@@ -26,6 +26,8 @@
 #ifndef ImageObserver_h
 #define ImageObserver_h
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 class Image;
@@ -44,6 +46,8 @@ public:
     virtual void animationAdvanced(const Image*) = 0;
 
     virtual void changedInRect(const Image*, const IntRect&) = 0;
+
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const = 0;
 };
 
 }

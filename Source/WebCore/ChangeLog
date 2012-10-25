@@ -1,3 +1,17 @@
+2012-10-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Memory instrumentation: add reportMemoryUsage to ImageObserver interface
+        https://bugs.webkit.org/show_bug.cgi?id=100091
+
+        Reviewed by Pavel Feldman.
+
+        Added reportMemoryUsage method to ImageObserver to make sure it is reported as
+        appropriate descendant(with pointer adjusted due to offsets added by inheritance)
+        rather than as a standalone memory block.
+
+        * platform/graphics/ImageObserver.h:
+        (ImageObserver):
+
 2012-10-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Overrides] Add latitude and longitude labels for the geolocation fields

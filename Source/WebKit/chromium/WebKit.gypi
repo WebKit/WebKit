@@ -86,6 +86,7 @@
             'tests/LinkHighlightTest.cpp',
             'tests/ListenerLeakTest.cpp',
             'tests/MemoryInfo.cpp',
+            'tests/MemoryInstrumentationTest.cpp',
             'tests/OpaqueRectTrackingContentLayerDelegateTest.cpp',
             'tests/OpenTypeVerticalDataTest.cpp',
             'tests/PODArenaTest.cpp',
