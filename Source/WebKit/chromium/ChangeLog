@@ -1,3 +1,21 @@
+2012-10-25  Sami Kyostila  <skyostil@chromium.org>
+
+        Composited/HW content have the red and blue channels inverted in DRT on Chromium Android
+        https://bugs.webkit.org/show_bug.cgi?id=98647
+
+        Reviewed by James Robinson.
+
+        WebLayerTreeView::compositeAndReadback() always gives back data in BGRA
+        ordering (i.e., the first byte in memory is blue). This matches Skia's
+        SkBitmap::kARGB_8888_Config ordering on all platforms except Android,
+        where Skia's native format is RGBA (i.e., red comes first in memory).
+
+        This mismatch causes layout test pixel comparison failures. This patch
+        fixes the problem by reordering the channels right after readback.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas):
+
 2012-10-25  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Notification should be sent when accessibilityIsIgnored changes

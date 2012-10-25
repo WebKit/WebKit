@@ -1769,6 +1769,14 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
     target.setConfig(SkBitmap::kARGB_8888_Config, rect.width(), rect.height(), rect.width() * 4);
     target.allocPixels();
     m_layerTreeView->compositeAndReadback(target.getPixels(), rect);
+#if (!SK_R32_SHIFT && SK_B32_SHIFT == 16)
+    // The compositor readback always gives back pixels in BGRA order, but for
+    // example Android's Skia uses RGBA ordering so the red and blue channels
+    // need to be swapped.
+    uint8_t* pixels = reinterpret_cast<uint8_t*>(target.getPixels());
+    for (size_t i = 0; i < target.getSize(); i += 4)
+        std::swap(pixels[i], pixels[i + 2]);
+#endif
     canvas->writePixels(target, rect.x(), rect.y());
 }
 #endif
