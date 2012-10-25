@@ -44,7 +44,6 @@ namespace WebCore {
 
     DOMWrapperMap<Node>& getDOMNodeMap(v8::Isolate* = 0);
     DOMWrapperMap<Node>& getActiveDOMNodeMap(v8::Isolate* = 0);
-    void visitActiveDOMNodes(DOMWrapperVisitor<Node>*);
 
     class NodeWrapperVisitor {
     public:

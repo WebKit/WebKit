@@ -1,3 +1,23 @@
+2012-10-25  Adam Barth  <abarth@webkit.org>
+
+        [V8] We can handle ActiveDOMNodes and DOMNodes in the same GC visitor
+        https://bugs.webkit.org/show_bug.cgi?id=100351
+
+        Reviewed by Eric Seidel.
+
+        There is no reason to handle active DOM nodes in a separate pass from
+        regular DOM nodes anymore.
+
+        * bindings/v8/V8DOMMap.cpp:
+        * bindings/v8/V8DOMMap.h:
+        (WebCore):
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::ActiveDOMObjectPrologueVisitor::visitDOMWrapper):
+        (WebCore::NodeVisitor::NodeVisitor):
+        (NodeVisitor):
+        (WebCore::NodeVisitor::visitNodeWrapper):
+        (WebCore::V8GCController::majorGCPrologue):
+
 2012-10-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Improper out-of-order call on a rule that is being removed from the stylesheet.

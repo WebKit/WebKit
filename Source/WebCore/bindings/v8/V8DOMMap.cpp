@@ -99,18 +99,6 @@ void visitAllDOMNodes(NodeWrapperVisitor* visitor)
     v8::V8::VisitHandlesWithClassIds(&visitorAdapter);
 }
 
-void visitActiveDOMNodes(DOMWrapperVisitor<Node>* visitor)
-{
-    v8::HandleScope scope;
-
-    Vector<DOMDataStore*>& list = V8PerIsolateData::current()->allStores();
-    for (size_t i = 0; i < list.size(); ++i) {
-        DOMDataStore* store = list[i];
-
-        store->activeDomNodeMap().visit(store, visitor);
-    }
-}
-
 void visitDOMObjects(DOMWrapperVisitor<void>* visitor)
 {
     v8::HandleScope scope;

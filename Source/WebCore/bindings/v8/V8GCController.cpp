@@ -67,29 +67,28 @@
 
 namespace WebCore {
 
-template<typename T>
-class ActiveDOMObjectPrologueVisitor : public DOMWrapperVisitor<T> {
+class ActiveDOMObjectPrologueVisitor : public DOMWrapperVisitor<void> {
 public:
     explicit ActiveDOMObjectPrologueVisitor(Vector<v8::Persistent<v8::Value> >* liveObjects)
         : m_liveObjects(liveObjects)
     {
     }
 
-    void visitDOMWrapper(DOMDataStore*, T* object, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore*, void* object, v8::Persistent<v8::Object> wrapper)
     {
-        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);  
+        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);  
 
-        if (V8MessagePort::info.equals(typeInfo)) {
+        if (V8MessagePort::info.equals(type)) {
             // Mark each port as in-use if it's entangled. For simplicity's sake,
             // we assume all ports are remotely entangled, since the Chromium port
             // implementation can't tell the difference.
-            MessagePort* port = reinterpret_cast<MessagePort*>(object);
+            MessagePort* port = static_cast<MessagePort*>(object);
             if (port->isEntangled() || port->hasPendingActivity())
                 m_liveObjects->append(wrapper);
             return;
         }
 
-        ActiveDOMObject* activeDOMObject = typeInfo->toActiveDOMObject(wrapper);
+        ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
         if (activeDOMObject && activeDOMObject->hasPendingActivity())
             m_liveObjects->append(wrapper);
     }
@@ -168,10 +167,21 @@ bool operator<(const ImplicitConnection& left, const ImplicitConnection& right)
 
 class NodeVisitor : public NodeWrapperVisitor {
 public:
+    explicit NodeVisitor(Vector<v8::Persistent<v8::Value> >* liveObjects)
+        : m_liveObjects(liveObjects)
+    {
+    }
+
     void visitNodeWrapper(Node* node, v8::Persistent<v8::Object> wrapper)
     {
         if (node->hasEventListeners())
             addImplicitReferencesForNodeWithEventListeners(node, wrapper);
+
+        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);  
+
+        ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
+        if (activeDOMObject && activeDOMObject->hasPendingActivity())
+            m_liveObjects->append(wrapper);
 
         Node* root = rootForGC(node);
         if (!root)
@@ -199,6 +209,7 @@ public:
     }
 
 private:
+    Vector<v8::Persistent<v8::Value> >* m_liveObjects;
     Vector<ImplicitConnection> m_connections;
 };
 
@@ -222,15 +233,15 @@ void V8GCController::majorGCPrologue()
 
     Vector<v8::Persistent<v8::Value> > liveObjects;
     liveObjects.append(V8PerIsolateData::current()->ensureLiveRoot());
-    ActiveDOMObjectPrologueVisitor<void> activeObjectVisitor(&liveObjects);
-    visitActiveDOMObjects(&activeObjectVisitor);
-    ActiveDOMObjectPrologueVisitor<Node> activeNodeVisitor(&liveObjects);
-    visitActiveDOMNodes(&activeNodeVisitor);
-    v8::V8::AddObjectGroup(liveObjects.data(), liveObjects.size());
 
-    NodeVisitor nodeVisitor;
+    ActiveDOMObjectPrologueVisitor activeObjectVisitor(&liveObjects);
+    visitActiveDOMObjects(&activeObjectVisitor);
+
+    NodeVisitor nodeVisitor(&liveObjects);
     visitAllDOMNodes(&nodeVisitor);
     nodeVisitor.applyGrouping();
+
+    v8::V8::AddObjectGroup(liveObjects.data(), liveObjects.size());
 
     ObjectVisitor objectVisitor;
     visitDOMObjects(&objectVisitor);
