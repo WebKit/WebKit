@@ -79,12 +79,6 @@ canvas/philip/tests/2d.text.draw.baseline.middle.html
 canvas/philip/tests/2d.text.draw.baseline.top.html
 canvas/philip/tests/type.prototype.html
 
-# Other failing Sputnik tests
-sputnik/Unicode/Unicode_510/S7.6_A3.1.html
-sputnik/Unicode/Unicode_510/S7.6_A3.2.html
-sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
-sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
-
 # Rendering of multipart images is broken: this test times out
 # https://bugs.webkit.org/show_bug.cgi?id=54251
 http/tests/multipart/invalid-image-data-standalone.html
