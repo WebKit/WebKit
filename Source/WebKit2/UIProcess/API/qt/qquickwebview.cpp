@@ -504,7 +504,7 @@ void QQuickWebViewPrivate::handleDownloadRequest(DownloadProxy* download)
     downloadItem->d->downloadProxy = download;
 
     q->connect(downloadItem->d, SIGNAL(receivedResponse(QWebDownloadItem*)), q, SLOT(_q_onReceivedResponseFromDownload(QWebDownloadItem*)));
-    context->downloadManager()->addDownload(download, downloadItem);
+    QtWebContext::downloadManager()->addDownload(download, downloadItem);
 }
 
 void QQuickWebViewPrivate::_q_onVisibleChanged()

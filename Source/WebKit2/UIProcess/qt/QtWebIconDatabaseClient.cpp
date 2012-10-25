@@ -22,7 +22,6 @@
 
 #include "Image.h"
 #include "KURL.h"
-#include "QtWebContext.h"
 #include "SharedBuffer.h"
 #include "WKURLQt.h"
 #include "WebContext.h"
@@ -40,11 +39,9 @@ static inline QtWebIconDatabaseClient* toQtWebIconDatabaseClient(const void* cli
     return reinterpret_cast<QtWebIconDatabaseClient*>(const_cast<void*>(clientInfo));
 }
 
-QtWebIconDatabaseClient::QtWebIconDatabaseClient(QtWebContext *qtWebContext)
+QtWebIconDatabaseClient::QtWebIconDatabaseClient(WebContext *context)
 {
-    m_contextId = qtWebContext->contextID();
     // The setter calls the getter here as it triggers the startup of the icon database.
-    WebContext* context = qtWebContext->context();
     if (!context->iconDatabase()->isOpen())
         context->setIconDatabasePath(context->iconDatabasePath());
     m_iconDatabase = context->iconDatabase();

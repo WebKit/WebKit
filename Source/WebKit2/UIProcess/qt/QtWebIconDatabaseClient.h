@@ -39,14 +39,14 @@ class String;
 
 namespace WebKit {
 
-class QtWebContext;
+class WebContext;
 class WebIconDatabase;
 
 class QtWebIconDatabaseClient : public QObject {
     Q_OBJECT
 
 public:
-    QtWebIconDatabaseClient(QtWebContext*);
+    QtWebIconDatabaseClient(WebContext*);
     ~QtWebIconDatabaseClient();
 
     WTF::String iconForPageURL(const WTF::String& pageURL);
@@ -60,7 +60,6 @@ public:
 
 private:
     static void didChangeIconForPageURL(WKIconDatabaseRef, WKURLRef pageURL, const void* clientInfo);
-    uint64_t m_contextId;
     RefPtr<WebKit::WebIconDatabase> m_iconDatabase;
     Mutex m_imageLock;
 };

@@ -30,6 +30,7 @@
 #include "ApplicationCacheStorage.h"
 #include "FileSystem.h"
 #include "QtDefaultDataLocation.h"
+#include "QtWebContext.h"
 #include "WKSharedAPICast.h"
 #if ENABLE(GEOLOCATION)
 #include "WebGeolocationProviderQt.h"
@@ -78,6 +79,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 void WebContext::platformInvalidateContext()
 {
+    QtWebContext::invalidateContext(this);
 }
 
 String WebContext::platformDefaultDatabaseDirectory() const

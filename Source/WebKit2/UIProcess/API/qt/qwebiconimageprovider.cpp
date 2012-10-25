@@ -49,13 +49,8 @@ WTF::String QWebIconImageProvider::iconURLForPageURLInContext(const WTF::String 
     QUrl url;
     url.setScheme(QStringLiteral("image"));
     url.setHost(QWebIconImageProvider::identifier());
-
-    QString path;
-    path.append(QLatin1Char('/'));
-    path.append(QString::number(context->contextID()));
-    path.append(QLatin1Char('/'));
-    path.append(QString::number(WTF::StringHash::hash(iconURL)));
-    url.setPath(path);
+    // Make sure that QML doesn't show cached versions of the previous icon if the icon location changed.
+    url.setPath(QLatin1Char('/') + QString::number(WTF::StringHash::hash(iconURL)));
 
     // FIXME: Use QUrl::DecodedMode when landed in Qt
     url.setFragment(QString::fromLatin1(QByteArray(QString(pageURL).toUtf8()).toBase64()));
@@ -70,21 +65,12 @@ WTF::String QWebIconImageProvider::iconURLForPageURLInContext(const WTF::String 
 
 QImage QWebIconImageProvider::requestImage(const QString& id, QSize* size, const QSize& requestedSize)
 {
-    // The string identifier has the leading image://webicon/ already stripped, so we just
-    // need to truncate from the first slash to get the context id.
-    QString contextIDString = id.left(id.indexOf(QLatin1Char('/')));
-    bool ok = false;
-    uint64_t contextId = contextIDString.toUInt(&ok);
-    if (!ok)
-        return QImage();
-
-    QtWebContext* context = QtWebContext::contextByID(contextId);
-    if (!context)
-        return QImage();
-
     QString pageURL = QString::fromUtf8(QByteArray::fromBase64(id.midRef(id.indexOf('#') + 1).toLatin1()));
 
-    QtWebIconDatabaseClient* iconDatabase = context->iconDatabase();
+    QtWebIconDatabaseClient* iconDatabase = QtWebContext::iconDatabase();
+    if (!iconDatabase)
+        return QImage();
+
     QImage icon = requestedSize.isValid() ? iconDatabase->iconImageForPageURL(pageURL, requestedSize) : iconDatabase->iconImageForPageURL(pageURL);
     ASSERT(!icon.isNull());
 

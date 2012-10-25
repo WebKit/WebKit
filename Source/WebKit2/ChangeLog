@@ -1,5 +1,57 @@
 2012-10-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Detach WebContext's clients from QtWebContext
+        https://bugs.webkit.org/show_bug.cgi?id=100224
+
+        Reviewed by Simon Hausmann.
+
+        The lifetime of WebContext isn't bound to QtWebContext and we wouldn't
+        keep a reference to our WebContext and would create a new one if a new
+        QQuickWebView/QtWebContext was created after we destroyed our QtWebContext.
+        This would cause a new WebContext and a new web process and somehow the
+        new WebContext could pick the IPC messages from the old WebProcess
+        and this would cause the new download client to receive messages about
+        downloads he doesn't know about and crash.
+
+        We assumed in the past that we would need multiple WebContext to allow
+        multiple web processes but this assumption doesn't hold anymore with
+        the work on ProcessModelMultipleSecondaryProcesses.
+        This patch enforces the use of a single WebContext by:
+        - Holding a single instance of QtWebIconDatabaseClient and QtDownloadManager
+        statically in QtWebContext
+        - Removing the context ID from QWebIconImageProvider's URLs
+        - Using QtWebContext as a temporary wrapper handle on WebContext to
+        initialize the WebContext's clients and allow us creating the first web page
+
+        platformInvalidateContext is used to clean up static global instances
+        when the WebContext is getting destroyed.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::handleDownloadRequest):
+        * UIProcess/API/qt/qwebiconimageprovider.cpp:
+        (QWebIconImageProvider::iconURLForPageURLInContext):
+        (QWebIconImageProvider::requestImage):
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit):
+        (WebKit::QtWebContext::QtWebContext):
+        (WebKit::QtWebContext::~QtWebContext):
+        (WebKit::QtWebContext::create):
+        (WebKit::QtWebContext::defaultContext):
+        (WebKit::QtWebContext::downloadManager):
+        (WebKit::QtWebContext::iconDatabase):
+        (WebKit::QtWebContext::invalidateContext):
+        * UIProcess/qt/QtWebContext.h:
+        (QtWebContext):
+        * UIProcess/qt/QtWebIconDatabaseClient.cpp:
+        (WebKit::QtWebIconDatabaseClient::QtWebIconDatabaseClient):
+        * UIProcess/qt/QtWebIconDatabaseClient.h:
+        (WebKit):
+        (QtWebIconDatabaseClient):
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformInvalidateContext):
+
+2012-10-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Make the context injected bundle client static
         https://bugs.webkit.org/show_bug.cgi?id=100223
 
