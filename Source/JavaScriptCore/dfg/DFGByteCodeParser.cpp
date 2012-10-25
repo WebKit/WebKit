@@ -2150,7 +2150,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_new_array_buffer: {
             int startConstant = currentInstruction[2].u.operand;
             int numConstants = currentInstruction[3].u.operand;
-            set(currentInstruction[1].u.operand, addToGraph(NewArrayBuffer, OpInfo(m_inlineStackTop->m_constantBufferRemap[startConstant]), OpInfo(numConstants)));
+            NewArrayBufferData data;
+            data.startConstant = m_inlineStackTop->m_constantBufferRemap[startConstant];
+            data.numConstants = numConstants;
+            m_graph.m_newArrayBufferData.append(data);
+            set(currentInstruction[1].u.operand, addToGraph(NewArrayBuffer, OpInfo(&m_graph.m_newArrayBufferData.last())));
             NEXT_OPCODE(op_new_array_buffer);
         }
             

@@ -1,3 +1,22 @@
+2012-10-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG NewArrayBuffer node should keep its data in a structure on the side to free up one of the opInfos
+        https://bugs.webkit.org/show_bug.cgi?id=100328
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGNode.h:
+        (NewArrayBufferData):
+        (DFG):
+        (JSC::DFG::Node::newArrayBufferData):
+        (Node):
+        (JSC::DFG::Node::startConstant):
+        (JSC::DFG::Node::numConstants):
+
 2012-10-25  Mark Lam  <mark.lam@apple.com>
 
         Update the C++ llint to work with the latest op_resolve... changes.
