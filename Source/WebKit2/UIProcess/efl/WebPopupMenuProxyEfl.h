@@ -34,15 +34,17 @@ namespace WebCore {
 class IntRect;
 }
 
+class EwkViewImpl;
+
 namespace WebKit {
 
 class WebPageProxy;
 
 class WebPopupMenuProxyEfl : public WebPopupMenuProxy {
 public:
-    static PassRefPtr<WebPopupMenuProxyEfl> create(Evas_Object* webView, WebPopupMenuProxy::Client* client)
+    static PassRefPtr<WebPopupMenuProxyEfl> create(EwkViewImpl* viewImpl, WebPopupMenuProxy::Client* client)
     {
-        return adoptRef(new WebPopupMenuProxyEfl(webView, client));
+        return adoptRef(new WebPopupMenuProxyEfl(viewImpl, client));
     }
 
     void showPopupMenu(const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex);
@@ -51,9 +53,9 @@ public:
     void valueChanged(int newSelectedIndex);
 
 private:
-    WebPopupMenuProxyEfl(Evas_Object*, WebPopupMenuProxy::Client*);
+    WebPopupMenuProxyEfl(EwkViewImpl*, WebPopupMenuProxy::Client*);
 
-    Evas_Object* m_webView;
+    EwkViewImpl* m_viewImpl;
 };
 
 } // namespace WebKit

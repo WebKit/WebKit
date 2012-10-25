@@ -27,7 +27,8 @@
 #ifndef PageUIClientEfl_h
 #define PageUIClientEfl_h
 
-#include "ewk_view_private.h"
+#include "WKPage.h"
+#include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 
 class EwkViewImpl;

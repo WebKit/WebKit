@@ -27,6 +27,7 @@
 #include "PageLoadClientEfl.h"
 
 #include "EwkViewImpl.h"
+#include "WKAPICast.h"
 #include "WKFrame.h"
 #include "WKPage.h"
 #include "ewk_back_forward_list_private.h"
@@ -152,7 +153,7 @@ void PageLoadClientEfl::didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef 
         return;
 
     EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
-    ewk_view_url_update(viewImpl->view());
+    viewImpl->informURLChange();
 }
 
 PageLoadClientEfl::PageLoadClientEfl(EwkViewImpl* viewImpl)

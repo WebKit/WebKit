@@ -27,7 +27,6 @@
 #define ResourceLoadClientEfl_h
 
 #include "ewk_resource_private.h"
-#include "ewk_view_private.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 

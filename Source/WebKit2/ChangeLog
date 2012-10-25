@@ -1,3 +1,79 @@
+2012-10-25  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Get rid of Ewk_View private C API (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=100331
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Convert most of the remaining Ewk_View private C API
+        into C++ methods in EwkViewImpl class. Only one private
+        C function remains but it will be taken care of in a
+        later patch to clean up the view construction code.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::addToPageViewMap):
+        (EwkViewImpl::removeFromPageViewMap):
+        (EwkViewImpl::viewFromPageViewMap):
+        (EwkViewImpl::fromEvasObject):
+        (EwkViewImpl::informLoadFinished):
+        (EwkViewImpl::informProvisionalLoadRedirect):
+        (EwkViewImpl::informProvisionalLoadStarted):
+        (EwkViewImpl::informWebProcessCrashed):
+        (EwkViewImpl::informContentsSizeChange):
+        (EwkViewImpl::requestPopupMenu):
+        (EwkViewImpl::requestJSAlertPopup):
+        (EwkViewImpl::requestJSConfirmPopup):
+        (EwkViewImpl::requestJSPromptPopup):
+        (EwkViewImpl::informDatabaseQuotaReached):
+        (EwkViewImpl::updateTextInputState):
+        (EwkViewImpl::informURLChange):
+        (EwkViewImpl::createNewPage):
+        (EwkViewImpl::closePage):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebKit):
+        (EwkViewImpl):
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::processDidCrash):
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::updateTextInputState):
+        (WebKit::PageClientImpl::didChangeContentsSize):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_del):
+        (_ewk_view_initialize):
+        (ewk_view_url_set):
+        (ewk_view_reload):
+        (ewk_view_reload_bypass_cache):
+        (ewk_view_html_string_load):
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/efl/ContextHistoryClientEfl.cpp:
+        (WebKit::ContextHistoryClientEfl::didNavigateWithNavigationData):
+        (WebKit::ContextHistoryClientEfl::didPerformClientRedirect):
+        (WebKit::ContextHistoryClientEfl::didPerformServerRedirect):
+        (WebKit::ContextHistoryClientEfl::didUpdateHistoryTitle):
+        * UIProcess/efl/FindClientEfl.cpp:
+        * UIProcess/efl/FormClientEfl.cpp:
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didSameDocumentNavigationForFrame):
+        * UIProcess/efl/PageLoadClientEfl.h:
+        * UIProcess/efl/PagePolicyClientEfl.cpp:
+        * UIProcess/efl/PagePolicyClientEfl.h:
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::closePage):
+        (WebKit::PageUIClientEfl::createNewPage):
+        (WebKit::PageUIClientEfl::runJavaScriptAlert):
+        (WebKit::PageUIClientEfl::runJavaScriptConfirm):
+        (WebKit::PageUIClientEfl::runJavaScriptPrompt):
+        (WebKit::PageUIClientEfl::exceededDatabaseQuota):
+        * UIProcess/efl/PageUIClientEfl.h:
+        * UIProcess/efl/ResourceLoadClientEfl.h:
+        * UIProcess/efl/WebPopupMenuProxyEfl.cpp:
+        (WebKit::WebPopupMenuProxyEfl::WebPopupMenuProxyEfl):
+        (WebKit::WebPopupMenuProxyEfl::showPopupMenu):
+        (WebKit::WebPopupMenuProxyEfl::hidePopupMenu):
+        * UIProcess/efl/WebPopupMenuProxyEfl.h:
+        (WebKit::WebPopupMenuProxyEfl::create):
+        (WebPopupMenuProxyEfl):
+
 2012-10-24  Joone Hur  <joone.hur@intel.com>
 
         [EFL][AC] Unreviewed, fix build break when AC is enabled

@@ -27,6 +27,9 @@
 #include <Ecore_IMF.h>
 #include <Ecore_IMF_Evas.h>
 #include <Evas.h>
+#include <WebCore/TextDirection.h>
+#include <WebKit2/WKBase.h>
+#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -63,6 +66,7 @@ class PageViewportControllerClientEfl;
 class PageViewportController;
 class ResourceLoadClientEfl;
 class WebPageProxy;
+class WebPopupItem;
 class WebPopupMenuProxyEfl;
 }
 
@@ -92,7 +96,7 @@ public:
     explicit EwkViewImpl(Evas_Object* view);
     ~EwkViewImpl();
 
-    static EwkViewImpl* fromEvasObject(Evas_Object* view);
+    static EwkViewImpl* fromEvasObject(const Evas_Object* view);
 
     inline Evas_Object* view() { return m_view; }
     WKPageRef wkPage();
@@ -103,6 +107,10 @@ public:
     void setCursor(const WebCore::Cursor& cursor);
     void redrawRegion(const WebCore::IntRect& rect);
     void setImageData(void* imageData, const WebCore::IntSize& size);
+
+    static void addToPageViewMap(const Evas_Object* ewkView);
+    static void removeFromPageViewMap(const Evas_Object* ewkView);
+    static const Evas_Object* viewFromPageViewMap(const WKPageRef);
 
 #if ENABLE(FULLSCREEN_API)
     void enterFullScreen();
@@ -119,6 +127,16 @@ public:
     void requestColorPicker(int r, int g, int b, int a, WKColorPickerResultListenerRef listener);
     void dismissColorPicker();
 #endif
+
+    WKPageRef createNewPage();
+    void closePage();
+
+    void requestPopupMenu(WebKit::WebPopupMenuProxyEfl*, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);
+    void updateTextInputState();
+
+    void requestJSAlertPopup(const WKEinaSharedString& message);
+    bool requestJSConfirmPopup(const WKEinaSharedString& message);
+    WKEinaSharedString requestJSPromptPopup(const WKEinaSharedString& message, const WKEinaSharedString& defaultValue);
 
     void informDownloadJobCancelled(Ewk_Download_Job* download);
     void informDownloadJobFailed(Ewk_Download_Job* download, Ewk_Error* error);
@@ -150,6 +168,10 @@ public:
     void informTooltipTextChange(const String& text);
     void informTextFound(unsigned matchCount);
     void informIconChange();
+    void informWebProcessCrashed();
+    void informContentsSizeChange(const WebCore::IntSize& size);
+    unsigned long long informDatabaseQuotaReached(const String& databaseName, const String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);
+    void informURLChange();
 
 #if ENABLE(WEB_INTENTS)
     void informIntentRequest(Ewk_Intent* ewkIntent);
@@ -208,6 +230,8 @@ private:
     Ewk_View_Smart_Data* smartData();
 
     Evas_Object* m_view;
+    typedef HashMap<WKPageRef, const Evas_Object*> PageViewMap;
+    static PageViewMap pageViewMap;
 };
 
 #endif // EwkViewImpl_h

@@ -29,7 +29,6 @@
 
 #include "EwkViewImpl.h"
 #include "WKPage.h"
-#include "ewk_view_private.h"
 
 namespace WebKit {
 

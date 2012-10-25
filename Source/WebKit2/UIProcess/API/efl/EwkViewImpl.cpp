@@ -52,6 +52,31 @@ using namespace WebKit;
 
 static const int defaultCursorSize = 16;
 
+EwkViewImpl::PageViewMap EwkViewImpl::pageViewMap;
+
+void EwkViewImpl::addToPageViewMap(const Evas_Object* ewkView)
+{
+    EwkViewImpl* viewImpl = EwkViewImpl::fromEvasObject(ewkView);
+
+    PageViewMap::AddResult result = pageViewMap.add(viewImpl->wkPage(), ewkView);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void EwkViewImpl::removeFromPageViewMap(const Evas_Object* ewkView)
+{
+    EwkViewImpl* viewImpl = EwkViewImpl::fromEvasObject(ewkView);
+
+    ASSERT(pageViewMap.contains(viewImpl->wkPage()));
+    pageViewMap.remove(viewImpl->wkPage());
+}
+
+const Evas_Object* EwkViewImpl::viewFromPageViewMap(const WKPageRef page)
+{
+    ASSERT(page);
+
+    return pageViewMap.get(page);
+}
+
 static void _ewk_view_commit(void* data, Ecore_IMF_Context*, void* eventInfo)
 {
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
@@ -156,7 +181,7 @@ Ewk_View_Smart_Data* EwkViewImpl::smartData()
     return static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(m_view));
 }
 
-EwkViewImpl* EwkViewImpl::fromEvasObject(Evas_Object* view)
+EwkViewImpl* EwkViewImpl::fromEvasObject(const Evas_Object* view)
 {
     ASSERT(view);
     Ewk_View_Smart_Data* sd = static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(view));
@@ -354,7 +379,7 @@ void EwkViewImpl::informLoadError(Ewk_Error* error)
  */
 void EwkViewImpl::informLoadFinished()
 {
-    ewk_view_url_update(m_view);
+    informURLChange();
     evas_object_smart_callback_call(m_view, "load,finished", 0);
 }
 
@@ -395,7 +420,7 @@ void EwkViewImpl::informLoadCommitted()
  */
 void EwkViewImpl::informProvisionalLoadRedirect()
 {
-    ewk_view_url_update(m_view);
+    informURLChange();
     evas_object_smart_callback_call(m_view, "load,provisional,redirect", 0);
 }
 
@@ -407,7 +432,7 @@ void EwkViewImpl::informProvisionalLoadRedirect()
  */
 void EwkViewImpl::informProvisionalLoadStarted()
 {
-    ewk_view_url_update(m_view);
+    informURLChange();
     evas_object_smart_callback_call(m_view, "load,provisional,started", 0);
 }
 
@@ -694,4 +719,196 @@ void EwkViewImpl::dismissColorPicker()
 void EwkViewImpl::informBackForwardListChange()
 {
     evas_object_smart_callback_call(m_view, "back,forward,list,changed", 0);
+}
+
+/**
+ * @internal
+ * Web process has crashed.
+ *
+ * Emits signal: "webprocess,crashed" with pointer to crash handling boolean.
+ */
+void EwkViewImpl::informWebProcessCrashed()
+{
+    bool handled = false;
+    evas_object_smart_callback_call(m_view, "webprocess,crashed", &handled);
+
+    if (!handled) {
+        CString url = pageProxy->urlAtProcessExit().utf8();
+        WARN("WARNING: The web process experienced a crash on '%s'.\n", url.data());
+
+        // Display an error page
+        ewk_view_html_string_load(m_view, "The web process has crashed.", 0, url.data());
+    }
+}
+
+void EwkViewImpl::informContentsSizeChange(const IntSize& size)
+{
+#if USE(COORDINATED_GRAPHICS)
+    pageViewportControllerClient->didChangeContentsSize(size);
+#else
+    UNUSED_PARAM(size);
+#endif
+}
+
+COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, RTL);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, LTR);
+
+void EwkViewImpl::requestPopupMenu(WebPopupMenuProxyEfl* popupMenu, const IntRect& rect, TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, int32_t selectedIndex)
+{
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
+
+    ASSERT(popupMenu);
+
+    if (!sd->api->popup_menu_show)
+        return;
+
+    if (popupMenuProxy)
+        ewk_view_popup_menu_close(m_view);
+    popupMenuProxy = popupMenu;
+
+    Eina_List* popupItems = 0;
+    const size_t size = items.size();
+    for (size_t i = 0; i < size; ++i)
+        popupItems = eina_list_append(popupItems, Ewk_Popup_Menu_Item::create(items[i]).leakPtr());
+    popupMenuItems = popupItems;
+
+    sd->api->popup_menu_show(sd, rect, static_cast<Ewk_Text_Direction>(textDirection), pageScaleFactor, popupItems, selectedIndex);
+}
+
+/**
+ * @internal
+ * Calls a smart member function for javascript alert().
+ */
+void EwkViewImpl::requestJSAlertPopup(const WKEinaSharedString& message)
+{
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
+
+    if (!sd->api->run_javascript_alert)
+        return;
+
+    sd->api->run_javascript_alert(sd, message);
+}
+
+/**
+ * @internal
+ * Calls a smart member function for javascript confirm() and returns a value from the function. Returns false by default.
+ */
+bool EwkViewImpl::requestJSConfirmPopup(const WKEinaSharedString& message)
+{
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
+
+    if (!sd->api->run_javascript_confirm)
+        return false;
+
+    return sd->api->run_javascript_confirm(sd, message);
+}
+
+/**
+ * @internal
+ * Calls a smart member function for javascript prompt() and returns a value from the function. Returns null string by default.
+ */
+WKEinaSharedString EwkViewImpl::requestJSPromptPopup(const WKEinaSharedString& message, const WKEinaSharedString& defaultValue)
+{
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
+
+    if (!sd->api->run_javascript_prompt)
+        return WKEinaSharedString();
+
+    return WKEinaSharedString::adopt(sd->api->run_javascript_prompt(sd, message, defaultValue));
+}
+
+#if ENABLE(SQL_DATABASE)
+/**
+ * @internal
+ * Calls exceeded_database_quota callback or falls back to default behavior returns default database quota.
+ */
+unsigned long long EwkViewImpl::informDatabaseQuotaReached(const String& databaseName, const String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage)
+{
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
+
+    static const unsigned long long defaultQuota = 5 * 1024 * 1204; // 5 MB
+    if (sd->api->exceeded_database_quota)
+        return sd->api->exceeded_database_quota(sd, databaseName.utf8().data(), displayName.utf8().data(), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
+
+    return defaultQuota;
+}
+#endif
+
+/**
+ * @internal
+ * The view was requested to update text input state
+ */
+void EwkViewImpl::updateTextInputState()
+{
+    if (!imfContext)
+        return;
+
+    const EditorState& editor = pageProxy->editorState();
+
+    if (editor.isContentEditable) {
+        if (isImfFocused)
+            return;
+
+        ecore_imf_context_reset(imfContext);
+        ecore_imf_context_focus_in(imfContext);
+        isImfFocused = true;
+    } else {
+        if (!isImfFocused)
+            return;
+
+        if (editor.hasComposition)
+            pageProxy->cancelComposition();
+
+        isImfFocused = false;
+        ecore_imf_context_reset(imfContext);
+        ecore_imf_context_focus_out(imfContext);
+    }
+}
+
+/**
+ * @internal
+ * The url of view was changed by the frame loader.
+ *
+ * Emits signal: "url,changed" with pointer to new url string.
+ */
+void EwkViewImpl::informURLChange()
+{
+    String activeURL = pageProxy->activeURL();
+    if (activeURL.isEmpty())
+        return;
+
+    CString rawActiveURL = activeURL.utf8();
+    if (url == rawActiveURL.data())
+        return;
+
+    url = rawActiveURL.data();
+    const char* callbackArgument = static_cast<const char*>(url);
+    evas_object_smart_callback_call(m_view, "url,changed", const_cast<char*>(callbackArgument));
+
+    // Update the view's favicon.
+    informIconChange();
+}
+
+WKPageRef EwkViewImpl::createNewPage()
+{
+    Evas_Object* newEwkView = 0;
+    evas_object_smart_callback_call(m_view, "create,window", &newEwkView);
+
+    if (!newEwkView)
+        return 0;
+
+    EwkViewImpl* newViewImpl = EwkViewImpl::fromEvasObject(newEwkView);
+    ASSERT(newViewImpl);
+
+    return static_cast<WKPageRef>(WKRetain(newViewImpl->page()));
+}
+
+void EwkViewImpl::closePage()
+{
+    evas_object_smart_callback_call(m_view, "close,window", 0);
 }

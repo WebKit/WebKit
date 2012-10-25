@@ -29,9 +29,11 @@
 #include "EwkViewImpl.h"
 #include "WKFrame.h"
 #include "WKFramePolicyListener.h"
+#include "WebFrameProxy.h"
 #include "ewk_navigation_policy_decision.h"
 #include "ewk_navigation_policy_decision_private.h"
 #include <WebCore/HTTPStatusCodes.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
 

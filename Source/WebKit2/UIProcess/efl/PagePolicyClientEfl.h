@@ -26,7 +26,9 @@
 #ifndef PagePolicyClientEfl_h
 #define PagePolicyClientEfl_h
 
-#include "ewk_view_private.h"
+#include "WKEvent.h"
+#include "WKPageLoadTypes.h"
+#include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 
 class EwkViewImpl;

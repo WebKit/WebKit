@@ -28,9 +28,11 @@
 #include "PageUIClientEfl.h"
 
 #include "EwkViewImpl.h"
+#include "WKAPICast.h"
+#include "WKEvent.h"
 #include "WKString.h"
-#include "ewk_view_private.h"
 #include <Ecore_Evas.h>
+#include <WebCore/Color.h>
 
 namespace WebKit {
 
@@ -41,27 +43,27 @@ static inline PageUIClientEfl* toPageUIClientEfl(const void* clientInfo)
 
 void PageUIClientEfl::closePage(WKPageRef, const void* clientInfo)
 {
-    ewk_view_page_close(toPageUIClientEfl(clientInfo)->m_viewImpl->view());
+    toPageUIClientEfl(clientInfo)->m_viewImpl->closePage();
 }
 
 WKPageRef PageUIClientEfl::createNewPage(WKPageRef, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
 {
-    return ewk_view_page_create(toPageUIClientEfl(clientInfo)->m_viewImpl->view());
+    return toPageUIClientEfl(clientInfo)->m_viewImpl->createNewPage();
 }
 
 void PageUIClientEfl::runJavaScriptAlert(WKPageRef, WKStringRef alertText, WKFrameRef, const void* clientInfo)
 {
-    ewk_view_run_javascript_alert(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), WKEinaSharedString(alertText));
+    toPageUIClientEfl(clientInfo)->m_viewImpl->requestJSAlertPopup(WKEinaSharedString(alertText));
 }
 
 bool PageUIClientEfl::runJavaScriptConfirm(WKPageRef, WKStringRef message, WKFrameRef, const void* clientInfo)
 {
-    return ewk_view_run_javascript_confirm(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), WKEinaSharedString(message));
+    return toPageUIClientEfl(clientInfo)->m_viewImpl->requestJSConfirmPopup(WKEinaSharedString(message));
 }
 
 WKStringRef PageUIClientEfl::runJavaScriptPrompt(WKPageRef, WKStringRef message, WKStringRef defaultValue, WKFrameRef, const void* clientInfo)
 {
-    WKEinaSharedString value = ewk_view_run_javascript_prompt(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), WKEinaSharedString(message), WKEinaSharedString(defaultValue));
+    WKEinaSharedString value = toPageUIClientEfl(clientInfo)->m_viewImpl->requestJSPromptPopup(WKEinaSharedString(message), WKEinaSharedString(defaultValue));
     return value ? WKStringCreateWithUTF8CString(value) : 0;
 }
 
@@ -83,7 +85,8 @@ void PageUIClientEfl::hideColorPicker(WKPageRef, const void* clientInfo)
 #if ENABLE(SQL_DATABASE)
 unsigned long long PageUIClientEfl::exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void* clientInfo)
 {
-    return ewk_view_database_quota_exceeded(toPageUIClientEfl(clientInfo)->m_viewImpl->view(), WKEinaSharedString(databaseName), WKEinaSharedString(displayName), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
+    EwkViewImpl* viewImpl = toPageUIClientEfl(clientInfo)->m_viewImpl;
+    return viewImpl->informDatabaseQuotaReached(toImpl(databaseName)->string(), toImpl(displayName)->string(), currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage);
 }
 #endif
 

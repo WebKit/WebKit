@@ -41,7 +41,6 @@
 #include "ewk_download_job.h"
 #include "ewk_download_job_private.h"
 #include "ewk_view.h"
-#include "ewk_view_private.h"
 
 #if USE(TILED_BACKING_STORE)
 #include "PageViewportController.h"
@@ -120,7 +119,7 @@ void PageClientImpl::processDidCrash()
     if (loadProgress >= 0 && loadProgress < 1)
         m_viewImpl->informLoadProgress(1);
 
-    ewk_view_webprocess_crashed(m_viewImpl->view());
+    m_viewImpl->informWebProcessCrashed();
 }
 
 void PageClientImpl::didRelaunchProcess()
@@ -217,7 +216,7 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent&, bool /*wasEv
 
 PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
 {
-    return WebPopupMenuProxyEfl::create(m_viewImpl->view(), page);
+    return WebPopupMenuProxyEfl::create(m_viewImpl, page);
 }
 
 PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy*)
@@ -299,7 +298,7 @@ void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, Fin
 
 void PageClientImpl::updateTextInputState()
 {
-    ewk_view_text_input_state_update(m_viewImpl->view());
+    m_viewImpl->updateTextInputState();
 }
 
 void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
@@ -320,7 +319,7 @@ void PageClientImpl::didChangeContentsSize(const WebCore::IntSize& size)
 #if USE(TILED_BACKING_STORE)
     m_pageViewportController->didChangeContentsSize(size);
 #else
-    ewk_view_contents_size_changed(m_viewImpl->view(), size);
+    m_viewImpl->informContentsSizeChange(size);
 #endif
 }
 
