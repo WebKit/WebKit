@@ -1,5 +1,26 @@
 2012-10-25  Zoltan Horvath  <zoltan@webkit.org>
 
+        Turn PageLoad tests into simple performancetests, commit #4 
+        https://bugs.webkit.org/show_bug.cgi?id=99899
+
+        Reviewed by Ryosuke Niwa.
+
+        We cannot provide an elegant way to measure the memory consumption of the PageLoad tests, but we can turn them into simple
+        performance tests and measure their memory footprint and performance that way. This change moves and renames the related files
+        to their new location and adds html/js wrappers for them.
+
+        This is the #4 commit of the whole patch.
+
+        * PageLoad/svg/files/france.svg: Removed.
+        * PageLoad/svg/files/francobollo_gnome_ezechi_02.svg: Removed.
+        * SVG/France.html: Added.
+        * SVG/FrancoBolloGnomeEzechi.html: Added.
+        * SVG/resources/France.svg: Copied from PerformanceTests/PageLoad/svg/files/france.svg.
+        * SVG/resources/FrancoBolloGnomeEzechi.svg: Copied from PerformanceTests/PageLoad/svg/files/francobollo_gnome_ezechi_02.svg.
+        * Skipped: Rename the files on the skipped list also.
+
+2012-10-25  Zoltan Horvath  <zoltan@webkit.org>
+
         Turn PageLoad tests into simple performancetests, commit #3 
         https://bugs.webkit.org/show_bug.cgi?id=99899
 
