@@ -40,6 +40,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "HistogramSupport.h"
 #include "InspectorInstrumentation.h"
 #include "NPObjectWrapper.h"
 #include "NPV8Object.h"
@@ -65,6 +66,7 @@
 #include "V8NPObject.h"
 #include "V8RecursionScope.h"
 #include "Widget.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
@@ -154,8 +156,10 @@ void ScriptController::reset()
 
 void ScriptController::clearForClose()
 {
+    double start = currentTime();
     reset();
     windowShell()->clearForClose();
+    HistogramSupport::histogramCustomCounts("WebCore.ScriptController.clearForClose", (currentTime() - start) * 1000, 0, 10000, 50);
 }
 
 void ScriptController::updateSecurityOrigin()
@@ -627,10 +631,12 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
 
 void ScriptController::clearWindowShell(DOMWindow*, bool)
 {
+    double start = currentTime();
     reset();
     // V8 binding expects ScriptController::clearWindowShell only be called
     // when a frame is loading a new page. This creates a new context for the new page.
     windowShell()->clearForNavigation();
+    HistogramSupport::histogramCustomCounts("WebCore.ScriptController.clearWindowShell", (currentTime() - start) * 1000, 0, 10000, 50);
 }
 
 #if ENABLE(INSPECTOR)

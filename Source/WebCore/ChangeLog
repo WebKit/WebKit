@@ -1,3 +1,14 @@
+2012-10-25  Ojan Vafai  <ojan@chromium.org>
+
+        [V8] Add histograms to measure V8 work done during window close and navigation
+        https://bugs.webkit.org/show_bug.cgi?id=100358
+
+        Reviewed by Adam Barth.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::clearForClose):
+        (WebCore::ScriptController::clearWindowShell):
+
 2012-10-25  Antti Koivisto  <antti@apple.com>
 
         Avoid unnecessary style recalcs on id attribute mutation.
