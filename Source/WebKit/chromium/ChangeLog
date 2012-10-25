@@ -1,3 +1,15 @@
+2012-10-25  Ben Wagner  <bungeman@chromium.org>
+
+        Remove SK_DISABLE_EXTRACTSUBSET_OPAQUE_FIX define from skia_webkit.gyp, as it has been rebaselined.
+        https://bugs.webkit.org/show_bug.cgi?id=100394
+
+        Reviewed by Dirk Pranke.
+
+        The define has been removed from the Skia code and the Chromium skia.gyp.
+        The pixel tests affected have already been rebaselined. 
+
+        * skia_webkit.gyp:
+
 2012-10-22  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Add supportMultipleWindows setting, needed for Android

@@ -47,9 +47,6 @@
 
           # Temporarily ignore fix to antialias coverage, until we can rebaseline
           'SK_USE_LEGACY_AA_COVERAGE',
-
-          # Temporarily disable opacity fix in extractSubset
-          'SK_DISABLE_EXTRACTSUBSET_OPAQUE_FIX',
         ],
       },
     },
