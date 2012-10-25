@@ -1,3 +1,17 @@
+2012-10-24  Joone Hur  <joone.hur@intel.com>
+
+        [EFL][AC] Unreviewed, fix build break when AC is enabled
+
+        Fix build break after r132405.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::enterAcceleratedCompositingMode):
+        * UIProcess/API/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::didChangeContentsSize):
+        (WebKit::PageViewportControllerClientEfl::didChangeVisibleContents):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+
 2012-10-24  Anders Carlsson  <andersca@apple.com>
 
         Make it a compile error to send a sync message as async (and vice versa)

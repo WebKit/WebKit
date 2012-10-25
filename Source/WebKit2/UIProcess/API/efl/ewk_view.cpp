@@ -561,7 +561,7 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
         evas_gl_surface_destroy(impl->evasGl, impl->evasGlSurface);
         impl->evasGlSurface = 0;
         impl->createGLSurface(IntSize(width, height));
-        ewk_view_display(ewkView, IntRect(IntPoint(), IntSize(width, height)));
+        impl->redrawRegion(IntRect(IntPoint(), IntSize(width, height)));
     }
 #endif
 }

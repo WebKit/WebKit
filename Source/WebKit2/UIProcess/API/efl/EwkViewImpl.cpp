@@ -37,6 +37,7 @@
 #include "ewk_context_private.h"
 #include "ewk_favicon_database_private.h"
 #include "ewk_popup_menu_item_private.h"
+#include "ewk_private.h"
 #include "ewk_settings_private.h"
 #include "ewk_view.h"
 #include "ewk_view_private.h"
@@ -608,7 +609,7 @@ bool EwkViewImpl::enterAcceleratedCompositingMode()
         return false;
     }
 
-    Evas* evas = evas_object_evas_get(ewkView);
+    Evas* evas = evas_object_evas_get(m_view);
     evasGl = evas_gl_new(evas);
     if (!evasGl)
         return false;

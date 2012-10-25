@@ -92,7 +92,7 @@ void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSi
 {
     m_contentsSize = size;
     IntRect rect = IntRect(IntPoint(), m_viewportSize);
-    m_viewImpl->redrawArea(rect);
+    m_viewImpl->redrawRegion(rect);
 }
 
 void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPoint& contentsPoint)
@@ -115,7 +115,7 @@ void PageViewportControllerClientEfl::didResumeContent()
 void PageViewportControllerClientEfl::didChangeVisibleContents()
 {
     IntRect rect = IntRect(IntPoint(), m_viewportSize);
-    m_viewImpl->redrawArea(rect);
+    m_viewImpl->redrawRegion(rect);
 }
 
 void PageViewportControllerClientEfl::didChangeViewportAttributes()
