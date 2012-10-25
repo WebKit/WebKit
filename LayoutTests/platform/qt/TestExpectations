@@ -189,7 +189,6 @@ compositing/visible-rect [ Skip ]
 editing/shadow
 fast/dom/shadow/access-key.html
 fast/dom/shadow/adopt-node-with-shadow-root.html
-fast/dom/shadow/athost-atrules.html
 fast/dom/shadow/composed-shadow-tree-walker.html
 fast/dom/shadow/content-after-style.html
 fast/dom/shadow/content-element-api.html

@@ -1,3 +1,13 @@
+2012-10-25  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL][QT] Remove test which is not exist
+        https://bugs.webkit.org/show_bug.cgi?id=100366
+
+        Unreviewed. fast/dom/shadow/athost-atrules.html has been removed after r132403.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-10-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Gardening after r132386
