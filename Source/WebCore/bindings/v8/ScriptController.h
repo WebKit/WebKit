@@ -167,7 +167,6 @@ public:
     void updatePlatformScriptObjects();
     void cleanupScriptObjectsForPlugin(Widget*);
 
-    void clearForNavigation();
     void clearForClose();
 
     NPObject* createScriptObjectForPluginElement(HTMLPlugInElement*);
@@ -192,7 +191,7 @@ private:
     // call world->destroyIsolatedShell().
     typedef HashMap<int, V8DOMWindowShell*> IsolatedWorldMap;
 
-    void resetIsolatedWorlds();
+    void reset();
 
     Frame* m_frame;
     const String* m_sourceURL;

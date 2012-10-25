@@ -1,3 +1,21 @@
+2012-10-25  Ojan Vafai  <ojan@chromium.org>
+
+        Get rid of ScriptController::clearForNavigation
+        https://bugs.webkit.org/show_bug.cgi?id=100390
+
+        Reviewed by Adam Barth.
+
+        Get rid of clearForNavigation and change resetIsolatedWorlds
+        to reset so that it can also do the hintForCollectGarbage call.
+        No new tests. No behavior change.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::reset):
+        (WebCore::ScriptController::clearForClose):
+        (WebCore::ScriptController::clearWindowShell):
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+
 2012-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         r132427 changed the tiling behavior of tiled layer TileCaches as well as the page tile cache

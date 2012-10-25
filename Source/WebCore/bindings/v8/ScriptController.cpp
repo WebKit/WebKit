@@ -142,27 +142,20 @@ void ScriptController::clearScriptObjects()
 #endif
 }
 
-void ScriptController::resetIsolatedWorlds()
+void ScriptController::reset()
 {
     for (IsolatedWorldMap::iterator iter = m_isolatedWorlds.begin();
          iter != m_isolatedWorlds.end(); ++iter) {
         iter->value->destroyIsolatedShell();
     }
     m_isolatedWorlds.clear();
+    V8GCController::hintForCollectGarbage();
 }
 
 void ScriptController::clearForClose()
 {
-    resetIsolatedWorlds();
-    V8GCController::hintForCollectGarbage();
+    reset();
     windowShell()->clearForClose();
-}
-
-void ScriptController::clearForNavigation()
-{
-    resetIsolatedWorlds();
-    V8GCController::hintForCollectGarbage();
-    windowShell()->clearForNavigation();
 }
 
 void ScriptController::updateSecurityOrigin()
@@ -634,10 +627,10 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
 
 void ScriptController::clearWindowShell(DOMWindow*, bool)
 {
+    reset();
     // V8 binding expects ScriptController::clearWindowShell only be called
-    // when a frame is loading a new page. ScriptController::clearForNavigation
-    // creates a new context for the new page.
-    clearForNavigation();
+    // when a frame is loading a new page. This creates a new context for the new page.
+    windowShell()->clearForNavigation();
 }
 
 #if ENABLE(INSPECTOR)
