@@ -1,3 +1,50 @@
+2012-10-25  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add Ewk_Popup_Menu API
+        https://bugs.webkit.org/show_bug.cgi?id=100404
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add new Ewk_Popup_Menu API to complete the existing
+        Ewk_Popup_Menu_Item one. This way, we can move the
+        popup menu code out of Ewk_View.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::~EwkViewImpl):
+        (EwkViewImpl::requestPopupMenu):
+        (EwkViewImpl::closePopupMenu):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_popup_menu.cpp: Added.
+        (Ewk_Popup_Menu::Ewk_Popup_Menu):
+        (Ewk_Popup_Menu::~Ewk_Popup_Menu):
+        (Ewk_Popup_Menu::close):
+        (Ewk_Popup_Menu::items):
+        (Ewk_Popup_Menu::selectedIndex):
+        (Ewk_Popup_Menu::setSelectedIndex):
+        (ewk_popup_menu_close):
+        (ewk_popup_menu_selected_index_set):
+        (ewk_popup_menu_selected_index_get):
+        (ewk_popup_menu_items_get):
+        * UIProcess/API/efl/ewk_popup_menu.h: Added.
+        * UIProcess/API/efl/ewk_popup_menu_private.h: Copied from Source/WebKit2/UIProcess/efl/WebPopupMenuProxyEfl.cpp.
+        (WebKit):
+        (Ewk_Popup_Menu):
+        (Ewk_Popup_Menu::create):
+        * UIProcess/API/efl/ewk_view.cpp:
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_popup_menu.cpp: Added.
+        (checkBasicPopupMenuItem):
+        (selectItemAfterDelayed):
+        (showPopupMenu):
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        * UIProcess/efl/WebPopupMenuProxyEfl.cpp:
+        (WebKit::WebPopupMenuProxyEfl::hidePopupMenu):
+
 2012-10-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Close the IconDatabase before the WebContext gets destroyed

@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2012 Intel Corporation
  * Copyright (C) 2012 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,38 +24,42 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPopupMenuProxyEfl.h"
+#ifndef ewk_popup_menu_private_h
+#define ewk_popup_menu_private_h
 
-#include "EwkViewImpl.h"
-#include "NativeWebMouseEvent.h"
-#include "WebPopupItem.h"
-#include "ewk_view.h"
-#include <wtf/text/CString.h>
-
-using namespace WebCore;
+#include <Eina.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
-
-WebPopupMenuProxyEfl::WebPopupMenuProxyEfl(EwkViewImpl* viewImpl, WebPopupMenuProxy::Client* client)
-    : WebPopupMenuProxy(client)
-    , m_viewImpl(viewImpl)
-{
+class WebPopupItem;
+class WebPopupMenuProxyEfl;
 }
 
-void WebPopupMenuProxyEfl::showPopupMenu(const IntRect& rect, TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
-{
-    m_viewImpl->requestPopupMenu(this, rect, textDirection, pageScaleFactor, items, selectedIndex);
-}
+class EwkViewImpl;
 
-void WebPopupMenuProxyEfl::hidePopupMenu()
-{
-    m_viewImpl->closePopupMenu();
-}
+class Ewk_Popup_Menu {
+public:
+    static PassOwnPtr<Ewk_Popup_Menu> create(EwkViewImpl* viewImpl, WebKit::WebPopupMenuProxyEfl* popupMenuProxy, const Vector<WebKit::WebPopupItem>& items, unsigned selectedIndex)
+    {
+        return adoptPtr(new Ewk_Popup_Menu(viewImpl, popupMenuProxy, items, selectedIndex));
+    }
+    ~Ewk_Popup_Menu();
 
-void WebPopupMenuProxyEfl::valueChanged(int newSelectedIndex)
-{
-    m_client->valueChangedForPopupMenu(this, newSelectedIndex);
-}
+    void close();
 
-} // namespace WebKit
+    const Eina_List* items() const;
+
+    bool setSelectedIndex(unsigned selectedIndex);
+    unsigned selectedIndex() const;
+
+private:
+    Ewk_Popup_Menu(EwkViewImpl* viewImpl, WebKit::WebPopupMenuProxyEfl*, const Vector<WebKit::WebPopupItem>& items, unsigned selectedIndex);
+
+    EwkViewImpl* m_viewImpl;
+    WebKit::WebPopupMenuProxyEfl* m_popupMenuProxy;
+    Eina_List* m_popupMenuItems;
+    unsigned m_selectedIndex;
+};
+
+#endif // ewk_popup_menu_private_h

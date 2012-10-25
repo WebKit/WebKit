@@ -79,6 +79,7 @@
 #include "ewk_download_job.h"
 #include "ewk_error.h"
 #include "ewk_intent.h"
+#include "ewk_popup_menu.h"
 #include "ewk_resource.h"
 #include "ewk_settings.h"
 #include "ewk_touch.h"
@@ -104,7 +105,7 @@ struct Ewk_View_Smart_Class {
     Evas_Smart_Class sc; /**< all but 'data' is free to be changed. */
     unsigned long version;
 
-    Eina_Bool (*popup_menu_show)(Ewk_View_Smart_Data *sd, Eina_Rectangle rect, Ewk_Text_Direction text_direction, double page_scale_factor, Eina_List *items, int selected_index);
+    Eina_Bool (*popup_menu_show)(Ewk_View_Smart_Data *sd, Eina_Rectangle rect, Ewk_Text_Direction text_direction, double page_scale_factor, Ewk_Popup_Menu *menu);
     Eina_Bool (*popup_menu_hide)(Ewk_View_Smart_Data *sd);
 
     // event handling:
@@ -687,27 +688,6 @@ EAPI Eina_Bool ewk_view_text_find_highlight_clear(Evas_Object *o);
  * @return @c EINA_TRUE on success, @c EINA_FALSE on errors
  */
 EAPI Eina_Bool ewk_view_text_matches_count(Evas_Object *o, const char *text, Ewk_Find_Options options, unsigned max_match_count);
-
-/**
- * Selects index of current popup menu.
- *
- * @param o view object contains popup menu.
- * @param index index of item to select
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (probably
- *         popup menu is not selected or index is out of range)
- */
-EAPI Eina_Bool ewk_view_popup_menu_select(Evas_Object *o, unsigned int index);
-
-/**
- * Closes current popup menu.
- *
- * @param o view object contains popup menu.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (probably
- *         popup menu is not selected)
- */
-EAPI Eina_Bool ewk_view_popup_menu_close(Evas_Object *o);
 
 /**
  * Sets whether the ewk_view supports the mouse events or not.

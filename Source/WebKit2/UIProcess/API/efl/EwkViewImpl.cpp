@@ -39,6 +39,7 @@
 #include "ewk_context_private.h"
 #include "ewk_favicon_database_private.h"
 #include "ewk_popup_menu_item_private.h"
+#include "ewk_popup_menu_private.h"
 #include "ewk_private.h"
 #include "ewk_settings_private.h"
 #include "ewk_view.h"
@@ -130,14 +131,14 @@ PassOwnPtr<Ecore_IMF_Context> EwkViewImpl::createIMFContext(Ewk_View_Smart_Data*
 }
 
 EwkViewImpl::EwkViewImpl(Evas_Object* view)
-    : popupMenuProxy(0)
-    , popupMenuItems(0)
 #if USE(ACCELERATED_COMPOSITING)
-    , evasGl(0)
+    : evasGl(0)
     , evasGlContext(0)
     , evasGlSurface(0)
-#endif
     , m_view(view)
+#else
+    : m_view(view)
+#endif
     , m_settings(Ewk_Settings::create(this))
     , m_inputMethodContext(createIMFContext(smartData()))
     , m_inputMethodContextFocused(false)
@@ -155,9 +156,6 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view)
 
 EwkViewImpl::~EwkViewImpl()
 {
-    void* item;
-    EINA_LIST_FREE(popupMenuItems, item)
-        delete static_cast<Ewk_Popup_Menu_Item*>(item);
 }
 
 Ewk_View_Smart_Data* EwkViewImpl::smartData()
@@ -874,27 +872,36 @@ void EwkViewImpl::informContentsSizeChange(const IntSize& size)
 COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, RTL);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, LTR);
 
-void EwkViewImpl::requestPopupMenu(WebPopupMenuProxyEfl* popupMenu, const IntRect& rect, TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, int32_t selectedIndex)
+void EwkViewImpl::requestPopupMenu(WebPopupMenuProxyEfl* popupMenuProxy, const IntRect& rect, TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, int32_t selectedIndex)
 {
     Ewk_View_Smart_Data* sd = smartData();
     ASSERT(sd->api);
 
-    ASSERT(popupMenu);
+    ASSERT(popupMenuProxy);
 
     if (!sd->api->popup_menu_show)
         return;
 
-    if (popupMenuProxy)
-        ewk_view_popup_menu_close(m_view);
-    popupMenuProxy = popupMenu;
+    if (m_popupMenu)
+        closePopupMenu();
 
-    Eina_List* popupItems = 0;
-    const size_t size = items.size();
-    for (size_t i = 0; i < size; ++i)
-        popupItems = eina_list_append(popupItems, Ewk_Popup_Menu_Item::create(items[i]).leakPtr());
-    popupMenuItems = popupItems;
+    m_popupMenu = Ewk_Popup_Menu::create(this, popupMenuProxy, items, selectedIndex);
 
-    sd->api->popup_menu_show(sd, rect, static_cast<Ewk_Text_Direction>(textDirection), pageScaleFactor, popupItems, selectedIndex);
+    sd->api->popup_menu_show(sd, rect, static_cast<Ewk_Text_Direction>(textDirection), pageScaleFactor, m_popupMenu.get());
+}
+
+void EwkViewImpl::closePopupMenu()
+{
+    if (!m_popupMenu)
+        return;
+
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
+
+    if (sd->api->popup_menu_hide)
+        sd->api->popup_menu_hide(sd);
+
+    m_popupMenu.clear();
 }
 
 /**

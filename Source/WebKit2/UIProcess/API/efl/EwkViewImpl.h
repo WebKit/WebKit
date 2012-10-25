@@ -91,6 +91,7 @@ class Ewk_Intent;
 class Ewk_Intent_Service;
 class Ewk_Navigation_Policy_Decision;
 class Ewk_Resource;
+class Ewk_Popup_Menu;
 class Ewk_Settings;
 class Ewk_Url_Request;
 class Ewk_Url_Response;
@@ -163,6 +164,8 @@ public:
     void closePage();
 
     void requestPopupMenu(WebKit::WebPopupMenuProxyEfl*, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);
+    void closePopupMenu();
+
     void updateTextInputState();
 
     void requestJSAlertPopup(const WKEinaSharedString& message);
@@ -228,9 +231,6 @@ public:
     OwnPtr<Ewk_Back_Forward_List> backForwardList;
     RefPtr<Ewk_Context> context;
 
-    WebKit::WebPopupMenuProxyEfl* popupMenuProxy;
-    Eina_List* popupMenuItems;
-
 #if USE(ACCELERATED_COMPOSITING)
     Evas_GL* evasGl;
     Evas_GL_Context* evasGlContext;
@@ -273,6 +273,7 @@ private:
     WKRetainPtr<WKColorPickerResultListenerRef> m_colorPickerResultListener;
     WebCore::Timer<EwkViewImpl> m_displayTimer;
     WTF::Vector <WebCore::IntRect> m_dirtyRects;
+    OwnPtr<Ewk_Popup_Menu> m_popupMenu;
 
     typedef HashMap<WKPageRef, const Evas_Object*> PageViewMap;
     static PageViewMap pageViewMap;

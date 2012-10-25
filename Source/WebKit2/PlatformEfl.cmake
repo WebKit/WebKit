@@ -55,6 +55,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_main.cpp
     UIProcess/API/efl/ewk_navigation_data.cpp
     UIProcess/API/efl/ewk_navigation_policy_decision.cpp
+    UIProcess/API/efl/ewk_popup_menu.cpp
     UIProcess/API/efl/ewk_popup_menu_item.cpp
     UIProcess/API/efl/ewk_resource.cpp
     UIProcess/API/efl/ewk_settings.cpp
@@ -250,6 +251,7 @@ SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_main.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_navigation_data.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_navigation_policy_decision.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_popup_menu.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_popup_menu_item.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_resource.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_settings.h"
@@ -346,6 +348,7 @@ SET(EWK2UnitTests_BINARIES
     test_ewk2_favicon_database
     test_ewk2_refptr_evas_object
     test_ewk2_intents
+    test_ewk2_popup_menu
     test_ewk2_settings
     test_ewk2_text_checker
     test_ewk2_view

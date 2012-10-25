@@ -39,15 +39,12 @@
 #include "WKString.h"
 #include "WebContext.h"
 #include "WebPageGroup.h"
-#include "WebPopupItem.h"
-#include "WebPopupMenuProxyEfl.h"
 #include "WebPreferences.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
 #include "ewk_favicon_database_private.h"
 #include "ewk_intent_private.h"
-#include "ewk_popup_menu_item_private.h"
 #include "ewk_private.h"
 #include "ewk_settings_private.h"
 #include "ewk_view_private.h"
@@ -970,41 +967,6 @@ Eina_Bool ewk_view_text_matches_count(Evas_Object* ewkView, const char* text, Ew
     EINA_SAFETY_ON_NULL_RETURN_VAL(text, false);
 
     impl->pageProxy->countStringMatches(String::fromUTF8(text), static_cast<WebKit::FindOptions>(options), maxMatchCount);
-
-    return true;
-}
-
-Eina_Bool ewk_view_popup_menu_close(Evas_Object* ewkView)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api, false);
-
-    if (!impl->popupMenuProxy)
-        return false;
-
-    impl->popupMenuProxy = 0;
-
-    if (smartData->api->popup_menu_hide)
-        smartData->api->popup_menu_hide(smartData);
-
-    void* item;
-    EINA_LIST_FREE(impl->popupMenuItems, item)
-        delete static_cast<Ewk_Popup_Menu_Item*>(item);
-
-    return true;
-}
-
-Eina_Bool ewk_view_popup_menu_select(Evas_Object* ewkView, unsigned int selectedIndex)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(impl->popupMenuProxy, false);
-
-    if (selectedIndex >= eina_list_count(impl->popupMenuItems))
-        return false;
-
-    impl->popupMenuProxy->valueChanged(selectedIndex);
 
     return true;
 }
