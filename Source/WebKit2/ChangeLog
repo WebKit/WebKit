@@ -1,3 +1,20 @@
+2012-10-25  Anders Carlsson  <andersca@apple.com>
+
+        Assertion failure trying to dispatch notification messages
+        https://bugs.webkit.org/show_bug.cgi?id=100387
+        <rdar://problem/12573195>
+
+        Reviewed by Jessie Berlin.
+
+        Pass a zero destination ID when sending WebNotificationManagerProxy messages; they are not
+        used by the UI process and since the WebNotificationManagerProxy message receiver is global
+        passing a non-zero destination ID would cause the aforementioned assertion failure.
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::cancel):
+        (WebKit::WebNotificationManager::clearNotifications):
+        (WebKit::WebNotificationManager::didDestroyNotification):
+
 2012-10-25  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r131686): Crashes in NSToolTipManager

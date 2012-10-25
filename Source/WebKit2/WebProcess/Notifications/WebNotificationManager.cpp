@@ -174,7 +174,7 @@ void WebNotificationManager::cancel(Notification* notification, WebPage* page)
     if (!notificationID)
         return;
     
-    m_process->connection()->send(Messages::WebNotificationManagerProxy::Cancel(notificationID), page->pageID());
+    m_process->connection()->send(Messages::WebNotificationManagerProxy::Cancel(notificationID), 0);
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);
@@ -189,7 +189,7 @@ void WebNotificationManager::clearNotifications(WebCore::ScriptExecutionContext*
         return;
     
     Vector<uint64_t>& notificationIDs = it->value;
-    m_process->connection()->send(Messages::WebNotificationManagerProxy::ClearNotifications(notificationIDs), page->pageID());
+    m_process->connection()->send(Messages::WebNotificationManagerProxy::ClearNotifications(notificationIDs), 0);
     size_t count = notificationIDs.size();
     for (size_t i = 0; i < count; ++i) {
         RefPtr<Notification> notification = m_notificationIDMap.take(notificationIDs[i]);
@@ -215,7 +215,7 @@ void WebNotificationManager::didDestroyNotification(Notification* notification, 
 
     m_notificationIDMap.remove(notificationID);
     removeNotificationFromContextMap(notificationID, notification);
-    m_process->connection()->send(Messages::WebNotificationManagerProxy::DidDestroyNotification(notificationID), page->pageID());
+    m_process->connection()->send(Messages::WebNotificationManagerProxy::DidDestroyNotification(notificationID), 0);
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);
