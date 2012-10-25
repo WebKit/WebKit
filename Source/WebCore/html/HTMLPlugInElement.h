@@ -68,6 +68,8 @@ public:
 
     bool canProcessDrag() const;
 
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
 

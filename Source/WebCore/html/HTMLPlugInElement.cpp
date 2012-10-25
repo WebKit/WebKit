@@ -78,6 +78,18 @@ bool HTMLPlugInElement::canProcessDrag() const
     return plugin ? plugin->canProcessDrag() : false;
 }
 
+bool HTMLPlugInElement::willRespondToMouseClickEvents()
+{
+    if (disabled())
+        return false;
+    RenderObject* r = renderer();
+    if (!r)
+        return false;
+    if (!r->isEmbeddedObject() && !r->isWidget())
+        return false;
+    return true;
+}
+
 void HTMLPlugInElement::detach()
 {
     m_instance.clear();

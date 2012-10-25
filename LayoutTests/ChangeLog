@@ -1,3 +1,17 @@
+2012-10-25  Kevin Ellis  <kevers@chromium.org>
+
+        Touch adjustment snaps to wrong target at a plugin boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=99938
+
+        Reviewed by Antonio Gomes.
+
+        Test for touch adjustment at a plugin boundary.
+        Prior to the patch, plugins were not considered
+        candidates for touch adjustment.
+
+        * touchadjustment/plugin-expected.txt: Added.
+        * touchadjustment/plugin.html: Added.
+
 2012-10-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip failing tests to speedup testing.

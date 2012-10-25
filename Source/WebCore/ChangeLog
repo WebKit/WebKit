@@ -1,3 +1,25 @@
+2012-10-25  Kevin Ellis  <kevers@chromium.org>
+
+        Touch adjustment snaps to wrong target at a plugin boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=99938
+
+        Reviewed by Antonio Gomes.
+
+        Inidcate that an <embed> element can respond to
+        mouse click events, since mouse events are forwarded
+        to the plugin.  Fixes touch adjustment at a plugin
+        boundary.  Prior to the patch a clickable element 
+        adjacent to the plugin would capture synthetic mouse
+        events from tap gestures that spanned the plugin
+        boundary.
+
+        Test: touchadjustment/plugin.html
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::willRespondToMouseClickEvents):
+        (WebCore):
+        * html/HTMLEmbedElement.h:
+
 2012-10-25  Ojan Vafai  <ojan@chromium.org>
 
         Get rid of ScriptController::clearForNavigation
