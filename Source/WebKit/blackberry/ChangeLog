@@ -1,3 +1,23 @@
+2012-10-24  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] ASSERT(!needsOneShotDrawingSynchronization()) failed in commitRootLayerIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=100214
+
+        Reviewed by Rob Buis.
+
+        ViewportSize has been changed before committing root layer, it asserts
+        that it needs relayout and render if needed before committing if it
+        Needs One Shot Drawing Synchronization.
+        This patch calls requestLayoutIfNeeded() when resumeScreenAndBackingStoreUpdates().
+
+        Fix a coding style in the BackingStore.cpp as well.
+
+        Reviewed internally by Arvid Nilsson.
+        PR #230253
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenAndBackingStoreUpdates):
+
 2012-10-24  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Geolocation is segfaulting

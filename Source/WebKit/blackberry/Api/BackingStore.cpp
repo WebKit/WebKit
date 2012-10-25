@@ -359,6 +359,10 @@ void BackingStorePrivate::resumeScreenAndBackingStoreUpdates(BackingStore::Resum
     if (op == BackingStore::None)
         return;
 #if USE(ACCELERATED_COMPOSITING)
+    // It needs layout and render before committing root layer if we set OSDS
+    if (m_webPage->d->needsOneShotDrawingSynchronization())
+        m_webPage->d->requestLayoutIfNeeded();
+
     // This will also blit since we set the OSDS flag above.
     m_webPage->d->commitRootLayerIfNeeded();
 #else
@@ -514,8 +518,7 @@ bool BackingStorePrivate::shouldPerformRegularRenderJobs() const
 }
 
 static const BlackBerry::Platform::Message::Type RenderJobMessageType = BlackBerry::Platform::Message::generateUniqueMessageType();
-class RenderJobMessage : public BlackBerry::Platform::ExecutableMessage
-{
+class RenderJobMessage : public BlackBerry::Platform::ExecutableMessage {
 public:
     RenderJobMessage(BlackBerry::Platform::MessageDelegate* delegate)
         : BlackBerry::Platform::ExecutableMessage(delegate, BlackBerry::Platform::ExecutableMessage::UniqueCoalescing, RenderJobMessageType)
