@@ -2270,14 +2270,6 @@ public:
     void compileAllocatePropertyStorage(Node&);
     void compileReallocatePropertyStorage(Node&);
     
-#if USE(JSVALUE64)
-    MacroAssembler::JumpList compileContiguousGetByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg resultReg);
-    MacroAssembler::JumpList compileArrayStorageGetByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg resultReg);
-#else
-    MacroAssembler::JumpList compileContiguousGetByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg resultTagReg, GPRReg resultPayloadReg);
-    MacroAssembler::JumpList compileArrayStorageGetByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg resultTagReg, GPRReg resultPayloadReg);
-#endif
-    
     bool putByValWillNeedExtraRegister(Array::Mode arrayMode)
     {
         switch (arrayMode) {
@@ -2304,13 +2296,6 @@ public:
     {
         return temporaryRegisterForPutByVal(temporary, node.arrayMode());
     }
-#if USE(JSVALUE64)
-    MacroAssembler::JumpList compileContiguousPutByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg valueReg, GPRReg tempReg);
-    MacroAssembler::JumpList compileArrayStoragePutByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg valueReg, GPRReg tempReg);
-#else
-    MacroAssembler::JumpList compileContiguousPutByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg valueTagReg, GPRReg valuePayloadReg);
-    MacroAssembler::JumpList compileArrayStoragePutByVal(Node&, GPRReg baseReg, GPRReg propertyReg, GPRReg storageReg, GPRReg valueTagReg, GPRReg valuePayloadReg);
-#endif
     
     void compileGetCharCodeAt(Node&);
     void compileGetByValOnString(Node&);
