@@ -1,3 +1,23 @@
+2012-10-25  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI instrument InspectorDebuggerAgent. It uses a lot of memory on heavy js sites because it keeps all the scripts in a map.
+        https://bugs.webkit.org/show_bug.cgi?id=100340
+
+        Reviewed by Yury Semikhatsky.
+
+        * dom/WebCoreMemoryInstrumentation.cpp:
+        (WebCore):
+        * dom/WebCoreMemoryInstrumentation.h:
+        (WebCoreMemoryTypes):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::reportMemoryUsage):
+        (WebCore):
+        (WebCore::ScriptDebugListener::Script::reportMemoryUsage):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        * inspector/ScriptDebugListener.h:
+        (Script):
+
 2012-10-25  Adam Barth  <abarth@webkit.org>
 
         [V8] We can handle ActiveDOMNodes and DOMNodes in the same GC visitor
