@@ -1,3 +1,13 @@
+2012-10-25  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][AC] Fix build break when AC is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=100367
+
+        Unreviewed build fix after r132405.
+
+        * UIProcess/API/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::PageViewportControllerClientEfl):
+
 2012-10-25  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] Add missing namespace.

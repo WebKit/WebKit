@@ -44,7 +44,7 @@ PageViewportControllerClientEfl::PageViewportControllerClientEfl(EwkViewImpl* vi
     , m_scaleFactor(1)
     , m_pageViewportController(0)
 {
-    ASSERT(m_viewWidget);
+    ASSERT(m_viewImpl);
 }
 
 PageViewportControllerClientEfl::~PageViewportControllerClientEfl()
