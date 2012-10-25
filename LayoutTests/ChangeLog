@@ -1,3 +1,15 @@
+2012-10-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations and baseline cleanup.
+
+        Remove some old baselines for a test that was converted to a reftest,
+        and remove entries for tests no longer failing on Chromium Mac ML.
+
+        * platform/chromium-mac-lion/fast/forms/date/date-reset-value-expected.png: Removed.
+        * platform/chromium-mac-mountainlion/TestExpectations:
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-reset-value-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date/date-reset-value-expected.png: Removed.
+
 2012-10-24  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=100169
