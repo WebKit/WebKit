@@ -1,3 +1,10 @@
+2012-10-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip tests because TestRunner::overridePreference()
+        does not support the 'WebKitSupportsMultipleWindows' preference on Qt WK1.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+
 2012-10-25  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Not reviewed: chromium test expectations updated.

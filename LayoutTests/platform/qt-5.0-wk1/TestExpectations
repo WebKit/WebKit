@@ -82,3 +82,8 @@ webkit.org/b/99306 fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/repaint/background-scaling.html [ ImageOnlyFailure ]
 webkit.org/b/99306 transforms/3d/point-mapping/3d-point-mapping-coplanar.html [ ImageOnlyFailure ]
 webkit.org/b/99306 transitions/suspend-transform-transition.html [ ImageOnlyFailure ]
+
+# TestRunner::overridePreference() does not support the 'WebKitSupportsMultipleWindows' preference
+fast/dom/HTMLAnchorElement/anchor-no-multiple-windows.html
+fast/dom/Window/window-open-no-multiple-windows.html
+fast/forms/post-popup-no-multiple-windows.html
