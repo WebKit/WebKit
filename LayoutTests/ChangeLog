@@ -1,3 +1,9 @@
+2012-10-25  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Add results for svg/custom/patter-scaling.svg on Windows after r132026.
+
+        * platform/win/svg/custom/pattern-scaling-expected.txt: Added.
+
 2012-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Report the tile coverage rect in layer coords, and add some tests for tiled backing and zooming
