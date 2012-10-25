@@ -67,19 +67,20 @@ def lint(port, options):
     lint_failed = False
 
     for port_to_lint in ports_to_lint:
-        expectations_file = port_to_lint.path_to_test_expectations_file()
-        if expectations_file in files_linted:
-            continue
+        expectations_dict = port_to_lint.expectations_dict()
+        for expectations_file in expectations_dict.keys():
+            if expectations_file in files_linted:
+                continue
 
-        try:
-            test_expectations.TestExpectations(port_to_lint, is_lint_mode=True)
-        except test_expectations.ParseError, e:
-            lint_failed = True
-            _log.error('')
-            for warning in e.warnings:
-                _log.error(warning)
-            _log.error('')
-        files_linted.add(expectations_file)
+            try:
+                test_expectations.TestExpectations(port_to_lint, expectations_to_lint={expectations_file: expectations_dict[expectations_file]})
+            except test_expectations.ParseError, e:
+                lint_failed = True
+                _log.error('')
+                for warning in e.warnings:
+                    _log.error(warning)
+                _log.error('')
+            files_linted.add(expectations_file)
 
     if lint_failed:
         _log.error('Lint failed.')

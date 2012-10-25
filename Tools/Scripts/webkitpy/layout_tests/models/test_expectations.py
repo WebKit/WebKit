@@ -837,16 +837,19 @@ class TestExpectations(object):
             suffixes.add('wav')
         return set(suffixes)
 
-    def __init__(self, port, tests=None, is_lint_mode=False, include_overrides=True):
+    # FIXME: This constructor does too much work. We should move the actual parsing of
+    # the expectations into separate routines so that linting and handling overrides
+    # can be controlled separately, and the constructor can be more of a no-op.
+    def __init__(self, port, tests=None, include_overrides=True, expectations_to_lint=None):
         self._full_test_list = tests
         self._test_config = port.test_configuration()
-        self._is_lint_mode = is_lint_mode
+        self._is_lint_mode = expectations_to_lint is not None
         self._model = TestExpectationsModel(self._shorten_filename)
-        self._parser = TestExpectationParser(port, tests, is_lint_mode)
+        self._parser = TestExpectationParser(port, tests, self._is_lint_mode)
         self._port = port
         self._skipped_tests_warnings = []
 
-        expectations_dict = port.expectations_dict()
+        expectations_dict = expectations_to_lint or port.expectations_dict()
         self._expectations = self._parser.parse(expectations_dict.keys()[0], expectations_dict.values()[0])
         self._add_expectations(self._expectations)
 

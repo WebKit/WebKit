@@ -80,7 +80,8 @@ Bug(test) failures/expected/image.html [ WontFix Mac ]
         if overrides:
             expectations_dict['overrides'] = overrides
         self._port.expectations_dict = lambda: expectations_dict
-        self._exp = TestExpectations(self._port, self.get_basic_tests(), is_lint_mode)
+        expectations_to_lint = expectations_dict if is_lint_mode else None
+        self._exp = TestExpectations(self._port, self.get_basic_tests(), expectations_to_lint=expectations_to_lint)
 
     def assert_exp(self, test, result):
         self.assertEquals(self._exp.get_expectations(self.get_test(test)),
@@ -247,7 +248,8 @@ class SkippedTests(Base):
             expectations_dict['overrides'] = overrides
         port.expectations_dict = lambda: expectations_dict
         port.skipped_layout_tests = lambda tests: set(skips)
-        exp = TestExpectations(port, ['failures/expected/text.html'], lint)
+        expectations_to_lint = expectations_dict if lint else None
+        exp = TestExpectations(port, ['failures/expected/text.html'], expectations_to_lint=expectations_to_lint)
 
         # Check that the expectation is for BUG_DUMMY SKIP : ... [ Pass ]
         self.assertEquals(exp.get_modifiers('failures/expected/text.html'),

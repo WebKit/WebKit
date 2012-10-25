@@ -199,9 +199,6 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
                 self.name = name
                 self.path = path
 
-            def path_to_test_expectations_file(self):
-                return self.path
-
             def test_configuration(self):
                 return None
 
@@ -244,7 +241,7 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
                                                FakePort(host, 'b-win', 'path-to-b')))
 
         self.assertEquals(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform=None)), 0)
-        self.assertEquals(host.ports_parsed, ['a', 'b'])
+        self.assertEquals(host.ports_parsed, ['a', 'b', 'b-win'])
 
         host.ports_parsed = []
         self.assertEquals(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform='a')), 0)
@@ -266,6 +263,15 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(res, -1)
         self.assertEmpty(out)
         self.assertTrue(any(['Lint failed' in msg for msg in err.buflist]))
+
+        # ensure we lint *all* of the files in the cascade.
+        port_obj.expectations_dict = lambda: {'foo': '-- syntax error1', 'bar': '-- syntax error2'}
+        res, out, err = run_and_capture(port_obj, options, parsed_args)
+
+        self.assertEqual(res, -1)
+        self.assertEmpty(out)
+        self.assertTrue(any(['foo:1' in msg for msg in err.buflist]))
+        self.assertTrue(any(['bar:1' in msg for msg in err.buflist]))
 
 
 class MainTest(unittest.TestCase, StreamTestingMixin):
