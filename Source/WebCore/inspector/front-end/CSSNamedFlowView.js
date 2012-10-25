@@ -81,7 +81,7 @@ WebInspector.CSSNamedFlowView.prototype = {
         treeOutline.wireToDomAgent();
         WebInspector.domAgent.removeEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, treeOutline._elementsTreeUpdater._documentUpdated, treeOutline._elementsTreeUpdater);
 
-        return treeOutline;        
+        return treeOutline;
     },
 
     /**

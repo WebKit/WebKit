@@ -285,7 +285,7 @@ WebInspector.NativeMemoryPieChart.prototype = {
 
         var swatchElement = this._memoryBlockList.createChild("div", "item");
         swatchElement.createChild("div", "swatch").style.backgroundColor = viewProperties._fillStyle;
-        swatchElement.createChild("span", "title").textContent = WebInspector.UIString(title);
+        swatchElement.createChild("span", "title").textContent = title;
 
         if (!memoryBlock.children || !includeChildren)
             return;

@@ -1,3 +1,17 @@
+2012-10-25  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Fix "check-inspector-strings" script and fix localized strings.
+        https://bugs.webkit.org/show_bug.cgi?id=100090
+
+        Reviewed by Vsevolod Vlasov.
+
+        Fixed localized strings table.
+
+        * English.lproj/localizedStrings.js: Added missing, removed orhans.
+        * inspector/front-end/CSSNamedFlowView.js: Removed tailing whitespaces.
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        Removed double localization.
+
 2012-10-25  Adam Barth  <abarth@webkit.org>
 
         [V8] We can merge DOMDataStore, ScopedDOMDataStore, and StaticDOMDataStore into one class

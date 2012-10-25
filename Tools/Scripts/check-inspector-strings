@@ -35,7 +35,9 @@ import os.path
 import re
 import sys
 
-from webkitpy.common.checkout.scm import detect_scm_system
+from webkitpy.common.checkout.scm import SCMDetector
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.logutils import configure_logging
 from webkitpy.style.checker import ProcessorBase
 from webkitpy.style.filereader import TextFileReader
@@ -46,10 +48,6 @@ _devtools_directory = "Source/WebKit/chromium/src/js"
 _localized_strings = "Source/WebCore/English.lproj/localizedStrings.js"
 
 _log = logging.getLogger("check-inspector-strings")
-
-def decode_unicode_escapes(s):
-    xNN_converted_to_u00NN = s.replace("\\x", "\\u00")
-    return eval("ur\"" + xNN_converted_to_u00NN + "\"")
 
 class StringsExtractor(ProcessorBase):
     def __init__(self, patterns):
@@ -70,7 +68,7 @@ class StringsExtractor(ProcessorBase):
             for pattern in self._patterns:
                 line_strings = re.findall(pattern, line)
                 for string in line_strings:
-                    self.strings[index].append(decode_unicode_escapes(string))
+                    self.strings[index].append(string)
                 index += 1
 
 class LocalizedStringsExtractor:
@@ -78,22 +76,60 @@ class LocalizedStringsExtractor:
         self.localized_strings = []
 
     def process_file(self, file_path):
-        localized_strings_file = codecs.open(file_path, encoding="utf-16", mode="r")
+        localized_strings_file = codecs.open(file_path, encoding="utf-8", mode="r")
         try:
             contents = localized_strings_file.read()
             lines = contents.split("\n")
             for line in lines:
                 match = re.match(r"localizedStrings\[\"((?:[^\"\\]|\\.)*?)\"", line)
                 if match:
-                    self.localized_strings.append(decode_unicode_escapes(match.group(1)))
+                    self.localized_strings.append(match.group(1))
         finally:
             localized_strings_file.close()
+
+def extract_ui_strings(str, out):
+    line_unrecognized = False
+    idx = 0
+    while idx < len(str):
+        idx = str.find("WebInspector.UIString(", idx)
+        if idx == -1:
+            break
+        idx = idx + len("WebInspector.UIString(")
+        balance = 1
+        item_recognized = False
+        while idx < len(str):
+            if str[idx] == ')':
+                balance = balance - 1
+                if balance == 0:
+                    break
+            elif str[idx] == '(':
+                balance = balance + 1
+            elif balance == 1:
+                if str[idx] == ',':
+                    break
+                elif str[idx] == '"':
+                    str_idx = idx + 1
+                    while str_idx < len(str):
+                        if str[str_idx] == '\\':
+                            str_idx = str_idx + 1
+                        elif str[str_idx] == '"':
+                            out.add(str[idx + 1 : str_idx])
+                            idx = str_idx
+                            item_recognized = True
+                            break
+                        str_idx = str_idx + 1
+            idx = idx + 1
+        if not item_recognized:
+            line_unrecognized = True
+    if line_unrecognized:
+        _log.info("Unrecognized: %s" % str)
 
 if __name__ == "__main__":
     configure_logging()
 
     cwd = os.path.abspath(os.curdir)
-    scm = detect_scm_system(cwd)
+    filesystem = FileSystem()
+    scm = SCMDetector(filesystem, Executive()).detect_scm_system(cwd)
 
     if scm is None:
         _log.error("WebKit checkout not found: You must run this script "
@@ -102,14 +138,17 @@ if __name__ == "__main__":
 
     checkout_root = scm.checkout_root
     _log.debug("WebKit checkout found with root: %s" % checkout_root)
-    change_directory(checkout_root=checkout_root, paths=None)
+    change_directory(filesystem, checkout_root=checkout_root, paths=None)
 
-    strings_extractor = StringsExtractor([r"WebInspector\.(?:UIString|formatLocalized)\(\"((?:[^\"\\]|\\.)*?)\"", r"\"((?:[^\"\\]|\\.)*?)\""])
-    file_reader = TextFileReader(strings_extractor)
+    strings_extractor = StringsExtractor([r"(WebInspector\.UIString\(.*)", r"\"((?:[^\"\\]|\\.)*?)\""])
+    file_reader = TextFileReader(filesystem, strings_extractor)
     file_reader.process_paths([_inspector_directory, _devtools_directory])
     localized_strings_extractor = LocalizedStringsExtractor()
     localized_strings_extractor.process_file(_localized_strings)
-    ui_strings = frozenset(strings_extractor.strings[0])
+    raw_ui_strings = frozenset(strings_extractor.strings[0])
+    ui_strings = set()
+    for s in raw_ui_strings:
+        extract_ui_strings(s, ui_strings)
     strings = frozenset(strings_extractor.strings[1])
     localized_strings = frozenset(localized_strings_extractor.localized_strings)
 

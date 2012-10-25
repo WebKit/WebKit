@@ -1,3 +1,15 @@
+2012-10-25  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Fix "check-inspector-strings" script and fix localized strings.
+        https://bugs.webkit.org/show_bug.cgi?id=100090
+
+        Reviewed by Vsevolod Vlasov.
+
+        Script "check-inspector-strings" seems to be broken.
+        Fixed it, refined search algorithm.
+
+        * Scripts/check-inspector-strings: Fixed and refined.
+
 2012-10-24  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: fix a couple of minor crashing issues under cygwin
