@@ -31,6 +31,9 @@
 #ifndef WebVideoFrame_h
 #define WebVideoFrame_h
 
+#include "WebRect.h"
+#include "WebSize.h"
+
 namespace WebKit {
 
 // A proxy video frame interface to communicate frame data between chromium
@@ -69,6 +72,8 @@ public:
     virtual const void* data(unsigned plane) const { return 0; }
     virtual unsigned textureId() const { return 0; }
     virtual unsigned textureTarget() const { return 0; }
+    virtual WebKit::WebRect visibleRect() const { return WebKit::WebRect(); }
+    virtual WebKit::WebSize textureSize() const { return WebKit::WebSize(); }
 };
 
 } // namespace WebKit

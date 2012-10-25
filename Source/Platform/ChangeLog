@@ -1,3 +1,22 @@
+2012-10-24  John Sheu  <sheu@google.com>
+
+        [chromium] Add textureWidth() and textureHeight() to WebVideoFrame
+        https://bugs.webkit.org/show_bug.cgi?id=100042
+
+        Reviewed by James Robinson.
+
+        It might be the case that the visible portion of a video frame isn't the
+        entire texture size, e.g. for cropping.  We'll need accessors in
+        WebVideoFrame to be able to query both the underlying texture dimensions
+        and the subrect which is supposed to be visible.
+
+        This is presently a no-op change.  Once Chromium changes are in, I will
+        remove the superseded parts of the WebVideoFrame interface.
+
+        * chromium/public/WebVideoFrame.h:
+        (WebKit::WebVideoFrame::visibleRect);
+        (WebKit::WebVideoFrame::textureSize);
+
 2012-10-24  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove screen-related functions from PlatformSupport
