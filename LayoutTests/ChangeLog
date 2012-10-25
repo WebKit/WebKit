@@ -1,3 +1,15 @@
+2012-10-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r132394
+        https://bugs.webkit.org/show_bug.cgi?id=100365
+
+        Unreviewed gardening.
+
+        Skipping of newly added compositing/tiling/backface-preserve-3d-tiled.html
+        test fail on EFL port due to missing AC support.
+
+        * platform/efl/TestExpectations:
+
 2012-10-25  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL][QT] Remove test which is not exist
