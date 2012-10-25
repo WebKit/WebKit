@@ -1,3 +1,19 @@
+2012-10-25  Mark Lam  <mark.lam@apple.com>
+
+        Update the C++ llint to work with the latest op_resolve... changes.
+        https://bugs.webkit.org/show_bug.cgi?id=100345.
+
+        Reviewed by Oliver Hunt.
+
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        - emit opcode name as label when not using COMPUTED_GOTOs. The new op_resolve
+          opcodes have jumps to these labels.
+        - declare all opcode labels as UNUSED_LABEL()s to keep the compiler happy
+          for opcodes that are not referenced by anyone.
+        * offlineasm/asm.rb:
+        - strip llint_ prefix from opcode names used as labels.
+
 2012-10-24  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Refactor LLInt64 to distinguish the pointer operations from the 64-bit integer operations

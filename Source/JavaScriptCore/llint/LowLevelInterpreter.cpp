@@ -312,6 +312,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
 
     #define DEFINE_OPCODE(__opcode) \
         case __opcode: \
+        __opcode: \
             RECORD_OPCODE_STATS(__opcode);
 
     // Dispatch to the current PC's bytecode:
@@ -418,7 +419,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
     // compiler on all such labels:
     #define LLINT_OPCODE_ENTRY(__opcode, length) \
         UNUSED_LABEL(__opcode);
-        FOR_EACH_LLINT_NATIVE_HELPER(LLINT_OPCODE_ENTRY)
+        FOR_EACH_OPCODE_ID(LLINT_OPCODE_ENTRY);
     #undef LLINT_OPCODE_ENTRY
 
 

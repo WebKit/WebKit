@@ -182,7 +182,11 @@ class Assembler
     end
     
     def self.cLabelReference(labelName)
-        "#{labelName}"
+        if /\Allint_op_/.match(labelName)
+            "op_#{$~.post_match}"  # strip opcodes of their llint_ prefix.
+        else
+            "#{labelName}"
+        end
     end
     
     def self.cLocalLabelReference(labelName)
