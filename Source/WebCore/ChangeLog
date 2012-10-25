@@ -1,3 +1,16 @@
+2012-10-25  Tom Sepez  <tsepez@chromium.org>
+
+        XSSAuditor must replace form action with about:blank when reflected action detected.
+        https://bugs.webkit.org/show_bug.cgi?id=100280
+
+        Reviewed by Daniel Bates.
+
+        Changes empty string form-action replacement to about:blank.
+        Existing form-action.html test modified to check this case.
+        
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::filterFormToken):
+
 2012-10-25  Kevin Ellis  <kevers@chromium.org>
 
         Touch adjustment snaps to wrong target at a plugin boundary.

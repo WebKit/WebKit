@@ -38,6 +38,12 @@ if ($cgi->param('clutter')) {
 if ($cgi->param('q2')) {
     print $cgi->param('q2');
 }
+if ($cgi->param('showAction')) {
+    print "<script>\n";
+    print "if (window.testRunner)\n";
+    print "    alert('Form action set to ' + document.forms[0].action);\n";
+    print "</script>\n";
+}
 if ($cgi->param('notifyDone')) {
     print "<script>\n";
     print "if (window.testRunner)\n";

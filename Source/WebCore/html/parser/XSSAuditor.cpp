@@ -428,7 +428,7 @@ bool XSSAuditor::filterFormToken(HTMLToken& token)
     ASSERT(token.type() == HTMLTokenTypes::StartTag);
     ASSERT(hasName(token, formTag));
 
-    return eraseAttributeIfInjected(token, actionAttr);
+    return eraseAttributeIfInjected(token, actionAttr, blankURL().string());
 }
 
 bool XSSAuditor::eraseDangerousAttributesIfInjected(HTMLToken& token)

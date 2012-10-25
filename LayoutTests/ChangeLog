@@ -1,3 +1,16 @@
+2012-10-25  Tom Sepez  <tsepez@chromium.org>
+
+        XSSAuditor must replace form action with about:blank when reflected action detected.
+        https://bugs.webkit.org/show_bug.cgi?id=100280
+
+        Reviewed by Daniel Bates.
+
+        Update tests to log form action attribute.
+
+        * http/tests/security/xssAuditor/form-action-expected.txt:
+        * http/tests/security/xssAuditor/form-action.html:
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+
 2012-10-25  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Plugin test gardening
