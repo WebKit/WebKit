@@ -1,3 +1,17 @@
+2012-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Report the tile coverage rect in layer coords, and add some tests for tiled backing and zooming
+        https://bugs.webkit.org/show_bug.cgi?id=100416
+
+        Reviewed by Beth Dakin.
+
+        New tests that exercise the page tiled backing under zooming.
+
+        * platform/mac/tiled-drawing/tiled-drawing-zoom-expected.txt: Added.
+        * platform/mac/tiled-drawing/tiled-drawing-zoom-scrolled-expected.txt: Added.
+        * platform/mac/tiled-drawing/tiled-drawing-zoom-scrolled.html: Added.
+        * platform/mac/tiled-drawing/tiled-drawing-zoom.html: Added.
+
 2012-10-25  Mariusz Grzegorczyk  <mariusz.g@samsung.com>
 
         [EFL] Add baselines for non problematic tests in editing subcategories: deleting, inserting, selection and style.

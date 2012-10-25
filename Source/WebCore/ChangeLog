@@ -1,3 +1,22 @@
+2012-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Report the tile coverage rect in layer coords, and add some tests for tiled backing and zooming
+        https://bugs.webkit.org/show_bug.cgi?id=100416
+
+        Reviewed by Beth Dakin.
+
+        The tileCoverageRect is computed in "tile" coordinates, which don't match
+        the visibleRect coordinates. It's more useful when testing to see the
+        tile coverage relative to the view bounds, so unapply the scale whem
+        reporting tile coverage in tests.
+
+        Tests: platform/mac/tiled-drawing/tiled-drawing-zoom-scrolled.html
+               platform/mac/tiled-drawing/tiled-drawing-zoom.html
+
+        * platform/graphics/ca/mac/TileCache.h:
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::tileCoverageRect):
+
 2012-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132269.

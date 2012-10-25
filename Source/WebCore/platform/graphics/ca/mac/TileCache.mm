@@ -460,6 +460,14 @@ void TileCache::revalidateTiles()
     platformLayer->owner()->platformCALayerDidCreateTiles(dirtyRects);
 }
 
+// Return the rect in layer coords, not tile coords.
+IntRect TileCache::tileCoverageRect() const
+{
+    IntRect coverageRectInLayerCoords(m_tileCoverageRect);
+    coverageRectInLayerCoords.scale(1 / m_scale);
+    return coverageRectInLayerCoords;
+}
+
 WebTileLayer* TileCache::tileLayerAtIndex(const TileIndex& index) const
 {
     return m_tiles.get(index).get();
