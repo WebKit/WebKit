@@ -85,6 +85,7 @@ void WebPreferences::reset()
     javaEnabled = false;
     javaScriptCanAccessClipboard = true;
     javaScriptCanOpenWindowsAutomatically = true;
+    supportsMultipleWindows = true;
     javaScriptEnabled = true;
     loadsImagesAutomatically = true;
     localStorageEnabled = true;
@@ -202,6 +203,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setJavaEnabled(javaEnabled);
     settings->setJavaScriptCanAccessClipboard(javaScriptCanAccessClipboard);
     settings->setJavaScriptCanOpenWindowsAutomatically(javaScriptCanOpenWindowsAutomatically);
+    settings->setSupportsMultipleWindows(supportsMultipleWindows);
     settings->setJavaScriptEnabled(javaScriptEnabled);
     settings->setLoadsImagesAutomatically(loadsImagesAutomatically);
     settings->setLocalStorageEnabled(localStorageEnabled);

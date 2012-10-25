@@ -87,6 +87,7 @@ struct WebPreferences {
     bool javaEnabled;
     bool javaScriptCanAccessClipboard;
     bool javaScriptCanOpenWindowsAutomatically;
+    bool supportsMultipleWindows;
     bool javaScriptEnabled;
     bool loadsImagesAutomatically;
     bool localStorageEnabled;

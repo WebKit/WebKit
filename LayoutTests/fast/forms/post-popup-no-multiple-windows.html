@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setCanOpenWindows(true);
+    testRunner.overridePreference('WebKitSupportsMultipleWindows', false);
+    testRunner.waitUntilDone();
+}
+
+function click(elmt)
+{
+    var event = document.createEvent('MouseEvent');
+    event.initEvent('click', true, true);
+    elmt.dispatchEvent(event);
+}
+
+function runTest()
+{
+    if (window.testRunner)
+        testRunner.initialWindowCount = testRunner.windowCount();
+    var button = document.getElementById("post-button");
+    click(button);
+    if (window.testRunner) {
+        start = new Date();
+        testInterval = setInterval(checkIfDone, 1);
+    }
+}
+
+function checkIfDone ()
+{
+    if (testRunner.globalFlag) {
+        document.writeln('FAIL: Popup opened in a new window');
+        clearInterval(testInterval);
+        testRunner.notifyDone();
+    } else if ((new Date() - start) > 10000) {
+        document.writeln('FAIL: Popup did not open');
+        clearInterval(testInterval);
+        testRunner.notifyDone();
+    }
+}
+
+window.addEventListener('load', runTest, true);
+</script>
+</head>
+<body>
+  You need popups to be enabled to run this test.
+  <form method="post" target="_blank" action="data:text/html;charset=utf-8,<html><head><script>function test() { if (!window.testRunner) return; testRunner.globalFlag=1; if (testRunner.initialWindowCount != testRunner.windowCount()) return; document.writeln('PASS: Popup opened in the same window'); testRunner.notifyDone(); }</script></head><body onload='test()'>The test passes if this page opens in the same window</body></html>">
+    <input id="post-button" type="submit" value="Click me!" />
+  </form>
+</body>
+</html>

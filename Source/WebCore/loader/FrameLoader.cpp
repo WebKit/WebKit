@@ -3283,6 +3283,11 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
     requestWithReferrer.resourceRequest().setHTTPReferrer(openerFrame->loader()->outgoingReferrer());
     FrameLoader::addHTTPOriginIfNeeded(requestWithReferrer.resourceRequest(), openerFrame->loader()->outgoingOrigin());
 
+    if (openerFrame->settings() && !openerFrame->settings()->supportsMultipleWindows()) {
+        created = false;
+        return openerFrame;
+    }
+
     Page* oldPage = openerFrame->page();
     if (!oldPage)
         return 0;

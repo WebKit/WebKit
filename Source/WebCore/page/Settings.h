@@ -152,6 +152,9 @@ namespace WebCore {
         void setJavaScriptCanOpenWindowsAutomatically(bool);
         bool javaScriptCanOpenWindowsAutomatically() const { return m_javaScriptCanOpenWindowsAutomatically; }
 
+        void setSupportsMultipleWindows(bool);
+        bool supportsMultipleWindows() const { return m_supportsMultipleWindows; }
+
         void setJavaScriptCanAccessClipboard(bool);
         bool javaScriptCanAccessClipboard() const { return m_javaScriptCanAccessClipboard; }
 
@@ -704,6 +707,7 @@ namespace WebCore {
         bool m_allowUniversalAccessFromFileURLs: 1;
         bool m_allowFileAccessFromFileURLs: 1;
         bool m_javaScriptCanOpenWindowsAutomatically : 1;
+        bool m_supportsMultipleWindows : 1;
         bool m_javaScriptCanAccessClipboard : 1;
         bool m_shouldPrintBackgrounds : 1;
         bool m_textAreasAreResizable : 1;

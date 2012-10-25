@@ -1560,6 +1560,8 @@ void DRTTestRunner::overridePreference(const CppArgumentList& arguments, CppVari
         prefs->webSecurityEnabled = cppVariantToBool(value);
     else if (key == "WebKitJavaScriptCanOpenWindowsAutomatically")
         prefs->javaScriptCanOpenWindowsAutomatically = cppVariantToBool(value);
+    else if (key == "WebKitSupportsMultipleWindows")
+        prefs->supportsMultipleWindows = cppVariantToBool(value);
     else if (key == "WebKitDisplayImagesKey")
         prefs->loadsImagesAutomatically = cppVariantToBool(value);
     else if (key == "WebKitPluginsEnabled")

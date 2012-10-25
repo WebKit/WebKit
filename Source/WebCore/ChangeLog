@@ -1,3 +1,31 @@
+2012-10-22  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Add supportMultipleWindows setting, needed for Android
+        https://bugs.webkit.org/show_bug.cgi?id=99716
+
+        Reviewed by Adam Barth.
+
+        Add supportMultipleWindows settings for reusing the same view when
+        opening popups. This is required for emulating the behavior of
+        Android WebView. Adding into WebCore, as other ports might want to
+        use this setting in the future.
+
+        Tests: fast/dom/HTMLAnchorElement/anchor-no-multiple-windows.html
+               fast/dom/Window/window-open-no-multiple-windows.html
+               fast/forms/post-popup-no-multiple-windows.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::createWindow):
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setSupportsMultipleWindows):
+        (WebCore):
+        * page/Settings.h:
+        (Settings):
+        (WebCore::Settings::supportsMultipleWindows):
+
 2012-10-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, fix Web Inspector frontend compilability

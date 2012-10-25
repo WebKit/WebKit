@@ -192,6 +192,11 @@ void WebSettingsImpl::setJavaScriptCanOpenWindowsAutomatically(bool canOpenWindo
     m_settings->setJavaScriptCanOpenWindowsAutomatically(canOpenWindows);
 }
 
+void WebSettingsImpl::setSupportsMultipleWindows(bool supportsMultipleWindows)
+{
+    m_settings->setSupportsMultipleWindows(supportsMultipleWindows);
+}
+
 void WebSettingsImpl::setLoadsImagesAutomatically(bool loadsImagesAutomatically)
 {
     m_settings->setLoadsImagesAutomatically(loadsImagesAutomatically);
