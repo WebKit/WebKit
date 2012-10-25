@@ -315,8 +315,28 @@ static bool resolutionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fra
     // Example (high-range resolution laptop):
     //     round((220 * 1.0 / 96) * 4) / 4 = 2.0
 
-    float horiDPI = frame->document()->domWindow()->screen()->horizontalDPI();
-    float vertDPI = frame->document()->domWindow()->screen()->verticalDPI();
+    float horiDPI;
+    float vertDPI;
+
+    // This checks the actual media type applied to the document, and we know
+    // this method only got called if this media type matches the one defined
+    // in the query. Thus, if if the document's media type is "print", the
+    // media type of the query will either be "print" or "all".
+    String mediaType = frame->view()->mediaType();
+    if (equalIgnoringCase(mediaType, "screen")) {
+        Screen* screen = frame->document()->domWindow()->screen();
+        horiDPI = screen->horizontalDPI();
+        vertDPI = screen->verticalDPI();
+    } else if (equalIgnoringCase(mediaType, "print")) {
+        // The resolution of images while printing should not depend on the dpi
+        // of the screen. Until we support proper ways of querying this info
+        // we use 300px which is considered minimum for current printers.
+        horiDPI = vertDPI = 300;
+    } else {
+        // FIXME: Possible handle other media types than 'screen' and 'print'.
+        // For now, do not match.
+        return false;
+    }
 
     float leastDenseDPI = std::min(horiDPI, vertDPI);
     float mostDenseDPI = std::max(horiDPI, vertDPI);
@@ -344,10 +364,10 @@ static bool resolutionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* fra
     if (rawValue->isDotsPerPixel()) {
         // http://dev.w3.org/csswg/css3-values/#absolute-lengths recommends
         // "that the pixel unit refer to the whole number of device pixels that
-        // best approximates the reference pixel". We compare with 2 decimal
+        // best approximates the reference pixel". We compare with 3 decimal
         // points, which aligns with current device-pixel-ratio's in use.
-        float leastDenseDensity = floorf(leastDenseDPI * 100 / 96) / 100;
-        float mostDenseDensity = floorf(leastDenseDPI * 100 / 96) / 100;
+        float leastDenseDensity = floorf(leastDenseDPI * 1000 / 96) / 1000;
+        float mostDenseDensity = floorf(leastDenseDPI * 1000 / 96) / 1000;
         float testedDensity = rawValue->getFloatValue(CSSPrimitiveValue::CSS_DPPX);
         return compareResolution(leastDenseDensity, mostDenseDensity, testedDensity, op);
     }

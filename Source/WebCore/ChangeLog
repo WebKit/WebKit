@@ -1,3 +1,18 @@
+2012-10-25  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        'resolution' MQ: Printing should use use high resolution images when available
+        https://bugs.webkit.org/show_bug.cgi?id=100382
+
+        Reviewed by Antti Koivisto.
+
+        Special case print to not use the dpi of the screen, but one of 300.
+
+        Updated the resolution media query test to cover this.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::resolutionMediaFeatureEval): Update compared decimal points
+        to three, due to 300 / 96 being equal to 3.125.
+
 2012-10-25  Kinuko Yasuda  <kinuko@chromium.org>
 
         [chromium] External FileSystem should use the root path returned by requestFileSystem

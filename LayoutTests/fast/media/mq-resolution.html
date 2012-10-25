@@ -6,11 +6,12 @@
 <div id="detector"></div>
 
 <style>
-    #detector { width: 10px; }
+    #detector { width: 100px; }
     @media (resolution: 1.00dppx) { #detector { width: 10px; } }
     @media (resolution: 1.50dppx) { #detector { width: 15px; } }
     @media (resolution: 2.00dppx) { #detector { width: 20px; } }
     @media (resolution: 2.25dppx) { #detector { width: 23px; } }
+    @media print and (min-resolution: 3dppx) { #detector { width: 30px; } }
 </style>
 
 <script>
@@ -30,9 +31,18 @@
                     return 2;
                 case "23px":
                     return 2.25;
+                case "30px":
+                    return 3;
+                case "31px":
+                    return 3.125;
                 default:
                     return undefined;
             }
+        }
+
+        function appendMediaRule(rule) {
+            var lastStyleSheet = document.styleSheets[document.styleSheets.length - 1];
+            lastStyleSheet.insertRule(rule, lastStyleSheet.cssRules.length);
         }
 
         shouldBe("matchMedia('(resolution: 0dpi)').matches", "false");
@@ -82,6 +92,19 @@
         shouldBe("matchMedia('(min-resolution: 100dpcm)').matches", "false");
         shouldBe("matchMedia('(max-resolution: 85dpcm)').matches", "false");
         shouldBe("matchMedia('(max-resolution: 100dpcm)').matches", "true");
+
+        // Test printing.
+
+        window.internals.settings.setMediaTypeOverride("print");
+        shouldBe("matchMedia('(min-resolution: 300dpi)').matches", "true");
+        shouldBe("matchMedia('(min-resolution: 118dpcm)').matches", "true");
+
+        // Should match the one requiring 'print' media type.
+        shouldBe("resolutionFromStyle()", "3");
+
+        // As well as those matching 'all'.
+        appendMediaRule("@media (resolution: 3.125dppx) { #detector { width: 31px; } }");
+        shouldBe("resolutionFromStyle()", "3.125");
     }
 </script>
 
