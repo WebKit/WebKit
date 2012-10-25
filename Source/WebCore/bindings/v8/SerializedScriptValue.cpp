@@ -2208,7 +2208,7 @@ SerializedScriptValue::SerializedScriptValue()
 
 static void neuterBinding(void* domObject) 
 {
-    DOMDataList& allStores = V8PerIsolateData::current()->allStores();
+    Vector<DOMDataStore*>& allStores = V8PerIsolateData::current()->allStores();
     for (size_t i = 0; i < allStores.size(); i++) {
         v8::Handle<v8::Object> obj = allStores[i]->domObjectMap().get(domObject);
         if (!obj.IsEmpty())

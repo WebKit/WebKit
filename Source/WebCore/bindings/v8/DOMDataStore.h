@@ -45,41 +45,34 @@
 
 namespace WebCore {
 
-    class DOMDataStore;
-
-    typedef Vector<DOMDataStore*> DOMDataList;
-
-    // DOMDataStore
-    //
-    // DOMDataStore is the backing store that holds the maps between DOM objects
-    // and JavaScript objects.  In general, each thread can have multiple backing
-    // stores, one per isolated world.
-    //
-    // This class doesn't manage the lifetime of the store.  The data store
-    // lifetime is managed by subclasses.
-    //
-    class DOMDataStore {
-        WTF_MAKE_NONCOPYABLE(DOMDataStore);
-    public:
-        virtual ~DOMDataStore();
-
-        static DOMDataStore* current(v8::Isolate*);
-
-        DOMWrapperMap<Node>& domNodeMap() { return *m_domNodeMap; }
-        DOMWrapperMap<Node>& activeDomNodeMap() { return *m_activeDomNodeMap; }
-        DOMWrapperMap<void>& domObjectMap() { return *m_domObjectMap; }
-        DOMWrapperMap<void>& activeDomObjectMap() { return *m_activeDomObjectMap; }
-
-        virtual void reportMemoryUsage(MemoryObjectInfo*) const;
-
-    protected:
-        DOMDataStore();
-
-        DOMWrapperMap<Node>* m_domNodeMap;
-        DOMWrapperMap<Node>* m_activeDomNodeMap;
-        DOMWrapperMap<void>* m_domObjectMap;
-        DOMWrapperMap<void>* m_activeDomObjectMap;
+class DOMDataStore {
+    WTF_MAKE_NONCOPYABLE(DOMDataStore);
+public:
+    enum Type {
+        MainWorld,
+        IsolatedWorld,
+        Worker,
     };
+
+    explicit DOMDataStore(Type);
+    ~DOMDataStore();
+
+    static DOMDataStore* current(v8::Isolate*);
+
+    DOMWrapperMap<Node>& domNodeMap() { return *m_domNodeMap; }
+    DOMWrapperMap<Node>& activeDomNodeMap() { return *m_activeDomNodeMap; }
+    DOMWrapperMap<void>& domObjectMap() { return *m_domObjectMap; }
+    DOMWrapperMap<void>& activeDomObjectMap() { return *m_activeDomObjectMap; }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
+protected:
+    Type m_type;
+    OwnPtr<DOMWrapperMap<Node> > m_domNodeMap;
+    OwnPtr<DOMWrapperMap<Node> > m_activeDomNodeMap;
+    OwnPtr<DOMWrapperMap<void> > m_domObjectMap;
+    OwnPtr<DOMWrapperMap<void> > m_activeDomObjectMap;
+};
 
 } // namespace WebCore
 

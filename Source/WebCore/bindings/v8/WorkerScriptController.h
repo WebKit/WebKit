@@ -33,7 +33,6 @@
 
 #if ENABLE(WORKERS)
 
-#include "ScopedDOMDataStore.h"
 #include "V8Binding.h"
 
 #include <v8.h>
@@ -82,7 +81,7 @@ namespace WebCore {
         WorkerContext* m_workerContext;
         OwnPtr<WorkerContextExecutionProxy> m_proxy;
         v8::Isolate* m_isolate;
-        ScopedDOMDataStore m_DOMDataStore;
+        OwnPtr<DOMDataStore> m_domDataStore;
         bool m_executionForbidden;
         bool m_executionScheduledToTerminate;
         mutable Mutex m_scheduledTerminationMutex;

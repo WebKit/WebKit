@@ -32,7 +32,6 @@
 #include "V8DOMMap.h"
 
 #include "DOMDataStore.h"
-#include "ScopedDOMDataStore.h"
 #include "V8Binding.h"
 #include "V8Node.h"
 #include <wtf/MainThread.h>
@@ -40,16 +39,13 @@
 namespace WebCore {
 
 DOMDataStoreHandle::DOMDataStoreHandle(bool initialize)
-    : m_store(adoptPtr(!initialize ? 0 : new ScopedDOMDataStore()))
 {
-    if (m_store)
-        V8PerIsolateData::current()->registerDOMDataStore(m_store.get());
+    if (initialize)
+        m_store = adoptPtr(new DOMDataStore(DOMDataStore::IsolatedWorld));
 }
 
 DOMDataStoreHandle::~DOMDataStoreHandle()
 {
-    if (m_store)
-        V8PerIsolateData::current()->unregisterDOMDataStore(m_store.get());
 }
 
 NodeWrapperVisitor::~NodeWrapperVisitor()
@@ -82,15 +78,6 @@ DOMWrapperMap<void>& getActiveDOMObjectMap(v8::Isolate* isolate)
     if (!isolate)
         isolate = v8::Isolate::GetCurrent();
     return DOMDataStore::current(isolate)->activeDomObjectMap();
-}
-
-void removeAllDOMObjects()
-{
-    ASSERT(!isMainThread());
-    v8::HandleScope scope;
-    DOMDataStore* store = DOMDataStore::current(v8::Isolate::GetCurrent());
-    store->domObjectMap().clear();
-    store->activeDomObjectMap().clear();
 }
 
 void visitAllDOMNodes(NodeWrapperVisitor* visitor)
@@ -126,7 +113,7 @@ void visitActiveDOMNodes(DOMWrapperVisitor<Node>* visitor)
 {
     v8::HandleScope scope;
 
-    DOMDataList& list = V8PerIsolateData::current()->allStores();
+    Vector<DOMDataStore*>& list = V8PerIsolateData::current()->allStores();
     for (size_t i = 0; i < list.size(); ++i) {
         DOMDataStore* store = list[i];
 
@@ -138,7 +125,7 @@ void visitDOMObjects(DOMWrapperVisitor<void>* visitor)
 {
     v8::HandleScope scope;
 
-    DOMDataList& list = V8PerIsolateData::current()->allStores();
+    Vector<DOMDataStore*>& list = V8PerIsolateData::current()->allStores();
     for (size_t i = 0; i < list.size(); ++i) {
         DOMDataStore* store = list[i];
 
@@ -150,7 +137,7 @@ void visitActiveDOMObjects(DOMWrapperVisitor<void>* visitor)
 {
     v8::HandleScope scope;
 
-    DOMDataList& list = V8PerIsolateData::current()->allStores();
+    Vector<DOMDataStore*>& list = V8PerIsolateData::current()->allStores();
     for (size_t i = 0; i < list.size(); ++i) {
         DOMDataStore* store = list[i];
 

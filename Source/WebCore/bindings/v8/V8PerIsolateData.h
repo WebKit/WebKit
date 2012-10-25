@@ -140,7 +140,7 @@ private:
     OwnPtr<StringCache> m_stringCache;
     OwnPtr<IntegerCache> m_integerCache;
 
-    DOMDataList m_domDataList;
+    Vector<DOMDataStore*> m_domDataList;
     DOMDataStore* m_domDataStore;
 
     OwnPtr<V8HiddenPropertyName> m_hiddenPropertyName;

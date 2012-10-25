@@ -76,9 +76,6 @@ namespace WebCore {
     DOMWrapperMap<void>& getActiveDOMObjectMap(v8::Isolate* = 0);
     void visitActiveDOMObjects(DOMWrapperVisitor<void>*);
 
-    // This should be called to remove all DOM objects associated with the current thread when it is tearing down.
-    void removeAllDOMObjects();
-
 } // namespace WebCore
 
 #endif // V8DOMMap_h

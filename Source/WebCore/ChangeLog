@@ -1,3 +1,50 @@
+2012-10-25  Adam Barth  <abarth@webkit.org>
+
+        [V8] We can merge DOMDataStore, ScopedDOMDataStore, and StaticDOMDataStore into one class
+        https://bugs.webkit.org/show_bug.cgi?id=100316
+
+        Reviewed by Eric Seidel.
+
+        Prior to this patch, DOMDataStore had two subclasses,
+        ScopedDOMDataStore and StaticDOMDataStore, which used slighly different
+        wrapper map base classes and had different lifetimes. This patch
+        unifies all these classes into DOMDataStore itself. This makes this
+        code much more straightforward.
+
+        * WebCore.gypi:
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::DOMDataStore):
+        (WebCore::DOMDataStore::~DOMDataStore):
+        (WebCore::DOMDataStore::current):
+        (WebCore::DOMDataStore::reportMemoryUsage):
+        * bindings/v8/DOMDataStore.h:
+        (DOMDataStore):
+        (WebCore::DOMDataStore::domNodeMap):
+        (WebCore::DOMDataStore::activeDomNodeMap):
+        (WebCore::DOMDataStore::domObjectMap):
+        (WebCore::DOMDataStore::activeDomObjectMap):
+        * bindings/v8/ScopedDOMDataStore.cpp: Removed.
+        * bindings/v8/ScopedDOMDataStore.h: Removed.
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::neuterBinding):
+        * bindings/v8/StaticDOMDataStore.cpp: Removed.
+        * bindings/v8/StaticDOMDataStore.h: Removed.
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::DOMDataStoreHandle::DOMDataStoreHandle):
+        (WebCore::DOMDataStoreHandle::~DOMDataStoreHandle):
+        (WebCore::visitActiveDOMNodes):
+        (WebCore::visitDOMObjects):
+        (WebCore::visitActiveDOMObjects):
+        * bindings/v8/V8DOMMap.h:
+        (WebCore):
+        * bindings/v8/V8PerIsolateData.h:
+        (V8PerIsolateData):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+        * bindings/v8/WorkerScriptController.h:
+        (WorkerScriptController):
+
 2012-10-24  Kent Tamura  <tkent@chromium.org>
 
         Minimize CSS rulesets for multiple-fields input
