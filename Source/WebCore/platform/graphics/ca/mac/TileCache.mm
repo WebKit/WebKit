@@ -45,15 +45,18 @@ using namespace std;
 
 namespace WebCore {
 
-PassOwnPtr<TileCache> TileCache::create(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
+static const int defaultTileCacheWidth = 512;
+static const int defaultTileCacheHeight = 512;
+
+PassOwnPtr<TileCache> TileCache::create(WebTileCacheLayer* tileCacheLayer)
 {
-    return adoptPtr(new TileCache(tileCacheLayer, tileSize));
+    return adoptPtr(new TileCache(tileCacheLayer));
 }
 
-TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
+TileCache::TileCache(WebTileCacheLayer* tileCacheLayer)
     : m_tileCacheLayer(tileCacheLayer)
     , m_tileContainerLayer(adoptCF([[CALayer alloc] init]))
-    , m_tileSize(tileSize)
+    , m_tileSize(defaultTileCacheWidth, defaultTileCacheHeight)
     , m_tileRevalidationTimer(this, &TileCache::tileRevalidationTimerFired)
     , m_scale(1)
     , m_deviceScaleFactor(1)
@@ -300,8 +303,12 @@ void TileCache::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft
 
     topLeft.setX(max(clampedRect.x() / m_tileSize.width(), 0));
     topLeft.setY(max(clampedRect.y() / m_tileSize.height(), 0));
-    bottomRight.setX(max(clampedRect.maxX() / m_tileSize.width(), 0));
-    bottomRight.setY(max(clampedRect.maxY() / m_tileSize.height(), 0));
+
+    int bottomXRatio = ceil((float)clampedRect.maxX() / m_tileSize.width());
+    bottomRight.setX(max(bottomXRatio - 1, 0));
+
+    int bottomYRatio = ceil((float)clampedRect.maxY() / m_tileSize.height());
+    bottomRight.setY(max(bottomYRatio - 1, 0));
 }
 
 IntRect TileCache::computeTileCoverageRect() const
@@ -323,6 +330,13 @@ IntRect TileCache::computeTileCoverageRect() const
     }
 
     return tileCoverageRect;
+}
+
+IntSize TileCache::tileSizeForCoverageRect(const IntRect& coverageRect) const
+{
+    if (m_tileCoverage == CoverageForVisibleArea)
+        return coverageRect.size();
+    return IntSize(defaultTileCacheWidth, defaultTileCacheHeight);
 }
 
 void TileCache::scheduleTileRevalidation(double interval)
@@ -379,6 +393,10 @@ void TileCache::revalidateTiles()
 
     IntRect tileCoverageRect = computeTileCoverageRect();
 
+    IntSize oldTileSize = m_tileSize;
+    m_tileSize = tileSizeForCoverageRect(tileCoverageRect);
+    bool tileSizeChanged = m_tileSize != oldTileSize;
+
     Vector<TileIndex> tilesToRemove;
 
     for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
@@ -386,7 +404,7 @@ void TileCache::revalidateTiles()
 
         WebTileLayer* tileLayer = it->value.get();
 
-        if (!rectForTileIndex(tileIndex).intersects(tileCoverageRect)) {
+        if (!rectForTileIndex(tileIndex).intersects(tileCoverageRect) || tileSizeChanged) {
             // Remove this layer.
             [tileLayer removeFromSuperlayer];
             [tileLayer setTileCache:0];

@@ -1,3 +1,17 @@
+2012-10-24  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=100169
+        We should make TileCache tiles the size of the tile coverage rect 
+        when we can't do fast scrolling
+        -and-
+        <rdar://problem/12505021>
+
+        Reviewed by Simon Fraser.
+
+        New test.
+        * platform/mac/tiled-drawing/tile-coverage-slow-scrolling-expected.txt: Added.
+        * platform/mac/tiled-drawing/tile-coverage-slow-scrolling.html: Added.
+
 2012-10-24  David Barton  <dbarton@mathscribe.com>
 
         MathML tests trigger font cache assertions in debug bots
