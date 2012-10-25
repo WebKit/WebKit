@@ -2,6 +2,14 @@
 
         [Qt] Unreviewed gardening.
 
+        Unskip tests that are not exist already.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
+2012-10-25  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
         Skip a new failing test introduced in r132394.
 
         * platform/qt-5.0-wk2/TestExpectations:
