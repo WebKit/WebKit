@@ -1,3 +1,12 @@
+2012-10-25  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip failing accessibility tests.
+        accessibility/title-ui-element-correctness.html
+        accessibility/aria-slider-value.html
+        accesibility/hidden-legend.html
+
+        * platform/win/TestExpectations:
+
 2012-10-25  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Notification should be sent when accessibilityIsIgnored changes

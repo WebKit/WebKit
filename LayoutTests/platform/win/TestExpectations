@@ -598,6 +598,7 @@ accessibility/aria-menubar-menuitems.html
 accessibility/aria-presentational-role.html
 accessibility/aria-readonly.html
 accessibility/aria-roles.html
+accessibility/aria-slider-value.html
 accessibility/aria-scrollbar-role.html
 accessibility/aria-tables.html
 accessibility/aria-tab-roles.html
@@ -606,6 +607,7 @@ accessibility/aria-used-on-image-maps.html
 accessibility/button-press-action.html
 accessibility/document-attributes.html
 accessibility/editable-webarea-context-menu-point.html
+accessibility/hidden-legend.html
 accessibility/ignore-spacer-elements.html
 accessibility/image-link.html
 accessibility/image-map1.html
@@ -645,6 +647,7 @@ accessibility/table-with-rules.html
 accessibility/textarea-insertion-point-line-number.html
 accessibility/textarea-line-for-index.html
 accessibility/textarea-selected-text-range.html
+accessibility/title-ui-element-correctness.html
 accessibility/th-as-title-ui.html
 accessibility/transformed-element.html
 accessibility/visible-elements.html
@@ -2353,3 +2356,4 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing
 
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing
+
