@@ -1929,14 +1929,12 @@ webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-ori
 webkit.org/b/95551 fast/forms/datalist/input-appearance-range-with-datalist-rtl.html [ ImageOnlyFailure ]
 
 # EFL port does not support plugins yet
-webkit.org/b/96881 fast/frames/sandboxed-iframe-plugins.html [ Failure ]
 webkit.org/b/96881 http/tests/security/cross-origin-plugin-private-browsing-toggled.html [ Failure ]
 webkit.org/b/96881 http/tests/security/cross-origin-plugin.html [ Failure ]
 webkit.org/b/96881 http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html [ Failure ]
 webkit.org/b/96881 http/tests/security/storage-blocking-strengthened-plugin.html [ Failure ]
 webkit.org/b/96881 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
 webkit.org/b/96881 java [ Skip ]
-webkit.org/b/96881 userscripts/user-script-plugin-document.html [ Failure ]
 
 # Ref tests added in r130592 that are failing on both EFL and GTK ports
 webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ] 
