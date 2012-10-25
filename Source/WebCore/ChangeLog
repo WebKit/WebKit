@@ -1,3 +1,16 @@
+2012-10-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Overrides] Add latitude and longitude labels for the geolocation fields
+        https://bugs.webkit.org/show_bug.cgi?id=100375
+
+        Reviewed by Yury Semikhatsky.
+
+        No new tests, a UI change.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.UserAgentSettingsTab.prototype._createGeolocationOverrideElement):
+
 2012-10-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Add setMediaTypeOverride to window.internals.settings

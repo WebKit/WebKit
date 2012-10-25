@@ -376,7 +376,9 @@ localizedStrings["Show total and self times as percentages."] = "Show total and 
 localizedStrings["Size"] = "Size";
 localizedStrings["Snapshot %d"] = "Snapshot %d";
 localizedStrings["End Time"] = "End Time";
+localizedStrings["Lat = "] = "Lat = ";
 localizedStrings["Latency"] = "Latency";
+localizedStrings["Lon = "] = "Lon = ";
 localizedStrings["Response Time"] = "Response Time";
 localizedStrings["Start"] = "Start";
 localizedStrings["Start CPU profiling."] = "Start CPU profiling.";

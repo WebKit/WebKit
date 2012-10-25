@@ -792,11 +792,14 @@ WebInspector.UserAgentSettingsTab.prototype = {
         var cellElement = rowElement.createChild("td");
         cellElement.appendChild(document.createTextNode(WebInspector.UIString("Geolocation Position") + ":"));
         cellElement = rowElement.createChild("td");
+        cellElement.appendChild(document.createTextNode(WebInspector.UIString("Lat = ")));
         this._latitudeElement = this._createInput(cellElement, "geolocation-override-latitude", String(geolocation.latitude), this._applyGeolocationUserInput.bind(this));
         cellElement.appendChild(document.createTextNode(" , "));
+        cellElement.appendChild(document.createTextNode(WebInspector.UIString("Lon = ")));
         this._longitudeElement = this._createInput(cellElement, "geolocation-override-longitude", String(geolocation.longitude), this._applyGeolocationUserInput.bind(this));
         rowElement = tableElement.createChild("tr");
         cellElement = rowElement.createChild("td");
+        cellElement.colSpan = 2;
         var geolocationErrorLabelElement = document.createElement("label");
         var geolocationErrorCheckboxElement = geolocationErrorLabelElement.createChild("input");
         geolocationErrorCheckboxElement.id = "geolocation-error";
