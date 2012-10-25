@@ -2796,12 +2796,6 @@ crbug.com/83290 [ Win ] http/tests/misc/link-rel-prefetch-and-subresource.html [
 crbug.com/83504 [ Win ] fast/css/custom-font-xheight.html [ Failure Pass Slow ]
 crbug.com/83504 [ Mac ] fast/css/custom-font-xheight.html [ Failure Pass ]
 
-# Need rebaselining after 99874
-webkit.org/b/99874 svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml [ Pass ImageOnlyFailure ]
-webkit.org/b/99874 svg/custom/object-sizing-width-50p-height-75p-on-target-svg.xhtml [ Pass ImageOnlyFailure ]
-webkit.org/b/99874 svg/zoom/page/zoom-svg-float-border-padding.xml [ Pass ImageOnlyFailure ]
-webkit.org/b/99874 svg/zoom/text/zoom-svg-float-border-padding.xml [ Pass ImageOnlyFailure ]
-
 # New tests added in r87121
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-canvas.html [ ImageOnlyFailure ]
 webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-image.html [ ImageOnlyFailure ]

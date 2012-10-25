@@ -1,3 +1,17 @@
+2012-10-25  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed rebaseline after https://bugs.webkit.org/show_bug.cgi?id=99874.
+
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-svg-float-border-padding-expected.png: Added.
+        * platform/chromium-mac-lion/svg/zoom/text/zoom-svg-float-border-padding-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/text/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png:
+        * platform/chromium-mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium-win/svg/zoom/text/zoom-svg-float-border-padding-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-25  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Pixel tests need rebaseline
