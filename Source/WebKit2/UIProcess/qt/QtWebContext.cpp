@@ -87,6 +87,34 @@ static void globalInitialization()
     initialized = true;
 }
 
+static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*)
+{
+    if (!WKStringIsEqualToUTF8CString(messageName, "MessageFromNavigatorQtObject"))
+        return;
+
+    ASSERT(messageBody);
+    ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
+
+    WKArrayRef body = static_cast<WKArrayRef>(messageBody);
+    ASSERT(WKArrayGetSize(body) == 2);
+    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 0)) == WKPageGetTypeID());
+    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 1)) == WKStringGetTypeID());
+
+    WKPageRef page = static_cast<WKPageRef>(WKArrayGetItemAtIndex(body, 0));
+    WKStringRef str = static_cast<WKStringRef>(WKArrayGetItemAtIndex(body, 1));
+
+    toImpl(page)->didReceiveMessageFromNavigatorQtObject(toImpl(str)->string());
+}
+
+static void initializeContextInjectedBundleClient(WebContext* context)
+{
+    WKContextInjectedBundleClient injectedBundleClient;
+    memset(&injectedBundleClient, 0, sizeof(WKContextInjectedBundleClient));
+    injectedBundleClient.version = kWKContextInjectedBundleClientCurrentVersion;
+    injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
+    WKContextSetInjectedBundleClient(toAPI(context), &injectedBundleClient);
+}
+
 QtWebContext::QtWebContext(WebContext* context)
     : m_contextID(generateContextID())
     , m_context(context)
@@ -103,7 +131,7 @@ QtWebContext::~QtWebContext()
     contextMap.remove(m_contextID);
 }
 
-// Used only by WebKitTestRunner. It avoids calling initialize(), so that we don't register any clients.
+// Used directly only by WebKitTestRunner.
 PassRefPtr<QtWebContext> QtWebContext::create(WebContext* context)
 {
     globalInitialization();
@@ -116,13 +144,14 @@ PassRefPtr<QtWebContext> QtWebContext::defaultContext()
         return PassRefPtr<QtWebContext>(s_defaultContext);
 
     RefPtr<WebContext> context = WebContext::create(String());
+    // Make sure for WebKitTestRunner that the injected bundle client isn't initialized
+    // and that the page cache isn't enabled (defaultContext isn't used there).
+    initializeContextInjectedBundleClient(context.get());
     // A good all-around default.
     context->setCacheModel(CacheModelDocumentBrowser);
 
     RefPtr<QtWebContext> defaultContext = QtWebContext::create(context.get());
     s_defaultContext = defaultContext.get();
-    // Make sure that this doesn't get called in WebKitTestRunner (defaultContext isn't used there).
-    defaultContext->initializeContextInjectedBundleClient();
 
     return defaultContext.release();
 }
@@ -155,46 +184,6 @@ void QtWebContext::postMessageToNavigatorQtObject(WebPageProxy* webPageProxy, co
 QtWebContext* QtWebContext::contextByID(uint64_t id)
 {
     return contextMap.get(id);
-}
-
-void QtWebContext::initializeContextInjectedBundleClient()
-{
-    WKContextInjectedBundleClient injectedBundleClient;
-    memset(&injectedBundleClient, 0, sizeof(WKContextInjectedBundleClient));
-    injectedBundleClient.version = kWKContextInjectedBundleClientCurrentVersion;
-    injectedBundleClient.clientInfo = this;
-    injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
-    WKContextSetInjectedBundleClient(toAPI(m_context.get()), &injectedBundleClient);
-}
-
-static QtWebContext* toQtWebContext(const void* clientInfo)
-{
-    ASSERT(clientInfo);
-    return reinterpret_cast<QtWebContext*>(const_cast<void*>(clientInfo));
-}
-
-void QtWebContext::didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo)
-{
-    toQtWebContext(clientInfo)->didReceiveMessageFromInjectedBundle(messageName, messageBody);
-}
-
-void QtWebContext::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
-{
-    if (!WKStringIsEqualToUTF8CString(messageName, "MessageFromNavigatorQtObject"))
-        return;
-
-    ASSERT(messageBody);
-    ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
-
-    WKArrayRef body = static_cast<WKArrayRef>(messageBody);
-    ASSERT(WKArrayGetSize(body) == 2);
-    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 0)) == WKPageGetTypeID());
-    ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(body, 1)) == WKStringGetTypeID());
-
-    WKPageRef page = static_cast<WKPageRef>(WKArrayGetItemAtIndex(body, 0));
-    WKStringRef str = static_cast<WKStringRef>(WKArrayGetItemAtIndex(body, 1));
-
-    toImpl(page)->didReceiveMessageFromNavigatorQtObject(toImpl(str)->string());
 }
 
 } // namespace WebKit

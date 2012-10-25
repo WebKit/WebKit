@@ -1,3 +1,20 @@
+2012-10-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Make the context injected bundle client static
+        https://bugs.webkit.org/show_bug.cgi?id=100223
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        It doesn't need any data from QtWebContext.
+
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit::didReceiveMessageFromInjectedBundle):
+        (WebKit):
+        (WebKit::initializeContextInjectedBundleClient):
+        (WebKit::QtWebContext::defaultContext):
+        * UIProcess/qt/QtWebContext.h:
+        (QtWebContext):
+
 2012-10-25  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Get rid of Ewk_View private C API (Part 2)
