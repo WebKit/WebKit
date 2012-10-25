@@ -359,7 +359,7 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     _ondragstart: function(event)
     {
-        if (!getSelection().isCollapsed)
+        if (!window.getSelection().isCollapsed)
             return false;
 
         var treeElement = this._treeElementFromEvent(event);

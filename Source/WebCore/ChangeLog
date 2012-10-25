@@ -1,3 +1,13 @@
+2012-10-25  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, fix Web Inspector frontend compilability
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._ondragstart):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype._handleEmptySpaceClick):
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2012-10-23  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Drag and drop property value from Inspector is not working as expected
