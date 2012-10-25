@@ -39,14 +39,21 @@ namespace WebCore {
 ScopedDOMDataStore::ScopedDOMDataStore()
     : DOMDataStore()
 {
-    m_domNodeMap = new DOMWrapperMap<Node>(&DOMDataStore::weakNodeCallback);
-    m_activeDomNodeMap = new DOMWrapperMap<Node>(&DOMDataStore::weakNodeCallback);
-    m_domObjectMap = new DOMWrapperMap<void>(&DOMDataStore::weakDOMObjectCallback);
-    m_activeDomObjectMap = new DOMWrapperMap<void>(&DOMDataStore::weakActiveDOMObjectCallback);
+    m_domNodeMap = new DOMWrapperHashMap<Node>;
+    m_activeDomNodeMap = new DOMWrapperHashMap<Node>;
+    m_domObjectMap = new DOMWrapperHashMap<void>;
+    m_activeDomObjectMap = new DOMWrapperHashMap<void>;
 }
 
 ScopedDOMDataStore::~ScopedDOMDataStore()
 {
+    // FIXME: Consider moving these calls to clear()
+    // into the DOMWrapperHashMap destructor.
+    m_domNodeMap->clear();
+    m_activeDomNodeMap->clear();
+    m_domObjectMap->clear();
+    m_activeDomObjectMap->clear();
+
     delete m_domNodeMap;
     delete m_activeDomNodeMap;
     delete m_domObjectMap;

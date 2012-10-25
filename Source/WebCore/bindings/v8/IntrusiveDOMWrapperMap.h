@@ -31,73 +31,12 @@
 #ifndef IntrusiveDOMWrapperMap_h
 #define IntrusiveDOMWrapperMap_h
 
-#include "DOMDataStore.h"
-#include "V8DOMMap.h"
-#include "V8Node.h"
-#include "WebCoreMemoryInstrumentation.h"
+#include "DOMWrapperMap.h"
 
 namespace WebCore {
 
-class DOMNodeWrapperMap : public AbstractWeakReferenceMap<Node, v8::Object> {
+class DOMNodeWrapperMap : public DOMWrapperMap<Node> {
 public:
-    DOMNodeWrapperMap(v8::WeakReferenceCallback callback)
-        : AbstractWeakReferenceMap<Node, v8::Object>(callback)
-    {
-    }
-
-    virtual v8::Persistent<v8::Object> get(Node* node)
-    {
-        return node->wrapper();
-    }
-
-    virtual void set(Node* node, v8::Persistent<v8::Object> wrapper)
-    {
-        ASSERT(node && node->wrapper().IsEmpty());
-        ASSERT(wrapper.WrapperClassId() == v8DOMSubtreeClassId);
-        node->setWrapper(wrapper);
-        wrapper.MakeWeak(node, weakReferenceCallback());
-    }
-
-    virtual bool contains(Node* node)
-    {
-        return !node->wrapper().IsEmpty();
-    }
-
-    virtual void visit(DOMDataStore* store, Visitor* visitor)
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual bool removeIfPresent(Node* node, v8::Persistent<v8::Object> value)
-    {
-        ASSERT(node);
-        v8::Persistent<v8::Object> wrapper = node->wrapper();
-        if (wrapper.IsEmpty())
-            return false;
-        if (wrapper != value)
-            return false;
-        node->disposeWrapper();
-        return true;
-    }
-
-    virtual void clear()
-    {
-        ASSERT_NOT_REACHED();
-    }
-
-    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
-    {
-        // This data structure doesn't use any extra memory.
-    }
-};
-
-class ActiveDOMNodeWrapperMap : public DOMWrapperMap<Node> {
-public:
-    ActiveDOMNodeWrapperMap(v8::WeakReferenceCallback callback)
-        : DOMWrapperMap<Node>(callback)
-    {
-    }
-
     virtual v8::Persistent<v8::Object> get(Node* node) OVERRIDE
     {
         return node->wrapper();
@@ -108,22 +47,63 @@ public:
         ASSERT(node && node->wrapper().IsEmpty());
         ASSERT(wrapper.WrapperClassId() == v8DOMSubtreeClassId);
         node->setWrapper(wrapper);
-        DOMWrapperMap<Node>::set(node, wrapper);
+        wrapper.MakeWeak(node, weakCallback);
     }
 
-    virtual bool removeIfPresent(Node* node, v8::Persistent<v8::Object> value) OVERRIDE
+    virtual void visit(DOMDataStore* store, DOMWrapperVisitor<Node>* visitor) OVERRIDE
     {
-        if (!DOMWrapperMap<Node>::removeIfPresent(node, value))
-            return false;
-        // Notice that we call "clearWrapper" here rather than disposeWrapper because
-        // our base class will call Dispose on the wrapper for us.
-        node->clearWrapper();
-        return true;
+        ASSERT_NOT_REACHED();
     }
 
     virtual void clear() OVERRIDE
     {
         ASSERT_NOT_REACHED();
+    }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
+    {
+    }
+
+private:
+    static void weakCallback(v8::Persistent<v8::Value> value, void* context)
+    {
+        Node* node = static_cast<Node*>(context);
+        ASSERT(value->IsObject());
+        ASSERT(node->wrapper() == v8::Persistent<v8::Object>::Cast(value));
+
+        node->clearWrapper();
+        value.Dispose();
+        node->deref();
+    }
+};
+
+class ActiveDOMNodeWrapperMap : public DOMWrapperHashMap<Node> {
+public:
+    virtual v8::Persistent<v8::Object> get(Node* node) OVERRIDE
+    {
+        v8::Persistent<v8::Object> wrapper = node->wrapper();
+        ASSERT(DOMWrapperHashMap<Node>::get(node) == wrapper);
+        return wrapper;
+    }
+
+    virtual void set(Node* node, v8::Persistent<v8::Object> wrapper) OVERRIDE
+    {
+        ASSERT(node && node->wrapper().IsEmpty());
+        ASSERT(wrapper.WrapperClassId() == v8DOMSubtreeClassId);
+        node->setWrapper(wrapper);
+        DOMWrapperHashMap<Node>::set(node, wrapper);
+    }
+
+    virtual void clear() OVERRIDE
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    virtual void remove(Node* node, v8::Persistent<v8::Object> wrapper) OVERRIDE
+    {
+        ASSERT(node->wrapper() == wrapper);
+        node->clearWrapper();
+        DOMWrapperHashMap<Node>::remove(node, wrapper);
     }
 };
 

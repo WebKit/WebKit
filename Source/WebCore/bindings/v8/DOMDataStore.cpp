@@ -128,44 +128,4 @@ void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addWeakPointer(m_activeDomObjectMap);
 }
 
-// Called when the object is near death (not reachable from JS roots).
-// It is time to remove the entry from the table and dispose the handle.
-void DOMDataStore::weakDOMObjectCallback(v8::Persistent<v8::Value> v8Object, void* domObject)
-{
-    v8::HandleScope scope;
-    ASSERT(v8Object->IsObject());
-    DOMData::handleWeakObject(DOMDataStore::DOMObjectMap, v8::Persistent<v8::Object>::Cast(v8Object), domObject);
-}
-
-void DOMDataStore::weakActiveDOMObjectCallback(v8::Persistent<v8::Value> v8Object, void* domObject)
-{
-    v8::HandleScope scope;
-    ASSERT(v8Object->IsObject());
-    DOMData::handleWeakObject(DOMDataStore::ActiveDOMObjectMap, v8::Persistent<v8::Object>::Cast(v8Object), domObject);
-}
-
-void DOMDataStore::weakNodeCallback(v8::Persistent<v8::Value> value, void* domObject)
-{
-    ASSERT(isMainThread());
-
-    Node* node = static_cast<Node*>(domObject);
-    // Node wrappers must be JS objects.
-    v8::Persistent<v8::Object> v8Object = v8::Persistent<v8::Object>::Cast(value);
-
-    DOMDataList& list = DOMDataStore::allStores();
-    for (size_t i = 0; i < list.size(); ++i) {
-        DOMDataStore* store = list[i];
-        DOMNodeMapping& nodeMap = node->isActiveNode() ? store->activeDomNodeMap() : store->domNodeMap();
-        if (nodeMap.removeIfPresent(node, v8Object)) {
-            node->deref(); // Nobody overrides Node::deref so it's safe
-            return; // There might be at most one wrapper for the node in world's maps
-        }
-    }
-
-    // If not found, it means map for the wrapper has been already destroyed, just dispose the
-    // handle and deref the object to fight memory leak.
-    v8Object.Dispose();
-    node->deref(); // Nobody overrides Node::deref so it's safe
-}
-
 } // namespace WebCore

@@ -116,6 +116,19 @@ namespace WebCore {
         const WrapperTypeInfo* parentClass;
         const WrapperTypePrototype wrapperTypePrototype;
     };
+
+    inline void* toNative(v8::Handle<v8::Object> object)
+    {
+        ASSERT(object->InternalFieldCount() >= v8DOMWrapperObjectIndex);
+        return object->GetPointerFromInternalField(v8DOMWrapperObjectIndex);
+    }
+
+    inline WrapperTypeInfo* toWrapperTypeInfo(v8::Handle<v8::Object> object)
+    {
+        ASSERT(object->InternalFieldCount() >= v8DOMWrapperTypeIndex);
+        return static_cast<WrapperTypeInfo*>(object->GetPointerFromInternalField(v8DOMWrapperTypeIndex));
+    }
+
 }
 
 #endif // WrapperTypeInfo_h

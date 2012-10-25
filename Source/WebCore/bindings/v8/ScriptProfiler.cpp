@@ -205,7 +205,7 @@ void ScriptProfiler::visitExternalStrings(ExternalStringVisitor* visitor)
 
 void ScriptProfiler::visitExternalArrays(ExternalArrayVisitor* visitor)
 {
-    class VisitorAdapter : public DOMWrapperMap<void>::Visitor {
+    class VisitorAdapter : public DOMWrapperVisitor<void> {
     public:
         VisitorAdapter(ExternalArrayVisitor* visitor) : m_visitor(visitor) { }
 

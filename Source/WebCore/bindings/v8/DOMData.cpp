@@ -51,11 +51,4 @@ DOMDataStore& DOMData::getCurrentStore(v8::Isolate* isolate)
     return defaultStore;
 }
 
-void DOMData::derefObject(WrapperTypeInfo* type, void* domObject)
-{
-    type->derefObject(domObject);
-}
-
-
-
 } // namespace WebCore

@@ -97,7 +97,7 @@ void V8DOMWrapper::setNamedHiddenReference(v8::Handle<v8::Object> parent, const 
 WrapperTypeInfo* V8DOMWrapper::domWrapperType(v8::Handle<v8::Object> object)
 {
     ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
-    return static_cast<WrapperTypeInfo*>(object->GetPointerFromInternalField(v8DOMWrapperTypeIndex));
+    return toWrapperTypeInfo(object);
 }
 
 PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> filter)

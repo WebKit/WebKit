@@ -35,6 +35,7 @@
 #include "DOMDataStore.h"
 #include "ScopedDOMDataStore.h"
 #include "V8Binding.h"
+#include "V8Node.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -56,12 +57,12 @@ NodeWrapperVisitor::~NodeWrapperVisitor()
 {
 }
 
-DOMNodeMapping& getDOMNodeMap(v8::Isolate* isolate)
+DOMWrapperMap<Node>& getDOMNodeMap(v8::Isolate* isolate)
 {
     return DOMData::getCurrentStore(isolate).domNodeMap();
 }
 
-DOMNodeMapping& getActiveDOMNodeMap(v8::Isolate* isolate)
+DOMWrapperMap<Node>& getActiveDOMNodeMap(v8::Isolate* isolate)
 {
     return DOMData::getCurrentStore(isolate).activeDomNodeMap();
 }
@@ -78,14 +79,11 @@ DOMWrapperMap<void>& getActiveDOMObjectMap(v8::Isolate* isolate)
 
 void removeAllDOMObjects()
 {
-    DOMDataStore& store = DOMData::getCurrentStore();
-
-    v8::HandleScope scope;
     ASSERT(!isMainThread());
-
-    // Note: We skip the Node wrapper maps because they exist only on the main thread.
-    DOMData::removeObjectsFromWrapperMap<void>(&store, store.domObjectMap());
-    DOMData::removeObjectsFromWrapperMap<void>(&store, store.activeDomObjectMap());
+    v8::HandleScope scope;
+    DOMDataStore& store = DOMData::getCurrentStore();
+    store.domObjectMap().clear();
+    store.activeDomObjectMap().clear();
 }
 
 void visitAllDOMNodes(NodeWrapperVisitor* visitor)
@@ -117,7 +115,7 @@ void visitAllDOMNodes(NodeWrapperVisitor* visitor)
     v8::V8::VisitHandlesWithClassIds(&visitorAdapter);
 }
 
-void visitActiveDOMNodes(DOMWrapperMap<Node>::Visitor* visitor)
+void visitActiveDOMNodes(DOMWrapperVisitor<Node>* visitor)
 {
     v8::HandleScope scope;
 
@@ -129,7 +127,7 @@ void visitActiveDOMNodes(DOMWrapperMap<Node>::Visitor* visitor)
     }
 }
 
-void visitDOMObjects(DOMWrapperMap<void>::Visitor* visitor)
+void visitDOMObjects(DOMWrapperVisitor<void>* visitor)
 {
     v8::HandleScope scope;
 
@@ -141,7 +139,7 @@ void visitDOMObjects(DOMWrapperMap<void>::Visitor* visitor)
     }
 }
 
-void visitActiveDOMObjects(DOMWrapperMap<void>::Visitor* visitor)
+void visitActiveDOMObjects(DOMWrapperVisitor<void>* visitor)
 {
     v8::HandleScope scope;
 

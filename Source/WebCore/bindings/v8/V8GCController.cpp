@@ -37,6 +37,7 @@
 #include "DOMImplementation.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "IntrusiveDOMWrapperMap.h"
 #include "MemoryUsageSupport.h"
 #include "MessagePort.h"
 #include "RetainedDOMInfo.h"
@@ -66,20 +67,8 @@
 
 namespace WebCore {
 
-#ifndef NDEBUG
-
-class EnsureWeakDOMNodeVisitor : public DOMWrapperMap<Node>::Visitor {
-public:
-    void visitDOMWrapper(DOMDataStore*, Node*, v8::Persistent<v8::Object> wrapper)
-    {
-        ASSERT(wrapper.IsWeak());
-    }
-};
-
-#endif // NDEBUG
-
 template<typename T>
-class ActiveDOMObjectPrologueVisitor : public DOMWrapperMap<T>::Visitor {
+class ActiveDOMObjectPrologueVisitor : public DOMWrapperVisitor<T> {
 public:
     explicit ActiveDOMObjectPrologueVisitor(Vector<v8::Persistent<v8::Value> >* liveObjects)
         : m_liveObjects(liveObjects)
@@ -109,7 +98,7 @@ private:
     Vector<v8::Persistent<v8::Value> >* m_liveObjects;
 };
 
-class ObjectVisitor : public DOMWrapperMap<void>::Visitor {
+class ObjectVisitor : public DOMWrapperVisitor<void> {
 public:
     void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
     {

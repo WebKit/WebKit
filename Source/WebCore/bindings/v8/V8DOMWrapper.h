@@ -32,6 +32,7 @@
 #define V8DOMWrapper_h
 
 #include "DOMDataStore.h"
+#include "DOMWrapperWorld.h"
 #include "Event.h"
 #include "Node.h"
 #include "NodeFilter.h"
@@ -123,7 +124,7 @@ namespace WebCore {
                 return node->wrapper();
 
             DOMDataStore* store = context->world()->domDataStore();
-            DOMNodeMapping& domNodeMap = node->isActiveNode() ? store->activeDomNodeMap() : store->domNodeMap();
+            DOMWrapperMap<Node>& domNodeMap = node->isActiveNode() ? store->activeDomNodeMap() : store->domNodeMap();
             return domNodeMap.get(node);
         }
     };

@@ -1,3 +1,141 @@
+2012-10-24  Adam Barth  <abarth@webkit.org>
+
+        [V8] AbstractWeakReferenceMap is unnecessarily general and complex
+        https://bugs.webkit.org/show_bug.cgi?id=100175
+
+        Reviewed by Eric Seidel.
+
+        Before this patch, AbstractWeakReferenceMap served two masters:
+
+        1) DOM wrappers
+        2) NPV8 function templates
+
+        These two uses cases pushed AbstractWeakReferenceMap to be more general
+        and complex that needed. This patch separates these two uses cases into
+        two separate classes. V8NPTemplateMap is all of 40 lines of code. It's
+        not worth complicating the DOM wrapper code path to share that tiny
+        amount of code.
+
+        The other thing this patch does is store a pointer to the DOM wrapper
+        map as the weak callback context object. That means we no longer need
+        to search through all the wrapper maps in order to find the map that
+        contains this particular DOM wrapper.
+
+        * WebCore.gypi:
+        * bindings/v8/DOMData.cpp:
+        * bindings/v8/DOMData.h:
+        (DOMData):
+        * bindings/v8/DOMDataStore.cpp:
+            - Delete all these complicated weak callback functions. The weak
+              callback functions are now an order of magnitude simpler and
+              declared as private member functions on the wrapper map.
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::domNodeMap):
+        (WebCore::DOMDataStore::activeDomNodeMap):
+        (DOMDataStore):
+            - We now have a consistent type to use for all these wrapper maps.
+              Both the hash map and the intrusive map derive from
+              DOMWrapperMap (with a single template parameter).
+        * bindings/v8/DOMWrapperMap.h: Added.
+        (WebCore):
+        (DOMWrapperVisitor):
+            - The visitor is no longer an inner class. It's just a top-level
+              class that does the same thing.
+        (DOMWrapperMap):
+            - The abstract interface for DOMWrapperMap has about half as many
+              functions as the old AbstractWeakReferenceMap because the two use
+              cases are disentangled.
+        (WebCore::DOMWrapperMap::~DOMWrapperMap):
+        (DOMWrapperHashMap):
+            - This is a concrete instance of DOMWrapperMap that uses a hash map.
+        (WebCore::DOMWrapperHashMap::DOMWrapperHashMap):
+        (WebCore::DOMWrapperHashMap::remove):
+        (WebCore::DOMWrapperHashMap::defaultWeakCallback):
+            - Notice that the context parameter now points to the hashmap
+              itself rather than to the native object. Now that we don't need
+              to handle the NPAPI case, we can recover the native object from
+              the wrapper using toNative. The assert in set() ensures that this
+              always works.
+        * bindings/v8/DOMWrapperWorld.h:
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+            - These classes are now simplified because they need to implement
+              fewer functions.
+        (WebCore::DOMNodeWrapperMap::weakCallback):
+            - For this weak callback, we still use the native object as the
+              context parameter. We could also recover the native object from
+              the wrapper, which means this context parameter is available to
+              do other work.
+        * bindings/v8/ScopedDOMDataStore.cpp:
+        (WebCore::ScopedDOMDataStore::ScopedDOMDataStore):
+            - This code no longer needs to have knowledge of which weak
+              callbacks these objects use.
+        (WebCore::ScopedDOMDataStore::~ScopedDOMDataStore):
+            - We need to clear the maps before deleting them because there are
+              still JavaScript objects that have references to the map in their
+              weak callback parameter. Previously, we handled this case because
+              we would search all the wrapper maps and fail to find the wrapper.
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::visitExternalArrays):
+        * bindings/v8/StaticDOMDataStore.cpp:
+            - This code no longer needs to have knowledge of which weak
+              callback these maps use.
+        * bindings/v8/StaticDOMDataStore.h:
+        (StaticDOMDataStore):
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::getDOMNodeMap):
+        (WebCore::getActiveDOMNodeMap):
+        (WebCore::removeAllDOMObjects):
+            - Rather than using some complicated visitor pattern, we can now
+              just call clear() directly on the maps to remove all the objects.
+        (WebCore::visitActiveDOMNodes):
+        (WebCore::visitDOMObjects):
+        (WebCore::visitActiveDOMObjects):
+        * bindings/v8/V8DOMMap.h:
+        (WebCore):
+            - Delete the old versions of these classes.
+        (DOMDataStoreHandle):
+            - Style nit: one-argument constructors should be marked explicit.
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::domWrapperType):
+            - I moved this logic into WrapperTypeInfo.h to avoid a circular
+              header dependency.
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::getCachedWrapper):
+        * bindings/v8/V8GCController.cpp:
+            - EnsureWeakDOMNodeVisitor is no longer used (or needed since we no
+              longer clear the weak callbacks in V8GCController).
+        * bindings/v8/V8NPObject.cpp:
+        (V8NPTemplateMap):
+            - staticTemplateMap is no longer an instance of WeakReferenceMap.
+              Instead, this patch just implements the functionality we need
+              here directly.
+        (WebCore::V8NPTemplateMap::get):
+        (WebCore::V8NPTemplateMap::set):
+        (WebCore::V8NPTemplateMap::sharedInstance):
+        (WebCore::V8NPTemplateMap::weakCallback):
+        (WebCore::V8NPTemplateMap::dispose):
+        (WebCore::npObjectGetProperty):
+        (WebCore):
+        (WebCore::staticNPObjectMap):
+        (WebCore::weakNPObjectCallback):
+            - DOMWrapperMap no longer exposes a "forget" function. Instead, we
+              just use the more basic "remove" and "Dispose" operations to do
+              the same thing. This is possible now because we no longer have
+              "removeIfPossible" to support searching all the wrapper maps for
+              the one that has the right wrapper.
+        (WebCore::createV8ObjectForNPObject):
+            - DOMWrapperMap No longer has a "contains" function. Instead, we
+              use get, which actually makes this code more efficient because we
+              only do one hash map lookup.
+        (WebCore::forgetV8ObjectForNPObject):
+            - The changes here are a combination of the two sorts of changes
+              above.
+        * bindings/v8/WrapperTypeInfo.h:
+        (WebCore::toNative):
+        (WebCore::toWrapperTypeInfo):
+            - The patch moves these functions into this header to avoid a
+              circular header dependency.
+
 2012-10-24  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         [cairo] unneeded FloatRect object creation in BitmapImage::draw

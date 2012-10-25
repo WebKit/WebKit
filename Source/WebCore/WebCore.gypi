@@ -2233,6 +2233,7 @@
             'bindings/v8/DOMDataStore.h',
             'bindings/v8/DOMTransaction.cpp',
             'bindings/v8/DOMTransaction.h',
+            'bindings/v8/DOMWrapperMap.h',
             'bindings/v8/DOMWrapperWorld.cpp',
             'bindings/v8/DOMWrapperWorld.h',
             'bindings/v8/DateExtension.cpp',

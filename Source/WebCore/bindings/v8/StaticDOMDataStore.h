@@ -54,8 +54,8 @@ public:
 private:
     DOMNodeWrapperMap m_staticDomNodeMap;
     ActiveDOMNodeWrapperMap m_staticActiveDomNodeMap;
-    DOMWrapperMap<void> m_staticDomObjectMap;
-    DOMWrapperMap<void> m_staticActiveDomObjectMap;
+    DOMWrapperHashMap<void> m_staticDomObjectMap;
+    DOMWrapperHashMap<void> m_staticActiveDomObjectMap;
 };
 
 } // namespace WebCore

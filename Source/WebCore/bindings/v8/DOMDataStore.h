@@ -31,8 +31,8 @@
 #ifndef DOMDataStore_h
 #define DOMDataStore_h
 
-#include "V8DOMMap.h"
-
+#include "DOMWrapperMap.h"
+#include "Node.h"
 #include <v8.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
@@ -72,27 +72,21 @@ namespace WebCore {
         DOMDataStore();
         virtual ~DOMDataStore();
 
-        // A list of all DOMDataStore objects in the current V8 instance (thread). Normally, each World has a DOMDataStore.
+        // A list of all DOMDataStore objects in the current V8 isolate. Normally, each World has a DOMDataStore.
         static DOMDataList& allStores();
 
         void* getDOMWrapperMap(DOMWrapperMapType);
 
-        DOMNodeMapping& domNodeMap() { return *m_domNodeMap; }
-        DOMNodeMapping& activeDomNodeMap() { return *m_activeDomNodeMap; }
+        DOMWrapperMap<Node>& domNodeMap() { return *m_domNodeMap; }
+        DOMWrapperMap<Node>& activeDomNodeMap() { return *m_activeDomNodeMap; }
         DOMWrapperMap<void>& domObjectMap() { return *m_domObjectMap; }
         DOMWrapperMap<void>& activeDomObjectMap() { return *m_activeDomObjectMap; }
-
-        // Need by V8GCController.
-        static void weakActiveDOMObjectCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
-        static void weakNodeCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
 
         virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
     protected:
-        static void weakDOMObjectCallback(v8::Persistent<v8::Value> v8Object, void* domObject);
-
-        DOMNodeMapping* m_domNodeMap;
-        DOMNodeMapping* m_activeDomNodeMap;
+        DOMWrapperMap<Node>* m_domNodeMap;
+        DOMWrapperMap<Node>* m_activeDomNodeMap;
         DOMWrapperMap<void>* m_domObjectMap;
         DOMWrapperMap<void>* m_activeDomObjectMap;
     };
