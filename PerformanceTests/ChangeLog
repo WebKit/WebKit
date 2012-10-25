@@ -1,5 +1,29 @@
 2012-10-24  Zoltan Horvath  <zoltan@webkit.org>
 
+        Turn PageLoad tests into simple performancetests, commit #2 
+        https://bugs.webkit.org/show_bug.cgi?id=99899
+
+        Reviewed by Ryosuke Niwa.
+
+        We cannot provide an elegant way to measure the memory consumption of the PageLoad tests, but we can turn them into simple
+        performance tests and measure their memory footprint and performance that way. This change moves and renames the related files
+        to their new location and adds html/js wrappers for them.
+
+        This is the #2 commit of the whole patch.
+
+        * PageLoad/svg/files/cacuts_01.svg: Removed.
+        * PageLoad/svg/files/cowboy.svg: Removed.
+        * PageLoad/svg/files/crawfish2_ganson.svg: Removed.
+        * SVG/Cactus.html: Added.
+        * SVG/Cowboy.html: Added.
+        * SVG/CrawFishGanson.html: Added.
+        * SVG/resources/Cactus.svg: Copied from PerformanceTests/PageLoad/svg/files/cacuts_01.svg.
+        * SVG/resources/Cowboy.svg: Copied from PerformanceTests/PageLoad/svg/files/cowboy.svg.
+        * SVG/resources/CrawFishGanson.svg: Copied from PerformanceTests/PageLoad/svg/files/crawfish2_ganson.svg.
+        * Skipped: Remove az-lizard_benji_park_01.svg from the skipped list.
+
+2012-10-24  Zoltan Horvath  <zoltan@webkit.org>
+
         Turn PageLoad tests into simple performancetests, commit #1 
         https://bugs.webkit.org/show_bug.cgi?id=99899
 
