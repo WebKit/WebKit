@@ -148,6 +148,7 @@
 #include "SubstituteData.h"
 #include "TextAffinity.h"
 #include "TextIterator.h"
+#include "TraceEvent.h"
 #include "UserGestureIndicator.h"
 #include "V8DOMFileSystem.h"
 #include "V8DirectoryEntry.h"
@@ -1114,15 +1115,7 @@ WebURLLoader* WebFrameImpl::createAssociatedURLLoader(const WebURLLoaderOptions&
 
 void WebFrameImpl::commitDocumentData(const char* data, size_t length)
 {
-    WebViewImpl* webView = viewImpl();
-    bool isMainFrame = webView->mainFrameImpl()->frame() == frame();
-    if (isMainFrame)
-        webView->suppressInvalidations(true);
-
     frame()->loader()->documentLoader()->commitData(data, length);
-
-    if (isMainFrame)
-        webView->suppressInvalidations(false);
 }
 
 unsigned WebFrameImpl::unloadListenerCount() const
@@ -2275,6 +2268,8 @@ void WebFrameImpl::didChangeContentsSize(const IntSize& size)
 
 void WebFrameImpl::createFrameView()
 {
+    TRACE_EVENT0("webkit", "WebFrameImpl::createFrameView");
+
     ASSERT(frame()); // If frame() doesn't exist, we probably didn't init properly.
 
     WebViewImpl* webView = viewImpl();

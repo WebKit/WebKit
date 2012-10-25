@@ -4102,7 +4102,7 @@ void WebViewImpl::didRecreateOutputSurface(bool success)
 void WebViewImpl::scheduleComposite()
 {
     if  (m_suppressInvalidations) {
-        TRACE_EVENT0("webkit", "WebViewImpl invalidations suppressed");
+        TRACE_EVENT_INSTANT0("webkit", "WebViewImpl invalidations suppressed");
         return;
     }
 

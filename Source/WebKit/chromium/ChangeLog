@@ -1,3 +1,19 @@
+2012-10-25  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Regression: navigating between composited pages doesn't cause redraw until scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=100396
+
+        Reviewed by Adrienne Walker.
+
+        This partially reverts r132173.  It's not valid to suppress invalidations in commitDocumentData since for small
+        or cached pages this could load up the whole document.  Also adds and improves some of the tracing.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::commitDocumentData):
+        (WebKit::WebFrameImpl::createFrameView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scheduleComposite):
+
 2012-10-25  Sami Kyostila  <skyostil@chromium.org>
 
         Composited/HW content have the red and blue channels inverted in DRT on Chromium Android
