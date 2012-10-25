@@ -41,7 +41,7 @@ namespace WebKit {
 bool isContinuousSpellCheckingEnabled(const void* clientInfo);
 void setContinuousSpellCheckingEnabled(bool enabled, const void* clientInfo);
 
-uint64_t uniqueSpellDocumentTag(WKPageRef page, const void* clientInfo);
+uint64_t uniqueSpellDocumentTag(WKPageRef, const void* clientInfo);
 void closeSpellDocumentWithTag(uint64_t tag, const void* clientInfo);
 
 void checkSpellingOfString(uint64_t tag, WKStringRef text, int32_t* misspellingLocation, int32_t* misspellingLength, const void* clientInfo);

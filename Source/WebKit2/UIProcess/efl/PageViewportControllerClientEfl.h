@@ -49,7 +49,7 @@ public:
     float scaleFactor() const { return m_scaleFactor; }
     WebCore::IntPoint scrollPosition() { return m_scrollPosition; }
 
-    void display(const WebCore::IntRect& rect, const WebCore::IntPoint& viewPosition);
+    void display(const WebCore::IntRect&, const WebCore::IntPoint& viewPosition);
     void updateViewportSize(const WebCore::IntSize& viewportSize);
     void setVisibleContentsRect(const WebCore::IntPoint&, float, const WebCore::FloatPoint&);
     void setRendererActive(bool);

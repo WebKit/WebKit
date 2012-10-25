@@ -41,13 +41,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/C/soup/WKContextSoup.cpp
     UIProcess/API/C/soup/WKSoupRequestManager.cpp
 
-    UIProcess/API/efl/BatteryProvider.cpp
     UIProcess/API/efl/EwkViewImpl.cpp
-    UIProcess/API/efl/PageViewportControllerClientEfl.cpp
-    UIProcess/API/efl/NetworkInfoProvider.cpp
-    UIProcess/API/efl/PageClientImpl.cpp
-    UIProcess/API/efl/VibrationProvider.cpp
-    UIProcess/API/efl/WebKitTextChecker.cpp
     UIProcess/API/efl/ewk_back_forward_list.cpp
     UIProcess/API/efl/ewk_back_forward_list_item.cpp
     UIProcess/API/efl/ewk_context.cpp
@@ -72,19 +66,25 @@ LIST(APPEND WebKit2_SOURCES
 
     UIProcess/cairo/BackingStoreCairo.cpp
 
+    UIProcess/efl/BatteryProvider.cpp
     UIProcess/efl/ContextHistoryClientEfl.cpp
     UIProcess/efl/DownloadManagerEfl.cpp
     UIProcess/efl/FindClientEfl.cpp
     UIProcess/efl/FormClientEfl.cpp
+    UIProcess/efl/NetworkInfoProvider.cpp
+    UIProcess/efl/PageClientImpl.cpp
     UIProcess/efl/PageLoadClientEfl.cpp
     UIProcess/efl/PagePolicyClientEfl.cpp
     UIProcess/efl/PageUIClientEfl.cpp
+    UIProcess/efl/PageViewportControllerClientEfl.cpp
     UIProcess/efl/RequestManagerClientEfl.cpp
     UIProcess/efl/ResourceLoadClientEfl.cpp
     UIProcess/efl/TextCheckerEfl.cpp
+    UIProcess/efl/VibrationProvider.cpp
     UIProcess/efl/WebContextEfl.cpp
     UIProcess/efl/WebFullScreenManagerProxyEfl.cpp
     UIProcess/efl/WebInspectorProxyEfl.cpp
+    UIProcess/efl/WebKitTextChecker.cpp
     UIProcess/efl/WebPageProxyEfl.cpp
     UIProcess/efl/WebPopupMenuProxyEfl.cpp
     UIProcess/efl/WebPreferencesEfl.cpp

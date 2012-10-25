@@ -1,3 +1,154 @@
+2012-10-25  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Move non-API classes out of UIProcess/API/efl
+        https://bugs.webkit.org/show_bug.cgi?id=100391
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move non-API classes from UIProcess/API/efl to
+        UIProcess/efl for clarity.
+
+        * PlatformEfl.cmake:
+        * UIProcess/efl/BatteryProvider.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/BatteryProvider.cpp.
+        (toBatteryProvider):
+        (startUpdatingCallback):
+        (stopUpdatingCallback):
+        (BatteryProvider::~BatteryProvider):
+        (BatteryProvider::create):
+        (BatteryProvider::BatteryProvider):
+        (BatteryProvider::startUpdating):
+        (BatteryProvider::stopUpdating):
+        (BatteryProvider::didChangeBatteryStatus):
+        * UIProcess/efl/BatteryProvider.h: Renamed from Source/WebKit2/UIProcess/API/efl/BatteryProvider.h.
+        (WebKit):
+        (BatteryProvider):
+        * UIProcess/efl/NetworkInfoProvider.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/NetworkInfoProvider.cpp.
+        (toNetworkInfoProvider):
+        (startUpdatingCallback):
+        (stopUpdatingCallback):
+        (getBandwidthCallback):
+        (isMeteredCallback):
+        (NetworkInfoProvider::create):
+        (NetworkInfoProvider::NetworkInfoProvider):
+        (NetworkInfoProvider::~NetworkInfoProvider):
+        (NetworkInfoProvider::bandwidth):
+        (NetworkInfoProvider::metered):
+        (NetworkInfoProvider::startUpdating):
+        (NetworkInfoProvider::stopUpdating):
+        * UIProcess/efl/NetworkInfoProvider.h: Renamed from Source/WebKit2/UIProcess/API/efl/NetworkInfoProvider.h.
+        (WebKit):
+        (NetworkInfoProvider):
+        * UIProcess/efl/PageClientImpl.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/PageClientImpl.cpp.
+        (WebKit):
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::~PageClientImpl):
+        (WebKit::PageClientImpl::viewImpl):
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        (WebKit::PageClientImpl::displayView):
+        (WebKit::PageClientImpl::scrollView):
+        (WebKit::PageClientImpl::viewSize):
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::isViewInWindow):
+        (WebKit::PageClientImpl::processDidCrash):
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        (WebKit::PageClientImpl::pageClosed):
+        (WebKit::PageClientImpl::toolTipChanged):
+        (WebKit::PageClientImpl::setCursor):
+        (WebKit::PageClientImpl::setCursorHiddenUntilMouseMoves):
+        (WebKit::PageClientImpl::didChangeViewportProperties):
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::clearAllEditCommands):
+        (WebKit::PageClientImpl::canUndoRedo):
+        (WebKit::PageClientImpl::executeUndoRedo):
+        (WebKit::PageClientImpl::convertToDeviceSpace):
+        (WebKit::PageClientImpl::convertToUserSpace):
+        (WebKit::PageClientImpl::screenToWindow):
+        (WebKit::PageClientImpl::windowToScreen):
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        (WebKit::PageClientImpl::doneWithTouchEvent):
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        (WebKit::PageClientImpl::createColorChooserProxy):
+        (WebKit::PageClientImpl::setFindIndicator):
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::exitAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::updateAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::didChangeScrollbarsForMainFrame):
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadingDataForCustomRepresentation):
+        (WebKit::PageClientImpl::customRepresentationZoomFactor):
+        (WebKit::PageClientImpl::setCustomRepresentationZoomFactor):
+        (WebKit::PageClientImpl::flashBackingStoreUpdates):
+        (WebKit::PageClientImpl::findStringInCustomRepresentation):
+        (WebKit::PageClientImpl::countStringMatchesInCustomRepresentation):
+        (WebKit::PageClientImpl::updateTextInputState):
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        (WebKit::PageClientImpl::pageDidRequestScroll):
+        (WebKit::PageClientImpl::didChangeContentsSize):
+        (WebKit::PageClientImpl::didRenderFrame):
+        (WebKit::PageClientImpl::pageTransitionViewportReady):
+        * UIProcess/efl/PageClientImpl.h: Renamed from Source/WebKit2/UIProcess/API/efl/PageClientImpl.h.
+        (WebKit):
+        (PageClientImpl):
+        (WebKit::PageClientImpl::create):
+        (WebKit::PageClientImpl::setPageViewportController):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/PageViewportControllerClientEfl.cpp.
+        (WebKit):
+        (WebKit::PageViewportControllerClientEfl::PageViewportControllerClientEfl):
+        (WebKit::PageViewportControllerClientEfl::~PageViewportControllerClientEfl):
+        (WebKit::PageViewportControllerClientEfl::drawingArea):
+        (WebKit::PageViewportControllerClientEfl::setRendererActive):
+        (WebKit::PageViewportControllerClientEfl::display):
+        (WebKit::PageViewportControllerClientEfl::updateViewportSize):
+        (WebKit::PageViewportControllerClientEfl::setVisibleContentsRect):
+        (WebKit::PageViewportControllerClientEfl::didChangeContentsSize):
+        (WebKit::PageViewportControllerClientEfl::setViewportPosition):
+        (WebKit::PageViewportControllerClientEfl::setContentsScale):
+        (WebKit::PageViewportControllerClientEfl::didResumeContent):
+        (WebKit::PageViewportControllerClientEfl::didChangeVisibleContents):
+        (WebKit::PageViewportControllerClientEfl::didChangeViewportAttributes):
+        (WebKit::PageViewportControllerClientEfl::setController):
+        * UIProcess/efl/PageViewportControllerClientEfl.h: Renamed from Source/WebKit2/UIProcess/API/efl/PageViewportControllerClientEfl.h.
+        (WebKit):
+        (PageViewportControllerClientEfl):
+        (WebKit::PageViewportControllerClientEfl::create):
+        (WebKit::PageViewportControllerClientEfl::viewSize):
+        (WebKit::PageViewportControllerClientEfl::scaleFactor):
+        (WebKit::PageViewportControllerClientEfl::scrollPosition):
+        * UIProcess/efl/VibrationProvider.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/VibrationProvider.cpp.
+        (Ewk_Vibration_Client):
+        (Ewk_Vibration_Client::Ewk_Vibration_Client):
+        (toVibrationProvider):
+        (vibrateCallback):
+        (cancelVibrationCallback):
+        (VibrationProvider::create):
+        (VibrationProvider::VibrationProvider):
+        (VibrationProvider::~VibrationProvider):
+        (VibrationProvider::vibrate):
+        (VibrationProvider::cancelVibration):
+        (VibrationProvider::setVibrationClientCallbacks):
+        * UIProcess/efl/VibrationProvider.h: Renamed from Source/WebKit2/UIProcess/API/efl/VibrationProvider.h.
+        (WebKit):
+        (VibrationProvider):
+        * UIProcess/efl/WebKitTextChecker.cpp: Renamed from Source/WebKit2/UIProcess/API/efl/WebKitTextChecker.cpp.
+        (WebKit):
+        (WebKit::isContinuousSpellCheckingEnabled):
+        (WebKit::setContinuousSpellCheckingEnabled):
+        (WebKit::uniqueSpellDocumentTag):
+        (WebKit::closeSpellDocumentWithTag):
+        (WebKit::checkSpellingOfString):
+        (WebKit::guessesForWord):
+        (WebKit::learnWord):
+        (WebKit::ignoreWord):
+        (WebKit::availableSpellCheckingLanguages):
+        (WebKit::updateSpellCheckingLanguages):
+        (WebKit::loadedSpellCheckingLanguages):
+        * UIProcess/efl/WebKitTextChecker.h: Renamed from Source/WebKit2/UIProcess/API/efl/WebKitTextChecker.h.
+        (WebKit):
+
 2012-10-25  Brady Eidson  <beidson@apple.com>
 
         Allow LoaderStrategy to override the ResourceLoadScheduler
