@@ -77,7 +77,7 @@ private:
     virtual bool handleKeyboardEvent(const WebKeyboardEvent&) OVERRIDE;
     virtual bool handleEditingCommand(const String& commandName, const String& argument) OVERRIDE;
     virtual bool isEditingCommandEnabled(const String&) OVERRIDE;
-    virtual bool handlesPageScaleFactor() OVERRIDE { return true; }
+    virtual bool handlesPageScaleFactor() OVERRIDE;
 
     // ScrollableArea functions.
     virtual void setScrollOffset(const WebCore::IntPoint&) OVERRIDE;

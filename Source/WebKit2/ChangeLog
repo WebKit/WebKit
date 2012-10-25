@@ -1,3 +1,22 @@
+2012-10-25  Tim Horton  <timothy_horton@apple.com>
+
+        Only full-page PDFPlugins should purport to handle page scale changes
+        https://bugs.webkit.org/show_bug.cgi?id=99635
+
+        Reviewed by Sam Weinig.
+
+        PDFPlugin should only handle page scale factor changes itself if it's in the main frame.
+        Subframe PDFs will act like images, zooming with the page.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (PDFPlugin): Move implementation of handlesPageScaleFactor() to PDFPlugin.mm.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pdfDocumentDidLoad): Only copy PDFLayerController's default autoscale magnification to PluginView's
+        notion of the current scale factor if we're supposed to be handling page scale factor changes.
+        (WebKit::PDFPlugin::geometryDidChange): Only update PDFLayerController's magnification from the page scale factor
+        if we're supposed to be handling page scale factor changes.
+        (WebKit::PDFPlugin::handlesPageScaleFactor): We should only handle page scale factor changes if we're in the main frame.
+
 2012-10-25  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Move non-API classes out of UIProcess/API/efl

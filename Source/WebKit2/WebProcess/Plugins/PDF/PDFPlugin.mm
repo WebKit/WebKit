@@ -298,7 +298,8 @@ void PDFPlugin::pdfDocumentDidLoad()
     [m_pdfLayerController.get() setFrameSize:size()];
     m_pdfLayerController.get().document = document.get();
     
-    pluginView()->setPageScaleFactor([m_pdfLayerController.get() tileScaleFactor], IntPoint());
+    if (handlesPageScaleFactor())
+        pluginView()->setPageScaleFactor([m_pdfLayerController.get() tileScaleFactor], IntPoint());
 
     calculateSizes();
     updateScrollbars();
@@ -400,12 +401,17 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, con
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     CATransform3D transform = CATransform3DMakeScale(1, -1, 1);
+    transform = CATransform3DTranslate(transform, 0, -pluginSize.height(), 0);
     
-    CGFloat magnification = pluginView()->pageScaleFactor() - [m_pdfLayerController.get() tileScaleFactor];
-    
-    // FIXME: Instead of m_lastMousePoint, we should use the zoom origin from PluginView::setPageScaleFactor.
-    [m_pdfLayerController.get() magnifyWithMagnification:magnification atPoint:m_lastMousePoint immediately:YES];
-    [m_contentLayer.get() setSublayerTransform:CATransform3DTranslate(transform, 0, -pluginSize.height(), 0)];
+    if (handlesPageScaleFactor()) {
+        CGFloat magnification = pluginView()->pageScaleFactor() - [m_pdfLayerController.get() tileScaleFactor];
+
+        // FIXME: Instead of m_lastMousePoint, we should use the zoom origin from PluginView::setPageScaleFactor.
+        if (magnification)
+            [m_pdfLayerController.get() magnifyWithMagnification:magnification atPoint:m_lastMousePoint immediately:YES];
+    }
+
+    [m_contentLayer.get() setSublayerTransform:transform];
     [CATransaction commit];
 
     calculateSizes();
@@ -575,6 +581,11 @@ void PDFPlugin::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rec
 void PDFPlugin::invalidateScrollCornerRect(const IntRect& rect)
 {
     [m_scrollCornerLayer.get() setNeedsDisplay];
+}
+
+bool PDFPlugin::handlesPageScaleFactor()
+{
+    return webFrame()->isMainFrame();
 }
 
 } // namespace WebKit
