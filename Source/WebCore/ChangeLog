@@ -1,3 +1,9 @@
+2012-10-24  Kent Tamura  <tkent@chromium.org>
+
+        Sort an Xcode project file.
+
+        * WebCore.xcodeproj/project.pbxproj: Sorted.
+
 2012-10-24  Adam Barth  <abarth@webkit.org>
 
         [V8] AbstractWeakReferenceMap is unnecessarily general and complex
