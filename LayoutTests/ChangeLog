@@ -1,3 +1,17 @@
+2012-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Log the tile cache tile size in test output
+        https://bugs.webkit.org/show_bug.cgi?id=100409
+
+        Reviewed by Beth Dakin.
+
+        New results with tile size in the output.
+
+        * platform/mac/tiled-drawing/tile-coverage-after-scroll-expected.txt:
+        * platform/mac/tiled-drawing/tile-coverage-scroll-to-bottom-expected.txt:
+        * platform/mac/tiled-drawing/tile-coverage-slow-scrolling-expected.txt:
+        * platform/mac/tiled-drawing/use-tiled-drawing-expected.txt:
+
 2012-10-25  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

@@ -1,3 +1,17 @@
+2012-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Log the tile cache tile size in test output
+        https://bugs.webkit.org/show_bug.cgi?id=100409
+
+        Reviewed by Beth Dakin.
+
+        When dumping tile cache information in tests, also dump the tile size.
+
+        * platform/graphics/TiledBacking.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties):
+        * platform/graphics/ca/mac/TileCache.h:
+
 2012-10-25  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         do not multiply/demultiply colors when alpha is 255
