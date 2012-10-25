@@ -1,5 +1,11 @@
 2012-10-24  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: updating chromium TestExpectations for the roll.
+
+        * platform/chromium/TestExpectations:
+
+2012-10-24  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: platform/chromium/TestExpectations lint.
 
         * platform/chromium/TestExpectations:
