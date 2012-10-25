@@ -1,3 +1,18 @@
+2012-10-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Add setMediaTypeOverride to window.internals.settings
+        https://bugs.webkit.org/show_bug.cgi?id=100249
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fixed fast/media/print-restores-previous-mediatype.html to use cross-platform
+        window.internals.settings.setMediaTypeOverride.
+        Unskipped fast/media/print-restores-previous-mediatype.html for EFL, the test should also work
+        on other ports but it needs to be checked first.
+
+        * fast/media/print-restores-previous-mediatype.html:
+        * platform/efl/TestExpectations:
+
 2012-10-22  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Add supportMultipleWindows setting, needed for Android

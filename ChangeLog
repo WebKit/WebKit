@@ -1,3 +1,14 @@
+2012-10-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Add setMediaTypeOverride to window.internals.settings
+        https://bugs.webkit.org/show_bug.cgi?id=100249
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Exported WebCore::Settings::setMediaTypeOverride(WTF::String const&) for GTK port.
+
+        * Source/autotools/symbols.filter:
+
 2012-10-24  Michael Carmody  <mcarmody@rim.com>
 
         [BlackBerry] change CMAKE_<CCXX|C>_FLAGS_<RELEASE|DEBUG> from enviroment flags

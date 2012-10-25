@@ -124,6 +124,10 @@ namespace WebCore {
         void setResolutionOverride(const IntSize&);
         const IntSize& resolutionOverride() const { return m_resolutionDensityPerInchOverride; }
 
+        // Only set by Layout Tests.
+        void setMediaTypeOverride(const String&);
+        const String& mediaTypeOverride() const { return m_mediaTypeOverride; }
+
         // Unlike areImagesEnabled, this only suppresses the network load of
         // the image URL.  A cached image will still be rendered if requested.
         void setLoadsImagesAutomatically(bool);
@@ -659,6 +663,7 @@ namespace WebCore {
         String m_defaultTextEncodingName;
         String m_ftpDirectoryTemplatePath;
         String m_localStorageDatabasePath;
+        String m_mediaTypeOverride;
         KURL m_userStyleSheetLocation;
         ScriptFontFamilyMap m_standardFontFamilyMap;
         ScriptFontFamilyMap m_serifFontFamilyMap;

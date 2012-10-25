@@ -125,6 +125,7 @@ static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;
 
 Settings::Settings(Page* page)
     : m_page(0)
+    , m_mediaTypeOverride("screen")
     , m_editableLinkBehavior(EditableLinkDefaultBehavior)
     , m_textDirectionSubmenuInclusionBehavior(TextDirectionSubmenuAutomaticallyIncluded)
     , m_passwordEchoDurationInSeconds(1)
@@ -466,6 +467,22 @@ void Settings::setResolutionOverride(const IntSize& densityPerInchOverride)
         return;
 
     m_resolutionDensityPerInchOverride = densityPerInchOverride;
+    m_page->setNeedsRecalcStyleInAllFrames();
+}
+
+void Settings::setMediaTypeOverride(const String& mediaTypeOverride)
+{
+    if (m_mediaTypeOverride == mediaTypeOverride)
+        return;
+
+    m_mediaTypeOverride = mediaTypeOverride;
+
+    Frame* mainFrame = m_page->mainFrame();
+    ASSERT(mainFrame);
+    FrameView* view = mainFrame->view();
+    ASSERT(view);
+
+    view->setMediaType(mediaTypeOverride);
     m_page->setNeedsRecalcStyleInAllFrames();
 }
 

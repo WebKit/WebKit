@@ -1,3 +1,32 @@
+2012-10-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Add setMediaTypeOverride to window.internals.settings
+        https://bugs.webkit.org/show_bug.cgi?id=100249
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added setMediaTypeOverride to window.internals.settings.
+
+        Test: fast/media/print-restores-previous-mediatype.html
+
+        * WebCore.exp.in: Exported WebCore::Settings::setMediaTypeOverride(WTF::String const&) for MAC.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setMediaTypeOverride):
+        (WebCore):
+        * page/Settings.h:
+        (Settings):
+        (WebCore::Settings::mediaTypeOverride):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setMediaTypeOverride):
+        (WebCore):
+        * testing/InternalSettings.h:
+        (Backup):
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
 2012-10-22  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Add supportMultipleWindows setting, needed for Android

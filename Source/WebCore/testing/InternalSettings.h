@@ -77,6 +77,7 @@ public:
         float m_originalTextAutosizingFontScaleFactor;
 #endif
         IntSize m_originalResolutionOverride;
+        String m_originalMediaTypeOverride;
 #if ENABLE(DIALOG_ELEMENT)
         bool m_originalDialogElementEnabled;
 #endif
@@ -126,6 +127,7 @@ public:
     void setTextAutosizingWindowSizeOverride(int width, int height, ExceptionCode&);
     void setTextAutosizingFontScaleFactor(float fontScaleFactor, ExceptionCode&);
     void setResolutionOverride(int dotsPerCSSInchHorizontally, int dotsPerCSSInchVertically, ExceptionCode&);
+    void setMediaTypeOverride(const String& mediaType, ExceptionCode&);
     void setEnableScrollAnimator(bool enabled, ExceptionCode&);
     bool scrollAnimatorEnabled(ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
