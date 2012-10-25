@@ -1,3 +1,12 @@
+2012-10-25  Nico Weber  <thakis@chromium.org>
+
+        Move ImageOrientation transform back in CG space (lower-left origin), adapt the skia code to work with that, turn on feature for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=100319
+
+        Reviewed by Eric Seidel.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Log the tile cache tile size in test output

@@ -3314,7 +3314,6 @@ webkit.org/b/83219 [ Lion ] fonts/cursive.html [ Failure Pass ]
 webkit.org/b/83324 [ Win Debug ] fast/js/cross-global-object-inline-global-var.html [ Failure Pass ]
 
 # EXIF orientation support has not yet been implemented for this platform
-webkit.org/b/19688 fast/images/exif-orientation.html
 webkit.org/b/19688 fast/images/exif-orientation-css.html
 
 crbug.com/122462 [ Linux Win ] http/tests/inspector/inspect-element.html [ Failure Slow ]
@@ -3984,6 +3983,9 @@ webkit.org/b/98192 [ Win Debug ] fast/js/dfg-cross-global-object-inline-new-arra
 webkit.org/b/98192 [ Win Debug ] fast/js/post-message-numeric-property.html [ Failure Pass ]
 
 webkit.org/b/98275 media/event-queue-crash.html [ Skip ]
+
+# BUGTHAKIS: Requires baselines
+webkit.org/b/19688 fast/images/exif-orientation.html [ ImageOnlyFailure ]
 
 # These are real failues due to 95121.
 # This is spilling caused by LANCZOS3 scaling algorithm that samples outside the source rect.

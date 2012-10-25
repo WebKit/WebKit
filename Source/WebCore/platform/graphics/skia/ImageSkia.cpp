@@ -614,12 +614,25 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
     GraphicsContextStateSaver saveContext(*ctxt, false);
     if (orientation != DefaultImageOrientation) {
         saveContext.save();
+
+        // ImageOrientation expects the origin to be at (0, 0)
+        ctxt->translate(normDstRect.x(), normDstRect.y());
+        normDstRect.setLocation(FloatPoint());
+
+        // ImageOrientation also expects the origin in the lower left corner, so flip, transform, and then...
+        ctxt->translate(0, normDstRect.height());
+        ctxt->scale(FloatSize(1, -1));
         ctxt->concatCTM(orientation.transformFromDefault(normDstRect.size()));
+
         if (orientation.usesWidthAsHeight()) {
             // The destination rect will have it's width and height already reversed for the orientation of
             // the image, as it was needed for page layout, so we need to reverse it back here.
             normDstRect = FloatRect(normDstRect.x(), normDstRect.y(), normDstRect.height(), normDstRect.width());
         }
+
+        // ...flip back.
+        ctxt->translate(0, normDstRect.height());
+        ctxt->scale(FloatSize(1, -1));
     }
 
     paintSkBitmap(ctxt->platformContext(),

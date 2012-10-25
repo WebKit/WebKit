@@ -39,10 +39,10 @@ enum ImageOrientationEnum {
     OriginTopRight = 2, // mirror along y-axis
     OriginBottomRight = 3, // 180 degree rotation
     OriginBottomLeft = 4, // mirror along the x-axis
-    OriginRightBottom = 5, // mirror along x-axis + 270 degree CW rotation
-    OriginLeftBottom = 6, // 90 degree CW rotation
-    OriginLeftTop = 7, // mirror along x-axis + 90 degree CW rotation
-    OriginRightTop = 8, // 270 degree CW rotation
+    OriginLeftTop = 5, // mirror along x-axis + 270 degree CW rotation
+    OriginRightTop = 6, // 90 degree CW rotation
+    OriginRightBottom = 7, // mirror along x-axis + 90 degree CW rotation
+    OriginLeftBottom = 8, // 270 degree CW rotation
     // All other values are "reserved" as of EXIF 2.2
     DefaultImageOrientation = OriginTopLeft,
 };
@@ -62,7 +62,7 @@ public:
     bool usesWidthAsHeight() const
     {
         // Values 5 through 8 all flip the width/height.
-        return m_orientation >= OriginRightBottom;
+        return m_orientation >= OriginLeftTop;
     }
 
     // ImageOrientationEnum currently matches EXIF values, however code outside
@@ -70,12 +70,13 @@ public:
     static ImageOrientation fromEXIFValue(int exifValue)
     {
         // Values direct from images may be invalid, in which case we use the default.
-        if (exifValue < OriginTopLeft || exifValue > OriginRightTop)
+        if (exifValue < OriginTopLeft || exifValue > OriginLeftBottom)
             return DefaultImageOrientation;
         return static_cast<ImageOrientationEnum>(exifValue);
     }
 
     // This transform can be used for drawing an image according to the orientation.
+    // It should be used in a left-handed coordinate system.
     AffineTransform transformFromDefault(const FloatSize& drawnSize) const;
 
     inline bool operator==(const ImageOrientation& other) const { return other.m_orientation == m_orientation; }

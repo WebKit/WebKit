@@ -1,3 +1,42 @@
+2012-10-25  Nico Weber  <thakis@chromium.org>
+
+        Move ImageOrientation transform back in CG space (lower-left origin), adapt the skia code to work with that, turn on feature for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=100401
+
+        Reviewed by Eric Seidel.
+
+        This is an alternative fix for the regression caused by r132384 / bug
+        100179. The bug exists because different pieces of code didn't agree
+        which space the transformation returned by ImageOrientation was in.
+
+        r132384 moved it from CG coordinates to skia coordinates, but didn't
+        do it completetely. This CL reverts this part of r132384 so that the
+        transformation is in CG coordinates again, and adapts the skia code to
+        work in that space.
+
+        Alternatively, https://bugs.webkit.org/show_bug.cgi?id=100319 woudl
+        make the cg code work with the transform in skia coordinates.
+
+        Covered by fast/images/exif-orientation.html
+
+        * platform/chromium/DragImageChromiumSkia.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/graphics/ImageOrientation.cpp:
+        (WebCore::ImageOrientation::transformFromDefault):
+        * platform/graphics/ImageOrientation.h:
+        (WebCore):
+        (WebCore::ImageOrientation::usesWidthAsHeight):
+        (WebCore::ImageOrientation::fromEXIFValue):
+        (ImageOrientation):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageFromImage):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldRespectImageOrientation):
+
 2012-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Log the tile cache tile size in test output
