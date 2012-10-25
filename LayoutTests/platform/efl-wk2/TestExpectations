@@ -68,6 +68,7 @@ webkit.org/b/97560 inspector/extensions/extensions-audits-content-script.html [ 
 webkit.org/b/97560 inspector/extensions/extensions-audits.html [ Failure Pass ]
 webkit.org/b/97560 inspector/extensions/extensions-eval-content-script.html [ Failure Pass ]
 
+Bug(EFL) editing/selection/fake-doubleclick.html [ Failure Pass ]
 Bug(EFL) http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked.html [ Crash Pass ]
 Bug(EFL) inspector/styles/styles-add-new-rule.html [ Failure Pass ]
 Bug(EFL) inspector/styles/metrics-box-sizing.html [ Failure Pass ]

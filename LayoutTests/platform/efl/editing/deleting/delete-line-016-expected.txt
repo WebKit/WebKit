@@ -1,0 +1,26 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 5 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x54
+        RenderText {#text} at (0,0) size 767x55
+          text run at (0,0) width 767: "This tests deletion of an empty line starting inside a <div> element, but ending outside that element (just before a <br>). In"
+          text run at (0,18) width 766: "this case, the <div> has no content inside it, but a min-height style prevents it from collapsing. If the deletion is successful,"
+          text run at (0,36) width 725: "the result should have two lines, and the insertion point should be on the second line, at the end of the editable area."
+      RenderBlock {DIV} at (0,70) size 784x68
+        RenderBlock {DIV} at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 7x19
+            text run at (0,0) width 7: "a"
+        RenderBlock {DIV} at (0,18) size 784x50
+          RenderBR {BR} at (0,0) size 0x19
+        RenderBlock (anonymous) at (0,68) size 784x0
+caret: position 0 of child 0 {BR} of child 2 {DIV} of child 3 {DIV} of body

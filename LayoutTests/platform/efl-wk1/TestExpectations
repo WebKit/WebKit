@@ -81,6 +81,8 @@ webkit.org/b/30724 [ Debug ] fast/loader/opaque-base-url.html [ Crash ]
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
+editing/selection/doubleclick-whitespace-img-crash.html [ Failure Pass ]
+
 # Test passes, but editing delegates does not match expected ones
 webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure Pass ]
 webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Failure Pass ]
