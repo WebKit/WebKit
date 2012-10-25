@@ -318,7 +318,7 @@ IntRect TileCache::computeTileCoverageRect() const
     // If the page is not in a window (for example if it's in a background tab), we limit the tile coverage rect to the visible rect.
     // Furthermore, if the page can't have scrollbars (for example if its body element has overflow:hidden) it's very unlikely that the
     // page will ever be scrolled so we limit the tile coverage rect as well.
-    if (m_isInWindow) {
+    if (m_isInWindow && !(m_tileCoverage & CoverageForSlowScrolling)) {
         // Inflate the coverage rect so that it covers 2x of the visible width and 3x of the visible height.
         // These values were chosen because it's more common to have tall pages and to scroll vertically,
         // so we keep more tiles above and below the current area.

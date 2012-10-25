@@ -1,3 +1,14 @@
+2012-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Incorrect tile size in the slow scrolling case
+        https://bugs.webkit.org/show_bug.cgi?id=100411
+
+        Reviewed by Beth Dakin.
+
+        New result with better tile size.
+
+        * platform/mac/tiled-drawing/tile-coverage-slow-scrolling-expected.txt:
+
 2012-10-25  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skipping inspector/elements/update-shadowdom.html. 

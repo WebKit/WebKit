@@ -8,7 +8,7 @@
       (backgroundColor #FFFFFF)
       (visible rect 0.00, 0.00 800.00 x 600.00)
       (tile cache coverage 0, 0 800 x 600)
-      (tile size 1600 x 1800)
+      (tile size 800 x 600)
       (children 1
         (GraphicsLayer
           (visible rect 0.00, 0.00 0.00 x 0.00)
