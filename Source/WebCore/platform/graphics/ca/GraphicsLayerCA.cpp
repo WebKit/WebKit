@@ -1593,10 +1593,13 @@ FloatRect GraphicsLayerCA::adjustTiledLayerVisibleRect(TiledBacking* tiledBackin
 
 void GraphicsLayerCA::updateVisibleRect(const FloatRect& oldVisibleRect)
 {
-    if (m_layer->layerType() != PlatformCALayer::LayerTypeTileCacheLayer)
+    if (!m_layer->usesTileCacheLayer())
         return;
 
-    FloatRect tileArea = adjustTiledLayerVisibleRect(tiledBacking(), oldVisibleRect, m_sizeAtLastVisibleRectUpdate);
+    FloatRect tileArea = m_visibleRect;
+    if (m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer)
+        tileArea = adjustTiledLayerVisibleRect(tiledBacking(), oldVisibleRect, m_sizeAtLastVisibleRectUpdate);
+
     tiledBacking()->setVisibleRect(enclosingIntRect(tileArea));
 
     m_sizeAtLastVisibleRectUpdate = m_size;

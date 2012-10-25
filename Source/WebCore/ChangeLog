@@ -1,3 +1,40 @@
+2012-10-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Tiled layers are missing content on zooming
+        https://bugs.webkit.org/show_bug.cgi?id=100422
+
+        Reviewed by Beth Dakin.
+
+        Tiled layers using TileCaches were missing content after
+        zooming. TileCache was confused in the presence of scaling;
+        it unapplies the scale on the layer above the tiles (so the tiles
+        live in screen space), and computed the tile coverage rect
+        in these tile coordinates. This worked for the page tile cache,
+        because its visibleRect was sent in pre-scaled. However, for
+        tiled layer TileCaches this was wrong.
+        
+        Fix by scaling the tile coverage rect by m_scale before
+        using it to compute which tiles to throw away and bring in.
+        
+        To fix the problem of the visibleRect being pre-scaled
+        for the page tile cache, remove the setting of the visibleRect
+        in RenderLayerCompositor::frameViewDidScroll(), and rely on 
+        GraphicsLayerCA::updateVisibleRect() which computes the
+        visible rect in the correct, layer coordinates.
+
+        Test: compositing/tiling/tile-cache-zoomed.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateVisibleRect): Call setVisibleRect()
+        for all tile cache layers, not just tiled layer ones, but only do
+        the visible rect adjustment for those that are not the page tile cache.
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::revalidateTiles): Use a coverageRectInTileCoords rect,
+        which is scaled to be in the same coordinate space as the tile grid.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::frameViewDidScroll): Remove the code
+        that sets the setVisibleRect() on the TiledBacking.
+
 2012-10-25  Adam Barth  <abarth@webkit.org>
 
         [V8] ActiveDOMNodes no longer require a separate wrapper map

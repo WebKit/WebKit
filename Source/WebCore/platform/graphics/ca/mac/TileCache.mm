@@ -392,6 +392,8 @@ void TileCache::revalidateTiles()
         return;
 
     IntRect tileCoverageRect = computeTileCoverageRect();
+    IntRect coverageRectInTileCoords(tileCoverageRect);
+    coverageRectInTileCoords.scale(m_scale);
 
     IntSize oldTileSize = m_tileSize;
     m_tileSize = tileSizeForCoverageRect(tileCoverageRect);
@@ -404,7 +406,7 @@ void TileCache::revalidateTiles()
 
         WebTileLayer* tileLayer = it->value.get();
 
-        if (!rectForTileIndex(tileIndex).intersects(tileCoverageRect) || tileSizeChanged) {
+        if (!rectForTileIndex(tileIndex).intersects(coverageRectInTileCoords) || tileSizeChanged) {
             // Remove this layer.
             [tileLayer removeFromSuperlayer];
             [tileLayer setTileCache:0];
@@ -421,7 +423,7 @@ void TileCache::revalidateTiles()
 
     TileIndex topLeft;
     TileIndex bottomRight;
-    getTileIndexRangeForRect(tileCoverageRect, topLeft, bottomRight);
+    getTileIndexRangeForRect(coverageRectInTileCoords, topLeft, bottomRight);
 
     Vector<FloatRect> dirtyRects;
 
