@@ -1,3 +1,18 @@
+2012-10-24  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [SOUP] Provide logging for SocketStreamHandleSoup
+        https://bugs.webkit.org/show_bug.cgi?id=100215
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add logging to SocketStreamHandleSoup to facilitate debugging.
+
+        * platform/network/soup/SocketStreamHandleSoup.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore::SocketStreamHandle::~SocketStreamHandle):
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+
 2012-10-24  Nico Weber  <thakis@chromium.org>
 
         Pass on exif orientation from ImageSource when using the open-source image decoders

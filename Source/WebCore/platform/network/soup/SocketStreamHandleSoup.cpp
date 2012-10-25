@@ -84,6 +84,7 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
     : SocketStreamHandleBase(url, client)
     , m_readBuffer(0)
 {
+    LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);
     unsigned int port = url.hasPort() ? url.port() : (url.protocolIs("wss") ? 443 : 80);
 
     m_id = activateHandle(this);
@@ -96,6 +97,7 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
 
 SocketStreamHandle::~SocketStreamHandle()
 {
+    LOG(Network, "SocketStreamHandle %p delete", this);
     // If for some reason we were destroyed without closing, ensure that we are deactivated.
     deactivateHandle(this);
     setClient(0);
@@ -153,6 +155,7 @@ void SocketStreamHandle::writeReady()
 
 int SocketStreamHandle::platformSend(const char* data, int length)
 {
+    LOG(Network, "SocketStreamHandle %p platformSend", this);
     GOwnPtr<GError> error;
     gssize written = g_pollable_output_stream_write_nonblocking(m_outputStream.get(), data, length, 0, &error.outPtr());
     if (error) {
@@ -173,6 +176,7 @@ int SocketStreamHandle::platformSend(const char* data, int length)
 
 void SocketStreamHandle::platformClose()
 {
+    LOG(Network, "SocketStreamHandle %p platformClose", this);
     // We remove this handle from the active handles list first, to disable all callbacks.
     deactivateHandle(this);
     stopWaitingForSocketWritability();
