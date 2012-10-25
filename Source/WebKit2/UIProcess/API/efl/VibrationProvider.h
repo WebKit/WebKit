@@ -35,6 +35,8 @@
 
 typedef struct Ewk_Vibration_Client Ewk_Vibration_Client;
 
+namespace WebKit {
+
 class VibrationProvider : public RefCounted<VibrationProvider> {
 public:
     static PassRefPtr<VibrationProvider> create(WKContextRef);
@@ -50,6 +52,8 @@ private:
     WKRetainPtr<WKContextRef> m_wkContext;
     OwnPtr<Ewk_Vibration_Client> m_vibrationClient;
 };
+
+} // namespace WebKit
 
 #endif // ENABLE(VIBRATION)
 

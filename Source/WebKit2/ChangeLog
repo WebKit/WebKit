@@ -1,3 +1,25 @@
+2012-10-25  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] Add missing namespace.
+        https://bugs.webkit.org/show_bug.cgi?id=100251
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add 'WebKit' namespace for BatteryProvider, NetworkInfoProvider and
+        VibrationProvider.
+
+        * UIProcess/API/efl/BatteryProvider.h:
+        (WebKit):
+        * UIProcess/API/efl/NetworkInfoProvider.cpp:
+        * UIProcess/API/efl/NetworkInfoProvider.h:
+        (WebKit):
+        * UIProcess/API/efl/VibrationProvider.cpp:
+        * UIProcess/API/efl/VibrationProvider.h:
+        (WebKit):
+        * UIProcess/API/efl/ewk_context_private.h:
+        (WebKit):
+        (Ewk_Context):
+
 2012-10-25  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Detach WebContext's clients from QtWebContext

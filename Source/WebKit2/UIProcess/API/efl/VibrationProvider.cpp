@@ -34,6 +34,7 @@
 #include <Evas.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
 /**
  * \struct  Ewk_Vibration_Client

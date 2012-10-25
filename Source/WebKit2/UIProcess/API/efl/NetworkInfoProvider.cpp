@@ -32,6 +32,8 @@
 #include "WKNetworkInfoManager.h"
 #include <NotImplemented.h>
 
+using namespace WebKit;
+
 static inline NetworkInfoProvider* toNetworkInfoProvider(const void* clientInfo)
 {
     return static_cast<NetworkInfoProvider*>(const_cast<void*>(clientInfo));

@@ -35,6 +35,8 @@
 #include <WebKit2/WKBase.h>
 #include <wtf/PassRefPtr.h>
 
+namespace WebKit {
+
 class BatteryProvider : public RefCounted<BatteryProvider>, public WebCore::BatteryProviderEflClient {
 public:
     virtual ~BatteryProvider();
@@ -52,6 +54,8 @@ private:
     WKRetainPtr<WKContextRef> m_wkContext;
     WebCore::BatteryProviderEfl m_provider;
 };
+
+} // namespace WebKit
 
 #endif // ENABLE(BATTERY_STATUS)
 

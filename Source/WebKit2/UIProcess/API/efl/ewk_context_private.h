@@ -28,6 +28,10 @@
 class Ewk_Url_Scheme_Request;
 class Ewk_Cookie_Manager;
 class Ewk_Favicon_Database;
+
+namespace WebKit {
+class ContextHistoryClientEfl;
+class RequestManagerClientEfl;
 #if ENABLE(BATTERY_STATUS)
 class BatteryProvider;
 #endif
@@ -37,10 +41,6 @@ class NetworkInfoProvider;
 #if ENABLE(VIBRATION)
 class VibrationProvider;
 #endif
-
-namespace WebKit {
-class ContextHistoryClientEfl;
-class RequestManagerClientEfl;
 }
 
 class Ewk_Context : public RefCounted<Ewk_Context> {
@@ -60,7 +60,7 @@ public:
     WebKit::RequestManagerClientEfl* requestManager();
 
 #if ENABLE(VIBRATION)
-    PassRefPtr<VibrationProvider> vibrationProvider();
+    PassRefPtr<WebKit::VibrationProvider> vibrationProvider();
 #endif
 
     void addVisitedLink(const String& visitedURL);
@@ -85,13 +85,13 @@ private:
     OwnPtr<Ewk_Cookie_Manager> m_cookieManager;
     OwnPtr<Ewk_Favicon_Database> m_faviconDatabase;
 #if ENABLE(BATTERY_STATUS)
-    RefPtr<BatteryProvider> m_batteryProvider;
+    RefPtr<WebKit::BatteryProvider> m_batteryProvider;
 #endif
 #if ENABLE(NETWORK_INFO)
-    RefPtr<NetworkInfoProvider> m_networkInfoProvider;
+    RefPtr<WebKit::NetworkInfoProvider> m_networkInfoProvider;
 #endif
 #if ENABLE(VIBRATION)
-    RefPtr<VibrationProvider> m_vibrationProvider;
+    RefPtr<WebKit::VibrationProvider> m_vibrationProvider;
 #endif
     OwnPtr<WebKit::DownloadManagerEfl> m_downloadManager;
     OwnPtr<WebKit::RequestManagerClientEfl> m_requestManagerClient;

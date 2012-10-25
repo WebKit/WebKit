@@ -34,6 +34,8 @@
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/PassRefPtr.h>
 
+namespace WebKit {
+
 class NetworkInfoProvider : public RefCounted<NetworkInfoProvider>, public WebCore::NetworkInfoClient {
 public:
     virtual ~NetworkInfoProvider();
@@ -52,6 +54,8 @@ private:
     WKRetainPtr<WKContextRef> m_wkContext;
     WebCore::NetworkInfoProviderEfl m_provider;
 };
+
+} // namespace WebKit
 
 #endif // ENABLE(NETWORK_INFO)
 
