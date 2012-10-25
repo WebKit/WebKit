@@ -1528,11 +1528,6 @@ bool Node::isBlockFlow() const
     return renderer() && renderer()->isBlockFlow();
 }
 
-bool Node::isBlockFlowOrBlockTable() const
-{
-    return renderer() && (renderer()->isBlockFlow() || (renderer()->isTable() && !renderer()->isInline()));
-}
-
 Element *Node::enclosingBlockFlowElement() const
 {
     Node *n = const_cast<Node *>(this);

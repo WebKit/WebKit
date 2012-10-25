@@ -258,8 +258,7 @@ public:
     Node* enclosingLinkEventParentOrSelf();
 
     bool isBlockFlow() const;
-    bool isBlockFlowOrBlockTable() const;
-    
+
     // These low-level calls give the caller responsibility for maintaining the integrity of the tree.
     void setPreviousSibling(Node* previous) { m_previous = previous; }
     void setNextSibling(Node* next) { m_next = next; }

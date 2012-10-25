@@ -1,3 +1,18 @@
+2012-10-25  Elliott Sprehn  <esprehn@chromium.org>
+
+        Remove dead Node::isBlockFlowOrBlockTable
+        https://bugs.webkit.org/show_bug.cgi?id=100336
+
+        Reviewed by Eric Seidel.
+
+        Nothing uses Node::isBlockFlowOrBlockTable anymore so remove it.
+
+        No new tests needed, just removing dead code.
+
+        * dom/Node.cpp:
+        * dom/Node.h:
+        (Node):
+
 2012-10-25  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Fix "check-inspector-strings" script and fix localized strings.
