@@ -353,14 +353,21 @@ function run() {
 
     // Find the resolution using max-resolution
     var resolution = 0;
-    do {
-      ++resolution;
-      if (resolution > 10000) {
-        break;
-      }
-    } while (!query_applies("(max-resolution: " + resolution + "dpi)"));
+    var max_resolution = 1000;
+
+    if (query_applies("(resolution)")) {
+        do {
+          ++resolution;
+          if (resolution > max_resolution) {
+            break;
+          }
+        } while (!query_applies("(max-resolution: " + resolution + "dpi)"));
+    } else {
+        resolution = max_resolution + 1;
+    }
+
     test(function() {
-      assert_false_wrapper(10000 < resolution);
+      assert_false_wrapper(max_resolution < resolution);
     }, "find_resolution");
 
     // resolution should now be Math.ceil() of the actual resolution.

@@ -1,3 +1,14 @@
+2012-10-25  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        Layout Test fast/media/w3c/test_media_queries.html is slow on Chromium debug bots after r132352
+        https://bugs.webkit.org/show_bug.cgi?id=100272
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Test if resolution media query is supported before identifying dpi of the media.
+
+        * fast/media/w3c/test_media_queries.html:
+
 2012-10-25  Nandor Huszka  <hnandor@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
