@@ -331,8 +331,9 @@ class ServerProcess(object):
             self._port.check_for_leaks(self.name(), self.pid())
 
         now = time.time()
-        self._proc.stdin.close()
-        self._proc.stdin = None
+        if self._proc.stdin:
+            self._proc.stdin.close()
+            self._proc.stdin = None
         killed = False
         if not timeout_secs:
             self._kill()

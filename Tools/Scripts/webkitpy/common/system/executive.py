@@ -215,6 +215,9 @@ class Executive(object):
                 if e.errno == errno.ECHILD:
                     # Can't wait on a non-child process, but the kill worked.
                     return
+                if e.errno == errno.EACCES and sys.platform == 'cygwin':
+                    # Cygwin python sometimes can't kill native processes.
+                    return
                 raise
 
     def _win32_check_running_pid(self, pid):

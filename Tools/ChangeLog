@@ -1,5 +1,20 @@
 2012-10-24  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: fix a couple of minor crashing issues under cygwin
+        https://bugs.webkit.org/show_bug.cgi?id=100309
+
+        Reviewed by Ojan Vafai.
+
+        Cygwin was crashing on a null object reference and then
+        an oserror in kill().
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.kill_process):
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess.stop):
+
+2012-10-24  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: truncate meter lines properly on windows
         https://bugs.webkit.org/show_bug.cgi?id=100062
 
