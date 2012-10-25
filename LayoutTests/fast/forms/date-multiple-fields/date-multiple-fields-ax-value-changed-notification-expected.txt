@@ -7,6 +7,8 @@ FocusedUIElementChanged AXHelp: Month=AXValueDescription: 10
 FocusedUIElementChanged AXHelp: Day=AXValueDescription: 09
 FocusedUIElementChanged AXHelp: Year=AXValueDescription: 2012
 ValueChanged AXHelp: Day=AXValueDescription: 04
+ValueChanged AXHelp: Day=AXValueDescription: 04
+ValueChanged AXHelp: Year=AXValueDescription: 2013
 ValueChanged AXHelp: Year=AXValueDescription: 2013
 
 PASS successfullyParsed is true

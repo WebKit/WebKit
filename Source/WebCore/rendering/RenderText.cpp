@@ -1466,7 +1466,7 @@ void RenderText::setText(PassRefPtr<StringImpl> text, bool force)
     
     AXObjectCache* axObjectCache = document()->axObjectCache();
     if (axObjectCache->accessibilityEnabled())
-        axObjectCache->contentChanged(this);
+        axObjectCache->textChanged(this);
 }
 
 String RenderText::textWithoutTranscoding() const

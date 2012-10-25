@@ -7,15 +7,13 @@
             testRunner.waitUntilDone();
 
         description("This tests that checking of an aria checkbox sends a notification.");
-        window.root = accessibilityController.rootElement;
-        window.body = root.childAtIndex(0);
 
-        var accessibleCheckbox = body.childAtIndex(0);
+        var accessibleCheckbox = accessibilityController.accessibleElementById("checkbox1");
         var notificationCount = 0;
 
         function listener(notification) {
-        if (notification == "CheckedStateChanged")
-            notificationCount++;
+            if (notification == "CheckedStateChanged")
+                notificationCount++;
 
             document.getElementById("console").innerText += "Got notification: " + notification + "\n";
 

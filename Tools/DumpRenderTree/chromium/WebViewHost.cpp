@@ -696,6 +696,12 @@ void WebViewHost::postAccessibilityNotification(const WebAccessibilityObject& ob
     case WebAccessibilityNotificationInvalidStatusChanged:
         notificationName = "InvalidStatusChanged";
         break;
+    case WebAccessibilityNotificationTextChanged:
+        notificationName = "TextChanged";
+        break;
+    case WebAccessibilityNotificationAriaAttributeChanged:
+        notificationName = "AriaAttributeChanged";
+        break;
     default:
         notificationName = "UnknownNotification";
         break;

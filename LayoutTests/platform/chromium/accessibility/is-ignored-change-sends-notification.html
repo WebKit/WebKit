@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div id="container">
+
+  <div id="hiddenDivContainer" aria-label="hiddenDivContainer">
+    <div id="hiddenDiv" hidden>
+      <div>
+        <button>Button</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="invisibleDivContainer" aria-label="invisibleDivContainer">
+    <div id="invisibleDiv" style="visibility: hidden">
+      <div>
+        <button>Button</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="emptyDivContainer" aria-label="emptyDivContainer">
+    <div id="emptyDiv"></div>
+  </div>
+
+  <div id="divWithoutRoleContainer" aria-label="divWithoutRoleContainer">
+    <div id="divWithoutRole">
+      <div>
+        <button>Button</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="divWithoutLabelContainer" aria-label="divWithoutLabelContainer">
+    <div id="divWithoutLabel">
+      <div>
+        <button>Button</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="console"></div>
+<script>
+description("This test ensures that a change to accessibilityIsIgnored fires a children changed notification on the parent.");
+
+if (window.testRunner && window.accessibilityController) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    function accessibleElementById(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    window.successCount = 0;
+    function gotSuccessfulNotification() {
+        successCount++;
+        if (successCount != 5)
+            return;
+
+        debug('All notifications received successfully.');
+        accessibleElementById('hiddenDivContainer').removeNotificationListener();
+        accessibleElementById('invisibleDivContainer').removeNotificationListener();
+        accessibleElementById('emptyDivContainer').removeNotificationListener();
+        accessibleElementById('divWithoutRoleContainer').removeNotificationListener();
+        accessibleElementById('divWithoutLabelContainer').removeNotificationListener();
+        document.getElementById('container').hidden = true;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    shouldBeTrue("accessibleElementById('hiddenDivContainer') != null");
+    shouldBeFalse("accessibleElementById('hiddenDiv') != null");
+    accessibleElementById('hiddenDivContainer').addNotificationListener(function(notification) {
+        debug('Got ' + notification + ' notification on hiddenDivContainer');
+        shouldBe("accessibleElementById('hiddenDivContainer').childrenCount", "1");
+        gotSuccessfulNotification();
+    });
+    document.getElementById('hiddenDiv').hidden = false;
+
+    shouldBeTrue("accessibleElementById('invisibleDivContainer') != null");
+    shouldBeFalse("accessibleElementById('invisibleDiv') != null");
+    accessibleElementById('invisibleDivContainer').addNotificationListener(function(notification) {
+        debug('Got ' + notification + ' notification on invisibleDivContainer');
+        shouldBe("accessibleElementById('invisibleDivContainer').childrenCount", "1");
+        gotSuccessfulNotification();
+    });
+    document.getElementById('invisibleDiv').style.visibility = 'visible';
+
+    shouldBeTrue("accessibleElementById('emptyDivContainer') != null");
+    shouldBeFalse("accessibleElementById('emptyDiv') != null");
+    accessibleElementById('emptyDivContainer').addNotificationListener(function(notification) {
+        debug('Got ' + notification + ' notification on emptyDivContainer');
+        shouldBe("accessibleElementById('emptyDivContainer').childrenCount", "1");
+        gotSuccessfulNotification();
+    });
+
+    document.getElementById('emptyDiv').innerText = 'Not empty anymore.';
+    document.getElementById('emptyDiv').offsetLeft;
+
+    shouldBeTrue("accessibleElementById('divWithoutRoleContainer') != null");
+    shouldBeFalse("accessibleElementById('divWithoutRole') != null");
+    accessibleElementById('divWithoutRoleContainer').addNotificationListener(function(notification) {
+        debug('Got ' + notification + ' notification on divWithoutRoleContainer');
+        shouldBe("accessibleElementById('divWithoutRoleContainer').childrenCount", "1");
+        gotSuccessfulNotification();
+    });
+    document.getElementById('divWithoutRole').setAttribute('role', 'heading');
+
+    shouldBeTrue("accessibleElementById('divWithoutLabelContainer') != null");
+    shouldBeFalse("accessibleElementById('divWithoutLabel') != null");
+    accessibleElementById('divWithoutLabelContainer').addNotificationListener(function(notification) {
+        debug('Got ' + notification + ' notification on divWithoutLabelContainer');
+        shouldBe("accessibleElementById('divWithoutLabelContainer').childrenCount", "1");
+        gotSuccessfulNotification();
+    });
+    document.getElementById('divWithoutLabel').setAttribute('aria-label', 'Label');
+
+    debug('');
+}
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

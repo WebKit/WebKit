@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<div id="container">
+  <button id="aria-label" aria-label="Aria Label">Content</button>
+  <button id="title" title="Title">Content</button>
+  <button id="labelledby" aria-labelledby="label1">Content</button>
+  <button id="labeled">Content</button>
+
+  <label id="label1">Label1</label>
+  <label id="label2">Label2</label>
+</div>
+
+<div id="console"></div>
+<script>
+description("This test ensures that a change to an element's accessible text, even if indirect, sends a notification.");
+
+if (window.testRunner && window.accessibilityController) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    function accessibleElementById(id) {
+        return accessibilityController.accessibleElementById(id);
+    }
+
+    window.successCount = 0;
+    function gotSuccessfulNotification() {
+        successCount++;
+        if (successCount != 4)
+            return;
+
+        debug('All notifications received successfully.');
+        accessibleElementById('aria-label').removeNotificationListener();
+        accessibleElementById('title').removeNotificationListener();
+        accessibleElementById('labelledby').removeNotificationListener();
+        accessibleElementById('labeled').removeNotificationListener();
+
+        document.getElementById('container').hidden = true;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+
+    accessibleElementById('aria-label').addNotificationListener(function(notification) {
+        debug('Got ' + notification + ' notification on aria-label');
+        gotSuccessfulNotification();
+    });
+    document.getElementById('aria-label').setAttribute('aria-label', 'New aria-label');
+
+    accessibleElementById('title').addNotificationListener(function(notification) {
+        debug('Got ' + notification + ' notification on title');
+        gotSuccessfulNotification();
+    });
+    document.getElementById('title').title = 'New title';
+
+    accessibleElementById('labelledby').addNotificationListener(function(notification) {
+        debug('Got ' + notification + ' notification on labelledby');
+        gotSuccessfulNotification();
+    });
+    document.getElementById('labelledby').setAttribute('aria-labelledby', 'label2');
+
+    accessibleElementById('labeled').addNotificationListener(function(notification) {
+        debug('Got ' + notification + ' notification on labeled');
+        gotSuccessfulNotification();
+    });
+    document.getElementById('label1').setAttribute('for', 'labeled');
+
+    debug('');
+}
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
