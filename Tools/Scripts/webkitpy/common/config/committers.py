@@ -498,7 +498,7 @@ reviewers_list = [
     Reviewer("Julien Chaffraix", ["jchaffraix@webkit.org", "julien.chaffraix@gmail.com", "jchaffraix@google.com", "jchaffraix@codeaurora.org"], "jchaffraix"),
     Reviewer("Justin Garcia", "justin.garcia@apple.com", "justing"),
     Reviewer("Ken Kocienda", "kocienda@apple.com"),
-    Reviewer("Kenneth Rohde Christiansen", ["kenneth@webkit.org", "kenneth.christiansen@openbossa.org", "kenneth.christiansen@gmail.com"], ["kenne", "kenneth"]),
+    Reviewer("Kenneth Rohde Christiansen", ["kenneth@webkit.org", "kenneth.r.christiansen@intel.com", "kenneth.christiansen@gmail.com"], ["kenneth_", "kenneth", "kenne"]),
     Reviewer("Kenneth Russell", "kbr@google.com", "kbr_google"),
     Reviewer("Kent Tamura", ["tkent@chromium.org", "tkent@google.com"], "tkent"),
     Reviewer("Kentaro Hara", ["haraken@chromium.org"], "haraken"),
