@@ -35,6 +35,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(TOUCH_EVENTS)
+#include "ewk_touch.h"
+#endif
+
 #if USE(ACCELERATED_COMPOSITING)
 #include <Evas_GL.h>
 #endif
@@ -72,6 +76,7 @@ class WebPopupMenuProxyEfl;
 }
 
 namespace WebCore {
+class Color;
 class Cursor;
 class IntRect;
 class IntSize;
@@ -102,12 +107,37 @@ public:
     inline Evas_Object* view() { return m_view; }
     WKPageRef wkPage();
     inline WebKit::WebPageProxy* page() { return pageProxy.get(); }
+    Ewk_Context* ewkContext() { return context.get(); }
+    Ewk_Settings* settings() { return m_settings.get(); }
 
     WebCore::IntSize size() const;
+    bool isFocused() const;
+    bool isVisible() const;
+
+    const char* url() const { return m_url; }
+    const char* faviconURL() const { return m_faviconURL; }
+    const char* title() const;
+    Ecore_IMF_Context* inputMethodContext();
+
+    const char* themePath() const;
+    void setThemePath(const char* theme);
+    const char* customTextEncodingName() const;
+    void setCustomTextEncodingName(const char* encoding);
+
+    bool mouseEventsEnabled() const { return m_mouseEventsEnabled; }
+    void setMouseEventsEnabled(bool enabled);
+#if ENABLE(TOUCH_EVENTS)
+    bool touchEventsEnabled() const { return m_touchEventsEnabled; }
+    void setTouchEventsEnabled(bool enabled);
+#endif
 
     void setCursor(const WebCore::Cursor& cursor);
     void redrawRegion(const WebCore::IntRect& rect);
     void setImageData(void* imageData, const WebCore::IntSize& size);
+
+#if ENABLE(INPUT_TYPE_COLOR)
+    bool setColorPickerColor(const WebCore::Color& color);
+#endif
 
     static void addToPageViewMap(const Evas_Object* ewkView);
     static void removeFromPageViewMap(const Evas_Object* ewkView);
@@ -195,31 +225,11 @@ public:
     OwnPtr<WebKit::FindClientEfl> findClient;
     OwnPtr<WebKit::FormClientEfl> formClient;
 
-    WKEinaSharedString url;
-    WKEinaSharedString title;
-    WKEinaSharedString theme;
-    WKEinaSharedString customEncoding;
-    WKEinaSharedString cursorGroup;
-    WKEinaSharedString faviconURL;
-    RefPtr<Evas_Object> cursorObject;
     OwnPtr<Ewk_Back_Forward_List> backForwardList;
-    OwnPtr<Ewk_Settings> settings;
-    bool areMouseEventsEnabled;
-    WKRetainPtr<WKColorPickerResultListenerRef> colorPickerResultListener;
     RefPtr<Ewk_Context> context;
-#if ENABLE(TOUCH_EVENTS)
-    bool areTouchEventsEnabled;
-#endif
 
     WebKit::WebPopupMenuProxyEfl* popupMenuProxy;
     Eina_List* popupMenuItems;
-
-    Ecore_IMF_Context* imfContext;
-    bool isImfFocused;
-
-#ifdef HAVE_ECORE_X
-    bool isUsingEcoreX;
-#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     Evas_GL* evasGl;
@@ -228,14 +238,44 @@ public:
 #endif
 
 private:
-    Ewk_View_Smart_Data* smartData();
+    inline Ewk_View_Smart_Data* smartData();
     void displayTimerFired(WebCore::Timer<EwkViewImpl>*);
 
+    static PassOwnPtr<Ecore_IMF_Context> createIMFContext(Ewk_View_Smart_Data*);
+    static void onIMFInputSequenceComplete(void* data, Ecore_IMF_Context*, void* eventInfo);
+    static void onIMFPreeditSequenceChanged(void* data, Ecore_IMF_Context*, void* eventInfo);
+
+    static void onMouseDown(void* data, Evas*, Evas_Object*, void* eventInfo);
+    static void onMouseUp(void* data, Evas*, Evas_Object*, void* eventInfo);
+    static void onMouseMove(void* data, Evas*, Evas_Object*, void* eventInfo);
+#if ENABLE(TOUCH_EVENTS)
+    void feedTouchEvents(Ewk_Touch_Event_Type type);
+    static void onTouchDown(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */);
+    static void onTouchUp(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */);
+    static void onTouchMove(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */);
+#endif
+
     Evas_Object* m_view;
-    typedef HashMap<WKPageRef, const Evas_Object*> PageViewMap;
-    static PageViewMap pageViewMap;
+    OwnPtr<Ewk_Settings> m_settings;
+    OwnPtr<Ecore_IMF_Context> m_inputMethodContext;
+    bool m_inputMethodContextFocused;
+    RefPtr<Evas_Object> m_cursorObject;
+    WKEinaSharedString m_cursorGroup;
+    WKEinaSharedString m_faviconURL;
+    WKEinaSharedString m_url;
+    mutable WKEinaSharedString m_title;
+    WKEinaSharedString m_theme;
+    mutable WKEinaSharedString m_customEncoding;
+    bool m_mouseEventsEnabled;
+#if ENABLE(TOUCH_EVENTS)
+    bool m_touchEventsEnabled;
+#endif
+    WKRetainPtr<WKColorPickerResultListenerRef> m_colorPickerResultListener;
     WebCore::Timer<EwkViewImpl> m_displayTimer;
     WTF::Vector <WebCore::IntRect> m_dirtyRects;
+
+    typedef HashMap<WKPageRef, const Evas_Object*> PageViewMap;
+    static PageViewMap pageViewMap;
 };
 
 #endif // EwkViewImpl_h

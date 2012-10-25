@@ -98,12 +98,12 @@ bool PageClientImpl::isViewWindowActive()
 
 bool PageClientImpl::isViewFocused()
 {
-    return evas_object_focus_get(m_viewImpl->view());
+    return m_viewImpl->isFocused();
 }
 
 bool PageClientImpl::isViewVisible()
 {
-    return evas_object_visible_get(m_viewImpl->view());
+    return m_viewImpl->isVisible();
 }
 
 bool PageClientImpl::isViewInWindow()
@@ -124,7 +124,7 @@ void PageClientImpl::processDidCrash()
 
 void PageClientImpl::didRelaunchProcess()
 {
-    const char* themePath = ewk_view_theme_get(m_viewImpl->view());
+    const char* themePath = m_viewImpl->themePath();
     if (themePath)
         m_viewImpl->page()->setThemePath(themePath);
 }
@@ -303,7 +303,7 @@ void PageClientImpl::updateTextInputState()
 
 void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
 {
-    Ewk_Context* context = ewk_view_context_get(m_viewImpl->view());
+    Ewk_Context* context = m_viewImpl->ewkContext();
     context->downloadManager()->registerDownload(download, m_viewImpl);
 }
 

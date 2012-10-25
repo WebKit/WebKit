@@ -40,6 +40,7 @@ typedef struct HRGN__* HRGN;
 
 #if PLATFORM(EFL)
 typedef struct _Ecore_Evas Ecore_Evas;
+typedef struct _Ecore_IMF_Context Ecore_IMF_Context;
 typedef struct _Ecore_Pipe Ecore_Pipe;
 typedef struct _Ecore_Timer Ecore_Timer;
 typedef struct _Eina_Hash Eina_Hash;
@@ -68,6 +69,7 @@ namespace WTF {
 
 #if PLATFORM(EFL)
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Ecore_Evas*);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(Ecore_IMF_Context*);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Ecore_Pipe*);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Ecore_Timer*);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Eina_Hash*);

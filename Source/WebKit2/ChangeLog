@@ -1,3 +1,87 @@
+2012-10-25  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Remove some C'ism from EwkView
+        https://bugs.webkit.org/show_bug.cgi?id=100370
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove a lot of C'ism from EwkView:
+        - Make more members private and add C++ methods to
+        EwkViewImpl for the public C API to use
+        - Use smart pointers when possible instead of raw
+        ones
+        - Use C++ naming conventions for callback functions
+        and define them as static methods in EwkViewImpl.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::onIMFInputSequenceComplete):
+        (EwkViewImpl::onIMFPreeditSequenceChanged):
+        (EwkViewImpl::createIMFContext):
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::~EwkViewImpl):
+        (EwkViewImpl::setCursor):
+        (EwkViewImpl::setColorPickerColor):
+        (EwkViewImpl::isFocused):
+        (EwkViewImpl::isVisible):
+        (EwkViewImpl::title):
+        (EwkViewImpl::inputMethodContext):
+        (EwkViewImpl::themePath):
+        (EwkViewImpl::setThemePath):
+        (EwkViewImpl::customTextEncodingName):
+        (EwkViewImpl::setCustomTextEncodingName):
+        (EwkViewImpl::setMouseEventsEnabled):
+        (EwkViewImpl::setTouchEventsEnabled):
+        (EwkViewImpl::informIconChange):
+        (EwkViewImpl::requestColorPicker):
+        (EwkViewImpl::dismissColorPicker):
+        (EwkViewImpl::updateTextInputState):
+        (EwkViewImpl::informURLChange):
+        (EwkViewImpl::onMouseDown):
+        (EwkViewImpl::onMouseUp):
+        (EwkViewImpl::onMouseMove):
+        (EwkViewImpl::feedTouchEvents):
+        (EwkViewImpl::onTouchDown):
+        (EwkViewImpl::onTouchUp):
+        (EwkViewImpl::onTouchMove):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebCore):
+        (EwkViewImpl::ewkContext):
+        (EwkViewImpl::settings):
+        (EwkViewImpl):
+        (EwkViewImpl::url):
+        (EwkViewImpl::faviconURL):
+        (EwkViewImpl::mouseEventsEnabled):
+        (EwkViewImpl::touchEventsEnabled):
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        * UIProcess/API/efl/ewk_settings_private.h:
+        (Ewk_Settings::create):
+        (Ewk_Settings::Ewk_Settings):
+        (Ewk_Settings):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_mouse_up):
+        (_ewk_view_smart_key_down):
+        (_ewk_view_smart_add):
+        (ewk_view_context_get):
+        (ewk_view_url_get):
+        (ewk_view_icon_url_get):
+        (ewk_view_settings_get):
+        (ewk_view_title_get):
+        (ewk_view_theme_set):
+        (ewk_view_theme_get):
+        (ewk_view_setting_encoding_custom_get):
+        (ewk_view_setting_encoding_custom_set):
+        (ewk_view_mouse_events_enabled_set):
+        (ewk_view_mouse_events_enabled_get):
+        (ewk_view_color_picker_color_set):
+        (ewk_view_touch_events_enabled_set):
+        (ewk_view_touch_events_enabled_get):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2012-10-25  Anders Carlsson  <andersca@apple.com>
 
         Assertion failure trying to dispatch notification messages

@@ -33,7 +33,6 @@
 #include "PageUIClientEfl.h"
 #include "ResourceLoadClientEfl.h"
 #include "WKAPICast.h"
-#include "WKColorPickerResultListener.h"
 #include "WKEinaSharedString.h"
 #include "WKFindOptions.h"
 #include "WKRetainPtr.h"
@@ -217,8 +216,9 @@ static Eina_Bool _ewk_view_smart_mouse_up(Ewk_View_Smart_Data* smartData, const 
     impl->pageProxy->handleMouseEvent(NativeWebMouseEvent(upEvent, &position));
 #endif
 
-    if (impl->imfContext)
-        ecore_imf_context_reset(impl->imfContext);
+    Ecore_IMF_Context* inputMethodContext = impl->inputMethodContext();
+    if (inputMethodContext)
+        ecore_imf_context_reset(inputMethodContext);
 
     return true;
 }
@@ -243,11 +243,12 @@ static Eina_Bool _ewk_view_smart_key_down(Ewk_View_Smart_Data* smartData, const 
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
 
     bool isFiltered = false;
-    if (impl->imfContext) {
-        Ecore_IMF_Event imfEvent;
-        ecore_imf_evas_event_key_down_wrap(const_cast<Evas_Event_Key_Down*>(downEvent), &imfEvent.key_down);
+    Ecore_IMF_Context* inputMethodContext = impl->inputMethodContext();
+    if (inputMethodContext) {
+        Ecore_IMF_Event inputMethodEvent;
+        ecore_imf_evas_event_key_down_wrap(const_cast<Evas_Event_Key_Down*>(downEvent), &inputMethodEvent.key_down);
 
-        isFiltered = ecore_imf_context_filter_event(impl->imfContext, ECORE_IMF_EVENT_KEY_DOWN, &imfEvent);
+        isFiltered = ecore_imf_context_filter_event(inputMethodContext, ECORE_IMF_EVENT_KEY_DOWN, &inputMethodEvent);
     }
 
     impl->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(downEvent, isFiltered));
@@ -288,33 +289,6 @@ static void _ewk_view_on_mouse_wheel(void* data, Evas*, Evas_Object*, void* even
     smartData->api->mouse_wheel(smartData, wheelEvent);
 }
 
-static void _ewk_view_on_mouse_down(void* data, Evas*, Evas_Object*, void* eventInfo)
-{
-    Evas_Event_Mouse_Down* downEvent = static_cast<Evas_Event_Mouse_Down*>(eventInfo);
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api->mouse_down);
-    smartData->api->mouse_down(smartData, downEvent);
-}
-
-static void _ewk_view_on_mouse_up(void* data, Evas*, Evas_Object*, void* eventInfo)
-{
-    Evas_Event_Mouse_Up* upEvent = static_cast<Evas_Event_Mouse_Up*>(eventInfo);
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api->mouse_up);
-    smartData->api->mouse_up(smartData, upEvent);
-}
-
-static void _ewk_view_on_mouse_move(void* data, Evas*, Evas_Object*, void* eventInfo)
-{
-    Evas_Event_Mouse_Move* moveEvent = static_cast<Evas_Event_Mouse_Move*>(eventInfo);
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api);
-    EINA_SAFETY_ON_NULL_RETURN(smartData->api->mouse_move);
-    smartData->api->mouse_move(smartData, moveEvent);
-}
-
 static void _ewk_view_on_key_down(void* data, Evas*, Evas_Object*, void* eventInfo)
 {
     Evas_Event_Key_Down* downEvent = static_cast<Evas_Event_Key_Down*>(eventInfo);
@@ -350,47 +324,6 @@ static void _ewk_view_on_hide(void* data, Evas*, Evas_Object*, void* /*eventInfo
     // depending on what WebPageProxy::isViewVisible() returns, this simply triggers the process.
     impl->pageProxy->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
-
-#if ENABLE(TOUCH_EVENTS)
-static inline void _ewk_view_feed_touch_event_using_touch_point_list_of_evas(Evas_Object* ewkView, Ewk_Touch_Event_Type type)
-{
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
-
-    unsigned count = evas_touch_point_list_count(smartData->base.evas);
-    if (!count)
-        return;
-
-    Eina_List* points = 0;
-    for (unsigned i = 0; i < count; ++i) {
-        Ewk_Touch_Point* point = new Ewk_Touch_Point;
-        point->id = evas_touch_point_list_nth_id_get(smartData->base.evas, i);
-        evas_touch_point_list_nth_xy_get(smartData->base.evas, i, &point->x, &point->y);
-        point->state = evas_touch_point_list_nth_state_get(smartData->base.evas, i);
-        points = eina_list_append(points, point);
-    }
-
-    ewk_view_feed_touch_event(ewkView, type, points, evas_key_modifier_get(smartData->base.evas));
-
-    void* data;
-    EINA_LIST_FREE(points, data)
-        delete static_cast<Ewk_Touch_Point*>(data);
-}
-
-static void _ewk_view_on_touch_down(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */)
-{
-    _ewk_view_feed_touch_event_using_touch_point_list_of_evas(ewkView, EWK_TOUCH_START);
-}
-
-static void _ewk_view_on_touch_up(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */)
-{
-    _ewk_view_feed_touch_event_using_touch_point_list_of_evas(ewkView, EWK_TOUCH_END);
-}
-
-static void _ewk_view_on_touch_move(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */)
-{
-    _ewk_view_feed_touch_event_using_touch_point_list_of_evas(ewkView, EWK_TOUCH_MOVE);
-}
-#endif
 
 static Evas_Smart_Class g_parentSmartClass = EVAS_SMART_CLASS_INIT_NULL;
 
@@ -438,8 +371,6 @@ static void _ewk_view_smart_add(Evas_Object* ewkView)
     evas_object_image_filled_set(smartData->image, true);
     evas_object_smart_member_add(smartData->image, ewkView);
     evas_object_show(smartData->image);
-
-    ewk_view_mouse_events_enabled_set(ewkView, true);
 
 #define CONNECT(s, c) evas_object_event_callback_add(ewkView, s, c, smartData)
     CONNECT(EVAS_CALLBACK_FOCUS_IN, _ewk_view_on_focus_in);
@@ -750,7 +681,7 @@ Ewk_Context* ewk_view_context_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, 0);
 
-    return impl->context.get();
+    return impl->ewkContext();
 }
 
 Eina_Bool ewk_view_url_set(Evas_Object* ewkView, const char* url)
@@ -770,7 +701,7 @@ const char* ewk_view_url_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, 0);
 
-    return impl->url;
+    return impl->url();
 }
 
 const char *ewk_view_icon_url_get(const Evas_Object *ewkView)
@@ -778,7 +709,7 @@ const char *ewk_view_icon_url_get(const Evas_Object *ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, 0);
 
-    return impl->faviconURL;
+    return impl->faviconURL();
 }
 
 Eina_Bool ewk_view_reload(Evas_Object* ewkView)
@@ -818,7 +749,7 @@ Ewk_Settings* ewk_view_settings_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, 0);
 
-    return impl->settings.get();
+    return impl->settings();
 }
 
 const char* ewk_view_title_get(const Evas_Object* ewkView)
@@ -826,10 +757,7 @@ const char* ewk_view_title_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, 0);
 
-    CString title = impl->pageProxy->pageTitle().utf8();
-    impl->title = title.data();
-
-    return impl->title;
+    return impl->title();
 }
 
 /**
@@ -891,10 +819,7 @@ void ewk_view_theme_set(Evas_Object* ewkView, const char* path)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl);
 
-    if (impl->theme != path) {
-        impl->theme = path;
-        impl->pageProxy->setThemePath(path);
-    }
+    impl->setThemePath(path);
 }
 
 const char* ewk_view_theme_get(const Evas_Object* ewkView)
@@ -902,7 +827,7 @@ const char* ewk_view_theme_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, 0);
 
-    return impl->theme;
+    return impl->themePath();
 }
 
 Eina_Bool ewk_view_back(Evas_Object* ewkView)
@@ -994,13 +919,7 @@ const char* ewk_view_setting_encoding_custom_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, 0);
 
-    String customEncoding = impl->pageProxy->customTextEncodingName();
-    if (customEncoding.isEmpty())
-        return 0;
-
-    impl->customEncoding = customEncoding.utf8().data();
-
-    return impl->customEncoding;
+    return impl->customTextEncodingName();
 }
 
 Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* ewkView, const char* encoding)
@@ -1008,8 +927,7 @@ Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* ewkView, const char*
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
 
-    impl->customEncoding = encoding;
-    impl->pageProxy->setCustomTextEncodingName(encoding ? encoding : String());
+    impl->setCustomTextEncodingName(encoding);
 
     return true;
 }
@@ -1096,20 +1014,7 @@ Eina_Bool ewk_view_mouse_events_enabled_set(Evas_Object* ewkView, Eina_Bool enab
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
 
-    enabled = !!enabled;
-    if (impl->areMouseEventsEnabled == enabled)
-        return true;
-
-    impl->areMouseEventsEnabled = enabled;
-    if (enabled) {
-        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_DOWN, _ewk_view_on_mouse_down, smartData);
-        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_UP, _ewk_view_on_mouse_up, smartData);
-        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_MOVE, _ewk_view_on_mouse_move, smartData);
-    } else {
-        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_DOWN, _ewk_view_on_mouse_down);
-        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_UP, _ewk_view_on_mouse_up);
-        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_MOVE, _ewk_view_on_mouse_move);
-    }
+    impl->setMouseEventsEnabled(!!enabled);
 
     return true;
 }
@@ -1119,7 +1024,7 @@ Eina_Bool ewk_view_mouse_events_enabled_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
 
-    return impl->areMouseEventsEnabled;
+    return impl->mouseEventsEnabled();
 }
 
 Eina_Bool ewk_view_color_picker_color_set(Evas_Object* ewkView, int r, int g, int b, int a)
@@ -1127,14 +1032,8 @@ Eina_Bool ewk_view_color_picker_color_set(Evas_Object* ewkView, int r, int g, in
 #if ENABLE(INPUT_TYPE_COLOR)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(impl->colorPickerResultListener, false);
 
-    WebCore::Color color = WebCore::Color(r, g, b, a);
-    WKRetainPtr<WKStringRef> colorString(AdoptWK, WKStringCreateWithUTF8CString(color.serialized().utf8().data()));
-    WKColorPickerResultListenerSetColor(impl->colorPickerResultListener.get(), colorString.get());
-    impl->colorPickerResultListener.clear();
-
-    return true;
+    return impl->setColorPickerColor(WebCore::Color(r, g, b, a));
 #else
     return false;
 #endif
@@ -1164,31 +1063,7 @@ Eina_Bool ewk_view_touch_events_enabled_set(Evas_Object* ewkView, Eina_Bool enab
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
 
-    enabled = !!enabled;
-    if (impl->areTouchEventsEnabled == enabled)
-        return true;
-
-    impl->areTouchEventsEnabled = enabled;
-    if (enabled) {
-        // FIXME: We have to connect touch callbacks with mouse and multi events
-        // because the Evas creates mouse events for first touch and multi events
-        // for second and third touches. Below codes should be fixed when the Evas
-        // supports the touch events.
-        // See https://bugs.webkit.org/show_bug.cgi?id=97785 for details.
-        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_DOWN, _ewk_view_on_touch_down, smartData);
-        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_UP, _ewk_view_on_touch_up, smartData);
-        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MOUSE_MOVE, _ewk_view_on_touch_move, smartData);
-        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MULTI_DOWN, _ewk_view_on_touch_down, smartData);
-        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MULTI_UP, _ewk_view_on_touch_up, smartData);
-        evas_object_event_callback_add(ewkView, EVAS_CALLBACK_MULTI_MOVE, _ewk_view_on_touch_move, smartData);
-    } else {
-        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_DOWN, _ewk_view_on_touch_down);
-        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_UP, _ewk_view_on_touch_up);
-        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MOUSE_MOVE, _ewk_view_on_touch_move);
-        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MULTI_DOWN, _ewk_view_on_touch_down);
-        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MULTI_UP, _ewk_view_on_touch_up);
-        evas_object_event_callback_del(ewkView, EVAS_CALLBACK_MULTI_MOVE, _ewk_view_on_touch_move);
-    }
+    impl->setTouchEventsEnabled(!!enabled);
 
     return true;
 #else
@@ -1202,7 +1077,7 @@ Eina_Bool ewk_view_touch_events_enabled_get(const Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
 
-    return impl->areTouchEventsEnabled;
+    return impl->touchEventsEnabled();
 #else
     return false;
 #endif

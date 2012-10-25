@@ -27,7 +27,7 @@
 #ifndef ewk_settings_private_h
 #define ewk_settings_private_h
 
-#include <wtf/RefPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 class WebPreferences;
@@ -39,16 +39,21 @@ class EwkViewImpl;
  */
 class Ewk_Settings {
 public:
-    explicit Ewk_Settings(EwkViewImpl* viewImpl)
-        : m_viewImpl(viewImpl)
+    static PassOwnPtr<Ewk_Settings> create(EwkViewImpl* viewImpl)
     {
-        ASSERT(m_viewImpl);
+        return adoptPtr(new Ewk_Settings(viewImpl));
     }
 
     const WebKit::WebPreferences* preferences() const;
     WebKit::WebPreferences* preferences();
 
 private:
+    explicit Ewk_Settings(EwkViewImpl* viewImpl)
+        : m_viewImpl(viewImpl)
+    {
+        ASSERT(m_viewImpl);
+    }
+
     EwkViewImpl* m_viewImpl;
 };
 
