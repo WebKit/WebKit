@@ -361,6 +361,10 @@ compositing/overflow/overflow-visible-with-touch.html
 compositing/overflow/scrolling-content-clip-to-viewport.html
 compositing/overflow/textarea-scroll-touch.html
 
+# New compositing/tiling/backface-preserve-3d-tiled.html introduced in r132394 fails
+# https://bugs.webkit.org/show_bug.cgi?id=100348
+compositing/tiling/backface-preserve-3d-tiled.html
+
 # [Qt] [WK2] Some fullscreen layout tests are timing out on the bot
 # https://bugs.webkit.org/show_bug.cgi?id=92543
 fullscreen/video-controls-timeline.html

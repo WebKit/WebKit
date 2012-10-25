@@ -1,3 +1,11 @@
+2012-10-25  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        Skip a new failing test introduced in r132394.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2012-10-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip a new failing test.
