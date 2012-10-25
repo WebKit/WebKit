@@ -56,6 +56,7 @@ QtWebIconDatabaseClient::QtWebIconDatabaseClient(WebContext *context)
 
 QtWebIconDatabaseClient::~QtWebIconDatabaseClient()
 {
+    m_iconDatabase->close();
     WKIconDatabaseSetIconDatabaseClient(toAPI(m_iconDatabase.get()), 0);
 }
 
