@@ -1,3 +1,29 @@
+2012-10-25  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Conditionalize XHR timeout support
+        https://bugs.webkit.org/show_bug.cgi?id=100356
+
+        Reviewed by Adam Barth.
+
+        Adding feature for XHR_TIMEOUT to disable it on ports that don't have
+        network backend support for setTimeoutInterval.
+
+        No new tests, covered by http/tests/xmlhttprequest/timeout/*
+
+        * Configurations/FeatureDefines.xcconfig: Default ON on mac.
+        * GNUmakefile.am:
+        * GNUmakefile.features.am:
+          Autotools support for the flag.
+        * xml/XMLHttpRequest.cpp: #if ENABLE(XHR_TIMEOUT) wrapping
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore):
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::didFail):
+        * xml/XMLHttpRequest.h: #if ENABLE(XHR_TIMEOUT) wrapping
+        (XMLHttpRequest):
+        * xml/XMLHttpRequest.idl: Conditional properties timeout and ontimeout (event handler).
+
 2012-10-25  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor must replace form action with about:blank when reflected action detected.

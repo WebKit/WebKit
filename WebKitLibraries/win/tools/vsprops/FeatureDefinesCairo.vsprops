@@ -367,6 +367,11 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
+		Name="ENABLE_XHR_TIMEOUT"
+		Value="ENABLE_XHR_TIMEOUT"
+		PerformEnvironmentSet="true"
+	/>
+  <UserMacro
 		Name="ENABLE_XSLT"
 		Value="ENABLE_XSLT"
 		PerformEnvironmentSet="true"

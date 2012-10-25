@@ -139,6 +139,7 @@ my (
     $webTimingSupport,
     $workersSupport,
     $xhrResponseBlobSupport,
+    $xhrTimeoutSupport,
     $xsltSupport,
 );
 
@@ -430,6 +431,9 @@ my @features = (
 
     { option => "xhr-response-blob", desc => "Toggle XHR Response BLOB support",
       define => "ENABLE_XHR_RESPONSE_BLOB", default => isBlackBerry(), value => \$xhrResponseBlobSupport },
+
+    { option => "xhr-timeout", desc => "Toggle XHR Timeout support",
+      define => "ENABLE_XHR_TIMEOUT", default => (isEfl() || isGtk() || isAppleMacWebKit()), value => \$xhrTimeoutSupport },
 
     { option => "xslt", desc => "Toggle XSLT support",
       define => "ENABLE_XSLT", default => 1, value => \$xsltSupport },

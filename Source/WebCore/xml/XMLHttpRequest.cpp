@@ -176,7 +176,9 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context, PassRefPtr<Secur
     : ActiveDOMObject(context, this)
     , m_async(true)
     , m_includeCredentials(false)
+#if ENABLE(XHR_TIMEOUT)
     , m_timeoutMilliseconds(0)
+#endif
     , m_state(UNSENT)
     , m_createdDocument(false)
     , m_error(false)
@@ -328,6 +330,7 @@ ArrayBuffer* XMLHttpRequest::responseArrayBuffer(ExceptionCode& ec)
     return m_responseArrayBuffer.get();
 }
 
+#if ENABLE(XHR_TIMEOUT)
 void XMLHttpRequest::setTimeout(unsigned long timeout, ExceptionCode& ec)
 {
     // FIXME: Need to trigger or update the timeout Timer here, if needed. http://webkit.org/b/98156
@@ -339,7 +342,7 @@ void XMLHttpRequest::setTimeout(unsigned long timeout, ExceptionCode& ec)
     }
     m_timeoutMilliseconds = timeout;
 }
-
+#endif
 
 void XMLHttpRequest::setResponseType(const String& responseType, ExceptionCode& ec)
 {
@@ -511,12 +514,14 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
             return;
         }
 
+#if ENABLE(XHR_TIMEOUT)
         // Similarly, timeouts are disabled for synchronous requests as well.
         if (m_timeoutMilliseconds > 0) {
             logConsoleError(scriptExecutionContext(), "Synchronous XMLHttpRequests must not have a timeout value set.");
             ec = INVALID_ACCESS_ERR;
             return;
         }
+#endif
     }
 
     m_method = uppercaseKnownHTTPMethod(method);
@@ -764,8 +769,10 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     options.crossOriginRequestPolicy = UseAccessControl;
     options.securityOrigin = securityOrigin();
 
+#if ENABLE(XHR_TIMEOUT)
     if (m_timeoutMilliseconds)
         request.setTimeoutInterval(m_timeoutMilliseconds / 1000.0);
+#endif
 
     m_exceptionCode = 0;
     m_error = false;
@@ -1083,10 +1090,12 @@ void XMLHttpRequest::didFail(const ResourceError& error)
         return;
     }
 
+#if ENABLE(XHR_TIMEOUT)
     if (error.isTimeout()) {
         didTimeout();
         return;
     }
+#endif
 
     // Network failures are already reported to Web Inspector by ResourceLoader.
     if (error.domain() == errorDomainWebKitInternal)
@@ -1212,6 +1221,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
     }
 }
 
+#if ENABLE(XHR_TIMEOUT)
 void XMLHttpRequest::didTimeout()
 {
     // internalAbort() calls dropProtection(), which may release the last reference.
@@ -1239,6 +1249,7 @@ void XMLHttpRequest::didTimeout()
     }
     m_progressEventThrottle.dispatchEventAndLoadEnd(XMLHttpRequestProgressEvent::create(eventNames().timeoutEvent));
 }
+#endif
 
 bool XMLHttpRequest::canSuspend() const
 {

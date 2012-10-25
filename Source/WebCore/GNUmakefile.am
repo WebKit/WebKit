@@ -206,6 +206,15 @@ $(GENSOURCES_WEBCORE)/XPathGrammar.cpp: $(WebCore)/xml/XPathGrammar.y
 	$(AM_V_at)perl $(WebCore)/css/makegrammar.pl --outputDir $(GENSOURCES_WEBCORE) --bison "$(BISON)" --symbolsPrefix xpathyy $<
 
 # ----
+# XHR timeout Support
+# ----
+if ENABLE_XHR_TIMEOUT
+feature_defines_overrides += ENABLE_XHR_TIMEOUT=1
+else
+feature_defines_overrides += ENABLE_XHR_TIMEOUT=0
+endif # END ENABLE_XHR_TIMEOUT
+
+# ----
 # XSLT Support
 # ----
 if ENABLE_XSLT

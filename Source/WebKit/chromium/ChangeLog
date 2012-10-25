@@ -1,3 +1,15 @@
+2012-10-25  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Conditionalize XHR timeout support
+        https://bugs.webkit.org/show_bug.cgi?id=100356
+
+        Reviewed by Adam Barth.
+
+        Adding XHR_TIMEOUT feature to conditionalize this on ports without network backend support.
+        Defaults to off on chromium until webkit.org/b/98397 is solved.
+
+        * features.gypi:
+
 2012-10-25  Ben Wagner  <bungeman@chromium.org>
 
         Remove SK_DISABLE_EXTRACTSUBSET_OPAQUE_FIX define from skia_webkit.gyp, as it has been rebaselined.
