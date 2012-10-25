@@ -237,8 +237,12 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
     frameView->setInProgrammaticScroll(oldProgrammaticScroll);
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView))
-        scrollLayer->syncPosition(-frameView->scrollPosition());
+    if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView)) {
+        if (programmaticScroll)
+            scrollLayer->setPosition(-frameView->scrollPosition());
+        else
+            scrollLayer->syncPosition(-frameView->scrollPosition());
+    }
 #endif
 }
 

@@ -1,3 +1,21 @@
+2012-10-25  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (132422): Tiles don't move when the Find dialog causes programmatic scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=100433
+        <rdar://problem/12575582>
+
+        Reviewed by Simon Fraser.
+
+        Actually update GraphicsLayer positions from updateMainFrameScrollPosition if
+        we're doing a programmatic scroll; otherwise programmatic scrolls while scrolling
+        on the main thread will short-circuit and end up only updating the GraphicsLayer's
+        notion of its current position, but never synchronizing that to the layer itself.
+
+        No new tests, as this is currently untestable.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPosition):
+
 2012-10-25  Simon Fraser  <simon.fraser@apple.com>
 
         Tiled layers are missing content on zooming
