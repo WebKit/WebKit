@@ -1,3 +1,17 @@
+2012-10-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Add two more tiled scrolling tests
+        https://bugs.webkit.org/show_bug.cgi?id=100314
+
+        Reviewed by Beth Dakin.
+
+        Two new tests for TileCache tile coverage after scrolling.
+
+        * platform/mac/tiled-drawing/tile-coverage-after-scroll-expected.txt: Added.
+        * platform/mac/tiled-drawing/tile-coverage-after-scroll.html: Added.
+        * platform/mac/tiled-drawing/tile-coverage-scroll-to-bottom-expected.txt: Added.
+        * platform/mac/tiled-drawing/tile-coverage-scroll-to-bottom.html: Added.
+
 2012-10-24  Beth Dakin  <bdakin@apple.com>
 
         Updated results for https://bugs.webkit.org/show_bug.cgi?id=100312
