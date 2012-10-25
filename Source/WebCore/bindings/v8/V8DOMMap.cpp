@@ -38,16 +38,6 @@
 
 namespace WebCore {
 
-DOMDataStoreHandle::DOMDataStoreHandle(bool initialize)
-{
-    if (initialize)
-        m_store = adoptPtr(new DOMDataStore(DOMDataStore::IsolatedWorld));
-}
-
-DOMDataStoreHandle::~DOMDataStoreHandle()
-{
-}
-
 NodeWrapperVisitor::~NodeWrapperVisitor()
 {
 }

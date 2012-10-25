@@ -42,21 +42,6 @@
 
 namespace WebCore {
 
-    class DOMDataStore;
-
-    // A utility class to manage the lifetime of set of DOM wrappers.
-    class DOMDataStoreHandle {
-    public:
-        explicit DOMDataStoreHandle(bool initialize);
-        ~DOMDataStoreHandle();
-
-        DOMDataStore* getStore() const { return m_store.get(); }
-
-    private:
-        OwnPtr<DOMDataStore> m_store;
-    };
-
-    // A map from DOM node to its JS wrapper.
     DOMWrapperMap<Node>& getDOMNodeMap(v8::Isolate* = 0);
     DOMWrapperMap<Node>& getActiveDOMNodeMap(v8::Isolate* = 0);
     void visitActiveDOMNodes(DOMWrapperVisitor<Node>*);

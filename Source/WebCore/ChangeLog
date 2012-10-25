@@ -1,3 +1,20 @@
+2012-10-25  Adam Barth  <abarth@webkit.org>
+
+        [V8] DOMDataStoreHandle serves no purpose and can be removed
+        https://bugs.webkit.org/show_bug.cgi?id=100333
+
+        Reviewed by Eric Seidel.
+
+        After https://bugs.webkit.org/show_bug.cgi?id=100316,
+        DOMDataStoreHandle is just a glorified OwnPtr.
+
+        * bindings/v8/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::domDataStore):
+        (DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        * bindings/v8/V8DOMMap.cpp:
+        * bindings/v8/V8DOMMap.h:
+
 2012-10-25  Elliott Sprehn  <esprehn@chromium.org>
 
         Remove dead Node::isBlockFlowOrBlockTable
