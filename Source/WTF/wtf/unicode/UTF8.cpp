@@ -363,7 +363,7 @@ ConversionResult convertUTF8ToUTF16(
     *targetStart = target;
 
     if (sourceAllASCII)
-        *sourceAllASCII = !(orAllData & 0x7f);
+        *sourceAllASCII = !(orAllData & ~0x7f);
 
     return result;
 }

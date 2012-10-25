@@ -94,7 +94,8 @@ static int convertCase(UChar* result, int resultLength, const UChar* src, int sr
     // Convert the result to UTF-16.
     UChar* utf16Target = result;
     const char* utf8Source = utf8Result.get();
-    conversionResult = convertUTF8ToUTF16(&utf8Source, utf8Source + utf8ResultLength, &utf16Target, utf16Target + resultLength, true);
+    bool unusedISAllASCII;
+    conversionResult = convertUTF8ToUTF16(&utf8Source, utf8Source + utf8ResultLength, &utf16Target, utf16Target + resultLength, &unusedIsAllASCII, true);
     long utf16ResultLength = utf16Target - result;
     if (conversionResult != conversionOK)
         *error = true;

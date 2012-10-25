@@ -1,3 +1,18 @@
+2012-10-25  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r131836): failures in list styles tests on EFL, GTK
+        https://bugs.webkit.org/show_bug.cgi?id=99824
+
+        Reviewed by Oliver Hunt.
+
+        Fixed ASCII check.
+        Added placeholder argument for new argument added to convertUTF8ToUTF16() in http://trac.webkit.org/changeset/131836.
+
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::convertUTF8ToUTF16):
+        * wtf/unicode/glib/UnicodeGLib.cpp:
+        (WTF::Unicode::convertCase):
+
 2012-10-25  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Remove some C'ism from EwkView

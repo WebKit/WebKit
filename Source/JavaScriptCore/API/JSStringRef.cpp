@@ -47,9 +47,10 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
         Vector<UChar, 1024> buffer(length);
         UChar* p = buffer.data();
         bool sourceIsAllASCII;
+        const LChar* stringStart = reinterpret_cast<const LChar*>(string);
         if (conversionOK == convertUTF8ToUTF16(&string, string + length, &p, p + length, &sourceIsAllASCII)) {
             if (sourceIsAllASCII)
-                return OpaqueJSString::create(reinterpret_cast<const LChar*>(string), length).leakRef();
+                return OpaqueJSString::create(stringStart, length).leakRef();
             return OpaqueJSString::create(buffer.data(), p - buffer.data()).leakRef();
         }
     }
