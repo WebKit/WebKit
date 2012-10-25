@@ -1636,6 +1636,7 @@ SET(WebCore_SOURCES
     loader/HistoryController.cpp
     loader/ImageLoader.cpp
     loader/LinkLoader.cpp
+    loader/LoaderStrategy.cpp
     loader/MainResourceLoader.cpp
     loader/MixedContentChecker.cpp
     loader/NavigationAction.cpp

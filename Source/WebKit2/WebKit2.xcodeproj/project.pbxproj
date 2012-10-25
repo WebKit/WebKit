@@ -461,6 +461,7 @@
 		51A9E1291315ED35009E7031 /* WebKeyValueStorageManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A9E1251315ED35009E7031 /* WebKeyValueStorageManagerMessages.h */; };
 		51A9E12A1315ED35009E7031 /* WebKeyValueStorageManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A9E1261315ED35009E7031 /* WebKeyValueStorageManagerProxyMessageReceiver.cpp */; };
 		51A9E12B1315ED35009E7031 /* WebKeyValueStorageManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A9E1271315ED35009E7031 /* WebKeyValueStorageManagerProxyMessages.h */; };
+		51ABF65A16392F2000132A7A /* WebResourceLoadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ABF65616392F1500132A7A /* WebResourceLoadScheduler.cpp */; };
 		51ACBB82127A8BAD00D203B9 /* WebContextMenuProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACBB81127A8BAD00D203B9 /* WebContextMenuProxy.h */; };
 		51ACBBA0127A8F2C00D203B9 /* WebContextMenuProxyMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACBB9E127A8F2C00D203B9 /* WebContextMenuProxyMac.h */; };
 		51ACBBA1127A8F2C00D203B9 /* WebContextMenuProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */; };
@@ -1636,6 +1637,8 @@
 		51A9E1251315ED35009E7031 /* WebKeyValueStorageManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKeyValueStorageManagerMessages.h; sourceTree = "<group>"; };
 		51A9E1261315ED35009E7031 /* WebKeyValueStorageManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKeyValueStorageManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		51A9E1271315ED35009E7031 /* WebKeyValueStorageManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKeyValueStorageManagerProxyMessages.h; sourceTree = "<group>"; };
+		51ABF65616392F1500132A7A /* WebResourceLoadScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebResourceLoadScheduler.cpp; path = Network/WebResourceLoadScheduler.cpp; sourceTree = "<group>"; };
+		51ABF65716392F1500132A7A /* WebResourceLoadScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourceLoadScheduler.h; path = Network/WebResourceLoadScheduler.h; sourceTree = "<group>"; };
 		51ACBB81127A8BAD00D203B9 /* WebContextMenuProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuProxy.h; sourceTree = "<group>"; };
 		51ACBB9E127A8F2C00D203B9 /* WebContextMenuProxyMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuProxyMac.h; sourceTree = "<group>"; };
 		51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuProxyMac.mm; sourceTree = "<group>"; };
@@ -2952,6 +2955,8 @@
 			children = (
 				5105B0D4162F7A7A00E27709 /* NetworkProcessConnection.cpp */,
 				5105B0D5162F7A7A00E27709 /* NetworkProcessConnection.h */,
+				51ABF65616392F1500132A7A /* WebResourceLoadScheduler.cpp */,
+				51ABF65716392F1500132A7A /* WebResourceLoadScheduler.h */,
 			);
 			name = Network;
 			sourceTree = "<group>";
@@ -5694,6 +5699,7 @@
 				513A164C1630A9BF005D7D22 /* NetworkConnectionToWebProcess.cpp in Sources */,
 				5183DDEC1630BDFC008BE5C7 /* NetworkProcessConnection.cpp in Sources */,
 				1A13BEB31635A9C800F19C03 /* StringReference.cpp in Sources */,
+				51ABF65A16392F2000132A7A /* WebResourceLoadScheduler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

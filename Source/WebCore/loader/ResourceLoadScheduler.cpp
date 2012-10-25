@@ -89,6 +89,10 @@ ResourceLoadScheduler::ResourceLoadScheduler()
 #endif
 }
 
+ResourceLoadScheduler::~ResourceLoadScheduler()
+{
+}
+
 PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, CachedResource* resource, const ResourceRequest& request, ResourceLoadPriority priority, const ResourceLoaderOptions& options)
 {
     RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, resource, request, options);

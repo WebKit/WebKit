@@ -37,6 +37,7 @@
 #include "WebProcessProxyMessages.h"
 #include <WebCore/Color.h>
 #include <WebCore/KURL.h>
+#include <WebCore/LoaderStrategy.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformPasteboard.h>
 #include <wtf/Atomics.h>
@@ -99,6 +100,21 @@ void WebPlatformStrategies::notifyCookiesChanged()
 {
     WebCookieManager::shared().dispatchCookiesDidChange();
 }
+
+// LoaderStrategy
+
+#if ENABLE(NETWORK_PROCESS)
+
+ResourceLoadScheduler* WebPlatformStrategies::resourceLoadScheduler()
+{
+    static ResourceLoadScheduler* scheduler;
+    if (!scheduler)
+        scheduler = &WebProcess::shared().webResourceLoadScheduler();
+        
+    return scheduler;
+}
+
+#endif
 
 // PluginStrategy
 

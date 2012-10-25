@@ -2993,6 +2993,8 @@
             'loader/LinkLoader.cpp',
             'loader/LinkLoader.h',
             'loader/LinkLoaderClient.h',
+            'loader/LoaderStrategy.cpp',
+            'loader/LoaderStrategy.h',
             'loader/MainResourceLoader.cpp',
             'loader/MainResourceLoader.h',
             'loader/MixedContentChecker.cpp',

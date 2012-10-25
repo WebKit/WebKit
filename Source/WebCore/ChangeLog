@@ -1,3 +1,53 @@
+2012-10-25  Brady Eidson  <beidson@apple.com>
+
+        Allow LoaderStrategy to override the ResourceLoadScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=100355
+
+        Reviewed by Anders Carlsson.
+
+        Allow LoaderStrategy to override the implementation of the ResourceLoadScheduler.
+        Add a default implementation that just returns the current ResourceLoadScheduler.
+
+        No new tests (No behavior change).
+
+        Project file stuff:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        "Virtualize" ResourceLoadScheduler to expose build issues in preparation for future virtualization:
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::~ResourceLoadScheduler):
+        * loader/ResourceLoadScheduler.h:
+        (ResourceLoadScheduler):
+
+        Add the new method plus a default implementation:
+         * loader/LoaderStrategy.cpp: 
+        (WebCore::LoaderStrategy::resourceLoadScheduler):
+        * loader/LoaderStrategy.h:
+
+        When strategies are enabled, use the LoaderStrategy for this:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::suspendPostAttachCallbacks):
+        (WebCore::ContainerNode::resumePostAttachCallbacks):
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::loadNow):
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::releaseResources):
+        (WebCore::ResourceLoader::willSendRequest):
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::performPostLoadActions):
+
 2012-10-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: inspector tests failing after r132454

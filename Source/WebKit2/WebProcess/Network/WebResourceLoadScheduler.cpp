@@ -23,27 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LoaderStrategy_h
-#define LoaderStrategy_h
+#include "config.h"
+#include "WebResourceLoadScheduler.h"
 
-#if USE(PLATFORM_STRATEGIES)
+#if ENABLE(NETWORK_PROCESS)
 
-namespace WebCore {
+using namespace WebCore;
 
-class ResourceLoadScheduler;
+namespace WebKit {
 
-class LoaderStrategy {
-public:
-    virtual ResourceLoadScheduler* resourceLoadScheduler();
+WebResourceLoadScheduler::~WebResourceLoadScheduler()
+{
+}
 
-protected:
-    virtual ~LoaderStrategy()
-    {
-    }
-};
+} // namespace WebKit
 
-} // namespace WebCore
-
-#endif // USE(PLATFORM_STRATEGIES)
-
-#endif // LoaderStrategy_h
+#endif // ENABLE(NETWORK_PROCESS)

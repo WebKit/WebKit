@@ -23,27 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LoaderStrategy_h
-#define LoaderStrategy_h
+#ifndef WebResourceLoadScheduler_h
+#define WebResourceLoadScheduler_h
 
-#if USE(PLATFORM_STRATEGIES)
+#include <WebCore/ResourceLoadScheduler.h>
 
-namespace WebCore {
+#if ENABLE(NETWORK_PROCESS)
 
-class ResourceLoadScheduler;
+namespace WebKit {
 
-class LoaderStrategy {
+class WebResourceLoadScheduler : public WebCore::ResourceLoadScheduler {
 public:
-    virtual ResourceLoadScheduler* resourceLoadScheduler();
-
-protected:
-    virtual ~LoaderStrategy()
-    {
-    }
+    virtual ~WebResourceLoadScheduler();
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // USE(PLATFORM_STRATEGIES)
+#endif // ENABLE(NETWORK_PROCESS)
 
-#endif // LoaderStrategy_h
+#endif // WebResourceLoadScheduler_h

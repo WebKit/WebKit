@@ -1598,6 +1598,7 @@
 		51ABAE1B103C18FF008C5260 /* SocketStreamError.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ABAE1A103C18FF008C5260 /* SocketStreamError.h */; };
 		51ABAE1E103C1913008C5260 /* SocketStreamHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ABAE1C103C1913008C5260 /* SocketStreamHandle.h */; };
 		51ABAE1F103C1913008C5260 /* SocketStreamHandleCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ABAE1D103C1913008C5260 /* SocketStreamHandleCFNet.cpp */; };
+		51ABF64D16392E2800132A7A /* LoaderStrategy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */; };
 		51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */; };
 		51BE37E00DAEE00E001085FC /* StorageArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 51BE37DE0DAEE00E001085FC /* StorageArea.h */; };
 		51C0AA390F2AA10A001648C2 /* CachedFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C0AA380F2AA10A001648C2 /* CachedFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8809,6 +8810,7 @@
 		51ABAE1A103C18FF008C5260 /* SocketStreamError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamError.h; sourceTree = "<group>"; };
 		51ABAE1C103C1913008C5260 /* SocketStreamHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketStreamHandle.h; sourceTree = "<group>"; };
 		51ABAE1D103C1913008C5260 /* SocketStreamHandleCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamHandleCFNet.cpp; sourceTree = "<group>"; };
+		51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoaderStrategy.cpp; sourceTree = "<group>"; };
 		51B2417A0D931F3F00E83F5C /* LegacyWebArchiveMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LegacyWebArchiveMac.mm; sourceTree = "<group>"; };
 		51BE37DE0DAEE00E001085FC /* StorageArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageArea.h; sourceTree = "<group>"; };
 		51C0AA380F2AA10A001648C2 /* CachedFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFrame.h; sourceTree = "<group>"; };
@@ -20718,6 +20720,7 @@
 				98CE4329129E00E5005821DC /* LinkLoader.h */,
 				984264EF12D5280A000D88A4 /* LinkLoaderClient.h */,
 				51E6820F16387302003BBF3C /* LoaderStrategy.h */,
+				51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */,
 				93E227DC0AF589AD00D48324 /* MainResourceLoader.cpp */,
 				656D37290ADBA5DE00A4554D /* MainResourceLoader.h */,
 				52F10862162B6D82009AC81E /* MixedContentChecker.cpp */,
@@ -28780,6 +28783,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				51ABF64D16392E2800132A7A /* LoaderStrategy.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

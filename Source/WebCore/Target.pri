@@ -834,6 +834,7 @@ SOURCES += \
     loader/icon/IconLoader.cpp \
     loader/ImageLoader.cpp \
     loader/LinkLoader.cpp \
+    loader/LoaderStrategy.cpp \
     loader/MainResourceLoader.cpp \
     loader/MixedContentChecker.cpp \
     loader/NavigationAction.cpp \
@@ -1962,6 +1963,7 @@ HEADERS += \
     loader/ImageLoader.h \
     loader/LinkLoader.h \
     loader/LinkLoaderClient.h \
+    loader/LoaderStrategy.h \
     loader/MainResourceLoader.h \
     loader/MixedContentChecker.h \
     loader/NavigationAction.h \

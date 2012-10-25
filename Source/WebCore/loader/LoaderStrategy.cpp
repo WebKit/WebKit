@@ -23,27 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LoaderStrategy_h
-#define LoaderStrategy_h
+#include "config.h"
+#include "LoaderStrategy.h"
+
+#include "ResourceLoadScheduler.h"
 
 #if USE(PLATFORM_STRATEGIES)
 
 namespace WebCore {
 
-class ResourceLoadScheduler;
-
-class LoaderStrategy {
-public:
-    virtual ResourceLoadScheduler* resourceLoadScheduler();
-
-protected:
-    virtual ~LoaderStrategy()
-    {
-    }
-};
+ResourceLoadScheduler* LoaderStrategy::resourceLoadScheduler()
+{
+    return WebCore::resourceLoadScheduler();
+}
 
 } // namespace WebCore
 
 #endif // USE(PLATFORM_STRATEGIES)
-
-#endif // LoaderStrategy_h

@@ -27607,6 +27607,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\LoaderStrategy.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\LoaderStrategy.h"
 				>
 			</File>

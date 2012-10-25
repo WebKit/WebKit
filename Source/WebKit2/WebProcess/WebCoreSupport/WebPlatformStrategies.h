@@ -56,6 +56,11 @@ private:
     // WebCore::CookiesStrategy
     virtual void notifyCookiesChanged() OVERRIDE;
 
+    // WebCore::LoaderStrategy
+#if ENABLE(NETWORK_PROCESS)
+    virtual WebCore::ResourceLoadScheduler* resourceLoadScheduler() OVERRIDE;
+#endif
+
     // WebCore::PluginStrategy
     virtual void refreshPlugins() OVERRIDE;
     virtual void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&) OVERRIDE;

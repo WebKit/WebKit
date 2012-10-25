@@ -36,7 +36,9 @@
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
+#include "LoaderStrategy.h"
 #include "Logging.h"
+#include "PlatformStrategies.h"
 #include "PurgeableBuffer.h"
 #include "ResourceBuffer.h"
 #include "ResourceHandle.h"
@@ -277,7 +279,12 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
     m_resourceRequest.setPriority(loadPriority());
     addAdditionalRequestHeaders(cachedResourceLoader);
 
+#if USE(PLATFORM_STRATEGIES)
+    m_loader = platformStrategies()->loaderStrategy()->resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->frame(), this, m_resourceRequest, m_resourceRequest.priority(), options);
+#else
     m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->frame(), this, m_resourceRequest, m_resourceRequest.priority(), options);
+#endif
+
     if (!m_loader) {
         failBeforeStarting();
         return;
