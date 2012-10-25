@@ -695,6 +695,13 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
         didModifyAttribute(name, newValue);
 }
 
+static inline AtomicString makeIdForStyleResolution(const AtomicString& value, bool inQuirksMode)
+{
+    if (inQuirksMode)
+        return value.lower();
+    return value;
+}
+
 void Element::attributeChanged(const QualifiedName& name, const AtomicString& newValue)
 {
     parseAttribute(Attribute(name, newValue));
@@ -702,14 +709,13 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ne
     document()->incDOMTreeVersion();
 
     if (isIdAttributeName(name)) {
-        if (newValue != attributeData()->idForStyleResolution()) {
-            if (newValue.isNull())
-                attributeData()->setIdForStyleResolution(nullAtom);
-            else if (document()->inQuirksMode())
-                attributeData()->setIdForStyleResolution(newValue.lower());
-            else
-                attributeData()->setIdForStyleResolution(newValue);
-            setNeedsStyleRecalc();
+        AtomicString oldId = attributeData()->idForStyleResolution();
+        AtomicString newId = makeIdForStyleResolution(newValue, document()->inQuirksMode());
+        if (newId != oldId) {
+            attributeData()->setIdForStyleResolution(newId);
+            StyleResolver* styleResolver = document()->styleResolverIfExists();
+            if (attached() && (!styleResolver || (styleResolver->hasSelectorForId(newId) || styleResolver->hasSelectorForId(oldId))))
+                setNeedsStyleRecalc();
         }
     } else if (name == HTMLNames::nameAttr)
         setHasName(!newValue.isNull());

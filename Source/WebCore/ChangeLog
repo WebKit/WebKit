@@ -1,3 +1,24 @@
+2012-10-25  Antti Koivisto  <antti@apple.com>
+
+        Avoid unnecessary style recalcs on id attribute mutation.
+        https://bugs.webkit.org/show_bug.cgi?id=100395
+
+        Reviewed by Andreas Kling.
+
+        There is no need to invalidate element style on id attribute change if neither the old nor the new id were 
+        mentioned in any stylesheet. This is similar to the optimization we already have for class attributes.
+        
+        Recalculating element style is expensive. It seems id attribute mutation is often used in scripts for purposes other than styling. 
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::hasSelectorForId):
+        (WebCore):
+        * css/StyleResolver.h:
+        * dom/Element.cpp:
+        (WebCore::makeIdForStyleResolution):
+        (WebCore):
+        (WebCore::Element::attributeChanged):
+
 2012-10-25  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Notification should be sent when accessibilityIsIgnored changes

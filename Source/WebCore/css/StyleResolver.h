@@ -218,6 +218,7 @@ public:
     static bool colorFromPrimitiveValueIsDerivedFromElement(CSSPrimitiveValue*);
     Color colorFromPrimitiveValue(CSSPrimitiveValue*, bool forVisitedLink = false) const;
 
+    bool hasSelectorForId(const AtomicString&) const;
     bool hasSelectorForAttribute(const AtomicString&) const;
 
     CSSFontSelector* fontSelector() const { return m_fontSelector.get(); }
