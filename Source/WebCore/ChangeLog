@@ -1,3 +1,18 @@
+2012-10-24  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [cairo] unneeded FloatRect object creation in BitmapImage::draw
+        https://bugs.webkit.org/show_bug.cgi?id=100298
+
+        Reviewed by Martin Robinson.
+
+        Do not copy FloatRect arguments src and dst to local variables.
+        Instead, use src and dst directly.
+
+        No new tests. No change in behavior.
+
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+
 2012-10-24  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [SOUP] Provide logging for SocketStreamHandleSoup
