@@ -147,13 +147,13 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         // RenderImageResourceStyleImage requires a style being present on the image but we don't want to
         // trigger a style change now as the node is not fully attached. Moving this code to style change
         // doesn't make sense as it should be run once at renderer creation.
-        image->m_style = style;
+        image->setStyleInternal(style);
         if (const StyleImage* styleImage = static_cast<const ImageContentData*>(contentData)->image()) {
             image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage*>(styleImage)));
             image->setIsGeneratedContent();
         } else
             image->setImageResource(RenderImageResource::create());
-        image->m_style = 0;
+        image->setStyleInternal(0);
         return image;
     }
 
@@ -1768,7 +1768,7 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
     styleWillChange(diff, style.get());
     
     RefPtr<RenderStyle> oldStyle = m_style.release();
-    m_style = style;
+    setStyleInternal(style);
 
     updateFillImages(oldStyle ? oldStyle->backgroundLayers() : 0, m_style ? m_style->backgroundLayers() : 0);
     updateFillImages(oldStyle ? oldStyle->maskLayers() : 0, m_style ? m_style->maskLayers() : 0);
@@ -1813,11 +1813,6 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
         // not having an outline to having an outline.
         repaint();
     }
-}
-
-void RenderObject::setStyleInternal(PassRefPtr<RenderStyle> style)
-{
-    m_style = style;
 }
 
 void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
