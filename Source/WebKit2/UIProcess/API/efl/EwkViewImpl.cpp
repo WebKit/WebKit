@@ -101,6 +101,7 @@ static void _ewk_view_preedit_changed(void* data, Ecore_IMF_Context* context, vo
         return;
 
     String preeditString = String::fromUTF8(buffer);
+    free(buffer);
     Vector<CompositionUnderline> underlines;
     underlines.append(CompositionUnderline(0, preeditString.length(), Color(0, 0, 0), false));
     viewImpl->pageProxy->setComposition(preeditString, underlines, 0);
