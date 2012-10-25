@@ -1,3 +1,26 @@
+2012-10-25  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        do not multiply/demultiply colors when alpha is 255
+        https://bugs.webkit.org/show_bug.cgi?id=89246
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Do not use colorFromPremultipliedARGB in getImageData nor
+        premultipliedARGBFromColor in putByteArray. Avoiding object creation
+        and function call make canvas.getImageData about 10% faster and
+        canvas.putImageData about 30% faster.
+
+        Also, we avoid multiplication/demultiplication computation when alpha
+        is 255. Result is the same, but when there is no transparency,
+        canvas.getImageData is about 4x faster, and canvas.putImageData is
+        about 2x faster.
+
+        No new tests. No change in behavior.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::putByteArray):
+
 2012-10-25  Nate Chapin  <japhet@chromium.org>
 
         Add a main resource type to the memory cache

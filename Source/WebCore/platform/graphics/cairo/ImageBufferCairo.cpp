@@ -175,15 +175,26 @@ PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBuffe
         for (int x = 0; x < numColumns; x++) {
             int basex = x * 4;
             unsigned* pixel = row + x + originx;
-            Color pixelColor;
-            if (multiplied == Unmultiplied)
-                pixelColor = colorFromPremultipliedARGB(*pixel);
-            else
-                pixelColor = Color(*pixel);
-            destRows[basex]     = pixelColor.red();
-            destRows[basex + 1] = pixelColor.green();
-            destRows[basex + 2] = pixelColor.blue();
-            destRows[basex + 3] = pixelColor.alpha();
+
+            // Avoid calling Color::colorFromPremultipliedARGB() because one
+            // function call per pixel is too expensive.
+            unsigned alpha = (*pixel & 0xFF000000) >> 24;
+            unsigned red = (*pixel & 0x00FF0000) >> 16;
+            unsigned green = (*pixel & 0x0000FF00) >> 8;
+            unsigned blue = (*pixel & 0x000000FF);
+
+            if (multiplied == Unmultiplied) {
+                if (alpha && alpha != 255) {
+                    red = red * 255 / alpha;
+                    green = green * 255 / alpha;
+                    blue = blue * 255 / alpha;
+                }
+            }
+
+            destRows[basex]     = red;
+            destRows[basex + 1] = green;
+            destRows[basex + 2] = blue;
+            destRows[basex + 3] = alpha;
         }
         destRows += destBytesPerRow;
     }
@@ -242,14 +253,23 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
         for (int x = 0; x < numColumns; x++) {
             int basex = x * 4;
             unsigned* pixel = row + x + destx;
-            Color pixelColor = Color::createUnCheked(srcRows[basex],
-                                                     srcRows[basex + 1],
-                                                     srcRows[basex + 2],
-                                                     srcRows[basex + 3]);
-            if (multiplied == Unmultiplied)
-                *pixel = premultipliedARGBFromColor(pixelColor);
-            else
-                *pixel = pixelColor.rgb();
+
+            // Avoid calling Color::premultipliedARGBFromColor() because one
+            // function call per pixel is too expensive.
+            unsigned red = srcRows[basex];
+            unsigned green = srcRows[basex + 1];
+            unsigned blue = srcRows[basex + 2];
+            unsigned alpha = srcRows[basex + 3];
+
+            if (multiplied == Unmultiplied) {
+                if (alpha && alpha != 255) {
+                    red = (red * alpha + 254) / 255;
+                    green = (green * alpha + 254) / 255;
+                    blue = (blue * alpha + 254) / 255;
+                }
+            }
+
+            *pixel = (alpha << 24) | red  << 16 | green  << 8 | blue;
         }
         srcRows += srcBytesPerRow;
     }
