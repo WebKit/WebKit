@@ -31,59 +31,12 @@
 #include "config.h"
 #include "DOMDataStore.h"
 
-#include "DOMData.h"
+#include "StaticDOMDataStore.h"
 #include "V8Binding.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
-
-// DOM binding algorithm:
-//
-// There are two kinds of DOM objects:
-// 1. DOM tree nodes, such as Document, HTMLElement, ...
-//    there classes implement TreeShared<T> interface;
-// 2. Non-node DOM objects, such as CSSRule, Location, etc.
-//    these classes implement a ref-counted scheme.
-//
-// A DOM object may have a JS wrapper object. If a tree node
-// is alive, its JS wrapper must be kept alive even it is not
-// reachable from JS roots.
-// However, JS wrappers of non-node objects can go away if
-// not reachable from other JS objects. It works like a cache.
-//
-// DOM objects are ref-counted, and JS objects are traced from
-// a set of root objects. They can create a cycle. To break
-// cycles, we do following:
-//   Handles from DOM objects to JS wrappers are always weak,
-// so JS wrappers of non-node object cannot create a cycle.
-//   Before starting a global GC, we create a virtual connection
-// between nodes in the same tree in the JS heap. If the wrapper
-// of one node in a tree is alive, wrappers of all nodes in
-// the same tree are considered alive. This is done by creating
-// object groups in GC prologue callbacks. The mark-compact
-// collector will remove these groups after each GC.
-//
-// DOM objects should be deref-ed from the owning thread, not the GC thread
-// that does not own them. In V8, GC can kick in from any thread. To ensure
-// that DOM objects are always deref-ed from the owning thread when running
-// V8 in multi-threading environment, we do following:
-// 1. Maintain a thread specific DOM wrapper map for each object map.
-//    (We're using TLS support from WTF instead of base since V8Bindings
-//     does not depend on base. We further assume that all child threads
-//     running V8 instances are created by WTF and thus a destructor will
-//     be called to clean up all thread specific data.)
-// 2. When GC happens:
-//    2.1. If the dead object is in GC thread's map, remove the JS reference
-//         and deref the DOM object.
-//    2.2. Otherwise, go through all thread maps to find the owning thread.
-//         Remove the JS reference from the owning thread's map and move the
-//         DOM object to a delayed queue. Post a task to the owning thread
-//         to have it deref-ed from the owning thread at later time.
-// 3. When a thread is tearing down, invoke a cleanup routine to go through
-//    all objects in the delayed queue and the thread map and deref all of
-//    them.
-
 
 DOMDataStore::DOMDataStore()
     : m_domNodeMap(0)
@@ -97,26 +50,16 @@ DOMDataStore::~DOMDataStore()
 {
 }
 
-DOMDataList& DOMDataStore::allStores()
+DOMDataStore* DOMDataStore::current(v8::Isolate* isolate)
 {
-    return V8PerIsolateData::current()->allStores();
-}
-
-void* DOMDataStore::getDOMWrapperMap(DOMWrapperMapType type)
-{
-    switch (type) {
-    case DOMNodeMap:
-        return m_domNodeMap;
-    case ActiveDOMNodeMap:
-        return m_activeDomNodeMap;
-    case DOMObjectMap:
-        return m_domObjectMap;
-    case ActiveDOMObjectMap:
-        return m_activeDomObjectMap;
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    DEFINE_STATIC_LOCAL(StaticDOMDataStore, defaultStore, ());
+    V8PerIsolateData* data = V8PerIsolateData::from(isolate);
+    if (UNLIKELY(!!data->domDataStore()))
+        return data->domDataStore();
+    V8DOMWindowShell* context = V8DOMWindowShell::getEntered();
+    if (UNLIKELY(!!context))
+        return context->world()->domDataStore();
+    return &defaultStore;
 }
 
 void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

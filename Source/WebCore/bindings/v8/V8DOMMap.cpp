@@ -31,7 +31,6 @@
 #include "config.h"
 #include "V8DOMMap.h"
 
-#include "DOMData.h"
 #include "DOMDataStore.h"
 #include "ScopedDOMDataStore.h"
 #include "V8Binding.h"
@@ -59,31 +58,39 @@ NodeWrapperVisitor::~NodeWrapperVisitor()
 
 DOMWrapperMap<Node>& getDOMNodeMap(v8::Isolate* isolate)
 {
-    return DOMData::getCurrentStore(isolate).domNodeMap();
+    if (!isolate)
+        isolate = v8::Isolate::GetCurrent();
+    return DOMDataStore::current(isolate)->domNodeMap();
 }
 
 DOMWrapperMap<Node>& getActiveDOMNodeMap(v8::Isolate* isolate)
 {
-    return DOMData::getCurrentStore(isolate).activeDomNodeMap();
+    if (!isolate)
+        isolate = v8::Isolate::GetCurrent();
+    return DOMDataStore::current(isolate)->activeDomNodeMap();
 }
 
 DOMWrapperMap<void>& getDOMObjectMap(v8::Isolate* isolate)
 {
-    return DOMData::getCurrentStore(isolate).domObjectMap();
+    if (!isolate)
+        isolate = v8::Isolate::GetCurrent();
+    return DOMDataStore::current(isolate)->domObjectMap();
 }
 
 DOMWrapperMap<void>& getActiveDOMObjectMap(v8::Isolate* isolate)
 {
-    return DOMData::getCurrentStore(isolate).activeDomObjectMap();
+    if (!isolate)
+        isolate = v8::Isolate::GetCurrent();
+    return DOMDataStore::current(isolate)->activeDomObjectMap();
 }
 
 void removeAllDOMObjects()
 {
     ASSERT(!isMainThread());
     v8::HandleScope scope;
-    DOMDataStore& store = DOMData::getCurrentStore();
-    store.domObjectMap().clear();
-    store.activeDomObjectMap().clear();
+    DOMDataStore* store = DOMDataStore::current(v8::Isolate::GetCurrent());
+    store->domObjectMap().clear();
+    store->activeDomObjectMap().clear();
 }
 
 void visitAllDOMNodes(NodeWrapperVisitor* visitor)
@@ -119,7 +126,7 @@ void visitActiveDOMNodes(DOMWrapperVisitor<Node>* visitor)
 {
     v8::HandleScope scope;
 
-    DOMDataList& list = DOMDataStore::allStores();
+    DOMDataList& list = V8PerIsolateData::current()->allStores();
     for (size_t i = 0; i < list.size(); ++i) {
         DOMDataStore* store = list[i];
 
@@ -131,7 +138,7 @@ void visitDOMObjects(DOMWrapperVisitor<void>* visitor)
 {
     v8::HandleScope scope;
 
-    DOMDataList& list = DOMDataStore::allStores();
+    DOMDataList& list = V8PerIsolateData::current()->allStores();
     for (size_t i = 0; i < list.size(); ++i) {
         DOMDataStore* store = list[i];
 
@@ -143,7 +150,7 @@ void visitActiveDOMObjects(DOMWrapperVisitor<void>* visitor)
 {
     v8::HandleScope scope;
 
-    DOMDataList& list = DOMDataStore::allStores();
+    DOMDataList& list = V8PerIsolateData::current()->allStores();
     for (size_t i = 0; i < list.size(); ++i) {
         DOMDataStore* store = list[i];
 

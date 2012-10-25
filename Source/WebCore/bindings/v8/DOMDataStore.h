@@ -45,10 +45,9 @@
 
 namespace WebCore {
 
-    class DOMData;
     class DOMDataStore;
 
-    typedef WTF::Vector<DOMDataStore*> DOMDataList;
+    typedef Vector<DOMDataStore*> DOMDataList;
 
     // DOMDataStore
     //
@@ -62,20 +61,9 @@ namespace WebCore {
     class DOMDataStore {
         WTF_MAKE_NONCOPYABLE(DOMDataStore);
     public:
-        enum DOMWrapperMapType {
-            DOMNodeMap,
-            ActiveDOMNodeMap,
-            DOMObjectMap,
-            ActiveDOMObjectMap,
-        };
-
-        DOMDataStore();
         virtual ~DOMDataStore();
 
-        // A list of all DOMDataStore objects in the current V8 isolate. Normally, each World has a DOMDataStore.
-        static DOMDataList& allStores();
-
-        void* getDOMWrapperMap(DOMWrapperMapType);
+        static DOMDataStore* current(v8::Isolate*);
 
         DOMWrapperMap<Node>& domNodeMap() { return *m_domNodeMap; }
         DOMWrapperMap<Node>& activeDomNodeMap() { return *m_activeDomNodeMap; }
@@ -85,6 +73,8 @@ namespace WebCore {
         virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
     protected:
+        DOMDataStore();
+
         DOMWrapperMap<Node>* m_domNodeMap;
         DOMWrapperMap<Node>* m_activeDomNodeMap;
         DOMWrapperMap<void>* m_domObjectMap;

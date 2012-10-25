@@ -1,3 +1,32 @@
+2012-10-24  Adam Barth  <abarth@webkit.org>
+
+        [V8] DOMData is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=100313
+
+        Reviewed by Eric Seidel.
+
+        This class serves no purpose anymore and can be deleted.
+
+        * WebCore.gypi:
+        * bindings/v8/DOMData.cpp: Removed.
+        * bindings/v8/DOMData.h: Removed.
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::current):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore):
+        (DOMDataStore):
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::neuterBinding):
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::getDOMNodeMap):
+        (WebCore::getActiveDOMNodeMap):
+        (WebCore::getDOMObjectMap):
+        (WebCore::getActiveDOMObjectMap):
+        (WebCore::removeAllDOMObjects):
+        (WebCore::visitActiveDOMNodes):
+        (WebCore::visitDOMObjects):
+        (WebCore::visitActiveDOMObjects):
+
 2012-10-24  Kent Tamura  <tkent@chromium.org>
 
         Sort an Xcode project file.

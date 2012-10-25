@@ -2227,8 +2227,6 @@
             'bindings/v8/ArrayValue.h',
             'bindings/v8/BindingState.cpp',
             'bindings/v8/BindingState.h',
-            'bindings/v8/DOMData.cpp',
-            'bindings/v8/DOMData.h',
             'bindings/v8/DOMDataStore.cpp',
             'bindings/v8/DOMDataStore.h',
             'bindings/v8/DOMTransaction.cpp',
