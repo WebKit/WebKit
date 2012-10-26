@@ -513,17 +513,6 @@ static void collectDomTreeInfo(MemoryInstrumentationImpl& memoryInstrumentation,
     domTreesIterator.visitMemoryCache();
 }
 
-static void addPlatformComponentsInfo(PassRefPtr<InspectorMemoryBlocks> children)
-{
-    Vector<MemoryUsageSupport::ComponentInfo> components;
-    MemoryUsageSupport::memoryUsageByComponents(components);
-    for (Vector<MemoryUsageSupport::ComponentInfo>::iterator it = components.begin(); it != components.end(); ++it) {
-        RefPtr<InspectorMemoryBlock> block = InspectorMemoryBlock::create().setName(it->m_name);
-        block->setSize(it->m_sizeInBytes);
-        children->addItem(block);
-    }
-}
-
 void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<InspectorMemoryBlock>& processMemory)
 {
     MemoryInstrumentationClientImpl memoryInstrumentationClient;
@@ -534,8 +523,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     reportRenderTreeInfo(memoryInstrumentationClient, m_page);
     collectDomTreeInfo(memoryInstrumentation, m_page); // FIXME: collect for all pages?
 
-    RefPtr<InspectorMemoryBlocks> children = InspectorMemoryBlocks::create();
-    addPlatformComponentsInfo(children);
+    MemoryUsageSupport::reportMemoryUsage(&memoryInstrumentation);
 
     memoryInstrumentation.addRootObject(this);
     memoryInstrumentation.addRootObject(memoryInstrumentation);
@@ -543,6 +531,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
 
     m_inspectorClient->dumpUncountedAllocatedObjects(memoryInstrumentationClient.countedObjects());
 
+    RefPtr<InspectorMemoryBlocks> children = InspectorMemoryBlocks::create();
     MemoryUsageStatsGenerator statsGenerator(&memoryInstrumentationClient);
     statsGenerator.dump(children.get());
 

@@ -1,3 +1,28 @@
+2012-10-26  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: instrument chromium GlyphCache. It keeps ~2mb data on gmail.
+        https://bugs.webkit.org/show_bug.cgi?id=100515
+
+        Reviewed by Yury Semikhatsky.
+
+        I replaced old version with an abstract number with new one which precisely reports allocated SkGlyphCache objects and their sizes.
+
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * platform/MemoryUsageSupport.cpp:
+        (WebCore::MemoryUsageSupport::reportMemoryUsage):
+        * platform/MemoryUsageSupport.h:
+        (MemoryUsageSupport):
+        * platform/PlatformMemoryInstrumentation.cpp:
+        (WebCore):
+        * platform/PlatformMemoryInstrumentation.h:
+        (PlatformMemoryTypes):
+        * platform/chromium/MemoryUsageSupportChromium.cpp:
+        (reportMemoryUsage):
+        (WebCore::reportGlyphCache):
+        (WebCore):
+        (WebCore::MemoryUsageSupport::reportMemoryUsage):
+
 2012-10-26  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Build fix for r132650.
