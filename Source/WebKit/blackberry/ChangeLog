@@ -1,3 +1,19 @@
+2012-10-26  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry][FullScreen] entering/leaving fullscreen results in temporary glitches on the screen
+        https://bugs.webkit.org/show_bug.cgi?id=100421
+
+        Reviewed by Yong Li.
+
+        PR: 231173
+        When leaving fullscreen, we need to suspend screen and backing store
+        updates before setting scroll position and changing transformation and
+        resume after they are done. In which way, we can get rid of a noticeable
+        glitch during the transition.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::exitFullScreenForElement):
+
 2012-10-26  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] ASSERT currentThreadIsHoldingLock() failed in MarkedAllocator::allocateSlowCase()

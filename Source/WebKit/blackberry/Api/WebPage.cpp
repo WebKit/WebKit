@@ -5971,6 +5971,8 @@ void WebPagePrivate::exitFullScreenForElement(Element* element)
         // The Browser chrome has its own fullscreen video widget.
         exitFullscreenForNode(element);
     } else {
+        m_backingStore->d->suspendScreenAndBackingStoreUpdates();
+
         // When leaving fullscreen mode, we need to restore the 'x' scroll position
         // before fullscreen.
         // FIXME: We may need to respect 'y' position as well, because the web page always scrolls to
@@ -5988,6 +5990,9 @@ void WebPagePrivate::exitFullScreenForElement(Element* element)
             m_transformationMatrix->setM22(m_scaleBeforeFullScreen);
             m_scaleBeforeFullScreen = -1.0;
         }
+
+        notifyTransformChanged();
+        m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
 
         // This is where we would restore the browser's chrome
         // if hidden above.
