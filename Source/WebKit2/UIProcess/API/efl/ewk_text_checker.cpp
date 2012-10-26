@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,38 +29,149 @@
 
 #if ENABLE(SPELLCHECK)
 
+#include "TextCheckerEnchant.h"
+#include "WKAPICast.h"
+#include "WKMutableArray.h"
+#include "WKRetainPtr.h"
+#include "WKString.h"
 #include "WKTextChecker.h"
-#include "WebKitTextChecker.h"
+#include "WebPageProxy.h"
+#include "WebString.h"
+#include "ewk_settings.h"
 #include "ewk_text_checker_private.h"
+#include <Eina.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/text/CString.h>
 
+using namespace WebCore;
 using namespace WebKit;
 
-// Initializes the client's functions to @c 0 to be sure that they are not defined.
-static Ewk_Text_Checker ewkTextCheckerCallbacks = {
-    0, // unique_spell_document_tag_get
-    0, // unique_spell_document_tag_close
-    0, // string_spelling_check
-    0, // word_guesses_get
-    0, // word_learn
-    0 // word_ignore
+/**
+ * @brief Structure to store client callback functions.
+ *
+ * @internal
+ */
+struct ClientCallbacks {
+    Ewk_Text_Checker_Unique_Spell_Document_Tag_Get_Cb unique_spell_document_tag_get;
+    Ewk_Text_Checker_Unique_Spell_Document_Tag_Close_Cb unique_spell_document_tag_close;
+    Ewk_Text_Checker_String_Spelling_Check_Cb string_spelling_check;
+    Ewk_Text_Checker_Word_Guesses_Get_Cb word_guesses_get;
+    Ewk_Text_Checker_Word_Learn_Cb word_learn;
+    Ewk_Text_Checker_Word_Ignore_Cb word_ignore;
 };
 
-#define EWK_TEXT_CHECKER_CALLBACK_SET(TYPE_NAME, NAME)  \
-void ewk_text_checker_##NAME##_cb_set(TYPE_NAME cb)     \
-{                                                       \
-    ewkTextCheckerCallbacks.NAME = cb;                  \
+static inline TextCheckerEnchant* textCheckerEnchant()
+{
+    static OwnPtr<TextCheckerEnchant> textCheckerEnchant = TextCheckerEnchant::create();
+    return textCheckerEnchant.get();
+}
+
+static inline ClientCallbacks& clientCallbacks()
+{
+    DEFINE_STATIC_LOCAL(ClientCallbacks, clientCallbacks, ());
+    return clientCallbacks;
+}
+
+static bool isContinuousSpellCheckingEnabled(const void*)
+{
+    return ewk_settings_continuous_spell_checking_enabled_get();
+}
+
+static void setContinuousSpellCheckingEnabled(bool enabled, const void*)
+{
+    ewk_settings_continuous_spell_checking_enabled_set(enabled);
+}
+
+static uint64_t uniqueSpellDocumentTag(WKPageRef page, const void*)
+{
+    if (clientCallbacks().unique_spell_document_tag_get)
+        return clientCallbacks().unique_spell_document_tag_get(toImpl(page)->viewWidget());
+
+    return 0;
+}
+
+static void closeSpellDocumentWithTag(uint64_t tag, const void*)
+{
+    if (clientCallbacks().unique_spell_document_tag_close)
+        clientCallbacks().unique_spell_document_tag_close(tag);
+}
+
+static void checkSpellingOfString(uint64_t tag, WKStringRef text, int32_t* misspellingLocation, int32_t* misspellingLength, const void*)
+{
+    if (clientCallbacks().string_spelling_check)
+        clientCallbacks().string_spelling_check(tag, toImpl(text)->string().utf8().data(), misspellingLocation, misspellingLength);
+    else
+        textCheckerEnchant()->checkSpellingOfString(toImpl(text)->string(), *misspellingLocation, *misspellingLength);
+}
+
+static WKArrayRef guessesForWord(uint64_t tag, WKStringRef word, const void*)
+{
+    WKMutableArrayRef suggestionsForWord = WKMutableArrayCreate();
+
+    if (clientCallbacks().word_guesses_get) {
+        Eina_List* list = clientCallbacks().word_guesses_get(tag, toImpl(word)->string().utf8().data());
+        void* item;
+
+        EINA_LIST_FREE(list, item) {
+            WKRetainPtr<WKStringRef> suggestion(AdoptWK, WKStringCreateWithUTF8CString(static_cast<const char*>(item)));
+            WKArrayAppendItem(suggestionsForWord, suggestion.get());
+            free(item);
+        }
+    } else {
+        const Vector<String>& guesses = textCheckerEnchant()->getGuessesForWord(toImpl(word)->string());
+        size_t numberOfGuesses = guesses.size();
+        for (size_t i = 0; i < numberOfGuesses; ++i) {
+            WKRetainPtr<WKStringRef> suggestion(AdoptWK, WKStringCreateWithUTF8CString(guesses[i].utf8().data()));
+            WKArrayAppendItem(suggestionsForWord, suggestion.get());
+        }
+    }
+
+    return suggestionsForWord;
+}
+
+static void learnWord(uint64_t tag, WKStringRef word, const void*)
+{
+    if (clientCallbacks().word_learn)
+        clientCallbacks().word_learn(tag, toImpl(word)->string().utf8().data());
+    else
+        textCheckerEnchant()->learnWord(toImpl(word)->string());
+}
+
+static void ignoreWord(uint64_t tag, WKStringRef word, const void*)
+{
+    if (clientCallbacks().word_ignore)
+        clientCallbacks().word_ignore(tag, toImpl(word)->string().utf8().data());
+    else
+        textCheckerEnchant()->ignoreWord(toImpl(word)->string());
+}
+
+namespace Ewk_Text_Checker {
+
+Vector<String> availableSpellCheckingLanguages()
+{
+    return textCheckerEnchant()->availableSpellCheckingLanguages();
+}
+
+void updateSpellCheckingLanguages(const Vector<String>& languages)
+{
+    textCheckerEnchant()->updateSpellCheckingLanguages(languages);
+}
+
+Vector<String> loadedSpellCheckingLanguages()
+{
+    return textCheckerEnchant()->loadedSpellCheckingLanguages();
 }
 
 /**
- * Attaches spellchecker feature.
+ * Initializes spellcheck feature.
  *
  * @internal
  *
- * The default spellchecker feature is based on Enchant library.
- * Client may use own implementation of spellchecker previously set
+ * The default spellcheck feature is based on Enchant library.
+ * Client may use own spellcheck implementation previously set
  * through the callback functions.
  */
-void ewk_text_checker_client_attach()
+void initialize()
 {
     static bool didInitializeTextCheckerClient = false;
     if (didInitializeTextCheckerClient)
@@ -90,21 +202,12 @@ void ewk_text_checker_client_attach()
     didInitializeTextCheckerClient = true;
 }
 
-/*
- * Gets the client's callbacks.
- *
- * @internal
- *
- * The client't callbacks are not defined by default.
- * If the client hasn't set the callback, the corresponding callback will
- * return @c 0 and the default WebKit implementation will be used for this
- * functionality.
- *
- * @return the struct with the client's callbacks.
- */
-Ewk_Text_Checker* ewk_text_checker_callbacks_get()
-{
-    return &ewkTextCheckerCallbacks;
+} // namespace Ewk_Text_Checker
+
+#define EWK_TEXT_CHECKER_CALLBACK_SET(TYPE_NAME, NAME)  \
+void ewk_text_checker_##NAME##_cb_set(TYPE_NAME cb)     \
+{                                                       \
+    clientCallbacks().NAME = cb;      \
 }
 
 #else

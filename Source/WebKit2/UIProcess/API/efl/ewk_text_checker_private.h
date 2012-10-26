@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,24 +31,16 @@
 
 #include "ewk_text_checker.h"
 
-/**
- * @brief Structure keeps client's callback functions.
- *
- * @internal
- */
-struct Ewk_Text_Checker {
-    Ewk_Text_Checker_Unique_Spell_Document_Tag_Get_Cb unique_spell_document_tag_get;
-    Ewk_Text_Checker_Unique_Spell_Document_Tag_Close_Cb unique_spell_document_tag_close;
-    Ewk_Text_Checker_String_Spelling_Check_Cb string_spelling_check;
-    Ewk_Text_Checker_Word_Guesses_Get_Cb word_guesses_get;
-    Ewk_Text_Checker_Word_Learn_Cb word_learn;
-    Ewk_Text_Checker_Word_Ignore_Cb word_ignore;
-};
+namespace Ewk_Text_Checker {
 
-Ewk_Text_Checker* ewk_text_checker_callbacks_get();
+void initialize();
 
-// Makes it visible for WTR.
-EAPI void ewk_text_checker_client_attach();
+// Enchant helpers.
+Vector<String> availableSpellCheckingLanguages();
+void updateSpellCheckingLanguages(const Vector<String>& languages);
+Vector<String> loadedSpellCheckingLanguages();
+
+}
 
 #endif // ENABLE(SPELLCHECK)
 #endif // ewk_text_checker_private_h

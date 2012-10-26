@@ -1,3 +1,45 @@
+2012-10-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Get rid of C'ism in text checker API
+        https://bugs.webkit.org/show_bug.cgi?id=100513
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make Ewk_Text_Checker a C++ class and move the
+        WebKitTextChecker code to this new class. This
+        gets rid of the C'ism in the text checker code
+        and make it consistent with other Ewk classes.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (Ewk_Context::Ewk_Context):
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (spellCheckingLanguagesSetUpdate):
+        (ewk_settings_continuous_spell_checking_enabled_set):
+        (ewk_settings_spell_checking_available_languages_get):
+        (ewk_settings_spell_checking_languages_get):
+        * UIProcess/API/efl/ewk_text_checker.cpp:
+        (ClientCallbacks):
+        (textCheckerEnchant):
+        (clientCallbacks):
+        (isContinuousSpellCheckingEnabled):
+        (setContinuousSpellCheckingEnabled):
+        (uniqueSpellDocumentTag):
+        (closeSpellDocumentWithTag):
+        (checkSpellingOfString):
+        (guessesForWord):
+        (learnWord):
+        (ignoreWord):
+        (Ewk_Text_Checker):
+        (Ewk_Text_Checker::availableSpellCheckingLanguages):
+        (Ewk_Text_Checker::updateSpellCheckingLanguages):
+        (Ewk_Text_Checker::loadedSpellCheckingLanguages):
+        (Ewk_Text_Checker::initialize):
+        * UIProcess/API/efl/ewk_text_checker_private.h:
+        (Ewk_Text_Checker):
+        * UIProcess/efl/WebKitTextChecker.cpp: Removed.
+        * UIProcess/efl/WebKitTextChecker.h: Removed.
+
 2012-10-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Clean up construction/destruction code in Ewk_view

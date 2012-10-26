@@ -90,7 +90,7 @@ Ewk_Context::Ewk_Context(WKContextRef context)
 #endif
 
 #if ENABLE(SPELLCHECK)
-    ewk_text_checker_client_attach();
+    Ewk_Text_Checker::initialize();
     if (ewk_settings_continuous_spell_checking_enabled_get()) {
         // Load the default language.
         ewk_settings_spell_checking_languages_set(0);
