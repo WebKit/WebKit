@@ -1925,16 +1925,10 @@ crbug.com/144536 [ Android ] scrollbars/custom-scrollbar-with-incomplete-style.h
 crbug.com/7482 [ Mac ] http/tests/misc/timer-vs-loading.html [ Failure Pass Timeout ]
 crbug.com/7482 [ Android Linux Win ] http/tests/misc/timer-vs-loading.html [ Pass Timeout ]
 
-# It's not clear that the test isn't wrong here. It believes that middle
-# aligning 15px Ahem should end up in a certain spot. But we have the
-# x-height correct and we're still one px off.
-crbug.com/10429 [ Android Linux ] css2.1/t100801-c544-valgn-01-d-ag.html [ Failure ]
-
 # Flakey. Not clear when it started, but it was before 3/9/09.
 # This test also started failing with the merge of March 25th 2009
 crbug.com/10441 [ Mac Win ] transitions/transition-end-event-transform.html [ Failure Pass ]
 
-crbug.com/27486 [ Android Linux Win ] fast/forms/listbox-hit-test-zoomed.html [ Failure ]
 crbug.com/27486 [ Android Linux Win ] fast/forms/range/slider-zoomed.html [ Failure ]
 
 # This test isn't just slow -- sometimes it times out indefinitely.
@@ -1961,7 +1955,6 @@ crbug.com/11001 http/tests/history/back-to-post.php [ Timeout ]
 
 # Regressions from WebKit Merge 42932:42994 due to text metric changes.
 crbug.com/11251 [ Android Linux Win ] svg/custom/svg-fonts-in-text-controls.html [ Failure ]
-crbug.com/11251 [ Android Linux Win ] fast/forms/textarea-metrics.html [ Failure ]
 
 # WebKit 45086:45111
 crbug.com/15270 fast/js/excessive-comma-usage.html [ Failure ]
@@ -2065,7 +2058,7 @@ crbug.com/156097  fast/borders/border-image-rotate-transform.html [ ImageOnlyFai
 crbug.com/156097  svg/custom/clip-mask-negative-scale.svg [ ImageOnlyFailure ] 
 crbug.com/156097  svg/custom/focus-ring.svg [ ImageOnlyFailure ] 
 crbug.com/156097  svg/transforms/animated-path-inside-transformed-html.xhtml [ ImageOnlyFailure ] 
-crbug.com/156097  fast/forms/select-style.html [ ImageOnlyFailure ] 
+crbug.com/156097 [ Mac ] fast/forms/select-style.html [ ImageOnlyFailure ]
 
 # Flakiness documented around Webkit Roll 51681:51711
 crbug.com/2844 http/tests/appcache/404-manifest.html [ Skip ]
@@ -2542,13 +2535,6 @@ crbug.com/75238 [ Win ] fast/text/large-text-composed-char.html [ Failure ]
 # Added by http://trac.webkit.org/changeset/76548
 crbug.com/70686 [ Mac ] fast/text/international/cjk-segmentation.html [ Failure ]
 crbug.com/144529 [ Android ] fast/text/international/cjk-segmentation.html [ Failure ]
-
-# These will pass once 149943 is fixed
-crbug.com/149943 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
-crbug.com/149943 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
-# These should pass too, but the latter might fail due to Skia blending differences.
-crbug.com/149943 platform/chromium/virtual/softwarecompositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
-crbug.com/149943 platform/chromium/virtual/softwarecompositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 
 # Added by http://trac.webkit.org/changeset/76674
 crbug.com/70882 [ Win ] fast/text/offsetForPosition-complex-fallback.html [ Failure ]

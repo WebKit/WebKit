@@ -5769,3 +5769,8 @@ webkit.org/b/99505 transitions/cross-fade-border-image.html [ ImageOnlyFailure ]
 webkit.org/b/99505 transitions/default-timing-function.html [ ImageOnlyFailure ]
 webkit.org/b/99505 transitions/move-after-transition.html [ ImageOnlyFailure ]
 webkit.org/b/99505 transitions/svg-text-shadow-transition.html [ ImageOnlyFailure ]
+
+webkit.org/b/99505 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
+webkit.org/b/99505 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
+webkit.org/b/99505 platform/chromium/virtual/softwarecompositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
+webkit.org/b/99505 platform/chromium/virtual/softwarecompositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
