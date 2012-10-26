@@ -1,5 +1,29 @@
 2012-10-26  Zoltan Horvath  <zoltan@webkit.org>
 
+        Turn PageLoad tests into simple performancetests, commit #6 
+        https://bugs.webkit.org/show_bug.cgi?id=99899
+
+        Reviewed by Ryosuke Niwa.
+
+        We cannot provide an elegant way to measure the memory consumption of the PageLoad tests, but we can turn them into simple
+        performance tests and measure their memory footprint and performance that way. This change moves and renames the related files
+        to their new location and adds html/js wrappers for them.
+
+        This is the #6 commit of the whole patch.
+
+        * PageLoad/svg/files/gearflowers.svg: Removed.
+        * PageLoad/svg/files/hereGear4.svg: Removed.
+        * PageLoad/svg/files/worldcup.svg: Removed.
+        * SVG/GearFlowers.html: Added.
+        * SVG/HereGear.html: Added.
+        * SVG/Worldcup.html: Added.
+        * SVG/resources/GearFlowers.svg: Copied from PerformanceTests/PageLoad/svg/files/gearflowers.svg.
+        * SVG/resources/HereGear.svg: Copied from PerformanceTests/PageLoad/svg/files/hereGear4.svg.
+        * SVG/resources/Worldcup.svg: Copied from PerformanceTests/PageLoad/svg/files/worldcup.svg.
+        * Skipped: Rename the files on the skipped list also.
+
+2012-10-26  Zoltan Horvath  <zoltan@webkit.org>
+
         Turn PageLoad tests into simple performancetests, commit #5 
         https://bugs.webkit.org/show_bug.cgi?id=99899
 
