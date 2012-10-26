@@ -1,3 +1,19 @@
+2012-10-26  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed. Update run-bindings-tests results after recent active DOM
+        object changes.
+
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::V8TestInterface::constructorCallback):
+        (WebCore::V8TestInterface::wrapSlow):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (WebCore::V8TestInterface::wrap):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore::V8TestNamedConstructorConstructorCallback):
+        (WebCore::V8TestNamedConstructor::wrapSlow):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h:
+        (WebCore::V8TestNamedConstructor::wrap):
+
 2012-10-26  MORITA Hajime  <morrita@google.com>
 
         [V8] REGRESSION(132540) Assertion failure on V8DOMWrapper::setJSWrapperForDOMNode()
