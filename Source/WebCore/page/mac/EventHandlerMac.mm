@@ -711,9 +711,6 @@ bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
 {
     Document* document = m_frame->document();
 
-    // RSS view needs arrow key keypress events.
-    if (applicationIsSafari() && (document->url().protocolIs("feed") || document->url().protocolIs("feeds")))
-        return true;
     Settings* settings = m_frame->settings();
     if (!settings)
         return false;

@@ -1,3 +1,15 @@
+2012-10-25  Anders Carlsson  <andersca@apple.com>
+
+        Remove feed and feeds URL scheme workarounds
+        https://bugs.webkit.org/show_bug.cgi?id=100442
+
+        Reviewed by Dan Bernstein.
+
+        * dom/DocumentEventQueue.cpp:
+        (WebCore::DocumentEventQueue::enqueueOrDispatchScrollEvent):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::needsKeyboardEventDisambiguationQuirks):
+
 2012-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132514.
