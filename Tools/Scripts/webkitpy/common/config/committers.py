@@ -232,7 +232,7 @@ committers_unable_to_review = [
     Committer("Dan Winship", "danw@gnome.org", "danw"),
     Committer("Dana Jansens", "danakj@chromium.org", "danakj"),
     Committer("Daniel Cheng", "dcheng@chromium.org", "dcheng"),
-    Committer("Dave Barton", "dbarton@mathscribe.com", "dbarton"),
+    Committer("Dave Barton", "dbarton@mathscribe.com", "davebarton"),
     Committer("Dave Tharp", "dtharp@codeaurora.org", "dtharp"),
     Committer("David Michael Barr", ["davidbarr@chromium.org", "davidbarr@google.com", "b@rr-dav.id.au"], "barrbrain"),
     Committer("David Grogan", ["dgrogan@chromium.org", "dgrogan@google.com"], "dgrogan"),

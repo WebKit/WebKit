@@ -1,3 +1,9 @@
+2012-10-26  David Barton  <dbarton@mathscribe.com>
+
+        Unreviewed. Update my IRC nickname to a registered one.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-10-26  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix the LLInt build on Windows
