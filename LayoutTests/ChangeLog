@@ -1,3 +1,9 @@
+2012-10-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: chromiuim expectations updated.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-25  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Pixel tests need rebaseline

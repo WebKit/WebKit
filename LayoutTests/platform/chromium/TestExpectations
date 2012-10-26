@@ -2811,7 +2811,6 @@ webkit.org/b/100471 fast/forms/time-multiple-fields/time-multiple-fields-appeara
 webkit.org/b/100471 fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
 webkit.org/b/100471 fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html [ Pass ImageOnlyFailure ]
 webkit.org/b/100471 fast/forms/time-multiple-fields/time-multiple-fields-appearance-style.html [ Pass ImageOnlyFailure ]
-webkit.org/b/100471 fast/forms/time-multiple-fields/time-multiple-fields-appearance-style.html [ Pass ImageOnlyFailure ]
 
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
@@ -4096,4 +4095,6 @@ webkit.org/b/100478  [ Mac ] css3/filters/custom/effect-custom.html [ Pass Image
 webkit.org/b/100475 compositing/tiling/tile-cache-zoomed.html [ Failure ]
 webkit.org/b/100475 platform/chromium/virtual/softwarecompositing/tiling/tile-cache-zoomed.html [ Failure ]
 webkit.org/b/100477 [ Win ] platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-key-operations.html [ Failure ]
+
+webkit.org/b/100480 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html [ Pass ImageOnlyFailure ]
 
