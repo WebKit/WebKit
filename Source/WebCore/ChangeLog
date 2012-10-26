@@ -1,3 +1,112 @@
+2012-10-26  Takashi Sakamoto  <tasak@google.com>
+
+        [Shadow DOM] Needs @host rule for ShadowDOM styling
+        https://bugs.webkit.org/show_bug.cgi?id=88606
+
+        Reviewed by Hajime Morita.
+
+        Implemented @host-@rules according to the shadow dom spec:
+        http://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html#host-at-rule
+        The design doc is:
+        https://docs.google.com/document/d/1P2yorchF8lci2sccr-mVSRf2dtvjKeiuyQWzCB2bEA8/edit
+
+        Test: fast/dom/shadow/athost-atrules.html
+
+        * css/CSSGrammar.y.in:
+        Added rules for parsing @host @-rules.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::detectAtToken):
+        Added a new token "@host".
+        (WebCore::CSSParser::createHostRule):
+        Added a new method to create an @host @-rule, which is invoked from
+        (WebCore):
+        * css/CSSParser.h:
+        Added a declaration of the above new method: createHostRule.
+        * css/CSSPropertySourceData.h:
+        Added HOST_RULE to enum Type.
+        * css/RuleSet.cpp:
+        (WebCore::RuleData::RuleData):
+        Modified multiple bool arguments into one argument. Now it
+        uses combinations of values from enum AddRuleFlags.
+        (WebCore::RuleSet::addRule):
+        (WebCore::RuleSet::addRegionRule):
+        (WebCore::RuleSet::addStyleRule):
+        Updated according to the RuleData's change.
+        Modified to Invoke increaseSpecificity if the given rule is @host
+        @-rule.
+        (WebCore::RuleSet::addRulesFromSheet):
+        Invoked addHostRule if the given rule is @host @-rule.
+        * css/RuleSet.h:
+        (RuleData):
+        (WebCore::RuleData::increaseSpecificity):
+        Added a new method to increase selector's specificity. This method is
+        used to make @host @-rules' specificity larger than normal author
+        rules' specificity.
+        (RuleSet):
+        * css/StyleResolver.cpp:
+        (WebCore::makeRuleSet):
+        (WebCore::StyleResolver::addHostRule):
+        A wrapper method to invoke StyleScopeResolver::addHostRule. The method
+        is used to make only StyleResolver know an implementation detail about
+        class StyleScopeResolver.
+        (WebCore::StyleResolver::appendAuthorStylesheets):
+        Updated according to the RuleData's change.
+        (WebCore::StyleResolver::styleSharingCandidateMatchesHostRules):
+        A new method to find matched host rules when an element is given.
+        This method invokes
+        StyleScopeResolver::styleSharingCandidateMatchesHostRules to find
+        matched host rules.
+        (WebCore):
+        (WebCore::StyleResolver::matchHostRules):
+        A new method to find matched host rules when an element is given.
+        This method invokes StyleScopeResolver::matchHostRules to find
+        matched host rules.
+        (WebCore::StyleResolver::matchScopedAuthorRules):
+        Modified to invoke matchHostRules.
+        (WebCore::StyleResolver::locateSharedStyle):
+        Disable sibling style cache if the given element is a shadow host and
+        any @host @-rules are applied to the element.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::ensureScopeResolver):
+        If no scopeResolver is created, create and return the instance.
+        If created, just return the instance.
+        (StyleResolver):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::reportMemoryUsage):
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy):
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        (WebCore::StyleRuleHost::StyleRuleHost):
+        Implemented class StyleRuleHost. The class is almost the same as
+        StyleRuleBlock except type.
+        (WebCore):
+        * css/StyleRule.h:
+        (WebCore::StyleRuleBase::isHostRule):
+        (StyleRuleHost):
+        (WebCore::StyleRuleHost::create):
+        (WebCore::StyleRuleHost::copy):
+        (WebCore):
+        * css/StyleScopeResolver.cpp:
+        (WebCore::StyleScopeResolver::ensureAtHostRuleSetFor):
+        A new method to create a new RuleSet for the given shadow root.
+        (WebCore):
+        (WebCore::StyleScopeResolver::atHostRuleSetFor):
+        A new private inline method to obtain @host @-rules declared in
+        the given shadow root.
+        (WebCore::StyleScopeResolver::addHostRule):
+        Added a new method to register @host @-rules with shadow roots.
+        (WebCore::StyleScopeResolver::styleSharingCandidateMatchesHostRules):
+        A new method to find whether any @host @-rules are applied to
+        the given host element.
+        (WebCore::StyleScopeResolver::matchHostRules):
+        A new method to find matched rules for the given host element.
+        (WebCore::StyleScopeResolver::reportMemoryUsage):
+        * css/StyleScopeResolver.h:
+        (WebCore):
+        (StyleScopeResolver):
+        * css/StyleSheetContents.cpp:
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+
 2012-10-26  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [CMAKE] Add TextAutosizer.cpp in WebCore/CMakeLists.txt

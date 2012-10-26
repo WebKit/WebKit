@@ -1,3 +1,13 @@
+2012-10-26  Takashi Sakamoto  <tasak@google.com>
+
+        [Shadow DOM] Needs @host rule for ShadowDOM styling
+        https://bugs.webkit.org/show_bug.cgi?id=88606
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/athost-atrules-expected.txt: Added.
+        * fast/dom/shadow/athost-atrules.html: Added.
+
 2012-10-26  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Fix test pixel expectation.
@@ -109,6 +119,116 @@
         * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop-expected.png: Added.
         * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-orientAngle-prop-expected.png: Added.
         * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-orientType-prop-expected.png: Added.
+
+2012-10-26  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Pixel tests need rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=99323
+
+        Unreviewed pixel gardening.
+
+        Added a bunch of pixel expectations for Qt-WebKit2 - part 4 (svg/dynamic-updates).
+
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in2-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-scale-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-xChannelSelector-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-dom-yChannelSelector-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in2-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-scale-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-xChannelSelector-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-yChannelSelector-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEFloodElement-dom-flood-opacity-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-color-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-opacity-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMergeNodeElement-dom-in-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMergeNodeElement-svgdom-in-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-in-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-operator-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEMorphologyElement-svgdom-radius-call-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-dom-x-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-dom-y-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-dom-z-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-svgdom-x-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-svgdom-y-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEPointLightElement-svgdom-z-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-limitingConeAngle-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtY-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtZ-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-specularExponent-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-x-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-y-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-dom-z-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-limitingConeAngle-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtX-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtY-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-pointsAtZ-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-specularExponent-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-x-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-y-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFESpotLightElement-svgdom-z-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETileElement-dom-in-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETileElement-svgdom-in-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-filterUnits-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-height-attr-expected.png: Added.
 
 2012-10-26  Balazs Kelemen  <kbalazs@webkit.org>
 

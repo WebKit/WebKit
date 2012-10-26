@@ -95,6 +95,9 @@ static inline int cssyyerror(void*, const char*)
 %token SUPPORTS_SYM
 #endif
 %token FONT_FACE_SYM
+#if ENABLE_SHADOW_DOM
+%token HOST_SYM
+#endif
 %token CHARSET_SYM
 %token NAMESPACE_SYM
 %token VARFUNCTION
@@ -187,6 +190,9 @@ static inline int cssyyerror(void*, const char*)
 %type <rule> page
 %type <rule> margin_box
 %type <rule> font_face
+#if ENABLE_SHADOW_DOM
+%type <rule> host
+#endif
 %type <rule> keyframes
 %type <rule> invalid_rule
 %type <rule> save_block
@@ -401,6 +407,9 @@ valid_rule:
   | region
 #if ENABLE_CSS3_CONDITIONAL_RULES
   | supports
+#endif
+#if ENABLE_SHADOW_DOM
+  | host
 #endif
   ;
 
@@ -900,6 +909,25 @@ font_face:
       parser->popRuleData();
     }
 ;
+
+#if ENABLE_SHADOW_DOM
+before_host_rule:
+    /* empty */ {
+        parser->markRuleHeaderStart(CSSRuleSourceData::HOST_RULE);
+    }
+    ;
+
+host:
+    before_host_rule HOST_SYM at_rule_header_end_maybe_space
+    '{' at_rule_body_start maybe_space block_rule_list save_block {
+        $$ = parser->createHostRule($7);
+    }
+    | before_host_rule HOST_SYM at_rule_header_end_maybe_space ';' {
+        $$ = 0;
+        parser->popRuleData();
+    }
+    ;
+#endif
 
 region_selector:
     selector_list {
