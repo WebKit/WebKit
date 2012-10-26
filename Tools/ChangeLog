@@ -1,3 +1,44 @@
+2012-10-26  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Support pixel tests for BlackBerry DRT
+        https://bugs.webkit.org/show_bug.cgi?id=100210
+
+        Reviewed by Rob Buis.
+
+        The implementation is based on the patch from Christopher Wells.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::DumpRenderTree):
+        (BlackBerry::WebKit::DumpRenderTree::runTest):
+        (BlackBerry::WebKit::DumpRenderTree::runCurrentTest):
+        (BlackBerry::WebKit::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        (BlackBerry::WebKit::DumpRenderTree::runTests):
+        (BlackBerry::WebKit::DumpRenderTree::dump):
+        * DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h:
+        (DumpRenderTree):
+
+        * DumpRenderTree/blackberry/PNGImageEncoder.cpp:
+        (BGRAtoRGBA):
+        (encodeBitmapToPNG):
+        * DumpRenderTree/blackberry/PNGImageEncoder.h:
+        The changes to PNGImageEncoder files are from master_40, patched by Tyler
+        Abbott and Rob Buis.
+
+        * DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.cpp:
+        (createBitmapContextFromWebView):
+        (computeMD5HashStringForBitmapContext):
+        (printPNG):
+        (dumpBitmap):
+        * DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.h:
+        (BitmapContext::createByAdoptingData):
+        (BitmapContext::~BitmapContext):
+        (BitmapContext):
+        (BitmapContext::BitmapContext):
+
+        * DumpRenderTree/blackberry/build: Added.
+        * DumpRenderTree/blackberry/src.pro: Added.
+        Adds 2 files for building ImageDiff, by Christopher Wells.
+
 2012-10-25  Min Qin  <qinmin@chromium.org>
 
         Fix a layout test crash if a TestWebkitPlugin is put inside an iframe

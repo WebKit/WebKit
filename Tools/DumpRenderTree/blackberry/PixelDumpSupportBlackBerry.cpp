@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 #include "config.h"
 #include "PixelDumpSupportBlackBerry.h"
 
+#include "BackingStore.h"
 #include "DumpRenderTreeBlackBerry.h"
 #include "PNGImageEncoder.h"
 #include "PixelDumpSupport.h"
@@ -26,7 +27,9 @@
 #include "WebPageClient.h"
 
 #include <BlackBerryPlatformWindow.h>
-#include <skia/SkDevice.h>
+#if USE(SKIA)
+#include <SkDevice.h>
+#endif
 #include <wtf/MD5.h>
 #include <wtf/Vector.h>
 
@@ -39,34 +42,52 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool /*onscreen*/, bool
     Platform::Graphics::Window* window = DumpRenderTree::currentInstance()->page()->client()->window();
     ASSERT(window);
 
+    // The BackingStore has a queue of pending jobs, which are run on idle
+    // and which may not have been run yet.
+    BackingStore* backingStore = DumpRenderTree::currentInstance()->page()->backingStore();
+    while (backingStore->hasBlitJobs())
+        backingStore->blitOnIdle();
+
     const Platform::IntRect& windowRect = window->viewportRect();
-
-    SkBitmap* bitmap = new SkBitmap;
-    bitmap->setConfig(SkBitmap::kARGB_8888_Config, windowRect.width(), windowRect.height()); // We use 32-bit RGBA since that is the pixel format that ImageDiff expects.
-    bitmap->allocPixels();
-
-    SkCanvas* canvas = new SkCanvas;
-    canvas->setBitmapDevice(*bitmap);
+    const Platform::IntSize& windowSize = window->viewportSize();
+    unsigned char* data = new unsigned char[windowSize.width() * windowSize.height() * 4];
 
     // We need to force a synchronous update to the window or we may get an empty bitmap.
     // For example, running DRT with one test case that finishes before the screen is updated.
     window->post(windowRect);
 
-    const SkBitmap* windowBitmap = static_cast<const SkBitmap*>(lockBufferBackingImage(window->buffer(), Platform::Graphics::ReadAccess));
-    canvas->drawBitmap(*windowBitmap, 0, 0); // Draw the bitmap at (0, 0).
+#if USE(SKIA)
+    SkBitmap bitmap;
+    bitmap.setConfig(SkBitmap::kARGB_8888_Config, windowSize.width(), windowSize.height());
+    bitmap.allocPixels();
+    bitmap.eraseARGB(0, 0, 0, 0);
+
+    SkCanvas canvas(bitmap);
+    backingStore->drawContents(&canvas, windowRect, windowSize);
+
+    // Read that SkBitmap rather than change it. So use false on accessBitmap.
+    const SkBitmap& contentsBitmap = canvas.getDevice()->accessBitmap(false/*changePixels*/);
+    contentsBitmap.lockPixels();
+
+    const unsigned char* windowPixels = 0;
+    if (!contentsBitmap.empty()) {
+        SkAutoLockPixels lock(contentsBitmap);
+        windowPixels = static_cast<const unsigned char*>(contentsBitmap.getPixels());
+    }
+#else
+    const unsigned char* windowPixels = lockBufferBackingImage(window->buffer(), Platform::Graphics::ReadAccess);
+#endif
+    memcpy(data, windowPixels, windowSize.width() * windowSize.height() * 4);
     Platform::Graphics::releaseBufferBackingImage(window->buffer());
-    return BitmapContext::createByAdoptingBitmapAndContext(bitmap, canvas);
+    return BitmapContext::createByAdoptingData(data, windowSize.width(), windowSize.height());
 }
 
 void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashString[33])
 {
-    const SkBitmap& bitmap = context->canvas()->getDevice()->accessBitmap(false);
-    ASSERT(bitmap.bytesPerPixel() == 4); // 32-bit RGBA
-
-    int pixelsWide = bitmap.width();
-    int pixelsHigh = bitmap.height();
-    int bytesPerRow = bitmap.rowBytes();
-    unsigned char* pixelData = (unsigned char*)bitmap.getPixels();
+    int pixelsWide = context->m_width;
+    int pixelsHigh = context->m_height;
+    int bytesPerRow = context->m_width * 4;
+    unsigned char* pixelData = context->m_data;
 
     MD5 md5;
     for (int i = 0; i < pixelsHigh; ++i) {
@@ -82,14 +103,14 @@ void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashStrin
         snprintf(hashString, 33, "%s%02x", hashString, hash[i]);
 }
 
-static void printPNG(SkCanvas* canvas, const char* checksum)
+static void printPNG(BitmapContext* context, const char* checksum)
 {
     Vector<unsigned char> pngData;
-    encodeSkBitmapToPNG(canvas->getDevice()->accessBitmap(false), &pngData);
+    encodeBitmapToPNG(context->m_data, context->m_width, context->m_height, &pngData);
     printPNG(pngData.data(), pngData.size(), checksum);
 }
 
 void dumpBitmap(BitmapContext* context, const char* checksum)
 {
-    printPNG(context->canvas(), checksum);
+    printPNG(context, checksum);
 }

@@ -109,7 +109,7 @@ public:
     // BlackBerry::Platform::BlackBerryPlatformLayoutTestClient method
     virtual void addTest(const char* testFile);
 private:
-    void runTest(const String& url);
+    void runTest(const String& url, const String& imageHash);
     void runTests();
     void runCurrentTest();
 
@@ -124,7 +124,7 @@ private:
     void doneDrt();
     bool isHTTPTest(const String& test);
     String renderTreeDump() const;
-    void resetToConsistentStateBeforeTesting();
+    void resetToConsistentStateBeforeTesting(const String& url, const String& imageHash);
     void runRemainingTests();
     void invalidateAnyPreviousWaitToDumpWatchdog();
     void waitToDumpWatchdogTimerFired(WebCore::Timer<DumpRenderTree>*);
@@ -141,7 +141,7 @@ private:
     GCController* m_gcController;
     AccessibilityController* m_accessibilityController;
     WebPage* m_page;
-    bool m_dumpPixels;
+    bool m_enablePixelTests;
     WebCore::Timer<DumpRenderTree> m_waitToDumpWatchdogTimer;
     WebCore::Timer<DumpRenderTree> m_workTimer;
 

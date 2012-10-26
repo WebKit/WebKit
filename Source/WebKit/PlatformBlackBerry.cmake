@@ -270,6 +270,18 @@ INSTALL(FILES ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html
               ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorBackendCommands.js
         DESTINATION ../../usr/share/webkit/inspector/)
 
+IF (NOT PUBLIC_BUILD)
+    # Add the custom target to build the host-side ImageDiff binary.
+    # Reuse the Qt version.
+    ADD_CUSTOM_TARGET(
+        ImageDiff ALL
+        WORKING_DIRECTORY ${TOOLS_DIR}/DumpRenderTree/blackberry/
+        COMMAND ./build
+        DEPENDS ${TOOLS_DIR}/DumpRenderTree/qt/ImageDiff.cpp
+        COMMENT "ImageDiff building..."
+    )
+ENDIF ()
+
 ADD_CUSTOM_TARGET (
     inspector ALL
     command cp ${WEBCORE_DIR}/inspector/front-end/inspector.html ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html && echo '<script src="inspectorBB.js"></script>'  >> ${DERIVED_SOURCES_WEBCORE_DIR}/inspectorBB.html

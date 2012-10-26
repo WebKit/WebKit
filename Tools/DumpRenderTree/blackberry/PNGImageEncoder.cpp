@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,6 @@
 #include "config.h"
 #include "PNGImageEncoder.h"
 
-#include "SkBitmap.h"
-#include "SkUnPreMultiply.h"
 
 extern "C" {
 #include "png.h"
@@ -33,20 +31,16 @@ extern "C" {
 // This code is almost a mirror of the code in WebCore/platform/image-encoders/skia/PNGImageEncoder.cpp
 // since we can't include this private WebCore file in a WebKit-client application.
 
-// Converts BGRA->RGBA and RGBA->BGRA and undoes alpha premultiplication.
-static void preMultipliedBGRAtoRGBA(const unsigned char* input, int numberOfPixels, unsigned char* output)
+// Keep the premultipied for as it is the most faithful information
+static void BGRAtoRGBA(const unsigned char* input, int numberOfPixels, unsigned char* output)
 {
-    SkBitmap inputBitmap;
-    inputBitmap.setConfig(SkBitmap::kARGB_8888_Config, numberOfPixels, 1);
-    inputBitmap.setPixels(const_cast<unsigned char*>(input));
     for (int x = 0; x < numberOfPixels; x++) {
-        uint32_t srcPixel = *inputBitmap.getAddr32(x, 0);
-        SkColor unmultiplied = SkUnPreMultiply::PMColorToColor(srcPixel);
-        unsigned char* pixelOut = &output[x * 4];
-        pixelOut[0] = SkColorGetR(unmultiplied);
-        pixelOut[1] = SkColorGetG(unmultiplied);
-        pixelOut[2] = SkColorGetB(unmultiplied);
-        pixelOut[3] = SkColorGetA(unmultiplied);
+        output[0] = input[2];
+        output[1] = input[1];
+        output[2] = input[0];
+        output[3] = input[3];
+        input += 4;
+        output += 4;
     }
 }
 
@@ -130,8 +124,8 @@ static bool encodeImpl(const unsigned char* input, int imageWidth, int imageHeig
     png_set_write_fn(pngPtr, &state, encoderWriteCallback, 0);
 
     png_set_IHDR(pngPtr, infoPtr, imageWidth, imageHeight, 8, pngOutputColorType,
-                 PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
-                 PNG_FILTER_TYPE_DEFAULT);
+        PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
+        PNG_FILTER_TYPE_DEFAULT);
     png_write_info(pngPtr, infoPtr);
 
     OwnArrayPtr<unsigned char> rowPixels = adoptArrayPtr(new unsigned char[imageWidth * outputColorComponents]);
@@ -144,13 +138,8 @@ static bool encodeImpl(const unsigned char* input, int imageWidth, int imageHeig
     return true;
 }
 
-bool encodeSkBitmapToPNG(const SkBitmap& image, Vector<unsigned char>* output)
+bool encodeBitmapToPNG(unsigned char* data, int width, int height, Vector<unsigned char>* output)
 {
-    if (image.config() != SkBitmap::kARGB_8888_Config)
-        return false; // Only support ARGB at 8 bpp now.
-
-    image.lockPixels();
-    bool result = encodeImpl(static_cast<unsigned char*>(image.getPixels()), image.width(), image.height(), image.rowBytes(), output, preMultipliedBGRAtoRGBA);
-    image.unlockPixels();
+    bool result = encodeImpl(data, width, height, width * 4, output, BGRAtoRGBA);
     return result;
 }

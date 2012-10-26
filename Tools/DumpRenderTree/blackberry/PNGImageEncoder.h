@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,6 @@
 
 #include <wtf/Vector.h>
 
-class SkBitmap;
-
-bool encodeSkBitmapToPNG(const SkBitmap&, WTF::Vector<unsigned char>* output);
+bool encodeBitmapToPNG(unsigned char* data, int width, int height, WTF::Vector<unsigned char>* output);
 
 #endif // PNGImageEncoder_h

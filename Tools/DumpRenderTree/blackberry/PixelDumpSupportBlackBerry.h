@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,38 +19,34 @@
 #ifndef PixelDumpSupportBlackBerry_h
 #define PixelDumpSupportBlackBerry_h
 
-#include <skia/SkBitmap.h>
-#include <skia/SkCanvas.h>
+#include <stdio.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 class BitmapContext : public RefCounted<BitmapContext> {
 public:
 
-    static PassRefPtr<BitmapContext> createByAdoptingBitmapAndContext(SkBitmap* bitmap, SkCanvas* canvas)
+    static PassRefPtr<BitmapContext> createByAdoptingData(unsigned char* data, int width, int height)
     {
-        return adoptRef(new BitmapContext(bitmap, canvas));
+        return adoptRef(new BitmapContext(data, width, height));
     }
 
     ~BitmapContext()
     {
-        delete m_bitmap;
-        delete m_canvas;
+        delete m_data;
     }
 
-    SkCanvas* canvas() { return m_canvas; }
+    unsigned char* m_data;
+    int m_width, m_height;
 
 private:
 
-    BitmapContext(SkBitmap* bitmap, SkCanvas* canvas)
-        : m_bitmap(bitmap)
-        , m_canvas(canvas)
+    BitmapContext(unsigned char* data, int width, int height)
+        : m_data(data)
+        , m_width(width)
+        , m_height(height)
     {
     }
-
-    SkBitmap* m_bitmap;
-    SkCanvas* m_canvas;
-
 };
 
 #endif // PixelDumpSupportBlackBerry_h

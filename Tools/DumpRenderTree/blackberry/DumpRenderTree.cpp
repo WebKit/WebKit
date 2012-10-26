@@ -66,7 +66,6 @@
 #include <wtf/NonCopyingSort.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/CString.h>
 
 #define SDCARD_PATH "/developer"
 
@@ -154,7 +153,7 @@ DumpRenderTree::DumpRenderTree(BlackBerry::WebKit::WebPage* page)
     : m_gcController(0)
     , m_accessibilityController(0)
     , m_page(page)
-    , m_dumpPixels(false)
+    , m_enablePixelTests(getenv("pixelTests"))
     , m_waitToDumpWatchdogTimer(this, &DumpRenderTree::waitToDumpWatchdogTimerFired)
     , m_workTimer(this, &DumpRenderTree::processWork)
     , m_acceptsEditing(true)
@@ -175,10 +174,10 @@ DumpRenderTree::~DumpRenderTree()
     delete m_accessibilityController;
 }
 
-void DumpRenderTree::runTest(const String& url)
+void DumpRenderTree::runTest(const String& url, const String& imageHash)
 {
     mainFrame->loader()->stopForUserCancel();
-    resetToConsistentStateBeforeTesting();
+    resetToConsistentStateBeforeTesting(url, imageHash);
     if (shouldLogFrameLoadDelegates(url))
         gTestRunner->setDumpFrameLoadCallbacks(true);
     if (!runFromCommandLine) {
@@ -211,12 +210,18 @@ void DumpRenderTree::doneDrt()
 
 void DumpRenderTree::runCurrentTest()
 {
+    String imageHash = "";
+    int posSplitter = m_currentTest->find('?');
+    if (posSplitter > 1 && (unsigned)posSplitter < m_currentTest->length() - 1) {
+        imageHash = m_currentTest->substring(posSplitter + 1);
+        m_currentTest->truncate(posSplitter);
+    }
     if (isHTTPTest(m_currentTest->utf8().data())) {
         m_currentHttpTest = m_currentTest->utf8().data();
         m_currentHttpTest.remove(0, strlen(httpTestSyntax));
-        runTest(httpPrefixURL + m_currentHttpTest);
+        runTest(httpPrefixURL + m_currentHttpTest, imageHash);
     } else
-        runTest(kSDCLayoutTestsURI + *m_currentTest);
+        runTest(kSDCLayoutTestsURI + *m_currentTest, imageHash);
 }
 
 void DumpRenderTree::runRemainingTests()
@@ -245,12 +250,9 @@ void DumpRenderTree::runRemainingTests()
     runCurrentTest();
 }
 
-void DumpRenderTree::resetToConsistentStateBeforeTesting()
+void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, const String& imageHash)
 {
-    if (isHTTPTest(m_currentTest->utf8().data()))
-        gTestRunner = TestRunner::create(String(httpPrefixURL + *m_currentTest).utf8().data(), "");
-    else
-        gTestRunner = TestRunner::create(String(kSDCLayoutTestsURI + *m_currentTest).utf8().data(), "");
+    gTestRunner = TestRunner::create(url.utf8().data(), imageHash.utf8().data());
 
     gTestRunner->setIconDatabaseEnabled(false);
 
@@ -335,7 +337,7 @@ void DumpRenderTree::runTests()
 
     mainFrame = DumpRenderTreeSupport::corePage(m_page)->mainFrame();
 
-    if (getenv("drtTestFile")) {
+    if (const char* testFile = getenv("drtTestFile")) {
         runFromCommandLine = true;
         addTest(testFile);
     } else {
@@ -509,10 +511,22 @@ void DumpRenderTree::dump()
     String result = "Content-Type: " + resultMimeType + "\n" + data;
 
     dumpToFile(result);
-    if (m_dumpPixels && !dumpAsText && gTestRunner->generatePixelResults())
-        dumpWebViewAsPixelsAndCompareWithExpected(gTestRunner->expectedPixelHash());
 
     if (!runFromCommandLine) {
+        // signal end of text block
+        fputs("#EOF\n", stdout);
+
+        // There are two scenarios for dumping pixels:
+        // 1. When the test case explicitly asks for it by calling dumpAsText(true) with that extra true passed as a parameter value, from JavaScript
+        bool explicitPixelResults = gTestRunner->dumpAsText() && gTestRunner->generatePixelResults();
+        // 2. When the test case implicitly allows it by not calling dumpAsText() at all (with no parameters).
+        bool implicitPixelResults = !gTestRunner->dumpAsText();
+
+        // But only if m_enablePixelTests is set, to say that the user wants to run pixel tests at all.
+        bool generatePixelResults = m_enablePixelTests && (explicitPixelResults || implicitPixelResults);
+        if (generatePixelResults)
+            dumpWebViewAsPixelsAndCompareWithExpected(gTestRunner->expectedPixelHash());
+
         String crashFile = dumpFile + ".crash";
         unlink(crashFile.utf8().data());
 
