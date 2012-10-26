@@ -307,7 +307,3 @@ webkit.org/b/87972 fast/encoding/mailto-always-utf-8.html [ Failure ]
 
 # Frame does not get focus as expected
 webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
-
-# Failing after r132303
-webkit.org/b/100246 fast/dom/shadow/shadowdom-dynamic-styling.html [ Failure ] 
-webkit.org/b/100246 fast/dom/shadow/style-scoped-not-enabled.html [ Failure ] 
