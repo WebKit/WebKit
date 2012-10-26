@@ -1,3 +1,29 @@
+2012-10-26  Kenichi Ishibashi  <bashi@chromium.org>
+
+        local(Helvetica) in src descriptor prevent fallback
+        https://bugs.webkit.org/show_bug.cgi?id=100446
+
+        Reviewed by Dan Bernstein.
+
+        FontCache::getCachedFontData() has a mechanism that aliases a few pairs
+        of font family names, so that if the family name specified in the font-family
+        property is not available on the system, but the its alias is available,
+        it will be used instead. This is appropriate for the font-family property,
+        but not for font family names specified in the local() function of the src
+        descriptor in a @font-face rule.
+
+        This patch disables the mechanism while checking src descriptor of @font-face.
+
+        No new tests. It's difficult to test the change because 'Helvetica' can
+        be mapped any other font. For example, chromium DRT uses FontConfig to
+        map Helvetica to Times New Roman. Other ports may map Helvetica to other
+        fonts. We can't define the expected result.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        Call fontCache()->getCachedFontData() with checkingAlternateName = true.
+        This disables aliasing font family names in FontCache.
+
 2012-10-26  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Doctype Audits panel code

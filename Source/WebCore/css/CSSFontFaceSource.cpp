@@ -106,7 +106,8 @@ PassRefPtr<SimpleFontData> CSSFontFaceSource::getFontData(const FontDescription&
 #endif
     ) {
         // We're local. Just return a SimpleFontData from the normal cache.
-        return fontCache()->getCachedFontData(fontDescription, m_string);
+        // We don't want to check alternate font family names here, so pass true as the checkingAlternateName parameter.
+        return fontCache()->getCachedFontData(fontDescription, m_string, true);
     }
 
     // See if we have a mapping in our FontData cache.
