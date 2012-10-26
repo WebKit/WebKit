@@ -1,3 +1,17 @@
+2012-10-26  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Implement {get,set}FloatValueForKey
+        https://bugs.webkit.org/show_bug.cgi?id=100452
+
+        Reviewed by Anders Carlsson.
+
+        Implement missing functions in WebPreferencesStore.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::setFloatValueForKey):
+        (WebKit):
+        (WebKit::WebPreferencesStore::getFloatValueForKey):
+
 2012-10-25  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [WK2] Use per destination ID message receivers for DownloadProxy.

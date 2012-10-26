@@ -227,4 +227,14 @@ double WebPreferencesStore::getDoubleValueForKey(const String& key) const
     return valueForKey(m_doubleValues, key);
 }
 
+bool WebPreferencesStore::setFloatValueForKey(const String& key, float value) 
+{
+    return setValueForKey(m_floatValues, key, value);
+}
+
+float WebPreferencesStore::getFloatValueForKey(const String& key) const
+{
+    return valueForKey(m_floatValues, key);
+}
+
 } // namespace WebKit
