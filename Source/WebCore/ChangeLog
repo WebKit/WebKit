@@ -1,3 +1,23 @@
+2012-10-26  Erik Arvidsson  <arv@chromium.org>
+
+        Replaceable attributes should also have readonly
+        https://bugs.webkit.org/show_bug.cgi?id=91768
+
+        Reviewed by Adam Barth.
+
+        This updates the code generators for JSC and V8 to handle this case correctly.
+
+        * Modules/intents/DOMWindowIntents.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/ObjC/DOMTestObj.h:
+        * bindings/scripts/test/ObjC/DOMTestObj.mm:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        * page/DOMWindow.idl:
+        * workers/WorkerContext.idl:
+
 2012-10-26  Nico Weber  <thakis@chromium.org>
 
         Clear m_orientation in FrameData::clear() for skia

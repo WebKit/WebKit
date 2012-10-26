@@ -30,6 +30,6 @@
 ] interface DOMWindowIntents {
     attribute IntentConstructor WebKitIntent;
 
-    [Replaceable] attribute DeliveredIntent webkitIntent;
+    [Replaceable] readonly attribute DeliveredIntent webkitIntent;
 };
 

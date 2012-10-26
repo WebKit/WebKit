@@ -2073,7 +2073,7 @@ static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
     {"id", TestObjV8Internal::idAttrGetter, TestObjV8Internal::idAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'hash' (Type: 'readonly attribute' ExtAttr: '')
     {"hash", TestObjV8Internal::hashAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'replaceableAttribute' (Type: 'attribute' ExtAttr: 'Replaceable')
+    // Attribute 'replaceableAttribute' (Type: 'readonly attribute' ExtAttr: 'Replaceable')
     {"replaceableAttribute", TestObjV8Internal::replaceableAttributeAttrGetter, TestObjV8Internal::TestObjReplaceableAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 

@@ -115,7 +115,7 @@ enum {
 @property(readonly) int descriptionName;
 @property int idName;
 @property(readonly, copy) NSString *hashName;
-@property int replaceableAttribute;
+@property(readonly) int replaceableAttribute;
 
 - (void)voidMethod;
 - (void)voidMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;

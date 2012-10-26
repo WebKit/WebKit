@@ -39,15 +39,15 @@
 
     // WorkerGlobalScope
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-             attribute [Replaceable] WorkerContext self;
+             [Replaceable] readonly attribute  WorkerContext self;
 #endif
-             attribute [Replaceable] WorkerLocation location;
+             [Replaceable] readonly attribute WorkerLocation location;
     void close();
              attribute EventListener onerror;
 
     // WorkerUtils
     [Custom] void importScripts(/*[Variadic] in DOMString urls */);
-             [Replaceable] attribute WorkerNavigator navigator;
+             [Replaceable] readonly attribute WorkerNavigator navigator;
 
     // Timers
     [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);

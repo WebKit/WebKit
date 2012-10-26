@@ -758,6 +758,13 @@ sub IsConstructable
     return $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"ConstructorTemplate"};
 }
 
+sub IsReadonly
+{
+    my $attribute = shift;
+    my $attrExt = $attribute->signature->extendedAttributes;
+    return ($attribute->type =~ /readonly/ || $attrExt->{"V8ReadOnly"}) && !$attrExt->{"Replaceable"};
+}
+
 sub GenerateDomainSafeFunctionGetter
 {
     my $function = shift;
@@ -1011,10 +1018,10 @@ END
     # Special case for readonly or Replaceable attributes (with a few exceptions). This attempts to ensure that JS wrappers don't get
     # garbage-collected prematurely when their lifetime is strongly tied to their owner. We accomplish this by inserting a reference to
     # the newly created wrapper into an internal field of the holder object.
-    if (!IsNodeSubType($dataNode) && $attrName ne "self" && (IsWrapperType($returnType) && ($attribute->type =~ /^readonly/ || $attribute->signature->extendedAttributes->{"Replaceable"} || $attrName eq "location")
+    if (!IsNodeSubType($dataNode) && $attrName ne "self" && IsWrapperType($returnType) && (IsReadonly($attribute) || $attribute->signature->extendedAttributes->{"Replaceable"} || $attrName eq "location")
         && $returnType ne "EventTarget" && $returnType ne "SerializedScriptValue" && $returnType ne "DOMWindow" 
         && $returnType ne "MessagePortArray"
-        && $returnType !~ /SVG/ && $returnType !~ /HTML/ && !IsDOMNodeType($returnType))) {
+        && $returnType !~ /SVG/ && $returnType !~ /HTML/ && !IsDOMNodeType($returnType)) {
 
         my $arrayType = $codeGenerator->GetArrayType($returnType);
         if ($arrayType) {
@@ -2196,7 +2203,7 @@ sub GenerateSingleBatchedAttribute
         $accessControl = "v8::ALL_CAN_WRITE";
     } elsif ($attrExt->{"DoNotCheckSecurity"}) {
         $accessControl = "v8::ALL_CAN_READ";
-        if (!($attribute->type =~ /^readonly/) && !($attrExt->{"V8ReadOnly"})) {
+        if (!IsReadonly($attribute)) {
             $accessControl .= " | v8::ALL_CAN_WRITE";
         }
     }
@@ -2273,7 +2280,7 @@ sub GenerateSingleBatchedAttribute
     }
 
     # Read only attributes
-    if ($attribute->type =~ /^readonly/ || $attrExt->{"V8ReadOnly"}) {
+    if (IsReadonly($attribute)) {
         $setter = "0";
     }
 
@@ -2652,8 +2659,7 @@ sub GenerateImplementation
             $hasReplaceable = 1;
         } elsif (!$attribute->signature->extendedAttributes->{"CustomSetter"} &&
             !$attribute->signature->extendedAttributes->{"V8CustomSetter"} &&
-            $attribute->type !~ /^readonly/ &&
-            !$attribute->signature->extendedAttributes->{"V8ReadOnly"}) {
+            !IsReadonly($attribute)) {
             GenerateNormalAttrSetter($attribute, $dataNode, $implClassName, $interfaceName);
         }
     }

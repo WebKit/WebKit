@@ -42,21 +42,21 @@
     InterfaceName=Window
 ] interface DOMWindow {
     // DOM Level 0
-    attribute [Replaceable] Screen screen;
-    attribute [Replaceable, DoNotCheckSecurityOnGetter] History history;
-    attribute [Replaceable] BarInfo locationbar;
-    attribute [Replaceable] BarInfo menubar;
-    attribute [Replaceable] BarInfo personalbar;
-    attribute [Replaceable] BarInfo scrollbars;
-    attribute [Replaceable] BarInfo statusbar;
-    attribute [Replaceable] BarInfo toolbar;
-    attribute [Replaceable] Navigator navigator;
-    attribute [Replaceable] Navigator clientInformation;
+    [Replaceable] readonly attribute Screen screen;
+    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute History history;
+    [Replaceable] readonly attribute BarInfo locationbar;
+    [Replaceable] readonly attribute BarInfo menubar;
+    [Replaceable] readonly attribute BarInfo personalbar;
+    [Replaceable] readonly attribute BarInfo scrollbars;
+    [Replaceable] readonly attribute BarInfo statusbar;
+    [Replaceable] readonly attribute BarInfo toolbar;
+    [Replaceable] readonly attribute Navigator navigator;
+    [Replaceable] readonly attribute Navigator clientInformation;
     readonly attribute Crypto crypto;
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     attribute [DoNotCheckSecurity, CustomSetter, V8Unforgeable] Location location;
 #endif
-    attribute [Replaceable, CustomGetter, V8CustomSetter] Event event;
+    [Replaceable, CustomGetter, V8CustomSetter] readonly attribute Event event;
 
     DOMSelection getSelection();
 
@@ -90,18 +90,18 @@
                  in [Optional=DefaultIsUndefined] boolean searchInFrames,
                  in [Optional=DefaultIsUndefined] boolean showDialog);
 
-    attribute [Replaceable] boolean offscreenBuffering;
+    [Replaceable] readonly attribute  boolean offscreenBuffering;
 
-    attribute [Replaceable] long outerHeight;
-    attribute [Replaceable] long outerWidth;
-    attribute [Replaceable] long innerHeight;
-    attribute [Replaceable] long innerWidth;
-    attribute [Replaceable] long screenX;
-    attribute [Replaceable] long screenY;
-    attribute [Replaceable] long screenLeft;
-    attribute [Replaceable] long screenTop;
-    attribute [Replaceable] long scrollX;
-    attribute [Replaceable] long scrollY;
+    [Replaceable] readonly attribute long outerHeight;
+    [Replaceable] readonly attribute long outerWidth;
+    [Replaceable] readonly attribute long innerHeight;
+    [Replaceable] readonly attribute long innerWidth;
+    [Replaceable] readonly attribute long screenX;
+    [Replaceable] readonly attribute long screenY;
+    [Replaceable] readonly attribute long screenLeft;
+    [Replaceable] readonly attribute long screenTop;
+    [Replaceable] readonly attribute long scrollX;
+    [Replaceable] readonly attribute long scrollY;
     readonly attribute long pageXOffset;
     readonly attribute long pageYOffset;
 
@@ -115,7 +115,7 @@
 
     readonly attribute [DoNotCheckSecurity] boolean closed;
 
-    attribute [Replaceable, DoNotCheckSecurityOnGetter] unsigned long length;
+    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute unsigned long length;
 
     attribute DOMString name;
 
@@ -127,13 +127,13 @@
 #endif
 
     // Self referential attributes
-    attribute [Replaceable, DoNotCheckSecurityOnGetter] DOMWindow self;
-    readonly attribute [DoNotCheckSecurity, V8Unforgeable] DOMWindow window;
-    attribute [Replaceable, DoNotCheckSecurityOnGetter] DOMWindow frames;
+    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow self;
+    [DoNotCheckSecurity, V8Unforgeable] readonly attribute DOMWindow window;
+    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute  DOMWindow frames;
 
-    attribute [Replaceable, DoNotCheckSecurityOnGetter, V8CustomSetter] DOMWindow opener;
-    attribute [Replaceable, DoNotCheckSecurityOnGetter] DOMWindow parent;
-    readonly attribute [DoNotCheckSecurityOnGetter, V8Unforgeable] DOMWindow top;
+    [Replaceable, DoNotCheckSecurityOnGetter, V8CustomSetter] readonly attribute DOMWindow opener;
+    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow parent;
+    [DoNotCheckSecurityOnGetter, V8Unforgeable] readonly attribute DOMWindow top;
 
     // DOM Level 2 AbstractView Interface
     readonly attribute Document document;
@@ -154,7 +154,7 @@
                                    in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString pseudoElement);
 #endif
 
-    attribute [Replaceable] double devicePixelRatio;
+    [Replaceable] readonly attribute double devicePixelRatio;
     
     WebKitPoint webkitConvertPointFromPageToNode(in [Optional=DefaultIsUndefined] Node node, 
                                                  in [Optional=DefaultIsUndefined] WebKitPoint p);
@@ -175,7 +175,7 @@
     readonly attribute long orientation;
 #endif
 
-             attribute [Replaceable] Console console;
+    [Replaceable] readonly attribute Console console;
 
     // cross-document messaging
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
@@ -198,7 +198,7 @@
 #endif
 
 #if defined(ENABLE_WEB_TIMING) && ENABLE_WEB_TIMING
-    attribute [Replaceable] Performance performance;
+    [Replaceable] readonly attribute Performance performance;
 #endif
 
     // Timers

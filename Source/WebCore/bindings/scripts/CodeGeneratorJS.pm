@@ -314,6 +314,12 @@ sub IsScriptProfileType
     return 0;
 }
 
+sub IsReadonly
+{
+    my $attribute = shift;
+    return $attribute->type =~ /readonly/ && !$attribute->signature->extendedAttributes->{"Replaceable"};
+}
+
 sub AddTypedefForScriptProfileType
 {
     my $type = shift;
@@ -807,7 +813,7 @@ sub GenerateHeader
     # Check if we have any writable properties
     my $hasReadWriteProperties = 0;
     foreach (@{$dataNode->attributes}) {
-        if ($_->type !~ /^readonly\ attribute$/ && !$_->isStatic) {
+        if (!IsReadonly($_) && !$_->isStatic) {
             $hasReadWriteProperties = 1;
         }
     }
@@ -921,7 +927,7 @@ sub GenerateHeader
                 push(@headerContent, "    JSC::JSValue " . $methodName . "(JSC::ExecState*) const;\n");
                 push(@headerContent, "#endif\n") if $conditionalString;
             }
-            if (($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCustomSetter"}) && $attribute->type !~ /^readonly/) {
+            if (($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"} || $attribute->signature->extendedAttributes->{"CustomSetter"} || $attribute->signature->extendedAttributes->{"JSCustomSetter"}) && !IsReadonly($attribute)) {
                 push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
                 push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue);\n");
                 push(@headerContent, "#endif\n") if $conditionalString;
@@ -1144,7 +1150,7 @@ sub GenerateHeader
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = GetAttributeGetterName($interfaceName, $className, $attribute);
             push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);\n");
-            unless ($attribute->type =~ /readonly/) {
+            if (!IsReadonly($attribute)) {
                 my $setter = GetAttributeSetterName($interfaceName, $className, $attribute);
                 push(@headerContent, "void ${setter}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);\n");
             }
@@ -1218,14 +1224,14 @@ sub GenerateAttributesHashTable($$)
         my @specials = ();
         push(@specials, "DontDelete") unless $attribute->signature->extendedAttributes->{"Deletable"};
         push(@specials, "DontEnum") if $attribute->signature->extendedAttributes->{"NotEnumerable"};
-        push(@specials, "ReadOnly") if $attribute->type =~ /readonly/;
+        push(@specials, "ReadOnly") if IsReadonly($attribute);
         my $special = (@specials > 0) ? join(" | ", @specials) : "0";
         push(@hashSpecials, $special);
 
         my $getter = GetAttributeGetterName($interfaceName, $className, $attribute);
         push(@hashValue1, $getter);
 
-        if ($attribute->type =~ /readonly/) {
+        if (IsReadonly($attribute)) {
             push(@hashValue2, "0");
         } else {
             my $setter = GetAttributeSetterName($interfaceName, $className, $attribute);
@@ -1462,14 +1468,14 @@ sub GenerateImplementation
 
             my @specials = ();
             push(@specials, "DontDelete") unless $attribute->signature->extendedAttributes->{"Deletable"};
-            push(@specials, "ReadOnly") if $attribute->type =~ /readonly/;
+            push(@specials, "ReadOnly") if IsReadonly($attribute);
             my $special = (@specials > 0) ? join(" | ", @specials) : "0";
             push(@hashSpecials, $special);
 
             my $getter = GetAttributeGetterName($interfaceName, $className, $attribute);
             push(@hashValue1, $getter);
 
-            if ($attribute->type =~ /readonly/) {
+            if (IsReadonly($attribute)) {
                 push(@hashValue2, "0");
             } else {
                 my $setter = GetAttributeSetterName($interfaceName, $className, $attribute);
@@ -1974,7 +1980,7 @@ sub GenerateImplementation
         # Check if we have any writable attributes
         my $hasReadWriteProperties = 0;
         foreach my $attribute (@{$dataNode->attributes}) {
-            $hasReadWriteProperties = 1 if $attribute->type !~ /^readonly/ && !$attribute->isStatic;
+            $hasReadWriteProperties = 1 if !IsReadonly($attribute) && !$attribute->isStatic;
         }
 
         my $hasSetter = $hasReadWriteProperties
@@ -2033,7 +2039,7 @@ sub GenerateImplementation
 
             if ($hasReadWriteProperties) {
                 foreach my $attribute (@{$dataNode->attributes}) {
-                    if ($attribute->type !~ /^readonly/) {
+                    if (!IsReadonly($attribute)) {
                         my $name = $attribute->signature->name;
                         my $type = $codeGenerator->StripModule($attribute->signature->type);
                         my $putFunctionName = GetAttributeSetterName($interfaceName, $className, $attribute);

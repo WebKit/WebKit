@@ -261,7 +261,7 @@
     const unsigned short CONST_VALUE_14 = 0x1abc;
     [Reflect=CONST_IMPL] const unsigned short CONST_JAVASCRIPT = 15;
 
-    [Replaceable] attribute long replaceableAttribute;
+    [Replaceable] readonly attribute long replaceableAttribute;
 
     void variadicStringMethod(in DOMString head, in DOMString... tail);
     void variadicDoubleMethod(in double head, in double... tail);

@@ -912,11 +912,11 @@ G_MAXLONG, /* max */
                                     PROP_REPLACEABLE_ATTRIBUTE,
                                     g_param_spec_long("replaceable-attribute", /* name */
                                                            "test_obj_replaceable-attribute", /* short description */
-                                                           "read-write  glong TestObj.replaceable-attribute", /* longer - could do with some extra doc stuff here */
+                                                           "read-only  glong TestObj.replaceable-attribute", /* longer - could do with some extra doc stuff here */
                                                            G_MINLONG, /* min */
 G_MAXLONG, /* max */
 0, /* default */
-                                                           WEBKIT_PARAM_READWRITE));
+                                                           WEBKIT_PARAM_READABLE));
 
 
 }
