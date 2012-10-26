@@ -215,6 +215,9 @@ void FileReader::didReceiveData()
 
 void FileReader::didFinishLoading()
 {
+    if (m_aborting)
+        return;
+
     ASSERT(m_state != DONE);
     m_state = DONE;
 

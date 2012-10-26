@@ -1,3 +1,20 @@
+2012-10-26  Ningxin Hu  <ningxin.hu@intel.com>
+
+        FileReader abort case causes Chromium renderer crash
+        https://bugs.webkit.org/show_bug.cgi?id=99142
+
+        Reviewed by Kentaro Hara.
+
+        Before dispatching load event, FileReader should check if it is
+        in aborting.
+
+        Test: manually launch fast/files/file-reader-abort.html in Chromium
+        browser and compare the result with
+        fast/files/file-reader-abort-expected.txt.
+
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::didFinishLoading):
+
 2012-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Generate less repaint calls during subtree detaching
