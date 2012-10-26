@@ -1760,6 +1760,20 @@ void WebViewImpl::layout()
         m_linkHighlight->updateGeometry();
 }
 
+void WebViewImpl::enterForceCompositingMode(bool enter)
+{
+    TRACE_EVENT1("webkit", "WebViewImpl::enterForceCompositingMode", "enter", enter);
+    settingsImpl()->setForceCompositingMode(enter);
+    if (enter) {
+        if (!m_page)
+            return;
+        Frame* mainFrame = m_page->mainFrame();
+        if (!mainFrame)
+            return;
+        mainFrame->view()->updateCompositingLayersAfterStyleChange();
+    }
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect)
 {

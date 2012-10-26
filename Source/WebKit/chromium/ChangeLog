@@ -1,3 +1,22 @@
+2012-10-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Allow embedder to enter/leave force compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=100458
+
+        Reviewed by Adrienne Walker.
+
+        This adds API for the embedder to decide when to enter and leave force compositing mode since it's
+        more efficient to only toggle this setting when the embedder is about to produce a frame.
+
+        * public/WebWidget.h:
+        (WebWidget):
+        (WebKit::WebWidget::enterForceCompositingMode):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebViewImpl::enterForceCompositingMode):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-10-26  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Notification should be sent when accessibilityIsIgnored changes
