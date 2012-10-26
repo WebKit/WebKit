@@ -130,17 +130,10 @@ DragImageRef createDragImageFromImage(Image* image, RespectImageOrientationEnum 
             FloatRect destRect(FloatPoint(), sizeRespectingOrientation);
             SkCanvas canvas(*dragImageChromium->bitmap);
 
-            // ImageOrientation expects the origin in the lower left corner, so flip, transform, and then...
-            canvas.translate(0, destRect.height());
-            canvas.scale(1, -1);
             canvas.concat(orientation.transformFromDefault(sizeRespectingOrientation));
 
             if (orientation.usesWidthAsHeight())
                 destRect = FloatRect(destRect.x(), destRect.y(), destRect.height(), destRect.width());
-
-            // ...flip back.
-            canvas.translate(0, destRect.height());
-            canvas.scale(1, -1);
 
             canvas.drawBitmapRect(bitmap->bitmap(), 0, destRect);
             return dragImageChromium;

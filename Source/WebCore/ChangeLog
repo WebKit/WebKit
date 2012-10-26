@@ -1,3 +1,31 @@
+2012-10-25  Nico Weber  <thakis@chromium.org>
+
+        Flip ImageOrientation coordinate system from lefthanded to righthanded
+        https://bugs.webkit.org/show_bug.cgi?id=100414
+
+        Reviewed by Eric Seidel.
+
+        platform/graphics, noteably GraphicsContext uses a right-handed
+        coordinate system (origin in the top left corner, x growing to the
+        right, y to the bottom).  ImageOrientation was an outlier from
+        and used a left-handed coordinate system.  This patch makes
+        ImageOrientation match the rest of platform/graphics.
+
+        This is a pure refactoring and has no observable effects.
+
+        * platform/chromium/DragImageChromiumSkia.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/graphics/ImageOrientation.cpp:
+        (WebCore::ImageOrientation::transformFromDefault):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::createDragImageFromImage):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldRespectImageOrientation):
+
 2012-10-25  Keishi Hattori  <keishi@webkit.org>
 
         Hide popup while transitioning from the suggestion picker to the calendar picker

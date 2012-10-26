@@ -76,7 +76,7 @@ public:
     }
 
     // This transform can be used for drawing an image according to the orientation.
-    // It should be used in a left-handed coordinate system.
+    // It should be used in a right-handed coordinate system.
     AffineTransform transformFromDefault(const FloatSize& drawnSize) const;
 
     inline bool operator==(const ImageOrientation& other) const { return other.m_orientation == m_orientation; }

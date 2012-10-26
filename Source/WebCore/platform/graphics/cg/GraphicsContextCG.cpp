@@ -326,9 +326,8 @@ void GraphicsContext::drawNativeImage(NativeImagePtr imagePtr, const FloatSize& 
 
     setPlatformCompositeOperation(op);
 
-    // Flip the coords.
-    CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.maxY());
-    CGContextScaleCTM(context, 1, -1);
+    // ImageOrientation expects the origin to be at (0, 0)
+    CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.y());
     adjustedDestRect.setLocation(FloatPoint());
 
     if (orientation != DefaultImageOrientation) {
@@ -340,6 +339,10 @@ void GraphicsContext::drawNativeImage(NativeImagePtr imagePtr, const FloatSize& 
         }
     }
     
+    // Flip the coords.
+    CGContextTranslateCTM(context, 0, adjustedDestRect.height());
+    CGContextScaleCTM(context, 1, -1);
+
     // Adjust the color space.
     image = Image::imageWithColorSpace(image.get(), styleColorSpace);
 

@@ -41,17 +41,17 @@ AffineTransform ImageOrientation::transformFromDefault(const FloatSize& drawnSiz
     case OriginBottomRight:
         return AffineTransform(-1,  0,  0, -1,  w, h);
     case OriginLeftBottom:
-        return AffineTransform( 0,  1, -1,  0,  w, 0);
-    case OriginRightTop:
         return AffineTransform( 0, -1,  1,  0,  0, h);
+    case OriginRightTop:
+        return AffineTransform( 0,  1, -1,  0,  w, 0);
     case OriginTopRight:
         return AffineTransform(-1,  0,  0,  1,  w, 0);
     case OriginBottomLeft:
         return AffineTransform( 1,  0,  0, -1,  0, h);
     case OriginLeftTop:
-        return AffineTransform( 0, -1, -1,  0,  w, h);
-    case OriginRightBottom:
         return AffineTransform( 0,  1,  1,  0,  0, 0);
+    case OriginRightBottom:
+        return AffineTransform( 0, -1, -1,  0,  w, h);
     }
     ASSERT_NOT_REACHED();
     return AffineTransform();
