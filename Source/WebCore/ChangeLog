@@ -1,3 +1,18 @@
+2012-10-26  Nico Weber  <thakis@chromium.org>
+
+        Clear m_orientation in FrameData::clear() for skia
+        https://bugs.webkit.org/show_bug.cgi?id=100456
+
+        Reviewed by Stephen White.
+
+        clear() is only called by the FrameData destructor and for multi-image
+        images in BitmapImage::destroyDecodedData(). Multi-frame images don't
+        have exif data, so this patch should have no effect in practice. It
+        makes the skia code match the CG code in BitmapImageCG.cpp though.
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::FrameData::clear):
+
 2012-10-26  Florin Malita  <fmalita@chromium.org>
 
         Crash on loading SVG filter resource on HTML element

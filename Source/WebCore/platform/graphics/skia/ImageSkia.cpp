@@ -449,6 +449,8 @@ bool FrameData::clear(bool clearMetadata)
     if (clearMetadata)
         m_haveMetadata = false;
 
+    m_orientation = DefaultImageOrientation;
+
     if (m_frame) {
         // ImageSource::createFrameAtIndex() allocated |m_frame| and passed
         // ownership to BitmapImage; we must delete it here.
