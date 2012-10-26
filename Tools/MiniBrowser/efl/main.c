@@ -567,6 +567,24 @@ on_javascript_prompt(Ewk_View_Smart_Data *smartData, const char *message, const 
 }
 
 static void
+on_tooltip_text_set(void *user_data, Evas_Object *obj, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+    const char* message = (const char*)event_info;
+
+    elm_object_tooltip_text_set(window->webview, message);
+    elm_object_tooltip_show(window->webview);
+}
+
+static void
+on_tooltip_text_unset(void *user_data, Evas_Object *obj, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+
+    elm_object_tooltip_unset(window->webview);
+}
+
+static void
 on_home_button_clicked(void *user_data, Evas_Object *home_button, void *event_info)
 {
     Browser_Window *app_data = (Browser_Window *)user_data;
@@ -706,6 +724,8 @@ static Browser_Window *window_create(const char *url)
     evas_object_smart_callback_add(app_data->webview, "title,changed", on_title_changed, app_data);
     evas_object_smart_callback_add(app_data->webview, "url,changed", on_url_changed, app_data);
     evas_object_smart_callback_add(app_data->webview, "back,forward,list,changed", on_back_forward_list_changed, app_data);
+    evas_object_smart_callback_add(app_data->webview, "tooltip,text,set", on_tooltip_text_set, app_data);
+    evas_object_smart_callback_add(app_data->webview, "tooltip,text,unset", on_tooltip_text_unset, app_data);
 
     evas_object_event_callback_add(app_data->webview, EVAS_CALLBACK_KEY_DOWN, on_key_down, app_data);
     evas_object_event_callback_add(app_data->webview, EVAS_CALLBACK_MOUSE_DOWN, on_mouse_down, app_data);

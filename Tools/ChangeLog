@@ -1,3 +1,17 @@
+2012-10-25  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Display tooltip in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=99322
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Display tooltip in MiniBrowser using elm_object_tooltip_text_set().
+
+        * MiniBrowser/efl/main.c:
+        (on_tooltip_text_set):
+        (on_tooltip_text_unset):
+        (window_create):
+
 2012-10-25  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] remove remaining usages of webkit_support from the TestRunner library
