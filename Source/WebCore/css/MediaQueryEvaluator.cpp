@@ -289,10 +289,27 @@ static bool device_aspect_ratioMediaFeatureEval(CSSValue* value, RenderStyle*, F
 
 static bool device_pixel_ratioMediaFeatureEval(CSSValue *value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)
 {
-    if (value)
-        return value->isPrimitiveValue() && compareValue(frame->page()->deviceScaleFactor(), static_cast<CSSPrimitiveValue*>(value)->getFloatValue(), op);
+    // FIXME: Possible handle other media types than 'screen' and 'print'.
+    float deviceScaleFactor = 0;
 
-    return frame->page()->deviceScaleFactor() != 0;
+    // This checks the actual media type applied to the document, and we know
+    // this method only got called if this media type matches the one defined
+    // in the query. Thus, if if the document's media type is "print", the
+    // media type of the query will either be "print" or "all".
+    String mediaType = frame->view()->mediaType();
+    if (equalIgnoringCase(mediaType, "screen"))
+        deviceScaleFactor = frame->page()->deviceScaleFactor();
+    else if (equalIgnoringCase(mediaType, "print")) {
+        // The resolution of images while printing should not depend on the dpi
+        // of the screen. Until we support proper ways of querying this info
+        // we use 300px which is considered minimum for current printers.
+        deviceScaleFactor = 3.125; // 300dpi / 96dpi;
+    }
+
+    if (!value)
+        return !!deviceScaleFactor;
+
+    return value->isPrimitiveValue() && compareValue(deviceScaleFactor, static_cast<CSSPrimitiveValue*>(value)->getFloatValue(), op);
 }
 
 static bool resolutionMediaFeatureEval(CSSValue* value, RenderStyle*, Frame* frame, MediaFeaturePrefix op)

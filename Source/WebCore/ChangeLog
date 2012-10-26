@@ -1,3 +1,20 @@
+2012-10-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Printing should use use high resolution images when available
+        https://bugs.webkit.org/show_bug.cgi?id=100488
+
+        Reviewed by Antti Koivisto.
+
+        The images loaded using -webkit-device-pixel-ratio depends on
+        the display type (deviceScaleFactor) and thus affects which
+        images are being used for printing. Printing should always
+        use the higher resolution images (aka 'retina' images).
+
+        Test: fast/media/mq-pixel-ratio-print.html
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::device_pixel_ratioMediaFeatureEval):
+
 2012-10-26  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI instrument InspectorResourceAgent. it caches resources for the front-end.
