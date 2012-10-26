@@ -1,3 +1,20 @@
+2012-10-26  Vincent Scheib  <scheib@chromium.org>
+
+        Unreviewed, rolling out r132702.
+        http://trac.webkit.org/changeset/132702
+        https://bugs.webkit.org/show_bug.cgi?id=100322
+
+        Compile error on Chromium Linux dbg builder (and others)
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::beginElementAt):
+        (WebCore::SVGAnimationElement::endElementAt):
+        * svg/animation/SMILTime.h:
+        (WebCore::SMILTime::SMILTime):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::addBeginTime):
+        (WebCore::SVGSMILElement::addEndTime):
+
 2012-10-26  Philip Rogers  <pdr@google.com>
 
         Prevent NaN offset values in ElementTimeControl.
