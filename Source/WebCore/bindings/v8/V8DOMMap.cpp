@@ -56,13 +56,6 @@ DOMWrapperMap<void>& getDOMObjectMap(v8::Isolate* isolate)
     return DOMDataStore::current(isolate)->domObjectMap();
 }
 
-DOMWrapperMap<void>& getActiveDOMObjectMap(v8::Isolate* isolate)
-{
-    if (!isolate)
-        isolate = v8::Isolate::GetCurrent();
-    return DOMDataStore::current(isolate)->activeDomObjectMap();
-}
-
 void visitAllDOMNodes(NodeWrapperVisitor* visitor)
 {
     v8::HandleScope scope;
@@ -101,18 +94,6 @@ void visitDOMObjects(DOMWrapperVisitor<void>* visitor)
         DOMDataStore* store = list[i];
 
         store->domObjectMap().visit(store, visitor);
-    }
-}
-
-void visitActiveDOMObjects(DOMWrapperVisitor<void>* visitor)
-{
-    v8::HandleScope scope;
-
-    Vector<DOMDataStore*>& list = V8PerIsolateData::current()->allStores();
-    for (size_t i = 0; i < list.size(); ++i) {
-        DOMDataStore* store = list[i];
-
-        store->activeDomObjectMap().visit(store, visitor);
     }
 }
 

@@ -42,22 +42,17 @@
 
 namespace WebCore {
 
-    DOMWrapperMap<Node>& getDOMNodeMap(v8::Isolate* = 0);
+class NodeWrapperVisitor {
+public:
+    virtual ~NodeWrapperVisitor();
+    virtual void visitNodeWrapper(Node*, v8::Persistent<v8::Object> wrapper) = 0;
+};
 
-    class NodeWrapperVisitor {
-    public:
-        virtual ~NodeWrapperVisitor();
-        virtual void visitNodeWrapper(Node*, v8::Persistent<v8::Object> wrapper) = 0;
-    };
-    void visitAllDOMNodes(NodeWrapperVisitor*);
+DOMWrapperMap<Node>& getDOMNodeMap(v8::Isolate* = 0);
+void visitAllDOMNodes(NodeWrapperVisitor*);
 
-    // A map from a DOM object (non-node) to its JS wrapper. This map does not contain the DOM objects which can have pending activity (active dom objects).
-    DOMWrapperMap<void>& getDOMObjectMap(v8::Isolate* = 0);
-    void visitDOMObjects(DOMWrapperVisitor<void>*);
-
-    // A map from a DOM object to its JS wrapper for DOM objects which can have pending activity.
-    DOMWrapperMap<void>& getActiveDOMObjectMap(v8::Isolate* = 0);
-    void visitActiveDOMObjects(DOMWrapperVisitor<void>*);
+DOMWrapperMap<void>& getDOMObjectMap(v8::Isolate* = 0);
+void visitDOMObjects(DOMWrapperVisitor<void>*);
 
 } // namespace WebCore
 

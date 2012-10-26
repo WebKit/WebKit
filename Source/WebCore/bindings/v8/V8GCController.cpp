@@ -233,7 +233,6 @@ void V8GCController::majorGCPrologue()
 
     ObjectVisitor objectVisitor(&liveObjects);
     visitDOMObjects(&objectVisitor);
-    visitActiveDOMObjects(&objectVisitor);
 
     v8::V8::AddObjectGroup(liveObjects.data(), liveObjects.size());
 

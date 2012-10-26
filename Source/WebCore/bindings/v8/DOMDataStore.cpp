@@ -52,7 +52,6 @@ DOMDataStore::DOMDataStore(Type type)
         m_domNodeMap = adoptPtr(new DOMWrapperHashMap<Node>);
     }
     m_domObjectMap = adoptPtr(new DOMWrapperHashMap<void>);
-    m_activeDomObjectMap = adoptPtr(new DOMWrapperHashMap<void>);
 
     V8PerIsolateData::current()->registerDOMDataStore(this);
 }
@@ -66,7 +65,6 @@ DOMDataStore::~DOMDataStore()
     if (m_type == IsolatedWorld)
         m_domNodeMap->clear();
     m_domObjectMap->clear();
-    m_activeDomObjectMap->clear();
 }
 
 DOMDataStore* DOMDataStore::current(v8::Isolate* isolate)
@@ -86,7 +84,6 @@ void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
     info.addMember(m_domNodeMap);
     info.addMember(m_domObjectMap);
-    info.addMember(m_activeDomObjectMap);
 }
 
 } // namespace WebCore

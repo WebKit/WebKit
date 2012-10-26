@@ -61,7 +61,6 @@ public:
 
     DOMWrapperMap<Node>& domNodeMap() { return *m_domNodeMap; }
     DOMWrapperMap<void>& domObjectMap() { return *m_domObjectMap; }
-    DOMWrapperMap<void>& activeDomObjectMap() { return *m_activeDomObjectMap; }
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
@@ -69,7 +68,6 @@ protected:
     Type m_type;
     OwnPtr<DOMWrapperMap<Node> > m_domNodeMap;
     OwnPtr<DOMWrapperMap<void> > m_domObjectMap;
-    OwnPtr<DOMWrapperMap<void> > m_activeDomObjectMap;
 };
 
 } // namespace WebCore
