@@ -337,7 +337,7 @@ namespace JSC {
 
     struct SymbolTableIndexHashTraits : HashTraits<SymbolTableEntry> {
         static const bool emptyValueIsZero = true;
-        static const bool needsDestruction = false;
+        static const bool needsDestruction = true;
     };
 
     typedef HashMap<RefPtr<StringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<StringImpl> >, SymbolTableIndexHashTraits> SymbolTable;

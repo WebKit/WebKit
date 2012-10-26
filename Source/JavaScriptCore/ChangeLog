@@ -1,3 +1,16 @@
+2012-10-25  Michael Saboff  <msaboff@apple.com>
+
+        SymbolTableIndexHashTraits::needsDestruction should be set to true
+        https://bugs.webkit.org/show_bug.cgi?id=100437
+
+        Reviewed by Mark Hahnenberg.
+
+        For correctness, set SymbolTableIndexHashTraits::needsDestruction to true since SymbolTableEntry's do
+        need to have their destructor called due to the possibility of rare data.
+
+        * runtime/SymbolTable.h:
+        (SymbolTableIndexHashTraits):
+
 2012-10-25  Filip Pizlo  <fpizlo@apple.com>
 
         DFG Arrayify elimination should replace it with GetButterfly rather than Phantom
