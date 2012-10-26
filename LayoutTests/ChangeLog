@@ -1,3 +1,11 @@
+2012-10-25  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Skipping these tests again because Bug 96951 isn't actually fixed.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-25  Nico Weber  <thakis@chromium.org>
 
         [chromium] Add expectations for fast/images/exif-orientation.html
