@@ -379,6 +379,14 @@ class PortTest(unittest.TestCase):
     def test_operating_system(self):
         self.assertEqual('mac', self.make_port().operating_system())
 
+    def test_http_server_supports_ipv6(self):
+        port = self.make_port()
+        self.assertTrue(port.http_server_supports_ipv6())
+        port.host.platform.os_name = 'cygwin'
+        self.assertFalse(port.http_server_supports_ipv6())
+        port.host.platform.os_name = 'win'
+        self.assertTrue(port.http_server_supports_ipv6())
+
     def test_check_httpd_success(self):
         port = self.make_port(executive=MockExecutive2())
         port._path_to_apache = lambda: '/usr/sbin/httpd'
@@ -450,7 +458,6 @@ class PortTest(unittest.TestCase):
     def test_build_path(self):
         port = self.make_port(options=optparse.Values({'build_directory': '/my-build-directory/'}))
         self.assertEqual(port._build_path(), '/my-build-directory/Release')
-
 
 if __name__ == '__main__':
     unittest.main()

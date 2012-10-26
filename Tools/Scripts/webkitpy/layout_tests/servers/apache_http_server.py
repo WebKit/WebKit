@@ -33,6 +33,7 @@
 import logging
 import os
 import re
+import socket
 import sys
 
 from webkitpy.layout_tests.servers import http_server_base
@@ -42,7 +43,6 @@ _log = logging.getLogger(__name__)
 
 
 class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
-
     def __init__(self, port_obj, output_dir, additional_dirs=None, number_of_servers=None):
         """Args:
           port_obj: handle to the platform-specific routines
@@ -77,13 +77,36 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             '-C', "\'DocumentRoot \"%s\"\'" % document_root,
             '-c', "\'Alias /js-test-resources \"%s\"'" % js_test_resources_dir,
             '-c', "\'Alias /media-resources \"%s\"'" % media_resources_dir,
-            '-C', "\'Listen %s\'" % "127.0.0.1:8000",
             '-c', "\'TypesConfig \"%s\"\'" % mime_types_path,
             '-c', "\'CustomLog \"%s\" common\'" % access_log,
             '-c', "\'ErrorLog \"%s\"\'" % error_log,
             '-C', "\'User \"%s\"\'" % os.environ.get("USERNAME", os.environ.get("USER", "")),
             '-c', "\'PidFile %s'" % self._pid_file,
             '-k', "start"]
+
+        enable_ipv6 = self._port_obj.http_server_supports_ipv6()
+        # Perform part of the checks Apache's APR does when trying to listen to
+        # a specific host/port. This allows us to avoid trying to listen to
+        # IPV6 addresses when it fails on Apache. APR itself tries to call
+        # getaddrinfo() again without AI_ADDRCONFIG if the first call fails
+        # with EBADFLAGS, but that is not how it normally fails in our use
+        # cases, so ignore that for now.
+        # See https://bugs.webkit.org/show_bug.cgi?id=98602#c7
+        try:
+            socket.getaddrinfo('::1', 0, 0, 0, 0, socket.AI_ADDRCONFIG)
+        except:
+            enable_ipv6 = False
+
+        for mapping in self._mappings:
+            port = mapping['port']
+
+            start_cmd += ['-C', "\'Listen 127.0.0.1:%d\'" % port]
+
+            # We listen to both IPv4 and IPv6 loop-back addresses, but ignore
+            # requests to 8000 from random users on network.
+            # See https://bugs.webkit.org/show_bug.cgi?id=37104
+            if enable_ipv6:
+                start_cmd += ['-C', "\'Listen [::1]:%d\'" % port]
 
         if additional_dirs:
             for alias, path in additional_dirs.iteritems():
@@ -97,7 +120,6 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             start_cmd += ['-c', "\'StartServers %d\'" % self._number_of_servers,
                           '-c', "\'MinSpareServers %d\'" % self._number_of_servers,
                           '-c', "\'MaxSpareServers %d\'" % self._number_of_servers]
-
 
         stop_cmd = [executable,
             '-f', "\"%s\"" % self._get_apache_config_file_path(test_dir, output_dir),

@@ -1,3 +1,17 @@
+2012-10-26  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        webkitpy: Pass the `Listen' Apache directive from webkitpy, not the httpd.conf files.
+        https://bugs.webkit.org/show_bug.cgi?id=98602
+
+        Reviewed by Dirk Pranke.
+
+        * http/conf/apache2-debian-httpd.conf: Remove the `Listen'
+        directive and related comments, it is passed to httpd by webkitpy
+        now.
+        * http/conf/apache2-httpd.conf: Ditto.
+        * http/conf/cygwin-httpd.conf: Ditto.
+        * http/conf/fedora-httpd.conf: Ditto.
+
 2012-10-26  Simon Fraser  <simon.fraser@apple.com>
 
         compositing/tiling/huge-layer* flakey
