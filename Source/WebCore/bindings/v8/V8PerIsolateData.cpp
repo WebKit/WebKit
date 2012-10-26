@@ -31,6 +31,15 @@
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationVector.h>
 
+namespace WTF {
+
+// WrapperTypeInfo are statically allocated, don't count them.
+template<> struct SequenceMemoryInstrumentationTraits<WebCore::WrapperTypeInfo*> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+}
+
 namespace WebCore {
 
 V8PerIsolateData::V8PerIsolateData(v8::Isolate* isolate)

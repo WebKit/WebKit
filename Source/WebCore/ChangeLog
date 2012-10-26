@@ -1,3 +1,15 @@
+2012-10-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        [v8] Memory instrumentation: don't count memory of WrapperTypeInfo
+        https://bugs.webkit.org/show_bug.cgi?id=100517
+
+        Reviewed by Alexander Pavlov.
+
+        * bindings/v8/V8PerIsolateData.cpp: when estimating bindings memory size skip
+        pointers to WrapperTypeInfo objects as they are static fields and belong to
+        the data segment.
+        (WTF):
+
 2012-10-26  Kent Tamura  <tkent@chromium.org>
 
         Refactor Localizer-related classes.
