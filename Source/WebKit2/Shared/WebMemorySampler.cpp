@@ -82,7 +82,7 @@ void WebMemorySampler::start(const SandboxExtension::Handle& sampleLogFileHandle
 void WebMemorySampler::initializeTimers(double interval)
 {
     m_sampleTimer.startRepeating(1);
-    printf("Started memory sampler for process %s", processName().utf8().data());
+    printf("Started memory sampler for process %s %d", processName().utf8().data(), getpid());
     if (interval > 0) {
         m_stopTimer.startOneShot(interval);
         printf(" for a interval of %g seconds", interval);
@@ -98,7 +98,7 @@ void WebMemorySampler::stop()
         return;
     m_sampleTimer.stop();
     m_sampleLogFile = 0;
-    printf("Stopped memory sampler for process %s\n", processName().utf8().data());
+    printf("Stopped memory sampler for process %s %d\n", processName().utf8().data(), getpid());
     // Flush stdout buffer so python script can be guaranteed to read up to this point.
     fflush(stdout);
     m_isRunning = false;
@@ -135,7 +135,7 @@ void WebMemorySampler::initializeSandboxedLogFile(const SandboxExtension::Handle
 
 void WebMemorySampler::writeHeaders()
 {
-    String processDetails = "Process: " + processName() + '\n';
+    String processDetails = String::format("Process: %s Pid: %d\n", processName().utf8().data(), getpid());
 
     CString utf8String = processDetails.utf8();
     writeToFile(m_sampleLogFile, utf8String.data(), utf8String.length());

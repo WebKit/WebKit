@@ -497,7 +497,7 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
     if (m_memorySamplerEnabled) {
         SandboxExtension::Handle sampleLogSandboxHandle;        
         double now = WTF::currentTime();
-        String sampleLogFilePath = String::format("WebProcess%llu", static_cast<unsigned long long>(now));
+        String sampleLogFilePath = String::format("WebProcess%llupid%d", static_cast<unsigned long long>(now), process->processIdentifier());
         sampleLogFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::WriteOnly, sampleLogSandboxHandle);
         
         process->send(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, m_memorySamplerInterval), 0);
