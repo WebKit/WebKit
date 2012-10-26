@@ -1,3 +1,13 @@
+2012-10-26  Florin Malita  <fmalita@chromium.org>
+
+        Crash on loading SVG filter resource on HTML element
+        https://bugs.webkit.org/show_bug.cgi?id=100491
+
+        Reviewed by Dirk Schulze.
+
+        * svg/filters/filter-reference-crash-expected.txt: Added.
+        * svg/filters/filter-reference-crash.html: Added.
+
 2012-10-26  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [WK2] should enable two postredirect tests

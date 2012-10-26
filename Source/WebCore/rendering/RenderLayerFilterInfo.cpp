@@ -141,9 +141,8 @@ void RenderLayerFilterInfo::updateReferenceFilterClients(const FilterOperations&
             // Reference is internal; add layer as a client so we can trigger
             // filter repaint on SVG attribute change.
             Element* filter = m_layer->renderer()->node()->document()->getElementById(referenceFilterOperation->fragment());
-            if (!filter || !filter->renderer())
+            if (!filter || !filter->renderer() || !filter->renderer()->isSVGResourceFilter())
                 continue;
-            ASSERT(filter->renderer()->isSVGResourceContainer());
             filter->renderer()->toRenderSVGResourceContainer()->addClientRenderLayer(m_layer);
             m_internalSVGReferences.append(filter);
         }
