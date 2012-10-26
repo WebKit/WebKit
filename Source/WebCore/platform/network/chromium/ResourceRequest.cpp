@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ResourceRequest.h"
 
-#include "PlatformMemoryInstrumentation.h"
-
 namespace WebCore {
 
 // This is used by the loader to control the number of issued parallel load requests. 
@@ -58,13 +56,6 @@ void ResourceRequest::doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>
     m_hasUserGesture = data->m_hasUserGesture;
     m_downloadToFile = data->m_downloadToFile;
     m_targetType = data->m_targetType;
-}
-
-void ResourceRequest::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
-    ResourceRequestBase::reportMemoryUsageBase(memoryObjectInfo);
-    info.addMember(m_extraData);
 }
 
 } // namespace WebCore
