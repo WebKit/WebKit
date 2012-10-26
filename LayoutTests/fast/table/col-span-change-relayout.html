@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../../resources/check-layout.js"></script>
+        <style>
+            table
+            {
+                border-collapse: collapse;
+                table-layout: fixed;
+                width: 200px;
+            }
+            td
+            {
+                background: green;
+                height: 1em;
+            }
+        </style>
+        <script>
+            if (window.testRunner)
+                testRunner.dumpAsText();
+
+            function log(msg)
+            {
+                var console = document.getElementById('console');
+                console.appendChild(document.createTextNode(msg));
+                console.appendChild(document.createElement('br'));
+            }
+
+            function changeColSpan()
+            {
+                document.getElementById('table').setAttribute('data-expected-width', 300);
+                checkLayout('table');
+
+                var col = document.getElementById('column');
+                col.setAttribute("span", "1");
+                document.getElementById('table').setAttribute('data-expected-width', 200);
+                checkLayout('table');
+            }
+        </script>
+    </head>
+    <body onload="changeColSpan();">
+        <p>This test checks that dynamically changing a column's 'span' properly recompute the cell's widths.</p>
+        <p>The table below shrink to 200px after changing the column's span.</p>
+        <table id="table">
+            <colgroup>
+                <col span="2" id="column" style="width: 100px"></col>
+                <col style="width: 100px;"></col>
+            </colgroup>
+            <tr>
+                <td id="cell"></td>
+                <td></td>
+                <td></td>
+           </tr>
+        </table>
+        <p id="console"></p>
+    </body>
+</html>
+

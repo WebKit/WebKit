@@ -1,3 +1,46 @@
+2012-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderTableCol::computePreferredLogicalWidths and RenderTableCol::layout should never be called
+        https://bugs.webkit.org/show_bug.cgi?id=99861
+
+        Reviewed by Ojan Vafai.
+
+        RenderTableCol's computePreferredLogicalWidths and layout's only purpose were to clear the preferred logical
+        widths dirty / layout flag so that we would properly propagate the information to our containing table. This
+        led to clunky code where the table layout code had to forcefully call RenderTableCol::computePreferredLogicalWidths
+        or else we would ignore the next layout hint on the <col> or <colgroup>.
+
+        Tests: fast/table/col-span-change-relayout.html
+               fast/table/simplified-layout-table.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        Simplified the code now that we only need to iterate over the sections.
+
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        Removed call to computePreferredLogicalWidths.
+
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::styleDidChange):
+        (WebCore::RenderTableCol::updateFromElement):
+        Forward a layout hint to the table so that we properly recompute the cell's logical withs.
+
+        (WebCore::RenderTableCol::computePreferredLogicalWidths):
+        (WebCore::RenderTableCol::layout):
+        Change our implementations of those 2 methods to be no-ops, while enforcing that they are
+        never called when it was possible.
+
+        (WebCore::RenderTableCol::propagateLayoutCueToTable):
+        New helper function that forward any layout cue to the containing table, this works around
+        us not clearing the flags which confuses RenderObject markContainingBlocksForLayout and
+        invalidateContainerPreferredLogicalWidths.
+
+        * rendering/RenderTableCol.h:
+        Made the function that we are not expected to be called private.
+
 2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132601.

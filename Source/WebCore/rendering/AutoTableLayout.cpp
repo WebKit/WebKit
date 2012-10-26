@@ -49,81 +49,77 @@ void AutoTableLayout::recalcColumn(unsigned effCol)
     RenderTableCell* fixedContributor = 0;
     RenderTableCell* maxContributor = 0;
 
-    for (RenderObject* child = m_table->children()->firstChild(); child; child = child->nextSibling()) {
-        if (child->isRenderTableCol())
-            toRenderTableCol(child)->computePreferredLogicalWidths();
-        else if (child->isTableSection()) {
-            RenderTableSection* section = toRenderTableSection(child);
-            unsigned numRows = section->numRows();
-            for (unsigned i = 0; i < numRows; i++) {
-                RenderTableSection::CellStruct current = section->cellAt(i, effCol);
-                RenderTableCell* cell = current.primaryCell();
-                
-                if (current.inColSpan || !cell)
-                    continue;
+    for (RenderTableSection* section = m_table->topNonEmptySection(); section; section = m_table->sectionBelow(section, SkipEmptySections)) {
+        unsigned numRows = section->numRows();
+        ASSERT(numRows);
+        for (unsigned i = 0; i < numRows; i++) {
+            RenderTableSection::CellStruct current = section->cellAt(i, effCol);
+            RenderTableCell* cell = current.primaryCell();
 
-                bool cellHasContent = cell->children()->firstChild() || cell->style()->hasBorder() || cell->style()->hasPadding();
-                if (cellHasContent)
-                    columnLayout.emptyCellsOnly = false;
+            if (current.inColSpan || !cell)
+                continue;
 
-                // A cell originates in this column. Ensure we have
-                // a min/max width of at least 1px for this column now.
-                columnLayout.minLogicalWidth = max<int>(columnLayout.minLogicalWidth, cellHasContent ? 1 : 0);
-                columnLayout.maxLogicalWidth = max<int>(columnLayout.maxLogicalWidth, 1);
+            bool cellHasContent = cell->children()->firstChild() || cell->style()->hasBorder() || cell->style()->hasPadding();
+            if (cellHasContent)
+                columnLayout.emptyCellsOnly = false;
 
-                if (cell->colSpan() == 1) {
-                    if (cell->preferredLogicalWidthsDirty())
-                        cell->computePreferredLogicalWidths();
-                    columnLayout.minLogicalWidth = max<int>(cell->minPreferredLogicalWidth(), columnLayout.minLogicalWidth);
-                    if (cell->maxPreferredLogicalWidth() > columnLayout.maxLogicalWidth) {
-                        columnLayout.maxLogicalWidth = cell->maxPreferredLogicalWidth();
-                        maxContributor = cell;
-                    }
+            // A cell originates in this column. Ensure we have
+            // a min/max width of at least 1px for this column now.
+            columnLayout.minLogicalWidth = max<int>(columnLayout.minLogicalWidth, cellHasContent ? 1 : 0);
+            columnLayout.maxLogicalWidth = max<int>(columnLayout.maxLogicalWidth, 1);
 
-                    // All browsers implement a size limit on the cell's max width. 
-                    // Our limit is based on KHTML's representation that used 16 bits widths.
-                    // FIXME: Other browsers have a lower limit for the cell's max width. 
-                    const int cCellMaxWidth = 32760;
-                    Length cellLogicalWidth = cell->styleOrColLogicalWidth();
-                    if (cellLogicalWidth.value() > cCellMaxWidth)
-                        cellLogicalWidth.setValue(cCellMaxWidth);
-                    if (cellLogicalWidth.isNegative())
-                        cellLogicalWidth.setValue(0);
-                    switch (cellLogicalWidth.type()) {
-                    case Fixed:
-                        // ignore width=0
-                        if (cellLogicalWidth.isPositive() && !columnLayout.logicalWidth.isPercent()) {
-                            LayoutUnit logicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(cellLogicalWidth.value());
-                            if (columnLayout.logicalWidth.isFixed()) {
-                                // Nav/IE weirdness
-                                if ((logicalWidth > columnLayout.logicalWidth.value()) 
-                                    || ((columnLayout.logicalWidth.value() == logicalWidth) && (maxContributor == cell))) {
-                                    columnLayout.logicalWidth.setValue(Fixed, logicalWidth);
-                                    fixedContributor = cell;
-                                }
-                            } else {
+            if (cell->colSpan() == 1) {
+                if (cell->preferredLogicalWidthsDirty())
+                    cell->computePreferredLogicalWidths();
+                columnLayout.minLogicalWidth = max<int>(cell->minPreferredLogicalWidth(), columnLayout.minLogicalWidth);
+                if (cell->maxPreferredLogicalWidth() > columnLayout.maxLogicalWidth) {
+                    columnLayout.maxLogicalWidth = cell->maxPreferredLogicalWidth();
+                    maxContributor = cell;
+                }
+
+                // All browsers implement a size limit on the cell's max width.
+                // Our limit is based on KHTML's representation that used 16 bits widths.
+                // FIXME: Other browsers have a lower limit for the cell's max width.
+                const int cCellMaxWidth = 32760;
+                Length cellLogicalWidth = cell->styleOrColLogicalWidth();
+                if (cellLogicalWidth.value() > cCellMaxWidth)
+                    cellLogicalWidth.setValue(cCellMaxWidth);
+                if (cellLogicalWidth.isNegative())
+                    cellLogicalWidth.setValue(0);
+                switch (cellLogicalWidth.type()) {
+                case Fixed:
+                    // ignore width=0
+                    if (cellLogicalWidth.isPositive() && !columnLayout.logicalWidth.isPercent()) {
+                        LayoutUnit logicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(cellLogicalWidth.value());
+                        if (columnLayout.logicalWidth.isFixed()) {
+                            // Nav/IE weirdness
+                            if ((logicalWidth > columnLayout.logicalWidth.value())
+                                || ((columnLayout.logicalWidth.value() == logicalWidth) && (maxContributor == cell))) {
                                 columnLayout.logicalWidth.setValue(Fixed, logicalWidth);
                                 fixedContributor = cell;
                             }
+                        } else {
+                            columnLayout.logicalWidth.setValue(Fixed, logicalWidth);
+                            fixedContributor = cell;
                         }
-                        break;
-                    case Percent:
-                        m_hasPercent = true;
-                        if (cellLogicalWidth.isPositive() && (!columnLayout.logicalWidth.isPercent() || cellLogicalWidth.value() > columnLayout.logicalWidth.value()))
-                            columnLayout.logicalWidth = cellLogicalWidth;
-                        break;
-                    case Relative:
-                        // FIXME: Need to understand this case and whether it makes sense to compare values
-                        // which are not necessarily of the same type.
-                        if (cellLogicalWidth.value() > columnLayout.logicalWidth.value())
-                            columnLayout.logicalWidth = cellLogicalWidth;
-                    default:
-                        break;
                     }
-                } else if (!effCol || section->primaryCellAt(i, effCol - 1) != cell) {
-                    // This spanning cell originates in this column. Insert the cell into spanning cells list.
-                    insertSpanCell(cell);
+                    break;
+                case Percent:
+                    m_hasPercent = true;
+                    if (cellLogicalWidth.isPositive() && (!columnLayout.logicalWidth.isPercent() || cellLogicalWidth.value() > columnLayout.logicalWidth.value()))
+                        columnLayout.logicalWidth = cellLogicalWidth;
+                    break;
+                case Relative:
+                    // FIXME: Need to understand this case and whether it makes sense to compare values
+                    // which are not necessarily of the same type.
+                    if (cellLogicalWidth.value() > columnLayout.logicalWidth.value())
+                        columnLayout.logicalWidth = cellLogicalWidth;
+                default:
+                    break;
                 }
+            } else if (!effCol || section->primaryCellAt(i, effCol - 1) != cell) {
+                // This spanning cell originates in this column. Insert the cell into spanning cells list.
+                insertSpanCell(cell);
             }
         }
     }

@@ -1,3 +1,19 @@
+2012-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderTableCol::computePreferredLogicalWidths and RenderTableCol::layout should never be called
+        https://bugs.webkit.org/show_bug.cgi?id=99861
+
+        Reviewed by Ojan Vafai.
+
+        Added 2 tests:
+        - 1 to cover the code in RenderTableCol::updateFromElement.
+        - 1 to cover simplified layout on a table.
+
+        * fast/table/col-span-change-relayout-expected.txt: Added.
+        * fast/table/col-span-change-relayout.html: Added.
+        * fast/table/simplified-layout-table-expected.html: Added.
+        * fast/table/simplified-layout-table.html: Added.
+
 2012-10-26  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Pixel tests need rebaseline
