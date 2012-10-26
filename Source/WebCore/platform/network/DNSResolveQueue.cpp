@@ -27,6 +27,8 @@
 #include "config.h"
 #include "DNSResolveQueue.h"
 
+#include <wtf/CurrentTime.h>
+
 namespace WebCore {
 
 // When resolve queue is empty, we fire async resolution requests immediately (which is important if the prefetch is triggered by hovering).
@@ -47,13 +49,30 @@ static const int gMaxRequestsToQueue = 64;
 // If there were queued names that couldn't be sent simultaneously, check the state of resolvers after this delay.
 static const double gRetryResolvingInSeconds = 0.1;
 
+DNSResolveQueue::DNSResolveQueue()
+    : m_requestsInFlight(0)
+    , m_cachedProxyEnabledStatus(false)
+    , m_lastProxyEnabledStatusCheckTime(0)
+{
+}
+
+bool DNSResolveQueue::isUsingProxy()
+{
+    double time = currentTime();
+    static const double minimumProxyCheckDelay = 5;
+    if (time - m_lastProxyEnabledStatusCheckTime > minimumProxyCheckDelay) {
+        m_lastProxyEnabledStatusCheckTime = time;
+        m_cachedProxyEnabledStatus = platformProxyIsEnabledInSystemPreferences();
+    }
+    return m_cachedProxyEnabledStatus;
+}
+
 void DNSResolveQueue::add(const String& hostname)
 {
     // If there are no names queued, and few enough are in flight, resolve immediately (the mouse may be over a link).
     if (!m_names.size()) {
-        if (platformProxyIsEnabledInSystemPreferences())
+        if (isUsingProxy())
             return;
-
         if (atomicIncrement(&m_requestsInFlight) <= gNamesToResolveImmediately) {
             platformResolve(hostname);
             return;
@@ -72,7 +91,7 @@ void DNSResolveQueue::add(const String& hostname)
 
 void DNSResolveQueue::fired()
 {
-    if (platformProxyIsEnabledInSystemPreferences()) {
+    if (isUsingProxy()) {
         m_names.clear();
         return;
     }

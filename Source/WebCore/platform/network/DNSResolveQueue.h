@@ -50,6 +50,10 @@ public:
     }
 
 private:
+    DNSResolveQueue();
+
+    bool isUsingProxy();
+
     bool platformProxyIsEnabledInSystemPreferences();
     void platformResolve(const String&);
 
@@ -57,6 +61,8 @@ private:
 
     HashSet<String> m_names;
     int m_requestsInFlight;
+    bool m_cachedProxyEnabledStatus;
+    double m_lastProxyEnabledStatusCheckTime;
 };
 
 }

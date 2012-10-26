@@ -1,3 +1,29 @@
+2012-10-26  Antti Koivisto  <antti@apple.com>
+
+        Lots of time spent under DNSResolveQueue::platformProxyIsEnabledInSystemPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=100514
+
+        Reviewed by Anders Carlsson.
+
+        DNSResolveQueue::platformProxyIsEnabledInSystemPreferences gets called for every link in
+        the document. The function is relatively slow.
+        
+        This patch caches the result of the last check for 5 seconds. Based on code comments
+        prefetching is disabled with proxies due to regressing performance with some configurations.
+        Proxy status changes rarely and a slight reaction delay shoudn't cause practical problems.
+
+        * platform/network/DNSResolveQueue.cpp:
+        (WebCore::DNSResolveQueue::DNSResolveQueue):
+        
+            Add constructor. Also fixes a bug, m_requestsInFlight was not initialized.
+            
+        (WebCore):
+        (WebCore::DNSResolveQueue::isUsingProxy):
+        (WebCore::DNSResolveQueue::add):
+        (WebCore::DNSResolveQueue::fired):
+        * platform/network/DNSResolveQueue.h:
+        (DNSResolveQueue):
+
 2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132662.
