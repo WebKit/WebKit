@@ -1,3 +1,16 @@
+2012-10-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Memory instrumentation: do not report memory occupied by v8::String
+        https://bugs.webkit.org/show_bug.cgi?id=100487
+
+        Reviewed by Alexander Pavlov.
+
+        Pointers to v8::String are skipped when reporting memory usage of V8 bindings'
+        string cache.
+
+        * bindings/v8/V8Binding.cpp:
+        (WTF):
+
 2012-10-26  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Add support for auto-height regions with region-breaks

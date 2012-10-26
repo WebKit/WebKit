@@ -61,6 +61,14 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+namespace WTF {
+
+template<> struct SequenceMemoryInstrumentationTraits<v8::String*> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+}
+
 namespace WebCore {
 
 v8::Handle<v8::Value> setDOMException(int exceptionCode, v8::Isolate* isolate)
