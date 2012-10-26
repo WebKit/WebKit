@@ -62,8 +62,6 @@ public:
     PassRefPtr<IDBAny> version() const;
     PassRefPtr<DOMStringList> objectStoreNames() const;
 
-    // FIXME: Try to modify the code generator so this is unneeded.
-    PassRefPtr<IDBObjectStore> createObjectStore(const String& name, ExceptionCode& ec) { return createObjectStore(name, Dictionary(), ec); }
     PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&);
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, PassRefPtr<DOMStringList>, const String& mode, ExceptionCode&);
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCode&);

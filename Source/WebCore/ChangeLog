@@ -1,3 +1,32 @@
+2012-10-26  Joshua Bell  <jsbell@chromium.org>
+
+        [WebKitIDL] Optional dictionary types should have default values of empty dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=100547
+
+        Reviewed by Adam Barth.
+
+        Per WebIDL, "Optional dictionary type arguments are always considered to have a default
+        value of an empty dictionary." WebKitIDL already supported this via the extended attribute
+        [Optional=DefaultIsUndefined] but make this the default for Dictionary.
+
+        Binding test expectations updated.
+
+        * Modules/filesystem/DirectoryEntry.h: Remove default parameters.
+        (DirectoryEntry):
+        * Modules/indexeddb/IDBDatabase.h: Remove overloads.
+        (IDBDatabase):
+        * Modules/indexeddb/IDBObjectStore.h: Remove overloads.
+        (IDBObjectStore):
+        * Modules/mediastream/RTCPeerConnection.idl: Remove DefaultIsUndefined annotations.
+        * bindings/scripts/CodeGeneratorJS.pm: Special case for Optional Dictionary.
+        (GenerateParametersCheck):
+        * bindings/scripts/CodeGeneratorV8.pm: Ditto.
+        (GenerateParametersCheck):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOptionsObject): Updated expectation - no early call.
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::optionsObjectCallback): Ditto.
+
 2012-10-26  Vincent Scheib  <scheib@chromium.org>
 
         Generated should not be supported for things with a shadow

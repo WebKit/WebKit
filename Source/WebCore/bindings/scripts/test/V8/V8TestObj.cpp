@@ -1173,10 +1173,6 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
     EXCEPTION_BLOCK(Dictionary, oo, Dictionary(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined), args.GetIsolate()));
     if (!oo.isUndefinedOrNull() && !oo.isObject())
         return throwTypeError("Not an object.", args.GetIsolate());
-    if (args.Length() <= 1) {
-        imp->optionsObject(oo);
-        return v8Undefined();
-    }
     EXCEPTION_BLOCK(Dictionary, ooo, Dictionary(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined), args.GetIsolate()));
     if (!ooo.isUndefinedOrNull() && !ooo.isObject())
         return throwTypeError("Not an object.", args.GetIsolate());

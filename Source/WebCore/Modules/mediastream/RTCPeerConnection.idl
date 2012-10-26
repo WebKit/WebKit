@@ -31,15 +31,15 @@
 [
     Conditional=MEDIA_STREAM,
     ActiveDOMObject,
-    Constructor(in Dictionary rtcIceServers, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints),
+    Constructor(in Dictionary rtcIceServers, in [Optional] Dictionary mediaConstraints),
     ConstructorRaisesException,
     CallWith=ScriptExecutionContext,
     EventTarget
 ] interface RTCPeerConnection {
-    void createOffer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback,Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
+    void createOffer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback,Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional] Dictionary mediaConstraints)
         raises(DOMException);
 
-    void createAnswer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback, Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
+    void createAnswer(in [Callback] RTCSessionDescriptionCallback successCallback, in [Callback, Optional=DefaultIsUndefined] RTCErrorCallback failureCallback, in [Optional] Dictionary mediaConstraints)
         raises(DOMException);
 
     void setLocalDescription(in RTCSessionDescription description, in [Callback, Optional=DefaultIsUndefined] VoidCallback successCallback, in [Callback, Optional=DefaultIsUndefined] RTCErrorCallback failureCallback)
@@ -54,7 +54,7 @@
 
     readonly attribute DOMString readyState;
 
-    void updateIce(in [Optional=DefaultIsUndefined] Dictionary configuration, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
+    void updateIce(in [Optional] Dictionary configuration, in [Optional] Dictionary mediaConstraints)
         raises(DOMException);
 
     void addIceCandidate(in RTCIceCandidate candidate)
@@ -65,14 +65,14 @@
     readonly attribute MediaStreamList localStreams;
     readonly attribute MediaStreamList remoteStreams;
 
-    [StrictTypeChecking] void addStream(in MediaStream stream, in [Optional=DefaultIsUndefined] Dictionary mediaConstraints)
+    [StrictTypeChecking] void addStream(in MediaStream stream, in [Optional] Dictionary mediaConstraints)
         raises(DOMException);
     [StrictTypeChecking] void removeStream(in MediaStream stream)
         raises(DOMException);
 
     void getStats(in [Callback] RTCStatsCallback successCallback, in [Optional=DefaultIsUndefined] MediaStreamTrack selector);
 
-    RTCDataChannel createDataChannel(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString label, in [Optional=DefaultIsUndefined] Dictionary options)
+    RTCDataChannel createDataChannel(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString label, in [Optional] Dictionary options)
          raises(DOMException);
 
     void close()

@@ -1636,13 +1636,6 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
     Dictionary oo(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-
-    size_t argsCount = exec->argumentCount();
-    if (argsCount <= 1) {
-        impl->optionsObject(oo);
-        return JSValue::encode(jsUndefined());
-    }
-
     Dictionary ooo(exec, MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());

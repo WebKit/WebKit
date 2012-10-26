@@ -1715,13 +1715,13 @@ sub GenerateParametersCheck
 
     foreach my $parameter (@{$function->parameters}) {
         TranslateParameter($parameter);
-
-        my $parameterName = $parameter->name;
+        my $nativeType = GetNativeTypeFromSignature($parameter, $paramIndex);
 
         # Optional arguments with [Optional] should generate an early call with fewer arguments.
         # Optional arguments with [Optional=...] should not generate the early call.
+        # Optional Dictionary arguments always considered to have default of empty dictionary.
         my $optional = $parameter->extendedAttributes->{"Optional"};
-        if ($optional && $optional ne "DefaultIsUndefined" && $optional ne "DefaultIsNullString" && !$parameter->extendedAttributes->{"Callback"}) {
+        if ($optional && $optional ne "DefaultIsUndefined" && $optional ne "DefaultIsNullString" && $nativeType ne "Dictionary" && !$parameter->extendedAttributes->{"Callback"}) {
             $parameterCheckString .= "    if (args.Length() <= $paramIndex) {\n";
             my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $implClassName, %replacements);
             $parameterCheckString .= $functionCall;
@@ -1733,6 +1733,7 @@ sub GenerateParametersCheck
             $parameterDefaultPolicy = "DefaultIsNullString";
         }
 
+        my $parameterName = $parameter->name;
         if (GetIndexOf($parameterName, @paramTransferListNames) != -1) {
             $replacements{$parameterName} = "messagePortArray" . ucfirst($parameterName);
             $paramIndex++;
@@ -1740,7 +1741,6 @@ sub GenerateParametersCheck
         }
 
         AddToImplIncludes("ExceptionCode.h");
-        my $nativeType = GetNativeTypeFromSignature($parameter, $paramIndex);
         if ($parameter->extendedAttributes->{"Callback"}) {
             my $className = GetCallbackClassName($parameter->type);
             AddToImplIncludes("$className.h");
