@@ -32,6 +32,7 @@
 
 #include <wtf/Assertions.h>
 #include "FileSystem.h"
+#include "HistogramSupport.h"
 #include "IDBFactoryBackendImpl.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
@@ -50,6 +51,26 @@ namespace WebCore {
 using namespace IDBLevelDBCoding;
 
 const int64_t KeyGeneratorInitialNumber = 1; // From the IndexedDB specification.
+
+enum IDBLevelDBBackingStoreInternalErrorType {
+    IDBLevelDBBackingStoreReadError,
+    IDBLevelDBBackingStoreWriteError,
+    IDBLevelDBBackingStoreConsistencyError,
+    IDBLevelDBBackingStoreInternalErrorMax,
+};
+static inline void recordInternalError(IDBLevelDBBackingStoreInternalErrorType type)
+{
+    HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.InternalError", type, IDBLevelDBBackingStoreInternalErrorMax);
+}
+
+// Use to signal conditions that usually indicate developer error, but could be caused by data corruption.
+// A macro is used instead of an inline function so that the assert and log report the line number.
+#define InternalError(type) \
+    do { \
+        ASSERT_NOT_REACHED(); \
+        LOG_ERROR("Internal IndexedDB Error: %s", #type); \
+        recordInternalError(type); \
+    } while (0)
 
 template <typename DBOrTransaction>
 static bool getBool(DBOrTransaction* db, const Vector<char>& key, bool& foundBool)
@@ -164,8 +185,10 @@ static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
     int64_t schemaVersion = 0;
     if (!getInt(db, metaDataKey, schemaVersion)) {
         schemaVersion = latestSchemaVersion;
-        if (!putInt(db, metaDataKey, latestSchemaVersion))
+        if (!putInt(db, metaDataKey, latestSchemaVersion)) {
+            InternalError(IDBLevelDBBackingStoreWriteError);
             return false;
+        }
     } else {
         ASSERT(schemaVersion <= latestSchemaVersion);
         if (!schemaVersion) {
@@ -180,7 +203,7 @@ static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
                 Vector<char> value;
                 bool ok = transaction->get(it->key(), value);
                 if (!ok) {
-                    ASSERT_NOT_REACHED();
+                    InternalError(IDBLevelDBBackingStoreReadError);
                     return false;
                 }
                 int databaseId = decodeInt(value.begin(), value.end());
@@ -188,13 +211,13 @@ static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
                 transaction->put(intVersionKey, encodeVarInt(IDBDatabaseMetadata::DefaultIntVersion));
                 ok = transaction->get(it->key(), value);
                 if (!ok) {
-                    ASSERT_NOT_REACHED();
+                    InternalError(IDBLevelDBBackingStoreReadError);
                     return false;
                 }
             }
             bool ok = transaction->commit();
             if (!ok) {
-                ASSERT_NOT_REACHED();
+                InternalError(IDBLevelDBBackingStoreWriteError);
                 return false;
             }
         }
@@ -240,6 +263,17 @@ IDBLevelDBBackingStore::~IDBLevelDBBackingStore()
     m_comparator.clear();
 }
 
+enum IDBLevelDBBackingStoreOpenResult {
+    IDBLevelDBBackingStoreOpenMemory,
+    IDBLevelDBBackingStoreOpenSuccess,
+    IDBLevelDBBackingStoreOpenFailedDirectory,
+    IDBLevelDBBackingStoreOpenFailedUnknownSchema,
+    IDBLevelDBBackingStoreOpenCleanupDestroyFailed,
+    IDBLevelDBBackingStoreOpenCleanupReopenFailed,
+    IDBLevelDBBackingStoreOpenCleanupReopenSuccess,
+    IDBLevelDBBackingStoreOpenMax,
+};
+
 PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
 {
     IDB_TRACE("IDBLevelDBBackingStore::open");
@@ -248,26 +282,33 @@ PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securit
     OwnPtr<LevelDBComparator> comparator = adoptPtr(new Comparator());
     OwnPtr<LevelDBDatabase> db;
 
-    if (pathBase.isEmpty())
+    if (pathBase.isEmpty()) {
+        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemory, IDBLevelDBBackingStoreOpenMax);
         db = LevelDBDatabase::openInMemory(comparator.get());
-    else {
+    } else {
         if (!makeAllDirectories(pathBase)) {
             LOG_ERROR("Unable to create IndexedDB database path %s", pathBase.utf8().data());
+            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedDirectory, IDBLevelDBBackingStoreOpenMax);
             return PassRefPtr<IDBBackingStore>();
         }
-        // FIXME: We should eventually use the same LevelDB database for all origins.
+
         String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
 
         db = LevelDBDatabase::open(path, comparator.get());
         bool knownSchema = isSchemaKnown(db.get());
-        if (!knownSchema)
+        if (!knownSchema) {
             LOG_ERROR("IndexedDB backing store had unknown schema, treating it as failure to open");
+            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedUnknownSchema, IDBLevelDBBackingStoreOpenMax);
+        }
 
-        if (!db || !knownSchema) {
+        if (db && knownSchema)
+            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenSuccess, IDBLevelDBBackingStoreOpenMax);
+        else {
             LOG_ERROR("IndexedDB backing store open failed, attempting cleanup");
             bool success = LevelDBDatabase::destroy(path);
             if (!success) {
                 LOG_ERROR("IndexedDB backing store cleanup failed");
+                HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupDestroyFailed, IDBLevelDBBackingStoreOpenMax);
                 return PassRefPtr<IDBBackingStore>();
             }
 
@@ -275,8 +316,10 @@ PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securit
             db = LevelDBDatabase::open(path, comparator.get());
             if (!db) {
                 LOG_ERROR("IndexedDB backing store reopen after recovery failed");
+                HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupReopenFailed, IDBLevelDBBackingStoreOpenMax);
                 return PassRefPtr<IDBBackingStore>();
             }
+            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupReopenSuccess, IDBLevelDBBackingStoreOpenMax);
         }
     }
 
@@ -325,12 +368,16 @@ bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, IDBDatab
         return false;
 
     ok = getString(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserVersion), metadata->version);
-    if (!ok)
+    if (!ok) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
 
     ok = getVarInt(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserIntVersion), metadata->intVersion);
-    if (!ok)
+    if (!ok) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
     if (metadata->intVersion == IDBDatabaseMetadata::DefaultIntVersion)
         metadata->intVersion = IDBDatabaseMetadata::NoIntVersion;
 
@@ -361,14 +408,20 @@ bool IDBLevelDBBackingStore::createIDBDatabaseMetaData(const String& name, const
         return false;
 
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
-    if (!putInt(m_db.get(), key, rowId))
+    if (!putInt(m_db.get(), key, rowId)) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
-    if (!putString(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version))
+    }
+    if (!putString(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version)) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
+    }
     if (intVersion == IDBDatabaseMetadata::NoIntVersion)
         intVersion = IDBDatabaseMetadata::DefaultIntVersion;
-    if (!putVarInt(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion))
+    if (!putVarInt(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion)) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
+    }
     return true;
 }
 
@@ -377,16 +430,19 @@ bool IDBLevelDBBackingStore::updateIDBDatabaseIntVersion(IDBBackingStore::Transa
     if (intVersion == IDBDatabaseMetadata::NoIntVersion)
         intVersion = IDBDatabaseMetadata::DefaultIntVersion;
     ASSERT_WITH_MESSAGE(intVersion >= 0, "intVersion was %lld", static_cast<long long>(intVersion));
-    if (!putVarInt(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion))
+    if (!putVarInt(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion)) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
-
+    }
     return true;
 }
 
 bool IDBLevelDBBackingStore::updateIDBDatabaseMetaData(IDBBackingStore::Transaction* transaction, int64_t rowId, const String& version)
 {
-    if (!putString(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version))
+    if (!putString(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version)) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
+    }
 
     return true;
 }
@@ -395,8 +451,10 @@ static bool deleteRange(LevelDBTransaction* transaction, const Vector<char>& beg
 {
     OwnPtr<LevelDBIterator> it = transaction->createIterator();
     for (it->seek(begin); it->isValid() && compareKeys(it->key(), end) < 0; it->next()) {
-        if (!transaction->remove(it->key()))
+        if (!transaction->remove(it->key())) {
+            InternalError(IDBLevelDBBackingStoreWriteError);
             return false;
+        }
     }
 
     return true;
@@ -456,7 +514,7 @@ Vector<IDBObjectStoreMetadata> IDBLevelDBBackingStore::getObjectStores(int64_t d
         p = ObjectStoreMetaDataKey::decode(p, limit, &metaDataKey);
         ASSERT(p);
         if (metaDataKey.metaDataType() != ObjectStoreMetaDataKey::Name) {
-            LOG_ERROR("Internal Indexed DB error.");
+            InternalError(IDBLevelDBBackingStoreReadError);
             // Possible stale metadata, but don't fail the load.
             it->next();
             continue;
@@ -469,33 +527,33 @@ Vector<IDBObjectStoreMetadata> IDBLevelDBBackingStore::getObjectStores(int64_t d
 
         it->next();
         if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::KeyPath)) {
-            LOG_ERROR("Internal Indexed DB error.");
+            InternalError(IDBLevelDBBackingStoreReadError);
             break;
         }
         IDBKeyPath keyPath = decodeIDBKeyPath(it->value().begin(), it->value().end());
 
         it->next();
         if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::AutoIncrement)) {
-            LOG_ERROR("Internal Indexed DB error.");
+            InternalError(IDBLevelDBBackingStoreReadError);
             break;
         }
         bool autoIncrement = decodeBool(it->value().begin(), it->value().end());
 
         it->next(); // Is evicatble.
         if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::Evictable)) {
-            LOG_ERROR("Internal Indexed DB error.");
+            InternalError(IDBLevelDBBackingStoreReadError);
             break;
         }
 
         it->next(); // Last version.
         if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::LastVersion)) {
-            LOG_ERROR("Internal Indexed DB error.");
+            InternalError(IDBLevelDBBackingStoreReadError);
             break;
         }
 
         it->next(); // Maximum index id allocated.
         if (!checkObjectStoreAndMetaDataType(it.get(), stopKey, objectStoreId, ObjectStoreMetaDataKey::MaxIndexId)) {
-            LOG_ERROR("Internal Indexed DB error.");
+            InternalError(IDBLevelDBBackingStoreReadError);
             break;
         }
         int64_t maxIndexId = decodeInt(it->value().begin(), it->value().end());
@@ -508,7 +566,7 @@ Vector<IDBObjectStoreMetadata> IDBLevelDBBackingStore::getObjectStores(int64_t d
             // (2) Later, null vs. string vs. array was stored in the keyPath itself.
             // So this check is only relevant for string-type keyPaths.
             if (!hasKeyPath && (keyPath.type() == IDBKeyPath::StringType && !keyPath.string().isEmpty())) {
-                LOG_ERROR("Internal Indexed DB error.");
+                InternalError(IDBLevelDBBackingStoreReadError);
                 break;
             }
             if (!hasKeyPath)
@@ -536,10 +594,14 @@ static bool setMaxObjectStoreId(LevelDBTransaction* transaction, int64_t databas
     int64_t maxObjectStoreId = getMaxObjectStoreId(transaction, maxObjectStoreIdKey);
 
     if (objectStoreId <= maxObjectStoreId) {
-        LOG_ERROR("Possible corruption: new object store id is too small.");
+        InternalError(IDBLevelDBBackingStoreConsistencyError);
         return false;
     }
-    return putInt(transaction, maxObjectStoreIdKey, objectStoreId);
+    if (!putInt(transaction, maxObjectStoreIdKey, objectStoreId)) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
+        return false;
+    }
+    return true;
 }
 
 bool IDBLevelDBBackingStore::createObjectStore(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath& keyPath, bool autoIncrement)
@@ -561,55 +623,55 @@ bool IDBLevelDBBackingStore::createObjectStore(IDBBackingStore::Transaction* tra
 
     bool ok = putString(levelDBTransaction, nameKey, name);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
     ok = putIDBKeyPath(levelDBTransaction, keyPathKey, keyPath);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
     ok = putInt(levelDBTransaction, autoIncrementKey, autoIncrement);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
     ok = putInt(levelDBTransaction, evictableKey, false);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
     ok = putInt(levelDBTransaction, lastVersionKey, 1);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
     ok = putInt(levelDBTransaction, maxIndexIdKey, MinimumIndexId);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
     ok = putBool(levelDBTransaction, hasKeyPathKey, !keyPath.isNull());
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
     ok = putInt(levelDBTransaction, keyGeneratorCurrentNumberKey, KeyGeneratorInitialNumber);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
     ok = putInt(levelDBTransaction, namesKey, objectStoreId);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
@@ -624,15 +686,21 @@ void IDBLevelDBBackingStore::deleteObjectStore(IDBBackingStore::Transaction* tra
     String objectStoreName;
     getString(levelDBTransaction, ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::Name), objectStoreName);
 
-    if (!deleteRange(levelDBTransaction, ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 0), ObjectStoreMetaDataKey::encodeMaxKey(databaseId, objectStoreId)))
+    if (!deleteRange(levelDBTransaction, ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 0), ObjectStoreMetaDataKey::encodeMaxKey(databaseId, objectStoreId))) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return; // FIXME: Report error.
+    }
 
     levelDBTransaction->remove(ObjectStoreNamesKey::encode(databaseId, objectStoreName));
 
-    if (!deleteRange(levelDBTransaction, IndexFreeListKey::encode(databaseId, objectStoreId, 0), IndexFreeListKey::encodeMaxKey(databaseId, objectStoreId)))
+    if (!deleteRange(levelDBTransaction, IndexFreeListKey::encode(databaseId, objectStoreId, 0), IndexFreeListKey::encodeMaxKey(databaseId, objectStoreId))) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return; // FIXME: Report error.
-    if (!deleteRange(levelDBTransaction, IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0), IndexMetaDataKey::encodeMaxKey(databaseId, objectStoreId)))
+    }
+    if (!deleteRange(levelDBTransaction, IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0), IndexMetaDataKey::encodeMaxKey(databaseId, objectStoreId))) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return; // FIXME: Report error.
+    }
 
     clearObjectStore(transaction, databaseId, objectStoreId);
 }
@@ -650,8 +718,10 @@ String IDBLevelDBBackingStore::getObjectStoreRecord(IDBBackingStore::Transaction
 
     int64_t version;
     const char* p = decodeVarInt(data.begin(), data.end(), version);
-    if (!p)
+    if (!p) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return String();
+    }
     (void) version;
 
     return decodeString(p, data.end());
@@ -709,12 +779,16 @@ bool IDBLevelDBBackingStore::putObjectStoreRecord(IDBBackingStore::Transaction* 
     v.append(encodeVarInt(version));
     v.append(encodeString(value));
 
-    if (!levelDBTransaction->put(objectStoredataKey, v))
+    if (!levelDBTransaction->put(objectStoredataKey, v)) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
+    }
 
     const Vector<char> existsEntryKey = ExistsEntryKey::encode(databaseId, objectStoreId, key);
-    if (!levelDBTransaction->put(existsEntryKey, encodeInt(version)))
+    if (!levelDBTransaction->put(existsEntryKey, encodeInt(version))) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
+    }
 
     LevelDBRecordIdentifier* levelDBRecordIdentifier = static_cast<LevelDBRecordIdentifier*>(recordIdentifier);
     levelDBRecordIdentifier->setPrimaryKey(encodeIDBKey(key));
@@ -806,7 +880,7 @@ bool IDBLevelDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStor
     const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::KeyGeneratorCurrentNumber);
     bool ok = putInt(levelDBTransaction, keyGeneratorCurrentNumberKey, newNumber);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
     return true;
@@ -850,8 +924,10 @@ bool IDBLevelDBBackingStore::forEachObjectStoreRecord(IDBBackingStore::Transacti
 
         int64_t version;
         const char* q = decodeVarInt(it->value().begin(), it->value().end(), version);
-        if (!q)
+        if (!q) {
+            InternalError(IDBLevelDBBackingStoreReadError);
             return false;
+        }
 
         RefPtr<LevelDBRecordIdentifier> ri = LevelDBRecordIdentifier::create(encodeIDBKey(*primaryKey), version);
         String idbValue = decodeString(q, it->value().end());
@@ -898,7 +974,7 @@ Vector<IDBIndexMetadata> IDBLevelDBBackingStore::getIndexes(int64_t databaseId, 
         p = IndexMetaDataKey::decode(p, limit, &metaDataKey);
         ASSERT(p);
         if (metaDataKey.metaDataType() != IndexMetaDataKey::Name) {
-            LOG_ERROR("Internal Indexed DB error.");
+            InternalError(IDBLevelDBBackingStoreReadError);
             // Possible stale metadata due to http://webkit.org/b/85557 but don't fail the load.
             it->next();
             continue;
@@ -910,14 +986,14 @@ Vector<IDBIndexMetadata> IDBLevelDBBackingStore::getIndexes(int64_t databaseId, 
 
         it->next(); // unique flag
         if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::Unique)) {
-            LOG_ERROR("Internal Indexed DB error.");
+            InternalError(IDBLevelDBBackingStoreReadError);
             break;
         }
         bool indexUnique = decodeBool(it->value().begin(), it->value().end());
 
         it->next(); // keyPath
         if (!checkIndexAndMetaDataKey(it.get(), stopKey, indexId, IndexMetaDataKey::KeyPath)) {
-            LOG_ERROR("Internal Indexed DB error.");
+            InternalError(IDBLevelDBBackingStoreReadError);
             break;
         }
         IDBKeyPath keyPath = decodeIDBKeyPath(it->value().begin(), it->value().end());
@@ -942,11 +1018,15 @@ static bool setMaxIndexId(LevelDBTransaction* transaction, int64_t databaseId, i
         maxIndexId = MinimumIndexId;
 
     if (indexId <= maxIndexId) {
-        LOG_ERROR("Possible corruption: new index id is too small.");
+        InternalError(IDBLevelDBBackingStoreConsistencyError);
         return false;
     }
 
-    return putInt(transaction, maxIndexIdKey, indexId);
+    if (!putInt(transaction, maxIndexIdKey, indexId)) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
+        return false;
+    }
+    return true;
 }
 
 bool IDBLevelDBBackingStore::createIndex(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath& keyPath, bool isUnique, bool isMultiEntry)
@@ -963,25 +1043,25 @@ bool IDBLevelDBBackingStore::createIndex(IDBBackingStore::Transaction* transacti
 
     bool ok = putString(levelDBTransaction, nameKey, name);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
     ok = putBool(levelDBTransaction, uniqueKey, isUnique);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
     ok = putIDBKeyPath(levelDBTransaction, keyPathKey, keyPath);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
     ok = putBool(levelDBTransaction, multiEntryKey, isMultiEntry);
     if (!ok) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
 
@@ -997,7 +1077,7 @@ void IDBLevelDBBackingStore::deleteIndex(IDBBackingStore::Transaction* transacti
     const Vector<char> indexMetaDataEnd = IndexMetaDataKey::encodeMaxKey(databaseId, objectStoreId, indexId);
 
     if (!deleteRange(levelDBTransaction, indexMetaDataStart, indexMetaDataEnd)) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return;
     }
 
@@ -1005,7 +1085,7 @@ void IDBLevelDBBackingStore::deleteIndex(IDBBackingStore::Transaction* transacti
     const Vector<char> indexDataEnd = IndexDataKey::encodeMaxKey(databaseId, objectStoreId, indexId);
 
     if (!deleteRange(levelDBTransaction, indexDataStart, indexDataEnd)) {
-        LOG_ERROR("Internal Indexed DB error.");
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return;
     }
 }
@@ -1090,8 +1170,10 @@ bool IDBLevelDBBackingStore::findKeyInIndex(IDBBackingStore::Transaction* transa
 
         int64_t version;
         const char* p = decodeVarInt(it->value().begin(), it->value().end(), version);
-        if (!p)
+        if (!p) {
+            InternalError(IDBLevelDBBackingStoreReadError);
             return false;
+        }
         foundEncodedPrimaryKey.append(p, it->value().end() - p);
 
         if (!versionExists(levelDBTransaction, databaseId, objectStoreId, version, foundEncodedPrimaryKey)) {
@@ -1369,17 +1451,19 @@ bool ObjectStoreKeyCursorImpl::loadCurrentRow()
 
     ObjectStoreDataKey objectStoreDataKey;
     keyPosition = ObjectStoreDataKey::decode(keyPosition, keyLimit, &objectStoreDataKey);
-    ASSERT(keyPosition);
-    if (!keyPosition)
+    if (!keyPosition) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
 
     m_currentKey = objectStoreDataKey.userKey();
 
     int64_t version;
     const char* valuePosition = decodeVarInt(m_iterator->value().begin(), m_iterator->value().end(), version);
-    ASSERT(valuePosition);
-    if (!valuePosition)
+    if (!valuePosition) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
 
     // FIXME: This re-encodes what was just decoded; try and optimize.
     m_identifier = LevelDBRecordIdentifier::create(encodeIDBKey(*m_currentKey), version);
@@ -1430,17 +1514,19 @@ bool ObjectStoreCursorImpl::loadCurrentRow()
 
     ObjectStoreDataKey objectStoreDataKey;
     keyPosition = ObjectStoreDataKey::decode(keyPosition, keyLimit, &objectStoreDataKey);
-    ASSERT(keyPosition);
-    if (!keyPosition)
+    if (!keyPosition) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
 
     m_currentKey = objectStoreDataKey.userKey();
 
     int64_t version;
     const char* valuePosition = decodeVarInt(m_iterator->value().begin(), m_iterator->value().end(), version);
-    ASSERT(valuePosition);
-    if (!valuePosition)
+    if (!valuePosition) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
 
     // FIXME: This re-encodes what was just decoded; try and optimize.
     m_identifier = LevelDBRecordIdentifier::create(encodeIDBKey(*m_currentKey), version);
@@ -1495,14 +1581,16 @@ bool IndexKeyCursorImpl::loadCurrentRow()
 
     int64_t indexDataVersion;
     const char* valuePosition = decodeVarInt(m_iterator->value().begin(), m_iterator->value().end(), indexDataVersion);
-    ASSERT(valuePosition);
-    if (!valuePosition)
+    if (!valuePosition) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
 
     valuePosition = decodeIDBKey(valuePosition, m_iterator->value().end(), m_primaryKey);
-    ASSERT(valuePosition);
-    if (!valuePosition)
+    if (!valuePosition) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
 
     Vector<char> primaryLevelDBKey = ObjectStoreDataKey::encode(indexDataKey.databaseId(), indexDataKey.objectStoreId(), *m_primaryKey);
 
@@ -1514,9 +1602,10 @@ bool IndexKeyCursorImpl::loadCurrentRow()
 
     int64_t objectStoreDataVersion;
     const char* t = decodeVarInt(result.begin(), result.end(), objectStoreDataVersion);
-    ASSERT(t);
-    if (!t)
+    if (!t) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
 
     if (objectStoreDataVersion != indexDataVersion) {
         m_transaction->remove(m_iterator->key());
@@ -1578,13 +1667,15 @@ bool IndexCursorImpl::loadCurrentRow()
 
     int64_t indexDataVersion;
     valuePosition = decodeVarInt(valuePosition, valueLimit, indexDataVersion);
-    ASSERT(valuePosition);
-    if (!valuePosition)
+    if (!valuePosition) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
     valuePosition = decodeIDBKey(valuePosition, valueLimit, m_primaryKey);
-    ASSERT(valuePosition);
-    if (!valuePosition)
+    if (!valuePosition) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
 
     m_primaryLevelDBKey = ObjectStoreDataKey::encode(indexDataKey.databaseId(), indexDataKey.objectStoreId(), *m_primaryKey);
 
@@ -1596,9 +1687,10 @@ bool IndexCursorImpl::loadCurrentRow()
 
     int64_t objectStoreDataVersion;
     const char* t = decodeVarInt(result.begin(), result.end(), objectStoreDataVersion);
-    ASSERT(t);
-    if (!t)
+    if (!t) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
 
     if (objectStoreDataVersion != indexDataVersion) {
         m_transaction->remove(m_iterator->key());

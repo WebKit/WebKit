@@ -1,3 +1,35 @@
+2012-10-25  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Add histogram statistics for backing store errors
+        https://bugs.webkit.org/show_bug.cgi?id=98465
+
+        Reviewed by Adam Barth.
+
+        Define a macro for consistent asserting (during development), logging, and recording
+        internal backing store errors via histograms. Define specific histogram values to
+        track issues with opening backing stores to gather stats on corruption.
+
+        No new tests - just the stats, ma'am, just the stats.
+
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore):
+        (WebCore::setUpMetadata):
+        (WebCore::IDBLevelDBBackingStore::open):
+        (WebCore::IDBLevelDBBackingStore::getIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::createIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::updateIDBDatabaseIntVersion):
+        (WebCore::IDBLevelDBBackingStore::updateIDBDatabaseMetaData):
+        (WebCore::deleteRange):
+        (WebCore::IDBLevelDBBackingStore::getObjectStores):
+        (WebCore::IDBLevelDBBackingStore::createObjectStore):
+        (WebCore::IDBLevelDBBackingStore::putObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber):
+        (WebCore::IDBLevelDBBackingStore::forEachObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::getIndexes):
+        (WebCore::IDBLevelDBBackingStore::createIndex):
+        (WebCore::IDBLevelDBBackingStore::deleteIndex):
+        (WebCore::IDBLevelDBBackingStore::findKeyInIndex):
+
 2012-10-25  Adam Barth  <abarth@webkit.org>
 
         [V8] We can merge ActiveDOMObjectPrologueVisitor with ObjectVisitor
