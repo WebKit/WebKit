@@ -1,3 +1,28 @@
+2012-10-26  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        LayerTreeCoordinator: Make sure that dependent layers are deleted before their directly composited image
+        https://bugs.webkit.org/show_bug.cgi?id=100495
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Since r128980 layers removals are delayed until we flush the layer tree.
+        This causes a crash if such a layer had a directly composited image since
+        the image is now deleted while the layer is still active in the UI process
+        and tries to access a deleted backing store.
+
+        Fix it by delaying the directly composited image removal as well.
+
+        Fixes a crash in tst_QQuickWebView::basicRenderingSanity since showWebView is
+        called first and loads direct-image-compositing.html.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h: 
+        (LayerTreeRenderer): Remove unused variable.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::flushPendingLayerChanges):
+        (WebKit::LayerTreeCoordinator::releaseImageBackingStore):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-10-26  Regina Chung  <heejin.r.chung@samsung.com>
 
         [EFL][WK2] Enable WebGL

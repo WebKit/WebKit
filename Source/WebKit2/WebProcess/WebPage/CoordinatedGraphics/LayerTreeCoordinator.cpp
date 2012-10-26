@@ -267,6 +267,10 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
 
     m_rootLayer->flushCompositingStateForThisLayerOnly();
 
+    for (size_t i = 0; i < m_releasedDirectlyCompositedImages.size(); ++i)
+        m_webPage->send(Messages::LayerTreeCoordinatorProxy::DestroyDirectlyCompositedImage(m_releasedDirectlyCompositedImages[i]));
+    m_releasedDirectlyCompositedImages.clear();
+
     if (m_shouldSyncRootLayer) {
         m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toCoordinatedGraphicsLayer(m_rootLayer.get())->id()));
         m_shouldSyncRootLayer = false;
@@ -529,13 +533,15 @@ void LayerTreeCoordinator::releaseImageBackingStore(int64_t key)
     if (it->value)
         return;
 
-    m_directlyCompositedImageRefCounts.remove(it);
 #if USE(CAIRO)
     // Complement the referencing in adoptImageBackingStore().
     cairo_surface_t* cairoSurface = reinterpret_cast<cairo_surface_t*>(key);
     cairo_surface_destroy(cairoSurface);
 #endif
-    m_webPage->send(Messages::LayerTreeCoordinatorProxy::DestroyDirectlyCompositedImage(key));
+
+    m_directlyCompositedImageRefCounts.remove(it);
+    m_releasedDirectlyCompositedImages.append(key);
+    scheduleLayerFlush();
 }
 
 

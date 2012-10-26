@@ -140,7 +140,6 @@ private:
 
     LayerTreeCoordinatorProxy* m_layerTreeCoordinatorProxy;
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
-    Vector<WebLayerID> m_layersToDelete;
 
     LayerMap m_layers;
     LayerMap m_fixedLayers;
