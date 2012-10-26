@@ -1,3 +1,16 @@
+2012-10-25  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r131793-r131826): Crash going to wikifonia.org
+        https://bugs.webkit.org/show_bug.cgi?id=100281
+
+        Reviewed by Oliver Hunt.
+
+        Restore something that got lost in the resolve refactoring: the ability to give up on life if
+        we see a resolve of 'arguments'.
+
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::resolveContainingScopeInternal):
+
 2012-10-25  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Conditionalize XHR timeout support

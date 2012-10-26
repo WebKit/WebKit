@@ -334,11 +334,14 @@ template <JSScope::LookupMode mode, JSScope::ReturnValues returnValues> JSObject
                     ASSERT(variableObject);
                     ASSERT(variableObject->symbolTable());
                     SymbolTableEntry entry = variableObject->symbolTable()->get(identifier.impl());
-                    // Variable was actually inserted by eval
+                    // Defend against the variable being actually inserted by eval.
                     if (entry.isNull()) {
                         ASSERT(!jsDynamicCast<JSNameScope*>(variableObject));
                         goto fail;
                     }
+                    // If we're getting the 'arguments' then give up on life.
+                    if (identifier == callFrame->propertyNames().arguments)
+                        goto fail;
 
                     if (putToBaseOperation) {
                         putToBaseOperation->m_kind = entry.isReadOnly() ? PutToBaseOperation::Readonly : PutToBaseOperation::VariablePut;

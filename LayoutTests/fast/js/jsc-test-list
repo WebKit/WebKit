@@ -295,6 +295,7 @@ fast/js/repeat-cached-vm-reentry
 fast/js/reserved-words-strict
 fast/js/reserved-words
 fast/js/resize-array-assign
+fast/js/resolve-arguments-from-scope
 fast/js/slash-lineterminator-parse
 fast/js/sort-large-array
 fast/js/sort-no-jit-code-crash
