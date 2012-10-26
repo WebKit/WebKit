@@ -1,5 +1,5 @@
 <?php
-header("X-XSS-Protection: full-block");
+header("X-XSS-Protection: 1; mode=block");
 ?>
 <!DOCTYPE html>
 <html>

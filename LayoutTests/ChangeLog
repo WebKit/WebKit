@@ -1,3 +1,14 @@
+2012-10-25  Tom Sepez  <tsepez@chromium.org>
+
+        Test full-block-iframe-no-inherit.php generates an invalid X-XSS-PROTECTION header.
+        https://bugs.webkit.org/show_bug.cgi?id=100423
+
+        Reviewed by Adam Barth.
+
+        Changed header syntax from full-block to mode=block.
+
+        * http/tests/security/xssAuditor/full-block-iframe-no-inherit.php:
+
 2012-10-25  Filip Pizlo  <fpizlo@apple.com>
 
         DFG Arrayify elimination should replace it with GetButterfly rather than Phantom
