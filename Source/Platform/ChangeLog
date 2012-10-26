@@ -1,3 +1,19 @@
+2012-10-26  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Add implicit conversions between WebFloatPoint and gfx::PointF
+        https://bugs.webkit.org/show_bug.cgi?id=100435
+
+        Reviewed by James Robinson.
+
+        This is similar to other Web geometry types, but the WebFloatPoint is
+        missing it.
+
+        * chromium/public/WebFloatPoint.h:
+        (WebFloatPoint):
+        (WebKit::WebFloatPoint::WebFloatPoint):
+        (WebKit::WebFloatPoint::operator=):
+        (WebKit::WebFloatPoint::operator gfx::PointF):
+
 2012-10-25  Jonathan Backer  <backer@chromium.org>
 
         CHROMIUM: Add a method to WebLayerTreeView API

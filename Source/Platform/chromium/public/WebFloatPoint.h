@@ -35,6 +35,8 @@
 
 #if WEBKIT_IMPLEMENTATION
 #include "FloatPoint.h"
+#else
+#include <ui/gfx/point_f.h>
 #endif
 
 namespace WebKit {
@@ -73,6 +75,25 @@ struct WebFloatPoint {
     {
         return WebCore::FloatPoint(x, y);
     }
+#else
+    WebFloatPoint(const gfx::PointF& p)
+        : x(p.x())
+        , y(p.y())
+    {
+    }
+
+    WebFloatPoint& operator=(const gfx::PointF& p)
+    {
+        x = p.x();
+        y = p.y();
+        return *this;
+    }
+
+    operator gfx::PointF() const
+    {
+        return gfx::PointF(x, y);
+    }
+
 #endif
 };
 
