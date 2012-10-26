@@ -1,3 +1,12 @@
+2012-10-26  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        Skip a new failing test introduced in r132554 that fails on 32 bit platforms.
+        Remove another one that does not exists already.
+
+        * platform/qt/TestExpectations:
+
 2012-10-25  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
