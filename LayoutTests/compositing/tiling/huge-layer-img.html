@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Test of very large image layer</title>
-
-    <style type="text/css" media="screen">
+    <style>
     #container {
-      width: 500px;
-      height: 20000px;
-      -webkit-transform:translateZ(0);
+        width: 500px;
+        height: 20000px;
+        -webkit-transform:translateZ(0);
     }
     body {
-      overflow:hidden;
+      overflow: hidden;
     }
     </style>
     <script type="text/javascript" charset="utf-8">
-        if (window.testRunner) {
+        if (window.testRunner)
             testRunner.dumpAsText(true);
-            testRunner.waitUntilDone();
-        }
 
         function testOnLoad()
         {
@@ -32,12 +28,8 @@
             context.fillRect(50, 50, 200, 200);
             img.src = canvas.toDataURL();
 
-            window.setTimeout(function() {
-                if (window.testRunner) {
-                    document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
-                    testRunner.notifyDone();
-                }
-            }, 0);
+            if (window.testRunner)
+                document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
         }
 
         window.addEventListener('load', testOnLoad, false);

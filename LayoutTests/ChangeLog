@@ -1,3 +1,45 @@
+2012-10-26  Simon Fraser  <simon.fraser@apple.com>
+
+        compositing/tiling/huge-layer* flakey
+        https://bugs.webkit.org/show_bug.cgi?id=48454
+
+        Reviewed by Dan Bernstein.
+
+        In r131009 I fixed layerTreeAsText() to not be flakey with tiled layers, by ensuring that
+        we flush layer state before dumping the layer tree. That makes these tests non-flakey. I was
+        also able to remove all the setTimeouts() from these tests.
+        
+        The 'usingTiledLayer' property is only dumped on Mac, so made cross-platform results without
+        this flag, and added Mac-specific results with it.
+        
+        Unskipped some tests on non-Mac platforms that should now pass.
+
+        * compositing/tiling/backface-preserve-3d-tiled-expected.txt:
+        * compositing/tiling/crash-reparent-tiled-layer-expected.txt:
+        * compositing/tiling/huge-layer-add-remove-child-expected.txt:
+        * compositing/tiling/huge-layer-add-remove-child.html: Added.
+        * compositing/tiling/huge-layer-add-remove-child.html-disabled: Removed.
+        * compositing/tiling/huge-layer-expected.txt:
+        * compositing/tiling/huge-layer-img-expected.txt:
+        * compositing/tiling/huge-layer-img.html: Renamed from LayoutTests/compositing/tiling/huge-layer-img.html-disabled.
+        * compositing/tiling/huge-layer-resize-expected.txt:
+        * compositing/tiling/huge-layer-with-layer-children-expected.txt:
+        * compositing/tiling/huge-layer-with-layer-children-resize-expected.txt:
+        * compositing/tiling/huge-layer-with-layer-children-resize.html: Added.
+        * compositing/tiling/huge-layer-with-layer-children-resize.html-disabled: Removed.
+        * compositing/tiling/huge-layer-with-layer-children.html: Renamed from LayoutTests/compositing/tiling/huge-layer-with-layer-children.html-disabled.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/mac/compositing/tiling/backface-preserve-3d-tiled-expected.txt: Copied from LayoutTests/compositing/tiling/backface-preserve-3d-tiled-expected.txt.
+        * platform/mac/compositing/tiling/crash-reparent-tiled-layer-expected.txt: Copied from LayoutTests/compositing/tiling/crash-reparent-tiled-layer-expected.txt.
+        * platform/mac/compositing/tiling/huge-layer-add-remove-child-expected.txt: Copied from LayoutTests/compositing/tiling/huge-layer-add-remove-child-expected.txt.
+        * platform/mac/compositing/tiling/huge-layer-expected.txt: Copied from LayoutTests/compositing/tiling/huge-layer-expected.txt.
+        * platform/mac/compositing/tiling/huge-layer-img-expected.txt: Copied from LayoutTests/compositing/tiling/huge-layer-img-expected.txt.
+        * platform/mac/compositing/tiling/huge-layer-resize-expected.txt: Copied from LayoutTests/compositing/tiling/huge-layer-resize-expected.txt.
+        * platform/mac/compositing/tiling/huge-layer-with-layer-children-expected.txt: Copied from LayoutTests/compositing/tiling/huge-layer-with-layer-children-expected.txt.
+        * platform/mac/compositing/tiling/huge-layer-with-layer-children-resize-expected.txt: Copied from LayoutTests/compositing/tiling/huge-layer-with-layer-children-resize-expected.txt.
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2012-10-26  Nico Weber  <thakis@chromium.org>
 
         [chromium] Enable fast/images/exif-orientation.html

@@ -334,7 +334,6 @@ compositing/geometry/limit-layer-bounds-transformed.html
 compositing/layer-creation/overflow-scroll-overlap.html
 compositing/layer-creation/scroll-partial-update.html
 compositing/layer-creation/spanOverlapsCanvas.html
-compositing/tiling/crash-reparent-tiled-layer.html
 
 # The following tests doesnt match both expected image and text.
 compositing/geometry/ancestor-overflow-change.html
@@ -360,9 +359,6 @@ compositing/overflow/overflow-scroll-with-touch-no-overflow.html
 compositing/overflow/overflow-visible-with-touch.html
 compositing/overflow/scrolling-content-clip-to-viewport.html
 compositing/overflow/textarea-scroll-touch.html
-
-# New compositing/tiling/backface-preserve-3d-tiled.html introduced in r132394 fails
-webkit.org/b/100348 compositing/tiling/backface-preserve-3d-tiled.html
 
 # [Qt][WK2] New compositing/tiling/tile-cache-zoomed.html introduced in r132542 fails
 webkit.org/b/100490 compositing/tiling/tile-cache-zoomed.html

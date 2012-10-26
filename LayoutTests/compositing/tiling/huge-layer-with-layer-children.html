@@ -32,22 +32,13 @@
     }   
     </style>
     <script type="text/javascript" charset="utf-8">
-        if (window.testRunner) {
+        if (window.testRunner)
             testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
 
         function testOnLoad()
         {
-            // Wait for a layer update and the tiled layer to fill in.
-            window.setTimeout(function() {
-                window.setTimeout(function() {
-                    if (window.testRunner) {
-                        document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
-                        testRunner.notifyDone();
-                    }
-                }, 0);
-            }, 0);
+            if (window.testRunner)
+                document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
         }
       
         window.addEventListener('load', testOnLoad, false);

@@ -2823,8 +2823,6 @@ crbug.com/84032 [ Win ] fast/dom/object-plugin-hides-properties.html [ Pass Time
 #new test added. Still fails on chrome
 webkit.org/b/98315 css3/compositing/blend-mode-property.html [ Failure ]
 webkit.org/b/98315 css3/compositing/should-have-compositing-layer.html [ Failure ]
-webkit.org/b/100205 compositing/tiling/backface-preserve-3d-tiled.html [ Failure ]
-webkit.org/b/100205 platform/chromium/virtual/softwarecompositing/tiling/backface-preserve-3d-tiled.html [ Failure ]
 
 # two regions reftests failing on Chromium
 webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions-rtl.html [ ImageOnlyFailure Pass ]
@@ -3046,6 +3044,9 @@ webkit.org/b/75716 [ Linux Mac Win ] fullscreen/video-controls-drag.html [ Failu
 
 webkit.org/b/75786 compositing/tiled-layers-hidpi.html [ Skip ]
 webkit.org/b/75786 platform/chromium/virtual/softwarecompositing/tiled-layers-hidpi.html [ Skip ]
+
+webkit.org/b/48454 compositing/tiling/huge-layer-img.html [ Skip ]
+webkit.org/b/48454 platform/chromium/virtual/softwarecompositing/tiling/huge-layer-img.html [ Skip ]
 
 webkit.org/b/75932 fast/js/array-defineOwnProperty.html [ Failure ]
 webkit.org/b/75932 fast/js/mozilla/strict/15.4.4.6.html [ Failure ]

@@ -130,7 +130,6 @@ compositing/checkerboard.html
 compositing/framesets/composited-frame-alignment.html
 compositing/images/direct-pdf-image.html
 compositing/reflections/backface-hidden-reflection.html
-compositing/tiling/constrained-layer-size.html
 editing/selection/extend-selection-after-double-click.html
 fast/forms/listbox-onchange.html
 fast/forms/onselect-textfield.html
