@@ -58,9 +58,9 @@ WebInspector.ObjectPropertiesSection.prototype = {
 
     _contextMenuEventFired: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         contextMenu.appendApplicableItems(this.object);
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     onpopulate: function()
@@ -253,10 +253,10 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
     _contextMenuFired: function(value, event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         this.populateContextMenu(contextMenu);
         contextMenu.appendApplicableItems(value);
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     /**

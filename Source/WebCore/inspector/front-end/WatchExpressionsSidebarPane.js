@@ -331,9 +331,9 @@ WebInspector.WatchExpressionsSection.prototype = {
 
     _emptyElementContextMenu: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         contextMenu.appendItem(WebInspector.UIString("Add watch expression"), this.addNewExpressionAndEdit.bind(this));
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     __proto__: WebInspector.ObjectPropertiesSection.prototype
@@ -417,9 +417,9 @@ WebInspector.WatchExpressionTreeElement.prototype = {
 
     _contextMenu: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         this.populateContextMenu(contextMenu);
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _deleteAllButtonClicked: function()

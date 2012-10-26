@@ -713,11 +713,11 @@ WebInspector.TabbedPaneTab.prototype = {
             this._tabbedPane.closeAllTabs(true);
         }
   
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         contextMenu.appendItem(WebInspector.UIString("Close"), close.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Close Others"), closeOthers.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Close All"), closeAll.bind(this));
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     /**

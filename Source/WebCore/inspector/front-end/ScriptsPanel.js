@@ -1105,7 +1105,7 @@ WebInspector.ScriptsPanel.prototype = {
      * @param {WebInspector.ContextMenu} contextMenu
      * @param {Object} target
      */
-    appendApplicableItems: function(contextMenu, target)
+    appendApplicableItems: function(event, contextMenu, target)
     {
         this._appendUISourceCodeItems(contextMenu, target);
         this._appendFunctionItems(contextMenu, target);

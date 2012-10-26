@@ -151,9 +151,9 @@ WebInspector.CookieItemsView.prototype = {
     _contextMenu: function(event)
     {
         if (!this._cookies.length) {
-            var contextMenu = new WebInspector.ContextMenu();
+            var contextMenu = new WebInspector.ContextMenu(event);
             contextMenu.appendItem(WebInspector.UIString("Refresh"), this._update.bind(this));
-            contextMenu.show(event);
+            contextMenu.show();
         }
     },
 

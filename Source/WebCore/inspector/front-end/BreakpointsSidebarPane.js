@@ -59,11 +59,11 @@ WebInspector.JavaScriptBreakpointsSidebarPane = function(breakpointManager, show
 WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
     _emptyElementContextMenu: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         var breakpointActive = WebInspector.debuggerModel.breakpointsActive();
         var breakpointActiveTitle = WebInspector.UIString(breakpointActive ? "Deactivate Breakpoints" : "Activate Breakpoints");
         contextMenu.appendItem(breakpointActiveTitle, WebInspector.debuggerModel.setBreakpointsActive.bind(WebInspector.debuggerModel, !breakpointActive));
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     /**
@@ -189,7 +189,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
     _breakpointContextMenu: function(breakpoint, event)
     {
         var breakpoints = this._items.values();
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), breakpoint.remove.bind(breakpoint));
         if (breakpoints.length > 1) {
             var removeAllTitle = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove all breakpoints" : "Remove All Breakpoints");
@@ -221,7 +221,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
             contextMenu.appendItem(disableTitle, this._breakpointManager.toggleAllBreakpoints.bind(this._breakpointManager, false), !(enableBreakpointCount > 1));
         }
 
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _addListElement: function(element, beforeElement)
@@ -295,9 +295,9 @@ WebInspector.XHRBreakpointsSidebarPane = function()
 WebInspector.XHRBreakpointsSidebarPane.prototype = {
     _emptyElementContextMenu: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), this._addButtonClicked.bind(this));
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _addButtonClicked: function(event)
@@ -381,7 +381,7 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
 
     _contextMenu: function(url, event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         function removeBreakpoint()
         {
             this._removeBreakpoint(url);
@@ -398,7 +398,7 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
         contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), this._addButtonClicked.bind(this));
         contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), removeBreakpoint.bind(this));
         contextMenu.appendItem(removeAllTitle, removeAllBreakpoints.bind(this));
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _checkboxClicked: function(url, event)

@@ -183,7 +183,7 @@ WebInspector.CallStackSidebarPane.Placard.prototype = {
 
     _placardContextMenu: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
 
         if (WebInspector.debuggerModel.canSetScriptSource()) {
             contextMenu.appendItem(WebInspector.UIString("Restart Frame"), this._restartFrame.bind(this));
@@ -191,7 +191,7 @@ WebInspector.CallStackSidebarPane.Placard.prototype = {
         }
         contextMenu.appendItem(WebInspector.UIString("Copy Stack Trace"), this._pane._copyStackTrace.bind(this._pane));
 
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _restartFrame: function()

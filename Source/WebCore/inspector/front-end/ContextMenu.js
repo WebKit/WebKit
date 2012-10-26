@@ -152,8 +152,9 @@ WebInspector.ContextSubMenuItem.prototype = {
  * @constructor
  * @extends {WebInspector.ContextSubMenuItem}
  */
-WebInspector.ContextMenu = function() {
+WebInspector.ContextMenu = function(event) {
     WebInspector.ContextSubMenuItem.call(this, this, "");
+    this._event = event;
     this._handlers = {};
     this._id = 0;
 }
@@ -164,15 +165,15 @@ WebInspector.ContextMenu.prototype = {
         return this._id++;
     },
 
-    show: function(event)
+    show: function()
     {
         var menuObject = this._buildDescriptor();
 
         if (menuObject.length) {
             WebInspector._contextMenu = this;
-            InspectorFrontendHost.showContextMenu(event, menuObject);
+            InspectorFrontendHost.showContextMenu(this._event, menuObject);
         }
-        event.consume();
+        this._event.consume();
     },
 
     _setHandler: function(id, handler)
@@ -203,7 +204,7 @@ WebInspector.ContextMenu.prototype = {
         for (var i = 0; i < WebInspector.ContextMenu._providers.length; ++i) {
             var provider = WebInspector.ContextMenu._providers[i];
             this.appendSeparator();
-            provider.appendApplicableItems(this, target);
+            provider.appendApplicableItems(this._event, this, target);
             this.appendSeparator();
         }
     },
@@ -222,7 +223,7 @@ WebInspector.ContextMenu.Provider.prototype = {
      * @param {WebInspector.ContextMenu} contextMenu
      * @param {Object} target
      */
-    appendApplicableItems: function(contextMenu, target) { }
+    appendApplicableItems: function(event, contextMenu, target) { }
 }
 
 /**

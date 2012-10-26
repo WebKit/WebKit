@@ -418,7 +418,7 @@ WebInspector.DefaultTextEditor.prototype = {
         var anchor = event.target.enclosingNodeOrSelfWithNodeName("a");
         if (anchor)
             return;
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
         if (target)
             this._delegate.populateLineGutterContextMenu(contextMenu, target.lineNumber);
@@ -426,7 +426,7 @@ WebInspector.DefaultTextEditor.prototype = {
             target = this._mainPanel._enclosingLineRowOrSelf(event.target);
             this._delegate.populateTextAreaContextMenu(contextMenu, target && target.lineNumber);
         }
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _handleScrollChanged: function(event)

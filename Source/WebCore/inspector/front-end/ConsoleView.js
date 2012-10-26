@@ -441,7 +441,7 @@ WebInspector.ConsoleView.prototype = {
         if (event.target.enclosingNodeOrSelfWithNodeName("a"))
             return;
 
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
 
         function monitoringXHRItemAction()
         {
@@ -457,7 +457,7 @@ WebInspector.ConsoleView.prototype = {
 
         contextMenu.appendSeparator();
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear console" : "Clear Console"), this._requestClearMessages.bind(this));
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _monitoringXHREnabledSettingChanged: function(event)

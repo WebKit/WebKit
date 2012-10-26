@@ -878,7 +878,7 @@ WebInspector.DataGrid.prototype = {
 
     _contextMenuInDataTable: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
 
         var gridNode = this.dataGridNodeFromNode(event.target);
         if (this._refreshCallback && (!gridNode || gridNode !== this.creationNode))
@@ -896,7 +896,7 @@ WebInspector.DataGrid.prototype = {
                 contextMenu.appendItem(WebInspector.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
         }
 
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _clickInDataTable: function(event)

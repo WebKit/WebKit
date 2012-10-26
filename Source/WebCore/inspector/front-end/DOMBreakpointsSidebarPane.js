@@ -236,7 +236,7 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
 
     _contextMenu: function(node, type, event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         function removeBreakpoint()
         {
             this._removeBreakpoint(node, type);
@@ -244,7 +244,7 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
         }
         contextMenu.appendItem(WebInspector.UIString("Remove Breakpoint"), removeBreakpoint.bind(this));
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove all DOM breakpoints" : "Remove All DOM Breakpoints"), this._removeAllBreakpoints.bind(this));
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _checkboxClicked: function(node, type, event)

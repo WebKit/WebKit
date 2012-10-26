@@ -1,3 +1,77 @@
+2012-10-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Some context menu items are duplicated on Resources and Sources panels.
+        https://bugs.webkit.org/show_bug.cgi?id=100522
+
+        Reviewed by Pavel Feldman.
+
+        Method appendApplicableItems now receives event as a parameter.
+        HandlerRegistry now makes sure that it is not called more than once for certain context menu event.
+
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._emptyElementContextMenu):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointContextMenu):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._emptyElementContextMenu):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._contextMenu):
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.Placard.prototype._placardContextMenu):
+        * inspector/front-end/ConsoleView.js:
+        * inspector/front-end/ContextMenu.js:
+        (WebInspector.ContextMenu):
+        (WebInspector.ContextMenu.prototype.show):
+        (WebInspector.ContextMenu.prototype.appendApplicableItems):
+        (WebInspector.ContextMenu.Provider.prototype.appendApplicableItems):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype._contextMenu):
+        * inspector/front-end/DOMBreakpointsSidebarPane.js:
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._contextMenu):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype._contextMenuInDataTable):
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype._contextMenu):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._contextMenuEventFired.set get var):
+        * inspector/front-end/ElementsPanelDescriptor.js:
+        (WebInspector.ElementsPanelDescriptor.prototype.appendApplicableItems):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._contextMenuEventFired):
+        * inspector/front-end/HandlerRegistry.js:
+        (WebInspector.HandlerRegistry.prototype.appendApplicableItems):
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView.prototype._contextMenu):
+        * inspector/front-end/NavigatorView.js:
+        (WebInspector.NavigatorView.prototype.handleContextMenu):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._contextMenu):
+        * inspector/front-end/NetworkPanelDescriptor.js:
+        (WebInspector.NetworkPanelDescriptor.prototype.appendApplicableItems):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection.prototype._contextMenuEventFired):
+        (WebInspector.ObjectPropertyTreeElement.prototype._contextMenuFired):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._handleContextMenuEvent):
+        (WebInspector.ProfileSidebarTreeElement.prototype.handleContextMenuEvent):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameResourceTreeElement.prototype._handleContextMenuEvent):
+        (WebInspector.IndexedDBTreeElement.prototype._handleContextMenuEvent):
+        (WebInspector.FileSystemListTreeElement.prototype._handleContextMenuEvent):
+        (WebInspector.IDBDatabaseTreeElement.prototype._handleContextMenuEvent):
+        * inspector/front-end/ScriptsNavigator.js:
+        (WebInspector.SnippetsNavigatorView.prototype.handleContextMenu):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.appendApplicableItems):
+        * inspector/front-end/ScriptsPanelDescriptor.js:
+        (WebInspector.ScriptsPanelDescriptor.prototype.appendApplicableItems):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._contextMenuEventFired):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPaneTab.prototype._tabContextMenu):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._contextMenu):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype._emptyElementContextMenu):
+        (WebInspector.WatchExpressionTreeElement.prototype._contextMenu):
+
 2012-10-26  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: instrument chromium GlyphCache. It keeps ~2mb data on gmail.

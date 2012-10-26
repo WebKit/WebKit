@@ -210,7 +210,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
      */
     handleContextMenu: function(event, uiSourceCode)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         if (uiSourceCode) {
             contextMenu.appendItem(WebInspector.UIString("Run"), this._handleEvaluateSnippet.bind(this, uiSourceCode));
             contextMenu.appendItem(WebInspector.UIString("Rename"), this._handleRenameSnippet.bind(this, uiSourceCode));
@@ -218,7 +218,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
             contextMenu.appendSeparator();
         }
         contextMenu.appendItem(WebInspector.UIString("New"), this._handleCreateSnippet.bind(this));
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     /**

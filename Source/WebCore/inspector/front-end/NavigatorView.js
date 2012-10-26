@@ -329,9 +329,9 @@ WebInspector.NavigatorView.prototype = {
 
     handleContextMenu: function(event, uiSourceCode)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         contextMenu.appendApplicableItems(uiSourceCode);
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     __proto__: WebInspector.View.prototype

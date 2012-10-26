@@ -934,7 +934,7 @@ WebInspector.NetworkLogView.prototype = {
 
     _contextMenu: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         var gridNode = this._dataGrid.dataGridNodeFromNode(event.target);
         var request = gridNode && gridNode._request;
 
@@ -968,7 +968,7 @@ WebInspector.NetworkLogView.prototype = {
             contextMenu.appendSeparator();
         }
 
-        contextMenu.show(event);
+        contextMenu.show();
     },
     
     _replayXHR: function(requestId)
@@ -1508,7 +1508,7 @@ WebInspector.NetworkPanel.prototype = {
      * @param {WebInspector.ContextMenu} contextMenu
      * @param {Object} target
      */
-    appendApplicableItems: function(contextMenu, target)
+    appendApplicableItems: function(event, contextMenu, target)
     {
         if (!(target instanceof WebInspector.NetworkRequest))
             return;

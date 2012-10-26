@@ -1217,11 +1217,11 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
     _handleContextMenuEvent: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         contextMenu.appendApplicableItems(this._resource);
         if (this._resource.request)
             contextMenu.appendApplicableItems(this._resource.request);
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _setBubbleText: function(x)
@@ -1417,9 +1417,9 @@ WebInspector.IndexedDBTreeElement.prototype = {
 
     _handleContextMenuEvent: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         contextMenu.appendItem(WebInspector.UIString("Refresh IndexedDB"), this.refreshIndexedDB.bind(this));
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _createIndexedDBModel: function()
@@ -1531,9 +1531,9 @@ WebInspector.FileSystemListTreeElement.prototype = {
 
     _handleContextMenuEvent: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         contextMenu.appendItem(WebInspector.UIString("Refresh FileSystem List"), this._refreshFileSystem.bind(this));
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _fileSystemAdded: function(event)
@@ -1606,9 +1606,9 @@ WebInspector.IDBDatabaseTreeElement.prototype = {
 
     _handleContextMenuEvent: function(event)
     {
-        var contextMenu = new WebInspector.ContextMenu();
+        var contextMenu = new WebInspector.ContextMenu(event);
         contextMenu.appendItem(WebInspector.UIString("Refresh IndexedDB"), this._refreshIndexedDB.bind(this));
-        contextMenu.show(event);
+        contextMenu.show();
     },
 
     _refreshIndexedDB: function(event)
