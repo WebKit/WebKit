@@ -42,15 +42,7 @@
 
 namespace WebCore {
 
-NetworkManager* NetworkManager::instance()
-{
-    static NetworkManager* sInstance;
-    if (!sInstance) {
-        sInstance = new NetworkManager;
-        ASSERT(sInstance);
-    }
-    return sInstance;
-}
+SINGLETON_INITIALIZER_THREADUNSAFE(NetworkManager)
 
 bool NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, const Frame& frame, bool defersLoading)
 {

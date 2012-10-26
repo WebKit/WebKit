@@ -22,6 +22,7 @@
 #include "KURL.h"
 #include "ResourceHandle.h"
 
+#include <BlackBerryPlatformSingleton.h>
 #include <wtf/Vector.h>
 
 namespace BlackBerry {
@@ -36,9 +37,9 @@ namespace WebCore {
 class Frame;
 class NetworkJob;
 
-class NetworkManager {
+class NetworkManager : public BlackBerry::Platform::ThreadUnsafeSingleton<NetworkManager> {
+    SINGLETON_DEFINITION_THREADUNSAFE(NetworkManager)
 public:
-    static NetworkManager* instance();
     void setInitialURL(const KURL& url) { m_initialURL = url; }
     KURL initialURL() { return m_initialURL; }
     bool startJob(int playerId, PassRefPtr<ResourceHandle> job, const Frame&, bool defersLoading);
