@@ -233,6 +233,15 @@ feature_defines_overrides += ENABLE_FILTERS=0
 endif # END ENABLE_FILTERS
 
 # ----
+# CSS Device Adaptation
+# ----
+if ENABLE_CSS_DEVICE_ADAPTATION
+feature_defines_overrides += ENABLE_CSS_DEVICE_ADAPTATION=1
+else
+feature_defines_overrides += ENABLE_CSS_DEVICE_ADAPTATION=0
+endif # END ENABLE_CSS_DEVICE_ADAPTATION
+
+# ----
 # Shaders
 # ----
 if ENABLE_CSS_SHADERS

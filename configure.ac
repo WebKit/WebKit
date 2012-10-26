@@ -883,6 +883,14 @@ if test "$enable_unstable_features" = "yes" && test "$enable_accelerated_composi
 fi
 AC_MSG_RESULT([$enable_css_filters])
 
+# CSS Device Adaptation
+AC_MSG_CHECKING([whether to enable CSS Device Adaptation])
+AC_ARG_ENABLE(css_device_adaptation,
+              AC_HELP_STRING([--enable-css-device-adaptation],
+                             [enable support for CSS Device Adaptation [default=no]]),
+              [],[enable_css_device_adaptation="no"])
+AC_MSG_RESULT([$enable_css_device_adaptation])
+
 G_IR_SCANNER=
 G_IR_COMPILER=
 G_IR_GENERATE=
@@ -1190,6 +1198,7 @@ AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
 AM_CONDITIONAL([ENABLE_PLUGIN_PROCESS],[test "$enable_plugin_process" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS_DEVICE_ADAPTATION],[test "$enable_css_device_adaptation" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_SHADERS],[test "$enable_css_shaders" = "yes"])
 
