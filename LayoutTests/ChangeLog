@@ -1,3 +1,11 @@
+2012-10-26  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Not reviewed: chromium baselines for selection-after-remove updated.
+
+        * platform/chromium-mac-lion/fast/repaint/selection-after-remove-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/selection-after-remove-expected.png:
+        * platform/chromium-win/fast/repaint/selection-after-remove-expected.png:
+
 2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132607.
