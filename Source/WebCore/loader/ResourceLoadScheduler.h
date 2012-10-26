@@ -105,6 +105,8 @@ private:
     HostInformation* hostForURL(const KURL&, CreateHostPolicy = FindOnly);
     void servePendingRequests(HostInformation*, ResourceLoadPriority);
 
+    static ResourceLoadScheduler* defaultResourceLoadScheduler();
+
     typedef HashMap<String, HostInformation*, StringHash> HostMap;
     HostMap m_hosts;
     HostInformation* m_nonHTTPProtocolHost;

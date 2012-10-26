@@ -31,8 +31,10 @@
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
+#include "LoaderStrategy.h"
 #include "Logging.h"
 #include "NetscapePlugInStreamLoader.h"
+#include "PlatformStrategies.h"
 #include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "SubresourceLoader.h"
@@ -71,11 +73,20 @@ ResourceLoadScheduler::HostInformation* ResourceLoadScheduler::hostForURL(const 
     return host;
 }
 
-ResourceLoadScheduler* resourceLoadScheduler()
+ResourceLoadScheduler* ResourceLoadScheduler::defaultResourceLoadScheduler()
 {
     ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(ResourceLoadScheduler, resourceLoadScheduler, ());
     return &resourceLoadScheduler;
+}
+
+ResourceLoadScheduler* resourceLoadScheduler()
+{
+#if USE(PLATFORM_STRATEGIES)
+    return platformStrategies()->loaderStrategy()->resourceLoadScheduler();
+#else
+    return ResourceLoadScheduler::defaultResourceLoadScheduler();
+#endif
 }
 
 ResourceLoadScheduler::ResourceLoadScheduler()

@@ -1,3 +1,45 @@
+2012-10-26  Brady Eidson  <beidson@apple.com>
+
+        Crash in WebProces at WebCore::ResourceLoadScheduler::crossOriginRedirectReceived + 78
+        <rdar://problem/12575514> and https://bugs.webkit.org/show_bug.cgi?id=100554
+
+        Reviewed by Alexey Proskuryakov.
+
+        This was fallout from http://trac.webkit.org/changeset/132501 where I missed some of the 
+        spots that call resourceLoadScheduler().
+
+        As a result we were creating more than one ResourceLoadScheduler, allowing the host records 
+        to get out of sync.
+
+        The fix that also results in less #ifdefs scattered throughout the code is to use a single 
+        choke point for all ResourceLoadScheduler access.
+
+        No new tests 
+        (No change of behavior for the default config, not testable at this time in the repro config)
+
+        Add a single choke point for accessing the correct ResourceLoadScheduler:
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::defaultResourceLoadScheduler): New private function that keeps the singleton default ResourceLoadScheduler.
+        (WebCore::resourceLoadScheduler): Refactor this function to either ask the LoaderStrategy or call through to
+
+        Revert back to using that single choke point everywhere:
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::suspendPostAttachCallbacks):
+        (WebCore::ContainerNode::resumePostAttachCallbacks):
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::loadNow):
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::releaseResources):
+        (WebCore::ResourceLoader::willSendRequest):
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::performPostLoadActions):
+
 2012-10-26  Elliott Sprehn  <esprehn@chromium.org>
 
         Try to fix the windows build

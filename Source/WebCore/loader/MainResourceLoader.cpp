@@ -44,9 +44,7 @@
 #include "HTMLFormElement.h"
 #include "HistoryItem.h"
 #include "InspectorInstrumentation.h"
-#include "LoaderStrategy.h"
 #include "Page.h"
-#include "PlatformStrategies.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
@@ -632,11 +630,7 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
     if (shouldLoadEmptyBeforeRedirect && !shouldLoadEmpty && defersLoading())
         return true;
 
-#if USE(PLATFORM_STRATEGIES)
-    platformStrategies()->loaderStrategy()->resourceLoadScheduler()->addMainResourceLoad(this);
-#else
     resourceLoadScheduler()->addMainResourceLoad(this);
-#endif
 
     if (m_substituteData.isValid())
         handleSubstituteDataLoadSoon(r);
