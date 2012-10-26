@@ -63,6 +63,9 @@ WebInspector.DockController.prototype = {
      */
     setDockSide: function(dockSide)
     {
+        if (this._dockSide === dockSide)
+            return;
+
         if (this._dockSide)
             WebInspector.settings.lastDockState.set(this._dockSide);
 

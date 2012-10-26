@@ -1,3 +1,14 @@
+2012-10-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: fast return upon setting the same dock side.
+        https://bugs.webkit.org/show_bug.cgi?id=100510
+
+        Reviewed by Vsevolod Vlasov.
+
+        Added fast return.
+
+        * inspector/front-end/DockController.js:
+
 2012-10-26  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed trivial build fix: It's glXGetCurrentContext not glxGetCurrentContext :)
