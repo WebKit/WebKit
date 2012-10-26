@@ -1032,8 +1032,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     color: rgb(15%, 15%, 15%);
 }
 
-ol.watch-expressions > li.hovered,
-.console-message:hover { 
+ol.watch-expressions > li.hovered {
     background-color: #F0F0F0;
 }
 

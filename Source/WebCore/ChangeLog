@@ -1,3 +1,15 @@
+2012-10-26  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Remove the on-hover highlighting of console messages
+        https://bugs.webkit.org/show_bug.cgi?id=100511
+
+        Reviewed by Pavel Feldman.
+
+        This clashes with the hovered element highlight in console messages.
+
+        * inspector/front-end/inspector.css:
+        (ol.watch-expressions > li.hovered):
+
 2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132612.
