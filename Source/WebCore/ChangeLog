@@ -1,3 +1,17 @@
+2012-10-26  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [CMAKE] Add TextAutosizer.cpp in WebCore/CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=100476
+
+        Reviewed by Kentaro Hara.
+
+        ENABLE_TEXT_AUTOSIZING option is added in CMAKE,
+        but the source file for that feature is omitted.
+
+        No new tests. Covered by existing tests.
+
+        * CMakeLists.txt:
+
 2012-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderTableCol::computePreferredLogicalWidths and RenderTableCol::layout should never be called
