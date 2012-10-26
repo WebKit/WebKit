@@ -56,7 +56,6 @@ webkit.org/b/100342 networkinformation/basic-all-types-of-events.html [ Crash ]
 webkit.org/b/100342 networkinformation/updates.html [ Crash ]
 webkit.org/b/100342 networkinformation/add-listener-from-callback.html [ Crash ]
 webkit.org/b/100342 networkinformation/basic-operation.html [ Crash ]
-webkit.org/b/100342 svg/foreignObject/viewport-foreignobject-crash.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
