@@ -720,10 +720,6 @@ http/tests/navigation/response204.html
 http/tests/navigation/success200-subframeload.html
 http/tests/navigation/timerredirect-subframeload.html
 
-# Redirected to unexpected page. Might be EFL port specific issue.
-http/tests/navigation/postredirect-basic.html
-http/tests/navigation/postredirect-goback1.html
-
 # Unexpected output from scrolling. Might be EFL port specific issue.
 http/tests/navigation/relativeanchor-frames.html
 
