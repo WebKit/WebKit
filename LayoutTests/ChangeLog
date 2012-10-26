@@ -1,5 +1,19 @@
 2012-10-26  Jinwoo Song  <jinwoo7.song@samsung.com>
 
+        [EFL] Gardening after bug 99824
+        https://bugs.webkit.org/show_bug.cgi?id=100469
+
+        Unreviewed, EFL gardening.
+
+        Unskip following 3 test cases after bug 99824 is resolved.
+         - fast/lists/w3-css3-list-styles-alphabetic.html
+         - fast/lists/w3-css3-list-styles-fallback-style.html
+         - fast/lists/w3-list-styles.html
+
+        * platform/efl-wk1/TestExpectations:
+
+2012-10-26  Jinwoo Song  <jinwoo7.song@samsung.com>
+
         [EFL] Unskip svg/foreignObject/viewport-foreignobject-crash.html
         https://bugs.webkit.org/show_bug.cgi?id=100467
 
