@@ -3997,7 +3997,6 @@ webkit.org/b/86146 css3/supports.html
 # Require rebaselining after webkit.org/b/97800
 webkit.org/b/89167 media/track/track-cue-rendering-horizontal.html [ Failure ]
 webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
-webkit.org/b/89167 media/track/track-cue-rendering.html [ Failure ]
 # [Chromium-Android] Subtitles (and video) do not work on Android (Disabled to make linter happy)
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-vertical.html [ Failure ]
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-horizontal.html [ Failure ]
