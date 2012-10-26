@@ -1,3 +1,9 @@
+2012-10-26  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Not reviewed: chromiuim expectations updated.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-26  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-Win] Support shortTimeFormat
