@@ -119,16 +119,29 @@ struct GraphicsSurfacePrivate {
         , m_hasAlpha(false)
     {
         GLXContext shareContextObject = 0;
+        m_display = XOpenDisplay(0);
+
 #if PLATFORM(QT)
         if (shareContext) {
+#if 0
             // This code path requires QXcbNativeInterface::nativeResourceForContext() which is not availble in Qt5 on the build bots yet.
             QPlatformNativeInterface* nativeInterface = QGuiApplication::platformNativeInterface();
             shareContextObject = static_cast<GLXContext>(nativeInterface->nativeResourceForContext(QByteArrayLiteral("glxcontext"), shareContext));
             if (!shareContextObject)
                 return;
+#else
+            // This code path should be removed as soon as QXcbNativeInterface::nativeResourceForContext() can provide the GLXContext.
+            QOpenGLContext* previousContext = QOpenGLContext::currentContext();
+            QSurface* previousSurface = previousContext->surface();
+            QSurface* currentSurface = shareContext->surface();
+            shareContext->makeCurrent(currentSurface);
+
+            shareContextObject = glxGetCurrentContext();
+
+            previousContext->makeCurrent(previousSurface);
+#endif
         }
 #endif
-        m_display = XOpenDisplay(0);
 
         int attributes[] = {
             GLX_LEVEL, 0,

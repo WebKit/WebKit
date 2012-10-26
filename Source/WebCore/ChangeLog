@@ -1,5 +1,18 @@
 2012-10-26  Zeno Albisser  <zeno@webkit.org>
 
+        [Qt] Temporarily disable use of QXcbNativeInterface in GraphicsSurfaceGLX.
+        https://bugs.webkit.org/show_bug.cgi?id=100493
+
+        Once QXcbNativeInterface::nativeResourceForContext() can provide the
+        GLXContext for an existing QOpenGLContext, this patch shall be reverted.
+
+        Reviewed by Simon Hausmann.
+
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+
+2012-10-26  Zeno Albisser  <zeno@webkit.org>
+
         [Qt] Remove QOpenGL specific code from GraphicsSurfaceGLX.
         https://bugs.webkit.org/show_bug.cgi?id=100492
 
