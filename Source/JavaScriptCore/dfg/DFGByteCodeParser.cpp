@@ -3108,6 +3108,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex base = 0;
             NodeIndex value = 0;
             if (parseResolveOperations(prediction, identifier, operations, putToBaseOperation, &base, &value)) {
+                // First create OSR hints only.
+                set(baseDst, base);
+                set(valueDst, value);
+                
+                // If we try to hoist structure checks into here, then we're guaranteed that they will occur
+                // *after* we have already set up the values for OSR.
+                
+                // Then do the real SetLocals.
                 set(baseDst, base);
                 set(valueDst, value);
             } else {
@@ -3128,6 +3136,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex base = 0;
             NodeIndex value = 0;
             if (parseResolveOperations(prediction, identifier, operations, 0, &base, &value)) {
+                // First create OSR hints only.
+                set(baseDst, base);
+                set(valueDst, value);
+                
+                // If we try to hoist structure checks into here, then we're guaranteed that they will occur
+                // *after* we have already set up the values for OSR.
+                
+                // Then do the real SetLocals.
                 set(baseDst, base);
                 set(valueDst, value);
             } else {

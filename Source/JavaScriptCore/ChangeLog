@@ -1,3 +1,37 @@
+2012-10-25  Filip Pizlo  <fpizlo@apple.com>
+
+        Forward OSR calculation is wrong in the presence of multiple SetLocals, or a mix of SetLocals and Phantoms
+        https://bugs.webkit.org/show_bug.cgi?id=100461
+
+        Reviewed by Oliver Hunt and Gavin Barraclough.
+
+        This does a couple of things. First, it removes the part of the change in r131822 that made the forward
+        OSR exit calculator capable of handling multiple SetLocals. That change was wrong, because it would
+        blindly assume that all SetLocals had the same ValueRecovery, and would ignore the possibility that if
+        there is no value recovery then a ForwardCheckStructure on the first SetLocal would not know how to
+        recover the state associated with the second SetLocal. Then, it introduces the invariant that any bytecode
+        op that decomposes into multiple SetLocals must first emit dead SetLocals as hints and then emit a second
+        set of SetLocals to actually do the setting of the locals. This means that if a ForwardCheckStructure (or
+        any other hoisted forward speculation) is inserted, it will always be inserted on the second set of
+        SetLocals (since hoisting only touches the live ones), at which point OSR will already know about the
+        mov hints implied by the first set of (dead) SetLocals. This gives us the behavior we wanted, namely, that
+        a ForwardCheckStructure applied to a variant set by a resolve_with_base-like operation can correctly do a
+        forward exit while also ensuring that prior to exiting we set the appropriate locals.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::OSRExit):
+        * dfg/DFGOSRExit.h:
+        (OSRExit):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::convertLastOSRExitToForward):
+
 2012-10-26  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix the LLInt build on Windows

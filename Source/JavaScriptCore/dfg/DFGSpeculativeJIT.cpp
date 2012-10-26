@@ -153,19 +153,37 @@ JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind)
 
 void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecovery)
 {
-#if !ASSERT_DISABLED
     if (!valueRecovery) {
         // Check that the preceding node was a SetLocal with the same code origin.
         Node* setLocal = &at(m_jit.graph().m_blocks[m_block]->at(m_indexInBlock - 1));
-        ASSERT(setLocal->op() == SetLocal);
-        ASSERT(setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
+        ASSERT_UNUSED(setLocal, setLocal->op() == SetLocal);
+        ASSERT_UNUSED(setLocal, setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
+        
+        // Find the next node.
+        unsigned indexInBlock = m_indexInBlock + 1;
+        Node* node = 0;
+        for (;;) {
+            if (indexInBlock == m_jit.graph().m_blocks[m_block]->size()) {
+                // This is an inline return. Give up and do a backwards speculation. This is safe
+                // because an inline return has its own bytecode index and it's always safe to
+                // reexecute that bytecode.
+                ASSERT(node->op() == Jump);
+                return;
+            }
+            node = &at(m_jit.graph().m_blocks[m_block]->at(indexInBlock));
+            if (node->codeOrigin != at(m_compileIndex).codeOrigin)
+                break;
+            indexInBlock++;
+        }
+        
+        ASSERT(node->codeOrigin != at(m_compileIndex).codeOrigin);
+        OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
+        exit.m_codeOrigin = node->codeOrigin;
+        return;
     }
-#endif
     
     unsigned setLocalIndexInBlock = m_indexInBlock + 1;
-
-    OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
-
+    
     Node* setLocal = &at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock));
     bool hadInt32ToDouble = false;
     
@@ -175,13 +193,11 @@ void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecov
     }
     if (setLocal->op() == Flush || setLocal->op() == Phantom)
         setLocal = &at(m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock));
-    
-    if (!!valueRecovery) {
-        if (hadInt32ToDouble)
-            ASSERT(at(setLocal->child1()).child1() == m_compileIndex);
-        else
-            ASSERT(setLocal->child1() == m_compileIndex);
-    }
+        
+    if (hadInt32ToDouble)
+        ASSERT(at(setLocal->child1()).child1() == m_compileIndex);
+    else
+        ASSERT(setLocal->child1() == m_compileIndex);
     ASSERT(setLocal->op() == SetLocal);
     ASSERT(setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
 
@@ -190,34 +206,14 @@ void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecov
         // We're at an inlined return. Use a backward speculation instead.
         return;
     }
-
-    exit.m_setOperands[0] = setLocal->local();
-    while (nextNode->codeOrigin == at(m_compileIndex).codeOrigin) {
-        ++setLocalIndexInBlock;
-        Node* nextSetLocal = nextNode;
-        if (nextSetLocal->op() == Int32ToDouble)
-            nextSetLocal = &at(m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock));
-
-        if (nextSetLocal->op() == Flush || nextSetLocal->op() == Phantom)
-            nextSetLocal = &at(m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock));
-
-        nextNode = &at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock + 1));
-        ASSERT(nextNode->op() != Jump || nextNode->codeOrigin != at(m_compileIndex).codeOrigin);
-        ASSERT(nextSetLocal->op() == SetLocal);
-        exit.m_setOperands.append(nextSetLocal->local());
-    }
-
     ASSERT(nextNode->codeOrigin != at(m_compileIndex).codeOrigin);
-
+        
+    OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
     exit.m_codeOrigin = nextNode->codeOrigin;
         
-    if (!valueRecovery)
-        return;
-
-    ASSERT(exit.m_setOperands.size() == 1);
-    for (size_t i = 0; i < exit.m_setOperands.size(); i++)
-        exit.m_valueRecoveryOverrides.append(adoptRef(new ValueRecoveryOverride(exit.m_setOperands[i], valueRecovery)));
-
+    exit.m_lastSetOperand = setLocal->local();
+    exit.m_valueRecoveryOverride = adoptRef(
+        new ValueRecoveryOverride(setLocal->local(), valueRecovery));
 }
 
 JumpReplacementWatchpoint* SpeculativeJIT::forwardSpeculationWatchpoint(ExitKind kind)
