@@ -35,6 +35,10 @@ class ColorChooserClient;
 #endif
 
 class Cursor;
+#if USE(ACCELERATED_COMPOSITING)
+class GraphicsContext3D;
+class GraphicsLayer;
+#endif
 class PopupMenuClient;
 }
 
@@ -154,6 +158,8 @@ void ewk_view_mixed_content_run_set(Evas_Object* ewkView, bool hasRun);
 #if USE(ACCELERATED_COMPOSITING)
 bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_Native_Surface* nativeSurface, const WebCore::IntRect& rect);
 WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object* ewkView);
+void ewk_view_root_graphics_layer_set(Evas_Object* ewkView, WebCore::GraphicsLayer* rootLayer);
+void ewk_view_mark_for_sync(Evas_Object* ewkView);
 #endif
 
 #if ENABLE(FULLSCREEN_API)

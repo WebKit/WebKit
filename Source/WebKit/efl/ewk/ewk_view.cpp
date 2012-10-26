@@ -94,7 +94,7 @@
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "NotImplemented.h"
+#include "AcceleratedCompositingContextEfl.h"
 #endif
 
 #if ENABLE(NETWORK_INFO)
@@ -250,6 +250,11 @@ struct _Ewk_View_Private_Data {
     WebCore::ViewportArguments viewportArguments;
     Ewk_History* history;
     OwnPtr<PageClientEfl> pageClient;
+#if USE(ACCELERATED_COMPOSITING)
+    OwnPtr<WebCore::AcceleratedCompositingContext> acceleratedCompositingContext;
+    bool isCompositingActive;
+    RefPtr<Evas_Object> compositingObject;
+#endif
 #if ENABLE(NETWORK_INFO)
     OwnPtr<WebCore::NetworkInfoClientEfl> networkInfoClient;
 #endif
@@ -907,6 +912,10 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
     priv->contextMenu = 0;
 
+#if USE(ACCELERATED_COMPOSITING)
+    priv->isCompositingActive = false;
+#endif
+
     return priv;
 }
 
@@ -942,6 +951,10 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
 
     if (priv->contextMenu)
         ewk_context_menu_free(priv->contextMenu);
+
+#if USE(ACCELERATED_COMPOSITING)
+    priv->acceleratedCompositingContext = nullptr;
+#endif
 
     delete priv;
 }
@@ -4494,16 +4507,92 @@ void ewk_view_inspector_view_set(Evas_Object* ewkView, Evas_Object* inspectorVie
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-bool ewk_view_accelerated_compositing_object_create(Evas_Object*, Evas_Native_Surface*, const WebCore::IntRect& /*rect*/)
+void _ewk_view_accelerated_compositing_cb(void* data, Evas_Object*)
 {
-    notImplemented();
-    return false;
+    Ewk_View_Private_Data* priv = static_cast<Ewk_View_Private_Data*>(data);
+
+    if (priv->isCompositingActive) {
+        priv->acceleratedCompositingContext->syncLayersNow();
+        priv->acceleratedCompositingContext->renderLayers();
+    }
 }
 
-WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object*)
+void _ewk_view_accelerated_compositing_context_create_if_needed(Evas_Object* ewkView)
 {
-    notImplemented();
-    return 0;
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    if (!priv->acceleratedCompositingContext)
+        priv->acceleratedCompositingContext = WebCore::AcceleratedCompositingContext::create(priv->page->chrome());
+}
+
+bool ewk_view_accelerated_compositing_object_create(Evas_Object* ewkView, Evas_Native_Surface* nativeSurface, const WebCore::IntRect& rect)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    if (!priv->compositingObject) {
+        priv->compositingObject = evas_object_image_add(smartData->base.evas);
+
+        evas_object_pass_events_set(priv->compositingObject.get(), true); // Just for rendering, ignore events.
+        evas_object_image_alpha_set(priv->compositingObject.get(), true);
+        evas_object_image_content_hint_set(priv->compositingObject.get(), EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
+
+        // Set the pixel get callback.
+        evas_object_image_pixels_get_callback_set(priv->compositingObject.get(), _ewk_view_accelerated_compositing_cb, priv);
+
+        evas_object_smart_member_add(priv->compositingObject.get(), ewkView);
+    }
+
+    evas_object_image_size_set(priv->compositingObject.get(), rect.width(), rect.height());
+    evas_object_image_fill_set(priv->compositingObject.get(), 0, 0, rect.width(), rect.height());
+
+    evas_object_move(priv->compositingObject.get(), rect.x(), rect.y());
+    evas_object_resize(priv->compositingObject.get(), rect.width(), rect.height());
+    evas_object_hide(priv->compositingObject.get());
+
+    // Set up the native surface info to use the context and surface created in GC3DPrivate.
+    evas_object_image_native_surface_set(priv->compositingObject.get(), nativeSurface);
+    return true;
+}
+
+WebCore::GraphicsContext3D* ewk_view_accelerated_compositing_context_get(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    _ewk_view_accelerated_compositing_context_create_if_needed(ewkView);
+    return priv->acceleratedCompositingContext->context();
+}
+
+void ewk_view_root_graphics_layer_set(Evas_Object* ewkView, WebCore::GraphicsLayer* rootLayer)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    bool active = !!rootLayer;
+    if (priv->isCompositingActive == active)
+        return;
+
+    priv->isCompositingActive = active;
+
+    if (priv->isCompositingActive) {
+        _ewk_view_accelerated_compositing_context_create_if_needed(ewkView);
+        evas_object_show(priv->compositingObject.get());
+    } else
+        evas_object_hide(priv->compositingObject.get());
+
+    priv->acceleratedCompositingContext->attachRootGraphicsLayer(rootLayer);
+}
+
+void ewk_view_mark_for_sync(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    // Mark the image as "dirty" meaning it needs an update next time evas renders.
+    // It will call the pixel get callback then.
+    evas_object_image_pixels_dirty_set(priv->compositingObject.get(), true);
 }
 #endif
 
