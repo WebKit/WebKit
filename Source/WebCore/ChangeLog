@@ -1,3 +1,22 @@
+2012-10-26  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Doctype Audits panel code
+        https://bugs.webkit.org/show_bug.cgi?id=100371
+
+        Reviewed by Alexander Pavlov.
+
+        This is a preparation step for ongoing refactoring.
+        It is much easier to read doctyped code.
+
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.MinimizeDnsLookupsRule.prototype.doRun):
+        Replaced "undefined" with "null"
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditCategory.prototype.callbackWrapper):
+        Removed callback parameter indirection.        
+        (WebInspector.AuditRuleResult.prototype.addFormatted):
+        Converted private instance function to scoped function.
+
 2012-10-26  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt]REGRESSION(r131428): cookies.db created on wrong place

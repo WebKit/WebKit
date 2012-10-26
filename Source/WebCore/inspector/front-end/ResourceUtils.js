@@ -165,7 +165,7 @@ WebInspector.linkifyStringAsFragment = function(string)
  * @param {string=} classes
  * @param {boolean=} isExternal
  * @param {string=} tooltipText
- * @return {Element}
+ * @return {!Element}
  */
 WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, tooltipText)
 {

@@ -70,17 +70,27 @@ WebInspector.AuditsPanel.prototype = {
         return [this.clearResultsButton.element];
     },
 
+    /**
+     * @return {!Object.<string, !WebInspector.AuditCategory>}
+     */
     get categoriesById()
     {
         return this._auditCategoriesById;
     },
 
+    /**
+     * @param {!WebInspector.AuditCategory} category
+     */
     addCategory: function(category)
     {
         this.categoriesById[category.id] = category;
         this._launcherView.addCategory(category);
     },
 
+    /**
+     * @param {string} id
+     * @return {WebInspector.AuditCategory}
+     */
     getCategory: function(id)
     {
         return this.categoriesById[id];
@@ -96,6 +106,10 @@ WebInspector.AuditsPanel.prototype = {
         }
     },
 
+    /**
+     * @param {!Array.<!WebInspector.AuditCategory>} categories
+     * @param {function(string, !Array.<!WebInspector.AuditCategoryResult>)} resultCallback
+     */
     _executeAudit: function(categories, resultCallback)
     {
         this._progress.setTitle(WebInspector.UIString("Running audit"));
@@ -133,6 +147,11 @@ WebInspector.AuditsPanel.prototype = {
         }
     },
 
+    /**
+     * @param {function()} launcherCallback
+     * @param {string} mainResourceURL
+     * @param {!Array.<!WebInspector.AuditCategoryResult>} results
+     */
     _auditFinishedCallback: function(launcherCallback, mainResourceURL, results)
     {
         var children = this.auditResultsTreeElement.children;
@@ -196,6 +215,9 @@ WebInspector.AuditsPanel.prototype = {
         }
     },
 
+    /**
+     * @param {!Array.<!WebInspector.AuditCategoryResult>} categoryResults
+     */
     showResults: function(categoryResults)
     {
         if (!categoryResults._resultView)
@@ -246,6 +268,7 @@ WebInspector.AuditsPanel.prototype = {
 
 /**
  * @constructor
+ * @param {string} displayName
  */
 WebInspector.AuditCategory = function(displayName)
 {
@@ -254,17 +277,27 @@ WebInspector.AuditCategory = function(displayName)
 }
 
 WebInspector.AuditCategory.prototype = {
+    /**
+     * @return {string}
+     */
     get id()
     {
         // this._id value is injected at construction time.
         return this._id;
     },
 
+    /**
+     * @return {string}
+     */
     get displayName()
     {
         return this._displayName;
     },
 
+    /**
+     * @param {!WebInspector.AuditRule} rule
+     * @param {!WebInspector.AuditRule.Severity} severity
+     */
     addRule: function(rule, severity)
     {
         rule.severity = severity;
@@ -272,19 +305,19 @@ WebInspector.AuditCategory.prototype = {
     },
 
     /**
-     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {!Array.<!WebInspector.NetworkRequest>} requests
      * @param {function(WebInspector.AuditRuleResult)} ruleResultCallback
      * @param {function()} categoryDoneCallback
-     * @param {WebInspector.Progress} progress
+     * @param {!WebInspector.Progress} progress
      */
     run: function(requests, ruleResultCallback, categoryDoneCallback, progress)
     {
         this._ensureInitialized();
         var remainingRulesCount = this._rules.length;
         progress.setTotalWork(remainingRulesCount);
-        function callbackWrapper()
+        function callbackWrapper(result)
         {
-            ruleResultCallback.apply(this, arguments);
+            ruleResultCallback(result);
             progress.worked();
             if (!--remainingRulesCount)
                 categoryDoneCallback();
@@ -305,6 +338,8 @@ WebInspector.AuditCategory.prototype = {
 
 /**
  * @constructor
+ * @param {string} id
+ * @param {string} displayName
  */
 WebInspector.AuditRule = function(id, displayName)
 {
@@ -312,12 +347,18 @@ WebInspector.AuditRule = function(id, displayName)
     this._displayName = displayName;
 }
 
+/**
+ * @enum {string}
+ */
 WebInspector.AuditRule.Severity = {
     Info: "info",
     Warning: "warning",
     Severe: "severe"
 }
 
+/**
+ * @type {Object.<WebInspector.AuditRule.Severity, number>}
+ */
 WebInspector.AuditRule.SeverityOrder = {
     "info": 3,
     "warning": 2,
@@ -335,15 +376,18 @@ WebInspector.AuditRule.prototype = {
         return this._displayName;
     },
 
+    /**
+     * @param {WebInspector.AuditRule.Severity} severity
+     */
     set severity(severity)
     {
         this._severity = severity;
     },
 
     /**
-     * @param {Array.<WebInspector.NetworkRequest>} requests
+     * @param {!Array.<!WebInspector.NetworkRequest>} requests
      * @param {function(WebInspector.AuditRuleResult)} callback
-     * @param {WebInspector.Progress} progress
+     * @param {!WebInspector.Progress} progress
      */
     run: function(requests, callback, progress)
     {
@@ -369,6 +413,7 @@ WebInspector.AuditRule.prototype = {
 
 /**
  * @constructor
+ * @param {!WebInspector.AuditCategory} category
  */
 WebInspector.AuditCategoryResult = function(category)
 {
@@ -377,6 +422,9 @@ WebInspector.AuditCategoryResult = function(category)
 }
 
 WebInspector.AuditCategoryResult.prototype = {
+    /**
+     * @param {!WebInspector.AuditCategoryResult} ruleResult
+     */
     addRuleResult: function(ruleResult)
     {
         this.ruleResults.push(ruleResult);
@@ -385,6 +433,7 @@ WebInspector.AuditCategoryResult.prototype = {
 
 /**
  * @constructor
+ * @param {(string|boolean|number|Object)} value
  * @param {boolean=} expanded
  * @param {string=} className
  */
@@ -402,6 +451,10 @@ WebInspector.AuditRuleResult = function(value, expanded, className)
         this._formatters[standardFormatters[i]] = String.standardFormatters[standardFormatters[i]];
 }
 
+/**
+ * @param {string} url
+ * @return {!Element}
+ */
 WebInspector.AuditRuleResult.linkifyDisplayName = function(url)
 {
     return WebInspector.linkifyURLAsNode(url, WebInspector.displayNameForURL(url));
@@ -414,8 +467,10 @@ WebInspector.AuditRuleResult.resourceDomain = function(domain)
 
 WebInspector.AuditRuleResult.prototype = {
     /**
+     * @param {(string|boolean|number|Object)} value
      * @param {boolean=} expanded
      * @param {string=} className
+     * @return {!WebInspector.AuditRuleResult}
      */
     addChild: function(value, expanded, className)
     {
@@ -426,43 +481,53 @@ WebInspector.AuditRuleResult.prototype = {
         return entry;
     },
 
+    /**
+     * @param {string} url
+     */
     addURL: function(url)
     {
-        return this.addChild(WebInspector.AuditRuleResult.linkifyDisplayName(url));
+        this.addChild(WebInspector.AuditRuleResult.linkifyDisplayName(url));
     },
 
+    /**
+     * @param {!Array.<string>} urls
+     */
     addURLs: function(urls)
     {
         for (var i = 0; i < urls.length; ++i)
             this.addURL(urls[i]);
     },
 
+    /**
+     * @param {string} snippet
+     */
     addSnippet: function(snippet)
     {
-        return this.addChild(snippet, false, "source-code");
+        this.addChild(snippet, false, "source-code");
     },
 
     /**
      * @param {string} format
      * @param {...*} vararg
+     * @return {!WebInspector.AuditRuleResult}
      */
     addFormatted: function(format, vararg)
     {
         var substitutions = Array.prototype.slice.call(arguments, 1);
         var fragment = document.createDocumentFragment();
 
-        var formattedResult = String.format(format, substitutions, this._formatters, fragment, this._append).formattedResult;
+        function append(a, b)
+        {
+            if (!(b instanceof Node))
+                b = document.createTextNode(b);
+            a.appendChild(b);
+            return a;
+        }
+
+        var formattedResult = String.format(format, substitutions, this._formatters, fragment, append).formattedResult;
         if (formattedResult instanceof Node)
             formattedResult.normalize();
         return this.addChild(formattedResult);
-    },
-
-    _append: function(a, b)
-    {
-        if (!(b instanceof Node))
-            b = document.createTextNode(b);
-        a.appendChild(b);
-        return a;
     }
 }
 
@@ -505,7 +570,10 @@ WebInspector.AuditsSidebarTreeElement.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.SidebarTreeElement}
- * @param {WebInspector.AuditsPanel} panel
+ * @param {!WebInspector.AuditsPanel} panel
+ * @param {!Array.<!WebInspector.AuditCategoryResult>} results
+ * @param {string} mainResourceURL
+ * @param {number} ordinal
  */
 WebInspector.AuditResultSidebarTreeElement = function(panel, results, mainResourceURL, ordinal)
 {
@@ -532,7 +600,10 @@ WebInspector.AuditResultSidebarTreeElement.prototype = {
 // Contributed audit rules should go into this namespace.
 WebInspector.AuditRules = {};
 
-// Contributed audit categories should go into this namespace.
+/**
+ * Contributed audit categories should go into this namespace.
+ * @type {Object.<string, function(new:WebInspector.AuditCategory)>}
+ */
 WebInspector.AuditCategories = {};
 
 importScript("AuditCategories.js");

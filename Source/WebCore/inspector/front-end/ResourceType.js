@@ -108,7 +108,10 @@ WebInspector.ResourceType.prototype = {
     }
 }
 
-//Keep these in sync with WebCore::InspectorPageAgent::resourceTypeJson
+/**
+ * Keep these in sync with WebCore::InspectorPageAgent::resourceTypeJson
+ * @enum {!WebInspector.ResourceType}
+ */
 WebInspector.resourceTypes = {
     Document: new WebInspector.ResourceType("document", "Document", "Documents", "rgb(47,102,236)", true),
     Stylesheet: new WebInspector.ResourceType("stylesheet", "Stylesheet", "Stylesheets", "rgb(157,231,119)", true),
