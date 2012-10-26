@@ -226,7 +226,7 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imag
 #if USE(GRAPHICS_SURFACE)
 void GraphicsContext3D::createGraphicsSurfaces(const IntSize& size)
 {
-    m_private->createGraphicsSurfaces(size);
+    notImplemented();
 }
 #endif
 

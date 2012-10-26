@@ -572,9 +572,6 @@ static void _ewk_view_initialize(Evas_Object* ewkView, PassRefPtr<Ewk_Context> c
     impl->pageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     impl->pageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
     impl->pageProxy->setUseFixedLayout(true);
-#if ENABLE(WEBGL)
-    impl->pageProxy->pageGroup()->preferences()->setWebGLEnabled(true);
-#endif
 #endif
     impl->pageProxy->initializeWebPage();
 

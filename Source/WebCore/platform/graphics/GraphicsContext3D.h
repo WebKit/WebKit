@@ -72,7 +72,6 @@ typedef QOpenGLContext* PlatformGraphicsContext3D;
 typedef QSurface* PlatformGraphicsSurface3D;
 #else
 typedef void* PlatformGraphicsContext3D;
-typedef void* PlatformGraphicsSurface3D;
 #endif
 
 #if (PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)) && USE(SKIA)
@@ -948,7 +947,7 @@ public:
 
     bool reshapeFBOs(const IntSize&);
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
-#if (PLATFORM(QT) || PLATFORM(EFL)) && USE(GRAPHICS_SURFACE)
+#if PLATFORM(QT) && USE(GRAPHICS_SURFACE)
     void createGraphicsSurfaces(const IntSize&);
 #endif
 

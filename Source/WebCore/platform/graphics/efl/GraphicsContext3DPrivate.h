@@ -26,10 +26,6 @@
 #include <texmap/TextureMapperPlatformLayer.h>
 #endif
 
-#if USE(GRAPHICS_SURFACE)
-#include "GraphicsSurface.h"
-#endif
-
 typedef struct _Evas_GL               Evas_GL;
 typedef struct _Evas_GL_Surface       Evas_GL_Surface;
 typedef struct _Evas_GL_Context       Evas_GL_Context;
@@ -56,12 +52,6 @@ public:
 #if USE(TEXTURE_MAPPER_GL)
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask);
 #endif
-#if USE(GRAPHICS_SURFACE)
-    virtual uint32_t copyToGraphicsSurface();
-    virtual GraphicsSurfaceToken graphicsSurfaceToken() const;
-    void createGraphicsSurfaces(const IntSize&);
-#endif
-
     bool makeContextCurrent();
     bool createSurface(PageClientEfl*, bool renderDirectlyToEvasGLObject);
     void setCurrentGLContext(void*, void*);
@@ -69,10 +59,6 @@ public:
     GraphicsContext3D::Attributes m_attributes;
     GraphicsContext3D* m_context;
     HostWindow* m_hostWindow;
-#if USE(GRAPHICS_SURFACE)
-    GraphicsSurface::Flags m_surfaceFlags;
-    RefPtr<GraphicsSurface> m_graphicsSurface;
-#endif
 
     ListHashSet<GC3Denum> m_syntheticErrors;
 
