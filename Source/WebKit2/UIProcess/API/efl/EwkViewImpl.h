@@ -211,6 +211,16 @@ public:
 #if ENABLE(WEB_INTENTS_TAG)
     void informIntentServiceRegistration(Ewk_Intent_Service* ewkIntentService);
 #endif
+#if USE(TILED_BACKING_STORE)
+    WebKit::PageViewportControllerClientEfl* pageViewportControllerClient() { return m_pageViewportControllerClient.get(); }
+    WebKit::PageViewportController* pageViewportController() { return m_pageViewportController.get(); }
+#endif
+#if USE(ACCELERATED_COMPOSITING)
+    Evas_GL* evasGl() { return m_evasGl; }
+    Evas_GL_Context* evasGlContext() { return m_evasGlContext; }
+    Evas_GL_Surface* evasGlSurface() { return m_evasGlSurface; }
+    void resetEvasGlSurface() { m_evasGlSurface = 0; }
+#endif
 
 private:
     inline Ewk_View_Smart_Data* smartData();

@@ -1,3 +1,32 @@
+2012-10-26  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] Build fix after r132647.
+        https://bugs.webkit.org/show_bug.cgi?id=100540
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        AC enabled build is broken after the latest refactoring of EFL WK2.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::displayTimerFired):
+        (EwkViewImpl::informLoadCommitted):
+        (EwkViewImpl::createGLSurface):
+        (EwkViewImpl::enterAcceleratedCompositingMode):
+        (EwkViewImpl::exitAcceleratedCompositingMode):
+        (EwkViewImpl::informContentsSizeChange):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        (EwkViewImpl::pageViewportControllerClient):
+        (EwkViewImpl::pageViewportController):
+        (EwkViewImpl::evasGl):
+        (EwkViewImpl::evasGlContext):
+        (EwkViewImpl::evasGlSurface):
+        (EwkViewImpl::resetEvasGlSurface):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (mapToWebContent):
+        (_ewk_view_smart_calculate):
+
 2012-10-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Get rid of C'ism in text checker API

@@ -131,7 +131,7 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, Pas
     m_pageProxy->initializeWebPage();
 
 #if USE(TILED_BACKING_STORE)
-    pageClient->setPageViewportController(pageViewportController.get());
+    m_pageClient->setPageViewportController(m_pageViewportController.get());
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -255,8 +255,8 @@ void EwkViewImpl::displayTimerFired(WebCore::Timer<EwkViewImpl>*)
     for (Vector<IntRect>::iterator it = rects.begin(); it != end; ++it) {
         IntRect rect = *it;
 #if USE(COORDINATED_GRAPHICS)
-        evas_gl_make_current(viewImpl->evasGl, viewImpl->evasGlSurface, viewImpl->evasGlContext);
-        viewImpl->pageViewportControllerClient->display(rect, IntPoint(sd->view.x, sd->view.y));
+        evas_gl_make_current(viewImpl->m_evasGl, viewImpl->m_evasGlSurface, viewImpl->m_evasGlContext);
+        viewImpl->m_pageViewportControllerClient->display(rect, IntPoint(sd->view.x, sd->view.y));
 #endif
 
         evas_object_image_data_update_add(sd->image, rect.x(), rect.y(), rect.width(), rect.height());
@@ -415,7 +415,7 @@ void EwkViewImpl::informProvisionalLoadFailed(Ewk_Error* error)
 #if USE(TILED_BACKING_STORE)
 void EwkViewImpl::informLoadCommitted()
 {
-    pageViewportController->didCommitLoad();
+    m_pageViewportController->didCommitLoad();
 }
 #endif
 
@@ -728,13 +728,13 @@ bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
         EVAS_GL_MULTISAMPLE_NONE
     };
 
-    ASSERT(!evasGlSurface);
-    evasGlSurface = evas_gl_surface_create(evasGl, &evasGlConfig, viewSize.width(), viewSize.height());
-    if (!evasGlSurface)
+    ASSERT(!m_evasGlSurface);
+    m_evasGlSurface = evas_gl_surface_create(m_evasGl, &evasGlConfig, viewSize.width(), viewSize.height());
+    if (!m_evasGlSurface)
         return false;
 
     Evas_Native_Surface nativeSurface;
-    evas_gl_native_surface_get(evasGl, evasGlSurface, &nativeSurface);
+    evas_gl_native_surface_get(m_evasGl, m_evasGlSurface, &nativeSurface);
     evas_object_image_native_surface_set(sd->image, &nativeSurface);
 
     return true;
@@ -742,52 +742,52 @@ bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
 
 bool EwkViewImpl::enterAcceleratedCompositingMode()
 {
-    if (evasGl) {
+    if (m_evasGl) {
         EINA_LOG_DOM_WARN(_ewk_log_dom, "Accelerated compositing mode already entered.");
         return false;
     }
 
     Evas* evas = evas_object_evas_get(m_view);
-    evasGl = evas_gl_new(evas);
-    if (!evasGl)
+    m_evasGl = evas_gl_new(evas);
+    if (!m_evasGl)
         return false;
 
-    evasGlContext = evas_gl_context_create(evasGl, 0);
-    if (!evasGlContext) {
-        evas_gl_free(evasGl);
-        evasGl = 0;
+    m_evasGlContext = evas_gl_context_create(m_evasGl, 0);
+    if (!m_evasGlContext) {
+        evas_gl_free(m_evasGl);
+        m_evasGl = 0;
         return false;
     }
 
     if (!createGLSurface(size())) {
-        evas_gl_context_destroy(evasGl, evasGlContext);
-        evasGlContext = 0;
+        evas_gl_context_destroy(m_evasGl, m_evasGlContext);
+        m_evasGlContext = 0;
 
-        evas_gl_free(evasGl);
-        evasGl = 0;
+        evas_gl_free(m_evasGl);
+        m_evasGl = 0;
         return false;
     }
 
-    pageViewportControllerClient->setRendererActive(true);
+    m_pageViewportControllerClient->setRendererActive(true);
     return true;
 }
 
 bool EwkViewImpl::exitAcceleratedCompositingMode()
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(evasGl, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(m_evasGl, false);
 
-    if (evasGlSurface) {
-        evas_gl_surface_destroy(evasGl, evasGlSurface);
-        evasGlSurface = 0;
+    if (m_evasGlSurface) {
+        evas_gl_surface_destroy(m_evasGl, m_evasGlSurface);
+        m_evasGlSurface = 0;
     }
 
-    if (evasGlContext) {
-        evas_gl_context_destroy(evasGl, evasGlContext);
-        evasGlContext = 0;
+    if (m_evasGlContext) {
+        evas_gl_context_destroy(m_evasGl, m_evasGlContext);
+        m_evasGlContext = 0;
     }
 
-    evas_gl_free(evasGl);
-    evasGl = 0;
+    evas_gl_free(m_evasGl);
+    m_evasGl = 0;
 
     return true;
 }
@@ -867,7 +867,7 @@ void EwkViewImpl::informWebProcessCrashed()
 void EwkViewImpl::informContentsSizeChange(const IntSize& size)
 {
 #if USE(COORDINATED_GRAPHICS)
-    pageViewportControllerClient->didChangeContentsSize(size);
+    m_pageViewportControllerClient->didChangeContentsSize(size);
 #else
     UNUSED_PARAM(size);
 #endif

@@ -148,8 +148,8 @@ static Evas_Coord_Point mapToWebContent(Ewk_View_Smart_Data* smartData, Evas_Coo
     Evas_Coord_Point result;
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, result);
 
-    result.x = (point.x  - smartData->view.x) / impl->pageViewportControllerClient->scaleFactor() + smartData->view.x + impl->pageViewportControllerClient->scrollPosition().x();
-    result.y = (point.y - smartData->view.y) / impl->pageViewportControllerClient->scaleFactor() + smartData->view.y + impl->pageViewportControllerClient->scrollPosition().y();
+    result.x = (point.x  - smartData->view.x) / impl->pageViewportControllerClient()->scaleFactor() + smartData->view.x + impl->pageViewportControllerClient()->scrollPosition().x();
+    result.y = (point.y - smartData->view.y) / impl->pageViewportControllerClient()->scaleFactor() + smartData->view.y + impl->pageViewportControllerClient()->scrollPosition().y();
     return result;
 }
 #endif
@@ -390,10 +390,10 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 
     if (smartData->changed.size) {
 #if USE(COORDINATED_GRAPHICS)
-        impl->pageViewportControllerClient->updateViewportSize(IntSize(width, height));
+        impl->pageViewportControllerClient()->updateViewportSize(IntSize(width, height));
 #endif
 #if USE(ACCELERATED_COMPOSITING)
-        needsNewSurface = impl->evasGlSurface;
+        needsNewSurface = impl->evasGlSurface();
 #endif
 
         if (impl->page()->drawingArea())
@@ -413,8 +413,8 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 
 #if USE(ACCELERATED_COMPOSITING)
     if (needsNewSurface) {
-        evas_gl_surface_destroy(impl->evasGl, impl->evasGlSurface);
-        impl->evasGlSurface = 0;
+        evas_gl_surface_destroy(impl->evasGl(), impl->evasGlSurface());
+        impl->resetEvasGlSurface();
         impl->createGLSurface(IntSize(width, height));
         impl->redrawRegion(IntRect(IntPoint(), IntSize(width, height)));
     }
