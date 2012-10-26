@@ -111,4 +111,8 @@ bool MemoryUsageSupport::processMemorySizesInBytes(size_t*, size_t*)
     return false;
 }
 
+void MemoryUsageSupport::memoryUsageByComponents(Vector<ComponentInfo>&)
+{
+}
+
 } // namespace WebCore

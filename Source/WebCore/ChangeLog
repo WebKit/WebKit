@@ -1,3 +1,16 @@
+2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132662.
+        http://trac.webkit.org/changeset/132662
+        https://bugs.webkit.org/show_bug.cgi?id=100528
+
+        It is not necessary any more. (Requested by loislo on
+        #webkit).
+
+        * platform/qt/MemoryUsageSupportQt.cpp:
+        (WebCore::MemoryUsageSupport::memoryUsageByComponents):
+        (WebCore):
+
 2012-10-26  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed build fix for Qt builders.
