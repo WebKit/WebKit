@@ -1,3 +1,28 @@
+2012-10-26  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] MiniBrowser segfaults on exit after using WebGL.
+        https://bugs.webkit.org/show_bug.cgi?id=100523
+
+        The display connection must not be closed before
+        destroying the offscreen window.
+        Therefore opening the connection is moved to the
+        getXWindow() function. And closing the connection
+        is being moved to the destructor of the offscreen window.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::OffScreenRootWindow::OffScreenRootWindow):
+        (WebCore::OffScreenRootWindow::getXWindow):
+        (OffScreenRootWindow):
+        (WebCore::OffScreenRootWindow::display):
+        (WebCore::OffScreenRootWindow::~OffScreenRootWindow):
+        (WebCore):
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::~GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::createSurface):
+
 2012-10-26  Parth Patel  <parpatel@rim.com>
 
         [BlackBerry] Extending existing ThreadUnsafe singletons in webkit to

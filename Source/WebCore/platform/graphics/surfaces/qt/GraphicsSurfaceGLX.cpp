@@ -55,40 +55,51 @@ class OffScreenRootWindow {
 public:
     OffScreenRootWindow()
     {
-        ++refCount;
+        ++m_refCount;
     }
 
-    Window* get(Display* dpy)
+    Window getXWindow()
     {
-        if (!window) {
-            window = XCreateSimpleWindow(dpy, XDefaultRootWindow(dpy), -1, -1, 1, 1, 0, BlackPixel(dpy, 0), WhitePixel(dpy, 0));
+        if (!m_window) {
+            Display* dpy = display();
+            m_window = XCreateSimpleWindow(dpy, XDefaultRootWindow(dpy), -1, -1, 1, 1, 0, BlackPixel(dpy, 0), WhitePixel(dpy, 0));
             XSetWindowAttributes attributes;
             attributes.override_redirect = true;
-            XChangeWindowAttributes(dpy, window, X11OverrideRedirect, &attributes);
-            display = dpy;
+            XChangeWindowAttributes(dpy, m_window, X11OverrideRedirect, &attributes);
             // Map window to the screen
-            XMapWindow(dpy, window);
+            XMapWindow(dpy, m_window);
         }
 
-        return &window;
+        return m_window;
+    }
+
+    Display* display()
+    {
+        if (!m_display)
+            m_display = XOpenDisplay(0);
+        return m_display;
     }
 
     ~OffScreenRootWindow()
     {
-        if (!--refCount) {
-            XUnmapWindow(display, window);
-            XDestroyWindow(display, window);
+        if (!--m_refCount) {
+            XUnmapWindow(m_display, m_window);
+            XDestroyWindow(m_display, m_window);
+            if (m_display)
+                XCloseDisplay(m_display);
+            m_display = 0;
         }
     }
 
 private:
-    static int refCount;
-    static Window window;
-    Display* display;
+    static int m_refCount;
+    static Window m_window;
+    static Display* m_display;
 };
 
-int OffScreenRootWindow::refCount = 0;
-Window OffScreenRootWindow::window = 0;
+int OffScreenRootWindow::m_refCount = 0;
+Window OffScreenRootWindow::m_window = 0;
+Display* OffScreenRootWindow::m_display = 0;
 
 static const int glxSpec[] = {
     // The specification is a set key value pairs stored in a simple array.
@@ -143,6 +154,7 @@ struct GraphicsSurfacePrivate {
         }
 #endif
 
+        m_display = m_offScreenWindow.display();
         int attributes[] = {
             GLX_LEVEL, 0,
             GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
@@ -170,9 +182,8 @@ struct GraphicsSurfacePrivate {
             XFreePixmap(m_display, m_xPixmap);
         m_xPixmap = 0;
 
-        if (m_display)
-            XCloseDisplay(m_display);
-        m_display = 0;
+        if (m_glContext)
+            glXDestroyContext(m_display, m_glContext);
     }
 
     uint32_t createSurface(const IntSize& size)
@@ -181,12 +192,12 @@ struct GraphicsSurfacePrivate {
         if (!visualInfo)
             return 0;
 
-        Colormap cmap = XCreateColormap(m_display, *m_offScreenWindow.get(m_display), visualInfo->visual, AllocNone);
+        Colormap cmap = XCreateColormap(m_display, m_offScreenWindow.getXWindow(), visualInfo->visual, AllocNone);
         XSetWindowAttributes a;
         a.background_pixel = WhitePixel(m_display, 0);
         a.border_pixel = BlackPixel(m_display, 0);
         a.colormap = cmap;
-        m_surface = XCreateWindow(m_display, *m_offScreenWindow.get(m_display), 0, 0, size.width(), size.height(),
+        m_surface = XCreateWindow(m_display, m_offScreenWindow.getXWindow(), 0, 0, size.width(), size.height(),
             0, visualInfo->depth, InputOutput, visualInfo->visual,
             CWBackPixel | CWBorderPixel | CWColormap, &a);
         XSetWindowBackgroundPixmap(m_display, m_surface, 0);
