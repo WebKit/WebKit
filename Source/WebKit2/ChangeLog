@@ -1,3 +1,85 @@
+2012-10-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Clean up construction/destruction code in Ewk_view
+        https://bugs.webkit.org/show_bug.cgi?id=100232
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Simplified a lot of initialization and destruction code of Ewk_view and EwkViewImpl
+        put all the impl stuff to its constructor and destructor, also made EwkViewImpl member
+        variables private.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (pageViewMap):
+        (EwkViewImpl::addToPageViewMap):
+        (EwkViewImpl::removeFromPageViewMap):
+        (EwkViewImpl::viewFromPageViewMap):
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::~EwkViewImpl):
+        (EwkViewImpl::wkPage):
+        (EwkViewImpl::title):
+        (EwkViewImpl::setThemePath):
+        (EwkViewImpl::customTextEncodingName):
+        (EwkViewImpl::setCustomTextEncodingName):
+        (EwkViewImpl::informIconChange):
+        (EwkViewImpl::informWebProcessCrashed):
+        (EwkViewImpl::updateTextInputState):
+        (EwkViewImpl::informURLChange):
+        (EwkViewImpl::onFaviconChanged):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebKit):
+        (EwkViewImpl):
+        (EwkViewImpl::view):
+        (EwkViewImpl::page):
+        (EwkViewImpl::ewkContext):
+        (EwkViewImpl::backForwardList):
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (Ewk_Settings::preferences):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_focus_in):
+        (_ewk_view_smart_focus_out):
+        (_ewk_view_smart_mouse_wheel):
+        (_ewk_view_smart_mouse_down):
+        (_ewk_view_smart_mouse_up):
+        (_ewk_view_smart_mouse_move):
+        (_ewk_view_smart_key_down):
+        (_ewk_view_smart_key_up):
+        (_ewk_view_on_show):
+        (_ewk_view_on_hide):
+        (_ewk_view_smart_add):
+        (_ewk_view_smart_del):
+        (_ewk_view_smart_calculate):
+        (_ewk_view_smart_color_set):
+        (createEwkViewSmartClass):
+        (createEwkView):
+        (ewk_view_base_add):
+        (ewk_view_smart_add):
+        (ewk_view_add_with_context):
+        (ewk_view_url_set):
+        (ewk_view_reload):
+        (ewk_view_reload_bypass_cache):
+        (ewk_view_stop):
+        (ewk_view_load_progress_get):
+        (ewk_view_scale_set):
+        (ewk_view_scale_get):
+        (ewk_view_device_pixel_ratio_set):
+        (ewk_view_device_pixel_ratio_get):
+        (ewk_view_back):
+        (ewk_view_forward):
+        (ewk_view_intent_deliver):
+        (ewk_view_back_possible):
+        (ewk_view_forward_possible):
+        (ewk_view_back_forward_list_get):
+        (ewk_view_html_string_load):
+        (ewk_view_text_find):
+        (ewk_view_text_find_highlight_clear):
+        (ewk_view_text_matches_count):
+        (ewk_view_feed_touch_event):
+        (ewk_view_inspector_show):
+        (ewk_view_inspector_close):
+        (ewk_view_pagination_mode_set):
+        (ewk_view_pagination_mode_get):
+
 2012-10-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Initialize Ewk_Context class members in initialization list

@@ -33,8 +33,11 @@
 #include "PageViewportControllerClientEfl.h"
 #include "ResourceLoadClientEfl.h"
 #include "WKString.h"
+#include "WebContext.h"
+#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyEfl.h"
+#include "WebPreferences.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_color_picker_private.h"
 #include "ewk_context_private.h"
@@ -49,44 +52,63 @@
 #include <Edje.h>
 #include <WebCore/Cursor.h>
 
+
+#if ENABLE(FULLSCREEN_API)
+#include "WebFullScreenManagerProxy.h"
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
 static const int defaultCursorSize = 16;
 
-EwkViewImpl::PageViewMap EwkViewImpl::pageViewMap;
+typedef HashMap<WKPageRef, Evas_Object*> PageViewMap;
 
-void EwkViewImpl::addToPageViewMap(const Evas_Object* ewkView)
+static inline PageViewMap& pageViewMap()
 {
-    EwkViewImpl* viewImpl = EwkViewImpl::fromEvasObject(ewkView);
+    DEFINE_STATIC_LOCAL(PageViewMap, map, ());
+    return map;
+}
 
-    PageViewMap::AddResult result = pageViewMap.add(viewImpl->wkPage(), ewkView);
+void EwkViewImpl::addToPageViewMap(EwkViewImpl* viewImpl)
+{
+    PageViewMap::AddResult result = pageViewMap().add(viewImpl->wkPage(), viewImpl->view());
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void EwkViewImpl::removeFromPageViewMap(const Evas_Object* ewkView)
+void EwkViewImpl::removeFromPageViewMap(EwkViewImpl* viewImpl)
 {
-    EwkViewImpl* viewImpl = EwkViewImpl::fromEvasObject(ewkView);
-
-    ASSERT(pageViewMap.contains(viewImpl->wkPage()));
-    pageViewMap.remove(viewImpl->wkPage());
+    ASSERT(pageViewMap().contains(viewImpl->wkPage()));
+    pageViewMap().remove(viewImpl->wkPage());
 }
 
 const Evas_Object* EwkViewImpl::viewFromPageViewMap(const WKPageRef page)
 {
     ASSERT(page);
 
-    return pageViewMap.get(page);
+    return pageViewMap().get(page);
 }
 
-EwkViewImpl::EwkViewImpl(Evas_Object* view)
-#if USE(ACCELERATED_COMPOSITING)
-    : evasGl(0)
-    , evasGlContext(0)
-    , evasGlSurface(0)
-    , m_view(view)
-#else
+EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, PassRefPtr<WebPageGroup> pageGroup)
     : m_view(view)
+    , m_context(context)
+    , m_pageClient(PageClientImpl::create(this))
+    , m_pageProxy(toImpl(m_context->wkContext())->createWebPage(m_pageClient.get(), pageGroup.get()))
+    , m_pageLoadClient(PageLoadClientEfl::create(this))
+    , m_pagePolicyClient(PagePolicyClientEfl::create(this))
+    , m_pageUIClient(PageUIClientEfl::create(this))
+    , m_resourceLoadClient(ResourceLoadClientEfl::create(this))
+    , m_findClient(FindClientEfl::create(this))
+    , m_formClient(FormClientEfl::create(this))
+    , m_backForwardList(Ewk_Back_Forward_List::create(toAPI(m_pageProxy->backForwardList())))
+#if USE(TILED_BACKING_STORE)
+    , m_pageViewportControllerClient(PageViewportControllerClientEfl::create(this))
+    , m_pageViewportController(adoptPtr(new PageViewportController(m_pageProxy.get(), m_pageViewportControllerClient.get())))
+#endif
+#if USE(ACCELERATED_COMPOSITING)
+    , m_evasGl(0)
+    , m_evasGlContext(0)
+    , m_evasGlSurface(0)
 #endif
     , m_settings(Ewk_Settings::create(this))
     , m_mouseEventsEnabled(false)
@@ -96,14 +118,48 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view)
     , m_displayTimer(this, &EwkViewImpl::displayTimerFired)
     , m_inputMethodContext(InputMethodContextEfl::create(this, smartData()->base.evas))
 {
-    ASSERT(view);
+    ASSERT(m_view);
+    ASSERT(m_context);
+    ASSERT(m_pageProxy);
+
+#if USE(COORDINATED_GRAPHICS)
+    m_pageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
+    m_pageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
+    m_pageProxy->setUseFixedLayout(true);
+#endif
+
+    m_pageProxy->initializeWebPage();
+
+#if USE(TILED_BACKING_STORE)
+    pageClient->setPageViewportController(pageViewportController.get());
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    m_pageProxy->fullScreenManager()->setWebView(m_view);
+    m_pageProxy->pageGroup()->preferences()->setFullScreenEnabled(true);
+#endif
 
     // Enable mouse events by default
     setMouseEventsEnabled(true);
+
+    // Listen for favicon changes.
+    Ewk_Favicon_Database* iconDatabase = m_context->faviconDatabase();
+    ASSERT(iconDatabase);
+
+    iconDatabase->watchChanges(IconChangeCallbackData(EwkViewImpl::onFaviconChanged, this));
+
+    EwkViewImpl::addToPageViewMap(this);
 }
 
 EwkViewImpl::~EwkViewImpl()
 {
+    // Unregister icon change callback.
+    Ewk_Favicon_Database* iconDatabase = m_context->faviconDatabase();
+    ASSERT(iconDatabase);
+
+    iconDatabase->unwatchChanges(EwkViewImpl::onFaviconChanged);
+
+    EwkViewImpl::removeFromPageViewMap(this);
 }
 
 Ewk_View_Smart_Data* EwkViewImpl::smartData()
@@ -126,7 +182,7 @@ EwkViewImpl* EwkViewImpl::fromEvasObject(const Evas_Object* view)
  */
 WKPageRef EwkViewImpl::wkPage()
 {
-    return toAPI(pageProxy.get());
+    return toAPI(m_pageProxy.get());
 }
 
 void EwkViewImpl::setCursor(const Cursor& cursor)
@@ -522,7 +578,7 @@ bool EwkViewImpl::isVisible() const
 
 const char* EwkViewImpl::title() const
 {
-    m_title = pageProxy->pageTitle().utf8().data();
+    m_title = m_pageProxy->pageTitle().utf8().data();
 
     return m_title;
 }
@@ -545,13 +601,13 @@ void EwkViewImpl::setThemePath(const char* theme)
 {
     if (m_theme != theme) {
         m_theme = theme;
-        pageProxy->setThemePath(theme);
+        m_pageProxy->setThemePath(theme);
     }
 }
 
 const char* EwkViewImpl::customTextEncodingName() const
 {
-    String customEncoding = pageProxy->customTextEncodingName();
+    String customEncoding = m_pageProxy->customTextEncodingName();
     if (customEncoding.isEmpty())
         return 0;
 
@@ -563,7 +619,7 @@ const char* EwkViewImpl::customTextEncodingName() const
 void EwkViewImpl::setCustomTextEncodingName(const char* encoding)
 {
     m_customEncoding = encoding;
-    pageProxy->setCustomTextEncodingName(encoding ? encoding : String());
+    m_pageProxy->setCustomTextEncodingName(encoding ? encoding : String());
 }
 
 void EwkViewImpl::setMouseEventsEnabled(bool enabled)
@@ -626,7 +682,7 @@ void EwkViewImpl::setTouchEventsEnabled(bool enabled)
  */
 void EwkViewImpl::informIconChange()
 {
-    Ewk_Favicon_Database* iconDatabase = context->faviconDatabase();
+    Ewk_Favicon_Database* iconDatabase = m_context->faviconDatabase();
     ASSERT(iconDatabase);
 
     m_faviconURL = ewk_favicon_database_icon_url_get(iconDatabase, m_url);
@@ -800,7 +856,7 @@ void EwkViewImpl::informWebProcessCrashed()
     evas_object_smart_callback_call(m_view, "webprocess,crashed", &handled);
 
     if (!handled) {
-        CString url = pageProxy->urlAtProcessExit().utf8();
+        CString url = m_pageProxy->urlAtProcessExit().utf8();
         WARN("WARNING: The web process experienced a crash on '%s'.\n", url.data());
 
         // Display an error page
@@ -923,7 +979,7 @@ unsigned long long EwkViewImpl::informDatabaseQuotaReached(const String& databas
  */
 void EwkViewImpl::informURLChange()
 {
-    String activeURL = pageProxy->activeURL();
+    String activeURL = m_pageProxy->activeURL();
     if (activeURL.isEmpty())
         return;
 
@@ -1028,3 +1084,13 @@ void EwkViewImpl::onTouchMove(void* /* data */, Evas* /* canvas */, Evas_Object*
     viewImpl->feedTouchEvents(EWK_TOUCH_MOVE);
 }
 #endif
+
+void EwkViewImpl::onFaviconChanged(const char* pageURL, void* eventInfo)
+{
+    EwkViewImpl* viewImpl = static_cast<EwkViewImpl*>(eventInfo);
+
+    if (!viewImpl->url() || strcasecmp(viewImpl->url(), pageURL))
+        return;
+
+    viewImpl->informIconChange();
+}

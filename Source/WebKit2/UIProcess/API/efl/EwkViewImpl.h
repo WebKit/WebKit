@@ -69,6 +69,7 @@ class PageUIClientEfl;
 class PageViewportControllerClientEfl;
 class PageViewportController;
 class ResourceLoadClientEfl;
+class WebPageGroup;
 class WebPageProxy;
 class WebPopupItem;
 class WebPopupMenuProxyEfl;
@@ -100,16 +101,17 @@ typedef struct Ewk_View_Smart_Data Ewk_View_Smart_Data;
 
 class EwkViewImpl {
 public:
-    explicit EwkViewImpl(Evas_Object* view);
+    EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, PassRefPtr<WebKit::WebPageGroup> pageGroup);
     ~EwkViewImpl();
 
     static EwkViewImpl* fromEvasObject(const Evas_Object* view);
 
-    inline Evas_Object* view() { return m_view; }
+    Evas_Object* view() { return m_view; }
     WKPageRef wkPage();
-    inline WebKit::WebPageProxy* page() { return pageProxy.get(); }
-    Ewk_Context* ewkContext() { return context.get(); }
+    WebKit::WebPageProxy* page() { return m_pageProxy.get(); }
+    Ewk_Context* ewkContext() { return m_context.get(); }
     Ewk_Settings* settings() { return m_settings.get(); }
+    Ewk_Back_Forward_List* backForwardList() { return m_backForwardList.get(); }
 
     WebCore::IntSize size() const;
     bool isFocused() const;
@@ -136,8 +138,8 @@ public:
     void redrawRegion(const WebCore::IntRect& rect);
     void setImageData(void* imageData, const WebCore::IntSize& size);
 
-    static void addToPageViewMap(const Evas_Object* ewkView);
-    static void removeFromPageViewMap(const Evas_Object* ewkView);
+    static void addToPageViewMap(EwkViewImpl* viewImpl);
+    static void removeFromPageViewMap(EwkViewImpl* viewImpl);
     static const Evas_Object* viewFromPageViewMap(const WKPageRef);
 
 #if ENABLE(FULLSCREEN_API)
@@ -210,29 +212,6 @@ public:
     void informIntentServiceRegistration(Ewk_Intent_Service* ewkIntentService);
 #endif
 
-    // FIXME: Make members private for encapsulation.
-    OwnPtr<WebKit::PageClientImpl> pageClient;
-#if USE(TILED_BACKING_STORE)
-    OwnPtr<WebKit::PageViewportControllerClientEfl> pageViewportControllerClient;
-    OwnPtr<WebKit::PageViewportController> pageViewportController;
-#endif
-    RefPtr<WebKit::WebPageProxy> pageProxy;
-    OwnPtr<WebKit::PageLoadClientEfl> pageLoadClient;
-    OwnPtr<WebKit::PagePolicyClientEfl> pagePolicyClient;
-    OwnPtr<WebKit::PageUIClientEfl> pageUIClient;
-    OwnPtr<WebKit::ResourceLoadClientEfl> resourceLoadClient;
-    OwnPtr<WebKit::FindClientEfl> findClient;
-    OwnPtr<WebKit::FormClientEfl> formClient;
-
-    OwnPtr<Ewk_Back_Forward_List> backForwardList;
-    RefPtr<Ewk_Context> context;
-
-#if USE(ACCELERATED_COMPOSITING)
-    Evas_GL* evasGl;
-    Evas_GL_Context* evasGlContext;
-    Evas_GL_Surface* evasGlSurface;
-#endif
-
 private:
     inline Ewk_View_Smart_Data* smartData();
     void displayTimerFired(WebCore::Timer<EwkViewImpl>*);
@@ -246,8 +225,29 @@ private:
     static void onTouchUp(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */);
     static void onTouchMove(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */);
 #endif
+    static void onFaviconChanged(const char* pageURL, void* eventInfo);
 
+    // Note, initialization matters.
     Evas_Object* m_view;
+    RefPtr<Ewk_Context> m_context;
+    OwnPtr<WebKit::PageClientImpl> m_pageClient;
+    RefPtr<WebKit::WebPageProxy> m_pageProxy;
+    OwnPtr<WebKit::PageLoadClientEfl> m_pageLoadClient;
+    OwnPtr<WebKit::PagePolicyClientEfl> m_pagePolicyClient;
+    OwnPtr<WebKit::PageUIClientEfl> m_pageUIClient;
+    OwnPtr<WebKit::ResourceLoadClientEfl> m_resourceLoadClient;
+    OwnPtr<WebKit::FindClientEfl> m_findClient;
+    OwnPtr<WebKit::FormClientEfl> m_formClient;
+    OwnPtr<Ewk_Back_Forward_List> m_backForwardList;
+#if USE(TILED_BACKING_STORE)
+    OwnPtr<WebKit::PageViewportControllerClientEfl> m_pageViewportControllerClient;
+    OwnPtr<WebKit::PageViewportController> m_pageViewportController;
+#endif
+#if USE(ACCELERATED_COMPOSITING)
+    Evas_GL* m_evasGl;
+    Evas_GL_Context* m_evasGlContext;
+    Evas_GL_Surface* m_evasGlSurface;
+#endif
     OwnPtr<Ewk_Settings> m_settings;
     RefPtr<Evas_Object> m_cursorObject;
     WKEinaSharedString m_cursorGroup;
@@ -265,9 +265,6 @@ private:
     OwnPtr<Ewk_Popup_Menu> m_popupMenu;
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
     OwnPtr<Ewk_Color_Picker> m_colorPicker;
-
-    typedef HashMap<WKPageRef, const Evas_Object*> PageViewMap;
-    static PageViewMap pageViewMap;
 };
 
 #endif // EwkViewImpl_h

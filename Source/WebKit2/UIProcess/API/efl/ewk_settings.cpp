@@ -45,12 +45,12 @@ using namespace WebKit;
 
 const WebKit::WebPreferences* Ewk_Settings::preferences() const
 {
-    return m_viewImpl->pageProxy->pageGroup()->preferences();
+    return m_viewImpl->page()->pageGroup()->preferences();
 }
 
 WebKit::WebPreferences* Ewk_Settings::preferences()
 {
-    return m_viewImpl->pageProxy->pageGroup()->preferences();
+    return m_viewImpl->page()->pageGroup()->preferences();
 }
 
 #if ENABLE(SPELLCHECK)
