@@ -390,9 +390,9 @@ WebInspector.UserAgentSettingsTab = function()
     p.appendChild(this._createUserAgentControl());
     if (Capabilities.canOverrideDeviceMetrics)
         p.appendChild(this._createDeviceMetricsControl());
-    if (Capabilities.canOverrideGeolocation && WebInspector.experimentsSettings.geolocationOverride.isEnabled())
+    if (Capabilities.canOverrideGeolocation)
         p.appendChild(this._createGeolocationOverrideControl());
-    if (Capabilities.canOverrideDeviceOrientation && WebInspector.experimentsSettings.deviceOrientationOverride.isEnabled())
+    if (Capabilities.canOverrideDeviceOrientation)
         p.appendChild(this._createDeviceOrientationOverrideControl());
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Emulate touch events"), WebInspector.settings.emulateTouchEvents));
 }
