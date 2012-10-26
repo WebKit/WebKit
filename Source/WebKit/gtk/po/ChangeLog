@@ -1,3 +1,12 @@
+2012-10-26  Christian Kirbach  <Christian.Kirbach@gmail.com>
+
+        German de.po translation needs update
+        https://bugs.webkit.org/show_bug.cgi?id=91349
+
+        Rubber-stamped by Gustavo Noronha.
+
+        * de.po: updated with proof-read version.
+
 2012-10-23  Martin Robinson  <mrobinson@igalia.com>
 
         POTFILES.in/.skip need updates for translators

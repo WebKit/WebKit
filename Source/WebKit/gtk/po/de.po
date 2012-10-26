@@ -2,22 +2,25 @@
 # This file is put in the public domain.
 # Copyright (C) 2009 Christian Dywan <christian@twotoasts.de>, 2009.
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2010, 2012.
-# Christian Kirbach <Christian.Kirbach@googlemail.com>, 2010, 2012.
+# Christian Kirbach <Christian.Kirbach@gmail.com>, 2010, 2012.
+# Wolfgang Stöggl <c72578@yahoo.de>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: webkit HEAD\n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
 "POT-Creation-Date: 2010-12-27 15:26+0000\n"
-"PO-Revision-Date: 2012-01-29 19:03+0100\n"
-"Last-Translator: Christian Kirbach <Christian.Kirbach@googlemail.com>\n"
+"PO-Revision-Date: 2012-10-07 06:30+0200\n"
+"Last-Translator: Christian Kirbach <Christian.Kirbach@gmail.com>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: GERMANY\n"
+"X-Generator: Gtranslator 2.91.5\n"
 
 #: ../WebCoreSupport/ChromeClientGtk.cpp:589
 msgid "Upload File"
@@ -42,7 +45,7 @@ msgstr "LRE Von-links-nach-rechts-_Einbettung"
 
 #: ../WebCoreSupport/ContextMenuClientGtk.cpp:83
 msgid "RLE Right-to-left e_mbedding"
-msgstr "RLE Von-rechts-nach-Links-E_inbettung"
+msgstr "RLE Von-rechts-nach-links-E_inbettung"
 
 #: ../WebCoreSupport/ContextMenuClientGtk.cpp:84
 msgid "LRO Left-to-right _override"
@@ -211,11 +214,10 @@ msgid "Link URI"
 msgstr "Adresse des Verweises"
 
 #: ../webkit/webkithittestresult.cpp:172
-#, fuzzy
 msgid "The URI to which the target that received the event points, if any."
 msgstr ""
-"Die Adresse zum Ziel ?, welches die Ereignispunkte erhalten hat, falls "
-"überhaupt."
+"Die Adresse zu der das Ziel, welches das Ereignis erhielt, zeigt (falls "
+"verfügbar)."
 
 #: ../webkit/webkithittestresult.cpp:185
 msgid "Image URI"
@@ -247,7 +249,7 @@ msgstr "Innerer Knoten"
 
 #: ../webkit/webkithittestresult.cpp:222
 msgid "The inner DOM node associated with the hit test result."
-msgstr "Der innere DOM-Knoten, der mit Trefferergebnis verknüpft ist."
+msgstr "Der innere DOM-Knoten, der mit dem Trefferergebnis verknüpft ist."
 
 #: ../webkit/webkitnetworkrequest.cpp:134
 #: ../webkit/webkitnetworkresponse.cpp:134 ../webkit/webkitwebframe.cpp:323
@@ -282,45 +284,40 @@ msgid "Protocol"
 msgstr "Protokoll"
 
 #: ../webkit/webkitsecurityorigin.cpp:151
-#, fuzzy
 msgid "The protocol of the security origin"
-msgstr "Das Protokoll der ?"
+msgstr "Das Protokoll des Sicherheitsursprungs"
 
 #: ../webkit/webkitsecurityorigin.cpp:164
 msgid "Host"
 msgstr "Rechner"
 
 #: ../webkit/webkitsecurityorigin.cpp:165
-#, fuzzy
 msgid "The host of the security origin"
-msgstr "Der Rechner der ?"
+msgstr "Der Rechner des Sicherheitsursprungs"
 
 #: ../webkit/webkitsecurityorigin.cpp:178
 msgid "Port"
 msgstr "Port"
 
 #: ../webkit/webkitsecurityorigin.cpp:179
-#, fuzzy
 msgid "The port of the security origin"
-msgstr "Der Port der ?"
+msgstr "Der Port des Sicherheitsursprungs"
 
 #: ../webkit/webkitsecurityorigin.cpp:192
 msgid "Web Database Usage"
 msgstr "Verwendung der Web-Datenbank"
 
 #: ../webkit/webkitsecurityorigin.cpp:193
-#, fuzzy
 msgid "The cumulative size of all web databases in the security origin"
-msgstr "Die Gesamtgröße aller Web-Datenbanken im ?"
+msgstr "Die Gesamtgröße aller Web-Datenbanken im Sicherheitsursprung"
 
 #: ../webkit/webkitsecurityorigin.cpp:205
 msgid "Web Database Quota"
 msgstr "Speicherplatzbegrenzung der Web-Datenbank"
 
 #: ../webkit/webkitsecurityorigin.cpp:206
-#, fuzzy
 msgid "The web database quota of the security origin in bytes"
-msgstr "Die Speicherplatzbegrenzung des ? in Bytes"
+msgstr "Die Speicherplatzbegrenzung des Sicherheitsursprungs in Bytes"
 
 #: ../webkit/webkitsoupauthdialog.c:264
 #, c-format
@@ -345,12 +342,11 @@ msgstr "An Passwort _erinnern"
 
 #: ../webkit/webkitwebdatabase.cpp:173
 msgid "Security Origin"
-msgstr ""
+msgstr "Sicherheitsursprung"
 
 #: ../webkit/webkitwebdatabase.cpp:174
-#, fuzzy
 msgid "The security origin of the database"
-msgstr "Das ? der Datenbank"
+msgstr "Der Sicherheitsursprung der Datenbank"
 
 #: ../webkit/webkitwebdatabase.cpp:187 ../webkit/webkitwebframe.cpp:309
 msgid "Name"
@@ -720,7 +716,7 @@ msgstr "Schrittweite für Größenänderungen"
 
 #: ../webkit/webkitwebsettings.cpp:441
 msgid "The value by which the zoom level is changed when zooming in or out."
-msgstr "Der Wert für Größenänderungensstufen beim Vergrößern oder Verkleinern."
+msgstr "Der Wert für Größenänderungsstufen beim Vergrößern oder Verkleinern."
 
 #: ../webkit/webkitwebsettings.cpp:459
 msgid "Enable Developer Extras"
@@ -922,10 +918,8 @@ msgid "Enable Hyperlink Auditing"
 msgstr "Hyperlink-Auditing aktivieren"
 
 #: ../webkit/webkitwebsettings.cpp:902
-#, fuzzy
-#| msgid "Whether the page cache should be used"
 msgid "Whether <a ping> should be able to send pings"
-msgstr "Legt fest, ob <ein ping> pings senden können soll"
+msgstr "Legt fest, ob <a ping> Pings senden darf"
 
 #: ../webkit/webkitwebsettings.cpp:910
 msgid "Enable Fullscreen"
