@@ -57,6 +57,7 @@ ShadowRoot::ShadowRoot(Document* document)
     , m_resetStyleInheritance(false)
     , m_insertionPointAssignedTo(0)
     , m_numberOfShadowElementChildren(0)
+    , m_numberOfStyles(0)
 {
     ASSERT(document);
     
@@ -244,6 +245,19 @@ void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node*
 {
     ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     owner()->invalidateDistribution();
+}
+
+void ShadowRoot::registerScopedHTMLStyleChild()
+{
+    ++m_numberOfStyles;
+    setHasScopedHTMLStyleChild(true);
+}
+
+void ShadowRoot::unregisterScopedHTMLStyleChild()
+{
+    ASSERT(hasScopedHTMLStyleChild() && m_numberOfStyles > 0);
+    --m_numberOfStyles;
+    setHasScopedHTMLStyleChild(m_numberOfStyles > 0);
 }
 
 }

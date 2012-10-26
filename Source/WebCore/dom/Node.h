@@ -662,8 +662,8 @@ public:
     void notifyMutationObserversNodeWillDetach();
 #endif // ENABLE(MUTATION_OBSERVERS)
 
-    void registerScopedHTMLStyleChild();
-    void unregisterScopedHTMLStyleChild();
+    virtual void registerScopedHTMLStyleChild();
+    virtual void unregisterScopedHTMLStyleChild();
     size_t numberOfScopedHTMLStyleChildren() const;
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;

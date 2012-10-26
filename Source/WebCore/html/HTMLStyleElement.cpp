@@ -122,40 +122,6 @@ void HTMLStyleElement::finishParsingChildren()
     HTMLElement::finishParsingChildren();
 }
 
-inline bool HTMLStyleElement::isRegisteredAsScoped() const
-{
-    // Note: We cannot rely on the 'scoped' attribute still being present when this method is invoked.
-    // Therefore we cannot rely on scoped()!
-    if (m_scopedStyleRegistrationState == NotRegistered)
-        return false;
-    return true;
-}
-
-// These three Node methods are placed here to
-// make the header inclusion dependency sane.
-
-inline void Node::registerScopedHTMLStyleChild()
-{
-    setHasScopedHTMLStyleChild(true);
-}
-
-inline void Node::unregisterScopedHTMLStyleChild()
-{
-    ASSERT(hasScopedHTMLStyleChild());
-    setHasScopedHTMLStyleChild(numberOfScopedHTMLStyleChildren());
-}
-
-size_t Node::numberOfScopedHTMLStyleChildren() const
-{
-    size_t count = 0;
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->hasTagName(styleTag) && static_cast<HTMLStyleElement*>(child)->isRegisteredAsScoped())
-            count++;
-    }
-
-    return count;
-}
-
 void HTMLStyleElement::registerWithScopingNode(bool scoped)
 {
     // Note: We cannot rely on the 'scoped' element already being present when this method is invoked.

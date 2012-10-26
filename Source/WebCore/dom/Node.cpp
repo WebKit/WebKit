@@ -64,6 +64,7 @@
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
+#include "HTMLStyleElement.h"
 #include "InspectorCounters.h"
 #include "KeyboardEvent.h"
 #include "LabelsNodeList.h"
@@ -2842,6 +2843,28 @@ void Node::textRects(Vector<IntRect>& rects) const
     WebCore::ExceptionCode ec = 0;
     range->selectNodeContents(const_cast<Node*>(this), ec);
     range->textRects(rects);
+}
+
+void Node::registerScopedHTMLStyleChild()
+{
+    setHasScopedHTMLStyleChild(true);
+}
+
+void Node::unregisterScopedHTMLStyleChild()
+{
+    ASSERT(hasScopedHTMLStyleChild());
+    setHasScopedHTMLStyleChild(numberOfScopedHTMLStyleChildren());
+}
+
+size_t Node::numberOfScopedHTMLStyleChildren() const
+{
+    size_t count = 0;
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(HTMLNames::styleTag) && static_cast<HTMLStyleElement*>(child)->isRegisteredAsScoped())
+            count++;
+    }
+
+    return count;
 }
 
 } // namespace WebCore

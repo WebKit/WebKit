@@ -44,7 +44,14 @@ public:
     bool scoped() const;
     void setScoped(bool);
     Element* scopingElement() const;
-    bool isRegisteredAsScoped() const;
+    bool isRegisteredAsScoped() const
+    {
+        // Note: We cannot rely on the 'scoped' attribute still being present when this method is invoked.
+        // Therefore we cannot rely on scoped()!
+        if (m_scopedStyleRegistrationState == NotRegistered)
+            return false;
+        return true;
+    }
 
     using StyleElement::sheet;
 
