@@ -235,7 +235,7 @@ SharedCookieJarQt::SharedCookieJarQt(const String& cookieStorageDirectory)
 {
     m_database = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"));
     const QString cookieStoragePath = cookieStorageDirectory;
-    const QString dataBaseName = cookieStoragePath + QLatin1String("cookies.db");
+    const QString dataBaseName = cookieStoragePath + QLatin1String("/cookies.db");
     m_database.setDatabaseName(dataBaseName);
     ensureDatabaseTable();
     loadCookies();

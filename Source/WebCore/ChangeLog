@@ -1,3 +1,15 @@
+2012-10-26  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt]REGRESSION(r131428): cookies.db created on wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=99445
+
+        Reviewed by Simon Hausmann.
+
+        Added a slash to the path of cookies.db in CookieJarQt.cpp.
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::SharedCookieJarQt::SharedCookieJarQt):
+
 2012-10-26  Adam Barth  <abarth@webkit.org>
 
         Unreviewed. This ASSERT is no longer correct (and fires on many tests.)
