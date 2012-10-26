@@ -764,4 +764,5 @@ webkit.org/b/99306 fast/multicol/vertical-rl/rule-style.html [ ImageOnlyFailure 
 webkit.org/b/99306 fast/overflow/paged-x-with-column-gap.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/repaint/fixed-child-of-fixed-move-after-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/replaced/border-radius-clip.html [ ImageOnlyFailure ]
+webkit.org/b/99306 transitions/opacity-transition-zindex.html [ ImageOnlyFailure ]
 webkit.org/b/99306 transitions/suspend-transform-transition.html [ ImageOnlyFailure ]
