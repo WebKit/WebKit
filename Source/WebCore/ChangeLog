@@ -1,3 +1,18 @@
+2012-10-25  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        A mistake in WebCore::JavaScriptCallFrame::evaluate which will cause assert failed
+        https://bugs.webkit.org/show_bug.cgi?id=100347
+
+        Reviewed by Mark Lam and Filip Pizlo.
+
+        In worker context, calling "JSDOMWindowBase::commonJSGlobalData" will cause assert,
+        since there is "ASSERT(isMainThread())" in "JSDOMWindowBase::commonJSGlobalData".
+
+        No new test case, since no behaviour changed.
+
+        * bindings/js/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::evaluate):
+
 2012-10-25  Adam Barth  <abarth@webkit.org>
 
         [V8] We can merge the wrapper maps for DOM objects and active DOM objects

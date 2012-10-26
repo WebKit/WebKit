@@ -115,7 +115,7 @@ JSValue JavaScriptCallFrame::evaluate(const String& script, JSValue& exception) 
     if (!m_isValid)
         return jsNull();
 
-    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
+    JSLockHolder lock(m_debuggerCallFrame.callFrame());
     return m_debuggerCallFrame.evaluate(script, exception);
 }
 
