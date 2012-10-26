@@ -1,3 +1,18 @@
+2012-10-25  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12544626> [cg] RenderBlock::selectionGaps() is extremely slow when there are many floats
+        https://bugs.webkit.org/show_bug.cgi?id=100413
+
+        Reviewed by Anders Carlsson.
+
+        RenderBlock::selectionGaps() calls GraphicsContext::clipOut(const IntRect&) for each float.
+        Sped up the Core Graphics implementation of this function considerably by removing an
+        unnecessary call to CGContextGetClipBoundingBox.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clipOut): Changed to use CGRectInfinite rather than the bounding
+        box of the current clip.
+
 2012-10-25  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (132422): Tiles don't move when the Find dialog causes programmatic scrolls

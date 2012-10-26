@@ -1057,7 +1057,7 @@ void GraphicsContext::clipOut(const IntRect& rect)
     if (paintingDisabled())
         return;
 
-    CGRect rects[2] = { CGContextGetClipBoundingBox(platformContext()), rect };
+    CGRect rects[2] = { CGRectInfinite, rect };
     CGContextBeginPath(platformContext());
     CGContextAddRects(platformContext(), rects, 2);
     CGContextEOClip(platformContext());
