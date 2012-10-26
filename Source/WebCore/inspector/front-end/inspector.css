@@ -909,11 +909,11 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     position: absolute;
     display: block;
     content: "";
-    left: -14px;
+    left: -17px;
     top: 0.8em;
     width: 10px;
     height: 10px;
-    margin-top: -5px;
+    margin-top: -6px;
     -webkit-user-select: none;
 }
 
@@ -1007,6 +1007,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 
 .console-warning-level::before {
     background-image: url(Images/warningIcon.png);
+    margin-top: -7px;
 }
 
 .console-user-command .console-message {

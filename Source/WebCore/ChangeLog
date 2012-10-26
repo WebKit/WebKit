@@ -1,3 +1,16 @@
+2012-10-26  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: Fix log-type icon alignment.
+        https://bugs.webkit.org/show_bug.cgi?id=100520
+
+        Reviewed by Yury Semikhatsky.
+
+        The icons are just a pixel or two off, and it's driving me nuts.
+
+        * inspector/front-end/inspector.css:
+        (.console-message::before, .console-user-command::before, #console-prompt::before, .console-group-title::before):
+        (.console-warning-level::before):
+
 2012-10-26  Erik Arvidsson  <arv@chromium.org>
 
         Replaceable attributes should also have readonly
