@@ -23,17 +23,20 @@
 #include "ImageBuffer.h"
 #include "SharedBuffer.h"
 
+#include <BlackBerryPlatformResourceStore.h>
+
+using BlackBerry::Platform::ResourceData;
+using BlackBerry::Platform::ResourceStore;
+
 namespace WebCore {
 
 PassRefPtr<Image> Image::loadPlatformResource(const char *name)
 {
-    // RESOURCE_PATH is set by CMake in OptionsBlackBerry.cmake
-    String fullPath(RESOURCE_PATH);
-    String extension(".png");
+    ResourceData data = ResourceStore::instance()->requestResource(BlackBerry::Platform::String(name));
+    if (!data.data())
+        return BitmapImage::nullImage();
 
-    fullPath = fullPath + name + extension;
-
-    RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(fullPath);
+    RefPtr<SharedBuffer> buffer = SharedBuffer::create(data.data(), data.len());
     if (!buffer)
         return BitmapImage::nullImage();
 
