@@ -458,29 +458,11 @@ struct AbstractValue {
 private:
     void clobberArrayModes()
     {
-        if (m_arrayModes == ALL_ARRAY_MODES)
-            return;
-        
-        if (LIKELY(m_arrayModes & asArrayModes(NonArray)))
-            m_arrayModes = ALL_ARRAY_MODES;
-        else
-            clobberArrayModesSlow();
+        // FIXME: We could make this try to predict the set of array modes that this object
+        // could have in the future. For now, just do the simple thing.
+        m_arrayModes = ALL_ARRAY_MODES;
     }
     
-    void clobberArrayModesSlow()
-    {
-        if (m_arrayModes & asArrayModes(ArrayClass))
-            m_arrayModes = ALL_ARRAY_MODES;
-        else if (m_arrayModes & asArrayModes(NonArrayWithContiguous))
-            m_arrayModes |= asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage);
-        else if (m_arrayModes & asArrayModes(ArrayWithContiguous))
-            m_arrayModes |= asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage);
-        else if (m_arrayModes & asArrayModes(NonArrayWithArrayStorage))
-            m_arrayModes |= asArrayModes(NonArrayWithSlowPutArrayStorage);
-        else if (m_arrayModes & asArrayModes(ArrayWithArrayStorage))
-            m_arrayModes |= asArrayModes(ArrayWithArrayStorage);
-    }
-
     void setFuturePossibleStructure(Structure* structure)
     {
         if (structure->transitionWatchpointSetIsStillValid())

@@ -1421,6 +1421,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             break;
         }
         forNode(node.child1()).filterArrayModes(arrayModesFor(node.arrayMode()));
+        m_haveStructures = true;
         break;
     }
     case Arrayify: {
@@ -1438,6 +1439,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(nodeIndex).clear();
             clobberStructures(indexInBlock);
             forNode(node.child1()).filterArrayModes(arrayModesFor(node.arrayMode()));
+            m_haveStructures = true;
             break;
         default:
             CRASH();

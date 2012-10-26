@@ -38,14 +38,14 @@ const char* arrayModesToString(ArrayModes arrayModes)
     if (arrayModes == ALL_ARRAY_MODES)
         return "TOP";
 
-    bool isNonArray = !!(arrayModes & NonArray);
-    bool isNonArrayWithContiguous = !!(arrayModes & NonArrayWithContiguous);
-    bool isNonArrayWithArrayStorage = !!(arrayModes & NonArrayWithArrayStorage);
-    bool isNonArrayWithSlowPutArrayStorage = !!(arrayModes & NonArrayWithSlowPutArrayStorage);
-    bool isArray = !!(arrayModes & ArrayClass);
-    bool isArrayWithContiguous = !!(arrayModes & ArrayWithContiguous);
-    bool isArrayWithArrayStorage = !!(arrayModes & ArrayWithArrayStorage);
-    bool isArrayWithSlowPutArrayStorage = !!(arrayModes & ArrayWithSlowPutArrayStorage);
+    bool isNonArray = !!(arrayModes & asArrayModes(NonArray));
+    bool isNonArrayWithContiguous = !!(arrayModes & asArrayModes(NonArrayWithContiguous));
+    bool isNonArrayWithArrayStorage = !!(arrayModes & asArrayModes(NonArrayWithArrayStorage));
+    bool isNonArrayWithSlowPutArrayStorage = !!(arrayModes & asArrayModes(NonArrayWithSlowPutArrayStorage));
+    bool isArray = !!(arrayModes & asArrayModes(ArrayClass));
+    bool isArrayWithContiguous = !!(arrayModes & asArrayModes(ArrayWithContiguous));
+    bool isArrayWithArrayStorage = !!(arrayModes & asArrayModes(ArrayWithArrayStorage));
+    bool isArrayWithSlowPutArrayStorage = !!(arrayModes & asArrayModes(ArrayWithSlowPutArrayStorage));
     
     static char result[256];
     snprintf(

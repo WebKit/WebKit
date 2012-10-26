@@ -1,5 +1,29 @@
 2012-10-25  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG Arrayify elimination should replace it with GetButterfly rather than Phantom
+        https://bugs.webkit.org/show_bug.cgi?id=100441
+
+        Reviewed by Oliver Hunt and Gavin Barraclough.
+
+        Made array profiler's to-string helper behave correctly.
+        
+        Made Arrayify elimination do the right thing (convert to GetButterfly).
+        
+        Made CFA's interference analysis track clobbered array modes correctly, mostly by
+        simplifying the machinery.
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::arrayModesToString):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::clobberArrayModes):
+        (AbstractValue):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
+2012-10-25  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION (r131793-r131826): Crash going to wikifonia.org
         https://bugs.webkit.org/show_bug.cgi?id=100281
 
