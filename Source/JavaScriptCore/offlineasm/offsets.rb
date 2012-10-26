@@ -105,7 +105,7 @@ def offsetsAndConfigurationIndex(file)
     
     fileBytes = []
     
-    File.open(file, "r") {
+    File.open(file, "rb") {
         | inp |
         loop {
             byte = inp.getbyte
