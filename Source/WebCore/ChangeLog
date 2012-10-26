@@ -1,3 +1,9 @@
+2012-10-26  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix for Qt builders.
+
+        * platform/qt/MemoryUsageSupportQt.cpp:
+
 2012-10-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r132658.
