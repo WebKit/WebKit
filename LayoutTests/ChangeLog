@@ -21,6 +21,96 @@
 
         Unreviewed pixel gardening.
 
+        Added a bunch of pixel expectations for Qt-WebKit2 - part 5 (svg/dynamic-updates).
+
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-primitiveUnits-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-width-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-x-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-dom-y-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-filterRes-call-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-filterResX-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-filterResY-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-filterUnits-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-height-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-primitiveUnits-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-width-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-x-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterElement-svgdom-y-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-height-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-result-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-width-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-x-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-dom-y-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-height-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-result-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-width-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-x-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFilterPrimitiveStandardAttributes-svgdom-y-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-dom-requiredFeatures-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-svgdom-requiredFeatures-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGGElement-dom-requiredFeatures-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGGElement-svgdom-requiredFeatures-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-requiredFeatures-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-requiredFeatures-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-dom-requiredFeatures-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-dom-x1-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-dom-x2-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-dom-y1-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-dom-y2-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-svgdom-requiredFeatures-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-svgdom-x1-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-svgdom-x2-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-svgdom-y1-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLineElement-svgdom-y2-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientTransform-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-x1-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-x2-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-y1-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-dom-y2-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientUnits-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x1-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x2-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y2-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-markerUnits-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-orient-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-refX-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-dom-refY-attr-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-markerUnits-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-orientAngle-prop-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dynamic-updates/SVGMarkerElement-svgdom-orientType-prop-expected.png: Added.
+
+2012-10-26  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Pixel tests need rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=99323
+
+        Unreviewed pixel gardening.
+
         Added a bunch of pixel expectations for Qt-WebKit2 - part 4 (svg/dynamic-updates).
 
         * platform/qt-5.0-wk2/svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop-expected.png: Added.
