@@ -1,5 +1,41 @@
 2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r132607.
+        http://trac.webkit.org/changeset/132607
+        https://bugs.webkit.org/show_bug.cgi?id=100502
+
+        "SOS! More wrong paths." (Requested by kbalazs on #webkit).
+
+        * platform/qt-5.0-wk2/fullscreen/fullscreen/full-screen-iframe-zIndex-expected.png: Removed.
+        * platform/qt-5.0-wk2/fullscreen/fullscreen/full-screen-remove-ancestor-after-expected.png: Removed.
+        * platform/qt-5.0-wk2/fullscreen/fullscreen/full-screen-stacking-context-expected.png: Removed.
+        * platform/qt-5.0-wk2/fullscreen/fullscreen/full-screen-zIndex-after-expected.png: Removed.
+        * platform/qt-5.0-wk2/fullscreen/fullscreen/full-screen-zIndex-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-appendItem-expected.png/SVGLengthList-appendItem-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-basics-expected.png/SVGLengthList-basics-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-getItem-expected.png/SVGLengthList-getItem-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-initialize-expected.png/SVGLengthList-initialize-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-insertItemBefore-expected.png/SVGLengthList-insertItemBefore-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-removeItem-expected.png/SVGLengthList-removeItem-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-replaceItem-expected.png/SVGLengthList-replaceItem-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-xml-dom-modifications-expected.png/SVGLengthList-xml-dom-modifications-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGLocatable-getCTM-svg-root-expected.png/SVGLocatable-getCTM-svg-root-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGNumberList-basics-expected.png/SVGNumberList-basics-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-appendItem-expected.png/SVGPathSegList-appendItem-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-clear-and-initialize-expected.png/SVGPathSegList-clear-and-initialize-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-insertItemBefore-expected.png/SVGPathSegList-insertItemBefore-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-removeItem-expected.png/SVGPathSegList-removeItem-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-replaceItem-expected.png/SVGPathSegList-replaceItem-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-xml-dom-synchronization-expected.png/SVGPathSegList-xml-dom-synchronization-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGPointList-basics-expected.png/SVGPointList-basics-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGStringList-basics-expected.png/SVGStringList-basics-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/dom/SVGTransformList-basics-expected.png/SVGTransformList-basics-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/filters/feImage-animated-transform-on-target-rect-expected.png/feImage-animated-transform-on-target-rect-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/repaint/image-href-change-expected.png/image-href-change-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/repaint/image-with-clip-path-expected.png/image-with-clip-path-expected.png: Removed.
+
+2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r132604.
         http://trac.webkit.org/changeset/132604
         https://bugs.webkit.org/show_bug.cgi?id=100501
