@@ -1,3 +1,29 @@
+2012-10-26  Vincent Scheib  <scheib@chromium.org>
+
+        Generated should not be supported for things with a shadow
+        https://bugs.webkit.org/show_bug.cgi?id=98836
+
+        Unreviewed rollout of rollout of http://trac.webkit.org/changeset/132269.
+        Initial rollout was speculative and was shown not to be related to crashes.
+        Change author: Elliott Sprehn  <esprehn@chromium.org>
+
+        As far as CSS is concerned inputs and things with shadow content inside 
+        shouldn't support pseudo elements like :before, :after or :first-letter.
+        Neither Gecko or Presto supports it, and we only accidentally supported 
+        it. 
+ 
+        Until the spec tells us what to do we should disable support. This is 
+        also neccesary because the new generated content implementation doesn't 
+        support shadows. 
+
+        Test: fast/forms/pseudo-elements.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+
 2012-10-26  Brady Eidson  <beidson@apple.com>
 
         Crash in WebProces at WebCore::ResourceLoadScheduler::crossOriginRedirectReceived + 78

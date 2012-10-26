@@ -1,3 +1,52 @@
+2012-10-26  Vincent Scheib  <scheib@chromium.org>
+
+        Generated should not be supported for things with a shadow
+        https://bugs.webkit.org/show_bug.cgi?id=98836
+
+        Unreviewed rollout of rollout of http://trac.webkit.org/changeset/132269.
+        Initial rollout was speculative and was shown not to be related to crashes.
+        Change author: Elliott Sprehn  <esprehn@chromium.org>
+
+        Change all pseudos on <input> tests to be ref tests and clean up the tests.
+        They now make sure we don't support generated content on things with a shadow.
+        Also added another test for the other form control types to ensure they don't
+        support pseudos either.
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.html: Added.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements.html:
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.html: Added.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements.html:
+        * fast/forms/pseudo-elements-expected.html: Added.
+        * fast/forms/pseudo-elements.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.html: Added.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html:
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.html: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements.html:
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+
 2012-10-26  Aaron Colwell  <acolwell@chromium.org>
 
         Remove Chromium specific expectations for video-media-source-add-and-remove-buffers.html

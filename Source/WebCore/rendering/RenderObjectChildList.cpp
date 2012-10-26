@@ -29,6 +29,7 @@
 
 #include "AXObjectCache.h"
 #include "ContentData.h"
+#include "Element.h"
 #include "RenderBlock.h"
 #include "RenderCounter.h"
 #include "RenderLayer.h"
@@ -337,6 +338,10 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
     
     if (!styledObject)
         styledObject = owner;
+
+    // Disallow generated content in shadows until the spec says what to do. See: http://webkit.org/b/98836
+    if (isShadowHost(styledObject->node()))
+        return;
 
     RenderStyle* pseudoElementStyle = styledObject->getCachedPseudoStyle(type);
     RenderObject* child;

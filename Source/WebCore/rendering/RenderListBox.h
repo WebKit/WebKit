@@ -67,6 +67,7 @@ private:
     virtual void updateFromElement();
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
     virtual bool hasControlClip() const { return true; }
+    virtual bool canHaveGeneratedChildren() const OVERRIDE { return false; }
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;
 
