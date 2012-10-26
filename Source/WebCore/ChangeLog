@@ -1,3 +1,22 @@
+2012-10-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Breakpoints are not managed correctly when editing uiSourceCode that was bound to ScriptFile after JavaScriptSourceFrame creation.
+        https://bugs.webkit.org/show_bug.cgi?id=100535
+
+        Reviewed by Pavel Feldman.
+
+        Added SourceMappingChanged event to UISourceCode and made
+        JavaScriptSourceFrame update ScriptFile events listeners on it.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype._onSourceMappingChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype._updateScriptFile):
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptMapping.prototype._bindUISourceCodeToScripts):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype.setSourceMapping):
+
 2012-10-26  Vincent Scheib  <scheib@chromium.org>
 
         Unreviewed, rolling out r132644.

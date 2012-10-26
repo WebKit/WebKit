@@ -74,7 +74,8 @@ WebInspector.UISourceCode.Events = {
     TitleChanged: "TitleChanged",
     ConsoleMessageAdded: "ConsoleMessageAdded",
     ConsoleMessageRemoved: "ConsoleMessageRemoved",
-    ConsoleMessagesCleared: "ConsoleMessagesCleared"
+    ConsoleMessagesCleared: "ConsoleMessagesCleared",
+    SourceMappingChanged: "SourceMappingChanged",
 }
 
 WebInspector.UISourceCode.prototype = {
@@ -590,6 +591,7 @@ WebInspector.UISourceCode.prototype = {
     setSourceMapping: function(sourceMapping)
     {
         this._sourceMapping = sourceMapping;
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.SourceMappingChanged, null);
     },
 
     __proto__: WebInspector.Object.prototype

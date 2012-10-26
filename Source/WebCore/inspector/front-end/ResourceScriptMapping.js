@@ -177,13 +177,13 @@ WebInspector.ResourceScriptMapping.prototype = {
     _bindUISourceCodeToScripts: function(uiSourceCode, scripts)
     {
         console.assert(scripts.length);
-        for (var i = 0; i < scripts.length; ++i)
-            scripts[i].setSourceMapping(this);
-        uiSourceCode.setSourceMapping(this);
         if (uiSourceCode.isEditable()) {
             var scriptFile = new WebInspector.ResourceScriptFile(this, uiSourceCode);
             uiSourceCode.setScriptFile(scriptFile);
         }
+        for (var i = 0; i < scripts.length; ++i)
+            scripts[i].setSourceMapping(this);
+        uiSourceCode.setSourceMapping(this);
     },
 
     /**
