@@ -38,3 +38,7 @@ wince* {
     INCLUDEPATH += $$QT.core.sources/../3rdparty/ce-compat
     INCLUDEPATH += $$SOURCE_DIR/os-win32
 }
+
+linux-*:if(isEqual(QT_ARCH, "i386")|isEqual(QT_ARCH, "x86_64")) {
+    INCLUDEPATH += $$SOURCE_DIR/disassembler/udis86
+}

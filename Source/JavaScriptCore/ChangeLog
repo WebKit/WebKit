@@ -1,3 +1,17 @@
+2012-10-26  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        [Qt] Enable JSC's disassembler on x86, x86_64 Linux
+        https://bugs.webkit.org/show_bug.cgi?id=100386
+
+        Reviewed by Simon Hausmann.
+
+        It works fine on Linux x86, x86_64 just needs to be enabled in the
+        QtWebKit build system.
+
+        * DerivedSources.pri:
+        * JavaScriptCore.pri:
+        * Target.pri:
+
 2012-10-26  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Add feature flags for CSS Device Adaptation
