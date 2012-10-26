@@ -24,7 +24,6 @@
 #include "config.h"
 #include "RenderBlock.h"
 
-#include "AXObjectCache.h"
 #include "ColumnInfo.h"
 #include "Document.h"
 #include "Element.h"
@@ -1012,8 +1011,6 @@ void RenderBlock::deleteLineBoxTree()
         }
     }
     m_lineBoxes.deleteLineBoxTree(renderArena());
-    if (UNLIKELY(AXObjectCache::accessibilityEnabled()))
-        document()->axObjectCache()->recomputeIsIgnored(this);
 }
 
 RootInlineBox* RenderBlock::createRootInlineBox() 
@@ -1025,10 +1022,6 @@ RootInlineBox* RenderBlock::createAndAppendRootInlineBox()
 {
     RootInlineBox* rootBox = createRootInlineBox();
     m_lineBoxes.appendLineBox(rootBox);
-
-    if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && m_lineBoxes.firstLineBox() == rootBox)
-        document()->axObjectCache()->recomputeIsIgnored(this);
-
     return rootBox;
 }
 

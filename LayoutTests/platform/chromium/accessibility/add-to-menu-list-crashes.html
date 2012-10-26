@@ -19,18 +19,19 @@
         menulist.focus();
         if (window.testRunner && window.accessibilityController) {
             window.accessibleMenulist = accessibilityController.focusedElement;
-            shouldBe("accessibleMenulist.childAtIndex(0).childrenCount", "1");
+            window.accessiblePopup = accessibleMenulist.childAtIndex(0);
+            shouldBe("accessiblePopup.childrenCount", "1");
         }
     </script>
     <script src="data:text/javascript,document.write('<option selected>2');"></script>
     <script>
         if (window.testRunner && window.accessibilityController)
-            shouldBe("accessibleMenulist.childAtIndex(0).childrenCount", "2");
+            shouldBe("accessiblePopup.childrenCount", "2");
     </script>
     <script>
         menulist.removeChild(menulist.selectedOptions[0]);
         if (window.testRunner && window.accessibilityController)
-            shouldBe("accessibleMenulist.childAtIndex(0).childrenCount", "1");
+            shouldBe("accessiblePopup.childrenCount", "1");
     </script>
 </select>
 

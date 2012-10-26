@@ -1,3 +1,60 @@
+2012-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132514.
+        http://trac.webkit.org/changeset/132514
+        https://bugs.webkit.org/show_bug.cgi?id=100440
+
+        "Broke chromium content_browsertests AccessibilityAriaMenu
+        AccessibilityInputRange AccessibilityListMarkers" (Requested
+        by scheib on #webkit).
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::contentChanged):
+        (WebCore::AXObjectCache::childrenChanged):
+        (WebCore::AXObjectCache::handleAriaRoleChanged):
+        * accessibility/AXObjectCache.h:
+        (AXObjectCache):
+        (WebCore::AXObjectCache::contentChanged):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::contentChanged):
+        (AccessibilityObject):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::correspondingControlForLabelElement):
+        (WebCore::AccessibilityRenderObject::contentChanged):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::isAttachment):
+        (WebCore::AccessibilityScrollView::widgetForAttachmentView):
+        (WebCore::AccessibilityScrollView::updateScrollbars):
+        (WebCore::AccessibilityScrollView::webAreaObject):
+        (WebCore::AccessibilityScrollView::elementRect):
+        (WebCore::AccessibilityScrollView::documentFrameView):
+        (WebCore::AccessibilityScrollView::parentObject):
+        (WebCore::AccessibilityScrollView::parentObjectIfExists):
+        (WebCore::AccessibilityScrollView::getScrollableAreaIfScrollable):
+        (WebCore::AccessibilityScrollView::scrollTo):
+        * accessibility/AccessibilityScrollView.h:
+        (WebCore::AccessibilityScrollView::scrollView):
+        (AccessibilityScrollView):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable):
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::deleteLineBoxTree):
+        (WebCore::RenderBlock::createAndAppendRootInlineBox):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setText):
+
 2012-10-25  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12544626> [cg] RenderBlock::selectionGaps() is extremely slow when there are many floats

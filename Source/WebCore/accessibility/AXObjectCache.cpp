@@ -60,7 +60,6 @@
 #include "HTMLAreaElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
-#include "HTMLLabelElement.h"
 #include "HTMLNames.h"
 #if ENABLE(VIDEO)
 #include "MediaControlElements.h"
@@ -334,9 +333,6 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     m_nodeObjectMapping.set(node, newObj->axObjectID());
     m_objects.set(newObj->axObjectID(), newObj);
     attachWrapper(newObj.get());
-
-    newObj->setCachedIsIgnoredValue(newObj->accessibilityIsIgnored());
-
     return newObj.get();
 }
 
@@ -355,9 +351,6 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
     m_renderObjectMapping.set(renderer, newObj->axObjectID());
     m_objects.set(newObj->axObjectID(), newObj);
     attachWrapper(newObj.get());
-
-    newObj->setCachedIsIgnoredValue(newObj->accessibilityIsIgnored());
-
     return newObj.get();
 }
     
@@ -534,26 +527,16 @@ void AXObjectCache::removeAXID(AccessibilityObject* object)
     m_idsInUse.remove(objID);
 }
 
-void AXObjectCache::textChanged(Node* node)
+void AXObjectCache::contentChanged(Node* node)
 {
-    textChanged(getOrCreate(node));
+    if (AccessibilityObject* object = getOrCreate(node))
+        object->contentChanged(); 
 }
 
-void AXObjectCache::textChanged(RenderObject* renderer)
+void AXObjectCache::contentChanged(RenderObject* renderer)
 {
-    textChanged(getOrCreate(renderer));
-}
-
-void AXObjectCache::textChanged(AccessibilityObject* obj)
-{
-    if (!obj)
-        return;
-
-    bool parentAlreadyExists = obj->parentObjectIfExists();
-    obj->textChanged();
-    postNotification(obj, obj->document(), AXObjectCache::AXTextChanged, true);
-    if (parentAlreadyExists)
-        obj->notifyIfIgnoredValueChanged();
+    if (AccessibilityObject* object = getOrCreate(renderer))
+        object->contentChanged(); 
 }
 
 void AXObjectCache::updateCacheAfterNodeIsAttached(Node* node)
@@ -565,23 +548,14 @@ void AXObjectCache::updateCacheAfterNodeIsAttached(Node* node)
 
 void AXObjectCache::childrenChanged(Node* node)
 {
-    childrenChanged(get(node));
+    if (AccessibilityObject* obj = get(node))
+        obj->childrenChanged();
 }
 
 void AXObjectCache::childrenChanged(RenderObject* renderer)
 {
-    childrenChanged(get(renderer));
-}
-
-void AXObjectCache::childrenChanged(AccessibilityObject* obj)
-{
-    if (!obj)
-        return;
-
-    obj->childrenChanged();
-
-    if (obj->parentObjectIfExists() && obj->cachedIsIgnoredValue() != obj->accessibilityIsIgnored())
-        childrenChanged(obj->parentObject());
+    if (AccessibilityObject* obj = get(renderer))
+        obj->childrenChanged();
 }
     
 void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
@@ -732,55 +706,8 @@ void AXObjectCache::handleActiveDescendantChanged(Node* node)
 
 void AXObjectCache::handleAriaRoleChanged(Node* node)
 {
-    if (AccessibilityObject* obj = getOrCreate(node)) {
+    if (AccessibilityObject* obj = getOrCreate(node))
         obj->updateAccessibilityRole();
-        obj->notifyIfIgnoredValueChanged();
-    }
-}
-
-void AXObjectCache::handleAttributeChanged(const QualifiedName& attrName, Element* element)
-{
-    if (attrName == roleAttr)
-        handleAriaRoleChanged(element);
-    else if (attrName == altAttr || attrName == titleAttr)
-        textChanged(element);
-    else if (attrName == forAttr && element->hasTagName(labelTag))
-        labelChanged(element);
-
-    if (!attrName.localName().string().startsWith("aria-"))
-        return;
-
-    if (attrName == aria_activedescendantAttr)
-        handleActiveDescendantChanged(element);
-    else if (attrName == aria_valuenowAttr || attrName == aria_valuetextAttr)
-        postNotification(element, AXObjectCache::AXValueChanged, true);
-    else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == aria_labelledbyAttr)
-        textChanged(element);
-    else if (attrName == aria_checkedAttr)
-        checkedStateChanged(element);
-    else if (attrName == aria_selectedAttr)
-        selectedChildrenChanged(element);
-    else if (attrName == aria_expandedAttr)
-        handleAriaExpandedChange(element);
-    else if (attrName == aria_hiddenAttr)
-        childrenChanged(element->parentNode());
-    else if (attrName == aria_invalidAttr)
-        postNotification(element, AXObjectCache::AXInvalidStatusChanged, true);
-    else
-        postNotification(element, AXObjectCache::AXAriaAttributeChanged, true);
-}
-
-void AXObjectCache::labelChanged(Element* element)
-{
-    ASSERT(element->hasTagName(labelTag));
-    HTMLElement* correspondingControl = static_cast<HTMLLabelElement*>(element)->control();
-    textChanged(correspondingControl);
-}
-
-void AXObjectCache::recomputeIsIgnored(RenderObject* renderer)
-{
-    if (AccessibilityObject* obj = get(renderer))
-        obj->notifyIfIgnoredValueChanged();
 }
 
 VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& textMarkerData)

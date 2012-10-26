@@ -130,7 +130,6 @@ bool AccessibilityTable::isDataTable() const
     
     // go through the cell's and check for tell-tale signs of "data" table status
     // cells have borders, or use attributes like headers, abbr, scope or axis
-    table->recalcSectionsIfNeeded();
     RenderTableSection* firstBody = table->firstBody();
     if (!firstBody)
         return false;

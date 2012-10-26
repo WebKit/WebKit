@@ -165,7 +165,7 @@ public:
     virtual AccessibilityOrientation orientation() const;
     
     virtual void detach();
-    virtual void textChanged();
+    virtual void contentChanged();
     virtual void addChildren();
     virtual bool canHaveChildren() const;
     virtual void selectedChildren(AccessibilityChildrenVector&);

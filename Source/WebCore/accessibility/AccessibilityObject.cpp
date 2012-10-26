@@ -72,7 +72,6 @@ AccessibilityObject::AccessibilityObject()
     : m_id(0)
     , m_haveChildren(false)
     , m_role(UnknownRole)
-    , m_cachedIsIgnoredValue(DefaultBehavior)
 #if PLATFORM(GTK)
     , m_wrapper(0)
 #elif PLATFORM(CHROMIUM)
@@ -1768,28 +1767,6 @@ void AccessibilityObject::scrollToGlobalPoint(const IntPoint& globalPoint) const
             offsetX = 0;
             offsetY = 0;
         }
-    }
-}
-
-bool AccessibilityObject::cachedIsIgnoredValue()
-{
-    if (m_cachedIsIgnoredValue == DefaultBehavior)
-        m_cachedIsIgnoredValue = accessibilityIsIgnored() ? IgnoreObject : IncludeObject;
-
-    return m_cachedIsIgnoredValue == IgnoreObject;
-}
-
-void AccessibilityObject::setCachedIsIgnoredValue(bool isIgnored)
-{
-    m_cachedIsIgnoredValue = isIgnored ? IgnoreObject : IncludeObject;
-}
-
-void AccessibilityObject::notifyIfIgnoredValueChanged()
-{
-    bool isIgnored = accessibilityIsIgnored();
-    if (cachedIsIgnoredValue() != isIgnored) {
-        axObjectCache()->childrenChanged(parentObject());
-        setCachedIsIgnoredValue(isIgnored);
     }
 }
 

@@ -1094,8 +1094,8 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     // NOTE: BRs always have text boxes now, so the text box check here can be removed
     if (m_renderer->isText()) {
         // static text beneath MenuItems and MenuButtons are just reported along with the menu item, so it's ignored on an individual level
-        AccessibilityObject* parent = parentObjectUnignored();
-        if (parent && (parent->ariaRoleAttribute() == MenuItemRole || parent->ariaRoleAttribute() == MenuButtonRole))
+        if (parentObjectUnignored()->ariaRoleAttribute() == MenuItemRole
+            || parentObjectUnignored()->ariaRoleAttribute() == MenuButtonRole)
             return true;
         RenderText* renderText = toRenderText(m_renderer);
         if (m_renderer->isBR() || !renderText->firstTextBox())
@@ -2212,10 +2212,6 @@ AccessibilityObject* AccessibilityRenderObject::correspondingControlForLabelElem
     HTMLElement* correspondingControl = labelElement->control();
     if (!correspondingControl)
         return 0;
-
-    // Make sure the corresponding control isn't a descendant of this label that's in the middle of being destroyed.
-    if (correspondingControl->renderer() && !correspondingControl->renderer()->parent())
-        return 0;
     
     return axObjectCache()->getOrCreate(correspondingControl);     
 }
@@ -2532,7 +2528,7 @@ bool AccessibilityRenderObject::canSetTextRangeAttributes() const
     return isTextControl();
 }
 
-void AccessibilityRenderObject::textChanged()
+void AccessibilityRenderObject::contentChanged()
 {
     // If this element supports ARIA live regions, or is part of a region with an ARIA editable role,
     // then notify the AT of changes.

@@ -1,8 +1,8 @@
 This test makes sure that adding a selected option to a menu list via an unusual route (document.write from an external script) doesn't trigger a crash when didUpdateActiveOption is called before the children are updated.
 
-PASS accessibleMenulist.childAtIndex(0).childrenCount is 1
-PASS accessibleMenulist.childAtIndex(0).childrenCount is 2
-PASS accessibleMenulist.childAtIndex(0).childrenCount is 1
+PASS accessiblePopup.childrenCount is 1
+PASS accessiblePopup.childrenCount is 2
+PASS accessiblePopup.childrenCount is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -38,10 +38,7 @@ class AccessibilityScrollView : public AccessibilityObject {
 public:
     static PassRefPtr<AccessibilityScrollView> create(ScrollView*);    
     virtual AccessibilityRole roleValue() const { return ScrollAreaRole; }
-    ScrollView* scrollView() const { return m_scrollView; }
-
-    virtual ~AccessibilityScrollView();
-    virtual void detach();
+    ScrollView* scrollView() const { return m_scrollView.get(); }
 
 protected:
     virtual ScrollableArea* getScrollableAreaIfScrollable() const;
@@ -75,7 +72,7 @@ private:
     AccessibilityScrollbar* addChildScrollbar(Scrollbar*);
     void removeChildScrollbar(AccessibilityObject*);
     
-    ScrollView* m_scrollView;
+    RefPtr<ScrollView> m_scrollView;
     RefPtr<AccessibilityObject> m_horizontalScrollbar;
     RefPtr<AccessibilityObject> m_verticalScrollbar;
     bool m_childrenDirty;

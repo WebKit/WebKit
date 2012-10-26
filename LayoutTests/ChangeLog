@@ -1,3 +1,26 @@
+2012-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132514.
+        http://trac.webkit.org/changeset/132514
+        https://bugs.webkit.org/show_bug.cgi?id=100440
+
+        "Broke chromium content_browsertests AccessibilityAriaMenu
+        AccessibilityInputRange AccessibilityListMarkers" (Requested
+        by scheib on #webkit).
+
+        * accessibility/aria-checkbox-sends-notification.html:
+        * accessibility/notification-listeners.html:
+        * fast/forms/date-multiple-fields/date-multiple-fields-ax-value-changed-notification-expected.txt:
+        * fast/forms/time-multiple-fields/time-multiple-fields-ax-value-changed-notification-expected.txt:
+        * platform/chromium/accessibility/add-to-menu-list-crashes-expected.txt:
+        * platform/chromium/accessibility/add-to-menu-list-crashes.html:
+        * platform/chromium/accessibility/is-ignored-change-sends-notification-expected.txt: Removed.
+        * platform/chromium/accessibility/is-ignored-change-sends-notification.html: Removed.
+        * platform/chromium/accessibility/other-aria-attribute-change-sends-notification-expected.txt: Removed.
+        * platform/chromium/accessibility/other-aria-attribute-change-sends-notification.html: Removed.
+        * platform/chromium/accessibility/text-change-notification-expected.txt: Removed.
+        * platform/chromium/accessibility/text-change-notification.html: Removed.
+
 2012-10-25  Vincent Scheib  <scheib@chromium.org>
 
         Unreviewed rebaseline of tests failing after 132529 rolled out 132269.

@@ -82,12 +82,10 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         // descendant and send the AXFocusedUIElementChanged notification.
         handleFocusedUIElementChanged(0, obj->document()->focusedNode());
         break;
-    case AXAriaAttributeChanged:
     case AXAutocorrectionOccured:
     case AXCheckedStateChanged:
     case AXChildrenChanged:
     case AXFocusedUIElementChanged:
-    case AXInvalidStatusChanged:
     case AXLayoutComplete:
     case AXLiveRegionChanged:
     case AXLoadComplete:
@@ -99,8 +97,8 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     case AXScrolledToAnchor:
     case AXSelectedChildrenChanged:
     case AXSelectedTextChanged:
-    case AXTextChanged:
     case AXValueChanged:
+    case AXInvalidStatusChanged:
         break;
     }
 

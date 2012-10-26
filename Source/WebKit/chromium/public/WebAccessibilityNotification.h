@@ -54,8 +54,11 @@ enum WebAccessibilityNotification {
     WebAccessibilityNotificationRowCollapsed,
     WebAccessibilityNotificationRowExpanded,
     WebAccessibilityNotificationInvalidStatusChanged,
-    WebAccessibilityNotificationTextChanged,
-    WebAccessibilityNotificationAriaAttributeChanged
+
+    // FIXME: now that we're using AssertMatchingEnums, we don't need a
+    // catch-all "invalid" notification enum. Remove this once it's been
+    // removed from Chromium.
+    WebAccessibilityNotificationInvalid,
 };
 
 } // namespace WebKit
