@@ -100,12 +100,7 @@ WorkerContextExecutionProxy::~WorkerContextExecutionProxy()
 void WorkerContextExecutionProxy::dispose()
 {
     m_perContextData.clear();
-
-    // Dispose the context.
-    if (!m_context.IsEmpty()) {
-        m_context.Dispose();
-        m_context.Clear();
-    }
+    m_context.clear();
 }
 
 void WorkerContextExecutionProxy::initIsolate()
@@ -132,7 +127,7 @@ void WorkerContextExecutionProxy::initIsolate()
 bool WorkerContextExecutionProxy::initializeIfNeeded()
 {
     // Bail out if the context has already been initialized.
-    if (!m_context.IsEmpty())
+    if (!m_context.isEmpty())
         return true;
 
     // Setup the security handlers and message listener. This only has
@@ -143,16 +138,16 @@ bool WorkerContextExecutionProxy::initializeIfNeeded()
 
     // Create a new environment
     v8::Persistent<v8::ObjectTemplate> globalTemplate;
-    m_context = v8::Context::New(0, globalTemplate);
-    if (m_context.IsEmpty())
+    m_context.adopt(v8::Context::New(0, globalTemplate));
+    if (m_context.isEmpty())
         return false;
 
     // Starting from now, use local context only.
-    v8::Local<v8::Context> context = v8::Local<v8::Context>::New(m_context);
+    v8::Local<v8::Context> context = v8::Local<v8::Context>::New(m_context.get());
 
     v8::Context::Scope scope(context);
 
-    m_perContextData = V8PerContextData::create(m_context);
+    m_perContextData = V8PerContextData::create(m_context.get());
     if (!m_perContextData->init()) {
         dispose();
         return false;
@@ -202,7 +197,7 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
         m_disableEvalPending = String();
     }
 
-    v8::Context::Scope scope(m_context);
+    v8::Context::Scope scope(m_context.get());
 
     v8::TryCatch exceptionCatcher;
 

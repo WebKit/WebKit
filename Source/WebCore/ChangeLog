@@ -1,3 +1,20 @@
+2012-10-25  Adam Barth  <abarth@webkit.org>
+
+        [V8] WorkerContextExecutionProxy should use ScopedPersistent
+        https://bugs.webkit.org/show_bug.cgi?id=100443
+
+        Reviewed by Eric Seidel.
+
+        This class was manually re-implementing the ScopedPersistent pattern.
+
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::dispose):
+        (WebCore::WorkerContextExecutionProxy::initializeIfNeeded):
+        (WebCore::WorkerContextExecutionProxy::evaluate):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        (WebCore::WorkerContextExecutionProxy::context):
+        (WorkerContextExecutionProxy):
+
 2012-10-25  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         A mistake in WebCore::JavaScriptCallFrame::evaluate which will cause assert failed

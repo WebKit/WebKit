@@ -74,7 +74,7 @@ namespace WebCore {
         ScriptValue evaluate(const String& script, const String& fileName, const TextPosition& scriptStartPosition, WorkerContextExecutionState*);
 
         // Returns a local handle of the context.
-        v8::Local<v8::Context> context() { return v8::Local<v8::Context>::New(m_context); }
+        v8::Local<v8::Context> context() { return v8::Local<v8::Context>::New(m_context.get()); }
 
     private:
         void initIsolate();
@@ -84,7 +84,7 @@ namespace WebCore {
         static const int kWorkerMaxStackSize = 500 * 1024;
 
         WorkerContext* m_workerContext;
-        v8::Persistent<v8::Context> m_context;
+        ScopedPersistent<v8::Context> m_context;
         OwnPtr<V8PerContextData> m_perContextData;
         String m_disableEvalPending;
     };
