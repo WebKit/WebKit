@@ -1,3 +1,11 @@
+2012-10-26  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Build fix for r132650.
+        https://bugs.webkit.org/show_bug.cgi?id=100482
+
+        * platform/text/LocaleWin.cpp:
+        (WebCore::LocaleWin::timeFormat):
+
 2012-10-26  Yury Semikhatsky  <yurys@chromium.org>
 
         [v8] Memory instrumentation: don't count memory of WrapperTypeInfo

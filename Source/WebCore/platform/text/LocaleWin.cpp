@@ -701,7 +701,7 @@ String LocaleWin::timeFormat()
 {
     if (m_timeFormatWithSeconds.isNull())
         m_timeFormatWithSeconds = convertWindowsTimeFormatToLDML(getLocaleInfoString(LOCALE_STIMEFORMAT));
-    return m_localizedTimeFormatText;
+    return m_timeFormatWithSeconds;
 }
 
 String LocaleWin::shortTimeFormat()
