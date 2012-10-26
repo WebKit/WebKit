@@ -139,8 +139,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void postTask(WebTestRunner::WebTask*) OVERRIDE;
     virtual void postDelayedTask(WebTestRunner::WebTask*, long long ms) OVERRIDE;
     virtual WebKit::WebString registerIsolatedFileSystem(const WebKit::WebVector<WebKit::WebString>& absoluteFilenames) OVERRIDE;
-    virtual long long getCurrentTimeInMillisecond() OVERRIDE;
-    virtual WebKit::WebString getAbsoluteWebStringFromUTF8Path(const std::string& path) OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);

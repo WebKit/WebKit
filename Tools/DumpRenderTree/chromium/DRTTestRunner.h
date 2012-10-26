@@ -43,23 +43,7 @@
 #define DRTTestRunner_h
 
 #include "TestRunner/src/TestRunner.h"
-#include "WebDeliveredIntentClient.h"
 #include "WebTask.h"
-#include "WebTextDirection.h"
-#include "platform/WebArrayBufferView.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
-#include <wtf/Deque.h>
-#include <wtf/OwnPtr.h>
-
-namespace WebKit {
-class WebGeolocationClientMock;
-}
-
-namespace webkit_support {
-class ScopedTempDirectory;
-}
-
 
 class TestShell;
 

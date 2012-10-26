@@ -59,8 +59,6 @@ public:
     virtual void postDelayedTask(WebTask*, long long ms) = 0;
 
     virtual WebKit::WebString registerIsolatedFileSystem(const WebKit::WebVector<WebKit::WebString>& absoluteFilenames) = 0;
-    virtual long long getCurrentTimeInMillisecond() = 0;
-    virtual WebKit::WebString getAbsoluteWebStringFromUTF8Path(const std::string& path) = 0;
 };
 
 }

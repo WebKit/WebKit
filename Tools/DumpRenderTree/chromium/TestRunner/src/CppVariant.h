@@ -43,6 +43,7 @@
 #define CppVariant_h
 
 #include "WebBindings.h"
+#include "webkit/support/webkit_support.h"
 #include <string>
 #include <wtf/Vector.h>
 

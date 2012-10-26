@@ -55,8 +55,6 @@ public:
     virtual void postTask(WebTestRunner::WebTask*) = 0;
     virtual void postDelayedTask(WebTestRunner::WebTask*, long long ms) = 0;
     virtual WebKit::WebString registerIsolatedFileSystem(const WebKit::WebVector<WebKit::WebString>& absoluteFilenames) = 0;
-    virtual long long getCurrentTimeInMillisecond() = 0;
-    virtual WebKit::WebString getAbsoluteWebStringFromUTF8Path(const std::string& path) = 0;
 };
 
 #endif // TestDelegate_h
