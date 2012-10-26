@@ -45,6 +45,7 @@ public:
     static PassRefPtr<PagePopupController> create(PagePopupClient*);
     void setValueAndClosePopup(int numValue, const String& stringValue);
     String localizeNumberString(const String&);
+    void clearPagePopupClient();
 
 private:
     explicit PagePopupController(PagePopupClient*);

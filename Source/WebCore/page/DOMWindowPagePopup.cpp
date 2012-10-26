@@ -45,6 +45,7 @@ DOMWindowPagePopup::DOMWindowPagePopup(PagePopupClient* popupClient)
 
 DOMWindowPagePopup::~DOMWindowPagePopup()
 {
+    m_controller->clearPagePopupClient();
 }
 
 const AtomicString& DOMWindowPagePopup::supplementName()

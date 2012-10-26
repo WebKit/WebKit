@@ -1,3 +1,23 @@
+2012-10-26  Kent Tamura  <tkent@chromium.org>
+
+        Crash in PagePopupController by events after WebPagePopupImpl::closePopup
+        https://bugs.webkit.org/show_bug.cgi?id=100454
+
+        Reviewed by Hajime Morita.
+
+        No new tests. The bug is timing-dependent.
+
+        * page/DOMWindowPagePopup.cpp:
+        (WebCore::DOMWindowPagePopup::~DOMWindowPagePopup):
+        Calls clearPagePopupClient for the associalated PagePopupController object.
+        * page/PagePopupController.cpp:
+        (WebCore::PagePopupController::setValueAndClosePopup):
+        Do nothing if m_popupClient is 0.
+        (WebCore::PagePopupController::localizeNumberString): Ditto.
+        (WebCore::PagePopupController::clearPagePopupClient): Added.
+        * page/PagePopupController.h:
+        (PagePopupController): Declare clearPagePopupClient.
+
 2012-10-25  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Bring device geolocation and orientation emulation from behind the experiment
