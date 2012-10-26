@@ -1,3 +1,19 @@
+2012-10-25  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] User Challenged again after browser restart for HTTP/FTP sites already successfully authenticated.
+        https://bugs.webkit.org/show_bug.cgi?id=100448
+
+        Reviewed by George Staikos.
+
+        Internally reviewed by Joe Mason.
+
+        We didn't check the persistent Credential Storage for Credentials when challenged by the server.
+
+        Manual Test: login to ftp://localhost on BlackBerry device, and restart the browser to login again.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+
 2012-10-25  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Add histogram statistics for backing store errors

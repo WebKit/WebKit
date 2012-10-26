@@ -770,8 +770,12 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         // Don't overwrite any existing credentials with the empty credential
         if (m_handle->getInternal()->m_currentWebChallenge.isNull())
             m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
-    } else if (!(credential = CredentialStorage::get(protectionSpace)).isEmpty()) {
-        // First search the CredentialStorage.
+    } else if (!(credential = CredentialStorage::get(protectionSpace)).isEmpty()
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+            || !(credential = CredentialStorage::getFromPersistentStorage(protectionSpace)).isEmpty()
+#endif
+            ) {
+        // First search the CredentialStorage and Persistent Credential Storage
         m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
         m_handle->getInternal()->m_currentWebChallenge.setStored(true);
     } else {
