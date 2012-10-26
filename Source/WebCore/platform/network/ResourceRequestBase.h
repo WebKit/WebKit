@@ -132,8 +132,6 @@ namespace WebCore {
         bool reportRawHeaders() const { return m_reportRawHeaders; }
         void setReportRawHeaders(bool reportRawHeaders) { m_reportRawHeaders = reportRawHeaders; }
 
-        void reportMemoryUsage(MemoryObjectInfo*) const;
-
         static double defaultTimeoutInterval(); // May return 0 when using platform default.
         static void setDefaultTimeoutInterval(double);
 
@@ -168,6 +166,8 @@ namespace WebCore {
 
         void updatePlatformRequest() const; 
         void updateResourceRequest() const; 
+
+        void reportMemoryUsageBase(MemoryObjectInfo*) const;
 
         // The ResourceRequest subclass may "shadow" this method to compare platform specific fields
         static bool platformCompare(const ResourceRequest&, const ResourceRequest&) { return true; }
