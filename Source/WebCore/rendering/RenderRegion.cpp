@@ -61,11 +61,15 @@ LayoutUnit RenderRegion::pageLogicalWidth() const
 
 LayoutUnit RenderRegion::pageLogicalHeight() const
 {
+    if (hasOverrideHeight() && view()->normalLayoutPhase())
+        return overrideLogicalContentHeight() + borderAndPaddingLogicalHeight();
     return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
 }
 
 LayoutUnit RenderRegion::logicalHeightOfAllFlowThreadContent() const
 {
+    if (hasOverrideHeight() && view()->normalLayoutPhase())
+        return overrideLogicalContentHeight() + borderAndPaddingLogicalHeight();
     return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
 }
 

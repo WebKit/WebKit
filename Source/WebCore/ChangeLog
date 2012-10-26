@@ -1,3 +1,55 @@
+2012-10-26  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Add support for auto-height regions with region-breaks
+        https://bugs.webkit.org/show_bug.cgi?id=99952
+
+        Reviewed by David Hyatt.
+
+        This patch takes region breaks into account when computing the height for auto logical height regions.
+        When a region break is encountered before/after an element from within a flow thread and we are in the layout
+        phase in which we lay out the flow threads in regions unconstrained, we use the region break to
+        compute the region override logical content height if the region break fits inside an auto logical height region.
+        A region break inside an auto logical height region determines the region override logical content height, taking
+        min/max height into account.
+
+        Tests: fast/regions/autoheight-allregions-nobreaks.html
+               fast/regions/autoheight-allregions.html
+               fast/regions/autoheight-breakafteralways-maxheight.html
+               fast/regions/autoheight-breakbeforealways.html
+               fast/regions/autoheight-firstregion-breakalways.html
+               fast/regions/autoheight-lastregion-overflowauto-breaksignored.html
+               fast/regions/autoheight-lastregion-overflowauto.html
+               fast/regions/autoheight-middleregion.html
+               fast/regions/autoheight-secondregion-breakoutside.html
+               fast/regions/autoheight-secondregion.html
+               fast/regions/autoheight-singleregion-breakafteralways-maxheight.html
+               fast/regions/autoheight-singleregion-breakafteralways.html
+               fast/regions/autoheight-singleregion-breakaftermargin.html
+               fast/regions/autoheight-singleregion-breakbeforealways-minheight.html
+               fast/regions/autoheight-singleregion-breakbeforealways.html
+               fast/regions/autoheight-singleregion-multiplebreaks.html
+               fast/regions/autoheight-singleregion-overflowauto-breaksignored.html
+               fast/regions/autoheight-singleregion-overflowauto.html
+
+        * rendering/RenderBlock.cpp: When encounter a region break before/after an element inside a flow thread,
+        try to use it to determine the override logical content height for auto logical height regions.
+        (WebCore::RenderBlock::applyBeforeBreak):
+        (WebCore::RenderBlock::applyAfterBreak):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::computeOverflowStateForRegions):
+        Simulate a region break at the end of the flow thread content.
+        (WebCore::RenderFlowThread::updateRegionsFlowThreadPortionRect):
+        (WebCore::RenderFlowThread::clearOverrideLogicalContentHeightInRegions):
+        Helper method used to clear the overrideLogicalContentHeight for auto logical height regions.
+        (WebCore::RenderFlowThread::addForcedRegionBreak):
+        Extend the method to process region breaks. The method returns true if at least one auto logical height region
+        has its override logical content height computed.        
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderRegion.cpp: Make these methods work with auto logical height regions.
+        (WebCore::RenderRegion::pageLogicalHeight):
+        (WebCore::RenderRegion::logicalHeightOfAllFlowThreadContent):
+
 2012-10-26  Regina Chung  <heejin.r.chung@samsung.com>
 
         [EFL][WK2] Enable WebGL

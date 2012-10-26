@@ -133,12 +133,16 @@ private:
 void RenderFlowThread::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
+
     m_pageLogicalHeightChanged = m_regionsInvalidated && everHadLayout();
     if (m_regionsInvalidated) {
         m_regionsInvalidated = false;
         m_regionsHaveUniformLogicalWidth = true;
         m_regionsHaveUniformLogicalHeight = true;
         m_regionRangeMap.clear();
+        m_breakBeforeToRegionMap.clear();
+        m_breakAfterToRegionMap.clear();
+
         LayoutUnit previousRegionLogicalWidth = 0;
         LayoutUnit previousRegionLogicalHeight = 0;
         bool firstRegionVisited = false;
@@ -599,8 +603,8 @@ void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterE
     LayoutUnit height = oldClientAfterEdge;
 
     // Simulate a region break at height. If it points inside an auto logical height region,
-    // then it determines the region override logical content height.
-    addForcedRegionBreak(height);
+    // then it may determine the region override logical content height.
+    addForcedRegionBreak(height, this, false);
 
     // FIXME: the visual overflow of middle region (if it is the last one to contain any content in a render flow thread)
     // might not be taken into account because the render flow thread height is greater that that regions height + its visual overflow
@@ -784,59 +788,103 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect()
 
         LayoutRect regionRect(style()->direction() == LTR ? ZERO_LAYOUT_UNIT : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
 
-        // FIXME: when a flow thread has more than one auto logical height region,
+        // When a flow thread has more than one auto logical height region,
         // we have to take into account the override logical content height value,
         // if computed for an auto logical height region, and use it to set the height
         // for the region rect. This way, the regions in the chain following the auto
         // logical height region, will be able to fragment the right part of their
         // associated flow thread content (and compute their overrideComputedLogicalHeight properly).
+        if (region->hasOverrideHeight() && view()->normalLayoutPhase()) {
+            regionLogicalHeight = region->overrideLogicalContentHeight();
+            regionRect.setHeight(regionLogicalHeight);
+        }
 
         region->setFlowThreadPortionRect(isHorizontalWritingMode() ? regionRect : regionRect.transposedRect());
         logicalHeight += regionLogicalHeight;
     }
 }
 
-// FIXME: Extend it to account for region break
-void RenderFlowThread::addForcedRegionBreak(LayoutUnit offsetBreakInFlowThread)
+void RenderFlowThread::clearOverrideLogicalContentHeightInRegions(RenderRegion* startRegion)
+{
+    RenderRegionList::iterator regionIter = startRegion ? m_regionList.find(startRegion) : m_regionList.begin();
+    for (; regionIter != m_regionList.end(); ++regionIter) {
+        RenderRegion* region = *regionIter;
+        if (region->hasAutoLogicalHeight())
+            region->clearOverrideLogicalContentHeight();
+    }
+}
+
+// Even if we require the break to occur at offsetBreakInFlowThread, because regions may have min/max-height values,
+// it is possible that the break will occur at a different offset than the original one required.
+// offsetBreakAdjustment measures the different between the requested break offset and the current break offset.
+bool RenderFlowThread::addForcedRegionBreak(LayoutUnit offsetBreakInFlowThread, RenderObject* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment)
 {
     // We take breaks into account for height computation for auto logical height regions
     // only in the layout phase in which we lay out the flows threads unconstrained
     // and we use the content breaks to determine the overrideContentLogicalHeight for
     // auto logical height regions.
     if (view()->constrainedFlowThreadsLayoutPhase())
-        return;
+        return false;
 
-    // Simulate a region break at height. If it points inside an auto logical height region,
+    // Breaks can come before or after some objects. We need to track these objects, so that if we get
+    // multiple breaks for the same object (for example because of multiple layouts on the same object),
+    // we need to invalidate every other region after the old one and start computing from fresh.
+    RenderObjectToRegionMap& mapToUse = isBefore ? m_breakBeforeToRegionMap : m_breakAfterToRegionMap;
+    RenderObjectToRegionMap::iterator iter = mapToUse.find(breakChild);
+    if (iter != mapToUse.end()) {
+        RenderRegionList::iterator regionIter = m_regionList.find(iter->value);
+        ASSERT(regionIter != m_regionList.end());
+        ASSERT((*regionIter)->hasAutoLogicalHeight());
+        clearOverrideLogicalContentHeightInRegions(*regionIter);
+
+        // We need to update the regions flow thread portion rect because we are going to process
+        // a break on these regions.
+        updateRegionsFlowThreadPortionRect();
+    }
+
+    // Simulate a region break at offsetBreakInFlowThread. If it points inside an auto logical height region,
     // then it determines the region override logical content height.
     RenderRegion* region = regionAtBlockOffset(offsetBreakInFlowThread);
     if (!region)
-        return;
+        return false;
 
-    if (!region->needsOverrideLogicalContentHeightComputation())
-        return;
+    // We want to distribute the offsetBreakInFlowThread content among the regions starting with the found region.
+    bool overrideLogicalContentHeightComputed = false;
 
     LayoutUnit currentRegionOffsetInFlowThread = isHorizontalWritingMode() ? region->flowThreadPortionRect().y() : region->flowThreadPortionRect().x();
     LayoutUnit offsetBreakInCurrentRegion = offsetBreakInFlowThread - currentRegionOffsetInFlowThread;
-    LayoutUnit regionOverrideLogicalContentHeight = region->computeReplacedLogicalHeightRespectingMinMaxHeight(offsetBreakInCurrentRegion);
-    region->setOverrideLogicalContentHeight(regionOverrideLogicalContentHeight);
 
-    // FIXME: Extend it to take into account that we may have more than one auto-height region in flow.
-    // For now, clear the override logical content height for remaining auto logical height regions in the flow.
-    // A follow-up patch will properly distribute the remaining height into the following regions.
     RenderRegionList::iterator regionIter = m_regionList.find(region);
     ASSERT(regionIter != m_regionList.end());
+    for (; (regionIter != m_regionList.end()) && (currentRegionOffsetInFlowThread < offsetBreakInFlowThread); ++regionIter) {
+        RenderRegion* region = *regionIter;
+        if (region->needsOverrideLogicalContentHeightComputation()) {
+            mapToUse.set(breakChild, region);
 
-    // Skip the current region.
-    ++regionIter;
+            overrideLogicalContentHeightComputed = true;
 
-    for (; regionIter != m_regionList.end(); ++regionIter) {
-        RenderRegion* currRegion = *regionIter;
-        if (!currRegion->hasAutoLogicalHeight())
-            continue;
-        currRegion->clearOverrideLogicalContentHeight();
+            // Compute the region height pretending that the offsetBreakInCurrentRegion is the logicalHeight for the auto-height region.
+            LayoutUnit regionOverrideLogicalContentHeight = region->computeReplacedLogicalHeightRespectingMinMaxHeight(offsetBreakInCurrentRegion);
+            region->setOverrideLogicalContentHeight(regionOverrideLogicalContentHeight);
+
+            offsetBreakInCurrentRegion -= regionOverrideLogicalContentHeight;
+            currentRegionOffsetInFlowThread += regionOverrideLogicalContentHeight;
+        } else
+            currentRegionOffsetInFlowThread += isHorizontalWritingMode() ? region->flowThreadPortionRect().height() : region->flowThreadPortionRect().width();
     }
 
-    updateRegionsFlowThreadPortionRect();
+    // The remaining auto logical height regions in the chain that were unable to receive content
+    // and set their overrideLogicalContentHeight should have their associated values cleared.
+    if (regionIter != m_regionList.end())
+        clearOverrideLogicalContentHeightInRegions(*regionIter);
+
+    if (overrideLogicalContentHeightComputed)
+        updateRegionsFlowThreadPortionRect();
+
+    if (offsetBreakAdjustment)
+        *offsetBreakAdjustment = max<LayoutUnit>(ZERO_LAYOUT_UNIT, currentRegionOffsetInFlowThread - offsetBreakInFlowThread);
+
+    return overrideLogicalContentHeightComputed;
 }
 
 CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)

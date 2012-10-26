@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .greenBox { position: absolute; width: 250px; height: 50px; background-color: green; }
+            #green { top: 200px; }
+            #green1 { top: 200px; left: 600px; }
+            #green2 { top: 200px; left: 300px; }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=91097"> Auto height is not working for regions</a>.</p>
+        <p>The three regions in the region chain all have auto-height. Their height is computed taking regions breaks into account.</p>
+        <p>On success, you should see 3 horizontal green lines.</p>
+        <div id="green" class="greenBox"></div>
+        <div id="green1" class="greenBox"></div>
+        <div id="green2" class="greenBox"></div>
+    </body>
+</html>

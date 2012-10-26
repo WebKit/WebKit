@@ -131,7 +131,7 @@ public:
     void resetRegionsOverrideLogicalContentHeight();
     void markAutoLogicalHeightRegionsForLayout();
 
-    void addForcedRegionBreak(LayoutUnit);
+    bool addForcedRegionBreak(LayoutUnit, RenderObject* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0);
 
     bool pageLogicalHeightChanged() const { return m_pageLogicalHeightChanged; }
 
@@ -151,6 +151,8 @@ protected:
     
     // Override if the flow thread implementation supports dispatching events when the flow layout is updated (e.g. for named flows)
     virtual void dispatchRegionLayoutUpdateEvent() { m_dispatchRegionLayoutUpdateEvent = false; }
+
+    void clearOverrideLogicalContentHeightInRegions(RenderRegion* startRegion = 0);
 
     RenderRegionList m_regionList;
 
@@ -183,6 +185,10 @@ protected:
     // A maps from RenderBox
     typedef HashMap<const RenderBox*, RenderRegionRange> RenderRegionRangeMap;
     RenderRegionRangeMap m_regionRangeMap;
+
+    typedef HashMap<RenderObject*, RenderRegion*> RenderObjectToRegionMap;
+    RenderObjectToRegionMap m_breakBeforeToRegionMap;
+    RenderObjectToRegionMap m_breakAfterToRegionMap;
 
     bool m_regionsInvalidated : 1;
     bool m_regionsHaveUniformLogicalWidth : 1;

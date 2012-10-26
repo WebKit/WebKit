@@ -1,3 +1,49 @@
+2012-10-26  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Add support for auto-height regions with region-breaks
+        https://bugs.webkit.org/show_bug.cgi?id=99952
+
+        Reviewed by David Hyatt.
+
+        Add tests for auto logical height regions with content having region breaks.
+
+        * fast/regions/autoheight-allregions-expected.html: Added.
+        * fast/regions/autoheight-allregions-nobreaks-expected.html: Added.
+        * fast/regions/autoheight-allregions-nobreaks.html: Added.
+        * fast/regions/autoheight-allregions.html: Added.
+        * fast/regions/autoheight-breakafteralways-maxheight-expected.html: Added.
+        * fast/regions/autoheight-breakafteralways-maxheight.html: Added.
+        * fast/regions/autoheight-breakbeforealways-expected.html: Added.
+        * fast/regions/autoheight-breakbeforealways.html: Added.
+        * fast/regions/autoheight-firstregion-breakalways-expected.html: Added.
+        * fast/regions/autoheight-firstregion-breakalways.html: Added.
+        * fast/regions/autoheight-lastregion-overflowauto-breaksignored-expected.html: Added.
+        * fast/regions/autoheight-lastregion-overflowauto-breaksignored.html: Added.
+        * fast/regions/autoheight-lastregion-overflowauto-expected.html: Added.
+        * fast/regions/autoheight-lastregion-overflowauto.html: Added.
+        * fast/regions/autoheight-middleregion-expected.html: Added.
+        * fast/regions/autoheight-middleregion.html: Added.
+        * fast/regions/autoheight-secondregion-breakoutside-expected.html: Added.
+        * fast/regions/autoheight-secondregion-breakoutside.html: Added.
+        * fast/regions/autoheight-secondregion-expected.html: Added.
+        * fast/regions/autoheight-secondregion.html: Added.
+        * fast/regions/autoheight-singleregion-breakafteralways-expected.html: Added.
+        * fast/regions/autoheight-singleregion-breakafteralways-maxheight-expected.html: Added.
+        * fast/regions/autoheight-singleregion-breakafteralways-maxheight.html: Added.
+        * fast/regions/autoheight-singleregion-breakafteralways.html: Added.
+        * fast/regions/autoheight-singleregion-breakaftermargin-expected.html: Added.
+        * fast/regions/autoheight-singleregion-breakaftermargin.html: Added.
+        * fast/regions/autoheight-singleregion-breakbeforealways-expected.html: Added.
+        * fast/regions/autoheight-singleregion-breakbeforealways-minheight-expected.html: Added.
+        * fast/regions/autoheight-singleregion-breakbeforealways-minheight.html: Added.
+        * fast/regions/autoheight-singleregion-breakbeforealways.html: Added.
+        * fast/regions/autoheight-singleregion-multiplebreaks-expected.html: Added.
+        * fast/regions/autoheight-singleregion-multiplebreaks.html: Added.
+        * fast/regions/autoheight-singleregion-overflowauto-breaksignored-expected.html: Added.
+        * fast/regions/autoheight-singleregion-overflowauto-breaksignored.html: Added.
+        * fast/regions/autoheight-singleregion-overflowauto-expected.html: Added.
+        * fast/regions/autoheight-singleregion-overflowauto.html: Added.
+
 2012-10-26  Li Yin  <li.yin@intel.com>
 
         fast/forms/file/input-file-write-files.html should cover correct setting value

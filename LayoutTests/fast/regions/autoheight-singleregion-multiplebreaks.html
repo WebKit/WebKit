@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .flowContent { font-size: 50px; color: green; font-family: Ahem; }
+            #article { -webkit-flow-into: flow; }
+
+             #p2, #p3 { -webkit-region-break-before: always; }
+
+            .regionSize { width: 250px; }
+            #region { -webkit-flow-from: flow; -webkit-region-overflow: break; position: absolute; top: 100px; }
+
+            .redBox { position: absolute; height: 50px; background-color: red; }
+            #red { top: 150px; }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=91097"> Auto height is not working for regions</a>.</p>
+        <p>The region is a block element. The flow has multiple forced breaks inside it. The first break sets the region height.</p>
+        <p>On success, you should see 1 green line.</p>
+        <div id="red" class="redBox regionSize"></div>
+
+        <div id="article" class="flowContent">
+            <p id="p1">aaaaa</p>
+            <p id="p2">aaaaa</p>
+            <p id="p3">aaaaa</p>
+        </div>
+
+        <div id="region" class="regionSize"></div>
+    </body>
+</html>
