@@ -1,3 +1,17 @@
+2012-10-26  MORITA Hajime  <morrita@google.com>
+
+        [V8] REGRESSION(132540) Assertion failure on V8DOMWrapper::setJSWrapperForDOMNode()
+        https://bugs.webkit.org/show_bug.cgi?id=100462
+
+        Reviewed by Adam Barth.
+
+        Removed the no longer correct assertion statement.
+
+        No new tests. Covered by breaking tests.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMNode):
+
 2012-10-25  Adam Barth  <abarth@webkit.org>
 
         [V8] WorkerContextExecutionProxy should use ScopedPersistent
