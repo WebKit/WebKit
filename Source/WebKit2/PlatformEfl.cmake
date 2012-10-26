@@ -72,6 +72,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/efl/DownloadManagerEfl.cpp
     UIProcess/efl/FindClientEfl.cpp
     UIProcess/efl/FormClientEfl.cpp
+    UIProcess/efl/InputMethodContextEfl.cpp
     UIProcess/efl/NetworkInfoProvider.cpp
     UIProcess/efl/PageClientImpl.cpp
     UIProcess/efl/PageLoadClientEfl.cpp

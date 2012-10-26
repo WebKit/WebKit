@@ -24,6 +24,7 @@
 #include "EflScreenUtilities.h"
 #include "FindClientEfl.h"
 #include "FormClientEfl.h"
+#include "InputMethodContextEfl.h"
 #include "PageClientImpl.h"
 #include "PageLoadClientEfl.h"
 #include "PagePolicyClientEfl.h"
@@ -45,8 +46,6 @@
 #include "ewk_view.h"
 #include "ewk_view_private.h"
 #include <Ecore_Evas.h>
-#include <Ecore_IMF.h>
-#include <Ecore_IMF_Evas.h>
 #include <Edje.h>
 #include <WebCore/Cursor.h>
 
@@ -80,56 +79,6 @@ const Evas_Object* EwkViewImpl::viewFromPageViewMap(const WKPageRef page)
     return pageViewMap.get(page);
 }
 
-void EwkViewImpl::onIMFInputSequenceComplete(void* data, Ecore_IMF_Context*, void* eventInfo)
-{
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
-    EWK_VIEW_IMPL_GET_OR_RETURN(smartData, viewImpl);
-    if (!eventInfo || !viewImpl->m_inputMethodContextFocused)
-        return;
-
-    viewImpl->pageProxy->confirmComposition(String::fromUTF8(static_cast<char*>(eventInfo)));
-}
-
-void EwkViewImpl::onIMFPreeditSequenceChanged(void* data, Ecore_IMF_Context* context, void*)
-{
-    Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
-    EWK_VIEW_IMPL_GET_OR_RETURN(smartData, viewImpl);
-
-    if (!viewImpl->pageProxy->focusedFrame() || !viewImpl->m_inputMethodContextFocused)
-        return;
-
-    char* buffer = 0;
-    ecore_imf_context_preedit_string_get(context, &buffer, 0);
-    if (!buffer)
-        return;
-
-    String preeditString = String::fromUTF8(buffer);
-    free(buffer);
-    Vector<CompositionUnderline> underlines;
-    underlines.append(CompositionUnderline(0, preeditString.length(), Color(0, 0, 0), false));
-    viewImpl->pageProxy->setComposition(preeditString, underlines, 0);
-}
-
-PassOwnPtr<Ecore_IMF_Context> EwkViewImpl::createIMFContext(Ewk_View_Smart_Data* sd)
-{
-    const char* defaultContextID = ecore_imf_context_default_id_get();
-    if (!defaultContextID)
-        return nullptr;
-
-    OwnPtr<Ecore_IMF_Context> imfContext = adoptPtr(ecore_imf_context_add(defaultContextID));
-    if (!imfContext)
-        return nullptr;
-
-    ecore_imf_context_event_callback_add(imfContext.get(), ECORE_IMF_CALLBACK_PREEDIT_CHANGED, onIMFPreeditSequenceChanged, sd);
-    ecore_imf_context_event_callback_add(imfContext.get(), ECORE_IMF_CALLBACK_COMMIT, onIMFInputSequenceComplete, sd);
-
-    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
-    ecore_imf_context_client_window_set(imfContext.get(), reinterpret_cast<void*>(ecore_evas_window_get(ecoreEvas)));
-    ecore_imf_context_client_canvas_set(imfContext.get(), sd->base.evas);
-
-    return imfContext.release();
-}
-
 EwkViewImpl::EwkViewImpl(Evas_Object* view)
 #if USE(ACCELERATED_COMPOSITING)
     : evasGl(0)
@@ -140,13 +89,12 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view)
     : m_view(view)
 #endif
     , m_settings(Ewk_Settings::create(this))
-    , m_inputMethodContext(createIMFContext(smartData()))
-    , m_inputMethodContextFocused(false)
     , m_mouseEventsEnabled(false)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchEventsEnabled(false)
 #endif
     , m_displayTimer(this, &EwkViewImpl::displayTimerFired)
+    , m_inputMethodContext(InputMethodContextEfl::create(this, smartData()->base.evas))
 {
     ASSERT(view);
 
@@ -593,7 +541,11 @@ const char* EwkViewImpl::title() const
     return m_title;
 }
 
-Ecore_IMF_Context* EwkViewImpl::inputMethodContext()
+/**
+ * @internal
+ * This function may return @c NULL.
+ */
+InputMethodContextEfl* EwkViewImpl::inputMethodContext()
 {
     return m_inputMethodContext.get();
 }
@@ -966,37 +918,6 @@ unsigned long long EwkViewImpl::informDatabaseQuotaReached(const String& databas
     return defaultQuota;
 }
 #endif
-
-/**
- * @internal
- * The view was requested to update text input state
- */
-void EwkViewImpl::updateTextInputState()
-{
-    if (!m_inputMethodContext)
-        return;
-
-    const EditorState& editor = pageProxy->editorState();
-
-    if (editor.isContentEditable) {
-        if (m_inputMethodContextFocused)
-            return;
-
-        ecore_imf_context_reset(m_inputMethodContext.get());
-        ecore_imf_context_focus_in(m_inputMethodContext.get());
-        m_inputMethodContextFocused = true;
-    } else {
-        if (!m_inputMethodContextFocused)
-            return;
-
-        if (editor.hasComposition)
-            pageProxy->cancelComposition();
-
-        m_inputMethodContextFocused = false;
-        ecore_imf_context_reset(m_inputMethodContext.get());
-        ecore_imf_context_focus_out(m_inputMethodContext.get());
-    }
-}
 
 /**
  * @internal

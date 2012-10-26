@@ -28,6 +28,7 @@
 
 #include "DrawingAreaProxyImpl.h"
 #include "EwkViewImpl.h"
+#include "InputMethodContextEfl.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NotImplemented.h"
 #include "WebContext.h"
@@ -298,7 +299,9 @@ void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, Fin
 
 void PageClientImpl::updateTextInputState()
 {
-    m_viewImpl->updateTextInputState();
+    InputMethodContextEfl* inputMethodContext = m_viewImpl->inputMethodContext();
+    if (inputMethodContext)
+        inputMethodContext->updateTextInputState();
 }
 
 void PageClientImpl::handleDownloadRequest(DownloadProxy* download)

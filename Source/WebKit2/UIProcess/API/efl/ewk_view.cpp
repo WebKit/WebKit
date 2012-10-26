@@ -24,6 +24,7 @@
 #include "EwkViewImpl.h"
 #include "FindClientEfl.h"
 #include "FormClientEfl.h"
+#include "InputMethodContextEfl.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
@@ -213,9 +214,9 @@ static Eina_Bool _ewk_view_smart_mouse_up(Ewk_View_Smart_Data* smartData, const 
     impl->pageProxy->handleMouseEvent(NativeWebMouseEvent(upEvent, &position));
 #endif
 
-    Ecore_IMF_Context* inputMethodContext = impl->inputMethodContext();
+    InputMethodContextEfl* inputMethodContext = impl->inputMethodContext();
     if (inputMethodContext)
-        ecore_imf_context_reset(inputMethodContext);
+        inputMethodContext->handleMouseUpEvent(upEvent);
 
     return true;
 }
@@ -240,13 +241,9 @@ static Eina_Bool _ewk_view_smart_key_down(Ewk_View_Smart_Data* smartData, const 
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
 
     bool isFiltered = false;
-    Ecore_IMF_Context* inputMethodContext = impl->inputMethodContext();
-    if (inputMethodContext) {
-        Ecore_IMF_Event inputMethodEvent;
-        ecore_imf_evas_event_key_down_wrap(const_cast<Evas_Event_Key_Down*>(downEvent), &inputMethodEvent.key_down);
-
-        isFiltered = ecore_imf_context_filter_event(inputMethodContext, ECORE_IMF_EVENT_KEY_DOWN, &inputMethodEvent);
-    }
+    InputMethodContextEfl* inputMethodContext = impl->inputMethodContext();
+    if (inputMethodContext)
+        inputMethodContext->handleKeyDownEvent(downEvent, &isFiltered);
 
     impl->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(downEvent, isFiltered));
     return true;

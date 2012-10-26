@@ -1,3 +1,41 @@
+2012-10-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Move input method code out of EwkViewImpl
+        https://bugs.webkit.org/show_bug.cgi?id=100468
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move input method code out of EwkViewImpl and into
+        a new InputMethodContextEfl class to avoid cluttering
+        the view code.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::inputMethodContext):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebKit):
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_mouse_up):
+        (_ewk_view_smart_key_down):
+        * UIProcess/efl/InputMethodContextEfl.cpp: Added.
+        (WebKit):
+        (WebKit::InputMethodContextEfl::InputMethodContextEfl):
+        (WebKit::InputMethodContextEfl::~InputMethodContextEfl):
+        (WebKit::InputMethodContextEfl::onIMFInputSequenceComplete):
+        (WebKit::InputMethodContextEfl::onIMFPreeditSequenceChanged):
+        (WebKit::InputMethodContextEfl::createIMFContext):
+        (WebKit::InputMethodContextEfl::handleMouseUpEvent):
+        (WebKit::InputMethodContextEfl::handleKeyDownEvent):
+        (WebKit::InputMethodContextEfl::updateTextInputState):
+        * UIProcess/efl/InputMethodContextEfl.h: Added.
+        (WebKit):
+        (InputMethodContextEfl):
+        (WebKit::InputMethodContextEfl::create):
+        * UIProcess/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::updateTextInputState):
+
 2012-10-26  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Implement {get,set}FloatValueForKey

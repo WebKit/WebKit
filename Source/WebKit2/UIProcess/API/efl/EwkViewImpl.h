@@ -24,8 +24,6 @@
 #include "RefPtrEfl.h"
 #include "WKEinaSharedString.h"
 #include "WKRetainPtr.h"
-#include <Ecore_IMF.h>
-#include <Ecore_IMF_Evas.h>
 #include <Evas.h>
 #include <WebCore/TextDirection.h>
 #include <WebCore/Timer.h>
@@ -63,6 +61,7 @@
 namespace WebKit {
 class FindClientEfl;
 class FormClientEfl;
+class InputMethodContextEfl;
 class PageClientImpl;
 class PageLoadClientEfl;
 class PagePolicyClientEfl;
@@ -118,7 +117,7 @@ public:
     const char* url() const { return m_url; }
     const char* faviconURL() const { return m_faviconURL; }
     const char* title() const;
-    Ecore_IMF_Context* inputMethodContext();
+    WebKit::InputMethodContextEfl* inputMethodContext();
 
     const char* themePath() const;
     void setThemePath(const char* theme);
@@ -241,10 +240,6 @@ private:
     inline Ewk_View_Smart_Data* smartData();
     void displayTimerFired(WebCore::Timer<EwkViewImpl>*);
 
-    static PassOwnPtr<Ecore_IMF_Context> createIMFContext(Ewk_View_Smart_Data*);
-    static void onIMFInputSequenceComplete(void* data, Ecore_IMF_Context*, void* eventInfo);
-    static void onIMFPreeditSequenceChanged(void* data, Ecore_IMF_Context*, void* eventInfo);
-
     static void onMouseDown(void* data, Evas*, Evas_Object*, void* eventInfo);
     static void onMouseUp(void* data, Evas*, Evas_Object*, void* eventInfo);
     static void onMouseMove(void* data, Evas*, Evas_Object*, void* eventInfo);
@@ -257,8 +252,6 @@ private:
 
     Evas_Object* m_view;
     OwnPtr<Ewk_Settings> m_settings;
-    OwnPtr<Ecore_IMF_Context> m_inputMethodContext;
-    bool m_inputMethodContextFocused;
     RefPtr<Evas_Object> m_cursorObject;
     WKEinaSharedString m_cursorGroup;
     WKEinaSharedString m_faviconURL;
@@ -274,6 +267,7 @@ private:
     WebCore::Timer<EwkViewImpl> m_displayTimer;
     WTF::Vector <WebCore::IntRect> m_dirtyRects;
     OwnPtr<Ewk_Popup_Menu> m_popupMenu;
+    OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
 
     typedef HashMap<WKPageRef, const Evas_Object*> PageViewMap;
     static PageViewMap pageViewMap;
