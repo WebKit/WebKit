@@ -186,6 +186,7 @@ class PatchAnalysisTask(object):
         first_results = self._delegate.test_results()
         first_results_archive = self._delegate.archive_last_test_results(self._patch)
         first_script_error = self._script_error
+        first_failure_status_id = self.failure_status_id
 
         if self._expected_failures.failures_were_expected(first_results):
             return True
@@ -223,6 +224,7 @@ class PatchAnalysisTask(object):
         # Now that we have updated information about failing tests with a clean checkout, we can
         # tell if our original failures were unexpected and fail the patch if necessary.
         if self._expected_failures.unexpected_failures_observed(first_results):
+            self.failure_status_id = first_failure_status_id
             return self.report_failure(first_results_archive, first_results, first_script_error)
 
         # We don't know what's going on.  The tree is likely very red (beyond our layout-test-results

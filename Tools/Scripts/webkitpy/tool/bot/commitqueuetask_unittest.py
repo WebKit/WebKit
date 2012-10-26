@@ -45,6 +45,7 @@ from webkitpy.tool.mocktool import MockTool
 class MockCommitQueue(CommitQueueTaskDelegate):
     def __init__(self, error_plan):
         self._error_plan = error_plan
+        self._failure_status_id = 0
 
     def run_command(self, command):
         log("run_webkit_patch: %s" % command)
@@ -60,7 +61,8 @@ class MockCommitQueue(CommitQueueTaskDelegate):
     def command_failed(self, failure_message, script_error, patch):
         log("command_failed: failure_message='%s' script_error='%s' patch='%s'" % (
             failure_message, script_error, patch.id()))
-        return 3947
+        self._failure_status_id += 1
+        return self._failure_status_id
 
     def refetch_patch(self, patch):
         return patch
@@ -522,6 +524,8 @@ command_failed: failure_message='Unable to pass tests without patch (tree is red
 """
         task = self._run_through_task(commit_queue, expected_stderr, GoldenScriptError)
         self.assertEqual(task.results_from_patch_test_run(task._patch).failing_tests(), ["foo.html", "bar.html"])
+        # failure_status_id should be of the test with patch (1), not the test without patch (2).
+        self.assertEqual(task.failure_status_id, 1)
 
     def test_land_failure(self):
         commit_queue = MockCommitQueue([

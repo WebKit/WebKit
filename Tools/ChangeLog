@@ -1,3 +1,17 @@
+2012-10-26  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Build bot gives incorrect link to EWS build failure
+        https://bugs.webkit.org/show_bug.cgi?id=100436
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (MockCommitQueue.__init__):
+        (MockCommitQueue.command_failed): Return incremental failure_status_id
+        (CommitQueueTaskTest.test_red_tree_patch_rejection): Check failure_status_id
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchAnalysisTask._test_patch): Use the failure_status_id of test with patch when test without patch fails and test with patch has unexpected failures.
+
 2012-10-26  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         webkitpy: Pass the `Listen' Apache directive from webkitpy, not the httpd.conf files.
