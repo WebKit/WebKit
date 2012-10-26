@@ -1,3 +1,9 @@
+2012-10-26  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Unreviewed Apple Win gardening.
+
+        * platform/win/TestExpectations: Skipping XHR timeout tests.
+
 2012-10-26  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed. Removing bogus '#EOF\n' data in the listed PNG file that's
