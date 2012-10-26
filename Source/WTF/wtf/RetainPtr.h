@@ -82,6 +82,8 @@ namespace WTF {
 
         PtrType get() const { return m_ptr; }
         PtrType operator->() const { return m_ptr; }
+        PtrType* operator&() { ASSERT(!m_ptr); return &m_ptr; }
+
 #if COMPILER_SUPPORTS(CXX_EXPLICIT_CONVERSIONS)
         explicit operator PtrType() const { return m_ptr; }
 #endif

@@ -1,3 +1,15 @@
+2012-10-26  Anders Carlsson  <andersca@apple.com>
+
+        Add an operator& to RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=100549
+
+        Reviewed by Dan Bernstein.
+
+        This is useful for APIs that return references using out parameters.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::operator&):
+
 2012-10-26  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         [Qt] Enable JSC's disassembler on x86, x86_64 Linux
