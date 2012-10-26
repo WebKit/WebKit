@@ -31,17 +31,8 @@
 #include "config.h"
 #include "MemoryUsageSupport.h"
 
-#include "PlatformMemoryInstrumentation.h"
-#include <SkGlyphCache.h>
 #include <SkGraphics.h>
 #include <public/Platform.h>
-
-void reportMemoryUsage(const SkGlyphCache* const& glyphCache, WTF::MemoryObjectInfo* memoryObjectInfo)
-{
-    WTF::MemoryClassInfo info(memoryObjectInfo, glyphCache, WebCore::PlatformMemoryTypes::GlyphCache);
-    info.addMember(&glyphCache->getDescriptor());
-    info.addMember(glyphCache->getScalerContext());
-}
 
 namespace WebCore {
 
@@ -75,16 +66,10 @@ bool MemoryUsageSupport::processMemorySizesInBytes(size_t* privateBytes, size_t*
     return WebKit::Platform::current()->processMemorySizesInBytes(privateBytes, sharedBytes);
 }
 
-static bool reportGlyphCache(SkGlyphCache* glyphCache, void* ctx)
+void MemoryUsageSupport::memoryUsageByComponents(Vector<ComponentInfo>& components)
 {
-    MemoryInstrumentation* memoryInstrumentation = reinterpret_cast<MemoryInstrumentation*>(ctx);
-    memoryInstrumentation->addRootObject(glyphCache);
-    return false;
-}
-
-void MemoryUsageSupport::reportMemoryUsage(MemoryInstrumentation* memoryInstrumentation)
-{
-    SkGlyphCache::VisitAllCaches(reportGlyphCache, memoryInstrumentation);
+    size_t size = SkGraphics::GetFontCacheUsed();
+    components.append(ComponentInfo("GlyphCache", size));
 }
 
 } // namespace WebCore

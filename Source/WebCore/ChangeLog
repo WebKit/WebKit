@@ -1,3 +1,28 @@
+2012-10-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r132658.
+        http://trac.webkit.org/changeset/132658
+        https://bugs.webkit.org/show_bug.cgi?id=100515
+
+        It broke the Qt build
+
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::addPlatformComponentsInfo):
+        (WebCore):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * platform/MemoryUsageSupport.cpp:
+        (WebCore::MemoryUsageSupport::memoryUsageByComponents):
+        * platform/MemoryUsageSupport.h:
+        (ComponentInfo):
+        (WebCore::MemoryUsageSupport::ComponentInfo::ComponentInfo):
+        (MemoryUsageSupport):
+        * platform/PlatformMemoryInstrumentation.cpp:
+        (WebCore):
+        * platform/PlatformMemoryInstrumentation.h:
+        (PlatformMemoryTypes):
+        * platform/chromium/MemoryUsageSupportChromium.cpp:
+        (WebCore::MemoryUsageSupport::memoryUsageByComponents):
+
 2012-10-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Some context menu items are duplicated on Resources and Sources panels.

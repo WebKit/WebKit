@@ -35,6 +35,5 @@ namespace WebCore {
 
 MemoryObjectType PlatformMemoryTypes::Image = "Page.Image";
 MemoryObjectType PlatformMemoryTypes::Loader = "Page.Loader";
-MemoryObjectType PlatformMemoryTypes::GlyphCache = "MemoryCache.Font.GlyphCache";
 
 } // namespace WebCore
