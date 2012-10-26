@@ -312,9 +312,9 @@ TEST_F(LocaleWinTest, timeFormat)
 
 TEST_F(LocaleWinTest, shortTimeFormat)
 {
-    EXPECT_STREQ("h:mm:ss a", shortTimeFormat(EnglishUS).utf8().data());
-    EXPECT_STREQ("HH:mm:ss", shortTimeFormat(FrenchFR).utf8().data());
-    EXPECT_STREQ("H:mm:ss", shortTimeFormat(JapaneseJP).utf8().data());
+    EXPECT_STREQ("h:mm a", shortTimeFormat(EnglishUS).utf8().data());
+    EXPECT_STREQ("HH:mm", shortTimeFormat(FrenchFR).utf8().data());
+    EXPECT_STREQ("H:mm", shortTimeFormat(JapaneseJP).utf8().data());
 }
 
 TEST_F(LocaleWinTest, shortMonthLabels)

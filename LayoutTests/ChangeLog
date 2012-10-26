@@ -1,3 +1,17 @@
+2012-10-26  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-Win] Support shortTimeFormat
+        https://bugs.webkit.org/show_bug.cgi?id=100471
+
+        Reviewed by Kentaro Hara.
+
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png:
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-26  Nandor Huszka  <hnandor@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
