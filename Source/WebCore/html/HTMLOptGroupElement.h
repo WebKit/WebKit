@@ -50,14 +50,16 @@ private:
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
     virtual void attach();
     virtual void detach();
-    virtual void setRenderStyle(PassRefPtr<RenderStyle>);
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
     virtual void accessKeyAction(bool sendMouseEvents);
-    
-    virtual RenderStyle* nonRendererRenderStyle() const;
-    
+
+    // <optgroup> never has a renderer so we manually manage a cached style.
+    void updateNonRenderStyle();
+    virtual RenderStyle* nonRendererStyle() const OVERRIDE;
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
+
     void recalcSelectOptions();
 
     RefPtr<RenderStyle> m_style;

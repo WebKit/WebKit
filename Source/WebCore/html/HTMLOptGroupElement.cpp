@@ -42,6 +42,7 @@ inline HTMLOptGroupElement::HTMLOptGroupElement(const QualifiedName& tagName, Do
     : HTMLElement(tagName, document)
 {
     ASSERT(hasTagName(optgroupTag));
+    setHasCustomCallbacks();
 }
 
 PassRefPtr<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName& tagName, Document* document)
@@ -94,9 +95,12 @@ void HTMLOptGroupElement::recalcSelectOptions()
 
 void HTMLOptGroupElement::attach()
 {
-    if (parentNode()->renderStyle())
-        setRenderStyle(styleForRenderer());
     HTMLElement::attach();
+    // If after attaching nothing called styleForRenderer() on this node we
+    // manually cache the value. This happens if our parent doesn't have a
+    // renderer like <optgroup> or if it doesn't allow children like <select>.
+    if (!m_style && parentNode()->renderStyle())
+        updateNonRenderStyle();
 }
 
 void HTMLOptGroupElement::detach()
@@ -105,14 +109,22 @@ void HTMLOptGroupElement::detach()
     HTMLElement::detach();
 }
 
-void HTMLOptGroupElement::setRenderStyle(PassRefPtr<RenderStyle> newStyle)
+void HTMLOptGroupElement::updateNonRenderStyle()
 {
-    m_style = newStyle;
+    m_style = document()->styleResolver()->styleForElement(this);
 }
-    
-RenderStyle* HTMLOptGroupElement::nonRendererRenderStyle() const 
-{ 
-    return m_style.get(); 
+
+RenderStyle* HTMLOptGroupElement::nonRendererStyle() const
+{
+    return m_style.get();
+}
+
+PassRefPtr<RenderStyle> HTMLOptGroupElement::customStyleForRenderer()
+{
+    // styleForRenderer is called whenever a new style should be associated
+    // with an Element so now is a good time to update our cached style.
+    updateNonRenderStyle();
+    return m_style;
 }
 
 String HTMLOptGroupElement::groupLabelText() const

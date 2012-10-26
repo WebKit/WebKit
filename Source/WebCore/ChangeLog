@@ -1,3 +1,50 @@
+2012-10-26  Elliott Sprehn  <esprehn@chromium.org>
+
+        Remove setRenderStyle in favor of callbacks on HTMLOptionElement and HTMLOptGroupElement
+        https://bugs.webkit.org/show_bug.cgi?id=100397
+
+        Reviewed by Ojan Vafai.
+
+        Use Node custom callbacks to support the non-renderer style caching for option
+        and optgroup eliminating the need for setRenderStyle.
+
+        setRenderStyle only existed to support HTMLOptionElement and HTMLOptGroupElement
+        so they could store their RenderStyle even though they have no renderer. This
+        means all style setting went through the virtual call to setRenderStyle, and it
+        also hid the if statement protecting against null renderers meaning we end up
+        checking if the renderer is null repeatedly in recalcStyle. This refactor cleans
+        up recalcStyle to be more clear about what's going on.
+
+        No new tests needed, this is just a refactor.
+
+        * dom/Element.cpp:
+        (WebCore::Element::pseudoStyleCacheIsInvalid):
+        (WebCore::Element::recalcStyle):
+        * dom/Node.cpp:
+        (WebCore::Node::createRenderer):
+        (WebCore::Node::setRenderStyle):
+            Removed this method because it was only here to support HTMLOptionElement
+            and HTMLOptGroupElement. Instead we can use node custom callbacks.
+        * dom/Node.h:
+        (WebCore::Node::nonRendererStyle): Renamed from nonRendererRenderStyle to match other style methods.
+        * dom/NodeRenderStyle.h:
+        (WebCore::Node::renderStyle):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::HTMLOptGroupElement):
+        (WebCore::HTMLOptGroupElement::attach): Reorder the logic to avoid calling styleForRenderer twice.
+        (WebCore::HTMLOptGroupElement::updateNonRenderStyle): Updates the cached non-renderer style.
+        (WebCore::HTMLOptGroupElement::nonRendererStyle):
+        (WebCore::HTMLOptGroupElement::customStyleForRenderer):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        (WebCore::HTMLOptionElement::attach): Reorder the logic to avoid calling styleForRenderer twice.
+        (WebCore::HTMLOptionElement::updateNonRenderStyle): Updates the cached non-renderer style.
+        (WebCore::HTMLOptionElement::nonRendererStyle):
+        (WebCore::HTMLOptionElement::customStyleForRenderer):
+        (WebCore::HTMLOptionElement::didRecalcStyle): Requests the repaint of the select like setRenderStyle used to.
+        * html/HTMLOptionElement.h:
+
 2012-10-26  Dirk Schulze  <krit@webkit.org>
 
         -webkit-clip-path property should just reference clipPath

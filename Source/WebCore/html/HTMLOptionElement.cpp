@@ -55,6 +55,7 @@ HTMLOptionElement::HTMLOptionElement(const QualifiedName& tagName, Document* doc
     , m_isSelected(false)
 {
     ASSERT(hasTagName(optionTag));
+    setHasCustomCallbacks();
 }
 
 PassRefPtr<HTMLOptionElement> HTMLOptionElement::create(Document* document)
@@ -90,9 +91,12 @@ PassRefPtr<HTMLOptionElement> HTMLOptionElement::createForJSConstructor(Document
 
 void HTMLOptionElement::attach()
 {
-    if (parentNode()->renderStyle())
-        setRenderStyle(styleForRenderer());
     HTMLElement::attach();
+    // If after attaching nothing called styleForRenderer() on this node we
+    // manually cache the value. This happens if our parent doesn't have a
+    // renderer like <optgroup> or if it doesn't allow children like <select>.
+    if (!m_style && parentNode()->renderStyle())
+        updateNonRenderStyle();
 }
 
 void HTMLOptionElement::detach()
@@ -305,18 +309,32 @@ void HTMLOptionElement::setLabel(const String& label)
     setAttribute(labelAttr, label);
 }
 
-void HTMLOptionElement::setRenderStyle(PassRefPtr<RenderStyle> newStyle)
+void HTMLOptionElement::updateNonRenderStyle()
 {
-    m_style = newStyle;
+    m_style = document()->styleResolver()->styleForElement(this);
+}
+
+RenderStyle* HTMLOptionElement::nonRendererStyle() const
+{
+    return m_style.get();
+}
+
+PassRefPtr<RenderStyle> HTMLOptionElement::customStyleForRenderer()
+{
+    // styleForRenderer is called whenever a new style should be associated
+    // with an Element so now is a good time to update our cached style.
+    updateNonRenderStyle();
+    return m_style;
+}
+
+void HTMLOptionElement::didRecalcStyle(StyleChange)
+{
+    // FIXME: This is nasty, we ask our owner select to repaint even if the new
+    // style is exactly the same.
     if (HTMLSelectElement* select = ownerSelectElement()) {
         if (RenderObject* renderer = select->renderer())
             renderer->repaint();
     }
-}
-
-RenderStyle* HTMLOptionElement::nonRendererRenderStyle() const
-{
-    return m_style.get();
 }
 
 String HTMLOptionElement::textIndentedToRespectGroupLabel() const

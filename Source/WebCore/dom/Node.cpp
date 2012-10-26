@@ -1416,17 +1416,6 @@ RenderObject* Node::createRenderer(RenderArena*, RenderStyle*)
     ASSERT_NOT_REACHED();
     return 0;
 }
-    
-RenderStyle* Node::nonRendererRenderStyle() const
-{ 
-    return 0; 
-}   
-
-void Node::setRenderStyle(PassRefPtr<RenderStyle> s)
-{
-    if (m_renderer)
-        m_renderer->setAnimatableStyle(s); 
-}
 
 RenderStyle* Node::virtualComputedStyle(PseudoId pseudoElementSpecifier)
 {

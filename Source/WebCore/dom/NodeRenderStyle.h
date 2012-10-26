@@ -35,9 +35,9 @@ inline RenderStyle* Node::renderStyle() const
 {
     // Using a ternary here confuses the Solaris Studio 12/12.1/12.2 compilers:
     // Bug is CR 6569194, "Problem with question operator binding in inline function"
-    if (m_renderer) 
+    if (m_renderer)
         return m_renderer->style();
-    return nonRendererRenderStyle();
+    return nonRendererStyle();
 }
 
 }
