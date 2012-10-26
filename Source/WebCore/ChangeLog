@@ -1,3 +1,30 @@
+2012-10-26  Keishi Hattori  <keishi@webkit.org>
+
+        Refactor calendar picker to remove _x/_y from DaysTable
+        https://bugs.webkit.org/show_bug.cgi?id=100460
+
+        Reviewed by Kent Tamura.
+
+        _x/_y properties keep the coordinates for the selection but when we add
+        week and month picking capabilities, the selection can't be expressed as
+        a set of coordinates. This change will remove it.
+
+        No new tests. Covered by calendar-picker-*.html tests.
+
+        * Resources/pagepopups/calendarPicker.js:
+        (DaysTable): Removed _x/_y properties.
+        (DaysTable.prototype._hasSelection): Changed to refer to the DOM to see if we have a selection.
+        (DaysTable.prototype.navigateToMonthAndKeepSelectionPosition): Lookup the selection position.
+        (DaysTable.prototype.selectDate): Deselect first so we don't have two selections.
+        (DaysTable.prototype._selectRangeContainingNode): Selects date/week/month containing the given day node.
+        (DaysTable.prototype._selectRangeAtPosition): Selects date/week/month at the given position.
+        (DaysTable.prototype._firstNodeInSelectedRange): Returns first selected day node.
+        (DaysTable.prototype._deselect): Deselects all selections.
+        (DaysTable.prototype._handleMouseOver): Use _selectRangeContainingNode so we don't have many places handling the selection.
+        (DaysTable.prototype._handleMouseOut): Use _deselect.
+        (DaysTable.prototype._handleKey): Lookup the selection position.
+        (DaysTable.prototype.updateSelection): Use _selectRangeAtPosition.
+
 2012-10-26  Ningxin Hu  <ningxin.hu@intel.com>
 
         FileReader abort case causes Chromium renderer crash
