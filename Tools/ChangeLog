@@ -1,3 +1,57 @@
+2012-10-25  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] remove remaining usages of webkit_support from the TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=100344
+
+        Reviewed by Adam Barth.
+
+        The most important part is to not rely on calling out to gdk/X11 to
+        translate keycodes to hardware keycodes, as this is not possible inside
+        the sandbox.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (WebKit):
+        (webkit_support):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/CppVariant.h:
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::doDragDrop):
+        (WebTestRunner::EventSender::updateClickCountForButton):
+        (WebTestRunner::EventSender::mouseDown):
+        (WebTestRunner::EventSender::mouseUp):
+        (WebTestRunner::EventSender::mouseMoveTo):
+        (WebTestRunner::EventSender::keyDown):
+        (WebTestRunner::EventSender::replaySavedEvents):
+        (WebTestRunner::EventSender::contextClick):
+        (WebTestRunner::EventSender::beginDragWithFiles):
+        (WebTestRunner::EventSender::sendCurrentTouchEvent):
+        (WebTestRunner::EventSender::handleMouseWheel):
+        (WebTestRunner::EventSender::gestureEvent):
+        (WebTestRunner::EventSender::gestureFlingCancel):
+        (WebTestRunner::EventSender::gestureFlingStart):
+        * DumpRenderTree/chromium/TestRunner/src/KeyCodeMapping.cpp: Added.
+        (WebTestRunner):
+        (WebTestRunner::NativeKeyCodeForWindowsKeyCode):
+        * DumpRenderTree/chromium/TestRunner/src/KeyCodeMapping.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/TestRunner.h.
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestDelegate.h:
+        (TestDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestInterfaces::Internal):
+        (WebTestRunner::WebTestInterfaces::Internal::getCurrentTimeInMillisecond):
+        (WebTestRunner):
+        (WebTestRunner::WebTestInterfaces::Internal::getAbsoluteWebStringFromUTF8Path):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::getCurrentTimeInMillisecond):
+        (WebViewHost::getAbsoluteWebStringFromUTF8Path):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132514.

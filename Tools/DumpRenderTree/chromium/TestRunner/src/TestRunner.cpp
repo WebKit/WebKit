@@ -32,51 +32,6 @@
 #include "config.h"
 #include "TestRunner.h"
 
-#include "WebAnimationController.h"
-#include "WebBindings.h"
-#include "WebConsoleMessage.h"
-#include "WebDeviceOrientation.h"
-#include "WebDeviceOrientationClientMock.h"
-#include "WebDocument.h"
-#include "WebElement.h"
-#include "WebFindOptions.h"
-#include "WebFrame.h"
-#include "WebGeolocationClientMock.h"
-#include "WebIDBFactory.h"
-#include "WebInputElement.h"
-#include "WebIntent.h"
-#include "WebIntentRequest.h"
-#include "WebKit.h"
-#include "WebNotificationPresenter.h"
-#include "WebPrintParams.h"
-#include "WebScriptSource.h"
-#include "WebSecurityPolicy.h"
-#include "WebSettings.h"
-#include "WebSurroundingText.h"
-#include "WebView.h"
-#include "WebWorkerInfo.h"
-#include "platform/WebData.h"
-#include "platform/WebSerializedScriptValue.h"
-#include "platform/WebSize.h"
-#include "platform/WebURL.h"
-#include "v8/include/v8.h"
-#include "webkit/support/webkit_support.h"
-#include <algorithm>
-#include <clocale>
-#include <cstdlib>
-#include <limits>
-#include <sstream>
-#include <wtf/OwnArrayPtr.h>
-#include <wtf/text/WTFString.h>
-
-#if OS(LINUX) || OS(ANDROID)
-#include "linux/WebFontRendering.h"
-#endif
-
-using namespace WebCore;
-using namespace WebKit;
-using namespace std;
-
 TestRunner::TestRunner()
 {
 }

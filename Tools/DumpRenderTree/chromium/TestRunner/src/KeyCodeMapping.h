@@ -28,35 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TestDelegate_h
-#define TestDelegate_h
-
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
-
-namespace WebKit {
-struct WebContextMenuData;
-class WebGamepads;
-}
+#ifndef KeyCodeMapping_h
+#define KeyCodeMapping_h
 
 namespace WebTestRunner {
-class WebTask;
-}
 
-class TestDelegate {
-public:
-    virtual void clearContextMenuData() = 0;
-    virtual void clearEditCommand() = 0;
-    virtual void fillSpellingSuggestionList(const WebKit::WebString& word, WebKit::WebVector<WebKit::WebString>* suggestions) = 0;
-    virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
-    virtual WebKit::WebContextMenuData* lastContextMenuData() const = 0;
-    virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
-    virtual void printMessage(const std::string& message) = 0;
-    virtual void postTask(WebTestRunner::WebTask*) = 0;
-    virtual void postDelayedTask(WebTestRunner::WebTask*, long long ms) = 0;
-    virtual WebKit::WebString registerIsolatedFileSystem(const WebKit::WebVector<WebKit::WebString>& absoluteFilenames) = 0;
-    virtual long long getCurrentTimeInMillisecond() = 0;
-    virtual WebKit::WebString getAbsoluteWebStringFromUTF8Path(const std::string& path) = 0;
+// The keycodes match the values of the virtual keycodes found here http://msdn.microsoft.com/en-us/library/windows/desktop/dd375731(v=vs.85).aspx
+enum {
+    VKEY_RETURN   = 0x0D,
+    VKEY_PRIOR    = 0x21,
+    VKEY_NEXT     = 0x22,
+    VKEY_END      = 0x23,
+    VKEY_HOME     = 0x24,
+    VKEY_LEFT     = 0x25,
+    VKEY_UP       = 0x26,
+    VKEY_RIGHT    = 0x27,
+    VKEY_DOWN     = 0x28,
+    VKEY_SNAPSHOT = 0x2C,
+    VKEY_INSERT   = 0x2D,
+    VKEY_DELETE   = 0x2E,
+    VKEY_APPS     = 0x5D,
+    VKEY_F1       = 0x70,
+    VKEY_LSHIFT   = 0xA0,
+    VKEY_RSHIFT   = 0xA1,
+    VKEY_LCONTROL = 0xA2,
+    VKEY_RCONTROL = 0xA3,
+    VKEY_LMENU    = 0xA4,
+    VKEY_RMENU    = 0xA5,
 };
 
-#endif // TestDelegate_h
+// Map a windows keycode to a native keycode on OS(LINUX) && USE(GTK).
+int NativeKeyCodeForWindowsKeyCode(int keysym);
+
+}
+
+#endif // KeyCodeMapping_h

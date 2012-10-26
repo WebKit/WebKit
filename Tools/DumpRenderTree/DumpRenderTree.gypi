@@ -83,6 +83,8 @@
             'chromium/TestRunner/src/EventSender.h',
             'chromium/TestRunner/src/GamepadController.cpp',
             'chromium/TestRunner/src/GamepadController.h',
+            'chromium/TestRunner/src/KeyCodeMapping.cpp',
+            'chromium/TestRunner/src/KeyCodeMapping.h',
             'chromium/TestRunner/src/TestInterfaces.cpp',
             'chromium/TestRunner/src/TestInterfaces.h',
             'chromium/TestRunner/src/TextInputController.cpp',
