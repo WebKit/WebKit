@@ -1,3 +1,17 @@
+2012-10-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Initialize Ewk_Context class members in initialization list
+        https://bugs.webkit.org/show_bug.cgi?id=100503
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move Ewk_Context class members initialization from the
+        constructor body to the initialization list for
+        efficiency.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (Ewk_Context::Ewk_Context):
+
 2012-10-26  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         LayerTreeCoordinator: Make sure that dependent layers are deleted before their directly composited image
