@@ -7,6 +7,43 @@
 
         Added a bunch of pixel expectations for Qt-WebKit2 - part 1.
 
+        * platform/qt-5.0-wk2/fullscreen/fullscreen/full-screen-iframe-zIndex-expected.png: Added.
+        * platform/qt-5.0-wk2/fullscreen/fullscreen/full-screen-remove-ancestor-after-expected.png: Added.
+        * platform/qt-5.0-wk2/fullscreen/fullscreen/full-screen-stacking-context-expected.png: Added.
+        * platform/qt-5.0-wk2/fullscreen/fullscreen/full-screen-zIndex-after-expected.png: Added.
+        * platform/qt-5.0-wk2/fullscreen/fullscreen/full-screen-zIndex-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-appendItem-expected.png/SVGLengthList-appendItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-basics-expected.png/SVGLengthList-basics-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-getItem-expected.png/SVGLengthList-getItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-initialize-expected.png/SVGLengthList-initialize-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-insertItemBefore-expected.png/SVGLengthList-insertItemBefore-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-removeItem-expected.png/SVGLengthList-removeItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-replaceItem-expected.png/SVGLengthList-replaceItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLengthList-xml-dom-modifications-expected.png/SVGLengthList-xml-dom-modifications-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGLocatable-getCTM-svg-root-expected.png/SVGLocatable-getCTM-svg-root-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGNumberList-basics-expected.png/SVGNumberList-basics-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-appendItem-expected.png/SVGPathSegList-appendItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-clear-and-initialize-expected.png/SVGPathSegList-clear-and-initialize-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-insertItemBefore-expected.png/SVGPathSegList-insertItemBefore-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-removeItem-expected.png/SVGPathSegList-removeItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-replaceItem-expected.png/SVGPathSegList-replaceItem-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPathSegList-xml-dom-synchronization-expected.png/SVGPathSegList-xml-dom-synchronization-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGPointList-basics-expected.png/SVGPointList-basics-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGStringList-basics-expected.png/SVGStringList-basics-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/dom/SVGTransformList-basics-expected.png/SVGTransformList-basics-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/filters/feImage-animated-transform-on-target-rect-expected.png/feImage-animated-transform-on-target-rect-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/repaint/image-href-change-expected.png/image-href-change-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/repaint/image-with-clip-path-expected.png/image-with-clip-path-expected.png: Added.
+
+2012-10-26  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Pixel tests need rebaseline
+        https://bugs.webkit.org/show_bug.cgi?id=99323
+
+        Unreviewed pixel gardening.
+
+        Added a bunch of pixel expectations for Qt-WebKit2 - part 1.
+
         * platform/qt-5.0-wk2/css3/filters/filter-empty-element-crash-expected.png: Added.
         * platform/qt-5.0-wk2/css3/filters/multiple-filters-invalidation-expected.png: Added.
         * platform/qt-5.0-wk2/css3/flexbox/repaint-expected.png: Added.
