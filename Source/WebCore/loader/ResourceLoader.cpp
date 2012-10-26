@@ -37,7 +37,9 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
+#include "LoaderStrategy.h"
 #include "Page.h"
+#include "PlatformStrategies.h"
 #include "ProgressTracker.h"
 #include "ResourceBuffer.h"
 #include "ResourceError.h"
@@ -89,9 +91,13 @@ void ResourceLoader::releaseResources()
     // the resources to prevent a double dealloc of WebView <rdar://problem/4372628>
     m_reachedTerminalState = true;
 
-    resourceLoadScheduler()->remove(this);
-
+#if USE(PLATFORM_STRATEGIES)
+    platformStrategies()->loaderStrategy()->resourceLoadScheduler()->remove(this);
+#endif
     m_identifier = 0;
+#if !USE(PLATFORM_STRATEGIES)
+    resourceLoadScheduler()->remove(this);
+#endif
 
     if (m_handle) {
         // Clear out the ResourceHandle's client so that it doesn't try to call
@@ -237,9 +243,13 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
         frameLoader()->notifier()->willSendRequest(this, request, redirectResponse);
     }
 
-    if (!redirectResponse.isNull())
+    if (!redirectResponse.isNull()) {
+#if USE(PLATFORM_STRATEGIES)
+        platformStrategies()->loaderStrategy()->resourceLoadScheduler()->crossOriginRedirectReceived(this, request.url());
+#else
         resourceLoadScheduler()->crossOriginRedirectReceived(this, request.url());
-
+#endif
+    }
     m_request = request;
 }
 

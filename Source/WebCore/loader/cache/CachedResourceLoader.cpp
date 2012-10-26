@@ -44,9 +44,11 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLElement.h"
+#include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "PingLoader.h"
+#include "PlatformStrategies.h"
 #include "ResourceLoadScheduler.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -728,7 +730,11 @@ void CachedResourceLoader::performPostLoadActions()
 {
     checkForPendingPreloads();
 
+#if USE(PLATFORM_STRATEGIES)
+    platformStrategies()->loaderStrategy()->resourceLoadScheduler()->servePendingRequests();
+#else
     resourceLoadScheduler()->servePendingRequests();
+#endif
 }
 
 void CachedResourceLoader::notifyLoadedFromMemoryCache(CachedResource* resource)
