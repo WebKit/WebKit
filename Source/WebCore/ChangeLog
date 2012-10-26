@@ -1,3 +1,21 @@
+2012-10-25  Leo Yang  <leoyang@rim.com>
+
+        [BlackBerry] Infinite redirect loop is not displayed to user
+        https://bugs.webkit.org/show_bug.cgi?id=100420
+
+        Reviewed by George Staikos.
+
+        CNN.com is redirecting us infinitely with 302 http code and response body. We catch
+        it my setting our extended error code as we defined. But we were not trying to notify
+        error because we have received body. This was wrong. For extended http status code
+        which is less than 0 we should display our own error page regardless there was data
+        received from the server or not.
+
+        Tested by manually loading CNN.com.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::shouldNotifyClientFailed):
+
 2012-10-25  Nico Weber  <thakis@chromium.org>
 
         Flip ImageOrientation coordinate system from lefthanded to righthanded
