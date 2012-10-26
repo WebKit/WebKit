@@ -1,3 +1,25 @@
+2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132612.
+        http://trac.webkit.org/changeset/132612
+        https://bugs.webkit.org/show_bug.cgi?id=100512
+
+        Crashes fast/events/tabindex-focus-blur-all.html in debug mode
+        (Requested by pfeldman on #webkit).
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::recalcColumn):
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::styleDidChange):
+        (WebCore::RenderTableCol::updateFromElement):
+        (WebCore::RenderTableCol::computePreferredLogicalWidths):
+        * rendering/RenderTableCol.h:
+        (RenderTableCol):
+
 2012-10-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: fast return upon setting the same dock side.

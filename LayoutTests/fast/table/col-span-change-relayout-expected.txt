@@ -1,7 +1,0 @@
-This test checks that dynamically changing a column's 'span' properly recompute the cell's widths.
-
-The table below shrink to 200px after changing the column's span.
-
-PASS
-PASS
-
