@@ -1,3 +1,9 @@
+2012-10-26  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Fix test pixel expectation.
+
+        * platform/efl/svg/dynamic-updates/SVGClipPathElement-css-transform-influences-hitTesting-expected.png:
+
 2012-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderTableCol::computePreferredLogicalWidths and RenderTableCol::layout should never be called
