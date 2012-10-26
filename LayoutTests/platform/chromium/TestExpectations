@@ -3997,9 +3997,6 @@ webkit.org/b/98192 [ Win Debug ] fast/js/post-message-numeric-property.html [ Fa
 
 webkit.org/b/98275 media/event-queue-crash.html [ Skip ]
 
-# BUGTHAKIS: Requires baselines
-webkit.org/b/19688 fast/images/exif-orientation.html [ ImageOnlyFailure ]
-
 # These are real failues due to 95121.
 # This is spilling caused by LANCZOS3 scaling algorithm that samples outside the source rect.
 webkit.org/b/95121 fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ] 

@@ -1,3 +1,14 @@
+2012-10-26  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Enable fast/images/exif-orientation.html
+        https://bugs.webkit.org/show_bug.cgi?id=100534
+
+        Unreviewed, TestExpecations change.
+
+        The baselines for this test landed yesterday.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-26  Florin Malita  <fmalita@chromium.org>
 
         Crash on loading SVG filter resource on HTML element
