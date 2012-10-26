@@ -1,3 +1,15 @@
+2012-10-26  Dirk Schulze  <krit@webkit.org>
+
+        -webkit-clip-path property should just reference clipPath
+        https://bugs.webkit.org/show_bug.cgi?id=100531
+
+        Reviewed by Eric Seidel.
+
+        Check that anther SVG resource like mask can not be referenced as clipPath.
+
+        * css3/masking/clip-path-reference-of-fake-clipPath-expected.txt: Added.
+        * css3/masking/clip-path-reference-of-fake-clipPath.html: Added.
+
 2012-10-26  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         webkitpy: Pass the `Listen' Apache directive from webkitpy, not the httpd.conf files.
