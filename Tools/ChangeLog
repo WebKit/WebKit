@@ -1,3 +1,16 @@
+2012-10-25  Roger Fong  <roger_fong@apple.com>
+
+        Get rid of (<X%) failing output for old-run-webkit-tests.
+        https://bugs.webkit.org/show_bug.cgi?id=100447
+
+        Reviewed by Jessie Berlin.
+
+        Not a particularly useful piece of information. It's pretty much never above 1%.
+        new-run-webkit-tests does not output this either.
+
+        * Scripts/old-run-webkit-tests:
+        (printResults):
+
 2012-10-26  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Build bot gives incorrect link to EWS build failure
