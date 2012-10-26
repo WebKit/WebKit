@@ -136,7 +136,7 @@ struct GraphicsSurfacePrivate {
             QSurface* currentSurface = shareContext->surface();
             shareContext->makeCurrent(currentSurface);
 
-            shareContextObject = glxGetCurrentContext();
+            shareContextObject = glXGetCurrentContext();
 
             previousContext->makeCurrent(previousSurface);
 #endif

@@ -1,3 +1,10 @@
+2012-10-26  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed trivial build fix: It's glXGetCurrentContext not glxGetCurrentContext :)
+
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+
 2012-10-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Printing should use use high resolution images when available
