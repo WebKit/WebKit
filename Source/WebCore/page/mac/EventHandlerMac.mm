@@ -709,8 +709,6 @@ bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
 
 bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
 {
-    Document* document = m_frame->document();
-
     Settings* settings = m_frame->settings();
     if (!settings)
         return false;
