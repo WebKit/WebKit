@@ -31,18 +31,55 @@
 namespace WebKit {
 
 struct WebGraphicsMemoryAllocation {
+    // Deprecated data, to be removed from this structure.
     unsigned gpuResourceSizeInBytes;
     bool suggestHaveBackbuffer;
+
+    enum PriorityCutoff {
+        // Allow no allocations.
+        PriorityCutoffAllowNothing,
+        // Allow only allocations that are visible.
+        PriorityCutoffAllowVisibleOnly,
+        // Allow only allocations that are few screens away from being visible.
+        PriorityCutoffAllowVisibleAndNearby,
+        // Allow all allocations.
+        PriorityCutoffAllowEverything,
+    };
+
+    // Limits when this renderer is visible.
+    size_t bytesLimitWhenVisible;
+    PriorityCutoff priorityCutoffWhenVisible;
+
+    // Limits when this renderer is not visible.
+    size_t bytesLimitWhenNotVisible;
+    PriorityCutoff priorityCutoffWhenNotVisible;
+    bool haveBackbufferWhenNotVisible;
+
+    // If true, enforce this policy just once, but do not keep
+    // it as a permanent policy.
+    bool enforceButDoNotKeepAsPolicy;
 
     WebGraphicsMemoryAllocation()
         : gpuResourceSizeInBytes(0)
         , suggestHaveBackbuffer(false)
+        , bytesLimitWhenVisible(0)
+        , priorityCutoffWhenVisible(PriorityCutoffAllowNothing)
+        , bytesLimitWhenNotVisible(0)
+        , priorityCutoffWhenNotVisible(PriorityCutoffAllowNothing)
+        , haveBackbufferWhenNotVisible(false)
+        , enforceButDoNotKeepAsPolicy(false)
     {
     }
 
     WebGraphicsMemoryAllocation(unsigned gpuResourceSizeInBytes, bool suggestHaveBackbuffer)
         : gpuResourceSizeInBytes(gpuResourceSizeInBytes)
         , suggestHaveBackbuffer(suggestHaveBackbuffer)
+        , bytesLimitWhenVisible(0)
+        , priorityCutoffWhenVisible(PriorityCutoffAllowNothing)
+        , bytesLimitWhenNotVisible(0)
+        , priorityCutoffWhenNotVisible(PriorityCutoffAllowNothing)
+        , haveBackbufferWhenNotVisible(false)
+        , enforceButDoNotKeepAsPolicy(false)
     {
     }
 };

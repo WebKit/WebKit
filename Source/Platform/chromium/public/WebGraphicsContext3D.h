@@ -33,6 +33,7 @@
 
 #include "WebCommon.h"
 #include "WebGraphicsMemoryAllocation.h"
+#include "WebGraphicsMemoryStats.h"
 #include "WebNonCopyable.h"
 #include "WebString.h"
 
@@ -162,6 +163,7 @@ public:
 
     // GL_CHROMIUM_gpu_memory_manager - sets callback to observe changes to memory allocation limits.
     virtual void setMemoryAllocationChangedCallbackCHROMIUM(WebGraphicsMemoryAllocationChangedCallbackCHROMIUM* callback) { }
+    virtual void sendManagedMemoryStatsCHROMIUM(const WebGraphicsManagedMemoryStats* stats) { }
 
     // GL_EXT_discard_framebuffer - discard/ensure existance of surface backbuffer.
     // FIXME: make these pure virtual once they are implemented by clients.

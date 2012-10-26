@@ -1,3 +1,28 @@
+2012-10-26  Christopher Cameron  <ccameron@chromium.org>
+
+        [chromium] Add additional memory management fields to WebGraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=99703
+
+        Reviewed by James Robinson.
+
+        Add new fields to WebGraphicsMemoryAllocation to allow for specifying
+        limits for when visible and not, and to allow for specifying priority
+        cutoffs (e.g, to allow specifying that backgrounded tabs should
+        retain only their visible textures).
+
+        Add sendManagedMemoryStatsCHROMIUM to WebGraphicsContext3D, and
+        add WebGraphicsManagedMemoryStats structure, to allow the GPU memory
+        manager to make more informed choices.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::sendManagedMemoryStatsCHROMIUM):
+        * chromium/public/WebGraphicsMemoryAllocation.h:
+        (WebGraphicsMemoryAllocation):
+        (WebKit::WebGraphicsMemoryAllocation::WebGraphicsMemoryAllocation):
+        (WebKit):
+        (WebGraphicsManagedMemoryStats):
+        (WebKit::WebGraphicsManagedMemoryStats::WebGraphicsManagedMemoryStats):
+
 2012-10-26  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Add implicit conversions between WebFloatPoint and gfx::PointF
