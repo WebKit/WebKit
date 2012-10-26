@@ -60,6 +60,7 @@ MemoryObjectType WebCoreMemoryTypes::InspectorDOMStorageResources = "WebInspecto
 MemoryObjectType WebCoreMemoryTypes::InspectorOverlay = "WebInspector.Overlay";
 MemoryObjectType WebCoreMemoryTypes::InspectorProfilerAgent = "WebInspector.ProfilerAgent";
 MemoryObjectType WebCoreMemoryTypes::InspectorDebuggerAgent = "WebInspector.DebuggerAgent";
+MemoryObjectType WebCoreMemoryTypes::InspectorResourceAgent = "WebInspector.ResourceAgent";
 
 MemoryObjectType WebCoreMemoryTypes::JSHeapUsed = "JSHeap.Used";
 MemoryObjectType WebCoreMemoryTypes::JSHeapUnused = "JSHeap.Unused";

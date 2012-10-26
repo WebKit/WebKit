@@ -68,6 +68,7 @@ public:
     static MemoryObjectType InspectorOverlay;
     static MemoryObjectType InspectorProfilerAgent;
     static MemoryObjectType InspectorDebuggerAgent;
+    static MemoryObjectType InspectorResourceAgent;
 
     static MemoryObjectType JSHeapUsed;
     static MemoryObjectType JSHeapUnused;

@@ -57,6 +57,7 @@ public:
     PassRefPtr<FormData> formData() const { return m_formData; }
     const HTTPHeaderMap& headers() const { return m_headers; }
     bool includeCredentials() const { return m_includeCredentials; }
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 private:
     XHRReplayData(const String &method, const KURL&, bool async, PassRefPtr<FormData>, bool includeCredentials);
 
@@ -116,6 +117,9 @@ public:
 
         XHRReplayData* xhrReplayData() const { return m_xhrReplayData.get(); }
         void setXHRReplayData(XHRReplayData* xhrReplayData) { m_xhrReplayData = xhrReplayData; }
+
+        void reportMemoryUsage(MemoryObjectInfo*) const;
+
     private:
         bool hasData() const { return m_dataBuffer; }
         size_t dataLength() const;
@@ -162,6 +166,8 @@ public:
     void setXHRReplayData(const String& requestId, XHRReplayData*);
     void reuseXHRReplayData(const String& requestId, const String& reusedRequestId);
     XHRReplayData* xhrReplayData(const String& requestId);
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     void ensureNoDataForRequestId(const String& requestId);
