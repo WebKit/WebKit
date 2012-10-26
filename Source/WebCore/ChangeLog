@@ -1,3 +1,10 @@
+2012-10-26  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed. This ASSERT is no longer correct (and fires on many tests.)
+
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMObject):
+
 2012-10-26  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-Win] Support shortTimeFormat

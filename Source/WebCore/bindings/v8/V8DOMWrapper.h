@@ -131,7 +131,6 @@ namespace WebCore {
     {
         v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
         ASSERT(maybeDOMWrapper(wrapperHandle));
-        ASSERT(!domWrapperType(wrapperHandle)->toActiveDOMObjectFunction);
         getDOMObjectMap(isolate).set(object.leakRef(), wrapperHandle);
         return wrapperHandle;
     }
