@@ -1,5 +1,13 @@
 2012-10-26  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Test expectation update.
+        https://bugs.webkit.org/show_bug.cgi?id=100471
+
+        * platform/chromium/TestExpectations:
+        We should do rebaseline for time-suggestion-picker-*.html too.
+
+2012-10-26  Kent Tamura  <tkent@chromium.org>
+
         Disable ENABLE_INPUT_TYPE_WEEK on Chromium/Android
         https://bugs.webkit.org/show_bug.cgi?id=100457
 
