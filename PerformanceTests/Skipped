@@ -5,7 +5,7 @@ Mutation
 PageLoad/svg/files/33041-Samurai.svg
 
 # Takes too long to load
-PageLoad/svg/files/Sierpinski_carpet_6.svg
+SVG/SierpinskiCarpet.html
 
 SVG/France.html
 SVG/FrancoBolloGnomeEzechi.html
@@ -13,7 +13,7 @@ PageLoad/svg/files/gearflowers.svg
 PageLoad/svg/files/hereGear4.svg
 
 # Takes 22s on MacBookPro
-PageLoad/svg/files/mtsthelens.svg
+SVG/MtSaintHelens.html
 
 # Do not conform to WebKit or Chromium perf test styles
 SunSpider
