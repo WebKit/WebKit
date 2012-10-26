@@ -33,12 +33,12 @@ KEYWORDLUT_FILES += \
 JIT_STUB_FILES += \
     jit/JITStubs.cpp
 
-LLINT_FILES = \
-    llint/LowLevelInterpreter.asm
+LLINT_ASSEMBLER = $$PWD/llint/LowLevelInterpreter.asm
 
 LLINT_DEPENDENCY = \
     $$PWD/llint/LowLevelInterpreter32_64.asm \
-    $$PWD/llint/LowLevelInterpreter64.asm
+    $$PWD/llint/LowLevelInterpreter64.asm \
+    $$LLINT_ASSEMBLER
 
 DISASSEMBLER_FILES = \
     disassembler/udis86/optable.xml
@@ -95,13 +95,20 @@ klgen.input = KEYWORDLUT_FILES
 klgen.commands = python $$klgen.script ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
 GENERATORS += klgen
 
-linux-*:!equals(QT_ARCH, "arm") {
+EXTRACTOR_BINARY = LLIntOffsetsExtractor$$BIN_EXTENSION
+DIRS = $$OUT_PWD $$OUT_PWD/debug $$OUT_PWD/release
+for(dir, DIRS) {
+    file = $$dir/$$EXTRACTOR_BINARY
+    exists($$file): LLINT_FILES += $$file
+}
+
+if(linux-*|win32):!equals(QT_ARCH, "arm") {
     #GENERATOR: LLInt
-    llint.output = LLIntAssembly.h
+    llint.output = ${QMAKE_FILE_IN_PATH}$${QMAKE_DIR_SEP}LLIntAssembly.h
     llint.script = $$PWD/offlineasm/asm.rb
     llint.input = LLINT_FILES
-    llint.depends = LLIntOffsetsExtractor $$LLINT_DEPENDENCY
-    llint.commands = ruby $$llint.script ${QMAKE_FILE_NAME} LLIntOffsetsExtractor ${QMAKE_FILE_OUT}
+    llint.depends = $$LLINT_DEPENDENCY
+    llint.commands = ruby $$llint.script $$LLINT_ASSEMBLER ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
     GENERATORS += llint
 }
 

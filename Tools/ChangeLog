@@ -1,3 +1,16 @@
+2012-10-26  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix the LLInt build on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=97648
+
+        Reviewed by Tor Arne Vestbø.
+
+        Added BIN_EXTENSION variable - similar to automake - that expands to .exe as suffix for
+        executable programs on Windows. Empty otherwise. Also added support for force_build_all
+        to allow overriding us disabling build_all for TEMPLATE = app.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-10-26  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] Support pixel tests for BlackBerry DRT

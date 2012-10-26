@@ -7,7 +7,7 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-linux-*:!equals(QT_ARCH, "arm") {
+if(linux-*|win32*):!equals(QT_ARCH, "arm") {
     LLIntOffsetsExtractor.file = LLIntOffsetsExtractor.pro
     LLIntOffsetsExtractor.makefile = Makefile.LLIntOffsetsExtractor
     SUBDIRS += LLIntOffsetsExtractor
@@ -18,7 +18,7 @@ target.file = Target.pri
 
 SUBDIRS += derived_sources target
 
-linux-*:!equals(QT_ARCH, "arm"):addStrictSubdirOrderBetween(LLIntOffsetsExtractor, derived_sources)
+if(linux-*|win32*):!equals(QT_ARCH, "arm"):addStrictSubdirOrderBetween(LLIntOffsetsExtractor, derived_sources)
 addStrictSubdirOrderBetween(derived_sources, target)
 
 jsc.file = jsc.pro

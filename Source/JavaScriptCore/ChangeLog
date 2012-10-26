@@ -1,3 +1,38 @@
+2012-10-26  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix the LLInt build on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=97648
+
+        Reviewed by Tor Arne Vestbø.
+
+        The main change for the port on Windows is changing the way offsets are extracted
+        and the LLIntAssembly.h is generated to accomodate release and debug configurations.
+
+        Firstly the LLIntOffsetsExtractor binary is now built as-is (no DESTDIR set) and
+        placed into debug\LLIntOffsetsExtractor.exe and release\LLIntOffsetsExtractor.exe
+        on Windows debug_and_release builds. On other patforms it remainds in the regular
+        out directory.
+
+        Secondly the LLIntAssembly.h files must be different for different build types,
+        so the LLIntAssembly.h generator in DerivedSources.pri operates no on the extractor
+        binary files as input. Using a simple exists() check we verify the presence of either
+        a regular, a debug\LLIntOffsetsExtractor and a release\LLIntOffsetsExtractor binary
+        and process all of them. The resulting assembly files consequently end up in
+        generated\debug\LLIntAssembly.h and generated\release\LLIntAssembly.h.
+
+        In Target.pri we have to also make sure that those directories are in the include
+        path according to the release or debug configuration.
+
+        Lastly a small tweak - swapping WTF.pri and JSC.pri inclusions - in the
+        LLIntOffsetsExtractor build was needed to make sure that we include
+        JavaScriptCore/config.h instead of WTF/config.h, required to fix the
+        build issues originally pasted in bug #97648.
+
+        * DerivedSources.pri:
+        * JavaScriptCore.pro:
+        * LLIntOffsetsExtractor.pro:
+        * Target.pri:
+
 2012-10-26  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         [Qt] Enable JSC's disassembler on x86, x86_64 Linux

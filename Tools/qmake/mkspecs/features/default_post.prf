@@ -23,7 +23,7 @@ root_project_file: finalizeConfigure()
     else: CONFIG -= debug_and_release
 } else:debug_and_release {
     # Only build a single instance of each application
-    contains(TEMPLATE, app) {
+    contains(TEMPLATE, app):!force_build_all {
         CONFIG -= build_all
     }
 }
