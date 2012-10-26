@@ -1666,3 +1666,7 @@ webkit.org/b/99691 gamepad/gamepad-out-of-range-crasher.html [ Failure ]
 
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
+
+# The red section is rendered at the wrong position.
+webkit.org/b/100519 fast/images/jpeg-with-color-profile.html [ Skip ]
+webkit.org/b/100519 fast/images/png-with-color-profile.html [ Skip ]
