@@ -145,7 +145,10 @@ function runTestsShouldFail(tagName, attributes)
     document.body.appendChild(element);
     debug("<hr>");
     debug("Running tests on " + tagName + " with attributes: " + JSON.stringify(attributes) + "\n");
-    evalAndLog("element.value = '0123456789XYZ'");
+    if (element.getAttribute("type") == "file")
+        shouldThrow("element.value = '0123456789XYZ'");
+    else
+        evalAndLog("element.value = '0123456789XYZ'");
     var initialValue = element.value;
     shouldThrow("element.setRangeText('ABC', 0, 0)");
     // setRangeText() shouldn't do anything on non-text form controls.

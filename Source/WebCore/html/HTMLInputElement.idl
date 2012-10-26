@@ -56,7 +56,7 @@ interface HTMLInputElement : HTMLElement {
     [Reflect] attribute DOMString step;
     [TreatNullAs=NullString] attribute DOMString type; // readonly dropped as part of DOM level 2
     [TreatNullAs=NullString] attribute DOMString defaultValue;
-    [TreatNullAs=NullString] attribute DOMString value;
+    [TreatNullAs=NullString] attribute DOMString value setter raises(DOMException);
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     attribute Date valueAsDate setter raises(DOMException);
 #endif

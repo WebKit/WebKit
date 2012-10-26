@@ -1006,6 +1006,15 @@ void HTMLInputElement::setEditingValue(const String& value)
     dispatchInputEvent();
 }
 
+void HTMLInputElement::setValue(const String& value, ExceptionCode& ec, TextFieldEventBehavior eventBehavior)
+{
+    if (isFileUpload() && !value.isEmpty()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    setValue(value, eventBehavior);
+}
+
 void HTMLInputElement::setValue(const String& value, TextFieldEventBehavior eventBehavior)
 {
     if (!m_inputType->canSetValue(value))

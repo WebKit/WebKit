@@ -1,85 +1,48 @@
 <!DOCTYPE html>
 <html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
 <body>
-<div id="droptarget">Test drops files here</div>
-<form>
-<input type="file" name="files" id="files">
-</form>
-<pre id='output'></pre>
-
+<input type="file" name="file1" id="file1">
+<input type="file" name="file2" id="file2">
 <script>
-function log(message)
-{
-    document.getElementById('output').appendChild(document.createTextNode(message + "\n"));
-}
-
-function onInputFileChange()
-{
-    var files = document.getElementById("files").files;
-    if (files.length != 1)
-        log("FAIL: Expected 1 file after drag.")
-    else
-        log("PASS: 1 file after drag");
-
-    doStringTest();
-
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
-function handleDragOver(e) {
-    e.stopPropagation();
-    e.preventDefault();
-}
-
-function handleDrop(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    document.getElementById("files").files = e.dataTransfer.files;
-}
-
-var droptarget = document.getElementById('droptarget');
-droptarget.addEventListener('dragover', handleDragOver, false);
-droptarget.addEventListener('drop', handleDrop, false);
-
-function doTest(fileList)
-{
-    // This drops files on a div, which copies them to the input element, whose
-    // callback calls notifyDone().
-    document.getElementById("files").onchange = onInputFileChange;
-    var fi = document.getElementById("files");
-    eventSender.beginDragWithFiles(['../resources/test.txt']);
-    eventSender.mouseMoveTo(droptarget.offsetLeft + 10, droptarget.offsetTop + droptarget.offsetHeight / 2);
-    eventSender.mouseUp();
-}
-
-function doStringTest()
-{
-    var files = document.getElementById("files");
-    files.files = "foo";  // Shouldn't crash.
-
-    files.value = "foo";  // Should do nothing.
-    if (files.files.length > 0)
-        log("PASS: writing nonempty string to value had no effect");
-    else
-        log("FAIL: writing nonempty string to value cleared elements");
-
-    files.value = "";
-    if (files.files.length === 0)
-        log("PASS: writing empty string to value cleared files");
-    else
-        log("FAIL: writing empty string to value did not clear files");
-}
+description("This tests the files attribute in file input forms");
 
 if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+    var file1 = document.getElementById("file1");
+    var file2 = document.getElementById("file2");
+    dragFilesOntoInput(file1, ["foo.txt"]);
+    dragFilesOntoInput(file2, ["bar.txt"]);
+
+    file1.files = "foo";
+    shouldBe("file1.files.length", "1");
+    shouldBeEqualToString("file1.files.item(0).name", "foo.txt");
+
+    file1.files = null;
+    shouldBe("file1.files.length", "1");
+    shouldBeEqualToString("file1.files.item(0).name", "foo.txt");
+
+    // From current W3C spec, files attribute should be read only,
+    // but WebKit implement it to be writable intentionally.
+    // See: https://bugs.webkit.org/show_bug.cgi?id=87154#c15
+    file1.files = file2.files;
+    shouldBe("file1.files.length", "1");
+    shouldBeEqualToString("file1.files.item(0).name", "bar.txt");
 }
 
-if (window.eventSender) {
-    doTest();
+function moveMouseToCenterOfElement(element) {
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
 }
 
+function dragFilesOntoInput(input, files) {
+    eventSender.beginDragWithFiles(files);
+    moveMouseToCenterOfElement(input);
+    eventSender.mouseUp();
+}
 </script>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>

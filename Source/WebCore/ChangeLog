@@ -1,3 +1,23 @@
+2012-10-26  Li Yin  <li.yin@intel.com>
+
+        fast/forms/file/input-file-write-files.html should cover correct setting value
+        https://bugs.webkit.org/show_bug.cgi?id=100085
+
+        Reviewed by Kentaro Hara.
+
+        From Spec: http://dev.w3.org/html5/spec/single-page.html#dom-input-value-filename
+        On setting, if the new value is the empty string, it must empty the list of selected
+        files; otherwise, it must throw an InvalidStateError exception.
+
+        Test: fast/forms/file/input-file-value.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/HTMLInputElement.idl:
+
 2012-10-26  Keishi Hattori  <keishi@webkit.org>
 
         Refactor calendar picker to remove _x/_y from DaysTable

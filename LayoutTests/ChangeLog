@@ -1,3 +1,19 @@
+2012-10-26  Li Yin  <li.yin@intel.com>
+
+        fast/forms/file/input-file-write-files.html should cover correct setting value
+        https://bugs.webkit.org/show_bug.cgi?id=100085
+
+        Reviewed by Kentaro Hara.
+
+        The test input-file-value.html is split from input-file-write-test.html.
+        And add correct setting value for files attribute, verify the files attribute
+        is writable or not.
+
+        * fast/forms/file/input-file-value-expected.txt: Added.
+        * fast/forms/file/input-file-value.html: Added.
+        * fast/forms/file/input-file-write-files-expected.txt:
+        * fast/forms/file/input-file-write-files.html:
+
 2012-10-26  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Gardening after bug 99824

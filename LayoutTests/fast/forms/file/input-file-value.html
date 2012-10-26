@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<input type="file" name="file" id="file">
+
+<script>
+description("This tests the value attribute in file input forms");
+
+if (window.testRunner) {
+    var file = document.getElementById("file");
+    dragFilesOntoInput(file, ["foo.txt"]);
+    
+    shouldBeEqualToString("file.value", "C:\\fakepath\\foo.txt");
+    shouldBe("file.files.length", "1");
+ 
+    shouldThrow("file.value = 'foo'");
+    shouldBeEqualToString("file.value", "C:\\fakepath\\foo.txt");
+    shouldBe("file.files.length", "1");
+
+    file.value = "";
+    shouldBeEqualToString("file.value", "");
+    shouldBe("file.files.length", "0");
+}
+
+function moveMouseToCenterOfElement(element) {
+    var centerX = element.offsetLeft + element.offsetWidth / 2;
+    var centerY = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(centerX, centerY);
+}
+
+function dragFilesOntoInput(input, files) {
+    eventSender.beginDragWithFiles(files);
+    moveMouseToCenterOfElement(input);
+    eventSender.mouseUp();
+}
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
