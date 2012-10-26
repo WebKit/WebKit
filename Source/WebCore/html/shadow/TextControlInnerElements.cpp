@@ -67,7 +67,7 @@ PassRefPtr<RenderStyle> TextControlInnerElement::customStyleForRenderer()
     return parentRenderer->createInnerBlockStyle(parentRenderer->style());
 }
 
-// ----------------------------
+// ---------------------------
 
 inline TextControlInnerTextElement::TextControlInnerTextElement(Document* document)
     : HTMLDivElement(divTag, document)

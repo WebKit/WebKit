@@ -1,3 +1,19 @@
+2012-10-26  Elliott Sprehn  <esprehn@chromium.org>
+
+        Try to fix the windows build
+        https://bugs.webkit.org/show_bug.cgi?id=100556
+
+        Reviewed by Eric Seidel.
+
+        Touch files by adding whitespace to try and make the windows
+        build bot regenerate files.
+
+        No new tests, just kick the bot.
+
+        * dom/DOMAllInOne.cpp:
+        * html/HTMLElementsAllInOne.cpp:
+        * html/shadow/TextControlInnerElements.cpp:
+
 2012-10-26  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Platform Abstraction for WebKit Resource/Image Loading
