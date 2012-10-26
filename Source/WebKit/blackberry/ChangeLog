@@ -1,3 +1,21 @@
+2012-10-25  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] WebView process crashed at AuthenticationChallengeManager::pageVisibilityChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=100330
+
+        Reviewed by Rob Buis.
+
+        Reviewed internally by Charles Wei.
+        PR #231232
+
+        Since AuthenticationChallengeManager keeps a map of WebPages, WebPage setting
+        visible needs AuthenticationChallengeManager to update its records, deleting
+        webpage from AuthenticationChallengeManager's map should be done after setting
+        webpage visibility.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate):
+
 2012-10-24  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] ASSERT(!needsOneShotDrawingSynchronization()) failed in commitRootLayerIfNeeded()

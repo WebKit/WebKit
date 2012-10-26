@@ -453,7 +453,6 @@ WebPage::WebPage(WebPageClient* client, const BlackBerry::Platform::String& page
 
 WebPagePrivate::~WebPagePrivate()
 {
-    AuthenticationChallengeManager::instance()->pageDeleted(this);
     // Hand the backingstore back to another owner if necessary.
     m_webPage->setVisible(false);
     if (BackingStorePrivate::currentBackingStoreOwner() == m_webPage)
@@ -494,6 +493,8 @@ WebPagePrivate::~WebPagePrivate()
     delete m_dumpRenderTree;
     m_dumpRenderTree = 0;
 #endif
+
+    AuthenticationChallengeManager::instance()->pageDeleted(this);
 }
 
 WebPage::~WebPage()
