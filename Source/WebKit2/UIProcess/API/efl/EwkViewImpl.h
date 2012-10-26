@@ -82,6 +82,7 @@ class IntSize;
 }
 
 class Ewk_Back_Forward_List;
+class Ewk_Color_Picker;
 class Ewk_Context;
 class Ewk_Download_Job;
 class Ewk_Error;
@@ -135,10 +136,6 @@ public:
     void redrawRegion(const WebCore::IntRect& rect);
     void setImageData(void* imageData, const WebCore::IntSize& size);
 
-#if ENABLE(INPUT_TYPE_COLOR)
-    bool setColorPickerColor(const WebCore::Color& color);
-#endif
-
     static void addToPageViewMap(const Evas_Object* ewkView);
     static void removeFromPageViewMap(const Evas_Object* ewkView);
     static const Evas_Object* viewFromPageViewMap(const WKPageRef);
@@ -155,7 +152,7 @@ public:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    void requestColorPicker(int r, int g, int b, int a, WKColorPickerResultListenerRef listener);
+    void requestColorPicker(WKColorPickerResultListenerRef listener, const WebCore::Color&);
     void dismissColorPicker();
 #endif
 
@@ -263,11 +260,11 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     bool m_touchEventsEnabled;
 #endif
-    WKRetainPtr<WKColorPickerResultListenerRef> m_colorPickerResultListener;
     WebCore::Timer<EwkViewImpl> m_displayTimer;
     WTF::Vector <WebCore::IntRect> m_dirtyRects;
     OwnPtr<Ewk_Popup_Menu> m_popupMenu;
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
+    OwnPtr<Ewk_Color_Picker> m_colorPicker;
 
     typedef HashMap<WKPageRef, const Evas_Object*> PageViewMap;
     static PageViewMap pageViewMap;

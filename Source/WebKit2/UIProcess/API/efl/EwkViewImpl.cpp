@@ -32,11 +32,11 @@
 #include "PageViewportController.h"
 #include "PageViewportControllerClientEfl.h"
 #include "ResourceLoadClientEfl.h"
-#include "WKColorPickerResultListener.h"
 #include "WKString.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyEfl.h"
 #include "ewk_back_forward_list_private.h"
+#include "ewk_color_picker_private.h"
 #include "ewk_context_private.h"
 #include "ewk_favicon_database_private.h"
 #include "ewk_popup_menu_item_private.h"
@@ -310,20 +310,6 @@ void EwkViewImpl::setImageData(void* imageData, const IntSize& size)
     evas_object_image_size_set(sd->image, size.width(), size.height());
     evas_object_image_data_copy_set(sd->image, imageData);
 }
-
-#if ENABLE(INPUT_TYPE_COLOR)
-bool EwkViewImpl::setColorPickerColor(const WebCore::Color& color)
-{
-    if (!m_colorPickerResultListener)
-        return false;
-
-    WKRetainPtr<WKStringRef> colorString(AdoptWK, WKStringCreateWithUTF8CString(color.serialized().utf8().data()));
-    WKColorPickerResultListenerSetColor(m_colorPickerResultListener.get(), colorString.get());
-    m_colorPickerResultListener.clear();
-
-    return true;
-}
-#endif
 
 /**
  * @internal
@@ -756,14 +742,20 @@ bool EwkViewImpl::exitAcceleratedCompositingMode()
  * @internal
  * Requests to show external color picker.
  */
-void EwkViewImpl::requestColorPicker(int r, int g, int b, int a, WKColorPickerResultListenerRef listener)
+void EwkViewImpl::requestColorPicker(WKColorPickerResultListenerRef listener, const WebCore::Color& color)
 {
     Ewk_View_Smart_Data* sd = smartData();
     EINA_SAFETY_ON_NULL_RETURN(sd->api->input_picker_color_request);
 
-    m_colorPickerResultListener = listener;
+    if (!sd->api->input_picker_color_request)
+        return;
 
-    sd->api->input_picker_color_request(sd, r, g, b, a);
+    if (m_colorPicker)
+        dismissColorPicker();
+
+    m_colorPicker = Ewk_Color_Picker::create(listener, color);
+
+    sd->api->input_picker_color_request(sd, m_colorPicker.get());
 }
 
 /**
@@ -772,12 +764,16 @@ void EwkViewImpl::requestColorPicker(int r, int g, int b, int a, WKColorPickerRe
  */
 void EwkViewImpl::dismissColorPicker()
 {
+    if (!m_colorPicker)
+        return;
+
     Ewk_View_Smart_Data* sd = smartData();
     EINA_SAFETY_ON_NULL_RETURN(sd->api->input_picker_color_dismiss);
 
-    m_colorPickerResultListener.clear();
+    if (sd->api->input_picker_color_dismiss)
+        sd->api->input_picker_color_dismiss(sd);
 
-    sd->api->input_picker_color_dismiss(sd);
+    m_colorPicker.clear();
 }
 #endif
 

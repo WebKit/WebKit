@@ -72,7 +72,7 @@ void PageUIClientEfl::showColorPicker(WKPageRef, WKStringRef initialColor, WKCol
 {
     PageUIClientEfl* pageUIClient = toPageUIClientEfl(clientInfo);
     WebCore::Color color = WebCore::Color(WebKit::toWTFString(initialColor));
-    pageUIClient->m_viewImpl->requestColorPicker(color.red(), color.green(), color.blue(), color.alpha(), listener);
+    pageUIClient->m_viewImpl->requestColorPicker(listener, color);
 }
 
 void PageUIClientEfl::hideColorPicker(WKPageRef, const void* clientInfo)

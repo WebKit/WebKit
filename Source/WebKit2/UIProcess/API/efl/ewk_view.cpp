@@ -986,18 +986,6 @@ Eina_Bool ewk_view_mouse_events_enabled_get(const Evas_Object* ewkView)
     return impl->mouseEventsEnabled();
 }
 
-Eina_Bool ewk_view_color_picker_color_set(Evas_Object* ewkView, int r, int g, int b, int a)
-{
-#if ENABLE(INPUT_TYPE_COLOR)
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
-
-    return impl->setColorPickerColor(WebCore::Color(r, g, b, a));
-#else
-    return false;
-#endif
-}
-
 Eina_Bool ewk_view_feed_touch_event(Evas_Object* ewkView, Ewk_Touch_Event_Type type, const Eina_List* points, const Evas_Modifier* modifiers)
 {
 #if ENABLE(TOUCH_EVENTS)

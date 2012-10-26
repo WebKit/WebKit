@@ -75,6 +75,7 @@
 #define ewk_view_h
 
 #include "ewk_back_forward_list.h"
+#include "ewk_color_picker.h"
 #include "ewk_context.h"
 #include "ewk_download_job.h"
 #include "ewk_error.h"
@@ -130,7 +131,7 @@ struct Ewk_View_Smart_Class {
 
     // color picker:
     //   - Shows and hides color picker.
-    Eina_Bool (*input_picker_color_request)(Ewk_View_Smart_Data *sd, int r, int g, int b, int a);
+    Eina_Bool (*input_picker_color_request)(Ewk_View_Smart_Data *sd, Ewk_Color_Picker *color_picker);
     Eina_Bool (*input_picker_color_dismiss)(Ewk_View_Smart_Data *sd);
 
     // storage:
@@ -710,23 +711,6 @@ EAPI Eina_Bool ewk_view_mouse_events_enabled_set(Evas_Object *o, Eina_Bool enabl
  * @return @c EINA_TRUE if the mouse events are enabled or @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool ewk_view_mouse_events_enabled_get(const Evas_Object *o);
-
-/*
- * Sets the user chosen color. To be used when implementing a color picker.
- *
- * The function should only be called when a color has been requested by the document.
- * If called when this is not the case or when the input picker has been dismissed, this
- * function will fail and return EINA_FALSE.
- *
- * @param o view object contains color picker
- * @param r red channel value to be set
- * @param g green channel value to be set
- * @param b blue channel value to be set
- * @param a alpha channel value to be set
- *
- * @return @c EINA_TRUE on success @c EINA_FALSE otherwise
- */
-EAPI Eina_Bool ewk_view_color_picker_color_set(Evas_Object *o, int r, int g, int b, int a);
 
 /**
  * Feeds the touch event to the view.

@@ -1,3 +1,44 @@
+2012-10-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add Ewk_Color_Picker API
+        https://bugs.webkit.org/show_bug.cgi?id=100472
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Move the color picker code out of EwkViewImpl and into
+        a new Ewk_Color_Picker class to avoid cluttering the
+        view code.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::requestColorPicker):
+        (EwkViewImpl::dismissColorPicker):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_color_picker.cpp: Added.
+        (Ewk_Color_Picker::Ewk_Color_Picker):
+        (Ewk_Color_Picker::setColor):
+        (Ewk_Color_Picker::color):
+        (ewk_color_picker_color_set):
+        (ewk_color_picker_color_get):
+        * UIProcess/API/efl/ewk_color_picker.h: Added.
+        * UIProcess/API/efl/ewk_color_picker_private.h: Added.
+        (Ewk_Color_Picker):
+        (Ewk_Color_Picker::create):
+        * UIProcess/API/efl/ewk_view.cpp:
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_color_picker.cpp: Added.
+        (onColorPickerDone):
+        (setColorPickerColor):
+        (showColorPicker):
+        (hideColorPicker):
+        (hideColorPickerByRemovingElement):
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::showColorPicker):
+
 2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132601.
