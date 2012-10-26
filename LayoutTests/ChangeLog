@@ -1,3 +1,9 @@
+2012-10-26  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] ... And another pixel rebaseline after r131941 and r131991.
+
+        * platform/efl/http/tests/misc/slow-loading-image-in-pattern-expected.png:
+
 2012-10-26  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Not reviewed: chromium baselines for selection-after-remove updated.
