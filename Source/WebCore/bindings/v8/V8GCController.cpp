@@ -67,16 +67,16 @@
 
 namespace WebCore {
 
-class ActiveDOMObjectPrologueVisitor : public DOMWrapperVisitor<void> {
+class ObjectVisitor : public DOMWrapperVisitor<void> {
 public:
-    explicit ActiveDOMObjectPrologueVisitor(Vector<v8::Persistent<v8::Value> >* liveObjects)
+    explicit ObjectVisitor(Vector<v8::Persistent<v8::Value> >* liveObjects)
         : m_liveObjects(liveObjects)
     {
     }
 
-    void visitDOMWrapper(DOMDataStore*, void* object, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
     {
-        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);  
+        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);
 
         if (V8MessagePort::info.equals(type)) {
             // Mark each port as in-use if it's entangled. For simplicity's sake,
@@ -85,24 +85,17 @@ public:
             MessagePort* port = static_cast<MessagePort*>(object);
             if (port->isEntangled() || port->hasPendingActivity())
                 m_liveObjects->append(wrapper);
-            return;
+        } else {
+            ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
+            if (activeDOMObject && activeDOMObject->hasPendingActivity())
+                m_liveObjects->append(wrapper);
         }
 
-        ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
-        if (activeDOMObject && activeDOMObject->hasPendingActivity())
-            m_liveObjects->append(wrapper);
+        type->visitDOMWrapper(store, object, wrapper);
     }
 
 private:
     Vector<v8::Persistent<v8::Value> >* m_liveObjects;
-};
-
-class ObjectVisitor : public DOMWrapperVisitor<void> {
-public:
-    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
-    {
-        V8DOMWrapper::domWrapperType(wrapper)->visitDOMWrapper(store, object, wrapper);
-    }
 };
 
 static void addImplicitReferencesForNodeWithEventListeners(Node* node, v8::Persistent<v8::Object> wrapper)
@@ -234,17 +227,15 @@ void V8GCController::majorGCPrologue()
     Vector<v8::Persistent<v8::Value> > liveObjects;
     liveObjects.append(V8PerIsolateData::current()->ensureLiveRoot());
 
-    ActiveDOMObjectPrologueVisitor activeObjectVisitor(&liveObjects);
-    visitActiveDOMObjects(&activeObjectVisitor);
-
     NodeVisitor nodeVisitor(&liveObjects);
     visitAllDOMNodes(&nodeVisitor);
     nodeVisitor.applyGrouping();
 
-    v8::V8::AddObjectGroup(liveObjects.data(), liveObjects.size());
-
-    ObjectVisitor objectVisitor;
+    ObjectVisitor objectVisitor(&liveObjects);
     visitDOMObjects(&objectVisitor);
+    visitActiveDOMObjects(&objectVisitor);
+
+    v8::V8::AddObjectGroup(liveObjects.data(), liveObjects.size());
 
     V8PerIsolateData* data = V8PerIsolateData::current();
     data->stringCache()->clearOnGC();
