@@ -1,3 +1,14 @@
+2012-10-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Generate less repaint calls during subtree detaching
+        https://bugs.webkit.org/show_bug.cgi?id=99741
+
+        Reviewed by Eric Seidel.
+
+        * platform/chromium-linux/fast/repaint/selection-after-remove-expected.png:
+        Rebaselined this test after the change. It is progressing as we still properly repaint
+        the selection, but repaint less (ie don't repaint the top border which didn't change).
+
 2012-10-26  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update.

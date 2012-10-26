@@ -2450,29 +2450,36 @@ void RenderObject::willBeRemovedFromTree()
 
 void RenderObject::destroyAndCleanupAnonymousWrappers()
 {
-    RenderObject* parent = this->parent();
-
-    // If the tree is destroyed or our parent is not anonymous, there is no need for a clean-up phase.
-    if (documentBeingDestroyed() || !parent || !parent->isAnonymous()) {
+    // If the tree is destroyed, there is no need for a clean-up phase.
+    if (documentBeingDestroyed()) {
         destroy();
         return;
     }
 
-    bool parentIsLeftOverAnonymousWrapper = false;
+    RenderObject* destroyRoot = this;
+    for (RenderObject* destroyRootParent = destroyRoot->parent(); destroyRootParent && destroyRootParent->isAnonymous(); destroyRoot = destroyRootParent, destroyRootParent = destroyRootParent->parent()) {
+        // Currently we only remove anonymous cells' wrapper but we should remove all unneeded
+        // wrappers. See http://webkit.org/b/52123 as an example where this is needed.
+        if (!destroyRootParent->isTableCell())
+            break;
 
-    // Currently we only remove anonymous cells' wrapper but we should remove all unneeded
-    // wrappers. See http://webkit.org/b/52123 as an example where this is needed.
-    if (parent->isTableCell())
-        parentIsLeftOverAnonymousWrapper = parent->firstChild() == this && parent->lastChild() == this;
+        if (destroyRootParent->firstChild() != this || destroyRootParent->lastChild() != this)
+            break;
+    }
 
-    destroy();
+    // We repaint, so that the area exposed when this object disappears gets repainted properly.
+    // FIXME: A RenderObject with RenderLayer should probably repaint through it as getting the
+    // repaint rects is O(1) through a RenderLayer (assuming it's up-to-date).
+    if (destroyRoot->everHadLayout()) {
+        if (destroyRoot->isBody())
+            destroyRoot->view()->repaint();
+        else
+            destroyRoot->repaint();
+    }
+
+    destroyRoot->destroy();
 
     // WARNING: |this| is deleted here.
-
-    if (parentIsLeftOverAnonymousWrapper) {
-        ASSERT(!parent->firstChild());
-        parent->destroyAndCleanupAnonymousWrappers();
-    }
 }
 
 void RenderObject::destroy()
