@@ -1,3 +1,15 @@
+2012-10-26  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Notification should be sent when accessibilityIsIgnored changes
+        https://bugs.webkit.org/show_bug.cgi?id=99547
+
+        Reviewed by Chris Fleizach.
+
+        Add additional accessibility notifications.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::postAccessibilityNotification):
+
 2012-10-25  Roger Fong  <roger_fong@apple.com>
 
         Get rid of (<X%) failing output for old-run-webkit-tests.

@@ -1,3 +1,97 @@
+2012-10-26  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Notification should be sent when accessibilityIsIgnored changes
+        https://bugs.webkit.org/show_bug.cgi?id=99547
+
+        Reviewed by Chris Fleizach.
+
+        Adds a new flag in AccessibilityObject that keeps track of the most recent
+        value of accessibilityIsIgnored(). After certain events such as an ARIA
+        attribute change or content change, checks the new value of
+        accessibilityIsIgnored() and posts a "children changed" notification on the
+        parent node if it changed, making sure the parent recomputes its vector of
+        (unignored) children.
+
+        Also moves handling of attribute changes to AXObjectCache, and sends
+        notifications for some attribute changes that were previously silent. On
+        Chromium, all changes to an accessibility object's attributes should
+        result in some notification.
+
+        Some tests would have broken because an AccessibilityScrollView was created
+        and holding a reference to a ScrollView for an iframe after it was deleted,
+        so this change switches AccessibilityScrollView to hold a weak reference
+        to ScrollView instead.
+
+        Tests: platform/chromium/accessibility/is-ignored-change-sends-notification.html
+               platform/chromium/accessibility/other-aria-attribute-change-sends-notification.html
+               platform/chromium/accessibility/text-change-notification.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::textChanged):
+        (WebCore):
+        (WebCore::AXObjectCache::childrenChanged):
+        (WebCore::AXObjectCache::handleAriaRoleChanged):
+        (WebCore::AXObjectCache::handleAttributeChanged):
+        (WebCore::AXObjectCache::labelChanged):
+        (WebCore::AXObjectCache::recomputeIsIgnored):
+        * accessibility/AXObjectCache.h:
+        (AXObjectCache):
+        (WebCore::AXObjectCache::childrenChanged):
+        (WebCore::AXObjectCache::textChanged):
+        (WebCore::AXObjectCache::handleAttributeChanged):
+        (WebCore::AXObjectCache::recomputeIsIgnored):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::insertChild):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        (WebCore::AccessibilityObject::cachedIsIgnoredValue):
+        (WebCore):
+        (WebCore::AccessibilityObject::setCachedIsIgnoredValue):
+        (WebCore::AccessibilityObject::notifyIfIgnoredValueChanged):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::textChanged):
+        (AccessibilityObject):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::correspondingControlForLabelElement):
+        (WebCore::AccessibilityRenderObject::textChanged):
+        (WebCore::AccessibilityRenderObject::addHiddenChildren):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::~AccessibilityScrollView):
+        (WebCore):
+        (WebCore::AccessibilityScrollView::detach):
+        (WebCore::AccessibilityScrollView::isAttachment):
+        (WebCore::AccessibilityScrollView::widgetForAttachmentView):
+        (WebCore::AccessibilityScrollView::updateScrollbars):
+        (WebCore::AccessibilityScrollView::webAreaObject):
+        (WebCore::AccessibilityScrollView::elementRect):
+        (WebCore::AccessibilityScrollView::documentFrameView):
+        (WebCore::AccessibilityScrollView::parentObject):
+        (WebCore::AccessibilityScrollView::parentObjectIfExists):
+        (WebCore::AccessibilityScrollView::getScrollableAreaIfScrollable):
+        (WebCore::AccessibilityScrollView::scrollTo):
+        * accessibility/AccessibilityScrollView.h:
+        (WebCore::AccessibilityScrollView::scrollView):
+        (AccessibilityScrollView):
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::isDataTable):
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::deleteLineBoxTree):
+        (WebCore::RenderBlock::createAndAppendRootInlineBox):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setText):
+
 2012-10-26  Joshua Bell  <jsbell@chromium.org>
 
         [WebKitIDL] Optional dictionary types should have default values of empty dictionary

@@ -1,0 +1,15 @@
+This test ensures that a change to an element's accessible text, even if indirect, sends a notification.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Got TextChanged notification on aria-label
+Got TextChanged notification on title
+Got TextChanged notification on labelledby
+Got TextChanged notification on labeled
+All notifications received successfully.
+

@@ -7,6 +7,8 @@ FocusedUIElementChanged AXHelp: Hours=AXValueDescription: 12
 FocusedUIElementChanged AXHelp: Minutes=AXValueDescription: 34
 ValueChanged AXHelp: Minutes=AXValueDescription: 05
 ValueChanged AXHelp: Minutes=AXValueDescription: 05
+ValueChanged AXHelp: Minutes=AXValueDescription: 05
+ValueChanged AXHelp: Minutes=AXValueDescription: 05
 
 PASS successfullyParsed is true
 

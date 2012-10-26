@@ -1,3 +1,34 @@
+2012-10-26  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Notification should be sent when accessibilityIsIgnored changes
+        https://bugs.webkit.org/show_bug.cgi?id=99547
+
+        Reviewed by Chris Fleizach.
+
+        Adds 3 new test to ensure:
+        1. A "children changed" notification is fired on the parent object when an
+           object that was previously ignored becomes unignored.
+        2. A notification is sent when an element's text (incl. title or label) changes.
+        3. A notification is sent when another ARIA attribute changes.
+
+        Modifies add-to-menu-list-crashes because it was too brittle; it was
+            referencing a stale object rather than retrieving its latest handle.
+        Modifies aria-checkbox-sends-notification to listen on the correct
+            object on all platforms.
+        Simplifies notification-listeners so it doesn't generate additional
+            notifications that are inconsistent between platforms now.
+
+        * accessibility/aria-checkbox-sends-notification.html:
+        * accessibility/notification-listeners.html:
+        * platform/chromium/accessibility/add-to-menu-list-crashes-expected.txt:
+        * platform/chromium/accessibility/add-to-menu-list-crashes.html:
+        * platform/chromium/accessibility/is-ignored-change-sends-notification-expected.txt: Added.
+        * platform/chromium/accessibility/is-ignored-change-sends-notification.html: Added.
+        * platform/chromium/accessibility/other-aria-attribute-change-sends-notification-expected.txt: Added.
+        * platform/chromium/accessibility/other-aria-attribute-change-sends-notification.html: Added.
+        * platform/chromium/accessibility/text-change-notification-expected.txt: Added.
+        * platform/chromium/accessibility/text-change-notification.html: Added.
+
 2012-10-26  Vincent Scheib  <scheib@chromium.org>
 
         Generated should not be supported for things with a shadow

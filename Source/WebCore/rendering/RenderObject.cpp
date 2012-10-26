@@ -1829,7 +1829,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
                 document()->setAnnotatedRegionsDirty(true);
 #endif
             if (visibilityChanged && AXObjectCache::accessibilityEnabled())
-                document()->axObjectCache()->childrenChanged(this);
+                document()->axObjectCache()->childrenChanged(parent());
 
             // Keep layer hierarchy visibility bits up to date if visibility changes.
             if (m_style->visibility() != newStyle->visibility()) {

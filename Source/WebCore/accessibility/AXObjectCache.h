@@ -89,12 +89,13 @@ public:
     void attachWrapper(AccessibilityObject*);
     void childrenChanged(Node*);
     void childrenChanged(RenderObject*);
+    void childrenChanged(AccessibilityObject*);
     void checkedStateChanged(Node*);
     void selectedChildrenChanged(Node*);
     void selectedChildrenChanged(RenderObject*);
     // Called by a node when text or a text equivalent (e.g. alt) attribute is changed.
-    void contentChanged(Node*);
-    void contentChanged(RenderObject*);
+    void textChanged(Node*);
+    void textChanged(RenderObject*);
     // Called when a node has just been attached, so we can make sure we have the right subclass of AccessibilityObject.
     void updateCacheAfterNodeIsAttached(Node*);
 
@@ -104,6 +105,9 @@ public:
     void handleScrolledToAnchor(const Node* anchorNode);
     void handleAriaExpandedChange(Node*);
     void handleScrollbarUpdate(ScrollView*);
+
+    void handleAttributeChanged(const QualifiedName& attrName, Element*);
+    void recomputeIsIgnored(RenderObject* renderer);
 
 #if HAVE(ACCESSIBILITY)
     static void enableAccessibility() { gAccessibilityEnabled = true; }
@@ -152,6 +156,8 @@ public:
         AXRowCollapsed,
         AXRowExpanded,
         AXInvalidStatusChanged,
+        AXTextChanged,
+        AXAriaAttributeChanged
     };
 
     void postNotification(RenderObject*, AXNotification, bool postToElement, PostType = PostAsynchronously);
@@ -180,6 +186,8 @@ protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);
     void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned offset, const String&);
     void frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent);
+    void textChanged(AccessibilityObject*);
+    void labelChanged(Element*);
 
     // This is a weak reference cache for knowing if Nodes used by TextMarkers are valid.
     void setNodeInUse(Node* n) { m_textMarkerNodes.add(n); }
@@ -232,8 +240,10 @@ inline void AXObjectCache::attachWrapper(AccessibilityObject*) { }
 inline void AXObjectCache::checkedStateChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*) { }
 inline void AXObjectCache::childrenChanged(Node*) { }
-inline void AXObjectCache::contentChanged(RenderObject*) { }
-inline void AXObjectCache::contentChanged(Node*) { }
+inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
+inline void AXObjectCache::textChanged(RenderObject*) { }
+inline void AXObjectCache::textChanged(Node*) { }
+inline void AXObjectCache::textChanged(AccessibilityObject*) { }
 inline void AXObjectCache::updateCacheAfterNodeIsAttached(Node*) { }
 inline void AXObjectCache::detachWrapper(AccessibilityObject*) { }
 inline void AXObjectCache::frameLoadingEventNotification(Frame*, AXLoadingEvent) { }
@@ -243,6 +253,8 @@ inline void AXObjectCache::handleAriaExpandedChange(Node*) { }
 inline void AXObjectCache::handleAriaRoleChanged(Node*) { }
 inline void AXObjectCache::handleFocusedUIElementChanged(Node*, Node*) { }
 inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
+inline void AXObjectCache::handleAttributeChanged(const QualifiedName&, Element*) { }
+inline void AXObjectCache::recomputeIsIgnored(RenderObject*) { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
 inline void AXObjectCache::nodeTextChangeNotification(Node*, AXTextChange, unsigned, const String&) { }
 inline void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&) { }
