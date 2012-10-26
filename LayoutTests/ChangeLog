@@ -1,3 +1,19 @@
+2012-10-26  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] More pixel rebaselines after r131941 and r131991.
+
+        * platform/efl/fast/backgrounds/solid-color-context-restore-expected.png:
+        * platform/efl/fast/dynamic/containing-block-change-expected.png:
+        * platform/efl/fast/forms/listbox-clip-expected.png:
+        * platform/efl/fast/frames/inline-object-inside-frameset-expected.png:
+        * platform/efl/fast/layers/add-layer-with-nested-stacking-expected.png: Added.
+        * platform/efl/fast/layers/inline-dirty-z-order-lists-expected.png:
+        * platform/efl/fast/layers/layer-content-visibility-change-expected.png:
+        * platform/efl/fast/layers/remove-layer-with-nested-stacking-expected.png:
+        * platform/efl/fast/reflections/inline-crash-expected.png:
+        * platform/efl/fast/replaced/width100percent-textarea-expected.png:
+        * platform/efl/fast/text/font-initial-expected.png:
+
 2012-10-26  Takashi Sakamoto  <tasak@google.com>
 
         [Shadow]: removing styles in shadow dom subtree causes crash.
