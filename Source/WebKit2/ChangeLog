@@ -1,3 +1,25 @@
+2012-10-25  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [WK2] Use per destination ID message receivers for DownloadProxy.
+        https://bugs.webkit.org/show_bug.cgi?id=100342
+
+        Reviewed by Anders Carlsson.
+
+        Per destination ID message receivers were proposed in r132386.
+        IPC messages of DownloadProxy use download ID for destination ID,
+        so the messages should be handled by the messsage receiver that was
+        newly proposed.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::createDownloadProxy):
+        (WebKit::WebContext::downloadFinished):
+        (WebKit::WebContext::addMessageReceiver):
+        (WebKit):
+        (WebKit::WebContext::removeMessageReceiver):
+        * UIProcess/WebContext.h:
+        (WebContext):
+
 2012-10-25  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add Ewk_Popup_Menu API
