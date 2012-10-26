@@ -9,7 +9,7 @@ function setInspectorResourcesDataSizeLimits()
         console.log("This test can not be run as window.internals is not available.");
         return;
     }
-    internals.settings.setInspectorResourcesDataSizeLimits(300, 200);
+    internals.setInspectorResourcesDataSizeLimits(300, 200);
     console.log("Done.");
 }
 

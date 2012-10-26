@@ -178,6 +178,8 @@
     [Conditional=INSPECTOR] sequence<String> consoleMessageArgumentCounts(in Document document);
     [Conditional=INSPECTOR] DOMWindow openDummyInspectorFrontend(in DOMString url);
     [Conditional=INSPECTOR] void closeDummyInspectorFrontend();
+    [Conditional=INSPECTOR] void setInspectorResourcesDataSizeLimits(in long maximumResourcesContentSize, in long maximumSingleResourceContentSize) raises(DOMException);
+    [Conditional=INSPECTOR] void setJavaScriptProfilingEnabled(in boolean creates) raises(DOMException);
 
     DOMString counterValue(in Element element);
     long pageNumber(in Element element, in [Optional] float pageWidth, in [Optional] float pageHeight);

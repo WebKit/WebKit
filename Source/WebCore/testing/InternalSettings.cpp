@@ -32,7 +32,6 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "InspectorController.h"
 #include "Language.h"
 #include "LocaleToScriptMapping.h"
 #include "MockPagePopupDriver.h"
@@ -55,12 +54,6 @@
     if (!settings()) { \
         ec = INVALID_ACCESS_ERR; \
         return; \
-    }
-
-#define InternalSettingsGuardForPageReturn(returnValue) \
-    if (!page()) { \
-        ec = INVALID_ACCESS_ERR; \
-        return returnValue; \
     }
 
 #define InternalSettingsGuardForPage() \
@@ -86,9 +79,6 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
     , m_originalUnifiedSpellCheckerEnabled(settings->unifiedTextCheckerEnabled())
     , m_originalFixedPositionCreatesStackingContext(settings->fixedPositionCreatesStackingContext())
     , m_originalSyncXHRInDocumentsEnabled(settings->syncXHRInDocumentsEnabled())
-#if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
-    , m_originalJavaScriptProfilingEnabled(page->inspectorController() && page->inspectorController()->profilerEnabled())
-#endif
     , m_originalWindowFocusRestricted(settings->windowFocusRestricted())
     , m_originalDeviceSupportsTouch(settings->deviceSupportsTouch())
     , m_originalDeviceSupportsMouse(settings->deviceSupportsMouse())
@@ -126,10 +116,6 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
     settings->setUnifiedTextCheckerEnabled(m_originalUnifiedSpellCheckerEnabled);
     settings->setFixedPositionCreatesStackingContext(m_originalFixedPositionCreatesStackingContext);
     settings->setSyncXHRInDocumentsEnabled(m_originalSyncXHRInDocumentsEnabled);
-#if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
-    if (page->inspectorController())
-        page->inspectorController()->setProfilerEnabled(m_originalJavaScriptProfilingEnabled);
-#endif
     settings->setWindowFocusRestricted(m_originalWindowFocusRestricted);
     settings->setDeviceSupportsTouch(m_originalDeviceSupportsTouch);
     settings->setDeviceSupportsMouse(m_originalDeviceSupportsMouse);
@@ -196,21 +182,6 @@ Settings* InternalSettings::settings() const
     if (!page())
         return 0;
     return page()->settings();
-}
-
-void InternalSettings::setInspectorResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode& ec)
-{
-#if ENABLE(INSPECTOR)
-    if (!page() || !page()->inspectorController()) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-    page()->inspectorController()->setResourcesDataSizeLimitsFromInternals(maximumResourcesContentSize, maximumSingleResourceContentSize);
-#else
-    UNUSED_PARAM(maximumResourcesContentSize);
-    UNUSED_PARAM(maximumSingleResourceContentSize);
-    UNUSED_PARAM(ec);
-#endif
 }
 
 void InternalSettings::setForceCompositingMode(bool enabled, ExceptionCode& ec)
@@ -516,22 +487,6 @@ void InternalSettings::setSyncXHRInDocumentsEnabled(bool enabled, ExceptionCode&
 {
     InternalSettingsGuardForSettings();
     settings()->setSyncXHRInDocumentsEnabled(enabled);
-}
-
-void InternalSettings::setJavaScriptProfilingEnabled(bool enabled, ExceptionCode& ec)
-{
-#if ENABLE(INSPECTOR)
-    if (!page() || !page()->inspectorController()) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-    page()->inspectorController()->setProfilerEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-    UNUSED_PARAM(ec);
-    return;
-#endif
 }
 
 void InternalSettings::setWindowFocusRestricted(bool restricted, ExceptionCode& ec)

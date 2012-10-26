@@ -1,3 +1,62 @@
+2012-10-26  Tony Chang  <tony@chromium.org>
+
+        Move non-Settings Inspector methods from internals.settings to internals
+        https://bugs.webkit.org/show_bug.cgi?id=100392
+
+        Reviewed by Adam Barth.
+
+        Update tests to use internals.setJavaScriptProfilingEnabled instead of internals.settings.setJavaScriptProfilingEnabled.
+        Update tests to use internals.setInspectorResourcesDataSizeLimits instead of internals.settings.setInspectorResourcesDataSizeLimits.
+
+        * fast/profiler/anonymous-event-handler.html:
+        * fast/profiler/anonymous-function-called-from-different-contexts.html:
+        * fast/profiler/anonymous-function-calls-built-in-functions.html:
+        * fast/profiler/anonymous-function-calls-eval.html:
+        * fast/profiler/anonymous-functions-with-display-names.html:
+        * fast/profiler/apply.html:
+        * fast/profiler/built-in-function-calls-anonymous.html:
+        * fast/profiler/built-in-function-calls-user-defined-function.html:
+        * fast/profiler/call-register-leak.html:
+        * fast/profiler/call.html:
+        * fast/profiler/calling-the-function-that-started-the-profiler-from-another-scope.html:
+        * fast/profiler/compare-multiple-profiles.html:
+        * fast/profiler/constructor.html:
+        * fast/profiler/dead-time.html:
+        * fast/profiler/document-dot-write.html:
+        * fast/profiler/event-handler.html:
+        * fast/profiler/execution-context-and-eval-on-same-line.html:
+        * fast/profiler/inline-event-handler.html:
+        * fast/profiler/many-calls-in-the-same-scope.html:
+        * fast/profiler/multiple-and-different-scoped-anonymous-function-calls.html:
+        * fast/profiler/multiple-and-different-scoped-function-calls.html:
+        * fast/profiler/multiple-anonymous-functions-called-from-the-same-function.html:
+        * fast/profiler/multiple-frames.html:
+        * fast/profiler/named-functions-with-display-names.html:
+        * fast/profiler/nested-anonymous-functon.html:
+        * fast/profiler/nested-start-and-stop-profiler.html:
+        * fast/profiler/no-execution-context.html:
+        * fast/profiler/one-execution-context.html:
+        * fast/profiler/profile-calls-in-included-file.html:
+        * fast/profiler/profile-with-no-title.html:
+        * fast/profiler/profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting.html:
+        * fast/profiler/profiling-from-a-nested-location.html:
+        * fast/profiler/simple-event-call.html:
+        * fast/profiler/simple-no-level-change.html:
+        * fast/profiler/start-and-stop-profiler-multiple-times.html:
+        * fast/profiler/start-and-stop-profiling-in-the-same-function.html:
+        * fast/profiler/start-but-dont-stop-profiling.html:
+        * fast/profiler/stop-profiling-after-setTimeout.html:
+        * fast/profiler/stop-then-function-call.html:
+        * fast/profiler/two-execution-contexts.html:
+        * fast/profiler/user-defined-function-calls-built-in-functions.html:
+        * fast/profiler/window-dot-eval.html:
+        * http/tests/inspector/network-test.js:
+        (resetInspectorResourcesData):
+        * http/tests/inspector/network/cached-resource-destroyed-too-big-discarded.html:
+        * http/tests/inspector/network/network-content-replacement-embed.html:
+        * http/tests/inspector/network/network-content-replacement-xhr.html:
+        * inspector/profiler/cpu-profiler-profiling-without-inspector.html:
+
 2012-10-26  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Notification should be sent when accessibilityIsIgnored changes

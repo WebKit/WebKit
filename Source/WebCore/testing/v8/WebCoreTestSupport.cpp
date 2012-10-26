@@ -61,7 +61,9 @@ void resetInternalsObject(v8::Local<v8::Context> context)
 
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     ASSERT(scriptContext->isDocument());
-    InternalSettings::from(static_cast<Document*>(scriptContext)->frame()->page())->reset();
+    Page* page = static_cast<Document*>(scriptContext)->frame()->page();
+    Internals::resetToConsistentState(page);
+    InternalSettings::from(page)->reset();
 }
 
 }

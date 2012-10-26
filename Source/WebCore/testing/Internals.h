@@ -46,6 +46,7 @@ class Frame;
 class InspectorFrontendChannelDummy;
 class InternalSettings;
 class Node;
+class Page;
 class PagePopupController;
 class Range;
 class ScriptExecutionContext;
@@ -60,6 +61,8 @@ class Internals : public RefCounted<Internals>
 public:
     static PassRefPtr<Internals> create(Document*);
     virtual ~Internals();
+
+    static void resetToConsistentState(Page*);
 
     String elementRenderTreeAsText(Element*, ExceptionCode&);
 
@@ -206,6 +209,8 @@ public:
     Vector<String> consoleMessageArgumentCounts(Document*) const;
     PassRefPtr<DOMWindow> openDummyInspectorFrontend(const String& url);
     void closeDummyInspectorFrontend();
+    void setInspectorResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode&);
+    void setJavaScriptProfilingEnabled(bool enabled, ExceptionCode&);
 #endif
 
     String counterValue(Element*);

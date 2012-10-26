@@ -26,7 +26,6 @@
 [
     OmitConstructor
 ] interface InternalSettings {
-    void setInspectorResourcesDataSizeLimits(in long maximumResourcesContentSize, in long maximumSingleResourceContentSize) raises(DOMException);
     void setForceCompositingMode(in boolean enabled) raises(DOMException);
     void setEnableCompositingForFixedPosition(in boolean enabled) raises(DOMException);
     void setEnableCompositingForScrollableFrames(in boolean enabled) raises(DOMException);
@@ -68,7 +67,6 @@
     void setEditingBehavior(in DOMString behavior) raises(DOMException);
     void setFixedPositionCreatesStackingContext(in boolean creates) raises(DOMException);
     void setSyncXHRInDocumentsEnabled(in boolean enabled) raises(DOMException);
-    void setJavaScriptProfilingEnabled(in boolean creates) raises(DOMException);
     void setWindowFocusRestricted(in boolean restricted) raises(DOMException);
     void setDialogElementEnabled(in boolean enabled) raises(DOMException);
     void setLangAttributeAwareFormControlUIEnabled(in boolean enabled);

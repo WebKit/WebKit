@@ -10,7 +10,7 @@ function loadFirstImage() {
         return;
     }
     // Make sure there is no enough space to save content in resource agent's storage.
-    internals.settings.setInspectorResourcesDataSizeLimits(100, 100);
+    internals.setInspectorResourcesDataSizeLimits(100, 100);
 
     image = new Image();
     image.onload = firstImageLoaded;
