@@ -1,3 +1,15 @@
+2012-10-25  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] Enable 3D_RENDERING flag
+        https://bugs.webkit.org/show_bug.cgi?id=99535
+
+        Reviewed by Laszlo Gombos.
+
+        Turn on the flag ENABLE_3D_RENDERING when WTF_USE_TILE_BACKING_STORE flag is on.
+        This flag controls perspective and preserves-3d behavior.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-10-25  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Adding feature for XHR_TIMEOUT
