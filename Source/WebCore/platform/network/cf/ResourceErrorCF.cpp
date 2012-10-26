@@ -45,8 +45,6 @@ ResourceError::ResourceError(CFErrorRef cfError)
     , m_platformError(cfError)
 {
     m_isNull = !cfError;
-    if (!m_isNull)
-        m_isTimeout = CFErrorGetCode(m_platformError.get()) == kCFURLErrorTimedOut;
 }
 
 #if PLATFORM(WIN)
