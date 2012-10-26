@@ -112,8 +112,13 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
 
 TextTrack::~TextTrack()
 {
-    if (m_client && m_cues)
-        m_client->textTrackRemoveCues(this, m_cues.get());
+    if (m_cues) {
+        if (m_client)
+            m_client->textTrackRemoveCues(this, m_cues.get());
+
+        for (size_t i = 0; i < m_cues->length(); ++i)
+            m_cues->item(i)->setTrack(0);
+    }
     clearClient();
 }
 

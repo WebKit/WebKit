@@ -85,7 +85,7 @@ public:
     static const AtomicString& futureNodesShadowPseudoId();
 
     TextTrack* track() const;
-    void setTrack(PassRefPtr<TextTrack>);
+    void setTrack(TextTrack*);
 
     const String& id() const { return m_id; }
     void setId(const String&);
@@ -197,7 +197,7 @@ private:
     Alignment m_cueAlignment;
 
     RefPtr<DocumentFragment> m_documentFragment;
-    RefPtr<TextTrack> m_track;
+    TextTrack* m_track;
 
     EventTargetData m_eventTargetData;
     ScriptExecutionContext* m_scriptExecutionContext;

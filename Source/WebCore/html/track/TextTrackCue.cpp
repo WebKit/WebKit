@@ -210,6 +210,7 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double
     , m_writingDirection(Horizontal)
     , m_cueAlignment(Middle)
     , m_documentFragment(0)
+    , m_track(0)
     , m_scriptExecutionContext(context)
     , m_isActive(false)
     , m_pauseOnExit(false)
@@ -252,10 +253,10 @@ void TextTrackCue::cueDidChange()
 
 TextTrack* TextTrackCue::track() const
 {
-    return m_track.get();
+    return m_track;
 }
 
-void TextTrackCue::setTrack(PassRefPtr<TextTrack>track)
+void TextTrackCue::setTrack(TextTrack* track)
 {
     m_track = track;
 }

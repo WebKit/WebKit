@@ -1,3 +1,25 @@
+2012-10-26  Aaron Colwell  <acolwell@chromium.org>
+
+        Remove the circular reference between TextTrack and TextTrackCue
+        https://bugs.webkit.org/show_bug.cgi?id=100300
+
+        Reviewed by Eric Carlson.
+
+        Changed TextTrackCue.m_track to a normal pointer to break the circular
+        reference that was keeping both objects from ever getting deleted.
+
+        No new tests. This simply fixes a memory leak.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::~TextTrack):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::TextTrackCue):
+        (WebCore::TextTrackCue::~TextTrackCue):
+        (WebCore::TextTrackCue::track):
+        (WebCore::TextTrackCue::setTrack):
+        * html/track/TextTrackCue.h:
+        (TextTrackCue):
+
 2012-10-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Breakpoints are not managed correctly when editing uiSourceCode that was bound to ScriptFile after JavaScriptSourceFrame creation.
