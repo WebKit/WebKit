@@ -1,3 +1,16 @@
+2012-10-26  Aaron Colwell  <acolwell@chromium.org>
+
+        Remove Chromium specific expectations for video-media-source-add-and-remove-buffers.html
+        https://bugs.webkit.org/show_bug.cgi?id=100160
+
+        Reviewed by Adam Barth.
+
+        The common expectations just reflected a bug in Chromium. The bug has been fixed and the common expectations
+        have been updated to reflect the correct behavior.
+
+        * http/tests/media/media-source/video-media-source-add-and-remove-buffers-expected.txt:
+        * platform/chromium/http/tests/media/media-source/video-media-source-add-and-remove-buffers-expected.txt: Removed.
+
 2012-10-26  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Block children have incorrect offset when shape-inside element lays out below other elements

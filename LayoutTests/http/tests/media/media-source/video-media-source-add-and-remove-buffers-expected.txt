@@ -32,7 +32,6 @@ Test that a buffer can be removed while in the ended state.
 running testAddBufferAfterRemoving
 EVENT(webkitsourceopen)
 Test that a buffer can be added again after it is removed.
-Unexpected exception: Error: QUOTA_EXCEEDED_ERR: DOM Exception 22
 
 running testAppendFailureCases
 EVENT(webkitsourceopen)
