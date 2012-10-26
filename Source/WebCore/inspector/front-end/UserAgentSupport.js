@@ -33,10 +33,12 @@
  */
 WebInspector.UserAgentSupport = function()
 {
+    this._userAgentOverrideEnabled = false;
     this._deviceMetricsOverrideEnabled = false;
     this._geolocationPositionOverrideEnabled = false;
     this._deviceOrientationOverrideEnabled = false;
 
+    WebInspector.settings.userAgent.addChangeListener(this._userAgentChanged, this);
     WebInspector.settings.deviceMetrics.addChangeListener(this._deviceMetricsChanged, this);
     WebInspector.settings.deviceFitWindow.addChangeListener(this._deviceMetricsChanged, this);
     WebInspector.settings.geolocationOverride.addChangeListener(this._geolocationPositionChanged, this);
@@ -307,6 +309,14 @@ WebInspector.UserAgentSupport.DeviceOrientation.clearDeviceOrientationOverride =
 }
 
 WebInspector.UserAgentSupport.prototype = {
+    toggleUserAgentOverride: function(enabled)
+    {
+        if (enabled === this._userAgentOverrideEnabled)
+            return;
+        this._userAgentOverrideEnabled = enabled;
+        this._userAgentChanged();
+    },
+
     toggleDeviceMetricsOverride: function(enabled)
     {
         if (enabled === this._deviceMetricsOverrideEnabled)
@@ -329,6 +339,11 @@ WebInspector.UserAgentSupport.prototype = {
             return;
         this._deviceOrientationOverrideEnabled = enabled;
         this._deviceOrientationChanged();
+    },
+
+    _userAgentChanged: function()
+    {
+        NetworkAgent.setUserAgentOverride(this._userAgentOverrideEnabled ? WebInspector.settings.userAgent.get() : "");
     },
 
     _deviceMetricsChanged: function()

@@ -406,7 +406,7 @@ WebInspector.UserAgentSettingsTab.prototype = {
         var labelElement = p.createChild("label");
         var checkboxElement = labelElement.createChild("input");
         checkboxElement.type = "checkbox";
-        checkboxElement.checked = !!userAgent;
+        checkboxElement.checked = false;
         labelElement.appendChild(document.createTextNode(WebInspector.UIString("User Agent")));
         p.appendChild(this._createUserAgentSelectRowElement(checkboxElement));
         return p;
@@ -496,8 +496,8 @@ WebInspector.UserAgentSettingsTab.prototype = {
             } else {
                 this._selectElement.disabled = true;
                 this._otherUserAgentElement.disabled = true;
-                WebInspector.settings.userAgent.set("");
             }
+            WebInspector.userAgentSupport.toggleUserAgentOverride(checkboxElement.checked);
         }
         checkboxElement.addEventListener("click", checkboxClicked.bind(this), false);
 
