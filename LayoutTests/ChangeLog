@@ -1,3 +1,9 @@
+2012-10-26  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Add custom expectation for test added in r131557.
+
+        * platform/efl/fast/replaced/border-radius-clip-content-edge-expected.png: Added.
+
 2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132612.
