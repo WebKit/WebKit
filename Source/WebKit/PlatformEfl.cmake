@@ -80,6 +80,7 @@ ENDIF ()
 
 IF (WTF_USE_TEXTURE_MAPPER_GL)
   LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/platform/graphics/surfaces"
     "${WEBCORE_DIR}/platform/graphics/texmap"
     "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
   )

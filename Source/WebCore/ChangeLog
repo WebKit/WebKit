@@ -1,3 +1,66 @@
+2012-10-26  Regina Chung  <heejin.r.chung@samsung.com>
+
+        [EFL][WK2] Enable WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=97652
+
+        Reviewed by Gyuyoung Kim.
+
+        Implemented GraphicsSurface for EFL to enable WebGL for WebKit2.
+        Depends on GLX since Evas doesn't provide the necessary functionality.
+
+        No new tests. Covered by existing tests.
+
+        * PlatformEfl.cmake:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::createGraphicsSurfaces):
+        * platform/graphics/efl/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore):
+        (WebCore::GraphicsContext3DPrivate::createGraphicsSurfaces):
+        (WebCore::GraphicsContext3DPrivate::copyToGraphicsSurface):
+        (WebCore::GraphicsContext3DPrivate::graphicsSurfaceToken):
+        * platform/graphics/efl/GraphicsContext3DPrivate.h:
+        (GraphicsContext3DPrivate):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::reshape):
+        * platform/graphics/surfaces/efl: Added.
+        * platform/graphics/surfaces/efl/GraphicsSurfaceEfl.cpp: Added.
+        (WebCore):
+        (WebCore::OffScreenRootWindow::get):
+        (WebCore::OffScreenRootWindow::~OffScreenRootWindow):
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::createSurface):
+        (WebCore::GraphicsSurfacePrivate::makeCurrent):
+        (WebCore::GraphicsSurfacePrivate::doneCurrent):
+        (WebCore::GraphicsSurfacePrivate::swapBuffers):
+        (WebCore::GraphicsSurface::platformBeginPaint):
+        (WebCore::GraphicsSurface::createReadOnlyImage):
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.h: Added.
+        (WebCore):
+        (OffScreenRootWindow):
+        (WebCore::OffScreenRootWindow::OffScreenRootWindow):
+        (GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::~GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::createPixmap):
+        (WebCore::GraphicsSurfacePrivate::copyFromTexture):
+        (WebCore::GraphicsSurfacePrivate::display):
+        (WebCore::GraphicsSurfacePrivate::glxPixmap):
+        (WebCore::GraphicsSurfacePrivate::size):
+        (WebCore::GraphicsSurfacePrivate::glContext):
+        (WebCore::resolveGLMethods):
+        * platform/graphics/surfaces/qt/GraphicsSurfaceQt.cpp:
+        (WebCore):
+        (WebCore::OffScreenRootWindow::OffScreenRootWindow::get):
+        (WebCore::OffScreenRootWindow::~OffScreenRootWindow):
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::createSurface):
+        (WebCore::GraphicsSurfacePrivate::makeCurrent):
+        (WebCore::GraphicsSurfacePrivate::doneCurrent):
+        (WebCore::GraphicsSurfacePrivate::swapBuffers):
+
 2012-10-26  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Overrides] Do not persist the User Agent "master switch"

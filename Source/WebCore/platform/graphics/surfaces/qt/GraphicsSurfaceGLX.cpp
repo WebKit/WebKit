@@ -22,13 +22,20 @@
 
 #if USE(GRAPHICS_SURFACE)
 
+#include "NotImplemented.h"
 #include "TextureMapperGL.h"
+
+#if PLATFORM(QT)
 // Qt headers must be included before glx headers.
 #include <QCoreApplication>
 #include <QOpenGLContext>
 #include <QVector>
 #include <QWindow>
 #include <qpa/qplatformwindow.h>
+#elif PLATFORM(EFL)
+#include <GL/gl.h>
+#endif
+
 #include <GL/glext.h>
 #include <GL/glx.h>
 #include <X11/extensions/Xcomposite.h>
@@ -53,6 +60,7 @@ public:
         ++refCount;
     }
 
+#if PLATFORM(QT) 
     QWindow* get(Display* dpy)
     {
         if (!window) {
@@ -67,22 +75,52 @@ public:
 
         return window;
     }
+#elif PLATFORM(EFL)
+    Window* get(Display* dpy)
+    {
+        if (!window) {
+            window = XCreateSimpleWindow(dpy, XDefaultRootWindow(dpy), -1, -1, 1, 1, 0, BlackPixel(dpy, 0), WhitePixel(dpy, 0));
+            XSetWindowAttributes attributes;
+            attributes.override_redirect = true;
+            XChangeWindowAttributes(dpy, window, X11OverrideRedirect, &attributes);
+            display = dpy;
+            // Map window to the screen
+            XMapWindow(dpy, window);
+        }
+
+        return &window;
+    }
+#endif
 
     ~OffScreenRootWindow()
     {
         if (!--refCount) {
+#if PLATFORM(QT)
             delete window;
             window = 0;
+#elif PLATFORM(EFL)
+            XUnmapWindow(display, window);
+            XDestroyWindow(display, window);
+#endif
         }
     }
 
 private:
     static int refCount;
+#if PLATFORM(QT)
     static QWindow* window;
+#elif PLATFORM(EFL)
+    static Window window;
+    Display* display;
+#endif
 };
 
 int OffScreenRootWindow::refCount = 0;
+#if PLATFORM(QT)
 QWindow* OffScreenRootWindow::window = 0;
+#elif PLATFORM(EFL)
+Window OffScreenRootWindow::window = 0;
+#endif
 
 static const int glxSpec[] = {
     // The specification is a set key value pairs stored in a simple array.
@@ -106,18 +144,20 @@ struct GraphicsSurfacePrivate {
         : m_display(0)
         , m_xPixmap(0)
         , m_glxPixmap(0)
-        , m_glContext(adoptPtr(new QOpenGLContext))
+        , m_glContext(0)
         , m_detachedContext(0)
         , m_detachedSurface(0)
         , m_textureIsYInverted(false)
         , m_hasAlpha(false)
     {
+#if PLATFORM(QT)
         QSurface* currentSurface = 0;
         QOpenGLContext* currentContext = QOpenGLContext::currentContext();
         if (currentContext)
             currentSurface = currentContext->surface();
 
         m_display = XOpenDisplay(0);
+        m_glContext = adoptPtr(new QOpenGLContext);
         m_glContext->setShareContext(shareContext);
         m_glContext->create();
 
@@ -125,6 +165,25 @@ struct GraphicsSurfacePrivate {
         // Therefore we have to make the previous context current again.
         if (currentContext)
             currentContext->makeCurrent(currentSurface);
+#elif PLATFORM(EFL)
+        m_display = XOpenDisplay(0);
+
+        int attributes[] = {
+            GLX_LEVEL, 0,
+            GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+            GLX_RENDER_TYPE,   GLX_RGBA_BIT,
+            GLX_RED_SIZE,      1,
+            GLX_GREEN_SIZE,    1,
+            GLX_BLUE_SIZE,     1,
+            GLX_DOUBLEBUFFER,  True,
+            None
+        };
+
+        int numReturned;
+        m_fbConfigs = glXChooseFBConfig(m_display, DefaultScreen(m_display), attributes, &numReturned);
+        // Create a GLX context for OpenGL rendering
+        m_glContext = glXCreateNewContext(m_display, m_fbConfigs[0], GLX_RGBA_TYPE, 0, true);
+#endif
     }
 
     ~GraphicsSurfacePrivate()
@@ -144,6 +203,7 @@ struct GraphicsSurfacePrivate {
 
     uint32_t createSurface(const IntSize& size)
     {
+#if PLATFORM(QT)
         m_surface = adoptPtr(new QWindow(m_offScreenWindow.get(m_display)));
         m_surface->setSurfaceType(QSurface::OpenGLSurface);
         m_surface->setGeometry(0, 0, size.width(), size.height());
@@ -158,6 +218,30 @@ struct GraphicsSurfacePrivate {
         m_surface->show();
 
         return m_surface->handle()->winId();
+#elif PLATFORM(EFL)
+        XVisualInfo* visualInfo = glXGetVisualFromFBConfig(m_display, m_fbConfigs[0]);
+        if (!visualInfo)
+            return 0;
+
+        Colormap cmap = XCreateColormap(m_display, *m_offScreenWindow.get(m_display), visualInfo->visual, AllocNone);
+        XSetWindowAttributes a;
+        a.background_pixel = WhitePixel(m_display, 0);
+        a.border_pixel = BlackPixel(m_display, 0);
+        a.colormap = cmap;
+        m_surface = XCreateWindow(m_display, *m_offScreenWindow.get(m_display), 0, 0, size.width(), size.height(),
+            0, visualInfo->depth, InputOutput, visualInfo->visual,
+            CWBackPixel | CWBorderPixel | CWColormap, &a);
+        XSetWindowBackgroundPixmap(m_display, m_surface, 0);
+        XCompositeRedirectWindow(m_display, m_surface, CompositeRedirectManual);
+
+        // Make sure the XRender Extension is available.
+        int eventBasep, errorBasep;
+        if (!XRenderQueryExtension(m_display, &eventBasep, &errorBasep))
+            return 0;
+
+        XMapWindow(m_display, m_surface);
+        return m_surface;
+#endif
     }
 
     void createPixmap(uint32_t winId)
@@ -184,18 +268,30 @@ struct GraphicsSurfacePrivate {
 
     void makeCurrent()
     {
+#if PLATFORM(QT)
         m_detachedContext = QOpenGLContext::currentContext();
         if (m_detachedContext)
             m_detachedSurface = m_detachedContext->surface();
 
         if (m_surface && m_glContext)
             m_glContext->makeCurrent(m_surface.get());
+#elif PLATFORM(EFL)
+        m_detachedContext = glXGetCurrentContext();
+        m_detachedSurface = glXGetCurrentDrawable();
+        if (m_surface && m_glContext)
+            glXMakeCurrent(m_display, m_surface, m_glContext);
+#endif
     }
 
     void doneCurrent()
     {
         if (m_detachedContext)
+#if PLATFORM(QT)
             m_detachedContext->makeCurrent(m_detachedSurface);
+#elif PLATFORM(EFL)
+            glXMakeCurrent(m_display, m_detachedSurface, m_detachedContext);    
+#endif
+        m_detachedContext = 0;
     }
 
     void swapBuffers()
@@ -206,6 +302,7 @@ struct GraphicsSurfacePrivate {
         if (m_xPixmap)
             return;
 
+#if PLATFORM(QT)
         if (!m_surface->isVisible())
             return;
 
@@ -222,6 +319,17 @@ struct GraphicsSurfacePrivate {
             glContext->swapBuffers(m_surface.get());
             pGlBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
         }
+#elif PLATFORM(EFL)
+        GLXContext glContext = glXGetCurrentContext();
+
+        if (m_surface && glContext) {
+            GLint oldFBO;
+            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
+            pGlBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glXSwapBuffers(m_display, m_surface);
+            pGlBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
+        }
+#endif
     }
 
     void copyFromTexture(uint32_t texture, const IntRect& sourceRect)
@@ -242,7 +350,11 @@ struct GraphicsSurfacePrivate {
         glBindTexture(GL_TEXTURE_2D, texture);
         pGlFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
+#if PLATFORM(QT)
         pGlBindFramebuffer(GL_DRAW_FRAMEBUFFER, glContext()->defaultFramebufferObject());
+#elif PLATFORM(EFL)
+        pGlBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+#endif
         pGlBlitFramebuffer(x, y, width, height, x, y, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
         pGlFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
@@ -254,14 +366,15 @@ struct GraphicsSurfacePrivate {
         doneCurrent();
     }
 
-
     Display* display() const { return m_display; }
 
     GLXPixmap glxPixmap() const { return m_glxPixmap; }
 
     IntSize size() const { return m_size; }
 
+#if PLATFORM(QT)
     QOpenGLContext* glContext() { return m_glContext.get(); }
+#endif
 
 private:
     OffScreenRootWindow m_offScreenWindow;
@@ -269,10 +382,18 @@ private:
     Display* m_display;
     Pixmap m_xPixmap;
     GLXPixmap m_glxPixmap;
+#if PLATFORM(QT)
     OwnPtr<QWindow> m_surface;
     OwnPtr<QOpenGLContext> m_glContext;
     QOpenGLContext* m_detachedContext;
     QSurface* m_detachedSurface;
+#elif PLATFORM(EFL)
+    Window m_surface;
+    GLXContext m_glContext;
+    GLXContext m_detachedContext;
+    GLXDrawable m_detachedSurface;
+    GLXFBConfig* m_fbConfigs;
+#endif
     bool m_textureIsYInverted;
     bool m_hasAlpha;
 };
@@ -282,7 +403,7 @@ static bool resolveGLMethods(GraphicsSurfacePrivate* p)
     static bool resolved = false;
     if (resolved)
         return true;
-
+#if PLATFORM(QT)
     QOpenGLContext* glContext = p->glContext();
     pGlXBindTexImageEXT = reinterpret_cast<PFNGLXBINDTEXIMAGEEXTPROC>(glContext->getProcAddress("glXBindTexImageEXT"));
     pGlXReleaseTexImageEXT = reinterpret_cast<PFNGLXRELEASETEXIMAGEEXTPROC>(glContext->getProcAddress("glXReleaseTexImageEXT"));
@@ -292,7 +413,16 @@ static bool resolveGLMethods(GraphicsSurfacePrivate* p)
     pGlGenFramebuffers = reinterpret_cast<PFNGLGENFRAMEBUFFERSPROC>(glContext->getProcAddress("glGenFramebuffers"));
     pGlDeleteFramebuffers = reinterpret_cast<PFNGLDELETEFRAMEBUFFERSPROC>(glContext->getProcAddress("glDeleteFramebuffers"));
     pGlFramebufferTexture2D = reinterpret_cast<PFNGLFRAMEBUFFERTEXTURE2DPROC>(glContext->getProcAddress("glFramebufferTexture2D"));
+#elif PLATFORM(EFL)
+    pGlXBindTexImageEXT = reinterpret_cast<PFNGLXBINDTEXIMAGEEXTPROC>(glXGetProcAddress(reinterpret_cast<const GLubyte*>("glXBindTexImageEXT")));
+    pGlXReleaseTexImageEXT = reinterpret_cast<PFNGLXRELEASETEXIMAGEEXTPROC>(glXGetProcAddress(reinterpret_cast<const GLubyte*>("glXReleaseTexImageEXT")));
+    pGlBindFramebuffer = reinterpret_cast<PFNGLBINDFRAMEBUFFERPROC>(glXGetProcAddress(reinterpret_cast<const GLubyte*>("glBindFramebuffer")));
+    pGlBlitFramebuffer = reinterpret_cast<PFNGLBLITFRAMEBUFFERPROC>(glXGetProcAddress(reinterpret_cast<const GLubyte*>("glBlitFramebuffer")));
 
+    pGlGenFramebuffers = reinterpret_cast<PFNGLGENFRAMEBUFFERSPROC>(glXGetProcAddress(reinterpret_cast<const GLubyte*>("glGenFramebuffers")));
+    pGlDeleteFramebuffers = reinterpret_cast<PFNGLDELETEFRAMEBUFFERSPROC>(glXGetProcAddress(reinterpret_cast<const GLubyte*>("glDeleteFramebuffers")));
+    pGlFramebufferTexture2D = reinterpret_cast<PFNGLFRAMEBUFFERTEXTURE2DPROC>(glXGetProcAddress(reinterpret_cast<const GLubyte*>("glFramebufferTexture2D")));
+#endif
     resolved = pGlBlitFramebuffer && pGlBindFramebuffer && pGlXBindTexImageEXT && pGlXReleaseTexImageEXT;
 
     return resolved;
@@ -410,5 +540,18 @@ void GraphicsSurface::platformDestroy()
     m_private = 0;
 }
 
+#if !PLATFORM(QT)
+PassOwnPtr<GraphicsContext> GraphicsSurface::platformBeginPaint(const IntSize&, char*, int)
+{
+    notImplemented();
+    return nullptr;
+}
+
+PassRefPtr<Image> GraphicsSurface::createReadOnlyImage(const IntRect&)
+{
+    notImplemented();
+    return 0;
+}
+#endif
 }
 #endif
