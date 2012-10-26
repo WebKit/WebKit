@@ -1,3 +1,17 @@
+2012-10-25  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Add expectations for fast/images/exif-orientation.html
+        https://bugs.webkit.org/show_bug.cgi?id=100434
+
+        Unreviewed, just baselines.
+
+        * platform/chromium-linux/fast/images/exif-orientation-expected.png: Added.
+        * platform/chromium-mac-lion/fast/images/exif-orientation-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/images/exif-orientation-expected.png: Added.
+        * platform/chromium-mac/fast/images/exif-orientation-expected.png: Added.
+        * platform/chromium-win/fast/images/exif-orientation-expected.png: Added.
+        * platform/chromium/fast/images/exif-orientation-expected.png: Removed.
+
 2012-10-25  Min Qin  <qinmin@chromium.org>
 
         Fix a layout test crash if a TestWebkitPlugin is put inside an iframe
