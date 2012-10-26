@@ -1,3 +1,17 @@
+2012-10-26  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Support pixel tests for BlackBerry DRT
+        https://bugs.webkit.org/show_bug.cgi?id=100210
+
+        Reviewed by Rob Buis.
+
+        (The following 2 files are missed in previous patch(r132582), adding them
+        again.)
+
+        * DumpRenderTree/blackberry/build: Added.
+        * DumpRenderTree/blackberry/src.pro: Added.
+        Adds 2 files for building ImageDiff, by Christopher Wells.
+
 2012-10-26  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Add feature flags for CSS Device Adaptation
