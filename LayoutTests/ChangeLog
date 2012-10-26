@@ -1,3 +1,10 @@
+2012-10-26  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed. Removing bogus '#EOF\n' data in the listed PNG file that's
+        positioned after the IEND PNG chunk.
+
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png:
+
 2012-10-26  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Printing should use use high resolution images when available
