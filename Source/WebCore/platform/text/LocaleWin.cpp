@@ -677,7 +677,7 @@ static String convertWindowsTimeFormatToLDML(const String& windowsTimeFormat)
 
 String LocaleWin::dateFormat()
 {
-    if (!m_dateFormat.isEmpty())
+    if (!m_dateFormat.isNull())
         return m_dateFormat;
     ensureShortDateTokens();
     m_dateFormat = convertWindowsDateFormatToLDML(m_shortDateTokens);
@@ -699,8 +699,8 @@ String LocaleWin::monthFormat()
 
 String LocaleWin::timeFormat()
 {
-    if (m_localizedTimeFormatText.isEmpty())
-        m_localizedTimeFormatText = convertWindowsTimeFormatToLDML(getLocaleInfoString(LOCALE_STIMEFORMAT));
+    if (m_timeFormatWithSeconds.isNull())
+        m_timeFormatWithSeconds = convertWindowsTimeFormatToLDML(getLocaleInfoString(LOCALE_STIMEFORMAT));
     return m_localizedTimeFormatText;
 }
 

@@ -1,5 +1,54 @@
 2012-10-26  Kent Tamura  <tkent@chromium.org>
 
+        Refactor Localizer-related classes.
+        https://bugs.webkit.org/show_bug.cgi?id=100482
+
+        Reviewed by Kentaro Hara.
+
+        - Localizer has unused code
+         Localizer should have function implementations only if they are used in
+         multiple subclasses.
+        - Some Localizer subclasses hide Localizer data members
+        - Should use String::isNull to check initialization-or-not
+
+        No new tests. This should not change any behavior.
+
+        * platform/text/Localizer.h:
+        (Localizer):
+        - timeFormat, shortTimeFormat, and timeAMPMLabels should be pure virtual.
+        - Remove m_localizedDateFormatText, m_localizedShortTimeFormatText, and
+          m_timeAMPMLabels
+        * platform/text/Localizer.cpp:
+        Remove implementations of timeFormat, shortTimeFormat, and timeAMPMLabels.
+
+        * platform/text/LocaleICU.h:
+        (LocaleICU): Introduce m_timeFormatWithSeconds and m_timeFormatWithoutSeconds.
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::initializeDateTimeFormat):
+        Use new data members instead of Localizer data members.
+        (WebCore::LocaleICU::dateFormat): Use isNull.
+
+        * platform/text/LocaleNone.cpp:
+        (LocaleNone): Add timeFormat, shortTimeFormat, timeAMPMLabels
+        implementations, and m_timeAMPMLabels.
+        (WebCore::LocaleNone::timeFormat): Returns the HTML time format.
+        (WebCore::LocaleNone::shortTimeFormat): Returns the HTML time format.
+        (WebCore::LocaleNone::timeAMPMLabels): Returns "AM" and "PM".
+
+        * platform/text/LocaleWin.h:
+        (LocaleWin): Add m_timeFormatWithSeconds.
+        * platform/text/LocaleWin.cpp:
+        (WebCore::LocaleWin::dateFormat): Use isNull.
+        (WebCore::LocaleWin::timeFormat): Use m_timeFormatWithSeconds.
+
+        * platform/text/mac/LocaleMac.h:
+        (LocaleMac): Rename m_localized*TimeFormatText to m_timeFormatWith*Seconds.
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::timeFormat): Follow the renaming.
+        (WebCore::LocaleMac::shortTimeFormat): Ditto.
+
+2012-10-26  Kent Tamura  <tkent@chromium.org>
+
         Crash in PagePopupController by events after WebPagePopupImpl::closePopup
         https://bugs.webkit.org/show_bug.cgi?id=100454
 

@@ -104,7 +104,9 @@ private:
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     String m_dateFormat;
     String m_monthFormat;
+    String m_timeFormatWithSeconds;
     String m_timeFormatWithoutSeconds;
+    Vector<String> m_timeAMPMLabels;
 #endif
 #if ENABLE(CALENDAR_PICKER)
     Vector<String> m_weekDayShortLabels;

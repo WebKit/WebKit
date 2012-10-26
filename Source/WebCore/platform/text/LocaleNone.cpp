@@ -47,10 +47,14 @@ private:
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     virtual String dateFormat() OVERRIDE;
     virtual String monthFormat() OVERRIDE;
+    virtual String timeFormat() OVERRIDE;
+    virtual String shortTimeFormat() OVERRIDE;
     virtual const Vector<String>& shortMonthLabels() OVERRIDE;
     virtual const Vector<String>& standAloneMonthLabels() OVERRIDE;
     virtual const Vector<String>& shortStandAloneMonthLabels() OVERRIDE;
+    virtual const Vector<String>& timeAMPMLabels() OVERRIDE;
 
+    Vector<String> m_timeAMPMLabels;
     Vector<String> m_shortMonthLabels;
 #endif
 #if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
@@ -111,6 +115,16 @@ String LocaleNone::monthFormat()
     return ASCIILiteral("yyyy-MM");
 }
 
+String LocaleNone::timeFormat()
+{
+    return ASCIILiteral("HH:mm:ss");
+}
+
+String LocaleNone::shortTimeFormat()
+{
+    return ASCIILiteral("HH:mm");
+}
+
 const Vector<String>& LocaleNone::shortMonthLabels()
 {
     if (!m_shortMonthLabels.isEmpty())
@@ -130,6 +144,17 @@ const Vector<String>& LocaleNone::standAloneMonthLabels()
 {
     return monthLabels();
 }
+
+const Vector<String>& LocaleNone::timeAMPMLabels()
+{
+    if (!m_timeAMPMLabels.isEmpty())
+        return m_timeAMPMLabels;
+    m_timeAMPMLabels.reserveCapacity(2);
+    m_timeAMPMLabels.append("AM");
+    m_timeAMPMLabels.append("PM");
+    return m_timeAMPMLabels;
+}
+
 #endif
 
 } // namespace WebCore

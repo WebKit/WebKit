@@ -93,8 +93,8 @@ private:
 
     String m_dateFormat;
     String m_monthFormat;
-    String m_localizedTimeFormatText;
-    String m_localizedShortTimeFormatText;
+    String m_timeFormatWithSeconds;
+    String m_timeFormatWithoutSeconds;
     Vector<String> m_shortMonthLabels;
     Vector<String> m_standAloneMonthLabels;
     Vector<String> m_shortStandAloneMonthLabels;

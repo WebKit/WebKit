@@ -262,18 +262,18 @@ String LocaleMac::monthFormat()
 
 String LocaleMac::timeFormat()
 {
-    if (!m_localizedTimeFormatText.isNull())
-        return m_localizedTimeFormatText;
-    m_localizedTimeFormatText = [timeFormatter().get() dateFormat];
-    return m_localizedTimeFormatText;
+    if (!m_timeFormatWithSeconds.isNull())
+        return m_timeFormatWithSeconds;
+    m_timeFormatWithSeconds = [timeFormatter().get() dateFormat];
+    return m_timeFormatWithSeconds;
 }
 
 String LocaleMac::shortTimeFormat()
 {
-    if (!m_localizedShortTimeFormatText.isNull())
-        return m_localizedShortTimeFormatText;
-    m_localizedShortTimeFormatText = [shortTimeFormatter().get() dateFormat];
-    return m_localizedShortTimeFormatText;
+    if (!m_timeFormatWithoutSeconds.isNull())
+        return m_timeFormatWithoutSeconds;
+    m_timeFormatWithoutSeconds = [shortTimeFormatter().get() dateFormat];
+    return m_timeFormatWithoutSeconds;
 }
 
 const Vector<String>& LocaleMac::shortMonthLabels()

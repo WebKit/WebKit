@@ -315,22 +315,6 @@ String Localizer::localizedDecimalSeparator()
     return m_decimalSymbols[DecimalSeparatorIndex];
 }
 
-String Localizer::timeFormat()
-{
-    if (!m_localizedTimeFormatText.isNull())
-        return m_localizedTimeFormatText;
-    m_localizedTimeFormatText = "hh:mm:ss";
-    return m_localizedTimeFormatText;
-}
-
-String Localizer::shortTimeFormat()
-{
-    if (!m_localizedShortTimeFormatText.isNull())
-        return m_localizedShortTimeFormatText;
-    m_localizedTimeFormatText = "hh:mm";
-    return m_localizedShortTimeFormatText;
-}
-
 String Localizer::dateTimeFormatWithSeconds()
 {
     if (!m_dateTimeFormatWithSeconds.isNull())
@@ -355,16 +339,6 @@ String Localizer::dateTimeFormatWithoutSeconds()
     builder.append(shortTimeFormat());
     m_dateTimeFormatWithoutSeconds = builder.toString();
     return m_dateTimeFormatWithoutSeconds;
-}
-
-const Vector<String>& Localizer::timeAMPMLabels()
-{
-    if (!m_timeAMPMLabels.isEmpty())
-        return m_timeAMPMLabels;
-    m_timeAMPMLabels.reserveCapacity(2);
-    m_timeAMPMLabels.append("AM");
-    m_timeAMPMLabels.append("PM");
-    return m_timeAMPMLabels;
 }
 #endif
 

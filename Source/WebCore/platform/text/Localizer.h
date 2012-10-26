@@ -68,12 +68,12 @@ public:
     // Returns time format in Unicode TR35 LDML[1] containing hour, minute, and
     // second with optional period(AM/PM), e.g. "h:mm:ss a"
     // [1] LDML http://unicode.org/reports/tr35/#Date_Format_Patterns
-    virtual String timeFormat();
+    virtual String timeFormat() = 0;
 
     // Returns time format in Unicode TR35 LDML containing hour, and minute
     // with optional period(AM/PM), e.g. "h:mm a"
     // Note: Some platforms return same value as timeFormat().
-    virtual String shortTimeFormat();
+    virtual String shortTimeFormat() = 0;
 
     // Returns a date-time format in Unicode TR35 LDML. It should have a seconds
     // field.
@@ -98,7 +98,7 @@ public:
     virtual const Vector<String>& shortStandAloneMonthLabels() = 0;
 
     // Returns localized period field(AM/PM) strings.
-    virtual const Vector<String>& timeAMPMLabels();
+    virtual const Vector<String>& timeAMPMLabels() = 0;
 #endif
 
 #if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
@@ -150,9 +150,6 @@ protected:
     };
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    String m_localizedTimeFormatText;
-    String m_localizedShortTimeFormatText;
-    Vector<String> m_timeAMPMLabels;
     String m_dateTimeFormatWithSeconds;
     String m_dateTimeFormatWithoutSeconds;
 #endif

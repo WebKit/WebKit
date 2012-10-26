@@ -382,10 +382,10 @@ void LocaleICU::initializeDateTimeFormat()
     // with LDML, because ICU specific pattern character "V" doesn't appear
     // in both medium and short time pattern.
     m_mediumTimeFormat = openDateFormat(UDAT_MEDIUM, UDAT_NONE);
-    m_localizedTimeFormatText = getDateFormatPattern(m_mediumTimeFormat);
+    m_timeFormatWithSeconds = getDateFormatPattern(m_mediumTimeFormat);
 
     m_shortTimeFormat = openDateFormat(UDAT_SHORT, UDAT_NONE);
-    m_localizedShortTimeFormatText = getDateFormatPattern(m_shortTimeFormat);
+    m_timeFormatWithoutSeconds = getDateFormatPattern(m_shortTimeFormat);
 
     OwnPtr<Vector<String> > timeAMPMLabels = createLabelVector(m_mediumTimeFormat, UDAT_AM_PMS, UCAL_AM, 2);
     if (!timeAMPMLabels)
@@ -397,7 +397,7 @@ void LocaleICU::initializeDateTimeFormat()
 
 String LocaleICU::dateFormat()
 {
-    if (!m_dateFormat.isEmpty())
+    if (!m_dateFormat.isNull())
         return m_dateFormat;
     if (!initializeShortDateFormat())
         return ASCIILiteral("dd/MM/yyyy");
@@ -438,13 +438,13 @@ String LocaleICU::monthFormat()
 String LocaleICU::timeFormat()
 {
     initializeDateTimeFormat();
-    return m_localizedTimeFormatText;
+    return m_timeFormatWithSeconds;
 }
 
 String LocaleICU::shortTimeFormat()
 {
     initializeDateTimeFormat();
-    return m_localizedShortTimeFormatText;
+    return m_timeFormatWithoutSeconds;
 }
 
 const Vector<String>& LocaleICU::shortMonthLabels()
