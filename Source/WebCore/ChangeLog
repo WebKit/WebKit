@@ -1,3 +1,21 @@
+2012-10-26  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Block children have incorrect offset when shape-inside element lays out below other elements
+        https://bugs.webkit.org/show_bug.cgi?id=98189
+
+        Reviewed by Dirk Schulze.
+
+        The initial code assumed that each block created a new layout state, such that
+        LayoutState::layoutOffset would be specific to each block child of a shape-inside.
+        Typically, however, block children of a shape-inside do not create a new layout state,
+        and therefore we use the current element's offset instead.
+
+        Test: fast/exclusions/shape-inside/shape-inside-subsequent-blocks.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange): Modified to use only logicalTop
+        rather than LayoutState::layoutOffset::width/height and logicalTop.
+
 2012-10-26  Elliott Sprehn  <esprehn@chromium.org>
 
         Remove setRenderStyle in favor of callbacks on HTMLOptionElement and HTMLOptGroupElement

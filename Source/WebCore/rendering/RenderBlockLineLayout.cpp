@@ -1403,9 +1403,9 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(this);
     if (exclusionShapeInsideInfo) {
         if (exclusionShapeInsideInfo != this->exclusionShapeInsideInfo()) {
-            // FIXME: If layout state is disabled, the offset will be incorrect.
-            LayoutSize layoutOffset = view()->layoutState()->layoutOffset();
-            absoluteLogicalTop = logicalTop() + (isHorizontalWritingMode() ? layoutOffset.height() : layoutOffset.width());
+            // FIXME Bug 100284: If subsequent LayoutStates are pushed, we will have to add
+            // their offsets from the original shape-inside container.
+            absoluteLogicalTop = logicalTop();
         }
         // Begin layout at the logical top of our shape inside.
         if (logicalHeight() + absoluteLogicalTop < exclusionShapeInsideInfo->shapeLogicalTop())
