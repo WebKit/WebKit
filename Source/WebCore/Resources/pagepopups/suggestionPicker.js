@@ -190,7 +190,8 @@ SuggestionPicker.prototype.selectEntry = function(entry) {
     if (typeof entry.dataset.value !== "undefined") {
         this.submitValue(entry.dataset.value);
     } else if (entry.dataset.action === SuggestionPicker.ActionNames.OpenCalendarPicker) {
-        openCalendarPicker();
+        hideWindow();
+        setTimeout(openCalendarPicker, 0);
     }
 };
 

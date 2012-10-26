@@ -21,7 +21,7 @@ function openPicker(input, callback) {
 }
 
 function popupOpenCallbackWrapper() {
-    popupWindow.removeEventListener("resize", popupOpenCallbackWrapper);
+    popupWindow.removeEventListener("didOpenPicker", popupOpenCallbackWrapper);
     popupOpenCallback();
 }
 

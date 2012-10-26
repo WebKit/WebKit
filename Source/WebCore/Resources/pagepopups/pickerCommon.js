@@ -163,6 +163,16 @@ function setWindowRect(rect) {
     }
 }
 
+function hideWindow() {
+    setWindowRect(new Rect(0, 0, 1, 1));
+}
+
+window.addEventListener("resize", function() {
+    if (window.innerWidth === 1 && window.innerHeight === 1)
+        return;
+    window.dispatchEvent(new CustomEvent("didOpenPicker"));
+}, false);
+
 /**
  * @return {!number}
  */

@@ -1,3 +1,21 @@
+2012-10-25  Keishi Hattori  <keishi@webkit.org>
+
+        Hide popup while transitioning from the suggestion picker to the calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=99537
+
+        Reviewed by Kent Tamura.
+
+        Right now you can see a squished calendar picker while transitioning
+        from suggestion picker from calendar picker. This change will hide the
+        popup before opening the calendar picker.
+
+        No new tests.
+
+        * Resources/pagepopups/pickerCommon.js: Hiding the window will also trigger a resize event so I created a separate event, didOpenPicker.
+        (hideWindow): Resize the window to 1x1 because we can't resize to 0x0.
+        * Resources/pagepopups/suggestionPicker.js:
+        (SuggestionPicker.prototype.selectEntry): Hide the window first and then open the calendar picker.
+
 2012-10-25  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
