@@ -1,3 +1,21 @@
+2012-10-26  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] ASSERT currentThreadIsHoldingLock() failed in MarkedAllocator::allocateSlowCase()
+        https://bugs.webkit.org/show_bug.cgi?id=100504
+
+        Reviewed by Yong Li.
+
+        PR #232038 The similar PR # 200724.
+        Reviewed internally by Petter Wang.
+
+        This issue is same as bug 95492, and this patch is same as its patch.
+        Hold the JSLock for the current thread before we call toRef to avoid
+        the ASSERT failure.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::executeJavaScriptInIsolatedWorld):
+        (BlackBerry::WebKit::WebPage::executeJavaScriptFunction):
+
 2012-10-25  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] WebView process crashed at AuthenticationChallengeManager::pageVisibilityChanged()

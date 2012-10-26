@@ -836,6 +836,7 @@ bool WebPagePrivate::executeJavaScriptInIsolatedWorld(const ScriptSourceCode& so
     JSC::ExecState* exec = m_mainFrame->script()->globalObject(m_isolatedWorld.get())->globalExec();
     JSGlobalContextRef context = toGlobalRef(exec);
 
+    JSC::JSLockHolder lock(exec);
     JSType type = JSValueGetType(context, toRef(exec, value));
 
     switch (type) {
@@ -910,6 +911,7 @@ void WebPage::executeJavaScriptFunction(const std::vector<BlackBerry::Platform::
     JSC::ExecState* exec = root->globalObject()->globalExec();
     JSGlobalContextRef ctx = toGlobalRef(exec);
 
+    JSC::JSLockHolder lock(exec);
     WTF::Vector<JSValueRef> argListRef(args.size());
     for (unsigned i = 0; i < args.size(); ++i)
         argListRef[i] = BlackBerryJavaScriptVariantToJSValueRef(ctx, args[i]);
