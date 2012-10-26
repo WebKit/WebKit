@@ -1,3 +1,17 @@
+2012-10-25  Tony Chang  <tony@chromium.org>
+
+        Remove unused static methods from DOMTimer.h
+        https://bugs.webkit.org/show_bug.cgi?id=100427
+
+        Reviewed by Kenneth Russell.
+
+        Since these values got moved into Settings, these methods are no longer called.
+
+        No new tests, removing dead code.
+
+        * page/DOMTimer.h:
+        (DOMTimer): Remove unused getters.
+
 2012-10-25  Leo Yang  <leoyang@rim.com>
 
         [BlackBerry] Infinite redirect loop is not displayed to user

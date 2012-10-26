@@ -27,7 +27,6 @@
 #ifndef DOMTimer_h
 #define DOMTimer_h
 
-#include "Settings.h"
 #include "SuspendableTimer.h"
 #include "UserGestureIndicator.h"
 #include <wtf/OwnPtr.h>
@@ -60,15 +59,8 @@ namespace WebCore {
 
         double intervalClampedToMinimum(int timeout, double minimumTimerInterval) const;
 
-        // The default minimum allowable timer setting (in seconds, 0.001 == 1 ms).
-        static double defaultMinTimerInterval() { return Settings::defaultMinDOMTimerInterval(); }
-
         // Retuns timer fire time rounded to the next multiple of timer alignment interval.
         virtual double alignedFireTime(double) const;
-
-        // The default timer alignment interval (in seconds). If non zero, timer fire times
-        // will be rounded to a multiple of the alignment interval.
-        static double defaultTimerAlignmentInterval() { return Settings::defaultDOMTimerAlignmentInterval(); }
 
         int m_timeoutId;
         int m_nestingLevel;
