@@ -1,3 +1,86 @@
+2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132604.
+        http://trac.webkit.org/changeset/132604
+        https://bugs.webkit.org/show_bug.cgi?id=100501
+
+        "SOS! Wrong paths." (Requested by kbalazs on #webkit).
+
+        * platform/qt-5.0-wk2/css3/filters/filter-empty-element-crash-expected.png: Removed.
+        * platform/qt-5.0-wk2/css3/filters/multiple-filters-invalidation-expected.png: Removed.
+        * platform/qt-5.0-wk2/css3/flexbox/repaint-expected.png: Removed.
+        * platform/qt-5.0-wk2/css3/flexbox/repaint-rtl-column-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/borders/border-shadow-large-radius-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/borders/outline-alpha-block-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/borders/outline-alpha-inline-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/box-shadow/box-shadow-clipped-slices-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/box-shadow/no-blur-multiple-offsets-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-composite-fill-repaint-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-composite-transformclip-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-empty-image-pattern-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-resize-after-paint-without-layout-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-resize-reset-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/canvas/canvas-transforms-during-path-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/canvas/gradient-add-second-start-end-stop-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/canvas/image-pattern-rotate-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/canvas/toDataURL-alpha-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/css/border-radius-non-negative-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/css/linear-gradient-currentcolor-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/datalist/input-appearance-range-with-datalist-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/datalist/input-appearance-range-with-padding-with-datalist-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/datalist/input-appearance-range-with-transform-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/file/file-input-pressed-state-expected.png/file-input-pressed-state-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/gradients/css3-color-stop-units-expected.png/css3-color-stop-units-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/gradients/css3-color-stops-expected.png/css3-color-stops-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/gradients/css3-linear-angle-gradients-expected.png/css3-linear-angle-gradients-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/gradients/css3-linear-right-angle-gradients-expected.png/css3-linear-right-angle-gradients-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/gradients/css3-radial-gradients-expected.png/css3-radial-gradients-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/gradients/css3-radial-gradients2-expected.png/css3-radial-gradients2-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/gradients/css3-radial-gradients3-expected.png/css3-radial-gradients3-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/gradients/css3-repeating-linear-gradients-expected.png/css3-repeating-linear-gradients-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/gradients/css3-repeating-linear-gradients2-expected.png/css3-repeating-linear-gradients2-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/gradients/css3-repeating-radial-gradients-expected.png/css3-repeating-radial-gradients-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/gradients/gradient-after-transparent-border-expected.png/gradient-after-transparent-border-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/images/jpeg-with-color-profile-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/images/paint-subrect-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/images/paint-subrect-grid-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/images/png-suite/test-expected.png/test-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/images/png-with-color-profile-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/images/rgb-jpeg-with-adobe-marker-only-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/images/rgb-png-with-cmyk-color-profile-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/images/ycbcr-with-cmyk-color-profile-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/layers/scroll-with-transform-composited-layer-expected.png/scroll-with-transform-composited-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/layers/scroll-with-transform-layer-expected.png/scroll-with-transform-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/absolute-position-changed-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/fixed-and-absolute-position-scrolled-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/fixed-position-transparency-with-overflow-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/nested-iframe-scroll-inner-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/nested-iframe-scroll-outer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/overflow-auto-in-overflow-auto-scrolled-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/overflow-hide-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/overflow-scroll-in-overflow-scroll-scrolled-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/overflow-show-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/scroll-absolute-layer-with-reflection-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/scroll-fixed-layer-with-no-visible-content-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/scroll-fixed-layer-with-reflection-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/scroll-fixed-layer-with-transformed-parent-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/scroll-fixed-reflected-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/scroll-in-clipped-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/scroll-in-fixed-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/scroll-in-transformed-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/scroll-inside-table-cell-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/scroll-relative-table-inside-table-cell-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/scroll-with-transformed-parent-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/table-overflow-auto-in-overflow-auto-scrolled-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/table-overflow-hidden-in-overflow-hidden-scrolled-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/repaint/table-overflow-scroll-in-overflow-scroll-scrolled-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/replaced/outline-replaced-elements-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/scrolling/scrollbar-tickmarks-styled-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/table/border-collapsing/collapsed-border-with-col-colgroup-span-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/table/table-row-focus-ring-paint-expected.png: Removed.
+
 2012-10-26  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] More pixel rebaselines after r131941 and r131991.
