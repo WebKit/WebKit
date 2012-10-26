@@ -1,3 +1,16 @@
+2012-10-25  Min Qin  <qinmin@chromium.org>
+
+        Fix a layout test crash if a TestWebkitPlugin is put inside an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=100406
+
+        Reviewed by Adam Barth.
+
+        Test for adding a webplugin into an iframe and make sure it doesn't crash.
+
+        * platform/chromium/plugins/plugin-inside-iframe-expected.txt: Added.
+        * platform/chromium/plugins/plugin-inside-iframe.html: Added.
+        * platform/chromium/plugins/resources/plugin-page.html: Added.
+
 2012-10-25  Tom Sepez  <tsepez@chromium.org>
 
         Test full-block-iframe-no-inherit.php generates an invalid X-XSS-PROTECTION header.

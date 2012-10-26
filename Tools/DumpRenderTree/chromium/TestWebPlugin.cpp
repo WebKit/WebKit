@@ -206,6 +206,8 @@ void TestWebPlugin::updateGeometry(const WebRect& frameRect,
     if (clipRect == m_rect)
         return;
     m_rect = clipRect;
+    if (m_rect.isEmpty())
+        return;
 
     m_context->reshape(m_rect.width, m_rect.height);
     m_context->viewport(0, 0, m_rect.width, m_rect.height);
