@@ -1,5 +1,19 @@
 2012-10-26  Kent Tamura  <tkent@chromium.org>
 
+        Disable ENABLE_INPUT_TYPE_WEEK on Chromium/Android
+        https://bugs.webkit.org/show_bug.cgi?id=100457
+
+        Reviewed by Kentaro Hara.
+
+        It was enabled accidentally. Week input is not implemented in
+        Android.
+
+        * features.gypi: Remove ENABLE_INPUT_TYPE_WEEK=1 in the common block,
+        add ENABLE_INPUT_TYPE_WEEK=0 in Android block, and add
+        ENABLE_INPUT_TYPE_WEEK=1 in non-Android block.
+
+2012-10-26  Kent Tamura  <tkent@chromium.org>
+
         [Chromium-Win] Support shortTimeFormat
         https://bugs.webkit.org/show_bug.cgi?id=100471
 
