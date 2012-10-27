@@ -1,3 +1,17 @@
+2012-10-27  Sam Weinig  <sam@webkit.org>
+
+        Completely roll out https://bugs.webkit.org/show_bug.cgi?id=99251 (r131686)
+
+        It has caused too many crashes.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/mac/WKViewPrivate.h:
+        * UIProcess/mac/CorrectionPanel.mm:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm:
+
 2012-10-27  Michael Saboff  <msaboff@apple.com>
 
         buildHTTPHeaders() should use a StringBuilder instead of a Vector<UChar>

@@ -139,7 +139,7 @@ PageClientImpl::~PageClientImpl()
 
 PassOwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
-    return [m_wkView _wk_createDrawingAreaProxy];
+    return [m_wkView _createDrawingAreaProxy];
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
@@ -156,7 +156,7 @@ void PageClientImpl::scrollView(const IntRect& scrollRect, const IntSize& scroll
 {
     NSRect clippedScrollRect = NSIntersectionRect(scrollRect, NSOffsetRect(scrollRect, -scrollOffset.width(), -scrollOffset.height()));
 
-    [m_wkView _wk_cacheWindowBottomCornerRect];
+    [m_wkView _cacheWindowBottomCornerRect];
 
     [m_wkView translateRectsNeedingDisplayInRect:clippedScrollRect by:scrollOffset];
     [m_wkView scrollRect:clippedScrollRect by:scrollOffset];
@@ -174,7 +174,7 @@ bool PageClientImpl::isViewWindowActive()
 
 bool PageClientImpl::isViewFocused()
 {
-    return [m_wkView _wk_isFocused];
+    return [m_wkView _isFocused];
 }
 
 void PageClientImpl::makeFirstResponder()
@@ -220,17 +220,17 @@ LayerHostingMode PageClientImpl::viewLayerHostingMode()
 
 ColorSpaceData PageClientImpl::colorSpace()
 {
-    return [m_wkView _wk_colorSpace];
+    return [m_wkView _colorSpace];
 }
 
 void PageClientImpl::processDidCrash()
 {
-    [m_wkView _wk_processDidCrash];
+    [m_wkView _processDidCrash];
 }
 
 void PageClientImpl::pageClosed()
 {
-    [m_wkView _wk_pageClosed];
+    [m_wkView _pageClosed];
 #if USE(DICTATION_ALTERNATIVES)
     m_alternativeTextUIController->clear();
 #endif
@@ -238,18 +238,18 @@ void PageClientImpl::pageClosed()
 
 void PageClientImpl::didRelaunchProcess()
 {
-    [m_wkView _wk_didRelaunchProcess];
+    [m_wkView _didRelaunchProcess];
 }
 
 void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newToolTip)
 {
-    [m_wkView _wk_toolTipChangedFrom:nsStringFromWebCoreString(oldToolTip) to:nsStringFromWebCoreString(newToolTip)];
+    [m_wkView _toolTipChangedFrom:nsStringFromWebCoreString(oldToolTip) to:nsStringFromWebCoreString(newToolTip)];
 }
 
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 {
     if (![NSApp _cursorRectCursor])
-        [m_wkView _wk_setCursor:cursor.platformCursor()];
+        [m_wkView _setCursor:cursor.platformCursor()];
 }
 
 void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
@@ -291,7 +291,7 @@ void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 
 bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, Vector<WebCore::KeypressCommand>& commands)
 {
-    return [m_wkView _wk_interpretKeyEvent:event.nativeEvent() savingCommandsTo:commands];
+    return [m_wkView _interpretKeyEvent:event.nativeEvent() savingCommandsTo:commands];
 }
 
 void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag)
@@ -299,34 +299,34 @@ void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<Sha
     RetainPtr<CGImageRef> dragCGImage = dragImage->makeCGImage();
     RetainPtr<NSImage> dragNSImage(AdoptNS, [[NSImage alloc] initWithCGImage:dragCGImage.get() size:dragImage->size()]);
 
-    [m_wkView _wk_setDragImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
+    [m_wkView _setDragImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
 }
 
 void PageClientImpl::setPromisedData(const String& pasteboardName, PassRefPtr<SharedBuffer> imageBuffer, const String& filename, const String& extension, const String& title, const String& url, const String& visibleUrl, PassRefPtr<SharedBuffer> archiveBuffer)
 {
     RefPtr<Image> image = BitmapImage::create();
     image->setData(imageBuffer.get(), true);
-    [m_wkView _wk_setPromisedData:image.get() withFileName:filename withExtension:extension withTitle:title withURL:url withVisibleURL:visibleUrl withArchive:archiveBuffer.get() forPasteboard:pasteboardName];
+    [m_wkView _setPromisedData:image.get() withFileName:filename withExtension:extension withTitle:title withURL:url withVisibleURL:visibleUrl withArchive:archiveBuffer.get() forPasteboard:pasteboardName];
 }
 
 void PageClientImpl::updateTextInputState(bool updateSecureInputState)
 {
-    [m_wkView _wk_updateTextInputStateIncludingSecureInputState:updateSecureInputState];
+    [m_wkView _updateTextInputStateIncludingSecureInputState:updateSecureInputState];
 }
 
 void PageClientImpl::resetTextInputState()
 {
-    [m_wkView _wk_resetTextInputState];
+    [m_wkView _resetTextInputState];
 }
 
 FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)
 {
-    return [m_wkView _wk_convertToDeviceSpace:rect];
+    return [m_wkView _convertToDeviceSpace:rect];
 }
 
 FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 {
-    return [m_wkView _wk_convertToUserSpace:rect];
+    return [m_wkView _convertToUserSpace:rect];
 }
    
 IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
@@ -352,7 +352,7 @@ void PageClientImpl::doneWithGestureEvent(const WebGestureEvent&, bool wasEventH
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool eventWasHandled)
 {
-    [m_wkView _wk_doneWithKeyEvent:event.nativeEvent() eventWasHandled:eventWasHandled];
+    [m_wkView _doneWithKeyEvent:event.nativeEvent() eventWasHandled:eventWasHandled];
 }
 
 PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
@@ -375,40 +375,40 @@ PassRefPtr<WebColorChooserProxy> PageClientImpl::createColorChooserProxy(WebPage
 
 void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut, bool animate)
 {
-    [m_wkView _wk_setFindIndicator:findIndicator fadeOut:fadeOut animate:animate];
+    [m_wkView _setFindIndicator:findIndicator fadeOut:fadeOut animate:animate];
 }
 
 void PageClientImpl::accessibilityWebProcessTokenReceived(const CoreIPC::DataReference& data)
 {
-    NSData *remoteToken = [NSData dataWithBytes:data.data() length:data.size()];
-    [m_wkView _wk_setAccessibilityWebProcessToken:remoteToken];
+    NSData* remoteToken = [NSData dataWithBytes:data.data() length:data.size()];
+    [m_wkView _setAccessibilityWebProcessToken:remoteToken];
 }
     
 #if USE(ACCELERATED_COMPOSITING)
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-    [m_wkView _wk_enterAcceleratedCompositingMode:layerTreeContext];
+    [m_wkView _enterAcceleratedCompositingMode:layerTreeContext];
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
-    [m_wkView _wk_exitAcceleratedCompositingMode];
+    [m_wkView _exitAcceleratedCompositingMode];
 }
 
 void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-    [m_wkView _wk_updateAcceleratedCompositingMode:layerTreeContext];
+    [m_wkView _updateAcceleratedCompositingMode:layerTreeContext];
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
 void PageClientImpl::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
 {
-    [m_wkView _wk_pluginFocusOrWindowFocusChanged:pluginHasFocusAndWindowHasFocus pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];
+    [m_wkView _pluginFocusOrWindowFocusChanged:pluginHasFocusAndWindowHasFocus pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];
 }
 
 void PageClientImpl::setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, PluginComplexTextInputState pluginComplexTextInputState)
 {
-    [m_wkView _wk_setPluginComplexTextInputState:pluginComplexTextInputState pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];
+    [m_wkView _setPluginComplexTextInputState:pluginComplexTextInputState pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];
 }
 
 CGContextRef PageClientImpl::containingWindowGraphicsContext()
@@ -424,37 +424,37 @@ CGContextRef PageClientImpl::containingWindowGraphicsContext()
 
 void PageClientImpl::didChangeScrollbarsForMainFrame() const
 {
-    [m_wkView _wk_didChangeScrollbarsForMainFrame];
+    [m_wkView _didChangeScrollbarsForMainFrame];
 }
 
 void PageClientImpl::didCommitLoadForMainFrame(bool useCustomRepresentation)
 {
-    [m_wkView _wk_setPageHasCustomRepresentation:useCustomRepresentation];
+    [m_wkView _setPageHasCustomRepresentation:useCustomRepresentation];
 }
 
 void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference& dataReference)
 {
-    [m_wkView _wk_didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:suggestedFilename dataReference:dataReference];
+    [m_wkView _didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:suggestedFilename dataReference:dataReference];
 }
 
 double PageClientImpl::customRepresentationZoomFactor()
 {
-    return [m_wkView _wk_customRepresentationZoomFactor];
+    return [m_wkView _customRepresentationZoomFactor];
 }
 
 void PageClientImpl::setCustomRepresentationZoomFactor(double zoomFactor)
 {
-    [m_wkView _wk_setCustomRepresentationZoomFactor:zoomFactor];
+    [m_wkView _setCustomRepresentationZoomFactor:zoomFactor];
 }
 
 void PageClientImpl::findStringInCustomRepresentation(const String& string, FindOptions options, unsigned maxMatchCount)
 {
-    [m_wkView _wk_findStringInCustomRepresentation:string withFindOptions:options maxMatchCount:maxMatchCount];
+    [m_wkView _findStringInCustomRepresentation:string withFindOptions:options maxMatchCount:maxMatchCount];
 }
 
 void PageClientImpl::countStringMatchesInCustomRepresentation(const String& string, FindOptions options, unsigned maxMatchCount)
 {
-    [m_wkView _wk_countStringMatchesInCustomRepresentation:string withFindOptions:options maxMatchCount:maxMatchCount];
+    [m_wkView _countStringMatchesInCustomRepresentation:string withFindOptions:options maxMatchCount:maxMatchCount];
 }
 
 void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
@@ -555,11 +555,10 @@ void PageClientImpl::recommendedScrollbarStyleDidChange(int32_t newStyle)
 
 bool PageClientImpl::executeSavedCommandBySelector(const String& selectorString)
 {
-    return [m_wkView _wk_executeSavedCommandBySelector:NSSelectorFromString(selectorString)];
+    return [m_wkView _executeSavedCommandBySelector:NSSelectorFromString(selectorString)];
 }
 
 #if USE(DICTATION_ALTERNATIVES)
-
 uint64_t PageClientImpl::addDictationAlternatives(const RetainPtr<NSTextAlternatives>& alternatives)
 {
     return m_alternativeTextUIController->addAlternatives(alternatives);
@@ -575,7 +574,7 @@ void PageClientImpl::showDictationAlternativeUI(const WebCore::FloatRect& boundi
     if (!isViewVisible() || !isViewInWindow())
         return;
     m_alternativeTextUIController->showAlternatives(m_wkView, boundingBoxOfDictatedText, dictationContext, ^(NSString* acceptedAlternative){
-        [m_wkView _wk_handleAcceptedAlternativeText:acceptedAlternative];
+        [m_wkView handleAcceptedAlternativeText:acceptedAlternative];
     });
 }
 
@@ -588,7 +587,6 @@ void PageClientImpl::dismissDictationAlternativeUI()
 {
     m_alternativeTextUIController->dismissAlternatives();
 }
-
 #endif
 
 } // namespace WebKit

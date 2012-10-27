@@ -42,7 +42,7 @@ void WebFullScreenManagerProxy::invalidate()
     if (!m_webView)
         return;
     
-    [m_webView _wk_closeFullScreenWindowController];
+    [m_webView closeFullScreenWindowController];
     m_webView = 0;
 }
 
@@ -50,43 +50,43 @@ void WebFullScreenManagerProxy::close()
 {
     if (!m_webView)
         return;
-    [[m_webView _wk_fullScreenWindowController] close];
+    [[m_webView fullScreenWindowController] close];
 }
 
 bool WebFullScreenManagerProxy::isFullScreen()
 {
     if (!m_webView)
         return false;
-    if (![m_webView _wk_hasFullScreenWindowController])
+    if (![m_webView hasFullScreenWindowController])
         return false;
 
-    return [[m_webView _wk_fullScreenWindowController] isFullScreen];
+    return [[m_webView fullScreenWindowController] isFullScreen];
 }
 
 void WebFullScreenManagerProxy::enterFullScreen()
 {
     if (!m_webView)
         return;
-    [[m_webView _wk_fullScreenWindowController] enterFullScreen:nil];
+    [[m_webView fullScreenWindowController] enterFullScreen:nil];
 }
 
 void WebFullScreenManagerProxy::exitFullScreen()
 {
     if (!m_webView)
         return;
-    [[m_webView _wk_fullScreenWindowController] exitFullScreen];
+    [[m_webView fullScreenWindowController] exitFullScreen];
 }
     
 void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
     if (m_webView)
-        [[m_webView _wk_fullScreenWindowController] beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+        [[m_webView fullScreenWindowController] beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
 }
 
 void WebFullScreenManagerProxy::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
     if (m_webView)
-        [[m_webView _wk_fullScreenWindowController] beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+        [[m_webView fullScreenWindowController] beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
 }
 
 } // namespace WebKit

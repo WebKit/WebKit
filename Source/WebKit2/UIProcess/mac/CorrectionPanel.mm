@@ -109,7 +109,7 @@ String CorrectionPanel::dismissInternal(ReasonForDismissingAlternativeText reaso
 
 void CorrectionPanel::recordAutocorrectionResponse(WKView* view, NSCorrectionResponse response, const String& replacedString, const String& replacementString)
 {
-    [[NSSpellChecker sharedSpellChecker] recordResponse:response toCorrection:replacementString forWord:replacedString language:nil inSpellDocumentWithTag:[view _wk_spellCheckerDocumentTag]];
+    [[NSSpellChecker sharedSpellChecker] recordResponse:response toCorrection:replacementString forWord:replacedString language:nil inSpellDocumentWithTag:[view spellCheckerDocumentTag]];
 }
 
 void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, NSString* replaced, NSString* proposedReplacement,  NSCorrectionIndicatorType correctionIndicatorType)
@@ -118,7 +118,7 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
         return;
 
     NSSpellChecker* spellChecker = [NSSpellChecker sharedSpellChecker];
-    NSInteger documentTag = [m_view.get() _wk_spellCheckerDocumentTag];
+    NSInteger documentTag = [m_view.get() spellCheckerDocumentTag];
     
     switch (correctionIndicatorType) {
     case NSCorrectionIndicatorTypeDefault:
@@ -141,7 +141,7 @@ void CorrectionPanel::handleAcceptedReplacement(NSString* acceptedReplacement, N
         break;
     }
 
-    [m_view.get() _wk_handleAcceptedAlternativeText:acceptedReplacement];
+    [m_view.get() handleAcceptedAlternativeText:acceptedReplacement];
     m_view.clear();
     if (acceptedReplacement)
         m_resultForDismissal.adoptNS([acceptedReplacement copy]);

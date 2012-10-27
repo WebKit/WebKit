@@ -242,7 +242,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     // unnecessary in the full-screen animation case, and can cause bugs; see
     // https://bugs.webkit.org/show_bug.cgi?id=88940 and https://bugs.webkit.org/show_bug.cgi?id=88374
     // We will resume the normal behavior in _startEnterFullScreenAnimationWithDuration:
-    [_webView _wk_setSuppressVisibilityUpdates:YES];
+    [_webView _setSuppressVisibilityUpdates:YES];
 
     // Swap the webView placeholder into place.
     if (!_webViewPlaceholder) {
@@ -334,7 +334,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
     // See the related comment in enterFullScreen:
     // We will resume the normal behavior in _startExitFullScreenAnimationWithDuration:
-    [_webView _wk_setSuppressVisibilityUpdates:YES];
+    [_webView _setSuppressVisibilityUpdates:YES];
 
     [self _manager]->setAnimatingFullScreen(true);
     [self _manager]->willExitFullScreen();
@@ -581,7 +581,7 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
 
     [_backgroundWindow.get() orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
 
-    [_webView _wk_setSuppressVisibilityUpdates:NO];
+    [_webView _setSuppressVisibilityUpdates:NO];
     [[self window] setAutodisplay:YES];
     [[self window] displayIfNeeded];
     NSEnableScreenUpdates();
@@ -626,7 +626,7 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     finalBounds.origin = [[self window] convertScreenToBase:finalBounds.origin];
     WKWindowSetClipRect([self window], finalBounds);
 
-    [_webView _wk_setSuppressVisibilityUpdates:NO];
+    [_webView _setSuppressVisibilityUpdates:NO];
     [[self window] setAutodisplay:YES];
     [[self window] displayIfNeeded];
     NSEnableScreenUpdates();

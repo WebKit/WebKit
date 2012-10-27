@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,59 +50,58 @@ namespace WebKit {
 @class WKFullScreenWindowController;
 
 @interface WKView (Internal)
+- (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
+- (BOOL)_isFocused;
+- (void)_processDidCrash;
+- (void)_pageClosed;
+- (void)_didRelaunchProcess;
+- (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip;
+- (void)_setCursor:(NSCursor *)cursor;
+- (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
+- (BOOL)_interpretKeyEvent:(NSEvent *)theEvent savingCommandsTo:(Vector<WebCore::KeypressCommand>&)commands;
+- (void)_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled;
+- (bool)_executeSavedCommandBySelector:(SEL)selector;
+- (NSRect)_convertToDeviceSpace:(NSRect)rect;
+- (NSRect)_convertToUserSpace:(NSRect)rect;
+- (void)_setFindIndicator:(PassRefPtr<WebKit::FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate;
 
-- (PassOwnPtr<WebKit::DrawingAreaProxy>)_wk_createDrawingAreaProxy;
-- (BOOL)_wk_isFocused;
-- (void)_wk_processDidCrash;
-- (void)_wk_pageClosed;
-- (void)_wk_didRelaunchProcess;
-- (void)_wk_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip;
-- (void)_wk_setCursor:(NSCursor *)cursor;
-- (void)_wk_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
-- (BOOL)_wk_interpretKeyEvent:(NSEvent *)theEvent savingCommandsTo:(Vector<WebCore::KeypressCommand>&)commands;
-- (void)_wk_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled;
-- (bool)_wk_executeSavedCommandBySelector:(SEL)selector;
-- (NSRect)_wk_convertToDeviceSpace:(NSRect)rect;
-- (NSRect)_wk_convertToUserSpace:(NSRect)rect;
-- (void)_wk_setFindIndicator:(PassRefPtr<WebKit::FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate;
+- (void)_enterAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext;
+- (void)_exitAcceleratedCompositingMode;
+- (void)_updateAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext;
 
-- (void)_wk_enterAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext;
-- (void)_wk_exitAcceleratedCompositingMode;
-- (void)_wk_updateAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext;
+- (void)_setAccessibilityWebProcessToken:(NSData *)data;
 
-- (void)_wk_setAccessibilityWebProcessToken:(NSData *)data;
+- (void)_pluginFocusOrWindowFocusChanged:(BOOL)pluginHasFocusAndWindowHasFocus pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier;
+- (void)_setPluginComplexTextInputState:(WebKit::PluginComplexTextInputState)pluginComplexTextInputState pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier;
 
-- (void)_wk_pluginFocusOrWindowFocusChanged:(BOOL)pluginHasFocusAndWindowHasFocus pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier;
-- (void)_wk_setPluginComplexTextInputState:(WebKit::PluginComplexTextInputState)pluginComplexTextInputState pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier;
+- (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation;
+- (void)_didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:(const String&)suggestedFilename dataReference:(const CoreIPC::DataReference&)dataReference;
+- (double)_customRepresentationZoomFactor;
+- (void)_setCustomRepresentationZoomFactor:(double)zoomFactor;
+- (void)_findStringInCustomRepresentation:(NSString *)string withFindOptions:(WebKit::FindOptions)options maxMatchCount:(NSUInteger)count;
+- (void)_countStringMatchesInCustomRepresentation:(NSString *)string withFindOptions:(WebKit::FindOptions)options maxMatchCount:(NSUInteger)count;
+- (void)_setDragImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag;
+- (void)_setPromisedData:(WebCore::Image *)image withFileName:(NSString *)filename withExtension:(NSString *)extension withTitle:(NSString *)title withURL:(NSString *)url withVisibleURL:(NSString *)visibleUrl withArchive:(WebCore::SharedBuffer*) archiveBuffer forPasteboard:(NSString *)pasteboardName;
+- (void)_updateSecureInputState;
+- (void)_updateTextInputStateIncludingSecureInputState:(BOOL)updateSecureInputState;
+- (void)_resetTextInputState;
 
-- (void)_wk_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation;
-- (void)_wk_didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:(const String&)suggestedFilename dataReference:(const CoreIPC::DataReference&)dataReference;
-- (double)_wk_customRepresentationZoomFactor;
-- (void)_wk_setCustomRepresentationZoomFactor:(double)zoomFactor;
-- (void)_wk_findStringInCustomRepresentation:(NSString *)string withFindOptions:(WebKit::FindOptions)options maxMatchCount:(NSUInteger)count;
-- (void)_wk_countStringMatchesInCustomRepresentation:(NSString *)string withFindOptions:(WebKit::FindOptions)options maxMatchCount:(NSUInteger)count;
-- (void)_wk_setDragImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag;
-- (void)_wk_setPromisedData:(WebCore::Image *)image withFileName:(NSString *)filename withExtension:(NSString *)extension withTitle:(NSString *)title withURL:(NSString *)url withVisibleURL:(NSString *)visibleUrl withArchive:(WebCore::SharedBuffer*) archiveBuffer forPasteboard:(NSString *)pasteboardName;
-- (void)_wk_updateSecureInputState;
-- (void)_wk_updateTextInputStateIncludingSecureInputState:(BOOL)updateSecureInputState;
-- (void)_wk_resetTextInputState;
+- (void)_didChangeScrollbarsForMainFrame;
 
-- (void)_wk_didChangeScrollbarsForMainFrame;
-
-- (WebKit::ColorSpaceData)_wk_colorSpace;
+- (WebKit::ColorSpaceData)_colorSpace;
 
 #if ENABLE(FULLSCREEN_API)
-- (BOOL)_wk_hasFullScreenWindowController;
-- (WKFullScreenWindowController*)_wk_fullScreenWindowController;
-- (void)_wk_closeFullScreenWindowController;
+- (BOOL)hasFullScreenWindowController;
+- (WKFullScreenWindowController*)fullScreenWindowController;
+- (void)closeFullScreenWindowController;
 #endif
 
-- (void)_wk_cacheWindowBottomCornerRect;
+- (void)_cacheWindowBottomCornerRect;
 
-- (NSInteger)_wk_spellCheckerDocumentTag;
-- (void)_wk_handleAcceptedAlternativeText:(NSString*)text;
+- (NSInteger)spellCheckerDocumentTag;
+- (void)handleAcceptedAlternativeText:(NSString*)text;
 
-- (void)_wk_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates;
-- (BOOL)_wk_suppressVisibilityUpdates;
+- (void)_setSuppressVisibilityUpdates:(BOOL)suppressVisibilityUpdates;
+- (BOOL)_suppressVisibilityUpdates;
 
 @end
