@@ -1,3 +1,32 @@
+2012-10-26  Philip Rogers  <pdr@google.com>
+
+        Prevent NaN offset values in ElementTimeControl.
+        https://bugs.webkit.org/show_bug.cgi?id=100322
+
+        Reviewed by Abhishek Arya.
+
+        NaN values can cause ElementTimeControl to go back in time!
+        If a value of NaN is passed to ElementTimeControl::beginElementAt(offset),
+        subsequent sorting will cause an assert in SVGSMILElement::findInstanceTime
+        because NaN values are not properly sorted. NaN SMILTime values
+        should not be allowed at all, so this patch adds a check for them in
+        ElementTimeControl's setters.
+ 
+        This patch also adds preventative asserts to catch if SMILTime is ever
+        initialized with NaN, or if addEndTime/addBeginTime are ever called
+        with NaN values.
+
+        Test: svg/custom/elementTimeControl-nan-crash.html
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::beginElementAt):
+        (WebCore::SVGAnimationElement::endElementAt):
+        * svg/animation/SMILTime.h:
+        (WebCore::SMILTime::SMILTime):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::addBeginTime):
+        (WebCore::SVGSMILElement::addEndTime):
+
 2012-10-26  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Browser prematurely sends wrong credentials
