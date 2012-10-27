@@ -68,8 +68,6 @@ namespace WebCore {
         // drag logic is in WebCore.
         void setDidInitiateDrag(bool initiated) { m_didInitiateDrag = initiated; } 
         bool didInitiateDrag() const { return m_didInitiateDrag; }
-        void setIsHandlingDrag(bool handling) { m_isHandlingDrag = handling; }
-        bool isHandlingDrag() const { return m_isHandlingDrag; }
         DragOperation sourceDragOperation() const { return m_sourceDragOperation; }
         const KURL& draggingImageURL() const { return m_draggingImageURL; }
         void setDragOffset(const IntPoint& offset) { m_dragOffset = offset; }
@@ -119,15 +117,15 @@ namespace WebCore {
 
         Page* m_page;
         DragClient* m_client;
-        
+
         RefPtr<Document> m_documentUnderMouse; // The document the mouse was last dragged over.
         RefPtr<Document> m_dragInitiator; // The Document (if any) that initiated the drag.
         RefPtr<HTMLInputElement> m_fileInputElementUnderMouse;
-        
+        bool m_documentIsHandlingDrag;
+
         DragDestinationAction m_dragDestinationAction;
         DragSourceAction m_dragSourceAction;
         bool m_didInitiateDrag;
-        bool m_isHandlingDrag;
         DragOperation m_sourceDragOperation; // Set in startDrag when a drag starts from a mouse down within WebKit
         IntPoint m_dragOffset;
         KURL m_draggingImageURL;

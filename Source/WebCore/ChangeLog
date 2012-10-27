@@ -1,3 +1,26 @@
+2012-10-26  Daniel Cheng  <dcheng@chromium.org>
+
+        dragover's default action should prevent drop for file drags
+        https://bugs.webkit.org/show_bug.cgi?id=79173
+
+        Reviewed by Tony Chang.
+
+        During a file drag, we need to keep track of whether or not the document has cancelled the
+        dragover action. We should only send a drop event if the dragover event was cancelled; this
+        matches the behavior of the spec, as well as IE, Gecko, and Opera. The relevant sections
+        from the spec are the sections pertaining to dragover and drop events at:
+        http://www.whatwg.org/specs/web-apps/current-work/#drag-and-drop-processing-model
+
+        Test: fast/events/only-valid-drop-targets-receive-file-drop.html
+
+        * page/DragController.cpp:
+        (WebCore::DragController::performDrag):
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::tryDocumentDrag):
+        * page/DragController.h:
+        (DragController): Cleanup to repurpose a variable that doesn't need to be a member anymore
+                          and remove the corresponding getter/setter.
+
 2012-10-26  Nico Weber  <thakis@chromium.org>
 
         Fix a operator ordering bug in SVGSMILElement::calculateAnimationPercentAndRepeat

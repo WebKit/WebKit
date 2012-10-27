@@ -10,6 +10,9 @@ function createBox(name) {
     div.style.width = '100px';
     div.style.height = '100px';
 
+    div.addEventListener('dragover', function(e) {
+        e.preventDefault();
+    });
     div.addEventListener('drop', function(e) {
         debug('PASS: drop event is fired.');
     });

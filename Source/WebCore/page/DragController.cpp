@@ -96,10 +96,10 @@ DragController::DragController(Page* page, DragClient* client)
     , m_documentUnderMouse(0)
     , m_dragInitiator(0)
     , m_fileInputElementUnderMouse(0)
+    , m_documentIsHandlingDrag(false)
     , m_dragDestinationAction(DragDestinationActionNone)
     , m_dragSourceAction(DragSourceActionNone)
     , m_didInitiateDrag(false)
-    , m_isHandlingDrag(false)
     , m_sourceDragOperation(DragOperationNone)
 {
     ASSERT(m_client);
@@ -209,7 +209,7 @@ bool DragController::performDrag(DragData* dragData)
 {
     ASSERT(dragData);
     m_documentUnderMouse = m_page->mainFrame()->documentAtPoint(dragData->clientPosition());
-    if (m_dragDestinationAction & DragDestinationActionDHTML) {
+    if ((m_dragDestinationAction & DragDestinationActionDHTML) && m_documentIsHandlingDrag) {
         m_client->willPerformDragDestinationAction(DragDestinationActionDHTML, dragData);
         RefPtr<Frame> mainFrame = m_page->mainFrame();
         bool preventedDefault = false;
@@ -265,8 +265,8 @@ DragSession DragController::dragEnteredOrUpdated(DragData* dragData)
     }
 
     DragSession dragSession;
-    bool handledByDocument = tryDocumentDrag(dragData, m_dragDestinationAction, dragSession);
-    if (!handledByDocument && (m_dragDestinationAction & DragDestinationActionLoad))
+    m_documentIsHandlingDrag = tryDocumentDrag(dragData, m_dragDestinationAction, dragSession);
+    if (!m_documentIsHandlingDrag && (m_dragDestinationAction & DragDestinationActionLoad))
         dragSession.operation = operationForLoad(dragData);
     return dragSession;
 }
@@ -314,9 +314,9 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
     if (m_dragInitiator && !m_documentUnderMouse->securityOrigin()->canReceiveDragData(m_dragInitiator->securityOrigin()))
         return false;
 
-    m_isHandlingDrag = false;
+    bool isHandlingDrag = false;
     if (actionMask & DragDestinationActionDHTML) {
-        m_isHandlingDrag = tryDHTMLDrag(dragData, dragSession.operation);
+        isHandlingDrag = tryDHTMLDrag(dragData, dragSession.operation);
         // Do not continue if m_documentUnderMouse has been reset by tryDHTMLDrag.
         // tryDHTMLDrag fires dragenter event. The event listener that listens
         // to this event may create a nested message loop (open a modal dialog),
@@ -332,10 +332,12 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
     if (!frameView)
         return false;
 
-    if (m_isHandlingDrag) {
+    if (isHandlingDrag) {
         m_page->dragCaretController()->clear();
         return true;
-    } else if ((actionMask & DragDestinationActionEdit) && canProcessDrag(dragData)) {
+    }
+
+    if ((actionMask & DragDestinationActionEdit) && canProcessDrag(dragData)) {
         if (dragData->containsColor()) {
             dragSession.operation = DragOperationGeneric;
             return true;

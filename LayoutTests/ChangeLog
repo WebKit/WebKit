@@ -1,3 +1,19 @@
+2012-10-26  Daniel Cheng  <dcheng@chromium.org>
+
+        dragover's default action should prevent drop for file drags
+        https://bugs.webkit.org/show_bug.cgi?id=79173
+
+        Reviewed by Tony Chang.
+
+        * fast/dom/shadow/drop-event-in-shadow.html:
+            Added dragover handler as required by the HTML specification.
+        * fast/events/input-element-display-none-in-dragleave-crash.html:
+            Added dragover handler as required by the HTML specification.
+        * fast/events/only-valid-drop-targets-receive-file-drop-expected.txt: Added.
+        * fast/events/only-valid-drop-targets-receive-file-drop.html: Added.
+        * http/tests/security/clipboard/clipboard-file-access.html:
+            Added dragover handler as required by the HTML specification.
+
 2012-10-26  Anders Carlsson  <andersca@apple.com>
 
         Crash when making NPRuntime calls with a null NPP pointer

@@ -55,6 +55,9 @@ dragTarget.addEventListener("drop", function() {
 // Some tests don't end up dropping the draggee over the drag target. Catch any
 // leftover drop events bubbling up through the tree so they don't cause page
 // navigation.
+document.body.addEventListener("dragover", function() {
+    event.preventDefault();
+});
 document.body.addEventListener("drop", function() {
     event.preventDefault();
 });
