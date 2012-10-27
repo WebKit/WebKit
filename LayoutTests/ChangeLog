@@ -1,3 +1,17 @@
+2012-10-26  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update.
+
+        Rebaseline for recent forms changes.
+
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-26  Daniel Cheng  <dcheng@chromium.org>
 
         dragover's default action should prevent drop for file drags
