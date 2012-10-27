@@ -31,6 +31,7 @@
 #include "config.h"
 #include "LocalizedStrings.h"
 
+#include "DateTimeFormat.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
 
@@ -270,7 +271,23 @@ String placeholderForYearField()
 
 String weekFormatInLDML()
 {
-    return query(WebLocalizedString::WeekFormatTemplate);
+    String templ = query(WebLocalizedString::WeekFormatTemplate);
+    // Converts a string like "Week $2, $1" to an LDML date format pattern like
+    // "'Week 'ww', 'yyyy".
+    StringBuilder builder;
+    unsigned literalStart = 0;
+    unsigned length = templ.length();
+    for (unsigned i = 0; i + 1 < length; ++i) {
+        if (templ[i] == '$' && (templ[i + 1] == '1' || templ[i + 1] == '2')) {
+            if (literalStart < i)
+                DateTimeFormat::quoteAndAppendLiteral(templ.substring(literalStart, i - literalStart), builder);
+            builder.append(templ[++i] == '1' ? "yyyy" : "ww");
+            literalStart = i + 1;
+        }
+    }
+    if (literalStart < length)
+        DateTimeFormat::quoteAndAppendLiteral(templ.substring(literalStart, length - literalStart), builder);
+    return builder.toString();
 }
 
 #endif
