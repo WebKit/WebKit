@@ -111,7 +111,7 @@ bool MemoryUsageSupport::processMemorySizesInBytes(size_t*, size_t*)
     return false;
 }
 
-void MemoryUsageSupport::reportMemoryUsage(MemoryInstrumentation* memoryInstrumentation)
+void MemoryUsageSupport::memoryUsageByComponents(Vector<ComponentInfo>&)
 {
 }
 

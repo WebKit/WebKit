@@ -1,3 +1,31 @@
+2012-10-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132725.
+        http://trac.webkit.org/changeset/132725
+        https://bugs.webkit.org/show_bug.cgi?id=100596
+
+        it broke linking on chromium debug bots (Requested by loislo
+        on #webkit).
+
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::addPlatformComponentsInfo):
+        (WebCore):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * platform/MemoryUsageSupport.cpp:
+        (WebCore::MemoryUsageSupport::memoryUsageByComponents):
+        * platform/MemoryUsageSupport.h:
+        (ComponentInfo):
+        (WebCore::MemoryUsageSupport::ComponentInfo::ComponentInfo):
+        (MemoryUsageSupport):
+        * platform/PlatformMemoryInstrumentation.cpp:
+        (WebCore):
+        * platform/PlatformMemoryInstrumentation.h:
+        (PlatformMemoryTypes):
+        * platform/chromium/MemoryUsageSupportChromium.cpp:
+        (WebCore::MemoryUsageSupport::memoryUsageByComponents):
+        * platform/qt/MemoryUsageSupportQt.cpp:
+        (WebCore::MemoryUsageSupport::memoryUsageByComponents):
+
 2012-10-27  Dan Bernstein  <mitz@apple.com>
 
         REAL_PLATFORM_NAME build setting is no longer needed
