@@ -189,6 +189,7 @@ compositing/visible-rect [ Skip ]
 editing/shadow
 fast/dom/shadow/access-key.html
 fast/dom/shadow/adopt-node-with-shadow-root.html
+fast/dom/shadow/athost-atrules.html
 fast/dom/shadow/composed-shadow-tree-walker.html
 fast/dom/shadow/content-after-style.html
 fast/dom/shadow/content-element-api.html
@@ -228,6 +229,7 @@ fast/dom/shadow/multiple-shadowroot-adopt.html
 fast/dom/shadow/multiple-shadowroot.html
 fast/dom/shadow/multiple-shadowroot-rendering.html
 fast/dom/shadow/parent-tree-scope-in-shadow.html
+fast/dom/shadow/remove-styles-in-shadow-crash.html
 fast/dom/shadow/select-image-with-shadow.html
 fast/dom/shadow/selection-shouldnt-expose-shadow-dom.html
 fast/dom/shadow/selections-in-shadow.html
@@ -702,6 +704,8 @@ fast/events/dropzone-005.html
 fast/events/drop-with-file-paths.html
 fast/events/moving-text-should-fire-drop-and-dragend-events.html
 fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
+fast/events/input-element-display-none-in-dragleave-crash.html
+fast/events/only-valid-drop-targets-receive-file-drop.html
 
 # =========================================================================== #
 #       Failing HTTP tests.                                                   #
@@ -1420,6 +1424,10 @@ svg/css/stars-with-shadow.html
 svg/custom/use-on-symbol-inside-pattern.svg
 svg/batik/text/longTextOnPath.svg
 svg/carto.net/tabgroup.svg
+
+# Fail on 32 bit with minor pixel differences (tests introduced in r132602)
+fast/regions/autoheight-middleregion.html
+fast/regions/autoheight-singleregion-breakbeforealways-minheight.html
 
 # [Qt] svg/css/text-gradient-shadow.svg fails
 # https://bugs.webkit.org/show_bug.cgi?id=92734

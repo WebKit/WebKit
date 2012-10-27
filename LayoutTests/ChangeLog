@@ -1,3 +1,9 @@
+2012-10-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed weekend gardening, skip new failing tests.
+
+        * platform/qt/TestExpectations:
+
 2012-10-26  Chris Rogers  <crogers@google.com>
 
         Implement AudioBufferSourceNode .loopStart and .loopEnd attributes
