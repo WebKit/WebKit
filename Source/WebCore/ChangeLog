@@ -1,3 +1,22 @@
+2012-10-26  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Browser prematurely sends wrong credentials
+        https://bugs.webkit.org/show_bug.cgi?id=100585
+
+        Reviewed by Yong Li.
+
+        Manually revert the patch for bug 96362, which causes regressions and the right patch has been
+        submitted with patch for bug 100448. Since the auto-revert fails, we use this patch to manually
+        revert.
+
+        No new tests. The test is coverted by patch for 100448.
+
+        * platform/network/blackberry/CredentialBackingStore.cpp:
+        * platform/network/blackberry/CredentialBackingStore.h:
+        (CredentialBackingStore):
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::startJob):
+
 2012-10-26  Brady Eidson  <beidson@apple.com>
 
         Have NetworkProcess manage resource load scheduling.

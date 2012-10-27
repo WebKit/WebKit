@@ -253,32 +253,6 @@ bool CredentialBackingStore::hasLogin(const KURL& url, const ProtectionSpace& pr
     return false;
 }
 
-ProtectionSpace CredentialBackingStore::getProtectionSpace(const KURL& url)
-{
-    ASSERT(m_database.isOpen());
-    ASSERT(m_database.tableExists("logins"));
-
-    if (!m_getLoginByURLStatement)
-        return ProtectionSpace();
-
-    m_getLoginByURLStatement->bindText(1, url.string());
-
-    int result = m_getLoginByURLStatement->step();
-    String username = m_getLoginByURLStatement->getColumnText(0);
-    String password = certMgrWrapper()->isReady() ? "" : m_getLoginByURLStatement->getColumnBlobAsString(1);
-    String host = m_getLoginByURLStatement->getColumnText(2);
-    int port = m_getLoginByURLStatement->getColumnInt(3);
-    int serviceType = m_getLoginByURLStatement->getColumnInt(4);
-    String realm = m_getLoginByURLStatement->getColumnText(5);
-    int authenticationScheme = m_getLoginByURLStatement->getColumnInt(6);
-    m_getLoginByURLStatement->reset();
-    HANDLE_SQL_EXEC_FAILURE(result != SQLResultRow, ProtectionSpace(),
-        "Failed to execute select login info from table logins in getLoginByURL - %i", result);
-
-    return ProtectionSpace (host, port, static_cast<ProtectionSpaceServerType>(serviceType),
-                            realm, static_cast<ProtectionSpaceAuthenticationScheme>(authenticationScheme));
-}
-
 Credential CredentialBackingStore::getLogin(const ProtectionSpace& protectionSpace)
 {
     ASSERT(m_database.isOpen());
