@@ -862,8 +862,12 @@ String String::fromUTF8(const LChar* stringStart, size_t length)
 
     // Try converting into the buffer.
     const char* stringCurrent = reinterpret_cast<const char*>(stringStart);
-    if (convertUTF8ToUTF16(&stringCurrent, reinterpret_cast<const char *>(stringStart + length), &buffer, bufferEnd) != conversionOK)
+    bool isAllASCII;
+    if (convertUTF8ToUTF16(&stringCurrent, reinterpret_cast<const char *>(stringStart + length), &buffer, bufferEnd, &isAllASCII) != conversionOK)
         return String();
+
+    if (isAllASCII)
+        return String(stringStart, length);
 
     // stringBuffer is full (the input must have been all ascii) so just return it!
     if (buffer == bufferEnd)

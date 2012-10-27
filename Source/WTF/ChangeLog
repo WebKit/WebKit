@@ -1,3 +1,15 @@
+2012-10-27  Michael Saboff  <msaboff@apple.com>
+
+        String::fromUTF8() should take advantage of the ASCII check in convertUTF8ToUTF16()
+        https://bugs.webkit.org/show_bug.cgi?id=100577
+
+        Reviewed by Oliver Hunt.
+
+        Passed is ASCII flag to convertUTF8ToUTF16() and if try, create an 8 bit string from the original arguments.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::fromUTF8):
+
 2012-10-27  Dan Bernstein  <mitz@apple.com>
 
         REAL_PLATFORM_NAME build setting is no longer needed
