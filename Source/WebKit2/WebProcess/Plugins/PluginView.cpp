@@ -61,6 +61,7 @@
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace JSC;
 using namespace WebCore;
@@ -162,23 +163,23 @@ static String buildHTTPHeaders(const ResourceResponse& response, long long& expe
     if (!response.isHTTP())
         return String();
 
-    Vector<UChar> stringBuilder;
+    StringBuilder stringBuilder;
     String separator(": ");
     
     String statusLine = String::format("HTTP %d ", response.httpStatusCode());
-    stringBuilder.append(statusLine.characters(), statusLine.length());
-    stringBuilder.append(response.httpStatusText().characters(), response.httpStatusText().length());
+    stringBuilder.append(statusLine);
+    stringBuilder.append(response.httpStatusText());
     stringBuilder.append('\n');
     
     HTTPHeaderMap::const_iterator end = response.httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = response.httpHeaderFields().begin(); it != end; ++it) {
-        stringBuilder.append(it->key.characters(), it->key.length());
-        stringBuilder.append(separator.characters(), separator.length());
-        stringBuilder.append(it->value.characters(), it->value.length());
+        stringBuilder.append(it->key);
+        stringBuilder.append(separator);
+        stringBuilder.append(it->value);
         stringBuilder.append('\n');
     }
     
-    String headers = String::adopt(stringBuilder);
+    String headers = stringBuilder.toString();
     
     // If the content is encoded (most likely compressed), then don't send its length to the plugin,
     // which is only interested in the decoded length, not yet known at the moment.
