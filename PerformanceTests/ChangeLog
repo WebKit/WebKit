@@ -1,3 +1,16 @@
+2012-10-26  Eric Seidel  <eric@webkit.org>
+
+        Add a microbenchmark for Hindi (complex-text) line-layout
+        https://bugs.webkit.org/show_bug.cgi?id=100024
+
+        Reviewed by Ryosuke Niwa.
+
+        I wrote this to make sure that we don't regress line-breaking performance
+        for the complex-text codepath. This test has shown me that TOT is
+        already 5% slower than Safari 6.0.1 here. :(
+
+        * Layout/hindi-line-layout.html: Added.
+
 2012-10-26  Zoltan Horvath  <zoltan@webkit.org>
 
         Turn PageLoad tests into simple performancetests, commit #6 
