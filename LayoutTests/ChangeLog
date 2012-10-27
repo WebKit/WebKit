@@ -1,3 +1,12 @@
+2012-10-27  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed gardening.
+
+        Added one more png to a wrong path in my previous commit, removing it and hoping that
+        the directory will not stay in svn.
+
+        * platform/qt-5.0-wk2/fast/images/png-suite/test-expected.png/test-expected.png: Removed.
+
 2012-10-27  Levi Weintraub  <leviw@chromium.org>
 
         Background images can incorrectly repeat with sub-pixel layout
