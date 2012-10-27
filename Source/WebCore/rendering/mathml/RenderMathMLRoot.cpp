@@ -82,7 +82,7 @@ void RenderMathMLRoot::addChild(RenderObject* newChild, RenderObject* beforeChil
     if (newChild->style()->position() == AbsolutePosition)
         RenderMathMLBlock::addChild(newChild);
     else
-        firstChild()->addChild(newChild, beforeChild && beforeChild->style()->position() != AbsolutePosition ? beforeChild : 0);
+        firstChild()->addChild(newChild, beforeChild && beforeChild->parent() == firstChild() ? beforeChild : 0);
 }
 
 RenderBoxModelObject* RenderMathMLRoot::index() const

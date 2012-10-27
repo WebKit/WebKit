@@ -86,14 +86,23 @@ void RenderMathMLFraction::updateFromElement()
     lastChild()->style()->setPaddingTop(Length(static_cast<int>(m_lineThickness), Fixed));
 }
 
-void RenderMathMLFraction::addChild(RenderObject* child, RenderObject* beforeChild)
+void RenderMathMLFraction::addChild(RenderObject* child, RenderObject* /* beforeChild */)
 {
-    RenderMathMLBlock* row = createAnonymousMathMLBlock();
+    if (isEmpty()) {
+        RenderMathMLBlock* numeratorWrapper = createAnonymousMathMLBlock();
+        RenderMathMLBlock::addChild(numeratorWrapper);
+        fixChildStyle(numeratorWrapper);
+        
+        RenderMathMLBlock* denominatorWrapper = createAnonymousMathMLBlock();
+        RenderMathMLBlock::addChild(denominatorWrapper);
+        fixChildStyle(denominatorWrapper);
+    }
     
-    RenderMathMLBlock::addChild(row, beforeChild);
-    row->addChild(child);
+    if (firstChild()->isEmpty())
+        firstChild()->addChild(child);
+    else
+        lastChild()->addChild(child);
     
-    fixChildStyle(row);
     updateFromElement();
 }
 

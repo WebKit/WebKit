@@ -1,3 +1,35 @@
+2012-10-27  David Barton  <dbarton@mathscribe.com>
+
+        [MathML] Improve some addChild methods
+        https://bugs.webkit.org/show_bug.cgi?id=98791
+
+        Reviewed by Eric Seidel.
+
+        MathML addChild methods need to handle any anonymous renderers correctly. Actually, most MathML elements have a fixed
+        number of children, so conformant javascript won't be doing arbitrary addChild and removeChild calls. However, we don't
+        want any assertions to fail, and we do want addChild to work correctly when beforeChild == 0, to build up the original
+        renderer, and then replaceChild at least should work correctly after that. We therefore clean up these routines before
+        giving them to the chromium fuzzers.
+        
+        It's best to build the anonymous wrappers just once initially if possible, so empty wrappers aren't left in the render
+        tree after later removeChild calls.
+
+        Test: mathml/presentation/dynamic.html added for mfrac and msqrt. There are already tests for dynamically changing
+        msub/sup elements, in mathml/presentation/m*-changed.xhtml.
+
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::addChild):
+            - The two wrappers are built initially. Also, the old RenderMathMLBlock::addChild(row, beforeChild); doesn't really
+              work because beforeChild is buried inside a wrapper. This new routine allows the numerator and denominator to be
+              added initially, and then later replaced with replaceChild. It's not clear whether e.g. a plain removeChild of a
+              numerator should move the remaining child from the denominator to the numerator or not, so we ignore that for now.
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::addChild):
+            - A bit of bullet-proofing for the fuzzers.
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::addChild):
+            - Like RenderMathMLFraction::addChild, we create the wrappers once initially, and then fill them dynamically.
+
 2012-10-27  Levi Weintraub  <leviw@chromium.org>
 
         Background images can incorrectly repeat with sub-pixel layout

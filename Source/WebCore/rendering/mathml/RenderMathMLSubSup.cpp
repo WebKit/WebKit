@@ -71,26 +71,22 @@ void RenderMathMLSubSup::fixScriptsStyle()
     scriptsStyle->setFontSize(static_cast<int>(0.75 * style()->fontSize()));
 }
 
-// FIXME: Handle arbitrary addChild/removeChild correctly throughout MathML, e.g. add/remove/add a base child here.
+// FIXME: Handle arbitrary addChild/removeChild correctly throughout MathML.
 void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild)
 {
-    // Note: The RenderMathMLBlock only allows element children to be added.
-    Element* childElement = toElement(child->node());
-
-    if (childElement && !childElement->previousElementSibling()) {
-        // Position 1 is always the base of the msub/msup/msubsup.
+    if (isEmpty()) {
         RenderMathMLBlock* baseWrapper = createAnonymousMathMLBlock();
-        RenderMathMLBlock::addChild(baseWrapper, firstChild());
-        baseWrapper->addChild(child);
-            
-        // Make sure we have a script block for rendering.
-        if (!m_scripts) {
-            m_scripts = createAnonymousMathMLBlock();
-            fixScriptsStyle();
-            RenderMathMLBlock::addChild(m_scripts, beforeChild);
-        }
-    } else
-        m_scripts->addChild(child, beforeChild ? m_scripts->firstChild() : 0);
+        RenderMathMLBlock::addChild(baseWrapper);
+        
+        m_scripts = createAnonymousMathMLBlock();
+        RenderMathMLBlock::addChild(m_scripts);
+        fixScriptsStyle();
+    }
+    
+    if (firstChild()->isEmpty())
+        firstChild()->addChild(child);
+    else
+        m_scripts->addChild(child, beforeChild && beforeChild->parent() == m_scripts ? beforeChild : 0);
 }
 
 void RenderMathMLSubSup::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
