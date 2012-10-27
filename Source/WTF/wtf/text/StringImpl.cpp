@@ -261,6 +261,23 @@ PassRefPtr<StringImpl> StringImpl::create(const LChar* characters, unsigned leng
     return string.release();
 }
 
+PassRefPtr<StringImpl> StringImpl::create8BitIfPossible(const UChar* characters, unsigned length)
+{
+    if (!characters || !length)
+        return empty();
+
+    LChar* data;
+    RefPtr<StringImpl> string = createUninitialized(length, data);
+
+    for (size_t i = 0; i < length; ++i) {
+        if (characters[i] & 0xff00)
+            return create(characters, length);
+        data[i] = static_cast<LChar>(characters[i]);
+    }
+
+    return string.release();
+}
+
 PassRefPtr<StringImpl> StringImpl::create(const LChar* string)
 {
     if (!string)
