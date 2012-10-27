@@ -1,3 +1,25 @@
+2012-10-26  Anders Carlsson  <andersca@apple.com>
+
+        Crash when making NPRuntime calls with a null NPP pointer
+        https://bugs.webkit.org/show_bug.cgi?id=100569
+        <rdar://problem/11726426>
+        <rdar://problem/12352836>
+
+        Reviewed by Darin Adler.
+
+        Finally bite the bullet and remove the assertion from NetscapePlugin::fromNPP. The WebKit1 equivalent of this
+        function used to return the plug-in currently being initialized in NPP_New, but we've never done that in WebKit2
+        and it has never been necessary. The crashes fixed here are not from calls underneath NPP_New so fixing it wouldn't
+        do us any good anyway.
+        
+        Also, make the PluginDestructionProtector handle a null plug-in gracefully.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::PluginDestructionProtector::PluginDestructionProtector):
+        (PluginDestructionProtector):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::fromNPP):
+
 2012-10-26  Stephanie Lewis  <slewis@apple.com>
 
         Add pids to WebMemorySampleFiles.

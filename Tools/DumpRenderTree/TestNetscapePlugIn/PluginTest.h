@@ -90,6 +90,7 @@ public:
     NPObject* NPN_RetainObject(NPObject*);
     void NPN_ReleaseObject(NPObject*);
     bool NPN_RemoveProperty(NPObject*, NPIdentifier propertyName);
+    void NPN_ReleaseVariantValue(NPVariant*);
 
 #ifdef XP_MACOSX
     bool NPN_ConvertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace);
@@ -124,6 +125,8 @@ protected:
     NPP m_npp;
 
     const std::string& identifier() const { return m_identifier; }
+
+    static NPNetscapeFuncs* netscapeFuncs();
 
     void waitUntilDone();
     void notifyDone();

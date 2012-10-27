@@ -1,3 +1,15 @@
+2012-10-26  Anders Carlsson  <andersca@apple.com>
+
+        Crash when making NPRuntime calls with a null NPP pointer
+        https://bugs.webkit.org/show_bug.cgi?id=100569
+
+        Reviewed by Darin Adler.
+
+        Add new tests.
+
+        * plugins/npruntime/npruntime-calls-with-null-npp-expected.txt: Added.
+        * plugins/npruntime/npruntime-calls-with-null-npp.html: Added.
+
 2012-10-26  Vincent Scheib  <scheib@chromium.org>
 
         Unreviewed, rolling out r132702.

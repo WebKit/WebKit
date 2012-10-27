@@ -110,6 +110,7 @@
             'TestNetscapePlugIn/Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp',
             'TestNetscapePlugIn/Tests/GetUserAgentWithNullNPPFromNPPNew.cpp',
             'TestNetscapePlugIn/Tests/NPPNewFails.cpp',
+            'TestNetscapePlugIn/Tests/NPRuntimeCallsWithNullNPP.cpp',
             'TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp',
             'TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp',
             'TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp',

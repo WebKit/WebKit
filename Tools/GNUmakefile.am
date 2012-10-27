@@ -224,6 +224,7 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPDeallocateCalledBeforeNPShutdown.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPPNewFails.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPPSetWindowCalledDuringDestruction.cpp \
+    Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeCallsWithNullNPP.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp \

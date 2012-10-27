@@ -24,6 +24,7 @@ SOURCES += \
     Tests/NPDeallocateCalledBeforeNPShutdown.cpp \
     Tests/NPPNewFails.cpp \
     Tests/NPPSetWindowCalledDuringDestruction.cpp \
+    Tests/NPRuntimeCallsWithNullNPP.cpp \
     Tests/NPRuntimeObjectFromDestroyedPlugin.cpp \
     Tests/NPRuntimeRemoveProperty.cpp \
     Tests/NullNPPGetValuePointer.cpp \
