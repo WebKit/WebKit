@@ -661,7 +661,6 @@ void WebProcess::terminate()
 void WebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
     m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder);
-        return;
 }
 
 void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
@@ -704,18 +703,6 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
     if (messageID.is<CoreIPC::MessageClassWebResourceCacheManager>()) {
         WebResourceCacheManager::shared().didReceiveMessage(connection, messageID, decoder);
         return;
-    }
-    
-    if (messageID.is<CoreIPC::MessageClassWebPageGroupProxy>()) {
-        uint64_t pageGroupID = decoder.destinationID();
-        if (!pageGroupID)
-            return;
-        
-        WebPageGroupProxy* pageGroupProxy = webPageGroup(pageGroupID);
-        if (!pageGroupProxy)
-            return;
-        
-        pageGroupProxy->didReceiveMessage(connection, messageID, decoder);
     }
 }
 

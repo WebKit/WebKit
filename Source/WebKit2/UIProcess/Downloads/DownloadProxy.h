@@ -45,7 +45,7 @@ class WebContext;
 class WebData;
 class WebPageProxy;
 
-class DownloadProxy : public APIObject {
+class DownloadProxy : public APIObject, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeDownload;
 
@@ -61,9 +61,6 @@ public:
     void invalidate();
     void processDidClose();
 
-    void didReceiveDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    void didReceiveSyncDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
-
 #if PLATFORM(QT)
     void startTransfer(const String& filename);
 #endif
@@ -72,6 +69,14 @@ private:
     explicit DownloadProxy(WebContext*);
 
     virtual Type type() const { return APIType; }
+
+    // CoreIPC::MessageReceiver
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&) OVERRIDE;
+
+    // Implemented in generated DownloadProxyMessageReceiver.cpp
+    void didReceiveDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveSyncDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 
     // Message handlers.
     void didStart(const WebCore::ResourceRequest&);

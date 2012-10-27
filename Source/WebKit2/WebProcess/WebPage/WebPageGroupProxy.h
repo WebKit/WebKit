@@ -27,14 +27,9 @@
 #define WebPageGroupProxy_h
 
 #include "APIObject.h"
+#include "MessageReceiver.h"
 #include "WebPageGroupData.h"
 #include <wtf/PassRefPtr.h>
-
-namespace CoreIPC {
-class Connection;
-class MessageDecoder;
-class MessageID;
-}
 
 namespace WebCore {
 class PageGroup;
@@ -42,7 +37,7 @@ class PageGroup;
 
 namespace WebKit {
 
-class WebPageGroupProxy : public APIObject {
+class WebPageGroupProxy : public APIObject, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeBundlePageGroup;
 
@@ -53,14 +48,16 @@ public:
     uint64_t pageGroupID() const { return m_data.pageGroupID; }
     bool isVisibleToInjectedBundle() const { return m_data.visibleToInjectedBundle; }
     bool isVisibleToHistoryClient() const { return m_data.visibleToHistoryClient; }
-    
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
 private:
     WebPageGroupProxy(const WebPageGroupData&);
 
     virtual Type type() const { return APIType; }
     
+    // CoreIPC::MessageReceiver
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+
+    // Implemented in generated WebPageGroupProxyMessageReceiver.cpp
     void didReceiveWebPageGroupProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     
     void addUserStyleSheet(const WebCore::UserStyleSheet&);

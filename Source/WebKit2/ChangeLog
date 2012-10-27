@@ -1,5 +1,63 @@
 2012-10-27  Sam Weinig  <sam@webkit.org>
 
+        Yet more MessageReceivering
+        https://bugs.webkit.org/show_bug.cgi?id=100325
+
+        Reviewed by Anders Carlsson.
+
+        Make DownloadProxy, WebPageProxy, and WebPageGroupProxy MessageReceivers.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::DownloadProxy):
+        (WebKit::DownloadProxy::invalidate):
+        (WebKit::DownloadProxy::didReceiveMessage):
+        (WebKit::DownloadProxy::didReceiveSyncMessage):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (DownloadProxy):
+        Make a MessageReceiver.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::addMessageReceiver):
+        (WebKit::WebContext::removeMessageReceiver):
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * UIProcess/WebContext.h:
+        Add additional MessageReceiverMap forwards, and stop dealing with DownloadProxy explicitly.
+        
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::~WebPageProxy):
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        * UIProcess/WebPageProxy.h:
+        Make a MessageReceiver, but keep sub objects using didReceiveMessage for now (like WebPage).
+        
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addMessageReceiver):
+        (WebKit::WebProcessProxy::removeMessageReceiver):
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * UIProcess/WebProcessProxy.h:
+        Give WebProcessProxy a MessageReceiverMap and all the appropriate forwarding methods.
+        
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::WebPageGroupProxy):
+        (WebKit::WebPageGroupProxy::~WebPageGroupProxy):
+        (WebKit::WebPageGroupProxy::didReceiveMessage):
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        (WebKit::WebPageGroupProxy::isVisibleToHistoryClient):
+        (WebPageGroupProxy):
+        Make a MessageReceiver and register/unregister with the WebProcess.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveSyncMessage):
+        Remove extraneous return statement.
+        (WebKit::WebProcess::didReceiveMessage):
+        Stop handling WebPageGroupProxy special.
+
+2012-10-27  Sam Weinig  <sam@webkit.org>
+
         Completely roll out https://bugs.webkit.org/show_bug.cgi?id=99251 (r131686)
 
         It has caused too many crashes.

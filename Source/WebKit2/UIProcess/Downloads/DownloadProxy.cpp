@@ -28,6 +28,7 @@
 
 #include "AuthenticationChallengeProxy.h"
 #include "DataReference.h"
+#include "DownloadProxyMessages.h"
 #include "WebContext.h"
 #include "WebData.h"
 #include "WebProcessMessages.h"
@@ -53,6 +54,7 @@ DownloadProxy::DownloadProxy(WebContext* webContext)
     : m_webContext(webContext)
     , m_downloadID(generateDownloadID())
 {
+    m_webContext->addMessageReceiver(Messages::DownloadProxy::messageReceiverName(), m_downloadID, this);
 }
 
 DownloadProxy::~DownloadProxy()
@@ -72,6 +74,8 @@ void DownloadProxy::cancel()
 void DownloadProxy::invalidate()
 {
     ASSERT(m_webContext);
+
+    m_webContext->removeMessageReceiver(Messages::DownloadProxy::messageReceiverName(), m_downloadID);
     m_webContext = 0;
 }
 
@@ -199,6 +203,16 @@ void DownloadProxy::startTransfer(const String& filename)
     m_webContext->sendToAllProcesses(Messages::WebProcess::StartTransfer(m_downloadID, filename));
 }
 #endif
+
+void DownloadProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+{
+    didReceiveDownloadProxyMessage(connection, messageID, decoder);
+}
+
+void DownloadProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+{
+    didReceiveSyncDownloadProxyMessage(connection, messageID, decoder, replyEncoder);
+}
 
 } // namespace WebKit
 

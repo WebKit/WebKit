@@ -32,6 +32,7 @@
 #include "DataReference.h"
 #include "DownloadProxy.h"
 #include "DrawingAreaProxy.h"
+#include "DrawingAreaProxyMessages.h"
 #include "EventDispatcherMessages.h"
 #include "FindIndicator.h"
 #include "Logging.h"
@@ -69,6 +70,7 @@
 #include "WebPageGroup.h"
 #include "WebPageGroupData.h"
 #include "WebPageMessages.h"
+#include "WebPageProxyMessages.h"
 #include "WebPopupItem.h"
 #include "WebPopupMenuProxy.h"
 #include "WebPreferences.h"
@@ -87,6 +89,14 @@
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
+
+#if ENABLE(INSPECTOR)
+#include "WebInspectorProxyMessages.h"
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+#include "WebFullScreenManagerProxyMessages.h"
+#endif
 
 #if ENABLE(WEB_INTENTS)
 #include "IntentData.h"
@@ -244,6 +254,20 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
 
     WebContext::statistics().wkPageCount++;
 
+    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, this);
+
+    // FIXME: This should be done in the object constructors, and the objects themselves should be message receivers.
+    m_process->addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_pageID, this);
+#if USE(COORDINATED_GRAPHICS)
+    m_process->addMessageReceiver(Messages::LayerTreeCoordinatorProxy::messageReceiverName(), m_pageID, this);
+#endif
+#if ENABLE(INSPECTOR)
+    m_process->addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_pageID, this);
+#endif
+#if ENABLE(FULLSCREEN_API)
+    m_process->addMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_pageID, this);
+#endif
+
     m_pageGroup->addPage(this);
 }
 
@@ -258,6 +282,20 @@ WebPageProxy::~WebPageProxy()
         TextChecker::closeSpellDocumentWithTag(m_spellDocumentTag);
 
     m_pageGroup->removePage(this);
+
+    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
+
+    // FIXME: This should be done in the object destructors, and the objects themselves should be message receivers.
+    m_process->removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_pageID);
+#if USE(COORDINATED_GRAPHICS)
+    m_process->removeMessageReceiver(Messages::LayerTreeCoordinatorProxy::messageReceiverName(), m_pageID);
+#endif
+#if ENABLE(INSPECTOR)
+    m_process->removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_pageID);
+#endif
+#if ENABLE(FULLSCREEN_API)
+    m_process->removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_pageID);
+#endif
 
 #ifndef NDEBUG
     webPageProxyCounter.decrement();
@@ -1865,6 +1903,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
     }
 #endif
 
+    ASSERT(messageID.is<CoreIPC::MessageClassWebPageProxy>());
     didReceiveWebPageProxyMessage(connection, messageID, decoder);
 }
 
@@ -1886,6 +1925,7 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
 #endif
 
     // FIXME: Do something with reply.
+    ASSERT(messageID.is<CoreIPC::MessageClassWebPageProxy>());
     didReceiveSyncWebPageProxyMessage(connection, messageID, decoder, replyEncoder);
 }
 

@@ -26,8 +26,9 @@
 #include "config.h"
 #include "WebPageGroupProxy.h"
 
-#include "WebProcess.h"
 #include "InjectedBundle.h"
+#include "WebPageGroupProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/DOMWrapperWorld.h>
 #include <WebCore/PageGroup.h>
 
@@ -43,23 +44,26 @@ PassRefPtr<WebPageGroupProxy> WebPageGroupProxy::create(const WebPageGroupData& 
     return pageGroup.release();
 }
 
-WebPageGroupProxy::~WebPageGroupProxy()
-{
-}
-    
-void WebPageGroupProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
-{
-    didReceiveWebPageGroupProxyMessage(connection, messageID, decoder);
-}
-    
 WebPageGroupProxy::WebPageGroupProxy(const WebPageGroupData& data)
     : m_data(data)
     , m_pageGroup(WebCore::PageGroup::pageGroup(m_data.identifer))
 {
+    WebProcess::shared().addMessageReceiver(Messages::WebPageGroupProxy::messageReceiverName(), m_data.pageGroupID, this);
+
     for (size_t i = 0; i < data.userStyleSheets.size(); ++i)
         addUserStyleSheet(data.userStyleSheets[i]);
     for (size_t i = 0; i < data.userScripts.size(); ++i)
         addUserScript(data.userScripts[i]);
+}
+
+WebPageGroupProxy::~WebPageGroupProxy()
+{
+    WebProcess::shared().removeMessageReceiver(Messages::WebPageGroupProxy::messageReceiverName(), m_data.pageGroupID);
+}
+
+void WebPageGroupProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+{
+    didReceiveWebPageGroupProxyMessage(connection, messageID, decoder);
 }
 
 void WebPageGroupProxy::addUserStyleSheet(const WebCore::UserStyleSheet& userStyleSheet)
