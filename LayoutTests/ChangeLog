@@ -1,3 +1,13 @@
+2012-10-27  Levi Weintraub  <leviw@chromium.org>
+
+        Background images can incorrectly repeat with sub-pixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=94622
+
+        Reviewed by Emil A Eklund.
+
+        * fast/sub-pixel/scaled-background-image-expected.html: Added.
+        * fast/sub-pixel/scaled-background-image.html: Added.
+
 2012-10-26  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Pixel tests need rebaseline

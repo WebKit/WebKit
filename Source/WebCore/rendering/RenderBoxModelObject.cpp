@@ -1046,6 +1046,12 @@ IntSize RenderBoxModelObject::calculateImageIntrinsicDimensions(StyleImage* imag
     return positioningAreaSize;
 }
 
+static inline void applySubPixelHeuristicForTileSize(LayoutSize& tileSize, const IntSize& positioningAreaSize)
+{
+    tileSize.setWidth(positioningAreaSize.width() - tileSize.width() <= 1 ? tileSize.width().ceil() : tileSize.width().floor());
+    tileSize.setHeight(positioningAreaSize.height() - tileSize.height() <= 1 ? tileSize.height().ceil() : tileSize.height().floor());
+}
+
 IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, const IntSize& positioningAreaSize) const
 {
     StyleImage* image = fillLayer->image();
@@ -1056,37 +1062,38 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
     RenderView* renderView = view();
     switch (type) {
         case SizeLength: {
-            int w = positioningAreaSize.width();
-            int h = positioningAreaSize.height();
+            LayoutSize tileSize = positioningAreaSize;
 
             Length layerWidth = fillLayer->size().size.width();
             Length layerHeight = fillLayer->size().size.height();
 
             if (layerWidth.isFixed())
-                w = layerWidth.value();
+                tileSize.setWidth(layerWidth.value());
             else if (layerWidth.isPercent() || layerHeight.isViewportPercentage())
-                w = valueForLength(layerWidth, positioningAreaSize.width(), renderView);
+                tileSize.setWidth(valueForLength(layerWidth, positioningAreaSize.width(), renderView));
             
             if (layerHeight.isFixed())
-                h = layerHeight.value();
+                tileSize.setHeight(layerHeight.value());
             else if (layerHeight.isPercent() || layerHeight.isViewportPercentage())
-                h = valueForLength(layerHeight, positioningAreaSize.height(), renderView);
-            
+                tileSize.setHeight(valueForLength(layerHeight, positioningAreaSize.height(), renderView));
+
+            applySubPixelHeuristicForTileSize(tileSize, positioningAreaSize);
+
             // If one of the values is auto we have to use the appropriate
             // scale to maintain our aspect ratio.
             if (layerWidth.isAuto() && !layerHeight.isAuto()) {
                 if (imageIntrinsicSize.height())
-                    w = imageIntrinsicSize.width() * h / imageIntrinsicSize.height();        
+                    tileSize.setWidth(imageIntrinsicSize.width() * tileSize.height() / imageIntrinsicSize.height());
             } else if (!layerWidth.isAuto() && layerHeight.isAuto()) {
                 if (imageIntrinsicSize.width())
-                    h = imageIntrinsicSize.height() * w / imageIntrinsicSize.width();
+                    tileSize.setHeight(imageIntrinsicSize.height() * tileSize.width() / imageIntrinsicSize.width());
             } else if (layerWidth.isAuto() && layerHeight.isAuto()) {
                 // If both width and height are auto, use the image's intrinsic size.
-                w = imageIntrinsicSize.width();
-                h = imageIntrinsicSize.height();
+                tileSize = imageIntrinsicSize;
             }
             
-            return IntSize(max(0, w), max(0, h));
+            tileSize.clampNegativeToZero();
+            return flooredIntSize(tileSize);
         }
         case SizeNone: {
             // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
