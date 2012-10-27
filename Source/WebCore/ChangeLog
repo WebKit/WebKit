@@ -1,3 +1,22 @@
+2012-10-26  Nico Weber  <thakis@chromium.org>
+
+        Fix a operator ordering bug in SVGSMILElement::calculateAnimationPercentAndRepeat
+        https://bugs.webkit.org/show_bug.cgi?id=94756
+
+        Reviewed by Dirk Schulze.
+
+        The function has an early exit for !simpleDuration.value(), so
+        !simpleDuration.value() always is 0 when passed as second parameter to
+        fmod(), which means fmod() always returns NaN, which always evaluates
+        to true. Simplify the code by removing that explicit check.
+
+        No observable behavior change.
+
+        Covered by existing svg tests.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::calculateAnimationPercentAndRepeat):
+
 2012-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132695.
