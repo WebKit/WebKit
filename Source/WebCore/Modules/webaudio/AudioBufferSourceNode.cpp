@@ -58,6 +58,8 @@ AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, float sample
     : AudioScheduledSourceNode(context, sampleRate)
     , m_buffer(0)
     , m_isLooping(false)
+    , m_loopStart(0)
+    , m_loopEnd(0)
     , m_virtualReadIndex(0)
     , m_isGrain(false)
     , m_grainOffset(0.0)
@@ -116,7 +118,10 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
             m_destinationChannels[i] = outputBus->channel(i)->mutableData();
 
         // Render by reading directly from the buffer.
-        renderFromBuffer(outputBus, quantumFrameOffset, bufferFramesToProcess);
+        if (!renderFromBuffer(outputBus, quantumFrameOffset, bufferFramesToProcess)) {
+            outputBus->zero();
+            return;
+        }
 
         // Apply the gain (in-place) to the output bus.
         float totalGain = gain()->value() * m_buffer->gain();
@@ -147,7 +152,7 @@ bool AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping(AudioBus*, unsign
     return false;
 }
 
-void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destinationFrameOffset, size_t numberOfFrames)
+bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destinationFrameOffset, size_t numberOfFrames)
 {
     ASSERT(context()->isAudioThread());
     
@@ -155,7 +160,7 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     ASSERT(bus);
     ASSERT(buffer());
     if (!bus || !buffer())
-        return;
+        return false;
 
     unsigned numberOfChannels = this->numberOfChannels();
     unsigned busNumberOfChannels = bus->numberOfChannels();
@@ -163,7 +168,7 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     bool channelCountGood = numberOfChannels && numberOfChannels == busNumberOfChannels;
     ASSERT(channelCountGood);
     if (!channelCountGood)
-        return;
+        return false;
 
     // Sanity check destinationFrameOffset, numberOfFrames.
     size_t destinationLength = bus->length();
@@ -171,12 +176,12 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     bool isLengthGood = destinationLength <= 4096 && numberOfFrames <= 4096;
     ASSERT(isLengthGood);
     if (!isLengthGood)
-        return;
+        return false;
 
     bool isOffsetGood = destinationFrameOffset <= destinationLength && destinationFrameOffset + numberOfFrames <= destinationLength;
     ASSERT(isOffsetGood);
     if (!isOffsetGood)
-        return;
+        return false;
 
     // Potentially zero out initial frames leading up to the offset.
     if (destinationFrameOffset) {
@@ -200,9 +205,7 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     
     ASSERT(endFrame >= startFrame);
     if (endFrame < startFrame)
-        return;
-    
-    unsigned deltaFrames = endFrame - startFrame;
+        return false;
     
     // This is a HACK to allow for HRTF tail-time - avoids glitch at end.
     // FIXME: implement tailTime for each AudioNode for a more general solution to this problem.
@@ -217,7 +220,25 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     if (m_virtualReadIndex >= endFrame)
         m_virtualReadIndex = startFrame; // reset to start
 
+    // If the .loop attribute is true, then values of m_loopStart == 0 && m_loopEnd == 0 implies
+    // that we should use the entire buffer as the loop, otherwise use the loop values in m_loopStart and m_loopEnd.
+    double virtualEndFrame = endFrame;
+    double virtualDeltaFrames = endFrame - startFrame;
+
+    if (loop() && (m_loopStart || m_loopEnd) && m_loopStart >= 0 && m_loopEnd > 0 && m_loopStart < m_loopEnd) {
+        // Convert from seconds to sample-frames.
+        double loopStartFrame = m_loopStart * buffer()->sampleRate();
+        double loopEndFrame = m_loopEnd * buffer()->sampleRate();
+
+        virtualEndFrame = min(loopEndFrame, virtualEndFrame);
+        virtualDeltaFrames = virtualEndFrame - loopStartFrame;
+    }
+
     double pitchRate = totalPitchRate();
+
+    // Sanity check that our playback rate isn't larger than the loop size.
+    if (pitchRate >= virtualDeltaFrames)
+        return false;
 
     // Get local copy.
     double virtualReadIndex = m_virtualReadIndex;
@@ -230,8 +251,12 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 
     // Optimize for the very common case of playing back with pitchRate == 1.
     // We can avoid the linear interpolation.
-    if (pitchRate == 1 && virtualReadIndex == floor(virtualReadIndex)) {
+    if (pitchRate == 1 && virtualReadIndex == floor(virtualReadIndex)
+        && virtualDeltaFrames == floor(virtualDeltaFrames)
+        && virtualEndFrame == floor(virtualEndFrame)) {
         unsigned readIndex = static_cast<unsigned>(virtualReadIndex);
+        unsigned deltaFrames = static_cast<unsigned>(virtualDeltaFrames);
+        endFrame = static_cast<unsigned>(virtualEndFrame);
         while (framesToProcess > 0) {
             int framesToEnd = endFrame - readIndex;
             int framesThisTime = min(framesToProcess, framesToEnd);
@@ -259,10 +284,10 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
 
             // For linear interpolation we need the next sample-frame too.
             unsigned readIndex2 = readIndex + 1;
-            if (readIndex2 >= endFrame) {
+            if (readIndex2 >= bufferLength) {
                 if (loop()) {
                     // Make sure to wrap around at the end of the buffer.
-                    readIndex2 -= deltaFrames;
+                    readIndex2 = static_cast<unsigned>(virtualReadIndex + 1 - virtualDeltaFrames);
                 } else
                     readIndex2 = readIndex;
             }
@@ -288,9 +313,8 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
             virtualReadIndex += pitchRate;
 
             // Wrap-around, retaining sub-sample position since virtualReadIndex is floating-point.
-            if (virtualReadIndex >= endFrame) {
-                virtualReadIndex -= deltaFrames;
-
+            if (virtualReadIndex >= virtualEndFrame) {
+                virtualReadIndex -= virtualDeltaFrames;
                 if (renderSilenceAndFinishIfNotLooping(bus, writeIndex, framesToProcess))
                     break;
             }
@@ -300,6 +324,8 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     bus->clearSilentFlag();
 
     m_virtualReadIndex = virtualReadIndex;
+
+    return true;
 }
 
 

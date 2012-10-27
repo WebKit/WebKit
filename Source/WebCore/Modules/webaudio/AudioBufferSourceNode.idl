@@ -41,13 +41,17 @@
     readonly attribute AudioParam playbackRate;
 
     attribute boolean loop; // This is the proper attribute name from the specification.
-    attribute boolean looping; // This is an alias for the .loop attribute for backwards compatibility.
+
+    attribute double loopStart;
+    attribute double loopEnd;
 
     [V8MeasureAs=WebAudioStart] void start(in double when);
     [V8MeasureAs=WebAudioStart, ImplementedAs=startGrain] void start(in double when, in double grainOffset, in double grainDuration);
     void stop(in double when);
 
 #if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
+    attribute boolean looping; // This is an alias for the .loop attribute for backwards compatibility.
+
     [V8MeasureAs=LegacyWebAudio] void noteOn(in double when);
     [V8MeasureAs=LegacyWebAudio] void noteGrainOn(in double when, in double grainOffset, in double grainDuration);
     void noteOff(in double when);

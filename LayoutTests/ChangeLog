@@ -1,3 +1,15 @@
+2012-10-26  Chris Rogers  <crogers@google.com>
+
+        Implement AudioBufferSourceNode .loopStart and .loopEnd attributes
+        https://bugs.webkit.org/show_bug.cgi?id=100170
+
+        Reviewed by Kenneth Russell.
+
+        * webaudio/audiobuffersource-loop-comprehensive-expected.txt: Added.
+        * webaudio/audiobuffersource-loop-comprehensive.html: Added.
+        * webaudio/audiobuffersource-loop-points-expected.wav: Added.
+        * webaudio/audiobuffersource-loop-points.html: Added.
+
 2012-10-26  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update.
