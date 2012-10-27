@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #include "ChildProcess.h"
+#include "NetworkResourceLoadScheduler.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -48,6 +49,8 @@ public:
     void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
     void removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess*);
+
+    NetworkResourceLoadScheduler& networkResourceLoadScheduler() { return m_networkResourceLoadScheduler; }
 
 private:
     NetworkProcess();
@@ -75,6 +78,7 @@ private:
     // Connections to WebProcesses.
     Vector<RefPtr<NetworkConnectionToWebProcess> > m_webProcessConnections;
 
+    NetworkResourceLoadScheduler m_networkResourceLoadScheduler;
 };
 
 } // namespace WebKit

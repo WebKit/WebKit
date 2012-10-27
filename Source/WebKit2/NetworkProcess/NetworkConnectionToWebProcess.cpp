@@ -28,6 +28,7 @@
 
 #include "ConnectionStack.h"
 #include "NetworkProcess.h"
+#include <WebCore/ResourceRequest.h>
 #include <WebCore/RunLoop.h>
 
 #if ENABLE(NETWORK_PROCESS)
@@ -42,6 +43,7 @@ PassRefPtr<NetworkConnectionToWebProcess> NetworkConnectionToWebProcess::create(
 }
 
 NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(CoreIPC::Connection::Identifier connectionIdentifier)
+    : m_serialLoadingEnabled(false)
 {
     m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
     m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
@@ -51,22 +53,36 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(CoreIPC::Connection
 NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
 {
     ASSERT(!m_connection);
+    ASSERT(m_observers.isEmpty());
 }
 
+void NetworkConnectionToWebProcess::registerObserver(NetworkConnectionToWebProcessObserver* observer)
+{
+    ASSERT(!m_observers.contains(observer));
+    m_observers.add(observer);
+}
+
+void NetworkConnectionToWebProcess::unregisterObserver(NetworkConnectionToWebProcessObserver* observer)
+{
+    ASSERT(m_observers.contains(observer));
+    m_observers.remove(observer);
+}
+    
 void NetworkConnectionToWebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    ConnectionStack::CurrentConnectionPusher currentConnection(ConnectionStack::shared(), connection);
-
     if (messageID.is<CoreIPC::MessageClassNetworkConnectionToWebProcess>()) {
         didReceiveNetworkConnectionToWebProcessMessage(connection, messageID, decoder);
         return;
     }
-
     ASSERT_NOT_REACHED();
 }
 
-void NetworkConnectionToWebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& arguments, OwnPtr<CoreIPC::MessageEncoder>& reply)
+void NetworkConnectionToWebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& reply)
 {
+    if (messageID.is<CoreIPC::MessageClassNetworkConnectionToWebProcess>()) {
+        didReceiveSyncNetworkConnectionToWebProcessMessage(connection, messageID, decoder, reply);
+        return;
+    }
     ASSERT_NOT_REACHED();
 }
 
@@ -77,6 +93,14 @@ void NetworkConnectionToWebProcess::didClose(CoreIPC::Connection*)
     
     NetworkProcess::shared().removeNetworkConnectionToWebProcess(this);
     
+    Vector<NetworkConnectionToWebProcessObserver*> observers;
+    copyToVector(m_observers, observers);
+    for (size_t i = 0; i < observers.size(); ++i)
+        observers[i]->connectionToWebProcessDidClose(this);
+    
+    // FIXME (NetworkProcess): We might consider actively clearing out all requests for this connection.
+    // But that might not be necessary as the observer mechanism used above is much more direct.
+    
     m_connection = 0;
 }
 
@@ -84,9 +108,44 @@ void NetworkConnectionToWebProcess::didReceiveInvalidMessage(CoreIPC::Connection
 {
 }
 
-void NetworkConnectionToWebProcess::didReceiveNetworkConnectionToWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&)
+void NetworkConnectionToWebProcess::scheduleNetworkRequest(const ResourceRequest& request, uint32_t resourceLoadPriority, ResourceLoadIdentifier& resourceLoadIdentifier)
 {
-    // Empty for now - There are no messages to handle.
+    resourceLoadIdentifier = NetworkProcess::shared().networkResourceLoadScheduler().scheduleNetworkRequest(request, static_cast<ResourceLoadPriority>(resourceLoadPriority), this);
+}
+
+void NetworkConnectionToWebProcess::addLoadInProgress(const WebCore::KURL& url, ResourceLoadIdentifier& identifier)
+{
+    identifier = NetworkProcess::shared().networkResourceLoadScheduler().addLoadInProgress(url);
+}
+
+void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier identifier)
+{
+    NetworkProcess::shared().networkResourceLoadScheduler().removeLoadIdentifier(identifier);
+}
+
+void NetworkConnectionToWebProcess::crossOriginRedirectReceived(ResourceLoadIdentifier identifier, const KURL& redirectURL)
+{
+    NetworkProcess::shared().networkResourceLoadScheduler().crossOriginRedirectReceived(identifier, redirectURL);
+}
+
+void NetworkConnectionToWebProcess::servePendingRequests(uint32_t resourceLoadPriority)
+{
+    NetworkProcess::shared().networkResourceLoadScheduler().servePendingRequests(static_cast<ResourceLoadPriority>(resourceLoadPriority));
+}
+
+void NetworkConnectionToWebProcess::suspendPendingRequests()
+{
+    NetworkProcess::shared().networkResourceLoadScheduler().suspendPendingRequests();
+}
+
+void NetworkConnectionToWebProcess::resumePendingRequests()
+{
+    NetworkProcess::shared().networkResourceLoadScheduler().resumePendingRequests();
+}
+
+void NetworkConnectionToWebProcess::setSerialLoadingEnabled(bool enabled)
+{
+    m_serialLoadingEnabled = enabled;
 }
 
 } // namespace WebKit

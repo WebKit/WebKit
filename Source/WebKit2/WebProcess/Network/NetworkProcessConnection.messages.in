@@ -22,26 +22,11 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-messages -> NetworkConnectionToWebProcess {
+messages -> NetworkProcessConnection {
 
-    // FIXME (NetworkProcess): At least some of these synchronous messages are synchronous due to the requirement
-    // that we synchronously get an identifier for new ResourceLoaders as they are created.
-    // There's possible ResourceLoader identifier refactoring that can remove that requirement.
-    // We might also have the NetworkProcess divvy up identifiers in blocks to each WebProcess beforehand.
-    ScheduleNetworkRequest(WebCore::ResourceRequest request, uint32_t resourceLoadPriority) -> (uint64_t resourceLoadIdentifier)
-    AddLoadInProgress(WebCore::KURL url) -> (uint64_t resourceLoadIdentifier)
-    RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
-
-    // It's possible that we will be able to do away with this message and have the NetworkProcess
-    // manage it internally.
-    crossOriginRedirectReceived(uint64_t resourceLoadIdentifier, WebCore::KURL redirectURL) -> ()
-    
-    ServePendingRequests(uint32_t resourceLoadPriority)
-
-    SuspendPendingRequests() -> ()
-    ResumePendingRequests() -> ()
-    
-    SetSerialLoadingEnabled(bool enabled) -> ()
+    // FIXME (NetworkProcess): This message is for the NetworkProcess to tell the WebProcess to start a load.
+    // Once the NetworkProcess is doing the loading itself then we should remove it.
+    StartResourceLoad(uint64_t resourceLoadIdentifier)
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

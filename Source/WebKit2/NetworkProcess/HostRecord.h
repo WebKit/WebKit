@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
+#ifndef HostRecord_h
+#define HostRecord_h
 
-#include <wtf/Assertions.h>
+#include <WebCore/ResourceRequest.h>
+#include <wtf/Deque.h>
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
-
-#if !LOG_DISABLED
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
 
 namespace WebKit {
 
-extern WTFLogChannel LogContextMenu;
-extern WTFLogChannel LogIconDatabase;
-extern WTFLogChannel LogKeyHandling;
-extern WTFLogChannel LogPlugins;
-extern WTFLogChannel LogSessionState;
-extern WTFLogChannel LogTextInput;
-extern WTFLogChannel LogView;
-extern WTFLogChannel LogNetwork;
+class NetworkRequest;
+typedef uint64_t ResourceLoadIdentifier;
 
-void initializeLogChannel(WTFLogChannel*);
-void initializeLogChannelsIfNecessary(void);
-#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
-WTFLogChannel* getChannelFromName(const String& channelName);
-#endif
+class HostRecord {
+    WTF_MAKE_NONCOPYABLE(HostRecord); WTF_MAKE_FAST_ALLOCATED;
+public:
+    HostRecord(const String& name, int maxRequestsInFlight);
+    ~HostRecord();
+    
+    const String& name() const { return m_name; }
+    void schedule(PassRefPtr<NetworkRequest>,  WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriorityVeryLow);
+    void addLoadInProgress(ResourceLoadIdentifier);
+    void remove(ResourceLoadIdentifier);
+    bool hasRequests() const;
+    bool limitRequests(WebCore::ResourceLoadPriority, bool serialLoadingEnabled) const;
+
+    typedef Deque<RefPtr<NetworkRequest> > RequestQueue;
+    RequestQueue& requestsPending(WebCore::ResourceLoadPriority priority) { return m_requestsPending[priority]; }
+
+private:                    
+    RequestQueue m_requestsPending[WebCore::ResourceLoadPriorityHighest + 1];
+    typedef HashSet<ResourceLoadIdentifier> RequestIdentifierMap;
+    RequestIdentifierMap m_requestsLoading;
+
+    const String m_name;
+    int m_maxRequestsInFlight;
+};
 
 } // namespace WebKit
 
-#endif // !LOG_DISABLED
-
-#endif // Logging_h
+#endif // #ifndef HostRecord_h

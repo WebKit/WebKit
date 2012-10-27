@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
+#ifndef NetworkRequest_h
+#define NetworkRequest_h
 
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
-
-#if !LOG_DISABLED
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+#include "NetworkConnectionToWebProcess.h"
+#include <WebCore/ResourceRequest.h>
 
 namespace WebKit {
 
-extern WTFLogChannel LogContextMenu;
-extern WTFLogChannel LogIconDatabase;
-extern WTFLogChannel LogKeyHandling;
-extern WTFLogChannel LogPlugins;
-extern WTFLogChannel LogSessionState;
-extern WTFLogChannel LogTextInput;
-extern WTFLogChannel LogView;
-extern WTFLogChannel LogNetwork;
+typedef uint64_t ResourceLoadIdentifier;
 
-void initializeLogChannel(WTFLogChannel*);
-void initializeLogChannelsIfNecessary(void);
-#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
-WTFLogChannel* getChannelFromName(const String& channelName);
-#endif
+class NetworkRequest : public RefCounted<NetworkRequest>, public NetworkConnectionToWebProcessObserver {
+public:
+    static RefPtr<NetworkRequest> create(const WebCore::ResourceRequest& request, ResourceLoadIdentifier identifier, NetworkConnectionToWebProcess* connection)
+    {
+        return adoptRef(new NetworkRequest(request, identifier, connection));
+    }
+    
+    ~NetworkRequest();
+
+    void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*);
+    
+    ResourceLoadIdentifier identifier() { return m_identifier; }
+    
+    NetworkConnectionToWebProcess* connectionToWebProcess() { return m_connection.get(); }
+
+private:
+    NetworkRequest(const WebCore::ResourceRequest&, ResourceLoadIdentifier, NetworkConnectionToWebProcess*);
+
+    WebCore::ResourceRequest m_request;
+    ResourceLoadIdentifier m_identifier;
+
+    RefPtr<NetworkConnectionToWebProcess> m_connection;
+};
 
 } // namespace WebKit
 
-#endif // !LOG_DISABLED
-
-#endif // Logging_h
+#endif // NetworkRequest_h

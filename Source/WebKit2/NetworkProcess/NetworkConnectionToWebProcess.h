@@ -30,10 +30,24 @@
 
 #include "Connection.h"
 #include "NetworkConnectionToWebProcessMessages.h"
+#include <WebCore/ResourceLoadPriority.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 
+namespace WebCore {
+class ResourceRequest;
+}
+
 namespace WebKit {
+
+class NetworkConnectionToWebProcess;
+typedef uint64_t ResourceLoadIdentifier;
+
+class NetworkConnectionToWebProcessObserver {
+public:
+    virtual ~NetworkConnectionToWebProcessObserver() { }
+    virtual void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*) = 0;
+};
 
 class NetworkConnectionToWebProcess : public RefCounted<NetworkConnectionToWebProcess>, CoreIPC::Connection::Client {
 public:
@@ -41,6 +55,11 @@ public:
     virtual ~NetworkConnectionToWebProcess();
 
     CoreIPC::Connection* connection() const { return m_connection.get(); }
+    
+    void registerObserver(NetworkConnectionToWebProcessObserver*);
+    void unregisterObserver(NetworkConnectionToWebProcessObserver*);
+
+    bool isSerialLoadingEnabled() const { return m_serialLoadingEnabled; }
 
 private:
     NetworkConnectionToWebProcess(CoreIPC::Connection::Identifier);
@@ -53,8 +72,22 @@ private:
 
     // Message handlers.
     void didReceiveNetworkConnectionToWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-
+    void didReceiveSyncNetworkConnectionToWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
+    
+    void scheduleNetworkRequest(const WebCore::ResourceRequest&, uint32_t resourceLoadPriority, ResourceLoadIdentifier&);
+    void addLoadInProgress(const WebCore::KURL&, ResourceLoadIdentifier&);
+    void removeLoadIdentifier(ResourceLoadIdentifier);
+    void crossOriginRedirectReceived(ResourceLoadIdentifier, const WebCore::KURL& redirectURL);
+    void servePendingRequests(uint32_t resourceLoadPriority);
+    void suspendPendingRequests();
+    void resumePendingRequests();
+    void setSerialLoadingEnabled(bool);
+    
     RefPtr<CoreIPC::Connection> m_connection;
+    
+    HashSet<NetworkConnectionToWebProcessObserver*> m_observers;
+    
+    bool m_serialLoadingEnabled;
 };
 
 } // namespace WebKit

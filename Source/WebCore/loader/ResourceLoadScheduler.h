@@ -50,28 +50,32 @@ class ResourceLoadScheduler {
 public:
     friend ResourceLoadScheduler* resourceLoadScheduler();
 
-    PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, CachedResource*, const ResourceRequest&, ResourceLoadPriority, const ResourceLoaderOptions&);
-    PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
-    void addMainResourceLoad(ResourceLoader*);
-    void remove(ResourceLoader*);
-    void crossOriginRedirectReceived(ResourceLoader*, const KURL& redirectURL);
+    virtual PassRefPtr<SubresourceLoader> scheduleSubresourceLoad(Frame*, CachedResource*, const ResourceRequest&, ResourceLoadPriority, const ResourceLoaderOptions&);
+    virtual PassRefPtr<NetscapePlugInStreamLoader> schedulePluginStreamLoad(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
+    virtual void addMainResourceLoad(ResourceLoader*);
+    virtual void remove(ResourceLoader*);
+    virtual void crossOriginRedirectReceived(ResourceLoader*, const KURL& redirectURL);
     
-    void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriorityVeryLow);
-    bool isSuspendingPendingRequests() const { return !!m_suspendPendingRequestsCount; }
-    void suspendPendingRequests();
-    void resumePendingRequests();
+    virtual void servePendingRequests(ResourceLoadPriority minimumPriority = ResourceLoadPriorityVeryLow);
+    virtual void suspendPendingRequests();
+    virtual void resumePendingRequests();
     
     bool isSerialLoadingEnabled() const { return m_isSerialLoadingEnabled; }
-    void setSerialLoadingEnabled(bool b) { m_isSerialLoadingEnabled = b; }
+    virtual void setSerialLoadingEnabled(bool b) { m_isSerialLoadingEnabled = b; }
 
 protected:
     ResourceLoadScheduler();
     virtual ~ResourceLoadScheduler();
 
+    void startResourceLoader(ResourceLoader*);
+    void notifyDidScheduleResourceRequest(ResourceLoader*);
+
 private:
     void scheduleLoad(ResourceLoader*, ResourceLoadPriority);
     void scheduleServePendingRequests();
     void requestTimerFired(Timer<ResourceLoadScheduler>*);
+
+    bool isSuspendingPendingRequests() const { return !!m_suspendPendingRequestsCount; }
 
     class HostInformation {
         WTF_MAKE_NONCOPYABLE(HostInformation); WTF_MAKE_FAST_ALLOCATED;

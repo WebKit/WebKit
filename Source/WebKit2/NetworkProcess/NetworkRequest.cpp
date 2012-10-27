@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,37 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
+#include "config.h"
+#include "NetworkRequest.h"
 
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
-
-#if !LOG_DISABLED
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+#include "NetworkConnectionToWebProcess.h"
 
 namespace WebKit {
 
-extern WTFLogChannel LogContextMenu;
-extern WTFLogChannel LogIconDatabase;
-extern WTFLogChannel LogKeyHandling;
-extern WTFLogChannel LogPlugins;
-extern WTFLogChannel LogSessionState;
-extern WTFLogChannel LogTextInput;
-extern WTFLogChannel LogView;
-extern WTFLogChannel LogNetwork;
+NetworkRequest::NetworkRequest(const WebCore::ResourceRequest& request, ResourceLoadIdentifier identifier, NetworkConnectionToWebProcess* connection)
+    : m_request(request)
+    , m_identifier(identifier)
+    , m_connection(connection)
+{
+    connection->registerObserver(this);
+}
 
-void initializeLogChannel(WTFLogChannel*);
-void initializeLogChannelsIfNecessary(void);
-#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
-WTFLogChannel* getChannelFromName(const String& channelName);
-#endif
+NetworkRequest::~NetworkRequest()
+{
+    if (m_connection)
+        m_connection->unregisterObserver(this);
+}
+
+void NetworkRequest::connectionToWebProcessDidClose(NetworkConnectionToWebProcess* connection)
+{
+    ASSERT_ARG(connection, connection == m_connection.get());
+    m_connection->unregisterObserver(this);
+    m_connection = 0;
+}
 
 } // namespace WebKit
-
-#endif // !LOG_DISABLED
-
-#endif // Logging_h

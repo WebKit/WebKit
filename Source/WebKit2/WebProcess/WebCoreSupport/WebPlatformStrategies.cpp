@@ -104,12 +104,18 @@ void WebPlatformStrategies::notifyCookiesChanged()
 // LoaderStrategy
 
 #if ENABLE(NETWORK_PROCESS)
-
 ResourceLoadScheduler* WebPlatformStrategies::resourceLoadScheduler()
 {
-    return WebCore::resourceLoadScheduler();
+    static ResourceLoadScheduler* scheduler;
+    if (!scheduler) {
+        if (WebProcess::shared().usesNetworkProcess())
+            scheduler = &WebProcess::shared().webResourceLoadScheduler();
+        else
+            scheduler = WebCore::resourceLoadScheduler();
+    }
+    
+    return scheduler;
 }
-
 #endif
 
 // PluginStrategy

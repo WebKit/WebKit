@@ -1,5 +1,132 @@
 2012-10-26  Brady Eidson  <beidson@apple.com>
 
+        Have NetworkProcess manage resource load scheduling.
+        https://bugs.webkit.org/show_bug.cgi?id=100479
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement a ResourceLoadScheduler that models the same behavior as WebCore::ResourceLoadScheduler.
+        
+        The WebProcess scheduler acts as a marshall to the NetworkProcess scheduler via CoreIPC messaging.
+
+        Besides MainResourceLoads which are started directly in the WebProcess, all other loads are now
+        started only when the NetworkProcess tells them to start.
+
+        Build-system and messaging related stuff:
+        * DerivedSources.make:
+        * Platform/CoreIPC/MessageID.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        Add a new Network logging channel.
+        * Platform/Logging.cpp:
+        (WebKit::getChannelFromName):
+        * Platform/Logging.h:
+
+        Modeled after ResourceLoadScheduler::HostInformation but more specifically geared towards what NetworkProcess needs to track:
+        * NetworkProcess/HostRecord.cpp: Added.
+        (WebKit::HostRecord::HostRecord):
+        (WebKit::HostRecord::~HostRecord):
+        (WebKit::HostRecord::schedule):
+        (WebKit::HostRecord::addLoadInProgress):
+        (WebKit::HostRecord::remove):
+        (WebKit::HostRecord::hasRequests):
+        (WebKit::HostRecord::limitRequests):
+        * NetworkProcess/HostRecord.h:
+        (WebKit::HostRecord::name):
+        (WebKit::HostRecord::requestsPending):
+
+        Gateway messaging from the WebResourceLoadScheduler to the NetworkResourceLoadScheduler:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess):
+        (WebKit::NetworkConnectionToWebProcess::registerObserver):
+        (WebKit::NetworkConnectionToWebProcess::unregisterObserver):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        (WebKit::NetworkConnectionToWebProcess::didReceiveSyncMessage):
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::scheduleNetworkRequest):
+        (WebKit::NetworkConnectionToWebProcess::addLoadInProgress):
+        (WebKit::NetworkConnectionToWebProcess::removeLoadIdentifier):
+        (WebKit::NetworkConnectionToWebProcess::crossOriginRedirectReceived):
+        (WebKit::NetworkConnectionToWebProcess::servePendingRequests):
+        (WebKit::NetworkConnectionToWebProcess::suspendPendingRequests):
+        (WebKit::NetworkConnectionToWebProcess::resumePendingRequests):
+        (WebKit::NetworkConnectionToWebProcess::setSerialLoadingEnabled):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (NetworkConnectionToWebProcessObserver): Add an observer interface so arbitrary objects can be notified if
+          a Network->WebProcess connection closes.
+        (WebKit::NetworkConnectionToWebProcessObserver::~NetworkConnectionToWebProcessObserver):
+        (WebKit::NetworkConnectionToWebProcess::isSerialLoadingEnabled):
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        Represents a request,  ResourceLoadIdentifier, and connection that all correspond to the same pending NetworkLoad:
+        * NetworkProcess/NetworkRequest.cpp:
+        (WebKit::NetworkRequest::NetworkRequest):
+        (WebKit::NetworkRequest::~NetworkRequest):
+        (WebKit::NetworkRequest::connectionToWebProcessDidClose): Using the NetworkConnectionToWebProcessObserver interface,
+          if the connection closes then clear out the connection pointer for this request that is now irrelevant.
+        * NetworkProcess/NetworkRequest.h:
+        (WebKit::NetworkRequest::create):
+        (WebKit::NetworkRequest::identifier):
+        (WebKit::NetworkRequest::connectionToWebProcess):
+
+        Manages connection-per-host scheduling with the same structure as WebCore::ResourceLoadScheduling but also with IPC:
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp: Added.
+        (WebKit::NetworkResourceLoadScheduler::NetworkResourceLoadScheduler):
+        (WebKit::NetworkResourceLoadScheduler::scheduleServePendingRequests):
+        (WebKit::NetworkResourceLoadScheduler::requestTimerFired):
+        (WebKit::NetworkResourceLoadScheduler::scheduleNetworkRequest):
+        (WebKit::NetworkResourceLoadScheduler::addLoadInProgress):
+        (WebKit::NetworkResourceLoadScheduler::hostForURL):
+        (WebKit::NetworkResourceLoadScheduler::removeLoadIdentifier):
+        (WebKit::NetworkResourceLoadScheduler::crossOriginRedirectReceived):
+        (WebKit::NetworkResourceLoadScheduler::servePendingRequests):
+        (WebKit::NetworkResourceLoadScheduler::servePendingRequestsForHost): Serve as many requests for the host as we should,
+          skipping the NetworkRequests who have lost their connection to their WebProcess.
+        (WebKit::NetworkResourceLoadScheduler::suspendPendingRequests):
+        (WebKit::NetworkResourceLoadScheduler::resumePendingRequests):
+        * NetworkProcess/NetworkResourceLoadScheduler.h: Added.
+        * NetworkProcess/mac/NetworkResourceLoadSchedulerMac.mm: Added.
+        (WebKit::NetworkResourceLoadScheduler::platformInitializeMaximumHTTPConnectionCountPerHost):
+
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::networkResourceLoadScheduler): Add a scheduler global to the NetworkProcess.
+
+        A thin derivation of WebCore::ResourceLoadScheduler, most of what WebResourceLoadScheduler does is handle IPC to the NetworkProcess:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::WebResourceLoadScheduler):
+        (WebKit::WebResourceLoadScheduler::scheduleSubresourceLoad):
+        (WebKit::WebResourceLoadScheduler::schedulePluginStreamLoad):
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+        (WebKit::WebResourceLoadScheduler::addMainResourceLoad):
+        (WebKit::WebResourceLoadScheduler::remove):
+        (WebKit::WebResourceLoadScheduler::crossOriginRedirectReceived):
+        (WebKit::WebResourceLoadScheduler::servePendingRequests):
+        (WebKit::WebResourceLoadScheduler::suspendPendingRequests):
+        (WebKit::WebResourceLoadScheduler::resumePendingRequests):
+        (WebKit::WebResourceLoadScheduler::setSerialLoadingEnabled):
+        (WebKit::WebResourceLoadScheduler::startResourceLoad):
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+
+        Add the ability for the NetworkProcess to message back to the WebProcess telling it to start a resource load:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        (WebKit::NetworkProcessConnection::didReceiveSyncMessage):
+        (WebKit::NetworkProcessConnection::startResourceLoad):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::resourceLoadScheduler): Only return the WebResourceLoadScheduler if NetworkProcess is enabled.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureNetworkProcessConnection): Actually keep the NetworkProcessConnection around in a member variable.
+        (WebKit::WebProcess::networkConnection):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::usesNetworkProcess): Expose this for platform strategies sake.
+
+2012-10-26  Brady Eidson  <beidson@apple.com>
+
         Crash in WebProces at WebCore::ResourceLoadScheduler::crossOriginRedirectReceived + 78
         https://bugs.webkit.org/show_bug.cgi?id=100554
 
