@@ -31,7 +31,7 @@ DYLIB_INSTALL_NAME_BASE = $(NORMAL_WEBKIT2_FRAMEWORKS_DIR);
 
 FRAMEWORK_AND_LIBRARY_LDFLAGS = -framework ApplicationServices -framework Carbon -framework Cocoa -framework CoreServices -framework IOKit -framework JavaScriptCore -licucore -framework QuartzCore -framework Security -framework WebCore;
 
-OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(REAL_PLATFORM_NAME)) $(OTHER_LDFLAGS);
+OTHER_LDFLAGS = $(OTHER_LDFLAGS_$(PLATFORM_NAME)) $(OTHER_LDFLAGS);
 OTHER_LDFLAGS_macosx = $(OTHER_LDFLAGS_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR)) $(FRAMEWORK_AND_LIBRARY_LDFLAGS);
 OTHER_LDFLAGS_macosx_1070 = -Xlinker -objc_gc_compaction;
 OTHER_LDFLAGS_macosx_1080 = $(OTHER_LDFLAGS_macosx_1070);

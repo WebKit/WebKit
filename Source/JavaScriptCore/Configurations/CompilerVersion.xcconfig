@@ -53,7 +53,7 @@ LLVM_COMPILER_SUITABLE_FOR_OPTIMIZED_BUILDS_YES = NO;
 // Note that Xcode versions as new as 3.1.2 use XCODE_VERSION_ACTUAL for the minor version
 // number.  Newer versions of Xcode use XCODE_VERSION_MINOR for the minor version, and
 // XCODE_VERSION_ACTUAL for the full version number.
-TARGET_GCC_VERSION = $(TARGET_GCC_VERSION_$(REAL_PLATFORM_NAME));
+TARGET_GCC_VERSION = $(TARGET_GCC_VERSION_$(PLATFORM_NAME));
 TARGET_GCC_VERSION_iphoneos = LLVM_COMPILER;
 TARGET_GCC_VERSION_iphonesimulator = $(TARGET_GCC_VERSION_iphoneos);
 TARGET_GCC_VERSION_macosx = $(TARGET_GCC_VERSION_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));

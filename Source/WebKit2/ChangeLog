@@ -1,3 +1,19 @@
+2012-10-27  Dan Bernstein  <mitz@apple.com>
+
+        REAL_PLATFORM_NAME build setting is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=100587
+
+        Reviewed by Mark Rowe.
+
+        Removed the definition of REAL_PLATFORM_NAME and replaced references to it with references
+        to PLATFORM_NAME.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/BaseTarget.xcconfig:
+        * Configurations/CompilerVersion.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/WebKit2.xcconfig:
+
 2012-10-26  Brady Eidson  <beidson@apple.com>
 
         Have NetworkProcess manage resource load scheduling.
