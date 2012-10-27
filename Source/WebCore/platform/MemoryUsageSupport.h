@@ -61,16 +61,8 @@ public:
     // false on platform specific error conditions.
     static bool processMemorySizesInBytes(size_t* privateBytes, size_t* sharedBytes);
 
-    class ComponentInfo {
-    public:
-        ComponentInfo(const String& name, size_t size) : m_name(name), m_sizeInBytes(size) { }
-
-        const String m_name;
-        size_t m_sizeInBytes;
-    };
-
-    // Reports private memory used by components in bytes.
-    static void memoryUsageByComponents(Vector<ComponentInfo>&);
+    // Reports memory objects used by platform.
+    static void reportMemoryUsage(MemoryInstrumentation*);
 };
 
 } // namespace WebCore
