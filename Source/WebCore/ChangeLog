@@ -1,5 +1,22 @@
 2012-10-27  David Barton  <dbarton@mathscribe.com>
 
+        ASSERTION FAILED: m_next in LayoutState.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=99796
+
+        Reviewed by Eric Seidel.
+
+        Before RenderMathMLBlock::computeChildrenPreferredLogicalHeights calls child->layoutIfNeeded(),
+        it must ensure a layoutState exists. We disable it in any case, since we are just calculating
+        metrics here, and the final layout may well happen again.
+
+        No new tests. I don't know how to create an automated test for this. The crashes users are
+        seeing are flaky.
+
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::computeChildrenPreferredLogicalHeights):
+
+2012-10-27  David Barton  <dbarton@mathscribe.com>
+
         [MathML] Improve some addChild methods
         https://bugs.webkit.org/show_bug.cgi?id=98791
 
