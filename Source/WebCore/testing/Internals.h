@@ -159,9 +159,6 @@ public:
     Vector<String> userPreferredLanguages() const;
     void setUserPreferredLanguages(const Vector<String>&);
 
-    void setShouldDisplayTrackKind(Document*, const String& kind, bool, ExceptionCode&);
-    bool shouldDisplayTrackKind(Document*, const String& kind, ExceptionCode&);
-
     unsigned wheelEventHandlerCount(Document*, ExceptionCode&);
     unsigned touchEventHandlerCount(Document*, ExceptionCode&);
 

@@ -1003,16 +1003,6 @@ void Internals::setUserPreferredLanguages(const Vector<String>& languages)
     settings()->setUserPreferredLanguages(languages);
 }
 
-void Internals::setShouldDisplayTrackKind(Document*, const String& kind, bool enabled, ExceptionCode& ec)
-{
-    settings()->setShouldDisplayTrackKind(kind, enabled, ec);
-}
-
-bool Internals::shouldDisplayTrackKind(Document*, const String& kind, ExceptionCode& ec)
-{
-    return settings()->shouldDisplayTrackKind(kind, ec);
-}
-
 unsigned Internals::wheelEventHandlerCount(Document* document, ExceptionCode& ec)
 {
     if (!document) {

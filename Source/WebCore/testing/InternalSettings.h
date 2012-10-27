@@ -82,6 +82,11 @@ public:
         bool m_originalMockScrollbarsEnabled;
         bool m_langAttributeAwareFormControlUIEnabled;
         bool m_imagesEnabled;
+#if ENABLE(VIDEO_TRACK)
+        bool m_shouldDisplaySubtitles;
+        bool m_shouldDisplayCaptions;
+        bool m_shouldDisplayTextDescriptions;
+#endif
     };
 
     typedef RefCountedSupplement<Page, InternalSettings> SuperType;

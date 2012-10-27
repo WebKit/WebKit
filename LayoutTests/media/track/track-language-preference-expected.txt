@@ -1,7 +1,7 @@
 Tests that the user's preferred languages are honored.
 
 **Set track preferences and user preferred languages
-RUN(internals.setShouldDisplayTrackKind(document, 'Captions', true))
+RUN(internals.settings.setShouldDisplayTrackKind('Captions', true))
 RUN(internals.setUserPreferredLanguages(['jp', 'es-ES', 'en', 'fr']))
 
 Test: a track language matches one of the user's preferred languages exactly.

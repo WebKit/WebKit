@@ -1,3 +1,17 @@
+2012-10-27  Tony Chang  <tony@chromium.org>
+
+        Remove internals shouldDisplayTrackKind methods; these are also on internals.settings
+        https://bugs.webkit.org/show_bug.cgi?id=100564
+
+        Reviewed by Adam Barth.
+
+        Update tests to use the internals.settings method.
+
+        * media/track/track-language-preference-expected.txt:
+        * media/track/track-language-preference.html:
+        * media/track/track-prefer-captions-expected.txt:
+        * media/track/track-prefer-captions.html:
+
 2012-10-26  Philip Rogers  <pdr@google.com>
 
         Prevent NaN offset values in ElementTimeControl.

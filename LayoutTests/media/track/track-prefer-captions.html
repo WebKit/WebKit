@@ -36,8 +36,8 @@
                     return;
                 }
 
-                run("internals.setShouldDisplayTrackKind(document, '" + type + "', " + flag + ")");
-                testExpected("internals.shouldDisplayTrackKind(document, '" + type + "')", flag);
+                run("internals.settings.setShouldDisplayTrackKind('" + type + "', " + flag + ")");
+                testExpected("internals.settings.shouldDisplayTrackKind('" + type + "')", flag);
             }
             
             function createTrackElement(kind, src)

@@ -96,6 +96,11 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
     , m_originalMockScrollbarsEnabled(settings->mockScrollbarsEnabled())
     , m_langAttributeAwareFormControlUIEnabled(RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled())
     , m_imagesEnabled(settings->areImagesEnabled())
+#if ENABLE(VIDEO_TRACK)
+    , m_shouldDisplaySubtitles(settings->shouldDisplaySubtitles())
+    , m_shouldDisplayCaptions(settings->shouldDisplayCaptions())
+    , m_shouldDisplayTextDescriptions(settings->shouldDisplayTextDescriptions())
+#endif
 {
 }
 
@@ -133,6 +138,11 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
     settings->setMockScrollbarsEnabled(m_originalMockScrollbarsEnabled);
     RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
     settings->setImagesEnabled(m_imagesEnabled);
+#if ENABLE(VIDEO_TRACK)
+    settings->setShouldDisplaySubtitles(m_shouldDisplaySubtitles);
+    settings->setShouldDisplayCaptions(m_shouldDisplayCaptions);
+    settings->setShouldDisplayTextDescriptions(m_shouldDisplayTextDescriptions);
+#endif
 }
 
 InternalSettings* InternalSettings::from(Page* page)

@@ -76,10 +76,8 @@
     void setUserPreferredLanguages(in sequence<String> languages);
     void allowRoundingHacks();
     void setEnableMockPagePopup(in boolean enabled) raises(DOMException);
-#if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
-    void setShouldDisplayTrackKind(in DOMString kind, in boolean enabled) raises (DOMException);
-    boolean shouldDisplayTrackKind(in DOMString trackKind) raises (DOMException);
-#endif
+    [Conditional=VIDEO_TRACK] void setShouldDisplayTrackKind(in DOMString kind, in boolean enabled) raises (DOMException);
+    [Conditional=VIDEO_TRACK] boolean shouldDisplayTrackKind(in DOMString trackKind) raises (DOMException);
     void setMemoryInfoEnabled(in boolean enabled) raises(DOMException);
     void setStorageBlockingPolicy(in DOMString policy) raises(DOMException);
     void setImagesEnabled(in boolean enabled) raises(DOMException);
