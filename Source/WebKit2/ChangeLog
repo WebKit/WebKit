@@ -1,3 +1,16 @@
+2012-10-26  Brady Eidson  <beidson@apple.com>
+
+        Crash in WebProces at WebCore::ResourceLoadScheduler::crossOriginRedirectReceived + 78
+        https://bugs.webkit.org/show_bug.cgi?id=100554
+
+        Reviewed by Alexey Proskuryakov.
+
+        For now, just have WebPlatformStrategies return the same default resourceLoadScheduler that
+        WebCore knows about.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::resourceLoadScheduler):
+
 2012-10-26  Anders Carlsson  <andersca@apple.com>
 
         Crash when making NPRuntime calls with a null NPP pointer

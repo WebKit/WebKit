@@ -107,11 +107,7 @@ void WebPlatformStrategies::notifyCookiesChanged()
 
 ResourceLoadScheduler* WebPlatformStrategies::resourceLoadScheduler()
 {
-    static ResourceLoadScheduler* scheduler;
-    if (!scheduler)
-        scheduler = &WebProcess::shared().webResourceLoadScheduler();
-        
-    return scheduler;
+    return WebCore::resourceLoadScheduler();
 }
 
 #endif
