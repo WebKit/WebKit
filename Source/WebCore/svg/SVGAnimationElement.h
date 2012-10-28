@@ -88,7 +88,7 @@ public:
     virtual bool isAdditive() const;
     bool isAccumulated() const;
     AnimationMode animationMode() const;
-    CalcMode calcMode() const;
+    CalcMode calcMode() const { return m_calcMode; }
 
     enum ShouldApplyAnimation {
         DontApplyAnimation,
@@ -201,6 +201,8 @@ protected:
     virtual void targetElementWillChange(SVGElement* currentTarget, SVGElement* oldTarget) OVERRIDE;
     bool hasInvalidCSSAttributeType() const { return m_hasInvalidCSSAttributeType; }
 
+    void setCalcMode(CalcMode calcMode) { m_calcMode = calcMode; }
+
 private:
     virtual void animationAttributeChanged() OVERRIDE;
     virtual void setAttributeName(const QualifiedName&) OVERRIDE;
@@ -235,6 +237,8 @@ private:
     virtual void synchronizeRequiredExtensions() { SVGTests::synchronizeRequiredExtensions(this); }
     virtual void synchronizeSystemLanguage() { SVGTests::synchronizeSystemLanguage(this); }
 
+    void setCalcMode(const AtomicString&);
+
     bool m_animationValid;
 
     AttributeType m_attributeType;
@@ -245,6 +249,7 @@ private:
     String m_lastValuesAnimationFrom;
     String m_lastValuesAnimationTo;
     bool m_hasInvalidCSSAttributeType;
+    CalcMode m_calcMode;
 };
 
 } // namespace WebCore

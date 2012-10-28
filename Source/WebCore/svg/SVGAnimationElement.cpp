@@ -58,6 +58,7 @@ SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document*
     , m_animationValid(false)
     , m_attributeType(AttributeTypeAuto)
     , m_hasInvalidCSSAttributeType(false)
+    , m_calcMode(CalcModeLinear)
 {
     registerAnimatedPropertiesForSVGAnimationElement();
 }
@@ -149,6 +150,7 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::keyPointsAttr);
         supportedAttributes.add(SVGNames::keySplinesAttr);
         supportedAttributes.add(SVGNames::attributeTypeAttr);
+        supportedAttributes.add(SVGNames::calcModeAttr);
     }
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
@@ -191,6 +193,11 @@ void SVGAnimationElement::parseAttribute(const Attribute& attribute)
 
     if (attribute.name() == SVGNames::attributeTypeAttr) {
         setAttributeType(attribute.value());
+        return;
+    }
+
+    if (attribute.name() == SVGNames::calcModeAttr) {
+        setCalcMode(attribute.value());
         return;
     }
 
@@ -276,22 +283,22 @@ AnimationMode SVGAnimationElement::animationMode() const
     return NoAnimation;
 }
 
-CalcMode SVGAnimationElement::calcMode() const
-{    
+void SVGAnimationElement::setCalcMode(const AtomicString& calcMode)
+{
     DEFINE_STATIC_LOCAL(const AtomicString, discrete, ("discrete"));
     DEFINE_STATIC_LOCAL(const AtomicString, linear, ("linear"));
     DEFINE_STATIC_LOCAL(const AtomicString, paced, ("paced"));
     DEFINE_STATIC_LOCAL(const AtomicString, spline, ("spline"));
-    const AtomicString& value = fastGetAttribute(SVGNames::calcModeAttr);
-    if (value == discrete)
-        return CalcModeDiscrete;
-    if (value == linear)
-        return CalcModeLinear;
-    if (value == paced)
-        return CalcModePaced;
-    if (value == spline)
-        return CalcModeSpline;
-    return hasTagName(SVGNames::animateMotionTag) ? CalcModePaced : CalcModeLinear;
+    if (calcMode == discrete)
+        setCalcMode(CalcModeDiscrete);
+    else if (calcMode == linear)
+        setCalcMode(CalcModeLinear);
+    else if (calcMode == paced)
+        setCalcMode(CalcModePaced);
+    else if (calcMode == spline)
+        setCalcMode(CalcModeSpline);
+    else
+        setCalcMode(hasTagName(SVGNames::animateMotionTag) ? CalcModePaced : CalcModeLinear);
 }
 
 void SVGAnimationElement::setAttributeType(const AtomicString& attributeType)
