@@ -86,14 +86,14 @@ private:
             ArrayProfile* arrayProfile = 
                 m_graph.baselineCodeBlockFor(nodePtr->codeOrigin)->getArrayProfile(
                     nodePtr->codeOrigin.bytecodeIndex);
-            Array::Mode arrayMode = Array::SelectUsingPredictions;
+            ArrayMode arrayMode = ArrayMode(Array::SelectUsingPredictions);
             if (arrayProfile) {
                 arrayProfile->computeUpdatedPrediction();
-                arrayMode = refineArrayMode(
-                    fromObserved(arrayProfile, Array::Read, false),
+                arrayMode = ArrayMode::fromObserved(arrayProfile, Array::Read, false);
+                arrayMode = arrayMode.refine(
                     m_graph[node.child1()].prediction(),
                     m_graph[m_compileIndex].prediction());
-                if (modeSupportsLength(arrayMode) && arrayProfile->hasDefiniteStructure()) {
+                if (arrayMode.supportsLength() && arrayProfile->hasDefiniteStructure()) {
                     m_graph.ref(nodePtr->child1());
                     Node checkStructure(CheckStructure, nodePtr->codeOrigin, OpInfo(m_graph.addStructureSet(arrayProfile->expectedStructure())), nodePtr->child1().index());
                     checkStructure.ref();
@@ -103,12 +103,11 @@ private:
                     nodePtr = &m_graph[m_compileIndex];
                 }
             } else {
-                arrayMode = refineArrayMode(
-                    arrayMode,
+                arrayMode = arrayMode.refine(
                     m_graph[node.child1()].prediction(),
                     m_graph[m_compileIndex].prediction());
             }
-            if (!modeSupportsLength(arrayMode))
+            if (!arrayMode.supportsLength())
                 break;
             nodePtr->setOp(GetArrayLength);
             ASSERT(nodePtr->flags() & NodeMustGenerate);
@@ -125,15 +124,14 @@ private:
             break;
         }
         case GetIndexedPropertyStorage: {
-            ASSERT(canCSEStorage(node.arrayMode()));
+            ASSERT(node.arrayMode().canCSEStorage());
             break;
         }
         case GetByVal:
         case StringCharAt:
         case StringCharCodeAt: {
             node.setArrayMode(
-                refineArrayMode(
-                    node.arrayMode(),
+                node.arrayMode().refine(
                     m_graph[node.child1()].prediction(),
                     m_graph[node.child2()].prediction()));
             
@@ -323,8 +321,7 @@ private:
             Edge child3 = m_graph.varArgChild(node, 2);
 
             node.setArrayMode(
-                refineArrayMode(
-                    node.arrayMode(),
+                node.arrayMode().refine(
                     m_graph[child1].prediction(),
                     m_graph[child2].prediction()));
             
@@ -332,7 +329,7 @@ private:
             
             Node* nodePtr = &m_graph[m_compileIndex];
             
-            switch (modeForPut(nodePtr->arrayMode())) {
+            switch (nodePtr->arrayMode().modeForPut().type()) {
             case Array::Int8Array:
             case Array::Int16Array:
             case Array::Int32Array:
@@ -376,16 +373,16 @@ private:
         return nodeIndex;
     }
     
-    NodeIndex checkArray(Array::Mode arrayMode, CodeOrigin codeOrigin, NodeIndex array, NodeIndex index, bool (*storageCheck)(Array::Mode) = canCSEStorage, bool shouldGenerate = true)
+    NodeIndex checkArray(ArrayMode arrayMode, CodeOrigin codeOrigin, NodeIndex array, NodeIndex index, bool (*storageCheck)(const ArrayMode&) = canCSEStorage, bool shouldGenerate = true)
     {
-        ASSERT(modeIsSpecific(arrayMode));
+        ASSERT(arrayMode.isSpecific());
         
         m_graph.ref(array);
 
-        if (isEffectful(arrayMode)) {
+        if (arrayMode.doesConversion()) {
             if (index != NoNode)
                 m_graph.ref(index);
-            Node arrayify(Arrayify, codeOrigin, OpInfo(arrayMode), array, index);
+            Node arrayify(Arrayify, codeOrigin, OpInfo(arrayMode.asWord()), array, index);
             arrayify.ref(); // Once because it's used as a butterfly.
             arrayify.ref(); // And twice because it's must-generate.
             NodeIndex arrayifyIndex = m_graph.size();
@@ -393,15 +390,15 @@ private:
             m_insertionSet.append(m_indexInBlock, arrayifyIndex);
             
             ASSERT(shouldGenerate);
-            ASSERT(canCSEStorage(arrayMode));
-            ASSERT(modeUsesButterfly(arrayMode));
+            ASSERT(arrayMode.canCSEStorage());
+            ASSERT(arrayMode.usesButterfly());
 
             if (!storageCheck(arrayMode))
                 return NoNode;
             return arrayifyIndex;
         }
         
-        Node checkArray(CheckArray, codeOrigin, OpInfo(arrayMode), array);
+        Node checkArray(CheckArray, codeOrigin, OpInfo(arrayMode.asWord()), array);
         checkArray.ref();
         NodeIndex checkArrayIndex = m_graph.size();
         m_graph.append(checkArray);
@@ -413,10 +410,10 @@ private:
         if (shouldGenerate)
             m_graph.ref(array);
         
-        if (modeUsesButterfly(arrayMode))
+        if (arrayMode.usesButterfly())
             return addNode(Node(GetButterfly, codeOrigin, array), shouldGenerate);
         
-        return addNode(Node(GetIndexedPropertyStorage, codeOrigin, OpInfo(arrayMode), array), shouldGenerate);
+        return addNode(Node(GetIndexedPropertyStorage, codeOrigin, OpInfo(arrayMode.asWord()), array), shouldGenerate);
     }
     
     void blessArrayOperation(Edge base, Edge index, unsigned storageChildIdx)
@@ -426,7 +423,7 @@ private:
             
         Node* nodePtr = &m_graph[m_compileIndex];
         
-        switch (nodePtr->arrayMode()) {
+        switch (nodePtr->arrayMode().type()) {
         case Array::ForceExit: {
             Node forceExit(ForceOSRExit, nodePtr->codeOrigin);
             forceExit.ref();

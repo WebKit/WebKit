@@ -273,7 +273,7 @@ public:
                 }
                     
                 case GetByVal: {
-                    if (node.arrayMode() != Array::Arguments) {
+                    if (node.arrayMode().type() != Array::Arguments) {
                         observeBadArgumentsUses(node);
                         break;
                     }
@@ -287,7 +287,7 @@ public:
                 }
                     
                 case GetArrayLength: {
-                    if (node.arrayMode() != Array::Arguments) {
+                    if (node.arrayMode().type() != Array::Arguments) {
                         observeBadArgumentsUses(node);
                         break;
                     }
@@ -476,7 +476,7 @@ public:
                 }
                     
                 case GetByVal: {
-                    if (node.arrayMode() != Array::Arguments)
+                    if (node.arrayMode().type() != Array::Arguments)
                         break;
 
                     // This can be simplified to GetMyArgumentByVal if we know that
@@ -499,7 +499,7 @@ public:
                 }
                     
                 case GetArrayLength: {
-                    if (node.arrayMode() != Array::Arguments)
+                    if (node.arrayMode().type() != Array::Arguments)
                         break;
                     
                     if (!isOKToOptimize(m_graph[node.child1()]))

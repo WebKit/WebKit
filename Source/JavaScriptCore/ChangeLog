@@ -1,3 +1,105 @@
+2012-10-27  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::Array::Mode needs to be cleaned up
+        https://bugs.webkit.org/show_bug.cgi?id=100599
+
+        Reviewed by Oliver Hunt.
+
+        Turn the previous massive Array::Mode enum into a class that contains four
+        fields, the type, whether it's a JSArray, the level of speculation, and the
+        kind of conversion to perform.
+        
+        No performance or behavioral change.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        (JSC::DFG::ArrayMode::refine):
+        (JSC::DFG::ArrayMode::alreadyChecked):
+        (JSC::DFG::arrayTypeToString):
+        (JSC::DFG::arrayClassToString):
+        (DFG):
+        (JSC::DFG::arraySpeculationToString):
+        (JSC::DFG::arrayConversionToString):
+        (JSC::DFG::ArrayMode::toString):
+        * dfg/DFGArrayMode.h:
+        (DFG):
+        (ArrayMode):
+        (JSC::DFG::ArrayMode::ArrayMode):
+        (JSC::DFG::ArrayMode::type):
+        (JSC::DFG::ArrayMode::arrayClass):
+        (JSC::DFG::ArrayMode::speculation):
+        (JSC::DFG::ArrayMode::conversion):
+        (JSC::DFG::ArrayMode::asWord):
+        (JSC::DFG::ArrayMode::fromWord):
+        (JSC::DFG::ArrayMode::withSpeculation):
+        (JSC::DFG::ArrayMode::usesButterfly):
+        (JSC::DFG::ArrayMode::isJSArray):
+        (JSC::DFG::ArrayMode::isInBounds):
+        (JSC::DFG::ArrayMode::mayStoreToHole):
+        (JSC::DFG::ArrayMode::isOutOfBounds):
+        (JSC::DFG::ArrayMode::isSlowPut):
+        (JSC::DFG::ArrayMode::canCSEStorage):
+        (JSC::DFG::ArrayMode::lengthNeedsStorage):
+        (JSC::DFG::ArrayMode::modeForPut):
+        (JSC::DFG::ArrayMode::isSpecific):
+        (JSC::DFG::ArrayMode::supportsLength):
+        (JSC::DFG::ArrayMode::benefitsFromStructureCheck):
+        (JSC::DFG::ArrayMode::doesConversion):
+        (JSC::DFG::ArrayMode::arrayModesThatPassFiltering):
+        (JSC::DFG::ArrayMode::operator==):
+        (JSC::DFG::ArrayMode::operator!=):
+        (JSC::DFG::ArrayMode::arrayModesWithIndexingShape):
+        (JSC::DFG::canCSEStorage):
+        (JSC::DFG::lengthNeedsStorage):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (JSC::DFG::ByteCodeParser::getArrayModeAndEmitChecks):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getArrayLengthElimination):
+        (JSC::DFG::CSEPhase::checkArrayElimination):
+        (JSC::DFG::CSEPhase::getIndexedPropertyStorageLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        (JSC::DFG::FixupPhase::blessArrayOperation):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::byValIsPure):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::arrayMode):
+        (JSC::DFG::Node::setArrayMode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::typedArrayDescriptor):
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode):
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentsLength):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        (JSC::DFG::SpeculativeJIT::temporaryRegisterForPutByVal):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::putByValWillNeedExtraRegister):
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-10-27  Dan Bernstein  <mitz@apple.com>
 
         REAL_PLATFORM_NAME build setting is no longer needed

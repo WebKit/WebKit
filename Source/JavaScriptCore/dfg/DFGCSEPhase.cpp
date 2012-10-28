@@ -176,13 +176,8 @@ private:
             case PutByVal:
                 if (!m_graph.byValIsPure(node))
                     return NoNode;
-                switch (node.arrayMode()) {
-                case CONTIGUOUS_TO_TAIL_MODES:
-                case ARRAY_STORAGE_TO_HOLE_MODES:
+                if (node.arrayMode().mayStoreToHole())
                     return NoNode;
-                default:
-                    break;
-                }
                 break;
                 
             default:
@@ -698,7 +693,7 @@ private:
         return NoNode;
     }
     
-    bool checkArrayElimination(NodeIndex child1, Array::Mode arrayMode)
+    bool checkArrayElimination(NodeIndex child1, ArrayMode arrayMode)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
@@ -729,7 +724,7 @@ private:
         return false;
     }
 
-    NodeIndex getIndexedPropertyStorageLoadElimination(NodeIndex child1, Array::Mode arrayMode)
+    NodeIndex getIndexedPropertyStorageLoadElimination(NodeIndex child1, ArrayMode arrayMode)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
@@ -1234,7 +1229,7 @@ private:
         case PutByVal: {
             Edge child1 = m_graph.varArgChild(node, 0);
             Edge child2 = m_graph.varArgChild(node, 1);
-            if (canCSEStorage(node.arrayMode())) {
+            if (node.arrayMode().canCSEStorage()) {
                 NodeIndex nodeIndex = getByValLoadElimination(child1.index(), child2.index());
                 if (nodeIndex == NoNode)
                     break;

@@ -46,42 +46,16 @@ enum Action {
     Write
 };
 
-enum Mode {
+enum Type {
     SelectUsingPredictions, // Implies that we need predictions to decide. We will never get to the backend in this mode.
     Unprofiled, // Implies that array profiling didn't see anything. But that could be because the operands didn't comply with basic type assumptions (base is cell, property is int). This either becomes Generic or ForceExit depending on value profiling.
     ForceExit, // Implies that we have no idea how to execute this operation, so we should just give up.
     Generic,
     String,
     
-    // Modes of conventional indexed storage where the check is non side-effecting.
     Contiguous,
-    ContiguousToTail,
-    ContiguousOutOfBounds,
-    ArrayWithContiguous,
-    ArrayWithContiguousToTail,
-    ArrayWithContiguousOutOfBounds,
-    PossiblyArrayWithContiguous,
-    PossiblyArrayWithContiguousToTail,
-    PossiblyArrayWithContiguousOutOfBounds,
     ArrayStorage,
-    ArrayStorageToHole,
     SlowPutArrayStorage,
-    ArrayStorageOutOfBounds,
-    ArrayWithArrayStorage,
-    ArrayWithArrayStorageToHole,
-    ArrayWithSlowPutArrayStorage,
-    ArrayWithArrayStorageOutOfBounds,
-    PossiblyArrayWithArrayStorage,
-    PossiblyArrayWithArrayStorageToHole,
-    PossiblyArrayWithSlowPutArrayStorage,
-    PossiblyArrayWithArrayStorageOutOfBounds,
-    
-    // Modes of conventional indexed storage where the check is side-effecting.
-    ToContiguous,
-    ToArrayStorage,
-    ArrayToArrayStorage,
-    PossiblyArrayToArrayStorage,
-    ToSlowPutArrayStorage,
     
     Arguments,
     Int8Array,
@@ -94,304 +68,280 @@ enum Mode {
     Float32Array,
     Float64Array
 };
+
+enum Class {
+    NonArray,
+    Array,
+    PossiblyArray
+};
+
+enum Speculation {
+    InBounds,
+    ToHole,
+    OutOfBounds
+};
+
+enum Conversion {
+    AsIs,
+    Convert
+};
 } // namespace Array
 
-// Helpers for 'case' statements. For example, saying "case AllArrayStorageModes:"
-// is the same as having multiple case statements listing off all of the modes that
-// have the word "ArrayStorage" in them.
+const char* arrayTypeToString(Array::Type);
+const char* arrayClassToString(Array::Class);
+const char* arraySpeculationToString(Array::Speculation);
+const char* arrayConversionToString(Array::Conversion);
 
-// First: helpers for non-side-effecting checks.
-#define NON_ARRAY_CONTIGUOUS_MODES                         \
-    Array::Contiguous:                                     \
-    case Array::ContiguousToTail:                          \
-    case Array::ContiguousOutOfBounds:                     \
-    case Array::PossiblyArrayWithContiguous:               \
-    case Array::PossiblyArrayWithContiguousToTail:         \
-    case Array::PossiblyArrayWithContiguousOutOfBounds
-#define ARRAY_WITH_CONTIGUOUS_MODES                        \
-    Array::ArrayWithContiguous:                            \
-    case Array::ArrayWithContiguousToTail:                 \
-    case Array::ArrayWithContiguousOutOfBounds
-#define ALL_CONTIGUOUS_MODES                               \
-    NON_ARRAY_CONTIGUOUS_MODES:                            \
-    case ARRAY_WITH_CONTIGUOUS_MODES
-#define IN_BOUNDS_CONTIGUOUS_MODES                         \
-    Array::Contiguous:                                     \
-    case Array::ArrayWithContiguous:                       \
-    case Array::PossiblyArrayWithContiguous
-#define CONTIGUOUS_TO_TAIL_MODES                           \
-    Array::ContiguousToTail:                               \
-    case Array::ArrayWithContiguousToTail:                 \
-    case Array::PossiblyArrayWithContiguousToTail
-#define OUT_OF_BOUNDS_CONTIGUOUS_MODES                     \
-    Array::ContiguousOutOfBounds:                          \
-    case Array::ArrayWithContiguousOutOfBounds:            \
-    case Array::PossiblyArrayWithContiguousOutOfBounds
-#define NON_ARRAY_ARRAY_STORAGE_MODES                      \
-    Array::ArrayStorage:                                   \
-    case Array::ArrayStorageToHole:                        \
-    case Array::SlowPutArrayStorage:                       \
-    case Array::ArrayStorageOutOfBounds:                   \
-    case Array::PossiblyArrayWithArrayStorage:             \
-    case Array::PossiblyArrayWithArrayStorageToHole:       \
-    case Array::PossiblyArrayWithSlowPutArrayStorage:      \
-    case Array::PossiblyArrayWithArrayStorageOutOfBounds
-#define ARRAY_WITH_ARRAY_STORAGE_MODES                     \
-    Array::ArrayWithArrayStorage:                          \
-    case Array::ArrayWithArrayStorageToHole:               \
-    case Array::ArrayWithSlowPutArrayStorage:              \
-    case Array::ArrayWithArrayStorageOutOfBounds
-#define ALL_ARRAY_STORAGE_MODES                            \
-    NON_ARRAY_ARRAY_STORAGE_MODES:                         \
-    case ARRAY_WITH_ARRAY_STORAGE_MODES
-#define IN_BOUNDS_ARRAY_STORAGE_MODES                      \
-    Array::ArrayStorage:                                   \
-    case Array::ArrayWithArrayStorage:                     \
-    case Array::PossiblyArrayWithArrayStorage
-#define ARRAY_STORAGE_TO_HOLE_MODES                        \
-    Array::ArrayStorageToHole:                             \
-    case Array::ArrayWithArrayStorageToHole:               \
-    case Array::PossiblyArrayWithArrayStorageToHole
-#define SLOW_PUT_ARRAY_STORAGE_MODES                       \
-    Array::SlowPutArrayStorage:                            \
-    case Array::ArrayWithSlowPutArrayStorage:              \
-    case Array::PossiblyArrayWithSlowPutArrayStorage
-#define OUT_OF_BOUNDS_ARRAY_STORAGE_MODES                  \
-    Array::ArrayStorageOutOfBounds:                        \
-    case Array::ArrayWithArrayStorageOutOfBounds:          \
-    case Array::PossiblyArrayWithArrayStorageOutOfBounds
-
-// Next: helpers for side-effecting checks.
-#define NON_ARRAY_EFFECTFUL_MODES                          \
-    Array::ToContiguous:                                   \
-    case Array::ToArrayStorage:                            \
-    case Array::ToSlowPutArrayStorage:                     \
-    case Array::PossiblyArrayToArrayStorage
-#define ARRAY_EFFECTFUL_MODES                              \
-    Array::ArrayToArrayStorage
-#define ALL_EFFECTFUL_CONTIGUOUS_MODES                     \
-    Array::ToContiguous
-#define ALL_EFFECTFUL_ARRAY_STORAGE_MODES                  \
-    Array::ToArrayStorage:                                 \
-    case Array::ToSlowPutArrayStorage:                     \
-    case Array::ArrayToArrayStorage:                       \
-    case Array::PossiblyArrayToArrayStorage
-#define SLOW_PUT_EFFECTFUL_ARRAY_STORAGE_MODES             \
-    Array::ToSlowPutArrayStorage
-#define ALL_EFFECTFUL_MODES                                \
-    ALL_EFFECTFUL_CONTIGUOUS_MODES:                        \
-    case ALL_EFFECTFUL_ARRAY_STORAGE_MODES
-
-Array::Mode fromObserved(ArrayProfile*, Array::Action, bool makeSafe);
-
-Array::Mode refineArrayMode(Array::Mode, SpeculatedType base, SpeculatedType index);
-
-bool modeAlreadyChecked(AbstractValue&, Array::Mode);
-
-const char* modeToString(Array::Mode);
-
-inline bool modeUsesButterfly(Array::Mode arrayMode)
-{
-    switch (arrayMode) {
-    case ALL_CONTIGUOUS_MODES:
-    case ALL_ARRAY_STORAGE_MODES:
-    case ALL_EFFECTFUL_MODES:
-        return true;
-    default:
-        return false;
+class ArrayMode {
+public:
+    ArrayMode()
+    {
+        u.asBytes.type = Array::SelectUsingPredictions;
+        u.asBytes.arrayClass = Array::NonArray;
+        u.asBytes.speculation = Array::InBounds;
+        u.asBytes.conversion = Array::AsIs;
     }
-}
-
-inline bool modeIsJSArray(Array::Mode arrayMode)
-{
-    switch (arrayMode) {
-    case ARRAY_WITH_CONTIGUOUS_MODES:
-    case ARRAY_WITH_ARRAY_STORAGE_MODES:
-    case ARRAY_EFFECTFUL_MODES:
-        return true;
-    default:
-        return false;
+    
+    explicit ArrayMode(Array::Type type)
+    {
+        u.asBytes.type = type;
+        u.asBytes.arrayClass = Array::NonArray;
+        u.asBytes.speculation = Array::InBounds;
+        u.asBytes.conversion = Array::AsIs;
     }
-}
-
-inline bool isInBoundsAccess(Array::Mode arrayMode)
-{
-    switch (arrayMode) {
-    case IN_BOUNDS_CONTIGUOUS_MODES:
-    case CONTIGUOUS_TO_TAIL_MODES:
-    case ARRAY_STORAGE_TO_HOLE_MODES:
-    case IN_BOUNDS_ARRAY_STORAGE_MODES:
-        return true;
-    default:
-        return false;
+    
+    ArrayMode(Array::Type type, Array::Class arrayClass, Array::Speculation speculation, Array::Conversion conversion)
+    {
+        u.asBytes.type = type;
+        u.asBytes.arrayClass = arrayClass;
+        u.asBytes.speculation = speculation;
+        u.asBytes.conversion = conversion;
     }
-}
-
-inline bool isSlowPutAccess(Array::Mode arrayMode)
-{
-    switch (arrayMode) {
-    case SLOW_PUT_ARRAY_STORAGE_MODES:
-    case SLOW_PUT_EFFECTFUL_ARRAY_STORAGE_MODES:
-        return true;
-    default:
-        return false;
+    
+    ArrayMode(Array::Type type, Array::Class arrayClass, Array::Conversion conversion)
+    {
+        u.asBytes.type = type;
+        u.asBytes.arrayClass = arrayClass;
+        u.asBytes.speculation = Array::InBounds;
+        u.asBytes.conversion = conversion;
     }
-}
-
-inline bool mayStoreToTail(Array::Mode arrayMode)
-{
-    switch (arrayMode) {
-    case CONTIGUOUS_TO_TAIL_MODES:
-    case OUT_OF_BOUNDS_CONTIGUOUS_MODES:
-    case ALL_EFFECTFUL_CONTIGUOUS_MODES:
-        return true;
-    default:
-        return false;
+    
+    Array::Type type() const { return static_cast<Array::Type>(u.asBytes.type); }
+    Array::Class arrayClass() const { return static_cast<Array::Class>(u.asBytes.arrayClass); }
+    Array::Speculation speculation() const { return static_cast<Array::Speculation>(u.asBytes.speculation); }
+    Array::Conversion conversion() const { return static_cast<Array::Conversion>(u.asBytes.conversion); }
+    
+    unsigned asWord() const { return u.asWord; }
+    
+    static ArrayMode fromWord(unsigned word)
+    {
+        return ArrayMode(word);
     }
-}
-
-inline bool mayStoreToHole(Array::Mode arrayMode)
-{
-    switch (arrayMode) {
-    case ARRAY_STORAGE_TO_HOLE_MODES:
-    case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
-    case SLOW_PUT_ARRAY_STORAGE_MODES:
-    case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
-        return true;
-    default:
-        return false;
+    
+    static ArrayMode fromObserved(ArrayProfile*, Array::Action, bool makeSafe);
+    
+    ArrayMode withSpeculation(Array::Speculation speculation) const
+    {
+        return ArrayMode(type(), arrayClass(), speculation, conversion());
     }
-}
-
-inline bool canCSEStorage(Array::Mode arrayMode)
-{
-    switch (arrayMode) {
-    case Array::SelectUsingPredictions:
-    case Array::Unprofiled:
-    case Array::ForceExit:
-    case Array::Generic:
-    case Array::Arguments:
-        return false;
-    default:
-        return true;
+    
+    ArrayMode withSpeculation(ArrayProfile* profile, bool makeSafe) const
+    {
+        return withSpeculation(makeSafe ? Array::OutOfBounds : (profile->mayStoreToHole() ? Array::ToHole : Array::InBounds));
     }
-}
-
-inline bool lengthNeedsStorage(Array::Mode arrayMode)
-{
-    return modeIsJSArray(arrayMode);
-}
-
-inline Array::Mode modeForPut(Array::Mode arrayMode)
-{
-    switch (arrayMode) {
-    case Array::String:
-        return Array::Generic;
+    
+    ArrayMode refine(SpeculatedType base, SpeculatedType index) const;
+    
+    bool alreadyChecked(AbstractValue&) const;
+    
+    const char* toString() const;
+    
+    bool usesButterfly() const
+    {
+        switch (type()) {
+        case Array::Contiguous:
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    bool isJSArray() const
+    {
+        return arrayClass() == Array::Array;
+    }
+    
+    bool isInBounds() const
+    {
+        return speculation() == Array::InBounds;
+    }
+    
+    bool mayStoreToHole() const
+    {
+        return !isInBounds();
+    }
+    
+    bool isOutOfBounds() const
+    {
+        return speculation() == Array::OutOfBounds;
+    }
+    
+    bool isSlowPut() const
+    {
+        return type() == Array::SlowPutArrayStorage;
+    }
+    
+    bool canCSEStorage() const
+    {
+        switch (type()) {
+        case Array::SelectUsingPredictions:
+        case Array::Unprofiled:
+        case Array::ForceExit:
+        case Array::Generic:
+        case Array::Arguments:
+            return false;
+        default:
+            return true;
+        }
+    }
+    
+    bool lengthNeedsStorage() const
+    {
+        return isJSArray();
+    }
+    
+    ArrayMode modeForPut() const
+    {
+        switch (type()) {
+        case Array::String:
+            return ArrayMode(Array::Generic);
 #if USE(JSVALUE32_64)
-    case Array::Arguments:
-        return Array::Generic;
+        case Array::Arguments:
+            return ArrayMode(Array::Generic);
 #endif
-    default:
-        return arrayMode;
+        default:
+            return *this;
+        }
     }
+    
+    bool isSpecific() const
+    {
+        switch (type()) {
+        case Array::SelectUsingPredictions:
+        case Array::Unprofiled:
+        case Array::ForceExit:
+        case Array::Generic:
+            return false;
+        default:
+            return true;
+        }
+    }
+    
+    bool supportsLength() const
+    {
+        switch (type()) {
+        case Array::SelectUsingPredictions:
+        case Array::Unprofiled:
+        case Array::ForceExit:
+        case Array::Generic:
+            return false;
+        case Array::Contiguous:
+        case Array::ArrayStorage:
+        case Array::SlowPutArrayStorage:
+            return arrayClass() == Array::Array;
+        default:
+            return true;
+        }
+    }
+    
+    bool benefitsFromStructureCheck() const
+    {
+        switch (type()) {
+        case Array::SelectUsingPredictions:
+        case Array::Unprofiled:
+        case Array::ForceExit:
+        case Array::Generic:
+            return false;
+        default:
+            return conversion() == Array::AsIs;
+        }
+    }
+    
+    bool doesConversion() const
+    {
+        return conversion() == Array::Convert;
+    }
+    
+    ArrayModes arrayModesThatPassFiltering() const
+    {
+        switch (type()) {
+        case Array::Generic:
+            return ALL_ARRAY_MODES;
+        case Array::Contiguous:
+            return arrayModesWithIndexingShape(ContiguousShape);
+        case Array::ArrayStorage:
+            return arrayModesWithIndexingShape(ArrayStorageShape);
+        case Array::SlowPutArrayStorage:
+            return arrayModesWithIndexingShape(SlowPutArrayStorageShape);
+        default:
+            return asArrayModes(NonArray);
+        }
+    }
+    
+    bool operator==(const ArrayMode& other) const
+    {
+        return type() == other.type()
+            && arrayClass() == other.arrayClass()
+            && speculation() == other.speculation()
+            && conversion() == other.conversion();
+    }
+    
+    bool operator!=(const ArrayMode& other) const
+    {
+        return !(*this == other);
+    }
+private:
+    explicit ArrayMode(unsigned word)
+    {
+        u.asWord = word;
+    }
+    
+    ArrayModes arrayModesWithIndexingShape(IndexingType shape) const
+    {
+        switch (arrayClass()) {
+        case Array::NonArray:
+            return asArrayModes(shape);
+        case Array::Array:
+            return asArrayModes(shape | IsArray);
+        case Array::PossiblyArray:
+            return asArrayModes(shape) | asArrayModes(shape | IsArray);
+        default:
+            // This is only necessary for C++ compilers that don't understand enums.
+            return 0;
+        }
+    }
+    
+    union {
+        struct {
+            uint8_t type;
+            uint8_t arrayClass;
+            uint8_t speculation;
+            uint8_t conversion;
+        } asBytes;
+        unsigned asWord;
+    } u;
+};
+
+static inline bool canCSEStorage(const ArrayMode& arrayMode)
+{
+    return arrayMode.canCSEStorage();
 }
 
-inline bool modeIsSpecific(Array::Mode mode)
+static inline bool lengthNeedsStorage(const ArrayMode& arrayMode)
 {
-    switch (mode) {
-    case Array::SelectUsingPredictions:
-    case Array::Unprofiled:
-    case Array::ForceExit:
-    case Array::Generic:
-        return false;
-    default:
-        return true;
-    }
-}
-
-inline bool modeSupportsLength(Array::Mode mode)
-{
-    switch (mode) {
-    case Array::SelectUsingPredictions:
-    case Array::Unprofiled:
-    case Array::ForceExit:
-    case Array::Generic:
-    case NON_ARRAY_CONTIGUOUS_MODES:
-    case NON_ARRAY_ARRAY_STORAGE_MODES:
-    case NON_ARRAY_EFFECTFUL_MODES:
-        return false;
-    default:
-        return true;
-    }
-}
-
-inline bool benefitsFromStructureCheck(Array::Mode mode)
-{
-    switch (mode) {
-    case ALL_EFFECTFUL_MODES:
-    case Array::SelectUsingPredictions:
-    case Array::Unprofiled:
-    case Array::ForceExit:
-    case Array::Generic:
-        return false;
-    default:
-        return true;
-    }
-}
-
-inline bool isEffectful(Array::Mode mode)
-{
-    switch (mode) {
-    case ALL_EFFECTFUL_MODES:
-        return true;
-    default:
-        return false;
-    }
-}
-
-// This returns the set of array modes that will pass filtering of a CheckArray or
-// Arrayify with the given mode.
-inline ArrayModes arrayModesFor(Array::Mode arrayMode)
-{
-    switch (arrayMode) {
-    case Array::Generic:
-        return ALL_ARRAY_MODES;
-    case Array::Contiguous:
-    case Array::ContiguousToTail:
-    case Array::ContiguousOutOfBounds:
-    case Array::ToContiguous:
-        return asArrayModes(NonArrayWithContiguous);
-    case Array::PossiblyArrayWithContiguous:
-    case Array::PossiblyArrayWithContiguousToTail:
-    case Array::PossiblyArrayWithContiguousOutOfBounds:
-        return asArrayModes(NonArrayWithContiguous) | asArrayModes(ArrayWithContiguous);
-    case ARRAY_WITH_CONTIGUOUS_MODES:
-        return asArrayModes(ArrayWithContiguous);
-    case Array::ArrayStorage:
-    case Array::ArrayStorageToHole:
-    case Array::ArrayStorageOutOfBounds:
-    case Array::ToArrayStorage:
-        return asArrayModes(NonArrayWithArrayStorage);
-    case Array::ToSlowPutArrayStorage:
-    case Array::SlowPutArrayStorage:
-        return asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage);
-    case Array::PossiblyArrayWithArrayStorage:
-    case Array::PossiblyArrayWithArrayStorageToHole:
-    case Array::PossiblyArrayWithArrayStorageOutOfBounds:
-    case Array::PossiblyArrayToArrayStorage:
-        return asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage);
-    case Array::PossiblyArrayWithSlowPutArrayStorage:
-        return asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage);
-    case Array::ArrayWithArrayStorage:
-    case Array::ArrayWithArrayStorageToHole:
-    case Array::ArrayWithArrayStorageOutOfBounds:
-    case Array::ArrayToArrayStorage:
-        return asArrayModes(ArrayWithArrayStorage);
-    case Array::ArrayWithSlowPutArrayStorage:
-        return asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage);
-    default:
-        return asArrayModes(NonArray);
-    }
+    return arrayMode.lengthNeedsStorage();
 }
 
 } } // namespace JSC::DFG

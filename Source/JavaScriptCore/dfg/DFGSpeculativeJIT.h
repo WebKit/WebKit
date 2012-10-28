@@ -2270,28 +2270,11 @@ public:
     void compileAllocatePropertyStorage(Node&);
     void compileReallocatePropertyStorage(Node&);
     
-    bool putByValWillNeedExtraRegister(Array::Mode arrayMode)
+    bool putByValWillNeedExtraRegister(ArrayMode arrayMode)
     {
-        switch (arrayMode) {
-        // For ArrayStorage, we need an extra reg for stores to holes except if
-        // we're in SlowPut mode.
-        case ARRAY_STORAGE_TO_HOLE_MODES:
-        case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
-        case ALL_EFFECTFUL_ARRAY_STORAGE_MODES:
-            return true;
-            
-        // For Contiguous, we need an extra reg for any access that may store
-        // to the tail.
-        case CONTIGUOUS_TO_TAIL_MODES:
-        case OUT_OF_BOUNDS_CONTIGUOUS_MODES:
-        case ALL_EFFECTFUL_CONTIGUOUS_MODES:
-            return true;
-            
-        default:
-            return false;
-        }
+        return arrayMode.mayStoreToHole();
     }
-    GPRReg temporaryRegisterForPutByVal(GPRTemporary&, Array::Mode);
+    GPRReg temporaryRegisterForPutByVal(GPRTemporary&, ArrayMode);
     GPRReg temporaryRegisterForPutByVal(GPRTemporary& temporary, Node& node)
     {
         return temporaryRegisterForPutByVal(temporary, node.arrayMode());
@@ -2430,9 +2413,9 @@ public:
     JumpReplacementWatchpoint* forwardSpeculationWatchpoint(ExitKind = UncountableWatchpoint);
     JumpReplacementWatchpoint* speculationWatchpointWithConditionalDirection(ExitKind, bool isForward);
     
-    const TypedArrayDescriptor* typedArrayDescriptor(Array::Mode);
+    const TypedArrayDescriptor* typedArrayDescriptor(ArrayMode);
     
-    JITCompiler::JumpList jumpSlowForUnwantedArrayMode(GPRReg tempWithIndexingTypeReg, Array::Mode arrayMode);
+    JITCompiler::JumpList jumpSlowForUnwantedArrayMode(GPRReg tempWithIndexingTypeReg, ArrayMode);
     void checkArray(Node&);
     void arrayify(Node&, GPRReg baseReg, GPRReg propertyReg);
     void arrayify(Node&);

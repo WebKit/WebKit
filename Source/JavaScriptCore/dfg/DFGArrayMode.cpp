@@ -32,126 +32,126 @@
 
 namespace JSC { namespace DFG {
 
-Array::Mode fromObserved(ArrayProfile* profile, Array::Action action, bool makeSafe)
+ArrayMode ArrayMode::fromObserved(ArrayProfile* profile, Array::Action action, bool makeSafe)
 {
     switch (profile->observedArrayModes()) {
     case 0:
-        return Array::Unprofiled;
+        return ArrayMode(Array::Unprofiled);
     case asArrayModes(NonArray):
         if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
-            return Array::ToContiguous; // FIXME: we don't know whether to go to contiguous or array storage. We're making a static guess here. In future we should use exit profiling for this.
-        return Array::SelectUsingPredictions;
+            return ArrayMode(Array::Contiguous, Array::NonArray, Array::OutOfBounds, Array::Convert); // FIXME: we don't know whether to go to contiguous or array storage. We're making a static guess here. In future we should use exit profiling for this.
+        return ArrayMode(Array::SelectUsingPredictions);
     case asArrayModes(NonArrayWithContiguous):
-        return makeSafe ? Array::ContiguousOutOfBounds : (profile->mayStoreToHole() ? Array::ContiguousToTail : Array::Contiguous);
+        return ArrayMode(Array::Contiguous, Array::NonArray, Array::AsIs).withSpeculation(profile, makeSafe);
     case asArrayModes(ArrayWithContiguous):
-        return makeSafe ? Array::ArrayWithContiguousOutOfBounds : (profile->mayStoreToHole() ? Array::ArrayWithContiguousToTail : Array::ArrayWithContiguous);
+        return ArrayMode(Array::Contiguous, Array::Array, Array::AsIs).withSpeculation(profile, makeSafe);
     case asArrayModes(NonArrayWithContiguous) | asArrayModes(ArrayWithContiguous):
-        return makeSafe ? Array::PossiblyArrayWithContiguousOutOfBounds : (profile->mayStoreToHole() ? Array::PossiblyArrayWithContiguousToTail : Array::PossiblyArrayWithContiguous);
+        return ArrayMode(Array::Contiguous, Array::PossiblyArray, Array::AsIs).withSpeculation(profile, makeSafe);
     case asArrayModes(NonArrayWithArrayStorage):
-        return makeSafe ? Array::ArrayStorageOutOfBounds : (profile->mayStoreToHole() ? Array::ArrayStorageToHole : Array::ArrayStorage);
+        return ArrayMode(Array::ArrayStorage, Array::NonArray, Array::AsIs).withSpeculation(profile, makeSafe);
     case asArrayModes(NonArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage):
-        return Array::SlowPutArrayStorage;
+        return ArrayMode(Array::SlowPutArrayStorage, Array::NonArray, Array::AsIs).withSpeculation(profile, makeSafe);
     case asArrayModes(ArrayWithArrayStorage):
-        return makeSafe ? Array::ArrayWithArrayStorageOutOfBounds : (profile->mayStoreToHole() ? Array::ArrayWithArrayStorageToHole : Array::ArrayWithArrayStorage);
+        return ArrayMode(Array::ArrayStorage, Array::Array, Array::AsIs).withSpeculation(profile, makeSafe);
     case asArrayModes(ArrayWithSlowPutArrayStorage):
     case asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
-        return Array::ArrayWithSlowPutArrayStorage;
+        return ArrayMode(Array::SlowPutArrayStorage, Array::Array, Array::AsIs).withSpeculation(profile, makeSafe);
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage):
-        return makeSafe ? Array::PossiblyArrayWithArrayStorageOutOfBounds : (profile->mayStoreToHole() ? Array::PossiblyArrayWithArrayStorageToHole : Array::PossiblyArrayWithArrayStorage);
+        return ArrayMode(Array::ArrayStorage, Array::PossiblyArray, Array::AsIs).withSpeculation(profile, makeSafe);
     case asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
-        return Array::PossiblyArrayWithSlowPutArrayStorage;
+        return ArrayMode(Array::SlowPutArrayStorage, Array::PossiblyArray, Array::AsIs).withSpeculation(profile, makeSafe);
     case asArrayModes(NonArrayWithContiguous) | asArrayModes(NonArrayWithArrayStorage):
-        return Array::ToArrayStorage;
+        return ArrayMode(Array::ArrayStorage, Array::NonArray, Array::Convert).withSpeculation(profile, makeSafe);
     case asArrayModes(ArrayWithContiguous) | asArrayModes(ArrayWithArrayStorage):
-        return Array::ArrayToArrayStorage;
+        return ArrayMode(Array::ArrayStorage, Array::Array, Array::Convert).withSpeculation(profile, makeSafe);
     case asArrayModes(NonArrayWithContiguous) | asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithContiguous) | asArrayModes(ArrayWithArrayStorage):
-        return Array::PossiblyArrayToArrayStorage;
+        return ArrayMode(Array::ArrayStorage, Array::PossiblyArray, Array::Convert).withSpeculation(profile, makeSafe);
     case asArrayModes(NonArray) | asArrayModes(NonArrayWithContiguous):
         if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
-            return Array::ToContiguous;
-        return Array::SelectUsingPredictions;
+            return ArrayMode(Array::Contiguous, Array::NonArray, Array::OutOfBounds, Array::Convert);
+        return ArrayMode(Array::SelectUsingPredictions);
     case asArrayModes(NonArray) | asArrayModes(NonArrayWithContiguous) | asArrayModes(NonArrayWithArrayStorage):
     case asArrayModes(NonArray) | asArrayModes(NonArrayWithArrayStorage):
         if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
-            return Array::ToArrayStorage;
-        return Array::SelectUsingPredictions;
+            return ArrayMode(Array::ArrayStorage, Array::NonArray, Array::OutOfBounds, Array::Convert);
+        return ArrayMode(Array::SelectUsingPredictions);
     case asArrayModes(NonArray) | asArrayModes(NonArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArray) | asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage):
         if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
-            return Array::ToSlowPutArrayStorage;
-        return Array::SelectUsingPredictions;
+            return ArrayMode(Array::SlowPutArrayStorage, Array::NonArray, Array::OutOfBounds, Array::Convert);
+        return ArrayMode(Array::SelectUsingPredictions);
     default:
         // We know that this is possibly a kind of array for which, though there is no
         // useful data in the array profile, we may be able to extract useful data from
         // the value profiles of the inputs. Hence, we leave it as undecided, and let
         // the predictions propagator decide later.
-        return Array::SelectUsingPredictions;
+        return ArrayMode(Array::SelectUsingPredictions);
     }
 }
 
-Array::Mode refineArrayMode(Array::Mode arrayMode, SpeculatedType base, SpeculatedType index)
+ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index) const
 {
     if (!base || !index) {
         // It can be that we had a legitimate arrayMode but no incoming predictions. That'll
         // happen if we inlined code based on, say, a global variable watchpoint, but later
         // realized that the callsite could not have possibly executed. It may be worthwhile
         // to fix that, but for now I'm leaving it as-is.
-        return Array::ForceExit;
+        return ArrayMode(Array::ForceExit);
     }
     
     if (!isInt32Speculation(index) || !isCellSpeculation(base))
-        return Array::Generic;
+        return ArrayMode(Array::Generic);
     
-    if (arrayMode == Array::Unprofiled) {
+    if (type() == Array::Unprofiled) {
         // If the indexing type wasn't recorded in the array profile but the values are
         // base=cell property=int, then we know that this access didn't execute.
-        return Array::ForceExit;
+        return ArrayMode(Array::ForceExit);
     }
     
-    if (arrayMode != Array::SelectUsingPredictions)
-        return arrayMode;
+    if (type() != Array::SelectUsingPredictions)
+        return *this;
     
     if (isStringSpeculation(base))
-        return Array::String;
+        return ArrayMode(Array::String);
     
     if (isArgumentsSpeculation(base))
-        return Array::Arguments;
+        return ArrayMode(Array::Arguments);
     
     if (isInt8ArraySpeculation(base))
-        return Array::Int8Array;
+        return ArrayMode(Array::Int8Array);
     
     if (isInt16ArraySpeculation(base))
-        return Array::Int16Array;
+        return ArrayMode(Array::Int16Array);
     
     if (isInt32ArraySpeculation(base))
-        return Array::Int32Array;
+        return ArrayMode(Array::Int32Array);
     
     if (isUint8ArraySpeculation(base))
-        return Array::Uint8Array;
+        return ArrayMode(Array::Uint8Array);
     
     if (isUint8ClampedArraySpeculation(base))
-        return Array::Uint8ClampedArray;
+        return ArrayMode(Array::Uint8ClampedArray);
     
     if (isUint16ArraySpeculation(base))
-        return Array::Uint16Array;
+        return ArrayMode(Array::Uint16Array);
     
     if (isUint32ArraySpeculation(base))
-        return Array::Uint32Array;
+        return ArrayMode(Array::Uint32Array);
     
     if (isFloat32ArraySpeculation(base))
-        return Array::Float32Array;
+        return ArrayMode(Array::Float32Array);
     
     if (isFloat64ArraySpeculation(base))
-        return Array::Float64Array;
+        return ArrayMode(Array::Float64Array);
     
-    return Array::Generic;
+    return ArrayMode(Array::Generic);
 }
 
-bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
+bool ArrayMode::alreadyChecked(AbstractValue& value) const
 {
-    switch (arrayMode) {
+    switch (type()) {
     case Array::Generic:
         return true;
         
@@ -162,63 +162,43 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
         return isStringSpeculation(value.m_type);
         
     case Array::Contiguous:
-    case Array::ContiguousToTail:
-    case Array::ContiguousOutOfBounds:
-    case Array::PossiblyArrayWithContiguous:
-    case Array::PossiblyArrayWithContiguousToTail:
-    case Array::PossiblyArrayWithContiguousOutOfBounds:
-    case Array::ToContiguous:
+        if (arrayClass() == Array::Array) {
+            if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithContiguous)))
+                return true;
+            return value.m_currentKnownStructure.hasSingleton()
+                && hasContiguous(value.m_currentKnownStructure.singleton()->indexingType())
+                && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
+        }
         if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(NonArrayWithContiguous) | asArrayModes(ArrayWithContiguous)))
             return true;
         return value.m_currentKnownStructure.hasSingleton()
             && hasContiguous(value.m_currentKnownStructure.singleton()->indexingType());
         
-    case Array::ArrayWithContiguous:
-    case Array::ArrayWithContiguousToTail:
-    case Array::ArrayWithContiguousOutOfBounds:
-        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithContiguous)))
-            return true;
-        return value.m_currentKnownStructure.hasSingleton()
-            && hasContiguous(value.m_currentKnownStructure.singleton()->indexingType())
-            && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
-
     case Array::ArrayStorage:
-    case Array::ArrayStorageToHole:
-    case Array::ArrayStorageOutOfBounds:
-    case Array::PossiblyArrayWithArrayStorage:
-    case Array::PossiblyArrayWithArrayStorageToHole:
-    case Array::PossiblyArrayWithArrayStorageOutOfBounds:
-    case Array::ToArrayStorage:
-    case Array::PossiblyArrayToArrayStorage:
+        if (arrayClass() == Array::Array) {
+            if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithArrayStorage)))
+                return true;
+            return value.m_currentKnownStructure.hasSingleton()
+                && hasFastArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
+                && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
+        }
         if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage)))
             return true;
         return value.m_currentKnownStructure.hasSingleton()
             && hasFastArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
         
     case Array::SlowPutArrayStorage:
-    case Array::PossiblyArrayWithSlowPutArrayStorage:
-    case Array::ToSlowPutArrayStorage:
+        if (arrayClass() == Array::Array) {
+            if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
+                return true;
+            return value.m_currentKnownStructure.hasSingleton()
+                && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
+                && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
+        }
         if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
             return true;
         return value.m_currentKnownStructure.hasSingleton()
             && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
-        
-    case Array::ArrayWithArrayStorage:
-    case Array::ArrayWithArrayStorageToHole:
-    case Array::ArrayWithArrayStorageOutOfBounds:
-    case Array::ArrayToArrayStorage:
-        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithArrayStorage)))
-            return true;
-        return value.m_currentKnownStructure.hasSingleton()
-            && hasFastArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
-            && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
-        
-    case Array::ArrayWithSlowPutArrayStorage:
-        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
-            return true;
-        return value.m_currentKnownStructure.hasSingleton()
-            && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
-            && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
         
     case Array::Arguments:
         return isArgumentsSpeculation(value.m_type);
@@ -255,13 +235,13 @@ bool modeAlreadyChecked(AbstractValue& value, Array::Mode arrayMode)
         break;
     }
     
-    ASSERT_NOT_REACHED();
+    CRASH();
     return false;
 }
 
-const char* modeToString(Array::Mode mode)
+const char* arrayTypeToString(Array::Type type)
 {
-    switch (mode) {
+    switch (type) {
     case Array::SelectUsingPredictions:
         return "SelectUsingPredictions";
     case Array::Unprofiled:
@@ -274,56 +254,10 @@ const char* modeToString(Array::Mode mode)
         return "String";
     case Array::Contiguous:
         return "Contiguous";
-    case Array::ContiguousToTail:
-        return "ContiguousToTail";
-    case Array::ContiguousOutOfBounds:
-        return "ContiguousOutOfBounds";
-    case Array::ArrayWithContiguous:
-        return "ArrayWithContiguous";
-    case Array::ArrayWithContiguousToTail:
-        return "ArrayWithContiguousToTail";
-    case Array::ArrayWithContiguousOutOfBounds:
-        return "ArrayWithContiguousOutOfBounds";
-    case Array::PossiblyArrayWithContiguous:
-        return "PossiblyArrayWithContiguous";
-    case Array::PossiblyArrayWithContiguousToTail:
-        return "PossiblyArrayWithContiguousToTail";
-    case Array::PossiblyArrayWithContiguousOutOfBounds:
-        return "PossiblyArrayWithContiguousOutOfBounds";
     case Array::ArrayStorage:
         return "ArrayStorage";
-    case Array::ArrayStorageToHole:
-        return "ArrayStorageToHole";
     case Array::SlowPutArrayStorage:
         return "SlowPutArrayStorage";
-    case Array::ArrayStorageOutOfBounds:
-        return "ArrayStorageOutOfBounds";
-    case Array::ArrayWithArrayStorage:
-        return "ArrayWithArrayStorage";
-    case Array::ArrayWithArrayStorageToHole:
-        return "ArrayWithArrayStorageToHole";
-    case Array::ArrayWithSlowPutArrayStorage:
-        return "ArrayWithSlowPutArrayStorage";
-    case Array::ArrayWithArrayStorageOutOfBounds:
-        return "ArrayWithArrayStorageOutOfBounds";
-    case Array::PossiblyArrayWithArrayStorage:
-        return "PossiblyArrayWithArrayStorage";
-    case Array::PossiblyArrayWithArrayStorageToHole:
-        return "PossiblyArrayWithArrayStorageToHole";
-    case Array::PossiblyArrayWithSlowPutArrayStorage:
-        return "PossiblyArrayWithSlowPutArrayStorage";
-    case Array::PossiblyArrayWithArrayStorageOutOfBounds:
-        return "PossiblyArrayWithArrayStorageOutOfBounds";
-    case Array::ToContiguous:
-        return "ToContiguous";
-    case Array::ToArrayStorage:
-        return "ToArrayStorage";
-    case Array::ToSlowPutArrayStorage:
-        return "ToSlowPutArrayStorage";
-    case Array::ArrayToArrayStorage:
-        return "ArrayToArrayStorage";
-    case Array::PossiblyArrayToArrayStorage:
-        return "PossiblyArrayToArrayStorage";
     case Array::Arguments:
         return "Arguments";
     case Array::Int8Array:
@@ -351,6 +285,53 @@ const char* modeToString(Array::Mode mode)
         // gone wrong.
         return "Unknown!";
     }
+}
+
+const char* arrayClassToString(Array::Class arrayClass)
+{
+    switch (arrayClass) {
+    case Array::Array:
+        return "Array";
+    case Array::NonArray:
+        return "NonArray";
+    case Array::PossiblyArray:
+        return "PossiblyArray";
+    default:
+        return "Unknown!";
+    }
+}
+
+const char* arraySpeculationToString(Array::Speculation speculation)
+{
+    switch (speculation) {
+    case Array::InBounds:
+        return "InBounds";
+    case Array::ToHole:
+        return "ToHole";
+    case Array::OutOfBounds:
+        return "OutOfBounds";
+    default:
+        return "Unknown!";
+    }
+}
+
+const char* arrayConversionToString(Array::Conversion conversion)
+{
+    switch (conversion) {
+    case Array::AsIs:
+        return "AsIs";
+    case Array::Convert:
+        return "Convert";
+    default:
+        return "Unknown!";
+    }
+}
+
+const char* ArrayMode::toString() const
+{
+    static char buffer[256];
+    snprintf(buffer, sizeof(buffer), "%s%s%s%s", arrayTypeToString(type()), arrayClassToString(arrayClass()), arraySpeculationToString(speculation()), arrayConversionToString(conversion()));
+    return buffer;
 }
 
 } } // namespace JSC::DFG

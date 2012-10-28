@@ -490,14 +490,14 @@ public:
     // - and so on.
     bool byValIsPure(Node& node)
     {
-        switch (node.arrayMode()) {
+        switch (node.arrayMode().type()) {
         case Array::Generic:
-        case OUT_OF_BOUNDS_CONTIGUOUS_MODES:
-        case ARRAY_STORAGE_TO_HOLE_MODES:
-        case OUT_OF_BOUNDS_ARRAY_STORAGE_MODES:
-        case SLOW_PUT_ARRAY_STORAGE_MODES:
-        case ALL_EFFECTFUL_MODES:
             return false;
+        case Array::Contiguous:
+        case Array::ArrayStorage:
+            return !node.arrayMode().isOutOfBounds();
+        case Array::SlowPutArrayStorage:
+            return !node.arrayMode().mayStoreToHole();
         case Array::String:
             return node.op() == GetByVal;
 #if USE(JSVALUE32_64)

@@ -767,18 +767,18 @@ struct Node {
         }
     }
     
-    Array::Mode arrayMode()
+    ArrayMode arrayMode()
     {
         ASSERT(hasArrayMode());
-        return static_cast<Array::Mode>(m_opInfo);
+        return ArrayMode::fromWord(m_opInfo);
     }
     
-    bool setArrayMode(Array::Mode arrayMode)
+    bool setArrayMode(ArrayMode arrayMode)
     {
         ASSERT(hasArrayMode());
         if (this->arrayMode() == arrayMode)
             return false;
-        m_opInfo = arrayMode;
+        m_opInfo = arrayMode.asWord();
         return true;
     }
     

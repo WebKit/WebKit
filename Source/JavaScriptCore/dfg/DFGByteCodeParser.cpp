@@ -906,13 +906,13 @@ private:
         return getPrediction(m_graph.size(), m_currentProfilingIndex);
     }
     
-    Array::Mode getArrayMode(ArrayProfile* profile)
+    ArrayMode getArrayMode(ArrayProfile* profile)
     {
         profile->computeUpdatedPrediction();
-        return fromObserved(profile, Array::Read, false);
+        return ArrayMode::fromObserved(profile, Array::Read, false);
     }
     
-    Array::Mode getArrayModeAndEmitChecks(ArrayProfile* profile, Array::Action action, NodeIndex base)
+    ArrayMode getArrayModeAndEmitChecks(ArrayProfile* profile, Array::Action action, NodeIndex base)
     {
         profile->computeUpdatedPrediction();
         
@@ -926,9 +926,9 @@ private:
             m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
             || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, OutOfBounds);
         
-        Array::Mode result = fromObserved(profile, action, makeSafe);
+        ArrayMode result = ArrayMode::fromObserved(profile, action, makeSafe);
         
-        if (profile->hasDefiniteStructure() && benefitsFromStructureCheck(result))
+        if (profile->hasDefiniteStructure() && result.benefitsFromStructureCheck())
             addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure())), base);
         
         return result;
@@ -1649,16 +1649,11 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (argumentCountIncludingThis != 2)
             return false;
         
-        Array::Mode arrayMode = getArrayMode(m_currentInstruction[5].u.arrayProfile);
-        switch (arrayMode) {
-        case Array::ArrayWithArrayStorageToHole:
-            ASSERT_NOT_REACHED();
-            
-        case Array::ArrayWithContiguous:
-        case Array::ArrayWithContiguousOutOfBounds:
-        case Array::ArrayWithArrayStorage:
-        case Array::ArrayWithArrayStorageOutOfBounds: {
-            NodeIndex arrayPush = addToGraph(ArrayPush, OpInfo(arrayMode), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
+        ArrayMode arrayMode = getArrayMode(m_currentInstruction[5].u.arrayProfile);
+        switch (arrayMode.type()) {
+        case Array::Contiguous:
+        case Array::ArrayStorage: {
+            NodeIndex arrayPush = addToGraph(ArrayPush, OpInfo(arrayMode.asWord()), OpInfo(prediction), get(registerOffset + argumentToOperand(0)), get(registerOffset + argumentToOperand(1)));
             if (usesResult)
                 set(resultOperand, arrayPush);
             
@@ -1674,16 +1669,11 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
         if (argumentCountIncludingThis != 1)
             return false;
         
-        Array::Mode arrayMode = getArrayMode(m_currentInstruction[5].u.arrayProfile);
-        switch (arrayMode) {
-        case Array::ArrayWithArrayStorageToHole:
-            ASSERT_NOT_REACHED();
-            
-        case Array::ArrayWithContiguous:
-        case Array::ArrayWithContiguousOutOfBounds:
-        case Array::ArrayWithArrayStorage:
-        case Array::ArrayWithArrayStorageOutOfBounds: {
-            NodeIndex arrayPop = addToGraph(ArrayPop, OpInfo(arrayMode), OpInfo(prediction), get(registerOffset + argumentToOperand(0)));
+        ArrayMode arrayMode = getArrayMode(m_currentInstruction[5].u.arrayProfile);
+        switch (arrayMode.type()) {
+        case Array::Contiguous:
+        case Array::ArrayStorage: {
+            NodeIndex arrayPop = addToGraph(ArrayPop, OpInfo(arrayMode.asWord()), OpInfo(prediction), get(registerOffset + argumentToOperand(0)));
             if (usesResult)
                 set(resultOperand, arrayPop);
             return true;
@@ -2476,9 +2466,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             SpeculatedType prediction = getPrediction();
             
             NodeIndex base = get(currentInstruction[2].u.operand);
-            Array::Mode arrayMode = getArrayModeAndEmitChecks(currentInstruction[4].u.arrayProfile, Array::Read, base);
+            ArrayMode arrayMode = getArrayModeAndEmitChecks(currentInstruction[4].u.arrayProfile, Array::Read, base);
             NodeIndex property = get(currentInstruction[3].u.operand);
-            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(arrayMode), OpInfo(prediction), base, property);
+            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction), base, property);
             set(currentInstruction[1].u.operand, getByVal);
 
             NEXT_OPCODE(op_get_by_val);
@@ -2487,7 +2477,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_put_by_val: {
             NodeIndex base = get(currentInstruction[1].u.operand);
 
-            Array::Mode arrayMode = getArrayModeAndEmitChecks(currentInstruction[4].u.arrayProfile, Array::Write, base);
+            ArrayMode arrayMode = getArrayModeAndEmitChecks(currentInstruction[4].u.arrayProfile, Array::Write, base);
             
             NodeIndex property = get(currentInstruction[2].u.operand);
             NodeIndex value = get(currentInstruction[3].u.operand);
@@ -2496,7 +2486,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addVarArgChild(property);
             addVarArgChild(value);
             addVarArgChild(NoNode); // Leave room for property storage.
-            addToGraph(Node::VarArg, PutByVal, OpInfo(arrayMode), OpInfo(0));
+            addToGraph(Node::VarArg, PutByVal, OpInfo(arrayMode.asWord()), OpInfo(0));
 
             NEXT_OPCODE(op_put_by_val);
         }
