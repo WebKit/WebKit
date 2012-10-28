@@ -121,21 +121,6 @@ WebProcessProxy* WebProcessProxy::fromConnection(CoreIPC::Connection* connection
     return webProcessProxy;
 }
 
-void WebProcessProxy::addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver* messageReceiver)
-{
-    m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
-}
-
-void WebProcessProxy::addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver* messageReceiver)
-{
-    m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
-}
-
-void WebProcessProxy::removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID)
-{
-    m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
-}
-
 void WebProcessProxy::connect()
 {
     ASSERT(!m_processLauncher);
@@ -431,27 +416,44 @@ void WebProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProces
 
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
-    if (m_messageReceiverMap.dispatchMessage(connection, messageID, decoder))
-        return;
-
     if (m_context->dispatchMessage(connection, messageID, decoder))
         return;
 
-    ASSERT(messageID.is<CoreIPC::MessageClassWebProcessProxy>());
-    didReceiveWebProcessProxyMessage(connection, messageID, decoder);
+    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
+        didReceiveWebProcessProxyMessage(connection, messageID, decoder);
+        return;
+    }
+
+    uint64_t pageID = decoder.destinationID();
+    if (!pageID)
+        return;
+
+    WebPageProxy* pageProxy = webPage(pageID);
+    if (!pageProxy)
+        return;
+    
+    pageProxy->didReceiveMessage(connection, messageID, decoder);
 }
 
 void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    if (m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder))
-        return;
-
     if (m_context->dispatchSyncMessage(connection, messageID, decoder, replyEncoder))
         return;
 
+    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
+        didReceiveSyncWebProcessProxyMessage(connection, messageID, decoder, replyEncoder);
+        return;
+    }
+
+    uint64_t pageID = decoder.destinationID();
+    if (!pageID)
+        return;
     
-    ASSERT(messageID.is<CoreIPC::MessageClassWebProcessProxy>());
-    didReceiveSyncWebProcessProxyMessage(connection, messageID, decoder, replyEncoder);
+    WebPageProxy* pageProxy = webPage(pageID);
+    if (!pageProxy)
+        return;
+    
+    pageProxy->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
 }
 
 void WebProcessProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)

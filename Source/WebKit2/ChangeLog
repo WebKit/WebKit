@@ -1,3 +1,49 @@
+2012-10-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132740.
+        http://trac.webkit.org/changeset/132740
+        https://bugs.webkit.org/show_bug.cgi?id=100603
+
+        "Causing many crashes" (Requested by weinig on #webkit).
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::DownloadProxy):
+        (WebKit::DownloadProxy::invalidate):
+        (WebKit):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (DownloadProxy):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createDownloadProxy):
+        (WebKit::WebContext::downloadFinished):
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * UIProcess/WebContext.h:
+        (WebKit):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::~WebPageProxy):
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        * UIProcess/WebPageProxy.h:
+        (CoreIPC):
+        (WebPageProxy):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * WebProcess/WebPage/WebPageGroupProxy.cpp:
+        (WebKit::WebPageGroupProxy::~WebPageGroupProxy):
+        (WebKit):
+        (WebKit::WebPageGroupProxy::didReceiveMessage):
+        (WebKit::WebPageGroupProxy::WebPageGroupProxy):
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        (CoreIPC):
+        (WebPageGroupProxy):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveSyncMessage):
+        (WebKit::WebProcess::didReceiveMessage):
+
 2012-10-27  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Coordinated Graphics: Animation jerkiness when rAF is enabled

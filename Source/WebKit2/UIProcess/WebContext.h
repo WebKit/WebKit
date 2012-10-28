@@ -50,31 +50,30 @@ namespace WebKit {
 
 class DownloadProxy;
 class WebApplicationCacheManagerProxy;
+#if ENABLE(BATTERY_STATUS)
+class WebBatteryManagerProxy;
+#endif
 class WebCookieManagerProxy;
 class WebDatabaseManagerProxy;
 class WebGeolocationManagerProxy;
 class WebIconDatabase;
 class WebKeyValueStorageManagerProxy;
 class WebMediaCacheManagerProxy;
+#if ENABLE(NETWORK_INFO)
+class WebNetworkInfoManagerProxy;
+#endif
 class WebNotificationManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
 class WebResourceCacheManagerProxy;
-struct StatisticsData;
-struct WebProcessCreationParameters;
-
-#if ENABLE(BATTERY_STATUS)
-class WebBatteryManagerProxy;
-#endif
-#if ENABLE(NETWORK_INFO)
-class WebNetworkInfoManagerProxy;
-#endif
 #if USE(SOUP)
 class WebSoupRequestManagerProxy;
 #endif
 #if ENABLE(VIBRATION)
 class WebVibrationProxy;
 #endif
+struct StatisticsData;
+struct WebProcessCreationParameters;
     
 typedef GenericCallback<WKDictionaryRef> DictionaryCallback;
 
