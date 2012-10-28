@@ -1,3 +1,33 @@
+2012-10-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Get rid of StyleResolver state related to unknown pseudo-elements.
+        https://bugs.webkit.org/show_bug.cgi?id=100582
+
+        Reviewed by Eric Seidel.
+
+        All of the state, related to unknown pseudo-elements is already understood at the time of collecting rules.
+        We can just get rid of most of this code in StyleResolver.
+
+        At the time of matching rules, we know for certain that only rules that contain unknown pseudo-elements,
+        or are UA rules, or are explicitly invited by a TreeScope will match. So we can just return early in many cases.
+
+        No change in behavior, covered by existing tests.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector): Removed now-unnecessary param.
+        (WebCore::SelectorChecker::checkOneSelector): Ditto.
+        * css/SelectorChecker.h:
+        (SelectorChecker): Ditto.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver): Ditto.
+        (MatchingUARulesScope): Moved class definition here, since we now use it in a different place.
+        (WebCore::StyleResolver::collectMatchingRules): Changed the logic to stop matching rules that definitely won't match in a different scope.
+        (WebCore::StyleResolver::collectMatchingRulesForList): Removed code that's now unnecesssary.
+        (WebCore::StyleResolver::checkSelector): Removed now-unnecessary param.
+        (WebCore::StyleResolver::checkRegionSelector): Removed weird dead code.
+        * css/StyleResolver.h:
+        (StyleResolver): Removed now-unnecessary member.
+
 2012-10-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132696.

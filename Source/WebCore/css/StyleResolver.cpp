@@ -273,7 +273,6 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     , m_matchAuthorAndUserStyles(matchAuthorAndUserStyles)
     , m_sameOriginOnly(false)
     , m_distributedToInsertionPoint(false)
-    , m_hasUnknownPseudoElements(false)
     , m_fontSelector(CSSFontSelector::create(document))
     , m_applyPropertyToRegularStyle(true)
     , m_applyPropertyToVisitedLinkStyle(false)
@@ -637,10 +636,55 @@ inline void StyleResolver::addElementStyleProperties(MatchResult& result, const 
         result.isCacheable = false;
 }
 
+class MatchingUARulesScope {
+public:
+    MatchingUARulesScope();
+    ~MatchingUARulesScope();
+
+    static bool isMatchingUARules();
+
+private:
+    static bool m_matchingUARules;
+};
+
+MatchingUARulesScope::MatchingUARulesScope()
+{
+    ASSERT(!m_matchingUARules);
+    m_matchingUARules = true;
+}
+
+MatchingUARulesScope::~MatchingUARulesScope()
+{
+    m_matchingUARules = false;
+}
+
+inline bool MatchingUARulesScope::isMatchingUARules()
+{
+    return m_matchingUARules;
+}
+
+bool MatchingUARulesScope::m_matchingUARules = false;
+
 void StyleResolver::collectMatchingRules(RuleSet* rules, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions& options)
 {
     ASSERT(rules);
     ASSERT(m_element);
+
+    const AtomicString& pseudoId = m_element->shadowPseudoId();
+    if (!pseudoId.isEmpty()) {
+        ASSERT(m_styledElement);
+        collectMatchingRulesForList(rules->shadowPseudoElementRules(pseudoId.impl()), firstRuleIndex, lastRuleIndex, options);
+    }
+
+    // Check whether other types of rules are applicable in the current tree scope. Criteria for this:
+    // a) it's a UA rule
+    // b) the tree scope allows author rules
+    // c) the rules comes from a scoped style sheet within the same tree scope
+    TreeScope* treeScope = m_element->treeScope();
+    if (!MatchingUARulesScope::isMatchingUARules()
+        && !treeScope->applyAuthorStyles()
+        && (!options.scope || options.scope->treeScope() != treeScope))
+        return;
 
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
     // then sort the buffer.
@@ -650,11 +694,7 @@ void StyleResolver::collectMatchingRules(RuleSet* rules, int& firstRuleIndex, in
         for (size_t i = 0; i < m_styledElement->classNames().size(); ++i)
             collectMatchingRulesForList(rules->classRules(m_styledElement->classNames()[i].impl()), firstRuleIndex, lastRuleIndex, options);
     }
-    const AtomicString& pseudoId = m_element->shadowPseudoId();
-    if (!pseudoId.isEmpty()) {
-        ASSERT(m_styledElement);
-        collectMatchingRulesForList(rules->shadowPseudoElementRules(pseudoId.impl()), firstRuleIndex, lastRuleIndex, options);
-    }
+
     if (m_element->isLink())
         collectMatchingRulesForList(rules->linkPseudoClassRules(), firstRuleIndex, lastRuleIndex, options);
     if (m_checker.matchesFocusPseudoClass(m_element))
@@ -818,41 +858,10 @@ void StyleResolver::matchUARules(MatchResult& result, RuleSet* rules)
     sortAndTransferMatchedRules(result);
 }
 
-class MatchingUARulesScope {
-public:
-    MatchingUARulesScope();
-    ~MatchingUARulesScope();
-
-    static bool isMatchingUARules();
-
-private:
-    static bool m_matchingUARules;
-};
-
-MatchingUARulesScope::MatchingUARulesScope()
-{
-    ASSERT(!m_matchingUARules);
-    m_matchingUARules = true;
-}
-
-MatchingUARulesScope::~MatchingUARulesScope()
-{
-    m_matchingUARules = false;
-}
-
-inline bool MatchingUARulesScope::isMatchingUARules()
-{
-    return m_matchingUARules;
-}
-
-bool MatchingUARulesScope::m_matchingUARules = false;
-
 void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, int& firstRuleIndex, int& lastRuleIndex, const MatchOptions& options)
 {
     if (!rules)
         return;
-
-    TreeScope* treeScope = m_element->treeScope();
 
     // In some cases we may end up looking up style for random elements in the middle of a recursive tree resolve.
     // Ancestor identifier filter won't be up-to-date in that case and we can't use the fast path.
@@ -867,19 +876,6 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, i
         StyleRule* rule = ruleData.rule();
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willMatchRule(document(), rule);
         if (checkSelector(ruleData, options.scope)) {
-            // Check whether the rule is applicable in the current tree scope. Criteria for this:
-            // a) it's a UA rule
-            // b) the tree scope allows author rules
-            // c) the rules comes from a scoped style sheet within the same tree scope
-            // d) the rule contains shadow-ID pseudo elements
-            if (!MatchingUARulesScope::isMatchingUARules()
-                && !treeScope->applyAuthorStyles()
-                && (!options.scope || options.scope->treeScope() != treeScope)
-                && !m_hasUnknownPseudoElements) {
-
-                InspectorInstrumentation::didMatchRule(cookie, false);
-                continue;
-            }
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
             const StylePropertySet* properties = rule->properties();
             if (!properties || (properties->isEmpty() && !options.includeEmptyRules)) {
@@ -2196,7 +2192,6 @@ PassRefPtr<CSSRuleList> StyleResolver::pseudoStyleRulesForElement(Element* e, Ps
 inline bool StyleResolver::checkSelector(const RuleData& ruleData, const ContainerNode* scope)
 {
     m_dynamicPseudo = NOPSEUDO;
-    m_hasUnknownPseudoElements = false;
 
     if (ruleData.hasFastCheckableSelector()) {
         // We know this selector does not include any pseudo elements.
@@ -2220,7 +2215,7 @@ inline bool StyleResolver::checkSelector(const RuleData& ruleData, const Contain
     context.elementParentStyle = m_parentNode ? m_parentNode->renderStyle() : 0;
     context.scope = scope;
     context.pseudoStyle = m_pseudoStyle;
-    SelectorChecker::SelectorMatch match = m_checker.checkSelector(context, m_dynamicPseudo, m_hasUnknownPseudoElements);
+    SelectorChecker::SelectorMatch match = m_checker.checkSelector(context, m_dynamicPseudo);
     if (match != SelectorChecker::SelectorMatches)
         return false;
     if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != m_dynamicPseudo)
@@ -2233,7 +2228,6 @@ bool StyleResolver::checkRegionSelector(CSSSelector* regionSelector, Element* re
     if (!regionSelector || !regionElement)
         return false;
 
-    m_hasUnknownPseudoElements = false;
     m_pseudoStyle = NOPSEUDO;
 
     for (CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s))

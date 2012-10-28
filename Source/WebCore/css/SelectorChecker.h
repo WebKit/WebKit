@@ -82,7 +82,7 @@ public:
     };
 
     bool checkSelector(CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
-    SelectorMatch checkSelector(const SelectorCheckingContext&, PseudoId&, bool& hasUnknownPseudoElements) const;
+    SelectorMatch checkSelector(const SelectorCheckingContext&, PseudoId&) const;
     template<typename SiblingTraversalStrategy>
     bool checkOneSelector(const SelectorCheckingContext&, const SiblingTraversalStrategy&) const;
 

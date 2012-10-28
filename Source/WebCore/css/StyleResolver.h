@@ -357,7 +357,7 @@ private:
     void sortMatchedRules();
     void sortAndTransferMatchedRules(MatchResult&);
 
-    bool checkSelector(const RuleData&, const ContainerNode* scope = 0);
+    bool checkSelector(const RuleData&, const ContainerNode* scope);
     bool checkRegionSelector(CSSSelector* regionSelector, Element* regionElement);
     void applyMatchedProperties(const MatchResult&, const Element*);
     enum StyleApplicationPass {
@@ -492,7 +492,6 @@ private:
     bool m_matchAuthorAndUserStyles;
     bool m_sameOriginOnly;
     bool m_distributedToInsertionPoint;
-    bool m_hasUnknownPseudoElements;
 
     RefPtr<CSSFontSelector> m_fontSelector;
     Vector<OwnPtr<MediaQueryResult> > m_viewportDependentMediaQueryResults;
