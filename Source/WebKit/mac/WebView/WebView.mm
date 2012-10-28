@@ -3029,6 +3029,7 @@ static Vector<String> toStringVector(NSArray* patterns)
 
 + (void)_setLoadResourcesSerially:(BOOL)serialize 
 {
+    WebPlatformStrategies::initialize();
     resourceLoadScheduler()->setSerialLoadingEnabled(serialize);
 }
 

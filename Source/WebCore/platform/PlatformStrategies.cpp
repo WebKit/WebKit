@@ -49,7 +49,7 @@ void setPlatformStrategies(PlatformStrategies* platformStrategies)
     
     // FIXME: This happens when mixing different platform strategies, and we should probably
     // throw an exception here in release builds.
-    ASSERT(platformStrategies != s_platformStrategies);
+    ASSERT(platformStrategies == s_platformStrategies);
 }
 
 bool hasPlatformStrategies()
