@@ -1,3 +1,22 @@
+2012-10-27  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Find-in-page reports matches in hidden iframes
+        https://bugs.webkit.org/show_bug.cgi?id=100604
+
+        Reviewed by Eric Seidel.
+
+        This is actually a regression caused by
+        http://trac.webkit.org/changeset/128784. This patch adds back some code
+        removed in WebFrameImpl::shouldScopeMatches in r128784.
+
+        This patch also introduces a test so that we don't make this mistake
+        again.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::shouldScopeMatches):
+        * tests/WebFrameTest.cpp:
+        * tests/data/find_in_hidden_frame.html: Added.
+
 2012-10-26  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Convert Chromium template string to an LDML date format

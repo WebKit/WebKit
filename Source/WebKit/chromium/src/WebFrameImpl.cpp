@@ -2453,7 +2453,7 @@ bool WebFrameImpl::shouldScopeMatches(const String& searchText)
     // Don't scope if we can't find a frame or a view.
     // The user may have closed the tab/application, so abort.
     // Also ignore detached frames, as many find operations report to the main frame.
-    if (!frame() || !frame()->view() || !frame()->page())
+    if (!frame() || !frame()->view() || !frame()->page() || !hasVisibleContent())
         return false;
 
     ASSERT(frame()->document() && frame()->view());

@@ -1045,19 +1045,23 @@ class FindUpdateWebFrameClient : public WebFrameClient {
 public:
     FindUpdateWebFrameClient()
         : m_findResultsAreReady(false)
+        , m_count(-1)
     {
     }
 
-    virtual void reportFindInPageMatchCount(int, int, bool finalUpdate) OVERRIDE
+    virtual void reportFindInPageMatchCount(int, int count, bool finalUpdate) OVERRIDE
     {
+        m_count = count;
         if (finalUpdate)
             m_findResultsAreReady = true;
     }
 
     bool findResultsAreReady() const { return m_findResultsAreReady; }
+    int count() const { return m_count; }
 
 private:
     bool m_findResultsAreReady;
+    int m_count;
 };
 
 TEST_F(WebFrameTest, FindInPageMatchRects)
@@ -1168,6 +1172,37 @@ TEST_F(WebFrameTest, FindInPageMatchRects)
     webView->resize(WebSize(800, 600));
     webkit_support::RunAllPendingMessages();
     EXPECT_TRUE(mainFrame->findMatchMarkersVersion() != rectsVersion);
+
+    webView->close();
+}
+
+TEST_F(WebFrameTest, FindInPageSkipsHiddenFrames)
+{
+    registerMockedHttpURLLoad("find_in_hidden_frame.html");
+
+    FindUpdateWebFrameClient client;
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "find_in_hidden_frame.html", true, &client);
+    webView->resize(WebSize(640, 480));
+    webView->layout();
+    webkit_support::RunAllPendingMessages();
+
+    static const char* kFindString = "hello";
+    static const int kFindIdentifier = 12345;
+    static const int kNumResults = 1;
+
+    WebFindOptions options;
+    WebString searchText = WebString::fromUTF8(kFindString);
+    WebFrameImpl* mainFrame = static_cast<WebFrameImpl*>(webView->mainFrame());
+    EXPECT_TRUE(mainFrame->find(kFindIdentifier, searchText, options, false, 0));
+
+    mainFrame->resetMatchCount();
+
+    for (WebFrame* frame = mainFrame; frame; frame = frame->traverseNext(false))
+        frame->scopeStringMatches(kFindIdentifier, searchText, options, true);
+
+    webkit_support::RunAllPendingMessages();
+    EXPECT_TRUE(client.findResultsAreReady());
+    EXPECT_EQ(kNumResults, client.count());
 
     webView->close();
 }
