@@ -90,6 +90,7 @@ fast/files/workers/worker-read-blob-sync.html
 fast/files/workers/worker-read-file-async.html
 fast/files/workers/worker-read-file-sync.html
 fast/forms/file/get-file-upload.html
+fast/forms/file/input-file-value.html
 fast/forms/file/input-file-write-files.html
 fast/forms/file/file-input-change-event.html
 fast/forms/file/recover-file-input-in-unposted-form.html
