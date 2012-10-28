@@ -1,3 +1,18 @@
+2012-10-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132696.
+        http://trac.webkit.org/changeset/132696
+        https://bugs.webkit.org/show_bug.cgi?id=100609
+
+        Needs a bit more clean-up on Chrome Web UI side. (Requested by
+        dglazkov on #webkit).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+
 2012-10-27  Alexey Proskuryakov  <ap@apple.com>
 
         All tests crash in WebKit1 mode

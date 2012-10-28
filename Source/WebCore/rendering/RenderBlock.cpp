@@ -6524,10 +6524,6 @@ void RenderBlock::updateFirstLetter()
     if (!currChild)
         return;
 
-    // Disallow generated content in shadows until the spec says what to do. See: http://webkit.org/b/98836
-    if (isShadowHost(firstLetterBlock->node()))
-        return;
-
     // If the child already has style, then it has already been created, so we just want
     // to update it.
     if (currChild->parent()->style()->styleType() == FIRST_LETTER) {
