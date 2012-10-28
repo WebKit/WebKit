@@ -1089,7 +1089,10 @@ MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::addKey(const 
 
     RetainPtr<AVAssetResourceLoadingRequest> avRequest = m_sessionIDToRequestMap.get(sessionID);
     RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:keyPtr length:keyLength]);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [avRequest.get() finishLoadingWithResponse:nil data:keyData.get() redirect:nil];
+#pragma clang diagnostic pop
     m_sessionIDToRequestMap.remove(sessionID);
 
     player()->keyAdded(keySystem, sessionID);

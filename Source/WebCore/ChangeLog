@@ -1,3 +1,10 @@
+2012-10-27  Anders Carlsson  <andersca@apple.com>
+
+        Fix AVFoundation build.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::addKey):
+
 2012-10-27  David Barton  <dbarton@mathscribe.com>
 
         ASSERTION FAILED: m_next in LayoutState.cpp
