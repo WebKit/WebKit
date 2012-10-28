@@ -320,6 +320,13 @@ public:
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, baselineCodeBlock());
     }
     
+    CodeBlock* baselineCodeBlockFor(InlineCallFrame* inlineCallFrame)
+    {
+        if (!inlineCallFrame)
+            return baselineCodeBlock();
+        return baselineCodeBlockForInlineCallFrame(inlineCallFrame);
+    }
+    
     CodeBlock* baselineCodeBlock()
     {
         return m_baselineCodeBlock;

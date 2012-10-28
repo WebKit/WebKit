@@ -688,6 +688,8 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
                 }
             }
 
+            if (!m_jit.baselineCodeBlockFor(inlineCallFrame)->usesArguments())
+                continue;
             int argumentsRegister = m_jit.argumentsRegisterFor(inlineCallFrame);
             if (didCreateArgumentsObject.add(inlineCallFrame).isNewEntry) {
                 // We know this call frame optimized out an arguments object that

@@ -1,5 +1,23 @@
 2012-10-27  Filip Pizlo  <fpizlo@apple.com>
 
+        OSR exit compilation should defend against argument recoveries from code blocks that are no longer on the inline stack
+        https://bugs.webkit.org/show_bug.cgi?id=100601
+
+        Reviewed by Oliver Hunt.
+
+        This happened to me while I was fixing bugs for https://bugs.webkit.org/show_bug.cgi?id=100599.
+        I'm not sure how to reproduce this.
+
+        * dfg/DFGAssemblyHelpers.h:
+        (JSC::DFG::AssemblyHelpers::baselineCodeBlockFor):
+        (AssemblyHelpers):
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+
+2012-10-27  Filip Pizlo  <fpizlo@apple.com>
+
         DFG::Array::Mode needs to be cleaned up
         https://bugs.webkit.org/show_bug.cgi?id=100599
 
