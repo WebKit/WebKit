@@ -218,7 +218,7 @@ public:
     
     GPRReg tagGPR() const
     {
-        ASSERT(!isAddress() && m_baseOrTag != InvalidGPRReg);
+        ASSERT(!isAddress() && static_cast<GPRReg>(m_baseOrTag) != InvalidGPRReg);
         return static_cast<GPRReg>(m_baseOrTag);
     }
     
@@ -290,7 +290,7 @@ public:
     static unsigned toIndex(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(reg < 8);
+        ASSERT(static_cast<int>(reg) < 8);
         static const unsigned indexForRegister[8] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 4, InvalidIndex };
         unsigned result = indexForRegister[reg];
         ASSERT(result != InvalidIndex);
@@ -300,7 +300,7 @@ public:
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(reg < 8);
+        ASSERT(static_cast<int>(reg) < 8);
         static const char* nameForRegister[8] = {
             "eax", "ecx", "edx", "ebx",
             "esp", "ebp", "esi", "edi",
@@ -362,7 +362,7 @@ public:
     static unsigned toIndex(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(reg < 16);
+        ASSERT(static_cast<int>(reg) < 16);
         static const unsigned indexForRegister[16] = { 0, 2, 1, 3, InvalidIndex, InvalidIndex, 5, 4, 6, 7, 8, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
         unsigned result = indexForRegister[reg];
         ASSERT(result != InvalidIndex);
@@ -372,7 +372,7 @@ public:
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(reg < 16);
+        ASSERT(static_cast<int>(reg) < 16);
         static const char* nameForRegister[16] = {
             "rax", "rcx", "rdx", "rbx",
             "rsp", "rbp", "rsi", "rdi",

@@ -82,7 +82,7 @@ public:
     {
         ASSERT(reg != InvalidFPRReg);
 #if CPU(X86_64)
-        ASSERT(reg < 16);
+        ASSERT(static_cast<int>(reg) < 16);
         static const char* nameForRegister[16] = {
             "xmm0", "xmm1", "xmm2", "xmm3",
             "xmm4", "xmm5", "xmm6", "xmm7",
@@ -90,7 +90,7 @@ public:
             "xmm12", "xmm13", "xmm14", "xmm15"
         };
 #elif CPU(X86)
-        ASSERT(reg < 8);
+        ASSERT(static_cast<int>(reg) < 8);
         static const char* nameForRegister[8] = {
             "xmm0", "xmm1", "xmm2", "xmm3",
             "xmm4", "xmm5", "xmm6", "xmm7"

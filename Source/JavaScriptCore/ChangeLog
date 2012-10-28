@@ -1,3 +1,16 @@
+2012-10-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, make always-true enum-to-int comparisons use casts.
+
+        * dfg/DFGFPRInfo.h:
+        (JSC::DFG::FPRInfo::debugName):
+        * dfg/DFGGPRInfo.h:
+        (JSC::DFG::JSValueSource::tagGPR):
+        (JSC::DFG::GPRInfo::toIndex):
+        (JSC::DFG::GPRInfo::debugName):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+
 2012-10-27  Filip Pizlo  <fpizlo@apple.com>
 
         OSR exit compilation should defend against argument recoveries from code blocks that are no longer on the inline stack
