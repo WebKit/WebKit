@@ -2792,11 +2792,6 @@ webkit.org/b/96720 fast/forms/time-multiple-fields/time-multiple-fields-preserve
 webkit.org/b/96720 fast/forms/date-multiple-fields/date-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/98906 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations.html [ Pass Failure ]
 
-# Need rebaseline 
-webkit.org/b/100128 fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic.html [ Pass ImageOnlyFailure ]
-webkit.org/b/100128 fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
-webkit.org/b/100128 fast/forms/week-multiple-fields/week-multiple-fields-appearance-style.html [ Pass ImageOnlyFailure ]
-
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
 

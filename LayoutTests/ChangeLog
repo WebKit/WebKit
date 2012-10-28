@@ -1,3 +1,27 @@
+2012-10-28  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+        https://bugs.webkit.org/show_bug.cgi?id=100128
+
+        Rebaseline for http://trac.webkit.org/changeset/132718 and crrev.com/164515.
+
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-10-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed weekend gardening, skip a failing test, update expected files.
