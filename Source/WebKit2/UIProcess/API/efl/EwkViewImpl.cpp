@@ -737,6 +737,11 @@ bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
     evas_gl_native_surface_get(m_evasGl, m_evasGlSurface, &nativeSurface);
     evas_object_image_native_surface_set(sd->image, &nativeSurface);
 
+    evas_gl_make_current(m_evasGl, m_evasGlSurface, m_evasGlContext);
+
+    Evas_GL_API* gl = evas_gl_api_get(evasGl());
+    gl->glViewport(0, 0, viewSize.width() + sd->view.x, viewSize.height() + sd->view.y);
+
     return true;
 }
 

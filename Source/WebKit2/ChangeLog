@@ -1,3 +1,17 @@
+2012-10-28  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] Viewport size does not change when the window size changes
+        https://bugs.webkit.org/show_bug.cgi?id=100573
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The viewport size is set when we create the window the first time
+        and does not change automatically afterwards. When we change the window size,
+        we need to explicitly change the viewport size as well.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::createGLSurface):
+
 2012-10-27  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Unreviewed build fix for breakage to minimal bot caused by r132742.
