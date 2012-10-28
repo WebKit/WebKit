@@ -1,3 +1,46 @@
+2012-10-27  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Coordinated Graphics: Animation jerkiness when rAF is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=100536
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The jerkiness comes from the fact that we schedule animations excessively; That's because
+        the previous patch broke requestAnimationFrame behavior during CSS animations, since the
+        frame returns right away instead of waiting till the previous frame is actually rendered.
+
+        This patch makes sure that when animations are scheduled, they're only serviced after the
+        UI process has actually painted the previous frame. We do so by sending a
+        RequestAnimationFrame message to the UI process, which responds with AnimationFrameReady
+        after the UI process paints.
+
+        New test: fast/animations/request-animation-frame-too-rapid.html
+        Tests that we don't receive an unreasonably high number of callbacks from
+        requestAnimationFrame (> 1000FPS).
+
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit):
+        (WebKit::LayerTreeCoordinatorProxy::requestAnimationFrame):
+        (WebKit::LayerTreeCoordinatorProxy::animationFrameReady):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::paintToCurrentGLContext):
+        (WebKit):
+        (WebKit::LayerTreeRenderer::animationFrameReady):
+        (WebKit::LayerTreeRenderer::requestAnimationFrame):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit):
+        (WebKit::LayerTreeCoordinator::scheduleAnimation):
+        (WebKit::LayerTreeCoordinator::animationFrameReady):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.messages.in:
+
 2012-10-27  Sam Weinig  <sam@webkit.org>
 
         Yet more MessageReceivering

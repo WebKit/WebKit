@@ -89,6 +89,9 @@ LayerTreeRenderer::LayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordin
     , m_rootLayerID(InvalidWebLayerID)
     , m_isActive(false)
     , m_animationsLocked(false)
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    , m_animationFrameRequested(false)
+#endif
 {
 }
 
@@ -138,7 +141,27 @@ void LayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matr
 
     if (layer->descendantsOrSelfHaveRunningAnimations())
         dispatchOnMainThread(bind(&LayerTreeRenderer::updateViewport, this));
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    if (m_animationFrameRequested) {
+        m_animationFrameRequested = false;
+        dispatchOnMainThread(bind(&LayerTreeRenderer::animationFrameReady, this));
+    }
+#endif
 }
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+void LayerTreeRenderer::animationFrameReady()
+{
+    if (m_layerTreeCoordinatorProxy)
+        m_layerTreeCoordinatorProxy->animationFrameReady();
+}
+
+void LayerTreeRenderer::requestAnimationFrame()
+{
+    m_animationFrameRequested = true;
+}
+#endif
 
 void LayerTreeRenderer::paintToGraphicsContext(BackingStore::PlatformGraphicsContext painter)
 {

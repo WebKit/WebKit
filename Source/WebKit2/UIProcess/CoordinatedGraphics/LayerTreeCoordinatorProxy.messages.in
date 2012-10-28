@@ -36,6 +36,10 @@ messages -> LayerTreeCoordinatorProxy {
     SetLayerAnimations(uint32_t id, WebCore::GraphicsLayerAnimations animations)
     SetAnimationsLocked(bool locked)
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    RequestAnimationFrame()
+#endif
+
 #if USE(GRAPHICS_SURFACE)
     SyncCanvas(uint32_t id, WebCore::IntSize canvasSize, WebCore::GraphicsSurfaceToken token, uint32_t frontBuffer)
 #endif

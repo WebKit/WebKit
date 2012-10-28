@@ -651,10 +651,17 @@ GraphicsLayerFactory* LayerTreeCoordinator::graphicsLayerFactory()
     return this;
 }
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
 void LayerTreeCoordinator::scheduleAnimation()
+{
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::RequestAnimationFrame());
+}
+
+void LayerTreeCoordinator::animationFrameReady()
 {
     scheduleLayerFlush();
 }
+#endif
 
 void LayerTreeCoordinator::renderNextFrame()
 {

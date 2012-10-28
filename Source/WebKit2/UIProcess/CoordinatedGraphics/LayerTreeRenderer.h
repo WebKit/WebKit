@@ -95,6 +95,12 @@ public:
     void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&);
     void setAnimationsLocked(bool);
 
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    void requestAnimationFrame();
+    void animationFrameReady();
+#endif
+
 private:
     PassOwnPtr<WebCore::GraphicsLayer> createLayer(WebLayerID);
 
@@ -148,6 +154,9 @@ private:
     WebCore::IntPoint m_pendingRenderedContentsScrollPosition;
     bool m_isActive;
     bool m_animationsLocked;
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    bool m_animationFrameRequested;
+#endif
 };
 
 };

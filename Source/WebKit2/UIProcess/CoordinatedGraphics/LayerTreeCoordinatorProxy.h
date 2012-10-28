@@ -83,6 +83,10 @@ public:
     LayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
     void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&);
     void setAnimationsLocked(bool);
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    void requestAnimationFrame();
+    void animationFrameReady();
+#endif
 
 protected:
     void dispatchUpdate(const Function<void()>&);
