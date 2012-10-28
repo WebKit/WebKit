@@ -109,7 +109,7 @@ public:
     virtual WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return 0; }
 #endif
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(COORDINATED_GRAPHICS) && ENABLE(REQUEST_ANIMATION_FRAME)
     virtual void scheduleAnimation() = 0;
 #endif
 
