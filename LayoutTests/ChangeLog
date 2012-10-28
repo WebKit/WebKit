@@ -1,3 +1,15 @@
+2012-10-28  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+
+        Rebaseline for http://trac.webkit.org/changeset/132753
+
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png:
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png:
+
 2012-10-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132696.
