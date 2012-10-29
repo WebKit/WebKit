@@ -1,5 +1,13 @@
 2012-10-28  Mark Rowe  <mrowe@apple.com>
 
+        Simplify Xcode configuration settings that used to vary between OS versions.
+
+        Reviewed by Dan Bernstein.
+
+        * gtest/xcode/Config/General.xcconfig:
+
+2012-10-28  Mark Rowe  <mrowe@apple.com>
+
         Remove references to unsupported OS and Xcode versions.
 
         Reviewed by Anders Carlsson.

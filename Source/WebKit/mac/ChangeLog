@@ -1,5 +1,15 @@
 2012-10-28  Mark Rowe  <mrowe@apple.com>
 
+        Simplify Xcode configuration settings that used to vary between OS versions.
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/WebKit.xcconfig:
+
+2012-10-28  Mark Rowe  <mrowe@apple.com>
+
         Remove references to unsupported OS and Xcode versions.
 
         Reviewed by Anders Carlsson.

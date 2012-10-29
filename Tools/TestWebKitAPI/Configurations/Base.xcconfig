@@ -21,6 +21,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+CLANG_CXX_LIBRARY = libc++;
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
 HEADER_SEARCH_PATHS = ${BUILT_PRODUCTS_DIR}/usr/local/include $(WEBCORE_PRIVATE_HEADERS_DIR)/ForwardingHeaders $(WEBCORE_PRIVATE_HEADERS_DIR)/icu;
 FRAMEWORK_SEARCH_PATHS = $(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Frameworks;
@@ -39,11 +40,6 @@ GCC_WARN_UNUSED_VARIABLE = YES
 WARNING_CFLAGS = -Wall -W -Wno-unused-parameter
 LINKER_DISPLAYS_MANGLED_NAMES = YES;
 VALID_ARCHS = i386 x86_64;
-
-CLANG_CXX_LIBRARY = $(CLANG_CXX_LIBRARY_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-CLANG_CXX_LIBRARY_1070 = libc++;
-CLANG_CXX_LIBRARY_1080 = libc++;
-CLANG_CXX_LIBRARY_1090 = libc++;
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.

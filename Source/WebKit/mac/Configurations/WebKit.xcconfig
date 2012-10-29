@@ -34,7 +34,6 @@ EXPORTED_SYMBOLS_FILE_armv6 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit
 EXPORTED_SYMBOLS_FILE_armv7 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.generated.exp;
 EXPORTED_SYMBOLS_FILE_i386 = mac/WebKit.exp;
 EXPORTED_SYMBOLS_FILE_ppc = mac/WebKit.exp;
-EXPORTED_SYMBOLS_FILE_ppc64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp;
 EXPORTED_SYMBOLS_FILE_x86_64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.LP64.exp;
 
 FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(PLATFORM_NAME));
@@ -71,10 +70,7 @@ OTHER_LDFLAGS_BASE = -licucore -framework JavaScriptCore -framework QuartzCore -
 OTHER_LDFLAGS = $(OTHER_LDFLAGS_BASE) $(OTHER_LDFLAGS_$(PLATFORM_NAME));
 OTHER_LDFLAGS_iphoneos = -lobjc -framework CFNetwork -framework CoreFoundation -framework CoreGraphics -framework CoreText -framework Foundation -framework GraphicsServices -framework ImageIO;
 OTHER_LDFLAGS_iphonesimulator = $(OTHER_LDFLAGS_iphoneos);
-OTHER_LDFLAGS_macosx = -sub_umbrella WebCore -framework Carbon -framework Cocoa -framework DiskArbitration -framework IOKit -framework OpenGL -framework Security $(OTHER_LDFLAGS_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-OTHER_LDFLAGS_macosx_1070 = -Xlinker -objc_gc_compaction;
-OTHER_LDFLAGS_macosx_1080 = $(OTHER_LDFLAGS_macosx_1070);
-OTHER_LDFLAGS_macosx_1090 = $(OTHER_LDFLAGS_macosx_1070);
+OTHER_LDFLAGS_macosx = -sub_umbrella WebCore -framework Carbon -framework Cocoa -framework DiskArbitration -framework IOKit -framework OpenGL -framework Security;
 
 NORMAL_WEBKIT_FRAMEWORKS_DIR = $(NORMAL_WEBKIT_FRAMEWORKS_DIR_$(PLATFORM_NAME));
 NORMAL_WEBKIT_FRAMEWORKS_DIR_iphoneos = $(PRODUCTION_FRAMEWORKS_DIR);

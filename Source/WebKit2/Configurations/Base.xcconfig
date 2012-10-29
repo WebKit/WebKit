@@ -21,6 +21,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
+CLANG_CXX_LIBRARY = libc++;
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
 DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
 GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -56,11 +57,6 @@ WARNING_CFLAGS = -Wall -Wextra -Wchar-subscripts -Wextra-tokens -Wformat-securit
 
 // Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
 OTHER_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__Znwm;
-
-CLANG_CXX_LIBRARY = $(CLANG_CXX_LIBRARY_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-CLANG_CXX_LIBRARY_1070 = libc++;
-CLANG_CXX_LIBRARY_1080 = libc++;
-CLANG_CXX_LIBRARY_1090 = libc++;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 
