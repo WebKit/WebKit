@@ -59,6 +59,7 @@ RenderTable::RenderTable(Node* node)
     , m_hasColElements(false)
     , m_needsSectionRecalc(false)
     , m_columnLogicalWidthChanged(false)
+    , m_columnRenderersValid(false)
     , m_hSpacing(0)
     , m_vSpacing(0)
     , m_borderStart(0)
@@ -211,6 +212,26 @@ void RenderTable::removeCaption(const RenderTableCaption* oldCaption)
         return;
 
     m_captions.remove(index);
+}
+
+void RenderTable::invalidateCachedColumns()
+{
+    m_columnRenderersValid = false;
+    m_columnRenderers.resize(0);
+}
+
+void RenderTable::addColumn(const RenderTableCol*)
+{
+    invalidateCachedColumns();
+}
+
+void RenderTable::removeColumn(const RenderTableCol*)
+{
+    invalidateCachedColumns();
+    // We don't really need to recompute our sections, but we need to update our
+    // column count and whether we have a column. Currently, we only have one
+    // size-fit-all flag but we may have to consider splitting it.
+    setNeedsSectionRecalc();
 }
 
 void RenderTable::updateLogicalWidth()
@@ -759,15 +780,30 @@ RenderTableCol* RenderTable::firstColumn() const
     return 0;
 }
 
+void RenderTable::updateColumnCache() const
+{
+    ASSERT(m_hasColElements);
+    ASSERT(m_columnRenderers.isEmpty());
+    ASSERT(!m_columnRenderersValid);
+
+    for (RenderTableCol* columnRenderer = firstColumn(); columnRenderer; columnRenderer = columnRenderer->nextColumn()) {
+        if (columnRenderer->isTableColumnGroupWithColumnChildren())
+            continue;
+        m_columnRenderers.append(columnRenderer);
+    }
+    m_columnRenderersValid = true;
+}
+
 RenderTableCol* RenderTable::slowColElement(unsigned col, bool* startEdge, bool* endEdge) const
 {
     ASSERT(m_hasColElements);
 
-    unsigned columnCount = 0;
-    for (RenderTableCol* columnRenderer = firstColumn(); columnRenderer; columnRenderer = columnRenderer->nextColumn()) {
-        if (columnRenderer->isTableColumnGroupWithColumnChildren())
-            continue;
+    if (!m_columnRenderersValid)
+        updateColumnCache();
 
+    unsigned columnCount = 0;
+    for (unsigned i = 0; i < m_columnRenderers.size(); i++) {
+        RenderTableCol* columnRenderer = m_columnRenderers[i];
         unsigned span = columnRenderer->span();
         unsigned startCol = columnCount;
         ASSERT(span >= 1);
@@ -781,7 +817,6 @@ RenderTableCol* RenderTable::slowColElement(unsigned col, bool* startEdge, bool*
             return columnRenderer;
         }
     }
-
     return 0;
 }
 

@@ -1,3 +1,33 @@
+2012-10-29  Eric Seidel  <eric@webkit.org>
+
+        Make rendering tables with <colgroups> twice as fast by avoiding walking the DOM for colgroups 4 times for each cell
+        https://bugs.webkit.org/show_bug.cgi?id=100630
+
+        Reviewed by Ojan Vafai.
+
+        This is not a complete fix.  Our rendering of this large tables still takes 7.8 seconds
+        on my retina MBP (down from 14.3s before this change).
+        It's very expensive to walk the DOM each time we call RenderTable::colElement
+        so this caches the RenderTableCol* in a vector for easier walking.
+        We invalidate the cache any time a RenderTableCol is added or removed from the
+        rendering sub-tree to avoid holding a bad pointer.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::RenderTable):
+        (WebCore::RenderTable::invalidateCachedColumns):
+        (WebCore):
+        (WebCore::RenderTable::addColumn):
+        (WebCore::RenderTable::removeColumn):
+        (WebCore::RenderTable::updateColumnCache):
+        (WebCore::RenderTable::slowColElement):
+        * rendering/RenderTable.h:
+        (RenderTable):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::insertedIntoTree):
+        (WebCore):
+        (WebCore::RenderTableCol::willBeRemovedFromTree):
+        * rendering/RenderTableCol.h:
+
 2012-10-28  Kent Tamura  <tkent@chromium.org>
 
         Rename Localizer.{cpp,h} to PlatformLocale.{cpp,h}

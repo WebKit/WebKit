@@ -81,6 +81,7 @@ private:
     virtual bool isRenderTableCol() const OVERRIDE { return true; }
     virtual void updateFromElement();
 
+    virtual void insertedIntoTree() OVERRIDE;
     virtual void willBeRemovedFromTree() OVERRIDE;
 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;

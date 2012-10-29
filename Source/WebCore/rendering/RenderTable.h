@@ -45,8 +45,6 @@ public:
     explicit RenderTable(Node*);
     virtual ~RenderTable();
 
-    int getColumnPos(unsigned col) const { return m_columnPos[col]; }
-
     // Per CSS 3 writing-mode: "The first and second values of the 'border-spacing' property represent spacing between columns
     // and rows respectively, not necessarily the horizontal and vertical spacing respectively".
     int hBorderSpacing() const { return m_hSpacing; }
@@ -258,6 +256,8 @@ public:
 
     void addCaption(const RenderTableCaption*);
     void removeCaption(const RenderTableCaption*);
+    void addColumn(const RenderTableCol*);
+    void removeColumn(const RenderTableCol*);
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
@@ -283,6 +283,9 @@ private:
 
     RenderTableCol* slowColElement(unsigned col, bool* startEdge, bool* endEdge) const;
 
+    void updateColumnCache() const;
+    void invalidateCachedColumns();
+
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();
     
@@ -305,6 +308,7 @@ private:
     mutable Vector<int> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
     mutable Vector<RenderTableCaption*> m_captions;
+    mutable Vector<RenderTableCol*> m_columnRenderers;
 
     mutable RenderTableSection* m_head;
     mutable RenderTableSection* m_foot;
@@ -315,10 +319,12 @@ private:
     CollapsedBorderValues m_collapsedBorders;
     const CollapsedBorderValue* m_currentBorder;
     bool m_collapsedBordersValid : 1;
-    
+
     mutable bool m_hasColElements : 1;
     mutable bool m_needsSectionRecalc : 1;
+
     bool m_columnLogicalWidthChanged : 1;
+    mutable bool m_columnRenderersValid: 1;
 
     short m_hSpacing;
     short m_vSpacing;
