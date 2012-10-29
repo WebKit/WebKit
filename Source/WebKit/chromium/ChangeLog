@@ -1,3 +1,11 @@
+2012-10-29  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-linux] Fix build.
+
+        * tests/LocalizedNumberICUTest.cpp:
+        (testNumberIsReversible): Rename an argument.
+        (testDecimalSeparator): Ditto.
+
 2012-10-28  Kent Tamura  <tkent@chromium.org>
 
         Rename Localizer to Locale
