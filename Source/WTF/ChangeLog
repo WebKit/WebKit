@@ -1,5 +1,12 @@
 2012-10-29  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed. Correct my previous patch to disable external SVG
+        references only on PLATFORM(CHROMIUM).
+
+        * wtf/Platform.h:
+
+2012-10-29  Adam Barth  <abarth@webkit.org>
+
         Block SVG external references pending a security review
         https://bugs.webkit.org/show_bug.cgi?id=100635
 
