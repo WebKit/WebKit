@@ -210,7 +210,7 @@ void SVGDocumentExtensions::reportError(const String& message)
     reportMessage(m_document, ErrorMessageLevel, "Error: " + message);
 }
 
-void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGStyledElement* element)
+void SVGDocumentExtensions::addPendingResource(const AtomicString& id, SVGElement* element)
 {
     ASSERT(element);
 
@@ -237,7 +237,7 @@ bool SVGDocumentExtensions::hasPendingResource(const AtomicString& id) const
     return m_pendingResources.contains(id);
 }
 
-bool SVGDocumentExtensions::isElementPendingResources(SVGStyledElement* element) const
+bool SVGDocumentExtensions::isElementPendingResources(SVGElement* element) const
 {
     // This algorithm takes time proportional to the number of pending resources and need not.
     // If performance becomes an issue we can keep a counted set of elements and answer the question efficiently.
@@ -255,7 +255,7 @@ bool SVGDocumentExtensions::isElementPendingResources(SVGStyledElement* element)
     return false;
 }
 
-bool SVGDocumentExtensions::isElementPendingResource(SVGStyledElement* element, const AtomicString& id) const
+bool SVGDocumentExtensions::isElementPendingResource(SVGElement* element, const AtomicString& id) const
 {
     ASSERT(element);
 
@@ -265,7 +265,7 @@ bool SVGDocumentExtensions::isElementPendingResource(SVGStyledElement* element, 
     return m_pendingResources.get(id)->contains(element);
 }
 
-void SVGDocumentExtensions::removeElementFromPendingResources(SVGStyledElement* element)
+void SVGDocumentExtensions::removeElementFromPendingResources(SVGElement* element)
 {
     ASSERT(element);
 
@@ -336,7 +336,7 @@ void SVGDocumentExtensions::markPendingResourcesForRemoval(const AtomicString& i
         m_pendingResourcesForRemoval.add(id, existing);
 }
 
-SVGStyledElement* SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval(const AtomicString& id)
+SVGElement* SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval(const AtomicString& id)
 {
     if (id.isEmpty())
         return 0;
@@ -346,7 +346,7 @@ SVGStyledElement* SVGDocumentExtensions::removeElementFromPendingResourcesForRem
         return 0;
 
     SVGPendingElements::iterator firstElement = resourceSet->begin();
-    SVGStyledElement* element = *firstElement;
+    SVGElement* element = *firstElement;
 
     resourceSet->remove(firstElement);
 

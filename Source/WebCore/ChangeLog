@@ -1,3 +1,53 @@
+2012-10-29  Philip Rogers  <pdr@google.com>
+
+        Let SVGElements have pending resources.
+        https://bugs.webkit.org/show_bug.cgi?id=99694
+
+        Reviewed by Eric Seidel.
+
+        Our SVG pending resource tracking is used for handling dynamic id changes. For example,
+        if an SVG element references an id that is not yet in the document (or has been removed),
+        the SVG element will be 'pending' an id. When styled elements are inserted into
+        the document, buildPendingResourcesIfNeeded() is called to force any pending elements
+        to resolve their dependencies. Only SVGStyledElement targets can be referenced using
+        this infrastructure, and that is not changed with this patch.
+
+        Previously, only SVGStyledElements could have pending resources. Some examples of where
+        this is violated are SVGAnimateElement and SVGMPathElement which are not a styled elements
+        but which can have pending references (they can reference styled elements and
+        paths, respectively). This patch changes the pending resource handling to allow
+        any SVGElement to have pending resources.
+
+        This patch is only a refactoring of code in preparation for WK99694 and does not
+        affect existing functionality or tests.
+
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addPendingResource):
+        (WebCore::SVGDocumentExtensions::isElementPendingResources):
+        (WebCore::SVGDocumentExtensions::isElementPendingResource):
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResources):
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval):
+        * svg/SVGDocumentExtensions.h:
+        (WebCore):
+        (SVGDocumentExtensions):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement):
+        (WebCore::SVGElement::removedFrom):
+        (WebCore::SVGElement::hasPendingResources):
+        (WebCore):
+        (WebCore::SVGElement::setHasPendingResources):
+        (WebCore::SVGElement::clearHasPendingResourcesIfPossible):
+        * svg/SVGElement.h:
+        (SVGElement):
+        (WebCore::SVGElement::buildPendingResource):
+        * svg/SVGStyledElement.cpp:
+        (WebCore):
+        (WebCore::SVGStyledElement::buildPendingResourcesIfNeeded):
+        (WebCore::SVGStyledElement::removedFrom):
+        * svg/SVGStyledElement.h:
+        (SVGStyledElement):
+        (WebCore::SVGStyledElement::selfHasRelativeLengths):
+
 2012-10-29  Dan Carney  <dcarney@google.com>
 
         Remove ensureAuxiliaryContext

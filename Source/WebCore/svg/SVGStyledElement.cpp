@@ -74,14 +74,6 @@ SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* docum
     registerAnimatedPropertiesForSVGStyledElement();
 }
 
-SVGStyledElement::~SVGStyledElement()
-{
-    if (hasPendingResources() && document())
-        document()->accessSVGExtensions()->removeElementFromPendingResources(this);
-
-    ASSERT(!hasPendingResources());
-}
-
 String SVGStyledElement::title() const
 {
     // According to spec, we should not return titles when hovering over root <svg> elements (those
@@ -375,7 +367,7 @@ void SVGStyledElement::buildPendingResourcesIfNeeded()
     extensions->markPendingResourcesForRemoval(resourceId);
 
     // Rebuild pending resources for each client of a pending resource that is being removed.
-    while (SVGStyledElement* clientElement = extensions->removeElementFromPendingResourcesForRemoval(resourceId)) {
+    while (SVGElement* clientElement = extensions->removeElementFromPendingResourcesForRemoval(resourceId)) {
         ASSERT(clientElement->hasPendingResources());
         if (clientElement->hasPendingResources()) {
             clientElement->buildPendingResource();
@@ -390,11 +382,6 @@ void SVGStyledElement::removedFrom(ContainerNode* rootParent)
         updateRelativeLengthsInformation(false, this);
     SVGElement::removedFrom(rootParent);
     SVGElementInstance::invalidateAllInstancesOfElement(this);
-    Document* document = this->document();
-    if (!rootParent->inDocument() || !document)
-        return;
-
-    document->accessSVGExtensions()->removeElementFromPendingResources(this);
 }
 
 void SVGStyledElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
@@ -432,22 +419,6 @@ void SVGStyledElement::setInstanceUpdatesBlocked(bool value)
 {
     if (hasSVGRareData())
         svgRareData()->setInstanceUpdatesBlocked(value);
-}
-
-bool SVGStyledElement::hasPendingResources() const
-{
-    return hasSVGRareData() && svgRareData()->hasPendingResources();
-}
-
-void SVGStyledElement::setHasPendingResources()
-{
-    ensureSVGRareData()->setHasPendingResources(true);
-}
-
-void SVGStyledElement::clearHasPendingResourcesIfPossible()
-{
-    if (!document()->accessSVGExtensions()->isElementPendingResources(this))
-        ensureSVGRareData()->setHasPendingResources(false);
 }
 
 AffineTransform SVGStyledElement::localCoordinateSpaceTransform(SVGLocatable::CTMScope) const
