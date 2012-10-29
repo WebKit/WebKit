@@ -395,6 +395,8 @@ WebInspector.DefaultTextEditor.prototype = {
         var handleRedo = this._mainPanel.handleUndoRedo.bind(this._mainPanel, true);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.CtrlOrMeta)] = handleUndo;
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.Shift | modifiers.CtrlOrMeta)] = handleRedo;
+        if (!WebInspector.isMac())
+            this._shortcuts[WebInspector.KeyboardShortcut.makeKey("y", modifiers.CtrlOrMeta)] = handleRedo;
 
         var handleTabKey = this._mainPanel.handleTabKeyPress.bind(this._mainPanel, false);
         var handleShiftTabKey = this._mainPanel.handleTabKeyPress.bind(this._mainPanel, true);
