@@ -807,7 +807,16 @@ windowCreate(User_Arguments *userArgs)
         return NULL;
     }
 
-    app->ee = ecore_evas_new(userArgs->engine, 0, 0, userArgs->geometry.w, userArgs->geometry.h, NULL);
+#if defined(WTF_USE_ACCELERATED_COMPOSITING) && defined(HAVE_ECORE_X)
+    if (userArgs->engine)
+#endif
+        app->ee = ecore_evas_new(userArgs->engine, 0, 0, userArgs->geometry.w, userArgs->geometry.h, NULL);
+#if defined(WTF_USE_ACCELERATED_COMPOSITING) && defined(HAVE_ECORE_X)
+    else {
+        const char* engine = "opengl_x11";
+        app->ee = ecore_evas_new(engine, 0, 0, userArgs->geometry.w, userArgs->geometry.h, NULL);
+    }
+#endif
     if (!app->ee) {
         quit(EINA_FALSE, "ERROR: could not construct evas-ecore\n");
         return NULL;

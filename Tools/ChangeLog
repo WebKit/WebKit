@@ -1,3 +1,22 @@
+2012-10-29  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][AC] Fix bugs preventing us from running layout tests with AC turned on
+        https://bugs.webkit.org/show_bug.cgi?id=100598
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make sure to use opengl_x11 engine when AC is turned on and X11 is in use.
+        We cannot create a gl context otherwise.
+
+        * MiniBrowser/efl/main.c:
+        (elm_main):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::initEcoreEvas):
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (initEcoreEvas):
+        * EWebLauncher/efl/main.c:
+        (windowCreate):
+
 2012-10-29  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][WK2] REGRESSION(r132342): fast/events/frame-tab-focus.html fails
