@@ -485,6 +485,13 @@ webkit.org/b/100236 [ Debug ] http/tests/misc/authentication-redirect-1/authenti
 webkit.org/b/100236 [ Debug ] http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Crash ]
 webkit.org/b/100236 [ Debug ] http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Crash ]
 
+webkit.org/b/100688 fast/css-generated-content/first-letter-table-cell-format-block-crash.html [ Crash Pass ]
+webkit.org/b/100688 fast/text/text-fragment-first-letter-update-crash.html [ Crash Pass ]
+webkit.org/b/100688 fast/text/custom-font-data-crash2.html [ Crash Pass ]
+webkit.org/b/100688 fast/css/first-letter-text-fragment-crash.html [ Crash Pass ]
+webkit.org/b/100688 editing/selection/first-letter-selection-crash.html [ Crash Pass ]
+webkit.org/b/100688 editing/text-iterator/backward-textiterator-first-letter-crash.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////

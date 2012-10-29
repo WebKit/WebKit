@@ -1,3 +1,12 @@
+2012-10-29  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding flaky crash expectations for tests that crash after r132699
+        if the accessibility object cache is populated.
+
+        * platform/gtk/TestExpectations:
+
 2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Skip fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html test case
