@@ -1,3 +1,17 @@
+2012-10-29  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Fix a build error
+        https://bugs.webkit.org/show_bug.cgi?id=100649
+
+        Reviewed by Kentaro Hara.
+
+        r127876 changed the signature of WebCore::EventHandler::hitTestResultAtPoint()
+        and this commit was later reverted. We need to update a call site in the
+        BlackBerry port to make it build.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::hitTestResult):
+
 2012-10-26  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry][FullScreen] entering/leaving fullscreen results in temporary glitches on the screen
