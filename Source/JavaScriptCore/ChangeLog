@@ -1,3 +1,22 @@
+2012-10-29  Michael Saboff  <msaboff@apple.com>
+
+        Non-special escape character sequences cause JSC::Lexer::parseString to create 16 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=100576
+
+        Reviewed by Darin Adler.
+
+        Changed singleEscape() processing to be based on a lookup of a static table.  The table
+        covers ASCII characters SPACE through DEL.  If a character can be a single character escape,
+        then the table provides the non-zero result of that escape.  Updated the result of
+        singleEscape to be an LChar to make the table as small as possible.
+        Added a new test fast/js/normal-character-escapes-in-string-literals.html to validated
+        the behavior.
+
+        * parser/Lexer.cpp:
+        (JSC::singleEscape):
+        (JSC::Lexer::parseString):
+        (JSC::Lexer::parseStringSlowCase):
+
 2012-10-29  Enrica Casucci  <enrica@apple.com>
 
         Add ENABLE_USERSELECT_ALL feature flag.

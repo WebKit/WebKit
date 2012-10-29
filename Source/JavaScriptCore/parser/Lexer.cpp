@@ -355,6 +355,139 @@ static const unsigned short typesOfLatin1Characters[256] = {
 /* 255 - Ll category        */ CharacterIdentifierStart
 };
 
+// This table provides the character that results from \X where X is the index in the table beginning
+// with SPACE. A table value of 0 means that more processing needs to be done.
+static const LChar singleCharacterEscapeValuesForASCII[128] = {
+/*   0 - Null               */ 0,
+/*   1 - Start of Heading   */ 0,
+/*   2 - Start of Text      */ 0,
+/*   3 - End of Text        */ 0,
+/*   4 - End of Transm.     */ 0,
+/*   5 - Enquiry            */ 0,
+/*   6 - Acknowledgment     */ 0,
+/*   7 - Bell               */ 0,
+/*   8 - Back Space         */ 0,
+/*   9 - Horizontal Tab     */ 0,
+/*  10 - Line Feed          */ 0,
+/*  11 - Vertical Tab       */ 0,
+/*  12 - Form Feed          */ 0,
+/*  13 - Carriage Return    */ 0,
+/*  14 - Shift Out          */ 0,
+/*  15 - Shift In           */ 0,
+/*  16 - Data Line Escape   */ 0,
+/*  17 - Device Control 1   */ 0,
+/*  18 - Device Control 2   */ 0,
+/*  19 - Device Control 3   */ 0,
+/*  20 - Device Control 4   */ 0,
+/*  21 - Negative Ack.      */ 0,
+/*  22 - Synchronous Idle   */ 0,
+/*  23 - End of Transmit    */ 0,
+/*  24 - Cancel             */ 0,
+/*  25 - End of Medium      */ 0,
+/*  26 - Substitute         */ 0,
+/*  27 - Escape             */ 0,
+/*  28 - File Separator     */ 0,
+/*  29 - Group Separator    */ 0,
+/*  30 - Record Separator   */ 0,
+/*  31 - Unit Separator     */ 0,
+/*  32 - Space              */ ' ',
+/*  33 - !                  */ '!',
+/*  34 - "                  */ '"',
+/*  35 - #                  */ '#',
+/*  36 - $                  */ '$',
+/*  37 - %                  */ '%',
+/*  38 - &                  */ '&',
+/*  39 - '                  */ '\'',
+/*  40 - (                  */ '(',
+/*  41 - )                  */ ')',
+/*  42 - *                  */ '*',
+/*  43 - +                  */ '+',
+/*  44 - ,                  */ ',',
+/*  45 - -                  */ '-',
+/*  46 - .                  */ '.',
+/*  47 - /                  */ '/',
+/*  48 - 0                  */ 0,
+/*  49 - 1                  */ 0,
+/*  50 - 2                  */ 0,
+/*  51 - 3                  */ 0,
+/*  52 - 4                  */ 0,
+/*  53 - 5                  */ 0,
+/*  54 - 6                  */ 0,
+/*  55 - 7                  */ 0,
+/*  56 - 8                  */ 0,
+/*  57 - 9                  */ 0,
+/*  58 - :                  */ ':',
+/*  59 - ;                  */ ';',
+/*  60 - <                  */ '<',
+/*  61 - =                  */ '=',
+/*  62 - >                  */ '>',
+/*  63 - ?                  */ '?',
+/*  64 - @                  */ '@',
+/*  65 - A                  */ 'A',
+/*  66 - B                  */ 'B',
+/*  67 - C                  */ 'C',
+/*  68 - D                  */ 'D',
+/*  69 - E                  */ 'E',
+/*  70 - F                  */ 'F',
+/*  71 - G                  */ 'G',
+/*  72 - H                  */ 'H',
+/*  73 - I                  */ 'I',
+/*  74 - J                  */ 'J',
+/*  75 - K                  */ 'K',
+/*  76 - L                  */ 'L',
+/*  77 - M                  */ 'M',
+/*  78 - N                  */ 'N',
+/*  79 - O                  */ 'O',
+/*  80 - P                  */ 'P',
+/*  81 - Q                  */ 'Q',
+/*  82 - R                  */ 'R',
+/*  83 - S                  */ 'S',
+/*  84 - T                  */ 'T',
+/*  85 - U                  */ 'U',
+/*  86 - V                  */ 'V',
+/*  87 - W                  */ 'W',
+/*  88 - X                  */ 'X',
+/*  89 - Y                  */ 'Y',
+/*  90 - Z                  */ 'Z',
+/*  91 - [                  */ '[',
+/*  92 - \                  */ '\\',
+/*  93 - ]                  */ ']',
+/*  94 - ^                  */ '^',
+/*  95 - _                  */ '_',
+/*  96 - `                  */ '`',
+/*  97 - a                  */ 'a',
+/*  98 - b                  */ 0x08,
+/*  99 - c                  */ 'c',
+/* 100 - d                  */ 'd',
+/* 101 - e                  */ 'e',
+/* 102 - f                  */ 0x0C,
+/* 103 - g                  */ 'g',
+/* 104 - h                  */ 'h',
+/* 105 - i                  */ 'i',
+/* 106 - j                  */ 'j',
+/* 107 - k                  */ 'k',
+/* 108 - l                  */ 'l',
+/* 109 - m                  */ 'm',
+/* 110 - n                  */ 0x0A,
+/* 111 - o                  */ 'o',
+/* 112 - p                  */ 'p',
+/* 113 - q                  */ 'q',
+/* 114 - r                  */ 0x0D,
+/* 115 - s                  */ 's',
+/* 116 - t                  */ 0x09,
+/* 117 - u                  */ 0,
+/* 118 - v                  */ 0x0B,
+/* 119 - w                  */ 'w',
+/* 120 - x                  */ 0,
+/* 121 - y                  */ 'y',
+/* 122 - z                  */ 'z',
+/* 123 - {                  */ '{',
+/* 124 - |                  */ '|',
+/* 125 - }                  */ '}',
+/* 126 - ~                  */ '~',
+/* 127 - Delete             */ 0
+};
+
 template <typename T>
 Lexer<T>::Lexer(JSGlobalData* globalData)
     : m_isReparsing(false)
@@ -547,30 +680,13 @@ static ALWAYS_INLINE bool isIdentPart(UChar c)
     return isLatin1(c) ? isIdentPart(static_cast<LChar>(c)) : isNonLatin1IdentPart(c);
 }
 
-static inline int singleEscape(int c)
+static inline LChar singleEscape(int c)
 {
-    switch (c) {
-    case 'b':
-        return 0x08;
-    case 't':
-        return 0x09;
-    case 'n':
-        return 0x0A;
-    case 'v':
-        return 0x0B;
-    case 'f':
-        return 0x0C;
-    case 'r':
-        return 0x0D;
-    case '\\':
-        return '\\';
-    case '\'':
-        return '\'';
-    case '"':
-        return '"';
-    default:
-        return 0;
+    if (c < 128) {
+        ASSERT(static_cast<size_t>(c) < ARRAY_SIZE(singleCharacterEscapeValuesForASCII));
+        return singleCharacterEscapeValuesForASCII[c];
     }
+    return 0;
 }
 
 template <typename T>
@@ -842,7 +958,7 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer<T>::parseString(JSTo
                 append8(stringStart, currentCharacter() - stringStart);
             shift();
 
-            int escape = singleEscape(m_current);
+            LChar escape = singleEscape(m_current);
 
             // Most common escape sequences first
             if (escape) {
@@ -907,7 +1023,7 @@ template <bool shouldBuildStrings> bool Lexer<T>::parseStringSlowCase(JSTokenDat
                 append16(stringStart, currentCharacter() - stringStart);
             shift();
 
-            int escape = singleEscape(m_current);
+            LChar escape = singleEscape(m_current);
 
             // Most common escape sequences first
             if (escape) {

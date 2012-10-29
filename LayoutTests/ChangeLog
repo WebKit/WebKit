@@ -1,3 +1,17 @@
+2012-10-29  Michael Saboff  <msaboff@apple.com>
+
+        Non-special escape character sequences cause JSC::Lexer::parseString to create 16 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=100576
+
+        Reviewed by Darin Adler.
+
+        Added a new test to validated the behavior of the corresponding changes to string processing
+        in the Lexer.
+
+        * fast/js/normal-character-escapes-in-string-literals-expected.txt: Added.
+        * fast/js/normal-character-escapes-in-string-literals.html: Added.
+        * fast/js/script-tests/normal-character-escapes-in-string-literals.js: Added.
+
 2012-10-29  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Feature introduced in r132708 is chromium only. Skipping related tests.
