@@ -48,21 +48,35 @@ TestRunner::TestRunner(WebCore::DumpRenderTree* drt)
     DumpRenderTreeSupportQt::dumpNotification(true);
 }
 
+void TestRunner::resetDumping()
+{
+    m_dumpBackForwardList = false;
+    m_dumpChildrenAsText = false;
+    m_dumpChildFrameScrollPositions = false;
+    m_dumpTitleChanges = false;
+    m_dumpDatabaseCallbacks = false;
+    m_dumpApplicationCacheDelegateCallbacks = false;
+    m_dumpStatusCallbacks = false;
+    DumpRenderTreeSupportQt::dumpEditingCallbacks(false);
+    DumpRenderTreeSupportQt::dumpFrameLoader(false);
+    DumpRenderTreeSupportQt::dumpProgressFinishedCallback(false);
+    DumpRenderTreeSupportQt::dumpUserGestureInFrameLoader(false);
+    DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(false);
+    DumpRenderTreeSupportQt::dumpResourceResponseMIMETypes(false);
+    DumpRenderTreeSupportQt::dumpWillCacheResponseCallbacks(false);
+    DumpRenderTreeSupportQt::dumpHistoryCallbacks(false);
+    DumpRenderTreeSupportQt::dumpVisitedLinksCallbacks(false);
+    DumpRenderTreeSupportQt::setCustomPolicyDelegate(false, false);
+}
+
 void TestRunner::reset()
 {
     m_hasDumped = false;
     m_loadFinished = false;
     m_textDump = false;
-    m_dumpBackForwardList = false;
-    m_dumpChildrenAsText = false;
-    m_dumpChildFrameScrollPositions = false;
     m_canOpenWindows = false;
     m_waitForDone = false;
     m_disallowIncreaseForApplicationCacheQuota = false;
-    m_dumpTitleChanges = false;
-    m_dumpDatabaseCallbacks = false;
-    m_dumpApplicationCacheDelegateCallbacks = false;
-    m_dumpStatusCallbacks = false;
     m_timeoutTimer.stop();
     m_topLoadingFrame = 0;
     m_waitForPolicy = false;
@@ -76,21 +90,11 @@ void TestRunner::reset()
     m_isPrinting = false;
     m_geolocationPermission = false;
 
-    DumpRenderTreeSupportQt::dumpEditingCallbacks(false);
-    DumpRenderTreeSupportQt::dumpFrameLoader(false);
-    DumpRenderTreeSupportQt::dumpProgressFinishedCallback(false);
-    DumpRenderTreeSupportQt::dumpUserGestureInFrameLoader(false);
-    DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(false);
-    DumpRenderTreeSupportQt::dumpResourceResponseMIMETypes(false);
-    DumpRenderTreeSupportQt::dumpWillCacheResponseCallbacks(false);
     DumpRenderTreeSupportQt::setDeferMainResourceDataLoad(true);
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(false);
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(false);
     DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(QStringList());
     DumpRenderTreeSupportQt::clearScriptWorlds();
-    DumpRenderTreeSupportQt::setCustomPolicyDelegate(false, false);
-    DumpRenderTreeSupportQt::dumpHistoryCallbacks(false);
-    DumpRenderTreeSupportQt::dumpVisitedLinksCallbacks(false);
     DumpRenderTreeSupportQt::resetGeolocationMock(m_drt->webPage());
     setIconDatabaseEnabled(false);
     clearAllDatabases();

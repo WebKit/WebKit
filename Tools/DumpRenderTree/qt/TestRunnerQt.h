@@ -78,6 +78,7 @@ public:
     bool isPrinting() { return m_isPrinting; }
 
     void reset();
+    void resetDumping();
 
     static const unsigned int maxViewWidth;
     static const unsigned int maxViewHeight;

@@ -130,6 +130,7 @@ private Q_SLOTS:
     void dryRunPrint(QWebFrame*);
     void loadNextTestInStandAloneMode();
     void geolocationPermissionSet();
+    void finishedResetting(bool);
 
 private:
     void setStandAloneMode(bool flag) { m_standAloneMode = flag; }
@@ -158,6 +159,7 @@ private:
     bool m_enableTextOutput;
     bool m_standAloneMode;
     bool m_graphicsBased;
+    bool m_finishedResetting;
     QString m_persistentStoragePath;
     QString m_redirectOutputFileName;
     QString m_redirectErrorFileName;

@@ -1,3 +1,30 @@
+2012-10-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Flaky security tests
+        https://bugs.webkit.org/show_bug.cgi?id=100388
+
+        Reviewed by Jocelyn Turcotte.
+
+        Disable text dumping and load a blank URL to ensure the documentLoader is cleared 
+        before we start dumping text for the new page. Otherwise messages from the old page
+        may end up in the text output of the new test.
+
+        This matches what WebKitTestRunner does, and reuses the Qt code for waiting for flag.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::runUntil):
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        (WebCore::DumpRenderTree::finishedResetting):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (DumpRenderTree):
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunner::resetDumping):
+        (TestRunner::reset):
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunner):
+
 2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WKTR] Enable Shadow DOM at runtime if compiled with SHADOW_DOM support
