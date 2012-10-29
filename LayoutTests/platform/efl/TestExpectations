@@ -473,12 +473,14 @@ webkit.org/b/86623 fast/events/moving-text-should-fire-drop-and-dragend-events.h
 webkit.org/b/86623 fast/events/moving-text-should-fire-drop-and-dragend-events-2.html [ Failure ]
 webkit.org/b/86623 fast/events/ondragenter.html
 webkit.org/b/86623 fast/events/ondrop-text-html.html
+webkit.org/b/86623 fast/events/only-valid-drop-targets-receive-file-drop.html [ Failure ]
 webkit.org/b/86623 fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
 webkit.org/b/86623 fast/events/selectstart-by-double-triple-clicks.html
 webkit.org/b/86623 fast/events/selectstart-by-drag.html
 webkit.org/b/86623 fast/events/standalone-image-drag-to-editable.html
 webkit.org/b/86623 fast/forms/drag-into-textarea.html
 webkit.org/b/86623 fast/forms/drag-out-of-textarea.html
+webkit.org/b/86623 fast/forms/file/input-file-value.html [ Failure ]
 webkit.org/b/86623 fast/forms/focus-change-on-keypress.html
 webkit.org/b/86623 fast/forms/search-cancel-button-mouseup.html
 webkit.org/b/86623 fast/forms/search-disabled-readonly.html

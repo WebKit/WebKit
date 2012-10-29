@@ -1,5 +1,17 @@
 2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] Skip 2 tests failing due to missing drag'n drop support
+        https://bugs.webkit.org/show_bug.cgi?id=100638
+
+        Unreviewed EFL gardening.
+
+        Skip 2 test cases failing due to missing drag'n drop support
+        in EFL port.
+
+        * platform/efl/TestExpectations:
+
+2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL] Skip 2 jquery tests crashing after r132757
         https://bugs.webkit.org/show_bug.cgi?id=100637
 
