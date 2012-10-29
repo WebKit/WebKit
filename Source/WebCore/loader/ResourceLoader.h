@@ -66,7 +66,7 @@ public:
     
     virtual void setDefersLoading(bool);
 
-    uint64_t identifier() const { return m_identifier; }
+    unsigned long identifier() const { return m_identifier; }
 
     virtual void releaseResources();
     const ResourceResponse& response() const;
@@ -182,7 +182,7 @@ private:
     ResourceRequest m_originalRequest; // Before redirects.
     RefPtr<ResourceBuffer> m_resourceData;
     
-    uint64_t m_identifier;
+    unsigned long m_identifier;
 
     bool m_reachedTerminalState;
     bool m_calledWillCancel;

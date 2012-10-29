@@ -1,3 +1,12 @@
+2012-10-29  Brady Eidson  <beidson@apple.com>
+
+        Try to fix 32-bit builds after my incompletely tested m_identifier change.
+
+        Not reviewed.
+
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::identifier): Revert my "unsigned long" -> "uint64_t" change in two places.
+
 2012-10-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Text with zero font size renders as X px sometimes, causing fast/text/zero-font-size-2.html to fail
