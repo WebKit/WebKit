@@ -69,6 +69,7 @@ public:
     virtual bool canClearBrowserCookies();
     virtual void clearBrowserCookies();
 
+    virtual bool canMonitorMainThread();
     virtual void startMainThreadMonitoring();
     virtual void stopMainThreadMonitoring();
 

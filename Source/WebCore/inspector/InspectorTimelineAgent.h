@@ -81,6 +81,7 @@ public:
     virtual void start(ErrorString*, const int* maxCallStackDepth);
     virtual void stop(ErrorString*);
     virtual void setIncludeMemoryDetails(ErrorString*, bool);
+    virtual void canMonitorMainThread(ErrorString*, bool*);
     virtual void supportsFrameInstrumentation(ErrorString*, bool*);
 
     int id() const { return m_id; }

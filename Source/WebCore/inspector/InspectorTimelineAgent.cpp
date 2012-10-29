@@ -198,6 +198,11 @@ void InspectorTimelineAgent::setIncludeMemoryDetails(ErrorString*, bool value)
     m_state->setBoolean(TimelineAgentState::includeMemoryDetails, value);
 }
 
+void InspectorTimelineAgent::canMonitorMainThread(ErrorString*, bool* result)
+{
+    *result = m_client && m_client->canMonitorMainThread();
+}
+
 void InspectorTimelineAgent::supportsFrameInstrumentation(ErrorString*, bool* result)
 {
     *result = m_client && m_client->supportsFrameInstrumentation();

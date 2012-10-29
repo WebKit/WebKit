@@ -131,6 +131,11 @@ void InspectorClientImpl::clearBrowserCookies()
         agent->clearBrowserCookies();
 }
 
+bool InspectorClientImpl::canMonitorMainThread()
+{
+    return true;
+}
+
 void InspectorClientImpl::startMainThreadMonitoring()
 {
     WebKit::Platform::current()->currentThread()->addTaskObserver(this);

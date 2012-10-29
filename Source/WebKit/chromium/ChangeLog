@@ -1,3 +1,16 @@
+2012-10-29  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: make cpu-monitoring feature available only on capable browsers
+        https://bugs.webkit.org/show_bug.cgi?id=100530
+
+        Reviewed by Yury Semikhatsky.
+
+        Motivation: cpu-monitoring feature looks like a glitch,
+        when it is not supported by browser.
+
+        * src/InspectorClientImpl.cpp: Implemented capability getter.
+        * src/InspectorClientImpl.h:
+
 2012-10-29  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Merge LocalizedNumberICUTest into LocaleICUTest

@@ -1,3 +1,21 @@
+2012-10-29  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: make cpu-monitoring feature available only on capable browsers
+        https://bugs.webkit.org/show_bug.cgi?id=100530
+
+        Reviewed by Yury Semikhatsky.
+
+        Motivation: cpu-monitoring feature looks like a glitch,
+        when it is not supported by browser.
+
+        * inspector/Inspector.json: Added capability getter to protocol.
+        * inspector/InspectorClient.h: Added capability getter.
+        * inspector/InspectorTimelineAgent.cpp: Proxy to request to client.
+        * inspector/InspectorTimelineAgent.h: Added capability getter.
+        * inspector/front-end/Settings.js: Added capability field.
+        * inspector/front-end/TimelinePanel.js: Check capability.
+        * inspector/front-end/inspector.js: Forward capability value.
+
 2012-10-29  Antti Koivisto  <antti@apple.com>
 
         Move seamless stylesheet collecting to DocumentStyleSheetCollection

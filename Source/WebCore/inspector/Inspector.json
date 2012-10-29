@@ -2478,6 +2478,14 @@
                 ],
                 "hidden": true,
                 "description": "Tells whether timeline agent supports frame instrumentation."
+            },
+            {
+                "name": "canMonitorMainThread",
+                "returns": [
+                    { "name": "result", "type": "boolean", "description": "True if timeline supports main thread CPU utilization instrumentation." }
+                ],
+                "hidden": true,
+                "description": "Tells whether timeline agent supports main thread CPU utilization instrumentation."
             }
         ],
         "events": [

@@ -133,7 +133,7 @@ WebInspector.TimelinePanel = function()
 
     this._mainThreadTasks = [];
     this._mainThreadMonitoringEnabled = false;
-    if (WebInspector.experimentsSettings.mainThreadMonitoring.isEnabled())
+    if (WebInspector.experimentsSettings.mainThreadMonitoring.isEnabled() && Capabilities.timelineCanMonitorMainThread)
         this._enableMainThreadMonitoring();
 
     this._createFileSelector();
