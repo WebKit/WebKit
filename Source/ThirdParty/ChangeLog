@@ -1,3 +1,12 @@
+2012-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Remove references to unsupported OS and Xcode versions.
+
+        Reviewed by Anders Carlsson.
+
+        * gtest/xcode/Config/CompilerVersion.xcconfig: Removed.
+        * gtest/xcode/Config/General.xcconfig:
+
 2012-10-27  Dan Bernstein  <mitz@apple.com>
 
         REAL_PLATFORM_NAME build setting is no longer needed

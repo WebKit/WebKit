@@ -395,7 +395,6 @@
 		BCBD372E125ABBE600D2C29F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameMIMETypePNG.cpp; sourceTree = "<group>"; };
 		BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FailedLoad.cpp; sourceTree = "<group>"; };
-		BCF0F9391381C25B008361AC /* CompilerVersion.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CompilerVersion.xcconfig; sourceTree = "<group>"; };
 		C01363C713C3997300EF3964 /* StringOperators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringOperators.cpp; path = WTF/StringOperators.cpp; sourceTree = "<group>"; };
 		C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpacebarScrolling.cpp; sourceTree = "<group>"; };
 		C02B7853126613AE0026BF0F /* Carbon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = Carbon.framework; sourceTree = SDKROOT; };
@@ -563,7 +562,6 @@
 			isa = PBXGroup;
 			children = (
 				BC90957E12554CF900083756 /* Base.xcconfig */,
-				BCF0F9391381C25B008361AC /* CompilerVersion.xcconfig */,
 				BC90957F12554CF900083756 /* DebugRelease.xcconfig */,
 				BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */,
 				BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */,

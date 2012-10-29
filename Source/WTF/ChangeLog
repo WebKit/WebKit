@@ -1,3 +1,14 @@
+2012-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Remove references to unsupported OS and Xcode versions.
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/CompilerVersion.xcconfig: Removed.
+        * Configurations/DebugRelease.xcconfig:
+        * WTF.xcodeproj/project.pbxproj:
+
 2012-10-29  Anders Carlsson  <andersca@apple.com>
 
         AtomicString(CFStringRef) shouldn't unconditionally create a StringImpl

@@ -21,11 +21,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
-#include "CompilerVersion.xcconfig"
-
-COMPILER_SPECIFIC_WARNING_CFLAGS = $(COMPILER_SPECIFIC_WARNING_CFLAGS_$(TARGET_GCC_VERSION));
-COMPILER_SPECIFIC_WARNING_CFLAGS_LLVM_COMPILER = -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare;
-
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
 DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
 GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -44,6 +39,7 @@ GCC_PRECOMPILE_PREFIX_HEADER = YES;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 GCC_THREADSAFE_STATICS = NO;
 GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -56,13 +52,12 @@ OTHER_MIGFLAGS = -F$(BUILT_PRODUCTS_DIR);
 PREBINDING = NO;
 VALID_ARCHS = i386 x86_64;
 // FIXME: <rdar://problem/5070292> WebKit should build with -Wshorten-64-to-32
-WARNING_CFLAGS = -Wall -Wextra -Wchar-subscripts -Wextra-tokens -Wformat-security -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wno-unused-parameter -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings $(COMPILER_SPECIFIC_WARNING_CFLAGS);
+WARNING_CFLAGS = -Wall -Wextra -Wchar-subscripts -Wextra-tokens -Wformat-security -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wno-unused-parameter -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare;
 
 // Prevent C++ standard library operator new, delete and their related exception types from being exported as weak symbols.
 OTHER_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__Znwm;
 
 CLANG_CXX_LIBRARY = $(CLANG_CXX_LIBRARY_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-CLANG_CXX_LIBRARY_1060 = libstdc++;
 CLANG_CXX_LIBRARY_1070 = libc++;
 CLANG_CXX_LIBRARY_1080 = libc++;
 CLANG_CXX_LIBRARY_1090 = libc++;
@@ -92,7 +87,6 @@ DEAD_CODE_STRIPPING = YES;
 SECTORDER_FLAGS = -Wl,-order_file,mac/WebKit2.order;
 
 TARGETING_SAME_OS_X_VERSION = $(TARGETING_SAME_OS_X_VERSION_$(MAC_OS_X_VERSION_MAJOR)_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-TARGETING_SAME_OS_X_VERSION_1060_1060 = YES;
 TARGETING_SAME_OS_X_VERSION_1070_1070 = YES;
 TARGETING_SAME_OS_X_VERSION_1080_1080 = YES;
 TARGETING_SAME_OS_X_VERSION_1090_1090 = YES;

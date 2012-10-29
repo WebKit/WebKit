@@ -331,7 +331,6 @@
 		BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityCommonMac.mm; path = mac/AccessibilityCommonMac.mm; sourceTree = "<group>"; };
 		BC4741290D038A4C0072B006 /* JavaScriptThreading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptThreading.h; sourceTree = "<group>"; };
 		BC4741400D038A570072B006 /* JavaScriptThreadingPthreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaScriptThreadingPthreads.cpp; path = pthreads/JavaScriptThreadingPthreads.cpp; sourceTree = "<group>"; };
-		BC646A4B136905DE00B35DED /* CompilerVersion.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = CompilerVersion.xcconfig; path = mac/Configurations/CompilerVersion.xcconfig; sourceTree = "<group>"; };
 		BC9D90210C97472D0099A4A3 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
 		BC9D90220C97472E0099A4A3 /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
 		BC9D90230C97472E0099A4A3 /* WorkQueueItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WorkQueueItem.h; sourceTree = "<group>"; };
@@ -682,7 +681,6 @@
 			isa = PBXGroup;
 			children = (
 				BCB281EE0CFA713D007E533E /* Base.xcconfig */,
-				BC646A4B136905DE00B35DED /* CompilerVersion.xcconfig */,
 				BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */,
 				BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */,
 				BCB283D80CFA7AFD007E533E /* ImageDiff.xcconfig */,

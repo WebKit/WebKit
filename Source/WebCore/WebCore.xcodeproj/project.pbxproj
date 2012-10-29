@@ -12846,7 +12846,6 @@
 		BC64649511D82349006455B0 /* JSDOMStringMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringMap.cpp; sourceTree = "<group>"; };
 		BC64649611D82349006455B0 /* JSDOMStringMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMStringMap.h; sourceTree = "<group>"; };
 		BC64649B11D8238C006455B0 /* JSDOMStringMapCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringMapCustom.cpp; sourceTree = "<group>"; };
-		BC646F7E136A435700B35DED /* CompilerVersion.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CompilerVersion.xcconfig; sourceTree = "<group>"; };
 		BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedFont.cpp; sourceTree = "<group>"; };
 		BC64B4CA0CB4295D005F2B62 /* CachedFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFont.h; sourceTree = "<group>"; };
 		BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFace.cpp; sourceTree = "<group>"; };
@@ -14850,7 +14849,6 @@
 			isa = PBXGroup;
 			children = (
 				1CDD45E60BA9C84600F90147 /* Base.xcconfig */,
-				BC646F7E136A435700B35DED /* CompilerVersion.xcconfig */,
 				1CDD45E40BA9C84600F90147 /* DebugRelease.xcconfig */,
 				449098B10F8F82520076A327 /* FeatureDefines.xcconfig */,
 				1C904DF90BA9D2C80081E9D0 /* Version.xcconfig */,
@@ -25736,8 +25734,6 @@
 				1C5F9D760E09A1B400E91D0A /* Streamline Inspector Source */,
 				93F19A0C08245E59001E9ABC /* Sources */,
 				93F19B1208245E59001E9ABC /* Frameworks */,
-				939D050109D9FF6B00984996 /* Check For Global Initializers */,
-				933457E60EBFDF6B00B80894 /* Check For Exit Time Destructors */,
 				5D0D540D0E9862F60029E223 /* Check For Weak VTables and Externals */,
 				37A1EAA3142699BC0087F425 /* Check For Inappropriate Objective-C Class Names */,
 				5DF50887116F3077005202AB /* Check For Inappropriate Files In Framework */,
@@ -25975,36 +25971,6 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-files-in-framework ]; then\n    ../../Tools/Scripts/check-for-inappropriate-files-in-framework || exit $?\nfi\n";
 		};
-		933457E60EBFDF6B00B80894 /* Check For Exit Time Destructors */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Check For Exit Time Destructors";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${TARGET_GCC_VERSION}\" = \"LLVM_COMPILER\" ]; then\n    exit 0;\nfi\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-exit-time-destructors ]; then\n    ../../Tools/Scripts/check-for-exit-time-destructors || exit $?\nfi";
-		};
-		939D050109D9FF6B00984996 /* Check For Global Initializers */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Check For Global Initializers";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${TARGET_GCC_VERSION}\" = \"LLVM_COMPILER\" ]; then\n    exit 0;\nfi\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-global-initializers ]; then\n    ../../Tools/Scripts/check-for-global-initializers || exit $?\nfi";
-		};
 		DD041FBD09D9DDBE0010AF2A /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -26017,7 +25983,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\n/bin/ln -sfh \"${SRCROOT}\" WebCore\nexport WebCore=\"WebCore\"\n\nif [ ! $CC ]; then\n    case $TARGET_GCC_VERSION in\n        (GCC_42)\n            export CC=\"`xcrun -find gcc-4.2`\";;\n        (LLVM_GCC_42)\n            export CC=\"`xcrun -find llvm-gcc-4.2`\";;\n        (LLVM_COMPILER)\n            export CC=\"`xcrun -find clang`\";;\n    esac\nfi\n\nif [ ! $GPERF ]; then\n    export GPERF=\"`xcrun -find gperf`\"\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make  --no-builtin-rules -f \"WebCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore\"\n\n/bin/ln -sfh \"${SRCROOT}\" WebCore\nexport WebCore=\"WebCore\"\n\nif [ ! $CC ]; then\n    export CC=\"`xcrun -find clang`\"\nfi\n\nif [ ! $GPERF ]; then\n    export GPERF=\"`xcrun -find gperf`\"\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make  --no-builtin-rules -f \"WebCore/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

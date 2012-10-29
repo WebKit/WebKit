@@ -1,3 +1,16 @@
+2012-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Remove references to unsupported OS and Xcode versions.
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/CompilerVersion.xcconfig: Removed.
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+        * DerivedSources.make:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2012-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Add a NetworkingContext for NetworkProcess

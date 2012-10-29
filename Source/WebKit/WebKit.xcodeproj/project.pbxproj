@@ -1648,8 +1648,6 @@
 				939810BB0824BF01008DF038 /* Sources */,
 				1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */,
 				939811270824BF01008DF038 /* Frameworks */,
-				939D054F09DA02D500984996 /* Check For Global Initializers */,
-				9337D6540EBFE54D00DA3CB5 /* Check For Exit Time Destructors */,
 				5D0D54210E98631D0029E223 /* Check For Weak VTables and Externals */,
 				3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */,
 				5D88EE6C11407DE800BC3ABC /* Check For Framework Include Consistency */,
@@ -1819,21 +1817,6 @@
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"${MACOSX_DEPLOYMENT_TARGET}\" > \"10.5\" && \"${CONFIGURATION}\" != \"Production\" && \"${ACTION}\" == \"build\" ]]; then\n    if [[ ! -e \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\" ]]; then\n       ln -s /System/Library/Frameworks/WebKit.framework/WebKitPluginHost.app \"${CONFIGURATION_BUILD_DIR}/WebKit.framework/WebKitPluginHost.app\"\n    fi\nfi\n";
 		};
-		9337D6540EBFE54D00DA3CB5 /* Check For Exit Time Destructors */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Check For Exit Time Destructors";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${TARGET_GCC_VERSION}\" = \"LLVM_COMPILER\" ]; then\n    exit 0;\nfi\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-exit-time-destructors ]; then\n    ../../Tools/Scripts/check-for-exit-time-destructors || exit $?\nfi";
-		};
 		939811300824BF01008DF038 /* Make Frameworks Symbolic Link */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 8;
@@ -1849,21 +1832,6 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "ln -sf Versions/Current/Frameworks \"$TARGET_BUILD_DIR/WebKit.framework/Frameworks\"\n";
-		};
-		939D054F09DA02D500984996 /* Check For Global Initializers */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Check For Global Initializers";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${TARGET_GCC_VERSION}\" = \"LLVM_COMPILER\" ]; then\n    exit 0;\nfi\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-global-initializers ]; then\n    ../../Tools/Scripts/check-for-global-initializers || exit $?\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 

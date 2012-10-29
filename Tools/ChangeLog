@@ -1,3 +1,25 @@
+2012-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Remove references to unsupported OS and Xcode versions.
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * DumpRenderTree/mac/Configurations/CompilerVersion.xcconfig: Removed.
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig:
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/CompilerVersion.xcconfig: Removed.
+        * MiniBrowser/Configurations/DebugRelease.xcconfig:
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/CompilerVersion.xcconfig: Removed.
+        * TestWebKitAPI/Configurations/DebugRelease.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/CompilerVersion.xcconfig: Removed.
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+
 2012-10-29  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: change non-verbose log format for webkit-patch

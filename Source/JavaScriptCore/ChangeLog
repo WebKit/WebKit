@@ -1,3 +1,15 @@
+2012-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Remove references to unsupported OS and Xcode versions.
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/CompilerVersion.xcconfig: Removed.
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2012-10-29  Michael Saboff  <msaboff@apple.com>
 
         Non-special escape character sequences cause JSC::Lexer::parseString to create 16 bit strings

@@ -2013,7 +2013,6 @@
 		BCAC111E12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDatabaseManagerProxyClient.cpp; sourceTree = "<group>"; };
 		BCAE9DE9160C097400A33217 /* com.apple.WebKit2.WebProcessServiceForWebKitDevelopment.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit2.WebProcessServiceForWebKitDevelopment.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCAE9DEF160C097500A33217 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCAE9DFF160C0B4100A33217 /* CompilerVersion.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CompilerVersion.xcconfig; sourceTree = "<group>"; };
 		BCAE9E00160C0B4100A33217 /* WebProcessServiceForWebKitDevelopment.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebProcessServiceForWebKitDevelopment.xcconfig; sourceTree = "<group>"; };
 		BCAE9E01160C12DA00A33217 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = WebProcessService/Info.plist; sourceTree = "<group>"; };
 		BCAE9E04160C137800A33217 /* WebProcessServiceForWebKitDevelopmentMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessServiceForWebKitDevelopmentMain.mm; sourceTree = "<group>"; };
@@ -2498,7 +2497,6 @@
 			children = (
 				1A4F976A100E7B6600637A18 /* Base.xcconfig */,
 				5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */,
-				BCAE9DFF160C0B4100A33217 /* CompilerVersion.xcconfig */,
 				1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */,
 				1A4F976C100E7B6600637A18 /* FeatureDefines.xcconfig */,
 				510CC8461613C7C600D03ED3 /* NetworkProcess.xcconfig */,
@@ -4881,8 +4879,6 @@
 				5D1A239215E760590023E981 /* Remove Compiled Python Files */,
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
-				5DF408C0131DD37C00130071 /* Check For Global Initializers */,
-				5DF408C4131DD3DB00130071 /* Check For Exit Time Destructors */,
 				5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */,
 				3713F0231429063D0036387F /* Check For Inappropriate Objective-C Class Names */,
 				5DF408C6131DD49700130071 /* Check For Framework Include Consistency */,
@@ -5100,36 +5096,6 @@
 			shellPath = /bin/sh;
 			shellScript = "find \"${BUILT_PRODUCTS_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}\" -name '*.pyc' -delete";
 		};
-		5DF408C0131DD37C00130071 /* Check For Global Initializers */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Check For Global Initializers";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${TARGET_GCC_VERSION}\" = \"LLVM_COMPILER\" ]; then\n    exit 0;\nfi\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-global-initializers ]; then\n    ../../Tools/Scripts/check-for-global-initializers || exit $?\nfi";
-		};
-		5DF408C4131DD3DB00130071 /* Check For Exit Time Destructors */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Check For Exit Time Destructors";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${TARGET_GCC_VERSION}\" = \"LLVM_COMPILER\" ]; then\n    exit 0;\nfi\n\nif [ \"${ACTION}\" = \"installhdrs\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-exit-time-destructors ]; then\n    ../../Tools/Scripts/check-for-exit-time-destructors || exit $?\nfi";
-		};
 		5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -5218,7 +5184,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\n\nexport WebKit2=\"${SRCROOT}\"\n\nif [ ! $CC ]; then\n    case $TARGET_GCC_VERSION in\n        (LLVM_GCC_42)\n            export CC=\"`xcrun -find llvm-gcc-4.2`\";;\n        (LLVM_COMPILER)\n            export CC=\"`xcrun -find clang`\";;\n    esac\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make --no-builtin-rules -f \"${WebKit2}/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
+			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\ncd \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2\"\n\nexport WebKit2=\"${SRCROOT}\"\n\nif [ ! $CC ]; then\n    export CC=\"`xcrun -find clang`\"\nfi\n\nif [ \"${ACTION}\" = \"build\" -o \"${ACTION}\" = \"install\" -o \"${ACTION}\" = \"installhdrs\" ]; then\n    make --no-builtin-rules -f \"${WebKit2}/DerivedSources.make\" -j `/usr/sbin/sysctl -n hw.availcpu`\nfi\n";
 		};
 		E14E99FA14D879DB001D221F /* Add Entitlements */ = {
 			isa = PBXShellScriptBuildPhase;
