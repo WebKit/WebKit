@@ -216,7 +216,7 @@ WebInspector.ToolbarDropdown.prototype = {
         var top = this._arrow.totalOffsetTop() + this._arrow.clientHeight;
         this._arrow.addStyleClass("dropdown-visible");
         this.element.style.top = top + "px";
-        this.element.style.left = this._arrow.totalOffsetLeft() + "px";
+        this.element.style.right = window.innerWidth - this._arrow.totalOffsetLeft() - this._arrow.clientWidth + "px";
         this._contentElement.style.maxHeight = window.innerHeight - top - 20 + "px";
         this._toolbar.element.appendChild(this.element);
     },

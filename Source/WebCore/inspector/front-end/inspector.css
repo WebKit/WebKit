@@ -245,6 +245,11 @@ body.undocked.platform-mac-snowleopard #toolbar-dropdown {
     margin-right: 0.5em;
 }
 
+#toolbar-dropdown .toolbar-label {
+    line-height: 32px;
+    top: 0;
+}
+
 .scrollable-content {
     position: static;
     height: 100%;

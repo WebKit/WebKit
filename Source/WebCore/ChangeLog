@@ -1,3 +1,19 @@
+2012-10-29  Patrick Dubroy  <dubroy@chromium.org>
+
+        Web Inspector: Toolbar overflow appears outside window
+        https://bugs.webkit.org/show_bug.cgi?id=100663
+
+        Reviewed by Pavel Feldman.
+
+        Since the search bar was removed from the toolbar, the overflow menu appears too far
+        to the right, and is unreadable. Fixed this by aligning it relative to the right side
+        of the window, rather than the left.
+
+        * inspector/front-end/Toolbar.js:
+        (WebInspector.ToolbarDropdown.prototype.show):
+        * inspector/front-end/inspector.css:
+        (#toolbar-dropdown .toolbar-label):
+
 2012-10-29  Michelangelo De Simone  <michelangelo@webkit.org>
 
         [CSS Shaders] Implement CustomFilterArrayParameter::blend
