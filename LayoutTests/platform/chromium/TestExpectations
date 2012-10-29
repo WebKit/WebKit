@@ -1974,6 +1974,7 @@ crbug.com/20345 fast/js/getOwnPropertyDescriptor.html [ Failure ]
 # WebKit merge 48500:48585, newly implemented Object.defineProperty.
 crbug.com/22526 fast/js/Object-defineProperty.html [ Failure ]
 
+webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
 # WebKit merge 48500:48585, due to newly added support for MathML.
 # crbug.com/22554 mathml
 # The mathml pixel tests will be changing for a few days. They'll need rebaseline after that.

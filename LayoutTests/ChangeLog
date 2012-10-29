@@ -1,3 +1,15 @@
+2012-10-29  David Barton  <dbarton@mathscribe.com>
+
+        Unreviewed gardening. LayoutTests/mathml/msubsup-fuzz.html passes locally but not on
+        cr-linux-ews. I need to see a stack trace to debug it. See webkit.org/b/100463.
+
+        * mathml/msubsup-fuzz-expected.txt: Added.
+        * mathml/msubsup-fuzz.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-10-29  Justin Novosad  <junov@google.com>
 
         [Chromium] flickering observed when copying 2D canvas to webGL texture

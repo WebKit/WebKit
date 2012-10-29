@@ -1298,6 +1298,7 @@ webkit.org/b/80394 fast/block/margin-collapse/empty-clear-blocks.html [ Failure 
 webkit.org/b/80394 fast/block/margin-collapse/025.html [ Failure ]
 webkit.org/b/80394 fast/block/margin-collapse/block-inside-inline/025.html [ Failure ]
 
+webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
 # Needs rebaselining after bug 99921
 webkit.org/b/99921 mathml/presentation/fenced.xhtml [ Failure ]
 webkit.org/b/99921 mathml/presentation/mo.xhtml [ Failure ]

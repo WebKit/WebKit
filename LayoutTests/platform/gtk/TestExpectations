@@ -422,6 +422,7 @@ webkit.org/b/99059 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 
+webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
 # MathML layout is being tuned/reworked.
 webkit.org/b/99921 mathml/presentation/fenced.xhtml [ Failure ]
 webkit.org/b/99921 mathml/presentation/mo.xhtml [ Failure ]

@@ -1579,6 +1579,7 @@ webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Ima
 
 webkit.org/b/99878 css3/flexbox/flexbox-baseline-margins.html [ Missing ImageOnlyFailure ]
 
+webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
 # Needs rebaseline eventually
 webkit.org/b/97990 mathml/presentation/attributes.xhtml [ Failure ]
 webkit.org/b/97990 mathml/presentation/fractions.xhtml [ Failure ]
