@@ -1,3 +1,30 @@
+2012-10-29  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: change non-verbose log format for webkit-patch
+        https://bugs.webkit.org/show_bug.cgi?id=100561
+
+        Reviewed by Ojan Vafai.
+
+        Logging the module name and the log level is annoying and nearly useless.
+        For starters, this change removes that unless you are doing verbose/
+        debug logging. In the future we should split out the concepts of
+        verbose and debug logging (like we did in test-webkitpy and
+        run-webkit-tests) so that you could get this in debug logging.
+
+        * Scripts/webkitpy/common/system/logutils.py:
+        (_default_handlers):
+        (configure_logging):
+        * Scripts/webkitpy/common/system/logutils_unittest.py:
+        (ConfigureLoggingTest.test_info_message):
+        (ConfigureLoggingTest):
+        (ConfigureLoggingTest.test_debug_message):
+        (ConfigureLoggingTest.test_two_messages):
+        (ConfigureLoggingVerboseTest):
+        (ConfigureLoggingVerboseTest._logging_level):
+        (ConfigureLoggingVerboseTest.test_info_message):
+        (ConfigureLoggingVerboseTest.test_debug_message):
+        (ConfigureLoggingCustomLevelTest.test_logged_message):
+
 2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         [CMAKE] Add TestNetscapePlugIn/Tests/NPRuntimeCallsWithNullNPP.cpp to CMakeLists.txt

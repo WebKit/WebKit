@@ -125,7 +125,7 @@ def get_logger(path):
     return logging.getLogger(logger_name)
 
 
-def _default_handlers(stream):
+def _default_handlers(stream, logging_level):
     """Return a list of the default logging handlers to use.
 
     Args:
@@ -148,7 +148,11 @@ def _default_handlers(stream):
 
     # Create the handler.
     handler = logging.StreamHandler(stream)
-    formatter = logging.Formatter("%(name)s: [%(levelname)s] %(message)s")
+    if logging_level == logging.DEBUG:
+        formatter = logging.Formatter("%(name)s: [%(levelname)s] %(message)s")
+    else:
+        formatter = logging.Formatter("%(message)s")
+
     handler.setFormatter(formatter)
     handler.addFilter(logging_filter)
 
@@ -195,7 +199,7 @@ def configure_logging(logging_level=None, logger=None, stream=None,
     if stream is None:
         stream = sys.stderr
     if handlers is None:
-        handlers = _default_handlers(stream)
+        handlers = _default_handlers(stream, logging_level)
 
     logger.setLevel(logging_level)
 
