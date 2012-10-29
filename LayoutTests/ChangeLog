@@ -1,3 +1,16 @@
+2012-10-29  Justin Novosad  <junov@google.com>
+
+        [Chromium] flickering observed when copying 2D canvas to webGL texture
+        https://bugs.webkit.org/show_bug.cgi?id=100691
+
+        Reviewed by Stephen White.
+
+        Modified test by adding a canvas draw imediately after webgl texture
+        upload in order to exercise graphics context synchronization between
+        the webGL and 2D canvas graphics contexts.
+
+        * fast/canvas/webgl/canvas-2d-webgl-texture.html:
+
 2012-10-29  Glenn Adams  <glenn@skynav.com>
        
         [CSSOM] Extraneous whitespace in CSSImportRule.cssText
