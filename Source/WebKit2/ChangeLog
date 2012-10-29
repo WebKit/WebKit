@@ -1,3 +1,37 @@
+2012-10-29  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [WK2] Enable delegated scrolling as soon as the FrameView is created when using fixed layout
+        https://bugs.webkit.org/show_bug.cgi?id=100383
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Scroll requests and PageTransitionViewportReady messages depend on
+        delegated scrolling being set properly on the FrameView to behave
+        properly. Since we were waiting for the viewport information to be
+        ready before setting the flag this could cause those messages to be avoided.
+
+        This patch takes most of the flag set by setResizesToContentsUsingLayoutSize
+        and apply them as soon as possible in WebPage::setUseFixedLayout and
+        WebFrameLoaderClient::transitionToCommittedForNewPage.
+
+        The behavior should be the same except for the following settings which are
+        now set outside of USE(TILED_BACKING_STORE) if we're using fixed layout:
+        - setAcceleratedCompositingForFixedPositionEnabled
+        - setFixedElementsLayoutRelativeToFrame
+        - setFixedPositionCreatesStackingContext
+
+        This fixes the tst_QQuickWebView::scrollRequest auto test and improves the
+        reliability of the loadVisuallyCommitted signal with pages loaded from disk.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+        (WebKit::WebPage::setUseFixedLayout):
+        (WebKit::WebPage::setFixedLayoutSize):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+
 2012-10-29  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Unreviewed build fix after r132709.

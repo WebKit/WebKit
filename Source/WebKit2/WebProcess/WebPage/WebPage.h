@@ -378,7 +378,6 @@ public:
 #if USE(TILED_BACKING_STORE)
     void pageDidRequestScroll(const WebCore::IntPoint&);
     void setFixedVisibleContentRect(const WebCore::IntRect&);
-    void setResizesToContentsUsingLayoutSize(const WebCore::IntSize&);
     void resizeToContentsIfNeeded();
     void sendViewportAttributesChanged();
     void setViewportSize(const WebCore::IntSize&);

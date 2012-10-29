@@ -1236,6 +1236,11 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     m_frame->coreFrame()->createView(webPage->size(), backgroundColor, /* transparent */ false, IntSize(), currentFixedVisibleContentRect, shouldUseFixedLayout);
     m_frame->coreFrame()->view()->setTransparent(!webPage->drawsBackground());
+
+#if USE(TILED_BACKING_STORE)
+    m_frame->coreFrame()->view()->setDelegatesScrolling(shouldUseFixedLayout);
+    m_frame->coreFrame()->view()->setPaintsEntireContents(shouldUseFixedLayout);
+#endif
 }
 
 void WebFrameLoaderClient::didSaveToPageCache()

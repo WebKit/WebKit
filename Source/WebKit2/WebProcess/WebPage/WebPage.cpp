@@ -962,32 +962,6 @@ void WebPage::setFixedVisibleContentRect(const IntRect& rect)
     m_page->mainFrame()->view()->setFixedVisibleContentRect(rect);
 }
 
-void WebPage::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSize)
-{
-    ASSERT(m_useFixedLayout);
-    ASSERT(!targetLayoutSize.isEmpty());
-
-    FrameView* view = m_page->mainFrame()->view();
-
-    view->setDelegatesScrolling(true);
-    view->setUseFixedLayout(true);
-    view->setPaintsEntireContents(true);
-
-    if (view->fixedLayoutSize() == targetLayoutSize)
-        return;
-
-    m_page->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
-    m_page->settings()->setFixedElementsLayoutRelativeToFrame(true);
-    m_page->settings()->setFixedPositionCreatesStackingContext(true);
-#if ENABLE(SMOOTH_SCROLLING)
-    // Ensure we don't do animated scrolling in the WebProcess when scrolling is delegated.
-    m_page->settings()->setEnableScrollAnimator(false);
-#endif
-
-    // Always reset even when empty. This also takes care of the relayout.
-    setFixedLayoutSize(targetLayoutSize);
-}
-
 void WebPage::resizeToContentsIfNeeded()
 {
     ASSERT(m_useFixedLayout);
@@ -1026,7 +1000,8 @@ void WebPage::sendViewportAttributesChanged()
 
     ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, deviceWidth, deviceHeight, m_page->deviceScaleFactor(), m_viewportSize);
 
-    setResizesToContentsUsingLayoutSize(IntSize(static_cast<int>(attr.layoutSize.width()), static_cast<int>(attr.layoutSize.height())));
+    // This also takes care of the relayout.
+    setFixedLayoutSize(IntSize(static_cast<int>(attr.layoutSize.width()), static_cast<int>(attr.layoutSize.height())));
     send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
 }
 
@@ -1190,10 +1165,24 @@ void WebPage::setUseFixedLayout(bool fixed)
 {
     m_useFixedLayout = fixed;
 
+    m_page->settings()->setAcceleratedCompositingForFixedPositionEnabled(fixed);
+    m_page->settings()->setFixedElementsLayoutRelativeToFrame(fixed);
+    m_page->settings()->setFixedPositionCreatesStackingContext(fixed);
+
+#if USE(TILED_BACKING_STORE) && ENABLE(SMOOTH_SCROLLING)
+    // Delegated scrolling will be enabled when the FrameView is created if fixed layout is enabled.
+    // Ensure we don't do animated scrolling in the WebProcess in that case.
+    m_page->settings()->setEnableScrollAnimator(!fixed);
+#endif
+
     FrameView* view = mainFrameView();
     if (!view)
         return;
 
+#if USE(TILED_BACKING_STORE)
+    view->setDelegatesScrolling(fixed);
+    view->setPaintsEntireContents(fixed);
+#endif
     view->setUseFixedLayout(fixed);
     if (!fixed)
         setFixedLayoutSize(IntSize());
@@ -1202,7 +1191,7 @@ void WebPage::setUseFixedLayout(bool fixed)
 void WebPage::setFixedLayoutSize(const IntSize& size)
 {
     FrameView* view = mainFrameView();
-    if (!view)
+    if (!view || view->fixedLayoutSize() == size)
         return;
 
     view->setFixedLayoutSize(size);
