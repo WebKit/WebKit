@@ -1,5 +1,17 @@
 2012-10-29  Michael Saboff  <msaboff@apple.com>
 
+        buildHTTPHeaders() should use a StringBuilder.appendLiteral() for separator
+        https://bugs.webkit.org/show_bug.cgi?id=100689
+
+        Reviewed by Darin Adler.
+
+        Changed from using a String temporary for the separator to using StringBuilder.appendLiteral(": ").
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::buildHTTPHeaders):
+
+2012-10-29  Michael Saboff  <msaboff@apple.com>
+
         WKStringCopyCFString() should directly use 8 bit Strings data instead of up converting
         https://bugs.webkit.org/show_bug.cgi?id=100579
 

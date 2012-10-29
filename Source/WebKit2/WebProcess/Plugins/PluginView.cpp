@@ -164,7 +164,6 @@ static String buildHTTPHeaders(const ResourceResponse& response, long long& expe
         return String();
 
     StringBuilder stringBuilder;
-    String separator(": ");
     
     String statusLine = String::format("HTTP %d ", response.httpStatusCode());
     stringBuilder.append(statusLine);
@@ -174,7 +173,7 @@ static String buildHTTPHeaders(const ResourceResponse& response, long long& expe
     HTTPHeaderMap::const_iterator end = response.httpHeaderFields().end();
     for (HTTPHeaderMap::const_iterator it = response.httpHeaderFields().begin(); it != end; ++it) {
         stringBuilder.append(it->key);
-        stringBuilder.append(separator);
+        stringBuilder.appendLiteral(": ");
         stringBuilder.append(it->value);
         stringBuilder.append('\n');
     }
