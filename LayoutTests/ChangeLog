@@ -1,3 +1,10 @@
+2012-10-29  Chris Rogers  <crogers@google.com>
+
+        Unreviewed rebaseline of webaudio/audiobuffersource-loop-points
+
+        * platform/chromium-win-xp/webaudio/audiobuffersource-loop-points-expected.wav: Added.
+        * platform/chromium-win/webaudio/audiobuffersource-loop-points-expected.wav: Added.
+
 2012-10-29  Alpha Lam  <hclam@chromium.org>
 
         [skia] Handle mask box image.
