@@ -1,3 +1,23 @@
+2012-10-29  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: The bubble for repeated errors is misplaced.
+        https://bugs.webkit.org/show_bug.cgi?id=100525
+
+        Reviewed by Pavel Feldman.
+
+        The repeated-message bubble is displayed as an inline-block element,
+        which works well as long as no stack trace is present. If present, the
+        message is wrapped in an 'ol' element displayed as a block, which pushes
+        itself down to the next line.
+
+        To avoid that issue, this patch switches the wrapper element to flexbox,
+        glorious flexbox.
+
+        * inspector/front-end/inspector.css:
+        (.console-message .bubble):
+        (.repeated-message .outline-disclosure):
+        (.filter-all .console-log-level.repeated-message, .filter-logs .console-log-level.repeated-message):
+
 2012-10-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Handle non-parsedOk properties as inactive ones

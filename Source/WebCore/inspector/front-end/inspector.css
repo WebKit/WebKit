@@ -924,7 +924,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     vertical-align: middle;
     white-space: nowrap;
     padding: 1px 4px;
-    margin-top: -2px;
+    margin-top: -1px;
     margin-right: 4px;
     margin-left: -18px;
     text-align: left;
@@ -943,6 +943,10 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 
 .repeated-message.console-error-level::before, .repeated-message.console-warning-level:before, .repeated-message.console-debug-level:before {
     visibility: hidden;
+}
+
+.repeated-message .outline-disclosure {
+    -webkit-flex: 1;
 }
 
 .console-group .console-group > .console-group-messages {
@@ -1986,6 +1990,12 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 .filter-all .console-error-level, .filter-errors .console-error-level,
 .filter-all .console-log-level, .filter-logs .console-log-level {
     display: block;
+}
+
+.filter-all .console-warning-level.repeated-message, .filter-warnings .console-warning-level.repeated-message,
+.filter-all .console-error-level.repeated-message, .filter-errors .console-error-level.repeated-message,
+.filter-all .console-log-level.repeated-message, .filter-logs .console-log-level.repeated-message {
+    display: -webkit-flex;
 }
 
 .console-user-command-result {
