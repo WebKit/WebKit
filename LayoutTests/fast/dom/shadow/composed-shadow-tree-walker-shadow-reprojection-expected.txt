@@ -1,0 +1,186 @@
+Tests for Composed Shadow DOM Tree Traversal APIs. Can only run within DRT
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Multiple shadow root without shadow element
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=c
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=c
+Traverse in backward.
+DIV	 id=c
+DIV	 id=a
+
+Multiple shadow root with shadow element
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=c
+	DIV	 id=b
+	DIV	 id=e
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=c
+DIV	 id=b
+DIV	 id=e
+Traverse in backward.
+DIV	 id=e
+DIV	 id=b
+DIV	 id=c
+DIV	 id=a
+
+Multiple shadow root with shadow element, case 2
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=f
+	DIV	 id=c
+	DIV	 id=b
+	DIV	 id=e
+	DIV	 id=h
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=f
+DIV	 id=c
+DIV	 id=b
+DIV	 id=e
+DIV	 id=h
+Traverse in backward.
+DIV	 id=h
+DIV	 id=e
+DIV	 id=b
+DIV	 id=c
+DIV	 id=f
+DIV	 id=a
+
+shadow reprojection
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=b
+		DIV	 id=d
+		DIV	 id=a-child
+		DIV	 id=f
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=b
+DIV	 id=d
+DIV	 id=a-child
+DIV	 id=f
+Traverse in backward.
+DIV	 id=f
+DIV	 id=a-child
+DIV	 id=d
+DIV	 id=b
+DIV	 id=a
+
+shadow reprojection, take 2
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=d
+		DIV	 id=f
+		DIV	 id=b
+		DIV	 id=h
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=d
+DIV	 id=f
+DIV	 id=b
+DIV	 id=h
+Traverse in backward.
+DIV	 id=h
+DIV	 id=b
+DIV	 id=f
+DIV	 id=d
+DIV	 id=a
+
+shadow fallback element reprojection
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=i
+		DIV	 id=k
+		DIV	 id=c
+		DIV	 id=b
+		DIV	 id=g
+		DIV	 id=h
+		DIV	 id=m
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=i
+DIV	 id=k
+DIV	 id=c
+DIV	 id=b
+DIV	 id=g
+DIV	 id=h
+DIV	 id=m
+Traverse in backward.
+DIV	 id=m
+DIV	 id=h
+DIV	 id=g
+DIV	 id=b
+DIV	 id=c
+DIV	 id=k
+DIV	 id=i
+DIV	 id=a
+
+with inactive insertion points
+Composed Shadow Tree:
+DIV	 id=a
+	DIV	 id=s
+		DIV	 id=u
+		DIV	 id=f
+		CONTENT	 id=b
+			DIV	 id=c
+		SHADOW	 id=d
+			DIV	 id=e
+		CONTENT	 id=l
+		SHADOW	 id=m
+		DIV	 id=n
+		CONTENT	 id=p
+		SHADOW	 id=q
+		DIV	 id=r
+		DIV	 id=w
+
+Traverse in forward.
+DIV	 id=a
+DIV	 id=s
+DIV	 id=u
+DIV	 id=f
+CONTENT	 id=b
+DIV	 id=c
+SHADOW	 id=d
+DIV	 id=e
+CONTENT	 id=l
+SHADOW	 id=m
+DIV	 id=n
+CONTENT	 id=p
+SHADOW	 id=q
+DIV	 id=r
+DIV	 id=w
+Traverse in backward.
+DIV	 id=w
+DIV	 id=r
+SHADOW	 id=q
+CONTENT	 id=p
+DIV	 id=n
+SHADOW	 id=m
+CONTENT	 id=l
+DIV	 id=e
+SHADOW	 id=d
+DIV	 id=c
+CONTENT	 id=b
+DIV	 id=f
+DIV	 id=u
+DIV	 id=s
+DIV	 id=a
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

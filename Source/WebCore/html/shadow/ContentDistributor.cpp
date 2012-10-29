@@ -50,6 +50,28 @@ InsertionPoint* ContentDistributor::findInsertionPointFor(const Node* key) const
     return m_nodeToInsertionPoint.get(key);
 }
 
+void ContentDistributor::populate(Node* node, ContentDistribution& pool)
+{
+    if (!isInsertionPoint(node)) {
+        pool.append(node);
+        return;
+    }
+
+    InsertionPoint* insertionPoint = toInsertionPoint(node);
+    if (!insertionPoint->isActive()) {
+        pool.append(insertionPoint);
+        return;
+    }
+
+    if (insertionPoint->hasDistribution()) {
+        for (size_t i = 0; i < insertionPoint->size(); ++i)
+            populate(insertionPoint->at(i), pool);
+    } else {
+        for (Node* fallbackNode = insertionPoint->firstChild(); fallbackNode; fallbackNode = fallbackNode->nextSibling())
+            pool.append(fallbackNode);
+    }
+}
+
 void ContentDistributor::distribute(Element* host)
 {
     ASSERT(needsDistribution());
@@ -58,27 +80,16 @@ void ContentDistributor::distribute(Element* host)
     m_validity = Valid;
 
     ContentDistribution pool;
-    for (Node* node = host->firstChild(); node; node = node->nextSibling()) {
-        if (!isHTMLContentElement(node)) {
-            pool.append(node);
-            continue;
-        }
-
-        InsertionPoint* insertionPoint = toInsertionPoint(node);
-        if (insertionPoint->hasDistribution()) {
-            for (size_t i = 0; i < insertionPoint->size(); ++i)
-                pool.append(insertionPoint->at(i));
-        } else {
-            for (Node* fallbackNode = insertionPoint->firstChild(); fallbackNode; fallbackNode = fallbackNode->nextSibling())
-                pool.append(fallbackNode);
-        }
-    }
+    for (Node* node = host->firstChild(); node; node = node->nextSibling())
+        populate(node, pool);
 
     Vector<bool> distributed(pool.size());
     distributed.fill(false);
 
-    HTMLShadowElement* firstActiveShadowInsertionPointInOldestShadowRoot = 0;
+    Vector<HTMLShadowElement*, 8> activeShadowInsertionPoints;
     for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+        HTMLShadowElement* firstActiveShadowInsertionPoint = 0;
+
         for (Node* node = root; node; node = node->traverseNextNode(root)) {
             if (!isInsertionPoint(node))
                 continue;
@@ -87,25 +98,31 @@ void ContentDistributor::distribute(Element* host)
                 continue;
 
             if (isHTMLShadowElement(node)) {
-                if (root->olderShadowRoot()) {
-                    if (!root->olderShadowRoot()->assignedTo()) {
-                        distributeNodeChildrenTo(point, root->olderShadowRoot());
-                        root->olderShadowRoot()->setAssignedTo(point);
-                    }
-                } else if (!firstActiveShadowInsertionPointInOldestShadowRoot)
-                    firstActiveShadowInsertionPointInOldestShadowRoot = toHTMLShadowElement(node);
+                if (!firstActiveShadowInsertionPoint)
+                    firstActiveShadowInsertionPoint = toHTMLShadowElement(node);
             } else {
                 distributeSelectionsTo(point, pool, distributed);
                 if (ElementShadow* shadow = node->parentNode()->isElementNode() ? toElement(node->parentNode())->shadow() : 0)
                     shadow->invalidateDistribution();
             }
         }
+
+        if (firstActiveShadowInsertionPoint)
+            activeShadowInsertionPoints.append(firstActiveShadowInsertionPoint);
     }
 
-    if (firstActiveShadowInsertionPointInOldestShadowRoot) {
-        distributeSelectionsTo(firstActiveShadowInsertionPointInOldestShadowRoot, pool, distributed);
-        if (ElementShadow* shadow = firstActiveShadowInsertionPointInOldestShadowRoot->parentNode()->isElementNode() ? toElement(firstActiveShadowInsertionPointInOldestShadowRoot->parentNode())->shadow() : 0)
-            shadow->invalidateDistribution();
+    for (size_t i = activeShadowInsertionPoints.size(); i > 0; --i) {
+        HTMLShadowElement* shadowElement = activeShadowInsertionPoints[i - 1];
+        ShadowRoot* root = shadowElement->shadowRoot();
+        ASSERT(root);
+        if (root->olderShadowRoot()) {
+            distributeNodeChildrenTo(shadowElement, root->olderShadowRoot());
+            root->olderShadowRoot()->setAssignedTo(shadowElement);
+        } else {
+            distributeSelectionsTo(shadowElement, pool, distributed);
+            if (ElementShadow* shadow = shadowElement->parentNode()->isElementNode() ? toElement(shadowElement->parentNode())->shadow() : 0)
+                shadow->invalidateDistribution();
+        }
     }
 }
 
@@ -162,8 +179,25 @@ void ContentDistributor::distributeNodeChildrenTo(InsertionPoint* insertionPoint
 {
     ContentDistribution distribution;
     for (Node* node = containerNode->firstChild(); node; node = node->nextSibling()) {
-        distribution.append(node);
-        m_nodeToInsertionPoint.add(node, insertionPoint);
+        if (isInsertionPoint(node) && toInsertionPoint(node)->isActive()) {
+            InsertionPoint* innerInsertionPoint = toInsertionPoint(node);
+            if (innerInsertionPoint->hasDistribution()) {
+                for (size_t i = 0; i < innerInsertionPoint->size(); ++i) {
+                    distribution.append(innerInsertionPoint->at(i));
+                    if (!m_nodeToInsertionPoint.contains(innerInsertionPoint->at(i)))
+                        m_nodeToInsertionPoint.add(innerInsertionPoint->at(i), insertionPoint);
+                }
+            } else {
+                for (Node* child = innerInsertionPoint->firstChild(); child; child = child->nextSibling()) {
+                    distribution.append(child);
+                    m_nodeToInsertionPoint.add(child, insertionPoint);
+                }
+            }
+        } else {
+            distribution.append(node);
+            if (!m_nodeToInsertionPoint.contains(node))
+                m_nodeToInsertionPoint.add(node, insertionPoint);
+        }
     }
 
     insertionPoint->setDistribution(distribution);

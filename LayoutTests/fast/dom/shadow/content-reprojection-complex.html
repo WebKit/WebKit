@@ -14,10 +14,10 @@
 
 <script>
 var shadowRoot1 = new WebKitShadowRoot(host1);
-shadowRoot1.innerHTML = '<div id="host2"><content select=".A"></content><shadow></shadow><div class=".A">A</div></div>';
+shadowRoot1.innerHTML = '<div id="host2"><content select=".A"></content><shadow></shadow><div class="A">A</div></div>';
 
 var shadowRoot2 = new WebKitShadowRoot(shadowRoot1.getElementById('host2'));
-shadowRoot2.innerHTML = '<div><h2>A</h2><content select="div"></content><h2>B</h2><shadow></shadow></div>'
+shadowRoot2.innerHTML = '<div><h2>A</h2><content select=".A"></content><h2>B</h2><shadow></shadow></div>'
 </script>
 
 </html>

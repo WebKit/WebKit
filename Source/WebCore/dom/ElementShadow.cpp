@@ -134,15 +134,6 @@ void ElementShadow::detach()
 
 InsertionPoint* ElementShadow::insertionPointFor(const Node* node) const
 {
-    ASSERT(node && node->parentNode());
-
-    if (node->parentNode()->isShadowRoot()) {
-        if (InsertionPoint* insertionPoint = toShadowRoot(node->parentNode())->assignedTo())
-            return insertionPoint;
-
-        return 0;
-    }
-
     return distributor().findInsertionPointFor(node);
 }
 

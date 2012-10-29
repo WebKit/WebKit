@@ -287,18 +287,6 @@ testComposedShadowTree(
               createDOM('div', {'id': 'child-1', 'class': 'foo'}),
               createDOM('div', {'id': 'not-selected', 'class': 'foo'}),
               createDOM('div', {'id': 'child-2', 'class': 'foo'})));
-
-/*
-debug('Test for multiple shadow roots with reprojections.');
-testComposedShadowTree(
-    createDOM('div', {'id': 'a'},
-              createShadowRoot(createDOM('content')),
-              createShadowRoot(createDOM('div', {'id': 'b'},
-                                         createShadowRoot(createDOM('content', {'select': '#child'})),
-                                         createDOM('shadow'))),
-              createDOM('div', {'id': 'child'})));
-*/
-
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<script src="resources/polyfill.js"></script>
+
+<div id="host1"><div>Host Child</div></div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var shadowRoot1 = new WebKitShadowRoot(host1);
+shadowRoot1.innerHTML = '<div id="host2">Oldest ShadowRoot Child</div>';
+
+var shadowRoot2 = new WebKitShadowRoot(host1);
+shadowRoot2.innerHTML = '<div id="host3"><shadow></shadow><content></content><div>Youngest ShadowRoot Child</div></div>';
+
+var host3 = shadowRoot2.getElementById('host3');
+var shadowRoot3 = new WebKitShadowRoot(host3);
+shadowRoot3.innerHTML = '<content select="div"></content>';
+
+setTimeout(function() {
+    shadowRoot1.innerHTML = '<div id="host2">Updated Oldest ShadowRoot Child</div><div>Added Oldest ShadowRoot Child</div>';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+
+</html>

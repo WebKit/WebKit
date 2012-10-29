@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<script src="resources/polyfill.js"></script>
+
+<div id="host1"><div>B</div></div>
+
+<script>
+var shadowRoot1 = new WebKitShadowRoot(host1);
+shadowRoot1.innerHTML = '<shadow></shadow>';
+
+var shadowRoot2 = new WebKitShadowRoot(host1);
+shadowRoot2.innerHTML = '<div id="host3"><shadow></shadow></div>';
+
+var host3 = shadowRoot2.getElementById('host3');
+var shadowRoot3 = new WebKitShadowRoot(host3);
+shadowRoot3.innerHTML = '<div>A</div><content select="div"></content><div>C</div>';
+</script>
+
+</html>

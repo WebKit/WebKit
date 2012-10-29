@@ -67,6 +67,12 @@ inline HTMLShadowElement* toHTMLShadowElement(Node* node)
     return static_cast<HTMLShadowElement*>(node);
 }
 
+inline const HTMLShadowElement* toHTMLShadowElement(const Node* node)
+{
+    ASSERT(!node || isHTMLShadowElement(node));
+    return static_cast<const HTMLShadowElement*>(node);
+}
+
 } // namespace WebCore
 
 #endif // HTMLShadowElement_h

@@ -74,6 +74,8 @@ public:
     void invalidateDistributionIn(ContentDistribution*);
 
 private:
+    void populate(Node*, ContentDistribution&);
+
     HashMap<const Node*, InsertionPoint*> m_nodeToInsertionPoint;
     unsigned m_validity : 2;
 };

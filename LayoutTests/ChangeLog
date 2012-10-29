@@ -1,3 +1,31 @@
+2012-10-28  Shinya Kawanaka  <shinyak@chromium.org>
+
+        The shadow element is not reprojected to a nested ShadowRoot.
+        https://bugs.webkit.org/show_bug.cgi?id=99228
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/composed-shadow-tree-walker-shadow-reprojection-expected.txt: Added.
+        * fast/dom/shadow/composed-shadow-tree-walker-shadow-reprojection.html: Added. A walker test case for elements distributed
+        to shadow element are reprojected.
+        * fast/dom/shadow/composed-shadow-tree-walker.html:
+        * fast/dom/shadow/content-reprojection-complex.html:
+        * fast/dom/shadow/content-reprojection-fallback-expected.html:
+        * fast/dom/shadow/content-reprojection-fallback-reprojection-expected.html:
+        * fast/dom/shadow/shadow-reprojection-click-expected.txt: Added.
+        * fast/dom/shadow/shadow-reprojection-click.html: Added. Does some interactive with a shadow-reprojected node.
+        * fast/dom/shadow/shadow-reprojection-dynamic-expected.html: Added.
+        * fast/dom/shadow/shadow-reprojection-dynamic.html: Added. Adds dynamically elements shadow-reprojected.
+        * fast/dom/shadow/shadow-reprojection-expected.html: Added.
+        * fast/dom/shadow/shadow-reprojection-fallback-expected.html: Added.
+        * fast/dom/shadow/shadow-reprojection-fallback.html: Added. A test case for fallback elements of a shadow element
+        are reprojected.
+        * fast/dom/shadow/shadow-reprojection-prohibited-expected.html: Removed.
+        * fast/dom/shadow/shadow-reprojection-prohibited.html: Removed.
+        * fast/dom/shadow/shadow-reprojection.html: Added. A basic test case.
+        * fast/dom/shadow/shadow-reprojection2-expected.html: Added.
+        * fast/dom/shadow/shadow-reprojection2.html: Added. Another basic test case.
+
 2012-10-28  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Webkit adds a boundary to the Content-Type: text/plain POST header

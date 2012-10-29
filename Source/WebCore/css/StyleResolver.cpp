@@ -989,21 +989,10 @@ inline bool shouldResetStyleInheritance(NodeRenderingContext& context)
     if (context.resetStyleInheritance())
         return true;
 
-    InsertionPoint* insertionPoint = context.insertionPoint();
-    if (!insertionPoint)
-        return false;
+    if (InsertionPoint* insertionPoint = context.insertionPoint())
+        return insertionPoint->resetStyleInheritance();
 
-    ASSERT(parentElementForDistribution(context.node()));
-    ElementShadow* shadow = parentElementForDistribution(context.node())->shadow();
-    ASSERT(shadow);
-
-    for ( ; insertionPoint; ) {
-        InsertionPoint* youngerInsertionPoint = shadow->insertionPointFor(insertionPoint);
-        if (!youngerInsertionPoint)
-            break;
-        insertionPoint = youngerInsertionPoint;
-    }
-    return insertionPoint->resetStyleInheritance();
+    return false;
 }
 
 inline void StyleResolver::initForStyleResolve(Element* e, RenderStyle* parentStyle, PseudoId pseudoID)
@@ -1572,9 +1561,10 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     // contenteditable attribute (implemented by -webkit-user-modify) should
     // be propagated from shadow host to distributed node.
     if (m_distributedToInsertionPoint) {
-        ASSERT(element->parentElement());
-        if (RenderStyle* styleOfShadowHost = element->parentElement()->renderStyle())
-            m_style->setUserModify(styleOfShadowHost->userModify());
+        if (Element* parent = element->parentElement()) {
+            if (RenderStyle* styleOfShadowHost = parent->renderStyle())
+                m_style->setUserModify(styleOfShadowHost->userModify());
+        }
     }
 
     if (element->isLink()) {

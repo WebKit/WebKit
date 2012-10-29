@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<script src="resources/polyfill.js"></script>
+
+<p>This test confirms that clicking a shadow reprojected element does not cause a crash.</p>
+
+<div id="container">
+    <div id="host1"><div>Host Child</div></div>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var shadowRoot1 = new WebKitShadowRoot(host1);
+shadowRoot1.innerHTML = '<div id="target">Oldest ShadowRoot Child</div>';
+
+var shadowRoot2 = new WebKitShadowRoot(host1);
+shadowRoot2.innerHTML = '<div id="host3"><shadow></shadow><content></content><div>Youngest ShadowRoot Child</div></div>';
+
+var host3 = shadowRoot2.getElementById('host3');
+var shadowRoot3 = new WebKitShadowRoot(host3);
+shadowRoot3.innerHTML = '<content select="div"></content>';
+
+container.offsetLeft;
+
+var target = shadowRoot1.getElementById('target');
+if (window.eventSender) {
+    eventSender.mouseMoveTo(target.offsetLeft + 10, target.offsetTop + 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+container.innerHTML = "PASS";
+</script>
+
+</html>

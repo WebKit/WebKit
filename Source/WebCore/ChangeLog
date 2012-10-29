@@ -1,3 +1,62 @@
+2012-10-28  Shinya Kawanaka  <shinyak@chromium.org>
+
+        The shadow element is not reprojected to a nested ShadowRoot.
+        https://bugs.webkit.org/show_bug.cgi?id=99228
+
+        Reviewed by Dimitri Glazkov.
+
+        We support shadow reprojection; elements distributed to <shadow> element can be reprojected to <content> now.
+
+        First, we have a distribution vector for each InsertionPoint, even if InsertionPoint is a shadow insertion point.
+        And we update a node-distribution map. Basically We're creating a map from node to InsertionPoint in ElementShadow.
+        If a node can be distributed to several InsertionPoint (e.g. in case reprojection happens),
+        the InsertionPoint in older ShadowDOM is chosen.
+
+        We also fix ComposedShadowTreeWalker to consider shadow reprojection.
+
+        Tests: fast/dom/shadow/composed-shadow-tree-walker-shadow-reprojection.html
+               fast/dom/shadow/shadow-reprojection-click.html
+               fast/dom/shadow/shadow-reprojection-dynamic.html
+               fast/dom/shadow/shadow-reprojection-fallback.html
+               fast/dom/shadow/shadow-reprojection.html
+               fast/dom/shadow/shadow-reprojection2.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::shouldResetStyleInheritance): Now context.insertionPoint() returns the final insertion point where
+        a node is distributed. So we don't have to trace shadow insertion point anymore here.
+        (WebCore::StyleResolver::styleForElement): Since a direct child of ShadowRoot can be distributed now. In that case,
+        we don't have any parentElement. The parent node is a ShadowRoot in that case.
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::nodeCanBeDistributed): If a node can be distributed, returns true.
+        (WebCore):
+        (WebCore::resolveReprojection): Resolves content-reprojection and shadow-reprojection both.
+        (WebCore::ComposedShadowTreeWalker::traverseSiblingOrBackToInsertionPoint):
+        (WebCore::ComposedShadowTreeWalker::traverseParent):
+        (WebCore::ComposedShadowTreeWalker::traverseParentBackToYoungerShadowRootOrHost): A case ShadowRoot is assigned
+        to some InsertionPoint should be handled with in traverseSiblingOrBackToInsertionPoint. So we remove it.
+        (WebCore::AncestorChainWalker::parent): Now we have a case that a direct child of ShadowRoot can be distributed.
+        In that case, we should not update m_distributedNode.
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::insertionPointFor): Since we have a distribution vector for each InsertionPoint,
+        we don't have a special case that a ShadowRoot is assigned to some InsertionPoint. Actually the existing code
+        is not correct now due to shadow reprojection.
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::populate): Populate a POOL. If a node is InsertionPoint, we fill it with the
+        distributed nodes.
+        (WebCore):
+        (WebCore::ContentDistributor::distribute): Since we want to make a distribution vector for each InsertionPoint,
+        we have to resolve a shadow InsertionPoint
+        (WebCore::ContentDistributor::distributeNodeChildrenTo):
+        * html/shadow/ContentDistributor.h:
+        (ContentDistributor):
+        * html/shadow/HTMLShadowElement.h:
+        (WebCore::toHTMLShadowElement):
+        (WebCore):
+        * html/shadow/InsertionPoint.h:
+        (WebCore::parentNodeForDistribution):
+        (WebCore::parentElementForDistribution):
+        (WebCore):
+
 2012-10-28  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Webkit adds a boundary to the Content-Type: text/plain POST header

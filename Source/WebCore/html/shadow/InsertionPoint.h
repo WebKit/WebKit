@@ -119,14 +119,24 @@ inline bool isLowerEncapsulationBoundary(Node* node)
     return toInsertionPoint(node)->isShadowBoundary();
 }
 
-inline Element* parentElementForDistribution(const Node* node)
+inline Node* parentNodeForDistribution(const Node* node)
 {
     ASSERT(node);
-    if (Element* parent = node->parentElement()) {
-        if (isInsertionPoint(parent) && toInsertionPoint(parent)->shouldUseFallbackElements())
-            return parent->parentElement();
 
+    if (Node* parent = node->parentNode()) {
+        if (isInsertionPoint(parent) && toInsertionPoint(parent)->shouldUseFallbackElements())
+            return parent->parentNode();
         return parent;
+    }
+
+    return 0;
+}
+
+inline Element* parentElementForDistribution(const Node* node)
+{
+    if (Node* parent = parentNodeForDistribution(node)) {
+        if (parent->isElementNode())
+            return toElement(parent);
     }
 
     return 0;
