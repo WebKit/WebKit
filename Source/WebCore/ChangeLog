@@ -1,3 +1,16 @@
+2012-10-29  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: Error/warning count is one pixel off.
+        https://bugs.webkit.org/show_bug.cgi?id=100660
+
+        Reviewed by Pavel Feldman.
+
+        The error/warning count div had a top padding of 6. That was one pixel
+        too many.
+
+        * inspector/front-end/inspector.css:
+        (#error-warning-count):
+
 2012-10-29  Shinya Kawanaka  <shinyak@chromium.org> 
 
         [Refactoring] Use isActiveInsertionPoint() instead of isInsertionPoint()
