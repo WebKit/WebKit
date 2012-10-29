@@ -1,3 +1,10 @@
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
+        Fix Windows build.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::setHeaderFields):
+
 2012-10-28  Mark Rowe  <mrowe@apple.com>
 
         Simplify Xcode configuration settings that used to vary between OS versions.
