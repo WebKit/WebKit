@@ -2371,3 +2371,19 @@ http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overridesexpires
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html
+
+# Feature introduced in r132708 is chromium only
+animations/3d/change-transform-in-end-event.html 
+transitions/move-after-transition.html 
+compositing/text-on-large-layer.html 
+compositing/iframes/fixed-position-iframe.html 
+compositing/tiling/backface-preserve-3d-tiled.html 
+compositing/tiling/constrained-layer-size.html 
+compositing/tiling/crash-huge-layer.html 
+compositing/tiling/crash-reparent-tiled-layer.html 
+compositing/tiling/huge-layer-add-remove-child.html 
+compositing/tiling/huge-layer-img.html 
+compositing/tiling/huge-layer-with-layer-children-resize.html 
+compositing/tiling/huge-layer-with-layer-children.html 
+compositing/tiling/preserve3d-tiled.html 
+compositing/tiling/tile-cache-zoomed.html

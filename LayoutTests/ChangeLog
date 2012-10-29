@@ -1,3 +1,9 @@
+2012-10-29  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Feature introduced in r132708 is chromium only. Skipping related tests.
+
+        * platform/win/TestExpectations:
+
 2012-10-29  Adam Barth  <abarth@webkit.org>
 
         Block SVG external references pending a security review
