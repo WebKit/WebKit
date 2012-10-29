@@ -2415,7 +2415,7 @@ public:
     
     const TypedArrayDescriptor* typedArrayDescriptor(ArrayMode);
     
-    JITCompiler::JumpList jumpSlowForUnwantedArrayMode(GPRReg tempWithIndexingTypeReg, ArrayMode);
+    JITCompiler::JumpList jumpSlowForUnwantedArrayMode(GPRReg tempWithIndexingTypeReg, ArrayMode, bool invert = false);
     void checkArray(Node&);
     void arrayify(Node&, GPRReg baseReg, GPRReg propertyReg);
     void arrayify(Node&);

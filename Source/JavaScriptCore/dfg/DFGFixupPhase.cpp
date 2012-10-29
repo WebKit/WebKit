@@ -88,7 +88,7 @@ private:
                     nodePtr->codeOrigin.bytecodeIndex);
             ArrayMode arrayMode = ArrayMode(Array::SelectUsingPredictions);
             if (arrayProfile) {
-                arrayProfile->computeUpdatedPrediction();
+                arrayProfile->computeUpdatedPrediction(m_graph.baselineCodeBlockFor(node.codeOrigin));
                 arrayMode = ArrayMode::fromObserved(arrayProfile, Array::Read, false);
                 arrayMode = arrayMode.refine(
                     m_graph[node.child1()].prediction(),
@@ -382,28 +382,47 @@ private:
         if (arrayMode.doesConversion()) {
             if (index != NoNode)
                 m_graph.ref(index);
-            Node arrayify(Arrayify, codeOrigin, OpInfo(arrayMode.asWord()), array, index);
-            arrayify.ref(); // Once because it's used as a butterfly.
-            arrayify.ref(); // And twice because it's must-generate.
-            NodeIndex arrayifyIndex = m_graph.size();
-            m_graph.append(arrayify);
-            m_insertionSet.append(m_indexInBlock, arrayifyIndex);
             
-            ASSERT(shouldGenerate);
-            ASSERT(arrayMode.canCSEStorage());
-            ASSERT(arrayMode.usesButterfly());
-
-            if (!storageCheck(arrayMode))
-                return NoNode;
-            return arrayifyIndex;
+            Structure* structure = 0;
+            if (arrayMode.isJSArrayWithOriginalStructure()) {
+                JSGlobalObject* globalObject = m_graph.baselineCodeBlockFor(codeOrigin)->globalObject();
+                switch (arrayMode.type()) {
+                case Array::Contiguous:
+                    structure = globalObject->arrayStructure();
+                    if (structure->indexingType() != ArrayWithContiguous)
+                        structure = 0;
+                    break;
+                case Array::ArrayStorage:
+                    structure = globalObject->arrayStructureWithArrayStorage();
+                    if (structure->indexingType() != ArrayWithArrayStorage)
+                        structure = 0;
+                    break;
+                default:
+                    break;
+                }
+            }
+            
+            if (structure) {
+                Node arrayify(ArrayifyToStructure, codeOrigin, OpInfo(structure), OpInfo(arrayMode.asWord()), array, index);
+                arrayify.ref();
+                NodeIndex arrayifyIndex = m_graph.size();
+                m_graph.append(arrayify);
+                m_insertionSet.append(m_indexInBlock, arrayifyIndex);
+            } else {
+                Node arrayify(Arrayify, codeOrigin, OpInfo(arrayMode.asWord()), array, index);
+                arrayify.ref();
+                NodeIndex arrayifyIndex = m_graph.size();
+                m_graph.append(arrayify);
+                m_insertionSet.append(m_indexInBlock, arrayifyIndex);
+            }
+        } else {
+            Node checkArray(CheckArray, codeOrigin, OpInfo(arrayMode.asWord()), array);
+            checkArray.ref();
+            NodeIndex checkArrayIndex = m_graph.size();
+            m_graph.append(checkArray);
+            m_insertionSet.append(m_indexInBlock, checkArrayIndex);
         }
         
-        Node checkArray(CheckArray, codeOrigin, OpInfo(arrayMode.asWord()), array);
-        checkArray.ref();
-        NodeIndex checkArrayIndex = m_graph.size();
-        m_graph.append(checkArray);
-        m_insertionSet.append(m_indexInBlock, checkArrayIndex);
-
         if (!storageCheck(arrayMode))
             return NoNode;
         

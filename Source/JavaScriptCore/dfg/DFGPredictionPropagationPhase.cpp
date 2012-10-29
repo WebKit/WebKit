@@ -635,7 +635,8 @@ private:
         case PhantomPutStructure:
         case PhantomArguments:
         case CheckArray:
-        case Arrayify: {
+        case Arrayify:
+        case ArrayifyToStructure: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             ASSERT_NOT_REACHED();

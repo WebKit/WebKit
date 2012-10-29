@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ArrayProfile.h"
 
+#include "CodeBlock.h"
 #include <wtf/StringExtras.h>
 
 namespace JSC {
@@ -64,12 +65,14 @@ const char* arrayModesToString(ArrayModes arrayModes)
     return result;
 }
 
-void ArrayProfile::computeUpdatedPrediction(OperationInProgress operation)
+void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, OperationInProgress operation)
 {
     if (m_lastSeenStructure) {
         m_observedArrayModes |= arrayModeFromStructure(m_lastSeenStructure);
         m_mayInterceptIndexedAccesses |=
             m_lastSeenStructure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero();
+        if (!codeBlock->globalObject()->isOriginalArrayStructure(m_lastSeenStructure))
+            m_usesOriginalArrayStructures = false;
         if (!m_structureIsPolymorphic) {
             if (!m_expectedStructure)
                 m_expectedStructure = m_lastSeenStructure;

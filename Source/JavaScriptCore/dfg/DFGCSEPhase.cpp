@@ -433,6 +433,12 @@ private:
                 }
                 return false;
                 
+            case Arrayify:
+            case ArrayifyToStructure:
+                // We could check if the arrayification could affect our structures.
+                // But that seems like it would take Effort.
+                return false;
+                
             default:
                 if (m_graph.clobbersWorld(index))
                     return false;
@@ -483,6 +489,12 @@ private:
                 if (node.structure() == structure && node.child1() == child1)
                     return true;
                 break;
+                
+            case Arrayify:
+            case ArrayifyToStructure:
+                // We could check if the arrayification could affect our structures.
+                // But that seems like it would take Effort.
+                return false;
                 
             default:
                 if (m_graph.clobbersWorld(index))
@@ -658,7 +670,6 @@ private:
 
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
-            case Arrayify:
                 // If we can cheaply prove this is a change to our object's storage, we
                 // can optimize and use its result.
                 if (node.child1() == child1)
@@ -682,6 +693,12 @@ private:
                     // change.
                     break;
                 }
+                return NoNode;
+                
+            case Arrayify:
+            case ArrayifyToStructure:
+                // We could check if the arrayification could affect our butterfly.
+                // But that seems like it would take Effort.
                 return NoNode;
                 
             default:
@@ -714,6 +731,12 @@ private:
                 if (node.child1() == child1 && node.arrayMode() == arrayMode)
                     return true;
                 break;
+                
+            case Arrayify:
+            case ArrayifyToStructure:
+                // We could check if the arrayification could affect our array.
+                // But that seems like it would take Effort.
+                return false;
                 
             default:
                 if (m_graph.clobbersWorld(index))
@@ -783,8 +806,6 @@ private:
         }
         return NoNode;
     }
-
-
     
     NodeIndex getLocalLoadElimination(VirtualRegister local, NodeIndex& relevantLocalOp, bool careAboutClobbering)
     {

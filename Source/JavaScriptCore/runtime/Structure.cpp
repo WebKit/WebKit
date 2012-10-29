@@ -543,6 +543,15 @@ Structure* Structure::nonPropertyTransition(JSGlobalData& globalData, Structure*
     unsigned attributes = toAttributes(transitionKind);
     IndexingType indexingType = newIndexingType(structure->indexingTypeIncludingHistory(), transitionKind);
     
+    JSGlobalObject* globalObject = structure->globalObject();
+    if (structure == globalObject->arrayStructure()) {
+        Structure* transition = globalObject->arrayStructureWithArrayStorage();
+        if (transition->indexingTypeIncludingHistory() == indexingType) {
+            structure->notifyTransitionFromThisStructure();
+            return transition;
+        }
+    }
+    
     if (Structure* existingTransition = structure->m_transitionTable.get(0, attributes)) {
         ASSERT(existingTransition->m_attributesInPrevious == attributes);
         ASSERT(existingTransition->indexingTypeIncludingHistory() == indexingType);

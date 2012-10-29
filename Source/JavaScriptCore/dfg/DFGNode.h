@@ -701,6 +701,7 @@ struct Node {
         switch (op()) {
         case StructureTransitionWatchpoint:
         case ForwardStructureTransitionWatchpoint:
+        case ArrayifyToStructure:
             return true;
         default:
             return false;
@@ -759,6 +760,7 @@ struct Node {
         case StringCharCodeAt:
         case CheckArray:
         case Arrayify:
+        case ArrayifyToStructure:
         case ArrayPush:
         case ArrayPop:
             return true;
@@ -770,6 +772,8 @@ struct Node {
     ArrayMode arrayMode()
     {
         ASSERT(hasArrayMode());
+        if (op() == ArrayifyToStructure)
+            return ArrayMode::fromWord(m_opInfo2);
         return ArrayMode::fromWord(m_opInfo);
     }
     

@@ -70,9 +70,10 @@ enum Type {
 };
 
 enum Class {
-    NonArray,
-    Array,
-    PossiblyArray
+    NonArray, // Definitely some object that is not a JSArray.
+    Array, // Definitely a JSArray, and may or may not have custom properties or have undergone some other bizarre transitions.
+    OriginalArray, // Definitely a JSArray, and still has one of the primordial JSArray structures for the global object that this code block (possibly inlined code block) belongs to.
+    PossiblyArray // Some object that may or may not be a JSArray.
 };
 
 enum Speculation {
@@ -145,9 +146,27 @@ public:
         return ArrayMode(type(), arrayClass(), speculation, conversion());
     }
     
-    ArrayMode withSpeculation(ArrayProfile* profile, bool makeSafe) const
+    ArrayMode withProfile(ArrayProfile* profile, bool makeSafe) const
     {
-        return withSpeculation(makeSafe ? Array::OutOfBounds : (profile->mayStoreToHole() ? Array::ToHole : Array::InBounds));
+        Array::Speculation mySpeculation;
+        Array::Class myArrayClass;
+        
+        if (makeSafe)
+            mySpeculation = Array::OutOfBounds;
+        else if (profile->mayStoreToHole())
+            mySpeculation = Array::ToHole;
+        else
+            mySpeculation = Array::InBounds;
+        
+        if (isJSArray()) {
+            if (profile->usesOriginalArrayStructures())
+                myArrayClass = Array::OriginalArray;
+            else
+                myArrayClass = Array::Array;
+        } else
+            myArrayClass = arrayClass();
+        
+        return ArrayMode(type(), myArrayClass, mySpeculation, conversion());
     }
     
     ArrayMode refine(SpeculatedType base, SpeculatedType index) const;
@@ -170,7 +189,18 @@ public:
     
     bool isJSArray() const
     {
-        return arrayClass() == Array::Array;
+        switch (arrayClass()) {
+        case Array::Array:
+        case Array::OriginalArray:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    bool isJSArrayWithOriginalStructure() const
+    {
+        return arrayClass() == Array::OriginalArray;
     }
     
     bool isInBounds() const
@@ -250,7 +280,7 @@ public:
         case Array::Contiguous:
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
-            return arrayClass() == Array::Array;
+            return isJSArray();
         default:
             return true;
         }
@@ -314,6 +344,7 @@ private:
         case Array::NonArray:
             return asArrayModes(shape);
         case Array::Array:
+        case Array::OriginalArray:
             return asArrayModes(shape | IsArray);
         case Array::PossiblyArray:
             return asArrayModes(shape) | asArrayModes(shape | IsArray);

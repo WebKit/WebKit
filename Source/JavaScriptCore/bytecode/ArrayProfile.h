@@ -33,6 +33,7 @@
 
 namespace JSC {
 
+class CodeBlock;
 class LLIntOffsetsExtractor;
 
 // This is a bitfield where each bit represents an IndexingType that we have seen.
@@ -87,6 +88,7 @@ public:
         , m_structureIsPolymorphic(false)
         , m_mayStoreToHole(false)
         , m_mayInterceptIndexedAccesses(false)
+        , m_usesOriginalArrayStructures(true)
         , m_observedArrayModes(0)
     {
     }
@@ -98,6 +100,7 @@ public:
         , m_structureIsPolymorphic(false)
         , m_mayStoreToHole(false)
         , m_mayInterceptIndexedAccesses(false)
+        , m_usesOriginalArrayStructures(true)
         , m_observedArrayModes(0)
     {
     }
@@ -113,7 +116,7 @@ public:
         m_lastSeenStructure = structure;
     }
     
-    void computeUpdatedPrediction(OperationInProgress operation = NoOperation);
+    void computeUpdatedPrediction(CodeBlock*, OperationInProgress = NoOperation);
     
     Structure* expectedStructure() const { return m_expectedStructure; }
     bool structureIsPolymorphic() const
@@ -129,6 +132,8 @@ public:
     
     bool mayStoreToHole() const { return m_mayStoreToHole; }
     
+    bool usesOriginalArrayStructures() const { return m_usesOriginalArrayStructures; }
+    
 private:
     friend class LLIntOffsetsExtractor;
     
@@ -138,6 +143,7 @@ private:
     bool m_structureIsPolymorphic;
     bool m_mayStoreToHole; // This flag may become overloaded to indicate other special cases that were encountered during array access, as it depends on indexing type. Since we currently have basically just one indexing type (two variants of ArrayStorage), this flag for now just means exactly what its name implies.
     bool m_mayInterceptIndexedAccesses;
+    bool m_usesOriginalArrayStructures;
     ArrayModes m_observedArrayModes;
 };
 

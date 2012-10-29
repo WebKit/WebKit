@@ -42,32 +42,32 @@ ArrayMode ArrayMode::fromObserved(ArrayProfile* profile, Array::Action action, b
             return ArrayMode(Array::Contiguous, Array::NonArray, Array::OutOfBounds, Array::Convert); // FIXME: we don't know whether to go to contiguous or array storage. We're making a static guess here. In future we should use exit profiling for this.
         return ArrayMode(Array::SelectUsingPredictions);
     case asArrayModes(NonArrayWithContiguous):
-        return ArrayMode(Array::Contiguous, Array::NonArray, Array::AsIs).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::Contiguous, Array::NonArray, Array::AsIs).withProfile(profile, makeSafe);
     case asArrayModes(ArrayWithContiguous):
-        return ArrayMode(Array::Contiguous, Array::Array, Array::AsIs).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::Contiguous, Array::Array, Array::AsIs).withProfile(profile, makeSafe);
     case asArrayModes(NonArrayWithContiguous) | asArrayModes(ArrayWithContiguous):
-        return ArrayMode(Array::Contiguous, Array::PossiblyArray, Array::AsIs).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::Contiguous, Array::PossiblyArray, Array::AsIs).withProfile(profile, makeSafe);
     case asArrayModes(NonArrayWithArrayStorage):
-        return ArrayMode(Array::ArrayStorage, Array::NonArray, Array::AsIs).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::ArrayStorage, Array::NonArray, Array::AsIs).withProfile(profile, makeSafe);
     case asArrayModes(NonArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage):
-        return ArrayMode(Array::SlowPutArrayStorage, Array::NonArray, Array::AsIs).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::SlowPutArrayStorage, Array::NonArray, Array::AsIs).withProfile(profile, makeSafe);
     case asArrayModes(ArrayWithArrayStorage):
-        return ArrayMode(Array::ArrayStorage, Array::Array, Array::AsIs).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::ArrayStorage, Array::Array, Array::AsIs).withProfile(profile, makeSafe);
     case asArrayModes(ArrayWithSlowPutArrayStorage):
     case asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
-        return ArrayMode(Array::SlowPutArrayStorage, Array::Array, Array::AsIs).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::SlowPutArrayStorage, Array::Array, Array::AsIs).withProfile(profile, makeSafe);
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage):
-        return ArrayMode(Array::ArrayStorage, Array::PossiblyArray, Array::AsIs).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::ArrayStorage, Array::PossiblyArray, Array::AsIs).withProfile(profile, makeSafe);
     case asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
     case asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage):
-        return ArrayMode(Array::SlowPutArrayStorage, Array::PossiblyArray, Array::AsIs).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::SlowPutArrayStorage, Array::PossiblyArray, Array::AsIs).withProfile(profile, makeSafe);
     case asArrayModes(NonArrayWithContiguous) | asArrayModes(NonArrayWithArrayStorage):
-        return ArrayMode(Array::ArrayStorage, Array::NonArray, Array::Convert).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::ArrayStorage, Array::NonArray, Array::Convert).withProfile(profile, makeSafe);
     case asArrayModes(ArrayWithContiguous) | asArrayModes(ArrayWithArrayStorage):
-        return ArrayMode(Array::ArrayStorage, Array::Array, Array::Convert).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::ArrayStorage, Array::Array, Array::Convert).withProfile(profile, makeSafe);
     case asArrayModes(NonArrayWithContiguous) | asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithContiguous) | asArrayModes(ArrayWithArrayStorage):
-        return ArrayMode(Array::ArrayStorage, Array::PossiblyArray, Array::Convert).withSpeculation(profile, makeSafe);
+        return ArrayMode(Array::ArrayStorage, Array::PossiblyArray, Array::Convert).withProfile(profile, makeSafe);
     case asArrayModes(NonArray) | asArrayModes(NonArrayWithContiguous):
         if (action == Array::Write && !profile->mayInterceptIndexedAccesses())
             return ArrayMode(Array::Contiguous, Array::NonArray, Array::OutOfBounds, Array::Convert);
@@ -162,7 +162,7 @@ bool ArrayMode::alreadyChecked(AbstractValue& value) const
         return isStringSpeculation(value.m_type);
         
     case Array::Contiguous:
-        if (arrayClass() == Array::Array) {
+        if (isJSArray()) {
             if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithContiguous)))
                 return true;
             return value.m_currentKnownStructure.hasSingleton()
@@ -175,7 +175,7 @@ bool ArrayMode::alreadyChecked(AbstractValue& value) const
             && hasContiguous(value.m_currentKnownStructure.singleton()->indexingType());
         
     case Array::ArrayStorage:
-        if (arrayClass() == Array::Array) {
+        if (isJSArray()) {
             if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithArrayStorage)))
                 return true;
             return value.m_currentKnownStructure.hasSingleton()
@@ -188,7 +188,7 @@ bool ArrayMode::alreadyChecked(AbstractValue& value) const
             && hasFastArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
         
     case Array::SlowPutArrayStorage:
-        if (arrayClass() == Array::Array) {
+        if (isJSArray()) {
             if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
                 return true;
             return value.m_currentKnownStructure.hasSingleton()
@@ -292,6 +292,8 @@ const char* arrayClassToString(Array::Class arrayClass)
     switch (arrayClass) {
     case Array::Array:
         return "Array";
+    case Array::OriginalArray:
+        return "OriginalArray";
     case Array::NonArray:
         return "NonArray";
     case Array::PossiblyArray:

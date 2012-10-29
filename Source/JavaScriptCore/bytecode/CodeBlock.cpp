@@ -2725,7 +2725,7 @@ void CodeBlock::updateAllPredictionsAndCountLiveness(
     // site also has a value profile site - so we already know whether or not it's
     // live.
     for (unsigned i = m_arrayProfiles.size(); i--;)
-        m_arrayProfiles[i].computeUpdatedPrediction(operation);
+        m_arrayProfiles[i].computeUpdatedPrediction(this, operation);
 }
 
 void CodeBlock::updateAllPredictions(OperationInProgress operation)

@@ -908,13 +908,13 @@ private:
     
     ArrayMode getArrayMode(ArrayProfile* profile)
     {
-        profile->computeUpdatedPrediction();
+        profile->computeUpdatedPrediction(m_inlineStackTop->m_codeBlock);
         return ArrayMode::fromObserved(profile, Array::Read, false);
     }
     
     ArrayMode getArrayModeAndEmitChecks(ArrayProfile* profile, Array::Action action, NodeIndex base)
     {
-        profile->computeUpdatedPrediction();
+        profile->computeUpdatedPrediction(m_inlineStackTop->m_codeBlock);
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         if (m_inlineStackTop->m_profiledBlock->numberOfRareCaseProfiles())
@@ -1783,6 +1783,10 @@ NodeIndex ByteCodeParser::handleGetByOffset(SpeculatedType prediction, NodeIndex
         propertyStorage = base;
     else
         propertyStorage = addToGraph(GetButterfly, base);
+    // FIXME: It would be far more efficient for load elimination (and safer from
+    // an OSR standpoint) if GetByOffset also referenced the object we were loading
+    // from, and if we could load eliminate a GetByOffset even if the butterfly
+    // had changed. That would be a great success.
     NodeIndex getByOffset = addToGraph(GetByOffset, OpInfo(m_graph.m_storageAccessData.size()), OpInfo(prediction), propertyStorage);
 
     StorageAccessData storageAccessData;

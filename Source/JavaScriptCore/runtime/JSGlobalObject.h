@@ -271,6 +271,10 @@ namespace JSC {
         Structure* arrayStructureWithArrayStorage() const { return m_arrayStructureWithArrayStorage.get(); }
         void* addressOfArrayStructure() { return &m_arrayStructure; }
         void* addressOfArrayStructureWithArrayStorage() { return &m_arrayStructureWithArrayStorage; }
+        bool isOriginalArrayStructure(Structure* structure)
+        {
+            return structure == m_arrayStructure.get() || structure == m_arrayStructureWithArrayStorage.get();
+        }
         Structure* booleanObjectStructure() const { return m_booleanObjectStructure.get(); }
         Structure* callbackConstructorStructure() const { return m_callbackConstructorStructure.get(); }
         Structure* callbackFunctionStructure() const { return m_callbackFunctionStructure.get(); }

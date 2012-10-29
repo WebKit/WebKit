@@ -2572,7 +2572,8 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
         
-    case Arrayify: {
+    case Arrayify:
+    case ArrayifyToStructure: {
         arrayify(node);
         break;
     }

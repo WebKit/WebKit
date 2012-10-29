@@ -1327,7 +1327,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         // the futurePossibleStructure set then the constant folding phase should
         // turn this into a watchpoint instead.
         StructureSet& set = node.structureSet();
-        if (value.m_futurePossibleStructure.isSubsetOf(set))
+        if (value.m_futurePossibleStructure.isSubsetOf(set)
+            || value.m_currentKnownStructure.isSubsetOf(set))
             m_foundConstants = true;
         node.setCanExit(
             !value.m_currentKnownStructure.isSubsetOf(set)
@@ -1368,7 +1369,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case GetButterfly:
     case AllocatePropertyStorage:
     case ReallocatePropertyStorage:
-        node.setCanExit(false);
+        node.setCanExit(!isCellSpeculation(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(SpecCell);
         forNode(nodeIndex).clear(); // The result is not a JS value.
         break;
@@ -1439,9 +1440,20 @@ bool AbstractState::execute(unsigned indexInBlock)
         forNode(node.child1()).filter(SpecCell);
         if (node.child2())
             forNode(node.child2()).filter(SpecInt32);
-        forNode(nodeIndex).clear();
         clobberStructures(indexInBlock);
         forNode(node.child1()).filterArrayModes(node.arrayMode().arrayModesThatPassFiltering());
+        m_haveStructures = true;
+        break;
+    }
+    case ArrayifyToStructure: {
+        AbstractValue& value = forNode(node.child1());
+        StructureSet set = node.structure();
+        if (value.m_futurePossibleStructure.isSubsetOf(set)
+            || value.m_currentKnownStructure.isSubsetOf(set))
+            m_foundConstants = true;
+        node.setCanExit(true);
+        clobberStructures(indexInBlock);
+        value.filter(set);
         m_haveStructures = true;
         break;
     }
@@ -1460,13 +1472,13 @@ bool AbstractState::execute(unsigned indexInBlock)
         break; 
     }
     case GetByOffset:
-        node.setCanExit(false);
+        node.setCanExit(!isCellSpeculation(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(SpecCell);
         forNode(nodeIndex).makeTop();
         break;
             
     case PutByOffset:
-        node.setCanExit(false);
+        node.setCanExit(!isCellSpeculation(forNode(node.child1()).m_type));
         forNode(node.child1()).filter(SpecCell);
         break;
             
