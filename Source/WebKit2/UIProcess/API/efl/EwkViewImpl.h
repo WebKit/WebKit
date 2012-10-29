@@ -260,7 +260,7 @@ private:
 #endif
     OwnPtr<Ewk_Settings> m_settings;
     RefPtr<Evas_Object> m_cursorObject;
-    WKEinaSharedString m_cursorGroup;
+    const char* m_cursorGroup; // This is an address, do not free it or use WKEinaSharedString.
     WKEinaSharedString m_faviconURL;
     WKEinaSharedString m_url;
     mutable WKEinaSharedString m_title;

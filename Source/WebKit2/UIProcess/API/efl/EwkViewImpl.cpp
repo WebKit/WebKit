@@ -111,6 +111,7 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, Pas
     , m_evasGlSurface(0)
 #endif
     , m_settings(Ewk_Settings::create(this))
+    , m_cursorGroup(0)
     , m_mouseEventsEnabled(false)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchEventsEnabled(false)
@@ -187,13 +188,12 @@ WKPageRef EwkViewImpl::wkPage()
 
 void EwkViewImpl::setCursor(const Cursor& cursor)
 {
-    Ewk_View_Smart_Data* sd = smartData();
-
     const char* group = cursor.platformCursor();
     if (!group || group == m_cursorGroup)
         return;
 
     m_cursorGroup = group;
+    Ewk_View_Smart_Data* sd = smartData();
     m_cursorObject = adoptRef(edje_object_add(sd->base.evas));
 
     Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);

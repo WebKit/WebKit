@@ -1,3 +1,25 @@
+2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Fix cursor change detection in EwkViewImpl::setCursor()
+        https://bugs.webkit.org/show_bug.cgi?id=100662
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Cursor change detection in EwkViewImpl::setCursor() relies on
+        addresses returned by Cursor::platformCursor(). However, the
+        value returned is currently assigned to a WKEinaSharedString
+        instead of a raw pointer. Therefore, the address is always
+        different and we keep recreating Evas Objects for the same
+        cursor.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::setCursor): Call smartData() after same cursor
+        detection since it is not needed if the cursor has not changed
+        and it may affect performance.
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+
 2012-10-29  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         Coordinated Graphics: Make sure that we release images immediately when purging resources
