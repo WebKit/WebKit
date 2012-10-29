@@ -1,5 +1,16 @@
 2012-10-29  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
+        Web Inspector: Timeline: Overview bars do not correspond to timeline bars
+        https://bugs.webkit.org/show_bug.cgi?id=100500
+
+        Reviewed by Yury Semikhatsky.
+
+        Fix: do not shorten bars by nested records of the same category.
+
+        * inspector/front-end/TimelineOverviewPane.js: Check added.
+
+2012-10-29  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
         Web Inspector: Timeline: make cpu-monitoring feature available only on capable browsers
         https://bugs.webkit.org/show_bug.cgi?id=100530
 

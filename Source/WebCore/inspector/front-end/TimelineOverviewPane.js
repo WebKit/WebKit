@@ -940,7 +940,8 @@ WebInspector.TimelineCategoryStrips.prototype = {
             // This bar may be merged with previous -- so just adjust the previous bar.
             const barsMergeThreshold = 2;
             if (bar && bar.category === category && bar.end + barsMergeThreshold >= recordStart) {
-                bar.end = recordEnd;
+                if (recordEnd > bar.end)
+                    bar.end = recordEnd;
                 return;
             }
             if (bar)
