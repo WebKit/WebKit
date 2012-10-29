@@ -31,6 +31,7 @@
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "Element.h"
+#include "HTMLIFrameElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
@@ -428,6 +429,14 @@ static void filterEnabledCSSStyleSheets(Vector<RefPtr<CSSStyleSheet> >& result, 
     }
 }
 
+static void collectActiveCSSStyleSheetsFromSeamlessParents(Vector<RefPtr<CSSStyleSheet> >& sheets, Document* document)
+{
+    HTMLIFrameElement* seamlessParentIFrame = document->seamlessParentIFrame();
+    if (!seamlessParentIFrame)
+        return;
+    sheets.append(seamlessParentIFrame->document()->styleSheetCollection()->activeAuthorStyleSheets());
+}
+
 bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag)
 {
     if (m_document->inStyleRecalc()) {
@@ -446,6 +455,7 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
     collectActiveStyleSheets(activeStyleSheets);
 
     Vector<RefPtr<CSSStyleSheet> > activeCSSStyleSheets;
+    collectActiveCSSStyleSheetsFromSeamlessParents(activeCSSStyleSheets, m_document);
     filterEnabledCSSStyleSheets(activeCSSStyleSheets, activeStyleSheets);
 
     StyleResolverUpdateType styleResolverUpdateType;

@@ -46,12 +46,13 @@ class StyleSheetList;
 class DocumentStyleSheetCollection {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DocumentStyleSheetCollection(Document*);
+    static PassOwnPtr<DocumentStyleSheetCollection> create(Document* document) { return adoptPtr(new DocumentStyleSheetCollection(document)); }
+
     ~DocumentStyleSheetCollection();
 
-    const Vector<RefPtr<StyleSheet> >& styleSheetsForStyleSheetList() { return m_styleSheetsForStyleSheetList; }
+    const Vector<RefPtr<StyleSheet> >& styleSheetsForStyleSheetList() const { return m_styleSheetsForStyleSheetList; }
 
-    const Vector<RefPtr<CSSStyleSheet> >& activeAuthorStyleSheets() { return m_activeAuthorStyleSheets; }
+    const Vector<RefPtr<CSSStyleSheet> >& activeAuthorStyleSheets() const { return m_activeAuthorStyleSheets; }
 
     CSSStyleSheet* pageUserSheet();
     const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets() const;
@@ -67,7 +68,7 @@ public:
 
     void addUserSheet(PassRefPtr<StyleSheetContents> userSheet);
 
-    bool needsUpdateActiveStylesheetsOnStyleRecalc() { return m_needsUpdateActiveStylesheetsOnStyleRecalc; }
+    bool needsUpdateActiveStylesheetsOnStyleRecalc() const { return m_needsUpdateActiveStylesheetsOnStyleRecalc; }
 
     enum UpdateFlag { FullUpdate, OptimizedUpdate };
     bool updateActiveStyleSheets(UpdateFlag);
@@ -102,6 +103,8 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
+    DocumentStyleSheetCollection(Document*);
+
     void collectActiveStyleSheets(Vector<RefPtr<StyleSheet> >&);
     enum StyleResolverUpdateType {
         Reconstruct,

@@ -1,3 +1,40 @@
+2012-10-29  Antti Koivisto  <antti@apple.com>
+
+        Move seamless stylesheet collecting to DocumentStyleSheetCollection
+        https://bugs.webkit.org/show_bug.cgi?id=100655
+
+        Reviewed by Andreas Kling.
+
+        Move the code from StyleResolver to DocumentStyleSheetCollection. StyleResolver should focus on resolving style.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        
+            Use standard create() pattern.
+
+        (WebCore):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::collectActiveCSSStyleSheetsFromSeamlessParents):
+        
+            Since parent activeAuthorStyleSheets() contains all seamlessly inherited sheets too, this does not need to
+            iterate to ancestors anymore.
+
+        (WebCore):
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        * dom/DocumentStyleSheetCollection.h:
+        (WebCore::DocumentStyleSheetCollection::create):
+        (DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::styleSheetsForStyleSheetList):
+        (WebCore::DocumentStyleSheetCollection::activeAuthorStyleSheets):
+        
+            activeAuthorStyleSheets() now includes the stylesheets inherited from the seamless parent too.
+
+        (WebCore::DocumentStyleSheetCollection::needsUpdateActiveStylesheetsOnStyleRecalc):
+
 2012-10-29  Andreas Kling  <kling@webkit.org>
 
         Don't expose implementation details of StylePropertySet storage.

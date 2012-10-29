@@ -330,23 +330,7 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     }
 #endif
 
-    addStylesheetsFromSeamlessParents();
     appendAuthorStyleSheets(0, styleSheetCollection->activeAuthorStyleSheets());
-}
-
-void StyleResolver::addStylesheetsFromSeamlessParents()
-{
-    // Build a list of stylesheet lists from our ancestors, and walk that
-    // list in reverse order so that the root-most sheets are appended first.
-    Document* childDocument = document();
-    Vector<const Vector<RefPtr<CSSStyleSheet> >* > ancestorSheets;
-    while (HTMLIFrameElement* parentIFrame = childDocument->seamlessParentIFrame()) {
-        Document* parentDocument = parentIFrame->document();
-        ancestorSheets.append(&parentDocument->styleSheetCollection()->activeAuthorStyleSheets());
-        childDocument = parentDocument;
-    }
-    for (int i = ancestorSheets.size() - 1; i >= 0; i--)
-        appendAuthorStyleSheets(0, *ancestorSheets[i]);
 }
 
 void StyleResolver::addAuthorRulesAndCollectUserRulesFromSheets(const Vector<RefPtr<CSSStyleSheet> >* userSheets, RuleSet& userStyle)

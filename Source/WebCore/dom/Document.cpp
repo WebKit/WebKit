@@ -446,7 +446,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 #if ENABLE(MUTATION_OBSERVERS)
     , m_mutationObserverTypes(0)
 #endif
-    , m_styleSheetCollection(adoptPtr(new DocumentStyleSheetCollection(this)))
+    , m_styleSheetCollection(DocumentStyleSheetCollection::create(this))
     , m_readyState(Complete)
     , m_styleRecalcTimer(this, &Document::styleRecalcTimerFired)
     , m_pendingStyleRecalcShouldForce(false)
