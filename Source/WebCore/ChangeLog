@@ -1,3 +1,25 @@
+2012-10-29  Patrick Dubroy  <dubroy@chromium.org>
+
+        Web Inspector: Fix vertical alignment in toolbar backgrounds and overflow button.
+        https://bugs.webkit.org/show_bug.cgi?id=100373
+
+        Reviewed by Pavel Feldman.
+
+        Fix the background image for the selected toolbar item to be vertically centered.
+        Make close button and toolbar overflow button vertically centered for any toolbar
+        height.
+
+        * inspector/front-end/Toolbar.js: Remove unused variable.
+        * inspector/front-end/inspector.css:
+        (.toolbar-item.toggleable):
+        (body.compact .toolbar-item.toggleable):
+        (.toolbar-item.toggleable.toggled-on):
+        (body.compact .toolbar-label):
+        (#toolbar-dropdown-arrow):
+        (#close-button-left, #close-button-right):
+        (.toolbar-item.close-left):
+        * inspector/front-end/inspector.html:
+
 2012-10-29  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: Overview bars do not correspond to timeline bars

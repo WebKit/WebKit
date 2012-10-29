@@ -183,7 +183,6 @@ WebInspector.Toolbar.prototype = {
     {
         this._setDropdownVisible(false);
 
-        var toolbar = document.getElementById("toolbar");
         if (this.element.scrollHeight > this.element.clientHeight)
             this._dropdownButton.removeStyleClass("hidden");
         else
