@@ -1,3 +1,15 @@
+2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Skip fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html test case
+        https://bugs.webkit.org/show_bug.cgi?id=100687
+
+        Unreviewed EFL gardening.
+
+        Skip fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html test case
+        since it is intrinsically flaky and cannot be fixed.
+
+        * platform/efl/TestExpectations:
+
 2012-10-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Flaky security tests

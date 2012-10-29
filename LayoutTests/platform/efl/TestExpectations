@@ -653,6 +653,9 @@ fast/dom/timer-throttling-hidden-page.html [ WontFix ]
 editing/pasteboard/paste-RTFD.html [ WontFix ]
 editing/pasteboard/paste-TIFF.html [ WontFix ]
 
+# The test is intrinsically flaky and cannot be fixed.
+webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ WontFix ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
