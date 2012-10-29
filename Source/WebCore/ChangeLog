@@ -1,3 +1,19 @@
+2012-10-29  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Crash on checking version of corrupt backing store
+        https://bugs.webkit.org/show_bug.cgi?id=100692
+
+        Reviewed by Tony Chang.
+
+        If the backing store fails to open (due to corruption, non-writeable disk, etc)
+        the subsequent schema version check dereferences a null pointer. Fix to only
+        do the schema check if the database opened.
+
+        Chromium tests will be included with crrev.com/11196029
+
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::open):
+
 2012-10-29  Philip Rogers  <pdr@google.com>
 
         Let SVGElements have pending resources.

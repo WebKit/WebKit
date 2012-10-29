@@ -295,13 +295,13 @@ PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securit
         String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
 
         db = LevelDBDatabase::open(path, comparator.get());
-        bool knownSchema = isSchemaKnown(db.get());
-        if (!knownSchema) {
+        if (db && !isSchemaKnown(db.get())) {
             LOG_ERROR("IndexedDB backing store had unknown schema, treating it as failure to open");
             HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedUnknownSchema, IDBLevelDBBackingStoreOpenMax);
+            db.release();
         }
 
-        if (db && knownSchema)
+        if (db)
             HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenSuccess, IDBLevelDBBackingStoreOpenMax);
         else {
             LOG_ERROR("IndexedDB backing store open failed, attempting cleanup");
