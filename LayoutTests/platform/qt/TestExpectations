@@ -191,6 +191,7 @@ fast/dom/shadow/access-key.html
 fast/dom/shadow/adopt-node-with-shadow-root.html
 fast/dom/shadow/athost-atrules.html
 fast/dom/shadow/composed-shadow-tree-walker.html
+fast/dom/shadow/composed-shadow-tree-walker-shadow-reprojection.html
 fast/dom/shadow/content-after-style.html
 fast/dom/shadow/content-element-api.html
 fast/dom/shadow/content-element-distributed-nodes.html
@@ -302,7 +303,11 @@ fast/dom/shadow/shadow-element-rendering-single.html
 fast/dom/shadow/shadow-nested-pseudo-id.html
 fast/dom/shadow/shadow-on-image.html
 fast/dom/shadow/shadow-removechild-and-blur-event.html
-fast/dom/shadow/shadow-reprojection-prohibited.html
+fast/dom/shadow/shadow-reprojection.html
+fast/dom/shadow/shadow-reprojection2.html
+fast/dom/shadow/shadow-reprojection-click.html
+fast/dom/shadow/shadow-reprojection-dynamic.html
+fast/dom/shadow/shadow-reprojection-fallback.html
 fast/dom/shadow/shadow-root-activeElement.html
 fast/dom/shadow/shadow-root-append.html
 fast/dom/shadow/shadow-root-applyAuthorStyles.html

@@ -1,3 +1,12 @@
+2012-10-29  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        Skip some tests because SHADOW_DOM is disabled on Qt.
+        Unskip another one that doesn't exist already.
+
+        * platform/qt/TestExpectations:
+
 2012-10-28  Shinya Kawanaka  <shinyak@chromium.org>
 
         The shadow element is not reprojected to a nested ShadowRoot.
