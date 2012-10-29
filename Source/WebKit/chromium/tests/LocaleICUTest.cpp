@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "LocaleICU.h"
 
 #include <gtest/gtest.h>
@@ -87,6 +86,7 @@ protected:
         return Labels(labels);
     }
 
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     String monthFormat(const char* localeString)
     {
         OwnPtr<LocaleICU> locale = LocaleICU::create(localeString);
@@ -134,6 +134,7 @@ protected:
         OwnPtr<LocaleICU> locale = LocaleICU::create(localeString);
         return locale->isRTL();
     }
+#endif
 };
 
 std::ostream& operator<<(std::ostream& os, const LocaleICUTest::Labels& labels)
@@ -141,6 +142,7 @@ std::ostream& operator<<(std::ostream& os, const LocaleICUTest::Labels& labels)
     return os << labels.toString().utf8().data();
 }
 
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 TEST_F(LocaleICUTest, isRTL)
 {
     EXPECT_TRUE(isRTL("ar-EG"));
@@ -222,4 +224,59 @@ TEST_F(LocaleICUTest, timeAMPMLabels)
     EXPECT_EQ(labels(String(jaAM), String(jaPM)), timeAMPMLabels("ja"));
 }
 
+static String testDecimalSeparator(const AtomicString& localeIdentifier)
+{
+    OwnPtr<Locale> locale = Locale::create(localeIdentifier);
+    return locale->localizedDecimalSeparator();
+}
+
+TEST_F(LocaleICUTest, localizedDecimalSeparator)
+{
+    EXPECT_EQ(String("."), testDecimalSeparator("en_US"));
+    EXPECT_EQ(String(","), testDecimalSeparator("fr"));
+}
 #endif
+
+void testNumberIsReversible(const AtomicString& localeIdentifier, const char* original, const char* shouldHave = 0)
+{
+    OwnPtr<Locale> locale = Locale::create(localeIdentifier);
+    String localized = locale->convertToLocalizedNumber(original);
+    if (shouldHave)
+        EXPECT_TRUE(localized.contains(shouldHave));
+    String converted = locale->convertFromLocalizedNumber(localized);
+    EXPECT_EQ(original, converted);
+}
+
+void testNumbers(const char* localeString)
+{
+    testNumberIsReversible(localeString, "123456789012345678901234567890");
+    testNumberIsReversible(localeString, "-123.456");
+    testNumberIsReversible(localeString, ".456");
+    testNumberIsReversible(localeString, "-0.456");
+}
+
+TEST_F(LocaleICUTest, reversible)
+{
+    testNumberIsReversible("en_US", "123456789012345678901234567890");
+    testNumberIsReversible("en_US", "-123.456", ".");
+    testNumberIsReversible("en_US", ".456", ".");
+    testNumberIsReversible("en_US", "-0.456", ".");
+
+    testNumberIsReversible("fr", "123456789012345678901234567890");
+    testNumberIsReversible("fr", "-123.456", ",");
+    testNumberIsReversible("fr", ".456", ",");
+    testNumberIsReversible("fr", "-0.456", ",");
+
+    // Persian locale has a negative prefix and a negative suffix.
+    testNumbers("fa");
+
+    // Test some of major locales.
+    testNumbers("ar");
+    testNumbers("de_DE");
+    testNumbers("es_ES");
+    testNumbers("ja_JP");
+    testNumbers("ko_KR");
+    testNumbers("zh_CN");
+    testNumbers("zh_HK");
+    testNumbers("zh_TW");
+}

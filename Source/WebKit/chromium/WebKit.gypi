@@ -147,7 +147,6 @@
             ['os_posix==1 and OS!="mac"', {
                 'webkit_unittest_files': [
                     'tests/LocaleICUTest.cpp',
-                    'tests/LocalizedNumberICUTest.cpp',
                 ],
             }],
             ['toolkit_uses_gtk == 1', {
