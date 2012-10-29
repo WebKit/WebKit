@@ -1,5 +1,22 @@
 2012-10-28  Filip Pizlo  <fpizlo@apple.com>
 
+        There should not be blind spots in array length array profiling
+        https://bugs.webkit.org/show_bug.cgi?id=100620
+
+        Reviewed by Oliver Hunt.
+
+        I don't think this has any performance impact. But it's good to not have random
+        programs occasionally emit a GetById for array length accesses.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+
+2012-10-28  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, make always-true enum-to-int comparisons use casts.
 
         * dfg/DFGFPRInfo.h:

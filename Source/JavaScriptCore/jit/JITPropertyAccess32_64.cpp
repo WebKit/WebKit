@@ -105,6 +105,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     
     int dst = currentInstruction[1].u.operand;
     int base = currentInstruction[2].u.operand;
+    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
     
     emitLoad(base, regT1, regT0);
     emitJumpSlowCaseIfNotJSCell(base, regT1);
@@ -129,7 +130,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     
     // Do a regular(ish) get_by_id (the slow case will be link to
     // cti_op_get_by_id_method_check instead of cti_op_get_by_id.
-    compileGetByIdHotPath();
+    compileGetByIdHotPath(ident);
     
     match.link(this);
     emitValueProfilingSite(m_bytecodeOffset + OPCODE_LENGTH(op_method_check));
@@ -453,22 +454,28 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
     int base = currentInstruction[2].u.operand;
+    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
     
     emitLoad(base, regT1, regT0);
     emitJumpSlowCaseIfNotJSCell(base, regT1);
-    compileGetByIdHotPath();
+    compileGetByIdHotPath(ident);
     emitValueProfilingSite();
     emitStore(dst, regT1, regT0);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_get_by_id), dst, regT1, regT0);
 }
 
-void JIT::compileGetByIdHotPath()
+void JIT::compileGetByIdHotPath(Identifier* ident)
 {
     // As for put_by_id, get_by_id requires the offset of the Structure and the offset of the access to be patched.
     // Additionally, for get_by_id we need patch the offset of the branch to the slow case (we patch this to jump
     // to array-length / prototype access tranpolines, and finally we also the the property-map access offset as a label
     // to jump back to if one of these trampolies finds a match.
     
+    if (*ident == m_globalData->propertyNames->length && canBeOptimized()) {
+        loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+        emitArrayProfilingSiteForBytecodeIndex(regT2, regT3, m_bytecodeOffset);
+    }
+
     BEGIN_UNINTERRUPTED_SEQUENCE(sequenceGetByIdHotPath);
     
     Label hotPathBegin(this);
@@ -751,7 +758,6 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     
     // Check for array
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-    emitArrayProfilingSiteForBytecodeIndex(regT2, regT3, stubInfo->bytecodeIndex);
     Jump failureCases1 = branchTest32(Zero, regT2, TrustedImm32(IsArray));
     Jump failureCases2 = branchTest32(Zero, regT2, TrustedImm32(IndexingShapeMask));
     

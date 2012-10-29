@@ -517,7 +517,7 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
     emitPutVirtualRegister(resultVReg);
 }
 
-void JIT::compileGetByIdHotPath(int baseVReg, Identifier*)
+void JIT::compileGetByIdHotPath(int baseVReg, Identifier* ident)
 {
     // As for put_by_id, get_by_id requires the offset of the Structure and the offset of the access to be patched.
     // Additionally, for get_by_id we need patch the offset of the branch to the slow case (we patch this to jump
@@ -525,6 +525,11 @@ void JIT::compileGetByIdHotPath(int baseVReg, Identifier*)
     // to jump back to if one of these trampolies finds a match.
 
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
+    
+    if (*ident == m_globalData->propertyNames->length && canBeOptimized()) {
+        loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
+        emitArrayProfilingSiteForBytecodeIndex(regT1, regT2, m_bytecodeOffset);
+    }
 
     BEGIN_UNINTERRUPTED_SEQUENCE(sequenceGetByIdHotPath);
 
@@ -788,7 +793,6 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
 
     // Check eax is an array
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
-    emitArrayProfilingSiteForBytecodeIndex(regT2, regT1, stubInfo->bytecodeIndex);
     Jump failureCases1 = branchTest32(Zero, regT2, TrustedImm32(IsArray));
     Jump failureCases2 = branchTest32(Zero, regT2, TrustedImm32(IndexingShapeMask));
 
