@@ -1,3 +1,18 @@
+2012-10-29  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Simplify AuthenticationChallengeManager::instance
+        https://bugs.webkit.org/show_bug.cgi?id=100614
+
+        Reviewed by Yong Li.
+        Internally reviewed by Lyon Chen.
+
+        Use a standard Singleton pattern here, this makes sure we create lazily.
+
+        * platform/blackberry/AuthenticationChallengeManager.cpp:
+        (WebCore):
+        * platform/blackberry/AuthenticationChallengeManager.h:
+        (AuthenticationChallengeManager):
+
 2012-10-29  Adam Barth  <abarth@webkit.org>
 
         Block SVG external references pending a security review

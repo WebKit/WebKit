@@ -28,6 +28,7 @@
 #include <BlackBerryPlatformLog.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
@@ -100,6 +101,8 @@ bool AuthenticationChallengeManagerPrivate::pageExists(PageClientBlackBerry* cli
 {
     return m_pageVisibilityMap.find(client) != m_pageVisibilityMap.end();
 }
+
+SINGLETON_INITIALIZER_THREADUNSAFE(AuthenticationChallengeManager)
 
 AuthenticationChallengeManager::AuthenticationChallengeManager()
     : d(adoptPtr(new AuthenticationChallengeManagerPrivate))
@@ -222,22 +225,5 @@ void AuthenticationChallengeManager::notifyChallengeResult(const KURL& url, cons
     if (next)
         d->startAuthenticationChallenge(next);
 }
-
-// Keep following code at the end of this file!!!
-static AuthenticationChallengeManager* s_manager = 0;
-
-AuthenticationChallengeManager* AuthenticationChallengeManager::instance()
-{
-    ASSERT(s_manager);
-    return s_manager;
-}
-
-void AuthenticationChallengeManager::init()
-{
-    ASSERT(!s_manager);
-    s_manager = new AuthenticationChallengeManager();
-}
-
-// No more code after this line, all new code should come before s_manager declaration!!!
 
 } // namespace WebCore

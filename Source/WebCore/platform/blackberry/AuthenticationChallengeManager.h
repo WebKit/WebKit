@@ -19,6 +19,7 @@
 #ifndef AuthenticationChallengeManager_h
 #define AuthenticationChallengeManager_h
 
+#include "BlackBerryPlatformSingleton.h"
 #include <wtf/OwnPtr.h>
 
 class PageClientBlackBerry;
@@ -40,11 +41,9 @@ public:
     virtual void notifyChallengeResult(const KURL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&) = 0;
 };
 
-class AuthenticationChallengeManager {
+class AuthenticationChallengeManager : public BlackBerry::Platform::ThreadUnsafeSingleton<AuthenticationChallengeManager> {
+    SINGLETON_DEFINITION_THREADUNSAFE(AuthenticationChallengeManager)
 public:
-    static void init();
-    static AuthenticationChallengeManager* instance();
-
     void pageCreated(PageClientBlackBerry*);
     void pageDeleted(PageClientBlackBerry*);
     void pageVisibilityChanged(PageClientBlackBerry*, bool visible);
