@@ -1,3 +1,17 @@
+2012-10-29  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] Typo in WebPagePrivate::postponeDocumentRecalcStyle()
+        https://bugs.webkit.org/show_bug.cgi?id=100377
+
+        Reviewed by Adam Treat.
+
+        Should be void, not bool.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::postponeDocumentStyleRecalc):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-10-29  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Fix a build error

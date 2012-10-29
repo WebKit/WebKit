@@ -461,7 +461,7 @@ public:
     void applySizeOverride(int overrideWidth, int overrideHeight);
     void setTextZoomFactor(float);
 
-    bool postponeDocumentStyleRecalc();
+    void postponeDocumentStyleRecalc();
     void resumeDocumentStyleRecalc();
 
     const WebCore::HitTestResult& hitTestResult(const WebCore::IntPoint& contentPos);

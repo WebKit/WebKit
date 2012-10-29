@@ -6335,7 +6335,7 @@ IntSize WebPagePrivate::screenSize() const
     return Platform::Graphics::Screen::primaryScreen()->size();
 }
 
-bool WebPagePrivate::postponeDocumentStyleRecalc()
+void WebPagePrivate::postponeDocumentStyleRecalc()
 {
     if (Document* document = m_mainFrame->document()) {
         m_documentChildNeedsStyleRecalc = document->childNeedsStyleRecalc();
