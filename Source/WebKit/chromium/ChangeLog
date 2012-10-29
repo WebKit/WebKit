@@ -1,3 +1,9 @@
+2012-10-29  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-10-28  Kent Tamura  <tkent@chromium.org>
 
         Rename Localizer.{cpp,h} to PlatformLocale.{cpp,h}
