@@ -1,3 +1,18 @@
+2012-10-29  Adam Barth  <abarth@webkit.org>
+
+        Block SVG external references pending a security review
+        https://bugs.webkit.org/show_bug.cgi?id=100635
+
+        Reviewed by Eric Seidel.
+
+        We need to do a security review of loading external SVG references
+        before we're sure that it is safe.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createFilterOperations):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+
 2012-10-29  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Crash on checking version of corrupt backing store

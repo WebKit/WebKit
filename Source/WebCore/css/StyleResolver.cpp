@@ -4933,7 +4933,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, RenderStyle* style
             if (SVGURIReference::isExternalURIReference(svgDocumentValue->url(), m_element->document())) {
                 if (!svgDocumentValue->loadRequested())
                     m_pendingSVGDocuments.set(operation.get(), svgDocumentValue);
-                else
+                else if (svgDocumentValue->cachedSVGDocument())
                     operation->setData(adoptPtr(new CachedSVGDocumentReference(svgDocumentValue->cachedSVGDocument())));
             }
             operations.operations().append(operation);

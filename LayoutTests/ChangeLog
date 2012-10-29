@@ -1,3 +1,14 @@
+2012-10-29  Adam Barth  <abarth@webkit.org>
+
+        Block SVG external references pending a security review
+        https://bugs.webkit.org/show_bug.cgi?id=100635
+
+        Reviewed by Eric Seidel.
+
+        Skip tests that depend on external SVG references.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-29  Chris Rogers  <crogers@google.com>
 
         Unreviewed rebaseline of webaudio/audiobuffersource-loop-points
