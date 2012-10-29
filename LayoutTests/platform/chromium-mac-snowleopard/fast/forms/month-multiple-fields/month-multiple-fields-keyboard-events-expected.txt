@@ -50,9 +50,9 @@ PASS input.value is ""
 PASS input.value is "0001-12"
 PASS input.value is "0002-12"
 == RTL Left/Right keys ==
-PASS input.value is "2012-10"
-FAIL input.value should be 0002-10. Was 2012-10.
-FAIL input.value should be 0002-11. Was 2013-10.
+FAIL input.value should be 2012-10. Was 2013-09.
+FAIL input.value should be 0002-10. Was 2013-09.
+FAIL input.value should be 0002-11. Was 2014-09.
 PASS successfullyParsed is true
 
 TEST COMPLETE

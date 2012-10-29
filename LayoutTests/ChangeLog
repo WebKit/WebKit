@@ -1,3 +1,23 @@
+2012-10-29  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update.
+        https://bugs.webkit.org/show_bug.cgi?id=99818
+
+        The failure of month-multiple-fields-keyboard-events.html on SnowLeopard
+        and XP is expected.
+
+        - OS X SnowLeopard
+          The month forma is "yyyy MMMM" on SnowLoepard though it's "MMMM yyyy"
+          on other platforms.
+
+        - Windows XP
+          It doesn't support the lang-attribute-aware-form-control-UI testing
+        feature.
+
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events-expected.txt: Copied from LayoutTests/platform/chromium-win-xp/fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events-expected.txt.
+        * platform/chromium-win-xp/fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Skip 2 tests failing due to missing drag'n drop support
