@@ -57,25 +57,6 @@ using namespace std;
 
 namespace WebCore {
 
-class ApplyingFilterEffectGuard {
-public:
-    ApplyingFilterEffectGuard(FilterData* data)
-        : m_filterData(data)
-    {
-        // The guard must be constructed when the filter is not applying.
-        ASSERT(!m_filterData->isApplying);
-        m_filterData->isApplying = true;
-    }
-
-    ~ApplyingFilterEffectGuard()
-    {
-        ASSERT(m_filterData->isApplying);
-        m_filterData->isApplying = false;
-    }
-
-    FilterData* m_filterData;
-};
-
 RenderSVGResourceType RenderSVGResourceFilter::s_resourceType = FilterResourceType;
 
 RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement* node)
@@ -108,7 +89,7 @@ void RenderSVGResourceFilter::removeClientFromCache(RenderObject* client, bool m
 
     if (FilterData* filterData = m_filter.get(client)) {
         if (filterData->savedContext)
-            filterData->markedForRemoval = true;
+            filterData->state = FilterData::MarkedForRemoval;
         else
             delete m_filter.take(client);
     }
@@ -168,14 +149,11 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, resourceMode == ApplyToDefaultMode);
 
-    // Returning false here, to avoid drawings onto the context. We just want to
-    // draw the stored filter output, not the unfiltered object as well.
     if (m_filter.contains(object)) {
         FilterData* filterData = m_filter.get(object);
-        if (filterData->isBuilt || filterData->isApplying)
-            return false;
-
-        delete m_filter.take(object); // Oops, have to rebuild, go through normal code path
+        if (filterData->state == FilterData::PaintingSource || filterData->state == FilterData::Applying)
+            filterData->state = FilterData::CycleDetected;
+        return false; // Already built, or we're in a cycle, or we're marked for removal. Regardless, just do nothing more now.
     }
 
     OwnPtr<FilterData> filterData(adoptPtr(new FilterData));
@@ -292,17 +270,21 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
     if (!filterData)
         return;
 
-    if (filterData->markedForRemoval) {
+    switch (filterData->state) {
+    case FilterData::MarkedForRemoval:
         delete m_filter.take(object);
         return;
-    }
 
-    // We have a cycle if we are already applying the data.
-    // This can occur due to FeImage referencing a source that makes use of the FEImage itself.
-    if (filterData->isApplying)
+    case FilterData::CycleDetected:
+    case FilterData::Applying:
+        // We have a cycle if we are already applying the data.
+        // This can occur due to FeImage referencing a source that makes use of the FEImage itself.
+        // This is the first place we've hit the cycle, so set the state back to PaintingSource so the return stack
+        // will continue correctly.
+        filterData->state = FilterData::PaintingSource;
         return;
 
-    if (!filterData->isBuilt) {
+    case FilterData::PaintingSource:
         if (!filterData->savedContext) {
             removeClientFromCache(object);
             return;
@@ -310,9 +292,10 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
 
         context = filterData->savedContext;
         filterData->savedContext = 0;
-    }
+        break;
 
-    ApplyingFilterEffectGuard isApplyingGuard(filterData);
+    case FilterData::Built: { } // Empty
+    }
 
     FilterEffect* lastEffect = filterData->builder->lastEffect();
 
@@ -320,11 +303,12 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
         // This is the real filtering of the object. It just needs to be called on the
         // initial filtering process. We just take the stored filter result on a
         // second drawing.
-        if (!filterData->isBuilt)
+        if (filterData->state != FilterData::Built)
             filterData->filter->setSourceImage(filterData->sourceGraphicBuffer.release());
 
-        // Always true if filterData is just built (filterData->isBuilt is false).
+        // Always true if filterData is just built (filterData->state == FilterData::Built).
         if (!lastEffect->hasResult()) {
+            filterData->state = FilterData::Applying;
             lastEffect->apply();
             lastEffect->correctFilterResultIfNeeded();
 #if !USE(CG)
@@ -333,7 +317,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
                 resultImage->transformColorSpace(lastEffect->colorSpace(), ColorSpaceDeviceRGB);
 #endif
         }
-        filterData->isBuilt = true;
+        filterData->state = FilterData::Built;
 
         ImageBuffer* resultImage = lastEffect->asImageBuffer();
         if (resultImage) {
@@ -365,7 +349,7 @@ void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, co
 
     for (; it != end; ++it) {
         FilterData* filterData = it->value;
-        if (!filterData->isBuilt)
+        if (filterData->state != FilterData::Built)
             continue;
 
         SVGFilterBuilder* builder = filterData->builder.get();

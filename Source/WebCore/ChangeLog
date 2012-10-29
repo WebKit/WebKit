@@ -1,3 +1,33 @@
+2012-10-25  Stephen Chenney  <schenney@chromium.org>
+
+        feImage should not be allowed to self reference
+        https://bugs.webkit.org/show_bug.cgi?id=94652
+
+        Reviewed by Eric Seidel.
+
+        Add cycle detection for SVG filter application, and also fix a problem
+        with graphics context restore when filters are applied. This also
+        converts the flags in FilterData to a state tracking system, as the
+        number of flags was getting messy and only one flag is valid at any given time.
+
+        Test: svg/filters/feImage-self-and-other-referencing.html
+
+        * rendering/svg/RenderSVGResourceFilter.cpp: Convert to new FilterData
+        state management and enable cycle detection.
+        (WebCore):
+        (WebCore::RenderSVGResourceFilter::removeClientFromCache): Change isBuilt and markedForRemoval flags to state enums.
+        (WebCore::RenderSVGResourceFilter::applyResource): Change flags to state enums and detect cycles.
+        (WebCore::RenderSVGResourceFilter::postApplyResource): Change flags to state and add handling
+        for the various states.
+        (WebCore::RenderSVGResourceFilter::primitiveAttributeChanged): Change isBuilt flag to state enums.
+        * rendering/svg/RenderSVGResourceFilter.h:
+        (WebCore::FilterData::FilterData):
+        (FilterData): Convert to a state tracking system.
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced): Add a block around the
+        SVGRenderingContext so that it applies the filter and reverts the
+        context before the calling method restores the context.
+
 2012-10-29  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12592716> REGRESSION (r132545): With full-page accelerated drawing, a
