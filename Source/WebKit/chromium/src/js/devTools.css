@@ -11,6 +11,22 @@ body.compact #toolbar {
 
 /* Chrome theme overrides */
 
+body.compact.platform-mac #toolbar {
+  /* Match Chrome's toolbar. */
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(230, 229, 229)), to(rgb(206, 207, 207))) !important;
+  border-top-color: white;
+  border-bottom-color: rgb(122, 122, 122);
+}
+
+body.compact.platform-mac.inactive #toolbar {
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(235, 235, 235)), to(rgb(216, 216, 216))) !important;
+  border-bottom-color: rgb(142, 142, 142);
+}
+
+body.platform-mac.inactive #toolbar .toolbar-label {
+  opacity: 0.8;
+}
+
 body.platform-windows #toolbar, body.platform-windows.inactive #toolbar {
     background-image: none;
 }

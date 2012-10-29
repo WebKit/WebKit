@@ -1,3 +1,18 @@
+2012-10-29  Patrick Dubroy  <dubroy@chromium.org>
+
+        Web Inspector: Style toolbar to match Chromium toolbar on Chromium/Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=100683
+
+        Reviewed by Pavel Feldman.
+
+        When in compact mode, style the Web Inspector toolbar using the same colors & gradients
+        as the Chromium toolbar (Chromium port only).
+
+        * src/js/devTools.css:
+        (body.compact.platform-mac #toolbar):
+        (body.compact.platform-mac.inactive #toolbar):
+        (body.platform-mac.inactive #toolbar .toolbar-label):
+
 2012-10-29  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: make cpu-monitoring feature available only on capable browsers
