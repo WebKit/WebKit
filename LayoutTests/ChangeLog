@@ -1,3 +1,11 @@
+2012-10-29  Pavel Podivilov  <podivilov@google.com>
+
+        [Chromium] Test expectation update.
+
+        Unreviewed, mark recently added audiobuffersource-loop-points.html test as failing on windows.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-29  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update.
