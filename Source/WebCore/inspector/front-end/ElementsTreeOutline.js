@@ -361,6 +361,8 @@ WebInspector.ElementsTreeOutline.prototype = {
     {
         if (!window.getSelection().isCollapsed)
             return false;
+        if (event.target.nodeName === "A")
+            return false;
 
         var treeElement = this._treeElementFromEvent(event);
         if (!treeElement)

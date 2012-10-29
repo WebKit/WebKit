@@ -1,3 +1,15 @@
+2012-10-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Drag and drop a URL in inspector is not working as expected
+        https://bugs.webkit.org/show_bug.cgi?id=100527
+
+        Reviewed by Yury Semikhatsky.
+
+        Inhibit custom dragstart handling when the active element is A.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._ondragstart):
+
 2012-10-29  Mike West  <mkwst@chromium.org>
 
         Web Inspector: Error/warning count is one pixel off.
