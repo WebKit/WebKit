@@ -39,7 +39,7 @@
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
-#include "Localizer.h"
+#include "PlatformLocale.h"
 #include "RenderTextControl.h"
 #include <limits>
 #include <wtf/ASCIICType.h>

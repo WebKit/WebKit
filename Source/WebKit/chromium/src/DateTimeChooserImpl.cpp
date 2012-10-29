@@ -40,9 +40,9 @@
 #include "FrameView.h"
 #include "InputTypeNames.h"
 #include "Language.h"
-#include "Localizer.h"
 #include "NotImplemented.h"
 #include "PickerCommon.h"
+#include "PlatformLocale.h"
 #include "RenderTheme.h"
 #include "WebViewImpl.h"
 #include <public/Platform.h>

@@ -2020,7 +2020,7 @@ SET(WebCore_SOURCES
     platform/text/LineEnding.cpp
     platform/text/LocaleNone.cpp
     platform/text/LocaleToScriptMappingDefault.cpp
-    platform/text/Localizer.cpp
+    platform/text/PlatformLocale.cpp
     platform/text/QuotedPrintable.cpp
     platform/text/RegularExpression.cpp
     platform/text/SegmentedString.cpp

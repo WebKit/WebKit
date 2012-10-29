@@ -6266,8 +6266,8 @@
 		F5122C901547FA1B0028A93B /* PagePopupDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5122C8F1547FA1B0028A93B /* PagePopupDriver.h */; };
 		F513A3EA15FF4841001526DB /* ValidationMessageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = F513A3E915FF4841001526DB /* ValidationMessageClient.h */; };
 		F52AD5E41534245F0059FBE6 /* EmptyClients.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F52AD5E31534245F0059FBE6 /* EmptyClients.cpp */; };
-		F544F78815CFB2A800AF33A8 /* Localizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F544F78615CFB2A800AF33A8 /* Localizer.cpp */; };
-		F544F78915CFB2A800AF33A8 /* Localizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F544F78715CFB2A800AF33A8 /* Localizer.h */; };
+		F544F78815CFB2A800AF33A8 /* PlatformLocale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F544F78615CFB2A800AF33A8 /* PlatformLocale.cpp */; };
+		F544F78915CFB2A800AF33A8 /* PlatformLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = F544F78715CFB2A800AF33A8 /* PlatformLocale.h */; };
 		F55B3DAD1251F12D003EF269 /* BaseTextInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3D791251F12D003EF269 /* BaseTextInputType.cpp */; };
 		F55B3DAE1251F12D003EF269 /* BaseTextInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D7A1251F12D003EF269 /* BaseTextInputType.h */; };
 		F55B3DAF1251F12D003EF269 /* ButtonInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3D7B1251F12D003EF269 /* ButtonInputType.cpp */; };
@@ -13703,8 +13703,8 @@
 		F523D30302DE4476018635CA /* Range.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Range.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30402DE4476018635CA /* Range.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Range.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F52AD5E31534245F0059FBE6 /* EmptyClients.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmptyClients.cpp; sourceTree = "<group>"; };
-		F544F78615CFB2A800AF33A8 /* Localizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Localizer.cpp; sourceTree = "<group>"; };
-		F544F78715CFB2A800AF33A8 /* Localizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Localizer.h; sourceTree = "<group>"; };
+		F544F78615CFB2A800AF33A8 /* PlatformLocale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformLocale.cpp; sourceTree = "<group>"; };
+		F544F78715CFB2A800AF33A8 /* PlatformLocale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformLocale.h; sourceTree = "<group>"; };
 		F55B3D791251F12D003EF269 /* BaseTextInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseTextInputType.cpp; sourceTree = "<group>"; };
 		F55B3D7A1251F12D003EF269 /* BaseTextInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTextInputType.h; sourceTree = "<group>"; };
 		F55B3D7B1251F12D003EF269 /* ButtonInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ButtonInputType.cpp; sourceTree = "<group>"; };
@@ -20095,9 +20095,9 @@
 				89B5EAA011E8003D00F2367E /* LineEnding.h */,
 				7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */,
 				7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */,
-				F544F78615CFB2A800AF33A8 /* Localizer.cpp */,
-				F544F78715CFB2A800AF33A8 /* Localizer.h */,
 				BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */,
+				F544F78615CFB2A800AF33A8 /* PlatformLocale.cpp */,
+				F544F78715CFB2A800AF33A8 /* PlatformLocale.h */,
 				379E371413736A6600B9E919 /* QuotedPrintable.cpp */,
 				379E371513736A6600B9E919 /* QuotedPrintable.h */,
 				B2C3D9FC0D006C1D00EF6F26 /* RegularExpression.cpp */,
@@ -24506,7 +24506,6 @@
 				7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */,
 				89878568122CA064003AABDA /* LocalFileSystem.h in Headers */,
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
-				F544F78915CFB2A800AF33A8 /* Localizer.h in Headers */,
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
 				656D37410ADBA5DE00A4554D /* MainResourceLoader.h in Headers */,
@@ -24697,6 +24696,7 @@
 				49182B5315DCE6F000548418 /* PlatformInstrumentation.h in Headers */,
 				935C476809AC4D4300A6AAB4 /* PlatformKeyboardEvent.h in Headers */,
 				0562F9611573F88F0031CA16 /* PlatformLayer.h in Headers */,
+				F544F78915CFB2A800AF33A8 /* PlatformLocale.h in Headers */,
 				4F7B4A6615FF6D6A006B5F22 /* PlatformMemoryInstrumentation.h in Headers */,
 				932871C00B20DEB70049035A /* PlatformMenuDescription.h in Headers */,
 				41BF70100FE86F61005E8DEC /* PlatformMessagePortChannel.h in Headers */,
@@ -27835,7 +27835,6 @@
 				89878567122CA064003AABDA /* LocalFileSystem.cpp in Sources */,
 				C046E1AC1208A9FE00BA2CF7 /* LocalizedStrings.cpp in Sources */,
 				BC25B52A131C6D3900180E10 /* LocalizedStringsMac.cpp in Sources */,
-				F544F78815CFB2A800AF33A8 /* Localizer.cpp in Sources */,
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
 				A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */,
 				1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */,
@@ -27993,6 +27992,7 @@
 				BC5C762A1497FE1400BC4775 /* PlatformEvent.cpp in Sources */,
 				BCAA486F14A052530088FAC4 /* PlatformEventFactoryMac.mm in Sources */,
 				49182B5215DCE6F000548418 /* PlatformInstrumentation.cpp in Sources */,
+				F544F78815CFB2A800AF33A8 /* PlatformLocale.cpp in Sources */,
 				4F1D11BF15FF37200026E908 /* PlatformMemoryInstrumentation.cpp in Sources */,
 				41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */,
 				C598902E14E9B0F800E8D18B /* PlatformPasteboardMac.mm in Sources */,

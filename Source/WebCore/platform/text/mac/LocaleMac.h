@@ -31,7 +31,7 @@
 #ifndef LocaleMac_h
 #define LocaleMac_h
 
-#include "Localizer.h"
+#include "PlatformLocale.h"
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>

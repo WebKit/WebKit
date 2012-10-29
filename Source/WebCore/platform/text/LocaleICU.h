@@ -32,7 +32,7 @@
 #define LocaleICU_h
 
 #include "DateComponents.h"
-#include "Localizer.h"
+#include "PlatformLocale.h"
 #include <unicode/udat.h>
 #include <unicode/unum.h>
 #include <wtf/Forward.h>

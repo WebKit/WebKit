@@ -45,7 +45,7 @@
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeFieldsState.h"
 #include "LocalizedStrings.h"
-#include "Localizer.h"
+#include "PlatformLocale.h"
 #include <wtf/text/WTFString.h>
 #endif
 

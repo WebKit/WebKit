@@ -1,3 +1,44 @@
+2012-10-28  Kent Tamura  <tkent@chromium.org>
+
+        Rename Localizer.{cpp,h} to PlatformLocale.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=100627
+
+        Reviewed by Yuta Kitamura.
+
+        We'd like to rename Localizer class to Locale class. However we use
+        PlatformLocale.cpp and PlatformLocale.h as their file names because
+        <locale.h> exists in the C standard.  In this patch, we rename only file
+        names. We're going to rename the class name later.
+
+        No new tests. This doesn't make any behavior change.
+
+        * platform/text/PlatformLocale.h: Renamed from Source/WebCore/platform/text/Localizer.h.
+        * platform/text/PlatformLocale.cpp: Renamed from Source/WebCore/platform/text/Localizer.cpp.
+        Follow the Localizer.h -> PlatformLocale.cpp renaming.
+
+        * CMakeLists.txt: Follow the file name renaming.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/Document.cpp: Ditto.
+        * html/BaseDateAndTimeInputType.cpp: Ditto.
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp: Ditto.
+        * html/DateInputType.cpp: Ditto.
+        * html/DateTimeInputType.cpp: Ditto.
+        * html/DateTimeLocalInputType.cpp: Ditto.
+        * html/MonthInputType.cpp: Ditto.
+        * html/NumberInputType.cpp: Ditto.
+        * html/TimeInputType.cpp: Ditto.
+        * html/shadow/DateTimeEditElement.cpp: Ditto.
+        * html/shadow/DateTimeNumericFieldElement.cpp: Ditto.
+        * page/PagePopupController.cpp: Ditto.
+        * platform/text/LocaleICU.h: Ditto.
+        * platform/text/LocaleNone.cpp: Ditto.
+        * platform/text/LocaleWin.h: Ditto.
+        * platform/text/mac/LocaleMac.h: Ditto.
+
 2012-10-28  Shinya Kawanaka  <shinyak@chromium.org>
 
         The shadow element is not reprojected to a nested ShadowRoot.

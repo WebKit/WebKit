@@ -34,7 +34,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
-#include "Localizer.h"
+#include "PlatformLocale.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>

@@ -32,8 +32,8 @@
 #include "PagePopupController.h"
 
 #if ENABLE(PAGE_POPUP)
-#include "Localizer.h"
 #include "PagePopupClient.h"
+#include "PlatformLocale.h"
 
 namespace WebCore {
 

@@ -29,7 +29,7 @@
 
 #include "FontCache.h"
 #include "KeyboardEvent.h"
-#include "Localizer.h"
+#include "PlatformLocale.h"
 #include "RenderStyle.h"
 #include "StyleResolver.h"
 #include "TextRun.h"

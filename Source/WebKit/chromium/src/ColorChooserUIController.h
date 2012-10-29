@@ -29,8 +29,8 @@
 #if ENABLE(INPUT_TYPE_COLOR)
 
 #include "ColorChooser.h"
-#include "Localizer.h"
 #include "PagePopupClient.h"
+#include "PlatformLocale.h"
 #include "WebColorChooserClient.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

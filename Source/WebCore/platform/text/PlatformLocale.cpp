@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "Localizer.h"
+#include "PlatformLocale.h"
 
 #include "DateTimeFormat.h"
 #include <wtf/text/StringBuilder.h>

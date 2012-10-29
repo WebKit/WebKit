@@ -933,7 +933,7 @@ SOURCES += \
     platform/text/Hyphenation.cpp \
     platform/text/LocaleNone.cpp \
     platform/text/LocaleToScriptMappingDefault.cpp \
-    platform/text/Localizer.cpp \
+    platform/text/PlatformLocale.cpp \
     platform/text/QuotedPrintable.cpp \
     platform/CalculationValue.cpp \
     platform/Clock.cpp \

@@ -35,8 +35,8 @@
 #include "EventHandler.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
-#include "Localizer.h"
 #include "MouseEvent.h"
+#include "PlatformLocale.h"
 #include "Text.h"
 #include <wtf/DateMath.h>
 #include <wtf/text/StringBuilder.h>

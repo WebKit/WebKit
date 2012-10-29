@@ -33710,15 +33710,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\Localizer.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\text\Localizer.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\text\ParserUtilities.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\PlatformLocale.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\PlatformLocale.h"
 					>
 				</File>
 				<File

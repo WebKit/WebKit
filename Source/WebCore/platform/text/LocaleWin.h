@@ -31,7 +31,7 @@
 #ifndef LocaleWin_h
 #define LocaleWin_h
 
-#include "Localizer.h"
+#include "PlatformLocale.h"
 #include <windows.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>

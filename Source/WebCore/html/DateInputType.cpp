@@ -39,8 +39,8 @@
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
-#include "Localizer.h"
 #include "PickerIndicatorElement.h"
+#include "PlatformLocale.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

@@ -41,9 +41,9 @@
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
 #include "KeyboardEvent.h"
-#include "Localizer.h"
 #include "Page.h"
 #include "PickerIndicatorElement.h"
+#include "PlatformLocale.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
 #include <wtf/DateMath.h>
