@@ -1,5 +1,20 @@
 2012-10-29  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Rename LocalizedDateICUTest.cpp to LocaleICUTest.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=100643
+
+        Reviewed by Kentaro Hara.
+
+        LocalizedDateICU was removed some months ago, and LocalizedDateICUTest
+        actually had tests for LocaleICU.
+
+        * WebKit.gypi:
+        * tests/LocaleICUTest.cpp:
+        - Renamed from Source/WebKit/chromium/tests/LocalizedDateICUTest.cpp.
+        - Rename LocalizedDateICUTest class to LocaleICUTest.
+
+2012-10-29  Kent Tamura  <tkent@chromium.org>
+
         [Chromium-linux] Fix build.
 
         * tests/LocalizedNumberICUTest.cpp:

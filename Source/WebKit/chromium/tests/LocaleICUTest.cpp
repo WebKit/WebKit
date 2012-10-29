@@ -29,17 +29,16 @@
  */
 
 #include "config.h"
-
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-
 #include "LocaleICU.h"
+
 #include <gtest/gtest.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
-class LocalizedDateICUTest : public ::testing::Test {
+class LocaleICUTest : public ::testing::Test {
 public:
     // Labels class is used for printing results in EXPECT_EQ macro.
     class Labels {
@@ -137,12 +136,12 @@ protected:
     }
 };
 
-std::ostream& operator<<(std::ostream& os, const LocalizedDateICUTest::Labels& labels)
+std::ostream& operator<<(std::ostream& os, const LocaleICUTest::Labels& labels)
 {
     return os << labels.toString().utf8().data();
 }
 
-TEST_F(LocalizedDateICUTest, isRTL)
+TEST_F(LocaleICUTest, isRTL)
 {
     EXPECT_TRUE(isRTL("ar-EG"));
     EXPECT_FALSE(isRTL("en-us"));
@@ -150,14 +149,14 @@ TEST_F(LocalizedDateICUTest, isRTL)
     EXPECT_FALSE(isRTL("**invalid**"));
 }
 
-TEST_F(LocalizedDateICUTest, monthFormat)
+TEST_F(LocaleICUTest, monthFormat)
 {
     EXPECT_STREQ("MMMM yyyy", monthFormat("en_US").utf8().data());
     EXPECT_STREQ("MMMM yyyy", monthFormat("fr").utf8().data());
     EXPECT_STREQ("yyyy\xE5\xB9\xB4M\xE6\x9C\x88", monthFormat("ja").utf8().data());
 }
 
-TEST_F(LocalizedDateICUTest, localizedDateFormatText)
+TEST_F(LocaleICUTest, localizedDateFormatText)
 {
     // Note: EXPECT_EQ(String, String) doesn't print result as string.
     EXPECT_STREQ("h:mm:ss a", localizedDateFormatText("en_US").utf8().data());
@@ -165,14 +164,14 @@ TEST_F(LocalizedDateICUTest, localizedDateFormatText)
     EXPECT_STREQ("H:mm:ss", localizedDateFormatText("ja").utf8().data());
 }
 
-TEST_F(LocalizedDateICUTest, localizedShortDateFormatText)
+TEST_F(LocaleICUTest, localizedShortDateFormatText)
 {
     EXPECT_STREQ("h:mm a", localizedShortDateFormatText("en_US").utf8().data());
     EXPECT_STREQ("HH:mm", localizedShortDateFormatText("fr").utf8().data());
     EXPECT_STREQ("H:mm", localizedShortDateFormatText("ja").utf8().data());
 }
 
-TEST_F(LocalizedDateICUTest, standAloneMonthLabels)
+TEST_F(LocaleICUTest, standAloneMonthLabels)
 {
     EXPECT_STREQ("January", standAloneMonthLabel("en_US", 0).utf8().data());
     EXPECT_STREQ("June", standAloneMonthLabel("en_US", 5).utf8().data());
@@ -190,7 +189,7 @@ TEST_F(LocalizedDateICUTest, standAloneMonthLabels)
     EXPECT_STREQ("\xD0\x9C\xD0\xB0\xD0\xB9", standAloneMonthLabel("ru_RU", 4).utf8().data());
 }
 
-TEST_F(LocalizedDateICUTest, shortMonthLabels)
+TEST_F(LocaleICUTest, shortMonthLabels)
 {
     EXPECT_STREQ("Jan", shortMonthLabel("en_US", 0).utf8().data());
     EXPECT_STREQ("Jan", shortStandAloneMonthLabel("en_US", 0).utf8().data());
@@ -213,7 +212,7 @@ TEST_F(LocalizedDateICUTest, shortMonthLabels)
     EXPECT_STREQ("\xD0\xBC\xD0\xB0\xD0\xB9", shortStandAloneMonthLabel("ru_RU", 4).utf8().data());
 }
 
-TEST_F(LocalizedDateICUTest, timeAMPMLabels)
+TEST_F(LocaleICUTest, timeAMPMLabels)
 {
     EXPECT_EQ(labels("AM", "PM"), timeAMPMLabels("en_US"));
     EXPECT_EQ(labels("AM", "PM"), timeAMPMLabels("fr"));
