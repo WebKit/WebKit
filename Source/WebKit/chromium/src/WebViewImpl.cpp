@@ -419,6 +419,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_rootLayer(0)
     , m_rootGraphicsLayer(0)
     , m_isAcceleratedCompositingActive(false)
+    , m_layerTreeViewCommitsDeferred(false)
     , m_compositorCreationFailed(false)
     , m_recreatingGraphicsContext(false)
     , m_compositorSurfaceReady(false)
@@ -3830,17 +3831,26 @@ void WebViewImpl::scrollRootLayerRect(const IntSize&, const IntRect&)
     updateLayerTreeViewport();
 }
 
-void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
+void WebViewImpl::invalidateRect(const IntRect& rect)
 {
-    ASSERT(m_layerTreeView);
+    if (m_layerTreeViewCommitsDeferred) {
+        // If we receive an invalidation from WebKit while in deferred commit mode,
+        // that means it's time to start producing frames again so un-defer.
+        m_layerTreeView->setDeferCommits(false);
+        m_layerTreeViewCommitsDeferred = false;
+    }
+    if (m_isAcceleratedCompositingActive) {
+        ASSERT(m_layerTreeView);
 
-    if (!page())
-        return;
+        if (!page())
+            return;
 
-    FrameView* view = page()->mainFrame()->view();
-    IntRect dirtyRect = view->windowToContents(rect);
-    updateLayerTreeViewport();
-    m_nonCompositedContentHost->invalidateRect(dirtyRect);
+        FrameView* view = page()->mainFrame()->view();
+        IntRect dirtyRect = view->windowToContents(rect);
+        updateLayerTreeViewport();
+        m_nonCompositedContentHost->invalidateRect(dirtyRect);
+    } else
+        m_client->didInvalidateRect(rect);
 }
 
 NonCompositedContentHost* WebViewImpl::nonCompositedContentHost()
@@ -3907,6 +3917,14 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         if (m_layerTreeView && !page()->settings()->forceCompositingMode())
             m_layerTreeView->finishAllRendering();
         m_client->didDeactivateCompositor();
+        if (WebKit::Platform::current()->compositorSupport()->isThreadingEnabled()) {
+            ASSERT(m_layerTreeView);
+            // In threaded compositing mode, force compositing mode is always on so setIsAcceleratedCompositingActive(false)
+            // means that we're transitioning to a new page. Suppress commits until WebKit generates invalidations so
+            // we don't attempt to paint too early in the next page load.
+            m_layerTreeView->setDeferCommits(true);
+            m_layerTreeViewCommitsDeferred = true;
+        }
     } else if (m_layerTreeView) {
         m_isAcceleratedCompositingActive = true;
         updateLayerTreeViewport();
