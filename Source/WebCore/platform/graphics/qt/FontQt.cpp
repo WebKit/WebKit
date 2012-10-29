@@ -278,6 +278,9 @@ void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const
 
 void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* fontData, const GlyphBuffer& glyphBuffer, int from, int numGlyphs, const FloatPoint& point) const
 {
+    if (!fontData->platformData().size())
+        return;
+
     if (context->paintingDisabled())
         return;
 

@@ -1,3 +1,13 @@
+2012-10-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Text with zero font size renders as X px sometimes, causing fast/text/zero-font-size-2.html to fail
+        https://bugs.webkit.org/show_bug.cgi?id=100115
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2012-10-29  Huang Dongsung  <luxtella@company100.net>
 
         [TexMap] Make GraphicsLayerAnimation choose a proper timing function.
