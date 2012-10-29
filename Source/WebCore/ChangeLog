@@ -1,3 +1,20 @@
+2012-10-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Handle non-parsedOk properties as inactive ones
+        https://bugs.webkit.org/show_bug.cgi?id=100119
+
+        Reviewed by Vsevolod Vlasov.
+
+        Test: inspector/styles/inactive-properties.html
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.createExclamationMark):
+        (WebInspector.ComputedStylePropertiesSection.prototype.rebuildComputedTrace):
+        * inspector/front-end/elementsPanel.css:
+        (.styles-section.computed-style .properties li.not-parsed-ok):
+        (.styles-section.computed-style .properties li.not-parsed-ok img.exclamation-mark):
+        (.styles-section .properties .not-parsed-ok):
+
 2012-10-29  Eric Seidel  <eric@webkit.org>
 
         Make rendering tables with <colgroups> twice as fast by avoiding walking the DOM for colgroups 4 times for each cell

@@ -178,6 +178,10 @@
     margin-left: 0px;
 }
 
+.styles-section.computed-style .properties li.not-parsed-ok {
+    margin-left: -6px;
+}
+
 .styles-section .properties li.not-parsed-ok img.exclamation-mark {
     content: url(Images/warningIcon.png);
     opacity: 0.75;
@@ -192,6 +196,10 @@
     -webkit-user-select: none;
     cursor: default;
     z-index: 1;
+}
+
+.styles-section.computed-style .properties li.not-parsed-ok img.exclamation-mark {
+    left: 0;
 }
 
 .styles-section .header {
@@ -388,7 +396,10 @@
     margin-left: 16px;
 }
 
-.styles-section .properties .overloaded, .styles-section .properties .inactive, .styles-section .properties .disabled {
+.styles-section .properties .overloaded,
+.styles-section .properties .inactive,
+.styles-section .properties .disabled,
+.styles-section .properties .not-parsed-ok {
     text-decoration: line-through;
 }
 

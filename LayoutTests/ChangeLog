@@ -1,3 +1,15 @@
+2012-10-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Handle non-parsedOk properties as inactive ones
+        https://bugs.webkit.org/show_bug.cgi?id=100119
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.dumpStyleTreeItem):
+        * inspector/styles/inactive-properties-expected.txt: Added.
+        * inspector/styles/inactive-properties.html: Added.
+
 2012-10-29  Nandor Huszka  <hnandor@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
