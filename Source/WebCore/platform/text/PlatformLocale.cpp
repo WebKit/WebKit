@@ -43,7 +43,7 @@ class DateTimeStringBuilder : private DateTimeFormat::TokenHandler {
 
 public:
     // The argument objects must be alive until this object dies.
-    DateTimeStringBuilder(Localizer&, const DateComponents&);
+    DateTimeStringBuilder(Locale&, const DateComponents&);
 
     bool build(const String&);
     String toString();
@@ -57,11 +57,11 @@ private:
     void appendNumber(int number, size_t width);
 
     StringBuilder m_builder;
-    Localizer& m_localizer;
+    Locale& m_localizer;
     const DateComponents& m_date;
 };
 
-DateTimeStringBuilder::DateTimeStringBuilder(Localizer& localizer, const DateComponents& date)
+DateTimeStringBuilder::DateTimeStringBuilder(Locale& localizer, const DateComponents& date)
     : m_localizer(localizer)
     , m_date(date)
 {
@@ -159,11 +159,11 @@ String DateTimeStringBuilder::toString()
 
 #endif
 
-Localizer::~Localizer()
+Locale::~Locale()
 {
 }
 
-void Localizer::setLocalizerData(const Vector<String, DecimalSymbolsSize>& symbols, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix)
+void Locale::setLocaleData(const Vector<String, DecimalSymbolsSize>& symbols, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix)
 {
     for (size_t i = 0; i < symbols.size(); ++i) {
         ASSERT(!symbols[i].isEmpty());
@@ -174,13 +174,13 @@ void Localizer::setLocalizerData(const Vector<String, DecimalSymbolsSize>& symbo
     m_negativePrefix = negativePrefix;
     m_negativeSuffix = negativeSuffix;
     ASSERT(!m_positivePrefix.isEmpty() || !m_positiveSuffix.isEmpty() || !m_negativePrefix.isEmpty() || !m_negativeSuffix.isEmpty());
-    m_hasLocalizerData = true;
+    m_hasLocaleData = true;
 }
 
-String Localizer::convertToLocalizedNumber(const String& input)
+String Locale::convertToLocalizedNumber(const String& input)
 {
-    initializeLocalizerData();
-    if (!m_hasLocalizerData || input.isEmpty())
+    initializeLocaleData();
+    if (!m_hasLocaleData || input.isEmpty())
         return input;
 
     unsigned i = 0;
@@ -235,7 +235,7 @@ static bool matches(const String& text, unsigned position, const String& part)
     return true;
 }
 
-bool Localizer::detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex)
+bool Locale::detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex)
 {
     startIndex = 0;
     endIndex = input.length();
@@ -263,7 +263,7 @@ bool Localizer::detectSignAndGetDigitRange(const String& input, bool& isNegative
     return true;
 }
 
-unsigned Localizer::matchedDecimalSymbolIndex(const String& input, unsigned& position)
+unsigned Locale::matchedDecimalSymbolIndex(const String& input, unsigned& position)
 {
     for (unsigned symbolIndex = 0; symbolIndex < DecimalSymbolsSize; ++symbolIndex) {
         if (m_decimalSymbols[symbolIndex].length() && matches(input, position, m_decimalSymbols[symbolIndex])) {
@@ -274,11 +274,11 @@ unsigned Localizer::matchedDecimalSymbolIndex(const String& input, unsigned& pos
     return DecimalSymbolsSize;
 }
 
-String Localizer::convertFromLocalizedNumber(const String& localized)
+String Locale::convertFromLocalizedNumber(const String& localized)
 {
-    initializeLocalizerData();
+    initializeLocaleData();
     String input = localized.stripWhiteSpace();
-    if (!m_hasLocalizerData || input.isEmpty())
+    if (!m_hasLocaleData || input.isEmpty())
         return input;
 
     bool isNegative;
@@ -309,13 +309,13 @@ String Localizer::convertFromLocalizedNumber(const String& localized)
 }
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-String Localizer::localizedDecimalSeparator()
+String Locale::localizedDecimalSeparator()
 {
-    initializeLocalizerData();
+    initializeLocaleData();
     return m_decimalSymbols[DecimalSeparatorIndex];
 }
 
-String Localizer::dateTimeFormatWithSeconds()
+String Locale::dateTimeFormatWithSeconds()
 {
     if (!m_dateTimeFormatWithSeconds.isNull())
         return m_dateTimeFormatWithSeconds;
@@ -328,7 +328,7 @@ String Localizer::dateTimeFormatWithSeconds()
     return m_dateTimeFormatWithSeconds;
 }
 
-String Localizer::dateTimeFormatWithoutSeconds()
+String Locale::dateTimeFormatWithoutSeconds()
 {
     if (!m_dateTimeFormatWithoutSeconds.isNull())
         return m_dateTimeFormatWithoutSeconds;
@@ -342,7 +342,7 @@ String Localizer::dateTimeFormatWithoutSeconds()
 }
 #endif
 
-String Localizer::formatDateTime(const DateComponents& date, FormatType formatType)
+String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
 {
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     if (date.type() != DateComponents::Time && date.type() != DateComponents::Date)

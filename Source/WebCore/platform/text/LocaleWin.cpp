@@ -86,7 +86,7 @@ static LCID LCIDFromLocale(const AtomicString& locale)
     return lcid;
 }
 
-PassOwnPtr<Localizer> Localizer::create(const AtomicString& locale)
+PassOwnPtr<Locale> Locale::create(const AtomicString& locale)
 {
     return LocaleWin::create(LCIDFromLocale(locale));
 }
@@ -751,7 +751,7 @@ const Vector<String>& LocaleWin::timeAMPMLabels()
 }
 #endif
 
-void LocaleWin::initializeLocalizerData()
+void LocaleWin::initializeLocaleData()
 {
     if (m_didInitializeNumberData)
         return;
@@ -819,7 +819,7 @@ void LocaleWin::initializeLocalizerData()
         break;
     }
     m_didInitializeNumberData = true;
-    setLocalizerData(symbols, emptyString(), emptyString(), negativePrefix, negativeSuffix);
+    setLocaleData(symbols, emptyString(), emptyString(), negativePrefix, negativeSuffix);
 }
 
 }

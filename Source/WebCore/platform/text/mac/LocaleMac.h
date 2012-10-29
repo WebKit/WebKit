@@ -45,7 +45,7 @@ namespace WebCore {
 
 class DateComponents;
 
-class LocaleMac : public Localizer {
+class LocaleMac : public Locale {
 public:
     static PassOwnPtr<LocaleMac> create(const String&);
     static PassOwnPtr<LocaleMac> create(NSLocale*);
@@ -76,7 +76,7 @@ public:
 private:
     explicit LocaleMac(NSLocale*);
     RetainPtr<NSDateFormatter> shortDateFormatter();
-    virtual void initializeLocalizerData() OVERRIDE;
+    virtual void initializeLocaleData() OVERRIDE;
 
     RetainPtr<NSLocale> m_locale;
     RetainPtr<NSCalendar> m_gregorianCalendar;

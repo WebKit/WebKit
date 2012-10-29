@@ -57,7 +57,7 @@ void PagePopupController::setValueAndClosePopup(int numValue, const String& stri
 String PagePopupController::localizeNumberString(const String& numberString)
 {
     if (m_popupClient)
-        return m_popupClient->localizer().convertToLocalizedNumber(numberString);
+        return m_popupClient->locale().convertToLocalizedNumber(numberString);
     return numberString;
 }
 

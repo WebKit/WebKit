@@ -1,3 +1,30 @@
+2012-10-28  Kent Tamura  <tkent@chromium.org>
+
+        Rename Localizer to Locale
+        https://bugs.webkit.org/show_bug.cgi?id=100634
+
+        Reviewed by Kentaro Hara.
+
+        * src/ColorChooserUIController.h:
+        (ColorChooserUIController):
+        Rename m_localizer to m_locale, and follow other renamings.
+        * src/ColorChooserUIController.cpp:
+        (WebKit::ColorChooserUIController::ColorChooserUIController): Follow renamings.
+        (WebKit::ColorChooserUIController::locale): Ditto.
+        * src/DateTimeChooserImpl.h:
+        (DateTimeChooserImpl):
+        Rename m_localizer to m_locale, and follow other renamings.
+        * src/DateTimeChooserImpl.cpp:
+        (WebKit::DateTimeChooserImpl::DateTimeChooserImpl): Follow renamings.
+        (WebKit::DateTimeChooserImpl::writeDocument): Ditto.
+        (WebKit::DateTimeChooserImpl::locale): Ditto.
+        * tests/LocaleMacTest.cpp:
+        (LocaleMacTest::formatTime): Ditto.
+        (testNumberIsReversible): Ditto.
+        * tests/LocalizedNumberICUTest.cpp:
+        (testNumberIsReversible): Ditto.
+        (testDecimalSeparator): Ditto.
+
 2012-10-29  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed.  Rolled DEPS.

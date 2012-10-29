@@ -57,7 +57,7 @@ ColorChooserUIController::ColorChooserUIController(ChromeClientImpl* chromeClien
     : m_chromeClient(chromeClient)
     , m_client(client)
     , m_popup(0)
-    , m_localizer(Localizer::createDefault())
+    , m_locale(Locale::createDefault())
 {
     if (m_client->shouldShowSuggestions())
         openPopup();
@@ -132,9 +132,9 @@ void ColorChooserUIController::writeDocument(DocumentWriter& writer)
     PagePopupClient::addString("</script></body>\n", writer);
 }
 
-Localizer& ColorChooserUIController::localizer()
+Locale& ColorChooserUIController::locale()
 {
-    return *m_localizer;
+    return *m_locale;
 }
 
 void ColorChooserUIController::setValueAndClosePopup(int numValue, const String& stringValue)

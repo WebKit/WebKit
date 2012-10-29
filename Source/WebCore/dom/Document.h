@@ -108,7 +108,7 @@ class HitTestResult;
 class IntPoint;
 class DOMWrapperWorld;
 class JSNode;
-class Localizer;
+class Locale;
 class MediaCanStartListener;
 class MediaQueryList;
 class MediaQueryMatcher;
@@ -1156,8 +1156,8 @@ public:
 
     bool inStyleRecalc() { return m_inStyleRecalc; }
 
-    // Return a Localizer for the default locale if the argument is null or empty.
-    Localizer& getCachedLocalizer(const AtomicString& locale = nullAtom);
+    // Return a Locale for the default locale if the argument is null or empty.
+    Locale& getCachedLocale(const AtomicString& locale = nullAtom);
 
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
@@ -1513,8 +1513,8 @@ private:
     bool m_didDispatchViewportPropertiesChanged;
 #endif
 
-    typedef HashMap<AtomicString, OwnPtr<Localizer> > LocaleToLocalizerMap;
-    LocaleToLocalizerMap m_localizerCache;
+    typedef HashMap<AtomicString, OwnPtr<Locale> > LocaleIdentifierToLocaleMap;
+    LocaleIdentifierToLocaleMap m_localeCache;
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()

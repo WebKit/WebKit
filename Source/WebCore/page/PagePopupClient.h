@@ -40,7 +40,7 @@
 namespace WebCore {
 
 class DocumentWriter;
-class Localizer;
+class Locale;
 
 class PagePopupClient {
 public:
@@ -53,8 +53,8 @@ public:
     //  - window.setValueAndClosePopup(number, string).
     virtual void writeDocument(DocumentWriter&) = 0;
 
-    // Returns a Localizer object associated to the client.
-    virtual Localizer& localizer() = 0;
+    // Returns a Locale object associated to the client.
+    virtual Locale& locale() = 0;
 
     // This is called by the content HTML of a PagePopup.
     // An implementation of this function should call ChromeClient::closePagePopup().

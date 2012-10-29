@@ -1,3 +1,97 @@
+2012-10-29  Kent Tamura  <tkent@chromium.org>
+
+        Rename Localizer to Locale
+        https://bugs.webkit.org/show_bug.cgi?id=100634
+
+        Reviewed by Kentaro Hara.
+
+        - Rename Localizer class to Locale
+        - Rename localizer with locale in variable names
+        - Rename localizer with locale in function names
+
+        No new tests. This doesn't make any behavior changes.
+
+        * dom/Document.h:
+        (WebCore): Declare Locale instead of Localizer.
+        (Document):
+        - Rename getCachedLocalizer to getCachedLocale.
+        - Rename LocaleToLocalizerMap to LocaleIdentifierToLocaleMap.
+        - Rename m_localizerCache to m_localeCache.
+        * dom/Document.cpp:
+        (WebCore::Document::getCachedLocale): Follow renamings.
+        * dom/Element.h:
+        (WebCore): Declare Locale instead of Localizer.
+        (Element): Rename localizer() to locale().
+        * dom/Element.cpp:
+        (WebCore::Element::locale): Follow renamings.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::localizeValue): Ditto.
+        (WebCore::BaseDateAndTimeInputType::convertFromVisibleValue): Ditto.
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::updateInnerTextValue): Ditto.
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::fixedPlaceholder): Ditto.
+        (WebCore::DateInputType::setupLayoutParameters): Ditto.
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::setupLayoutParameters): Ditto.
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::setupLayoutParameters): Ditto.
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::setupLayoutParameters): Ditto.
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::localizeValue): Ditto.
+        (WebCore::NumberInputType::convertFromVisibleValue): Ditto.
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::localizeValue): Ditto.
+        (WebCore::TimeInputType::setupLayoutParameters): Ditto.
+
+        * html/shadow/DateTimeEditElement.h:
+        (WebCore): Declare Locale instead of Localizer.
+        (LayoutParameters): Rename localizer data member to locale.
+        (WebCore::DateTimeEditElement::LayoutParameters::LayoutParameters): Follow renamings.
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitField): Ditto.
+        * html/shadow/DateTimeNumericFieldElement.h:
+        (DateTimeNumericFieldElement): Rename localizerForOwner to localeForOwner.
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::formatValue): Follow renamings.
+        (WebCore::DateTimeNumericFieldElement::handleKeyboardEvent): Ditto.
+        (WebCore::DateTimeNumericFieldElement::localeForOwner): Ditto.
+        * page/PagePopupClient.h:
+        (WebCore): Declare Locale instead of Localizer.
+        (PagePopupClient): Rename localizer member function to locale.
+        * page/PagePopupController.cpp:
+        (WebCore::PagePopupController::localizeNumberString): Follow renamings.
+
+        * platform/text/PlatformLocale.cpp: Rename the Localizer class to Locale.
+        (DateTimeStringBuilder):
+        (WebCore::DateTimeStringBuilder::DateTimeStringBuilder):
+        (WebCore::Locale::~Locale):
+        (WebCore::Locale::setLocaleData): Renamed from setLocalizerData.
+        (WebCore::Locale::convertToLocalizedNumber):
+        (WebCore::Locale::detectSignAndGetDigitRange):
+        (WebCore::Locale::matchedDecimalSymbolIndex):
+        (WebCore::Locale::convertFromLocalizedNumber):
+        (WebCore::Locale::localizedDecimalSeparator):
+        (WebCore::Locale::dateTimeFormatWithSeconds):
+        (WebCore::Locale::dateTimeFormatWithoutSeconds):
+        (WebCore::Locale::formatDateTime):
+        * platform/text/PlatformLocale.h: Update the ifndef macro.
+        (Locale): Renamed from Localizer. Also, renamed the followings:
+         - initializeLocalizerData -> initializeLocaleData
+         - setLocalizerData -> setLocaleData
+         - m_hasLocalizerData -> m_hasLocaleData
+        (WebCore::Locale::Locale):
+        (WebCore::Locale::createDefault):
+        * platform/text/LocaleICU.cpp: Follow renamings.
+        * platform/text/LocaleICU.h: Ditto.
+        * platform/text/LocaleNone.cpp: Ditto.
+        * platform/text/LocaleWin.cpp: Ditto.
+        * platform/text/LocaleWin.h: Ditto.
+        * platform/text/mac/LocaleMac.h: Ditto.
+        * platform/text/mac/LocaleMac.mm: Ditto.
+
 2012-10-29  Mike West  <mkwst@chromium.org>
 
         Web Inspector: Error messages lines in console are 1px taller than regular messages

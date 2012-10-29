@@ -34,7 +34,7 @@ namespace WebCore {
 
 class DateTimeFieldsState;
 class KeyboardEvent;
-class Localizer;
+class Locale;
 class MouseEvent;
 class StepRange;
 
@@ -63,7 +63,7 @@ public:
     struct LayoutParameters {
         String dateTimeFormat;
         String fallbackDateTimeFormat;
-        Localizer& localizer;
+        Locale& locale;
         const StepRange stepRange;
         int minimumYear;
         int maximumYear;
@@ -71,8 +71,8 @@ public:
         String placeholderForMonth;
         String placeholderForYear;
 
-        LayoutParameters(Localizer& localizer, const StepRange& stepRange)
-            : localizer(localizer)
+        LayoutParameters(Locale& locale, const StepRange& stepRange)
+            : locale(locale)
             , stepRange(stepRange)
             , minimumYear(undefinedYear())
             , maximumYear(undefinedYear())

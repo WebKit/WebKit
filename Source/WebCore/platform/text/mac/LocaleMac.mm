@@ -65,7 +65,7 @@ static NSLocale* determineLocale(const String& locale)
     return [[NSLocale alloc] initWithLocaleIdentifier:locale];
 }
 
-PassOwnPtr<Localizer> Localizer::create(const AtomicString& locale)
+PassOwnPtr<Locale> Locale::create(const AtomicString& locale)
 {
     return LocaleMac::create(determineLocale(locale.string()));
 }
@@ -334,7 +334,7 @@ const Vector<String>& LocaleMac::timeAMPMLabels()
 }
 #endif
 
-void LocaleMac::initializeLocalizerData()
+void LocaleMac::initializeLocaleData()
 {
     if (m_didInitializeNumberData)
         return;
@@ -362,7 +362,7 @@ void LocaleMac::initializeLocalizerData()
     String positiveSuffix([formatter.get() positiveSuffix]);
     String negativePrefix([formatter.get() negativePrefix]);
     String negativeSuffix([formatter.get() negativeSuffix]);
-    setLocalizerData(symbols, positivePrefix, positiveSuffix, negativePrefix, negativeSuffix);
+    setLocaleData(symbols, positivePrefix, positiveSuffix, negativePrefix, negativeSuffix);
 }
 
 }

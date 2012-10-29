@@ -42,7 +42,7 @@ class DOMTokenList;
 class ElementRareData;
 class ElementShadow;
 class IntSize;
-class Localizer;
+class Locale;
 class RenderRegion;
 class ShadowRoot;
 class WebKitAnimationList;
@@ -291,7 +291,7 @@ public:
     bool isInCanvasSubtree() const;
 
     AtomicString computeInheritedLanguage() const;
-    Localizer& localizer() const;
+    Locale& locale() const;
 
     virtual void accessKeyAction(bool /*sendToAnyEvent*/) { }
 

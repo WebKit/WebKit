@@ -23,8 +23,8 @@
  * DAMAGE.
  */
 
-#ifndef Localizer_h
-#define Localizer_h
+#ifndef PlatformLocale_h
+#define PlatformLocale_h
 
 #include "DateComponents.h"
 #include "Language.h"
@@ -33,15 +33,15 @@
 
 namespace WebCore {
 
-class Localizer {
-    WTF_MAKE_NONCOPYABLE(Localizer);
+class Locale {
+    WTF_MAKE_NONCOPYABLE(Locale);
 
 public:
-    static PassOwnPtr<Localizer> create(const AtomicString& localeIdentifier);
-    static PassOwnPtr<Localizer> createDefault();
+    static PassOwnPtr<Locale> create(const AtomicString& localeIdentifier);
+    static PassOwnPtr<Locale> createDefault();
 
     // Converts the specified number string to another number string localized
-    // for this Localizer locale. The input string must conform to HTML
+    // for this Locale locale. The input string must conform to HTML
     // floating-point numbers, and is not empty.
     String convertToLocalizedNumber(const String&);
 
@@ -125,7 +125,7 @@ public:
 #endif
 
     // Parses a string representation of a date/time string localized
-    // for this Localizer locale. If the input string is not valid or
+    // for this Locale locale. If the input string is not valid or
     // an implementation doesn't support localized dates, this
     // function returns NaN. If the input string is valid this
     // function returns the number of milliseconds since 1970-01-01
@@ -139,7 +139,7 @@ public:
     // localized dates the function should return an empty string.
     String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified);
 
-    virtual ~Localizer();
+    virtual ~Locale();
 
 protected:
     enum {
@@ -154,9 +154,9 @@ protected:
     String m_dateTimeFormatWithoutSeconds;
 #endif
 
-    Localizer() : m_hasLocalizerData(false) { }
-    virtual void initializeLocalizerData() = 0;
-    void setLocalizerData(const Vector<String, DecimalSymbolsSize>&, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix);
+    Locale() : m_hasLocaleData(false) { }
+    virtual void initializeLocaleData() = 0;
+    void setLocaleData(const Vector<String, DecimalSymbolsSize>&, const String& positivePrefix, const String& positiveSuffix, const String& negativePrefix, const String& negativeSuffix);
 
 private:
     bool detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex);
@@ -167,12 +167,12 @@ private:
     String m_positiveSuffix;
     String m_negativePrefix;
     String m_negativeSuffix;
-    bool m_hasLocalizerData;
+    bool m_hasLocaleData;
 };
 
-inline PassOwnPtr<Localizer> Localizer::createDefault()
+inline PassOwnPtr<Locale> Locale::createDefault()
 {
-    return Localizer::create(defaultLanguage());
+    return Locale::create(defaultLanguage());
 }
 
 }

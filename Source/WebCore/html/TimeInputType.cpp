@@ -128,9 +128,9 @@ String TimeInputType::localizeValue(const String& proposedValue) const
     if (!parseToDateComponents(proposedValue, &date))
         return proposedValue;
 
-    Localizer::FormatType formatType = shouldHaveSecondField(date) ? Localizer::FormatTypeMedium : Localizer::FormatTypeShort;
+    Locale::FormatType formatType = shouldHaveSecondField(date) ? Locale::FormatTypeMedium : Locale::FormatTypeShort;
 
-    String localized = element()->localizer().formatDateTime(date, formatType);
+    String localized = element()->locale().formatDateTime(date, formatType);
     return localized.isEmpty() ? proposedValue : localized;
 }
 
@@ -155,10 +155,10 @@ String TimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateT
 void TimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
 {
     if (shouldHaveSecondField(date)) {
-        layoutParameters.dateTimeFormat = layoutParameters.localizer.timeFormat();
+        layoutParameters.dateTimeFormat = layoutParameters.locale.timeFormat();
         layoutParameters.fallbackDateTimeFormat = "HH:mm:ss";
     } else {
-        layoutParameters.dateTimeFormat = layoutParameters.localizer.shortTimeFormat();
+        layoutParameters.dateTimeFormat = layoutParameters.locale.shortTimeFormat();
         layoutParameters.fallbackDateTimeFormat = "HH:mm";
     }
 }

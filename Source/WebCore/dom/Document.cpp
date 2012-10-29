@@ -6035,14 +6035,14 @@ bool Document::haveStylesheetsLoaded() const
     return !m_styleSheetCollection->hasPendingSheets() || m_ignorePendingStylesheets;
 }
 
-Localizer& Document::getCachedLocalizer(const AtomicString& locale)
+Locale& Document::getCachedLocale(const AtomicString& locale)
 {
     AtomicString localeKey = locale;
     if (locale.isEmpty() || !RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled())
         localeKey = defaultLanguage();
-    LocaleToLocalizerMap::AddResult result = m_localizerCache.add(localeKey, nullptr);
+    LocaleIdentifierToLocaleMap::AddResult result = m_localeCache.add(localeKey, nullptr);
     if (result.isNewEntry)
-        result.iterator->value = Localizer::create(localeKey);
+        result.iterator->value = Locale::create(localeKey);
     return *(result.iterator->value);
 }
 

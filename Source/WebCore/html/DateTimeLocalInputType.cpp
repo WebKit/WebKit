@@ -152,10 +152,10 @@ String DateTimeLocalInputType::formatDateTimeFieldsState(const DateTimeFieldsSta
 void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
 {
     if (shouldHaveSecondField(date)) {
-        layoutParameters.dateTimeFormat = layoutParameters.localizer.dateTimeFormatWithSeconds();
+        layoutParameters.dateTimeFormat = layoutParameters.locale.dateTimeFormatWithSeconds();
         layoutParameters.fallbackDateTimeFormat = "dd/MM/yyyy HH:mm:ss";
     } else {
-        layoutParameters.dateTimeFormat = layoutParameters.localizer.dateTimeFormatWithoutSeconds();
+        layoutParameters.dateTimeFormat = layoutParameters.locale.dateTimeFormatWithoutSeconds();
         layoutParameters.fallbackDateTimeFormat = "dd/MM/yyyy HH:mm";
     }
     layoutParameters.minimumYear = fullYear(element()->fastGetAttribute(minAttr));

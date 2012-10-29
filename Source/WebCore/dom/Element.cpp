@@ -1789,9 +1789,9 @@ AtomicString Element::computeInheritedLanguage() const
     return value;
 }
 
-Localizer& Element::localizer() const
+Locale& Element::locale() const
 {
-    return document()->getCachedLocalizer(computeInheritedLanguage());
+    return document()->getCachedLocale(computeInheritedLanguage());
 }
 
 void Element::cancelFocusAppearanceUpdate()

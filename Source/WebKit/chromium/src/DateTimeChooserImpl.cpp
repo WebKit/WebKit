@@ -57,7 +57,7 @@ DateTimeChooserImpl::DateTimeChooserImpl(ChromeClientImpl* chromeClient, WebCore
     , m_client(client)
     , m_popup(0)
     , m_parameters(parameters)
-    , m_localizer(WebCore::Localizer::createDefault())
+    , m_locale(WebCore::Locale::createDefault())
 {
     ASSERT(m_chromeClient);
     ASSERT(m_client);
@@ -119,10 +119,10 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     addProperty("locale", WebCore::defaultLanguage(), writer);
     addProperty("todayLabel", Platform::current()->queryLocalizedString(WebLocalizedString::CalendarToday), writer);
     addProperty("clearLabel", Platform::current()->queryLocalizedString(WebLocalizedString::CalendarClear), writer);
-    addProperty("weekStartDay", m_localizer->firstDayOfWeek(), writer);
-    addProperty("monthLabels", m_localizer->monthLabels(), writer);
-    addProperty("dayLabels", m_localizer->weekDayShortLabels(), writer);
-    addProperty("isCalendarRTL", m_localizer->isRTL(), writer);
+    addProperty("weekStartDay", m_locale->firstDayOfWeek(), writer);
+    addProperty("monthLabels", m_locale->monthLabels(), writer);
+    addProperty("dayLabels", m_locale->weekDayShortLabels(), writer);
+    addProperty("isCalendarRTL", m_locale->isRTL(), writer);
     addProperty("isRTL", m_parameters.isAnchorElementRTL, writer);
     if (m_parameters.suggestionValues.size()) {
         addProperty("inputWidth", static_cast<unsigned>(m_parameters.anchorRectInRootView.width()), writer);
@@ -142,9 +142,9 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     addString("</script></body>\n", writer);
 }
 
-WebCore::Localizer& DateTimeChooserImpl::localizer()
+WebCore::Locale& DateTimeChooserImpl::locale()
 {
-    return *m_localizer;
+    return *m_locale;
 }
 
 void DateTimeChooserImpl::setValueAndClosePopup(int numValue, const String& stringValue)

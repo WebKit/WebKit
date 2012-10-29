@@ -165,7 +165,7 @@ bool DateInputType::usesFixedPlaceholder() const
 
 String DateInputType::fixedPlaceholder()
 {
-    return element()->localizer().dateFormatText();
+    return element()->locale().dateFormatText();
 }
 #endif // ENABLE(INPUT_TYPE_DATE_LEGACY_UI)
 
@@ -180,7 +180,7 @@ String DateInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateT
 
 void DateInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& date) const
 {
-    layoutParameters.dateTimeFormat = layoutParameters.localizer.dateFormat();
+    layoutParameters.dateTimeFormat = layoutParameters.locale.dateFormat();
     layoutParameters.fallbackDateTimeFormat = ASCIILiteral("yyyy-MM-dd");
     layoutParameters.minimumYear = fullYear(element()->fastGetAttribute(minAttr));
     layoutParameters.maximumYear = fullYear(element()->fastGetAttribute(maxAttr));

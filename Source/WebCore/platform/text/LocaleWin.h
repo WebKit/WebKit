@@ -42,7 +42,7 @@ namespace WebCore {
 class DateComponents;
 struct DateFormatToken;
 
-class LocaleWin : public Localizer {
+class LocaleWin : public Locale {
 public:
     static PassOwnPtr<LocaleWin> create(LCID);
     ~LocaleWin();
@@ -93,8 +93,8 @@ private:
 #if ENABLE(CALENDAR_PICKER)
     void ensureWeekDayShortLabels();
 #endif
-    // Localizer function:
-    virtual void initializeLocalizerData() OVERRIDE;
+    // Locale function:
+    virtual void initializeLocaleData() OVERRIDE;
 
     LCID m_lcid;
     int m_baseYear;

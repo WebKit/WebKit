@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-class LocaleNone : public Localizer {
+class LocaleNone : public Locale {
 public:
     virtual ~LocaleNone();
 
 private:
-    virtual void initializeLocalizerData() OVERRIDE FINAL;
+    virtual void initializeLocaleData() OVERRIDE FINAL;
     virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
     virtual String dateFormatText() OVERRIDE;
@@ -62,7 +62,7 @@ private:
 #endif
 };
 
-PassOwnPtr<Localizer> Localizer::create(const AtomicString&)
+PassOwnPtr<Locale> Locale::create(const AtomicString&)
 {
     return adoptPtr(new LocaleNone());
 }
@@ -71,7 +71,7 @@ LocaleNone::~LocaleNone()
 {
 }
 
-void LocaleNone::initializeLocalizerData()
+void LocaleNone::initializeLocaleData()
 {
 }
 

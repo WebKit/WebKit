@@ -44,7 +44,7 @@ using namespace std;
 
 namespace WebCore {
 
-PassOwnPtr<Localizer> Localizer::create(const AtomicString& locale)
+PassOwnPtr<Locale> Locale::create(const AtomicString& locale)
 {
     return LocaleICU::create(locale.string().utf8().data());
 }
@@ -112,7 +112,7 @@ String LocaleICU::decimalTextAttribute(UNumberFormatTextAttribute tag)
     return String::adopt(buffer);
 }
 
-void LocaleICU::initializeLocalizerData()
+void LocaleICU::initializeLocaleData()
 {
     if (m_didCreateDecimalFormat)
         return;
@@ -136,7 +136,7 @@ void LocaleICU::initializeLocalizerData()
     symbols.append(decimalSymbol(UNUM_DECIMAL_SEPARATOR_SYMBOL));
     symbols.append(decimalSymbol(UNUM_GROUPING_SEPARATOR_SYMBOL));
     ASSERT(symbols.size() == DecimalSymbolsSize);
-    setLocalizerData(symbols, decimalTextAttribute(UNUM_POSITIVE_PREFIX), decimalTextAttribute(UNUM_POSITIVE_SUFFIX), decimalTextAttribute(UNUM_NEGATIVE_PREFIX), decimalTextAttribute(UNUM_NEGATIVE_SUFFIX));
+    setLocaleData(symbols, decimalTextAttribute(UNUM_POSITIVE_PREFIX), decimalTextAttribute(UNUM_POSITIVE_SUFFIX), decimalTextAttribute(UNUM_NEGATIVE_PREFIX), decimalTextAttribute(UNUM_NEGATIVE_SUFFIX));
 }
 
 bool LocaleICU::initializeShortDateFormat()

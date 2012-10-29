@@ -322,11 +322,11 @@ void BaseMultipleFieldsDateAndTimeInputType::updateInnerTextValue()
     if (!m_dateTimeEditElement)
         return;
 
-    AtomicString direction = element()->localizer().isRTL() ? AtomicString("rtl", AtomicString::ConstructFromLiteral) : AtomicString("ltr", AtomicString::ConstructFromLiteral);
+    AtomicString direction = element()->locale().isRTL() ? AtomicString("rtl", AtomicString::ConstructFromLiteral) : AtomicString("ltr", AtomicString::ConstructFromLiteral);
     if (Element* container = firstElementChild(element()->userAgentShadowRoot()))
         container->setAttribute(HTMLNames::dirAttr, direction);
 
-    DateTimeEditElement::LayoutParameters layoutParameters(element()->localizer(), createStepRange(AnyIsDefaultStep));
+    DateTimeEditElement::LayoutParameters layoutParameters(element()->locale(), createStepRange(AnyIsDefaultStep));
 
     DateComponents date;
     const bool hasValue = parseToDateComponents(element()->value(), &date);

@@ -57,7 +57,7 @@ private:
     // PagePopupClient functions:
     virtual WebCore::IntSize contentSize() OVERRIDE;
     virtual void writeDocument(WebCore::DocumentWriter&) OVERRIDE;
-    virtual WebCore::Localizer& localizer() OVERRIDE;
+    virtual WebCore::Locale& locale() OVERRIDE;
     virtual void setValueAndClosePopup(int, const String&) OVERRIDE;
     virtual void didClosePopup() OVERRIDE;
 
@@ -65,7 +65,7 @@ private:
     WebCore::DateTimeChooserClient* m_client;
     WebCore::PagePopup* m_popup;
     WebCore::DateTimeChooserParameters m_parameters;
-    OwnPtr<WebCore::Localizer> m_localizer;
+    OwnPtr<WebCore::Locale> m_locale;
 };
 
 }

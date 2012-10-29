@@ -156,7 +156,7 @@ String BaseDateAndTimeInputType::localizeValue(const String& proposedValue) cons
     if (!parseToDateComponents(proposedValue, &date))
         return proposedValue;
 
-    String localized = element()->localizer().formatDateTime(date);
+    String localized = element()->locale().formatDateTime(date);
     return localized.isEmpty() ? proposedValue : localized;
 }
 
@@ -170,7 +170,7 @@ String BaseDateAndTimeInputType::convertFromVisibleValue(const String& visibleVa
     if (visibleValue.isEmpty())
         return visibleValue;
 
-    double parsedValue = element()->localizer().parseDateTime(visibleValue, dateType());
+    double parsedValue = element()->locale().parseDateTime(visibleValue, dateType());
     if (!isfinite(parsedValue))
         return visibleValue;
 

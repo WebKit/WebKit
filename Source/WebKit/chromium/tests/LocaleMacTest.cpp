@@ -78,7 +78,7 @@ protected:
     String formatTime(const String& localeString, int hour, int minute, int second, int millisecond, bool useShortFormat)
     {
         OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
-        return locale->formatDateTime(timeComponents(hour, minute, second, millisecond), (useShortFormat ? Localizer::FormatTypeShort : Localizer::FormatTypeMedium));
+        return locale->formatDateTime(timeComponents(hour, minute, second, millisecond), (useShortFormat ? Locale::FormatTypeShort : Locale::FormatTypeMedium));
     }
 
     double parseDate(const String& localeString, const String& dateString)
@@ -350,7 +350,7 @@ TEST_F(LocaleMacTest, invalidLocale)
 
 static void testNumberIsReversible(const AtomicString& localeString, const char* original, const char* shouldHave = 0)
 {
-    OwnPtr<Localizer> locale = Localizer::create(localeString);
+    OwnPtr<Locale> locale = Locale::create(localeString);
     String localized = locale->convertToLocalizedNumber(original);
     if (shouldHave)
         EXPECT_TRUE(localized.contains(shouldHave));

@@ -38,11 +38,11 @@ using namespace WebCore;
 
 void testNumberIsReversible(const AtomicString& locale, const char* original, const char* shouldHave = 0)
 {
-    OwnPtr<Localizer> localizer = Localizer::create(locale);
-    String localized = localizer->convertToLocalizedNumber(original);
+    OwnPtr<Locale> locale = Locale::create(locale);
+    String localized = locale->convertToLocalizedNumber(original);
     if (shouldHave)
         EXPECT_TRUE(localized.contains(shouldHave));
-    String converted = localizer->convertFromLocalizedNumber(localized);
+    String converted = locale->convertFromLocalizedNumber(localized);
     EXPECT_EQ(original, converted);
 }
 
@@ -84,8 +84,8 @@ TEST(LocalizedNumberICUTest, Reversible)
 
 static String testDecimalSeparator(const AtomicString& locale)
 {
-    OwnPtr<Localizer> localizer = Localizer::create(locale);
-    return localizer->localizedDecimalSeparator();
+    OwnPtr<Locale> locale = Locale::create(locale);
+    return locale->localizedDecimalSeparator();
 }
 
 TEST(LocalizedNumberICUTest, localizedDecimalSeparator)

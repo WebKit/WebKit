@@ -104,12 +104,12 @@ void DateTimeNumericFieldElement::didBlur()
 
 String DateTimeNumericFieldElement::formatValue(int value) const
 {
-    Localizer& localizer = localizerForOwner();
+    Locale& locale = localeForOwner();
     if (m_range.maximum > 999)
-        return localizer.convertToLocalizedNumber(String::format("%04d", value));
+        return locale.convertToLocalizedNumber(String::format("%04d", value));
     if (m_range.maximum > 99)
-        return localizer.convertToLocalizedNumber(String::format("%03d", value));
-    return localizer.convertToLocalizedNumber(String::format("%02d", value));
+        return locale.convertToLocalizedNumber(String::format("%03d", value));
+    return locale.convertToLocalizedNumber(String::format("%02d", value));
 }
 
 void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent* keyboardEvent)
@@ -127,7 +127,7 @@ void DateTimeNumericFieldElement::handleKeyboardEvent(KeyboardEvent* keyboardEve
     DOMTimeStamp delta = keyboardEvent->timeStamp() - m_lastDigitCharTime;
     m_lastDigitCharTime = 0;
 
-    String number = localizerForOwner().convertFromLocalizedNumber(String(&charCode, 1));
+    String number = localeForOwner().convertFromLocalizedNumber(String(&charCode, 1));
     const int digit = number[0] - '0';
     if (digit < 0 || digit > 9)
         return;
@@ -145,9 +145,9 @@ bool DateTimeNumericFieldElement::hasValue() const
     return m_hasValue;
 }
 
-Localizer& DateTimeNumericFieldElement::localizerForOwner() const
+Locale& DateTimeNumericFieldElement::localeForOwner() const
 {
-    return document()->getCachedLocalizer(localeIdentifier());
+    return document()->getCachedLocale(localeIdentifier());
 }
 
 int DateTimeNumericFieldElement::maximum() const
