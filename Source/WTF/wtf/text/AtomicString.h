@@ -138,11 +138,10 @@ public:
     static void remove(StringImpl*);
     
 #if USE(CF)
-    AtomicString(CFStringRef s) :  m_string(add(String(s).impl())) { }
-    CFStringRef createCFString() const { return m_string.createCFString(); }
+    AtomicString(CFStringRef s) :  m_string(add(s)) { }
 #endif    
 #ifdef __OBJC__
-    AtomicString(NSString* s) : m_string(add(String(s).impl())) { }
+    AtomicString(NSString* s) : m_string(add((CFStringRef)s)) { }
     operator NSString*() const { return m_string; }
 #endif
 #if PLATFORM(QT)
@@ -173,7 +172,7 @@ private:
     ALWAYS_INLINE static PassRefPtr<StringImpl> add(const char* s) { return add(reinterpret_cast<const LChar*>(s)); };
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(const LChar*, unsigned length);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(const UChar*, unsigned length);
-    ALWAYS_INLINE static PassRefPtr<StringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const char*>(s), length); };
+    ALWAYS_INLINE static PassRefPtr<StringImpl> add(const char* s, unsigned length) { return add(reinterpret_cast<const LChar*>(s), length); };
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(const UChar*, unsigned length, unsigned existingHash);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(const UChar*);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> add(StringImpl*, unsigned offset, unsigned length);
@@ -185,6 +184,10 @@ private:
     }
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addFromLiteralData(const char* characters, unsigned length);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addSlowCase(StringImpl*);
+#if USE(CF)
+    static PassRefPtr<StringImpl> add(CFStringRef);
+#endif
+
     WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);
 };
 

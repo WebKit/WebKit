@@ -5752,6 +5752,7 @@
             'platform/text/TextEncodingRegistry.cpp',
             'platform/text/TextStream.cpp',
             'platform/text/UnicodeRange.cpp',
+            'platform/text/cf/AtomicStringCF.cpp',
             'platform/text/cf/HyphenationCF.cpp',
             'platform/text/cf/StringCF.cpp',
             'platform/text/cf/StringImplCF.cpp',

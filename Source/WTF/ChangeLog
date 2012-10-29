@@ -1,3 +1,19 @@
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
+        AtomicString(CFStringRef) shouldn't unconditionally create a StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=100701
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::AtomicString):
+        Change the constructors that take a CFStringRef and an NSString * to call AtomicString::add(CFStringRef)
+        and remove AtomicString::createCFString.
+
+        (WTF::AtomicString::add):
+        Add new member function declaration. The definition is in a new file in WebCore, AtomicStringCF.cpp.
+        Also, fix the overload of add that takes a const char* to call the right other overload instead of itself.
+
 2012-10-29  Adam Barth  <abarth@webkit.org>
 
         Unreviewed. Correct my previous patch to disable external SVG

@@ -1,3 +1,29 @@
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
+        AtomicString(CFStringRef) shouldn't unconditionally create a StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=100701
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.exp.in:
+        Export AtomicString::add(CFStringRef).
+
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add AtomicStringCF.cpp 
+
+        * platform/text/cf/AtomicStringCF.cpp: Added.
+        (WTF::AtomicString::add):
+        When trying to add the atomic string to the table, first try to get a Latin-1 pointer
+        from the string. Second, try to get a Unicode pointer from the string.
+        If that also fails, copy the string to a temporary unicode buffer and add it from there.
+
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::::createValueForKey):
+        Update for AtomicString::createCFString being removed.
+
 2012-10-25  Stephen Chenney  <schenney@chromium.org>
 
         feImage should not be allowed to self reference

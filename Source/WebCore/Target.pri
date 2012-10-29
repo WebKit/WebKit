@@ -2873,8 +2873,9 @@ win32-*|wince* {
 
 mac {
     SOURCES += \
-        platform/text/cf/StringCF.cpp \
         platform/cf/SharedBufferCF.cpp \
+        platform/text/cf/AtomicStringCF.cpp \
+        platform/text/cf/StringCF.cpp \
         platform/text/cf/StringImplCF.cpp
 }
 

@@ -34185,6 +34185,10 @@
 					Name="cf"
 					>
 					<File
+						RelativePath="..\platform\text\cf\AtomicStringCF.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\text\cf\HyphenationCF.cpp"
 						>
 					</File>
