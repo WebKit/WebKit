@@ -1,3 +1,14 @@
+2012-10-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132782.
+        http://trac.webkit.org/changeset/132782
+        https://bugs.webkit.org/show_bug.cgi?id=100653
+
+        It made 400+ tests fail and 180 tests flakey on Qt (Requested
+        by Ossy on #webkit).
+
+        * platform/qt/TestExpectations:
+
 2012-10-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Flaky security tests
