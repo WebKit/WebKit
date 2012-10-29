@@ -1,3 +1,27 @@
+2012-10-29  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        Coordinated Graphics: Make sure that we release images immediately when purging resources
+        https://bugs.webkit.org/show_bug.cgi?id=100661
+
+        Reviewed by Noam Rosenthal.
+
+        When we purge, we do both on the UI and web process at the same time,
+        both are expected to release references of the other process.
+        This creates problem when delaying the release of directly composited
+        images.
+
+        Release them immediately in that case.
+
+        Fixes the tst_QQuickWebView::removeFromCanvas API test.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::flushPendingLayerChanges):
+        (WebKit::LayerTreeCoordinator::purgeReleasedImages):
+        (WebKit):
+        (WebKit::LayerTreeCoordinator::purgeBackingStores):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Avoid useless assignment in EwkViewImpl::setCustomTextEncodingName()

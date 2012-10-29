@@ -125,6 +125,7 @@ private:
     void syncDisplayState();
     void lockAnimations();
     void unlockAnimations();
+    void purgeReleasedImages();
 
     void layerFlushTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
 
