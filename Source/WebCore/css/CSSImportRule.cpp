@@ -69,8 +69,11 @@ String CSSImportRule::cssText() const
     result.append("\")");
 
     if (m_importRule->mediaQueries()) {
-        result.append(' ');
-        result.append(m_importRule->mediaQueries()->mediaText());
+        String mediaText = m_importRule->mediaQueries()->mediaText();
+        if (!mediaText.isEmpty()) {
+            result.append(' ');
+            result.append(mediaText);
+        }
     }
     result.append(';');
     

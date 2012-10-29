@@ -1,3 +1,19 @@
+2012-10-29  Glenn Adams  <glenn@skynav.com>
+
+        [CSSOM] Extraneous whitespace in CSSImportRule.cssText
+        https://bugs.webkit.org/show_bug.cgi?id=100657
+
+        Reviewed by Simon Fraser.
+
+        Remove extraneous whitespace when serializing CSSImportRule.cssText when
+        media list is empty.
+
+        Test: cssom/cssimportrule-media.html
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::cssText):
+        Don't append extra whitespace if mediaText is empty.
+
 2012-10-29  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         webview not redrawn as needed when accelerated compositing is enabled.

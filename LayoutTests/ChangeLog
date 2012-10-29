@@ -1,3 +1,20 @@
+2012-10-29  Glenn Adams  <glenn@skynav.com>
+       
+        [CSSOM] Extraneous whitespace in CSSImportRule.cssText
+        https://bugs.webkit.org/show_bug.cgi?id=100657
+
+        Reviewed by Simon Fraser.
+
+        Test (from CSS WG) that checks serializion of CSSImportRule.cssText.
+
+        * http/tests/css/shared-stylesheet-mutation-expected.txt:
+        * http/tests/css/shared-stylesheet-mutation-preconstruct-expected.txt:
+        Fix expected output to match removal of extraneous space.
+
+        * cssom/cssimportrule-media-expected.txt: Added.
+        * cssom/cssimportrule-media.html: Added.
+        * cssom/resources/import.css: Added.
+
 2012-10-29  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
