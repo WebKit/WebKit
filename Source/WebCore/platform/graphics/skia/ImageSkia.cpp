@@ -472,13 +472,14 @@ void Image::drawPattern(GraphicsContext* context,
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT0("skia", "Image::drawPattern");
 #endif
-    FloatRect normSrcRect = normalizeRect(floatSrcRect);
-    if (destRect.isEmpty() || normSrcRect.isEmpty())
-        return; // nothing to draw
-
     NativeImageSkia* bitmap = nativeImageForCurrentFrame();
     if (!bitmap)
         return;
+
+    FloatRect normSrcRect = normalizeRect(floatSrcRect);
+    normSrcRect.intersect(FloatRect(0, 0, bitmap->bitmap().width(), bitmap->bitmap().height()));
+    if (destRect.isEmpty() || normSrcRect.isEmpty())
+        return; // nothing to draw
 
     SkMatrix ctm = context->platformContext()->canvas()->getTotalMatrix();
     SkMatrix totalMatrix;
@@ -605,6 +606,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
 
     FloatRect normDstRect = normalizeRect(dstRect);
     FloatRect normSrcRect = normalizeRect(srcRect);
+    normSrcRect.intersect(FloatRect(0, 0, bm->bitmap().width(), bm->bitmap().height()));
 
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return; // Nothing to draw.
@@ -650,6 +652,7 @@ void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
 {
     FloatRect normDstRect = normalizeRect(dstRect);
     FloatRect normSrcRect = normalizeRect(srcRect);
+    normSrcRect.intersect(FloatRect(0, 0, m_nativeImage.bitmap().width(), m_nativeImage.bitmap().height()));
 
     if (normSrcRect.isEmpty() || normDstRect.isEmpty())
         return; // Nothing to draw.

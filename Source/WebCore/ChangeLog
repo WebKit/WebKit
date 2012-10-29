@@ -1,3 +1,20 @@
+2012-10-29  Alpha Lam  <hclam@chromium.org>
+
+        [skia] Handle mask box image.
+        https://bugs.webkit.org/show_bug.cgi?id=100570
+
+        Reviewed by James Robinson.
+
+        When drawing an image with source rectangle it should intersect with image rectangle.
+        This should be the case for drawing single image and tiling an image.
+
+        Test: fast/images/mask-box-image-crash.html
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImageSingleFrameSkia::draw):
+
 2012-10-29  Eric Carlson  <eric.carlson@apple.com>
 
         Support captions when PLUGIN_PROXY_FOR_VIDEO
