@@ -16,6 +16,7 @@ SET(WebKitTestNetscapePlugin_SOURCES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/NPDeallocateCalledBeforeNPShutdown.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/NPPNewFails.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/NPPSetWindowCalledDuringDestruction.cpp
+    ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/NPRuntimeCallsWithNullNPP.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/NPRuntimeRemoveProperty.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/NullNPPGetValuePointer.cpp

@@ -1,3 +1,16 @@
+2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [CMAKE] Add TestNetscapePlugIn/Tests/NPRuntimeCallsWithNullNPP.cpp to CMakeLists.txt
+        https://bugs.webkit.org/show_bug.cgi?id=100681
+
+        Reviewed by Anders Carlsson.
+
+        Add TestNetscapePlugIn/Tests/NPRuntimeCallsWithNullNPP.cpp to CMake since
+        it is needed by plugins/npruntime/npruntime-calls-with-null-npp.html
+        layout test.
+
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+
 2012-10-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Flaky security tests
