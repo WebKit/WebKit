@@ -1,3 +1,27 @@
+2012-10-29  Huang Dongsung  <luxtella@company100.net>
+
+        [TexMap] Make GraphicsLayerAnimation choose a proper timing function.
+        https://bugs.webkit.org/show_bug.cgi?id=100623
+
+        Reviewed by Noam Rosenthal.
+
+        Currently, GraphicsLayerAnimation chooses a timing function in the wrong
+        way. Other GraphicsLayers choose a timing function in the similar way to
+        GraphicsLayerCA::timingFunctionForAnimationValue(). The way consists of
+        the following steps.
+        1. Try to query the timing function of the current keyframe animation value.
+        2. If the timing function of #1 is null, try to query the timing function of Animation.
+        3. If the timing function of #2 is null, return CubicBezierTimingFunction::defaultTimingFunction().
+
+        This patch makes GraphicsLayerAnimation choose a timing function in the same way
+        to other implementations.
+
+        Covered by existing animations tests.
+
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        (WebCore::timingFunctionForAnimationValue):
+        (WebCore::GraphicsLayerAnimation::apply):
+
 2012-10-29  Patrick Dubroy  <dubroy@chromium.org>
 
         Web Inspector: Toolbar overflow appears outside window
