@@ -26,7 +26,6 @@
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSParser.h"
-#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"

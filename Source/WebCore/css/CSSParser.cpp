@@ -43,7 +43,6 @@
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSProperty.h"
 #include "CSSPropertySourceData.h"
 #include "CSSReflectValue.h"
 #include "CSSSelector.h"
@@ -53,7 +52,6 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
-#include "StylePropertyShorthand.h"
 #if ENABLE(CSS_VARIABLES)
 #include "CSSVariableValue.h"
 #endif

@@ -1058,7 +1058,7 @@ void EditingStyle::mergeStyle(const StylePropertySet* style, CSSPropertyOverride
 
     unsigned propertyCount = style->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {
-        const CSSProperty& property = style->propertyAt(i);
+        StylePropertySet::PropertyReference property = style->propertyAt(i);
         RefPtr<CSSValue> value = m_mutableStyle->getPropertyCSSValue(property.id());
 
         // text decorations never override values
@@ -1114,7 +1114,7 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
     {
         unsigned propertyCount = m_mutableStyle->propertyCount();
         for (unsigned i = 0; i < propertyCount; ++i) {
-            const CSSProperty& property = m_mutableStyle->propertyAt(i);
+            StylePropertySet::PropertyReference property = m_mutableStyle->propertyAt(i);
             CSSValue* value = property.value();
             if (!value->isPrimitiveValue())
                 continue;

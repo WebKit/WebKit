@@ -635,10 +635,10 @@ String StylePropertySet::asText() const
 {
     StringBuilder result;
 
-    const CSSProperty* positionXProp = 0;
-    const CSSProperty* positionYProp = 0;
-    const CSSProperty* repeatXProp = 0;
-    const CSSProperty* repeatYProp = 0;
+    int positionXPropertyIndex = -1;
+    int positionYPropertyIndex = -1;
+    int repeatXPropertyIndex = -1;
+    int repeatYPropertyIndex = -1;
 
     BitArray<numCSSProperties> shorthandPropertyUsed;
     BitArray<numCSSProperties> shorthandPropertyAppeared;
@@ -646,8 +646,8 @@ String StylePropertySet::asText() const
     unsigned size = propertyCount();
     unsigned numDecls = 0;
     for (unsigned n = 0; n < size; ++n) {
-        const CSSProperty& prop = propertyAt(n);
-        CSSPropertyID propertyID = prop.id();
+        PropertyReference property = propertyAt(n);
+        CSSPropertyID propertyID = property.id();
         CSSPropertyID shorthandPropertyID = CSSPropertyInvalid;
         CSSPropertyID borderFallbackShorthandProperty = CSSPropertyInvalid;
         String value;
@@ -657,20 +657,20 @@ String StylePropertySet::asText() const
         case CSSPropertyVariable:
             if (numDecls++)
                 result.append(' ');
-            result.append(prop.cssText());
+            result.append(property.cssText());
             continue;
 #endif
         case CSSPropertyBackgroundPositionX:
-            positionXProp = &prop;
+            positionXPropertyIndex = n;
             continue;
         case CSSPropertyBackgroundPositionY:
-            positionYProp = &prop;
+            positionYPropertyIndex = n;
             continue;
         case CSSPropertyBackgroundRepeatX:
-            repeatXProp = &prop;
+            repeatXPropertyIndex = n;
             continue;
         case CSSPropertyBackgroundRepeatY:
-            repeatYProp = &prop;
+            repeatYPropertyIndex = n;
             continue;
         case CSSPropertyBorderTopWidth:
         case CSSPropertyBorderRightWidth:
@@ -806,7 +806,7 @@ String StylePropertySet::asText() const
             propertyID = shorthandPropertyID;
             shorthandPropertyUsed.set(shortPropertyIndex);
         } else
-            value = prop.value()->cssText();
+            value = property.value()->cssText();
 
         if (value == "initial" && !CSSProperty::isInheritedProperty(propertyID))
             continue;
@@ -816,7 +816,7 @@ String StylePropertySet::asText() const
         result.append(getPropertyName(propertyID));
         result.appendLiteral(": ");
         result.append(value);
-        if (prop.isImportant())
+        if (property.isImportant())
             result.appendLiteral(" !important");
         result.append(';');
     }
@@ -825,58 +825,64 @@ String StylePropertySet::asText() const
     // It is required because background-position-x/y are non-standard properties and WebKit generated output
     // would not work in Firefox (<rdar://problem/5143183>)
     // It would be a better solution if background-position was CSS_PAIR.
-    if (positionXProp && positionYProp && positionXProp->isImportant() == positionYProp->isImportant()) {
+    if (positionXPropertyIndex != -1 && positionYPropertyIndex != -1 && propertyAt(positionXPropertyIndex).isImportant() == propertyAt(positionYPropertyIndex).isImportant()) {
+        PropertyReference positionXProperty = propertyAt(positionXPropertyIndex);
+        PropertyReference positionYProperty = propertyAt(positionYPropertyIndex);
+
         if (numDecls++)
             result.append(' ');
         result.appendLiteral("background-position: ");
-        if (positionXProp->value()->isValueList() || positionYProp->value()->isValueList())
+        if (positionXProperty.value()->isValueList() || positionYProperty.value()->isValueList())
             result.append(getLayeredShorthandValue(backgroundPositionShorthand()));
         else {
-            result.append(positionXProp->value()->cssText());
+            result.append(positionXProperty.value()->cssText());
             result.append(' ');
-            result.append(positionYProp->value()->cssText());
+            result.append(positionYProperty.value()->cssText());
         }
-        if (positionXProp->isImportant())
+        if (positionXProperty.isImportant())
             result.appendLiteral(" !important");
         result.append(';');
     } else {
-        if (positionXProp) {
+        if (positionXPropertyIndex != -1) {
             if (numDecls++)
                 result.append(' ');
-            result.append(positionXProp->cssText());
+            result.append(propertyAt(positionXPropertyIndex).cssText());
         }
-        if (positionYProp) {
+        if (positionYPropertyIndex != -1) {
             if (numDecls++)
                 result.append(' ');
-            result.append(positionYProp->cssText());
+            result.append(propertyAt(positionYPropertyIndex).cssText());
         }
     }
 
     // FIXME: We need to do the same for background-repeat.
-    if (repeatXProp && repeatYProp && repeatXProp->isImportant() == repeatYProp->isImportant()) {
+    if (repeatXPropertyIndex != -1 && repeatYPropertyIndex != -1 && propertyAt(repeatXPropertyIndex).isImportant() == propertyAt(repeatYPropertyIndex).isImportant()) {
+        PropertyReference repeatXProperty = propertyAt(repeatXPropertyIndex);
+        PropertyReference repeatYProperty = propertyAt(repeatYPropertyIndex);
+
         if (numDecls++)
             result.append(' ');
         result.appendLiteral("background-repeat: ");
-        if (repeatXProp->value()->isValueList() || repeatYProp->value()->isValueList())
+        if (repeatXProperty.value()->isValueList() || repeatYProperty.value()->isValueList())
             result.append(getLayeredShorthandValue(backgroundRepeatShorthand()));
         else {
-            result.append(repeatXProp->value()->cssText());
+            result.append(repeatXProperty.value()->cssText());
             result.append(' ');
-            result.append(repeatYProp->value()->cssText());
+            result.append(repeatYProperty.value()->cssText());
         }
-        if (repeatXProp->isImportant())
+        if (repeatXProperty.isImportant())
             result.appendLiteral(" !important");
         result.append(';');
     } else {
-        if (repeatXProp) {
+        if (repeatXPropertyIndex != -1) {
             if (numDecls++)
                 result.append(' ');
-            result.append(repeatXProp->cssText());
+            result.append(propertyAt(repeatXPropertyIndex).cssText());
         }
-        if (repeatYProp) {
+        if (repeatYPropertyIndex != -1) {
             if (numDecls++)
                 result.append(' ');
-            result.append(repeatYProp->cssText());
+            result.append(propertyAt(repeatYPropertyIndex).cssText());
         }
     }
 
@@ -889,7 +895,7 @@ void StylePropertySet::mergeAndOverrideOnConflict(const StylePropertySet* other)
     ASSERT(isMutable());
     unsigned size = other->propertyCount();
     for (unsigned n = 0; n < size; ++n) {
-        const CSSProperty& toMerge = other->propertyAt(n);
+        const CSSProperty& toMerge = other->propertyAtInternal(n);
         CSSProperty* old = findPropertyWithId(toMerge.id());
         if (old)
             setProperty(toMerge, old);
@@ -989,7 +995,7 @@ const CSSProperty* StylePropertySet::findPropertyWithId(CSSPropertyID propertyID
 {
     for (int n = propertyCount() - 1 ; n >= 0; --n) {
         if (propertyID == propertyAt(n).id())
-            return &propertyAt(n);
+            return &propertyAtInternal(n);
     }
     return 0;
 }
@@ -999,7 +1005,7 @@ CSSProperty* StylePropertySet::findPropertyWithId(CSSPropertyID propertyID)
     ASSERT(isMutable());
     for (int n = propertyCount() - 1 ; n >= 0; --n) {
         if (propertyID == propertyAt(n).id())
-            return &propertyAt(n);
+            return &propertyAtInternal(n);
     }
     return 0;
 }
@@ -1109,7 +1115,7 @@ void StylePropertySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 
     unsigned count = propertyCount();
     for (unsigned i = 0; i < count; ++i)
-        info.addMember(propertyAt(i));
+        info.addMember(propertyAtInternal(i));
 }
 
 // See the function above if you need to update this.

@@ -1,3 +1,52 @@
+2012-10-29  Andreas Kling  <kling@webkit.org>
+
+        Don't expose implementation details of StylePropertySet storage.
+        <http://webkit.org/b/100644>
+
+        Reviewed by Antti Koivisto.
+
+        Add a StylePropertySet::PropertyReference class, now returned by propertyAt(index).
+        This will allow us to refactor the internal storage of StylePropertySet without
+        breaking its API.
+
+        A PropertyReference is a simple inlinable wrapper around a StylePropertySet&/index pair.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/CSSParser.cpp:
+        * css/CSSParser.h:
+        * css/SVGCSSParser.cpp:
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::asText):
+        (WebCore::StylePropertySet::mergeAndOverrideOnConflict):
+        (WebCore::StylePropertySet::findPropertyWithId):
+        (WebCore::StylePropertySet::reportMemoryUsage):
+        * css/StylePropertySet.h:
+        (StylePropertySet):
+        (PropertyReference):
+        (WebCore::StylePropertySet::PropertyReference::PropertyReference):
+        (WebCore::StylePropertySet::PropertyReference::id):
+        (WebCore::StylePropertySet::PropertyReference::isImportant):
+        (WebCore::StylePropertySet::PropertyReference::isInherited):
+        (WebCore::StylePropertySet::PropertyReference::cssName):
+        (WebCore::StylePropertySet::PropertyReference::cssText):
+        (WebCore::StylePropertySet::PropertyReference::value):
+        (WebCore::StylePropertySet::PropertyReference::propertyInternal):
+        (WebCore::StylePropertySet::propertyAt):
+        (WebCore::StylePropertySet::propertyAtInternal):
+        (WebCore):
+        * css/StyleResolver.cpp:
+        (WebCore::attributeStylesEqual):
+        (WebCore::StyleResolver::applyProperties):
+        (WebCore::StyleResolver::resolveVariables):
+        * editing/ApplyStyleCommand.cpp:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::mergeStyle):
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization):
+        * editing/Editor.cpp:
+        * editing/markup.cpp:
+        * page/Frame.cpp:
+        * svg/SVGFontFaceElement.cpp:
+
 2012-10-29  Kent Tamura  <tkent@chromium.org>
 
         Move LocaleWin.{cpp,h} to platform/text/win/

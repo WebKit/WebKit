@@ -31,7 +31,6 @@
 
 #include "CDATASection.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"

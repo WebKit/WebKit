@@ -1143,10 +1143,10 @@ static inline bool attributeStylesEqual(const StylePropertySet* a, const StylePr
         return false;
     unsigned propertyCount = a->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {
-        const CSSProperty& aProperty = a->propertyAt(i);
+        StylePropertySet::PropertyReference aProperty = a->propertyAt(i);
         unsigned j;
         for (j = 0; j < propertyCount; ++j) {
-            const CSSProperty& bProperty = b->propertyAt(j);
+            StylePropertySet::PropertyReference bProperty = b->propertyAt(j);
             if (aProperty.id() != bProperty.id())
                 continue;
             // We could get a few more hits by comparing cssText() here, but that gets expensive quickly.
@@ -2248,7 +2248,7 @@ void StyleResolver::applyProperties(const StylePropertySet* properties, StyleRul
 
     unsigned propertyCount = properties->propertyCount();
     for (unsigned i = 0; i < propertyCount; ++i) {
-        const CSSProperty& current = properties->propertyAt(i);
+        StylePropertySet::PropertyReference current = properties->propertyAt(i);
         if (isImportant != current.isImportant())
             continue;
         if (inheritedOnly && !current.isInherited()) {
@@ -2801,7 +2801,7 @@ void StyleResolver::resolveVariables(CSSPropertyID id, CSSValue* value, Vector<s
         return; // expression failed to parse.
 
     for (unsigned i = 0; i < resultSet->propertyCount(); i++) {
-        const CSSProperty& property = resultSet->propertyAt(i);
+        StylePropertySet::PropertyReference property = resultSet->propertyAt(i);
         if (property.id() != CSSPropertyVariable && hasVariableReference(property.value()))
             resolveVariables(property.id(), property.value(), knownExpressions);
         else

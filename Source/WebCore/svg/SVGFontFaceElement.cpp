@@ -27,7 +27,6 @@
 #include "Attribute.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSParser.h"
-#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
