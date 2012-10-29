@@ -1,5 +1,23 @@
 2012-10-29  Kent Tamura  <tkent@chromium.org>
 
+        Move LocaleWin.{cpp,h} to platform/text/win/
+        https://bugs.webkit.org/show_bug.cgi?id=100641
+
+        Reviewed by Kentaro Hara.
+
+        We have platform/text/win/ directory. Windows-specific files should be
+        in it.
+        Note that these files are used only in Chromium-win for now.
+
+        No new tests. This doesn't change any behavior.
+
+        * WebCore.gyp/WebCore.gyp: Fix path names.
+        * WebCore.gypi: Ditto.
+        * platform/text/win/LocaleWin.cpp: Renamed from Source/WebCore/platform/text/LocaleWin.cpp.
+        * platform/text/win/LocaleWin.h: Renamed from Source/WebCore/platform/text/LocaleWin.h.
+
+2012-10-29  Kent Tamura  <tkent@chromium.org>
+
         Rename Localizer to Locale
         https://bugs.webkit.org/show_bug.cgi?id=100634
 

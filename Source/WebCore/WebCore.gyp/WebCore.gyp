@@ -1876,8 +1876,8 @@
 
             ['exclude', 'platform/text/LocaleICU\\.cpp$'],
             ['exclude', 'platform/text/LocaleICU\\.h$'],
-            ['include', 'platform/text/LocaleWin\.cpp$'],
-            ['include', 'platform/text/LocaleWin\.h$'],
+            ['include', 'platform/text/win/LocaleWin\.cpp$'],
+            ['include', 'platform/text/win/LocaleWin\.h$'],
           ],
         },{ # OS!="win"
           'sources/': [
