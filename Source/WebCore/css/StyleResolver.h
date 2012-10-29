@@ -61,6 +61,7 @@ class CSSValue;
 class ContainerNode;
 class CustomFilterOperation;
 class CustomFilterParameter;
+class CustomFilterParameterList;
 class Document;
 class Element;
 class Frame;
@@ -94,10 +95,6 @@ class StyledElement;
 class WebKitCSSFilterValue;
 class WebKitCSSShaderValue;
 class WebKitCSSSVGDocumentValue;
-
-#if ENABLE(CSS_SHADERS)
-typedef Vector<RefPtr<CustomFilterParameter> > CustomFilterParameterList;
-#endif
 
 class MediaQueryResult {
     WTF_MAKE_NONCOPYABLE(MediaQueryResult); WTF_MAKE_FAST_ALLOCATED;

@@ -31,22 +31,14 @@
 #define CustomFilterOperation_h
 
 #if ENABLE(CSS_SHADERS)
+#include "CustomFilterParameterList.h"
 #include "CustomFilterProgram.h"
 #include "FilterOperation.h"
 #include "LayoutTypes.h"
 
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
 // CSS Shaders
-
-class CustomFilterParameter;
-typedef Vector<RefPtr<CustomFilterParameter> > CustomFilterParameterList;
-
-bool customFilterParametersEqual(const CustomFilterParameterList&, const CustomFilterParameterList&);
-void blendCustomFilterParameters(const CustomFilterParameterList& listFrom, const CustomFilterParameterList& listTo, 
-                                 double progress, const LayoutSize&, CustomFilterParameterList& resultList);
 
 class CustomFilterOperation : public FilterOperation {
 public:
@@ -92,11 +84,11 @@ private:
 
         const CustomFilterOperation* other = static_cast<const CustomFilterOperation*>(&o);
         return *m_program.get() == *other->m_program.get()
-               && m_meshRows == other->m_meshRows
-               && m_meshColumns == other->m_meshColumns
-               && m_meshBoxType == other->m_meshBoxType
-               && m_meshType == other->m_meshType
-               && customFilterParametersEqual(m_parameters, other->m_parameters);
+            && m_meshRows == other->m_meshRows
+            && m_meshColumns == other->m_meshColumns
+            && m_meshBoxType == other->m_meshBoxType
+            && m_meshType == other->m_meshType
+            && m_parameters == other->m_parameters;
     }
     
     CustomFilterOperation(PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&, unsigned meshRows, unsigned meshColumns, MeshBoxType, MeshType);

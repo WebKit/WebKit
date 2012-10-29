@@ -1,3 +1,37 @@
+2012-10-29  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Extract the CustomFilterParameterList to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=100548
+
+        Reviewed by Dean Jackson.
+
+        Moved all the CustomFilterParameterList related methods to their own file.
+        Also made CustomFilterParameterList inherit from Vector instead of typedefing it,
+        so that we can add a different operator== and a blend method to it.
+
+        No new tests, just refactoring existing code.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleResolver.h:
+        * platform/graphics/filters/CustomFilterOperation.cpp:
+        (WebCore::CustomFilterOperation::CustomFilterOperation):
+        (WebCore::CustomFilterOperation::blend):
+        * platform/graphics/filters/CustomFilterOperation.h:
+        (WebCore):
+        (WebCore::CustomFilterOperation::operator==):
+        * platform/graphics/filters/CustomFilterParameterList.cpp: Added.
+        (WebCore):
+        (WebCore::CustomFilterParameterList::operator==):
+        (WebCore::CustomFilterParameterList::checkAlphabeticalOrder):
+        (WebCore::CustomFilterParameterList::blend):
+        * platform/graphics/filters/CustomFilterParameterList.h: Added.
+        (WebCore):
+        (CustomFilterParameterList):
+
 2012-10-29  Brady Eidson  <beidson@apple.com>
 
         Try to fix 32-bit builds after my incompletely tested m_identifier change.

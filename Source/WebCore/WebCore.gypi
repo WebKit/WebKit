@@ -4977,6 +4977,8 @@
             'platform/graphics/filters/CustomFilterOperation.cpp',
             'platform/graphics/filters/CustomFilterOperation.h',
             'platform/graphics/filters/CustomFilterParameter.h',
+            'platform/graphics/filters/CustomFilterParameterList.cpp',
+            'platform/graphics/filters/CustomFilterParameterList.h',
             'platform/graphics/filters/CustomFilterProgram.cpp',
             'platform/graphics/filters/CustomFilterProgram.h',
             'platform/graphics/filters/CustomFilterProgramInfo.cpp',

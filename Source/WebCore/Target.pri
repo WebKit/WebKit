@@ -2078,6 +2078,7 @@ HEADERS += \
     platform/graphics/filters/CustomFilterCompiledProgram.h \
     platform/graphics/filters/CustomFilterOperation.h \
     platform/graphics/filters/CustomFilterParameter.h \
+    platform/graphics/filters/CustomFilterParameterList.h \
     platform/graphics/filters/CustomFilterProgram.h \
     platform/graphics/filters/CustomFilterProgramInfo.h \
     platform/graphics/filters/CustomFilterTransformParameter.h \
@@ -3492,6 +3493,7 @@ enable?(FILTERS) {
     SOURCES += \
         platform/graphics/filters/CustomFilterGlobalContext.cpp \
         platform/graphics/filters/CustomFilterOperation.cpp \
+        platform/graphics/filters/CustomFilterParameterList.cpp \
         platform/graphics/filters/CustomFilterProgram.cpp \
         platform/graphics/filters/CustomFilterProgramInfo.cpp \
         platform/graphics/filters/CustomFilterCompiledProgram.cpp \

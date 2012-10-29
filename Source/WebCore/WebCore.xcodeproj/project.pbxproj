@@ -1498,6 +1498,8 @@
 		5081E3E03CFF80C16EF8B48B /* CachedResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5081E3E13D0280C16EF8B48B /* CachedResourceRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		508CCA4F13CF106B003151F3 /* RenderFlowThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 508CCA4D13CF106B003151F3 /* RenderFlowThread.h */; };
 		508CCA5013CF106B003151F3 /* RenderFlowThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */; };
+		5093334F163B0E4300099A60 /* CustomFilterParameterList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5093334D163B0E4300099A60 /* CustomFilterParameterList.cpp */; };
+		50933350163B0E4300099A60 /* CustomFilterParameterList.h in Headers */ = {isa = PBXBuildFile; fileRef = 5093334E163B0E4300099A60 /* CustomFilterParameterList.h */; };
 		50987C26157D676D00BDA835 /* CustomFilterGlobalContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50987C24157D676D00BDA835 /* CustomFilterGlobalContext.cpp */; };
 		50987C27157D676D00BDA835 /* CustomFilterGlobalContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 50987C25157D676D00BDA835 /* CustomFilterGlobalContext.h */; };
 		509CC9FB14C069ED00BBECBD /* CustomFilterParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 509CC9FA14C069ED00BBECBD /* CustomFilterParameter.h */; };
@@ -8704,6 +8706,8 @@
 		5081E3E13D0280C16EF8B48B /* CachedResourceRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceRequest.h; sourceTree = "<group>"; };
 		508CCA4D13CF106B003151F3 /* RenderFlowThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlowThread.h; sourceTree = "<group>"; };
 		508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFlowThread.cpp; sourceTree = "<group>"; };
+		5093334D163B0E4300099A60 /* CustomFilterParameterList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterParameterList.cpp; path = filters/CustomFilterParameterList.cpp; sourceTree = "<group>"; };
+		5093334E163B0E4300099A60 /* CustomFilterParameterList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterParameterList.h; path = filters/CustomFilterParameterList.h; sourceTree = "<group>"; };
 		50987C24157D676D00BDA835 /* CustomFilterGlobalContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterGlobalContext.cpp; path = filters/CustomFilterGlobalContext.cpp; sourceTree = "<group>"; };
 		50987C25157D676D00BDA835 /* CustomFilterGlobalContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterGlobalContext.h; path = filters/CustomFilterGlobalContext.h; sourceTree = "<group>"; };
 		509CC9FA14C069ED00BBECBD /* CustomFilterParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterParameter.h; path = filters/CustomFilterParameter.h; sourceTree = "<group>"; };
@@ -18244,6 +18248,8 @@
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				5093334D163B0E4300099A60 /* CustomFilterParameterList.cpp */,
+				5093334E163B0E4300099A60 /* CustomFilterParameterList.h */,
 				49ECEB5C1499790D00CDD3A4 /* arm */,
 				15B3FC1715FB217800A81BCB /* CustomFilterArrayParameter.h */,
 				50D4060F147D49DE00D30BB5 /* CustomFilterCompiledProgram.cpp */,
@@ -25671,6 +25677,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				50933350163B0E4300099A60 /* CustomFilterParameterList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28784,6 +28791,7 @@
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				51ABF64D16392E2800132A7A /* LoaderStrategy.cpp in Sources */,
+				5093334F163B0E4300099A60 /* CustomFilterParameterList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

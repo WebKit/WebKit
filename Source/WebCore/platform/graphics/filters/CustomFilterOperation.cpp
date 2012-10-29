@@ -36,64 +36,7 @@
 #include "CustomFilterProgram.h"
 #include "FilterOperation.h"
 
-#include <wtf/text/StringHash.h>
-
 namespace WebCore {
-
-bool customFilterParametersEqual(const CustomFilterParameterList& listA, const CustomFilterParameterList& listB)
-{
-    if (listA.size() != listB.size())
-        return false;
-    for (size_t i = 0; i < listA.size(); ++i) {
-        if (listA.at(i).get() != listB.at(i).get() 
-            && *listA.at(i).get() != *listB.at(i).get())
-            return false;
-    }
-    return true;
-}
-
-#if !ASSERT_DISABLED
-static bool checkCustomFilterParametersOrder(const CustomFilterParameterList& parameters)
-{
-    for (unsigned i = 1; i < parameters.size(); ++i) {
-        // Break for equal or not-sorted parameters.
-        if (!codePointCompareLessThan(parameters.at(i - 1)->name(), parameters.at(i)->name()))
-            return false;
-    }
-    return true;
-}
-#endif
-
-void blendCustomFilterParameters(const CustomFilterParameterList& fromList, const CustomFilterParameterList& toList, 
-                                 double progress, const LayoutSize& size, CustomFilterParameterList& resultList)
-{
-    // This method expects both lists to be sorted by parameter name and the result list is also sorted.
-    ASSERT(checkCustomFilterParametersOrder(fromList));
-    ASSERT(checkCustomFilterParametersOrder(toList));
-    size_t fromListIndex = 0, toListIndex = 0;
-    while (fromListIndex < fromList.size() && toListIndex < toList.size()) {
-        CustomFilterParameter* paramFrom = fromList.at(fromListIndex).get();
-        CustomFilterParameter* paramTo = toList.at(toListIndex).get();
-        if (paramFrom->name() == paramTo->name()) {
-            resultList.append(paramTo->blend(paramFrom, progress, size));
-            ++fromListIndex;
-            ++toListIndex;
-            continue;
-        }
-        if (codePointCompareLessThan(paramFrom->name(), paramTo->name())) {
-            resultList.append(paramFrom);
-            ++fromListIndex;
-            continue;
-        }
-        resultList.append(paramTo);
-        ++toListIndex;
-    }
-    for (; fromListIndex < fromList.size(); ++fromListIndex)
-        resultList.append(fromList.at(fromListIndex));
-    for (; toListIndex < toList.size(); ++toListIndex)
-        resultList.append(toList.at(toListIndex));
-    ASSERT(checkCustomFilterParametersOrder(resultList));
-}
 
 CustomFilterOperation::CustomFilterOperation(PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, MeshBoxType meshBoxType, MeshType meshType)
     : FilterOperation(CUSTOM)
@@ -105,7 +48,7 @@ CustomFilterOperation::CustomFilterOperation(PassRefPtr<CustomFilterProgram> pro
     , m_meshType(meshType)
 {
     // Make sure that the parameters are alwyas sorted by name. We use that to merge two CustomFilterOperations in animations.
-    ASSERT(checkCustomFilterParametersOrder(m_parameters));
+    ASSERT(m_parameters.checkAlphabeticalOrder());
 }
     
 CustomFilterOperation::~CustomFilterOperation()
@@ -129,7 +72,7 @@ PassRefPtr<FilterOperation> CustomFilterOperation::blend(const FilterOperation* 
         return this;
     
     CustomFilterParameterList animatedParameters;
-    blendCustomFilterParameters(fromOp->m_parameters, m_parameters, progress, size, animatedParameters);
+    m_parameters.blend(fromOp->m_parameters, progress, size, animatedParameters);
     return CustomFilterOperation::create(m_program, animatedParameters, m_meshRows, m_meshColumns, m_meshBoxType, m_meshType);
 }
 

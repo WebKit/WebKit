@@ -31925,6 +31925,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterParameterList.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterParameterList.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\CustomFilterProgram.cpp"
 						>
 					</File>
