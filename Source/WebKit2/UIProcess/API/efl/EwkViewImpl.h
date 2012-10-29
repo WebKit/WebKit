@@ -125,7 +125,7 @@ public:
     const char* themePath() const;
     void setThemePath(const char* theme);
     const char* customTextEncodingName() const;
-    void setCustomTextEncodingName(const char* encoding);
+    void setCustomTextEncodingName(const String& encoding);
 
     bool mouseEventsEnabled() const { return m_mouseEventsEnabled; }
     void setMouseEventsEnabled(bool enabled);

@@ -1,3 +1,24 @@
+2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Avoid useless assignment in EwkViewImpl::setCustomTextEncodingName()
+        https://bugs.webkit.org/show_bug.cgi?id=100667
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove useless m_customEncoding assignment in EwkViewImpl::setCustomTextEncodingName()
+        since the member is anyway assigned in EwkViewImpl::customTextEncodingName().
+
+        Have EwkViewImpl::setCustomTextEncodingName() take a String in argument instead
+        of a const char* to make the API more C++ and since we don't need a const char*
+        to assign to m_customEncoding anymore.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::setCustomTextEncodingName):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_setting_encoding_custom_set):
+
 2012-10-29  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [WK2] Enable delegated scrolling as soon as the FrameView is created when using fixed layout

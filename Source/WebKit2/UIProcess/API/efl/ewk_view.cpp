@@ -814,7 +814,7 @@ Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* ewkView, const char*
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, false);
 
-    impl->setCustomTextEncodingName(encoding);
+    impl->setCustomTextEncodingName(encoding ? encoding : String());
 
     return true;
 }

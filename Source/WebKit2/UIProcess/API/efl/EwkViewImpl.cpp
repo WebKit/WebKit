@@ -616,10 +616,9 @@ const char* EwkViewImpl::customTextEncodingName() const
     return m_customEncoding;
 }
 
-void EwkViewImpl::setCustomTextEncodingName(const char* encoding)
+void EwkViewImpl::setCustomTextEncodingName(const String& encoding)
 {
-    m_customEncoding = encoding;
-    m_pageProxy->setCustomTextEncodingName(encoding ? encoding : String());
+    m_pageProxy->setCustomTextEncodingName(encoding);
 }
 
 void EwkViewImpl::setMouseEventsEnabled(bool enabled)
