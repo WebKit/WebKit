@@ -43,16 +43,17 @@
 #include "config.h"
 #include "EventSender.h"
 
+#include "KeyCodeMapping.h"
 #include "TestDelegate.h"
 #include "WebContextMenuData.h"
 #include "WebDragOperation.h"
+#include "WebEventSender.h"
 #include "WebTouchPoint.h"
 #include "WebView.h"
 #include "platform/WebDragData.h"
 #include "platform/WebPoint.h"
 #include "platform/WebString.h"
 #include "platform/WebVector.h"
-#include "webkit/support/webkit_support.h"
 #include <wtf/Deque.h>
 #include <wtf/StringExtras.h>
 
@@ -125,9 +126,9 @@ inline bool outsideMultiClickRadius(const WebPoint& a, const WebPoint& b)
 // dependent (e.g., dragging has a timeout vs selection).
 uint32 timeOffsetMs = 0;
 
-double getCurrentEventTimeSec()
+double getCurrentEventTimeSec(TestDelegate* delegate)
 {
-    return (webkit_support::GetCurrentTimeInMillisecond() + timeOffsetMs) / 1000.0;
+    return (delegate->getCurrentTimeInMillisecond() + timeOffsetMs) / 1000.0;
 }
 
 void advanceEventTime(int32_t deltaMs)
@@ -135,7 +136,7 @@ void advanceEventTime(int32_t deltaMs)
     timeOffsetMs += deltaMs;
 }
 
-void initMouseEvent(WebInputEvent::Type t, WebMouseEvent::Button b, const WebPoint& pos, WebMouseEvent* e)
+void initMouseEvent(WebInputEvent::Type t, WebMouseEvent::Button b, const WebPoint& pos, WebMouseEvent* e, double ts)
 {
     e->type = t;
     e->button = b;
@@ -144,7 +145,7 @@ void initMouseEvent(WebInputEvent::Type t, WebMouseEvent::Button b, const WebPoi
     e->y = pos.y;
     e->globalX = pos.x;
     e->globalY = pos.y;
-    e->timeStampSeconds = getCurrentEventTimeSec();
+    e->timeStampSeconds = ts;
     e->clickCount = clickCount;
 }
 
@@ -214,16 +215,16 @@ bool getEditCommand(const WebKeyboardEvent& event, string* name)
         return false;
 
     switch (event.windowsKeyCode) {
-    case webkit_support::VKEY_LEFT:
+    case VKEY_LEFT:
         *name = "MoveToBeginningOfLine";
         break;
-    case webkit_support::VKEY_RIGHT:
+    case VKEY_RIGHT:
         *name = "MoveToEndOfLine";
         break;
-    case webkit_support::VKEY_UP:
+    case VKEY_UP:
         *name = "MoveToBeginningOfDocument";
         break;
-    case webkit_support::VKEY_DOWN:
+    case VKEY_DOWN:
         *name = "MoveToEndOfDocument";
         break;
     default:
@@ -349,7 +350,7 @@ void EventSender::reset()
 void EventSender::doDragDrop(const WebDragData& dragData, WebDragOperationsMask mask)
 {
     WebMouseEvent event;
-    initMouseEvent(WebInputEvent::MouseDown, pressedButton, lastMousePos, &event);
+    initMouseEvent(WebInputEvent::MouseDown, pressedButton, lastMousePos, &event, getCurrentEventTimeSec(m_delegate));
     WebPoint clientPoint(event.x, event.y);
     WebPoint screenPoint(event.globalX, event.globalY);
     currentDragData = dragData;
@@ -392,7 +393,7 @@ int EventSender::getButtonNumberFromSingleArg(const CppArgumentList& arguments)
 
 void EventSender::updateClickCountForButton(WebMouseEvent::Button buttonType)
 {
-    if ((getCurrentEventTimeSec() - lastClickTimeSec < multipleClickTimeSec)
+    if ((getCurrentEventTimeSec(m_delegate) - lastClickTimeSec < multipleClickTimeSec)
         && (!outsideMultiClickRadius(lastMousePos, lastClickPos))
         && (buttonType == lastButtonType))
         ++clickCount;
@@ -422,7 +423,7 @@ void EventSender::mouseDown(const CppArgumentList& arguments, CppVariant* result
 
     WebMouseEvent event;
     pressedButton = buttonType;
-    initMouseEvent(WebInputEvent::MouseDown, buttonType, lastMousePos, &event);
+    initMouseEvent(WebInputEvent::MouseDown, buttonType, lastMousePos, &event, getCurrentEventTimeSec(m_delegate));
     if (arguments.size() >= 2 && (arguments[1].isObject() || arguments[1].isString()))
         applyKeyModifiers(&(arguments[1]), &event);
     webview()->handleInputEvent(event);
@@ -448,7 +449,7 @@ void EventSender::mouseUp(const CppArgumentList& arguments, CppVariant* result)
         replaySavedEvents();
     } else {
         WebMouseEvent event;
-        initMouseEvent(WebInputEvent::MouseUp, buttonType, lastMousePos, &event);
+        initMouseEvent(WebInputEvent::MouseUp, buttonType, lastMousePos, &event, getCurrentEventTimeSec(m_delegate));
         if (arguments.size() >= 2 && (arguments[1].isObject() || arguments[1].isString()))
             applyKeyModifiers(&(arguments[1]), &event);
         doMouseUp(event);
@@ -497,7 +498,7 @@ void EventSender::mouseMoveTo(const CppArgumentList& arguments, CppVariant* resu
         mouseEventQueue.append(savedEvent);
     } else {
         WebMouseEvent event;
-        initMouseEvent(WebInputEvent::MouseMove, pressedButton, mousePos, &event);
+        initMouseEvent(WebInputEvent::MouseMove, pressedButton, mousePos, &event, getCurrentEventTimeSec(m_delegate));
         doMouseMove(event);
     }
 }
@@ -535,50 +536,43 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
     bool needsShiftKeyModifier = false;
     if ("\n" == codeStr) {
         generateChar = true;
-        text = code = webkit_support::VKEY_RETURN;
+        text = code = VKEY_RETURN;
     } else if ("rightArrow" == codeStr)
-        code = webkit_support::VKEY_RIGHT;
+        code = VKEY_RIGHT;
     else if ("downArrow" == codeStr)
-        code = webkit_support::VKEY_DOWN;
+        code = VKEY_DOWN;
     else if ("leftArrow" == codeStr)
-        code = webkit_support::VKEY_LEFT;
+        code = VKEY_LEFT;
     else if ("upArrow" == codeStr)
-        code = webkit_support::VKEY_UP;
+        code = VKEY_UP;
     else if ("insert" == codeStr)
-        code = webkit_support::VKEY_INSERT;
+        code = VKEY_INSERT;
     else if ("delete" == codeStr)
-        code = webkit_support::VKEY_DELETE;
+        code = VKEY_DELETE;
     else if ("pageUp" == codeStr)
-        code = webkit_support::VKEY_PRIOR;
+        code = VKEY_PRIOR;
     else if ("pageDown" == codeStr)
-        code = webkit_support::VKEY_NEXT;
+        code = VKEY_NEXT;
     else if ("home" == codeStr)
-        code = webkit_support::VKEY_HOME;
+        code = VKEY_HOME;
     else if ("end" == codeStr)
-        code = webkit_support::VKEY_END;
+        code = VKEY_END;
     else if ("printScreen" == codeStr)
-        code = webkit_support::VKEY_SNAPSHOT;
+        code = VKEY_SNAPSHOT;
     else if ("menu" == codeStr)
-        // FIXME: Change this to webkit_support::VKEY_APPS.
-        code = 0x5D;
+        code = VKEY_APPS;
     else if ("leftControl" == codeStr)
-        // FIXME: Change this to webkit_support::VKEY_LCONTROL.
-        code = 0xA2;
+        code = VKEY_LCONTROL;
     else if ("rightControl" == codeStr)
-        // FIXME: Change this to webkit_support::VKEY_RCONTROL.
-        code = 0xA3;
+        code = VKEY_RCONTROL;
     else if ("leftShift" == codeStr)
-        // FIXME: Change this to webkit_support::VKEY_LSHIFT.
-        code = 0xA0;
+        code = VKEY_LSHIFT;
     else if ("rightShift" == codeStr)
-        // FIXME: Change this to webkit_support::VKEY_RSHIFT.
-        code = 0xA1;
+        code = VKEY_RSHIFT;
     else if ("leftAlt" == codeStr)
-        // FIXME: Change this to webkit_support::VKEY_LMENU.
-        code = 0xA4;
+        code = VKEY_LMENU;
     else if ("rightAlt" == codeStr)
-        // FIXME: Change this to webkit_support::VKEY_RMENU.
-        code = 0xA5;
+        code = VKEY_RMENU;
     else {
         // Compare the input string with the function-key names defined by the
         // DOM spec (i.e. "F1",...,"F24"). If the input string is a function-key
@@ -588,7 +582,7 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
             snprintf(functionChars, 10, "F%d", i);
             string functionKeyName(functionChars);
             if (functionKeyName == codeStr) {
-                code = webkit_support::VKEY_F1 + (i - 1);
+                code = VKEY_F1 + (i - 1);
                 break;
             }
         }
@@ -613,7 +607,7 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
     eventDown.modifiers = 0;
     eventDown.windowsKeyCode = code;
 #if OS(LINUX) && USE(GTK)
-    eventDown.nativeKeyCode = webkit_support::NativeKeyCodeForWindowsKeyCode(code, needsShiftKeyModifier);
+    eventDown.nativeKeyCode = NativeKeyCodeForWindowsKeyCode(code);
 #endif
 
     if (generateChar) {
@@ -775,7 +769,7 @@ void EventSender::replaySavedEvents()
         switch (e.type) {
         case SavedEvent::MouseMove: {
             WebMouseEvent event;
-            initMouseEvent(WebInputEvent::MouseMove, pressedButton, e.pos, &event);
+            initMouseEvent(WebInputEvent::MouseMove, pressedButton, e.pos, &event, getCurrentEventTimeSec(m_delegate));
             doMouseMove(event);
             break;
         }
@@ -784,7 +778,7 @@ void EventSender::replaySavedEvents()
             break;
         case SavedEvent::MouseUp: {
             WebMouseEvent event;
-            initMouseEvent(WebInputEvent::MouseUp, e.buttonType, lastMousePos, &event);
+            initMouseEvent(WebInputEvent::MouseUp, e.buttonType, lastMousePos, &event, getCurrentEventTimeSec(m_delegate));
             doMouseUp(event);
             break;
         }
@@ -843,10 +837,10 @@ void EventSender::contextClick(const CppArgumentList& arguments, CppVariant* res
     // Generate right mouse down and up.
     WebMouseEvent event;
     pressedButton = WebMouseEvent::ButtonRight;
-    initMouseEvent(WebInputEvent::MouseDown, WebMouseEvent::ButtonRight, lastMousePos, &event);
+    initMouseEvent(WebInputEvent::MouseDown, WebMouseEvent::ButtonRight, lastMousePos, &event, getCurrentEventTimeSec(m_delegate));
     webview()->handleInputEvent(event);
 
-    initMouseEvent(WebInputEvent::MouseUp, WebMouseEvent::ButtonRight, lastMousePos, &event);
+    initMouseEvent(WebInputEvent::MouseUp, WebMouseEvent::ButtonRight, lastMousePos, &event, getCurrentEventTimeSec(m_delegate));
     webview()->handleInputEvent(event);
 
     pressedButton = WebMouseEvent::ButtonNone;
@@ -906,7 +900,7 @@ void EventSender::beginDragWithFiles(const CppArgumentList& arguments, CppVarian
     for (size_t i = 0; i < files.size(); ++i) {
         WebDragData::Item item;
         item.storageType = WebDragData::Item::StorageTypeFilename;
-        item.filenameData = webkit_support::GetAbsoluteWebStringFromUTF8Path(files[i]);
+        item.filenameData = m_delegate->getAbsoluteWebStringFromUTF8Path(files[i]);
         currentDragData.addItem(item);
         absoluteFilenames[i] = item.filenameData;
     }
@@ -1014,7 +1008,7 @@ void EventSender::sendCurrentTouchEvent(const WebInputEvent::Type type)
     WebTouchEvent touchEvent;
     touchEvent.type = type;
     touchEvent.modifiers = touchModifiers;
-    touchEvent.timeStampSeconds = getCurrentEventTimeSec();
+    touchEvent.timeStampSeconds = getCurrentEventTimeSec(m_delegate);
     touchEvent.touchesLength = touchPoints.size();
     for (unsigned i = 0; i < touchPoints.size(); ++i)
         touchEvent.touches[i] = touchPoints[i];
@@ -1054,7 +1048,7 @@ void EventSender::handleMouseWheel(const CppArgumentList& arguments, CppVariant*
         hasPreciseScrollingDeltas = arguments[3].toBoolean();
 
     WebMouseWheelEvent event;
-    initMouseEvent(WebInputEvent::MouseWheel, pressedButton, lastMousePos, &event);
+    initMouseEvent(WebInputEvent::MouseWheel, pressedButton, lastMousePos, &event, getCurrentEventTimeSec(m_delegate));
     event.wheelTicksX = static_cast<float>(horizontal);
     event.wheelTicksY = static_cast<float>(vertical);
     event.deltaX = event.wheelTicksX;
@@ -1217,7 +1211,7 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
 
     event.globalX = event.x;
     event.globalY = event.y;
-    event.timeStampSeconds = getCurrentEventTimeSec();
+    event.timeStampSeconds = getCurrentEventTimeSec(m_delegate);
     webview()->handleInputEvent(event);
 }
 
@@ -1229,7 +1223,7 @@ void EventSender::gestureFlingCancel(const CppArgumentList& arguments, CppVarian
 
     WebGestureEvent event;
     event.type = WebInputEvent::GestureFlingCancel;
-    event.timeStampSeconds = getCurrentEventTimeSec();
+    event.timeStampSeconds = getCurrentEventTimeSec(m_delegate);
     webview()->handleInputEvent(event);
 }
 
@@ -1253,7 +1247,7 @@ void EventSender::gestureFlingStart(const CppArgumentList& arguments, CppVariant
 
     event.data.flingStart.velocityX = static_cast<float>(arguments[2].toDouble());
     event.data.flingStart.velocityY = static_cast<float>(arguments[3].toDouble());
-    event.timeStampSeconds = getCurrentEventTimeSec();
+    event.timeStampSeconds = getCurrentEventTimeSec(m_delegate);
     webview()->handleInputEvent(event);
 }
 
