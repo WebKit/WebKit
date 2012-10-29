@@ -1,3 +1,9 @@
+2012-10-29  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Unreviewed build fix after r132709.
+
+        * Shared/WebMemorySampler.cpp: Include unistd.h for getpid(3).
+
 2012-10-28  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [WK2] Fix the incorrect use of preprocessor statement in API header.
