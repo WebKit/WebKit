@@ -1,3 +1,19 @@
+2012-10-28  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Webkit adds a boundary to the Content-Type: text/plain POST header
+        https://bugs.webkit.org/show_bug.cgi?id=100445
+
+        Reviewed by Kent Tamura.
+
+        Fixed test failure and added a test case for Content-Type header.
+
+        * http/tests/misc/form-post-textplain-expected.txt:
+        * http/tests/misc/form-post-textplain.html:
+        * http/tests/misc/resources/form-post-textplain.php:
+        Added a test case for testing Content-Type POST header.
+        Also fixed existing test case that attempted to test newline in the input value.
+        LF in the input value is replaced with CRLF durling the construction of the form data set.
+
 2012-10-28  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update

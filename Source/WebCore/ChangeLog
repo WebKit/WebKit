@@ -1,3 +1,19 @@
+2012-10-28  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Webkit adds a boundary to the Content-Type: text/plain POST header
+        https://bugs.webkit.org/show_bug.cgi?id=100445
+
+        Reviewed by Kent Tamura.
+
+        Fixed a bug where an empty boundary parameter was added to Content-Type
+        header when POSTing forms with enctype=text/plain.
+
+        Test: http/tests/misc/form-post-textplain.html
+
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::populateFrameLoadRequest): Add boundary parameter to
+        Content-Type only when a boundary string is generated.
+
 2012-10-28  Philip Rogers  <pdr@google.com>
 
         Cache calcMode() value for SVG animations.

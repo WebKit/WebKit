@@ -245,9 +245,9 @@ void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)
         frameRequest.resourceRequest().setHTTPBody(m_formData);
 
         // construct some user headers if necessary
-        if (m_contentType.isNull() || m_contentType == "application/x-www-form-urlencoded")
+        if (m_boundary.isEmpty())
             frameRequest.resourceRequest().setHTTPContentType(m_contentType);
-        else // contentType must be "multipart/form-data"
+        else
             frameRequest.resourceRequest().setHTTPContentType(m_contentType + "; boundary=" + m_boundary);
     }
 
