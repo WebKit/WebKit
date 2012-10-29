@@ -1,3 +1,17 @@
+2012-10-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Flaky security tests
+        https://bugs.webkit.org/show_bug.cgi?id=100388
+
+        Reviewed by Jocelyn Turcotte.
+
+        Disable text output and load a blank URL to ensure the documentLoader is cleared
+        before we start dumping text for the new page. Otherwise messages from the old page
+        may end up in the text output of the new test.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
 2012-10-29  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] remove remaining usages of webkit_support from the TestRunner library

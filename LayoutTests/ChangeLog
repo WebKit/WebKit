@@ -1,3 +1,14 @@
+2012-10-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Flaky security tests
+        https://bugs.webkit.org/show_bug.cgi?id=100388
+
+        Reviewed by Jocelyn Turcotte.
+
+        Unskip no longer flaky tests.
+
+        * platform/qt/TestExpectations:
+
 2012-10-29  Pavel Podivilov  <podivilov@google.com>
 
         [Chromium] Test expectation update.

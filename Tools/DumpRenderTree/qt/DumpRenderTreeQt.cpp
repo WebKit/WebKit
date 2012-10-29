@@ -510,11 +510,17 @@ void DumpRenderTree::dryRunPrint(QWebFrame* frame)
 
 void DumpRenderTree::resetToConsistentStateBeforeTesting(const QUrl& url)
 {
-    // reset so that any current loads are stopped
+    // Disable text-output, because some document-loaders will output
+    // security signals when stopped, and we do not want them logged
+    // for the next test.
+    setTextOutputEnabled(false);
+    // Reset so that any current loads are stopped. We set to an empty
+    // URL here instead of issuing a stop action, since setUrl also
+    // clears the current document.
     // NOTE: that this has to be done before the testRunner is
     // reset or we get timeouts for some tests.
     m_page->blockSignals(true);
-    m_page->triggerAction(QWebPage::Stop);
+    m_page->mainFrame()->setUrl(QUrl("about:blank"));
     m_page->blockSignals(false);
 
     QList<QWebSecurityOrigin> knownOrigins = QWebSecurityOrigin::allOrigins();
