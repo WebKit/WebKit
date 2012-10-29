@@ -1,3 +1,15 @@
+2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Skip 2 jquery tests crashing after r132757
+        https://bugs.webkit.org/show_bug.cgi?id=100637
+
+        Unreviewed EFL gardening.
+
+        Skip 2 jquery test cases that started crashing after
+        r132757.
+
+        * platform/efl/TestExpectations:
+
 2012-10-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Handle non-parsedOk properties as inactive ones
