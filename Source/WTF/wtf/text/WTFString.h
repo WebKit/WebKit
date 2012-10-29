@@ -350,10 +350,16 @@ public:
     static String createUninitialized(unsigned length, UChar*& data) { return StringImpl::createUninitialized(length, data); }
     static String createUninitialized(unsigned length, LChar*& data) { return StringImpl::createUninitialized(length, data); }
 
-    WTF_EXPORT_STRING_API void split(const String& separator, Vector<String>& result) const;
     WTF_EXPORT_STRING_API void split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const;
-    WTF_EXPORT_STRING_API void split(UChar separator, Vector<String>& result) const;
+    void split(const String& separator, Vector<String>& result) const
+    {
+        split(separator, false, result);
+    }
     WTF_EXPORT_STRING_API void split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const;
+    void split(UChar separator, Vector<String>& result) const
+    {
+        split(separator, false, result);
+    }
 
     WTF_EXPORT_STRING_API int toIntStrict(bool* ok = 0, int base = 10) const;
     WTF_EXPORT_STRING_API unsigned toUIntStrict(bool* ok = 0, int base = 10) const;

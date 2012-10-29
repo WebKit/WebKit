@@ -665,11 +665,6 @@ void String::split(const String& separator, bool allowEmptyEntries, Vector<Strin
         result.append(substring(startPos));
 }
 
-void String::split(const String& separator, Vector<String>& result) const
-{
-    split(separator, false, result);
-}
-
 void String::split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const
 {
     result.clear();
@@ -683,11 +678,6 @@ void String::split(UChar separator, bool allowEmptyEntries, Vector<String>& resu
     }
     if (allowEmptyEntries || startPos != length())
         result.append(substring(startPos));
-}
-
-void String::split(UChar separator, Vector<String>& result) const
-{
-    split(String(&separator, 1), false, result);
 }
 
 CString String::ascii() const
