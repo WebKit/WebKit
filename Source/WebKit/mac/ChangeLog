@@ -1,3 +1,12 @@
+2012-10-29  Enrica Casucci  <enrica@apple.com>
+
+        Add ENABLE_USERSELECT_ALL feature flag.
+        https://bugs.webkit.org/show_bug.cgi?id=100559
+
+        Reviewed by Eric Seidel.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-10-27  Alexey Proskuryakov  <ap@apple.com>
 
         All tests crash in WebKit1 mode

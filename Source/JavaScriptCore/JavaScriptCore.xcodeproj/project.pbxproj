@@ -3009,7 +3009,7 @@
 				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
 				0F5541B21613C1FB00CE3E25 /* SpecialPointer.h in Headers */,
 				0FEB3ECD16237F4D00AB67AD /* TypedArrayDescriptor.h in Headers */,
- 				0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */,
+				0F256C361627B0AD007F2783 /* DFGCallArrayAllocatorSlowPathGenerator.h in Headers */,
 				C2239D1B16262BDD005AC5FD /* GCThread.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
