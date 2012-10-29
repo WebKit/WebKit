@@ -1,3 +1,17 @@
+2012-10-29  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12592716> REGRESSION (r132545): With full-page accelerated drawing, a
+        reproducible hang occurs at <http://www.cbsnews.com/stories/2010/01/24/ftn/main6136386.shtml>.
+
+        Reviewed by Anders Carlsson.
+
+        Work around <rdar://problem/12584492> by limiting the scope of the fix for <http://webkit.org/b/100413>.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clipOut): Reverted to using CGContextGetClipBoundingBox() rather
+        than CGRectInfinite when the context is accelerated and has a transform that is not just
+        a translation or a scale.
+
 2012-10-29  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Simplify AuthenticationChallengeManager::instance
