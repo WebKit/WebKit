@@ -108,7 +108,7 @@ RedirectedXCompositeWindow::RedirectedXCompositeWindow(const IntSize& size)
     , m_damageNotifyCallback(0)
     , m_damageNotifyData(0)
 {
-    Display* display = GLContext::sharedX11Display();
+    Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
     Screen* screen = DefaultScreenOfDisplay(display);
 
     // This is based on code from Chromium: src/content/common/gpu/image_transport_surface_linux.cc
@@ -163,7 +163,7 @@ RedirectedXCompositeWindow::~RedirectedXCompositeWindow()
     if (getWindowHashMap().isEmpty())
         gdk_window_remove_filter(0, reinterpret_cast<GdkFilterFunc>(filterXDamageEvent), 0);
 
-    Display* display = GLContext::sharedX11Display();
+    Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
     XDamageDestroy(display, m_damage);
     XDestroyWindow(display, m_window);
     XDestroyWindow(display, m_parentWindow);
@@ -172,7 +172,7 @@ RedirectedXCompositeWindow::~RedirectedXCompositeWindow()
 
 void RedirectedXCompositeWindow::resize(const IntSize& size)
 {
-    Display* display = GLContext::sharedX11Display();
+    Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
     XResizeWindow(display, m_window, size.width(), size.height());
 
     XFlush(display);

@@ -1,3 +1,20 @@
+2012-10-29  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        webview not redrawn as needed when accelerated compositing is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=99109
+
+        Reviewed by Martin Robinson.
+
+        GL shared display is not in the gtk loop and therefore, its events are
+        not captured by gtk. So, we use gdk default instead.
+
+        No new tests, covered by existing tests.
+
+        * platform/gtk/RedirectedXCompositeWindow.cpp:
+        (WebCore::RedirectedXCompositeWindow::RedirectedXCompositeWindow):
+        (WebCore::RedirectedXCompositeWindow::~RedirectedXCompositeWindow):
+        (WebCore::RedirectedXCompositeWindow::resize):
+
 2012-10-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: bind redo to Ctrl+Y on non-mac platforms
