@@ -182,12 +182,14 @@ uint64_t WKPageGetRenderTreeSize(WKPageRef page)
     return toImpl(page)->renderTreeSize();
 }
 
-#if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
 WKInspectorRef WKPageGetInspector(WKPageRef pageRef)
 {
+#if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
     return toAPI(toImpl(pageRef)->inspector());
-}
+#else
+    return 0;
 #endif
+}
 
 double WKPageGetEstimatedProgress(WKPageRef pageRef)
 {

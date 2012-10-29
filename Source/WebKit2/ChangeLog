@@ -1,3 +1,17 @@
+2012-10-28  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [WK2] Fix the incorrect use of preprocessor statement in API header.
+        https://bugs.webkit.org/show_bug.cgi?id=100610
+
+        Reviewed by Timothy Hatcher.
+
+        Remove the preprocessor statement to check 'ENABLE_INSPECTOR' feature
+        from the WKPage.h.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetInspector):
+        * UIProcess/API/C/WKPage.h:
+
 2012-10-28  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2][AC] Viewport size does not change when the window size changes
