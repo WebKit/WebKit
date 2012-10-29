@@ -1,3 +1,10 @@
+2012-10-29  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        Unreviewed. Add jonathan.dong@torchmobile.com.cn as a committer.
+        https://bugs.webkit.org/show_bug.cgi?id=100629
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-10-27  Dan Bernstein  <mitz@apple.com>
 
         REAL_PLATFORM_NAME build setting is no longer needed
