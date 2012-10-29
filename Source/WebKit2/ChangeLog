@@ -1,3 +1,17 @@
+2012-10-29  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Delete cached ShareableSurfaces when purging backingStores.
+        https://bugs.webkit.org/show_bug.cgi?id=100705
+
+        Reviewed by Noam Rosenthal.
+
+        LayerTreeCoordinatorProxy can be used after calling
+        LayerTreeCoordinatorProxy::purgeBackingStores(). So we should clear cached
+        ShareableSurfaces.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::purgeBackingStores):
+
 2012-10-28  Mark Rowe  <mrowe@apple.com>
 
         Simplify Xcode configuration settings that used to vary between OS versions.
