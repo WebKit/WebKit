@@ -103,6 +103,10 @@ function customFilterParameterMatch(param1, param2, tolerance)
         case "function":
             if (val1.name != val2.name)
                 return false;
+            if (val1.arguments.length != val2.arguments.length) {
+                console.error("Arguments length mismatch: ", val1.arguments.length, "/", val2.arguments.length);
+                return false;
+            }
             for (var t = 0; t < val1.arguments.length; ++t) {
                 if (val1.arguments[t].type != "number" || val2.arguments[t].type != "number")
                     return false;

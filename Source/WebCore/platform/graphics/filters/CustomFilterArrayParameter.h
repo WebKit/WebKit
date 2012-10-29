@@ -50,11 +50,19 @@ public:
 
     virtual PassRefPtr<CustomFilterParameter> blend(const CustomFilterParameter* from, double progress, const LayoutSize&)
     {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=96437
-        UNUSED_PARAM(from);
-        UNUSED_PARAM(progress);
+        if (!from || !isSameType(*from))
+            return this;
 
-        return this;
+        const CustomFilterArrayParameter* fromArray = static_cast<const CustomFilterArrayParameter*>(from);
+
+        if (size() != fromArray->size())
+            return this;
+
+        RefPtr<CustomFilterArrayParameter> result = CustomFilterArrayParameter::create(name());
+        for (size_t i = 0; i < size(); ++i)
+            result->addValue(WebCore::blend(fromArray->valueAt(i), valueAt(i), progress));
+
+        return result.release();
     }
 
     virtual bool operator==(const CustomFilterParameter& o) const
