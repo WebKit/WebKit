@@ -2,7 +2,7 @@
 Mutation
 
 # Unstable SVG page loading tests
-PageLoad/svg/files/33041-Samurai.svg
+SVG/Samurai.html
 
 # Takes too long to load
 SVG/SierpinskiCarpet.html
