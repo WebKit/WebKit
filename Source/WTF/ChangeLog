@@ -1,3 +1,15 @@
+2012-10-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r132736.
+        http://trac.webkit.org/changeset/132736
+        https://bugs.webkit.org/show_bug.cgi?id=100652
+
+        It broke all plugin related tests on GTK and on Qt (Requested
+        by Ossy on #webkit).
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::fromUTF8):
+
 2012-10-27  Michael Saboff  <msaboff@apple.com>
 
         Try to create AtomicString as 8 bit where possible
