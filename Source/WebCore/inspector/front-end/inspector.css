@@ -1273,7 +1273,6 @@ iframe.panel.extension {
 .outline-disclosure li {
     padding: 0 0 0 14px;
     margin-top: 1px;
-    margin-bottom: 1px;
     margin-left: -2px;
     word-wrap: break-word;
 }
@@ -1311,7 +1310,6 @@ iframe.panel.extension {
     float: left;
     width: 8px;
     height: 8px;
-    margin-top: 1px;
     padding-right: 2px;
 }
 

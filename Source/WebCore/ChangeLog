@@ -1,5 +1,24 @@
 2012-10-29  Mike West  <mkwst@chromium.org>
 
+        Web Inspector: Error messages lines in console are 1px taller than regular messages
+        https://bugs.webkit.org/show_bug.cgi?id=100521
+
+        Reviewed by Pavel Feldman.
+
+        The inspector is adding a 1px bottom border to list elements inside
+        a disclosure list. This is unnecessary in the current layout; it's
+        causing console messages with stack traces to be one pixel taller than
+        other console messages, which this patch fixes.
+
+        As a drive-by, this patch also adjusts the disclosure triangle's
+        position to match.
+
+        * inspector/front-end/inspector.css:
+        (.outline-disclosure li):
+        (.outline-disclosure li.parent::before):
+
+2012-10-29  Mike West  <mkwst@chromium.org>
+
         Web Inspector: The bubble for repeated errors is misplaced.
         https://bugs.webkit.org/show_bug.cgi?id=100525
 
