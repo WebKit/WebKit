@@ -1,3 +1,29 @@
+2012-10-29  Shinya Kawanaka  <shinyak@chromium.org> 
+
+        [Refactoring] Use isActiveInsertionPoint() instead of isInsertionPoint()
+        https://bugs.webkit.org/show_bug.cgi?id=100459
+
+        Reviewed by Hajime Morita.
+
+        Checking InsertionPoint and its activeness with two if-statement is error-prone. We would like to
+        use a utility function which checks both at once.
+
+        We rewrite some lines with such function.
+
+        No new tests, simple refactoring.
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseNode):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::populate):
+        (WebCore::ContentDistributor::distribute):
+        (WebCore::ContentDistributor::distributeNodeChildrenTo):
+        * html/shadow/InsertionPoint.h:
+        (WebCore::isInsertionPoint): Since our convention is the argument of this kind of function should not be null,
+        we would like to make it similar to the other functions.
+        (WebCore::toInsertionPoint):
+        (WebCore::isLowerEncapsulationBoundary):
+
 2012-10-29  Patrick Dubroy  <dubroy@chromium.org>
 
         Web Inspector: Fix vertical alignment in toolbar backgrounds and overflow button.

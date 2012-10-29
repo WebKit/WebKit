@@ -52,17 +52,12 @@ InsertionPoint* ContentDistributor::findInsertionPointFor(const Node* key) const
 
 void ContentDistributor::populate(Node* node, ContentDistribution& pool)
 {
-    if (!isInsertionPoint(node)) {
+    if (!isActiveInsertionPoint(node)) {
         pool.append(node);
         return;
     }
 
     InsertionPoint* insertionPoint = toInsertionPoint(node);
-    if (!insertionPoint->isActive()) {
-        pool.append(insertionPoint);
-        return;
-    }
-
     if (insertionPoint->hasDistribution()) {
         for (size_t i = 0; i < insertionPoint->size(); ++i)
             populate(insertionPoint->at(i), pool);
@@ -91,11 +86,9 @@ void ContentDistributor::distribute(Element* host)
         HTMLShadowElement* firstActiveShadowInsertionPoint = 0;
 
         for (Node* node = root; node; node = node->traverseNextNode(root)) {
-            if (!isInsertionPoint(node))
+            if (!isActiveInsertionPoint(node))
                 continue;
             InsertionPoint* point = toInsertionPoint(node);
-            if (!point->isActive())
-                continue;
 
             if (isHTMLShadowElement(node)) {
                 if (!firstActiveShadowInsertionPoint)
@@ -179,7 +172,7 @@ void ContentDistributor::distributeNodeChildrenTo(InsertionPoint* insertionPoint
 {
     ContentDistribution distribution;
     for (Node* node = containerNode->firstChild(); node; node = node->nextSibling()) {
-        if (isInsertionPoint(node) && toInsertionPoint(node)->isActive()) {
+        if (isActiveInsertionPoint(node)) {
             InsertionPoint* innerInsertionPoint = toInsertionPoint(node);
             if (innerInsertionPoint->hasDistribution()) {
                 for (size_t i = 0; i < innerInsertionPoint->size(); ++i) {

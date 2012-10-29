@@ -86,9 +86,6 @@ private:
 
 inline bool isInsertionPoint(const Node* node)
 {
-    if (!node)
-        return false;
-
     if (node->isHTMLElement() && toHTMLElement(node)->isInsertionPoint())
         return true;
 
@@ -97,13 +94,13 @@ inline bool isInsertionPoint(const Node* node)
 
 inline InsertionPoint* toInsertionPoint(Node* node)
 {
-    ASSERT(isInsertionPoint(node));
+    ASSERT(!node || isInsertionPoint(node));
     return static_cast<InsertionPoint*>(node);
 }
 
 inline const InsertionPoint* toInsertionPoint(const Node* node)
 {
-    ASSERT(isInsertionPoint(node));
+    ASSERT(!node || isInsertionPoint(node));
     return static_cast<const InsertionPoint*>(node);
 }
 
@@ -114,7 +111,7 @@ inline bool isActiveInsertionPoint(const Node* node)
 
 inline bool isLowerEncapsulationBoundary(Node* node)
 {
-    if (!isInsertionPoint(node))
+    if (!node || !isInsertionPoint(node))
         return false;
     return toInsertionPoint(node)->isShadowBoundary();
 }

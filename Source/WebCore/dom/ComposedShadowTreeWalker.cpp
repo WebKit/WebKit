@@ -198,11 +198,9 @@ Node* ComposedShadowTreeWalker::traverseSiblings(const Node* node, TraversalDire
 Node* ComposedShadowTreeWalker::traverseNode(const Node* node, TraversalDirection direction)
 {
     ASSERT(node);
-    if (!isInsertionPoint(node))
+    if (!isActiveInsertionPoint(node))
         return const_cast<Node*>(node);
     const InsertionPoint* insertionPoint = toInsertionPoint(node);
-    if (!insertionPoint->isActive())
-        return const_cast<Node*>(node);
     if (Node* found = traverseDistributedNodes(direction == TraversalDirectionForward ? insertionPoint->first() : insertionPoint->last(), insertionPoint, direction))
         return found;
     return traverseLightChildren(node, direction);
