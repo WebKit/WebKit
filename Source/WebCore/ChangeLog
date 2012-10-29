@@ -1,3 +1,22 @@
+2012-10-29  Eric Carlson  <eric.carlson@apple.com>
+
+        Support captions when PLUGIN_PROXY_FOR_VIDEO
+        https://bugs.webkit.org/show_bug.cgi?id=100690
+
+        Reviewed by Simon Fraser.
+
+        When built with PLUGIN_PROXY_FOR_VIDEO, WebCore uses a plug-in for the media element's
+        platform media engine. Update this code path so the shadow DOM elements used to display
+        text tracks are created and configured correctly.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::configureMediaControls): Create media controls if necessary.
+
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::layout): Set the position and size of the shadow DOM when the
+            position of the embedded element changes.
+        * rendering/RenderEmbeddedObject.h:
+
 2012-10-29  Justin Novosad  <junov@google.com>
 
         [Chromium] flickering observed when copying 2D canvas to webGL texture
