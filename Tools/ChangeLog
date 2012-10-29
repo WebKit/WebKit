@@ -1,3 +1,19 @@
+2012-10-29  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][WK2] REGRESSION(r132342): fast/events/frame-tab-focus.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=100646
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::focus): Improve the check we perform to
+        decide whether the focus should be taken out of the view before
+        focusing it again so that we do not unnecessarily unfocus it and
+        cause blur/focus events to be triggered. Instead of just verifying
+        if the Evas_Object representing the view has focus, use the WK C
+        API to check that the currently focused frame is not the main
+        frame.
+
 2012-10-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r132782.

@@ -275,6 +275,3 @@ webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure ]
 webkit.org/b/91854 editing/spelling [ Skip ]
 
 webkit.org/b/100248 fast/forms/select-multiple-elements-with-mouse-drag.html [ Failure ]
-
-# Spurious output after fixing flakiness
-webkit.org/b/100010 fast/events/frame-tab-focus.html [ Failure ]
