@@ -256,6 +256,9 @@ webkit.org/b/98741 plugins/refcount-leaks.html [ Failure ]
 # NPP_SetWindow is not called during plugin destruction on X11.
 webkit.org/b/63261 plugins/npp-set-window-called-during-destruction.html [ Failure ]
 
+# Focus navigation behaves differently than in DRT
+webkit.org/b/100669 fast/dom/shadow/focus-navigation.html [ Failure ]
+
 # Delete plugin failures.
 webkit.org/b/98740 plugins/npruntime/delete-plugin-within-hasProperty-return-false.html [ Failure ]
 webkit.org/b/98740 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]

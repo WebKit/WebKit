@@ -1,3 +1,17 @@
+2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WKTR] Enable Shadow DOM at runtime if compiled with SHADOW_DOM support
+        https://bugs.webkit.org/show_bug.cgi?id=100668
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable Shadow DOM functionality at run time in WebKitTestRunner
+        if compiled with SHADOW_DOM flag set. This is needed to run
+        the Shadow DOM layout tests.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+
 2012-10-29  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][AC] Fix bugs preventing us from running layout tests with AC turned on

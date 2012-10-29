@@ -1,5 +1,24 @@
 2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [WK2][WKTR] Enable Shadow DOM at runtime if compiled with SHADOW_DOM support
+        https://bugs.webkit.org/show_bug.cgi?id=100668
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Bundle API to enable Shadow DOM functionality. This is
+        now needed by WebKitTestRunner.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetShadowDOMEnabled):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setShadowDOMEnabled):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
+2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Fix cursor change detection in EwkViewImpl::setCursor()
         https://bugs.webkit.org/show_bug.cgi?id=100662
 

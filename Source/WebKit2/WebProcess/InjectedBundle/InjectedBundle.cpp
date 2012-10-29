@@ -70,6 +70,10 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 
+#if ENABLE(SHADOW_DOM)
+#include <WebCore/RuntimeEnabledFeatures.h>
+#endif
+
 using namespace WebCore;
 using namespace JSC;
 
@@ -620,6 +624,15 @@ void InjectedBundle::setTabKeyCyclesThroughElements(WebPage* page, bool enabled)
 void InjectedBundle::setSerialLoadingEnabled(bool enabled)
 {
     resourceLoadScheduler()->setSerialLoadingEnabled(enabled);
+}
+
+void InjectedBundle::setShadowDOMEnabled(bool enabled)
+{
+#if ENABLE(SHADOW_DOM)
+    RuntimeEnabledFeatures::setShadowDOMEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 void InjectedBundle::dispatchPendingLoadRequests()

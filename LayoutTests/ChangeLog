@@ -1,3 +1,19 @@
+2012-10-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WKTR] Enable Shadow DOM at runtime if compiled with SHADOW_DOM support
+        https://bugs.webkit.org/show_bug.cgi?id=100668
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove Shadow DOM layout tests from the global wk2 TestExpectations
+        and add it to the mac-wk2 one. EFL and GTK ports have Shadow DOM
+        enabled so they don't need to be skipped for those ports. The Qt port
+        is already skipping those tests in its global TestExpectations file.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2012-10-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Text with zero font size renders as X px sometimes, causing fast/text/zero-font-size-2.html to fail
