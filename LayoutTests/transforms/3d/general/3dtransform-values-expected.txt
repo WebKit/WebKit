@@ -1,6 +1,7 @@
 transform "translate3d(0, 0, 10px)" expected "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 10, 1)" : PASS
 transform "translateZ(10px)" expected "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 10, 1)" : PASS
 transform "rotate3d(0, 1, 0, 180deg)" expected "matrix3d(-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1)" : PASS
+transform "rotate3d(0, 0, 0, 180deg)" expected "matrix3d(1, 0, 0, 1, 0, 0)" : PASS
 transform "translate3d(0, 0, 10px)" expected "matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 10, 1)" : PASS
 transform "translate3d(0, 0, 10%)" expected "none" : PASS
 transform "translate3d(0, 0, 10)" expected "none" : PASS

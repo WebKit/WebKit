@@ -727,24 +727,22 @@ TransformationMatrix& TransformationMatrix::scale3d(double sx, double sy, double
 
 TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double z, double angle)
 {
-    // Angles are in degrees. Switch to radians.
-    angle = deg2rad(angle);
-
-    double sinTheta = sin(angle);
-    double cosTheta = cos(angle);
-    
     // Normalize the axis of rotation
     double length = sqrt(x * x + y * y + z * z);
     if (length == 0) {
-        // bad vector, just use something reasonable
-        x = 0;
-        y = 0;
-        z = 1;
+        // A direction vector that cannot be normalized, such as [0, 0, 0], will cause the rotation to not be applied. 
+        return *this;
     } else if (length != 1) {
         x /= length;
         y /= length;
         z /= length;
     }
+
+    // Angles are in degrees. Switch to radians.
+    angle = deg2rad(angle);
+
+    double sinTheta = sin(angle);
+    double cosTheta = cos(angle);
     
     TransformationMatrix mat;
 

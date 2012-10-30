@@ -1,3 +1,15 @@
+2012-10-30  Zoltan Nyul  <zoltan.nyul@intel.com>
+
+        3d rotation with [0, 0, 0] direction vector should not be applied
+        https://bugs.webkit.org/show_bug.cgi?id=100733
+
+        Reviewed by Levi Weintraub.
+
+        Add test for 3d rotation with [0, 0, 0] direction vector.
+
+        * transforms/3d/general/3dtransform-values-expected.txt:
+        * transforms/3d/general/3dtransform-values.html:
+
 2012-10-30  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Bitmap should show whole view area.

@@ -1,3 +1,19 @@
+2012-10-30  Zoltan Nyul  <zoltan.nyul@intel.com>
+
+        3d rotation with [0, 0, 0] direction vector should not be applied
+        https://bugs.webkit.org/show_bug.cgi?id=100733
+
+        Reviewed by Levi Weintraub.
+
+        As stated in the specification (http://dev.w3.org/csswg/css3-3d-transforms/#transform-functions),
+        a direction vector that cannot be normalized, such as [0, 0, 0], will cause the rotation to not be applied,
+        but webkit applies it with [1, 0, 0] direction vector.
+
+        Test: transforms/3d/general/3dtransform-values.html
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::rotate3d):
+
 2012-10-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: report actual object address for CachedResourceClients
