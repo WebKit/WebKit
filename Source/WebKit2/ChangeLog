@@ -1,3 +1,15 @@
+2012-10-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Fix EFL build after r132887
+        https://bugs.webkit.org/show_bug.cgi?id=100748
+
+        Reviewed by Gyuyoung Kim.
+
+        Fixed EFL build failure with WTF_USE_TILED_BACKING_STORE enabled caused by http://trac.webkit.org/changeset/132887.
+
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+
 2012-10-30  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Reject vertex shaders with custom attributes

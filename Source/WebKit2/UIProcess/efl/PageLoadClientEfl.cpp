@@ -136,7 +136,7 @@ void PageLoadClientEfl::didCommitLoadForFrame(WKPageRef, WKFrameRef frame, WKTyp
         return;
 
     EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
-    viewImpl->smartCallback<LoadCommitted>().call();
+    viewImpl->informLoadCommitted();
 }
 #endif
 
