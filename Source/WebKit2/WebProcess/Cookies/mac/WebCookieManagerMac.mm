@@ -34,7 +34,7 @@ namespace WebKit {
 
 void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:policy];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:static_cast<NSHTTPCookieAcceptPolicy>(policy)];
 
 #if USE(CFURLSTORAGESESSIONS)
     if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage())

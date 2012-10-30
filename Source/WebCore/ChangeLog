@@ -1,3 +1,47 @@
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
+        Build WebKit as C++11 on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=100720
+
+        Reviewed by Daniel Bates.
+
+        * Configurations/Base.xcconfig:
+        Add CLANG_CXX_LANGUAGE_STANDARD=gnu++0x.
+
+        * platform/graphics/FontPlatformData.h:
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::strokeArc):
+        * platform/graphics/filters/CustomFilterProgramInfo.cpp:
+        (WebCore::CustomFilterProgramInfo::hash):
+        (WebCore::ProtectionSpaceHash::hash):
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::setHTTPBody):
+        Add static_casts to prevent implicit type conversions in non-constant initializer lists.
+        
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::ClipboardMac::createDragImage):
+        * platform/mac/CursorMac.mm:
+        (WebCore::createNamedCursor):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformSetContentsSize):
+        Use NSMakePoint to prevent implicit type conversions in non-constant initializer lists.
+
+        * platform/mac/CookieJar.mm:
+        (WebCore::cookiesEnabled):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::shouldRelaxThirdPartyCookiePolicy):
+        Add explicit casts to NSHTTPCookieAcceptPolicy.
+
+        * platform/mac/WebCoreNSURLExtras.h:
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::URLByTruncatingOneCharacterBeforeComponent):
+        (WebCore::dataForURLComponentType):
+        * platform/network/ProtectionSpaceHash.h:
+        Use CFIndex instead of CFURLComponentType, the enum can be mangled differently in some cases, and these
+        functions are exported from WebCore.
+
 2012-10-30  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12395187> REGRESSION (r121299): OS X Text Replacement forces cursor out of text fields

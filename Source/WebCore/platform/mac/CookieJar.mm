@@ -147,7 +147,7 @@ bool cookiesEnabled(const Document*)
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy;
 #if USE(CFURLSTORAGESESSIONS)
     if (RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage())
-        cookieAcceptPolicy = wkGetHTTPCookieAcceptPolicy(cfCookieStorage.get());
+        cookieAcceptPolicy = static_cast<NSHTTPCookieAcceptPolicy>(wkGetHTTPCookieAcceptPolicy(cfCookieStorage.get()));
     else
 #endif
         cookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];

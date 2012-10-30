@@ -85,8 +85,8 @@ unsigned CustomFilterProgramInfo::hash() const
         hashPossiblyNullString(m_vertexShaderString),
         hashPossiblyNullString(m_fragmentShaderString),
         blendsElementTexture,
-        blendsElementTexture ? m_mixSettings.blendMode : 0,
-        blendsElementTexture ? m_mixSettings.compositeOperator : 0,
+        static_cast<uintptr_t>(blendsElementTexture ? m_mixSettings.blendMode : 0),
+        static_cast<uintptr_t>(blendsElementTexture ? m_mixSettings.compositeOperator : 0),
         m_meshType
     };
     return StringHasher::hashMemory<sizeof(hashCodes)>(&hashCodes);

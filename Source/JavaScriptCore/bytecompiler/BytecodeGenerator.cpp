@@ -170,8 +170,8 @@ JSObject* BytecodeGenerator::generate()
         TryRange& range = m_tryRanges[i];
         ASSERT(range.tryData->targetScopeDepth != UINT_MAX);
         HandlerInfo info = {
-            range.start->bind(0, 0), range.end->bind(0, 0),
-            range.tryData->target->bind(0, 0), range.tryData->targetScopeDepth
+            static_cast<uint32_t>(range.start->bind(0, 0)), static_cast<uint32_t>(range.end->bind(0, 0)),
+            static_cast<uint32_t>(range.tryData->target->bind(0, 0)), static_cast<uint32_t>(range.tryData->targetScopeDepth)
 #if ENABLE(JIT)
             ,
 #if ENABLE(LLINT)
@@ -2131,11 +2131,11 @@ void BytecodeGenerator::pushFinallyContext(StatementNode* finallyBlock)
     scope.isFinallyBlock = true;
     FinallyContext context = {
         finallyBlock,
-        m_scopeContextStack.size(),
-        m_switchContextStack.size(),
-        m_forInContextStack.size(),
-        m_tryContextStack.size(),
-        m_labelScopes.size(),
+        static_cast<unsigned>(m_scopeContextStack.size()),
+        static_cast<unsigned>(m_switchContextStack.size()),
+        static_cast<unsigned>(m_forInContextStack.size()),
+        static_cast<unsigned>(m_tryContextStack.size()),
+        static_cast<unsigned>(m_labelScopes.size()),
         m_finallyDepth,
         m_dynamicScopeDepth
     };
@@ -2462,7 +2462,7 @@ void BytecodeGenerator::emitPushNameScope(const Identifier& property, RegisterID
 
 void BytecodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::SwitchType type)
 {
-    SwitchInfo info = { instructions().size(), type };
+    SwitchInfo info = { static_cast<uint32_t>(instructions().size()), type };
     switch (type) {
         case SwitchInfo::SwitchImmediate:
             emitOpcode(op_switch_imm);

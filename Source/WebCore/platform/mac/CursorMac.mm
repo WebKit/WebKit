@@ -61,10 +61,9 @@ static RetainPtr<NSCursor> createNamedCursor(const char* name, int x, int y)
     
     RetainPtr<NSCursor> cursor;
 
-    if (cursorImage) {
-        NSPoint hotSpotPoint = {x, y}; // workaround for 4213314
-        cursor.adoptNS([[NSCursor alloc] initWithImage:cursorImage.get() hotSpot:hotSpotPoint]);
-    }
+    if (cursorImage)
+        cursor = adoptNS([[NSCursor alloc] initWithImage:cursorImage.get() hotSpot:NSMakePoint(x, y)]);
+
     return cursor;
     END_BLOCK_OBJC_EXCEPTIONS;
     return nil;

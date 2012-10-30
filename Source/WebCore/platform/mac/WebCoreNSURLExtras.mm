@@ -510,12 +510,12 @@ static NSString *stringByTrimmingWhitespace(NSString *string)
     return trimmed;
 }
 
-NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *URL, CFURLComponentType component)
+NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *URL, CFIndex component)
 {
     if (!URL)
         return nil;
     
-    CFRange fragRg = CFURLGetByteRangeForComponent((CFURLRef)URL, component, NULL);
+    CFRange fragRg = CFURLGetByteRangeForComponent((CFURLRef)URL, static_cast<CFURLComponentType>(component), NULL);
     if (fragRg.location == kCFNotFound)
         return URL;
     
@@ -619,7 +619,7 @@ static BOOL hasQuestionMarkOnlyQueryString(NSURL *URL)
 
 #define completeURL (CFURLComponentType)-1
 
-NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
+NSData *dataForURLComponentType(NSURL *URL, CFIndex componentType)
 {
     static int URLComponentTypeBufferLength = 2048;
     
@@ -635,7 +635,7 @@ NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
     
     CFRange range;
     if (componentType != completeURL) {
-        range = CFURLGetByteRangeForComponent((CFURLRef)URL, componentType, NULL);
+        range = CFURLGetByteRangeForComponent((CFURLRef)URL, static_cast<CFURLComponentType>(componentType), NULL);
         if (range.location == kCFNotFound)
             return nil;
     } else {

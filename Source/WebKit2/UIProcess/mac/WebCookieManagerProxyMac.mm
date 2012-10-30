@@ -33,7 +33,7 @@ void WebCookieManagerProxy::persistHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy
     // FIXME: The sandbox appears to prevent persisting the new policy to disk, so we must set the
     // policy in the UI Process as well as in the Web Process (to make sure it gets set on any
     // Private Browsing Cookie Storage).
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:policy];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:static_cast<NSHTTPCookieAcceptPolicy>(policy)];
 }
 
 } // namespace WebKit

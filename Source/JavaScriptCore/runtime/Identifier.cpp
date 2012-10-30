@@ -128,7 +128,7 @@ PassRefPtr<StringImpl> Identifier::add8(JSGlobalData* globalData, const UChar* s
     
     if (!length)
         return StringImpl::empty();
-    CharBuffer<UChar> buf = {s, length}; 
+    CharBuffer<UChar> buf = { s, static_cast<unsigned>(length) };
     HashSet<StringImpl*>::AddResult addResult = globalData->identifierTable->add<CharBuffer<UChar>, IdentifierLCharFromUCharTranslator >(buf);
     
     // If the string is newly-translated, then we need to adopt it.

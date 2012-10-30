@@ -488,7 +488,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
             }
         }
 
-        const CGFloat dottedLine[2] = { patWidth, patWidth };
+        const CGFloat dottedLine[2] = { static_cast<CGFloat>(patWidth), static_cast<CGFloat>(patWidth) };
         CGContextSetLineDash(context, patternOffset, dottedLine, 2);
     }
 
@@ -596,7 +596,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
             }
         }
 
-        const CGFloat dottedLine[2] = { patWidth, patWidth };
+        const CGFloat dottedLine[2] = { static_cast<CGFloat>(patWidth), static_cast<CGFloat>(patWidth) };
         CGContextSetLineDash(context, patternOffset, dottedLine, 2);
     }
 

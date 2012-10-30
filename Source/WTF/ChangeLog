@@ -1,5 +1,23 @@
 2012-10-29  Anders Carlsson  <andersca@apple.com>
 
+        Build WebKit as C++11 on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=100720
+
+        Reviewed by Daniel Bates.
+
+        * Configurations/Base.xcconfig:
+        Add CLANG_CXX_LANGUAGE_STANDARD=gnu++0x.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::add):
+        Change the type of length to be unsigned to prevent implicit type conversions in non-constant initializer lists.
+
+        * wtf/unicode/UTF8.cpp:
+        (Unicode):
+        Add static_casts to prevent implicit type conversions in non-constant initializer lists.
+
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
         String::createCFString should return a RetainPtr
         https://bugs.webkit.org/show_bug.cgi?id=100419
 

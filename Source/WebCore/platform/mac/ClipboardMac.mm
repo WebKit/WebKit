@@ -404,7 +404,7 @@ void ClipboardMac::declareAndWriteDragImage(Element* element, const KURL& url, c
     
 DragImageRef ClipboardMac::createDragImage(IntPoint& loc) const
 {
-    NSPoint nsloc = {loc.x(), loc.y()};
+    NSPoint nsloc = NSMakePoint(loc.x(), loc.y());
     DragImageRef result = dragNSImage(nsloc);
     loc = (IntPoint)nsloc;
     return result;

@@ -1492,10 +1492,10 @@
 		5038BE401472AD980095E0D1 /* CachedShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5038BE3E1472AD980095E0D1 /* CachedShader.cpp */; };
 		5038BE411472AD980095E0D1 /* CachedShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 5038BE3F1472AD980095E0D1 /* CachedShader.h */; };
 		503D0CAA14B5B08700F32F57 /* CustomFilterProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 503D0CA714B5B08700F32F57 /* CustomFilterProgram.cpp */; };
-		503D0CAB14B5B08700F32F57 /* CustomFilterProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 503D0CA814B5B08700F32F57 /* CustomFilterProgram.h */; settings = {ATTRIBUTES = (); }; };
-		503D0CAC14B5B08700F32F57 /* CustomFilterProgramClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 503D0CA914B5B08700F32F57 /* CustomFilterProgramClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		503D0CAA14B5B08700F32F58 /* CustomFilterRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 503D0CA714B5B08700F32F58 /* CustomFilterRenderer.cpp */; };
+		503D0CAB14B5B08700F32F57 /* CustomFilterProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 503D0CA814B5B08700F32F57 /* CustomFilterProgram.h */; settings = {ATTRIBUTES = (); }; };
 		503D0CAB14B5B08700F32F58 /* CustomFilterRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 503D0CA814B5B08700F32F58 /* CustomFilterRenderer.h */; settings = {ATTRIBUTES = (); }; };
+		503D0CAC14B5B08700F32F57 /* CustomFilterProgramClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 503D0CA914B5B08700F32F57 /* CustomFilterProgramClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		503D0CAE14B5B0BA00F32F57 /* StyleCustomFilterProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 503D0CAD14B5B0BA00F32F57 /* StyleCustomFilterProgram.h */; settings = {ATTRIBUTES = (); }; };
 		5081E3C33CE580C16EF8B48B /* CachedResourceRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5081E3DF3CFC80C16EF8B48B /* CachedResourceRequest.cpp */; };
 		5081E3E03CFF80C16EF8B48B /* CachedResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5081E3E13D0280C16EF8B48B /* CachedResourceRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8705,10 +8705,10 @@
 		5038BE3E1472AD980095E0D1 /* CachedShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedShader.cpp; sourceTree = "<group>"; };
 		5038BE3F1472AD980095E0D1 /* CachedShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedShader.h; sourceTree = "<group>"; };
 		503D0CA714B5B08700F32F57 /* CustomFilterProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterProgram.cpp; path = filters/CustomFilterProgram.cpp; sourceTree = "<group>"; };
-		503D0CA814B5B08700F32F57 /* CustomFilterProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterProgram.h; path = filters/CustomFilterProgram.h; sourceTree = "<group>"; };
-		503D0CA914B5B08700F32F57 /* CustomFilterProgramClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterProgramClient.h; path = filters/CustomFilterProgramClient.h; sourceTree = "<group>"; };
 		503D0CA714B5B08700F32F58 /* CustomFilterRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterRenderer.cpp; path = filters/CustomFilterRenderer.cpp; sourceTree = "<group>"; };
+		503D0CA814B5B08700F32F57 /* CustomFilterProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterProgram.h; path = filters/CustomFilterProgram.h; sourceTree = "<group>"; };
 		503D0CA814B5B08700F32F58 /* CustomFilterRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterRenderer.h; path = filters/CustomFilterRenderer.h; sourceTree = "<group>"; };
+		503D0CA914B5B08700F32F57 /* CustomFilterProgramClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterProgramClient.h; path = filters/CustomFilterProgramClient.h; sourceTree = "<group>"; };
 		503D0CAD14B5B0BA00F32F57 /* StyleCustomFilterProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleCustomFilterProgram.h; path = style/StyleCustomFilterProgram.h; sourceTree = "<group>"; };
 		5081E3DF3CFC80C16EF8B48B /* CachedResourceRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceRequest.cpp; sourceTree = "<group>"; };
 		5081E3E13D0280C16EF8B48B /* CachedResourceRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CachedResourceRequest.h; sourceTree = "<group>"; };

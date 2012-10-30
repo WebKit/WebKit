@@ -282,7 +282,7 @@ static bool bumperCarBackForwardHackNeeded()
         [result appendString:[kit(entries[i].get()) description]];
 
         // shift all the contents over.  a bit slow, but this is for debugging
-        NSRange replRange = {currPos, [result length]-currPos};
+        NSRange replRange = { static_cast<NSUInteger>(currPos), [result length] - currPos };
         [result replaceOccurrencesOfString:@"\n" withString:@"\n        " options:0 range:replRange];
         
         [result appendString:@"\n"];

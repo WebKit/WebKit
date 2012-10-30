@@ -1,3 +1,19 @@
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
+        Build WebKit as C++11 on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=100720
+
+        Reviewed by Daniel Bates.
+
+        * Configurations/Base.xcconfig:
+        Add CLANG_CXX_LANGUAGE_STANDARD=gnu++0x.
+
+        * UIProcess/mac/WebCookieManagerProxyMac.mm:
+        (WebKit::WebCookieManagerProxy::persistHTTPCookieAcceptPolicy):
+        * WebProcess/Cookies/mac/WebCookieManagerMac.mm:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        Add explicit casts to NSHTTPCookieAcceptPolicy.
+
 2012-10-30  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2][Qt] Enable hover and mouse events in flickable WebView

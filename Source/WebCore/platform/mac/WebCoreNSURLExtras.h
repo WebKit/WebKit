@@ -47,10 +47,10 @@ NSString *decodeHostNameWithRange(NSString *, NSRange);
 NSString *encodeHostNameWithRange(NSString *, NSRange);
 NSString *decodeHostName(NSString *);
 NSString *encodeHostName(NSString *);
-NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *, CFURLComponentType);
+NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *, CFIndex);
 NSURL *URLWithData(NSData *, NSURL *baseURL);
 NSData *originalURLData(NSURL *);
-NSData *dataForURLComponentType(NSURL *, CFURLComponentType);
+NSData *dataForURLComponentType(NSURL *, CFIndex);
 BOOL isUserVisibleURL(NSString *);
     
 } // namespace WebCore

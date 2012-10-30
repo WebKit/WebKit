@@ -36,7 +36,7 @@ struct ProtectionSpaceHash {
     { 
         unsigned hashCodes[5] = {
             protectionSpace.host().impl() ? protectionSpace.host().impl()->hash() : 0, 
-            protectionSpace.port(), 
+            static_cast<unsigned>(protectionSpace.port()),
             protectionSpace.serverType(),
             protectionSpace.authenticationScheme(),
             protectionSpace.realm().impl() ? protectionSpace.realm().impl()->hash() : 0

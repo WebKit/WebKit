@@ -438,7 +438,7 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> prpFormDat
 #endif
 
     // Precompute the content length so NSURLConnection doesn't use chunked mode.
-    long long length = 0;
+    unsigned long long length = 0;
     for (size_t i = 0; i < count; ++i) {
         const FormDataElement& element = formData->elements()[i];
         if (element.m_type == FormDataElement::data)

@@ -53,7 +53,7 @@
 
 namespace JSC {
 
-#define OFFLINE_ASM_OFFSETOF(clazz, field) OBJECT_OFFSETOF(clazz, field)
+#define OFFLINE_ASM_OFFSETOF(clazz, field) (static_cast<unsigned>(OBJECT_OFFSETOF(clazz, field)))
 
 class LLIntOffsetsExtractor {
 public:

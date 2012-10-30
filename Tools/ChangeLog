@@ -1,3 +1,16 @@
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
+        Build WebKit as C++11 on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=100720
+
+        Reviewed by Daniel Bates.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+        * MiniBrowser/Configurations/Base.xcconfig:
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        Add CLANG_CXX_LANGUAGE_STANDARD=gnu++0x.
+
 2012-10-30  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][JHBUILD] Update EFL libraries to v1.7.1 stable release
