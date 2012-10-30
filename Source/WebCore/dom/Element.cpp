@@ -765,18 +765,49 @@ static inline bool classStringHasClassName(const AtomicString& newClassString)
     return classStringHasClassName(newClassString.characters16(), length);
 }
 
+static void collectAddedAndRemovedClasses(Vector<AtomicString, 4>& addedAndRemovedClasses, SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
+{
+    for (unsigned i = 0; i < newClasses.size(); ++i) {
+        if (oldClasses.remove(newClasses[i]))
+            continue;
+        addedAndRemovedClasses.append(newClasses[i]);
+    }
+    for (unsigned i = 0; i < oldClasses.size(); ++i)
+        addedAndRemovedClasses.append(oldClasses[i]);
+}
+
 void Element::classAttributeChanged(const AtomicString& newClassString)
 {
+    bool shouldInvalidateStyle = attached() && document()->styleResolverIfExists();
+    Vector<AtomicString, 4> addedAndRemovedClasses;
+
     if (classStringHasClassName(newClassString)) {
+        const ElementAttributeData* attributeData = ensureAttributeData();
         const bool shouldFoldCase = document()->inQuirksMode();
-        ensureAttributeData()->setClass(newClassString, shouldFoldCase);
-    } else if (attributeData())
+        SpaceSplitString oldClasses = attributeData->classNames();
+        attributeData->setClass(newClassString, shouldFoldCase);
+        if (shouldInvalidateStyle)
+            collectAddedAndRemovedClasses(addedAndRemovedClasses, oldClasses, mutableAttributeData()->classNames());
+    } else if (attributeData()) {
+        if (shouldInvalidateStyle) {
+            const SpaceSplitString& oldClasses = attributeData()->classNames();
+            for (unsigned i = 0; i < oldClasses.size(); ++i)
+                addedAndRemovedClasses.append(oldClasses[i]);
+        }
         mutableAttributeData()->clearClass();
+    }
 
     if (DOMTokenList* classList = optionalClassList())
         static_cast<ClassList*>(classList)->reset(newClassString);
 
-    setNeedsStyleRecalc();
+    if (!shouldInvalidateStyle)
+        return;
+    for (unsigned i = 0; i < addedAndRemovedClasses.size(); ++i) {
+        if (document()->styleResolverIfExists()->hasSelectorForClass(addedAndRemovedClasses[i])) {
+            setNeedsStyleRecalc();
+            break;
+        }
+    }
 }
 
 // Returns true is the given attribute is an event handler.

@@ -39,9 +39,9 @@ class ContainerNode;
 class CSSStyleSheet;
 class Element;
 class RuleSet;
-class RuleFeatureSet;
 class ShadowRoot;
 class StyleRuleHost;
+struct RuleFeatureSet;
 
 #if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
 

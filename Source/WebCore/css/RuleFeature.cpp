@@ -38,11 +38,14 @@ namespace WebCore {
 
 void RuleFeatureSet::add(const RuleFeatureSet& other)
 {
-    HashSet<AtomicStringImpl*>::iterator end = other.idsInRules.end();
-    for (HashSet<AtomicStringImpl*>::iterator it = other.idsInRules.begin(); it != end; ++it)
+    HashSet<AtomicStringImpl*>::const_iterator end = other.idsInRules.end();
+    for (HashSet<AtomicStringImpl*>::const_iterator it = other.idsInRules.begin(); it != end; ++it)
         idsInRules.add(*it);
+    end = other.classesInRules.end();
+    for (HashSet<AtomicStringImpl*>::const_iterator it = other.classesInRules.begin(); it != end; ++it)
+        classesInRules.add(*it);
     end = other.attrsInRules.end();
-    for (HashSet<AtomicStringImpl*>::iterator it = other.attrsInRules.begin(); it != end; ++it)
+    for (HashSet<AtomicStringImpl*>::const_iterator it = other.attrsInRules.begin(); it != end; ++it)
         attrsInRules.add(*it);
     siblingRules.append(other.siblingRules);
     uncommonAttributeRules.append(other.uncommonAttributeRules);
@@ -53,6 +56,7 @@ void RuleFeatureSet::add(const RuleFeatureSet& other)
 void RuleFeatureSet::clear()
 {
     idsInRules.clear();
+    classesInRules.clear();
     attrsInRules.clear();
     siblingRules.clear();
     uncommonAttributeRules.clear();
@@ -64,6 +68,7 @@ void RuleFeatureSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(idsInRules);
+    info.addMember(classesInRules);
     info.addMember(attrsInRules);
     info.addMember(siblingRules);
     info.addMember(uncommonAttributeRules);

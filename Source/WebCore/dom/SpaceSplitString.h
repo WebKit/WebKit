@@ -47,7 +47,7 @@ namespace WebCore {
         bool containsAll(SpaceSplitStringData&);
 
         void add(const AtomicString&);
-        void remove(const AtomicString&);
+        void remove(unsigned index);
 
         bool isUnique() const { return m_keyString.isNull(); } 
         size_t size() const { return m_vector.size(); }
@@ -76,7 +76,7 @@ namespace WebCore {
         bool contains(const AtomicString& string) const { return m_data && m_data->contains(string); }
         bool containsAll(const SpaceSplitString& names) const { return !names.m_data || (m_data && m_data->containsAll(*names.m_data)); }
         void add(const AtomicString&);
-        void remove(const AtomicString&);
+        bool remove(const AtomicString&);
 
         size_t size() const { return m_data ? m_data->size() : 0; }
         bool isNull() const { return !m_data; }

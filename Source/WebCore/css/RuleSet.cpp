@@ -161,7 +161,9 @@ static inline void collectFeaturesFromSelector(RuleFeatureSet& features, const C
 {
     if (selector->m_match == CSSSelector::Id)
         features.idsInRules.add(selector->value().impl());
-    if (selector->isAttributeSelector())
+    else if (selector->m_match == CSSSelector::Class)
+        features.classesInRules.add(selector->value().impl());
+    else if (selector->isAttributeSelector())
         features.attrsInRules.add(selector->attribute().localName().impl());
     switch (selector->pseudoType()) {
     case CSSSelector::PseudoFirstLine:

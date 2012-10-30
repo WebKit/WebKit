@@ -1,3 +1,55 @@
+2012-10-30  Antti Koivisto  <antti@apple.com>
+
+        Avoid unnecessary style recalcs on class attribute mutation
+        https://bugs.webkit.org/show_bug.cgi?id=100776
+
+        Reviewed by Andreas Kling.
+
+        There is no need to invalidate element style on class attribute change if neither the added
+        or removed classes featured in any active stylesheet.
+
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::add):
+        (WebCore::RuleFeatureSet::clear):
+        (WebCore::RuleFeatureSet::reportMemoryUsage):
+        * css/RuleFeature.h:
+        (RuleFeatureSet):
+        * css/RuleSet.cpp:
+        (WebCore::collectFeaturesFromSelector):
+        
+            Collect classes mentioned in CSS selectors the same way ids and attribute names are
+            already collected.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::hasSelectorForClass):
+        
+            Add a method to test if a given class name is mentioned anywhere in stylehseets.
+
+        (WebCore):
+        * css/StyleResolver.h:
+        * css/StyleScopeResolver.h:
+        (WebCore):
+        * dom/Element.cpp:
+        (WebCore::collectAddedAndRemovedClasses):
+        (WebCore):
+        (WebCore::Element::classAttributeChanged):
+        
+            Figure out which classes were added and removed. Test if they are present in any style
+            rule and invalidate the style only if they are.
+
+        * dom/SpaceSplitString.cpp:
+        (WebCore::SpaceSplitStringData::add):
+        (WebCore::SpaceSplitStringData::remove):
+        (WebCore::SpaceSplitString::add):
+        (WebCore::SpaceSplitString::remove):
+        
+            Added bool return value to indicate if anything was actually removed. Reorganized 
+            the code a bit to avoid unnecessary uniquing when nothing changes.
+
+        * dom/SpaceSplitString.h:
+        (SpaceSplitStringData):
+        (SpaceSplitString):
+
 2012-10-30  Robert Hogan  <robert@webkit.org>
 
         white-space: nowrap inline element beside a floated element wraps incorrectly without trailing textnode/newline

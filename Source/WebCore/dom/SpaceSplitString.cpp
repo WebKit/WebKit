@@ -107,36 +107,43 @@ bool SpaceSplitStringData::containsAll(SpaceSplitStringData& other)
 void SpaceSplitStringData::add(const AtomicString& string)
 {
     ASSERT(hasOneRef());
-    if (contains(string))
-        return;
-
+    ASSERT(!contains(string));
     m_vector.append(string);
 }
 
-void SpaceSplitStringData::remove(const AtomicString& string)
+void SpaceSplitStringData::remove(unsigned index)
 {
     ASSERT(hasOneRef());
-    size_t position = 0;
-    while (position < m_vector.size()) {
-        if (m_vector[position] == string)
-            m_vector.remove(position);
-        else
-            ++position;
-    }
+    m_vector.remove(index);
 }
 
 void SpaceSplitString::add(const AtomicString& string)
 {
+    // FIXME: add() does not allow duplicates but createVector() does.
+    if (contains(string))
+        return;
     ensureUnique();
     if (m_data)
         m_data->add(string);
 }
 
-void SpaceSplitString::remove(const AtomicString& string)
+bool SpaceSplitString::remove(const AtomicString& string)
 {
-    ensureUnique();
-    if (m_data)
-        m_data->remove(string);
+    if (!m_data)
+        return false;
+    unsigned i = 0;
+    bool changed = false;
+    while (i < m_data->size()) {
+        if ((*m_data)[i] == string) {
+            if (!changed)
+                ensureUnique();
+            m_data->remove(i);
+            changed = true;
+            continue;
+        }
+        ++i;
+    }
+    return changed;
 }
 
 typedef HashMap<AtomicString, SpaceSplitStringData*> SpaceSplitStringDataMap;
