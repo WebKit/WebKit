@@ -239,10 +239,6 @@ void EwkViewImpl::displayTimerFired(WebCore::Timer<EwkViewImpl>*)
     if (!sd->image)
         return;
 
-#if USE(COORDINATED_GRAPHICS)
-    EWK_VIEW_IMPL_GET_OR_RETURN(sd, viewImpl);
-#endif
-
     Region dirtyRegion;
     for (Vector<IntRect>::iterator it = m_dirtyRects.begin(); it != m_dirtyRects.end(); ++it)
         dirtyRegion.unite(*it);
@@ -255,8 +251,8 @@ void EwkViewImpl::displayTimerFired(WebCore::Timer<EwkViewImpl>*)
     for (Vector<IntRect>::iterator it = rects.begin(); it != end; ++it) {
         IntRect rect = *it;
 #if USE(COORDINATED_GRAPHICS)
-        evas_gl_make_current(viewImpl->m_evasGl, viewImpl->m_evasGlSurface, viewImpl->m_evasGlContext);
-        viewImpl->m_pageViewportControllerClient->display(rect, IntPoint(sd->view.x, sd->view.y));
+        evas_gl_make_current(m_evasGl, m_evasGlSurface, m_evasGlContext);
+        m_pageViewportControllerClient->display(rect, IntPoint(sd->view.x, sd->view.y));
 #endif
 
         evas_object_image_data_update_add(sd->image, rect.x(), rect.y(), rect.width(), rect.height());

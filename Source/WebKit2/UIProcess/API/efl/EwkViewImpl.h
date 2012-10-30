@@ -41,23 +41,6 @@
 #include <Evas_GL.h>
 #endif
 
-#define EWK_VIEW_IMPL_GET(smartData, impl)                                     \
-    EwkViewImpl* impl = smartData->priv
-
-#define EWK_VIEW_IMPL_GET_OR_RETURN(smartData, impl, ...)                      \
-    if (!smartData) {                                                          \
-        EINA_LOG_CRIT("smart data is null");                                   \
-        return __VA_ARGS__;                                                    \
-    }                                                                          \
-    EWK_VIEW_IMPL_GET(smartData, impl);                                        \
-    do {                                                                       \
-        if (!impl) {                                                           \
-            EINA_LOG_CRIT("no private data for object %p (%s)",                \
-                smartData->self, evas_object_type_get(smartData->self));       \
-            return __VA_ARGS__;                                                \
-        }                                                                      \
-    } while (0)
-
 namespace WebKit {
 class FindClientEfl;
 class FormClientEfl;
