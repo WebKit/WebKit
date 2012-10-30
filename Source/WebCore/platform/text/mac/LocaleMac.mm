@@ -54,20 +54,20 @@ static inline String languageFromLocale(const String& locale)
     return normalizedLocale.left(separatorPosition);
 }
 
-static NSLocale* determineLocale(const String& locale)
+static RetainPtr<NSLocale> determineLocale(const String& locale)
 {
-    NSLocale* currentLocale = [NSLocale currentLocale];
-    String currentLocaleLanguage = languageFromLocale(String([currentLocale localeIdentifier]));
+    RetainPtr<NSLocale> currentLocale = [NSLocale currentLocale];
+    String currentLocaleLanguage = languageFromLocale(String([currentLocale.get() localeIdentifier]));
     String localeLanguage = languageFromLocale(locale);
     if (equalIgnoringCase(currentLocaleLanguage, localeLanguage))
         return currentLocale;
     // It seems initWithLocaleIdentifier accepts dash-separated locale identifier.
-    return [[NSLocale alloc] initWithLocaleIdentifier:locale];
+     return RetainPtr<NSLocale>(AdoptNS, [[NSLocale alloc] initWithLocaleIdentifier:locale]);
 }
 
 PassOwnPtr<Locale> Locale::create(const AtomicString& locale)
 {
-    return LocaleMac::create(determineLocale(locale.string()));
+    return LocaleMac::create(determineLocale(locale.string()).get());
 }
 
 static RetainPtr<NSDateFormatter> createDateTimeFormatter(NSLocale* locale, NSCalendar* calendar, NSDateFormatterStyle dateStyle, NSDateFormatterStyle timeStyle)
@@ -90,7 +90,7 @@ LocaleMac::LocaleMac(NSLocale* locale)
     // NSLocale returns a lower case NSLocaleLanguageCode so we don't have care about case.
     NSString* language = [m_locale.get() objectForKey:NSLocaleLanguageCode];
     if ([availableLanguages indexOfObject:language] == NSNotFound)
-        m_locale = [[NSLocale alloc] initWithLocaleIdentifier:defaultLanguage()];
+        m_locale.adoptNS([[NSLocale alloc] initWithLocaleIdentifier:defaultLanguage()]);
     [m_gregorianCalendar.get() setLocale:m_locale.get()];
 }
 
@@ -100,7 +100,8 @@ LocaleMac::~LocaleMac()
 
 PassOwnPtr<LocaleMac> LocaleMac::create(const String& localeIdentifier)
 {
-    return adoptPtr(new LocaleMac([[NSLocale alloc] initWithLocaleIdentifier:localeIdentifier]));
+    RetainPtr<NSLocale> locale = [[NSLocale alloc] initWithLocaleIdentifier:localeIdentifier];
+    return adoptPtr(new LocaleMac(locale.get()));
 }
 
 PassOwnPtr<LocaleMac> LocaleMac::create(NSLocale* locale)

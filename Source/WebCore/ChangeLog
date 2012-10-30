@@ -1,3 +1,21 @@
+2012-10-29  Keishi Hattori  <keishi@webkit.org>
+
+        NSLocale leaks in LocaleMac
+        https://bugs.webkit.org/show_bug.cgi?id=97628
+
+        Reviewed by Kent Tamura.
+
+        We need to adopt the NSLocale object so it doesn't leak and
+        determineLocale() should return a NSLocale without additional retain.
+
+        No new tests.
+
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::determineLocale): Returns a RetainPtr<NSLocale>.
+        (WebCore::Locale::create):
+        (WebCore::LocaleMac::LocaleMac): m_locale should adopt the NSLocale object.
+        (WebCore::LocaleMac::create): LocaleMac constructor takes NSLocale without additional retain.
+
 2012-10-29  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Disable redirect to data scheme for potential fishing.
