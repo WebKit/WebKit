@@ -1,3 +1,17 @@
+2012-10-30  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r116255.
+
+    2012-05-06  MORITA Hajime  <morrita@google.com>
+
+            [Shadow DOM] Node distribution should be refreshed before style recalc.
+            https://bugs.webkit.org/show_bug.cgi?id=85259
+
+            Reviewed by Dimitri Glazkov.
+
+            * fast/dom/shadow/shadow-dynamic-style-change-via-mutation-and-selector-expected.txt: Added.
+            * fast/dom/shadow/shadow-dynamic-style-change-via-mutation-and-selector.html: Added.
+
 2012-08-31  Timothy Hatcher  <timothy@apple.com>
 
         Merge r127047.
@@ -10365,6 +10379,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .

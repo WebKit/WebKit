@@ -1,0 +1,32 @@
+<style>
+.baz:nth-last-child(odd) { display: block;  }
+</style>
+<script>
+function test() {
+    var foo = document.createElement('div');
+    document.documentElement.appendChild(foo);
+
+    var bar = document.createElement('div');
+    var barShadow = new WebKitShadowRoot(bar);
+    bar.setAttribute('class', 'bar');
+    document.documentElement.appendChild(bar);
+
+    baz = document.createElement('span');
+    baz.setAttribute('class', 'baz');
+    bar.appendChild(baz);
+
+    var qux = document.createElement('div');
+    bar.appendChild(qux);
+
+    var ip = document.createElement('shadow');
+    barShadow.appendChild(ip);
+
+    document.documentElement.offsetLeft;
+    foo.appendChild(qux);
+    layoutTestController.notifyDone();
+}
+
+layoutTestController.waitUntilDone();
+layoutTestController.dumpAsText();
+window.onload = test;
+</script>
