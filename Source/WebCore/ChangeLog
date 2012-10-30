@@ -1,3 +1,28 @@
+2012-10-30  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Software and composited filters should have a common path
+        https://bugs.webkit.org/show_bug.cgi?id=100532
+
+        Reviewed by Dean Jackson.
+
+        Added computeFilterOperations as a common method between the software filters
+        and hardware composited ones. The method rejects custom filters that are not
+        loaded yet. In bug 100533 it will also convert the CustomFilterOperation to a 
+        ValidatedCustomFilterOperation. That will help us keep the loading and verification 
+        code for the custom filters common across all the ports.
+
+        No new tests, just refactoring existing code.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::computeFilterOperations):
+        (WebCore):
+        (WebCore::RenderLayer::updateOrRemoveFilterEffect):
+        * rendering/RenderLayer.h:
+        (WebCore):
+        (RenderLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateFilters):
+
 2012-10-30  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Implement native memory snapshot grid view

@@ -110,6 +110,10 @@
 #include "SVGNames.h"
 #endif
 
+#if ENABLE(CSS_SHADERS)
+#include <CustomFilterOperation.h>
+#endif
+
 #if PLATFORM(BLACKBERRY)
 #define DISABLE_ROUNDED_CORNER_CLIPPING
 #endif
@@ -5076,6 +5080,33 @@ void RenderLayer::updateReflectionStyle()
 }
 
 #if ENABLE(CSS_FILTERS)
+FilterOperations RenderLayer::computeFilterOperations(const RenderStyle* style)
+{
+#if !ENABLE(CSS_SHADERS)
+    return style->filter();
+#else
+    const FilterOperations& filters = style->filter();
+    if (!filters.hasCustomFilter())
+        return filters;
+
+    FilterOperations outputFilters;
+    for (size_t i = 0; i < filters.size(); ++i) {
+        RefPtr<FilterOperation> filterOperation = filters.operations().at(i);
+        if (filterOperation->getOperationType() == FilterOperation::CUSTOM) {
+            // We have to wait until the program of CSS Shaders is loaded before setting it on the layer.
+            // Note that we will handle the loading of the shaders and repainting of the layer in updateOrRemoveFilterEffect.
+            const CustomFilterOperation* customOperation = static_cast<const CustomFilterOperation*>(filterOperation.get());
+            if (!customOperation->program()->isLoaded())
+                continue;
+            // FIXME: Validate the shaders and convert the operation to a ValidatedCustomFilterOperation.
+            // https://bugs.webkit.org/show_bug.cgi?id=100533
+        }
+        outputFilters.operations().append(filterOperation.release());
+    }
+    return outputFilters;
+#endif
+}
+
 void RenderLayer::updateOrRemoveFilterEffect()
 {
     if (!hasFilter()) {
@@ -5115,7 +5146,7 @@ void RenderLayer::updateOrRemoveFilterEffect()
 
     // If the filter fails to build, remove it from the layer. It will still attempt to
     // go through regular processing (e.g. compositing), but never apply anything.
-    if (!filterInfo->renderer()->build(renderer()->document(), renderer()->style()->filter()))
+    if (!filterInfo->renderer()->build(renderer()->document(), computeFilterOperations(renderer()->style())))
         filterInfo->setRenderer(0);
 }
 
