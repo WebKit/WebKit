@@ -91,7 +91,8 @@ bool FilterOperations::operationsMatch(const FilterOperations& other) const
 bool FilterOperations::hasCustomFilter() const
 {
     for (size_t i = 0; i < m_operations.size(); ++i) {
-        if (m_operations.at(i)->getOperationType() == FilterOperation::CUSTOM)
+        FilterOperation::OperationType type = m_operations.at(i)->getOperationType();
+        if (type == FilterOperation::CUSTOM || type == FilterOperation::VALIDATED_CUSTOM)
             return true;
     }
     return false;
@@ -146,8 +147,10 @@ void FilterOperations::getOutsets(int& top, int& right, int& bottom, int& left) 
             break;
         }
 #if ENABLE(CSS_SHADERS)
-        case FilterOperation::CUSTOM: {
-            // Need to include the filter margins here.
+        case FilterOperation::CUSTOM:
+        case FilterOperation::VALIDATED_CUSTOM: {
+            // FIXME: Need to include the filter margins here.
+            // https://bugs.webkit.org/show_bug.cgi?id=71400
             break;
         }
 #endif

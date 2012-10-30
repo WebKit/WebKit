@@ -4928,6 +4928,11 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, RenderStyle* style
         FilterOperation::OperationType operationType = filterOperationForType(filterValue->operationType());
 
 #if ENABLE(CSS_SHADERS)
+        if (operationType == FilterOperation::VALIDATED_CUSTOM) {
+            // ValidatedCustomFilterOperation is not supposed to end up in the RenderStyle.
+            ASSERT_NOT_REACHED();
+            continue;
+        }
         if (operationType == FilterOperation::CUSTOM) {
             RefPtr<CustomFilterOperation> operation = createCustomFilterOperation(filterValue);
             if (!operation)

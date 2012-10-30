@@ -367,6 +367,7 @@ static bool copyWebCoreFilterOperationsToWebFilterOperations(const FilterOperati
         }
 #if ENABLE(CSS_SHADERS)
         case FilterOperation::CUSTOM:
+        case FilterOperation::VALIDATED_CUSTOM:
             return false; // Not supported.
 #endif
         case FilterOperation::PASSTHROUGH:

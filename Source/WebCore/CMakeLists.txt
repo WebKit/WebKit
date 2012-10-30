@@ -1913,6 +1913,7 @@ SET(WebCore_SOURCES
     platform/graphics/filters/CustomFilterMesh.cpp
     platform/graphics/filters/CustomFilterOperation.cpp
     platform/graphics/filters/CustomFilterParameterList.cpp
+    platform/graphics/filters/ValidatedCustomFilterOperation.cpp
     platform/graphics/filters/CustomFilterProgram.cpp
     platform/graphics/filters/CustomFilterProgramInfo.cpp
     platform/graphics/filters/CustomFilterRenderer.cpp
