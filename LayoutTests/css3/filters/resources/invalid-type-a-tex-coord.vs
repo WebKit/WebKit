@@ -4,9 +4,7 @@ precision mediump float;
 
 // a_meshCoord should be a vec2, not an vec4.
 attribute vec4 a_texCoord;
-
 attribute vec4 a_position;
-
 uniform mat4 u_projectionMatrix;
 
 void main()

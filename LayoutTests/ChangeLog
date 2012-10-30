@@ -1,3 +1,45 @@
+2012-10-30  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Reject vertex shaders with custom attributes
+        https://bugs.webkit.org/show_bug.cgi?id=98973
+
+        Reviewed by Dean Jackson.
+
+        Add checks to verify:
+        (1) Shaders with custom attributes do not execute (e.g. attribute float my_attribute;).
+        (2) Shaders with a_triangleCoord defined do not execute with an attached mesh.
+
+        Note that in CSS Custom Filters, the a_triangleCoord attribute is only available in detached
+        meshes. In detached meshes, no vertices are shared between triangles. Thus, each vertex
+        belongs to a specific triangle, which a_triangleCoord identifies. In attached meshes,
+        vertices can belong to many triangles, which a_triangleCoord cannot identify because it's
+        only a vec3.
+
+        CSS Filters Spec, Vertex Attributes:
+        https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#vertex-attribute-variables
+
+        * css3/filters/custom/invalid-custom-filter-attribute-types-expected.html:
+        * css3/filters/custom/invalid-custom-filter-attribute-types.html:
+            Add two checks for two new vertex shaders. Update the a_triangleCoord type check to use
+            a detached mesh, so the vertex shader fails to validate because a_triangleCoord is
+            defined with an incorrect type, not because it defines a_triangleCoord in an attached
+            mesh.
+        * css3/filters/resources/invalid-a-triangle-coord-with-attached-mesh.vs:
+            Added. This vertex shader defines a_triangleCoord with the correct type. However, this
+            shader is run with an an attached mesh, so it should not execute.
+        * css3/filters/resources/invalid-custom-attribute.vs:
+            Added. This vertex shader defines a custom attribute. The associated test verifies
+            that it does not execute.
+        * css3/filters/resources/invalid-type-a-mesh-coord.vs:
+            Remove some empty lines to improve readability.
+        * css3/filters/resources/invalid-type-a-position.vs: Ditto.
+        * css3/filters/resources/invalid-type-a-tex-coord.vs: Ditto.
+        * css3/filters/resources/invalid-type-a-triangle-coord.vs:
+            Add a comment that this shader should be run with a detached mesh.
+        * css3/filters/resources/invalid-type-attribute-array.vs:
+            Remove some empty lines to improve readability.
+        * css3/filters/resources/invalid-type-a-triangle-coord.vs: Ditto.
+
 2012-10-30  Andrey Lushnikov  <lushnikov@google.com>
 
         Web Inspector: adds isOwnProperty to remote protocol

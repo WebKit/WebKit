@@ -1,3 +1,111 @@
+2012-10-30  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Reject vertex shaders with custom attributes
+        https://bugs.webkit.org/show_bug.cgi?id=98973
+
+        Reviewed by Dean Jackson.
+
+        Improved CSS Custom Filters shader validation. With this patch:
+        (1) Shaders with custom attributes do not execute (e.g. attribute float my_attribute;).
+        (2) Shaders with a_triangleCoord defined do not execute with an attached mesh.
+
+        Most of the changes are from renaming CustomFilterOperation::MeshType to
+        CustomFilterMeshType, and moving the enumeration to CustomFilterConstants.h. This avoids
+        pulling in CustomFilterOperation for classes that only care about the mesh type.
+
+        Note that in CSS Custom Filters, the a_triangleCoord attribute is only available in detached
+        meshes. In detached meshes, no vertices are shared between triangles. Thus, each vertex
+        belongs to a specific triangle, which a_triangleCoord identifies. In attached meshes,
+        vertices can belong to many triangles, which a_triangleCoord cannot identify because it's
+        only a vec3.
+
+        Tests:
+        Add two new checks to the test file:
+            css3/filters/custom/invalid-custom-filter-attribute-types.html
+        Add two new shaders:
+            css3/filters/resources/invalid-custom-attribute.vs
+            css3/filters/resources/invalid-a-triangle-coord-with-attached-mesh.vs
+
+        * WebCore.xcodeproj/project.pbxproj:
+            Update a broken reference to CustomFilterConstants.h in the Xcode project file.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+            Replace CustomFilterOperation::MeshType with CustomFilterMeshType.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createCustomFilterOperation): Ditto.
+        * platform/graphics/filters/CustomFilterConstants.h:
+            Add CustomFilterMeshType enum to share across the Custom Filters codebase, so that we
+            don't have to include CustomFilterOperation just to access the old
+            CustomFilterOperation::MeshType enum.
+        * platform/graphics/filters/CustomFilterMesh.cpp:
+        (WebCore::CustomFilterMesh::CustomFilterMesh):
+            Replace CustomFilterOperation::MeshType with CustomFilterMeshType.
+        * platform/graphics/filters/CustomFilterMesh.h:
+        (WebCore::CustomFilterMesh::create): Ditto.
+        (WebCore::CustomFilterMesh::meshType): Ditto.
+        (CustomFilterMesh): Ditto.
+        * platform/graphics/filters/CustomFilterMeshGenerator.cpp: Ditto.
+        (WebCore::CustomFilterMeshGenerator::CustomFilterMeshGenerator): Ditto.
+        (WebCore::CustomFilterMeshGenerator::dumpBuffers): Ditto.
+        * platform/graphics/filters/CustomFilterMeshGenerator.h:
+        (CustomFilterMeshGenerator): Ditto.
+        (WebCore::CustomFilterMeshGenerator::floatsPerVertex): Ditto.
+        (WebCore::CustomFilterMeshGenerator::verticesCount): Ditto.
+        * platform/graphics/filters/CustomFilterOperation.cpp: 
+        (WebCore::CustomFilterOperation::CustomFilterOperation): Ditto.
+        * platform/graphics/filters/CustomFilterOperation.h:
+        (WebCore::CustomFilterOperation::create): Ditto.
+        (WebCore::CustomFilterOperation::meshType): Ditto.
+        (CustomFilterOperation): Ditto.
+        * platform/graphics/filters/CustomFilterProgram.cpp:
+        (WebCore::CustomFilterProgram::CustomFilterProgram):
+            Add a meshType constructor parameter because the program now needs to know the meshType
+            to properly validate.
+        (WebCore::CustomFilterProgram::programInfo):
+            Pass meshType to CustomFilterProgram constructor.
+        (WebCore::CustomFilterProgram::operator==):
+            Check the meshType in the equals operator.
+        * platform/graphics/filters/CustomFilterProgram.h:
+            Make vertexShaderString() and fragmentShaderString() public so that we don't have to ask
+            for a programInfo object just to get the shader strings in
+            CoordinatedGraphicsArgumentCoders.cpp.
+        * platform/graphics/filters/CustomFilterProgramInfo.cpp:
+        (WebCore::CustomFilterProgramInfo::CustomFilterProgramInfo):
+            Add a meshType constructor parameter.       
+        (WebCore::CustomFilterProgramInfo::hash):
+            Include the meshType in the validated program hash, since the same shader code can pass
+            or fail validation based on the meshType.
+        (WebCore::CustomFilterProgramInfo::operator==):
+            Check the meshType in the equals operator.
+        * platform/graphics/filters/CustomFilterProgramInfo.h:
+        (CustomFilterProgramInfo):
+            Update method prototype.
+        (WebCore::CustomFilterProgramInfo::meshType):
+            Add meshType getter.
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore::CustomFilterValidatedProgram::validateSymbols):
+            If the author defines attribute that is is not found in the built-in attribute map,
+            reject the shader.
+            If the author defines a_triangleCoord without a detached mesh type, reject the shader.
+            Also, make this previously file-static function into a method of
+            CustomFilterValidatedProgram because it now needs to access the m_meshType.
+        * platform/graphics/filters/CustomFilterValidatedProgram.h:
+        (CustomFilterValidatedProgram):
+            Add a meshType constructor parameter because the program now needs to know the meshType
+            to properly validate.
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::FECustomFilter):
+            Replace CustomFilterOperation::MeshType with CustomFilterMeshType.
+        (WebCore::FECustomFilter::create): Ditto.
+        (WebCore::FECustomFilter::bindProgramAndBuffers): Ditto.
+        (WebCore::FECustomFilter::unbindVertexAttributes): Ditto.
+        * platform/graphics/filters/FECustomFilter.h:
+        (FECustomFilter): Ditto.
+        * rendering/style/StyleCustomFilterProgram.h:
+        (WebCore::StyleCustomFilterProgram::create):
+            Add a meshType constructor parameter.
+        (WebCore::StyleCustomFilterProgram::StyleCustomFilterProgram): Ditto.
+
 2012-10-30  Andrey Lushnikov  <lushnikov@google.com>
 
         Web Inspector: adds isOwnProperty to remote protocol

@@ -54,6 +54,7 @@
 #if ENABLE(CSS_SHADERS)
 #include "WebCustomFilterProgram.h"
 #include <WebCore/CustomFilterArrayParameter.h>
+#include <WebCore/CustomFilterConstants.h>
 #include <WebCore/CustomFilterNumberParameter.h>
 #include <WebCore/CustomFilterOperation.h>
 #include <WebCore/CustomFilterProgram.h>
@@ -140,13 +141,13 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder* encoder, 
             ASSERT(customOperation->program());
             RefPtr<CustomFilterProgram> program = customOperation->program();
             ASSERT(program->isLoaded());
-            CustomFilterProgramInfo programInfo = program->programInfo();
-            encoder->encode(programInfo.vertexShaderString());
-            encoder->encode(programInfo.fragmentShaderString());
+            encoder->encode(program->vertexShaderString());
+            encoder->encode(program->fragmentShaderString());
             encoder->encodeEnum(program->programType());
-            CustomFilterProgramMixSettings mixSettings = programInfo.mixSettings();
+            CustomFilterProgramMixSettings mixSettings = program->mixSettings();
             encoder->encodeEnum(mixSettings.blendMode);
             encoder->encodeEnum(mixSettings.compositeOperator);
+            encoder->encodeEnum(program->meshType());
 
             CustomFilterParameterList parameters = customOperation->parameters();
             encoder->encode(static_cast<uint32_t>(parameters.size()));
@@ -181,7 +182,6 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder* encoder, 
             encoder->encode(customOperation->meshRows());
             encoder->encode(customOperation->meshColumns());
             encoder->encodeEnum(customOperation->meshBoxType());
-            encoder->encodeEnum(customOperation->meshType());
             break;
         }
 #endif
@@ -252,6 +252,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
             String fragmentShaderString;
             CustomFilterProgramType programType;
             CustomFilterProgramMixSettings mixSettings;
+            CustomFilterMeshType meshType;
             if (!decoder->decode(vertexShaderString))
                 return false;
             if (!decoder->decode(fragmentShaderString))
@@ -262,7 +263,9 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
                 return false;
             if (!decoder->decodeEnum(mixSettings.compositeOperator))
                 return false;
-            RefPtr<CustomFilterProgram> program = WebCustomFilterProgram::create(vertexShaderString, fragmentShaderString, programType, mixSettings);
+            if (!decoder->decodeEnum(meshType))
+                return false;
+            RefPtr<CustomFilterProgram> program = WebCustomFilterProgram::create(vertexShaderString, fragmentShaderString, programType, mixSettings, meshType);
 
             uint32_t parametersSize;
             if (!decoder->decodeUInt32(parametersSize))
@@ -321,14 +324,11 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
             unsigned meshRows;
             unsigned meshColumns;
             CustomFilterOperation::MeshBoxType meshBoxType;
-            CustomFilterOperation::MeshType meshType;
             if (!decoder->decode(meshRows))
                 return false;
             if (!decoder->decode(meshColumns))
                 return false;
             if (!decoder->decodeEnum(meshBoxType))
-                return false;
-            if (!decoder->decodeEnum(meshType))
                 return false;
 
             filter = CustomFilterOperation::create(program, parameters, meshRows, meshColumns, meshBoxType, meshType);

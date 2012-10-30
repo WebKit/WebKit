@@ -157,6 +157,7 @@
 
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterArrayParameter.h"
+#include "CustomFilterConstants.h"
 #include "CustomFilterNumberParameter.h"
 #include "CustomFilterOperation.h"
 #include "CustomFilterParameter.h"
@@ -4824,7 +4825,7 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
     unsigned meshRows = 1;
     unsigned meshColumns = 1;
     CustomFilterOperation::MeshBoxType meshBoxType = CustomFilterOperation::FILTER_BOX;
-    CustomFilterOperation::MeshType meshType = CustomFilterOperation::ATTACHED;
+    CustomFilterMeshType meshType = MeshTypeAttached;
     
     CSSValue* parametersValue = 0;
     
@@ -4868,7 +4869,7 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
         if (iterator.hasMore() && iterator.isPrimitiveValue()) {
             CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
             if (primitiveValue->getIdent() == CSSValueDetached) {
-                meshType = CustomFilterOperation::DETACHED;
+                meshType = MeshTypeDetached;
                 iterator.advance();
             }
         }
@@ -4888,7 +4889,7 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
     if (parametersValue && !parseCustomFilterParameterList(parametersValue, parameterList))
         return 0;
     
-    RefPtr<StyleCustomFilterProgram> program = StyleCustomFilterProgram::create(vertexShader.release(), fragmentShader.release(), programType, mixSettings);
+    RefPtr<StyleCustomFilterProgram> program = StyleCustomFilterProgram::create(vertexShader.release(), fragmentShader.release(), programType, mixSettings, meshType);
     return CustomFilterOperation::create(program.release(), parameterList, meshRows, meshColumns, meshBoxType, meshType);
 }
 #endif

@@ -49,7 +49,6 @@ typedef WebCore::LayerCompiledProgram PlatformCompiledProgram;
 
 namespace WebCore {
 
-class ANGLEWebKitBridge;
 class CustomFilterCompiledProgram;
 class CustomFilterGlobalContext;
 

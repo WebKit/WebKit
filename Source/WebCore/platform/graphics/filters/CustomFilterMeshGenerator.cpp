@@ -39,7 +39,7 @@ namespace WebCore {
 static bool s_dumpCustomFilterMeshBuffers = false;
 #endif
 
-CustomFilterMeshGenerator::CustomFilterMeshGenerator(unsigned columns, unsigned rows, const FloatRect& meshBox, CustomFilterOperation::MeshType meshType)
+CustomFilterMeshGenerator::CustomFilterMeshGenerator(unsigned columns, unsigned rows, const FloatRect& meshBox, CustomFilterMeshType meshType)
     : m_meshType(meshType)
     , m_points(columns + 1, rows + 1)
     , m_tiles(columns, rows)
@@ -60,7 +60,7 @@ CustomFilterMeshGenerator::CustomFilterMeshGenerator(unsigned columns, unsigned 
     // when there's no need to explode the tiles.
     // * detached: each triangle has its own vertices. This means each triangle can be moved independently and a vec3
     // attribute is passed, so that each vertex can be uniquely identified.
-    if (m_meshType == CustomFilterOperation::ATTACHED)
+    if (m_meshType == MeshTypeAttached)
         generateAttachedMesh();
     else
         generateDetachedMesh();
@@ -152,8 +152,8 @@ void CustomFilterMeshGenerator::addDetachedMeshVertexAttributes(int quadX, int q
 void CustomFilterMeshGenerator::dumpBuffers() const
 {
     printf("Mesh buffers: Points.width(): %d, Points.height(): %d meshBox: %f, %f, %f, %f, type: %s\n",
-           m_points.width(), m_points.height(), m_meshBox.x(), m_meshBox.y(), m_meshBox.width(), m_meshBox.height(),
-           (m_meshType == CustomFilterOperation::ATTACHED) ? "Attached" : "Detached");
+        m_points.width(), m_points.height(), m_meshBox.x(), m_meshBox.y(), m_meshBox.width(), m_meshBox.height(),
+        (m_meshType == MeshTypeAttached) ? "Attached" : "Detached");
     printf("---Vertex:\n\t");
     for (unsigned i = 0; i < m_vertices.size(); ++i) {
         printf("%f ", m_vertices.at(i));

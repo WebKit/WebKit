@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-CustomFilterOperation::CustomFilterOperation(PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, MeshBoxType meshBoxType, MeshType meshType)
+CustomFilterOperation::CustomFilterOperation(PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, MeshBoxType meshBoxType, CustomFilterMeshType meshType)
     : FilterOperation(CUSTOM)
     , m_program(program)
     , m_parameters(sortedParameters)

@@ -45,9 +45,9 @@ namespace WebCore {
 class StyleCustomFilterProgram : public CustomFilterProgram, public CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<StyleCustomFilterProgram> create(PassRefPtr<StyleShader> vertexShader, PassRefPtr<StyleShader> fragmentShader, CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings)
+    static PassRefPtr<StyleCustomFilterProgram> create(PassRefPtr<StyleShader> vertexShader, PassRefPtr<StyleShader> fragmentShader, CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)
     {
-        return adoptRef(new StyleCustomFilterProgram(vertexShader, fragmentShader, programType, mixSettings));
+        return adoptRef(new StyleCustomFilterProgram(vertexShader, fragmentShader, programType, mixSettings, meshType));
     }
     
     void setVertexShader(PassRefPtr<StyleShader> shader) { m_vertexShader = shader; }
@@ -130,8 +130,8 @@ public:
     }
 
 private:
-    StyleCustomFilterProgram(PassRefPtr<StyleShader> vertexShader, PassRefPtr<StyleShader> fragmentShader, CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings)
-        : CustomFilterProgram(programType, mixSettings)
+    StyleCustomFilterProgram(PassRefPtr<StyleShader> vertexShader, PassRefPtr<StyleShader> fragmentShader, CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)
+        : CustomFilterProgram(programType, mixSettings, meshType)
         , m_vertexShader(vertexShader)
         , m_fragmentShader(fragmentShader)
         , m_isVertexShaderLoaded(false)

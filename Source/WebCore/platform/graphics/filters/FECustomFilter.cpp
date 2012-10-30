@@ -82,8 +82,7 @@ static void orthogonalProjectionMatrix(TransformationMatrix& matrix, float left,
 }
 
 FECustomFilter::FECustomFilter(Filter* filter, CustomFilterGlobalContext* customFilterGlobalContext, PassRefPtr<CustomFilterValidatedProgram> validatedProgram, const CustomFilterParameterList& parameters,
-                               unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType,
-                               CustomFilterOperation::MeshType meshType)
+    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, CustomFilterMeshType meshType)
     : FilterEffect(filter)
     , m_globalContext(customFilterGlobalContext)
     , m_validatedProgram(validatedProgram)
@@ -106,8 +105,7 @@ FECustomFilter::FECustomFilter(Filter* filter, CustomFilterGlobalContext* custom
 }
 
 PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, CustomFilterGlobalContext* customFilterGlobalContext, PassRefPtr<CustomFilterValidatedProgram> validatedProgram, const CustomFilterParameterList& parameters,
-                                           unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType meshBoxType,
-                                           CustomFilterOperation::MeshType meshType)
+    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType meshBoxType, CustomFilterMeshType meshType)
 {
     return adoptRef(new FECustomFilter(filter, customFilterGlobalContext, validatedProgram, parameters, meshRows, meshColumns, meshBoxType, meshType));
 }
@@ -577,7 +575,7 @@ void FECustomFilter::bindProgramAndBuffers(Platform3DObject inputTexture)
     // https://bugs.webkit.org/show_bug.cgi?id=94358
     bindVertexAttribute(m_compiledProgram->internalTexCoordAttribLocation(), TexAttribSize, TexAttribOffset);
     bindVertexAttribute(m_compiledProgram->meshAttribLocation(), MeshAttribSize, MeshAttribOffset);
-    if (m_meshType == CustomFilterOperation::DETACHED)
+    if (m_meshType == MeshTypeDetached)
         bindVertexAttribute(m_compiledProgram->triangleAttribLocation(), TriangleAttribSize, TriangleAttribOffset);
     
     bindProgramParameters();
@@ -589,7 +587,7 @@ void FECustomFilter::unbindVertexAttributes()
     unbindVertexAttribute(m_compiledProgram->texAttribLocation());
     unbindVertexAttribute(m_compiledProgram->internalTexCoordAttribLocation());
     unbindVertexAttribute(m_compiledProgram->meshAttribLocation());
-    if (m_meshType == CustomFilterOperation::DETACHED)
+    if (m_meshType == MeshTypeDetached)
         unbindVertexAttribute(m_compiledProgram->triangleAttribLocation());
 }
 

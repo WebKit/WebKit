@@ -1,3 +1,25 @@
+2012-10-30  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Reject vertex shaders with custom attributes
+        https://bugs.webkit.org/show_bug.cgi?id=98973
+
+        Reviewed by Dean Jackson.
+
+        Replace CustomFilterOperation::MeshType with CustomFilterMeshType from
+        CustomFilterConstants.h.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+            Read the shader strings directly from the CustomFilterProgram instead of asking for a
+            CustomFilterProgramInfo object. Also, encode the meshType earlier so that decoding can
+            can use it to create a WebCustomFilterProgram, which now requires a meshType.
+        (CoreIPC::::decode):
+            Decode the meshType earlier to pass it to the new WebCustomFilterProgram constructor.
+        * Shared/CoordinatedGraphics/WebCustomFilterProgram.h:
+        (WebKit::WebCustomFilterProgram::create):
+            Add a meshType parameter to pass to the base class constructor.
+        (WebKit::WebCustomFilterProgram::WebCustomFilterProgram): Ditto.
+
 2012-10-30  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Remove ViewportUpdateDeferrer from PageViewportController

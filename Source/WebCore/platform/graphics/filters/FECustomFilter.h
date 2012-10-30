@@ -59,8 +59,7 @@ class IntSize;
 class FECustomFilter : public FilterEffect {
 public:
     static PassRefPtr<FECustomFilter> create(Filter*, CustomFilterGlobalContext*, PassRefPtr<CustomFilterValidatedProgram>, const CustomFilterParameterList&,
-                   unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, 
-                   CustomFilterOperation::MeshType);
+        unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, CustomFilterMeshType);
 
     virtual void platformApplySoftware();
     virtual void dump();
@@ -69,8 +68,7 @@ public:
 
 private:
     FECustomFilter(Filter*, CustomFilterGlobalContext*, PassRefPtr<CustomFilterValidatedProgram>, const CustomFilterParameterList&,
-                   unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, 
-                   CustomFilterOperation::MeshType);
+        unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, CustomFilterMeshType);
     ~FECustomFilter();
     
     bool applyShader();
@@ -131,7 +129,7 @@ private:
 
     unsigned m_meshRows;
     unsigned m_meshColumns;
-    CustomFilterOperation::MeshType m_meshType;
+    CustomFilterMeshType m_meshType;
 };
 
 } // namespace WebCore

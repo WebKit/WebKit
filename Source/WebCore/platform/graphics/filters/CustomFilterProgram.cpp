@@ -38,9 +38,10 @@
 
 namespace WebCore {
 
-CustomFilterProgram::CustomFilterProgram(CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings)
+CustomFilterProgram::CustomFilterProgram(CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)
     : m_programType(programType)
     , m_mixSettings(mixSettings)
+    , m_meshType(meshType)
 {
     // Keep the constructor protected to prevent creating this object directly.
 }
@@ -82,12 +83,14 @@ void CustomFilterProgram::notifyClients()
 CustomFilterProgramInfo CustomFilterProgram::programInfo() const
 {
     ASSERT(isLoaded());
-    return CustomFilterProgramInfo(vertexShaderString(), fragmentShaderString(), m_programType, m_mixSettings);
+    return CustomFilterProgramInfo(vertexShaderString(), fragmentShaderString(), m_programType, m_mixSettings, m_meshType);
 }
 
 bool CustomFilterProgram::operator==(const CustomFilterProgram& o) const
 {
-    return m_programType == o.m_programType && (m_programType != PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE || m_mixSettings == o.m_mixSettings);
+    return m_programType == o.m_programType
+        && (m_programType != PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE || m_mixSettings == o.m_mixSettings)
+        && m_meshType == o.m_meshType;
 }
 
 } // namespace WebCore

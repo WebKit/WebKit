@@ -942,7 +942,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(const RenderObj
             
             // FIXME: The specification doesn't have any "attached" identifier. Should we add one?
             // https://bugs.webkit.org/show_bug.cgi?id=72700
-            if (customOperation->meshType() == CustomFilterOperation::DETACHED)
+            if (customOperation->meshType() == MeshTypeDetached)
                 meshParameters->append(cssValuePool().createIdentifierValue(CSSValueDetached));
             
             filterValue->append(meshParameters.release());

@@ -43,7 +43,7 @@ class GraphicsContext3D;
 
 class CustomFilterMesh : public RefCounted<CustomFilterMesh> {
 public:
-    static PassRefPtr<CustomFilterMesh> create(GraphicsContext3D* context, unsigned cols, unsigned rows, const FloatRect& meshBox, CustomFilterOperation::MeshType meshType)
+    static PassRefPtr<CustomFilterMesh> create(GraphicsContext3D* context, unsigned cols, unsigned rows, const FloatRect& meshBox, CustomFilterMeshType meshType)
     {
         return adoptRef(new CustomFilterMesh(context, cols, rows, meshBox, meshType));
     }
@@ -56,10 +56,10 @@ public:
     unsigned indicesCount() const { return m_indicesCount; }
     
     const FloatRect& meshBox() const { return m_meshBox; }
-    CustomFilterOperation::MeshType meshType() const { return m_meshType; }
+    CustomFilterMeshType meshType() const { return m_meshType; }
 
 private:
-    CustomFilterMesh(GraphicsContext3D*, unsigned cols, unsigned rows, const FloatRect& meshBox, CustomFilterOperation::MeshType);
+    CustomFilterMesh(GraphicsContext3D*, unsigned cols, unsigned rows, const FloatRect& meshBox, CustomFilterMeshType);
     
     GraphicsContext3D* m_context;
     
@@ -70,7 +70,7 @@ private:
     unsigned m_indicesCount;
     
     FloatRect m_meshBox;
-    CustomFilterOperation::MeshType m_meshType;
+    CustomFilterMeshType m_meshType;
 };
 
 } // namespace WebCore

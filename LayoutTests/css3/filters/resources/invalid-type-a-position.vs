@@ -4,7 +4,6 @@ precision mediump float;
 
 // a_position should be a vec4, not a vec3.
 attribute vec3 a_position;
-
 uniform mat4 u_projectionMatrix;
 
 void main()

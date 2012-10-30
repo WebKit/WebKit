@@ -31,6 +31,7 @@
 #define CustomFilterOperation_h
 
 #if ENABLE(CSS_SHADERS)
+#include "CustomFilterConstants.h"
 #include "CustomFilterParameterList.h"
 #include "CustomFilterProgram.h"
 #include "FilterOperation.h"
@@ -48,13 +49,8 @@ public:
         PADDING_BOX,
         CONTENT_BOX
     };
-    
-    enum MeshType {
-        ATTACHED,
-        DETACHED
-    };
-    
-    static PassRefPtr<CustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, MeshBoxType meshBoxType, MeshType meshType)
+        
+    static PassRefPtr<CustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, MeshBoxType meshBoxType, CustomFilterMeshType meshType)
     {
         return adoptRef(new CustomFilterOperation(program, sortedParameters, meshRows, meshColumns, meshBoxType, meshType));
     }
@@ -67,7 +63,7 @@ public:
     unsigned meshColumns() const { return m_meshColumns; }
     
     MeshBoxType meshBoxType() const { return m_meshBoxType; }
-    MeshType meshType() const { return m_meshType; }
+    CustomFilterMeshType meshType() const { return m_meshType; }
     
     virtual ~CustomFilterOperation();
     
@@ -91,7 +87,7 @@ private:
             && m_parameters == other->m_parameters;
     }
     
-    CustomFilterOperation(PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&, unsigned meshRows, unsigned meshColumns, MeshBoxType, MeshType);
+    CustomFilterOperation(PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&, unsigned meshRows, unsigned meshColumns, MeshBoxType, CustomFilterMeshType);
 
     RefPtr<CustomFilterProgram> m_program;
     CustomFilterParameterList m_parameters;
@@ -99,7 +95,7 @@ private:
     unsigned m_meshRows;
     unsigned m_meshColumns;
     MeshBoxType m_meshBoxType;
-    MeshType m_meshType;
+    CustomFilterMeshType m_meshType;
 };
 
 } // namespace WebCore

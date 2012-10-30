@@ -34,6 +34,7 @@
 #include "CustomFilterValidatedProgram.h"
 
 #include "ANGLEWebKitBridge.h"
+#include "CustomFilterConstants.h"
 #include "CustomFilterGlobalContext.h"
 #include "CustomFilterProgramInfo.h"
 #include "NotImplemented.h"
@@ -62,7 +63,7 @@ static SymbolNameToTypeMap* builtInAttributeNameToTypeMap()
     return nameToTypeMap;
 }
 
-static bool validateSymbols(const Vector<ANGLEShaderSymbol>& symbols)
+static bool validateSymbols(const Vector<ANGLEShaderSymbol>& symbols, CustomFilterMeshType meshType)
 {
     for (size_t i = 0; i < symbols.size(); ++i) {
         const ANGLEShaderSymbol& symbol = symbols[i];
@@ -70,13 +71,24 @@ static bool validateSymbols(const Vector<ANGLEShaderSymbol>& symbols)
         case SHADER_SYMBOL_TYPE_ATTRIBUTE: {
             SymbolNameToTypeMap* attributeNameToTypeMap = builtInAttributeNameToTypeMap();
             SymbolNameToTypeMap::iterator builtInAttribute = attributeNameToTypeMap->find(symbol.name);
-            if (builtInAttribute != attributeNameToTypeMap->end() && symbol.dataType != builtInAttribute->value) {
-                // The author defined one of the built-in attributes with the wrong type.
+            if (builtInAttribute == attributeNameToTypeMap->end()) {
+                // The author defined a custom attribute.
+                // FIXME: Report the validation error.
+                // https://bugs.webkit.org/show_bug.cgi?id=74416
                 return false;
             }
-
-            // FIXME: Return false when the attribute is not one of the built-in attributes.
-            // https://bugs.webkit.org/show_bug.cgi?id=98973
+            if (meshType == MeshTypeAttached && symbol.name == "a_triangleCoord") {
+                // a_triangleCoord is only available for detached meshes.
+                // FIXME: Report the validation error.
+                // https://bugs.webkit.org/show_bug.cgi?id=74416
+                return false;
+            }
+            if (symbol.dataType != builtInAttribute->value) {
+                // The author defined one of the built-in attributes with the wrong type.
+                // FIXME: Report the validation error.
+                // https://bugs.webkit.org/show_bug.cgi?id=74416
+                return false;
+            }
             break;
         }
         case SHADER_SYMBOL_TYPE_UNIFORM:
@@ -153,7 +165,7 @@ CustomFilterValidatedProgram::CustomFilterValidatedProgram(CustomFilterGlobalCon
         return;
     }
 
-    if (!validateSymbols(symbols)) {
+    if (!validateSymbols(symbols, m_programInfo.meshType())) {
         // FIXME: Report validation errors.
         // https://bugs.webkit.org/show_bug.cgi?id=74416
         return;

@@ -37,7 +37,7 @@
 namespace WebCore {
 
 CustomFilterMesh::CustomFilterMesh(GraphicsContext3D* context, unsigned columns, unsigned rows,
-                                   const FloatRect& meshBox, CustomFilterOperation::MeshType meshType)
+    const FloatRect& meshBox, CustomFilterMeshType meshType)
     : m_context(context)
     , m_verticesBufferObject(0)
     , m_elementsBufferObject(0)
