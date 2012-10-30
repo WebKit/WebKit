@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WKInspector.h"
 
-#if ENABLE(INSPECTOR)
-
 #include "WKAPICast.h"
 #include "WebInspectorProxy.h"
 
@@ -35,92 +33,142 @@ using namespace WebKit;
 
 WKTypeID WKInspectorGetTypeID()
 {
+#if ENABLE(INSPECTOR)
     return toAPI(WebInspectorProxy::APIType);
+#else
+    return 0;
+#endif
 }
 
 WKPageRef WKInspectorGetPage(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     return toAPI(toImpl(inspectorRef)->page());
+#else
+    return 0;
+#endif
 }
 
 bool WKInspectorIsVisible(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     return toImpl(inspectorRef)->isVisible();
+#else
+    return false;
+#endif
 }
 
 bool WKInspectorIsFront(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     return toImpl(inspectorRef)->isFront();
+#else
+    return false;
+#endif
 }
 
 void WKInspectorShow(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->show();
+#endif
 }
 
 void WKInspectorClose(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->close();
+#endif
 }
 
 void WKInspectorShowConsole(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->showConsole();
+#endif
 }
 
 void WKInspectorShowResources(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->showResources();
+#endif
 }
 
 void WKInspectorShowMainResourceForFrame(WKInspectorRef inspectorRef, WKFrameRef frameRef)
 {
+#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->showMainResourceForFrame(toImpl(frameRef));
+#endif
 }
 
 bool WKInspectorIsAttached(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     return toImpl(inspectorRef)->isAttached();
+#else
+    return false;
+#endif
 }
 
 void WKInspectorAttach(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->attach();
+#endif
 }
 
 void WKInspectorDetach(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->detach();
+#endif
 }
 
 bool WKInspectorIsDebuggingJavaScript(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     return toImpl(inspectorRef)->isDebuggingJavaScript();
+#else
+    return false;
+#endif
 }
 
 void WKInspectorToggleJavaScriptDebugging(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->toggleJavaScriptDebugging();
+#endif
 }
 
 bool WKInspectorIsProfilingJavaScript(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     return toImpl(inspectorRef)->isProfilingJavaScript();
+#else
+    return false;
+#endif
 }
 
 void WKInspectorToggleJavaScriptProfiling(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->toggleJavaScriptProfiling();
+#endif
 }
 
 bool WKInspectorIsProfilingPage(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     return toImpl(inspectorRef)->isProfilingPage();
+#else
+    return false;
+#endif
 }
 
 void WKInspectorTogglePageProfiling(WKInspectorRef inspectorRef)
 {
+#if ENABLE(INSPECTOR)
     toImpl(inspectorRef)->togglePageProfiling();
+#endif
 }
-
-#endif // ENABLE(INSPECTOR)

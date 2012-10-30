@@ -142,10 +142,7 @@ WK_ADD_API_MAPPING(WKRenderLayerRef, WebRenderLayer)
 WK_ADD_API_MAPPING(WKRenderObjectRef, WebRenderObject)
 WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
 WK_ADD_API_MAPPING(WKVibrationRef, WebVibrationProxy)
-
-#if ENABLE(INSPECTOR)
 WK_ADD_API_MAPPING(WKInspectorRef, WebInspectorProxy)
-#endif
 
 /* Enum conversions */
 

@@ -1,3 +1,36 @@
+2012-10-30  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [WK2] Remove incorrect use of preprocessor macro in API headers.
+        https://bugs.webkit.org/show_bug.cgi?id=100722
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove the preprocessor macro ENABLE(INSPECTOR) from the WKAPICast.h
+        and WKInspector.h.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit):
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorGetTypeID):
+        (WKInspectorGetPage):
+        (WKInspectorIsVisible):
+        (WKInspectorIsFront):
+        (WKInspectorShow):
+        (WKInspectorClose):
+        (WKInspectorShowConsole):
+        (WKInspectorShowResources):
+        (WKInspectorShowMainResourceForFrame):
+        (WKInspectorIsAttached):
+        (WKInspectorAttach):
+        (WKInspectorDetach):
+        (WKInspectorIsDebuggingJavaScript):
+        (WKInspectorToggleJavaScriptDebugging):
+        (WKInspectorIsProfilingJavaScript):
+        (WKInspectorToggleJavaScriptProfiling):
+        (WKInspectorIsProfilingPage):
+        (WKInspectorTogglePageProfiling):
+        * UIProcess/API/C/WKInspector.h:
+
 2012-10-29  Sergio Villar Senin  <svillar@igalia.com>
 
         REGRESSION(r130755): All WebKit2 unit tests are failing in WebKit2 bot
