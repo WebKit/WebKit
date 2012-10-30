@@ -4985,6 +4985,8 @@
             'platform/graphics/filters/CustomFilterProgram.h',
             'platform/graphics/filters/CustomFilterProgramInfo.cpp',
             'platform/graphics/filters/CustomFilterProgramInfo.h',
+            'platform/graphics/filters/CustomFilterRenderer.cpp',
+            'platform/graphics/filters/CustomFilterRenderer.h',
             'platform/graphics/filters/CustomFilterCompiledProgram.cpp',
             'platform/graphics/filters/CustomFilterCompiledProgram.h',
             'platform/graphics/filters/CustomFilterValidatedProgram.cpp',

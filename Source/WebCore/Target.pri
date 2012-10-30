@@ -2081,6 +2081,7 @@ HEADERS += \
     platform/graphics/filters/CustomFilterParameterList.h \
     platform/graphics/filters/CustomFilterProgram.h \
     platform/graphics/filters/CustomFilterProgramInfo.h \
+    platform/graphics/filters/CustomFilterRenderer.h \
     platform/graphics/filters/CustomFilterTransformParameter.h \
     platform/graphics/filters/CustomFilterValidatedProgram.h \
     platform/graphics/filters/FEBlend.h \
@@ -3500,6 +3501,7 @@ enable?(FILTERS) {
         platform/graphics/filters/CustomFilterCompiledProgram.cpp \
         platform/graphics/filters/CustomFilterMesh.cpp \
         platform/graphics/filters/CustomFilterMeshGenerator.cpp \
+        platform/graphics/filters/CustomFilterRenderer.cpp \
         platform/graphics/filters/CustomFilterValidatedProgram.cpp \
         platform/graphics/filters/DistantLightSource.cpp \
         platform/graphics/filters/FEBlend.cpp \

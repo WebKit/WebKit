@@ -44,8 +44,8 @@
 
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "CustomFilterGlobalContext.h"
-#include "CustomFilterProgram.h"
 #include "CustomFilterOperation.h"
+#include "CustomFilterProgram.h"
 #include "CustomFilterValidatedProgram.h"
 #include "FECustomFilter.h"
 #include "RenderView.h"
@@ -97,20 +97,22 @@ static PassRefPtr<FECustomFilter> createCustomFilterEffect(Filter* filter, Docum
 {
     if (!isCSSCustomFilterEnabled(document))
         return 0;
-    
+
     RefPtr<CustomFilterProgram> program = operation->program();
     if (!program->isLoaded())
         return 0;
 
     CustomFilterGlobalContext* globalContext = document->renderView()->customFilterGlobalContext();
     globalContext->prepareContextIfNeeded(document->view()->hostWindow());
+    if (!globalContext->context())
+        return 0;
+
     RefPtr<CustomFilterValidatedProgram> validatedProgram = globalContext->getValidatedProgram(program->programInfo());
     if (!validatedProgram->isInitialized())
         return 0;
 
-    return FECustomFilter::create(filter, globalContext, validatedProgram, operation->parameters(),
-                                  operation->meshRows(), operation->meshColumns(),
-                                  operation->meshBoxType(), operation->meshType());
+    return FECustomFilter::create(filter, globalContext->context(), validatedProgram.release(), operation->parameters(),
+        operation->meshRows(), operation->meshColumns(), operation->meshBoxType(), operation->meshType());
 }
 #endif
 

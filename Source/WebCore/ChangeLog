@@ -1,3 +1,71 @@
+2012-10-30  Huang Dongsung  <luxtella@company100.net>
+
+        [CSS Shaders] Add CustomFilterRenderer to reuse this class by Accelerated Compositing.
+        https://bugs.webkit.org/show_bug.cgi?id=98989
+
+        Reviewed by Dean Jackson.
+
+        Extract CustomFilterRenderer class from the rendering part of FECustomFilter.
+        FECustomFilter now plays a role in extending FilterEffect and delegates
+        rendering CSS Shaders to CustomFilterRenderer.
+
+        CustomFilterRenderer does not know Filter and FilterEffect. We can
+        create a CustomFilterRenderer instance with only GraphicsContext3D and
+        CustomFilterValidatedProgram. It means that Accelerated Compositing can
+        create the CustomFilterRenderer instance if Accelerated Compositing has
+        GraphicsContext3D and CustomFilterOperation, and it is already possible.
+
+        This patch prepares to enable CSS Shaders on Accelerated Compositing.
+
+        No new tests. Covered by css3/filters/custom
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/CustomFilterRenderer.cpp: Added.
+        (WebCore):
+        (WebCore::orthogonalProjectionMatrix):
+        (WebCore::CustomFilterRenderer::create):
+        (WebCore::CustomFilterRenderer::CustomFilterRenderer):
+        (WebCore::CustomFilterRenderer::~CustomFilterRenderer):
+        (WebCore::CustomFilterRenderer::premultipliedAlpha):
+        (WebCore::CustomFilterRenderer::programNeedsInputTexture):
+        (WebCore::CustomFilterRenderer::draw):
+        (WebCore::CustomFilterRenderer::prepareForDrawing):
+        (WebCore::CustomFilterRenderer::initializeCompiledProgramIfNeeded):
+        (WebCore::CustomFilterRenderer::initializeMeshIfNeeded):
+        (WebCore::CustomFilterRenderer::bindVertexAttribute):
+        (WebCore::CustomFilterRenderer::unbindVertexAttribute):
+        (WebCore::CustomFilterRenderer::bindProgramArrayParameters):
+        (WebCore::CustomFilterRenderer::bindProgramNumberParameters):
+        (WebCore::CustomFilterRenderer::bindProgramTransformParameter):
+        (WebCore::CustomFilterRenderer::bindProgramParameters):
+        (WebCore::CustomFilterRenderer::bindProgramAndBuffers):
+        (WebCore::CustomFilterRenderer::unbindVertexAttributes):
+        * platform/graphics/filters/CustomFilterRenderer.h: Copied from Source/WebCore/platform/graphics/filters/FECustomFilter.h.
+        (WebCore):
+        (CustomFilterRenderer):
+          CustomFilterRenderer renders custom filters in GPU using a
+          GraphicsContext3D.
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::FECustomFilter):
+        (WebCore::FECustomFilter::create):
+        (WebCore::FECustomFilter::deleteRenderBuffers):
+        (WebCore::FECustomFilter::drawFilterMesh):
+        (WebCore::FECustomFilter::prepareForDrawing):
+        (WebCore::FECustomFilter::applyShader):
+        (WebCore::FECustomFilter::resolveMultisampleBuffer):
+        (WebCore::FECustomFilter::resizeMultisampleBuffers):
+        (WebCore::FECustomFilter::resizeContext):
+        * platform/graphics/filters/FECustomFilter.h:
+        (WebCore):
+        (FECustomFilter):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::createCustomFilterEffect):
+
 2012-10-30  Mike West  <mkwst@chromium.org>
 
         Web Inspector: Associate console messages with the requests that caused them.

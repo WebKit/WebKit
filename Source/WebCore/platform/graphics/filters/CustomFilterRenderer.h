@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012 Company 100, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,82 +28,72 @@
  * SUCH DAMAGE.
  */
 
-#ifndef FECustomFilter_h
-#define FECustomFilter_h
+#ifndef CustomFilterRenderer_h
+#define CustomFilterRenderer_h
 
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 
 #include "CustomFilterConstants.h"
 #include "CustomFilterOperation.h"
-#include "Filter.h"
-#include "FilterEffect.h"
 #include "GraphicsTypes3D.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-
-namespace JSC {
-class Uint8ClampedArray;
-}
 
 namespace WebCore {
 
-class CustomFilterRenderer;
+class CustomFilterArrayParameter;
+class CustomFilterCompiledProgram;
+class CustomFilterMesh;
+class CustomFilterNumberParameter;
+class CustomFilterTransformParameter;
 class CustomFilterValidatedProgram;
 class GraphicsContext3D;
 class IntSize;
 
-class FECustomFilter : public FilterEffect {
+class CustomFilterRenderer : public RefCounted<CustomFilterRenderer> {
 public:
-    static PassRefPtr<FECustomFilter> create(Filter*, PassRefPtr<GraphicsContext3D>, PassRefPtr<CustomFilterValidatedProgram>, const CustomFilterParameterList&,
+    static PassRefPtr<CustomFilterRenderer> create(PassRefPtr<GraphicsContext3D>, PassRefPtr<CustomFilterValidatedProgram>, const CustomFilterParameterList&,
         unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, CustomFilterMeshType);
+    ~CustomFilterRenderer();
 
-    virtual void platformApplySoftware();
-    virtual void dump();
-
-    virtual TextStream& externalRepresentation(TextStream&, int indention) const;
-
-private:
-    FECustomFilter(Filter*, PassRefPtr<GraphicsContext3D>, PassRefPtr<CustomFilterValidatedProgram>, const CustomFilterParameterList&,
-        unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, CustomFilterMeshType);
-    ~FECustomFilter();
-
-    bool applyShader();
-    void clearShaderResult();
-    bool initializeContext();
+    bool premultipliedAlpha() const;
+    bool programNeedsInputTexture() const;
 
     bool prepareForDrawing();
 
-    void drawFilterMesh(Platform3DObject inputTexture);
-    bool ensureInputTexture();
-    void uploadInputTexture(Uint8ClampedArray* srcPixelArray);
-    bool resizeContextIfNeeded(const IntSize&);
-    bool resizeContext(const IntSize&);
+    void draw(Platform3DObject, const IntSize&);
 
-    bool canUseMultisampleBuffers() const;
-    bool createMultisampleBuffer();
-    bool resizeMultisampleBuffers(const IntSize&);
-    void resolveMultisampleBuffer();
-    void deleteMultisampleRenderBuffers();
+private:
+    CustomFilterRenderer(PassRefPtr<GraphicsContext3D>, PassRefPtr<CustomFilterValidatedProgram>, const CustomFilterParameterList&,
+        unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, CustomFilterMeshType);
 
-    bool ensureFrameBuffer();
-    void deleteRenderBuffers();
+    void initializeCompiledProgramIfNeeded();
+    void initializeMeshIfNeeded();
+
+    void bindVertexAttribute(int attributeLocation, unsigned size, unsigned offset);
+    void unbindVertexAttribute(int attributeLocation);
+    void bindProgramArrayParameters(int uniformLocation, CustomFilterArrayParameter*);
+    void bindProgramNumberParameters(int uniformLocation, CustomFilterNumberParameter*);
+    void bindProgramTransformParameter(int uniformLocation, CustomFilterTransformParameter*);
+    void bindProgramParameters();
+    void bindProgramAndBuffers(Platform3DObject inputTexture);
+    void unbindVertexAttributes();
 
     RefPtr<GraphicsContext3D> m_context;
-    RefPtr<CustomFilterRenderer> m_customFilterRenderer;
+    RefPtr<CustomFilterValidatedProgram> m_validatedProgram;
+    RefPtr<CustomFilterCompiledProgram> m_compiledProgram;
+    RefPtr<CustomFilterMesh> m_mesh;
     IntSize m_contextSize;
 
-    Platform3DObject m_inputTexture;
-    Platform3DObject m_frameBuffer;
-    Platform3DObject m_depthBuffer;
-    Platform3DObject m_destTexture;
+    CustomFilterParameterList m_parameters;
 
-    bool m_triedMultisampleBuffer;
-    Platform3DObject m_multisampleFrameBuffer;
-    Platform3DObject m_multisampleRenderBuffer;
-    Platform3DObject m_multisampleDepthBuffer;
+    unsigned m_meshRows;
+    unsigned m_meshColumns;
+    CustomFilterMeshType m_meshType;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 
-#endif // FECustomFilter_h
+#endif // CustomFilterRenderer_h
