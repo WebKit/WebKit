@@ -1,3 +1,19 @@
+2012-10-30  Nico Weber  <thakis@chromium.org>
+
+        Fix potential overflow in jpeg exif reader. Found by aedla@google.com.
+        https://bugs.webkit.org/show_bug.cgi?id=100320
+
+        Reviewed by Eric Seidel.
+
+        Adding more than 1 element past an array is undefined, so don't do it.
+
+        No test, since in practice ifd will just overflow and `end - ifd` will
+        become much larget than 2 and the `if (end - ifd < 2)` a few lines
+        down will catch that case.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::readImageOrientation):
+
 2012-10-26  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Add the ValidatedCustomFilterOperation class

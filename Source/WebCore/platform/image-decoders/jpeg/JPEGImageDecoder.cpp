@@ -187,7 +187,10 @@ static ImageOrientation readImageOrientation(jpeg_decompress_struct* info)
         unsigned ifdOffset;
         if (!checkExifHeader(marker, isBigEndian, ifdOffset))
             continue;
-        ifdOffset += 6; // Account for 'Exif\0<fill byte>' header.
+        const unsigned offsetToTiffData = 6; // Account for 'Exif\0<fill byte>' header.
+        if (marker->data_length < offsetToTiffData || ifdOffset >= marker->data_length - offsetToTiffData)
+            continue;
+        ifdOffset += offsetToTiffData;
 
         // The jpeg exif container format contains a tiff block for metadata.
         // A tiff image file directory (ifd) consists of a uint16_t describing
