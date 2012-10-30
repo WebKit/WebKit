@@ -1,3 +1,9 @@
+2012-10-30  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip another failing accessibility test on Windows: accessibility/svg-remote-element.html.
+
+        * platform/win/TestExpectations:
+
 2012-10-30  Vincent Scheib  <scheib@chromium.org>
 
         [chromium] Unreviewed: Additional webgl test suppression to go along with earlier ones.
