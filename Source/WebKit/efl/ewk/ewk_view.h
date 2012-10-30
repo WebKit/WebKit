@@ -103,7 +103,8 @@
  *    will be deleted.
  *  - "restore", Evas_Object *: reports that view should be restored to default conditions
  *    and it gives a frame that originated restore as an argument.
- *  - "tooltip,text,set", const char*: sets tooltip text and displays if it is currently hidden.
+ *  - "tooltip,text,set", const char*: tooltip was set.
+ *  - "tooltip,text,unset", void: tooltip was unset.
  *  - "uri,changed", const char*: uri of the main frame was changed.
  *  - "view,resized", void: view object's size was changed.
  *  - "viewport,changed", void: reports that viewport was changed.

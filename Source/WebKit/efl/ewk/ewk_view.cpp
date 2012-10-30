@@ -158,6 +158,7 @@ static const Evas_Smart_Cb_Description _ewk_view_callback_names[] = {
     { "toolbars,visible,get", "b" },
     { "toolbars,visible,set", "b" },
     { "tooltip,text,set", "s" },
+    { "tooltip,text,unset", "s" },
     { "uri,changed", "s" },
     { "view,resized", "" },
     { "zoom,animated,end", "" },
@@ -3491,18 +3492,14 @@ void ewk_view_menubar_visible_get(Evas_Object* ewkView, bool* visible)
 
 /**
  * @internal
- * Set tooltip text and display if it is currently hidden.
- *
- * @param ewkView View.
- * @param text Text to set tooltip to.
- *
- * Emits signal: "tooltip,text,set" with a string. If tooltip must be actually
- * removed, text will be 0 or '\0'
  */
 void ewk_view_tooltip_text_set(Evas_Object* ewkView, const char* text)
 {
     DBG("ewkView=%p text=%s", ewkView, text);
-    evas_object_smart_callback_call(ewkView, "tooltip,text,set", (void*)text);
+    if (text && *text)
+        evas_object_smart_callback_call(ewkView, "tooltip,text,set", (void*)text);
+    else
+        evas_object_smart_callback_call(ewkView, "tooltip,text,unset", 0);
 }
 
 /**
