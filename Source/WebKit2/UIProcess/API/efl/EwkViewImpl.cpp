@@ -194,12 +194,10 @@ void EwkViewImpl::setCursor(const Cursor& cursor)
 
     m_cursorGroup = group;
     Ewk_View_Smart_Data* sd = smartData();
-    m_cursorObject = adoptRef(edje_object_add(sd->base.evas));
+    RefPtr<Evas_Object> cursorObject = adoptRef(edje_object_add(sd->base.evas));
 
     Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
-    if (!m_theme || !edje_object_file_set(m_cursorObject.get(), m_theme, group)) {
-        m_cursorObject.clear();
-
+    if (!m_theme || !edje_object_file_set(cursorObject.get(), m_theme, group)) {
         ecore_evas_object_cursor_set(ecoreEvas, 0, 0, 0, 0);
 #ifdef HAVE_ECORE_X
         if (WebCore::isUsingEcoreX(sd->base.evas))
@@ -208,28 +206,31 @@ void EwkViewImpl::setCursor(const Cursor& cursor)
         return;
     }
 
+    // Set cursor size.
     Evas_Coord width, height;
-    edje_object_size_min_get(m_cursorObject.get(), &width, &height);
+    edje_object_size_min_get(cursorObject.get(), &width, &height);
     if (width <= 0 || height <= 0)
-        edje_object_size_min_calc(m_cursorObject.get(), &width, &height);
+        edje_object_size_min_calc(cursorObject.get(), &width, &height);
     if (width <= 0 || height <= 0) {
         width = defaultCursorSize;
         height = defaultCursorSize;
     }
-    evas_object_resize(m_cursorObject.get(), width, height);
+    evas_object_resize(cursorObject.get(), width, height);
 
+    // Get cursor hot spot.
     const char* data;
     int hotspotX = 0;
-    data = edje_object_data_get(m_cursorObject.get(), "hot.x");
+    data = edje_object_data_get(cursorObject.get(), "hot.x");
     if (data)
         hotspotX = atoi(data);
 
     int hotspotY = 0;
-    data = edje_object_data_get(m_cursorObject.get(), "hot.y");
+    data = edje_object_data_get(cursorObject.get(), "hot.y");
     if (data)
         hotspotY = atoi(data);
 
-    ecore_evas_object_cursor_set(ecoreEvas, m_cursorObject.get(), EVAS_LAYER_MAX, hotspotX, hotspotY);
+    // ecore_evas takes care of freeing the cursor object.
+    ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release().leakRef(), EVAS_LAYER_MAX, hotspotX, hotspotY);
 }
 
 void EwkViewImpl::displayTimerFired(WebCore::Timer<EwkViewImpl>*)

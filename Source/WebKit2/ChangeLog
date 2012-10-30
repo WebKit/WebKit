@@ -1,3 +1,22 @@
+2012-10-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Let Ecore_Evas own the cursor object
+        https://bugs.webkit.org/show_bug.cgi?id=100731
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Ecore_Evas takes care of calling evas_object_del() on
+        the cursor object when it is no longer used (e.g. when
+        it is replaced by another cursor object). Therefore,
+        we don't need to keep a RefPtr to the cursor Evas
+        Object as a data member of EwkViewImpl. We pass
+        ownership of the cursor object to Ecore_Evas.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::setCursor):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+
 2012-10-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Simplify getting impl from ewk_view evas object instance

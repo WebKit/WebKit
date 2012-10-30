@@ -242,7 +242,6 @@ private:
     Evas_GL_Surface* m_evasGlSurface;
 #endif
     OwnPtr<Ewk_Settings> m_settings;
-    RefPtr<Evas_Object> m_cursorObject;
     const char* m_cursorGroup; // This is an address, do not free it or use WKEinaSharedString.
     WKEinaSharedString m_faviconURL;
     WKEinaSharedString m_url;
