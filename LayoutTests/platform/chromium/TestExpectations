@@ -3821,6 +3821,9 @@ webkit.org/b/96227 fast/js/function-dot-arguments-identity.html [ Skip ]
 webkit.org/b/96835 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure Pass ]
 webkit.org/b/96835 platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure Pass ]
 
+# needs baselines
+Bug(thakis) fast/images/exif-orientation-image-document.html [ ImageOnlyFailure ] 
+
 webkit.org/b/96834 platform/chromium/virtual/threaded/compositing/visibility/visibility-image-layers.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98086 platform/chromium/virtual/threaded/compositing/visibility/visibility-composited-transforms.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98086 platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-video-layer.html [ ImageOnlyFailure Pass ]
@@ -4060,6 +4063,7 @@ webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/animated-gif-r
 webkit.org/b/94240 [ Linux Win ] platform/chromium/virtual/deferred/fast/images/color-jpeg-with-color-profile.html [ ImageOnlyFailure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/embed-image.html [ Failure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/exif-orientation-css.html [ ImageOnlyFailure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/exif-orientation-image-document.html [ Failure ImageOnlyFailure ] 
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/exif-orientation.html [ Failure ImageOnlyFailure ]
 webkit.org/b/94240 [ Linux Win SnowLeopard ] platform/chromium/virtual/deferred/fast/images/favicon-as-image.html [ Failure ]
 webkit.org/b/94240 [ Linux Win SnowLeopard MountainLion ] platform/chromium/virtual/deferred/fast/images/gif-large-checkerboard.html [ ImageOnlyFailure ]

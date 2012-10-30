@@ -1,3 +1,16 @@
+2012-10-30  Nico Weber  <thakis@chromium.org>
+
+        Add a test for reading exif orientation off image documents
+        https://bugs.webkit.org/show_bug.cgi?id=100698
+
+        Reviewed by Eric Seidel.
+
+        fast/images/exif-orientation.html tests <img> elements, but image documents were untested previously.
+
+        * fast/images/exif-orientation-image-document.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/images/exif-orientation-image-document-expected.txt: Added.
+
 2012-10-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r132819.
