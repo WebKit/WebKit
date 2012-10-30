@@ -1,3 +1,11 @@
+2012-10-30  Pavel Podivilov  <podivilov@google.com>
+
+        Unreviewed, rebaseline fast/sub-pixel/float-wrap-zoom.html.
+
+        * platform/chromium-mac-lion/fast/sub-pixel/float-wrap-zoom-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/sub-pixel/float-wrap-zoom-expected.png: Added.
+        * platform/chromium-mac/fast/sub-pixel/float-wrap-zoom-expected.png: Added.
+
 2012-10-30  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL] Unreviewed, combine color profile failures to correct bug
