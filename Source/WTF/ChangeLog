@@ -1,3 +1,9 @@
+2012-10-30  Mark Rowe  <mrowe@apple.com>
+
+        Fix WTF to not install a few header files in bogus locations.
+
+        * WTF.xcodeproj/project.pbxproj:
+
 2012-10-28  Mark Rowe  <mrowe@apple.com>
 
         Simplify Xcode configuration settings that used to vary between OS versions.
