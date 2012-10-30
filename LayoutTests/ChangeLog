@@ -1,3 +1,21 @@
+2012-10-30  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] Unskip sputnik flaky tests.
+        https://bugs.webkit.org/show_bug.cgi?id=100732
+
+        Unreviewed, EFL gardening.
+
+        These tests are always passing now.
+
+        sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A5.html
+        sputnik/Conformance/07_Lexical_Conventions/7.4_Comments/S7.4_A6.html
+        sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html
+        sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html
+        sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html
+        sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.4_T2.html
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-10-30  Nico Weber  <thakis@chromium.org>
 
         Add a test for reading exif orientation off image documents
