@@ -3849,7 +3849,7 @@ void WebViewImpl::invalidateRect(const IntRect& rect)
         IntRect dirtyRect = view->windowToContents(rect);
         updateLayerTreeViewport();
         m_nonCompositedContentHost->invalidateRect(dirtyRect);
-    } else
+    } else if (m_client)
         m_client->didInvalidateRect(rect);
 }
 

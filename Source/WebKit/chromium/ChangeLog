@@ -1,3 +1,15 @@
+2012-10-29  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Null-check WebViewImpl::m_client before calling invalidateRect() on it
+        https://bugs.webkit.org/show_bug.cgi?id=100716
+
+        Reviewed by Dirk Pranke.
+
+        This check was accidentally removed in r132862 and the value is null in at least some unit tests.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::invalidateRect):
+
 2012-10-29  Vincent Scheib  <scheib@chromium.org>
 
         Unreviewed, rolling out r132845.
