@@ -1,3 +1,18 @@
+2012-10-30  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        Regression(r132647)-Enable WebGL in EwkView.
+        https://bugs.webkit.org/show_bug.cgi?id=100552.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebGL is enabled with following changeset: http://trac.webkit.org/changeset/132627.
+        Some changes are lost after the following changeset: http://trac.webkit.org/changeset/132647
+        i.e setWebGLEnabled(true);  in EwkViewImpl.cpp.
+        This patch re-applies the lost changes.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+
 2012-10-30  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Animations jump when the page is suspended

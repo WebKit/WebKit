@@ -126,6 +126,9 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, Pas
 #if USE(COORDINATED_GRAPHICS)
     m_pageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     m_pageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
+#if ENABLE(WEBGL)
+    m_pageProxy->pageGroup()->preferences()->setWebGLEnabled(true);
+#endif
     m_pageProxy->setUseFixedLayout(true);
 #endif
 
