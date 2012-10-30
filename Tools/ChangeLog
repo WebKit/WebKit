@@ -1,3 +1,15 @@
+2012-10-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][JHBUILD] Update EFL libraries to v1.7.1 stable release
+        https://bugs.webkit.org/show_bug.cgi?id=100759
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update Bump EFL libraries to the new stable release (v1.7.1)
+        in JHBuild to pull the latest bug fixes.
+
+        * efl/jhbuild.modules:
+
 2012-10-29  Anders Carlsson  <andersca@apple.com>
 
         String::createCFString should return a RetainPtr
