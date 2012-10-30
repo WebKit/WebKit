@@ -4108,3 +4108,16 @@ webkit.org/b/100475 platform/chromium/virtual/softwarecompositing/tiling/tile-ca
 webkit.org/b/100477 [ Win ] platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-key-operations.html [ Failure ]
 
 webkit.org/b/100647 [ Win ] webaudio/audiobuffersource-loop-points.html [ Failure ]
+
+webkit.org/b/100784 fast/canvas/webgl/canvas-test.html [ Text ]
+webkit.org/b/100784 fast/canvas/webgl/gl-get-calls.html [ Text ]
+webkit.org/b/100784 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Text ]
+webkit.org/b/100784 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Text ]
+webkit.org/b/100784 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Text ]
+webkit.org/b/100784 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Text ]
+webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/canvas-test.html [ Text ]
+webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/gl-get-calls.html [ Text ]
+webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Text ]
+webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Text ]
+webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Text ]
+webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Text ]
