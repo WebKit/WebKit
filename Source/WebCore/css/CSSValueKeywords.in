@@ -621,6 +621,10 @@ space
 //
 // CSS_PROP__KHTML_LINE_BREAK
 //
+// auto
+loose
+// normal
+strict
 after-white-space
 
 // -webkit-appearance

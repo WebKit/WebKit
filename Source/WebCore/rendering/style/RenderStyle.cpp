@@ -471,7 +471,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             || rareInheritedData->wordBreak != other->rareInheritedData->wordBreak
             || rareInheritedData->overflowWrap != other->rareInheritedData->overflowWrap
             || rareInheritedData->nbspMode != other->rareInheritedData->nbspMode
-            || rareInheritedData->khtmlLineBreak != other->rareInheritedData->khtmlLineBreak
+            || rareInheritedData->lineBreak != other->rareInheritedData->lineBreak
             || rareInheritedData->textSecurity != other->rareInheritedData->textSecurity
             || rareInheritedData->hyphens != other->rareInheritedData->hyphens
             || rareInheritedData->hyphenationLimitBefore != other->rareInheritedData->hyphenationLimitBefore

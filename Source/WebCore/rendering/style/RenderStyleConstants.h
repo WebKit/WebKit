@@ -210,8 +210,8 @@ enum ENBSPMode {
     NBNORMAL, SPACE
 };
 
-enum EKHTMLLineBreak {
-    LBNORMAL, AFTER_WHITE_SPACE
+enum LineBreak {
+    LineBreakAuto, LineBreakLoose, LineBreakNormal, LineBreakStrict, LineBreakAfterWhiteSpace
 };
 
 enum EResize {

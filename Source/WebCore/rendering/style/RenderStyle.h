@@ -683,7 +683,7 @@ public:
 
     bool breakOnlyAfterWhiteSpace() const
     {
-        return whiteSpace() == PRE_WRAP || khtmlLineBreak() == AFTER_WHITE_SPACE;
+        return whiteSpace() == PRE_WRAP || lineBreak() == LineBreakAfterWhiteSpace;
     }
 
     bool breakWords() const
@@ -846,7 +846,7 @@ public:
     EWordBreak wordBreak() const { return static_cast<EWordBreak>(rareInheritedData->wordBreak); }
     EOverflowWrap overflowWrap() const { return static_cast<EOverflowWrap>(rareInheritedData->overflowWrap); }
     ENBSPMode nbspMode() const { return static_cast<ENBSPMode>(rareInheritedData->nbspMode); }
-    EKHTMLLineBreak khtmlLineBreak() const { return static_cast<EKHTMLLineBreak>(rareInheritedData->khtmlLineBreak); }
+    LineBreak lineBreak() const { return static_cast<LineBreak>(rareInheritedData->lineBreak); }
     const AtomicString& highlight() const { return rareInheritedData->highlight; }
     Hyphens hyphens() const { return static_cast<Hyphens>(rareInheritedData->hyphens); }
     short hyphenationLimitBefore() const { return rareInheritedData->hyphenationLimitBefore; }
@@ -1311,7 +1311,7 @@ public:
     void setWordBreak(EWordBreak b) { SET_VAR(rareInheritedData, wordBreak, b); }
     void setOverflowWrap(EOverflowWrap b) { SET_VAR(rareInheritedData, overflowWrap, b); }
     void setNBSPMode(ENBSPMode b) { SET_VAR(rareInheritedData, nbspMode, b); }
-    void setKHTMLLineBreak(EKHTMLLineBreak b) { SET_VAR(rareInheritedData, khtmlLineBreak, b); }
+    void setLineBreak(LineBreak b) { SET_VAR(rareInheritedData, lineBreak, b); }
     void setHighlight(const AtomicString& h) { SET_VAR(rareInheritedData, highlight, h); }
     void setHyphens(Hyphens h) { SET_VAR(rareInheritedData, hyphens, h); }
     void setHyphenationLimitBefore(short limit) { SET_VAR(rareInheritedData, hyphenationLimitBefore, limit); }
@@ -1650,7 +1650,7 @@ public:
     static EWordBreak initialWordBreak() { return NormalWordBreak; }
     static EOverflowWrap initialOverflowWrap() { return NormalOverflowWrap; }
     static ENBSPMode initialNBSPMode() { return NBNORMAL; }
-    static EKHTMLLineBreak initialKHTMLLineBreak() { return LBNORMAL; }
+    static LineBreak initialLineBreak() { return LineBreakAuto; }
     static const AtomicString& initialHighlight() { return nullAtom; }
     static ESpeak initialSpeak() { return SpeakNormal; }
     static Hyphens initialHyphens() { return HyphensManual; }

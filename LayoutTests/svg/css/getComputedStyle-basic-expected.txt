@@ -322,7 +322,7 @@ rect: style.getPropertyValue(-webkit-line-align) : none
 rect: style.getPropertyCSSValue(-webkit-line-align) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-box-contain) : block inline replaced
 rect: style.getPropertyCSSValue(-webkit-line-box-contain) : [object CSSValue]
-rect: style.getPropertyValue(-webkit-line-break) : normal
+rect: style.getPropertyValue(-webkit-line-break) : auto
 rect: style.getPropertyCSSValue(-webkit-line-break) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-line-clamp) : none
 rect: style.getPropertyCSSValue(-webkit-line-clamp) : [object CSSPrimitiveValue]
@@ -824,7 +824,7 @@ g: style.getPropertyValue(-webkit-line-align) : none
 g: style.getPropertyCSSValue(-webkit-line-align) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-box-contain) : block inline replaced
 g: style.getPropertyCSSValue(-webkit-line-box-contain) : [object CSSValue]
-g: style.getPropertyValue(-webkit-line-break) : normal
+g: style.getPropertyValue(-webkit-line-break) : auto
 g: style.getPropertyCSSValue(-webkit-line-break) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-line-clamp) : none
 g: style.getPropertyCSSValue(-webkit-line-clamp) : [object CSSPrimitiveValue]

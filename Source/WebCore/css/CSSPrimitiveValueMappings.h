@@ -1440,31 +1440,46 @@ template<> inline CSSPrimitiveValue::operator EFloat() const
     return NoFloat;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EKHTMLLineBreak e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineBreak e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_IDENT;
     switch (e) {
-        case LBNORMAL:
-            m_value.ident = CSSValueNormal;
-            break;
-        case AFTER_WHITE_SPACE:
-            m_value.ident = CSSValueAfterWhiteSpace;
-            break;
+    case LineBreakAuto:
+        m_value.ident = CSSValueAuto;
+        break;
+    case LineBreakLoose:
+        m_value.ident = CSSValueLoose;
+        break;
+    case LineBreakNormal:
+        m_value.ident = CSSValueNormal;
+        break;
+    case LineBreakStrict:
+        m_value.ident = CSSValueStrict;
+        break;
+    case LineBreakAfterWhiteSpace:
+        m_value.ident = CSSValueAfterWhiteSpace;
+        break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EKHTMLLineBreak() const
+template<> inline CSSPrimitiveValue::operator LineBreak() const
 {
     switch (m_value.ident) {
-        case CSSValueAfterWhiteSpace:
-            return AFTER_WHITE_SPACE;
-        case CSSValueNormal:
-            return LBNORMAL;
+    case CSSValueAuto:
+        return LineBreakAuto;
+    case CSSValueLoose:
+        return LineBreakLoose;
+    case CSSValueNormal:
+        return LineBreakNormal;
+    case CSSValueStrict:
+        return LineBreakStrict;
+    case CSSValueAfterWhiteSpace:
+        return LineBreakAfterWhiteSpace;
     }
 
     ASSERT_NOT_REACHED();
-    return LBNORMAL;
+    return LineBreakAuto;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStylePosition e)

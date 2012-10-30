@@ -161,7 +161,7 @@ zoom: 1
 -webkit-hyphens: manual
 -webkit-line-align: none
 -webkit-line-box-contain: block inline replaced
--webkit-line-break: normal
+-webkit-line-break: auto
 -webkit-line-clamp: none
 -webkit-line-grid: none
 -webkit-line-snap: none

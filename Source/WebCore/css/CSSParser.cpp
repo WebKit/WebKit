@@ -827,8 +827,8 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNone || valueID == CSSValueEdges)
             return true;
         break;
-    case CSSPropertyWebkitLineBreak: // normal | after-white-space
-        if (valueID == CSSValueNormal || valueID == CSSValueAfterWhiteSpace)
+    case CSSPropertyWebkitLineBreak: // auto | loose | normal | strict | after-white-space
+        if (valueID == CSSValueAuto || valueID == CSSValueLoose || valueID == CSSValueNormal || valueID == CSSValueStrict || valueID == CSSValueAfterWhiteSpace)
             return true;
         break;
     case CSSPropertyWebkitLineSnap:

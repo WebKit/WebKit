@@ -2138,7 +2138,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWordWrap:
             return cssValuePool().createValue(style->overflowWrap());
         case CSSPropertyWebkitLineBreak:
-            return cssValuePool().createValue(style->khtmlLineBreak());
+            return cssValuePool().createValue(style->lineBreak());
         case CSSPropertyWebkitNbspMode:
             return cssValuePool().createValue(style->nbspMode());
         case CSSPropertyResize:

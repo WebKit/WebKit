@@ -1,3 +1,63 @@
+2012-10-30  Glenn Adams  <glenn@skynav.com>
+
+        [CSS] Expand -webkit-line-break value space
+        https://bugs.webkit.org/show_bug.cgi?id=100739
+
+        Reviewed by Eric Seidel.
+
+        (1) expand -webkit-line-break to include new values defined by CSS3 Text [1], i.e., 'auto', 'strict', 'loose';
+        (2) change default (initial) value for -webkit-line-break to 'auto' to match CSS3 Text;
+        (3) rename enum EKHTMLLineBreak to LineBreak, renaming enum values appropriately;
+
+        New tests to be added when functionality of new values is added. No rendering behavior change at this time.
+        Only externally visible change is default (initial) value returning 'auto' rather than 'normal', for which 3 existing
+        tests that were sensitive to this value have been updated. Note that until the functionality for the new values is
+        added, any actual use of the new values will be treated as the same as the pre-existing 'normal' value, i.e., the
+        default semantics.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        Update from kthmlLineBreak() to lineBreak().
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        Update values supported for CSSPropertyWebkitLineBreak.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator LineBreak):
+        Update LineBreak enumeration values (previously EKHTMLLineBreak).
+
+        * css/CSSValueKeywords.in:
+        Update keywords used for -webkit-line-break.
+
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        Update names for line break style getter/setter.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        Remove khtml prefix on line break related state.
+
+        * rendering/style/RenderStyle.h:
+        Remove khtml prefix on line break related methods. Update to redefined LineBreak
+        enumeration type.
+
+        * rendering/style/RenderStyleConstants.h:
+        Rename EKHTMLLineBreak enumeration to LineBreak.
+        Redefine LineBreak enumeration to include new CSS3 Text modes (auto, loose, strict) and
+        use better names.
+
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        Remove khtml prefix on line break related state references.
+
+        * rendering/style/StyleRareInheritedData.h:
+        (StyleRareInheritedData):
+        Remove khtml prefix on line break related state. Widen field to 3 bits to support 8 values,
+        of which 5 are now used.
+
 2012-10-30  Antti Koivisto  <antti@apple.com>
 
         Avoid unnecessary style recalcs on class attribute mutation
