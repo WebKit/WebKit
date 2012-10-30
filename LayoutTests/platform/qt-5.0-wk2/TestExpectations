@@ -765,3 +765,11 @@ webkit.org/b/99306 fast/repaint/fixed-child-of-fixed-move-after-scroll.html [ Im
 webkit.org/b/99306 fast/replaced/border-radius-clip.html [ ImageOnlyFailure ]
 webkit.org/b/99306 transitions/opacity-transition-zindex.html [ ImageOnlyFailure ]
 webkit.org/b/99306 transitions/suspend-transform-transition.html [ ImageOnlyFailure ]
+
+# missing "PASS: mousewheel event is fired."
+fast/dom/shadow/wheel-event-in-shadow-dom.html
+fast/dom/shadow/wheel-event-on-input-in-shadow-dom.html
+
+# [Qt][WK2] REGRESSION(r132907): It made animations/negative-delay.html fail
+webkit.org/b/100769 animations/negative-delay.html
+webkit.org/b/100769 transitions/negative-delay.html

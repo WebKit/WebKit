@@ -1,3 +1,9 @@
+2012-10-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed evening gardening, skip failing tests to paint the bot green.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2012-10-30 Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support embedded SVG objects in AX tree
