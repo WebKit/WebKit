@@ -92,9 +92,9 @@
 
 .data-grid td {
     vertical-align: top;
-    height: 12px;
-    line-height: 12px;
-    padding: 2px 4px;
+    height: 14px;
+    line-height: 14px;
+    padding: 1px 4px;
     white-space: nowrap;
     overflow: hidden;
     border-right: 1px solid #aaa;

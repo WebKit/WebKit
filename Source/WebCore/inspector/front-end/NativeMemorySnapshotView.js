@@ -31,35 +31,124 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
+ * @param {WebInspector.ProfileType} profile
  */
 WebInspector.NativeMemorySnapshotView = function(profile)
 {
     WebInspector.View.call(this);
     this.registerRequiredCSS("nativeMemoryProfiler.css");
-    this._profile = profile;
-    this.element.addStyleClass("memory-chart-view");
 
-    var pieChart = new WebInspector.NativeMemoryPieChart(profile._memoryBlock);
-    pieChart.element.addStyleClass("fill");
-    pieChart.show(this.element);
+    this.element.addStyleClass("native-snapshot-view");
+    this.containmentDataGrid = new WebInspector.NativeSnapshotDataGrid(profile._memoryBlock);
+    this.containmentDataGrid.show(this.element);
 }
 
 WebInspector.NativeMemorySnapshotView.prototype = {
-    dispose: function()
-    {
-    },
-
-    get statusBarItems()
-    {
-        return [];
-    },
-
-    get profile()
-    {
-        return this._profile;
-    },
-
     __proto__: WebInspector.View.prototype
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.DataGrid}
+ * @param {MemoryAgent.MemoryBlock} profile
+ */
+WebInspector.NativeSnapshotDataGrid = function(profile)
+{
+    var columns = {
+        object: { title: WebInspector.UIString("Object"), width: "200px", disclosure: true, sortable: false },
+        size: { title: WebInspector.UIString("Size"), sortable: false },
+    };
+    WebInspector.DataGrid.call(this, columns);
+    this.setRootNode(new WebInspector.NativeSnapshotNode(profile, profile));
+    this.rootNode()._populate();
+}
+
+WebInspector.NativeSnapshotDataGrid.prototype = {
+    __proto__: WebInspector.DataGrid.prototype
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.DataGridNode}
+ * @param {MemoryAgent.MemoryBlock} nodeData
+ * @param {MemoryAgent.MemoryBlock} profile
+ */
+WebInspector.NativeSnapshotNode = function(nodeData, profile)
+{
+    this._nodeData = nodeData;
+    this._profile = profile;
+    var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(nodeData);
+    var data = { object: viewProperties._description, size: this._nodeData.size };
+    var hasChildren = nodeData.children && nodeData.children.length !== 0;
+    WebInspector.DataGridNode.call(this, data, hasChildren);
+    this.addEventListener("populate", this._populate, this);
+}
+
+WebInspector.NativeSnapshotNode.prototype = {
+    /**
+     * @override
+     * @param {string} profilesPanel
+     * @return {Element}
+     */
+    createCell: function(columnIdentifier)
+    {
+        var cell = columnIdentifier === "size" ?
+            this._createSizeCell(columnIdentifier) :
+            WebInspector.DataGridNode.prototype.createCell.call(this, columnIdentifier);
+        return cell;
+    },
+
+    /**
+     * @param {string} columnIdentifier
+     * @return {Element}
+     */
+    _createSizeCell: function(columnIdentifier)
+    {
+        var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(this._nodeData);
+        var sizeKiB = this._nodeData.size / 1024;
+        var totalSize = this._profile.size;
+        var percentage = this._nodeData.size / totalSize  * 100;
+
+        var cell = document.createElement("td");
+        cell.className = columnIdentifier + "-column";
+
+        var textDiv = document.createElement("div");
+        textDiv.textContent = Number.withThousandsSeparator(sizeKiB.toFixed(0)) + "\u2009" + WebInspector.UIString("KiB");
+        textDiv.className = "size-text";
+        cell.appendChild(textDiv);
+
+        var barDiv = document.createElement("div");
+        barDiv.className = "size-bar";
+        barDiv.style.width = percentage + "%";
+        barDiv.style.backgroundColor = viewProperties._fillStyle;
+        // fillerDiv displaces percentage text out of the bar visible area if it doesn't fit.
+        var fillerDiv = document.createElement("div");
+        fillerDiv.className = "percent-text"
+        barDiv.appendChild(fillerDiv);
+        var percentDiv = document.createElement("div");
+        percentDiv.textContent = percentage.toFixed(1) + "%";
+        percentDiv.className = "percent-text"
+        barDiv.appendChild(percentDiv);
+
+        var barHolderDiv = document.createElement("div");
+        barHolderDiv.appendChild(barDiv);
+        cell.appendChild(barHolderDiv);
+
+        return cell;
+    },
+
+    _populate: function() {
+        function comparator(a, b) {
+            return b.size - a.size;
+        }
+        if (this._nodeData !== this._profile)
+            this._nodeData.children.sort(comparator);
+        for (var node in this._nodeData.children) {
+            this.appendChild(new WebInspector.NativeSnapshotNode(this._nodeData.children[node], this._profile));
+        }
+    },
+
+    __proto__: WebInspector.DataGridNode.prototype
 }
 
 /**
@@ -218,18 +307,18 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
     addBlock("hsl(  0,  0%, 100%)", "ProcessPrivateMemory", "Total");
     addBlock("hsl(  0,  0%,  80%)", "OwnersTypePlaceholder", "OwnersTypePlaceholder");
     addBlock("hsl(  0,  0%,  80%)", "Other", "Other");
-    addBlock("hsl(300, 30%,  80%)", "Page", "Page's structures");
-    addBlock("hsl( 90, 60%,  80%)", "JSHeap", "JavaScript heap");
-    addBlock("hsl( 90, 80%,  80%)", "JSHeap.Used", "Used JavaScript heap");
-    addBlock("hsl( 90, 30%,  80%)", "JSExternalResources", "JavaScript external resources");
-    addBlock("hsl( 90, 40%,  80%)", "JSExternalArrays", "JavaScript external arrays");
-    addBlock("hsl( 90, 50%,  80%)", "JSExternalStrings", "JavaScript external strings");
-    addBlock("hsl(210, 60%,  80%)", "WebInspector", "Inspector data");
-    addBlock("hsl( 30, 60%,  80%)", "MemoryCache", "Memory cache resources");
-    addBlock("hsl( 40, 60%,  80%)", "GlyphCache", "Glyph cache resources");
-    addBlock("hsl( 35, 60%,  80%)", "DOMStorageCache", "DOM storage cache");
-    addBlock("hsl( 60, 60%,  80%)", "RenderTree", "Render tree");
-    addBlock("hsl( 60, 60%,  80%)", "RenderTree.Used", "Render tree used");
+    addBlock("hsl(220, 80%,  70%)", "Page", "Page structures");
+    addBlock("hsl(100, 60%,  50%)", "JSHeap", "JavaScript heap");
+    addBlock("hsl(100, 80%,  80%)", "JSHeap.Used", "Used JavaScript heap");
+    addBlock("hsl( 90, 40%,  80%)", "JSExternalResources", "JavaScript external resources");
+    addBlock("hsl( 90, 60%,  80%)", "JSExternalArrays", "JavaScript external arrays");
+    addBlock("hsl( 90, 60%,  80%)", "JSExternalStrings", "JavaScript external strings");
+    addBlock("hsl(  0, 80%,  60%)", "WebInspector", "Inspector data");
+    addBlock("hsl( 30, 80%,  80%)", "MemoryCache", "Memory cache resources");
+    addBlock("hsl( 40, 80%,  80%)", "GlyphCache", "Glyph cache resources");
+    addBlock("hsl( 35, 80%,  80%)", "DOMStorageCache", "DOM storage cache");
+    addBlock("hsl( 60, 80%,  60%)", "RenderTree", "Render tree");
+    addBlock("hsl( 60, 80%,  60%)", "RenderTree.Used", "Render tree used");
 }
 
 WebInspector.MemoryBlockViewProperties._forMemoryBlock = function(memoryBlock)
@@ -238,7 +327,7 @@ WebInspector.MemoryBlockViewProperties._forMemoryBlock = function(memoryBlock)
     var result = WebInspector.MemoryBlockViewProperties._standardBlocks[memoryBlock.name];
     if (result)
         return result;
-    return new WebInspector.MemoryBlockViewProperties("rgba(20, 200, 20, 0.8)", memoryBlock.name, memoryBlock.name);
+    return new WebInspector.MemoryBlockViewProperties("rgba(128, 128, 128, 0.8)", memoryBlock.name, memoryBlock.name);
 }
 
 

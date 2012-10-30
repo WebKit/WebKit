@@ -1,3 +1,34 @@
+2012-10-30  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Implement native memory snapshot grid view
+        https://bugs.webkit.org/show_bug.cgi?id=100656
+
+        Native memory snapshots are now shown as an expandable tree form
+        using the grid control.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeMemorySnapshotView):
+        (WebInspector.NativeSnapshotDataGrid):
+        (WebInspector.NativeSnapshotNode):
+        (WebInspector.NativeSnapshotNode.prototype.createCell):
+        (WebInspector.NativeSnapshotNode.prototype._createSizeCell):
+        (WebInspector.NativeSnapshotNode.prototype._populate):
+        (WebInspector.MemoryBlockViewProperties._initialize):
+        (WebInspector.MemoryBlockViewProperties._forMemoryBlock):
+        * inspector/front-end/dataGrid.css:
+        (.data-grid td):
+        * inspector/front-end/nativeMemoryProfiler.css:
+        (.memory-bar-chart-bar):
+        (.native-snapshot-view):
+        (.native-snapshot-view.visible):
+        (.native-snapshot-view .data-grid):
+        (.native-snapshot-view .data-grid table):
+        (.native-snapshot-view .data-grid div.size-text):
+        (.native-snapshot-view .data-grid div.size-bar):
+        (.native-snapshot-view .data-grid div.percent-text):
+
 2012-10-30  Zoltan Nyul  <zoltan.nyul@intel.com>
 
         3d rotation with [0, 0, 0] direction vector should not be applied
