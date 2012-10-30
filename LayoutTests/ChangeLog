@@ -1,3 +1,13 @@
+2012-10-30  Andrey Lushnikov  <lushnikov@google.com>
+
+        Web Inspector: adds isOwnProperty to remote protocol
+        https://bugs.webkit.org/show_bug.cgi?id=100664
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/runtime/runtime-getProperties-isOwnProperty-expected.txt: Added.
+        * inspector/runtime/runtime-getProperties-isOwnProperty.html: Added.
+
 2012-10-30  Pavel Podivilov  <podivilov@google.com>
 
         Unreviewed, add baselines for exif-orientation-image-document.
