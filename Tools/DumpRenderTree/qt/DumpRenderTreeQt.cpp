@@ -46,7 +46,6 @@
 #include <QBuffer>
 #include <QCryptographicHash>
 #include <QDir>
-#include <QElapsedTimer>
 #include <QFile>
 #include <QFileInfo>
 #include <QFocusEvent>
@@ -394,7 +393,6 @@ DumpRenderTree::DumpRenderTree()
     , m_enableTextOutput(false)
     , m_standAloneMode(false)
     , m_graphicsBased(false)
-    , m_finishedResetting(false)
     , m_persistentStoragePath(QString(getenv("DUMPRENDERTREE_TEMP")))
 {
     QByteArray viewMode = getenv("QT_DRT_WEBVIEW_MODE");
@@ -510,37 +508,14 @@ void DumpRenderTree::dryRunPrint(QWebFrame* frame)
 #endif
 }
 
-static void runUntil(bool& condition, double timeout)
-{
-    int timeoutInMSecs = timeout * 1000;
-    QElapsedTimer timer;
-    timer.start();
-    while (!condition) {
-        if (timer.elapsed() > timeoutInMSecs)
-            return;
-        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents, timeoutInMSecs - timer.elapsed());
-    }
-}
-
 void DumpRenderTree::resetToConsistentStateBeforeTesting(const QUrl& url)
 {
-    // Disable text-output first, because some tests can performed actions
-    // causing text dump out when stopped, and we do not want them dumping
-    // into the next test.
-    setTextOutputEnabled(false);
-    m_controller->resetDumping();
-
-    // Reset the page so that any current loads are stopped. We set to an
-    // empty page here instead of issuing a stop action, since setUrl also
-    // clears the current document.
-    // NOTE: that this has to be done before the testRunner is reset or we get timeouts for some tests.
-    m_finishedResetting = false;
-    connect(m_page, SIGNAL(loadFinished(bool)), this, SLOT(finishedResetting(bool)));
-
-    m_page->mainFrame()->setUrl(QUrl("about:blank"));
-
-    runUntil(m_finishedResetting, 5);
-    disconnect(m_page, SIGNAL(loadFinished(bool)), this, SLOT(finishedResetting(bool)));
+    // reset so that any current loads are stopped
+    // NOTE: that this has to be done before the testRunner is
+    // reset or we get timeouts for some tests.
+    m_page->blockSignals(true);
+    m_page->triggerAction(QWebPage::Stop);
+    m_page->blockSignals(false);
 
     QList<QWebSecurityOrigin> knownOrigins = QWebSecurityOrigin::allOrigins();
     for (int i = 0; i < knownOrigins.size(); ++i)
@@ -596,11 +571,6 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const QUrl& url)
 #endif
 
     DumpRenderTreeSupportQt::clearOpener(m_page->mainFrame());
-}
-
-void DumpRenderTree::finishedResetting(bool)
-{
-    m_finishedResetting = true;
 }
 
 static bool isGlobalHistoryTest(const QUrl& url)
@@ -926,8 +896,6 @@ static const char *methodNameStringForFailedTest(TestRunner *controller)
 
 void DumpRenderTree::dump()
 {
-    if (!isTextOutputEnabled())
-        return;
     // Prevent any further frame load or resource load callbacks from appearing after we dump the result.
     DumpRenderTreeSupportQt::dumpFrameLoader(false);
     DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(false);

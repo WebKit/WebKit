@@ -1,3 +1,13 @@
+2012-10-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r132819.
+        http://trac.webkit.org/changeset/132819
+        https://bugs.webkit.org/show_bug.cgi?id=100388
+
+        It made layout testing 40% slower and storage tests assert
+
+        * platform/qt/TestExpectations:
+
 2012-10-25  Stephen Chenney  <schenney@chromium.org>
 
         feImage should not be allowed to self reference

@@ -2450,6 +2450,11 @@ webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
 
+# Flaky tests
+webkit.org/b/91376 http/tests/security/sandboxed-iframe-modify-self.html [ Failure Pass ]
+webkit.org/b/91379 http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html [ Failure Pass ]
+webkit.org/b/91379 http/tests/security/contentSecurityPolicy/object-src-none-allowed.html [ Failure Pass ]
+
 webkit.org/b/99756 fast/events/touch/touch-slider.html [ Failure ]
 
 webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
