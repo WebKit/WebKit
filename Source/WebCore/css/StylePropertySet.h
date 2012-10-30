@@ -62,7 +62,9 @@ public:
         { }
 
         CSSPropertyID id() const { return propertyInternal().id(); }
+        CSSPropertyID shorthandID() const { return propertyInternal().shorthandID(); }
         bool isImportant() const { return propertyInternal().isImportant(); }
+        bool isImplicit() const { return propertyInternal().isImplicit(); }
         bool isInherited() const { return propertyInternal().isInherited(); }
 
         String cssName() const { return propertyInternal().cssName(); }
@@ -179,12 +181,10 @@ private:
     bool appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result) const;
 
     bool removeShorthandProperty(CSSPropertyID);
-    bool propertyMatches(const CSSProperty*) const;
+    bool propertyMatches(const PropertyReference&) const;
 
-    const CSSProperty* findPropertyWithId(CSSPropertyID) const;
-    CSSProperty* findPropertyWithId(CSSPropertyID);
-
-    void append(const CSSProperty&);
+    int findPropertyIndex(CSSPropertyID) const;
+    CSSProperty* findMutableCSSPropertyWithID(CSSPropertyID);
 
     CSSProperty& propertyAtInternal(unsigned index);
     const CSSProperty& propertyAtInternal(unsigned index) const;

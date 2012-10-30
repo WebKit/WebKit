@@ -1,3 +1,39 @@
+2012-10-30  Andreas Kling  <kling@webkit.org>
+
+        StylePropertySet: Convert more logic to use PropertyReference.
+        <http://webkit.org/b/100779>
+
+        Reviewed by Antti Koivisto.
+
+        Rewrite more of the StylePropertySet logic to use PropertyReference instead of CSSProperty.
+        This is cleanup before changing the internal storage layout of immutable StylePropertySet.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::cssPropertyMatches):
+        * css/CSSComputedStyleDeclaration.h:
+        * css/CSSStyleDeclaration.h:
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::cssPropertyMatches):
+        * css/PropertySetCSSStyleDeclaration.h:
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::appendFontLonghandValueIfExplicit):
+        (WebCore::StylePropertySet::fontValue):
+        (WebCore::StylePropertySet::get4Values):
+        (WebCore::StylePropertySet::getPropertyCSSValue):
+        (WebCore::StylePropertySet::removeProperty):
+        (WebCore::StylePropertySet::propertyIsImportant):
+        (WebCore::StylePropertySet::getPropertyShorthand):
+        (WebCore::StylePropertySet::isPropertyImplicit):
+        (WebCore::StylePropertySet::setProperty):
+        (WebCore::StylePropertySet::mergeAndOverrideOnConflict):
+        (WebCore::StylePropertySet::findPropertyIndex):
+        (WebCore::StylePropertySet::findMutableCSSPropertyWithID):
+        (WebCore::StylePropertySet::propertyMatches):
+        (WebCore::StylePropertySet::removeEquivalentProperties):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::PropertyReference::shorthandID):
+        (WebCore::StylePropertySet::PropertyReference::isImplicit):
+
 2012-10-30  Eric Seidel  <eric@webkit.org>
 
         Teach RenderTable how to use Vector::insert and Vector::append instead of its own custom memmove code

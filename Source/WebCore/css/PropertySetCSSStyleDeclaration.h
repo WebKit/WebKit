@@ -67,7 +67,7 @@ private:
     virtual String getPropertyValueInternal(CSSPropertyID) OVERRIDE;
     virtual void setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) OVERRIDE;
     
-    virtual bool cssPropertyMatches(const CSSProperty*) const OVERRIDE;
+    virtual bool cssPropertyMatches(const StylePropertySet::PropertyReference&) const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> copy() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> makeMutable() OVERRIDE;
 

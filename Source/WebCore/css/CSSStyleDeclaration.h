@@ -23,6 +23,7 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSRule.h"
+#include "StylePropertySet.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -30,7 +31,6 @@ namespace WebCore {
 class CSSProperty;
 class CSSStyleSheet;
 class CSSValue;
-class StylePropertySet;
 class StyledElement;
 
 typedef int ExceptionCode;
@@ -66,7 +66,7 @@ public:
     virtual PassRefPtr<StylePropertySet> copy() const = 0;
     virtual PassRefPtr<StylePropertySet> makeMutable() = 0;
 
-    virtual bool cssPropertyMatches(const CSSProperty*) const = 0;
+    virtual bool cssPropertyMatches(const StylePropertySet::PropertyReference&) const = 0;
     virtual CSSStyleSheet* parentStyleSheet() const { return 0; }
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const = 0;

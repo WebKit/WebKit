@@ -369,7 +369,7 @@ PassRefPtr<StylePropertySet> PropertySetCSSStyleDeclaration::makeMutable()
     return m_propertySet;
 }
 
-bool PropertySetCSSStyleDeclaration::cssPropertyMatches(const CSSProperty* property) const
+bool PropertySetCSSStyleDeclaration::cssPropertyMatches(const StylePropertySet::PropertyReference& property) const
 {
     return m_propertySet->propertyMatches(property);
 }

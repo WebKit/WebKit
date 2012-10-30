@@ -2725,20 +2725,20 @@ String CSSComputedStyleDeclaration::item(unsigned i) const
     return getPropertyNameString(computedProperties[i]);
 }
 
-bool CSSComputedStyleDeclaration::cssPropertyMatches(const CSSProperty* property) const
+bool CSSComputedStyleDeclaration::cssPropertyMatches(const StylePropertySet::PropertyReference& property) const
 {
-    if (property->id() == CSSPropertyFontSize && property->value()->isPrimitiveValue() && m_node) {
+    if (property.id() == CSSPropertyFontSize && property.value()->isPrimitiveValue() && m_node) {
         m_node->document()->updateLayoutIgnorePendingStylesheets();
         RenderStyle* style = m_node->computedStyle(m_pseudoElementSpecifier);
         if (style && style->fontDescription().keywordSize()) {
             int sizeValue = cssIdentifierForFontSizeKeyword(style->fontDescription().keywordSize());
-            CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(property->value());
+            const CSSPrimitiveValue* primitiveValue = static_cast<const CSSPrimitiveValue*>(property.value());
             if (primitiveValue->isIdent() && primitiveValue->getIdent() == sizeValue)
                 return true;
         }
     }
-    RefPtr<CSSValue> value = getPropertyCSSValue(property->id());
-    return value && value->cssText() == property->value()->cssText();
+    RefPtr<CSSValue> value = getPropertyCSSValue(property.id());
+    return value && value->cssText() == property.value()->cssText();
 }
 
 PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::copy() const
