@@ -51,9 +51,9 @@ class ScriptValue;
 class ConsoleMessage {
     WTF_MAKE_NONCOPYABLE(ConsoleMessage); WTF_MAKE_FAST_ALLOCATED;
 public:
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& u, unsigned li, const String& requestId = String());
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& responseUrl, const String& requestId);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& u, unsigned li, unsigned long requestIdentifier = 0);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& responseUrl, unsigned long requestIdentifier);
     ~ConsoleMessage();
 
     void addToFrontend(InspectorFrontend::Console*, InjectedScriptManager*, bool generatePreview);

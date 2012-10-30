@@ -279,23 +279,23 @@ void WorkerContext::logExceptionToConsole(const String& errorMessage, const Stri
     thread()->workerReportingProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
 }
 
-void WorkerContext::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack)
+void WorkerContext::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask::create(source, type, level, message));
         return;
     }
     thread()->workerReportingProxy().postConsoleMessageToWorkerObject(source, type, level, message, lineNumber, sourceURL);
-    addMessageToWorkerConsole(source, type, level, message, sourceURL, lineNumber, callStack);
+    addMessageToWorkerConsole(source, type, level, message, sourceURL, lineNumber, callStack, requestIdentifier);
 }
 
-void WorkerContext::addMessageToWorkerConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack)
+void WorkerContext::addMessageToWorkerConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
     ASSERT(isContextThread());
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(this, source, type, level, message, 0, callStack);
+        InspectorInstrumentation::addMessageToConsole(this, source, type, level, message, 0, callStack, requestIdentifier);
     else
-        InspectorInstrumentation::addMessageToConsole(this, source, type, level, message, sourceURL, lineNumber);
+        InspectorInstrumentation::addMessageToConsole(this, source, type, level, message, sourceURL, lineNumber, requestIdentifier);
 }
 
 bool WorkerContext::isContextThread() const

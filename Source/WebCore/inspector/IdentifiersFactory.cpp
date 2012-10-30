@@ -49,7 +49,9 @@ String IdentifiersFactory::createIdentifier()
 // static
 String IdentifiersFactory::requestId(unsigned long identifier)
 {
-    return addProcessIdPrefixTo(String::number(identifier));
+    if (identifier)
+        return addProcessIdPrefixTo(String::number(identifier));
+    return String();
 }
 
 // static

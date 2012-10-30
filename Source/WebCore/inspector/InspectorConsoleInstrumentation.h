@@ -39,36 +39,36 @@
 
 namespace WebCore {
 
-inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
+inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, arguments, callStack);
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, arguments, callStack, requestIdentifier);
 #endif
 }
 
-inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber)
+inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, scriptId, lineNumber);
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, scriptId, lineNumber, requestIdentifier);
 #endif
 }
 
 #if ENABLE(WORKERS)
-inline void InspectorInstrumentation::addMessageToConsole(WorkerContext* workerContext, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
+inline void InspectorInstrumentation::addMessageToConsole(WorkerContext* workerContext, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerContext(workerContext))
-        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, arguments, callStack);
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, arguments, callStack, requestIdentifier);
 #endif
 }
 
-inline void InspectorInstrumentation::addMessageToConsole(WorkerContext* workerContext, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber)
+inline void InspectorInstrumentation::addMessageToConsole(WorkerContext* workerContext, MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerContext(workerContext))
-        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, scriptId, lineNumber);
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, scriptId, lineNumber, requestIdentifier);
 #endif
 }
 #endif

@@ -68,8 +68,8 @@ public:
     virtual void clearFrontend();
     virtual void restore();
 
-    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
-    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber);
+    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
+    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber, unsigned long requestIdentifier = 0);
     Vector<unsigned> consoleMessageArgumentCounts();
 
     void startTiming(const String& title);
@@ -78,9 +78,9 @@ public:
 
     void frameWindowDiscarded(DOMWindow*);
 
-    void didFinishXHRLoading(unsigned long identifier, const String& url, const String& sendURL, unsigned sendLineNumber);
-    void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
-    void didFailLoading(unsigned long identifier, const ResourceError&);
+    void didFinishXHRLoading(unsigned long requestIdentifier, const String& url, const String& sendURL, unsigned sendLineNumber);
+    void didReceiveResponse(unsigned long requestIdentifier, const ResourceResponse&);
+    void didFailLoading(unsigned long requestIdentifier, const ResourceError&);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);

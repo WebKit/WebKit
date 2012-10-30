@@ -35,6 +35,7 @@
 #include "ConsoleMessage.h"
 
 #include "Console.h"
+#include "IdentifiersFactory.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorFrontend.h"
@@ -46,7 +47,7 @@
 
 namespace WebCore {
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, const String& u, unsigned li, const String& requestId)
+ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, const String& u, unsigned li, unsigned long requestIdentifier)
     : m_source(s)
     , m_type(t)
     , m_level(l)
@@ -54,11 +55,11 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
     , m_url(u)
     , m_line(li)
     , m_repeatCount(1)
-    , m_requestId(requestId)
+    , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
+ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
     : m_source(s)
     , m_type(t)
     , m_level(l)
@@ -67,6 +68,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
     , m_url()
     , m_line(0)
     , m_repeatCount(1)
+    , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
     if (callStack && callStack->size()) {
         const ScriptCallFrame& frame = callStack->at(0);
@@ -76,7 +78,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
     m_callStack = callStack;
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, const String& responseUrl, const String& requestId)
+ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, const String& responseUrl, unsigned long requestIdentifier)
     : m_source(s)
     , m_type(t)
     , m_level(l)
@@ -84,7 +86,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
     , m_url(responseUrl)
     , m_line(0)
     , m_repeatCount(1)
-    , m_requestId(requestId)
+    , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
 }
 

@@ -134,10 +134,10 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
 
 void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
 {
-    addMessage(source, type, level, message, String(), 0, callStack);
+    addMessage(source, type, level, message, String(), 0, callStack, 0);
 }
 
-void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack)
+void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
 
     if (muteCount && source != ConsoleAPIMessageSource)
@@ -147,17 +147,17 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
     if (!page)
         return;
 
-    page->chrome()->client()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
+    page->chrome()->client()->addMessageToConsole(source, type, level, message, lineNumber, url);
 
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, 0, callStack);
+        InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, 0, callStack, requestIdentifier);
     else
-        InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, sourceURL, lineNumber);
+        InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, url, lineNumber, requestIdentifier);
 
     if (!Console::shouldPrintExceptions())
         return;
 
-    printSourceURLAndLine(sourceURL, lineNumber);
+    printSourceURLAndLine(url, lineNumber);
     printMessageSourceAndLevelPrefix(source, level);
 
     printf(" %s\n", message.utf8().data());

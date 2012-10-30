@@ -311,14 +311,14 @@ void ScriptExecutionContext::reportException(const String& errorMessage, int lin
     m_pendingExceptions.clear();
 }
 
-void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack)
+void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
-    addMessage(source, type, level, message, sourceURL, lineNumber, callStack);
+    addMessage(source, type, level, message, sourceURL, lineNumber, callStack, requestIdentifier);
 }
 
-void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
+void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
-    addMessage(source, type, level, message, String(), 0, callStack);
+    addMessage(source, type, level, message, String(), 0, callStack, requestIdentifier);
 }
 
 

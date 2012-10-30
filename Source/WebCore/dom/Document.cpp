@@ -4862,7 +4862,7 @@ void Document::parseDNSPrefetchControlHeader(const String& dnsPrefetchControl)
     m_haveExplicitlyDisabledDNSPrefetch = true;
 }
 
-void Document::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack)
+void Document::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask::create(source, type, level, message));
@@ -4871,7 +4871,7 @@ void Document::addMessage(MessageSource source, MessageType type, MessageLevel l
 
     if (DOMWindow* window = domWindow()) {
         if (Console* console = window->console())
-            console->addMessage(source, type, level, message, sourceURL, lineNumber, callStack);
+            console->addMessage(source, type, level, message, sourceURL, lineNumber, callStack, requestIdentifier);
     }
 }
 

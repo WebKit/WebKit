@@ -1,3 +1,89 @@
+2012-10-30  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: Associate console messages with the requests that caused them.
+        https://bugs.webkit.org/show_bug.cgi?id=99941
+
+        Reviewed by Pavel Feldman.
+
+        The inspector currently supports the concept of a request's "initiator"
+        in order to add context to console messages that are generated in
+        response to a specific request. The initiator is used as the message's
+        anchor link iff a requestID is present, and no stack trace is present.
+
+        Currently, this functionality is only exposed to three specific
+        callsites: 'InspectorConsoleAgent::didFinishXHRLoading',
+        'InspectorConsoleAgent::didReceiveResponse', and
+        'InspectorConsoleAgent::didFailLoading'. This patch adds a generic
+        mechanism to associate requests with console messages by passing the
+        request's identifier through 'ScriptExecutionContext::addConsoleMessage'
+        or 'Console::addMessage' when relevant.
+
+        This patch should have no visible changes. It just installs some new
+        piping, and adjusts the three methods mentioned above to use it.
+        Existing tests shouldn't break.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addMessage):
+        * dom/Document.h:
+        (Document):
+            Add a 'requestIdentifier' parameter (defaulting to 0), and pipe it
+            through to Console::addMessage.
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::addConsoleMessage):
+        * dom/ScriptExecutionContext.h:
+        (ScriptExecutionContext):
+            Add a 'requestIdentifier' parameter (defaulting to 0), and pipe it
+            through to the subclass' addMessage method.
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+            Accept an unsigned long instead of a string, and move the conversion
+            from WebCore request identifiers to Inspector request identifiers
+            into ConsoleMessage.
+        * inspector/ConsoleMessage.h:
+        (ConsoleMessage):
+            Add 'requestIdentifier' (defaulting to 0) to the
+            ConsoleMessage constructor that accepts a ScriptCallStack (it was
+            already part of the constructor that accepted a line number).
+        * inspector/IdentifiersFactory.cpp:
+        (WebCore::IdentifiersFactory::requestId):
+            If the provided request identifier is 0, return an empty string.
+            This simplifies the logic at the callsite.
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::addMessageToConsole):
+            Add a 'requestIdentifier' parameter (defaulting to 0), and pipe it
+            through to the 'ConsoleMessage' constructor after converting it to
+            an internal identifier via 'IdentifiersFactor::requestId'.
+        (WebCore::InspectorConsoleAgent::didFinishXHRLoading):
+        (WebCore::InspectorConsoleAgent::didReceiveResponse):
+        (WebCore::InspectorConsoleAgent::didFailLoading):
+            Use the new 'requestIdentifier' parameter on addMessageToConsole
+            rather than replicating the behavior in each of these three methods.
+        * inspector/InspectorConsoleAgent.h:
+        (InspectorConsoleAgent):
+            Add a 'requestIdentifier' parameter (defaulting to 0).
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+            Add a 'requestIdentifier' parameter (defaulting to 0), and pipe it
+            through to lower levels of the stack.
+        * page/Console.cpp:
+        (WebCore::Console::addMessage):
+        * page/Console.h:
+        (Console):
+            Add a 'requestIdentifier' parameter (defaulting to 0), and pipe it
+            through to 'InspectorInstrumentation::addMessageToConsole'.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::addMessage):
+        (WebCore::WorkerContext::addMessageToWorkerConsole):
+        * workers/WorkerContext.h:
+        (WorkerContext):
+            Add a 'requestIdentifier' parameter (defaulting to 0), and pipe it
+            through to 'InspectorInstrumentation::addMessageToConsole'.
+
 2012-10-29  Anders Carlsson  <andersca@apple.com>
 
         String::createCFString should return a RetainPtr
