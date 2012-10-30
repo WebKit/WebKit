@@ -70,6 +70,20 @@
 
         Reviewed by David Kilzer.
 
+        Follow up to better coordinate with iOS feature defines. Make:
+
+          - ENABLE_FILTERS always on
+          - ENABLE_INPUT_* iphonesimulator values point to the iphoneos values
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2012-10-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] Sync up FeatureDefine Configuration Files
+        https://bugs.webkit.org/show_bug.cgi?id=100171
+
+        Reviewed by David Kilzer.
+
         Ensure an identical FeatureDefine files across all projects. Changes:
 
           - ENABLE_CSS_BOX_DECORATION_BREAK should be in all
