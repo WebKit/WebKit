@@ -2810,7 +2810,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
         } else
             ASSERT_NOT_REACHED();
 
-        bool checkForBreak = autoWrap;
+        bool checkForBreak = autoWrap || blockStyle->autoWrap();
         if (width.committedWidth() && !width.fitsOnLine() && lBreak.m_obj && currWS == NOWRAP)
             checkForBreak = true;
         else if (next && current.m_obj->isText() && next->isText() && !next->isBR() && (autoWrap || (next->style()->autoWrap()))) {

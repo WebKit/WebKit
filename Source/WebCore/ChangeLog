@@ -1,3 +1,22 @@
+2012-10-30  Robert Hogan  <robert@webkit.org>
+
+        white-space: nowrap inline element beside a floated element wraps incorrectly without trailing textnode/newline
+        https://bugs.webkit.org/show_bug.cgi?id=29648
+
+        Reviewed by Levi Weintraub.
+
+        A no-wrap child on a line inside an autowrap container should move to the next line if a float doesn't allow
+        it to fit. This will happen if there is trailing space after the no-wrap child but not if it's the last renderer
+        on the line. This is because nextLineBreak() is only interested in the white-space style of the current renderer 
+        and the renderer's next sibling (if there is one) when deciding whether it needs to fit below any floats that
+        push it beyond the edge of the container. There isn't any situation in which a no-wrap child shouldn't move 
+        below a float on an auto-wrap line though, so this check always needs to respect the container's white-space style too.
+
+        Test: fast/text/whitespace/no-wrap-child-in-auto-wrap-container.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+
 2012-10-26  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Add the ValidatedCustomFilterOperation class
