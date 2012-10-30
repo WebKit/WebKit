@@ -265,6 +265,7 @@ public:
     void queueBackNavigation(unsigned howFarBackward);
     void queueForwardNavigation(unsigned howFarForward);
     void queueLoad(JSStringRef url, JSStringRef target);
+    void queueLoadHTMLString(JSStringRef content, JSStringRef baseURL, JSStringRef unreachableURL);
     void queueReload();
     void queueLoadingScript(JSStringRef script);
     void queueNonLoadingScript(JSStringRef script);

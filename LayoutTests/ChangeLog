@@ -1,3 +1,14 @@
+2012-10-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][WTR] WebKitTestRunner needs testRunner.queueLoadHTMLString
+        https://bugs.webkit.org/show_bug.cgi?id=100747
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped http/tests/navigation/go-back-to-error-page.html for WK2 ports.
+
+        * platform/wk2/TestExpectations:
+
 2012-10-30  Pavel Podivilov  <podivilov@google.com>
 
         Unreviewed, rebaseline fast/sub-pixel/float-wrap-zoom.html.

@@ -43,6 +43,7 @@ public:
     bool processWorkQueue(); // Returns 'true' if queue is processed (no new loading is started), returns 'false' otherwise.
 
     void queueLoad(const String& url, const String& target);
+    void queueLoadHTMLString(const String& content, const String& baseURL, const String& unreachableURL);
     void queueBackNavigation(unsigned howFarBackward);
     void queueForwardNavigation(unsigned howFarForward);
     void queueReload();

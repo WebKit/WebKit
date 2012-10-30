@@ -186,6 +186,7 @@ interface TestRunner {
     void queueBackNavigation(in unsigned long howFarBackward);
     void queueForwardNavigation(in unsigned long howFarForward);
     void queueLoad(in DOMString url, in DOMString target);
+    void queueLoadHTMLString(in DOMString content, in [Optional] DOMString baseURL, in [Optional] DOMString unreachableURL);
     void queueReload();
     void queueLoadingScript(in DOMString script);
     void queueNonLoadingScript(in DOMString script);

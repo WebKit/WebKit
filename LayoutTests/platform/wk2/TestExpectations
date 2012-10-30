@@ -105,7 +105,6 @@ fast/canvas/webgl/renderer-and-vendor-strings.html
 fast/canvas/webgl/shader-deleted-by-accessor.html
 fast/canvas/webgl/uniform-array-length-overflow.html
 fast/overflow/horizontal-scroll-after-back.html
-http/tests/navigation/go-back-to-error-page.html
 fast/canvas/webgl/canvas-zero-size.html
 fast/canvas/webgl/context-lost-restored.html
 fast/canvas/webgl/context-lost.html

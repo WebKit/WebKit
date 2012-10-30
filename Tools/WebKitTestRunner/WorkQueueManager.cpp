@@ -153,6 +153,31 @@ void WorkQueueManager::queueLoad(const String& url, const String& target)
     enqueue(new LoadItem(url, target));
 }
 
+void WorkQueueManager::queueLoadHTMLString(const String& content, const String& baseURL, const String& unreachableURL)
+{
+    class LoadHTMLStringItem : public WorkQueueItem {
+    public:
+        LoadHTMLStringItem(const String& content, const String& baseURL, const String& unreachableURL)
+            : m_content(AdoptWK, WKStringCreateWithUTF8CString(content.utf8().data()))
+            , m_baseURL(AdoptWK, WKURLCreateWithUTF8CString(baseURL.utf8().data()))
+            , m_unreachableURL(AdoptWK, WKURLCreateWithUTF8CString(unreachableURL.utf8().data()))
+        {
+        }
+
+        WorkQueueItem::Type invoke() const
+        {
+            WKPageLoadAlternateHTMLString(mainPage(), m_content.get(), m_baseURL.get(), m_unreachableURL.get());
+            return WorkQueueItem::Loading;
+        }
+
+        WKRetainPtr<WKStringRef> m_content;
+        WKRetainPtr<WKURLRef> m_baseURL;
+        WKRetainPtr<WKURLRef> m_unreachableURL;
+    };
+
+    enqueue(new LoadHTMLStringItem(content, baseURL, unreachableURL));
+}
+
 void WorkQueueManager::queueBackNavigation(unsigned howFarBackward)
 {
     enqueue(new NavigationItem(-howFarBackward));

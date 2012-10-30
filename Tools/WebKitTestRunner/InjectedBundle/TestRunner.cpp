@@ -853,6 +853,15 @@ void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
     InjectedBundle::shared().queueLoad(urlStringWK.get(), toWK(target).get());
 }
 
+void TestRunner::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL, JSStringRef unreachableURL)
+{
+    WKRetainPtr<WKStringRef> contentWK = toWK(content);
+    WKRetainPtr<WKStringRef> baseURLWK = baseURL ? toWK(baseURL) : WKRetainPtr<WKStringRef>();
+    WKRetainPtr<WKStringRef> unreachableURLWK = unreachableURL ? toWK(unreachableURL) : WKRetainPtr<WKStringRef>();
+
+    InjectedBundle::shared().queueLoadHTMLString(contentWK.get(), baseURLWK.get(), unreachableURLWK.get());
+}
+
 void TestRunner::queueReload()
 {
     InjectedBundle::shared().queueReload();
