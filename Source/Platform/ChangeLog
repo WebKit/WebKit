@@ -1,3 +1,15 @@
+2012-10-30  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Forward declare WebGraphicsContext3D in WebLayerTreeViewClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=100717
+
+        Reviewed by Adrienne Walker.
+
+        Currently it isn't possible to include WebLayerTreeViewClient by itself.
+
+        * chromium/public/WebLayerTreeViewClient.h:
+        (WebKit):
+
 2012-10-26  Christopher Cameron  <ccameron@chromium.org>
 
         [chromium] Add additional memory management fields to WebGraphicsContext3D

@@ -28,6 +28,7 @@
 
 namespace WebKit {
 class WebCompositorOutputSurface;
+class WebGraphicsContext3D;
 class WebInputHandler;
 class WebThread;
 struct WebSize;
