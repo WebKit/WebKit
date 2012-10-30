@@ -1,5 +1,12 @@
 2012-10-30  Anders Carlsson  <andersca@apple.com>
 
+        Another build fix.
+
+        * TestWebKitAPI/Tests/WebKit2/WebArchive.cpp:
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+
+2012-10-30  Anders Carlsson  <andersca@apple.com>
+
         Build fix.
 
         * WebKitTestRunner/mac/EventSenderProxy.mm:

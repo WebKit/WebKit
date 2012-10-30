@@ -49,8 +49,7 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
     size_t size = WKDataGetSize(receivedData);
     const unsigned char* bytes = WKDataGetBytes(receivedData);
     RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, bytes, size));
-    CFPropertyListFormat format = kCFPropertyListXMLFormat_v1_0 | kCFPropertyListBinaryFormat_v1_0;
-    RetainPtr<CFPropertyListRef> propertyList(AdoptCF, CFPropertyListCreateWithData(0, data.get(), kCFPropertyListImmutable, &format, 0));
+    RetainPtr<CFPropertyListRef> propertyList(AdoptCF, CFPropertyListCreateWithData(0, data.get(), kCFPropertyListImmutable, 0, 0));
     EXPECT_TRUE(propertyList);
     
     // It should be a dictionary.
