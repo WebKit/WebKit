@@ -1,3 +1,21 @@
+2012-10-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Mac] Sync up FeatureDefine Configuration Files
+        https://bugs.webkit.org/show_bug.cgi?id=100171
+
+        Reviewed by David Kilzer.
+
+        Ensure an identical FeatureDefine files across all projects. Changes:
+
+          - ENABLE_CSS_BOX_DECORATION_BREAK should be in all
+          - ENABLE_PDFKIT_PLUGIN should be in all
+          - ENABLE_RESOLUTION_MEDIA_QUERY should be in all
+          - ENABLE_ENCRYPTED_MEDIA should be in all
+          - ENABLE_HIDDEN_PAGE_DOM_TIMER_THROTTLING with corrected value
+          - Some alphabetical ordering cleanup
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-10-29  Anders Carlsson  <andersca@apple.com>
 
         Build WebKit as C++11 on Mac
