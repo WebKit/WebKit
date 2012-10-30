@@ -4978,8 +4978,6 @@
             'platform/graphics/filters/CustomFilterNumberParameter.h',
             'platform/graphics/filters/CustomFilterOperation.cpp',
             'platform/graphics/filters/CustomFilterOperation.h',
-            'platform/graphics/filters/ValidatedCustomFilterOperation.cpp',
-            'platform/graphics/filters/ValidatedCustomFilterOperation.h',
             'platform/graphics/filters/CustomFilterParameter.h',
             'platform/graphics/filters/CustomFilterParameterList.cpp',
             'platform/graphics/filters/CustomFilterParameterList.h',

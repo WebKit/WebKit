@@ -904,10 +904,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(const RenderObj
             break;
         }
 #if ENABLE(CSS_SHADERS)
-        case FilterOperation::VALIDATED_CUSTOM:
-            // ValidatedCustomFilterOperation is not supposed to end up in the RenderStyle.
-            ASSERT_NOT_REACHED();
-            break;
         case FilterOperation::CUSTOM: {
             CustomFilterOperation* customOperation = static_cast<CustomFilterOperation*>(filterOperation);
             filterValue = WebKitCSSFilterValue::create(WebKitCSSFilterValue::CustomFilterOperation);

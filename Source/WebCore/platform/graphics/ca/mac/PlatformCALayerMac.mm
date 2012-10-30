@@ -850,7 +850,6 @@ bool PlatformCALayer::filtersCanBeComposited(const FilterOperations& filters)
         case FilterOperation::REFERENCE:
 #if ENABLE(CSS_SHADERS)
         case FilterOperation::CUSTOM:
-        case FilterOperation::VALIDATED_CUSTOM:
 #endif
             return false;
         case FilterOperation::DROP_SHADOW:

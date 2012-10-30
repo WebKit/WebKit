@@ -31977,14 +31977,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\filters\ValidatedCustomFilterOperation.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\ValidatedCustomFilterOperation.h"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\filters\CustomFilterParameter.h"
 						>
 					</File>
