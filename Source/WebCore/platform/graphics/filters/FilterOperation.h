@@ -69,6 +69,7 @@ public:
         DROP_SHADOW,
 #if ENABLE(CSS_SHADERS)
         CUSTOM,
+        VALIDATED_CUSTOM,
 #endif
         PASSTHROUGH,
         NONE

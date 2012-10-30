@@ -1,3 +1,52 @@
+2012-10-26  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Add the ValidatedCustomFilterOperation class
+        https://bugs.webkit.org/show_bug.cgi?id=100558
+
+        Reviewed by Dean Jackson.
+
+        Added the ValidatedCustomFilterOperation class. The file is now almost empty,
+        but more is going to come in the following patches.
+
+        Added the a filter operation type VALIDATED_CUSTOM and updated the compositors to ignore
+        such operations for now.
+        
+        No new tests, there is no new functionality yet.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createFilterOperations):
+        * platform/graphics/blackberry/LayerWebKitThread.cpp:
+        (WebCore::LayerWebKitThread::filtersCanBeComposited):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::filtersCanBeComposited):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::copyWebCoreFilterOperationsToWebFilterOperations):
+        * platform/graphics/filters/FilterOperation.h:
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::hasCustomFilter):
+        (WebCore::FilterOperations::getOutsets):
+        * platform/graphics/filters/ValidatedCustomFilterOperation.cpp: Added.
+        (WebCore):
+        (WebCore::ValidatedCustomFilterOperation::ValidatedCustomFilterOperation):
+        (WebCore::ValidatedCustomFilterOperation::~ValidatedCustomFilterOperation):
+        (WebCore::ValidatedCustomFilterOperation::blend):
+        * platform/graphics/filters/ValidatedCustomFilterOperation.h: Added.
+        (WebCore):
+        (ValidatedCustomFilterOperation):
+        (WebCore::ValidatedCustomFilterOperation::create):
+        (WebCore::ValidatedCustomFilterOperation::affectsOpacity):
+        (WebCore::ValidatedCustomFilterOperation::movesPixels):
+        (WebCore::ValidatedCustomFilterOperation::blendingNeedsRendererSize):
+        (WebCore::ValidatedCustomFilterOperation::operator==):
+
 2012-10-29  Anders Carlsson  <andersca@apple.com>
 
         Build WebKit as C++11 on Mac

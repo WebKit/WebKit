@@ -4337,6 +4337,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/filters/CustomFilterNumberParameter.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterOperation.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterOperation.h \
+	Source/WebCore/platform/graphics/filters/ValidatedCustomFilterOperation.cpp \
+	Source/WebCore/platform/graphics/filters/ValidatedCustomFilterOperation.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterParameter.h \
 	Source/WebCore/platform/graphics/filters/CustomFilterParameterList.cpp \
 	Source/WebCore/platform/graphics/filters/CustomFilterParameterList.h \

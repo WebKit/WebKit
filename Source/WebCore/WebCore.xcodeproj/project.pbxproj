@@ -1511,6 +1511,8 @@
 		50CC0A3914C6F5B10017AB51 /* CustomFilterOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50CC0A3814C6F5B10017AB51 /* CustomFilterOperation.cpp */; };
 		50D10D991545F5760096D288 /* RenderLayerFilterInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D10D971545F5760096D288 /* RenderLayerFilterInfo.cpp */; };
 		50D10D9A1545F5760096D288 /* RenderLayerFilterInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		50D32857163B313F0016111E /* ValidatedCustomFilterOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D32855163B313F0016111E /* ValidatedCustomFilterOperation.cpp */; };
+		50D32858163B313F0016111E /* ValidatedCustomFilterOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D32856163B313F0016111E /* ValidatedCustomFilterOperation.h */; };
 		50D403C714768C9400D30BB5 /* FECustomFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D403C514768C9400D30BB5 /* FECustomFilter.cpp */; };
 		50D403C814768C9400D30BB5 /* FECustomFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50D403C614768C9400D30BB5 /* FECustomFilter.h */; };
 		50D405F9147D31F300D30BB5 /* CustomFilterMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50D405F7147D31F300D30BB5 /* CustomFilterMesh.cpp */; };
@@ -8726,6 +8728,8 @@
 		50CC0A3814C6F5B10017AB51 /* CustomFilterOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterOperation.cpp; path = filters/CustomFilterOperation.cpp; sourceTree = "<group>"; };
 		50D10D971545F5760096D288 /* RenderLayerFilterInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerFilterInfo.cpp; sourceTree = "<group>"; };
 		50D10D981545F5760096D288 /* RenderLayerFilterInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerFilterInfo.h; sourceTree = "<group>"; };
+		50D32855163B313F0016111E /* ValidatedCustomFilterOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ValidatedCustomFilterOperation.cpp; path = filters/ValidatedCustomFilterOperation.cpp; sourceTree = "<group>"; };
+		50D32856163B313F0016111E /* ValidatedCustomFilterOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ValidatedCustomFilterOperation.h; path = filters/ValidatedCustomFilterOperation.h; sourceTree = "<group>"; };
 		50D403C514768C9400D30BB5 /* FECustomFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FECustomFilter.cpp; path = filters/FECustomFilter.cpp; sourceTree = "<group>"; };
 		50D403C614768C9400D30BB5 /* FECustomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FECustomFilter.h; path = filters/FECustomFilter.h; sourceTree = "<group>"; };
 		50D405F7147D31F300D30BB5 /* CustomFilterMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterMesh.cpp; path = filters/CustomFilterMesh.cpp; sourceTree = "<group>"; };
@@ -18261,6 +18265,8 @@
 			children = (
 				5093334D163B0E4300099A60 /* CustomFilterParameterList.cpp */,
 				5093334E163B0E4300099A60 /* CustomFilterParameterList.h */,
+				50D32855163B313F0016111E /* ValidatedCustomFilterOperation.cpp */,
+				50D32856163B313F0016111E /* ValidatedCustomFilterOperation.h */,
 				49ECEB5C1499790D00CDD3A4 /* arm */,
 				15B3FC1715FB217800A81BCB /* CustomFilterArrayParameter.h */,
 				50D4060F147D49DE00D30BB5 /* CustomFilterCompiledProgram.cpp */,
@@ -25696,6 +25702,7 @@
 				AAC08CEF15F933D600F1E188 /* SVGImageChromeClient.h in Headers */,
 				AAC08CF315F941FD00F1E188 /* AccessibilitySVGRoot.h in Headers */,
 				50933350163B0E4300099A60 /* CustomFilterParameterList.h in Headers */,
+				50D32858163B313F0016111E /* ValidatedCustomFilterOperation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28780,6 +28787,7 @@
 				51ABF64D16392E2800132A7A /* LoaderStrategy.cpp in Sources */,
 				5093334F163B0E4300099A60 /* CustomFilterParameterList.cpp in Sources */,
 				1AA21250163F0DA80000E63F /* AtomicStringCF.cpp in Sources */,
+				50D32857163B313F0016111E /* ValidatedCustomFilterOperation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
