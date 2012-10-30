@@ -97,12 +97,6 @@ protected:
     }
 
 #if ENABLE(CALENDAR_PICKER)
-    String dateFormatText(LCID lcid)
-    {
-        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
-        return locale->dateFormatText();
-    }
-
     unsigned firstDayOfWeek(LCID lcid)
     {
         OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
@@ -167,20 +161,6 @@ protected:
 #endif
 };
 
-TEST_F(LocaleWinTest, TestLocalizedDateFormatText)
-{
-    EXPECT_STREQ("year/month/day", LocaleWin::dateFormatText("y/M/d", "year", "month", "day").utf8().data());
-    EXPECT_STREQ("year/month/day", LocaleWin::dateFormatText("yy/MM/dd", "year", "month", "day").utf8().data());
-    EXPECT_STREQ("year/month/day", LocaleWin::dateFormatText("yyy/MMM/ddd", "year", "month", "day").utf8().data());
-    EXPECT_STREQ("year/month/day", LocaleWin::dateFormatText("yyyy/MMMM/dddd", "year", "month", "day").utf8().data());
-    EXPECT_STREQ("/month/day, year", LocaleWin::dateFormatText("/MM/dd, yyyy", "year", "month", "day").utf8().data());
-    EXPECT_STREQ("month/day, year=year.", LocaleWin::dateFormatText("MM/dd, 'year='yyyy.", "year", "month", "day").utf8().data());
-    EXPECT_STREQ("month-day 'year", LocaleWin::dateFormatText("MM-dd ''yyy", "year", "month", "day").utf8().data());
-    EXPECT_STREQ("month-day aaa'bbb year", LocaleWin::dateFormatText("MM-dd 'aaa''bbb' yyy", "year", "month", "day").utf8().data());
-    EXPECT_STREQ("year/month/day/year/month/day", LocaleWin::dateFormatText("yyyy/MMMM/dddd/yyyy/MMMM/dddd", "year", "month", "day").utf8().data());
-    EXPECT_STREQ("YY/mm/DD", LocaleWin::dateFormatText("YY/mm/DD", "year", "month", "day").utf8().data());
-}
-
 TEST_F(LocaleWinTest, TestParse)
 {
     OwnPtr<LocaleWin> locale = LocaleWin::create(EnglishUS);
@@ -235,13 +215,6 @@ TEST_F(LocaleWinTest, parseDate)
 }
 
 #if ENABLE(CALENDAR_PICKER)
-TEST_F(LocaleWinTest, dateFormatText)
-{
-    EXPECT_STREQ("Month/Day/Year", dateFormatText(EnglishUS).utf8().data());
-    EXPECT_STREQ("Day/Month/Year", dateFormatText(FrenchFR).utf8().data());
-    EXPECT_STREQ("Year/Month/Day", dateFormatText(JapaneseJP).utf8().data());
-}
-
 TEST_F(LocaleWinTest, firstDayOfWeek)
 {
     EXPECT_EQ(Sunday, firstDayOfWeek(EnglishUS));

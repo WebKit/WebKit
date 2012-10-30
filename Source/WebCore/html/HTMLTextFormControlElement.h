@@ -89,7 +89,7 @@ public:
 
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
-    virtual bool isPlaceholderEmpty() const;
+    bool isPlaceholderEmpty() const;
     virtual void updatePlaceholderText() = 0;
 
     virtual void parseAttribute(const Attribute&) OVERRIDE;

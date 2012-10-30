@@ -450,48 +450,6 @@ void LocaleWin::ensureShortDateTokens()
     m_shortDateTokens = parseDateFormat(getLocaleInfoString(LOCALE_SSHORTDATE));
 }
 
-static String substituteLabelsIntoFormat(const Vector<DateFormatToken>& tokens, const String& yearText, const String& monthText, const String& dayText)
-{
-    String nonEmptyDayText = dayText.isEmpty() ? "Day" : dayText;
-    String nonEmptyMonthText = monthText.isEmpty() ? "Month" : monthText;
-    String nonEmptyYearText = yearText.isEmpty() ? "Year" : yearText;
-    StringBuilder buffer;
-    for (unsigned i = 0; i < tokens.size(); ++i) {
-        switch (tokens[i].type) {
-        case DateFormatToken::Literal:
-            buffer.append(tokens[i].data);
-            break;
-        case DateFormatToken::Day1:
-        case DateFormatToken::Day2:
-            buffer.append(nonEmptyDayText);
-            break;
-        case DateFormatToken::Month1:
-        case DateFormatToken::Month2:
-        case DateFormatToken::Month3:
-        case DateFormatToken::Month4:
-            buffer.append(nonEmptyMonthText);
-            break;
-        case DateFormatToken::Year1:
-        case DateFormatToken::Year2:
-        case DateFormatToken::Year4:
-            buffer.append(nonEmptyYearText);
-            break;
-        }
-    }
-    return buffer.toString();
-}
-
-String LocaleWin::dateFormatText()
-{
-    ensureShortDateTokens();
-    return substituteLabelsIntoFormat(m_shortDateTokens, dateFormatYearText(), dateFormatMonthText(), dateFormatDayInMonthText());
-}
-
-String LocaleWin::dateFormatText(const String& format, const String& yearText, const String& monthText, const String& dayText)
-{
-    return substituteLabelsIntoFormat(parseDateFormat(format), yearText, monthText, dayText);
-}
-
 void LocaleWin::ensureMonthLabels()
 {
     if (!m_monthLabels.isEmpty())

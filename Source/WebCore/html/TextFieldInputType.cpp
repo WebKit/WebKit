@@ -402,7 +402,7 @@ void TextFieldInputType::updatePlaceholderText()
     if (!supportsPlaceholder())
         return;
     ExceptionCode ec = 0;
-    String placeholderText = usesFixedPlaceholder() ? fixedPlaceholder() : element()->strippedPlaceholder();
+    String placeholderText = element()->strippedPlaceholder();
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
             m_placeholder->parentNode()->removeChild(m_placeholder.get(), ec);

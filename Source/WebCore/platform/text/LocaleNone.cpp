@@ -38,7 +38,6 @@ private:
     virtual void initializeLocaleData() OVERRIDE FINAL;
     virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
-    virtual String dateFormatText() OVERRIDE;
     virtual bool isRTL() OVERRIDE;
 #endif
 #if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
@@ -81,11 +80,6 @@ double LocaleNone::parseDateTime(const String&, DateComponents::Type)
 }
 
 #if ENABLE(CALENDAR_PICKER)
-String LocaleNone::dateFormatText()
-{
-    return ASCIILiteral("Year-Month-Day");
-}
-
 bool LocaleNone::isRTL()
 {
     return false;

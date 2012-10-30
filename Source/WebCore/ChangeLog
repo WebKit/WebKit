@@ -1,5 +1,46 @@
 2012-10-30  Kent Tamura  <tkent@chromium.org>
 
+        Remove unused code for old input[type=date] UI
+        https://bugs.webkit.org/show_bug.cgi?id=100734
+
+        Reviewed by Hajime Morita.
+
+        The old input[type=date] UI used in Google Chrome 20-23 (text field with
+        a fixed placeholder) was replaced with ENABLE_INPUT_MULTIPLE_FIELDS_UI.
+
+        No new tests because of no behavior changes.
+
+        * html/DateInputType.cpp: Remove ENABLE_INPUT_TYPE_DATE_LEGACY_UI code path.
+        * html/DateInputType.h: Ditto.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::supportsPlaceholder):
+        Remove fixed-placeholder feature.
+        * html/HTMLInputElement.h:
+        (HTMLInputElement): Ditto.
+        * html/HTMLTextFormControlElement.h:
+        (HTMLTextFormControlElement): isPlaceholderEmpty() is not needed to be virtual
+        * html/InputType.cpp: Remove fixed-placeholder feature.
+        * html/InputType.h: Ditto.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::updatePlaceholderText): Ditto.
+
+        * platform/text/PlatformLocale.h:
+        (Locale): Remove dateFormatText.
+        * platform/text/LocaleICU.cpp: Ditto.
+        * platform/text/LocaleICU.h: Ditto.
+        * platform/text/LocaleNone.cpp: Ditto.
+        * platform/text/mac/LocaleMac.h: Ditto.
+        * platform/text/mac/LocaleMac.mm: Ditto.
+        * platform/text/win/LocaleWin.cpp: Ditto.
+        * platform/text/win/LocaleWin.h: Ditto.
+        * platform/LocalizedStrings.h:
+        (WebCore): Remove unused functions; calendarTodayText,
+        calendarClearText, dateFormatYearText, dateFormatMonthText,
+        dateFormatDayInMonthText
+
+2012-10-30  Kent Tamura  <tkent@chromium.org>
+
         Fix crash by calendar picker or suggestion picker
         https://bugs.webkit.org/show_bug.cgi?id=100728
 

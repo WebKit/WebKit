@@ -88,12 +88,6 @@ protected:
     }
 
 #if ENABLE(CALENDAR_PICKER)
-    String dateFormatText(const String& localeString)
-    {
-        OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
-        return locale->dateFormatText();
-    }
-
     unsigned firstDayOfWeek(const String& localeString)
     {
         OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
@@ -206,13 +200,6 @@ TEST_F(LocaleMacTest, parseDate)
 }
 
 #if ENABLE(CALENDAR_PICKER)
-TEST_F(LocaleMacTest, dateFormatText)
-{
-    EXPECT_STREQ("Month/Day/Year", dateFormatText("en_US").utf8().data());
-    EXPECT_STREQ("Day/Month/Year", dateFormatText("fr_FR").utf8().data());
-    EXPECT_STREQ("Year/Month/Day", dateFormatText("ja_JP").utf8().data());
-}
-
 TEST_F(LocaleMacTest, firstDayOfWeek)
 {
     EXPECT_EQ(Sunday, firstDayOfWeek("en_US"));

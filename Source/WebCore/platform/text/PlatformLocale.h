@@ -117,8 +117,6 @@ public:
     // The first day of a week. 0 is Sunday, and 6 is Saturday.
     virtual unsigned firstDayOfWeek() = 0;
 
-    virtual String dateFormatText() = 0;
-
     // Returns true if people use right-to-left writing in the locale for this
     // object.
     virtual bool isRTL() = 0;

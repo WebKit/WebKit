@@ -124,63 +124,6 @@ double LocaleMac::parseDateTime(const String& input, DateComponents::Type type)
     return [date timeIntervalSince1970] * msPerSecond;
 }
 
-#if ENABLE(CALENDAR_PICKER)
-static bool isYearSymbol(UChar letter) { return letter == 'y' || letter == 'Y' || letter == 'u'; }
-static bool isMonthSymbol(UChar letter) { return letter == 'M' || letter == 'L'; }
-static bool isDaySymbol(UChar letter) { return letter == 'd'; }
-
-// http://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
-static String localizeDateFormat(const String& format)
-{
-    String yearText = dateFormatYearText().isEmpty() ? "Year" : dateFormatYearText();
-    String monthText = dateFormatMonthText().isEmpty() ? "Month" : dateFormatMonthText();
-    String dayText = dateFormatDayInMonthText().isEmpty() ? "Day" : dateFormatDayInMonthText();
-    StringBuilder buffer;
-    bool inQuote = false;
-    for (unsigned i = 0; i < format.length(); ++i) {
-        UChar ch = format[i];
-        if (inQuote) {
-            if (ch == '\'') {
-                inQuote = false;
-                ASSERT(i);
-                if (format[i - 1] == '\'')
-                    buffer.append('\'');
-            } else
-                buffer.append(ch);
-            continue;
-        }
-
-        if (ch == '\'') {
-            inQuote = true;
-            if (i > 0 && format[i - 1] == '\'')
-                buffer.append(ch);
-        } else if (isYearSymbol(ch)) {
-            if (i > 0 && format[i - 1] == ch)
-                continue;
-            buffer.append(yearText);
-        } else if (isMonthSymbol(ch)) {
-            if (i > 0 && format[i - 1] == ch)
-                continue;
-            buffer.append(monthText);
-        } else if (isDaySymbol(ch)) {
-            if (i > 0 && format[i - 1] == ch)
-                continue;
-            buffer.append(dayText);
-        } else
-            buffer.append(ch);
-    }
-    return buffer.toString();
-}
-
-String LocaleMac::dateFormatText()
-{
-    if (!m_localizedDateFormatText.isNull())
-        return m_localizedDateFormatText;
-    m_localizedDateFormatText = localizeDateFormat([shortDateFormatter().get() dateFormat]);
-    return  m_localizedDateFormatText;
-}
-#endif
-
 #if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 const Vector<String>& LocaleMac::monthLabels()
 {

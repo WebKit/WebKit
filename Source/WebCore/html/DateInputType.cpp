@@ -53,9 +53,6 @@ static const int dateStepScaleFactor = 86400000;
 
 inline DateInputType::DateInputType(HTMLInputElement* element)
     : BaseDateInputType(element)
-#if ENABLE(INPUT_TYPE_DATE_LEGACY_UI)
-    , m_pickerElement(0)
-#endif
 {
 }
 
@@ -103,73 +100,7 @@ bool DateInputType::isDateField() const
     return true;
 }
 
-#if ENABLE(INPUT_TYPE_DATE_LEGACY_UI)
-void DateInputType::createShadowSubtree()
-{
-    BaseDateAndTimeInputType::createShadowSubtree();
-    RefPtr<PickerIndicatorElement> pickerElement = PickerIndicatorElement::create(element()->document());
-    m_pickerElement = pickerElement.get();
-    containerElement()->insertBefore(m_pickerElement, innerBlockElement()->nextSibling(), ASSERT_NO_EXCEPTION);
-}
-
-void DateInputType::destroyShadowSubtree()
-{
-    TextFieldInputType::destroyShadowSubtree();
-    m_pickerElement = 0;
-}
-
-bool DateInputType::needsContainer() const
-{
-    return true;
-}
-
-bool DateInputType::shouldHaveSpinButton() const
-{
-    return false;
-}
-
-void DateInputType::handleKeydownEvent(KeyboardEvent* event)
-{
-    if (element()->disabled() || element()->readOnly())
-        return;
-    if (event->keyIdentifier() == "Down") {
-        if (m_pickerElement)
-            m_pickerElement->openPopup();
-        event->setDefaultHandled();
-        return;
-    }
-    BaseDateAndTimeInputType::handleKeydownEvent(event);
-}
-
-void DateInputType::handleBlurEvent()
-{
-    if (m_pickerElement)
-        m_pickerElement->closePopup();
-
-    // Reset the renderer value, which might be unmatched with the element value.
-    element()->setFormControlValueMatchesRenderer(false);
-    // We need to reset the renderer value explicitly because an unacceptable
-    // renderer value should be purged before style calculation.
-    updateInnerTextValue();
-}
-
-bool DateInputType::supportsPlaceholder() const
-{
-    return true;
-}
-
-bool DateInputType::usesFixedPlaceholder() const
-{
-    return true;
-}
-
-String DateInputType::fixedPlaceholder()
-{
-    return element()->locale().dateFormatText();
-}
-#endif // ENABLE(INPUT_TYPE_DATE_LEGACY_UI)
-
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI) && !ENABLE(INPUT_TYPE_DATE_LEGACY_UI)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 String DateInputType::formatDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState) const
 {
     if (!dateTimeFieldsState.hasDayOfMonth() || !dateTimeFieldsState.hasMonth() || !dateTimeFieldsState.hasYear())

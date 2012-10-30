@@ -53,7 +53,6 @@ public:
     virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
 
 #if ENABLE(CALENDAR_PICKER)
-    virtual String dateFormatText() OVERRIDE;
     virtual const Vector<String>& weekDayShortLabels() OVERRIDE;
     virtual unsigned firstDayOfWeek() OVERRIDE;
     virtual bool isRTL() OVERRIDE;
@@ -81,7 +80,6 @@ private:
     RetainPtr<NSLocale> m_locale;
     RetainPtr<NSCalendar> m_gregorianCalendar;
 #if ENABLE(CALENDAR_PICKER)
-    String m_localizedDateFormatText;
     Vector<String> m_weekDayShortLabels;
 #endif
 #if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)

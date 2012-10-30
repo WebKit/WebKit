@@ -871,16 +871,6 @@ bool InputType::supportsPlaceholder() const
     return false;
 }
 
-bool InputType::usesFixedPlaceholder() const
-{
-    return false;
-}
-
-String InputType::fixedPlaceholder()
-{
-    return String();
-}
-
 void InputType::updateInnerTextValue()
 {
 }

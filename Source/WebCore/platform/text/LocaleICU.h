@@ -52,8 +52,6 @@ public:
     // For LocalizedDate
     virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
-    virtual String dateFormatText() OVERRIDE;
-
     virtual const Vector<String>& weekDayShortLabels() OVERRIDE;
     virtual unsigned firstDayOfWeek() OVERRIDE;
     virtual bool isRTL() OVERRIDE;
@@ -85,7 +83,6 @@ private:
     UDateFormat* openDateFormat(UDateFormatStyle timeStyle, UDateFormatStyle dateStyle) const;
 
 #if ENABLE(CALENDAR_PICKER)
-    void initializeLocalizedDateFormatText();
     void initializeCalendar();
 #endif
 
@@ -104,7 +101,6 @@ private:
     bool m_didCreateShortDateFormat;
 
 #if ENABLE(CALENDAR_PICKER)
-    String m_localizedDateFormatText;
     OwnPtr<Vector<String> > m_weekDayShortLabels;
     unsigned m_firstDayOfWeek;
 #endif

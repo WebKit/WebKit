@@ -48,7 +48,6 @@ public:
     ~LocaleWin();
     virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
-    virtual String dateFormatText() OVERRIDE;
     virtual const Vector<String>& weekDayShortLabels() OVERRIDE;
     virtual unsigned firstDayOfWeek() OVERRIDE;
     virtual bool isRTL() OVERRIDE;
@@ -69,8 +68,6 @@ public:
 
     // For testing.
     double parseDate(const String& format, int baseYear, const String& input);
-    String formatDate(const String& format, int baseYear, int year, int month, int day);
-    static String dateFormatText(const String& format, const String& yearText, const String& monthText, const String& dayText);
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     static String dateFormat(const String&);
 #endif

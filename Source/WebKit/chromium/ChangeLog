@@ -1,5 +1,19 @@
 2012-10-30  Kent Tamura  <tkent@chromium.org>
 
+        Remove unused code for old input[type=date] UI
+        https://bugs.webkit.org/show_bug.cgi?id=100734
+
+        Reviewed by Hajime Morita.
+
+        * src/LocalizedStrings.cpp:
+        Follow the LocalizedStrings.h change.
+        * tests/LocaleMacTest.cpp:
+        (LocaleMacTest): Remove tests for Locale::dateFormatText.
+        * tests/LocaleWinTest.cpp:
+        (LocaleWinTest): Ditto.
+
+2012-10-30  Kent Tamura  <tkent@chromium.org>
+
         Fix crash by calendar picker or suggestion picker
         https://bugs.webkit.org/show_bug.cgi?id=100728
 

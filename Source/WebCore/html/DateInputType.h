@@ -39,7 +39,7 @@ namespace WebCore {
 
 class PickerIndicatorElement;
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI) && !ENABLE(INPUT_TYPE_DATE_LEGACY_UI)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 typedef BaseMultipleFieldsDateAndTimeInputType BaseDateInputType;
 #else
 typedef BaseDateAndTimeInputType BaseDateInputType;
@@ -58,26 +58,10 @@ private:
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
     virtual bool isDateField() const OVERRIDE;
 
-#if ENABLE(INPUT_TYPE_DATE_LEGACY_UI)
-    virtual void createShadowSubtree() OVERRIDE;
-    virtual void destroyShadowSubtree() OVERRIDE;
-    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
-    virtual void handleBlurEvent() OVERRIDE;
-    virtual bool supportsPlaceholder() const OVERRIDE;
-    virtual bool usesFixedPlaceholder() const OVERRIDE;
-    virtual String fixedPlaceholder() OVERRIDE;
-
-    // TextFieldInputType functions
-    virtual bool needsContainer() const OVERRIDE;
-    virtual bool shouldHaveSpinButton() const OVERRIDE;
-
-    PickerIndicatorElement* m_pickerElement;
-#else
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     // BaseMultipleFieldsDateAndTimeInputType functions
     virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const OVERRIDE;
     virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const OVERRIDE;
-#endif
 #endif
 };
 
