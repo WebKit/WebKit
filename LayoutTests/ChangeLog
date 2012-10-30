@@ -1,3 +1,15 @@
+2012-10-30  Emil A Eklund  <eae@chromium.org>
+
+        [subixel] Change LineWidth::shrinkAvailableWidthForNewFloatIfNeeded to not pixel snap
+        https://bugs.webkit.org/show_bug.cgi?id=100742
+
+        Reviewed by Levi Weintraub.
+
+        Add test for wrapping when combining float and inline elements.
+
+        * fast/sub-pixel/float-wrap-zoom-expected.html: Added.
+        * fast/sub-pixel/float-wrap-zoom.html: Added.
+
 2012-10-30  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Reject vertex shaders with custom attributes
