@@ -1,3 +1,21 @@
+2012-10-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2][Qt] Enable hover and mouse events in flickable WebView
+        https://bugs.webkit.org/show_bug.cgi?id=100296
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Flickable WebView is now allowed to handle both hover and mouse
+        events. Flickable was initially meant to be the mobile interface and
+        was only handling touch events, but now the idea is that it will be
+        the WebView for both mobile and desktop environments.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize): refactored hover and mouse
+        event handling from children classes.
+        (QQuickWebViewLegacyPrivate::initialize):
+        (QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate):
+
 2012-10-29  Anders Carlsson  <andersca@apple.com>
 
         String::createCFString should return a RetainPtr

@@ -322,6 +322,9 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
 
     pageClient.initialize(q_ptr, pageViewPrivate->eventHandler.data(), &undoController);
     webPageProxy->initializeWebPage();
+
+    q_ptr->setAcceptedMouseButtons(Qt::MouseButtonMask);
+    q_ptr->setAcceptHoverEvents(true);
 }
 
 void QQuickWebViewPrivate::loadDidStop()
@@ -806,11 +809,7 @@ QQuickWebViewLegacyPrivate::QQuickWebViewLegacyPrivate(QQuickWebView* viewport)
 
 void QQuickWebViewLegacyPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    Q_Q(QQuickWebView);
     QQuickWebViewPrivate::initialize(contextRef, pageGroupRef);
-
-    q->setAcceptedMouseButtons(Qt::MouseButtonMask);
-    q->setAcceptHoverEvents(true);
 
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
@@ -848,7 +847,6 @@ void QQuickWebViewLegacyPrivate::setZoomFactor(qreal factor)
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
 {
-    viewport->setAcceptHoverEvents(false);
 }
 
 void QQuickWebViewFlickablePrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
