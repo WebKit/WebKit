@@ -1,3 +1,16 @@
+2012-10-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        REGRESSION(r130755): All WebKit2 unit tests are failing in WebKit2 bot
+        https://bugs.webkit.org/show_bug.cgi?id=98864
+
+        Reviewed by Martin Robinson.
+
+        Use a dedicated directory to store WebKit2 generated resources.
+
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/TestMain.cpp:
+        (registerGResource): load the resource from the new directory.
+
 2012-10-29  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Delete cached ShareableSurfaces when purging backingStores.
