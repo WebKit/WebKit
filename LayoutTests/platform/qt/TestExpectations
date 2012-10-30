@@ -2496,3 +2496,7 @@ webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 
 # [Qt] New http/tests/inspector/network/image-as-text-loading-data-url.html fails
 webkit.org/b/100196 http/tests/inspector/network/image-as-text-loading-data-url.html
+
+# REGRESSION(r132757): It made 2 jquery tests assert
+webkit.org/b/100636 jquery/manipulation.html
+webkit.org/b/100636 jquery/traversing.html
