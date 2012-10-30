@@ -1,3 +1,15 @@
+2012-10-30  Jesse van den Kieboom  <jessevdk@gnome.org>
+
+        Fixed transfer annotation for default web context
+        https://bugs.webkit.org/show_bug.cgi?id=94314
+
+        Reviewed by Martin Robinson.
+
+        Add a missing colon which prevented the transfer annotation of
+        webkit_web_context_get_default to be parsed correctly.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+
 2012-10-30  Anders Carlsson  <andersca@apple.com>
 
         Use the message name when dispatching messages

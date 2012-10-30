@@ -179,7 +179,7 @@ static gpointer createDefaultWebContext(gpointer)
  *
  * Gets the default web context
  *
- * Returns: (transfer none) a #WebKitWebContext
+ * Returns: (transfer none): a #WebKitWebContext
  */
 WebKitWebContext* webkit_web_context_get_default(void)
 {
