@@ -1,3 +1,17 @@
+2012-10-30  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Bitmap should show whole view area.
+        https://bugs.webkit.org/show_bug.cgi?id=100642
+
+        Reviewed by Gyuyoung Kim.
+
+        css sticky position test cases haven't been passed even though implementation has been landed by BUG 95182.
+        This is because current create bitmap implementation refers to geometry position that considers scroll movement even though
+        paint does it. Therefore, this patch always reflects current view size and remove duplicated graphic operation to dump correct bitmap image.
+
+        * DumpRenderTree/efl/PixelDumpSupportEfl.cpp:
+        (createBitmapContextFromWebView):
+
 2012-10-30  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Refactor tooltip callback signal in WebKit1

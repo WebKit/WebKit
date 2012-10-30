@@ -47,13 +47,12 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool 
     const Evas_Object* mainFrame = browser->mainFrame();
 
     int x, y, width, height;
-    if (!ewk_frame_visible_content_geometry_get(mainFrame, EINA_TRUE, &x, &y, &width, &height))
-        return 0;
+    evas_object_geometry_get(browser->mainFrame(), &x, &y, &width, &height);
+    const Eina_Rectangle rect = { x, y, width, height };
 
-    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height));
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, rect.w, rect.h));
     RefPtr<cairo_t> context = adoptRef(cairo_create(surface.get()));
 
-    const Eina_Rectangle rect = { x, y, width, height };
     if (!ewk_view_paint(privateData, context.get(), &rect))
         return 0;
 

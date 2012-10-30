@@ -26,22 +26,6 @@
 # TESTS EXPECTED TO FAIL
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# CSS Sticky (-webkit-sticky) supported by EFL, these tests fail on WK1.
-webkit.org/b/95182 fast/css/sticky/sticky-overflowing.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/inflow-sticky.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/replaced-sticky.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/sticky-as-positioning-container.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/sticky-left-percentage.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/sticky-left.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/sticky-margins.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/sticky-side-margins.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/sticky-top-margins.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/sticky-top.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-horizontal-bt.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
-webkit.org/b/95182 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageOnlyFailure ]
-
 # EFL's LayoutTestController does not implement setWindowIsKey
 fast/dom/Window/window-onFocus.html
 fast/events/blur-focus-window-should-blur-focus-element.html
@@ -92,54 +76,6 @@ webkit.org/b/96977 [ Release ] perf/nested-combined-selectors.html [ Failure Pas
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/99072 compositing/absolute-position-changed-in-composited-layer.html [ ImageOnlyFailure ]
-webkit.org/b/99072 compositing/absolute-position-changed-with-composited-parent-layer.html [ ImageOnlyFailure ]
-webkit.org/b/99072 compositing/fixed-position-scroll-offset-history-restore.html [ ImageOnlyFailure ]
-webkit.org/b/99072 compositing/geometry/fixed-in-composited.html [ ImageOnlyFailure ]
-webkit.org/b/99072 compositing/geometry/horizontal-scroll-composited.html [ ImageOnlyFailure ]
-webkit.org/b/99072 compositing/geometry/video-fixed-scrolling.html [ ImageOnlyFailure ]
-webkit.org/b/99072 compositing/overflow/fixed-position-ancestor-clip.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/block/positioning/rtl-fixed-positioning.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/block/positioning/vertical-rl/fixed-positioning.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/dynamic/anchor-lock.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/events/autoscroll.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/events/reveal-link-when-focused.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/events/scale-and-scroll-body.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/events/scale-and-scroll-iframe-body.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/events/scale-and-scroll-iframe-window.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/events/scale-and-scroll-window.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/layers/scroll-rect-to-visible.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/multicol/scrolling-overflow.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/overflow/clip-rects-fixed-ancestor.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/overflow/paged-x-with-column-gap.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/overflow/position-fixed-transform-clipping.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/overflow/scrollRevealButton.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/absolute-position-changed.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-after-scroll.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-and-absolute-position-scrolled.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-child-move-after-scroll.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-child-of-fixed-move-after-scroll.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-child-of-transformed-move-after-scroll.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-in-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-move-after-scroll.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-right-bottom-in-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-right-in-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-scale.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-scroll-simple.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-table-cell.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-table-overflow-zindex.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-table-overflow.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed-tranformed.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/fixed.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/repaint-during-scroll.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/scroll-absolute-layer-with-reflection.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/scroll-fixed-layer-with-no-visible-content.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/scroll-fixed-layer-with-reflection.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/scroll-fixed-layer-with-transformed-parent-layer.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/scroll-fixed-reflected-layer.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/scroll-in-fixed-layer.html [ ImageOnlyFailure ]
-webkit.org/b/99072 fast/repaint/scroll-relative-table-inside-table-cell.html [ ImageOnlyFailure ]
 
 webkit.org/b/99180 svg/as-image/img-preserveAspectRatio-support-1.html [ ImageOnlyFailure ]
 

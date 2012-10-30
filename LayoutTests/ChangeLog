@@ -1,3 +1,14 @@
+2012-10-30  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][DRT] Bitmap should show whole view area.
+        https://bugs.webkit.org/show_bug.cgi?id=100642
+
+        Reviewed by Gyuyoung Kim.
+
+        Unskip css sticky position as well as scroll and fixed position related test cases.
+
+        * platform/efl-wk1/TestExpectations:
+
 2012-10-30  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] Unskip sputnik flaky tests.
