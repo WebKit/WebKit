@@ -1,3 +1,9 @@
+2012-10-30  Pavel Podivilov  <podivilov@google.com>
+
+        Unrewieved, rebaseline audiobuffersource-loop-points.
+
+        * platform/chromium-linux/webaudio/audiobuffersource-loop-points-expected.wav: Renamed from LayoutTests/platform/chromium-win-xp/webaudio/audiobuffersource-loop-points-expected.wav.
+
 2012-10-30  Kent Tamura  <tkent@chromium.org>
 
         Fix crash by calendar picker or suggestion picker
