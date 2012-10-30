@@ -716,14 +716,10 @@ RenderTableSection* RenderTable::topNonEmptySection() const
 
 void RenderTable::splitColumn(unsigned position, unsigned firstSpan)
 {
-    // we need to add a new columnStruct
-    unsigned oldSize = m_columns.size();
-    m_columns.grow(oldSize + 1);
-    unsigned oldSpan = m_columns[position].span;
-    ASSERT(oldSpan > firstSpan);
-    m_columns[position].span = firstSpan;
-    memmove(m_columns.data() + position + 1, m_columns.data() + position, (oldSize - position) * sizeof(ColumnStruct));
-    m_columns[position + 1].span = oldSpan - firstSpan;
+    // We split the column at "position", taking "firstSpan" cells from the span.
+    ASSERT(m_columns[position].span > firstSpan);
+    m_columns.insert(position, ColumnStruct(firstSpan));
+    m_columns[position + 1].span -= firstSpan;
 
     // Propagate the change in our columns representation to the sections that don't need
     // cell recalc. If they do, they will be synced up directly with m_columns later.
@@ -744,10 +740,8 @@ void RenderTable::splitColumn(unsigned position, unsigned firstSpan)
 
 void RenderTable::appendColumn(unsigned span)
 {
-    unsigned pos = m_columns.size();
-    unsigned newSize = pos + 1;
-    m_columns.grow(newSize);
-    m_columns[pos].span = span;
+    unsigned newColumnIndex = m_columns.size();
+    m_columns.append(ColumnStruct(span));
 
     // Propagate the change in our columns representation to the sections that don't need
     // cell recalc. If they do, they will be synced up directly with m_columns later.
@@ -759,7 +753,7 @@ void RenderTable::appendColumn(unsigned span)
         if (section->needsCellRecalc())
             continue;
 
-        section->appendColumn(pos);
+        section->appendColumn(newColumnIndex);
     }
 
     m_columnPos.grow(numEffCols() + 1);

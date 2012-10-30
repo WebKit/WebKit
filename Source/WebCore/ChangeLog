@@ -1,3 +1,23 @@
+2012-10-30  Eric Seidel  <eric@webkit.org>
+
+        Teach RenderTable how to use Vector::insert and Vector::append instead of its own custom memmove code
+        https://bugs.webkit.org/show_bug.cgi?id=100428
+
+        Reviewed by Julien Chaffraix.
+
+        RenderTable is now like all other clients of Vector instead of being
+        needlessly different. :)
+
+        insert, append and grow all use the same expandCapacity logic under the covers
+        and Vector::insert uses TypeOperations::moveOverlapping which should use memmove
+        by default for unknown types.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::splitColumn):
+        (WebCore::RenderTable::appendColumn):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::ColumnStruct::ColumnStruct):
+
 2012-10-30  Vincent Scheib  <scheib@chromium.org>
 
         Unreviewed, rolling out r132927.

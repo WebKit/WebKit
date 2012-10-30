@@ -127,8 +127,8 @@ public:
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
 
     struct ColumnStruct {
-        ColumnStruct()
-            : span(1)
+        explicit ColumnStruct(unsigned initialSpan = 1)
+            : span(initialSpan)
         {
         }
 
