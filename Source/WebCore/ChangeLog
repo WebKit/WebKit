@@ -1,3 +1,12 @@
+2012-10-30  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt][Mac] Unreviewed build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=100727.
+
+        Speculative build fix after 132858. Include missing CoreFoundation/CoreFoundation.h header.
+
+        * platform/text/cf/AtomicStringCF.cpp:
+
 2012-10-30  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Optimize vclip for NEON in VectorMath

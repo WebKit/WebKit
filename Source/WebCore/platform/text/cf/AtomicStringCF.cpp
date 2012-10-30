@@ -28,6 +28,7 @@
 
 #if USE(CF)
 
+#include <CoreFoundation/CoreFoundation.h>
 #include <wtf/text/CString.h>
 
 namespace WTF {
