@@ -1,3 +1,20 @@
+2012-10-30  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: promote "cpu activity" out of experiment
+        https://bugs.webkit.org/show_bug.cgi?id=100726
+
+        Reviewed by Pavel Feldman.
+
+        1. CPU actibity bars redesigned
+        2. Experiment setting removed
+        3. Feature setting added
+
+        * English.lproj/localizedStrings.js: Updated setting label.
+        * inspector/front-end/Settings.js: Replaced experiment with setting.
+        * inspector/front-end/SettingsScreen.js: Added new setting.
+        * inspector/front-end/TimelinePanel.js: Update cpu bars appearance.
+        * inspector/front-end/timelinePanel.css: Ditto.
+
 2012-10-30  Michelangelo De Simone  <michelangelo@webkit.org>
 
         [CSS Shaders] Change the default compositing mode and the default CSS value for <fragmentShader>

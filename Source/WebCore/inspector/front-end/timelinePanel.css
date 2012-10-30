@@ -653,24 +653,19 @@
 
 .timeline-cpu-bars {
     position: absolute;
-    top: 19px;
-    height: 18px;
+    top: 0;
+    height: 19px;
     z-index: 350;
     width: 100%;
     overflow: hidden;
 }
 
-.timeline-cpu-bars-label {
-    font-weight: bold;
-    font-family: monospace;
-    font-size: 9px;
-    line-height: 7px;
-    position: absolute;
-    top: 5px;
-    left: 4px;
-    color: rgb(51, 51, 51);
-    background-color: rgba(255, 255, 255, 0.75);
-    z-index: 350;
+.timeline-cpu-bars .timeline-graph-bar {
+    border-color: rgb(192, 192, 192);
+    background-color: rgba(0, 0, 0, 0.15);
+    top: 2px;
+    bottom: 2px;
+    height: auto;
 }
 
 .image-preview-container {

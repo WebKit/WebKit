@@ -133,7 +133,7 @@ WebInspector.TimelinePanel = function()
 
     this._mainThreadTasks = [];
     this._mainThreadMonitoringEnabled = false;
-    if (WebInspector.experimentsSettings.mainThreadMonitoring.isEnabled() && Capabilities.timelineCanMonitorMainThread)
+    if (WebInspector.settings.showCpuOnTimelineRuler.get() && Capabilities.timelineCanMonitorMainThread)
         this._enableMainThreadMonitoring();
 
     this._createFileSelector();
@@ -875,7 +875,7 @@ WebInspector.TimelinePanel.prototype = {
         var taskIndex = insertionIndexForObjectInListSortedByFunction(startTime, tasks, compareEndTime);
 
         var container = this._cpuBarsElement;
-        var element = container.firstChild.nextSibling;
+        var element = container.firstChild;
         var lastElement;
         var lastLeft;
         var lastRight;
@@ -921,12 +921,8 @@ WebInspector.TimelinePanel.prototype = {
 
     _enableMainThreadMonitoring: function()
     {
-        ++this._headerLineCount;
-
         var container = this._timelineGrid.gridHeaderElement;
-        this._cpuBarsElement = container.createChild("div", "timeline-cpu-bars timeline-category-program");
-        var cpuBarsLabel = this._cpuBarsElement.createChild("span", "timeline-cpu-bars-label");
-        cpuBarsLabel.textContent = WebInspector.UIString("CPU");
+        this._cpuBarsElement = container.createChild("div", "timeline-cpu-bars");
 
         const headerBorderWidth = 1;
         const headerMargin = 2;
