@@ -1,3 +1,10 @@
+2012-10-30  Vincent Scheib  <scheib@chromium.org>
+
+        [chromium] Unreviewed: Additional webgl test suppression to go along with earlier ones.
+        https://bugs.webkit.org/show_bug.cgi?id=100784
+
+        * platform/chromium/TestExpectations:
+
 2012-10-30  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Restrict link highlights to targets that display a hand-cursor
