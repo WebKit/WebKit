@@ -51,8 +51,7 @@ bool SearchPopupMenuWin::enabled()
 #if USE(CF)
 static RetainPtr<CFStringRef> autosaveKey(const String& name)
 {
-    String key = "com.apple.WebKit.searchField:" + name;
-    return RetainPtr<CFStringRef>(AdoptCF, key.createCFString());
+    return String("com.apple.WebKit.searchField:" + name).createCFString();
 }
 #endif
 
@@ -67,10 +66,8 @@ void SearchPopupMenuWin::saveRecentSearches(const AtomicString& name, const Vect
     size_t size = searchItems.size();
     if (size) {
         items.adoptCF(CFArrayCreateMutable(0, size, &kCFTypeArrayCallBacks));
-        for (size_t i = 0; i < size; ++i) {
-            RetainPtr<CFStringRef> item(AdoptCF, searchItems[i].createCFString());
-            CFArrayAppendValue(items.get(), item.get());
-        }
+        for (size_t i = 0; i < size; ++i)
+            CFArrayAppendValue(items.get(), searchItems[i].createCFString().get());
     }
 
     CFPreferencesSetAppValue(autosaveKey(name).get(), items.get(), kCFPreferencesCurrentApplication);

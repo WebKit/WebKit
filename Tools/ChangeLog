@@ -1,3 +1,15 @@
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
+        String::createCFString should return a RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=100419
+
+        Reviewed by Andreas Kling.
+
+        Update callers of String::createCFString.
+
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundlePageMac.mm:
+        (WTR::InjectedBundlePage::platformDidStartProvisionalLoadForFrame):
+
 2012-10-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] WebKitTestRunner needs testRunner.queueLoadHTMLString

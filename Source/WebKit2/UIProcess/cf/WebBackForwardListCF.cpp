@@ -94,9 +94,9 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
             continue;
         }
         
-        RetainPtr<CFStringRef> url(AdoptCF, m_entries[i]->url().createCFString());
-        RetainPtr<CFStringRef> title(AdoptCF, m_entries[i]->title().createCFString());
-        RetainPtr<CFStringRef> originalURL(AdoptCF, m_entries[i]->originalURL().createCFString());
+        RetainPtr<CFStringRef> url = m_entries[i]->url().createCFString();
+        RetainPtr<CFStringRef> title = m_entries[i]->title().createCFString();
+        RetainPtr<CFStringRef> originalURL = m_entries[i]->originalURL().createCFString();
 
         // FIXME: This uses the CoreIPC data encoding format, which means that whenever we change the CoreIPC encoding we need to bump the CurrentSessionStateDataVersion
         // constant in WebPageProxyCF.cpp. The CoreIPC data format is meant to be an implementation detail, and not something that should be written to disk.

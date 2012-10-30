@@ -131,7 +131,7 @@ static HashMap<String, RetainPtr<CFDataRef> >& clientCerts()
 
 static void setDefaultMIMEType(CFURLResponseRef response)
 {
-    static CFStringRef defaultMIMETypeString = defaultMIMEType().createCFString();
+    static CFStringRef defaultMIMETypeString = defaultMIMEType().createCFString().leakRef();
     
     CFURLResponseSetMIMEType(response, defaultMIMETypeString);
 }
@@ -161,8 +161,8 @@ static CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef 
     if (cfRedirectResponse) {
         CFHTTPMessageRef httpMessage = CFURLResponseGetHTTPResponse(cfRedirectResponse);
         if (httpMessage && CFHTTPMessageGetResponseStatusCode(httpMessage) == 307) {
-            RetainPtr<CFStringRef> lastHTTPMethod(AdoptCF, handle->lastHTTPMethod().createCFString());
-            RetainPtr<CFStringRef> newMethod(AdoptCF, CFURLRequestCopyHTTPRequestMethod(cfRequest));
+            RetainPtr<CFStringRef> lastHTTPMethod = handle->lastHTTPMethod().createCFString();
+            RetainPtr<CFStringRef> newMethod = adoptCF(CFURLRequestCopyHTTPRequestMethod(cfRequest));
             if (CFStringCompareWithOptions(lastHTTPMethod.get(), newMethod.get(), CFRangeMake(0, CFStringGetLength(lastHTTPMethod.get())), kCFCompareCaseInsensitive)) {
                 RetainPtr<CFMutableURLRequestRef> mutableRequest(AdoptCF, CFURLRequestCreateMutableCopy(0, cfRequest));
 #if USE(CFURLSTORAGESESSIONS)
@@ -175,9 +175,8 @@ static CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef 
                     WebCore::setHTTPBody(mutableRequest.get(), body);
 
                 String originalContentType = handle->firstRequest().httpContentType();
-                RetainPtr<CFStringRef> originalContentTypeCF(AdoptCF, originalContentType.createCFString());
                 if (!originalContentType.isEmpty())
-                    CFURLRequestSetHTTPHeaderFieldValue(mutableRequest.get(), CFSTR("Content-Type"), originalContentTypeCF.get());
+                    CFURLRequestSetHTTPHeaderFieldValue(mutableRequest.get(), CFSTR("Content-Type"), originalContentType.createCFString().get());
 
                 request = mutableRequest.get();
             }
@@ -607,10 +606,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
 #endif
 
     if (!d->m_user.isNull() && !d->m_pass.isNull()) {
-        RetainPtr<CFStringRef> user(AdoptCF, d->m_user.createCFString());
-        RetainPtr<CFStringRef> pass(AdoptCF, d->m_pass.createCFString());
-        RetainPtr<CFURLCredentialRef> credential(AdoptCF,
-            CFURLCredentialCreate(kCFAllocatorDefault, user.get(), pass.get(), 0, kCFURLCredentialPersistenceNone));
+        RetainPtr<CFURLCredentialRef> credential = adoptCF(CFURLCredentialCreate(kCFAllocatorDefault, d->m_user.createCFString().get(), d->m_pass.createCFString().get(), 0, kCFURLCredentialPersistenceNone));
         
         KURL urlToStore;
         if (challenge.failureResponse().httpStatusCode() == 401)
@@ -1005,7 +1001,7 @@ void ResourceHandle::setPrivateBrowsingEnabled(bool enabled)
         return;
 
     String base = privateBrowsingStorageSessionIdentifierBase().isNull() ? privateBrowsingStorageSessionIdentifierDefaultBase() : privateBrowsingStorageSessionIdentifierBase();
-    RetainPtr<CFStringRef> cfIdentifier(AdoptCF, String(base + ".PrivateBrowsing").createCFString());
+    RetainPtr<CFStringRef> cfIdentifier = String(base + ".PrivateBrowsing").createCFString();
 
     privateStorageSession() = createPrivateBrowsingStorageSession(cfIdentifier.get());
 }

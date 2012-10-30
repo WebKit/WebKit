@@ -478,7 +478,7 @@ void adjustMIMETypeIfNecessary(CFURLResponseRef cfResponse)
     }
     
     if (!result) {
-        static CFStringRef defaultMIMETypeString = WebCore::defaultMIMEType().createCFString();
+        static CFStringRef defaultMIMETypeString = WebCore::defaultMIMEType().createCFString().leakRef();
         result = defaultMIMETypeString;
     }
 

@@ -32,10 +32,6 @@
 #include <objc/objc.h>
 #endif
 
-#if USE(CF)
-typedef const struct __CFString * CFStringRef;
-#endif
-
 #if PLATFORM(QT)
 QT_BEGIN_NAMESPACE
 class QString;
@@ -392,7 +388,7 @@ public:
 
 #if USE(CF)
     String(CFStringRef);
-    CFStringRef createCFString() const;
+    RetainPtr<CFStringRef> createCFString() const;
 #endif
 
 #ifdef __OBJC__

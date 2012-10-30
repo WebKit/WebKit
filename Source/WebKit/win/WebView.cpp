@@ -471,7 +471,7 @@ void WebView::setCacheModel(WebCacheModel cacheModel)
     RetainPtr<CFURLCacheRef> cfurlCache(AdoptCF, CFURLCacheCopySharedURLCache());
     RetainPtr<CFStringRef> cfurlCacheDirectory(AdoptCF, wkCopyFoundationCacheDirectory(0));
     if (!cfurlCacheDirectory)
-        cfurlCacheDirectory.adoptCF(WebCore::localUserSpecificStorageDirectory().createCFString());
+        cfurlCacheDirectory = WebCore::localUserSpecificStorageDirectory().createCFString();
 
     // As a fudge factor, use 1000 instead of 1024, in case the reported byte 
     // count doesn't align exactly to a megabyte boundary.
@@ -4712,8 +4712,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         if (FAILED(hr))
             return hr;
 
-        RetainPtr<CFStringRef> urlString(AdoptCF, toString(str).createCFString());
-        RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithString(kCFAllocatorDefault, urlString.get(), 0));
+        RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithString(kCFAllocatorDefault, toString(str).createCFString().get(), 0));
 
         // Check if the passed in string is a path and convert it to a URL.
         // FIXME: This is a workaround for nightly builds until we can get Safari to pass 

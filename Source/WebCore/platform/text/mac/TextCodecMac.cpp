@@ -284,7 +284,7 @@ CString TextCodecMac::encode(const UChar* characters, size_t length, Unencodable
     // Encoding will change the yen sign back into a backslash.
     String copy(characters, length);
     copy.replace('\\', m_backslashAsCurrencySymbol);
-    RetainPtr<CFStringRef> cfs(AdoptCF, copy.createCFString());
+    RetainPtr<CFStringRef> cfs = copy.createCFString();
 
     CFIndex startPos = 0;
     CFIndex charactersLeft = CFStringGetLength(cfs.get());

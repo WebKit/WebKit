@@ -118,14 +118,8 @@ static inline void setHeaderFields(CFMutableURLRequestRef request, const HTTPHea
             CFURLRequestSetHTTPHeaderFieldValue(request, oldHeaderFieldNames[i], 0);
     }
 
-    HTTPHeaderMap::const_iterator end = requestHeaders.end();
-    for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
-        CFStringRef key = it->key.string().createCFString();
-        CFStringRef value = it->value.createCFString();
-        CFURLRequestSetHTTPHeaderFieldValue(request, key, value);
-        CFRelease(key);
-        CFRelease(value);
-    }
+    for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(), end = requestHeaders.end(); it != end; ++it)
+        CFURLRequestSetHTTPHeaderFieldValue(request, it->key.string().createCFString().get(), it->value.createCFString().get());
 }
 
 void ResourceRequest::doUpdatePlatformRequest()
@@ -146,8 +140,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     wkSetRequestStorageSession(ResourceHandle::currentStorageSession(), cfRequest);
 #endif
 
-    RetainPtr<CFStringRef> requestMethod(AdoptCF, httpMethod().createCFString());
-    CFURLRequestSetHTTPRequestMethod(cfRequest, requestMethod.get());
+    CFURLRequestSetHTTPRequestMethod(cfRequest, httpMethod().createCFString().get());
 
     if (httpPipeliningEnabled())
         wkSetHTTPPipeliningPriority(cfRequest, toHTTPPipeliningPriority(m_priority));
@@ -164,7 +157,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     unsigned fallbackCount = m_responseContentDispositionEncodingFallbackArray.size();
     RetainPtr<CFMutableArrayRef> encodingFallbacks(AdoptCF, CFArrayCreateMutable(kCFAllocatorDefault, fallbackCount, 0));
     for (unsigned i = 0; i != fallbackCount; ++i) {
-        RetainPtr<CFStringRef> encodingName(AdoptCF, m_responseContentDispositionEncodingFallbackArray[i].createCFString());
+        RetainPtr<CFStringRef> encodingName = m_responseContentDispositionEncodingFallbackArray[i].createCFString();
         CFStringEncoding encoding = CFStringConvertIANACharSetNameToEncoding(encodingName.get());
         if (encoding != kCFStringEncodingInvalidId)
             CFArrayAppendValue(encodingFallbacks.get(), reinterpret_cast<const void*>(encoding));

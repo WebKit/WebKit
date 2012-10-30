@@ -23,8 +23,8 @@
 #include <wtf/text/WTFString.h>
 
 #if USE(CF)
-
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/RetainPtr.h>
 
 namespace WTF {
 
@@ -51,7 +51,7 @@ String::String(CFStringRef str)
     }
 }
 
-CFStringRef String::createCFString() const
+RetainPtr<CFStringRef> String::createCFString() const
 {
     if (!m_impl)
         return CFSTR("");

@@ -90,12 +90,12 @@ void DNSResolveQueue::platformResolve(const String& hostname)
 {
     ASSERT(isMainThread());
 
-    RetainPtr<CFStringRef> hostnameCF(AdoptCF, hostname.createCFString());
-    RetainPtr<CFHostRef> host(AdoptCF, CFHostCreateWithName(0, hostnameCF.get()));
+    RetainPtr<CFHostRef> host = adoptCF(CFHostCreateWithName(0, hostname.createCFString().get()));
     if (!host) {
         decrementRequestCount();
         return;
     }
+
     CFHostClientContext context = { 0, 0, 0, 0, 0 };
     CFHostRef leakedHost = host.leakRef(); // The host will be released from clientCallback().
     Boolean result = CFHostSetClient(leakedHost, clientCallback, &context);

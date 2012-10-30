@@ -279,8 +279,7 @@ static void initializeSandbox(const String& pluginPath, const String& sandboxPro
     if (sandboxProfileDirectoryPath.isEmpty())
         return;
 
-    RetainPtr<CFStringRef> cfPluginPath = adoptCF(pluginPath.createCFString());
-    RetainPtr<CFURLRef> pluginURL = adoptCF(CFURLCreateWithFileSystemPath(0, cfPluginPath.get(), kCFURLPOSIXPathStyle, false));
+    RetainPtr<CFURLRef> pluginURL = adoptCF(CFURLCreateWithFileSystemPath(0, pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
     if (!pluginURL)
         return;
 
@@ -292,8 +291,7 @@ static void initializeSandbox(const String& pluginPath, const String& sandboxPro
     if (!bundleIdentifier)
         return;
 
-    RetainPtr<CFStringRef> cfSandboxProfileDirectoryPath = adoptCF(sandboxProfileDirectoryPath.createCFString());
-    RetainPtr<CFURLRef> sandboxProfileDirectory = adoptCF(CFURLCreateWithFileSystemPath(0, cfSandboxProfileDirectoryPath.get(), kCFURLPOSIXPathStyle, TRUE));
+    RetainPtr<CFURLRef> sandboxProfileDirectory = adoptCF(CFURLCreateWithFileSystemPath(0, sandboxProfileDirectoryPath.createCFString().get(), kCFURLPOSIXPathStyle, TRUE));
 
     RetainPtr<CFStringRef> sandboxFileName = CFStringCreateWithFormat(0, 0, CFSTR("%@.sb"), bundleIdentifier);
     RetainPtr<CFURLRef> sandboxURL = adoptCF(CFURLCreateWithFileSystemPathRelativeToBase(0, sandboxFileName.get(), kCFURLPOSIXPathStyle, FALSE, sandboxProfileDirectory.get()));

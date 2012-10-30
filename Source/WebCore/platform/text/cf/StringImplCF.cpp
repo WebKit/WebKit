@@ -26,6 +26,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 
 #if PLATFORM(MAC)
@@ -132,7 +133,7 @@ namespace StringWrapperCFAllocator {
 
 }
 
-CFStringRef StringImpl::createCFString()
+RetainPtr<CFStringRef> StringImpl::createCFString()
 {
     if (!m_length || !isMainThread()) {
         if (is8Bit())
@@ -153,7 +154,7 @@ CFStringRef StringImpl::createCFString()
     // CoreFoundation might not have to allocate anything, we clear currentString in case we did not execute allocate().
     StringWrapperCFAllocator::currentString = 0;
 
-    return string;
+    return adoptCF(string);
 }
 
 // On StringImpl creation we could check if the allocator is the StringWrapperCFAllocator.

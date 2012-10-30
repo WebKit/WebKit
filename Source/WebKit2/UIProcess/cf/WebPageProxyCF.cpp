@@ -65,7 +65,7 @@ PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilte
         if (provisionalURL.isEmpty())
             provisionalURL = m_mainFrame->provisionalURL();
         if (!provisionalURL.isEmpty()) {
-            provisionalURLString.adoptCF(provisionalURL.createCFString());
+            provisionalURLString = provisionalURL.createCFString();
             keys[numValues] = ProvisionalURLKey();
             values[numValues] = provisionalURLString.get();
             ++numValues;
@@ -179,8 +179,7 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
 
 static RetainPtr<CFStringRef> autosaveKey(const String& name)
 {
-    String key = "com.apple.WebKit.searchField:" + name;
-    return RetainPtr<CFStringRef>(AdoptCF, key.createCFString());
+    return String("com.apple.WebKit.searchField:" + name).createCFString();
 }
 
 void WebPageProxy::saveRecentSearches(const String& name, const Vector<String>& searchItems)
@@ -192,10 +191,8 @@ void WebPageProxy::saveRecentSearches(const String& name, const Vector<String>& 
 
     if (size_t size = searchItems.size()) {
         items.adoptCF(CFArrayCreateMutable(0, size, &kCFTypeArrayCallBacks));
-        for (size_t i = 0; i < size; ++i) {
-            RetainPtr<CFStringRef> item(AdoptCF, searchItems[i].createCFString());
-            CFArrayAppendValue(items.get(), item.get());
-        }
+        for (size_t i = 0; i < size; ++i)
+            CFArrayAppendValue(items.get(), searchItems[i].createCFString().get());
     }
 
     CFPreferencesSetAppValue(autosaveKey(name).get(), items.get(), kCFPreferencesCurrentApplication);

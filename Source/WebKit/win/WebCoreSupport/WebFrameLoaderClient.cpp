@@ -792,24 +792,20 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* plugin
         KURL pluginPageURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(pluginView->pluginsPage()));
         if (pluginPageURL.protocolIsInHTTPFamily()) {
             static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
-            RetainPtr<CFStringRef> str(AdoptCF, pluginPageURL.string().createCFString());
-            CFDictionarySetValue(userInfo.get(), key, str.get());
+            CFDictionarySetValue(userInfo.get(), key, pluginPageURL.string().createCFString().get());
         }
     }
 
     if (!pluginView->mimeType().isNull()) {
         static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorMIMETypeKey);
-
-        RetainPtr<CFStringRef> str(AdoptCF, pluginView->mimeType().createCFString());
-        CFDictionarySetValue(userInfo.get(), key, str.get());
+        CFDictionarySetValue(userInfo.get(), key, pluginView->mimeType().createCFString().get());
     }
 
     if (pluginView->plugin()) {
         String pluginName = pluginView->plugin()->name();
         if (!pluginName.isNull()) {
             static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
-            RetainPtr<CFStringRef> str(AdoptCF, pluginName.createCFString());
-            CFDictionarySetValue(userInfo.get(), key, str.get());
+            CFDictionarySetValue(userInfo.get(), key, pluginName.createCFString().get());
         }
     }
 

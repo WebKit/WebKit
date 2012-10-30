@@ -60,11 +60,7 @@ String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& ch
         return String();
     }
 
-    RetainPtr<CFStringRef> challengeStringCF(AdoptCF, challengeString.createCFString());
-    RetainPtr<CFStringRef> keyDescription(AdoptCF, keygenKeychainItemName(url.host()).createCFString());
-    RetainPtr<CFStringRef> result(AdoptCF, wkSignedPublicKeyAndChallengeString(keySize, challengeStringCF.get(), keyDescription.get()));
-
-    return result.get();
+    return adoptCF(wkSignedPublicKeyAndChallengeString(keySize, challengeString.createCFString().get(), keygenKeychainItemName(url.host()).createCFString().get())).get();
 }
 
 }

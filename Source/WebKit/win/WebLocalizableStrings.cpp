@@ -132,12 +132,10 @@ static CFBundleRef createWebKitBundle()
         return 0;
 
     String bundlePathString(pathStr);
-    CFStringRef bundlePathCFString = bundlePathString.createCFString();
-    if (!bundlePathCFString)
+    if (!bundlePathString)
         return 0;
 
-    CFURLRef bundleURLRef = CFURLCreateWithFileSystemPath(0, bundlePathCFString, kCFURLWindowsPathStyle, true);
-    CFRelease(bundlePathCFString);
+    CFURLRef bundleURLRef = CFURLCreateWithFileSystemPath(0, bundlePathString.createCFString().get(), kCFURLWindowsPathStyle, true);
     if (!bundleURLRef)
         return 0;
 
@@ -168,8 +166,7 @@ static CFStringRef copyLocalizedStringFromBundle(WebLocalizableStringsBundle* st
     if (!bundle)
         return notFound;
 
-    RetainPtr<CFStringRef> keyString(AdoptCF, key.createCFString());
-    CFStringRef result = CFCopyLocalizedStringWithDefaultValue(keyString.get(), 0, bundle, notFound, 0);
+    CFStringRef result = CFCopyLocalizedStringWithDefaultValue(key.createCFString().get(), 0, bundle, notFound, 0);
 
     ASSERT_WITH_MESSAGE(result != notFound, "could not find localizable string %s in bundle", key);
     return result;

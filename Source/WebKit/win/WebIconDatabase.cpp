@@ -366,7 +366,7 @@ BSTR WebIconDatabase::iconDatabaseDidAddIconNotification()
 
 CFStringRef WebIconDatabase::iconDatabaseNotificationUserInfoURLKey()
 {
-    static CFStringRef iconUserInfoURLKey = String(WebIconNotificationUserInfoURLKey).createCFString();
+    static CFStringRef iconUserInfoURLKey = String(WebIconNotificationUserInfoURLKey).createCFString().leakRef();
     return iconUserInfoURLKey;
 }
 
@@ -387,8 +387,7 @@ static void postDidAddIconNotification(const String& pageURL, WebIconDatabase* i
     RetainPtr<CFMutableDictionaryRef> dictionary(AdoptCF, 
     CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    RetainPtr<CFStringRef> url(AdoptCF, pageURL.createCFString());
-    CFDictionaryAddValue(dictionary.get(), WebIconDatabase::iconDatabaseNotificationUserInfoURLKey(), url.get());
+    CFDictionaryAddValue(dictionary.get(), WebIconDatabase::iconDatabaseNotificationUserInfoURLKey(), pageURL.createCFString().get());
 
     COMPtr<CFDictionaryPropertyBag> userInfo = CFDictionaryPropertyBag::createInstance();
     userInfo->setDictionary(dictionary.get());

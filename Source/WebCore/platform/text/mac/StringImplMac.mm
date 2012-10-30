@@ -22,12 +22,13 @@
 #include <wtf/text/StringImpl.h>
 
 #include "FoundationExtras.h"
+#include <wtf/RetainPtr.h>
 
 namespace WTF {
 
 StringImpl::operator NSString *()
 {
-    return HardAutorelease(createCFString());
+    return HardAutorelease(createCFString().leakRef());
 }
 
 }

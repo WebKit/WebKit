@@ -145,13 +145,11 @@ CFErrorRef ResourceError::cfError() const
     if (!m_platformError) {
         RetainPtr<CFMutableDictionaryRef> userInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-        if (!m_localizedDescription.isEmpty()) {
-            RetainPtr<CFStringRef> localizedDescriptionString(AdoptCF, m_localizedDescription.createCFString());
-            CFDictionarySetValue(userInfo.get(), kCFErrorLocalizedDescriptionKey, localizedDescriptionString.get());
-        }
+        if (!m_localizedDescription.isEmpty())
+            CFDictionarySetValue(userInfo.get(), kCFErrorLocalizedDescriptionKey, m_localizedDescription.createCFString().get());
 
         if (!m_failingURL.isEmpty()) {
-            RetainPtr<CFStringRef> failingURLString(AdoptCF, m_failingURL.createCFString());
+            RetainPtr<CFStringRef> failingURLString = m_failingURL.createCFString();
             CFDictionarySetValue(userInfo.get(), failingURLStringKey, failingURLString.get());
             RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithString(0, failingURLString.get(), 0));
             CFDictionarySetValue(userInfo.get(), failingURLKey, url.get());
@@ -162,8 +160,7 @@ CFErrorRef ResourceError::cfError() const
             wkSetSSLPeerCertificateData(userInfo.get(), m_certificate.get());
 #endif
         
-        RetainPtr<CFStringRef> domainString(AdoptCF, m_domain.createCFString());
-        m_platformError.adoptCF(CFErrorCreate(0, domainString.get(), m_errorCode, userInfo.get()));
+        m_platformError = adoptCF(CFErrorCreate(0, m_domain.createCFString().get(), m_errorCode, userInfo.get()));
     }
 
     return m_platformError.get();

@@ -119,13 +119,7 @@ CFURLCredentialRef createCF(const Credential& coreCredential)
         return CFURLCredentialCreateWithIdentityAndCertificateArray(kCFAllocatorDefault, coreCredential.identity(), coreCredential.certificates(), persistence);
 #endif
 
-    CFStringRef user = coreCredential.user().createCFString();
-    CFStringRef password = coreCredential.password().createCFString();
-    CFURLCredentialRef result = CFURLCredentialCreate(0, user, password, 0, persistence);
-    CFRelease(user);
-    CFRelease(password);
-
-    return result;
+    return CFURLCredentialCreate(0, coreCredential.user().createCFString().get(), coreCredential.password().createCFString().get(), 0, persistence);
 }
 
 CFURLProtectionSpaceRef createCF(const ProtectionSpace& coreSpace)
@@ -192,13 +186,7 @@ CFURLProtectionSpaceRef createCF(const ProtectionSpace& coreSpace)
         ASSERT_NOT_REACHED();
     }
 
-    CFStringRef host = coreSpace.host().createCFString();
-    CFStringRef realm = coreSpace.realm().createCFString();
-    CFURLProtectionSpaceRef result = CFURLProtectionSpaceCreate(0, host, coreSpace.port(), serverType, realm, scheme);
-    CFRelease(host);
-    CFRelease(realm);
-    
-    return result;
+    return CFURLProtectionSpaceCreate(0, coreSpace.host().createCFString().get(), coreSpace.port(), serverType, coreSpace.realm().createCFString().get(), scheme);
 }
 
 Credential core(CFURLCredentialRef cfCredential)

@@ -459,7 +459,7 @@ void PlatformCALayerWinInternal::updateTiles()
 
 #ifndef NDEBUG
             String name = "Tile (" + String::number(i) + "," + String::number(j) + ")";
-            CACFLayerSetName(tile, RetainPtr<CFStringRef>(AdoptCF, name.createCFString()).get());
+            CACFLayerSetName(tile, name.createCFString().get());
 #endif
         }
     }

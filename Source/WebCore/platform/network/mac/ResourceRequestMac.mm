@@ -163,9 +163,9 @@ void ResourceRequest::doUpdatePlatformRequest()
         NSMutableArray *encodingFallbacks = [NSMutableArray array];
         unsigned count = m_responseContentDispositionEncodingFallbackArray.size();
         for (unsigned i = 0; i != count; ++i) {
-            CFStringRef encodingName = m_responseContentDispositionEncodingFallbackArray[i].createCFString();
-            unsigned long nsEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName));
-            CFRelease(encodingName);
+            RetainPtr<CFStringRef> encodingName = m_responseContentDispositionEncodingFallbackArray[i].createCFString();
+            unsigned long nsEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName.get()));
+
             if (nsEncoding != kCFStringEncodingInvalidId)
                 [encodingFallbacks addObject:[NSNumber numberWithUnsignedLong:nsEncoding]];
         }

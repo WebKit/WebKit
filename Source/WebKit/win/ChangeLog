@@ -1,3 +1,33 @@
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
+        String::createCFString should return a RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=100419
+
+        Reviewed by Andreas Kling.
+
+        Update callers of String::createCFString.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidFailToStartPlugin):
+        * WebDatabaseManager.cpp:
+        (WebDatabaseManager::dispatchDidModifyDatabase):
+        * WebHistory.cpp:
+        (WebHistory::visitedURL):
+        (WebHistory::itemForURLString):
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::dictionaryRepresentation):
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::iconDatabaseNotificationUserInfoURLKey):
+        (postDidAddIconNotification):
+        * WebLocalizableStrings.cpp:
+        (createWebKitBundle):
+        (copyLocalizedStringFromBundle):
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        * WebView.cpp:
+        (WebView::setCacheModel):
+        (WebView::notifyPreferencesChanged):
+
 2012-10-24  Brady Eidson  <beidson@apple.com>
 
         Add a strategy for loader customization.

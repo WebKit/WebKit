@@ -63,15 +63,14 @@ using namespace WebCore;
 
 static const char* inspectorStartsAttachedSetting = "inspectorStartsAttached";
 
-static inline CFStringRef createKeyForPreferences(const String& key)
+static inline RetainPtr<CFStringRef> createKeyForPreferences(const String& key)
 {
-    RetainPtr<CFStringRef> keyCFString(AdoptCF, key.createCFString());
-    return CFStringCreateWithFormat(0, 0, CFSTR("WebKit Web Inspector Setting - %@"), keyCFString.get());
+    return adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("WebKit Web Inspector Setting - %@"), key.createCFString().get()));
 }
 
 static void populateSetting(const String& key, String* setting)
 {
-    RetainPtr<CFStringRef> preferencesKey(AdoptCF, createKeyForPreferences(key));
+    RetainPtr<CFStringRef> preferencesKey = createKeyForPreferences(key);
     RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(preferencesKey.get(), kCFPreferencesCurrentApplication));
 
     if (!value)
@@ -88,12 +87,7 @@ static void populateSetting(const String& key, String* setting)
 
 static void storeSetting(const String& key, const String& setting)
 {
-    RetainPtr<CFPropertyListRef> objectToStore;
-    objectToStore.adoptCF(setting.createCFString());
-    ASSERT(objectToStore);
-
-    RetainPtr<CFStringRef> preferencesKey(AdoptCF, createKeyForPreferences(key));
-    CFPreferencesSetAppValue(preferencesKey.get(), objectToStore.get(), kCFPreferencesCurrentApplication);
+    CFPreferencesSetAppValue(createKeyForPreferences(key).get(), setting.createCFString().get(), kCFPreferencesCurrentApplication);
 }
 
 bool WebInspectorClient::sendMessageToFrontend(const String& message)

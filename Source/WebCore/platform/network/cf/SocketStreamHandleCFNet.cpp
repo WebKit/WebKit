@@ -269,7 +269,7 @@ void SocketStreamHandle::createStreams()
     if (m_connectionType == Unknown)
         return;
 
-    RetainPtr<CFStringRef> host(AdoptCF, m_url.host().createCFString());
+    RetainPtr<CFStringRef> host = m_url.host().createCFString();
 
     // Creating streams to final destination, not to proxy.
     CFReadStreamRef readStream = 0;
@@ -359,12 +359,10 @@ void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
     String password;
     if (!m_sentStoredCredentials && getStoredCONNECTProxyCredentials(protectionSpace, login, password)) {
         // Try to apply stored credentials, if we haven't tried those already.
-        RetainPtr<CFStringRef> loginCF(AdoptCF, login.createCFString());
-        RetainPtr<CFStringRef> passwordCF(AdoptCF, password.createCFString());
-        // Creating a temporary request to make CFNetwork apply credentials to it. Unfortunately, this cannot work with NTLM authentication.
+        // Create a temporary request to make CFNetwork apply credentials to it. Unfortunately, this cannot work with NTLM authentication.
         RetainPtr<CFHTTPMessageRef> dummyRequest(AdoptCF, CFHTTPMessageCreateRequest(0, CFSTR("GET"), m_httpsURL.get(), kCFHTTPVersion1_1));
 
-        Boolean appliedCredentials = CFHTTPMessageApplyCredentials(dummyRequest.get(), authentication.get(), loginCF.get(), passwordCF.get(), 0);
+        Boolean appliedCredentials = CFHTTPMessageApplyCredentials(dummyRequest.get(), authentication.get(), login.createCFString().get(), password.createCFString().get(), 0);
         ASSERT_UNUSED(appliedCredentials, appliedCredentials);
 
         RetainPtr<CFStringRef> proxyAuthorizationString(AdoptCF, CFHTTPMessageCopyHeaderFieldValue(dummyRequest.get(), CFSTR("Proxy-Authorization")));
@@ -389,7 +387,7 @@ void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
 CFStringRef SocketStreamHandle::copyCFStreamDescription(void* info)
 {
     SocketStreamHandle* handle = static_cast<SocketStreamHandle*>(info);
-    return String("WebKit socket stream, " + handle->m_url.string()).createCFString();
+    return String("WebKit socket stream, " + handle->m_url.string()).createCFString().leakRef();
 }
 
 struct MainThreadEventCallbackInfo {

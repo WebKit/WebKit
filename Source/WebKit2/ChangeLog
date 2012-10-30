@@ -1,3 +1,33 @@
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
+        String::createCFString should return a RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=100419
+
+        Reviewed by Andreas Kling.
+
+        Update callers of String::createCFString.
+
+        * Platform/mac/ModuleMac.mm:
+        (WebKit::Module::load):
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::initializeSandbox):
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        (WebKit::NetscapePluginModule::createPluginMIMETypesPreferences):
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation):
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::sessionStateData):
+        (WebKit::autosaveKey):
+        (WebKit::WebPageProxy::saveRecentSearches):
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::clearCacheForOrigin):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::cachedResponseForURL):
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformSetCacheModel):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2012-10-30  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         Regression(r132647)-Enable WebGL in EwkView.

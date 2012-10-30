@@ -79,7 +79,7 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
         cfurlCacheDirectory.adoptCF(wkCopyFoundationCacheDirectory(0));
 
     if (!cfurlCacheDirectory)
-        cfurlCacheDirectory.adoptCF(WebCore::localUserSpecificStorageDirectory().createCFString());
+        cfurlCacheDirectory = WebCore::localUserSpecificStorageDirectory().createCFString();
 
     // As a fudge factor, use 1000 instead of 1024, in case the reported byte 
     // count doesn't align exactly to a megabyte boundary.
@@ -148,13 +148,12 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     if (defaultStorageSession)
         return;
 
-    RetainPtr<CFStringRef> cachePath(AdoptCF, parameters.diskCacheDirectory.createCFString());
-    if (!cachePath)
+    if (!parameters.diskCacheDirectory)
         return;
 
     CFIndex cacheDiskCapacity = parameters.cfURLCacheDiskCapacity;
     CFIndex cacheMemoryCapacity = parameters.cfURLCacheMemoryCapacity;
-    RetainPtr<CFURLCacheRef> uiProcessCache(AdoptCF, CFURLCacheCreate(kCFAllocatorDefault, cacheMemoryCapacity, cacheDiskCapacity, cachePath.get()));
+    RetainPtr<CFURLCacheRef> uiProcessCache(AdoptCF, CFURLCacheCreate(kCFAllocatorDefault, cacheMemoryCapacity, cacheDiskCapacity, parameters.diskCacheDirectory.createCFString().get()));
     CFURLCacheSetSharedURLCache(uiProcessCache.get());
 #endif // USE(CFNETWORK)
 }

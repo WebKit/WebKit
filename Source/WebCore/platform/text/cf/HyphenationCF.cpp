@@ -46,8 +46,7 @@ RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::creat
 template<>
 RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::createValueForKey(const AtomicString& localeIdentifier)
 {
-    RetainPtr<CFStringRef> cfLocaleIdentifier(AdoptCF, localeIdentifier.string().createCFString());
-    RetainPtr<CFLocaleRef> locale(AdoptCF, CFLocaleCreate(kCFAllocatorDefault, cfLocaleIdentifier.get()));
+    RetainPtr<CFLocaleRef> locale = adoptCF(CFLocaleCreate(kCFAllocatorDefault, localeIdentifier.string().createCFString().get()));
 
     return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : 0;
 }

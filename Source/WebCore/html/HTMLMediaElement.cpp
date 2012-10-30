@@ -916,8 +916,7 @@ static KURL createFileURLForApplicationCacheResource(const String& path)
     // app cache media files are always created with encodeForFileName(createCanonicalUUIDString()).
 
 #if USE(CF) && PLATFORM(WIN)
-    RetainPtr<CFStringRef> cfPath(AdoptCF, path.createCFString());
-    RetainPtr<CFURLRef> cfURL(AdoptCF, CFURLCreateWithFileSystemPath(0, cfPath.get(), kCFURLWindowsPathStyle, false));
+    RetainPtr<CFURLRef> cfURL(AdoptCF, CFURLCreateWithFileSystemPath(0, path.createCFString().get(), kCFURLWindowsPathStyle, false));
     KURL url(cfURL.get());
 #else
     KURL url;

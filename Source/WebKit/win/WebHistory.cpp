@@ -693,9 +693,9 @@ HRESULT WebHistory::addItem(IWebHistoryItem* entry, bool discardDuplicate, bool*
 
 void WebHistory::visitedURL(const KURL& url, const String& title, const String& httpMethod, bool wasFailure, bool increaseVisitCount)
 {
-    RetainPtr<CFStringRef> urlString(AdoptCF, url.string().createCFString());
+    RetainPtr<CFStringRef> urlString = url.string().createCFString();
 
-    IWebHistoryItem* entry = (IWebHistoryItem*) CFDictionaryGetValue(m_entriesByURL.get(), urlString.get());
+    IWebHistoryItem* entry = (IWebHistoryItem*)CFDictionaryGetValue(m_entriesByURL.get(), urlString.get());
     if (entry) {
         COMPtr<IWebHistoryItemPrivate> entryPrivate(Query, entry);
         if (!entryPrivate)
@@ -786,11 +786,10 @@ HRESULT WebHistory::removeItemForURLString(CFStringRef urlString)
 
 COMPtr<IWebHistoryItem> WebHistory::itemForURLString(const String& urlString) const
 {
-    RetainPtr<CFStringRef> urlCFString(AdoptCF, urlString.createCFString());
-    if (!urlCFString)
+    if (!urlString)
         return 0;
     COMPtr<IWebHistoryItem> item;
-    if (FAILED(itemForURLString(urlCFString.get(), &item)))
+    if (FAILED(itemForURLString(urlString.createCFString().get(), &item)))
         return 0;
     return item;
 }

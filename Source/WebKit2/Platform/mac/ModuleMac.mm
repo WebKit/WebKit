@@ -30,12 +30,11 @@ namespace WebKit {
 
 bool Module::load()
 {
-    RetainPtr<CFStringRef> bundlePath(AdoptCF, m_path.createCFString());
-    RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(kCFAllocatorDefault, bundlePath.get(), kCFURLPOSIXPathStyle, FALSE));
+    RetainPtr<CFURLRef> bundleURL = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, m_path.createCFString().get(), kCFURLPOSIXPathStyle, FALSE));
     if (!bundleURL)
         return false;
 
-    RetainPtr<CFBundleRef> bundle(AdoptCF, CFBundleCreate(kCFAllocatorDefault, bundleURL.get()));
+    RetainPtr<CFBundleRef> bundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, bundleURL.get()));
     if (!bundle)
         return false;
 

@@ -67,6 +67,7 @@ struct CharBufferFromLiteralDataTranslator;
 class MemoryObjectInfo;
 struct SubstringTranslator;
 struct UCharBufferTranslator;
+template<typename> class RetainPtr;
 
 enum TextCaseSensitivity { TextCaseSensitive, TextCaseInsensitive };
 
@@ -714,7 +715,7 @@ public:
     WTF_EXPORT_STRING_API WTF::Unicode::Direction defaultWritingDirection(bool* hasStrongDirectionality = 0);
 
 #if USE(CF)
-    CFStringRef createCFString();
+    RetainPtr<CFStringRef> createCFString();
 #endif
 #ifdef __OBJC__
     operator NSString*();

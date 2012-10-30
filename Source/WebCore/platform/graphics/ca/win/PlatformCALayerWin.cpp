@@ -176,10 +176,8 @@ void PlatformCALayer::animationStarted(CFTimeInterval beginTime)
 static void resubmitAllAnimations(PlatformCALayer* layer)
 {
     HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator end = layer->animations().end();
-    for (HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator it = layer->animations().begin(); it != end; ++it) {
-        RetainPtr<CFStringRef> s(AdoptCF, it->key.createCFString());
-        CACFLayerAddAnimation(layer->platformLayer(), s.get(), it->value->platformAnimation());
-    }
+    for (HashMap<String, RefPtr<PlatformCAAnimation> >::const_iterator it = layer->animations().begin(); it != end; ++it)
+        CACFLayerAddAnimation(layer->platformLayer(), it->key.createCFString().get(), it->value->platformAnimation());
 }
 
 void PlatformCALayer::ensureAnimationsSubmitted()
@@ -297,8 +295,7 @@ void PlatformCALayer::addAnimationForKey(const String& key, PlatformCAAnimation*
     // Add it to the animation list
     m_animations.add(key, animation);
 
-    RetainPtr<CFStringRef> s(AdoptCF, key.createCFString());
-    CACFLayerAddAnimation(m_layer.get(), s.get(), animation->platformAnimation());
+    CACFLayerAddAnimation(m_layer.get(), key.createCFString().get(), animation->platformAnimation());
     setNeedsCommit();
 
     // Tell the host about it so we can fire the start animation event
@@ -312,8 +309,7 @@ void PlatformCALayer::removeAnimationForKey(const String& key)
     // Remove it from the animation list
     m_animations.remove(key);
 
-    RetainPtr<CFStringRef> s(AdoptCF, key.createCFString());
-    CACFLayerRemoveAnimation(m_layer.get(), s.get());
+    CACFLayerRemoveAnimation(m_layer.get(), key.createCFString().get());
 
     // We don't "remove" a layer from AbstractCACFLayerTreeHost when it loses an animation.
     // There may be other active animations on the layer and if an animation
@@ -586,8 +582,7 @@ String PlatformCALayer::name() const
 
 void PlatformCALayer::setName(const String& value)
 {
-    RetainPtr<CFStringRef> s(AdoptCF, value.createCFString());
-    CACFLayerSetName(m_layer.get(), s.get());
+    CACFLayerSetName(m_layer.get(), value.createCFString().get());
     setNeedsCommit();
 }
 

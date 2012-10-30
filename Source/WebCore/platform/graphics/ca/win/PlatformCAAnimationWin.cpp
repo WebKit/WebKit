@@ -151,8 +151,7 @@ PlatformCAAnimation::PlatformCAAnimation(AnimationType type, const String& keyPa
     else
         m_animation.adoptCF(CACFAnimationCreate(kCACFKeyframeAnimation));
     
-    RetainPtr<CFStringRef> s(AdoptCF, keyPath.createCFString());
-    CACFAnimationSetKeyPath(m_animation.get(), s.get());
+    CACFAnimationSetKeyPath(m_animation.get(), keyPath.createCFString().get());
 }
 
 PlatformCAAnimation::PlatformCAAnimation(PlatformAnimationRef animation)

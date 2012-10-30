@@ -37,7 +37,7 @@ namespace WebCore {
 
 CString fileSystemRepresentation(const String& path)
 {
-    RetainPtr<CFStringRef> cfString(AdoptCF, path.createCFString());
+    RetainPtr<CFStringRef> cfString = path.createCFString();
 
     if (!cfString)
         return CString();
@@ -63,8 +63,7 @@ RetainPtr<CFURLRef> pathAsURL(const String& path)
 #else
     pathStyle = kCFURLPOSIXPathStyle;
 #endif
-    return RetainPtr<CFURLRef>(AdoptCF, CFURLCreateWithFileSystemPath(0,
-        RetainPtr<CFStringRef>(AdoptCF, path.createCFString()).get(), pathStyle, FALSE));
+    return adoptCF(CFURLCreateWithFileSystemPath(0, path.createCFString().get(), pathStyle, FALSE));
 }
 
 } // namespace WebCore

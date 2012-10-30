@@ -352,11 +352,10 @@ static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginModuleInf
 
 bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
-    RetainPtr<CFStringRef> bundlePath(AdoptCF, pluginPath.createCFString());
-    RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(kCFAllocatorDefault, bundlePath.get(), kCFURLPOSIXPathStyle, false));
+    RetainPtr<CFURLRef> bundleURL = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
     
     // Try to initialize the bundle.
-    RetainPtr<CFBundleRef> bundle(AdoptCF, CFBundleCreate(kCFAllocatorDefault, bundleURL.get()));
+    RetainPtr<CFBundleRef> bundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, bundleURL.get()));
     if (!bundle)
         return false;
     
@@ -395,11 +394,9 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
 
 bool NetscapePluginModule::createPluginMIMETypesPreferences(const String& pluginPath)
 {
-    RetainPtr<CFStringRef> bundlePath(AdoptCF, pluginPath.createCFString());
-    RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(kCFAllocatorDefault, bundlePath.get(), kCFURLPOSIXPathStyle, false));
+    RetainPtr<CFURLRef> bundleURL = adoptCF(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, pluginPath.createCFString().get(), kCFURLPOSIXPathStyle, false));
     
-    // Try to initialize the bundle.
-    RetainPtr<CFBundleRef> bundle(AdoptCF, CFBundleCreate(kCFAllocatorDefault, bundleURL.get()));
+    RetainPtr<CFBundleRef> bundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, bundleURL.get()));
     if (!bundle)
         return false;
 

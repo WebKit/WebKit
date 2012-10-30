@@ -85,8 +85,7 @@ void InjectedBundlePage::platformDidStartProvisionalLoadForFrame(WKBundleFrameRe
         StringBuilder builder;
         builder.appendLiteral("CRASHING TEST: ");
         builder.append(testPath);
-        RetainPtr<CFStringRef> cfString(AdoptCF, builder.toString().createCFString());
-        WKSetCrashReportApplicationSpecificInformation(cfString.get());
+        WKSetCrashReportApplicationSpecificInformation(builder.toString().createCFString().get());
     }
 #endif
 }

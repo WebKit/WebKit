@@ -51,9 +51,7 @@ CFURLResponseRef ResourceResponse::cfURLResponse() const
 {
     if (!m_cfResponse && !m_isNull) {
         RetainPtr<CFURLRef> url(AdoptCF, m_url.createCFURL());
-        RetainPtr<CFStringRef> mimeType(AdoptCF, m_mimeType.createCFString());
-        RetainPtr<CFStringRef> textEncodingName(AdoptCF, m_textEncodingName.createCFString());
-        m_cfResponse.adoptCF(CFURLResponseCreate(0, url.get(), mimeType.get(), m_expectedContentLength, textEncodingName.get(), kCFURLCacheStorageAllowed));
+        m_cfResponse.adoptCF(CFURLResponseCreate(0, url.get(), m_mimeType.createCFString().get(), m_expectedContentLength, m_textEncodingName.createCFString().get(), kCFURLCacheStorageAllowed));
     }
 
     return m_cfResponse.get();

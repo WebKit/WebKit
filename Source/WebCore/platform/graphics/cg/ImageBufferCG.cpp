@@ -377,8 +377,7 @@ static inline CFStringRef jpegUTI()
 static RetainPtr<CFStringRef> utiFromMIMEType(const String& mimeType)
 {
 #if PLATFORM(MAC)
-    RetainPtr<CFStringRef> mimeTypeCFString(AdoptCF, mimeType.createCFString());
-    return RetainPtr<CFStringRef>(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeTypeCFString.get(), 0));
+    return adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString().get(), 0));
 #else
     ASSERT(isMainThread()); // It is unclear if CFSTR is threadsafe.
 

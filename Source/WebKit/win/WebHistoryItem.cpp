@@ -214,7 +214,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
 
     if (!m_historyItem->urlString().isEmpty()) {
         keys[keyCount] = urlKey;
-        values[keyCount++] = m_historyItem->urlString().createCFString();
+        values[keyCount++] = m_historyItem->urlString().createCFString().leakRef();
     }
 
     keys[keyCount] = lastVisitedDateKey;
@@ -222,7 +222,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
 
     if (!m_historyItem->title().isEmpty()) {
         keys[keyCount] = titleKey;
-        values[keyCount++] = m_historyItem->title().createCFString();
+        values[keyCount++] = m_historyItem->title().createCFString().leakRef();
     }
 
     keys[keyCount] = visitCountKey;
@@ -245,7 +245,7 @@ HRESULT STDMETHODCALLTYPE WebHistoryItem::dictionaryRepresentation(void** dictio
         ASSERT(size);
         CFStringRef* items = new CFStringRef[size];
         for (size_t i = 0; i < size; ++i)
-            items[i] = redirectURLs->at(i).createCFString();
+            items[i] = redirectURLs->at(i).createCFString().leakRef();
         CFArrayRef result = CFArrayCreate(0, (const void**)items, size, &kCFTypeArrayCallBacks);
         for (size_t i = 0; i < size; ++i)
             CFRelease(items[i]);

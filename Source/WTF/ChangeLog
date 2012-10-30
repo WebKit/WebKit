@@ -1,3 +1,16 @@
+2012-10-29  Anders Carlsson  <andersca@apple.com>
+
+        String::createCFString should return a RetainPtr
+        https://bugs.webkit.org/show_bug.cgi?id=100419
+
+        Reviewed by Andreas Kling.
+
+        Make String::createCFString and StringImpl::createCFString return RetainPtrs.
+
+        * wtf/text/AtomicString.h:
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.h:
+
 2012-10-30  Mark Rowe  <mrowe@apple.com>
 
         Fix WTF to not install a few header files in bogus locations.

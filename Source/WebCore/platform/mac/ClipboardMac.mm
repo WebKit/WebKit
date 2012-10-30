@@ -99,11 +99,10 @@ static String cocoaTypeFromHTMLClipboardType(const String& type)
 
     // Try UTI now
     String mimeType = qType;
-    RetainPtr<CFStringRef> utiType(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString(), NULL));
-    if (utiType) {
-        CFStringRef pbType = UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassNSPboardType);
+    if (RetainPtr<CFStringRef> utiType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType.createCFString().get(), NULL))) {
+        RetainPtr<CFStringRef> pbType = adoptCF(UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassNSPboardType));
         if (pbType)
-            return pbType;
+            return pbType.get();
     }
 
     // No mapping, just pass the whole string though
@@ -112,11 +111,8 @@ static String cocoaTypeFromHTMLClipboardType(const String& type)
 
 static String utiTypeFromCocoaType(const String& type)
 {
-    RetainPtr<CFStringRef> typeCF = adoptCF(type.createCFString());
-    RetainPtr<CFStringRef> utiType(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, typeCF.get(), 0));
-    if (utiType) {
-        RetainPtr<CFStringRef> mimeType(AdoptCF, UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassMIMEType));
-        if (mimeType)
+    if (RetainPtr<CFStringRef> utiType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, type.createCFString().get(), 0))) {
+        if (RetainPtr<CFStringRef> mimeType = adoptCF(UTTypeCopyPreferredTagWithClass(utiType.get(), kUTTagClassMIMEType)))
             return String(mimeType.get());
     }
     return String();

@@ -270,8 +270,7 @@ static RetainPtr<CFCachedURLResponseRef> cachedResponseForURL(WebPage* webPage, 
     wkSetRequestStorageSession(ResourceHandle::currentStorageSession(), request.get());
 #endif
 
-    RetainPtr<CFStringRef> userAgent(AdoptCF, webPage->userAgent().createCFString());
-    CFURLRequestSetHTTPHeaderFieldValue(request.get(), CFSTR("User-Agent"), userAgent.get());
+    CFURLRequestSetHTTPHeaderFieldValue(request.get(), CFSTR("User-Agent"), webPage->userAgent().createCFString().get());
 
     RetainPtr<CFURLCacheRef> cache;
 #if USE(CFURLSTORAGESESSIONS)
