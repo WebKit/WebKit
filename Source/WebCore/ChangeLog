@@ -1,3 +1,18 @@
+2012-10-30  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][Win] BitmapTextureGL::updateContents() broken after r132019.
+        https://bugs.webkit.org/show_bug.cgi?id=100680
+
+        When creating a temporary for swizzling the image data,
+        the temporary will have the target size.
+        Therefore no offset within the available image data
+        shall be applied in this case.
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::BitmapTextureGL::updateContents):
+
 2012-10-30  Kent Tamura  <tkent@chromium.org>
 
         Remove unused code for old input[type=date] UI
