@@ -1,3 +1,10 @@
+2012-10-30  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Some flaky http/security tests to add to the skip list.
+        Bug tracking flaky security tests here: https://bugs.webkit.org/show_bug.cgi?id=95803.
+
+        * platform/win/TestExpectations:
+
 2012-10-30  Simon Fraser  <simon.fraser@apple.com>
 
         Skip tiled drawing tests on Lion, since the TiledCoreAnimationDrawingArea is only
