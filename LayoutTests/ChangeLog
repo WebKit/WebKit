@@ -1,3 +1,10 @@
+2012-10-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Skip tiled drawing tests on Lion, since the TiledCoreAnimationDrawingArea is only
+        built for Mountain Lion and later.
+
+        * platform/mac-lion/TestExpectations:
+
 2012-10-30  Rick Byers  <rbyers@chromium.org>
 
         [touchadjustment] touch-links-longpress tests passes incorrectly
