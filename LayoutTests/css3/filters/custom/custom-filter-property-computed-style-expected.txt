@@ -32,157 +32,157 @@ PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(url(vertex.shader) url(fragment.shader), 1 1 filter-box)'
 
 Custom with mix function : custom(none mix(url(fragment.shader)))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) normal source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) normal source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) normal source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) normal source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode normal : custom(none mix(url(fragment.shader) normal))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) normal source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) normal source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) normal source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) normal source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode multiply : custom(none mix(url(fragment.shader) multiply))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) multiply source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) multiply source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) multiply source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) multiply source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode screen : custom(none mix(url(fragment.shader) screen))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) screen source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) screen source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) screen source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) screen source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode overlay : custom(none mix(url(fragment.shader) overlay))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) overlay source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) overlay source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) overlay source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) overlay source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode darken : custom(none mix(url(fragment.shader) darken))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) darken source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) darken source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) darken source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) darken source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode lighten : custom(none mix(url(fragment.shader) lighten))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) lighten source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) lighten source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) lighten source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) lighten source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode color-dodge : custom(none mix(url(fragment.shader) color-dodge))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) color-dodge source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) color-dodge source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) color-dodge source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) color-dodge source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode color-burn : custom(none mix(url(fragment.shader) color-burn))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) color-burn source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) color-burn source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) color-burn source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) color-burn source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode hard-light : custom(none mix(url(fragment.shader) hard-light))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) hard-light source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) hard-light source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) hard-light source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) hard-light source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode soft-light : custom(none mix(url(fragment.shader) soft-light))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) soft-light source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) soft-light source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) soft-light source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) soft-light source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode difference : custom(none mix(url(fragment.shader) difference))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) difference source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) difference source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) difference source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) difference source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode exclusion : custom(none mix(url(fragment.shader) exclusion))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) exclusion source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) exclusion source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) exclusion source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) exclusion source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode hue : custom(none mix(url(fragment.shader) hue))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) hue source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) hue source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) hue source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) hue source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode saturation : custom(none mix(url(fragment.shader) saturation))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) saturation source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) saturation source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) saturation source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) saturation source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode color : custom(none mix(url(fragment.shader) color))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) color source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) color source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) color source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) color source-atop), 1 1 filter-box)'
 
 Custom with mix function and blend mode luminosity : custom(none mix(url(fragment.shader) luminosity))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) luminosity source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) luminosity source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) luminosity source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) luminosity source-atop), 1 1 filter-box)'
 
 Custom with mix function and alpha compositing mode clear : custom(none mix(url(fragment.shader) clear))
 PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) normal clear), 1 1 filter-box)'
@@ -302,22 +302,22 @@ PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) multiply clear), 1 1 filter-box)'
 
 Custom with vertex shader and mix function : custom(url(vertex.shader) mix(url(fragment.shader)))
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(url(vertex.shader) mix(url(fragment.shader) normal source-over), 1 1 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(url(vertex.shader) mix(url(fragment.shader) normal source-atop), 1 1 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(url(vertex.shader) mix(url(fragment.shader) normal source-over), 1 1 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(url(vertex.shader) mix(url(fragment.shader) normal source-atop), 1 1 filter-box)'
 
 Custom with mix function and mesh size : custom(none mix(url(fragment.shader)), 10)
-PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) normal source-over), 10 10 filter-box)'
+PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) normal source-atop), 10 10 filter-box)'
 PASS jsWrapperClass(filterRule) is 'CSSValueList'
 PASS jsWrapperClass(filterRule.__proto__) is 'CSSValueListPrototype'
 PASS jsWrapperClass(filterRule.constructor) is 'CSSValueListConstructor'
 PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
-PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) normal source-over), 10 10 filter-box)'
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) normal source-atop), 10 10 filter-box)'
 
 Custom with mesh size : custom(url(vertex.shader), 10)
 PASS removeBaseURL(filterStyle.getPropertyValue('-webkit-filter')) is 'custom(url(vertex.shader) none, 10 10 filter-box)'

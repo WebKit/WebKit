@@ -1,3 +1,29 @@
+2012-10-30  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        [CSS Shaders] Change the default compositing mode and the default CSS value for <fragmentShader>
+        https://bugs.webkit.org/show_bug.cgi?id=94020
+
+        Reviewed by Dean Jackson.
+
+        The default compositing mode has been changed from "normal source-over" to
+        "normal source-atop". This applies to the default fragment shader that will
+        kick in when there is no explicit fragment shader or mix function defined.
+
+        This has required to update all the existing tests; the dummy empty fragment
+        shader has also been removed because not needed.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter): An existence check
+        for the fragment shader has been added.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createCustomFilterOperation): The default program
+        has been updated: PROGRAM_TYPE_BLENDS_TEXTURE (compositing enabled) now is
+        the default.
+        * platform/graphics/filters/CustomFilterProgramInfo.h:
+        (WebCore::CustomFilterProgramMixSettings::CustomFilterProgramMixSettings):
+        New CustomFilterProgramMixSettings defaults to "source-atop" composite
+        operator.
+
 2012-10-30  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt][Mac] Unreviewed build fix.

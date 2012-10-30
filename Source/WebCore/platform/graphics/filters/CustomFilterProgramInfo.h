@@ -46,7 +46,7 @@ enum CustomFilterProgramType {
 struct CustomFilterProgramMixSettings {
     CustomFilterProgramMixSettings()
         : blendMode(BlendModeNormal)
-        , compositeOperator(CompositeSourceOver)
+        , compositeOperator(CompositeSourceAtop)
     {
     }
     

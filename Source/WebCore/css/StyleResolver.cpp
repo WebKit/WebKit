@@ -4785,16 +4785,18 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
     ASSERT(shadersValue->isValueList());
     CSSValueList* shadersList = static_cast<CSSValueList*>(shadersValue);
 
-    ASSERT(shadersList->length());
-    RefPtr<StyleShader> vertexShader = styleShader(shadersList->itemWithoutBoundsCheck(0));
+    unsigned shadersListLength = shadersList->length();
+    ASSERT(shadersListLength);
 
+    RefPtr<StyleShader> vertexShader = styleShader(shadersList->itemWithoutBoundsCheck(0));
     RefPtr<StyleShader> fragmentShader;
-    CustomFilterProgramType programType = PROGRAM_TYPE_NO_ELEMENT_TEXTURE;
+    CustomFilterProgramType programType = PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE;
     CustomFilterProgramMixSettings mixSettings;
-    if (shadersList->length() > 1) {
+
+    if (shadersListLength > 1) {
         CSSValue* fragmentShaderOrMixFunction = shadersList->itemWithoutBoundsCheck(1);
+
         if (fragmentShaderOrMixFunction->isWebKitCSSMixFunctionValue()) {
-            programType = PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE;
             WebKitCSSMixFunctionValue* mixFunction = static_cast<WebKitCSSMixFunctionValue*>(fragmentShaderOrMixFunction);
             CSSValueListIterator iterator(mixFunction);
 
@@ -4813,8 +4815,10 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
                     ASSERT_NOT_REACHED();
                 iterator.advance();
             }
-        } else
+        } else {
+            programType = PROGRAM_TYPE_NO_ELEMENT_TEXTURE;
             fragmentShader = styleShader(fragmentShaderOrMixFunction);
+        }
     }
     
     unsigned meshRows = 1;
