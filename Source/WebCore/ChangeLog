@@ -1,3 +1,19 @@
+2012-10-30  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [Qt][EFL][AC] While Using WebGL, MiniBrowser segfaults on Refreshing the page.
+        https://bugs.webkit.org/show_bug.cgi?id=100639.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        TextureMapperSurfaceBackingStore can import textures from a GraphicSurface.
+        In such cases GraphicsSurfaceGLX creates an XPixmap to read texture content
+        from a given WindowId, but doesn't create any new window.
+        However, OffScreenRootWindow always tries to unmap window (in its destructor) resulting in segfault.
+        With this patch OffScreenRootWindow would check for a valid window before trying to unmap it.
+
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::OffScreenRootWindow::~OffScreenRootWindow):
+
 2012-10-30  Emil A Eklund  <eae@chromium.org>
 
         [subixel] Change LineWidth::shrinkAvailableWidthForNewFloatIfNeeded to not pixel snap

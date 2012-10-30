@@ -82,13 +82,17 @@ public:
 
     ~OffScreenRootWindow()
     {
-        if (!--m_refCount) {
+        if (--m_refCount || !m_display)
+            return;
+
+        if (m_window) {
             XUnmapWindow(m_display, m_window);
             XDestroyWindow(m_display, m_window);
-            if (m_display)
-                XCloseDisplay(m_display);
-            m_display = 0;
+            m_window = 0;
         }
+
+        XCloseDisplay(m_display);
+        m_display = 0;
     }
 
 private:
