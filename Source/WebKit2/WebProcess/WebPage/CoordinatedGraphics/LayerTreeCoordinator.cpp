@@ -512,15 +512,20 @@ int64_t LayerTreeCoordinator::adoptImageBackingStore(Image* image)
         return key;
     }
 
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(image->size(), (image->currentFrameHasAlpha() ? ShareableBitmap::SupportsAlpha : 0));
-    {
-        OwnPtr<WebCore::GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
-        graphicsContext->drawImage(image, ColorSpaceDeviceRGB, IntPoint::zero());
-    }
+    // Check if we were going to release this image during the next flush.
+    size_t releasedIndex = m_releasedDirectlyCompositedImages.find(key);
+    if (releasedIndex == notFound) {
+        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(image->size(), (image->currentFrameHasAlpha() ? ShareableBitmap::SupportsAlpha : 0));
+        {
+            OwnPtr<WebCore::GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
+            graphicsContext->drawImage(image, ColorSpaceDeviceRGB, IntPoint::zero());
+        }
+        ShareableBitmap::Handle handle;
+        bitmap->createHandle(handle);
+        m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateDirectlyCompositedImage(key, handle));
+    } else
+        m_releasedDirectlyCompositedImages.remove(releasedIndex);
 
-    ShareableBitmap::Handle handle;
-    bitmap->createHandle(handle);
-    m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateDirectlyCompositedImage(key, handle));
     m_directlyCompositedImageRefCounts.add(key, 1);
     return key;
 }
