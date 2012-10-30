@@ -1092,7 +1092,7 @@ void JSArray::sortVector(ExecState* exec, JSValue compareFunction, CallType call
     for (; numDefined < usedVectorLength; ++numDefined) {
         if (numDefined > m_butterfly->vectorLength())
             break;
-        JSValue v = indexingData<indexingType>()[numDefined].get();
+        JSValue v = currentIndexingData()[numDefined].get();
         if (!v || v.isUndefined())
             break;
         tree.abstractor().m_nodes[numDefined].value = v;
@@ -1101,7 +1101,7 @@ void JSArray::sortVector(ExecState* exec, JSValue compareFunction, CallType call
     for (unsigned i = numDefined; i < usedVectorLength; ++i) {
         if (i > m_butterfly->vectorLength())
             break;
-        JSValue v = indexingData<indexingType>()[i].get();
+        JSValue v = currentIndexingData()[i].get();
         if (v) {
             if (v.isUndefined())
                 ++numUndefined;
@@ -1116,7 +1116,7 @@ void JSArray::sortVector(ExecState* exec, JSValue compareFunction, CallType call
     unsigned newUsedVectorLength = numDefined + numUndefined;
         
     // The array size may have changed. Figure out the new bounds.
-    unsigned newestUsedVectorLength = relevantLength<indexingType>();
+    unsigned newestUsedVectorLength = currentRelevantLength();
         
     unsigned elementsToExtractThreshold = min(min(newestUsedVectorLength, numDefined), static_cast<unsigned>(tree.abstractor().m_nodes.size()));
     unsigned undefinedElementsThreshold = min(newestUsedVectorLength, newUsedVectorLength);
@@ -1127,18 +1127,18 @@ void JSArray::sortVector(ExecState* exec, JSValue compareFunction, CallType call
     iter.start_iter_least(tree);
     JSGlobalData& globalData = exec->globalData();
     for (unsigned i = 0; i < elementsToExtractThreshold; ++i) {
-        indexingData<indexingType>()[i].set(globalData, this, tree.abstractor().m_nodes[*iter].value);
+        currentIndexingData()[i].set(globalData, this, tree.abstractor().m_nodes[*iter].value);
         ++iter;
     }
     // Put undefined values back in.
     for (unsigned i = elementsToExtractThreshold; i < undefinedElementsThreshold; ++i)
-        indexingData<indexingType>()[i].setUndefined();
+        currentIndexingData()[i].setUndefined();
 
     // Ensure that unused values in the vector are zeroed out.
     for (unsigned i = undefinedElementsThreshold; i < clearElementsThreshold; ++i)
-        indexingData<indexingType>()[i].clear();
+        currentIndexingData()[i].clear();
     
-    if (hasArrayStorage(indexingType))
+    if (hasArrayStorage(structure()->indexingType()))
         arrayStorage()->m_numValuesInVector = newUsedVectorLength;
 }
 

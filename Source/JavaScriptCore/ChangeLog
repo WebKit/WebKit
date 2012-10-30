@@ -1,3 +1,20 @@
+2012-10-30  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Arrays can change IndexingType in the middle of sorting
+        https://bugs.webkit.org/show_bug.cgi?id=100773
+
+        Reviewed by Filip Pizlo.
+
+        Instead of giving up, we just fetch the appropriate vector based on the current 
+        IndexingType of the array.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sortVector):
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::currentIndexingData):
+        (JSC::JSObject::currentRelevantLength):
+
 2012-10-29  Anders Carlsson  <andersca@apple.com>
 
         Build WebKit as C++11 on Mac

@@ -717,6 +717,21 @@ namespace JSC {
                 return 0;
             }
         }
+
+        WriteBarrier<Unknown>* currentIndexingData()
+        {
+            switch (structure()->indexingType()) {
+            case ALL_CONTIGUOUS_INDEXING_TYPES:
+                return m_butterfly->contiguous();
+
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+                return m_butterfly->arrayStorage()->m_vector;
+
+            default:
+                CRASH();
+                return 0;
+            }
+        }
         
         template<IndexingType indexingType>
         unsigned relevantLength()
@@ -730,6 +745,23 @@ namespace JSC {
                     m_butterfly->arrayStorage()->length(),
                     m_butterfly->arrayStorage()->vectorLength());
                 
+            default:
+                CRASH();
+                return 0;
+            }
+        }
+
+        unsigned currentRelevantLength()
+        {
+            switch (structure()->indexingType()) {
+            case ALL_CONTIGUOUS_INDEXING_TYPES:
+                return m_butterfly->publicLength();
+
+            case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+                return std::min(
+                    m_butterfly->arrayStorage()->length(),
+                    m_butterfly->arrayStorage()->vectorLength());
+
             default:
                 CRASH();
                 return 0;
