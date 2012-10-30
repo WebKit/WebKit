@@ -1200,6 +1200,10 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
     case WebInputEvent::GestureLongPress:
         event.x = point.x;
         event.y = point.y;
+        if (arguments.size() >= 4) {
+            event.data.tapDown.width = static_cast<float>(arguments[2].toDouble());
+            event.data.tapDown.height = static_cast<float>(arguments[3].toDouble());
+        }
         break;
     case WebInputEvent::GestureTwoFingerTap:
         event.x = point.x;

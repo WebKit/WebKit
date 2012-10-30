@@ -1,14 +1,13 @@
-/* function for finding the absolute bounds of a node */
+/* function for finding the absolute bounds of a node (both inline and block) */
 function findAbsoluteBounds(node)
 {
-    var bounds = {left: 0, top: 0};
-    bounds.width = node.clientWidth;
-    bounds.height = node.clientHeight;
-    do {
-        bounds.left += node.offsetLeft;
-        bounds.top += node.offsetTop;
-    } while (node = node.offsetParent);
-    return bounds;
+    var bounds = node.getBoundingClientRect();
+    return {
+        left: bounds.left,
+        top: bounds.top,
+        width: bounds.right - bounds.left,
+        height: bounds.bottom - bounds.top
+    };
 }
 
 function nodeToString(node)

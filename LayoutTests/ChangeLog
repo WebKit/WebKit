@@ -1,3 +1,24 @@
+2012-10-30  Rick Byers  <rbyers@chromium.org>
+
+        [touchadjustment] touch-links-longpress tests passes incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=96810
+
+        Reviewed by Antonio Gomes.
+
+        Fix touch-links-longpress test to be consistent with touch-links-active.
+        Now it's actually touching where we intended - at the center of the
+        touch region identified instead of the top/left corner.  Also pass
+        the width/height of the touch to EventSender in order to enable touch
+        adjustment.
+
+        Also adds checks to verify that our touches are actually landing on
+        or outside the element we're targetting as desired.
+
+        * touchadjustment/resources/touchadjustment.js:
+        (findAbsoluteBounds): Update to support both inline and block nodes (clientHeight is 0 for inline nodes)
+        * touchadjustment/touch-links-active.html: Use updated findAbsoluteBounds
+        * touchadjustment/touch-links-longpress.html:
+
 2012-10-30  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12395187> REGRESSION (r121299): OS X Text Replacement forces cursor out of text fields

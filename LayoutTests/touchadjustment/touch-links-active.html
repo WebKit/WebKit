@@ -63,23 +63,10 @@
         if (isLinkActive()) testFailed('Link unexpectedly active on exit');
     }
 
-    // FIXME: Why doesn't the approach in findAbsoluteBounds work correctly here?
-    // I'll investigate/fix along with http://wkb.ug/96810
-    function getBounds(node)
-    {
-      var bounds = node.getBoundingClientRect();
-      return {
-          left: bounds.left,
-          top: bounds.top,
-          width: bounds.right - bounds.left,
-          height: bounds.bottom - bounds.top
-      };    
-    }
-    
     function testDirectTouch(element)
     {
         // Touch directly in the center of the element.
-        var touchpoint = offsetTouchPoint(getBounds(element), 'center', 0, 20, 30);
+        var touchpoint = offsetTouchPoint(findAbsoluteBounds(element), 'center', 0, 20, 30);
         if (document.elementFromPoint(touchpoint.x, touchpoint.y) != element)
             testFailed('Direct touch ended up on some other element');
         testTapDown(touchpoint, element);
@@ -99,7 +86,7 @@
     function testIndirectTouch(element)
     {
         // Touch just right of the element.
-        var touchpoint = offsetTouchPoint(getBounds(element), 'right', 10, 30, 20);
+        var touchpoint = offsetTouchPoint(findAbsoluteBounds(element), 'right', 10, 30, 20);
         if (isDescendantOf(element, document.elementFromPoint(touchpoint.x, touchpoint.y)))
             testFailed('Indirect touch ended up still on top of the element');
         testTapDown(touchpoint, element);

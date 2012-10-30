@@ -448,6 +448,9 @@ fast/js/names.html
 # Don't have GestureTapCancel event type
 touchadjustment/touch-links-active.html
 
+# Don't have width/height on GestureLongPress necessary to enable adjustment
+touchadjustment/touch-links-longpress.html
+
 # ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING) is disabled
 fast/dom/timer-throttling-hidden-page.html
 
