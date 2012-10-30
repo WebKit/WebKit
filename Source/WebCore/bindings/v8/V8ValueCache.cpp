@@ -33,7 +33,15 @@ namespace WebCore {
 
 static v8::Local<v8::String> makeExternalString(const String& string)
 {
-    WebCoreStringResource* stringResource = new WebCoreStringResource(string);
+    if (string.is8Bit() && string.containsOnlyASCII()) {
+        WebCoreStringResource8* stringResource = new WebCoreStringResource8(string);
+        v8::Local<v8::String> newString = v8::String::NewExternal(stringResource);
+        if (newString.IsEmpty())
+            delete stringResource;
+        return newString;
+    }
+
+    WebCoreStringResource16* stringResource = new WebCoreStringResource16(string);
     v8::Local<v8::String> newString = v8::String::NewExternal(stringResource);
     if (newString.IsEmpty())
         delete stringResource;
@@ -92,7 +100,18 @@ v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, 
     return newString;
 }
 
-void WebCoreStringResource::visitStrings(ExternalStringVisitor* visitor)
+WebCoreStringResourceBase* WebCoreStringResourceBase::toWebCoreStringResourceBase(v8::Handle<v8::String> string)
+{
+    v8::String::Encoding encoding;
+    v8::String::ExternalStringResourceBase* resource = string->GetExternalStringResourceBase(&encoding);
+    if (!resource)
+        return 0;
+    if (encoding == v8::String::ASCII_ENCODING)
+        return static_cast<WebCoreStringResource8*>(resource);
+    return static_cast<WebCoreStringResource16*>(resource);
+}
+
+void WebCoreStringResourceBase::visitStrings(ExternalStringVisitor* visitor)
 {
     visitor->visitJSExternalString(m_plainString.impl());
     if (m_plainString.impl() != m_atomicString.impl() && !m_atomicString.isNull())

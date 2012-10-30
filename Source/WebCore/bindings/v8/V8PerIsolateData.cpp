@@ -121,7 +121,7 @@ void V8PerIsolateData::visitExternalStrings(ExternalStringVisitor* visitor)
         virtual ~VisitorImpl() { }
         virtual void VisitExternalString(v8::Handle<v8::String> string)
         {
-            WebCoreStringResource* resource = static_cast<WebCoreStringResource*>(string->GetExternalStringResource());
+            WebCoreStringResourceBase* resource = WebCoreStringResourceBase::toWebCoreStringResourceBase(string);
             if (resource)
                 resource->visitStrings(m_visitor);
         }

@@ -1,3 +1,35 @@
+2012-10-30  Dan Carney  <dcarney@google.com>
+
+        add 7 bit strings capabilities to the v8 binding layer
+        https://bugs.webkit.org/show_bug.cgi?id=91850
+
+        Reviewed by Adam Barth.
+
+        This change enables the v8 binding layer to make use of webkit's
+        8 bit string capabilities. Using 8 bit strings leads to certain
+        benchmark performance improvemnts as can be seen in
+        https://bug-91850-attachments.webkit.org/attachment.cgi?id=163334.
+
+        No new tests. Test coverage already extensive.
+
+        * bindings/v8/V8PerIsolateData.cpp:
+        (WebCore::V8PerIsolateData::visitExternalStrings):
+        * bindings/v8/V8StringResource.cpp:
+        (StringTraits):
+        (WebCore::false):
+        (WebCore):
+        (WebCore::true):
+        (WebCore::v8StringToWebCoreString):
+        * bindings/v8/V8ValueCache.cpp:
+        (WebCore::makeExternalString):
+        (WebCore::WebCoreStringResourceBase::visitStrings):
+        * bindings/v8/V8ValueCache.h:
+        (WebCore::WebCoreStringResourceBase::WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::~WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::atomicString):
+        (WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::memoryConsumption):
+
 2012-10-30  Christophe Dumez  <christophe.dumez@intel.com>
 
         [AC] Fix compilation warnings when enabling Accelerated Compositing
