@@ -1,3 +1,16 @@
+2012-10-30  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL] Baseline search path should consider both WK1 and WK2 on layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=100755
+
+        Reviewed by Gyuyoung Kim.
+
+        Current implementation doesn't consider WK1 case in baseline search path.
+        Therefore, this patch fixes it.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.default_baseline_search_path):
+
 2012-10-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [QT][DRT] Remove unneeded testRunner.setMediaType() implementation
