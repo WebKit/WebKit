@@ -83,7 +83,6 @@ private:
     void addToChangeQueue(const ParsedCookie* changedCookie, UpdateParameter actionParam);
     void sendChangesToDatabase(int interval);
     void sendChangesToDatabaseTimerFired();
-    void upgradeTableIfNeeded(const String& databaseSchema, const String& primarykeyFields);
 
     void invokeOpen(const String& cookieJar);
     void invokeRemoveAll();

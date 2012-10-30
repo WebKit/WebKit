@@ -94,112 +94,6 @@ void CookieDatabaseBackingStore::onThreadFinished()
     MessageClient::onThreadFinished();
 }
 
-void CookieDatabaseBackingStore::upgradeTableIfNeeded(const String& databaseFields, const String& primaryKeyFields)
-{
-    ASSERT(isCurrentThread());
-
-    bool creationTimeExists = false;
-    bool protocolExists = false;
-
-    if (!m_db.tableExists(m_tableName))
-        return;
-
-    // Check if the existing table has the required database fields
-    {
-        String query = "PRAGMA table_info(" + m_tableName + ");";
-
-        SQLiteStatement statement(m_db, query);
-        if (statement.prepare()) {
-            LOG_ERROR("Cannot prepare statement to query cookie table info. sql:%s", query.utf8().data());
-            LOG_ERROR("SQLite Error Message: %s", m_db.lastErrorMsg());
-            return;
-        }
-
-        while (statement.step() == SQLResultRow) {
-            DEFINE_STATIC_LOCAL(String, creationTime, (ASCIILiteral("creationTime")));
-            DEFINE_STATIC_LOCAL(String, protocol, (ASCIILiteral("protocol")));
-            String name = statement.getColumnText(1);
-            if (name == creationTime)
-                creationTimeExists = true;
-            if (name == protocol)
-                protocolExists = true;
-            if (creationTimeExists && protocolExists)
-                return;
-        }
-        LOG(Network, "Need to update cookie table schema.");
-    }
-
-    // Drop and recreate the cookie table to update to the latest database fields.
-    // We do not use alter table - add column because that method cannot add primary keys.
-    Vector<String> commands;
-
-    // Backup existing table
-    String renameQuery = "ALTER TABLE " + m_tableName + " RENAME TO Backup_" + m_tableName + ";";
-    commands.append(renameQuery);
-
-    // Recreate the cookie table using the new database and primary key fields
-    StringBuilder createTableQuery;
-    createTableQuery.append("CREATE TABLE ");
-    createTableQuery.append(m_tableName);
-    createTableQuery.append(" (" + databaseFields + ", " + primaryKeyFields + ");");
-    commands.append(createTableQuery.toString());
-
-    // Copy the old data into the new table. If a column does not exists,
-    // we have to put a '' in the select statement to make the number of columns
-    // equal in the insert statement.
-    StringBuilder migrationQuery;
-    migrationQuery.append("INSERT OR REPLACE INTO ");
-    migrationQuery.append(m_tableName);
-    migrationQuery.append(" SELECT *");
-    if (!creationTimeExists)
-        migrationQuery.append(",''");
-    if (!protocolExists)
-        migrationQuery.append(",''");
-    migrationQuery.append(" FROM Backup_" + m_tableName);
-    commands.append(migrationQuery.toString());
-
-    // The new columns will be blank, set the new values.
-    if (!creationTimeExists) {
-        String setCreationTimeQuery = "UPDATE " + m_tableName + " SET creationTime = lastAccessed;";
-        commands.append(setCreationTimeQuery);
-    }
-
-    if (!protocolExists) {
-        String setProtocolQuery = "UPDATE " + m_tableName + " SET protocol = 'http' WHERE isSecure = '0';";
-        String setProtocolQuery2 = "UPDATE " + m_tableName + " SET protocol = 'https' WHERE isSecure = '1';";
-        commands.append(setProtocolQuery);
-        commands.append(setProtocolQuery2);
-    }
-
-    // Drop the backup table
-    String dropBackupQuery = "DROP TABLE IF EXISTS Backup_" + m_tableName + ";";
-    commands.append(dropBackupQuery);
-
-    SQLiteTransaction transaction(m_db, false);
-    transaction.begin();
-    size_t commandSize = commands.size();
-    for (size_t i = 0; i < commandSize; ++i) {
-        if (!m_db.executeCommand(commands[i])) {
-            LOG_ERROR("Failed to alter cookie table when executing sql:%s", commands[i].utf8().data());
-            LOG_ERROR("SQLite Error Message: %s", m_db.lastErrorMsg());
-            transaction.rollback();
-
-            // We should never get here, but if we do, rename the current cookie table for future restoration. This has the side effect of
-            // clearing the current cookie table, but that's better than continually hitting this case and hence never being able to use the
-            // cookie table.
-            ASSERT_NOT_REACHED();
-            String renameQuery = "ALTER TABLE " + m_tableName + " RENAME TO Backup2_" + m_tableName + ";";
-            if (!m_db.executeCommand(renameQuery)) {
-                LOG_ERROR("Failed to backup existing cookie table.");
-                LOG_ERROR("SQLite Error Message: %s", m_db.lastErrorMsg());
-            }
-            return;
-        }
-    }
-    transaction.commit();
-    LOG(Network, "Successfully updated cookie table schema.");
-}
-
 void CookieDatabaseBackingStore::open(const String& cookieJar)
 {
     dispatchMessage(createMethodCallMessage(&CookieDatabaseBackingStore::invokeOpen, this, cookieJar));
@@ -222,10 +116,7 @@ void CookieDatabaseBackingStore::invokeOpen(const String& cookieJar)
 
     const String primaryKeyFields("PRIMARY KEY (protocol, host, path, name)");
     const String databaseFields("name TEXT, value TEXT, host TEXT, path TEXT, expiry DOUBLE, lastAccessed DOUBLE, isSecure INTEGER, isHttpOnly INTEGER, creationTime DOUBLE, protocol TEXT");
-    // Update table to add the new column creationTime and protocol for backwards compatability.
-    upgradeTableIfNeeded(databaseFields, primaryKeyFields);
 
-    // Create table if not exsist in case that the upgradeTableIfNeeded() failed accidentally.
     StringBuilder createTableQuery;
     createTableQuery.append("CREATE TABLE IF NOT EXISTS ");
     createTableQuery.append(m_tableName);

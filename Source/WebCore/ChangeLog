@@ -1,3 +1,19 @@
+2012-10-30  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Remove CookieDatabaseBackingStore::upgradeTableIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=100783
+
+        Reviewed by Yong Li.
+
+        PR 220513.
+
+        Remove CookieDatabaseBackingStore::upgradeTableIfNeeded, it was needed for backwards
+        compatibility, but not needed anymore.
+
+        * platform/blackberry/CookieDatabaseBackingStore/CookieDatabaseBackingStore.cpp:
+        (WebCore::CookieDatabaseBackingStore::invokeOpen):
+        * platform/blackberry/CookieDatabaseBackingStore/CookieDatabaseBackingStore.h:
+
 2012-10-30  Glenn Adams  <glenn@skynav.com>
 
         [CSS] Expand -webkit-line-break value space
