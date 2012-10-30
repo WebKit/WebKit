@@ -1,3 +1,19 @@
+2012-10-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add a configure option to build with -g1
+        https://bugs.webkit.org/show_bug.cgi?id=100670
+
+        Reviewed by Martin Robinson.
+
+        Add min and full options to the --enable-debug-symbols configure
+        option. Using --enable-debug-symbols=min will use -g1 instead of
+        -g (which is actually -g2). The first level is enough for most of
+        the cases, like getting a backtrace, and it's the only way to
+        build WebKit with debug symbols in a 32 bit system. The option
+        full is actually the same than yes for backwards compatibility.
+
+        * configure.ac:
+
 2012-10-26  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Platform Abstraction for WebKit Resource/Image Loading

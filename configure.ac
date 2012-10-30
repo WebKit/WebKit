@@ -827,9 +827,15 @@ AC_MSG_RESULT([$enable_fast_malloc])
 # check whether to enable debug symbols
 AC_MSG_CHECKING([whether to enable debug symbols])
 AC_ARG_ENABLE(debug_symbols,
-              AC_HELP_STRING([--enable-debug-symbols],
+              AC_HELP_STRING([--enable-debug-symbols=yes|no|min|full],
                              [enable debug symbols default=no, default=yes for debug builds]),
               [],[if test "$enable_debug" = "yes"; then enable_debug_symbols="yes"; else enable_debug_symbols="no"; fi])
+
+case "$enable_debug_symbols" in
+  yes) enable_debug_symbols="full" ;;
+  no|min|full) ;;
+  *) AC_MSG_ERROR([Invalid debug symbols option: must be yes, no, min or full.]) ;;
+esac
 AC_MSG_RESULT([$enable_debug_symbols])
 
 # check whether to enable debug features
@@ -930,7 +936,10 @@ if test "$host_cpu" = "sh4"; then
 fi
 
 # Add '-g' flag to gcc to build with debug symbols
-if test "$enable_debug_symbols" = "yes"; then
+if test "$enable_debug_symbols" = "min"; then
+   CXXFLAGS="$CXXFLAGS -g1"
+   CFLAGS="$CFLAGS -g1"
+elif test "$enable_debug_symbols" != "no"; then
    CXXFLAGS="$CXXFLAGS -g"
    CFLAGS="$CFLAGS -g"
 fi
