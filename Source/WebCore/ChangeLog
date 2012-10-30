@@ -1,3 +1,41 @@
+2012-10-30  Dan Carney  <dcarney@google.com>
+
+        Remove ensureAuxiliaryContext
+        https://bugs.webkit.org/show_bug.cgi?id=99975
+
+        Reviewed by Adam Barth.
+
+        Removed auxilliaryContext as use if it is problematic in IDB.
+
+        No new tests. No change in functionality.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::setValueReady):
+        * Modules/indexeddb/IDBCursor.h:
+        (IDBCursor):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::generateIndexKeysForValue):
+        (WebCore::IDBObjectStore::put):
+        (WebCore):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::dispatchEvent):
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromScriptValueAndKeyPath):
+        (WebCore::deserializeIDBValue):
+        (WebCore::injectIDBKeyIntoScriptValue):
+        * bindings/v8/IDBBindingUtilities.h:
+        (WebCore):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::toV8Context):
+        (WebCore):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        * bindings/v8/V8PerIsolateData.cpp:
+        (WebCore):
+        * bindings/v8/V8PerIsolateData.h:
+
 2012-10-30  Huang Dongsung  <luxtella@company100.net>
 
         [CSS Shaders] Add CustomFilterRenderer to reuse this class by Accelerated Compositing.

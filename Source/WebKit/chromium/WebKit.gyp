@@ -710,6 +710,7 @@
                                 'tests/AssociatedURLLoaderTest.cpp',
                                 'tests/EventListenerTest.cpp',
                                 'tests/FrameTestHelpers.cpp',
+                                'tests/IDBBindingUtilitiesTest.cpp',
                                 'tests/LevelDBTest.cpp',
                                 'tests/ListenerLeakTest.cpp',
                                 'tests/LinkHighlightTest.cpp',
