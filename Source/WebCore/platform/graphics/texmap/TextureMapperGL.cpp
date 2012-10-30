@@ -670,7 +670,7 @@ void BitmapTextureGL::updateContents(const void* srcData, const IntRect& targetR
     else
         swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(data), IntRect(adjustedSourceOffset, targetRect.size()), bytesPerLine / bytesPerPixel);
 
-    if (bytesPerLine == targetRect.width() * bytesPerPixel && adjustedSourceOffset == IntPoint::zero()) {
+    if (bytesPerLine == static_cast<int>(targetRect.width() * bytesPerPixel) && adjustedSourceOffset == IntPoint::zero()) {
         m_context3D->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, data);
         return;
     }

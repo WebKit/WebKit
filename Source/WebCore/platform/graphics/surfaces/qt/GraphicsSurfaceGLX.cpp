@@ -156,6 +156,8 @@ struct GraphicsSurfacePrivate {
             previousContext->makeCurrent(previousSurface);
 #endif
         }
+#else
+        UNUSED_PARAM(shareContext);
 #endif
 
         m_display = m_offScreenWindow.display();
@@ -323,7 +325,7 @@ private:
     bool m_hasAlpha;
 };
 
-static bool resolveGLMethods(GraphicsSurfacePrivate* p)
+static bool resolveGLMethods(GraphicsSurfacePrivate*)
 {
     static bool resolved = false;
     if (resolved)
@@ -361,7 +363,7 @@ uint32_t GraphicsSurface::platformGetTextureID()
     return m_texture;
 }
 
-void GraphicsSurface::platformCopyToGLTexture(uint32_t target, uint32_t id, const IntRect& targetRect, const IntPoint& offset)
+void GraphicsSurface::platformCopyToGLTexture(uint32_t /*target*/, uint32_t /*id*/, const IntRect& /*targetRect*/, const IntPoint& /*offset*/)
 {
     // This is not supported by GLX/Xcomposite.
 }
@@ -431,7 +433,7 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::platformImport(const IntSize& size,
     return surface;
 }
 
-char* GraphicsSurface::platformLock(const IntRect& rect, int* outputStride, LockOptions lockOptions)
+char* GraphicsSurface::platformLock(const IntRect&, int* /*outputStride*/, LockOptions)
 {
     // GraphicsSurface is currently only being used for WebGL, which does not require this locking mechanism.
     return 0;

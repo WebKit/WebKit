@@ -1,3 +1,23 @@
+2012-10-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [AC] Fix compilation warnings when enabling Accelerated Compositing
+        https://bugs.webkit.org/show_bug.cgi?id=100741
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix a few compilation warnings when building EFL port
+        with accelerated compositing enabled.
+
+        No new tests, no behavior change.
+
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+        (WebCore::resolveGLMethods):
+        (WebCore::GraphicsSurface::platformCopyToGLTexture):
+        (WebCore::GraphicsSurface::platformLock):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::BitmapTextureGL::updateContents):
+
 2012-10-30  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Animations jump when the page is suspended
