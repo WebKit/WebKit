@@ -13,6 +13,7 @@ xcuserdata
 # Ignore auto-generated files by VS2005 and VS2010.
 *.vcproj.*.user
 *.suo
+*.ncb
 
 # Ignore common tool auto-generated files.
 .gdb_history
@@ -61,6 +62,7 @@ tags
 /WebKitLibraries/win/WebKitAuxiliaryLibrary.headers
 /WebKitLibraries/win/WebKitAuxiliaryLibraryVersion
 /WebKitLibraries/win/WebKitChangesToPthreads.diff
+/WebKitLibraries/win/WebKitSupportLibraryVersion
 /WebKitLibraries/win/include/ApplicationServices/
 /WebKitLibraries/win/include/AssertMacros.h
 /WebKitLibraries/win/include/Availability.h
@@ -77,6 +79,7 @@ tags
 /WebKitLibraries/win/include/SQLite/
 /WebKitLibraries/win/include/SafariTheme/
 /WebKitLibraries/win/include/TargetConditionals.h
+/WebKitLibraries/win/include/WebKitQuartzCoreAdditions/
 /WebKitLibraries/win/include/checkint.h
 /WebKitLibraries/win/include/dispatch/
 /WebKitLibraries/win/include/inttypes.h
@@ -95,6 +98,7 @@ tags
 /WebKitLibraries/win/lib/QuartzCore.lib
 /WebKitLibraries/win/lib/SQLite3.lib
 /WebKitLibraries/win/lib/SafariTheme.lib
+/WebKitLibraries/win/lib/WebKitQuartzCoreAdditions.lib
 /WebKitLibraries/win/lib/icuin.lib
 /WebKitLibraries/win/lib/icuuc.lib
 /WebKitLibraries/win/lib/libdispatch.lib
