@@ -59,8 +59,6 @@ public:
 
     void recalcShadowTreeStyle(StyleChange);
 
-    InsertionPoint* insertionPointFor(Node*) const;
-
     virtual bool applyAuthorStyles() const OVERRIDE;
     void setApplyAuthorStyles(bool);
     virtual bool resetStyleInheritance() const OVERRIDE;

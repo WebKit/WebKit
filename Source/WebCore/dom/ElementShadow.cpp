@@ -132,11 +132,6 @@ void ElementShadow::detach()
     }
 }
 
-InsertionPoint* ElementShadow::insertionPointFor(const Node* node) const
-{
-    return distributor().findInsertionPointFor(node);
-}
-
 bool ElementShadow::childNeedsStyleRecalc()
 {
     ASSERT(youngestShadowRoot());

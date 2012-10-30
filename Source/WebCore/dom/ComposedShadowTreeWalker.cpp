@@ -88,7 +88,7 @@ static inline InsertionPoint* resolveReprojection(const Node* projectedNode)
     while (true) {
         if (ElementShadow* shadow = shadowOfParentForDistribution(current)) {
             shadow->ensureDistribution();
-            if (InsertionPoint* insertedTo = shadow->insertionPointFor(projectedNode)) {
+            if (InsertionPoint* insertedTo = shadow->distributor().findInsertionPointFor(projectedNode)) {
                 current = insertedTo;
                 insertionPoint = insertedTo;
                 continue;
@@ -395,7 +395,7 @@ void AncestorChainWalker::parent()
     ASSERT(m_node);
     ASSERT(m_distributedNode);
     if (ElementShadow* shadow = shadowOfParent(m_node)) {
-        if (InsertionPoint* insertionPoint = shadow->insertionPointFor(m_distributedNode)) {
+        if (InsertionPoint* insertionPoint = shadow->distributor().findInsertionPointFor(m_distributedNode)) {
             m_node = insertionPoint;
             m_isCrossingInsertionPoint = true;
             return;

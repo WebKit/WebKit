@@ -65,8 +65,6 @@ public:
     void setValidityUndetermined();
     void invalidateDistribution();
     void ensureDistribution();
- 
-    InsertionPoint* insertionPointFor(const Node*) const;
 
     ContentDistributor& distributor();
     const ContentDistributor& distributor() const;

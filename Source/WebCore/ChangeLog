@@ -1,3 +1,24 @@
+2012-10-29  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Refatoring] Remove ElementShadow::insertionPointFor
+        https://bugs.webkit.org/show_bug.cgi?id=100625
+
+        Reviewed by Hajime Morita.
+
+        Now that ElementShadow::insertionPointFor does not do any special things, and it's only used in
+        ComposedShadowTreeWalker. So we can remove it.
+
+        No new tests, simple refactoring.
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::resolveReprojection):
+        (WebCore::AncestorChainWalker::parent):
+        * dom/ElementShadow.cpp:
+        * dom/ElementShadow.h:
+        (ElementShadow):
+        * dom/ShadowRoot.h: ShadowRoot has insertionPointFor declaration, but we don't have any implementation.
+        We should remove it.
+
 2012-10-29  Andy Estes  <aestes@apple.com>
 
         Fix a typo that caused SVG external resources to be blocked on
