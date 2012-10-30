@@ -234,6 +234,8 @@ public:
     bool handleTouchEvent(const PlatformTouchEvent&);
 #endif
 
+    bool useHandCursor(Node*, bool isOverLink, bool shiftKey);
+
 private:
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();

@@ -4,7 +4,7 @@
 <script src="../../../../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body onload="runTest();">
-<div id="targetDiv" onclick="doNothing();" style="position: absolute; left: 40px; top: 40px; width: 50px; height: 50px; -webkit-transform: rotate(22.5deg); border-style: solid; border-width: 2px; -webkit-tap-highlight-color: rgba(0, 255, 0, 0.5);">
+<div id="targetDiv" onclick="doNothing();" style="position: absolute; left: 40px; top: 40px; width: 50px; height: 50px; -webkit-transform: rotate(22.5deg); border-style: solid; border-width: 2px; -webkit-tap-highlight-color: rgba(0, 255, 0, 0.5); cursor: Pointer">
 <br><center>Target</center><br>
 </div>
 <div style="position: absolute; left: 10px; top: 110px; -webkit-transform: translateZ(0);">
@@ -15,7 +15,7 @@ function doNothing() { }
 function runTest() {
     var clientRect = document.getElementById('targetDiv').getBoundingClientRect();
     x = (clientRect.left + clientRect.right) / 2;
-    y = (clientRect.top + clientRect.bottom) / 2;
+    y = (0.75 * clientRect.top + 0.25 * clientRect.bottom);
     if (window.testRunner) {
         testRunner.dumpAsText(true);
         testRunner.waitUntilDone();

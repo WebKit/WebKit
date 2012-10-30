@@ -32,6 +32,7 @@
 #include "URLTestHelpers.h"
 #include "WebCompositorInitializer.h"
 #include "WebFrame.h"
+#include "WebInputEvent.h"
 #include "WebViewImpl.h"
 #include <gtest/gtest.h>
 #include <public/WebContentLayer.h>
@@ -59,27 +60,39 @@ TEST(LinkHighlightTest, verifyWebViewImplIntegration)
     webViewImpl->resize(WebSize(pageWidth, pageHeight));
     webViewImpl->layout();
 
+    WebGestureEvent touchEvent;
+
     // The coordinates below are linked to absolute positions in the referenced .html file.
-    IntPoint touchEventLocation(20, 20);
-    Node* touchNode = webViewImpl->bestTouchLinkNode(touchEventLocation);
+    touchEvent.x = 20;
+    touchEvent.y = 20;
+    Node* touchNode = webViewImpl->bestTouchLinkNode(touchEvent);
     ASSERT_TRUE(touchNode);
 
-    touchEventLocation = IntPoint(20, 40);
-    EXPECT_FALSE(webViewImpl->bestTouchLinkNode(touchEventLocation));
+    touchEvent.y = 40;
+    EXPECT_FALSE(webViewImpl->bestTouchLinkNode(touchEvent));
 
-    touchEventLocation = IntPoint(20, 20);
+    touchEvent.y = 20;
     // Shouldn't crash.
 
-    webViewImpl->enableTouchHighlight(touchEventLocation);
+    webViewImpl->enableTouchHighlight(touchEvent);
     EXPECT_TRUE(webViewImpl->linkHighlight());
     EXPECT_TRUE(webViewImpl->linkHighlight()->contentLayer());
     EXPECT_TRUE(webViewImpl->linkHighlight()->clipLayer());
 
     // Find a target inside a scrollable div
 
-    touchEventLocation = IntPoint(20, 100);
-    webViewImpl->enableTouchHighlight(touchEventLocation);
+    touchEvent.y = 100;
+    webViewImpl->enableTouchHighlight(touchEvent);
     ASSERT_TRUE(webViewImpl->linkHighlight());
+
+    // Don't highlight if no "hand cursor"
+    touchEvent.y = 220; // An A-link with cross-hair cursor.
+    webViewImpl->enableTouchHighlight(touchEvent);
+    ASSERT_FALSE(webViewImpl->linkHighlight());
+
+    touchEvent.y = 260; // A text input box.
+    webViewImpl->enableTouchHighlight(touchEvent);
+    ASSERT_FALSE(webViewImpl->linkHighlight());
 
     webViewImpl->close();
 }

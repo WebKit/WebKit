@@ -565,8 +565,8 @@ public:
 
 #if ENABLE(GESTURE_EVENTS)
     void computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZoomType, float& scale, WebPoint& scroll, bool& isAnchor);
-    WebCore::Node* bestTouchLinkNode(WebCore::IntPoint touchEventLocation);
-    void enableTouchHighlight(WebCore::IntPoint touchEventLocation);
+    WebCore::Node* bestTouchLinkNode(const WebGestureEvent& touchEvent);
+    void enableTouchHighlight(const WebGestureEvent& touchEvent);
 #endif
     void animateZoomAroundPoint(const WebCore::IntPoint&, AutoZoomType);
 

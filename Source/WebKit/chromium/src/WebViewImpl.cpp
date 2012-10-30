@@ -673,7 +673,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         // Queue a highlight animation, then hand off to regular handler.
 #if OS(LINUX)
         if (settingsImpl()->gestureTapHighlightEnabled())
-            enableTouchHighlight(IntPoint(event.x, event.y));
+            enableTouchHighlight(event);
 #endif
         break;
     case WebInputEvent::GestureTapCancel:
@@ -1169,15 +1169,17 @@ void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZo
         scroll = clampOffsetAtScale(scroll, scale);
 }
 
-static bool highlightConditions(Node* node)
+static bool invokesHandCursor(Node* node, bool shiftKey, Frame* frame)
 {
-    return node->supportsFocus()
-           || node->hasEventListeners(eventNames().clickEvent)
-           || node->hasEventListeners(eventNames().mousedownEvent)
-           || node->hasEventListeners(eventNames().mouseupEvent);
+    if (!node || !node->renderer())
+        return false;
+
+    ECursor cursor = node->renderer()->style()->cursor();
+    return cursor == CURSOR_POINTER
+        || (cursor == CURSOR_AUTO && frame->eventHandler()->useHandCursor(node, node->isLink(), shiftKey));
 }
 
-Node* WebViewImpl::bestTouchLinkNode(IntPoint touchEventLocation)
+Node* WebViewImpl::bestTouchLinkNode(const WebGestureEvent& touchEvent)
 {
     if (!m_page || !m_page->mainFrame())
         return 0;
@@ -1186,27 +1188,23 @@ Node* WebViewImpl::bestTouchLinkNode(IntPoint touchEventLocation)
 
     // FIXME: Should accept a search region from the caller instead of hard-coding the size.
     IntSize touchEventSearchRegionSize(4, 2);
+    IntPoint touchEventLocation(touchEvent.x, touchEvent.y);
     m_page->mainFrame()->eventHandler()->bestClickableNodeForTouchPoint(touchEventLocation, touchEventSearchRegionSize, touchEventLocation, bestTouchNode);
     // bestClickableNodeForTouchPoint() doesn't always return a node that is a link, so let's try and find
     // a link to highlight.
-    while (bestTouchNode && !highlightConditions(bestTouchNode))
+    bool shiftKey = touchEvent.modifiers & WebGestureEvent::ShiftKey;
+    while (bestTouchNode && !invokesHandCursor(bestTouchNode, shiftKey, m_page->mainFrame()))
         bestTouchNode = bestTouchNode->parentNode();
-
-    // If the document/body have click handlers installed, we don't want to default to applying the highlight to the entire RenderView, or the
-    // entire body.
-    RenderObject* touchNodeRenderer = bestTouchNode ? bestTouchNode->renderer() : 0;
-    if (bestTouchNode && (!touchNodeRenderer || touchNodeRenderer->isRenderView() || touchNodeRenderer->isBody()))
-        return 0;
 
     return bestTouchNode;
 }
 
-void WebViewImpl::enableTouchHighlight(IntPoint touchEventLocation)
+void WebViewImpl::enableTouchHighlight(const WebGestureEvent& touchEvent)
 {
     // Always clear any existing highlight when this is invoked, even if we don't get a new target to highlight.
     m_linkHighlight.clear();
 
-    Node* touchNode = bestTouchLinkNode(touchEventLocation);
+    Node* touchNode = bestTouchLinkNode(touchEvent);
 
     if (!touchNode || !touchNode->renderer() || !touchNode->renderer()->enclosingLayer())
         return;

@@ -1,3 +1,27 @@
+2012-10-30  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Restrict link highlights to targets that display a hand-cursor
+        https://bugs.webkit.org/show_bug.cgi?id=99862
+
+        Reviewed by James Robinson.
+
+        To avoid applying highlights to inappropriate targets, such as large divs with
+        click handlers installed, test candidate targets and only highlight them if they
+        would normally display a hand cursor on mouse over. This is a heuristic, but has
+        been tested and found effective in practice.
+
+        This CL refactors EventHandler::selectCursor() to make the logic for determining
+        if CURSOR_AUTO should resolve to CURSOR_POINTER available outside EventHandler.
+
+        Relies on existing cursor tests.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::useHandCursor):
+        (WebCore):
+        (WebCore::EventHandler::selectCursor):
+        * page/EventHandler.h:
+        (EventHandler):
+
 2012-10-30  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Remove CookieDatabaseBackingStore::upgradeTableIfNeeded
