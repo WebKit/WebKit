@@ -192,7 +192,14 @@ void WebResourceLoadScheduler::setSerialLoadingEnabled(bool enabled)
 void WebResourceLoadScheduler::startResourceLoad(ResourceLoadIdentifier identifier)
 {
     RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.take(identifier);
+    
+    // <rdar://problem/12596761> and http://webkit.org/b/100792
+    // There is a race condition where the WebProcess might tell the NetworkProcess to remove a resource load identifier
+    // at the very time the NetworkProcess is telling the WebProcess to start that particular load.
+    // We'd like to remove that race condition but it makes sense for release builds to do an early return.
     ASSERT(loader);
+    if (!loader)
+        return;
     
     LOG(Network, "(WebProcess) WebResourceLoadScheduler::startResourceLoad starting load for '%s'", loader->url().string().utf8().data());
 

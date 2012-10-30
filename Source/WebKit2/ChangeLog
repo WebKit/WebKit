@@ -1,3 +1,19 @@
+2012-10-30  Brady Eidson  <beidson@apple.com>
+
+        Crash in WebProcess at com.apple.WebCore: WebCore::ResourceLoader::start
+        <rdar://problem/12596761> and https://webkit.org/b/100792
+
+        Reviewed by Tim Hatcher.
+
+        In release builds we can sometimes end up with a null ResourceLoader due to a race condition
+        with the WebProcess telling the NetworkProcess to remove a resource load at the very same time
+        the NetworkProcess is about to start that load.
+
+        Until we can resolve that race condition an early return will be necessary.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::startResourceLoad):
+
 2012-10-30  Jesse van den Kieboom  <jessevdk@gnome.org>
 
         Fixed transfer annotation for default web context
