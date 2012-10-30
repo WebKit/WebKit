@@ -220,6 +220,7 @@ private:
     PlatformLayer* m_canvasPlatformLayer;
     Timer<CoordinatedGraphicsLayer> m_animationStartedTimer;
     GraphicsLayerAnimations m_animations;
+    double m_lastAnimationStartTime;
 };
 
 CoordinatedGraphicsLayer* toCoordinatedGraphicsLayer(GraphicsLayer*);

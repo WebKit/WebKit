@@ -262,11 +262,10 @@ void GraphicsLayerAnimation::apply(Client* client)
     }
 }
 
-void GraphicsLayerAnimation::pause(double offset)
+void GraphicsLayerAnimation::pause(double time)
 {
-    // FIXME: should apply offset here.
     setState(PausedState);
-    m_pauseTime = WTF::currentTime() - offset;
+    m_pauseTime = time;
 }
 
 void GraphicsLayerAnimations::add(const GraphicsLayerAnimation& animation)

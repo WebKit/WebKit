@@ -1,3 +1,18 @@
+2012-10-30  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Animations jump when the page is suspended
+        https://bugs.webkit.org/show_bug.cgi?id=100673
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        GraphicsLayerAnimations::pause() should accept time from start and not an offset.
+
+        We need to support the "freeze" API before this can be reliably tested.
+        See https://bugs.webkit.org/show_bug.cgi?id=100703.
+
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        (WebCore::GraphicsLayerAnimation::pause):
+
 2012-10-30  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [Qt][EFL][AC] While Using WebGL, MiniBrowser segfaults on Refreshing the page.

@@ -1,3 +1,19 @@
+2012-10-30  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Animations jump when the page is suspended
+        https://bugs.webkit.org/show_bug.cgi?id=100673
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        GraphicsLayerAnimations::pause() should accept time from start and not an offset.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::addAnimation):
+        (WebCore::CoordinatedGraphicsLayer::pauseAnimation):
+        (WebCore::CoordinatedGraphicsLayer::animationStartedTimerFired):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayer):
+
 2012-10-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Fix EFL build after r132887

@@ -795,7 +795,7 @@ bool CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms()
     return false;
 }
 
-bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
+bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double delayAsNegativeTimeOffset)
 {
     ASSERT(!keyframesName.isEmpty());
 
@@ -808,15 +808,16 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
     if (valueList.property() == AnimatedPropertyWebkitTransform)
         listsMatch = validateTransformOperations(valueList, ignoredHasBigRotation) >= 0;
 
-    m_animations.add(GraphicsLayerAnimation(keyframesName, valueList, boxSize, anim, WTF::currentTime() - timeOffset, listsMatch));
+    m_lastAnimationStartTime = WTF::currentTime() - delayAsNegativeTimeOffset;
+    m_animations.add(GraphicsLayerAnimation(keyframesName, valueList, boxSize, anim, m_lastAnimationStartTime, listsMatch));
     m_animationStartedTimer.startOneShot(0);
     didChangeAnimations();
     return true;
 }
 
-void CoordinatedGraphicsLayer::pauseAnimation(const String& animationName, double timeOffset)
+void CoordinatedGraphicsLayer::pauseAnimation(const String& animationName, double time)
 {
-    m_animations.pause(animationName, timeOffset);
+    m_animations.pause(animationName, time);
     didChangeAnimations();
 }
 
@@ -828,7 +829,7 @@ void CoordinatedGraphicsLayer::removeAnimation(const String& animationName)
 
 void CoordinatedGraphicsLayer::animationStartedTimerFired(Timer<CoordinatedGraphicsLayer>*)
 {
-    client()->notifyAnimationStarted(this, /* DOM time */ WTF::currentTime());
+    client()->notifyAnimationStarted(this, m_lastAnimationStartTime);
 }
 }
 #endif
