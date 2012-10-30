@@ -2397,3 +2397,6 @@ compositing/tiling/huge-layer-with-layer-children-resize.html
 compositing/tiling/huge-layer-with-layer-children.html 
 compositing/tiling/preserve3d-tiled.html 
 compositing/tiling/tile-cache-zoomed.html
+
+# Test added in r132901 is for chromium only
+fast/images/exif-orientation-image-document.html

@@ -1,5 +1,11 @@
 2012-10-30  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Test should not be run on Apple Windows port: fast/images/exif-orientation-image-document.html
+
+        * platform/win/TestExpectations:
+
+2012-10-30  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Skip another failing accessibility test on Windows: accessibility/svg-remote-element.html.
 
         * platform/win/TestExpectations:
