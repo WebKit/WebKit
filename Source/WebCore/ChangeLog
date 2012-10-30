@@ -1,3 +1,30 @@
+2012-10-29  Vincent Scheib  <scheib@chromium.org>
+
+        Unreviewed, rolling out r132845.
+        http://trac.webkit.org/changeset/132845
+        https://bugs.webkit.org/show_bug.cgi?id=99975
+
+        Broke chromium builds, linker errors from
+        IDBBindingUtilitiesTest
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBRequest.h:
+        (IDBRequest):
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromScriptValueAndKeyPath):
+        (WebCore):
+        (WebCore::deserializeIDBValue):
+        (WebCore::injectIDBKeyIntoScriptValue):
+        (WebCore::idbKeyToScriptValue):
+        * bindings/v8/V8PerIsolateData.cpp:
+        (WebCore::V8PerIsolateData::ensureAuxiliaryContext):
+        (WebCore):
+        * bindings/v8/V8PerIsolateData.h:
+        (V8PerIsolateData):
+
 2012-10-29  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.

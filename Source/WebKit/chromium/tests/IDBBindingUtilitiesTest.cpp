@@ -24,19 +24,11 @@
  */
 
 #include "config.h"
-#include "Document.h"
-#include "Frame.h"
-#include "FrameTestHelpers.h"
 #include "IDBBindingUtilities.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
-#include "V8Binding.h"
 #include "V8PerIsolateData.h"
 #include "V8Utilities.h"
-#include "WebFrame.h"
-#include "WebFrameImpl.h"
-#include "WebView.h"
-#include "WorldContextHandle.h"
 
 #include <gtest/gtest.h>
 #include <wtf/Vector.h>
@@ -44,7 +36,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 using namespace WebCore;
-using namespace WebKit;
 
 namespace {
 
@@ -99,21 +90,10 @@ void checkKeyPathNumberValue(const ScriptValue& value, const String& keyPath, in
     ASSERT_TRUE(expected == idbKey->number());
 }
 
-static v8::Handle<v8::Context> context()
-{
-    static WebView* webView;
-    if (!webView) {
-        webView = FrameTestHelpers::createWebViewAndLoad("about:blank");
-        webView->setFocus(true);
-    }
-    ScriptExecutionContext* context = static_cast<WebFrameImpl*>(webView->mainFrame())->frame()->document();
-    return toV8Context(context, WorldContextHandle(UseCurrentWorld));
-}
-
 TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyStringValue)
 {
     v8::HandleScope handleScope;
-    v8::Context::Scope scope(context());
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
 
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::String::New("zoo"));
@@ -127,7 +107,7 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyStringValue)
 TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
 {
     v8::HandleScope handleScope;
-    v8::Context::Scope scope(context());
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
 
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::Number::New(456));
@@ -141,7 +121,7 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
 TEST(IDBKeyFromValueAndKeyPathTest, SubProperty)
 {
     v8::HandleScope handleScope;
-    v8::Context::Scope scope(context());
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
 
     v8::Local<v8::Object> object = v8::Object::New();
     v8::Local<v8::Object> subProperty = v8::Object::New();
@@ -157,7 +137,7 @@ TEST(IDBKeyFromValueAndKeyPathTest, SubProperty)
 TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
 {
     v8::HandleScope handleScope;
-    v8::Context::Scope scope(context());
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
 
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::String::New("zoo"));
@@ -172,7 +152,7 @@ TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
 TEST(InjectIDBKeyTest, SubProperty)
 {
     v8::HandleScope handleScope;
-    v8::Context::Scope scope(context());
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
 
     v8::Local<v8::Object> object = v8::Object::New();
     v8::Local<v8::Object> subProperty = v8::Object::New();

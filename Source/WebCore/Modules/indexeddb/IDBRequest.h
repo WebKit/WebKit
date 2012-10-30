@@ -42,9 +42,6 @@
 #include "IDBCallbacks.h"
 #include "IDBCursor.h"
 #include "IDBCursorBackendInterface.h"
-#if USE(V8)
-#include "WorldContextHandle.h"
-#endif
 
 namespace WebCore {
 
@@ -158,9 +155,6 @@ private:
     bool m_preventPropagation;
 
     EventTargetData m_eventTargetData;
-#if USE(V8)
-    WorldContextHandle m_worldContextHandle;
-#endif
 };
 
 } // namespace WebCore

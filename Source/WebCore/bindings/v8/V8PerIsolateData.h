@@ -86,6 +86,7 @@ public:
     DOMDataList& allStores() { return m_domDataList; }
 
     V8HiddenPropertyName* hiddenPropertyName() { return m_hiddenPropertyName.get(); }
+    v8::Handle<v8::Context> ensureAuxiliaryContext();
 
     void registerDOMDataStore(DOMDataStore* domDataStore) 
     {

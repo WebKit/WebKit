@@ -1,3 +1,15 @@
+2012-10-29  Vincent Scheib  <scheib@chromium.org>
+
+        Unreviewed, rolling out r132845.
+        http://trac.webkit.org/changeset/132845
+        https://bugs.webkit.org/show_bug.cgi?id=99975
+
+        Broke chromium builds, linker errors from
+        IDBBindingUtilitiesTest
+
+        * tests/IDBBindingUtilitiesTest.cpp:
+        (WebCore::TEST):
+
 2012-10-29  James Robinson  <jamesr@chromium.org>
 
         [chromium] Defer commits between page unload and first invalidation in threaded compositing mode

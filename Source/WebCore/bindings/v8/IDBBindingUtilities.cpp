@@ -179,9 +179,10 @@ static PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(const ScriptValu
     IDBKeyPathParseError error;
     IDBParseKeyPath(keyPath, keyPathElements, error);
     ASSERT(error == IDBKeyPathParseErrorNone);
-    ASSERT(v8::Context::InContext());
 
     v8::HandleScope handleScope;
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
+
     v8::Handle<v8::Value> v8Value(value.v8Value());
     v8::Handle<v8::Value> v8Key(getNthValueOnKeyPath(v8Value, keyPathElements, keyPathElements.size()));
     if (v8Key.IsEmpty())
@@ -193,10 +194,8 @@ PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(const ScriptValue& valu
 {
     IDB_TRACE("createIDBKeyFromScriptValueAndKeyPath");
     ASSERT(!keyPath.isNull());
-    ASSERT(v8::Context::InContext());
 
-
-    v8::HandleScope handleScope;
+    v8::HandleScope scope;
     if (keyPath.type() == IDBKeyPath::ArrayType) {
         IDBKey::KeyArray result;
         const Vector<String>& array = keyPath.array();
@@ -213,10 +212,11 @@ PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(const ScriptValue& valu
     return createIDBKeyFromScriptValueAndKeyPath(value, keyPath.string());
 }
 
+// FIXME: The only reason this exists is because we need a v8::Context and scope inside a timer. Is there a better / more general way to do this?
 ScriptValue deserializeIDBValue(ScriptExecutionContext* scriptContext, PassRefPtr<SerializedScriptValue> prpValue)
 {
-    ASSERT(v8::Context::InContext());
     v8::HandleScope handleScope;
+    v8::Context::Scope contextScope(toV8Context(scriptContext, UseCurrentWorld));
     RefPtr<SerializedScriptValue> serializedValue = prpValue;
     if (serializedValue)
         return ScriptValue(serializedValue->deserialize());
@@ -226,7 +226,6 @@ ScriptValue deserializeIDBValue(ScriptExecutionContext* scriptContext, PassRefPt
 bool injectIDBKeyIntoScriptValue(PassRefPtr<IDBKey> key, ScriptValue& value, const IDBKeyPath& keyPath)
 {
     IDB_TRACE("injectIDBKeyIntoScriptValue");
-    ASSERT(v8::Context::InContext());
 
     ASSERT(keyPath.type() == IDBKeyPath::StringType);
     Vector<String> keyPathElements;
@@ -238,6 +237,8 @@ bool injectIDBKeyIntoScriptValue(PassRefPtr<IDBKey> key, ScriptValue& value, con
         return 0;
 
     v8::HandleScope handleScope;
+    v8::Context::Scope scope(V8PerIsolateData::current()->ensureAuxiliaryContext());
+
     v8::Handle<v8::Value> v8Value(value.v8Value());
     v8::Handle<v8::Value> parent(ensureNthValueOnKeyPath(v8Value, keyPathElements, keyPathElements.size() - 1));
     if (parent.IsEmpty())
@@ -267,8 +268,9 @@ bool canInjectIDBKeyIntoScriptValue(const ScriptValue& scriptValue, const IDBKey
 
 ScriptValue idbKeyToScriptValue(ScriptExecutionContext* scriptContext, PassRefPtr<IDBKey> key)
 {
-    ASSERT(v8::Context::InContext());
     v8::HandleScope handleScope;
+    v8::Context::Scope contextScope(toV8Context(scriptContext, UseCurrentWorld));
+
     v8::Handle<v8::Value> v8Value(toV8(key.get()));
     return ScriptValue(v8Value);
 }
