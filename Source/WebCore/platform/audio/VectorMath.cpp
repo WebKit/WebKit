@@ -655,7 +655,22 @@ void vclip(const float* sourceP, int sourceStride, const float* lowThresholdP, c
     float highThreshold = *highThresholdP;
 
     // FIXME: Optimize for SSE2.
-    // FIXME: Optimize for NEON.
+#if HAVE(ARM_NEON_INTRINSICS)
+    if ((sourceStride == 1) && (destStride == 1)) {
+        int tailFrames = n % 4;
+        const float* endP = destP + n - tailFrames;
+
+        float32x4_t low = vdupq_n_f32(lowThreshold);
+        float32x4_t high = vdupq_n_f32(highThreshold);
+        while (destP < endP) {
+            float32x4_t source = vld1q_f32(sourceP);
+            vst1q_f32(destP, vmaxq_f32(vminq_f32(source, high), low));
+            sourceP += 4;
+            destP += 4;
+        }
+        n = tailFrames;
+    }
+#endif
     while (n--) {
         *destP = std::max(std::min(*sourceP, highThreshold), lowThreshold);
         sourceP += sourceStride;
