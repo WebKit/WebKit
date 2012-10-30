@@ -64,6 +64,11 @@ DateTimeChooserImpl::DateTimeChooserImpl(ChromeClientImpl* chromeClient, WebCore
     m_popup = m_chromeClient->openPagePopup(this, m_parameters.anchorRectInRootView);
 }
 
+PassRefPtr<DateTimeChooserImpl> DateTimeChooserImpl::create(ChromeClientImpl* chromeClient, WebCore::DateTimeChooserClient* client, const WebCore::DateTimeChooserParameters& parameters)
+{
+    return adoptRef(new DateTimeChooserImpl(chromeClient, client, parameters));
+}
+
 DateTimeChooserImpl::~DateTimeChooserImpl()
 {
 }
@@ -149,6 +154,7 @@ WebCore::Locale& DateTimeChooserImpl::locale()
 
 void DateTimeChooserImpl::setValueAndClosePopup(int numValue, const String& stringValue)
 {
+    RefPtr<DateTimeChooserImpl> protector(this);
     if (numValue >= 0)
         m_client->didChooseValue(stringValue);
     endChooser();

@@ -1,3 +1,28 @@
+2012-10-30  Kent Tamura  <tkent@chromium.org>
+
+        Fix crash by calendar picker or suggestion picker
+        https://bugs.webkit.org/show_bug.cgi?id=100728
+
+        Reviewed by Hajime Morita.
+
+        Change DateTimeChooser so that it is ref-coutned.
+
+        Test: platform/chromium/fast/forms/calendar-picker/calendar-picker-type-change-onchange.html
+
+        * platform/DateTimeChooser.h: Made DateTimeChooser RefCounted.
+        * page/ChromeClient.h:
+        (ChromeClient): openDateTimeChooser should return PassRefPtr<DateTimeChooser>.
+        * loader/EmptyClients.h:
+        (EmptyChromeClient): Follow the above change.
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyChromeClient::openDateTimeChooser): Ditto.
+
+        * html/shadow/PickerIndicatorElement.h:
+        (PickerIndicatorElement): Hold DateTimeChooser in RefPtr<DateTimeChooser>.
+        * html/shadow/PickerIndicatorElement.cpp:
+        (WebCore::PickerIndicatorElement::PickerIndicatorElement):
+        Remove unnecessary initialization.
+
 2012-10-30  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: promote "cpu activity" out of experiment

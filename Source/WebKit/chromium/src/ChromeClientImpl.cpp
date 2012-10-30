@@ -693,9 +693,9 @@ PassOwnPtr<WebColorChooser> ChromeClientImpl::createWebColorChooser(WebColorChoo
 #endif
 
 #if ENABLE(CALENDAR_PICKER)
-PassOwnPtr<WebCore::DateTimeChooser> ChromeClientImpl::openDateTimeChooser(WebCore::DateTimeChooserClient* pickerClient, const WebCore::DateTimeChooserParameters& parameters)
+PassRefPtr<DateTimeChooser> ChromeClientImpl::openDateTimeChooser(DateTimeChooserClient* pickerClient, const DateTimeChooserParameters& parameters)
 {
-    return adoptPtr(new DateTimeChooserImpl(this, pickerClient, parameters));
+    return DateTimeChooserImpl::create(this, pickerClient, parameters);
 }
 #endif
 

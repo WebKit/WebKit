@@ -1,3 +1,24 @@
+2012-10-30  Kent Tamura  <tkent@chromium.org>
+
+        Fix crash by calendar picker or suggestion picker
+        https://bugs.webkit.org/show_bug.cgi?id=100728
+
+        Reviewed by Hajime Morita.
+
+        * src/DateTimeChooserImpl.h:
+        (DateTimeChooserImpl): Add a factory function, and made the constructor private.
+        * src/DateTimeChooserImpl.cpp:
+        (WebKit::DateTimeChooserImpl::create): Added.
+        (WebKit::DateTimeChooserImpl::setValueAndClosePopup):
+        Protect this because JavaScript code might run during didChooseValue.
+
+        * src/ChromeClientImpl.h:
+        (ChromeClientImpl): Follow the ChromeClient change.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::openDateTimeChooser):
+        Use DateTimeChooserImpl::create.
+
+
 2012-10-29  James Robinson  <jamesr@chromium.org>
 
         [chromium] Null-check WebViewImpl::m_client before calling invalidateRect() on it

@@ -63,7 +63,7 @@ private:
 
     HTMLInputElement* hostInput();
 
-    OwnPtr<DateTimeChooser> m_chooser;
+    RefPtr<DateTimeChooser> m_chooser;
 };
 
 }
