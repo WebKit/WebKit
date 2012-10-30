@@ -1,3 +1,11 @@
+2012-10-29  Andy Estes  <aestes@apple.com>
+
+        Fix a typo that caused SVG external resources to be blocked on
+        platforms other than Chromium.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+
 2012-10-29  Keishi Hattori  <keishi@webkit.org>
 
         NSLocale leaks in LocaleMac

@@ -306,7 +306,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
         return 0;
     }
 
-#if ENABLE(SVG) && !ENABLE(BLOCK_SVG_EXTERNAL_REFERENCES)
+#if ENABLE(SVG) && !ENABLE(EXTERNAL_SVG_REFERENCES)
     if (type == CachedResource::SVGDocumentResource)
         return false;
 #endif
