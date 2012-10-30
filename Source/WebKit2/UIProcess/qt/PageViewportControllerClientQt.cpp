@@ -45,6 +45,7 @@ PageViewportControllerClientQt::PageViewportControllerClientQt(QQuickWebView* vi
     , m_pinchStartScale(-1)
     , m_lastCommittedScale(-1)
     , m_zoomOutScale(0)
+    , m_isUserInteracting(false)
     , m_ignoreViewportChanges(true)
 {
     m_scaleAnimation->setDuration(kScaleAnimationDurationMillis);
@@ -102,7 +103,7 @@ void PageViewportControllerClientQt::animateContentRectVisible(const QRectF& con
 
     QRectF viewportRectInContentCoords = m_viewportItem->mapRectToWebContent(m_viewportItem->boundingRect());
     if (contentRect == viewportRectInContentCoords) {
-        updateViewportController();
+        m_controller->resumeContent();
         return;
     }
 
@@ -120,8 +121,7 @@ void PageViewportControllerClientQt::animateContentRectVisible(const QRectF& con
 
 void PageViewportControllerClientQt::flickMoveStarted()
 {
-    Q_ASSERT(m_viewportItem->isMoving());
-    m_scrollUpdateDeferrer.reset(new ViewportUpdateDeferrer(m_controller, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
+    m_controller->suspendContent();
 
     m_lastScrollPosition = m_viewportItem->contentPos();
 
@@ -130,12 +130,11 @@ void PageViewportControllerClientQt::flickMoveStarted()
 
 void PageViewportControllerClientQt::flickMoveEnded()
 {
-    Q_ASSERT(!m_viewportItem->isMoving());
     // This method is called on the end of the pan or pan kinetic animation.
 
     m_ignoreViewportChanges = true;
-
-    m_scrollUpdateDeferrer.reset();
+    if (!m_isUserInteracting)
+        m_controller->resumeContent();
 }
 
 void PageViewportControllerClientQt::pageItemPositionChanged()
@@ -155,11 +154,10 @@ void PageViewportControllerClientQt::scaleAnimationStateChanged(QAbstractAnimati
     switch (newState) {
     case QAbstractAnimation::Running:
         m_viewportItem->cancelFlick();
-        ASSERT(!m_animationUpdateDeferrer);
-        m_animationUpdateDeferrer.reset(new ViewportUpdateDeferrer(m_controller, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
+        m_controller->suspendContent();
         break;
     case QAbstractAnimation::Stopped:
-        m_animationUpdateDeferrer.reset();
+        m_controller->resumeContent();
         break;
     default:
         break;
@@ -170,14 +168,13 @@ void PageViewportControllerClientQt::touchBegin()
 {
     m_controller->setHadUserInteraction(true);
 
-    // Prevents resuming the page between the user's flicks of the page while the animation is running.
-    if (scrollAnimationActive())
-        m_touchUpdateDeferrer.reset(new ViewportUpdateDeferrer(m_controller, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
+    // Prevents resuming the page between the user's flicks of the page.
+    m_isUserInteracting = true;
 }
 
 void PageViewportControllerClientQt::touchEnd()
 {
-    m_touchUpdateDeferrer.reset();
+    m_isUserInteracting = false;
 }
 
 void PageViewportControllerClientQt::focusEditableArea(const QRectF& caretArea, const QRectF& targetArea)
@@ -326,9 +323,9 @@ void PageViewportControllerClientQt::setContentsScale(float localScale, bool tre
 
 void PageViewportControllerClientQt::setContentsRectToNearestValidBounds()
 {
-    ViewportUpdateDeferrer guard(m_controller);
     float targetScale = m_controller->innerBoundedViewportScale(m_pageItem->contentsScale());
     setContentRectVisiblePositionAtScale(nearestValidVisibleContentsRect().topLeft(), targetScale);
+    updateViewportController();
 }
 
 void PageViewportControllerClientQt::didResumeContent()
@@ -421,7 +418,7 @@ void PageViewportControllerClientQt::pinchGestureStarted(const QPointF& pinchCen
     m_scaleStack.clear();
     m_zoomOutScale = 0.0;
 
-    m_scaleUpdateDeferrer.reset(new ViewportUpdateDeferrer(m_controller, ViewportUpdateDeferrer::DeferUpdateAndSuspendContent));
+    m_controller->suspendContent();
 
     m_lastPinchCenterInViewportCoordinates = pinchCenterInViewportCoordinates;
     m_pinchStartScale = m_pageItem->contentsScale();
@@ -457,14 +454,14 @@ void PageViewportControllerClientQt::pinchGestureEnded()
 
     m_pinchStartScale = -1;
 
+    // This will take care of resuming the content, even if no animation was performed.
     animateContentRectVisible(nearestValidVisibleContentsRect());
-    m_scaleUpdateDeferrer.reset(); // Clear after starting potential animation, which takes over deferring.
 }
 
 void PageViewportControllerClientQt::pinchGestureCancelled()
 {
     m_pinchStartScale = -1;
-    m_scaleUpdateDeferrer.reset();
+    m_controller->resumeContent();
 }
 
 void PageViewportControllerClientQt::didChangeContentsSize(const IntSize& newSize)

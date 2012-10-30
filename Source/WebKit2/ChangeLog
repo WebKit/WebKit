@@ -1,3 +1,36 @@
+2012-10-30  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Remove ViewportUpdateDeferrer from PageViewportController
+        https://bugs.webkit.org/show_bug.cgi?id=100665
+
+        Reviewed by Jocelyn Turcotte.
+
+        Since the original use case of delayed viewport updates and the issue
+        of infinite loop conditions between the programmatic adjustmet of the
+        viewport and the Qt notification signals are not present any more the
+        ViewportUpdateDeferrer became an unnecessary legacy and can be removed.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::pageDidRequestScroll):
+        * UIProcess/PageViewportController.h:
+        (WebKit):
+        (PageViewportController):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::PageViewportControllerClientQt):
+        (WebKit::PageViewportControllerClientQt::animateContentRectVisible):
+        (WebKit::PageViewportControllerClientQt::flickMoveStarted):
+        (WebKit::PageViewportControllerClientQt::flickMoveEnded):
+        (WebKit::PageViewportControllerClientQt::scaleAnimationStateChanged):
+        (WebKit::PageViewportControllerClientQt::touchBegin):
+        (WebKit::PageViewportControllerClientQt::touchEnd):
+        (WebKit::PageViewportControllerClientQt::setContentsRectToNearestValidBounds):
+        (WebKit::PageViewportControllerClientQt::pinchGestureStarted):
+        (WebKit::PageViewportControllerClientQt::pinchGestureEnded):
+        (WebKit::PageViewportControllerClientQt::pinchGestureCancelled):
+        * UIProcess/qt/PageViewportControllerClientQt.h:
+        (PageViewportControllerClientQt):
+
 2012-10-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Simplify signal emitting API in EwkViewImpl

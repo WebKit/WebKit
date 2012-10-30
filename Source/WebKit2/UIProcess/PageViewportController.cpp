@@ -39,31 +39,11 @@ bool fuzzyCompare(float a, float b, float epsilon)
     return std::abs(a - b) < epsilon;
 }
 
-ViewportUpdateDeferrer::ViewportUpdateDeferrer(PageViewportController* PageViewportController, SuspendContentFlag suspendContentFlag)
-    : m_controller(PageViewportController)
-{
-    m_controller->m_activeDeferrerCount++;
-
-    // There is no need to suspend content for immediate updates
-    // only during animations or longer gestures.
-    if (suspendContentFlag == DeferUpdateAndSuspendContent)
-        m_controller->suspendContent();
-}
-
-ViewportUpdateDeferrer::~ViewportUpdateDeferrer()
-{
-    if (--(m_controller->m_activeDeferrerCount))
-        return;
-
-    m_controller->resumeContent();
-}
-
 PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, PageViewportControllerClient* client)
     : m_webPageProxy(proxy)
     , m_client(client)
     , m_allowsUserScaling(false)
     , m_minimumScaleToFit(1)
-    , m_activeDeferrerCount(0)
     , m_hasSuspendedContent(false)
     , m_hadUserInteraction(false)
     , m_effectiveScale(1)
@@ -172,7 +152,7 @@ void PageViewportController::pageTransitionViewportReady()
 void PageViewportController::pageDidRequestScroll(const IntPoint& cssPosition)
 {
     // Ignore the request if suspended. Can only happen due to delay in event delivery.
-    if (m_activeDeferrerCount)
+    if (m_hasSuspendedContent)
         return;
 
     FloatRect endVisibleContentRect(clampViewportToContents(cssPosition, m_effectiveScale), viewportSizeInContentsCoordinates());

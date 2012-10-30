@@ -129,11 +129,6 @@ private:
     void animateContentRectVisible(const QRectF& contentRect);
     void scaleContent(qreal itemScale, const QPointF& centerInCSSCoordinates = QPointF());
 
-    QScopedPointer<ViewportUpdateDeferrer> m_scaleUpdateDeferrer;
-    QScopedPointer<ViewportUpdateDeferrer> m_scrollUpdateDeferrer;
-    QScopedPointer<ViewportUpdateDeferrer> m_touchUpdateDeferrer;
-    QScopedPointer<ViewportUpdateDeferrer> m_animationUpdateDeferrer;
-
     ScaleAnimation* m_scaleAnimation;
     QPointF m_lastPinchCenterInViewportCoordinates;
     QPointF m_lastScrollPosition;
@@ -141,6 +136,7 @@ private:
     qreal m_lastCommittedScale;
     qreal m_zoomOutScale;
     QList<ScaleStackItem> m_scaleStack;
+    bool m_isUserInteracting;
     bool m_ignoreViewportChanges;
 };
 
