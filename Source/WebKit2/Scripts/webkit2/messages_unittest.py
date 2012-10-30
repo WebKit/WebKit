@@ -761,18 +761,15 @@ bool TestMultipleAttributes::DelayedReply::send()
 
 namespace WebKit {
 
-void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
+void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)
 {
 #if COMPILER(MSVC)
 #pragma warning(push)
 #pragma warning(disable: 4065)
 #endif
-    switch (messageID.get<Messages::WebPage::Kind>()) {
-    case Messages::WebPage::TestConnectionQueueID:
+    if (decoder.messageName() == Messages::WebPage::TestConnectionQueue::name()) {
         CoreIPC::handleMessageOnConnectionQueue<Messages::WebPage::TestConnectionQueue>(connection, decoder, this, &WebPage::testConnectionQueue);
         didHandleMessage = true;
-        return;
-    default:
         return;
     }
 #if COMPILER(MSVC)
@@ -780,78 +777,83 @@ void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection*
 #endif
 }
 
-void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder)
 {
-    switch (messageID.get<Messages::WebPage::Kind>()) {
-    case Messages::WebPage::LoadURLID:
+    if (decoder.messageName() == Messages::WebPage::LoadURL::name()) {
         CoreIPC::handleMessage<Messages::WebPage::LoadURL>(decoder, this, &WebPage::loadURL);
         return;
+    }
 #if ENABLE(TOUCH_EVENTS)
-    case Messages::WebPage::TouchEventID:
+    if (decoder.messageName() == Messages::WebPage::TouchEvent::name()) {
         CoreIPC::handleMessage<Messages::WebPage::TouchEvent>(decoder, this, &WebPage::touchEvent);
         return;
+    }
 #endif
-    case Messages::WebPage::DidReceivePolicyDecisionID:
+    if (decoder.messageName() == Messages::WebPage::DidReceivePolicyDecision::name()) {
         CoreIPC::handleMessage<Messages::WebPage::DidReceivePolicyDecision>(decoder, this, &WebPage::didReceivePolicyDecision);
         return;
-    case Messages::WebPage::CloseID:
+    }
+    if (decoder.messageName() == Messages::WebPage::Close::name()) {
         CoreIPC::handleMessage<Messages::WebPage::Close>(decoder, this, &WebPage::close);
         return;
-    case Messages::WebPage::PreferencesDidChangeID:
+    }
+    if (decoder.messageName() == Messages::WebPage::PreferencesDidChange::name()) {
         CoreIPC::handleMessage<Messages::WebPage::PreferencesDidChange>(decoder, this, &WebPage::preferencesDidChange);
         return;
-    case Messages::WebPage::SendDoubleAndFloatID:
+    }
+    if (decoder.messageName() == Messages::WebPage::SendDoubleAndFloat::name()) {
         CoreIPC::handleMessage<Messages::WebPage::SendDoubleAndFloat>(decoder, this, &WebPage::sendDoubleAndFloat);
         return;
-    case Messages::WebPage::SendIntsID:
+    }
+    if (decoder.messageName() == Messages::WebPage::SendInts::name()) {
         CoreIPC::handleMessage<Messages::WebPage::SendInts>(decoder, this, &WebPage::sendInts);
         return;
-    case Messages::WebPage::TestParameterAttributesID:
+    }
+    if (decoder.messageName() == Messages::WebPage::TestParameterAttributes::name()) {
         CoreIPC::handleMessage<Messages::WebPage::TestParameterAttributes>(decoder, this, &WebPage::testParameterAttributes);
         return;
+    }
 #if PLATFORM(MAC)
-    case Messages::WebPage::DidCreateWebProcessConnectionID:
+    if (decoder.messageName() == Messages::WebPage::DidCreateWebProcessConnection::name()) {
         CoreIPC::handleMessage<Messages::WebPage::DidCreateWebProcessConnection>(decoder, this, &WebPage::didCreateWebProcessConnection);
         return;
+    }
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
-    case Messages::WebPage::DeprecatedOperationID:
+    if (decoder.messageName() == Messages::WebPage::DeprecatedOperation::name()) {
         CoreIPC::handleMessage<Messages::WebPage::DeprecatedOperation>(decoder, this, &WebPage::deprecatedOperation);
         return;
+    }
 #endif
 #if ENABLE(EXPERIMENTAL_FEATURE)
-    case Messages::WebPage::ExperimentalOperationID:
+    if (decoder.messageName() == Messages::WebPage::ExperimentalOperation::name()) {
         CoreIPC::handleMessage<Messages::WebPage::ExperimentalOperation>(decoder, this, &WebPage::experimentalOperation);
         return;
-#endif
-    default:
-        break;
     }
-
+#endif
     ASSERT_NOT_REACHED();
 }
 
-void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    switch (messageID.get<Messages::WebPage::Kind>()) {
-    case Messages::WebPage::CreatePluginID:
+    if (decoder.messageName() == Messages::WebPage::CreatePlugin::name()) {
         CoreIPC::handleMessage<Messages::WebPage::CreatePlugin>(decoder, *replyEncoder, this, &WebPage::createPlugin);
         return;
-    case Messages::WebPage::RunJavaScriptAlertID:
+    }
+    if (decoder.messageName() == Messages::WebPage::RunJavaScriptAlert::name()) {
         CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(decoder, *replyEncoder, this, &WebPage::runJavaScriptAlert);
         return;
-    case Messages::WebPage::GetPluginProcessConnectionID:
+    }
+    if (decoder.messageName() == Messages::WebPage::GetPluginProcessConnection::name()) {
         CoreIPC::handleMessageDelayed<Messages::WebPage::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &WebPage::getPluginProcessConnection);
         return;
+    }
 #if PLATFORM(MAC)
-    case Messages::WebPage::InterpretKeyEventID:
+    if (decoder.messageName() == Messages::WebPage::InterpretKeyEvent::name()) {
         CoreIPC::handleMessage<Messages::WebPage::InterpretKeyEvent>(decoder, *replyEncoder, this, &WebPage::interpretKeyEvent);
         return;
-#endif
-    default:
-        break;
     }
-
+#endif
     ASSERT_NOT_REACHED();
 }
 

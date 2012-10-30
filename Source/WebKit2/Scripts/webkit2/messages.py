@@ -318,7 +318,7 @@ def handler_function(receiver, message):
     return '%s::%s' % (receiver.name, message.name[0].lower() + message.name[1:])
 
 
-def async_case_statement(receiver, message):
+def async_message_statement(receiver, message):
     dispatch_function_args = ['decoder', 'this', '&%s' % handler_function(receiver, message)]
     dispatch_function = 'handleMessage'
     if message.has_attribute(VARIADIC_ATTRIBUTE):
@@ -328,16 +328,16 @@ def async_case_statement(receiver, message):
         dispatch_function_args.insert(0, 'connection')
         
     result = []
-    result.append('    case Messages::%s::%s:\n' % (receiver.name, message.id()))
-
+    result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
     result.append('        CoreIPC::%s<Messages::%s::%s>(%s);\n' % (dispatch_function, receiver.name, message.name, ', '.join(dispatch_function_args)))
     if message.has_attribute(DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE):
         result.append('        didHandleMessage = true;\n')
     result.append('        return;\n')
+    result.append('    }\n')
     return surround_in_condition(''.join(result), message.condition)
 
 
-def sync_case_statement(receiver, message):
+def sync_message_statement(receiver, message):
     dispatch_function = 'handleMessage'
     if message.has_attribute(DELAYED_ATTRIBUTE):
         dispatch_function += 'Delayed'
@@ -345,10 +345,10 @@ def sync_case_statement(receiver, message):
         dispatch_function += 'Variadic'
 
     result = []
-    result.append('    case Messages::%s::%s:\n' % (receiver.name, message.id()))
+    result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
     result.append('        CoreIPC::%s<Messages::%s::%s>(%sdecoder, %sreplyEncoder, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if message.has_attribute(DELAYED_ATTRIBUTE) else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) else '*', handler_function(receiver, message)))
     result.append('        return;\n')
-
+    result.append('    }\n')
     return surround_in_condition(''.join(result), message.condition)
 
 
@@ -547,42 +547,30 @@ def generate_message_handler(file):
                 async_messages.append(message)
 
     if async_dispatch_on_connection_queue_messages:
-        result.append('void %s::didReceive%sMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)\n' % (receiver.name, receiver.name))
+        result.append('void %s::didReceive%sMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, bool& didHandleMessage)\n' % (receiver.name, receiver.name))
         result.append('{\n')
         result.append('#if COMPILER(MSVC)\n')
         result.append('#pragma warning(push)\n')
         result.append('#pragma warning(disable: 4065)\n')
         result.append('#endif\n')
-        result.append('    switch (messageID.get<Messages::%s::Kind>()) {\n' % receiver.name)
-        result += [async_case_statement(receiver, message) for message in async_dispatch_on_connection_queue_messages]
-        result.append('    default:\n')
-        result.append('        return;\n')
-        result.append('    }\n')
+        result += [async_message_statement(receiver, message) for message in async_dispatch_on_connection_queue_messages]
         result.append('#if COMPILER(MSVC)\n')
         result.append('#pragma warning(pop)\n')
         result.append('#endif\n')
         result.append('}\n\n')
 
     if async_messages:
-        result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
+        result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
         result.append('{\n')
-        result.append('    switch (messageID.get<Messages::%s::Kind>()) {\n' % receiver.name)
-        result += [async_case_statement(receiver, message) for message in async_messages]
-        result.append('    default:\n')
-        result.append('        break;\n')
-        result.append('    }\n\n')
+        result += [async_message_statement(receiver, message) for message in async_messages]
         result.append('    ASSERT_NOT_REACHED();\n')
         result.append('}\n')
 
     if sync_messages:
         result.append('\n')
-        result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
+        result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
         result.append('{\n')
-        result.append('    switch (messageID.get<Messages::%s::Kind>()) {\n' % receiver.name)
-        result += [sync_case_statement(receiver, message) for message in sync_messages]
-        result.append('    default:\n')
-        result.append('        break;\n')
-        result.append('    }\n\n')
+        result += [sync_message_statement(receiver, message) for message in sync_messages]
         result.append('    ASSERT_NOT_REACHED();\n')
         result.append('}\n')
 

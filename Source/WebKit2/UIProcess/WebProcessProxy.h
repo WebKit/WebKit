@@ -220,7 +220,7 @@ bool WebProcessProxy::send(const T& message, uint64_t destinationID, unsigned me
 {
     COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
 
-    OwnPtr<CoreIPC::MessageEncoder> encoder = CoreIPC::MessageEncoder::create(T::receiverName(), "", destinationID);
+    OwnPtr<CoreIPC::MessageEncoder> encoder = CoreIPC::MessageEncoder::create(T::receiverName(), T::name(), destinationID);
     encoder->encode(message);
 
     return sendMessage(CoreIPC::MessageID(T::messageID), encoder.release(), messageSendFlags);

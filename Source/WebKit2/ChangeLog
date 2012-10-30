@@ -1,3 +1,24 @@
+2012-10-30  Anders Carlsson  <andersca@apple.com>
+
+        Use the message name when dispatching messages
+        https://bugs.webkit.org/show_bug.cgi?id=100774
+
+        Reviewed by Andreas Kling.
+
+        Change the message generator to decide which function to call based on the message name instead
+        of the MessageID. This is yet another step towards eliminating MessageID completely.
+
+        * Scripts/webkit2/messages.py:
+        (async_message_statement):
+        (sync_message_statement):
+        (generate_message_handler):
+        * Scripts/webkit2/messages_unittest.py:
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::send):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postMessage):
+        (WebKit::InjectedBundle::postSynchronousMessage):
+
 2012-10-29  Sam Weinig  <sam@webkit.org>
 
         Switch more class to use the new << form of encode
