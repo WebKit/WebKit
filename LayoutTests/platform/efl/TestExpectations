@@ -656,6 +656,11 @@ editing/pasteboard/paste-TIFF.html [ WontFix ]
 # The test is intrinsically flaky and cannot be fixed.
 webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ WontFix ]
 
+# Color profiles are not currently used. See USE(QCMSLIB)
+webkit.org/b/100519 fast/images/jpeg-with-color-profile.html [ Skip ]
+webkit.org/b/100519 fast/images/png-with-color-profile.html [ Skip ]
+webkit.org/b/100519 fast/images/paletted-png-with-color-profile.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1438,9 +1443,6 @@ webkit.org/b/29359 fast/forms/time [ Skip ]
 webkit.org/b/29359 fast/forms/week [ Skip ]
 webkit.org/b/89209 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailure ]
 
-# Paletted PNG with ICC color profiles not working.
-webkit.org/b/86722 fast/images/paletted-png-with-color-profile.html
-
 # These tests cause flakiness (extra console messages in output)
 webkit.org/b/88729 userscripts/window-onerror-for-isolated-world-1.html
 webkit.org/b/88729 userscripts/window-onerror-for-isolated-world-2.html
@@ -1674,7 +1676,3 @@ webkit.org/b/99691 gamepad/gamepad-out-of-range-crasher.html [ Failure ]
 
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
-
-# The red section is rendered at the wrong position.
-webkit.org/b/100519 fast/images/jpeg-with-color-profile.html [ Skip ]
-webkit.org/b/100519 fast/images/png-with-color-profile.html [ Skip ]

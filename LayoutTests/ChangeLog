@@ -1,3 +1,10 @@
+2012-10-30  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL] Unreviewed, combine color profile failures to correct bug
+        https://bugs.webkit.org/show_bug.cgi?id=100746
+
+        * platform/efl/TestExpectations:
+
 2012-10-30  Emil A Eklund  <eae@chromium.org>
 
         [subixel] Change LineWidth::shrinkAvailableWidthForNewFloatIfNeeded to not pixel snap
