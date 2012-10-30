@@ -604,6 +604,11 @@ bool NetworkJob::handleRedirect()
     if (!newURL.isValid())
         return false;
 
+    if (newURL.protocolIsData()) {
+        m_extendedStatusCode = BlackBerry::Platform::FilterStream::StatusInvalidRedirectToData;
+        return false;
+    }
+
     ResourceRequest newRequest = m_handle->firstRequest();
     newRequest.setURL(newURL);
     newRequest.setMustHandleInternally(true);

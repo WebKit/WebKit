@@ -1,3 +1,17 @@
+2012-10-29  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Disable redirect to data scheme for potential fishing.
+        https://bugs.webkit.org/show_bug.cgi?id=100713
+
+        Reviewed by George Staikos.
+
+        We will disable redirect to data scheme to avoid potential security concern, 
+        described in klevjers.com/papers/phishing.pdf.
+
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleRedirect):
+
 2012-10-29  Vincent Scheib  <scheib@chromium.org>
 
         Unreviewed, rolling out r132845.
