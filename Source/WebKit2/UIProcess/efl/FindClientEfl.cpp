@@ -48,7 +48,8 @@ void FindClientEfl::didFindString(WKPageRef, WKStringRef, unsigned matchCount, c
 void FindClientEfl::didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo)
 {
     FindClientEfl* findClient = toFindClientEfl(clientInfo);
-    findClient->m_viewImpl->smartCallback<TextFound>().call();
+    unsigned matchCount = 0;
+    findClient->m_viewImpl->smartCallback<TextFound>().call(&matchCount);
 }
 
 FindClientEfl::FindClientEfl(EwkViewImpl* viewImpl)

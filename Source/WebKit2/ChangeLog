@@ -1,3 +1,19 @@
+2012-10-30  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Regression(r132887): Caused segfault in a EWK2UnitTestBase.ewk_view_text_find
+        https://bugs.webkit.org/show_bug.cgi?id=100781
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make sure we pass a pointer to zero instead of a NULL pointer
+        as parameter to the "text,found" in case the text could not
+        be found. This prevents crashing in
+        EWK2UnitTestBase.ewk_view_text_find when trying to dereference
+        the parameter pointer.
+
+        * UIProcess/efl/FindClientEfl.cpp:
+        (WebKit::FindClientEfl::didFailToFindString):
+
 2012-10-30  Brady Eidson  <beidson@apple.com>
 
         Crash in WebProcess at com.apple.WebCore: WebCore::ResourceLoader::start
