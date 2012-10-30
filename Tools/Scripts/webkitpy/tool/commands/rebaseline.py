@@ -101,12 +101,12 @@ class RebaselineTest(AbstractRebaseliningCommand):
             port = self._tool.port_factory.get(platform)
             old_baseline = port.expected_filename(test_name, "." + suffix)
             if not self._tool.filesystem.exists(old_baseline):
-                _log.info("No existing baseline for %s." % test_name)
+                _log.debug("No existing baseline for %s." % test_name)
                 continue
 
             new_baseline = self._tool.filesystem.join(port.baseline_path(), self._file_name_for_expected_result(test_name, suffix))
             if self._tool.filesystem.exists(new_baseline):
-                _log.info("Existing baseline at %s, not copying over it." % new_baseline)
+                _log.debug("Existing baseline at %s, not copying over it." % new_baseline)
                 continue
 
             old_baselines.append(old_baseline)
@@ -116,7 +116,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
             old_baseline = old_baselines[i]
             new_baseline = new_baselines[i]
 
-            _log.info("Copying baseline from %s to %s." % (old_baseline, new_baseline))
+            _log.debug("Copying baseline from %s to %s." % (old_baseline, new_baseline))
             self._tool.filesystem.maybe_make_directory(self._tool.filesystem.dirname(new_baseline))
             self._tool.filesystem.copyfile(old_baseline, new_baseline)
             if not self._tool.scm().exists(new_baseline):
@@ -163,7 +163,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
         if move_overwritten_baselines_to:
             self._copy_existing_baseline(move_overwritten_baselines_to, test_name, suffix)
 
-        _log.info("Retrieving %s." % source_baseline)
+        _log.debug("Retrieving %s." % source_baseline)
         self._save_baseline(self._tool.web.get_binary(source_baseline, convert_404_to_None=True), target_baseline)
 
     def _rebaseline_test_and_update_expectations(self, builder_name, test_name, platforms_to_move_existing_baselines_to):
@@ -186,7 +186,7 @@ class OptimizeBaselines(AbstractRebaseliningCommand):
         for suffix in self._baseline_suffix_list:
             baseline_name = _baseline_name(self._tool.filesystem, test_name, suffix)
             if not self._baseline_optimizer.optimize(baseline_name):
-                print "Hueristics failed to optimize %s" % baseline_name
+                print "Heuristics failed to optimize %s" % baseline_name
 
     def execute(self, options, args, tool):
         self._baseline_suffix_list = options.suffixes.split(',')
@@ -194,7 +194,7 @@ class OptimizeBaselines(AbstractRebaseliningCommand):
         self._port = tool.port_factory.get("chromium-win-win7")  # FIXME: This should be selectable.
 
         for test_name in self._port.tests(args):
-            print "Optimizing %s." % test_name
+            _log.info("Optimizing %s" % test_name)
             self._optimize_baseline(test_name)
 
 
@@ -235,9 +235,12 @@ class AbstractParallelRebaselineCommand(AbstractDeclarativeCommand):
                       'You can use "webkit-patch optimize-baselines" to optimize separately.'))])
         AbstractDeclarativeCommand.__init__(self, options=options)
 
-    def _run_webkit_patch(self, args):
+    def _run_webkit_patch(self, args, verbose):
         try:
-            self._tool.executive.run_command([self._tool.path()] + args, cwd=self._tool.scm().checkout_root)
+            verbose_args = ['--verbose'] if verbose else []
+            stderr = self._tool.executive.run_command([self._tool.path()] + verbose_args + args, cwd=self._tool.scm().checkout_root, return_stderr=True)
+            for line in stderr.splitlines():
+                print >> sys.stderr, line
         except ScriptError, e:
             _log.error(e)
 
@@ -262,7 +265,8 @@ class AbstractParallelRebaselineCommand(AbstractDeclarativeCommand):
                 builders_to_fallback_paths[builder] = fallback_path
         return builders_to_fallback_paths.keys()
 
-    def _rebaseline_commands(self, test_list):
+    def _rebaseline_commands(self, test_list, verbose=False):
+
         path_to_webkit_patch = self._tool.path()
         cwd = self._tool.scm().checkout_root
         commands = []
@@ -273,6 +277,8 @@ class AbstractParallelRebaselineCommand(AbstractDeclarativeCommand):
                 move_overwritten_baselines_to = builders.move_overwritten_baselines_to(builder)
                 for platform in move_overwritten_baselines_to:
                     cmd_line.extend(['--move-overwritten-baselines-to', platform])
+                if verbose:
+                    cmd_line.append('--verbose')
                 commands.append(tuple([cmd_line, cwd]))
         return commands
 
@@ -282,8 +288,9 @@ class AbstractParallelRebaselineCommand(AbstractDeclarativeCommand):
             file_added = False
             for line in output:
                 try:
-                    files_to_add.update(json.loads(line)['add'])
-                    file_added = True
+                    if line:
+                        files_to_add.update(json.loads(line)['add'])
+                        file_added = True
                 except ValueError, e:
                     _log.debug('"%s" is not a JSON object, ignoring' % line)
 
@@ -293,24 +300,34 @@ class AbstractParallelRebaselineCommand(AbstractDeclarativeCommand):
 
         return list(files_to_add)
 
-    def _optimize_baselines(self, test_list):
+    def _optimize_baselines(self, test_list, verbose=False):
         # We don't run this in parallel because modifying the SCM in parallel is unreliable.
         for test in test_list:
             all_suffixes = set()
             for builder in self._builders_to_fetch_from(test_list[test]):
                 all_suffixes.update(test_list[test][builder])
-            self._run_webkit_patch(['optimize-baselines', '--suffixes', ','.join(all_suffixes), test])
+            self._run_webkit_patch(['optimize-baselines', '--suffixes', ','.join(all_suffixes), test], verbose)
 
     def _rebaseline(self, options, test_list):
-        commands = self._rebaseline_commands(test_list)
+        for test, builders in sorted(test_list.items()):
+            _log.info("Rebaselining %s" % test)
+            for builder, suffixes in sorted(builders.items()):
+                _log.debug("  %s: %s" % (builder, ",".join(suffixes)))
+
+        commands = self._rebaseline_commands(test_list, options.verbose)
         command_results = self._tool.executive.run_in_parallel(commands)
+
+        log_output = '\n'.join(result[2] for result in command_results).replace('\n\n', '\n')
+        for line in log_output.split('\n'):
+            if line:
+                print >> sys.stderr, line  # FIXME: Figure out how to log properly.
 
         files_to_add = self._files_to_add(command_results)
         if files_to_add:
             self._tool.scm().add_list(list(files_to_add))
 
         if options.optimize:
-            self._optimize_baselines(test_list)
+            self._optimize_baselines(test_list, options.verbose)
 
 
 class RebaselineJson(AbstractParallelRebaselineCommand):
@@ -347,7 +364,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
         tests = self._tests_to_rebaseline(self._tool.port_factory.get(port_name)).items()
 
         if tests:
-            _log.info("Retrieving results for %s from %s." % (port_name, builder_name))
+            _log.debug("Retrieving results for %s from %s." % (port_name, builder_name))
 
         for test_name, suffixes in tests:
             _log.info("    %s (%s)" % (test_name, ','.join(suffixes)))
@@ -427,6 +444,6 @@ class Rebaseline(AbstractParallelRebaselineCommand):
                 test_list[test][builder.name()] = self._suffixes_to_update(options)
 
         if options.verbose:
-            print "rebaseline-json: " + str(test_list)
+            _log.debug("rebaseline-json: " + str(test_list))
 
         self._rebaseline(options, test_list)

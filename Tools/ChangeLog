@@ -1,5 +1,44 @@
 2012-10-30  Dirk Pranke  <dpranke@chromium.org>
 
+        webkit-patch rebaseline*: add more helpful logging
+        https://bugs.webkit.org/show_bug.cgi?id=100562
+
+        Reviewed by Ojan Vafai.
+
+        This change rewires the garden-o-matic and rebaseline* commands
+        in webkit-patch so that --verbose propagates through all the
+        subcommand invocations properly, and cleans up the logging so
+        that you can actually tell what is happening. For now, we
+        leave all of the logging at the logging.DEBUG level, which
+        means that it gets mixed in will all the other debug logging noise
+        and is harder to read, but we'll fix that in subsequent patches.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        (BaselineOptimizer._platform):
+        (BaselineOptimizer._move_baselines):
+        (BaselineOptimizer.optimize):
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        (GardenOMatic.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._copy_existing_baseline):
+        (RebaselineTest._rebaseline_test):
+        (OptimizeBaselines._optimize_baseline):
+        (OptimizeBaselines.execute):
+        (AbstractParallelRebaselineCommand._run_webkit_patch):
+        (AbstractParallelRebaselineCommand._rebaseline_commands):
+        (AbstractParallelRebaselineCommand._files_to_add):
+        (AbstractParallelRebaselineCommand._optimize_baselines):
+        (AbstractParallelRebaselineCommand._rebaseline):
+        (RebaselineExpectations._add_tests_to_rebaseline_for_port):
+        (Rebaseline.execute):
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPServer.__init__):
+        (GardeningHTTPRequestHandler):
+        (GardeningHTTPRequestHandler._run_webkit_patch):
+        (GardeningHTTPRequestHandler.rebaselineall):
+
+2012-10-30  Dirk Pranke  <dpranke@chromium.org>
+
         clean up tests for webkit-patch rebaseline* commands
         https://bugs.webkit.org/show_bug.cgi?id=100793
 
@@ -310,7 +349,7 @@
         * WebKitTestRunner/Configurations/DebugRelease.xcconfig:
         * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
 
-2012-10-29  Dirk Pranke  <dpranke@chromium.org>
+2012-10-26  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: change non-verbose log format for webkit-patch
         https://bugs.webkit.org/show_bug.cgi?id=100561

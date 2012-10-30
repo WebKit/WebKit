@@ -34,7 +34,7 @@ class GardenOMatic(AbstractDeclarativeCommand):
         print "This command runs a local HTTP server that changes your working copy"
         print "based on the actions you take in the web-based UI."
 
-        httpd = GardeningHTTPServer(httpd_port=8127, config={'tool': tool})
+        httpd = GardeningHTTPServer(httpd_port=8127, config={'tool': tool, 'options': options})
         self._tool.user.open_url(httpd.url())
 
         print "Local HTTP server started."

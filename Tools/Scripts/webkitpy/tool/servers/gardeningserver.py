@@ -26,6 +26,7 @@ import BaseHTTPServer
 import logging
 import json
 import os
+import sys
 
 from webkitpy.common.memoized import memoized
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
@@ -54,6 +55,7 @@ class GardeningHTTPServer(BaseHTTPServer.HTTPServer):
     def __init__(self, httpd_port, config):
         server_name = ''
         self.tool = config['tool']
+        self.options = config['options']
         BaseHTTPServer.HTTPServer.__init__(self, (server_name, httpd_port), GardeningHTTPRequestHandler)
 
     def url(self):
@@ -75,6 +77,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         'TestFailures')
 
     allow_cross_origin_requests = True
+    debug_output = ''
 
     def _run_webkit_patch(self, args):
         return self.server.tool.executive.run_command([self.server.tool.path()] + args, cwd=self.server.tool.scm().checkout_root)
@@ -94,13 +97,26 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
     def ping(self):
         self._serve_text('pong')
 
+    def _run_webkit_patch(self, command, input_string):
+        PIPE = self.server.tool.executive.PIPE
+        process = self.server.tool.executive.popen([self.server.tool.path()] + command, cwd=self.server.tool.scm().checkout_root, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        process.stdin.write(input_string)
+        output, error = process.communicate()
+        return (process.returncode, output, error)
+
     def rebaselineall(self):
         command = ['rebaseline-json']
+        if self.server.options.verbose:
+            command.append('--verbose')
         json_input = self.read_entity_body()
-        _log.debug("rebaselining using '%s'" % json_input)
 
-        def error_handler(script_error):
-            _log.error("error from rebaseline-json: %s, input='%s', output='%s'" % (str(script_error), json_input, script_error.output))
+        _log.debug("calling %s, input='%s'", command, json_input)
+        return_code, output, error = self._run_webkit_patch(command, json_input)
+        print >> sys.stderr, error
+        if return_code:
+            _log.error("rebaseline-json failed: %d, output='%s'" % (return_code, output))
+        else:
+            _log.debug("rebaseline-json succeeded")
 
-        self.server.tool.executive.run_command([self.server.tool.path()] + command, input=json_input, cwd=self.server.tool.scm().checkout_root, return_stderr=True, error_handler=error_handler)
+        # FIXME: propagate error and/or log messages back to the UI.
         self._serve_text('success')

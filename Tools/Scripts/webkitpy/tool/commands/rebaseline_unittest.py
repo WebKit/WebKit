@@ -228,8 +228,8 @@ class TestRebaselineJson(_BaseTestCase):
 
         # Note that we have one run_in_parallel() call followed by a run_command()
         self.assertEquals(self.tool.executive.calls,
-            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'user-scripts/another-test.html']],
-             ['echo', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
+            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'user-scripts/another-test.html', '--verbose']],
+             ['echo', '--verbose', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
 
     def test_rebaseline_debug(self):
         options = MockOptions(optimize=True, verbose=True)
@@ -237,8 +237,8 @@ class TestRebaselineJson(_BaseTestCase):
 
         # Note that we have one run_in_parallel() call followed by a run_command()
         self.assertEquals(self.tool.executive.calls,
-            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder (Debug)', '--test', 'user-scripts/another-test.html']],
-             ['echo', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
+            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder (Debug)', '--test', 'user-scripts/another-test.html', '--verbose']],
+             ['echo', '--verbose', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
 
 
 class TestRebaseline(_BaseTestCase):

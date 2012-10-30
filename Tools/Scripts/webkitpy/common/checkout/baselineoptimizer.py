@@ -196,6 +196,15 @@ class BaselineOptimizer(object):
                 del results_by_port_name[port_name]
         return results_by_port_name
 
+    def _platform(self, filename):
+        platform_dir = 'LayoutTests' + self._filesystem.sep + 'platform' + self._filesystem.sep
+        if filename.startswith(platform_dir):
+            return filename.replace(platform_dir, '').split(self._filesystem.sep)[0]
+        platform_dir = self._filesystem.join(self._scm.checkout_root, platform_dir)
+        if filename.startswith(platform_dir):
+            return filename.replace(platform_dir, '').split(self._filesystem.sep)[0]
+        return '(generic)'
+
     def _move_baselines(self, baseline_name, results_by_directory, new_results_by_directory):
         data_for_result = {}
         for directory, result in results_by_directory.items():
@@ -208,12 +217,12 @@ class BaselineOptimizer(object):
             if new_results_by_directory.get(directory) != result:
                 file_names.append(self._filesystem.join(self._scm.checkout_root, directory, baseline_name))
         if file_names:
-            _log.debug("deleting:")
-            for filename in file_names:
-                _log.debug("  " + self._filesystem.relpath(filename, self._scm.checkout_root).replace(baseline_name, ''))
+            _log.debug("    Deleting:")
+            for platform_dir in sorted(self._platform(filename) for filename in file_names):
+                _log.debug("      " + platform_dir)
             self._scm.delete_list(file_names)
         else:
-            _log.debug("nothing to delete")
+            _log.debug("    (Nothing to delete)")
 
         file_names = []
         for directory, result in new_results_by_directory.items():
@@ -223,12 +232,12 @@ class BaselineOptimizer(object):
                 self._filesystem.write_binary_file(destination, data_for_result[result])
                 file_names.append(destination)
         if file_names:
-            _log.debug("adding:")
-            for filename in file_names:
-                _log.debug("  " + self._filesystem.relpath(filename, self._scm.checkout_root).replace(baseline_name, ''))
+            _log.debug("    Adding:")
+            for platform_dir in sorted(self._platform(filename) for filename in file_names):
+                _log.debug("      " + platform_dir)
             self._scm.add_list(file_names)
         else:
-            _log.debug("nothing to add")
+            _log.debug("    (Nothing to add)")
 
     def directories_by_result(self, baseline_name):
         results_by_directory = self._read_results_by_directory(baseline_name)
@@ -240,23 +249,26 @@ class BaselineOptimizer(object):
         self.new_results_by_directory = new_results_by_directory
         if new_results_by_directory == results_by_directory:
             if new_results_by_directory:
-                _log.debug("No optimization found for %s, optimal?" % basename)
-                for path, result in results_by_directory.items():
-                    _log.debug("  %s: %s" % (self._filesystem.relpath(path, self._scm.checkout_root).replace(baseline_name, ''), result[0:6]))
+                _log.debug("  %s: (already optimal)" % basename)
+                for path in sorted(results_by_directory):
+                    result = results_by_directory[path]
+                    _log.debug("      %s: %s" % (self._platform(path), result[0:6]))
             else:
-                _log.debug("No baselines found for %s" % basename)
+                _log.debug("  %s: (no baselines found)" % basename)
             return True
         if self._filtered_results_by_port_name(results_by_directory) != self._filtered_results_by_port_name(new_results_by_directory):
             _log.warning("Optimization failed")
             return False
 
-        _log.debug("Optimizing %s" % basename)
-        _log.debug("before: ")
-        for path, result in results_by_directory.items():
-            _log.debug("  %s: %s" % (self._filesystem.relpath(path, self._scm.checkout_root).replace(baseline_name, ''), result[0:6]))
-        _log.debug("after: ")
-        for path, result in new_results_by_directory.items():
-            _log.debug("  %s: %s" % (self._filesystem.relpath(path, self._scm.checkout_root).replace(baseline_name, ''), result[0:6]))
+        _log.debug("  %s:" % basename)
+        _log.debug("    Before: ")
+        for path in sorted(results_by_directory):
+            result = results_by_directory[path]
+            _log.debug("      %s: %s" % (self._platform(path), result[0:6]))
+        _log.debug("    After: ")
+        for path in sorted(new_results_by_directory):
+            result = new_results_by_directory[path]
+            _log.debug("      %s: %s" % (self._platform(path), result[0:6]))
 
         self._move_baselines(baseline_name, results_by_directory, new_results_by_directory)
         return True
