@@ -116,6 +116,12 @@
                         '<(source_dir)/WebKit/chromium/public/gtk',
                     ],
                 }],
+                ['inside_chromium_build==1 and component=="shared_library"', {
+                    'sources': [
+                        '<(source_dir)/WebKit/chromium/src/ChromiumCurrentTime.cpp',
+                        '<(source_dir)/WebKit/chromium/src/ChromiumThreading.cpp',
+                    ],
+                }],
             ],
         },
         {
@@ -346,18 +352,6 @@
                 }, { # OS!="android"
                     'sources/': [
                         ['exclude', 'Android\\.cpp$'],
-                    ],
-                }],
-                ['inside_chromium_build==1 and component=="shared_library"', {
-                    'sources': [
-                        '<(source_dir)/WebKit/chromium/src/ChromiumCurrentTime.cpp',
-                        '<(source_dir)/WebKit/chromium/src/ChromiumThreading.cpp',
-                    ],
-                    'include_dirs': [
-                        '<(source_dir)/WebKit/chromium/public',
-                    ],
-                    'dependencies': [
-                        '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
                     ],
                 }],
                 ['inside_chromium_build==0', {

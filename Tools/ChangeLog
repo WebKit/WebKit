@@ -1,3 +1,15 @@
+2012-10-29  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] TestRunner needs to compile ChromiumCurrentTime and ChromiumThreading in components build
+        https://bugs.webkit.org/show_bug.cgi?id=100658
+
+        Reviewed by Tony Chang.
+
+        Before, this was compiled into DumpRenderTree. I also dropped the
+        include_dirs and dependencies block as TestRunner already has them.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-10-29  Takashi Sakamoto  <tasak@google.com>
 
         Unreviewed. Adding myself as a committer.
