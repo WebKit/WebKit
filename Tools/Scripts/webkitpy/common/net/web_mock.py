@@ -30,7 +30,11 @@ import StringIO
 
 
 class MockWeb(object):
+    def __init__(self):
+        self.urls_fetched = []
+
     def get_binary(self, url, convert_404_to_None=False):
+        self.urls_fetched.append(url)
         return "MOCK Web result, convert 404 to None=%s" % convert_404_to_None
 
 

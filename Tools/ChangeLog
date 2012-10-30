@@ -1,5 +1,75 @@
 2012-10-30  Dirk Pranke  <dpranke@chromium.org>
 
+        clean up tests for webkit-patch rebaseline* commands
+        https://bugs.webkit.org/show_bug.cgi?id=100793
+
+        Reviewed by Ojan Vafai.
+
+        The tests in rebaseline_unittest.py had a lot of code cloning,
+        and many of the tests tested whether things passed or failed by
+        looking at what was logged instead of what was actually done;
+        as a result the tests were kinda hard to understand and harder to
+        maintain.
+
+        This patch adds hooks to MockWeb() and MockExecutive() so we can
+        directly see which URLs were fetched and calls invoked, and
+        then reworks all of the unit tests to be easier to follow and
+        maintain and not sensitive to the logging. Also there were a
+        couple of tests that were redundant.
+
+        There are no functional changes in this patch, and I verified that
+        the coverage remains the same.
+
+        * Scripts/webkitpy/common/net/web_mock.py:
+        (MockWeb.__init__):
+        (MockWeb.get_binary):
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive.__init__):
+        (MockExecutive.run_command):
+        (MockExecutive.kill_all):
+        (MockExecutive):
+        (MockExecutive.kill_process):
+        (MockExecutive.popen):
+        (MockExecutive.run_in_parallel):
+        (MockExecutive2):
+        (MockExecutive2.__init__):
+        (MockExecutive2.run_command):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (_BaseTestCase):
+        (_BaseTestCase.setUp):
+        (_BaseTestCase._expand):
+        (_BaseTestCase._read):
+        (_BaseTestCase._write):
+        (_BaseTestCase._zero_out_test_expectations):
+        (TestRebaselineTest):
+        (TestRebaselineTest.test_baseline_directory):
+        (TestRebaselineTest.test_rebaseline_updates_expectations_file_noop):
+        (test_rebaseline_updates_expectations_file):
+        (test_rebaseline_does_not_include_overrides):
+        (test_rebaseline_test):
+        (test_rebaseline_test_and_print_scm_changes):
+        (test_rebaseline_and_copy_test):
+        (test_rebaseline_and_copy_test_no_existing_result):
+        (test_rebaseline_and_copy_test_with_lion_result):
+        (test_rebaseline_and_copy_no_overwrite_test):
+        (test_rebaseline_test_internal_with_move_overwritten_baselines_to):
+        (TestRebaselineJson):
+        (TestRebaselineJson.setUp):
+        (TestRebaselineJson.tearDown):
+        (TestRebaselineJson.test_rebaseline_all):
+        (TestRebaselineJson.test_rebaseline_debug):
+        (TestRebaseline):
+        (TestRebaseline.test_tests_to_update):
+        (TestRebaseline.test_rebaseline):
+        (TestRebaseline.test_rebaseline.rebaseline_stub):
+        (TestRebaselineExpectations):
+        (TestRebaselineExpectations.setUp):
+        (TestRebaselineExpectations.test_rebaseline_expectations):
+        (TestRebaselineExpectations.test_rebaseline_expectations_noop):
+        (TestRebaselineExpectations.disabled_test_overrides_are_included_correctly):
+
+2012-10-30  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: fix import of coverage so that it works in a clean install
         https://bugs.webkit.org/show_bug.cgi?id=100780
 

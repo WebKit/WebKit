@@ -33,20 +33,48 @@ from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.rebaseline import *
 from webkitpy.tool.mocktool import MockTool, MockOptions
 from webkitpy.common.net.buildbot.buildbot_mock import MockBuilder
-from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.executive_mock import MockExecutive2
 
 
-class TestRebaseline(unittest.TestCase):
-    def test_tests_to_update(self):
-        command = Rebaseline()
-        command.bind_to_tool(MockTool())
-        build = Mock()
-        OutputCapture().assert_outputs(self, command._tests_to_update, [build])
+class _BaseTestCase(unittest.TestCase):
+    MOCK_WEB_RESULT = 'MOCK Web result, convert 404 to None=True'
+    command_constructor = None
+
+    def setUp(self):
+        self.tool = MockTool()
+        self.command = self.command_constructor()
+        self.command.bind_to_tool(self.tool)
+        self.lion_port = self.tool.port_factory.get_from_builder_name("WebKit Mac10.7")
+        self.lion_expectations_path = self.lion_port.path_to_test_expectations_file()
+
+        # FIXME: we should override builders._exact_matches here to point to a set
+        # of test ports and restore the value in tearDown(), and that way the
+        # individual tests wouldn't have to worry about it.
+
+    def _expand(self, path):
+        if self.tool.filesystem.isabs(path):
+            return path
+        return self.tool.filesystem.join(self.lion_port.layout_tests_dir(), path)
+
+    def _read(self, path):
+        return self.tool.filesystem.read_text_file(self._expand(path))
+
+    def _write(self, path, contents):
+        self.tool.filesystem.write_text_file(self._expand(path), contents)
+
+    def _zero_out_test_expectations(self):
+        for port_name in self.tool.port_factory.all_port_names():
+            port = self.tool.port_factory.get(port_name)
+            for path in port.expectations_files():
+                self._write(path, '')
+        self.tool.filesystem.written_files = {}
+
+
+class TestRebaselineTest(_BaseTestCase):
+    command_constructor = RebaselineTest  # AKA webkit-patch rebaseline-test-internal
 
     def test_baseline_directory(self):
-        command = RebaselineTest()
-        tool = MockTool()
-        command.bind_to_tool(tool)
+        command = self.command
         self.assertEqual(command._baseline_directory("Apple Win XP Debug (Tests)"), "/mock-checkout/LayoutTests/platform/win-xp")
         self.assertEqual(command._baseline_directory("Apple Win 7 Release (Tests)"), "/mock-checkout/LayoutTests/platform/win")
         self.assertEqual(command._baseline_directory("Apple Lion Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-lion")
@@ -58,458 +86,244 @@ class TestRebaseline(unittest.TestCase):
         self.assertEqual(command._baseline_directory("WebKit Mac10.6"), "/mock-checkout/LayoutTests/platform/chromium-mac-snowleopard")
 
     def test_rebaseline_updates_expectations_file_noop(self):
-        command = RebaselineTest()
-        tool = MockTool()
-        command.bind_to_tool(tool)
-
-        lion_port = tool.port_factory.get_from_builder_name("WebKit Mac10.7")
-        for path in lion_port.expectations_files():
-            tool.filesystem.write_text_file(path, '')
-        tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), """Bug(B) [ Mac Linux XP Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass ]
+        self._zero_out_test_expectations()
+        self._write(self.lion_expectations_path, """Bug(B) [ Mac Linux XP Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass ]
 Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
 """)
-        tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "fast/dom/Window/window-postmessage-clone-really-deep-array.html"), "Dummy test contents")
-        tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "fast/css/large-list-of-rules-crash.html"), "Dummy test contents")
-        tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "userscripts/another-test.html"), "Dummy test contents")
+        self._write("fast/dom/Window/window-postmessage-clone-really-deep-array.html", "Dummy test contents")
+        self._write("fast/css/large-list-of-rules-crash.html", "Dummy test contents")
+        self._write("userscripts/another-test.html", "Dummy test contents")
 
-        expected_logs = """Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png.
-Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.wav.
-Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
-"""
-        OutputCapture().assert_outputs(self, command._rebaseline_test_and_update_expectations, ["WebKit Mac10.7", "userscripts/another-test.html", None], expected_logs=expected_logs)
+        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None)
 
-        new_expectations = tool.filesystem.read_text_file(lion_port.path_to_test_expectations_file())
+        self.assertEquals(self.tool.web.urls_fetched,
+            ['http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png',
+             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.wav',
+             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt'])
+        new_expectations = self._read(self.lion_expectations_path)
         self.assertEqual(new_expectations, """Bug(B) [ Mac Linux XP Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass ]
 Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
 """)
 
     def test_rebaseline_updates_expectations_file(self):
-        command = RebaselineTest()
-        tool = MockTool()
-        command.bind_to_tool(tool)
+        self._write(self.lion_expectations_path, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
+        self._write("userscripts/another-test.html", "Dummy test contents")
 
-        lion_port = tool.port_factory.get_from_builder_name("WebKit Mac10.7")
-        tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
-        tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "userscripts/another-test.html"), "Dummy test contents")
+        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None)
 
-        expected_logs = """Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png.
-Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.wav.
-Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
-"""
-        OutputCapture().assert_outputs(self, command._rebaseline_test_and_update_expectations, ["WebKit Mac10.7", "userscripts/another-test.html", None], expected_logs=expected_logs)
-
-        new_expectations = tool.filesystem.read_text_file(lion_port.path_to_test_expectations_file())
+        self.assertEquals(self.tool.web.urls_fetched,
+            ['http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png',
+             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.wav',
+             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt'])
+        new_expectations = self._read(self.lion_expectations_path)
         self.assertEqual(new_expectations, "Bug(x) [ MountainLion SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
     def test_rebaseline_does_not_include_overrides(self):
-        command = RebaselineTest()
-        tool = MockTool()
-        command.bind_to_tool(tool)
+        self._write(self.lion_expectations_path, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
+        self._write(self.lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), "Bug(y) [ Mac ] other-test.html [ Failure ]\n")
+        self._write("userscripts/another-test.html", "Dummy test contents")
 
-        lion_port = tool.port_factory.get_from_builder_name("WebKit Mac10.7")
-        tool.filesystem.write_text_file(lion_port.path_to_test_expectations_file(), "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
-        tool.filesystem.write_text_file(lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), "Bug(y) [ Mac ] other-test.html [ Failure ]\n")
-        tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "userscripts/another-test.html"), "Dummy test contents")
+        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None)
 
-        expected_logs = """Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png.
-Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.wav.
-Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
-"""
-        OutputCapture().assert_outputs(self, command._rebaseline_test_and_update_expectations, ["WebKit Mac10.7", "userscripts/another-test.html", None], expected_logs=expected_logs)
+        self.assertEquals(self.tool.web.urls_fetched,
+            ['http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png',
+             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.wav',
+             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt'])
 
-        new_expectations = tool.filesystem.read_text_file(lion_port.path_to_test_expectations_file())
+        new_expectations = self._read(self.lion_expectations_path)
         self.assertEqual(new_expectations, "Bug(x) [ MountainLion SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
     def test_rebaseline_test(self):
-        command = RebaselineTest()
-        command.bind_to_tool(MockTool())
-        expected_logs = "Retrieving http://example.com/f/builders/WebKit Linux/results/layout-test-results/userscripts/another-test-actual.txt.\n"
-        OutputCapture().assert_outputs(self, command._rebaseline_test, ["WebKit Linux", "userscripts/another-test.html", None, "txt"], expected_logs=expected_logs)
+        self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt")
+        self.assertEquals(self.tool.web.urls_fetched, ['http://example.com/f/builders/WebKit Linux/results/layout-test-results/userscripts/another-test-actual.txt'])
 
     def test_rebaseline_test_and_print_scm_changes(self):
-        command = RebaselineTest()
-        command.bind_to_tool(MockTool())
-        expected_logs = "Retrieving http://example.com/f/builders/WebKit Linux/results/layout-test-results/userscripts/another-test-actual.txt.\n"
-        command._print_scm_changes = True
-        command._scm_changes = {'add': [], 'delete': []}
-        command._tool._scm.exists = lambda x: False
-        OutputCapture().assert_outputs(self, command._rebaseline_test, ["WebKit Linux", "userscripts/another-test.html", None, "txt"], expected_logs=expected_logs)
-        self.assertEquals(command._scm_changes, {'add': ['/mock-checkout/LayoutTests/platform/chromium-linux/userscripts/another-test-expected.txt'], 'delete': []})
+        self.command._print_scm_changes = True
+        self.command._scm_changes = {'add': [], 'delete': []}
+        self.tool._scm.exists = lambda x: False
+
+        self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt")
+
+        self.assertEquals(self.command._scm_changes, {'add': ['/mock-checkout/LayoutTests/platform/chromium-linux/userscripts/another-test-expected.txt'], 'delete': []})
 
     def test_rebaseline_and_copy_test(self):
-        command = RebaselineTest()
-        tool = MockTool()
-        command.bind_to_tool(tool)
+        self._write("userscripts/another-test-expected.txt", "generic result")
 
-        lion_port = tool.port_factory.get_from_builder_name("WebKit Mac10.7")
-        tool.filesystem.write_text_file(os.path.join(lion_port.layout_tests_dir(), "userscripts/another-test-expected.txt"), "Dummy expected result")
+        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt")
 
-        expected_logs = """Copying baseline from /mock-checkout/LayoutTests/userscripts/another-test-expected.txt to /mock-checkout/LayoutTests/platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt.
-Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
-"""
-        OutputCapture().assert_outputs(self, command._rebaseline_test, ["WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt"], expected_logs=expected_logs)
+        self.assertEquals(self._read('platform/chromium-mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
+        self.assertEquals(self._read('platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt'), 'generic result')
 
     def test_rebaseline_and_copy_test_no_existing_result(self):
-        command = RebaselineTest()
-        tool = MockTool()
-        command.bind_to_tool(tool)
+        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt")
 
-        expected_logs = """No existing baseline for userscripts/another-test.html.
-Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
-"""
-        OutputCapture().assert_outputs(self, command._rebaseline_test, ["WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt"], expected_logs=expected_logs)
+        self.assertEquals(self._read('platform/chromium-mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
+        self.assertFalse(self.tool.filesystem.exists(self._expand('platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt')))
 
     def test_rebaseline_and_copy_test_with_lion_result(self):
-        command = RebaselineTest()
-        tool = MockTool()
-        command.bind_to_tool(tool)
+        self._write("platform/chromium-mac-lion/userscripts/another-test-expected.txt", "original lion result")
 
-        lion_port = tool.port_factory.get_from_builder_name("WebKit Mac10.7")
-        tool.filesystem.write_text_file(os.path.join(lion_port.baseline_path(), "userscripts/another-test-expected.txt"), "Dummy expected result")
+        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt")
 
-        expected_logs = "Copying baseline from /mock-checkout/LayoutTests/platform/chromium-mac-lion/userscripts/another-test-expected.txt to /mock-checkout/LayoutTests/platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt.\nRetrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.\n"
-        OutputCapture().assert_outputs(self, command._rebaseline_test, ["WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt"], expected_logs=expected_logs)
+        self.assertEquals(self.tool.web.urls_fetched, ["http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt"])
+        self.assertEquals(self._read("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt"), "original lion result")
+        self.assertEquals(self._read("platform/chromium-mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
 
     def test_rebaseline_and_copy_no_overwrite_test(self):
-        command = RebaselineTest()
-        tool = MockTool()
-        command.bind_to_tool(tool)
+        self._write("platform/chromium-mac-lion/userscripts/another-test-expected.txt", "original lion result")
+        self._write("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt", "original snowleopard result")
 
-        lion_port = tool.port_factory.get_from_builder_name("WebKit Mac10.7")
-        tool.filesystem.write_text_file(os.path.join(lion_port.baseline_path(), "userscripts/another-test-expected.txt"), "Dummy expected result")
+        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt")
 
-        snowleopard_port = tool.port_factory.get_from_builder_name("WebKit Mac10.6")
-        tool.filesystem.write_text_file(os.path.join(snowleopard_port.baseline_path(), "userscripts/another-test-expected.txt"), "Dummy expected result")
-
-        expected_logs = """Existing baseline at /mock-checkout/LayoutTests/platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt, not copying over it.
-Retrieving http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt.
-"""
-        OutputCapture().assert_outputs(self, command._rebaseline_test, ["WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt"], expected_logs=expected_logs)
-
-    def test_rebaseline_all(self):
-        old_exact_matches = builders._exact_matches
-        builders._exact_matches = {
-            "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
-            "MOCK builder (Debug)": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier", "debug"])},
-        }
-
-        command = RebaselineJson()
-        tool = MockTool()
-        options = MockOptions()
-        options.optimize = True
-        command.bind_to_tool(tool)
-        tool.executive = MockExecutive(should_log=True)
-
-        expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'user-scripts/another-test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html'], cwd=/mock-checkout
-"""
-        OutputCapture().assert_outputs(self, command._rebaseline, [options, {"user-scripts/another-test.html":{"MOCK builder": ["txt", "png"]}}], expected_stderr=expected_stderr)
-
-        expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder (Debug)', '--test', 'user-scripts/another-test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html'], cwd=/mock-checkout
-"""
-        OutputCapture().assert_outputs(self, command._rebaseline, [options, {"user-scripts/another-test.html":{"MOCK builder (Debug)": ["txt", "png"]}}], expected_stderr=expected_stderr)
-
-        expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder', '--test', 'user-scripts/another-test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'user-scripts/another-test.html'], cwd=/mock-checkout
-"""
-        OutputCapture().assert_outputs(self, command._rebaseline, [options, {"user-scripts/another-test.html":{"MOCK builder (Debug)": ["txt", "png"], "MOCK builder": ["txt"]}}], expected_stderr=expected_stderr)
-
-        builders._exact_matches = old_exact_matches
-
-    def test_rebaseline_expectations(self):
-        command = RebaselineExpectations()
-        tool = MockTool()
-        command.bind_to_tool(tool)
-
-        lion_port = tool.port_factory.get_from_builder_name("WebKit Mac10.7")
-        for port_name in tool.port_factory.all_port_names():
-            port = tool.port_factory.get(port_name)
-            for path in port.expectations_files():
-                tool.filesystem.write_text_file(path, '')
-
-        # Don't enable logging until after we create the mock expectation files as some Port.__init__'s run subcommands.
-        tool.executive = MockExecutive(should_log=True)
-
-        def run_in_parallel(commands):
-            print commands
-            return ""
-
-        tool.executive.run_in_parallel = run_in_parallel
-
-        expected_logs = "Retrieving results for chromium-linux-x86 from WebKit Linux 32.\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for chromium-linux-x86_64 from WebKit Linux.\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for chromium-mac-lion from WebKit Mac10.7.\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for chromium-mac-mountainlion from WebKit Mac10.8.\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for chromium-mac-snowleopard from WebKit Mac10.6.\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for chromium-win-win7 from WebKit Win7.\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for chromium-win-xp from WebKit XP.\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for efl from EFL Linux 64-bit Release.\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for gtk from GTK Linux 64-bit Release.\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for mac-lion from Apple Lion Release WK1 (Tests).\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for mac-mountainlion from Apple MountainLion Release WK1 (Tests).\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for qt-linux from Qt Linux Release.\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\nRetrieving results for win-7sp0 from Apple Win 7 Release (Tests).\n    userscripts/another-test.html (txt)\n    userscripts/images.svg (png)\n"
-
-        expected_stdout = "[(['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'WebKit Linux 32', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'WebKit Linux', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'WebKit Mac10.6', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'WebKit Mac10.7', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'WebKit Win7', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'Apple Win 7 Release (Tests)', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'EFL Linux 64-bit Release', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'WebKit Mac10.8', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'GTK Linux 64-bit Release', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'Qt Linux Release', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'Apple Lion Release WK1 (Tests)', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'WebKit XP', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'Apple MountainLion Release WK1 (Tests)', '--test', 'userscripts/another-test.html'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'WebKit Linux 32', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'WebKit Linux', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'WebKit Mac10.6', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'WebKit Mac10.7', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'WebKit Win7', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'Apple Win 7 Release (Tests)', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'EFL Linux 64-bit Release', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'WebKit Mac10.8', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'GTK Linux 64-bit Release', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'Qt Linux Release', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'Apple Lion Release WK1 (Tests)', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'WebKit XP', '--test', 'userscripts/images.svg'], '/mock-checkout'), (['echo', 'rebaseline-test-internal', '--suffixes', 'png', '--builder', 'Apple MountainLion Release WK1 (Tests)', '--test', 'userscripts/images.svg'], '/mock-checkout')]\n"
-
-        expected_stderr = """MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['qmake', '-v'], cwd=None
-"""
-
-        command._tests_to_rebaseline = lambda port: {'userscripts/another-test.html': set(['txt']), 'userscripts/images.svg': set(['png'])}
-        OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=False), [], tool], expected_logs=expected_logs, expected_stdout=expected_stdout, expected_stderr=expected_stderr)
-
-        expected_stderr_with_optimize = """MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'userscripts/another-test.html'], cwd=/mock-checkout
-MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'png', 'userscripts/images.svg'], cwd=/mock-checkout
-MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['qmake', '-v'], cwd=None
-MOCK run_command: ['qmake', '-v'], cwd=None
-"""
-
-        command._tests_to_rebaseline = lambda port: {'userscripts/another-test.html': set(['txt']), 'userscripts/images.svg': set(['png'])}
-        OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True), [], tool], expected_logs=expected_logs, expected_stdout=expected_stdout, expected_stderr=expected_stderr_with_optimize)
-
-    def _assert_command(self, command, options=None, args=None, expected_stdout='', expected_stderr='', expected_logs=''):
-        # FIXME: generalize so more tests use this to get rid of boilerplate.
-        options = options or MockOptions(optimize=True, builders=None, suffixes=['txt'], verbose=False)
-        args = args or []
-
-        tool = MockTool()
-        command.bind_to_tool(tool)
-
-        port = tool.port_factory.get('chromium-mac-lion')
-
-        for port_name in tool.port_factory.all_port_names():
-            port = tool.port_factory.get(port_name)
-            for path in port.expectations_files():
-                tool.filesystem.write_text_file(path, '')
-
-        OutputCapture().assert_outputs(self, command.execute, [options, args, tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr, expected_logs=expected_logs)
-
-    def test_rebaseline_expectations_noop(self):
-        self._assert_command(RebaselineExpectations(), expected_logs='Did not find any tests marked Rebaseline.\n')
-
-    def test_overrides_are_included_correctly(self):
-        command = RebaselineExpectations()
-        tool = MockTool()
-        command.bind_to_tool(tool)
-        port = tool.port_factory.get('chromium-mac-lion')
-
-        # This tests that the any tests marked as REBASELINE in the overrides are found, but
-        # that the overrides do not get written into the main file.
-        expectations_path = port.expectations_files()[0]
-        expectations_contents = ''
-        port._filesystem.write_text_file(expectations_path, expectations_contents)
-        port.expectations_dict = lambda: {
-            expectations_path: expectations_contents,
-            'overrides': ('Bug(x) userscripts/another-test.html [ Failure Rebaseline ]\n'
-                          'Bug(y) userscripts/test.html [ Crash ]\n')}
-
-        for path in port.expectations_files():
-            port._filesystem.write_text_file(path, '')
-        port._filesystem.write_text_file(port.layout_tests_dir() + '/userscripts/another-test.html', '')
-        self.assertEquals(command._tests_to_rebaseline(port), {'userscripts/another-test.html': set(['png', 'txt', 'wav'])})
-        self.assertEquals(port._filesystem.read_text_file(expectations_path), expectations_contents)
-
-    def test_rebaseline(self):
-        old_exact_matches = builders._exact_matches
-        try:
-            builders._exact_matches = {
-                "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
-            }
-
-            command = Rebaseline()
-            tool = MockTool()
-            command.bind_to_tool(tool)
-
-            for port_name in tool.port_factory.all_port_names():
-                port = tool.port_factory.get(port_name)
-                for path in port.expectations_files():
-                    tool.filesystem.write_text_file(path, '')
-
-            tool.executive = MockExecutive(should_log=True)
-
-            def mock_builders_to_pull_from():
-                return [MockBuilder('MOCK builder')]
-
-            def mock_tests_to_update(build):
-                return ['mock/path/to/test.html']
-
-            command._builders_to_pull_from = mock_builders_to_pull_from
-            command._tests_to_update = mock_tests_to_update
-
-            expected_stdout = """rebaseline-json: {'mock/path/to/test.html': {'MOCK builder': ['txt']}}
-"""
-
-            expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'mock/path/to/test.html'], cwd=/mock-checkout
-"""
-
-            OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True, builders=None, suffixes=["txt"], verbose=True), [], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
-
-        finally:
-            builders._exact_matches = old_exact_matches
-
-    def test_rebaseline_command_line_flags(self):
-        old_exact_matches = builders._exact_matches
-        try:
-            builders._exact_matches = {
-                "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
-            }
-
-            command = Rebaseline()
-            tool = MockTool()
-            command.bind_to_tool(tool)
-
-            for port_name in tool.port_factory.all_port_names():
-                port = tool.port_factory.get(port_name)
-                for path in port.expectations_files():
-                    tool.filesystem.write_text_file(path, '')
-
-            tool.executive = MockExecutive(should_log=True)
-
-            expected_stdout = """rebaseline-json: {'mock/path/to/test.html': {'MOCK builder': ['txt']}}
-"""
-
-            expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'mock/path/to/test.html'], cwd=/mock-checkout
-"""
-
-            builder = "MOCK builder"
-            test = "mock/path/to/test.html"
-            OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True, builders=[builder], suffixes=["txt"], verbose=True), [test], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
-
-        finally:
-            builders._exact_matches = old_exact_matches
-
-    def test_rebaseline_multiple_builders(self):
-        old_exact_matches = builders._exact_matches
-        try:
-            builders._exact_matches = {
-                "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
-                "MOCK builder2": {"port_name": "test-mac-snowleopard", "specifiers": set(["mock-specifier2"])},
-            }
-
-            command = Rebaseline()
-            tool = MockTool()
-            command.bind_to_tool(tool)
-
-            for port_name in tool.port_factory.all_port_names():
-                port = tool.port_factory.get(port_name)
-                for path in port.expectations_files():
-                    tool.filesystem.write_text_file(path, '')
-
-            tool.executive = MockExecutive(should_log=True)
-
-            def mock_builders_to_pull_from():
-                return [MockBuilder('MOCK builder'), MockBuilder('MOCK builder2')]
-
-            def mock_tests_to_update(build):
-                return ['mock/path/to/test.html']
-
-            command._builders_to_pull_from = mock_builders_to_pull_from
-            command._tests_to_update = mock_tests_to_update
-
-            expected_stdout = """rebaseline-json: {'mock/path/to/test.html': {'MOCK builder2': ['txt'], 'MOCK builder': ['txt']}}
-"""
-
-            expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder2', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt', 'mock/path/to/test.html'], cwd=/mock-checkout
-"""
-
-            OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True, builders=None, suffixes=["txt"], verbose=True), [], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
-
-        finally:
-            builders._exact_matches = old_exact_matches
-
-    def test_rebaseline_multiple_builders_and_tests_command_line(self):
-        old_exact_matches = builders._exact_matches
-        try:
-            builders._exact_matches = {
-                "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
-                "MOCK builder2": {"port_name": "test-mac-snowleopard", "specifiers": set(["mock-specifier2"])},
-                "MOCK builder3": {"port_name": "test-mac-snowleopard", "specifiers": set(["mock-specifier2"])},
-            }
-
-            command = Rebaseline()
-            tool = MockTool()
-            command.bind_to_tool(tool)
-
-            for port_name in tool.port_factory.all_port_names():
-                port = tool.port_factory.get(port_name)
-                for path in port.expectations_files():
-                    tool.filesystem.write_text_file(path, '')
-
-            tool.executive = MockExecutive(should_log=True)
-
-            expected_stdout = """rebaseline-json: {'mock/path/to/test.html': {'MOCK builder2': ['wav', 'txt', 'png'], 'MOCK builder': ['wav', 'txt', 'png'], 'MOCK builder3': ['wav', 'txt', 'png']}, 'mock/path/to/test2.html': {'MOCK builder2': ['wav', 'txt', 'png'], 'MOCK builder': ['wav', 'txt', 'png'], 'MOCK builder3': ['wav', 'txt', 'png']}}
-"""
-
-            expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'wav,txt,png', '--builder', 'MOCK builder2', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'wav,txt,png', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'wav,txt,png', '--builder', 'MOCK builder2', '--test', 'mock/path/to/test2.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'wav,txt,png', '--builder', 'MOCK builder', '--test', 'mock/path/to/test2.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'wav,txt,png', 'mock/path/to/test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'wav,txt,png', 'mock/path/to/test2.html'], cwd=/mock-checkout
-"""
-
-            OutputCapture().assert_outputs(self, command.execute, [MockOptions(optimize=True, builders=["MOCK builder,MOCK builder2", "MOCK builder3"], suffixes=["txt,png", "png,wav,txt"], verbose=True), ["mock/path/to/test.html", "mock/path/to/test2.html"], tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
-
-        finally:
-            builders._exact_matches = old_exact_matches
-
-    def test_rebaseline_json_with_move_overwritten_baselines_to(self):
-        old_exact_matches = builders._exact_matches
-        try:
-            builders._exact_matches = {
-                "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
-                "MOCK builder2": {"port_name": "test-mac-snowleopard", "specifiers": set(["mock-specifier2"]),
-                                  "move_overwritten_baselines_to": ["test-mac-leopard"]},
-            }
-
-            command = Rebaseline()
-            tool = MockTool()
-            tool.executive = MockExecutive(should_log=True)
-            command.bind_to_tool(tool)
-
-            expected_stdout = """rebaseline-json: {'mock/path/to/test.html': {'MOCK builder2': ['txt', 'png']}}\n"""
-            expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder2', '--test', 'mock/path/to/test.html', '--move-overwritten-baselines-to', 'test-mac-leopard'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'optimize-baselines', '--suffixes', 'txt,png', 'mock/path/to/test.html'], cwd=/mock-checkout
-"""
-
-            options = MockOptions(optimize=True, builders=["MOCK builder2"], suffixes=["txt,png"], verbose=True)
-            OutputCapture().assert_outputs(self, command.execute, [options, ["mock/path/to/test.html"], tool],
-                expected_stdout=expected_stdout, expected_stderr=expected_stderr)
-        finally:
-            builders._exact_matches = old_exact_matches
+        self.assertEquals(self._read("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt"), "original snowleopard result")
+        self.assertEquals(self._read("platform/chromium-mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
 
     def test_rebaseline_test_internal_with_move_overwritten_baselines_to(self):
+        self.tool.executive = MockExecutive2()
+
+        # FIXME: it's confusing that this is the test- port, and not the regular lion port. Really all of the tests should be using the test ports.
+        port = self.tool.port_factory.get('test-mac-snowleopard')
+        self._write(port._filesystem.join(port.layout_tests_dir(), 'platform/test-mac-snowleopard/failures/expected/image-expected.txt'), 'original snowleopard result')
+
         old_exact_matches = builders._exact_matches
+        oc = OutputCapture()
         try:
             builders._exact_matches = {
                 "MOCK Leopard": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
                 "MOCK SnowLeopard": {"port_name": "test-mac-snowleopard", "specifiers": set(["mock-specifier"])},
             }
 
-            command = RebaselineTest()
-            tool = MockTool()
-            tool.executive = MockExecutive(should_log=True)
-            command.bind_to_tool(tool)
-
-            port = tool.port_factory.get('test-mac-snowleopard')
-            tool.filesystem.write_text_file(tool.filesystem.join(port.baseline_version_dir(), 'failures', 'expected', 'image-expected.txt'), '')
-
             options = MockOptions(optimize=True, builder="MOCK SnowLeopard", suffixes="txt",
                 move_overwritten_baselines_to=["test-mac-leopard"], verbose=True, test="failures/expected/image.html")
 
-            oc = OutputCapture()
             oc.capture_output()
-            try:
-                logs = ''
-                command.execute(options, [], tool)
-            finally:
-                _, _, logs = oc.restore_output()
-
-            self.assertTrue("Copying baseline from /test.checkout/LayoutTests/platform/test-mac-snowleopard/failures/expected/image-expected.txt to /test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.txt.\n" in logs)
-
+            self.command.execute(options, [], self.tool)
         finally:
+            out, _, _ = oc.restore_output()
             builders._exact_matches = old_exact_matches
+
+        self.assertEquals(self._read(self.tool.filesystem.join(port.layout_tests_dir(), 'platform/test-mac-leopard/failures/expected/image-expected.txt')), 'original snowleopard result')
+        self.assertEquals(out, '{"add": []}\n')
+
+
+class TestRebaselineJson(_BaseTestCase):
+    command_constructor = RebaselineJson
+
+    def setUp(self):
+        super(TestRebaselineJson, self).setUp()
+        self.tool.executive = MockExecutive2()
+        self.old_exact_matches = builders._exact_matches
+        builders._exact_matches = {
+            "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
+            "MOCK builder (Debug)": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier", "debug"])},
+        }
+
+    def tearDown(self):
+        builders._exact_matches = self.old_exact_matches
+        super(TestRebaselineJson, self).tearDown()
+
+    def test_rebaseline_all(self):
+        options = MockOptions(optimize=True, verbose=True)
+        self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder": ["txt", "png"]}})
+
+        # Note that we have one run_in_parallel() call followed by a run_command()
+        self.assertEquals(self.tool.executive.calls,
+            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'user-scripts/another-test.html']],
+             ['echo', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
+
+    def test_rebaseline_debug(self):
+        options = MockOptions(optimize=True, verbose=True)
+        self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder (Debug)": ["txt", "png"]}})
+
+        # Note that we have one run_in_parallel() call followed by a run_command()
+        self.assertEquals(self.tool.executive.calls,
+            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder (Debug)', '--test', 'user-scripts/another-test.html']],
+             ['echo', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
+
+
+class TestRebaseline(_BaseTestCase):
+    # This command shares most of its logic with RebaselineJson, so these tests just test what is different.
+
+    command_constructor = Rebaseline  # AKA webkit-patch rebaseline-test
+
+    def test_tests_to_update(self):
+        build = Mock()
+        OutputCapture().assert_outputs(self, self.command._tests_to_update, [build])
+
+    def test_rebaseline(self):
+        # This test basically tests the path from command.execute() to command._rebaseline();
+        # it doesn't test that _rebaseline() actually does anything (that is tested in TestRebaselineJson.
+        self.test_list = {}
+
+        def rebaseline_stub(options, test_list):
+            self.test_list = test_list
+
+        self.command._builders_to_pull_from = lambda: [MockBuilder('MOCK builder')]
+        self.command._tests_to_update = lambda builder: ['mock/path/to/test.html']
+        self.command._rebaseline = rebaseline_stub
+
+        self._zero_out_test_expectations()
+
+        old_exact_matches = builders._exact_matches
+        oc = OutputCapture()
+        try:
+            builders._exact_matches = {
+                "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
+            }
+            oc.capture_output()
+            self.command.execute(MockOptions(optimize=True, builders=None, suffixes=["txt"], verbose=True), [], self.tool)
+        finally:
+            oc.restore_output()
+            builders._exact_matches = old_exact_matches
+
+        self.assertEquals(self.test_list, {'mock/path/to/test.html': {'MOCK builder': ['txt']}})
+
+
+class TestRebaselineExpectations(_BaseTestCase):
+    command_constructor = RebaselineExpectations
+
+    def setUp(self):
+        super(TestRebaselineExpectations, self).setUp()
+        self.options = MockOptions(optimize=True, builders=None, suffixes=['txt'], verbose=False)
+
+    def test_rebaseline_expectations(self):
+        self._zero_out_test_expectations()
+
+        self.tool.executive = MockExecutive2()
+
+        self.command._tests_to_rebaseline = lambda port: {'userscripts/another-test.html': set(['txt']), 'userscripts/images.svg': set(['png'])}
+        self.command.execute(MockOptions(optimize=False, verbose=False), [], self.tool)
+
+        # FIXME: change this to use the test- ports.
+        calls = filter(lambda x: x != ['qmake', '-v'], self.tool.executive.calls)
+        self.assertTrue(len(calls) == 1)
+        self.assertTrue(len(calls[0]) == 26)
+
+    def test_rebaseline_expectations_noop(self):
+        self._zero_out_test_expectations()
+
+        oc = OutputCapture()
+        try:
+            oc.capture_output()
+            self.command.execute(self.options, [], self.tool)
+        finally:
+            _, _, logs = oc.restore_output()
+            self.assertEquals(self.tool.filesystem.written_files, {})
+            self.assertEquals(logs, 'Did not find any tests marked Rebaseline.\n')
+
+    def disabled_test_overrides_are_included_correctly(self):
+        # This tests that the any tests marked as REBASELINE in the overrides are found, but
+        # that the overrides do not get written into the main file.
+        self._zero_out_test_expectations()
+
+        self._write(self.lion_expectations_path, '')
+        self.lion_port.expectations_dict = lambda: {
+            self.lion_expectations_path: '',
+            'overrides': ('Bug(x) userscripts/another-test.html [ Failure Rebaseline ]\n'
+                          'Bug(y) userscripts/test.html [ Crash ]\n')}
+        self._write('/userscripts/another-test.html', '')
+
+        self.assertEquals(self.command._tests_to_rebaseline(self.lion_port), {'userscripts/another-test.html': set(['png', 'txt', 'wav'])})
+        self.assertEquals(self._read(self.lion_expectations_path), '')
+
+

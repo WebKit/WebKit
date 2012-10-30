@@ -60,6 +60,7 @@ class MockExecutive(object):
         # FIXME: Once executive wraps os.getpid() we can just use a static pid for "this" process.
         self._running_pids = {'test-webkitpy': os.getpid()}
         self._proc = None
+        self.calls = []
 
     def check_running_pid(self, pid):
         return pid in self._running_pids.values()
@@ -92,6 +93,9 @@ class MockExecutive(object):
                     return_stderr=True,
                     decode_output=False,
                     env=None):
+
+        self.calls.append(args)
+
         assert(isinstance(args, list) or isinstance(args, tuple))
         if self._should_log:
             env_string = ""
@@ -109,7 +113,14 @@ class MockExecutive(object):
     def cpu_count(self):
         return 2
 
+    def kill_all(self, process_name):
+        pass
+
+    def kill_process(self, pid):
+        pass
+
     def popen(self, args, cwd=None, env=None, **kwargs):
+        self.calls.append(args)
         if self._should_log:
             cwd_string = ""
             if cwd:
@@ -123,32 +134,27 @@ class MockExecutive(object):
         return self._proc
 
     def run_in_parallel(self, commands):
+        num_previous_calls = len(self.calls)
         command_outputs = []
         for cmd_line, cwd in commands:
             command_outputs.append([0, self.run_command(cmd_line, cwd=cwd), ''])
+
+        new_calls = self.calls[num_previous_calls:]
+        self.calls = self.calls[:num_previous_calls]
+        self.calls.append(new_calls)
         return command_outputs
 
-class MockExecutive2(object):
-    @staticmethod
-    def ignore_error(error):
-        pass
 
-    def __init__(self, output='', exit_code=0, exception=None,
-                 run_command_fn=None, stderr=''):
+class MockExecutive2(MockExecutive):
+    """MockExecutive2 is like MockExecutive except it doesn't log anything."""
+
+    def __init__(self, output='', exit_code=0, exception=None, run_command_fn=None, stderr=''):
         self._output = output
         self._stderr = stderr
         self._exit_code = exit_code
         self._exception = exception
         self._run_command_fn = run_command_fn
-
-    def cpu_count(self):
-        return 2
-
-    def kill_all(self, process_name):
-        pass
-
-    def kill_process(self, pid):
-        pass
+        self.calls = []
 
     def run_command(self,
                     args,
@@ -159,6 +165,7 @@ class MockExecutive2(object):
                     return_stderr=True,
                     decode_output=False,
                     env=None):
+        self.calls.append(args)
         assert(isinstance(args, list) or isinstance(args, tuple))
         if self._exception:
             raise self._exception
