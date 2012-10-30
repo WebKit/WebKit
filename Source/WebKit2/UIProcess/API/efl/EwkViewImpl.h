@@ -21,6 +21,7 @@
 #ifndef EwkViewImpl_h
 #define EwkViewImpl_h
 
+#include "EwkViewCallbacks.h"
 #include "RefPtrEfl.h"
 #include "WKEinaSharedString.h"
 #include "WKRetainPtr.h"
@@ -153,47 +154,18 @@ public:
     bool requestJSConfirmPopup(const WKEinaSharedString& message);
     WKEinaSharedString requestJSPromptPopup(const WKEinaSharedString& message, const WKEinaSharedString& defaultValue);
 
-    void informDownloadJobCancelled(Ewk_Download_Job* download);
-    void informDownloadJobFailed(Ewk_Download_Job* download, Ewk_Error* error);
-    void informDownloadJobFinished(Ewk_Download_Job* download);
-    void informDownloadJobRequested(Ewk_Download_Job* download);
+    template<EwkViewCallbacks::CallbackType callbackType>
+    EwkViewCallbacks::CallBack<callbackType> smartCallback() const
+    {
+        return EwkViewCallbacks::CallBack<callbackType>(m_view);
+    }
 
-    void informNewFormSubmissionRequest(Ewk_Form_Submission_Request* request);
-    void informLoadError(Ewk_Error* error);
-    void informLoadFinished();
-    void informLoadProgress(double progress);
-    void informProvisionalLoadFailed(Ewk_Error* error);
 #if USE(TILED_BACKING_STORE)
     void informLoadCommitted();
 #endif
-    void informProvisionalLoadRedirect();
-    void informProvisionalLoadStarted();
-
-    void informResourceLoadStarted(Ewk_Resource* resource, Ewk_Url_Request* request);
-    void informResourceLoadResponse(Ewk_Resource* resource, Ewk_Url_Response* response);
-    void informResourceLoadFailed(Ewk_Resource* resource, Ewk_Error* error);
-    void informResourceLoadFinished(Ewk_Resource* resource);
-    void informResourceRequestSent(Ewk_Resource* resource, Ewk_Url_Request* request, Ewk_Url_Response* redirectResponse);
-
-    void informNavigationPolicyDecision(Ewk_Navigation_Policy_Decision* decision);
-    void informNewWindowPolicyDecision(Ewk_Navigation_Policy_Decision* decision);
-    void informBackForwardListChange();
-
-    void informTitleChange(const String& title);
-    void informTooltipTextChange(const String& text);
-    void informTextFound(unsigned matchCount);
-    void informIconChange();
-    void informWebProcessCrashed();
     void informContentsSizeChange(const WebCore::IntSize& size);
     unsigned long long informDatabaseQuotaReached(const String& databaseName, const String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);
-    void informURLChange();
 
-#if ENABLE(WEB_INTENTS)
-    void informIntentRequest(Ewk_Intent* ewkIntent);
-#endif
-#if ENABLE(WEB_INTENTS_TAG)
-    void informIntentServiceRegistration(Ewk_Intent_Service* ewkIntentService);
-#endif
 #if USE(TILED_BACKING_STORE)
     WebKit::PageViewportControllerClientEfl* pageViewportControllerClient() { return m_pageViewportControllerClient.get(); }
     WebKit::PageViewportController* pageViewportController() { return m_pageViewportController.get(); }
@@ -205,9 +177,14 @@ public:
     void resetEvasGlSurface() { m_evasGlSurface = 0; }
 #endif
 
+    // FIXME: needs refactoring (split callback invoke)
+    void informURLChange();
+
 private:
     inline Ewk_View_Smart_Data* smartData();
     void displayTimerFired(WebCore::Timer<EwkViewImpl>*);
+
+    void informIconChange();
 
     static void onMouseDown(void* data, Evas*, Evas_Object*, void* eventInfo);
     static void onMouseUp(void* data, Evas*, Evas_Object*, void* eventInfo);

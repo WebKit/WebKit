@@ -32,6 +32,9 @@
 #include "WKString.h"
 #include "ewk_context_private.h"
 #include "ewk_error_private.h"
+#include "ewk_view.h"
+
+using namespace EwkViewCallbacks;
 
 namespace WebKit {
 
@@ -49,7 +52,7 @@ WKStringRef DownloadManagerEfl::decideDestinationWithSuggestedFilename(WKContext
 
     // We send the new download signal on the Ewk_View only once we have received the response
     // and the suggested file name.
-    download->viewImpl()->informDownloadJobRequested(download);
+    download->viewImpl()->smartCallback<DownloadJobRequested>().call(download);
 
     // DownloadSoup expects the destination to be a URL.
     String destination = ASCIILiteral("file://") + String::fromUTF8(download->destination());
@@ -88,7 +91,8 @@ void DownloadManagerEfl::didFail(WKContextRef, WKDownloadRef wkDownload, WKError
 
     OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(error);
     download->setState(EWK_DOWNLOAD_JOB_STATE_FAILED);
-    download->viewImpl()->informDownloadJobFailed(download, ewkError.get());
+    Ewk_Download_Job_Error downloadError = { download, ewkError.get() };
+    download->viewImpl()->smartCallback<DownloadJobFailed>().call(&downloadError);
     downloadManager->unregisterDownloadJob(downloadId);
 }
 
@@ -100,7 +104,7 @@ void DownloadManagerEfl::didCancel(WKContextRef, WKDownloadRef wkDownload, const
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_CANCELLED);
-    download->viewImpl()->informDownloadJobCancelled(download);
+    download->viewImpl()->smartCallback<DownloadJobCancelled>().call(download);
     downloadManager->unregisterDownloadJob(downloadId);
 }
 
@@ -112,7 +116,7 @@ void DownloadManagerEfl::didFinish(WKContextRef, WKDownloadRef wkDownload, const
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_FINISHED);
-    download->viewImpl()->informDownloadJobFinished(download);
+    download->viewImpl()->smartCallback<DownloadJobFinished>().call(download);
     downloadManager->unregisterDownloadJob(downloadId);
 }
 

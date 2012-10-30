@@ -1,3 +1,65 @@
+2012-10-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Simplify signal emitting API in EwkViewImpl
+        https://bugs.webkit.org/show_bug.cgi?id=100506
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Now signal emitting API in EwkViewImpl is simplified so that
+        there is one EwkViewImpl::smartCallback template method
+        returning EwkViewCallbacks::CallBack class instance
+        which encapsulates Ewk_view callback info and also provide
+        arguments type checking.
+
+        * UIProcess/API/efl/EwkViewCallbacks.h: Added.
+        (EwkViewCallbacks):
+        (CallBackInfo):
+        (EwkViewCallbacks::CallBackInfo::name):
+        (EwkViewCallbacks::CallBackInfo::hasArguments):
+        (CallBack):
+        (EwkViewCallbacks::CallBack::CallBack):
+        (EwkViewCallbacks::CallBack::call):
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        (EwkViewImpl::smartCallback):
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadManagerEfl::didFail):
+        (WebKit::DownloadManagerEfl::didCancel):
+        (WebKit::DownloadManagerEfl::didFinish):
+        * UIProcess/efl/FindClientEfl.cpp:
+        (WebKit::FindClientEfl::didFindString):
+        (WebKit::FindClientEfl::didFailToFindString):
+        * UIProcess/efl/FormClientEfl.cpp:
+        (WebKit::FormClientEfl::willSubmitForm):
+        * UIProcess/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::processDidCrash):
+        (WebKit::PageClientImpl::toolTipChanged):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didReceiveTitleForFrame):
+        (WebKit::PageLoadClientEfl::didReceiveIntentForFrame):
+        (WebKit::PageLoadClientEfl::registerIntentServiceForFrame):
+        (WebKit::PageLoadClientEfl::didChangeProgress):
+        (WebKit::PageLoadClientEfl::didFinishLoadForFrame):
+        (WebKit::PageLoadClientEfl::didFailLoadWithErrorForFrame):
+        (WebKit::PageLoadClientEfl::didStartProvisionalLoadForFrame):
+        (WebKit::PageLoadClientEfl::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::PageLoadClientEfl::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+        (WebKit::PageLoadClientEfl::didChangeBackForwardList):
+        * UIProcess/efl/PagePolicyClientEfl.cpp:
+        (WebKit::PagePolicyClientEfl::decidePolicyForNavigationAction):
+        (WebKit::PagePolicyClientEfl::decidePolicyForNewWindowAction):
+        * UIProcess/efl/ResourceLoadClientEfl.cpp:
+        (WebKit::ResourceLoadClientEfl::didInitiateLoadForResource):
+        (WebKit::ResourceLoadClientEfl::didSendRequestForResource):
+        (WebKit::ResourceLoadClientEfl::didReceiveResponseForResource):
+        (WebKit::ResourceLoadClientEfl::didFinishLoadForResource):
+        (WebKit::ResourceLoadClientEfl::didFailLoadForResource):
+        (WebKit::ResourceLoadClientEfl::ResourceLoadClientEfl):
+        (WebKit::ResourceLoadClientEfl::~ResourceLoadClientEfl):
+
 2012-10-30  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         Coordinated Graphics: Unrelease adopted images

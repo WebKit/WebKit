@@ -41,6 +41,7 @@
 #include "ewk_context_private.h"
 #include "ewk_download_job.h"
 #include "ewk_download_job_private.h"
+#include "ewk_private.h"
 #include "ewk_view.h"
 
 #if USE(TILED_BACKING_STORE)
@@ -48,6 +49,7 @@
 #endif
 
 using namespace WebCore;
+using namespace EwkViewCallbacks;
 
 namespace WebKit {
 
@@ -117,10 +119,21 @@ void PageClientImpl::processDidCrash()
 {
     // Check if loading was ongoing, when web process crashed.
     double loadProgress = ewk_view_load_progress_get(m_viewImpl->view());
-    if (loadProgress >= 0 && loadProgress < 1)
-        m_viewImpl->informLoadProgress(1);
+    if (loadProgress >= 0 && loadProgress < 1) {
+        loadProgress = 1;
+        m_viewImpl->smartCallback<LoadProgress>().call(&loadProgress);
+    }
 
-    m_viewImpl->informWebProcessCrashed();
+    bool handled = false;
+    m_viewImpl->smartCallback<WebProcessCrashed>().call(&handled);
+
+    if (!handled) {
+        CString url = m_viewImpl->page()->urlAtProcessExit().utf8();
+        WARN("WARNING: The web process experienced a crash on '%s'.\n", url.data());
+
+        // Display an error page
+        ewk_view_html_string_load(m_viewImpl->view(), "The web process has crashed.", 0, url.data());
+    }
 }
 
 void PageClientImpl::didRelaunchProcess()
@@ -137,7 +150,10 @@ void PageClientImpl::pageClosed()
 
 void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
 {
-    m_viewImpl->informTooltipTextChange(newToolTip);
+    if (newToolTip.isEmpty())
+        m_viewImpl->smartCallback<TooltipTextUnset>().call();
+    else
+        m_viewImpl->smartCallback<TooltipTextSet>().call(newToolTip);
 }
 
 void PageClientImpl::setCursor(const Cursor& cursor)

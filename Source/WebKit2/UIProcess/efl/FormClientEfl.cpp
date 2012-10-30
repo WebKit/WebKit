@@ -30,6 +30,8 @@
 #include "WKPage.h"
 #include "ewk_form_submission_request_private.h"
 
+using namespace EwkViewCallbacks;
+
 namespace WebKit {
 
 static inline FormClientEfl* toFormClientEfl(const void* clientInfo)
@@ -42,7 +44,7 @@ void FormClientEfl::willSubmitForm(WKPageRef, WKFrameRef /*frame*/, WKFrameRef /
     FormClientEfl* formClient = toFormClientEfl(clientInfo);
 
     RefPtr<Ewk_Form_Submission_Request> request = Ewk_Form_Submission_Request::create(values, listener);
-    formClient->m_viewImpl->informNewFormSubmissionRequest(request.get());
+    formClient->m_viewImpl->smartCallback<NewFormSubmissionRequest>().call(request.get());
 }
 
 FormClientEfl::FormClientEfl(EwkViewImpl* viewImpl)

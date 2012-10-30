@@ -30,6 +30,8 @@
 #include "EwkViewImpl.h"
 #include "WKPage.h"
 
+using namespace EwkViewCallbacks;
+
 namespace WebKit {
 
 static inline FindClientEfl* toFindClientEfl(const void* clientInfo)
@@ -40,13 +42,13 @@ static inline FindClientEfl* toFindClientEfl(const void* clientInfo)
 void FindClientEfl::didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
 {
     FindClientEfl* findClient = toFindClientEfl(clientInfo);
-    findClient->m_viewImpl->informTextFound(matchCount);
+    findClient->m_viewImpl->smartCallback<TextFound>().call(&matchCount);
 }
 
 void FindClientEfl::didFailToFindString(WKPageRef, WKStringRef, const void* clientInfo)
 {
     FindClientEfl* findClient = toFindClientEfl(clientInfo);
-    findClient->m_viewImpl->informTextFound(0);
+    findClient->m_viewImpl->smartCallback<TextFound>().call();
 }
 
 FindClientEfl::FindClientEfl(EwkViewImpl* viewImpl)
