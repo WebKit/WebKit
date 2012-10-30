@@ -56,6 +56,14 @@
 #include <wtf/text/CString.h>
 #include <wtf/Vector.h>
 
+namespace WTF {
+
+template<> struct SequenceMemoryInstrumentationTraits<WebCore::CachedResourceClient*> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+}
+
 using namespace WTF;
 
 namespace WebCore {

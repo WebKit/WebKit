@@ -176,6 +176,14 @@
 
 using namespace std;
 
+namespace WTF {
+
+template<> struct SequenceMemoryInstrumentationTraits<const WebCore::RuleData*> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+}
+
 namespace WebCore {
 
 using namespace HTMLNames;

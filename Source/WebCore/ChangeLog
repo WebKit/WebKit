@@ -1,3 +1,25 @@
+2012-10-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Memory instrumentation: report actual object address for CachedResourceClients
+        https://bugs.webkit.org/show_bug.cgi?id=100659
+
+        Reviewed by Alexander Pavlov.
+
+        Skipped pointers to objects that are not allocated on the heap directly.
+
+        To test this we need to compare addresses of objects traversed by the memory
+        insrumentation with those allocated by the memory allocator. The latter set
+        should include the former one.
+
+        * css/StyleResolver.cpp:
+        (WTF): skip pointers to RuleData structures as they are stored by value in RuleSet
+        objects and should not be reported separately.
+        * loader/cache/CachedResource.cpp:
+        (WTF): do not report memory occupied by CachedResourceClients as objects implementing
+        the interface may have address which differ from CachedResourceClient*. The clients
+        should be reachable from their instrumented owners where we know exact type of the
+        clients and hence can figure correct address.
+
 2012-10-29  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Refatoring] Remove ElementShadow::insertionPointFor
