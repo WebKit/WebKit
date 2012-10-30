@@ -1998,7 +1998,29 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
         return true;
     }
 
-    bool handled = PageWidgetDelegate::handleInputEvent(m_page.get(), *this, inputEvent);
+    if (!m_layerTreeView)
+        return PageWidgetDelegate::handleInputEvent(m_page.get(), *this, inputEvent);
+
+    const WebInputEvent* inputEventTransformed = &inputEvent;
+    WebMouseEvent mouseEvent;
+    WebGestureEvent gestureEvent;
+    if (WebInputEvent::isMouseEventType(inputEvent.type)) {
+        mouseEvent = *static_cast<const WebMouseEvent*>(&inputEvent);
+
+        IntPoint transformedLocation = roundedIntPoint(m_layerTreeView->adjustEventPointForPinchZoom(WebFloatPoint(mouseEvent.x, mouseEvent.y)));
+        mouseEvent.x = transformedLocation.x();
+        mouseEvent.y = transformedLocation.y();
+        inputEventTransformed = static_cast<const WebInputEvent*>(&mouseEvent);
+    } else if (WebInputEvent::isGestureEventType(inputEvent.type)) {
+        gestureEvent = *static_cast<const WebGestureEvent*>(&inputEvent);
+
+        IntPoint transformedLocation = roundedIntPoint(m_layerTreeView->adjustEventPointForPinchZoom(WebFloatPoint(gestureEvent.x, gestureEvent.y)));
+        gestureEvent.x = transformedLocation.x();
+        gestureEvent.y = transformedLocation.y();
+        inputEventTransformed = static_cast<const WebInputEvent*>(&gestureEvent);
+    }
+
+    bool handled = PageWidgetDelegate::handleInputEvent(m_page.get(), *this, *inputEventTransformed);
     return handled;
 }
 
