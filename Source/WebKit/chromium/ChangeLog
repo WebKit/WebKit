@@ -1,3 +1,9 @@
+2012-10-30  Alok Priyadarshi  <alokp@chromium.org>
+
+        Unreviewed. Rolled DEPS.
+
+        * DEPS:
+
 2012-10-30  Dan Carney  <dcarney@google.com>
 
         Remove ensureAuxiliaryContext
