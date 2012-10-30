@@ -1,5 +1,15 @@
 2012-10-30  Pavel Podivilov  <podivilov@google.com>
 
+        Unreviewed, add baselines for exif-orientation-image-document.
+
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/exif-orientation-image-document-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/exif-orientation-image-document-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/exif-orientation-image-document-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/deferred/fast/images/exif-orientation-image-document-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/exif-orientation-image-document-expected.png: Added.
+
+2012-10-30  Pavel Podivilov  <podivilov@google.com>
+
         Unrewieved, rebaseline audiobuffersource-loop-points.
 
         * platform/chromium-linux/webaudio/audiobuffersource-loop-points-expected.wav: Renamed from LayoutTests/platform/chromium-win-xp/webaudio/audiobuffersource-loop-points-expected.wav.
