@@ -66,8 +66,8 @@ bool SessionState::isEmpty() const
     
 void SessionState::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(m_list);
-    encoder.encode(m_currentIndex);
+    encoder << m_list;
+    encoder << m_currentIndex;
 }
 
 bool SessionState::decode(CoreIPC::ArgumentDecoder* decoder, SessionState& state)

@@ -48,9 +48,9 @@ WebEvent::WebEvent(Type type, Modifiers modifiers, double timestamp)
 
 void WebEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(m_type);
-    encoder.encode(m_modifiers);
-    encoder.encode(m_timestamp);
+    encoder << m_type;
+    encoder << m_modifiers;
+    encoder << m_timestamp;
 }
 
 bool WebEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebEvent& result)

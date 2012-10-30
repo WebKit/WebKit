@@ -51,10 +51,10 @@ KeychainAttribute::KeychainAttribute(const SecKeychainAttribute& secKeychainAttr
 
 namespace CoreIPC {
 
-void encode(CoreIPC::ArgumentEncoder* encoder, const WebKit::KeychainAttribute& attribute)
+void encode(CoreIPC::ArgumentEncoder& encoder, const WebKit::KeychainAttribute& attribute)
 {
-    encoder->encode(static_cast<uint32_t>(attribute.tag));
-    encoder->encode(static_cast<bool>(attribute.data));
+    encoder << static_cast<uint32_t>(attribute.tag);
+    encoder << static_cast<bool>(attribute.data);
     if (attribute.data)
         CoreIPC::encode(encoder, attribute.data.get());
 }

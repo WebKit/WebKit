@@ -51,7 +51,7 @@ WebConnectionToUIProcess::WebConnectionToUIProcess(WebProcess* process, CoreIPC:
 
 void WebConnectionToUIProcess::encodeMessageBody(CoreIPC::ArgumentEncoder& encoder, APIObject* messageBody)
 {
-    encoder.encode(InjectedBundleUserMessageEncoder(messageBody));
+    encoder << InjectedBundleUserMessageEncoder(messageBody);
 }
 
 bool WebConnectionToUIProcess::decodeMessageBody(CoreIPC::ArgumentDecoder& decoder, RefPtr<APIObject>& messageBody)

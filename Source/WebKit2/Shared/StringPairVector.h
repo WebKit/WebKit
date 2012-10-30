@@ -47,7 +47,7 @@ public:
 
     void encode(CoreIPC::ArgumentEncoder& encoder) const
     {
-        encoder.encode(m_stringPairVector);
+        encoder << m_stringPairVector;
     }
 
     static bool decode(CoreIPC::ArgumentDecoder* decoder, StringPairVector& stringPairVector)

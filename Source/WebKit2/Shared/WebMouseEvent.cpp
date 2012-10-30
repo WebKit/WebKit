@@ -82,16 +82,16 @@ void WebMouseEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     WebEvent::encode(encoder);
 
-    encoder.encode(m_button);
-    encoder.encode(m_position);
-    encoder.encode(m_globalPosition);
-    encoder.encode(m_deltaX);
-    encoder.encode(m_deltaY);
-    encoder.encode(m_deltaZ);
-    encoder.encode(m_clickCount);
+    encoder << m_button;
+    encoder << m_position;
+    encoder << m_globalPosition;
+    encoder << m_deltaX;
+    encoder << m_deltaY;
+    encoder << m_deltaZ;
+    encoder << m_clickCount;
 
 #if PLATFORM(WIN)
-    encoder.encode(m_didActivateWebView);
+    encoder << m_didActivateWebView;
 #endif
 }
 

@@ -47,25 +47,25 @@ PlatformPopupMenuData::PlatformPopupMenuData()
 void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
 #if PLATFORM(WIN)
-    encoder.encode(m_clientPaddingLeft);
-    encoder.encode(m_clientPaddingRight);
-    encoder.encode(m_clientInsetLeft);
-    encoder.encode(m_clientInsetRight);
-    encoder.encode(m_popupWidth);
-    encoder.encode(m_itemHeight);
+    encoder << m_clientPaddingLeft;
+    encoder << m_clientPaddingRight;
+    encoder << m_clientInsetLeft;
+    encoder << m_clientInsetRight;
+    encoder << m_popupWidth;
+    encoder << m_itemHeight;
 
     ShareableBitmap::Handle notSelectedBackingStoreHandle;
     m_notSelectedBackingStore->createHandle(notSelectedBackingStoreHandle);
-    encoder.encode(notSelectedBackingStoreHandle);
+    encoder << notSelectedBackingStoreHandle;
 
     ShareableBitmap::Handle selectedBackingStoreHandle;
     m_selectedBackingStore->createHandle(selectedBackingStoreHandle);
-    encoder.encode(selectedBackingStoreHandle);
+    encoder << selectedBackingStoreHandle;
 #elif PLATFORM(MAC)
-    encoder.encode(fontInfo);
-    encoder.encode(shouldPopOver);
+    encoder << fontInfo;
+    encoder << shouldPopOver;
 #elif PLATFORM(QT)
-    encoder.encode(multipleSelections);
+    encoder << multipleSelections;
 #else
     UNUSED_PARAM(encoder);
 #endif

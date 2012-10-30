@@ -32,40 +32,40 @@ namespace WebKit {
 
 void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(viewSize);
-    encoder.encode(isActive);
-    encoder.encode(isFocused);
-    encoder.encode(isVisible);
-    encoder.encode(isInWindow);
+    encoder << viewSize;
+    encoder << isActive;
+    encoder << isFocused;
+    encoder << isVisible;
+    encoder << isInWindow;
 
-    encoder.encode(store);
+    encoder << store;
     encoder.encodeEnum(drawingAreaType);
-    encoder.encode(pageGroupData);
-    encoder.encode(drawsBackground);
-    encoder.encode(drawsTransparentBackground);
-    encoder.encode(areMemoryCacheClientCallsEnabled);
-    encoder.encode(useFixedLayout);
-    encoder.encode(fixedLayoutSize);
+    encoder << pageGroupData;
+    encoder << drawsBackground;
+    encoder << drawsTransparentBackground;
+    encoder << areMemoryCacheClientCallsEnabled;
+    encoder << useFixedLayout;
+    encoder << fixedLayoutSize;
     encoder.encodeEnum(paginationMode);
-    encoder.encode(paginationBehavesLikeColumns);
-    encoder.encode(pageLength);
-    encoder.encode(gapBetweenPages);
-    encoder.encode(userAgent);
-    encoder.encode(sessionState);
-    encoder.encode(highestUsedBackForwardItemID);
-    encoder.encode(canRunBeforeUnloadConfirmPanel);
-    encoder.encode(canRunModal);
-    encoder.encode(deviceScaleFactor);
-    encoder.encode(mediaVolume);
+    encoder << paginationBehavesLikeColumns;
+    encoder << pageLength;
+    encoder << gapBetweenPages;
+    encoder << userAgent;
+    encoder << sessionState;
+    encoder << highestUsedBackForwardItemID;
+    encoder << canRunBeforeUnloadConfirmPanel;
+    encoder << canRunModal;
+    encoder << deviceScaleFactor;
+    encoder << mediaVolume;
 
 #if PLATFORM(MAC)
-    encoder.encode(isSmartInsertDeleteEnabled);
+    encoder << isSmartInsertDeleteEnabled;
     encoder.encodeEnum(layerHostingMode);
-    encoder.encode(colorSpace);
+    encoder << colorSpace;
 #endif
 
 #if PLATFORM(WIN)
-    encoder.encode(reinterpret_cast<uint64_t>(nativeWindow));
+    encoder << reinterpret_cast<uint64_t>(nativeWindow);
 #endif
 }
 

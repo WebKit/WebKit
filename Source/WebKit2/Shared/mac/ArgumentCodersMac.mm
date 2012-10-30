@@ -76,10 +76,10 @@ static NSType typeFromObject(id object)
     return Unknown;
 }
 
-static void encode(ArgumentEncoder* encoder, id object)
+static void encode(ArgumentEncoder& encoder, id object)
 {
     NSType type = typeFromObject(object);
-    encoder->encodeEnum(type);
+    encoder.encodeEnum(type);
 
     switch (type) {
     case NSAttributedStringType:
@@ -172,7 +172,7 @@ static bool decode(ArgumentDecoder* decoder, RetainPtr<id>& result)
     return false;
 }
 
-void encode(ArgumentEncoder* encoder, NSAttributedString *string)
+void encode(ArgumentEncoder& encoder, NSAttributedString *string)
 {
     // Even though NSAttributedString is toll free bridged with CFAttributedStringRef, attributes' values may be not, so we should stay within this file's code.
 
@@ -196,11 +196,11 @@ void encode(ArgumentEncoder* encoder, NSAttributedString *string)
         position = NSMaxRange(effectiveRange);
     }
 
-    encoder->encode(static_cast<uint64_t>(ranges.size()));
+    encoder << static_cast<uint64_t>(ranges.size());
 
     for (size_t i = 0; i < ranges.size(); ++i) {
-        encoder->encode(static_cast<uint64_t>(ranges[i].first.location));
-        encoder->encode(static_cast<uint64_t>(ranges[i].first.length));
+        encoder << static_cast<uint64_t>(ranges[i].first.location);
+        encoder << static_cast<uint64_t>(ranges[i].first.length);
         CoreIPC::encode(encoder, ranges[i].second.get());
     }
 }
@@ -243,9 +243,9 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSAttributedString>& result)
 }
 
 #if USE(APPKIT)
-void encode(ArgumentEncoder* encoder, NSColor *color)
+void encode(ArgumentEncoder& encoder, NSColor *color)
 {
-    encoder->encode(colorFromNSColor(color));
+    encoder << colorFromNSColor(color);
 }
 
 bool decode(ArgumentDecoder* decoder, RetainPtr<NSColor>& result)
@@ -259,7 +259,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSColor>& result)
 }
 #endif
 
-void encode(ArgumentEncoder* encoder, NSDictionary *dictionary)
+void encode(ArgumentEncoder& encoder, NSDictionary *dictionary)
 {
     // Even though NSDictionary is toll free bridged with CFDictionaryRef, values may be not, so we should stay within this file's code.
 
@@ -267,7 +267,7 @@ void encode(ArgumentEncoder* encoder, NSDictionary *dictionary)
     NSArray *keys = [dictionary allKeys];
     NSArray *values = [dictionary allValues];
 
-    encoder->encode(static_cast<uint64_t>(size));
+    encoder << static_cast<uint64_t>(size);
 
     for (NSUInteger i = 0; i < size; ++i) {
         id key = [keys objectAtIndex:i];
@@ -310,7 +310,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSDictionary>& result)
 }
 
 #if USE(APPKIT)
-void encode(ArgumentEncoder* encoder, NSFont *font)
+void encode(ArgumentEncoder& encoder, NSFont *font)
 {
     // NSFont could use CTFontRef code if we had it in ArgumentCodersCF.
     encode(encoder, [[font fontDescriptor] fontAttributes]);
@@ -329,7 +329,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSFont>& result)
 }
 #endif
 
-void encode(ArgumentEncoder* encoder, NSNumber *number)
+void encode(ArgumentEncoder& encoder, NSNumber *number)
 {
     encode(encoder, (CFNumberRef)number);
 }
@@ -344,7 +344,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSNumber>& result)
     return true;
 }
 
-void encode(ArgumentEncoder* encoder, NSString *string)
+void encode(ArgumentEncoder& encoder, NSString *string)
 {
     encode(encoder, (CFStringRef)string);
 }

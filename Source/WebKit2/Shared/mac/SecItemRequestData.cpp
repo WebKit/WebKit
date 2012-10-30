@@ -53,11 +53,11 @@ void SecItemRequestData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder.encodeEnum(m_type);
 
-    CoreIPC::encode(&encoder, m_queryDictionary.get());
+    CoreIPC::encode(encoder, m_queryDictionary.get());
 
-    encoder.encode(static_cast<bool>(m_attributesToMatch));
+    encoder << static_cast<bool>(m_attributesToMatch);
     if (m_attributesToMatch)
-        CoreIPC::encode(&encoder, m_attributesToMatch.get());
+        CoreIPC::encode(encoder, m_attributesToMatch.get());
 }
 
 bool SecItemRequestData::decode(CoreIPC::ArgumentDecoder* decoder, SecItemRequestData& secItemRequestData)

@@ -45,9 +45,9 @@ PrintInfo::PrintInfo()
 
 void PrintInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(pageSetupScaleFactor);
-    encoder.encode(availablePaperWidth);
-    encoder.encode(availablePaperHeight);
+    encoder << pageSetupScaleFactor;
+    encoder << availablePaperWidth;
+    encoder << availablePaperHeight;
 
 #if PLATFORM(GTK)
     CoreIPC::encode(&encoder, printSettings.get());

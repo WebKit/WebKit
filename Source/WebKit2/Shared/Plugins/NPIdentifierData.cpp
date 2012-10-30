@@ -69,11 +69,11 @@ NPIdentifier NPIdentifierData::createNPIdentifier() const
 
 void NPIdentifierData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(m_isString);
+    encoder << m_isString;
     if (m_isString)
-        encoder.encode(m_string);
+        encoder << m_string;
     else
-        encoder.encode(m_number);
+        encoder << m_number;
 }
 
 bool NPIdentifierData::decode(CoreIPC::ArgumentDecoder* decoder, NPIdentifierData& result)

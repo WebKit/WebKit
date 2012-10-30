@@ -57,10 +57,10 @@ void WebGestureEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     WebEvent::encode(encoder);
 
-    encoder.encode(m_position);
-    encoder.encode(m_globalPosition);
-    encoder.encode(m_area);
-    encoder.encode(m_delta);
+    encoder << m_position;
+    encoder << m_globalPosition;
+    encoder << m_area;
+    encoder << m_delta;
 }
 
 bool WebGestureEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebGestureEvent& t)

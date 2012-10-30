@@ -58,17 +58,17 @@ public:
         switch (type) {
         case APIObject::TypeBundlePage: {
             WebPage* page = static_cast<WebPage*>(m_root);
-            encoder.encode(page->pageID());
+            encoder << page->pageID();
             break;
         }
         case APIObject::TypeBundleFrame: {
             WebFrame* frame = static_cast<WebFrame*>(m_root);
-            encoder.encode(frame->frameID());
+            encoder << frame->frameID();
             break;
         }
         case APIObject::TypeBundlePageGroup: {
             WebPageGroupProxy* pageGroup = static_cast<WebPageGroupProxy*>(m_root);
-            encoder.encode(pageGroup->pageGroupID());
+            encoder << pageGroup->pageGroupID();
             break;
         }
         default:

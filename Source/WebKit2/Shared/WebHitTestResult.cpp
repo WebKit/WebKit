@@ -36,14 +36,14 @@ PassRefPtr<WebHitTestResult> WebHitTestResult::create(const WebHitTestResult::Da
 
 void WebHitTestResult::Data::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(absoluteImageURL);
-    encoder.encode(absolutePDFURL);
-    encoder.encode(absoluteLinkURL);
-    encoder.encode(absoluteMediaURL);
-    encoder.encode(linkLabel);
-    encoder.encode(linkTitle);
-    encoder.encode(isContentEditable);
-    encoder.encode(elementBoundingBox);
+    encoder << absoluteImageURL;
+    encoder << absolutePDFURL;
+    encoder << absoluteLinkURL;
+    encoder << absoluteMediaURL;
+    encoder << linkLabel;
+    encoder << linkTitle;
+    encoder << isContentEditable;
+    encoder << elementBoundingBox;
 }
 
 bool WebHitTestResult::Data::decode(CoreIPC::ArgumentDecoder* decoder, WebHitTestResult::Data& hitTestResultData)

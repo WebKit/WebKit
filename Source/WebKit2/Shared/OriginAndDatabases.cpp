@@ -36,10 +36,10 @@ namespace WebKit {
 
 void OriginAndDatabases::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(originIdentifier);
-    encoder.encode(originQuota);
-    encoder.encode(originUsage);
-    encoder.encode(databases);
+    encoder << originIdentifier;
+    encoder << originQuota;
+    encoder << originUsage;
+    encoder << databases;
 }
 
 bool OriginAndDatabases::decode(CoreIPC::ArgumentDecoder* decoder, OriginAndDatabases& originAndDatabases)

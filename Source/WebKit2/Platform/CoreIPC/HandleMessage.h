@@ -331,7 +331,7 @@ void handleMessage(MessageDecoder& decoder, MessageEncoder& replyEncoder, C* obj
 
     typename T::Reply::ValueType replyArguments;
     callMemberFunction(arguments, replyArguments, object, function);
-    replyEncoder.encode(replyArguments);
+    replyEncoder << replyArguments;
 }
 
 template<typename T, typename C, typename MF>
@@ -361,7 +361,7 @@ void handleMessageVariadic(MessageDecoder& decoder, MessageEncoder& replyEncoder
 
     typename T::Reply::ValueType replyArguments;
     callMemberFunction(arguments, decoder, replyArguments, object, function);
-    replyEncoder.encode(replyArguments);
+    replyEncoder << replyArguments;
 }
 
 template<typename T, typename C, typename MF>

@@ -49,15 +49,15 @@ void WebKeyboardEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     WebEvent::encode(encoder);
 
-    encoder.encode(m_text);
-    encoder.encode(m_unmodifiedText);
-    encoder.encode(m_keyIdentifier);
-    encoder.encode(m_windowsVirtualKeyCode);
-    encoder.encode(m_nativeVirtualKeyCode);
-    encoder.encode(m_macCharCode);
-    encoder.encode(m_isAutoRepeat);
-    encoder.encode(m_isKeypad);
-    encoder.encode(m_isSystemKey);
+    encoder << m_text;
+    encoder << m_unmodifiedText;
+    encoder << m_keyIdentifier;
+    encoder << m_windowsVirtualKeyCode;
+    encoder << m_nativeVirtualKeyCode;
+    encoder << m_macCharCode;
+    encoder << m_isAutoRepeat;
+    encoder << m_isKeypad;
+    encoder << m_isSystemKey;
 }
 
 bool WebKeyboardEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebKeyboardEvent& result)

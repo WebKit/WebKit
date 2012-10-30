@@ -43,10 +43,10 @@ SecItemResponseData::SecItemResponseData(OSStatus resultCode, CFTypeRef resultOb
 
 void SecItemResponseData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(static_cast<int64_t>(m_resultCode));
-    encoder.encode(static_cast<bool>(m_resultObject.get()));
+    encoder << static_cast<int64_t>(m_resultCode);
+    encoder << static_cast<bool>(m_resultObject.get());
     if (m_resultObject)
-        CoreIPC::encode(&encoder, m_resultObject.get());
+        CoreIPC::encode(encoder, m_resultObject.get());
 }
 
 bool SecItemResponseData::decode(CoreIPC::ArgumentDecoder* decoder, SecItemResponseData& secItemResponseData)

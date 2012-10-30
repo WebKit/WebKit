@@ -44,14 +44,14 @@ void ColorSpaceData::encode(CoreIPC::ArgumentEncoder& encoder) const
         // Try to encode the name.
         if (RetainPtr<CFStringRef> name = adoptCF(CGColorSpaceCopyName(cgColorSpace.get()))) {
             encoder.encodeEnum(Name);
-            CoreIPC::encode(&encoder, name.get());
+            CoreIPC::encode(encoder, name.get());
             return;
         }
 
         // Failing that, just encode the ICC data.
         if (RetainPtr<CFDataRef> profileData = adoptCF(CGColorSpaceCopyICCProfile(cgColorSpace.get()))) {
             encoder.encodeEnum(Data);
-            CoreIPC::encode(&encoder, profileData.get());
+            CoreIPC::encode(encoder, profileData.get());
             return;
         }
     }

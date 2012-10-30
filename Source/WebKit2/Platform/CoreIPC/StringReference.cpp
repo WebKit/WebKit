@@ -35,13 +35,13 @@ namespace CoreIPC {
 
 void StringReference::encode(ArgumentEncoder& encoder) const
 {
-    encoder.encodeVariableLengthByteArray(DataReference(reinterpret_cast<const uint8_t*>(m_data), m_size));
+    encoder << DataReference(reinterpret_cast<const uint8_t*>(m_data), m_size);
 }
 
 bool StringReference::decode(ArgumentDecoder* decoder, StringReference& result)
 {
     DataReference dataReference;
-    if (!decoder->decodeVariableLengthByteArray(dataReference))
+    if (!decoder->decode(dataReference))
         return false;
 
     result.m_data = reinterpret_cast<const char*>(dataReference.data());

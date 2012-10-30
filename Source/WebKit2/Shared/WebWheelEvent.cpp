@@ -73,18 +73,18 @@ void WebWheelEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     WebEvent::encode(encoder);
 
-    encoder.encode(m_position);
-    encoder.encode(m_globalPosition);
-    encoder.encode(m_delta);
-    encoder.encode(m_wheelTicks);
-    encoder.encode(m_granularity);
-    encoder.encode(m_directionInvertedFromDevice);
+    encoder << m_position;
+    encoder << m_globalPosition;
+    encoder << m_delta;
+    encoder << m_wheelTicks;
+    encoder << m_granularity;
+    encoder << m_directionInvertedFromDevice;
 #if PLATFORM(MAC)
-    encoder.encode(m_phase);
-    encoder.encode(m_momentumPhase);
-    encoder.encode(m_hasPreciseScrollingDeltas);
-    encoder.encode(m_scrollCount);
-    encoder.encode(m_unacceleratedScrollingDelta);
+    encoder << m_phase;
+    encoder << m_momentumPhase;
+    encoder << m_hasPreciseScrollingDeltas;
+    encoder << m_scrollCount;
+    encoder << m_unacceleratedScrollingDelta;
 #endif
 }
 

@@ -32,10 +32,10 @@ namespace WebKit {
 
 void StatisticsData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(statisticsNumbers);
-    encoder.encode(javaScriptProtectedObjectTypeCounts);
-    encoder.encode(javaScriptObjectTypeCounts);
-    encoder.encode(webCoreCacheStatistics);
+    encoder << statisticsNumbers;
+    encoder << javaScriptProtectedObjectTypeCounts;
+    encoder << javaScriptObjectTypeCounts;
+    encoder << webCoreCacheStatistics;
 }
 
 bool StatisticsData::decode(CoreIPC::ArgumentDecoder* decoder, StatisticsData& statisticsData)

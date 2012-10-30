@@ -33,23 +33,23 @@ namespace WebKit {
 
 void EditorState::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(shouldIgnoreCompositionSelectionChange);
-    encoder.encode(selectionIsNone);
-    encoder.encode(selectionIsRange);
-    encoder.encode(isContentEditable);
-    encoder.encode(isContentRichlyEditable);
-    encoder.encode(isInPasswordField);
-    encoder.encode(hasComposition);
+    encoder << shouldIgnoreCompositionSelectionChange;
+    encoder << selectionIsNone;
+    encoder << selectionIsRange;
+    encoder << isContentEditable;
+    encoder << isContentRichlyEditable;
+    encoder << isInPasswordField;
+    encoder << hasComposition;
 
 #if PLATFORM(QT)
-    encoder.encode(cursorPosition);
-    encoder.encode(anchorPosition);
-    encoder.encode(editorRect);
-    encoder.encode(cursorRect);
-    encoder.encode(compositionRect);
-    encoder.encode(inputMethodHints);
-    encoder.encode(selectedText);
-    encoder.encode(surroundingText);
+    encoder << cursorPosition;
+    encoder << anchorPosition;
+    encoder << editorRect;
+    encoder << cursorRect;
+    encoder << compositionRect;
+    encoder << inputMethodHints;
+    encoder << selectedText;
+    encoder << surroundingText;
 #endif
 }
 

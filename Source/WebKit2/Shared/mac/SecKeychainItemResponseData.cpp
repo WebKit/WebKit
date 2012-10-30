@@ -65,19 +65,19 @@ SecKeychainItemResponseData::SecKeychainItemResponseData(OSStatus resultCode)
 
 void SecKeychainItemResponseData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(static_cast<int64_t>(m_resultCode));
-    encoder.encode(static_cast<uint32_t>(m_itemClass));
-    encoder.encode(static_cast<uint32_t>(m_attributes.size()));
+    encoder << static_cast<int64_t>(m_resultCode);
+    encoder << static_cast<uint32_t>(m_itemClass);
+    encoder << static_cast<uint32_t>(m_attributes.size());
     for (size_t i = 0, count = m_attributes.size(); i < count; ++i)
-        CoreIPC::encode(&encoder, m_attributes[i]);
+        CoreIPC::encode(encoder, m_attributes[i]);
 
-    encoder.encode(static_cast<bool>(m_data));
+    encoder << static_cast<bool>(m_data);
     if (m_data)
-        CoreIPC::encode(&encoder, m_data.get());
+        CoreIPC::encode(encoder, m_data.get());
 
-    encoder.encode(static_cast<bool>(m_keychainItem));
+    encoder << static_cast<bool>(m_keychainItem);
     if (m_keychainItem)
-        CoreIPC::encode(&encoder, m_keychainItem.get());
+        CoreIPC::encode(encoder, m_keychainItem.get());
 }
 
 bool SecKeychainItemResponseData::decode(CoreIPC::ArgumentDecoder* decoder, SecKeychainItemResponseData& secKeychainItemResponseData)

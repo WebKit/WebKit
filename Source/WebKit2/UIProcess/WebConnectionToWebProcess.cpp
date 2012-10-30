@@ -54,7 +54,7 @@ WebConnectionToWebProcess::WebConnectionToWebProcess(WebProcessProxy* process, C
 
 void WebConnectionToWebProcess::encodeMessageBody(CoreIPC::ArgumentEncoder& encoder, APIObject* messageBody)
 {
-    encoder.encode(WebContextUserMessageEncoder(messageBody));
+    encoder << WebContextUserMessageEncoder(messageBody);
 }
 
 bool WebConnectionToWebProcess::decodeMessageBody(CoreIPC::ArgumentDecoder& decoder, RefPtr<APIObject>& messageBody)

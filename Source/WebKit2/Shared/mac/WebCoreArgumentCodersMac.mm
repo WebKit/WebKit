@@ -47,7 +47,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder* encoder
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, WKNSURLRequestCreateSerializableRepresentation(resourceRequest.nsURLRequest(), CoreIPC::tokenNullTypeRef()));
-    CoreIPC::encode(encoder, dictionary.get());
+    CoreIPC::encode(*encoder, dictionary.get());
 }
 
 bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
@@ -82,7 +82,7 @@ void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder* encode
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, WKNSURLResponseCreateSerializableRepresentation(resourceResponse.nsURLResponse(), CoreIPC::tokenNullTypeRef()));
-    CoreIPC::encode(encoder, dictionary.get());
+    CoreIPC::encode(*encoder, dictionary.get());
 }
 
 bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)

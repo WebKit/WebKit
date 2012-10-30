@@ -127,16 +127,16 @@ void SecKeychainItemRequestData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder.encodeEnum(m_type);
 
-    encoder.encode(static_cast<bool>(m_keychainItem));
+    encoder << static_cast<bool>(m_keychainItem);
     if (m_keychainItem)
-        CoreIPC::encode(&encoder, m_keychainItem.get());
+        CoreIPC::encode(encoder, m_keychainItem.get());
 
-    encoder.encode(static_cast<int32_t>(m_keychainAttributes.size()));
+    encoder << static_cast<int32_t>(m_keychainAttributes.size());
     for (size_t i = 0, count = m_keychainAttributes.size(); i < count; ++i)
-        CoreIPC::encode(&encoder, m_keychainAttributes[i]);
+        CoreIPC::encode(encoder, m_keychainAttributes[i]);
     
-    encoder.encode(static_cast<uint64_t>(m_itemClass));
-    m_dataReference.encode(encoder);
+    encoder << static_cast<uint64_t>(m_itemClass);
+    encoder << m_dataReference;
 }
 
 bool SecKeychainItemRequestData::decode(CoreIPC::ArgumentDecoder* decoder, SecKeychainItemRequestData& secKeychainItemRequestData)
@@ -171,9 +171,9 @@ bool SecKeychainItemRequestData::decode(CoreIPC::ArgumentDecoder* decoder, SecKe
     
     secKeychainItemRequestData.m_itemClass = static_cast<SecItemClass>(itemClass);
 
-    if (!CoreIPC::DataReference::decode(decoder, secKeychainItemRequestData.m_dataReference))
+    if (decoder->decode(secKeychainItemRequestData.m_dataReference))
         return false;
-        
+
     return true;
 }
 

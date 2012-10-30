@@ -34,31 +34,31 @@ class ArgumentEncoder;
 class ArgumentDecoder;
 
 // NSAttributedString
-void encode(ArgumentEncoder*, NSAttributedString *);
+void encode(ArgumentEncoder&, NSAttributedString *);
 bool decode(ArgumentDecoder*, RetainPtr<NSAttributedString>&);
 
 #if USE(APPKIT)
 // NSColor
-void encode(ArgumentEncoder*, NSColor *);
+void encode(ArgumentEncoder&, NSColor *);
 bool decode(ArgumentDecoder*, RetainPtr<NSColor>&);
 #endif
 
 // NSDictionary
-void encode(ArgumentEncoder*, NSDictionary *);
+void encode(ArgumentEncoder&, NSDictionary *);
 bool decode(ArgumentDecoder*, RetainPtr<NSDictionary>&);
 
 #if USE(APPKIT)
 // NSFont
-void encode(ArgumentEncoder*, NSFont *);
+void encode(ArgumentEncoder&, NSFont *);
 bool decode(ArgumentDecoder*, RetainPtr<NSFont>&);
 #endif
 
 // NSNumber
-void encode(ArgumentEncoder*, NSNumber *);
+void encode(ArgumentEncoder&, NSNumber *);
 bool decode(ArgumentDecoder*, RetainPtr<NSNumber>&);
 
 // NSString
-void encode(ArgumentEncoder*, NSString *);
+void encode(ArgumentEncoder&, NSString *);
 bool decode(ArgumentDecoder*, RetainPtr<NSString>&);
 
 } // namespace CoreIPC

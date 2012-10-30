@@ -39,7 +39,7 @@ NetworkProcessCreationParameters::NetworkProcessCreationParameters()
 void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
 #if PLATFORM(MAC)
-    encoder.encode(parentProcessName);
+    encoder << parentProcessName;
 #endif
 }
 

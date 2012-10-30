@@ -32,12 +32,12 @@ namespace WebKit {
 
 void WebPageGroupData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(identifer);
-    encoder.encode(pageGroupID);
-    encoder.encode(visibleToInjectedBundle);
-    encoder.encode(visibleToHistoryClient);
-    encoder.encode(userStyleSheets);
-    encoder.encode(userScripts);
+    encoder << identifer;
+    encoder << pageGroupID;
+    encoder << visibleToInjectedBundle;
+    encoder << visibleToHistoryClient;
+    encoder << userStyleSheets;
+    encoder << userScripts;
 }
 
 bool WebPageGroupData::decode(CoreIPC::ArgumentDecoder* decoder, WebPageGroupData& data)

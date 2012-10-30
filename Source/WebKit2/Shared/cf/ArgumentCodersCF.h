@@ -39,48 +39,48 @@ class ArgumentEncoder;
 class ArgumentDecoder;
 
 // CFArrayRef
-void encode(ArgumentEncoder*, CFArrayRef);
+void encode(ArgumentEncoder&, CFArrayRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFArrayRef>& result);
 
 // CFBooleanRef
-void encode(ArgumentEncoder*, CFBooleanRef);
+void encode(ArgumentEncoder&, CFBooleanRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFBooleanRef>& result);
 
 // CFDataRef
-void encode(ArgumentEncoder*, CFDataRef);
+void encode(ArgumentEncoder&, CFDataRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFDataRef>& result);
 
 // CFDateRef
-void encode(ArgumentEncoder*, CFDateRef);
+void encode(ArgumentEncoder&, CFDateRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFDateRef>& result);
 
 // CFDictionaryRef
-void encode(ArgumentEncoder*, CFDictionaryRef);
+void encode(ArgumentEncoder&, CFDictionaryRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFDictionaryRef>& result);
 
 // CFNumberRef
-void encode(ArgumentEncoder*, CFNumberRef);
+void encode(ArgumentEncoder&, CFNumberRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFNumberRef>& result);
 
 // CFStringRef
-void encode(ArgumentEncoder*, CFStringRef);
+void encode(ArgumentEncoder&, CFStringRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFStringRef>& result);
 
 // CFTypeRef
-void encode(ArgumentEncoder*, CFTypeRef);
+void encode(ArgumentEncoder&, CFTypeRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFTypeRef>& result);
 
 // CFURLRef
-void encode(ArgumentEncoder*, CFURLRef);
+void encode(ArgumentEncoder&, CFURLRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFURLRef>& result);
 
 #if USE(SECURITY_FRAMEWORK)
 // SecCertificateRef
-void encode(ArgumentEncoder*, SecCertificateRef);
+void encode(ArgumentEncoder&, SecCertificateRef);
 bool decode(ArgumentDecoder*, RetainPtr<SecCertificateRef>& result);
 
 // SecKeychainItemRef
-void encode(ArgumentEncoder*, SecKeychainItemRef);
+void encode(ArgumentEncoder&, SecKeychainItemRef);
 bool decode(ArgumentDecoder*, RetainPtr<SecKeychainItemRef>& result);
 #endif
 

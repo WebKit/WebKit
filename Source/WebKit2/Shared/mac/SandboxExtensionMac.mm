@@ -56,7 +56,7 @@ SandboxExtension::Handle::~Handle()
 void SandboxExtension::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     if (!m_sandboxExtension) {
-        encoder.encodeVariableLengthByteArray(CoreIPC::DataReference());
+        encoder << CoreIPC::DataReference();
         return;
     }
 
@@ -64,7 +64,7 @@ void SandboxExtension::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
     const char *serializedFormat = WKSandboxExtensionGetSerializedFormat(m_sandboxExtension, &length);
     ASSERT(serializedFormat);
 
-    encoder.encodeVariableLengthByteArray(CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(serializedFormat), length));
+    encoder << CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(serializedFormat), length);
 
     // Encoding will destroy the sandbox extension locally.
     WKSandboxExtensionDestroy(m_sandboxExtension);
@@ -76,7 +76,7 @@ bool SandboxExtension::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle&
     ASSERT(!result.m_sandboxExtension);
 
     CoreIPC::DataReference dataReference;
-    if (!decoder->decodeVariableLengthByteArray(dataReference))
+    if (!decoder->decode(dataReference))
         return false;
 
     if (dataReference.isEmpty())
@@ -128,9 +128,9 @@ size_t SandboxExtension::HandleArray::size() const
 
 void SandboxExtension::HandleArray::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(static_cast<uint64_t>(size()));
+    encoder << static_cast<uint64_t>(size());
     for (size_t i = 0; i < m_size; ++i)
-        encoder.encode(m_data[i]);
+        encoder << m_data[i];
     
 }
 
@@ -140,9 +140,10 @@ bool SandboxExtension::HandleArray::decode(CoreIPC::ArgumentDecoder* decoder, Sa
     if (!decoder->decodeUInt64(size))
         return false;
     handles.allocate(size);
-    for (size_t i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++) {
         if (!decoder->decode(handles[i]))
             return false;
+    }
     return true;
 }
 

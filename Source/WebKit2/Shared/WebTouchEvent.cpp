@@ -44,7 +44,7 @@ void WebTouchEvent::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     WebEvent::encode(encoder);
 
-    encoder.encode(m_touchPoints);
+    encoder << m_touchPoints;
 }
 
 bool WebTouchEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebTouchEvent& result)

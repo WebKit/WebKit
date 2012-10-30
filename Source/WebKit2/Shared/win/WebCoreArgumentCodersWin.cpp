@@ -59,7 +59,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder* encoder
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, wkCFURLRequestCreateSerializableRepresentation(resourceRequest.cfURLRequest(), CoreIPC::tokenNullTypeRef()));
-    CoreIPC::encode(encoder, dictionary.get());
+    CoreIPC::encode(*encoder, dictionary.get());
 #endif
 }
 
@@ -105,7 +105,7 @@ void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder* encode
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, wkCFURLResponseCreateSerializableRepresentation(resourceResponse.cfURLResponse(), CoreIPC::tokenNullTypeRef()));
-    CoreIPC::encode(encoder, dictionary.get());
+    CoreIPC::encode(*encoder, dictionary.get());
 #endif
 }
 

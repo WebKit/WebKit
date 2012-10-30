@@ -47,7 +47,7 @@ namespace CoreIPC {
 class ArgumentDecoder;
 class ArgumentEncoder;
 
-void encode(ArgumentEncoder*, const WebKit::KeychainAttribute&);
+void encode(ArgumentEncoder&, const WebKit::KeychainAttribute&);
 bool decode(ArgumentDecoder*, WebKit::KeychainAttribute&);
 
 } // namespace CoreIPC

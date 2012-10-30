@@ -108,10 +108,10 @@ void WebContextMenuItemData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder.encodeEnum(m_type);
     encoder.encodeEnum(m_action);
-    encoder.encode(m_title);
-    encoder.encode(m_checked);
-    encoder.encode(m_enabled);
-    encoder.encode(m_submenu);
+    encoder << m_title;
+    encoder << m_checked;
+    encoder << m_enabled;
+    encoder << m_submenu;
 }
 
 bool WebContextMenuItemData::decode(CoreIPC::ArgumentDecoder* decoder, WebContextMenuItemData& item)

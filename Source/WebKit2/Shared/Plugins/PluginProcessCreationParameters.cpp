@@ -39,15 +39,15 @@ PluginProcessCreationParameters::PluginProcessCreationParameters()
 
 void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(pluginPath);
-    encoder.encode(supportsAsynchronousPluginInitialization);
-    encoder.encode(minimumLifetime);
-    encoder.encode(terminationTimeout);
+    encoder << pluginPath;
+    encoder << supportsAsynchronousPluginInitialization;
+    encoder << minimumLifetime;
+    encoder << terminationTimeout;
 
 #if PLATFORM(MAC)
-    encoder.encode(parentProcessName);
-    encoder.encode(acceleratedCompositingPort);
-    encoder.encode(sandboxProfileDirectoryPath);
+    encoder << parentProcessName;
+    encoder << acceleratedCompositingPort;
+    encoder << sandboxProfileDirectoryPath;
 #endif
 }
 
