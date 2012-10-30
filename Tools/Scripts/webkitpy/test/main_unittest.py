@@ -21,11 +21,22 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import sys
 import unittest
 import StringIO
 
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.test.main import Tester, _Loader
+
+
+STUBS_CLASS = __name__ + ".TestStubs"
+
+
+class TestStubs(unittest.TestCase):
+    def test_empty(self):
+        pass
 
 
 class TesterTest(unittest.TestCase):
@@ -59,3 +70,15 @@ class TesterTest(unittest.TestCase):
         parallel_tests, serial_tests = tester._test_names(_Loader(), args)
         self.assertEquals(parallel_tests, args)
         self.assertEquals(serial_tests, [])
+
+    def integration_test_coverage_works(self):
+        filesystem = FileSystem()
+        executive = Executive()
+        module_path = filesystem.path_to_module(self.__module__)
+        script_dir = module_path[0:module_path.find('webkitpy') - 1]
+        proc = executive.popen([sys.executable, filesystem.join(script_dir, 'test-webkitpy'), '-c', STUBS_CLASS + '.test_empty'],
+                               stdout=executive.PIPE, stderr=executive.PIPE)
+        out, _ = proc.communicate()
+        retcode = proc.returncode
+        self.assertEquals(retcode, 0)
+        self.assertTrue('Cover' in out)
