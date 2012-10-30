@@ -107,7 +107,6 @@ public:
     static void setFrameFlatteningEnabled(QWebPage*, bool);
     static void setCaretBrowsingEnabled(QWebPage* page, bool value);
     static void setAuthorAndUserStylesEnabled(QWebPage*, bool);
-    static void setMediaType(QWebFrame* qframe, const QString& type);
     static void setDumpRenderTreeModeEnabled(bool b);
 
     static void garbageCollectorCollect();

@@ -429,15 +429,6 @@ void DumpRenderTreeSupportQt::setAuthorAndUserStylesEnabled(QWebPage* page, bool
     page->handle()->page->settings()->setAuthorAndUserStylesEnabled(value);
 }
 
-void DumpRenderTreeSupportQt::setMediaType(QWebFrame* frame, const QString& type)
-{
-    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
-    WebCore::FrameView* view = coreFrame->view();
-    view->setMediaType(type);
-    coreFrame->document()->styleResolverChanged(RecalcStyleImmediately);
-    view->layout();
-}
-
 void DumpRenderTreeSupportQt::setSmartInsertDeleteEnabled(QWebPage* page, bool enabled)
 {
     page->d->smartInsertDeleteEnabled = enabled;

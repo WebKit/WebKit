@@ -408,11 +408,6 @@ QString TestRunner::decodeHostName(const QString& host)
     return decoded;
 }
 
-void TestRunner::setMediaType(const QString& type)
-{
-    DumpRenderTreeSupportQt::setMediaType(m_drt->webPage()->mainFrame(), type);
-}
-
 void TestRunner::closeWebInspector()
 {
     DumpRenderTreeSupportQt::webInspectorClose(m_drt->webPage());

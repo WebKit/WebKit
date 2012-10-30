@@ -1,3 +1,17 @@
+2012-10-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [QT][DRT] Remove unneeded testRunner.setMediaType() implementation
+        https://bugs.webkit.org/show_bug.cgi?id=100740
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Removed unneeded testRunner.setMediaType() implementation, as tests use
+        cross-platform window.internals.settings.setMediaTypeOverride instead.
+
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunner):
+
 2012-10-30  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][DRT] Bitmap should show whole view area.
