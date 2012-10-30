@@ -1,3 +1,24 @@
+2012-10-30  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12395187> REGRESSION (r121299): OS X Text Replacement forces cursor out of text fields
+        https://bugs.webkit.org/show_bug.cgi?id=100768
+
+        Reviewed by Anders Carlsson.
+
+        r121299 introduced code to restore the paragraph range by saving its length and start offset
+        relative to the document. The latter was obtained by iterating over the range starting at
+        the beginning of the document and ending at the beginning of the paragraph range. However,
+        such a range could not be constructed if the paragraph range was contained in a shadow DOM,
+        since a range must have both its endpoints within the same shadow tree (or not in a shadow
+        tree).
+
+        Test: platform/mac/editing/spelling/autocorrection-in-textarea.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAndReplaceFor): Changed paragraphStartIndex to be relative to the
+        root container of paragraphRange, using the same logic used by
+        checkForDifferentRootContainer() in Range.cpp.
+
 2012-10-30  Dan Carney  <dcarney@google.com>
 
         Remove ensureAuxiliaryContext
