@@ -1,3 +1,10 @@
+2012-10-30  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseScrollBy):
+
 2012-10-30  Rick Byers  <rbyers@chromium.org>
 
         [touchadjustment] touch-links-longpress tests passes incorrectly
