@@ -262,6 +262,7 @@ COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleUserInterfaceTooltip, UserInter
 COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleToggleButton, ToggleButtonRole);
 COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleCanvas, CanvasRole);
 COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleLegend, LegendRole);
+COMPILE_ASSERT_MATCHING_ENUM(WebAccessibilityRoleSVGRoot, SVGRootRole);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebApplicationCacheHost::Uncached, ApplicationCacheHost::UNCACHED);
 COMPILE_ASSERT_MATCHING_ENUM(WebApplicationCacheHost::Idle, ApplicationCacheHost::IDLE);

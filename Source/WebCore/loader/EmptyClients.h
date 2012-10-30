@@ -206,6 +206,8 @@ public:
     virtual void numWheelEventHandlersChanged(unsigned) OVERRIDE { }
     
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return false; }
+    
+    virtual bool isEmptyChromeClient() const { return true; }
 };
 
 class EmptyFrameLoaderClient : public FrameLoaderClient {

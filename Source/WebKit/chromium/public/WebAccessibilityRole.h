@@ -125,6 +125,7 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleSplitter,
     WebAccessibilityRoleStaticText,
     WebAccessibilityRoleSystemWide,
+    WebAccessibilityRoleSVGRoot,
     WebAccessibilityRoleTabGroup,
     WebAccessibilityRoleTabList,
     WebAccessibilityRoleTabPanel,

@@ -181,6 +181,7 @@ enum AccessibilityRole {
     SplitterRole,
     StaticTextRole,
     SystemWideRole,
+    SVGRootRole,
     TabGroupRole,
     TabListRole,
     TabPanelRole,            
@@ -362,7 +363,8 @@ public:
     virtual bool isAccessibilityRenderObject() const { return false; }
     virtual bool isAccessibilityScrollbar() const { return false; }
     virtual bool isAccessibilityScrollView() const { return false; }
-    
+    virtual bool isAccessibilitySVGRoot() const { return false; }
+
     bool accessibilityObjectContainsText(String *) const;
     
     virtual bool isAnchor() const { return false; }

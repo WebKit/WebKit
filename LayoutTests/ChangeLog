@@ -1,3 +1,18 @@
+2012-10-30 Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support embedded SVG objects in AX tree
+        https://bugs.webkit.org/show_bug.cgi?id=97571
+
+        Reviewed by Tim Horton.
+
+        Added a new test that links in an svg file. Accessibility of that remote svg file is tested.
+        Test skipped on chromium until clickPoint() is implemented in DRT.
+
+        * accessibility/svg-remote-element.html: Added.
+        * accessibility/resources/svg-face.svg: Added.
+        * platform/chromium/TestExpectations:
+        * platform/mac/accessibility/svg-remote-element-expected.txt: Added.
+
 2012-10-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][WTR] WebKitTestRunner needs testRunner.queueLoadHTMLString

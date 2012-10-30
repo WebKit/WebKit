@@ -364,6 +364,8 @@ namespace WebCore {
 
         virtual FloatSize minimumWindowSize() const { return FloatSize(100, 100); };
 
+        virtual bool isEmptyChromeClient() const { return false; }
+
     protected:
         virtual ~ChromeClient() { }
     };

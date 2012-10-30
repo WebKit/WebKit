@@ -1001,6 +1001,7 @@ SET(WebCore_SOURCES
     accessibility/AccessibilityScrollView.cpp
     accessibility/AccessibilitySpinButton.cpp
     accessibility/AccessibilitySlider.cpp
+    accessibility/AccessibilitySVGRoot.cpp
     accessibility/AccessibilityTable.cpp
     accessibility/AccessibilityTableCell.cpp
     accessibility/AccessibilityTableColumn.cpp

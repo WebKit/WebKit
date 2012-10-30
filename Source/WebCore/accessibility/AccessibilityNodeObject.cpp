@@ -1475,6 +1475,9 @@ String AccessibilityNodeObject::title() const
     case RadioButtonRole:
     case TabRole:
         return textUnderElement();
+    // SVGRoots should not use the text under itself as a title. That could include the text of objects like <text>.
+    case SVGRootRole:
+        return String();
     default:
         break;
     }

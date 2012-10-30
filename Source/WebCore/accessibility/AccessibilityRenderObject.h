@@ -35,6 +35,7 @@
 
 namespace WebCore {
     
+class AccessibilitySVGRoot;
 class AXObjectCache;
 class Element;
 class Frame;
@@ -241,16 +242,24 @@ private:
     AccessibilityObject* internalLinkElement() const;
     AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
+    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const;
+
     bool renderObjectIsObservable(RenderObject*) const;
     RenderObject* renderParentObject() const;
     bool isDescendantOfElementType(const QualifiedName& tagName) const;
-    // This returns true if it's focusable but it's not content editable and it's not a control or ARIA control.
-
+    
+    bool isSVGImage() const;
+    void detachRemoteSVGRoot();
+    AccessibilitySVGRoot* remoteSVGRootElement() const;
+    AccessibilityObject* remoteSVGElementHitTest(const IntPoint&) const;
+    void offsetBoundingBoxForRemoteSVGElement(LayoutRect&) const;
+    
     void addHiddenChildren();
     void addTextFieldChildren();
     void addImageMapChildren();
     void addCanvasChildren();
     void addAttachmentChildren();
+    void addRemoteSVGChildren();
 #if PLATFORM(MAC)
     void updateAttachmentViewParents();
 #endif

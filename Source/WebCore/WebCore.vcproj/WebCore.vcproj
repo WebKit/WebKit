@@ -26263,6 +26263,62 @@
 				>
 			</File>
 			<File
+				RelativePath="..\accessibility\AccessibilitySVGRoot.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\accessibility\AccessibilitySVGRoot.h"
+				>
+			</File>
+			<File
 				RelativePath="..\accessibility\AccessibilityScrollbar.cpp"
 				>
 				<FileConfiguration
@@ -73823,6 +73879,10 @@
 				</File>
 				<File
 					RelativePath="..\svg\graphics\SVGImageCache.h"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\graphics\SVGImageChromeClient.h"
 					>
 				</File>
 				<Filter

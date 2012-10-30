@@ -4574,6 +4574,8 @@
 		AAB6054F15874C58007B5031 /* InjectedScriptBase.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB6054B15874C58007B5031 /* InjectedScriptBase.h */; };
 		AAB6055015874C58007B5031 /* InjectedScriptModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB6054C15874C58007B5031 /* InjectedScriptModule.cpp */; };
 		AAB6055115874C58007B5031 /* InjectedScriptModule.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB6054D15874C58007B5031 /* InjectedScriptModule.h */; };
+		AAC08CEF15F933D600F1E188 /* SVGImageChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC08CED15F933D600F1E188 /* SVGImageChromeClient.h */; };
+		AAC08CF315F941FD00F1E188 /* AccessibilitySVGRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC08CF115F941FC00F1E188 /* AccessibilitySVGRoot.h */; };
 		AAD766EB157E502F00E85423 /* InspectorCanvasAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD766E8157E502F00E85423 /* InspectorCanvasAgent.cpp */; };
 		AAD766EC157E502F00E85423 /* InspectorCanvasAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD766E9157E502F00E85423 /* InspectorCanvasAgent.h */; };
 		AAD766ED157E502F00E85423 /* InspectorCanvasInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD766EA157E502F00E85423 /* InspectorCanvasInstrumentation.h */; };
@@ -11744,6 +11746,9 @@
 		AAB6054B15874C58007B5031 /* InjectedScriptBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptBase.h; sourceTree = "<group>"; };
 		AAB6054C15874C58007B5031 /* InjectedScriptModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptModule.cpp; sourceTree = "<group>"; };
 		AAB6054D15874C58007B5031 /* InjectedScriptModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptModule.h; sourceTree = "<group>"; };
+		AAC08CED15F933D600F1E188 /* SVGImageChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageChromeClient.h; sourceTree = "<group>"; };
+		AAC08CF015F941FC00F1E188 /* AccessibilitySVGRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilitySVGRoot.cpp; sourceTree = "<group>"; };
+		AAC08CF115F941FC00F1E188 /* AccessibilitySVGRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySVGRoot.h; sourceTree = "<group>"; };
 		AAD766E8157E502F00E85423 /* InspectorCanvasAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCanvasAgent.cpp; sourceTree = "<group>"; };
 		AAD766E9157E502F00E85423 /* InspectorCanvasAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCanvasAgent.h; sourceTree = "<group>"; };
 		AAD766EA157E502F00E85423 /* InspectorCanvasInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCanvasInstrumentation.h; sourceTree = "<group>"; };
@@ -14905,6 +14910,8 @@
 				0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */,
 				29D7BCF51444AF580070619C /* AccessibilitySpinButton.cpp */,
 				29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */,
+				AAC08CF015F941FC00F1E188 /* AccessibilitySVGRoot.cpp */,
+				AAC08CF115F941FC00F1E188 /* AccessibilitySVGRoot.h */,
 				2981CAAA131822EC00D12F2A /* AccessibilityTable.cpp */,
 				29A8120D0FBB9C1D00510293 /* AccessibilityTable.h */,
 				2981CAAB131822EC00D12F2A /* AccessibilityTableCell.cpp */,
@@ -19828,6 +19835,7 @@
 				B255990C0D00D8B900BB825C /* SVGImage.h */,
 				08F859D21463F9CD0067D933 /* SVGImageCache.cpp */,
 				08F859D31463F9CD0067D933 /* SVGImageCache.h */,
+				AAC08CED15F933D600F1E188 /* SVGImageChromeClient.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
@@ -25678,6 +25686,8 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				AAC08CEF15F933D600F1E188 /* SVGImageChromeClient.h in Headers */,
+				AAC08CF315F941FD00F1E188 /* AccessibilitySVGRoot.h in Headers */,
 				50933350163B0E4300099A60 /* CustomFilterParameterList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

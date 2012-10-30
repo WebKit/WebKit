@@ -43,6 +43,7 @@
 #import "AccessibilityTableColumn.h"
 #import "AccessibilityTableRow.h"
 #import "Chrome.h"
+#import "ChromeClient.h"
 #import "ColorMac.h"
 #import "ContextMenuController.h"
 #import "Font.h"
@@ -1460,7 +1461,8 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
         
         // Find the appropriate scroll view to use to convert the contents to the window.
         ScrollView* scrollView = 0;
-        for (AccessibilityObject* parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
+        AccessibilityObject* parent = 0;
+        for (parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
             if (parent->isAccessibilityScrollView()) {
                 scrollView = toAccessibilityScrollView(parent)->scrollView();
                 break;
@@ -1470,8 +1472,15 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
         if (scrollView)
             rect = scrollView->contentsToRootView(rect);
         
-        if (m_object->page())
-            point = m_object->page()->chrome()->rootViewToScreen(rect).location();
+        Page* page = m_object->page();
+        
+        // If we have an empty chrome client (like SVG) then we should use the page
+        // of the scroll view parent to help us get to the screen rect.
+        if (parent && page && page->chrome()->client()->isEmptyChromeClient())
+            page = parent->page();
+
+        if (page)
+            point = page->chrome()->rootViewToScreen(rect).location();
         else
             point = rect.location();
     }
@@ -1588,6 +1597,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { FooterRole, NSAccessibilityGroupRole },
         { ToggleButtonRole, NSAccessibilityButtonRole },
         { CanvasRole, NSAccessibilityImageRole },
+        { SVGRootRole, NSAccessibilityGroupRole },
         { LegendRole, NSAccessibilityGroupRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;

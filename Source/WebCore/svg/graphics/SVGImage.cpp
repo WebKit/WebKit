@@ -31,43 +31,16 @@
 #include "SVGImage.h"
 
 #include "DocumentLoader.h"
-#include "EmptyClients.h"
 #include "FrameView.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "RenderSVGRoot.h"
 #include "SVGDocument.h"
+#include "SVGImageChromeClient.h"
 #include "SVGSVGElement.h"
 #include "Settings.h"
 
 namespace WebCore {
-
-class SVGImageChromeClient : public EmptyChromeClient {
-    WTF_MAKE_NONCOPYABLE(SVGImageChromeClient); WTF_MAKE_FAST_ALLOCATED;
-public:
-    SVGImageChromeClient(SVGImage* image)
-        : m_image(image)
-    {
-    }
-
-    virtual bool isSVGImageChromeClient() const { return true; }
-    SVGImage* image() const { return m_image; }
-
-private:
-    virtual void chromeDestroyed()
-    {
-        m_image = 0;
-    }
-
-    virtual void invalidateContentsAndRootView(const IntRect& r, bool)
-    {
-        // If m_image->m_page is null, we're being destructed, don't fire changedInRect() in that case.
-        if (m_image && m_image->imageObserver() && m_image->m_page)
-            m_image->imageObserver()->changedInRect(m_image, r);
-    }
-
-    SVGImage* m_image;
-};
 
 SVGImage::SVGImage(ImageObserver* observer)
     : Image(observer)

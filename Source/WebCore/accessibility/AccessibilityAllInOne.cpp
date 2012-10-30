@@ -37,6 +37,7 @@
 #include "AccessibilityNodeObject.cpp"
 #include "AccessibilityObject.cpp"
 #include "AccessibilityRenderObject.cpp"
+#include "AccessibilitySVGRoot.cpp"
 #include "AccessibilityScrollView.cpp"
 #include "AccessibilityScrollbar.cpp"
 #include "AccessibilitySlider.cpp"

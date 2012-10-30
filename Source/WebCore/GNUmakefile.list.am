@@ -2215,6 +2215,8 @@ webcore_sources += \
 	Source/WebCore/accessibility/AccessibilitySlider.h \
 	Source/WebCore/accessibility/AccessibilitySpinButton.cpp \
 	Source/WebCore/accessibility/AccessibilitySpinButton.h \
+	Source/WebCore/accessibility/AccessibilitySVGRoot.cpp \
+	Source/WebCore/accessibility/AccessibilitySVGRoot.h \
 	Source/WebCore/accessibility/AccessibilityTableCell.cpp \
 	Source/WebCore/accessibility/AccessibilityTableCell.h \
 	Source/WebCore/accessibility/AccessibilityTableColumn.cpp \
@@ -5425,6 +5427,7 @@ webcore_sources += \
 	Source/WebCore/svg/graphics/filters/SVGFilter.h \
 	Source/WebCore/svg/graphics/SVGImageCache.cpp \
 	Source/WebCore/svg/graphics/SVGImageCache.h \
+	Source/WebCore/svg/graphics/SVGImageChromeClient.h \
 	Source/WebCore/svg/graphics/SVGImage.cpp \
 	Source/WebCore/svg/graphics/SVGImage.h \
 	Source/WebCore/svg/LinearGradientAttributes.h \

@@ -1,3 +1,72 @@
+2012-10-30  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support embedded SVG objects in AX tree
+        https://bugs.webkit.org/show_bug.cgi?id=97571
+
+        Reviewed by Tim Horton.
+
+        This patch allows an SVG image from another resource to be hooked into the AX
+        hierarchy. This is done by creating an AX wrapper for the root SVG that holds onto
+        its native parent image. The SVGChromeClient is then used to connect to this SVG resource.
+
+        Test: accessibility/svg-remote-element.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::createFromRenderer):
+        * accessibility/AccessibilityAllInOne.cpp:
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isAccessibilitySVGRoot):
+        (AccessibilityObject):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::detach):
+        (WebCore::AccessibilityRenderObject::offsetBoundingBoxForRemoteSVGElement):
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        (WebCore::AccessibilityRenderObject::remoteSVGElementHitTest):
+        (WebCore::AccessibilityRenderObject::elementAccessibilityHitTest):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::isSVGImage):
+        (WebCore::AccessibilityRenderObject::detachRemoteSVGRoot):
+        (WebCore::AccessibilityRenderObject::remoteSVGRootElement):
+        (WebCore::AccessibilityRenderObject::addRemoteSVGChildren):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+        * accessibility/AccessibilitySVGRoot.cpp: Added.
+        (WebCore::AccessibilitySVGRoot::AccessibilitySVGRoot):
+        (WebCore::AccessibilitySVGRoot::~AccessibilitySVGRoot):
+        (WebCore::AccessibilitySVGRoot::create):
+        (WebCore::AccessibilitySVGRoot::parentObject):
+        * accessibility/AccessibilitySVGRoot.h: Added.
+        (AccessibilitySVGRoot): Class provides ability to wrap the SVG root of a remote accessibility element.
+        (WebCore::AccessibilitySVGRoot::setParent):
+        (WebCore::AccessibilitySVGRoot::isAccessibilitySVGRoot):
+        (WebCore::toAccessibilitySVGRoot):
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper position]): The position of AX elements within a remote SVG element needs to be handled 
+        in a special manner.
+        (createAccessibilityRoleMap):
+        * loader/EmptyClients.h:
+        (EmptyChromeClient): Expose isEmptyChromeClient() so Accessibility will know when to apply different policies for finding
+        the accessibility bounding rect of elements.
+        (WebCore::EmptyChromeClient::isEmptyChromeClient):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::isEmptyChromeClient):
+        (ChromeClient):
+        * svg/graphics/SVGImage.cpp:
+        * svg/graphics/SVGImageChromeClient.h: Added.
+        (SVGImageChromeClient): Expose the SVGImageChromeClient so that Accessibility can reference its image.
+        (WebCore::SVGImageChromeClient::SVGImageChromeClient):
+        (WebCore::SVGImageChromeClient::isSVGImageChromeClient):
+        (WebCore::SVGImageChromeClient::image):
+        (WebCore::SVGImageChromeClient::chromeDestroyed):
+        (WebCore::SVGImageChromeClient::invalidateContentsAndRootView):
+        (WebCore::toSVGImageChromeClient):
+
 2012-10-30  Dan Carney  <dcarney@google.com>
 
         add 7 bit strings capabilities to the v8 binding layer
