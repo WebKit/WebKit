@@ -59,22 +59,23 @@ PageRuntimeAgent::PageRuntimeAgent(InstrumentingAgents* instrumentingAgents, Ins
     , m_pageAgent(pageAgent)
     , m_inspectorAgent(inspectorAgent)
     , m_frontend(0)
+    , m_mainWorldContextCreated(false)
 {
+    m_instrumentingAgents->setPageRuntimeAgent(this);
 }
 
 PageRuntimeAgent::~PageRuntimeAgent()
 {
+    m_instrumentingAgents->setPageRuntimeAgent(0);
 }
 
 void PageRuntimeAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->runtime();
-    m_instrumentingAgents->setPageRuntimeAgent(this);
 }
 
 void PageRuntimeAgent::clearFrontend()
 {
-    m_instrumentingAgents->setPageRuntimeAgent(0);
     m_frontend = 0;
     String errorString;
     disable(&errorString);
@@ -98,7 +99,7 @@ void PageRuntimeAgent::enable(ErrorString* errorString)
     // Only report existing contexts if the page did commit load, otherwise we may
     // unintentionally initialize contexts in the frames which may trigger some listeners
     // that are expected to be triggered only after the load is committed, see http://crbug.com/131623
-    if (m_inspectorAgent->didCommitLoadFired())
+    if (m_mainWorldContextCreated)
         reportExecutionContextCreation();
 }
 
@@ -111,8 +112,10 @@ void PageRuntimeAgent::disable(ErrorString* errorString)
     m_state->setBoolean(PageRuntimeAgentState::runtimeEnabled, false);
 }
 
-void PageRuntimeAgent::didClearWindowObject(Frame* frame)
+void PageRuntimeAgent::didCreateMainWorldContext(Frame* frame)
 {
+    m_mainWorldContextCreated = true;
+
     if (!m_enabled)
         return;
     ASSERT(m_frontend);

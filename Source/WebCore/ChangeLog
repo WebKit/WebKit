@@ -1,3 +1,60 @@
+2012-10-31  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: frame chooser does not work on subsequent inspector open.
+        https://bugs.webkit.org/show_bug.cgi?id=100771
+
+        Reviewed by Yury Semikhatsky.
+
+        - Make WorkerRuntimeAgent and PageRuntimeAgent register themselves in the instrumenting agents independently
+        - Move pause / run worker handling from InspectorRuntimeAgent into WorkerRuntimeAgent
+        - Remove remains of the front-end reused signal from InspectorAgent
+        - Send execution contexts post clear window object instead of post commit load.
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::clearFrontend):
+        (WebCore::InspectorAgent::didCommitLoad):
+        * inspector/InspectorAgent.h:
+        (InspectorAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        (WebCore::InspectorInstrumentation::willEvaluateWorkerScript):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::restore):
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::~InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::run):
+        (WebCore::InspectorRuntimeAgent::setScriptDebugServer):
+        * inspector/InspectorRuntimeAgent.h:
+        (InspectorRuntimeAgent):
+        * inspector/InstrumentingAgents.h:
+        (WebCore):
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::workerRuntimeAgent):
+        (WebCore::InstrumentingAgents::setWorkerRuntimeAgent):
+        (InstrumentingAgents):
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::PageRuntimeAgent):
+        (WebCore::PageRuntimeAgent::~PageRuntimeAgent):
+        (WebCore::PageRuntimeAgent::setFrontend):
+        (WebCore::PageRuntimeAgent::clearFrontend):
+        (WebCore::PageRuntimeAgent::enable):
+        (WebCore::PageRuntimeAgent::didCreateMainWorldContext):
+        * inspector/PageRuntimeAgent.h:
+        (PageRuntimeAgent):
+        * inspector/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::WorkerRuntimeAgent):
+        (WebCore::WorkerRuntimeAgent::~WorkerRuntimeAgent):
+        (WebCore::WorkerRuntimeAgent::run):
+        (WebCore):
+        (WebCore::WorkerRuntimeAgent::pauseWorkerContext):
+        * inspector/WorkerRuntimeAgent.h:
+        (WorkerRuntimeAgent):
+
 2012-10-31  Keishi Hattori  <keishi@webkit.org>
 
         Calendar picker can flicker when opened from the suggestion picker

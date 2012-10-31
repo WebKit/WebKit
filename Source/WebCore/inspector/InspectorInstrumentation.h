@@ -257,7 +257,6 @@ public:
     static bool hasFrontends() { return s_frontendCounter; }
     static bool canvasAgentEnabled(ScriptExecutionContext*);
     static bool consoleAgentEnabled(ScriptExecutionContext*);
-    static bool runtimeAgentEnabled(Frame*);
     static bool timelineAgentEnabled(ScriptExecutionContext*);
     static bool collectingHTMLParseErrors(Page*);
 #else

@@ -58,7 +58,7 @@ public:
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
 
-    void didClearWindowObject(Frame*);
+    void didCreateMainWorldContext(Frame*);
     void didCreateIsolatedContext(Frame*, ScriptState*, SecurityOrigin*);
 
 private:
@@ -74,6 +74,7 @@ private:
     InspectorPageAgent* m_pageAgent;
     InspectorAgent* m_inspectorAgent;
     InspectorFrontend::Runtime* m_frontend;
+    bool m_mainWorldContextCreated;
 };
 
 } // namespace WebCore
