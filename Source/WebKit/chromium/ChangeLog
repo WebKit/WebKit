@@ -1,3 +1,20 @@
+2012-10-31  Mike West  <mkwst@chromium.org>
+
+        Prefer document->addConsoleMessage to document->domWindow->console->addMessage.
+        https://bugs.webkit.org/show_bug.cgi?id=100850
+
+        Reviewed by Adam Barth.
+
+        For historical reasons, a few places in WebCore talk to Console directly
+        via 'document()->domWindow()->console()->addMessage(...)'. This is more
+        safely wrapped by calling 'addConsoleMessage' on the Document itself.
+
+        No visible functionality should change; we'll simply avoid potential
+        null dereferences in the future.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::addMessageToConsole):
+
 2012-10-31  Kent Tamura  <tkent@chromium.org>
 
         Remove code to hide/reshow text caret for PagePopups

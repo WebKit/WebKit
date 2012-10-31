@@ -31,7 +31,6 @@
 
 #include "CachedImage.h"
 #include "CheckedInt.h"
-#include "Console.h"
 #include "DOMWindow.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "ExceptionCode.h"
@@ -5207,20 +5206,10 @@ void WebGLRenderingContext::printWarningToConsole(const String& message)
 {
     if (!canvas())
         return;
-    // FIXME: This giant cascade of null checks seems a bit paranoid.
     Document* document = canvas()->document();
     if (!document)
         return;
-    Frame* frame = document->frame();
-    if (!frame)
-        return;
-    DOMWindow* window = document->domWindow();
-    if (!window)
-        return;
-    Console* console = window->console();
-    if (!console)
-        return;
-    console->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, document->url().string());
+    document->addConsoleMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, document->url().string());
 }
 
 bool WebGLRenderingContext::validateFramebufferFuncParameters(const char* functionName, GC3Denum target, GC3Denum attachment)

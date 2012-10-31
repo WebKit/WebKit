@@ -31,6 +31,7 @@
 #include "ActiveDOMObject.h"
 #include "ConsoleTypes.h"
 #include "KURL.h"
+#include "ScriptCallStack.h"
 #include "SecurityContext.h"
 #include "Supplementable.h"
 #include <wtf/Forward.h>
@@ -53,7 +54,6 @@ class EventListener;
 class EventQueue;
 class EventTarget;
 class MessagePort;
-class ScriptCallStack;
 
 #if ENABLE(BLOB)
 class PublicURLManager;

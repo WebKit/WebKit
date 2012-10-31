@@ -26,7 +26,6 @@
 #include "HTMLFormElement.h"
 
 #include "Attribute.h"
-#include "Console.h"
 #include "DOMFormData.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -257,7 +256,7 @@ bool HTMLFormElement::validateInteractively(Event* event)
                 continue;
             String message("An invalid form control with name='%name' is not focusable.");
             message.replace("%name", unhandledAssociatedElement->name());
-            document()->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, ErrorMessageLevel, message, document()->url().string());
+            document()->addConsoleMessage(HTMLMessageSource, LogMessageType, ErrorMessageLevel, message, document()->url().string());
         }
     }
     return false;

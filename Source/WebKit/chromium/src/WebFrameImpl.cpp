@@ -859,7 +859,7 @@ void WebFrameImpl::addMessageToConsole(const WebConsoleMessage& message)
         return;
     }
 
-    frame()->document()->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, webCoreMessageLevel, message.text);
+    frame()->document()->addConsoleMessage(OtherMessageSource, LogMessageType, webCoreMessageLevel, message.text);
 }
 
 void WebFrameImpl::collectGarbage()
