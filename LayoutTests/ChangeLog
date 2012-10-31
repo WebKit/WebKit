@@ -1,5 +1,14 @@
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
+        [chromium] Fix incorrect test names landed in
+        http://trac.webkit.org/changeset/133056
+
+        Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
         [chromium] New linux baseline for basic-inputs-expected.png, due to
         crrev.com/164985.
 
