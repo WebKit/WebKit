@@ -35,7 +35,7 @@ InputMethodContextEfl::InputMethodContextEfl(EwkViewImpl* viewImpl, PassOwnPtr<E
     , m_context(context)
     , m_focused(false)
 {
-    ASSERT(context);
+    ASSERT(m_context);
     ecore_imf_context_event_callback_add(m_context.get(), ECORE_IMF_CALLBACK_PREEDIT_CHANGED, onIMFPreeditSequenceChanged, this);
     ecore_imf_context_event_callback_add(m_context.get(), ECORE_IMF_CALLBACK_COMMIT, onIMFInputSequenceComplete, this);
 }

@@ -1,3 +1,15 @@
+2012-10-31  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [WK2][EFL] Assert check need to be changed in InputMethodContextEfl::InputMethodContextEfl
+        https://bugs.webkit.org/show_bug.cgi?id=100840
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Because 'context' is already set to 'm_context', assert check need to be done for m_context.
+
+        * UIProcess/efl/InputMethodContextEfl.cpp:
+        (WebKit::InputMethodContextEfl::InputMethodContextEfl):
+
 2012-10-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [WK2/EFL] Make sure all our events are transformed correctly
