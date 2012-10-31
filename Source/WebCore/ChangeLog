@@ -1,3 +1,17 @@
+2012-10-31  Philippe Normand  <pnormand@igalia.com>
+
+        Spatialized panning renders incorrectly with USE_CONCATENATED_IMPULSE_RESPONSES
+        https://bugs.webkit.org/show_bug.cgi?id=98294
+
+        Reviewed by Chris Rogers.
+
+        Regenerated the concatenated impulse responses file with
+        elevations in increasing order per azimuth. In the previous
+        version of this file the elevations for 315, 330 and 345 were
+        concatenated at the wrong indexes.
+
+        * platform/audio/resources/Composite.wav:
+
 2012-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Full-page PDFPlugin should support inline form editing
