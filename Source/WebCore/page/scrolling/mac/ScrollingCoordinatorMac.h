@@ -77,7 +77,7 @@ private:
     virtual void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);
 
     void ensureRootStateNodeForFrameView(FrameView*);
-    ScrollingStateScrollingNode* stateNodeForID(ScrollingNodeID);
+    ScrollingStateNode* stateNodeForID(ScrollingNodeID);
 
     struct ScrollParameters {
         ScrollElasticity horizontalScrollElasticity;

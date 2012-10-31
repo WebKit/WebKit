@@ -1,3 +1,22 @@
+2012-10-30  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=100813
+        ScrollingCoordinatorMac::stateNodeForID() should return a 
+        ScrollingStateNode* instead of a ScrollingStateScrollingNode*
+
+        Reviewed by Sam Weinig.
+
+        ScrollingCoordinatorMac::stateNodeForID() should return a 
+        ScrollingStateNode* instead of a ScrollingStateScrollingNode* so that 
+        it can be used for other types of nodes once we add them.
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        (ScrollingCoordinatorMac):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::frameViewLayoutUpdated):
+        (WebCore::ScrollingCoordinatorMac::recomputeWheelEventHandlerCountForFrameView):
+        (WebCore::ScrollingCoordinatorMac::requestScrollPositionUpdate):
+        (WebCore::ScrollingCoordinatorMac::stateNodeForID):
+
 2012-10-30  Keishi Hattori  <keishi@webkit.org>
 
         F4 inside <input type=time> should not open calendar picker

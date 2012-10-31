@@ -109,7 +109,7 @@ void ScrollingCoordinatorMac::frameViewLayoutUpdated(FrameView* frameView)
     if (!coordinatesScrollingForFrameView(frameView))
         return;
 
-    ScrollingStateScrollingNode* node = stateNodeForID(frameView->scrollLayerID());
+    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(stateNodeForID(frameView->scrollLayerID()));
     if (!node)
         return;
 
@@ -130,7 +130,7 @@ void ScrollingCoordinatorMac::frameViewLayoutUpdated(FrameView* frameView)
 
 void ScrollingCoordinatorMac::recomputeWheelEventHandlerCountForFrameView(FrameView* frameView)
 {
-    ScrollingStateScrollingNode* node = stateNodeForID(frameView->scrollLayerID());
+    ScrollingStateScrollingNode* node = toScrollingStateScrollingNode(stateNodeForID(frameView->scrollLayerID()));
     if (!node)
         return;
     setWheelEventHandlerCountForNode(computeCurrentWheelEventHandlerCount(), node);
@@ -191,7 +191,7 @@ bool ScrollingCoordinatorMac::requestScrollPositionUpdate(FrameView* frameView, 
     if (frameView->frame()->document()->inPageCache())
         return true;
 
-    ScrollingStateScrollingNode* stateNode = stateNodeForID(frameView->scrollLayerID());
+    ScrollingStateScrollingNode* stateNode = toScrollingStateScrollingNode(stateNodeForID(frameView->scrollLayerID()));
     if (!stateNode)
         return false;
 
@@ -294,7 +294,7 @@ void ScrollingCoordinatorMac::clearStateTree()
     m_scrollingStateTree->removeNode(m_scrollingStateTree->rootStateNode());
 }
 
-ScrollingStateScrollingNode* ScrollingCoordinatorMac::stateNodeForID(ScrollingNodeID scrollLayerID)
+ScrollingStateNode* ScrollingCoordinatorMac::stateNodeForID(ScrollingNodeID scrollLayerID)
 {
     if (!scrollLayerID)
         return 0;
@@ -303,8 +303,7 @@ ScrollingStateScrollingNode* ScrollingCoordinatorMac::stateNodeForID(ScrollingNo
     if (it == m_stateNodeMap.end())
         return 0;
 
-    ScrollingStateNode* node = it->value;
-    return toScrollingStateScrollingNode(node);
+    return it->value;
 }
 
 void ScrollingCoordinatorMac::ensureRootStateNodeForFrameView(FrameView* frameView)
