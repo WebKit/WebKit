@@ -1,5 +1,15 @@
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
+        [chromium] New linux baseline for basic-inputs-expected.png, due to
+        crrev.com/164985.
+
+        Unreviewed.
+
+        * platform/chromium-linux/fast/forms/basic-inputs-expected.png:
+        * platform/efl-wk1/fast/forms/basic-inputs-expected.png: Renamed from LayoutTests/platform/efl/fast/forms/basic-inputs-expected.png.
+
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
         [Chromium] Adjust expectations for float-wrap-zoom on mac.
         Unreviewed.
 
