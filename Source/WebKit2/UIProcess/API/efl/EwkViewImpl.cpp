@@ -235,24 +235,21 @@ void EwkViewImpl::setCursor(const Cursor& cursor)
     ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release().leakRef(), EVAS_LAYER_MAX, hotspotX, hotspotY);
 }
 
-void EwkViewImpl::displayTimerFired(WebCore::Timer<EwkViewImpl>*)
+void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
 {
     Ewk_View_Smart_Data* sd = smartData();
 
     if (!sd->image)
         return;
 
-    Region dirtyRegion;
-    for (Vector<IntRect>::iterator it = m_dirtyRects.begin(); it != m_dirtyRects.end(); ++it)
-        dirtyRegion.unite(*it);
+    ASSERT(m_dirtyRegion);
+    Vector<IntRect> rects = m_dirtyRegion->rects();
+    // Clear region.
+    m_dirtyRegion.clear();
 
-    m_dirtyRects.clear();
-
-    Vector<IntRect> rects = dirtyRegion.rects();
-    Vector<IntRect>::iterator end = rects.end();
-
-    for (Vector<IntRect>::iterator it = rects.begin(); it != end; ++it) {
-        IntRect rect = *it;
+    Vector<IntRect>::const_iterator end = rects.end();
+    for (Vector<IntRect>::const_iterator it = rects.begin(); it != end; ++it) {
+        const IntRect& rect = *it;
 #if USE(COORDINATED_GRAPHICS)
         evas_gl_make_current(evasGL(), evasGLSurface(), evasGLContext());
         m_pageViewportControllerClient->display(rect, IntPoint(sd->view.x, sd->view.y));
@@ -264,9 +261,14 @@ void EwkViewImpl::displayTimerFired(WebCore::Timer<EwkViewImpl>*)
 
 void EwkViewImpl::redrawRegion(const IntRect& rect)
 {
+    if (m_dirtyRegion)
+        m_dirtyRegion->unite(rect);
+    else
+        m_dirtyRegion = adoptPtr(new Region(rect));
+
+    // Update display in the event loop.
     if (!m_displayTimer.isActive())
         m_displayTimer.startOneShot(0);
-    m_dirtyRects.append(rect);
 }
 
 #if ENABLE(FULLSCREEN_API)

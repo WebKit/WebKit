@@ -1,3 +1,22 @@
+2012-10-31  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2][AC] Avoid storing dirty rects in a Vector inside EwkViewImpl
+        https://bugs.webkit.org/show_bug.cgi?id=100736
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No longer store dirty rectangles in a temporary Vector and construct
+        a WebCore::Region directly from them instead. This avoid having to
+        iterate over the Vector in EwkViewImpl::displayTimerFired() to construct
+        a Region object, which should be more efficient.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::displayTimerFired):
+        (EwkViewImpl::redrawRegion):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebCore):
+        (EwkViewImpl):
+
 2012-10-30  Anders Carlsson  <andersca@apple.com>
 
         Connection::Client::didReceiveInvalidMessage should take the full message name

@@ -65,6 +65,7 @@ class Color;
 class Cursor;
 class IntRect;
 class IntSize;
+class Region;
 }
 
 class Ewk_Back_Forward_List;
@@ -236,7 +237,7 @@ private:
     bool m_touchEventsEnabled;
 #endif
     WebCore::Timer<EwkViewImpl> m_displayTimer;
-    WTF::Vector <WebCore::IntRect> m_dirtyRects;
+    OwnPtr<WebCore::Region> m_dirtyRegion;
     OwnPtr<Ewk_Popup_Menu> m_popupMenu;
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
     OwnPtr<Ewk_Color_Picker> m_colorPicker;
