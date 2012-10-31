@@ -1,3 +1,10 @@
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Adjust expectations for float-wrap-zoom on mac.
+        Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (tile cache layers): bits of tiled layers are missing with certain 3D transforms
