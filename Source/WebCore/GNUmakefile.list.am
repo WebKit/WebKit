@@ -4060,8 +4060,6 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/SVGInlineTextBox.cpp \
 	Source/WebCore/rendering/svg/SVGInlineTextBox.h \
 	Source/WebCore/rendering/svg/SVGMarkerData.h \
-	Source/WebCore/rendering/svg/SVGMarkerLayoutInfo.cpp \
-	Source/WebCore/rendering/svg/SVGMarkerLayoutInfo.h \
 	Source/WebCore/rendering/svg/SVGPathData.cpp \
 	Source/WebCore/rendering/svg/SVGPathData.h \
 	Source/WebCore/rendering/svg/SVGRenderSupport.cpp \

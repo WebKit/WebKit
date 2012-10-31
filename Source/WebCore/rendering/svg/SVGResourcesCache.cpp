@@ -89,7 +89,7 @@ void SVGResourcesCache::removeResourcesFromRenderObject(RenderObject* object)
     delete m_cache.take(object);
 }
 
-static inline SVGResourcesCache* resourcesCacheFromRenderObject(RenderObject* renderer)
+static inline SVGResourcesCache* resourcesCacheFromRenderObject(const RenderObject* renderer)
 {
     Document* document = renderer->document();
     ASSERT(document);
@@ -103,7 +103,7 @@ static inline SVGResourcesCache* resourcesCacheFromRenderObject(RenderObject* re
     return cache;
 }
 
-SVGResources* SVGResourcesCache::cachedResourcesForRenderObject(RenderObject* renderer)
+SVGResources* SVGResourcesCache::cachedResourcesForRenderObject(const RenderObject* renderer)
 {
     ASSERT(renderer);
     SVGResourcesCache* cache = resourcesCacheFromRenderObject(renderer);
@@ -170,8 +170,8 @@ void SVGResourcesCache::resourceDestroyed(RenderSVGResourceContainer* resource)
     // The resource itself may have clients, that need to be notified.
     cache->removeResourcesFromRenderObject(resource);
 
-    HashMap<RenderObject*, SVGResources*>::iterator end = cache->m_cache.end();
-    for (HashMap<RenderObject*, SVGResources*>::iterator it = cache->m_cache.begin(); it != end; ++it) {
+    HashMap<const RenderObject*, SVGResources*>::iterator end = cache->m_cache.end();
+    for (HashMap<const RenderObject*, SVGResources*>::iterator it = cache->m_cache.begin(); it != end; ++it) {
         it->second->resourceDestroyed(resource);
 
         // Mark users of destroyed resources as pending resolution based on the id of the old resource.
