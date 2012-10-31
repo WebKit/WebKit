@@ -323,6 +323,18 @@ void TestController::initialize(int argc, const char* argv[])
         WKContextSetLocalStorageDirectory(m_context.get(), dumpRenderTreeTempWK.get());
         WKContextSetDiskCacheDirectory(m_context.get(), dumpRenderTreeTempWK.get());
         WKContextSetCookieStorageDirectory(m_context.get(), dumpRenderTreeTempWK.get());
+
+        std::string iconDatabaseFileTemp(dumpRenderTreeTemp);
+        // WebCore::pathByAppendingComponent is not used here because of the namespace,
+        // which leads us to this ugly #ifdef and file path concatenation.
+#if OS(WINDOWS)
+        const char separator = '\\';
+#else
+        const char separator = '/';
+#endif
+        iconDatabaseFileTemp = iconDatabaseFileTemp + separator + "WebpageIcons.db";
+        WKRetainPtr<WKStringRef> iconDatabaseFileTempWK = WKStringCreateWithUTF8CString(iconDatabaseFileTemp.c_str());
+        WKContextSetIconDatabasePath(m_context.get(), iconDatabaseFileTempWK.get());
     }
 
     platformInitializeContext();

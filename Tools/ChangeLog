@@ -1,3 +1,17 @@
+2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WTR] WebKitTestRunner is not cleaning up the icon database
+        https://bugs.webkit.org/show_bug.cgi?id=100678
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The icon database was not being set to the temporary folder created for
+        the test runner by the test driver, which is removed automatically
+        after the run.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2012-10-31  Mike West  <mkwst@chromium.org>
 
         Script run from an isolated world should bypass a page's CSP.
