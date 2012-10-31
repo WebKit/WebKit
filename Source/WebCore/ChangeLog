@@ -1,3 +1,9 @@
+2012-10-31  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed, attempt to fix the build by exporting NoExceptionAssertionChecker symbols.
+
+        * WebCore.exp.in:
+
 2012-10-31  Eric Seidel  <eric@webkit.org>
 
         Add non-virtual firstChild/lastChild overrides to RenderBlock and RenderTableCol for a > 30% speedup on table from bug 100304
