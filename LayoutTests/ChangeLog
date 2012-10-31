@@ -1,3 +1,15 @@
+2012-10-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unreviewed, add a few more pixel expectations.
+
+        * platform/efl/css3/flexbox/repaint-during-resize-no-flex-expected.png: Added.
+        * platform/efl/css3/flexbox/repaint-rtl-column-expected.png:
+        * platform/efl/fast/forms/indeterminate-expected.png: Added.
+        * platform/efl/media/video-aspect-ratio-expected.png: Added.
+        * platform/efl/media/video-layer-crash-expected.png: Added.
+        * platform/efl/media/video-transformed-expected.png: Added.
+        * platform/efl/media/video-zoom-expected.png: Added.
+
 2012-10-31  Mike West  <mkwst@chromium.org>
 
         X-Frame-Options console message should be associated with a request.
