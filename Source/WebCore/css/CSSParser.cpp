@@ -8010,6 +8010,8 @@ bool CSSParser::parsePerspectiveOrigin(CSSPropertyID propId, CSSPropertyID& prop
 
     switch (propId) {
         case CSSPropertyWebkitPerspectiveOrigin:
+            if (m_valueList->size() > 2)
+                return false;
             parseFillPosition(m_valueList.get(), value, value2);
             break;
         case CSSPropertyWebkitPerspectiveOriginX: {

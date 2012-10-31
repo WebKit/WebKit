@@ -1,3 +1,15 @@
+2012-10-31  Zoltan Nyul  <zoltan.nyul@intel.com>
+
+        perspective-origin should ignore values with more then two lengths and use the default values
+        https://bugs.webkit.org/show_bug.cgi?id=100835
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add test for perspective-origin with more the than two lengths.
+
+        * transforms/2d/computed-style-origin-expected.txt:
+        * transforms/2d/computed-style-origin.html:
+
 2012-10-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Unreviewed pixel expectations gardening.

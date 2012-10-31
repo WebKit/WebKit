@@ -48,6 +48,14 @@
         -webkit-transform-origin: 50% 50%;
         -webkit-perspective-origin: 50% 50%;
     }
+    #test6 {
+        width: 100px;
+        height: 100px;
+        background-color: blue;
+        position: relative;
+        -webkit-transform: translate(0);
+        -webkit-perspective-origin: 10% 20% 30%;
+    }
 
 </style>
 <script src="../../fast/js/resources/js-test-pre.js"></script>
@@ -58,6 +66,7 @@
 <p id="test3"></p>
 <p id="test4"></p>
 <p id="test5"></p>
+<p id="test6"></p>
 <p id="description"></p>
 <div id="console"></div>
 <script>
@@ -69,12 +78,14 @@ var test2 = document.getElementById("test2");
 var test3 = document.getElementById("test3");
 var test4 = document.getElementById("test4");
 var test5 = document.getElementById("test5");
+var test6 = document.getElementById("test6");
 
 var test1Style = window.getComputedStyle(test1);
 var test2Style = window.getComputedStyle(test2);
 var test3Style = window.getComputedStyle(test3);
 var test4Style = window.getComputedStyle(test4);
 var test5Style = window.getComputedStyle(test5);
+var test6Style = window.getComputedStyle(test6);
 
 shouldBe("test1Style.webkitTransformOrigin", "'10px 10px'");
 shouldBe("test2Style.webkitTransformOrigin", "'10px 10px'");
@@ -87,6 +98,7 @@ shouldBe("test2Style.webkitPerspectiveOrigin", "'10px 10px'");
 shouldBe("test3Style.webkitPerspectiveOrigin", "'0px 20px'");
 shouldBe("test4Style.webkitPerspectiveOrigin", "'5px 7px'");
 shouldBe("test5Style.webkitPerspectiveOrigin", "'15px 15px'");
+shouldBe("test6Style.webkitPerspectiveOrigin", "'50px 50px'");
 
 debug("");
 
