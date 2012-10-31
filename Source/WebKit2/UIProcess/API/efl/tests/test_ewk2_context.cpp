@@ -121,7 +121,7 @@ static void loadVibrationHTMLString(Evas_Object* webView, const char* vibrationP
         ecore_main_loop_iterate();
 }
 
-TEST_F(EWK2UnitTestBase, ewk_context_vibration_client_callbacks_set)
+TEST_F(EWK2UnitTestBase, DISABLED_ewk_context_vibration_client_callbacks_set)
 {
     VibrationCbData data = { false, false, 0, 5000 };
     ewk_context_vibration_client_callbacks_set(ewk_view_context_get(webView()), vibrateCallback, cancelVibrationCallback, &data);
