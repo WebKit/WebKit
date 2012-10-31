@@ -178,6 +178,11 @@ public:
     RenderObject* previousSibling() const { return m_previous; }
     RenderObject* nextSibling() const { return m_next; }
 
+    // FIXME: These should be renamed slowFirstChild, slowLastChild, etc.
+    // to discourage their use. The virtualChildren() call inside these
+    // can be slow for hot code paths.
+    // Currently, some subclasses like RenderBlock, override these NON-virtual
+    // functions to make these fast when we already have a more specific pointer type.
     RenderObject* firstChild() const
     {
         if (const RenderObjectChildList* children = virtualChildren())

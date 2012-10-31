@@ -1,3 +1,31 @@
+2012-10-31  Eric Seidel  <eric@webkit.org>
+
+        Add non-virtual firstChild/lastChild overrides to RenderBlock and RenderTableCol for a > 30% speedup on table from bug 100304
+        https://bugs.webkit.org/show_bug.cgi?id=100306
+
+        Reviewed by Abhishek Arya.
+
+        Presumably this is a speedup for other rendering tests as well.  We use firstChild() all over
+        the rendering code w/o considering that it makes a virtual function call.
+        Originally I just fixed the one callsite which was showing up on the sample to
+        use children()->firstChild() directly.  However after further thought, this
+        broader solution seemed the better way to go.  The first patch was a 15% win for
+        this large table, this broader solution was a 30%!? win.
+
+        The elephant in the room for this table is that we're walking the whole table
+        for many nextColumn calls.  But that I will solve in a later bug.
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::firstChild):
+        (WebCore::RenderBlock::lastChild):
+        (RenderBlock):
+        * rendering/RenderObject.h:
+        (RenderObject):
+        * rendering/RenderTableCol.h:
+        (WebCore::RenderTableCol::firstChild):
+        (WebCore::RenderTableCol::lastChild):
+        (RenderTableCol):
+
 2012-10-31  Philippe Normand  <pnormand@igalia.com>
 
         Spatialized panning renders incorrectly with USE_CONCATENATED_IMPULSE_RESPONSES

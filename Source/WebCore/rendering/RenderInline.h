@@ -35,6 +35,9 @@ class RenderInline : public RenderBoxModelObject {
 public:
     explicit RenderInline(Node*);
 
+    RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }
+    RenderObject* lastChild() const { ASSERT(children() == virtualChildren()); return children()->lastChild(); }
+
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
 
     virtual LayoutUnit marginLeft() const;

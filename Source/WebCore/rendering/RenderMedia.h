@@ -40,6 +40,9 @@ public:
     RenderMedia(HTMLMediaElement*, const IntSize& intrinsicSize);
     virtual ~RenderMedia();
 
+    RenderObject* firstChild() const { ASSERT(children() == virtualChildren()); return children()->firstChild(); }
+    RenderObject* lastChild() const { ASSERT(children() == virtualChildren()); return children()->lastChild(); }
+
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
