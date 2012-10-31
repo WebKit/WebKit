@@ -34,6 +34,9 @@
  * - "download,finished", Ewk_Download_Job*: reports that a download completed successfully.
  * - "download,request", Ewk_Download_Job*: reports that a new download has been requested. The client should set the
  *   destination path by calling ewk_download_job_destination_set() or the download will fail.
+ * - "file,chooser,request", Ewk_File_Chooser_Request*: reports that a request has been made for the user to choose
+ *   a file (or several) on the file system. Call ewk_file_chooser_request_ref() on the request object to process it
+ *   asynchronously.
  * - "form,submission,request", Ewk_Form_Submission_Request*: Reports that a form request is about to be submitted.
  *   The Ewk_Form_Submission_Request passed contains information about the text fields of the form. This
  *   is typically used to store login information that can be used later to pre-fill the form.

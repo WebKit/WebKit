@@ -31,8 +31,11 @@
 #include "WKAPICast.h"
 #include "WKEvent.h"
 #include "WKString.h"
+#include "ewk_file_chooser_request_private.h"
 #include <Ecore_Evas.h>
 #include <WebCore/Color.h>
+
+using namespace EwkViewCallbacks;
 
 namespace WebKit {
 
@@ -122,6 +125,13 @@ void PageUIClientEfl::setWindowFrame(WKPageRef, WKRect frame, const void* client
     ecore_evas_move_resize(ee, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
 }
 
+void PageUIClientEfl::runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
+{
+    EwkViewImpl* viewImpl = toPageUIClientEfl(clientInfo)->m_viewImpl;
+    RefPtr<Ewk_File_Chooser_Request> fileChooserRequest = Ewk_File_Chooser_Request::create(toImpl(parameters), toImpl(listener));
+    viewImpl->smartCallback<FileChooserRequest>().call(fileChooserRequest.get());
+}
+
 PageUIClientEfl::PageUIClientEfl(EwkViewImpl* viewImpl)
     : m_viewImpl(viewImpl)
 {
@@ -142,6 +152,7 @@ PageUIClientEfl::PageUIClientEfl(EwkViewImpl* viewImpl)
     uiClient.unfocus = unfocus;
     uiClient.getWindowFrame = getWindowFrame;
     uiClient.setWindowFrame = setWindowFrame;
+    uiClient.runOpenPanel = runOpenPanel;
 #if ENABLE(SQL_DATABASE)
     uiClient.exceededDatabaseQuota = exceededDatabaseQuota;
 #endif

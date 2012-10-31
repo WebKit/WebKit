@@ -62,6 +62,7 @@ private:
     static void takeFocus(WKPageRef, WKFocusDirection, const void*);
     static WKRect getWindowFrame(WKPageRef, const void*);
     static void setWindowFrame(WKPageRef, WKRect, const void*);
+    static void runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef, WKOpenPanelResultListenerRef, const void*);
 
     EwkViewImpl* m_viewImpl;
 };

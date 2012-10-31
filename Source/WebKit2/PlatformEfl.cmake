@@ -52,6 +52,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_download_job.cpp
     UIProcess/API/efl/ewk_error.cpp
     UIProcess/API/efl/ewk_favicon_database.cpp
+    UIProcess/API/efl/ewk_file_chooser_request.cpp
     UIProcess/API/efl/ewk_form_submission_request.cpp
     UIProcess/API/efl/ewk_intent.cpp
     UIProcess/API/efl/ewk_intent_service.cpp
@@ -249,6 +250,7 @@ SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_download_job.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_error.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_favicon_database.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_file_chooser_request.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_form_submission_request.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_intent.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_intent_service.h"
@@ -351,6 +353,7 @@ SET(EWK2UnitTests_BINARIES
     test_ewk2_download_job
     test_ewk2_eina_shared_string
     test_ewk2_favicon_database
+    test_ewk2_file_chooser_request
     test_ewk2_refptr_evas_object
     test_ewk2_intents
     test_ewk2_popup_menu

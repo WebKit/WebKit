@@ -1,3 +1,54 @@
+2012-10-31  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add Ewk_File_Chooser_Request API
+        https://bugs.webkit.org/show_bug.cgi?id=100818
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Ewk_File_Chooser_Request API so that the client
+        can handle file chooser requests (e.g. Show a file
+        picker dialog) when the user clicks on an input
+        element of type "file".
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        (EwkViewCallbacks):
+        * UIProcess/API/efl/ewk_file_chooser_request.cpp: Added.
+        (Ewk_File_Chooser_Request::Ewk_File_Chooser_Request):
+        (Ewk_File_Chooser_Request::~Ewk_File_Chooser_Request):
+        (Ewk_File_Chooser_Request::allowMultipleFiles):
+        (Ewk_File_Chooser_Request::acceptedMIMETypes):
+        (Ewk_File_Chooser_Request::cancel):
+        (Ewk_File_Chooser_Request::chooseFiles):
+        (ewk_file_chooser_request_ref):
+        (ewk_file_chooser_request_unref):
+        (ewk_file_chooser_request_allow_multiple_files_get):
+        (ewk_file_chooser_request_accepted_mimetypes_get):
+        (ewk_file_chooser_request_cancel):
+        (ewk_file_chooser_request_files_choose):
+        (ewk_file_chooser_request_file_choose):
+        * UIProcess/API/efl/ewk_file_chooser_request.h: Added.
+        * UIProcess/API/efl/ewk_file_chooser_request_private.h: Added.
+        (WebKit):
+        (Ewk_File_Chooser_Request):
+        (Ewk_File_Chooser_Request::create):
+        (Ewk_File_Chooser_Request::wasHandled):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/resources/file_chooser.html: Added.
+        * UIProcess/API/efl/tests/test_ewk2_file_chooser_request.cpp: Added corresponding
+        unit tests.
+        (onFileChooserRequest):
+        (compareStrings):
+        (freeStringList):
+        (TEST_F):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::runOpenPanel):
+        (WebKit):
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+        * UIProcess/efl/PageUIClientEfl.h:
+        (PageUIClientEfl):
+
 2012-10-31  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Enable filter animations in GraphicsLayerAnimation
