@@ -1,3 +1,21 @@
+2012-10-31  Tien-Ren Chen  <trchen@chromium.org>
+
+        Apply transformation for highlights on non-composited contents
+        https://bugs.webkit.org/show_bug.cgi?id=100438
+
+        Reviewed by Adam Barth.
+
+        Non-composited content host layer "steals" the contents on the
+        RenderView layer, including the highlight layer.
+        The transformation for regular contents are applied by the paint
+        function of the non-composited content host however the highlight
+        uses its own WebLayer. Need to apply the same transformation to
+        the highlight layer as well.
+
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-scaled-document.html: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-scaled-document-expected.png: Added.
+        * platform/chromium-linux/platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-scaled-document-expected.txt: Added.
+
 2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Added viewport at-rule to the CSS parser and tokenizer

@@ -91,7 +91,6 @@ private:
 
     bool m_geometryNeedsUpdate;
     bool m_isAnimating;
-    WebCore::FloatPoint m_graphicsLayerOffset;
 };
 
 } // namespace WebKit

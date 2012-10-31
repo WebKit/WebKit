@@ -48,6 +48,7 @@
 #include <public/WebFloatPoint.h>
 #include <public/WebRect.h>
 #include <public/WebSize.h>
+#include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;
 
@@ -125,10 +126,10 @@ RenderLayer* LinkHighlight::computeEnclosingCompositingLayer()
     if (!renderLayer || !renderLayer->isComposited())
         return 0;
 
-    m_graphicsLayerOffset = FloatPoint();
     GraphicsLayerChromium* newGraphicsLayer = static_cast<GraphicsLayerChromium*>(renderLayer->backing()->graphicsLayer());
+    m_clipLayer->setSublayerTransform(WebTransformationMatrix());
     if (!newGraphicsLayer->drawsContent()) {
-        m_graphicsLayerOffset = newGraphicsLayer->position();
+        m_clipLayer->setSublayerTransform(WebTransformationMatrix(newGraphicsLayer->transform()));
         newGraphicsLayer = static_cast<GraphicsLayerChromium*>(m_owningWebViewImpl->nonCompositedContentHost()->topLevelRootLayer());
     }
 
