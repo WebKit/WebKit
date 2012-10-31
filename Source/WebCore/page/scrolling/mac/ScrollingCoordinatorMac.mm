@@ -234,25 +234,37 @@ void ScrollingCoordinatorMac::updateMainFrameScrollPositionAndScrollLayerPositio
         scrollLayer->setPosition(-frameView->scrollPosition());
 }
 
-ScrollingNodeID ScrollingCoordinatorMac::attachToStateTree(ScrollingNodeID newNodeID, ScrollingNodeID parentID)
+ScrollingNodeID ScrollingCoordinatorMac::attachToStateTree(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)
 {
     ASSERT(newNodeID);
 
-    ScrollingStateScrollingNode* existingNode = stateNodeForID(newNodeID);
-    if (existingNode && existingNode == m_scrollingStateTree->rootStateNode())
+    if (stateNodeForID(newNodeID))
         return newNodeID;
 
-    // If there is no parent, this is the root node. Right now, we only support the root node.
-    // FIXME: In the future, we should append child nodes in the appropriate spot in the state
-    // tree.
+    ScrollingStateNode* newNode;
     if (!parentID) {
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clearStateTree();
 
         m_scrollingStateTree->rootStateNode()->setScrollingNodeID(newNodeID);
-        m_stateNodeMap.set(newNodeID, m_scrollingStateTree->rootStateNode());
+        newNode = m_scrollingStateTree->rootStateNode();
+    } else {
+        ScrollingStateNode* parent = stateNodeForID(parentID);
+        switch (nodeType) {
+        case ScrollingNode: {
+            // FIXME: We currently do not support child nodes. This assertion should be removed when we do.
+            ASSERT_NOT_REACHED();
+            PassOwnPtr<ScrollingStateScrollingNode> scrollingNode = ScrollingStateScrollingNode::create(m_scrollingStateTree.get(), newNodeID);
+            newNode = scrollingNode.get();
+            parent->appendChild(scrollingNode);
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED();
+        }
     }
 
+    m_stateNodeMap.set(newNodeID, newNode);
     return newNodeID;
 }
 
@@ -297,7 +309,7 @@ ScrollingStateScrollingNode* ScrollingCoordinatorMac::stateNodeForID(ScrollingNo
 
 void ScrollingCoordinatorMac::ensureRootStateNodeForFrameView(FrameView* frameView)
 {
-    attachToStateTree(frameView->scrollLayerID(), 0);
+    attachToStateTree(ScrollingNode, frameView->scrollLayerID(), 0);
 }
 
 void ScrollingCoordinatorMac::setScrollLayerForNode(GraphicsLayer* scrollLayer, ScrollingStateNode* node)

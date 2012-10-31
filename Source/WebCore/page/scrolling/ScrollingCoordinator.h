@@ -47,6 +47,11 @@ namespace WebCore {
 typedef unsigned MainThreadScrollingReasons;
 typedef uint64_t ScrollingNodeID;
 
+enum ScrollingNodeType {
+    ScrollingNode
+    // FIXME: This will soon contain other types such as FixedNode.
+};
+
 class Frame;
 class FrameView;
 class GraphicsLayer;
@@ -109,7 +114,7 @@ public:
     virtual bool requestScrollPositionUpdate(FrameView*, const IntPoint&) { return false; }
     virtual bool handleWheelEvent(FrameView*, const PlatformWheelEvent&) { return true; }
     virtual void updateMainFrameScrollPositionAndScrollLayerPosition() { }
-    virtual ScrollingNodeID attachToStateTree(ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/) { return newNodeID; }
+    virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/) { return newNodeID; }
     virtual void detachFromStateTree(ScrollingNodeID) { }
     virtual void clearStateTree() { }
 

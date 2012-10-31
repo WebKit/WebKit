@@ -1,3 +1,31 @@
+2012-10-30  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=100809
+        ScrollingCoordinator::attachToStateTree() should take an enum 
+        indicating what type of node to create
+
+        Reviewed by Simon Fraser.
+
+        New enum ScrollingNodeType will soon have other values, such as 
+        FixedNode.
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::attachToStateTree):
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        (ScrollingCoordinatorMac):
+
+        This patch generalizes this function so that it can be used to create 
+        different types of nodes and so that it is actually ready to create 
+        child nodes. 
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::attachToStateTree):
+
+        The rootStateNode is always a ScrollingNode.
+        (WebCore::ScrollingCoordinatorMac::ensureRootStateNodeForFrameView):
+
+        For the time being, always create a ScrollingNode.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::attachToScrollingCoordinator):
+
 2012-10-30  Gregg Tavares  <gman@google.com>
 
         Set the initial scissor box for WebGL

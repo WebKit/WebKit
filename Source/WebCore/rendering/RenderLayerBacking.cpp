@@ -1012,8 +1012,9 @@ void RenderLayerBacking::attachToScrollingCoordinator(RenderLayerBacking* parent
     if (!scrollingCoordinator)
         return;
 
+    ScrollingNodeType nodeType = ScrollingNode;
     ScrollingNodeID parentID = parent ? parent->scrollLayerID() : 0;
-    m_scrollLayerID = scrollingCoordinator->attachToStateTree(scrollingCoordinator->uniqueScrollLayerID(), parentID);
+    m_scrollLayerID = scrollingCoordinator->attachToStateTree(nodeType, scrollingCoordinator->uniqueScrollLayerID(), parentID);
 }
 
 void RenderLayerBacking::detachFromScrollingCoordinator()
