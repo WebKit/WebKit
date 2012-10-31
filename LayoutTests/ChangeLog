@@ -1,3 +1,11 @@
+2012-10-31  Mike West  <mkwst@chromium.org>
+
+        [Qt] Unreviewed gardening. Rebaselining tests after r133019.
+
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt:
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt:
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt:
+
 2012-10-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: page crash when pausing in dedicated worker
