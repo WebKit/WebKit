@@ -1665,6 +1665,3 @@ Bug(EFL) media/context-menu-actions.html [ Failure ]
 
 # ESC key does not cancel context menu in EFL port
 Bug(EFL) editing/selection/5354455-1.html [ Failure ]
-
-# Exif Image Orientation not correctly interpreted in image documents
-webkit.org/b/100852 fast/images/exif-orientation.html [ Missing ]

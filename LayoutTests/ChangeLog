@@ -2,6 +2,15 @@
 
         [EFL][GTK] Unreviewed gardening.
 
+        Removing duplicate in EFL file, changing bug number for exif orientation bug in GTK.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2012-10-31  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][GTK] Unreviewed gardening.
+
         Exif orientation test marked as failing for GTK & EFL,
         On EFL, the vibration IPC issue may cause crash, see bug 100334.
 
