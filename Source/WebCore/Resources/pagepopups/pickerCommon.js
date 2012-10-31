@@ -169,8 +169,9 @@ function hideWindow() {
 
 window.addEventListener("resize", function() {
     if (window.innerWidth === 1 && window.innerHeight === 1)
-        return;
-    window.dispatchEvent(new CustomEvent("didOpenPicker"));
+        window.dispatchEvent(new CustomEvent("didHide"));
+    else
+        window.dispatchEvent(new CustomEvent("didOpenPicker"));
 }, false);
 
 /**

@@ -1,3 +1,19 @@
+2012-10-31  Keishi Hattori  <keishi@webkit.org>
+
+        Calendar picker can flicker when opened from the suggestion picker
+        https://bugs.webkit.org/show_bug.cgi?id=100816
+
+        Reviewed by Kent Tamura.
+
+        Calendar picker was opening before the hiding completed.
+
+        No new tests. Added test to date-suggestion-picker-key-operations.html.
+
+        * Resources/pagepopups/pickerCommon.js: Added didHide event.
+        * Resources/pagepopups/suggestionPicker.js:
+        (SuggestionPicker.prototype.selectEntry): Use didHide event so we don't open the calendar picker prematurely.
+        (SuggestionPicker._handleWindowDidHide): When the window finished hiding, open the calendar picker.
+
 2012-10-31  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Reset binding test result after r132973

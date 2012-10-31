@@ -30,6 +30,8 @@ PASS document.getElementById("date").value is "2012-03-08"
 Reopen popup.
 PASS highlightedEntry() is "@openCalendarPicker"
 Open calendar picker.
+PASS expectingDidHideEvent is true
+PASS expectingDidHideEvent is false
 Confirm calendar picker did open.
 PASS popupWindow.document.getElementById("main").classList.contains("calendar-picker") is true
 Check that escape key closes the popup.

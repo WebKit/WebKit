@@ -89,12 +89,12 @@ shouldBeNull('document.getElementById("mock-page-popup")');
 
 openPicker(document.getElementById('date'), test1);
 
+var expectingDidHideEvent = false;
+
 function test1() {
     debug('Check that page popup exists.');
     shouldBe('popupWindow.pagePopupController.toString()', '"[object PagePopupController]"');
     popupWindow.focus();
-
-    popupWindow.removeEventListener("resize", test1, false);
 
     debug('Check that up/down arrow keys work.');
     shouldBeNull('highlightedEntry()');
@@ -135,14 +135,10 @@ function test1() {
     shouldBe('document.getElementById("date").value', '"2012-03-08"');
 
     debug('Reopen popup.');
-    openPicker(document.getElementById('date'));
-    popupWindow.addEventListener("resize", test2, false);
+    openPicker(document.getElementById('date'), test2);
 }
 
 function test2() {
-    popupWindow.removeEventListener("resize", test2, false);
-    popupWindow.addEventListener("resize", test3, false);
-
     popupWindow.focus();
 
     eventSender.keyDown('pageDown');
@@ -151,11 +147,23 @@ function test2() {
     shouldBe('highlightedEntry()', '"@openCalendarPicker"');
 
     debug('Open calendar picker.');
+    expectingDidHideEvent = true;
+    popupWindow.addEventListener("didHide", testDidHide, false);
+    popupWindow.addEventListener("didOpenPicker", test3, false);
     eventSender.keyDown('\n');
 }
 
+function testDidHide() {
+    popupWindow.removeEventListener("didHide", testDidHide);
+
+    shouldBeTrue('expectingDidHideEvent');
+    expectingDidHideEvent = false;
+}
+
 function test3() {
-    popupWindow.removeEventListener("resize", test3, false);
+    popupWindow.removeEventListener("didOpenPicker", test3);
+
+    shouldBeFalse('expectingDidHideEvent');
 
     debug('Confirm calendar picker did open.');
     shouldBeTrue('popupWindow.document.getElementById("main").classList.contains("calendar-picker")');
