@@ -1,3 +1,16 @@
+2012-10-31  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Enable filter animations in GraphicsLayerAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=100318
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Encode/decode KeyframeValues of type FilterOperations.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
 2012-10-31  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2][AC] Avoid storing dirty rects in a Vector inside EwkViewImpl

@@ -609,6 +609,11 @@ void ArgumentCoder<GraphicsLayerAnimation>::encode(ArgumentEncoder* encoder, con
         case AnimatedPropertyWebkitTransform:
             encoder->encode(*static_cast<const TransformAnimationValue*>(value)->value());
             break;
+#if ENABLE(CSS_FILTERS)
+        case AnimatedPropertyWebkitFilter:
+            encoder->encode(*static_cast<const FilterAnimationValue*>(value)->value());
+            break;
+#endif
         default:
             break;
         }
@@ -692,6 +697,15 @@ bool ArgumentCoder<GraphicsLayerAnimation>::decode(ArgumentDecoder* decoder, Gra
             keyframes.insert(new TransformAnimationValue(keyTime, &transform, timingFunction));
             break;
         }
+#if ENABLE(CSS_FILTERS)
+        case AnimatedPropertyWebkitFilter: {
+            FilterOperations filter;
+            if (!decoder->decode(filter))
+                return false;
+            keyframes.insert(new FilterAnimationValue(keyTime, &filter, timingFunction));
+            break;
+        }
+#endif
         default:
             break;
         }

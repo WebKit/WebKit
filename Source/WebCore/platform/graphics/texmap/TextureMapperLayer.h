@@ -119,6 +119,9 @@ public:
     IntSize size() const { return IntSize(m_size.width(), m_size.height()); }
     void setTransform(const TransformationMatrix&);
     void setOpacity(float value) { m_opacity = value; }
+#if ENABLE(CSS_FILTERS)
+    void setFilters(const FilterOperations& filters) { m_filters = filters; }
+#endif
     void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
     bool descendantsOrSelfHaveRunningAnimations() const;
 
@@ -165,6 +168,9 @@ private:
     // GraphicsLayerAnimation::Client
     void setAnimatedTransform(const TransformationMatrix& matrix) { setTransform(matrix); }
     void setAnimatedOpacity(float opacity) { setOpacity(opacity); }
+#if ENABLE(CSS_FILTERS)
+    virtual void setAnimatedFilters(const FilterOperations& filters) { setFilters(filters); }
+#endif
 
     void syncAnimations();
     bool isVisible() const;
@@ -191,6 +197,9 @@ private:
     TextureMapperPlatformLayer* m_contentsLayer;
     FloatSize m_size;
     float m_opacity;
+#if ENABLE(CSS_FILTERS)
+    FilterOperations m_filters;
+#endif
     float m_centerZ;
     String m_name;
     bool m_shouldUpdateBackingStoreFromLayer;

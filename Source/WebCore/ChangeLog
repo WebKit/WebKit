@@ -1,3 +1,32 @@
+2012-10-31  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Enable filter animations in GraphicsLayerAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=100318
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use the same method of animating filters in WebCore to animate filters for TextureMapper.
+        Added the appropriate methods to GraphicsLayerAnimation and TextureMapperLayer.
+
+        Tested by LayoutTests/css3/filters/filter-animation-hw.html and other tests.
+
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        (WebCore):
+        (WebCore::blendFunc):
+        (WebCore::applyFilterAnimation):
+        (WebCore::GraphicsLayerAnimation::applyInternal):
+        * platform/graphics/GraphicsLayerAnimation.h:
+        (Client):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::intermediateSurfaceRect):
+        (WebCore::TextureMapperLayer::shouldPaintToIntermediateSurface):
+        (WebCore::TextureMapperLayer::paintRecursive):
+        (WebCore::TextureMapperLayer::syncAnimations):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (TextureMapperLayer):
+        (WebCore::TextureMapperLayer::setFilters):
+        (WebCore::TextureMapperLayer::setAnimatedFilters):
+
 2012-10-31  Adam Barth  <abarth@webkit.org>
 
         [V8] Garbage collection should use opaque roots rather than implicit references

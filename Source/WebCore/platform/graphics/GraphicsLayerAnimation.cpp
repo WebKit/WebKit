@@ -22,11 +22,59 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayerAnimation.h"
 
+#include "FractionalLayoutSize.h"
 #include "UnitBezier.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
+#if ENABLE(CSS_FILTERS)
+static inline PassRefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation* toOp, double progress, const IntSize& size, bool blendToPassthrough = false)
+{
+    ASSERT(toOp);
+    if (toOp->blendingNeedsRendererSize())
+        return toOp->blend(fromOp, progress, LayoutSize(size.width(), size.height()), blendToPassthrough);
+
+    return toOp->blend(fromOp, progress, blendToPassthrough);
+}
+
+
+static FilterOperations applyFilterAnimation(const FilterOperations* from, const FilterOperations* to, double progress, const IntSize& boxSize)
+{
+    // First frame of an animation.
+    if (!progress)
+        return *from;
+
+    // Last frame of an animation.
+    if (progress == 1)
+        return *to;
+
+    if (!from->operationsMatch(*to))
+        return *to;
+
+    FilterOperations result;
+
+    size_t fromSize = from->operations().size();
+    size_t toSize = to->operations().size();
+    size_t size = std::max(fromSize, toSize);
+    for (size_t i = 0; i < size; i++) {
+        RefPtr<FilterOperation> fromOp = (i < fromSize) ? from->operations()[i].get() : 0;
+        RefPtr<FilterOperation> toOp = (i < toSize) ? to->operations()[i].get() : 0;
+        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), toOp.get(), progress, boxSize) : (fromOp ? blendFunc(0, fromOp.get(), progress, boxSize, true) : 0);
+        if (blendedOp)
+            result.operations().append(blendedOp);
+        else {
+            RefPtr<FilterOperation> identityOp = PassthroughFilterOperation::create();
+            if (progress > 0.5)
+                result.operations().append(toOp ? toOp : identityOp);
+            else
+                result.operations().append(fromOp ? fromOp : identityOp);
+        }
+    }
+
+    return result;
+}
+#endif
 
 static bool shouldReverseAnimationValue(Animation::AnimationDirection direction, int loopCount)
 {
@@ -186,6 +234,11 @@ void GraphicsLayerAnimation::applyInternal(Client* client, const AnimationValue*
     case AnimatedPropertyWebkitTransform:
         client->setAnimatedTransform(applyTransformAnimation(static_cast<const TransformAnimationValue*>(from)->value(), static_cast<const TransformAnimationValue*>(to)->value(), progress, m_boxSize, m_listsMatch));
         return;
+#if ENABLE(CSS_FILTERS)
+    case AnimatedPropertyWebkitFilter:
+        client->setAnimatedFilters(applyFilterAnimation(static_cast<const FilterAnimationValue*>(from)->value(), static_cast<const FilterAnimationValue*>(to)->value(), progress, m_boxSize));
+        return;
+#endif
     default:
         ASSERT_NOT_REACHED();
     }
