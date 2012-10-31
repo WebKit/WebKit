@@ -271,8 +271,6 @@ webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure ]
 # EFL WK2 does not support the spellchecker feature
 webkit.org/b/91854 editing/spelling [ Skip ]
 
-webkit.org/b/100248 fast/forms/select-multiple-elements-with-mouse-drag.html [ Failure ]
-
 # WebKitTestRunner needs an implementation for eventSender.contextClick
 webkit.org/b/86881 editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
 webkit.org/b/86881 editing/selection/5354455-1.html [ Failure ]
