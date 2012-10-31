@@ -258,11 +258,8 @@ void tst_QQuickWebView::show()
 
 void tst_QQuickWebView::showWebView()
 {
-    webView()->setSize(QSizeF(300, 400));
-
     webView()->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/direct-image-compositing.html")));
     QVERIFY(waitForLoadSucceeded(webView()));
-
     m_window->show();
     // This should not crash.
     webView()->setVisible(true);
@@ -295,13 +292,11 @@ void tst_QQuickWebView::multipleWebViewWindows()
     QQuickWebView* webView2 = newWebView();
     QScopedPointer<TestWindow> window2(new TestWindow(webView2));
 
-    webView1->setSize(QSizeF(300, 400));
     webView1->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/scroll.html")));
     QVERIFY(waitForLoadSucceeded(webView1));
     window1->show();
     webView1->setVisible(true);
 
-    webView2->setSize(QSizeF(300, 400));
     webView2->setUrl(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
     QVERIFY(waitForLoadSucceeded(webView2));
     window2->show();
@@ -334,14 +329,10 @@ void tst_QQuickWebView::multipleWebViews()
 void tst_QQuickWebView::basicRenderingSanity()
 {
     showWebView();
-    webView()->setSize(QSizeF(300, 400));
 
     webView()->setUrl(QUrl(QString::fromUtf8("data:text/html,<html><body bgcolor=\"#00ff00\"></body></html>")));
     QVERIFY(waitForLoadSucceeded(webView()));
 
-    // We have to explicitly move the window into the screen, otherwise it's not rendered.
-    m_window->setGeometry(0, 0, 300, 400);
-    m_window->show();
     // This should not crash.
     webView()->setVisible(true);
     QTest::qWait(200);

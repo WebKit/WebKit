@@ -44,6 +44,7 @@ inline TestWindow::TestWindow(QQuickItem* webView)
 {
     Q_ASSERT(webView);
     webView->setParentItem(contentItem());
+    resize(300, 400);
 }
 
 inline void TestWindow::resizeEvent(QResizeEvent* event)

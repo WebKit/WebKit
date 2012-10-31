@@ -1,3 +1,23 @@
+2012-10-31  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Fix "Unable to find a renderable master window QQuickView" warnings in tst_QQuickWebView
+        https://bugs.webkit.org/show_bug.cgi?id=100247
+
+        Reviewed by Jocelyn Turcotte.
+
+        Make sure we have a visible window for tests that want to render.
+
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView::showWebView):
+        (tst_QQuickWebView::removeFromCanvas):
+        (tst_QQuickWebView::multipleWebViewWindows):
+        (tst_QQuickWebView::multipleWebViews):
+        (tst_QQuickWebView::basicRenderingSanity):
+        (tst_QQuickWebView::transparentWebViews):
+        Removed some unnecessary resize now that the window have a default size.
+        * UIProcess/API/qt/tests/testwindow.h:
+        (TestWindow): Resize the window to a default size at construction.
+
 2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] WebContext::platformDefaultIconDatabasePath() should return a path to a file
