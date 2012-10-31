@@ -1,3 +1,13 @@
+2012-10-30  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed test update after r132969
+
+        Add alternate font family name (Courier New).
+
+        * fast/css/font-face-descending-unicode-range.html:
+        * fast/css/font-face-download-error.html:
+        * fast/css/font-face-unicode-range.html:
+
 2012-10-30  Nico Weber  <thakis@chromium.org>
 
         [chromium] Enable fast/images/exif-orientation-css.html
