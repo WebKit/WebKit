@@ -67,6 +67,7 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TextResourceDecoder.h"
+#include "TextStream.h"
 
 #include <wtf/CurrentTime.h>
 #include <wtf/TemporaryChange.h>
@@ -3640,8 +3641,20 @@ void FrameView::setTracksRepaints(bool trackRepaints)
     if (trackRepaints == m_isTrackingRepaints)
         return;
     
-    m_trackedRepaintRects.clear();
+    resetTrackedRepaints();
     m_isTrackingRepaints = trackRepaints;
+}
+
+String FrameView::trackedRepaintRectsAsText() const
+{
+    TextStream ts;
+    if (!m_trackedRepaintRects.isEmpty()) {
+        ts << "(repaint rects\n";
+        for (size_t i = 0; i < m_trackedRepaintRects.size(); ++i)
+            ts << "  (rect " << m_trackedRepaintRects[i].x() << " " << m_trackedRepaintRects[i].y() << " " << m_trackedRepaintRects[i].width() << " " << m_trackedRepaintRects[i].height() << ")\n";
+        ts << ")\n";
+    }
+    return ts.release();
 }
 
 void FrameView::addScrollableArea(ScrollableArea* scrollableArea)

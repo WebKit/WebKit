@@ -893,6 +893,13 @@ String Frame::layerTreeAsText(LayerTreeFlags flags) const
 #endif
 }
 
+String Frame::trackedRepaintRectsAsText() const
+{
+    if (!m_view)
+        return String();
+    return m_view->trackedRepaintRectsAsText();
+}
+
 void Frame::setPageZoomFactor(float factor)
 {
     setPageAndTextZoomFactors(factor, m_textZoomFactor);

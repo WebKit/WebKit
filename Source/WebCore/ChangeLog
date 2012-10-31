@@ -1,3 +1,46 @@
+2012-10-31  Ian Vollick  <vollick@chromium.org>
+
+        Add support for text-based repaint testing
+        https://bugs.webkit.org/show_bug.cgi?id=100584
+
+        Reviewed by Simon Fraser.
+
+        Allows tracked repaint rects to be dumped as text.
+
+        The following layout tests have been converted:
+          fast/repaint/layer-full-repaint.html
+          fast/repaint/overflow-flipped-writing-mode-table.html
+
+        * WebCore.exp.in:
+          Exports for:
+            FrameView::setTracksRepaints(bool)
+            Frame::trackedRepaintRectsAsText() const
+        * page/Frame.cpp:
+        (WebCore::Frame::trackedRepaintRectsAsText):
+          Returns a string containing information on all tracked repaint rects.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setTracksRepaints):
+          Rather than calling m_trackedRepaintRects.clear() directly, I've
+          called resetTrackedRepaints(). This will allow us to do more
+          sophisticated resetting when we start tracking repaint rects for
+          composited layers.
+        (WebCore::FrameView::trackedRepaintRectsAsText):
+          Provides the string returned by Frame::trackedRepaintRectsAsText.
+        * testing/Internals.cpp:
+        (WebCore::Internals::repaintRectsAsText):
+          Returns Frame::trackedRepaintRectsAsText.
+        (WebCore):
+        (WebCore::Internals::startTrackingRepaints):
+          Calls FrameView::setTracksRepaints(true)
+        (WebCore::Internals::stopTrackingRepaints):
+          Calls FrameView::setTracksRepaints(false)
+        * testing/Internals.h:
+        * testing/Internals.idl:
+          Declarations for:
+            repaintRectsAsText
+            startTrackingRepaints
+            stopTrackingRepaints
+
 2012-10-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: page crash when pausing in dedicated worker

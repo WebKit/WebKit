@@ -195,6 +195,7 @@ public:
     };
     String layerTreeAsText(Document*, unsigned flags, ExceptionCode&) const;
     String layerTreeAsText(Document*, ExceptionCode&) const;
+    String repaintRectsAsText(Document*, ExceptionCode&) const;
 
     void garbageCollectDocumentResources(Document*, ExceptionCode&) const;
 
@@ -232,6 +233,9 @@ public:
     PassRefPtr<MallocStatistics> mallocStatistics() const;
 
     PassRefPtr<DOMStringList> getReferencedFilePaths() const;
+
+    void startTrackingRepaints(Document*, ExceptionCode&);
+    void stopTrackingRepaints(Document*, ExceptionCode&);
 
 private:
     explicit Internals(Document*);

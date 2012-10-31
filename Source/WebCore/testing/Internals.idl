@@ -156,6 +156,8 @@
     const unsigned short LAYER_TREE_INCLUDES_TILE_CACHES = 2;
     DOMString layerTreeAsText(in Document document, in [Optional] unsigned short flags) raises (DOMException);
 
+    DOMString repaintRectsAsText(in Document document) raises (DOMException);
+
     void garbageCollectDocumentResources(in Document document) raises (DOMException);
 
     void allowRoundingHacks();
@@ -197,4 +199,9 @@
     MallocStatistics mallocStatistics();
 
     DOMString[] getReferencedFilePaths();
+
+    // These functions both reset the tracked repaint rects. They are inteded to be used in the following order:
+    //  startTrackingRepaints, repaintRectsAsText, stopTrackingRepaints.
+    void startTrackingRepaints(in Document document) raises (DOMException);
+    void stopTrackingRepaints(in Document document) raises (DOMException);
 };

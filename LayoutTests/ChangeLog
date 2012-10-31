@@ -1,3 +1,38 @@
+2012-10-31  Ian Vollick  <vollick@chromium.org>
+
+        Add support for text-based repaint testing
+        https://bugs.webkit.org/show_bug.cgi?id=100584
+
+        Reviewed by Simon Fraser.
+
+        Allows tracked repaint rects to be dumped as text.
+
+        * fast/repaint/layer-full-repaint-expected.txt: Added.
+        * fast/repaint/layer-full-repaint.html:
+        * fast/repaint/overflow-flipped-writing-mode-table-expected.png: Removed.
+        * fast/repaint/overflow-flipped-writing-mode-table-expected.txt:
+        * fast/repaint/overflow-flipped-writing-mode-table.html:
+        * fast/repaint/resources/repaint.js:
+        * fast/repaint/resources/text-based-repaint.js: Added.
+        (runRepaintTest):
+          The function calls internals.startTrackingRepaints() rather than display()
+          before calling repaintTest(). It also generates a <pre> element and sets
+          its innerHTML to internals.repaintRectsAsText().
+        * platform/chromium-mac/fast/repaint/layer-full-repaint-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/overflow-flipped-writing-mode-table-expected.png: Removed.
+        * platform/chromium-win/fast/repaint/overflow-flipped-writing-mode-table-expected.png: Removed.
+        * platform/chromium/fast/repaint/layer-full-repaint-expected.png: Removed.
+        * platform/chromium/fast/repaint/layer-full-repaint-expected.txt: Removed.
+        * platform/efl/fast/repaint/layer-full-repaint-expected.png: Removed.
+        * platform/efl/fast/repaint/layer-full-repaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/layer-full-repaint-expected.png: Removed.
+        * platform/gtk/fast/repaint/layer-full-repaint-expected.txt: Removed.
+        * platform/gtk/fast/repaint/overflow-flipped-writing-mode-table-expected.png: Removed.
+        * platform/mac/fast/repaint/layer-full-repaint-expected.png: Removed.
+        * platform/mac/fast/repaint/layer-full-repaint-expected.txt: Removed.
+        * platform/qt/fast/repaint/layer-full-repaint-expected.png: Removed.
+        * platform/qt/fast/repaint/layer-full-repaint-expected.txt: Removed.
+
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         New Chromium baselines for css3/filters/composited-reflected.html.

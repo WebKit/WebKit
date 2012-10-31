@@ -340,6 +340,7 @@ public:
     bool isTrackingRepaints() const { return m_isTrackingRepaints; }
     void resetTrackedRepaints() { m_trackedRepaintRects.clear(); }
     const Vector<IntRect>& trackedRepaintRects() const { return m_trackedRepaintRects; }
+    String trackedRepaintRectsAsText() const;
 
     typedef HashSet<ScrollableArea*> ScrollableAreaSet;
     void addScrollableArea(ScrollableArea*);

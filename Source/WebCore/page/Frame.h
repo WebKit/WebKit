@@ -134,6 +134,7 @@ namespace WebCore {
         void injectUserScripts(UserScriptInjectionTime);
         
         String layerTreeAsText(LayerTreeFlags = 0) const;
+        String trackedRepaintRectsAsText() const;
 
         static Frame* frameForWidget(const Widget*);
 

@@ -313,4 +313,6 @@ EXPORTS
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVDOMWindow@1@@Z
         ?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UAEXXZ
         ?layerTreeAsText@Frame@WebCore@@QBE?AVString@WTF@@I@Z
+        ?trackedRepaintRectsAsText@Frame@WebCore@@QBE?AVString@WTF@@XZ
+        ?setTracksRepaints@FrameView@WebCore@@QAEX_N@Z
 

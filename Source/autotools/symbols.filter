@@ -206,6 +206,8 @@ _ZN7WebCore12PrintContext26pageSizeAndMarginsInPixelsEPNS_5FrameEiiiiiii;
 _ZNK7WebCore9DOMWindow8documentEv;
 _ZTVN7WebCore28InspectorFrontendClientLocal8SettingsE;
 _ZNK7WebCore5Frame15layerTreeAsTextEj;
+_ZN7WebCore9FrameView17setTracksRepaintsEb;
+_ZNK7WebCore5Frame25trackedRepaintRectsAsTextEv;
 
 local:
 _Z*;

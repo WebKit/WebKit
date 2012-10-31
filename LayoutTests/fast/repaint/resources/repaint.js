@@ -1,3 +1,4 @@
+// Note: pixel based repaint tests are now deprecated. Please use text-based-repaint.js in new repaint tests.
 function runRepaintTest()
 {
     if (window.testRunner) {
