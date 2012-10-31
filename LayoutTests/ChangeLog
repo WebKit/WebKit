@@ -1,3 +1,12 @@
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] New baselines for
+        fast/images/exif-orientation-css-expected.png.  Unreviewed.
+
+        * platform/chromium-linux-x86/fast/images/exif-orientation-css-expected.png: Removed.
+        * platform/chromium-win/fast/images/exif-orientation-css-expected.png: Added.
+        * platform/chromium/fast/images/exif-orientation-css-expected.png: Removed.
+
 2012-10-31  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Table with percentage column widths doesn't scale to fill the entire width of a table containing it
