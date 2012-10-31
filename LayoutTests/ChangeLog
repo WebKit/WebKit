@@ -1,3 +1,10 @@
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.  More flaky fallout from 
+        http://trac.webkit.org/changeset/133069.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133044.
