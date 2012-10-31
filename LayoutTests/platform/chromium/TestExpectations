@@ -4087,6 +4087,10 @@ webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/support-broken
 
 # Just needs a rebaseline (but webkit-patch rebaseline doesn't seem to work)
 Bug(senorblanco) [ Mac ] fast/sub-pixel/float-wrap-zoom.html [ ImageOnlyFailure ]
+# Crashing in debug since WK r133043:133045, Chrome 165184:165190
+Bug(senorblanco) http/tests/security/isolatedWorld/all-window-prototypes.html [ Crash Pass ]
+Bug(senorblanco) http/tests/security/isolatedWorld/document-prototype.html [ Crash Pass ]
+Bug(senorblanco) http/tests/security/isolatedWorld/top-properties.html [ Crash Pass ]
 
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]

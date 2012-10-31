@@ -1,3 +1,9 @@
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.  Mark a few tests as crashing.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-31  Tom Sepez  <tsepez@chromium.org>
 
         Malformed X-XSS-Protection headers not reported
