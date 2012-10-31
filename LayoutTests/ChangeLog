@@ -1,5 +1,15 @@
 2012-10-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] More unreviewed gardening.
+
+        Skip the EXIF-related tests since the feature is not implemented
+        for the port anyway, and skip the recently-added
+        fast/images/exif-orientation-image-document.html as well.
+
+        * platform/efl/TestExpectations:
+
+2012-10-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Skip http/tests/appcache/load-from-appcache-defer-resume-crash.html on WK2.
 
         Just marking it as Failure does not prevent a useless PNG expectation to be generated when running pixel tests.
