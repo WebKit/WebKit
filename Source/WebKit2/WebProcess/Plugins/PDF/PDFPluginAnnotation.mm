@@ -92,7 +92,7 @@ void PDFPluginAnnotation::updateGeometry()
 {
     IntSize documentSize(m_pdfLayerController.contentSizeRespectingZoom);
     IntPoint scrollPosition(m_pdfLayerController.scrollPosition);
-    NSRect annotationRect = [m_pdfLayerController boundsForAnnotation:m_annotation.get()];
+    NSRect annotationRect = NSRectFromCGRect([m_pdfLayerController boundsForAnnotation:m_annotation.get()]);
 
     StyledElement* styledElement = static_cast<StyledElement*>(element());
     styledElement->setInlineStyleProperty(CSSPropertyWidth, annotationRect.size.width, CSSPrimitiveValue::CSS_PX);
