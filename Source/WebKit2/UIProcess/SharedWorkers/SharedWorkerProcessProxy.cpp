@@ -128,7 +128,7 @@ void SharedWorkerProcessProxy::didClose(CoreIPC::Connection*)
     sharedWorkerProcessCrashedOrFailedToLaunch();
 }
 
-void SharedWorkerProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
+void SharedWorkerProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
 }
 

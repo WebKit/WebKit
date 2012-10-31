@@ -88,7 +88,7 @@ public:
     class Client : public MessageReceiver {
     public:
         virtual void didClose(Connection*) = 0;
-        virtual void didReceiveInvalidMessage(Connection*, MessageID) = 0;
+        virtual void didReceiveInvalidMessage(Connection*, StringReference messageReceiverName, StringReference messageName) = 0;
 
 #if PLATFORM(WIN)
         virtual Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply() = 0;

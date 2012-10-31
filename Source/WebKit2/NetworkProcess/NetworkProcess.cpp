@@ -87,7 +87,7 @@ void NetworkProcess::didClose(CoreIPC::Connection*)
     RunLoop::current()->stop();
 }
 
-void NetworkProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
+void NetworkProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
     RunLoop::current()->stop();
 }

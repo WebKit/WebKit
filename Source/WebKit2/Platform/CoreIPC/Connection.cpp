@@ -692,7 +692,7 @@ void Connection::dispatchMessage(IncomingMessage& message)
         m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount--;
 
     if (m_didReceiveInvalidMessage && m_client)
-        m_client->didReceiveInvalidMessage(this, message.messageID());
+        m_client->didReceiveInvalidMessage(this, arguments->messageReceiverName(), arguments->messageName());
 
     m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
 }

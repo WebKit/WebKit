@@ -104,7 +104,7 @@ void NetworkConnectionToWebProcess::didClose(CoreIPC::Connection*)
     m_connection = 0;
 }
 
-void NetworkConnectionToWebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
+void NetworkConnectionToWebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
 }
 

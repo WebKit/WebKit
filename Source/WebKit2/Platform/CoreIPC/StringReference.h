@@ -26,6 +26,7 @@
 #ifndef StringReference_h
 #define StringReference_h
 
+#include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
 
 namespace CoreIPC {
@@ -58,6 +59,8 @@ public:
 
     size_t size() const { return m_size; }
     const char* data() const { return m_data; }
+
+    CString toString() const;
 
     friend bool operator==(const StringReference& a, const StringReference& b)
     {

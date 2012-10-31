@@ -146,7 +146,7 @@ void PluginProcess::didClose(CoreIPC::Connection*)
     RunLoop::current()->stop();
 }
 
-void PluginProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
+void PluginProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
 }
 

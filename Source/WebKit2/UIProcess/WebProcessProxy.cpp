@@ -477,9 +477,9 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
         pages[i]->processDidCrash();
 }
 
-void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID)
+void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
 {
-    WTFLogAlways("Received an invalid message from the web process with message ID %x\n", messageID.toInt());
+    WTFLogAlways("Received an invalid message \"%s.%s\" from the web process.\n", messageReceiverName.toString().data(), messageName.toString().data());
 
     // Terminate the WebProcesses.
     terminate();

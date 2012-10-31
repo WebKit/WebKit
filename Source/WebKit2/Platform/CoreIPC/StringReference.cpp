@@ -30,8 +30,14 @@
 #include "ArgumentEncoder.h"
 #include "DataReference.h"
 #include <wtf/StringHasher.h>
+#include <wtf/text/CString.h>
 
 namespace CoreIPC {
+
+CString StringReference::toString() const
+{
+    return WTF::CString(m_data, m_size);
+}
 
 void StringReference::encode(ArgumentEncoder& encoder) const
 {

@@ -94,14 +94,14 @@ void WebConnectionToWebProcess::didClose(CoreIPC::Connection* connection)
     m_client.didClose(this);
 }
 
-void WebConnectionToWebProcess::didReceiveInvalidMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID)
+void WebConnectionToWebProcess::didReceiveInvalidMessage(CoreIPC::Connection* connection, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
 {
     RefPtr<WebConnectionToWebProcess> protector = this;
     RefPtr<WebProcessProxy> process = m_process;
 
     // This will invalidate the CoreIPC::Connection and the WebProcessProxy member
     // variables, so we should be careful not to use them after this call.
-    process->didReceiveInvalidMessage(connection, messageID);
+    process->didReceiveInvalidMessage(connection, messageReceiverName, messageName);
 
     // Since we've invalidated the connection we'll never get a CoreIPC::Connection::Client::didClose
     // callback so we'll explicitly call it here instead.

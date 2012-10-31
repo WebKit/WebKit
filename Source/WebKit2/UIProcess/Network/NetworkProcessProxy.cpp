@@ -112,7 +112,7 @@ void NetworkProcessProxy::didClose(CoreIPC::Connection*)
     networkProcessCrashedOrFailedToLaunch();
 }
 
-void NetworkProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
+void NetworkProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
 
 }

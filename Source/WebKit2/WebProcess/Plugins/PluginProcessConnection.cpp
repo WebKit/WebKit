@@ -129,7 +129,7 @@ void PluginProcessConnection::didClose(CoreIPC::Connection*)
     }
 }
 
-void PluginProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
+void PluginProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
 }
 

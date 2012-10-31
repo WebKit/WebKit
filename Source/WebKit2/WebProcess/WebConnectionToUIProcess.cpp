@@ -81,9 +81,9 @@ void WebConnectionToUIProcess::didClose(CoreIPC::Connection* connection)
     m_process->didClose(connection);
 }
 
-void WebConnectionToUIProcess::didReceiveInvalidMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID)
+void WebConnectionToUIProcess::didReceiveInvalidMessage(CoreIPC::Connection* connection, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
 {
-    m_process->didReceiveInvalidMessage(connection, messageID);
+    m_process->didReceiveInvalidMessage(connection, messageReceiverName, messageName);
 }
 
 #if PLATFORM(WIN)

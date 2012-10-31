@@ -1,3 +1,79 @@
+2012-10-30  Anders Carlsson  <andersca@apple.com>
+
+        Connection::Client::didReceiveInvalidMessage should take the full message name
+        https://bugs.webkit.org/show_bug.cgi?id=100788
+
+        Reviewed by Sam Weinig.
+
+        Change Connection::Client::didReceiveInvalidMessage to take the message receiver name and message name as parameters
+        and make WebProcessProxy::didReceiveInvalidMessage print out the full message name.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveInvalidMessage):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (NetworkConnectionToWebProcess):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didReceiveInvalidMessage):
+        * NetworkProcess/NetworkProcess.h:
+        (NetworkProcess):
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchMessage):
+        * Platform/CoreIPC/Connection.h:
+        (Client):
+        * Platform/CoreIPC/StringReference.cpp:
+        (CoreIPC::StringReference::toString):
+        (CoreIPC):
+        * Platform/CoreIPC/StringReference.h:
+        (StringReference):
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::didReceiveInvalidMessage):
+        * PluginProcess/PluginProcess.h:
+        (PluginProcess):
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveInvalidMessage):
+        * PluginProcess/WebProcessConnection.h:
+        (WebProcessConnection):
+        * SharedWorkerProcess/SharedWorkerProcess.cpp:
+        (WebKit::SharedWorkerProcess::didReceiveInvalidMessage):
+        * SharedWorkerProcess/SharedWorkerProcess.h:
+        (SharedWorkerProcess):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        (NetworkProcessProxy):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        (PluginProcessProxy):
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.cpp:
+        (WebKit::SharedWorkerProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.h:
+        (SharedWorkerProcessProxy):
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::didReceiveInvalidMessage):
+        * UIProcess/WebConnectionToWebProcess.h:
+        (WebConnectionToWebProcess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        (NetworkProcessConnection):
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didReceiveInvalidMessage):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        (PluginProcessConnection):
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::didReceiveInvalidMessage):
+        * WebProcess/WebConnectionToUIProcess.h:
+        (WebConnectionToUIProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveInvalidMessage):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+
 2012-10-31  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2][AC] Use smart pointers for Evas_GL types

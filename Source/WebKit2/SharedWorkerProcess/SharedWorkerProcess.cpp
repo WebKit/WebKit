@@ -114,7 +114,7 @@ void SharedWorkerProcess::didClose(CoreIPC::Connection*)
     RunLoop::current()->stop();
 }
 
-void SharedWorkerProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
+void SharedWorkerProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
 }
 
