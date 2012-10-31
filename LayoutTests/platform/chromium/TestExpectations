@@ -4123,3 +4123,8 @@ webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-an
 webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Text ]
 webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Text ]
 webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Text ]
+
+webkit.org/b/100806 [ Win ] fast/css/font-face-implicit-local-font.html [ Failure ]
+webkit.org/b/100806 [ Win ] fast/css/font-face-unicode-range.html [ Failure ]
+webkit.org/b/100806 [ Win ] fast/css/font-face-descending-unicode-range.html [ Text ]
+webkit.org/b/100806 [ Win ] fast/css/font-face-download-error.html [ Text ]
