@@ -1,3 +1,16 @@
+2012-10-30  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [WTR] Memory leaks in TestWebKitAPI::didReceiveMessageFromInjectedBundle()
+        https://bugs.webkit.org/show_bug.cgi?id=100770
+
+        Reviewed by Sam Weinig.
+
+        Adopt strings returned by WKStringCreateWithUTF8CString() in
+        didReceiveMessageFromInjectedBundle() to avoid memory leaks.
+
+        * TestWebKitAPI/Tests/WebKit2/WillSendSubmitEvent.cpp:
+        (TestWebKitAPI::didReceiveMessageFromInjectedBundle):
+
 2012-10-30  Kangil Han  <kangil.han@samsung.com>
 
         Fix broken python unit test

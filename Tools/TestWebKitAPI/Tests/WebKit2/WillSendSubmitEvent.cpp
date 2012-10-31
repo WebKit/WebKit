@@ -41,14 +41,17 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
     EXPECT_EQ(WKDictionaryGetTypeID(), WKGetTypeID(body));
     WKDictionaryRef values = static_cast<WKDictionaryRef>(body);
 
-    WKStringRef textFieldValueWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(values, WKStringCreateWithUTF8CString("textField")));
+    WKRetainPtr<WKStringRef> textFieldKey(AdoptWK, WKStringCreateWithUTF8CString("textField"));
+    WKStringRef textFieldValueWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(values, textFieldKey.get()));
     EXPECT_WK_STREQ("text field", textFieldValueWK);
 
-    WKStringRef passwordFieldValueWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(values, WKStringCreateWithUTF8CString("passwordField")));
+    WKRetainPtr<WKStringRef> passwordFieldKey(AdoptWK, WKStringCreateWithUTF8CString("passwordField"));
+    WKStringRef passwordFieldValueWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(values, passwordFieldKey.get()));
     EXPECT_WK_STREQ("password field", passwordFieldValueWK);
 
     // <input type="hidden"> fields are not sent.
-    WKStringRef hiddenFieldValueWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(values, WKStringCreateWithUTF8CString("hiddenField")));
+    WKRetainPtr<WKStringRef> hiddenFieldKey(AdoptWK, WKStringCreateWithUTF8CString("hiddenField"));
+    WKStringRef hiddenFieldValueWK = static_cast<WKStringRef>(WKDictionaryGetItemForKey(values, hiddenFieldKey.get()));
     EXPECT_NULL(hiddenFieldValueWK);
 }
 
