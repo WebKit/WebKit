@@ -1,3 +1,16 @@
+2012-10-30  Kangil Han  <kangil.han@samsung.com>
+
+        Fix broken python unit test
+        https://bugs.webkit.org/show_bug.cgi?id=100810
+
+        Reviewed by Dirk Pranke.
+
+        BUG 100755 has broken python unit test, e.g. assertion fail, since it modified baseline path.
+        Therefore, this patch fixes it.
+
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.test_baseline_directory):
+
 2012-10-30  Dirk Pranke  <dpranke@chromium.org>
 
         webkit-patch rebaseline*: add more helpful logging
