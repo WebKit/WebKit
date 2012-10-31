@@ -1,3 +1,9 @@
+2012-10-31  Pavel Podivilov  <podivilov@google.com>
+
+        [chromium] Unreviewed, mark two touchadjustment tests as failing on mac.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-31  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][DRT] EventSender requires contextClick implementation

@@ -4122,3 +4122,6 @@ webkit.org/b/100806 [ Win ] fast/css/font-face-implicit-local-font.html [ Failur
 webkit.org/b/100806 [ Win ] fast/css/font-face-unicode-range.html [ Failure ]
 webkit.org/b/100806 [ Win ] fast/css/font-face-descending-unicode-range.html [ Text ]
 webkit.org/b/100806 [ Win ] fast/css/font-face-download-error.html [ Text ]
+
+webkit.org/b/100833 [ Mac ] touchadjustment/html-label.html [ Text ]
+webkit.org/b/100833 [ Mac ] touchadjustment/nested-touch.html [ Text ]
