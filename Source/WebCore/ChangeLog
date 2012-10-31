@@ -1,3 +1,20 @@
+2012-10-31  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [Qt][EFL][AC][WK2]TextureMapperLayer backing store contents are drawn upside down on screen.
+        https://bugs.webkit.org/show_bug.cgi?id=100845.
+
+        Reviewed by Noam Rosenthal.
+
+        WebGL displays the Canvas with (0,0) being the bottom left corner.
+        In GraphicsSurface::platformPaintToTextureMapper we don't set ShouldFlipTexture
+        flag before painting to TextureMapper.
+        It results in backing store contents being drawn upside down on screen.
+        This patch enables ShouldFlipTexture flag when TextureMapperLayer renders 
+        it's backing store contents into a TextureMapper.
+
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurface::platformPaintToTextureMapper):
+
 2012-10-31  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Enable filter animations in GraphicsLayerAnimation
