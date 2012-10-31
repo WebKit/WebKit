@@ -248,7 +248,7 @@ guint webkit_back_forward_list_get_length(WebKitBackForwardList* backForwardList
  * webkit_back_forward_list_get_back_list:
  * @back_forward_list: a #WebKitBackForwardList
  *
- * Returns: (element-type WebKit.BackForwardListItem) (transfer container): a #GList of
+ * Returns: (element-type WebKit2.BackForwardListItem) (transfer container): a #GList of
  *    items preceding the current item.
  */
 GList* webkit_back_forward_list_get_back_list(WebKitBackForwardList* backForwardList)
@@ -263,7 +263,7 @@ GList* webkit_back_forward_list_get_back_list(WebKitBackForwardList* backForward
  * @back_forward_list: a #WebKitBackForwardList
  * @limit: the number of items to retrieve
  *
- * Returns: (element-type WebKit.BackForwardListItem) (transfer container): a #GList of
+ * Returns: (element-type WebKit2.BackForwardListItem) (transfer container): a #GList of
  *    items preceding the current item limited by @limit.
  */
 GList* webkit_back_forward_list_get_back_list_with_limit(WebKitBackForwardList* backForwardList, guint limit)
@@ -278,7 +278,7 @@ GList* webkit_back_forward_list_get_back_list_with_limit(WebKitBackForwardList* 
  * webkit_back_forward_list_get_forward_list:
  * @back_forward_list: a #WebKitBackForwardList
  *
- * Returns: (element-type WebKit.BackForwardListItem) (transfer container): a #GList of
+ * Returns: (element-type WebKit2.BackForwardListItem) (transfer container): a #GList of
  *    items following the current item.
  */
 GList* webkit_back_forward_list_get_forward_list(WebKitBackForwardList* backForwardList)
@@ -293,7 +293,7 @@ GList* webkit_back_forward_list_get_forward_list(WebKitBackForwardList* backForw
  * @back_forward_list: a #WebKitBackForwardList
  * @limit: the number of items to retrieve
  *
- * Returns: (element-type WebKit.BackForwardListItem) (transfer container): a #GList of
+ * Returns: (element-type WebKit2.BackForwardListItem) (transfer container): a #GList of
  *    items following the current item limited by @limit.
  */
 GList* webkit_back_forward_list_get_forward_list_with_limit(WebKitBackForwardList* backForwardList, guint limit)

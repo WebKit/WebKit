@@ -329,7 +329,10 @@ gir_DATA = $(WEBKIT_GIRSOURCES) $(JSCORE_GIRSOURCES)
 typelibsdir += $(libdir)/girepository-1.0
 typelibs_DATA += $(JSCORE_GIRSOURCES:.gir=.typelib) $(WEBKIT_GIRSOURCES:.gir=.typelib)
 
-%.typelib: %.gir $(G_IR_COMPILER)
+WebKit-@WEBKITGTK_API_VERSION@.typelib: WebKit-@WEBKITGTK_API_VERSION@.gir $(G_IR_COMPILER)
+	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(WebKit) --includedir $(top_builddir) $< -o $@
+
+JSCore-@WEBKITGTK_API_VERSION@.typelib: JSCore-@WEBKITGTK_API_VERSION@.gir $(G_IR_COMPILER)
 	$(AM_V_GEN)$(G_IR_COMPILER) --includedir $(WebKit) --includedir $(top_builddir) $< -o $@
 
 CLEANFILES += $(JSCORE_GIRSOURCES) $(WEBKIT_GIRSOURCES) $(typelibs_DATA)
