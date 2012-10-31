@@ -1436,9 +1436,6 @@ PagePopup* WebViewImpl::openPagePopup(PagePopupClient* client, const IntRect& or
         m_pagePopup->closePopup();
         m_pagePopup = 0;
     }
-
-    if (Frame* frame = focusedWebCoreFrame())
-        frame->selection()->setCaretVisible(false);
     return m_pagePopup.get();
 }
 
@@ -1451,9 +1448,6 @@ void WebViewImpl::closePagePopup(PagePopup* popup)
         return;
     m_pagePopup->closePopup();
     m_pagePopup = 0;
-
-    if (Frame* frame = focusedWebCoreFrame())
-        frame->selection()->pageActivationChanged();
 }
 #endif
 

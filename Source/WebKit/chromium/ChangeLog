@@ -1,3 +1,21 @@
+2012-10-31  Kent Tamura  <tkent@chromium.org>
+
+        Remove code to hide/reshow text caret for PagePopups
+        https://bugs.webkit.org/show_bug.cgi?id=100834
+
+        Reviewed by Hajime Morita.
+
+        All of form controls supporting PagePopups don't have a text
+        caret. We don't need to hide a text caret on opening a PagePopup,
+        and don't need to reshow it on closing the PagePopup.
+
+        We had this code because an old UI of input[type=date] had a text
+        caret.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::openPagePopup):
+        (WebKit::WebViewImpl::closePagePopup):
+
 2012-10-31  Mike West  <mkwst@chromium.org>
 
         Script run from an isolated world should bypass a page's CSP.
