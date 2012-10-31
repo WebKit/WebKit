@@ -1414,6 +1414,7 @@ crbug.com/10322 accessibility/transformed-element.html [ Skip ]
 crbug.com/10322 accessibility/visible-elements.html [ Skip ]
 
 webkit.org/b/97359 accessibility/svg-bounds.html [ Skip ]
+webkit.org/b/97359 accessibility/svg-remote-element.html [ Skip ]
 webkit.org/b/96529 accessibility/hidden-legend.html [ Skip ]
 webkit.org/b/73912 accessibility/aria-checkbox-text.html [ Skip ]
 webkit.org/b/99665 accessibility/loading-iframe-sends-notification.html [ Skip ]

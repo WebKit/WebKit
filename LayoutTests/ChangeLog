@@ -1,5 +1,14 @@
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
+        [chromium] Added skipped expectations for new test
+        svg-remote-element.html with no results.
+
+        Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
         [chromium] New baselines for
         fast/images/exif-orientation-css-expected.png.  Unreviewed.
 
