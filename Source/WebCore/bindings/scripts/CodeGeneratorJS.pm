@@ -377,6 +377,17 @@ sub prototypeHashTableAccessor
     }
 }
 
+sub constructorHashTableAccessor
+{
+    my $noStaticTables = shift;
+    my $constructorClassName = shift;
+    if ($noStaticTables) {
+        return "get${constructorClassName}Table(exec)";
+    } else {
+        return "&${constructorClassName}Table";
+    }
+}
+
 sub GetGenerateIsReachable
 {
     my $dataNode = shift;
@@ -3727,7 +3738,16 @@ sub GenerateConstructorDefinition
         push(@$outputArray, "{\n");
         push(@$outputArray, "}\n\n");
     } else {
-        push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, &${constructorClassName}Table, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
+        if ($dataNode->extendedAttributes->{"JSNoStaticTables"}) {
+            push(@$outputArray, "static const HashTable* get${constructorClassName}Table(ExecState* exec)\n");
+            push(@$outputArray, "{\n");
+            push(@$outputArray, "    return getHashTableForGlobalData(exec->globalData(), &${constructorClassName}Table);\n");
+            push(@$outputArray, "}\n\n");
+            push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, 0, get${constructorClassName}Table, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
+        } else {
+            push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}Constructor\", &Base::s_info, &${constructorClassName}Table, 0, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
+        }
+
         push(@$outputArray, "${constructorClassName}::${constructorClassName}(Structure* structure, JSDOMGlobalObject* globalObject)\n");
         push(@$outputArray, "    : DOMConstructorObject(structure, globalObject)\n");
         push(@$outputArray, "{\n");
@@ -3765,12 +3785,12 @@ sub GenerateConstructorDefinition
 
         push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
         push(@$outputArray, "{\n");
-        push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, jsCast<${constructorClassName}*>(cell), propertyName, slot);\n");
+        push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, " . constructorHashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $constructorClassName) . ", jsCast<${constructorClassName}*>(cell), propertyName, slot);\n");
         push(@$outputArray, "}\n\n");
 
         push(@$outputArray, "bool ${constructorClassName}::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)\n");
         push(@$outputArray, "{\n");
-        push(@$outputArray, "    return getStatic${kind}Descriptor<${constructorClassName}, JSDOMWrapper>(exec, &${constructorClassName}Table, jsCast<${constructorClassName}*>(object), propertyName, descriptor);\n");
+        push(@$outputArray, "    return getStatic${kind}Descriptor<${constructorClassName}, JSDOMWrapper>(exec, " . constructorHashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $constructorClassName) . ", jsCast<${constructorClassName}*>(object), propertyName, descriptor);\n");
         push(@$outputArray, "}\n\n");
     }
 

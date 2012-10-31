@@ -1,3 +1,18 @@
+2012-10-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        DOM URL is flaky when workers are used
+        https://bugs.webkit.org/show_bug.cgi?id=99178
+
+        Reviewed by Geoffrey Garen.
+
+        Extend JSNoStaticTables to also avoid direct access of static tables in constructor objects.
+
+        Test: fast/workers/worker-domurl.html
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (constructorHashTableAccessor):
+        (GenerateConstructorDefinition):
+
 2012-10-30  Jae Hyun Park  <jae.park@company100.net>
 
         Coordinated Graphics: Remove unused methods
