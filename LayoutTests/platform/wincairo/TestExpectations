@@ -2810,3 +2810,5 @@ http/tests/xmlhttprequest/range-test.html
 
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
+
+webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]

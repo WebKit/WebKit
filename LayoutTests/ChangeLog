@@ -1,3 +1,28 @@
+2012-10-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: page crash when pausing in dedicated worker
+        https://bugs.webkit.org/show_bug.cgi?id=100837
+
+        Reviewed by Pavel Feldman.
+
+        Test that Debugger.pause works for dedicated workers. The test is skipped
+        on all platforms that use JSC as worker debugging is not supported there
+        yet.
+
+        * http/tests/inspector-protocol/resources/InspectorTest.js:
+        (WebInspector.dispatchMessageFromBackend):
+        * inspector-protocol/debugger-pause-dedicated-worker-expected.txt: Added.
+        * inspector-protocol/debugger-pause-dedicated-worker.html: Added.
+        * inspector-protocol/resources/dedicated-worker.js: Added.
+        (onmessage):
+        (doWork):
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2012-10-31  Zoltan Nyul  <zoltan.nyul@intel.com>
 
         perspective-origin should ignore values with more then two lengths and use the default values

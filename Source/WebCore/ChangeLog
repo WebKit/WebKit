@@ -1,3 +1,17 @@
+2012-10-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: page crash when pausing in dedicated worker
+        https://bugs.webkit.org/show_bug.cgi?id=100837
+
+        Reviewed by Pavel Feldman.
+
+        Pass debugger agent to InjectedScriptHost::init in case of workers.
+
+        Test: inspector-protocol/debugger-pause-dedicated-worker.html
+
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::WorkerInspectorController):
+
 2012-10-31  Zoltan Nyul  <zoltan.nyul@intel.com>
 
         perspective-origin should ignore values with more then two lengths and use the default values

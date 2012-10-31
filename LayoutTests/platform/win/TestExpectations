@@ -2403,3 +2403,5 @@ compositing/tiling/tile-cache-zoomed.html
 
 # Test added in r132901 is for chromium only
 fast/images/exif-orientation-image-document.html
+
+webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]

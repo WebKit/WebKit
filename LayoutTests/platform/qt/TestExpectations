@@ -2506,3 +2506,5 @@ webkit.org/b/100196 http/tests/inspector/network/image-as-text-loading-data-url.
 # REGRESSION(r132757): It made 2 jquery tests assert
 webkit.org/b/100636 jquery/manipulation.html
 webkit.org/b/100636 jquery/traversing.html
+
+webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]

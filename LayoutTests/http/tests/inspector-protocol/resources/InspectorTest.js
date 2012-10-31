@@ -27,6 +27,7 @@ WebInspector = {};
 InspectorTest = {};
 InspectorTest._dispatchTable = [];
 InspectorTest._requestId = -1;
+InspectorTest.eventHandler = {};
 
 /**
  * @param {string} method
@@ -56,6 +57,11 @@ WebInspector.dispatchMessageFromBackend = function(messageObject)
         var handler = InspectorTest._dispatchTable[messageId];
         if (handler && typeof handler === "function")
             handler(messageObject);
+    } else {
+        var eventName = messageObject["method"];
+        var eventHandler = InspectorTest.eventHandler[eventName];
+        if (eventHandler)
+            eventHandler(messageObject);
     }
 }
 

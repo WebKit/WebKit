@@ -114,7 +114,9 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
 #endif
         , 0
         , 0
-        , 0
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+        , m_debuggerAgent.get()
+#endif
     );
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

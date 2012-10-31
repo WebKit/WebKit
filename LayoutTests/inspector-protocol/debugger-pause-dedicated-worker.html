@@ -1,0 +1,76 @@
+<html>
+<head>
+<script type="text/javascript" src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+
+
+var worker;
+
+function startWorkerAndRunTest()
+{
+    worker = new Worker("resources/dedicated-worker.js");
+    worker.onmessage = function(event) { };
+    worker.postMessage(1);
+    log("Started worker");
+    runTest();
+}
+
+
+function test()
+{
+
+    var workerId;
+    var workerRequestId = 1;
+    function sendCommandToWorker(method, params)
+    {
+        InspectorTest.sendCommand("Worker.sendMessageToWorker",
+            {
+                "workerId": workerId,
+                "message": { "method": method,
+                             "params": params,
+                             "id": workerRequestId++ }
+            });
+    }
+
+    function didEnableWorkerDebugging(messageObject)
+    {
+        if ("error" in messageObject) {
+            InspectorTest.log("FAIL: Couldn't enable worker debugger: " + messageObject.error.message);
+            InspectorTest.completeTest();
+            return;
+        }
+        InspectorTest.log("didEnableWorkerDebugging");
+    }
+    InspectorTest.sendCommand("Worker.enable", {}, didEnableWorkerDebugging);
+
+
+    InspectorTest.eventHandler["Worker.workerCreated"] = function(messageObject)
+    {
+        workerId = messageObject["params"]["workerId"];
+        InspectorTest.log("Worker created");
+        InspectorTest.sendCommand("Worker.connectToWorker", { "workerId": workerId }, didConnectToWorker);
+
+        function didConnectToWorker(messageObject)
+        {
+            InspectorTest.log("didConnectToWorker");
+            sendCommandToWorker("Debugger.enable", {});
+            sendCommandToWorker("Debugger.pause", {});
+        }
+    }
+
+    InspectorTest.eventHandler["Worker.dispatchMessageFromWorker"] = function(messageObject)
+    {
+        var message = messageObject["params"]["message"];
+        if (message["method"] === "Debugger.paused") {
+            InspectorTest.log("SUCCESS: Worker paused");
+            sendCommandToWorker("Debugger.disable", {});
+            InspectorTest.completeTest();
+        }
+    }
+
+}
+</script>
+</head>
+<body onLoad="startWorkerAndRunTest();">
+</body>
+</html>
