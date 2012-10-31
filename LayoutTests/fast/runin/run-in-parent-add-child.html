@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html style="font-family: ahem; font-size: 50px; -webkit-font-smoothing: none;">
+<!-- WebKit bug 86387 - Move run-in handling to addChild, instead of in layout. -->
+<!-- 'A' green box, followed by 'B' orange box, followed by 'C' purple box in the same line. -->
+<style>
+.runin { display: run-in; color: green; }
+</style>
+</head>
+<body>
+<div>
+  <div class="runin">A</div>
+  <div id="test" style="color: purple">C</div>
+</div>
+</body>
+<script>
+document.body.offsetTop;
+test = document.getElementById('test');
+span = document.createElement('span');
+span.appendChild(document.createTextNode('B'));
+span.style.color = 'orange';
+test.insertBefore(span, test.firstChild);
+</script>
+</html>

@@ -244,6 +244,30 @@ public:
     RenderObject* firstLetterRemainingText() const;
     void setFirstLetterRemainingText(RenderObject*);
 
+    // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
+    // Since they are typically called only to move objects around within anonymous blocks (which only have layers in
+    // the case of column spans), the default for fullRemoveInsert is false rather than true.
+    void moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, RenderObject* beforeChild, bool fullRemoveInsert = false);
+    void moveChildTo(RenderBoxModelObject* toBoxModelObject, RenderObject* child, bool fullRemoveInsert = false)
+    {
+        moveChildTo(toBoxModelObject, child, 0, fullRemoveInsert);
+    }
+    void moveAllChildrenTo(RenderBoxModelObject* toBoxModelObject, bool fullRemoveInsert = false)
+    {
+        moveAllChildrenTo(toBoxModelObject, 0, fullRemoveInsert);
+    }
+    void moveAllChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* beforeChild, bool fullRemoveInsert = false)
+    {
+        moveChildrenTo(toBoxModelObject, firstChild(), 0, beforeChild, fullRemoveInsert);
+    }
+    // Move all of the kids from |startChild| up to but excluding |endChild|. 0 can be passed as the |endChild| to denote
+    // that all the kids from |startChild| onwards should be moved.
+    void moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, bool fullRemoveInsert = false)
+    {
+        moveChildrenTo(toBoxModelObject, startChild, endChild, 0, fullRemoveInsert);
+    }
+    void moveChildrenTo(RenderBoxModelObject* toBoxModelObject, RenderObject* startChild, RenderObject* endChild, RenderObject* beforeChild, bool fullRemoveInsert = false);
+
 private:
     virtual bool isBoxModelObject() const { return true; }
 
