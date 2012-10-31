@@ -104,6 +104,11 @@ enum MarkingBehavior {
     MarkContainingBlockChain,
 };
 
+enum PlaceGeneratedRunInFlag {
+    PlaceGeneratedRunIn,
+    DoNotPlaceGeneratedRunIn
+};
+
 const int caretWidth = 1;
 
 #if ENABLE(DASHBOARD_SUPPORT)
