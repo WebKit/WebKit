@@ -35,15 +35,8 @@ import re
 from webkitpy.layout_tests.port import builders
 
 
-def port_options(**help_strings):
+def platform_options(**help_strings):
     return [
-        optparse.make_option("-t", "--target", dest="configuration",
-            help="(DEPRECATED)"),
-        # FIXME: --help should display which configuration is default.
-        optparse.make_option('--debug', action='store_const', const='Debug', dest="configuration",
-            help='Set the configuration to Debug'),
-        optparse.make_option('--release', action='store_const', const='Release', dest="configuration",
-            help='Set the configuration to Release'),
         optparse.make_option('--platform', action='store',
             help=help_strings.get('platform', 'Platform/Port being tested (e.g., "mac-lion")')),
         optparse.make_option('--chromium', action='store_const', const='chromium', dest='platform',
@@ -56,8 +49,21 @@ def port_options(**help_strings):
             help='Alias for --platform=gtk'),
         optparse.make_option('--qt', action='store_const', const='qt', dest="platform",
             help='Alias for --platform=qt'),
+        ]
+
+
+def configuration_options():
+    return [
+        optparse.make_option("-t", "--target", dest="configuration", help="(DEPRECATED)"),
+        # FIXME: --help should display which configuration is default.
+        optparse.make_option('--debug', action='store_const', const='Debug', dest="configuration",
+            help='Set the configuration to Debug'),
+        optparse.make_option('--release', action='store_const', const='Release', dest="configuration",
+            help='Set the configuration to Release'),
         optparse.make_option('--32-bit', action='store_const', const='x86', default=None, dest="architecture",
-            help='use 32-bit binaries by default (x86 instead of x86_64)')]
+            help='use 32-bit binaries by default (x86 instead of x86_64)'),
+        ]
+
 
 
 def _builder_options(builder_name):

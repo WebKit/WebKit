@@ -1,3 +1,36 @@
+2012-10-31  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: refactor common command line arguments for --platform, rebaseline commands
+        https://bugs.webkit.org/show_bug.cgi?id=100800
+
+        Reviewed by Ojan Vafai.
+
+        This change shuffles around how we share command-line options
+        between NRWT and the various webkit-patch rebaselining commands.
+
+        There are no functional changes in this patch but it should make
+        things clearer and will be useful in a couple of upcoming patches.
+
+        * Scripts/webkitpy/layout_tests/port/__init__.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (platform_options):
+        (configuration_options):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations.__init__):
+        (PrintBaselines.__init__):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractRebaseliningCommand):
+        (AbstractRebaseliningCommand.__init__):
+        (RebaselineTest.__init__):
+        (OptimizeBaselines.__init__):
+        (AnalyzeBaselines.__init__):
+        (AbstractParallelRebaselineCommand):
+        (RebaselineJson.__init__):
+        (RebaselineExpectations.__init__):
+        (Rebaseline.__init__):
+
 2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [NRWT] Xvfb driver is leaking application cache files

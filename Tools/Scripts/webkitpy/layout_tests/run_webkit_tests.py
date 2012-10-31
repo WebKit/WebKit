@@ -41,7 +41,7 @@ from webkitpy.common.host import Host
 from webkitpy.common.system import stack_utils
 from webkitpy.layout_tests.controllers.manager import Manager, WorkerException, TestRunInterruptedException
 from webkitpy.layout_tests.models import test_expectations
-from webkitpy.layout_tests.port import port_options
+from webkitpy.layout_tests.port import configuration_options, platform_options
 from webkitpy.layout_tests.views import printing
 
 
@@ -201,7 +201,8 @@ def parse_args(args=None):
 
     option_group_definitions = []
 
-    option_group_definitions.append(("Configuration options", port_options()))
+    option_group_definitions.append(("Platform options", platform_options()))
+    option_group_definitions.append(("Configuration options", configuration_options()))
     option_group_definitions.append(("Printing Options", printing.print_options()))
 
     # FIXME: These options should move onto the ChromiumPort.

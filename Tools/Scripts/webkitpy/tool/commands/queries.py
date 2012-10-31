@@ -47,7 +47,7 @@ from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
-from webkitpy.layout_tests.port import port_options
+from webkitpy.layout_tests.port import platform_options, configuration_options
 
 
 class SuggestReviewers(AbstractDeclarativeCommand):
@@ -440,7 +440,7 @@ class PrintExpectations(AbstractDeclarativeCommand):
                         help='Print a CSV-style report that includes the port name, modifiers, tests, and expectations'),
             make_option('-f', '--full', action='store_true', default=False,
                         help='Print a full TestExpectations-style line for every match'),
-        ] + port_options(platform='port/platform to use. Use glob-style wildcards for multiple ports (implies --csv)')
+        ] + platform_options(platform='port/platform to use. Use glob-style wildcards for multiple ports (implies --csv)') + configuration_options()
 
         AbstractDeclarativeCommand.__init__(self, options=options)
         self._expectation_models = {}
@@ -519,7 +519,7 @@ class PrintBaselines(AbstractDeclarativeCommand):
                         help='Print a CSV-style report that includes the port name, test_name, test platform, baseline type, baseline location, and baseline platform'),
             make_option('--include-virtual-tests', action='store_true',
                         help='Include virtual tests'),
-        ] + port_options(platform='port/platform to use. Use glob-style wildcards for multiple ports (implies --csv)')
+        ] + platform_options(platform='port/platform to use. Use glob-style wildcards for multiple ports (implies --csv)') + configuration_options()
         AbstractDeclarativeCommand.__init__(self, options=options)
         self._platform_regexp = re.compile('platform/([^\/]+)/(.+)')
 
