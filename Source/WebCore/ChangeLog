@@ -1,3 +1,25 @@
+2012-10-30  Kenneth Russell  <kbr@google.com>
+
+        Temporarily restrict use of ImageBufferSkia::copyToPlatformTexture until bugs resolved
+        https://bugs.webkit.org/show_bug.cgi?id=100714
+
+        Reviewed by Stephen White.
+
+        For the moment, only use ImageBuffer::copyToPlatformTexture when
+        copying to RGBA/UNSIGNED_BYTE textures, and document restriction
+        in header. Restriction will be lifted once the implementations
+        (currently only Chromium has one) have been fixed; see bug 100715.
+
+        No new tests; manually ran WebGL conformance test
+        tex-image-and-sub-image-2d-with-canvas-rgba5551.html on NVIDIA
+        hardware on Mac OS.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        * platform/graphics/ImageBuffer.h:
+        (ImageBuffer):
+
 2012-10-30  Nico Weber  <thakis@chromium.org>
 
         Fix potential overflow in jpeg exif reader. Found by aedla@google.com.
