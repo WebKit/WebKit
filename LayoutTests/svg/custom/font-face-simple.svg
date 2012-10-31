@@ -10,7 +10,7 @@
   }
   @font-face {
     font-family: "csstest";
-    src: local("Courier");
+    src: local("Courier"), local("Courier New");
   }
 </style>
 <defs>

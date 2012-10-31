@@ -1,3 +1,17 @@
+2012-10-30  Kenichi Ishibashi  <bashi@chromium.org>
+
+        local(Helvetica) in src descriptor prevent fallback
+        https://bugs.webkit.org/show_bug.cgi?id=100446
+
+        Reviewed by Dan Bernstein.
+
+        Add alternate font family names to src descriptor of @font-face rules
+        so that the change doesn't change the expectations of tests.
+
+        * fast/css/font-face-implicit-local-font.html:
+        * fast/css/font-face-multiple-faces.html:
+        * svg/custom/font-face-simple.svg:
+
 2012-10-30  Rick Byers  <rbyers@chromium.org>
 
         cssText for cursor property doesn't include hotspot
