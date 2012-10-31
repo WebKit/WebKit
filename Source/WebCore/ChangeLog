@@ -1,3 +1,26 @@
+2012-10-30  Chris Evans  <cevans@google.com>
+
+        Improve performance of MaskPtr.
+        https://bugs.webkit.org/show_bug.cgi?id=100790
+
+        Reviewed by Eric Seidel.
+
+        Calculate the mask once, and store it as a fast-access member variable.
+        Also avoid unneccessary integer width expansion in index calculation.
+        Parser/tiny-innerHTML.html has a high stddev.
+        Best result I've seen pre-patch is 5.70 runs/s.
+        Best result I've seen post-patch is 5.72 runs/s, but this is not statistically significant.
+        MaskPtr is still showing as ~2% in the profile, so we're not sure we trust the profile symbolization at this time.
+        MaskPtr is now reduced to a single inline instruction (was: 4) so this seems like a strict improvement worth landing.
+
+        * rendering/RenderArena.cpp:
+        (MaskPtr): Use a passed-in mask for the mask operation.
+        (WebCore::RenderArena::RenderArena): Calculate the mask and store it.
+        (WebCore::RenderArena::allocate):
+        (WebCore::RenderArena::free): Use stored mask and avoid unneccessary casts.
+        * rendering/RenderArena.h:
+        (RenderArena): Store the freelist mask as a member variable.
+
 2012-10-30  Kenichi Ishibashi  <bashi@chromium.org>
 
         local(Helvetica) in src descriptor prevent fallback
