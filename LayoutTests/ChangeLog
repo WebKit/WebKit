@@ -1,3 +1,14 @@
+2012-10-31  Terry Anderson  <tdanderson@chromium.org>
+
+        [touchadjustment] touch-links-two-finger-tap test pass incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=100619
+
+        Reviewed by Antonio Gomes.
+
+        Make use of the gesture's touch area when testing the correct targeting of elements.
+
+        * touchadjustment/touch-links-two-finger-tap.html:
+
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.  More flaky fallout from 

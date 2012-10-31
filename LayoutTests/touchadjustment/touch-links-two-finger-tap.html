@@ -36,7 +36,7 @@
     function testTwoFingerTap(touchpoint)
     {
         if (eventSender.gestureTwoFingerTap)
-            eventSender.gestureTwoFingerTap(touchpoint.left, touchpoint.top);
+            eventSender.gestureTwoFingerTap(touchpoint.x, touchpoint.y, touchpoint.width, touchpoint.height);
         else
             debug("gestureTwoFingerTap not implemented by this platform.");
     }
@@ -45,6 +45,8 @@
     {
         // Touch directly in the center of the element.
         var touchpoint = offsetTouchPoint(findAbsoluteBounds(element), 'center', 0, 20, 30);
+        if (document.elementFromPoint(touchpoint.x, touchpoint.y) != element)
+            testFailed('Direct touch ended up on some other element');
         testTwoFingerTap(touchpoint);
     }
 
@@ -52,7 +54,20 @@
     {
         // Touch just right of the element.
         var touchpoint = offsetTouchPoint(findAbsoluteBounds(element), 'right', 10, 30, 20);
+        if (isDescendantOf(element, document.elementFromPoint(touchpoint.x, touchpoint.y)))
+            testFailed('Indirect touch ended up still on top of the element');
         testTwoFingerTap(touchpoint);
+    }
+
+    function isDescendantOf(parent, child)
+    {
+        var n = child;
+        while (n) {
+            if (n == parent)
+                return true;
+            n = n.parentNode;
+        }
+        return false;
     }
 
     function testDirectTouches()

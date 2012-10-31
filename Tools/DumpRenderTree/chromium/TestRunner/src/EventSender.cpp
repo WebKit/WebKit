@@ -1208,6 +1208,10 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
     case WebInputEvent::GestureTwoFingerTap:
         event.x = point.x;
         event.y = point.y;
+        if (arguments.size() >= 4) {
+            event.data.twoFingerTap.firstFingerWidth = static_cast<float>(arguments[2].toDouble());
+            event.data.twoFingerTap.firstFingerHeight = static_cast<float>(arguments[3].toDouble());
+        }
         break;
     default:
         ASSERT_NOT_REACHED();

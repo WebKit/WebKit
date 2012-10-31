@@ -1,3 +1,16 @@
+2012-10-31  Terry Anderson  <tdanderson@chromium.org>
+
+        [touchadjustment] touch-links-two-finger-tap test pass incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=100619
+
+        Reviewed by Antonio Gomes.
+
+        Store the touch area when sending a GestureTwoFingerTap event.
+
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::gestureEvent):
+
 2012-10-31  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt is not killing stuck DRTs on chromium win
