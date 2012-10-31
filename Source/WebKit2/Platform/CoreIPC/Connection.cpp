@@ -304,8 +304,10 @@ bool Connection::sendMessage(MessageID messageID, PassOwnPtr<MessageEncoder> enc
             || m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount))
         messageID = messageID.messageIDWithAddedFlags(MessageID::DispatchMessageWhenWaitingForSyncReply);
 
-    MutexLocker locker(m_outgoingMessagesLock);
-    m_outgoingMessages.append(OutgoingMessage(messageID, encoder));
+    {
+        MutexLocker locker(m_outgoingMessagesLock);
+        m_outgoingMessages.append(OutgoingMessage(messageID, encoder));
+    }
     
     // FIXME: We should add a boolean flag so we don't call this when work has already been scheduled.
     m_connectionQueue.dispatch(WTF::bind(&Connection::sendOutgoingMessages, this));
@@ -648,8 +650,10 @@ void Connection::didFailToSendSyncMessage()
 
 void Connection::enqueueIncomingMessage(IncomingMessage& incomingMessage)
 {
-    MutexLocker locker(m_incomingMessagesLock);
-    m_incomingMessages.append(incomingMessage);
+    {
+        MutexLocker locker(m_incomingMessagesLock);
+        m_incomingMessages.append(incomingMessage);
+    }
 
     m_clientRunLoop->dispatch(WTF::bind(&Connection::dispatchOneMessage, this));
 }

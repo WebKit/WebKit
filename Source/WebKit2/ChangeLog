@@ -1,3 +1,21 @@
+2012-10-31  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [WK2] Change the scope of locking in CoreIPC::Connection class.
+        https://bugs.webkit.org/show_bug.cgi?id=98998
+
+        Reviewed by Laszlo Gombos.
+
+        Release the m_incomingMessagesLock and m_outgoingMessagesLock mutexes
+        immediately after the protected resource is no longer modified to
+        prevent a possible source of a deadlock.
+
+        The change allows the EFL port to prevent an actual dead-lock
+        situation with some upcoming changes.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendMessage):
+        (CoreIPC::Connection::enqueueIncomingMessage):
+
 2012-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed, fix header sorting in r132992.
