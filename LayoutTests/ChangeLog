@@ -1,3 +1,12 @@
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
+        New Chromium baselines for css3/filters/composited-reflected.html.
+
+        Unreviewed.
+
+        * platform/chromium-mac/css3/filters/composited-reflected-expected.png: Added.
+        * platform/chromium-win/css3/filters/composited-reflected-expected.png: Added.
+
 2012-10-31  Mike West  <mkwst@chromium.org>
 
         [Qt] Unreviewed gardening. Rebaselining tests after r133019.
