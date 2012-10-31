@@ -1,3 +1,27 @@
+2012-10-31  Mike West  <mkwst@chromium.org>
+
+        X-Frame-Options console message should be associated with a request.
+        https://bugs.webkit.org/show_bug.cgi?id=100735
+
+        Reviewed by Pavel Feldman.
+
+        In 99941, we added the possibility to tie console messages to requests,
+        which enables automatic generation of stack traces, line numbers, etc.
+        making the error simpler to diagnose for web developers. This patch
+        uses the piping laid in that patch to improve the console message
+        generated when a document is blocked by X-Frame-Options.
+
+        No new tests; the functionality is covered by changes to existing tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+            Grab the request identifier from the currently active DocumentLoader
+            and pass it into the console message.
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse):
+            Grab the request identifier from the MainResourceLoader, and pass it
+            into the console message.
+
 2012-10-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133015.
