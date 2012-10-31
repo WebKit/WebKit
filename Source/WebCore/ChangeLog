@@ -1,3 +1,57 @@
+2012-10-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133015.
+        http://trac.webkit.org/changeset/133015
+        https://bugs.webkit.org/show_bug.cgi?id=100847
+
+        broke Apple Win Debug compilation (Requested by podivilov on
+        #webkit).
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::clearFrontend):
+        (WebCore::InspectorAgent::didCommitLoad):
+        * inspector/InspectorAgent.h:
+        (WebCore::InspectorAgent::didCommitLoadFired):
+        (InspectorAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        (WebCore::InspectorInstrumentation::willEvaluateWorkerScript):
+        (WebCore::InspectorInstrumentation::runtimeAgentEnabled):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::restore):
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::~InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::run):
+        (WebCore):
+        (WebCore::InspectorRuntimeAgent::pauseWorkerContext):
+        * inspector/InspectorRuntimeAgent.h:
+        (InspectorRuntimeAgent):
+        * inspector/InstrumentingAgents.h:
+        (WebCore):
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::inspectorRuntimeAgent):
+        (WebCore::InstrumentingAgents::setInspectorRuntimeAgent):
+        (InstrumentingAgents):
+        * inspector/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::PageRuntimeAgent):
+        (WebCore::PageRuntimeAgent::~PageRuntimeAgent):
+        (WebCore::PageRuntimeAgent::setFrontend):
+        (WebCore::PageRuntimeAgent::clearFrontend):
+        (WebCore::PageRuntimeAgent::enable):
+        (WebCore::PageRuntimeAgent::didClearWindowObject):
+        * inspector/PageRuntimeAgent.h:
+        (PageRuntimeAgent):
+        * inspector/WorkerRuntimeAgent.cpp:
+        (WebCore::WorkerRuntimeAgent::WorkerRuntimeAgent):
+        (WebCore::WorkerRuntimeAgent::~WorkerRuntimeAgent):
+        * inspector/WorkerRuntimeAgent.h:
+        (WorkerRuntimeAgent):
+
 2012-10-31  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add DeviceController base-class to remove duplication of DeviceXXXControler

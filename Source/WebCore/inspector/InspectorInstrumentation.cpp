@@ -57,6 +57,7 @@
 #include "InspectorPageAgent.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
+#include "InspectorRuntimeAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
@@ -66,7 +67,6 @@
 #include "ScriptProfile.h"
 #include "StyleRule.h"
 #include "WorkerContext.h"
-#include "WorkerRuntimeAgent.h"
 #include "WorkerThread.h"
 #include "XMLHttpRequest.h"
 #include <wtf/StdLibExtras.h>
@@ -127,7 +127,7 @@ void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgen
 #endif
     if (PageRuntimeAgent* pageRuntimeAgent = instrumentingAgents->pageRuntimeAgent()) {
         if (world == mainThreadNormalWorld())
-            pageRuntimeAgent->didCreateMainWorldContext(frame);
+            pageRuntimeAgent->didClearWindowObject(frame);
     }
 }
 
@@ -1076,7 +1076,7 @@ void InspectorInstrumentation::willEvaluateWorkerScript(WorkerContext* workerCon
     if (!instrumentingAgents)
         return;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (WorkerRuntimeAgent* runtimeAgent = instrumentingAgents->workerRuntimeAgent())
+    if (InspectorRuntimeAgent* runtimeAgent = instrumentingAgents->inspectorRuntimeAgent())
         runtimeAgent->pauseWorkerContext(workerContext);
 #endif
 }
@@ -1162,6 +1162,13 @@ bool InspectorInstrumentation::consoleAgentEnabled(ScriptExecutionContext* scrip
     InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext);
     InspectorConsoleAgent* consoleAgent = instrumentingAgents ? instrumentingAgents->inspectorConsoleAgent() : 0;
     return consoleAgent && consoleAgent->enabled();
+}
+
+bool InspectorInstrumentation::runtimeAgentEnabled(Frame* frame)
+{
+    InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame);
+    InspectorRuntimeAgent* runtimeAgent = instrumentingAgents ? instrumentingAgents->inspectorRuntimeAgent() : 0;
+    return runtimeAgent && runtimeAgent->enabled();
 }
 
 bool InspectorInstrumentation::timelineAgentEnabled(ScriptExecutionContext* scriptExecutionContext)

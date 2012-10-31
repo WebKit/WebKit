@@ -50,12 +50,12 @@ class InspectorFileSystemAgent;
 class InspectorPageAgent;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
+class InspectorRuntimeAgent;
 class InspectorTimelineAgent;
 class InspectorWorkerAgent;
 class Page;
 class PageRuntimeAgent;
 class WorkerContext;
-class WorkerRuntimeAgent;
 
 class InstrumentingAgents {
     WTF_MAKE_NONCOPYABLE(InstrumentingAgents);
@@ -68,8 +68,8 @@ public:
         , m_inspectorConsoleAgent(0)
         , m_inspectorDOMAgent(0)
         , m_inspectorResourceAgent(0)
+        , m_inspectorRuntimeAgent(0)
         , m_pageRuntimeAgent(0)
-        , m_workerRuntimeAgent(0)
         , m_inspectorTimelineAgent(0)
         , m_inspectorDOMStorageAgent(0)
 #if ENABLE(SQL_DATABASE)
@@ -109,11 +109,11 @@ public:
     InspectorResourceAgent* inspectorResourceAgent() const { return m_inspectorResourceAgent; }
     void setInspectorResourceAgent(InspectorResourceAgent* agent) { m_inspectorResourceAgent = agent; }
 
+    InspectorRuntimeAgent* inspectorRuntimeAgent() const { return m_inspectorRuntimeAgent; }
+    void setInspectorRuntimeAgent(InspectorRuntimeAgent* agent) { m_inspectorRuntimeAgent = agent; }
+
     PageRuntimeAgent* pageRuntimeAgent() const { return m_pageRuntimeAgent; }
     void setPageRuntimeAgent(PageRuntimeAgent* agent) { m_pageRuntimeAgent = agent; }
-
-    WorkerRuntimeAgent* workerRuntimeAgent() const { return m_workerRuntimeAgent; }
-    void setWorkerRuntimeAgent(WorkerRuntimeAgent* agent) { m_workerRuntimeAgent = agent; }
 
     InspectorTimelineAgent* inspectorTimelineAgent() const { return m_inspectorTimelineAgent; }
     void setInspectorTimelineAgent(InspectorTimelineAgent* agent) { m_inspectorTimelineAgent = agent; }
@@ -160,8 +160,8 @@ private:
     InspectorConsoleAgent* m_inspectorConsoleAgent;
     InspectorDOMAgent* m_inspectorDOMAgent;
     InspectorResourceAgent* m_inspectorResourceAgent;
+    InspectorRuntimeAgent* m_inspectorRuntimeAgent;
     PageRuntimeAgent* m_pageRuntimeAgent;
-    WorkerRuntimeAgent* m_workerRuntimeAgent;
     InspectorTimelineAgent* m_inspectorTimelineAgent;
     InspectorDOMStorageAgent* m_inspectorDOMStorageAgent;
 #if ENABLE(SQL_DATABASE)
