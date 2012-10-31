@@ -1,3 +1,51 @@
+2012-10-31  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2][AC] Use smart pointers for Evas_GL types
+        https://bugs.webkit.org/show_bug.cgi?id=100745
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Replace raw pointers to Evas_GL, Evas_GL_Context and
+        Evas_GL_Surface by smart pointers in EwkViewImpl.
+
+        C++ wrappers were added for Evas_GL_Context and
+        Evas_GL_Surface in order to use OwnPtr. This is needed
+        because their destroy functions need the Evas_GL.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EvasGLContext.cpp: Added.
+        (WebKit):
+        (WebKit::EvasGLContext::EvasGLContext):
+        (WebKit::EvasGLContext::~EvasGLContext):
+        * UIProcess/API/efl/EvasGLContext.h: Added.
+        (WebKit):
+        (EvasGLContext):
+        (WebKit::EvasGLContext::create):
+        (WebKit::EvasGLContext::context):
+        * UIProcess/API/efl/EvasGLSurface.cpp: Added.
+        (WebKit):
+        (WebKit::EvasGLSurface::EvasGLSurface):
+        (WebKit::EvasGLSurface::~EvasGLSurface):
+        * UIProcess/API/efl/EvasGLSurface.h: Added.
+        (WebKit):
+        (EvasGLSurface):
+        (WebKit::EvasGLSurface::create):
+        (WebKit::EvasGLSurface::surface):
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::displayTimerFired):
+        (EwkViewImpl::createGLSurface):
+        (EwkViewImpl::enterAcceleratedCompositingMode):
+        (EwkViewImpl::exitAcceleratedCompositingMode):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl::evasGL):
+        (EwkViewImpl::evasGLContext):
+        (EwkViewImpl::evasGLSurface):
+        (EwkViewImpl::resetEvasGLSurface):
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+
 2012-10-31  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Fix "Unable to find a renderable master window QQuickView" warnings in tst_QQuickWebView

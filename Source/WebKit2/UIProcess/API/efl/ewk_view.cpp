@@ -423,7 +423,7 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
         impl->pageViewportControllerClient()->updateViewportSize(IntSize(width, height));
 #endif
 #if USE(ACCELERATED_COMPOSITING)
-        needsNewSurface = impl->evasGlSurface();
+        needsNewSurface = impl->evasGLSurface();
 #endif
 
         if (impl->page()->drawingArea())
@@ -443,8 +443,7 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 
 #if USE(ACCELERATED_COMPOSITING)
     if (needsNewSurface) {
-        evas_gl_surface_destroy(impl->evasGl(), impl->evasGlSurface());
-        impl->resetEvasGlSurface();
+        impl->resetEvasGLSurface();
         impl->createGLSurface(IntSize(width, height));
         impl->redrawRegion(IntRect(IntPoint(), IntSize(width, height)));
     }
