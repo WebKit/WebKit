@@ -1,3 +1,14 @@
+2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Added viewport at-rule to the CSS parser and tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=95961
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable CSS Device Adaptation by default on EFL.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-10-31  Terry Anderson  <tdanderson@chromium.org>
 
         [touchadjustment] touch-links-two-finger-tap test pass incorrectly

@@ -38207,6 +38207,14 @@
 			    >
 			</File>
 			<File
+				RelativePath="..\css\WebKitCSSViewportRule.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSViewportRule.h"
+				>
+			</File>
+			<File
 			    RelativePath="..\css\BasicShapeFunctions.h"
 			    >
 			</File>

@@ -269,6 +269,9 @@ CSSParser::CSSParser(const CSSParserContext& context)
     , m_lastSelectorLineNumber(0)
     , m_allowImportRules(true)
     , m_allowNamespaceDeclarations(true)
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    , m_inViewport(false)
+#endif
     , m_selectorVector(adoptPtr(new CSSSelectorVector))
 {
 #if YYDEBUG > 0
@@ -9318,8 +9321,15 @@ inline void CSSParser::detectAtToken(int length, bool hasEscape)
             return;
 
         case 17:
-            if (!hasEscape && isEqualToCSSIdentifier(name + 2, "webkit-selector"))
+            if (hasEscape)
+                return;
+
+            if (isASCIIAlphaCaselessEqual(name[16], 'r') && isEqualToCSSIdentifier(name + 2, "webkit-selecto"))
                 m_token = WEBKIT_SELECTOR_SYM;
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+            else if (isASCIIAlphaCaselessEqual(name[16], 't') && isEqualToCSSIdentifier(name + 2, "webkit-viewpor"))
+                m_token = WEBKIT_VIEWPORT_RULE_SYM;
+#endif
             return;
 
         case 18:
@@ -10391,6 +10401,24 @@ void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
     }
     resetPropertyRange();
 }
+
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+StyleRuleBase* CSSParser::createViewportRule()
+{
+    m_allowImportRules = m_allowNamespaceDeclarations = false;
+
+    RefPtr<StyleRuleViewport> rule = StyleRuleViewport::create();
+
+    rule->setProperties(createStylePropertySet());
+    clearProperties();
+
+    StyleRuleViewport* result = rule.get();
+    m_parsedRules.append(rule.release());
+    processAndAddNewRuleToSourceTreeIfNeeded();
+
+    return result;
+}
+#endif
 
 template <typename CharacterType>
 static CSSPropertyID cssPropertyID(const CharacterType* propertyName, unsigned length)

@@ -3,6 +3,7 @@
  *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *  Copyright (C) 2008 Eric Seidel <eric@webkit.org>
+ *  Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -109,6 +110,7 @@ static inline int cssyyerror(void*, const char*)
 %token WEBKIT_MEDIAQUERY_SYM
 %token WEBKIT_SELECTOR_SYM
 %token WEBKIT_REGION_RULE_SYM
+%token WEBKIT_VIEWPORT_RULE_SYM
 %token <marginBox> TOPLEFTCORNER_SYM
 %token <marginBox> TOPLEFT_SYM
 %token <marginBox> TOPCENTER_SYM
@@ -205,6 +207,9 @@ static inline int cssyyerror(void*, const char*)
 %type <rule> region
 #if ENABLE_CSS3_CONDITIONAL_RULES
 %type <rule> supports
+#endif
+#if ENABLE_CSS_DEVICE_ADAPTATION
+%type <rule> viewport
 #endif
 
 %type <string> maybe_ns_prefix
@@ -411,6 +416,9 @@ valid_rule:
 #if ENABLE_SHADOW_DOM
   | host
 #endif
+#if ENABLE_CSS_DEVICE_ADAPTATION
+  | viewport
+#endif
   ;
 
 rule:
@@ -439,6 +447,9 @@ block_valid_rule:
   | page
   | font_face
   | keyframes
+#if ENABLE_CSS_DEVICE_ADAPTATION
+  | viewport
+#endif
   ;
 
 block_rule:
@@ -927,6 +938,33 @@ host:
         parser->popRuleData();
     }
     ;
+#endif
+
+#if ENABLE_CSS_DEVICE_ADAPTATION
+before_viewport_rule:
+    /* empty */ {
+        parser->markViewportRuleBodyStart();
+        parser->markRuleHeaderStart(CSSRuleSourceData::VIEWPORT_RULE);
+    }
+    ;
+
+viewport:
+    before_viewport_rule WEBKIT_VIEWPORT_RULE_SYM at_rule_header_end_maybe_space
+    '{' at_rule_body_start maybe_space_before_declaration declaration_list closing_brace {
+        $$ = parser->createViewportRule();
+        parser->markViewportRuleBodyEnd();
+    }
+    | before_viewport_rule WEBKIT_VIEWPORT_RULE_SYM error invalid_block {
+        $$ = 0;
+        parser->popRuleData();
+        parser->markViewportRuleBodyEnd();
+    }
+    | before_viewport_rule WEBKIT_VIEWPORT_RULE_SYM error ';' {
+        $$ = 0;
+        parser->popRuleData();
+        parser->markViewportRuleBodyEnd();
+    }
+;
 #endif
 
 region_selector:

@@ -1,3 +1,81 @@
+2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Added viewport at-rule to the CSS parser and tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=95961
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add tokens and grammar rules to parse @-webkit-viewport blocks. Also add
+        the newly parsed rule to the rule list.
+
+        This parser now implements the following part of the CSS Device Adaptation
+        specification: http://www.w3.org/TR/css-device-adapt/#syntax
+
+        Test: css3/device-adapt/viewport-at-rule-parsing.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::detectAtToken):
+        (WebCore):
+        (WebCore::CSSParser::createViewportRule):
+        * css/CSSParser.h:
+        (CSSParser):
+        (WebCore::CSSParser::markViewportRuleBodyStart):
+        (WebCore::CSSParser::markViewportRuleBodyEnd):
+        (WebCore::CSSParser::inViewport):
+
+            These methods are needed by the next patch validating the properties.
+            Some viewport properties are common to other rules but have different
+            semantics, and accepts different keywords. The validation needs to be
+            done in a different code path.
+
+        * css/CSSPropertySourceData.h:
+        * css/CSSRule.cpp:
+        (WebCore):
+        (WebCore::CSSRule::cssText):
+        (WebCore::CSSRule::destroy):
+        (WebCore::CSSRule::reattach):
+        (WebCore::CSSRule::reportMemoryUsage):
+        * css/CSSRule.h:
+        (CSSRule):
+        (WebCore::CSSRule::isViewportRule):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::reportMemoryUsage):
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy):
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        (WebCore):
+        (WebCore::StyleRuleViewport::StyleRuleViewport):
+        (WebCore::StyleRuleViewport::~StyleRuleViewport):
+        (WebCore::StyleRuleViewport::mutableProperties):
+        (WebCore::StyleRuleViewport::setProperties):
+        (WebCore::StyleRuleViewport::reportDescendantMemoryUsage):
+        * css/StyleRule.h:
+        (StyleRuleBase):
+        (WebCore::StyleRuleBase::isViewportRule):
+        (WebCore):
+        (StyleRuleViewport):
+        (WebCore::StyleRuleViewport::create):
+        (WebCore::StyleRuleViewport::properties):
+        (WebCore::StyleRuleViewport::copy):
+        * css/WebKitCSSViewportRule.cpp: Added.
+        (WebCore):
+        (WebCore::WebKitCSSViewportRule::WebKitCSSViewportRule):
+        (WebCore::WebKitCSSViewportRule::~WebKitCSSViewportRule):
+        (WebCore::WebKitCSSViewportRule::style):
+        (WebCore::WebKitCSSViewportRule::cssText):
+        (WebCore::WebKitCSSViewportRule::reattach):
+        (WebCore::WebKitCSSViewportRule::reportDescendantMemoryUsage):
+        * css/WebKitCSSViewportRule.h: Added.
+        (WebCore):
+
 2012-10-31  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Validate types of built-in uniforms

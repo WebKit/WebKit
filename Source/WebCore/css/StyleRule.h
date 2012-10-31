@@ -47,6 +47,9 @@ public:
         Keyframes,
         Keyframe, // Not used. These are internally non-rule StyleKeyframe objects.
         Host,
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+        Viewport = 15,
+#endif
         Region = 16
     };
     Type type() const { return static_cast<Type>(m_type); }
@@ -58,6 +61,9 @@ public:
     bool isPageRule() const { return type() == Page; }
     bool isStyleRule() const { return type() == Style; }
     bool isRegionRule() const { return type() == Region; }
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    bool isViewportRule() const { return type() == Viewport; }
+#endif
     bool isImportRule() const { return type() == Import; }
     bool isHostRule() const { return type() == Host; }
 
@@ -238,6 +244,30 @@ private:
     StyleRuleHost(Vector<RefPtr<StyleRuleBase> >& adoptRules) : StyleRuleBlock(Host, adoptRules) { }
     StyleRuleHost(const StyleRuleHost& o) : StyleRuleBlock(o) { }
 };
+
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+class StyleRuleViewport : public StyleRuleBase {
+public:
+    static PassRefPtr<StyleRuleViewport> create() { return adoptRef(new StyleRuleViewport); }
+
+    ~StyleRuleViewport();
+
+    const StylePropertySet* properties() const { return m_properties.get(); }
+    StylePropertySet* mutableProperties();
+
+    void setProperties(PassRefPtr<StylePropertySet>);
+
+    PassRefPtr<StyleRuleViewport> copy() const { return adoptRef(new StyleRuleViewport(*this)); }
+
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
+private:
+    StyleRuleViewport();
+    StyleRuleViewport(const StyleRuleViewport&);
+
+    RefPtr<StylePropertySet> m_properties;
+};
+#endif // ENABLE(CSS_DEVICE_ADAPTATION)
 
 } // namespace WebCore
 

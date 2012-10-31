@@ -2808,6 +2808,9 @@ http/tests/security/xssAuditor/xss-filter-bypass-long-string.html
 http/tests/xmlhttprequest/access-control-allow-lists-starting-with-comma.html
 http/tests/xmlhttprequest/range-test.html
 
+# CSS Device Adaptation is not enabled.
+webkit.org/b/95959 css3/device-adapt [ Skip ]
+
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 

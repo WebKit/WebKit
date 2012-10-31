@@ -1103,6 +1103,7 @@ SET(WebCore_SOURCES
     css/WebKitCSSSVGDocumentValue.cpp
     css/WebKitCSSShaderValue.cpp
     css/WebKitCSSTransformValue.cpp
+    css/WebKitCSSViewportRule.cpp
 
     dom/ActiveDOMObject.cpp
     dom/Attr.cpp

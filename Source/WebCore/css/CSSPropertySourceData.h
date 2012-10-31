@@ -95,7 +95,8 @@ struct CSSRuleSourceData : public RefCounted<CSSRuleSourceData> {
         PAGE_RULE,
         KEYFRAMES_RULE,
         REGION_RULE,
-        HOST_RULE
+        HOST_RULE,
+        VIEWPORT_RULE
     };
 
     static PassRefPtr<CSSRuleSourceData> create(Type type)

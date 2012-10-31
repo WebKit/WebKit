@@ -30,12 +30,13 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSUnknownRule.h"
-#include "WebKitCSSKeyframeRule.h"
-#include "WebKitCSSKeyframesRule.h"
-#include "WebKitCSSRegionRule.h"
 #include "NotImplemented.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
+#include "WebKitCSSKeyframeRule.h"
+#include "WebKitCSSKeyframesRule.h"
+#include "WebKitCSSRegionRule.h"
+#include "WebKitCSSViewportRule.h"
 
 namespace WebCore {
 
@@ -48,6 +49,10 @@ COMPILE_ASSERT(sizeof(CSSRule) == sizeof(SameSizeAsCSSRule), CSSRule_should_stay
 
 #if ENABLE(CSS_REGIONS)
 COMPILE_ASSERT(StyleRuleBase::Region == static_cast<StyleRuleBase::Type>(CSSRule::WEBKIT_REGION_RULE), enums_should_match);
+#endif
+
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+COMPILE_ASSERT(StyleRuleBase::Viewport == static_cast<StyleRuleBase::Type>(CSSRule::WEBKIT_VIEWPORT_RULE), enums_should_match);
 #endif
 
 void CSSRule::setCssText(const String& /*cssText*/, ExceptionCode& /*ec*/)
@@ -76,6 +81,10 @@ String CSSRule::cssText() const
         return static_cast<const WebKitCSSKeyframesRule*>(this)->cssText();
     case WEBKIT_KEYFRAME_RULE:
         return static_cast<const WebKitCSSKeyframeRule*>(this)->cssText();
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    case WEBKIT_VIEWPORT_RULE:
+        return static_cast<const WebKitCSSViewportRule*>(this)->cssText();
+#endif
 #if ENABLE(CSS_REGIONS)
     case WEBKIT_REGION_RULE:
         return static_cast<const WebKitCSSRegionRule*>(this)->cssText();
@@ -115,6 +124,11 @@ void CSSRule::destroy()
     case WEBKIT_KEYFRAME_RULE:
         delete static_cast<WebKitCSSKeyframeRule*>(this);
         return;
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    case WEBKIT_VIEWPORT_RULE:
+        delete static_cast<WebKitCSSViewportRule*>(this);
+        return;
+#endif
 #if ENABLE(CSS_REGIONS)
     case WEBKIT_REGION_RULE:
         delete static_cast<WebKitCSSRegionRule*>(this);
@@ -155,6 +169,11 @@ void CSSRule::reattach(StyleRuleBase* rule)
         // No need to reattach, the underlying data is shareable on mutation.
         ASSERT_NOT_REACHED();
         return;
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    case WEBKIT_VIEWPORT_RULE:
+        static_cast<WebKitCSSViewportRule*>(this)->reattach(static_cast<StyleRuleViewport*>(rule));
+        return;
+#endif
 #if ENABLE(CSS_REGIONS)
     case WEBKIT_REGION_RULE:
         static_cast<WebKitCSSRegionRule*>(this)->reattach(static_cast<StyleRuleRegion*>(rule));
@@ -194,6 +213,11 @@ void CSSRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     case WEBKIT_KEYFRAME_RULE:
         static_cast<const WebKitCSSKeyframeRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    case WEBKIT_VIEWPORT_RULE:
+        static_cast<const WebKitCSSViewportRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+#endif
 #if ENABLE(CSS_REGIONS)
     case WEBKIT_REGION_RULE:
         static_cast<const WebKitCSSRegionRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);

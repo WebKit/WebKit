@@ -33,6 +33,7 @@
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"
+#include "WebKitCSSViewportRule.h"
 #include <wtf/MemoryInstrumentationVector.h>
 
 namespace WebCore {
@@ -82,6 +83,11 @@ void StyleRuleBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     case Host:
         static_cast<const StyleRuleBlock*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    case Viewport:
+        static_cast<const StyleRuleViewport*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+#endif
     case Unknown:
     case Charset:
     case Keyframe:
@@ -123,6 +129,11 @@ void StyleRuleBase::destroy()
     case Host:
         delete static_cast<StyleRuleHost*>(this);
         return;
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    case Viewport:
+        delete static_cast<StyleRuleViewport*>(this);
+        return;
+#endif
     case Unknown:
     case Charset:
     case Keyframe:
@@ -158,6 +169,10 @@ PassRefPtr<StyleRuleBase> StyleRuleBase::copy() const
         return static_cast<const StyleRuleKeyframes*>(this)->copy();
     case Host:
         return static_cast<const StyleRuleHost*>(this)->copy();
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    case Viewport:
+        return static_cast<const StyleRuleViewport*>(this)->copy();
+#endif
     case Unknown:
     case Charset:
     case Keyframe:
@@ -199,6 +214,11 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
     case Keyframes:
         rule = WebKitCSSKeyframesRule::create(static_cast<StyleRuleKeyframes*>(self), parentSheet);
         break;
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    case Viewport:
+        rule = WebKitCSSViewportRule::create(static_cast<StyleRuleViewport*>(self), parentSheet);
+        break;
+#endif
     case Host:
     case Unknown:
     case Charset:
@@ -389,5 +409,40 @@ void StyleRuleRegion::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObject
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(m_selectorList);
 }
+
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+StyleRuleViewport::StyleRuleViewport()
+    : StyleRuleBase(Viewport, 0)
+{
+}
+
+StyleRuleViewport::StyleRuleViewport(const StyleRuleViewport& o)
+    : StyleRuleBase(o)
+    , m_properties(o.m_properties->copy())
+{
+}
+
+StyleRuleViewport::~StyleRuleViewport()
+{
+}
+
+StylePropertySet* StyleRuleViewport::mutableProperties()
+{
+    if (!m_properties->isMutable())
+        m_properties = m_properties->copy();
+    return m_properties.get();
+}
+
+void StyleRuleViewport::setProperties(PassRefPtr<StylePropertySet> properties)
+{
+    m_properties = properties;
+}
+
+void StyleRuleViewport::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
+    info.addMember(m_properties);
+}
+#endif // ENABLE(CSS_DEVICE_ADAPTATION)
 
 } // namespace WebCore

@@ -1,3 +1,26 @@
+2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Added viewport at-rule to the CSS parser and tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=95961
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added a test that detects if the @-webkit-viewport rule is being
+        parsed and skip the tests on all ports since the feature is disabled
+        by default for instance.
+
+        Note that this test doesn't do property validation, which will be
+        added in the next patch of the series.
+
+        * css3/device-adapt/viewport-at-rule-parsing-expected.txt: Added.
+        * css3/device-adapt/viewport-at-rule-parsing.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2012-10-31  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Validate types of built-in uniforms

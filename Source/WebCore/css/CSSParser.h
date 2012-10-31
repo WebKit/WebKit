@@ -366,6 +366,12 @@ public:
 
     int token() { return m_token; }
 
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    void markViewportRuleBodyStart() { m_inViewport = true; }
+    void markViewportRuleBodyEnd() { m_inViewport = false; }
+    StyleRuleBase* createViewportRule();
+#endif
+
     PassRefPtr<CSSPrimitiveValue> createPrimitiveNumericValue(CSSParserValue*);
     PassRefPtr<CSSPrimitiveValue> createPrimitiveStringValue(CSSParserValue*);
 #if ENABLE(CSS_VARIABLES)
@@ -512,6 +518,11 @@ private:
 
     bool m_allowImportRules;
     bool m_allowNamespaceDeclarations;
+
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    bool inViewport() const { return m_inViewport; }
+    bool m_inViewport;
+#endif
 
     int (CSSParser::*m_lexFunc)(void*);
 

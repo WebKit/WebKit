@@ -2676,6 +2676,8 @@
             'css/WebKitCSSSVGDocumentValue.cpp',
             'css/WebKitCSSSVGDocumentValue.h',
             'css/WebKitCSSTransformValue.cpp',
+            'css/WebKitCSSViewportRule.h',
+            'css/WebKitCSSViewportRule.cpp',
             'editing/AlternativeTextController.cpp',
             'editing/AlternativeTextController.h',
             'editing/AppendNodeCommand.cpp',
