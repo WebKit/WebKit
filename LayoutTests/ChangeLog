@@ -1,3 +1,9 @@
+2012-10-31  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, chromium-mac-mountainlion expectation updating.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+
 2012-10-31  Tien-Ren Chen  <trchen@chromium.org>
 
         Apply transformation for highlights on non-composited contents
