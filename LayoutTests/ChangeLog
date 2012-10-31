@@ -1,3 +1,126 @@
+2012-10-31  Mike West  <mkwst@chromium.org>
+
+        Implement the canonical "Content-Security-Policy" header.
+        https://bugs.webkit.org/show_bug.cgi?id=96765
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html:
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html:
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-invalidnonce.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-scriptsrc-blocked.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-separators-allowed.html:
+            Updating these 1.1 tests along with the multiple-iframe-*.js test
+            "framework" to ensure that the experimental prefixed header is sent.
+        * http/tests/security/contentSecurityPolicy/blob-urls-match-self.html:
+        * http/tests/security/contentSecurityPolicy/combine-multiple-policies.html:
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-allowed.html:
+        * http/tests/security/contentSecurityPolicy/connect-src-eventsource-blocked.html:
+        * http/tests/security/contentSecurityPolicy/connect-src-websocket-allowed.html:
+        * http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked.html:
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-allowed.html:
+        * http/tests/security/contentSecurityPolicy/connect-src-xmlhttprequest-blocked.html:
+        * http/tests/security/contentSecurityPolicy/default-src-inline-allowed.html:
+        * http/tests/security/contentSecurityPolicy/default-src-inline-blocked.html:
+        * http/tests/security/contentSecurityPolicy/duplicate-directive.html:
+        * http/tests/security/contentSecurityPolicy/eval-allowed.html:
+        * http/tests/security/contentSecurityPolicy/eval-blocked-in-about-blank-iframe.html:
+        * http/tests/security/contentSecurityPolicy/eval-blocked.html:
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-allowed.html:
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-blocked.html:
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-allowed.html:
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-blocked.html:
+        * http/tests/security/contentSecurityPolicy/filesystem-urls-match-self.html:
+        * http/tests/security/contentSecurityPolicy/frame-src-about-blank-allowed-by-default.html:
+        * http/tests/security/contentSecurityPolicy/frame-src-about-blank-allowed-by-scheme.html:
+        * http/tests/security/contentSecurityPolicy/frame-src-allowed.html:
+        * http/tests/security/contentSecurityPolicy/frame-src-blocked.html:
+        * http/tests/security/contentSecurityPolicy/function-constructor-allowed.html:
+        * http/tests/security/contentSecurityPolicy/function-constructor-blocked.html:
+        * http/tests/security/contentSecurityPolicy/iframe-inside-csp.html:
+        * http/tests/security/contentSecurityPolicy/image-allowed.html:
+        * http/tests/security/contentSecurityPolicy/image-blocked.html:
+        * http/tests/security/contentSecurityPolicy/image-full-host-wildcard-allowed.html:
+        * http/tests/security/contentSecurityPolicy/image-host-wildcard-allowed.html:
+        * http/tests/security/contentSecurityPolicy/injected-inline-script-allowed.html:
+        * http/tests/security/contentSecurityPolicy/injected-inline-script-blocked.html:
+        * http/tests/security/contentSecurityPolicy/injected-inline-style-allowed.html:
+        * http/tests/security/contentSecurityPolicy/injected-inline-style-blocked.html:
+        * http/tests/security/contentSecurityPolicy/inline-script-allowed.html:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-goofy.html:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url.html:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked.html:
+        * http/tests/security/contentSecurityPolicy/inline-style-allowed.html:
+        * http/tests/security/contentSecurityPolicy/inline-style-attribute-allowed.html:
+        * http/tests/security/contentSecurityPolicy/inline-style-attribute-blocked.html:
+        * http/tests/security/contentSecurityPolicy/inline-style-attribute-on-html.html:
+        * http/tests/security/contentSecurityPolicy/inline-style-blocked.html:
+        * http/tests/security/contentSecurityPolicy/media-src-allowed.html:
+        * http/tests/security/contentSecurityPolicy/media-src-blocked.html:
+        * http/tests/security/contentSecurityPolicy/object-src-no-url-allowed.html:
+        * http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html:
+        * http/tests/security/contentSecurityPolicy/object-src-url-allowed.html:
+        * http/tests/security/contentSecurityPolicy/object-src-url-blocked.html:
+        * http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html:
+        * http/tests/security/contentSecurityPolicy/register-bypassing-scheme.html:
+        * http/tests/security/contentSecurityPolicy/report-and-enforce.html:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri-cross-origin.html:
+        * http/tests/security/contentSecurityPolicy/report-blocked-uri.html:
+        * http/tests/security/contentSecurityPolicy/report-only-from-header.php:
+        * http/tests/security/contentSecurityPolicy/report-only.html:
+        * http/tests/security/contentSecurityPolicy/report-uri.html:
+        * http/tests/security/contentSecurityPolicy/resources/echo-iframe.pl:
+        * http/tests/security/contentSecurityPolicy/resources/echo-multiple-headers.pl:
+            s/X-WebKit-CSP/Content-Security-Policy/g
+        * http/tests/security/contentSecurityPolicy/resources/echo-object-data.pl:
+        * http/tests/security/contentSecurityPolicy/resources/echo-script-src.pl:
+            Reworking these two scripts in order to support sending both
+            the experimental header and the canonical header, as required.
+        * http/tests/security/contentSecurityPolicy/resources/event-handler.pl:
+        * http/tests/security/contentSecurityPolicy/resources/generate-csp-report.html:
+        * http/tests/security/contentSecurityPolicy/resources/javascript-url.pl:
+        * http/tests/security/contentSecurityPolicy/resources/mixed-content-with-csp.html:
+            s/X-WebKit-CSP/Content-Security-Policy/g
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-plugin-test.js:
+        (testExperimentalPolicy):
+        (test):
+        (testImpl.iframe.onload):
+        (testImpl):
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-test.js:
+        (testPreescapedPolicy):
+        (testExperimentalPolicy):
+        (test):
+        (testImpl.iframe.onload):
+        (testImpl):
+            Reworking these two "frameworks" in order to support sending both
+            the experimental header and the canonical header, as required.
+        * http/tests/security/contentSecurityPolicy/resources/sandbox.php:
+        * http/tests/security/contentSecurityPolicy/resources/sandboxed-eval.php:
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts-subframe.html:
+        * http/tests/security/contentSecurityPolicy/sandbox-allow-scripts.html:
+        * http/tests/security/contentSecurityPolicy/sandbox-empty-subframe.html:
+        * http/tests/security/contentSecurityPolicy/sandbox-empty.html:
+        * http/tests/security/contentSecurityPolicy/script-src-overrides-default-src.html:
+        * http/tests/security/contentSecurityPolicy/shared-worker-connect-src-allowed.html:
+        * http/tests/security/contentSecurityPolicy/shared-worker-connect-src-blocked.html:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-malformed-meta.html:
+        * http/tests/security/contentSecurityPolicy/srcdoc-doesnt-bypass-script-src.html:
+        * http/tests/security/contentSecurityPolicy/style-allowed.html:
+        * http/tests/security/contentSecurityPolicy/style-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-connect-src-allowed.html:
+        * http/tests/security/contentSecurityPolicy/worker-connect-src-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-eval-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-function-function-blocked.html:
+        * http/tests/security/contentSecurityPolicy/worker-script-src.html:
+        * http/tests/security/contentSecurityPolicy/worker-set-timeout-blocked.html:
+        * http/tests/security/contentSecurityPolicy/xsl-allowed.php:
+        * http/tests/security/contentSecurityPolicy/xsl-blocked.php:
+        * http/tests/security/contentSecurityPolicy/xsl-img-blocked.php:
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-1.php:
+        * http/tests/security/contentSecurityPolicy/xsl-unaffected-by-style-src-2.php:
+            s/X-WebKit-CSP/Content-Security-Policy/g
+
 2012-10-31  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Adding window.external to our port

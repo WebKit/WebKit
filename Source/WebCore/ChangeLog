@@ -1,3 +1,67 @@
+2012-10-31  Mike West  <mkwst@chromium.org>
+
+        Implement the canonical "Content-Security-Policy" header.
+        https://bugs.webkit.org/show_bug.cgi?id=96765
+
+        Reviewed by Adam Barth.
+
+        The CSP 1.0 specification defines the "Content-Security-Policy" header
+        as the canonical mechanism of defining a resource's security policy. Up
+        through this patch, we've implemented the functionality behind a prefix
+        in order to ensure compatibility with the standard once it's released as
+        a recommendation. Both the specification and WebKit's implementation are
+        far enough along in that process that it makes sense to support the
+        unprefixed header for sites that wish to opt-in to CSP 1.0.
+
+        As discussed on public-webappsec[1], we'll keep the experimental 1.1
+        features behind the prefixed header ('X-WebKit-CSP') until that standard
+        is far enough along to justify moving them out to the canonical header.
+
+        This patch defines the 'Content-Security-Policy' header for all ports,
+        just as the 'X-WebKit-CSP' header is currently supported on all ports.
+        Ports that have not opted-in to the CSP_NEXT flag will see exactly the
+        same behavior with both headers. Ports that have opted-in will see much
+        of CSP 1.1's current definition on the prefixed header, and CSP 1.0 on
+        the canonical header.
+
+        The functionality in this change is covered by the changes made to
+        existing tests. No expectations changed, only the headers that are sent.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+            Add canonical header support to 'meta' element definitions.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didBeginDocument):
+            Add canonical header support to FrameLoader.
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::headerType):
+            The ContentSecurityPolicy::HeaderType enum now has four values:
+            prefixed/report-only, unprefixed/report-only, prefixed/enforce, and
+            unprefixed/enforce. Instead of creating logic to output the proper
+            type based on internal flags, CSPDirectiveList now saves the value
+            provided at creation time, and returns it via this method.
+        (CSPDirectiveList):
+        (WebCore::CSPDirectiveList::CSPDirectiveList):
+            The constructor now accepts a type, which is stored on the object.
+            It also stores a new internal variable, 'm_experimental', which
+            defines whether or not experimental features ought to be available.
+            These features are still locked behind the CSP_NEXT flag, but that
+            might not be the case forever.
+        (WebCore::CSPDirectiveList::create):
+            The static constructor wrapper now passes the type into the real
+            constructor, which also now handles setting its internal variables.
+        (WebCore::CSPDirectiveList::parse):
+            'parse()' is given the header, so it makes sense to store it here as
+            well, rather than in the create wrapper.
+        (WebCore::CSPDirectiveList::addDirective):
+            1.1 directives remain locked behind CSP_NEXT, but now also require
+            that 'm_experimental' is set, signaling usage of the prefixed header
+            and an implicit opt-in to 1.1.
+        * page/ContentSecurityPolicy.h:
+            Added two new types to the HeaderTypes enum: PrefixedReportOnly, and
+            PrefixedEnforcePolicy. These map to 'X-WebKitCSP-Report-Only' and
+            'X-WebKit-CSP', respectively.
+
 2012-10-31  Roger Fong  <roger_fong@apple.com>
 
         Change PopupMenu positioning on Windows such that behaviour on multiple monitors matches Windows standards.

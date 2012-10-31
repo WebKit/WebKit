@@ -5,8 +5,8 @@ use CGI;
 my $cgi = new CGI;
 
 print "Content-Type: text/html; charset=UTF-8\n";
-print "X-WebKit-CSP: ".$cgi->param('csp1')."\n";
-print "X-WebKit-CSP: ".$cgi->param('csp2')."\n\n";
+print "Content-Security-Policy: ".$cgi->param('csp1')."\n";
+print "Content-Security-Policy: ".$cgi->param('csp2')."\n\n";
 
 my ($text, $replacement) = ("FAIL", "PASS");
 ($text, $replacement) = ($replacement, $text) if $cgi->param('should_run') eq 'no';

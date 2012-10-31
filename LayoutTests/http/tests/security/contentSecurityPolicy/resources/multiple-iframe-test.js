@@ -5,18 +5,22 @@ if (window.testRunner) {
 }
 
 function testPreescapedPolicy() {
-    testImpl(true);
+    testImpl(false, true);
+}
+
+function testExperimentalPolicy() {
+    testImpl(true, false);
 }
 
 function test() {
-    testImpl(false);
+    testImpl(false, false);
 }
 
-function testImpl(preescapedPolicy) {
+function testImpl(experimental, preescapedPolicy) {
     if (tests.length === 0)
         return finishTesting();
 
-    var baseURL = "http://127.0.0.1:8000/security/contentSecurityPolicy/";
+    var baseURL = "/security/contentSecurityPolicy/";
     var current = tests.shift();
     var iframe = document.createElement("iframe");
 
@@ -29,12 +33,13 @@ function testImpl(preescapedPolicy) {
         scriptToLoad = encodeURIComponent(current[2]);
 
     iframe.src = baseURL + "resources/echo-script-src.pl?" +
-                 "should_run=" + encodeURIComponent(current[0]) +
+                 "experimental=" + (experimental ? "true" : "false") +
+                 "&should_run=" + encodeURIComponent(current[0]) +
                  "&csp=" + policy + "&q=" + scriptToLoad;
     if (current[3])
       iframe.src += "&nonce=" + encodeURIComponent(current[3]);
 
-    iframe.onload = test;
+    iframe.onload = function() { testImpl(experimental, preescapedPolicy); };
     document.body.appendChild(iframe);
 }
 

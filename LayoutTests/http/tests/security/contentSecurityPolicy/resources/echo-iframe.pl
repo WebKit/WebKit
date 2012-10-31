@@ -5,7 +5,7 @@ use CGI;
 my $cgi = new CGI;
 
 print "Content-Type: text/html; charset=UTF-8\n";
-print "X-WebKit-CSP: ".$cgi->param('csp')."\n\n";
+print "Content-Security-Policy: ".$cgi->param('csp')."\n\n";
 
 print "<!DOCTYPE html>\n";
 print "<html>\n";

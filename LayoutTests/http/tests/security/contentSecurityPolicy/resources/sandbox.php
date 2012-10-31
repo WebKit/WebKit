@@ -1,5 +1,5 @@
 <?php
-header("X-WebKit-CSP: sandbox " . $_GET["sandbox"]);
+header("Content-Security-Policy: sandbox " . $_GET["sandbox"]);
 ?>
 <!DOCTYPE html>
 <p>Ready</p>

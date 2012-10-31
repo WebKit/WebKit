@@ -4,13 +4,22 @@ if (window.testRunner) {
     testRunner.dumpChildFramesAsText();
 }
 
+function testExperimentalPolicy() {
+    testImpl(true);
+}
+
 function test() {
+    testImpl(false);
+}
+
+function testImpl(experimental) {
     if (tests.length === 0)
         return finishTesting();
-    var baseURL = "http://127.0.0.1:8000/security/contentSecurityPolicy/";
+    var baseURL = "/security/contentSecurityPolicy/";
     var current = tests.shift();
     var iframe = document.createElement("iframe");
     iframe.src = baseURL + "resources/echo-object-data.pl?" +
+                 "experimental=" + (experimental ? "true" : "false") +
                  "&csp=" + escape(current[1]);
 
     if (current[0])
@@ -29,7 +38,7 @@ function test() {
     else
         iframe.src += "&type=application/x-webkit-test-netscape";
 
-    iframe.onload = test;
+    iframe.onload = function() { testImpl(experimental); };
     document.body.appendChild(iframe);
 }
 

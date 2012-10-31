@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/xhtml+xml");
-header("X-WebKit-CSP: style-src 'none'; script-src * 'unsafe-inline'");
+header("Content-Security-Policy: style-src 'none'; script-src * 'unsafe-inline'");
 
 echo '<?xml version="1.0" encoding="UTF-8"?>';
 echo '<?xml-stylesheet type="text/xsl" href="resources/style.xsl"?>';

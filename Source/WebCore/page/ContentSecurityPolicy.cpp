@@ -772,7 +772,7 @@ public:
     static PassOwnPtr<CSPDirectiveList> create(ContentSecurityPolicy*, const String&, ContentSecurityPolicy::HeaderType);
 
     const String& header() const { return m_header; }
-    ContentSecurityPolicy::HeaderType headerType() const { return m_reportOnly ? ContentSecurityPolicy::ReportOnly : ContentSecurityPolicy::EnforcePolicy; }
+    ContentSecurityPolicy::HeaderType headerType() const { return m_headerType; }
 
     bool allowJavaScriptURLs(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
     bool allowInlineEventHandlers(const String& contextURL, const WTF::OrdinalNumber& contextLine, ContentSecurityPolicy::ReportingStatus) const;
@@ -796,7 +796,7 @@ public:
     const String& evalDisabledErrorMessage() { return m_evalDisabledErrorMessage; }
 
 private:
-    explicit CSPDirectiveList(ContentSecurityPolicy*);
+    CSPDirectiveList(ContentSecurityPolicy*, ContentSecurityPolicy::HeaderType);
 
     void parse(const String&);
 
@@ -833,7 +833,9 @@ private:
     ContentSecurityPolicy* m_policy;
 
     String m_header;
+    ContentSecurityPolicy::HeaderType m_headerType;
 
+    bool m_experimental;
     bool m_reportOnly;
     bool m_haveSandboxPolicy;
 
@@ -855,27 +857,21 @@ private:
     String m_evalDisabledErrorMessage;
 };
 
-CSPDirectiveList::CSPDirectiveList(ContentSecurityPolicy* policy)
+CSPDirectiveList::CSPDirectiveList(ContentSecurityPolicy* policy, ContentSecurityPolicy::HeaderType type)
     : m_policy(policy)
+    , m_headerType(type)
+    , m_experimental(false)
     , m_reportOnly(false)
     , m_haveSandboxPolicy(false)
 {
+    m_reportOnly = (type == ContentSecurityPolicy::ReportStableDirectives || type == ContentSecurityPolicy::ReportAllDirectives);
+    m_experimental = (type == ContentSecurityPolicy::ReportAllDirectives || type == ContentSecurityPolicy::EnforceAllDirectives);
 }
 
 PassOwnPtr<CSPDirectiveList> CSPDirectiveList::create(ContentSecurityPolicy* policy, const String& header, ContentSecurityPolicy::HeaderType type)
 {
-    OwnPtr<CSPDirectiveList> directives = adoptPtr(new CSPDirectiveList(policy));
+    OwnPtr<CSPDirectiveList> directives = adoptPtr(new CSPDirectiveList(policy, type));
     directives->parse(header);
-    directives->m_header = header;
-
-    switch (type) {
-    case ContentSecurityPolicy::ReportOnly:
-        directives->m_reportOnly = true;
-        return directives.release();
-    case ContentSecurityPolicy::EnforcePolicy:
-        ASSERT(!directives->m_reportOnly);
-        break;
-    }
 
     if (!directives->checkEval(directives->operativeDirective(directives->m_scriptSrc.get()))) {
         String message = makeString("Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"", directives->operativeDirective(directives->m_scriptSrc.get())->text(), "\".\n");
@@ -1151,6 +1147,7 @@ bool CSPDirectiveList::allowFormAction(const KURL& url, ContentSecurityPolicy::R
 //
 void CSPDirectiveList::parse(const String& policy)
 {
+    m_header = policy;
     if (policy.isEmpty())
         return;
 
@@ -1297,12 +1294,14 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
     else if (equalIgnoringCase(name, reportURI))
         parseReportURI(name, value);
 #if ENABLE(CSP_NEXT)
-    else if (equalIgnoringCase(name, formAction))
-        setCSPDirective<SourceListDirective>(name, value, m_formAction);
-    else if (equalIgnoringCase(name, pluginTypes))
-        setCSPDirective<MediaListDirective>(name, value, m_pluginTypes);
-    else if (equalIgnoringCase(name, scriptNonce))
-        setCSPDirective<NonceDirective>(name, value, m_scriptNonce);
+    else if (m_experimental) {
+        if (equalIgnoringCase(name, formAction))
+            setCSPDirective<SourceListDirective>(name, value, m_formAction);
+        else if (equalIgnoringCase(name, pluginTypes))
+            setCSPDirective<MediaListDirective>(name, value, m_pluginTypes);
+        else if (equalIgnoringCase(name, scriptNonce))
+            setCSPDirective<NonceDirective>(name, value, m_scriptNonce);
+    }
 #endif
     else
         m_policy->reportUnrecognizedDirective(name);
@@ -1368,7 +1367,7 @@ const String& ContentSecurityPolicy::deprecatedHeader() const
 
 ContentSecurityPolicy::HeaderType ContentSecurityPolicy::deprecatedHeaderType() const
 {
-    return m_policies.isEmpty() ? EnforcePolicy : m_policies[0]->headerType();
+    return m_policies.isEmpty() ? EnforceStableDirectives : m_policies[0]->headerType();
 }
 
 template<bool (CSPDirectiveList::*allowed)(ContentSecurityPolicy::ReportingStatus) const>

@@ -2,7 +2,7 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 </script>
-<meta http-equiv="X-WebKit-CSP" content="script-src 'unsafe-inline'">
+<meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'">
 <iframe src="about:blank"></iframe>
 Eval should be blocked in the iframe, but inline script should be allowed.
 <script>

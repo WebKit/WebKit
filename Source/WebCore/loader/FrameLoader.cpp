@@ -660,13 +660,21 @@ void FrameLoader::didBeginDocument(bool dispatch)
         if (!dnsPrefetchControl.isEmpty())
             m_frame->document()->parseDNSPrefetchControlHeader(dnsPrefetchControl);
 
-        String contentSecurityPolicy = m_documentLoader->response().httpHeaderField("X-WebKit-CSP");
-        if (!contentSecurityPolicy.isEmpty())
-            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(contentSecurityPolicy, ContentSecurityPolicy::EnforcePolicy);
+        String policyValue = m_documentLoader->response().httpHeaderField("Content-Security-Policy");
+        if (!policyValue.isEmpty())
+            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::EnforceStableDirectives);
 
-        String reportOnlyContentSecurityPolicy = m_documentLoader->response().httpHeaderField("X-WebKit-CSP-Report-Only");
-        if (!reportOnlyContentSecurityPolicy.isEmpty())
-            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(reportOnlyContentSecurityPolicy, ContentSecurityPolicy::ReportOnly);
+        policyValue = m_documentLoader->response().httpHeaderField("Content-Security-Policy-Report-Only");
+        if (!policyValue.isEmpty())
+            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::ReportStableDirectives);
+
+        policyValue = m_documentLoader->response().httpHeaderField("X-WebKit-CSP");
+        if (!policyValue.isEmpty())
+            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::EnforceAllDirectives);
+
+        policyValue = m_documentLoader->response().httpHeaderField("X-WebKit-CSP-Report-Only");
+        if (!policyValue.isEmpty())
+            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::ReportAllDirectives);
 
         String headerContentLanguage = m_documentLoader->response().httpHeaderField("Content-Language");
         if (!headerContentLanguage.isEmpty()) {

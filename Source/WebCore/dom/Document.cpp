@@ -2966,10 +2966,14 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
                 addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, url().string(), 0, 0, requestIdentifier);
             }
         }
-    } else if (equalIgnoringCase(equiv, "x-webkit-csp"))
-        contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicy::EnforcePolicy);
+    } else if (equalIgnoringCase(equiv, "content-security-policy"))
+        contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicy::EnforceStableDirectives);
+    else if (equalIgnoringCase(equiv, "content-security-policy-report-only"))
+        contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicy::ReportStableDirectives);
+    else if (equalIgnoringCase(equiv, "x-webkit-csp"))
+        contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicy::EnforceAllDirectives);
     else if (equalIgnoringCase(equiv, "x-webkit-csp-report-only"))
-        contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicy::ReportOnly);
+        contentSecurityPolicy()->didReceiveHeader(content, ContentSecurityPolicy::ReportAllDirectives);
 }
 
 // Though isspace() considers \t and \v to be whitespace, Win IE doesn't.

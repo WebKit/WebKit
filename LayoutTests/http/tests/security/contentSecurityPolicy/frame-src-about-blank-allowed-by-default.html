@@ -2,7 +2,7 @@
 if (window.testRunner)
     testRunner.dumpAsText();
 </script>
-<meta http-equiv="X-WebKit-CSP" content="frame-src 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="frame-src 'none'; object-src 'none'">
 These frames should not be blocked by Content-Security-Policy.  It's pointless
 to block about:blank iframes because blocking a frame just results in
 displaying about:blank anyway!
