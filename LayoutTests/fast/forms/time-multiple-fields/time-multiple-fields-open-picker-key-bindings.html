@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/picker-common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<input type=time id=time value="2011-05-01">
+
+<script>
+description('F4 or Alt+Down should not open the calendar picker.');
+
+var input = document.getElementById('time');
+sendKey(input, 'F4', false, false);
+shouldBeNull('document.getElementById("mock-page-popup")');
+sendKey(input, 'Down', false, true);
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+finishJSTest();
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

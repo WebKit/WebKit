@@ -1,0 +1,11 @@
+F4 or Alt+Down should not open the calendar picker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("mock-page-popup") is null
+PASS document.getElementById("mock-page-popup") is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

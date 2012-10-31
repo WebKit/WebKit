@@ -237,11 +237,8 @@ void BaseMultipleFieldsDateAndTimeInputType::handleKeydownEvent(KeyboardEvent* e
 {
     Document* document = element()->document();
     RefPtr<RenderTheme> theme = document->page() ? document->page()->theme() : RenderTheme::defaultTheme();
-    if (theme->shouldOpenPickerWithF4Key() && event->keyIdentifier() == "F4") {
-        if (m_pickerIndicatorElement)
-            m_pickerIndicatorElement->openPopup();
-        event->setDefaultHandled();
-    } else if (m_pickerIndicatorIsVisible && event->keyIdentifier() == "Down" && event->getModifierState("Alt")) {
+    if (m_pickerIndicatorIsVisible
+        && ((event->keyIdentifier() == "Down" && event->getModifierState("Alt")) || (theme->shouldOpenPickerWithF4Key() && event->keyIdentifier() == "F4"))) {
         if (m_pickerIndicatorElement)
             m_pickerIndicatorElement->openPopup();
         event->setDefaultHandled();
