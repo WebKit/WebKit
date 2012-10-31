@@ -1349,7 +1349,7 @@ void GraphicsLayerCA::updateContentsVisibility()
         if (m_drawsContent)
             m_layer->setNeedsDisplay();
     } else {
-        m_layer.get()->setContents(0);
+        m_layer->setContents(0);
 
         if (LayerMap* layerCloneMap = m_layerClones.get()) {
             LayerMap::const_iterator end = layerCloneMap->end();
@@ -1361,7 +1361,7 @@ void GraphicsLayerCA::updateContentsVisibility()
 
 void GraphicsLayerCA::updateContentsOpaque()
 {
-    m_layer.get()->setOpaque(m_contentsOpaque);
+    m_layer->setOpaque(m_contentsOpaque);
 
     if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
@@ -1394,9 +1394,9 @@ void GraphicsLayerCA::updateBackfaceVisibility()
 #if ENABLE(CSS_FILTERS)
 void GraphicsLayerCA::updateFilters()
 {
-    primaryLayer()->setFilters(m_filters);
+    m_layer->setFilters(m_filters);
 
-    if (LayerMap* layerCloneMap = primaryLayerClones()) {
+    if (LayerMap* layerCloneMap = m_layerClones.get()) {
         LayerMap::const_iterator end = layerCloneMap->end();
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it) {
             if (m_replicaLayer && isReplicatedRootClone(it->key))
@@ -2834,6 +2834,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::cloneLayer(PlatformCALayer *layer, 
     newLayer->setOpaque(layer->isOpaque());
     newLayer->setBackgroundColor(layer->backgroundColor());
     newLayer->setContentsScale(layer->contentsScale());
+    newLayer->copyFiltersFrom(layer);
 
     if (cloneLevel == IntermediateCloneLevel) {
         newLayer->setOpacity(layer->opacity());

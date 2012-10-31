@@ -189,6 +189,7 @@ public:
 #if ENABLE(CSS_FILTERS)
     void setFilters(const FilterOperations&);
     static bool filtersCanBeComposited(const FilterOperations&);
+    void copyFiltersFrom(const PlatformCALayer*);
 #endif
 
     String name() const;

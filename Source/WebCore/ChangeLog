@@ -1,3 +1,32 @@
+2012-10-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix issues with filters and reflections
+        https://bugs.webkit.org/show_bug.cgi?id=100308
+
+        Reviewed by Dirk Schulze.
+
+        Composited filters were being applied to the wrong CALayer. The code used
+        primaryLayer(), which may be a CATransformLayer (which filters cannot apply
+        to; doing so causes console spew), or a CALayer that is used for reflection
+        flattening, which again is the wrong layer.
+
+        Test: css3/filters/composited-reflected.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateContentsVisibility): Replace .get()-> with ->
+        (WebCore::GraphicsLayerCA::updateContentsOpaque): Ditto.
+        (WebCore::GraphicsLayerCA::updateFilters): Apply filters to m_layer, not primaryLayer(),
+        and use m_layerClones, not primaryLayerClones().
+        (WebCore::GraphicsLayerCA::cloneLayer): When cloning a layer for reflections, copy filters
+        from the source layer.
+        * platform/graphics/ca/PlatformCALayer.h:
+        (PlatformCALayer): Add a member function to copy filters from a supplied layer.
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::setFilters): Remove blank line.
+        (PlatformCALayer::copyFiltersFrom): Copy CAFIlters from the given layer.
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayer::copyFiltersFrom): Stub; no filters on Windows.
+
 2012-10-30  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=100809

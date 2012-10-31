@@ -1,3 +1,17 @@
+2012-10-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix issues with filters and reflections
+        https://bugs.webkit.org/show_bug.cgi?id=100308
+
+        Reviewed by Dirk Schulze.
+
+        Test composited filters inside a nested reflection.
+
+        * css3/filters/composited-reflected-expected.png: Added.
+        * css3/filters/composited-reflected-expected.txt: Added.
+        * css3/filters/composited-reflected.html: Added.
+        * platform/mac/css3/filters/composited-reflected-expected.png: Added.
+
 2012-10-30  Kenichi Ishibashi  <bashi@chromium.org>
 
         Unreviewed test expectations update

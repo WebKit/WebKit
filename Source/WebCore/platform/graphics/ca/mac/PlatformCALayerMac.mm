@@ -715,7 +715,6 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
             
             [m_layer.get() setShadowRadius:op->stdDeviation()];
             [m_layer.get() setShadowOpacity:1];
-
             break;
         }
         case FilterOperation::GRAYSCALE: {
@@ -835,6 +834,13 @@ void PlatformCALayer::setFilters(const FilterOperations& filters)
     if ([array.get() count] > 0)
         [m_layer.get() setFilters:array.get()];
     
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void PlatformCALayer::copyFiltersFrom(const PlatformCALayer* sourceLayer)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [m_layer.get() setFilters:[sourceLayer->platformLayer() filters]];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

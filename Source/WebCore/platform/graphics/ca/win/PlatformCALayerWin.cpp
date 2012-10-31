@@ -568,6 +568,10 @@ void PlatformCALayer::setFilters(const FilterOperations&)
 {
 }
 
+void PlatformCALayer::copyFiltersFrom(const PlatformCALayer*)
+{
+}
+
 bool PlatformCALayer::filtersCanBeComposited(const FilterOperations&)
 {
     return false;
