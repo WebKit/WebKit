@@ -1,0 +1,3 @@
+Test if window.external search components are supported, and if it works.
+PASS 'window.external AddSearchProvider is callable.
+PASS 'window.external IsSearchProviderInstalled is callable.

@@ -33,6 +33,7 @@
 #include "CredentialManager.h"
 #include "CredentialTransformData.h"
 #include "DumpRenderTreeClient.h"
+#include "ExternalExtension.h"
 #include "FrameNetworkingContextBlackBerry.h"
 #include "FrameView.h"
 #include "HTMLFormElement.h"
@@ -905,6 +906,8 @@ void FrameLoaderClientBlackBerry::dispatchDidClearWindowObjectInWorld(DOMWrapper
     // Provide the extension object first in case the client or others want to use it.
     if (m_webPagePrivate->m_enableQnxJavaScriptObject)
         attachExtensionObjectToFrame(m_frame, m_webPagePrivate->m_client);
+
+    attachExternalExtensionObjectToFrame(m_frame);
 
     m_webPagePrivate->m_client->notifyWindowObjectCleared();
 

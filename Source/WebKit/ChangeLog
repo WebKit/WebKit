@@ -1,3 +1,14 @@
+2012-10-31  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Adding window.external to our port
+        https://bugs.webkit.org/show_bug.cgi?id=100868
+
+        Reviewed by Rob Buis.
+
+        Adding ExternalExtension classes to the BB cmake file.
+
+        * PlatformBlackBerry.cmake:
+
 2012-10-31  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][DRT] EventSender requires contextClick implementation

@@ -1,3 +1,34 @@
+2012-10-31  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Adding window.external to our port
+        https://bugs.webkit.org/show_bug.cgi?id=100868
+
+        Reviewed by Rob Buis.
+
+        Attaching the window.external interface to the frame when
+        it loads up.
+
+        When called, the external interface methods call stubs declared
+        in ChromeClientBlackBerry. The method passes in the url of the search
+        provider and the url of the frame. Cross-site check has to be done in the
+        implementation PR.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::addSearchProvider):
+        (WebCore):
+        (WebCore::ChromeClientBlackBerry::isSearchProviderInstalled):
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+        * WebCoreSupport/ExternalExtension.cpp: Added.
+        (addSearchProviderMethod):
+        (IsSearchProviderInstalledMethod):
+        (externalExtensionInitialize):
+        (externalExtensionFinalize):
+        * WebCoreSupport/ExternalExtension.h: Added.
+        (WebCore):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidClearWindowObjectInWorld):
+
 2012-10-30  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         [BlackBerry] Clean the code of "JavaScriptDebuggerBlackBerry"

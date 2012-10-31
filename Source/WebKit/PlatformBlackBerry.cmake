@@ -107,6 +107,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/DeviceOrientationClientBlackBerry.cpp
     blackberry/WebCoreSupport/DragClientBlackBerry.cpp
     blackberry/WebCoreSupport/EditorClientBlackBerry.cpp
+    blackberry/WebCoreSupport/ExternalExtension.cpp
     blackberry/WebCoreSupport/FrameLoaderClientBlackBerry.cpp
     blackberry/WebCoreSupport/FrameNetworkingContextBlackBerry.cpp
     blackberry/WebCoreSupport/GeolocationClientBlackBerry.cpp

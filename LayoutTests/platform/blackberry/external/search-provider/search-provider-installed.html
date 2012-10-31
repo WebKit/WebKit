@@ -1,0 +1,37 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>add-search-provider</title>
+<script src="../../../../fast/js/resources/js-test-pre.js">
+</script>
+<script type='text/javascript'>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function startTest()
+{
+    try {
+        window.external.AddSearchProvider("http://www.search.com");
+        testPassed("'window.external AddSearchProvider is callable.");
+    } catch (ex) {
+        testFailed("Got an exception when calling window.external.AddSearchProvider(url): " + ex);
+    }
+
+    try {
+        window.external.IsSearchProviderInstalled("http://www.search.com");
+        testPassed("''window.external IsSearchProviderInstalled is callable.");
+    } catch (ex) {
+        testFailed("Got an exception when calling window.external.IsSearchProviderInstalled(url): " + ex);
+    }
+}
+
+function loadComplete() { startTest(); layoutTestController.notifyDone();}
+</script>
+</head>
+<body onload="loadComplete()">
+<div id="description">Test if window.external search components are supported, and if it works.</div>
+<div id="console"></div>
+</body>
+</html>
