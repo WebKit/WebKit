@@ -1,5 +1,12 @@
 2012-10-31  Pavel Podivilov  <podivilov@google.com>
 
+        [chromium] Add new baselines for fast/forms/basic-inputs.html and fast/forms/indeterminate.html on linux.
+
+        * platform/chromium-linux/fast/forms/indeterminate-expected.png:
+        * platform/efl-wk1/fast/forms/indeterminate-expected.png: Renamed from LayoutTests/platform/efl/fast/forms/indeterminate-expected.png.
+
+2012-10-31  Pavel Podivilov  <podivilov@google.com>
+
         [chromium] Unreviewed, mark two touchadjustment tests as failing on mac.
 
         * platform/chromium/TestExpectations:
