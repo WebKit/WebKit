@@ -53,40 +53,28 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* sta
 {
 }
 
-ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateScrollingNode* stateNode)
+ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScrollingNode& stateNode)
     : ScrollingStateNode(stateNode)
-    , m_changedProperties(stateNode->changedProperties())
-    , m_viewportRect(stateNode->viewportRect())
-    , m_contentsSize(stateNode->contentsSize())
-    , m_nonFastScrollableRegion(stateNode->nonFastScrollableRegion())
-    , m_wheelEventHandlerCount(stateNode->wheelEventHandlerCount())
-    , m_shouldUpdateScrollLayerPositionOnMainThread(stateNode->shouldUpdateScrollLayerPositionOnMainThread())
-    , m_horizontalScrollElasticity(stateNode->horizontalScrollElasticity())
-    , m_verticalScrollElasticity(stateNode->verticalScrollElasticity())
-    , m_hasEnabledHorizontalScrollbar(stateNode->hasEnabledHorizontalScrollbar())
-    , m_hasEnabledVerticalScrollbar(stateNode->hasEnabledVerticalScrollbar())
-    , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode->requestedScrollPositionRepresentsProgrammaticScroll())
-    , m_horizontalScrollbarMode(stateNode->horizontalScrollbarMode())
-    , m_verticalScrollbarMode(stateNode->verticalScrollbarMode())
-    , m_requestedScrollPosition(stateNode->requestedScrollPosition())
-    , m_scrollOrigin(stateNode->scrollOrigin())
+    , m_changedProperties(stateNode.changedProperties())
+    , m_viewportRect(stateNode.viewportRect())
+    , m_contentsSize(stateNode.contentsSize())
+    , m_nonFastScrollableRegion(stateNode.nonFastScrollableRegion())
+    , m_wheelEventHandlerCount(stateNode.wheelEventHandlerCount())
+    , m_shouldUpdateScrollLayerPositionOnMainThread(stateNode.shouldUpdateScrollLayerPositionOnMainThread())
+    , m_horizontalScrollElasticity(stateNode.horizontalScrollElasticity())
+    , m_verticalScrollElasticity(stateNode.verticalScrollElasticity())
+    , m_hasEnabledHorizontalScrollbar(stateNode.hasEnabledHorizontalScrollbar())
+    , m_hasEnabledVerticalScrollbar(stateNode.hasEnabledVerticalScrollbar())
+    , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
+    , m_horizontalScrollbarMode(stateNode.horizontalScrollbarMode())
+    , m_verticalScrollbarMode(stateNode.verticalScrollbarMode())
+    , m_requestedScrollPosition(stateNode.requestedScrollPosition())
+    , m_scrollOrigin(stateNode.scrollOrigin())
 {
 }
 
 ScrollingStateScrollingNode::~ScrollingStateScrollingNode()
 {
-}
-
-PassOwnPtr<ScrollingStateNode> ScrollingStateScrollingNode::cloneAndResetNode()
-{
-    OwnPtr<ScrollingStateScrollingNode> clone = adoptPtr(new ScrollingStateScrollingNode(this));
-
-    // Now that this node is cloned, reset our change properties.
-    setScrollLayerDidChange(false);
-    resetChangedProperties();
-
-    cloneAndResetChildNodes(clone.get());
-    return clone.release();
 }
 
 void ScrollingStateScrollingNode::setViewportRect(const IntRect& viewportRect)

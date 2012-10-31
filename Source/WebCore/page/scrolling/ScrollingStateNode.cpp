@@ -43,27 +43,39 @@ ScrollingStateNode::ScrollingStateNode(ScrollingStateTree* scrollingStateTree, S
 // This copy constructor is used for cloning nodes in the tree, and it doesn't make sense
 // to clone the relationship pointers, so don't copy that information from the original
 // node.
-ScrollingStateNode::ScrollingStateNode(ScrollingStateNode* stateNode)
+ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode)
     : m_scrollingStateTree(0)
-    , m_nodeID(stateNode->scrollingNodeID())
+    , m_nodeID(stateNode.scrollingNodeID())
     , m_parent(0)
-    , m_scrollLayerDidChange(stateNode->scrollLayerDidChange())
+    , m_scrollLayerDidChange(stateNode.scrollLayerDidChange())
 {
-    setScrollLayer(stateNode->platformScrollLayer());
+    setScrollLayer(stateNode.platformScrollLayer());
 }
 
 ScrollingStateNode::~ScrollingStateNode()
 {
 }
 
-void ScrollingStateNode::cloneAndResetChildNodes(ScrollingStateNode* clone)
+PassOwnPtr<ScrollingStateNode> ScrollingStateNode::cloneAndReset()
+{
+    OwnPtr<ScrollingStateScrollingNode> clone = adoptPtr(new ScrollingStateScrollingNode(*toScrollingStateScrollingNode(this)));
+
+    // Now that this node is cloned, reset our change properties.
+    setScrollLayerDidChange(false);
+    resetChangedProperties();
+
+    cloneAndResetChildren(clone.get());
+    return clone.release();
+}
+
+void ScrollingStateNode::cloneAndResetChildren(ScrollingStateNode* clone)
 {
     if (!m_children)
         return;
 
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
-        clone->appendChild(m_children->at(i)->cloneAndResetNode());
+        clone->appendChild(m_children->at(i)->cloneAndReset());
 }
 
 void ScrollingStateNode::appendChild(PassOwnPtr<ScrollingStateNode> childNode)

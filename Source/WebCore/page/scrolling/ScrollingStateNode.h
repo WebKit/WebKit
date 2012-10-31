@@ -44,16 +44,14 @@ class GraphicsLayer;
 class ScrollingStateTree;
 
 class ScrollingStateNode {
-    WTF_MAKE_NONCOPYABLE(ScrollingStateNode);
-
 public:
     ScrollingStateNode(ScrollingStateTree*, ScrollingNodeID);
     virtual ~ScrollingStateNode();
 
     virtual bool isScrollingStateScrollingNode() { return false; }
 
-    virtual PassOwnPtr<ScrollingStateNode> cloneAndResetNode() = 0;
-    void cloneAndResetChildNodes(ScrollingStateNode*);
+    PassOwnPtr<ScrollingStateNode> cloneAndReset();
+    void cloneAndResetChildren(ScrollingStateNode*);
 
     virtual bool hasChangedProperties() const = 0;
     virtual unsigned changedProperties() const = 0;
@@ -82,7 +80,7 @@ public:
     void removeChild(ScrollingStateNode*);
 
 protected:
-    ScrollingStateNode(ScrollingStateNode*);
+    ScrollingStateNode(const ScrollingStateNode&);
 
     ScrollingStateTree* m_scrollingStateTree;
 

@@ -1,3 +1,38 @@
+2012-10-31  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=100879
+        ScrollingStateNode::cloneAndResetNode() should not be virtual
+
+        Reviewed by Simon Fraser.
+
+        cloneAndResetNode() is currently pure virtual and implemented only 
+        in ScrollingStateScrollingNode. However, all of the work that it 
+        does at this time is stuff that a generic ScrollingStateNode could 
+        do. We should move this implementation to the base class so that it 
+        does not need to be duplicated for future node types.
+
+        This patch also re-names cloneAndResetNode() to cloneAndReset()
+        and correspondingly re-names cloneAndResetChildNodes() to 
+        cloneAndResetChildren(). 
+
+        Finally the patch also changes the copy constructors of both of these 
+        classes to take a const reference instead of a pointer.
+
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::ScrollingStateNode):
+        (WebCore::ScrollingStateNode::cloneAndReset):
+        (WebCore):
+        (WebCore::ScrollingStateNode::cloneAndResetChildren):
+        * page/scrolling/ScrollingStateNode.h:
+        (ScrollingStateNode):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (ScrollingStateScrollingNode):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::commit):
+
 2012-10-31  Tom Sepez  <tsepez@chromium.org>
         
         Malformed X-XSS-Protection headers not reported.
