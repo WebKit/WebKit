@@ -47,7 +47,7 @@ namespace WebCore {
     typedef v8::Persistent<v8::FunctionTemplate> (*GetTemplateFunction)();
     typedef void (*DerefObjectFunction)(void*);
     typedef ActiveDOMObject* (*ToActiveDOMObjectFunction)(v8::Handle<v8::Object>);
-    typedef void* (*OpaqueRootForGC)(void*, v8::Persistent<v8::Object>);
+    typedef void (*DOMWrapperVisitorFunction)(DOMDataStore*, void*, v8::Persistent<v8::Object>);
     typedef void (*InstallPerContextPrototypePropertiesFunction)(v8::Handle<v8::Object>);
 
     enum WrapperTypePrototype {
@@ -102,17 +102,16 @@ namespace WebCore {
             return toActiveDOMObjectFunction(object);
         }
 
-        void* opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapper)
+        void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
         {
-            if (!opaqueRootForGCFunction)
-                return object;
-            return opaqueRootForGCFunction(object, wrapper);
+            if (domWrapperVisitorFunction)
+                domWrapperVisitorFunction(store, object, wrapper);
         }
 
         const GetTemplateFunction getTemplateFunction;
         const DerefObjectFunction derefObjectFunction;
         const ToActiveDOMObjectFunction toActiveDOMObjectFunction;
-        const OpaqueRootForGC opaqueRootForGCFunction;
+        const DOMWrapperVisitorFunction domWrapperVisitorFunction;
         const InstallPerContextPrototypePropertiesFunction installPerContextPrototypePropertiesFunction;
         const WrapperTypeInfo* parentClass;
         const WrapperTypePrototype wrapperTypePrototype;

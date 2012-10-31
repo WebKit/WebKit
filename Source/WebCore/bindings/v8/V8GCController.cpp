@@ -67,79 +67,14 @@
 
 namespace WebCore {
 
-class ImplicitConnection {
-public:
-    ImplicitConnection(void* root, v8::Persistent<v8::Value> wrapper)
-        : m_root(root)
-        , m_wrapper(wrapper)
-    {
-    }
-
-    void* root() const { return m_root; }
-    v8::Persistent<v8::Value> wrapper() const { return m_wrapper; }
-
-private:
-    void* m_root;
-    v8::Persistent<v8::Value> m_wrapper;
-};
-
-bool operator<(const ImplicitConnection& left, const ImplicitConnection& right)
-{
-    return left.root() < right.root();
-}
-
-class WrapperGrouper {
-public:
-    WrapperGrouper()
-    {
-        m_liveObjects.append(V8PerIsolateData::current()->ensureLiveRoot());
-    }
-
-    void addToGroup(void* root, v8::Persistent<v8::Value> wrapper)
-    {
-        m_connections.append(ImplicitConnection(root, wrapper));
-    }
-
-    void keepAlive(v8::Persistent<v8::Value> wrapper)
-    {
-        m_liveObjects.append(wrapper);
-    }
-
-    void apply()
-    {
-        if (m_liveObjects.size() > 1)
-            v8::V8::AddObjectGroup(m_liveObjects.data(), m_liveObjects.size());
-
-        std::sort(m_connections.begin(), m_connections.end());
-        Vector<v8::Persistent<v8::Value> > group;
-        size_t i = 0;
-        while (i < m_connections.size()) {
-            void* root = m_connections[i].root();
-
-            do {
-                group.append(m_connections[i++].wrapper());
-            } while (i < m_connections.size() && root == m_connections[i].root());
-
-            if (group.size() > 1)
-                v8::V8::AddObjectGroup(group.data(), group.size(), 0);
-
-            group.shrink(0);
-        }
-    }
-
-private:
-    Vector<v8::Persistent<v8::Value> > m_liveObjects;
-    Vector<ImplicitConnection> m_connections;
-};
-
 class ObjectVisitor : public DOMWrapperVisitor<void> {
 public:
-    explicit ObjectVisitor(WrapperGrouper* grouper)
-        : m_grouper(grouper)
+    explicit ObjectVisitor(Vector<v8::Persistent<v8::Value> >* liveObjects)
+        : m_liveObjects(liveObjects)
     {
     }
 
-    void visitDOMWrapper(DOMDataStore*, void* object, v8::Persistent<v8::Object> wrapper)
+    void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
     {
         WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);
 
@@ -149,21 +84,20 @@ public:
             // implementation can't tell the difference.
             MessagePort* port = static_cast<MessagePort*>(object);
             if (port->isEntangled() || port->hasPendingActivity())
-                m_grouper->keepAlive(wrapper);
+                m_liveObjects->append(wrapper);
         } else {
             ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
             if (activeDOMObject && activeDOMObject->hasPendingActivity())
-                m_grouper->keepAlive(wrapper);
+                m_liveObjects->append(wrapper);
         }
 
-        m_grouper->addToGroup(type->opaqueRootForGC(object, wrapper), wrapper);
+        type->visitDOMWrapper(store, object, wrapper);
     }
 
 private:
-    WrapperGrouper* m_grouper;
+    Vector<v8::Persistent<v8::Value> >* m_liveObjects;
 };
 
-// FIXME: This should use opaque GC roots.
 static void addImplicitReferencesForNodeWithEventListeners(Node* node, v8::Persistent<v8::Object> wrapper)
 {
     ASSERT(node->hasEventListeners());
@@ -186,16 +120,15 @@ static void addImplicitReferencesForNodeWithEventListeners(Node* node, v8::Persi
     v8::V8::AddImplicitReferences(wrapper, listeners.data(), listeners.size());
 }
 
-void* V8GCController::opaqueRootForGC(Node* node)
+static Node* rootForGC(Node* node)
 {
     if (node->inDocument() || (node->hasTagName(HTMLNames::imgTag) && static_cast<HTMLImageElement*>(node)->hasPendingActivity()))
         return node->document();
 
     if (node->isAttributeNode()) {
-        Node* ownerElement = static_cast<Attr*>(node)->ownerElement();
-        if (!ownerElement)
-            return node;
-        node = ownerElement;
+        node = static_cast<Attr*>(node)->ownerElement();
+        if (!node)
+            return 0;
     }
 
     while (Node* parent = node->parentOrHostNode())
@@ -204,10 +137,31 @@ void* V8GCController::opaqueRootForGC(Node* node)
     return node;
 }
 
+class ImplicitConnection {
+public:
+    ImplicitConnection(Node* root, v8::Persistent<v8::Value> wrapper)
+        : m_root(root)
+        , m_wrapper(wrapper)
+    {
+    }
+
+    Node* root() const { return m_root; }
+    v8::Persistent<v8::Value> wrapper() const { return m_wrapper; }
+
+public:
+    Node* m_root;
+    v8::Persistent<v8::Value> m_wrapper;
+};
+
+bool operator<(const ImplicitConnection& left, const ImplicitConnection& right)
+{
+    return left.root() < right.root();
+}
+
 class NodeVisitor : public NodeWrapperVisitor {
 public:
-    explicit NodeVisitor(WrapperGrouper* grouper)
-        : m_grouper(grouper)
+    explicit NodeVisitor(Vector<v8::Persistent<v8::Value> >* liveObjects)
+        : m_liveObjects(liveObjects)
     {
     }
 
@@ -220,13 +174,36 @@ public:
 
         ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
         if (activeDOMObject && activeDOMObject->hasPendingActivity())
-            m_grouper->keepAlive(wrapper);
+            m_liveObjects->append(wrapper);
 
-        m_grouper->addToGroup(V8GCController::opaqueRootForGC(node), wrapper);
+        Node* root = rootForGC(node);
+        if (!root)
+            return;
+        m_connections.append(ImplicitConnection(root, wrapper));
+    }
+
+    void applyGrouping()
+    {
+        std::sort(m_connections.begin(), m_connections.end());
+        Vector<v8::Persistent<v8::Value> > group;
+        size_t i = 0;
+        while (i < m_connections.size()) {
+            Node* root = m_connections[i].root();
+
+            do {
+                group.append(m_connections[i++].wrapper());
+            } while (i < m_connections.size() && root == m_connections[i].root());
+
+            if (group.size() > 1)
+                v8::V8::AddObjectGroup(group.data(), group.size(), new RetainedDOMInfo(root));
+
+            group.shrink(0);
+        }
     }
 
 private:
-    WrapperGrouper* m_grouper;
+    Vector<v8::Persistent<v8::Value> >* m_liveObjects;
+    Vector<ImplicitConnection> m_connections;
 };
 
 void V8GCController::gcPrologue(v8::GCType type, v8::GCCallbackFlags flags)
@@ -247,14 +224,17 @@ void V8GCController::majorGCPrologue()
 
     v8::HandleScope scope;
 
-    WrapperGrouper grouper;
+    Vector<v8::Persistent<v8::Value> > liveObjects;
+    liveObjects.append(V8PerIsolateData::current()->ensureLiveRoot());
 
-    NodeVisitor nodeVisitor(&grouper);
-    ObjectVisitor objectVisitor(&grouper);
+    NodeVisitor nodeVisitor(&liveObjects);
     visitAllDOMNodes(&nodeVisitor);
+    nodeVisitor.applyGrouping();
+
+    ObjectVisitor objectVisitor(&liveObjects);
     visitDOMObjects(&objectVisitor);
 
-    grouper.apply();
+    v8::V8::AddObjectGroup(liveObjects.data(), liveObjects.size());
 
     V8PerIsolateData* data = V8PerIsolateData::current();
     data->stringCache()->clearOnGC();
