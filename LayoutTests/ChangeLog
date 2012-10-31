@@ -1,5 +1,13 @@
 2012-10-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Skip http/tests/appcache/load-from-appcache-defer-resume-crash.html on WK2.
+
+        Just marking it as Failure does not prevent a useless PNG expectation to be generated when running pixel tests.
+
+        * platform/efl-wk2/TestExpectations:
+
+2012-10-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Unreviewed, add a few more pixel expectations.
 
         * platform/efl/css3/flexbox/repaint-during-resize-no-flex-expected.png: Added.
