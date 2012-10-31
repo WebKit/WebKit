@@ -196,15 +196,11 @@ static bool shouldScaleColumns(RenderTable* table)
             table = 0;
             if (cb && cb->isTableCell() &&
                 (cb->style()->width().isAuto() || cb->style()->width().isPercent())) {
-                if (tw.isPercent())
+                RenderTableCell* cell = toRenderTableCell(cb);
+                if (cell->colSpan() > 1 || cell->table()->style()->width().isAuto())
                     scale = false;
-                else {
-                    RenderTableCell* cell = toRenderTableCell(cb);
-                    if (cell->colSpan() > 1 || cell->table()->style()->width().isAuto())
-                        scale = false;
-                    else
-                        table = cell->table();
-                }
+                else
+                    table = cell->table();
             }
         }
         else

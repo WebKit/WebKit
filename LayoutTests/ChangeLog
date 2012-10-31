@@ -1,3 +1,42 @@
+2012-10-31  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Table with percentage column widths doesn't scale to fill the entire width of a table containing it
+        https://bugs.webkit.org/show_bug.cgi?id=11645
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/table/scale-nested-percent-width-cols-expected.html: Added.
+        * fast/table/scale-nested-percent-width-cols.html: Added.
+        Added a ref test verifying that our nested (auto width) table's columns
+        are scaled and sized appropriately if the containing table has
+        percent width.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        Added an entry for fast/table/025.html for these ports. It would need
+        rebaselining as a result of this fix.
+
+        * platform/qt/fast/table/025-expected.png:
+        * platform/qt/fast/table/025-expected.txt:
+        Modified expected results for the existing test on qt port.
+
+        In the given test, our innermost nested table has auto width and consits
+        of three table cells with percent width specified for the first and the
+        third cells. Its containing table on the other hand is a percent width
+        table.
+
+        Previously, we were not scaling our inner table's column(s) from expanding
+        to the width of the containing table if it had percent width type. Because
+        of this our first and last table cells in the innermost table were being
+        rendered only with the minimum width (4px).
+
+        Post this fix, since now our inner table columns shall scale, the first and
+        the last table cell would thus expand in width (41px each) and hence the
+        change in the column and the table dimensions.
+
 2012-10-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] More unreviewed pixel expectations gardening.

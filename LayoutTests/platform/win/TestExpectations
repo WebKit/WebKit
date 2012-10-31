@@ -2357,6 +2357,9 @@ css3/supports.html
 # https://bugs.webkit.org/show_bug.cgi?id=98169
 http/tests/inspector/stacktraces
 
+# Requires rebaselining after https://bugs.webkit.org/show_bug.cgi?id=11645
+webkit.org/b/11645 fast/table/025.html [ Failure ]
+
 # HIDDEN_PAGE_DOM_TIMER_THROTTLING is disabled
 fast/dom/timer-throttling-hidden-page.html
 

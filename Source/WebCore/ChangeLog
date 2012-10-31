@@ -1,3 +1,23 @@
+2012-10-31  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Table with percentage column widths doesn't scale to fill the entire width of a table containing it
+        https://bugs.webkit.org/show_bug.cgi?id=11645
+
+        Reviewed by Julien Chaffraix.
+
+        When the inner (or nested) table has auto width and column(s) with
+        percent width, we should scale our column(s) to the width of the
+        containing table (unless it has auto width).
+
+        Test: fast/table/scale-nested-percent-width-cols.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::shouldScaleColumns):
+        If the containing table width was of percent type, we were disallowing
+        our inner or nested table's column from scaling to the size of the parent
+        table. We should prohibit the scaling of the nested table columns only
+        if the parent table has auto width.
+
 2012-10-31  Ian Vollick  <vollick@chromium.org>
 
         Add support for text-based repaint testing
