@@ -20,10 +20,6 @@ textarea {
     font-family: monospace;
 }
 
-input, textarea {
-    border-radius: 3px;
-}
-
 input[type="datetime"],
 input[type="date"],
 input[type="week"],
@@ -35,22 +31,6 @@ input[type="color"] {
     border: solid 2px blue;
 }
 
-select:focus {
-    border: 1px solid black;
-    outline: none;
-}
-
-select[size],
-select[multiple],
-select[size][multiple] {
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid rgb(139,139,139);
-}
-
-select[size]:focus,
-select[multiple]:focus,
-select[size][multiple]:focus {
-    border: 1px solid black;
-    outline: none;
+select {
+    border-radius: 0;
 }

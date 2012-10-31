@@ -1,3 +1,35 @@
+2012-10-30  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] update form theme for BB10.
+        https://bugs.webkit.org/show_bug.cgi?id=100760
+
+        Reviewed by Rob Buis.
+
+        RIM PR:222126
+        Introduce slide function to paint new theme for the form controls.
+
+        No new tests.
+
+        * css/themeBlackBerry.css:
+        (select):
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore):
+        (WebCore::drawControl): Added.
+        (WebCore::drawThreeSlice): Added.
+        (WebCore::drawNineSlice): Added.
+        (WebCore::loadImage): Added.
+        (WebCore::RenderThemeBlackBerry::systemFont): Modified.
+        (WebCore::RenderThemeBlackBerry::paintTextFieldOrTextAreaOrSearchField): Modified.
+        (WebCore::RenderThemeBlackBerry::paintCheckbox): Modified.
+        (WebCore::RenderThemeBlackBerry::paintRadio): Modified.
+        (WebCore::RenderThemeBlackBerry::paintButton): Modified.
+        (WebCore::RenderThemeBlackBerry::paintMenuList): Modified.
+        (WebCore::RenderThemeBlackBerry::paintMenuListButton): Modified.
+        (WebCore::RenderThemeBlackBerry::paintSliderTrackRect): Modified.
+        (WebCore::RenderThemeBlackBerry::paintSliderThumb): Modified.
+        * platform/blackberry/RenderThemeBlackBerry.h:
+        (RenderThemeBlackBerry):
+
 2012-10-30  Rick Byers  <rbyers@chromium.org>
 
         cssText for cursor property doesn't include hotspot

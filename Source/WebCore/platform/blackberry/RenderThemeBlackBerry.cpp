@@ -35,6 +35,8 @@
 #include "RenderView.h"
 #include "UserAgentStyleSheets.h"
 
+#include <BlackBerryPlatformLog.h>
+
 namespace WebCore {
 
 // Sizes (unit px)
@@ -65,6 +67,20 @@ const float radioButtonCheckStateScaler = 7 / 30.0;
 const unsigned paddingDivisor = 5;
 const unsigned fullScreenEnlargementFactor = 2;
 const float scaleFactorThreshold = 2.0;
+
+// Slice length
+const int smallSlice = 8;
+const int mediumSlice = 10;
+const int largeSlice = 13;
+
+// Slider Aura, calculated from UX spec
+const float auraRatio = 1.62;
+
+// Dropdown arrow position, calculated from UX spec
+const float xPositionRatio = 3;
+const float yPositionRatio = 0.38;
+const float widthRatio = 3;
+const float heightRatio = 0.23;
 
 // Colors
 const RGBA32 caretBottom = 0xff2163bf;
@@ -109,23 +125,9 @@ const RGBA32 selection = 0xff2b8fff;
 
 const RGBA32 blackPen = Color::black;
 const RGBA32 focusRingPen = 0xffa3c8fe;
+const RGBA32 activeTextColor = 0xfffafafa;
 
 float RenderThemeBlackBerry::defaultFontSize = 16;
-
-// We aim to match IE here.
-// -IE uses a font based on the encoding as the default font for form controls.
-// -Gecko uses MS Shell Dlg (actually calls GetStockObject(DEFAULT_GUI_FONT),
-// which returns MS Shell Dlg)
-// -Safari uses Lucida Grande.
-//
-// FIXME: The only case where we know we don't match IE is for ANSI encodings.
-// IE uses MS Shell Dlg there, which we render incorrectly at certain pixel
-// sizes (e.g. 15px). So we just use Arial for now.
-const String& RenderThemeBlackBerry::defaultGUIFont()
-{
-    DEFINE_STATIC_LOCAL(String, fontFace, (ASCIILiteral("Arial")));
-    return fontFace;
-}
 
 static PassRefPtr<Gradient> createLinearGradient(RGBA32 top, RGBA32 bottom, const IntPoint& a, const IntPoint& b)
 {
@@ -133,22 +135,6 @@ static PassRefPtr<Gradient> createLinearGradient(RGBA32 top, RGBA32 bottom, cons
     gradient->addColorStop(0.0, Color(top));
     gradient->addColorStop(1.0, Color(bottom));
     return gradient.release();
-}
-
-static Path roundedRectForBorder(RenderObject* object, const IntRect& rect)
-{
-    RenderStyle* style = object->style();
-    LengthSize topLeftRadius = style->borderTopLeftRadius();
-    LengthSize topRightRadius = style->borderTopRightRadius();
-    LengthSize bottomLeftRadius = style->borderBottomLeftRadius();
-    LengthSize bottomRightRadius = style->borderBottomRightRadius();
-
-    Path roundedRect;
-    roundedRect.addRoundedRect(rect, IntSize(topLeftRadius.width().value(), topLeftRadius.height().value()),
-                                     IntSize(topRightRadius.width().value(), topRightRadius.height().value()),
-                                     IntSize(bottomLeftRadius.width().value(), bottomLeftRadius.height().value()),
-                                     IntSize(bottomRightRadius.width().value(), bottomRightRadius.height().value()));
-    return roundedRect;
 }
 
 static RenderSlider* determineRenderSlider(RenderObject* object)
@@ -180,6 +166,76 @@ static float determineFullScreenMultiplier(Element* element)
     }
 #endif
     return fullScreenMultiplier;
+}
+
+static void drawControl(GraphicsContext* gc, const FloatRect& rect, Image* img)
+{
+    FloatRect srcRect(0, 0, img->width(), img->height());
+    gc->drawImage(img, ColorSpaceDeviceRGB, rect, srcRect);
+}
+
+static void drawThreeSlice(GraphicsContext* gc, const IntRect& rect, Image* img, int slice)
+{
+    FloatSize dstSlice(rect.height() / 2, rect.height());
+    FloatRect srcRect(0, 0, slice, img->height());
+    FloatRect dstRect(rect.location(), dstSlice);
+
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+    srcRect.move(img->width() - srcRect.width(), 0);
+    dstRect.move(rect.width() - dstRect.width(), 0);
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+
+    srcRect = FloatRect(slice, 0, img->width() - 2 * slice, img->height());
+    dstRect = FloatRect(rect.x() + dstSlice.width(), rect.y(), rect.width() - 2 * dstSlice.width(), dstSlice.height());
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+}
+
+static void drawNineSlice(GraphicsContext* gc, const IntRect& rect, double scale, Image* img, int slice)
+{
+    if (rect.height() * scale < 101.0)
+        scale = 101.0 / rect.height();
+    FloatSize dstSlice(slice / scale, slice / scale);
+    FloatRect srcRect(0, 0, slice, slice);
+    FloatRect dstRect(rect.location(), dstSlice);
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+    srcRect.move(img->width() - srcRect.width(), 0);
+    dstRect.move(rect.width() - dstRect.width(), 0);
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+    srcRect.move(0, img->height() - srcRect.height());
+    dstRect.move(0, rect.height() - dstRect.height());
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+    srcRect.move(-(img->width() - srcRect.width()), 0);
+    dstRect.move(-(rect.width() - dstRect.width()), 0);
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+
+    srcRect = FloatRect(slice, 0, img->width() - 2 * slice, slice);
+    dstRect = FloatRect(rect.x() + dstSlice.width(), rect.y(), rect.width() - 2 * dstSlice.width(), dstSlice.height());
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+    srcRect.move(0, img->height() - srcRect.height());
+    dstRect.move(0, rect.height() - dstRect.height());
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+
+    srcRect = FloatRect(0, slice, slice, img->height() - 2 * slice);
+    dstRect = FloatRect(rect.x(), rect.y() + dstSlice.height(), dstSlice.width(), rect.height() - 2 * dstSlice.height());
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+    srcRect.move(img->width() - srcRect.width(), 0);
+    dstRect.move(rect.width() - dstRect.width(), 0);
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+
+    srcRect = FloatRect(slice, slice, img->width() - 2 * slice, img->height() - 2 * slice);
+    dstRect = FloatRect(rect.x() + dstSlice.width(), rect.y() + dstSlice.height(), rect.width() - 2 * dstSlice.width(), rect.height() - 2 * dstSlice.height());
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+}
+
+static RefPtr<Image> loadImage(const char* filename)
+{
+    RefPtr<Image> resource;
+    resource = Image::loadPlatformResource(filename).leakRef();
+    if (!resource) {
+        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelWarn, "RenderThemeBlackBerry failed to load %s.png", filename);
+        return 0;
+    }
+    return resource;
 }
 
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
@@ -229,7 +285,8 @@ void RenderThemeBlackBerry::systemFont(int propId, FontDescription& fontDescript
 {
     float fontSize = defaultFontSize;
 
-    if (propId == CSSValueWebkitMiniControl || propId ==  CSSValueWebkitSmallControl || propId == CSSValueWebkitControl) {
+    // Both CSSValueWebkitControl and CSSValueWebkitSmallControl should use default font size which looks better on the controls.
+    if (propId == CSSValueWebkitMiniControl) {
         // Why 2 points smaller? Because that's what Gecko does. Note that we
         // are assuming a 96dpi screen, which is the default value we use on Windows.
         static const float pointsPerInch = 72.0f;
@@ -237,10 +294,9 @@ void RenderThemeBlackBerry::systemFont(int propId, FontDescription& fontDescript
         fontSize -= (2.0f / pointsPerInch) * pixelsPerInch;
     }
 
-    fontDescription.firstFamily().setFamily(defaultGUIFont());
     fontDescription.setSpecifiedSize(fontSize);
     fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setGenericFamily(FontDescription::NoFamily);
+    fontDescription.setGenericFamily(FontDescription::SansSerifFamily);
     fontDescription.setWeight(FontWeightNormal);
     fontDescription.setItalic(false);
 }
@@ -278,27 +334,22 @@ bool RenderThemeBlackBerry::paintTextFieldOrTextAreaOrSearchField(RenderObject* 
     ASSERT(info.context);
     GraphicsContext* context = info.context;
 
-    context->save();
-    context->setStrokeStyle(SolidStroke);
-    context->setStrokeThickness(lineWidth);
-    if (!isEnabled(object))
-        context->setStrokeColor(disabledOutline, ColorSpaceDeviceRGB);
-    else if (isPressed(object))
-        info.context->setStrokeGradient(createLinearGradient(depressedTopOutline, depressedBottomOutline, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    else if (isHovered(object) || isFocused(object))
-        context->setStrokeGradient(createLinearGradient(hoverTopOutline, hoverBottomOutline, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    else
-        context->setStrokeGradient(createLinearGradient(regularTopOutline, regularBottomOutline, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+    static RefPtr<Image> bg, bgDisabled, bgHighlight;
+    if (!bg) {
+        bg = loadImage("core_textinput_bg");
+        bgDisabled = loadImage("core_textinput_bg_disabled");
+        bgHighlight = loadImage("core_textinput_bg_highlight");
+    }
 
-    Path textFieldRoundedRectangle = roundedRectForBorder(object, rect);
-    if (object->style()->appearance() == SearchFieldPart) {
-        // We force the fill color to White so as to match the background color of the search cancel button graphic.
-        context->setFillColor(Color::white, ColorSpaceDeviceRGB);
-        context->fillPath(textFieldRoundedRectangle);
-        context->strokePath(textFieldRoundedRectangle);
-    } else
-        context->strokePath(textFieldRoundedRectangle);
-    context->restore();
+    AffineTransform ctm = context->getCTM();
+    if (isEnabled(object) && bg)
+        drawNineSlice(context, rect, ctm.xScale(), bg.get(), smallSlice);
+    if (!isEnabled(object) && bgDisabled)
+        drawNineSlice(context, rect, ctm.xScale(), bgDisabled.get(), smallSlice);
+
+    if ((isHovered(object) || isFocused(object) || isPressed(object)) && bgHighlight)
+        drawNineSlice(context, rect, ctm.xScale(), bgHighlight.get(), smallSlice);
+
     return false;
 }
 
@@ -409,7 +460,51 @@ void RenderThemeBlackBerry::calculateButtonSize(RenderStyle* style) const
 
 bool RenderThemeBlackBerry::paintCheckbox(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintButton(object, info, rect);
+    ASSERT(info.context);
+    GraphicsContext* context = info.context;
+
+    static RefPtr<Image> disabled, background, inactive, pressed, active, activeMark, disableMark;
+    if (!disabled) {
+        disabled = loadImage("core_checkbox_disabled");
+        background = loadImage("core_checkbox_moat");
+        inactive = loadImage("core_checkbox_inactive");
+        pressed = loadImage("core_checkbox_pressed");
+        active = loadImage("core_checkbox_active");
+        activeMark = loadImage("core_checkbox_active_mark");
+        disableMark = loadImage("core_checkbox_disabled_mark");
+    }
+
+    // Caculate where to put center checkmark.
+    FloatRect tmpRect(rect);
+
+    float centerX = ((float(inactive->width()) - float(activeMark->width())) / float(inactive->width()) * tmpRect.width() / 2) + tmpRect.x();
+    float centerY = ((float(inactive->height()) - float(activeMark->height())) / float(inactive->height()) * tmpRect.height() / 2) + tmpRect.y();
+    float width = float(activeMark->width()) / float(inactive->width()) * tmpRect.width();
+    float height = float(activeMark->height()) / float(inactive->height()) * tmpRect.height();
+    FloatRect centerRect(centerX, centerY, width, height);
+
+    drawControl(context, rect, background.get());
+
+    if (isEnabled(object)) {
+        if (isPressed(object)) {
+            drawControl(context, rect, pressed.get());
+            if (isChecked(object)) {
+                // FIXME: need opacity 30% on activeMark
+                drawControl(context, centerRect, activeMark.get());
+            }
+        } else {
+            drawControl(context, rect, inactive.get());
+            if (isChecked(object)) {
+                drawControl(context, rect, active.get());
+                drawControl(context, centerRect, activeMark.get());
+            }
+        }
+    } else {
+        drawControl(context, rect, disabled.get());
+        if (isChecked(object))
+            drawControl(context, rect, disableMark.get());
+    }
+    return false;
 }
 
 void RenderThemeBlackBerry::setCheckboxSize(RenderStyle* style) const
@@ -419,7 +514,50 @@ void RenderThemeBlackBerry::setCheckboxSize(RenderStyle* style) const
 
 bool RenderThemeBlackBerry::paintRadio(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintButton(object, info, rect);
+    ASSERT(info.context);
+    GraphicsContext* context = info.context;
+
+    static RefPtr<Image> disabled, disabledActive, inactive, pressed, active, activeMark;
+    if (!disabled) {
+        disabled = loadImage("core_radiobutton_disabled");
+        disabledActive = loadImage("core_radiobutton_disabled_active");
+        inactive = loadImage("core_radiobutton_inactive");
+        pressed = loadImage("core_radiobutton_pressed");
+        active = loadImage("core_radiobutton_active");
+        activeMark = loadImage("core_radiobutton_active_mark");
+    }
+
+    // Caculate where to put center circle.
+    FloatRect tmpRect(rect);
+
+    float centerX = ((float(inactive->width()) - float(activeMark->width())) / float(inactive->width()) * tmpRect.width() / 2)+ tmpRect.x();
+    float centerY = ((float(inactive->height()) - float(activeMark->height())) / float(inactive->height()) * tmpRect.height() / 2) + tmpRect.y();
+    float width = float(activeMark->width()) / float(inactive->width()) * tmpRect.width();
+    float height = float(activeMark->height()) / float(inactive->height()) * tmpRect.height();
+    FloatRect centerRect(centerX, centerY, width, height);
+
+    if (isEnabled(object)) {
+        if (isPressed(object)) {
+            drawControl(context, rect, pressed.get());
+            if (isChecked(object)) {
+                // FIXME: need opacity 30% on activeMark
+                drawControl(context, centerRect, activeMark.get());
+            }
+        } else {
+            drawControl(context, rect, inactive.get());
+            if (isChecked(object)) {
+                drawControl(context, rect, active.get());
+                drawControl(context, centerRect, activeMark.get());
+            }
+        }
+    } else {
+        drawControl(context, rect, inactive.get());
+        if (isChecked(object))
+            drawControl(context, rect, disabledActive.get());
+        else
+            drawControl(context, rect, disabled.get());
+    }
+    return false;
 }
 
 void RenderThemeBlackBerry::setRadioSize(RenderStyle* style) const
@@ -432,81 +570,26 @@ bool RenderThemeBlackBerry::paintButton(RenderObject* object, const PaintInfo& i
 {
     ASSERT(info.context);
     info.context->save();
+    GraphicsContext* context = info.context;
 
-    info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeThickness(lineWidth);
+    static RefPtr<Image> disabled, inactive, pressed;
+    if (!disabled) {
+        disabled = loadImage("core_button_disabled");
+        inactive = loadImage("core_button_inactive");
+        pressed = loadImage("core_button_pressed");
+    }
 
-    Color check(blackPen);
+    AffineTransform ctm = context->getCTM();
     if (!isEnabled(object)) {
-        info.context->setFillGradient(createLinearGradient(disabledTop, disabledBottom, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-        info.context->setStrokeColor(disabledOutline, ColorSpaceDeviceRGB);
+        drawNineSlice(context, rect, ctm.xScale(), inactive.get(), largeSlice);
+        drawNineSlice(context, rect, ctm.xScale(), disabled.get(), largeSlice);
     } else if (isPressed(object)) {
-        info.context->setFillGradient(createLinearGradient(depressedTop, depressedBottom, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-        info.context->setStrokeGradient(createLinearGradient(depressedTopOutline, depressedBottomOutline, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    } else if (isHovered(object)) {
-        info.context->setFillGradient(createLinearGradient(hoverTop, hoverBottom, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-        info.context->setStrokeGradient(createLinearGradient(hoverTopOutline, hoverBottomOutline, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    } else {
-        info.context->setFillGradient(createLinearGradient(regularTop, regularBottom, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-        info.context->setStrokeGradient(createLinearGradient(regularTopOutline, regularBottomOutline, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    }
+        drawNineSlice(context, rect, ctm.xScale(), pressed.get(), largeSlice);
+        object->style()->setTextFillColor(activeTextColor);
+    } else
+        drawNineSlice(context, rect, ctm.xScale(), inactive.get(), largeSlice);
 
-    ControlPart part = object->style()->appearance();
-    switch (part) {
-    case CheckboxPart: {
-        FloatSize smallCorner(smallRadius, smallRadius);
-        Path path;
-        path.addRoundedRect(rect, smallCorner);
-        info.context->fillPath(path);
-        info.context->strokePath(path);
-
-        if (isChecked(object)) {
-            Path checkPath;
-            IntRect rect2 = rect;
-            rect2.inflate(-1);
-            checkPath.moveTo(FloatPoint(rect2.x() + rect2.width() * checkboxLeftX, rect2.y() + rect2.height() * checkboxLeftY));
-            checkPath.addLineTo(FloatPoint(rect2.x() + rect2.width() * checkboxMiddleX, rect2.maxY() - rect2.height() * checkboxMiddleY));
-            checkPath.addLineTo(FloatPoint(rect2.x() + rect2.width() * checkboxRightX, rect2.y() + rect2.height() * checkboxRightY));
-            info.context->setLineCap(RoundCap);
-            info.context->setStrokeColor(blackPen, ColorSpaceDeviceRGB);
-            info.context->setStrokeThickness(rect2.width() / checkboxStrokeThickness);
-            info.context->fillPath(checkPath);
-            info.context->strokePath(checkPath);
-        }
-        break;
-    }
-    case RadioPart:
-        info.context->drawEllipse(rect);
-        if (isChecked(object)) {
-            IntRect rect2 = rect;
-            rect2.inflate(-rect.width() * radioButtonCheckStateScaler);
-            info.context->setFillColor(check, ColorSpaceDeviceRGB);
-            info.context->setStrokeColor(check, ColorSpaceDeviceRGB);
-            info.context->drawEllipse(rect2);
-        }
-        break;
-    case ButtonPart:
-    case PushButtonPart: {
-        FloatSize largeCorner(largeRadius, largeRadius);
-        Path path;
-        path.addRoundedRect(rect, largeCorner);
-        info.context->fillPath(path);
-        info.context->strokePath(path);
-        break;
-    }
-    case SquareButtonPart: {
-        Path path;
-        path.addRect(rect);
-        info.context->fillPath(path);
-        info.context->strokePath(path);
-        break;
-    }
-    default:
-        info.context->restore();
-        return true;
-    }
-
-    info.context->restore();
+    context->restore();
     return false;
 }
 
@@ -535,43 +618,6 @@ void RenderThemeBlackBerry::adjustRadioStyle(StyleResolver*, RenderStyle* style,
     style->setCursor(CURSOR_WEBKIT_GRAB);
 }
 
-void RenderThemeBlackBerry::paintMenuListButtonGradientAndArrow(GraphicsContext* context, RenderObject* object, IntRect buttonRect, const Path& clipPath)
-{
-    ASSERT(context);
-    context->save();
-    if (!isEnabled(object))
-        context->setFillGradient(createLinearGradient(disabledTop, disabledBottom, buttonRect.maxXMinYCorner(), buttonRect.maxXMaxYCorner()));
-    else if (isPressed(object))
-        context->setFillGradient(createLinearGradient(depressedTop, depressedBottom, buttonRect.maxXMinYCorner(), buttonRect.maxXMaxYCorner()));
-    else if (isHovered(object))
-        context->setFillGradient(createLinearGradient(hoverTop, hoverBottom, buttonRect.maxXMinYCorner(), buttonRect.maxXMaxYCorner()));
-    else
-        context->setFillGradient(createLinearGradient(regularTop, regularBottom, buttonRect.maxXMinYCorner(), buttonRect.maxXMaxYCorner()));
-
-    // 1. Paint the background of the button.
-    context->clip(clipPath);
-    context->drawRect(buttonRect);
-    context->restore();
-
-    // 2. Paint the button arrow.
-    buttonRect.inflate(-buttonRect.width() / 3);
-    buttonRect.move(0, buttonRect.height() * 7 / 20);
-    Path path;
-    path.moveTo(FloatPoint(buttonRect.x(), buttonRect.y()));
-    path.addLineTo(FloatPoint(buttonRect.x() + buttonRect.width(), buttonRect.y()));
-    path.addLineTo(FloatPoint(buttonRect.x() + buttonRect.width() / 2.0, buttonRect.y() + buttonRect.height() / 2.0));
-    path.closeSubpath();
-
-    context->save();
-    context->setStrokeStyle(SolidStroke);
-    context->setStrokeThickness(lineWidth);
-    context->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
-    context->setFillColor(Color::black, ColorSpaceDeviceRGB);
-    context->setLineJoin(BevelJoin);
-    context->fillPath(path);
-    context->restore();
-}
-
 static IntRect computeMenuListArrowButtonRect(const IntRect& rect)
 {
     // FIXME: The menu list arrow button should have a minimum and maximum width (to ensure usability) or
@@ -579,77 +625,48 @@ static IntRect computeMenuListArrowButtonRect(const IntRect& rect)
     return IntRect(IntPoint(rect.maxX() - rect.height(), rect.y()), IntSize(rect.height(), rect.height()));
 }
 
-static void paintMenuListBackground(GraphicsContext* context, const Path& menuListPath, const Color& backgroundColor)
-{
-    ASSERT(context);
-    context->save();
-    context->setFillColor(backgroundColor, ColorSpaceDeviceRGB);
-    context->fillPath(menuListPath);
-    context->restore();
-}
-
 bool RenderThemeBlackBerry::paintMenuList(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    // Note, this method is not called if the menu list explicitly specifies either a border or background color.
-    // Instead, RenderThemeBlackBerry::paintMenuListButton is called. Therefore, when this method is called, we don't
-    // have to adjust rect with respect to the border dimensions.
-
     ASSERT(info.context);
+    info.context->save();
     GraphicsContext* context = info.context;
 
-    Path menuListRoundedRectangle = roundedRectForBorder(object, rect);
+    static RefPtr<Image> disabled, inactive, pressed, arrowUp, arrowUpPressed;
+    if (!disabled) {
+        disabled = loadImage("core_button_disabled");
+        inactive = loadImage("core_button_inactive");
+        pressed = loadImage("core_button_pressed");
+        arrowUp = loadImage("core_dropdown_button_arrowup");
+        arrowUpPressed = loadImage("core_dropdown_button_arrowup_pressed");
+    }
 
-    // 1. Paint the background of the entire control.
-    paintMenuListBackground(context, menuListRoundedRectangle, Color::white);
+    FloatRect arrowButtonRectangle(computeMenuListArrowButtonRect(rect));
+    float x = arrowButtonRectangle.x() + arrowButtonRectangle.width() / xPositionRatio;
+    float y = arrowButtonRectangle.y() + arrowButtonRectangle.height() * yPositionRatio;
+    float width = arrowButtonRectangle.width() / widthRatio;
+    float height = arrowButtonRectangle.height() * heightRatio;
+    FloatRect tmpRect(x, y, width, height);
 
-    // 2. Paint the background of the button and its arrow.
-    IntRect arrowButtonRectangle = computeMenuListArrowButtonRect(rect);
-    paintMenuListButtonGradientAndArrow(context, object, arrowButtonRectangle, menuListRoundedRectangle);
-
-    // 4. Stroke an outline around the entire control.
-    context->save();
-    context->setStrokeStyle(SolidStroke);
-    context->setStrokeThickness(lineWidth);
-    if (!isEnabled(object))
-        context->setStrokeColor(disabledOutline, ColorSpaceDeviceRGB);
-    else if (isPressed(object))
-        context->setStrokeGradient(createLinearGradient(depressedTopOutline, depressedBottomOutline, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    else if (isHovered(object))
-        context->setStrokeGradient(createLinearGradient(hoverTopOutline, hoverBottomOutline, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    else
-        context->setStrokeGradient(createLinearGradient(regularTopOutline, regularBottomOutline, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-
-    context->strokePath(menuListRoundedRectangle);
+    AffineTransform ctm = context->getCTM();
+    if (!isEnabled(object)) {
+        drawNineSlice(context, rect, ctm.xScale(), inactive.get(), largeSlice);
+        drawNineSlice(context, rect, ctm.xScale(), disabled.get(), largeSlice);
+        drawControl(context, tmpRect, arrowUp.get()); // FIXME: should have a disabled image.
+    } else if (isFocused(object)) {
+        drawNineSlice(context, rect, ctm.xScale(), pressed.get(), largeSlice);
+        drawControl(context, tmpRect, arrowUpPressed.get());
+        object->style()->setTextFillColor(activeTextColor);
+    } else {
+        drawNineSlice(context, rect, ctm.xScale(), inactive.get(), largeSlice);
+        drawControl(context, tmpRect, arrowUp.get());
+    }
     context->restore();
     return false;
 }
 
 bool RenderThemeBlackBerry::paintMenuListButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    // Note, this method is only called if the menu list explicitly specifies either a border or background color.
-    // Otherwise, RenderThemeBlackBerry::paintMenuList is called. We need to fit the arrow button with the border box
-    // of the menu-list so as to not occlude the custom border.
-
-    // We compute menuListRoundedRectangle with respect to the dimensions of the entire menu-list control (i.e. rect) and
-    // its border radius so that we clip the contour of the arrow button (when we paint it below) to match the contour of
-    // the control.
-    Path menuListRoundedRectangle = roundedRectForBorder(object, rect);
-
-    // 1. Paint the background of the entire control.
-    Color fillColor = object->style()->visitedDependentColor(CSSPropertyBackgroundColor);
-    if (!fillColor.isValid())
-        fillColor = Color::white;
-    paintMenuListBackground(info.context, menuListRoundedRectangle, fillColor);
-
-    // 2. Paint the background of the button and its arrow.
-    IntRect bounds = IntRect(rect.x() + object->style()->borderLeftWidth(),
-                         rect.y() + object->style()->borderTopWidth(),
-                         rect.width() - object->style()->borderLeftWidth() - object->style()->borderRightWidth(),
-                         rect.height() - object->style()->borderTopWidth() - object->style()->borderBottomWidth());
-
-    IntRect arrowButtonRectangle = computeMenuListArrowButtonRect(bounds); // Fit the arrow button within the border box of the menu-list.
-    paintMenuListButtonGradientAndArrow(info.context, object, arrowButtonRectangle, menuListRoundedRectangle);
-    return false;
+    return paintMenuList(object, info, rect);
 }
 
 void RenderThemeBlackBerry::adjustSliderThumbSize(RenderStyle* style, Element* element) const
@@ -699,77 +716,67 @@ bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const Pai
 bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect,
         RGBA32 strokeColorStart, RGBA32 strokeColorEnd, RGBA32 fillColorStart, RGBA32 fillColorEnd)
 {
-    FloatSize smallCorner(smallRadius, smallRadius);
-
+    ASSERT(info.context);
     info.context->save();
-    info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeThickness(lineWidth);
+    GraphicsContext* context = info.context;
 
-    info.context->setStrokeGradient(createLinearGradient(strokeColorStart, strokeColorEnd, rect.maxXMinYCorner(), rect. maxXMaxYCorner()));
-    info.context->setFillGradient(createLinearGradient(fillColorStart, fillColorEnd, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+    static RefPtr<Image> disabled, inactive;
+    if (!disabled) {
+        disabled = loadImage("core_slider_fill_disabled");
+        inactive = loadImage("core_slider_bg");
+    }
 
-    Path path;
-    path.addRoundedRect(rect, smallCorner);
-    info.context->fillPath(path);
+    if (isEnabled(object))
+        drawThreeSlice(context, rect, inactive.get(), mediumSlice);
+    else
+        drawThreeSlice(context, rect, disabled.get(), (smallSlice - 1));
 
-    info.context->restore();
+    context->restore();
     return false;
 }
 
 bool RenderThemeBlackBerry::paintSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    FloatSize largeCorner(largeRadius, largeRadius);
-
+    ASSERT(info.context);
     info.context->save();
-    info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeThickness(lineWidth);
+    GraphicsContext* context = info.context;
 
-    if (isPressed(object) || isHovered(object)) {
-        info.context->setStrokeGradient(createLinearGradient(hoverTopOutline, hoverBottomOutline, rect.maxXMinYCorner(), rect. maxXMaxYCorner()));
-        info.context->setFillGradient(createLinearGradient(hoverTop, hoverBottom, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+    static RefPtr<Image> disabled, inactive, pressed, aura;
+    if (!disabled) {
+        disabled = loadImage("core_slider_handle_disabled");
+        inactive = loadImage("core_slider_handle");
+        pressed = loadImage("core_slider_handle_pressed");
+        aura = loadImage("core_slider_aura");
+    }
+
+    FloatRect tmpRect(rect);
+    float length = std::max(tmpRect.width(), tmpRect.height());
+    if (tmpRect.width() > tmpRect.height()) {
+        tmpRect.setY(tmpRect.y() - (length - tmpRect.height()) / 2);
+        tmpRect.setHeight(length);
     } else {
-        info.context->setStrokeGradient(createLinearGradient(regularTopOutline, regularBottomOutline, rect.maxXMinYCorner(), rect. maxXMaxYCorner()));
-        info.context->setFillGradient(createLinearGradient(regularTop, regularBottom, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+        tmpRect.setX(tmpRect.x() - (length - tmpRect.width()) / 2);
+        tmpRect.setWidth(length);
     }
 
-    Path path;
-    path.addRoundedRect(rect, largeCorner);
-    info.context->fillPath(path);
+    float auraHeight = length * auraRatio;
+    float auraWidth = auraHeight;
+    float auraX = tmpRect.x() - (auraWidth - tmpRect.width()) / 2;
+    float auraY = tmpRect.y() - (auraHeight - tmpRect.height()) / 2;
+    FloatRect auraRect(auraX, auraY, auraWidth, auraHeight);
 
-    bool isVertical = rect.width() > rect.height();
-    IntPoint startPoint(rect.x() + (isVertical ? 5 : 2), rect.y() + (isVertical ? 2 : 5));
-    IntPoint endPoint(rect.x() + (isVertical ? 20 : 2), rect.y() + (isVertical ? 2 : 20));
-    const int lineOffset = 2;
-    const int shadowOffset = 1;
-
-    for (int i = 0; i < 3; i++) {
-        if (isVertical) {
-            startPoint.setY(startPoint.y() + lineOffset);
-            endPoint.setY(endPoint.y() + lineOffset);
+    if (!isEnabled(object))
+        drawControl(context, tmpRect, disabled.get());
+    else {
+        if (isPressed(object) || isHovered(object) || isFocused(object)) {
+            drawControl(context, tmpRect, pressed.get());
+            drawControl(context, auraRect, aura.get());
         } else {
-            startPoint.setX(startPoint.x() + lineOffset);
-            endPoint.setX(endPoint.x() + lineOffset);
+            drawControl(context, tmpRect, inactive.get());
         }
-        if (isPressed(object) || isHovered(object))
-            info.context->setStrokeColor(dragRollLight, ColorSpaceDeviceRGB);
-        else
-            info.context->setStrokeColor(dragRegularLight, ColorSpaceDeviceRGB);
-        info.context->drawLine(startPoint, endPoint);
-
-        if (isVertical) {
-            startPoint.setY(startPoint.y() + shadowOffset);
-            endPoint.setY(endPoint.y() + shadowOffset);
-        } else {
-            startPoint.setX(startPoint.x() + shadowOffset);
-            endPoint.setX(endPoint.x() + shadowOffset);
-        }
-        if (isPressed(object) || isHovered(object))
-            info.context->setStrokeColor(dragRollDark, ColorSpaceDeviceRGB);
-        else
-            info.context->setStrokeColor(dragRegularDark, ColorSpaceDeviceRGB);
-        info.context->drawLine(startPoint, endPoint);
     }
-    info.context->restore();
+
+    context->restore();
     return false;
 }
 

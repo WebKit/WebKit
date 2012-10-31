@@ -105,7 +105,6 @@ private:
     RenderThemeBlackBerry();
     void setButtonStyle(RenderStyle*) const;
 
-    void paintMenuListButtonGradientAndArrow(GraphicsContext*, RenderObject*, IntRect buttonRect, const Path& clipPath);
     bool paintTextFieldOrTextAreaOrSearchField(RenderObject*, const PaintInfo&, const IntRect&);
     bool paintSliderTrackRect(RenderObject*, const PaintInfo&, const IntRect&);
     bool paintSliderTrackRect(RenderObject*, const PaintInfo&, const IntRect&, RGBA32 strokeColorStart,
