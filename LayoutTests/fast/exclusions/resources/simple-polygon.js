@@ -38,49 +38,60 @@ function subpixelRound(f) {
 }
 
 // Return two X intercepts of the horizontal line at y. We're assuming that the polygon
-// 0 or 2 intercepts for all y.Of course this isn't true for polygons in general,
+// has 0 or 2 intercepts for all y. Of course this isn't true for polygons in general,
 // just the ones used by the test cases supported by this file.
 
 function polygonXIntercepts(polygon, y) {
     var vertices = polygon.vertices;
-    var vertex = null;  // first intersecting non-horizontal edge vertex, vertex.y == y
-    var xIntercepts = [];
+    var foundXIntercept = false;
+    var interceptsMinX, interceptsMaxX;
 
-    for(var i = 0; i < vertices.length && xIntercepts.length < 2; i++) {
+    for(var i = 0; i < vertices.length; i++) {
         var v1 = vertices[i];
         var v2 = vertices[(i + 1) % vertices.length];
 
-        if (vertex == v1 || vertex == v2)
+        if (Math.max(v1.y, v2.y) < y || Math.min(v1.y, v2.y) > y)
             continue;
 
-        var minY = Math.min(v1.y, v2.y);
-        var maxY = Math.max(v1.y, v2.y);
+        if (v1.y == y && v2.y == y) {  // horizontal edge 
+            if (y != polygon.maxY)
+                continue;
 
-        if (maxY < y || minY > y)
-            continue;
-
-        if (minY == maxY)
-            return [v1.x, v2.x];
-
-        if (v1.y == y) {
-            xIntercepts.push(v1.x);
-            if (!vertex)
-                vertex = v1;
-        }
-        else if (v2.y == y) {
-            xIntercepts.push(v2.x);
-            if (!vertex)
-                vertex = v2;
+            if (!foundXIntercept) {
+                interceptsMinX = Math.min(v1.x, v2.x);
+                interceptsMaxX = Math.max(v1.x, v2.x);
+                foundXIntercept = true;
+            }
+            else {
+                interceptsMinX = Math.min(v1.x, v2.x, interceptsMinX);
+                interceptsMaxX = Math.max(v1.x, v2.x, interceptsMaxX);
+            }
         }
         else {
-            xIntercepts.push( ((y - v1.y) * (v2.x - v1.x) / (v2.y - v1.y)) + v1.x );
+            var interceptX;
+
+            if (v1.y == y) 
+                interceptX = v1.x;
+            else if (v2.y == y) 
+                interceptX = v2.x;
+            else
+                interceptX = ((y - v1.y) * (v2.x - v1.x) / (v2.y - v1.y)) + v1.x;
+
+            if (!foundXIntercept) {
+                interceptsMinX = interceptsMaxX = interceptX;
+                foundXIntercept = true;
+            }
+            else {
+                interceptsMinX = Math.min(interceptX, interceptsMinX);
+                interceptsMaxX = Math.max(interceptX, interceptsMaxX);
+            }
         }
     }
 
-    if (xIntercepts.length != 2)
+    if (!foundXIntercept)
         return [];
 
-    return [subpixelRound(Math.min.apply(null, xIntercepts)), Math.floor(Math.max.apply(null, xIntercepts))];
+    return [subpixelRound(interceptsMinX), Math.floor(interceptsMaxX)];
 }
 
 function polygonLineIntercepts(polygon, y, lineHeight) {

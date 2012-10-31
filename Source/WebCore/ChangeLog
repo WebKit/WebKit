@@ -1,3 +1,31 @@
+2012-10-30  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Multiple segment polygon layout does not get all segments
+        https://bugs.webkit.org/show_bug.cgi?id=100039
+
+        Reviewed by Dirk Schulze.
+
+        Corrected the algorithm for computing included polygon intervals for rectilinear polygons,
+        and polygons with horizontal edges in general.
+
+        Tests: fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-001.html
+               fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-002.html
+
+        * rendering/ExclusionPolygon.cpp: Removed some internal dead code related to the no-longer-used sortedEdgesMinY Vector.
+        (WebCore::ExclusionPolygon::ExclusionPolygon): Initialize new ExclusionPolygonEdge edgeIndex field.
+        (WebCore::getVertexIntersectionVertices): Return the previous, next, and target vertex indices for a vertex intersection.
+        (WebCore::ExclusionPolygon::computeXIntersections): Refactored the core of this method to improve handling of horizontal edges.
+        (WebCore::ExclusionPolygon::computeEdgeIntersections): Ignore zero-width edges.
+        * rendering/ExclusionPolygon.h: Removed the rightVertexY() method, since it's no longer used.
+        (WebCore::ExclusionPolygon::edgeAt): New method.
+        (WebCore::ExclusionPolygon::numberOfEdges): New method.
+        (ExclusionPolygon): Added support for retrieving edges.
+        (WebCore::ExclusionPolygonEdge::vertex1): Use vertex1Index.
+        (WebCore::ExclusionPolygonEdge::vertex2): Use vertex2Index.
+        (ExclusionPolygonEdge): Renamed index1, index2 fields to vertex1Index, vertex2Index.
+        (WebCore::ExclusionPolygonEdge::previousEdge): New method.
+        (WebCore::ExclusionPolygonEdge::nextEdge): New method.
+
 2012-10-30  Chris Evans  <cevans@google.com>
 
         Improve performance of MaskPtr.

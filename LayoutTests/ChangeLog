@@ -1,3 +1,21 @@
+2012-10-30  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Multiple segment polygon layout does not get all segments
+        https://bugs.webkit.org/show_bug.cgi?id=100039
+
+        Reviewed by Dirk Schulze.
+
+        Added tests for CSS Exclusion shape-inside polygons with horizontal edges.
+        Corrected the simple-polygon.js code for computing a polygon's included intervals.
+
+        * fast/exclusions/resources/simple-polygon.js:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-001-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-001.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-002-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-002.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-004-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-004.html:
+
 2012-10-30  Kenichi Ishibashi  <bashi@chromium.org>
 
         local(Helvetica) in src descriptor prevent fallback

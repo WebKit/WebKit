@@ -47,11 +47,6 @@ struct EdgeIntersection {
     EdgeIntersectionType type;
 };
 
-static bool compareEdgeMinY(const ExclusionPolygonEdge* e1, const ExclusionPolygonEdge* e2)
-{
-    return e1->minY() < e2->minY();
-}
-
 ExclusionPolygon::ExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, WindRule fillRule)
     : ExclusionShape()
     , m_vertices(vertices)
@@ -60,7 +55,6 @@ ExclusionPolygon::ExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, Win
     unsigned nVertices = numberOfVertices();
     m_edges.resize(nVertices);
     m_empty = nVertices < 3;
-    Vector<ExclusionPolygonEdge*> sortedEdgesMinY(nVertices);
 
     if (nVertices)
         m_boundingBox.setLocation(vertexAt(0));
@@ -69,13 +63,10 @@ ExclusionPolygon::ExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, Win
         const FloatPoint& vertex = vertexAt(i);
         m_boundingBox.extend(vertex);
         m_edges[i].polygon = this;
-        m_edges[i].index1 = i;
-        m_edges[i].index2 = (i + 1) % nVertices;
-
-        sortedEdgesMinY[i] = &m_edges[i];
+        m_edges[i].vertexIndex1 = i;
+        m_edges[i].vertexIndex2 = (i + 1) % nVertices;
+        m_edges[i].edgeIndex = i;
     }
-
-    std::sort(sortedEdgesMinY.begin(), sortedEdgesMinY.end(), WebCore::compareEdgeMinY);
 
     for (unsigned i = 0; i < m_edges.size(); i++) {
         ExclusionPolygonEdge* edge = &m_edges[i];
@@ -118,15 +109,27 @@ static bool computeXIntersection(const ExclusionPolygonEdge* edgePointer, float 
     return true;
 }
 
-float ExclusionPolygon::rightVertexY(unsigned index) const
+static inline bool getVertexIntersectionVertices(const EdgeIntersection& intersection, FloatPoint& prevVertex, FloatPoint& thisVertex, FloatPoint& nextVertex)
 {
-    unsigned nVertices = numberOfVertices();
-    const FloatPoint& vertex1 = vertexAt((index + 1) % nVertices);
-    const FloatPoint& vertex2 = vertexAt((index - 1) % nVertices);
+    if (intersection.type != VertexMinY && intersection.type != VertexMaxY)
+        return false;
 
-    if (vertex1.x() == vertex2.x())
-        return vertex1.y() > vertex2.y() ? vertex1.y() : vertex2.y();
-    return vertex1.x() > vertex2.x() ? vertex1.y() : vertex2.y();
+    ASSERT(intersection.edge && intersection.edge->polygon);
+    const ExclusionPolygon& polygon = *(intersection.edge->polygon);
+    const ExclusionPolygonEdge& thisEdge = *(intersection.edge);
+
+    if ((intersection.type == VertexMinY && (thisEdge.vertex1().y() < thisEdge.vertex2().y()))
+        || (intersection.type == VertexMaxY && (thisEdge.vertex1().y() > thisEdge.vertex2().y()))) {
+        prevVertex = polygon.vertexAt(thisEdge.previousEdge().vertexIndex2);
+        thisVertex = polygon.vertexAt(thisEdge.vertexIndex1);
+        nextVertex = polygon.vertexAt(thisEdge.vertexIndex2);
+    } else {
+        prevVertex = polygon.vertexAt(thisEdge.vertexIndex1);
+        thisVertex = polygon.vertexAt(thisEdge.vertexIndex2);
+        nextVertex = polygon.vertexAt(thisEdge.nextEdge().vertexIndex1);
+    }
+
+    return true;
 }
 
 static bool appendIntervalX(float x, bool inside, Vector<ExclusionInterval>& result)
@@ -155,7 +158,7 @@ void ExclusionPolygon::computeXIntersections(float y, Vector<ExclusionInterval>&
     EdgeIntersection intersection;
     for (unsigned i = 0; i < overlappingEdges.size(); i++) {
         ExclusionPolygonEdge* edge = static_cast<ExclusionPolygonEdge*>(overlappingEdges[i].data());
-        if (computeXIntersection(edge, y, intersection))
+        if (computeXIntersection(edge, y, intersection) && intersection.type != VertexYBoth)
             intersections.append(intersection);
     }
     if (intersections.size() < 2)
@@ -169,7 +172,6 @@ void ExclusionPolygon::computeXIntersections(float y, Vector<ExclusionInterval>&
 
     while (index < intersections.size()) {
         const EdgeIntersection& thisIntersection = intersections[index];
-
         if (index + 1 < intersections.size()) {
             const EdgeIntersection& nextIntersection = intersections[index + 1];
             if ((thisIntersection.point.x() == nextIntersection.point.x()) && (thisIntersection.type == VertexMinY || thisIntersection.type == VertexMaxY)) {
@@ -177,9 +179,7 @@ void ExclusionPolygon::computeXIntersections(float y, Vector<ExclusionInterval>&
                     // Skip pairs of intersections whose types are VertexMaxY,VertexMaxY and VertexMinY,VertexMinY.
                     index += 2;
                 } else {
-                    // Replace pairs of intersections whose types are VertexMinY,VertexMaxY or VertexMaxY,VertexMinY with one VertexMinY intersection.
-                    if (nextIntersection.type == VertexMaxY)
-                        intersections[index + 1] = thisIntersection;
+                    // Replace pairs of intersections whose types are VertexMinY,VertexMaxY or VertexMaxY,VertexMinY with one intersection.
                     index++;
                 }
                 continue;
@@ -187,22 +187,32 @@ void ExclusionPolygon::computeXIntersections(float y, Vector<ExclusionInterval>&
         }
 
         const ExclusionPolygonEdge& thisEdge = *thisIntersection.edge;
-        bool crossing = !windCount;
+        bool evenOddCrossing = !windCount;
 
         if (fillRule() == RULE_EVENODD) {
             windCount += (thisEdge.vertex2().y() > thisEdge.vertex1().y()) ? 1 : -1;
-            crossing = crossing || !windCount;
+            evenOddCrossing = evenOddCrossing || !windCount;
         }
 
-        if ((thisIntersection.type == Normal) || (thisIntersection.type == VertexMinY)) {
-            if (crossing)
+        if (evenOddCrossing) {
+            bool edgeCrossing = false;
+            if (thisIntersection.type == Normal || !inside || index == intersections.size() - 1)
+                edgeCrossing = true;
+            else {
+                FloatPoint prevVertex;
+                FloatPoint thisVertex;
+                FloatPoint nextVertex;
+
+                if (getVertexIntersectionVertices(thisIntersection, prevVertex, thisVertex, nextVertex)) {
+                    if (prevVertex.y() == y)
+                        edgeCrossing =  (thisVertex.x() > prevVertex.x()) ? nextVertex.y() > y : nextVertex.y() < y;
+                    else
+                        edgeCrossing = (nextVertex.y() != y);
+                }
+            }
+            if (edgeCrossing)
                 inside = appendIntervalX(thisIntersection.point.x(), inside, result);
-        } else if (thisIntersection.type == VertexMaxY) {
-            int vertexIndex = (thisEdge.vertex2().y() > thisEdge.vertex1().y()) ? thisEdge.index2 : thisEdge.index1;
-            if (crossing && rightVertexY(vertexIndex) > y)
-                inside = appendIntervalX(thisEdge.maxX(), inside, result);
-        } else if (thisIntersection.type == VertexYBoth)
-            result.append(ExclusionInterval(thisEdge.minX(), thisEdge.maxX()));
+        }
 
         index++;
     }
@@ -235,7 +245,8 @@ void ExclusionPolygon::computeEdgeIntersections(float y1, float y2, Vector<Exclu
         if (x1 > x2)
             std::swap(x1, x2);
 
-        result.append(ExclusionInterval(x1, x2));
+        if (x2 > x1)
+            result.append(ExclusionInterval(x1, x2));
     }
 
     sortExclusionIntervals(result);

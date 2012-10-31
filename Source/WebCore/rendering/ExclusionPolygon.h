@@ -59,13 +59,15 @@ public:
     unsigned numberOfVertices() const { return m_vertices->size(); }
     WindRule fillRule() const { return m_fillRule; }
 
+    const ExclusionPolygonEdge& edgeAt(unsigned index) const { return m_edges[index]; }
+    unsigned numberOfEdges() const { return m_edges.size(); }
+
     virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return internalToLogicalBoundingBox(m_boundingBox); }
     virtual bool isEmpty() const OVERRIDE { return m_empty; }
     virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
     virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
 
 private:
-    float rightVertexY(unsigned) const;
     void computeXIntersections(float y, Vector<ExclusionInterval>&) const;
     void computeEdgeIntersections(float minY, float maxY, Vector<ExclusionInterval>&) const;
 
@@ -87,13 +89,25 @@ struct ExclusionPolygonEdge {
     const FloatPoint& vertex1() const
     {
         ASSERT(polygon);
-        return polygon->vertexAt(index1);
+        return polygon->vertexAt(vertexIndex1);
     }
 
     const FloatPoint& vertex2() const
     {
         ASSERT(polygon);
-        return polygon->vertexAt(index2);
+        return polygon->vertexAt(vertexIndex2);
+    }
+
+    const ExclusionPolygonEdge& previousEdge() const
+    {
+        ASSERT(polygon && polygon->numberOfEdges() > 1);
+        return polygon->edgeAt((edgeIndex + polygon->numberOfEdges() - 2) % polygon->numberOfEdges());
+    }
+
+    const ExclusionPolygonEdge& nextEdge() const
+    {
+        ASSERT(polygon && polygon->numberOfEdges() > 1);
+        return polygon->edgeAt((edgeIndex + 1) % polygon->numberOfEdges());
     }
 
     float minX() const { return std::min(vertex1().x(), vertex2().x()); }
@@ -102,8 +116,9 @@ struct ExclusionPolygonEdge {
     float maxY() const { return std::max(vertex1().y(), vertex2().y()); }
 
     const ExclusionPolygon* polygon;
-    unsigned index1;
-    unsigned index2;
+    unsigned vertexIndex1;
+    unsigned vertexIndex2;
+    unsigned edgeIndex;
 };
 
 // These structures are used by PODIntervalTree for debugging.1
