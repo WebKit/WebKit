@@ -1601,7 +1601,7 @@ bool DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<Event
             controller->addListener(this);
     } else if (eventType == eventNames().deviceorientationEvent && RuntimeEnabledFeatures::deviceOrientationEnabled()) {
         if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
-            controller->addDeviceEventListener(this);
+            controller->addListener(this);
     }
 #endif
 
@@ -1630,7 +1630,7 @@ bool DOMWindow::removeEventListener(const AtomicString& eventType, EventListener
             controller->removeListener(this);
     } else if (eventType == eventNames().deviceorientationEvent) {
         if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
-            controller->removeDeviceEventListener(this);
+            controller->removeListener(this);
     }
 #endif
 
@@ -1687,7 +1687,7 @@ void DOMWindow::removeAllEventListeners()
     if (DeviceMotionController* controller = DeviceMotionController::from(page()))
         controller->removeAllListeners(this);
     if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
-        controller->removeAllDeviceEventListeners(this);
+        controller->removeAllListeners(this);
 #endif
 
     removeAllUnloadEventListeners(this);

@@ -1,6 +1,5 @@
 /*
  * Copyright 2010, The Android Open Source Project
- * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,18 +26,18 @@
 #ifndef DeviceOrientationClient_h
 #define DeviceOrientationClient_h
 
-#include "DeviceClient.h"
-
 namespace WebCore {
 
 class DeviceOrientationController;
 class DeviceOrientationData;
 class Page;
 
-class DeviceOrientationClient : public DeviceClient {
+class DeviceOrientationClient {
 public:
     virtual ~DeviceOrientationClient() {}
     virtual void setController(DeviceOrientationController*) = 0;
+    virtual void startUpdating() = 0;
+    virtual void stopUpdating() = 0;
     virtual DeviceOrientationData* lastOrientation() const = 0;
     virtual void deviceOrientationControllerDestroyed() = 0;
 };

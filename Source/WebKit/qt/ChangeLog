@@ -1,3 +1,15 @@
+2012-10-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133016.
+        http://trac.webkit.org/changeset/133016
+        https://bugs.webkit.org/show_bug.cgi?id=100856
+
+        broke compile-webkit on several bots (Requested by podivilov
+        on #webkit).
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setMockDeviceOrientation):
+
 2012-10-31  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add DeviceController base-class to remove duplication of DeviceXXXControler

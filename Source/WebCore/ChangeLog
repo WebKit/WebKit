@@ -1,3 +1,52 @@
+2012-10-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133016.
+        http://trac.webkit.org/changeset/133016
+        https://bugs.webkit.org/show_bug.cgi?id=100856
+
+        broke compile-webkit on several bots (Requested by podivilov
+        on #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceOrientationClient.h:
+        (DeviceOrientationClient):
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        (WebCore):
+        (WebCore::DeviceOrientationController::~DeviceOrientationController):
+        (WebCore::DeviceOrientationController::timerFired):
+        (WebCore::DeviceOrientationController::addListener):
+        (WebCore::DeviceOrientationController::removeListener):
+        (WebCore::DeviceOrientationController::removeAllListeners):
+        (WebCore::DeviceOrientationController::suspendEventsForAllListeners):
+        (WebCore::DeviceOrientationController::resumeEventsForAllListeners):
+        (WebCore::DeviceOrientationController::didChangeDeviceOrientation):
+        (WebCore::DeviceOrientationController::supplementName):
+        * dom/DeviceOrientationController.h:
+        (WebCore):
+        (DeviceOrientationController):
+        (WebCore::DeviceOrientationController::isActive):
+        (WebCore::DeviceOrientationController::client):
+        (WebCore::DeviceOrientationController::from):
+        * dom/Document.cpp:
+        (WebCore::Document::suspendActiveDOMObjects):
+        (WebCore::Document::resumeActiveDOMObjects):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyDeviceOrientationClient::startUpdating):
+        (WebCore::EmptyDeviceOrientationClient::stopUpdating):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * page/DeviceClient.h: Removed.
+        * page/DeviceController.cpp: Removed.
+        * page/DeviceController.h: Removed.
+
 2012-10-31  Antti Koivisto  <antti@apple.com>
 
         Remove stray calls to mutableAttributeData()
