@@ -29,19 +29,20 @@
 #include "WebEvent.h"
 #include "ewk_touch.h"
 #include <Evas.h>
+#include <WebCore/AffineTransform.h>
 
 namespace WebKit {
 
 class WebEventFactory {
 public:
-    static WebMouseEvent createWebMouseEvent(const Evas_Event_Mouse_Down*, const Evas_Point*);
-    static WebMouseEvent createWebMouseEvent(const Evas_Event_Mouse_Up*, const Evas_Point*);
-    static WebMouseEvent createWebMouseEvent(const Evas_Event_Mouse_Move*, const Evas_Point*);
-    static WebWheelEvent createWebWheelEvent(const Evas_Event_Mouse_Wheel*, const Evas_Point*);
+    static WebMouseEvent createWebMouseEvent(const Evas_Event_Mouse_Down*, const WebCore::AffineTransform&, const WebCore::AffineTransform&);
+    static WebMouseEvent createWebMouseEvent(const Evas_Event_Mouse_Up*, const WebCore::AffineTransform&, const WebCore::AffineTransform&);
+    static WebMouseEvent createWebMouseEvent(const Evas_Event_Mouse_Move*, const WebCore::AffineTransform&, const WebCore::AffineTransform&);
+    static WebWheelEvent createWebWheelEvent(const Evas_Event_Mouse_Wheel*, const WebCore::AffineTransform&, const WebCore::AffineTransform&);
     static WebKeyboardEvent createWebKeyboardEvent(const Evas_Event_Key_Down*);
     static WebKeyboardEvent createWebKeyboardEvent(const Evas_Event_Key_Up*);
 #if ENABLE(TOUCH_EVENTS)
-    static WebTouchEvent createWebTouchEvent(Ewk_Touch_Event_Type, const Eina_List*, const Evas_Modifier*, const Evas_Point*, double timestamp);
+    static WebTouchEvent createWebTouchEvent(Ewk_Touch_Event_Type, const Eina_List*, const Evas_Modifier*, const WebCore::AffineTransform&, const WebCore::AffineTransform&, double timestamp);
 #endif
 };
 

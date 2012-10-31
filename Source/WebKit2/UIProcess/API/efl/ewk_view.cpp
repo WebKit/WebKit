@@ -50,6 +50,7 @@
 #include "ewk_settings_private.h"
 #include "ewk_view_private.h"
 #include <Ecore_Evas.h>
+#include <Ecore_X.h>
 #include <WebKit2/WKPageGroup.h>
 #include <wtf/text/CString.h>
 
@@ -168,30 +169,54 @@ static Eina_Bool _ewk_view_smart_focus_out(Ewk_View_Smart_Data* smartData)
     return true;
 }
 
-#if USE(TILED_BACKING_STORE)
-static Evas_Coord_Point mapToWebContent(Ewk_View_Smart_Data* smartData, Evas_Coord_Point point)
+static AffineTransform toDeviceScreenTransform(Ewk_View_Smart_Data* smartData)
 {
-    Evas_Coord_Point result;
-    EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, result);
+    AffineTransform transform;
+    EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, transform);
 
-    result.x = (point.x  - smartData->view.x) / impl->pageViewportControllerClient()->scaleFactor() + smartData->view.x + impl->pageViewportControllerClient()->scrollPosition().x();
-    result.y = (point.y - smartData->view.y) / impl->pageViewportControllerClient()->scaleFactor() + smartData->view.y + impl->pageViewportControllerClient()->scrollPosition().y();
-    return result;
-}
+    int windowGlobalX = 0;
+    int windowGlobalY = 0;
+
+#ifdef HAVE_ECORE_X
+    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
+    Ecore_X_Window window = ecore_evas_software_x11_window_get(ecoreEvas); // Returns 0 if none.
+
+    int x, y; // x, y are relative to parent (in a reparenting window manager).
+    while (window) {
+        ecore_x_window_geometry_get(window, &x, &y, 0, 0);
+        windowGlobalX += x;
+        windowGlobalY += y;
+        window = ecore_x_window_parent_get(window);
+    }
 #endif
+
+    transform.translate(-smartData->view.x, -smartData->view.y);
+    transform.translate(windowGlobalX, windowGlobalY);
+
+    return transform;
+}
+
+static AffineTransform toWebContentTransform(Ewk_View_Smart_Data* smartData)
+{
+    AffineTransform transform;
+    EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, transform);
+
+    transform.translate(-smartData->view.x, -smartData->view.y);
+
+#if USE(TILED_BACKING_STORE)
+    transform.scale(1 / impl->pageViewportControllerClient()->scaleFactor());
+    IntPoint scrollPos = impl->pageViewportControllerClient()->scrollPosition();
+    transform.translate(scrollPos.x(), scrollPos.y());
+#endif
+
+    return transform;
+}
 
 static Eina_Bool _ewk_view_smart_mouse_wheel(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Wheel* wheelEvent)
 {
     EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, false);
 
-    Evas_Point position = {smartData->view.x, smartData->view.y};
-#if USE(TILED_BACKING_STORE)
-    Evas_Event_Mouse_Wheel event(*wheelEvent);
-    event.canvas = mapToWebContent(smartData, event.canvas);
-    impl->page()->handleWheelEvent(NativeWebWheelEvent(&event, &position));
-#else
-    impl->page()->handleWheelEvent(NativeWebWheelEvent(wheelEvent, &position));
-#endif
+    impl->page()->handleWheelEvent(NativeWebWheelEvent(wheelEvent, toWebContentTransform(smartData), toDeviceScreenTransform(smartData)));
     return true;
 }
 
@@ -199,14 +224,7 @@ static Eina_Bool _ewk_view_smart_mouse_down(Ewk_View_Smart_Data* smartData, cons
 {
     EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, false);
 
-    Evas_Point position = {smartData->view.x, smartData->view.y};
-#if USE(TILED_BACKING_STORE)
-    Evas_Event_Mouse_Down event(*downEvent);
-    event.canvas = mapToWebContent(smartData, event.canvas);
-    impl->page()->handleMouseEvent(NativeWebMouseEvent(&event, &position));
-#else
-    impl->page()->handleMouseEvent(NativeWebMouseEvent(downEvent, &position));
-#endif
+    impl->page()->handleMouseEvent(NativeWebMouseEvent(downEvent, toWebContentTransform(smartData), toDeviceScreenTransform(smartData)));
     return true;
 }
 
@@ -214,14 +232,7 @@ static Eina_Bool _ewk_view_smart_mouse_up(Ewk_View_Smart_Data* smartData, const 
 {
     EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, false);
 
-    Evas_Point position = {smartData->view.x, smartData->view.y};
-#if USE(TILED_BACKING_STORE)
-    Evas_Event_Mouse_Up event(*upEvent);
-    event.canvas = mapToWebContent(smartData, event.canvas);
-    impl->page()->handleMouseEvent(NativeWebMouseEvent(&event, &position));
-#else
-    impl->page()->handleMouseEvent(NativeWebMouseEvent(upEvent, &position));
-#endif
+    impl->page()->handleMouseEvent(NativeWebMouseEvent(upEvent, toWebContentTransform(smartData), toDeviceScreenTransform(smartData)));
 
     InputMethodContextEfl* inputMethodContext = impl->inputMethodContext();
     if (inputMethodContext)
@@ -234,14 +245,7 @@ static Eina_Bool _ewk_view_smart_mouse_move(Ewk_View_Smart_Data* smartData, cons
 {
     EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, false);
 
-    Evas_Point position = {smartData->view.x, smartData->view.y};
-#if USE(TILED_BACKING_STORE)
-    Evas_Event_Mouse_Move event(*moveEvent);
-    event.cur.canvas = mapToWebContent(smartData, event.cur.canvas);
-    impl->page()->handleMouseEvent(NativeWebMouseEvent(&event, &position));
-#else
-    impl->page()->handleMouseEvent(NativeWebMouseEvent(moveEvent, &position));
-#endif
+    impl->page()->handleMouseEvent(NativeWebMouseEvent(moveEvent, toWebContentTransform(smartData), toDeviceScreenTransform(smartData)));
     return true;
 }
 
@@ -882,10 +886,7 @@ Eina_Bool ewk_view_feed_touch_event(Evas_Object* ewkView, Ewk_Touch_Event_Type t
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, false);
 
-    Evas_Point position = { smartData->view.x, smartData->view.y };
-    // FIXME: Touch points do not take scroll position and scale into account when 
-    // TILED_BACKING_STORE is enabled.
-    impl->page()->handleTouchEvent(NativeWebTouchEvent(type, points, modifiers, &position, ecore_time_get()));
+    impl->page()->handleTouchEvent(NativeWebTouchEvent(type, points, modifiers, toWebContentTransform(smartData), toDeviceScreenTransform(smartData), ecore_time_get()));
 
     return true;
 #else

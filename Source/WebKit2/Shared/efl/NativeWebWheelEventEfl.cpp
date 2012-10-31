@@ -30,8 +30,8 @@
 
 namespace WebKit {
 
-NativeWebWheelEvent::NativeWebWheelEvent(const Evas_Event_Mouse_Wheel* event, const Evas_Point* position)
-    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, position))
+NativeWebWheelEvent::NativeWebWheelEvent(const Evas_Event_Mouse_Wheel* event, const WebCore::AffineTransform& toWebContent, const WebCore::AffineTransform& toDeviceScreen)
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, toWebContent, toDeviceScreen))
     , m_nativeEvent(event)
 {
 }

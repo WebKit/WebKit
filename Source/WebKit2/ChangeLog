@@ -1,3 +1,50 @@
+2012-10-31  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [WK2/EFL] Make sure all our events are transformed correctly
+        https://bugs.webkit.org/show_bug.cgi?id=100836
+
+        Reviewed by Alexis Menard.
+
+        When moving to using the tiled backing store, we need to
+        transform our events before sending them to the web process.
+
+        We needed to do that before as well, as the webkit view
+        doesn't have to be positioned at (0,0), but it was done in
+        a hacking way in the WebEvent creating.
+
+        Now we generate two transforms, one for transforming points
+        to the web content, and one for transforming them into the
+        device screen coordinate system.
+
+        This fixes the global position which was wrong before.
+
+        * Shared/NativeWebMouseEvent.h:
+        (NativeWebMouseEvent):
+        * Shared/NativeWebTouchEvent.h:
+        (NativeWebTouchEvent):
+        * Shared/NativeWebWheelEvent.h:
+        (NativeWebWheelEvent):
+        * Shared/efl/NativeWebMouseEventEfl.cpp:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/efl/NativeWebTouchEventEfl.cpp:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/efl/NativeWebWheelEventEfl.cpp:
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/efl/WebEventFactory.h:
+        (WebEventFactory):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (toDeviceScreenTransform):
+        (toWebContentTransform):
+        (_ewk_view_smart_mouse_wheel):
+        (_ewk_view_smart_mouse_down):
+        (_ewk_view_smart_mouse_up):
+        (_ewk_view_smart_mouse_move):
+        (ewk_view_feed_touch_event):
+
 2012-10-31  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [WK2] Change the scope of locking in CoreIPC::Connection class.

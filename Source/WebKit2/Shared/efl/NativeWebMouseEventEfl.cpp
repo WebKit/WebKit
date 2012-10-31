@@ -30,20 +30,20 @@
 
 namespace WebKit {
 
-NativeWebMouseEvent::NativeWebMouseEvent(const Evas_Event_Mouse_Down* event, const Evas_Point* position)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, position))
+NativeWebMouseEvent::NativeWebMouseEvent(const Evas_Event_Mouse_Down* event, const WebCore::AffineTransform& toWebContent, const WebCore::AffineTransform& toDeviceScreen)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, toWebContent, toDeviceScreen))
     , m_nativeEvent(event)
 {
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(const Evas_Event_Mouse_Up* event, const Evas_Point* position)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, position))
+NativeWebMouseEvent::NativeWebMouseEvent(const Evas_Event_Mouse_Up* event, const WebCore::AffineTransform& toWebContent, const WebCore::AffineTransform& toDeviceScreen)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, toWebContent, toDeviceScreen))
     , m_nativeEvent(event)
 {
 }
 
-NativeWebMouseEvent::NativeWebMouseEvent(const Evas_Event_Mouse_Move* event, const Evas_Point* position)
-    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, position))
+NativeWebMouseEvent::NativeWebMouseEvent(const Evas_Event_Mouse_Move* event, const WebCore::AffineTransform& toWebContent, const WebCore::AffineTransform& toDeviceScreen)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, toWebContent, toDeviceScreen))
     , m_nativeEvent(event)
 {
 }
