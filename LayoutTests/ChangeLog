@@ -1,3 +1,12 @@
+2012-10-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unreviewed, unskip media/video-seek-past-end-playing.html on WK2.
+
+        It has been passing on the WK2 bot for quite a while, so unskip
+        and hope for the best.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-10-31  Keishi Hattori  <keishi@webkit.org>
 
         Calendar picker can flicker when opened from the suggestion picker
