@@ -949,33 +949,6 @@ unsigned Node::nodeIndex() const
     return count;
 }
 
-static void removeNodeListCacheIfPossible(Node* node, NodeRareData* data)
-{
-    if (!data->nodeLists()->isEmpty())
-        return;
-    data->clearNodeLists();
-    node->treeScope()->removeNodeListCache();
-}
-
-// FIXME: Move this function to Document
-void Node::registerDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
-{
-    ASSERT(isDocumentNode());
-    NodeRareData* data = ensureRareData();
-    data->ensureNodeLists(this)->m_listsInvalidatedAtDocument.add(list);
-}
-
-// FIXME: Move this function to Document
-void Node::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
-{
-    ASSERT(isDocumentNode());
-    ASSERT(hasRareData());
-    ASSERT(rareData()->nodeLists());
-    NodeRareData* data = rareData();
-    data->nodeLists()->m_listsInvalidatedAtDocument.remove(list);
-    removeNodeListCacheIfPossible(this, data);
-}
-
 void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& attrName)
 {
     if (hasRareData() && isAttributeNode()) {
@@ -994,6 +967,11 @@ void Node::invalidateNodeListsCacheAfterAttributeChanged(const QualifiedName& at
         && attrName != nameAttr
         && attrName != forAttr)
         return;
+
+    if (document()->hasRareData()) {
+        if (NodeListsNodeData* nodeLists = document()->rareData()->nodeLists())
+            nodeLists->invalidateCachesForDocument();
+    }
 
     if (!treeScope()->hasNodeListCaches())
         return;
@@ -1014,6 +992,11 @@ void Node::invalidateNodeListsCacheAfterChildrenChanged()
 {
     if (hasRareData())
         rareData()->clearChildNodeListCache();
+
+    if (document()->hasRareData()) {
+        if (NodeListsNodeData* nodeLists = document()->rareData()->nodeLists())
+            nodeLists->invalidateCachesForDocument();
+    }
 
     if (!treeScope()->hasNodeListCaches())
         return;
@@ -2307,13 +2290,15 @@ void NodeListsNodeData::invalidateCaches()
     invalidateCachesThatDependOnAttributes();
 }
 
-void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
+void NodeListsNodeData::invalidateCachesForDocument()
 {
-    // Used by labels and region node lists on document.
     NodeListsNodeData::NodeListSet::iterator end = m_listsInvalidatedAtDocument.end();
     for (NodeListsNodeData::NodeListSet::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it)
         (*it)->invalidateCache();
+}
 
+void NodeListsNodeData::invalidateCachesThatDependOnAttributes()
+{
     ClassNodeListCache::iterator classCacheEnd = m_classNodeListCache.end();
     for (ClassNodeListCache::iterator it = m_classNodeListCache.begin(); it != classCacheEnd; ++it)
         it->second->invalidateCache();

@@ -749,6 +749,9 @@ public:
     bool isPendingStyleRecalc() const;
     void styleRecalcTimerFired(Timer<Document>*);
 
+    void registerDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
+    void unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList*);
+
     void attachNodeIterator(NodeIterator*);
     void detachNodeIterator(NodeIterator*);
     void moveNodeIteratorsToNewDocument(Node*, Document*);

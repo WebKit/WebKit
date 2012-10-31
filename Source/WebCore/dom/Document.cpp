@@ -113,6 +113,7 @@
 #include "NewXMLDocumentParser.h"
 #include "NodeFilter.h"
 #include "NodeIterator.h"
+#include "NodeRareData.h"
 #include "NodeWithIndex.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -3764,6 +3765,18 @@ void Document::setCSSTarget(Element* n)
     m_cssTarget = n;
     if (n)
         n->setNeedsStyleRecalc();
+}
+
+void Document::registerDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
+{
+    ensureRareData()->ensureNodeLists(this)->m_listsInvalidatedAtDocument.add(list);
+}
+
+void Document::unregisterDynamicSubtreeNodeList(DynamicSubtreeNodeList* list)
+{
+    ASSERT(hasRareData());
+    ASSERT(rareData()->nodeLists());
+    rareData()->nodeLists()->m_listsInvalidatedAtDocument.remove(list);
 }
 
 void Document::attachNodeIterator(NodeIterator* ni)
