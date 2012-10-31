@@ -34,3 +34,27 @@ input[type="color"] {
 select {
     border-radius: 0;
 }
+
+::-webkit-validation-bubble-message {
+    padding-left: 10px;
+    padding-right: 10px;
+    background: #fafafa;
+    border-color: #ffffff;
+    border-width: 1px;
+    box-shadow: 2px 2px 4px rgba(100,100,100,0.3), 0 0 4px rgba(100,100,100,0.6);
+    -webkit-border-radius: 4px;
+    top: -1px;
+}
+
+::-webkit-validation-bubble-arrow {
+    left: 40px;
+    top: 3px;
+    background: #fafafa;
+    border-color: #ffffff;
+    border-width: 1px;
+    box-shadow: 0 0 4px rgba(100,100,100,0.6);
+}
+
+::-webkit-validation-bubble-heading {
+    font-weight: normal;
+}

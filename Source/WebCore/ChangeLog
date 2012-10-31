@@ -1,3 +1,19 @@
+2012-10-31  Tiancheng Jiang  <tijiang@rim.com>
+
+        Change bubble message style to BB10 UX spec.
+        https://bugs.webkit.org/show_bug.cgi?id=100862
+
+        Reviewed by Rob Buis.
+
+        RIM PR 198108
+        Internal Reviewed by Otto Cheung.
+        No new tests.
+
+        * css/themeBlackBerry.css:
+        (::-webkit-validation-bubble-message): Added.
+        (::-webkit-validation-bubble-arrow): Added.
+        (::-webkit-validation-bubble-heading): Added.
+
 2012-10-31  Mike West  <mkwst@chromium.org>
 
         Prefer document->addConsoleMessage to document->domWindow->console->addMessage.
