@@ -1,3 +1,29 @@
+2012-10-31  Roger Fong  <roger_fong@apple.com>
+
+        Change PopupMenu positioning on Windows such that behaviour on multiple monitors matches Windows standards.
+        https://bugs.webkit.org/show_bug.cgi?id=100317
+
+        Reviewed by Sam Weinig.
+
+        The existing code determines which screen the popup menu "belongs" to by determining which screen the owning application's hwnd belongs to,
+        where ownership is determined by how much of the hwnd is on which screen.
+        To match what most Windows applications do, the owning screen should be whichever screen the drop down button belongs to.
+        To determine which screen an element belongs to in Windows we need to pass in an hwnd for that element.
+        However, since the drop down button is something that WebKit renders there is no hwnd.
+
+        To remedy this issue, we can temporarily move the popup menu's hwnd to match the position and size of the button,
+        determine the correct screen, and then eventually move it back to the correct final position after the rest of 
+        the calculations have been completed. This is all done in the same function call so no rendering of the popup menu occurs
+        between the temporary and final positionings.
+
+        There's not really a good way of testing popup menus except manually, they're separate hwnds created outside of the WebView.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::monitorFromHwnd):
+        (WebCore):
+        (WebCore::PopupMenuWin::show):
+        (WebCore::PopupMenuWin::calculatePositionAndSize):
+
 2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Added viewport at-rule to the CSS parser and tokenizer
