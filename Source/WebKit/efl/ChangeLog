@@ -1,3 +1,29 @@
+2012-10-31  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][DRT] EventSender requires contextClick implementation
+        https://bugs.webkit.org/show_bug.cgi?id=86091
+
+        Reviewed by Gyuyoung Kim.
+
+        Add a pointer to parent menu in Ewk_Context_Menu_Item and a getter
+        function to allow selecting a context menu item without having
+        parent menu pointer in DumpRenderTree EventSender.
+        Three unit tests added due ewk API changes.
+
+        * ewk/ewk_contextmenu.cpp:
+        (_Ewk_Context_Menu_Item):
+        (ewk_context_menu_item_new):
+        (ewk_context_menu_item_parent_get):
+        (ewk_context_menu_item_append):
+        * ewk/ewk_contextmenu.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_context_menu_get):
+        * ewk/ewk_view.h:
+        * tests/test_ewk_contextmenu.cpp: Added.
+        (TEST_F):
+        * tests/test_ewk_view.cpp:
+        (TEST_F):
+
 2012-10-30  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL] Fix failure to highlight nodes on web inspector

@@ -1335,27 +1335,6 @@ webkit.org/b/82140 inspector/geolocation-error.html [ Failure ]
 webkit.org/b/82140 inspector/geolocation-success.html [ Failure ]
 webkit.org/b/82140 inspector/geolocation-watchPosition.html [ Failure ]
 
-# EFL's EventSender does not implement contextClick yet
-webkit.org/b/86091 editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
-webkit.org/b/86091 editing/selection/5354455-1.html [ Failure ]
-webkit.org/b/86091 editing/selection/button-right-click.html [ Failure ]
-webkit.org/b/86091 editing/selection/context-menu-on-text.html [ Failure ]
-webkit.org/b/86091 editing/selection/context-menu-text-selection.html [ Failure ]
-webkit.org/b/86091 editing/selection/empty-cell-right-click.html [ Failure ]
-webkit.org/b/86091 editing/spelling/context-menu-suggestions.html [ Failure ]
-webkit.org/b/86091 editing/spelling/spellcheck-input-search-crash.html [ Failure ]
-webkit.org/b/86091 fast/events/context-onmousedown-event.html [ Failure ]
-webkit.org/b/86091 fast/events/contextmenu-scrolled-page-with-frame.html [ Failure ]
-webkit.org/b/86091 fast/events/right-click-focus.html [ Failure ]
-webkit.org/b/86091 fast/events/selectstart-prevent-selection-on-right-click.html [ Failure ]
-webkit.org/b/86091 media/context-menu-actions.html [ Failure ]
-webkit.org/b/86091 media/controls-right-click-on-timebar.html [ Failure ]
-webkit.org/b/86091 editing/shadow/rightclick-on-meter-in-shadow-crash.html [ Failure ]
-
-# EFL's EventSender contextClick, needs baselines
-webkit.org/b/86091 editing/selection/5354455-2.html [ Missing ]
-webkit.org/b/86091 fast/events/context-no-deselect.html [ Missing ]
-
 # IETC namespace failures
 webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 
@@ -1676,3 +1655,9 @@ webkit.org/b/99691 gamepad/gamepad-out-of-range-crasher.html [ Failure ]
 
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
+
+# Entering into full screen playback mode fails when triggered by context menu
+Bug(EFL) media/context-menu-actions.html [ Failure ]
+
+# ESC key does not cancel context menu in EFL port
+Bug(EFL) editing/selection/5354455-1.html [ Failure ]

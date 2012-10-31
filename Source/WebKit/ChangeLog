@@ -1,3 +1,14 @@
+2012-10-31  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][DRT] EventSender requires contextClick implementation
+        https://bugs.webkit.org/show_bug.cgi?id=86091
+
+        Reviewed by Gyuyoung Kim.
+
+        Add new unit test file, needed due to ewk API changes.
+
+        * PlatformEfl.cmake:
+
 2012-10-30  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         [BlackBerry] Clean the code of "JavaScriptDebuggerBlackBerry"

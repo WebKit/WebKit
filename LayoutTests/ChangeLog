@@ -1,3 +1,19 @@
+2012-10-31  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][DRT] EventSender requires contextClick implementation
+        https://bugs.webkit.org/show_bug.cgi?id=86091
+
+        Reviewed by Gyuyoung Kim.
+
+        Move contextClick dependent tests to WebKit2 TestExpectations and
+        add new expected results.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/selection/5354455-2-expected.txt: Added.
+        * platform/efl/fast/events/context-no-deselect-expected.txt: Added.
+        * platform/efl/fast/events/context-onmousedown-event-expected.png: Added.
+
 2012-10-30  Nico Weber  <thakis@chromium.org>
 
         [chromium] Add baselines for fast/images/exif-orientation-css.html and exif-orientation-image-document.html

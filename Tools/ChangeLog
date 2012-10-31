@@ -1,3 +1,19 @@
+2012-10-31  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [EFL][DRT] EventSender requires contextClick implementation
+        https://bugs.webkit.org/show_bug.cgi?id=86091
+
+        Reviewed by Gyuyoung Kim.
+
+        Add contextClick for DumpRenderTreeEventSender basing on WebKit GTK
+        implementation.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (getMenuItemTitleCallback):
+        (setMenuItemTitleCallback):
+        (menuItemClickCallback):
+        (contextClickCallback):
+
 2012-10-30  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [WTR] Memory leaks in TestWebKitAPI::didReceiveMessageFromInjectedBundle()

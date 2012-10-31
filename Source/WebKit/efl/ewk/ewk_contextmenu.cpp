@@ -53,6 +53,7 @@ struct _Ewk_Context_Menu_Item {
 
     const char* title; /**< contains the title of the item */
     Ewk_Context_Menu* submenu; /**< contains the pointer to the submenu of the item */
+    Ewk_Context_Menu* parentMenu; /**< contains the pointer to parent menu of the item */
 
     bool checked : 1;
     bool enabled : 1;
@@ -98,14 +99,14 @@ const Eina_List* ewk_context_menu_item_list_get(const Ewk_Context_Menu* menu)
     return menu->items;
 }
 
-Ewk_Context_Menu_Item* ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type,
-                                                 Ewk_Context_Menu_Action action, Ewk_Context_Menu* submenu,
-                                                 const char* title, Eina_Bool checked, Eina_Bool enabled)
+Ewk_Context_Menu_Item* ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Action action, Ewk_Context_Menu* parentMenu,
+    Ewk_Context_Menu* submenu, const char* title, Eina_Bool checked, Eina_Bool enabled)
 {
     Ewk_Context_Menu_Item* item = new Ewk_Context_Menu_Item;
     item->type = type;
     item->action = action;
     item->title = eina_stringshare_add(title);
+    item->parentMenu = parentMenu;
     item->submenu = submenu;
     item->checked = checked;
     item->enabled = enabled;
@@ -203,6 +204,12 @@ Eina_Bool ewk_context_menu_item_enabled_set(Ewk_Context_Menu_Item* item, Eina_Bo
     return true;
 }
 
+Ewk_Context_Menu* ewk_context_menu_item_parent_get(const Ewk_Context_Menu_Item* item)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(item, 0);
+
+    return item->parentMenu;
+}
 
 /* internal methods ****************************************************/
 
@@ -276,9 +283,7 @@ void ewk_context_menu_item_append(Ewk_Context_Menu* menu, const WebCore::Context
     Ewk_Context_Menu_Item_Type type = static_cast<Ewk_Context_Menu_Item_Type>(core.type());
     Ewk_Context_Menu_Action action = static_cast<Ewk_Context_Menu_Action>(core.action());
 
-    Ewk_Context_Menu_Item* menu_item = ewk_context_menu_item_new
-                                           (type, action, 0, core.title().utf8().data(), core.checked(),
-                                           core.enabled());
+    Ewk_Context_Menu_Item* menu_item = ewk_context_menu_item_new(type, action, menu, 0, core.title().utf8().data(), core.checked(), core.enabled());
     EINA_SAFETY_ON_NULL_RETURN(menu_item);
 
     menu->items = eina_list_append(menu->items, menu_item);

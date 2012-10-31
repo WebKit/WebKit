@@ -192,6 +192,7 @@ EAPI const Eina_List            *ewk_context_menu_item_list_get(const Ewk_Contex
  *
  * @param type specifies a type of the item
  * @param action specifies a action of the item
+ * @param parent_menu specifies a parent menu of the item
  * @param submenu specifies a submenu of the item
  * @param title specifies a title of the item
  * @param checked @c EINA_TRUE if the item should be toggled or @c EINA_FALSE if not
@@ -200,7 +201,7 @@ EAPI const Eina_List            *ewk_context_menu_item_list_get(const Ewk_Contex
  *
  * @note The return value @b should @b be freed after use.
  */
-EAPI Ewk_Context_Menu_Item      *ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Action action, Ewk_Context_Menu *submenu, const char *title, Eina_Bool checked, Eina_Bool enabled);
+EAPI Ewk_Context_Menu_Item      *ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Action action, Ewk_Context_Menu *parent_menu, Ewk_Context_Menu *submenu, const char *title, Eina_Bool checked, Eina_Bool enabled);
 
 /**
  * Destroys the item of the context menu object.
@@ -321,6 +322,14 @@ EAPI Eina_Bool                   ewk_context_menu_item_enabled_get(const Ewk_Con
  * @see ewk_context_menu_item_enabled_get
  */
 EAPI Eina_Bool                   ewk_context_menu_item_enabled_set(Ewk_Context_Menu_Item *o, Eina_Bool enabled);
+
+/**
+ * Gets the parent menu for context menu item.
+ *
+ * @param o the context menu item object
+ * @return a context menu object on success or @c NULL on failure
+ */
+EAPI Ewk_Context_Menu           *ewk_context_menu_item_parent_get(const Ewk_Context_Menu_Item *o);
 
 #ifdef __cplusplus
 }

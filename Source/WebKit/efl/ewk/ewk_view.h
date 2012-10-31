@@ -114,6 +114,7 @@
 #ifndef ewk_view_h
 #define ewk_view_h
 
+#include "ewk_contextmenu.h"
 #include "ewk_file_chooser.h"
 #include "ewk_frame.h"
 #include "ewk_history.h"
@@ -2774,6 +2775,14 @@ EAPI Eina_Bool ewk_view_setting_enable_fullscreen_set(Evas_Object *o, Eina_Bool 
  *         @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool ewk_view_setting_enable_fullscreen_get(const Evas_Object *o);
+
+/**
+ * Gets the context menu object.
+ * @param o The view that contains context menu.
+ *
+ * @return context menu structure on success or @c NULL on failure
+ */
+EAPI Ewk_Context_Menu *ewk_view_context_menu_get(const Evas_Object *o);
 
 #ifdef __cplusplus
 }

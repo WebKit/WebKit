@@ -70,3 +70,35 @@ TEST_F(EWKTestBase, ewk_view_setting_enable_fullscreen)
     ASSERT_FALSE(ewk_view_setting_enable_fullscreen_get(webView()));
 #endif
 }
+
+/**
+ * @brief Checking whether function returns proper context menu structure.
+ *
+ * This test creates a context menu and checks if context menu structure
+ * is not NULL;
+ */
+TEST_F(EWKTestBase, ewk_view_context_menu_get)
+{
+    loadUrl();
+
+    Evas* evas = evas_object_evas_get(webView());
+    ASSERT_TRUE(evas);
+
+    Evas_Event_Mouse_Down mouseDown;
+    mouseDown.button = 3;
+    mouseDown.output.x = 0;
+    mouseDown.output.y = 0;
+    mouseDown.canvas.x = 0;
+    mouseDown.canvas.y = 0;
+    mouseDown.data = 0;
+    mouseDown.modifiers = const_cast<Evas_Modifier*>(evas_key_modifier_get(evas));
+    mouseDown.locks = const_cast<Evas_Lock*>(evas_key_lock_get(evas));
+    mouseDown.flags = EVAS_BUTTON_NONE;
+    mouseDown.timestamp = ecore_loop_time_get();
+    mouseDown.event_flags = EVAS_EVENT_FLAG_NONE;
+    mouseDown.dev = 0;
+
+    ASSERT_TRUE(ewk_view_context_menu_forward_event(webView(), &mouseDown));
+
+    ASSERT_TRUE(ewk_view_context_menu_get(webView()));
+}

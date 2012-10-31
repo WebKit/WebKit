@@ -269,6 +269,102 @@ static unsigned modifiersFromJSValue(JSContextRef context, const JSValueRef modi
     return modifier;
 }
 
+static JSValueRef getMenuItemTitleCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
+{
+    Ewk_Context_Menu_Item* item = static_cast<Ewk_Context_Menu_Item*>(JSObjectGetPrivate(object));
+    CString label;
+    if (ewk_context_menu_item_type_get(item) == EWK_SEPARATOR_TYPE)
+        label = "<separator>";
+    else
+        label = ewk_context_menu_item_title_get(item);
+
+    return JSValueMakeString(context, JSStringCreateWithUTF8CString(label.data()));
+}
+
+static bool setMenuItemTitleCallback(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
+{
+    return true;
+}
+
+static JSValueRef menuItemClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    Ewk_Context_Menu_Item* item = static_cast<Ewk_Context_Menu_Item*>(JSObjectGetPrivate(thisObject));
+    ewk_context_menu_item_select(ewk_context_menu_item_parent_get(item), item);
+    return JSValueMakeUndefined(context);
+}
+
+static JSStaticFunction staticMenuItemFunctions[] = {
+    { "click", menuItemClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { 0, 0, 0 }
+};
+
+static JSStaticValue staticMenuItemValues[] = {
+    { "title", getMenuItemTitleCallback, setMenuItemTitleCallback, kJSPropertyAttributeNone },
+    { 0, 0, 0, 0 }
+};
+
+static JSClassRef getMenuItemClass()
+{
+    static JSClassRef menuItemClass = 0;
+
+    if (!menuItemClass) {
+        JSClassDefinition classDefinition = {
+            0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        classDefinition.staticFunctions = staticMenuItemFunctions;
+        classDefinition.staticValues = staticMenuItemValues;
+
+        menuItemClass = JSClassCreate(&classDefinition);
+    }
+
+    return menuItemClass;
+}
+
+static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    Evas_Object* view = ewk_frame_view_get(browser->mainFrame());
+    if (!view)
+        return JSValueMakeUndefined(context);
+
+    Evas* evas = evas_object_evas_get(view);
+    if (!evas)
+        return JSValueMakeUndefined(context);
+
+    Evas_Event_Mouse_Down mouseDown;
+    mouseDown.button = 3;
+    mouseDown.output.x = gLastMousePositionX;
+    mouseDown.output.y = gLastMousePositionY;
+    mouseDown.canvas.x = gLastMousePositionX;
+    mouseDown.canvas.y = gLastMousePositionY;
+    mouseDown.data = 0;
+    mouseDown.modifiers = const_cast<Evas_Modifier*>(evas_key_modifier_get(evas));
+    mouseDown.locks = const_cast<Evas_Lock*>(evas_key_lock_get(evas));
+    mouseDown.flags = EVAS_BUTTON_NONE;
+    mouseDown.timestamp = ecore_loop_time_get();
+    mouseDown.event_flags = EVAS_EVENT_FLAG_NONE;
+    mouseDown.dev = 0;
+
+    ewk_view_context_menu_forward_event(view, &mouseDown);
+    Ewk_Context_Menu* ewkMenu = ewk_view_context_menu_get(view);
+
+    JSValueRef valueRef = JSObjectMakeArray(context, 0, 0, 0);
+    if (ewkMenu) {
+        const Eina_List* ewkMenuItems = ewk_context_menu_item_list_get(ewkMenu);
+        JSValueRef arrayValues[eina_list_count(ewkMenuItems)];
+
+        const Eina_List* listIterator;
+        void* data;
+        int index = 0;
+        EINA_LIST_FOREACH(ewkMenuItems, listIterator, data)
+            arrayValues[index++] = JSObjectMake(context, getMenuItemClass(), data);
+
+        if (index)
+            valueRef = JSObjectMakeArray(context, index - 1, arrayValues, 0);
+    }
+
+    return valueRef;
+}
+
 static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     int button = 0;
@@ -803,6 +899,7 @@ static JSValueRef setTouchModifierCallback(JSContextRef context, JSObjectRef fun
 }
 
 static JSStaticFunction staticFunctions[] = {
+    { "contextClick", contextClickCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseScrollBy", mouseScrollByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "continuousMouseScrollBy", continuousMouseScrollByCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "mouseDown", mouseDownCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
