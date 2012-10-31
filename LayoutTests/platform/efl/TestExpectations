@@ -1648,8 +1648,8 @@ webkit.org/b/99189 fast/box-shadow/transform-fringing.html [ ImageOnlyFailure ]
 webkit.org/b/99189 fast/borders/inline-mask-overlay-image-outset-vertical-rl.html [ ImageOnlyFailure ]
 webkit.org/b/99189 fast/borders/inline-mask-overlay-image-outset.html [ ImageOnlyFailure ]
 webkit.org/b/99189 fast/borders/inline-mask-overlay-image.html [ ImageOnlyFailure ]
-webkit.org/b/99189 ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm [ ImageOnlyFailure ]
-webkit.org/b/99189 ietestcenter/css3/bordersbackgrounds/border-radius-style-002.htm [ ImageOnlyFailure ]
+webkit.org/b/99189 ietestcenter/css3/bordersbackgrounds/border-radius-style-001.htm [ ImageOnlyFailure Missing ]
+webkit.org/b/99189 ietestcenter/css3/bordersbackgrounds/border-radius-style-002.htm [ ImageOnlyFailure Missing ]
 
 # User Timing is not enable yet. so skip it.
 webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
@@ -1667,6 +1667,7 @@ Bug(EFL) media/context-menu-actions.html [ Failure ]
 Bug(EFL) editing/selection/5354455-1.html [ Failure ]
 
 # It may even be the case that the tests themselves are wrong.
+webkit.org/b/100859 ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box.htm [ ImageOnlyFailure Missing ]
 webkit.org/b/100857 ietestcenter/css3/text/textshadow-005.htm [ ImageOnlyFailure Missing ]
 webkit.org/b/100855 ietestcenter/css3/text/textshadow-008.htm [ ImageOnlyFailure Missing ]
 

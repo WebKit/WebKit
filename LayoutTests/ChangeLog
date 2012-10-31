@@ -1,3 +1,12 @@
+2012-10-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] More unreviewed pixel expectations gardening.
+
+        Accept Missing as a valid result for some ietestcenter tests, and
+        skip another one of them.
+
+        * platform/efl/TestExpectations:
+
 2012-10-31  Ian Vollick  <vollick@chromium.org>
 
         Add support for text-based repaint testing
