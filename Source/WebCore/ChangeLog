@@ -1,3 +1,17 @@
+2012-10-30  Jae Hyun Park  <jae.park@company100.net>
+
+        Coordinated Graphics: Remove unused methods
+        https://bugs.webkit.org/show_bug.cgi?id=100799
+
+        Reviewed by Noam Rosenthal.
+
+        Currently, there are several unused methods regarding Coordinated
+        Graphics. This patch removes those unused methods.
+
+        No new tests (No change in behavior).
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+
 2012-10-30  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Multiple segment polygon layout does not get all segments

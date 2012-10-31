@@ -39,12 +39,6 @@
 #include <wtf/Functional.h>
 #include <wtf/HashSet.h>
 
-#if PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QSGNode;
-QT_END_NAMESPACE
-#endif
-
 namespace WebKit {
 
 class WebLayerInfo;
@@ -62,8 +56,6 @@ public:
 #endif
     void deleteCompositingLayer(WebLayerID);
     void setRootCompositingLayer(WebLayerID);
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    void purgeGLResources();
     void setContentsSize(const WebCore::FloatSize&);
     void setVisibleContentsRect(const WebCore::FloatRect&, float scale, const WebCore::FloatPoint& trajectoryVector);
     void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);

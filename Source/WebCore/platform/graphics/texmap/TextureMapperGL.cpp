@@ -33,10 +33,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#if USE(GRAPHICS_SURFACE)
-#include "GraphicsSurface.h"
-#endif
-
 #if PLATFORM(QT)
 #include "NativeImageQt.h"
 #endif
