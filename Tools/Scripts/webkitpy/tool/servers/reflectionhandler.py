@@ -139,5 +139,5 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 self.send_header("Expires", expires_formatted)
             self.end_headers()
 
-            if not header_only:
+            if not headers_only:
                 shutil.copyfileobj(static_file, self.wfile)

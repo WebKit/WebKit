@@ -189,7 +189,7 @@ function resultsDirectoryURL(platform, builderName)
 {
     if (config.useLocalResults)
         return config.kLocalServerURL + '/localresult?path=';
-    return resultsDirectoryListingURL(platform, builderName) + 'results/layout-test-results';
+    return resultsDirectoryListingURL(platform, builderName) + 'results/layout-test-results/';
 }
 
 function resultsDirectoryListingURL(platform, builderName)

@@ -1,5 +1,14 @@
 2012-10-31  Dirk Pranke  <dpranke@chromium.org>
 
+        Fix typos introduced in r133061.
+        Unreviewed, build fix.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+        (ReflectionHandler._serve_file):
+
+2012-10-31  Dirk Pranke  <dpranke@chromium.org>
+
         garden-o-matic should work for local results
         https://bugs.webkit.org/show_bug.cgi?id=100805
 
