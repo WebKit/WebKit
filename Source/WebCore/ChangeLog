@@ -1,3 +1,19 @@
+2012-10-31  Antti Koivisto  <antti@apple.com>
+
+        Remove stray calls to mutableAttributeData()
+        https://bugs.webkit.org/show_bug.cgi?id=100849
+
+        Reviewed by Andreas Kling.
+
+        Changing the cached class attribute value does not require mutable attribute data.
+
+        * dom/Element.cpp:
+        (WebCore::Element::classAttributeChanged):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::clearClass):
+        
+            Make const like setClass().
+
 2012-10-31  Mike West  <mkwst@chromium.org>
 
         X-Frame-Options console message should be associated with a request.

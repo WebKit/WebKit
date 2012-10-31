@@ -787,14 +787,14 @@ void Element::classAttributeChanged(const AtomicString& newClassString)
         SpaceSplitString oldClasses = attributeData->classNames();
         attributeData->setClass(newClassString, shouldFoldCase);
         if (shouldInvalidateStyle)
-            collectAddedAndRemovedClasses(addedAndRemovedClasses, oldClasses, mutableAttributeData()->classNames());
-    } else if (attributeData()) {
+            collectAddedAndRemovedClasses(addedAndRemovedClasses, oldClasses, attributeData->classNames());
+    } else if (const ElementAttributeData* attributeData = this->attributeData()) {
         if (shouldInvalidateStyle) {
-            const SpaceSplitString& oldClasses = attributeData()->classNames();
+            const SpaceSplitString& oldClasses = attributeData->classNames();
             for (unsigned i = 0; i < oldClasses.size(); ++i)
                 addedAndRemovedClasses.append(oldClasses[i]);
         }
-        mutableAttributeData()->clearClass();
+        attributeData->clearClass();
     }
 
     if (DOMTokenList* classList = optionalClassList())
@@ -805,7 +805,7 @@ void Element::classAttributeChanged(const AtomicString& newClassString)
     for (unsigned i = 0; i < addedAndRemovedClasses.size(); ++i) {
         if (document()->styleResolverIfExists()->hasSelectorForClass(addedAndRemovedClasses[i])) {
             setNeedsStyleRecalc();
-            break;
+            return;
         }
     }
 }

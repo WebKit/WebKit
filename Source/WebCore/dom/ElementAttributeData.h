@@ -48,7 +48,7 @@ public:
     // the appropriate subclass type.
     void deref();
 
-    void clearClass() { m_classNames.clear(); }
+    void clearClass() const { m_classNames.clear(); }
     void setClass(const AtomicString& className, bool shouldFoldCase) const { m_classNames.set(className, shouldFoldCase); }
     const SpaceSplitString& classNames() const { return m_classNames; }
 
