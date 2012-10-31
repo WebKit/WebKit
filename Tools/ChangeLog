@@ -1,5 +1,19 @@
 2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
+        [NRWT] Xvfb driver is leaking application cache files
+        https://bugs.webkit.org/show_bug.cgi?id=100864
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Application Cache looks for XDG_CACHE_HOME which is now
+        prepended with DUMPRENDERTREE_TEMP and cleaned up when
+        the test worker finishes his job.
+
+        * Scripts/webkitpy/layout_tests/port/xvfbdriver.py:
+        (XvfbDriver._start):
+
+2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
         [EFL] DRT doesn't clean up after itself
         https://bugs.webkit.org/show_bug.cgi?id=100346
 
