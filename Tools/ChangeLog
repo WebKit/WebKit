@@ -1,5 +1,23 @@
 2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
+        [EFL] DRT doesn't clean up after itself
+        https://bugs.webkit.org/show_bug.cgi?id=100346
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The test driver exports an environment variable DUMPRENDERTREE_TEMP
+        which is used by both DRT and WTR as the folder for storing icons,
+        databases, application cache, etc, overriding the default XDG_* path.
+
+        We don't need to create these folders because in fact, they are never
+        used and also never cleaned. Things created inside DUMPRENDERTREE_TEMP
+        are automatically removed after the test run.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.setup_environ_for_server):
+
+2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
         [WTR] WebKitTestRunner is not cleaning up the icon database
         https://bugs.webkit.org/show_bug.cgi?id=100678
 
