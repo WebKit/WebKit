@@ -1,3 +1,30 @@
+2012-10-31  Tom Sepez  <tsepez@chromium.org>
+
+        Malformed X-XSS-Protection headers not reported
+        https://bugs.webkit.org/show_bug.cgi?id=100538
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-expected.txt: Removed.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header.html: Removed.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-1.html: Copied from LayoutTests/http/tests/security/xssAuditor/malformed-xss-protection-header.html.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-expected-1.txt: Copied from LayoutTests/http/tests/security/xssAuditor/malformed-xss-protection-header-expected.txt.
+        renamed to -1 to match convention.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-2-expected.txt: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-2.html: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-3-expected.txt: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-3.html: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-4-expected.txt: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-4.html: Added.
+        New test to cover new error message cases.
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        Added more x-xss-protection header values to its set of values.
+        * http/tests/security/xssAuditor/xss-protection-parsing-01.html:
+        Converted for interface change to echo_intertag.pl
+        * http/tests/security/xssAuditor/xss-protection-parsing-02-expected.txt: Added.
+        * http/tests/security/xssAuditor/xss-protection-parsing-02.html: Added.
+        New test for testing x-xss-protect: 0; (allow trailing semicolon).
+        
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Fix incorrect test names landed in

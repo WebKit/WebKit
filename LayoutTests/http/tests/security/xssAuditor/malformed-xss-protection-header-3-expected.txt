@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Error parsing header X-XSS-Protection: 1; mode=purple: invalid mode directive. The default protections will be applied.
+CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
+
+This tests that a malformed X-XSS-Protection header is not ignored and an error is reported when the mode= token is invalid.
+
+
+
+--------
+Frame: 'frame'
+--------
+If you see this message and no JavaScript alert() then the test PASSED.

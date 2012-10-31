@@ -1,3 +1,34 @@
+2012-10-31  Tom Sepez  <tsepez@chromium.org>
+        
+        Malformed X-XSS-Protection headers not reported.
+        https://bugs.webkit.org/show_bug.cgi?id=100538
+
+        Reviewed by Adam Barth.
+
+        Re-writes X-XSS-Protection header parser to be more particular, and to
+        return better information on error.
+
+        Tests: http/tests/security/xssAuditor/malformed-xss-protection-header-1.html
+               http/tests/security/xssAuditor/malformed-xss-protection-header-2.html
+               http/tests/security/xssAuditor/malformed-xss-protection-header-4.html
+               http/tests/security/xssAuditor/xss-protection-parsing-02.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::init):
+        Detect error return code and log console message with details
+        * platform/network/HTTPParsers.cpp:
+        (WebCore):
+        (WebCore::skipWhiteSpace):
+        Use safe less-than comparsion in case called with pos already out of range.
+        (WebCore::skipToken):
+        Fix comparison to properly reject substrings at end of input.  Prevent advancing
+        returned position when match fails, so that this may someday be used to match
+        optional tokens.
+        (WebCore::parseXSSProtectionHeader):
+        Return detailled error status. Avoid needless string copy.
+        * platform/network/HTTPParsers.h:
+        Add new error returns for x-xss-protection header parser.
+        
 2012-10-31  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (tile cache layers): bits of tiled layers are missing with certain 3D transforms

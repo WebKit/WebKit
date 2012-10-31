@@ -216,7 +216,16 @@ void XSSAuditor::init()
 
     if (DocumentLoader* documentLoader = m_parser->document()->frame()->loader()->documentLoader()) {
         DEFINE_STATIC_LOCAL(String, XSSProtectionHeader, (ASCIILiteral("X-XSS-Protection")));
-        m_xssProtection = parseXSSProtectionHeader(documentLoader->response().httpHeaderField(XSSProtectionHeader));
+        String headerValue = documentLoader->response().httpHeaderField(XSSProtectionHeader);
+        String errorDetails;
+        m_xssProtection = parseXSSProtectionHeader(headerValue, errorDetails);
+        if (m_xssProtection == XSSProtectionInvalid) {
+            DEFINE_STATIC_LOCAL(String, consoleMessageStart, (ASCIILiteral("Error parsing header X-XSS-Protection: ")));
+            DEFINE_STATIC_LOCAL(String, consoleMessageSeparator, (ASCIILiteral(": ")));
+            DEFINE_STATIC_LOCAL(String, consoleMessageEnd, (ASCIILiteral(". The default protections will be applied.")));
+            m_parser->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessageStart + headerValue + consoleMessageSeparator + errorDetails + consoleMessageEnd);
+            m_xssProtection = XSSProtectionEnabled;
+        }
 
         FormData* httpBody = documentLoader->originalRequest().httpBody();
         if (httpBody && !httpBody->isEmpty()) {

@@ -16,7 +16,7 @@ function done()
 }
 window.onload = function()
 {
-    sendRequestFromIFrame("http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl","crazy-header=1&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))<\/script>","POST", done);
+    sendRequestFromIFrame("http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl","valid-header=1&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))<\/script>","POST", done);
 };
 </script>
 </head>

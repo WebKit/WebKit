@@ -4,17 +4,32 @@ use CGI;
 
 my $cgi = new CGI;
 
-if ($cgi->param('enable-full-block')) {
-    print "X-XSS-Protection: 1; mode=block\n";
-}
+# Passing semicolons through the url to this script is problematic. The raw
+# form truncates the input and the %-encoded form isn't being decoded. Hence
+# this set of hard-coded headers. 
 if ($cgi->param('disable-protection')) {
     print "X-XSS-Protection: 0\n";
 }
-if ($cgi->param('crazy-header')) {
+if ($cgi->param('enable-full-block')) {
+    print "X-XSS-Protection: 1; mode=block\n";
+}
+if ($cgi->param('valid-header') == 1) {
     print "X-XSS-Protection:   1  ;MoDe =  bLocK   \n";
 }
-if ($cgi->param('custom-header')) {
-    print $cgi->param('custom-header') . "\n";
+if ($cgi->param('valid-header') == 2) {
+    print "X-XSS-Protection: 1; \n";
+}
+if ($cgi->param('malformed-header') == 1) {
+    print "X-XSS-Protection: 12345678901234567\n";
+}
+if ($cgi->param('malformed-header') == 2) {
+    print "X-XSS-Protection: red\n";
+}
+if ($cgi->param('malformed-header') == 3) {
+    print "X-XSS-Protection: 1; mode=purple\n";
+}
+if ($cgi->param('malformed-header') == 4) {
+    print "X-XSS-Protection: 1; mode=block-a-block-block\n";
 }
 
 print "Content-Type: text/html; charset=";

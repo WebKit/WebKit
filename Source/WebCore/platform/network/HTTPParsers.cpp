@@ -43,34 +43,41 @@ using namespace WTF;
 
 namespace WebCore {
 
-// true if there is more to parse
+// true if there is more to parse, after incrementing pos past whitespace.
+// Note: Might return pos == str.length()
 static inline bool skipWhiteSpace(const String& str, unsigned& pos, bool fromHttpEquivMeta)
 {
     unsigned len = str.length();
 
     if (fromHttpEquivMeta) {
-        while (pos != len && str[pos] <= ' ')
+        while (pos < len && str[pos] <= ' ')
             ++pos;
     } else {
-        while (pos != len && (str[pos] == '\t' || str[pos] == ' '))
+        while (pos < len && (str[pos] == '\t' || str[pos] == ' '))
             ++pos;
     }
 
-    return pos != len;
+    return pos < len;
 }
 
-// Returns true if the function can match the whole token (case insensitive).
+// Returns true if the function can match the whole token (case insensitive)
+// incrementing pos on match, otherwise leaving pos unchanged.
 // Note: Might return pos == str.length()
 static inline bool skipToken(const String& str, unsigned& pos, const char* token)
 {
     unsigned len = str.length();
+    unsigned current = pos;
 
-    while (pos != len && *token) {
-        if (toASCIILower(str[pos]) != *token++)
+    while (current < len && *token) {
+        if (toASCIILower(str[current]) != *token++)
             return false;
-        ++pos;
+        ++current;
     }
 
+    if (*token)
+        return false;
+
+    pos = current;
     return true;
 }
 
@@ -313,31 +320,52 @@ void findCharsetInMediaType(const String& mediaType, unsigned int& charsetPos, u
     }
 }
 
-XSSProtectionDisposition parseXSSProtectionHeader(const String& header)
+XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason)
 {
-    String stippedHeader = header.stripWhiteSpace();
+    DEFINE_STATIC_LOCAL(String, failureReasonInvalidToggle, (ASCIILiteral("first non-blank character must be 0 or 1")));
+    DEFINE_STATIC_LOCAL(String, failureReasonInvalidSeparator, (ASCIILiteral("expected semicolon")));
+    DEFINE_STATIC_LOCAL(String, failureReasonInvalidMode, (ASCIILiteral("invalid mode directive")));
+    DEFINE_STATIC_LOCAL(String, failureReasonInvalidExtra, (ASCIILiteral("extra characters follow valid header")));
 
-    if (stippedHeader.isEmpty())
+    unsigned pos = 0;
+
+    if (!skipWhiteSpace(header, pos, false))
         return XSSProtectionEnabled;
 
-    if (stippedHeader[0] == '0')
+    if (header[pos] == '0')
         return XSSProtectionDisabled;
 
-    unsigned length = header.length();
-    unsigned pos = 0;
-    if (stippedHeader[pos++] == '1'
-        && skipWhiteSpace(stippedHeader, pos, false)
-        && stippedHeader[pos++] == ';'
-        && skipWhiteSpace(stippedHeader, pos, false)
-        && skipToken(stippedHeader, pos, "mode")
-        && skipWhiteSpace(stippedHeader, pos, false)
-        && stippedHeader[pos++] == '='
-        && skipWhiteSpace(stippedHeader, pos, false)
-        && skipToken(stippedHeader, pos, "block")
-        && pos == length)
-        return XSSProtectionBlockEnabled;
+    if (header[pos++] != '1') {
+        failureReason = failureReasonInvalidToggle;
+        return XSSProtectionInvalid;
+    }
 
-    return XSSProtectionEnabled;
+    if (!skipWhiteSpace(header, pos, false))
+        return XSSProtectionEnabled;
+
+    if (header[pos++] != ';') {
+        failureReason = failureReasonInvalidSeparator;
+        return XSSProtectionInvalid;
+    }
+
+    if (!skipWhiteSpace(header, pos, false))
+        return XSSProtectionEnabled;
+
+    if (!(skipToken(header, pos, "mode")
+        && skipWhiteSpace(header, pos, false)
+        && header[pos++] == '='
+        && skipWhiteSpace(header, pos, false)
+        && skipToken(header, pos, "block"))) {
+        failureReason = failureReasonInvalidMode;
+        return XSSProtectionInvalid;
+    }
+
+    if (skipWhiteSpace(header, pos, false)) {
+        failureReason = failureReasonInvalidExtra;
+        return XSSProtectionInvalid;
+    }
+
+    return XSSProtectionBlockEnabled;
 }
 
 String extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
