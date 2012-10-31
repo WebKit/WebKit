@@ -23,6 +23,7 @@
 #include "SVGMPathElement.h"
 
 #include "Document.h"
+#include "SVGAnimateMotionElement.h"
 #include "SVGNames.h"
 #include "SVGPathElement.h"
 
@@ -47,6 +48,53 @@ inline SVGMPathElement::SVGMPathElement(const QualifiedName& tagName, Document* 
 PassRefPtr<SVGMPathElement> SVGMPathElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new SVGMPathElement(tagName, document));
+}
+
+void SVGMPathElement::buildPendingResource()
+{
+    clearResourceReferences();
+    if (!inDocument())
+        return;
+
+    String id;
+    Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
+    if (!target) {
+        if (hasPendingResources())
+            return;
+
+        if (!id.isEmpty()) {
+            document()->accessSVGExtensions()->addPendingResource(id, this);
+            ASSERT(hasPendingResources());
+        }
+    } else if (target->isSVGElement()) {
+        // Register us with the target in the dependencies map. Any change of hrefElement
+        // that leads to relayout/repainting now informs us, so we can react to it.
+        document()->accessSVGExtensions()->addElementReferencingTarget(this, static_cast<SVGElement*>(target));
+    }
+
+    targetPathChanged();
+}
+
+void SVGMPathElement::clearResourceReferences()
+{
+    ASSERT(document());
+    document()->accessSVGExtensions()->removeAllTargetReferencesForElement(this);
+}
+
+Node::InsertionNotificationRequest SVGMPathElement::insertedInto(ContainerNode* rootParent)
+{
+    SVGElement::insertedInto(rootParent);
+    if (rootParent->inDocument())
+        buildPendingResource();
+    return InsertionDone;
+}
+
+void SVGMPathElement::removedFrom(ContainerNode* rootParent)
+{
+    SVGElement::removedFrom(rootParent);
+    notifyParentOfPathChange(rootParent);
+    if (rootParent->inDocument())
+        clearResourceReferences();
 }
 
 bool SVGMPathElement::isSupportedAttribute(const QualifiedName& attrName)
@@ -74,12 +122,43 @@ void SVGMPathElement::parseAttribute(const Attribute& attribute)
     ASSERT_NOT_REACHED();
 }
 
+void SVGMPathElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    if (!isSupportedAttribute(attrName)) {
+        SVGElement::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
+        buildPendingResource();
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        return;
+
+    ASSERT_NOT_REACHED();
+}
+
 SVGPathElement* SVGMPathElement::pathElement()
 {
     Element* target = targetElementFromIRIString(href(), document());
     if (target && target->hasTagName(SVGNames::pathTag))
         return static_cast<SVGPathElement*>(target);
     return 0;
+}
+
+void SVGMPathElement::targetPathChanged()
+{
+    notifyParentOfPathChange(parentNode());
+}
+
+void SVGMPathElement::notifyParentOfPathChange(ContainerNode* parent)
+{
+    if (parent && parent->hasTagName(SVGNames::animateMotionTag))
+        static_cast<SVGAnimateMotionElement*>(parent)->updateAnimationPath();
 }
 
 } // namespace WebCore

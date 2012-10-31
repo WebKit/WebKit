@@ -2486,6 +2486,8 @@ webkit.org/b/98525 plugins/netscape-dom-access.html
 webkit.org/b/98525 plugins/resize-from-plugin.html
 webkit.org/b/98640 plugins/refcount-leaks.html
 
+webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
+
 # New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
 webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
 

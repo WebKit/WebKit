@@ -27,6 +27,7 @@
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
+#include "SVGMPathElement.h"
 #include "SVGNames.h"
 #include "SVGPathSegArc.h"
 #include "SVGPathSegClosePath.h"
@@ -270,10 +271,39 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
 
         if (renderer)
             renderer->setNeedsShapeUpdate();
+
+        invalidateMPathDependencies();
     }
 
     if (renderer)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+}
+
+void SVGPathElement::invalidateMPathDependencies()
+{
+    // <mpath> can only reference <path> but this dependency is not handled in
+    // markForLayoutAndParentResourceInvalidation so we update any mpath dependencies manually.
+    ASSERT(document());
+    if (HashSet<SVGElement*>* dependencies = document()->accessSVGExtensions()->setOfElementsReferencingTarget(this)) {
+        HashSet<SVGElement*>::iterator end = dependencies->end();
+        for (HashSet<SVGElement*>::iterator it = dependencies->begin(); it != end; ++it) {
+            if ((*it)->hasTagName(SVGNames::mpathTag))
+                static_cast<SVGMPathElement*>(*it)->targetPathChanged();
+        }
+    }
+}
+
+Node::InsertionNotificationRequest SVGPathElement::insertedInto(ContainerNode* rootParent)
+{
+    SVGStyledTransformableElement::insertedInto(rootParent);
+    invalidateMPathDependencies();
+    return InsertionDone;
+}
+
+void SVGPathElement::removedFrom(ContainerNode* rootParent)
+{
+    SVGStyledTransformableElement::removedFrom(rootParent);
+    invalidateMPathDependencies();
 }
 
 SVGPathByteStream* SVGPathElement::pathByteStream() const

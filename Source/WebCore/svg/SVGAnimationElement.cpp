@@ -59,6 +59,7 @@ SVGAnimationElement::SVGAnimationElement(const QualifiedName& tagName, Document*
     , m_attributeType(AttributeTypeAuto)
     , m_hasInvalidCSSAttributeType(false)
     , m_calcMode(CalcModeLinear)
+    , m_animationMode(NoAnimation)
 {
     registerAnimatedPropertiesForSVGAnimationElement();
 }
@@ -151,6 +152,9 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::keySplinesAttr);
         supportedAttributes.add(SVGNames::attributeTypeAttr);
         supportedAttributes.add(SVGNames::calcModeAttr);
+        supportedAttributes.add(SVGNames::fromAttr);
+        supportedAttributes.add(SVGNames::toAttr);
+        supportedAttributes.add(SVGNames::byAttr);
     }
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
@@ -169,6 +173,8 @@ void SVGAnimationElement::parseAttribute(const Attribute& attribute)
         attribute.value().string().split(';', m_values);
         for (unsigned i = 0; i < m_values.size(); ++i)
             m_values[i] = m_values[i].stripWhiteSpace();
+
+        updateAnimationMode();
         return;
     }
 
@@ -198,6 +204,11 @@ void SVGAnimationElement::parseAttribute(const Attribute& attribute)
 
     if (attribute.name() == SVGNames::calcModeAttr) {
         setCalcMode(attribute.value());
+        return;
+    }
+
+    if (attribute.name() == SVGNames::fromAttr || attribute.name() == SVGNames::toAttr || attribute.name() == SVGNames::byAttr) {
+        updateAnimationMode();
         return;
     }
 
@@ -267,20 +278,17 @@ void SVGAnimationElement::endElementAt(float offset)
     addEndTime(elapsed, elapsed + offset, SMILTimeWithOrigin::ScriptOrigin);
 }
 
-AnimationMode SVGAnimationElement::animationMode() const
+void SVGAnimationElement::updateAnimationMode()
 {
     // http://www.w3.org/TR/2001/REC-smil-animation-20010904/#AnimFuncValues
-    if (hasTagName(SVGNames::setTag))
-        return ToAnimation;
-    if (!animationPath().isEmpty())
-        return PathAnimation;
     if (hasAttribute(SVGNames::valuesAttr))
-        return ValuesAnimation;
-    if (!toValue().isEmpty())
-        return fromValue().isEmpty() ? ToAnimation : FromToAnimation;
-    if (!byValue().isEmpty())
-        return fromValue().isEmpty() ? ByAnimation : FromByAnimation;
-    return NoAnimation;
+        setAnimationMode(ValuesAnimation);
+    else if (!toValue().isEmpty())
+        setAnimationMode(fromValue().isEmpty() ? ToAnimation : FromToAnimation);
+    else if (!byValue().isEmpty())
+        setAnimationMode(fromValue().isEmpty() ? ByAnimation : FromByAnimation);
+    else
+        setAnimationMode(NoAnimation);
 }
 
 void SVGAnimationElement::setCalcMode(const AtomicString& calcMode)

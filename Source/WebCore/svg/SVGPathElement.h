@@ -128,6 +128,11 @@ private:
 
     RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
+    virtual Node::InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
+    virtual void removedFrom(ContainerNode*) OVERRIDE;
+
+    void invalidateMPathDependencies();
+
 private:
     OwnPtr<SVGPathByteStream> m_pathByteStream;
     mutable SVGSynchronizableAnimatedProperty<SVGPathSegList> m_pathSegList;

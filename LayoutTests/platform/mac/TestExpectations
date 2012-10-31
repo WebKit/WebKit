@@ -1170,6 +1170,8 @@ webkit.org/b/85404 fast/loader/javascript-url-in-embed.html [ Failure Pass ]
 
 webkit.org/b/85408 svg/batik/text/longTextOnPath.svg [ Failure Pass ]
 
+webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
+
 # Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=89116
 webkit.org/b/89116 svg/W3C-SVG-1.1/filters-specular-01-f.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html [ ImageOnlyFailure Pass ]

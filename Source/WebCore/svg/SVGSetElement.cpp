@@ -28,12 +28,19 @@ namespace WebCore {
 inline SVGSetElement::SVGSetElement(const QualifiedName& tagName, Document* document)
     : SVGAnimateElement(tagName, document)
 {
+    setAnimationMode(ToAnimation);
     ASSERT(hasTagName(SVGNames::setTag));
 }
 
 PassRefPtr<SVGSetElement> SVGSetElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new SVGSetElement(tagName, document));
+}
+
+void SVGSetElement::updateAnimationMode()
+{
+    // No-op, as <set> has a constant animation mode of ToAnimation.
+    // See: http://www.w3.org/TR/SVG/single-page.html#animate-SetElement
 }
 
 }

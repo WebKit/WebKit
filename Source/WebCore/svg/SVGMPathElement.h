@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedString.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGURIReference.h"
 
@@ -37,13 +38,22 @@ public:
     static PassRefPtr<SVGMPathElement> create(const QualifiedName&, Document*);
 
     SVGPathElement* pathElement();
-    
+
+    void targetPathChanged();
+
 private:
     SVGMPathElement(const QualifiedName&, Document*);
 
-    // FIXME: svgAttributeChanged missing.
+    void buildPendingResource();
+    void clearResourceReferences();
+    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
+    void removedFrom(ContainerNode*);
+
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseAttribute(const Attribute&) OVERRIDE;
+    virtual void svgAttributeChanged(const QualifiedName&) OVERRIDE;
+
+    void notifyParentOfPathChange(ContainerNode*);
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGMPathElement)
         DECLARE_ANIMATED_STRING(Href, href)

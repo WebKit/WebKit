@@ -1,3 +1,17 @@
+2012-10-31  Philip Rogers  <pdr@google.com>
+
+        Cache animationMode() in SVG animations.
+        https://bugs.webkit.org/show_bug.cgi?id=99694
+
+        Reviewed by Eric Seidel.
+
+        This refactoring is covered by existing tests.
+        svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg fails after this patch
+        because our element dependency tracking has a bug with duplicate ids; see WK99893.
+
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.  Updating TestExpectations for

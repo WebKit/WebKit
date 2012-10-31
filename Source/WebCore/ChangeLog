@@ -1,3 +1,113 @@
+2012-10-31  Philip Rogers  <pdr@google.com>
+
+        Cache animationMode() in SVG animations.
+        https://bugs.webkit.org/show_bug.cgi?id=99694
+
+        Reviewed by Eric Seidel.
+
+        This patch caches animationMode() which accounted for 25% of the CPU time of a simple
+        animation benchmark! This is the 3rd patch for WK99694.
+
+        Background: SVGAnimationElement contains most of the shared animation logic for <animate>,
+        <set>, <animateColor>, <animateTransform>, and <animateMotion>. <animateMotion> is the only
+        animation element that can depend on other elements in the page. For example:
+        <path id="mypath" d="M0 0 L 100 100Z"/> <!-- note, can be animated! -->
+        <rect x="0" y="0" width="100" height="100" fill="green">
+            <animateMotion dur="6s" repeatCount="indefinite">
+                <mpath xlink:href="#mypath"/>
+            </animateMotion>
+        </rect>
+        See: http://www.w3.org/TR/SVG/single-page.html#animate-AnimateMotionElement
+
+        animationMode depends on several properties of an animation element: the set tag, whether
+        the animation has a path, and the "values", "to", and "by" attributes. animationMode() was
+        a hot function for two reasons:
+        1) hasAttribute(SVGNames::valuesAttr) is expensive because we are unable to use
+           fastHasAttribute. This is cacheable by simply calculating the animationMode when the
+           "values" attribute changes.
+        2) In the <animateMotion> case, determining if a path is empty or changed is expensive.
+           AnimateMotion can have a path attribute, or it can have <mpath> children that reference
+           a (possibly non-existent) <path> element elsewhere in the page. Before this patch we did
+           this path lookup on every animation loop in case something changed. After this patch we
+           only update AnimateMotion's path when it changes.
+
+        A previous patch, http://trac.webkit.org/changeset/132847, laid the groundwork for tracking
+        <path> changes in <mpath>. This patch adds <mpath> to our resource tracking infrastructure
+        to track when target <path>s change, instead of looking this up every time.
+
+        This refactoring is covered by existing tests.
+        svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg fails after this patch
+        because our element dependency tracking has a bug with duplicate ids; see WK99893.
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::parseAttribute):
+        (WebCore::SVGAnimateMotionElement::updateAnimationPath):
+
+            animationPath() has been changed to updateAnimationPath() and should only be called
+            when the animation path (path attribute, or mpath's referenced path) has changed.
+
+        (WebCore::SVGAnimateMotionElement::buildTransformForProgress):
+        (WebCore::SVGAnimateMotionElement::updateAnimationMode):
+
+            If an animationPath exists, we use PathAnimation, otherwise we fall back to the normal
+            updateAnimationMode() codepath.
+
+        (WebCore):
+        * svg/SVGAnimateMotionElement.h:
+        (SVGAnimateMotionElement):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::SVGAnimationElement):
+        (WebCore::SVGAnimationElement::isSupportedAttribute):
+        (WebCore::SVGAnimationElement::parseAttribute):
+
+            The from, by, and to attributes have been added so that we can track when they change
+            and update the animation mode. Similarly for when the values attribute changes.
+
+        (WebCore::SVGAnimationElement::updateAnimationMode):
+        * svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::animationMode):
+        (SVGAnimationElement):
+        (WebCore::SVGAnimationElement::setAnimationMode):
+        (WebCore::SVGAnimationElement::calculateDistance):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::buildPendingResource):
+
+            It would be nice to move all the duplicated buildPendingResource() logic into a central
+            place (SVGURIReference?) but for now it is copied. This function is nearly identical to
+            SVGFEImageElement::buildPendingResource.
+
+        (WebCore):
+        (WebCore::SVGMPathElement::clearResourceReferences):
+        (WebCore::SVGMPathElement::insertedInto):
+        (WebCore::SVGMPathElement::removedFrom):
+        (WebCore::SVGMPathElement::svgAttributeChanged):
+        (WebCore::SVGMPathElement::targetPathChanged):
+        (WebCore::SVGMPathElement::notifyParentOfPathChange):
+        * svg/SVGMPathElement.h:
+        (SVGMPathElement):
+        * svg/SVGPathElement.cpp:
+
+            When a <path>'s path changes, we need to notify any dependent <mpath> elements. This is
+            typically handled with RenderSVGResource::markForLayoutAndParentResourceInvalidation
+            but for the special-case of <mpath> we only need to track when the path's "d" attribute
+            changes so invalidateMPathDependencies() has been added.
+
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::invalidateMPathDependencies):
+        (WebCore):
+        (WebCore::SVGPathElement::insertedInto):
+        (WebCore::SVGPathElement::removedFrom):
+        * svg/SVGPathElement.h:
+        (SVGPathElement):
+        * svg/SVGSetElement.cpp:
+        (WebCore::SVGSetElement::SVGSetElement):
+        (WebCore::SVGSetElement::updateAnimationMode):
+        (WebCore):
+        * svg/SVGSetElement.h:
+        (SVGSetElement):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::isSupportedAttribute):
+
 2012-10-31  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=100879
