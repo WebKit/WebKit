@@ -543,7 +543,7 @@ public:
             m_jit.move(valueOfJSConstantAsImm64(plan.nodeIndex()), plan.gpr());
             break;
         case SetDoubleConstant:
-            m_jit.move(Imm64(valueOfNumberConstant(plan.nodeIndex())), canTrample);
+            m_jit.move(Imm64(reinterpretDoubleToInt64(valueOfNumberConstant(plan.nodeIndex()))), canTrample);
             m_jit.move64ToDouble(canTrample, plan.fpr());
             break;
         case Load32PayloadBoxInt:
