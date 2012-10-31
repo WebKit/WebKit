@@ -38,16 +38,16 @@ using namespace WebKit;
 
 namespace CoreIPC {
 
-void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
     bool requestIsPresent = resourceRequest.nsURLRequest();
-    encoder->encode(requestIsPresent);
+    encoder << requestIsPresent;
 
     if (!requestIsPresent)
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, WKNSURLRequestCreateSerializableRepresentation(resourceRequest.nsURLRequest(), CoreIPC::tokenNullTypeRef()));
-    CoreIPC::encode(*encoder, dictionary.get());
+    CoreIPC::encode(encoder, dictionary.get());
 }
 
 bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
@@ -73,16 +73,16 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder* decoder
     return true;
 }
 
-void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
+void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder& encoder, const ResourceResponse& resourceResponse)
 {
     bool responseIsPresent = resourceResponse.nsURLResponse();
-    encoder->encode(responseIsPresent);
+    encoder << responseIsPresent;
 
     if (!responseIsPresent)
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, WKNSURLResponseCreateSerializableRepresentation(resourceResponse.nsURLResponse(), CoreIPC::tokenNullTypeRef()));
-    CoreIPC::encode(*encoder, dictionary.get());
+    CoreIPC::encode(encoder, dictionary.get());
 }
 
 bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
@@ -113,10 +113,10 @@ static NSString* nsString(const String& string)
     return string.impl() ? [NSString stringWithCharacters:reinterpret_cast<const UniChar*>(string.characters()) length:string.length()] : @"";
 }
 
-void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder* encoder, const ResourceError& resourceError)
+void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, const ResourceError& resourceError)
 {
     bool errorIsNull = resourceError.isNull();
-    encoder->encode(errorIsNull);
+    encoder << errorIsNull;
 
     if (errorIsNull)
         return;
@@ -124,10 +124,10 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder* encoder, 
     NSError *nsError = resourceError.nsError();
 
     String domain = [nsError domain];
-    encoder->encode(domain);
-    
+    encoder << domain;
+
     int64_t code = [nsError code];
-    encoder->encode(code);
+    encoder << code;
 
     HashMap<String, String> stringUserInfoMap;
 
@@ -140,11 +140,11 @@ void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder* encoder, 
         stringUserInfoMap.set(key, (NSString *)value);
         continue;
     }
-    encoder->encode(stringUserInfoMap);
+    encoder << stringUserInfoMap;
 
     id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
     ASSERT(!peerCertificateChain || [peerCertificateChain isKindOfClass:[NSArray class]]);
-    encoder->encode(PlatformCertificateInfo((CFArrayRef)peerCertificateChain));
+    encoder << PlatformCertificateInfo((CFArrayRef)peerCertificateChain);
 }
 
 bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder* decoder, ResourceError& resourceError)
@@ -194,10 +194,9 @@ bool ArgumentCoder<ResourceError>::decodePlatformData(ArgumentDecoder* decoder, 
     return true;
 }
 
-void ArgumentCoder<KeypressCommand>::encode(ArgumentEncoder* encoder, const KeypressCommand& keypressCommand)
+void ArgumentCoder<KeypressCommand>::encode(ArgumentEncoder& encoder, const KeypressCommand& keypressCommand)
 {
-    encoder->encode(keypressCommand.commandName);
-    encoder->encode(keypressCommand.text);
+    encoder << keypressCommand.commandName << keypressCommand.text;
 }
     
 bool ArgumentCoder<KeypressCommand>::decode(ArgumentDecoder* decoder, KeypressCommand& keypressCommand)

@@ -50,8 +50,8 @@ void PrintInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << availablePaperHeight;
 
 #if PLATFORM(GTK)
-    CoreIPC::encode(&encoder, printSettings.get());
-    CoreIPC::encode(&encoder, pageSetup.get());
+    CoreIPC::encode(encoder, printSettings.get());
+    CoreIPC::encode(encoder, pageSetup.get());
 #endif
 }
 

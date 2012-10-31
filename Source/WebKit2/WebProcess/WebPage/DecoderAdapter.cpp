@@ -45,7 +45,7 @@ DecoderAdapter::DecoderAdapter(const uint8_t* buffer, size_t bufferSize)
 bool DecoderAdapter::decodeBytes(Vector<uint8_t>& bytes)
 {
     CoreIPC::DataReference dataReference;
-    if (!m_decoder->decodeVariableLengthByteArray(dataReference))
+    if (!m_decoder->decode(dataReference))
         return false;
 
     bytes = dataReference.vector();

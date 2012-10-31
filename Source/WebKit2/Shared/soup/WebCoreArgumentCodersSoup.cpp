@@ -36,9 +36,9 @@ using namespace WebCore;
 
 namespace CoreIPC {
 
-void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
-    encoder->encode(static_cast<uint32_t>(resourceRequest.soupMessageFlags()));
+    encoder << static_cast<uint32_t>(resourceRequest.soupMessageFlags());
 }
 
 bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
@@ -51,9 +51,9 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder* decoder
 }
 
 
-void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
+void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder& encoder, const ResourceResponse& resourceResponse)
 {
-    encoder->encode(static_cast<uint32_t>(resourceResponse.soupMessageFlags()));
+    encoder << static_cast<uint32_t>(resourceResponse.soupMessageFlags());
 }
 
 bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
@@ -66,7 +66,7 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder* decode
 }
 
 
-void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder*, const ResourceError&)
+void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder&, const ResourceError&)
 {
 }
 

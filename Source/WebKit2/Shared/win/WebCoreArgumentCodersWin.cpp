@@ -49,17 +49,17 @@ namespace CoreIPC {
 
 // FIXME: These coders should really go in a WebCoreArgumentCodersCFNetwork file.
 
-void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
 #if USE(CFNETWORK)
     bool requestIsPresent = resourceRequest.cfURLRequest();
-    encoder->encode(requestIsPresent);
+    encoder << requestIsPresent;
 
     if (!requestIsPresent)
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, wkCFURLRequestCreateSerializableRepresentation(resourceRequest.cfURLRequest(), CoreIPC::tokenNullTypeRef()));
-    CoreIPC::encode(*encoder, dictionary.get());
+    CoreIPC::encode(encoder, dictionary.get());
 #endif
 }
 
@@ -95,17 +95,17 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder* decoder
 }
 
 
-void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
+void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder& encoder, const ResourceResponse& resourceResponse)
 {
 #if USE(CFNETWORK)
     bool responseIsPresent = resourceResponse.cfURLResponse();
-    encoder->encode(responseIsPresent);
+    encoder << responseIsPresent;
 
     if (!responseIsPresent)
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, wkCFURLResponseCreateSerializableRepresentation(resourceResponse.cfURLResponse(), CoreIPC::tokenNullTypeRef()));
-    CoreIPC::encode(*encoder, dictionary.get());
+    CoreIPC::encode(encoder, dictionary.get());
 #endif
 }
 
@@ -137,10 +137,10 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder* decode
 }
 
 
-void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder* encoder, const ResourceError& resourceError)
+void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, const ResourceError& resourceError)
 {
 #if USE(CFNETWORK)
-    encoder->encode(PlatformCertificateInfo(resourceError.certificate()));
+    encoder << PlatformCertificateInfo(resourceError.certificate());
 #endif
 }
 

@@ -34,7 +34,7 @@ using namespace WebCore;
  
 namespace CoreIPC {
 
-void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
 }
 
@@ -44,7 +44,7 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder* decoder
 }
 
 
-void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
+void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder& encoder, const ResourceResponse& resourceResponse)
 {
 }
 
@@ -54,7 +54,7 @@ bool ArgumentCoder<ResourceResponse>::decodePlatformData(ArgumentDecoder* decode
 }
 
 
-void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder* encoder, const ResourceError& resourceError)
+void ArgumentCoder<ResourceError>::encodePlatformData(ArgumentEncoder& encoder, const ResourceError& resourceError)
 {
 }
 

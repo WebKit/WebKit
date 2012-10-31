@@ -41,7 +41,7 @@ using namespace WebKit;
 
 namespace CoreIPC {
 
-static void encodeImage(ArgumentEncoder* encoder, const GdkPixbuf* pixbuf)
+static void encodeImage(ArgumentEncoder& encoder, const GdkPixbuf* pixbuf)
 {
     IntSize imageSize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(imageSize, ShareableBitmap::SupportsAlpha);
@@ -54,7 +54,7 @@ static void encodeImage(ArgumentEncoder* encoder, const GdkPixbuf* pixbuf)
     ShareableBitmap::Handle handle;
     bitmap->createHandle(handle);
 
-    encoder->encode(handle);
+    encoder << handle;
 }
 
 static bool decodeImage(ArgumentDecoder* decoder, GRefPtr<GdkPixbuf>& pixbuf)
@@ -85,30 +85,30 @@ static bool decodeImage(ArgumentDecoder* decoder, GRefPtr<GdkPixbuf>& pixbuf)
     return true;
 }
 
-static void encodeDataObject(ArgumentEncoder* encoder, const DataObjectGtk* dataObject)
+static void encodeDataObject(ArgumentEncoder& encoder, const DataObjectGtk* dataObject)
 {
     bool hasText = dataObject->hasText();
-    encoder->encode(hasText);
+    encoder << hasText;
     if (hasText)
-        encoder->encode(dataObject->text());
+        encoder << dataObject->text();
 
     bool hasMarkup = dataObject->hasMarkup();
-    encoder->encode(hasMarkup);
+    encoder << hasMarkup;
     if (hasMarkup)
-        encoder->encode(dataObject->markup());
+        encoder << dataObject->markup();
 
     bool hasURL = dataObject->hasURL();
-    encoder->encode(hasURL);
+    encoder << hasURL;
     if (hasURL)
-        encoder->encode(dataObject->url().string());
+        encoder << dataObject->url().string();
 
     bool hasURIList = dataObject->hasURIList();
-    encoder->encode(hasURIList);
+    encoder << hasURIList;
     if (hasURIList)
-        encoder->encode(dataObject->uriList());
+        encoder << dataObject->uriList();
 
     bool hasImage = dataObject->hasImage();
-    encoder->encode(hasImage);
+    encoder << hasImage;
     if (hasImage)
         encodeImage(encoder, dataObject->image());
 }
@@ -172,15 +172,15 @@ static bool decodeDataObject(ArgumentDecoder* decoder, RefPtr<DataObjectGtk>& da
     return true;
 }
 
-void ArgumentCoder<DragData>::encode(ArgumentEncoder* encoder, const DragData& dragData)
+void ArgumentCoder<DragData>::encode(ArgumentEncoder& encoder, const DragData& dragData)
 {
-    encoder->encode(dragData.clientPosition());
-    encoder->encode(dragData.globalPosition());
-    encoder->encode(static_cast<uint64_t>(dragData.draggingSourceOperationMask()));
-    encoder->encode(static_cast<uint64_t>(dragData.flags()));
+    encoder << dragData.clientPosition();
+    encoder << dragData.globalPosition();
+    encoder << static_cast<uint64_t>(dragData.draggingSourceOperationMask());
+    encoder << static_cast<uint64_t>(dragData.flags());
 
     DataObjectGtk* platformData = dragData.platformData();
-    encoder->encode(static_cast<bool>(platformData));
+    encoder << static_cast<bool>(platformData);
     if (platformData)
         encodeDataObject(encoder, platformData);
 }
@@ -219,12 +219,11 @@ bool ArgumentCoder<DragData>::decode(ArgumentDecoder* decoder, DragData& dragDat
     return true;
 }
 
-static void encodeGKeyFile(ArgumentEncoder* encoder, GKeyFile* keyFile)
+static void encodeGKeyFile(ArgumentEncoder& encoder, GKeyFile* keyFile)
 {
     gsize dataSize;
     GOwnPtr<char> data(g_key_file_to_data(keyFile, &dataSize, 0));
-    DataReference dataReference(reinterpret_cast<uint8_t*>(data.get()), dataSize);
-    encoder->encode(dataReference);
+    encoder << DataReference(reinterpret_cast<uint8_t*>(data.get()), dataSize);
 }
 
 static bool decodeGKeyFile(ArgumentDecoder* decoder, GOwnPtr<GKeyFile>& keyFile)
@@ -245,7 +244,7 @@ static bool decodeGKeyFile(ArgumentDecoder* decoder, GOwnPtr<GKeyFile>& keyFile)
     return true;
 }
 
-void encode(ArgumentEncoder* encoder, GtkPrintSettings* printSettings)
+void encode(ArgumentEncoder& encoder, GtkPrintSettings* printSettings)
 {
     GOwnPtr<GKeyFile> keyFile(g_key_file_new());
     gtk_print_settings_to_key_file(printSettings, keyFile.get(), "Print Settings");
@@ -268,7 +267,7 @@ bool decode(ArgumentDecoder* decoder, GRefPtr<GtkPrintSettings>& printSettings)
     return printSettings;
 }
 
-void encode(ArgumentEncoder* encoder, GtkPageSetup* pageSetup)
+void encode(ArgumentEncoder& encoder, GtkPageSetup* pageSetup)
 {
     GOwnPtr<GKeyFile> keyFile(g_key_file_new());
     gtk_page_setup_to_key_file(pageSetup, keyFile.get(), "Page Setup");

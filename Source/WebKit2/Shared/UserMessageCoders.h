@@ -303,7 +303,7 @@ public:
         }
         case APIObject::TypeSerializedScriptValue: {
             CoreIPC::DataReference dataReference;
-            if (!decoder->decodeVariableLengthByteArray(dataReference))
+            if (!decoder->decode(dataReference))
                 return false;
             
             Vector<uint8_t> vector = dataReference.vector();
@@ -475,7 +475,7 @@ public:
         }
         case APIObject::TypeData: {
             CoreIPC::DataReference dataReference;
-            if (!decoder->decodeVariableLengthByteArray(dataReference))
+            if (!decoder->decode(dataReference))
                 return false;
             coder.m_root = WebData::create(dataReference.data(), dataReference.size());
             break;

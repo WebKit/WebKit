@@ -47,7 +47,7 @@ CoreIPC::DataReference EncoderAdapter::dataReference() const
 
 void EncoderAdapter::encodeBytes(const uint8_t* bytes, size_t size)
 {
-    m_encoder->encodeVariableLengthByteArray(CoreIPC::DataReference(bytes, size));
+    m_encoder->encode(CoreIPC::DataReference(bytes, size));
 }
 
 void EncoderAdapter::encodeBool(bool value)

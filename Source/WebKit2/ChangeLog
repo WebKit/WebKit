@@ -1,3 +1,53 @@
+2012-10-31  Sam Weinig  <sam@webkit.org>
+
+        Convert the rest of the encoders to take the encoder as a reference
+        https://bugs.webkit.org/show_bug.cgi?id=100821
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/ArgumentCoders.h:
+        (CoreIPC::SimpleArgumentCoder::encode):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::encodeTimingFunction):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        * Shared/PrintInfo.cpp:
+        (WebKit::PrintInfo::encode):
+        * Shared/SessionState.cpp:
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebGeolocationPosition.cpp:
+        (WebKit::WebGeolocationPosition::Data::encode):
+        * Shared/WebLayerTreeInfo.cpp:
+        (WebKit::WebLayerInfo::encode):
+        * Shared/gtk/ArgumentCodersGtk.cpp:
+        (CoreIPC::encodeImage):
+        (CoreIPC::encodeDataObject):
+        (CoreIPC::::encode):
+        (CoreIPC::encodeGKeyFile):
+        (CoreIPC::encode):
+        * Shared/gtk/ArgumentCodersGtk.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::::encodePlatformData):
+        (CoreIPC::::encode):
+        * Shared/qt/ArgumentCodersQt.cpp:
+        (CoreIPC::::encode):
+        * Shared/qt/ArgumentCodersQt.h:
+        (CoreIPC):
+        * Shared/qt/WebCoreArgumentCodersQt.cpp:
+        (CoreIPC::::encodePlatformData):
+        * Shared/soup/WebCoreArgumentCodersSoup.cpp:
+        (CoreIPC::::encodePlatformData):
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (CoreIPC::::encodePlatformData):
+        * WebProcess/WebPage/DecoderAdapter.cpp:
+        (WebKit::DecoderAdapter::decodeBytes):
+        * WebProcess/WebPage/EncoderAdapter.cpp:
+        (WebKit::EncoderAdapter::encodeBytes):
+
 2012-10-31  Jesse van den Kieboom  <jessevdk@gnome.org>
 
         Enable webkit2 introspection
