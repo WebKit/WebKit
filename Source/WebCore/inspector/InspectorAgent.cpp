@@ -68,7 +68,6 @@ InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScript
     , m_inspectedPage(page)
     , m_frontend(0)
     , m_injectedScriptManager(injectedScriptManager)
-    , m_didCommitLoadFired(false)
 {
     ASSERT_ARG(page, page);
     m_instrumentingAgents->setInspectorAgent(this);
@@ -102,7 +101,6 @@ void InspectorAgent::clearFrontend()
 {
     m_pendingEvaluateTestCommands.clear();
     m_frontend = 0;
-    m_didCommitLoadFired = false;
     m_injectedScriptManager->discardInjectedScripts();
     ErrorString error;
     disable(&error);
@@ -110,7 +108,6 @@ void InspectorAgent::clearFrontend()
 
 void InspectorAgent::didCommitLoad()
 {
-    m_didCommitLoadFired = true;
     m_injectedScriptManager->discardInjectedScripts();
 }
 

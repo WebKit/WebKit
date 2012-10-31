@@ -79,7 +79,6 @@ public:
 
     void didCommitLoad();
     void domContentLoadedEventFired();
-    bool didCommitLoadFired() { return m_didCommitLoadFired; }
 
     bool hasFrontend() const { return m_frontend; }
 
@@ -109,7 +108,6 @@ private:
     pair<RefPtr<TypeBuilder::Runtime::RemoteObject>, RefPtr<InspectorObject> > m_pendingInspectData;
     typedef HashMap<String, String> InjectedScriptForOriginMap;
     InjectedScriptForOriginMap m_injectedScriptForOrigin;
-    bool m_didCommitLoadFired;
 };
 
 } // namespace WebCore

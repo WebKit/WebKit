@@ -35,18 +35,26 @@
 #include "WorkerRuntimeAgent.h"
 
 #include "InjectedScript.h"
+#include "InstrumentingAgents.h"
 #include "ScriptState.h"
+#include "WorkerContext.h"
+#include "WorkerDebuggerAgent.h"
+#include "WorkerRunLoop.h"
+#include "WorkerThread.h"
 
 namespace WebCore {
 
 WorkerRuntimeAgent::WorkerRuntimeAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, InjectedScriptManager* injectedScriptManager, WorkerContext* workerContext)
     : InspectorRuntimeAgent(instrumentingAgents, state, injectedScriptManager)
     , m_workerContext(workerContext)
+    , m_paused(false)
 {
+    m_instrumentingAgents->setWorkerRuntimeAgent(this);
 }
 
 WorkerRuntimeAgent::~WorkerRuntimeAgent()
 {
+    m_instrumentingAgents->setWorkerRuntimeAgent(0);
 }
 
 InjectedScript WorkerRuntimeAgent::injectedScriptForEval(ErrorString* error, const int* executionContextId)
@@ -68,6 +76,23 @@ void WorkerRuntimeAgent::unmuteConsole()
 {
     // We don't need to mute console for workers.
 }
+
+void WorkerRuntimeAgent::run(ErrorString*)
+{
+    m_paused = false;
+}
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+void WorkerRuntimeAgent::pauseWorkerContext(WorkerContext* context)
+{
+    m_paused = true;
+    MessageQueueWaitResult result;
+    do {
+        result = context->thread()->runLoop().runInMode(context, WorkerDebuggerAgent::debuggerTaskMode);
+    // Keep waiting until execution is resumed.
+    } while (result == MessageQueueMessageReceived && m_paused);
+}
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
 
 } // namespace WebCore
 

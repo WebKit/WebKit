@@ -48,12 +48,20 @@ public:
     }
     virtual ~WorkerRuntimeAgent();
 
+    // Protocol commands.
+    virtual void run(ErrorString*);
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    void pauseWorkerContext(WorkerContext*);
+#endif // ENABLE(JAVASCRIPT_DEBUGGER)
+
 private:
     WorkerRuntimeAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*, WorkerContext*);
     virtual InjectedScript injectedScriptForEval(ErrorString*, const int* executionContextId);
     virtual void muteConsole();
     virtual void unmuteConsole();
     WorkerContext* m_workerContext;
+    bool m_paused;
 };
 
 } // namespace WebCore
