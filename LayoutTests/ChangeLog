@@ -1,3 +1,12 @@
+2012-10-30  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Enable fast/images/exif-orientation-css.html
+        https://bugs.webkit.org/show_bug.cgi?id=100767
+
+        Unreviewed, expectations-only change.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         DOM URL is flaky when workers are used
