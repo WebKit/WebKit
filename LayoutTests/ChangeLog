@@ -1,3 +1,14 @@
+2012-10-31  Adam Barth  <abarth@webkit.org>
+
+        [V8] Garbage collection should use opaque roots rather than implicit references
+        https://bugs.webkit.org/show_bug.cgi?id=100707
+
+        Reviewed by Kentaro Hara.
+
+        Test progression.
+
+        * platform/chromium/fast/dom/gc-9-expected.txt:
+
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Added skipped expectations for new test

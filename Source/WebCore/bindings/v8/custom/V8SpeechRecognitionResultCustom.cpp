@@ -31,16 +31,15 @@
 
 #include "SpeechRecognitionResult.h"
 #include "V8Binding.h"
+#include "V8GCController.h"
 
 namespace WebCore {
 
-void V8SpeechRecognitionResult::visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
+void* V8SpeechRecognitionResult::opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapper)
 {
+    ASSERT(V8SpeechRecognitionResult::HasInstance(wrapper));
     SpeechRecognitionResult* impl = static_cast<SpeechRecognitionResult*>(object);
-    Document* emma = impl->emma();
-    v8::Persistent<v8::Value> emmaWrapper = store->domNodeMap().get(emma);
-    if (!emmaWrapper.IsEmpty())
-        v8::V8::AddImplicitReferences(wrapper, &emmaWrapper, 1);
+    return V8GCController::opaqueRootForGC(impl->emma());
 }
 
 } // namespace WebCore

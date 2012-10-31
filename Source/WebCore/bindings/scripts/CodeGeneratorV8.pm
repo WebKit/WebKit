@@ -181,7 +181,7 @@ sub AddIncludesForType
     }
 }
 
-sub NeedsToVisitDOMWrapper
+sub NeedsCustomOpaqueRootForGC
 {
     my $dataNode = shift;
     return GetGenerateIsReachable($dataNode) || GetCustomIsReachable($dataNode);
@@ -199,7 +199,7 @@ sub GetCustomIsReachable
     return $dataNode->extendedAttributes->{"CustomIsReachable"} || $dataNode->extendedAttributes->{"V8CustomIsReachable"};
 }
 
-sub GenerateVisitDOMWrapper
+sub GenerateOpaqueRootForGC
 {
     my ($dataNode, $implClassName) = @_;
 
@@ -208,7 +208,7 @@ sub GenerateVisitDOMWrapper
     }
 
     push(@implContent, <<END);
-void V8${implClassName}::visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
+void* V8${implClassName}::opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapper)
 {
     ${implClassName}* impl = static_cast<${implClassName}*>(object);
 END
@@ -218,6 +218,8 @@ END
         GetGenerateIsReachable($dataNode) eq  "ImplOwnerNodeRoot" ||
         GetGenerateIsReachable($dataNode) eq  "ImplBaseRoot") {
 
+        $implIncludes{"V8GCController.h"} = 1;
+
         my $methodName;
         $methodName = "document" if (GetGenerateIsReachable($dataNode) eq "ImplDocument");
         $methodName = "element" if (GetGenerateIsReachable($dataNode) eq "ImplElementRoot");
@@ -226,17 +228,13 @@ END
         $methodName = "base" if (GetGenerateIsReachable($dataNode) eq "ImplBaseRoot");
 
         push(@implContent, <<END);
-    if (Node* owner = impl->${methodName}()) {
-        v8::Persistent<v8::Object> ownerWrapper = store->domNodeMap().get(owner);
-        if (!ownerWrapper.IsEmpty()) {
-            v8::Persistent<v8::Value> value = wrapper;
-            v8::V8::AddImplicitReferences(ownerWrapper, &value, 1);
-        }
-    }
+    if (Node* owner = impl->${methodName}())
+        return V8GCController::opaqueRootForGC(owner);
 END
     }
 
     push(@implContent, <<END);
+    return object;
 }
 
 END
@@ -387,8 +385,8 @@ END
     static WrapperTypeInfo info;
 END
 
-    if (NeedsToVisitDOMWrapper($dataNode)) {
-        push(@headerContent, "    static void visitDOMWrapper(DOMDataStore*, void*, v8::Persistent<v8::Object>);\n");
+    if (NeedsCustomOpaqueRootForGC($dataNode)) {
+        push(@headerContent, "    static void* opaqueRootForGC(void*, v8::Persistent<v8::Object>);\n");
     }
 
     if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
@@ -2594,7 +2592,7 @@ sub GenerateImplementation
     AddIncludesForType($interfaceName);
 
     my $toActive = $dataNode->extendedAttributes->{"ActiveDOMObject"} ? "${className}::toActiveDOMObject" : "0";
-    my $domVisitor = NeedsToVisitDOMWrapper($dataNode) ? "${className}::visitDOMWrapper" : "0";
+    my $rootForGC = NeedsCustomOpaqueRootForGC($dataNode) ? "${className}::opaqueRootForGC" : "0";
 
     # Find the super descriptor.
     my $parentClass = "";
@@ -2611,7 +2609,7 @@ sub GenerateImplementation
 
     my $WrapperTypePrototype = $dataNode->isException ? "WrapperTypeErrorPrototype" : "WrapperTypeObjectPrototype";
 
-    push(@implContentDecls, "WrapperTypeInfo ${className}::info = { ${className}::GetTemplate, ${className}::derefObject, $toActive, $domVisitor, ${className}::installPerContextPrototypeProperties, $parentClassInfo, $WrapperTypePrototype };\n\n");
+    push(@implContentDecls, "WrapperTypeInfo ${className}::info = { ${className}::GetTemplate, ${className}::derefObject, $toActive, $rootForGC, ${className}::installPerContextPrototypeProperties, $parentClassInfo, $WrapperTypePrototype };\n\n");
     push(@implContentDecls, "namespace ${interfaceName}V8Internal {\n\n");
 
     push(@implContentDecls, "template <typename T> void V8_USE(T) { }\n\n");
@@ -2672,8 +2670,8 @@ sub GenerateImplementation
         GenerateReplaceableAttrSetter($dataNode, $implClassName);
     }
 
-    if (NeedsToVisitDOMWrapper($dataNode)) {
-        GenerateVisitDOMWrapper($dataNode, $implClassName);
+    if (NeedsCustomOpaqueRootForGC($dataNode)) {
+        GenerateOpaqueRootForGC($dataNode, $implClassName);
     }
 
     if ($dataNode->extendedAttributes->{"TypedArray"}) {
