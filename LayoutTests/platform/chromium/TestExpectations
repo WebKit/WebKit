@@ -1423,6 +1423,8 @@ webkit.org/b/99665 accessibility/loading-iframe-sends-notification.html [ Skip ]
 
 webkit.org/b/73912 accessibility/aria-checkbox-sends-notification.html [ Failure Pass ]
 #webkit.org/b/98787 accessibility/aria-hidden-negates-no-visibility.html [ Skip ]
+webkit.org/b/100887 platform/chromium/accessibility/other-aria-attribute-change-sends-notification.html [ Failure ]
+webkit.org/b/100887 platform/chromium/accessibility/is-ignored-change-sends-notification.html [ Failure ]
 
 # -----------------------------------------------------------------
 # Test failures with Skia GPU rendering of canvas 2D
@@ -4007,7 +4009,7 @@ crbug.com/152007 [ Linux Mac ] platform/chromium/virtual/softwarecompositing/geo
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
 
 webkit.org/b/98192 [ Win Debug ] fast/js/dfg-cross-global-object-inline-new-array-with-elements.html [ Failure Pass ]
-webkit.org/b/98192 [ Win Debug ] fast/js/post-message-numeric-property.html [ Failure Pass ]
+webkit.org/b/98192 [ Debug ] fast/js/post-message-numeric-property.html [ Failure Pass ]
 
 webkit.org/b/98275 media/event-queue-crash.html [ Skip ]
 

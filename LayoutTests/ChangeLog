@@ -1,3 +1,10 @@
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.  Updating TestExpectations for
+        recent failures.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-31  Philip Rogers  <pdr@google.com>
 
         Cache animationMode() in SVG animations.
