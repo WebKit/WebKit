@@ -1426,6 +1426,8 @@ webkit.org/b/99825 accessibility/title-ui-element-correctness.html [ Failure ]
 
 webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure ]
 
+webkit.org/b/100852 fast/images/exif-orientation.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
