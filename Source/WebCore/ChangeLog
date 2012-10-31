@@ -1,3 +1,15 @@
+2012-10-31  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Add total node to native memory snapshot tree
+        https://bugs.webkit.org/show_bug.cgi?id=100843
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeSnapshotDataGrid):
+        (WebInspector.NativeSnapshotNode):
+        (WebInspector.MemoryBlockViewProperties._initialize):
+
 2012-10-31  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Table with percentage column widths doesn't scale to fill the entire width of a table containing it

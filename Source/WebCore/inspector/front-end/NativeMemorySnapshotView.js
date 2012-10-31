@@ -31,7 +31,7 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
- * @param {WebInspector.ProfileType} profile
+ * @param {WebInspector.NativeMemoryProfileHeader} profile
  */
 WebInspector.NativeMemorySnapshotView = function(profile)
 {
@@ -59,8 +59,10 @@ WebInspector.NativeSnapshotDataGrid = function(profile)
         size: { title: WebInspector.UIString("Size"), sortable: false },
     };
     WebInspector.DataGrid.call(this, columns);
-    this.setRootNode(new WebInspector.NativeSnapshotNode(profile, profile));
-    this.rootNode()._populate();
+    this.setRootNode(new WebInspector.DataGridNode(null, true));
+    var totalNode = new WebInspector.NativeSnapshotNode(profile, profile);
+    this.rootNode().appendChild(totalNode);
+    totalNode.expand();
 }
 
 WebInspector.NativeSnapshotDataGrid.prototype = {
@@ -79,7 +81,7 @@ WebInspector.NativeSnapshotNode = function(nodeData, profile)
     this._profile = profile;
     var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(nodeData);
     var data = { object: viewProperties._description, size: this._nodeData.size };
-    var hasChildren = nodeData.children && nodeData.children.length !== 0;
+    var hasChildren = !!nodeData.children && nodeData.children.length !== 0;
     WebInspector.DataGridNode.call(this, data, hasChildren);
     this.addEventListener("populate", this._populate, this);
 }
@@ -87,7 +89,7 @@ WebInspector.NativeSnapshotNode = function(nodeData, profile)
 WebInspector.NativeSnapshotNode.prototype = {
     /**
      * @override
-     * @param {string} profilesPanel
+     * @param {string} columnIdentifier
      * @return {Element}
      */
     createCell: function(columnIdentifier)
@@ -304,7 +306,7 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
     {
         WebInspector.MemoryBlockViewProperties._standardBlocks[name] = new WebInspector.MemoryBlockViewProperties(fillStyle, name, WebInspector.UIString(description));
     }
-    addBlock("hsl(  0,  0%, 100%)", "ProcessPrivateMemory", "Total");
+    addBlock("hsl(  0,  0%,  60%)", "ProcessPrivateMemory", "Total");
     addBlock("hsl(  0,  0%,  80%)", "OwnersTypePlaceholder", "OwnersTypePlaceholder");
     addBlock("hsl(  0,  0%,  80%)", "Other", "Other");
     addBlock("hsl(220, 80%,  70%)", "Page", "Page structures");
