@@ -37,7 +37,7 @@
                 testExpected("video.clientWidth", 300);
                 testExpected("video.clientHeight", 150);
 
-                // FIXME: the getTime() below works around a bug in DRT where caches aren't cleared between tests; chromium: 93195, mac: 82976, gtk: 79760.
+                // FIXME: the getTime() below works around a bug (82976) in mac DRT where caches aren't cleared between tests.
                 video.poster = "content/abe.png?" + (new Date().getTime());
 
                 setTimeout(testAfterLoadingPoster, 100);

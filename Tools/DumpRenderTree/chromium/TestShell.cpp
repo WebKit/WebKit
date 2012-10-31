@@ -35,6 +35,7 @@
 #include "DRTDevToolsClient.h"
 #include "DRTTestRunner.h"
 #include "MockWebPrerenderingSupport.h"
+#include "WebCache.h"
 #include "WebDataSource.h"
 #include "WebDocument.h"
 #include "WebElement.h"
@@ -318,6 +319,7 @@ void TestShell::resetTestController()
     webView()->setFixedLayoutSize(WebSize(0, 0));
     webView()->mainFrame()->clearOpener();
     WebTestingSupport::resetInternalsObject(webView()->mainFrame());
+    WebCache::clear();
 }
 
 void TestShell::loadURL(const WebURL& url)

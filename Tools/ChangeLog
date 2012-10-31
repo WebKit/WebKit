@@ -1,3 +1,15 @@
+2012-10-31  Ami Fischman  <fischman@chromium.org>
+
+        [chromium] DRT and WTR should clear the cache between tests
+        https://bugs.webkit.org/show_bug.cgi?id=93195
+
+        Reviewed by Tony Chang.
+
+        This change makes chromium DRT match the GTK+, Qt, and EFL ports.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetTestController): added a WebCache::clear() call to achieve the goal of the bug.
+
 2012-10-31  Dirk Pranke  <dpranke@chromium.org>
 
         Fix typos introduced in r133061.
