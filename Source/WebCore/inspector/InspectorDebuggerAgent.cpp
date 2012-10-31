@@ -748,7 +748,7 @@ void InspectorDebuggerAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInf
     info.addMember(m_breakpointIdToDebugServerBreakpointIds);
     info.addMember(m_continueToLocationBreakpointId);
     info.addMember(m_breakAuxData);
-    info.addMember(m_listener);
+    info.addWeakPointer(m_listener);
 }
 
 void ScriptDebugListener::Script::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

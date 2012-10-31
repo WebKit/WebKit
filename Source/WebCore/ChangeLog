@@ -1,3 +1,30 @@
+2012-10-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Memory instrumentation: do not report memory occupied by objects referenced using client interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=100824
+
+        Reviewed by Alexander Pavlov.
+
+        In many classes we have pointer to a client object. These references should be
+        reported as weak pointers and the client's memory usage should be reported when
+        the client is reached from its instrumented owner where we know exact type of
+        the client. Otherwise we would need to add reportMemoryUsage to all client
+        interfaces which places additional burden on the client implementers and blurs
+        the instrumentation boundaries.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::reportMemoryUsage):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::reportMemoryUsage):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::reportMemoryUsage):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::reportMemoryUsage):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::reportMemoryUsage):
+        * page/Page.cpp:
+        (WebCore::Page::reportMemoryUsage):
+
 2012-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed, attempt to fix the build by exporting NoExceptionAssertionChecker symbols.

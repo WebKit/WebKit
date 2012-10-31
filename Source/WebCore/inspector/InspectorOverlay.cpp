@@ -504,7 +504,7 @@ void InspectorOverlay::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorOverlay);
     info.addMember(m_page);
-    info.addMember(m_client);
+    info.addWeakPointer(m_client);
     info.addMember(m_pausedInDebuggerMessage);
     info.addMember(m_highlightNode);
     info.addMember(m_nodeHighlightConfig);

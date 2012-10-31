@@ -404,7 +404,7 @@ void InspectorController::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) 
     info.addMember(m_inspectorFrontendClient);
     info.addMember(m_inspectorFrontend);
     info.addMember(m_page);
-    info.addMember(m_inspectorClient);
+    info.addWeakPointer(m_inspectorClient);
     info.addMember(m_agents);
 }
 

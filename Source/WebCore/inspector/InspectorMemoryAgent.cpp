@@ -559,7 +559,7 @@ void InspectorMemoryAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Inspector);
     InspectorBaseAgent<InspectorMemoryAgent>::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_inspectorClient);
+    info.addWeakPointer(m_inspectorClient);
     info.addMember(m_page);
 }
 

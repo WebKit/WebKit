@@ -674,8 +674,8 @@ void InspectorResourceAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInf
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorResourceAgent);
     InspectorBaseAgent<InspectorResourceAgent>::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_pageAgent);
-    info.addMember(m_client);
+    info.addWeakPointer(m_pageAgent);
+    info.addWeakPointer(m_client);
     info.addWeakPointer(m_frontend);
     info.addMember(m_userAgentOverride);
     info.addMember(m_resourcesData);
