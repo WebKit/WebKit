@@ -29,14 +29,14 @@
 #import "PDFPluginAnnotation.h"
 
 #import "PDFKitImports.h"
-#import <PDFKit/PDFKit.h>
 #import "PDFLayerControllerDetails.h"
 #import "PDFPlugin.h"
 #import "PDFPluginChoiceAnnotation.h"
 #import "PDFPluginTextAnnotation.h"
-#import <WebCore/ColorMac.h>
+#import <PDFKit/PDFKit.h>
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
+#import <WebCore/ColorMac.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>

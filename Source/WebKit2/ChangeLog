@@ -1,5 +1,12 @@
 2012-10-31  Tim Horton  <timothy_horton@apple.com>
 
+        Unreviewed, fix header sorting in r132992.
+
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+
+2012-10-31  Tim Horton  <timothy_horton@apple.com>
+
         Unreviewed, fix 32bit build breakage.
 
         * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
