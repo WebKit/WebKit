@@ -1,3 +1,78 @@
+2012-10-31  Tim Horton  <timothy_horton@apple.com>
+
+        Full-page PDFPlugin should support inline form editing
+        https://bugs.webkit.org/show_bug.cgi?id=100155
+
+        Reviewed by Dan Bernstein.
+
+        Add form controls corresponding to Text and Choice PDF annotations,
+        allowing for single- and multi-line text input, and <select>-like input.
+
+        Currently, forms are only implemented for full-page PDF documents.
+
+        * Shared/mac/PDFKitImports.h:
+        (WebKit): Add pdfAnnotationTextWidgetClass and pdfAnnotationChoiceWidgetClass.
+        * Shared/mac/PDFKitImports.mm:
+        (WebKit::pdfAnnotationTextWidgetClass): Add pdfAnnotationTextWidgetClass.
+        (WebKit::pdfAnnotationChoiceWidgetClass): Add pdfAnnotationChoiceWidgetClass.
+        * WebKit2.xcodeproj/project.pbxproj: Add PDFLayerControllerDetails, PDFPluginTextAnnotation, PDFPluginChoiceAnnotation,
+        and PDFPluginAnnotation.
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h: Added. Extract PDFLayerController details category into a header.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (PDFPlugin): Add m_activeAnnotation, to keep track of the active PDFPluginAnnotation, and m_annotationContainer,
+        the <div> that form controls are inserted into.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFLayerControllerDelegate pdfLayerController:didChangeActiveAnnotation:]): Forward active annotation changes to PDFPlugin.
+        (WebKit::PDFPlugin::PDFPlugin): Add a <div> to the PluginDocument <body>, which will contain <input>, <select>, and <textarea> elements
+        corresponding to the active annotation. This div is made to fit to the body, and is "overflow: hidden" so that form elements scrolled
+        out of the viewport do not cause the Document to expand to be larger than the Plugin.
+        (WebKit::PDFPlugin::pdfDocumentDidLoad): Update PDFPlugin's notion of the scroll position immediately after the document loads, in case
+        the scroll position is constrained by PDFKit.
+        (WebKit::PDFPlugin::destroy): Tear down any forms for the active annotation.
+        (WebKit::PDFPlugin::geometryDidChange): Notify the current annotation that it should update its geometry when the Plugin's geometry changes.
+        (WebKit::PDFPlugin::setScrollOffset): Notify the current annotation that it should update its geometry when we scroll.
+        (WebKit::PDFPlugin::setActiveAnnotation): Commit changes to the current annotation, if there is one, then make a new PDFPluginAnnotation
+        corresponding to the newly active annotation, and attach it to our document.
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.h: Added.
+        (WebKit::PDFPluginAnnotation::element): Return the Element corresponding to this object.
+        (WebKit::PDFPluginAnnotation::annotation): Return the PDFAnnotation corresponding to this object.
+        (WebKit::PDFPluginAnnotation::plugin): Return the Plugin that created this object.
+        (WebKit::PDFPluginAnnotation::commit): Commit changes from the form to the PDFAnnotation. This is implemented in subclasses.
+        (WebKit::PDFPluginAnnotation::attach): Attach a PDFPluginAnnotation to its parent Element.
+        (WebKit::PDFPluginAnnotation::parent): Return the parent Element that we're attach()ed to.
+        (WebKit::PDFPluginAnnotation::pdfLayerController): Return the pdfLayerController that the PDFAnnotation comes from.
+        (PDFPluginAnnotationEventListener): Add an event listener to respond to "change" and "blur" events from m_element.
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm: Added.
+        (WebKit::PDFPluginAnnotation::create): Create the appropriate PDFPluginAnnotation subclass (PDFPluginTextAnnotation or
+        PDFPluginChoiceAnnotation based on the class of the PDFAnnotation).
+        (WebKit::PDFPluginAnnotation::attach): Lazily create the HTML form element corresponding to this annotation. Add it to its parent
+        element. Add event listeners for "change" and "blur".
+        (WebKit::PDFPluginAnnotation::~PDFPluginAnnotation): Tear down the annotation, by removing event listeners and removing
+        the form element from its parent element.
+        (WebKit::PDFPluginAnnotation::updateGeometry): Update the size and position of the form element, given the current PDF scale and scrolling position.
+        (WebKit::PDFPluginAnnotation::PDFPluginAnnotationEventListener::handleEvent): If we get a blur or change event, we should remove the
+        form control to match the behavior of PDFKit.
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.h: Added.
+        (WebKit::PDFPluginChoiceAnnotation::choiceAnnotation): Return annotation() with the appropriate cast.
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm: Added.
+        (WebKit::PDFPluginChoiceAnnotation::updateGeometry): Update the font size of the choice widget given the current PDF scale.
+        (WebKit::PDFPluginChoiceAnnotation::commit): Save the value of the currently selected <option> into the PDFAnnotationChoiceWidget.
+        (WebKit::PDFPluginChoiceAnnotation::createAnnotationElement): Create a <select> element, populated with <option> elements
+        for the PDFAnnotationChoiceWidget's available choices. Select the correct <option> initially.
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.h: Added.
+        (WebKit::PDFPluginTextAnnotation::textAnnotation): Return annotation() with the appropriate cast.
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm: Added.
+        (WebKit::cssAlignmentValueForNSTextAlignment): Return the CSS alignment value for a given NSTextAlignment.
+        (WebKit::PDFPluginTextAnnotation::createAnnotationElement): Create a <textarea> or <input> element, depending on whether the
+        PDFAnnotationTextWidget supports multiline editing or not.
+        (WebKit::PDFPluginTextAnnotation::updateGeometry): Update the font size of the text widget given the current PDF scale.
+        (WebKit::PDFPluginTextAnnotation::commit): Save the current string in the form element into the PDFAnnotationTextWidget.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::focusedPluginViewForFrame): Return the PluginView for a Frame only if the Plugin's element is focused.
+        (WebKit::WebPage::executeEditingCommand): Only forward editing commands to PluginView if the plugin itself is focused.
+        (WebKit::WebPage::isEditingCommandEnabled): Ditto.
+        (WebKit::WebPage::validateCommand): Ditto.
+
 2012-10-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Make WebKit2 Build with NETWORK_PROCESS disabled

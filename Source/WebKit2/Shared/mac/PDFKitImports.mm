@@ -62,6 +62,20 @@ Class pdfLayerControllerClass()
     ASSERT(pdfLayerControllerClass);
     return pdfLayerControllerClass;
 }
+
+Class pdfAnnotationTextWidgetClass()
+{
+    static Class pdfAnnotationTextWidgetClass = classFromPDFKit(@"PDFAnnotationTextWidget");
+    ASSERT(pdfAnnotationTextWidgetClass);
+    return pdfAnnotationTextWidgetClass;
+}
+
+Class pdfAnnotationChoiceWidgetClass()
+{
+    static Class pdfAnnotationChoiceWidgetClass = classFromPDFKit(@"PDFAnnotationChoiceWidget");
+    ASSERT(pdfAnnotationChoiceWidgetClass);
+    return pdfAnnotationChoiceWidgetClass;
+}
 #endif
 
 }

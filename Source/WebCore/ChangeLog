@@ -1,3 +1,18 @@
+2012-10-31  Tim Horton  <timothy_horton@apple.com>
+
+        Full-page PDFPlugin should support inline form editing
+        https://bugs.webkit.org/show_bug.cgi?id=100155
+
+        Reviewed by Dan Bernstein.
+
+        Add form controls corresponding to Text and Choice PDF annotations,
+        allowing for single- and multi-line text input, and <option>-like input.
+
+        Currently, forms are only implemented for full-page PDF documents.
+
+        * WebCore.exp.in: Expose a variety of additional WebCore functionality to WebKit2.
+        * WebCore.xcodeproj/project.pbxproj: Expose some more WebCore headers as private headers for use in WebKit2.
+
 2012-10-30  Eric Seidel  <eric@webkit.org>
 
         RoboHornetPro spends ~25% of total test time in WebCore::Region::Shape methods

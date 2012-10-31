@@ -666,6 +666,20 @@ PassRefPtr<ImmutableArray> WebPage::trackedRepaintRects()
     return ImmutableArray::adopt(vector);
 }
 
+static PluginView* focusedPluginViewForFrame(Frame* frame)
+{
+    if (!frame->document()->isPluginDocument())
+        return 0;
+
+    PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame->document());
+
+    if (pluginDocument->focusedNode() != pluginDocument->pluginNode())
+        return 0;
+
+    PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
+    return pluginView;
+}
+
 static PluginView* pluginViewForFrame(Frame* frame)
 {
     if (!frame->document()->isPluginDocument())
@@ -682,7 +696,7 @@ void WebPage::executeEditingCommand(const String& commandName, const String& arg
     if (!frame)
         return;
 
-    if (PluginView* pluginView = pluginViewForFrame(frame)) {
+    if (PluginView* pluginView = focusedPluginViewForFrame(frame)) {
         pluginView->handleEditingCommand(commandName, argument);
         return;
     }
@@ -696,7 +710,7 @@ bool WebPage::isEditingCommandEnabled(const String& commandName)
     if (!frame)
         return false;
 
-    if (PluginView* pluginView = pluginViewForFrame(frame))
+    if (PluginView* pluginView = focusedPluginViewForFrame(frame))
         return pluginView->isEditingCommandEnabled(commandName);
     
     Editor::Command command = frame->editor()->command(commandName);
@@ -1598,7 +1612,7 @@ void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
     int32_t state = 0;
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     if (frame) {
-        if (PluginView* pluginView = pluginViewForFrame(frame))
+        if (PluginView* pluginView = focusedPluginViewForFrame(frame))
             isEnabled = pluginView->isEditingCommandEnabled(commandName);
         else {
             Editor::Command command = frame->editor()->command(commandName);

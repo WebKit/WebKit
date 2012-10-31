@@ -29,6 +29,8 @@
 #import "PDFPlugin.h"
 
 #import "PDFKitImports.h"
+#import "PDFLayerControllerDetails.h"
+#import "PDFPluginAnnotation.h"
 #import "PluginView.h"
 #import "ShareableBitmap.h"
 #import "WebEvent.h"
@@ -36,12 +38,15 @@
 #import <PDFKit/PDFKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/ArchiveResource.h>
+#import <WebCore/CSSPrimitiveValue.h>
+#import <WebCore/CSSPropertyNames.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/HTMLElement.h>
 #import <WebCore/HTTPHeaderMap.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/Page.h>
@@ -51,73 +56,35 @@
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/ScrollbarTheme.h>
 
-@protocol PDFLayerControllerDelegate <NSObject>
-
-- (void)updateScrollPosition:(CGPoint)newPosition;
-- (void)writeItemsToPasteboard:(NSArray *)items withTypes:(NSArray *)types;
-- (void)showDefinitionForAttributedString:(NSAttributedString *)string atPoint:(CGPoint)point;
-- (void)performWebSearch:(NSString *)string;
-- (void)openWithPreview;
-- (void)saveToPDF;
-
-@end
-
-@interface PDFLayerController : NSObject
-@end
-
-@interface PDFLayerController (Details)
-
-@property (retain) CALayer *parentLayer;
-@property (retain) PDFDocument *document;
-@property (retain) id<PDFLayerControllerDelegate> delegate;
-
-- (void)setFrameSize:(CGSize)size;
-
-- (void)setDisplayMode:(int)mode;
-- (void)setDisplaysPageBreaks:(BOOL)pageBreaks;
-
-- (CGFloat)tileScaleFactor;
-- (void)setTileScaleFactor:(CGFloat)scaleFactor;
-
-- (CGSize)contentSize;
-- (CGSize)contentSizeRespectingZoom;
-
-- (void)snapshotInContext:(CGContextRef)context;
-
-- (void)magnifyWithMagnification:(CGFloat)magnification atPoint:(CGPoint)point immediately:(BOOL)immediately;
-
-- (CGPoint)scrollPosition;
-- (void)setScrollPosition:(CGPoint)newPosition;
-- (void)scrollWithDelta:(CGSize)delta;
-
-- (void)mouseDown:(NSEvent *)event;
-- (void)mouseMoved:(NSEvent *)event;
-- (void)mouseUp:(NSEvent *)event;
-- (void)mouseDragged:(NSEvent *)event;
-- (void)mouseEntered:(NSEvent *)event;
-- (void)mouseExited:(NSEvent *)event;
-
-- (NSArray *)findString:(NSString *)string caseSensitive:(BOOL)isCaseSensitive highlightMatches:(BOOL)shouldHighlightMatches;
-
-- (id)currentSelection;
-- (void)copySelection;
-- (void)selectAll;
-
-- (bool)keyDown:(NSEvent *)event;
-
-- (void)setHUDEnabled:(BOOL)enabled;
-- (BOOL)hudEnabled;
-
-@end
-
 using namespace WebCore;
+
+// Set overflow: hidden on the annotation container so <input> elements scrolled out of view don't show
+// scrollbars on the body. We can't add annotations directly to the body, because overflow: hidden on the body
+// will break rubber-banding.
+static const char* annotationStyle = " \
+#annotationContainer { \
+    overflow: hidden; \
+    position: absolute; \
+    pointer-events: none; \
+    top: 0; \
+    left: 0; \
+    right: 0; \
+    bottom: 0; \
+} \
+.annotation { \
+    position: absolute; \
+    pointer-events: auto; \
+} \
+textarea.annotation { \
+    resize: none; \
+}";
 
 @interface WKPDFPluginScrollbarLayer : CALayer
 {
     WebKit::PDFPlugin* _pdfPlugin;
 }
 
-@property (assign) WebKit::PDFPlugin* pdfPlugin;
+@property(assign) WebKit::PDFPlugin* pdfPlugin;
 
 @end
 
@@ -152,7 +119,7 @@ using namespace WebCore;
     WebKit::PDFPlugin* _pdfPlugin;
 }
 
-@property (assign) WebKit::PDFPlugin* pdfPlugin;
+@property(assign) WebKit::PDFPlugin* pdfPlugin;
 
 @end
 
@@ -208,9 +175,16 @@ using namespace WebCore;
     // FIXME: Implement.
 }
 
+- (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeActiveAnnotation:(PDFAnnotation *)annotation
+{
+    _pdfPlugin->setActiveAnnotation(annotation);
+}
+
 @end
 
 namespace WebKit {
+
+using namespace HTMLNames;
 
 PassRefPtr<PDFPlugin> PDFPlugin::create(WebFrame* frame)
 {
@@ -227,7 +201,19 @@ PDFPlugin::PDFPlugin(WebFrame* frame)
 {
     m_pdfLayerController.get().delegate = m_pdfLayerControllerDelegate.get();
     m_pdfLayerController.get().parentLayer = m_contentLayer.get();
-    
+
+    if (supportsForms()) {
+        Document* document = webFrame()->coreFrame()->document();
+        m_annotationContainer = document->createElement(divTag, false);
+        m_annotationContainer->setAttribute(idAttr, "annotationContainer");
+
+        RefPtr<Element> m_annotationStyle = document->createElement(styleTag, false);
+        m_annotationStyle->setTextContent(annotationStyle, ASSERT_NO_EXCEPTION);
+
+        m_annotationContainer->appendChild(m_annotationStyle.get());
+        document->body()->appendChild(m_annotationContainer.get());
+    }
+
     [m_containerLayer.get() addSublayer:m_contentLayer.get()];
     [m_containerLayer.get() addSublayer:m_scrollCornerLayer.get()];
 }
@@ -301,6 +287,8 @@ void PDFPlugin::pdfDocumentDidLoad()
     if (handlesPageScaleFactor())
         pluginView()->setPageScaleFactor([m_pdfLayerController.get() tileScaleFactor], IntPoint());
 
+    notifyScrollPositionChanged(IntPoint([m_pdfLayerController.get() scrollPosition]));
+
     calculateSizes();
     updateScrollbars();
 
@@ -325,6 +313,9 @@ void PDFPlugin::destroy()
         if (FrameView* frameView = webFrame()->coreFrame()->view())
             frameView->removeScrollableArea(this);
     }
+
+    m_activeAnnotation = 0;
+    m_annotationContainer = 0;
 
     destroyScrollbar(HorizontalScrollbar);
     destroyScrollbar(VerticalScrollbar);
@@ -411,11 +402,14 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, con
             [m_pdfLayerController.get() magnifyWithMagnification:magnification atPoint:m_lastMousePoint immediately:YES];
     }
 
-    [m_contentLayer.get() setSublayerTransform:transform];
-    [CATransaction commit];
-
     calculateSizes();
     updateScrollbars();
+
+    if (m_activeAnnotation)
+        m_activeAnnotation->updateGeometry();
+
+    [m_contentLayer.get() setSublayerTransform:transform];
+    [CATransaction commit];
 }
     
 static NSUInteger modifierFlagsFromWebEvent(const WebEvent& event)
@@ -567,7 +561,14 @@ bool PDFPlugin::isEditingCommandEnabled(const String& commandName)
 void PDFPlugin::setScrollOffset(const IntPoint& offset)
 {
     SimplePDFPlugin::setScrollOffset(offset);
+
+    [CATransaction begin];
     [m_pdfLayerController.get() setScrollPosition:offset];
+
+    if (m_activeAnnotation)
+        m_activeAnnotation->updateGeometry();
+
+    [CATransaction commit];
 }
 
 void PDFPlugin::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
@@ -585,6 +586,27 @@ void PDFPlugin::invalidateScrollCornerRect(const IntRect& rect)
 
 bool PDFPlugin::handlesPageScaleFactor()
 {
+    return webFrame()->isMainFrame();
+}
+
+void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)
+{
+    if (!supportsForms())
+        return;
+
+    if (m_activeAnnotation)
+        m_activeAnnotation->commit();
+
+    if (annotation) {
+        m_activeAnnotation = PDFPluginAnnotation::create(annotation, m_pdfLayerController.get(), this);
+        m_activeAnnotation->attach(m_annotationContainer.get());
+    } else
+        m_activeAnnotation = 0;
+}
+
+bool PDFPlugin::supportsForms()
+{
+    // FIXME: Should we support forms for inline PDFs? Since we touch the document, this might be difficult.
     return webFrame()->isMainFrame();
 }
 

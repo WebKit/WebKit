@@ -23,22 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PDFKitImports_h
-#define PDFKitImports_h
+#ifndef PDFPluginChoiceAnnotation_h
+#define PDFPluginChoiceAnnotation_h
+
+#if ENABLE(PDFKIT_PLUGIN)
+
+#include "PDFPluginAnnotation.h"
+
+namespace WebCore {
+class Element;
+}
+
+OBJC_CLASS PDFAnnotationChoiceWidget;
 
 namespace WebKit {
 
-NSString *pdfKitFrameworkPath();
-Class classFromPDFKit(NSString *className);
-Class pdfAnnotationLinkClass();
-Class pdfDocumentClass();
+class PDFPluginChoiceAnnotation : public PDFPluginAnnotation {
+public:
+    static PassRefPtr<PDFPluginChoiceAnnotation> create(PDFAnnotation *, PDFLayerController *, PDFPlugin*);
 
-#if ENABLE(PDFKIT_PLUGIN)
-Class pdfLayerControllerClass();
-Class pdfAnnotationTextWidgetClass();
-Class pdfAnnotationChoiceWidgetClass();
-#endif
+    virtual void updateGeometry() OVERRIDE;
+    virtual void commit() OVERRIDE;
 
-}
+private:
+    PDFPluginChoiceAnnotation(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
+        : PDFPluginAnnotation(annotation, pdfLayerController, plugin)
+    {
+    }
 
-#endif // PDFKitImports_h
+    virtual PassRefPtr<WebCore::Element> createAnnotationElement() OVERRIDE;
+
+    PDFAnnotationChoiceWidget *choiceAnnotation() { return static_cast<PDFAnnotationChoiceWidget *>(annotation()); }
+};
+
+} // namespace WebKit
+
+#endif // ENABLE(PDFKIT_PLUGIN)
+
+#endif // PDFPluginChoiceAnnotation_h
