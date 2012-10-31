@@ -1,3 +1,17 @@
+2012-10-30  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] PurgeCredential should also purge the persisted credential store
+        https://bugs.webkit.org/show_bug.cgi?id=100744
+
+        Reviewed by George Staikos.
+
+        When challenged by the server, we will check the credential in-memory and from the persistent storage.
+        So the invalid credentials should also be purged from the persistent credential storage; Otherwise,
+        it will be sent to the server next time been challenged, instead of prompting the user.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::purgeCredentials):
+
 2012-10-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         DOM URL is flaky when workers are used

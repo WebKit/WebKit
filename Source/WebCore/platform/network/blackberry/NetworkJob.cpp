@@ -23,6 +23,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CookieManager.h"
+#include "CredentialBackingStore.h"
 #include "CredentialStorage.h"
 #include "Frame.h"
 #include "FrameLoaderClientBlackBerry.h"
@@ -874,6 +875,9 @@ void NetworkJob::purgeCredentials()
 
     CredentialStorage::remove(challenge.protectionSpace());
     challenge.setStored(false);
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    credentialBackingStore().removeLogin(m_response.url(), challenge.protectionSpace());
+#endif
 }
 
 bool NetworkJob::shouldSendClientData() const
