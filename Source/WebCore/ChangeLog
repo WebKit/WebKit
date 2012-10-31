@@ -1,3 +1,18 @@
+2012-10-30  Gregg Tavares  <gman@google.com>
+
+        Set the initial scissor box for WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=100804
+
+        Reviewed by Kenneth Russell.
+
+        The initial scissor box needs to be set for WebGL
+
+        No new tests as no new functionality.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+
 2012-10-30  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] PurgeCredential should also purge the persisted credential store

@@ -532,6 +532,7 @@ void WebGLRenderingContext::initializeNewContext()
 
     m_context->reshape(canvasSize.width(), canvasSize.height());
     m_context->viewport(0, 0, canvasSize.width(), canvasSize.height());
+    m_context->scissor(0, 0, canvasSize.width(), canvasSize.height());
 
     m_context->setContextLostCallback(adoptPtr(new WebGLRenderingContextLostCallback(this)));
     m_context->setErrorMessageCallback(adoptPtr(new WebGLRenderingContextErrorMessageCallback(this)));
