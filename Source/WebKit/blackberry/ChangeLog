@@ -1,3 +1,20 @@
+2012-10-30  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        [BlackBerry] Clean the code of "JavaScriptDebuggerBlackBerry"
+        https://bugs.webkit.org/show_bug.cgi?id=100724
+
+        Reviewed by Rob Buis.
+
+        Remove the code of JavaScriptDebuggerBlackBerry.
+
+        * Api/WebPage.cpp:
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebCore):
+        (WebPagePrivate):
+        * WebCoreSupport/JavaScriptDebuggerBlackBerry.cpp: Removed.
+        * WebCoreSupport/JavaScriptDebuggerBlackBerry.h: Removed.
+
 2012-10-29  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Simplify AuthenticationChallengeManager::instance

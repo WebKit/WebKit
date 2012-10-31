@@ -55,7 +55,6 @@ class Element;
 class Frame;
 class GeolocationClientBlackBerry;
 class GraphicsLayerBlackBerry;
-class JavaScriptDebuggerBlackBerry;
 class LayerWebKitThread;
 class Node;
 class Page;
@@ -479,10 +478,6 @@ public:
     WebCookieJar* m_cookieJar;
     OwnPtr<WebTapHighlight> m_tapHighlight;
     OwnPtr<SelectionOverlay> m_selectionOverlay;
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    OwnPtr<WebCore::JavaScriptDebuggerBlackBerry> m_scriptDebugger;
-#endif
 
     bool m_visible;
     ActivationStateType m_activationState;

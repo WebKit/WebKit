@@ -1,3 +1,14 @@
+2012-10-30  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        [BlackBerry] Clean the code of "JavaScriptDebuggerBlackBerry"
+        https://bugs.webkit.org/show_bug.cgi?id=100724
+
+        Reviewed by Rob Buis.
+
+        Remove the code of JavaScriptDebuggerBlackBerry.
+
+        * PlatformBlackBerry.cmake:
+
 2012-10-28  Mark Rowe  <mrowe@apple.com>
 
         Remove references to unsupported OS and Xcode versions.
