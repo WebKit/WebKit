@@ -95,7 +95,7 @@ public:
         // contribute to overlap as soon as their composited ancestor has been
         // recursively processed and popped off the stack.
         ASSERT(m_overlapStack.size() >= 2);
-        m_overlapStack[m_overlapStack.size() - 2].unite(bounds);
+        m_overlapStack[m_overlapStack.size() - 2].append(bounds);
         m_layers.add(layer);
     }
 
@@ -106,7 +106,12 @@ public:
 
     bool overlapsLayers(const IntRect& bounds) const
     {
-        return m_overlapStack.last().intersects(bounds);
+        const RectList& layerRects = m_overlapStack.last();
+        for (unsigned i = 0; i < layerRects.size(); i++) {
+            if (layerRects[i].intersects(bounds))
+                return true;
+        }
+        return false;
     }
 
     bool isEmpty()
@@ -116,19 +121,20 @@ public:
 
     void pushCompositingContainer()
     {
-        m_overlapStack.append(Region());
+        m_overlapStack.append(RectList());
     }
 
     void popCompositingContainer()
     {
-        m_overlapStack[m_overlapStack.size() - 2].unite(m_overlapStack.last());
+        m_overlapStack[m_overlapStack.size() - 2].append(m_overlapStack.last());
         m_overlapStack.removeLast();
     }
-    
+
     RenderGeometryMap& geometryMap() { return m_geometryMap; }
 
 private:
-    Vector<Region> m_overlapStack;
+    typedef Vector<IntRect> RectList;
+    Vector<RectList> m_overlapStack;
     HashSet<const RenderLayer*> m_layers;
     RenderGeometryMap m_geometryMap;
 };

@@ -1,3 +1,36 @@
+2012-10-30  Eric Seidel  <eric@webkit.org>
+
+        RoboHornetPro spends ~25% of total test time in WebCore::Region::Shape methods
+        https://bugs.webkit.org/show_bug.cgi?id=98800
+
+        Reviewed by Sam Weinig.
+
+        This patch brings our total RoboHornetPro time from 8.2 seconds to 5.3 seconds!
+
+        OverlapMap previously used Regions to track Layer bounds rects. 
+        Unfortunately unioning a list of Regions is O(N^2)
+        where N is the number of Shapes (in this case rects).
+        This is because Shapes are immutable, so to union two shapes, we copy
+        both Shapes' segment/span vectors into a single new Shape.
+        Thus if we union a set of M Regions, each with 1 Shape, we'll end up copying
+        the segments of the first Shape N times before we have the final Region/Shape
+        and the second shape N-1 times. The sum of 1 to N is (N*(N-1))/2 aka order N^2.
+        Fixing the N^2 algorithm covered by https://bugs.webkit.org/show_bug.cgi?id=100814.
+
+        For now we just avoid this O(N^2) by moving away from Region, since OverlapMap
+        doesn't need it. We just collect a vector of the layer rects and hit-test that directly.
+        Hit-testing the rect list is O(N), just like hit-testing the same information in a Region would be.
+
+        Even better for us is that the OverlapMap is never even used in RoboHornetPro.
+        We just collect these rects to end up doing nothing with them. :)
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::OverlapMap::add):
+        (WebCore::RenderLayerCompositor::OverlapMap::overlapsLayers):
+        (WebCore::RenderLayerCompositor::OverlapMap::pushCompositingContainer):
+        (WebCore::RenderLayerCompositor::OverlapMap::popCompositingContainer):
+        (RenderLayerCompositor::OverlapMap):
+
 2012-10-30  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=100813
