@@ -38,6 +38,15 @@ class TestStubs(unittest.TestCase):
     def test_empty(self):
         pass
 
+    def integration_test_empty(self):
+        pass
+
+    def serial_test_empty(self):
+        pass
+
+    def serial_integration_test_empty(self):
+        pass
+
 
 class TesterTest(unittest.TestCase):
 
@@ -64,12 +73,36 @@ class TesterTest(unittest.TestCase):
         self.assertTrue('No tests to run' in errors.getvalue())
         self.assertTrue('No tests to run' in logs)
 
-    def test_individual_names_are_not_run_twice(self):
+    def _find_test_names(self, args):
         tester = Tester()
-        tester._options, args = tester._parse_args(["webkitpy.test.main_unittest.TesterTest.test_no_tests_found"])
-        parallel_tests, serial_tests = tester._test_names(_Loader(), args)
+        tester._options, args = tester._parse_args(args)
+        return tester._test_names(_Loader(), args)
+
+    def test_individual_names_are_not_run_twice(self):
+        args = [STUBS_CLASS + '.test_empty']
+        parallel_tests, serial_tests = self._find_test_names(args)
         self.assertEquals(parallel_tests, args)
         self.assertEquals(serial_tests, [])
+
+    def test_integration_tests_are_not_found_by_default(self):
+        parallel_tests, serial_tests = self._find_test_names([STUBS_CLASS])
+        self.assertEquals(parallel_tests, [
+            STUBS_CLASS + '.test_empty',
+            ])
+        self.assertEquals(serial_tests, [
+            STUBS_CLASS + '.serial_test_empty',
+            ])
+
+    def test_integration_tests_are_found(self):
+        parallel_tests, serial_tests = self._find_test_names(['--integration-tests', STUBS_CLASS])
+        self.assertEquals(parallel_tests, [
+            STUBS_CLASS + '.integration_test_empty',
+            STUBS_CLASS + '.test_empty',
+            ])
+        self.assertEquals(serial_tests, [
+            STUBS_CLASS + '.serial_integration_test_empty',
+            STUBS_CLASS + '.serial_test_empty',
+            ])
 
     def integration_test_coverage_works(self):
         filesystem = FileSystem()

@@ -178,17 +178,19 @@ class Tester(object):
         return True
 
     def _test_names(self, loader, names):
+        parallel_test_method_prefixes = ['test_']
+        serial_test_method_prefixes = ['serial_test_']
         if self._options.integration_tests:
-            loader.test_method_prefixes.append('integration_test_')
+            parallel_test_method_prefixes.append('integration_test_')
+            serial_test_method_prefixes.append('serial_integration_test_')
 
         parallel_tests = []
-        if self._options.child_processes > 1:
-            for name in names:
-                parallel_tests.extend(self._all_test_names(loader.loadTestsFromName(name, None)))
-            loader.test_method_prefixes = []
+        loader.test_method_prefixes = parallel_test_method_prefixes
+        for name in names:
+            parallel_tests.extend(self._all_test_names(loader.loadTestsFromName(name, None)))
 
         serial_tests = []
-        loader.test_method_prefixes = ['serial_test_', 'serial_integration_test_']
+        loader.test_method_prefixes = serial_test_method_prefixes
         for name in names:
             serial_tests.extend(self._all_test_names(loader.loadTestsFromName(name, None)))
 
@@ -216,7 +218,7 @@ class Tester(object):
 
 
 class _Loader(unittest.TestLoader):
-    test_method_prefixes = ['test_']
+    test_method_prefixes = []
 
     def getTestCaseNames(self, testCaseClass):
         def isTestMethod(attrname, testCaseClass=testCaseClass):

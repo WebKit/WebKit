@@ -1,5 +1,30 @@
 2012-10-31  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: fix running modules and classes on the command line
+        https://bugs.webkit.org/show_bug.cgi?id=100787
+
+        Reviewed by Eric Seidel.
+
+        Handling modules and classes are arguments on the command line
+        was broken due to the way we were parsing test names looking for
+        parallel and serial tests.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._test_names):
+        (_Loader):
+        * Scripts/webkitpy/test/main_unittest.py:
+        (TestStubs.integration_test_empty):
+        (TestStubs):
+        (TestStubs.serial_test_empty):
+        (TestStubs.serial_integration_test_empty):
+        (TesterTest._find_test_names):
+        (TesterTest):
+        (TesterTest.test_individual_names_are_not_run_twice):
+        (TesterTest.test_integration_tests_are_not_found_by_default):
+        (TesterTest.test_integration_tests_are_found):
+
+2012-10-31  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: refactor common command line arguments for --platform, rebaseline commands
         https://bugs.webkit.org/show_bug.cgi?id=100800
 
