@@ -1,5 +1,14 @@
 2012-10-31  Pavel Podivilov  <podivilov@google.com>
 
+        [chromium] Rebaseline media/video-zoom.html.
+
+        * platform/chromium-linux/media/video-zoom-expected.png:
+        * platform/chromium-mac-lion/media/video-zoom-expected.png: Added.
+        * platform/chromium-mac-snowleopard/media/video-zoom-expected.png:
+        * platform/efl-wk1/media/video-zoom-expected.png: Renamed from LayoutTests/platform/efl/media/video-zoom-expected.png.
+
+2012-10-31  Pavel Podivilov  <podivilov@google.com>
+
         [chromium] Rebaseline 7 media/video-* tests on Linux and Mac.
 
         * platform/chromium-linux/media/video-aspect-ratio-expected.png:
