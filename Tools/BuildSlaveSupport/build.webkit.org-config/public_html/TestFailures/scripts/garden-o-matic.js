@@ -77,7 +77,7 @@ function update()
             updatePartyTime();
             g_unexpectedFailuresController.purge();
 
-            Object.keys(config.kPlatforms[config.currentPlatform].builders).forEach(function(builderName) {
+            Object.keys(config.currentBuilders()).forEach(function(builderName) {
                 if (!model.state.resultsByBuilder[builderName])
                     g_info.add(new ui.notifications.Info('Could not find test results for ' + builderName + ' in the last ' + config.kBuildNumberLimit + ' runs.'));            
             });

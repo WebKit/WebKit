@@ -96,7 +96,7 @@ var testNames = new Cycler([
     'tables/mozilla/bugs/bug52505.html'
 ]);
 
-var builders = new Cycler(Object.keys(config.kPlatforms[config.currentPlatform].builders), 3);
+var builders = new Cycler(Object.keys(config.currentBuilders()), 3);
 
 var expectations = new Cycler([
     'TEXT',

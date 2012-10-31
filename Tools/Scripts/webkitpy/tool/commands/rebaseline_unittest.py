@@ -214,8 +214,9 @@ class TestRebaselineJson(_BaseTestCase):
         self.tool.executive = MockExecutive2()
         self.old_exact_matches = builders._exact_matches
         builders._exact_matches = {
-            "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
-            "MOCK builder (Debug)": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier", "debug"])},
+            "MOCK builder": {"port_name": "test-mac-snowleopard", "specifiers": set(["mock-specifier"]),
+                             "move_overwritten_baselines_to": ["test-mac-leopard"]},
+            "MOCK builder (Debug)": {"port_name": "test-mac-snowleopard", "specifiers": set(["mock-specifier", "debug"])},
         }
 
     def tearDown(self):
@@ -223,7 +224,7 @@ class TestRebaselineJson(_BaseTestCase):
         super(TestRebaselineJson, self).tearDown()
 
     def test_rebaseline_all(self):
-        options = MockOptions(optimize=True, verbose=True)
+        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=False)
         self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder": ["txt", "png"]}})
 
         # Note that we have one run_in_parallel() call followed by a run_command()
@@ -232,13 +233,30 @@ class TestRebaselineJson(_BaseTestCase):
              ['echo', '--verbose', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
 
     def test_rebaseline_debug(self):
-        options = MockOptions(optimize=True, verbose=True)
+        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=False)
         self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder (Debug)": ["txt", "png"]}})
 
         # Note that we have one run_in_parallel() call followed by a run_command()
         self.assertEquals(self.tool.executive.calls,
             [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder (Debug)', '--test', 'user-scripts/another-test.html', '--verbose']],
              ['echo', '--verbose', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
+
+    def test_move_overwritten(self):
+        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=True)
+        self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder": ["txt", "png"]}})
+
+        # Note that we have one run_in_parallel() call followed by a run_command()
+        self.assertEquals(self.tool.executive.calls,
+            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'user-scripts/another-test.html', '--move-overwritten-baselines-to', 'test-mac-leopard', '--verbose']],
+             ['echo', '--verbose', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
+
+    def test_no_optimize(self):
+        options = MockOptions(optimize=False, verbose=True, move_overwritten_baselines=False)
+        self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder (Debug)": ["txt", "png"]}})
+
+        # Note that we have only one run_in_parallel() call
+        self.assertEquals(self.tool.executive.calls,
+            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder (Debug)', '--test', 'user-scripts/another-test.html', '--verbose']]])
 
 
 class TestRebaseline(_BaseTestCase):
@@ -292,7 +310,7 @@ class TestRebaselineExpectations(_BaseTestCase):
         self.tool.executive = MockExecutive2()
 
         self.command._tests_to_rebaseline = lambda port: {'userscripts/another-test.html': set(['txt']), 'userscripts/images.svg': set(['png'])}
-        self.command.execute(MockOptions(optimize=False, verbose=False), [], self.tool)
+        self.command.execute(MockOptions(optimize=False, verbose=False, move_overwritten_baselines=False), [], self.tool)
 
         # FIXME: change this to use the test- ports.
         calls = filter(lambda x: x != ['qmake', '-v'], self.tool.executive.calls)

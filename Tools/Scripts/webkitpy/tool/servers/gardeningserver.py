@@ -27,6 +27,7 @@ import logging
 import json
 import os
 import sys
+import urllib
 
 from webkitpy.common.memoized import memoized
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
@@ -58,8 +59,10 @@ class GardeningHTTPServer(BaseHTTPServer.HTTPServer):
         self.options = config['options']
         BaseHTTPServer.HTTPServer.__init__(self, (server_name, httpd_port), GardeningHTTPRequestHandler)
 
-    def url(self):
-        return 'file://' + os.path.join(GardeningHTTPRequestHandler.STATIC_FILE_DIRECTORY, 'garden-o-matic.html')
+    def url(self, args=None):
+        # We can't use urllib.encode() here because that encodes spaces as plus signs and the buildbots don't decode those properly.
+        arg_string = ('?' + '&'.join("%s=%s" % (key, urllib.quote(value)) for (key, value) in args.items())) if args else ''
+        return 'file://' + os.path.join(GardeningHTTPRequestHandler.STATIC_FILE_DIRECTORY, 'garden-o-matic.html' + arg_string)
 
 
 class GardeningHTTPRequestHandler(ReflectionHandler):
@@ -106,6 +109,10 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
 
     def rebaselineall(self):
         command = ['rebaseline-json']
+        if self.server.options.move_overwritten_baselines:
+            command.append('--move-overwritten-baselines')
+        if not self.server.options.optimize:
+            command.append('--no-optimize')
         if self.server.options.verbose:
             command.append('--verbose')
         json_input = self.read_entity_body()

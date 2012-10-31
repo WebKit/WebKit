@@ -158,7 +158,7 @@ model.latestRevisionWithNoBuildersInFlight = function()
 
 model.updateResultsByBuilder = function(callback)
 {
-    var platformBuilders = config.kPlatforms[config.currentPlatform].builders;
+    var platformBuilders = config.currentBuilders();
     results.fetchResultsByBuilder(Object.keys(platformBuilders), function(resultsByBuilder) {
         model.state.resultsByBuilder = resultsByBuilder;
         callback();

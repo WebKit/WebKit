@@ -97,7 +97,7 @@ function fetchMostRecentBuildInfoByBuilder(platform, callback)
         var builderNames = Object.keys(builderStatus);
         var requestTracker = new base.RequestTracker(builderNames.length, callback, [buildInfoByBuilder]);
         builderNames.forEach(function(builderName) {
-            if (!config.kPlatforms[config.currentPlatform].builderApplies(builderName)) {
+            if (!config.builderApplies(builderName)) {
                 requestTracker.requestComplete();
                 return;
             }

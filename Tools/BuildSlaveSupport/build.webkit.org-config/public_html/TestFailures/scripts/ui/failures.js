@@ -33,7 +33,7 @@ var kBuildingResult = 'BUILDING';
 ui.failures.Builder = base.extends('a', {
     init: function(builderName, failures)
     {
-        var platformBuilders = config.kPlatforms[config.currentPlatform].builders;
+        var platformBuilders = config.currentBuilders();
         var configuration = platformBuilders[builderName];
         if (configuration) {
             if (configuration.version)
