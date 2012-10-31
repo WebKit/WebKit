@@ -1874,15 +1874,18 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
                 coords.append(int(value->fValue));
                 value = m_valueList->next();
             }
+            bool hasHotSpot = false;
             IntPoint hotSpot(-1, -1);
             int nrcoords = coords.size();
             if (nrcoords > 0 && nrcoords != 2)
                 return false;
-            if (nrcoords == 2)
+            if (nrcoords == 2) {
+                hasHotSpot = true;
                 hotSpot = IntPoint(coords[0], coords[1]);
+            }
 
             if (!uri.isNull())
-                list->append(CSSCursorImageValue::create(completeURL(uri), hotSpot));
+                list->append(CSSCursorImageValue::create(completeURL(uri), hasHotSpot, hotSpot));
 
             if ((inStrictMode() && !value) || (value && !(value->unit == CSSParserValue::Operator && value->iValue == ',')))
                 return false;

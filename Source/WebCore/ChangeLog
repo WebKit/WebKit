@@ -1,3 +1,22 @@
+2012-10-30  Rick Byers  <rbyers@chromium.org>
+
+        cssText for cursor property doesn't include hotspot
+        https://bugs.webkit.org/show_bug.cgi?id=99530
+
+        Reviewed by Darin Adler.
+
+        Implement customCssText in CSSCursorImageValue to include the hotspot when present.
+        Also explicitly track whether or not a hotspot was supplied in the parser,
+        while still using the existing convention of (-1,-1) to denote no hotspot
+        in the rest of the system.
+
+        Test: fast/css/cursor-parsing.html
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::customCssText):
+        * css/CSSCursorImageValue.h:
+        (CSSCursorImageValue):
+
 2012-10-30  Kenneth Russell  <kbr@google.com>
 
         Temporarily restrict use of ImageBufferSkia::copyToPlatformTexture until bugs resolved

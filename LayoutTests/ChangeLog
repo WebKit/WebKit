@@ -1,3 +1,15 @@
+2012-10-30  Rick Byers  <rbyers@chromium.org>
+
+        cssText for cursor property doesn't include hotspot
+        https://bugs.webkit.org/show_bug.cgi?id=99530
+
+        Reviewed by Darin Adler.
+
+        Add simple test for parsing of CSS cursor property.
+
+        * fast/css/cursor-parsing-expected.txt: Added.
+        * fast/css/cursor-parsing.html: Added.
+
 2012-10-30  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Test should not be run on Apple Windows port: fast/images/exif-orientation-image-document.html
