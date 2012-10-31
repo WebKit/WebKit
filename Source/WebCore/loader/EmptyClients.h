@@ -573,6 +573,12 @@ public:
     virtual void hideHighlight() { }
 };
 
+class EmptyDeviceClient : public DeviceClient {
+public:
+    virtual void startUpdating() OVERRIDE { }
+    virtual void stopUpdating() OVERRIDE { }
+};
+
 class EmptyDeviceMotionClient : public DeviceMotionClient {
 public:
     virtual void setController(DeviceMotionController*) { }
@@ -585,8 +591,6 @@ public:
 class EmptyDeviceOrientationClient : public DeviceOrientationClient {
 public:
     virtual void setController(DeviceOrientationController*) { }
-    virtual void startUpdating() { }
-    virtual void stopUpdating() { }
     virtual DeviceOrientationData* lastOrientation() const { return 0; }
     virtual void deviceOrientationControllerDestroyed() { }
 };

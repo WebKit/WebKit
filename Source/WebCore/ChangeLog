@@ -1,3 +1,74 @@
+2012-10-31  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Add DeviceController base-class to remove duplication of DeviceXXXControler
+        https://bugs.webkit.org/show_bug.cgi?id=96894
+
+        Reviewed by Hajime Morita.
+
+        Add DeviceController which is extracted from DeviceOrientationController to remove duplication.
+        And soon-to-be-added DeviceMotionController and ProximityController.
+
+        Covered by existing tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceOrientationClient.h:
+        * dom/DeviceOrientationController.cpp:
+        Remove member functions to move to DeviceController.
+        - addListener(), removeListener(), removeAllListeners(), isActive()
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        (WebCore::DeviceOrientationController::didChangeDeviceOrientation):
+        (WebCore::DeviceOrientationController::client):
+        (WebCore::DeviceOrientationController::hasLastData):
+        (WebCore::DeviceOrientationController::getLastEvent):
+        (WebCore::DeviceOrientationController::from):
+        (WebCore):
+        * dom/DeviceOrientationController.h:
+        (WebCore):
+        (WebCore::DeviceOrientationController::~DeviceOrientationController):
+        (DeviceOrientationController):
+        * dom/Document.cpp:
+        Remove suspendEventsForAllListeners() and resumeEventsForAllListeners() function calls.
+        These calls can be made by checking activeDOMObjectsAreSuspended() and activeDOMObjectsAreStopped() before dispatchEvent.
+        (WebCore::Document::suspendActiveDOMObjects):
+        (WebCore::Document::resumeActiveDOMObjects):
+        * loader/EmptyClients.h:
+        (EmptyDeviceClient):
+        (WebCore::EmptyDeviceClient::startUpdating):
+        (WebCore::EmptyDeviceClient::stopUpdating):
+        (WebCore):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * page/DeviceClient.h: Added.
+        (WebCore):
+        (DeviceClient):
+        (WebCore::DeviceClient::~DeviceClient):
+        * page/DeviceController.cpp: Added.
+        DeviceController has extracted functions from DeviceOrientationController and DeviceMotionController.
+        - addDeviceEventListener(), removeDeviceEventlistener(), removeAllDeviceEventListeners(), dispatchDeviceEvent()
+        All kind of device event controller which has DeviceClient can be inherited from DeviceController.
+        (WebCore):
+        (WebCore::DeviceController::DeviceController):
+        (WebCore::DeviceController::addDeviceEventListener):
+        (WebCore::DeviceController::removeDeviceEventListener):
+        (WebCore::DeviceController::removeAllDeviceEventListeners):
+        (WebCore::DeviceController::dispatchDeviceEvent):
+        (WebCore::DeviceController::fireDeviceEvent):
+        * page/DeviceController.h: Added.
+        (WebCore):
+        (DeviceController):
+        (WebCore::DeviceController::~DeviceController):
+        (WebCore::DeviceController::isActive):
+        (WebCore::DeviceController::client):
+        (WebCore::DeviceController::hasLastData):
+        (WebCore::DeviceController::getLastEvent):
+
 2012-10-31  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: frame chooser does not work on subsequent inspector open.
