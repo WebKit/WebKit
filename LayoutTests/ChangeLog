@@ -1,3 +1,24 @@
+2012-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (tile cache layers): bits of tiled layers are missing with certain 3D transforms
+        https://bugs.webkit.org/show_bug.cgi?id=100808
+        <rdar://problem/12562541>
+
+        Reviewed by Dean Jackson.
+
+        Two tests for visible rect computation under clamping, one of which tests 'applyWasClamped',
+        and the other 'mapWasClamped'.
+
+        * compositing/tiling/rotated-tiled-clamped-expected.png: Added.
+        * compositing/tiling/rotated-tiled-clamped-expected.txt: Added.
+        * compositing/tiling/rotated-tiled-clamped.html: Added.
+        * compositing/tiling/rotated-tiled-preserve3d-clamped-expected.png: Added.
+        * compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt: Added.
+        * compositing/tiling/rotated-tiled-preserve3d-clamped.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/mac/compositing/tiling/rotated-tiled-clamped-expected.txt: Added.
+        * platform/mac/compositing/tiling/rotated-tiled-preserve3d-clamped-expected.txt: Added.
+
 2012-10-31  Adam Barth  <abarth@webkit.org>
 
         [V8] Garbage collection should use opaque roots rather than implicit references

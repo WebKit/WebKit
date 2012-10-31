@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            overflow: hidden; /* hide body scrollbars */
+        }
+        .scene {
+            position: relative;
+            -webkit-perspective: 600px;
+            width: 500px;
+            height: 300px;
+            margin: 50px;
+            overflow: hidden;
+            border: 1px solid black;
+        }
+        .tiled {
+            position: absolute;
+            left: -1250px;
+            height: 300px;
+            width: 2500px;
+            background-color: silver;
+            border-right: 300px solid green; /* this should be visible */
+            -webkit-transform: rotateY(80deg);
+            -webkit-transform-origin: 1500px 50%;
+        }
+        
+        #layers {
+            opacity: 0; /* hide from pixel result */
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText(true);
+
+        function doTest()
+        {
+            if (window.internals) {
+                document.getElementById('layers').innerText = internals.layerTreeAsText(document,
+                    internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+            }
+        }
+    
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div class="scene">
+    <div class="tiled"></div>
+</div>
+<pre id="layers">Layer tree goes here</p>
+
+</body>
+</html>

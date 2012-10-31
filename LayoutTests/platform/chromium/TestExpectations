@@ -3021,6 +3021,12 @@ webkit.org/b/75786 platform/chromium/virtual/softwarecompositing/tiled-layers-hi
 webkit.org/b/48454 compositing/tiling/huge-layer-img.html [ Skip ]
 webkit.org/b/48454 platform/chromium/virtual/softwarecompositing/tiling/huge-layer-img.html [ Skip ]
 
+# Need image baselines for Chromium
+webkit.org/b/100808 compositing/tiling/tiling/rotated-tiled-clamped.html [ ImageOnlyFailure ]
+webkit.org/b/100808 platform/chromium/virtual/softwarecompositing/tiling/tiling/rotated-tiled-clamped.html [ ImageOnlyFailure ]
+webkit.org/b/100808 compositing/tiling/tiling/rotated-tiled-preserve3d-clamped.html [ ImageOnlyFailure ]
+webkit.org/b/100808 platform/chromium/virtual/softwarecompositing/tiling/tiling/rotated-tiled-preserve3d-clamped.html [ ImageOnlyFailure ]
+
 webkit.org/b/75932 fast/js/array-defineOwnProperty.html [ Failure ]
 webkit.org/b/75932 fast/js/mozilla/strict/15.4.4.6.html [ Failure ]
 

@@ -81,20 +81,20 @@ public:
     }
     
     void move(LayoutUnit x, LayoutUnit y, TransformAccumulation = FlattenTransform);
-    void applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation = FlattenTransform);
-    void applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation = FlattenTransform);
-    void flatten();
+    void applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = 0);
+    void applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation = FlattenTransform, bool* wasClamped = 0);
+    void flatten(bool* wasClamped = 0);
 
     // Return the coords of the point or quad in the last flattened layer
     FloatPoint lastPlanarPoint() const { return m_lastPlanarPoint; }
     FloatQuad lastPlanarQuad() const { return m_lastPlanarQuad; }
 
     // Return the point or quad mapped through the current transform
-    FloatPoint mappedPoint() const;
-    FloatQuad mappedQuad() const;
+    FloatPoint mappedPoint(bool* wasClamped = 0) const;
+    FloatQuad mappedQuad(bool* wasClamped = 0) const;
 
 private:
-    void flattenWithTransform(const TransformationMatrix&);
+    void flattenWithTransform(const TransformationMatrix&, bool* wasClamped);
     
     FloatPoint m_lastPlanarPoint;
     FloatQuad m_lastPlanarQuad;

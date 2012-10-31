@@ -166,7 +166,7 @@ public:
     // with the destination plane.
     FloatPoint projectPoint(const FloatPoint&, bool* clamped = 0) const;
     // Projects the four corners of the quad
-    FloatQuad projectQuad(const FloatQuad&) const;
+    FloatQuad projectQuad(const FloatQuad&,  bool* clamped = 0) const;
     // Projects the four corners of the quad and takes a bounding box,
     // while sanitizing values created when the w component is negative.
     FractionalLayoutRect clampedBoundsOfProjectedQuad(const FloatQuad&) const;

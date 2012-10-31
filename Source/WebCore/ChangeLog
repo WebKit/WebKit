@@ -1,3 +1,42 @@
+2012-10-31  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (tile cache layers): bits of tiled layers are missing with certain 3D transforms
+        https://bugs.webkit.org/show_bug.cgi?id=100808
+        <rdar://problem/12562541>
+
+        Reviewed by Dean Jackson.
+
+        When projecting rects down into transformed layers, the projection can fail with severe
+        3D rotations if the computed w component in TransformationMatrix::projectPoint() is negative.
+        In this case we already clamp, but the fact that we clamped doesn't make it out to
+        GraphicsLayerCA::computeVisibleRect() which resulted in incorrect visible rects being
+        computed.
+        
+        Fix by propagating the fact that clamping occurred out of the TransformState functions
+        which can clamp. In computeVisibleRect(), simply consider the entire layer bounds
+        to be visible if clamping occurred.
+
+        Tests: compositing/tiling/rotated-tiled-clamped.html
+               compositing/tiling/rotated-tiled-preserve3d-clamped.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::computeVisibleRect): If either the applyTransform()
+        or the state.mappedQuad() clamped, use our bounds as the visible rect.
+        * platform/graphics/transforms/TransformState.cpp:
+        (WebCore::TransformState::applyTransform): Pass out clamping state.
+        (WebCore::TransformState::flatten): Ditto.
+        (WebCore::TransformState::mappedPoint): Ditto.
+        (WebCore::TransformState::mappedQuad): Ditto.
+        (WebCore::TransformState::flattenWithTransform): Ditto. No need to initialize
+        wasClamped, since this function is internal.
+        * platform/graphics/transforms/TransformState.h:
+        (TransformState):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::projectQuad): If any point projection clamped,
+        set the flag to say we clamped.
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (TransformationMatrix):
+
 2012-10-31  Tiancheng Jiang  <tijiang@rim.com>
 
         Change bubble message style to BB10 UX spec.

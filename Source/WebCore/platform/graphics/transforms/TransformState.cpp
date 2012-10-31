@@ -76,13 +76,16 @@ void TransformState::move(LayoutUnit x, LayoutUnit y, TransformAccumulation accu
 }
 
 // FIXME: We transform AffineTransform to TransformationMatrix. This is rather inefficient.
-void TransformState::applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation accumulate)
+void TransformState::applyTransform(const AffineTransform& transformFromContainer, TransformAccumulation accumulate, bool* wasClamped)
 {
-    applyTransform(transformFromContainer.toTransformationMatrix(), accumulate);
+    applyTransform(transformFromContainer.toTransformationMatrix(), accumulate, wasClamped);
 }
 
-void TransformState::applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation accumulate)
+void TransformState::applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation accumulate, bool* wasClamped)
 {
+    if (wasClamped)
+        *wasClamped = false;
+
     // If we have an accumulated transform from last time, multiply in this transform
     if (m_accumulatedTransform) {
         if (m_direction == ApplyTransformDirection)
@@ -96,44 +99,53 @@ void TransformState::applyTransform(const TransformationMatrix& transformFromCon
     
     if (accumulate == FlattenTransform) {
         const TransformationMatrix* finalTransform = m_accumulatedTransform ? m_accumulatedTransform.get() : &transformFromContainer;
-        flattenWithTransform(*finalTransform);
+        flattenWithTransform(*finalTransform, wasClamped);
     }
     m_accumulatingTransform = accumulate == AccumulateTransform;
 }
 
-void TransformState::flatten()
+void TransformState::flatten(bool* wasClamped)
 {
+    if (wasClamped)
+        *wasClamped = false;
+
     if (!m_accumulatedTransform) {
         m_accumulatingTransform = false;
         return;
     }
     
-    flattenWithTransform(*m_accumulatedTransform);
+    flattenWithTransform(*m_accumulatedTransform, wasClamped);
 }
 
-FloatPoint TransformState::mappedPoint() const
+FloatPoint TransformState::mappedPoint(bool* wasClamped) const
 {
+    if (wasClamped)
+        *wasClamped = false;
+
     if (!m_accumulatedTransform)
         return m_lastPlanarPoint;
 
     if (m_direction == ApplyTransformDirection)
         return m_accumulatedTransform->mapPoint(m_lastPlanarPoint);
 
-    return m_accumulatedTransform->inverse().projectPoint(m_lastPlanarPoint);
+    return m_accumulatedTransform->inverse().projectPoint(m_lastPlanarPoint, wasClamped);
 }
 
-FloatQuad TransformState::mappedQuad() const
+FloatQuad TransformState::mappedQuad(bool* wasClamped) const
 {
+    if (wasClamped)
+        *wasClamped = false;
+
     if (!m_accumulatedTransform)
         return m_lastPlanarQuad;
 
     if (m_direction == ApplyTransformDirection)
         return m_accumulatedTransform->mapQuad(m_lastPlanarQuad);
 
-    return m_accumulatedTransform->inverse().projectQuad(m_lastPlanarQuad);
+    return m_accumulatedTransform->inverse().projectQuad(m_lastPlanarQuad, wasClamped);
 }
 
-void TransformState::flattenWithTransform(const TransformationMatrix& t)
+void TransformState::flattenWithTransform(const TransformationMatrix& t, bool* wasClamped)
 {
     if (m_direction == ApplyTransformDirection) {
         if (m_mapPoint)
@@ -145,7 +157,7 @@ void TransformState::flattenWithTransform(const TransformationMatrix& t)
         if (m_mapPoint)
             m_lastPlanarPoint = inverseTransform.projectPoint(m_lastPlanarPoint);
         if (m_mapQuad)
-            m_lastPlanarQuad = inverseTransform.projectQuad(m_lastPlanarQuad);
+            m_lastPlanarQuad = inverseTransform.projectQuad(m_lastPlanarQuad, wasClamped);
     }
 
     // We could throw away m_accumulatedTransform if we wanted to here, but that

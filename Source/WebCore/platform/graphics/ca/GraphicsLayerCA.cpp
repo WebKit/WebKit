@@ -943,11 +943,14 @@ FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state) const
         }
     }
 
-    state.applyTransform(layerTransform, accumulation);
+    bool applyWasClamped;
+    state.applyTransform(layerTransform, accumulation, &applyWasClamped);
     
-    FloatRect clipRectForChildren = state.mappedQuad().boundingBox();
+    bool mapWasClamped;
+    FloatRect clipRectForChildren = state.mappedQuad(&mapWasClamped).boundingBox();
     FloatRect clipRectForSelf(0, 0, m_size.width(), m_size.height());
-    clipRectForSelf.intersect(clipRectForChildren);
+    if (!applyWasClamped && !mapWasClamped)
+        clipRectForSelf.intersect(clipRectForChildren);
     
     if (masksToBounds()) {
         ASSERT(accumulation == TransformState::FlattenTransform);

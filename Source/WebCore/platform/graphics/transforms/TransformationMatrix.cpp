@@ -589,7 +589,7 @@ FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p, bool* clamped
     return FloatPoint(static_cast<float>(outX), static_cast<float>(outY));
 }
 
-FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q) const
+FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q, bool* clamped) const
 {
     FloatQuad projectedQuad;
 
@@ -603,6 +603,9 @@ FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q) const
     projectedQuad.setP3(projectPoint(q.p3(), &clamped3));
     projectedQuad.setP4(projectPoint(q.p4(), &clamped4));
 
+    if (clamped)
+        *clamped = clamped1 || clamped2 || clamped3 || clamped4;
+        
     // If all points on the quad had w < 0, then the entire quad would not be visible to the projected surface.
     bool everythingWasClipped = clamped1 && clamped2 && clamped3 && clamped4;
     if (everythingWasClipped)
