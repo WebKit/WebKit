@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkRequest.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include "NetworkConnectionToWebProcess.h"
 
 namespace WebKit {
@@ -52,3 +54,5 @@ void NetworkRequest::connectionToWebProcessDidClose(NetworkConnectionToWebProces
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)

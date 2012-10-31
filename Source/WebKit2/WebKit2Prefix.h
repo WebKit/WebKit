@@ -55,10 +55,6 @@
 #endif
 #endif
 
-#endif // PLATFORM(MAC)
-
-#if PLATFORM(MAC)
-
 #if ENABLE(PLUGIN_PROCESS)
 #define ENABLE_SHARED_WORKER_PROCESS 1
 #endif

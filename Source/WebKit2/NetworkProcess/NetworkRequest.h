@@ -26,6 +26,8 @@
 #ifndef NetworkRequest_h
 #define NetworkRequest_h
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include "NetworkConnectionToWebProcess.h"
 #include <WebCore/ResourceRequest.h>
 
@@ -58,5 +60,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkRequest_h

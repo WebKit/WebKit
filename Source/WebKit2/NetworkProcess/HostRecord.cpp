@@ -32,6 +32,8 @@
 #include "NetworkRequest.h"
 #include "NetworkResourceLoadScheduler.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -101,3 +103,5 @@ bool HostRecord::limitRequests(ResourceLoadPriority priority, bool serialLoading
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)

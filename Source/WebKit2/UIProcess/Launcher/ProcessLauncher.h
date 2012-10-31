@@ -51,7 +51,9 @@ public:
 #if ENABLE(PLUGIN_PROCESS)
         PluginProcess,
 #endif
+#if ENABLE(NETWORK_PROCESS)
         NetworkProcess,
+#endif
 #if ENABLE(SHARED_WORKER_PROCESS)
         SharedWorkerProcess
 #endif

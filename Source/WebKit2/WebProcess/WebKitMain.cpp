@@ -60,11 +60,9 @@ static int WebKitMain(const CommandLine& commandLine)
         case ProcessLauncher::PluginProcess:
             return PluginProcessMain(commandLine);
 #endif
-        case ProcessLauncher::NetworkProcess:
 #if ENABLE(NETWORK_PROCESS)
+        case ProcessLauncher::NetworkProcess:
             return NetworkProcessMain(commandLine);
-#else
-            break;
 #endif
 #if ENABLE(SHARED_WORKER_PROCESS)
         case ProcessLauncher::SharedWorkerProcess:

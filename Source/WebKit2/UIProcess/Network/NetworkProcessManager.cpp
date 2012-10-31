@@ -28,6 +28,8 @@
 
 #include "NetworkProcessProxy.h"
 
+#if ENABLE(NETWORK_PROCESS)
+
 namespace WebKit {
 
 NetworkProcessManager& NetworkProcessManager::shared()
@@ -68,3 +70,5 @@ void NetworkProcessManager::removeNetworkProcessProxy(NetworkProcessProxy* netwo
 
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)

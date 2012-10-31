@@ -26,6 +26,8 @@
 #ifndef HostRecord_h
 #define HostRecord_h
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
@@ -62,5 +64,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // #ifndef HostRecord_h

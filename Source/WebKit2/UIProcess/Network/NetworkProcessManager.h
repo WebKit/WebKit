@@ -26,6 +26,8 @@
 #ifndef NetworkProcessManager_h
 #define NetworkProcessManager_h
 
+#if ENABLE(NETWORK_PROCESS)
+
 #include "Connection.h"
 #include "WebProcessProxyMessages.h"
 #include <wtf/RefCounted.h>
@@ -55,5 +57,7 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(NETWORK_PROCESS)
 
 #endif // NetworkProcessManager_h

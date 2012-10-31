@@ -77,8 +77,10 @@ const char* ProcessLauncher::processTypeAsString(ProcessType processType)
     case PluginProcess:
         return "pluginprocess";
 #endif
+#if ENABLE(NETWORK_PROCESS)
     case NetworkProcess:
         return "networkprocess";
+#endif
 #if ENABLE(SHARED_WORKER_PROCESS)
     case SharedWorkerProcess:
         return "sharedworkerprocess";
@@ -103,10 +105,12 @@ bool ProcessLauncher::getProcessTypeFromString(const char* string, ProcessType& 
     }
 #endif
 
+#if ENABLE(NETWORK_PROCESS)
     if (!strcmp(string, "networkprocess")) {
         processType = NetworkProcess;
         return true;
     }
+#endif
 
 #if ENABLE(SHARED_WORKER_PROCESS)
     if (!strcmp(string, "sharedworkerprocess")) {
