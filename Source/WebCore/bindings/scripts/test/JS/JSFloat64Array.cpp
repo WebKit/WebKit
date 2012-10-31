@@ -53,7 +53,12 @@ static const HashTableValue JSFloat64ArrayConstructorTableValues[] =
 };
 
 static const HashTable JSFloat64ArrayConstructorTable = { 1, 0, JSFloat64ArrayConstructorTableValues, 0 };
-const ClassInfo JSFloat64ArrayConstructor::s_info = { "Float64ArrayConstructor", &Base::s_info, &JSFloat64ArrayConstructorTable, 0, CREATE_METHOD_TABLE(JSFloat64ArrayConstructor) };
+static const HashTable* getJSFloat64ArrayConstructorTable(ExecState* exec)
+{
+    return getHashTableForGlobalData(exec->globalData(), &JSFloat64ArrayConstructorTable);
+}
+
+const ClassInfo JSFloat64ArrayConstructor::s_info = { "Float64ArrayConstructor", &Base::s_info, 0, getJSFloat64ArrayConstructorTable, CREATE_METHOD_TABLE(JSFloat64ArrayConstructor) };
 
 JSFloat64ArrayConstructor::JSFloat64ArrayConstructor(Structure* structure, JSDOMGlobalObject* globalObject)
     : DOMConstructorObject(structure, globalObject)
@@ -70,12 +75,12 @@ void JSFloat64ArrayConstructor::finishCreation(ExecState* exec, JSDOMGlobalObjec
 
 bool JSFloat64ArrayConstructor::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSFloat64ArrayConstructor, JSDOMWrapper>(exec, &JSFloat64ArrayConstructorTable, jsCast<JSFloat64ArrayConstructor*>(cell), propertyName, slot);
+    return getStaticValueSlot<JSFloat64ArrayConstructor, JSDOMWrapper>(exec, getJSFloat64ArrayConstructorTable(exec), jsCast<JSFloat64ArrayConstructor*>(cell), propertyName, slot);
 }
 
 bool JSFloat64ArrayConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<JSFloat64ArrayConstructor, JSDOMWrapper>(exec, &JSFloat64ArrayConstructorTable, jsCast<JSFloat64ArrayConstructor*>(object), propertyName, descriptor);
+    return getStaticValueDescriptor<JSFloat64ArrayConstructor, JSDOMWrapper>(exec, getJSFloat64ArrayConstructorTable(exec), jsCast<JSFloat64ArrayConstructor*>(object), propertyName, descriptor);
 }
 
 EncodedJSValue JSC_HOST_CALL JSFloat64ArrayConstructor::constructJSFloat64Array(ExecState* exec)

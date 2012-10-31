@@ -1,3 +1,15 @@
+2012-10-31  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Reset binding test result after r132973
+        https://bugs.webkit.org/show_bug.cgi?id=99178
+
+        Unreviewed gardening.
+
+        * bindings/scripts/test/JS/JSFloat64Array.cpp:
+        (WebCore::getJSFloat64ArrayConstructorTable):
+        (WebCore::JSFloat64ArrayConstructor::getOwnPropertySlot):
+        (WebCore::JSFloat64ArrayConstructor::getOwnPropertyDescriptor):
+
 2012-10-31  Mike West  <mkwst@chromium.org>
 
         Script run from an isolated world should bypass a page's CSP.
