@@ -1,3 +1,33 @@
+2012-10-30  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=100796
+        Should add FixedPositionViewportConstraints to ScrollingConstraints.h
+
+        Reviewed by Simon Fraser.
+
+        ScrollingConstraints.h currently contains an abstract class called 
+        ViewportConstraints that is intended to encapsulate data and logic 
+        required to reposition elements whose layout depends on the viewport 
+        rect (positions fixed and sticky), when scrolling and zooming. 
+        However, at this time there is only a subclass for sticky. We should 
+        add a sub-class for fixed. This is required to get pages with fixed 
+        position elements scrolling on the scrolling thread.
+
+        * page/scrolling/ScrollingConstraints.cpp:
+        (WebCore::FixedPositionViewportConstraints::layerPositionForViewportRect):
+        (WebCore):
+        * page/scrolling/ScrollingConstraints.h:
+        (WebCore::ViewportConstraints::ViewportConstraints):
+        (ViewportConstraints):
+        (WebCore::ViewportConstraints::setAnchorEdges):
+        (FixedPositionViewportConstraints):
+        (WebCore::FixedPositionViewportConstraints::FixedPositionViewportConstraints):
+        (WebCore::FixedPositionViewportConstraints::viewportRectAtLastLayout):
+        (WebCore::FixedPositionViewportConstraints::setViewportRectAtLastLayout):
+        (WebCore::FixedPositionViewportConstraints::layerPositionAtLastLayout):
+        (WebCore::FixedPositionViewportConstraints::setLayerPositionAtLastLayout):
+        (WebCore):
+
 2012-10-30  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] update form theme for BB10.

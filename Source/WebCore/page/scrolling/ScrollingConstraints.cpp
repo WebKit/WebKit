@@ -28,6 +28,23 @@
 
 namespace WebCore {
 
+FloatPoint FixedPositionViewportConstraints::layerPositionForViewportRect(const FloatRect& viewportRect) const
+{
+    FloatSize offset;
+
+    if (hasAnchorEdge(AnchorEdgeLeft))
+        offset.setWidth(viewportRect.x() - m_viewportRectAtLastLayout.x());
+    else if (hasAnchorEdge(AnchorEdgeRight))
+        offset.setWidth(viewportRect.maxX() - m_viewportRectAtLastLayout.maxX());
+
+    if (hasAnchorEdge(AnchorEdgeTop))
+        offset.setHeight(viewportRect.y() - m_viewportRectAtLastLayout.y());
+    else if (hasAnchorEdge(AnchorEdgeBottom))
+        offset.setHeight(viewportRect.maxY() - m_viewportRectAtLastLayout.maxY());
+
+    return m_layerPositionAtLastLayout + offset;
+}
+
 FloatSize StickyPositionViewportConstraints::computeStickyOffset(const FloatRect& viewportRect) const
 {
     FloatRect boxRect = m_absoluteStickyBoxRect;

@@ -51,6 +51,11 @@ public:
         : m_anchorEdges(0)
     { }
 
+    ViewportConstraints(ViewportConstraints* constraints)
+        : m_alignmentOffset(constraints->alignmentOffset())
+        , m_anchorEdges(constraints->anchorEdges())
+    { }
+
     virtual ~ViewportConstraints() { }
     
     virtual ConstraintType constraintType() const = 0;
@@ -58,6 +63,7 @@ public:
     AnchorEdges anchorEdges() const { return m_anchorEdges; }
     bool hasAnchorEdge(AnchorEdgeFlags flag) const { return m_anchorEdges & flag; }
     void addAnchorEdge(AnchorEdgeFlags edgeFlag) { m_anchorEdges |= edgeFlag; }
+    void setAnchorEdges(AnchorEdges edges) { m_anchorEdges = edges; }
     
     FloatSize alignmentOffset() const { return m_alignmentOffset; }
     void setAlignmentOffset(const FloatSize& offset) { m_alignmentOffset = offset; }
@@ -65,6 +71,32 @@ public:
 protected:
     FloatSize m_alignmentOffset;
     AnchorEdges m_anchorEdges;
+};
+
+class FixedPositionViewportConstraints : public ViewportConstraints {
+public:
+    FixedPositionViewportConstraints()
+    { }
+
+    FixedPositionViewportConstraints(FixedPositionViewportConstraints* constraints)
+        : ViewportConstraints(constraints)
+        , m_viewportRectAtLastLayout(constraints->viewportRectAtLastLayout())
+        , m_layerPositionAtLastLayout(constraints->layerPositionAtLastLayout())
+    { }
+
+    virtual ConstraintType constraintType() const OVERRIDE { return FixedPositionConstaint; };
+
+    FloatPoint layerPositionForViewportRect(const FloatRect& viewportRect) const;
+
+    const FloatRect& viewportRectAtLastLayout() const { return m_viewportRectAtLastLayout; }
+    void setViewportRectAtLastLayout(const FloatRect& rect) { m_viewportRectAtLastLayout = rect; }
+
+    const FloatPoint& layerPositionAtLastLayout() const { return m_layerPositionAtLastLayout; }
+    void setLayerPositionAtLastLayout(const FloatPoint& point) { m_layerPositionAtLastLayout = point; }
+
+private:
+    FloatRect m_viewportRectAtLastLayout;
+    FloatPoint m_layerPositionAtLastLayout;
 };
 
 class StickyPositionViewportConstraints : public ViewportConstraints {
