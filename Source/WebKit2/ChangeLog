@@ -1,3 +1,20 @@
+2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] WebContext::platformDefaultIconDatabasePath() should return a path to a file
+        https://bugs.webkit.org/show_bug.cgi?id=100679
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch aligns the EFL implementation with other ports. Before
+        that, we had an inconsistence: the return value of the getter could
+        not be used on the setter (the setter expects a full path, not a
+        directory).
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (Ewk_Context::faviconDatabase):
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformDefaultIconDatabasePath):
+
 2012-10-31  Ian Vollick  <vollick@chromium.org>
 
         Add support for text-based repaint testing

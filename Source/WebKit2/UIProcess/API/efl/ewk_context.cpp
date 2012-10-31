@@ -150,8 +150,7 @@ Ewk_Favicon_Database* Ewk_Context::faviconDatabase()
         // Set the database path if it is not open yet.
         if (!toImpl(iconDatabase.get())->isOpen()) {
             WebContext* webContext = toImpl(m_context.get());
-            String databasePath = webContext->iconDatabasePath() + "/" + WebCore::IconDatabase::defaultDatabaseFilename();
-            webContext->setIconDatabasePath(databasePath);
+            webContext->setIconDatabasePath(webContext->iconDatabasePath());
         }
         m_faviconDatabase = Ewk_Favicon_Database::create(iconDatabase.get());
     }
