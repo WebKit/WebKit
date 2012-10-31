@@ -1,3 +1,28 @@
+2012-10-31  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt is not killing stuck DRTs on chromium win
+        https://bugs.webkit.org/show_bug.cgi?id=100886
+
+        Unreviewed, build fix.
+
+        In the original implementation of NRWT for Chromium, we used
+        to assume that DRT would always manage to exit on its own and
+        so NRWT wouldn't attempt to kill DRT if it was stuck (this was the
+        "hung worker" problem, and meant that if DRT hung, NRWT would hang).
+
+        Eventually, we merged the chromium code with the other ports and
+        now will always try to shut down DRTs if a test times out, but as
+        part of that merge we left in a code path where we wouldn't
+        shut the driver down on windows. This was resulting in stray
+        DRTs being left around, and NRWT sometimes not exiting cleanly as
+        a result.
+
+        No unit tests added because this was a windows-only code path (hence
+        hard to test) and that is now gone.
+
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess.stop):
+
 2012-10-31  Ami Fischman  <fischman@chromium.org>
 
         [chromium] DRT and WTR should clear the cache between tests

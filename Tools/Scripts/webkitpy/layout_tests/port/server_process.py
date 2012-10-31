@@ -335,19 +335,17 @@ class ServerProcess(object):
             self._proc.stdin.close()
             self._proc.stdin = None
         killed = False
-        if not timeout_secs:
-            self._kill()
-            killed = True
-        elif not self._host.platform.is_win():
-            # FIXME: Why aren't we calling this on win?
+        if timeout_secs:
             deadline = now + timeout_secs
             while self._proc.poll() is None and time.time() < deadline:
                 time.sleep(0.01)
             if self._proc.poll() is None:
-                _log.warning('stopping %s timed out, killing it' % self._name)
-                self._kill()
-                killed = True
-                _log.warning('killed')
+                _log.warning('stopping %s(pid %d) timed out, killing it' % (self._name, self._proc.pid))
+
+        if self._proc.poll() is None:
+            self._kill()
+            killed = True
+            _log.debug('killed pid %d' % self._proc.pid)
 
         # read any remaining data on the pipes and return it.
         if not killed:
