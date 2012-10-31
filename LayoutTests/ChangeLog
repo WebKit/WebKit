@@ -1,3 +1,15 @@
+2012-10-31  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unreviewed pixel expectations gardening.
+
+        Skip a few ietestcenter/css3/text texts which are rendering
+        incorrectly, and accept Missing as a valid result for some culling
+        tests.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/ietestcenter/css3/text/textshadow-005-expected.png: Removed.
+        * platform/efl/ietestcenter/css3/text/textshadow-005-expected.txt: Removed.
+
 2012-10-31  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][GTK] Unreviewed gardening.

@@ -1037,8 +1037,8 @@ webkit.org/b/99047 compositing/backface-visibility/backface-visibility-non3d.htm
 webkit.org/b/99048 compositing/backface-visibility/backface-visibility-simple.html [ ImageOnlyFailure ]
 webkit.org/b/99050 compositing/culling/filter-occlusion-alpha-large.html [ ImageOnlyFailure ]
 webkit.org/b/99051 compositing/culling/filter-occlusion-alpha.html [ ImageOnlyFailure ]
-webkit.org/b/99185 compositing/culling/filter-occlusion-blur-large.html [ ImageOnlyFailure ]
-webkit.org/b/99185 compositing/culling/filter-occlusion-blur.html [ ImageOnlyFailure ]
+webkit.org/b/99185 compositing/culling/filter-occlusion-blur-large.html [ ImageOnlyFailure Missing ]
+webkit.org/b/99185 compositing/culling/filter-occlusion-blur.html [ ImageOnlyFailure Missing ]
 webkit.org/b/79766 compositing/geometry/ancestor-overflow-change.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/clip.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/composited-in-columns.html [ Failure ]
@@ -1665,3 +1665,7 @@ Bug(EFL) media/context-menu-actions.html [ Failure ]
 
 # ESC key does not cancel context menu in EFL port
 Bug(EFL) editing/selection/5354455-1.html [ Failure ]
+
+# It may even be the case that the tests themselves are wrong.
+webkit.org/b/100857 ietestcenter/css3/text/textshadow-005.htm [ ImageOnlyFailure Missing ]
+webkit.org/b/100855 ietestcenter/css3/text/textshadow-008.htm [ ImageOnlyFailure Missing ]
