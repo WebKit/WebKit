@@ -59,6 +59,9 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_POST(self):
         self._handle_request()
 
+    def do_HEAD(self):
+        self._handle_request()
+
     def read_entity_body(self):
         length = int(self.headers.getheader('content-length'))
         return self.rfile.read(length)
@@ -116,7 +119,7 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.end_headers()
         json.dump(json_object, self.wfile)
 
-    def _serve_file(self, file_path, cacheable_seconds=0):
+    def _serve_file(self, file_path, cacheable_seconds=0, headers_only=False):
         if not os.path.exists(file_path):
             self.send_error(404, "File not found")
             return
@@ -136,4 +139,5 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 self.send_header("Expires", expires_formatted)
             self.end_headers()
 
-            shutil.copyfileobj(static_file, self.wfile)
+            if not header_only:
+                shutil.copyfileobj(static_file, self.wfile)

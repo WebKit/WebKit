@@ -69,6 +69,8 @@ class AbstractRebaseliningCommand(AbstractDeclarativeCommand):
 
     platform_options = factory.platform_options()
 
+    results_directory_option = optparse.make_option("--results-directory", help="Local results directory to use")
+
     suffixes_option = optparse.make_option("--suffixes", default=','.join(BASELINE_SUFFIX_LIST), action="store",
         help="Comma-separated-list of file types to rebaseline")
 
@@ -84,6 +86,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
     def __init__(self):
         super(RebaselineTest, self).__init__(options=[
             self.no_optimize_option,
+            self.results_directory_option,
             self.suffixes_option,
             optparse.make_option("--builder", help="Builder to pull new baselines from"),
             optparse.make_option("--move-overwritten-baselines-to", action="append", default=[],
@@ -164,8 +167,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
     def _file_name_for_expected_result(self, test_name, suffix):
         return "%s-expected.%s" % (self._test_root(test_name), suffix)
 
-    def _rebaseline_test(self, builder_name, test_name, move_overwritten_baselines_to, suffix):
-        results_url = self._results_url(builder_name)
+    def _rebaseline_test(self, builder_name, test_name, move_overwritten_baselines_to, suffix, results_url):
         baseline_directory = self._baseline_directory(builder_name)
 
         source_baseline = "%s/%s" % (results_url, self._file_name_for_actual_result(test_name, suffix))
@@ -177,14 +179,15 @@ class RebaselineTest(AbstractRebaseliningCommand):
         _log.debug("Retrieving %s." % source_baseline)
         self._save_baseline(self._tool.web.get_binary(source_baseline, convert_404_to_None=True), target_baseline)
 
-    def _rebaseline_test_and_update_expectations(self, builder_name, test_name, platforms_to_move_existing_baselines_to):
+    def _rebaseline_test_and_update_expectations(self, builder_name, test_name, platforms_to_move_existing_baselines_to, results_url):
         for suffix in self._baseline_suffix_list:
-            self._rebaseline_test(builder_name, test_name, platforms_to_move_existing_baselines_to, suffix)
+            self._rebaseline_test(builder_name, test_name, platforms_to_move_existing_baselines_to, suffix, results_url)
         self._update_expectations_file(builder_name, test_name)
 
     def execute(self, options, args, tool):
         self._baseline_suffix_list = options.suffixes.split(',')
-        self._rebaseline_test_and_update_expectations(options.builder, options.test, options.move_overwritten_baselines_to)
+        results_url = options.results_directory or self._results_url(options.builder)
+        self._rebaseline_test_and_update_expectations(options.builder, options.test, options.move_overwritten_baselines_to, results_url)
         print json.dumps(self._scm_changes)
 
 
@@ -274,7 +277,7 @@ class AbstractParallelRebaselineCommand(AbstractRebaseliningCommand):
                 builders_to_fallback_paths[builder] = fallback_path
         return builders_to_fallback_paths.keys()
 
-    def _rebaseline_commands(self, test_list, move_overwritten_baselines=False, verbose=False):
+    def _rebaseline_commands(self, test_list, options):
 
         path_to_webkit_patch = self._tool.path()
         cwd = self._tool.scm().checkout_root
@@ -283,11 +286,13 @@ class AbstractParallelRebaselineCommand(AbstractRebaseliningCommand):
             for builder in self._builders_to_fetch_from(test_list[test]):
                 suffixes = ','.join(test_list[test][builder])
                 cmd_line = [path_to_webkit_patch, 'rebaseline-test-internal', '--suffixes', suffixes, '--builder', builder, '--test', test]
-                if move_overwritten_baselines:
+                if options.move_overwritten_baselines:
                     move_overwritten_baselines_to = builders.move_overwritten_baselines_to(builder)
                     for platform in move_overwritten_baselines_to:
                         cmd_line.extend(['--move-overwritten-baselines-to', platform])
-                if verbose:
+                if options.results_directory:
+                    cmd_line.extend(['--results_directory', options.results_directory])
+                if options.verbose:
                     cmd_line.append('--verbose')
                 commands.append(tuple([cmd_line, cwd]))
         return commands
@@ -325,7 +330,7 @@ class AbstractParallelRebaselineCommand(AbstractRebaseliningCommand):
             for builder, suffixes in sorted(builders.items()):
                 _log.debug("  %s: %s" % (builder, ",".join(suffixes)))
 
-        commands = self._rebaseline_commands(test_list, options.move_overwritten_baselines, options.verbose)
+        commands = self._rebaseline_commands(test_list, options)
         command_results = self._tool.executive.run_in_parallel(commands)
 
         log_output = '\n'.join(result[2] for result in command_results).replace('\n\n', '\n')
@@ -349,6 +354,7 @@ class RebaselineJson(AbstractParallelRebaselineCommand):
         return super(RebaselineJson, self).__init__(options=[
             self.move_overwritten_baselines_option,
             self.no_optimize_option,
+            self.results_directory_option,
             ])
 
     def execute(self, options, args, tool):

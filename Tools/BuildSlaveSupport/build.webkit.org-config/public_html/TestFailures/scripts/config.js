@@ -189,4 +189,6 @@ config.setPlatform = function(platform) {
     config.currentPlatform = platform;
 };
 
+config.useLocalResults = Boolean(base.getURLParameter('useLocalResults')) || false;
+
 })();

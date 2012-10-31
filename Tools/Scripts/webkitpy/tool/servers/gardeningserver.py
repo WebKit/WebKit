@@ -111,6 +111,8 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         command = ['rebaseline-json']
         if self.server.options.move_overwritten_baselines:
             command.append('--move-overwritten-baselines')
+        if self.server.options.results_directory:
+            command.extend(['--results-directory', self.server.options.results_directory])
         if not self.server.options.optimize:
             command.append('--no-optimize')
         if self.server.options.verbose:
@@ -127,3 +129,16 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
 
         # FIXME: propagate error and/or log messages back to the UI.
         self._serve_text('success')
+
+    def localresult(self):
+        path = self.query['path'][0]
+        filesystem = self.server.tool.filesystem
+
+        # Ensure that we're only serving files from inside the results directory.
+        if not filesystem.isabs(path) and self.server.options.results_directory:
+            fullpath = filesystem.abspath(filesystem.join(self.server.options.results_directory, path))
+            if fullpath.startswith(filesystem.abspath(self.server.options.results_directory)):
+                self._serve_file(fullpath, headers_only=(self.command == 'HEAD'))
+                return
+
+        self._send_response(403)

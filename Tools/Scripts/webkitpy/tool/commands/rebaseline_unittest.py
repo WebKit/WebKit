@@ -38,6 +38,8 @@ from webkitpy.common.system.executive_mock import MockExecutive2
 
 class _BaseTestCase(unittest.TestCase):
     MOCK_WEB_RESULT = 'MOCK Web result, convert 404 to None=True'
+    WEB_PREFIX = 'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results'
+
     command_constructor = None
 
     def setUp(self):
@@ -94,12 +96,12 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self._write("fast/css/large-list-of-rules-crash.html", "Dummy test contents")
         self._write("userscripts/another-test.html", "Dummy test contents")
 
-        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None)
+        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None, self.WEB_PREFIX)
 
         self.assertEquals(self.tool.web.urls_fetched,
-            ['http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png',
-             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.wav',
-             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt'])
+            [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
+             self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
+             self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
         new_expectations = self._read(self.lion_expectations_path)
         self.assertEqual(new_expectations, """Bug(B) [ Mac Linux XP Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass ]
 Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
@@ -109,12 +111,12 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self._write(self.lion_expectations_path, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
         self._write("userscripts/another-test.html", "Dummy test contents")
 
-        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None)
+        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None, self.WEB_PREFIX)
 
         self.assertEquals(self.tool.web.urls_fetched,
-            ['http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png',
-             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.wav',
-             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt'])
+            [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
+             self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
+             self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
         new_expectations = self._read(self.lion_expectations_path)
         self.assertEqual(new_expectations, "Bug(x) [ MountainLion SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
@@ -123,39 +125,43 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self._write(self.lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), "Bug(y) [ Mac ] other-test.html [ Failure ]\n")
         self._write("userscripts/another-test.html", "Dummy test contents")
 
-        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None)
+        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None, self.WEB_PREFIX)
 
         self.assertEquals(self.tool.web.urls_fetched,
-            ['http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.png',
-             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.wav',
-             'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt'])
+            [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
+             self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
+             self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
 
         new_expectations = self._read(self.lion_expectations_path)
         self.assertEqual(new_expectations, "Bug(x) [ MountainLion SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
     def test_rebaseline_test(self):
-        self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt")
-        self.assertEquals(self.tool.web.urls_fetched, ['http://example.com/f/builders/WebKit Linux/results/layout-test-results/userscripts/another-test-actual.txt'])
+        self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt", self.WEB_PREFIX)
+        self.assertEquals(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
+
+    def test_rebaseline_test_with_results_directory(self):
+        self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt", '/tmp')
+        self.assertEquals(self.tool.web.urls_fetched, ['/tmp/userscripts/another-test-actual.txt'])
 
     def test_rebaseline_test_and_print_scm_changes(self):
         self.command._print_scm_changes = True
         self.command._scm_changes = {'add': [], 'delete': []}
         self.tool._scm.exists = lambda x: False
 
-        self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt")
+        self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt", None)
 
         self.assertEquals(self.command._scm_changes, {'add': ['/mock-checkout/LayoutTests/platform/chromium-linux/userscripts/another-test-expected.txt'], 'delete': []})
 
     def test_rebaseline_and_copy_test(self):
         self._write("userscripts/another-test-expected.txt", "generic result")
 
-        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt")
+        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", None)
 
         self.assertEquals(self._read('platform/chromium-mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
         self.assertEquals(self._read('platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt'), 'generic result')
 
     def test_rebaseline_and_copy_test_no_existing_result(self):
-        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt")
+        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", None)
 
         self.assertEquals(self._read('platform/chromium-mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
         self.assertFalse(self.tool.filesystem.exists(self._expand('platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt')))
@@ -163,9 +169,9 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
     def test_rebaseline_and_copy_test_with_lion_result(self):
         self._write("platform/chromium-mac-lion/userscripts/another-test-expected.txt", "original lion result")
 
-        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt")
+        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", self.WEB_PREFIX)
 
-        self.assertEquals(self.tool.web.urls_fetched, ["http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results/userscripts/another-test-actual.txt"])
+        self.assertEquals(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
         self.assertEquals(self._read("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt"), "original lion result")
         self.assertEquals(self._read("platform/chromium-mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
 
@@ -173,7 +179,7 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self._write("platform/chromium-mac-lion/userscripts/another-test-expected.txt", "original lion result")
         self._write("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt", "original snowleopard result")
 
-        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt")
+        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", None)
 
         self.assertEquals(self._read("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt"), "original snowleopard result")
         self.assertEquals(self._read("platform/chromium-mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
@@ -194,7 +200,8 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
             }
 
             options = MockOptions(optimize=True, builder="MOCK SnowLeopard", suffixes="txt",
-                move_overwritten_baselines_to=["test-mac-leopard"], verbose=True, test="failures/expected/image.html")
+                move_overwritten_baselines_to=["test-mac-leopard"], verbose=True, test="failures/expected/image.html",
+                results_directory=None)
 
             oc.capture_output()
             self.command.execute(options, [], self.tool)
@@ -224,7 +231,7 @@ class TestRebaselineJson(_BaseTestCase):
         super(TestRebaselineJson, self).tearDown()
 
     def test_rebaseline_all(self):
-        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=False)
+        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=False, results_directory=None)
         self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder": ["txt", "png"]}})
 
         # Note that we have one run_in_parallel() call followed by a run_command()
@@ -233,7 +240,7 @@ class TestRebaselineJson(_BaseTestCase):
              ['echo', '--verbose', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
 
     def test_rebaseline_debug(self):
-        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=False)
+        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=False, results_directory=None)
         self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder (Debug)": ["txt", "png"]}})
 
         # Note that we have one run_in_parallel() call followed by a run_command()
@@ -242,7 +249,7 @@ class TestRebaselineJson(_BaseTestCase):
              ['echo', '--verbose', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
 
     def test_move_overwritten(self):
-        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=True)
+        options = MockOptions(optimize=True, verbose=True, move_overwritten_baselines=True, results_directory=None)
         self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder": ["txt", "png"]}})
 
         # Note that we have one run_in_parallel() call followed by a run_command()
@@ -251,12 +258,20 @@ class TestRebaselineJson(_BaseTestCase):
              ['echo', '--verbose', 'optimize-baselines', '--suffixes', 'txt,png', 'user-scripts/another-test.html']])
 
     def test_no_optimize(self):
-        options = MockOptions(optimize=False, verbose=True, move_overwritten_baselines=False)
+        options = MockOptions(optimize=False, verbose=True, move_overwritten_baselines=False, results_directory=None)
         self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder (Debug)": ["txt", "png"]}})
 
         # Note that we have only one run_in_parallel() call
         self.assertEquals(self.tool.executive.calls,
             [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder (Debug)', '--test', 'user-scripts/another-test.html', '--verbose']]])
+
+    def test_results_directory(self):
+        options = MockOptions(optimize=False, verbose=True, move_overwritten_baselines=False, results_directory='/tmp')
+        self.command._rebaseline(options,  {"user-scripts/another-test.html": {"MOCK builder": ["txt", "png"]}})
+
+        # Note that we have only one run_in_parallel() call
+        self.assertEquals(self.tool.executive.calls,
+            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'user-scripts/another-test.html', '--results_directory', '/tmp', '--verbose']]])
 
 
 class TestRebaseline(_BaseTestCase):
@@ -310,7 +325,7 @@ class TestRebaselineExpectations(_BaseTestCase):
         self.tool.executive = MockExecutive2()
 
         self.command._tests_to_rebaseline = lambda port: {'userscripts/another-test.html': set(['txt']), 'userscripts/images.svg': set(['png'])}
-        self.command.execute(MockOptions(optimize=False, verbose=False, move_overwritten_baselines=False), [], self.tool)
+        self.command.execute(MockOptions(optimize=False, verbose=False, move_overwritten_baselines=False, results_directory=None), [], self.tool)
 
         # FIXME: change this to use the test- ports.
         calls = filter(lambda x: x != ['qmake', '-v'], self.tool.executive.calls)

@@ -34,6 +34,7 @@ class GardenOMatic(AbstractRebaseliningCommand):
     def __init__(self):
         return super(AbstractRebaseliningCommand, self).__init__(options=(self.platform_options + [
             self.move_overwritten_baselines_option,
+            self.results_directory_option,
             self.no_optimize_option,
             ]))
 
@@ -48,6 +49,8 @@ class GardenOMatic(AbstractRebaseliningCommand):
             builder = builders.builder_name_for_port_name(options.platform)
             if builder:
                 args['builder'] = builder
+        if options.results_directory:
+            args['useLocalResults'] = "true"
 
         httpd = GardeningHTTPServer(httpd_port=8127, config={'tool': tool, 'options': options})
         self._tool.user.open_url(httpd.url(args))

@@ -1,5 +1,60 @@
 2012-10-31  Dirk Pranke  <dpranke@chromium.org>
 
+        garden-o-matic should work for local results
+        https://bugs.webkit.org/show_bug.cgi?id=100805
+
+        Reviewed by Adam Barth.
+
+        This is the next step in making garden-o-matic replace
+        'webkit-patch rebaseline-server' and be able to deal with local
+        results. garden-o-matic now accepts a '--results-directory' option
+        that will point to a layout-test-results directory. At the moment
+        this will only work if you are also filtering to a single bot/
+        platform at a time (we can't handle multiple bots' worth of local
+        results, but that is a logical next step).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js:
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        (GardenOMatic.__init__):
+        (GardenOMatic.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractRebaseliningCommand):
+        (RebaselineTest.__init__):
+        (RebaselineTest._rebaseline_test):
+        (RebaselineTest._rebaseline_test_and_update_expectations):
+        (RebaselineTest.execute):
+        (AbstractParallelRebaselineCommand._rebaseline_commands):
+        (AbstractParallelRebaselineCommand._rebaseline):
+        (RebaselineJson.__init__):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (_BaseTestCase):
+        (test_rebaseline_updates_expectations_file):
+        (test_rebaseline_does_not_include_overrides):
+        (test_rebaseline_test):
+        (test_rebaseline_test_and_print_scm_changes):
+        (test_rebaseline_and_copy_test):
+        (test_rebaseline_and_copy_test_no_existing_result):
+        (test_rebaseline_and_copy_test_with_lion_result):
+        (test_rebaseline_and_copy_no_overwrite_test):
+        (test_rebaseline_test_internal_with_move_overwritten_baselines_to):
+        (TestRebaselineJson.test_rebaseline_all):
+        (TestRebaselineJson.test_rebaseline_debug):
+        (TestRebaselineJson.test_move_overwritten):
+        (TestRebaselineJson.test_no_optimize):
+        (TestRebaselineExpectations.test_rebaseline_expectations):
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler.rebaselineall):
+        (GardeningHTTPRequestHandler):
+        (GardeningHTTPRequestHandler.localresult):
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+        (ReflectionHandler.do_POST):
+        (ReflectionHandler):
+        (ReflectionHandler.do_HEAD):
+
+2012-10-31  Dirk Pranke  <dpranke@chromium.org>
+
         garden-o-matic should support gardening a single port and specifying how to deal with overwritten baselines
         https://bugs.webkit.org/show_bug.cgi?id=100563
 
