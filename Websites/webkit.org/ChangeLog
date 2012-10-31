@@ -1,3 +1,12 @@
+2012-10-31  Adam Barth  <abarth@webkit.org>
+
+        technical-articles.html should link to my talk on how WebKit works
+        https://bugs.webkit.org/show_bug.cgi?id=100867
+
+        Reviewed by Tony Chang.
+
+        * coding/technical-articles.html:
+
 2012-10-29  Eric Seidel  <eric@webkit.org>
 
         Technical Articles should link to an old talk I gave
