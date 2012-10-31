@@ -157,6 +157,7 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("evaluateScriptInIsolatedWorld", &DRTTestRunner::evaluateScriptInIsolatedWorld);
     bindMethod("evaluateScriptInIsolatedWorldAndReturnValue", &DRTTestRunner::evaluateScriptInIsolatedWorldAndReturnValue);
     bindMethod("setIsolatedWorldSecurityOrigin", &DRTTestRunner::setIsolatedWorldSecurityOrigin);
+    bindMethod("setIsolatedWorldContentSecurityPolicy", &DRTTestRunner::setIsolatedWorldContentSecurityPolicy);
     bindMethod("execCommand", &DRTTestRunner::execCommand);
     bindMethod("forceRedSelectionColors", &DRTTestRunner::forceRedSelectionColors);
 #if ENABLE(NOTIFICATIONS)
@@ -1401,6 +1402,16 @@ void DRTTestRunner::setIsolatedWorldSecurityOrigin(const CppArgumentList& argume
     if (arguments[1].isString())
         origin = WebSecurityOrigin::createFromString(cppVariantToWebString(arguments[1]));
     m_shell->webView()->focusedFrame()->setIsolatedWorldSecurityOrigin(arguments[0].toInt32(), origin);
+}
+
+void DRTTestRunner::setIsolatedWorldContentSecurityPolicy(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+
+    if (arguments.size() != 2 || !arguments[0].isNumber() || !arguments[1].isString())
+        return;
+
+    m_shell->webView()->focusedFrame()->setIsolatedWorldContentSecurityPolicy(arguments[0].toInt32(), cppVariantToWebString(arguments[1]));
 }
 
 void DRTTestRunner::setAllowUniversalAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)

@@ -37,6 +37,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -57,6 +58,19 @@ public:
     static void setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin>);
     static void clearIsolatedWorldSecurityOrigin(int worldID);
     SecurityOrigin* isolatedWorldSecurityOrigin();
+
+    // Associated an isolated world with a Content Security Policy. Resources
+    // embedded into the main world's DOM from script executed in an isolated
+    // world should be restricted based on the isolated world's DOM, not the
+    // main world's.
+    //
+    // FIXME: Right now, resource injection simply bypasses the main world's
+    // DOM. More work is necessary to allow the isolated world's policy to be
+    // applied correctly.
+    static void setIsolatedWorldContentSecurityPolicy(int worldID, const String& policy);
+    static void clearIsolatedWorldContentSecurityPolicy(int worldID);
+    bool isolatedWorldHasContentSecurityPolicy();
+
     // FIXME: this is a workaround for a problem in WebViewImpl.
     // Do not use this anywhere else!!
     static PassRefPtr<DOMWrapperWorld> createUninitializedWorld();

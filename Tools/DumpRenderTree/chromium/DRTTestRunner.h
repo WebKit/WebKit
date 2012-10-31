@@ -297,6 +297,7 @@ public:
     void evaluateScriptInIsolatedWorldAndReturnValue(const CppArgumentList&, CppVariant*);
     void evaluateScriptInIsolatedWorld(const CppArgumentList&, CppVariant*);
     void setIsolatedWorldSecurityOrigin(const CppArgumentList&, CppVariant*);
+    void setIsolatedWorldContentSecurityPolicy(const CppArgumentList&, CppVariant*);
 
     // The fallback method is called when a nonexistent method is called on
     // the layout test controller object.

@@ -107,6 +107,11 @@ public:
     // FIXME: Get rid of extensionGroup here.
     void evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup, Vector<ScriptValue>* results);
 
+    // Returns true if the current world is isolated, and has its own Content
+    // Security Policy. In this case, the policy of the main world should be
+    // ignored when evaluating resources injected into the DOM.
+    bool shouldBypassMainWorldContentSecurityPolicy();
+
     // FIXME: Remove references to this call in chromium and delete it.
     inline static void setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin> origin)
     {

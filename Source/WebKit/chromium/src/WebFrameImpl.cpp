@@ -82,6 +82,7 @@
 #include "DOMUtilitiesPrivate.h"
 #include "DOMWindow.h"
 #include "DOMWindowIntents.h"
+#include "DOMWrapperWorld.h"
 #include "DeliveredIntent.h"
 #include "DeliveredIntentClientImpl.h"
 #include "DirectoryEntry.h"
@@ -826,7 +827,13 @@ void WebFrameImpl::executeScriptInIsolatedWorld(int worldID, const WebScriptSour
 void WebFrameImpl::setIsolatedWorldSecurityOrigin(int worldID, const WebSecurityOrigin& securityOrigin)
 {
     ASSERT(frame());
-    frame()->script()->setIsolatedWorldSecurityOrigin(worldID, securityOrigin.get());
+    DOMWrapperWorld::setIsolatedWorldSecurityOrigin(worldID, securityOrigin.get());
+}
+
+void WebFrameImpl::setIsolatedWorldContentSecurityPolicy(int worldID, const WebString& policy)
+{
+    ASSERT(frame());
+    DOMWrapperWorld::setIsolatedWorldContentSecurityPolicy(worldID, policy);
 }
 
 void WebFrameImpl::addMessageToConsole(const WebConsoleMessage& message)

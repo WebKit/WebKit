@@ -396,6 +396,13 @@ void ScriptController::evaluateInIsolatedWorld(int worldID, const Vector<ScriptS
     }
 }
 
+bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
+{
+    if (V8DOMWindowShell* isolatedWorldShell = V8DOMWindowShell::getEntered())
+        return isolatedWorldShell->world()->isolatedWorldHasContentSecurityPolicy();
+    return false;
+}
+
 TextPosition ScriptController::eventHandlerPosition() const
 {
     ScriptableDocumentParser* parser = m_frame->document()->scriptableDocumentParser();

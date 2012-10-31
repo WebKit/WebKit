@@ -114,6 +114,7 @@ public:
         int worldID, const WebScriptSource* sources, unsigned numSources,
         int extensionGroup);
     virtual void setIsolatedWorldSecurityOrigin(int worldID, const WebSecurityOrigin&);
+    virtual void setIsolatedWorldContentSecurityPolicy(int worldID, const WebString&);
     virtual void addMessageToConsole(const WebConsoleMessage&);
     virtual void collectGarbage();
     virtual bool checkIfRunInsecureContent(const WebURL&) const;

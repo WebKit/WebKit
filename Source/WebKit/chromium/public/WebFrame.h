@@ -252,6 +252,16 @@ public:
     virtual void setIsolatedWorldSecurityOrigin(
         int worldID, const WebSecurityOrigin&) = 0;
 
+    // Associates a content security policy with an isolated world. This policy
+    // should be used when evaluating script in the isolated world, and should
+    // also replace a protected resource's CSP when evaluating resources
+    // injected into the DOM.
+    //
+    // FIXME: Setting this simply bypasses the protected resource's CSP. It
+    //     doesn't yet restrict the isolated world to the provided policy.
+    virtual void setIsolatedWorldContentSecurityPolicy(
+        int worldID, const WebString&) = 0;
+
     // Logs to the console associated with this frame.
     virtual void addMessageToConsole(const WebConsoleMessage&) = 0;
 

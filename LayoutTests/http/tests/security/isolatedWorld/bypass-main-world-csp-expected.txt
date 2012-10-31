@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
+
+ALERT: BLOCKED in main world
+CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
+
+ALERT: BLOCKED in isolated world
+ALERT: Starting to bypass main world's CSP:
+ALERT: LOADED in isolated world
+CONSOLE MESSAGE: Refused to load the image 'http://127.0.0.1:8000/security/resources/abe.png' because it violates the following Content Security Policy directive: "img-src 'none'".
+
+ALERT: BLOCKED in main world
+This test ensures that scripts run in isolated worlds marked with their own Content Security Policy aren't affected by the page's content security policy. Extensions, for example, should be able to load any resource they like.
+
+

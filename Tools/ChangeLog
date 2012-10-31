@@ -1,3 +1,18 @@
+2012-10-31  Mike West  <mkwst@chromium.org>
+
+        Script run from an isolated world should bypass a page's CSP.
+        https://bugs.webkit.org/show_bug.cgi?id=97398
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::setIsolatedWorldContentSecurityPolicy):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+            Adding a mechanism to set the Content Security Policy for an
+            isolated world to Chromium's testRunner.
+
 2012-10-31  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][DRT] EventSender requires contextClick implementation

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-WebKit-CSP" content="img-src 'none'">
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    tests = 4;
+    window.addEventListener("message", function(message) {
+        tests -= 1;
+        test();
+    }, false);
+
+    function test() {
+        function setImgSrc(isolated) {
+            var img = document.createElement('img');
+            document.body.appendChild(img);
+            img.onload = function () {
+                alert('LOADED in ' + (isolated ? "isolated world" : "main world"));
+                window.postMessage("next", "*");
+            };
+            img.onerror = function () {
+                alert('BLOCKED in ' + (isolated ? "isolated world" : "main world"));
+                window.postMessage("next", "*");
+            };
+            img.src = "../resources/abe.png";
+        }
+
+        switch (tests) {
+            case 4:
+                setImgSrc(false);
+                break;
+            case 3:
+                testRunner.evaluateScriptInIsolatedWorld(1, String(eval("setImgSrc")) + "\nsetImgSrc(true);");
+                break;
+            case 2:
+                alert("Starting to bypass main world's CSP:");
+                testRunner.setIsolatedWorldContentSecurityPolicy(1, 'img-src *');
+                testRunner.evaluateScriptInIsolatedWorld(1, String(eval("setImgSrc")) + "\nsetImgSrc(true);");
+                break;
+            case 1:
+                setImgSrc(false);
+                break;
+            case 0:
+                testRunner.setIsolatedWorldContentSecurityPolicy(1, '');
+                testRunner.notifyDone();
+                break;
+        }
+    }
+</script>
+</head>
+<body onload='test();'>
+    <p>
+        This test ensures that scripts run in isolated worlds marked with their
+        own Content Security Policy aren't affected by the page's content
+        security policy. Extensions, for example, should be able to load any
+        resource they like.
+    </p>
+</body>
+</html>

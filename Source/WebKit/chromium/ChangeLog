@@ -1,3 +1,23 @@
+2012-10-31  Mike West  <mkwst@chromium.org>
+
+        Script run from an isolated world should bypass a page's CSP.
+        https://bugs.webkit.org/show_bug.cgi?id=97398
+
+        Reviewed by Adam Barth.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::setIsolatedWorldSecurityOrigin):
+        (WebKit):
+        (WebKit::WebFrameImpl::setIsolatedWorldContentSecurityPolicy):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+            Piping a Content Security Policy through WebFrame, in the same way
+            we're currently doing for SecurityOrigin. As a drive-by, this also
+            uses the static method on DOMWrapperWindow to set the security
+            origin, rather than routing through the frame's ScriptController.
+
 2012-10-30  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Transform mouse/gesture event coordinates to account for pinch-zoom in compositor.

@@ -1482,6 +1482,9 @@ loader/navigation-while-deferring-loads.html
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
+# JSC also doesn't support setIsolatedWorldContentSecurityPolicy (webkit.org/b/100815)
+http/tests/security/isolatedWorld/bypass-main-world-csp.html
+
 # ENABLE(WEBGL) is disabled
 compositing/backface-visibility/backface-visibility-webgl.html
 compositing/visibility/visibility-simple-webgl-layer.html

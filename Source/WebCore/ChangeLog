@@ -1,3 +1,51 @@
+2012-10-31  Mike West  <mkwst@chromium.org>
+
+        Script run from an isolated world should bypass a page's CSP.
+        https://bugs.webkit.org/show_bug.cgi?id=97398
+
+        Reviewed by Adam Barth.
+
+        A page's Content Security Policy currently applies to all resources
+        loaded, regardless of their source. That generally makes sense, but
+        proves problematic when considering script run from an isolated
+        world (Chrome extensions, for instance). These scripts should be allowed
+        to inject resources into a page's DOM without eiher being restricted by
+        the page's active CSP, or generating violation reports that spam the
+        page owner.
+
+        Ideally, the isolated world could define its own Content Security Policy
+        which should be applied to resources it loads. For the moment, this
+        patch accepts a String that we can parse later on, but only uses it in
+        a binary way. If a non-empty policy String is provided, we bypass the
+        main world's CSP checks. If an empty String is provided, the main
+        world's CSP checks remain active.
+
+        Test: http/tests/security/isolatedWorld/bypass-main-world-csp.html
+
+        (WebCore::isolatedWorldContentSecurityPolicies):
+        (WebCore::DOMWrapperWorld::isolatedWorldHasContentSecurityPolicy):
+        (WebCore::DOMWrapperWorld::setIsolatedWorldContentSecurityPolicy):
+        (WebCore::DOMWrapperWorld::clearIsolatedWorldContentSecurityPolicy):
+        * bindings/v8/DOMWrapperWorld.h:
+        (DOMWrapperWorld):
+            Mechanisms for setting and clearing Content Security Policies from
+            isolated worlds; implemented in the same HashMappy way as
+            SecurityOrigin.
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::shouldBypassMainWorldContentSecurityPolicy):
+        (WebCore):
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+            Adding a method to ScriptController to query the state of the
+            current world's Content Security Policy. We'll drop this once we can
+            apply a policy more directly, but for the moment it's necessary for
+            the next bit.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+            Check the new ScriptController method, and only perform CSP checks
+            when loading resources if we're executing code from the main world,
+            or an isolated world with no Content Security Policy set.
+
 2012-10-31  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed, attempt to fix the release build by not exporting symbols that aren't defined there.

@@ -301,7 +301,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
 {
     if (document() && !document()->securityOrigin()->canDisplay(url)) {
         if (!forPreload)
-            FrameLoader::reportLocalLoadFailed(document()->frame(), url.string());
+            FrameLoader::reportLocalLoadFailed(frame(), url.string());
         LOG(ResourceLoading, "CachedResourceLoader::requestResource URL was not allowed by SecurityOrigin::canDisplay");
         return 0;
     }
@@ -310,6 +310,8 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     if (type == CachedResource::SVGDocumentResource)
         return false;
 #endif
+
+    bool shouldBypassMainWorldContentSecurityPolicy = (frame() && frame()->script()->shouldBypassMainWorldContentSecurityPolicy());
 
     // Some types of resources can be loaded only from the same origin.  Other
     // types of resources, like Images, Scripts, and CSS, can be loaded from
@@ -352,7 +354,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::XSLStyleSheet:
 #endif
     case CachedResource::Script:
-        if (!m_document->contentSecurityPolicy()->allowScriptFromSource(url))
+        if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowScriptFromSource(url))
             return false;
 
         if (frame()) {
@@ -368,18 +370,18 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
         // Since shaders are referenced from CSS Styles use the same rules here.
 #endif
     case CachedResource::CSSStyleSheet:
-        if (!m_document->contentSecurityPolicy()->allowStyleFromSource(url))
+        if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowStyleFromSource(url))
             return false;
         break;
 #if ENABLE(SVG)
     case CachedResource::SVGDocumentResource:
 #endif
     case CachedResource::ImageResource:
-        if (!m_document->contentSecurityPolicy()->allowImageFromSource(url))
+        if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowImageFromSource(url))
             return false;
         break;
     case CachedResource::FontResource: {
-        if (!m_document->contentSecurityPolicy()->allowFontFromSource(url))
+        if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowFontFromSource(url))
             return false;
         break;
     }
@@ -394,7 +396,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::TextTrackResource:
         // Cues aren't called out in the CPS spec yet, but they only work with a media element
         // so use the media policy.
-        if (!m_document->contentSecurityPolicy()->allowMediaFromSource(url))
+        if (!shouldBypassMainWorldContentSecurityPolicy && !m_document->contentSecurityPolicy()->allowMediaFromSource(url))
             return false;
         break;
 #endif

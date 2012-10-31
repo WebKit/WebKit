@@ -143,4 +143,35 @@ void DOMWrapperWorld::clearIsolatedWorldSecurityOrigin(int worldID)
     isolatedWorldSecurityOrigins().remove(worldID);
 }
 
+typedef HashMap<int, bool> IsolatedWorldContentSecurityPolicyMap;
+static IsolatedWorldContentSecurityPolicyMap& isolatedWorldContentSecurityPolicies()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(IsolatedWorldContentSecurityPolicyMap, map, ());
+    return map;
+}
+
+bool DOMWrapperWorld::isolatedWorldHasContentSecurityPolicy()
+{
+    ASSERT(this->isIsolatedWorld());
+    IsolatedWorldContentSecurityPolicyMap& policies = isolatedWorldContentSecurityPolicies();
+    IsolatedWorldContentSecurityPolicyMap::iterator it = policies.find(worldId());
+    return it == policies.end() ? false : it->value;
+}
+
+void DOMWrapperWorld::setIsolatedWorldContentSecurityPolicy(int worldID, const String& policy)
+{
+    ASSERT(DOMWrapperWorld::isIsolatedWorldId(worldID));
+    if (!policy.isEmpty())
+        isolatedWorldContentSecurityPolicies().set(worldID, true);
+    else
+        isolatedWorldContentSecurityPolicies().remove(worldID);
+}
+
+void DOMWrapperWorld::clearIsolatedWorldContentSecurityPolicy(int worldID)
+{
+    ASSERT(DOMWrapperWorld::isIsolatedWorldId(worldID));
+    isolatedWorldContentSecurityPolicies().remove(worldID);
+}
+
 } // namespace WebCore

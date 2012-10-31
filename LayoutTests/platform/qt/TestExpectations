@@ -340,6 +340,9 @@ fast/js/i18n-bindings-locale.html
 # JSC does not support setIsolatedWorldSecurityOrigin, (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
+# JSC also doesn't support setIsolatedWorldContentSecurityPolicy (webkit.org/b/100815)
+http/tests/security/isolatedWorld/bypass-main-world-csp.html
+
 # This test is for clients that choose to make the missing plugin indicator a button
 plugins/clicking-missing-plugin-fires-delegate.html
 

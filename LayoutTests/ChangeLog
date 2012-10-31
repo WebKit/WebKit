@@ -1,3 +1,18 @@
+2012-10-31  Mike West  <mkwst@chromium.org>
+
+        Script run from an isolated world should bypass a page's CSP.
+        https://bugs.webkit.org/show_bug.cgi?id=97398
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/isolatedWorld/bypass-main-world-csp-expected.txt: Added.
+        * http/tests/security/isolatedWorld/bypass-main-world-csp.html: Added.
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+            Skip the new tests on ports that don't support the new functionality
+
 2012-10-31  Pavel Podivilov  <podivilov@google.com>
 
         [chromium] Rebaseline media/video-zoom.html.
