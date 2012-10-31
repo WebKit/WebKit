@@ -1,3 +1,14 @@
+2012-10-31  Mark Lam  <mark.lam@apple.com>
+
+        64-bit llint PC offset can be negative: using an unsigned shift is a bug.
+        https://bugs.webkit.org/show_bug.cgi?id=100896.
+
+        Reviewed by Filip Pizlo.
+
+        Fixed the PC offset divisions in the 64-bit llint asm to use rshift instead of urshift.
+
+        * llint/LowLevelInterpreter64.asm:
+
 2012-10-30  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         glsl-function-atan.html WebGL conformance test fails after https://bugs.webkit.org/show_bug.cgi?id=99154

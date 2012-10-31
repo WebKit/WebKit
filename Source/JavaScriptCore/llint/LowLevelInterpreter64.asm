@@ -87,7 +87,7 @@ macro restoreStateAfterCCall()
     move t1, cfr
     move t3, PB
     subp PB, PC
-    urshiftp 3, PC
+    rshiftp 3, PC
 end
 
 macro callSlowPath(slowPath)
@@ -1525,7 +1525,7 @@ _llint_op_catch:
     loadp JITStackFrame::globalData[sp], t3
     loadp JSGlobalData::targetInterpreterPCForThrow[t3], PC
     subp PB, PC
-    urshiftp 3, PC
+    rshiftp 3, PC
     loadp JSGlobalData::exception[t3], t0
     storep 0, JSGlobalData::exception[t3]
     loadis 8[PB, PC, 8], t2
