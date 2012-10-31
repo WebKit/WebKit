@@ -1,3 +1,17 @@
+2012-10-30  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] Fix failure to highlight nodes on web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=100303
+
+        Reviewed by Gyuyoung Kim.
+
+        It is not working to highlight nodes on web inspector
+        when using 'Single Backing Store'.
+        Add code for drawing it if there is the highlighted node.
+
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_smart_repaints_process):
+
 2012-10-30  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Refactor tooltip callback signal in WebKit1

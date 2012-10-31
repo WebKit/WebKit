@@ -30,6 +30,11 @@
 #include <eina_safety_checks.h>
 #include <string.h>
 
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
+#include "Page.h"
+#endif
+
 static Ewk_View_Smart_Class _parent_sc = EWK_VIEW_SMART_CLASS_INIT_NULL;
 
 static void _ewk_view_single_on_del(void* data, Evas*, Evas_Object*, void*)
@@ -265,6 +270,15 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
         ewk_view_paint(smartData->_priv, context, rect);
         evas_object_image_data_update_add(smartData->backing_store, rect->x, rect->y, rect->w, rect->h);
     }
+
+#if ENABLE(INSPECTOR)
+    WebCore::Page* page = EWKPrivate::corePage(smartData->self);
+    if (page) {
+        WebCore::InspectorController* controller = page->inspectorController();
+        if (controller->highlightedNode())
+            controller->drawHighlight(*context->graphicContext);
+    }
+#endif
 
     ewk_paint_context_restore(context);
     ewk_paint_context_free(context);
