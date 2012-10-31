@@ -1,3 +1,22 @@
+2012-10-30  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Add baselines for fast/images/exif-orientation-css.html and exif-orientation-image-document.html
+        https://bugs.webkit.org/show_bug.cgi?id=100807
+
+        Unreviewed, expectations update.
+
+        * platform/chromium-linux-x86/fast/images/exif-orientation-css-expected.png: Added.
+        * platform/chromium-linux/fast/images/exif-orientation-css-expected.png: Added.
+        * platform/chromium-linux/fast/images/exif-orientation-image-document-expected.png: Added.
+        * platform/chromium-mac-lion/fast/images/exif-orientation-css-expected.png: Added.
+        * platform/chromium-mac-lion/fast/images/exif-orientation-image-document-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/images/exif-orientation-css-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/images/exif-orientation-image-document-expected.png: Added.
+        * platform/chromium-mac/fast/images/exif-orientation-css-expected.png: Added.
+        * platform/chromium-mac/fast/images/exif-orientation-image-document-expected.png: Added.
+        * platform/chromium-win/fast/images/exif-orientation-image-document-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-10-30  Keishi Hattori  <keishi@webkit.org>
 
         F4 inside <input type=time> should not open calendar picker

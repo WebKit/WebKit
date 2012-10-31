@@ -3296,9 +3296,6 @@ crbug.com/121442 [ Linux Release ] plugins/iframe-shims.html [ Crash Pass ]
 webkit.org/b/83219 [ Lion ] fonts/cursive.html [ Failure Pass ]
 webkit.org/b/83324 [ Win Debug ] fast/js/cross-global-object-inline-global-var.html [ Failure Pass ]
 
-# Needs baselines
-Bug(thakis) fast/images/exif-orientation-css.html [ ImageOnlyFailure ]
-
 crbug.com/122462 [ Linux Win ] http/tests/inspector/inspect-element.html [ Failure Slow ]
 
 webkit.org/b/83635 fast/canvas/2d.backingStorePixelRatio.html [ Failure Timeout ]
@@ -3820,9 +3817,6 @@ webkit.org/b/96227 fast/js/function-dot-arguments-identity.html [ Skip ]
 
 webkit.org/b/96835 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure Pass ]
 webkit.org/b/96835 platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Failure Pass ]
-
-# needs baselines
-Bug(thakis) fast/images/exif-orientation-image-document.html [ ImageOnlyFailure ] 
 
 webkit.org/b/96834 platform/chromium/virtual/threaded/compositing/visibility/visibility-image-layers.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98086 platform/chromium/virtual/threaded/compositing/visibility/visibility-composited-transforms.html [ ImageOnlyFailure Pass ]
