@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+
+<input id="range1" type="range" onchange="updateType(this)" autofocus>
+<script>
+description('Check if no problem happens by type change in onchange handler.');
+
+function updateType(input) {
+    input.type = 'text';
+    setTimeout(finish, 0);
+}
+
+function finish() {
+    testPassed('unless crash');
+    finishJSTest();
+}
+
+jsTestIsAsync = true;
+eventSender.keyDown('upArrow');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>

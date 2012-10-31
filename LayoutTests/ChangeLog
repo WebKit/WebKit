@@ -1,3 +1,13 @@
+2012-10-30  Kent Tamura  <tkent@chromium.org>
+
+        Delaying 'change' and 'input' event dispatching during HTMLInputElement::setValue
+        https://bugs.webkit.org/show_bug.cgi?id=100772
+
+        Reviewed by Abhishek Arya.
+
+        * fast/forms/range/range-type-change-onchange-expected.txt: Added.
+        * fast/forms/range/range-type-change-onchange.html: Added.
+
 2012-10-30  Simon Fraser  <simon.fraser@apple.com>
 
         Fix issues with filters and reflections
