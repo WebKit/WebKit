@@ -46,8 +46,6 @@ namespace WebCore {
 
 #define SHADER(Src) (#Src) 
 
-// FIXME: Reuse this type when we validate the types of built-in uniforms.
-// https://bugs.webkit.org/show_bug.cgi?id=98974
 typedef HashMap<String, ShDataType> SymbolNameToTypeMap;
 
 static SymbolNameToTypeMap* builtInAttributeNameToTypeMap()
@@ -59,6 +57,20 @@ static SymbolNameToTypeMap* builtInAttributeNameToTypeMap()
         nameToTypeMap->set("a_position", SH_FLOAT_VEC4);
         nameToTypeMap->set("a_texCoord", SH_FLOAT_VEC2);
         nameToTypeMap->set("a_triangleCoord", SH_FLOAT_VEC3);
+    }
+    return nameToTypeMap;
+}
+
+static SymbolNameToTypeMap* builtInUniformNameToTypeMap()
+{
+    static SymbolNameToTypeMap* nameToTypeMap = 0;
+    if (!nameToTypeMap) {
+        nameToTypeMap = new SymbolNameToTypeMap;
+        nameToTypeMap->set("u_meshBox", SH_FLOAT_VEC4);
+        nameToTypeMap->set("u_meshSize", SH_FLOAT_VEC2);
+        nameToTypeMap->set("u_projectionMatrix", SH_FLOAT_MAT4);
+        nameToTypeMap->set("u_textureSize", SH_FLOAT_VEC2);
+        nameToTypeMap->set("u_tileSize", SH_FLOAT_VEC2);
     }
     return nameToTypeMap;
 }
@@ -91,7 +103,7 @@ static bool validateSymbols(const Vector<ANGLEShaderSymbol>& symbols, CustomFilt
             }
             break;
         }
-        case SHADER_SYMBOL_TYPE_UNIFORM:
+        case SHADER_SYMBOL_TYPE_UNIFORM: {
             if (symbol.isSampler()) {
                 // FIXME: For now, we restrict shaders with any sampler defined.
                 // When we implement texture parameters, we will allow shaders whose samplers are bound to valid textures.
@@ -101,9 +113,16 @@ static bool validateSymbols(const Vector<ANGLEShaderSymbol>& symbols, CustomFilt
                 return false;
             }
 
-            // FIXME: Validate the types of built-in uniforms.
-            // https://bugs.webkit.org/show_bug.cgi?id=98974
+            SymbolNameToTypeMap* uniformNameToTypeMap = builtInUniformNameToTypeMap();
+            SymbolNameToTypeMap::iterator builtInUniform = uniformNameToTypeMap->find(symbol.name);
+            if (builtInUniform != uniformNameToTypeMap->end() && (symbol.isArray || symbol.dataType != builtInUniform->value)) {
+                // The author defined one of the built-in uniforms with the wrong type.
+                // FIXME: Report the validation error.
+                // https://bugs.webkit.org/show_bug.cgi?id=74416
+                return false;
+            }
             break;
+        }
         default:
             ASSERT_NOT_REACHED();
             break;

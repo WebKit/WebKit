@@ -1,3 +1,24 @@
+2012-10-31  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Validate types of built-in uniforms
+        https://bugs.webkit.org/show_bug.cgi?id=98974
+
+        Reviewed by Dean Jackson.
+
+        Reject shaders which define built-in uniforms with the wrong type. For example, we reject a
+        shader with the GLSL code "uniform float u_textureSize;" because u_textureSize should be a
+        vec2, not a float.
+
+        Relevant Spec Section:
+        https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#shader-uniform-variables
+
+        Test: css3/filters/custom/invalid-custom-filter-uniform-types.html
+
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore):
+        (WebCore::builtInUniformNameToTypeMap):
+        (WebCore::validateSymbols):
+
 2012-10-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133044.
