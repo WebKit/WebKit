@@ -947,10 +947,10 @@ PassRefPtr<TypeBuilder::Page::FrameResourceTree> InspectorPageAgent::buildObject
             .setUrl(cachedResource->url())
             .setType(cachedResourceTypeJson(*cachedResource))
             .setMimeType(cachedResource->response().mimeType());
-        if (cachedResource->status() == CachedResource::LoadError)
-            resourceObject->setFailed(true);
-        if (cachedResource->status() == CachedResource::Canceled)
+        if (cachedResource->wasCanceled())
             resourceObject->setCanceled(true);
+        else if (cachedResource->status() == CachedResource::LoadError)
+            resourceObject->setFailed(true);
         subresources->addItem(resourceObject);
     }
 

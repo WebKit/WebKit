@@ -1,3 +1,28 @@
+2012-10-31  Nate Chapin  <japhet@chromium.org>
+
+        Remove some CachedResource::Status's in favor of looking at CachedResource::m_error
+        https://bugs.webkit.org/show_bug.cgi?id=100901
+
+        Reviewed by Adam Barth.
+
+        No new tests, refactor only.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::buildObjectForFrameTree):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::notifyFinished):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadInSameDocument):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::willCancel):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::stopLoading):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::wasCanceled):
+        (WebCore::CachedResource::errorOccurred):
+        (WebCore::CachedResource::loadFailedOrCanceled):
+
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, rolling out r133122.

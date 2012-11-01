@@ -289,16 +289,13 @@ void SubresourceLoader::didFail(const ResourceError& error)
     CachedResourceHandle<CachedResource> protectResource(m_resource);
     m_state = Finishing;
     m_resource->setResourceError(error);
-    if (error.isTimeout())
-        m_resource->error(CachedResource::TimeoutError);
-    else
-        m_resource->error(CachedResource::LoadError);
+    m_resource->error(CachedResource::LoadError);
     if (!m_resource->isPreloaded())
         memoryCache()->remove(m_resource);
     ResourceLoader::didFail(error);
 }
 
-void SubresourceLoader::willCancel(const ResourceError&)
+void SubresourceLoader::willCancel(const ResourceError& error)
 {
     if (m_state != Initialized)
         return;
@@ -309,6 +306,7 @@ void SubresourceLoader::willCancel(const ResourceError&)
     m_state = Finishing;
     if (m_resource->resourceToRevalidate())
         memoryCache()->revalidationFailed(m_resource);
+    m_resource->setResourceError(error);
     memoryCache()->remove(m_resource);
 }
 

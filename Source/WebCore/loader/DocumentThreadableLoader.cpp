@@ -305,14 +305,9 @@ void DocumentThreadableLoader::notifyFinished(CachedResource* resource)
     ASSERT(m_client);
     ASSERT_UNUSED(resource, resource == m_resource);
         
-    if (m_resource && (m_resource->errorOccurred() || m_resource->wasCanceled())) {
-        ResourceError error("Network Request Failed", 0, m_resource->url(), "Resource failed to load");
-        if (m_resource->wasCanceled())
-            error.setIsCancellation(true);
-        if (m_resource->timedOut())
-            error.setIsTimeout(true);
-        didFail(error);
-    } else
+    if (m_resource && m_resource->errorOccurred())
+        didFail(m_resource->resourceError());
+    else
         didFinishLoading(m_resource->identifier(), m_resource->loadFinishTime());
 }
 
