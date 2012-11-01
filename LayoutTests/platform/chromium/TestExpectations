@@ -4103,6 +4103,13 @@ Bug(senorblanco) http/tests/security/isolatedWorld/userGestureEvents.html [ Cras
 Bug(senorblanco) http/tests/security/isolatedWorld/global-variables.html [ Crash Pass ]
 Bug(senorblanco) http/tests/security/isolatedWorld/body-prototype.html [ Crash Pass ]
 
+# Failing since r133095 (which is CSP-related, not calendar-related?)
+Bug(senorblanco) platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure ]
+
+# Failing on Mac since Chromium r165269
+Bug(senorblanco) [ Mac ] compositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
+Bug(senorblanco) [ Mac ] compositing/geometry/fixed-position-transform-composited-page-scale-down.html [ ImageOnlyFailure ]
+
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]
 

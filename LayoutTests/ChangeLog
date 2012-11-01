@@ -1,3 +1,9 @@
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. fast\text\international\text-combine-image-test-expected.txt needs some 1 pixel off rebaselines on Windows.
