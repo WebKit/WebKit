@@ -41,12 +41,12 @@
 
 namespace WebCore {
 
-static const size_t gMaxRecycledSize = 400;
+static const size_t gMaxRecycledSize = 1024;
 
 class RenderArena {
     WTF_MAKE_NONCOPYABLE(RenderArena); WTF_MAKE_FAST_ALLOCATED;
 public:
-    RenderArena(unsigned arenaSize = 4096);
+    RenderArena(unsigned arenaSize = 8192);
     ~RenderArena();
 
     // Memory management functions
@@ -62,9 +62,10 @@ private:
 
     // The mask used to secure the recycled freelist pointers.
     uintptr_t m_mask;
-    // The recycler array is sparse with the indices being multiples of 4,
-    // i.e., 0, 4, 8, 12, 16, 20, ...
-    void* m_recyclers[gMaxRecycledSize >> 2];
+    // The recycler array is sparse with the indices being multiples of the
+    // rounding size, sizeof(void*), i.e., 0, 4, 8, 12, 16, 20, ... on 32-bit.
+    static const size_t kRecyclerShift = (sizeof(void*) == 8) ? 3 : 2;
+    void* m_recyclers[gMaxRecycledSize >> kRecyclerShift];
 
     size_t m_totalSize;
     size_t m_totalAllocated;

@@ -1,3 +1,33 @@
+2012-10-31  Chris Evans  <cevans@google.com>
+
+        RenderArena has a memory leak and poor efficiency
+        https://bugs.webkit.org/show_bug.cgi?id=100893
+
+        Reviewed by Eric Seidel.
+
+        1) Avoid memory leak that persists for the Document lifetime by
+        increasing recycled size buckets up to 1024. It was previously 400,
+        and sizeof(RenderNamedFlowThread) / sizeof(RenderSVGText) both blew this
+        quota. An assert was added to prevent this happening again.
+
+        2) Fix the size of the recyled size bucket array on 64-bit. We only
+        need 8 byte granularity on 64-bit, but we had 4.
+
+        3) Try and pass power-of-two sizes to the underlying malloc() call, so
+        that we're space efficient. We now take Arena metadata into account.
+
+        4) Double the default RenderArena size allocation to 8192 bytes. Even
+        for a render of a trivial text file, 4096 bytes is not enough to prevent
+        extra calls into the underlying malloc() for more arena pool.
+
+        * rendering/RenderArena.cpp:
+        (WebCore::RenderArena::RenderArena): Adjust arena size so that we pass on the page-sized multiple to the underlying malloc() implementation.
+        (WebCore::RenderArena::allocate):
+        (WebCore::RenderArena::free): Assert that the allocation size is handled by our recycling buckets.
+        * rendering/RenderArena.h:
+        (WebCore): Maintain free buckets up to 1024 bytes to avoid memory leak.
+        (RenderArena): Double the default allocation size and handle 64-bit systems more efficiently.
+
 2012-10-31  Adam Barth  <abarth@webkit.org>
 
         [V8] Garbage collection should use opaque roots rather than implicit references
