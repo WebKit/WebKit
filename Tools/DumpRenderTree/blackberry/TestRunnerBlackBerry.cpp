@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2009, 2010, 2012 Research In Motion Limited. All rights reserved.
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +19,6 @@
 #include "config.h"
 #include "TestRunner.h"
 
-#include "CString.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -36,14 +34,12 @@
 #include "JSElement.h"
 #include "KURL.h"
 #include "NotImplemented.h"
-#include "OwnArrayPtr.h"
 #include "Page.h"
 #include "RenderTreeAsText.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
-#include "UnusedParam.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 #include "WorkerThread.h"
@@ -52,6 +48,10 @@
 #include <SharedPointer.h>
 #include <WebPage.h>
 #include <WebSettings.h>
+
+#include <wtf/OwnArrayPtr.h>
+#include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
 
 using WebCore::toElement;
 using WebCore::toJS;
@@ -452,10 +452,10 @@ void TestRunner::setMockGeolocationPosition(double latitude, double longitude, d
     DumpRenderTreeSupport::setMockGeolocationPosition(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), latitude, longitude, accuracy);
 }
 
-void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
+void TestRunner::setMockGeolocationError(int code, JSStringRef message)
 {
     String messageStr = jsStringRefToWebCoreString(message);
-    DumpRenderTreeSupport::setMockGeolocationPositionUnavailableError(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), messageStr);
+    DumpRenderTreeSupport::setMockGeolocationError(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), code, messageStr);
 }
 
 void TestRunner::showWebInspector()
@@ -585,6 +585,12 @@ void TestRunner::setJavaScriptCanAccessClipboard(bool flag)
 JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
 {
     return DumpRenderTreeSupport::computedStyleIncludingVisitedInfo(context, value);
+}
+
+JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
+{
+    notImplemented();
+    return 0;
 }
 
 JSRetainPtr<JSStringRef> TestRunner::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
@@ -746,9 +752,7 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
             options |= WebCore::StartInSelection;
     }
 
-    // Our layout tests assume find will wrap and highlight all matches.
-    return BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->findNextString(nameStr.utf8().data(),
-        !(options & WebCore::Backwards), !(options & WebCore::CaseInsensitive), true /* wrap */, true /* highlightAllMatches */);
+    return mainFrame->page()->findString(nameStr, options);
 }
 
 void TestRunner::deleteLocalStorageForOrigin(JSStringRef URL)
@@ -837,5 +841,11 @@ void TestRunner::sendWebIntentResponse(JSStringRef)
 
 void TestRunner::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
 {
+    notImplemented();
+}
+
+void TestRunner::setStorageDatabaseIdleInterval(double)
+{
+    // FIXME: Implement this.
     notImplemented();
 }

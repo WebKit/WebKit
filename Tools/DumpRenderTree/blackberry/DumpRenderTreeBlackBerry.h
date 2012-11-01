@@ -23,11 +23,11 @@
 
 
 #include "DumpRenderTreeClient.h"
-#include "PlatformString.h"
 #include "Timer.h"
 #include <BlackBerryPlatformLayoutTest.h>
 #include <FindOptions.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class Credential;
@@ -94,7 +94,6 @@ public:
     void didEndEditing();
     void didChange();
     void didChangeSelection();
-    bool findString(const String&, WebCore::FindOptions);
     bool shouldBeginEditingInDOMRange(WebCore::Range*);
     bool shouldEndEditingInDOMRange(WebCore::Range*);
     bool shouldDeleteDOMRange(WebCore::Range*);

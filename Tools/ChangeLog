@@ -1,3 +1,31 @@
+2012-10-31  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Fix editing/text-iterator/findString-expected.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=100902
+
+        Reviewed by Yong Li.
+
+        PR 210039
+
+        Fix the test my using the Page::findString method instead of our own in-page searcher.
+        This also syncs some of the changes we did regarding String usage.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::dumpFramesAsText):
+        (BlackBerry::WebKit::dumpHistoryItem):
+        (BlackBerry::WebKit::dumpBackForwardListForWebView):
+        (BlackBerry::WebKit::DumpRenderTree::dump):
+        (BlackBerry::WebKit::DumpRenderTree::didFinishDocumentLoadForFrame):
+        (BlackBerry::WebKit::DumpRenderTree::didReceiveTitleForFrame):
+        (BlackBerry::WebKit::DumpRenderTree::runJavaScriptAlert):
+        * DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h:
+        (DumpRenderTree):
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp:
+        (TestRunner::setMockGeolocationError):
+        (TestRunner::layerTreeAsText):
+        (TestRunner::findString):
+        (TestRunner::setStorageDatabaseIdleInterval):
+
 2012-11-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add File Chooser dialog support to MiniBrowser
