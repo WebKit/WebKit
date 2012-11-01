@@ -1,3 +1,21 @@
+2012-10-31  Alexandru Chiculita  <achicu@adobe.com>
+
+        CustomFilterOperation parameters list is not decoded correctly in CoordinatedGraphicsArgumentCoders
+        https://bugs.webkit.org/show_bug.cgi?id=100889
+
+        Reviewed by Noam Rosenthal.
+
+        The custom filters parameters list was initialized with a specific size and then
+        the decoder was expected to fill it with all the decoded parameters. The decoder was
+        using the append command which added the paramters at the end, so it doubled the size
+        of the vector leaving empty spaces at the beginning of the list. Fixed it by writting
+        directly into the allocated space.
+
+        No new tests, the code path is not activated yet.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::decode):
+
 2012-10-31  Sam Weinig  <sam@webkit.org>
 
         Convert the rest of the encoders to take the encoder as a reference

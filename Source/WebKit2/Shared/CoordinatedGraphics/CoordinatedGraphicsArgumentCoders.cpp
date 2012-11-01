@@ -283,7 +283,6 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
                 switch (parameterType) {
                 case CustomFilterParameter::ARRAY: {
                     RefPtr<CustomFilterArrayParameter> arrayParameter = CustomFilterArrayParameter::create(name);
-                    parameters.append(arrayParameter);
                     uint32_t arrayParameterSize;
                     if (!decoder->decodeUInt32(arrayParameterSize))
                         return false;
@@ -293,11 +292,11 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
                             return false;
                         arrayParameter->addValue(arrayParameterValue);
                     }
+                    parameters[i] = arrayParameter.release();
                     break;
                 }
                 case CustomFilterParameter::NUMBER: {
                     RefPtr<CustomFilterNumberParameter> numberParameter = CustomFilterNumberParameter::create(name);
-                    parameters.append(numberParameter);
                     uint32_t numberParameterSize;
                     if (!decoder->decodeUInt32(numberParameterSize))
                         return false;
@@ -307,15 +306,16 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
                             return false;
                         numberParameter->addValue(numberParameterValue);
                     }
+                    parameters[i] = numberParameter.release();
                     break;
                 }
                 case CustomFilterParameter::TRANSFORM: {
                     RefPtr<CustomFilterTransformParameter> transformParameter = CustomFilterTransformParameter::create(name);
-                    parameters.append(transformParameter);
                     TransformOperations operations;
                     if (!ArgumentCoder<TransformOperations>::decode(decoder, operations))
                         return false;
                     transformParameter->setOperations(operations);
+                    parameters[i] = transformParameter.release();
                     break;
                 }
                 }
