@@ -72,7 +72,7 @@ private:
     WebCore::IntSize m_viewportSize;
     WebCore::IntPoint m_scrollPosition;
     float m_scaleFactor;
-    PageViewportController* m_pageViewportController;
+    PageViewportController* m_controller;
 };
 
 } // namespace WebKit

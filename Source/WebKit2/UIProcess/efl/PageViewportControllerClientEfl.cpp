@@ -42,7 +42,7 @@ namespace WebKit {
 PageViewportControllerClientEfl::PageViewportControllerClientEfl(EwkViewImpl* viewImpl)
     : m_viewImpl(viewImpl)
     , m_scaleFactor(1)
-    , m_pageViewportController(0)
+    , m_controller(0)
 {
     ASSERT(m_viewImpl);
 }
@@ -78,14 +78,18 @@ void PageViewportControllerClientEfl::updateViewportSize(const IntSize& viewport
 {
     m_viewportSize = viewportSize;
     m_viewImpl->page()->setViewportSize(viewportSize);
-    m_pageViewportController->didChangeViewportSize(viewportSize);
+
+    ASSERT(m_controller);
+    m_controller->didChangeViewportSize(viewportSize);
 }
 
 void PageViewportControllerClientEfl::setVisibleContentsRect(const IntPoint& newScrollPosition, float newScale, const FloatPoint& /*trajectory*/)
 {
     m_scaleFactor = newScale;
     m_scrollPosition = newScrollPosition;
-    m_pageViewportController->didChangeContentsVisibility(m_scrollPosition, m_scaleFactor, FloatPoint());
+
+    ASSERT(m_controller);
+    m_controller->didChangeContentsVisibility(m_scrollPosition, m_scaleFactor, FloatPoint());
 }
 
 void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& size)
@@ -109,7 +113,8 @@ void PageViewportControllerClientEfl::setContentsScale(float newScale, bool trea
 
 void PageViewportControllerClientEfl::didResumeContent()
 {
-    m_pageViewportController->didChangeContentsVisibility(m_scrollPosition, m_scaleFactor);
+    ASSERT(m_controller);
+    m_controller->didChangeContentsVisibility(m_scrollPosition, m_scaleFactor);
 }
 
 void PageViewportControllerClientEfl::didChangeVisibleContents()
@@ -122,9 +127,9 @@ void PageViewportControllerClientEfl::didChangeViewportAttributes()
 {
 }
 
-void PageViewportControllerClientEfl::setController(PageViewportController* pageViewportController)
+void PageViewportControllerClientEfl::setController(PageViewportController* controller)
 {
-    m_pageViewportController = pageViewportController;
+    m_controller = controller;
 }
 
 } // namespace WebKit
