@@ -56,7 +56,7 @@ private:
     inline HTMLVideoElement* videoElement() const;
 
     virtual void intrinsicSizeChanged();
-    IntSize calculateIntrinsicSize();
+    LayoutSize calculateIntrinsicSize();
     void updateIntrinsicSize();
 
     virtual void imageChanged(WrappedImagePtr, const IntRect*);
@@ -72,7 +72,7 @@ private:
 
     virtual LayoutUnit computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
     virtual LayoutUnit computeReplacedLogicalHeight() const;
-    virtual int minimumReplacedHeight() const;
+    virtual LayoutUnit minimumReplacedHeight() const OVERRIDE;
 
 #if ENABLE(FULLSCREEN_API)
     virtual LayoutUnit offsetLeft() const;
@@ -83,7 +83,7 @@ private:
 
     void updatePlayer();
 
-    IntSize m_cachedImageSize;
+    LayoutSize m_cachedImageSize;
 };
 
 inline RenderVideo* toRenderVideo(RenderObject* object)

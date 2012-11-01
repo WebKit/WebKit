@@ -30,6 +30,7 @@
 
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
+#include "LayoutTypes.h"
 #include "StyleImage.h"
 
 namespace WebCore {
@@ -60,7 +61,7 @@ public:
     virtual bool canRender(const RenderObject*, float multiplier) const;
     virtual bool isLoaded() const;
     virtual bool errorOccurred() const;
-    virtual IntSize imageSize(const RenderObject*, float multiplier) const;
+    virtual LayoutSize imageSize(const RenderObject*, float multiplier) const;
     virtual bool imageHasRelativeWidth() const;
     virtual bool imageHasRelativeHeight() const;
     virtual void computeIntrinsicDimensions(const RenderObject*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);

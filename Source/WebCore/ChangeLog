@@ -1,3 +1,73 @@
+2012-11-01  Emil A Eklund  <eae@chromium.org>
+
+        [subpixel] Change intrinsicSize to LayoutUnit
+        https://bugs.webkit.org/show_bug.cgi?id=99104
+
+        Reviewed by Levi Weintraub.
+
+        Change RenderReplaced and intrinsicSize to LayoutUnit to avoid
+        rounding problems when zooming/scaling. Also change imageSize to
+        LayoutUnit as it can return a scaled size.
+
+        Test: fast/sub-pixel/tiled-canvas-elements.html
+
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::finish):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::imageSizeForRenderer):
+        * loader/cache/CachedImage.h:
+        (CachedImage):
+        * platform/graphics/FractionalLayoutSize.h:
+        (FractionalLayoutSize):
+        (WebCore::FractionalLayoutSize::scale):
+        (WebCore::FractionalLayoutSize::clampToMinimumSize):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::intrinsicSize):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::canvasSizeChanged):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::updateIntrinsicSizeIfNeeded):
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::minimumReplacedHeight):
+        * rendering/RenderImage.h:
+        (RenderImage):
+        * rendering/RenderImageResource.h:
+        (WebCore::RenderImageResource::imageSize):
+        * rendering/RenderImageResourceStyleImage.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::RenderReplaced):
+        (WebCore::RenderReplaced::computeAspectRatioInformationForRenderBox):
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight):
+        * rendering/RenderReplaced.h:
+        (RenderReplaced):
+        (WebCore::RenderReplaced::minimumReplacedHeight):
+        (WebCore::RenderReplaced::setIntrinsicSize):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updateIntrinsicSize):
+        (WebCore::RenderVideo::calculateIntrinsicSize):
+        (WebCore::RenderVideo::videoBox):
+        (WebCore::RenderVideo::minimumReplacedHeight):
+        * rendering/RenderVideo.h:
+        (RenderVideo):
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::imageSize):
+        * rendering/style/StyleCachedImage.h:
+        (StyleCachedImage):
+        * rendering/style/StyleCachedImageSet.cpp:
+        (WebCore::StyleCachedImageSet::imageSize):
+        * rendering/style/StyleCachedImageSet.h:
+        (StyleCachedImageSet):
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::imageSize):
+        (WebCore::StyleGeneratedImage::computeIntrinsicDimensions):
+        * rendering/style/StyleGeneratedImage.h:
+        (StyleGeneratedImage):
+        * rendering/style/StyleImage.h:
+        (StyleImage):
+        * rendering/style/StylePendingImage.h:
+
 2012-11-01  Adam Barth  <abarth@webkit.org>
 
         [V8] Unify the V8GCController visitors

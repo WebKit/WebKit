@@ -77,6 +77,12 @@ public:
         m_width *= scale;
         m_height *= scale;
     }
+
+    void scale(float widthScale, float heightScale)
+    {
+        m_width *= widthScale;
+        m_height *= heightScale;
+    }
     
     FractionalLayoutSize expandedTo(const FractionalLayoutSize& other) const
     {
@@ -93,6 +99,14 @@ public:
     void clampNegativeToZero()
     {
         *this = expandedTo(FractionalLayoutSize());
+    }
+    
+    void clampToMinimumSize(const FractionalLayoutSize& minimumSize)
+    {
+        if (m_width < minimumSize.width())
+            m_width = minimumSize.width();
+        if (m_height < minimumSize.height())
+            m_height = minimumSize.height();
     }
 
     FractionalLayoutSize transposedSize() const

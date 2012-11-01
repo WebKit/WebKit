@@ -53,7 +53,7 @@ public:
     CSSImageSetValue* cssImageSetValue() const { return m_value->isImageSetValue() ? static_cast<CSSImageSetValue*>(m_value) : 0; }
 #endif
     
-    virtual IntSize imageSize(const RenderObject*, float /*multiplier*/) const { return IntSize(); }
+    virtual LayoutSize imageSize(const RenderObject*, float /*multiplier*/) const OVERRIDE { return LayoutSize(); }
     virtual bool imageHasRelativeWidth() const { return false; }
     virtual bool imageHasRelativeHeight() const { return false; }
     virtual void computeIntrinsicDimensions(const RenderObject*, Length& /* intrinsicWidth */ , Length& /* intrinsicHeight */, FloatSize& /* intrinsicRatio */) { }

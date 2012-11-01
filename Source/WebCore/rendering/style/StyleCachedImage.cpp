@@ -61,7 +61,7 @@ bool StyleCachedImage::errorOccurred() const
     return m_image->errorOccurred();
 }
 
-IntSize StyleCachedImage::imageSize(const RenderObject* renderer, float multiplier) const
+LayoutSize StyleCachedImage::imageSize(const RenderObject* renderer, float multiplier) const
 {
     return m_image->imageSizeForRenderer(renderer, multiplier);
 }

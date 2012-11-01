@@ -24,9 +24,10 @@
 #define CachedImage_h
 
 #include "CachedResource.h"
-#include "SVGImageCache.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
+#include "LayoutTypesInlineMethods.h"
+#include "SVGImageCache.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -63,7 +64,7 @@ public:
     bool imageHasRelativeHeight() const;
     
     // This method takes a zoom multiplier that can be used to increase the natural size of the image by the zoom.
-    IntSize imageSizeForRenderer(const RenderObject*, float multiplier); // returns the size of the complete image.
+    LayoutSize imageSizeForRenderer(const RenderObject*, float multiplier); // returns the size of the complete image.
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     virtual void didAddClient(CachedResourceClient*);

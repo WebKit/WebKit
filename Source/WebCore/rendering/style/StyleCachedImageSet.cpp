@@ -69,9 +69,9 @@ bool StyleCachedImageSet::errorOccurred() const
     return m_bestFitImage->errorOccurred();
 }
 
-IntSize StyleCachedImageSet::imageSize(const RenderObject* renderer, float multiplier) const
+LayoutSize StyleCachedImageSet::imageSize(const RenderObject* renderer, float multiplier) const
 {
-    IntSize scaledImageSize = m_bestFitImage->imageSizeForRenderer(renderer, multiplier);
+    LayoutSize scaledImageSize = m_bestFitImage->imageSizeForRenderer(renderer, multiplier);
     scaledImageSize.scale(1 / m_imageScaleFactor);
     return scaledImageSize;
 }

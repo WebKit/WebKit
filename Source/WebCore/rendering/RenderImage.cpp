@@ -165,7 +165,8 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         return;
     
     if (!m_didIncrementVisuallyNonEmptyPixelCount) {
-        view()->frameView()->incrementVisuallyNonEmptyPixelCount(m_imageResource->imageSize(1.0f));
+        // At a zoom level of 1 the image is guaranteed to have an integer size.
+        view()->frameView()->incrementVisuallyNonEmptyPixelCount(flooredIntSize(m_imageResource->imageSize(1.0f)));
         m_didIncrementVisuallyNonEmptyPixelCount = true;
     }
 
@@ -187,7 +188,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     imageDimensionsChanged(imageSizeChanged, rect);
 }
 
-bool RenderImage::updateIntrinsicSizeIfNeeded(const IntSize& newSize, bool imageSizeChanged)
+bool RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize, bool imageSizeChanged)
 {
     if (newSize == intrinsicSize() && !imageSizeChanged)
         return false;
@@ -326,7 +327,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 if (centerY < 0)
                     centerY = 0;
                 imageOffset = LayoutSize(leftBorder + leftPad + centerX + 1, topBorder + topPad + centerY + 1);
-                context->drawImage(image.get(), style()->colorSpace(), IntRect(roundedIntPoint(paintOffset + imageOffset), imageSize), CompositeSourceOver, shouldRespectImageOrientation());
+                context->drawImage(image.get(), style()->colorSpace(), pixelSnappedIntRect(LayoutRect(paintOffset + imageOffset, imageSize)), CompositeSourceOver, shouldRespectImageOrientation());
                 errorPictureDrawn = true;
             }
 
@@ -485,9 +486,9 @@ bool RenderImage::backgroundIsObscured() const
     return true;
 }
 
-int RenderImage::minimumReplacedHeight() const
+LayoutUnit RenderImage::minimumReplacedHeight() const
 {
-    return m_imageResource->errorOccurred() ? intrinsicSize().height() : 0;
+    return m_imageResource->errorOccurred() ? intrinsicSize().height() : LayoutUnit();
 }
 
 HTMLMapElement* RenderImage::imageMap() const

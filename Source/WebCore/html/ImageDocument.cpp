@@ -154,9 +154,9 @@ void ImageDocumentParser::finish()
 
         cachedImage->setResponse(document()->frame()->loader()->documentLoader()->response());
 
-        // Report the natural image size in the page title, regardless of zoom
-        // level.
-        IntSize size = cachedImage->imageSizeForRenderer(document()->imageElement()->renderer(), 1.0f);
+        // Report the natural image size in the page title, regardless of zoom level.
+        // At a zoom level of 1 the image is guaranteed to have an integer size.
+        IntSize size = flooredIntSize(cachedImage->imageSizeForRenderer(document()->imageElement()->renderer(), 1.0f));
         if (size.width()) {
             // Compute the title, we use the decoded filename of the resource, falling
             // back on the (decoded) hostname if there is no path.

@@ -1,3 +1,29 @@
+2012-11-01  Emil A Eklund  <eae@chromium.org>
+
+        [subpixel] Change intrinsicSize to LayoutUnit
+        https://bugs.webkit.org/show_bug.cgi?id=99104
+
+        Reviewed by Levi Weintraub.
+
+        Add test for tiled replaced elements and update existing expectations as needed.
+
+        * fast/sub-pixel/tiled-canvas-elements-expected.txt: Added.
+        * fast/sub-pixel/tiled-canvas-elements.html: Added.
+        * platform/chromium-linux/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/chromium-linux/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/chromium-win/svg/as-image/svg-non-integer-scaled-image-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
+        * platform/chromium/fast/reflections/reflection-with-zoom-expected.txt:
+        * platform/chromium/svg/as-image/svg-non-integer-scaled-image-expected.txt:
+        * platform/chromium/svg/zoom/page/zoom-svg-as-image-expected.txt:
+        * platform/chromium/svg/zoom/page/zoom-svg-as-relative-image-expected.txt:
+
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.  New reftest from 

@@ -382,7 +382,7 @@ public:
         return document()->inQuirksMode() && style()->logicalHeight().isAuto() && !isFloatingOrOutOfFlowPositioned() && (isRoot() || isBody()) && !document()->shouldDisplaySeamlesslyWithParent();
     }
 
-    virtual IntSize intrinsicSize() const { return IntSize(); }
+    virtual LayoutSize intrinsicSize() const { return LayoutSize(); }
     LayoutUnit intrinsicLogicalWidth() const { return style()->isHorizontalWritingMode() ? intrinsicSize().width() : intrinsicSize().height(); }
     LayoutUnit intrinsicLogicalHeight() const { return style()->isHorizontalWritingMode() ? intrinsicSize().height() : intrinsicSize().width(); }
 

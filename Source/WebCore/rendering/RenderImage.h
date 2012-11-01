@@ -89,7 +89,7 @@ private:
 
     virtual bool backgroundIsObscured() const;
 
-    virtual int minimumReplacedHeight() const;
+    virtual LayoutUnit minimumReplacedHeight() const OVERRIDE;
 
     virtual void notifyFinished(CachedResource*);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
@@ -98,7 +98,7 @@ private:
 
     IntSize imageSizeForError(CachedImage*) const;
     void imageDimensionsChanged(bool imageSizeChanged, const IntRect* = 0);
-    bool updateIntrinsicSizeIfNeeded(const IntSize&, bool imageSizeChanged);
+    bool updateIntrinsicSizeIfNeeded(const LayoutSize&, bool imageSizeChanged);
 
     void paintAreaElementFocusRing(PaintInfo&);
 

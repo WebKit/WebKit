@@ -29,6 +29,7 @@
 #include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "Image.h"
+#include "LayoutTypesInlineMethods.h"
 #include "StyleImage.h"
 
 namespace WebCore {
@@ -62,7 +63,7 @@ public:
     virtual bool imageHasRelativeWidth() const { return m_cachedImage ? m_cachedImage->imageHasRelativeWidth() : false; }
     virtual bool imageHasRelativeHeight() const { return m_cachedImage ? m_cachedImage->imageHasRelativeHeight() : false; }
 
-    virtual IntSize imageSize(float multiplier) const { return m_cachedImage ? m_cachedImage->imageSizeForRenderer(m_renderer, multiplier) : IntSize(); }
+    virtual LayoutSize imageSize(float multiplier) const { return m_cachedImage ? m_cachedImage->imageSizeForRenderer(m_renderer, multiplier) : LayoutSize(); }
 
     virtual WrappedImagePtr imagePtr() const { return m_cachedImage.get(); }
 

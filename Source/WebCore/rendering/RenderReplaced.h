@@ -29,7 +29,7 @@ namespace WebCore {
 class RenderReplaced : public RenderBox {
 public:
     RenderReplaced(Node*);
-    RenderReplaced(Node*, const IntSize& intrinsicSize);
+    RenderReplaced(Node*, const LayoutSize& intrinsicSize);
     virtual ~RenderReplaced();
 
     virtual LayoutUnit computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
@@ -43,10 +43,10 @@ protected:
 
     virtual void layout();
 
-    virtual IntSize intrinsicSize() const { return m_intrinsicSize; }
+    virtual LayoutSize intrinsicSize() const OVERRIDE { return m_intrinsicSize; }
     virtual void computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
 
-    virtual int minimumReplacedHeight() const { return 0; }
+    virtual LayoutUnit minimumReplacedHeight() const { return LayoutUnit(); }
 
     virtual void setSelectionState(SelectionState);
 
@@ -54,7 +54,7 @@ protected:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    void setIntrinsicSize(const IntSize& intrinsicSize) { m_intrinsicSize = intrinsicSize; }
+    void setIntrinsicSize(const LayoutSize& intrinsicSize) { m_intrinsicSize = intrinsicSize; }
     virtual void intrinsicSizeChanged();
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
@@ -80,7 +80,7 @@ private:
     virtual LayoutRect selectionRectForRepaint(RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
     void computeAspectRatioInformationForRenderBox(RenderBox*, FloatSize& constrainedSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
 
-    mutable IntSize m_intrinsicSize;
+    mutable LayoutSize m_intrinsicSize;
 };
 
 }

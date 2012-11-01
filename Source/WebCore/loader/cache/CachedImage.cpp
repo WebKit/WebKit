@@ -226,14 +226,14 @@ bool CachedImage::imageHasRelativeHeight() const
     return false;
 }
 
-IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float multiplier)
+LayoutSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float multiplier)
 {
     ASSERT(!isPurgeable());
 
     if (!m_image)
         return IntSize();
 
-    IntSize imageSize;
+    LayoutSize imageSize;
 
     if (m_image->isBitmapImage() && (renderer && renderer->shouldRespectImageOrientation() == RespectImageOrientation))
         imageSize = static_cast<BitmapImage*>(m_image.get())->sizeRespectingOrientation();
@@ -262,14 +262,10 @@ IntSize CachedImage::imageSizeForRenderer(const RenderObject* renderer, float mu
     // Don't let images that have a width/height >= 1 shrink below 1 when zoomed.
     float widthScale = m_image->hasRelativeWidth() ? 1.0f : multiplier;
     float heightScale = m_image->hasRelativeHeight() ? 1.0f : multiplier;
-    IntSize minimumSize(imageSize.width() > 0 ? 1 : 0, imageSize.height() > 0 ? 1 : 0);
-#if ENABLE(SUBPIXEL_LAYOUT)
-    imageSize.setWidth(lroundf(imageSize.width() * widthScale));
-    imageSize.setHeight(lroundf(imageSize.height() * heightScale));
-#else
+    LayoutSize minimumSize(imageSize.width() > 0 ? 1 : 0, imageSize.height() > 0 ? 1 : 0);
     imageSize.scale(widthScale, heightScale);
-#endif
     imageSize.clampToMinimumSize(minimumSize);
+    ASSERT(multiplier != 1.0f || (imageSize.width().fraction() == 0.0f && imageSize.height().fraction() == 0.0f));
     return imageSize;
 }
 
