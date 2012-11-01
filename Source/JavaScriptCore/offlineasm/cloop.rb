@@ -249,10 +249,10 @@ class BaseIndex
     end
     def pointerExpr
         if base.is_a? RegisterID and base.name == "sp"
-            offsetValue = "(#{index.clValue(:int32)} << #{scaleShift}) + #{offset.clValue})"
+            offsetValue = "(#{index.clValue} << #{scaleShift}) + #{offset.clValue})"
             "(ASSERT(#{offsetValue} == offsetof(JITStackFrame, globalData)), &sp->globalData)"
         else
-            "#{base.clValue(:int8Ptr)} + (#{index.clValue(:int32)} << #{scaleShift}) + #{offset.clValue}"
+            "#{base.clValue(:int8Ptr)} + (#{index.clValue} << #{scaleShift}) + #{offset.clValue}"
         end
     end
     def int8MemRef
@@ -353,22 +353,47 @@ end
 
 
 def cloopEmitOperation(operands, type, operator)
+    raise unless type == :int || type == :uint || type == :int32 || type == :uint32 || \
+        type == :int64 || type == :uint64 || type == :double
     if operands.size == 3
         $asm.putc "#{operands[2].clValue(type)} = #{operands[1].clValue(type)} #{operator} #{operands[0].clValue(type)};"
+        if operands[2].is_a? RegisterID and (type == :int32 or type == :uint32)
+            $asm.putc "#{operands[2].dump}.clearHighWord();" # Just clear it. It does nothing on the 32-bit port.
+        end
     else
         raise unless operands.size == 2
         raise unless not operands[1].is_a? Immediate
         $asm.putc "#{operands[1].clValue(type)} = #{operands[1].clValue(type)} #{operator} #{operands[0].clValue(type)};"
+        if operands[1].is_a? RegisterID and (type == :int32 or type == :uint32)
+            $asm.putc "#{operands[1].dump}.clearHighWord();" # Just clear it. It does nothing on the 32-bit port.
+        end
     end
 end
 
 def cloopEmitShiftOperation(operands, type, operator)
+    raise unless type == :int || type == :uint || type == :int32 || type == :uint32 || type == :int64 || type == :uint64
     if operands.size == 3
         $asm.putc "#{operands[2].clValue(type)} = #{operands[1].clValue(type)} #{operator} (#{operands[0].clValue(:int)} & 0x1f);"
+        if operands[2].is_a? RegisterID and (type == :int32 or type == :uint32)
+            $asm.putc "#{operands[2].dump}.clearHighWord();" # Just clear it. It does nothing on the 32-bit port.
+        end
     else
         raise unless operands.size == 2
         raise unless not operands[1].is_a? Immediate
         $asm.putc "#{operands[1].clValue(type)} = #{operands[1].clValue(type)} #{operator} (#{operands[0].clValue(:int)} & 0x1f);"
+        if operands[1].is_a? RegisterID and (type == :int32 or type == :uint32)
+            $asm.putc "#{operands[1].dump}.clearHighWord();" # Just clear it. It does nothing on the 32-bit port.
+        end
+    end
+end
+
+def cloopEmitUnaryOperation(operands, type, operator)
+    raise unless type == :int || type == :uint || type == :int32 || type == :uint32 || type == :int64 || type == :uint64
+    raise unless operands.size == 1
+    raise unless not operands[0].is_a? Immediate
+    $asm.putc "#{operands[0].clValue(type)} = #{operator}#{operands[0].clValue(type)};"
+    if operands[0].is_a? RegisterID and (type == :int32 or type == :uint32)
+        $asm.putc "#{operands[0].dump}.clearHighWord();" # Just clear it. It does nothing on the 32-bit port.
     end
 end
 
@@ -595,17 +620,19 @@ class Instruction
             cloopEmitOperation(operands, :int, "-")
 
         when "negi"
-            $asm.putc "#{operands[0].clValue(:int32)} = -#{operands[0].clValue(:int32)};"
+            cloopEmitUnaryOperation(operands, :int32, "-")
         when "negq"
-            $asm.putc "#{operands[0].clValue(:int64)} = -#{operands[0].clValue(:int64)};"
+            cloopEmitUnaryOperation(operands, :int64, "-")
         when "negp"
-            $asm.putc "#{operands[0].clValue(:int)} = -#{operands[0].clValue(:int)};"
+            cloopEmitUnaryOperation(operands, :int, "-")
 
         when "noti"
-            $asm.putc "#{operands[0].clValue(:int32)} = !#{operands[0].clValue(:int32)};"
+            cloopEmitUnaryOperation(operands, :int32, "!")
 
         when "loadi"
-            $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].uint32MemRef};"
+            $asm.putc "#{operands[1].clValue(:uint)} = #{operands[0].uint32MemRef};"
+            # There's no need to call clearHighWord() here because the above will
+            # automatically take care of 0 extension.
         when "loadis"
             $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].int32MemRef};"
         when "loadq"
@@ -676,6 +703,7 @@ class Instruction
 
         when "td2i"
             $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].clValue(:double)};"
+            $asm.putc "#{operands[1].dump}.clearHighWord();"
 
         when "bcd2i"  # operands: srcDbl dstInt slowPath
             $asm.putc "{"
@@ -684,6 +712,7 @@ class Instruction
             $asm.putc "    if (asInt32 != d || (!asInt32 && signbit(d))) // true for -0.0"
             $asm.putc "        goto  #{operands[2].cLabel};"
             $asm.putc "    #{operands[1].clValue} = asInt32;"            
+            $asm.putc "    #{operands[1].dump}.clearHighWord();"
             $asm.putc "}"
 
         when "move"
@@ -965,7 +994,9 @@ class Instruction
             $asm.putc "{"
             $asm.putc "    int64_t temp = t0.i32; // sign extend the low 32bit"
             $asm.putc "    t0.i32 = temp; // low word"
+            $asm.putc "    t0.clearHighWord();"
             $asm.putc "    t1.i32 = uint64_t(temp) >> 32; // high word"
+            $asm.putc "    t1.clearHighWord();"
             $asm.putc "}"
 
         # 64-bit instruction: idivi op1 (based on X64)
@@ -985,7 +1016,9 @@ class Instruction
             $asm.putc "    int64_t dividend = (int64_t(t1.u32) << 32) | t0.u32;"
             $asm.putc "    int64_t divisor = #{operands[0].clValue(:int)};"
             $asm.putc "    t1.i32 = dividend % divisor; // remainder"
+            $asm.putc "    t1.clearHighWord();"
             $asm.putc "    t0.i32 = dividend / divisor; // quotient"
+            $asm.putc "    t0.clearHighWord();"
             $asm.putc "}"
 
         # 32-bit instruction: fii2d int32LoOp int32HiOp dblOp (based on ARMv7)

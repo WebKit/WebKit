@@ -15,6 +15,32 @@
 
 2012-10-31  Mark Lam  <mark.lam@apple.com>
 
+        C++ llint 64-bit backend needs to zero extend results of int32 operations.
+        https://bugs.webkit.org/show_bug.cgi?id=100899.
+
+        Reviewed by Filip Pizlo.
+
+        llint asm instructions ending in "i" for a 64-bit machine expects the
+        high 32-bit of registers to be zero'ed out when a 32-bit instruction
+        writes into a register. Fixed the C++ llint to honor this.
+
+        Fixed the index register used in BaseIndex addressing to be of size
+        intptr_t as expected.
+
+        Updated CLoopRegister to handle different endiannesss configurations.
+
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoopRegister::clearHighWord):
+          - new method to clear the high 32-bit of a 64-bit register.
+            It's a no-op for the 32-bit build. 
+        (CLoopRegister):
+          - CLoopRegister now takes care of packing and byte endianness order.
+        (JSC::CLoop::execute): - Added an assert.
+        * offlineasm/cloop.rb:
+          - Add calls to clearHighWord() wherever needed.
+
+2012-10-31  Mark Lam  <mark.lam@apple.com>
+
         A JSC printf (support for %J+s and %b).
         https://bugs.webkit.org/show_bug.cgi?id=100566.
 

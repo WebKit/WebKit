@@ -122,6 +122,98 @@ static double Ints2Double(uint32_t lo, uint32_t hi)
 
 
 //============================================================================
+// CLoopRegister is the storage for an emulated CPU register.
+// It defines the policy of how ints smaller than intptr_t are packed into the
+// pseudo register, as well as hides endianness differences.
+
+struct CLoopRegister {
+    union {
+        intptr_t i;
+        uintptr_t u;
+#if USE(JSVALUE64)
+#if CPU(BIG_ENDIAN)
+        struct {
+            int32_t i32padding;
+            int32_t i32;
+        };
+        struct {
+            uint32_t u32padding;
+            uint32_t u32;
+        };
+        struct {
+            int8_t i8padding[7];
+            int8_t i8;
+        };
+        struct {
+            uint8_t u8padding[7];
+            uint8_t u8;
+        };
+#else // !CPU(BIG_ENDIAN)
+        struct {
+            int32_t i32;
+            int32_t i32padding;
+        };
+        struct {
+            uint32_t u32;
+            uint32_t u32padding;
+        };
+        struct {
+            int8_t i8;
+            int8_t i8padding[7];
+        };
+        struct {
+            uint8_t u8;
+            uint8_t u8padding[7];
+        };
+#endif // !CPU(BIG_ENDIAN)
+#else // !USE(JSVALUE64)
+        int32_t i32;
+        uint32_t u32;
+
+#if CPU(BIG_ENDIAN)
+        struct {
+            int8_t i8padding[3];
+            int8_t i8;
+        };
+        struct {
+            uint8_t u8padding[3];
+            uint8_t u8;
+        };
+
+#else // !CPU(BIG_ENDIAN)
+        struct {
+            int8_t i8;
+            int8_t i8padding[3];
+        };
+        struct {
+            uint8_t u8;
+            uint8_t u8padding[3];
+        };
+#endif // !CPU(BIG_ENDIAN)
+#endif // !USE(JSVALUE64)
+
+        int8_t* i8p;
+        void* vp;
+        ExecState* execState;
+        void* instruction;
+        NativeFunction nativeFunc;
+#if USE(JSVALUE64)
+        int64_t i64;
+        uint64_t u64;
+        EncodedJSValue encodedJSValue;
+        double castToDouble;
+#endif
+        Opcode opcode;
+    };
+
+#if USE(JSVALUE64)
+    inline void clearHighWord() { i32padding = 0; }
+#else
+    inline void clearHighWord() { }
+#endif
+};
+
+//============================================================================
 // The llint C++ interpreter loop:
 //
 
@@ -164,26 +256,8 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
     ASSERT(callFrame->globalData().topCallFrame == callFrame);
 
     // Define the pseudo registers used by the LLINT C Loop backend:
-    union CLoopRegister {
-        intptr_t i;
-        uintptr_t u;
-        int32_t i32;
-        uint32_t u32;
-        int8_t i8;
-        uint8_t u8;
-        int8_t* i8p;
-        void* vp;
-        ExecState* execState;
-        void* instruction;
-        NativeFunction nativeFunc;
-#if USE(JSVALUE64)
-        int64_t i64;
-        uint64_t u64;
-        EncodedJSValue encodedJSValue;
-        double castToDouble;
-#endif
-        Opcode opcode;
-    };
+    ASSERT(sizeof(CLoopRegister) == sizeof(intptr_t));
+
     union CLoopDoubleRegister {
         double d;
 #if USE(JSVALUE64)
