@@ -1,5 +1,20 @@
 2012-11-01  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium windows rebaseline.
+
+        * platform/chromium-linux-x86/svg/zoom: Removed.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Removed.
+        * platform/chromium-win/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/chromium-win/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+
+2012-11-01  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium rebaseline for r133172.
 
         * platform/chromium-linux-x86/svg/zoom/page: Removed.
