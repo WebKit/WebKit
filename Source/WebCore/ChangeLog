@@ -1,3 +1,27 @@
+2012-11-01  Adam Barth  <abarth@webkit.org>
+
+        [V8] The DOMWrapperVisitor abstraction is no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=100965
+
+        Reviewed by Kentaro Hara.
+
+        This patch removes the DOMWrapperVisitor interface because it is no
+        longer needed. As a consequence, DOMWrapperMaps no longer need to
+        support enumeration, and we can move more DOM objects to use the faster
+        intrusive wrappers.
+
+        There was one remaining user of DOMWrapperVisitor in the
+        ScriptProfiler, which I've moved over to enumerating objects directly
+        from V8, similar to a function above it in the same file.
+
+        * bindings/v8/DOMWrapperMap.h:
+        (WebCore):
+        (DOMWrapperMap):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::visitNodeWrappers):
+        (WebCore::ScriptProfiler::visitExternalArrays):
+
 2012-11-01  Mike West  <mkwst@chromium.org>
 
         CSP 1.0: Warn when old-style directives encountered.

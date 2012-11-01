@@ -181,14 +181,14 @@ void ScriptProfiler::visitNodeWrappers(WrappedNodeVisitor* visitor)
 {
     v8::HandleScope scope;
 
-    class VisitorAdapter : public v8::PersistentHandleVisitor {
+    class DOMNodeWrapperVisitor : public v8::PersistentHandleVisitor {
     public:
-        explicit VisitorAdapter(WrappedNodeVisitor* visitor)
+        explicit DOMNodeWrapperVisitor(WrappedNodeVisitor* visitor)
             : m_visitor(visitor)
         {
         }
 
-        virtual void VisitPersistentHandle(v8::Persistent<v8::Value> value, uint16_t classId)
+        virtual void VisitPersistentHandle(v8::Persistent<v8::Value> value, uint16_t classId) OVERRIDE
         {
             if (classId != v8DOMNodeClassId)
                 return;
@@ -200,9 +200,9 @@ void ScriptProfiler::visitNodeWrappers(WrappedNodeVisitor* visitor)
 
     private:
         WrappedNodeVisitor* m_visitor;
-    } visitorAdapter(visitor);
+    } wrapperVisitor(visitor);
 
-    v8::V8::VisitHandlesWithClassIds(&visitorAdapter);
+    v8::V8::VisitHandlesWithClassIds(&wrapperVisitor);
 }
 
 void ScriptProfiler::visitExternalStrings(ExternalStringVisitor* visitor)
@@ -212,24 +212,29 @@ void ScriptProfiler::visitExternalStrings(ExternalStringVisitor* visitor)
 
 void ScriptProfiler::visitExternalArrays(ExternalArrayVisitor* visitor)
 {
-    class VisitorAdapter : public DOMWrapperVisitor<void> {
+    class DOMObjectWrapperVisitor : public v8::PersistentHandleVisitor {
     public:
-        VisitorAdapter(ExternalArrayVisitor* visitor) : m_visitor(visitor) { }
-
-        virtual void visitDOMWrapper(DOMDataStore*, void* impl, v8::Persistent<v8::Object> v8Object)
+        explicit DOMObjectWrapperVisitor(ExternalArrayVisitor* visitor)
+            : m_visitor(visitor)
         {
-            WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(v8Object);
-            if (!type->isSubclass(&V8ArrayBufferView::info))
-                return;
-            ArrayBufferView* arrayBufferView = V8ArrayBufferView::toNative(v8Object);
-            m_visitor->visitJSExternalArray(arrayBufferView);
         }
+
+        virtual void VisitPersistentHandle(v8::Persistent<v8::Value> value, uint16_t classId) OVERRIDE
+        {
+            if (classId != v8DOMObjectClassId)
+                return;
+            ASSERT(value->IsObject());
+            v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
+            if (!V8DOMWrapper::domWrapperType(wrapper)->isSubclass(&V8ArrayBufferView::info))
+                return;
+            m_visitor->visitJSExternalArray(V8ArrayBufferView::toNative(wrapper));
+        }
+
     private:
         ExternalArrayVisitor* m_visitor;
-    } adapter(visitor);
+    } wrapperVisitor(visitor);
 
-    getDOMObjectMap().visit(0, &adapter);
-
+    v8::V8::VisitHandlesWithClassIds(&wrapperVisitor);
 }
 
 void ScriptProfiler::collectBindingMemoryInfo(MemoryInstrumentation* instrumentation)

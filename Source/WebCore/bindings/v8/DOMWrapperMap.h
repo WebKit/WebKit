@@ -42,20 +42,12 @@ namespace WebCore {
 class DOMDataStore;
 
 template<class KeyType>
-class DOMWrapperVisitor {
-public:
-    virtual void visitDOMWrapper(DOMDataStore*, KeyType*, v8::Persistent<v8::Object> wrapper) = 0;
-    virtual ~DOMWrapperVisitor() { }
-};
-
-template<class KeyType>
 class DOMWrapperMap {
 public:
     virtual ~DOMWrapperMap() { }
 
     virtual v8::Persistent<v8::Object> get(KeyType*) = 0;
     virtual void set(KeyType*, v8::Persistent<v8::Object>) = 0;
-    virtual void visit(DOMDataStore*, DOMWrapperVisitor<KeyType>*) = 0;
     virtual void clear() = 0;
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const = 0;
@@ -82,12 +74,6 @@ public:
         ASSERT(static_cast<KeyType*>(toNative(wrapper)) == key);
         wrapper.MakeWeak(this, m_callback);
         m_map.set(key, wrapper);
-    }
-
-    virtual void visit(DOMDataStore* store, DOMWrapperVisitor<KeyType>* visitor) OVERRIDE
-    {
-        for (typename MapType::iterator it = m_map.begin(); it != m_map.end(); ++it)
-            visitor->visitDOMWrapper(store, it->key, it->value);
     }
 
     virtual void clear() OVERRIDE

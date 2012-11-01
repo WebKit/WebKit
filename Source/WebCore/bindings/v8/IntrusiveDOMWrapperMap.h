@@ -50,11 +50,6 @@ public:
         wrapper.MakeWeak(node, weakCallback);
     }
 
-    virtual void visit(DOMDataStore* store, DOMWrapperVisitor<Node>* visitor) OVERRIDE
-    {
-        ASSERT_NOT_REACHED();
-    }
-
     virtual void clear() OVERRIDE
     {
         ASSERT_NOT_REACHED();
