@@ -1,3 +1,20 @@
+2012-11-01  Andreas Kling  <kling@webkit.org>
+
+        Update average StylePropertySet size estimation.
+        <http://webkit.org/b/100940>
+
+        Reviewed by Antti Koivisto.
+
+        Use sizeForImmutableStylePropertySetWithPropertyCount(2) as the average StylePropertySet
+        size to keep it in sync with the changed object memory layout.
+
+        * css/StylePropertySet.cpp:
+        (WebCore::sizeForImmutableStylePropertySetWithPropertyCount):
+        (WebCore::StylePropertySet::createImmutable):
+        (WebCore::StylePropertySet::averageSizeInBytes):
+        (WebCore::StylePropertySet::reportMemoryUsage):
+
+
 2012-11-01  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL][Qt][AC] Remove an unnecessary connection to X-Server.

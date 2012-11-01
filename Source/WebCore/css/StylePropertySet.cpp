@@ -55,14 +55,14 @@ static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
     return propertySetCSSOMWrapperMapInstance;
 }
 
-static size_t immutableStylePropertySetSize(unsigned count)
+static size_t sizeForImmutableStylePropertySetWithPropertyCount(unsigned count)
 {
     return sizeof(StylePropertySet) + sizeof(CSSValue*) * count + sizeof(StylePropertyMetadata) * count;
 }
 
 PassRefPtr<StylePropertySet> StylePropertySet::createImmutable(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
 {
-    void* slot = WTF::fastMalloc(immutableStylePropertySetSize(count));
+    void* slot = WTF::fastMalloc(sizeForImmutableStylePropertySetWithPropertyCount(count));
     return adoptRef(new (slot) ImmutableStylePropertySet(properties, count, cssParserMode));
 }
 
@@ -1133,12 +1133,12 @@ void StylePropertySet::clearParentElement(StyledElement* element)
 unsigned StylePropertySet::averageSizeInBytes()
 {
     // Please update this if the storage scheme changes so that this longer reflects the actual size.
-    return sizeof(StylePropertySet) + sizeof(CSSProperty) * 2;
+    return sizeForImmutableStylePropertySetWithPropertyCount(2);
 }
 
 void StylePropertySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    size_t actualSize = m_isMutable ? sizeof(StylePropertySet) : immutableStylePropertySetSize(m_arraySize);
+    size_t actualSize = m_isMutable ? sizeof(StylePropertySet) : sizeForImmutableStylePropertySetWithPropertyCount(m_arraySize);
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS, actualSize);
     if (m_isMutable)
         info.addMember(mutablePropertyVector());
