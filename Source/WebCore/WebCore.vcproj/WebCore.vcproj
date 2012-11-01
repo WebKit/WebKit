@@ -26963,6 +26963,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\DeviceClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\DeviceController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\DeviceController.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\DiagnosticLoggingKeys.cpp"
 				>
 			</File>
