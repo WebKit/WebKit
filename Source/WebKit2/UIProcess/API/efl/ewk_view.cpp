@@ -204,9 +204,9 @@ static AffineTransform toWebContentTransform(Ewk_View_Smart_Data* smartData)
     transform.translate(-smartData->view.x, -smartData->view.y);
 
 #if USE(TILED_BACKING_STORE)
-    transform.scale(1 / impl->pageViewportControllerClient()->scaleFactor());
     IntPoint scrollPos = impl->pageViewportControllerClient()->scrollPosition();
     transform.translate(scrollPos.x(), scrollPos.y());
+    transform.scale(1 / impl->pageViewportControllerClient()->scaleFactor());
 #endif
 
     return transform;

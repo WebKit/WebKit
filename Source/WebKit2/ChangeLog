@@ -1,5 +1,17 @@
 2012-11-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        [EFL] Fix event mapping for WebKit2 with coordinated graphics
+        https://bugs.webkit.org/show_bug.cgi?id=100956
+
+        Reviewed by Alexis Menard.
+
+        Apply scale after translation.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (toWebContentTransform):
+
+2012-11-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         [EFL] Correct our use of the coordinated graphics
         https://bugs.webkit.org/show_bug.cgi?id=100947
 
