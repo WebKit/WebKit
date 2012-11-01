@@ -1,3 +1,22 @@
+2012-11-01  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        Fix the Mac breakage
+        https://bugs.webkit.org/show_bug.cgi?id=100383
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        acceleratedCompositingForFixedPositionEnabled needs to be enabled
+        for fixed layout to work efficiently but it's wrong to force it
+        to false if fixed layout isn't enabled.
+
+        Separate hard requirements for fixed layout from rendering optimizations
+        and guard the later with USE(COORDINATED_GRAPHICS).
+        Also add an early return to make sure that ports always having a false
+        useFixedLayout creation parameter won't get their settings adjusted.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setUseFixedLayout):
+
 2012-10-24  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         WebIconDatabase: Properly clean up on destruction

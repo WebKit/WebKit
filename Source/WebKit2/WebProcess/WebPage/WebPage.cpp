@@ -1177,11 +1177,16 @@ float WebPage::deviceScaleFactor() const
 
 void WebPage::setUseFixedLayout(bool fixed)
 {
+    // Do not overwrite current settings if initially setting it to false.
+    if (m_useFixedLayout == fixed)
+        return;
     m_useFixedLayout = fixed;
 
-    m_page->settings()->setAcceleratedCompositingForFixedPositionEnabled(fixed);
     m_page->settings()->setFixedElementsLayoutRelativeToFrame(fixed);
+#if USE(COORDINATED_GRAPHICS)
+    m_page->settings()->setAcceleratedCompositingForFixedPositionEnabled(fixed);
     m_page->settings()->setFixedPositionCreatesStackingContext(fixed);
+#endif
 
 #if USE(TILED_BACKING_STORE) && ENABLE(SMOOTH_SCROLLING)
     // Delegated scrolling will be enabled when the FrameView is created if fixed layout is enabled.
