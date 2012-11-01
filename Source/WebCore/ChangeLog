@@ -1,3 +1,28 @@
+2012-11-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Restoring breakpoints for formatted UISourceCode should be triggered by BreakpointManager, not ScriptsPanel.
+        https://bugs.webkit.org/show_bug.cgi?id=100593
+
+        Reviewed by Pavel Feldman.
+
+        BreakpointManager now listen for FormattedChanged event and restores formatted breakpoints on it.
+        Removed now redundant callback from UISourceCode.setFormatted().
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype._restoreBreakpoints):
+        (WebInspector.BreakpointManager.prototype._uiSourceCodeAdded):
+        (WebInspector.BreakpointManager.prototype._uiSourceCodeFormatted):
+        (WebInspector.BreakpointManager.prototype._uiSourceCodeRemoved):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addUISourceCode):
+        (WebInspector.ScriptsPanel.prototype._revealExecutionLine):
+        (WebInspector.ScriptsPanel.prototype._toggleFormatSource):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode.prototype._fireContentAvailable):
+        (WebInspector.UISourceCode.prototype.setFormatted.formattedChanged):
+        (WebInspector.UISourceCode.prototype.setFormatted.didGetContent):
+        (WebInspector.UISourceCode.prototype.setFormatted):
+
 2012-10-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: Output code evaluated in the console the same as console.log

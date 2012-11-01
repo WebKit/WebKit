@@ -67,7 +67,7 @@ WebInspector.BreakpointManager.prototype = {
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
      */
-    restoreBreakpoints: function(uiSourceCode)
+    _restoreBreakpoints: function(uiSourceCode)
     {
         var sourceFileId = WebInspector.BreakpointManager.breakpointStorageId(uiSourceCode);
         if (!sourceFileId || this._sourceFilesWithRestoredBreakpoints[sourceFileId])
@@ -92,8 +92,19 @@ WebInspector.BreakpointManager.prototype = {
     _uiSourceCodeAdded: function(event)
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
-        if (uiSourceCode.contentType() === WebInspector.resourceTypes.Script || uiSourceCode.contentType() === WebInspector.resourceTypes.Document)
-            this.restoreBreakpoints(uiSourceCode);
+        if (uiSourceCode.contentType() === WebInspector.resourceTypes.Script || uiSourceCode.contentType() === WebInspector.resourceTypes.Document) {
+            this._restoreBreakpoints(uiSourceCode);
+            uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.FormattedChanged, this._uiSourceCodeFormatted, this);
+        }
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _uiSourceCodeFormatted: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        this._restoreBreakpoints(uiSourceCode);
     },
 
     /**
@@ -126,7 +137,7 @@ WebInspector.BreakpointManager.prototype = {
         var uiSourceCodes = this._workspace.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i) {
             if (WebInspector.BreakpointManager.breakpointStorageId(uiSourceCodes[i]) === sourceFileId)
-                this.restoreBreakpoints(uiSourceCodes[i]);
+                this._restoreBreakpoints(uiSourceCodes[i]);
         }
     },
 

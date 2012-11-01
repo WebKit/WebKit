@@ -41,11 +41,13 @@ var test = function()
 
             function resumed()
             {
-                sourceFrame._uiSourceCode.setFormatted(true, didFormatPage);
+                sourceFrame._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.FormattedChanged, didFormatPage, this);
+                sourceFrame._uiSourceCode.setFormatted(true);
             }
 
             function didFormatPage()
             {
+                sourceFrame._uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.FormattedChanged, didFormatPage, this);
                 // There should be a breakpoint in f1 although script is pretty-printed.
                 InspectorTest.waitUntilPaused(pausedInF1Again);
                 InspectorTest.evaluateInPageWithTimeout("f1()");

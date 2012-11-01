@@ -22,7 +22,7 @@ var test = function()
     {
         scriptSource = frame._uiSourceCode;
         InspectorTest.addSniffer(scriptSource._workspace, "requestFileContent", requestContentSniffer);
-        scriptSource.searchInContent("margic-string", true, false, dump1);
+        scriptSource.searchInContent("magic-string", true, false, dump1);
     }
 
     function dump1(matches)
@@ -30,12 +30,14 @@ var test = function()
         InspectorTest.addResult("Pre-format search results:");
         InspectorTest.dumpSearchMatches(matches);
         shouldRequestContent = true;
-        scriptSource.setFormatted(true, didFormat);
+        scriptSource.addEventListener(WebInspector.UISourceCode.Events.FormattedChanged, didFormat, this);
+        scriptSource.setFormatted(true);
     }
 
     function didFormat()
     {
-        scriptSource.searchInContent("margic-string", true, false, dump2);
+        scriptSource.removeEventListener(WebInspector.UISourceCode.Events.FormattedChanged, didFormat, this);
+        scriptSource.searchInContent("magic-string", true, false, dump2);
     }
 
     function dump2(matches)

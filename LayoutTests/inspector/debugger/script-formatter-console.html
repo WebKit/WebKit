@@ -33,7 +33,8 @@ var test = function()
                 InspectorTest.addResult("Pre-format row message list:");
                 InspectorTest.addResult(JSON.stringify(Object.keys(sourceFrame._rowMessages)));
                 InspectorTest.addResult(JSON.stringify(Object.keys(sourceFrame._messageBubbles)));
-                sourceFrame._uiSourceCode.setFormatted(true, didFormatLinkText);
+                InspectorTest.addSniffer(WebInspector.UISourceCode.prototype, "updateLiveLocations", didFormatLinkText);
+                sourceFrame._uiSourceCode.setFormatted(true);
             }
 
             function didFormatLinkText()
