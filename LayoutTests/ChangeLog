@@ -1,5 +1,19 @@
 2012-10-31  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r122278
+
+    2012-07-10  Philip Rogers  <pdr@google.com>
+
+            Crash due to SVG animation element not removed from target (before reset)
+            https://bugs.webkit.org/show_bug.cgi?id=90750
+
+            Reviewed by Abhishek Arya.
+
+            * svg/animations/dynamic-modify-attributename-crash2-expected.txt: Added.
+            * svg/animations/dynamic-modify-attributename-crash2.svg: Added.
+
+2012-10-31  Lucas Forschler  <lforschler@apple.com>
+
         Merge r121930
 
     2012-07-05  Hayato Ito  <hayato@chromium.org>
@@ -10536,6 +10550,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .

@@ -169,14 +169,20 @@ void SVGDocumentExtensions::removeAnimationElementFromTarget(SVGSMILElement* ani
 void SVGDocumentExtensions::removeAllAnimationElementsFromTarget(SVGElement* targetElement)
 {
     ASSERT(targetElement);
-    HashSet<SVGSMILElement*>* animationElementsForTarget = m_animatedElements.take(targetElement);
-    if (!animationElementsForTarget)
+    HashMap<SVGElement*, HashSet<SVGSMILElement*>* >::iterator it = m_animatedElements.find(targetElement);
+    if (it == m_animatedElements.end())
         return;
-    HashSet<SVGSMILElement*>::iterator it = animationElementsForTarget->begin();
+
+    HashSet<SVGSMILElement*>* animationElementsForTarget = it->second;
+    Vector<SVGSMILElement*> toBeReset;
+
     HashSet<SVGSMILElement*>::iterator end = animationElementsForTarget->end();
-    for (; it != end; ++it)
-        (*it)->resetTargetElement();
-    delete animationElementsForTarget;
+    for (HashSet<SVGSMILElement*>::iterator it = animationElementsForTarget->begin(); it != end; ++it)
+        toBeReset.append(*it);
+
+    Vector<SVGSMILElement*>::iterator vectorEnd = toBeReset.end();
+    for (Vector<SVGSMILElement*>::iterator vectorIt = toBeReset.begin(); vectorIt != vectorEnd; ++vectorIt)
+        (*vectorIt)->resetTargetElement();
 }
 
 // FIXME: Callers should probably use ScriptController::eventHandlerLineNumber()
