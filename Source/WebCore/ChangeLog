@@ -1,3 +1,19 @@
+2012-11-01  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL][Qt][AC] Remove an unnecessary connection to X-Server.
+        https://bugs.webkit.org/show_bug.cgi?id=100628.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        With Changset: https://bugs.webkit.org/show_bug.cgi?id=100523
+        GraphicsSurfacePrivate should always use the Display returned by offscreenwindow.
+        However, in GraphicsSurfacePrivate constructor we call XOpenDisplay before asking
+        display from offscreenwindow.
+        This patch removes unnecessary call to XOpenDisplay made in GraphicsSurfacePrivate.
+
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+
 2012-11-01  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Former auto-height regions should not ignore their defined height

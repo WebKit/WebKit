@@ -134,7 +134,7 @@ struct GraphicsSurfacePrivate {
         , m_hasAlpha(false)
     {
         GLXContext shareContextObject = 0;
-        m_display = XOpenDisplay(0);
+        m_display = m_offScreenWindow.display();
 
 #if PLATFORM(QT)
         if (shareContext) {
@@ -160,7 +160,6 @@ struct GraphicsSurfacePrivate {
         UNUSED_PARAM(shareContext);
 #endif
 
-        m_display = m_offScreenWindow.display();
         int attributes[] = {
             GLX_LEVEL, 0,
             GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
