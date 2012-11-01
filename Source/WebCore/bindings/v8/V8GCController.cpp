@@ -49,6 +49,7 @@
 #include "V8CSSStyleDeclaration.h"
 #include "V8DOMImplementation.h"
 #include "V8MessagePort.h"
+#include "V8Node.h"
 #include "V8RecursionScope.h"
 #include "V8StyleSheet.h"
 #include "V8StyleSheetList.h"

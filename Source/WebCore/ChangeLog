@@ -1,3 +1,9 @@
+2012-11-01  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed. Build fix.
+
+        * bindings/v8/V8GCController.cpp:
+
 2012-11-01  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add Ewk_Auth_Request API
