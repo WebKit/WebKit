@@ -1,3 +1,9 @@
+2012-10-31  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed chromium mac ml expectation updating.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+
 2012-10-31  Adam Barth  <abarth@webkit.org>
 
         [V8] Garbage collection should use opaque roots rather than implicit references
