@@ -60,6 +60,7 @@ WebIconDatabase::WebIconDatabase(WebContext* context)
 
 void WebIconDatabase::invalidate()
 {
+    setGlobalIconDatabase(0);
 }
 
 void WebIconDatabase::setDatabasePath(const String& path)

@@ -1,3 +1,14 @@
+2012-10-24  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        WebIconDatabase: Properly clean up on destruction
+        https://bugs.webkit.org/show_bug.cgi?id=100237
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::invalidate):
+        Make sure that IconDatabaseBase::iconDatabase won't return a dangling pointer.
+
 2012-11-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL] Fix event mapping for WebKit2 with coordinated graphics

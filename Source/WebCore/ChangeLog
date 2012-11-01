@@ -1,3 +1,19 @@
+2012-10-24  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        WebIconDatabase: Properly clean up on destruction
+        https://bugs.webkit.org/show_bug.cgi?id=100237
+
+        Reviewed by Brady Eidson.
+
+        It's now possible that the IconDatabase gets destroyed since WebKit2
+        isn't using it as a singleton.
+
+        Check that the database was properly closed rather than asserting that
+        it won't get deleted.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::~IconDatabase):
+
 2012-11-01  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: make component subitems use parent color in native memory snapshots.

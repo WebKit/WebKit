@@ -811,7 +811,7 @@ IconDatabase::IconDatabase()
 
 IconDatabase::~IconDatabase()
 {
-    ASSERT_NOT_REACHED();
+    ASSERT(!isOpen());
 }
 
 void IconDatabase::notifyPendingLoadDecisionsOnMainThread(void* context)
