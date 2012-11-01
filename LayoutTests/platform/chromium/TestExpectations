@@ -4112,6 +4112,7 @@ Bug(senorblanco) [ MountainLion ] fast/regions/autoheight-definedheight-changeno
 # Has been flaky in Debug since at least r133070, possibly earlier.
 Bug(senorblanco) [ Debug ] svg/as-image/same-image-two-instances.html [ ImageOnlyFailure Pass ]
 Bug(senorblanco) [ Debug ] svg/as-image/img-relative-height.html [ ImageOnlyFailure Pass ]
+Bug(senorblanco) [ Debug ] svg/as-image/img-relative-width.html [ ImageOnlyFailure Pass ]
 
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]
