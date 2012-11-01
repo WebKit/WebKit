@@ -4105,6 +4105,9 @@ Bug(senorblanco) [ Mac ] compositing/geometry/fixed-position-transform-composite
 # Crashy since at least r133035; gives a v8 error
 Bug(senorblanco) [ Linux Debug ] fast/files/workers/worker-apply-blob-url-to-xhr.html [ Crash Pass ]
 
+# This reftest doesn't work on Mac 10.8 for some reason.
+Bug(senorblanco) [ MountainLion ] fast/regions/autoheight-definedheight-changenotdetected.html [ ImageOnlyFailure ]
+
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]
 

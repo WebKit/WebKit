@@ -1,3 +1,11 @@
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.  New reftest from 
+        http://trac.webkit.org/changeset/133146 doesn't seem to work on
+        MacOS 10.8.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-01  Mike West  <mkwst@chromium.org>
 
         [Chromium] Unreviewed gardening.
