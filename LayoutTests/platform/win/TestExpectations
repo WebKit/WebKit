@@ -2416,3 +2416,6 @@ compositing/tiling/tile-cache-zoomed.html
 fast/images/exif-orientation-image-document.html
 
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
+
+#https://bugs.webkit.org/show_bug.cgi?id=100117
+fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
