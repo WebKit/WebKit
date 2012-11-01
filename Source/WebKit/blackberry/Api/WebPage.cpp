@@ -2361,12 +2361,6 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     if (node->isElementNode()) {
         Element* element = static_cast<Element*>(node->shadowAncestorNode());
 
-        String webWorksContext(DOMSupport::webWorksContext(element));
-        if (!webWorksContext.stripWhiteSpace().isEmpty()) {
-            context.setFlag(Platform::WebContext::IsWebWorksContext);
-            context.setWebWorksContext(webWorksContext);
-        }
-
         if (DOMSupport::isTextBasedContentEditableElement(element)) {
             if (!canStartSelection) {
                 // Input fields host node is by spec non-editable unless the field itself has content editable enabled.
@@ -2392,6 +2386,20 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
 
     if (node->isFocusable())
         context.setFlag(Platform::WebContext::IsFocusable);
+
+    // Walk up the node tree looking for our custom webworks context attribute.
+    while (node) {
+        if (node->isElementNode()) {
+            Element* element = static_cast<Element*>(node->shadowAncestorNode());
+            String webWorksContext(DOMSupport::webWorksContext(element));
+            if (!webWorksContext.stripWhiteSpace().isEmpty()) {
+                context.setFlag(Platform::WebContext::IsWebWorksContext);
+                context.setWebWorksContext(webWorksContext);
+                break;
+            }
+        }
+        node = node->parentNode();
+    }
 
     return context;
 }

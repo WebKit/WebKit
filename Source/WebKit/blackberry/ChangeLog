@@ -1,3 +1,17 @@
+2012-10-31  Genevieve Mak  <gmak@rim.com>
+
+        [BLACKBERRY] Custom WebWorks context menus don't always work.
+        https://bugs.webkit.org/show_bug.cgi?id=100891
+
+        Reviewed by Rob Buis.
+
+        Walk up the dom tree until we find the webworks attribute or run out
+        of parent nodes.
+        PR# 227732
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+
 2012-10-31  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Adding window.external to our port
