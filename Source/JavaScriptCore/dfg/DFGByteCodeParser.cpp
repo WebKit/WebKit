@@ -1689,9 +1689,6 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return false;
 
         int thisOperand = registerOffset + argumentToOperand(0);
-        if (!(m_graph[get(thisOperand)].prediction() & SpecString))
-            return false;
-        
         int indexOperand = registerOffset + argumentToOperand(1);
         NodeIndex charCode = addToGraph(StringCharCodeAt, OpInfo(Array::String), get(thisOperand), getToInt32(indexOperand));
 
@@ -1705,9 +1702,6 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             return false;
 
         int thisOperand = registerOffset + argumentToOperand(0);
-        if (!(m_graph[get(thisOperand)].prediction() & SpecString))
-            return false;
-
         int indexOperand = registerOffset + argumentToOperand(1);
         NodeIndex charCode = addToGraph(StringCharAt, OpInfo(Array::String), get(thisOperand), getToInt32(indexOperand));
 

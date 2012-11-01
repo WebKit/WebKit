@@ -1,5 +1,41 @@
 2012-10-31  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG optimized string access code should be enabled
+        https://bugs.webkit.org/show_bug.cgi?id=100825
+
+        Reviewed by Oliver Hunt.
+
+        - Removes prediction checks from the parser.
+        
+        - Fixes the handling of array mode refinement for strings. I.e. we don't do
+          any refinement - we already know it's going to be a string. We could
+          revisit this in the future, but for now the DFG lacks the ability to
+          handle any array modes other than Array::String for string intrinsics, so
+          this is as good as it gets.
+        
+        - Removes uses of isBlahSpeculation for checking if a mode is already
+          checked. isBlahSpeculation implicitly checks if the SpeculatedType is not
+          BOTTOM ("empty"), which breaks for checking if a mode is already checked
+          since a mode may already be "checked" in the sense that we've proven that
+          the code is unreachable.
+        
+        ~1% speed-up on V8v7, mostly from a speed-up on crypto, which uses string
+        intrinsics in one of the hot functions.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::speculationChecked):
+        (JSC):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::alreadyChecked):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetCharCodeAt):
+
+2012-10-31  Filip Pizlo  <fpizlo@apple.com>
+
         Sparse array size threshold should be increased to 100000
         https://bugs.webkit.org/show_bug.cgi?id=100827
 

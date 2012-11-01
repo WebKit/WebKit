@@ -159,7 +159,7 @@ bool ArrayMode::alreadyChecked(AbstractValue& value) const
         return false;
         
     case Array::String:
-        return isStringSpeculation(value.m_type);
+        return speculationChecked(value.m_type, SpecString);
         
     case Array::Contiguous:
         if (isJSArray()) {
@@ -201,34 +201,34 @@ bool ArrayMode::alreadyChecked(AbstractValue& value) const
             && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
         
     case Array::Arguments:
-        return isArgumentsSpeculation(value.m_type);
+        return speculationChecked(value.m_type, SpecArguments);
         
     case Array::Int8Array:
-        return isInt8ArraySpeculation(value.m_type);
+        return speculationChecked(value.m_type, SpecInt8Array);
         
     case Array::Int16Array:
-        return isInt16ArraySpeculation(value.m_type);
+        return speculationChecked(value.m_type, SpecInt16Array);
         
     case Array::Int32Array:
-        return isInt32ArraySpeculation(value.m_type);
+        return speculationChecked(value.m_type, SpecInt32Array);
         
     case Array::Uint8Array:
-        return isUint8ArraySpeculation(value.m_type);
+        return speculationChecked(value.m_type, SpecUint8Array);
         
     case Array::Uint8ClampedArray:
-        return isUint8ClampedArraySpeculation(value.m_type);
+        return speculationChecked(value.m_type, SpecUint8ClampedArray);
         
     case Array::Uint16Array:
-        return isUint16ArraySpeculation(value.m_type);
+        return speculationChecked(value.m_type, SpecUint16Array);
         
     case Array::Uint32Array:
-        return isUint32ArraySpeculation(value.m_type);
+        return speculationChecked(value.m_type, SpecUint32Array);
 
     case Array::Float32Array:
-        return isFloat32ArraySpeculation(value.m_type);
+        return speculationChecked(value.m_type, SpecFloat32Array);
 
     case Array::Float64Array:
-        return isFloat64ArraySpeculation(value.m_type);
+        return speculationChecked(value.m_type, SpecFloat64Array);
         
     case Array::SelectUsingPredictions:
     case Array::Unprofiled:

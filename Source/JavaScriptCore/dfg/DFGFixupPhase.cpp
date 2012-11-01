@@ -127,14 +127,19 @@ private:
             ASSERT(node.arrayMode().canCSEStorage());
             break;
         }
-        case GetByVal:
-        case StringCharAt:
-        case StringCharCodeAt: {
+        case GetByVal: {
             node.setArrayMode(
                 node.arrayMode().refine(
                     m_graph[node.child1()].prediction(),
                     m_graph[node.child2()].prediction()));
             
+            blessArrayOperation(node.child1(), node.child2(), 2);
+            break;
+        }
+        case StringCharAt:
+        case StringCharCodeAt: {
+            // Currently we have no good way of refining these.
+            ASSERT(node.arrayMode() == ArrayMode(Array::String));
             blessArrayOperation(node.child1(), node.child2(), 2);
             break;
         }

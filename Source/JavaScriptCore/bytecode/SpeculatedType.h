@@ -284,6 +284,11 @@ inline bool mergeSpeculation(T& left, SpeculatedType right)
     return result;
 }
 
+inline bool speculationChecked(SpeculatedType actual, SpeculatedType desired)
+{
+    return (actual | desired) == desired;
+}
+
 SpeculatedType speculationFromClassInfo(const ClassInfo*);
 SpeculatedType speculationFromStructure(Structure*);
 SpeculatedType speculationFromCell(JSCell*);

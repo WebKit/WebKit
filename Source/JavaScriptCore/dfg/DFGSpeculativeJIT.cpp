@@ -1799,7 +1799,6 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
 
 void SpeculativeJIT::compileGetCharCodeAt(Node& node)
 {
-    ASSERT(node.child3() == NoNode);
     SpeculateCellOperand string(this, node.child1());
     SpeculateStrictInt32Operand index(this, node.child2());
     StorageOperand storage(this, node.child3());
@@ -1808,12 +1807,7 @@ void SpeculativeJIT::compileGetCharCodeAt(Node& node)
     GPRReg indexReg = index.gpr();
     GPRReg storageReg = storage.gpr();
     
-    if (!isStringSpeculation(m_state.forNode(node.child1()).m_type)) {
-        ASSERT(!(at(node.child1()).prediction() & SpecString));
-        terminateSpeculativeExecution(Uncountable, JSValueRegs(), NoNode);
-        noResult(m_compileIndex);
-        return;
-    }
+    ASSERT(speculationChecked(m_state.forNode(node.child1()).m_type, SpecString));
 
     // unsigned comparison so we can filter out negative indices and indices that are too large
     speculationCheck(Uncountable, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::AboveOrEqual, indexReg, MacroAssembler::Address(stringReg, JSString::offsetOfLength())));
