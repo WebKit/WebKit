@@ -1,3 +1,33 @@
+2012-11-01  Jer Noble  <jer.noble@apple.com>
+
+        Add LLDB-Python scripts to support WebKit data types.
+        https://bugs.webkit.org/show_bug.cgi?id=100898
+
+        Reviewed by Anders Carlsson.
+
+        Add Summary providers for common WebKit string types.
+
+        * lldb/lldb_webkit.py: Added.
+        (__lldb_init_module): Register these providers with the debugger.
+        (WTFString_SummaryProvider): Wrapper around WTFStringProvider.
+        (WTFStringImpl_SummaryProvider): Wrapper around WTFStringImplProvider.
+        (WTFAtomicString_SummaryProvider): Ditto.
+        (guess_string_length): Walk through the string looking for a null-byte(s).
+        (ustring_to_string): Walk through the string, extracting two-byte values, and concatenate them.
+        (lstring_to_string): Walk through the string, extracting byte values, and concatenate them.
+        (WTFStringImplProvider): 
+        (WTFStringImplProvider.__init__):
+        (WTFStringImplProvider.get_length): Extract the m_length variable.
+        (WTFStringImplProvider.get_data8): Extract the m_data8 variable.
+        (WTFStringImplProvider.get_data16): Extract the m_data16 variable.
+        (WTFStringImplProvider.to_string): Pass the appropriate data variable to {u,l}string_to_string.
+        (WTFStringImplProvider.is_8bit): Check the m_hashAndFlags variable.
+        (WTFStringProvider):
+        (WTFStringProvider.__init__):
+        (WTFStringProvider.stringimpl): Extract the m_impl variable.
+        (WTFStringProvider.get_length): Pass through to WTFStringImplProvider.
+        (WTFStringProvider.to_string): Ditto.
+
 2012-11-01  Peter Beverloo  <peter@chromium.org>
 
         [Chromium-Android] Apache doesn't properly clean up ipc semaphores after a layout test run
