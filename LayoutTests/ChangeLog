@@ -1,3 +1,33 @@
+2012-11-01  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium rebaseline for r133172.
+
+        * platform/chromium-linux-x86/svg/zoom/page: Removed.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-as-relative-image-expected.txt: Removed.
+        * platform/chromium-mac-lion/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/chromium-mac-lion/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png: Added.
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/chromium-mac/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/chromium-mac/svg/as-image/svg-non-integer-scaled-image-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt:
+        * platform/efl/compositing/overflow/overflow-compositing-descendant-expected.png: Removed.
+        * platform/efl/compositing/overflow/scroll-ancestor-update-expected.png: Removed.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png: Removed.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png: Removed.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png: Removed.
+
 2012-11-01  Mike Reed  <reed@google.com>
 
         Add suppressions for images for new skia roll
