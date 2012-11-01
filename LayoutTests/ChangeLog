@@ -1,3 +1,9 @@
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Unreviewed gardening.  Mark a test as flaky.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-01  Dana Jansens  <danakj@chromium.org>
 
         Unreviewed, remove failing expectations after rebaseline.
