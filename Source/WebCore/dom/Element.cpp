@@ -77,6 +77,7 @@
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
+#include <wtf/BitVector.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(SVG)
@@ -702,31 +703,42 @@ static inline AtomicString makeIdForStyleResolution(const AtomicString& value, b
     return value;
 }
 
+static bool checkNeedsStyleInvalidationForIdChange(const AtomicString& oldId, const AtomicString& newId, StyleResolver* styleResolver)
+{
+    ASSERT(newId != oldId);
+    if (!oldId.isEmpty() && styleResolver->hasSelectorForId(oldId))
+        return true;
+    if (!newId.isEmpty() && styleResolver->hasSelectorForId(newId))
+        return true;
+    return false;
+}
+
 void Element::attributeChanged(const QualifiedName& name, const AtomicString& newValue)
 {
     parseAttribute(Attribute(name, newValue));
 
     document()->incDOMTreeVersion();
 
+    StyleResolver* styleResolver = document()->styleResolverIfExists();
+    bool testShouldInvalidateStyle = attached() && styleResolver && styleChangeType() < FullStyleChange;
+    bool shouldInvalidateStyle = false;
+
     if (isIdAttributeName(name)) {
         AtomicString oldId = attributeData()->idForStyleResolution();
         AtomicString newId = makeIdForStyleResolution(newValue, document()->inQuirksMode());
         if (newId != oldId) {
             attributeData()->setIdForStyleResolution(newId);
-            StyleResolver* styleResolver = document()->styleResolverIfExists();
-            if (attached() && (!styleResolver || (styleResolver->hasSelectorForId(newId) || styleResolver->hasSelectorForId(oldId))))
-                setNeedsStyleRecalc();
+            shouldInvalidateStyle = testShouldInvalidateStyle && checkNeedsStyleInvalidationForIdChange(oldId, newId, styleResolver);
         }
     } else if (name == HTMLNames::nameAttr)
         setHasName(!newValue.isNull());
 
-    if (!needsStyleRecalc() && document()->attached()) {
-        StyleResolver* styleResolver = document()->styleResolverIfExists();
-        if (!styleResolver || styleResolver->hasSelectorForAttribute(name.localName()))
-            setNeedsStyleRecalc();
-    }
+    shouldInvalidateStyle |= testShouldInvalidateStyle && styleResolver->hasSelectorForAttribute(name.localName());
 
     invalidateNodeListCachesInAncestors(&name, this);
+
+    if (shouldInvalidateStyle)
+        setNeedsStyleRecalc();
 
     if (AXObjectCache::accessibilityEnabled())
         document()->axObjectCache()->handleAttributeChanged(name, this);
@@ -765,49 +777,72 @@ static inline bool classStringHasClassName(const AtomicString& newClassString)
     return classStringHasClassName(newClassString.characters16(), length);
 }
 
-static void collectAddedAndRemovedClasses(Vector<AtomicString, 4>& addedAndRemovedClasses, SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
+static bool checkNeedsStyleInvalidationForClassChange(const SpaceSplitString& changedClasses, StyleResolver* styleResolver)
 {
-    for (unsigned i = 0; i < newClasses.size(); ++i) {
-        if (oldClasses.remove(newClasses[i]))
-            continue;
-        addedAndRemovedClasses.append(newClasses[i]);
+    unsigned changedSize = changedClasses.size();
+    for (unsigned i = 0; i < changedSize; ++i) {
+        if (styleResolver->hasSelectorForClass(changedClasses[i]))
+            return true;
     }
-    for (unsigned i = 0; i < oldClasses.size(); ++i)
-        addedAndRemovedClasses.append(oldClasses[i]);
+    return false;
+}
+
+static bool checkNeedsStyleInvalidationForClassChange(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses, StyleResolver* styleResolver)
+{
+    unsigned oldSize = oldClasses.size();
+    if (!oldSize)
+        return checkNeedsStyleInvalidationForClassChange(newClasses, styleResolver);
+    BitVector remainingClassBits;
+    remainingClassBits.ensureSize(oldSize);
+    // Class vectors tend to be very short. This is faster than using a hash table.
+    unsigned newSize = newClasses.size();
+    for (unsigned i = 0; i < newSize; ++i) {
+        for (unsigned j = 0; j < oldSize; ++j) {
+            if (newClasses[i] == oldClasses[j]) {
+                remainingClassBits.quickSet(j);
+                continue;
+            }
+        }
+        if (styleResolver->hasSelectorForClass(newClasses[i]))
+            return true;
+    }
+    for (unsigned i = 0; i < oldSize; ++i) {
+        // If the bit is not set the the corresponding class has been removed.
+        if (remainingClassBits.quickGet(i))
+            continue;
+        if (styleResolver->hasSelectorForClass(oldClasses[i]))
+            return true;
+    }
+    return false;
 }
 
 void Element::classAttributeChanged(const AtomicString& newClassString)
 {
-    bool shouldInvalidateStyle = attached() && document()->styleResolverIfExists();
-    Vector<AtomicString, 4> addedAndRemovedClasses;
+    StyleResolver* styleResolver = document()->styleResolverIfExists();
+    bool testShouldInvalidateStyle = attached() && styleResolver && styleChangeType() < FullStyleChange;
+    bool shouldInvalidateStyle = false;
 
     if (classStringHasClassName(newClassString)) {
         const ElementAttributeData* attributeData = ensureAttributeData();
         const bool shouldFoldCase = document()->inQuirksMode();
-        SpaceSplitString oldClasses = attributeData->classNames();
+        const SpaceSplitString oldClasses = attributeData->classNames();
+
         attributeData->setClass(newClassString, shouldFoldCase);
-        if (shouldInvalidateStyle)
-            collectAddedAndRemovedClasses(addedAndRemovedClasses, oldClasses, attributeData->classNames());
+
+        const SpaceSplitString& newClasses = attributeData->classNames();
+        shouldInvalidateStyle = testShouldInvalidateStyle && checkNeedsStyleInvalidationForClassChange(oldClasses, newClasses, styleResolver);
     } else if (const ElementAttributeData* attributeData = this->attributeData()) {
-        if (shouldInvalidateStyle) {
-            const SpaceSplitString& oldClasses = attributeData->classNames();
-            for (unsigned i = 0; i < oldClasses.size(); ++i)
-                addedAndRemovedClasses.append(oldClasses[i]);
-        }
+        const SpaceSplitString& oldClasses = attributeData->classNames();
+        shouldInvalidateStyle = testShouldInvalidateStyle && checkNeedsStyleInvalidationForClassChange(oldClasses, styleResolver);
+
         attributeData->clearClass();
     }
 
     if (DOMTokenList* classList = optionalClassList())
         static_cast<ClassList*>(classList)->reset(newClassString);
 
-    if (!shouldInvalidateStyle)
-        return;
-    for (unsigned i = 0; i < addedAndRemovedClasses.size(); ++i) {
-        if (document()->styleResolverIfExists()->hasSelectorForClass(addedAndRemovedClasses[i])) {
-            setNeedsStyleRecalc();
-            return;
-        }
-    }
+    if (shouldInvalidateStyle)
+        setNeedsStyleRecalc();
 }
 
 // Returns true is the given attribute is an event handler.

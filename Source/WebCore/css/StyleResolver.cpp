@@ -4249,25 +4249,6 @@ Color StyleResolver::colorFromPrimitiveValue(CSSPrimitiveValue* value, bool forV
     }
 }
 
-bool StyleResolver::hasSelectorForAttribute(const AtomicString &attrname) const
-{
-    return m_features.attrsInRules.contains(attrname.impl());
-}
-
-bool StyleResolver::hasSelectorForClass(const AtomicString& classValue) const
-{
-    if (classValue.isEmpty())
-        return false;
-    return m_features.classesInRules.contains(classValue.impl());
-}
-
-bool StyleResolver::hasSelectorForId(const AtomicString& idValue) const
-{
-    if (idValue.isEmpty())
-        return false;
-    return m_features.idsInRules.contains(idValue.impl());
-}
-
 void StyleResolver::addViewportDependentMediaQueryResult(const MediaQueryExp* expr, bool result)
 {
     m_viewportDependentMediaQueryResults.append(adoptPtr(new MediaQueryResult(*expr, result)));

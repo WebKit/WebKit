@@ -518,6 +518,24 @@ private:
     friend bool operator!=(const MatchRanges&, const MatchRanges&);
 };
 
+inline bool StyleResolver::hasSelectorForAttribute(const AtomicString &attributeName) const
+{
+    ASSERT(!attributeName.isEmpty());
+    return m_features.attrsInRules.contains(attributeName.impl());
+}
+
+inline bool StyleResolver::hasSelectorForClass(const AtomicString& classValue) const
+{
+    ASSERT(!classValue.isEmpty());
+    return m_features.classesInRules.contains(classValue.impl());
+}
+
+inline bool StyleResolver::hasSelectorForId(const AtomicString& idValue) const
+{
+    ASSERT(!idValue.isEmpty());
+    return m_features.idsInRules.contains(idValue.impl());
+}
+
 } // namespace WebCore
 
 #endif // StyleResolver_h

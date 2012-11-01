@@ -1,3 +1,38 @@
+2012-11-01  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r132941): attribute modification 10% performance regression
+        https://bugs.webkit.org/show_bug.cgi?id=100873
+
+        Reviewed by Ojan Vafai.
+
+        Don't do the class change finding by mutating SpaceSplitString. It is slow. Instead use a bit vector
+        to mark the unchanged classes
+
+        * css/StyleResolver.cpp:
+        (WebCore):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::hasSelectorForAttribute):
+        (WebCore):
+        (WebCore::StyleResolver::hasSelectorForClass):
+        (WebCore::StyleResolver::hasSelectorForId):
+        
+            Inlined these and moved value validity testing to clients.
+
+        * dom/Element.cpp:
+        (WebCore::checkNeedsStyleInvalidationForIdChange):
+        (WebCore):
+        (WebCore::Element::attributeChanged):
+    
+            Clean up id testing too.
+
+        (WebCore::checkNeedsStyleInvalidationForClassChange):
+        
+            Use bit vector for marking seen values. Avoids allocations and reffing.
+
+        (WebCore::Element::classAttributeChanged):
+        
+            Don't test if style is already invalid.
+
 2012-11-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Mac] Crash in Range::editingStartPosition
