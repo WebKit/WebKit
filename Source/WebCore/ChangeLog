@@ -1,3 +1,24 @@
+2012-11-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix HAVE(NETWORK_CFDATA_ARRAY_CALLBACK) build
+        https://bugs.webkit.org/show_bug.cgi?id=100979
+
+        Reviewed by Joseph Pecoraro.
+
+        * loader/ResourceBuffer.cpp: (WebCore::ResourceBuffer::append):
+        * loader/ResourceBuffer.h:
+        Added a version of append() that takes CFDataRef, passing it directly to SharedBuffer.
+
+        * loader/mac/ResourceLoaderMac.mm: (WebCore::ResourceLoader::didReceiveDataArray):
+        InspectorInstrumentation now takes a length. Unfortunately, we don't have encodedLength
+        here, meaning that the results will likely be incorrect.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willCacheResponse): Removed a version that needlessly used deprecated API.
+        (WebCore::ResourceHandle::createCFURLConnection): This code assumed that
+        HAVE(NETWORK_CFDATA_ARRAY_CALLBACK) and USE(PROTECTION_SPACE_AUTH_CALLBACK) always
+        come together. Changed to check for these separately.
+
 2012-11-01  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Add more form validation strings

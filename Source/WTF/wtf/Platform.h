@@ -592,7 +592,7 @@
 #define ENABLE_ORIENTATION_EVENTS 1
 #define ENABLE_REPAINT_THROTTLING 1
 #define ENABLE_WEB_ARCHIVE 1
-#define HAVE_NETWORK_CFDATA_ARRAY_CALLBACK 1
+#define HAVE_NETWORK_CFDATA_ARRAY_CALLBACK 1 // FIXME: All CFNetwork based platforms have this callback now, so it should be USE, not HAVE.
 #define HAVE_PTHREAD_RWLOCK 1
 #define HAVE_READLINE 1
 #define WTF_USE_CF 1
