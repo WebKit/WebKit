@@ -1,3 +1,23 @@
+2012-11-01  Jer Noble  <jer.noble@apple.com>
+
+        Add Python-LLDB support for WTF::Vector types.
+        https://bugs.webkit.org/show_bug.cgi?id=100980
+
+        Reviewed by Anders Carlsson.
+
+        Add a synthetic child provider for WTF::Vector types.
+
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module): Add both the summary and synthetic providers for WTF::Vector
+        (WTFVector_SummaryProvider): Wrapper around WTFVectorProvider
+        (WTFVectorProvider):
+        (WTFVectorProvider.__init__):
+        (WTFVectorProvider.num_children): Return m_size+2 children to account for synthesized children.
+        (WTFVectorProvider.get_child_index): Synthesize child indexes for each entry in the Vector.
+        (WTFVectorProvider.get_child_at_index): Synthesize children for each entry in the Vector.
+        (WTFVectorProvider.update): Retrieve state from the underlying Vector.
+        (WTFVectorProvider.has_children): Vectors always have children.
+
 2012-11-01  Zoltan Horvath  <zoltan@webkit.org>
 
         Remove PageLoad directory entry from PerformanceTests pattern_map

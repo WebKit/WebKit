@@ -36,6 +36,8 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFString_SummaryProvider WTF::String')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFStringImpl_SummaryProvider WTF::StringImpl')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFAtomicString_SummaryProvider WTF::AtomicString')
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFVector_SummaryProvider -x "WTF::Vector<.+>$"')
+    debugger.HandleCommand('type synthetic add -x "WTF::Vector<.+>$" --python-class lldb_webkit.WTFVectorProvider')
 
 
 def WTFString_SummaryProvider(valobj, dict):
@@ -50,6 +52,11 @@ def WTFStringImpl_SummaryProvider(valobj, dict):
 
 def WTFAtomicString_SummaryProvider(valobj, dict):
     return WTFString_SummaryProvider(valobj.GetChildMemberWithName('m_string'), dict)
+
+
+def WTFVector_SummaryProvider(valobj, dict):
+    provider = WTFVectorProvider(valobj, dict)
+    return "{ size = %d, capacity = %d }" % (provider.size, provider.capacity)
 
 # FIXME: Provide support for the following types:
 # def WTFVector_SummaryProvider(valobj, dict):
@@ -143,3 +150,43 @@ class WTFStringProvider:
         if not impl:
             return u""
         return impl.to_string()
+
+
+class WTFVectorProvider:
+    def __init__(self, valobj, internal_dict):
+        self.valobj = valobj
+        self.update()
+
+    def num_children(self):
+        return self.size + 2
+
+    def get_child_index(self, name):
+        if name == "m_size":
+            return self.size
+        elif name == "m_buffer":
+            return self.size + 1
+        else:
+            return int(name.lstrip('[').rstrip(']'))
+
+    def get_child_at_index(self, index):
+        if index == self.size:
+            return self.valobj.GetChildMemberWithName("m_size")
+        elif index == self.size + 1:
+            return self.vector_buffer
+        elif index < self.size:
+            offset = index * self.data_size
+            child = self.buffer.CreateChildAtOffset('[' + str(index) + ']', offset, self.data_type)
+            return child
+        else:
+            return None
+
+    def update(self):
+        self.vector_buffer = self.valobj.GetChildMemberWithName('m_buffer')
+        self.buffer = self.vector_buffer.GetChildMemberWithName('m_buffer')
+        self.size = self.valobj.GetChildMemberWithName('m_size').GetValueAsUnsigned(0)
+        self.capacity = self.vector_buffer.GetChildMemberWithName('m_capacity').GetValueAsUnsigned(0)
+        self.data_type = self.buffer.GetType().GetPointeeType()
+        self.data_size = self.data_type.GetByteSize()
+
+    def has_children(self):
+        return True
