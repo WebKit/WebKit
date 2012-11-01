@@ -66,7 +66,7 @@ PassRefPtr<DOMStringList> IDBObjectStore::indexNames() const
     IDB_TRACE("IDBObjectStore::indexNames");
     RefPtr<DOMStringList> indexNames = DOMStringList::create();
     for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it)
-        indexNames->append(it->key);
+        indexNames->append(it->value.name);
     indexNames->sort();
     return indexNames.release();
 }
@@ -209,7 +209,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBObjectStoreBackendInterface::PutMo
     for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it) {
         IndexKeys keys;
         generateIndexKeysForValue(it->value, value, &keys);
-        indexNames.append(it->key);
+        indexNames.append(it->value.name);
         indexKeys.append(keys);
     }
     ASSERT(indexKeys.size() == indexNames.size());
@@ -382,7 +382,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context
         ec = NATIVE_TYPE_ERR;
         return 0;
     }
-    if (m_metadata.indexes.contains(name)) {
+    if (m_metadata.containsIndex(name)) {
         ec = IDBDatabaseException::CONSTRAINT_ERR;
         return 0;
     }
@@ -409,7 +409,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context
     IDBIndexMetadata metadata(name, indexId, keyPath, unique, multiEntry);
     RefPtr<IDBIndex> index = IDBIndex::create(metadata, indexBackend.release(), this, m_transaction.get());
     m_indexMap.set(name, index);
-    m_metadata.indexes.set(name, metadata);
+    m_metadata.indexes.set(indexId, metadata);
 
     ASSERT(!ec);
     if (ec)
@@ -444,15 +444,24 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
     if (it != m_indexMap.end())
         return it->value;
 
-    RefPtr<IDBIndexBackendInterface> indexBackend = m_backend->index(name, ec);
-    ASSERT(!indexBackend != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
-    if (ec)
+    if (!m_metadata.containsIndex(name)) {
+        ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return 0;
+    }
 
-    IDBObjectStoreMetadata::IndexMap::const_iterator mdit = m_metadata.indexes.find(name);
-    ASSERT(mdit != m_metadata.indexes.end());
+    RefPtr<IDBIndexBackendInterface> indexBackend = m_backend->index(name, ec);
+    ASSERT(!ec && indexBackend);
 
-    RefPtr<IDBIndex> index = IDBIndex::create(mdit->value, indexBackend.release(), this, m_transaction.get());
+    const IDBIndexMetadata* indexMetadata(0);
+    for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it) {
+        if (it->value.name == name) {
+            indexMetadata = &it->value;
+            break;
+        }
+    }
+    ASSERT(indexMetadata);
+
+    RefPtr<IDBIndex> index = IDBIndex::create(*indexMetadata, indexBackend.release(), this, m_transaction.get());
     m_indexMap.set(name, index);
     return index.release();
 }
@@ -467,21 +476,20 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return;
     }
-    if (!m_metadata.indexes.contains(name)) {
+    if (!m_metadata.containsIndex(name)) {
         ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return;
     }
 
     m_backend->deleteIndex(name, m_transaction->backend(), ec);
     if (!ec) {
+        ASSERT(m_metadata.containsIndex(name));
         IDBIndexMap::iterator it = m_indexMap.find(name);
         if (it != m_indexMap.end()) {
+            m_metadata.indexes.remove(it->value->id());
             it->value->markDeleted();
             m_indexMap.remove(name);
         }
-
-        ASSERT(m_metadata.indexes.contains(name));
-        m_metadata.indexes.remove(name);
     }
 }
 

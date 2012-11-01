@@ -167,13 +167,13 @@ IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
     // FIXME: Figure out a way to keep m_metadata.objectStores.get(N).indexes up to date rather than regenerating this every time.
     IDBDatabaseMetadata metadata(m_metadata);
     for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it)
-        metadata.objectStores.set(it->key, it->value->metadata());
+        metadata.objectStores.set(it->value->id(), it->value->metadata());
     return metadata;
 }
 
 PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectStore(int64_t id, const String& name, const IDBKeyPath& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
-    ASSERT(!m_objectStores.contains(name));
+    ASSERT(!m_objectStores.contains(id));
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, IDBObjectStoreMetadata(name, id, keyPath, autoIncrement, IDBObjectStoreBackendInterface::MinimumIndexId));
     ASSERT(objectStore->name() == name);
@@ -193,7 +193,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
         return 0;
     }
 
-    m_objectStores.set(name, objectStore);
+    m_objectStores.set(id, objectStore);
     return objectStore.release();
 }
 
@@ -207,17 +207,27 @@ void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, 
     transaction->didCompleteTaskEvents();
 }
 
-PassRefPtr<IDBObjectStoreBackendImpl> IDBDatabaseBackendImpl::objectStore(const String& name)
+PassRefPtr<IDBObjectStoreBackendImpl> IDBDatabaseBackendImpl::objectStore(int64_t id)
 {
-    return m_objectStores.get(name);
+    return m_objectStores.get(id);
 }
 
-void IDBDatabaseBackendImpl::deleteObjectStore(const String& name, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
+int64_t IDBDatabaseBackendImpl::getObjectStoreId(const String& name)
 {
-    ASSERT(m_objectStores.contains(name));
+    for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it) {
+        if (it->value->name() == name)
+            return it->key;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+void IDBDatabaseBackendImpl::deleteObjectStore(int64_t id, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
+{
+    ASSERT(m_objectStores.contains(id));
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = m_objectStores.get(name);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = m_objectStores.get(id);
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
 
@@ -227,7 +237,7 @@ void IDBDatabaseBackendImpl::deleteObjectStore(const String& name, IDBTransactio
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return;
     }
-    m_objectStores.remove(name);
+    m_objectStores.remove(id);
 }
 
 void IDBDatabaseBackendImpl::deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
@@ -421,18 +431,17 @@ void IDBDatabaseBackendImpl::processPendingCalls()
     ASSERT(m_pendingOpenCalls.isEmpty());
 }
 
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList* objectStoreNames, unsigned short mode, ExceptionCode& ec)
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList*, unsigned short mode, ExceptionCode&)
 {
-    for (size_t i = 0; i < objectStoreNames->length(); ++i) {
-        if (!m_objectStores.contains(objectStoreNames->item(i))) {
-            ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
-            return 0;
-        }
-    }
-
-    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(objectStoreNames, mode, this);
+    // FIXME: First parameter isn't used for anything yet anyway, and this method is going away.
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(Vector<int64_t>(), mode, this);
     m_transactions.add(transaction.get());
     return transaction.release();
+}
+
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(const Vector<int64_t>& objectStoreIds, unsigned short mode)
+{
+    return transaction(objectStoreIds, mode);
 }
 
 void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
@@ -611,21 +620,21 @@ void IDBDatabaseBackendImpl::loadObjectStores()
     Vector<IDBObjectStoreMetadata> objectStores = m_backingStore->getObjectStores(m_metadata.id);
 
     for (size_t i = 0; i < objectStores.size(); i++)
-        m_objectStores.set(objectStores[i].name, IDBObjectStoreBackendImpl::create(this, objectStores[i]));
+        m_objectStores.set(objectStores[i].id, IDBObjectStoreBackendImpl::create(this, objectStores[i]));
 }
 
 void IDBDatabaseBackendImpl::removeObjectStoreFromMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> prpObjectStore)
 {
     RefPtr<IDBObjectStoreBackendImpl> objectStore = prpObjectStore;
-    ASSERT(database->m_objectStores.contains(objectStore->name()));
-    database->m_objectStores.remove(objectStore->name());
+    ASSERT(database->m_objectStores.contains(objectStore->id()));
+    database->m_objectStores.remove(objectStore->id());
 }
 
 void IDBDatabaseBackendImpl::addObjectStoreToMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore)
 {
     RefPtr<IDBObjectStoreBackendImpl> objectStorePtr = objectStore;
-    ASSERT(!database->m_objectStores.contains(objectStorePtr->name()));
-    database->m_objectStores.set(objectStorePtr->name(), objectStorePtr);
+    ASSERT(!database->m_objectStores.contains(objectStorePtr->id()));
+    database->m_objectStores.set(objectStorePtr->id(), objectStorePtr);
 }
 
 void IDBDatabaseBackendImpl::resetVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, const String& previousVersion, int64_t previousIntVersion)

@@ -57,6 +57,7 @@ public:
     const IDBKeyPath keyPath() const { return m_metadata.keyPath; }
     bool unique() const { return m_metadata.unique; }
     bool multiEntry() const { return m_metadata.multiEntry; }
+    int64_t id() const { return m_metadata.id; }
 
     // FIXME: Try to modify the code generator so this is unneeded.
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openCursor(context, static_cast<IDBKeyRange*>(0), ec); }
@@ -68,7 +69,7 @@ public:
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);
 
-    PassRefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openKeyCursor(context, static_cast<IDBKeyRange*>(0), ec); } 
+    PassRefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, ExceptionCode& ec) { return openKeyCursor(context, static_cast<IDBKeyRange*>(0), ec); }
     PassRefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> keyRange, ExceptionCode& ec) { return openKeyCursor(context, keyRange, IDBCursor::directionNext(), ec); }
     PassRefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec) { return openKeyCursor(context, key, IDBCursor::directionNext(), ec); }
     PassRefPtr<IDBRequest> openKeyCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, const String& direction, ExceptionCode&);

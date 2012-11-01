@@ -108,7 +108,7 @@ PassRefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
 {
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
     for (IDBDatabaseMetadata::ObjectStoreMap::const_iterator it = m_metadata.objectStores.begin(); it != m_metadata.objectStores.end(); ++it)
-        objectStoreNames->append(it->key);
+        objectStoreNames->append(it->value.name);
     objectStoreNames->sort();
     return objectStoreNames.release();
 }
@@ -142,7 +142,7 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
             keyPath = IDBKeyPath(keyPathString);
     }
 
-    if (m_metadata.objectStores.contains(name)) {
+    if (m_metadata.containsObjectStore(name)) {
         ec = IDBDatabaseException::CONSTRAINT_ERR;
         return 0;
     }
@@ -170,7 +170,7 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
 
     IDBObjectStoreMetadata metadata(name, objectStoreId, keyPath, autoIncrement, IDBObjectStoreBackendInterface::MinimumIndexId);
     RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(metadata, objectStoreBackend.release(), m_versionChangeTransaction.get());
-    m_metadata.objectStores.set(name, metadata);
+    m_metadata.objectStores.set(metadata.id, metadata);
     ++m_metadata.maxObjectStoreId;
 
     m_versionChangeTransaction->objectStoreCreated(name, objectStore);
@@ -187,7 +187,9 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return;
     }
-    if (!m_metadata.objectStores.contains(name)) {
+
+    int64 objectStoreId = m_metadata.findObjectStore(name);
+    if (objectStoreId == IDBObjectStoreMetadata::InvalidId) {
         ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return;
     }
@@ -195,7 +197,7 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
     m_backend->deleteObjectStore(name, m_versionChangeTransaction->backend(), ec);
     if (!ec) {
         m_versionChangeTransaction->objectStoreDeleted(name);
-        m_metadata.objectStores.remove(name);
+        m_metadata.objectStores.remove(objectStoreId);
     }
 }
 
@@ -241,6 +243,13 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
         return 0;
     }
 
+    for (size_t i = 0; i < storeNames->length(); ++i) {
+        if (!m_metadata.containsObjectStore(storeNames->item(i))) {
+            ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
+            return 0;
+        }
+    }
+
     // We need to create a new transaction synchronously. Locks are acquired asynchronously. Operations
     // can be queued against the transaction at any point. They will start executing as soon as the
     // appropriate locks have been acquired.
@@ -250,7 +259,7 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
         ASSERT(ec);
         return 0;
     }
-    RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionBackend, mode, this);
+    RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionBackend, *storeNames, mode, this);
     transactionBackend->setCallbacks(transaction.get());
     return transaction.release();
 }

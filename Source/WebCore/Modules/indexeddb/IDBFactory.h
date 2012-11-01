@@ -28,7 +28,6 @@
 #ifndef IDBFactory_h
 #define IDBFactory_h
 
-#include "DOMStringList.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBOpenDBRequest.h"
 #include <wtf/PassRefPtr.h>

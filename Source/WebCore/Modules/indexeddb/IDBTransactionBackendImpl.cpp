@@ -39,13 +39,13 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl* database)
+PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(const Vector<int64_t>& objectStoreIds, unsigned short mode, IDBDatabaseBackendImpl* database)
 {
-    return adoptRef(new IDBTransactionBackendImpl(objectStores, mode, database));
+    return adoptRef(new IDBTransactionBackendImpl(objectStoreIds, mode, database));
 }
 
-IDBTransactionBackendImpl::IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl* database)
-    : m_objectStoreNames(objectStores)
+IDBTransactionBackendImpl::IDBTransactionBackendImpl(const Vector<int64_t>& objectStoreIds, unsigned short mode, IDBDatabaseBackendImpl* database)
+    : m_objectStoreIds(objectStoreIds)
     , m_mode(mode)
     , m_state(Unused)
     , m_database(database)
@@ -55,8 +55,6 @@ IDBTransactionBackendImpl::IDBTransactionBackendImpl(DOMStringList* objectStores
     , m_pendingPreemptiveEvents(0)
     , m_pendingEvents(0)
 {
-    ASSERT(m_objectStoreNames);
-    ASSERT(m_mode == IDBTransaction::VERSION_CHANGE || !m_objectStoreNames->isEmpty());
     m_database->transactionCoordinator()->didCreateTransaction(this);
 }
 
@@ -66,29 +64,21 @@ IDBTransactionBackendImpl::~IDBTransactionBackendImpl()
     ASSERT(m_state == Finished);
 }
 
-PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStore(const String& name, ExceptionCode& ec)
+PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStore(int64_t id, ExceptionCode& ec)
 {
     if (m_state == Finished) {
         ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
         return 0;
     }
 
-    // Does a linear search, but it really shouldn't be that slow in practice.
-    if (m_mode != IDBTransaction::VERSION_CHANGE && !m_objectStoreNames->contains(name)) {
-        ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
-        return 0;
-    }
-
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = m_database->objectStore(name);
-    // FIXME: This is only necessary right now beacuse a setVersion transaction could modify things
-    //        between its creation (where another check occurs) and the .objectStore call.
-    //        There's a bug to make this impossible in the spec. When we make it impossible here, we
-    //        can remove this check.
-    if (!objectStore) {
-        ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
-        return 0;
-    }
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = m_database->objectStore(id);
+    ASSERT(objectStore);
     return objectStore.release();
+}
+
+PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStore(const String& name, ExceptionCode& ec)
+{
+    return objectStore(m_database->getObjectStoreId(name), ec);
 }
 
 bool IDBTransactionBackendImpl::scheduleTask(TaskType type, PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask)
@@ -100,7 +90,7 @@ bool IDBTransactionBackendImpl::scheduleTask(TaskType type, PassOwnPtr<ScriptExe
         m_taskQueue.append(task);
     else
         m_preemptiveTaskQueue.append(task);
-    
+
     if (abortTask)
         m_abortTaskQueue.prepend(abortTask);
 
