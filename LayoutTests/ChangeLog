@@ -1,3 +1,18 @@
+2012-10-31  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Test that dynamically setting shape-inside causes relayout in child elements
+        https://bugs.webkit.org/show_bug.cgi?id=97721
+
+        Reviewed by Dirk Schulze.
+
+        Adding a test that dynamically sets shape-inside on a block containing multiple block children.
+
+        * fast/exclusions/resources/simple-rectangle.js:
+        (createRectangleTest): Modifying test to work with elements with existing content.
+        (createRectangleTestResult): Modifying test expectation to work with elements with existing content.
+        * fast/exclusions/shape-inside/shape-inside-multiple-blocks-dynamic-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-multiple-blocks-dynamic.html: Added.
+
 2012-10-31  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skip another failing drag and drop test.

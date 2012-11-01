@@ -25,7 +25,8 @@ function createRectangleTest(elementId, stylesheetId, bounds, shapeBounds, units
     rules.push('position: absolute', 'display: block', 'content: \' \'');
     rules.push('border: 1px solid blue');
     stylesheet.insertRule('#' + elementId + '::before{' + rules.join(';') + '}');
-    elem.innerHTML = content;
+    if (content)
+        elem.innerHTML = content;
 }
 
 function createRectangleTestResult(elementId, stylesheetId, bounds, shapeBounds, units, content) {
@@ -51,5 +52,6 @@ function createRectangleTestResult(elementId, stylesheetId, bounds, shapeBounds,
     rules.push('position: absolute', 'display: block', 'content: \' \'');
     rules.push('border: 1px solid blue');
     stylesheet.insertRule('#' + elementId + '::before{' + rules.join(';') + '}');
-    elem.innerHTML = content;
+    if (content)
+        elem.innerHTML = content;
 }
