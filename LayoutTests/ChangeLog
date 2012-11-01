@@ -1,3 +1,10 @@
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.  svg/custom/font-face-simple.svg
+        seems to be failing on Windows (wrong font).
+
+        * platform/chromium/TestExpectations:
+
 2012-10-31  Mike West  <mkwst@chromium.org>
 
         Implement the canonical "Content-Security-Policy" header.
