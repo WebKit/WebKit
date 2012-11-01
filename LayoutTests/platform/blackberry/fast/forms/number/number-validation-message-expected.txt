@@ -1,0 +1,21 @@
+Test for validationMessage IDL attribute for <input type=number>
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+No message
+PASS testIt("", "", "") is ""
+Value missing
+FAIL testIt("", "", "") should be value missing. Was Input value missing.
+Type mismatch
+PASS testIt("foo", "", "") is ""
+Range overflow
+FAIL testIt("200", "", "100") should be range overflow. Was Value must be less than or equal to 100.
+Range underflow
+FAIL testIt("10", "50", "100") should be range underflow. Was Value must be greater than or equal to 50.
+Step mismatch
+FAIL testIt("55", "0", "100", "10") should be step mismatch. Was Step mismatch.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

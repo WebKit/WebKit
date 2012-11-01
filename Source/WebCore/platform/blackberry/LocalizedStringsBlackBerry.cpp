@@ -25,6 +25,7 @@
 #include <LocaleHandler.h>
 #include <LocalizeResource.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -458,16 +459,14 @@ String validationMessageTooLongText(int, int)
     return String();
 }
 
-String validationMessageRangeUnderflowText(const String&)
+String validationMessageRangeUnderflowText(const String& text)
 {
-    notImplemented();
-    return String();
+    return String::format(s_resource.getString(BlackBerry::Platform::VALIDATION_RANGE_UNDERFLOW), text.utf8().data());
 }
 
-String validationMessageRangeOverflowText(const String&)
+String validationMessageRangeOverflowText(const String& text)
 {
-    notImplemented();
-    return String();
+    return String::format(s_resource.getString(BlackBerry::Platform::VALIDATION_RANGE_OVERFLOW), text.utf8().data());
 }
 
 String validationMessageStepMismatchText(const String&, const String&)

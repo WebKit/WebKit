@@ -1,3 +1,18 @@
+2012-11-01  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Add more form validation strings
+        https://bugs.webkit.org/show_bug.cgi?id=100978
+
+        Reviewed by Yong Li.
+
+        PR 210072
+
+        Implement these two methods properly.
+
+        * platform/blackberry/LocalizedStringsBlackBerry.cpp:
+        (WebCore::validationMessageRangeUnderflowText):
+        (WebCore::validationMessageRangeOverflowText):
+
 2012-11-01  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Move MeshBoxType out of CustomFilterOperation

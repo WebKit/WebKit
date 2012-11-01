@@ -1,3 +1,16 @@
+2012-11-01  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Add more form validation strings
+        https://bugs.webkit.org/show_bug.cgi?id=100978
+
+        Reviewed by Yong Li.
+
+        PR 210072
+
+        Add the result we expect after adding translations for range over and underflow.
+
+        * platform/blackberry/fast/forms/number/number-validation-message-expected.txt: Added.
+
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Unreviewed; marking another inspector test as flaky.
