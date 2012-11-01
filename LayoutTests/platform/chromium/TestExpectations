@@ -4119,6 +4119,9 @@ Bug(senorblanco) [ Debug ] svg/as-image/img-relative-width.html [ ImageOnlyFailu
 # Have been flaky since at least r133043
 Bug(senorblanco) inspector-protocol/debugger-pause-dedicated-worker.html [ Failure Pass ]
 
+# Started failing with r133224-133226 (probably 133224)
+Bug(senorblanco) fast/repaint/block-selection-gap-in-table-cell.html [ ImageOnlyFailure ]
+
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]
 
