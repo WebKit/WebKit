@@ -1,3 +1,20 @@
+2012-11-01  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Allow implicit conversion between gfx::Vector2d and WebSize
+        https://bugs.webkit.org/show_bug.cgi?id=100553
+
+        Reviewed by James Robinson.
+
+        The gfx::Vector2d class is used in chromium for defining distances. The
+        IntSize class is used equivalently inside WebCore. This lets us convert
+        between vectors and sizes along the API boundary.
+
+        * chromium/public/WebSize.h:
+        (WebKit::WebSize::WebSize):
+        (WebSize):
+        (WebKit::WebSize::operator=):
+        (WebKit::WebSize::operator gfx::Vector2d):
+
 2012-11-01  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Make WebLayerTreeView::adjustEventPointForPinchZoom pure virtual.
