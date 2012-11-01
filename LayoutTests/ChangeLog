@@ -1,3 +1,9 @@
+2012-11-01  Dana Jansens  <danakj@chromium.org>
+
+        Unreviewed, remove failing expectations after rebaseline.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-01  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=100917
