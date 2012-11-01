@@ -4116,8 +4116,8 @@ Bug(senorblanco) [ Debug ] svg/as-image/same-image-two-instances.html [ ImageOnl
 Bug(senorblanco) [ Debug ] svg/as-image/img-relative-height.html [ ImageOnlyFailure Pass ]
 Bug(senorblanco) [ Debug ] svg/as-image/img-relative-width.html [ ImageOnlyFailure Pass ]
 
-# Has been flaky for a long time.
-Bug(senorblanco) http/tests/inspector-enabled/dynamic-scripts.html [ Failure Pass ]
+# Have been flaky since at least r133043
+Bug(senorblanco) inspector-protocol/debugger-pause-dedicated-worker.html [ Failure Pass ]
 
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]

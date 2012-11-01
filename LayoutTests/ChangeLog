@@ -1,3 +1,9 @@
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Unreviewed; marking another inspector test as flaky.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-01  Enrica Casucci  <enrica@apple.com>
 
         Part2 of: Extend -webkit-user-select with new value "all"
