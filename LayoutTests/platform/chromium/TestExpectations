@@ -2183,6 +2183,13 @@ webkit.org/b/45991 platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.
 webkit.org/b/45991 [ Android Linux Win MountainLion ] canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
 webkit.org/b/45991 [ Linux Win MountainLion ] platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
 
+# Rebaseline after Skia rev. 6227 lands
+crbug.com/148638  fast/repaint/list-marker.html [ Failure ImageOnlyFailure ]
+crbug.com/148638  svg/hixie/perf/001.xml [ Failure ImageOnlyFailure ]
+crbug.com/148638  svg/hixie/perf/002.xml [ Failure ImageOnlyFailure ]
+crbug.com/148638  svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Failure ImageOnlyFailure ]
+crbug.com/148638  svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ImageOnlyFailure ]
+ 
 # Update canvas/philip in WK r71481
 crbug.com/62301 canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html [ Failure ]
 crbug.com/62301 canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html [ Failure ]

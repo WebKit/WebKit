@@ -1,3 +1,15 @@
+2012-11-01  Mike Reed  <reed@google.com>
+
+        Add suppressions for images for new skia roll
+        https://bugs.webkit.org/show_bug.cgi?id=100961
+
+        Reviewed by NOBODY.
+
+        New skia roll improves clipped antialias hairlines, and this means a few images need to be rebaselined.
+        crbug.com/148638
+
+        * platform/chromium/TestExpectations:
+
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.  Remove some no-longer-flaky tests
