@@ -733,10 +733,8 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     if (!emptyURL)
         emptyURL = WKURLCreateWithUTF8CString("");
 
-    if (WKURLIsEqual(URLRef, emptyURL)) {
-        WKRelease(URLRef);
+    if (WKURLIsEqual(URLRef, emptyURL))
         return;
-    }
 
     CFURLRef cfSourceURL = WKURLCopyCFURL(0, URLRef);
     [urlText setStringValue:(NSString*)CFURLGetString(cfSourceURL)];
@@ -746,6 +744,8 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 - (void)updateProvisionalURLForFrame:(WKFrameRef)frame
 {
     WKURLRef url = WKFrameCopyProvisionalURL(frame);
+    if (!url)
+        return;
     [self updateTextFieldFromURL:url];
     WKRelease(url);
 }
@@ -753,6 +753,8 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
 - (void)updateCommittedURLForFrame:(WKFrameRef)frame
 {
     WKURLRef url = WKFrameCopyURL(frame);
+    if (!url)
+        return;
     [self updateTextFieldFromURL:url];
     WKRelease(url);
 }

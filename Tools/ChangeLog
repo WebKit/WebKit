@@ -1,3 +1,20 @@
+2012-11-01  Adam Roben  <aroben@webkit.org>
+
+        Crash beneath WKRelease after failed load in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=100954
+
+        Reviewed by Sam Weinig.
+
+        There were just some simple retain/release bugs.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController updateTextFieldFromURL:]):
+        (-[WK2BrowserWindowController updateProvisionalURLForFrame:]):
+        Don't try to release null URLs.
+
+        (-[WK2BrowserWindowController updateCommittedURLForFrame:]): Don't
+        release a URL for which we don't have ownership.
+
 2012-10-31  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Fix editing/text-iterator/findString-expected.html fail
