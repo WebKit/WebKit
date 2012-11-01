@@ -41,7 +41,6 @@ namespace WebKit {
 
 NonCompositedContentHost::NonCompositedContentHost(WebViewImpl* webView)
     : m_webView(webView)
-    , m_opaque(true)
     , m_showDebugBorders(false)
 {
     m_graphicsLayer = WebCore::GraphicsLayer::create(0, this);
@@ -50,9 +49,10 @@ NonCompositedContentHost::NonCompositedContentHost(WebViewImpl* webView)
 #endif
     m_graphicsLayer->setDrawsContent(true);
     m_graphicsLayer->setAppliesPageScale(!m_webView->page()->settings()->applyPageScaleFactorInCompositor());
+    m_graphicsLayer->setContentsOpaque(true);
+    // FIXME: Remove LCD text setting after it is implemented in chromium.
     WebContentLayer* layer = static_cast<WebCore::GraphicsLayerChromium*>(m_graphicsLayer.get())->contentLayer();
     layer->setUseLCDText(true);
-    layer->layer()->setOpaque(true);
 #if !OS(ANDROID)
     layer->setDrawCheckerboardForMissingTiles(true);
 #endif
@@ -69,8 +69,7 @@ void NonCompositedContentHost::setBackgroundColor(const WebCore::Color& color)
 
 void NonCompositedContentHost::setOpaque(bool opaque)
 {
-    m_opaque = opaque;
-    m_graphicsLayer->platformLayer()->setOpaque(opaque);
+    m_graphicsLayer->setContentsOpaque(opaque);
 }
 
 void NonCompositedContentHost::setScrollLayer(WebCore::GraphicsLayer* layer)
@@ -173,10 +172,11 @@ void NonCompositedContentHost::notifyFlushRequired(const WebCore::GraphicsLayer*
 
 void NonCompositedContentHost::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect)
 {
+    // FIXME: Remove LCD text setting after it is implemented in chromium.
     // On non-android platforms, we want to render text with subpixel antialiasing on the root layer
     // so long as the root is opaque. On android all text is grayscale.
 #if !OS(ANDROID)
-    if (m_opaque)
+    if (m_graphicsLayer->contentsOpaque())
         context.platformContext()->setDrawingToImageBuffer(false);
 #endif
     context.translate(-m_layerAdjust);

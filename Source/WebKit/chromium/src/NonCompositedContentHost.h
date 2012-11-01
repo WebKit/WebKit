@@ -82,7 +82,6 @@ private:
     WebCore::IntSize m_viewportSize;
     WebCore::IntSize m_layerAdjust;
 
-    bool m_opaque;
     bool m_showDebugBorders;
 };
 

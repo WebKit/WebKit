@@ -43,7 +43,8 @@ public:
     // optimizations.
 #define WEBCONTENTLAYERCLIENT_HAS_OPAQUE 1
 #define WEBCONTENTLAYERCLIENT_FLOAT_OPAQUE_RECT 1
-    virtual void paintContents(WebCanvas*, const WebRect& clip, WebFloatRect& opaque) = 0;
+#define WEBCONTENTLAYERCLIENT_HAS_CANPAINTLCDTEXT 1
+    virtual void paintContents(WebCanvas*, const WebRect& clip, bool canPaintLCDText, WebFloatRect& opaque) = 0;
 
 protected:
     virtual ~WebContentLayerClient() { }
