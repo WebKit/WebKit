@@ -54,6 +54,8 @@ class WebCookieJar;
 class WebFileSystem;
 class WebFileUtilities;
 class WebFlingAnimator;
+class WebGestureCurveTarget;
+class WebGestureCurve;
 class WebMediaStreamCenter;
 class WebMediaStreamCenterClient;
 class WebMessagePortChannel;
@@ -71,6 +73,8 @@ class WebURL;
 class WebURLLoader;
 class WebWorkerRunLoop;
 struct WebLocalizedString;
+struct WebFloatPoint;
+struct WebSize;
 
 class Platform {
 public:
@@ -415,6 +419,10 @@ public:
     virtual WebCompositorSupport* compositorSupport() { return 0; }
 
     virtual WebFlingAnimator* createFlingAnimator() { return 0; }
+
+    // Creates a new fling animation curve instance for device |deviceSource|
+    // with |velocity| and already scrolled |cumulativeScroll| pixels.
+    virtual WebGestureCurve* createFlingAnimationCurve(int deviceSource, const WebFloatPoint& velocity, const WebSize& cumulativeScroll) { return 0; }
 
     // WebRTC ----------------------------------------------------------
 

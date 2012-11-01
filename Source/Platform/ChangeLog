@@ -1,3 +1,41 @@
+2012-11-01  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] Provide WebKit API interface for platform gesture curves
+        https://bugs.webkit.org/show_bug.cgi?id=100675
+
+        Reviewed by James Robinson.
+
+        Define interfaces to permit the Chromium embedder to provide its own
+        implementation of a gesture animation curve and add an entry point
+        to Platform.h that permits WebKit to obtain an instance of an embedder-
+        provided gesture curve.
+
+        No tests needed in this CL: only interfaces are being added.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        (WebKit::Platform::createFlingAnimationCurve):
+        * chromium/public/WebGestureCurve.h: Added.
+        (WebKit):
+        (WebGestureCurve):
+        (WebKit::WebGestureCurve::~WebGestureCurve):
+        * chromium/public/WebGestureCurveTarget.h: Added.
+        (WebKit):
+        (WebGestureCurveTarget):
+        (WebKit::WebGestureCurveTarget::~WebGestureCurveTarget):
+        * chromium/src/WebActiveGestureAnimation.cpp: Added.
+        (WebKit):
+        (WebKit::WebActiveGestureAnimation::createAtAnimationStart):
+        (WebKit::WebActiveGestureAnimation::createWithTimeOffset):
+        (WebKit::WebActiveGestureAnimation::~WebActiveGestureAnimation):
+        (WebKit::WebActiveGestureAnimation::WebActiveGestureAnimation):
+        (WebKit::WebActiveGestureAnimation::animate):
+        * chromium/src/WebActiveGestureAnimation.h: Added.
+        (WebKit):
+        (WebActiveGestureAnimation):
+
 2012-11-01  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Allow implicit conversion between gfx::Vector2d and WebSize
