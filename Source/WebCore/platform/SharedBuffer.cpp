@@ -202,7 +202,7 @@ void SharedBuffer::clear()
 
     m_buffer.clear();
     m_purgeableBuffer.clear();
-#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     m_dataArray.clear();
 #endif
 }
@@ -244,7 +244,7 @@ const Vector<char>& SharedBuffer::buffer() const
             freeSegment(m_segments[i]);
         }
         m_segments.clear();
-#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
         copyDataArrayAndClear(destination, bytesLeft);
 #endif
     }
@@ -294,7 +294,7 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
         someData = m_segments[segment] + positionInSegment;
         return segment == segments - 1 ? segmentedSize - position : segmentSize - positionInSegment;
     }
-#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     ASSERT(maxSegmentedSize <= position);
     position -= maxSegmentedSize;
     return copySomeDataFromDataArray(someData, position);

@@ -89,7 +89,7 @@ public:
     const char* platformData() const;
     unsigned platformDataSize() const;
 
-#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     void append(CFDataRef);
 #endif
 
@@ -137,7 +137,7 @@ private:
     mutable Vector<char> m_buffer;
     mutable Vector<char*> m_segments;
     OwnPtr<PurgeableBuffer> m_purgeableBuffer;
-#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     mutable Vector<RetainPtr<CFDataRef> > m_dataArray;
     void copyDataArrayAndClear(char *destination, unsigned bytesToCopy) const;
     unsigned copySomeDataFromDataArray(const char*& someData, unsigned position) const;

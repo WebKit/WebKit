@@ -220,7 +220,7 @@ public:
     static CFStringRef synchronousLoadRunLoopMode();
 #endif
 
-#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     void handleDataArray(CFArrayRef dataArray);
 #endif
 

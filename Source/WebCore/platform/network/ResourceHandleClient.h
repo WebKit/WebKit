@@ -77,7 +77,7 @@ namespace WebCore {
         virtual void wasBlocked(ResourceHandle*) { }
         virtual void cannotShowURL(ResourceHandle*) { }
 
-#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
         virtual bool supportsDataArray() { return false; }
         virtual void didReceiveDataArray(ResourceHandle*, CFArrayRef) { }
 #endif

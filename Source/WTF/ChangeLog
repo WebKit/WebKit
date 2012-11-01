@@ -1,5 +1,13 @@
 2012-11-01  Alexey Proskuryakov  <ap@apple.com>
 
+        Rename HAVE(NETWORK_CFDATA_ARRAY_CALLBACK) to USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+
+        Rubber-stamped by Joe Pecoraro.
+
+        All CFNetwork based platforms have this now, but not all use it at the moment.
+
+2012-11-01  Alexey Proskuryakov  <ap@apple.com>
+
         Fix HAVE(NETWORK_CFDATA_ARRAY_CALLBACK) build
         https://bugs.webkit.org/show_bug.cgi?id=100979
 
