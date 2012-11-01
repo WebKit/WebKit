@@ -58,6 +58,7 @@ public:
                   const String& objectGroup,
                   bool includeCommandLineAPI,
                   bool returnByValue,
+                  bool generatePreview,
                   RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
                   TypeBuilder::OptOutput<bool>* wasThrown);
     void callFunctionOn(ErrorString*,
@@ -65,6 +66,7 @@ public:
                         const String& expression,
                         const String& arguments,
                         bool returnByValue,
+                        bool generatePreview,
                         RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
                         TypeBuilder::OptOutput<bool>* wasThrown);
     void evaluateOnCallFrame(ErrorString*,
@@ -74,6 +76,7 @@ public:
                              const String& objectGroup,
                              bool includeCommandLineAPI,
                              bool returnByValue,
+                             bool generatePreview,
                              RefPtr<TypeBuilder::Runtime::RemoteObject>* result,
                              TypeBuilder::OptOutput<bool>* wasThrown);
     void restartFrame(ErrorString*, const ScriptValue& callFrames, const String& callFrameId, RefPtr<InspectorObject>* result);

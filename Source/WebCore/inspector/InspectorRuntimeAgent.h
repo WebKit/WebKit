@@ -68,6 +68,7 @@ public:
                   const bool* doNotPauseOnExceptionsAndMuteConsole,
                   const int* executionContextId,
                   const bool* returnByValue,
+                  const bool* generatePreview,
                   RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
                   TypeBuilder::OptOutput<bool>* wasThrown);
     virtual void callFunctionOn(ErrorString*,
@@ -76,6 +77,7 @@ public:
                         const RefPtr<InspectorArray>* optionalArguments,
                         const bool* doNotPauseOnExceptionsAndMuteConsole,
                         const bool* returnByValue,
+                        const bool* generatePreview,
                         RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
                         TypeBuilder::OptOutput<bool>* wasThrown);
     virtual void releaseObject(ErrorString*, const String& objectId);

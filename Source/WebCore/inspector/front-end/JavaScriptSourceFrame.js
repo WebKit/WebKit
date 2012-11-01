@@ -315,7 +315,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             return;
         }
         var selectedCallFrame = WebInspector.debuggerModel.selectedCallFrame();
-        selectedCallFrame.evaluate(this._highlightElement.textContent, objectGroupName, false, true, false, showObjectPopover.bind(this));
+        selectedCallFrame.evaluate(this._highlightElement.textContent, objectGroupName, false, true, false, false, showObjectPopover.bind(this));
     },
 
     _onHidePopover: function()

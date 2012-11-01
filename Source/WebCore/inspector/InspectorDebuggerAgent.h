@@ -107,6 +107,7 @@ public:
                              const bool* includeCommandLineAPI,
                              const bool* doNotPauseOnExceptionsAndMuteConsole,
                              const bool* returnByValue,
+                             const bool* generatePreview,
                              RefPtr<TypeBuilder::Runtime::RemoteObject>& result,
                              TypeBuilder::OptOutput<bool>* wasThrown);
     void compileScript(ErrorString*, const String& expression, const String& sourceURL, TypeBuilder::OptOutput<TypeBuilder::Debugger::ScriptId>*, TypeBuilder::OptOutput<String>* syntaxErrorMessage);

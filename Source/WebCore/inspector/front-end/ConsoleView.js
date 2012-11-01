@@ -582,7 +582,7 @@ WebInspector.ConsoleView.prototype = {
             
             this._printResult(result, wasThrown, commandMessage);
         }
-        WebInspector.runtimeModel.evaluate(text, "console", useCommandLineAPI, false, false, printResult.bind(this));
+        WebInspector.runtimeModel.evaluate(text, "console", useCommandLineAPI, false, false, true, printResult.bind(this));
 
         WebInspector.userMetrics.ConsoleEvaluated.record();
     },
@@ -704,6 +704,16 @@ WebInspector.ConsoleCommandResult = function(result, wasThrown, originatingComma
 }
 
 WebInspector.ConsoleCommandResult.prototype = {
+    /**
+     * @override
+     * @param {WebInspector.RemoteObject} array
+     * @return {boolean}
+     */
+    useArrayPreviewInFormatter: function(array)
+    {
+        return false;
+    },
+
     toMessageElement: function()
     {
         var element = WebInspector.ConsoleMessageImpl.prototype.toMessageElement.call(this);

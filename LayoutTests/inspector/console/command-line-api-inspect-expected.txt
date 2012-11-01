@@ -14,14 +14,14 @@ Running: testRevealDatabase
 
 WebInspector.inspect called with: Database
 WebInspector.inspect's hints are: ["databaseId"]
-inspect(db) = Database
+inspect(db) = Database {version: "1.0"}
 
 Running: testRevealDatabase2
 
 
 WebInspector.inspect called with: Database
 WebInspector.inspect's hints are: ["databaseId"]
-inspect(db2) = Database
+inspect(db2) = Database {version: "1.0"}
 
 Running: testRevealLocalStorage
 

@@ -364,7 +364,7 @@ InjectedScript.prototype = {
                     if (!descriptor) {
                         // Not all bindings provide proper descriptors. Fall back to the writable, configurable property.
                         try {
-                            var descriptor = { name: name, value: object[name], writable: false, configurable: false, enumerable: false};
+                            descriptor = { name: name, value: object[name], writable: false, configurable: false, enumerable: false};
                             if (o === object) 
                                 descriptor.isOwn = true;
                             descriptors.push(descriptor);
@@ -398,11 +398,12 @@ InjectedScript.prototype = {
      * @param {string} objectGroup
      * @param {boolean} injectCommandLineAPI
      * @param {boolean} returnByValue
+     * @param {boolean} generatePreview
      * @return {*}
      */
-    evaluate: function(expression, objectGroup, injectCommandLineAPI, returnByValue)
+    evaluate: function(expression, objectGroup, injectCommandLineAPI, returnByValue, generatePreview)
     {
-        return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, returnByValue);
+        return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, returnByValue, generatePreview);
     },
 
     /**
@@ -460,13 +461,14 @@ InjectedScript.prototype = {
      * @param {boolean} isEvalOnCallFrame
      * @param {boolean} injectCommandLineAPI
      * @param {boolean} returnByValue
+     * @param {boolean} generatePreview
      * @return {*}
      */
-    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI, returnByValue)
+    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI, returnByValue, generatePreview)
     {
         try {
             return { wasThrown: false,
-                     result: this._wrapObject(this._evaluateOn(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup, returnByValue, false) };
+                     result: this._wrapObject(this._evaluateOn(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup, returnByValue, generatePreview) };
         } catch (e) {
             return this._createThrownValue(e, objectGroup);
         }
@@ -542,9 +544,10 @@ InjectedScript.prototype = {
      * @param {string} objectGroup
      * @param {boolean} injectCommandLineAPI
      * @param {boolean} returnByValue
+     * @param {boolean} generatePreview
      * @return {*}
      */
-    evaluateOnCallFrame: function(topCallFrame, callFrameId, expression, objectGroup, injectCommandLineAPI, returnByValue)
+    evaluateOnCallFrame: function(topCallFrame, callFrameId, expression, objectGroup, injectCommandLineAPI, returnByValue, generatePreview)
     {
         var callFrame = this._callFrameForId(topCallFrame, callFrameId);
         if (!callFrame)

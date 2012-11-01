@@ -1,3 +1,19 @@
+2012-10-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: Output code evaluated in the console the same as console.log
+        https://bugs.webkit.org/show_bug.cgi?id=100695
+
+        Reviewed by Pavel Feldman.
+
+        Rebaselined some tests after object preview is started beeing used for
+        console eval results.
+
+        * inspector/console/command-line-api-expected.txt:
+        * inspector/console/command-line-api-inspect-expected.txt:
+        * inspector/console/console-eval-global-expected.txt:
+        * inspector/console/console-eval-undefined-override-expected.txt:
+        * platform/chromium/inspector/console/console-eval-undefined-override-expected.txt:
+
 2012-11-01  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Former auto-height regions should not ignore their defined height

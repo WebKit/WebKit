@@ -61,27 +61,29 @@ InjectedScript::InjectedScript(ScriptObject injectedScriptObject, InspectedState
 {
 }
 
-void InjectedScript::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown)
+void InjectedScript::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown)
 {
     ScriptFunctionCall function(injectedScriptObject(), "evaluate");
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
     function.appendArgument(includeCommandLineAPI);
     function.appendArgument(returnByValue);
+    function.appendArgument(generatePreview);
     makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const String& arguments, bool returnByValue, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown)
+void InjectedScript::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown)
 {
     ScriptFunctionCall function(injectedScriptObject(), "callFunctionOn");
     function.appendArgument(objectId);
     function.appendArgument(expression);
     function.appendArgument(arguments);
     function.appendArgument(returnByValue);
+    function.appendArgument(generatePreview);
     makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, RefPtr<RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown)
+void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, RefPtr<RemoteObject>* result, TypeBuilder::OptOutput<bool>* wasThrown)
 {
     ScriptFunctionCall function(injectedScriptObject(), "evaluateOnCallFrame");
     function.appendArgument(callFrames);
@@ -90,6 +92,7 @@ void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const ScriptV
     function.appendArgument(objectGroup);
     function.appendArgument(includeCommandLineAPI);
     function.appendArgument(returnByValue);
+    function.appendArgument(generatePreview);
     makeEvalCall(errorString, function, result, wasThrown);
 }
 

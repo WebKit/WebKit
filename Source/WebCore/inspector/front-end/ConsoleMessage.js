@@ -355,9 +355,18 @@ WebInspector.ConsoleMessageImpl.prototype = {
         object.pushNodeToFrontend(printNode.bind(this));
     },
 
+    /**
+     * @param {WebInspector.RemoteObject} array
+     * @return {boolean}
+     */
+    useArrayPreviewInFormatter: function(array)
+    {
+        return !!array.preview;
+    },
+
     _formatParameterAsArray: function(array, elem)
     {
-        if (array.preview) {
+        if (this.useArrayPreviewInFormatter(array)) {
             this._formatParameterAsArrayOrObject(array, "", elem, true);
             return;
         }

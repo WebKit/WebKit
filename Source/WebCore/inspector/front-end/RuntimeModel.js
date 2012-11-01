@@ -129,12 +129,13 @@ WebInspector.RuntimeModel.prototype = {
      * @param {boolean} includeCommandLineAPI
      * @param {boolean} doNotPauseOnExceptionsAndMuteConsole
      * @param {boolean} returnByValue
+     * @param {boolean} generatePreview
      * @param {function(?WebInspector.RemoteObject, boolean, RuntimeAgent.RemoteObject=)} callback
      */
-    evaluate: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
+    evaluate: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, callback)
     {
         if (WebInspector.debuggerModel.selectedCallFrame()) {
-            WebInspector.debuggerModel.evaluateOnSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback);
+            WebInspector.debuggerModel.evaluateOnSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, callback);
             return;
         }
 
@@ -161,7 +162,7 @@ WebInspector.RuntimeModel.prototype = {
             else
                 callback(WebInspector.RemoteObject.fromPayload(result), !!wasThrown);
         }
-        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, this._currentExecutionContext ? this._currentExecutionContext.id : undefined, returnByValue, evalCallback);
+        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, this._currentExecutionContext ? this._currentExecutionContext.id : undefined, returnByValue, generatePreview, evalCallback);
     },
 
     /**
@@ -209,7 +210,7 @@ WebInspector.RuntimeModel.prototype = {
         if (!expressionString && WebInspector.debuggerModel.selectedCallFrame())
             WebInspector.debuggerModel.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
         else
-            this.evaluate(expressionString, "completion", true, true, false, evaluated.bind(this));
+            this.evaluate(expressionString, "completion", true, true, false, false, evaluated.bind(this));
 
         function evaluated(result, wasThrown)
         {
@@ -245,7 +246,7 @@ WebInspector.RuntimeModel.prototype = {
             if (result.type === "object" || result.type === "function")
                 result.callFunctionJSON(getCompletions, undefined, receivedPropertyNames.bind(this));
             else if (result.type === "string" || result.type === "number" || result.type === "boolean")
-                this.evaluate("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, receivedPropertyNamesFromEval.bind(this));
+                this.evaluate("(" + getCompletions + ")(\"" + result.type + "\")", "completion", false, true, true, false, receivedPropertyNamesFromEval.bind(this));
         }
 
         function receivedPropertyNamesFromEval(notRelevant, wasThrown, result)

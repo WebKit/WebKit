@@ -797,7 +797,7 @@ WebInspector.ExtensionServer.prototype = {
                 return this._status.E_NOTFOUND(securityOrigin);
             contextId = context.id;
         }
-        RuntimeAgent.evaluate(expression, "extension", exposeCommandLineAPI, true, contextId, returnByValue, callback);
+        RuntimeAgent.evaluate(expression, "extension", exposeCommandLineAPI, true, contextId, returnByValue, false, callback);
     }
 }
 

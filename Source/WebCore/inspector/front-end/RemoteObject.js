@@ -248,7 +248,7 @@ WebInspector.RemoteObject.prototype = {
                 setPropertyValueFunction = "function(a) { this[a] = " + result.description + "; }";
 
             delete result.description; // Optimize on traffic.
-            RuntimeAgent.callFunctionOn(this._objectId, setPropertyValueFunction, [{ value:name }, result], true, undefined, propertySetCallback.bind(this));
+            RuntimeAgent.callFunctionOn(this._objectId, setPropertyValueFunction, [{ value:name }, result], true, undefined, undefined, propertySetCallback.bind(this));
             if (result._objectId)
                 RuntimeAgent.releaseObject(result._objectId);
         }
@@ -299,7 +299,7 @@ WebInspector.RemoteObject.prototype = {
             callback((error || wasThrown) ? null : WebInspector.RemoteObject.fromPayload(result));
         }
 
-        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, undefined, mycallback);
+        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, undefined, undefined, mycallback);
     },
 
     /**
@@ -319,7 +319,7 @@ WebInspector.RemoteObject.prototype = {
             callback((error || wasThrown) ? null : result.value);
         }
 
-        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, true, mycallback);
+        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), args, true, true, false, mycallback);
     },
 
     release: function()

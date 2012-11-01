@@ -76,7 +76,7 @@ static ScriptDebugServer::PauseOnExceptionsState setPauseOnExceptionsState(Scrip
 }
 #endif
 
-void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* const returnByValue, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown)
+void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const int* executionContextId, const bool* const returnByValue, const bool* generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown)
 {
     InjectedScript injectedScript = injectedScriptForEval(errorString, executionContextId);
     if (injectedScript.hasNoValue())
@@ -89,7 +89,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         muteConsole();
 
-    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", asBool(includeCommandLineAPI), asBool(returnByValue), &result, wasThrown);
+    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", asBool(includeCommandLineAPI), asBool(returnByValue), asBool(generatePreview), &result, wasThrown);
 
     if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
         unmuteConsole();
@@ -99,7 +99,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
     }
 }
 
-void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown)
+void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, RefPtr<TypeBuilder::Runtime::RemoteObject>& result, TypeBuilder::OptOutput<bool>* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
@@ -118,7 +118,7 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
     if (asBool(doNotPauseOnExceptionsAndMuteConsole))
         muteConsole();
 
-    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), &result, wasThrown);
+    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), asBool(generatePreview), &result, wasThrown);
 
     if (asBool(doNotPauseOnExceptionsAndMuteConsole)) {
         unmuteConsole();

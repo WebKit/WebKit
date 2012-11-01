@@ -478,9 +478,10 @@ WebInspector.DebuggerModel.prototype = {
      * @param {boolean} includeCommandLineAPI
      * @param {boolean} doNotPauseOnExceptionsAndMuteConsole
      * @param {boolean} returnByValue
+     * @param {boolean} generatePreview
      * @param {function(?WebInspector.RemoteObject, boolean, RuntimeAgent.RemoteObject=)} callback
      */
-    evaluateOnSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
+    evaluateOnSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, callback)
     {
         /**
          * @param {?RuntimeAgent.RemoteObject} result
@@ -497,7 +498,7 @@ WebInspector.DebuggerModel.prototype = {
                 this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ConsoleCommandEvaluatedInSelectedCallFrame);
         }
 
-        this.selectedCallFrame().evaluate(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, didEvaluate.bind(this));
+        this.selectedCallFrame().evaluate(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, didEvaluate.bind(this));
     },
 
     /**
@@ -735,9 +736,10 @@ WebInspector.DebuggerModel.CallFrame.prototype = {
      * @param {boolean} includeCommandLineAPI
      * @param {boolean} doNotPauseOnExceptionsAndMuteConsole
      * @param {boolean} returnByValue
+     * @param {boolean} generatePreview
      * @param {function(?RuntimeAgent.RemoteObject, boolean=)=} callback
      */
-    evaluate: function(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, callback)
+    evaluate: function(code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, callback)
     {
         /**
          * @this {WebInspector.DebuggerModel.CallFrame}
@@ -754,7 +756,7 @@ WebInspector.DebuggerModel.CallFrame.prototype = {
             }
             callback(result, wasThrown);
         }
-        DebuggerAgent.evaluateOnCallFrame(this._payload.callFrameId, code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, didEvaluateOnCallFrame.bind(this));
+        DebuggerAgent.evaluateOnCallFrame(this._payload.callFrameId, code, objectGroup, includeCommandLineAPI, doNotPauseOnExceptionsAndMuteConsole, returnByValue, generatePreview, didEvaluateOnCallFrame.bind(this));
     },
 
     /**

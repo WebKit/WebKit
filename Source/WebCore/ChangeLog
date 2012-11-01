@@ -1,3 +1,53 @@
+2012-10-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: Output code evaluated in the console the same as console.log
+        https://bugs.webkit.org/show_bug.cgi?id=100695
+
+        Reviewed by Pavel Feldman.
+
+        Added an option to return object preview from evaluation commands in the protocol.
+        The option is used to generate preview for console eval results.
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::evaluate):
+        (WebCore::InjectedScript::callFunctionOn):
+        (WebCore::InjectedScript::evaluateOnCallFrame):
+        * inspector/InjectedScript.h:
+        (InjectedScript):
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        (WebCore::InspectorRuntimeAgent::callFunctionOn):
+        * inspector/InspectorRuntimeAgent.h:
+        (InspectorRuntimeAgent):
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype.useArrayPreviewInFormatter):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsArray):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleCommandResult.prototype.useArrayPreviewInFormatter):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.evaluateOnSelectedCallFrame):
+        (WebInspector.DebuggerModel.CallFrame.prototype.evaluate):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype.evaluate):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype._resolveObjectForPopover):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.):
+        (WebInspector.RemoteObject.prototype.callFunction):
+        (WebInspector.RemoteObject.prototype.callFunctionJSON):
+        * inspector/front-end/RuntimeModel.js:
+        (WebInspector.RuntimeModel.prototype.evaluate):
+        (WebInspector.RuntimeModel.prototype.evaluated):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+
 2012-11-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Remove obsolete code from JavaScriptSourceFrame

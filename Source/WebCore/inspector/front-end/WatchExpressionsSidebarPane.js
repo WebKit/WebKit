@@ -213,7 +213,7 @@ WebInspector.WatchExpressionsSection.prototype = {
             if (!expression)
                 continue;
 
-            WebInspector.runtimeModel.evaluate(expression, this._watchObjectGroupId, false, true, false, appendResult.bind(this, expression, i));
+            WebInspector.runtimeModel.evaluate(expression, this._watchObjectGroupId, false, true, false, false, appendResult.bind(this, expression, i));
         }
 
         if (!propertyCount) {
