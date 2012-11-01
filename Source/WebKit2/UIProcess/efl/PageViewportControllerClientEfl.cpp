@@ -61,19 +61,6 @@ void PageViewportControllerClientEfl::setRendererActive(bool active)
     drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer()->setActive(active);
 }
 
-void PageViewportControllerClientEfl::display(const IntRect& rect, const IntPoint& viewPosition)
-{
-    WebCore::TransformationMatrix matrix;
-    matrix.setMatrix(m_scaleFactor, 0, 0, m_scaleFactor, -m_scrollPosition.x() * m_scaleFactor + viewPosition.x() , -m_scrollPosition.y() * m_scaleFactor + viewPosition.y());
-
-    LayerTreeRenderer* renderer = drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer();
-    renderer->setActive(true);
-    renderer->syncRemoteContent();
-    IntRect clipRect(rect);
-    clipRect.move(viewPosition.x(), viewPosition.y());
-    renderer->paintToCurrentGLContext(matrix, 1, clipRect);
-}
-
 void PageViewportControllerClientEfl::updateViewportSize(const IntSize& viewportSize)
 {
     m_viewportSize = viewportSize;
@@ -83,20 +70,18 @@ void PageViewportControllerClientEfl::updateViewportSize(const IntSize& viewport
     m_controller->didChangeViewportSize(viewportSize);
 }
 
-void PageViewportControllerClientEfl::setVisibleContentsRect(const IntPoint& newScrollPosition, float newScale, const FloatPoint& /*trajectory*/)
+void PageViewportControllerClientEfl::setVisibleContentsRect(const IntPoint& newScrollPosition, float newScale, const FloatPoint& trajectory)
 {
     m_scaleFactor = newScale;
     m_scrollPosition = newScrollPosition;
 
     ASSERT(m_controller);
-    m_controller->didChangeContentsVisibility(m_scrollPosition, m_scaleFactor, FloatPoint());
+    m_controller->didChangeContentsVisibility(m_scrollPosition, m_scaleFactor, trajectory);
 }
 
 void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& size)
 {
-    m_contentsSize = size;
-    IntRect rect = IntRect(IntPoint(), m_viewportSize);
-    m_viewImpl->redrawRegion(rect);
+    m_viewImpl->update();
 }
 
 void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPoint& contentsPoint)
@@ -119,8 +104,7 @@ void PageViewportControllerClientEfl::didResumeContent()
 
 void PageViewportControllerClientEfl::didChangeVisibleContents()
 {
-    IntRect rect = IntRect(IntPoint(), m_viewportSize);
-    m_viewImpl->redrawRegion(rect);
+    m_viewImpl->update();
 }
 
 void PageViewportControllerClientEfl::didChangeViewportAttributes()

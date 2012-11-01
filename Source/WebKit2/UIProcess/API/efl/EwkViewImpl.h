@@ -26,6 +26,7 @@
 #include "WKEinaSharedString.h"
 #include "WKRetainPtr.h"
 #include <Evas.h>
+#include <WebCore/IntRect.h>
 #include <WebCore/TextDirection.h>
 #include <WebCore/Timer.h>
 #include <WebKit2/WKBase.h>
@@ -63,9 +64,7 @@ class WebPopupMenuProxyEfl;
 namespace WebCore {
 class Color;
 class Cursor;
-class IntRect;
 class IntSize;
-class Region;
 }
 
 class Ewk_Back_Forward_List;
@@ -126,8 +125,9 @@ public:
 #endif
 
     void setCursor(const WebCore::Cursor& cursor);
-    void redrawRegion(const WebCore::IntRect& rect);
     void setImageData(void* imageData, const WebCore::IntSize& size);
+
+    void update(const WebCore::IntRect& rect = WebCore::IntRect());
 
     static void addToPageViewMap(EwkViewImpl* viewImpl);
     static void removeFromPageViewMap(EwkViewImpl* viewImpl);
@@ -181,7 +181,7 @@ public:
     Evas_GL* evasGL() { return m_evasGL.get(); }
     Evas_GL_Context* evasGLContext() { return m_evasGLContext ? m_evasGLContext->context() : 0; }
     Evas_GL_Surface* evasGLSurface() { return m_evasGLSurface ? m_evasGLSurface->surface() : 0; }
-    void resetEvasGLSurface() { m_evasGLSurface.clear(); }
+    void clearEvasGLSurface() { m_evasGLSurface.clear(); }
 #endif
 
     // FIXME: needs refactoring (split callback invoke)
@@ -237,7 +237,6 @@ private:
     bool m_touchEventsEnabled;
 #endif
     WebCore::Timer<EwkViewImpl> m_displayTimer;
-    OwnPtr<WebCore::Region> m_dirtyRegion;
     OwnPtr<Ewk_Popup_Menu> m_popupMenu;
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
     OwnPtr<Ewk_Color_Picker> m_colorPicker;

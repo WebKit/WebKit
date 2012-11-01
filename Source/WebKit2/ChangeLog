@@ -1,3 +1,36 @@
+2012-11-01  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL] Correct our use of the coordinated graphics
+        https://bugs.webkit.org/show_bug.cgi?id=100947
+
+        Reviewed by Alexis Menard.
+
+        Replace the display(...) call with a regular update() on the view.
+        In the coordinated graphics case this updates our view using
+        paintToCurrentGLContext with our viewmodel matrix and clips it to
+        the viewport. This avoid the need to manually joining update regions.
+
+        Unneeded update calls have also been removed and the resizing
+        logic has been improved.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::displayTimerFired):
+        (EwkViewImpl::update):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebCore):
+        (EwkViewImpl):
+        (EwkViewImpl::clearEvasGLSurface):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+        * UIProcess/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::setVisibleContentsRect):
+        (WebKit::PageViewportControllerClientEfl::didChangeContentsSize):
+        (WebKit::PageViewportControllerClientEfl::didChangeVisibleContents):
+        * UIProcess/efl/PageViewportControllerClientEfl.h:
+        (PageViewportControllerClientEfl):
+
 2012-11-01  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Double clicks/taps aren't passed down to the page

@@ -409,45 +409,37 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl);
 
-#if USE(ACCELERATED_COMPOSITING)
-    bool needsNewSurface = false;
-#endif
-
     smartData->changed.any = false;
 
     Evas_Coord x, y, width, height;
     evas_object_geometry_get(ewkView, &x, &y, &width, &height);
 
+    if (smartData->changed.position) {
+        smartData->changed.position = false;
+        smartData->view.x = x;
+        smartData->view.y = y;
+        evas_object_move(smartData->image, x, y);
+    }
+
     if (smartData->changed.size) {
-#if USE(COORDINATED_GRAPHICS)
-        impl->pageViewportControllerClient()->updateViewportSize(IntSize(width, height));
-#endif
-#if USE(ACCELERATED_COMPOSITING)
-        needsNewSurface = impl->evasGLSurface();
-#endif
+        smartData->changed.size = false;
+        smartData->view.w = width;
+        smartData->view.h = height;
 
         if (impl->page()->drawingArea())
             impl->page()->drawingArea()->setSize(IntSize(width, height), IntSize());
 
-        smartData->view.w = width;
-        smartData->view.h = height;
-        smartData->changed.size = false;
-    }
-
-    if (smartData->changed.position) {
-        evas_object_move(smartData->image, x, y);
-        smartData->view.x = x;
-        smartData->view.y = y;
-        smartData->changed.position = false;
-    }
-
 #if USE(ACCELERATED_COMPOSITING)
-    if (needsNewSurface) {
-        impl->resetEvasGLSurface();
-        impl->createGLSurface(IntSize(width, height));
-        impl->redrawRegion(IntRect(IntPoint(), IntSize(width, height)));
-    }
+        // Recreate surface if needed.
+        if (impl->evasGLSurface()) {
+            impl->clearEvasGLSurface();
+            impl->createGLSurface(IntSize(width, height));
+        }
 #endif
+#if USE(COORDINATED_GRAPHICS)
+        impl->pageViewportControllerClient()->updateViewportSize(IntSize(width, height));
+#endif
+    }
 }
 
 static void _ewk_view_smart_show(Evas_Object* ewkView)

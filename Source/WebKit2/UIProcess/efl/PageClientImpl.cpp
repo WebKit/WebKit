@@ -75,7 +75,7 @@ PassOwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
 {
-    m_viewImpl->redrawRegion(rect);
+    m_viewImpl->update(rect);
 }
 
 void PageClientImpl::displayView()

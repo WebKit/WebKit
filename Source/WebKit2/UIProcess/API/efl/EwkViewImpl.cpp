@@ -25,6 +25,8 @@
 #include "FindClientEfl.h"
 #include "FormClientEfl.h"
 #include "InputMethodContextEfl.h"
+#include "LayerTreeCoordinatorProxy.h"
+#include "LayerTreeRenderer.h"
 #include "PageClientImpl.h"
 #include "PageLoadClientEfl.h"
 #include "PagePolicyClientEfl.h"
@@ -237,38 +239,47 @@ void EwkViewImpl::setCursor(const Cursor& cursor)
 
 void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
 {
+#if USE(COORDINATED_GRAPHICS)
     Ewk_View_Smart_Data* sd = smartData();
 
+    evas_gl_make_current(evasGL(), evasGLSurface(), evasGLContext());
+
+    // We are supposed to clip to the actual viewport, nothing less.
+    IntRect viewport(sd->view.x, sd->view.y, sd->view.w, sd->view.h);
+
+    IntPoint scrollPosition = m_pageViewportControllerClient->scrollPosition();
+    float scaleFactor = m_pageViewportControllerClient->scaleFactor();
+
+    WebCore::TransformationMatrix matrix;
+    matrix.translate(viewport.x(), viewport.y());
+    matrix.scale(scaleFactor);
+    matrix.translate(-scrollPosition.x(), -scrollPosition.y());
+
+    LayerTreeRenderer* renderer = page()->drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer();
+    renderer->setActive(true);
+    renderer->syncRemoteContent();
+
+    renderer->paintToCurrentGLContext(matrix, /* opacity */ 1, viewport);
+
+    evas_object_image_data_update_add(sd->image, viewport.x(), viewport.y(), viewport.width(), viewport.height());
+#endif
+}
+
+void EwkViewImpl::update(const IntRect& rect)
+{
+#if USE(COORDINATED_GRAPHICS)
+    // Coordinated graphices needs to schedule an full update, not
+    // repainting of a region. Update in the event loop.
+    UNUSED_PARAM(rect);
+    if (!m_displayTimer.isActive())
+        m_displayTimer.startOneShot(0);
+#else
+    Ewk_View_Smart_Data* sd = smartData();
     if (!sd->image)
         return;
 
-    ASSERT(m_dirtyRegion);
-    Vector<IntRect> rects = m_dirtyRegion->rects();
-    // Clear region.
-    m_dirtyRegion.clear();
-
-    Vector<IntRect>::const_iterator end = rects.end();
-    for (Vector<IntRect>::const_iterator it = rects.begin(); it != end; ++it) {
-        const IntRect& rect = *it;
-#if USE(COORDINATED_GRAPHICS)
-        evas_gl_make_current(evasGL(), evasGLSurface(), evasGLContext());
-        m_pageViewportControllerClient->display(rect, IntPoint(sd->view.x, sd->view.y));
+    evas_object_image_data_update_add(sd->image, rect.x(), rect.y(), rect.width(), rect.height());
 #endif
-
-        evas_object_image_data_update_add(sd->image, rect.x(), rect.y(), rect.width(), rect.height());
-    }
-}
-
-void EwkViewImpl::redrawRegion(const IntRect& rect)
-{
-    if (m_dirtyRegion)
-        m_dirtyRegion->unite(rect);
-    else
-        m_dirtyRegion = adoptPtr(new Region(rect));
-
-    // Update display in the event loop.
-    if (!m_displayTimer.isActive())
-        m_displayTimer.startOneShot(0);
 }
 
 #if ENABLE(FULLSCREEN_API)

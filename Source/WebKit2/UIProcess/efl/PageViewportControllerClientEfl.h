@@ -49,7 +49,6 @@ public:
     float scaleFactor() const { return m_scaleFactor; }
     WebCore::IntPoint scrollPosition() { return m_scrollPosition; }
 
-    void display(const WebCore::IntRect&, const WebCore::IntPoint& viewPosition);
     void updateViewportSize(const WebCore::IntSize& viewportSize);
     void setVisibleContentsRect(const WebCore::IntPoint&, float, const WebCore::FloatPoint&);
     void setRendererActive(bool);
@@ -68,7 +67,6 @@ private:
     explicit PageViewportControllerClientEfl(EwkViewImpl*);
 
     EwkViewImpl* m_viewImpl;
-    WebCore::IntSize m_contentsSize;
     WebCore::IntSize m_viewportSize;
     WebCore::IntPoint m_scrollPosition;
     float m_scaleFactor;
