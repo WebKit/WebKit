@@ -1,3 +1,11 @@
+2012-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r133224 as suggested by Enrica.
+        Confirmed the test failures go away on Chromium Mac locally.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+
 2012-11-01  Alexey Proskuryakov  <ap@apple.com>
 
         Rename HAVE(NETWORK_CFDATA_ARRAY_CALLBACK) to USE(NETWORK_CFDATA_ARRAY_CALLBACK)

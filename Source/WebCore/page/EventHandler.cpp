@@ -869,7 +869,10 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         else
             newSelection.setExtent(targetPosition);
     }
+#else
+    newSelection.setExtent(targetPosition);
 #endif
+
     if (m_frame->selection()->granularity() != CharacterGranularity)
         newSelection.expandUsingGranularity(m_frame->selection()->granularity());
 
