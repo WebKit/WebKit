@@ -398,7 +398,7 @@ void NodeRendererFactory::createRendererIfNeeded()
 
 #if ENABLE(FULLSCREEN_API)
     if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == node)
-        newRenderer = RenderFullScreen::wrapRenderer(newRenderer, document);
+        newRenderer = RenderFullScreen::wrapRenderer(newRenderer, parentRenderer, document);
 #endif
 
     if (!newRenderer)

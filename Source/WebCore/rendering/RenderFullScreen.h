@@ -42,7 +42,7 @@ public:
     void createPlaceholder(PassRefPtr<RenderStyle>, const LayoutRect& frameRect);
 
 
-    static RenderObject* wrapRenderer(RenderObject* renderer, Document*);
+    static RenderObject* wrapRenderer(RenderObject*, RenderObject*, Document*);
     void unwrapRenderer();
 
 private:
