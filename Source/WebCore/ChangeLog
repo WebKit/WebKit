@@ -1,3 +1,20 @@
+2012-11-01  Kenneth Russell  <kbr@google.com>
+
+        Add RGB to supported destination formats of ImageBuffer::copyToPlatformTexture
+        https://bugs.webkit.org/show_bug.cgi?id=100971
+
+        Reviewed by Stephen White.
+
+        The ImageBuffer::copyToPlatformTexture restriction added in
+        r132965 was too restrictive. Allow RGB textures to prevent
+        performance regressions.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        * platform/graphics/ImageBuffer.h:
+        (ImageBuffer):
+
 2012-11-01  Michael Matovsky  <mmatovsky@rim.com>
 
         [BlackBerry] Web page view state should be preserved for pages loaded from page cache

@@ -120,7 +120,7 @@ namespace WebCore {
 #endif
 
         // FIXME: current implementations of this method have the restriction that they only work
-        // with textures that are RGBA format and UNSIGNED_BYTE type.
+        // with textures that are RGB or RGBA format, and UNSIGNED_BYTE type.
         bool copyToPlatformTexture(GraphicsContext3D&, Platform3DObject, GC3Denum, bool, bool);
 
         void reportMemoryUsage(MemoryObjectInfo*) const;

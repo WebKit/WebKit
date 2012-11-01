@@ -3700,10 +3700,10 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
     // If possible, copy from the canvas element directly to the texture
     // via the GPU, without a read-back to system memory.
     //
-    // FIXME: restriction of RGBA/UNSIGNED_BYTE should be lifted when
+    // FIXME: restriction of (RGB || RGBA)/UNSIGNED_BYTE should be lifted when
     // ImageBuffer::copyToPlatformTexture implementations are fully functional.
     if (GraphicsContext3D::TEXTURE_2D == target && texture && type == texture->getType(target, level)
-        && format == GraphicsContext3D::RGBA && type == GraphicsContext3D::UNSIGNED_BYTE) {
+        && (format == GraphicsContext3D::RGB || format == GraphicsContext3D::RGBA) && type == GraphicsContext3D::UNSIGNED_BYTE) {
         ImageBuffer* buffer = canvas->buffer();
         if (buffer && buffer->copyToPlatformTexture(*m_context.get(), texture->object(), internalformat, m_unpackPremultiplyAlpha, m_unpackFlipY)) {
             texture->setLevelInfo(target, level, internalformat, canvas->width(), canvas->height(), type);
