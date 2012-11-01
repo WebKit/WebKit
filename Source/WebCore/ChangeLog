@@ -1,3 +1,17 @@
+2012-11-01  Stephen Chenney  <schenney@chromium.org>
+
+        FEImage::m_document is never cleared. Why not?
+        https://bugs.webkit.org/show_bug.cgi?id=99243
+
+        Reviewed by Dirk Schulze.
+
+        Adding a comment to explain why the failure to clear m_document is not a problem.
+
+        No new tests because no code change at all.
+
+        * svg/graphics/filters/SVGFEImage.h:
+        (FEImage): Add a comment on the lifetime of m_document.
+
 2012-11-01  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: make "addRecord" unambiguous

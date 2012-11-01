@@ -54,6 +54,8 @@ private:
     RenderObject* referencedRenderer() const;
 
     RefPtr<Image> m_image;
+
+    // m_document will never be a dangling reference. See https://bugs.webkit.org/show_bug.cgi?id=99243
     Document* m_document;
     String m_href;
     SVGPreserveAspectRatio m_preserveAspectRatio;
