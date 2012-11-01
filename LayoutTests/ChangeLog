@@ -1,3 +1,14 @@
+2012-10-31  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Move jquery/traversing.html to flaky list
+        https://bugs.webkit.org/show_bug.cgi?id=100908
+
+        Unreviewed gardening.
+
+        jquery/traversing.html sometimes crashes and sometimes passes, so needs to be moved to the flaky list.
+
+        * platform/efl/TestExpectations:
+
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.
