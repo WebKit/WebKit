@@ -4152,3 +4152,10 @@ webkit.org/b/100833 [ Mac ] touchadjustment/nested-touch.html [ Text ]
 
 # This test is consistently leaking state into the next test (object-src-url-allowed.html) after r133069.
 webkit.org/b/100955 http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Skip ]
+
+# Rebaseline these when they start failing with super minor single-pixel differences.
+crbug.com/147395 compositing/geometry/vertical-scroll-composited.html [ Pass ImageOnlyFailure ]
+crbug.com/147395 compositing/reflections/nested-reflection-anchor-point.html [ Pass ImageOnlyFailure ]
+crbug.com/147395 platform/chromium/compositing/huge-layer-rotated.html [ Pass ImageOnlyFailure ]
+crbug.com/147395 transforms/3d/point-mapping/3d-point-mapping-3.html [ Pass ImageOnlyFailure ]
+crbug.com/147395 transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html [ Pass ImageOnlyFailure ]
