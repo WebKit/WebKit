@@ -2384,6 +2384,7 @@ inspector/elements/update-shadowdom.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple.html
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconmain.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-aborted.html
 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overridesexpires.html
