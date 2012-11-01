@@ -1,3 +1,17 @@
+2012-11-01  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r124156
+
+    2012-07-30  MORITA Hajime  <morrita@google.com>
+
+            Node::replaceChild() can create bad DOM topology with MutationEvent
+            https://bugs.webkit.org/show_bug.cgi?id=92619
+
+            Reviewed by Ryosuke Niwa.
+
+            * fast/events/mutation-during-replace-child-expected.txt: Added.
+            * fast/events/mutation-during-replace-child.html: Added.
+
 2012-10-31  Lucas Forschler  <lforschler@apple.com>
 
         Merge r123131
@@ -10619,6 +10633,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .
