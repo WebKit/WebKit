@@ -274,7 +274,7 @@ WebInspector.TimelinePresentationModel.prototype = {
         this._frames.push(frame);
     },
 
-    addRecord: function(record, parentRecord)
+    addRecord: function(record)
     {
         if (this._minimumRecordTime === -1 || record.startTime < this._minimumRecordTime)
             this._minimumRecordTime = WebInspector.TimelineModel.startTimeInSeconds(record);
@@ -288,7 +288,7 @@ WebInspector.TimelinePresentationModel.prototype = {
         var formattedRecords = [];
         var recordsCount = records.length;
         for (var i = 0; i < recordsCount; ++i)
-            formattedRecords.push(this._innerAddRecord(records[i], parentRecord));
+            formattedRecords.push(this._innerAddRecord(records[i], this._rootRecord));
         return formattedRecords;
     },
 

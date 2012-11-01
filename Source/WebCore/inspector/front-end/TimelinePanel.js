@@ -553,17 +553,17 @@ WebInspector.TimelinePanel.prototype = {
         this._automaticallySizeWindow = false;
         var records = this._model.records;
         for (var i = 0; i < records.length; ++i)
-            this._innerAddRecordToTimeline(records[i], this._rootRecord());
+            this._innerAddRecordToTimeline(records[i]);
         this._invalidateAndScheduleRefresh(false);
     },
 
     _onTimelineEventRecorded: function(event)
     {
-        if (this._innerAddRecordToTimeline(event.data, this._rootRecord()))
+        if (this._innerAddRecordToTimeline(event.data))
             this._invalidateAndScheduleRefresh(false);
     },
 
-    _innerAddRecordToTimeline: function(record, parentRecord)
+    _innerAddRecordToTimeline: function(record)
     {
         if (record.type === WebInspector.TimelineModel.RecordType.Program) {
             this._mainThreadTasks.push({
@@ -572,7 +572,7 @@ WebInspector.TimelinePanel.prototype = {
             });
         }
 
-        var records = this._presentationModel.addRecord(record, parentRecord);
+        var records = this._presentationModel.addRecord(record);
         this._allRecordsCount += records.length;
         var timeStampRecords = this._timeStampRecords;
         var hasVisibleRecords = false;

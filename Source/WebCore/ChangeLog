@@ -1,3 +1,19 @@
+2012-11-01  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: make "addRecord" unambiguous
+        https://bugs.webkit.org/show_bug.cgi?id=100761
+
+        Reviewed by Pavel Feldman.
+
+        TimelinePresentationModel.addRecord accepts two parameters:
+        record and parentRecord. parentRecord is always root record.
+        Make this explicit by removing parentRecord parameter.
+
+        * inspector/front-end/TimelinePanel.js: Removed parameter.
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.prototype.addRecord):
+        Used root recoed instead of parent record.
+
 2012-11-01  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Browser prematurely sends wrong credentials
