@@ -308,6 +308,64 @@ on_download_request(void *user_data, Evas_Object *webview, void *event_info)
     eina_strbuf_free(destination_path);
 }
 
+typedef struct {
+    Evas_Object *window;
+    Ewk_File_Chooser_Request *request;
+} FileSelectorData;
+
+static void close_file_picker(FileSelectorData* fs_data)
+{
+    evas_object_del(fs_data->window);
+    ewk_file_chooser_request_unref(fs_data->request);
+    free(fs_data);
+}
+
+static void
+on_filepicker_deletion(void *user_data, Evas_Object *window, void *event_info)
+{
+    close_file_picker((FileSelectorData *)user_data);
+}
+
+static void
+on_fileselector_done(void *user_data, Evas_Object *file_selector, void *event_info)
+{
+    FileSelectorData *fs_data = (FileSelectorData *)user_data;
+
+    const char *selected = (const char *)event_info;
+    if (selected && *selected)
+        ewk_file_chooser_request_file_choose(fs_data->request, selected);
+
+    close_file_picker(fs_data);
+}
+
+static void
+on_file_chooser_request(void *user_data, Evas_Object *webview, void *event_info)
+{
+    Ewk_File_Chooser_Request *request = (Ewk_File_Chooser_Request *)event_info;
+
+    // Show basic file picker which does not currently support multiple files
+    // or MIME type filtering.
+    Evas_Object *window = elm_win_util_standard_add("file-picker-window", "File picker");
+
+    FileSelectorData* fs_data = (FileSelectorData*)malloc(sizeof(FileSelectorData));
+    fs_data->window = window;
+    fs_data->request = ewk_file_chooser_request_ref(request);
+    evas_object_smart_callback_add(window, "delete,request", on_filepicker_deletion, fs_data);
+
+    Evas_Object *file_selector = elm_fileselector_add(window);
+    const char *home_path = getenv("HOME");
+    elm_fileselector_path_set(file_selector, home_path ? home_path : "/home");
+    evas_object_size_hint_weight_set(file_selector, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(window, file_selector);
+    evas_object_show(file_selector);
+
+    evas_object_smart_callback_add(file_selector, "done", on_fileselector_done, fs_data);
+
+    evas_object_resize(window, 400, 400);
+    elm_win_center(window, EINA_TRUE, EINA_TRUE);
+    evas_object_show(window);
+}
+
 static void
 on_download_finished(void *user_data, Evas_Object *webview, void *event_info)
 {
@@ -718,6 +776,7 @@ static Browser_Window *window_create(const char *url)
     evas_object_smart_callback_add(app_data->webview, "download,failed", on_download_failed, app_data);
     evas_object_smart_callback_add(app_data->webview, "download,finished", on_download_finished, app_data);
     evas_object_smart_callback_add(app_data->webview, "download,request", on_download_request, app_data);
+    evas_object_smart_callback_add(app_data->webview, "file,chooser,request", on_file_chooser_request, app_data);
     evas_object_smart_callback_add(app_data->webview, "icon,changed", on_view_icon_changed, app_data);
     evas_object_smart_callback_add(app_data->webview, "load,error", on_error, app_data);
     evas_object_smart_callback_add(app_data->webview, "load,progress", on_progress, app_data);
