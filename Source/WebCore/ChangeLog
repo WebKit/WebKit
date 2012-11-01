@@ -1,3 +1,20 @@
+2012-10-31  Hayato Ito  <hayato@chromium.org>
+
+        Make resolveReprojection() defined in ComposedShadowTreeWalker.cpp callable from outside.
+        https://bugs.webkit.org/show_bug.cgi?id=100832
+
+        Reviewed by Dimitri Glazkov.
+
+        InsertionPoint.h now defines resolveReprojection() so that it can be called from outside.
+
+        No new tests as no new functionality.
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        * html/shadow/InsertionPoint.h:
+        (WebCore::shadowOfParentForDistribution):
+        (WebCore):
+        (WebCore::resolveReprojection):
+
 2012-10-31  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] Pass canPaintLCDText to WebContentLayerClient::paintContents

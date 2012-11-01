@@ -32,6 +32,7 @@
 #define InsertionPoint_h
 
 #include "ContentDistributor.h"
+#include "ElementShadow.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "ShadowRoot.h"
@@ -137,6 +138,46 @@ inline Element* parentElementForDistribution(const Node* node)
     }
 
     return 0;
+}
+
+inline ElementShadow* shadowOfParentForDistribution(const Node* node)
+{
+    if (!node)
+        return 0;
+
+    if (Element* parent = parentElementForDistribution(node))
+        return parent->shadow();
+
+    return 0;
+}
+
+inline InsertionPoint* resolveReprojection(const Node* projectedNode)
+{
+    InsertionPoint* insertionPoint = 0;
+    const Node* current = projectedNode;
+
+    while (true) {
+        if (ElementShadow* shadow = shadowOfParentForDistribution(current)) {
+            shadow->ensureDistribution();
+            if (InsertionPoint* insertedTo = shadow->distributor().findInsertionPointFor(projectedNode)) {
+                current = insertedTo;
+                insertionPoint = insertedTo;
+                continue;
+            }
+        }
+
+        if (Node* parent = parentNodeForDistribution(current)) {
+            if (InsertionPoint* insertedTo = parent->isShadowRoot() ? toShadowRoot(parent)->assignedTo() : 0) {
+                current = insertedTo;
+                insertionPoint = insertedTo;
+                continue;
+            }
+        }
+
+        break;
+    }
+
+    return insertionPoint;
 }
 
 } // namespace WebCore

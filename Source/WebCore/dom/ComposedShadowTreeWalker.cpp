@@ -53,17 +53,6 @@ static inline ElementShadow* shadowOfParent(const Node* node)
     return 0;
 }
 
-static inline ElementShadow* shadowOfParentForDistribution(const Node* node)
-{
-    if (!node)
-        return 0;
-
-    if (Element* parent = parentElementForDistribution(node))
-        return parent->shadow();
-
-    return 0;    
-}
-
 static inline bool nodeCanBeDistributed(const Node* node)
 {
     ASSERT(node);
@@ -78,35 +67,6 @@ static inline bool nodeCanBeDistributed(const Node* node)
         return true;
 
     return false;
-}
-
-static inline InsertionPoint* resolveReprojection(const Node* projectedNode)
-{
-    InsertionPoint* insertionPoint = 0;
-    const Node* current = projectedNode;
-
-    while (true) {
-        if (ElementShadow* shadow = shadowOfParentForDistribution(current)) {
-            shadow->ensureDistribution();
-            if (InsertionPoint* insertedTo = shadow->distributor().findInsertionPointFor(projectedNode)) {
-                current = insertedTo;
-                insertionPoint = insertedTo;
-                continue;
-            }
-        }
-
-        if (Node* parent = parentNodeForDistribution(current)) {
-            if (InsertionPoint* insertedTo = parent->isShadowRoot() ? toShadowRoot(parent)->assignedTo() : 0) {
-                current = insertedTo;
-                insertionPoint = insertedTo;
-                continue;
-            }
-        }
-
-        break;
-    }
-
-    return insertionPoint;
 }
 
 inline void ComposedShadowTreeWalker::ParentTraversalDetails::didTraverseInsertionPoint(InsertionPoint* insertionPoint)
