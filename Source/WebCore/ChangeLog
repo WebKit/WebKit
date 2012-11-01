@@ -1,3 +1,19 @@
+2012-11-01  Adam Barth  <abarth@webkit.org>
+
+        [V8] The V8DOMMap visitors are no longer needed
+        https://bugs.webkit.org/show_bug.cgi?id=100963
+
+        Reviewed by Kentaro Hara.
+
+        This patch inlines visitAllDOMNodes into its one caller (and removes
+        one layer of visitor adaptor abstraction).
+
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::visitNodeWrappers):
+        * bindings/v8/V8DOMMap.cpp:
+        * bindings/v8/V8DOMMap.h:
+        (WebCore):
+
 2012-11-01  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update BB10 form theme.

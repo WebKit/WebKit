@@ -179,23 +179,30 @@ void ScriptProfiler::initialize()
 
 void ScriptProfiler::visitNodeWrappers(WrappedNodeVisitor* visitor)
 {
-    class VisitorAdapter : public NodeWrapperVisitor {
+    v8::HandleScope scope;
+
+    class VisitorAdapter : public v8::PersistentHandleVisitor {
     public:
-        VisitorAdapter(WrappedNodeVisitor* visitor)
+        explicit VisitorAdapter(WrappedNodeVisitor* visitor)
             : m_visitor(visitor)
         {
         }
 
-        virtual void visitNodeWrapper(Node* node, v8::Persistent<v8::Object>)
+        virtual void VisitPersistentHandle(v8::Persistent<v8::Value> value, uint16_t classId)
         {
-            m_visitor->visitNode(node);
+            if (classId != v8DOMNodeClassId)
+                return;
+            ASSERT(V8Node::HasInstance(value));
+            ASSERT(value->IsObject());
+            v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
+            m_visitor->visitNode(V8Node::toNative(wrapper));
         }
 
     private:
         WrappedNodeVisitor* m_visitor;
-    } adapter(visitor);
+    } visitorAdapter(visitor);
 
-    visitAllDOMNodes(&adapter);
+    v8::V8::VisitHandlesWithClassIds(&visitorAdapter);
 }
 
 void ScriptProfiler::visitExternalStrings(ExternalStringVisitor* visitor)

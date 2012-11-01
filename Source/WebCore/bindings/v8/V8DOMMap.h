@@ -42,17 +42,8 @@
 
 namespace WebCore {
 
-class NodeWrapperVisitor {
-public:
-    virtual ~NodeWrapperVisitor();
-    virtual void visitNodeWrapper(Node*, v8::Persistent<v8::Object> wrapper) = 0;
-};
-
 DOMWrapperMap<Node>& getDOMNodeMap(v8::Isolate* = 0);
-void visitAllDOMNodes(NodeWrapperVisitor*);
-
 DOMWrapperMap<void>& getDOMObjectMap(v8::Isolate* = 0);
-void visitDOMObjects(DOMWrapperVisitor<void>*);
 
 } // namespace WebCore
 

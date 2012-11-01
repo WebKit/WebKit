@@ -38,10 +38,6 @@
 
 namespace WebCore {
 
-NodeWrapperVisitor::~NodeWrapperVisitor()
-{
-}
-
 DOMWrapperMap<Node>& getDOMNodeMap(v8::Isolate* isolate)
 {
     if (!isolate)
@@ -54,47 +50,6 @@ DOMWrapperMap<void>& getDOMObjectMap(v8::Isolate* isolate)
     if (!isolate)
         isolate = v8::Isolate::GetCurrent();
     return DOMDataStore::current(isolate)->domObjectMap();
-}
-
-void visitAllDOMNodes(NodeWrapperVisitor* visitor)
-{
-    v8::HandleScope scope;
-
-    class VisitorAdapter : public v8::PersistentHandleVisitor {
-    public:
-        explicit VisitorAdapter(NodeWrapperVisitor* visitor)
-            : m_visitor(visitor)
-        {
-        }
-
-        virtual void VisitPersistentHandle(v8::Persistent<v8::Value> value, uint16_t classId)
-        {
-            if (classId != v8DOMNodeClassId)
-                return;
-            ASSERT(V8Node::HasInstance(value));
-            ASSERT(value->IsObject());
-            ASSERT(!value.IsIndependent());
-            v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
-            m_visitor->visitNodeWrapper(V8Node::toNative(wrapper), wrapper);
-        }
-
-    private:
-        NodeWrapperVisitor* m_visitor;
-    } visitorAdapter(visitor);
-
-    v8::V8::VisitHandlesWithClassIds(&visitorAdapter);
-}
-
-void visitDOMObjects(DOMWrapperVisitor<void>* visitor)
-{
-    v8::HandleScope scope;
-
-    Vector<DOMDataStore*>& list = V8PerIsolateData::current()->allStores();
-    for (size_t i = 0; i < list.size(); ++i) {
-        DOMDataStore* store = list[i];
-
-        store->domObjectMap().visit(store, visitor);
-    }
 }
 
 } // namespace WebCore
