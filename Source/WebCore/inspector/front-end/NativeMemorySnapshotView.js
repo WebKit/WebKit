@@ -106,7 +106,13 @@ WebInspector.NativeSnapshotNode.prototype = {
      */
     _createSizeCell: function(columnIdentifier)
     {
-        var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(this._nodeData);
+        var cell = this;
+        var viewProperties = null;
+        while (!viewProperties || viewProperties._fillStyle === "inherit") {
+            viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(cell._nodeData);
+            cell = cell.parent;
+        }
+
         var sizeKiB = this._nodeData.size / 1024;
         var totalSize = this._profile.size;
         var percentage = this._nodeData.size / totalSize  * 100;
@@ -311,16 +317,14 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
     addBlock("hsl(  0,  0%,  80%)", "Other", "Other");
     addBlock("hsl(220, 80%,  70%)", "Page", "Page structures");
     addBlock("hsl(100, 60%,  50%)", "JSHeap", "JavaScript heap");
-    addBlock("hsl(100, 80%,  80%)", "JSHeap.Used", "Used JavaScript heap");
     addBlock("hsl( 90, 40%,  80%)", "JSExternalResources", "JavaScript external resources");
     addBlock("hsl( 90, 60%,  80%)", "JSExternalArrays", "JavaScript external arrays");
     addBlock("hsl( 90, 60%,  80%)", "JSExternalStrings", "JavaScript external strings");
     addBlock("hsl(  0, 80%,  60%)", "WebInspector", "Inspector data");
-    addBlock("hsl( 30, 80%,  80%)", "MemoryCache", "Memory cache resources");
+    addBlock("hsl( 36, 90%,  50%)", "MemoryCache", "Memory cache resources");
     addBlock("hsl( 40, 80%,  80%)", "GlyphCache", "Glyph cache resources");
     addBlock("hsl( 35, 80%,  80%)", "DOMStorageCache", "DOM storage cache");
     addBlock("hsl( 60, 80%,  60%)", "RenderTree", "Render tree");
-    addBlock("hsl( 60, 80%,  60%)", "RenderTree.Used", "Render tree used");
 }
 
 WebInspector.MemoryBlockViewProperties._forMemoryBlock = function(memoryBlock)
@@ -329,7 +333,7 @@ WebInspector.MemoryBlockViewProperties._forMemoryBlock = function(memoryBlock)
     var result = WebInspector.MemoryBlockViewProperties._standardBlocks[memoryBlock.name];
     if (result)
         return result;
-    return new WebInspector.MemoryBlockViewProperties("rgba(128, 128, 128, 0.8)", memoryBlock.name, memoryBlock.name);
+    return new WebInspector.MemoryBlockViewProperties("inherit", memoryBlock.name, memoryBlock.name);
 }
 
 

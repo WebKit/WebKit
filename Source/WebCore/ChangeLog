@@ -1,3 +1,18 @@
+2012-11-01  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: make component subitems use parent color in native memory snapshots.
+        https://bugs.webkit.org/show_bug.cgi?id=100876
+
+        A component subitems use the color of the component itself if the color
+        is not explicitly specified for the subitem.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeSnapshotNode.prototype._createSizeCell):
+        (WebInspector.MemoryBlockViewProperties._initialize):
+        (WebInspector.MemoryBlockViewProperties._forMemoryBlock):
+
 2012-11-01  Emil A Eklund  <eae@chromium.org>
 
         [subpixel] Change intrinsicSize to LayoutUnit
