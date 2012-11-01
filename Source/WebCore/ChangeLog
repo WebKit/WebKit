@@ -1,3 +1,14 @@
+2012-11-01  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Fix Windows build by re-adding a #include
+        https://bugs.webkit.org/show_bug.cgi?id=100986
+
+        Reviewed by Stephen White.
+
+        Fix #include that broke windows.
+
+        * Modules/indexeddb/IDBCallbacks.h:
+
 2012-11-01  David Barton  <dbarton@mathscribe.com>
 
         REGRESSION (r128837): mathml/presentation/subsup.xhtml became flaky

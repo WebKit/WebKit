@@ -29,6 +29,7 @@
 #ifndef IDBCallbacks_h
 #define IDBCallbacks_h
 
+#include "DOMStringList.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
 #include "IDBKey.h"
