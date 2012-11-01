@@ -114,12 +114,6 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
 
         if (authType != BlackBerry::Platform::NetworkRequest::AuthNone)
             platformRequest.setCredentials(username.utf8().data(), password.utf8().data(), authType);
-    } else if (url.protocolIsInHTTPFamily()) {
-        // For URLs that match the paths of those previously challenged for HTTP Basic authentication,
-        // try and reuse the credential preemptively, as allowed by RFC 2617.
-        Credential credential = CredentialStorage::get(url);
-        if (!credential.isEmpty())
-            platformRequest.setCredentials(credential.user().utf8().data(), credential.password().utf8().data(), BlackBerry::Platform::NetworkRequest::AuthHTTPBasic);
     }
 
     if (!request.overrideContentType().isEmpty())

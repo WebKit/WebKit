@@ -1,3 +1,15 @@
+2012-11-01  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Browser prematurely sends wrong credentials
+        https://bugs.webkit.org/show_bug.cgi?id=100585
+
+        Reviewed by George Staikos.
+
+        Don't send credentials to the server before been challenged.
+
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::startJob):
+
 2012-11-01  Stephen Chenney  <schenney@chromium.org>
 
         SVG as an image may recreate the renderer on zoom
