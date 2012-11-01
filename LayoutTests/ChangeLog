@@ -1,3 +1,10 @@
+2012-11-01  Tony Chang  <tony@chromium.org>
+
+        [Chromium] Unreviewed, marking http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html
+        as slow on Linux Debug based on the flakiness dashboard.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-01  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium windows rebaseline.
