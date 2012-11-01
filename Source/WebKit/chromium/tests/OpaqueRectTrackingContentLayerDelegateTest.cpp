@@ -145,7 +145,7 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testOpaqueRectPresentAfterOpa
     OpaqueRectTrackingContentLayerDelegate delegate(&painter);
 
     WebFloatRect opaqueRect;
-    delegate.paintContents(skCanvas(), canvasRect(), false, opaqueRect);
+    delegate.paintContents(skCanvas(), canvasRect(), opaqueRect);
     EXPECT_EQ_RECT(WebFloatRect(0, 0, 400, 400), opaqueRect);
 }
 
@@ -156,7 +156,7 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testOpaqueRectNotPresentAfter
     OpaqueRectTrackingContentLayerDelegate delegate(&painter);
 
     WebFloatRect opaqueRect;
-    delegate.paintContents(skCanvas(), canvasRect(), false, opaqueRect);
+    delegate.paintContents(skCanvas(), canvasRect(), opaqueRect);
     EXPECT_EQ_RECT(WebFloatRect(0, 0, 0, 0), opaqueRect);
 }
 
@@ -169,7 +169,7 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testOpaqueRectNotPresentForOp
     delegate.setOpaque(true);
 
     WebFloatRect opaqueRect;
-    delegate.paintContents(skCanvas(), canvasRect(), false, opaqueRect);
+    delegate.paintContents(skCanvas(), canvasRect(), opaqueRect);
     EXPECT_EQ_RECT(WebFloatRect(0, 0, 0, 0), opaqueRect);
 }
 
@@ -182,7 +182,7 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testOpaqueRectNotPresentForOp
     delegate.setOpaque(true);
 
     WebFloatRect opaqueRect;
-    delegate.paintContents(skCanvas(), canvasRect(), false, opaqueRect);
+    delegate.paintContents(skCanvas(), canvasRect(), opaqueRect);
     EXPECT_EQ_RECT(WebFloatRect(0, 0, 0, 0), opaqueRect);
 }
 
@@ -194,7 +194,7 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testPartialOpaqueRectNoTransf
     OpaqueRectTrackingContentLayerDelegate delegate(&painter);
 
     WebFloatRect opaqueRect;
-    delegate.paintContents(skCanvas(), canvasRect(), false, opaqueRect);
+    delegate.paintContents(skCanvas(), canvasRect(), opaqueRect);
     EXPECT_EQ_RECT(WebFloatRect(partialRect.x(), partialRect.y(), partialRect.width(), partialRect.height()), opaqueRect);
 }
 
@@ -207,7 +207,7 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testPartialOpaqueRectTranslat
 
     WebFloatRect opaqueRect;
     WebRect contentRect(11, 12, 389, 388);
-    delegate.paintContents(skCanvas(), contentRect, false, opaqueRect);
+    delegate.paintContents(skCanvas(), contentRect, opaqueRect);
     EXPECT_EQ_RECT(WebFloatRect(partialRect.x(), partialRect.y(), partialRect.width(), partialRect.height()), opaqueRect);
 }
 
@@ -225,7 +225,7 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testHintingScaleFactorSet)
 
     IntRect rectA;
     WebFloatRect rectB;
-    delegate.paintContents(&canvas, rectA, false, rectB);
+    delegate.paintContents(&canvas, rectA, rectB);
     EXPECT_EQ(callback.hintingScale, hintingScale);
 }
 #endif

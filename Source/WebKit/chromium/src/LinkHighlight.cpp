@@ -226,7 +226,7 @@ bool LinkHighlight::computeHighlightLayerPathAndPosition(RenderLayer* compositin
     return pathHasChanged;
 }
 
-void LinkHighlight::paintContents(WebCanvas* canvas, const WebRect& webClipRect, bool, WebFloatRect&)
+void LinkHighlight::paintContents(WebCanvas* canvas, const WebRect& webClipRect, WebFloatRect&)
 {
     if (!m_node || !m_node->renderer())
         return;

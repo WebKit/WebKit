@@ -1,3 +1,14 @@
+2012-10-31  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, rolling out r133122.
+        http://trac.webkit.org/changeset/133122
+        https://bugs.webkit.org/show_bug.cgi?id=99083
+
+        Broke Chromium Win, Android, ChromeOS builds
+
+        * chromium/public/WebContentLayerClient.h:
+        (WebContentLayerClient):
+
 2012-10-31  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] Pass canPaintLCDText to WebContentLayerClient::paintContents

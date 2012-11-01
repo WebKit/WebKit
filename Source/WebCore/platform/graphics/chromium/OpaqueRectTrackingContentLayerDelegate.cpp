@@ -49,7 +49,7 @@ OpaqueRectTrackingContentLayerDelegate::~OpaqueRectTrackingContentLayerDelegate(
 {
 }
 
-void OpaqueRectTrackingContentLayerDelegate::paintContents(SkCanvas* canvas, const WebRect& clip, bool canPaintLCDText, WebFloatRect& opaque)
+void OpaqueRectTrackingContentLayerDelegate::paintContents(SkCanvas* canvas, const WebRect& clip, WebFloatRect& opaque)
 {
     PlatformContextSkia platformContext(canvas);
 #if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
@@ -57,10 +57,6 @@ void OpaqueRectTrackingContentLayerDelegate::paintContents(SkCanvas* canvas, con
         platformContext.setHintingScaleFactor(canvas->getTotalMatrix().getScaleX());
 #endif
     platformContext.setTrackOpaqueRegion(!m_opaque);
-    // FIXME: Rename PlatformContextSkia::setDrawingToImageBuffer to setCanPaintLCDText.
-    // I also suspect that a function on PlatformContextSkia is not really needed.
-    // GraphicsContext::setAllowsFontSmoothing can be used for this purpose.
-    platformContext.setDrawingToImageBuffer(!(canPaintLCDText && m_opaque));
     GraphicsContext context(&platformContext);
 
     // Record transform prior to painting, as all opaque tracking will be

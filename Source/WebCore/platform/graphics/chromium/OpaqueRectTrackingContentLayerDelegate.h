@@ -55,7 +55,7 @@ public:
     void setOpaque(bool opaque) { m_opaque = opaque; }
 
     // WebKit::WebContentLayerClient implementation.
-    virtual void paintContents(SkCanvas*, const WebKit::WebRect& clip, bool canPaintLCDText, WebKit::WebFloatRect& opaque) OVERRIDE;
+    virtual void paintContents(SkCanvas*, const WebKit::WebRect& clip, WebKit::WebFloatRect& opaque) OVERRIDE;
 
 private:
     GraphicsContextPainter* m_painter;
