@@ -1,3 +1,38 @@
+2012-11-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add Ewk_Auth_Request API
+        https://bugs.webkit.org/show_bug.cgi?id=100858
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Provide an AuthenticationClient for EFL port in WebCore so
+        that we can handle authentication similarly to other ports
+        of WebKit.
+
+        No new tests, no behavior change for layout tests.
+
+        * PlatformEfl.cmake: Add AuthenticationChallengeSoup.cpp to CMake.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        * platform/network/ResourceHandle.h:
+        (ResourceHandle): Have ResourceHandle subclass AuthenticationClient like
+        most of the other ports.
+        * platform/network/soup/AuthenticationChallengeSoup.cpp: Fix initialization
+        of previousFailureCount member. It should be 1 if we are retrying
+        authentication and 0 otherwise, not the opposite.
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        * platform/network/soup/ResourceHandleSoup.cpp: Provide implementation for EFL
+        port of AuthenticationClient methods.
+        (WebCore::WebCoreSynchronousLoader::didReceiveAuthenticationChallenge):
+        (WebCoreSynchronousLoader):
+        (WebCore):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+        (WebCore::authenticateCallback):
+        (WebCore::ResourceHandle::defaultSession):
+
 2012-10-24  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         WebIconDatabase: Properly clean up on destruction

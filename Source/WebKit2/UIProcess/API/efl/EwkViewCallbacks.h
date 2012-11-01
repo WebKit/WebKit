@@ -31,6 +31,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+struct Ewk_Auth_Request;
 struct Ewk_Download_Job;
 struct Ewk_Download_Job_Error;
 struct Ewk_File_Chooser_Request;
@@ -51,6 +52,7 @@ struct Ewk_Intent_Service;
 namespace EwkViewCallbacks {
 
 enum CallbackType {
+    AuthenticationRequest,
     BackForwardListChange,
     DownloadJobCancelled,
     DownloadJobFailed,
@@ -146,6 +148,7 @@ struct CallBackInfo<callbackType> {                           \
 }
 
 // Note: type 'void' means that no arguments are expected.
+DECLARE_EWK_VIEW_CALLBACK(AuthenticationRequest, "authentication,request", Ewk_Auth_Request);
 DECLARE_EWK_VIEW_CALLBACK(BackForwardListChange, "back,forward,list,changed", void);
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobCancelled, "download,cancelled", Ewk_Download_Job);
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobFailed, "download,failed", Ewk_Download_Job_Error);

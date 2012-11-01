@@ -69,6 +69,7 @@ LIST(APPEND WebCore_SOURCES
   platform/linux/GamepadDeviceLinux.cpp
   platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp
   platform/network/efl/NetworkStateNotifierEfl.cpp
+  platform/network/soup/AuthenticationChallengeSoup.cpp
   platform/network/soup/CookieJarSoup.cpp
   platform/network/soup/CookieStorageSoup.cpp
   platform/network/soup/CredentialStorageSoup.cpp

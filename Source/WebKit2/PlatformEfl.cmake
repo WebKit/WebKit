@@ -44,6 +44,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/EwkViewImpl.cpp
     UIProcess/API/efl/EvasGLContext.cpp
     UIProcess/API/efl/EvasGLSurface.cpp
+    UIProcess/API/efl/ewk_auth_request.cpp
     UIProcess/API/efl/ewk_back_forward_list.cpp
     UIProcess/API/efl/ewk_back_forward_list_item.cpp
     UIProcess/API/efl/ewk_color_picker.cpp
@@ -242,6 +243,7 @@ SET(ForwardingNetworkHeaders_NAME forwarding-headerSoup)
 CONFIGURE_FILE(efl/ewebkit2.pc.in ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc @ONLY)
 SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/EWebKit2.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_auth_request.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_back_forward_list.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_back_forward_list_item.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_color_picker.h"
@@ -345,6 +347,7 @@ TARGET_LINK_LIBRARIES(ewk2UnitTestUtils ${EWK2UnitTests_LIBRARIES})
 # The "ewk" on the test name needs to be suffixed with "2", otherwise it
 # will clash with tests from the WebKit 1 test suite.
 SET(EWK2UnitTests_BINARIES
+    test_ewk2_auth_request
     test_ewk2_back_forward_list
     test_ewk2_color_picker
     test_ewk2_context

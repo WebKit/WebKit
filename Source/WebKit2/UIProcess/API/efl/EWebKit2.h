@@ -28,6 +28,7 @@
 #ifndef EWebKit2_h
 #define EWebKit2_h
 
+#include "ewk_auth_request.h"
 #include "ewk_back_forward_list.h"
 #include "ewk_back_forward_list_item.h"
 #include "ewk_color_picker.h"

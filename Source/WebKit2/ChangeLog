@@ -1,3 +1,52 @@
+2012-11-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add Ewk_Auth_Request API
+        https://bugs.webkit.org/show_bug.cgi?id=100858
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Ewk_Auth_Request API for the client to handle
+        HTTP authentication.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        (EwkViewCallbacks):
+        * UIProcess/API/efl/ewk_auth_request.cpp: Added.
+        (Ewk_Auth_Request::Ewk_Auth_Request):
+        (Ewk_Auth_Request::~Ewk_Auth_Request):
+        (Ewk_Auth_Request::suggestedUsername):
+        (Ewk_Auth_Request::realm):
+        (Ewk_Auth_Request::host):
+        (Ewk_Auth_Request::cancel):
+        (Ewk_Auth_Request::authenticate):
+        (Ewk_Auth_Request::isRetrying):
+        (ewk_auth_request_ref):
+        (ewk_auth_request_unref):
+        (ewk_auth_request_suggested_username_get):
+        (ewk_auth_request_cancel):
+        (ewk_auth_request_authenticate):
+        (ewk_auth_request_retrying_get):
+        (ewk_auth_request_realm_get):
+        (ewk_auth_request_host_get):
+        * UIProcess/API/efl/ewk_auth_request.h: Added.
+        * UIProcess/API/efl/ewk_auth_request_private.h: Added.
+        (WebKit):
+        (Ewk_Auth_Request):
+        (Ewk_Auth_Request::create):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_auth_request.cpp: Added corresponding API tests.
+        (serverCallback):
+        (onAuthenticationRequest):
+        (TEST_F):
+        (onResourceLoadResponse):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didReceiveAuthenticationChallengeInFrame):
+        (WebKit):
+        (WebKit::PageLoadClientEfl::PageLoadClientEfl):
+        * UIProcess/efl/PageLoadClientEfl.h:
+        (PageLoadClientEfl):
+
 2012-11-01  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         Fix the Mac breakage

@@ -66,7 +66,7 @@ static ProtectionSpace protectionSpaceFromSoupAuthAndMessage(SoupAuth* soupAuth,
 AuthenticationChallenge::AuthenticationChallenge(SoupSession* soupSession, SoupMessage* soupMessage, SoupAuth* soupAuth, bool retrying, AuthenticationClient* client)
     : AuthenticationChallengeBase(protectionSpaceFromSoupAuthAndMessage(soupAuth, soupMessage),
         Credential(), // proposedCredentials
-        retrying ? 0 : 1, // previousFailureCount
+        retrying ? 1 : 0, // previousFailureCount
         soupMessage, // failureResponse
         ResourceError::authenticationError(soupMessage))
     , m_soupSession(soupSession)

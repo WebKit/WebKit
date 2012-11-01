@@ -26,6 +26,8 @@
  *
  * The following signals (see evas_object_smart_callback_add()) are emitted:
  *
+ * - "authentication,request", Ewk_Auth_Request*: reports that user authentication was requested. Call
+ *   ewk_auth_request_ref() on the request object to process the authentication asynchronously.
  * - "back,forward,list,changed", void: reports that the view's back / forward list had changed.
  * - "close,window", void: window is closed.
  * - "create,window", Evas_Object**: a new window is created.
