@@ -1,3 +1,22 @@
+2012-11-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: expose Inspector.detached event factory to the embedder.
+        https://bugs.webkit.org/show_bug.cgi?id=100967
+
+        Reviewed by Vsevolod Vlasov.
+
+        That way embedder will be able to send messages on behalf of the backend being destructed.
+
+        * public/WebDevToolsAgent.h:
+        (WebDevToolsAgent):
+        * src/WebDevToolsAgentImpl.cpp:
+        (SerializingFrontendChannel):
+        (WebKit::SerializingFrontendChannel::sendMessageToFrontend):
+        (WebKit::WebDevToolsAgent::inspectorDetachedEvent):
+        (WebKit):
+        (WebKit::WebDevToolsAgent::workerDisconnectedFromWorkerEvent):
+        (WebKit::WebDevToolsAgent::disconnectEventAsText):
+
 2012-11-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         [Chromium] debug builds: Use after free under ~PageOverlay()

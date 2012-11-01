@@ -348,6 +348,15 @@ private:
     double m_originalZoomFactor;
 };
 
+class SerializingFrontendChannel : public InspectorFrontendChannel {
+public:
+    virtual bool sendMessageToFrontend(const String& message)
+    {
+        m_message = message;
+        return true;
+    }
+    String m_message;
+};
 
 WebDevToolsAgentImpl::WebDevToolsAgentImpl(
     WebViewImpl* webViewImpl,
@@ -685,22 +694,28 @@ void WebDevToolsAgent::processPendingMessages()
     PageScriptDebugServer::shared().runPendingTasks();
 }
 
-WebString WebDevToolsAgent::disconnectEventAsText()
+WebString WebDevToolsAgent::inspectorDetachedEvent(const WebString& reason)
 {
-    class ChannelImpl : public InspectorFrontendChannel {
-    public:
-        virtual bool sendMessageToFrontend(const String& message)
-        {
-            m_message = message;
-            return true;
-        }
-        String m_message;
-    } channel;
+    SerializingFrontendChannel channel;
+    InspectorFrontend::Inspector inspector(&channel);
+    inspector.detached(reason);
+    return channel.m_message;
+}
+
+WebString WebDevToolsAgent::workerDisconnectedFromWorkerEvent()
+{
+    SerializingFrontendChannel channel;
 #if ENABLE(WORKERS)
     InspectorFrontend::Worker inspector(&channel);
     inspector.disconnectedFromWorker();
 #endif
     return channel.m_message;
+}
+
+// FIXME: remove this once migrated to workerDisconnectedFromWorkerEvent().
+WebString WebDevToolsAgent::disconnectEventAsText()
+{
+    return WebDevToolsAgent::workerDisconnectedFromWorkerEvent();
 }
 
 } // namespace WebKit
