@@ -1,3 +1,9 @@
+2012-11-01  Pavel Podivilov  <podivilov@google.com>
+
+        [chromium] Unreviewed, remove several tests that started to pass from TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-31  Takashi Sakamoto  <tasak@google.com>
 
         [Refactoring] Move initial style setting for ProgressValueElement from attach method to createShadowSubtree method in HTMLProgressElement.

@@ -2124,10 +2124,6 @@ crbug.com/36966 fast/loader/about-blank-hash-kept.html [ Failure ]
 # New test, added http://trac.webkit.org/changeset/55546
 crbug.com/37896 [ Android Linux Win ] fast/multicol/hit-test-above-or-below.html [ Failure ]
 
-# WebKit roll 56197:56239.
-# Needs testRunner.setMediaType() (implemented on Qt only)
-crbug.com/38656 fast/media/print-restores-previous-mediatype.html [ Failure ]
-
 # Needs testRunner.setViewModeMediaFeature()
 crbug.com/40680 fast/media/view-mode-media-feature.html
 crbug.com/40680 fast/media/media-query-list-02.html
@@ -3437,7 +3433,6 @@ webkit.org/b/79540 [ Debug ] fast/files/workers/worker-read-blob-sync.html [ Cra
 
 # Shadow DOM for replaced elements is not rendered correctly yet.
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-complex-shadow.html [ ImageOnlyFailure ]
-webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-only-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-without-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91487 fast/dom/shadow/shadowdom-for-select-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91487 fast/dom/shadow/shadowdom-for-select-without-shadow.html [ ImageOnlyFailure ]
@@ -3645,7 +3640,7 @@ webkit.org/b/93488 fast/notifications/notifications-permission.html [ Skip ]
 
 webkit.org/b/93799 [ Mac ] fast/dom/HTMLMeterElement/meter-optimums.html [ Failure Pass ]
 
-webkit.org/b/93801 [ Lion ] fast/speech/input-appearance-searchandspeech.html [ ImageOnlyFailure Pass ]
+webkit.org/b/93801 [ Mac ] fast/speech/input-appearance-searchandspeech.html [ ImageOnlyFailure Pass ]
 
 # Flaky
 webkit.org/b/93938 [ Debug ] fast/forms/range/slider-delete-while-dragging-thumb.html [ Failure Pass ]
@@ -3947,6 +3942,7 @@ crbug.com/150010 platform/chromium/virtual/softwarecompositing/culling/filter-oc
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-blur.html [ ImageOnlyFailure ]
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/flat-with-transformed-child.html [ ImageOnlyFailure ]
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/masks [ ImageOnlyFailure ]
+crbug.com/150010 platform/chromium/virtual/softwarecompositing/masks/layer-mask-placement.html [ Pass ]
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/masks/mask-of-clipped-layer.html [ Pass ]
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections [ ImageOnlyFailure ]
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/backface-hidden-reflection.html [ Pass ]
@@ -4100,9 +4096,6 @@ Bug(senorblanco) http/tests/security/isolatedWorld/top-properties.html [ Crash P
 Bug(senorblanco) http/tests/security/isolatedWorld/userGestureEvents.html [ Crash Pass ]
 Bug(senorblanco) http/tests/security/isolatedWorld/global-variables.html [ Crash Pass ]
 Bug(senorblanco) http/tests/security/isolatedWorld/body-prototype.html [ Crash Pass ]
-
-# Failing since r133095 (which is CSP-related, not calendar-related?)
-Bug(senorblanco) platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure ]
 
 # Failing since r133069 (maybe debug-only?  Update after more results are in)
 Bug(senorblanco) editing/pasteboard/file-drag-to-editable.html [ Failure Pass ]
