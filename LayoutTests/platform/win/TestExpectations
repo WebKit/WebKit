@@ -2378,6 +2378,8 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing
 
+webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
+
 # https://bugs.webkit.org/show_bug.cgi?id=99567
 # Not supported on Mac or Windows ports
 inspector/elements/update-shadowdom.html

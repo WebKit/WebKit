@@ -1,3 +1,24 @@
+2012-11-01  Enrica Casucci  <enrica@apple.com>
+
+        Part2 of: Extend -webkit-user-select with new value "all"
+        <rdar://problem/10161404>
+        https://bugs.webkit.org/show_bug.cgi?id=91912
+
+        Reviewed by Ryosuke Niwa.
+
+        Testing moving and extending selections with the new CSS propertyvalue, with mouse movements
+        and with the keyboard.
+        Updated test expectations for all the platforms, since this is only enabled for the Mac port.
+
+        * editing/selection/user-select-all-selection-expected.txt: Added.
+        * editing/selection/user-select-all-selection.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/efl/TestExpectations:
+
+
 2012-11-01  David Barton  <dbarton@mathscribe.com>
 
         REGRESSION (r128837): mathml/presentation/subsup.xhtml became flaky

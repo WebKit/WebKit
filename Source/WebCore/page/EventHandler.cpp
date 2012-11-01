@@ -418,14 +418,21 @@ bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targe
     if (!dispatchSelectStart(targetNode))
         return false;
 
-    if (newSelection.isRange())
+    VisibleSelection selection(newSelection);
+#if ENABLE(USERSELECT_ALL)
+    if (Node* rootUserSelectAll = Position::rootUserSelectAllForNode(targetNode)) {
+        selection.setBase(positionBeforeNode(rootUserSelectAll).upstream(CanCrossEditingBoundary));
+        selection.setExtent(positionAfterNode(rootUserSelectAll).downstream(CanCrossEditingBoundary));
+    }
+#endif
+    if (selection.isRange())
         m_selectionInitiationState = ExtendedSelection;
     else {
         granularity = CharacterGranularity;
         m_selectionInitiationState = PlacedCaret;
     }
 
-    m_frame->selection()->setNonDirectionalSelectionIfNeeded(newSelection, granularity);
+    m_frame->selection()->setNonDirectionalSelectionIfNeeded(selection, granularity);
 
     return true;
 }
@@ -844,7 +851,25 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
         newSelection = VisibleSelection(targetPosition);
     }
 
-    newSelection.setExtent(targetPosition);
+#if ENABLE(USERSELECT_ALL)
+    Node* rootUserSelectAllForMousePressNode = Position::rootUserSelectAllForNode(m_mousePressNode.get());
+    if (rootUserSelectAllForMousePressNode && rootUserSelectAllForMousePressNode == Position::rootUserSelectAllForNode(target)) {
+        newSelection.setBase(positionBeforeNode(rootUserSelectAllForMousePressNode).upstream(CanCrossEditingBoundary));
+        newSelection.setExtent(positionAfterNode(rootUserSelectAllForMousePressNode).downstream(CanCrossEditingBoundary));
+    } else {
+        // Reset base for user select all when base is inside user-select-all area and extent < base.
+        if (rootUserSelectAllForMousePressNode && comparePositions(target->renderer()->positionForPoint(hitTestResult.localPoint()), m_mousePressNode->renderer()->positionForPoint(m_dragStartPos)) < 0)
+            newSelection.setBase(positionAfterNode(rootUserSelectAllForMousePressNode).downstream(CanCrossEditingBoundary));
+        
+        Node* rootUserSelectAllForTarget = Position::rootUserSelectAllForNode(target);
+        if (rootUserSelectAllForTarget && m_mousePressNode->renderer() && comparePositions(target->renderer()->positionForPoint(hitTestResult.localPoint()), m_mousePressNode->renderer()->positionForPoint(m_dragStartPos)) < 0)
+            newSelection.setExtent(positionBeforeNode(rootUserSelectAllForTarget).upstream(CanCrossEditingBoundary));
+        else if (rootUserSelectAllForTarget && m_mousePressNode->renderer())
+            newSelection.setExtent(positionAfterNode(rootUserSelectAllForTarget).downstream(CanCrossEditingBoundary));
+        else
+            newSelection.setExtent(targetPosition);
+    }
+#endif
     if (m_frame->selection()->granularity() != CharacterGranularity)
         newSelection.expandUsingGranularity(m_frame->selection()->granularity());
 

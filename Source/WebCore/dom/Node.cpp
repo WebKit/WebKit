@@ -717,16 +717,16 @@ const AtomicString& Node::virtualNamespaceURI() const
     return nullAtom;
 }
 
-bool Node::isContentEditable()
+bool Node::isContentEditable(UserSelectAllTreatment treatment)
 {
     document()->updateStyleIfNeeded();
-    return rendererIsEditable(Editable);
+    return rendererIsEditable(Editable, treatment);
 }
 
 bool Node::isContentRichlyEditable()
 {
     document()->updateStyleIfNeeded();
-    return rendererIsEditable(RichlyEditable);
+    return rendererIsEditable(RichlyEditable, UserSelectAllIsAlwaysNonEditable);
 }
 
 void Node::inspect()
@@ -737,7 +737,7 @@ void Node::inspect()
 #endif
 }
 
-bool Node::rendererIsEditable(EditableLevel editableLevel) const
+bool Node::rendererIsEditable(EditableLevel editableLevel, UserSelectAllTreatment treatment) const
 {
     if (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable() && !shadowRoot())
         return true;
@@ -748,6 +748,12 @@ bool Node::rendererIsEditable(EditableLevel editableLevel) const
 
     for (const Node* node = this; node; node = node->parentNode()) {
         if ((node->isHTMLElement() || node->isDocumentNode()) && node->renderer()) {
+#if ENABLE(USERSELECT_ALL)
+            // Elements with user-select: all style are considered atomic
+            // therefore non editable.
+            if (node->renderer()->style()->userSelect() == SELECT_ALL && treatment == UserSelectAllIsAlwaysNonEditable)
+                return false;
+#endif
             switch (node->renderer()->style()->userModify()) {
             case READ_ONLY:
                 return false;
@@ -785,7 +791,7 @@ bool Node::isEditableToAccessibility(EditableLevel editableLevel) const
 
 bool Node::shouldUseInputMethod()
 {
-    return isContentEditable();
+    return isContentEditable(UserSelectAllIsAlwaysNonEditable);
 }
 
 RenderBox* Node::renderBox() const
@@ -2746,7 +2752,7 @@ bool Node::willRespondToMouseClickEvents()
 {
     if (disabled())
         return false;
-    return isContentEditable() || hasEventListeners(eventNames().mouseupEvent) || hasEventListeners(eventNames().mousedownEvent) || hasEventListeners(eventNames().clickEvent) || hasEventListeners(eventNames().DOMActivateEvent);
+    return isContentEditable(UserSelectAllIsAlwaysNonEditable) || hasEventListeners(eventNames().mouseupEvent) || hasEventListeners(eventNames().mousedownEvent) || hasEventListeners(eventNames().clickEvent) || hasEventListeners(eventNames().DOMActivateEvent);
 }
 
 bool Node::willRespondToTouchEvents()

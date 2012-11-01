@@ -1,3 +1,75 @@
+2012-11-01  Enrica Casucci  <enrica@apple.com>
+
+        Part2 of: Extend -webkit-user-select with new value "all"
+        <rdar://problem/10161404>
+        https://bugs.webkit.org/show_bug.cgi?id=91912
+
+        Reviewed by Ryosuke Niwa.
+
+        The new value "all" for -webkit-user-select property gives content none-or-all selection option.
+        The patch was originally prepared by Alice Cheng but the approach has been changed.
+        The idea is to treat these elements like non editable, meaning that we should skip over them entirely
+        when moving the cursor and a deletion should delete the element and all its descentants at once.
+        The key change is in Node::rendererIsEditable where we now return false if the element style is
+        userSelect: all. The other change is in the way we create the selection on mouse click and dragging
+        over the element. In both cases we force the selection to extend over the entire element with
+        the user-select: all attribute.
+        This is currently enabled only for the Mac port.
+
+        Test: editing/selection/user-select-all-selection.html
+
+        * dom/Node.cpp: Added a parameter to isContentEditable to behave differently
+        when called from JavaScript. Internally isContentEditable returns false on
+        nodes with user-select: all style.
+        (WebCore::Node::isContentEditable):
+        (WebCore::Node::isContentRichlyEditable):
+        (WebCore::Node::rendererIsEditable):
+        (WebCore::Node::shouldUseInputMethod):
+        (WebCore::Node::willRespondToMouseClickEvents):
+        * dom/Node.h:
+        (WebCore::Node::rendererIsEditable):
+        (WebCore::Node::rendererIsRichlyEditable):
+        * dom/Position.cpp:
+        (WebCore::Position::nodeIsUserSelectAll): Added.
+        (WebCore::Position::rootUserSelectAllForNode): Added.
+        * dom/Position.h: Added static functions described above.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement): Added parameter to
+        isContentEditable() call.
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement): Added parameter to
+        isContentEditable() call.
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::doApply): Added parameter to
+        isContentEditable() call.
+        * editing/FrameSelection.cpp:
+        (WebCore::adjustForwardPositionForUserSelectAll): New helper function.
+        (WebCore::adjustBackwardPositionForUserSelectAll): New helper function.
+        (WebCore::FrameSelection::modifyExtendingRight):
+        (WebCore::FrameSelection::modifyExtendingForward):
+        (WebCore::FrameSelection::modifyExtendingLeft):
+        (WebCore::FrameSelection::modifyExtendingBackward):
+        (WebCore::FrameSelection::modify):
+        (WebCore::CaretBase::invalidateCaretRect): Added parameter to
+        isContentEditable() call.
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply): Ditto.
+        (WebCore::InsertNodeBeforeCommand::doUnapply): Ditto.
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::doApply): Ditto.
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph): We should not consider a paragraph break and element
+        with user-select: all style, like we do at the border of editability.
+        (WebCore::endOfParagraph): Ditto.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateSelectionForMouseDownDispatchingSelectStart): Create a selection
+        around the element whose style is user-select: all.
+        (WebCore::EventHandler::updateSelectionForMouseDrag): Ditto.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::selectionState): Fixed a bug uncovered during this work.
+        If the selection starts in one of the leaf boxes and after we encounter one with SelectionNone,
+        we should return the selection state as SelectionBoth, assuming we went past the end selection.
+        This avoids doing an incorrect gap filling for the selection highlighting.
+
 2012-11-01  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Fix Windows build by re-adding a #include

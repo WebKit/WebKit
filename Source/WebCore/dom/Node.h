@@ -375,16 +375,20 @@ public:
     virtual bool isMouseFocusable() const;
     virtual Node* focusDelegate();
 
-    bool isContentEditable();
+    enum UserSelectAllTreatment {
+        UserSelectAllDoesNotAffectEditability,
+        UserSelectAllIsAlwaysNonEditable
+    };
+    bool isContentEditable(UserSelectAllTreatment = UserSelectAllDoesNotAffectEditability);
     bool isContentRichlyEditable();
 
     void inspect();
 
-    bool rendererIsEditable(EditableType editableType = ContentIsEditable) const
+    bool rendererIsEditable(EditableType editableType = ContentIsEditable, UserSelectAllTreatment treatment = UserSelectAllIsAlwaysNonEditable) const
     {
         switch (editableType) {
         case ContentIsEditable:
-            return rendererIsEditable(Editable);
+            return rendererIsEditable(Editable, treatment);
         case HasEditableAXRole:
             return isEditableToAccessibility(Editable);
         }
@@ -396,7 +400,7 @@ public:
     {
         switch (editableType) {
         case ContentIsEditable:
-            return rendererIsEditable(RichlyEditable);
+            return rendererIsEditable(RichlyEditable, UserSelectAllIsAlwaysNonEditable);
         case HasEditableAXRole:
             return isEditableToAccessibility(RichlyEditable);
         }
@@ -768,7 +772,7 @@ private:
     void setDocument(Document*);
 
     enum EditableLevel { Editable, RichlyEditable };
-    bool rendererIsEditable(EditableLevel) const;
+    bool rendererIsEditable(EditableLevel, UserSelectAllTreatment = UserSelectAllIsAlwaysNonEditable) const;
     bool isEditableToAccessibility(EditableLevel) const;
 
     void setStyleChange(StyleChangeType);

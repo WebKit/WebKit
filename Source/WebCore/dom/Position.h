@@ -189,7 +189,10 @@ public:
 
     static bool hasRenderedNonAnonymousDescendantsWithHeight(RenderObject*);
     static bool nodeIsUserSelectNone(Node*);
-
+#if ENABLE(USERSELECT_ALL)
+    static bool nodeIsUserSelectAll(const Node*);
+    static Node* rootUserSelectAllForNode(Node*);
+#endif
     static ContainerNode* findParent(const Node*);
     
     void debugPosition(const char* msg = "") const;

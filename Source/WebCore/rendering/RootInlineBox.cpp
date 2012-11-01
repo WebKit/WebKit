@@ -499,6 +499,10 @@ RenderObject::SelectionState RootInlineBox::selectionState()
                  ((boxState == RenderObject::SelectionStart || boxState == RenderObject::SelectionEnd) &&
                   (state == RenderObject::SelectionNone || state == RenderObject::SelectionInside)))
             state = boxState;
+        else if (boxState == RenderObject::SelectionNone && state == RenderObject::SelectionStart) {
+            // We are past the end of the selection.
+            state = RenderObject::SelectionBoth;
+        }
         if (state == RenderObject::SelectionBoth)
             break;
     }

@@ -47,7 +47,7 @@ void DeleteFromTextNodeCommand::doApply()
 {
     ASSERT(m_node);
 
-    if (!m_node->isContentEditable())
+    if (!m_node->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable))
         return;
 
     ExceptionCode ec = 0;
