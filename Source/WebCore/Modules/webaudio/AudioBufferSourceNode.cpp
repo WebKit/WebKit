@@ -195,35 +195,26 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     size_t bufferLength = buffer()->length();
     double bufferSampleRate = buffer()->sampleRate();
 
-    // Calculate the start and end frames in our buffer that we want to play.
-    // If m_isGrain is true, then we will be playing a portion of the total buffer.
-    unsigned startFrame = m_isGrain ? AudioUtilities::timeToSampleFrame(m_grainOffset, bufferSampleRate) : 0;
-
     // Avoid converting from time to sample-frames twice by computing
     // the grain end time first before computing the sample frame.
     unsigned endFrame = m_isGrain ? AudioUtilities::timeToSampleFrame(m_grainOffset + m_grainDuration, bufferSampleRate) : bufferLength;
     
-    ASSERT(endFrame >= startFrame);
-    if (endFrame < startFrame)
-        return false;
-    
     // This is a HACK to allow for HRTF tail-time - avoids glitch at end.
     // FIXME: implement tailTime for each AudioNode for a more general solution to this problem.
+    // https://bugs.webkit.org/show_bug.cgi?id=77224
     if (m_isGrain)
         endFrame += 512;
 
     // Do some sanity checking.
-    if (startFrame >= bufferLength)
-        startFrame = !bufferLength ? 0 : bufferLength - 1;
     if (endFrame > bufferLength)
         endFrame = bufferLength;
     if (m_virtualReadIndex >= endFrame)
-        m_virtualReadIndex = startFrame; // reset to start
+        m_virtualReadIndex = 0; // reset to start
 
     // If the .loop attribute is true, then values of m_loopStart == 0 && m_loopEnd == 0 implies
     // that we should use the entire buffer as the loop, otherwise use the loop values in m_loopStart and m_loopEnd.
     double virtualEndFrame = endFrame;
-    double virtualDeltaFrames = endFrame - startFrame;
+    double virtualDeltaFrames = endFrame;
 
     if (loop() && (m_loopStart || m_loopEnd) && m_loopStart >= 0 && m_loopEnd > 0 && m_loopStart < m_loopEnd) {
         // Convert from seconds to sample-frames.
@@ -233,6 +224,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
         virtualEndFrame = min(loopEndFrame, virtualEndFrame);
         virtualDeltaFrames = virtualEndFrame - loopStartFrame;
     }
+
 
     double pitchRate = totalPitchRate();
 
@@ -372,6 +364,12 @@ unsigned AudioBufferSourceNode::numberOfChannels()
     return output(0)->numberOfChannels();
 }
 
+void AudioBufferSourceNode::startGrain(double when, double grainOffset)
+{
+    // Duration of 0 has special value, meaning calculate based on the entire buffer's duration.
+    startGrain(when, grainOffset, 0);
+}
+
 void AudioBufferSourceNode::startGrain(double when, double grainOffset, double grainDuration)
 {
     ASSERT(isMainThread());
@@ -385,21 +383,22 @@ void AudioBufferSourceNode::startGrain(double when, double grainOffset, double g
     // Do sanity checking of grain parameters versus buffer size.
     double bufferDuration = buffer()->duration();
 
-    if (grainDuration > bufferDuration)
-        return; // FIXME: maybe should throw exception - consider in specification.
-    
-    double maxGrainOffset = bufferDuration - grainDuration;
-    maxGrainOffset = max(0.0, maxGrainOffset);
-
     grainOffset = max(0.0, grainOffset);
-    grainOffset = min(maxGrainOffset, grainOffset);
+    grainOffset = min(bufferDuration, grainOffset);
     m_grainOffset = grainOffset;
 
+    // Handle default/unspecified duration.
+    double maxDuration = bufferDuration - grainOffset;
+    if (!grainDuration)
+        grainDuration = maxDuration;
+
+    grainDuration = max(0.0, grainDuration);
+    grainDuration = min(maxDuration, grainDuration);
     m_grainDuration = grainDuration;
-    
+
     m_isGrain = true;
     m_startTime = when;
-
+    
     // We call timeToSampleFrame here since at playbackRate == 1 we don't want to go through linear interpolation
     // at a sub-sample position since it will degrade the quality.
     // When aligned to the sample-frame the playback will be identical to the PCM data stored in the buffer.

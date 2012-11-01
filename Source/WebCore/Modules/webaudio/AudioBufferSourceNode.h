@@ -62,6 +62,7 @@ public:
     unsigned numberOfChannels();
                     
     // Play-state
+    void startGrain(double when, double grainOffset);
     void startGrain(double when, double grainOffset, double grainDuration);
 
 #if ENABLE(LEGACY_WEB_AUDIO)

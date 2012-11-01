@@ -1,3 +1,23 @@
+2012-10-31  Chris Rogers  <crogers@google.com>
+
+        Implement optional arguments in AudioBufferSourceNode start() method
+        https://bugs.webkit.org/show_bug.cgi?id=100894
+
+        Reviewed by Kenneth Russell.
+
+        The start() method should be able to take 1, 2, or 3 arguments, optionally supporting
+        offset and duration.  Currently, only 1 and 3 arguments are supported.
+
+        Test: webaudio/audiobuffersource-start.html
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::renderFromBuffer):
+        (WebCore::AudioBufferSourceNode::startGrain):
+        (WebCore):
+        * Modules/webaudio/AudioBufferSourceNode.h:
+        (AudioBufferSourceNode):
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+
 2012-10-31  Mike West  <mkwst@chromium.org>
 
         Implement the canonical "Content-Security-Policy" header.

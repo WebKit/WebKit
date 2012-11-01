@@ -46,6 +46,7 @@
     attribute double loopEnd;
 
     [V8MeasureAs=WebAudioStart] void start(in double when);
+    [V8MeasureAs=WebAudioStart, ImplementedAs=startGrain] void start(in double when, in double grainOffset);
     [V8MeasureAs=WebAudioStart, ImplementedAs=startGrain] void start(in double when, in double grainOffset, in double grainDuration);
     void stop(in double when);
 

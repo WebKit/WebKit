@@ -1,3 +1,18 @@
+2012-10-31  Chris Rogers  <crogers@google.com>
+
+        Implement optional arguments in AudioBufferSourceNode start() method
+        https://bugs.webkit.org/show_bug.cgi?id=100894
+
+        Reviewed by Kenneth Russell.
+
+        * webaudio/audiobuffersource-loop-comprehensive.html:
+        * webaudio/audiobuffersource-start-expected.txt: Added.
+        * webaudio/audiobuffersource-start.html: Added.
+        * webaudio/resources/audiobuffersource-testing.js: Added.
+        (createTestBuffer):
+        (checkSingleTest):
+        (checkAllTests):
+
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.

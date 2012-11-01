@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script src="resources/audio-testing.js"></script>
+<script src="resources/audiobuffersource-testing.js"></script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests AudioBufferSourceNode start() with a variety of offsets and durations.");
+
+// The following test cases assume an AudioBuffer of length 8 whose PCM data is a linear ramp, 0, 1, 2, 3,...
+
+var tests = [
+
+{ description: "start(when): implicitly play whole buffer from beginning to end",
+  offsetFrame: "none", durationFrames: "none", renderFrames: 16, playbackRate: 1, expected: [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0] },
+
+{ description: "start(when, 0): play whole buffer from beginning to end explicitly giving offset of 0",
+  offsetFrame: 0, durationFrames: "none", renderFrames: 16, playbackRate: 1, expected: [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0] },
+
+{ description: "start(when, 0, 8_frames): play whole buffer from beginning to end explicitly giving offset of 0 and duration of 8 frames",
+  offsetFrame: 0, durationFrames: 8, renderFrames: 16, playbackRate: 1, expected: [0,1,2,3,4,5,6,7,0,0,0,0,0,0,0,0] },
+
+{ description: "start(when, 4_frames): play with explicit non-zero offset",
+  offsetFrame: 4, durationFrames: "none", renderFrames: 16, playbackRate: 1, expected: [4,5,6,7,0,0,0,0,0,0,0,0,0,0,0,0] },
+
+{ description: "start(when, 4_frames, 4_frames): play with explicit non-zero offset and duration",
+  offsetFrame: 4, durationFrames: 4, renderFrames: 16, playbackRate: 1, expected: [4,5,6,7,0,0,0,0,0,0,0,0,0,0,0,0] },
+
+// Enable test when AudioBufferSourceNode hack is fixed: https://bugs.webkit.org/show_bug.cgi?id=77224
+// { description: "start(when, 3_frames, 3_frames): play a middle section with explicit offset and duration",
+//   offsetFrame: 3, durationFrames: 3, renderFrames: 16, playbackRate: 1, expected: [4,5,6,7,0,0,0,0,0,0,0,0,0,0,0,0] },
+
+];
+
+var sampleRate = 44100;
+var buffer;
+var bufferFrameLength = 8;
+var testSpacingFrames = 32;
+var testSpacingSeconds = testSpacingFrames / sampleRate;
+var totalRenderLengthFrames = tests.length * testSpacingFrames;
+
+function runLoopTest(context, testNumber, test) {
+    var source = context.createBufferSource();
+
+    source.buffer = buffer;
+    source.playbackRate.value = test.playbackRate;
+
+    source.connect(context.destination);
+
+    // Render each test one after the other, spaced apart by testSpacingSeconds.
+    var startTime = testNumber * testSpacingSeconds;
+
+    if (test.offsetFrame == "none" && test.durationFrames == "none") {
+        source.start(startTime);
+    } else if (test.durationFrames == "none") {
+        var offset = test.offsetFrame / context.sampleRate;
+        source.start(startTime, offset);
+    } else {
+        var offset = test.offsetFrame / context.sampleRate;
+        var duration = test.durationFrames / context.sampleRate;
+        source.start(startTime, offset, duration);
+    }
+}
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    window.jsTestIsAsync = true;
+
+    // Create offline audio context.
+    var context = new webkitAudioContext(1, totalRenderLengthFrames, sampleRate);
+    buffer = createTestBuffer(context, bufferFrameLength);
+
+    for (var i = 0; i < tests.length; ++i)
+        runLoopTest(context, i, tests[i]);
+
+    context.oncomplete = checkAllTests;
+    context.startRendering();
+}
+
+runTest();
+successfullyParsed = true;
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
