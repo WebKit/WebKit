@@ -1,5 +1,12 @@
 2012-11-01  Pavel Podivilov  <podivilov@google.com>
 
+        [chromium] Unreviewed, two fast/images/exif-orientation-* tests now pass.
+
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/exif-orientation-css-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
+2012-11-01  Pavel Podivilov  <podivilov@google.com>
+
         [chromium] Unreviewed, remove several tests that started to pass from TestExpectations.
 
         * platform/chromium/TestExpectations:
