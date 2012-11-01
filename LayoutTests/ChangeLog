@@ -1,3 +1,13 @@
+2012-11-01  Mike West  <mkwst@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        Skipping http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
+        as it's consistently leaking state into the next text (object-src-url-allowed.html).
+        Filed https://bugs.webkit.org/show_bug.cgi?id=100955 to follow up.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-01  Stephen Chenney  <schenney@chromium.org>
 
         SVG as an image may recreate the renderer on zoom
