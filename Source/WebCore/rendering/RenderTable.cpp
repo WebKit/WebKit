@@ -786,6 +786,8 @@ RenderTableCol* RenderTable::colElement(unsigned col, bool* startEdge, bool* end
 
 void RenderTable::recalcSections() const
 {
+    ASSERT(m_needsSectionRecalc);
+
     m_head = 0;
     m_foot = 0;
     m_firstBody = 0;
