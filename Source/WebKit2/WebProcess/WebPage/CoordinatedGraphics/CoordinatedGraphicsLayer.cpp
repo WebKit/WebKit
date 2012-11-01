@@ -47,15 +47,6 @@ static HashMap<WebLayerID, CoordinatedGraphicsLayer*>& layerByIDMap()
     return globalMap;
 }
 
-CoordinatedGraphicsLayer* CoordinatedGraphicsLayer::layerByID(WebKit::WebLayerID id)
-{
-    HashMap<WebLayerID, CoordinatedGraphicsLayer*>& table = layerByIDMap();
-    HashMap<WebLayerID, CoordinatedGraphicsLayer*>::iterator it = table.find(id);
-    if (it == table.end())
-        return 0;
-    return it->value;
-}
-
 static WebLayerID toWebLayerID(GraphicsLayer* layer)
 {
     return layer ? toCoordinatedGraphicsLayer(layer)->id() : 0;
@@ -136,11 +127,6 @@ CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
         m_CoordinatedGraphicsLayerClient->detachLayer(this);
     }
     willBeDestroyed();
-}
-
-void CoordinatedGraphicsLayer::willBeDestroyed()
-{
-    GraphicsLayer::willBeDestroyed();
 }
 
 bool CoordinatedGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)

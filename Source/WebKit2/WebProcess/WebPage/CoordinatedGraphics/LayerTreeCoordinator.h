@@ -44,8 +44,6 @@ public:
     static PassRefPtr<LayerTreeCoordinator> create(WebPage*);
     virtual ~LayerTreeCoordinator();
 
-    static bool supportsAcceleratedCompositing();
-
     virtual const LayerTreeContext& layerTreeContext() { return m_layerTreeContext; }
     virtual void setLayerFlushSchedulingEnabled(bool);
     virtual void scheduleLayerFlush();

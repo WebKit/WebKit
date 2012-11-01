@@ -46,9 +46,11 @@ class LayerTreeRenderer;
 class WebLayerUpdateInfo;
 
 class LayerTreeCoordinatorProxy {
+    WTF_MAKE_NONCOPYABLE(LayerTreeCoordinatorProxy);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    LayerTreeCoordinatorProxy(DrawingAreaProxy*);
-    virtual ~LayerTreeCoordinatorProxy();
+    explicit LayerTreeCoordinatorProxy(DrawingAreaProxy*);
+    ~LayerTreeCoordinatorProxy();
     void setCompositingLayerState(WebLayerID, const WebLayerInfo&);
     void setCompositingLayerChildren(WebLayerID, const Vector<WebLayerID>&);
 #if ENABLE(CSS_FILTERS)

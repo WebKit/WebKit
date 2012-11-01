@@ -60,7 +60,7 @@ public:
         {
         }
     };
-    LayerTreeRenderer(LayerTreeCoordinatorProxy*);
+    explicit LayerTreeRenderer(LayerTreeCoordinatorProxy*);
     virtual ~LayerTreeRenderer();
     void purgeGLResources();
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, WebCore::TextureMapper::PaintFlags = 0);
@@ -75,7 +75,6 @@ public:
 
     void detach();
     void appendUpdate(const Function<void()>&);
-    void updateViewport();
     void setActive(bool);
 
     void deleteLayer(WebLayerID);
@@ -95,7 +94,6 @@ public:
     void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&);
     void setAnimationsLocked(bool);
 
-
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void requestAnimationFrame();
     void animationFrameReady();
@@ -113,8 +111,16 @@ private:
     virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const { return false; }
     virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const { return false; }
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&) { }
+    void updateViewport();
     void dispatchOnMainThread(const Function<void()>&);
     void adjustPositionForFixedLayers();
+
+    void assignImageToLayer(WebCore::GraphicsLayer*, int64_t imageID);
+    void ensureRootLayer();
+    void ensureLayer(WebLayerID);
+    void commitTileOperations();
+    void renderNextFrame();
+    void purgeBackingStores();
 
     typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerMap;
     WebCore::FloatSize m_contentsSize;
@@ -133,16 +139,6 @@ private:
     typedef HashMap<WebLayerID, RefPtr<WebCore::TextureMapperSurfaceBackingStore> > SurfaceBackingStoreMap;
     SurfaceBackingStoreMap m_surfaceBackingStores;
 #endif
-
-    void scheduleWebViewUpdate();
-    void synchronizeViewport();
-    void assignImageToLayer(WebCore::GraphicsLayer*, int64_t imageID);
-    void ensureRootLayer();
-    void ensureLayer(WebLayerID);
-    void commitTileOperations();
-    void syncAnimations();
-    void renderNextFrame();
-    void purgeBackingStores();
 
     LayerTreeCoordinatorProxy* m_layerTreeCoordinatorProxy;
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;

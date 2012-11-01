@@ -78,7 +78,7 @@ public:
 
 namespace WebCore {
 
-class CoordinatedGraphicsLayer : public WebCore::GraphicsLayer
+class CoordinatedGraphicsLayer : public GraphicsLayer
     , public TiledBackingStoreClient
     , public WebKit::CoordinatedTileClient {
 public:
@@ -86,93 +86,110 @@ public:
     virtual ~CoordinatedGraphicsLayer();
 
     // Reimplementations from GraphicsLayer.h.
-    bool setChildren(const Vector<GraphicsLayer*>&);
-    void addChild(GraphicsLayer*);
-    void addChildAtIndex(GraphicsLayer*, int);
-    void addChildAbove(GraphicsLayer*, GraphicsLayer*);
-    void addChildBelow(GraphicsLayer*, GraphicsLayer*);
-    bool replaceChild(GraphicsLayer*, GraphicsLayer*);
-    void removeFromParent();
-    void setPosition(const FloatPoint&);
-    void setAnchorPoint(const FloatPoint3D&);
-    void setSize(const FloatSize&);
-    void setTransform(const TransformationMatrix&);
-    void setChildrenTransform(const TransformationMatrix&);
-    void setPreserves3D(bool);
-    void setMasksToBounds(bool);
-    void setDrawsContent(bool);
-    void setContentsVisible(bool);
-    void setContentsOpaque(bool);
-    void setBackfaceVisibility(bool);
-    void setOpacity(float);
-    void setContentsRect(const IntRect&);
-    void setContentsToImage(Image*);
-    void setContentsToCanvas(PlatformLayer*);
-    void setMaskLayer(GraphicsLayer*);
-    void setReplicatedByLayer(GraphicsLayer*);
-    void setNeedsDisplay();
-    void setNeedsDisplayInRect(const FloatRect&);
-    void setContentsNeedsDisplay();
-    void setContentsScale(float);
-    void setVisibleContentRectTrajectoryVector(const FloatPoint&);
-    virtual void flushCompositingState(const FloatRect&);
-    virtual void flushCompositingStateForThisLayerOnly();
+    virtual bool setChildren(const Vector<GraphicsLayer*>&) OVERRIDE;
+    virtual void addChild(GraphicsLayer*) OVERRIDE;
+    virtual void addChildAtIndex(GraphicsLayer*, int) OVERRIDE;
+    virtual void addChildAbove(GraphicsLayer*, GraphicsLayer*) OVERRIDE;
+    virtual void addChildBelow(GraphicsLayer*, GraphicsLayer*) OVERRIDE;
+    virtual bool replaceChild(GraphicsLayer*, GraphicsLayer*) OVERRIDE;
+    virtual void removeFromParent() OVERRIDE;
+    virtual void setPosition(const FloatPoint&) OVERRIDE;
+    virtual void setAnchorPoint(const FloatPoint3D&) OVERRIDE;
+    virtual void setSize(const FloatSize&) OVERRIDE;
+    virtual void setTransform(const TransformationMatrix&) OVERRIDE;
+    virtual void setChildrenTransform(const TransformationMatrix&) OVERRIDE;
+    virtual void setPreserves3D(bool) OVERRIDE;
+    virtual void setMasksToBounds(bool) OVERRIDE;
+    virtual void setDrawsContent(bool) OVERRIDE;
+    virtual void setContentsVisible(bool) OVERRIDE;
+    virtual void setContentsOpaque(bool) OVERRIDE;
+    virtual void setBackfaceVisibility(bool) OVERRIDE;
+    virtual void setOpacity(float) OVERRIDE;
+    virtual void setContentsRect(const IntRect&) OVERRIDE;
+    virtual void setContentsToImage(Image*) OVERRIDE;
+    virtual void setContentsToCanvas(PlatformLayer*) OVERRIDE;
+    virtual void setMaskLayer(GraphicsLayer*) OVERRIDE;
+    virtual void setReplicatedByLayer(GraphicsLayer*) OVERRIDE;
+    virtual void setNeedsDisplay() OVERRIDE;
+    virtual void setNeedsDisplayInRect(const FloatRect&) OVERRIDE;
+    virtual void setContentsNeedsDisplay() OVERRIDE;
+    virtual void setContentsScale(float) OVERRIDE;
+    virtual void setVisibleContentRectTrajectoryVector(const FloatPoint&) OVERRIDE;
+    virtual void flushCompositingState(const FloatRect&) OVERRIDE;
+    virtual void flushCompositingStateForThisLayerOnly() OVERRIDE;
 #if ENABLE(CSS_FILTERS)
-    bool setFilters(const FilterOperations&);
+    virtual bool setFilters(const FilterOperations&) OVERRIDE;
 #endif
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize&, const Animation*, const String&, double) OVERRIDE;
+    virtual void pauseAnimation(const String&, double) OVERRIDE;
+    virtual void removeAnimation(const String&) OVERRIDE;
 
     void setRootLayer(bool);
 
     WebKit::WebLayerID id() const;
-    static CoordinatedGraphicsLayer* layerByID(WebKit::WebLayerID);
-    void didSynchronize();
-    Image* image() { return m_image.get(); }
 
-    bool fixedToViewport() const { return m_fixedToViewport; }
     void setFixedToViewport(bool isFixed) { m_fixedToViewport = isFixed; }
 
-    GraphicsLayer* maskTarget() const { return m_maskTarget; }
-    void setMaskTarget(GraphicsLayer* layer) { m_maskTarget = layer; }
     IntRect coverRect() const { return m_mainBackingStore ? m_mainBackingStore->mapToContents(m_mainBackingStore->coverRect()) : IntRect(); }
 
     static void initFactory();
 
     // TiledBackingStoreClient
-    virtual void tiledBackingStorePaintBegin();
-    virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&);
-    virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea);
-    virtual bool tiledBackingStoreUpdatesAllowed() const;
-    virtual IntRect tiledBackingStoreContentsRect();
-    virtual IntRect tiledBackingStoreVisibleRect();
-    virtual Color tiledBackingStoreBackgroundColor() const;
+    virtual void tiledBackingStorePaintBegin() OVERRIDE;
+    virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) OVERRIDE;
+    virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) OVERRIDE;
+    virtual bool tiledBackingStoreUpdatesAllowed() const OVERRIDE;
+    virtual IntRect tiledBackingStoreContentsRect() OVERRIDE;
+    virtual IntRect tiledBackingStoreVisibleRect() OVERRIDE;
+    virtual Color tiledBackingStoreBackgroundColor() const OVERRIDE;
 
     // CoordinatedTileClient
-    virtual void createTile(int tileID, const WebKit::SurfaceUpdateInfo&, const WebCore::IntRect&);
-    virtual void updateTile(int tileID, const WebKit::SurfaceUpdateInfo&, const WebCore::IntRect&);
-    virtual void removeTile(int tileID);
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, WebKit::ShareableSurface::Handle&, WebCore::IntPoint&);
+    virtual void createTile(int tileID, const WebKit::SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
+    virtual void updateTile(int tileID, const WebKit::SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
+    virtual void removeTile(int tileID) OVERRIDE;
+    virtual PassOwnPtr<GraphicsContext> beginContentUpdate(const IntSize&, WebKit::ShareableSurface::Handle&, IntPoint&) OVERRIDE;
 
     void setCoordinatedGraphicsLayerClient(WebKit::CoordinatedGraphicsLayerClient*);
-    void syncChildren();
+
+    void adjustVisibleRect();
+    void purgeBackingStores();
+    bool hasPendingVisibleChanges();
+
+private:
+    bool fixedToViewport() const { return m_fixedToViewport; }
+    void setMaskTarget(GraphicsLayer* layer) { m_maskTarget = layer; }
+
+    void notifyChange();
+    void didChangeLayerState();
+    void didChangeAnimations();
+    void didChangeGeometry();
+    void didChangeChildren();
+#if ENABLE(CSS_FILTERS)
+    void didChangeFilters();
+#endif
+
     void syncLayerState();
+    void syncAnimations();
+    void syncChildren();
 #if ENABLE(CSS_FILTERS)
     void syncFilters();
 #endif
     void syncCanvas();
     void ensureImageBackingStore();
-
-    void adjustVisibleRect();
-    bool isReadyForTileBufferSwap() const;
+    void computeTransformedVisibleRect();
     void updateContentBuffers();
-    void purgeBackingStores();
-    bool hasPendingVisibleChanges();
 
-    virtual bool addAnimation(const KeyframeValueList&, const IntSize&, const Animation*, const String&, double);
-    virtual void pauseAnimation(const String&, double);
-    virtual void removeAnimation(const String&);
+    void createBackingStore();
 
-private:
-    virtual void willBeDestroyed();
+    bool selfOrAncestorHaveNonAffineTransforms();
+    bool shouldUseTiledBackingStore();
+    void adjustContentsScale();
+
+    void setShouldUpdateVisibleRect();
+    float effectiveContentsScale();
+
+    void animationStartedTimerFired(Timer<CoordinatedGraphicsLayer>*);
+
     WebKit::WebLayerID m_id;
     WebKit::WebLayerInfo m_layerInfo;
     RefPtr<Image> m_image;
@@ -188,34 +205,12 @@ private:
     bool m_fixedToViewport : 1;
     bool m_canvasNeedsDisplay : 1;
 
-    void notifyChange();
-    void didChangeAnimations();
-    void didChangeGeometry();
-    void didChangeLayerState();
-    void didChangeChildren();
-#if ENABLE(CSS_FILTERS)
-    void didChangeFilters();
-#endif
-
     float m_effectiveOpacity;
     TransformationMatrix m_effectiveTransform;
 
-    void createBackingStore();
-
-    bool selfOrAncestorHaveNonAffineTransforms();
-    bool shouldUseTiledBackingStore();
-    void adjustContentsScale();
-    void computeTransformedVisibleRect();
-    void syncLayerParameters();
-    void syncAnimations();
-    void setShouldUpdateVisibleRect();
-    float effectiveContentsScale();
-
-    void animationStartedTimerFired(WebCore::Timer<CoordinatedGraphicsLayer>*);
-
     WebKit::CoordinatedGraphicsLayerClient* m_CoordinatedGraphicsLayerClient;
-    OwnPtr<WebCore::TiledBackingStore> m_mainBackingStore;
-    OwnPtr<WebCore::TiledBackingStore> m_previousBackingStore;
+    OwnPtr<TiledBackingStore> m_mainBackingStore;
+    OwnPtr<TiledBackingStore> m_previousBackingStore;
     float m_contentsScale;
     PlatformLayer* m_canvasPlatformLayer;
     Timer<CoordinatedGraphicsLayer> m_animationStartedTimer;
