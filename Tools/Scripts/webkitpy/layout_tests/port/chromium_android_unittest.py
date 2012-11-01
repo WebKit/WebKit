@@ -165,6 +165,10 @@ class ChromiumAndroidPortTest(chromium_port_testcase.ChromiumPortTestCase):
         self.assertEquals(self.mock_run_command._mock_devices[1], port._get_device_serial(1))
         self.assertRaises(AssertionError, port._get_device_serial, 2)
 
+    def test_must_require_http_server(self):
+        port = self.make_port()
+        self.assertEquals(port.requires_http_server(), True)
+
 
 class ChromiumAndroidDriverTest(unittest.TestCase):
     def setUp(self):

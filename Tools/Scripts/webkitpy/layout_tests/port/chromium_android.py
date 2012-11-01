@@ -232,20 +232,16 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         android_expectations_file = self.path_from_webkit_base('LayoutTests', 'platform', 'chromium-android', 'TestExpectations')
         return super(ChromiumAndroidPort, self).expectations_files() + [android_expectations_file]
 
+    def requires_http_server(self):
+        """Chromium Android runs tests on devices, and uses the HTTP server to
+        serve the actual layout tests to DumpRenderTree."""
+        return True
+
     def start_http_server(self, additional_dirs=None, number_of_servers=0):
-        # The http server runs during the whole testing period, so ignore this call.
-        pass
-
-    def stop_http_server(self):
-        # Same as start_http_server().
-        pass
-
-    def setup_test_run(self):
-        # Start the HTTP server so that the device can access the test cases.
-        super(ChromiumAndroidPort, self).start_http_server(additional_dirs={TEST_PATH_PREFIX: self.layout_tests_dir()})
-
-    def clean_up_test_run(self):
-        super(ChromiumAndroidPort, self).stop_http_server()
+        if not additional_dirs:
+            additional_dirs = {}
+        additional_dirs[TEST_PATH_PREFIX] = self.layout_tests_dir()
+        super(ChromiumAndroidPort, self).start_http_server(additional_dirs, number_of_servers)
 
     def create_driver(self, worker_number, no_timeout=False):
         # We don't want the default DriverProxy which is not compatible with our driver.

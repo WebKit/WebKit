@@ -1,3 +1,38 @@
+2012-11-01  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium-Android] Apache doesn't properly clean up ipc semaphores after a layout test run
+        https://bugs.webkit.org/show_bug.cgi?id=100950
+
+        Reviewed by Dirk Pranke.
+
+        When a test run would fail to complete due to an exception in one of
+        the workers, the HTTP server wouldn't get a chance to gracefully shut
+        down. This caused too much IPC semaphores to be left on the server,
+        causing Apache to fail to start in subsequent runs.
+
+        By unifying the Android-specific code with other ports, we no longer
+        fail to call the ChromiumPort/Base setup_test_run() and clean_up_test_run()
+        methods either. Furthermore, the number_of_servers argument for starting
+        the HTTP server is now available as well.
+
+        Because not all tests require an HTTP server, it's not guaranteed that
+        it will be started. Android depends on this, so add a new method to Port
+        and override it for Android: requires_http_server().
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.to.requires_http_server):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_dont_require_http_server):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.requires_http_server):
+        (ChromiumAndroidPort.start_http_server):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidPortTest.test_must_require_http_server):
+
 2012-11-01  Adam Roben  <aroben@webkit.org>
 
         Crash beneath WKRelease after failed load in MiniBrowser

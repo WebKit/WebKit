@@ -126,7 +126,7 @@ class LayoutTestRunner(object):
 
         all_shards = locked_shards + unlocked_shards
         self._remaining_locked_shards = locked_shards
-        if locked_shards and self._options.http:
+        if self._port.requires_http_server() or (locked_shards and self._options.http):
             self.start_servers_with_lock(2 * min(num_workers, len(locked_shards)))
 
         num_workers = min(num_workers, len(all_shards))
@@ -252,7 +252,7 @@ class LayoutTestRunner(object):
         index = find(list_name, self._remaining_locked_shards)
         if index >= 0:
             self._remaining_locked_shards.pop(index)
-            if not self._remaining_locked_shards:
+            if not self._remaining_locked_shards and not self._port.requires_http_server():
                 self.stop_servers_with_lock()
 
     def _handle_finished_test(self, worker_name, result, elapsed_time, log_messages=[]):

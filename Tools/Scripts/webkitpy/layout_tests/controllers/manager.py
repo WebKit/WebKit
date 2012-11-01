@@ -459,7 +459,7 @@ class Manager(object):
 
     def _run_tests(self, tests, result_summary, num_workers):
         test_inputs = [self._test_input_for_file(test) for test in tests]
-        needs_http = any(self._is_http_test(test) for test in tests)
+        needs_http = self._port.requires_http_server() or any(self._is_http_test(test) for test in tests)
         needs_websockets = any(self._is_websocket_test(test) for test in tests)
         return self._runner.run_tests(test_inputs, self._expectations, result_summary, num_workers, needs_http, needs_websockets, self._retrying)
 

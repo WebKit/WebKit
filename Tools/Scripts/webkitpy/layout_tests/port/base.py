@@ -899,6 +899,11 @@ class Port(object):
         method."""
         pass
 
+    def requires_http_server(self):
+        """Does the port require an HTTP server for running tests? This could
+        be the case when the tests aren't run on the host platform."""
+        return False
+
     def start_http_server(self, additional_dirs=None, number_of_servers=None):
         """Start a web server. Raise an error if it can't start or is already running.
 
