@@ -40,6 +40,7 @@
 #include "ewk_cookie_manager.h"
 #include "ewk_favicon_database.h"
 #include "ewk_navigation_data.h"
+#include "ewk_storage_manager.h"
 #include "ewk_url_scheme_request.h"
 #include <Evas.h>
 
@@ -190,6 +191,15 @@ EAPI Ewk_Cookie_Manager *ewk_context_cookie_manager_get(const Ewk_Context *conte
  * @return Ewk_Favicon_Database object instance or @c NULL in case of failure.
  */
 EAPI Ewk_Favicon_Database *ewk_context_favicon_database_get(const Ewk_Context *context);
+
+/**
+ * Gets the storage manager instance for this @a context.
+ *
+ * @param context context object to query.
+ *
+ * @return Ewk_Storage_Manager object instance or @c NULL in case of failure.
+ */
+EAPI Ewk_Storage_Manager *ewk_context_storage_manager_get(const Ewk_Context *context);
 
 /**
  * Register @a scheme in @a context.
