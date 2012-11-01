@@ -62,9 +62,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_popup_menu.cpp
     UIProcess/API/efl/ewk_popup_menu_item.cpp
     UIProcess/API/efl/ewk_resource.cpp
-    UIProcess/API/efl/ewk_security_origin.cpp
     UIProcess/API/efl/ewk_settings.cpp
-    UIProcess/API/efl/ewk_storage_manager.cpp
     UIProcess/API/efl/ewk_text_checker.cpp
     UIProcess/API/efl/ewk_url_request.cpp
     UIProcess/API/efl/ewk_url_response.cpp
@@ -262,9 +260,7 @@ SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_popup_menu.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_popup_menu_item.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_resource.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_security_origin.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_settings.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_storage_manager.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_text_checker.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_touch.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_url_request.h"
@@ -362,7 +358,6 @@ SET(EWK2UnitTests_BINARIES
     test_ewk2_intents
     test_ewk2_popup_menu
     test_ewk2_settings
-    test_ewk2_storage_manager
     test_ewk2_text_checker
     test_ewk2_view
 )

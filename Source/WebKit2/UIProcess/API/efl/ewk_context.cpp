@@ -38,7 +38,6 @@
 #include "ewk_cookie_manager_private.h"
 #include "ewk_favicon_database_private.h"
 #include "ewk_private.h"
-#include "ewk_storage_manager_private.h"
 #include "ewk_url_scheme_request_private.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
@@ -63,7 +62,6 @@ static inline ContextMap& contextMap()
 
 Ewk_Context::Ewk_Context(WKContextRef context)
     : m_context(context)
-    , m_storageManager(Ewk_Storage_Manager::create(WKContextGetKeyValueStorageManager(m_context.get())))
 #if ENABLE(BATTERY_STATUS)
     , m_batteryProvider(BatteryProvider::create(context))
 #endif
@@ -160,11 +158,6 @@ Ewk_Favicon_Database* Ewk_Context::faviconDatabase()
     return m_faviconDatabase.get();
 }
 
-Ewk_Storage_Manager* Ewk_Context::storageManager() const
-{
-    return m_storageManager.get();
-}
-
 RequestManagerClientEfl* Ewk_Context::requestManager()
 {
     return m_requestManagerClient.get();
@@ -220,13 +213,6 @@ Ewk_Favicon_Database* ewk_context_favicon_database_get(const Ewk_Context* ewkCon
     EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, 0);
 
     return const_cast<Ewk_Context*>(ewkContext)->faviconDatabase();
-}
-
-Ewk_Storage_Manager* ewk_context_storage_manager_get(const Ewk_Context* ewkContext)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, 0);
-
-    return ewkContext->storageManager();
 }
 
 WKContextRef Ewk_Context::wkContext()
