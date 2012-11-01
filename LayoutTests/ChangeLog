@@ -1,5 +1,12 @@
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
+        [chromium] Unreviewed gardening.
+
+        * platform/chromium-linux-x86/compositing/reflections/nested-reflection-anchor-point-expected.png: Removed.
+        * platform/chromium-mac/compositing/reflections/nested-reflection-anchor-point-expected.png:
+
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
         [chromium] Unreviewed gardening.  Move baselines for a couple of
         compositing tests to platform-mac, so MountainLion can use them too.
 
