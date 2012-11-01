@@ -35,14 +35,14 @@
 
 namespace WebCore {
 
-static size_t immutableElementAttributeDataSize(unsigned count)
+static size_t sizeForImmutableElementAttributeDataWithAttributeCount(unsigned count)
 {
-    return sizeof(ElementAttributeData) + sizeof(Attribute) * count;
+    return sizeof(ImmutableElementAttributeData) - sizeof(void*) + sizeof(Attribute) * count;
 }
 
 PassRefPtr<ElementAttributeData> ElementAttributeData::createImmutable(const Vector<Attribute>& attributes)
 {
-    void* slot = WTF::fastMalloc(immutableElementAttributeDataSize(attributes.size()));
+    void* slot = WTF::fastMalloc(sizeForImmutableElementAttributeDataWithAttributeCount(attributes.size()));
     return adoptRef(new (slot) ImmutableElementAttributeData(attributes));
 }
 
@@ -274,7 +274,7 @@ void ElementAttributeData::detachAttrObjectsFromElement(Element* element) const
 
 void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    size_t actualSize = m_isMutable ? sizeof(ElementAttributeData) : immutableElementAttributeDataSize(m_arraySize);
+    size_t actualSize = m_isMutable ? sizeof(ElementAttributeData) : sizeForImmutableElementAttributeDataWithAttributeCount(m_arraySize);
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM, actualSize);
     info.addMember(m_inlineStyleDecl);
     info.addMember(m_attributeStyle);

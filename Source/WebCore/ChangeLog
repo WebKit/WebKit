@@ -1,3 +1,21 @@
+2012-11-01  Andreas Kling  <kling@webkit.org>
+
+        Fix StylePropertySet/ElementAttributeData custom allocation in debug builds.
+        <http://webkit.org/b/100753>
+
+        Unreviewed debug bot crash fix after r133138.
+
+        There's additional padding after StylePropertySet and ElementAttributeData
+        in 64-bit debug builds since there are additional members in RefCountedBase.
+        Use 'sizeof(ImmutableFoo) - sizeof(void*)' as the base size of ImmutableFoo.
+
+        * css/StylePropertySet.cpp:
+        (WebCore::sizeForImmutableStylePropertySetWithPropertyCount):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::sizeForImmutableElementAttributeDataWithAttributeCount):
+        (WebCore::ElementAttributeData::createImmutable):
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+
 2012-11-01  Stephen Chenney  <schenney@chromium.org>
 
         FEImage::m_document is never cleared. Why not?
