@@ -1,3 +1,18 @@
+2012-10-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Sparse array size threshold should be increased to 100000
+        https://bugs.webkit.org/show_bug.cgi?id=100827
+
+        Reviewed by Oliver Hunt.
+
+        This enables the use of contiguous arrays in programs that previously
+        couldn't use them. And I so far can't see any examples of this being
+        a downside. To the extent that there is a downside, it ought to be
+        addressed by GC: https://bugs.webkit.org/show_bug.cgi?id=100828
+
+        * runtime/ArrayConventions.h:
+        (JSC):
+
 2012-10-31  Mark Lam  <mark.lam@apple.com>
 
         A JSC printf (support for %J+s and %b).

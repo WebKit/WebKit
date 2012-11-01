@@ -58,7 +58,7 @@ namespace JSC {
 
 // These values have to be macros to be used in max() and min() without introducing
 // a PIC branch in Mach-O binaries, see <rdar://problem/5971391>.
-#define MIN_SPARSE_ARRAY_INDEX 10000U
+#define MIN_SPARSE_ARRAY_INDEX 100000U
 #define MAX_STORAGE_VECTOR_INDEX (MAX_STORAGE_VECTOR_LENGTH - 1)
 // 0xFFFFFFFF is a bit weird -- is not an array index even though it's an integer.
 #define MAX_ARRAY_INDEX 0xFFFFFFFEU
