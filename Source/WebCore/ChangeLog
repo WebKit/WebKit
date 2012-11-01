@@ -1,3 +1,19 @@
+2012-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [Mac] Crash in Range::editingStartPosition
+        https://bugs.webkit.org/show_bug.cgi?id=100972
+
+        Reviewed by Enrica Casucci.
+
+        Add a missing null pointer check. toNormalizedRange() can return null here, in which case the call to
+        pastLastNode() will crash.
+
+        No new tests since determining the exact condition under which we go through the said code path and
+        toNormalRange returns null is hard.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::fontForSelection):
+
 2012-11-01  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=100917
