@@ -90,12 +90,6 @@ protected:
         return locale->formatDateTime(dateComponents(year, month, day));
     }
 
-    double parseDate(LCID lcid, const String& dateString)
-    {
-        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
-        return locale->parseDateTime(dateString, DateComponents::Date);
-    }
-
 #if ENABLE(CALENDAR_PICKER)
     unsigned firstDayOfWeek(LCID lcid)
     {
@@ -161,57 +155,11 @@ protected:
 #endif
 };
 
-TEST_F(LocaleWinTest, TestParse)
-{
-    OwnPtr<LocaleWin> locale = LocaleWin::create(EnglishUS);
-
-    EXPECT_EQ(msForDate(2012, April, 27), locale->parseDate("MM/dd/yy", 2012, "04/27/12"));
-    EXPECT_EQ(msForDate(2062, April, 27), locale->parseDate("MM/dd/yy", 2012, "04/27/62"));
-    EXPECT_EQ(msForDate(1963, April, 27), locale->parseDate("MM/dd/yy", 2012, "04/27/63"));
-    EXPECT_EQ(msForDate(2012, April, 27), locale->parseDate("MM/dd/yy", 2012, "4/27/2012"));
-    EXPECT_EQ(msForDate(2012, April, 27), locale->parseDate("MM/dd/yy", 2012, "Apr/27/2012"));
-    EXPECT_EQ(msForDate(2, April, 27), locale->parseDate("MM/d/yy", 2012, "April/27/2"));
-    EXPECT_EQ(msForDate(2, April, 27), locale->parseDate("MM/d/yy", 2012, "april/27/2"));
-    EXPECT_TRUE(isnan(locale->parseDate("MM/d/yy", 2012, "april/27")));
-    EXPECT_TRUE(isnan(locale->parseDate("MM/d/yy", 2012, "april/27/")));
-    EXPECT_TRUE(isnan(locale->parseDate("MM/d/yy", 2012, " april/27/")));
-
-    EXPECT_EQ(msForDate(12, April, 7), locale->parseDate("MMM/d/yyyy", 2012, "04/7/12"));
-    EXPECT_EQ(msForDate(62, April, 7), locale->parseDate("MMM/d/yyyy", 2012, "04/07/62"));
-    EXPECT_EQ(msForDate(63, April, 7), locale->parseDate("MMM/d/yyyy", 2012, "04/07/63"));
-    EXPECT_EQ(msForDate(2012, April, 7), locale->parseDate("MMM/d/yyyy", 2012, "4/7/2012"));
-    EXPECT_EQ(msForDate(2012, May, 7), locale->parseDate("MMM/d/yyyy", 2012, "May/007/2012"));
-    EXPECT_EQ(msForDate(2, May, 27), locale->parseDate("MM/d/yyyy", 2012, "May/0027/2"));
-    EXPECT_TRUE(isnan(locale->parseDate("MM/d/yyyy", 2012, "May///0027///2")));
-    EXPECT_TRUE(isnan(locale->parseDate("MM/d/yyyy", 2012, "Mayyyyyy/0027/2")));
-
-    EXPECT_EQ(msForDate(2012, April, 27), locale->parseDate("MMMM/dd/y", 2012, "04/27/2"));
-    EXPECT_EQ(msForDate(2017, April, 27), locale->parseDate("MMMM/dd/y", 2012, "04/27/7"));
-    EXPECT_EQ(msForDate(2008, April, 27), locale->parseDate("MMMM/dd/y", 2012, "04/27/8"));
-    EXPECT_EQ(msForDate(2012, April, 27), locale->parseDate("MMMM/dd/y", 2012, "4/27/2012"));
-    EXPECT_EQ(msForDate(2012, December, 27), locale->parseDate("MMMM/dd/y", 2012, "December/27/2012"));
-    EXPECT_EQ(msForDate(2012, November, 27), locale->parseDate("MMMM/d/y", 2012, "November/27/2"));
-    EXPECT_TRUE(isnan(locale->parseDate("MMMM/d/y", 2012, "November 27 2")));
-    EXPECT_TRUE(isnan(locale->parseDate("MMMM/d/y", 2012, "November 32 2")));
-    EXPECT_TRUE(isnan(locale->parseDate("MMMM/d/y", 2012, "-1/-1/-1")));
-
-    OwnPtr<LocaleWin> persian = LocaleWin::create(Persian);
-    // U+06F1 U+06F6 / U+06F0 U+06F8 / 2012
-    EXPECT_EQ(msForDate(2012, August, 16), persian->parseDate("dd/MM/yyyy", 2012, String::fromUTF8("\xDB\xB1\xDB\xB6/\xDB\xB0\xDB\xB8/2012")));
-}
-
 TEST_F(LocaleWinTest, formatDate)
 {
     EXPECT_STREQ("04/27/2005", formatDate(EnglishUS, 2005, April, 27).utf8().data());
     EXPECT_STREQ("27/04/2005", formatDate(FrenchFR, 2005, April, 27).utf8().data());
     EXPECT_STREQ("2005/04/27", formatDate(JapaneseJP, 2005, April, 27).utf8().data());
-}
-
-TEST_F(LocaleWinTest, parseDate)
-{
-    EXPECT_EQ(msForDate(2005, April, 27), parseDate(EnglishUS, "April/27/2005"));
-    EXPECT_EQ(msForDate(2005, April, 27), parseDate(FrenchFR, "27/avril/2005"));
-    EXPECT_EQ(msForDate(2005, April, 27), parseDate(JapaneseJP, "2005/04/27"));
 }
 
 #if ENABLE(CALENDAR_PICKER)

@@ -46,7 +46,6 @@ class LocaleWin : public Locale {
 public:
     static PassOwnPtr<LocaleWin> create(LCID);
     ~LocaleWin();
-    virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
     virtual const Vector<String>& weekDayShortLabels() OVERRIDE;
     virtual unsigned firstDayOfWeek() OVERRIDE;
@@ -66,8 +65,6 @@ public:
     virtual const Vector<String>& timeAMPMLabels() OVERRIDE;
 #endif
 
-    // For testing.
-    double parseDate(const String& format, int baseYear, const String& input);
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     static String dateFormat(const String&);
 #endif
@@ -79,14 +76,6 @@ private:
     void ensureShortMonthLabels();
     void ensureMonthLabels();
     void ensureShortDateTokens();
-    bool isLocalizedDigit(UChar);
-    int parseNumber(const String&, unsigned& index);
-    int parseNumberOrMonth(const String&, unsigned& index);
-    double parseDate(const Vector<DateFormatToken>&, int baseYear, const String&);
-    void appendNumber(int, StringBuilder&);
-    void appendTwoDigitsNumber(int, StringBuilder&);
-    void appendFourDigitsNumber(int, StringBuilder&);
-    String formatDate(const Vector<DateFormatToken>&, int baseYear, int year, int month, int day);
 #if ENABLE(CALENDAR_PICKER)
     void ensureWeekDayShortLabels();
 #endif
@@ -94,7 +83,6 @@ private:
     virtual void initializeLocaleData() OVERRIDE;
 
     LCID m_lcid;
-    int m_baseYear;
     Vector<DateFormatToken> m_shortDateTokens;
     Vector<String> m_shortMonthLabels;
     Vector<String> m_monthLabels;

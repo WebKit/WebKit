@@ -167,14 +167,11 @@ String BaseDateAndTimeInputType::visibleValue() const
 
 String BaseDateAndTimeInputType::convertFromVisibleValue(const String& visibleValue) const
 {
-    if (visibleValue.isEmpty())
-        return visibleValue;
-
-    double parsedValue = element()->locale().parseDateTime(visibleValue, dateType());
-    if (!isfinite(parsedValue))
-        return visibleValue;
-
-    return serializeWithMilliseconds(parsedValue);
+    // convertFromVisibleValue is used in the textfield UI. Though this class
+    // inherits TextFieldInputType, users are unable to edit visible values, and
+    // this function is never called.
+    ASSERT_NOT_REACHED();
+    return visibleValue;
 }
 
 String BaseDateAndTimeInputType::sanitizeValue(const String& proposedValue) const

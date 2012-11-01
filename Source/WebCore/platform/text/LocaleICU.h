@@ -49,8 +49,6 @@ public:
     static PassOwnPtr<LocaleICU> create(const char* localeString);
     virtual ~LocaleICU();
 
-    // For LocalizedDate
-    virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
     virtual const Vector<String>& weekDayShortLabels() OVERRIDE;
     virtual unsigned firstDayOfWeek() OVERRIDE;

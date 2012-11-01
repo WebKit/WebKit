@@ -36,7 +36,6 @@ public:
 
 private:
     virtual void initializeLocaleData() OVERRIDE FINAL;
-    virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
 #if ENABLE(CALENDAR_PICKER)
     virtual bool isRTL() OVERRIDE;
 #endif
@@ -72,11 +71,6 @@ LocaleNone::~LocaleNone()
 
 void LocaleNone::initializeLocaleData()
 {
-}
-
-double LocaleNone::parseDateTime(const String&, DateComponents::Type)
-{
-    return std::numeric_limits<double>::quiet_NaN();
 }
 
 #if ENABLE(CALENDAR_PICKER)

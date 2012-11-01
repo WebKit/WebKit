@@ -1,3 +1,42 @@
+2012-11-01  Kent Tamura  <tkent@chromium.org>
+
+        Remove unused Locale::parseDateTime
+        https://bugs.webkit.org/show_bug.cgi?id=100910
+
+        Reviewed by Kentaro Hara.
+
+        For date/time input types, InputType::convertFromVisibleValue is never
+        called. convertFromVisibleValue is called when an inner editable node is
+        updated. However input elements don't have such editable nodes if
+        ENABLE_INPUT_MULTIPLE_FIELDS_UI is enabled, and a user can't edit the
+        inner editable node otherwise because we open date/time pickers when a
+        user try to change the field value.
+
+        We had used convertFromVisibleValue for input[type=date] with an old UI.
+
+        No new tests because of no behavior changes.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::convertFromVisibleValue):
+        Remove Locale::parseDateTiem and put ASSERT_NOT_REACHED.
+
+        * platform/text/PlatformLocale.h: Remove parseDateTime.
+
+        * platform/text/LocaleICU.h: Remove parseDateTime and a bogus comment.
+        * platform/text/LocaleICU.cpp: Remove parseDateTime.
+
+        * platform/text/LocaleNone.cpp: Remove parseDateTime.
+
+        * platform/text/mac/LocaleMac.h: Remove parseDateTime.
+        * platform/text/mac/LocaleMac.mm: Ditto.
+        * platform/text/win/LocaleWin.h:
+        - Remove parseDateTime, its helpers, and m_baseYear.
+        - Remove appendNumber, appendTwoDigitsNumber, appendFourDigitsNumber,
+          and formatDate. They don't exist.
+        * platform/text/win/LocaleWin.cpp:
+        Remove the above functions.
+        (WebCore::LocaleWin::LocaleWin): Remove m_baseYear iniitalization.
+
 2012-10-31  Nate Chapin  <japhet@chromium.org>
 
         Remove some CachedResource::Status's in favor of looking at CachedResource::m_error

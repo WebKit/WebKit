@@ -81,12 +81,6 @@ protected:
         return locale->formatDateTime(timeComponents(hour, minute, second, millisecond), (useShortFormat ? Locale::FormatTypeShort : Locale::FormatTypeMedium));
     }
 
-    double parseDate(const String& localeString, const String& dateString)
-    {
-        OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
-        return locale->parseDateTime(dateString, DateComponents::Date);
-    }
-
 #if ENABLE(CALENDAR_PICKER)
     unsigned firstDayOfWeek(const String& localeString)
     {
@@ -190,13 +184,6 @@ TEST_F(LocaleMacTest, formatTime)
     EXPECT_STREQ("7:07:07.007", formatTime("ja_JP", 07, 07, 07, 007, false).utf8().data());
     EXPECT_STREQ("\xD9\xA7:\xD9\xA0\xD9\xA7:\xD9\xA0\xD9\xA7\xD9\xAB\xD9\xA0\xD9\xA0\xD9\xA7 \xD8\xB5", formatTime("ar", 07, 07, 07, 007, false).utf8().data());
     EXPECT_STREQ("\xDB\xB7:\xDB\xB0\xDB\xB7:\xDB\xB0\xDB\xB7\xD9\xAB\xDB\xB0\xDB\xB0\xDB\xB7", formatTime("fa", 07, 07, 07, 007, false).utf8().data());
-}
-
-TEST_F(LocaleMacTest, parseDate)
-{
-    EXPECT_EQ(msForDate(2005, April, 27), parseDate("en_US", "April 27, 2005"));
-    EXPECT_EQ(msForDate(2005, April, 27), parseDate("fr_FR", "27 avril 2005"));
-    EXPECT_EQ(msForDate(2005, April, 27), parseDate("ja_JP", "2005/04/27"));
 }
 
 #if ENABLE(CALENDAR_PICKER)

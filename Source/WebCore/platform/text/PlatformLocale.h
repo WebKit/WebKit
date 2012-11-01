@@ -122,14 +122,6 @@ public:
     virtual bool isRTL() = 0;
 #endif
 
-    // Parses a string representation of a date/time string localized
-    // for this Locale locale. If the input string is not valid or
-    // an implementation doesn't support localized dates, this
-    // function returns NaN. If the input string is valid this
-    // function returns the number of milliseconds since 1970-01-01
-    // 00:00:00.000 UTC.
-    virtual double parseDateTime(const String&, DateComponents::Type) = 0;
-
     enum FormatType { FormatTypeUnspecified, FormatTypeShort, FormatTypeMedium };
 
     // Serializes the specified date into a formatted date string to

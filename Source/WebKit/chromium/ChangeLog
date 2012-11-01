@@ -1,3 +1,13 @@
+2012-11-01  Kent Tamura  <tkent@chromium.org>
+
+        Remove unused Locale::parseDateTime
+        https://bugs.webkit.org/show_bug.cgi?id=100910
+
+        Reviewed by Kentaro Hara.
+
+        * tests/LocaleMacTest.cpp: Remove tests for parseDateTime.
+        * tests/LocaleWinTest.cpp: Ditto.
+
 2012-10-31  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Page popup shows up at wrong locations when root view is scrolled

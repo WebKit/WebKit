@@ -50,7 +50,6 @@ public:
     static PassOwnPtr<LocaleMac> create(const String&);
     static PassOwnPtr<LocaleMac> create(NSLocale*);
     ~LocaleMac();
-    virtual double parseDateTime(const String&, DateComponents::Type) OVERRIDE;
 
 #if ENABLE(CALENDAR_PICKER)
     virtual const Vector<String>& weekDayShortLabels() OVERRIDE;

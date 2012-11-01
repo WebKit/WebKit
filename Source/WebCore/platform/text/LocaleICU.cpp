@@ -155,24 +155,6 @@ UDateFormat* LocaleICU::openDateFormat(UDateFormatStyle timeStyle, UDateFormatSt
     return udat_open(timeStyle, dateStyle, m_locale.data(), gmtTimezone, WTF_ARRAY_LENGTH(gmtTimezone), 0, -1, &status);
 }
 
-double LocaleICU::parseDateTime(const String& input, DateComponents::Type type)
-{
-    if (type != DateComponents::Date)
-        return std::numeric_limits<double>::quiet_NaN();
-    if (!initializeShortDateFormat())
-        return numeric_limits<double>::quiet_NaN();
-    if (input.length() > static_cast<unsigned>(numeric_limits<int32_t>::max()))
-        return numeric_limits<double>::quiet_NaN();
-    int32_t inputLength = static_cast<int32_t>(input.length());
-    UErrorCode status = U_ZERO_ERROR;
-    int32_t parsePosition = 0;
-    UDate date = udat_parse(m_shortDateFormat, input.characters(), inputLength, &parsePosition, &status);
-    if (parsePosition != inputLength || U_FAILURE(status))
-        return numeric_limits<double>::quiet_NaN();
-    // UDate, which is an alias of double, is compatible with our expectation.
-    return date;
-}
-
 #if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 static String getDateFormatPattern(const UDateFormat* dateFormat)
 {

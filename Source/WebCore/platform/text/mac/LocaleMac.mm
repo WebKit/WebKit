@@ -114,16 +114,6 @@ RetainPtr<NSDateFormatter> LocaleMac::shortDateFormatter()
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterNoStyle);
 }
 
-double LocaleMac::parseDateTime(const String& input, DateComponents::Type type)
-{
-    if (type != DateComponents::Date)
-        return std::numeric_limits<double>::quiet_NaN();
-    NSDate *date = [shortDateFormatter().get() dateFromString:input];
-    if (!date)
-        return std::numeric_limits<double>::quiet_NaN();
-    return [date timeIntervalSince1970] * msPerSecond;
-}
-
 #if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 const Vector<String>& LocaleMac::monthLabels()
 {

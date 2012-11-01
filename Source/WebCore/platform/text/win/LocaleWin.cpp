@@ -91,20 +91,10 @@ PassOwnPtr<Locale> Locale::create(const AtomicString& locale)
     return LocaleWin::create(LCIDFromLocale(locale));
 }
 
-// Windows doesn't have an API to parse locale-specific date string,
-// and GetDateFormat() and GetDateFormatEx() don't support years older
-// than 1600, which we should support according to the HTML
-// standard. So, we obtain the date format from the system, but we
-// format/parse a date by our own code.
-
 inline LocaleWin::LocaleWin(LCID lcid)
     : m_lcid(lcid)
     , m_didInitializeNumberData(false)
 {
-    SYSTEMTIME systemTime;
-    GetLocalTime(&systemTime);
-    m_baseYear = systemTime.wYear;
-
 #if ENABLE(CALENDAR_PICKER)
     DWORD value = 0;
     getLocaleInfo(LOCALE_IFIRSTDAYOFWEEK, value);
@@ -297,151 +287,6 @@ static Vector<DateFormatToken> parseDateFormat(const String format)
     commitLiteralToken(literalBuffer, tokens);
     return tokens;
 }
-
-// -------------------------------- Parsing
-
-bool LocaleWin::isLocalizedDigit(UChar ch)
-{
-    String normalizedDigit = convertFromLocalizedNumber(String(&ch, 1));
-    if (normalizedDigit.length() != 1)
-        return false;
-    return isASCIIDigit(normalizedDigit[0]);
-}
-
-// Returns -1 if parsing fails.
-int LocaleWin::parseNumber(const String& input, unsigned& index)
-{
-    unsigned digitsStart = index;
-    while (index < input.length() && isASCIIDigit(input[index]))
-        index++;
-    if (digitsStart != index) {
-        bool ok = false;
-        int number = input.substring(digitsStart, index - digitsStart).toInt(&ok);
-        return ok ? number : -1;
-    }
-
-    while (index < input.length() && isLocalizedDigit(input[index]))
-        index++;
-    if (digitsStart == index)
-        return -1;
-    bool ok = false;
-    int number = convertFromLocalizedNumber(input.substring(digitsStart, index - digitsStart)).toInt(&ok);
-    return ok ? number : -1;
-}
-
-// Returns 0-based month number. Returns -1 if parsing fails.
-int LocaleWin::parseNumberOrMonth(const String& input, unsigned& index)
-{
-    int result = parseNumber(input, index);
-    if (result >= 0) {
-        if (result < 1 || result > 12)
-            return -1;
-        return result - 1;
-    }
-    for (unsigned m = 0; m < m_monthLabels.size(); ++m) {
-        unsigned labelLength = m_monthLabels[m].length();
-        if (equalIgnoringCase(input.substring(index, labelLength), m_monthLabels[m])) {
-            index += labelLength;
-            return m;
-        }
-    }
-    for (unsigned m = 0; m < m_shortMonthLabels.size(); ++m) {
-        unsigned labelLength = m_shortMonthLabels[m].length();
-        if (equalIgnoringCase(input.substring(index, labelLength), m_shortMonthLabels[m])) {
-            index += labelLength;
-            return m;
-        }
-    }
-    return -1;
-}
-
-double LocaleWin::parseDateTime(const String& input, DateComponents::Type type)
-{
-    if (type != DateComponents::Date)
-        return std::numeric_limits<double>::quiet_NaN();
-    ensureShortDateTokens();
-    return parseDate(m_shortDateTokens, m_baseYear, input);
-}
-
-double LocaleWin::parseDate(const String& format, int baseYear, const String& input)
-{
-    return parseDate(parseDateFormat(format), baseYear, input);
-}
-
-double LocaleWin::parseDate(const Vector<DateFormatToken>& tokens, int baseYear, const String& input)
-{
-    ensureShortMonthLabels();
-    ensureMonthLabels();
-    const double NaN = numeric_limits<double>::quiet_NaN();
-    unsigned inputIndex = 0;
-    int day = -1, month = -1, year = -1;
-    for (unsigned i = 0; i < tokens.size(); ++i) {
-        switch (tokens[i].type) {
-        case DateFormatToken::Literal: {
-            String data = tokens[i].data;
-            unsigned literalLength = data.length();
-            if (input.substring(inputIndex, literalLength) == data)
-                inputIndex += literalLength;
-            // Go ahead even if the input doesn't have this string.
-            break;
-        }
-        case DateFormatToken::Day1:
-        case DateFormatToken::Day2:
-            day = parseNumber(input, inputIndex);
-            if (day < 1 || day > 31)
-                return NaN;
-            break;
-        case DateFormatToken::Month1:
-        case DateFormatToken::Month2:
-        case DateFormatToken::Month3:
-        case DateFormatToken::Month4:
-            month = parseNumberOrMonth(input, inputIndex);
-            if (month < 0 || month > 11)
-                return NaN;
-            break;
-        case DateFormatToken::Year1: {
-            unsigned oldIndex = inputIndex;
-            year = parseNumber(input, inputIndex);
-            if (year <= 0)
-                return NaN;
-            if (inputIndex - oldIndex == 1) {
-                int shortYear = baseYear % 10;
-                int decade = baseYear - shortYear;
-                if (shortYear >= 5)
-                    year += shortYear - 4 <= year ? decade : decade + 10;
-                else
-                    year += shortYear + 5 >= year ? decade : decade - 10;
-            }
-            break;
-        }
-        case DateFormatToken::Year2: {
-            unsigned oldIndex = inputIndex;
-            year = parseNumber(input, inputIndex);
-            if (year <= 0)
-                return NaN;
-            if (inputIndex - oldIndex == 2) {
-                int shortYear = baseYear % 100;
-                int century = baseYear - shortYear;
-                if (shortYear >= 50)
-                    year += shortYear - 49 <= year ? century : century + 100;
-                else
-                    year += shortYear + 50 >= year ? century : century - 100;
-            }
-            break;
-        }
-        case DateFormatToken::Year4:
-            year = parseNumber(input, inputIndex);
-            if (year <= 0)
-                return NaN;
-            break;
-        }
-    }
-    if (year <= 0 || month < 0 || day <= 0)
-        return NaN;
-    return dateToDaysFrom1970(year, month, day) * msPerDay;
-}
-
-// -------------------------------- Formatting
 
 void LocaleWin::ensureShortDateTokens()
 {
