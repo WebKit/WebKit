@@ -1,3 +1,9 @@
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Unreviewed gardening.  Mark a test as flaky.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-01  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skip fast/workers/worker-domurl.html on Windows. ENABLE_BLOB not enabled.
