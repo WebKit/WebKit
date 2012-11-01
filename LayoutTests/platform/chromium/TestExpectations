@@ -4113,6 +4113,9 @@ Bug(senorblanco) editing/pasteboard/file-drag-to-editable.html [ Failure Pass ]
 Bug(senorblanco) [ Mac ] compositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
 Bug(senorblanco) [ Mac ] compositing/geometry/fixed-position-transform-composited-page-scale-down.html [ ImageOnlyFailure ]
 
+# Crashy since at least r133035; gives a v8 error
+Bug(senorblanco) [ Linux Debug ] fast/files/workers/worker-apply-blob-url-to-xhr.html [ Crash Pass ]
+
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]
 
