@@ -62,7 +62,7 @@ public:
     unsigned m_size;
     String m_source;
     BlackBerry::WebKit::WebPagePrivate* m_webPage;
-    HTMLSelectElement* m_element;
+    RefPtr<HTMLSelectElement> m_element;
     WebCore::Timer<SelectPopupClient> m_notifyChangeTimer;
 };
 } // namespace WebCore

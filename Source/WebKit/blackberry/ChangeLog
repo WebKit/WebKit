@@ -1,3 +1,20 @@
+2012-10-31  George Staikos  <staikos@webkit.org>
+
+        [BlackBerry] Crash on html popup form control when element is deleted
+        https://bugs.webkit.org/show_bug.cgi?id=100869
+
+        Reviewed by Yong Li.
+
+        Make the element pointers RefPtr so they don't go away before the popup
+        is closed.
+
+        * WebCoreSupport/ColorPickerClient.h:
+        (ColorPickerClient):
+        * WebCoreSupport/DatePickerClient.h:
+        (DatePickerClient):
+        * WebCoreSupport/SelectPopupClient.h:
+        (SelectPopupClient):
+
 2012-10-31  Genevieve Mak  <gmak@rim.com>
 
         [BLACKBERRY] Custom WebWorks context menus don't always work.

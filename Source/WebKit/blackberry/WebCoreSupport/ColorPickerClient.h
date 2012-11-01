@@ -53,7 +53,7 @@ private:
 
     String m_source;
     BlackBerry::WebKit::WebPagePrivate* m_webPage;
-    HTMLInputElement* m_element;
+    RefPtr<HTMLInputElement> m_element;
 };
 } // namespace WebCore
 #endif
