@@ -1,3 +1,9 @@
+2012-11-01  Pavel Podivilov  <podivilov@google.com>
+
+        [chromium] Add new baseline for exif-orientation-css.html on linux.
+
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/exif-orientation-css-expected.png: Added.
+
 2012-11-01  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r133056
