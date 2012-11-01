@@ -1,3 +1,18 @@
+2012-11-01  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Former auto-height regions should not ignore their defined height
+        https://bugs.webkit.org/show_bug.cgi?id=100749
+
+        Reviewed by Julien Chaffraix.
+
+        When a region with height auto has its height defined, we should also clear the override logical content height.
+        Otherwise, the region will use the wrong height when laying out content from the associated render flow thread.
+
+        Test: fast/regions/autoheight-definedheight-changenotdetected.html
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::updateRegionHasAutoLogicalHeightFlag):
+
 2012-11-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: do not report memory occupied by RenderObjects referenced from CSSImageGeneratorValue

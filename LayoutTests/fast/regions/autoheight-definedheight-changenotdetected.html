@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .flowContent { font-size: 50px; color: green; font-family: Ahem; }
+            #article { -webkit-flow-into: flow; }
+
+            .regionSize { width: 250px; }
+            .regionSize2 { width: 250px; height: 150px; }
+            #region { -webkit-flow-from: flow; position: absolute; top: 150px; }
+            #region2 { -webkit-flow-from: flow; height: 200px; position: absolute; top: 150px; left: 350px; }
+
+            .redBox { position: absolute; height: 50px; background-color: red; }
+            #red { top: 200px; }
+            #red1 { top: 150px; left: 350px; }
+            #red2 { top: 250px; left: 350px; }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=100749"> [CSSRegions]Former auto-height regions should not ignore their defined height</a>.</p>
+        <p>The first region is auto-height and the second region has specified height.</p>
+        <p>After a first layout, the first region has its height defined and the content should flow into the second region too.</p>
+        <p>On success, you should see 1 green line on the left and 2 green lines on the right.</p>
+
+        <div id="red" class="redBox regionSize"></div>
+        <div id="red1" class="redBox regionSize"></div>
+        <div id="red2" class="redBox regionSize"></div>
+
+        <div id="article" class="flowContent">
+            <p id="p1">aaaaa</p>
+            <p id="p2">aaaaa</p>
+            <p id="p3">aaaaa</p>
+        </div>
+        <div id="region" class="regionSize"></div>
+        <div id="region2" class="regionSize2"></div>
+        <script>
+            document.body.offsetTop;
+            document.getElementById("region").className = "regionSize2";
+        </script>
+    </body>
+</html>

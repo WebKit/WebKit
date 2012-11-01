@@ -189,8 +189,10 @@ void RenderRegion::updateRegionHasAutoLogicalHeightFlag()
     if (m_hasAutoLogicalHeight != didHaveAutoLogicalHeight) {
         if (m_hasAutoLogicalHeight)
             view()->flowThreadController()->incrementAutoLogicalHeightRegions();
-        else
+        else {
+            clearOverrideLogicalContentHeight();
             view()->flowThreadController()->decrementAutoLogicalHeightRegions();
+        }
     }
 }
 

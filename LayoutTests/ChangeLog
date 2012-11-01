@@ -1,3 +1,17 @@
+2012-11-01  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Former auto-height regions should not ignore their defined height
+        https://bugs.webkit.org/show_bug.cgi?id=100749
+
+        Reviewed by Julien Chaffraix.
+
+        Add a test in which we flow content into a region chain with 2 regions, the first one having height auto.
+        After a first layout, the region with height auto has an override logical content height, which should be
+        cleared when the first region has its height changed from auto to defined.
+
+        * fast/regions/autoheight-definedheight-changenotdetected-expected.html: Added.
+        * fast/regions/autoheight-definedheight-changenotdetected.html: Added.
+
 2012-11-01  Pavel Podivilov  <podivilov@google.com>
 
         [chromium] Add new baseline for exif-orientation-css.html on linux.
