@@ -170,12 +170,16 @@ static float determineFullScreenMultiplier(Element* element)
 
 static void drawControl(GraphicsContext* gc, const FloatRect& rect, Image* img)
 {
+    if (!img)
+        return;
     FloatRect srcRect(0, 0, img->width(), img->height());
     gc->drawImage(img, ColorSpaceDeviceRGB, rect, srcRect);
 }
 
 static void drawThreeSlice(GraphicsContext* gc, const IntRect& rect, Image* img, int slice)
 {
+    if (!img)
+        return;
     FloatSize dstSlice(rect.height() / 2, rect.height());
     FloatRect srcRect(0, 0, slice, img->height());
     FloatRect dstRect(rect.location(), dstSlice);
@@ -192,6 +196,8 @@ static void drawThreeSlice(GraphicsContext* gc, const IntRect& rect, Image* img,
 
 static void drawNineSlice(GraphicsContext* gc, const IntRect& rect, double scale, Image* img, int slice)
 {
+    if (!img)
+        return;
     if (rect.height() * scale < 101.0)
         scale = 101.0 / rect.height();
     FloatSize dstSlice(slice / scale, slice / scale);
