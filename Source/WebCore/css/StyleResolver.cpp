@@ -4273,14 +4273,14 @@ PassRefPtr<StyleImage> StyleResolver::cachedOrPendingFromValue(CSSPropertyID pro
 {
     RefPtr<StyleImage> image = value->cachedOrPendingImage();
     if (image && image->isPendingImage())
-        m_pendingImageProperties.add(property);
+        m_pendingImageProperties.set(property, value);
     return image.release();
 }
 
 PassRefPtr<StyleImage> StyleResolver::generatedOrPendingFromValue(CSSPropertyID property, CSSImageGeneratorValue* value)
 {
     if (value->isPending()) {
-        m_pendingImageProperties.add(property);
+        m_pendingImageProperties.set(property, value);
         return StylePendingImage::create(value);
     }
     return StyleGeneratedImage::create(value);
@@ -4291,7 +4291,7 @@ PassRefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID proper
 {
     RefPtr<StyleImage> image = value->cachedOrPendingImageSet(document());
     if (image && image->isPendingImage())
-        m_pendingImageProperties.add(property);
+        m_pendingImageProperties.set(property, value);
     return image.release();
 }
 #endif
@@ -5795,8 +5795,8 @@ void StyleResolver::loadPendingImages()
     if (m_pendingImageProperties.isEmpty())
         return;
 
-    HashSet<CSSPropertyID>::const_iterator end = m_pendingImageProperties.end();
-    for (HashSet<CSSPropertyID>::const_iterator it = m_pendingImageProperties.begin(); it != end; ++it) {
+    PendingImagePropertyMap::const_iterator::Keys end = m_pendingImageProperties.end().keys(); 
+    for (PendingImagePropertyMap::const_iterator::Keys it = m_pendingImageProperties.begin().keys(); it != end; ++it) { 
         CSSPropertyID currentProperty = *it;
 
         switch (currentProperty) {

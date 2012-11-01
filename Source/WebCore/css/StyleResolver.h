@@ -468,7 +468,8 @@ private:
 
     RefPtr<StaticCSSRuleList> m_ruleList;
 
-    HashSet<CSSPropertyID> m_pendingImageProperties;
+    typedef HashMap<CSSPropertyID, RefPtr<CSSValue> > PendingImagePropertyMap;
+    PendingImagePropertyMap m_pendingImageProperties;
 
     OwnPtr<MediaQueryEvaluator> m_medium;
     RefPtr<RenderStyle> m_rootDefaultStyle;
