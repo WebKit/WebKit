@@ -1,5 +1,32 @@
 2012-11-01  Dana Jansens  <danakj@chromium.org>
 
+        Rebaseline after compositor migration to gfx types.
+        http://crbug.com/147395
+
+        Unreviewed rebaselines.
+
+        * platform/chromium-linux/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
+        * platform/chromium-linux/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-linux/compositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/chromium-linux/platform/chromium/compositing/huge-layer-rotated-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-3-expected.png:
+        * platform/chromium-linux/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+        * platform/chromium-mac-lion/compositing/geometry/vertical-scroll-composited-expected.png: Added.
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/compositing/huge-layer-rotated-expected.png: Added.
+        * platform/chromium-mac-lion/transforms/3d/point-mapping/3d-point-mapping-3-expected.png: Added.
+        * platform/chromium-mac-lion/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png: Added.
+        * platform/chromium-mac-lion/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png: Added.
+        * platform/chromium-mac-snowleopard/compositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/chromium-mac-snowleopard/transforms/3d/point-mapping/3d-point-mapping-3-expected.png:
+        * platform/chromium-mac-snowleopard/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-mac-snowleopard/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+        * platform/chromium-win-xp/compositing/reflections/nested-reflection-anchor-point-expected.png: Removed.
+        * platform/efl-wk1/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png: Renamed from LayoutTests/platform/efl/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png.
+        * platform/efl-wk1/compositing/reflections/nested-reflection-anchor-point-expected.png: Renamed from LayoutTests/platform/efl/compositing/reflections/nested-reflection-anchor-point-expected.png.
+
+2012-11-01  Dana Jansens  <danakj@chromium.org>
+
         Unreviewed, marking tests as failing preemptively.
         http://crbug.com/147395
 
