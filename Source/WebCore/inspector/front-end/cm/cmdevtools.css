@@ -1,8 +1,11 @@
 .CodeMirror {
   line-height: 1.2em !important;
-}
-.CodeMirror-scroll {
   height: 100% !important;
+}
+
+.CodeMirror-linenumber {
+  padding-top: 1px !important;
+  min-width: 22px !important;
 }
 
 .cm-highlight {
@@ -13,11 +16,13 @@
     to { background-color: white; }
 }
 .cm-breakpoint {
-  color: white !important;
-  margin-right: -8px !important;
-  margin-left: -6px !important;
+  color: white;
+  position: absolute;
+  right: 3px;
+  margin: 0 -8px 0 -6px !important;
   border-width: 0 8px 0px 2px !important;
   -webkit-border-image: url(Images/breakpointBorder.png) 1 14 1 2;
+  padding: 0 0 1px 100px;
 }
 .cm-breakpoint-disabled {
   opacity: 0.5;

@@ -1,3 +1,88 @@
+2012-11-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: Update CodeMirror to v3
+        https://bugs.webkit.org/show_bug.cgi?id=99319
+
+        Reviewed by Vsevolod Vlasov.
+
+        Updated to ToT v3.
+
+        * inspector/front-end/CodeMirrorTextEditor.js:
+        (WebInspector.CodeMirrorTextEditor):
+        (WebInspector.CodeMirrorTextEditor.prototype._gutterClick):
+        (WebInspector.CodeMirrorTextEditor.prototype.addBreakpoint):
+        (WebInspector.CodeMirrorTextEditor.prototype.removeBreakpoint):
+        (WebInspector.CodeMirrorTextEditor.prototype.setExecutionLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.clearExecutionLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.highlightLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.clearLineHighlight):
+        (WebInspector.CodeMirrorTextEditor.prototype._change):
+        * inspector/front-end/cm/cmdevtools.css:
+        (.CodeMirror):
+        (.CodeMirror-linenumber):
+        (.cm-breakpoint):
+        * inspector/front-end/cm/codemirror.css:
+        (.CodeMirror):
+        (.CodeMirror-scroll):
+        (.CodeMirror-lines):
+        (.CodeMirror pre):
+        (.CodeMirror-scrollbar-filler):
+        (.CodeMirror-gutters):
+        (.CodeMirror-linenumbers):
+        (.CodeMirror-linenumber):
+        (.CodeMirror pre.CodeMirror-cursor):
+        (.CodeMirror pre.CodeMirror-secondarycursor):
+        (.cm-keymap-fat-cursor pre.CodeMirror-cursor):
+        (.cm-keymap-fat-cursor pre.CodeMirror-cursor:not(#nonsense_id)):
+        (.CodeMirror pre.CodeMirror-cursor.CodeMirror-overwrite):
+        (.cm-s-default .cm-keyword):
+        (.cm-s-default .cm-atom):
+        (.cm-s-default .cm-number):
+        (.cm-s-default .cm-def):
+        (.cm-s-default .cm-variable):
+        (.cm-s-default .cm-variable-2):
+        (.cm-s-default .cm-variable-3):
+        (.cm-s-default .cm-property):
+        (.cm-s-default .cm-operator):
+        (.cm-s-default .cm-comment):
+        (.cm-s-default .cm-string):
+        (.cm-s-default .cm-string-2):
+        (.cm-s-default .cm-meta):
+        (.cm-s-default .cm-error):
+        (.cm-s-default .cm-qualifier):
+        (.cm-s-default .cm-builtin):
+        (.cm-s-default .cm-bracket):
+        (.cm-s-default .cm-tag):
+        (.cm-s-default .cm-attribute):
+        (.cm-s-default .cm-header):
+        (.cm-s-default .cm-quote):
+        (.cm-s-default .cm-hr):
+        (.cm-s-default .cm-link):
+        (.cm-header, .cm-strong):
+        (.cm-em):
+        (.cm-emstrong):
+        (.cm-link):
+        (.cm-invalidchar):
+        (div.CodeMirror span.CodeMirror-matchingbracket):
+        (div.CodeMirror span.CodeMirror-nonmatchingbracket):
+        (.CodeMirror-sizer):
+        (.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler):
+        (.CodeMirror-vscrollbar):
+        (.CodeMirror-hscrollbar):
+        (.CodeMirror-gutter):
+        (.CodeMirror-gutter-elt):
+        (.CodeMirror-linebackground):
+        (.CodeMirror-linewidget):
+        (.CodeMirror-measure):
+        (.CodeMirror-measure pre):
+        (.CodeMirror-selected):
+        (.CodeMirror-focused .CodeMirror-selected):
+        (.CodeMirror span):
+        * inspector/front-end/cm/codemirror.js:
+        (window.CodeMirror.):
+        (window.CodeMirror):
+        * inspector/front-end/utilities.js:
+
 2012-11-01  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update BB10 form theme.
