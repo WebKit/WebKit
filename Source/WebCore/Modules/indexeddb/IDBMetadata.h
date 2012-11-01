@@ -38,37 +38,21 @@
 
 namespace WebCore {
 
-struct IDBObjectStoreMetadata;
-struct IDBIndexMetadata;
-
-struct IDBDatabaseMetadata {
-    // FIXME: These can probably be collapsed into 0.
-    enum {
-        NoIntVersion = -1,
-        DefaultIntVersion = 0
-    };
-
-    IDBDatabaseMetadata()
-        : intVersion(NoIntVersion)
-    {
-    }
-    IDBDatabaseMetadata(const String& name, int64_t id, const String& version, int64_t intVersion, int64_t maxObjectStoreId)
+struct IDBIndexMetadata {
+    IDBIndexMetadata() { }
+    IDBIndexMetadata(const String& name, int64_t id, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
         : name(name)
         , id(id)
-        , version(version)
-        , intVersion(intVersion)
-        , maxObjectStoreId(maxObjectStoreId)
-    {
-    }
-
+        , keyPath(keyPath)
+        , unique(unique)
+        , multiEntry(multiEntry) { }
     String name;
     int64_t id;
-    String version;
-    int64_t intVersion;
-    int64_t maxObjectStoreId;
+    IDBKeyPath keyPath;
+    bool unique;
+    bool multiEntry;
 
-    typedef HashMap<String, IDBObjectStoreMetadata> ObjectStoreMap;
-    ObjectStoreMap objectStores;
+    static const int64_t InvalidId = -1;
 };
 
 struct IDBObjectStoreMetadata {
@@ -87,23 +71,66 @@ struct IDBObjectStoreMetadata {
     bool autoIncrement;
     int64_t maxIndexId;
 
-    typedef HashMap<String, IDBIndexMetadata> IndexMap;
+    static const int64_t InvalidId = -1;
+
+    typedef HashMap<int64_t, IDBIndexMetadata> IndexMap;
     IndexMap indexes;
+
+    bool containsIndex(const String& name) const
+    {
+        for (IndexMap::const_iterator it = indexes.begin(); it != indexes.end(); ++it) {
+            if (it->value.name == name)
+                return true;
+        }
+        return false;
+    }
 };
 
-struct IDBIndexMetadata {
-    IDBIndexMetadata() { }
-    IDBIndexMetadata(const String& name, int64_t id, const IDBKeyPath& keyPath, bool unique, bool multiEntry)
+struct IDBDatabaseMetadata {
+    // FIXME: These can probably be collapsed into 0.
+    enum {
+        NoIntVersion = -1,
+        DefaultIntVersion = 0
+    };
+
+    typedef HashMap<int64_t, IDBObjectStoreMetadata> ObjectStoreMap;
+
+    IDBDatabaseMetadata()
+        : intVersion(NoIntVersion)
+    {
+    }
+    IDBDatabaseMetadata(const String& name, int64_t id, const String& version, int64_t intVersion, int64_t maxObjectStoreId)
         : name(name)
         , id(id)
-        , keyPath(keyPath)
-        , unique(unique)
-        , multiEntry(multiEntry) { }
+        , version(version)
+        , intVersion(intVersion)
+        , maxObjectStoreId(maxObjectStoreId)
+    {
+    }
+
+    int64_t findObjectStore(const String& name) const
+    {
+        for (ObjectStoreMap::const_iterator it = objectStores.begin(); it != objectStores.end(); ++it) {
+            if (it->value.name == name) {
+                ASSERT(it->key != IDBObjectStoreMetadata::InvalidId);
+                return it->key;
+            }
+        }
+        return IDBObjectStoreMetadata::InvalidId;
+    }
+
+    bool containsObjectStore(const String& name) const
+    {
+        return findObjectStore(name) != IDBObjectStoreMetadata::InvalidId;
+    }
+
     String name;
     int64_t id;
-    IDBKeyPath keyPath;
-    bool unique;
-    bool multiEntry;
+    String version;
+    int64_t intVersion;
+    int64_t maxObjectStoreId;
+
+    ObjectStoreMap objectStores;
 };
 
 }

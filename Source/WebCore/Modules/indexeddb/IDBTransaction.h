@@ -30,7 +30,6 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMError.h"
-#include "DOMStringList.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -56,8 +55,8 @@ public:
         VERSION_CHANGE = 2
     };
 
-    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, Mode, IDBDatabase*);
-    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, Mode, IDBDatabase*, IDBOpenDBRequest*);
+    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>& objectStoreNames, Mode, IDBDatabase*);
+    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>& objectStoreNames, Mode, IDBDatabase*, IDBOpenDBRequest*);
     virtual ~IDBTransaction();
 
     static const AtomicString& modeReadOnly();
@@ -122,7 +121,7 @@ public:
     using RefCounted<IDBTransactionCallbacks>::deref;
 
 private:
-    IDBTransaction(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, Mode, IDBDatabase*, IDBOpenDBRequest*);
+    IDBTransaction(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>&, Mode, IDBDatabase*, IDBOpenDBRequest*);
 
     void enqueueEvent(PassRefPtr<Event>);
     void closeOpenCursors();
@@ -145,6 +144,7 @@ private:
 
     RefPtr<IDBTransactionBackendInterface> m_backend;
     RefPtr<IDBDatabase> m_database;
+    const Vector<String> m_objectStoreNames;
     IDBOpenDBRequest* m_openDBRequest;
     const Mode m_mode;
     bool m_active;

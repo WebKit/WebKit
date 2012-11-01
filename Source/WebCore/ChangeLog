@@ -1,3 +1,120 @@
+2012-10-31  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: add methods to support id-based backend APIs
+        https://bugs.webkit.org/show_bug.cgi?id=100425
+
+        Reviewed by Tony Chang.
+
+        First half of refactor involves adding a number of methods that
+        are int64_t-based rather than String-based. As a part of this, the
+        IDB*Metadata structs and the backend objectStore/index maps all
+        use int64_t as keys, rather than String.
+
+        In addition, there were a number of cleanups that came out of the
+        refactor:
+
+        - The list of object stores active in a transaction is now
+          maintained by the frontend IDBTransaction rather than the backend
+          IDBTransactionBackendImpl. This also had a simplifying rippling
+          effect through other call signatures.
+
+        - I was able to remove an apparently old FIXME from
+          IDBTransactionBackendImpl::objectStore and replace it with an ASSERT.
+
+        - IDBObjectStoreBackendImpl's IndexWriter class got a little
+          simpler since the id is now easily available in the
+          IDBIndexMetadata.
+
+        - A number of methods got simpler in their int64_t versions,
+          specifically dropping a number of ExceptionCodes.
+
+        There is also some glue code
+        (getIndexId/getIndexIds/getObjectStoreId) that will go away with
+        the 2nd half of this: https://bugs.webkit.org/show_bug.cgi?id=100425
+
+        No new tests, no new functionality as this is just a refactor.
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::objectStoreNames):
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::deleteObjectStore):
+        (WebCore::IDBDatabase::transaction):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::metadata):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::objectStore):
+        (WebCore::IDBDatabaseBackendImpl::getObjectStoreId):
+        (WebCore):
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::transaction):
+        (WebCore::IDBDatabaseBackendImpl::loadObjectStores):
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStoreFromMap):
+        (WebCore::IDBDatabaseBackendImpl::addObjectStoreToMap):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStore):
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+        (IDBDatabaseBackendInterface):
+        * Modules/indexeddb/IDBIndex.h:
+        (WebCore::IDBIndex::id):
+        (WebCore::IDBIndex::openKeyCursor):
+        * Modules/indexeddb/IDBIndexBackendInterface.h:
+        * Modules/indexeddb/IDBMetadata.h:
+        (WebCore::IDBIndexMetadata::IDBIndexMetadata):
+        (IDBIndexMetadata):
+        (IDBObjectStoreMetadata):
+        (WebCore::IDBObjectStoreMetadata::containsIndex):
+        (IDBDatabaseMetadata):
+        (WebCore::IDBDatabaseMetadata::IDBDatabaseMetadata):
+        (WebCore::IDBDatabaseMetadata::containsObjectStore):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::indexNames):
+        (WebCore::IDBObjectStore::put):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::deleteIndex):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::putWithIndexKeys):
+        (WebCore):
+        (WebCore::makeIndexWriters):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexesReady):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexesReadyInternal):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::index):
+        (WebCore::IDBObjectStoreBackendImpl::getIndexId):
+        (WebCore::IDBObjectStoreBackendImpl::getIndexIds):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndex):
+        (WebCore::IDBObjectStoreBackendImpl::loadIndexes):
+        (WebCore::IDBObjectStoreBackendImpl::removeIndexFromMap):
+        (WebCore::IDBObjectStoreBackendImpl::addIndexToMap):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (IDBObjectStoreBackendImpl):
+        * Modules/indexeddb/IDBObjectStoreBackendInterface.h:
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::uncaughtExceptionInEventHandler):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::create):
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::objectStore):
+        * Modules/indexeddb/IDBTransaction.h:
+        (IDBTransaction):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::create):
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::objectStore):
+        (WebCore):
+        (WebCore::IDBTransactionBackendImpl::scheduleTask):
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        (IDBTransactionBackendImpl):
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+
 2012-10-30  Mark Lam  <mark.lam@apple.com>
 
         A JSC printf (support for %J+s and %b).

@@ -1,3 +1,51 @@
+2012-10-31  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: add methods to support id-based backend APIs
+        https://bugs.webkit.org/show_bug.cgi?id=100425
+
+        Reviewed by Tony Chang.
+
+        Chromium Proxy and WebIDB* support for new int64_t-based methods.
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::deleteObjectStore):
+        (WebKit::WebIDBDatabase::transaction):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::put):
+        (WebKit::WebIDBObjectStore::setIndexKeys):
+        (WebKit::WebIDBObjectStore::setIndexesReady):
+        (WebKit::WebIDBObjectStore::index):
+        (WebKit::WebIDBObjectStore::deleteIndex):
+        * public/WebIDBTransaction.h:
+        (WebKit::WebIDBTransaction::objectStore):
+        * src/IDBDatabaseBackendProxy.cpp:
+        (WebKit::IDBDatabaseBackendProxy::deleteObjectStore):
+        (WebKit):
+        (WebKit::IDBDatabaseBackendProxy::transaction):
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::put):
+        (WebKit):
+        (WebKit::IDBObjectStoreBackendProxy::setIndexKeys):
+        (WebKit::IDBObjectStoreBackendProxy::setIndexesReady):
+        (WebKit::IDBObjectStoreBackendProxy::index):
+        (WebKit::IDBObjectStoreBackendProxy::deleteIndex):
+        * src/IDBObjectStoreBackendProxy.h:
+        (IDBObjectStoreBackendProxy):
+        * src/IDBTransactionBackendProxy.cpp:
+        (WebKit::IDBTransactionBackendProxy::objectStore):
+        * src/IDBTransactionBackendProxy.h:
+        (IDBTransactionBackendProxy):
+        * src/WebIDBMetadata.cpp:
+        (WebKit::WebIDBMetadata::WebIDBMetadata):
+        (WebKit::WebIDBMetadata::operator IDBDatabaseMetadata):
+        * src/WebIDBTransactionImpl.cpp:
+        (WebKit::WebIDBTransactionImpl::objectStore):
+        (WebKit):
+        * src/WebIDBTransactionImpl.h:
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2012-10-31  Tien-Ren Chen  <trchen@chromium.org>
 
         Apply transformation for highlights on non-composited contents

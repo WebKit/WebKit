@@ -152,8 +152,10 @@ public:
     virtual IDBDatabaseMetadata metadata() const { return IDBDatabaseMetadata(); }
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(int64_t, const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) { return 0; }
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) { }
+    virtual void deleteObjectStore(int64_t, IDBTransactionBackendInterface*, ExceptionCode&) { }
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, ExceptionCode&) { }
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, ExceptionCode&) { return 0; }
+    virtual PassRefPtr<IDBTransactionBackendInterface> transaction(const Vector<int64_t>&, unsigned short mode) { return 0; }
 
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>)
     {
