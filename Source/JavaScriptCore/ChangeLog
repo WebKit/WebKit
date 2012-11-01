@@ -1,5 +1,39 @@
 2012-10-31  Mark Lam  <mark.lam@apple.com>
 
+        A JSC printf (support for %J+s and %b).
+        https://bugs.webkit.org/show_bug.cgi?id=100566.
+
+        Reviewed by Michael Saboff.
+
+        Added VMInspector::printf(), fprintf(), sprintf(), and snprintf().
+        - %b prints ints as boolean TRUE (non-zero) or FALSE (zero).
+        - %Js prints a WTF::String* like a %s prints a char*.
+          Also works for 16bit WTF::Strings (prints wchar_t* using %S).
+        - '+' is a modifier meaning 'use verbose mode', and %J+s is an example
+          of its use.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/VMInspector.cpp:
+        (FormatPrinter):
+        (JSC::FormatPrinter::~FormatPrinter):
+        (JSC::FormatPrinter::print):
+        (JSC::FormatPrinter::printArg):
+        (JSC::FormatPrinter::printWTFString):
+        (JSC::FileFormatPrinter::FileFormatPrinter):
+        (JSC::FileFormatPrinter::printArg):
+        (JSC::StringFormatPrinter::StringFormatPrinter):
+        (JSC::StringFormatPrinter::printArg):
+        (JSC::StringNFormatPrinter::StringNFormatPrinter):
+        (JSC::StringNFormatPrinter::printArg):
+        (JSC::VMInspector::fprintf):
+        (JSC::VMInspector::printf):
+        (JSC::VMInspector::sprintf):
+        (JSC::VMInspector::snprintf):
+        * interpreter/VMInspector.h:
+        (VMInspector):
+
+2012-10-31  Mark Lam  <mark.lam@apple.com>
+
         64-bit llint PC offset can be negative: using an unsigned shift is a bug.
         https://bugs.webkit.org/show_bug.cgi?id=100896.
 

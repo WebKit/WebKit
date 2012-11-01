@@ -183,6 +183,7 @@
 		F6F49C6B15545CA70007F39D /* DOMWindowExtensionNoCache_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */; };
 		F6FDDDD314241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */; };
 		F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F6FDDDD514241C48004F1729 /* push-state.html */; };
+		FE217ECD1640A54A0052988B /* VMInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE217ECC1640A54A0052988B /* VMInspector.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -438,6 +439,7 @@
 		F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionNoCache.cpp; sourceTree = "<group>"; };
 		F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateBrowsingPushStateNoHistoryCallback.cpp; sourceTree = "<group>"; };
 		F6FDDDD514241C48004F1729 /* push-state.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "push-state.html"; sourceTree = "<group>"; };
+		FE217ECC1640A54A0052988B /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -718,6 +720,7 @@
 		BCB9EB66112366D800A137E0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				FE217ECB1640A54A0052988B /* JavaScriptCore */,
 				C08587F913FEC39B001EF4E5 /* TestWebKitAPI */,
 				C07E6CAD13FD67650038B22B /* mac */,
 				440A1D3614A01000008A66F2 /* WebCore */,
@@ -814,6 +817,14 @@
 				BCAA485714A044D40088FAC4 /* EditorCommands.mm */,
 			);
 			path = mac;
+			sourceTree = "<group>";
+		};
+		FE217ECB1640A54A0052988B /* JavaScriptCore */ = {
+			isa = PBXGroup;
+			children = (
+				FE217ECC1640A54A0052988B /* VMInspector.cpp */,
+			);
+			path = JavaScriptCore;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1004,6 +1015,7 @@
 				2943BE86161DFEB800999E3D /* UserContentTest.mm in Sources */,
 				4F4D2C0E1626FE2700320FE1 /* MemoryInstrumentationTest.cpp in Sources */,
 				378E64731632646D00B6C676 /* InjectedBundleFrameHitTest.cpp in Sources */,
+				FE217ECD1640A54A0052988B /* VMInspector.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

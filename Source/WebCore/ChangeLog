@@ -1,3 +1,16 @@
+2012-10-30  Mark Lam  <mark.lam@apple.com>
+
+        A JSC printf (support for %J+s and %b).
+        https://bugs.webkit.org/show_bug.cgi?id=100566.
+
+        Reviewed by Michael Saboff.
+
+        Added forwarding header for VMInspector.h.
+
+        No new tests needed for this.
+
+        * ForwardingHeaders/interpreter/VMInspector.h: Added.
+
 2012-10-31  Chris Rogers  <crogers@google.com>
 
         Implement optional arguments in AudioBufferSourceNode start() method

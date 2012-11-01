@@ -1,3 +1,16 @@
+2012-10-30  Mark Lam  <mark.lam@apple.com>
+
+        A JSC printf (support for %J+s and %b).
+        https://bugs.webkit.org/show_bug.cgi?id=100566.
+
+        Reviewed by Michael Saboff.
+
+        Added regression tests for VMInspector::fprintf() sprintf() and snprintf().
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/JavaScriptCore: Added.
+        * TestWebKitAPI/Tests/JavaScriptCore/VMInspector.cpp: Added.
+
 2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Added viewport at-rule to the CSS parser and tokenizer

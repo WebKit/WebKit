@@ -28,12 +28,15 @@
 
 #define ENABLE_VMINSPECTOR 0
 
-#if ENABLE(VMINSPECTOR)
-
 #include "CallFrame.h"
 #include "JSValue.h"
+#include <stdarg.h>
+#include <stdio.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
+
+#if ENABLE(VMINSPECTOR)
 
 class VMInspector {
 public:    
@@ -41,10 +44,46 @@ public:
     static JS_EXPORT_PRIVATE void dumpFrame0(CallFrame*);
     static JS_EXPORT_PRIVATE void dumpFrame(CallFrame*, const char* prefix = 0, const char* funcName = 0, const char* file = 0, int line = -1);
     static JS_EXPORT_PRIVATE int countFrames(CallFrame*);
+
+    // Special family of ...printf() functions that support, in addition to the
+    // standard % formats (e.g. %d, %s, etc), the following extra JSC formatting
+    // options, %J<x>, where <x> consists of:
+    //
+    //   +    - verbose mode modifier.
+    //          Used in combination with other options. Must come after the %J.
+    //   s    - WTF::String*
+    //
+    // Examples of usage:
+    //
+    //    WTF::String str("My WTF String");
+    //
+    //    // Printing the string. Will print:
+    //    // The wtf string says: "My WTF String" and is NOT EMPTY.
+    //
+    //    VMInspector::printf("The wtf string says: \"%Js\" and is %s\n",
+    //        &str, str.isEmpty()?"EMPTY":"NOT EMPTY");
+    //
+    //    // Printing the string with verbose mode. Will print:
+    //    // <WTF::String "My WTF String">
+    //
+    //    VMInspector::printf("<%J+s>\n", &str);
+    //
+    // Also added some convenience non-JS formats:
+    //
+    //   %b    - boolean (va_args will look for an int).
+    //           Prints TRUE if non-zero, else prints FALSE.
+    //
+    // Caution: the user is expected to pass the correctly matched arguments
+    // to pair with the corresponding % fomatting.
+
+    static JS_EXPORT_PRIVATE void fprintf(FILE*, const char* format, ...);
+    static JS_EXPORT_PRIVATE void printf(const char* format, ...);
+    static JS_EXPORT_PRIVATE void sprintf(char*, const char* format, ...);
+    static JS_EXPORT_PRIVATE void snprintf(char*, size_t, const char* format, ...);
 };
 
-} // namespace JSC
-
 #endif // ENABLE(VMINSPECTOR)
+
+} // namespace JSC
 
 #endif // VMInspector.h
