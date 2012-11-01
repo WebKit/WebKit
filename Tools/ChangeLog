@@ -1,3 +1,15 @@
+2012-11-01  Zoltan Horvath  <zoltan@webkit.org>
+
+        Remove PageLoad directory entry from PerformanceTests pattern_map
+        https://bugs.webkit.org/show_bug.cgi?id=100989
+
+        Reviewed by Ryosuke Niwa.
+
+        Since we removed PageLoad directory from PerformanceTests we don't need this entry in pattern_map.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTestFactory):
+
 2012-11-01  Jer Noble  <jer.noble@apple.com>
 
         Add LLDB-Python scripts to support WebKit data types.

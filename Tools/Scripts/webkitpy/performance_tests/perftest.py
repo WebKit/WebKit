@@ -381,7 +381,6 @@ class PerfTestFactory(object):
 
     _pattern_map = [
         (re.compile(r'^inspector/'), ChromiumStylePerfTest),
-        (re.compile(r'^PageLoad/'), PageLoadingPerfTest),
         (re.compile(r'(.+)\.replay$'), ReplayPerfTest),
     ]
 
