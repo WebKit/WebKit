@@ -1,3 +1,51 @@
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, rolling out r133143.
+        http://trac.webkit.org/changeset/133143
+        https://bugs.webkit.org/show_bug.cgi?id=96894
+
+        Causing content_browsertests failures
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DeviceOrientationClient.h:
+        (DeviceOrientationClient):
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        (WebCore):
+        (WebCore::DeviceOrientationController::~DeviceOrientationController):
+        (WebCore::DeviceOrientationController::timerFired):
+        (WebCore::DeviceOrientationController::addListener):
+        (WebCore::DeviceOrientationController::removeListener):
+        (WebCore::DeviceOrientationController::removeAllListeners):
+        (WebCore::DeviceOrientationController::suspendEventsForAllListeners):
+        (WebCore::DeviceOrientationController::resumeEventsForAllListeners):
+        (WebCore::DeviceOrientationController::didChangeDeviceOrientation):
+        (WebCore::DeviceOrientationController::supplementName):
+        * dom/DeviceOrientationController.h:
+        (WebCore):
+        (DeviceOrientationController):
+        (WebCore::DeviceOrientationController::isActive):
+        (WebCore::DeviceOrientationController::client):
+        (WebCore::DeviceOrientationController::from):
+        * dom/Document.cpp:
+        (WebCore::Document::suspendActiveDOMObjects):
+        (WebCore::Document::resumeActiveDOMObjects):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyDeviceOrientationClient::startUpdating):
+        (WebCore::EmptyDeviceOrientationClient::stopUpdating):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * page/DeviceClient.h: Removed.
+        * page/DeviceController.cpp: Removed.
+        * page/DeviceController.h: Removed.
+
 2012-11-01  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL][AC]Free GL resources allocated by GraphicsContext3DEfl.
