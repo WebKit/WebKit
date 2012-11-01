@@ -59,23 +59,40 @@ public:
         PropertyReference(const StylePropertySet& propertySet, unsigned index)
             : m_propertySet(propertySet)
             , m_index(index)
-        { }
+        {
+        }
 
-        CSSPropertyID id() const { return propertyInternal().id(); }
-        CSSPropertyID shorthandID() const { return propertyInternal().shorthandID(); }
-        bool isImportant() const { return propertyInternal().isImportant(); }
-        bool isImplicit() const { return propertyInternal().isImplicit(); }
-        bool isInherited() const { return propertyInternal().isInherited(); }
+        CSSPropertyID id() const { return static_cast<CSSPropertyID>(propertyMetadata().m_propertyID); }
+        CSSPropertyID shorthandID() const { return static_cast<CSSPropertyID>(propertyMetadata().m_shorthandID); }
 
-        String cssName() const { return propertyInternal().cssName(); }
-        String cssText() const { return propertyInternal().cssText(); }
+        bool isImportant() const { return propertyMetadata().m_important; }
+        bool isInherited() const { return propertyMetadata().m_inherited; }
+        bool isImplicit() const { return propertyMetadata().m_implicit; }
 
-        const CSSValue* value() const { return propertyInternal().value(); }
+        String cssName() const;
+        String cssText() const;
+
+        const CSSValue* value() const { return propertyValue(); }
         // FIXME: We should try to remove this mutable overload.
-        CSSValue* value() { return const_cast<CSSValue*>(propertyInternal().value()); }
+        CSSValue* value() { return const_cast<CSSValue*>(propertyValue()); }
+
+        // FIXME: Remove this.
+        CSSProperty toCSSProperty() const { return CSSProperty(propertyMetadata(), const_cast<CSSValue*>(propertyValue())); }
 
     private:
-        const CSSProperty& propertyInternal() const { return m_propertySet.propertyAtInternal(m_index); }
+        StylePropertyMetadata propertyMetadata() const
+        {
+            if (m_propertySet.isMutable())
+                return m_propertySet.mutablePropertyVector().at(m_index).metadata();
+            return m_propertySet.immutableMetadataArray()[m_index];
+        }
+
+        const CSSValue* propertyValue() const
+        {
+            if (m_propertySet.isMutable())
+                return m_propertySet.mutablePropertyVector().at(m_index).value();
+            return m_propertySet.immutableValueArray()[m_index];
+        }
 
         const StylePropertySet& m_propertySet;
         unsigned m_index;
@@ -142,7 +159,8 @@ public:
     void showStyle();
 #endif
 
-    const CSSProperty* immutablePropertyArray() const;
+    const CSSValue** immutableValueArray() const;
+    const StylePropertyMetadata* immutableMetadataArray() const;
 
 protected:
     StylePropertySet(CSSParserMode cssParserMode)
@@ -186,9 +204,6 @@ private:
     int findPropertyIndex(CSSPropertyID) const;
     CSSProperty* findMutableCSSPropertyWithID(CSSPropertyID);
 
-    CSSProperty& propertyAtInternal(unsigned index);
-    const CSSProperty& propertyAtInternal(unsigned index) const;
-
     friend class PropertySetCSSStyleDeclaration;
 };
 
@@ -197,8 +212,20 @@ public:
     ImmutableStylePropertySet(const CSSProperty*, unsigned count, CSSParserMode);
     ~ImmutableStylePropertySet();
 
-    void* m_propertyArray;
+    void* m_storage;
 };
+
+inline const CSSValue** StylePropertySet::immutableValueArray() const
+{
+    ASSERT(!m_isMutable);
+    return reinterpret_cast<const CSSValue**>(const_cast<const void**>((&static_cast<const ImmutableStylePropertySet*>(this)->m_storage)));
+}
+
+inline const StylePropertyMetadata* StylePropertySet::immutableMetadataArray() const
+{
+    ASSERT(!m_isMutable);
+    return reinterpret_cast<const StylePropertyMetadata*>(&reinterpret_cast<const char*>((&static_cast<const ImmutableStylePropertySet*>(this)->m_storage))[m_arraySize * sizeof(CSSValue*)]);
+}
 
 class MutableStylePropertySet : public StylePropertySet {
 public:
@@ -211,20 +238,6 @@ public:
     Vector<CSSProperty, 4> m_propertyVector;
 };
 
-inline CSSProperty& StylePropertySet::propertyAtInternal(unsigned index)
-{
-    if (m_isMutable)
-        return mutablePropertyVector().at(index);
-    return const_cast<CSSProperty*>(immutablePropertyArray())[index];
-}
-
-inline const CSSProperty& StylePropertySet::propertyAtInternal(unsigned index) const
-{
-    if (m_isMutable)
-        return mutablePropertyVector().at(index);
-    return immutablePropertyArray()[index];
-}
-
 inline Vector<CSSProperty, 4>& StylePropertySet::mutablePropertyVector()
 {
     ASSERT(m_isMutable);
@@ -235,12 +248,6 @@ inline const Vector<CSSProperty, 4>& StylePropertySet::mutablePropertyVector() c
 {
     ASSERT(m_isMutable);
     return static_cast<const MutableStylePropertySet*>(this)->m_propertyVector;
-}
-
-inline const CSSProperty* StylePropertySet::immutablePropertyArray() const
-{
-    ASSERT(!m_isMutable);
-    return reinterpret_cast<const CSSProperty*>(&static_cast<const ImmutableStylePropertySet*>(this)->m_propertyArray);
 }
 
 inline unsigned StylePropertySet::propertyCount() const

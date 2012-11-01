@@ -1,3 +1,74 @@
+2012-11-01  Andreas Kling  <kling@webkit.org>
+
+        Pack immutable StylePropertySets harder on 64-bit.
+        <http://webkit.org/b/100753>
+        <rdar://problem/12599155>
+
+        Reviewed by Antti Koivisto.
+
+        Move away from using CSSProperty as internal storage for immutable StylePropertySets.
+        Instead use two arrays, one for property metadata (ID, shorthand ID, !important, ...)
+        and one for the CSSValue pointers. This saves 4 bytes per property on 64-bit.
+
+        Old object layout:
+
+            Ref count                   (4 bytes)
+            Metadata                    (4 bytes)
+            CSSProperty [N]             (16 bytes each)
+
+        New object layout:
+
+            Ref count                   (4 bytes)
+            Metadata                    (4 bytes)
+            CSSValue* [N]               (8 bytes each)
+            StylePropertyMetadata [N]   (4 bytes each)
+
+        901kB progress on Membuster3 (22% overall reduction in StylePropertySet memory.)
+
+        The CSSProperty class sticks around for now, it's still used in mutable StylePropertySets
+        and by the StylePropertySet constructors.
+
+        * css/CSSProperty.cpp:
+        * css/CSSProperty.h:
+        (CSSProperty):
+        (WebCore::CSSProperty::CSSProperty):
+        (WebCore::CSSProperty::id):
+        (WebCore::CSSProperty::shorthandID):
+        (WebCore::CSSProperty::isImportant):
+        (WebCore::CSSProperty::metadata):
+
+            Break the bitfield from CSSProperty out into a StylePropertyMetadata class (actually a union.)
+
+        * css/StylePropertySet.cpp:
+        (WebCore::immutableStylePropertySetSize):
+
+            Updated size calculation for immutable StylePropertySets, 1/4 smaller!
+
+        (WebCore::ImmutableStylePropertySet::ImmutableStylePropertySet):
+        (WebCore::ImmutableStylePropertySet::~ImmutableStylePropertySet):
+        (WebCore::MutableStylePropertySet::MutableStylePropertySet):
+        (WebCore::StylePropertySet::mergeAndOverrideOnConflict):
+        (WebCore::StylePropertySet::reportMemoryUsage):
+        (WebCore::StylePropertySet::PropertyReference::cssName):
+        (WebCore::StylePropertySet::PropertyReference::cssText):
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::PropertyReference::id):
+        (WebCore::StylePropertySet::PropertyReference::shorthandID):
+        (WebCore::StylePropertySet::PropertyReference::isImportant):
+        (WebCore::StylePropertySet::PropertyReference::isInherited):
+        (WebCore::StylePropertySet::PropertyReference::isImplicit):
+        (PropertyReference):
+        (WebCore::StylePropertySet::PropertyReference::value):
+        (WebCore::StylePropertySet::PropertyReference::toCSSProperty):
+        (WebCore::StylePropertySet::PropertyReference::propertyMetadata):
+        (WebCore::StylePropertySet::PropertyReference::propertyValue):
+        (StylePropertySet):
+        (ImmutableStylePropertySet):
+        (WebCore::StylePropertySet::immutableValueArray):
+        (WebCore::StylePropertySet::immutableMetadataArray):
+
+            Refactored internal storage for StylePropertySet.
+
 2012-11-01  Kent Tamura  <tkent@chromium.org>
 
         Remove unused Locale::parseDateTime

@@ -34,6 +34,10 @@
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(CSS_VARIABLES)
+#include "CSSVariableValue.h"
+#endif
+
 #ifndef NDEBUG
 #include <stdio.h>
 #include <wtf/ASCIICType.h>
@@ -53,7 +57,7 @@ static PropertySetCSSOMWrapperMap& propertySetCSSOMWrapperMap()
 
 static size_t immutableStylePropertySetSize(unsigned count)
 {
-    return sizeof(StylePropertySet) + sizeof(CSSProperty) * count;
+    return sizeof(StylePropertySet) + sizeof(CSSValue*) * count + sizeof(StylePropertyMetadata) * count;
 }
 
 PassRefPtr<StylePropertySet> StylePropertySet::createImmutable(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
@@ -80,8 +84,20 @@ MutableStylePropertySet::MutableStylePropertySet(const CSSProperty* properties, 
 ImmutableStylePropertySet::ImmutableStylePropertySet(const CSSProperty* properties, unsigned length, CSSParserMode cssParserMode)
     : StylePropertySet(cssParserMode, length)
 {
-    for (unsigned i = 0; i < length; ++i)
-        new (&reinterpret_cast<CSSProperty*>(&m_propertyArray)[i]) CSSProperty(properties[i]);
+    StylePropertyMetadata* metadataArray = const_cast<StylePropertyMetadata*>(immutableMetadataArray());
+    CSSValue** valueArray = const_cast<CSSValue**>(immutableValueArray());
+    for (unsigned i = 0; i < length; ++i) {
+        metadataArray[i] = properties[i].metadata();
+        valueArray[i] = properties[i].value();
+        valueArray[i]->ref();
+    }
+}
+
+ImmutableStylePropertySet::~ImmutableStylePropertySet()
+{
+    CSSValue** valueArray = const_cast<CSSValue**>(immutableValueArray());
+    for (unsigned i = 0; i < m_arraySize; ++i)
+        valueArray[i]->deref();
 }
 
 MutableStylePropertySet::MutableStylePropertySet(const StylePropertySet& other)
@@ -92,14 +108,8 @@ MutableStylePropertySet::MutableStylePropertySet(const StylePropertySet& other)
     else {
         m_propertyVector.reserveInitialCapacity(other.propertyCount());
         for (unsigned i = 0; i < other.propertyCount(); ++i)
-            m_propertyVector.uncheckedAppend(other.immutablePropertyArray()[i]);
+            m_propertyVector.uncheckedAppend(other.propertyAt(i).toCSSProperty());
     }
-}
-
-ImmutableStylePropertySet::~ImmutableStylePropertySet()
-{
-    for (unsigned i = 0; i < m_arraySize; ++i)
-        immutablePropertyArray()[i].~CSSProperty();
 }
 
 StylePropertySet::~StylePropertySet()
@@ -914,12 +924,12 @@ void StylePropertySet::mergeAndOverrideOnConflict(const StylePropertySet* other)
     ASSERT(isMutable());
     unsigned size = other->propertyCount();
     for (unsigned n = 0; n < size; ++n) {
-        const CSSProperty& toMerge = other->propertyAtInternal(n);
+        PropertyReference toMerge = other->propertyAt(n);
         CSSProperty* old = findMutableCSSPropertyWithID(toMerge.id());
         if (old)
-            setProperty(toMerge, old);
+            setProperty(toMerge.toCSSProperty(), old);
         else
-            mutablePropertyVector().append(toMerge);
+            mutablePropertyVector().append(toMerge.toCSSProperty());
     }
 }
 
@@ -1132,10 +1142,10 @@ void StylePropertySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS, actualSize);
     if (m_isMutable)
         info.addMember(mutablePropertyVector());
-
-    unsigned count = propertyCount();
-    for (unsigned i = 0; i < count; ++i)
-        info.addMember(propertyAtInternal(i));
+    else {
+        for (unsigned i = 0; i < propertyCount(); ++i)
+            info.addMember(propertyAt(i).value());
+    }
 }
 
 // See the function above if you need to update this.
@@ -1160,5 +1170,29 @@ PassRefPtr<StylePropertySet> StylePropertySet::create(const CSSProperty* propert
 {
     return adoptRef(new MutableStylePropertySet(properties, count));
 }
+
+String StylePropertySet::PropertyReference::cssName() const
+{
+#if ENABLE(CSS_VARIABLES)
+    if (id() == CSSPropertyVariable) {
+        ASSERT(propertyValue()->isVariableValue());
+        return "-webkit-var-" + static_cast<const CSSVariableValue*>(propertyValue())->name();
+    }
+#endif
+    return getPropertyNameString(id());
+}
+
+String StylePropertySet::PropertyReference::cssText() const
+{
+    StringBuilder result;
+    result.append(cssName());
+    result.appendLiteral(": ");
+    result.append(propertyValue()->cssText());
+    if (isImportant())
+        result.appendLiteral(" !important");
+    result.append(';');
+    return result.toString();
+}
+
 
 } // namespace WebCore

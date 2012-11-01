@@ -31,29 +31,46 @@
 
 namespace WebCore {
 
-class CSSProperty {
-public:
-    CSSProperty(CSSPropertyID propID, PassRefPtr<CSSValue> value, bool important = false, CSSPropertyID shorthandID = CSSPropertyInvalid, bool implicit = false)
-        : m_id(propID)
+union StylePropertyMetadata {
+    StylePropertyMetadata(CSSPropertyID propertyID, CSSPropertyID shorthandID, bool important, bool implicit, bool inherited)
+        : m_propertyID(propertyID)
         , m_shorthandID(shorthandID)
         , m_important(important)
         , m_implicit(implicit)
-        , m_inherited(isInheritedProperty(propID))
+        , m_inherited(inherited)
+    {
+    }
+
+    unsigned m_bits;
+    struct {
+        unsigned m_propertyID : 14;
+        unsigned m_shorthandID : 14; // If this property was set as part of a shorthand, gives the shorthand.
+        unsigned m_important : 1;
+        unsigned m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
+        unsigned m_inherited : 1;
+    };
+};
+
+class CSSProperty {
+public:
+    CSSProperty(CSSPropertyID propertyID, PassRefPtr<CSSValue> value, bool important = false, CSSPropertyID shorthandID = CSSPropertyInvalid, bool implicit = false)
+        : m_metadata(propertyID, shorthandID, important, implicit, isInheritedProperty(propertyID))
         , m_value(value)
     {
     }
 
-    CSSPropertyID id() const { return static_cast<CSSPropertyID>(m_id); }
-    CSSPropertyID shorthandID() const { return static_cast<CSSPropertyID>(m_shorthandID); }
+    // FIXME: Remove this.
+    CSSProperty(StylePropertyMetadata metadata, CSSValue* value)
+        : m_metadata(metadata)
+        , m_value(value)
+    {
+    }
 
-    bool isImportant() const { return m_important; }
-    bool isImplicit() const { return m_implicit; }
-    bool isInherited() const { return m_inherited; }
+    CSSPropertyID id() const { return static_cast<CSSPropertyID>(m_metadata.m_propertyID); }
+    CSSPropertyID shorthandID() const { return static_cast<CSSPropertyID>(m_metadata.m_shorthandID); }
+    bool isImportant() const { return m_metadata.m_important; }
 
     CSSValue* value() const { return m_value.get(); }
-
-    String cssName() const;
-    String cssText() const;
 
     void wrapValueInCommaSeparatedList();
 
@@ -62,14 +79,10 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
-private:
-    // Make sure the following fits in 4 bytes. Really.
-    unsigned m_id : 14;
-    unsigned m_shorthandID : 14; // If this property was set as part of a shorthand, gives the shorthand.
-    unsigned m_important : 1;
-    unsigned m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
-    unsigned m_inherited : 1;
+    StylePropertyMetadata metadata() const { return m_metadata; }
 
+private:
+    StylePropertyMetadata m_metadata;
     RefPtr<CSSValue> m_value;
 };
 
