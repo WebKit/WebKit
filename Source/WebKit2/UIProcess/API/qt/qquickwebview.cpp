@@ -423,9 +423,6 @@ void QQuickWebViewPrivate::handleMouseEvent(QMouseEvent* event)
 {
     switch (event->type()) {
     case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonDblClick:
-        // If a MouseButtonDblClick was received then we got a MouseButtonPress before
-        // handleMousePressEvent will take care of double clicks.
         pageView->eventHandler()->handleMousePressEvent(event);
         break;
     case QEvent::MouseMove:
@@ -433,6 +430,11 @@ void QQuickWebViewPrivate::handleMouseEvent(QMouseEvent* event)
         break;
     case QEvent::MouseButtonRelease:
         pageView->eventHandler()->handleMouseReleaseEvent(event);
+        break;
+    case QEvent::MouseButtonDblClick:
+        // If a MouseButtonDblClick was received then we got a MouseButtonPress before.
+        // WebCore will build double-clicks out of press events.
+        event->accept();
         break;
     default:
         ASSERT_NOT_REACHED();

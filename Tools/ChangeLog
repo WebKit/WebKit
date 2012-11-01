@@ -1,3 +1,19 @@
+2012-11-01  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Double clicks/taps aren't passed down to the page
+        https://bugs.webkit.org/show_bug.cgi?id=100949
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Touch mocking shouldn't transform double click events as well,
+        this adds an extra touch update between clicks which prevents
+        double-tap detection from triggering on web pages.
+
+        Tested on the mobile version of Google maps.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::notify):
+
 2012-10-31  Dirk Pranke  <dpranke@chromium.org>
 
         NRWT: lint warnings don't show up by default

@@ -66,7 +66,6 @@ static WebMouseEvent::Button mouseButtonForEvent(QMouseEvent *event)
 static WebEvent::Type webEventTypeForEvent(const QEvent* event)
 {
     switch (event->type()) {
-    case QEvent::MouseButtonDblClick:
     case QEvent::MouseButtonPress:
         return WebEvent::MouseDown;
     case QEvent::MouseButtonRelease:
@@ -89,6 +88,9 @@ static WebEvent::Type webEventTypeForEvent(const QEvent* event)
     case QEvent::TouchCancel:
         return WebEvent::TouchCancel;
 #endif
+    case QEvent::MouseButtonDblClick:
+        ASSERT_NOT_REACHED();
+        return WebEvent::NoType;
     default:
         // assert
         return WebEvent::MouseMove;
