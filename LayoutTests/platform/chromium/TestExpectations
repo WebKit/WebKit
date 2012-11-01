@@ -4087,13 +4087,6 @@ webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/support-broken
 
 # Just needs a rebaseline (but webkit-patch rebaseline doesn't seem to work)
 Bug(senorblanco) [ Mac ] fast/sub-pixel/float-wrap-zoom.html [ ImageOnlyFailure ]
-# Crashing in debug since WK r133043:133045, Chrome 165184:165190
-Bug(senorblanco) http/tests/security/isolatedWorld/all-window-prototypes.html [ Crash Pass ]
-Bug(senorblanco) http/tests/security/isolatedWorld/document-prototype.html [ Crash Pass ]
-Bug(senorblanco) http/tests/security/isolatedWorld/top-properties.html [ Crash Pass ]
-Bug(senorblanco) http/tests/security/isolatedWorld/userGestureEvents.html [ Crash Pass ]
-Bug(senorblanco) http/tests/security/isolatedWorld/global-variables.html [ Crash Pass ]
-Bug(senorblanco) http/tests/security/isolatedWorld/body-prototype.html [ Crash Pass ]
 
 # Failing since r133069 (maybe debug-only?  Update after more results are in)
 Bug(senorblanco) editing/pasteboard/file-drag-to-editable.html [ Failure Pass ]

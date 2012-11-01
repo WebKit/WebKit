@@ -1,3 +1,10 @@
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.  Remove some no-longer-flaky tests
+        from TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-01  Emil A Eklund  <eae@chromium.org>
 
         [subpixel] Change intrinsicSize to LayoutUnit
