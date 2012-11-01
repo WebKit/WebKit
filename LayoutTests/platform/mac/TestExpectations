@@ -1304,14 +1304,16 @@ webkit.org/b/80394 fast/block/margin-collapse/025.html [ Failure ]
 webkit.org/b/80394 fast/block/margin-collapse/block-inside-inline/025.html [ Failure ]
 
 webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
-# Needs rebaselining after bug 99921
+# Needs rebaseline
 webkit.org/b/99921 mathml/presentation/fenced.xhtml [ Failure ]
 webkit.org/b/99921 mathml/presentation/mo.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/mo-stretch.html [ Failure ]
 webkit.org/b/99921 mathml/presentation/over.xhtml [ Failure ]
 webkit.org/b/99921 mathml/presentation/row.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/row-alignment.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/subsup.xhtml [ Failure ]
+# Needs rebaseline after bug 97390
+webkit.org/b/97390 mathml/presentation/mo-stretch.html [ Failure Pass ]
+webkit.org/b/97390 mathml/presentation/row-alignment.xhtml [ Failure Pass ]
+webkit.org/b/97390 mathml/presentation/tables.xhtml [ Failure Pass ]
+webkit.org/b/97390 mathml/presentation/subsup.xhtml [ Failure Pass ]
 
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html

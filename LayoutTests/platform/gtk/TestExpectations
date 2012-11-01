@@ -423,13 +423,16 @@ webkit.org/b/99059 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 webkit.org/b/86146 css3/supports.html
 
 webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
-# MathML layout is being tuned/reworked.
+# Needs rebaseline
 webkit.org/b/99921 mathml/presentation/fenced.xhtml [ Failure ]
 webkit.org/b/99921 mathml/presentation/mo.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/mo-stretch.html [ Failure ]
 webkit.org/b/99921 mathml/presentation/over.xhtml [ Failure ]
 webkit.org/b/99921 mathml/presentation/row.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/row-alignment.xhtml [ Failure ]
+# Needs rebaseline after bug 97390
+webkit.org/b/97390 mathml/presentation/mo-stretch.html [ Failure Pass ]
+webkit.org/b/97390 mathml/presentation/row-alignment.xhtml [ Failure Pass ]
+webkit.org/b/97390 mathml/presentation/tables.xhtml [ Failure Pass ]
+webkit.org/b/97390 mathml/presentation/subsup.xhtml [ Failure Pass ]
 
 # Requires Resolution Media Query support
 webkit.org/b/100137 fast/media/mq-resolution.html [ Failure ]
@@ -580,9 +583,6 @@ webkit.org/b/94119 storage/websql/database-lock-after-reload.html [ Failure Pass
 webkit.org/b/93812 [ Release ] svg/custom/use-instanceRoot-as-event-target.xhtml [ Pass Timeout ]
 
 webkit.org/b/95430 fast/layers/scroll-no-visible-content-but-visible-descendant.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/97390 mathml/presentation/subsup.xhtml [ Failure Pass ]
-webkit.org/b/97390 mathml/presentation/msubsup-base-changed.xhtml [ ImageOnlyFailure Pass ]
 
 webkit.org/b/73409 fast/forms/textarea-placeholder-set-attribute.html [ ImageOnlyFailure Pass ]
 

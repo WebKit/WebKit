@@ -44,7 +44,7 @@ protected:
     virtual void layout();
     
 private:
-    void fixScriptsStyle();
+    void fixAnonymousStyles();
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 
     virtual const char* renderName() const { return "RenderMathMLSubSup"; }

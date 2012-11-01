@@ -61,8 +61,12 @@ RenderBoxModelObject* RenderMathMLSubSup::base() const
     return toRenderBoxModelObject(base);
 }
 
-void RenderMathMLSubSup::fixScriptsStyle()
+void RenderMathMLSubSup::fixAnonymousStyles()
 {
+    // Set the base wrapper's style so that baseHeight in layout() will be an unstretched height.
+    ASSERT(firstChild() && firstChild()->style()->refCount() == 1);
+    firstChild()->style()->setAlignSelf(AlignFlexStart);
+    
     ASSERT(m_scripts && m_scripts->style()->refCount() == 1);
     RenderStyle* scriptsStyle = m_scripts->style();
     scriptsStyle->setFlexDirection(FlowColumn);
@@ -80,7 +84,8 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
         
         m_scripts = createAnonymousMathMLBlock();
         RenderMathMLBlock::addChild(m_scripts);
-        fixScriptsStyle();
+        
+        fixAnonymousStyles();
     }
     
     if (firstChild()->isEmpty())
@@ -93,8 +98,8 @@ void RenderMathMLSubSup::styleDidChange(StyleDifference diff, const RenderStyle*
 {
     RenderMathMLBlock::styleDidChange(diff, oldStyle);
     
-    if (m_scripts)
-        fixScriptsStyle();
+    if (!isEmpty())
+        fixAnonymousStyles();
 }
 
 RenderMathMLOperator* RenderMathMLSubSup::unembellishedOperator()

@@ -1,3 +1,22 @@
+2012-11-01  David Barton  <dbarton@mathscribe.com>
+
+        REGRESSION (r128837): mathml/presentation/subsup.xhtml became flaky
+        https://bugs.webkit.org/show_bug.cgi?id=97390
+
+        Reviewed by Ojan Vafai.
+
+        In a RenderMathMLSubSup, we need to set the base's wrapper's style so that baseHeight
+        in layout() will be the base's true height, without any flexbox stretching.
+
+        Tested by existing tests.
+
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::fixAnonymousStyles):
+        (WebCore::RenderMathMLSubSup::addChild):
+        (WebCore::RenderMathMLSubSup::styleDidChange):
+        * rendering/mathml/RenderMathMLSubSup.h:
+        (RenderMathMLSubSup):
+
 2012-11-01  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r132941): attribute modification 10% performance regression

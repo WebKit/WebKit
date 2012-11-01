@@ -1,3 +1,15 @@
+2012-11-01  David Barton  <dbarton@mathscribe.com>
+
+        REGRESSION (r128837): mathml/presentation/subsup.xhtml became flaky
+        https://bugs.webkit.org/show_bug.cgi?id=97390
+
+        Reviewed by Ojan Vafai.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Unreviewed gardening.  Mark an inspector test as flaky.
