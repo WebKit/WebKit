@@ -1,3 +1,21 @@
+2012-11-01  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: introduce Inspector.detached message containing termination cause.
+        https://bugs.webkit.org/show_bug.cgi?id=100948
+
+        Reviewed by Yury Semikhatsky.
+
+        Now protocol clients have more information to process connection termination.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/Inspector.json:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (WebInspector.RemoteDebuggingTerminatedScreen):
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded.WebInspector.socket.onopen):
+        (WebInspector.loaded):
+        (WebInspector.detached):
+
 2012-11-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Restoring breakpoints for formatted UISourceCode should be triggered by BreakpointManager, not ScriptsPanel.

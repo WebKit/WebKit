@@ -790,3 +790,6 @@ localizedStrings["JavaScript external resources"] = "JavaScript external resourc
 localizedStrings["Glyph cache resources"] = "Glyph cache resources";
 localizedStrings["CSS Regions Support"] = "CSS Regions Support";
 localizedStrings["Scroll"] = "Scroll";
+localizedStrings["Detached from the target"] = "Detached from the target";
+localizedStrings["Remote debugging has been terminated with reason: "] = "Remote debugging has been terminated with reason: ";
+localizedStrings["Please re-attach to the new target."] = "Please re-attach to the new target.";

@@ -335,9 +335,6 @@ WebInspector.loaded = function()
             InspectorFrontendHost.sendMessageToBackend = WebInspector.socket.send.bind(WebInspector.socket);
             WebInspector.doLoadedDone();
         }
-        WebInspector.socket.onclose = function() {
-            (new WebInspector.RemoteDebuggingTerminatedScreen()).showModal();
-        }
         return;
     }
 
@@ -888,6 +885,7 @@ WebInspector.showErrorMessage = function(error)
     WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error, true);
 }
 
+// Inspector.inspect protocol event
 WebInspector.inspect = function(payload, hints)
 {
     var object = WebInspector.RemoteObject.fromPayload(payload);
@@ -907,6 +905,12 @@ WebInspector.inspect = function(payload, hints)
         WebInspector.showPanel("resources").selectDOMStorage(WebInspector.domStorageModel.storageForId(hints.domStorageId));
 
     object.release();
+}
+
+// Inspector.detached protocol event
+WebInspector.detached = function(reason)
+{
+    (new WebInspector.RemoteDebuggingTerminatedScreen(reason)).showModal();
 }
 
 WebInspector._updateFocusedNode = function(nodeId)

@@ -28,6 +28,13 @@
                     { "name": "object", "$ref": "Runtime.RemoteObject" },
                     { "name": "hints", "type": "object" }
                 ]
+            },
+            {
+                "name": "detached",
+                "description": "Fired when remote debugging connection is about to be terminated. Contains detach reason.",
+                "parameters": [
+                    { "name": "reason", "type": "string", "description": "The reason why connection has been terminated." }
+                ]
             }
         ]
     },
