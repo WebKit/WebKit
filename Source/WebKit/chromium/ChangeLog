@@ -1,3 +1,9 @@
+2012-11-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-11-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: expose Inspector.detached event factory to the embedder.
