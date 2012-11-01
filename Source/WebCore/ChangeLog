@@ -1,3 +1,16 @@
+2012-11-01  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL][AC]Free GL resources allocated by GraphicsContext3DEfl.
+        https://bugs.webkit.org/show_bug.cgi?id=100923.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        GraphicsContext3DEfl creates FBO's, textures and render buffer's, but doesn't free them.
+        This patch makes sure that GraphicsContext3dEfl frees all the GL resources allocated by it.
+
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+
 2012-11-01  Andreas Kling  <kling@webkit.org>
 
         Fix StylePropertySet/ElementAttributeData custom allocation in debug builds.

@@ -151,6 +151,31 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 
 GraphicsContext3D::~GraphicsContext3D()
 {
+    if (m_renderStyle == RenderToCurrentGLContext || !m_private)
+        return;
+
+    makeContextCurrent();
+    glDeleteTextures(1, &m_texture);
+
+    if (m_attrs.antialias) {
+        glDeleteRenderbuffers(1, &m_multisampleColorBuffer);
+
+        if (m_attrs.stencil || m_attrs.depth)
+            glDeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
+
+        glDeleteFramebuffers(1, &m_multisampleFBO);
+    } else if (m_attrs.stencil || m_attrs.depth) {
+
+#if USE(OPENGL_ES_2)
+        if (m_attrs.depth)
+            glDeleteRenderbuffers(1, &m_depthBuffer);
+
+        if (m_attrs.stencil)
+            glDeleteRenderbuffers(1, &m_stencilBuffer);
+#endif
+        glDeleteRenderbuffers(1, &m_depthStencilBuffer);
+    }
+    glDeleteFramebuffers(1, &m_fbo);
 }
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
