@@ -184,6 +184,15 @@ class MiscTests(Base):
                         "expectations:2 Path does not exist. non-existent-test.html")
             self.assertEqual(str(e), warnings)
 
+    def test_parse_warnings_are_logged_if_not_in_lint_mode(self):
+        oc = OutputCapture()
+        try:
+            oc.capture_output()
+            self.parse_exp('-- this should be a syntax error', is_lint_mode=False)
+        finally:
+            _, _, logs = oc.restore_output()
+            self.assertNotEquals(logs, '')
+
     def test_error_on_different_platform(self):
         # parse_exp uses a Windows port. Assert errors on Mac show up in lint mode.
         self.assertRaises(ParseError, self.parse_exp,

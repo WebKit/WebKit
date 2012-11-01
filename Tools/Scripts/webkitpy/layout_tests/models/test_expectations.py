@@ -689,7 +689,7 @@ class TestExpectationsModel(object):
         # to be warnings and return False".
 
         if prev_expectation_line.matching_configurations == expectation_line.matching_configurations:
-            expectation_line.warnings.append('Duplicate or ambiguous entry for %s on lines %s:%d and %s:%d.' % (expectation_line.name,
+            expectation_line.warnings.append('Duplicate or ambiguous entry lines %s:%d and %s:%d.' % (
                 self._shorten_filename(prev_expectation_line.filename), prev_expectation_line.line_number,
                 self._shorten_filename(expectation_line.filename), expectation_line.line_number))
             return True
@@ -932,6 +932,10 @@ class TestExpectations(object):
             self._has_warnings = True
             if self._is_lint_mode:
                 raise ParseError(warnings)
+            _log.warning('--lint-test-files warnings:')
+            for warning in warnings:
+                _log.warning(warning)
+            _log.warning('')
 
     def _process_tests_without_expectations(self):
         if self._full_test_list:

@@ -1,3 +1,26 @@
+2012-10-31  Dirk Pranke  <dpranke@chromium.org>
+
+        NRWT: lint warnings don't show up by default
+        https://bugs.webkit.org/show_bug.cgi?id=100914
+
+        Reviewed by Ryosuke Niwa.
+
+        NRWT wasn't printing any warnings if you had errors in your
+        TestExpectations files; this means you would only notice this
+        with --lint-test-files, which is probably bad. I'm not sure
+        when this requested, but perhaps when we changed the
+        warnings to not be fatal if you weren't linting the files.
+
+        Now they're still not fatal, but at least we print them.
+
+        Also fix one warning message where we were printing the test name twice.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationsModel._already_seen_better_match):
+        (TestExpectations._report_warnings):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (MiscTests.test_parse_warnings_are_logged_if_not_in_lint_mode(self): Added.
+
 2012-10-31  Terry Anderson  <tdanderson@chromium.org>
 
         Missing stderr output when using run-webkit-tests
