@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            height: 5000px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            window.scrollTo(0, 3000);
+            if (window.internals) {
+                document.getElementById('layers').innerText = internals.scrollingStateTreeAsText(document);
+            }
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<pre id="layers">Scrolling tree goes here</p>
+</body>
+</html>

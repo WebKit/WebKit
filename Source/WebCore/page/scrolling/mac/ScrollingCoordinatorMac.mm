@@ -394,6 +394,11 @@ void ScrollingCoordinatorMac::commitTreeState()
     ScrollingThread::dispatch(bind(&ScrollingTree::commitNewTreeState, m_scrollingTree.get(), treeState.release()));
 }
 
+String ScrollingCoordinatorMac::scrollingStateTreeAsText() const
+{
+    return m_scrollingStateTree->rootStateNode()->scrollingStateTreeAsText();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_SCROLLING)

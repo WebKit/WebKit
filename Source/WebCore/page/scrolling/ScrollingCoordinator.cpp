@@ -323,4 +323,9 @@ ScrollingNodeID ScrollingCoordinator::uniqueScrollLayerID()
     return uniqueScrollLayerID++;
 }
 
+String ScrollingCoordinator::scrollingStateTreeAsText() const
+{
+    return String();
+}
+
 } // namespace WebCore

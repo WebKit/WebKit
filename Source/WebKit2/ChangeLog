@@ -1,3 +1,13 @@
+2012-11-01  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=100917
+        There should be a way to dump the scrolling tree from the layout tests
+        
+        Reviewed by Simon Fraser.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-11-01  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Clean up headers of Coordinated Graphics.

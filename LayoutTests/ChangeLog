@@ -1,3 +1,15 @@
+2012-11-01  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=100917
+        There should be a way to dump the scrolling tree from the layout tests
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/tiled-drawing/scrolling-tree-after-scroll-expected.txt: Added.
+        * platform/mac/tiled-drawing/scrolling-tree-after-scroll.html: Added.
+        * platform/mac/tiled-drawing/scrolling-tree-slow-scrolling-expected.txt: Added.
+        * platform/mac/tiled-drawing/scrolling-tree-slow-scrolling.html: Added.
+
 2012-11-01  Dana Jansens  <danakj@chromium.org>
 
         Rebaseline after compositor migration to gfx types.

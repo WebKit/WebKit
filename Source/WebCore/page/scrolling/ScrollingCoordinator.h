@@ -117,6 +117,7 @@ public:
     virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/) { return newNodeID; }
     virtual void detachFromStateTree(ScrollingNodeID) { }
     virtual void clearStateTree() { }
+    virtual String scrollingStateTreeAsText() const;
 
     // Generated a unique id for scroll layers.
     ScrollingNodeID uniqueScrollLayerID();

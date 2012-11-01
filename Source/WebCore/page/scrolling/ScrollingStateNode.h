@@ -42,6 +42,7 @@ namespace WebCore {
 
 class GraphicsLayer;
 class ScrollingStateTree;
+class TextStream;
 
 class ScrollingStateNode {
 public:
@@ -79,12 +80,19 @@ public:
     void appendChild(PassOwnPtr<ScrollingStateNode>);
     void removeChild(ScrollingStateNode*);
 
+    String scrollingStateTreeAsText() const;
+
 protected:
     ScrollingStateNode(const ScrollingStateNode&);
+    static void writeIndent(TextStream&, int indent);
 
     ScrollingStateTree* m_scrollingStateTree;
 
 private:
+    void dump(TextStream&, int indent) const;
+
+    virtual void dumpProperties(TextStream&, int indent) const = 0;
+
     ScrollingNodeID m_nodeID;
 
     ScrollingStateNode* m_parent;

@@ -27,6 +27,9 @@
 #include "ScrollingStateNode.h"
 
 #include "ScrollingStateTree.h"
+#include "TextStream.h"
+
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(THREADED_SCROLLING)
 
@@ -102,6 +105,40 @@ void ScrollingStateNode::removeChild(ScrollingStateNode* node)
     size_t size = m_children->size();
     for (size_t i = 0; i < size; ++i)
         m_children->at(i)->removeChild(node);
+}
+
+void ScrollingStateNode::writeIndent(TextStream& ts, int indent)
+{
+    for (int i = 0; i != indent; ++i)
+        ts << "  ";
+}
+
+void ScrollingStateNode::dump(TextStream& ts, int indent) const
+{
+    writeIndent(ts, indent);
+    dumpProperties(ts, indent);
+
+    if (m_children) {
+        writeIndent(ts, indent + 1);
+        size_t size = children()->size();
+        ts << "(children " << size << "\n";
+        
+        for (size_t i = 0; i < size; i++)
+            m_children->at(i)->dump(ts, indent + 2);
+        writeIndent(ts, indent + 1);
+        ts << ")\n";
+    }
+
+    writeIndent(ts, indent);
+    ts << ")\n";
+}
+
+String ScrollingStateNode::scrollingStateTreeAsText() const
+{
+    TextStream ts;
+
+    dump(ts, 0);
+    return ts.release();
 }
 
 } // namespace WebCore

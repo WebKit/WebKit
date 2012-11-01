@@ -27,6 +27,7 @@
 #include "ScrollingStateScrollingNode.h"
 
 #include "ScrollingStateTree.h"
+#include "TextStream.h"
 #include <wtf/OwnPtr.h>
 
 #if ENABLE(THREADED_SCROLLING)
@@ -203,6 +204,48 @@ void ScrollingStateScrollingNode::setScrollOrigin(const IntPoint& scrollOrigin)
     m_scrollOrigin = scrollOrigin;
     m_changedProperties |= ScrollOrigin;
     m_scrollingStateTree->setHasChangedProperties(true);
+}
+
+void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent) const
+{
+    ts << "(" << "Scrolling node" << "\n";
+
+    if (!m_viewportRect.isEmpty()) {
+        writeIndent(ts, indent + 1);
+        ts << "(viewport rect " << m_viewportRect.x() << " " << m_viewportRect.y() << " " << m_viewportRect.width() << " " << m_viewportRect.height() << ")\n";
+    }
+
+    if (!m_contentsSize.isEmpty()) {
+        writeIndent(ts, indent + 1);
+        ts << "(contents size " << m_contentsSize.width() << " " << m_contentsSize.height() << ")\n";
+    }
+
+    if (m_shouldUpdateScrollLayerPositionOnMainThread) {
+        writeIndent(ts, indent + 1);
+        ts << "(Scrolling on main thread because: ";
+        if (m_shouldUpdateScrollLayerPositionOnMainThread & ScrollingCoordinator::ForcedOnMainThread)
+            ts << "Forced on main thread, ";
+        if (m_shouldUpdateScrollLayerPositionOnMainThread & ScrollingCoordinator::HasSlowRepaintObjects)
+            ts << "Has slow repaint objects, ";
+        if (m_shouldUpdateScrollLayerPositionOnMainThread & ScrollingCoordinator::HasViewportConstrainedObjectsWithoutSupportingFixedLayers)
+            ts << "Has viewport constrained objects without supporting fixed layers, ";
+        if (m_shouldUpdateScrollLayerPositionOnMainThread & ScrollingCoordinator::HasNonLayerFixedObjects)
+            ts << "Has non-layer fixed objects, ";
+        if (m_shouldUpdateScrollLayerPositionOnMainThread & ScrollingCoordinator::IsImageDocument)
+            ts << "Is image document";
+        ts << ")\n";
+    }
+
+    if (m_requestedScrollPosition != IntPoint()) {
+        writeIndent(ts, indent + 1);
+        ts << "(requested scroll position " << m_requestedScrollPosition.x() << " " << m_requestedScrollPosition.y() << ")\n";
+    }
+
+    if (m_scrollOrigin != IntPoint()) {
+        writeIndent(ts, indent + 1);
+        ts << "(scroll origin " << m_scrollOrigin.x() << " " << m_scrollOrigin.y() << ")\n";
+    }
+
 }
 
 } // namespace WebCore

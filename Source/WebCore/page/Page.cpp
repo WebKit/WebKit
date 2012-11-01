@@ -244,6 +244,17 @@ ScrollingCoordinator* Page::scrollingCoordinator()
     return m_scrollingCoordinator.get();
 }
 
+String Page::scrollingStateTreeAsText()
+{
+    if (Document* document = m_mainFrame->document())
+        document->updateLayout();
+
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
+        return scrollingCoordinator->scrollingStateTreeAsText();
+
+    return String();
+}
+
 struct ViewModeInfo {
     const char* name;
     Page::ViewMode type;

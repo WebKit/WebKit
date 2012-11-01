@@ -1273,6 +1273,20 @@ String Internals::repaintRectsAsText(Document* document, ExceptionCode& ec) cons
     return document->frame()->trackedRepaintRectsAsText();
 }
 
+String Internals::scrollingStateTreeAsText(Document* document, ExceptionCode& ec) const
+{
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    Page* page = document->page();
+    if (!page)
+        return String();
+
+    return page->scrollingStateTreeAsText();
+}
+
 void Internals::garbageCollectDocumentResources(Document* document, ExceptionCode& ec) const
 {
     if (!document) {

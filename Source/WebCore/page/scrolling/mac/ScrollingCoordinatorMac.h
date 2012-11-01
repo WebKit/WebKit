@@ -72,6 +72,8 @@ public:
     // This function wipes out the current tree.
     virtual void clearStateTree();
 
+    virtual String scrollingStateTreeAsText() const OVERRIDE;
+
 private:
     virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*);
     virtual void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);

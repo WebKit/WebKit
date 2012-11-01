@@ -1,3 +1,12 @@
+2012-11-01  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=100917
+        There should be a way to dump the scrolling tree from the layout tests
+
+        Reviewed by Simon Fraser.
+
+        * Source/autotools/symbols.filter:
+
 2012-10-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Added viewport at-rule to the CSS parser and tokenizer

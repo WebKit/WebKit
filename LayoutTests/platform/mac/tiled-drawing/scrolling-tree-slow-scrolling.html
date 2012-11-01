@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .box {
+            height: 100px;
+            width: 100px;
+            position: fixed; /* At this time, position:fixed forces slow mode. */
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function doTest()
+        {
+            if (window.internals) {
+                document.getElementById('layers').innerText = internals.scrollingStateTreeAsText(document);
+            }
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<div class="box">
+</div>
+<pre id="layers">Scrolling tree goes here</p>
+</body>
+</html>

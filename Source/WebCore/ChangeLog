@@ -1,3 +1,52 @@
+2012-11-01  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=100917
+        There should be a way to dump the scrolling tree from the layout tests
+
+        Reviewed by Simon Fraser.
+
+        New Internals call to dump the scrolling state tree as text. Calls through to the 
+        ScrollingCoordinator.
+        * testing/Internals.cpp:
+        (WebCore::Internals::scrollingStateTreeAsText):
+        (WebCore):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * WebCore.exp.in:
+        * page/Page.cpp:
+        (WebCore::Page::scrollingStateTreeAsText):
+        (WebCore):
+        * page/Page.h:
+        (Page):
+
+        ScrollingCoordinator tells the rootStateNode to dump the tree as text.
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        (ScrollingCoordinatorMac):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::scrollingStateTreeAsText):
+        (WebCore):
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::scrollingStateTreeAsText):
+        (WebCore):
+        * page/scrolling/ScrollingCoordinator.h:
+        (ScrollingCoordinator):
+
+        dumpNode() dumps generic stuff for each node, and dumpProperties will dump the 
+        properties that are specific to different types of nodes.
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::writeIndent):
+        (WebCore):
+        (WebCore::ScrollingStateNode::dumpNode):
+        (WebCore::ScrollingStateNode::scrollingStateTreeAsText):
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore):
+        (ScrollingStateNode):
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::dumpProperties):
+        (WebCore):
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (ScrollingStateScrollingNode):
+
 2012-11-01  Kenneth Russell  <kbr@google.com>
 
         Add RGB to supported destination formats of ImageBuffer::copyToPlatformTexture
