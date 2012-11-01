@@ -447,7 +447,7 @@ bool ResourceRequestBase::isConditional() const
             m_httpHeaderFields.contains("If-Unmodified-Since"));
 }
 
-void ResourceRequestBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void ResourceRequestBase::reportMemoryUsageBase(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Loader);
     info.addMember(m_url);

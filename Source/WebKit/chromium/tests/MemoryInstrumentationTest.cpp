@@ -67,24 +67,36 @@ public:
 TEST(MemoryInstrumentationTest, ImageObserver)
 {
     ImageObserverTestHelper helper;
-    EXPECT_NE(static_cast<void*>(helper.m_cachedImage.get()), static_cast<void*>(helper.m_imageOberver));
 
     class TestClient : public MemoryInstrumentationClientImpl {
     public:
-        explicit TestClient(const void* unexpectedPointer) : m_unexpectedPointed(unexpectedPointer) { }
+        TestClient(const void* expectedPointer, const void* unexpectedPointer)
+            : m_expectedPointer(expectedPointer)
+            , m_unexpectedPointer(unexpectedPointer)
+            , m_expectedPointerFound(false)
+        {
+            EXPECT_NE(expectedPointer, unexpectedPointer);
+        }
         virtual void countObjectSize(const void* pointer, MemoryObjectType type, size_t size) OVERRIDE
         {
-            EXPECT_NE(m_unexpectedPointed, pointer);
+            EXPECT_NE(m_unexpectedPointer, pointer);
+            if (m_expectedPointer == pointer)
+                m_expectedPointerFound = true;
             MemoryInstrumentationClientImpl::countObjectSize(pointer, type, size);
         }
 
+        bool expectedPointerFound() { return m_expectedPointerFound; }
+
     private:
-        const void* m_unexpectedPointed;
-    } client(helper.m_imageOberver);
+        const void* m_expectedPointer;
+        const void* m_unexpectedPointer;
+        bool m_expectedPointerFound;
+    } client(helper.m_cachedImage.get(), helper.m_imageOberver);
     MemoryInstrumentationImpl instrumentation(&client);
     instrumentation.addRootObject(helper);
-    EXPECT_EQ(sizeof(CachedImage), client.reportedSizeForAllTypes());
-    EXPECT_EQ(2u, client.visitedObjects());
+    EXPECT_TRUE(client.expectedPointerFound());
+    EXPECT_LE(sizeof(CachedImage), client.reportedSizeForAllTypes());
+    EXPECT_LE(1u, client.totalCountedObjects());
 }
 
 

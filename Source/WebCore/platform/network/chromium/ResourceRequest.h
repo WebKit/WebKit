@@ -140,6 +140,8 @@ namespace WebCore {
         TargetType targetType() const { return m_targetType; }
         void setTargetType(TargetType type) { m_targetType = type; }
 
+        void reportMemoryUsage(MemoryObjectInfo*) const;
+
     private:
         friend class ResourceRequestBase;
 
