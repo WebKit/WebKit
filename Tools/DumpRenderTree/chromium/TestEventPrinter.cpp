@@ -65,7 +65,6 @@ void TestEventPrinter::handleTextHeader() const
 void TestEventPrinter::handleTextFooter() const
 {
     printf("#EOF\n");
-    fprintf(stderr, "#EOF\n");
 }
 
 void TestEventPrinter::handleAudio(const void* audioData, size_t audioSize) const
@@ -95,6 +94,7 @@ void TestEventPrinter::handleImage(const char* actualHash, const char* expectedH
 void TestEventPrinter::handleTestFooter(bool) const
 {
     printf("#EOF\n");
+    fprintf(stderr, "#EOF\n");
 }
 
 void TestEventPrinter::handleBinary(const void* data, size_t size) const

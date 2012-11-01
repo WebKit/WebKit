@@ -1,3 +1,18 @@
+2012-10-31  Terry Anderson  <tdanderson@chromium.org>
+
+        Missing stderr output when using run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=100709
+
+        Reviewed by Dirk Pranke.
+
+        Appends #EOF to the end of the stderr output only at the end of a test,
+        not possibly part-way through. This will allow all of the stderr output 
+        to appear on the results page after running run-webkit-tests.
+
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        (TestEventPrinter::handleTextFooter):
+        (TestEventPrinter::handleTestFooter):
+
 2012-10-30  Mark Lam  <mark.lam@apple.com>
 
         A JSC printf (support for %J+s and %b).
