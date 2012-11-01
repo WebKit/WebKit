@@ -98,6 +98,7 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     FrameView* view = static_cast<WebViewImpl*>(m_chromeClient->webView())->page()->mainFrame()->view();
     IntRect rootViewVisibleContentRect = view->visibleContentRect(true /* include scrollbars */);
     IntRect rootViewRectInScreen = m_chromeClient->rootViewToScreen(rootViewVisibleContentRect);
+    rootViewRectInScreen.move(-view->scrollX(), -view->scrollY());
 
     addString("<!DOCTYPE html><head><meta charset='UTF-8'><style>\n", writer);
     writer.addData(WebCore::pickerCommonCss, sizeof(WebCore::pickerCommonCss));

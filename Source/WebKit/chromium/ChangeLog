@@ -1,3 +1,15 @@
+2012-10-31  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Page popup shows up at wrong locations when root view is scrolled
+        https://bugs.webkit.org/show_bug.cgi?id=100830
+
+        Reviewed by Kent Tamura.
+
+        We need to account for the scroll position when calculating the root view rectangle in the screen.
+
+        * src/DateTimeChooserImpl.cpp:
+        (WebKit::DateTimeChooserImpl::writeDocument):
+
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, rolling out r133122.
