@@ -3931,7 +3931,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         if (m_layerTreeView && !page()->settings()->forceCompositingMode())
             m_layerTreeView->finishAllRendering();
         m_client->didDeactivateCompositor();
-        if (WebKit::Platform::current()->compositorSupport()->isThreadingEnabled()) {
+        if (!m_layerTreeViewCommitsDeferred
+            && WebKit::Platform::current()->compositorSupport()->isThreadingEnabled()) {
             ASSERT(m_layerTreeView);
             // In threaded compositing mode, force compositing mode is always on so setIsAcceleratedCompositingActive(false)
             // means that we're transitioning to a new page. Suppress commits until WebKit generates invalidations so
