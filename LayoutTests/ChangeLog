@@ -1,5 +1,11 @@
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
+        [chromium] Unreviewed gardening.  Mark an inspector test as flaky.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
         [chromium] Unreviewed gardening.
 
         * platform/chromium-linux-x86/compositing/reflections/nested-reflection-anchor-point-expected.png: Removed.
