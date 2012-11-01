@@ -1,3 +1,13 @@
+2012-10-31  Takashi Sakamoto  <tasak@google.com>
+
+        [Refactoring] Move initial style setting for ProgressValueElement from attach method to createShadowSubtree method in HTMLProgressElement.
+        https://bugs.webkit.org/show_bug.cgi?id=83664
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/HTMLProgressElement/progress-bar-set-value-expected.html: Added.
+        * fast/dom/HTMLProgressElement/progress-bar-set-value.html: Added.
+
 2012-10-31  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, remove entries for tests no longer failing.

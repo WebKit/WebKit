@@ -106,7 +106,8 @@ void HTMLProgressElement::parseAttribute(const Attribute& attribute)
 void HTMLProgressElement::attach()
 {
     LabelableElement::attach();
-    didElementStateChange();
+    if (RenderProgress* render = renderProgress())
+        render->updateFromElement();
 }
 
 double HTMLProgressElement::value() const
@@ -175,6 +176,7 @@ void HTMLProgressElement::createShadowSubtree()
     RefPtr<ProgressBarElement> bar = ProgressBarElement::create(document());
     RefPtr<ProgressValueElement> value = ProgressValueElement::create(document());
     m_value = value.get();
+    m_value->setWidthPercentage(HTMLProgressElement::IndeterminatePosition * 100);
     bar->appendChild(m_value, ASSERT_NO_EXCEPTION);
 
     inner->appendChild(bar, ASSERT_NO_EXCEPTION);
