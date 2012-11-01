@@ -43,14 +43,7 @@ namespace WebCore {
 
 class CustomFilterOperation : public FilterOperation {
 public:
-    enum MeshBoxType {
-        FILTER_BOX,
-        BORDER_BOX,
-        PADDING_BOX,
-        CONTENT_BOX
-    };
-        
-    static PassRefPtr<CustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, MeshBoxType meshBoxType, CustomFilterMeshType meshType)
+    static PassRefPtr<CustomFilterOperation> create(PassRefPtr<CustomFilterProgram> program, const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType meshBoxType, CustomFilterMeshType meshType)
     {
         return adoptRef(new CustomFilterOperation(program, sortedParameters, meshRows, meshColumns, meshBoxType, meshType));
     }
@@ -62,7 +55,7 @@ public:
     unsigned meshRows() const { return m_meshRows; }
     unsigned meshColumns() const { return m_meshColumns; }
     
-    MeshBoxType meshBoxType() const { return m_meshBoxType; }
+    CustomFilterMeshBoxType meshBoxType() const { return m_meshBoxType; }
     CustomFilterMeshType meshType() const { return m_meshType; }
     
     virtual ~CustomFilterOperation();
@@ -87,14 +80,14 @@ private:
             && m_parameters == other->m_parameters;
     }
     
-    CustomFilterOperation(PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&, unsigned meshRows, unsigned meshColumns, MeshBoxType, CustomFilterMeshType);
+    CustomFilterOperation(PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&, unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType, CustomFilterMeshType);
 
     RefPtr<CustomFilterProgram> m_program;
     CustomFilterParameterList m_parameters;
     
     unsigned m_meshRows;
     unsigned m_meshColumns;
-    MeshBoxType m_meshBoxType;
+    CustomFilterMeshBoxType m_meshBoxType;
     CustomFilterMeshType m_meshType;
 };
 

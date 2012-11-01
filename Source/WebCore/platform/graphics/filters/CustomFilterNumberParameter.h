@@ -31,6 +31,7 @@
 #define CustomFilterNumberParameter_h
 
 #if ENABLE(CSS_SHADERS)
+#include "AnimationUtilities.h"
 #include "CustomFilterParameter.h"
 #include <wtf/Vector.h>
 

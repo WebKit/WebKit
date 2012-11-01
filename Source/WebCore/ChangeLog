@@ -1,3 +1,43 @@
+2012-11-01  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Move MeshBoxType out of CustomFilterOperation
+        https://bugs.webkit.org/show_bug.cgi?id=100782
+
+        Reviewed by Dean Jackson.
+
+        Moved CustomFilter::MeshBoxType enum to the CustomFilterConstants.h file and renamed it to CustomFilterMeshBoxType. 
+        This way we can reuse it without including the CustomFilterOperation file.
+
+        No new tests, just refactoring code.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator CustomFilterMeshBoxType):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::createCustomFilterOperation):
+        * platform/graphics/filters/CustomFilterArrayParameter.h: Adding AnimationUtilities.h for WebCore::blend, looks like
+        CustomFilterOperation already included AnimationsUtilities.h indirectly.
+        * platform/graphics/filters/CustomFilterConstants.h: Added CustomFilterMeshBoxType.
+        * platform/graphics/filters/CustomFilterNumberParameter.h:
+        * platform/graphics/filters/CustomFilterOperation.cpp:
+        (WebCore::CustomFilterOperation::CustomFilterOperation):
+        * platform/graphics/filters/CustomFilterOperation.h:
+        (WebCore::CustomFilterOperation::create):
+        (WebCore::CustomFilterOperation::meshBoxType):
+        (CustomFilterOperation):
+        * platform/graphics/filters/CustomFilterRenderer.cpp:
+        (WebCore::CustomFilterRenderer::create):
+        (WebCore::CustomFilterRenderer::CustomFilterRenderer):
+        * platform/graphics/filters/CustomFilterRenderer.h: Also removed the need to include CustomFilterOperation.h. Some other
+        headers were needed to replace the files that were automatically incldued because of that file.
+        (WebCore):
+        (CustomFilterRenderer):
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::FECustomFilter):
+        (WebCore::FECustomFilter::create):
+        * platform/graphics/filters/FECustomFilter.h:
+        (FECustomFilter):
+
 2012-11-01  Enrica Casucci  <enrica@apple.com>
 
         Part2 of: Extend -webkit-user-select with new value "all"

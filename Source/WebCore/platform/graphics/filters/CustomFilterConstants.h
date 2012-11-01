@@ -50,6 +50,13 @@ enum CustomFilterMeshType {
     MeshTypeDetached
 };
 
+enum CustomFilterMeshBoxType {
+    MeshBoxTypeFilter,
+    MeshBoxTypeBorder,
+    MeshBoxTypePadding,
+    MeshBoxTypeContent
+};
+
 } // namespace WebCore
 
 #endif // CustomFilterConstants_h

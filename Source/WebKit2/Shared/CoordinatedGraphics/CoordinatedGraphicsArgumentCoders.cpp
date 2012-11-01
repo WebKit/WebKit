@@ -323,7 +323,7 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
 
             unsigned meshRows;
             unsigned meshColumns;
-            CustomFilterOperation::MeshBoxType meshBoxType;
+            CustomFilterMeshBoxType meshBoxType;
             if (!decoder->decode(meshRows))
                 return false;
             if (!decoder->decode(meshColumns))

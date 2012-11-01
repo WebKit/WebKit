@@ -1,3 +1,15 @@
+2012-11-01  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Move MeshBoxType out of CustomFilterOperation
+        https://bugs.webkit.org/show_bug.cgi?id=100782
+
+        Reviewed by Dean Jackson.
+
+        Renamed the CustomFilterOperation::MeshBoxType to CustomFilterMeshBoxType.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::decode):
+
 2012-11-01  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=100917

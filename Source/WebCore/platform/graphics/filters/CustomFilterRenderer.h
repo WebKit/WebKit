@@ -34,8 +34,9 @@
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 
 #include "CustomFilterConstants.h"
-#include "CustomFilterOperation.h"
+#include "CustomFilterParameterList.h"
 #include "GraphicsTypes3D.h"
+#include "IntSize.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -48,12 +49,11 @@ class CustomFilterNumberParameter;
 class CustomFilterTransformParameter;
 class CustomFilterValidatedProgram;
 class GraphicsContext3D;
-class IntSize;
 
 class CustomFilterRenderer : public RefCounted<CustomFilterRenderer> {
 public:
     static PassRefPtr<CustomFilterRenderer> create(PassRefPtr<GraphicsContext3D>, PassRefPtr<CustomFilterValidatedProgram>, const CustomFilterParameterList&,
-        unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, CustomFilterMeshType);
+        unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType, CustomFilterMeshType);
     ~CustomFilterRenderer();
 
     bool premultipliedAlpha() const;
@@ -65,7 +65,7 @@ public:
 
 private:
     CustomFilterRenderer(PassRefPtr<GraphicsContext3D>, PassRefPtr<CustomFilterValidatedProgram>, const CustomFilterParameterList&,
-        unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType, CustomFilterMeshType);
+        unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType, CustomFilterMeshType);
 
     void initializeCompiledProgramIfNeeded();
     void initializeMeshIfNeeded();

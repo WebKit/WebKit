@@ -4812,7 +4812,7 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
     
     unsigned meshRows = 1;
     unsigned meshColumns = 1;
-    CustomFilterOperation::MeshBoxType meshBoxType = CustomFilterOperation::FILTER_BOX;
+    CustomFilterMeshBoxType meshBoxType = MeshBoxTypeFilter;
     CustomFilterMeshType meshType = MeshTypeAttached;
     
     CSSValue* parametersValue = 0;

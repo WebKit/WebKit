@@ -45,7 +45,7 @@
 namespace WebCore {
 
 FECustomFilter::FECustomFilter(Filter* filter, PassRefPtr<GraphicsContext3D> context, PassRefPtr<CustomFilterValidatedProgram> validatedProgram, const CustomFilterParameterList& parameters,
-    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType meshBoxType, CustomFilterMeshType meshType)
+    unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType meshBoxType, CustomFilterMeshType meshType)
     : FilterEffect(filter)
     , m_context(context)
     , m_customFilterRenderer(CustomFilterRenderer::create(m_context, validatedProgram, parameters, meshRows, meshColumns, meshBoxType, meshType))
@@ -61,7 +61,7 @@ FECustomFilter::FECustomFilter(Filter* filter, PassRefPtr<GraphicsContext3D> con
 }
 
 PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, PassRefPtr<GraphicsContext3D> context, PassRefPtr<CustomFilterValidatedProgram> validatedProgram, const CustomFilterParameterList& parameters,
-    unsigned meshRows, unsigned meshColumns, CustomFilterOperation::MeshBoxType meshBoxType, CustomFilterMeshType meshType)
+    unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType meshBoxType, CustomFilterMeshType meshType)
 {
     return adoptRef(new FECustomFilter(filter, context, validatedProgram, parameters, meshRows, meshColumns, meshBoxType, meshType));
 }

@@ -3415,41 +3415,41 @@ template<> inline CSSPrimitiveValue::operator ESpeak() const
 }
 
 #if ENABLE(CSS_SHADERS)
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CustomFilterOperation::MeshBoxType meshBoxType)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CustomFilterMeshBoxType meshBoxType)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_IDENT;
     switch (meshBoxType) {
-    case CustomFilterOperation::FILTER_BOX:
+    case MeshBoxTypeFilter:
         m_value.ident = CSSValueFilterBox;
         break;
-    case CustomFilterOperation::BORDER_BOX:
+    case MeshBoxTypeBorder:
         m_value.ident = CSSValueBorderBox;
         break;
-    case CustomFilterOperation::PADDING_BOX:
+    case MeshBoxTypePadding:
         m_value.ident = CSSValuePaddingBox;
         break;
-    case CustomFilterOperation::CONTENT_BOX:
+    case MeshBoxTypeContent:
         m_value.ident = CSSValueContentBox;
         break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator CustomFilterOperation::MeshBoxType() const
+template<> inline CSSPrimitiveValue::operator CustomFilterMeshBoxType() const
 {
     switch (m_value.ident) {
     case CSSValueFilterBox:
-        return CustomFilterOperation::FILTER_BOX;
+        return MeshBoxTypeFilter;
     case CSSValueBorderBox:
-        return CustomFilterOperation::BORDER_BOX;
+        return MeshBoxTypeBorder;
     case CSSValuePaddingBox:
-        return CustomFilterOperation::PADDING_BOX;
+        return MeshBoxTypePadding;
     case CSSValueContentBox:
-        return CustomFilterOperation::CONTENT_BOX;
+        return MeshBoxTypeContent;
     }
 
     ASSERT_NOT_REACHED();
-    return CustomFilterOperation::FILTER_BOX;
+    return MeshBoxTypeFilter;
 }
 #endif // ENABLE(CSS_SHADERS)
 
