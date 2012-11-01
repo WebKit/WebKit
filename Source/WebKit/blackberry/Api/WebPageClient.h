@@ -113,6 +113,9 @@ public:
     virtual void addMessageToConsole(const unsigned short* message, unsigned messageLength, const unsigned short* source, unsigned sourceLength, unsigned lineNumber) = 0;
     virtual int showAlertDialog(AlertType) = 0;
 
+    virtual BlackBerry::Platform::String serializePageCacheState() const = 0;
+    virtual void deserializePageCacheState(const BlackBerry::Platform::String& state) = 0;
+
     virtual void runJavaScriptAlert(const unsigned short* message, unsigned messageLength, const char* origin, unsigned originLength) = 0;
     virtual bool runJavaScriptConfirm(const unsigned short* message, unsigned messageLength, const char* origin, unsigned originLength) = 0;
     virtual bool runJavaScriptPrompt(const unsigned short* message, unsigned messageLength, const unsigned short* defaultValue, unsigned defaultValueLength, const char* origin, unsigned originLength, BlackBerry::Platform::String& result) = 0;

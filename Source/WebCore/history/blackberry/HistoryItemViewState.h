@@ -19,6 +19,7 @@
 #ifndef HistoryItemViewState_h
 #define HistoryItemViewState_h
 
+#include <BlackBerryPlatformString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -46,6 +47,7 @@ struct HistoryItemViewState {
     bool shouldReflowBlock;
     bool shouldSaveViewState;
     String networkToken;
+    BlackBerry::Platform::String webPageClientState;
 };
 
 } // namespace WebCore

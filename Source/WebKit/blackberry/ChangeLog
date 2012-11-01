@@ -1,3 +1,20 @@
+2012-11-01  Michael Matovsky  <mmatovsky@rim.com>
+
+        [BlackBerry] Web page view state should be preserved for pages loaded from page cache
+        https://bugs.webkit.org/show_bug.cgi?id=100694
+        Internal PR: 220488
+
+        Internally reviewed by Lianghui Chen, Joe Mason
+        Reviewed by Rob Buis.
+
+        The web page view specific metadata should be preserved for web pages loaded from page cache (by using back/forward).
+        This requires web page view state to be saved in and restored from the corresponding page cache history item.
+
+        * Api/WebPageClient.h:
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::saveViewStateToItem):
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState):
+
 2012-11-01  Leo Yang  <leoyang@rim.com>
 
         [BlackBerry] Use clipped background rect in backing store

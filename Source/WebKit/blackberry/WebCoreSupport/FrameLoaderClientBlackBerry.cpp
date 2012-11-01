@@ -1043,6 +1043,7 @@ void FrameLoaderClientBlackBerry::saveViewStateToItem(HistoryItem* item)
         viewState.minimumScale = m_webPagePrivate->m_minimumScale;
         viewState.maximumScale = m_webPagePrivate->m_maximumScale;
         viewState.isUserScalable = m_webPagePrivate->m_userScalable;
+        viewState.webPageClientState = m_webPagePrivate->m_client->serializePageCacheState();
     }
 }
 
@@ -1060,6 +1061,9 @@ void FrameLoaderClientBlackBerry::restoreViewState()
     HistoryItemViewState& viewState = currentItem->viewState();
     if (!viewState.shouldSaveViewState)
         return;
+
+    m_webPagePrivate->m_client->deserializePageCacheState(viewState.webPageClientState);
+
     // WebPagePrivate is messing up FrameView::wasScrolledByUser() by sending
     // scroll events that look like they were user generated all the time.
     //
