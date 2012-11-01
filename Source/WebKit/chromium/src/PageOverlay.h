@@ -65,8 +65,8 @@ private:
 
     WebViewImpl* m_viewImpl;
     WebPageOverlay* m_overlay;
-    OwnPtr<WebCore::GraphicsLayer> m_layer;
     OwnPtr<WebCore::GraphicsLayerClient> m_layerClient;
+    OwnPtr<WebCore::GraphicsLayer> m_layer;
     int m_zOrder;
 };
 

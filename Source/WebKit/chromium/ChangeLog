@@ -1,3 +1,15 @@
+2012-11-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        [Chromium] debug builds: Use after free under ~PageOverlay()
+        https://bugs.webkit.org/show_bug.cgi?id=100930
+
+        Reviewed by Pavel Feldman.
+
+        Changed members order in PageOverlay so that GraphicsLayer is destroyed before GraphicsLayerClient.
+
+        * src/PageOverlay.h:
+        (PageOverlay):
+
 2012-11-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Avoid attempting to defer commits when they are already deferred

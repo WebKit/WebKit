@@ -1,3 +1,19 @@
+2012-11-01  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update BB10 form theme.
+        https://bugs.webkit.org/show_bug.cgi?id=100760
+
+        Reviewed by Rob Buis.
+
+        RIM PR 235194.
+
+        Check img pointer is null, if so, do early return.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::drawControl):
+        (WebCore::drawThreeSlice):
+        (WebCore::drawNineSlice):
+
 2012-11-01  Adam Barth  <abarth@webkit.org>
 
         [V8] The V8DOMMap visitors are no longer needed
