@@ -132,40 +132,6 @@ private:
     Vector<ImplicitConnection> m_connections;
 };
 
-class ObjectVisitor : public DOMWrapperVisitor<void> {
-public:
-    explicit ObjectVisitor(WrapperGrouper* grouper)
-        : m_grouper(grouper)
-    {
-    }
-
-    void visitDOMWrapper(DOMDataStore*, void* object, v8::Persistent<v8::Object> wrapper)
-    {
-        if (wrapper.IsIndependent())
-            return;
-
-        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);
-
-        if (V8MessagePort::info.equals(type)) {
-            // Mark each port as in-use if it's entangled. For simplicity's sake,
-            // we assume all ports are remotely entangled, since the Chromium port
-            // implementation can't tell the difference.
-            MessagePort* port = static_cast<MessagePort*>(object);
-            if (port->isEntangled() || port->hasPendingActivity())
-                m_grouper->keepAlive(wrapper);
-        } else {
-            ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
-            if (activeDOMObject && activeDOMObject->hasPendingActivity())
-                m_grouper->keepAlive(wrapper);
-        }
-
-        m_grouper->addToGroup(type->opaqueRootForGC(object, wrapper), wrapper);
-    }
-
-private:
-    WrapperGrouper* m_grouper;
-};
-
 // FIXME: This should use opaque GC roots.
 static void addImplicitReferencesForNodeWithEventListeners(Node* node, v8::Persistent<v8::Object> wrapper)
 {
@@ -207,29 +173,61 @@ void* V8GCController::opaqueRootForGC(Node* node)
     return node;
 }
 
-class NodeVisitor : public NodeWrapperVisitor {
+class WrapperVisitor : public v8::PersistentHandleVisitor {
 public:
-    explicit NodeVisitor(WrapperGrouper* grouper)
-        : m_grouper(grouper)
+    virtual void VisitPersistentHandle(v8::Persistent<v8::Value> value, uint16_t classId) OVERRIDE
     {
+        ASSERT(value->IsObject());
+        v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
+
+        if (classId != v8DOMNodeClassId && classId != v8DOMObjectClassId)
+            return;
+
+        ASSERT(V8DOMWrapper::maybeDOMWrapper(value));
+
+        if (value.IsIndependent())
+            return;
+
+        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);
+        void* object = toNative(wrapper);
+
+        if (V8MessagePort::info.equals(type)) {
+            // Mark each port as in-use if it's entangled. For simplicity's sake,
+            // we assume all ports are remotely entangled, since the Chromium port
+            // implementation can't tell the difference.
+            MessagePort* port = static_cast<MessagePort*>(object);
+            if (port->isEntangled() || port->hasPendingActivity())
+                m_grouper.keepAlive(wrapper);
+        } else {
+            ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
+            if (activeDOMObject && activeDOMObject->hasPendingActivity())
+                m_grouper.keepAlive(wrapper);
+        }
+
+        if (classId == v8DOMNodeClassId) {
+            ASSERT(V8Node::HasInstance(wrapper));
+            ASSERT(!wrapper.IsIndependent());
+
+            Node* node = static_cast<Node*>(object);
+
+            if (node->hasEventListeners())
+                addImplicitReferencesForNodeWithEventListeners(node, wrapper);
+
+            m_grouper.addToGroup(V8GCController::opaqueRootForGC(node), wrapper);
+        } else if (classId == v8DOMObjectClassId) {
+            m_grouper.addToGroup(type->opaqueRootForGC(object, wrapper), wrapper);
+        } else {
+            ASSERT_NOT_REACHED();
+        }
     }
 
-    void visitNodeWrapper(Node* node, v8::Persistent<v8::Object> wrapper)
+    void notifyFinished()
     {
-        if (node->hasEventListeners())
-            addImplicitReferencesForNodeWithEventListeners(node, wrapper);
-
-        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);  
-
-        ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
-        if (activeDOMObject && activeDOMObject->hasPendingActivity())
-            m_grouper->keepAlive(wrapper);
-
-        m_grouper->addToGroup(V8GCController::opaqueRootForGC(node), wrapper);
+        m_grouper.apply();
     }
 
 private:
-    WrapperGrouper* m_grouper;
+    WrapperGrouper m_grouper;
 };
 
 void V8GCController::gcPrologue(v8::GCType type, v8::GCCallbackFlags flags)
@@ -250,14 +248,9 @@ void V8GCController::majorGCPrologue()
 
     v8::HandleScope scope;
 
-    WrapperGrouper grouper;
-
-    NodeVisitor nodeVisitor(&grouper);
-    ObjectVisitor objectVisitor(&grouper);
-    visitAllDOMNodes(&nodeVisitor);
-    visitDOMObjects(&objectVisitor);
-
-    grouper.apply();
+    WrapperVisitor visitor;
+    v8::V8::VisitHandlesWithClassIds(&visitor);
+    visitor.notifyFinished();
 
     V8PerIsolateData* data = V8PerIsolateData::current();
     data->stringCache()->clearOnGC();

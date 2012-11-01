@@ -165,7 +165,7 @@ PassRefPtr<ScriptHeapSnapshot> ScriptProfiler::takeHeapSnapshot(const String& ti
 
 static v8::RetainedObjectInfo* retainedDOMInfo(uint16_t classId, v8::Handle<v8::Value> wrapper)
 {
-    ASSERT(classId == v8DOMSubtreeClassId);
+    ASSERT(classId == v8DOMNodeClassId);
     if (!wrapper->IsObject())
         return 0;
     Node* node = V8Node::toNative(wrapper.As<v8::Object>());
@@ -174,7 +174,7 @@ static v8::RetainedObjectInfo* retainedDOMInfo(uint16_t classId, v8::Handle<v8::
 
 void ScriptProfiler::initialize()
 {
-    v8::HeapProfiler::DefineWrapperClass(v8DOMSubtreeClassId, &retainedDOMInfo);
+    v8::HeapProfiler::DefineWrapperClass(v8DOMNodeClassId, &retainedDOMInfo);
 }
 
 void ScriptProfiler::visitNodeWrappers(WrappedNodeVisitor* visitor)

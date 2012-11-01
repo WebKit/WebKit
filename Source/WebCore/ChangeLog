@@ -1,3 +1,35 @@
+2012-11-01  Adam Barth  <abarth@webkit.org>
+
+        [V8] Unify the V8GCController visitors
+        https://bugs.webkit.org/show_bug.cgi?id=100897
+
+        Reviewed by Eric Seidel.
+
+        After this patch, we use a single visitor for all DOM wrappers,
+        regardless of type. We also visit all the wrappers in one pass by
+        calling v8::V8::VisitHandlesWithClassIds directly rather than via
+        visitAllDOMNodes.
+
+        This patch also introduces a wrapper class ID for non-Node DOM objects.
+        Previously, only DOM nodes had a class ID.
+
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::retainedDOMInfo):
+        (WebCore::ScriptProfiler::initialize):
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::visitAllDOMNodes):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMNode):
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMObject):
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::GCHandleVisitor::notifyFinished):
+        (GCHandleVisitor):
+        (WebCore::V8GCController::majorGCPrologue):
+        * bindings/v8/WrapperTypeInfo.h:
+        (WebCore):
+
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, rolling out r133143.

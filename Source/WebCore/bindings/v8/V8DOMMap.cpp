@@ -69,7 +69,7 @@ void visitAllDOMNodes(NodeWrapperVisitor* visitor)
 
         virtual void VisitPersistentHandle(v8::Persistent<v8::Value> value, uint16_t classId)
         {
-            if (classId != v8DOMSubtreeClassId)
+            if (classId != v8DOMNodeClassId)
                 return;
             ASSERT(V8Node::HasInstance(value));
             ASSERT(value->IsObject());
