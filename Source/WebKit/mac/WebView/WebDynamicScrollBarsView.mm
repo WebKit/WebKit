@@ -29,7 +29,6 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebHTMLViewInternal.h"
-#import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebKitSystemInterface.h>
 
@@ -186,6 +185,36 @@ static Class customScrollerClass;
 - (BOOL)verticalScrollingAllowed
 {
     return _private->verticalScrollingAllowedButScrollerHidden || [self hasVerticalScroller];
+}
+
+static BOOL shouldRoundScrollOrigin(WebDynamicScrollBarsView *view)
+{
+    NSView *documentView = [view documentView];
+    if (![documentView isKindOfClass:[WebHTMLView class]])
+        return NO;
+
+    Frame* frame = core([(WebHTMLView *)documentView _frame]);
+    if (!frame)
+        return NO;
+    
+    FrameView *frameView = frame->view();
+    if (!frameView)
+        return NO;
+
+    return frameView->hasViewportConstrainedObjects();
+}
+
+- (void)scrollClipView:(NSClipView *)clipView toPoint:(NSPoint)point
+{
+    if (shouldRoundScrollOrigin(self)) {
+        // WebCore isn't yet able to handle subpixel scrolling, as can happen on Retina displays. For
+        // now we'll round to the nearest pixel. Once subpixel layout is enabled in WebCore we may be
+        // able to remove this method entirely.
+        point.x = round(point.x);
+        point.y = round(point.y);
+    }
+
+    [super scrollClipView:clipView toPoint:point];
 }
 
 @end

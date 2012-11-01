@@ -1,3 +1,21 @@
+2012-11-01  Adam Roben  <aroben@webkit.org>
+
+        [WK1] Fixed-position elements jiggle up and down slightly during scrolling on a Retina display
+        https://bugs.webkit.org/show_bug.cgi?id=100957
+
+        Reviewed by Simon Fraser.
+
+        WebCore doesn't yet support subpixel scrolling. WebKit2 forces
+        scrolling to always be integral. Now WebKit1 forces this as well.
+
+        I'm not sure how to write a test for this.
+
+        * WebView/WebDynamicScrollBarsView.mm:
+        (shouldRoundScrollOrigin): Returns YES if there are any position:fixed
+        or position:sticky elements in the page.
+        (-[WebDynamicScrollBarsView scrollClipView:toPoint:]): Round the
+        scroll origin to the nearest pixel if needed.
+
 2012-10-31  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
