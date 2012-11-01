@@ -1203,7 +1203,7 @@ void BackingStorePrivate::paintDefaultBackground(const Platform::IntRect& dstRec
     // make sure it is invalidated.
     const Platform::IntRect pixelContentsRect = viewportAccessor->pixelContentsRect();
     Platform::IntRectRegion overScrollRegion = Platform::IntRectRegion::subtractRegions(
-        dstRect, viewportAccessor->pixelViewportFromContents(pixelContentsRect));
+        clippedDstRect, viewportAccessor->pixelViewportFromContents(pixelContentsRect));
 
     IntRectList overScrollRects = overScrollRegion.rects();
     for (size_t i = 0; i < overScrollRects.size(); ++i) {
