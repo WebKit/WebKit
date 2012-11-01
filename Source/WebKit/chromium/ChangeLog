@@ -1,3 +1,9 @@
+2012-11-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-11-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: report memory occupied by ResourceRequest instead of its base ResourceRequestBase
