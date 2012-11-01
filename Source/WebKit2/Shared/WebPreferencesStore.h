@@ -138,6 +138,7 @@ namespace WebKit {
     macro(CookieEnabled, cookieEnabled, Bool, bool, true) \
     macro(PlugInSnapshottingEnabled, plugInSnapshottingEnabled, Bool, bool, false) \
     macro(PDFPluginEnabled, pdfPluginEnabled, Bool, bool, false) \
+    macro(UsesEncodingDetector, usesEncodingDetector, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

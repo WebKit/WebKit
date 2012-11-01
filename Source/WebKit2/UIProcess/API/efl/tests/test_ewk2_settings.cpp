@@ -157,3 +157,17 @@ TEST_F(EWK2UnitTestBase, ewk_settings_dns_prefetching_enabled)
     ASSERT_TRUE(ewk_settings_dns_prefetching_enabled_set(settings, false));
     ASSERT_FALSE(ewk_settings_dns_prefetching_enabled_get(settings));
 }
+
+TEST_F(EWK2UnitTestBase, ewk_setting_encoding_detector_enabled)
+{
+    Ewk_Settings* settings = ewk_view_settings_get(webView());
+
+    // The encoding detector is disabled by default.
+    ASSERT_FALSE(ewk_setting_encoding_detector_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_setting_encoding_detector_enabled_set(settings, true));
+    ASSERT_TRUE(ewk_setting_encoding_detector_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_setting_encoding_detector_enabled_set(settings, false));
+    ASSERT_FALSE(ewk_setting_encoding_detector_enabled_get(settings));
+}

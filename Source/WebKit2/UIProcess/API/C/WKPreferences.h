@@ -220,6 +220,10 @@ WK_EXPORT WKStorageBlockingPolicy WKPreferencesGetStorageBlockingPolicy(WKPrefer
 WK_EXPORT void WKPreferencesSetPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetEncodingDetectorEnabled(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetEncodingDetectorEnabled(WKPreferencesRef preferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

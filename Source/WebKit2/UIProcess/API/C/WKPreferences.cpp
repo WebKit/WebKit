@@ -943,3 +943,13 @@ bool WKPreferencesGetPDFPluginEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->pdfPluginEnabled();
 }
+
+void WKPreferencesSetEncodingDetectorEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setUsesEncodingDetector(enabled);
+}
+
+bool WKPreferencesGetEncodingDetectorEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->usesEncodingDetector();
+}

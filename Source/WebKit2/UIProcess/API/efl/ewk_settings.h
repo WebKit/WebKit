@@ -298,6 +298,29 @@ EAPI void ewk_settings_spell_checking_languages_set(const char *languages);
  */
 EAPI Eina_List *ewk_settings_spell_checking_languages_get(void);
 
+/**
+ * Enables/disables the encoding detector.
+ *
+ * By default, the encoding detector is disabled.
+ *
+ * @param settings settings object to set the encoding detector
+ * @param enable @c EINA_TRUE to enable the encoding detector,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_setting_encoding_detector_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+* Returns whether the encoding detector is enabled or not.
+ *
+ * @param settings settings object to query whether encoding detector is enabled
+ *
+ * @return @c EINA_TRUE if the encoding detector is enabled
+ *         @c EINA_FALSE if not or on failure
+ */
+EAPI Eina_Bool ewk_setting_encoding_detector_enabled_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,3 +1,25 @@
+2012-11-01  Yuni Jeong  <yhnet.jung@samsung.com>
+
+        [WK2] Add APIs to get/set encoding detector
+        https://bugs.webkit.org/show_bug.cgi?id=100066
+
+        Reviewed by Gyuyoung Kim.
+
+        Add setting APIs for encoding dector and a unit test.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetUsesEncodingDetector):
+        (WKPreferencesGetUsesEncodingDetector):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_setting_uses_encoding_detector_set):
+        (ewk_setting_uses_encoding_detector_get):
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+
 2012-10-31  Jihye Kang  <jye.kang@samsung.com>
 
         [EFL][WK2] Add ewk_security_origin and ewk_storage_manager APIs
