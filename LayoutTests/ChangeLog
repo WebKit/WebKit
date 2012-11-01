@@ -1,3 +1,9 @@
+2012-10-31  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, remove entries for tests no longer failing.
+
+        * platform/chromium/TestExpectations:
+
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.  Mark a crashy test.

@@ -2476,7 +2476,6 @@ webkit.org/b/50709 [ Mac ] fast/css/font-weight-1.html [ ImageOnlyFailure ]
 # End DRT failures
 #///////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/70878 http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html [ Timeout ]
 webkit.org/b/73538 [ Win ] http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure ]
 
 crbug.com/66087 [ Win ] fast/dom/Geolocation/timestamp.html [ Failure Pass ]
@@ -3082,7 +3081,6 @@ crbug.com/113063 [ Debug ] storage/indexeddb/basics-workers.html [ Crash Pass ]
 webkit.org/b/79224 [ Win ] fast/canvas/webgl/tex-image-with-format-and-type.html [ Failure Pass ]
 webkit.org/b/79224 [ Win ] platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-with-format-and-type.html [ Failure Pass ]
 
-webkit.org/b/79642 accessibility/aria-describedby-on-input.html [ Timeout ]
 webkit.org/b/79642 fast/loader/subresource-willSendRequest-null.html [ Timeout ]
 
 webkit.org/b/79702 fast/regex/lastIndex.html [ Failure ]
@@ -4143,21 +4141,6 @@ webkit.org/b/100475 platform/chromium/virtual/softwarecompositing/tiling/tile-ca
 webkit.org/b/100477 [ Win ] platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-key-operations.html [ Failure ]
 
 webkit.org/b/100647 [ Win ] webaudio/audiobuffersource-loop-points.html [ Failure ]
-
-webkit.org/b/100784 fast/canvas/webgl/canvas-test.html [ Text ]
-webkit.org/b/100784 fast/canvas/webgl/gl-get-calls.html [ Text ]
-webkit.org/b/100784 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Text ]
-webkit.org/b/100784 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Text ]
-webkit.org/b/100784 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Text ]
-webkit.org/b/100784 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Text ]
-webkit.org/b/100784 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Text ]
-webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/canvas-test.html [ Text ]
-webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/gl-get-calls.html [ Text ]
-webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Text ]
-webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Text ]
-webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Text ]
-webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Text ]
-webkit.org/b/100784 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Text ]
 
 webkit.org/b/100806 [ Win ] fast/css/font-face-implicit-local-font.html [ Failure ]
 webkit.org/b/100806 [ Win ] fast/css/font-face-unicode-range.html [ Failure ]
