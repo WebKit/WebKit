@@ -96,8 +96,9 @@ public:
     // mode).
     virtual WebSize deviceViewportSize() const = 0;
 
-    // FIXME: Once cc::LayerTreeHost::adjustEventPointForPinchZoom lands, make this pure virtual.
-    virtual WebFloatPoint adjustEventPointForPinchZoom(const WebFloatPoint& point) const { return point; }
+    // Gives the corrected location for an event, accounting for the pinch-zoom transformation
+    // in the compositor.
+    virtual WebFloatPoint adjustEventPointForPinchZoom(const WebFloatPoint&) const = 0;
 
     virtual void setDeviceScaleFactor(float) = 0;
     virtual float deviceScaleFactor() const = 0;

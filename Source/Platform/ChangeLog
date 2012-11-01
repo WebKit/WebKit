@@ -1,3 +1,16 @@
+2012-11-01  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Make WebLayerTreeView::adjustEventPointForPinchZoom pure virtual.
+        https://bugs.webkit.org/show_bug.cgi?id=100875
+
+        Reviewed by James Robinson.
+
+        This CL removes the default implementation for adjustEventPointForPinchZoom(), which
+        was necessary for landing the original patch in https://bugs.webkit.org/show_bug.cgi?id=100542.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, rolling out r133122.
