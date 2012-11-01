@@ -1,3 +1,69 @@
+2012-10-31  Adam Barth  <abarth@webkit.org>
+
+        [V8] Garbage collection should use opaque roots rather than implicit references
+        https://bugs.webkit.org/show_bug.cgi?id=100707
+
+        Reviewed by Kentaro Hara.
+
+        This patch replaces visitDOMWrapper with opaqueRootForGC. The
+        former used to inform V8 of implicit relationships between wrapper
+        objects on a per-wrapper basis. That meant that we needed to know which
+        DOMDataStore a given wrapper was in during garbage collection.
+
+        After this patch, we now use object groups rather than implicit
+        references to inform V8 of these relationships. That has two benefits:
+
+        1) We no longer need to know which DOMDataStore a wrapper belongs
+           because we don't need to find the exact source wrapper for the
+           implicit connection.
+
+        2) We can now handle more complicated implicit relationships, for
+           example when some of the intervening objects haven't had their
+           JavaScript wrappers created yet.
+
+        This patch also unlocks to paths of future development:
+        A) Fixing the remaining failures in fast/dom/gc-9.html
+        B) Enumerating DOM wrappers entirely from V8 rather than from the
+           DOMWrapperMaps (so that we can move more object towards using
+           IntrusiveDOMWrapperMaps, which aren't enumerable from WebCore).
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (NeedsCustomOpaqueRootForGC):
+        (GenerateOpaqueRootForGC):
+        (GenerateHeader):
+        (GenerateImplementation):
+        * bindings/v8/V8GCController.cpp:
+        (ImplicitConnection):
+        (WebCore::ImplicitConnection::ImplicitConnection):
+        (WebCore::ImplicitConnection::root):
+        (WebCore::ImplicitConnection::wrapper):
+        (WebCore):
+        (WebCore::operator<):
+        (WrapperGrouper):
+        (WebCore::WrapperGrouper::WrapperGrouper):
+        (WebCore::WrapperGrouper::addToGroup):
+        (WebCore::WrapperGrouper::keepAlive):
+        (WebCore::WrapperGrouper::apply):
+        (WebCore::ObjectVisitor::ObjectVisitor):
+        (WebCore::ObjectVisitor::visitDOMWrapper):
+        (ObjectVisitor):
+        (WebCore::V8GCController::opaqueRootForGC):
+        (WebCore::NodeVisitor::NodeVisitor):
+        (WebCore::NodeVisitor::visitNodeWrapper):
+        (NodeVisitor):
+        (WebCore::V8GCController::majorGCPrologue):
+        * bindings/v8/V8GCController.h:
+        (WebCore):
+        (V8GCController):
+        * bindings/v8/WrapperTypeInfo.h:
+        (WebCore):
+        (WebCore::WrapperTypeInfo::opaqueRootForGC):
+        (WrapperTypeInfo):
+        * bindings/v8/custom/V8NodeListCustom.cpp:
+        (WebCore::V8NodeList::opaqueRootForGC):
+        * bindings/v8/custom/V8SpeechRecognitionResultCustom.cpp:
+        (WebCore::V8SpeechRecognitionResult::opaqueRootForGC):
+
 2012-10-31  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, rolling out r133107.

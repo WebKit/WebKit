@@ -69,8 +69,8 @@ PASS: document.getElementsByTagName('map')[0].areas.myCustomProperty should be 1
 FAIL: document.body.style.myCustomProperty should be 1 but instead is undefined.
 FAIL: document.body.style.getPropertyCSSValue('color').myCustomProperty should be 1 but instead is undefined.
 PASS: document.styleSheets.myCustomProperty should be 1 and is.
-FAIL: document.styleSheets[0].myCustomProperty should be 1 but instead is undefined.
-FAIL: document.styleSheets[0].cssRules.myCustomProperty should be 1 but instead is undefined.
+PASS: document.styleSheets[0].myCustomProperty should be 1 and is.
+PASS: document.styleSheets[0].cssRules.myCustomProperty should be 1 and is.
 FAIL: document.styleSheets[0].cssRules[0].myCustomProperty should be 1 but instead is undefined.
 PASS: new XPathEvaluator().myCustomProperty should be undefined and is.
 PASS: new XPathEvaluator().evaluate('/', document, null, 0, null).myCustomProperty should be undefined and is.

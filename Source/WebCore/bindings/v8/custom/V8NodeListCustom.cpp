@@ -34,6 +34,7 @@
 #include "DynamicNodeList.h"
 #include "NodeList.h"
 #include "V8Binding.h"
+#include "V8GCController.h"
 #include "V8Node.h"
 
 #include <wtf/RefPtr.h>
@@ -59,19 +60,16 @@ v8::Handle<v8::Value> V8NodeList::namedPropertyGetter(v8::Local<v8::String> name
     return toV8(result.release(), info.Holder(), info.GetIsolate());
 }
 
-void V8NodeList::visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
+void* V8NodeList::opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapper)
 {
+    ASSERT(V8NodeList::HasInstance(wrapper));
     NodeList* impl = static_cast<NodeList*>(object);
-    if (impl->isDynamicNodeList()) {
-        Node* owner = static_cast<DynamicNodeList*>(impl)->ownerNode();
-        if (owner) {
-            v8::Persistent<v8::Object> ownerWrapper = store->domNodeMap().get(owner);
-            if (!ownerWrapper.IsEmpty()) {
-                v8::Persistent<v8::Value> value = wrapper;
-                v8::V8::AddImplicitReferences(ownerWrapper, &value, 1);
-            }
-        }
-    }
+    if (!impl->isDynamicNodeList())
+        return object;
+    Node* owner = static_cast<DynamicNodeList*>(impl)->ownerNode();
+    if (!owner)
+        return object;
+    return V8GCController::opaqueRootForGC(owner);
 }
 
 } // namespace WebCore
