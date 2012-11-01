@@ -1,3 +1,9 @@
+2012-11-01  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip fast/workers/worker-domurl.html on Windows. ENABLE_BLOB not enabled.
+
+        * platform/win/TestExpectations:
+
 2012-11-01  Mike West  <mkwst@chromium.org>
 
         CSP 1.0: Warn when old-style directives encountered.
