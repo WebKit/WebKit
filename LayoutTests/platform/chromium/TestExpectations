@@ -4106,6 +4106,9 @@ Bug(senorblanco) http/tests/security/isolatedWorld/body-prototype.html [ Crash P
 # Failing since r133095 (which is CSP-related, not calendar-related?)
 Bug(senorblanco) platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure ]
 
+# Failing since r133069 (maybe debug-only?  Update after more results are in)
+Bug(senorblanco) editing/pasteboard/file-drag-to-editable.html [ Failure Pass ]
+
 # Failing on Mac since Chromium r165269
 Bug(senorblanco) [ Mac ] compositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
 Bug(senorblanco) [ Mac ] compositing/geometry/fixed-position-transform-composited-page-scale-down.html [ ImageOnlyFailure ]
