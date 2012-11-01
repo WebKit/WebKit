@@ -36,6 +36,15 @@
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/text/WTFString.h>
 
+
+namespace WTF {
+
+template<> struct SequenceMemoryInstrumentationTraits<const WebCore::RenderObject*> {
+    template <typename I> static void reportMemoryUsage(I, I, MemoryClassInfo&) { }
+};
+
+}
+
 namespace WebCore {
 
 CSSImageGeneratorValue::CSSImageGeneratorValue(ClassType classType)
