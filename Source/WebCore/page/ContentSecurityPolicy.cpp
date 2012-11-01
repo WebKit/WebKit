@@ -1191,7 +1191,7 @@ bool CSPDirectiveList::parseDirective(const UChar* begin, const UChar* end, Stri
     // The directive-name must be non-empty.
     if (nameBegin == position) {
         skipWhile<isNotASCIISpace>(position, end);
-        m_policy->reportUnrecognizedDirective(String(nameBegin, position - nameBegin));
+        m_policy->reportUnsupportedDirective(String(nameBegin, position - nameBegin));
         return false;
     }
 
@@ -1202,7 +1202,7 @@ bool CSPDirectiveList::parseDirective(const UChar* begin, const UChar* end, Stri
 
     if (!skipExactly<isASCIISpace>(position, end)) {
         skipWhile<isNotASCIISpace>(position, end);
-        m_policy->reportUnrecognizedDirective(String(nameBegin, position - nameBegin));
+        m_policy->reportUnsupportedDirective(String(nameBegin, position - nameBegin));
         return false;
     }
 
@@ -1304,7 +1304,7 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
     }
 #endif
     else
-        m_policy->reportUnrecognizedDirective(name);
+        m_policy->reportUnsupportedDirective(name);
 }
 
 ContentSecurityPolicy::ContentSecurityPolicy(ScriptExecutionContext* scriptExecutionContext)
@@ -1596,9 +1596,23 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
         PingLoader::reportContentSecurityPolicyViolation(frame, reportURIs[i], report);
 }
 
-void ContentSecurityPolicy::reportUnrecognizedDirective(const String& name) const
+void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const
 {
+    DEFINE_STATIC_LOCAL(String, allow, (ASCIILiteral("allow")));
+    DEFINE_STATIC_LOCAL(String, options, (ASCIILiteral("options")));
+    DEFINE_STATIC_LOCAL(String, policyURI, (ASCIILiteral("policy-uri")));
+    DEFINE_STATIC_LOCAL(String, allowMessage, (ASCIILiteral("The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.")));
+    DEFINE_STATIC_LOCAL(String, optionsMessage, (ASCIILiteral("The 'options' directive has been replaced with 'unsafe-inline' and 'unsafe-eval' source expressions for the 'script-src' and 'style-src' directives. Please use those directives instead, as 'options' has no effect.")));
+    DEFINE_STATIC_LOCAL(String, policyURIMessage, (ASCIILiteral("The 'policy-uri' directive has been removed from the specification. Please specify a complete policy via the Content-Security-Policy header.")));
+
     String message = makeString("Unrecognized Content-Security-Policy directive '", name, "'.\n");
+    if (equalIgnoringCase(name, allow))
+        message = allowMessage;
+    else if (equalIgnoringCase(name, options))
+        message = optionsMessage;
+    else if (equalIgnoringCase(name, policyURI))
+        message = policyURIMessage;
+
     logToConsole(message);
 }
 

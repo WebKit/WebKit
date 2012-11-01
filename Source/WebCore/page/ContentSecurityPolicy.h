@@ -108,7 +108,7 @@ public:
     void reportInvalidNonce(const String&) const;
     void reportInvalidPluginTypes(const String&) const;
     void reportInvalidSourceExpression(const String& directiveName, const String& source) const;
-    void reportUnrecognizedDirective(const String&) const;
+    void reportUnsupportedDirective(const String&) const;
     void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), ScriptState* = 0) const;
 
     void reportBlockedScriptExecutionToInspector(const String& directiveText) const;

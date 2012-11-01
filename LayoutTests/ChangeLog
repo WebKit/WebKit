@@ -1,3 +1,23 @@
+2012-11-01  Mike West  <mkwst@chromium.org>
+
+        CSP 1.0: Warn when old-style directives encountered.
+        https://bugs.webkit.org/show_bug.cgi?id=100883
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/directive-parsing-01-expected.txt:
+        * http/tests/security/contentSecurityPolicy/directive-parsing-multiple-headers-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-goofy-expected.txt:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-allowed-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-in-iframe-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-none-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-deprecated-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-deprecated.html: Added.
+        * platform/chromium/http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt:
+        * platform/chromium/http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+
 2012-11-01  Tony Chang  <tony@chromium.org>
 
         [Chromium] Unreviewed, marking http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html

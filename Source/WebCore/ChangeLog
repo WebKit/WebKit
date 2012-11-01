@@ -1,3 +1,27 @@
+2012-11-01  Mike West  <mkwst@chromium.org>
+
+        CSP 1.0: Warn when old-style directives encountered.
+        https://bugs.webkit.org/show_bug.cgi?id=100883
+
+        Reviewed by Adam Barth.
+
+        In Mozilla's pre-W3C-spec implementation, a few directives are
+        implemented that were either renamed, reworked, or removed from CSP 1.0.
+        This patch adds special warning messages for three of those directives
+        to set developer expectations correctly.
+
+        Test: http/tests/security/contentSecurityPolicy/source-list-parsing-deprecated.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::parseDirective):
+        (WebCore::CSPDirectiveList::addDirective):
+        (WebCore::ContentSecurityPolicy::reportUnsupportedDirective):
+        * page/ContentSecurityPolicy.h:
+            Rename 'reportUnrecognizedDirectives' to
+            'reportUnsupportedDirectives', and teach it to give more descriptive
+            error messages when encountering 'allow', 'options', and
+            'policy-uri'.
+
 2012-11-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: Update CodeMirror to v3
