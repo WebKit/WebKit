@@ -58,7 +58,6 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, uiSourceCode)
 
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.FormattedChanged, this._onFormattedChanged, this);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._onWorkingCopyChanged, this);
-    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyCommitted, this._onWorkingCopyCommitted, this);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageRemoved, this._consoleMessageRemoved, this);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
@@ -118,27 +117,12 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         this._innerSetContent(this._uiSourceCode.workingCopy());
     },
 
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _onWorkingCopyCommitted: function(event)
-    {
-        this._innerSetContent(this._uiSourceCode.workingCopy());
-    },
-
     _innerSetContent: function(content)
     {
         if (this._isSettingWorkingCopy || this._isCommittingEditing)
             return;
 
-        if (this._uiSourceCode.togglingFormatter())
-            this.setContent(content, false, this._uiSourceCode.mimeType());
-        else {
-            var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);
-            for (var i = 0; i < breakpointLocations.length; ++i)
-                breakpointLocations[i].breakpoint.remove();
-            this.setContent(content, false, this._uiSourceCode.mimeType());
-        }
+        this.setContent(content, false, this._uiSourceCode.mimeType());
     },
 
     populateLineGutterContextMenu: function(contextMenu, lineNumber)

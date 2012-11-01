@@ -1,3 +1,17 @@
+2012-11-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Remove obsolete code from JavaScriptSourceFrame
+        https://bugs.webkit.org/show_bug.cgi?id=100594
+
+        Reviewed by Yury Semikhatsky.
+
+        Removed obsolete WorkingCopyCommitted listener.
+        Removed redundant code that removes breakpoints from _innerSetContent.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype._innerSetContent):
+
 2012-11-01  Andreas Kling  <kling@webkit.org>
 
         Update average StylePropertySet size estimation.
