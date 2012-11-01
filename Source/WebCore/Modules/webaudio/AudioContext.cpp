@@ -764,7 +764,7 @@ void AudioContext::handleDeferredFinishDerefs()
 void AudioContext::markForDeletion(AudioNode* node)
 {
     ASSERT(isGraphOwner());
-    m_nodesToDelete.append(node);
+    m_nodesMarkedForDeletion.append(node);
 
     // This is probably the best time for us to remove the node from automatic pull list,
     // since all connections are gone and we hold the graph lock. Then when handlePostRenderTasks()
@@ -781,7 +781,11 @@ void AudioContext::scheduleNodeDeletion()
         return;
 
     // Make sure to call deleteMarkedNodes() on main thread.    
-    if (m_nodesToDelete.size() && !m_isDeletionScheduled) {
+    if (m_nodesMarkedForDeletion.size() && !m_isDeletionScheduled) {
+        for (unsigned i = 0; i < m_nodesMarkedForDeletion.size(); ++i)
+            m_nodesToDelete.append(m_nodesMarkedForDeletion[i]);
+        m_nodesMarkedForDeletion.clear();
+
         m_isDeletionScheduled = true;
 
         // Don't let ourself get deleted before the callback.
@@ -808,7 +812,6 @@ void AudioContext::deleteMarkedNodes()
 
     AutoLocker locker(this);
     
-    // Note: deleting an AudioNode can cause m_nodesToDelete to grow.
     while (size_t n = m_nodesToDelete.size()) {
         AudioNode* node = m_nodesToDelete[n - 1];
         m_nodesToDelete.removeLast();

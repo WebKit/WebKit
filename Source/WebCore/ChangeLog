@@ -1,3 +1,26 @@
+2012-11-01  Chris Rogers  <crogers@google.com>
+
+        Ensure that AudioNode deletion is synchronized with a stable state of the rendering graph
+        https://bugs.webkit.org/show_bug.cgi?id=100994
+
+        Reviewed by Kenneth Russell.
+
+        In some rare cases it has been observed that nodes are getting deleted in the main thread
+        during an audio rendering quantum where the dirty inputs and outputs have not yet been cleaned
+        via calls to handleDirtyAudioSummingJunctions() and handleDirtyAudioNodeOutputs().
+        This was possible because nodes marked for deletion with markForDeletion() could be picked
+        up in a subsequent call to deleteMarkedNodes() before the render quantum has finished and
+        handlePostRenderTasks() has had a chance to reconcile these marked nodes and clean the dirty state.
+        The solution is to manage the marked nodes in a separate vector which only gets copied to another
+        vector truly eligible for deletion which is synchronized in handlePostRenderTasks().
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::markForDeletion):
+        (WebCore::AudioContext::scheduleNodeDeletion):
+        (WebCore::AudioContext::deleteMarkedNodes):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+
 2012-11-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r133224 as suggested by Enrica.
