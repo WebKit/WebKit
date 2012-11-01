@@ -1,3 +1,20 @@
+2012-11-01  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Get rid of internal tex coord attribute
+        https://bugs.webkit.org/show_bug.cgi?id=94358
+
+        Reviewed by Dean Jackson.
+
+        Add a test which verifies that a custom filter executes regardless of whether the author
+        defines a_texCoord in the vertex shader. We check this because the implementation uses
+        the author's a_texCoord definition if it exists. If it doesn't exist, the implementation
+        adds its own a_texCoord definition to the author's shader.
+
+        * css3/filters/custom/custom-filter-a-tex-coord-optional-expected.html: Added.
+        * css3/filters/custom/custom-filter-a-tex-coord-optional.html: Added.
+        * css3/filters/resources/a-tex-coord-defined.vs: Added.
+        * css3/filters/resources/a-tex-coord-undefined.vs: Added.
+
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Unreviewed gardening.  Suppressing an image failure after

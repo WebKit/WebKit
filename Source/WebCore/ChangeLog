@@ -1,3 +1,45 @@
+2012-11-01  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Get rid of internal tex coord attribute
+        https://bugs.webkit.org/show_bug.cgi?id=94358
+
+        Reviewed by Dean Jackson.
+
+        Remove the internal css_a_texCoord attribute that WebKit added to shaders in order to
+        sample the element texture by texture coordinate.
+
+        Now, the WebKit-added sampling code can leverage a_texCoord if the author defined it, or
+        WebKit can add its own a_texCoord definition to the author's shader.
+
+        Note that vertex attributes are read-only in GLSL. Also, note that we already reject the
+        shader if the author did not define a_texCoord with the correct type. Essentially, if
+        a_texCoord exists in the author's validated shader, we are guaranteed that it's the correct
+        type and that its value is unmodified.
+
+        Test: css3/filters/custom/custom-filter-a-tex-coord-optional.html
+
+        * platform/graphics/filters/CustomFilterCompiledProgram.cpp:
+        (WebCore::CustomFilterCompiledProgram::CustomFilterCompiledProgram):
+            Remove the references to m_internalTexCoordAttribLocation.
+        (WebCore::CustomFilterCompiledProgram::initializeParameterLocations): Ditto.
+        * platform/graphics/filters/CustomFilterCompiledProgram.h: Ditto.
+        * platform/graphics/filters/CustomFilterRenderer.cpp:
+        (WebCore::CustomFilterRenderer::bindProgramAndBuffers): Ditto.
+        (WebCore::CustomFilterRenderer::unbindVertexAttributes): Ditto.
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore::CustomFilterValidatedProgram::CustomFilterValidatedProgram):
+            Pass the set of symbols found in the author's shaders to the rewriteMixVertexShader
+            method.
+        (WebCore::CustomFilterValidatedProgram::rewriteMixVertexShader):
+            If the author didn't define a_texCoord, add it to the end of the author's vertex 
+            shader, but before the shader's new main function. As before, the new main function
+            will pass the texture coordinate to the fragment shader via the css_v_texCoord varying.
+        * platform/graphics/filters/CustomFilterValidatedProgram.h:
+        (WebCore):
+            Add a forward declaration for ANGLEShaderSymbol.
+        (CustomFilterValidatedProgram):
+            Update the method prototype for rewriteMixVertexShader.
+
 2012-11-01  Chris Rogers  <crogers@google.com>
 
         Ensure that AudioNode deletion is synchronized with a stable state of the rendering graph

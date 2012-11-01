@@ -50,7 +50,6 @@ CustomFilterCompiledProgram::CustomFilterCompiledProgram(PassRefPtr<GraphicsCont
     , m_samplerLocation(-1)
     , m_samplerSizeLocation(-1)
     , m_contentSamplerLocation(-1)
-    , m_internalTexCoordAttribLocation(-1)
     , m_isInitialized(false)
 {
     m_context->makeContextCurrent();
@@ -130,10 +129,9 @@ void CustomFilterCompiledProgram::initializeParameterLocations(CustomFilterProgr
     m_samplerSizeLocation = m_context->getUniformLocation(m_program, "u_textureSize");
     m_contentSamplerLocation = m_context->getUniformLocation(m_program, "u_contentTexture");
     if (programType == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE) {
-        // When the author uses the CSS mix function in a custom filter, we add internal symbols to the shader code.
-        // One of them, css_u_texture, references the texture of the element.
+        // When the author uses the CSS mix function in a custom filter, WebKit adds the internal
+        // symbol css_u_texture to the shader code, which references the texture of the element.
         m_samplerLocation = m_context->getUniformLocation(m_program, "css_u_texture");
-        m_internalTexCoordAttribLocation = m_context->getAttribLocation(m_program, "css_a_texCoord");
     }
 }
 

@@ -61,12 +61,6 @@ public:
     int samplerLocation() const { return m_samplerLocation; }
     int contentSamplerLocation() const { return m_contentSamplerLocation; }
     int samplerSizeLocation() const { return m_samplerSizeLocation; }
-    // FIXME: Get rid of the internal tex coord attribute "css_a_texCoord".
-    // If the author defined "a_texCoord", we should leverage that.
-    // If not, we should write "a_texCoord" in the shader.
-    // This requires us to first get the list of attributes from the vertex shader using ANGLE.
-    // https://bugs.webkit.org/show_bug.cgi?id=94358
-    int internalTexCoordAttribLocation() const { return m_internalTexCoordAttribLocation; }
 
     int uniformLocationByName(const String&);
     
@@ -94,9 +88,6 @@ private:
     int m_samplerLocation;
     int m_samplerSizeLocation;
     int m_contentSamplerLocation;
-    // FIXME: Get rid of the internal tex coord attribute "css_a_texCoord".
-    // https://bugs.webkit.org/show_bug.cgi?id=94358
-    int m_internalTexCoordAttribLocation;
     
     bool m_isInitialized;
 };
