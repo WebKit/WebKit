@@ -1,3 +1,22 @@
+2012-11-01  Stephen Chenney  <schenney@chromium.org>
+
+        SVG as an image may recreate the renderer on zoom
+        https://bugs.webkit.org/show_bug.cgi?id=99508
+
+        Reviewed by Abhishek Arya.
+
+        The SVGImage code, when SVG is used in <img> tags, caches the renderer
+        at the start of the painting method and re-uses the pointer at the end
+        of the method. However, when the page is zoomed the renderer may be
+        detached mid-method, thus leaving a stray pointer. The fix is to
+        re-fetch the pointer after the zooms.
+
+        Test: svg/as-image/img-zoom-svg-stylesheet.html
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawSVGToImageBuffer): Re-fetch the renderer after
+        the zoom operations.
+
 2012-11-01  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: introduce Inspector.detached message containing termination cause.
