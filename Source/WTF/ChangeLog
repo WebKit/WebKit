@@ -1,3 +1,12 @@
+2012-10-31  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+        <rdar://problem/12612207>.
+
+        Reviewed by Sam Weinig.
+
+        * wtf/CheckedArithmetic.h:
+
 2012-10-31  Benjamin Poulain  <bpoulain@apple.com>
 
         Add an optimized version of copyLCharsFromUCharSource for ARM

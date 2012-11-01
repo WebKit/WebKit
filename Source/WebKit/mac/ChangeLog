@@ -1,3 +1,13 @@
+2012-10-31  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+        <rdar://problem/12612207>.
+
+        Reviewed by Sam Weinig.
+
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel loadNib]):
+
 2012-10-30  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Mac] Sync up FeatureDefine Configuration Files

@@ -102,7 +102,10 @@
 - (BOOL)loadNib
 {
     if (!nibLoaded) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         if ([NSBundle loadNibNamed:WebAuthenticationPanelNibName owner:self]) {
+#pragma clang diagnostic pop
             nibLoaded = YES;
             [imageView setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
         } else {

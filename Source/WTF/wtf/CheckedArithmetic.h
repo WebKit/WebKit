@@ -154,7 +154,7 @@ template <typename Target, typename Source> struct BoundsChecker<Target, Source,
     }
 };
 
-template <typename Target, typename Source, bool SameType = IsSameType<Target, Source>::value> struct BoundsCheckElider;
+template <typename Target, typename Source, bool CanElide = IsSameType<Target, Source>::value || (sizeof(Target) > sizeof(Source)) > struct BoundsCheckElider;
 template <typename Target, typename Source> struct BoundsCheckElider<Target, Source, true> {
     static bool inBounds(Source) { return true; }
 };
@@ -270,7 +270,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
                 if (lhs && (std::numeric_limits<ResultType>::max() / lhs) < rhs)
                     return false;
             } else {
-                if (lhs == std::numeric_limits<ResultType>::min() || rhs == std::numeric_limits<ResultType>::min())
+                if (static_cast<ResultType>(lhs) == std::numeric_limits<ResultType>::min() || static_cast<ResultType>(rhs) == std::numeric_limits<ResultType>::min())
                     return false;
                 if ((std::numeric_limits<ResultType>::max() / -lhs) < -rhs)
                     return false;
