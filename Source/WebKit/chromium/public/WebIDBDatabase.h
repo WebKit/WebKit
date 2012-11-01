@@ -56,15 +56,9 @@ public:
         return 0;
     }
     virtual void deleteObjectStore(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode& ec) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void deleteObjectStore(long long objectStoreId, const WebIDBTransaction& transaction, WebExceptionCode& ec) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     // Transfers ownership of the WebIDBTransaction to the caller.
     virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, WebExceptionCode& ec)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return 0;
-    }
-    virtual WebIDBTransaction* transaction(const WebVector<long long>&, unsigned short mode)
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;

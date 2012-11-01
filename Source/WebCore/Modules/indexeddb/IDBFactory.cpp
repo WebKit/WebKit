@@ -31,6 +31,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMStringList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"

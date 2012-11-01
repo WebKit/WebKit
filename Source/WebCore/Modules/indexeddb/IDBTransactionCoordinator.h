@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMStringList.h"
 #include "IDBTransactionBackendInterface.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>

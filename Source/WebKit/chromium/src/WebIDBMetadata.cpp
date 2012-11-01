@@ -49,7 +49,6 @@ WebIDBMetadata::WebIDBMetadata(const WebCore::IDBDatabaseMetadata& metadata)
     for (IDBDatabaseMetadata::ObjectStoreMap::const_iterator storeIterator = metadata.objectStores.begin(); storeIterator != metadata.objectStores.end(); ++storeIterator) {
         const IDBObjectStoreMetadata& objectStore = storeIterator->value;
         ObjectStore webObjectStore;
-        webObjectStore.id = objectStore.id;
         webObjectStore.name = objectStore.name;
         webObjectStore.keyPath = objectStore.keyPath;
         webObjectStore.autoIncrement = objectStore.autoIncrement;
@@ -60,7 +59,6 @@ WebIDBMetadata::WebIDBMetadata(const WebCore::IDBDatabaseMetadata& metadata)
         for (IDBObjectStoreMetadata::IndexMap::const_iterator indexIterator = objectStore.indexes.begin(); indexIterator != objectStore.indexes.end(); ++indexIterator) {
             const IDBIndexMetadata& index = indexIterator->value;
             Index webIndex;
-            webIndex.id = index.id;
             webIndex.name = index.name;
             webIndex.keyPath = index.keyPath;
             webIndex.unique = index.unique;
@@ -81,9 +79,9 @@ WebIDBMetadata::operator IDBDatabaseMetadata() const
         for (size_t j = 0; j < webObjectStore.indexes.size(); ++j) {
             const Index webIndex = webObjectStore.indexes[j];
             IDBIndexMetadata index(webIndex.name, webIndex.id, webIndex.keyPath, webIndex.unique, webIndex.multiEntry);
-            objectStore.indexes.set(index.id, index);
+            objectStore.indexes.set(index.name, index);
         }
-        db.objectStores.set(objectStore.id, objectStore);
+        db.objectStores.set(objectStore.name, objectStore);
     }
     return db;
 }

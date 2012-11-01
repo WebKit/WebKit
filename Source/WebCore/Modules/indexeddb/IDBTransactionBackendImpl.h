@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "DOMStringList.h"
 #include "IDBBackingStore.h"
 #include "IDBDatabaseError.h"
 #include "IDBTransactionBackendInterface.h"
@@ -44,7 +45,7 @@ class IDBDatabaseBackendImpl;
 
 class IDBTransactionBackendImpl : public IDBTransactionBackendInterface {
 public:
-    static PassRefPtr<IDBTransactionBackendImpl> create(const Vector<int64_t>&, unsigned short mode, IDBDatabaseBackendImpl*);
+    static PassRefPtr<IDBTransactionBackendImpl> create(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl*);
     static IDBTransactionBackendImpl* from(IDBTransactionBackendInterface* interface)
     {
         return static_cast<IDBTransactionBackendImpl*>(interface);
@@ -53,7 +54,6 @@ public:
 
     // IDBTransactionBackendInterface
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, ExceptionCode&);
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(int64_t, ExceptionCode&);
     virtual void didCompleteTaskEvents();
     virtual void abort();
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }
@@ -71,7 +71,7 @@ public:
     IDBBackingStore::Transaction* backingStoreTransaction() { return m_transaction.get(); }
 
 private:
-    IDBTransactionBackendImpl(const Vector<int64_t>& objectStoreIds, unsigned short mode, IDBDatabaseBackendImpl*);
+    IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, IDBDatabaseBackendImpl*);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -89,7 +89,7 @@ private:
     void taskEventTimerFired(Timer<IDBTransactionBackendImpl>*);
     void closeOpenCursors();
 
-    const Vector<int64_t> m_objectStoreIds;
+    RefPtr<DOMStringList> m_objectStoreNames;
     const unsigned short m_mode;
 
     State m_state;
