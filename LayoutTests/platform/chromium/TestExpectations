@@ -4010,7 +4010,7 @@ crbug.com/152007 [ Linux Mac ] platform/chromium/virtual/softwarecompositing/geo
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
 
 webkit.org/b/98192 [ Win Debug ] fast/js/dfg-cross-global-object-inline-new-array-with-elements.html [ Failure Pass ]
-webkit.org/b/98192 [ Debug ] fast/js/post-message-numeric-property.html [ Failure Pass ]
+webkit.org/b/98192 fast/js/post-message-numeric-property.html [ Failure Pass ]
 
 webkit.org/b/98275 media/event-queue-crash.html [ Skip ]
 
