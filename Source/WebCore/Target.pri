@@ -388,8 +388,9 @@ SOURCES += \
     dom/DynamicNodeList.cpp \
     dom/EditingText.cpp \
     dom/Element.cpp \
-    dom/ElementShadow.cpp \
     dom/ElementAttributeData.cpp \
+    dom/ElementRareData.cpp \
+    dom/ElementShadow.cpp \
     dom/EntityReference.cpp \
     dom/ErrorEvent.cpp \
     dom/Event.cpp \
@@ -428,6 +429,7 @@ SOURCES += \
     dom/NodeFilterCondition.cpp \
     dom/NodeFilter.cpp \
     dom/NodeIterator.cpp \
+    dom/NodeRareData.cpp \
     dom/NodeRenderingContext.cpp \
     dom/Notation.cpp \
     dom/StaticHashSetNodeList.cpp \
@@ -1596,6 +1598,7 @@ HEADERS += \
     dom/NodeFilter.h \
     dom/Node.h \
     dom/NodeIterator.h \
+    dom/NodeRareData.h \
     dom/NodeRenderingContext.h \
     dom/Notation.h \
     dom/StaticHashSetNodeList.h \

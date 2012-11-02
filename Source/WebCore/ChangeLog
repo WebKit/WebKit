@@ -1,3 +1,71 @@
+2012-11-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI instrument ShadowRoot. It gives us ~400k on plus.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=100866
+
+        Reviewed by Yury Semikhatsky.
+
+        Plain vanilla memory instrumentation code for HTMLInputElement which has a ElementShadow.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::reportMemoryUsage):
+        (WebCore):
+        * dom/DocumentOrderedMap.h:
+        (DocumentOrderedMap):
+        * dom/Element.cpp:
+        (WebCore::Element::reportMemoryUsage):
+        (WebCore):
+        * dom/Element.h:
+        * dom/ElementRareData.cpp: Added.
+        (WebCore):
+        (WebCore::ElementRareData::reportMemoryUsage):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::reportMemoryUsage):
+        (WebCore):
+        * dom/ElementShadow.h:
+        (ElementShadow):
+        * dom/Node.cpp:
+        (WebCore::Node::reportMemoryUsage):
+        * dom/NodeRareData.cpp: Added.
+        (WebCore):
+        (WebCore::NodeListsNodeData::reportMemoryUsage):
+        (WebCore::NodeRareData::reportMemoryUsage):
+        * dom/NodeRareData.h:
+        (NodeListsNodeData):
+        (NodeRareData):
+        * dom/ShadowRoot.cpp:
+        (WebCore):
+        (WebCore::ShadowRoot::reportMemoryUsage):
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::reportMemoryUsage):
+        (WebCore):
+        * dom/TreeScope.h:
+        (TreeScope):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::reportMemoryUsage):
+        (WebCore):
+        * html/HTMLFormControlElement.h:
+        (HTMLFormControlElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::reportMemoryUsage):
+        (WebCore):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::reportMemoryUsage):
+        (WebCore):
+        * html/HTMLTextFormControlElement.h:
+        (HTMLTextFormControlElement):
+
 2012-11-02  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Cookie info in Network Resources Cookies tab shows "Invalid Date"

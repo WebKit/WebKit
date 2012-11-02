@@ -51131,6 +51131,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\ElementRareData.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\Entity.h"
 				>
 			</File>
@@ -52904,6 +52908,10 @@
 			</File>
 			<File
 				RelativePath="..\dom\Node.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\NodeRareData.cpp"
 				>
 			</File>
 			<File

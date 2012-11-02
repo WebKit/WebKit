@@ -158,6 +158,8 @@ public:
         }
     }
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     NodeListsNodeData() { }
 
@@ -307,6 +309,8 @@ public:
 
     bool isFocused() const { return m_isFocused; }
     void setFocused(bool focused) { m_isFocused = focused; }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
     // for ElementRareData

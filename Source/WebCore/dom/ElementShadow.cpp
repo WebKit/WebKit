@@ -203,4 +203,16 @@ void ElementShadow::invalidateDistribution(Element* host)
         m_distributor.finishInivalidation();
 }
 
+void ElementShadow::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    info.addMember(m_shadowRoots);
+    ShadowRoot* shadowRoot = m_shadowRoots.head();
+    while (shadowRoot) {
+        info.addMember(shadowRoot);
+        shadowRoot = shadowRoot->next();
+    }
+    info.addMember(m_distributor);
+}
+
 } // namespace

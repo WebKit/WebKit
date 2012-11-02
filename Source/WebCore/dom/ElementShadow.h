@@ -69,6 +69,8 @@ public:
     ContentDistributor& distributor();
     const ContentDistributor& distributor() const;
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     void invalidateDistribution(Element* host);
 

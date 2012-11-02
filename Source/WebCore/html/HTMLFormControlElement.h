@@ -112,6 +112,8 @@ public:
     using Node::ref;
     using Node::deref;
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 protected:
     HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*);
 

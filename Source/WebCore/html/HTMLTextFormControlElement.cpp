@@ -672,4 +672,11 @@ String HTMLTextFormControlElement::directionForFormData() const
     return "ltr";
 }
 
+void HTMLTextFormControlElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    HTMLFormControlElementWithState::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_textAsOfLastFormControlChangeEvent);
+}
+
 } // namespace Webcore

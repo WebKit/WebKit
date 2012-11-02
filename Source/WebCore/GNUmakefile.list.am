@@ -2800,11 +2800,12 @@ webcore_sources += \
 	Source/WebCore/dom/EditingText.h \
 	Source/WebCore/dom/Element.cpp \
 	Source/WebCore/dom/Element.h \
-	Source/WebCore/dom/ElementShadow.cpp \
-	Source/WebCore/dom/ElementShadow.h \
 	Source/WebCore/dom/ElementAttributeData.cpp \
 	Source/WebCore/dom/ElementAttributeData.h \
+	Source/WebCore/dom/ElementRareData.cpp \
 	Source/WebCore/dom/ElementRareData.h \
+	Source/WebCore/dom/ElementShadow.cpp \
+	Source/WebCore/dom/ElementShadow.h \
 	Source/WebCore/dom/Entity.h \
 	Source/WebCore/dom/EntityReference.cpp \
 	Source/WebCore/dom/EntityReference.h \
@@ -2887,6 +2888,7 @@ webcore_sources += \
 	Source/WebCore/dom/NodeFilterCondition.h \
 	Source/WebCore/dom/NodeFilter.cpp \
 	Source/WebCore/dom/NodeFilter.h \
+	Source/WebCore/dom/NodeRareData.cpp \
 	Source/WebCore/dom/NodeRenderingContext.cpp \
 	Source/WebCore/dom/Node.h \
 	Source/WebCore/dom/NodeIterator.cpp \

@@ -2830,6 +2830,8 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_previous);
     if (m_renderer)
         info.addMember(m_renderer->style());
+    if (hasRareData())
+        info.addMember(rareData());
 }
 
 void Node::textRects(Vector<IntRect>& rects) const

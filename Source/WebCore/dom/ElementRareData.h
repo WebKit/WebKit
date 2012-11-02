@@ -107,6 +107,8 @@ public:
         }
     }
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
     typedef FixedArray<HTMLCollection*, NumNodeCollectionTypes> CachedHTMLCollectionArray;
     OwnPtr<CachedHTMLCollectionArray> m_cachedCollections;
 

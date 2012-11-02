@@ -1154,8 +1154,9 @@ SET(WebCore_SOURCES
     dom/DynamicNodeList.cpp
     dom/EditingText.cpp
     dom/Element.cpp
-    dom/ElementShadow.cpp
     dom/ElementAttributeData.cpp
+    dom/ElementRareData.cpp
+    dom/ElementShadow.cpp
     dom/EntityReference.cpp
     dom/ErrorEvent.cpp
     dom/Event.cpp
@@ -1193,6 +1194,7 @@ SET(WebCore_SOURCES
     dom/NodeFilterCondition.cpp
     dom/NodeFilter.cpp
     dom/NodeIterator.cpp
+    dom/NodeRareData.cpp
     dom/NodeRenderingContext.cpp
     dom/Notation.cpp
     dom/OverflowEvent.cpp

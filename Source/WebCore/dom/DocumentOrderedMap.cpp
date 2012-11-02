@@ -35,6 +35,9 @@
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
 #include "TreeScope.h"
+#include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationHashCountedSet.h>
+#include <wtf/MemoryInstrumentationHashMap.h>
 
 namespace WebCore {
 
@@ -157,6 +160,13 @@ Element* DocumentOrderedMap::getElementByLowercasedMapName(AtomicStringImpl* key
 Element* DocumentOrderedMap::getElementByLabelForAttribute(AtomicStringImpl* key, const TreeScope* scope) const
 {
     return get<keyMatchesLabelForAttribute>(key, scope);
+}
+
+void DocumentOrderedMap::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    info.addMember(m_map);
+    info.addMember(m_duplicateCounts);
 }
 
 } // namespace WebCore

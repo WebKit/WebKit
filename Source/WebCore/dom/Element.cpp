@@ -73,6 +73,7 @@
 #include "TextIterator.h"
 #include "UndoManager.h"
 #include "VoidCallback.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "WebKitAnimationList.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
@@ -2396,6 +2397,14 @@ void Element::createMutableAttributeData()
         m_attributeData = ElementAttributeData::create();
     else
         m_attributeData = m_attributeData->makeMutableCopy();
+}
+
+void Element::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    ContainerNode::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_tagName);
+    info.addMember(m_attributeData);
 }
 
 } // namespace WebCore

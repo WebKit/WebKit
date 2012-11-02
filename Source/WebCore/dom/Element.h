@@ -437,13 +437,7 @@ public:
     IntSize savedLayerScrollOffset() const;
     void setSavedLayerScrollOffset(const IntSize&);
 
-    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-        ContainerNode::reportMemoryUsage(memoryObjectInfo);
-        info.addMember(m_tagName);
-        info.addMember(m_attributeData);
-    }
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 protected:
     Element(const QualifiedName& tagName, Document* document, ConstructionType type)
