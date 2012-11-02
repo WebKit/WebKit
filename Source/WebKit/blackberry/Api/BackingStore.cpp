@@ -2330,8 +2330,10 @@ void BackingStorePrivate::blitToWindow(const Platform::IntRect& dstRect,
     BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
     ASSERT(dstBuffer);
     ASSERT(srcBuffer);
-    if (!dstBuffer)
-        BBLOG(BlackBerry::Platform::LogLevelWarn, "Empty window buffer, couldn't blitToWindow");
+    if (!dstBuffer) {
+        BBLOG(BlackBerry::Platform::LogLevelWarn,
+            "Empty window buffer, couldn't blitToWindow");
+    }
 
     BlackBerry::Platform::Graphics::BlendMode blendMode = blend
         ? BlackBerry::Platform::Graphics::SourceOver
@@ -2359,8 +2361,10 @@ void BackingStorePrivate::fillWindow(Platform::Graphics::FillPattern pattern,
 
     BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
     ASSERT(dstBuffer);
-    if (!dstBuffer)
-        BBLOG(BlackBerry::Platform::LogLevelWarn, "Empty window buffer, couldn't fillWindow");
+    if (!dstBuffer) {
+        BBLOG(BlackBerry::Platform::LogLevelWarn,
+            "Empty window buffer, couldn't fillWindow");
+    }
 
     BlackBerry::Platform::Graphics::fillBuffer(dstBuffer, pattern, dstRect, contentsOrigin, contentsScale);
 }
@@ -2444,8 +2448,10 @@ void BackingStorePrivate::clearWindow(const Platform::IntRect& rect,
 
     BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
     ASSERT(dstBuffer);
-    if (!dstBuffer)
-        BBLOG(BlackBerry::Platform::LogLevelWarn, "Empty window buffer, couldn't clearWindow");
+    if (!dstBuffer) {
+        BBLOG(BlackBerry::Platform::LogLevelWarn,
+            "Empty window buffer, couldn't clearWindow");
+    }
 
     windowFrontBufferState()->clearBlittedRegion(rect);
     windowBackBufferState()->addBlittedRegion(rect);

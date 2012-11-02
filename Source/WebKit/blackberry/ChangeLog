@@ -1,5 +1,24 @@
 2012-11-02  Nima Ghanavatian  <nghanavatian@rim.com>
 
+        [BlackBerry] Fix compile-time warning of a possible empty-body if statement
+        https://bugs.webkit.org/show_bug.cgi?id=101095
+
+        Reviewed by Yong Li.
+        Internally reviewed by Jeff Rogers.
+
+        BBLOG might be compiled out leaving an if statement with an empty
+        body. This is giving us a warning at the moment. Simply putting braces
+        around it will fail as well because then we'd have braces around a
+        single-line if. So, in following with the style observed in other parts
+        of BackingStore.cpp, break up the log message and add braces.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::blitToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::fillWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::clearWindow):
+
+2012-11-02  Nima Ghanavatian  <nghanavatian@rim.com>
+
         [BlackBerry] Optimize backspace key handling
         https://bugs.webkit.org/show_bug.cgi?id=101083
 
