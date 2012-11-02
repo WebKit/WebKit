@@ -61,23 +61,23 @@ using namespace WebCore;
 // Set overflow: hidden on the annotation container so <input> elements scrolled out of view don't show
 // scrollbars on the body. We can't add annotations directly to the body, because overflow: hidden on the body
 // will break rubber-banding.
-static const char* annotationStyle = " \
-#annotationContainer { \
-    overflow: hidden; \
-    position: absolute; \
-    pointer-events: none; \
-    top: 0; \
-    left: 0; \
-    right: 0; \
-    bottom: 0; \
-} \
-.annotation { \
-    position: absolute; \
-    pointer-events: auto; \
-} \
-textarea.annotation { \
-    resize: none; \
-}";
+static const char* annotationStyle =
+"#annotationContainer {"
+"    overflow: hidden; "
+"    position: absolute; "
+"    pointer-events: none; "
+"    top: 0; "
+"    left: 0; "
+"    right: 0; "
+"    bottom: 0; "
+"} "
+".annotation { "
+"    position: absolute; "
+"    pointer-events: auto; "
+"} "
+"textarea.annotation { "
+"    resize: none; "
+"}";
 
 @interface WKPDFPluginScrollbarLayer : CALayer
 {
