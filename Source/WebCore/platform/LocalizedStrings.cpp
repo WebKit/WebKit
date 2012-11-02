@@ -683,6 +683,11 @@ String insecurePluginVersionText()
     return WEB_UI_STRING_KEY("Blocked Plug-in", "Blocked Plug-In (Insecure plug-in)", "Label text to be used when an insecure plug-in version was blocked from loading");
 }
 
+String inactivePluginText()
+{
+    return WEB_UI_STRING("Inactive Plug-in", "Label text to be used when a plugin has not been loaded for some time");
+}
+
 String multipleFileUploadText(unsigned numberOfFiles)
 {
     return formatLocalizedString(WEB_UI_STRING("%d files", "Label to describe the number of files selected in a file upload control that allows multiple files"), numberOfFiles);

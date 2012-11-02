@@ -317,6 +317,12 @@ String insecurePluginVersionText()
     return String();
 }
 
+String inactivePluginText()
+{
+    notImplemented();
+    return String();
+}
+
 String multipleFileUploadText(unsigned numberOfFiles)
 {
     return query(WebLocalizedString::MultipleFileUploadText, String::number(numberOfFiles));

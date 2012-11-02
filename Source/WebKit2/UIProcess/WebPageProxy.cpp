@@ -2593,6 +2593,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
         break;
 
     case RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy:
+    case RenderEmbeddedObject::PluginInactive:
         ASSERT_NOT_REACHED();
     }
 

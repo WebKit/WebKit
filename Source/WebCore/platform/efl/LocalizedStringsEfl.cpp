@@ -572,6 +572,12 @@ String insecurePluginVersionText()
     return String();
 }
 
+String inactivePluginText()
+{
+    notImplemented();
+    return String();
+}
+
 String unacceptableTLSCertificate()
 {
     return String::fromUTF8("Unacceptable TLS certificate");

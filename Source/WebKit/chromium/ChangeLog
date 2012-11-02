@@ -1,3 +1,14 @@
+2012-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Add a PluginInactive plug-in unavailability reason
+        https://bugs.webkit.org/show_bug.cgi?id=101089
+
+        Reviewed by Sam Weinig.
+
+        * src/LocalizedStrings.cpp:
+        (WebCore::inactivePluginText):
+        (WebCore):
+
 2012-11-02  Ian Vollick  <vollick@chromium.org>
 
         Support invalidation tracking for composited layers

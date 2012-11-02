@@ -41,7 +41,8 @@ public:
         PluginMissing,
         PluginCrashed,
         PluginBlockedByContentSecurityPolicy,
-        InsecurePluginVersion
+        InsecurePluginVersion,
+        PluginInactive,
     };
     void setPluginUnavailabilityReason(PluginUnavailabilityReason);
     bool showsUnavailablePluginIndicator() const;

@@ -584,6 +584,12 @@ String insecurePluginVersionText()
     return String();
 }
 
+String inactivePluginText()
+{
+    notImplemented();
+    return String();
+}
+
 String multipleFileUploadText(unsigned)
 {
     return String(", ...");

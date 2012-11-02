@@ -485,6 +485,12 @@ String insecurePluginVersionText()
     return String();
 }
 
+String inactivePluginText()
+{
+    notImplemented();
+    return String();
+}
+
 String multipleFileUploadText(unsigned numberOfFiles)
 {
     // FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
