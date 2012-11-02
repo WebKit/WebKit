@@ -247,7 +247,7 @@ void DragController::mouseMovedIntoDocument(Document* newDocument)
 DragSession DragController::dragEnteredOrUpdated(DragData* dragData)
 {
     ASSERT(dragData);
-    ASSERT(m_page->mainFrame()); // It is not possible in Mac WebKit to have a Page without a mainFrame()
+    ASSERT(m_page->mainFrame());
     mouseMovedIntoDocument(m_page->mainFrame()->documentAtPoint(dragData->clientPosition()));
 
     m_dragDestinationAction = m_client->actionMaskForDrag(dragData);
@@ -891,6 +891,9 @@ void DragController::doSystemDrag(DragImageRef image, const IntPoint& dragLoc, c
     RefPtr<FrameView> viewProtector = frameProtector->view();
     m_client->startDrag(image, viewProtector->rootViewToContents(frame->view()->contentsToRootView(dragLoc)),
         viewProtector->rootViewToContents(frame->view()->contentsToRootView(eventPos)), clipboard, frameProtector.get(), forLink);
+    // DragClient::startDrag can cause our Page to dispear, deallocating |this|.
+    if (!frameProtector->page())
+        return;
 
     cleanupAfterSystemDrag();
 }
