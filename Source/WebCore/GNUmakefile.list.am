@@ -4748,6 +4748,8 @@ webcore_sources += \
 	Source/WebCore/platform/network/SocketStreamHandleBase.cpp \
 	Source/WebCore/platform/network/SocketStreamHandleBase.h \
 	Source/WebCore/platform/network/SocketStreamHandleClient.h \
+	Source/WebCore/platform/network/gtk/CredentialBackingStore.cpp \
+	Source/WebCore/platform/network/gtk/CredentialBackingStore.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallenge.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallengeSoup.cpp \
 	Source/WebCore/platform/network/soup/CookieJarSoup.cpp \

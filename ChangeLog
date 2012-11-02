@@ -1,3 +1,15 @@
+2012-11-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove dependency on SoupPasswordManager
+        https://bugs.webkit.org/show_bug.cgi?id=100775
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a libsecret dependency to the build. This is necessary so that we can remove
+        a dependency on SoupPasswordManager.
+
+        * configure.ac: Look for libsecret using the pkg-config configuration macro.
+
 2012-11-02  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt][WK2] ASSERT hit for every mouse click

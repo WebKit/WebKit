@@ -962,6 +962,10 @@ PKG_CHECK_MODULES([LIBSOUP],
 AC_SUBST([LIBSOUP_CFLAGS])
 AC_SUBST([LIBSOUP_LIBS])
 
+PKG_CHECK_MODULES([LIBSECRET], [libsecret-1])
+AC_SUBST([LIBSECRET_CFLAGS])
+AC_SUBST([LIBSECRET_LIBS])
+
 # check if FreeType/FontConfig are available
 if test "$with_font_backend" = "freetype"; then
    if test "$with_target" = "directfb"; then

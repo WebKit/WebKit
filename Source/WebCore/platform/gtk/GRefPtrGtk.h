@@ -23,10 +23,15 @@
 
 #include <wtf/gobject/GRefPtr.h>
 
+typedef struct _SecretValue SecretValue;
+
 namespace WTF {
 
 template <> GtkTargetList* refGPtr(GtkTargetList* ptr);
 template <> void derefGPtr(GtkTargetList* ptr);
+
+template <> SecretValue* refGPtr(SecretValue* ptr);
+template <> void derefGPtr(SecretValue* ptr);
 
 #ifdef GTK_API_VERSION_2
 template <> GdkCursor* refGPtr(GdkCursor* ptr);

@@ -20,8 +20,12 @@
 #include "config.h"
 #include "GRefPtrGtk.h"
 
+#define SECRET_WITH_UNSTABLE 1
+#define SECRET_API_SUBJECT_TO_CHANGE 1
+
 #include <glib.h>
 #include <gtk/gtk.h>
+#include <libsecret/secret.h>
 
 namespace WTF {
 
@@ -36,6 +40,19 @@ template <> void derefGPtr(GtkTargetList* ptr)
 {
     if (ptr)
         gtk_target_list_unref(ptr);
+}
+
+template <> SecretValue* refGPtr(SecretValue* ptr)
+{
+    if (ptr)
+        secret_value_ref(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(SecretValue* ptr)
+{
+    if (ptr)
+        secret_value_unref(ptr);
 }
 
 #ifdef GTK_API_VERSION_2

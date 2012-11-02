@@ -73,6 +73,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/mediastream/gstreamer \
 	-I$(srcdir)/Source/WebCore/platform/mock \
 	-I$(srcdir)/Source/WebCore/platform/network \
+	-I$(srcdir)/Source/WebCore/platform/network/gtk \
 	-I$(srcdir)/Source/WebCore/platform/sql \
 	-I$(srcdir)/Source/WebCore/platform/text \
 	-I$(srcdir)/Source/WebCore/platform/text/transcoder \
@@ -641,6 +642,7 @@ libWebCore_la_CPPFLAGS = \
 	$(GEOCLUE_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
+	$(LIBSECRET_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(LIBXSLT_CFLAGS) \
@@ -704,6 +706,7 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(GSTREAMER_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(HILDON_CFLAGS) \
+	$(LIBSECRET_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(LIBXSLT_CFLAGS) \
