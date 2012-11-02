@@ -296,4 +296,9 @@ RenderObject* RenderTextControl::layoutSpecialExcludedChild(bool relayoutChildre
     return placeholderRenderer;
 }
 
+bool RenderTextControl::canBeReplacedWithInlineRunIn() const
+{
+    return false;
+}
+
 } // namespace WebCore

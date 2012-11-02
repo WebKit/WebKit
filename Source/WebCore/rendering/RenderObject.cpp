@@ -2902,6 +2902,11 @@ bool RenderObject::canUpdateSelectionOnRootLineBoxes()
     return containingBlock ? !containingBlock->needsLayout() : true;
 }
 
+bool RenderObject::canBeReplacedWithInlineRunIn() const
+{
+    return true;
+}
+
 #if ENABLE(SVG)
 
 RenderSVGResourceContainer* RenderObject::toRenderSVGResourceContainer()
