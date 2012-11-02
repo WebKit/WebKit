@@ -1,5 +1,110 @@
 2012-11-01  Simon Fraser  <simon.fraser@apple.com>
 
+        New image results for compositing tests. Cross-platform image results seem
+        impossible to maintain, so these are all Mac-specific.
+
+        * platform/mac/compositing/animation/busy-indicator-expected.png:
+        * platform/mac/compositing/animation/state-at-end-event-transform-layer-expected.png:
+        * platform/mac/compositing/color-matching/image-color-matching-expected.png:
+        * platform/mac/compositing/color-matching/pdf-image-match-expected.png:
+        * platform/mac/compositing/compositing-visible-descendant-expected.png:
+        * platform/mac/compositing/direct-image-compositing-expected.png:
+        * platform/mac/compositing/flat-with-transformed-child-expected.png:
+        * platform/mac/compositing/framesets/composited-frame-alignment-expected.png:
+        * platform/mac/compositing/generated-content-expected.png:
+        * platform/mac/compositing/geometry/abs-position-inside-opacity-expected.png:
+        * platform/mac/compositing/geometry/clipping-foreground-expected.png:
+        * platform/mac/compositing/geometry/composited-html-size-expected.png:
+        * platform/mac/compositing/geometry/fixed-in-composited-expected.png:
+        * platform/mac/compositing/geometry/fixed-position-composited-page-scale-down-expected.png:
+        * platform/mac/compositing/geometry/fixed-position-composited-page-scale-expected.png:
+        * platform/mac/compositing/geometry/fixed-position-expected.png:
+        * platform/mac/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/mac/compositing/geometry/fixed-position-iframe-composited-page-scale-expected.png:
+        * platform/mac/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
+        * platform/mac/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
+        * platform/mac/compositing/geometry/foreground-layer-expected.png:
+        * platform/mac/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/mac/compositing/geometry/layer-due-to-layer-children-deep-expected.png:
+        * platform/mac/compositing/geometry/layer-due-to-layer-children-expected.png:
+        * platform/mac/compositing/geometry/limit-layer-bounds-overflow-repaint-expected.png:
+        * platform/mac/compositing/geometry/outline-change-expected.png:
+        * platform/mac/compositing/geometry/partial-layout-update-expected.png:
+        * platform/mac/compositing/geometry/repaint-foreground-layer-expected.png:
+        * platform/mac/compositing/geometry/root-layer-update-expected.png:
+        * platform/mac/compositing/geometry/tall-page-composited-expected.png:
+        * platform/mac/compositing/geometry/transfrom-origin-on-zero-size-layer-expected.png:
+        * platform/mac/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/mac/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/mac/compositing/geometry/video-opacity-overlay-expected.png:
+        * platform/mac/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/mac/compositing/iframes/iframe-copy-on-scroll-expected.png:
+        * platform/mac/compositing/iframes/iframe-in-composited-layer-expected.png:
+        * platform/mac/compositing/images/content-image-change-expected.png:
+        * platform/mac/compositing/images/direct-image-background-color-expected.png:
+        * platform/mac/compositing/layer-creation/fixed-position-scroll-expected.png:
+        * platform/mac/compositing/layer-creation/spanOverlapsCanvas-expected.png:
+        * platform/mac/compositing/layers-inside-overflow-scroll-expected.png:
+        * platform/mac/compositing/masks/direct-image-mask-expected.png:
+        * platform/mac/compositing/masks/masked-ancestor-expected.png:
+        * platform/mac/compositing/masks/multiple-masks-expected.png:
+        * platform/mac/compositing/masks/simple-composited-mask-expected.png:
+        * platform/mac/compositing/overflow/ancestor-overflow-expected.png:
+        * platform/mac/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/mac/compositing/overflow/overflow-compositing-descendant-expected.png:
+        * platform/mac/compositing/overflow/overflow-positioning-expected.png:
+        * platform/mac/compositing/overflow/overflow-scaled-descendant-overlapping-expected.png:
+        * platform/mac/compositing/overflow/overflow-scroll-expected.png:
+        * platform/mac/compositing/overflow/parent-overflow-expected.png:
+        * platform/mac/compositing/overflow/scroll-ancestor-update-expected.png:
+        * platform/mac/compositing/overflow/scrollbar-painting-expected.png:
+        * platform/mac/compositing/overflow/theme-affects-visual-overflow-expected.png:
+        * platform/mac/compositing/plugins/composited-plugin-expected.png:
+        * platform/mac/compositing/reflections/animation-inside-reflection-expected.png:
+        * platform/mac/compositing/reflections/compositing-change-inside-reflection-expected.png:
+        * platform/mac/compositing/reflections/deeply-nested-reflections-expected.png:
+        * platform/mac/compositing/reflections/load-video-in-reflection-expected.png:
+        * platform/mac/compositing/reflections/masked-reflection-on-composited-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-animated-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-mask-change-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-on-overflow-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-opacity-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-size-change-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/mac/compositing/reflections/nested-reflection-transition-expected.png:
+        * platform/mac/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/mac/compositing/reflections/reflection-on-composited-expected.png:
+        * platform/mac/compositing/reflections/reflection-opacity-expected.png:
+        * platform/mac/compositing/reflections/reflection-ordering-expected.png:
+        * platform/mac/compositing/reflections/reflection-positioning-expected.png:
+        * platform/mac/compositing/reflections/reflection-positioning2-expected.png:
+        * platform/mac/compositing/reflections/simple-composited-reflections-expected.png:
+        * platform/mac/compositing/reflections/transform-inside-reflection-expected.png:
+        * platform/mac/compositing/repaint/become-overlay-composited-layer-expected.png:
+        * platform/mac/compositing/repaint/composited-document-element-expected.png:
+        * platform/mac/compositing/repaint/content-into-overflow-expected.png:
+        * platform/mac/compositing/repaint/layer-repaint-expected.png:
+        * platform/mac/compositing/repaint/layer-repaint-rects-expected.png:
+        * platform/mac/compositing/repaint/opacity-between-absolute-expected.png:
+        * platform/mac/compositing/repaint/opacity-between-absolute2-expected.png:
+        * platform/mac/compositing/repaint/overflow-into-content-expected.png:
+        * platform/mac/compositing/repaint/same-size-invalidation-expected.png:
+        * platform/mac/compositing/scaling/tiled-layer-recursion-expected.png:
+        * platform/mac/compositing/self-painting-layers-expected.png:
+        * platform/mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/mac/compositing/sibling-positioning-expected.png:
+        * platform/mac/compositing/text-on-large-layer-expected.png:
+        * platform/mac/compositing/transitions/scale-transition-no-start-expected.png:
+        * platform/mac/compositing/transitions/singular-scale-transition-expected.png:
+        * platform/mac/compositing/webgl/webgl-background-color-expected.png:
+        * platform/mac/compositing/webgl/webgl-no-alpha-expected.png:
+        * platform/mac/compositing/webgl/webgl-reflection-expected.png:
+
+2012-11-01  Simon Fraser  <simon.fraser@apple.com>
+
         Rebaseline some MathML results, and mark compositing/iframes/overlapped-nested-iframes.html
         as flakey because it is.
         
