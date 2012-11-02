@@ -1,3 +1,18 @@
+2012-11-02  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: Repeated errors are rendered incorrectly: link is not floating to the right.
+        https://bugs.webkit.org/show_bug.cgi?id=101032
+
+        Reviewed by Yury Semikhatsky.
+
+        https://bugs.webkit.org/show_bug.cgi?id=100525 incorrectly added
+        '-webkit-flex: 1' only to the list generated for errors in the console.
+        It should have been added to normal warning text as well. This patch
+        fixes the problem.
+
+        * inspector/front-end/inspector.css:
+        (.repeated-message .outline-disclosure, .repeated-message > .console-message-text):
+
 2012-11-02  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: show popup for CPU bars.

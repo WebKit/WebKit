@@ -964,7 +964,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     visibility: hidden;
 }
 
-.repeated-message .outline-disclosure {
+.repeated-message .outline-disclosure, .repeated-message > .console-message-text {
     -webkit-flex: 1;
 }
 
