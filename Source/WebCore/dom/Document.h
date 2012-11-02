@@ -116,7 +116,6 @@ class MouseEventWithHitTestResults;
 class NamedFlowCollection;
 class NodeFilter;
 class NodeIterator;
-class NodeRareData;
 class Page;
 class PlatformMouseEvent;
 class ProcessingInstruction;
@@ -465,9 +464,6 @@ public:
     virtual bool isFrameSet() const { return false; }
 
     bool isSrcdocDocument() const { return m_isSrcdocDocument; }
-
-    NodeRareData* documentRareData() const { return m_documentRareData; };
-    void setDocumentRareData(NodeRareData*);
 
     StyleResolver* styleResolverIfExists() const { return m_styleResolver.get(); }
 
@@ -1429,8 +1425,6 @@ private:
     bool m_sawElementsInKnownNamespaces;
     bool m_isSrcdocDocument;
 
-    NodeRareData* m_documentRareData;
-
     RefPtr<DocumentEventQueue> m_eventQueue;
 
     RefPtr<DocumentWeakReference> m_weakReference;
@@ -1526,7 +1520,6 @@ inline Node::Node(Document* document, ConstructionType type)
     , m_document(document)
     , m_previous(0)
     , m_next(0)
-    , m_renderer(0)
 {
     if (document)
         document->guardRef();

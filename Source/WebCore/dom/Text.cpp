@@ -256,14 +256,17 @@ void Text::recalcTextStyle(StyleChange change)
     if (hasCustomCallbacks())
         willRecalcTextStyle(change);
 
-    if (change != NoChange && parentNode() && parentNode()->renderer()) {
-        if (renderer())
-            renderer()->setStyle(parentNode()->renderer()->style());
-    }
+    RenderObject* renderer = this->renderer();
+
+    // The only time we have a renderer and our parent doesn't is if our parent
+    // is a shadow root.
+    if (change != NoChange && renderer && !parentNode()->isShadowRoot())
+        renderer->setStyle(parentNode()->renderer()->style());
+
     if (needsStyleRecalc()) {
-        if (renderer()) {
-            if (renderer()->isText())
-                toRenderText(renderer())->setText(dataImpl());
+        if (renderer) {
+            if (renderer->isText())
+                toRenderText(renderer)->setText(dataImpl());
         } else
             reattach();
     }

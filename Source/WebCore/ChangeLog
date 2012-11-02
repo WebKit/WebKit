@@ -1,3 +1,71 @@
+2012-11-02  Elliott Sprehn  <esprehn@chromium.org>
+
+        Replace NodeRareData hash map with a union on m_renderer
+        https://bugs.webkit.org/show_bug.cgi?id=100057
+
+        Reviewed by Eric Seidel.
+
+        Use a union on Node::m_renderer between NodeRareData* and RenderObject*. This removes
+        the overhead of accessing rare data and the memory from the map.
+
+        This is an 8% improvement on Bindings/get-elements-by-tag-name.html which tested
+        document.getElementsByTagName and was previously optimized in Bug 90059 for a 5% 
+        improvement. As this is better than even the special casing for document that was
+        done in that bug, general node list access should see an even greater win.
+
+        This reduces the memory usage on nytimes.com by 250k per Bug 101052 by
+        removing the rare data map overhead.
+
+        This is also a 15% improvement on Parser/textarea-parsing.html
+
+        By removing the performance overhead of rareData() this patch addresses the performance
+        issues raised in Bugs 73853, 87034 and 89635.
+
+        I ran Parser/html5-full-render.html and there was no performance regression after
+        tuning Text::recalcTextStyle and the refactor that was done in r132684.
+
+        No new tests, this is just a refactor.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore::Node::Node):
+        * dom/Element.cpp:
+        (WebCore::Element::elementRareData):
+        * dom/Node.cpp:
+        (WebCore::Node::rareData):
+        (WebCore::Node::ensureRareData):
+        (WebCore::Node::clearRareData):
+        (WebCore::Node::renderBox):
+        (WebCore::Node::renderBoxModelObject):
+        (WebCore::Node::reportMemoryUsage):
+        * dom/Node.h:
+        (NodeRareDataBase):
+          Base class for NodeRareData that knows about the renderer so we can
+          inline the accesses in Node.h
+        (WebCore::NodeRareDataBase::renderer):
+        (WebCore::NodeRareDataBase::setRenderer):
+        (WebCore::NodeRareDataBase::~NodeRareDataBase):
+        (WebCore::NodeRareDataBase::NodeRareDataBase):
+        (WebCore):
+        (WebCore::Node::renderer):
+        (WebCore::Node::setRenderer):
+        (Node):
+        * dom/NodeRareData.h:
+        * dom/NodeRenderStyle.h:
+        (WebCore::Node::renderStyle):
+        * dom/Text.cpp:
+        (WebCore::Text::recalcTextStyle):
+          This method appears very hot in html5-full-render.html and accessing the
+          renderer 4 times caused a 2% performance regression with this patch. I
+          reduced it to 1 access and there's no longer any performance regression.
+        * dom/WebCoreMemoryInstrumentation.cpp:
+          Removed tracking of the rare data map memory usage as there is no longer
+          a map to track.
+        * dom/WebCoreMemoryInstrumentation.h:
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+
 2012-11-02  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] ResourceHandle changes for network process

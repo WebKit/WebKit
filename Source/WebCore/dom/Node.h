@@ -111,6 +111,17 @@ enum StyleChangeType {
     SyntheticStyleChange = 3 << nodeStyleChangeShift
 };
 
+class NodeRareDataBase {
+public:
+    RenderObject* renderer() const { return m_renderer; }
+    void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
+    virtual ~NodeRareDataBase() { }
+protected:
+    NodeRareDataBase() { }
+private:
+    RenderObject* m_renderer;
+};
+
 class Node : public EventTarget, public ScriptWrappable, public TreeShared<Node, ContainerNode> {
     friend class Document;
     friend class TreeScope;
@@ -499,9 +510,16 @@ public:
     // -----------------------------------------------------------------------------
     // Integration with rendering tree
 
-    RenderObject* renderer() const { return m_renderer; }
-    void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
-    
+    // As renderer() includes a branch you should avoid calling it repeatedly in hot code paths.
+    RenderObject* renderer() const { return hasRareData() ? m_data.m_rareData->renderer() : m_data.m_renderer; };
+    void setRenderer(RenderObject* renderer)
+    {
+        if (hasRareData())
+            m_data.m_rareData->setRenderer(renderer);
+        else
+            m_data.m_renderer = renderer;
+    }
+
     // Use these two methods with caution.
     RenderBox* renderBox() const;
     RenderBoxModelObject* renderBoxModelObject() const;
@@ -809,7 +827,12 @@ private:
     Document* m_document;
     Node* m_previous;
     Node* m_next;
-    RenderObject* m_renderer;
+    // When a node has rare data we move the renderer into the rare data.
+    union DataUnion {
+        DataUnion() : m_renderer(0) { }
+        RenderObject* m_renderer;
+        NodeRareDataBase* m_rareData;
+    } m_data;
 
 protected:
     bool isParsingChildrenFinished() const { return getFlag(IsParsingChildrenFinishedFlag); }

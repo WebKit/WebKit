@@ -31,10 +31,6 @@
 #include "config.h"
 #include "WebCoreMemoryInstrumentation.h"
 
-#include "Node.h"
-#include "NodeRareData.h"
-#include <wtf/MemoryInstrumentationHashMap.h>
-
 namespace WebCore {
 
 MemoryObjectType WebCoreMemoryTypes::Page = "Page";
@@ -75,10 +71,5 @@ MemoryObjectType WebCoreMemoryTypes::RenderTreeUsed = "RenderTree.Used";
 MemoryObjectType WebCoreMemoryTypes::RenderTreeUnused = "RenderTree.Unused";
 
 MemoryObjectType WebCoreMemoryTypes::ProcessPrivateMemory = "ProcessPrivateMemory";
-
-void WebCoreMemoryInstrumentation::reportMemoryUsage(MemoryInstrumentation* memoryInstrumentation)
-{
-    memoryInstrumentation->addRootObject(NodeRareData::rareDataMap(), WebCoreMemoryTypes::DOM);
-}
 
 } // namespace WebCore

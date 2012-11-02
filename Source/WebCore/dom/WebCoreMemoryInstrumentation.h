@@ -81,11 +81,6 @@ public:
     static MemoryObjectType ProcessPrivateMemory;
 };
 
-class WebCoreMemoryInstrumentation {
-public:
-    static void reportMemoryUsage(MemoryInstrumentation*);
-};
-
 } // namespace WebCore
 
 #endif // !defined(WebCoreMemoryInstrumentation_h)

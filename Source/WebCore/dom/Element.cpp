@@ -154,9 +154,9 @@ Element::~Element()
 inline ElementRareData* Element::elementRareData() const
 {
     ASSERT(hasRareData());
-    return static_cast<ElementRareData*>(NodeRareData::rareDataFromMap(this));
+    return static_cast<ElementRareData*>(rareData());
 }
-    
+
 inline ElementRareData* Element::ensureElementRareData()
 {
     return static_cast<ElementRareData*>(ensureRareData());
