@@ -1,3 +1,77 @@
+2012-11-02  Adam Barth  <abarth@webkit.org>
+
+        ENABLE(UNDO_MANAGER) is disabled everywhere and is not under active development
+        https://bugs.webkit.org/show_bug.cgi?id=100711
+
+        Reviewed by Eric Seidel.
+
+        No one is actively working on ENABLE(UNDO_MANAGER). There are some
+        tricky lifetime issues in the UndoManager API that are complicating
+        ongoing work to improve the interaction between WebCore and the garbage
+        collector. Rather than leave this code in a broken state, we should
+        remove it for the time being. We can always restore it from the svn
+        history when there is an active owner for this code.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.features.am:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/DOMTransaction.cpp: Removed.
+        * bindings/js/DOMTransaction.h: Removed.
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSUndoManagerCustom.cpp: Removed.
+        * bindings/v8/DOMTransaction.cpp: Removed.
+        * bindings/v8/DOMTransaction.h: Removed.
+        * bindings/v8/V8HiddenPropertyName.h:
+        (WebCore):
+        * bindings/v8/custom/V8DOMTransactionCustom.cpp: Removed.
+        * bindings/v8/custom/V8UndoManagerCustom.cpp: Removed.
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText):
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::removeProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::setPropertyInternal):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setDataAndUpdate):
+        * dom/ContainerNode.cpp:
+        (WebCore::willRemoveChild):
+        (WebCore::willRemoveChildren):
+        (WebCore::updateTreeAfterInsertion):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * dom/Document.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::willModifyAttribute):
+        * editing/CompositeEditCommand.h:
+        * editing/DOMTransaction.idl: Removed.
+        * editing/DOMTransactionStep.cpp: Removed.
+        * editing/DOMTransactionStep.h: Removed.
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::unappliedEditing):
+        (WebCore::Editor::reappliedEditing):
+        (WebCore::Editor::canUndo):
+        (WebCore::Editor::undo):
+        (WebCore::Editor::canRedo):
+        (WebCore::Editor::redo):
+        * editing/UndoManager.cpp: Removed.
+        * editing/UndoManager.h: Removed.
+        * editing/UndoManager.idl: Removed.
+        * editing/UndoStep.h:
+        (UndoStep):
+
 2012-11-02  Mike West  <mkwst@chromium.org>
 
         Measure the usage of the various CSP headers.

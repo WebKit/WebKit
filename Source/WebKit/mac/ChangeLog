@@ -1,3 +1,12 @@
+2012-11-02  Adam Barth  <abarth@webkit.org>
+
+        ENABLE(UNDO_MANAGER) is disabled everywhere and is not under active development
+        https://bugs.webkit.org/show_bug.cgi?id=100711
+
+        Reviewed by Eric Seidel.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-11-01  Adam Roben  <aroben@webkit.org>
 
         [WK1] Fixed-position elements jiggle up and down slightly during scrolling on a Retina display

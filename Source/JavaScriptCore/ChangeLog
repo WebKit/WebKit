@@ -1,3 +1,12 @@
+2012-11-02  Adam Barth  <abarth@webkit.org>
+
+        ENABLE(UNDO_MANAGER) is disabled everywhere and is not under active development
+        https://bugs.webkit.org/show_bug.cgi?id=100711
+
+        Reviewed by Eric Seidel.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-11-02  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix build on Windows when Qt is configured with -release

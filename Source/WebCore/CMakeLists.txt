@@ -406,9 +406,6 @@ SET(WebCore_IDL_FILES
     dom/WebKitTransitionEvent.idl
     dom/WheelEvent.idl
 
-    editing/DOMTransaction.idl
-    editing/UndoManager.idl
-
     fileapi/Blob.idl
     fileapi/File.idl
     fileapi/FileError.idl
@@ -1257,7 +1254,6 @@ SET(WebCore_SOURCES
     editing/BreakBlockquoteCommand.cpp
     editing/CompositeEditCommand.cpp
     editing/CreateLinkCommand.cpp
-    editing/DOMTransactionStep.cpp
     editing/DeleteButton.cpp
     editing/DeleteButtonController.cpp
     editing/DeleteFromTextNodeCommand.cpp
@@ -1302,7 +1298,6 @@ SET(WebCore_SOURCES
     editing/TextInsertionBaseCommand.cpp
     editing/TextIterator.cpp
     editing/TypingCommand.cpp
-    editing/UndoManager.cpp
     editing/UnlinkCommand.cpp
     editing/VisiblePosition.cpp
     editing/VisibleSelection.cpp

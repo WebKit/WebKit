@@ -140,7 +140,6 @@ class StyleSheetList;
 class Text;
 class TextResourceDecoder;
 class TreeWalker;
-class UndoManager;
 class WebKitNamedFlow;
 class XMLHttpRequest;
 class XPathEvaluator;
@@ -1119,11 +1118,7 @@ public:
 #if ENABLE(MICRODATA)
     PassRefPtr<NodeList> getItems(const String& typeNames);
 #endif
-    
-#if ENABLE(UNDO_MANAGER)
-    PassRefPtr<UndoManager> undoManager();
-#endif
-    
+
     bool isInDocumentWrite() { return m_writeRecursionDepth > 0; }
 
     void suspendScheduledTasks(ActiveDOMObject::ReasonForSuspension);
@@ -1475,10 +1470,6 @@ private:
     unsigned m_wheelEventHandlerCount;
 #if ENABLE(TOUCH_EVENTS)
     unsigned m_touchEventHandlerCount;
-#endif
-    
-#if ENABLE(UNDO_MANAGER)
-    RefPtr<UndoManager> m_undoManager;
 #endif
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)

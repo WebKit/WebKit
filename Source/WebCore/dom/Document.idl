@@ -212,10 +212,6 @@
     CSSStyleDeclaration createCSSStyleDeclaration();
 #endif
 
-#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [Conditional=UNDO_MANAGER] readonly attribute UndoManager undoManager;
-#endif
-
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     // DOM Level 2 Style Interface
     [ObjCLegacyUnnamedParameters, ObjCUseDefaultView] CSSStyleDeclaration getComputedStyle(in Element element,

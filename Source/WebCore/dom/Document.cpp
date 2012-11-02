@@ -160,7 +160,6 @@
 #include "Timer.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
-#include "UndoManager.h"
 #include "UserContentURLPattern.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WebKitNamedFlow.h"
@@ -499,9 +498,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_wheelEventHandlerCount(0)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchEventHandlerCount(0)
-#endif
-#if ENABLE(UNDO_MANAGER)
-    , m_undoManager(0)
 #endif
     , m_pendingTasksTimer(this, &Document::pendingTasksTimerFired)
     , m_scheduledTasksAreSuspended(false)
@@ -5964,15 +5960,6 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_mediaCanStartListeners);
     info.addMember(m_pendingTasks);
 }
-
-#if ENABLE(UNDO_MANAGER)
-PassRefPtr<UndoManager> Document::undoManager()
-{
-    if (!m_undoManager)
-        m_undoManager = UndoManager::create(this);
-    return m_undoManager;
-}
-#endif
 
 class ImmutableAttributeDataCacheKey {
 public:
