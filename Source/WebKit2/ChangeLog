@@ -1,3 +1,17 @@
+2012-11-01  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] Wrong translation of mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=100983
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The transform that we build for mouse events is scaled by the scale factor.
+        The url bar should not be scaled, so it should be scaled in the oposite
+        direction to compensate for that.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (toWebContentTransform):
+
 2012-11-02  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Add missing variable initialization in PageViewportController
