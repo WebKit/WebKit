@@ -59,7 +59,7 @@ WebInspector.CookieParser.prototype = {
     /**
      * @return {Array.<WebInspector.Cookie>}
      */
-    get cookies()
+    cookies: function()
     {
         return this._cookies;
     },
@@ -122,7 +122,7 @@ WebInspector.CookieParser.prototype = {
     _flushCookie: function()
     {
         if (this._lastCookie)
-            this._lastCookie.size = this._originalInputLength - this._input.length - this._lastCookiePosition;
+            this._lastCookie.setSize(this._originalInputLength - this._input.length - this._lastCookiePosition);
         this._lastCookie = null;
     },
 
@@ -168,7 +168,7 @@ WebInspector.CookieParser.prototype = {
     _addCookie: function(keyValue, type)
     {
         if (this._lastCookie)
-            this._lastCookie.size = keyValue.position - this._lastCookiePosition;
+            this._lastCookie.setSize(keyValue.position - this._lastCookiePosition);
         // Mozilla bug 169091: Mozilla, IE and Chrome treat single token (w/o "=") as
         // specifying a value for a cookie with empty name.
         this._lastCookie = keyValue.value ? new WebInspector.Cookie(keyValue.key, keyValue.value, type) :
@@ -198,6 +198,9 @@ WebInspector.CookieParser.parseSetCookie = function(header)
 
 /**
  * @constructor
+ * @param {string} name
+ * @param {string} value
+ * @param {number=} type
  */
 WebInspector.Cookie = function(name, value, type)
 {
@@ -211,7 +214,7 @@ WebInspector.Cookie.prototype = {
     /**
      * @return {boolean}
      */ 
-    get httpOnly()
+    httpOnly: function()
     {
         return "httponly" in this._attributes;
     },
@@ -219,7 +222,7 @@ WebInspector.Cookie.prototype = {
     /**
      * @return {boolean}
      */ 
-    get secure()
+    secure: function()
     {
         return "secure" in this._attributes;
     },
@@ -227,17 +230,17 @@ WebInspector.Cookie.prototype = {
     /**
      * @return {boolean}
      */ 
-    get session()
+    session: function()
     {
         // RFC 2965 suggests using Discard attribute to mark session cookies, but this does not seem to be widely used.
-        // Check for absence of explicity max-age or expiry date instead.
-        return  !("expires" in this._attributes || "max-age" in this._attributes);
+        // Check for absence of explicitly max-age or expiry date instead.
+        return !("expires" in this._attributes || "max-age" in this._attributes);
     },
 
     /**
      * @return {string}
      */ 
-    get path()
+    path: function()
     {
         return this._attributes["path"];
     },
@@ -245,31 +248,79 @@ WebInspector.Cookie.prototype = {
     /**
      * @return {string}
      */ 
-    get domain()
+    port: function()
+    {
+        return this._attributes["port"];
+    },
+
+    /**
+     * @return {string}
+     */ 
+    domain: function()
     {
         return this._attributes["domain"];
     },
 
     /**
+     * @return {string}
+     */ 
+    expires: function()
+    {
+        return this._attributes["expires"];
+    },
+
+    /**
+     * @return {string}
+     */ 
+    maxAge: function()
+    {
+        return this._attributes["max-age"];
+    },
+
+    /**
+     * @return {number}
+     */ 
+    size: function()
+    {
+        return this._size;
+    },
+
+    /**
+     * @param {number} size
+     */ 
+    setSize: function(size)
+    {
+        this._size = size;
+    },
+
+    /**
      * @return {Date}
      */ 
-    expires: function(requestDate)
+    expiresDate: function(requestDate)
     {
-        return this._attributes["expires"] ? new Date(this._attributes["expires"]) :
-            (this._attributes["max-age"] ? new Date(requestDate.getTime() + 1000 * this._attributes["max-age"]) : null);
+        // RFC 6265 indicates that the max-age attribute takes precedence over the expires attribute
+        if (this.maxAge()) {
+            var targetDate = requestDate === null ? new Date() : requestDate;
+            return new Date(targetDate.getTime() + 1000 * this.maxAge());
+        }
+
+        if (this.expires())
+            return new Date(this.expires());
+
+        return null;
     },
 
     /**
      * @return {Object}
      */ 
-    get attributes()
+    attributes: function()
     {
         return this._attributes;
     },
 
     /**
      * @param {string} key 
-     * @param {string} value 
+     * @param {string=} value 
      */ 
     addAttribute: function(key, value)
     {
@@ -286,6 +337,11 @@ WebInspector.Cookies = {}
 
 WebInspector.Cookies.getCookiesAsync = function(callback)
 {
+    /**
+     * @param {?Protocol.Error} error 
+     * @param {Array.<WebInspector.Cookie>} cookies 
+     * @param {string} cookiesString 
+     */ 
     function mycallback(error, cookies, cookiesString)
     {
         if (error)
@@ -293,12 +349,16 @@ WebInspector.Cookies.getCookiesAsync = function(callback)
         if (cookiesString)
             callback(WebInspector.Cookies.buildCookiesFromString(cookiesString), false);
         else
-            callback(cookies, true);
+            callback(cookies.map(WebInspector.Cookies.buildCookieProtocolObject), true);
     }
 
     PageAgent.getCookies(mycallback);
 }
 
+/**
+ * @param {string} rawCookieString 
+ * @return {Array.<WebInspector.Cookie>} 
+ */ 
 WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
 {
     var rawCookies = rawCookieString.split(/;\s*/);
@@ -306,31 +366,61 @@ WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
 
     if (!(/^\s*$/.test(rawCookieString))) {
         for (var i = 0; i < rawCookies.length; ++i) {
-            var cookie = rawCookies[i];
-            var delimIndex = cookie.indexOf("=");
-            var name = cookie.substring(0, delimIndex);
-            var value = cookie.substring(delimIndex + 1);
+            var rawCookie = rawCookies[i];
+            var delimIndex = rawCookie.indexOf("=");
+            var name = rawCookie.substring(0, delimIndex);
+            var value = rawCookie.substring(delimIndex + 1);
             var size = name.length + value.length;
-            cookies.push({ name: name, value: value, size: size });
+            var cookie = new WebInspector.Cookie(name, value);
+            cookie.setSize(size);
+            cookies.push(cookie);
         }
     }
 
     return cookies;
 }
 
+/**
+ * @param {Object} protocolCookie 
+ * @return {WebInspector.Cookie} 
+ */ 
+WebInspector.Cookies.buildCookieProtocolObject = function(protocolCookie)
+{
+    var cookie = new WebInspector.Cookie(protocolCookie.name, protocolCookie.value);
+    cookie.addAttribute("domain", protocolCookie["domain"]);
+    cookie.addAttribute("path", protocolCookie["path"]);
+    cookie.addAttribute("port", protocolCookie["port"]);
+    if (protocolCookie["expires"])
+        cookie.addAttribute("expires", protocolCookie["expires"]);
+    if (protocolCookie["httpOnly"])
+        cookie.addAttribute("httpOnly");
+    if (protocolCookie["secure"])
+        cookie.addAttribute("secure");
+    cookie.setSize(protocolCookie["size"]);
+    return cookie;
+}
+
+/**
+ * @param {WebInspector.Cookie} cookie 
+ * @param {string} resourceURL
+ */ 
 WebInspector.Cookies.cookieMatchesResourceURL = function(cookie, resourceURL)
 {
     var url = resourceURL.asParsedURL();
-    if (!url || !WebInspector.Cookies.cookieDomainMatchesResourceDomain(cookie.domain, url.host))
+    if (!url || !WebInspector.Cookies.cookieDomainMatchesResourceDomain(cookie.domain(), url.host))
         return false;
-    return (url.path.startsWith(cookie.path)
-        && (!cookie.port || url.port == cookie.port)
-        && (!cookie.secure || url.scheme === "https"));
+    return (url.path.startsWith(cookie.path())
+        && (!cookie.port() || url.port == cookie.port())
+        && (!cookie.secure() || url.scheme === "https"));
 }
 
+/**
+ * @param {string} cookieDomain 
+ * @param {string} resourceDomain
+ */ 
 WebInspector.Cookies.cookieDomainMatchesResourceDomain = function(cookieDomain, resourceDomain)
 {
     if (cookieDomain.charAt(0) !== '.')
         return resourceDomain === cookieDomain;
-    return !!resourceDomain.match(new RegExp("^([^\\.]+\\.)?" + cookieDomain.substring(1).escapeForRegExp() + "$"), "i");
+    return !!resourceDomain.match(new RegExp("^([^\\.]+\\.)?" + cookieDomain.substring(1).escapeForRegExp() + "$", "i"));
 }

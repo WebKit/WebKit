@@ -28,7 +28,7 @@ function test()
     {
         for (var i = 0; i < allCookies.length; i++) {
           var cookie = allCookies[i];
-            if (cookie.name === cookieName && cookie.domain == cookieDomain) {
+            if (cookie.name === cookieName && cookie.domain() == cookieDomain) {
                 InspectorTest.addResult("Cookie: " + cookie.name + "=" + cookie.value + ".");
             }
         }

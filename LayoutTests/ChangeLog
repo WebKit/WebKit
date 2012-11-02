@@ -1,3 +1,13 @@
+2012-11-02  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Cookie info in Network Resources Cookies tab shows "Invalid Date"
+        https://bugs.webkit.org/show_bug.cgi?id=97471
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/resource-main-cookies.php:
+        * inspector/cookie-parser.html:
+
 2012-11-01  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Element should have getter and setter of attribute 'pseudo'

@@ -74,6 +74,10 @@ WebInspector.CookieItemsView.prototype = {
         WebInspector.Cookies.getCookiesAsync(this._updateWithCookies.bind(this));
     },
 
+    /**
+     * @param {Array.<WebInspector.Cookie>} allCookies
+     * @param {boolean} isAdvanced
+     */
     _updateWithCookies: function(allCookies, isAdvanced)
     {
         this._cookies = isAdvanced ? this._filterCookiesForDomain(allCookies) : allCookies;
@@ -100,6 +104,9 @@ WebInspector.CookieItemsView.prototype = {
         }
     },
 
+    /**
+     * @param {Array.<WebInspector.Cookie>} allCookies
+     */
     _filterCookiesForDomain: function(allCookies)
     {
         var cookies = [];
@@ -116,7 +123,7 @@ WebInspector.CookieItemsView.prototype = {
 
         for (var i = 0; i < allCookies.length; ++i) {
             var pushed = false;
-            var size = allCookies[i].size;
+            var size = allCookies[i].size();
             for (var j = 0; j < resourceURLsForDocumentURL.length; ++j) {
                 var resourceURL = resourceURLsForDocumentURL[j];
                 if (WebInspector.Cookies.cookieMatchesResourceURL(allCookies[i], resourceURL)) {
@@ -131,6 +138,9 @@ WebInspector.CookieItemsView.prototype = {
         return cookies;
     },
 
+    /**
+     * @param {WebInspector.Cookie} cookie
+     */
     _deleteCookie: function(cookie)
     {
         PageAgent.deleteCookie(cookie.name, this._cookieDomain);
@@ -180,6 +190,9 @@ WebInspector.SimpleCookiesTable = function()
 }
 
 WebInspector.SimpleCookiesTable.prototype = {
+    /**
+     * @param {Array.<WebInspector.Cookie>} cookies
+     */
     setCookies: function(cookies)
     {
         this._dataGrid.rootNode().removeChildren();

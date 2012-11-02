@@ -1234,7 +1234,7 @@ WebInspector.AuditRules.CookieRuleBase.prototype = {
     {
         for (var i = 0; i < allCookies.length; ++i) {
             for (var requestDomain in requestsByDomain) {
-                if (WebInspector.Cookies.cookieDomainMatchesResourceDomain(allCookies[i].domain, requestDomain))
+                if (WebInspector.Cookies.cookieDomainMatchesResourceDomain(allCookies[i].domain(), requestDomain))
                     this._callbackForResourceCookiePairs(requestsByDomain[requestDomain], allCookies[i], callback);
             }
         }
@@ -1269,7 +1269,7 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
     {
         var total = 0;
         for (var i = 0; i < cookieArray.length; ++i)
-            total += cookieArray[i].size;
+            total += cookieArray[i].size();
         return cookieArray.length ? Math.round(total / cookieArray.length) : 0;
     },
 
@@ -1277,7 +1277,7 @@ WebInspector.AuditRules.CookieSizeRule.prototype = {
     {
         var result = 0;
         for (var i = 0; i < cookieArray.length; ++i)
-            result = Math.max(cookieArray[i].size, result);
+            result = Math.max(cookieArray[i].size(), result);
         return result;
     },
 
@@ -1403,7 +1403,7 @@ WebInspector.AuditRules.StaticCookielessRule.prototype = {
 
     _collectorCallback: function(matchingResourceData, request, cookie)
     {
-        matchingResourceData[request.url] = (matchingResourceData[request.url] || 0) + cookie.size;
+        matchingResourceData[request.url] = (matchingResourceData[request.url] || 0) + cookie.size();
     },
 
     __proto__: WebInspector.AuditRules.CookieRuleBase.prototype

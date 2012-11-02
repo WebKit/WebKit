@@ -63,7 +63,7 @@ function test() {
 
     function createCookie(name, value, secure, domain, path, port)
     {
-        return {
+        var protocolCookie = {
             name: name,
             value: value,
             domain: domain,
@@ -75,6 +75,7 @@ function test() {
             secure: secure,
             session: true
         };
+        return WebInspector.Cookies.buildCookieProtocolObject(protocolCookie);
     }
 }
 </script>

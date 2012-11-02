@@ -1,3 +1,53 @@
+2012-11-02  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Cookie info in Network Resources Cookies tab shows "Invalid Date"
+        https://bugs.webkit.org/show_bug.cgi?id=97471
+
+        Reviewed by Pavel Feldman.
+
+        This patch is partly based on patch by Otto Derek Cheung <otcheung@rim.com>.
+        Refactored CookieParser so that all cookies in front-end were WebInspector.Cookie object.
+        Cookie table can now show Max-Age as well as Expires attribute of a cookie.
+        Fixed expiresDate calculation.
+        Removed getters from CookieParser for better compilation.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.CookieRuleBase.prototype.mapResourceCookies):
+        (WebInspector.AuditRules.CookieSizeRule.prototype._average):
+        (WebInspector.AuditRules.CookieSizeRule.prototype._max):
+        (WebInspector.AuditRules.StaticCookielessRule.prototype._collectorCallback):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype._filterCookiesForDomain):
+        * inspector/front-end/CookieParser.js:
+        (WebInspector.CookieParser.prototype.cookies):
+        (WebInspector.CookieParser.prototype._flushCookie):
+        (WebInspector.CookieParser.prototype._addCookie):
+        (WebInspector.Cookie.prototype.httpOnly):
+        (WebInspector.Cookie.prototype.secure):
+        (WebInspector.Cookie.prototype.session):
+        (WebInspector.Cookie.prototype.path):
+        (WebInspector.Cookie.prototype.domain):
+        (WebInspector.Cookie.prototype.expires):
+        (WebInspector.Cookie.prototype.maxAge):
+        (WebInspector.Cookie.prototype.size):
+        (WebInspector.Cookie.prototype.setSize):
+        (WebInspector.Cookie.prototype.expiresDate):
+        (WebInspector.Cookie.prototype.attributes):
+        (WebInspector.Cookies.getCookiesAsync):
+        (WebInspector.Cookies.buildCookiesFromString):
+        (WebInspector.Cookies.buildCookieProtocolObject):
+        (WebInspector.Cookies.cookieMatchesResourceURL):
+        (WebInspector.Cookies.cookieDomainMatchesResourceDomain):
+        * inspector/front-end/CookiesTable.js:
+        (WebInspector.CookiesTable):
+        (WebInspector.CookiesTable.prototype._totalSize):
+        (WebInspector.CookiesTable.prototype._sortCookies.expiresCompare):
+        (WebInspector.CookiesTable.prototype._sortCookies):
+        (WebInspector.CookiesTable.prototype._createGridNode):
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HAREntry.prototype._buildCookie):
+
 2012-11-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: do not call checkCountedObject with wrong pointers
