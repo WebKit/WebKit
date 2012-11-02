@@ -1979,11 +1979,8 @@ crbug.com/20345 fast/js/getOwnPropertyDescriptor.html [ Failure ]
 crbug.com/22526 fast/js/Object-defineProperty.html [ Failure ]
 
 webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
-# WebKit merge 48500:48585, due to newly added support for MathML.
-# crbug.com/22554 mathml
 # The mathml pixel tests will be changing for a few days. They'll need rebaseline after that.
-webkit.org/b/96960 [ Android Linux Win ] mathml/xHeight.xhtml [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/96960 [ Android Linux Win ] mathml/presentation [ Pass Failure ImageOnlyFailure ]
+webkit.org/b/96960 [ Linux Win ] mathml/presentation [ Pass Failure ImageOnlyFailure ]
 # Needs rebaseline after bug 97390
 webkit.org/b/97390 [ Mac ] mathml/presentation/mo-stretch.html [ Failure Pass ]
 webkit.org/b/97390 [ Mac ] mathml/presentation/row-alignment.xhtml [ Failure Pass ]

@@ -1,3 +1,21 @@
+2012-11-01  David Barton  <dbarton@mathscribe.com>
+
+        Unreviewed mathml rebaseline.
+
+        * platform/chromium-linux-x86/mathml: Added.
+        * platform/chromium-linux-x86/mathml/xHeight-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/xHeight-expected.txt: Added.
+        * platform/chromium-linux/mathml: Added.
+        * platform/chromium-linux/mathml/xHeight-expected.png: Added.
+        * platform/chromium-linux/mathml/xHeight-expected.txt: Added.
+        * platform/chromium-win-xp/mathml: Added.
+        * platform/chromium-win-xp/mathml/xHeight-expected.png: Added.
+        * platform/chromium-win-xp/mathml/xHeight-expected.txt: Added.
+        * platform/chromium-win/mathml: Added.
+        * platform/chromium-win/mathml/xHeight-expected.png: Added.
+        * platform/chromium-win/mathml/xHeight-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.  Mark another flaky test.
