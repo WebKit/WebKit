@@ -3418,7 +3418,7 @@ webkit.org/b/86683 [ Linux Win Release ] inspector/profiler/heap-snapshot-summar
 
 webkit.org/b/86908 [ Win ] http/tests/security/cross-frame-access-put.html [ Failure Pass ]
 
-webkit.org/b/86909 [ Win ] compositing/geometry/object-clip-rects-assertion.html [ Pass Slow ]
+webkit.org/b/86909 [ Win ] compositing/geometry/object-clip-rects-assertion.html [ Pass Slow Crash ]
 webkit.org/b/86909 [ Win ] platform/chromium/virtual/softwarecompositing/geometry/object-clip-rects-assertion.html [ Pass Slow ]
 webkit.org/b/86909 [ Win ] http/tests/inspector/appcache/appcache-iframe-manifests.html [ Pass Timeout ]
 webkit.org/b/86909 [ Win ] http/tests/inspector/network/network-content-replacement-xhr.html [ Pass Timeout ]
