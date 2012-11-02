@@ -1,3 +1,12 @@
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
+        * platform/chromium-mac-lion/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png: Added.
+        * platform/efl-wk1/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png: Renamed from LayoutTests/platform/efl/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png.
+
 2012-11-01  David Barton  <dbarton@mathscribe.com>
 
         Unreviewed mathml rebaseline.
