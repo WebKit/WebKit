@@ -1,3 +1,9 @@
+2012-11-02  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-02  Keishi Hattori  <keishi@webkit.org>
 
         Fix test calendar-picker-key-operations.html
