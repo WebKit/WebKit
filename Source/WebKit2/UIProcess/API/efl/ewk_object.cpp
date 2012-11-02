@@ -24,56 +24,21 @@
  */
 
 #include "config.h"
-#include "ewk_back_forward_list_item.h"
+#include "ewk_object.h"
 
-#include "WKAPICast.h"
-#include "WKBackForwardListItem.h"
-#include "ewk_back_forward_list_item_private.h"
+#include "ewk_object_private.h"
 
-using namespace WebKit;
-
-EwkBackForwardListItem::EwkBackForwardListItem(WKBackForwardListItemRef itemRef)
-    : m_wkItem(itemRef)
-{ }
-
-const char* EwkBackForwardListItem::url() const
+Ewk_Object* ewk_object_ref(Ewk_Object* object)
 {
-    m_url = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyURL(m_wkItem.get()));
+    EINA_SAFETY_ON_NULL_RETURN_VAL(object, 0);
+    object->ref();
 
-    return m_url;
+    return object;
 }
 
-const char* EwkBackForwardListItem::title() const
+void ewk_object_unref(Ewk_Object* object)
 {
-    m_title = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyTitle(m_wkItem.get()));
+    EINA_SAFETY_ON_NULL_RETURN(object);
 
-    return m_title;
-}
-
-const char* EwkBackForwardListItem::originalURL() const
-{
-    m_originalURL = WKEinaSharedString(AdoptWK, WKBackForwardListItemCopyOriginalURL(m_wkItem.get()));
-
-    return m_originalURL;
-}
-
-const char* ewk_back_forward_list_item_url_get(const Ewk_Back_Forward_List_Item* item)
-{
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkBackForwardListItem, item, impl, 0);
-
-    return impl->url();
-}
-
-const char* ewk_back_forward_list_item_title_get(const Ewk_Back_Forward_List_Item* item)
-{
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkBackForwardListItem, item, impl, 0);
-
-    return impl->title();
-}
-
-const char* ewk_back_forward_list_item_original_url_get(const Ewk_Back_Forward_List_Item* item)
-{
-    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkBackForwardListItem, item, impl, 0);
-
-    return impl->originalURL();
+    object->deref();
 }

@@ -83,7 +83,7 @@ static inline void freeEinaList(Eina_List* list)
 {
     void* data = 0;
     EINA_LIST_FREE(list, data)
-        ewk_back_forward_list_item_unref(static_cast<Ewk_Back_Forward_List_Item*>(data));
+        ewk_object_unref(static_cast<Ewk_Object*>(data));
 }
 
 TEST_F(EWK2UnitTestBase, ewk_back_forward_list_current_item_get)

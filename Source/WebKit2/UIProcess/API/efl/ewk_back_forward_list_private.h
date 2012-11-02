@@ -27,6 +27,7 @@
 #define ewk_back_forward_list_private_h
 
 #include "WKRetainPtr.h"
+#include "ewk_back_forward_list_item.h"
 #include "ewk_back_forward_list_item_private.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/HashMap.h>

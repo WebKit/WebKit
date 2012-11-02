@@ -30,6 +30,7 @@
 #include "WKArray.h"
 #include "WKBackForwardList.h"
 #include "ewk_back_forward_list_private.h"
+#include "ewk_object.h"
 #include <wtf/text/CString.h>
 
 using namespace WebKit;
@@ -90,7 +91,7 @@ Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::getFromCacheOrCreate(WKBackFo
 
     RefPtr<Ewk_Back_Forward_List_Item> item = m_wrapperCache.get(wkItem);
     if (!item) {
-        item = Ewk_Back_Forward_List_Item::create(wkItem);
+        item = EwkBackForwardListItem::create(wkItem);
         m_wrapperCache.set(wkItem, item);
     }
 
@@ -108,7 +109,7 @@ Eina_List* Ewk_Back_Forward_List::createEinaList(WKArrayRef wkList) const
     for (size_t i = 0; i < count; ++i) {
         WKBackForwardListItemRef wkItem = static_cast<WKBackForwardListItemRef>(WKArrayGetItemAtIndex(wkList, i));
         Ewk_Back_Forward_List_Item* item = getFromCacheOrCreate(wkItem);
-        result = eina_list_append(result, ewk_back_forward_list_item_ref(item));
+        result = eina_list_append(result, ewk_object_ref(item));
     }
 
     return result;

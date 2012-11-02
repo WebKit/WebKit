@@ -5,9 +5,9 @@
  * modification, are permitted provided that the following conditions
  * are met:
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this item of conditions and the following disclaimer.
+ *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this item of conditions and the following disclaimer in the
+ *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
@@ -23,38 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ewk_back_forward_list_item_private_h
-#define ewk_back_forward_list_item_private_h
+/**
+ * @file    ewk_object.h
+ * @brief   Describes the Ewk Ref Counted API.
+ */
 
-#include "WKEinaSharedString.h"
-#include "ewk_object_private.h"
-#include <WebKit2/WKBase.h>
-#include <wtf/PassRefPtr.h>
+#ifndef ewk_object_h
+#define ewk_object_h
+
+#include <Eina.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/** Creates a type name for Ewk_Object */
+typedef struct Ewk_Object Ewk_Object;
 
 /**
- * \struct  Ewk_Back_Forward_List
- * @brief   Contains the Back Forward List data.
+ * Increases the reference count of the given Ewk_Object.
+ *
+ * @param object the Ewk_Object instance to increase the reference count
+ *
+ * @return a pointer to the object on success, @c NULL otherwise.
  */
-class EwkBackForwardListItem : public Ewk_Object {
-public:
-    EWK_OBJECT_DECLARE(EwkBackForwardListItem)
+EAPI Ewk_Object *ewk_object_ref(Ewk_Object *object);
 
-    static PassRefPtr<EwkBackForwardListItem> create(WKBackForwardListItemRef itemRef)
-    {
-        return adoptRef(new EwkBackForwardListItem(itemRef));
-    }
+/**
+ * Decreases the reference count of the given Ewk_Object, possibly freeing it.
+ *
+ * When the reference count reaches 0, the item is freed.
+ *
+ * @param object the Ewk_Object instance to decrease the reference count
+ */
+EAPI void ewk_object_unref(Ewk_Object *object);
 
-    const char* url() const;
-    const char* title() const;
-    const char* originalURL() const;
 
-private:
-    explicit EwkBackForwardListItem(WKBackForwardListItemRef itemRef);
-
-    WKRetainPtr<WKBackForwardListItemRef> m_wkItem;
-    mutable WKEinaSharedString m_url;
-    mutable WKEinaSharedString m_title;
-    mutable WKEinaSharedString m_originalURL;
-};
-
-#endif // ewk_back_forward_list_private_h
+#ifdef __cplusplus
+}
+#endif
+#endif // ewk_object_h

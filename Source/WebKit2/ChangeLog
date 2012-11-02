@@ -1,3 +1,44 @@
+2012-11-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Common ref and unref functions for EFL WK2 objects
+        https://bugs.webkit.org/show_bug.cgi?id=100751
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added common Ewk_Object class with ref/unref API also added several aux functions for safe
+        Ewk_Object conversion. Used new approach on ewk_back_forward_list_item as example.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (Ewk_Back_Forward_List::getFromCacheOrCreate):
+        (Ewk_Back_Forward_List::createEinaList):
+        * UIProcess/API/efl/ewk_back_forward_list_item.cpp:
+        (EwkBackForwardListItem::EwkBackForwardListItem):
+        (EwkBackForwardListItem::url):
+        (EwkBackForwardListItem::title):
+        (EwkBackForwardListItem::originalURL):
+        (ewk_back_forward_list_item_url_get):
+        (ewk_back_forward_list_item_title_get):
+        (ewk_back_forward_list_item_original_url_get):
+        * UIProcess/API/efl/ewk_back_forward_list_item.h:
+        * UIProcess/API/efl/ewk_back_forward_list_item_private.h:
+        (EwkBackForwardListItem):
+        (EwkBackForwardListItem::create):
+        * UIProcess/API/efl/ewk_back_forward_list_private.h:
+        * UIProcess/API/efl/ewk_object.cpp: Copied from Source/WebKit2/UIProcess/API/efl/ewk_back_forward_list_item_private.h.
+        (ewk_object_ref):
+        (ewk_object_unref):
+        * UIProcess/API/efl/ewk_object.h: Copied from Source/WebKit2/UIProcess/API/efl/ewk_back_forward_list_item_private.h.
+        * UIProcess/API/efl/ewk_object_private.h: Added.
+        (Ewk_Object):
+        (Ewk_Object::~Ewk_Object):
+        (ewk_object_is_of_type):
+        (ewk_object_cast_check):
+        (ewk_object_cast):
+        * UIProcess/API/efl/tests/test_ewk2_back_forward_list.cpp:
+        (freeEinaList):
+
 2012-11-02  Nandor Huszka  <hnandor@inf.u-szeged.hu>
 
         [Qt][Mac][Win] Unreviewed build fix after r133182
