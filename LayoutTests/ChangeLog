@@ -1,5 +1,24 @@
 2012-11-02  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r124724
+
+    2012-08-05  Benjamin Poulain  <bpoulain@apple.com>
+
+            Assert in checkValidity() in hashtable.h from WebGeolocationManager::didFailToDeterminePosition() when fetching http://html5demos.com/geo
+            https://bugs.webkit.org/show_bug.cgi?id=80386
+
+            Reviewed by Alexey Proskuryakov.
+
+            Add tests for clearing the Geolocation as a listener from a callback originated from the GeolocationController.
+
+            * fast/dom/Geolocation/error-clear-watch-expected.txt: Added.
+            * fast/dom/Geolocation/error-clear-watch.html: Added.
+            * fast/dom/Geolocation/success-clear-watch-expected.txt: Added.
+            * fast/dom/Geolocation/success-clear-watch.html: Added.
+            * platform/wk2/Skipped:
+
+2012-11-02  Lucas Forschler  <lforschler@apple.com>
+
         Merge r124681
 
     2012-08-03  Florin Malita  <fmalita@chromium.org>
@@ -10812,6 +10831,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .

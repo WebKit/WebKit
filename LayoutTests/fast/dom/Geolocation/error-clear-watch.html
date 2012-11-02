@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This tests removing the watcher from an error callback does not causes assertions.");
+
+var mockCode = 2;
+var mockMessage = "debug";
+
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationError(mockCode, mockMessage);
+} else
+    debug('This test can not be run without the LayoutTestController');
+
+var watchId = navigator.geolocation.watchPosition(function() {
+    navigator.geolocation.clearWatch(watchId);
+    finishJSTest();
+}, function(e) {
+    navigator.geolocation.clearWatch(watchId);
+    finishJSTest();
+});
+
+
+window.jsTestIsAsync = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

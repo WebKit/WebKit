@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This tests removing the watcher from a position callback does not causes assertions.");
+
+var mockLatitude = 51.478;
+var mockLongitude = -0.166;
+var mockAccuracy = 100;
+
+if (window.testRunner) {
+    testRunner.setGeolocationPermission(true);
+    testRunner.setMockGeolocationPosition(mockLatitude,
+                                          mockLongitude,
+                                          mockAccuracy);
+} else
+    debug('This test can not be run without the LayoutTestController');
+
+var watchId = navigator.geolocation.watchPosition(function() {
+    navigator.geolocation.clearWatch(watchId);
+    finishJSTest();
+}, function(e) {
+    navigator.geolocation.clearWatch(watchId);
+    finishJSTest();
+});
+
+
+window.jsTestIsAsync = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
