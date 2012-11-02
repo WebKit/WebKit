@@ -1,3 +1,24 @@
+2012-11-02  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Add ASSERT() to guarantee that we don't store NULL pointers to V8 internal fields
+        https://bugs.webkit.org/show_bug.cgi?id=101054
+
+        Reviewed by Adam Barth.
+
+        I'm investigating a Chromium crash bug:
+        http://code.google.com/p/chromium/issues/detail?id=155942
+
+        I've not yet identified the root cause (because I can't reproduce
+        the crash), but it looks like we are storing NULL pointers to
+        V8 internal fields. Just in case, we can add an ASSERT() to
+        guarantee that NULL pointers are never stored. (Also I'm hoping
+        that this ASSERT() will give me more debug information.)
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::setDOMWrapper):
+
 2012-11-02  Kevin Ellis  <kevers@chromium.org>
 
         Imrpove scoring in touch adjustment to address bias towards smaller targets.

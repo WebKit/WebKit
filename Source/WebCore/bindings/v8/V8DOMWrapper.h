@@ -71,6 +71,8 @@ namespace WebCore {
         static void setDOMWrapper(v8::Handle<v8::Object> object, WrapperTypeInfo* type, void* cptr)
         {
             ASSERT(object->InternalFieldCount() >= 2);
+            ASSERT(type);
+            ASSERT(cptr);
             object->SetPointerInInternalField(v8DOMWrapperObjectIndex, cptr);
             object->SetPointerInInternalField(v8DOMWrapperTypeIndex, type);
         }
