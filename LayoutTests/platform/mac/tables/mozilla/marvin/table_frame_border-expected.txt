@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 424x118 [border: (1px solid #808080)]
-        RenderBlock {CAPTION} at (0,0) size 422x18
-          RenderText {#text} at (17,0) size 388x18
-            text run at (17,0) width 388: "Communicator 4.5 Installers for Mac and Windows Platforms"
+        RenderBlock {CAPTION} at (0,0) size 424x18
+          RenderText {#text} at (18,0) size 388x18
+            text run at (18,0) width 388: "Communicator 4.5 Installers for Mac and Windows Platforms"
         RenderTableSection {TBODY} at (1,19) size 422x98
           RenderTableRow {TR} at (0,2) size 422x22
             RenderTableCell {TH} at (2,11) size 118x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

@@ -14,11 +14,11 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,0) size 332x35
                   RenderTableRow {TR} at (0,2) size 332x31
                     RenderTableCell {TD} at (2,2) size 328x31 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (2,2) size 252x27
-                        RenderTableSection {TBODY} at (0,0) size 252x27
-                          RenderTableRow {TR} at (0,2) size 252x23
-                            RenderTableCell {TD} at (2,11) size 4x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                            RenderTableCell {TD} at (8,2) size 236x23 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=2]
+                      RenderTable {TABLE} at (2,2) size 324x27
+                        RenderTableSection {TBODY} at (0,0) size 324x27
+                          RenderTableRow {TR} at (0,2) size 324x23
+                            RenderTableCell {TD} at (2,11) size 40x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                            RenderTableCell {TD} at (44,2) size 236x23 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=2]
                               RenderImage {IMG} at (2,2) size 21x15 [bgcolor=#800080]
                               RenderText {#text} at (23,3) size 4x18
                                 text run at (23,3) width 4: " "
@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
                                   text run at (146,3) width 84: "White Pages"
                               RenderText {#text} at (230,3) size 4x18
                                 text run at (230,3) width 4: " "
-                            RenderTableCell {TD} at (246,11) size 4x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=3 rs=1 cs=1]
+                            RenderTableCell {TD} at (282,11) size 40x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=3 rs=1 cs=1]
             RenderTableCell {TD} at (548,0) size 236x42 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderTable {TABLE} at (4,4) size 228x34
                 RenderTableSection {TBODY} at (0,0) size 228x34
@@ -59,11 +59,11 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (0,0) size 321x35
                   RenderTableRow {TR} at (0,2) size 321x31
                     RenderTableCell {TD} at (2,2) size 317x31 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                      RenderTable {TABLE} at (2,2) size 252x27
-                        RenderTableSection {TBODY} at (0,0) size 252x27
-                          RenderTableRow {TR} at (0,2) size 252x23
-                            RenderTableCell {TD} at (2,11) size 4x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
-                            RenderTableCell {TD} at (8,2) size 236x23 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=2]
+                      RenderTable {TABLE} at (2,2) size 313x27
+                        RenderTableSection {TBODY} at (0,0) size 313x27
+                          RenderTableRow {TR} at (0,2) size 313x23
+                            RenderTableCell {TD} at (2,11) size 34x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                            RenderTableCell {TD} at (38,2) size 236x23 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=2]
                               RenderImage {IMG} at (2,2) size 21x15 [bgcolor=#800080]
                               RenderText {#text} at (23,3) size 4x18
                                 text run at (23,3) width 4: " "
@@ -80,7 +80,7 @@ layer at (0,0) size 800x600
                                   text run at (146,3) width 84: "White Pages"
                               RenderText {#text} at (230,3) size 4x18
                                 text run at (230,3) width 4: " "
-                            RenderTableCell {TD} at (246,11) size 4x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=3 rs=1 cs=1]
+                            RenderTableCell {TD} at (276,11) size 35x4 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=3 rs=1 cs=1]
             RenderTableCell {TD} at (548,0) size 236x42 [bgcolor=#FFA500] [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderTable {TABLE} at (4,4) size 228x34
                 RenderTableSection {TBODY} at (0,0) size 228x34

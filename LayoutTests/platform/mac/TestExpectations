@@ -1007,13 +1007,6 @@ webkit.org/b/58192 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
 webkit.org/b/58192 fast/frames/flattening/iframe-flattening-offscreen.html [ Failure Pass ]
 webkit.org/b/58192 svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
 
-# Need rebaselining after 99870
-webkit.org/b/99870 svg/custom/js-late-pattern-creation.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-skew-transformed.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-with-transformation.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-scaling.svg [ Pass ImageOnlyFailure Missing ]
-
 # Flakey cookies tests
 webkit.org/b/73694 http/tests/cookies/simple-cookies-expired.html [ Failure Pass ]
 webkit.org/b/73695 http/tests/cookies/simple-cookies-max-age.html [ Failure Pass ]
@@ -1022,134 +1015,16 @@ webkit.org/b/69999 [ Release ] http/tests/security/contentSecurityPolicy/media-s
 
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
-# Need rebaselining after 71244. Also needs rebaseline after 86441.
-webkit.org/b/74432 fast/borders/border-antialiasing.html [ ImageOnlyFailure ]
-
 # Flakey media tests
 webkit.org/b/34331 http/tests/media/video-referer.html [ Failure Pass ]
 webkit.org/b/97259 media/track/track-cue-rendering-inner-timestamps.html [ Skip ]
 
-# Rebaseline after bug 71705. All differences are due to the fact that table captions now
-# expand to the full width of the table.
-webkit.org/b/74888 tables/mozilla/bugs/bug1163-1.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/bugs/bug119786.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/bugs/bug1302.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/bugs/bug222846.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/bugs/bug29058-3.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/bugs/bug48028-1.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/bugs/bug48028-2.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/bugs/bug5838.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/bugs/bug6304.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/bugs/bug8381.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/core/captions.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/backgr_layers-opacity.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/backgr_position-table.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table-cell.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table-column-group.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table-column.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table-row-group.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table-row.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/backgr_simple-table.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/table_frame_border.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/table_frame_box.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/table_rules_all.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/table_rules_none.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/tables_caption_align_bot.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/tables_caption_align_top.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/x_caption_align_bottom.xml [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/x_caption_align_top.xml [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/x_caption_class.xml [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/x_caption_id.xml [ Failure ]
-webkit.org/b/74888 tables/mozilla/marvin/x_caption_style.xml [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug10140.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug10216.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug104898.html [ Failure ]
-webkit.org/b/74888 webkit.org/b/93148 tables/mozilla_expected_failures/bugs/bug106966.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug14007-2.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug29058-2.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-11.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-12.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-13.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-14.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-16.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-17.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-3.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-4.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-5.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-6.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug3166-9.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/bugs/bug91057.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/core/captions1.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/core/captions2.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/core/captions3.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-column-group.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-column.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-quirks.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-row-group.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table-row.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_border-table.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_fixed-bg.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_layers-hide.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_position-table-cell.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_position-table-column-group.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_position-table-column.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_position-table-row-group.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_position-table-row.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_frame_vsides.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_bottom.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_left.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_right.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_caption_top.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_row.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_cell_sibling.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_row_sibling.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_table_caption.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_overflow_style_reflow_tbody_sibling.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_rules_cols.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_rules_rows.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/tables_caption_align_left.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/tables_caption_align_right.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/x_caption_align_left.xml [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/x_caption_align_right.xml [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/other/test4.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/bugs/bug29157.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/other/wa_table_thtd_rowspan.html [ Failure ]
-webkit.org/b/74888 tables/mozilla/other/wa_table_tr_align.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/backgr_layers-show.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_frame_lhs.html [ Failure ]
-webkit.org/b/74888 tables/mozilla_expected_failures/marvin/table_frame_rhs.html [ Failure ]
-webkit.org/b/74888 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
-webkit.org/b/74888 fast/dom/HTMLTableElement/colSpan.html [ Failure ]
-webkit.org/b/74888 fast/dom/HTMLTableElement/createCaption.html [ Failure ]
-webkit.org/b/74888 fast/repaint/table-section-repaint.html [ Failure ]
-webkit.org/b/74888 fast/table/frame-and-rules.html [ Failure ]
-
-# Rebaseline required after bug 74874
-webkit.org/b/74874 fast/table/027.html [ Failure ]
-webkit.org/b/74874 fast/table/027-vertical.html [ Failure ]
-
-# Need rebaselining. Only FAIL is suppressed because that is all the buildbots check, however
-# images need to be rebaselined too.
-webkit.org/b/69210 fast/encoding/utf-16-big-endian.html [ Skip ]
-webkit.org/b/69210 fast/encoding/utf-16-little-endian.html [ Failure ]
-webkit.org/b/69210 fast/inline/continuation-outlines-with-layers-2.html [ Failure ]
 # https://bugs.webkit.org/show_bug.cgi?id=81276
 # Allowed to regress to fix a crash.
 webkit.org/b/69210 fast/inline/continuation-outlines-with-layers.html [ Skip ]
 webkit.org/b/69210 fast/repaint/transform-absolute-in-positioned-container.html [ Failure ]
 
-# Requires rebaseline after bug 83978
-webkit.org/b/83978 tables/mozilla_expected_failures/collapsing_borders/bug41262-5.html [ Skip ]
-
+# Failing ref tests
 webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
 webkit.org/b/84760 ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
 webkit.org/b/84761 ietestcenter/css3/multicolumn/column-filling-001.htm [ ImageOnlyFailure ]
@@ -1172,37 +1047,14 @@ webkit.org/b/85408 svg/batik/text/longTextOnPath.svg [ Failure Pass ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 
-# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=89116
-webkit.org/b/89116 svg/W3C-SVG-1.1/filters-specular-01-f.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89116 svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89116 svg/filters/feLighting-crash.svg [ ImageOnlyFailure Pass ]
-
 webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure Pass ]
-
-# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=79682
-webkit.org/b/79682 svg/repaint/text-mask-update.svg [ Failure ImageOnlyFailure Missing Pass ]
 
 # IETC flexbox failures
 webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ ImageOnlyFailure ]
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
-# Requires rebaseline after bug 85031
-webkit.org/b/85565 fast/css/border-solid-single-edge-antialias.html [ ImageOnlyFailure ]
-
 # Interferes with the tests that should pass
 webkit.org/b/85689 fast/animation/request-animation-frame-disabled.html [ Skip ]
-
-# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=6033
-webkit.org/b/6033 svg/filters/color-interpolation-filters.svg [ Missing Pass ]
 
 # Hits assert https://bugs.webkit.org/show_bug.cgi?id=86208
 webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ Skip ]
@@ -1216,15 +1068,6 @@ webkit.org/b/84167 editing/pasteboard/innerText-inline-table.html [ Failure ]
 webkit.org/b/84167 editing/selection/iframe.html [ Failure ]
 webkit.org/b/84167 editing/selection/inline-table.html [ Failure ]
 webkit.org/b/84167 editing/selection/table-caret-3.html [ Failure ]
-webkit.org/b/84167 fast/css-generated-content/inline-display-types.html [ Failure ]
-webkit.org/b/84167 fast/inline-block/001.html [ Failure ]
-webkit.org/b/84167 tables/mozilla/bugs/bug2479-2.html [ Failure ]
-
-# Needs rebaseline after bug 86441
-webkit.org/b/86441 fast/multicol/shadow-breaking.html [ ImageOnlyFailure ]
-
-# Requires rebaseline after https://bugs.webkit.org/show_bug.cgi?id=85405
-webkit.org/b/85405 tables/mozilla/bugs/bug10296-1.html [ Failure ]
 
 # Safari needs to be fixed after bug 84195 updated the layout tests
 webkit.org/b/85918 compositing/backface-visibility/backface-visibility-3d.html [ ImageOnlyFailure ]
@@ -1239,11 +1082,6 @@ webkit.org/b/88794 webaudio/codec-tests
 
 webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 
-# Require rebaseline after bug 88171
-webkit.org/b/88171 fast/block/float/independent-align-positioning.html [ Failure ]
-webkit.org/b/88171 fast/block/float/010.html [ Failure ]
-webkit.org/b/88171 css1/formatting_model/floating_elements.html [ Failure ]
-
 # Text Autosizing is not enabled.
 webkit.org/b/84186 fast/text-autosizing
 
@@ -1255,19 +1093,6 @@ webkit.org/b/90987 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailu
 
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
-
-# Needs rebaseline after https://bugs.webkit.org/show_bug.cig?id=91969
-webkit.org/b/91969 fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html [ Failure ]
-webkit.org/b/91969 fast/dom/HTMLProgressElement/progress-writing-mode.html [ Failure ]
-webkit.org/b/91969 fast/dom/HTMLProgressElement/indeterminate-progress-001.html [ Failure ]
-
-# Needs new image to be checked in for all platforms.
-webkit.org/b/93859 compositing/video/video-controls-layer-creation.html [ Missing Pass ]
-
-# Require rebaseline after bug 93148
-webkit.org/b/93148 tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html [ Failure ]
-webkit.org/b/93148 tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html [ Failure ]
-webkit.org/b/93148 fast/css/nested-layers-with-hover.html [ Failure ]
 
 webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
 
@@ -1287,33 +1112,7 @@ webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-
 webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Failure Pass ]
 webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Failure Pass ]
 
-#Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=77754
-webkit.org/b/77754 fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks.html [ Failure ]
-webkit.org/b/77754 fast/inline/absolute-positioned-inline-in-centred-block.html [ Failure ]
-webkit.org/b/77754 fast/css/absolute-child-with-percent-height-inside-relative-parent.html [ Failure ]
-
 webkit.org/b/92464 [ Debug ] fast/events/tabindex-focus-blur-all.html [ Crash Pass ]
-
-# Needs results
-webkit.org/b/97409 svg/custom/clip-mask-negative-scale.svg [ Missing Pass ]
-
-#Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80394
-webkit.org/b/80394 fast/block/float/024.html [ Failure ]
-webkit.org/b/80394 fast/block/margin-collapse/empty-clear-blocks.html [ Failure ]
-webkit.org/b/80394 fast/block/margin-collapse/025.html [ Failure ]
-webkit.org/b/80394 fast/block/margin-collapse/block-inside-inline/025.html [ Failure ]
-
-webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
-# Needs rebaseline
-webkit.org/b/99921 mathml/presentation/fenced.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/mo.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/over.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/row.xhtml [ Failure ]
-# Needs rebaseline after bug 97390
-webkit.org/b/97390 mathml/presentation/mo-stretch.html [ Failure Pass ]
-webkit.org/b/97390 mathml/presentation/row-alignment.xhtml [ Failure Pass ]
-webkit.org/b/97390 mathml/presentation/tables.xhtml [ Failure Pass ]
-webkit.org/b/97390 mathml/presentation/subsup.xhtml [ Failure Pass ]
 
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
@@ -1324,9 +1123,6 @@ webkit.org/b/95959 css3/device-adapt [ Skip ]
 # Hardware accelerated CSS transitions appear pixelated when scaled up using transform
 webkit.org/b/27684 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
 webkit.org/b/27684 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
-
-# Requires rebaselining after https://bugs.webkit.org/show_bug.cgi?id=11645
-webkit.org/b/11645 fast/table/025.html [ Failure ]
 
 # Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests.
 webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html

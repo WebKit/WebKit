@@ -38,8 +38,8 @@ layer at (0,0) size 800x600
                 text run at (607,4) width 90: "   My Links:   "
                 text run at (697,4) width 84: "  Lite \x{2022} Email"
           RenderTableRow {TR} at (0,26) size 784x312
-            RenderTableCell {TD} at (0,178) size 220x8 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
-            RenderTableCell {TD} at (220,26) size 345x312 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (0,178) size 219x8 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (219,26) size 345x312 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (4,4) size 337x304
                 RenderTableSection {TBODY} at (0,0) size 337x304
                   RenderTableRow {TR} at (0,2) size 337x300
@@ -68,6 +68,6 @@ layer at (0,0) size 800x600
                                 text run at (2,254) width 60: "think will"
                                 text run at (2,272) width 37: "work."
                             RenderTableCell {TD} at (202,146) size 125x4 [border: (1px solid #008000)] [r=0 c=2 rs=1 cs=1]
-            RenderTableCell {TD} at (565,169) size 219x26 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (564,169) size 220x26 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
               RenderImage {IMG} at (4,4) size 212x18
               RenderText {#text} at (0,0) size 0x0

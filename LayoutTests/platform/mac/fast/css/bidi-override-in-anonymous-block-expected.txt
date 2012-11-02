@@ -179,9 +179,9 @@ layer at (0,0) size 785x1217
         RenderText {#text} at (0,0) size 417x18
           text run at (0,0) width 417: "The following 2 tables should be identical, ignorning whitespaces:"
       RenderTable {TABLE} at (1,946) size 84x66 [border: (1px solid #808080)]
-        RenderBlock {CAPTION} at (0,0) size 82x18
-          RenderText {#text} at (-2,0) size 84x18
-            text run at (-2,0) width 84: "NormalTable"
+        RenderBlock {CAPTION} at (0,0) size 84x18
+          RenderText {#text} at (0,0) size 84x18
+            text run at (0,0) width 84: "NormalTable"
         RenderTableSection {TBODY} at (1,19) size 82x46
           RenderTableRow {TR} at (0,2) size 82x20
             RenderTableCell {TD} at (44,2) size 36x20 [r=0 c=0 rs=1 cs=1]
@@ -198,9 +198,9 @@ layer at (0,0) size 785x1217
               RenderText {#text} at (15,1) size 24x18
                 text run at (15,1) width 24: "opq"
       RenderTable {DIV} at (1,1013) size 145x56 [border: (1px solid #000000)]
-        RenderBlock {DIV} at (0,0) size 143x18
-          RenderText {#text} at (-2,0) size 145x18
-            text run at (-2,0) width 145: "AnonymousTableRow"
+        RenderBlock {DIV} at (0,0) size 145x18
+          RenderText {#text} at (0,0) size 145x18
+            text run at (0,0) width 145: "AnonymousTableRow"
         RenderTableSection (anonymous) at (1,19) size 143x36
           RenderTableRow {DIV} at (0,0) size 143x18
             RenderTableCell {DIV} at (75,0) size 68x18 [r=0 c=0 rs=1 cs=1]
@@ -225,7 +225,7 @@ layer at (0,0) size 785x1217
             RenderTableRow {DIV} at (0,0) size 24x18
               RenderTableCell (anonymous) at (0,0) size 24x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,0) size 22x18
-                  text run at (2,0) width 22: "abc"
+                  text run at (2,0) width 22 RTL override: "abc"
             RenderTableRow (anonymous) at (0,18) size 24x18
               RenderTableCell {DIV} at (0,18) size 24x18 [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (4,0) size 20x18
@@ -237,4 +237,4 @@ layer at (0,0) size 785x1217
             RenderTableRow (anonymous) at (0,0) size 24x18
               RenderTableCell (anonymous) at (0,0) size 24x18 [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 24x18
-                  text run at (0,0) width 24: "opq"
+                  text run at (0,0) width 24 RTL override: "opq"

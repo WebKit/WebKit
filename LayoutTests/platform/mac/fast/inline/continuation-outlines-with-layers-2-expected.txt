@@ -8,8 +8,6 @@ layer at (0,0) size 800x316
           text run at (0,0) width 327: "This should be an unobscured fuzzy green polygon:"
       RenderBlock {DIV} at (0,34) size 784x100
         RenderBlock (anonymous) at (0,0) size 784x50
-        RenderBlock (anonymous) at (0,50) size 784x0
-          RenderBlock {DIV} at (0,0) size 784x0
         RenderBlock (anonymous) at (0,50) size 784x50
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,150) size 784x18
@@ -41,6 +39,9 @@ layer at (8,50) size 160x50
       RenderText {#text} at (60,0) size 100x50
         text run at (60,0) width 50: " "
         text run at (110,0) width 50: " "
+layer at (8,100) size 784x0
+  RenderBlock (anonymous) at (0,50) size 784x0
+    RenderBlock {DIV} at (0,0) size 784x0
 layer at (8,100) size 60x50
   RenderInline (relative positioned) {SPAN} at (0,0) size 60x50 [bgcolor=#FFFFFF]
     RenderInline {SPAN} at (0,0) size 60x50

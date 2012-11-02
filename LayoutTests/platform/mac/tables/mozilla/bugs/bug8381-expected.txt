@@ -5,11 +5,11 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#3333FF]
       RenderBlock {CENTER} at (0,0) size 784x69
         RenderTable {TABLE} at (181,0) size 421x69 [bgcolor=#FFFFFF] [border: (2px outset #808080)]
-          RenderBlock {CAPTION} at (0,0) size 417x21
+          RenderBlock {CAPTION} at (0,0) size 421x21
             RenderInline {B} at (0,0) size 131x18
               RenderInline {FONT} at (0,0) size 131x20 [color=#C0C0C0]
-                RenderText {#text} at (143,0) size 131x20
-                  text run at (143,0) width 131: "Future Bugzilla"
+                RenderText {#text} at (145,0) size 131x20
+                  text run at (145,0) width 131: "Future Bugzilla"
             RenderText {#text} at (0,0) size 0x0
           RenderTableSection {TBODY} at (2,23) size 417x44
             RenderTableRow {TR} at (0,2) size 417x19
