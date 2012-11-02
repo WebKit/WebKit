@@ -1,3 +1,18 @@
+2012-11-02  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix build on Windows when Qt is configured with -release
+        https://bugs.webkit.org/show_bug.cgi?id=101041
+
+        Reviewed by Jocelyn Turcotte.
+
+        When Qt is configured with -debug or -release, the release/debug build of for example
+        QtCore is not available by default. For LLIntExtractor we always need to build debug
+        _and_ release versions, but we do not actually need any Qt libraries nor qtmain(d).lib.
+        Therefore we can disable all these features but need to keep $$QT.core.includes in the
+        INCLUDEPATH for some defines from qglobal.h.
+
+        * LLIntOffsetsExtractor.pro:
+
 2012-11-01  Mark Lam  <mark.lam@apple.com>
 
         A llint workaround for a toolchain issue.
