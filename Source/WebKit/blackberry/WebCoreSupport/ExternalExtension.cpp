@@ -46,7 +46,7 @@ static JSValueRef addSearchProviderMethod(
 
     // Double check if page chrome client exists
     Frame* frame = reinterpret_cast<Frame*>(JSObjectGetPrivate(thisObject));
-    if (!frame) {
+    if (frame) {
         Page* page = frame->page();
         if (!page || !page->chrome())
             return jsRetVal;
@@ -75,7 +75,7 @@ static JSValueRef IsSearchProviderInstalledMethod(
 
     // Double check if page chrome client exists
     Frame* frame = reinterpret_cast<Frame*>(JSObjectGetPrivate(thisObject));
-    if (!frame) {
+    if (frame) {
         Page* page = frame->page();
         if (!page || !page->chrome())
             return jsRetVal;

@@ -1,3 +1,17 @@
+2012-11-02  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Adding window.external to our port
+        https://bugs.webkit.org/show_bug.cgi?id=100868
+
+        Reviewed by Rob Buis.
+        PR 158809
+
+        Patch up an error where we were dereferencing a null pointer.
+
+        * WebCoreSupport/ExternalExtension.cpp:
+        (addSearchProviderMethod):
+        (IsSearchProviderInstalledMethod):
+
 2012-11-01  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         [BlackBerry] Simplify the code of returning JSValue in "BlackBerry::WebKit::WebPagePrivate::executeJavaScript"
