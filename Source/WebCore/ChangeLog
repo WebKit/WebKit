@@ -1,3 +1,15 @@
+2012-11-02  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Fix compilation errors
+        https://bugs.webkit.org/show_bug.cgi?id=101027
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeSnapshotNode.prototype._createSizeCell):
+
 2012-11-02  Andreas Kling  <kling@webkit.org>
 
         Only resolve attribute-derived style once per shared ElementAttributeData.

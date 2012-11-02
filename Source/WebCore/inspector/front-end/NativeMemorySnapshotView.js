@@ -106,11 +106,11 @@ WebInspector.NativeSnapshotNode.prototype = {
      */
     _createSizeCell: function(columnIdentifier)
     {
-        var cell = this;
+        var node = this;
         var viewProperties = null;
         while (!viewProperties || viewProperties._fillStyle === "inherit") {
-            viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(cell._nodeData);
-            cell = cell.parent;
+            viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(node._nodeData);
+            node = node.parent;
         }
 
         var sizeKiB = this._nodeData.size / 1024;
