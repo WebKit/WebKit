@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Error parsing header X-XSS-Protection: 12345678901234567: expected semicolon. The default protections will be applied.
+CONSOLE MESSAGE: Error parsing header X-XSS-Protection: 12345678901234567: expected semicolon at character position 2. The default protections will be applied.
 CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
 
 This tests that a malformed X-XSS-Protection header is not ignored when the length of its value exceeds 16 characters, and that an error is reported.

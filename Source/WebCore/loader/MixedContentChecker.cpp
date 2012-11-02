@@ -57,6 +57,7 @@ static inline CString asUTF8(const KURL& url)
     return url.string().utf8();
 }
 
+// static
 bool MixedContentChecker::isMixedContent(SecurityOrigin* securityOrigin, const KURL& url)
 {
     if (securityOrigin->protocol() != "https")

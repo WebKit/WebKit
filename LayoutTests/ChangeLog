@@ -1,3 +1,32 @@
+2012-11-02  Tom Sepez  <tsepez@chromium.org>
+
+        Support X-XSS-Protection: report=URL header syntax in XSSAuditor.
+        https://bugs.webkit.org/show_bug.cgi?id=100892
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-1-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-2-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-3-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-4-expected.txt:
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-5-expected.txt: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-5.html: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-6-expected.txt: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-6.html: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-7-expected.txt: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-7.html: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-8-expected.txt: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-8.html: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-9-expected.txt: Added.
+        * http/tests/security/xssAuditor/malformed-xss-protection-header-9.html: Added.
+        * http/tests/security/xssAuditor/report-script-tag-expected.txt: Added.
+        * http/tests/security/xssAuditor/report-script-tag.html: Added.
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * http/tests/security/xssAuditor/xss-protection-parsing-03-expected.txt: Added.
+        * http/tests/security/xssAuditor/xss-protection-parsing-03.html: Added.
+        * http/tests/security/xssAuditor/xss-protection-parsing-04-expected.txt: Added.
+        * http/tests/security/xssAuditor/xss-protection-parsing-04.html: Added.
+
 2012-11-02  Ian Vollick  <vollick@chromium.org>
 
         [Mac] REGRESSION (r130411-r130414): fast/images/repaint-subrect-grid.html failing on Apple MountainLion Debug WK2 (Tests)

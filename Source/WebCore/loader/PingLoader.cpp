@@ -103,7 +103,7 @@ void PingLoader::sendPing(Frame* frame, const KURL& pingURL, const KURL& destina
     UNUSED_PARAM(leakedPingLoader);
 }
 
-void PingLoader::reportContentSecurityPolicyViolation(Frame* frame, const KURL& reportURL, PassRefPtr<FormData> report)
+void PingLoader::sendViolationReport(Frame* frame, const KURL& reportURL, PassRefPtr<FormData> report)
 {
     ResourceRequest request(reportURL);
 #if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)

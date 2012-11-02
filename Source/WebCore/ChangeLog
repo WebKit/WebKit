@@ -1,3 +1,57 @@
+2012-11-02  Tom Sepez  <tsepez@chromium.org>
+
+        Support X-XSS-Protection: report=URL header syntax in XSSAuditor.
+        https://bugs.webkit.org/show_bug.cgi?id=100892
+
+        Reviewed by Adam Barth.
+
+        This patch adds a security feature which allows a violation report to be sent back
+        to a site when the XSSAuditor detects a reflected XSS against it.  It uses the same
+        reporting mechanism as for CSP violation reports.
+
+        Tests: http/tests/security/xssAuditor/malformed-xss-protection-header-5.html
+               http/tests/security/xssAuditor/malformed-xss-protection-header-6.html
+               http/tests/security/xssAuditor/malformed-xss-protection-header-7.html
+               http/tests/security/xssAuditor/malformed-xss-protection-header-8.html
+               http/tests/security/xssAuditor/malformed-xss-protection-header-9.html
+               http/tests/security/xssAuditor/report-script-tag.html
+               http/tests/security/xssAuditor/xss-protection-parsing-03.html
+               http/tests/security/xssAuditor/xss-protection-parsing-04.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::XSSAuditor):
+        (WebCore::XSSAuditor::init):
+        (WebCore::XSSAuditor::filterToken):
+        Invoke Ping loader's violation reporting, if requested, when a reflected
+        XSS is detected.
+        
+        * html/parser/XSSAuditor.h:
+        XSSAuditor class need to store the report URL as well as the undigested versions
+        of the request URL and request body for reporting.
+
+        * loader/MixedContentChecker.cpp:
+        (WebCore):
+        * loader/MixedContentChecker.h:
+        (MixedContentChecker):
+        Make isMixedContent() method public.
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::sendViolationReport):
+        * loader/PingLoader.h:
+        (PingLoader):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        Renamed reportContentSecurityPolicyViolation() method to sendViolationReport(),
+        since this is now used to send more than just CSP violations.
+        
+        * platform/network/HTTPParsers.cpp:
+        (WebCore):
+        (WebCore::skipEquals):
+        (WebCore::skipValue):
+        (WebCore::parseXSSProtectionHeader):
+        * platform/network/HTTPParsers.h:
+        Parse and return report= directive in X-XSS-Protection header.
+        
 2012-11-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133313.

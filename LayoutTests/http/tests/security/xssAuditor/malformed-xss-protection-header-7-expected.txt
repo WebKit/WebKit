@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Error parsing header X-XSS-Protection: 1; red: unrecognized directive at character position 3. The default protections will be applied.
+CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
+
+This tests that the X-XSS-Protection header is not ignored when there is an invalid directive, and we issue an error
+
+
+
+--------
+Frame: 'frame'
+--------
+If you see this message and no JavaScript alert() then the test PASSED.

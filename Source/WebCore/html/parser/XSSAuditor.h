@@ -85,6 +85,8 @@ private:
     bool m_isEnabled;
     XSSProtectionDisposition m_xssProtection;
 
+    String m_originalURL;
+    String m_originalHTTPBody;
     String m_decodedURL;
     String m_decodedHTTPBody;
     OwnPtr<SuffixTree<ASCIICodebook> > m_decodedHTTPBodySuffixTree;
@@ -93,7 +95,8 @@ private:
     String m_cachedDecodedSnippet;
     bool m_shouldAllowCDATA;
     unsigned m_scriptTagNestingLevel;
-    bool m_notifiedClient;
+    bool m_notifyClient;
+    KURL m_reportURL;
 };
 
 }

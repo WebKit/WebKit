@@ -47,12 +47,12 @@ public:
 
     bool canDisplayInsecureContent(SecurityOrigin*, const KURL&) const;
     bool canRunInsecureContent(SecurityOrigin*, const KURL&) const;
+    static bool isMixedContent(SecurityOrigin*, const KURL&);
 
 private:
     // FIXME: This should probably have a separate client from FrameLoader.
     FrameLoaderClient* client() const;
 
-    static bool isMixedContent(SecurityOrigin*, const KURL&);
     void logWarning(bool allowed, const String& action, const KURL&) const;
 
     Frame* m_frame;

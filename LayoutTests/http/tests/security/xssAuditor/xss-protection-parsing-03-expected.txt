@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
+
+This tests that the X-XSS-Protection header is not ignored when there is a trailing semicolon following mode=blank. Although theoretically malformed, we tolerate this case without issuing an error.
+
+
+
+--------
+Frame: 'frame'
+--------
+

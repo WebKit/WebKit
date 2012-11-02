@@ -56,7 +56,7 @@ class PingLoader : private ResourceHandleClient {
 public:
     static void loadImage(Frame*, const KURL& url);
     static void sendPing(Frame*, const KURL& pingURL, const KURL& destinationURL);
-    static void reportContentSecurityPolicyViolation(Frame*, const KURL& reportURL, PassRefPtr<FormData> report);
+    static void sendViolationReport(Frame*, const KURL& reportURL, PassRefPtr<FormData> report);
 
     ~PingLoader();
 

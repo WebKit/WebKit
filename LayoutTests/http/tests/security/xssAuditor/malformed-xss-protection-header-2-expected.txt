@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Error parsing header X-XSS-Protection: red: first non-blank character must be 0 or 1. The default protections will be applied.
+CONSOLE MESSAGE: Error parsing header X-XSS-Protection: red: expected 0 or 1 at character position 0. The default protections will be applied.
 CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
 
 This tests that the X-XSS-Protection header is not ignored when the first character is not 0 or 1, and that we issue an error.
