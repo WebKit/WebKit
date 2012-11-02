@@ -1,3 +1,17 @@
+2012-11-01  Tom Sepez  <tsepez@chromium.org>
+
+        XSS blocker false positive when page contains <iframe src="">
+        https://bugs.webkit.org/show_bug.cgi?id=93416
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/xssAuditor/iframe-injection-allowed-2-expected.txt: Added.
+        * http/tests/security/xssAuditor/iframe-injection-allowed-2.html: Added.
+        * http/tests/security/xssAuditor/iframe-injection-allowed-3-expected.txt: Added.
+        * http/tests/security/xssAuditor/iframe-injection-allowed-3.html: Added.
+        * http/tests/security/xssAuditor/iframe-injection-allowed-expected.txt: Added.
+        * http/tests/security/xssAuditor/iframe-injection-allowed.html: Added.
+
 2012-11-01  Tien-Ren Chen  <trchen@chromium.org>
 
         Fix assertion failure in RenderGeometryMap::absoluteRect when frame scale != 1.0

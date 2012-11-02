@@ -614,6 +614,12 @@ bool XSSAuditor::isContainedInRequest(const String& decodedSnippet)
 
 bool XSSAuditor::isLikelySafeResource(const String& url)
 {
+    // Give empty URLs and about:blank a pass. Making a resourceURL from an
+    // empty string below will likely later fail the "no query args test" as
+    // it inherits the document's query args.
+    if (url.isEmpty() || url == blankURL().string())
+        return true;
+
     // If the resource is loaded from the same host as the enclosing page, it's
     // probably not an XSS attack, so we reduce false positives by allowing the
     // request, ignoring scheme and port considerations. If the resource has a
