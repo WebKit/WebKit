@@ -1,3 +1,135 @@
+2012-11-02  Glenn Adams  <glenn@skynav.com>
+
+        Add support to -webkit-line-break property for CSS3 Text line-break property values and semantics.
+        https://bugs.webkit.org/show_bug.cgi?id=89235
+
+        Reviewed by Eric Seidel.
+
+        See also wiki documentation at:
+        [1] http://trac.webkit.org/wiki/LineBreaking
+        [2] http://trac.webkit.org/wiki/LineBreakingCSS3Mapping
+
+        Web exposed changes include:
+        (1) The default (initial) value for -webkit-line-break becomes 'auto', instead of 'normal';
+        (2) The values 'auto', 'loose', 'normal', and 'strict' are added to -webkit-line-break;
+        (3) See [2] above for details regarding interpretation.
+
+        Tests: css3/line-break/line-break-auto-centered.html
+               css3/line-break/line-break-auto-half-kana.html
+               css3/line-break/line-break-auto-hyphens.html
+               css3/line-break/line-break-auto-inseparables.html
+               css3/line-break/line-break-auto-iteration-marks.html
+               css3/line-break/line-break-auto-postfixes.html
+               css3/line-break/line-break-auto-prefixes.html
+               css3/line-break/line-break-auto-sound-marks.html
+               css3/line-break/line-break-loose-centered.html
+               css3/line-break/line-break-loose-half-kana.html
+               css3/line-break/line-break-loose-hyphens.html
+               css3/line-break/line-break-loose-inseparables.html
+               css3/line-break/line-break-loose-iteration-marks.html
+               css3/line-break/line-break-loose-postfixes.html
+               css3/line-break/line-break-loose-prefixes.html
+               css3/line-break/line-break-loose-sound-marks.html
+               css3/line-break/line-break-normal-centered.html
+               css3/line-break/line-break-normal-half-kana.html
+               css3/line-break/line-break-normal-hyphens.html
+               css3/line-break/line-break-normal-inseparables.html
+               css3/line-break/line-break-normal-iteration-marks.html
+               css3/line-break/line-break-normal-postfixes.html
+               css3/line-break/line-break-normal-prefixes.html
+               css3/line-break/line-break-normal-sound-marks.html
+               css3/line-break/line-break-strict-centered.html
+               css3/line-break/line-break-strict-half-kana.html
+               css3/line-break/line-break-strict-hyphens.html
+               css3/line-break/line-break-strict-inseparables.html
+               css3/line-break/line-break-strict-iteration-marks.html
+               css3/line-break/line-break-strict-postfixes.html
+               css3/line-break/line-break-strict-prefixes.html
+               css3/line-break/line-break-strict-sound-marks.html
+
+        * platform/text/LineBreakIteratorPoolICU.h:
+        (WebCore::LineBreakIteratorPool::makeLocaleWithBreakKeyword):
+        Add static function to construct ICU locale argument (also used as pool key) with additional
+        break keyword.
+        (WebCore::LineBreakIteratorPool::take):
+        (WebCore::LineBreakIteratorPool::put):
+        (LineBreakIteratorPool):
+        Remove direct dependency from ICU library (and types), moving that dependency into
+        new {open,close}LineBreakIterator() functions (defined in TextBreakIteratorICU.cpp).
+        Update to take line break mode into account.
+        Create (and cache) different break iterators depending on line break mode (in addition to locale),
+        which entails expanding pool entry key format to optionally append "@break=" +
+        "loose"|"normal"|"strict" keyword to locale string.
+
+        * platform/text/TextBreakIterator.h:
+        (WebCore::LazyLineBreakIterator::LazyLineBreakIterator):
+        (WebCore::LazyLineBreakIterator::isLooseCJKMode):
+        (WebCore::LazyLineBreakIterator::get):
+        (WebCore::LazyLineBreakIterator::reset):
+        (LazyLineBreakIterator):
+        Define LineBreakIteratorMode enumeration for use in TextBreakIterator et al.
+        Add state member to indicate line break mode.
+
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::acquireLineBreakIterator):
+        Use new line break mode when making iterator from pool.
+        Handle change of return type of LineBreakIteratorPool::take() to non-ICU type,
+        i.e., TextBreakIterator* instead of ICU's UBreakIterator*.
+        (WebCore::releaseLineBreakIterator):
+        Handle change of parameter type of LineBreakIteratorPool::put() to non-ICU type,
+        i.e., TextBreakIterator* instead of ICU's UBreakIterator*.
+        (WebCore::isCJKLocale):
+        New functions for determining if CJK rules apply.
+        (WebCore::openLineBreakIterator):
+        New function for abstracting opening of ICU style line break iterator. This is now
+        used in LineBreakIteratorPoolICU.h rather than having direct ICU API dependency there.
+        This function also takes into account the line break mode.
+        (WebCore::closeLineBreakIterator):
+        (WebCore::mapLineIteratorModeToRules):
+        New function for abstracting closing of ICU style line break iterator. This is now
+        used in LineBreakIteratorPoolICU.h rather than having direct ICU API dependency there.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        Pass line break iterator mode flag when reseting LazyLineBreakIterator.
+        Add looseMode local variable to prevent need for computing under isBreakable().
+
+        * rendering/RenderText.cpp:
+        (WebCore::mapLineBreakToIteratorMode):
+        Add implementation for mapLineBreakToIteratorMode(), used by both RenderText::computePreferredLogicalWidths
+        and RenderBlock::LineBreaker::nextLineBreak.
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        Ensure (lazy line) breakIterator is initialized for line break mode.
+        Ensure isBreakable() is passed loose mode flag to match behavior in RenderBlock::LineBreaker::nextLineBreak.
+
+        * rendering/RenderText.h:
+        (WebCore):
+        Add declaration for mapLineBreakToIteratorMode(), used by both RenderText::computePreferredLogicalWidths
+        and RenderBlock::LineBreaker::nextLineBreak.
+
+        * rendering/break_lines.cpp:
+        (WebCore):
+        Introduce two (local) enums NBSPBehavior and LooseBehavior for expanding template on nextBreakablePosition
+        to include loose mode parameter.
+        (WebCore::isBreakableSpace):
+        Add externally specified loose mode parameter to prevent need to invoke line break iterator
+        accessor method on each invocation. Use new loose mode flavors off NBP functions.
+        (WebCore::needsLineBreakIterator):
+        Introduce loose mode behavior template parameter to optimize loose mode behavior code path in order
+        to prevent regression to non loose mode path.
+        (WebCore::nextBreakablePosition):
+        (WebCore::nextBreakablePositionIgnoringNBSP):
+        Use new template parameter enums described above.
+        (WebCore::nextBreakablePositionIgnoringNBSPLoose):
+        (WebCore::nextBreakablePositionLoose):
+        Introduce two additional 'loose' mode flavors of NBP template expansions.
+
+        * rendering/break_lines.h:
+        (WebCore):
+        (WebCore::isBreakable):
+        Add externally specified loose mode parameter to prevent need to invoke line break iterator
+        accessor method on each invocation.
+
 2012-11-02  Elliott Sprehn  <esprehn@chromium.org>
 
         Replace NodeRareData hash map with a union on m_renderer

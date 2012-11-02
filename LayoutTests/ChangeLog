@@ -1,3 +1,81 @@
+2012-11-02  Glenn Adams  <glenn@skynav.com>
+
+        Add support to -webkit-line-break property for CSS3 Text line-break property values and semantics.
+        https://bugs.webkit.org/show_bug.cgi?id=89235
+
+        Reviewed by Eric Seidel.
+
+        See also wiki documentation at:
+        [1] http://trac.webkit.org/wiki/LineBreaking
+        [2] http://trac.webkit.org/wiki/LineBreakingCSS3Mapping
+
+        * css3/line-break/line-break-auto-centered-expected.html: Added.
+        * css3/line-break/line-break-auto-centered.html: Added.
+        * css3/line-break/line-break-auto-half-kana-expected.html: Added.
+        * css3/line-break/line-break-auto-half-kana.html: Added.
+        * css3/line-break/line-break-auto-hyphens-expected.html: Added.
+        * css3/line-break/line-break-auto-hyphens.html: Added.
+        * css3/line-break/line-break-auto-inseparables-expected.html: Added.
+        * css3/line-break/line-break-auto-inseparables.html: Added.
+        * css3/line-break/line-break-auto-iteration-marks-expected.html: Added.
+        * css3/line-break/line-break-auto-iteration-marks.html: Added.
+        * css3/line-break/line-break-auto-postfixes-expected.html: Added.
+        * css3/line-break/line-break-auto-postfixes.html: Added.
+        * css3/line-break/line-break-auto-prefixes-expected.html: Added.
+        * css3/line-break/line-break-auto-prefixes.html: Added.
+        * css3/line-break/line-break-auto-sound-marks-expected.html: Added.
+        * css3/line-break/line-break-auto-sound-marks.html: Added.
+        * css3/line-break/line-break-loose-centered-expected.html: Added.
+        * css3/line-break/line-break-loose-centered.html: Added.
+        * css3/line-break/line-break-loose-half-kana-expected.html: Added.
+        * css3/line-break/line-break-loose-half-kana.html: Added.
+        * css3/line-break/line-break-loose-hyphens-expected.html: Added.
+        * css3/line-break/line-break-loose-hyphens.html: Added.
+        * css3/line-break/line-break-loose-inseparables-expected.html: Added.
+        * css3/line-break/line-break-loose-inseparables.html: Added.
+        * css3/line-break/line-break-loose-iteration-marks-expected.html: Added.
+        * css3/line-break/line-break-loose-iteration-marks.html: Added.
+        * css3/line-break/line-break-loose-postfixes-expected.html: Added.
+        * css3/line-break/line-break-loose-postfixes.html: Added.
+        * css3/line-break/line-break-loose-prefixes-expected.html: Added.
+        * css3/line-break/line-break-loose-prefixes.html: Added.
+        * css3/line-break/line-break-loose-sound-marks-expected.html: Added.
+        * css3/line-break/line-break-loose-sound-marks.html: Added.
+        * css3/line-break/line-break-normal-centered-expected.html: Added.
+        * css3/line-break/line-break-normal-centered.html: Added.
+        * css3/line-break/line-break-normal-half-kana-expected.html: Added.
+        * css3/line-break/line-break-normal-half-kana.html: Added.
+        * css3/line-break/line-break-normal-hyphens-expected.html: Added.
+        * css3/line-break/line-break-normal-hyphens.html: Added.
+        * css3/line-break/line-break-normal-inseparables-expected.html: Added.
+        * css3/line-break/line-break-normal-inseparables.html: Added.
+        * css3/line-break/line-break-normal-iteration-marks-expected.html: Added.
+        * css3/line-break/line-break-normal-iteration-marks.html: Added.
+        * css3/line-break/line-break-normal-postfixes-expected.html: Added.
+        * css3/line-break/line-break-normal-postfixes.html: Added.
+        * css3/line-break/line-break-normal-prefixes-expected.html: Added.
+        * css3/line-break/line-break-normal-prefixes.html: Added.
+        * css3/line-break/line-break-normal-sound-marks-expected.html: Added.
+        * css3/line-break/line-break-normal-sound-marks.html: Added.
+        * css3/line-break/line-break-strict-centered-expected.html: Added.
+        * css3/line-break/line-break-strict-centered.html: Added.
+        * css3/line-break/line-break-strict-half-kana-expected.html: Added.
+        * css3/line-break/line-break-strict-half-kana.html: Added.
+        * css3/line-break/line-break-strict-hyphens-expected.html: Added.
+        * css3/line-break/line-break-strict-hyphens.html: Added.
+        * css3/line-break/line-break-strict-inseparables-expected.html: Added.
+        * css3/line-break/line-break-strict-inseparables.html: Added.
+        * css3/line-break/line-break-strict-iteration-marks-expected.html: Added.
+        * css3/line-break/line-break-strict-iteration-marks.html: Added.
+        * css3/line-break/line-break-strict-postfixes-expected.html: Added.
+        * css3/line-break/line-break-strict-postfixes.html: Added.
+        * css3/line-break/line-break-strict-prefixes-expected.html: Added.
+        * css3/line-break/line-break-strict-prefixes.html: Added.
+        * css3/line-break/line-break-strict-sound-marks-expected.html: Added.
+        * css3/line-break/line-break-strict-sound-marks.html: Added.
+        * platform/chromium-linux/css3/line-break/line-break-auto-half-kana-expected.html: Added.
+        * platform/chromium-linux/css3/line-break/line-break-auto-sound-marks-expected.html: Added.
+
 2012-11-02  Alice Boxhall  <aboxhall@chromium.org>
 
         Unreviewed gardening. Generalising flakiness for fast/forms/formaction-attribute.html.
