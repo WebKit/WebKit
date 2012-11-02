@@ -1,5 +1,21 @@
 2012-11-02  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::SpeculativeJIT::typedArrayDescriptor should use the Float64Array descriptor for Float64Arrays
+        https://bugs.webkit.org/show_bug.cgi?id=101114
+
+        Reviewed by Gavin Barraclough.
+
+        As in https://bugs.webkit.org/show_bug.cgi?id=101112, this was only wrong when Float64Array descriptors
+        hadn't been initialized yet. That happens rarely, but when it does happen, we would crash.
+        
+        This would also become much more wrong if we ever put type size info (num bytes, etc) in the descriptor
+        and used that directly. So it's good to fix it.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::typedArrayDescriptor):
+
+2012-11-02  Filip Pizlo  <fpizlo@apple.com>
+
         JIT::privateCompileGetByVal should use the uint8ClampedArrayDescriptor for compiling accesses to Uint8ClampedArrays
         https://bugs.webkit.org/show_bug.cgi?id=101112
 

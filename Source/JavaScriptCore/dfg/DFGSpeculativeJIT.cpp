@@ -337,7 +337,7 @@ const TypedArrayDescriptor* SpeculativeJIT::typedArrayDescriptor(ArrayMode array
     case Array::Float32Array:
         return &m_jit.globalData()->float32ArrayDescriptor();
     case Array::Float64Array:
-        return &m_jit.globalData()->float32ArrayDescriptor();
+        return &m_jit.globalData()->float64ArrayDescriptor();
     default:
         return 0;
     }
