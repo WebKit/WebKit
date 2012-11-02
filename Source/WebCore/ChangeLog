@@ -1,3 +1,11 @@
+2012-11-02  Ojan Vafai  <ojan@chromium.org>
+
+        Fix silly mistake from http://trac.webkit.org/changeset/133315.
+        Forgot to remove the "!".
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement):
+
 2012-11-02  Tom Sepez  <tsepez@chromium.org>
 
         Support X-XSS-Protection: report=URL header syntax in XSSAuditor.

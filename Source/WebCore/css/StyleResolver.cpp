@@ -1214,7 +1214,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 
 #if ENABLE(PROGRESS_ELEMENT)
     if (element->hasTagName(progressTag)) {
-        ASSERT(!m_element->hasTagName(progressTag));
+        ASSERT(m_element->hasTagName(progressTag));
         HTMLProgressElement* thisProgressElement = static_cast<HTMLProgressElement*>(element);
         HTMLProgressElement* otherProgressElement = static_cast<HTMLProgressElement*>(m_element);
         if (thisProgressElement->isDeterminate() != otherProgressElement->isDeterminate())
