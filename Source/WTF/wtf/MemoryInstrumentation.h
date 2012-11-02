@@ -100,9 +100,9 @@ public:
     explicit MemoryInstrumentation(MemoryInstrumentationClient* client) : m_client(client) { }
     virtual ~MemoryInstrumentation() { }
 
-    template <typename T> void addRootObject(const T& t)
+    template <typename T> void addRootObject(const T& t, MemoryObjectType objectType = 0)
     {
-        addObject(t, 0);
+        addObject(t, objectType);
         processDeferredInstrumentedPointers();
     }
 

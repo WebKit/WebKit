@@ -536,6 +536,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
 
     RefPtr<InspectorMemoryBlocks> children = InspectorMemoryBlocks::create();
     addPlatformComponentsInfo(children);
+    WebCoreMemoryInstrumentation::reportMemoryUsage(&memoryInstrumentation);
 
     memoryInstrumentation.addRootObject(this);
     memoryInstrumentation.addRootObject(memoryInstrumentation);

@@ -1,3 +1,24 @@
+2012-11-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI instrument NodeRareData::Map. It uses ~250k on nytimes.com
+        https://bugs.webkit.org/show_bug.cgi?id=101052
+
+        Reviewed by Yury Semikhatsky.
+
+        I noticed that in many cases cache structures are plain static HashMap, HashSet etc.
+        MemoryAgent can visit it but instrumentation for these containers report no objectType.
+        It means that addRootObject method needs to accept objectType property as an argument.
+        Otherwise I would have had to create a proxy class with proper objectType.
+
+        * dom/WebCoreMemoryInstrumentation.cpp:
+        (WebCore::WebCoreMemoryInstrumentation::reportMemoryUsage):
+        (WebCore):
+        * dom/WebCoreMemoryInstrumentation.h:
+        (WebCoreMemoryInstrumentation):
+        (WebCore):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+
 2012-11-02  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt][WK2] ASSERT hit for every mouse click
