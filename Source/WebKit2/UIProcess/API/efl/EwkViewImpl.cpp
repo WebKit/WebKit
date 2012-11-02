@@ -158,6 +158,8 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, Pas
 
 EwkViewImpl::~EwkViewImpl()
 {
+    m_pageProxy->close();
+
     // Unregister icon change callback.
     Ewk_Favicon_Database* iconDatabase = m_context->faviconDatabase();
     ASSERT(iconDatabase);

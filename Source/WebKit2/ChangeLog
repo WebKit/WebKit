@@ -1,3 +1,17 @@
+2012-11-02  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][EFL] Crash when calling WebOpenPanelResultListenerProxy::cancel() after PageClient is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=100977
+
+        Reviewed by Alexey Proskuryakov.
+
+        Call WebPageProxy::close() in EwkViewImpl's destructor to avoid crashes
+        if other objects keep a reference to the WebPageProxy and try to use
+        it after the view (and therefore the PageClient) is destroyed.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::~EwkViewImpl):
+
 2012-11-02  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove dependency on SoupPasswordManager
