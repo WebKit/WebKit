@@ -113,8 +113,6 @@ public:
     virtual void setNeedsDisplay() OVERRIDE;
     virtual void setNeedsDisplayInRect(const FloatRect&) OVERRIDE;
     virtual void setContentsNeedsDisplay() OVERRIDE;
-    virtual void setContentsScale(float) OVERRIDE;
-    virtual void setVisibleContentRectTrajectoryVector(const FloatPoint&) OVERRIDE;
     virtual void flushCompositingState(const FloatRect&) OVERRIDE;
     virtual void flushCompositingStateForThisLayerOnly() OVERRIDE;
 #if ENABLE(CSS_FILTERS)
@@ -123,6 +121,9 @@ public:
     virtual bool addAnimation(const KeyframeValueList&, const IntSize&, const Animation*, const String&, double) OVERRIDE;
     virtual void pauseAnimation(const String&, double) OVERRIDE;
     virtual void removeAnimation(const String&) OVERRIDE;
+    
+    virtual void setContentsScale(float);
+    virtual void setVisibleContentRectTrajectoryVector(const FloatPoint&);
 
     void setRootLayer(bool);
 

@@ -1,3 +1,14 @@
+2012-11-02  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        [Qt][Mac][Win] Unreviewed build fix after r133182
+        https://bugs.webkit.org/show_bug.cgi?id=100995
+
+        Remove two methods' OVERRIDE and virtual modifiers, because they cannot be found in any base class.
+        Also relocate their prototypes, because they mix with the overridden ones.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayer):
+
 2012-11-02  Jihye Kang  <jye.kang@samsung.com>
 
         [EFL][WK2] Add ewk_security_origin and ewk_storage_manager APIs
