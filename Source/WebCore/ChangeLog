@@ -1,3 +1,23 @@
+2012-11-02  Chris Rogers  <crogers@google.com>
+
+        Automating gain AudioParam with linearRampToValueAtTime introduces buzzing distortion
+        https://bugs.webkit.org/show_bug.cgi?id=100885
+
+        Reviewed by Kenneth Russell.
+
+        AudioParamTimeline needs to use double-precision for time-values to avoid drift and precision issues.
+
+        Covered by existing tests.
+
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::calculateTimelineValues):
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::valueForContextTime):
+        (WebCore::AudioParamTimeline::valuesForTimeRange):
+        (WebCore::AudioParamTimeline::valuesForTimeRangeImpl):
+        * Modules/webaudio/AudioParamTimeline.h:
+        (AudioParamTimeline):
+
 2012-11-02  Stephen Chenney  <schenney@chromium.org>
 
         Reduce redundant code in SimpleFontData[platform]

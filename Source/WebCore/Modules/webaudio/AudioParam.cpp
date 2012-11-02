@@ -155,9 +155,9 @@ void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
 {
     // Calculate values for this render quantum.
     // Normally numberOfValues will equal AudioNode::ProcessingSizeInFrames (the render quantum size).
-    float sampleRate = context()->sampleRate();
-    float startTime = narrowPrecisionToFloat(context()->currentTime());
-    float endTime = startTime + numberOfValues / sampleRate;
+    double sampleRate = context()->sampleRate();
+    double startTime = context()->currentTime();
+    double endTime = startTime + numberOfValues / sampleRate;
 
     // Note we're running control rate at the sample-rate.
     // Pass in the current value as default value.
