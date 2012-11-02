@@ -27,7 +27,7 @@ if ($cgi->param('valid-header') == 3) {
     print "X-XSS-Protection: 1; mode=block; \n";
 }
 if ($cgi->param('valid-header') == 4) {
-    print "X-XSS-Protection: 1; report=/security/contentSecurityPolicy/resources/save-report.php; mode=block; \n";
+    print "X-XSS-Protection: 1; report=/security/contentSecurityPolicy/resources/nonesuch.php; mode=block; \n";
 }
 
 if ($cgi->param('malformed-header') == 1) {

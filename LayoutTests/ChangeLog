@@ -1,3 +1,17 @@
+2012-11-02  Tom Sepez  <tsepez@chromium.org>
+
+        report-blocked-uri-cross-origin.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=101096
+
+        Reviewed by Adam Barth.
+
+        Don't actually create a report file during the syntax-only test for when
+        the report directive comes before the mode directive in an X-XSS-Protection
+        header. Thus, we avoid having to clean it up later.
+
+        * http/tests/security/xssAuditor/resources/echo-intertag.pl:
+        * platform/chromium/TestExpectations:
+
 2012-11-02  Simon Fraser  <simon.fraser@apple.com>
 
         Enable SUBPIXEL_LAYOUT on Mac
