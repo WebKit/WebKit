@@ -46,28 +46,28 @@ layer at (0,0) size 800x600
                   text run at (6,240) width 292: "getting up and walking off to other parts of "
                   text run at (298,240) width 114: "the ground, Alice"
                   text run at (57,258) width 306: "soon came to the conclusion that it was a very "
-                RenderBlock (floating) {SPAN} at (6,261) size 48x64 [bgcolor=#ADD8E6]
+                RenderBlock (floating) {SPAN} at (6,261) size 48x65 [bgcolor=#ADD8E6]
                 RenderText {#text} at (363,258) size 355x36
                   text run at (363,258) width 49: "difficult"
                   text run at (57,276) width 88: "game indeed. "
                 RenderBR {BR} at (0,0) size 0x0
                 RenderText {#text} at (57,294) size 297x18
                   text run at (57,294) width 297: "The players all played at once without waiting "
-                RenderBlock (floating) {SPAN} at (348,315) size 64x80 [bgcolor=#90EE90]
+                RenderBlock (floating) {SPAN} at (348,315) size 64x81 [bgcolor=#90EE90]
                 RenderText {#text} at (354,294) size 406x54
                   text run at (354,294) width 58: "for turns,"
-                  text run at (57,312) width 288: "quarrelling all the while, and fighting for the"
+                  text run at (57,312) width 287: "quarrelling all the while, and fighting for the"
                   text run at (6,330) width 119: "hedgehogs; and in "
                   text run at (125,330) width 109: "a very short time "
                 RenderInline {SPAN} at (0,0) size 65x18
                   RenderText {#text} at (234,330) size 65x18
                     text run at (234,330) width 65: "the Queen"
-                RenderText {#text} at (299,330) size 339x72
-                  text run at (299,330) width 46: " was in"
+                RenderText {#text} at (299,330) size 338x72
+                  text run at (299,330) width 45: " was in"
                   text run at (6,348) width 201: "a furious passion, and went "
-                  text run at (207,348) width 138: "stamping about, and"
-                  text run at (6,366) width 274: "shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
-                  text run at (280,366) width 65: "her head!\x{2019}"
+                  text run at (207,348) width 137: "stamping about, and"
+                  text run at (6,366) width 273: "shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
+                  text run at (279,366) width 65: "her head!\x{2019}"
                   text run at (6,384) width 151: "about once in a minute. "
                 RenderBR {BR} at (0,0) size 0x0
                 RenderText {#text} at (6,402) size 406x90

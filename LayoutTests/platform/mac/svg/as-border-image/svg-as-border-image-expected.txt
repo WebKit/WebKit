@@ -3,11 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 370x436 [border: (1px solid #000000)]
-        RenderBlock {H2} at (1,20) size 368x28
+      RenderBlock {DIV} at (0,0) size 370x438 [border: (1px solid #000000)]
+        RenderBlock {H2} at (1,20) size 368x29
           RenderText {#text} at (0,0) size 196x28
             text run at (0,0) width 196: "SVG border-image"
-        RenderBlock (anonymous) at (1,67) size 368x368
+        RenderBlock (anonymous) at (1,68) size 368x369
           RenderBlock {DIV} at (10,10) size 160x160 [border: (30px none #000000)]
           RenderText {#text} at (180,166) size 4x18
             text run at (180,166) width 4: " "
@@ -20,13 +20,13 @@ layer at (0,0) size 800x600
             text run at (180,350) width 4: " "
           RenderBlock {DIV} at (194,194) size 160x160 [border: (30px none #000000)]
           RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (370,417) size 4x18
-        text run at (370,417) width 4: " "
-      RenderBlock {DIV} at (374,0) size 370x436 [border: (1px solid #000000)]
-        RenderBlock {H2} at (1,20) size 368x28
+      RenderText {#text} at (370,418) size 4x18
+        text run at (370,418) width 4: " "
+      RenderBlock {DIV} at (374,0) size 370x438 [border: (1px solid #000000)]
+        RenderBlock {H2} at (1,20) size 368x29
           RenderText {#text} at (0,0) size 198x28
             text run at (0,0) width 198: "PNG border-image"
-        RenderBlock (anonymous) at (1,67) size 368x368
+        RenderBlock (anonymous) at (1,68) size 368x369
           RenderBlock {DIV} at (10,10) size 160x160 [border: (30px none #000000)]
           RenderText {#text} at (180,166) size 4x18
             text run at (180,166) width 4: " "

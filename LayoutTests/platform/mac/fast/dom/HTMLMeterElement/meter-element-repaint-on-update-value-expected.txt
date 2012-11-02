@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderMeter {METER} at (0,1) size 80x16
+      RenderMeter {METER} at (0,1) size 80x17
       RenderText {#text} at (80,0) size 4x18
         text run at (80,0) width 4: " "
-      RenderBlock {METER} at (84,1) size 80x16
+      RenderBlock {METER} at (84,1) size 80x17
         RenderMeter {DIV} at (0,0) size 80x16
           RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 40x16

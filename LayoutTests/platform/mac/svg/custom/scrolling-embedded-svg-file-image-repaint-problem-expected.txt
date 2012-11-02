@@ -1,8 +1,8 @@
-layer at (0,0) size 1026x1014
+layer at (0,0) size 1026x1015
   RenderView at (0,0) size 785x585
-layer at (0,0) size 785x1014
-  RenderBlock {HTML} at (0,0) size 785x1014
-    RenderBody {BODY} at (8,16) size 769x994
+layer at (0,0) size 785x1015
+  RenderBlock {HTML} at (0,0) size 785x1015
+    RenderBody {BODY} at (8,16) size 769x995
       RenderBlock {DIV} at (16,0) size 737x60
         RenderBlock {P} at (0,0) size 737x20
           RenderInline {A} at (0,0) size 90x18 [color=#0000EE]
@@ -41,8 +41,8 @@ layer at (0,0) size 785x1014
               RenderTable {TABLE} at (10,10) size 998x530
                 RenderTableSection {TBODY} at (0,0) size 998x530
                   RenderTableRow {TR} at (0,2) size 998x106
-                    RenderTableCell {TD} at (2,2) size 994x106 [r=0 c=0 rs=1 cs=2]
-                      RenderBlock {H1} at (8,29) size 978x48
+                    RenderTableCell {TD} at (2,2) size 994x107 [r=0 c=0 rs=1 cs=2]
+                      RenderBlock {H1} at (8,29) size 978x49
                         RenderText {#text} at (314,5) size 350x38
                           text run at (314,5) width 350: "render-groups-01-b"
                   RenderTableRow {TR} at (0,110) size 998x36 [color=#FFFFFF] [bgcolor=#000000]
@@ -87,12 +87,12 @@ layer at (0,0) size 785x1014
                     RenderTableCell {TD} at (500,148) size 496x380 [r=2 c=1 rs=1 cs=1]
                       RenderImage {IMG} at (8,8) size 480x360
                       RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (23,625) size 723x333
+      RenderBlock {DIV} at (23,625) size 723x334
         RenderBlock {P} at (0,0) size 723x40
           RenderText {#text} at (0,1) size 716x38
             text run at (0,1) width 716: "Verifies implicit rendering order (paragraph 3.3) and grouping mechanism (paragraphs 3.4)."
             text run at (0,21) width 430: "It also validates basic Shape, Image and text rendering."
-        RenderBlock {P} at (0,51) size 723x160
+        RenderBlock {P} at (0,51) size 723x161
           RenderText {#text} at (0,1) size 709x158
             text run at (0,1) width 152: "This test renders 3 "
             text run at (151,1) width 274: "elements: a text string \"SVG\", then "
@@ -110,7 +110,7 @@ layer at (0,0) size 785x1014
             text run at (0,121) width 200: "should show through the "
             text run at (199,121) width 479: "rectangle and none of the rectangle should show through the"
             text run at (0,141) width 53: "image."
-        RenderBlock {P} at (0,222) size 723x80
+        RenderBlock {P} at (0,222) size 723x81
           RenderText {#text} at (0,1) size 712x78
             text run at (0,1) width 623: "Prerequisites: the test assumes proper handling of the fill stroke, stroke-width, "
             text run at (622,1) width 61: "opacity,"
@@ -119,10 +119,10 @@ layer at (0,0) size 785x1014
             text run at (0,41) width 598: "the elements required for the test template. To ensure that the text string is "
             text run at (597,41) width 111: "overlapped by"
             text run at (0,61) width 656: "the other elements and to avoid a dependency on system fonts, an SVG font is used."
-        RenderBlock {P} at (0,313) size 723x20
+        RenderBlock {P} at (0,313) size 723x21
           RenderText {#text} at (0,1) size 492x18
             text run at (0,1) width 492: "The rendered image should match the reference image exactly."
-      RenderBlock {DIV} at (16,974) size 737x20
+      RenderBlock {DIV} at (16,974) size 737x21
         RenderBlock {P} at (0,0) size 737x20
           RenderInline {A} at (0,0) size 202x18 [color=#0000EE]
             RenderText {#text} at (153,1) size 202x18
@@ -138,4 +138,4 @@ layer at (0,0) size 785x1014
             RenderText {#text} at (408,1) size 176x18
               text run at (408,1) width 176: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0
-scrolled to 0,429
+scrolled to 0,430

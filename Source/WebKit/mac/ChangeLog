@@ -1,3 +1,14 @@
+2012-11-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable SUBPIXEL_LAYOUT on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=101076
+
+        Reviewed by Dave Hyatt.
+
+        Define ENABLE_SUBPIXEL_LAYOUT and include it in FEATURE_DEFINES.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-11-02  Adam Barth  <abarth@webkit.org>
 
         ENABLE(UNDO_MANAGER) is disabled everywhere and is not under active development

@@ -1,0 +1,25 @@
+#1 DIV element with a non-editable element only align center:
+
+Hello
+#2 DIV element with a non-editable element only align left:
+
+Hello
+#3 DIV element with a non-editable element only align right:
+
+Hello
+#4 DIV element with two non-editable elementwith padding:
+
+Hello World
+#5 DIV element empty
+
+#6 non editable DIV element with an editable empty span element
+
+Hello: 
+Anchor ([object HTMLDivElement], 0 caret[40,540] refpos=41) is incorrect.
+Anchor ([object HTMLDivElement], 3 caret[75,540] refpos=77) is incorrect.
+Anchor ([object HTMLDivElement], 1 caret[43,472] refpos=43) is correct.
+Anchor ([object HTMLDivElement], 0 caret[8,472] refpos=8) is correct.
+Anchor ([object HTMLDivElement], 0 caret[73,404] refpos=73) is correct.
+Anchor ([object HTMLDivElement], 3 caret[47,336] refpos=47) is correct.
+Anchor ([object HTMLDivElement], 0 caret[58,268] refpos=58) is correct.
+Anchor ([object HTMLSpanElement], 0 caret[0,600] refpos=0) is correct.

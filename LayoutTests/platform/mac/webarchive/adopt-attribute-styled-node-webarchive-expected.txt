@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>WebMainResource</key>
+	<dict>
+		<key>WebResourceData</key>
+		<string>&lt;html&gt;&lt;head&gt;
+
+&lt;script&gt;
+
+if (window.testRunner) {
+    testRunner.dumpDOMAsWebArchive();
+    testRunner.setCanOpenWindows();
+    testRunner.waitUntilDone();
+}
+
+var otherWindow = null;
+
+function startTest()
+{
+    otherWindow = window.open("resources/adopt-attribute-styled-node-second-window.html", "TestWindow");
+    if (!otherWindow) {
+        alert("When running this test under Safari, popup blocking must be disabled.");
+        return;
+    }
+    tryAdoptNode();
+}
+
+function tryAdoptNode()
+{
+    var otherMarquee = otherWindow.document.getElementById("otherMarquee");
+    if (!otherMarquee) {
+        setTimeout("tryAdoptNode()", 10);
+        return;
+    }
+    
+    var adoptedMarquee = document.adoptNode(otherMarquee);
+    document.getElementById("testSpan").appendChild(adoptedMarquee);
+    otherWindow.close();
+    
+    procedeAfterClosedWindow();
+}
+
+function procedeAfterClosedWindow()
+{
+    if (!otherWindow.closed) {
+        setTimeout("procedeAfterClosedWindow()", 10);
+        return;
+    }
+    
+    otherWindow = null;
+    
+    if (window.GCController) {
+        GCController.collect();
+        if (window.testRunner)
+            testRunner.notifyDone();
+        else
+            alert("How strange - You have window.GCController, but no window.testRunner.  How did this happen?");
+    }
+    else
+        alert("Now wait for garbage collection to have occured, then save the current page as a WebArchive.");
+}
+
+&lt;/script&gt;
+&lt;/head&gt;
+
+&lt;body onload="startTest();"&gt;
+&lt;span id="testSpan"&gt;This test takes a node with mapped style attributes from a different document, moves it to this document, makes sure the other document has closed,
+then makes a WebArchive from this document.  The test passes if it doesn't crash.  If running the test in Safari then garbage collection might get in the
+way of fulling testing the bug.  One should wait "awhile" before making the WebArchive.&lt;br&gt;&lt;marquee id="otherMarquee" bgcolor="blue" width="300px"&gt;Hello there marquee!&lt;/marquee&gt;&lt;/span&gt;
+
+
+&lt;/body&gt;&lt;/html&gt;</string>
+		<key>WebResourceFrameName</key>
+		<string></string>
+		<key>WebResourceMIMEType</key>
+		<string>text/html</string>
+		<key>WebResourceTextEncodingName</key>
+		<string>UTF-8</string>
+		<key>WebResourceURL</key>
+		<string>file:///LayoutTests/webarchive/adopt-attribute-styled-node-webarchive.html</string>
+	</dict>
+</dict>
+</plist>

@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x301
-  RenderBlock {html} at (0,0) size 800x301
-    RenderBody {body} at (8,21) size 784x272
+layer at (0,0) size 800x302
+  RenderBlock {html} at (0,0) size 800x302
+    RenderBody {body} at (8,21) size 784x273
       RenderBlock {h1} at (0,0) size 784x37
         RenderText {#text} at (0,0) size 749x37
           text run at (0,0) width 749: "Test case for x/y attributes on root-most <svg> element"
-      RenderBlock {p} at (0,58) size 784x54
+      RenderBlock {p} at (0,58) size 784x55
         RenderText {#text} at (0,0) size 29x18
           text run at (0,0) width 29: "The "
         RenderInline {code} at (0,0) size 8x15
@@ -30,7 +30,7 @@ layer at (0,0) size 800x301
         RenderText {#text} at (0,18) size 742x36
           text run at (0,18) width 742: "element is the element at the root of an SVG fragment. For the following test to pass, the green SVG square should be"
           text run at (0,36) width 623: "rendered aligned to the top-left of the red CSS-rendered square, which is 10 pixels wider and taller."
-      RenderBlock {p} at (0,128) size 784x18
+      RenderBlock {p} at (0,128) size 784x19
         RenderText {#text} at (0,0) size 27x18
           text run at (0,0) width 27: "See "
         RenderInline {a} at (0,0) size 71x18 [color=#0000EE]
@@ -38,7 +38,7 @@ layer at (0,0) size 800x301
             text run at (27,0) width 71: "Bug 13828"
         RenderText {#text} at (98,0) size 4x18
           text run at (98,0) width 4: "."
-      RenderBlock {div} at (0,162) size 110x110 [bgcolor=#FF0000]
-        RenderSVGRoot {svg} at (8,183) size 100x100
-          RenderSVGRect {rect} at (8,183) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderBlock {div} at (0,162) size 110x111 [bgcolor=#FF0000]
+        RenderSVGRoot {svg} at (8,183) size 100x101
+          RenderSVGRect {rect} at (8,183) size 100x101 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
         RenderText {#text} at (0,0) size 0x0

@@ -30,17 +30,17 @@ Flow Threads
             text run at (35,18) width 216: "the regions. These lines will not"
             text run at (35,36) width 178: "spill out of the regions. "
             text run at (213,36) width 38: "These"
-            text run at (47,59) width 291: "lines will not spill out of the regions. These"
-            text run at (47,77) width 229: "lines will not spill out of the regions."
+            text run at (48,59) width 290: "lines will not spill out of the regions. These"
+            text run at (48,77) width 229: "lines will not spill out of the regions."
         RenderBlock {P} at (1,146) size 291x72
-          RenderText {#text} at (47,0) size 291x72
-            text run at (47,0) width 291: "These lines will not spill out of the regions."
-            text run at (47,18) width 291: "These lines will not spill out of the regions."
-            text run at (47,36) width 291: "These lines will not spill out of the regions."
-            text run at (47,54) width 271: "These lines will not spill out of the regions."
+          RenderText {#text} at (48,0) size 290x72
+            text run at (48,0) width 290: "These lines will not spill out of the regions."
+            text run at (48,18) width 290: "These lines will not spill out of the regions."
+            text run at (48,36) width 290: "These lines will not spill out of the regions."
+            text run at (48,54) width 271: "These lines will not spill out of the regions."
         RenderBlock {DIV} at (1,234) size 500x18
-          RenderText {#text} at (47,0) size 286x18
-            text run at (47,0) width 286: "Clipped line of text that should not be visible."
+          RenderText {#text} at (48,0) size 286x18
+            text run at (48,0) width 286: "Clipped line of text that should not be visible."
   Regions for flow 'flow1'
     RenderRegion {DIV} #region1
     RenderRegion {DIV} #region2

@@ -10,7 +10,7 @@ layer at (0,0) size 785x2886
               RenderText {#text} at (12,11) size 12x18
                 text run at (12,11) width 12: "A"
             RenderTableCell {TD} at (40,52) size 427x47 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (176,11) size 76x25
+              RenderImage {IMG} at (175,11) size 77x25
             RenderTableCell {TD} at (469,2) size 296x148 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (12,11) size 272x126
                 text run at (12,11) width 272: "test test test test test test test test test test test"
@@ -29,7 +29,7 @@ layer at (0,0) size 785x2886
               RenderText {#text} at (12,11) size 12x18
                 text run at (12,11) width 12: "B"
             RenderTableCell {TD} at (40,194) size 427x64 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (199,11) size 30x42
+              RenderImage {IMG} at (198,11) size 31x42
             RenderTableCell {TD} at (469,152) size 296x148 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (12,11) size 272x126
                 text run at (12,11) width 272: "test test test test test test test test test test test"
@@ -48,7 +48,7 @@ layer at (0,0) size 785x2886
               RenderText {#text} at (12,11) size 12x18
                 text run at (12,11) width 12: "C"
             RenderTableCell {TD} at (40,302) size 427x160 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (104,11) size 220x138
+              RenderImage {IMG} at (103,11) size 221x138
             RenderTableCell {TD} at (469,308) size 296x148 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
               RenderText {#text} at (12,11) size 272x126
                 text run at (12,11) width 272: "test test test test test test test test test test test"
@@ -67,7 +67,7 @@ layer at (0,0) size 785x2886
               RenderText {#text} at (12,11) size 12x18
                 text run at (12,11) width 12: "D"
             RenderTableCell {TD} at (40,484) size 427x107 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (114,11) size 200x85
+              RenderImage {IMG} at (113,11) size 201x85
             RenderTableCell {TD} at (469,464) size 296x148 [border: (1px inset #808080)] [r=3 c=2 rs=1 cs=1]
               RenderText {#text} at (12,11) size 272x126
                 text run at (12,11) width 272: "test test test test test test test test test test test"
@@ -86,7 +86,7 @@ layer at (0,0) size 785x2886
               RenderText {#text} at (13,11) size 10x18
                 text run at (13,11) width 10: "E"
             RenderTableCell {TD} at (40,652) size 427x72 [border: (1px inset #808080)] [r=4 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (187,11) size 54x50
+              RenderImage {IMG} at (186,11) size 55x50
             RenderTableCell {TD} at (469,614) size 296x148 [border: (1px inset #808080)] [r=4 c=2 rs=1 cs=1]
               RenderText {#text} at (12,11) size 272x126
                 text run at (12,11) width 272: "test test test test test test test test test test test"
@@ -124,7 +124,7 @@ layer at (0,0) size 785x2886
               RenderText {#text} at (12,11) size 12x18
                 text run at (12,11) width 12: "G"
             RenderTableCell {TD} at (40,945) size 427x85 [border: (1px inset #808080)] [r=6 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (156,11) size 116x63
+              RenderImage {IMG} at (155,11) size 117x63
             RenderTableCell {TD} at (469,914) size 296x148 [border: (1px inset #808080)] [r=6 c=2 rs=1 cs=1]
               RenderText {#text} at (12,11) size 272x126
                 text run at (12,11) width 272: "test test test test test test test test test test test"
@@ -200,7 +200,7 @@ layer at (0,0) size 785x2886
               RenderText {#text} at (12,11) size 12x18
                 text run at (12,11) width 12: "K"
             RenderTableCell {TD} at (40,1552) size 427x72 [border: (1px inset #808080)] [r=10 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (78,11) size 272x50
+              RenderImage {IMG} at (77,11) size 273x50
             RenderTableCell {TD} at (469,1514) size 296x148 [border: (1px inset #808080)] [r=10 c=2 rs=1 cs=1]
               RenderText {#text} at (12,11) size 272x126
                 text run at (12,11) width 272: "test test test test test test test test test test test"
@@ -238,7 +238,7 @@ layer at (0,0) size 785x2886
               RenderText {#text} at (13,11) size 10x18
                 text run at (13,11) width 10: "L"
             RenderTableCell {TD} at (40,1844) size 427x88 [border: (1px inset #808080)] [r=12 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (89,11) size 250x66
+              RenderImage {IMG} at (88,11) size 251x66
             RenderTableCell {TD} at (469,1814) size 296x148 [border: (1px inset #808080)] [r=12 c=2 rs=1 cs=1]
               RenderText {#text} at (12,11) size 272x126
                 text run at (12,11) width 272: "test test test test test test test test test test test"
@@ -352,7 +352,7 @@ layer at (0,0) size 785x2886
               RenderText {#text} at (12,11) size 12x18
                 text run at (12,11) width 12: "R"
             RenderTableCell {TD} at (40,2714) size 427x152 [border: (1px inset #808080)] [r=18 c=1 rs=1 cs=1]
-              RenderImage {IMG} at (42,11) size 344x130
+              RenderImage {IMG} at (41,11) size 345x130
             RenderTableCell {TD} at (469,2716) size 296x148 [border: (1px inset #808080)] [r=18 c=2 rs=1 cs=1]
               RenderText {#text} at (12,11) size 272x126
                 text run at (12,11) width 272: "test test test test test test test test test test test"

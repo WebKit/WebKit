@@ -1,8 +1,8 @@
-layer at (0,0) size 785x779
+layer at (0,0) size 785x780
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x779
-  RenderBlock {HTML} at (0,0) size 785x779
-    RenderBody {BODY} at (8,8) size 769x763 [bgcolor=#CCCCCC]
+  RenderBlock {HTML} at (0,0) size 785x780
+    RenderBody {BODY} at (8,8) size 769x764 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -25,7 +25,7 @@ layer at (0,0) size 785x779
       RenderBlock {P} at (0,170) size 769x192
         RenderText {#text} at (0,7) size 187x18
           text run at (0,7) width 187: "This is a paragraph that has a "
-        RenderInline {SPAN} at (0,0) size 761x170 [border: (10px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 761x172 [border: (10px solid #FF0000)]
           RenderText {#text} at (239,7) size 761x146
             text run at (239,7) width 522: "very long span in it, and the span has a 10px red border separated from the span by"
             text run at (0,39) width 167: "2pt, and a margin of 30pt. "
@@ -42,7 +42,7 @@ layer at (0,0) size 785x779
       RenderBlock {P} at (0,378) size 769x64
         RenderText {#text} at (0,0) size 159x15
           text run at (0,0) width 159: "This is a paragraph that has a "
-        RenderInline {SPAN} at (0,0) size 764x91 [border: (12px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 764x93 [border: (12px solid #FF0000)]
           RenderText {#text} at (173,0) size 764x63
             text run at (173,0) width 552: "very long span in it, and the span has a 12px red border separated from the span by 2pt of padding (the"
             text run at (0,16) width 764: "difference between the line-height and the font-size), which should overlap with the lines of text above and below the span, since the padding"
@@ -52,7 +52,7 @@ layer at (0,0) size 785x779
         RenderText {#text} at (83,48) size 415x15
           text run at (83,48) width 3: " "
           text run at (86,48) width 412: "The line spacing in the whole paragraph should be 12pt, with font-size 10pt."
-      RenderTable {TABLE} at (0,455) size 769x308 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,455) size 769x309 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x306
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
@@ -67,7 +67,7 @@ layer at (0,0) size 785x779
               RenderBlock {P} at (4,4) size 747x192
                 RenderText {#text} at (0,7) size 187x18
                   text run at (0,7) width 187: "This is a paragraph that has a "
-                RenderInline {SPAN} at (0,0) size 747x170 [border: (10px solid #FF0000)]
+                RenderInline {SPAN} at (0,0) size 747x172 [border: (10px solid #FF0000)]
                   RenderText {#text} at (239,7) size 747x146
                     text run at (239,7) width 502: "very long span in it, and the span has a 10px red border separated from the span"
                     text run at (0,39) width 187: "by 2pt, and a margin of 30pt. "
@@ -84,7 +84,7 @@ layer at (0,0) size 785x779
               RenderBlock {P} at (4,212) size 747x64
                 RenderText {#text} at (0,0) size 159x15
                   text run at (0,0) width 159: "This is a paragraph that has a "
-                RenderInline {SPAN} at (0,0) size 725x91 [border: (12px solid #FF0000)]
+                RenderInline {SPAN} at (0,0) size 725x93 [border: (12px solid #FF0000)]
                   RenderText {#text} at (173,0) size 725x63
                     text run at (173,0) width 552: "very long span in it, and the span has a 12px red border separated from the span by 2pt of padding (the"
                     text run at (0,16) width 716: "difference between the line-height and the font-size), which should overlap with the lines of text above and below the span, since the"

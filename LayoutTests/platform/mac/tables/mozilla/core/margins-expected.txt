@@ -75,7 +75,7 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (2,2) size 396x36
           RenderTableRow {TR} at (0,2) size 396x32
             RenderTableCell {TD} at (2,2) size 114x32 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (41,2) size 31x28 [border: (1px outset #808080)]
+              RenderTable {TABLE} at (41,2) size 32x28 [border: (1px outset #808080)]
                 RenderTableSection {TBODY} at (1,1) size 29x26
                   RenderTableRow {TR} at (0,2) size 29x22
                     RenderTableCell {TD} at (2,2) size 25x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

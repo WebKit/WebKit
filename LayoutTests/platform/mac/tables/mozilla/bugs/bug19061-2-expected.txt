@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {H3} at (0,0) size 784x22
         RenderText {#text} at (0,0) size 163x22
           text run at (0,0) width 163: "Thead/Tfoot/Tbody"
-      RenderBlock {PRE} at (0,40) size 784x108
+      RenderBlock {PRE} at (0,40) size 784x109
         RenderInline {FONT} at (0,0) size 318x108
           RenderText {#text} at (0,0) size 6x12
             text run at (0,0) width 6: " "
@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
             text run at (108,84) width 0: " "
             text run at (0,96) width 318: "      background-color: #ff99ff;  text-align: center;"
             text run at (318,96) width 0: " "
-      RenderTable {TABLE} at (0,161) size 784x218 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,161) size 784x219 [border: (1px outset #808080)]
         RenderTableSection {THEAD} at (1,1) size 782x38 [bgcolor=#00FFFF]
           RenderTableRow {TR} at (0,4) size 782x30
             RenderTableCell {TD} at (4,4) size 137x30 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x267
-  RenderBlock {HTML} at (0,0) size 800x267
-    RenderBody {BODY} at (8,21) size 784x230
+layer at (0,0) size 800x268
+  RenderBlock {HTML} at (0,0) size 800x268
+    RenderBody {BODY} at (8,21) size 784x231
       RenderBlock {H1} at (0,0) size 784x37
         RenderText {#text} at (0,0) size 529x37
           text run at (0,0) width 529: "Letter spacing lost for emphasized text"
-      RenderBlock {P} at (0,58) size 784x36
+      RenderBlock {P} at (0,58) size 784x37
         RenderText {#text} at (0,0) size 281x18
           text run at (0,0) width 281: "This example demonstrates that text inside a "
         RenderInline {CODE} at (0,0) size 8x15
@@ -35,7 +35,7 @@ layer at (0,0) size 800x267
         RenderText {#text} at (620,0) size 781x36
           text run at (620,0) width 161: " CSS attribute that should"
           text run at (0,18) width 296: "be inherited. This was discovered in Safari 1.0."
-      RenderBlock {DIV} at (0,110) size 784x120
+      RenderBlock {DIV} at (0,110) size 784x121
         RenderBlock {P} at (0,0) size 784x18
           RenderText {#text} at (0,0) size 122x18
             text run at (0,0) width 122: "Text inside "

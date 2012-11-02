@@ -1,5 +1,5 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
+layer at (0,0) size 802x585
+  RenderView at (0,0) size 800x585
 layer at (0,0) size 800x296
   RenderBlock {HTML} at (0,0) size 800x296
     RenderBody {BODY} at (8,16) size 784x272
@@ -12,14 +12,15 @@ layer at (0,0) size 800x296
         RenderText {#text} at (358,0) size 292x18
           text run at (358,0) width 292: ". The rotated box should be correctly redrawn."
       RenderBlock (anonymous) at (0,34) size 784x18
-      RenderBlock (anonymous) at (0,52) size 784x202
       RenderBlock (anonymous) at (0,254) size 784x18
         RenderText {#text} at (0,0) size 0x0
 layer at (18,110) size 82x58
   RenderInline (relative positioned) {SPAN} at (0,0) size 82x58 [bgcolor=#DDDDDD]
     RenderText {#text} at (20,0) size 62x18
       text run at (20,0) width 62: "Container"
-layer at (108,168) size 202x202
+layer at (18,128) size 784x202
+  RenderBlock (anonymous) at (0,52) size 784x202
+layer at (118,228) size 202x202
   RenderBlock (relative positioned) {DIV} at (0,0) size 202x202 [bgcolor=#CCCCCC] [border: (1px solid #000000)]
 layer at (18,330) size 20x58
   RenderInline (relative positioned) {SPAN} at (0,0) size 20x58 [bgcolor=#DDDDDD]

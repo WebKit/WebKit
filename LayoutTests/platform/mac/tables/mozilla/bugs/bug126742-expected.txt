@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTable {TABLE} at (0,0) size 784x377
           RenderTableSection {TBODY} at (0,0) size 784x377
             RenderTableRow {TR} at (0,0) size 784x66
-              RenderTableCell {TD} at (0,7) size 784x52 [r=0 c=0 rs=1 cs=1]
+              RenderTableCell {TD} at (0,6) size 784x53 [r=0 c=0 rs=1 cs=1]
                 RenderBlock {H2} at (0,0) size 784x33
                   RenderInline {FONT} at (0,0) size 102x33
                     RenderText {#text} at (341,0) size 102x33

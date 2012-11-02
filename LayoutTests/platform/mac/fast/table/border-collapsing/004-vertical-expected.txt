@@ -1,12 +1,12 @@
-layer at (0,0) size 1444x914
+layer at (0,0) size 1444x915
   RenderView at (0,0) size 785x585
-layer at (0,0) size 785x914
-  RenderBlock {HTML} at (0,0) size 785x914
-    RenderBody {BODY} at (8,21) size 769x885
+layer at (0,0) size 785x915
+  RenderBlock {HTML} at (0,0) size 785x915
+    RenderBody {BODY} at (8,21) size 769x886
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 290x37
           text run at (0,0) width 290: "Table Border Models"
-      RenderBlock {P} at (0,58) size 769x18
+      RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 117x18
           text run at (0,0) width 117: "This tests tests the "
         RenderInline {A} at (0,0) size 208x18 [color=#0000EE]
@@ -15,7 +15,7 @@ layer at (0,0) size 785x914
         RenderText {#text} at (325,0) size 180x18
           text run at (325,0) width 8: ". "
           text run at (333,0) width 172: "The styles applied here are:"
-      RenderBlock {PRE} at (0,92) size 769x180
+      RenderBlock {PRE} at (0,92) size 769x181
         RenderText {#text} at (0,0) size 688x180
           text run at (0,0) width 408: "TABLE   { margin: 1em; border: medium solid blue; }"
           text run at (408,0) width 0: " "
@@ -41,7 +41,7 @@ layer at (0,0) size 785x914
           text run at (688,150) width 0: " "
           text run at (0,165) width 264: "    { border: medium solid red; }"
           text run at (264,165) width 0: " "
-      RenderBlock {DIV} at (0,285) size 1436x600
+      RenderBlock {DIV} at (0,285) size 1436x601
         RenderTable {TABLE} at (16,16) size 238x568 [border: (1px solid #0000FF)]
           RenderTableSection {TBODY} at (1,1) size 235x565
             RenderTableRow {TR} at (0,0) size 31x565

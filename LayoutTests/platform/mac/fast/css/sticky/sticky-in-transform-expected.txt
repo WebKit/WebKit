@@ -1,0 +1,15 @@
+layer at (0,0) size 5000x585
+  RenderView at (0,0) size 800x585
+layer at (0,0) size 800x18
+  RenderBlock {HTML} at (0,0) size 800x18
+    RenderBody {BODY} at (0,0) size 5000x18
+      RenderText {#text} at (0,0) size 7x18
+        text run at (0,0) width 7: "a"
+      RenderText {#text} at (0,0) size 0x0
+layer at (600,28) size 500x200
+  RenderBlock (positioned) {DIV} at (600,28) size 500x200
+layer at (600,28) size 800x200
+  RenderBlock {DIV} at (0,0) size 800x200
+layer at (600,28) size 200x200
+  RenderBlock (sticky positioned) {DIV} at (0,0) size 200x200 [bgcolor=#008000]
+scrolled to 100,0

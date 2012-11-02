@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {H3} at (0,0) size 784x23
         RenderText {#text} at (0,0) size 495x23
           text run at (0,0) width 495: "tt's, font-family inheriting and font-size: a bug"
-      RenderTable {TABLE} at (0,41) size 784x376
+      RenderTable {TABLE} at (0,41) size 784x377
         RenderTableSection {TBODY} at (0,0) size 784x376
           RenderTableRow {TR} at (0,10) size 784x211
             RenderTableCell {TD} at (10,10) size 764x211 [r=0 c=0 rs=1 cs=2]

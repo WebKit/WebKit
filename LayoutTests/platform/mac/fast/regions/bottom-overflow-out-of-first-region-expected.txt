@@ -19,7 +19,7 @@ Flow Threads
       RenderNamedFlowThread at (0,0) size 400x300
         RenderBlock {DIV} at (0,0) size 400x200
           RenderBlock {DIV} at (5,5) size 390x190 [border: (1px solid #0000FF)]
-            RenderBlock {DIV} at (48,1) size 293x229 [border: (1px solid #008000)]
+            RenderBlock {DIV} at (48,1) size 294x229 [border: (1px solid #008000)]
               RenderBlock {P} at (1,17) size 291x54
                 RenderText {#text} at (0,0) size 291x54
                   text run at (0,0) width 291: "These lines should all fit to the width of the"

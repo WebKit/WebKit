@@ -6,31 +6,31 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {#text} at (0,0) size 565x18
           text run at (0,0) width 565: "In this sample, the H3s should be nested. This matches Firefox, IE, and the HTML5 spec."
-      RenderBlock {H3} at (0,36) size 784x297 [border: (2px solid #FF0000)]
+      RenderBlock {H3} at (0,36) size 784x303 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (4,4) size 776x22
           RenderInline {I} at (0,0) size 33x22
             RenderText {#text} at (0,0) size 33x22
               text run at (0,0) width 33: "One"
-        RenderBlock (anonymous) at (4,47) size 776x225
-          RenderBlock {H3} at (0,0) size 776x225 [border: (2px solid #FF0000)]
+        RenderBlock (anonymous) at (4,47) size 776x230
+          RenderBlock {H3} at (0,0) size 776x229 [border: (2px solid #FF0000)]
             RenderBlock (anonymous) at (4,4) size 768x26
               RenderInline {I} at (0,0) size 39x26
                 RenderText {#text} at (0,0) size 39x26
                   text run at (0,0) width 39: "Two"
-            RenderBlock (anonymous) at (4,55) size 768x141
-              RenderBlock {H3} at (0,0) size 768x141 [border: (2px solid #FF0000)]
+            RenderBlock (anonymous) at (4,55) size 768x144
+              RenderBlock {H3} at (0,0) size 768x143 [border: (2px solid #FF0000)]
                 RenderBlock (anonymous) at (4,4) size 760x31
                   RenderInline {I} at (0,0) size 64x31
                     RenderText {#text} at (0,0) size 64x31
                       text run at (0,0) width 64: "Three"
-                RenderBlock (anonymous) at (4,64) size 760x44
+                RenderBlock (anonymous) at (4,64) size 760x45
                   RenderBlock {H3} at (0,0) size 760x44 [border: (2px solid #FF0000)]
                     RenderInline {I} at (0,0) size 64x36
                       RenderText {#text} at (4,4) size 64x36
                         text run at (4,4) width 64: "Four"
-                RenderBlock (anonymous) at (4,137) size 760x0
+                RenderBlock (anonymous) at (4,138) size 760x1
                   RenderInline {I} at (0,0) size 0x0
-            RenderBlock (anonymous) at (4,221) size 768x0
+            RenderBlock (anonymous) at (4,224) size 768x1
               RenderInline {I} at (0,0) size 0x0
-        RenderBlock (anonymous) at (4,293) size 776x0
+        RenderBlock (anonymous) at (4,297) size 776x1
           RenderInline {I} at (0,0) size 0x0

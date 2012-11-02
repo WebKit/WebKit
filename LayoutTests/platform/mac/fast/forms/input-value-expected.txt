@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 249x18
                   text run at (1,1) width 249: "check box with value property changed"
               RenderTableCell {TD} at (389,56) size 243x20 [r=2 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (3,4) size 12x12
+                RenderBlock {INPUT} at (3,4) size 13x12
               RenderTableCell {TD} at (634,56) size 62x20 [r=2 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,1) width 28: "after"
@@ -81,7 +81,7 @@ layer at (0,0) size 800x600
                   text run at (1,1) width 224: "button with value property changed"
               RenderTableCell {TD} at (389,100) size 243x24 [r=4 c=1 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 41x18 [bgcolor=#C0C0C0]
-                  RenderBlock (anonymous) at (8,2) size 25x13
+                  RenderBlock (anonymous) at (8,2) size 25x14
                     RenderText at (0,0) size 25x13
                       text run at (0,0) width 25: "after"
               RenderTableCell {TD} at (634,102) size 62x20 [r=4 c=2 rs=1 cs=1]
@@ -107,7 +107,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 216x18
                   text run at (1,1) width 216: "radio with value property changed"
               RenderTableCell {TD} at (389,148) size 243x21 [r=6 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (3,4) size 12x13
+                RenderBlock {INPUT} at (3,4) size 13x13
               RenderTableCell {TD} at (634,148) size 62x20 [r=6 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,1) width 28: "after"
@@ -131,7 +131,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 247x18
                   text run at (1,1) width 247: "check box with value attribute changed"
               RenderTableCell {TD} at (389,198) size 243x20 [r=8 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (3,4) size 12x12
+                RenderBlock {INPUT} at (3,4) size 13x12
               RenderTableCell {TD} at (634,198) size 62x20 [r=8 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,1) width 28: "after"
@@ -143,7 +143,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 383x18
                   text run at (1,1) width 383: "text with value property changed, then turned into check box"
               RenderTableCell {TD} at (389,220) size 243x20 [r=9 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (3,4) size 12x12
+                RenderBlock {INPUT} at (3,4) size 13x12
               RenderTableCell {TD} at (634,220) size 62x20 [r=9 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,1) width 28: "after"
@@ -167,7 +167,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (1,1) size 381x18
                   text run at (1,1) width 381: "text with value attribute changed, then turned into check box"
               RenderTableCell {TD} at (389,269) size 243x20 [r=11 c=1 rs=1 cs=1]
-                RenderBlock {INPUT} at (3,4) size 12x12
+                RenderBlock {INPUT} at (3,4) size 13x12
               RenderTableCell {TD} at (634,269) size 62x20 [r=11 c=2 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 28x18
                   text run at (1,1) width 28: "after"
@@ -193,7 +193,7 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (389,318) size 243x24 [r=13 c=1 rs=1 cs=1]
                 RenderFileUploadControl {INPUT} at (3,3) size 237x18 "no file selected"
                   RenderButton {INPUT} at (0,0) size 78x18 [bgcolor=#C0C0C0]
-                    RenderBlock (anonymous) at (8,2) size 62x13
+                    RenderBlock (anonymous) at (8,2) size 62x14
                       RenderText at (0,0) size 62x13
                         text run at (0,0) width 62: "Choose File"
               RenderTableCell {TD} at (634,329) size 62x2 [r=13 c=2 rs=1 cs=1]

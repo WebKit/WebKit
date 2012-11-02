@@ -118,7 +118,7 @@ example-rbw.rbw has MIME type text/x-ruby-script
 example-rgb.rgb has MIME type image/x-rgb
 example-rm.rm has MIME type application/vnd.rn-realmedia
 example-roff.roff has MIME type application/x-troff
-example-rpm.rpm has MIME type audio/x-pn-realaudio-plugin
+example-rpm.rpm has MIME type application/x-rpm
 example-rtf.rtf has MIME type text/rtf
 example-rtx.rtx has MIME type text/richtext
 Using an image element to load resources, this test makes sure that every MIME type the loader should know about based solely on file extension in file:// urls is correct.

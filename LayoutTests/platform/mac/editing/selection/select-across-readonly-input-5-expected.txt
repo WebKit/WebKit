@@ -12,22 +12,22 @@ layer at (0,0) size 800x600
           text run at (0,0) width 762: "To manually test, select text by a mouse drag starting in \"WebKit\" and ending in \"hello\". Selection should extend only in"
           text run at (0,18) width 263: "the input element that contains \"WebKit\"."
       RenderBlock {DIV} at (0,104) size 784x28
-        RenderTextControl {INPUT} at (0,2) size 59x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-        RenderText {#text} at (59,6) size 4x18
-          text run at (59,6) width 4: " "
-        RenderInline {SPAN} at (0,0) size 37x18
-          RenderText {#text} at (63,6) size 37x18
-            text run at (63,6) width 37: "world"
-        RenderText {#text} at (100,6) size 4x18
-          text run at (100,6) width 4: " "
-        RenderTextControl {INPUT} at (104,2) size 59x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (0,2) size 60x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderText {#text} at (59,6) size 5x18
+          text run at (59,6) width 5: " "
+        RenderInline {SPAN} at (0,0) size 38x18
+          RenderText {#text} at (63,6) size 38x18
+            text run at (63,6) width 38: "world"
+        RenderText {#text} at (100,6) size 5x18
+          text run at (100,6) width 5: " "
+        RenderTextControl {INPUT} at (104,2) size 60x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
 layer at (11,117) size 53x18
-  RenderBlock {DIV} at (3,3) size 53x18
+  RenderBlock {DIV} at (3,3) size 54x18
     RenderText {#text} at (0,0) size 38x18
       text run at (0,0) width 38: "hello"
 layer at (115,117) size 53x18 scrollWidth 54
-  RenderBlock {DIV} at (3,3) size 53x18
+  RenderBlock {DIV} at (3,3) size 54x18
     RenderText {#text} at (0,0) size 54x18
       text run at (0,0) width 54: "WebKit"
 selection start: position 0 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 5 {INPUT} of child 5 {DIV} of body
