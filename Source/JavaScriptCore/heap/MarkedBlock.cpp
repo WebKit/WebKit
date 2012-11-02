@@ -78,7 +78,7 @@ MarkedBlock::FreeList MarkedBlock::specializedSweep()
     FreeCell* head = 0;
     size_t count = 0;
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
-        if (blockState == Marked && m_marks.get(i))
+        if (blockState == Marked && (m_marks.get(i) || (m_newlyAllocated && m_newlyAllocated->get(i))))
             continue;
 
         JSCell* cell = reinterpret_cast_ptr<JSCell*>(&atoms()[i]);
@@ -93,6 +93,11 @@ MarkedBlock::FreeList MarkedBlock::specializedSweep()
             ++count;
         }
     }
+
+    // We only want to discard the newlyAllocated bits if we're creating a FreeList,
+    // otherwise we would lose information on what's currently alive.
+    if (sweepMode == SweepToFreeList && m_newlyAllocated)
+        m_newlyAllocated.clear();
 
     m_state = ((sweepMode == SweepToFreeList) ? FreeListed : Marked);
     return FreeList(head, count * cellSize());
@@ -138,12 +143,21 @@ MarkedBlock::FreeList MarkedBlock::sweepHelper(SweepMode sweepMode)
     return FreeList();
 }
 
-class SetAllMarksFunctor : public MarkedBlock::VoidFunctor {
+class SetNewlyAllocatedFunctor : public MarkedBlock::VoidFunctor {
 public:
+    SetNewlyAllocatedFunctor(MarkedBlock* block)
+        : m_block(block)
+    {
+    }
+
     void operator()(JSCell* cell)
     {
-        MarkedBlock::blockFor(cell)->setMarked(cell);
+        ASSERT(MarkedBlock::blockFor(cell) == m_block);
+        m_block->setNewlyAllocated(cell);
     }
+
+private:
+    MarkedBlock* m_block;
 };
 
 void MarkedBlock::canonicalizeCellLivenessData(const FreeList& freeList)
@@ -168,14 +182,17 @@ void MarkedBlock::canonicalizeCellLivenessData(const FreeList& freeList)
     // allocated from our free list are not currently marked, so we need another
     // way to tell what's live vs dead. 
     
-    SetAllMarksFunctor functor;
+    ASSERT(!m_newlyAllocated);
+    m_newlyAllocated = adoptPtr(new WTF::Bitmap<atomsPerBlock>());
+
+    SetNewlyAllocatedFunctor functor(this);
     forEachCell(functor);
 
     FreeCell* next;
     for (FreeCell* current = head; current; current = next) {
         next = current->next;
         reinterpret_cast<JSCell*>(current)->zap();
-        clearMarked(current);
+        clearNewlyAllocated(current);
     }
     
     m_state = Marked;

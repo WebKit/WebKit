@@ -1,3 +1,50 @@
+2012-11-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        MarkedBlocks should use something other than the mark bits to indicate liveness for newly allocated objects
+        https://bugs.webkit.org/show_bug.cgi?id=100877
+
+        Reviewed by Filip Pizlo.
+
+        Currently when we canonicalize cell liveness data in MarkedBlocks, we set the mark bit for every cell in the 
+        block except for those in the free list. This allows us to consider objects that were allocated since the 
+        previous collection to be considered live until they have a chance to be properly marked by the collector.
+
+        If we want to use the mark bits to signify other types of information, e.g. using sticky mark bits for generational 
+        collection, we will have to keep track of newly allocated objects in a different fashion when we canonicalize cell liveness.
+
+        One method would be to allocate a separate set of bits while canonicalizing liveness data. These bits would 
+        track the newly allocated objects in the block separately from those objects who had already been marked. We would 
+        then check these bits, along with the mark bits, when determining liveness. 
+
+        * heap/Heap.h:
+        (Heap):
+        (JSC::Heap::isLive): We now check for the presence of the newlyAllocated Bitmap.
+        (JSC):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::specializedSweep): We clear the newlyAllocated Bitmap if we're creating a free list. This 
+        will happen if we canonicalize liveness data for some other reason than collection (e.g. forEachCell) and 
+        then start allocating again.
+        (JSC::SetNewlyAllocatedFunctor::SetNewlyAllocatedFunctor): 
+        (SetNewlyAllocatedFunctor):
+        (JSC::SetNewlyAllocatedFunctor::operator()): We set the newlyAllocated bits for all the objects 
+        that aren't already marked. We undo the bits for the objects in the free list later in canonicalizeCellLivenessData.
+        (JSC::MarkedBlock::canonicalizeCellLivenessData): We should never have a FreeListed block with a newlyAllocated Bitmap.
+        We allocate the new Bitmap, set the bits for all the objects that aren't already marked, and then unset all of the 
+        bits for the items currently in the FreeList.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::clearMarks): We clear the newlyAllocated bitmap if it exists because at this point we don't need it
+        any more.
+        (JSC::MarkedBlock::isEmpty): If we have some objects that are newlyAllocated, we are not empty.
+        (JSC::MarkedBlock::isNewlyAllocated): 
+        (JSC):
+        (JSC::MarkedBlock::setNewlyAllocated):
+        (JSC::MarkedBlock::clearNewlyAllocated):
+        (JSC::MarkedBlock::isLive): We now check the newlyAllocated Bitmap, if it exists, when determining liveness of a cell in 
+        a block that is Marked.
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::visit): We need to make sure we don't finalize objects that are in the newlyAllocated Bitmap.
+        (JSC::WeakBlock::reap): Ditto.
+
 2012-11-02  Filip Pizlo  <fpizlo@apple.com>
 
         JIT::privateCompileGetByVal should use MacroAssemblerCodePtr::createFromExecutableAddress like JIT::privateCompilePutByVal

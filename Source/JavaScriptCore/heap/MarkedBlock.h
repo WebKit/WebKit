@@ -159,6 +159,10 @@ namespace JSC {
         void setMarked(const void*);
         void clearMarked(const void*);
 
+        bool isNewlyAllocated(const void*);
+        void setNewlyAllocated(const void*);
+        void clearNewlyAllocated(const void*);
+
         bool needsSweeping();
 
 #if ENABLE(GGC)
@@ -218,6 +222,8 @@ namespace JSC {
 #else
         WTF::Bitmap<atomsPerBlock, WTF::BitmapNotAtomic> m_marks;
 #endif
+        OwnPtr<WTF::Bitmap<atomsPerBlock> > m_newlyAllocated;
+
         DestructorType m_destructorType;
         MarkedAllocator* m_allocator;
         BlockState m_state;
@@ -313,6 +319,7 @@ namespace JSC {
 
         ASSERT(m_state != New && m_state != FreeListed);
         m_marks.clearAll();
+        m_newlyAllocated.clear();
 
         // This will become true at the end of the mark phase. We set it now to
         // avoid an extra pass to do so later.
@@ -326,7 +333,7 @@ namespace JSC {
 
     inline bool MarkedBlock::isEmpty()
     {
-        return m_marks.isEmpty() && m_weakSet.isEmpty();
+        return m_marks.isEmpty() && m_weakSet.isEmpty() && (!m_newlyAllocated || m_newlyAllocated->isEmpty());
     }
 
     inline size_t MarkedBlock::cellSize()
@@ -375,6 +382,21 @@ namespace JSC {
         m_marks.clear(atomNumber(p));
     }
 
+    inline bool MarkedBlock::isNewlyAllocated(const void* p)
+    {
+        return m_newlyAllocated->get(atomNumber(p));
+    }
+
+    inline void MarkedBlock::setNewlyAllocated(const void* p)
+    {
+        m_newlyAllocated->set(atomNumber(p));
+    }
+
+    inline void MarkedBlock::clearNewlyAllocated(const void* p)
+    {
+        m_newlyAllocated->clear(atomNumber(p));
+    }
+
     inline bool MarkedBlock::isLive(const JSCell* cell)
     {
         switch (m_state) {
@@ -382,7 +404,7 @@ namespace JSC {
             return true;
 
         case Marked:
-            return m_marks.get(atomNumber(cell));
+            return m_marks.get(atomNumber(cell)) || (m_newlyAllocated && isNewlyAllocated(cell));
 
         case New:
         case FreeListed:
