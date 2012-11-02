@@ -1,3 +1,24 @@
+2012-11-02  Stephen Chenney  <schenney@chromium.org>
+
+        SVG classes cause layering violations in platform Font code
+        https://bugs.webkit.org/show_bug.cgi?id=98513
+
+        Reviewed by Eric Seidel.
+
+        Add a contained class to save and restore GlpyhPage state in FontFallbackList.
+        This allows us to remove the layering violation, and several methods, that
+        previously existed to support SVGTextRunRenderingContext.
+
+        No new tests because no change at all in functionality.
+
+        * platform/graphics/FontFallbackList.h:
+        (FontFallbackList):
+        (GlyphPagesStateSaver): New state save and restore class
+        (WebCore::FontFallbackList::GlyphPagesStateSaver::GlyphPagesStateSaver): Save GlyphPage state
+        (WebCore::FontFallbackList::GlyphPagesStateSaver::~GlyphPagesStateSaver): Restore GlyphPage state
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter): Shift to usage of the new class.
+
 2012-11-02  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Fix compilation errors

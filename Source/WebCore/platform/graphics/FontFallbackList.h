@@ -41,6 +41,29 @@ const int cAllFamiliesScanned = -1;
 class FontFallbackList : public RefCounted<FontFallbackList> {
     WTF_MAKE_NONCOPYABLE(FontFallbackList);
 public:
+    typedef HashMap<int, GlyphPageTreeNode*, DefaultHash<int>::Hash> GlyphPages;
+
+    class GlyphPagesStateSaver {
+    public:
+        GlyphPagesStateSaver(FontFallbackList& fallbackList)
+            : m_fallbackList(fallbackList)
+            , m_pages(fallbackList.m_pages)
+            , m_pageZero(fallbackList.m_pageZero)
+        {
+        }
+
+        ~GlyphPagesStateSaver()
+        {
+            m_fallbackList.m_pages = m_pages;
+            m_fallbackList.m_pageZero = m_pageZero;
+        }
+
+    private:
+        FontFallbackList& m_fallbackList;
+        GlyphPages& m_pages;
+        GlyphPageTreeNode* m_pageZero;
+    };
+
     static PassRefPtr<FontFallbackList> create() { return adoptRef(new FontFallbackList()); }
 
     ~FontFallbackList() { releaseFontData(); }
@@ -55,10 +78,6 @@ public:
     // FIXME: It should be possible to combine fontSelectorVersion and generation.
     unsigned fontSelectorVersion() const { return m_fontSelectorVersion; }
     unsigned generation() const { return m_generation; }
-
-    typedef HashMap<int, GlyphPageTreeNode*, DefaultHash<int>::Hash> GlyphPages;
-    GlyphPageTreeNode* glyphPageZero() const { return m_pageZero; }
-    const GlyphPages& glyphPages() const { return m_pages; }
 
 private:
     FontFallbackList();
@@ -77,8 +96,6 @@ private:
     void setPlatformFont(const FontPlatformData&);
 
     void releaseFontData();
-    void setGlyphPageZero(GlyphPageTreeNode* pageZero) { m_pageZero = pageZero; }
-    void setGlyphPages(const GlyphPages& pages) { m_pages = pages; }
     
     mutable Vector<RefPtr<FontData>, 1> m_fontList;
     mutable GlyphPages m_pages;
@@ -92,7 +109,6 @@ private:
     mutable bool m_loadingCustomFonts : 1;
 
     friend class Font;
-    friend class SVGTextRunRenderingContext;
 };
 
 }
