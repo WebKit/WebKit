@@ -1,3 +1,15 @@
+2012-11-02  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Compilation warning in Node.cpp when USERSELECT_ALL is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=101025
+
+        Reviewed by Ryosuke Niwa.
+
+        The parameter 'treatment' is not used when USERSELECT_ALL is disabled. 
+
+        * dom/Node.cpp:
+        (WebCore::Node::rendererIsEditable):
+
 2012-11-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Middle click closes an editor and pastes selection into current editor on Linux

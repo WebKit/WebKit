@@ -753,6 +753,8 @@ bool Node::rendererIsEditable(EditableLevel editableLevel, UserSelectAllTreatmen
             // therefore non editable.
             if (node->renderer()->style()->userSelect() == SELECT_ALL && treatment == UserSelectAllIsAlwaysNonEditable)
                 return false;
+#else
+            UNUSED_PARAM(treatment);
 #endif
             switch (node->renderer()->style()->userModify()) {
             case READ_ONLY:
