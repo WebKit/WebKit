@@ -33,7 +33,6 @@
 
 import codecs
 import logging
-import new
 import os
 import shutil
 import sys
@@ -42,7 +41,6 @@ import tempfile
 import urllib
 import urlparse
 import zipfile
-import zipimport
 
 _log = logging.getLogger(__name__)
 
@@ -97,35 +95,9 @@ class AutoInstaller(object):
         self._target_dir = target_dir
         self._temp_dir = temp_dir
 
-    def _log_transfer(self, message, source, target, log_method=None):
-        """Log a debug message that involves a source and target."""
-        if log_method is None:
-            log_method = _log.debug
-
-        log_method("%s" % message)
-        log_method('    From: "%s"' % source)
-        log_method('      To: "%s"' % target)
-
-    def _create_directory(self, path, name=None):
-        """Create a directory."""
-        log = _log.debug
-
-        name = name + " " if name is not None else ""
-        log('Creating %sdirectory...' % name)
-        log('    "%s"' % path)
-
-        os.makedirs(path)
-
     def _write_file(self, path, text, encoding):
-        """Create a file at the given path with given text.
-
-        This method overwrites any existing file.
-
-        """
-        _log.debug("Creating file...")
-        _log.debug('    "%s"' % path)
-        with codecs.open(path, "w", encoding) as file:
-            file.write(text)
+        with codecs.open(path, "w", encoding) as filehandle:
+            filehandle.write(text)
 
     def _set_up_target_dir(self, target_dir, append_to_search_path,
                            make_package):
@@ -143,7 +115,7 @@ class AutoInstaller(object):
 
         """
         if not os.path.exists(target_dir):
-            self._create_directory(target_dir, "autoinstall target")
+            os.makedirs(target_dir)
 
         if append_to_search_path:
             sys.path.append(target_dir)
@@ -192,50 +164,31 @@ class AutoInstaller(object):
             if temp_dir is None or os.path.exists(temp_dir):
                 raise
             # Else try again after creating the temp directory.
-            self._create_directory(temp_dir, "autoinstall temp")
+            os.makedirs(temp_dir)
             scratch_dir = self._create_scratch_directory_inner(prefix)
 
         return scratch_dir
 
     def _url_downloaded_path(self, target_name):
-        """Return the path to the file containing the URL downloaded."""
-        filename = ".%s.url" % target_name
-        path = os.path.join(self._target_dir, filename)
-        return path
+        return os.path.join(self._target_dir, ".%s.url" % target_name)
 
     def _is_downloaded(self, target_name, url):
-        """Return whether a package version has been downloaded."""
         version_path = self._url_downloaded_path(target_name)
-
-        _log.debug('Checking %s URL downloaded...' % target_name)
-        _log.debug('    "%s"' % version_path)
 
         if not os.path.exists(version_path):
-            # Then no package version has been downloaded.
-            _log.debug("No URL file found.")
             return False
 
-        with codecs.open(version_path, "r", "utf-8") as file:
-            version = file.read()
-
-        return version.strip() == url.strip()
+        with codecs.open(version_path, "r", "utf-8") as filehandle:
+            return filehandle.read().strip() == url.strip()
 
     def _record_url_downloaded(self, target_name, url):
-        """Record the URL downloaded to a file."""
         version_path = self._url_downloaded_path(target_name)
-        _log.debug("Recording URL downloaded...")
-        _log.debug('    URL: "%s"' % url)
-        _log.debug('     To: "%s"' % version_path)
-
         self._write_file(version_path, url, "utf-8")
 
     def _extract_targz(self, path, scratch_dir):
-        # tarfile.extractall() extracts to a path without the
-        # trailing ".tar.gz".
+        # tarfile.extractall() extracts to a path without the trailing ".tar.gz".
         target_basename = os.path.basename(path[:-len(".tar.gz")])
         target_path = os.path.join(scratch_dir, target_basename)
-
-        self._log_transfer("Starting gunzip/extract...", path, target_path)
 
         try:
             tar_file = tarfile.open(path)
@@ -248,11 +201,6 @@ class AutoInstaller(object):
             raise Exception(message)
 
         try:
-            # This is helpful for debugging purposes.
-            _log.debug("Listing tar file contents...")
-            for name in tar_file.getnames():
-                _log.debug('    * "%s"' % name)
-            _log.debug("Extracting gzipped tar file...")
             tar_file.extractall(target_path)
         finally:
             tar_file.close()
@@ -263,33 +211,23 @@ class AutoInstaller(object):
     # available in Python 2.6 but not in earlier versions.
     # NOTE: The version in 2.6.1 (which shipped on Snow Leopard) is broken!
     def _extract_all(self, zip_file, target_dir):
-        self._log_transfer("Extracting zip file...", zip_file, target_dir)
-
-        # This is helpful for debugging purposes.
-        _log.debug("Listing zip file contents...")
-        for name in zip_file.namelist():
-            _log.debug('    * "%s"' % name)
-
         for name in zip_file.namelist():
             path = os.path.join(target_dir, name)
-            self._log_transfer("Extracting...", name, path)
-
             if not os.path.basename(path):
                 # Then the path ends in a slash, so it is a directory.
-                self._create_directory(path)
+                os.makedirs(path)
                 continue
-            # Otherwise, it is a file.
 
             try:
                 # We open this file w/o encoding, as we're reading/writing
                 # the raw byte-stream from the zip file.
                 outfile = open(path, 'wb')
-            except IOError, err:
+            except IOError:
                 # Not all zip files seem to list the directories explicitly,
                 # so try again after creating the containing directory.
                 _log.debug("Got IOError: retrying after creating directory...")
-                dir = os.path.dirname(path)
-                self._create_directory(dir)
+                dirname = os.path.dirname(path)
+                os.makedirs(dirname)
                 outfile = open(path, 'wb')
 
             try:
@@ -298,12 +236,9 @@ class AutoInstaller(object):
                 outfile.close()
 
     def _unzip(self, path, scratch_dir):
-        # zipfile.extractall() extracts to a path without the
-        # trailing ".zip".
+        # zipfile.extractall() extracts to a path without the trailing ".zip".
         target_basename = os.path.basename(path[:-len(".zip")])
         target_path = os.path.join(scratch_dir, target_basename)
-
-        self._log_transfer("Starting unzip...", path, target_path)
 
         try:
             zip_file = zipfile.ZipFile(path, "r")
@@ -345,7 +280,6 @@ class AutoInstaller(object):
         return new_path
 
     def _download_to_stream(self, url, stream):
-        """Download an URL to a stream, and return the number of bytes."""
         try:
             netstream = urllib.urlopen(url)
         except IOError, err:
@@ -364,29 +298,21 @@ class AutoInstaller(object):
             raise ValueError("HTTP Error code %s" % code)
 
         BUFSIZE = 2**13  # 8KB
-        bytes = 0
         while True:
             data = netstream.read(BUFSIZE)
             if not data:
                 break
             stream.write(data)
-            bytes += len(data)
         netstream.close()
-        return bytes
 
     def _download(self, url, scratch_dir):
-        """Download URL contents, and return the download path."""
         url_path = urlparse.urlsplit(url)[2]
         url_path = os.path.normpath(url_path)  # Removes trailing slash.
         target_filename = os.path.basename(url_path)
         target_path = os.path.join(scratch_dir, target_filename)
 
-        self._log_transfer("Starting download...", url, target_path)
-
         with open(target_path, "wb") as stream:
-            bytes = self._download_to_stream(url, stream)
-
-        _log.debug("Downloaded %s bytes." % bytes)
+            self._download_to_stream(url, stream)
 
         return target_path
 
@@ -407,13 +333,10 @@ class AutoInstaller(object):
             source_path = os.path.join(path, url_subpath)
 
         if os.path.exists(target_path):
-            _log.debug('Refreshing install: deleting "%s".' % target_path)
             if os.path.isdir(target_path):
                 shutil.rmtree(target_path)
             else:
                 os.remove(target_path)
-
-        self._log_transfer("Moving files into place...", source_path, target_path)
 
         # The shutil.move() command creates intermediate directories if they
         # do not exist, but we do not rely on this behavior since we
@@ -453,13 +376,9 @@ class AutoInstaller(object):
 
         target_path = os.path.join(self._target_dir, target_name)
         if not should_refresh and self._is_downloaded(target_name, url):
-            _log.debug('URL for %s already downloaded.  Skipping...'
-                       % target_name)
-            _log.debug('    "%s"' % url)
             return False
 
-        self._log_transfer("Auto-installing package: %s" % target_name,
-                            url, target_path, log_method=_log.info)
+        _log.info("Auto-installing package: %s" % target_name)
 
         # The scratch directory is where we will download and prepare
         # files specific to this install until they are ready to move
@@ -480,38 +399,7 @@ class AutoInstaller(object):
                        % (target_name, target_path, err))
             raise Exception(message)
         finally:
-            _log.debug('Cleaning up: deleting "%s".' % scratch_dir)
             shutil.rmtree(scratch_dir)
-        _log.debug('Auto-installed %s to:' % target_name)
+        _log.debug('Auto-installed %s to:' % url)
         _log.debug('    "%s"' % target_path)
         return True
-
-
-if __name__=="__main__":
-
-    # Configure the autoinstall logger to log DEBUG messages for
-    # development testing purposes.
-    console = logging.StreamHandler()
-
-    formatter = logging.Formatter('%(name)s: %(levelname)-8s %(message)s')
-    console.setFormatter(formatter)
-    _log.addHandler(console)
-    _log.setLevel(logging.DEBUG)
-
-    # Use a more visible temp directory for debug purposes.
-    this_dir = os.path.dirname(__file__)
-    target_dir = os.path.join(this_dir, "autoinstalled")
-    temp_dir = os.path.join(target_dir, "Temp")
-
-    installer = AutoInstaller(target_dir=target_dir,
-                              temp_dir=temp_dir)
-
-    installer.install(should_refresh=False,
-                      target_name="pep8.py",
-                      url="http://pypi.python.org/packages/source/p/pep8/pep8-0.5.0.tar.gz#md5=512a818af9979290cd619cce8e9c2e2b",
-                      url_subpath="pep8-0.5.0/pep8.py")
-    installer.install(should_refresh=False,
-                      target_name="mechanize",
-                      url="http://pypi.python.org/packages/source/m/mechanize/mechanize-0.2.4.zip",
-                      url_subpath="mechanize")
-

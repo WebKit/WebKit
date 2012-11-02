@@ -1,5 +1,35 @@
 2012-11-02  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: clean up logging in common.system.autoinstall
+        https://bugs.webkit.org/show_bug.cgi?id=101090
+
+        Reviewed by Ojan Vafai.
+
+        This module logged way too much, much of which was logging that
+        was either really redundant or useful only during initial development.
+        This patch deletes a lot of code and tweaks the remaining log messages
+        to be more useful now.
+
+        Also, clean up a bunch of lint errors and warnings.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller.__init__):
+        (AutoInstaller._write_file):
+        (AutoInstaller._set_up_target_dir):
+        (AutoInstaller._create_scratch_directory):
+        (AutoInstaller._url_downloaded_path):
+        (AutoInstaller._is_downloaded):
+        (AutoInstaller._record_url_downloaded):
+        (AutoInstaller._extract_targz):
+        (AutoInstaller._extract_all):
+        (AutoInstaller._unzip):
+        (AutoInstaller._download_to_stream):
+        (AutoInstaller._download):
+        (AutoInstaller._install):
+        (AutoInstaller.install):
+
+2012-11-02  Dirk Pranke  <dpranke@chromium.org>
+
         webkit-patch analyze-baselines output is weak
         https://bugs.webkit.org/show_bug.cgi?id=100998
 
