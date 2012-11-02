@@ -1,3 +1,15 @@
+2012-11-02  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Console: remove obsolete ctrl-shift-m shortcut
+        https://bugs.webkit.org/show_bug.cgi?id=101036
+
+        Reviewed by Pavel Feldman.
+
+        Ctrl-shift-m on console dumps MemoryAgent.getDOMNodeCount
+        This functionality seems to be obsolete.
+
+        * inspector/front-end/ConsoleView.js: Removed shortcut and function.
+
 2012-11-02  Stephen Chenney  <schenney@chromium.org>
 
         SVG classes cause layering violations in platform Font code
