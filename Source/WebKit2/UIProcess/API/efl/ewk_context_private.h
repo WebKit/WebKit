@@ -57,6 +57,8 @@ public:
 
     Ewk_Favicon_Database* faviconDatabase();
 
+    Ewk_Storage_Manager* storageManager() const;
+
     WebKit::RequestManagerClientEfl* requestManager();
 
 #if ENABLE(VIBRATION)
@@ -84,6 +86,7 @@ private:
 
     OwnPtr<Ewk_Cookie_Manager> m_cookieManager;
     OwnPtr<Ewk_Favicon_Database> m_faviconDatabase;
+    OwnPtr<Ewk_Storage_Manager> m_storageManager;
 #if ENABLE(BATTERY_STATUS)
     RefPtr<WebKit::BatteryProvider> m_batteryProvider;
 #endif

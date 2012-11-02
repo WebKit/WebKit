@@ -1,3 +1,57 @@
+2012-11-02  Jihye Kang  <jye.kang@samsung.com>
+
+        [EFL][WK2] Add ewk_security_origin and ewk_storage_manager APIs
+        https://bugs.webkit.org/show_bug.cgi?id=92827
+
+        Reviewed by Gyuyoung Kim.
+
+        Add ewk_security_origin APIs to get security origin.
+        These APIs will be used to get host, protocol and port of security
+        origin.
+        Add ewk_storage_manager to manage web storage and
+        ewk_storage_manager_origins_get to get origins list of web storage.
+        Add Unit tests for ewk_storage_manager and ewk_security_origin APIs.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (Ewk_Context::storageManager):
+        (ewk_context_storage_manager_get):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        (Ewk_Context):
+        * UIProcess/API/efl/ewk_security_origin.cpp: Added.
+        (Ewk_Security_Origin::Ewk_Security_Origin):
+        (Ewk_Security_Origin::host):
+        (Ewk_Security_Origin::protocol):
+        (Ewk_Security_Origin::port):
+        (ewk_security_origin_ref):
+        (ewk_security_origin_unref):
+        (ewk_security_origin_host_get):
+        (ewk_security_origin_protocol_get):
+        (ewk_security_origin_port_get):
+        * UIProcess/API/efl/ewk_security_origin.h: Added.
+        * UIProcess/API/efl/ewk_security_origin_private.h: Added.
+        (Ewk_Security_Origin):
+        (Ewk_Security_Origin::create):
+        * UIProcess/API/efl/ewk_storage_manager.cpp: Added.
+        (Ewk_Storage_Manager::Ewk_Storage_Manager):
+        (Ewk_Storage_Manager::getStorageOrigins):
+        (Ewk_Storage_Manager::createOriginList):
+        (_Ewk_Storage_Origins_Async_Get_Context):
+        (_Ewk_Storage_Origins_Async_Get_Context::_Ewk_Storage_Origins_Async_Get_Context):
+        (getStorageOriginsCallback):
+        (ewk_storage_manager_origins_get):
+        * UIProcess/API/efl/ewk_storage_manager.h: Added.
+        * UIProcess/API/efl/ewk_storage_manager_private.h: Added.
+        (Ewk_Storage_Manager):
+        (Ewk_Storage_Manager::create):
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_storage_manager.cpp: Added.
+        (getStorageOriginsCallback):
+        (TEST_F):
+
 2012-11-02  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Manage the lifecycle of shareable surfaces precisely.
