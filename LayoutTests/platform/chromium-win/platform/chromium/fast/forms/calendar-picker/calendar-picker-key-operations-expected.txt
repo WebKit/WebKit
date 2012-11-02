@@ -25,7 +25,7 @@ PASS currentMonth() is "1999-11"
 PASS selectedDate() is "1999-12-26"
 PASS currentMonth() is "2000-0"
 press m
-FAIL selectedDate() should be 2000-01-26. Was 2000-01-30.
+PASS selectedDate() is "2000-01-30"
 PASS currentMonth() is "2000-1"
 press shift + m
 PASS selectedDate() is "1999-12-26"

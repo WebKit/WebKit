@@ -1,3 +1,16 @@
+2012-11-02  Keishi Hattori  <keishi@webkit.org>
+
+        Fix test calendar-picker-key-operations.html
+        https://bugs.webkit.org/show_bug.cgi?id=101020
+
+        Reviewed by Kent Tamura.
+
+        The test was wrong and failing.
+
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations-expected.txt:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations-expected.txt:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html:
+
 2012-11-02  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Regression r130057: Improper preferred width calculation when an inline replaced object, wrapped in an inline flow, follows some text.
