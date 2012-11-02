@@ -1,3 +1,15 @@
+2012-11-02  Rob Buis  <rbuis@rim.com>
+
+        [CMAKE] Remove QNX specific section
+        https://bugs.webkit.org/show_bug.cgi?id=101063
+
+        Reviewed by Daniel Bates.
+
+        We do not need the QNX section anymore, so also remove the FEATURE_DEFINES_CSS variable as it
+        equals FEATURE_DEFINES_WITH_SPACE_SEPARATOR.
+
+        * CMakeLists.txt:
+
 2012-11-02  Michael Saboff  <msaboff@apple.com>
 
         visitedHashLink() converts 8 bit URLs and attributes to 16 bits.
