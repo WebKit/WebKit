@@ -1,3 +1,17 @@
+2012-11-02  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        Fix build warning [-Wswitch]
+        https://bugs.webkit.org/show_bug.cgi?id=101029
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix build warning message: enumeration value ‘Viewport’ not handled in switch [-Wswitch]
+        in Source/WebCore/css/StyleSheetContents.cpp.
+        Add case statement for 'Viewport' with the CSS_DEVICE_ADAPTATION macro.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+
 2012-11-02  Ojan Vafai  <ojan@chromium.org>
 
         Move m_element checks out of canShareStyle into locateSharedStyle
