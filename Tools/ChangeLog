@@ -1,3 +1,12 @@
+2012-11-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove tests no longer needed after r133229.
+
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTestFactory.test_inspector_test):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_collect_tests_with_skipped_list):
+
 2012-11-01  Nico Weber  <thakis@chromium.org>
 
         [chromium] Try to find ninja if it's not in the path already

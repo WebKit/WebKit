@@ -362,10 +362,6 @@ class TestPerfTestFactory(unittest.TestCase):
         test = PerfTestFactory.create_perf_test(MockPort(), 'inspector/some-test', '/path/inspector/some-test')
         self.assertEqual(test.__class__, ChromiumStylePerfTest)
 
-    def test_page_loading_test(self):
-        test = PerfTestFactory.create_perf_test(MockPort(), 'PageLoad/some-test', '/path/PageLoad/some-test')
-        self.assertEqual(test.__class__, PageLoadingPerfTest)
-
 
 if __name__ == '__main__':
     unittest.main()

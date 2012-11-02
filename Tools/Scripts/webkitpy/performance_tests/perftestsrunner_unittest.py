@@ -598,13 +598,6 @@ max 548000 bytes
         port.skipped_perf_tests = lambda: ['inspector/unsupported_test1.html', 'unsupported']
         self.assertEqual(self._collect_tests_and_sort_test_name(runner), ['inspector/test1.html', 'inspector/test2.html', 'inspector/unsupported_test1.html', 'unsupported/unsupported_test2.html'])
 
-    def test_collect_tests_with_page_load_svg(self):
-        runner, port = self.create_runner()
-        self._add_file(runner, 'PageLoad', 'some-svg-test.svg')
-        tests = runner._collect_tests()
-        self.assertEqual(len(tests), 1)
-        self.assertEqual(tests[0].__class__.__name__, 'PageLoadingPerfTest')
-
     def test_collect_tests_should_ignore_replay_tests_by_default(self):
         runner, port = self.create_runner()
         self._add_file(runner, 'Replay', 'www.webkit.org.replay')
