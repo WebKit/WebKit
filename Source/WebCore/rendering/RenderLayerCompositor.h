@@ -228,6 +228,9 @@ public:
 
     void documentBackgroundColorDidChange();
 
+    void resetTrackedRepaintRects();
+    void setTracksRepaints(bool);
+
 private:
     class OverlapMap;
 
@@ -238,6 +241,8 @@ private:
 
     virtual bool showDebugBorders(const GraphicsLayer*) const OVERRIDE;
     virtual bool showRepaintCounter(const GraphicsLayer*) const OVERRIDE;
+
+    virtual bool isTrackingRepaints() const OVERRIDE;
     
     // GraphicsLayerUpdaterClient implementation
     virtual void flushLayers(GraphicsLayerUpdater*) OVERRIDE;
@@ -351,6 +356,8 @@ private:
     bool m_flushingLayers;
     bool m_shouldFlushOnReattach;
     bool m_forceCompositingMode;
+
+    bool m_isTrackingRepaints; // Used for testing.
 
     RootLayerAttachment m_rootLayerAttachment;
 

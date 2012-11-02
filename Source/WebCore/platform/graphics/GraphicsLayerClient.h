@@ -85,6 +85,8 @@ public:
     virtual bool showDebugBorders(const GraphicsLayer*) const = 0;
     virtual bool showRepaintCounter(const GraphicsLayer*) const = 0;
 
+    virtual bool isTrackingRepaints() const { return false; }
+
 #ifndef NDEBUG
     // RenderLayerBacking overrides this to verify that it is not
     // currently painting contents. An ASSERT fails, if it is.

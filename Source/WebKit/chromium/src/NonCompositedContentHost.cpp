@@ -201,4 +201,9 @@ bool NonCompositedContentHost::showRepaintCounter(const WebCore::GraphicsLayer*)
     return false;
 }
 
+bool NonCompositedContentHost::isTrackingRepaints() const
+{
+    return m_webView->isTrackingRepaints();
+}
+
 } // namespace WebKit

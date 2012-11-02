@@ -1596,6 +1596,12 @@ bool RenderLayerBacking::showRepaintCounter(const GraphicsLayer*) const
     return compositor() ? compositor()->compositorShowRepaintCounter() : false;
 }
 
+bool RenderLayerBacking::isTrackingRepaints() const
+{
+    GraphicsLayerClient* client = compositor();
+    return client ? client->isTrackingRepaints() : false;
+}
+
 #ifndef NDEBUG
 void RenderLayerBacking::verifyNotPainting()
 {

@@ -147,6 +147,7 @@ public:
     virtual void layout(); // Also implements WebLayerTreeViewClient::layout()
     virtual void enterForceCompositingMode(bool enable) OVERRIDE;
     virtual void paint(WebCanvas*, const WebRect&, PaintOptions = ReadbackFromCompositorIfAvailable);
+    virtual bool isTrackingRepaints() const OVERRIDE;
     virtual void themeChanged();
     virtual void composite(bool finish);
     virtual void setNeedsRedraw();

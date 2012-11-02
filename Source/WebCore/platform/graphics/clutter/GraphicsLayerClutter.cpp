@@ -67,11 +67,13 @@ ClutterActor* GraphicsLayerClutter::platformLayer() const
 void GraphicsLayerClutter::setNeedsDisplay()
 {
     notImplemented();
+    addRepaintRect(FloatRect(FloatPoint(), m_size));
 }
 
-void GraphicsLayerClutter::setNeedsDisplayInRect(const FloatRect&)
+void GraphicsLayerClutter::setNeedsDisplayInRect(const FloatRect& rect)
 {
     notImplemented();
+    addRepaintRect(rect);
 }
 
 } // namespace WebCore

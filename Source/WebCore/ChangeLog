@@ -1,3 +1,81 @@
+2012-11-02  Ian Vollick  <vollick@chromium.org>
+
+        Support invalidation tracking for composited layers
+        https://bugs.webkit.org/show_bug.cgi?id=97801
+
+        Reviewed by Simon Fraser.
+
+        GraphicsLayers now store invalidated rects and can include them in
+        the layer tree dump.
+
+        Test: compositing/repaint/invalidations-on-composited-layers.html
+
+        * WebCore.exp.in:
+          Exports FrameView::resetTrackedRepaints()
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setTracksRepaints):
+          Notifies each compositor that we are starting/stopping repaints.
+        (WebCore::FrameView::resetTrackedRepaints):
+          Moved implementation to the cpp file.
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::~GraphicsLayer):
+          Clears the repaint rects associated with this layer.
+        (WebCore::GraphicsLayer::resetTrackedRepaints):
+          Clears the repaint rects associated with this layer.
+          Note that the repaint rects are stored in a statically allocated
+          HashMap to avoid using space on the graphics layers.
+        (WebCore::GraphicsLayer::addRepaintRect):
+          Adds a repaint rect to list associated with this layer in the
+          hash map mentioned above.
+        (WebCore::GraphicsLayer::dumpProperties):
+          This has been modified to include the repaint rects in the dump
+          if they've been requested.
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::isTrackingRepaints):
+          This is how graphics layers check if repaint tracking is happening.
+          Returns false by default.
+        * platform/graphics/blackberry/GraphicsLayerBlackBerry.cpp:
+        (WebCore::GraphicsLayerBlackBerry::setContentsNeedsDisplay):
+        (WebCore::GraphicsLayerBlackBerry::setNeedsDisplay):
+        (WebCore::GraphicsLayerBlackBerry::setNeedsDisplayInRect):
+          These now call GraphicsLayer::addRepaintRect as necessary.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setNeedsDisplayInRect):
+          Now calls GraphicsLayer::addRepaintRect as necessary.
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setContentsNeedsDisplay):
+        (WebCore::GraphicsLayerChromium::setNeedsDisplay):
+        (WebCore::GraphicsLayerChromium::setNeedsDisplayInRect):
+          These now call GraphicsLayer::addRepaintRect as necessary.
+        * platform/graphics/clutter/GraphicsLayerClutter.cpp:
+        (WebCore::GraphicsLayerClutter::setNeedsDisplay):
+        (WebCore::GraphicsLayerClutter::setNeedsDisplayInRect):
+          These now call GraphicsLayer::addRepaintRect as necessary.
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setNeedsDisplay):
+        (WebCore::GraphicsLayerTextureMapper::setContentsNeedsDisplay):
+        (WebCore::GraphicsLayerTextureMapper::setNeedsDisplayInRect):
+          These now call GraphicsLayer::addRepaintRect as necessary.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isTrackingRepaints):
+          Required since this is a GraphicsLayerClient.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+          Now accepts a flag to include the repaint rects in the layer tree
+          dump.
+        (WebCore::resetTrackedRepaintRectsRecursive):
+          Clears the repaint rects on all graphics layers.
+        (WebCore::RenderLayerCompositor::resetTrackedRepaintRects):
+          Clears the repaint rects on all graphics layers.
+        (WebCore::RenderLayerCompositor::isTrackingRepaints):
+          Required since this is a GraphicsLayerClient.
+        * testing/Internals.cpp:
+        (WebCore::Internals::layerTreeAsText):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+          The internals changes plumb the new flag for including the repaint
+          rects in the layer tree dump.
+
 2012-11-02  Adam Barth  <abarth@webkit.org>
 
         [V8] Generalize NodeWrapperMap to be able to handle other sorts of keys

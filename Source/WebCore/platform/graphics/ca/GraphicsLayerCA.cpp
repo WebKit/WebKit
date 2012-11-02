@@ -670,6 +670,8 @@ void GraphicsLayerCA::setNeedsDisplayInRect(const FloatRect& r)
         m_dirtyRects[0].unite(rect);
 
     noteLayerPropertyChanged(DirtyRectsChanged);
+
+    addRepaintRect(rect);
 }
 
 void GraphicsLayerCA::setContentsNeedsDisplay()

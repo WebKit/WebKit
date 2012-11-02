@@ -436,14 +436,17 @@ void GraphicsLayerChromium::setReplicatedByLayer(GraphicsLayer* layer)
 
 void GraphicsLayerChromium::setContentsNeedsDisplay()
 {
-    if (WebLayer* contentsLayer = contentsLayerIfRegistered())
+    if (WebLayer* contentsLayer = contentsLayerIfRegistered()) {
         contentsLayer->invalidate();
+        addRepaintRect(contentsRect());
+    }
 }
 
 void GraphicsLayerChromium::setNeedsDisplay()
 {
     if (drawsContent()) {
         m_layer->layer()->invalidate();
+        addRepaintRect(FloatRect(FloatPoint(), m_size));
         if (m_linkHighlight)
             m_linkHighlight->invalidate();
     }
@@ -453,6 +456,7 @@ void GraphicsLayerChromium::setNeedsDisplayInRect(const FloatRect& rect)
 {
     if (drawsContent()) {
         m_layer->layer()->invalidateRect(rect);
+        addRepaintRect(rect);
         if (m_linkHighlight)
             m_linkHighlight->invalidate();
     }

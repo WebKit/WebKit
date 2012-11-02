@@ -127,6 +127,9 @@ public:
     // animate or layout in this case.
     virtual void composite(bool finish) = 0;
 
+    // Returns true if we've started tracking repaint rectangles.
+    virtual bool isTrackingRepaints() const { return false; }
+
     // Indicates that the compositing surface associated with this WebWidget is
     // ready to use.
     virtual void setCompositorSurfaceReady() = 0;

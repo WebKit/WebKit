@@ -190,7 +190,8 @@ public:
     enum {
         // Values need to be kept in sync with Internals.idl.
         LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1,
-        LAYER_TREE_INCLUDES_TILE_CACHES = 2
+        LAYER_TREE_INCLUDES_TILE_CACHES = 2,
+        LAYER_TREE_INCLUDES_REPAINT_RECTS = 4
         
     };
     String layerTreeAsText(Document*, unsigned flags, ExceptionCode&) const;

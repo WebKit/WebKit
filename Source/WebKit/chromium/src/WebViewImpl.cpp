@@ -1829,6 +1829,14 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect, PaintOptions opt
     }
 }
 
+bool WebViewImpl::isTrackingRepaints() const
+{
+    if (!page())
+        return false;
+    FrameView* view = page()->mainFrame()->view();
+    return view->isTrackingRepaints();
+}
+
 void WebViewImpl::themeChanged()
 {
     if (!page())

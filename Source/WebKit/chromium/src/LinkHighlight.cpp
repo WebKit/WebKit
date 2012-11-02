@@ -303,6 +303,9 @@ void LinkHighlight::updateGeometry()
         // We only need to invalidate the layer if the highlight size has changed, otherwise
         // we can just re-position the layer without needing to repaint.
         m_contentLayer->layer()->invalidate();
+
+        if (m_currentGraphicsLayer)
+            m_currentGraphicsLayer->addRepaintRect(FloatRect(layer()->position().x, layer()->position().y, layer()->bounds().width, layer()->bounds().height));
     }
 }
 

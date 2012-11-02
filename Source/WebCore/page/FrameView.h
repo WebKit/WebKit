@@ -338,7 +338,7 @@ public:
     
     void setTracksRepaints(bool);
     bool isTrackingRepaints() const { return m_isTrackingRepaints; }
-    void resetTrackedRepaints() { m_trackedRepaintRects.clear(); }
+    void resetTrackedRepaints();
     const Vector<IntRect>& trackedRepaintRects() const { return m_trackedRepaintRects; }
     String trackedRepaintRectsAsText() const;
 

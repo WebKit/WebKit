@@ -157,6 +157,8 @@ public:
     virtual bool showDebugBorders(const GraphicsLayer*) const OVERRIDE;
     virtual bool showRepaintCounter(const GraphicsLayer*) const OVERRIDE;
 
+    virtual bool isTrackingRepaints() const OVERRIDE;
+
 #ifndef NDEBUG
     virtual void verifyNotPainting();
 #endif

@@ -194,6 +194,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_flushingLayers(false)
     , m_shouldFlushOnReattach(false)
     , m_forceCompositingMode(false)
+    , m_isTrackingRepaints(false)
     , m_rootLayerAttachment(RootLayerUnattached)
 #if !LOG_DISABLED
     , m_rootLayerUpdateCount(0)
@@ -1149,10 +1150,22 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
         layerTreeBehavior |= LayerTreeAsTextIncludeVisibleRects;
     if (flags & LayerTreeFlagsIncludeTileCaches)
         layerTreeBehavior |= LayerTreeAsTextIncludeTileCaches;
+    if (flags & LayerTreeFlagsIncludeRepaintRects)
+        layerTreeBehavior |= LayerTreeAsTextIncludeRepaintRects;
 
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.
-    return m_rootContentLayer->layerTreeAsText(layerTreeBehavior);
+    String layerTreeText = m_rootContentLayer->layerTreeAsText(layerTreeBehavior);
+
+    // The true root layer is not included in the dump, so if we want to report
+    // its repaint rects, they must be included here.
+    if (flags & LayerTreeFlagsIncludeRepaintRects) {
+        String layerTreeTextWithRootRepaintRects = m_renderView->frameView()->trackedRepaintRectsAsText();
+        layerTreeTextWithRootRepaintRects.append(layerTreeText);
+        return layerTreeTextWithRootRepaintRects;
+    }
+
+    return layerTreeText;
 }
 
 RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderPart* renderer)
@@ -2003,6 +2016,34 @@ void RenderLayerCompositor::documentBackgroundColorDidChange()
     graphicsLayer->setBackgroundColor(backgroundColor);
 }
 
+static void resetTrackedRepaintRectsRecursive(GraphicsLayer* graphicsLayer)
+{
+    if (!graphicsLayer)
+        return;
+
+    graphicsLayer->resetTrackedRepaints();
+
+    for (size_t i = 0; i < graphicsLayer->children().size(); ++i)
+        resetTrackedRepaintRectsRecursive(graphicsLayer->children()[i]);
+
+    if (GraphicsLayer* replicaLayer = graphicsLayer->replicaLayer())
+        resetTrackedRepaintRectsRecursive(replicaLayer);
+
+    if (GraphicsLayer* maskLayer = graphicsLayer->maskLayer())
+        resetTrackedRepaintRectsRecursive(maskLayer);
+}
+
+void RenderLayerCompositor::resetTrackedRepaintRects()
+{
+    if (GraphicsLayer* rootLayer = rootGraphicsLayer())
+        resetTrackedRepaintRectsRecursive(rootLayer);
+}
+
+void RenderLayerCompositor::setTracksRepaints(bool tracksRepaints)
+{
+    m_isTrackingRepaints = tracksRepaints;
+}
+
 bool RenderLayerCompositor::showDebugBorders(const GraphicsLayer* layer) const
 {
     if (layer == m_layerForHorizontalScrollbar || layer == m_layerForVerticalScrollbar || layer == m_layerForScrollCorner)
@@ -2017,6 +2058,11 @@ bool RenderLayerCompositor::showRepaintCounter(const GraphicsLayer* layer) const
         return m_showDebugBorders;
 
     return false;
+}
+
+bool RenderLayerCompositor::isTrackingRepaints() const
+{
+    return m_isTrackingRepaints;
 }
 
 float RenderLayerCompositor::deviceScaleFactor() const

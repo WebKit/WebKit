@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<!--
+This test checks that repaint testing works with composited layers.
+-->
+
+<html>
+<head>
+  <style type="text/css">
+    #parent {
+        -webkit-transform: translateZ(0px);
+        width: 400px;
+        height: 400px;
+        background: blue;
+    }
+
+    #child {
+        -webkit-transform: translateZ(0px);
+        position: relative;
+        left: 50px;
+        top: 50px;
+        width: 75px;
+        height: 75px;
+        background: green;
+    }
+
+  </style>
+  <script type="text/javascript">
+      window.addEventListener('load', function() {
+          if (!window.testRunner) {
+              alert('This test requires testRunner to run!');
+              return;
+          }
+
+          if (!window.internals) {
+              alert('This test requires window.interals to run!');
+              return;
+          }
+
+          testRunner.dumpAsText(false);
+
+          var parent = document.getElementById('parent');
+          var child = document.getElementById('child');
+
+          window.internals.startTrackingRepaints(document);
+
+          child.style.background = 'blue';
+          parent.style.background = 'green';
+
+          var text = document.getElementById('text');
+          text.innerHTML = 'This text will be replaced with the layer tree';
+
+          // Force a style recalc.
+          var dummy = child.offsetTop;
+
+          var layerTreeText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+
+          window.internals.stopTrackingRepaints(document);
+
+          text.innerHTML = layerTreeText;
+      });
+  </script>
+</head>
+<body>
+  <pre id="text"></pre>
+  <div id="parent">
+    <div id="child"></div>
+  </div>
+</body>
+</html>

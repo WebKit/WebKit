@@ -379,20 +379,26 @@ void GraphicsLayerBlackBerry::setOpacity(float opacity)
 
 void GraphicsLayerBlackBerry::setContentsNeedsDisplay()
 {
-    if (m_contentsLayer)
+    if (m_contentsLayer) {
         m_contentsLayer->setNeedsDisplay();
+        addRepaintRect(contentsRect());
+    }
 }
 
 void GraphicsLayerBlackBerry::setNeedsDisplay()
 {
-    if (drawsContent())
+    if (drawsContent()) {
         m_layer->setNeedsDisplay();
+        addRepaintRect(FloatRect(FloatPoint(), m_size));
+    }
 }
 
 void GraphicsLayerBlackBerry::setNeedsDisplayInRect(const FloatRect& rect)
 {
-    if (drawsContent())
+    if (drawsContent()) {
         m_layer->setNeedsDisplayInRect(rect);
+        addRepaintRect(rect);
+    }
 }
 
 void GraphicsLayerBlackBerry::setContentsRect(const IntRect& rect)

@@ -48,13 +48,15 @@ enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextBehaviorNormal = 0,
     LayerTreeAsTextDebug = 1 << 0, // Dump extra debugging info like layer addresses.
     LayerTreeAsTextIncludeVisibleRects = 1 << 1,
-    LayerTreeAsTextIncludeTileCaches = 1 << 2
+    LayerTreeAsTextIncludeTileCaches = 1 << 2,
+    LayerTreeAsTextIncludeRepaintRects = 1 << 3
 };
 typedef unsigned LayerTreeAsTextBehavior;
 
 namespace WebCore {
 
 class FloatPoint3D;
+class FloatRect;
 class GraphicsContext;
 class GraphicsLayerFactory;
 class Image;
@@ -403,6 +405,9 @@ public:
     bool usingTiledLayer() const { return m_usingTiledLayer; }
 
     virtual TiledBacking* tiledBacking() const { return 0; }
+
+    void resetTrackedRepaints();
+    void addRepaintRect(const FloatRect&);
 
 #if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     // This allows several alternative GraphicsLayer implementations in the same port,
