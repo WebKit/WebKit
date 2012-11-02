@@ -339,10 +339,12 @@ float hybridDistanceFunction(const IntPoint& touchHotspot, const IntRect& touchR
     float radiusSquared = 0.25f * (touchRect.size().diagonalLengthSquared());
     float distanceToAdjustScore = rect.distanceSquaredToPoint(touchHotspot) / radiusSquared;
 
-    float targetArea = max(rect.size().area(), 1);
+    int maxOverlapWidth = std::min(touchRect.width(), rect.width());
+    int maxOverlapHeight = std::min(touchRect.height(), rect.height());
+    float maxOverlapArea = std::max(maxOverlapWidth * maxOverlapHeight, 1);
     rect.intersect(touchRect);
     float intersectArea = rect.size().area();
-    float intersectionScore = 1 - intersectArea / targetArea;
+    float intersectionScore = 1 - intersectArea / maxOverlapArea;
 
     float hybridScore = intersectionScore + distanceToAdjustScore;
 

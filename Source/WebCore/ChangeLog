@@ -1,3 +1,22 @@
+2012-11-02  Kevin Ellis  <kevers@chromium.org>
+
+        Imrpove scoring in touch adjustment to address bias towards smaller targets.
+        https://bugs.webkit.org/show_bug.cgi?id=101046
+
+        Reviewed by Antonio Gomes.
+
+        Update the touch overlap score for touch adjustmetn to normalize
+        with respect to the maximum possible overlap rather than the size
+        of the target element.  This change enables good overlap scores for
+        small and large targets alike.  Prior to the patch it was not possible
+        to get a good overlap score for a sufficiently larget target.
+
+        Covered by existing tests, which have been updated to reflect the
+        intended behavior.
+
+        * page/TouchAdjustment.cpp:
+        (WebCore::TouchAdjustment::hybridDistanceFunction):
+
 2012-11-02  Mike West  <mkwst@chromium.org>
 
         Web Inspector: Repeated errors are rendered incorrectly: link is not floating to the right.

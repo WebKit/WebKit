@@ -41,6 +41,7 @@
     var e = {};
     ['container', 'rotated'].forEach(function(a) {
         e[a] = document.getElementById(a);
+        e[a].addEventListener('click', function() {}, false);
     });
 
     function testDirectTouches()
@@ -71,8 +72,8 @@
         debug('\nNear Misses');
 
         // Touch overlaps bounding-box of element, but not the actual bounds.
-        testTouchPoint(touchPoint(70, 0, 20), e.container);
-        testTouchPoint(touchPoint(70, 60, 20), e.container);
+        testTouchPoint(touchPoint(71, 0, 20), e.container);
+        testTouchPoint(touchPoint(71, 60, 20), e.container);
     }
 
     function testAdjustedPoints()
