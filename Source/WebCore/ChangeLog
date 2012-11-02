@@ -1,3 +1,21 @@
+2012-11-02  Lianghui Chen  <liachen@rim.com>
+
+        [BlackBerry] ResourceHandle::cancel() in ResourceHandleBlackBerry should setClient to null.
+        https://bugs.webkit.org/show_bug.cgi?id=101082
+
+        Internal PR: 235410.
+        Patch suggested by George Staikos, prepared by Lyon Chen.
+        Reviewed by Yong Li.
+
+        ResourceHandle::cancel() should call setClient(0) to close the window
+        during which it has been cancelled but its client is still there and can
+        be called.
+
+        No new tests as it's a code improvement without obvious bug.
+
+        * platform/network/blackberry/ResourceHandleBlackBerry.cpp:
+        (WebCore::ResourceHandle::cancel):
+
 2012-11-02  Anders Carlsson  <andersca@apple.com>
 
         Add a PluginInactive plug-in unavailability reason

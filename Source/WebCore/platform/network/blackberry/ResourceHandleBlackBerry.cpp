@@ -135,6 +135,7 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest&, Frame*)
 void ResourceHandle::cancel()
 {
     NetworkManager::instance()->stopJob(this);
+    setClient(0);
 }
 
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
