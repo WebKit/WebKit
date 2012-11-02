@@ -613,9 +613,13 @@ WebInspector.NavigatorSourceTreeElement.prototype = {
         this._navigatorView._scriptSelected(this.uiSourceCode, false);
     },
 
-    ondblclick: function()
+    /**
+     * @param {Event} event
+     */
+    ondblclick: function(event)
     {
-        this._navigatorView._scriptSelected(this.uiSourceCode, true);
+        var middleClick = event.button === 1;
+        this._navigatorView._scriptSelected(this.uiSourceCode, !middleClick);
     },
 
     onenter: function()

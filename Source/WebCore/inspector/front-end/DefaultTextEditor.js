@@ -46,6 +46,14 @@ WebInspector.DefaultTextEditor = function(url, delegate)
 
     this.element.className = "text-editor monospace";
 
+    // Prevent middle-click pasting in the editor unless it is explicitly enabled for certain component.
+    this.element.addEventListener("mouseup", preventDefaultOnMouseUp.bind(this), false);
+    function preventDefaultOnMouseUp()
+    {
+        if (event.button === 1)
+            event.consume(true);
+    }
+
     this._textModel = new WebInspector.TextEditorModel();
     this._textModel.addEventListener(WebInspector.TextEditorModel.Events.TextChanged, this._textChanged, this);
     this._textModel.resetUndoStack();
@@ -62,6 +70,14 @@ WebInspector.DefaultTextEditor = function(url, delegate)
     this._mainPanel._container.addEventListener("focus", this._handleFocused.bind(this), false);
 
     this._gutterPanel.element.addEventListener("mousedown", this._onMouseDown.bind(this), true);
+
+    // Explicitly enable middle-click pasting in the editor main panel.
+    this._mainPanel.element.addEventListener("mouseup", consumeMouseUp.bind(this), false);
+    function consumeMouseUp()
+    {
+        if (event.button === 1)
+            event.consume(false);
+    }
 
     this.element.appendChild(this._mainPanel.element);
     this.element.appendChild(this._gutterPanel.element);

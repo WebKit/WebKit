@@ -45,6 +45,7 @@ WebInspector.TabbedPane = function()
     this._tabsHistory = [];
     this._tabsById = {};
     this.element.addEventListener("click", this.focus.bind(this), false);
+    this.element.addEventListener("mouseup", this.onMouseUp.bind(this), false);
 
     this._dropDownButton = this._createDropDownButton();
 }
@@ -90,6 +91,16 @@ WebInspector.TabbedPane.prototype = {
     defaultFocusedElement: function()
     {
         return this.visibleView ? this.visibleView.defaultFocusedElement() : null;
+    },
+
+    /**
+     * @param {Event} event
+     */
+    onMouseUp: function(event)
+    {
+        // This is needed to prevent middle-click pasting on linux when tabs are clicked.
+        if (event.button === 1)
+            event.consume(true);
     },
 
     /**

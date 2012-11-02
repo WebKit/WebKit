@@ -1,3 +1,24 @@
+2012-11-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Middle click closes an editor and pastes selection into current editor on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=100743
+
+        Reviewed by Alexander Pavlov.
+
+        Editor now consumes all middle mouse button mouse ups except for the ones in the main panel.
+        TabbedPane now consumes all middle mouse button mouse ups as well.
+        Navigator view does not pass focus anymore if element was selected with middle mouse button.
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (.preventDefaultOnMouseUp):
+        (.consumeMouseUp):
+        * inspector/front-end/NavigatorView.js:
+        (WebInspector.NavigatorSourceTreeElement.prototype.ondblclick):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane):
+        (WebInspector.TabbedPane.prototype.onMouseUp):
+        (WebInspector.TabbedPane.prototype.onMouseClick):
+
 2012-11-01  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI instrument ShadowRoot. It gives us ~400k on plus.google.com
