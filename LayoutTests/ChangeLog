@@ -1,5 +1,11 @@
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
+        [Chromium] Unreviewed gardening.  Mark another flaky test.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
         [Chromium] Unreviewed gardening.
 
         * platform/chromium-win/compositing/geometry/vertical-scroll-composited-expected.png:

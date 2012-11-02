@@ -4116,6 +4116,9 @@ Bug(senorblanco) [ Debug ] svg/as-image/same-image-two-instances.html [ ImageOnl
 Bug(senorblanco) [ Debug ] svg/as-image/img-relative-height.html [ ImageOnlyFailure Pass ]
 Bug(senorblanco) [ Debug ] svg/as-image/img-relative-width.html [ ImageOnlyFailure Pass ]
 
+# Seems to have been flaky for quite a while.
+Bug(senorblanco) [ Lion Debug ] ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Pass Failure ]
+
 # Have been flaky since at least r133043
 Bug(senorblanco) inspector-protocol/debugger-pause-dedicated-worker.html [ Failure Pass ]
 
