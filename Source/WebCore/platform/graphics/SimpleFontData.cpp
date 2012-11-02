@@ -148,6 +148,12 @@ const SimpleFontData* SimpleFontData::fontDataForCharacter(UChar32) const
     return this;
 }
 
+Glyph SimpleFontData::glyphForCharacter(UChar32 character) const
+{
+    GlyphPageTreeNode* node = GlyphPageTreeNode::getRootChild(this, character / GlyphPage::size);
+    return node->page() ? node->page()->glyphAt(character % GlyphPage::size) : 0;
+}
+
 bool SimpleFontData::isSegmented() const
 {
     return false;
