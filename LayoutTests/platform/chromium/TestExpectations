@@ -4093,26 +4093,26 @@ webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pixel-crack-im
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/repaint-subrect-grid.html [ Timeout ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/support-broken-image-delegate.html [ Failure ]
 
-# Just needs a rebaseline (but webkit-patch rebaseline doesn't seem to work)
-Bug(senorblanco) [ Mac ] fast/sub-pixel/float-wrap-zoom.html [ ImageOnlyFailure ]
+# This ref-test doesn't work on Chromium Mac ("Test" is offset).
+webkit.org/b/101093 [ Mac ] fast/sub-pixel/float-wrap-zoom.html [ ImageOnlyFailure ]
 
-# Failing since r133069 (maybe debug-only?  Update after more results are in)
-Bug(senorblanco) editing/pasteboard/file-drag-to-editable.html [ Failure Pass ]
+# Flaky since r133069
+webkit.org/b/101092 [ Mac Win Debug ] editing/pasteboard/file-drag-to-editable.html [ Failure Pass ]
 
 # Failing on Mac since Chromium r165269
 Bug(senorblanco) [ Mac ] compositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
 Bug(senorblanco) [ Mac ] compositing/geometry/fixed-position-transform-composited-page-scale-down.html [ ImageOnlyFailure ]
 
 # Crashy since at least r133035; gives a v8 error
-Bug(senorblanco) [ Linux Debug ] fast/files/workers/worker-apply-blob-url-to-xhr.html [ Crash Pass ]
+webkit.org/b/101099 [ Linux Debug ] fast/files/workers/worker-apply-blob-url-to-xhr.html [ Crash Pass ]
 
 # This reftest doesn't work on Mac 10.8 for some reason.
-Bug(senorblanco) [ MountainLion ] fast/regions/autoheight-definedheight-changenotdetected.html [ ImageOnlyFailure ]
+webkit.org/b/101101 [ MountainLion ] fast/regions/autoheight-definedheight-changenotdetected.html [ ImageOnlyFailure ]
 
 # Has been flaky in Debug since at least r133070, possibly earlier.
-Bug(senorblanco) [ Debug ] svg/as-image/same-image-two-instances.html [ ImageOnlyFailure Pass ]
-Bug(senorblanco) [ Debug ] svg/as-image/img-relative-height.html [ ImageOnlyFailure Pass ]
-Bug(senorblanco) [ Debug ] svg/as-image/img-relative-width.html [ ImageOnlyFailure Pass ]
+webkit.org/b/83471 [ Debug ] svg/as-image/same-image-two-instances.html [ ImageOnlyFailure Pass ]
+webkit.org/b/83471 [ Debug ] svg/as-image/img-relative-height.html [ ImageOnlyFailure Pass ]
+webkit.org/b/83471 [ Debug ] svg/as-image/img-relative-width.html [ ImageOnlyFailure Pass ]
 
 # Seems to have been flaky for quite a while.
 Bug(senorblanco) [ Lion Debug ] ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Pass Failure ]
