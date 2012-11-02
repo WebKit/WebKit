@@ -1,3 +1,9 @@
+2012-11-02  Alice Boxhall  <aboxhall@chromium.org>
+
+        Unreviewed gardening. Mark video-media-source-state-changes.html as flaky.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-02  Tom Sepez  <tsepez@chromium.org>
 
         report-blocked-uri-cross-origin.html is failing
