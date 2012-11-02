@@ -1876,12 +1876,12 @@ bool ByteCodeParser::parseResolveOperations(SpeculatedType prediction, unsigned 
     while (resolvingBase) {
         switch (pc->m_operation) {
         case ResolveOperation::ReturnGlobalObjectAsBase:
-            *base = get(m_codeBlock->globalObjectConstant());
+            *base = cellConstant(globalObject);
             ASSERT(!value);
             return true;
 
         case ResolveOperation::SetBaseToGlobal:
-            *base = get(m_codeBlock->globalObjectConstant());
+            *base = cellConstant(globalObject);
             setBase = true;
             resolvingBase = false;
             ++pc;

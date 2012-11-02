@@ -1216,9 +1216,6 @@ namespace JSC {
         int m_numVars;
         bool m_isConstructor;
 
-        int globalObjectConstant() const { return m_globalObjectConstant; }
-        void setGlobalObjectConstant(int globalRegister) { m_globalObjectConstant = globalRegister; }
-
     protected:
 #if ENABLE(JIT)
         virtual bool jitCompileImpl(ExecState*) = 0;
@@ -1298,7 +1295,6 @@ namespace JSC {
         int m_thisRegister;
         int m_argumentsRegister;
         int m_activationRegister;
-        int m_globalObjectConstant;
 
         bool m_needsFullScopeChain;
         bool m_usesEval;

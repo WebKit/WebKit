@@ -270,7 +270,6 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, JSScope* scope, S
     , m_expressionTooDeep(false)
 {
     m_globalData->startedCompiling(m_codeBlock);
-    m_codeBlock->setGlobalObjectConstant(emitLoad(0, JSValue(m_codeBlock->globalObject()))->index());
     
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
@@ -354,7 +353,6 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, JSScope* sc
     , m_expressionTooDeep(false)
 {
     m_globalData->startedCompiling(m_codeBlock);
-    m_codeBlock->setGlobalObjectConstant(emitLoad(0, JSValue(m_codeBlock->globalObject()))->index());
 
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
@@ -570,7 +568,6 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, JSScope* scope, SharedS
     , m_expressionTooDeep(false)
 {
     m_globalData->startedCompiling(m_codeBlock);
-    m_codeBlock->setGlobalObjectConstant(emitLoad(0, JSValue(m_codeBlock->globalObject()))->index());
 
     if (m_shouldEmitDebugHooks || m_baseScopeDepth)
         m_codeBlock->setNeedsFullScopeChain(true);

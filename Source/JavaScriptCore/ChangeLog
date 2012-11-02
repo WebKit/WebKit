@@ -1,3 +1,22 @@
+2012-11-01  Oliver Hunt  <oliver@apple.com>
+
+        Remove GlobalObject constant register that is typically unused
+        https://bugs.webkit.org/show_bug.cgi?id=101005
+
+        Reviewed by Geoffrey Garen.
+
+        The GlobalObject constant register is frequently allocated even when it
+        is not used, it is also getting in the way of some other optimisations.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseResolveOperations):
+
 2012-10-31  Filip Pizlo  <fpizlo@apple.com>
 
         DFG optimized string access code should be enabled
