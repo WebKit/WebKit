@@ -1,3 +1,15 @@
+2012-11-01  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Try to find ninja if it's not in the path already
+        https://bugs.webkit.org/show_bug.cgi?id=100988
+
+        Reviewed by Ryosuke Niwa.
+
+        Similar to the gclient detection logic in update-webkit-chromium
+
+        * Scripts/webkitdirs.pm:
+        (buildChromiumNinja):
+
 2012-11-01  Eric Seidel  <eric@webkit.org>
 
         Add Glenn Adams to the Contributor list
