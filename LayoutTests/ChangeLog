@@ -2,6 +2,14 @@
 
         Unreviewed baselines for chromium-mac.
 
+        * platform/chromium-mac-lion/compositing/repaint/invalidations-on-composited-layers-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/compositing/repaint/invalidations-on-composited-layers-expected.txt: Added.
+        * platform/chromium-mac/compositing/repaint/invalidations-on-composited-layers-expected.txt: Added.
+
+2012-11-02  Ian Vollick  <vollick@chromium.org>
+
+        Unreviewed baselines for chromium-mac.
+
         * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/repaint/invalidations-on-composited-layers-expected.txt: Added.
 
 2012-11-02  Alice Boxhall  <aboxhall@google.com>
