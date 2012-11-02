@@ -35,19 +35,19 @@
 
 namespace WebCore {
 
-class DOMNodeWrapperMap : public DOMWrapperMap<Node> {
+template<class KeyType>
+class IntrusiveDOMWrapperMap : public DOMWrapperMap<KeyType> {
 public:
-    virtual v8::Persistent<v8::Object> get(Node* node) OVERRIDE
+    virtual v8::Persistent<v8::Object> get(KeyType* key) OVERRIDE
     {
-        return node->wrapper();
+        return key->wrapper();
     }
 
-    virtual void set(Node* node, v8::Persistent<v8::Object> wrapper) OVERRIDE
+    virtual void set(KeyType* key, v8::Persistent<v8::Object> wrapper) OVERRIDE
     {
-        ASSERT(node && node->wrapper().IsEmpty());
-        ASSERT(wrapper.WrapperClassId() == v8DOMNodeClassId);
-        node->setWrapper(wrapper);
-        wrapper.MakeWeak(node, weakCallback);
+        ASSERT(key && key->wrapper().IsEmpty());
+        key->setWrapper(wrapper);
+        wrapper.MakeWeak(key, weakCallback);
     }
 
     virtual void clear() OVERRIDE
@@ -57,19 +57,19 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
+        // This type of wrapper map does not use any additional memory.
     }
 
 private:
     static void weakCallback(v8::Persistent<v8::Value> value, void* context)
     {
-        Node* node = static_cast<Node*>(context);
+        KeyType* key = static_cast<KeyType*>(context);
         ASSERT(value->IsObject());
-        ASSERT(node->wrapper() == v8::Persistent<v8::Object>::Cast(value));
+        ASSERT(key->wrapper() == v8::Persistent<v8::Object>::Cast(value));
 
-        node->clearWrapper();
+        key->clearWrapper();
         value.Dispose();
-        node->deref();
+        key->deref();
     }
 };
 

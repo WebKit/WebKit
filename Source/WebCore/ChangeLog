@@ -1,5 +1,23 @@
 2012-11-02  Adam Barth  <abarth@webkit.org>
 
+        [V8] Generalize NodeWrapperMap to be able to handle other sorts of keys
+        https://bugs.webkit.org/show_bug.cgi?id=100973
+
+        Reviewed by Stephen White.
+
+        This is the first step towards using intrusive DOM wrapper maps more
+        widely in WebCore (see
+        http://lists.webkit.org/pipermail/webkit-dev/2012-November/022686.html
+        for more context).
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::DOMDataStore):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        (WebCore):
+        (WebCore::IntrusiveDOMWrapperMap::weakCallback):
+
+2012-11-02  Adam Barth  <abarth@webkit.org>
+
         ASSERT in RenderLayer::hitTestContents can fire
         https://bugs.webkit.org/show_bug.cgi?id=99656
 
