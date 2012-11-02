@@ -246,12 +246,10 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers modifiersRef
 void EventSenderProxy::updateClickCountForButton(int button)
 {
     if (m_time - m_clickTime < QApplication::doubleClickInterval() && m_position == m_clickPosition && button == m_clickButton) {
-        ++m_clickCount;
         m_clickTime = m_time;
         return;
     }
 
-    m_clickCount = 1;
     m_clickTime = m_time;
     m_clickPosition = m_position;
     m_clickButton = button;
@@ -267,9 +265,10 @@ void EventSenderProxy::mouseDown(unsigned button, WKEventModifiers wkModifiers)
     m_mouseButtons |= mouseButton;
 
     QPoint mousePos(m_position.x, m_position.y);
-    QMouseEvent* event = new QMouseEvent((m_clickCount == 2) ? QEvent::MouseButtonDblClick : QEvent::MouseButtonPress,
+    QMouseEvent* event = new QMouseEvent(QEvent::MouseButtonPress,
         mousePos, mousePos, mouseButton, m_mouseButtons, modifiers);
 
+    // We aren't generating MouseButtonDblClick events as they aren't used.
     sendOrQueueEvent(event);
 }
 

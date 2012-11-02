@@ -1,3 +1,23 @@
+2012-11-02  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] WTR: Make sure that eventSender.mouseDown sends a press event for the second press
+        https://bugs.webkit.org/show_bug.cgi?id=101033
+
+        Reviewed by Simon Hausmann.
+
+        eventSender.mouseDown doesn't work properly since r133153 where
+        MouseButtonDblClick events aren't interpreted as Press events anymore.
+        The problem is that mouseDown sends a DblClick event instead of a Press,
+        while the correct way is to send both events.
+
+        Since QQuickWebView isn't doing anything with DblClick events anymore,
+        simply send Press events all the time and let WebCore figure out
+        where the double clicks are.
+
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp:
+        (WTR::EventSenderProxy::updateClickCountForButton):
+        (WTR::EventSenderProxy::mouseDown):
+
 2012-11-02  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add HTTP authentication support to MiniBrowser
