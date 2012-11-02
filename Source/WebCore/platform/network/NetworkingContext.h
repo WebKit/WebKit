@@ -23,6 +23,7 @@
 #include <wtf/RefCounted.h>
 
 #if PLATFORM(MAC)
+OBJC_CLASS NSOperationQueue;
 #include "SchedulePair.h"
 #endif
 
@@ -53,7 +54,8 @@ public:
 #if PLATFORM(MAC)
     virtual bool needsSiteSpecificQuirks() const = 0;
     virtual bool localFileContentSniffingEnabled() const = 0;
-    virtual SchedulePairHashSet* scheduledRunLoopPairs() const = 0;
+    virtual SchedulePairHashSet* scheduledRunLoopPairs() const { return 0; }
+    virtual NSOperationQueue *scheduledOperationQueue() const { return 0; }
     virtual ResourceError blockedError(const ResourceRequest&) const = 0;
 #endif
 

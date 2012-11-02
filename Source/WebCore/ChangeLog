@@ -1,3 +1,26 @@
+2012-11-02  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] ResourceHandle changes for network process
+        https://bugs.webkit.org/show_bug.cgi?id=101111
+
+        Reviewed by Jessie Berlin.
+
+        With NSOperationQueue, we'll be getting NetworkProcess delegate method calls
+        on secondary threads, and so we won't block other requests while consulting with WebProcess.
+
+        * platform/network/NetworkingContext.h:
+        (WebCore::NetworkingContext::scheduledRunLoopPairs):
+        (WebCore::NetworkingContext::scheduledOperationQueue):
+        Add an ability to schedule on an NSOperationQueue. Now that scheduling on run loop
+        is not a must, give scheduledRunLoopPairs() a default implementation.
+
+        * platform/network/mac/ResourceHandleMac.mm: Removed isInitializingConnection
+        static. It was only used to catch a long obsolete bug with debug logging, and
+        cannot work with multiple threads.
+        (WebCore::ResourceHandle::start): Scedule on a operation queue if applicable.
+        (-[WebCoreResourceHandleAsDelegate connection:willCacheResponse:]): Removed a
+        check that used isInitializingConnection.
+
 2012-11-02  Chris Rogers  <crogers@google.com>
 
         Automating gain AudioParam with linearRampToValueAtTime introduces buzzing distortion

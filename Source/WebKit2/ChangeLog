@@ -1,3 +1,21 @@
+2012-11-02  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] ResourceHandle changes for network process
+        https://bugs.webkit.org/show_bug.cgi?id=101111
+
+        Reviewed by Jessie Berlin.
+
+        * NetworkProcess/mac/NetworkProcessMainMac.mm: (WebKit::NetworkProcessMain):
+        We want to use WebKitSystemInterface in network process.
+        * NetworkProcess/mac/RemoteNetworkingContext.h:
+        (WebKit::RemoteNetworkingContext::create): Added a constructor and a create function.
+        Switched from scheduledRunLoopPairs() to the new scheduledOperationQueue().
+
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::RemoteNetworkingContext):
+        (WebKit::RemoteNetworkingContext::scheduledOperationQueue):
+        Ditto.
+
 2012-11-02  Simon Fraser  <simon.fraser@apple.com>
 
         Enable SUBPIXEL_LAYOUT on Mac

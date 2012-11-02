@@ -32,14 +32,20 @@ namespace WebKit {
 
 class RemoteNetworkingContext : public WebCore::NetworkingContext {
 public:
+    static PassRefPtr<RemoteNetworkingContext> create(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled)
+    {
+        return adoptRef(new RemoteNetworkingContext(needsSiteSpecificQuirks, localFileContentSniffingEnabled));
+    }
     virtual ~RemoteNetworkingContext();
 
 private:
+    RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled);
+
     virtual bool isValid() const OVERRIDE;
 
     virtual bool needsSiteSpecificQuirks() const OVERRIDE;
     virtual bool localFileContentSniffingEnabled() const OVERRIDE;
-    virtual WebCore::SchedulePairHashSet* scheduledRunLoopPairs() const OVERRIDE;
+    virtual NSOperationQueue *scheduledOperationQueue() const OVERRIDE;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
 
     bool m_needsSiteSpecificQuirks;

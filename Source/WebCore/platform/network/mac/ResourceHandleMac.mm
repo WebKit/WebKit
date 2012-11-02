@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,10 +124,6 @@ private:
 
 namespace WebCore {
 
-#ifndef NDEBUG
-static bool isInitializingConnection;
-#endif
-    
 static void applyBasicAuthorizationHeader(ResourceRequest& request, const Credential& credential)
 {
     String authenticationHeader = "Basic " + base64Encode(String(credential.user() + ":" + credential.password()).utf8());
@@ -250,10 +246,6 @@ bool ResourceHandle::start(NetworkingContext* context)
     if (!context->isValid())
         return false;
 
-#ifndef NDEBUG
-    isInitializingConnection = YES;
-#endif
-
     ASSERT(!d->m_proxy);
     d->m_proxy.adoptNS(wkCreateNSURLConnectionDelegateProxy());
     [static_cast<WebCoreNSURLConnectionDelegateProxy*>(d->m_proxy.get()) setDelegate:ResourceHandle::delegate()];
@@ -278,16 +270,18 @@ bool ResourceHandle::start(NetworkingContext* context)
         }
     }
 
+    if (NSOperationQueue *operationQueue = context->scheduledOperationQueue()) {
+        ASSERT(!scheduled);
+        [connection() setDelegateQueue:operationQueue];
+        scheduled = true;
+    }
+
     // Start the connection if we did schedule with at least one runloop.
     // We can't start the connection until we have one runloop scheduled.
     if (scheduled)
         [connection() start];
     else
         d->m_startWhenScheduled = true;
-
-#ifndef NDEBUG
-    isInitializingConnection = NO;
-#endif
 
     LOG(Network, "Handle %p starting connection %p for %@", this, connection(), firstRequest().nsURLRequest());
     
@@ -878,11 +872,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     LOG(Network, "Handle %p delegate connection:%p willCacheResponse:%p", m_handle, connection, cachedResponse);
 
     UNUSED_PARAM(connection);
-
-#ifndef NDEBUG
-    if (isInitializingConnection)
-        LOG_ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (4067625)");
-#endif
 
     if (!m_handle || !m_handle->client())
         return nil;

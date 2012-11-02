@@ -33,6 +33,7 @@
 #import "NetworkProcess.h"
 #import <WebCore/RunLoop.h>
 #import <WebKitSystemInterface.h>
+#import <WebSystemInterface.h>
 #import <mach/mach_error.h>
 #import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
@@ -78,7 +79,7 @@ int NetworkProcessMain(const CommandLine& commandLine)
     signal(SIGSEGV, _exit);
 #endif
 
-
+    InitWebCoreSystemInterface();
     JSC::initializeThreading();
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();

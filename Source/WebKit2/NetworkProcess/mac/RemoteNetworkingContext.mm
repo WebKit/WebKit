@@ -33,6 +33,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+RemoteNetworkingContext::RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled)
+    : m_needsSiteSpecificQuirks(needsSiteSpecificQuirks)
+    , m_localFileContentSniffingEnabled(localFileContentSniffingEnabled)
+{
+}
+
 RemoteNetworkingContext::~RemoteNetworkingContext()
 {
 }
@@ -52,14 +58,15 @@ bool RemoteNetworkingContext::localFileContentSniffingEnabled() const
     return m_localFileContentSniffingEnabled;
 }
 
-SchedulePairHashSet* RemoteNetworkingContext::scheduledRunLoopPairs() const
+NSOperationQueue *RemoteNetworkingContext::scheduledOperationQueue() const
 {
-    static SchedulePairHashSet* pairs;
-    if (!pairs) {
-        pairs = new SchedulePairHashSet;
-        pairs->add(SchedulePair::create(CFRunLoopGetMain(), kCFRunLoopCommonModes));
+    static NSOperationQueue *queue;
+    if (!queue) {
+        queue = [[NSOperationQueue alloc] init];
+        // Default concurrent operation count depends on current system workload, but delegate methods are mostly idling in IPC, so we can run as many as needed.
+        [queue setMaxConcurrentOperationCount:NSIntegerMax];
     }
-    return pairs;
+    return queue;
 }
 
 ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& request) const
