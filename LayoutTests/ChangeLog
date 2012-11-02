@@ -1,3 +1,11 @@
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium-win/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-win/platform/chromium/compositing/huge-layer-rotated-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+
 2012-11-01  Tom Sepez  <tsepez@chromium.org>
 
         XSS blocker false positive when page contains <iframe src="">
