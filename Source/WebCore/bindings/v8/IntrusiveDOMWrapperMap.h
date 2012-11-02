@@ -35,19 +35,19 @@
 
 namespace WebCore {
 
-template<class KeyType>
-class IntrusiveDOMWrapperMap : public DOMWrapperMap<KeyType> {
+class DOMNodeWrapperMap : public DOMWrapperMap<Node> {
 public:
-    virtual v8::Persistent<v8::Object> get(KeyType* key) OVERRIDE
+    virtual v8::Persistent<v8::Object> get(Node* node) OVERRIDE
     {
-        return key->wrapper();
+        return node->wrapper();
     }
 
-    virtual void set(KeyType* key, v8::Persistent<v8::Object> wrapper) OVERRIDE
+    virtual void set(Node* node, v8::Persistent<v8::Object> wrapper) OVERRIDE
     {
-        ASSERT(key && key->wrapper().IsEmpty());
-        key->setWrapper(wrapper);
-        wrapper.MakeWeak(key, weakCallback);
+        ASSERT(node && node->wrapper().IsEmpty());
+        ASSERT(wrapper.WrapperClassId() == v8DOMNodeClassId);
+        node->setWrapper(wrapper);
+        wrapper.MakeWeak(node, weakCallback);
     }
 
     virtual void clear() OVERRIDE
@@ -63,13 +63,13 @@ public:
 private:
     static void weakCallback(v8::Persistent<v8::Value> value, void* context)
     {
-        KeyType* key = static_cast<KeyType*>(context);
+        Node* node = static_cast<Node*>(context);
         ASSERT(value->IsObject());
-        ASSERT(key->wrapper() == v8::Persistent<v8::Object>::Cast(value));
+        ASSERT(node->wrapper() == v8::Persistent<v8::Object>::Cast(value));
 
-        key->clearWrapper();
+        node->clearWrapper();
         value.Dispose();
-        key->deref();
+        node->deref();
     }
 };
 

@@ -43,7 +43,7 @@ DOMDataStore::DOMDataStore(Type type)
     : m_type(type)
 {
     if (type == MainWorld)
-        m_domNodeMap = adoptPtr(new IntrusiveDOMWrapperMap<Node>);
+        m_domNodeMap = adoptPtr(new DOMNodeWrapperMap);
     else {
         ASSERT(type == IsolatedWorld || type == Worker);
         // FIXME: In principle, we shouldn't need to create this

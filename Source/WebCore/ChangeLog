@@ -1,3 +1,16 @@
+2012-11-01  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, rolling out r133244.
+        http://trac.webkit.org/changeset/133244
+        https://bugs.webkit.org/show_bug.cgi?id=100973
+
+        Broke Chromium Mac (clang) builds.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::DOMDataStore):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        (WebCore::DOMNodeWrapperMap::weakCallback):
+
 2012-11-01  Ami Fischman  <fischman@chromium.org>
 
         HTMLMediaPlayer should free m_player when src is set/changed
