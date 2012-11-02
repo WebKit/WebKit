@@ -1381,8 +1381,10 @@ void JIT::privateCompileGetByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
         slowCases = emitIntTypedArrayGetByVal(currentInstruction, badType, m_globalData->int32ArrayDescriptor(), 4, SignedTypedArray);
         break;
     case JITUint8Array:
-    case JITUint8ClampedArray:
         slowCases = emitIntTypedArrayGetByVal(currentInstruction, badType, m_globalData->uint8ArrayDescriptor(), 1, UnsignedTypedArray);
+        break;
+    case JITUint8ClampedArray:
+        slowCases = emitIntTypedArrayGetByVal(currentInstruction, badType, m_globalData->uint8ClampedArrayDescriptor(), 1, UnsignedTypedArray);
         break;
     case JITUint16Array:
         slowCases = emitIntTypedArrayGetByVal(currentInstruction, badType, m_globalData->uint16ArrayDescriptor(), 2, UnsignedTypedArray);

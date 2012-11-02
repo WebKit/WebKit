@@ -1,3 +1,16 @@
+2012-11-02  Filip Pizlo  <fpizlo@apple.com>
+
+        JIT::privateCompileGetByVal should use the uint8ClampedArrayDescriptor for compiling accesses to Uint8ClampedArrays
+        https://bugs.webkit.org/show_bug.cgi?id=101112
+
+        Reviewed by Gavin Barraclough.
+
+        The only reason why the code was wrong to use uint8ArrayDescriptor instead is that if we're just using
+        Uint8ClampedArrays then the descriptor for Uint8Array may not have been initialized.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByVal):
+
 2012-11-02  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         MarkedBlocks should use something other than the mark bits to indicate liveness for newly allocated objects
