@@ -178,11 +178,34 @@ JSValue regExpObjectMultiline(ExecState*, JSValue slotBase, PropertyName)
     return jsBoolean(asRegExpObject(slotBase)->regExp()->multiline());
 }
 
-JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, PropertyName)
+template <typename CharacterType>
+static inline void appendLineTerminatorEscape(StringBuilder&, CharacterType);
+
+template <>
+inline void appendLineTerminatorEscape<LChar>(StringBuilder& builder, LChar lineTerminator)
 {
-    String pattern = asRegExpObject(slotBase)->regExp()->pattern();
-    unsigned length = pattern.length();
-    const UChar* characters = pattern.characters();
+    if (lineTerminator == '\n')
+        builder.append('n');
+    else
+        builder.append('r');
+}
+
+template <>
+inline void appendLineTerminatorEscape<UChar>(StringBuilder& builder, UChar lineTerminator)
+{
+    if (lineTerminator == '\n')
+        builder.append('n');
+    else if (lineTerminator == '\r')
+        builder.append('r');
+    else if (lineTerminator == 0x2028)
+        builder.appendLiteral("u2028");
+    else
+        builder.appendLiteral("u2029");
+}
+
+template <typename CharacterType>
+static inline JSValue regExpObjectSourceInternal(ExecState* exec, String pattern, const CharacterType* characters, unsigned length)
+{
     bool previousCharacterWasBackslash = false;
     bool inBrackets = false;
     bool shouldEscape = false;
@@ -197,7 +220,7 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, PropertyName)
 
     // early return for strings that don't contain a forwards slash and LineTerminator
     for (unsigned i = 0; i < length; ++i) {
-        UChar ch = characters[i];
+        CharacterType ch = characters[i];
         if (!previousCharacterWasBackslash) {
             if (inBrackets) {
                 if (ch == ']')
@@ -212,7 +235,7 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, PropertyName)
             }
         }
 
-        if (Lexer<UChar>::isLineTerminator(ch)) {
+        if (Lexer<CharacterType>::isLineTerminator(ch)) {
             shouldEscape = true;
             break;
         }
@@ -230,7 +253,7 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, PropertyName)
     inBrackets = false;
     StringBuilder result;
     for (unsigned i = 0; i < length; ++i) {
-        UChar ch = characters[i];
+        CharacterType ch = characters[i];
         if (!previousCharacterWasBackslash) {
             if (inBrackets) {
                 if (ch == ']')
@@ -244,18 +267,11 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, PropertyName)
         }
 
         // escape LineTerminator
-        if (Lexer<UChar>::isLineTerminator(ch)) {
+        if (Lexer<CharacterType>::isLineTerminator(ch)) {
             if (!previousCharacterWasBackslash)
                 result.append('\\');
 
-            if (ch == '\n')
-                result.append('n');
-            else if (ch == '\r')
-                result.append('r');
-            else if (ch == 0x2028)
-                result.appendLiteral("u2028");
-            else
-                result.appendLiteral("u2029");
+            appendLineTerminatorEscape<CharacterType>(result, ch);
         } else
             result.append(ch);
 
@@ -266,6 +282,14 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, PropertyName)
     }
 
     return jsString(exec, result.toString());
+}
+
+JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    String pattern = asRegExpObject(slotBase)->regExp()->pattern();
+    if (pattern.is8Bit())
+        return regExpObjectSourceInternal(exec, pattern, pattern.characters8(), pattern.length());
+    return regExpObjectSourceInternal(exec, pattern, pattern.characters16(), pattern.length());
 }
 
 void RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)

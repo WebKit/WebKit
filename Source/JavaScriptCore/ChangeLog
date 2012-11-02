@@ -1,3 +1,18 @@
+2012-11-02  Michael Saboff  <msaboff@apple.com>
+
+        RegExp.prototype.toString Should Produce an 8 bit JSString if possible.
+        https://bugs.webkit.org/show_bug.cgi?id=101003
+
+        Reviewed by Geoffrey Garen.
+
+        Took the logic of regExpObjectSource() and created two templated helpers that uses the
+        source character type when appending to the StringBuilder.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::appendLineTerminatorEscape): Checks line terminate type to come up with escaped version.
+        (JSC::regExpObjectSourceInternal): Templated version of original.
+        (JSC::regExpObjectSource): Wrapper function.
+
 2012-11-02  Adam Barth  <abarth@webkit.org>
 
         ENABLE(UNDO_MANAGER) is disabled everywhere and is not under active development
