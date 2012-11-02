@@ -104,7 +104,7 @@ void RenderGeometryMap::mapToAbsolute(TransformState& transformState) const
         // If this box has a transform, it acts as a fixed position container
         // for fixed descendants, which prevents the propagation of 'fixed'
         // unless the layer itself is also fixed position.
-        if (currentStep.m_hasTransform && !currentStep.m_isFixedPosition)
+        if (i && currentStep.m_hasTransform && !currentStep.m_isFixedPosition)
             inFixed = false;
         else if (currentStep.m_isFixedPosition)
             inFixed = true;

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.fixed-no-z-index {
+  position: absolute;
+  left: 10px;
+}
+.fixed-with-z-index {
+  position: fixed;
+  z-index: 1;
+  left: 10px;
+  -webkit-transform:translateZ(0);
+}
+</style>
+<script>
+  function scale() {
+    if (window.internals) {
+      window.internals.settings.setEnableCompositingForFixedPosition(true);
+      window.internals.settings.setPageScaleFactor(2, 0, 0);
+    }
+    window.scrollTo(100,100);
+    if (window.testRunner)
+      testRunner.dumpAsText();
+  }
+</script>
+</head>
+<body onload="scale();" style="width:2000px;height:2000px;">
+<div class="fixed-no-z-index">This test should not hit an assertion in RenderGeometryMap in debug builds</div><br>
+<div class="fixed-with-z-index">This test should not hit an assertion in RenderGeometryMap in debug builds</div>
+</body>
+</html>

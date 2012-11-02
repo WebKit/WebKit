@@ -1,3 +1,24 @@
+2012-11-01  Tien-Ren Chen  <trchen@chromium.org>
+
+        Fix assertion failure in RenderGeometryMap::absoluteRect when frame scale != 1.0
+        https://bugs.webkit.org/show_bug.cgi?id=100912
+
+        Reviewed by Simon Fraser.
+
+        Frame scale will add transformation to RenderView, so fixed position doesn't
+        get propagated up to the viewport by RenderGeometryMap. This is handled
+        correctly in RenderView::mapLocalToContainer, causing the assertion to fail.
+        This patch corrects RenderGeometryMap::mapToAbsolute to handle the RenderView
+        transformation case.
+
+        A layout test is added to catch this issue. The test will crash debug build
+        without this patch.
+
+        Test: compositing/geometry/fixed-position-composited-page-scale-scroll.html
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::mapToAbsolute):
+
 2012-11-01  Adam Barth  <abarth@webkit.org>
 
         [V8] Generalize NodeWrapperMap to be able to handle other sorts of keys
