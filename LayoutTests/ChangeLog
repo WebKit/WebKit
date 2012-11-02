@@ -1,3 +1,17 @@
+2012-11-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline some MathML results, and mark compositing/iframes/overlapped-nested-iframes.html
+        as flakey because it is.
+        
+        * platform/mac/TestExpectations:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/presentation/row-alignment-expected.png:
+        * platform/mac/mathml/presentation/row-alignment-expected.txt:
+        * platform/mac/mathml/presentation/subsup-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+        * platform/mac/mathml/presentation/tables-expected.png:
+        * platform/mac/mathml/presentation/tables-expected.txt:
+
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.

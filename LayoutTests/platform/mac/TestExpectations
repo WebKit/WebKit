@@ -779,6 +779,8 @@ inspector/debugger/set-breakpoint.html
 # https://bugs.webkit.org/show_bug.cgi?id=90724
 compositing/iframes/iframe-size-from-zero.html
 
+compositing/iframes/overlapped-nested-iframes.html [ Failure Pass ]
+
 # https://bugs.webkit.org/show_bug.cgi?id=90725
 media/media-blocked-by-beforeload.html
 
