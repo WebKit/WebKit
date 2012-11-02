@@ -72,7 +72,7 @@ public:
     virtual void attachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
     virtual void syncFixedLayers() = 0;
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableSurface::Handle&, WebCore::IntPoint&) = 0;
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, int& atlasID, WebCore::IntPoint&) = 0;
 };
 }
 
@@ -147,7 +147,7 @@ public:
     virtual void createTile(int tileID, const WebKit::SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
     virtual void updateTile(int tileID, const WebKit::SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
     virtual void removeTile(int tileID) OVERRIDE;
-    virtual PassOwnPtr<GraphicsContext> beginContentUpdate(const IntSize&, WebKit::ShareableSurface::Handle&, IntPoint&) OVERRIDE;
+    virtual PassOwnPtr<GraphicsContext> beginContentUpdate(const IntSize&, int& atlasID, IntPoint&) OVERRIDE;
 
     void setCoordinatedGraphicsLayerClient(WebKit::CoordinatedGraphicsLayerClient*);
 

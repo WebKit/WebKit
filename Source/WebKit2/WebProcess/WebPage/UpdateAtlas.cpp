@@ -30,12 +30,28 @@ using namespace WebCore;
 
 namespace WebKit {
 
-UpdateAtlas::UpdateAtlas(int dimension, ShareableBitmap::Flags flags)
-    : m_flags(flags)
+UpdateAtlas::UpdateAtlas(UpdateAtlasClient* client, int dimension, ShareableBitmap::Flags flags)
+    : m_client(client)
+    , m_flags(flags)
     , m_inactivityInSeconds(0)
+    , m_isVaild(true)
 {
+    static int nextID = 0;
+    m_ID = ++nextID;
     IntSize size = nextPowerOfTwo(IntSize(dimension, dimension));
     m_surface = ShareableSurface::create(size, flags, ShareableSurface::SupportsGraphicsSurface);
+
+    if (!m_surface->createHandle(m_handle)) {
+        m_isVaild = false;
+        return;
+    }
+    m_client->createUpdateAtlas(m_ID, m_handle);
+}
+
+UpdateAtlas::~UpdateAtlas()
+{
+    if (m_isVaild)
+        m_client->removeUpdateAtlas(m_ID);
 }
 
 void UpdateAtlas::buildLayoutIfNeeded()
@@ -51,7 +67,7 @@ void UpdateAtlas::didSwapBuffers()
     m_areaAllocator.clear();
 }
 
-PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(ShareableSurface::Handle& handle, const WebCore::IntSize& size, IntPoint& offset)
+PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(int& atlasID, const WebCore::IntSize& size, IntPoint& offset)
 {
     m_inactivityInSeconds = 0;
     buildLayoutIfNeeded();
@@ -61,8 +77,10 @@ PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(Shareabl
     if (rect.isEmpty())
         return PassOwnPtr<GraphicsContext>();
 
-    if (!m_surface->createHandle(handle))
-        return PassOwnPtr<WebCore::GraphicsContext>();
+    if (!m_isVaild)
+        return PassOwnPtr<GraphicsContext>();
+
+    atlasID = m_ID;
 
     // FIXME: Use tri-state buffers, to allow faster updates.
     offset = rect.location();

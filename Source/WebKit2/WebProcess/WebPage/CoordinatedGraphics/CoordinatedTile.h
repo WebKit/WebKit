@@ -28,7 +28,6 @@
 
 #if USE(TILED_BACKING_STORE)
 
-#include "ShareableSurface.h"
 #include "Tile.h"
 #include "TiledBackingStore.h"
 #include "WebCore/IntRect.h"
@@ -79,7 +78,7 @@ public:
     virtual void createTile(int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
     virtual void updateTile(int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
     virtual void removeTile(int tileID) = 0;
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableSurface::Handle&, WebCore::IntPoint&) = 0;
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, int& atlasID, WebCore::IntPoint&) = 0;
 };
 
 class CoordinatedTileBackend : public WebCore::TiledBackingStoreBackend {

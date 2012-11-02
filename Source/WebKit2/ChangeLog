@@ -1,3 +1,66 @@
+2012-11-02  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Manage the lifecycle of shareable surfaces precisely.
+        https://bugs.webkit.org/show_bug.cgi?id=100797
+
+        Reviewed by Noam Rosenthal.
+
+        Internal Review by Gwang Yoon Hwang and Jae Hyun Park.
+
+        This patch makes UpdateAtlas manage the lifecycle of shareable surfaces
+        containing the updates in the way how CoordinatedTile manages the lifecycle of
+        tiles. Currently, UI Process creates the shareable surface when receiving an
+        UpdateTileForLayer message, but there is no exact point to remove the shareable
+        surface. Now, we introduce new two messages to handle the lifecycle:
+        CreateUpdateAtlas and RemoveUpdateAtlas.
+
+        This patch gives us two benefits.
+        1. Reduce file and mmap operations. Web Process does not need to duplicate a
+        file handle every tile update. UI Process does not need to create a
+        ShareableSurface every UpdateTileForLayer message.
+        2. Save memory. We can remove a ShareableSurface in UI Process when UpdateAtlas
+        in Web Process is removed.
+
+        * Shared/SurfaceUpdateInfo.cpp:
+        (WebKit::SurfaceUpdateInfo::encode):
+        (WebKit::SurfaceUpdateInfo::decode):
+        * Shared/SurfaceUpdateInfo.h:
+        (SurfaceUpdateInfo):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::updateTileForLayer):
+        (WebKit::LayerTreeCoordinatorProxy::createUpdateAtlas):
+        (WebKit):
+        (WebKit::LayerTreeCoordinatorProxy::removeUpdateAtlas):
+        (WebKit::LayerTreeCoordinatorProxy::purgeBackingStores):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::beginContentUpdate):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        (CoordinatedGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp:
+        (WebKit::CoordinatedTile::updateBackBuffer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.h:
+        (CoordinatedTileClient):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::createUpdateAtlas):
+        (WebKit):
+        (WebKit::LayerTreeCoordinator::removeUpdateAtlas):
+        (WebKit::LayerTreeCoordinator::beginContentUpdate):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+        * WebProcess/WebPage/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        (WebKit):
+        (WebKit::UpdateAtlas::~UpdateAtlas):
+        (WebKit::UpdateAtlas::beginPaintingOnAvailableBuffer):
+        * WebProcess/WebPage/UpdateAtlas.h:
+        (UpdateAtlasClient):
+        (WebKit):
+        (UpdateAtlas):
+
 2012-11-02  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Remove redundant internal function

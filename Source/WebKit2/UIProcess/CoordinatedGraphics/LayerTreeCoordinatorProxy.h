@@ -26,6 +26,7 @@
 #include "CoordinatedGraphicsArgumentCoders.h"
 #include "DrawingAreaProxy.h"
 #include "Region.h"
+#include "ShareableSurface.h"
 #include "SurfaceUpdateInfo.h"
 #include "WebLayerTreeInfo.h"
 #include <WebCore/GraphicsContext.h>
@@ -64,6 +65,8 @@ public:
     void createTileForLayer(int layerID, int tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
     void updateTileForLayer(int layerID, int tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
     void removeTileForLayer(int layerID, int tileID);
+    void createUpdateAtlas(int atlasID, const ShareableSurface::Handle&);
+    void removeUpdateAtlas(int atlasID);
     void createDirectlyCompositedImage(int64_t, const WebKit::ShareableBitmap::Handle&);
     void destroyDirectlyCompositedImage(int64_t);
     void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
@@ -90,9 +93,8 @@ protected:
     WebCore::IntRect m_lastSentVisibleRect;
     float m_lastSentScale;
     WebCore::FloatPoint m_lastSentTrajectoryVector;
-#if USE(GRAPHICS_SURFACE)
-    HashMap<WebCore::GraphicsSurfaceToken::BufferHandle, RefPtr<ShareableSurface> > m_surfaces;
-#endif
+    typedef HashMap<int /* atlasID */, RefPtr<ShareableSurface> > SurfaceMap;
+    SurfaceMap m_surfaces;
 };
 
 }

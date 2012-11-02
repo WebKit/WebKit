@@ -38,8 +38,9 @@ class UpdateInfo;
 class WebPage;
 
 class LayerTreeCoordinator : public LayerTreeHost, WebCore::GraphicsLayerClient
-                           , public CoordinatedGraphicsLayerClient
-                           , public WebCore::GraphicsLayerFactory {
+    , public CoordinatedGraphicsLayerClient
+    , public UpdateAtlasClient
+    , public WebCore::GraphicsLayerFactory {
 public:
     static PassRefPtr<LayerTreeCoordinator> create(WebPage*);
     virtual ~LayerTreeCoordinator();
@@ -93,7 +94,11 @@ public:
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*);
     virtual void syncFixedLayers();
 
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableSurface::Handle&, WebCore::IntPoint&);
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, int& atlasID, WebCore::IntPoint&);
+
+    // UpdateAtlasClient
+    virtual void createUpdateAtlas(int atlasID, const ShareableSurface::Handle&);
+    virtual void removeUpdateAtlas(int atlasID);
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     virtual void scheduleAnimation() OVERRIDE;

@@ -616,6 +616,16 @@ void LayerTreeCoordinator::removeTile(WebLayerID layerID, int tileID)
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::RemoveTileForLayer(layerID, tileID));
 }
 
+void LayerTreeCoordinator::createUpdateAtlas(int atlasID, const ShareableSurface::Handle& handle)
+{
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateUpdateAtlas(atlasID, handle));
+}
+
+void LayerTreeCoordinator::removeUpdateAtlas(int atlasID)
+{
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::RemoveUpdateAtlas(atlasID));
+}
+
 WebCore::IntRect LayerTreeCoordinator::visibleContentsRect() const
 {
     return m_visibleContentsRect;
@@ -699,23 +709,23 @@ void LayerTreeCoordinator::purgeBackingStores()
     m_updateAtlases.clear();
 }
 
-PassOwnPtr<WebCore::GraphicsContext> LayerTreeCoordinator::beginContentUpdate(const WebCore::IntSize& size, ShareableBitmap::Flags flags, ShareableSurface::Handle& handle, WebCore::IntPoint& offset)
+PassOwnPtr<WebCore::GraphicsContext> LayerTreeCoordinator::beginContentUpdate(const WebCore::IntSize& size, ShareableBitmap::Flags flags, int& atlasID, WebCore::IntPoint& offset)
 {
     OwnPtr<WebCore::GraphicsContext> graphicsContext;
     for (unsigned i = 0; i < m_updateAtlases.size(); ++i) {
         UpdateAtlas* atlas = m_updateAtlases[i].get();
         if (atlas->flags() == flags) {
             // This will return null if there is no available buffer space.
-            graphicsContext = atlas->beginPaintingOnAvailableBuffer(handle, size, offset);
+            graphicsContext = atlas->beginPaintingOnAvailableBuffer(atlasID, size, offset);
             if (graphicsContext)
                 return graphicsContext.release();
         }
     }
 
     static const int ScratchBufferDimension = 1024; // Should be a power of two.
-    m_updateAtlases.append(adoptPtr(new UpdateAtlas(ScratchBufferDimension, flags)));
+    m_updateAtlases.append(adoptPtr(new UpdateAtlas(this, ScratchBufferDimension, flags)));
     scheduleReleaseInactiveAtlases();
-    return m_updateAtlases.last()->beginPaintingOnAvailableBuffer(handle, size, offset);
+    return m_updateAtlases.last()->beginPaintingOnAvailableBuffer(atlasID, size, offset);
 }
 
 const double ReleaseInactiveAtlasesTimerInterval = 0.5;

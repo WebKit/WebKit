@@ -32,15 +32,22 @@ class IntPoint;
 
 namespace WebKit {
 
+class UpdateAtlasClient {
+public:
+    virtual void createUpdateAtlas(int atlasID, const ShareableSurface::Handle&) = 0;
+    virtual void removeUpdateAtlas(int atlasID) = 0;
+};
+
 class UpdateAtlas {
     WTF_MAKE_NONCOPYABLE(UpdateAtlas);
 public:
-    UpdateAtlas(int dimension, ShareableBitmap::Flags);
+    UpdateAtlas(UpdateAtlasClient*, int dimension, ShareableBitmap::Flags);
+    ~UpdateAtlas();
 
     inline WebCore::IntSize size() const { return m_surface->size(); }
 
     // Returns a null pointer of there is no available buffer.
-    PassOwnPtr<WebCore::GraphicsContext> beginPaintingOnAvailableBuffer(ShareableSurface::Handle&, const WebCore::IntSize&, WebCore::IntPoint& offset);
+    PassOwnPtr<WebCore::GraphicsContext> beginPaintingOnAvailableBuffer(int& atlasID, const WebCore::IntSize&, WebCore::IntPoint& offset);
     void didSwapBuffers();
     ShareableBitmap::Flags flags() const { return m_flags; }
 
@@ -60,10 +67,14 @@ private:
     void buildLayoutIfNeeded();
 
 private:
+    UpdateAtlasClient* m_client;
     OwnPtr<GeneralAreaAllocator> m_areaAllocator;
     ShareableBitmap::Flags m_flags;
     RefPtr<ShareableSurface> m_surface;
+    ShareableSurface::Handle m_handle;
     double m_inactivityInSeconds;
+    int m_ID;
+    bool m_isVaild;
 };
 
 }

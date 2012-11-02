@@ -29,6 +29,8 @@ messages -> LayerTreeCoordinatorProxy {
     CreateTileForLayer(uint32_t layerID, int tileID, WebCore::IntRect targetRect, WebKit::SurfaceUpdateInfo updateInfo)
     UpdateTileForLayer(uint32_t layerID, int tileID, WebCore::IntRect targetRect, WebKit::SurfaceUpdateInfo updateInfo)
     RemoveTileForLayer(uint32_t layerID, int tileID)
+    CreateUpdateAtlas(int atlasID, WebKit::ShareableSurface::Handle handle)
+    RemoveUpdateAtlas(int atlasID)
     CreateDirectlyCompositedImage(int64_t key, WebKit::ShareableBitmap::Handle handle)
     DestroyDirectlyCompositedImage(int64_t key)
     DidRenderFrame(WebCore::IntSize contentsSize, WebCore::IntRect coveredRect)

@@ -28,7 +28,7 @@ void SurfaceUpdateInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder.encode(updateRect);
     encoder.encode(scaleFactor);
-    encoder.encode(surfaceHandle);
+    encoder.encode(atlasID);
     encoder.encode(surfaceOffset);
 }
 
@@ -38,7 +38,7 @@ bool SurfaceUpdateInfo::decode(CoreIPC::ArgumentDecoder* decoder, SurfaceUpdateI
         return false;
     if (!decoder->decode(result.scaleFactor))
         return false;
-    if (!decoder->decode(result.surfaceHandle))
+    if (!decoder->decode(result.atlasID))
         return false;
     if (!decoder->decode(result.surfaceOffset))
         return false;

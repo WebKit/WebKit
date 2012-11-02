@@ -73,7 +73,7 @@ Vector<IntRect> CoordinatedTile::updateBackBuffer()
         return Vector<IntRect>();
 
     SurfaceUpdateInfo updateInfo;
-    OwnPtr<GraphicsContext> graphicsContext = m_client->beginContentUpdate(m_dirtyRect.size(), updateInfo.surfaceHandle, updateInfo.surfaceOffset);
+    OwnPtr<GraphicsContext> graphicsContext = m_client->beginContentUpdate(m_dirtyRect.size(), updateInfo.atlasID, updateInfo.surfaceOffset);
     if (!graphicsContext)
         return Vector<IntRect>();
     graphicsContext->translate(-m_dirtyRect.x(), -m_dirtyRect.y());
