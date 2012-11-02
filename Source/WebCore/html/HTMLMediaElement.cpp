@@ -3709,7 +3709,7 @@ void HTMLMediaElement::userCancelledLoad()
 #endif
 }
 
-void HTMLMediaElement::clearMediaPlayer(unsigned flags)
+void HTMLMediaElement::clearMediaPlayer(signed flags)
 {
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     m_player.clear();
