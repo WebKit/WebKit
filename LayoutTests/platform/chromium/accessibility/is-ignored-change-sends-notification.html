@@ -48,10 +48,10 @@
 <div id="console"></div>
 <script>
 description("This test ensures that a change to accessibilityIsIgnored fires a children changed notification on the parent.");
+window.jsTestIsAsync = true;
 
 if (window.testRunner && window.accessibilityController) {
     testRunner.dumpAsText();
-    testRunner.waitUntilDone();
 
     function accessibleElementById(id) {
         return accessibilityController.accessibleElementById(id);
@@ -70,8 +70,7 @@ if (window.testRunner && window.accessibilityController) {
         accessibleElementById('divWithoutRoleContainer').removeNotificationListener();
         accessibleElementById('divWithoutLabelContainer').removeNotificationListener();
         document.getElementById('container').hidden = true;
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 
     shouldBeTrue("accessibleElementById('hiddenDivContainer') != null");

@@ -15,10 +15,10 @@
 <div id="console"></div>
 <script>
 description("This test ensures that a change to any ARIA attribute, not just a state, sends a notification.");
+window.jsTestIsAsync = true;
 
 if (window.testRunner && window.accessibilityController) {
     testRunner.dumpAsText();
-    testRunner.waitUntilDone();
 
     function accessibleElementById(id) {
         return accessibilityController.accessibleElementById(id);
@@ -37,8 +37,7 @@ if (window.testRunner && window.accessibilityController) {
         accessibleElementById('aria-required').removeNotificationListener();
 
         document.getElementById('container').hidden = true;
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 
     accessibleElementById('aria-busy').addNotificationListener(function(notification) {

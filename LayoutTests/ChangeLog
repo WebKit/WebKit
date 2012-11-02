@@ -1,3 +1,24 @@
+2012-11-02  Tony Chang  <tony@chromium.org>
+
+        [chromium] platform/chromium/accessibility/other-aria-attribute-change-sends-notification.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=100887
+
+        Reviewed by Ojan Vafai.
+
+        The tests were racing the load time of js-test-post.js and the test completion.
+        Previously, js-test-post.js would already be in the cache, so it would always load first.
+        Now that we clear the cache, sometimes js-test-post.js would run after the other test output.
+        Fix this by setting window.jsTestIsAsync = true and calling finishJSTest() when the test
+        ends (this delays the js-test-post.js output until finishJSTest() is called).
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium/accessibility/is-ignored-change-sends-notification-expected.txt:
+        * platform/chromium/accessibility/is-ignored-change-sends-notification.html:
+        * platform/chromium/accessibility/other-aria-attribute-change-sends-notification-expected.txt:
+        * platform/chromium/accessibility/other-aria-attribute-change-sends-notification.html:
+        * platform/chromium/accessibility/text-change-notification-expected.txt:
+        * platform/chromium/accessibility/text-change-notification.html:
+
 2012-11-02  Ian Vollick  <vollick@chromium.org>
 
         Unreviewed baselines for chromium-mac.

@@ -14,9 +14,6 @@ PASS accessibleElementById('divWithoutRole') != null is false
 PASS accessibleElementById('divWithoutLabelContainer') != null is true
 PASS accessibleElementById('divWithoutLabel') != null is false
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 Got ChildrenChanged notification on hiddenDivContainer
 PASS accessibleElementById('hiddenDivContainer').childrenCount is 1
 Got ChildrenChanged notification on invisibleDivContainer
@@ -28,4 +25,7 @@ PASS accessibleElementById('divWithoutRoleContainer').childrenCount is 1
 Got ChildrenChanged notification on divWithoutLabelContainer
 PASS accessibleElementById('divWithoutLabelContainer').childrenCount is 1
 All notifications received successfully.
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

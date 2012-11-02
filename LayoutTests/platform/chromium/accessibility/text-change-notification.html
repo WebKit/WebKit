@@ -18,10 +18,10 @@
 <div id="console"></div>
 <script>
 description("This test ensures that a change to an element's accessible text, even if indirect, sends a notification.");
+window.jsTestIsAsync = true;
 
 if (window.testRunner && window.accessibilityController) {
     testRunner.dumpAsText();
-    testRunner.waitUntilDone();
 
     function accessibleElementById(id) {
         return accessibilityController.accessibleElementById(id);
@@ -40,8 +40,7 @@ if (window.testRunner && window.accessibilityController) {
         accessibleElementById('labeled').removeNotificationListener();
 
         document.getElementById('container').hidden = true;
-        if (window.testRunner)
-            testRunner.notifyDone();
+        finishJSTest();
     }
 
     accessibleElementById('aria-label').addNotificationListener(function(notification) {
