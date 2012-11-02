@@ -1,3 +1,23 @@
+2012-11-01  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Element should have getter and setter of attribute 'pseudo'
+        https://bugs.webkit.org/show_bug.cgi?id=100831
+
+        Reviewed by Hajime Morita.
+
+        We expose 'pseudo' attribute in Element. When nothing is assigned to 'pseudo', it should return null.
+
+        Test: fast/dom/shadow/pseudo-attribute.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::pseudo):
+        (WebCore):
+        (WebCore::Element::setPseudo):
+        * dom/Element.h:
+        (Element):
+        * dom/Element.idl:
+        * html/HTMLAttributeNames.in:
+
 2012-11-01  Roger Fong  <roger_fong@apple.com>
 
         Build fix. http://trac.webkit.org/changeset/133252 broke the Windows build.

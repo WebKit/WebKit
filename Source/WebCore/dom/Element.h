@@ -312,6 +312,9 @@ public:
  
     virtual String title() const;
 
+    const AtomicString& pseudo() const;
+    void setPseudo(const AtomicString&);
+
     void updateId(const AtomicString& oldId, const AtomicString& newId);
     void updateId(TreeScope*, const AtomicString& oldId, const AtomicString& newId);
     void updateName(const AtomicString& oldName, const AtomicString& newName);

@@ -1774,6 +1774,16 @@ String Element::title() const
     return String();
 }
 
+const AtomicString& Element::pseudo() const
+{
+    return getAttribute(pseudoAttr);
+}
+
+void Element::setPseudo(const AtomicString& value)
+{
+    setAttribute(pseudoAttr, value);
+}
+
 LayoutSize Element::minimumSizeForResizing() const
 {
     return hasRareData() ? elementRareData()->m_minimumSizeForResizing : defaultMinimumSizeForResizing();
