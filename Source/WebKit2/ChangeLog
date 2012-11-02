@@ -1,3 +1,56 @@
+2012-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Don't instantiate the Java plug-in if it's inactive
+        https://bugs.webkit.org/show_bug.cgi?id=101102
+        <rdar://problem/12595679>
+
+        Reviewed by Andreas Kling.
+
+        * Shared/Plugins/PluginModuleInfo.h:
+        Add a PluginModuleLoadPolicy enum.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::policyForPlugin):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        (PluginInfoStore):
+        Rename shouldBlockPlugin to policyForPlugin and make it return an enum so we can handle inactive plug-ins.
+        
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::shouldBlockPlugin):
+        Add helper function.
+
+        (WebKit::PluginInfoStore::policyForPlugin):
+        If the Java plug-in is inactive, return PluginModuleInactive.
+
+        (WebKit::PluginInfoStore::reactivateInactivePlugin):
+        If the given plug-in is the Java plug-in, call WKJLReportWebComponentsUsed() to reactivate it.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::unavailablePluginButtonClicked):
+        If the plug-in is inactive, try to reactivate it and reload the page if reactivation succeeded.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPluginPath):
+        * UIProcess/WebProcessProxy.h:
+        This now returns a plug-in load policy.
+
+        * UIProcess/WebProcessProxy.messages.in:
+        GetPluginPack now returns a load policy enum.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldUnavailablePluginMessageBeButton):
+        Change this to a switch statement and always return true for RenderEmbeddedObject::PluginInactive.
+
+        (WebKit::WebChromeClient::unavailablePluginButtonClicked):
+        Add RenderEmbeddedObject::PluginInactive to the assertion.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        Update now that GetPluginPath returns a pluginLoadPolicy enum.
+
+        (WebKit::canPluginHandleResponse):
+        Ditto.
+
 2012-11-02  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] ResourceHandle changes for network process

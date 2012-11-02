@@ -2592,8 +2592,20 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
         pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginCrashed;
         break;
 
+    case RenderEmbeddedObject::PluginInactive: {
+#if ENABLE(NETSCAPE_PLUGIN_API)
+        String newMimeType = mimeType;
+        PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), url));
+
+        if (!plugin.path.isEmpty() && PluginInfoStore::reactivateInactivePlugin(plugin)) {
+            // The plug-in has been reactivated now; reload the page so it'll be instantiated.
+            reload(false);
+        }
+        return;
+#endif
+    }
+
     case RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy:
-    case RenderEmbeddedObject::PluginInactive:
         ASSERT_NOT_REACHED();
     }
 

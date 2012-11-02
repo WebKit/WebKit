@@ -153,6 +153,18 @@ void WKGetGlyphsForCharacters(CGFontRef, const UniChar[], CGGlyph[], size_t);
 bool WKGetVerticalGlyphsForCharacters(CTFontRef, const UniChar[], CGGlyph[], size_t);
 
 CTLineRef WKCreateCTLineWithUniCharProvider(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+enum {
+    WKCTFontTransformApplyShaping = (1 << 0),
+    WKCTFontTransformApplyPositioning = (1 << 1)
+};
+
+typedef int WKCTFontTransformOptions;
+
+bool WKCTFontTransformGlyphs(CTFontRef font, CGGlyph glyphs[], CGSize advances[], CFIndex count, WKCTFontTransformOptions options);
+#endif
+
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 CTTypesetterRef WKCreateCTTypesetterWithUniCharProviderAndOptions(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*, CFDictionaryRef options);
 
@@ -511,6 +523,7 @@ CGFloat WKNSReboundDeltaForElasticDelta(CGFloat delta);
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 Boolean WKJLIsRuntimeAndWebComponentsInstalled(void);
+void WKJLReportWebComponentsUsed(void);
 #endif
 
 typedef enum {
@@ -547,6 +560,18 @@ CGFontRef WKCaptionAppearanceCopyFontForStyle(int fontStyle);
 bool WKCaptionAppearanceGetRelativeCharacterSize(CGFloat*);
 int WKCaptionAppearanceGetTextEdgeStyle(void);
 CFStringRef WKCaptionAppearanceGetSettingsChangedNotification(void);
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+typedef enum {
+    WKOcclusionNotificationTypeApplicationBecameVisible,
+    WKOcclusionNotificationTypeApplicationBecameOccluded
+} WKOcclusionNotificationType;
+
+typedef void (*WKOcclusionNotificationHandler)(uint32_t, void*, uint32_t, void*, uint32_t);
+
+bool WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
+bool WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
+#endif
 
 #ifdef __cplusplus
 }

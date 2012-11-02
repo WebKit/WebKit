@@ -473,19 +473,28 @@ void WebChromeClient::scrollRectIntoView(const IntRect&) const
 
 bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
-    if (pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing || pluginUnavailabilityReason == RenderEmbeddedObject::InsecurePluginVersion) {
+    switch (pluginUnavailabilityReason) {
+    case RenderEmbeddedObject::PluginMissing:
         // FIXME: <rdar://problem/8794397> We should only return true when there is a
         // missingPluginButtonClicked callback defined on the Page UI client.
+    case RenderEmbeddedObject::InsecurePluginVersion:
+    case RenderEmbeddedObject::PluginInactive:
         return true;
+
+
+    case RenderEmbeddedObject::PluginCrashed:
+    case RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy:
+        return false;
     }
 
+    ASSERT_NOT_REACHED();
     return false;
 }
     
 void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
     ASSERT(element->hasTagName(objectTag) || element->hasTagName(embedTag) || element->hasTagName(appletTag));
-    ASSERT(pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing || pluginUnavailabilityReason == RenderEmbeddedObject::InsecurePluginVersion);
+    ASSERT(pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing || pluginUnavailabilityReason == RenderEmbeddedObject::InsecurePluginVersion || pluginUnavailabilityReason == RenderEmbeddedObject::PluginInactive);
 
     HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(element);
 

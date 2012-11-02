@@ -1,3 +1,27 @@
+2012-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Don't instantiate the Java plug-in if it's inactive
+        https://bugs.webkit.org/show_bug.cgi?id=101102
+        <rdar://problem/12595679>
+
+        Reviewed by Andreas Kling.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::shouldUnavailablePluginMessageBeButton):
+        The RenderEmbeddedObject::PluginInactive reason should always result in a button being shown.
+
+        (WebChromeClient::unavailablePluginButtonClicked):
+        If the Java plug-in is inactive, call WKJLReportWebComponentsUsed() to reactivate the plug-in and
+        then reload the page.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (isOracleJavaPlugIn):
+        (isPlugInInactive):
+        Helper functions.
+
+        (WebFrameLoaderClient::createPlugin):
+        If the plug-in is inactive, set the appropriate unavailability reason on the renderer.
+
 2012-11-02  Simon Fraser  <simon.fraser@apple.com>
 
         Enable SUBPIXEL_LAYOUT on Mac

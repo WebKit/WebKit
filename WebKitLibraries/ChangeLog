@@ -1,3 +1,18 @@
+2012-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Don't instantiate the Java plug-in if it's inactive
+        https://bugs.webkit.org/show_bug.cgi?id=101102
+        <rdar://problem/12595679>
+
+        Reviewed by Andreas Kling.
+
+        Update WebKitSystemInterface to a version that has WKJLReportWebComponentsUsed.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+        Roll WebKitSystemInterface DERPS.
+
 2012-10-25  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Conditionalize XHR timeout support

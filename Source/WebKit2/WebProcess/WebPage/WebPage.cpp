@@ -491,19 +491,27 @@ void WebPage::initializeInjectedBundleDiagnosticLoggingClient(WKBundlePageDiagno
 PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters)
 {
     String pluginPath;
-    bool blocked;
-
+    uint32_t pluginLoadPolicy;
     if (!WebProcess::shared().connection()->sendSync(
             Messages::WebProcessProxy::GetPluginPath(parameters.mimeType, parameters.url.string()),
-            Messages::WebProcessProxy::GetPluginPath::Reply(pluginPath, blocked), 0)) {
+            Messages::WebProcessProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy), 0)) {
         return 0;
     }
 
-    if (blocked) {
+    switch (static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy)) {
+    case PluginModuleLoadNormally:
+        break;
+
+    case PluginModuleBlocked:
         if (pluginElement->renderer()->isEmbeddedObject())
             toRenderEmbeddedObject(pluginElement->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
 
         send(Messages::WebPageProxy::DidBlockInsecurePluginVersion(parameters.mimeType, parameters.url.string()));
+        return 0;
+
+    case PluginModuleInactive:
+        if (pluginElement->renderer()->isEmbeddedObject())
+            toRenderEmbeddedObject(pluginElement->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginInactive);
         return 0;
     }
 
@@ -3493,12 +3501,12 @@ static bool canPluginHandleResponse(const ResourceResponse& response)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     String pluginPath;
-    bool blocked;
+    uint32_t pluginLoadPolicy;
     
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPluginPath(response.mimeType(), response.url().string()), Messages::WebProcessProxy::GetPluginPath::Reply(pluginPath, blocked), 0))
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPluginPath(response.mimeType(), response.url().string()), Messages::WebProcessProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy), 0))
         return false;
-    
-    return !blocked && !pluginPath.isEmpty();
+
+    return pluginLoadPolicy != PluginModuleBlocked && !pluginPath.isEmpty();
 #else
     return false;
 #endif
