@@ -662,7 +662,7 @@ _llint_op_resolve_global_property:
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_globalObject[t1], t1
     loadp ResolveOperation::m_structure[t0], t2
-    bpneq JSCell::m_structure[t1], t2, _llint_op_resolve
+    bpneq JSCell::m_structure[t1], t2, .llint_op_resolve_local
     loadis ResolveOperation::m_offset[t0], t0
     if JSVALUE64
         loadPropertyAtVariableOffsetKnownNotInline(t0, t1, t2)
@@ -747,6 +747,7 @@ _llint_op_resolve_scoped_var_with_top_scope_check:
     dispatch(5)
 
 _llint_op_resolve:
+.llint_op_resolve_local:
     traceExecution()
     getResolveOperation(3, t0, t1)
     btpz t0, .noInstructions

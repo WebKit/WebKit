@@ -1,3 +1,14 @@
+2012-11-01  Mark Lam  <mark.lam@apple.com>
+
+        A llint workaround for a toolchain issue.
+        https://bugs.webkit.org/show_bug.cgi?id=101012.
+
+        Reviewed by Michael Saboff.
+
+        * llint/LowLevelInterpreter.asm:
+          - use a local label to workaround the toolchain issue with undeclared
+            global labels.
+
 2012-11-01  Oliver Hunt  <oliver@apple.com>
 
         Remove GlobalObject constant register that is typically unused
