@@ -1,3 +1,10 @@
+2012-11-02  Alice Boxhall  <aboxhall@google.com>
+
+        Unreviewed gardening. Mark report-blocked-uri-cross-origin.html as failing.
+        https://bugs.webkit.org/show_bug.cgi?id=101096
+
+        * platform/chromium/TestExpectations:
+
 2012-11-02  Ian Vollick  <vollick@chromium.org>
 
         Support invalidation tracking for composited layers
