@@ -52,8 +52,6 @@ using namespace std;
 
 namespace WebCore {
   
-const float smallCapsFontSizeMultiplier = 0.7f;
-
 static bool fontHasVerticalGlyphs(CTFontRef ctFont)
 {
     // The check doesn't look neat but this is what AppKit does for vertical writing...
@@ -350,26 +348,6 @@ PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescri
     END_BLOCK_OBJC_EXCEPTIONS;
 
     return 0;
-}
-
-PassRefPtr<SimpleFontData> SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
-{
-    if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
-    if (!m_derivedFontData->smallCaps)
-        m_derivedFontData->smallCaps = createScaledFontData(fontDescription, smallCapsFontSizeMultiplier);
-
-    return m_derivedFontData->smallCaps;
-}
-
-PassRefPtr<SimpleFontData> SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
-{
-    if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
-    if (!m_derivedFontData->emphasisMark)
-        m_derivedFontData->emphasisMark = createScaledFontData(fontDescription, .5f);
-
-    return m_derivedFontData->emphasisMark;
 }
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const

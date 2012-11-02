@@ -34,9 +34,6 @@ void SimpleFontData::determinePitch()
     m_treatAsFixedPitch = false;
 }
 
-static const float smallCapsFraction = 0.7;
-static const float emphasisMarkFraction = 0.5;
-
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
 {
     QRawFont rawFont(m_platformData.rawFont());
@@ -65,26 +62,6 @@ PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescri
 {
     const float scaledSize = lroundf(fontDescription.computedSize() * scaleFactor);
     return SimpleFontData::create(FontPlatformData(m_platformData, scaledSize), isCustomFont(), false);
-}
-
-PassRefPtr<SimpleFontData> SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
-{
-    if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
-    if (!m_derivedFontData->smallCaps)
-        m_derivedFontData->smallCaps = createScaledFontData(fontDescription, smallCapsFraction);
-
-    return m_derivedFontData->smallCaps;
-}
-
-PassRefPtr<SimpleFontData> SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
-{
-    if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
-    if (!m_derivedFontData->emphasisMark)
-        m_derivedFontData->emphasisMark = createScaledFontData(fontDescription, emphasisMarkFraction);
-
-    return m_derivedFontData->emphasisMark;
 }
 
 FloatRect SimpleFontData::platformBoundsForGlyph(Glyph) const

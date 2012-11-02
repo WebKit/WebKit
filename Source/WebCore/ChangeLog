@@ -1,3 +1,39 @@
+2012-11-02  Stephen Chenney  <schenney@chromium.org>
+
+        Reduce redundant code in SimpleFontData[platform]
+        https://bugs.webkit.org/show_bug.cgi?id=97245
+
+        Reviewed by Eric Seidel.
+
+        Move duplicated code out of platform specific files and into the common file.
+        This represents all of the methods in SimpleFontData that do not have genuine
+        platform specific code.
+
+        No new tests because there is no change at all in the functionality.
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore):
+        (WebCore::SimpleFontData::smallCapsFontData): Implementation from platform files.
+        (WebCore::SimpleFontData::emphasisMarkFontData): Implementation from platform files.
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        (WebCore): Removed common code.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore): Removed common code.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore): Removed common code.
+        * platform/graphics/pango/SimpleFontDataPango.cpp:
+        (WebCore): Removed common code.
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore): Removed common code.
+        * platform/graphics/skia/SimpleFontDataSkia.cpp:
+        (WebCore): Removed common code.
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore): Removed common code.
+        * platform/graphics/wince/SimpleFontDataWinCE.cpp:
+        (WebCore): Removed common code.
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore): Removed common code.
+
 2012-11-02  Adam Barth  <abarth@webkit.org>
 
         memory-instrumentation-cached-images.html is crashing
