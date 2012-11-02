@@ -39,30 +39,28 @@ static const BlackBerry::Platform::String frameOrigin(Frame* frame)
 
 GeolocationClientBlackBerry::GeolocationClientBlackBerry(BlackBerry::WebKit::WebPagePrivate* webPagePrivate)
     : m_webPagePrivate(webPagePrivate)
-    , m_tracker(0)
     , m_accuracy(false)
+    , m_isActive(false)
 {
 }
 
 void GeolocationClientBlackBerry::geolocationDestroyed()
 {
-    if (m_tracker)
-        m_tracker->destroy();
     delete this;
 }
 
 void GeolocationClientBlackBerry::startUpdating()
 {
-    if (m_tracker)
-        m_tracker->resume();
-    else
-        m_tracker = BlackBerry::Platform::GeoTracker::create(this, m_accuracy);
+    if (!m_isActive)
+        BlackBerry::Platform::GeolocationHandler::instance()->addListener(this, false);
+    m_isActive = true;
 }
 
 void GeolocationClientBlackBerry::stopUpdating()
 {
-    if (m_tracker)
-        m_tracker->suspend();
+    if (m_isActive)
+        BlackBerry::Platform::GeolocationHandler::instance()->removeListener(this);
+    m_isActive = false;
 }
 
 GeolocationPosition* GeolocationClientBlackBerry::lastPosition()
@@ -75,16 +73,32 @@ void GeolocationClientBlackBerry::requestPermission(Geolocation* location)
     Frame* frame = location->frame();
     if (!frame)
         return;
+
+    // FIXME: The geolocation setting for WebSettings is always true. Nothing ever toggles that setting.
     if (!m_webPagePrivate->m_webSettings->isGeolocationEnabled()) {
         location->setIsAllowed(false);
         return;
     }
+
     DOMWindow* window = frame->document()->domWindow();
     if (!window)
         return;
 
     const BlackBerry::Platform::String origin = frameOrigin(frame);
     m_pendingPermissionGeolocation = location;
+
+    // Check global location setting, if it is off then we request an infobar that invokes a location settings card.
+    // If it's on, then we request an infobar that allows the site to have permission to use geolocation.
+    if (!BlackBerry::Platform::GeolocationHandler::instance()->isGlobalServiceActive()) {
+        // We only want to ask them once per session. If we get here again, automatically fail the request.
+        if (!BlackBerry::Platform::GeolocationHandler::instance()->didAskUserForGlobalPermission()) {
+            m_webPagePrivate->m_client->requestGlobalLocalServicePermission(this, origin);
+            BlackBerry::Platform::GeolocationHandler::instance()->setAskedUserForGlobalPermission();
+        } else
+            onPermission(false);
+        return;
+    }
+
     m_webPagePrivate->m_client->requestGeolocationPermission(this, origin);
 }
 
@@ -115,12 +129,7 @@ void GeolocationClientBlackBerry::onPermission(bool isAllowed)
 
 void GeolocationClientBlackBerry::setEnableHighAccuracy(bool newAccuracy)
 {
-    if (m_accuracy == newAccuracy)
-        return;
-
+    // FIXME: we have to implement high accuracy on our side too
     m_accuracy = newAccuracy;
-
-    if (m_tracker)
-        m_tracker->setRequiresHighAccuracy(m_accuracy);
 }
 

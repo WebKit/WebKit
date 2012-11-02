@@ -160,6 +160,8 @@ public:
 
     virtual void cursorChanged(Platform::CursorType, const char* url, int x, int y) = 0;
 
+    virtual void requestGlobalLocalServicePermission(Platform::GeoTrackerListener*, const BlackBerry::Platform::String& origin) = 0;
+
     virtual void requestGeolocationPermission(Platform::GeoTrackerListener*, const BlackBerry::Platform::String& origin) = 0;
     virtual void cancelGeolocationPermission() = 0;
     virtual Platform::NetworkStreamFactory* networkStreamFactory() = 0;
