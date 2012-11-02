@@ -47,6 +47,8 @@ PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, Page
     , m_hasSuspendedContent(false)
     , m_hadUserInteraction(false)
     , m_effectiveScale(1)
+    , m_viewportPosIsLocked(false)
+    , m_effectiveScaleIsLocked(false)
 {
     // Initializing Viewport Raw Attributes to avoid random negative or infinity scale factors
     // if there is a race condition between the first layout and setting the viewport attributes for the first time.

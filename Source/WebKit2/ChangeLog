@@ -1,3 +1,15 @@
+2012-11-02  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Add missing variable initialization in PageViewportController
+
+        Reviewed by Jocelyn Turcotte.
+
+        Updating the viewport state depends on uninitialized booleans
+        which it should not.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+
 2012-11-02  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][WK2] Use MutexLocker instead of lock()/unlock().
