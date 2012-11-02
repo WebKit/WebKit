@@ -63,6 +63,8 @@ private:
     virtual void didPause(JSC::JSGlobalObject*);
     virtual void didContinue(JSC::JSGlobalObject*);
 
+    virtual void runEventLoopWhilePaused();
+
     void didRemoveLastListener(Page*);
 
     void setJavaScriptPaused(const PageGroup&, bool paused);

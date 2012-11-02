@@ -52,11 +52,19 @@ public:
 
     void interruptAndRunTask(PassOwnPtr<ScriptDebugServer::Task>);
 
+    void recompileAllJSFunctions(Timer<ScriptDebugServer>*);
+
 private:
-    virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>*) { }
-    virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) { return 0; }
+    virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) { return &m_listeners; }
     virtual void didPause(JSC::JSGlobalObject*) { }
     virtual void didContinue(JSC::JSGlobalObject*) { }
+
+    virtual bool isContentScript(JSC::ExecState*) { return false; }
+
+    virtual void runEventLoopWhilePaused();
+
+    WorkerContext* m_workerContext;
+    ListenerSet m_listeners;
 };
 
 } // namespace WebCore

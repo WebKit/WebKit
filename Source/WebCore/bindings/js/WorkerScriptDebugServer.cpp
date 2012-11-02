@@ -31,25 +31,65 @@
 #include "config.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
-
 #include "WorkerScriptDebugServer.h"
+
+#include "WorkerContext.h"
+#include "WorkerDebuggerAgent.h"
+#include "WorkerRunLoop.h"
+#include "WorkerThread.h"
+
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 const char* WorkerScriptDebugServer::debuggerTaskMode = "debugger";
 
-WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerContext*)
+WorkerScriptDebugServer::WorkerScriptDebugServer(WorkerContext* context)
     : ScriptDebugServer()
+    , m_workerContext(context)
 {
 }
 
-void WorkerScriptDebugServer::addListener(ScriptDebugListener*)
+void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
 {
+    if (!listener)
+        return;
+
+    if (m_listeners.isEmpty())
+        m_workerContext->script()->attachDebugger(this);
+    m_listeners.add(listener);
+    recompileAllJSFunctions(0);
 }
 
-void WorkerScriptDebugServer::removeListener(ScriptDebugListener*)
+void WorkerScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)
 {
+    JSC::JSGlobalData* globalData = m_workerContext->script()->globalData();
+
+    JSC::JSLockHolder lock(globalData);
+    // If JavaScript stack is not empty postpone recompilation.
+    if (globalData->dynamicGlobalObject)
+        recompileAllJSFunctionsSoon();
+    else
+        JSC::Debugger::recompileAllJSFunctions(globalData);
+}
+
+void WorkerScriptDebugServer::removeListener(ScriptDebugListener* listener)
+{
+    if (!listener)
+        return;
+
+    m_listeners.remove(listener);
+    if (m_listeners.isEmpty())
+        m_workerContext->script()->detachDebugger(this);
+}
+
+void WorkerScriptDebugServer::runEventLoopWhilePaused()
+{
+    MessageQueueWaitResult result;
+    do {
+        result = m_workerContext->thread()->runLoop().runInMode(m_workerContext, WorkerDebuggerAgent::debuggerTaskMode);
+    // Keep waiting until execution is resumed.
+    } while (result != MessageQueueTerminated && !m_doneProcessingDebuggerEvents);
 }
 
 void WorkerScriptDebugServer::interruptAndRunTask(PassOwnPtr<ScriptDebugServer::Task>)

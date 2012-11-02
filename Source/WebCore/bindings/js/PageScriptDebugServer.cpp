@@ -34,6 +34,7 @@
 
 #include "PageScriptDebugServer.h"
 
+#include "EventLoop.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "JSDOMWindowCustom.h"
@@ -161,6 +162,13 @@ void PageScriptDebugServer::didRemoveLastListener(Page* page)
 
     recompileAllJSFunctionsSoon();
     page->setDebugger(0);
+}
+
+void PageScriptDebugServer::runEventLoopWhilePaused()
+{
+    EventLoop loop;
+    while (!m_doneProcessingDebuggerEvents && !loop.ended())
+        loop.cycle();
 }
 
 void PageScriptDebugServer::setJavaScriptPaused(const PageGroup& pageGroup, bool paused)

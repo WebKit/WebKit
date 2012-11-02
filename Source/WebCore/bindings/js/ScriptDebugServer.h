@@ -46,6 +46,7 @@
 namespace JSC {
 class DebuggerCallFrame;
 class JSGlobalObject;
+class ExecState;
 }
 namespace WebCore {
 
@@ -112,6 +113,10 @@ protected:
     virtual ListenerSet* getListenersForGlobalObject(JSC::JSGlobalObject*) = 0;
     virtual void didPause(JSC::JSGlobalObject*) = 0;
     virtual void didContinue(JSC::JSGlobalObject*) = 0;
+
+    virtual void runEventLoopWhilePaused() = 0;
+
+    virtual bool isContentScript(JSC::ExecState*);
 
     bool hasBreakpoint(intptr_t sourceID, const TextPosition&) const;
 

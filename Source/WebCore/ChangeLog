@@ -1,3 +1,50 @@
+2012-11-02  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        Web Inspector: [JSC] implement WorkerScriptDebugServer
+        https://bugs.webkit.org/show_bug.cgi?id=99801
+
+        Reviewed by Yury Semikhatsky.
+
+        To implement Worker Inspector for JSC.
+        The virtual function "runEventLoopWhilePaused" is defined, since there are different ways to block
+        the JS running in worker-context and normal page-context.
+        The function "isContentScript" now is virtual because the original invoked functions are useless
+        and cause problem in worker-context.
+        In function "WebCore::WorkerScriptController::attachDebugger", we invoke "initScriptIfNeeded" to
+        ensure the JSGloblalObject exist in the case of attaching Debugger before executing the worker
+        JS code (Pause on start).
+
+        No new test case.
+
+        * bindings/js/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::runEventLoopWhilePaused):
+        (WebCore):
+        * bindings/js/PageScriptDebugServer.h:
+        (PageScriptDebugServer):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::isContentScript):
+        (WebCore::ScriptDebugServer::pauseIfNeeded):
+        * bindings/js/ScriptDebugServer.h:
+        (JSC):
+        (ScriptDebugServer):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::attachDebugger):
+        (WebCore):
+        (WebCore::WorkerScriptController::detachDebugger):
+        * bindings/js/WorkerScriptController.h:
+        (WorkerScriptController):
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::WorkerScriptDebugServer):
+        (WebCore):
+        (WebCore::WorkerScriptDebugServer::addListener):
+        (WebCore::WorkerScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::WorkerScriptDebugServer::removeListener):
+        (WebCore::WorkerScriptDebugServer::runEventLoopWhilePaused):
+        * bindings/js/WorkerScriptDebugServer.h:
+        (WorkerScriptDebugServer):
+        (WebCore::WorkerScriptDebugServer::getListenersForGlobalObject):
+        (WebCore::WorkerScriptDebugServer::isContentScript):
+
 2012-11-02  KyungTae Kim  <ktf.kim@samsung.com>
 
         Compilation warning in Node.cpp when USERSELECT_ALL is disabled

@@ -38,6 +38,7 @@
 #include "WebCoreJSClientData.h"
 #include "WorkerContext.h"
 #include "WorkerObjectProxy.h"
+#include "WorkerScriptDebugServer.h"
 #include "WorkerThread.h"
 #include <heap/StrongInlines.h>
 #include <interpreter/Interpreter.h>
@@ -195,6 +196,17 @@ void WorkerScriptController::disableEval(const String& errorMessage)
     JSLockHolder lock(globalData());
 
     m_workerContextWrapper->setEvalEnabled(false, errorMessage);
+}
+
+void WorkerScriptController::attachDebugger(JSC::Debugger* debugger)
+{
+    initScriptIfNeeded();
+    debugger->attach(m_workerContextWrapper->globalObject());
+}
+
+void WorkerScriptController::detachDebugger(JSC::Debugger* debugger)
+{
+    debugger->detach(m_workerContextWrapper->globalObject());
 }
 
 } // namespace WebCore

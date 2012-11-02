@@ -34,7 +34,6 @@
 #include "ScriptDebugServer.h"
 
 #include "ContentSearchUtils.h"
-#include "EventLoop.h"
 #include "Frame.h"
 #include "JSJavaScriptCallFrame.h"
 #include "JavaScriptCallFrame.h"
@@ -334,7 +333,7 @@ void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners
         copy[i]->failedToParseSource(url, data, firstLine, errorLine, errorMessage);
 }
 
-static bool isContentScript(ExecState* exec)
+bool ScriptDebugServer::isContentScript(ExecState* exec)
 {
     return currentWorld(exec) != mainThreadNormalWorld();
 }
@@ -442,10 +441,8 @@ void ScriptDebugServer::pauseIfNeeded(JSGlobalObject* dynamicGlobalObject)
 
     TimerBase::fireTimersInNestedEventLoop();
 
-    EventLoop loop;
     m_doneProcessingDebuggerEvents = false;
-    while (!m_doneProcessingDebuggerEvents && !loop.ended())
-        loop.cycle();
+    runEventLoopWhilePaused();
 
     didContinue(dynamicGlobalObject);
     dispatchFunctionToListeners(&ScriptDebugServer::dispatchDidContinue, dynamicGlobalObject);
