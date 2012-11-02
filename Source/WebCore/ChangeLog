@@ -1,3 +1,46 @@
+2012-11-01  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] CustomFilterOperation should be converted to ValidatedCustomFilterOperation before using it
+        https://bugs.webkit.org/show_bug.cgi?id=100533
+
+        Reviewed by Dean Jackson.
+
+        Added the code that converts a CustomFilterOperation to a ValidatedCustomFilterOperation.
+        Both the software path and the composited one will use this operation instead. There will be
+        no need to check the shader in platform code anymore.
+
+        No new tests, already covered by existing custom filter tests.
+
+        * platform/graphics/filters/ValidatedCustomFilterOperation.cpp:
+        (WebCore::ValidatedCustomFilterOperation::ValidatedCustomFilterOperation):
+        * platform/graphics/filters/ValidatedCustomFilterOperation.h:
+        (WebCore):
+        (WebCore::ValidatedCustomFilterOperation::create):
+        (ValidatedCustomFilterOperation):
+        (WebCore::ValidatedCustomFilterOperation::validatedProgram):
+        (WebCore::ValidatedCustomFilterOperation::parameters):
+        (WebCore::ValidatedCustomFilterOperation::meshRows):
+        (WebCore::ValidatedCustomFilterOperation::meshColumns):
+        (WebCore::ValidatedCustomFilterOperation::meshType):
+        (WebCore::ValidatedCustomFilterOperation::operator==):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::createCustomFilterEffect):
+        (WebCore::FilterEffectRenderer::build):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::ensureBacking):
+        (WebCore::RenderLayer::clearBacking):
+        (WebCore::RenderLayer::styleChanged): updateOrRemoveFilterClients needs to be called before the composited
+        layer is updated. Otherwise the composited layer will never see a loaded filter in the first call.
+        (WebCore):
+        (WebCore::RenderLayer::isCSSCustomFilterEnabled):
+        (WebCore::RenderLayer::computeFilterOperations):
+        (WebCore::RenderLayer::updateOrRemoveFilterClients): Split updateOrRemoveFilterEffect into 2 functions.
+        This one is supposed to add the clients needed to load network resources.
+        (WebCore::RenderLayer::updateOrRemoveFilterEffectRenderer): Figures out if a software fallback is needed 
+        and creates a FilterEffectRenderer.
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+
 2012-11-01  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Get rid of internal tex coord attribute

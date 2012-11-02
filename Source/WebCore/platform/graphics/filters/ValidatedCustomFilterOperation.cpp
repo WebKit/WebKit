@@ -32,13 +32,21 @@
 #if ENABLE(CSS_SHADERS)
 #include "ValidatedCustomFilterOperation.h"
 
+#include "CustomFilterParameter.h"
+#include "CustomFilterValidatedProgram.h"
 #include "FractionalLayoutSize.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
-ValidatedCustomFilterOperation::ValidatedCustomFilterOperation()
+ValidatedCustomFilterOperation::ValidatedCustomFilterOperation(PassRefPtr<CustomFilterValidatedProgram> validatedProgram, 
+    const CustomFilterParameterList& sortedParameters, unsigned meshRows, unsigned meshColumns, CustomFilterMeshType meshType)
     : FilterOperation(VALIDATED_CUSTOM)
+    , m_validatedProgram(validatedProgram)
+    , m_parameters(sortedParameters)
+    , m_meshRows(meshRows)
+    , m_meshColumns(meshColumns)
+    , m_meshType(meshType)
 {
 }
 

@@ -110,8 +110,11 @@
 #include "SVGNames.h"
 #endif
 
-#if ENABLE(CSS_SHADERS)
-#include <CustomFilterOperation.h>
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
+#include "CustomFilterGlobalContext.h"
+#include "CustomFilterOperation.h"
+#include "CustomFilterValidatedProgram.h"
+#include "ValidatedCustomFilterOperation.h"
 #endif
 
 #if PLATFORM(BLACKBERRY)
@@ -4505,7 +4508,7 @@ RenderLayerBacking* RenderLayer::ensureBacking()
         compositor()->layerBecameComposited(this);
 
 #if ENABLE(CSS_FILTERS)
-        updateOrRemoveFilterEffect();
+        updateOrRemoveFilterEffectRenderer();
 #endif
 #if ENABLE(CSS_COMPOSITING)
         backing()->setBlendMode(m_blendMode);
@@ -4522,7 +4525,7 @@ void RenderLayer::clearBacking(bool layerBeingDestroyed)
 
 #if ENABLE(CSS_FILTERS)
     if (!layerBeingDestroyed)
-        updateOrRemoveFilterEffect();
+        updateOrRemoveFilterEffectRenderer();
 #else
     UNUSED_PARAM(layerBeingDestroyed);
 #endif
@@ -4941,6 +4944,9 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode();
 #endif
+#if ENABLE(CSS_FILTERS)
+    updateOrRemoveFilterClients();
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     if (compositor()->updateLayerCompositingState(this))
@@ -4956,7 +4962,7 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
 #endif
 
 #if ENABLE(CSS_FILTERS)
-    updateOrRemoveFilterEffect();
+    updateOrRemoveFilterEffectRenderer();
 #if USE(ACCELERATED_COMPOSITING)
     bool backingDidCompositeLayers = isComposited() && backing()->canCompositeFilters();
     if (isComposited() && backingDidCompositeLayers && !backing()->canCompositeFilters()) {
@@ -5079,6 +5085,15 @@ void RenderLayer::updateReflectionStyle()
     m_reflection->setStyle(newStyle.release());
 }
 
+#if ENABLE(CSS_SHADERS)
+bool RenderLayer::isCSSCustomFilterEnabled() const
+{
+    // We only want to enable shaders if WebGL is also enabled on this platform.
+    const Settings* settings = renderer()->document()->settings();
+    return settings && settings->isCSSCustomFilterEnabled() && settings->webGLEnabled();
+}
+#endif
+
 #if ENABLE(CSS_FILTERS)
 FilterOperations RenderLayer::computeFilterOperations(const RenderStyle* style)
 {
@@ -5089,17 +5104,33 @@ FilterOperations RenderLayer::computeFilterOperations(const RenderStyle* style)
     if (!filters.hasCustomFilter())
         return filters;
 
+    if (!isCSSCustomFilterEnabled()) {
+        // CSS Custom filters should not parse at all in this case, but there might be
+        // remaining styles that were parsed when the flag was enabled. Reproduces in DumpRenderTree
+        // because it resets the flag while the previous test is still loaded.
+        return FilterOperations();
+    }
+
     FilterOperations outputFilters;
     for (size_t i = 0; i < filters.size(); ++i) {
         RefPtr<FilterOperation> filterOperation = filters.operations().at(i);
         if (filterOperation->getOperationType() == FilterOperation::CUSTOM) {
             // We have to wait until the program of CSS Shaders is loaded before setting it on the layer.
-            // Note that we will handle the loading of the shaders and repainting of the layer in updateOrRemoveFilterEffect.
+            // Note that we will handle the loading of the shaders and repainting of the layer in updateOrRemoveFilterClients.
             const CustomFilterOperation* customOperation = static_cast<const CustomFilterOperation*>(filterOperation.get());
-            if (!customOperation->program()->isLoaded())
+            RefPtr<CustomFilterProgram> program = customOperation->program();
+            if (!program->isLoaded())
                 continue;
-            // FIXME: Validate the shaders and convert the operation to a ValidatedCustomFilterOperation.
-            // https://bugs.webkit.org/show_bug.cgi?id=100533
+            
+            CustomFilterGlobalContext* globalContext = renderer()->view()->customFilterGlobalContext();
+            RefPtr<CustomFilterValidatedProgram> validatedProgram = globalContext->getValidatedProgram(program->programInfo());
+            if (!validatedProgram->isInitialized())
+                continue;
+
+            RefPtr<ValidatedCustomFilterOperation> validatedOperation = ValidatedCustomFilterOperation::create(validatedProgram.release(), 
+                customOperation->parameters(), customOperation->meshRows(), customOperation->meshColumns(), customOperation->meshType());
+            outputFilters.operations().append(validatedOperation.release());
+            continue;
         }
         outputFilters.operations().append(filterOperation.release());
     }
@@ -5107,7 +5138,7 @@ FilterOperations RenderLayer::computeFilterOperations(const RenderStyle* style)
 #endif
 }
 
-void RenderLayer::updateOrRemoveFilterEffect()
+void RenderLayer::updateOrRemoveFilterClients()
 {
     if (!hasFilter()) {
         removeFilterInfoIfNeeded();
@@ -5127,7 +5158,13 @@ void RenderLayer::updateOrRemoveFilterEffect()
     else if (hasFilterInfo())
         filterInfo()->removeReferenceFilterClients();
 #endif
+}
 
+void RenderLayer::updateOrRemoveFilterEffectRenderer()
+{
+    // FilterEffectRenderer is only used to render the filters in software mode,
+    // so we always need to run updateOrRemoveFilterEffectRenderer after the composited
+    // mode might have changed for this layer.
     if (!paintsWithFilters()) {
         // Don't delete the whole filter info here, because we might use it
         // for loading CSS shader files.

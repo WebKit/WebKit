@@ -43,13 +43,14 @@
 #include <wtf/MathExtras.h>
 
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
+#include "CustomFilterConstants.h"
 #include "CustomFilterGlobalContext.h"
 #include "CustomFilterOperation.h"
 #include "CustomFilterProgram.h"
 #include "CustomFilterValidatedProgram.h"
 #include "FECustomFilter.h"
 #include "RenderView.h"
-#include "Settings.h"
+#include "ValidatedCustomFilterOperation.h"
 #endif
 
 #if ENABLE(SVG)
@@ -86,33 +87,18 @@ inline bool isFilterSizeValid(FloatRect rect)
 }
 
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
-static bool isCSSCustomFilterEnabled(Document* document)
+static PassRefPtr<FECustomFilter> createCustomFilterEffect(Filter* filter, Document* document, ValidatedCustomFilterOperation* operation)
 {
-    // We only want to enable shaders if WebGL is also enabled on this platform.
-    Settings* settings = document->settings();
-    return settings && settings->isCSSCustomFilterEnabled() && settings->webGLEnabled();
-}
-
-static PassRefPtr<FECustomFilter> createCustomFilterEffect(Filter* filter, Document* document, CustomFilterOperation* operation)
-{
-    if (!isCSSCustomFilterEnabled(document))
-        return 0;
-
-    RefPtr<CustomFilterProgram> program = operation->program();
-    if (!program->isLoaded())
-        return 0;
-
     CustomFilterGlobalContext* globalContext = document->renderView()->customFilterGlobalContext();
     globalContext->prepareContextIfNeeded(document->view()->hostWindow());
     if (!globalContext->context())
         return 0;
 
-    RefPtr<CustomFilterValidatedProgram> validatedProgram = globalContext->getValidatedProgram(program->programInfo());
-    if (!validatedProgram->isInitialized())
-        return 0;
-
-    return FECustomFilter::create(filter, globalContext->context(), validatedProgram.release(), operation->parameters(),
-        operation->meshRows(), operation->meshColumns(), operation->meshBoxType(), operation->meshType());
+    // FIXME: Use the right CustomFilterMeshBoxType when that will be available on the ValidatedCustomFilterOperation.
+    // Right now the implementation doesn't use that parameter anyway, so just pass the default MeshBoxTypeFilter.
+    // https://bugs.webkit.org/show_bug.cgi?id=100890
+    return FECustomFilter::create(filter, globalContext->context(), operation->validatedProgram(), operation->parameters(),
+        operation->meshRows(), operation->meshColumns(), MeshBoxTypeFilter, operation->meshType());
 }
 #endif
 
@@ -353,8 +339,13 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
             break;
         }
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
-        case FilterOperation::CUSTOM: {
-            CustomFilterOperation* customFilterOperation = static_cast<CustomFilterOperation*>(filterOperation);
+        case FilterOperation::CUSTOM:
+            // CUSTOM operations are always converted to VALIDATED_CUSTOM before getting here.
+            // The conversion happens in RenderLayer::computeFilterOperations.
+            ASSERT_NOT_REACHED();
+            break;
+        case FilterOperation::VALIDATED_CUSTOM: {
+            ValidatedCustomFilterOperation* customFilterOperation = static_cast<ValidatedCustomFilterOperation*>(filterOperation);
             effect = createCustomFilterEffect(this, document, customFilterOperation);
             if (effect)
                 m_hasCustomShaderFilter = true;
