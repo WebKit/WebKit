@@ -1,3 +1,22 @@
+2012-11-02  Ojan Vafai  <ojan@chromium.org>
+
+        Move m_element checks out of canShareStyle into locateSharedStyle
+        https://bugs.webkit.org/show_bug.cgi?id=101070
+
+        Reviewed by Darin Adler.
+
+        Can shareStyleWithElement is called for each sibling as we look for a
+        shareElement. locateSharedStyle is called once for the element we're
+        trying to find a style for. Checks that only depend on the latter
+        element should, thus be in locateSharedStyle.
+
+        No new tests. There should be no change in behavior, except possibly
+        a performance improvement in some cases.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        (WebCore::StyleResolver::locateSharedStyle):
+
 2012-11-02  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Add ASSERT() to guarantee that we don't store NULL pointers to V8 internal fields

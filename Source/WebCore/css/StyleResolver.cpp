@@ -1199,8 +1199,6 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element == element->document()->cssTarget())
         return false;
-    if (m_element == m_element->document()->cssTarget())
-        return false;
     if (element->fastGetAttribute(XMLNames::langAttr) != m_element->fastGetAttribute(XMLNames::langAttr))
         return false;
     if (element->fastGetAttribute(langAttr) != m_element->fastGetAttribute(langAttr))
@@ -1216,9 +1214,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 
 #if ENABLE(PROGRESS_ELEMENT)
     if (element->hasTagName(progressTag)) {
-        if (!m_element->hasTagName(progressTag))
-            return false;
-
+        ASSERT(!m_element->hasTagName(progressTag));
         HTMLProgressElement* thisProgressElement = static_cast<HTMLProgressElement*>(element);
         HTMLProgressElement* otherProgressElement = static_cast<HTMLProgressElement*>(m_element);
         if (thisProgressElement->isDeterminate() != otherProgressElement->isDeterminate())
@@ -1255,7 +1251,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
 #endif
 
-    if (elementHasDirectionAuto(element) || elementHasDirectionAuto(m_element))
+    if (elementHasDirectionAuto(element))
         return false;
 
     if (element->hasClass()) {
@@ -1320,6 +1316,10 @@ RenderStyle* StyleResolver::locateSharedStyle()
     if (parentStylePreventsSharing(m_parentStyle))
         return 0;
     if (m_styledElement->hasScopedHTMLStyleChild())
+        return 0;
+    if (m_element == m_element->document()->cssTarget())
+        return 0;
+    if (elementHasDirectionAuto(m_element))
         return 0;
 
     // Check previous siblings and their cousins.
