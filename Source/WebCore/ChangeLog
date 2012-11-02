@@ -1,3 +1,25 @@
+2012-11-02  Adam Barth  <abarth@webkit.org>
+
+        ASSERT in RenderLayer::hitTestContents can fire
+        https://bugs.webkit.org/show_bug.cgi?id=99656
+
+        Reviewed by Eric Seidel.
+
+        The issue is that updateHitTestResult and addNodeToRectBasedTestResult
+        are using two different nodes. Since they aren't consistent, we violate
+        assertions about only setting the inner node if we're doing a
+        rect-based hit test. This patch makes the two consistent.
+
+        Test: fast/dom/nodesFromRect/nodesFromRect-continuation-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeForHitTest):
+        (WebCore):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::updateHitTestResult):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+
 2012-11-02  Mike West  <mkwst@chromium.org>
 
         Prefer 'Content-Security-Policy' to 'X-WebKit-CSP'.

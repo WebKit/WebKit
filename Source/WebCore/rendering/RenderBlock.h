@@ -571,6 +571,8 @@ private:
     void createFirstLetterRenderer(RenderObject* firstLetterBlock, RenderObject* currentChild);
     void updateFirstLetterStyle(RenderObject* firstLetterBlock, RenderObject* firstLetterContainer);
 
+    Node* nodeForHitTest() const;
+
     struct FloatWithRect {
         FloatWithRect(RenderBox* f)
             : object(f)

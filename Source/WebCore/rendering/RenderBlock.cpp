@@ -4716,6 +4716,14 @@ bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const LayoutPo
     return layer()->hitTestOverflowControls(result, roundedIntPoint(locationInContainer - toLayoutSize(accumulatedOffset)));
 }
 
+Node* RenderBlock::nodeForHitTest() const
+{
+    // If we are in the margins of block elements that are part of a
+    // continuation we're actually still inside the enclosing element
+    // that was split. Use the appropriate inner node.
+    return isAnonymousBlockContinuation() ? continuation()->node() : node();
+}
+
 bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     LayoutPoint adjustedLocation(accumulatedOffset + location());
@@ -4733,7 +4741,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, locationInContainer.point(), adjustedLocation)) {
         updateHitTestResult(result, locationInContainer.point() - localOffset);
         // FIXME: isPointInOverflowControl() doesn't handle rect-based tests yet.
-        if (!result.addNodeToRectBasedTestResult(node(), request, locationInContainer))
+        if (!result.addNodeToRectBasedTestResult(nodeForHitTest(), request, locationInContainer))
            return true;
     }
 
@@ -4766,7 +4774,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         LayoutRect boundsRect(adjustedLocation, size());
         if (visibleToHitTesting() && locationInContainer.intersects(boundsRect)) {
             updateHitTestResult(result, flipForWritingMode(locationInContainer.point() - localOffset));
-            if (!result.addNodeToRectBasedTestResult(node(), request, locationInContainer, boundsRect))
+            if (!result.addNodeToRectBasedTestResult(nodeForHitTest(), request, locationInContainer, boundsRect))
                 return true;
         }
     }
@@ -6829,14 +6837,7 @@ void RenderBlock::updateHitTestResult(HitTestResult& result, const LayoutPoint& 
     if (result.innerNode())
         return;
 
-    Node* n = node();
-    if (isAnonymousBlockContinuation())
-        // We are in the margins of block elements that are part of a continuation.  In
-        // this case we're actually still inside the enclosing element that was
-        // split.  Go ahead and set our inner node accordingly.
-        n = continuation()->node();
-
-    if (n) {
+    if (Node* n = nodeForHitTest()) {
         result.setInnerNode(n);
         if (!result.innerNonSharedNode())
             result.setInnerNonSharedNode(n);

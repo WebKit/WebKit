@@ -1,3 +1,15 @@
+2012-11-02  Adam Barth  <abarth@webkit.org>
+
+        ASSERT in RenderLayer::hitTestContents can fire
+        https://bugs.webkit.org/show_bug.cgi?id=99656
+
+        Reviewed by Eric Seidel.
+
+        This test ensures that we don't trigger the assert.
+
+        * fast/dom/nodesFromRect/nodesFromRect-continuation-crash-expected.txt: Added.
+        * fast/dom/nodesFromRect/nodesFromRect-continuation-crash.html: Added.
+
 2012-11-02  Mike West  <mkwst@chromium.org>
 
         Prefer 'Content-Security-Policy' to 'X-WebKit-CSP'.
