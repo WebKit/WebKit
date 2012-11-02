@@ -363,8 +363,10 @@ void HTMLMediaElement::parseAttribute(const Attribute& attribute)
 {
     if (attribute.name() == srcAttr) {
         // Trigger a reload, as long as the 'src' attribute is present.
-        if (fastHasAttribute(srcAttr))
+        if (fastHasAttribute(srcAttr)) {
+            clearMediaPlayer(MediaResource);
             scheduleLoad(MediaResource);
+        }
     } else if (attribute.name() == controlsAttr)
         configureMediaControls();
 #if PLATFORM(MAC)
@@ -3669,13 +3671,7 @@ void HTMLMediaElement::userCancelledLoad()
     // If the media data fetching process is aborted by the user:
 
     // 1 - The user agent should cancel the fetching process.
-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    m_player.clear();
-#endif
-    stopPeriodicTimers();
-    m_loadTimer.stop();
-    m_loadState = WaitingForSource;
-    m_pendingLoadFlags = 0;
+    clearMediaPlayer(-1);
 
     // 2 - Set the error attribute to a new MediaError object whose code attribute is set to MEDIA_ERR_ABORTED.
     m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED);
@@ -3711,6 +3707,18 @@ void HTMLMediaElement::userCancelledLoad()
     if (RuntimeEnabledFeatures::webkitVideoTrackEnabled())
         updateActiveTextTrackCues(0);
 #endif
+}
+
+void HTMLMediaElement::clearMediaPlayer(unsigned flags)
+{
+#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    m_player.clear();
+#endif
+    stopPeriodicTimers();
+    m_loadTimer.stop();
+
+    m_pendingLoadFlags &= ~flags;
+    m_loadState = WaitingForSource;
 }
 
 bool HTMLMediaElement::canSuspend() const
@@ -4263,7 +4271,7 @@ void HTMLMediaElement::createMediaPlayer()
     if (m_audioSourceNode)
         m_audioSourceNode->lock();
 #endif
-        
+
     m_player = MediaPlayer::create(this);
 
 #if ENABLE(MEDIA_SOURCE)

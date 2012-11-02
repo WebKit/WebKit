@@ -1,3 +1,14 @@
+2012-11-01  Ami Fischman  <fischman@chromium.org>
+
+        HTMLMediaPlayer should free m_player when src is set/changed
+        https://bugs.webkit.org/show_bug.cgi?id=99647
+
+        Reviewed by Eric Carlson.
+
+        * ManualTests/media-players-are-dropped-on-error.html: Added.
+            Various scenarios are tested to make sure players aren't
+            leaked in different ways for each of them.
+
 2012-11-01  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=100917
