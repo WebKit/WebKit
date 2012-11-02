@@ -3357,6 +3357,10 @@ webkit.org/b/84688 [ SnowLeopard ] platform/chromium/virtual/softwarecompositing
 webkit.org/b/84696 fast/workers/storage/interrupt-database.html [ Pass Slow ]
 
 webkit.org/b/84720 [ Debug ] fast/repaint/fixed-right-in-page-scale.html [ ImageOnlyFailure Pass ]
+webkit.org/b/84720 fast/repaint/fixed-scale.html [ ImageOnlyFailure Pass ]
+webkit.org/b/84720 fast/repaint/fixed-table-overflow-zindex.html [ ImageOnlyFailure Pass ]
+webkit.org/b/84720 fast/repaint/fixed-tranformed.html [ ImageOnlyFailure Pass ]
+webkit.org/b/84720 fast/repaint/scroll-fixed-reflected-layer.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/84724 [ SnowLeopard ] platform/chromium/media/video-frame-size-change.html [ ImageOnlyFailure Pass ]
 

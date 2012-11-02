@@ -1,3 +1,10 @@
+2012-11-02  Alice Boxhall  <aboxhall@google.com>
+
+        Unreviewed gardening. Marking some repaint tests as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=84720
+
+        * platform/chromium/TestExpectations:
+
 2012-11-02  Kevin Ellis  <kevers@chromium.org>
 
         Imrpove scoring in touch adjustment to address bias towards smaller targets.
