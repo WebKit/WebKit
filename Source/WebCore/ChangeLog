@@ -1,3 +1,18 @@
+2012-11-02  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Network panel grid UI is misaligned after r132888
+        https://bugs.webkit.org/show_bug.cgi?id=101050
+
+        Rollback the change to basic data grid css and move it to the native memory
+        snapshot datagrid css.
+
+        Reviewed by Alexander Pavlov.
+
+        * inspector/front-end/dataGrid.css:
+        (.data-grid td):
+        * inspector/front-end/nativeMemoryProfiler.css:
+        (.native-snapshot-view .data-grid td):
+
 2012-11-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133303.
