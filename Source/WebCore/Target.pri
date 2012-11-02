@@ -4085,6 +4085,11 @@ use?(GRAPHICS_SURFACE) {
     }
 }
 
+if(build?(drt)|build?(wtr)) {
+    HEADERS += platform/qt/QtTestSupport.h
+    SOURCES += platform/qt/QtTestSupport.cpp
+}
+
 ALL_IN_ONE_SOURCES += \
     accessibility/AccessibilityAllInOne.cpp \
     inspector/InspectorAllInOne.cpp \

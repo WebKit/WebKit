@@ -62,6 +62,7 @@ INCLUDEPATH += \
     $$PWD \
     $$PWD/.. \
     $$PWD/Bindings \
+    $${ROOT_WEBKIT_DIR}/Source/WebCore/platform/qt \
     $${ROOT_WEBKIT_DIR}/Source/WebCore/testing/js \
     $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport
 

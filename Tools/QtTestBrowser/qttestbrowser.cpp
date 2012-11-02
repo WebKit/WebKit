@@ -31,7 +31,7 @@
  */
 
 #include "DumpRenderTreeSupportQt.h"
-#include "QtInitializeTestFonts.h"
+#include "QtTestSupport.h"
 #include "launcherwindow.h"
 #include "urlloader.h"
 
@@ -241,7 +241,7 @@ void LauncherApplication::handleUserOptions()
 #endif
 
     if (args.contains("-use-test-fonts"))
-        WebKit::initializeTestFonts();
+        WebKit::QtTestSupport::initializeTestFonts();
 
     if (args.contains("-print-loaded-urls"))
         windowOptions.printLoadedUrls = true;

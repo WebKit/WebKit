@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-static PlatformStrategies* s_platformStrategies;
+static PlatformStrategies* s_platformStrategies = 0;
 
 PlatformStrategies* platformStrategies()
 {
