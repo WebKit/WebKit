@@ -1,3 +1,14 @@
+2012-11-02  Adam Barth  <abarth@webkit.org>
+
+        memory-instrumentation-cached-images.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=101103
+
+        Unreviewed.
+
+        Restore code deleted in http://trac.webkit.org/changeset/133331.
+
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+
 2012-11-02  Simon Fraser  <simon.fraser@apple.com>
 
         Enable SUBPIXEL_LAYOUT on Mac

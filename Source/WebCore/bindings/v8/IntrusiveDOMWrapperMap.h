@@ -57,7 +57,8 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
-        // This type of wrapper map does not use any additional memory.
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
+        UNUSED_PARAM(info);
     }
 
 private:
