@@ -164,7 +164,7 @@ bool ArgumentCoder<MimeClassInfo>::decode(ArgumentDecoder* decoder, MimeClassInf
 
 void ArgumentCoder<PluginInfo>::encode(ArgumentEncoder& encoder, const PluginInfo& pluginInfo)
 {
-    encoder << pluginInfo.name << pluginInfo.name << pluginInfo.desc << pluginInfo.mimes;
+    encoder << pluginInfo.name << pluginInfo.file << pluginInfo.desc << pluginInfo.mimes;
 }
     
 bool ArgumentCoder<PluginInfo>::decode(ArgumentDecoder* decoder, PluginInfo& pluginInfo)
