@@ -261,7 +261,7 @@ bool Element::hasAttribute(const QualifiedName& name) const
 
 const AtomicString& Element::getAttribute(const QualifiedName& name) const
 {
-    if (UNLIKELY(name == styleAttr) && !isStyleAttributeValid())
+    if (UNLIKELY(name == styleAttr) && styleAttributeIsDirty())
         updateStyleAttribute();
 
 #if ENABLE(SVG)
@@ -619,7 +619,7 @@ const AtomicString& Element::getAttribute(const AtomicString& name) const
     bool ignoreCase = shouldIgnoreAttributeCase(this);
 
     // Update the 'style' attribute if it's invalid and being requested:
-    if (!isStyleAttributeValid() && equalPossiblyIgnoringCase(name, styleAttr.localName(), ignoreCase))
+    if (styleAttributeIsDirty() && equalPossiblyIgnoringCase(name, styleAttr.localName(), ignoreCase))
         updateStyleAttribute();
 
 #if ENABLE(SVG)

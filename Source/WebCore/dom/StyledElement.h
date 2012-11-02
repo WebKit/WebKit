@@ -51,7 +51,7 @@ public:
     
     virtual CSSStyleDeclaration* style() OVERRIDE;
 
-    const StylePropertySet* attributeStyle();
+    const StylePropertySet* presentationAttributeStyle();
 
     virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) { }
 
@@ -78,19 +78,22 @@ private:
     void inlineStyleChanged();
 
     void makePresentationAttributeCacheKey(PresentationAttributeCacheKey&) const;
-    void updateAttributeStyle();
+    void rebuildPresentationAttributeStyle();
 };
 
 inline void StyledElement::invalidateStyleAttribute()
 {
-    clearIsStyleAttributeValid();
+    ASSERT(attributeData());
+    attributeData()->setStyleAttributeIsDirty(true);
 }
 
-inline const StylePropertySet* StyledElement::attributeStyle()
+inline const StylePropertySet* StyledElement::presentationAttributeStyle()
 {
-    if (attributeStyleDirty())
-        updateAttributeStyle();
-    return attributeData() ? attributeData()->attributeStyle() : 0;
+    if (!attributeData())
+        return 0;
+    if (attributeData()->presentationAttributeStyleIsDirty())
+        rebuildPresentationAttributeStyle();
+    return attributeData()->presentationAttributeStyle();
 }
 
 } //namespace

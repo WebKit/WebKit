@@ -63,7 +63,7 @@ MutableElementAttributeData::MutableElementAttributeData(const ImmutableElementA
     const ElementAttributeData& baseOther = static_cast<const ElementAttributeData&>(other);
 
     m_inlineStyleDecl = baseOther.m_inlineStyleDecl;
-    m_attributeStyle = baseOther.m_attributeStyle;
+    m_presentationAttributeStyle = baseOther.m_presentationAttributeStyle;
     m_classNames = baseOther.m_classNames;
     m_idForStyleResolution = baseOther.m_idForStyleResolution;
 
@@ -277,7 +277,7 @@ void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     size_t actualSize = m_isMutable ? sizeof(ElementAttributeData) : sizeForImmutableElementAttributeDataWithAttributeCount(m_arraySize);
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM, actualSize);
     info.addMember(m_inlineStyleDecl);
-    info.addMember(m_attributeStyle);
+    info.addMember(m_presentationAttributeStyle);
     info.addMember(m_classNames);
     info.addMember(m_idForStyleResolution);
     if (m_isMutable)
@@ -341,10 +341,18 @@ void ElementAttributeData::cloneDataFrom(const ElementAttributeData& sourceData,
         targetElement.attributeChanged(attribute.name(), attribute.value());
     }
 
-    if (targetElement.isStyledElement() && sourceData.m_inlineStyleDecl) {
+    if (!targetElement.isStyledElement())
+        return;
+
+    m_styleAttributeIsDirty = sourceData.m_styleAttributeIsDirty;
+    m_presentationAttributeStyleIsDirty = sourceData.m_presentationAttributeStyleIsDirty;
+
+    // Clone the source element's inline style unless it's immutable.
+    if (sourceData.m_inlineStyleDecl)
         m_inlineStyleDecl = sourceData.m_inlineStyleDecl->immutableCopyIfNeeded();
-        targetElement.setIsStyleAttributeValid(sourceElement.isStyleAttributeValid());
-    }
+
+    // Share the presentation attribute style (no need for cloning since it's not accessible via CSSOM.)
+    m_presentationAttributeStyle = sourceData.m_presentationAttributeStyle;
 }
 
 void ElementAttributeData::clearAttributes(Element* element)

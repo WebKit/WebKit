@@ -126,10 +126,11 @@ static PresentationAttributeCacheCleaner& presentationAttributeCacheCleaner()
 
 void StyledElement::updateStyleAttribute() const
 {
-    ASSERT(!isStyleAttributeValid());
-    setIsStyleAttributeValid();
-    if (const StylePropertySet* inlineStyle = this->inlineStyle())
-        const_cast<StyledElement*>(this)->setSynchronizedLazyAttribute(styleAttr, inlineStyle->asText());
+    ASSERT(styleAttributeIsDirty());
+    ASSERT(attributeData());
+    attributeData()->setStyleAttributeIsDirty(false);
+    if (inlineStyle())
+        const_cast<StyledElement*>(this)->setSynchronizedLazyAttribute(styleAttr, inlineStyle()->asText());
 }
 
 StyledElement::StyledElement(const QualifiedName& name, Document* document, ConstructionType type)
@@ -151,7 +152,7 @@ CSSStyleDeclaration* StyledElement::style()
 void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue)
 {
     if (isPresentationAttribute(name)) {
-        setAttributeStyleDirty();
+        attributeData()->setPresentationAttributeStyleIsDirty(true);
         setNeedsStyleRecalc(InlineStyleChange);
     }
 
@@ -168,7 +169,8 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, Sh
             mutableAttributeData()->destroyInlineStyle(this);
         else if (document()->contentSecurityPolicy()->allowInlineStyle(document()->url(), startLineNumber))
             ensureAttributeData()->updateInlineStyleAvoidingMutation(this, newStyleString);
-        setIsStyleAttributeValid();
+
+        attributeData()->setStyleAttributeIsDirty(false);
     }
     setNeedsStyleRecalc();
     InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
@@ -185,7 +187,7 @@ void StyledElement::parseAttribute(const Attribute& attribute)
 void StyledElement::inlineStyleChanged()
 {
     setNeedsStyleRecalc(InlineStyleChange);
-    setIsStyleAttributeValid(false);
+    attributeData()->setStyleAttributeIsDirty(true);
     InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
 }
     
@@ -270,7 +272,7 @@ static unsigned computePresentationAttributeCacheHash(const PresentationAttribut
     return WTF::pairIntHash(key.tagName->existingHash(), attributeHash);
 }
 
-void StyledElement::updateAttributeStyle()
+void StyledElement::rebuildPresentationAttributeStyle()
 {
     PresentationAttributeCacheKey cacheKey;
     makePresentationAttributeCacheKey(cacheKey);
@@ -297,9 +299,9 @@ void StyledElement::updateAttributeStyle()
             collectStyleForAttribute(*attribute, style.get());
         }
     }
-    clearAttributeStyleDirty();
 
-    attributeData()->setAttributeStyle(style->isEmpty() ? 0 : style);
+    attributeData()->setPresentationAttributeStyleIsDirty(false);
+    attributeData()->setPresentationAttributeStyle(style->isEmpty() ? 0 : style);
 
     if (!cacheHash || cacheIterator->value)
         return;

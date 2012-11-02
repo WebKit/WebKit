@@ -1,3 +1,74 @@
+2012-11-02  Andreas Kling  <kling@webkit.org>
+
+        Only resolve attribute-derived style once per shared ElementAttributeData.
+        <http://webkit.org/b/100990>
+
+        Reviewed by Antti Koivisto.
+
+        Track the serialization of the "style" attribute, and the dirtiness of the presentation attribute style
+        on ElementAttributeData instead of in Node flags.
+
+        This allows us to avoid duplicate work for ElementAttributeData that are shared between multiple elements,
+        since the state is no longer per-Element.
+
+        I've left the presentation attribute cache in there for now, since it covers two additional cases:
+
+            - Elements with the same attributes in different order.
+            - Elements with the same presentation attributes, but with differing non-presentation attributes.
+
+        It's likely that we're not gaining much from it anymore, but that's a topic for another patch.
+
+        * dom/Node.h:
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::presentationAttributeStyle):
+        (WebCore::ElementAttributeData::setPresentationAttributeStyle):
+        (WebCore::ElementAttributeData::styleAttributeIsDirty):
+        (WebCore::ElementAttributeData::setStyleAttributeIsDirty):
+        (WebCore::ElementAttributeData::presentationAttributeStyleIsDirty):
+        (WebCore::ElementAttributeData::setPresentationAttributeStyleIsDirty):
+        (ElementAttributeData):
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        * dom/Element.cpp:
+        (WebCore::Element::getAttribute):
+        * dom/Element.h:
+        (WebCore::Element::styleAttributeIsDirty):
+        (WebCore::Element::updateInvalidAttributes):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateStyleAttribute):
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::styleAttributeChanged):
+        (WebCore::StyledElement::inlineStyleChanged):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::invalidateStyleAttribute):
+
+            Move the "attribute style dirty" and "style attribute valid" node flags to ElementAttributeData
+            and change them to both use dirty semantics.
+
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::cloneDataFrom):
+
+            Share the presentation attribute style between cloned elements initially.
+
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::presentationAttributeStyle):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::sweepMatchedPropertiesCache):
+        (WebCore::StyleResolver::matchAllRules):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::MutableElementAttributeData::MutableElementAttributeData):
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+
+            Renamed StyledElement::attributeStyle() to presentationAttributeStyle(). The old name was too
+            easily confused with "style attribute".
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+
+            Renamed from updateAttributeStyle().
+
 2012-11-01  Kent Tamura  <tkent@chromium.org>
 
         Introduce ENABLE_DATE_AND_TIME_INPUT_TYPES, and clarify usage of other related flags

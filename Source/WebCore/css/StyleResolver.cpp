@@ -478,7 +478,7 @@ StyleResolver::~StyleResolver()
 void StyleResolver::sweepMatchedPropertiesCache(Timer<StyleResolver>*)
 {
     // Look for cache entries containing a style declaration with a single ref and remove them.
-    // This may happen when an element attribute mutation causes it to generate a new attributeStyle(),
+    // This may happen when an element attribute mutation causes it to generate a new presentationAttributeStyle(),
     // potentially leaving this cache with the last ref on the old one.
     Vector<unsigned, 16> toRemove;
     MatchedPropertiesCache::iterator it = m_matchedPropertiesCache.begin();
@@ -927,7 +927,7 @@ void StyleResolver::matchAllRules(MatchResult& result, bool includeSMILPropertie
         
     // Now check author rules, beginning first with presentational attributes mapped from HTML.
     if (m_styledElement) {
-        addElementStyleProperties(result, m_styledElement->attributeStyle());
+        addElementStyleProperties(result, m_styledElement->presentationAttributeStyle());
 
         // Now we check additional mapped declarations.
         // Tables and table cells share an additional mapped rule that must be applied
@@ -1179,7 +1179,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element->isSVGElement() && static_cast<SVGElement*>(element)->animatedSMILStyleProperties())
         return false;
 #endif
-    if (!!element->attributeStyle() != !!m_styledElement->attributeStyle())
+    if (!!element->presentationAttributeStyle() != !!m_styledElement->presentationAttributeStyle())
         return false;
     const StylePropertySet* additionalAttributeStyleA = element->additionalAttributeStyle();
     const StylePropertySet* additionalAttributeStyleB = m_styledElement->additionalAttributeStyle();
@@ -1270,7 +1270,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
             return false;
     }
 
-    if (element->attributeStyle() && !attributeStylesEqual(element->attributeStyle(), m_styledElement->attributeStyle()))
+    if (element->presentationAttributeStyle() && !attributeStylesEqual(element->presentationAttributeStyle(), m_styledElement->presentationAttributeStyle()))
         return false;
 
     if (additionalAttributeStyleA && !attributeStylesEqual(additionalAttributeStyleA, additionalAttributeStyleB))
