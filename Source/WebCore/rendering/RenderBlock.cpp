@@ -5792,6 +5792,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
     LayoutUnit textIndent = minimumValueForLength(styleToUse->textIndent(), cw, view());
     RenderObject* prevFloat = 0;
     bool isPrevChildInlineFlow = false;
+    bool shouldBreakLineAfterText = false;
     while (RenderObject* child = childIterator.next()) {
         autoWrap = child->isReplaced() ? child->parent()->style()->autoWrap() : 
             child->style()->autoWrap();
@@ -5880,7 +5881,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     clearPreviousFloat = false;
 
                 bool canBreakReplacedElement = !child->isImage() || allowImagesToBreak;
-                if ((canBreakReplacedElement && (autoWrap || oldAutoWrap) && !isPrevChildInlineFlow) || clearPreviousFloat) {
+                if ((canBreakReplacedElement && (autoWrap || oldAutoWrap) && (!isPrevChildInlineFlow || shouldBreakLineAfterText)) || clearPreviousFloat) {
                     updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
                     inlineMin = 0;
                 }
@@ -5907,7 +5908,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 // Add our width to the max.
                 inlineMax += max<float>(0, childMax);
 
-                if (!autoWrap || !canBreakReplacedElement || isPrevChildInlineFlow) {
+                if (!autoWrap || !canBreakReplacedElement || (isPrevChildInlineFlow && !shouldBreakLineAfterText)) {
                     if (child->isFloating())
                         updatePreferredWidth(m_minPreferredLogicalWidth, childMin);
                     else
@@ -6011,9 +6012,11 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                         // and end our current line.
                         updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
                         inlineMin = 0;
+                        shouldBreakLineAfterText = false;
                     } else {
                         updatePreferredWidth(m_minPreferredLogicalWidth, inlineMin);
                         inlineMin = endMin;
+                        shouldBreakLineAfterText = true;
                     }
                 }
 

@@ -1,3 +1,38 @@
+2012-11-02  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Regression r130057: Improper preferred width calculation when an inline replaced object, wrapped in an inline flow, follows some text.
+        https://bugs.webkit.org/show_bug.cgi?id=99442
+
+        Reviewed by Levi Weintraub.
+
+        Extra width is displayed after an inline replaced object that follows some
+        text (not ending in a whitespace) within an inline-block. This is due to
+        the end width (endMin) of the text object being carried forward (via inlineMin)
+        and added onto the next line containing the inline replaced object.
+
+        This was caused as a regression to, or rather became apparent post the fix
+        http://trac.webkit.org/changeset/130057 which fixed the block's preferred
+        width when a renderInline with width contained an inline replaced object.
+
+        Test: fast/block/block-with-inline-replaced-child-following-text.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        Introduced another flag (shouldBreakLineAfterText) which is set when
+        our current Text line (object) does not end in a whitespace, thereby
+        implying that there could be more text following, for which the end width
+        needs to be carried forward onto the next line.
+
+        In case the following object instead turns out to be an Inline Replaced
+        object, we should terminate our previous line and reset this extra width.
+        This is now being handled by checking for the shouldBreakLineAfterText
+        flag while processing Inline Replaced objects.
+
+        Once set, shouldBreakLineAfterText shall be reset only if we get another
+        Text object that ends in a whitespace, signifying the termination of
+        that text line. For all other cases, we persist with this flag through
+        the block's inline contents.
+
 2012-11-02  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Console: remove obsolete ctrl-shift-m shortcut

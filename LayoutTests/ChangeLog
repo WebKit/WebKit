@@ -1,3 +1,25 @@
+2012-11-02  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Regression r130057: Improper preferred width calculation when an inline replaced object, wrapped in an inline flow, follows some text.
+        https://bugs.webkit.org/show_bug.cgi?id=99442
+
+        Reviewed by Levi Weintraub.
+
+        * fast/block/block-with-inline-replaced-child-following-text-expected.txt: Added.
+        * fast/block/block-with-inline-replaced-child-following-text.html: Added.
+        Test added for verifying the width of the inline-block when an inline replaced
+        object follows some text object which does not end in a whitespace.
+
+        The correct width of our containing box in this case should be 94px which is
+        determined by the min-width of our text (using ahem font) which is 64px +
+        the padding - 30px.
+
+        Prior to this fix, the trailing end-width from the text (64px) would be carried
+        onto the next line containing the inline replaced object. This would then make
+        that line's width as 64px (end width of text) + 30 px (padding) + 50px (width
+        of our image object) making it 144px in total. This would then incorrectly
+        define the width of our containing box.
+
 2012-11-02  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Unreviewed pixel expectations gardening.
