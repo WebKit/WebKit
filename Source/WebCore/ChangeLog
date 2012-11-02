@@ -1,3 +1,32 @@
+2012-11-02  Kent Tamura  <tkent@chromium.org>
+
+        Add a common base class for date/time input types without inline editing behavior
+        https://bugs.webkit.org/show_bug.cgi?id=101031
+
+        Reviewed by Hajime Morita.
+
+        Add BaseChooserOnlyDateAndTimeInputType class, which will support
+        DateTimeChooserClient, and date/time input types inherit it if
+        !ENABLE(INPUT_MULTIPLE_FIELDS_UI).
+
+        No new tests. This doesn't change any behavior.
+
+        * CMakeLists.txt: Add BaseChooserOnlyDateAndTimeInputType.{cpp,h}.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp: Added.
+        * html/BaseChooserOnlyDateAndTimeInputType.h: Added.
+
+        * html/DateInputType.h: Inherit BaseChooserOnlyDateAndTimeInputType if
+        !ENABLE(INPUT_MULTIPLE_FIELDS_UI).
+        * html/DateTimeInputType.h: Ditto.
+        * html/DateTimeLocalInputType.h: Ditto.
+        * html/MonthInputType.h: Ditto.
+        * html/TimeInputType.h: Ditto.
+        * html/WeekInputType.h: Ditto.
+
 2012-11-02  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         Web Inspector: [JSC] implement WorkerScriptDebugServer

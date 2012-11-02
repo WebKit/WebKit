@@ -32,6 +32,7 @@
 #define DateInputType_h
 
 #if ENABLE(INPUT_TYPE_DATE)
+#include "BaseChooserOnlyDateAndTimeInputType.h"
 #include "BaseMultipleFieldsDateAndTimeInputType.h"
 #include <wtf/RefPtr.h>
 
@@ -42,7 +43,7 @@ class PickerIndicatorElement;
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 typedef BaseMultipleFieldsDateAndTimeInputType BaseDateInputType;
 #else
-typedef BaseDateAndTimeInputType BaseDateInputType;
+typedef BaseChooserOnlyDateAndTimeInputType BaseDateInputType;
 #endif
 
 class DateInputType : public BaseDateInputType {

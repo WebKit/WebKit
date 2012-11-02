@@ -32,6 +32,7 @@
 #define MonthInputType_h
 
 #if ENABLE(INPUT_TYPE_MONTH)
+#include "BaseChooserOnlyDateAndTimeInputType.h"
 #include "BaseMultipleFieldsDateAndTimeInputType.h"
 
 namespace WebCore {
@@ -39,7 +40,7 @@ namespace WebCore {
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 typedef BaseMultipleFieldsDateAndTimeInputType BaseMonthInputType;
 #else
-typedef BaseDateAndTimeInputType BaseMonthInputType;
+typedef BaseChooserOnlyDateAndTimeInputType BaseMonthInputType;
 #endif
 
 class MonthInputType : public BaseMonthInputType {

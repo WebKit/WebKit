@@ -3178,6 +3178,8 @@ webcore_sources += \
 	Source/WebCore/html/BaseButtonInputType.h \
 	Source/WebCore/html/BaseCheckableInputType.cpp \
 	Source/WebCore/html/BaseCheckableInputType.h \
+	Source/WebCore/html/BaseChooserOnlyDateAndTimeInputType.cpp \
+	Source/WebCore/html/BaseChooserOnlyDateAndTimeInputType.h \
 	Source/WebCore/html/BaseClickableWithKeyInputType.cpp \
 	Source/WebCore/html/BaseClickableWithKeyInputType.h \
 	Source/WebCore/html/BaseDateAndTimeInputType.cpp \

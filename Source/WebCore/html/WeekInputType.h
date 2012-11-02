@@ -31,16 +31,16 @@
 #ifndef WeekInputType_h
 #define WeekInputType_h
 
-#include "BaseMultipleFieldsDateAndTimeInputType.h"
-
 #if ENABLE(INPUT_TYPE_WEEK)
+#include "BaseChooserOnlyDateAndTimeInputType.h"
+#include "BaseMultipleFieldsDateAndTimeInputType.h"
 
 namespace WebCore {
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 typedef BaseMultipleFieldsDateAndTimeInputType BaseWeekInputType;
 #else
-typedef BaseDateAndTimeInputType BaseWeekInputType;
+typedef BaseChooserOnlyDateAndTimeInputType BaseWeekInputType;
 #endif
 
 class WeekInputType : public BaseWeekInputType {

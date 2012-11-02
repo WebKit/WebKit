@@ -1333,6 +1333,7 @@ SET(WebCore_SOURCES
 
     html/BaseButtonInputType.cpp
     html/BaseCheckableInputType.cpp
+    html/BaseChooserOnlyDateAndTimeInputType.cpp
     html/BaseClickableWithKeyInputType.cpp
     html/BaseDateAndTimeInputType.cpp
     html/BaseMultipleFieldsDateAndTimeInputType.cpp

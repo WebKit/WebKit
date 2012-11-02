@@ -32,6 +32,7 @@
 #define TimeInputType_h
 
 #if ENABLE(INPUT_TYPE_TIME)
+#include "BaseChooserOnlyDateAndTimeInputType.h"
 #include "BaseMultipleFieldsDateAndTimeInputType.h"
 
 namespace WebCore {
@@ -39,7 +40,7 @@ namespace WebCore {
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 typedef BaseMultipleFieldsDateAndTimeInputType BaseTimeInputType;
 #else
-typedef BaseDateAndTimeInputType BaseTimeInputType;
+typedef BaseChooserOnlyDateAndTimeInputType BaseTimeInputType;
 #endif
 
 class TimeInputType : public BaseTimeInputType {
