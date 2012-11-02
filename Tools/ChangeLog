@@ -1,3 +1,14 @@
+2012-11-01  Eric Seidel  <eric@webkit.org>
+
+        Add Glenn Adams to the Contributor list
+        https://bugs.webkit.org/show_bug.cgi?id=100982
+
+        Reviewed by Adam Barth.
+
+        I CC him enough on bugs it would help me to have him listed here.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-11-01  Jer Noble  <jer.noble@apple.com>
 
         Add Python-LLDB support for WTF::Vector types.
