@@ -1,3 +1,27 @@
+2012-11-02  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Optimize backspace key handling
+        https://bugs.webkit.org/show_bug.cgi?id=101083
+
+        PR233591
+        Optimize backspace key handling. Some of these calls are not
+        required by IMF since the input_service already processes the backspace key
+        and updates the state before passing us the key.
+
+        Internally reviewed by Mike Fenton.
+
+        Reviewed by Yong Li.
+
+        Blocking calls with a flag that we clear immediately after
+        processing a backspace keydown.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::nodeTextChanged):
+        (BlackBerry::WebKit::InputHandler::selectionChanged):
+        (BlackBerry::WebKit::InputHandler::handleKeyboardInput):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2012-11-02  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Adding window.external to our port

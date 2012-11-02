@@ -225,6 +225,8 @@ private:
 
     double m_focusZoomScale;
     WebCore::FloatPoint m_focusZoomLocation;
+
+    bool m_receivedBackspaceKeyDown;
 };
 
 }
