@@ -1,3 +1,29 @@
+2012-11-02  Ojan Vafai  <ojan@chromium.org>
+
+        Unreviewed, rolling out r132913.
+        http://trac.webkit.org/changeset/132913
+        https://bugs.webkit.org/show_bug.cgi?id=91850
+
+        Caused performance regressions.
+        See https://bugs.webkit.org/show_bug.cgi?id=100872 for details.
+
+        * bindings/v8/V8PerIsolateData.cpp:
+        (WebCore::V8PerIsolateData::visitExternalStrings):
+        * bindings/v8/V8StringResource.cpp:
+        (StringTraits):
+        (WebCore::v8StringToWebCoreString):
+        * bindings/v8/V8ValueCache.cpp:
+        (WebCore::makeExternalString):
+        (WebCore::WebCoreStringResource::visitStrings):
+        * bindings/v8/V8ValueCache.h:
+        (WebCore::WebCoreStringResource::WebCoreStringResource):
+        (WebCore::WebCoreStringResource::~WebCoreStringResource):
+        (WebCore::WebCoreStringResource::data):
+        (WebCoreStringResource):
+        (WebCore::WebCoreStringResource::length):
+        (WebCore::WebCoreStringResource::atomicString):
+        (WebCore::WebCoreStringResource::toStringResource):
+
 2012-11-02  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove dependency on SoupPasswordManager

@@ -30,121 +30,72 @@
 
 namespace WebCore {
 
-template<class StringClass> struct StringTraits {
-    static const StringClass& fromStringResource(WebCoreStringResourceBase*);
-    static bool is16BitAtomicString(StringClass&);
-    template<bool ascii>
+template <class StringClass> struct StringTraits {
+    static const StringClass& fromStringResource(WebCoreStringResource*);
     static StringClass fromV8String(v8::Handle<v8::String>, int);
 };
 
 template<>
 struct StringTraits<String> {
-    static const String& fromStringResource(WebCoreStringResourceBase* resource)
+    static const String& fromStringResource(WebCoreStringResource* resource)
     {
         return resource->webcoreString();
     }
-    static bool is16BitAtomicString(String& string)
+
+    static String fromV8String(v8::Handle<v8::String> v8String, int length)
     {
-        return false;
+        ASSERT(v8String->Length() == length);
+        // NOTE: as of now, String(const UChar*, int) performs String::createUninitialized
+        // anyway, so no need to optimize like we do for AtomicString below.
+        UChar* buffer;
+        String result = String::createUninitialized(length, buffer);
+        v8String->Write(reinterpret_cast<uint16_t*>(buffer), 0, length);
+        return result;
     }
-    template<bool ascii>
-    static String fromV8String(v8::Handle<v8::String>, int);
 };
 
 template<>
 struct StringTraits<AtomicString> {
-    static const AtomicString& fromStringResource(WebCoreStringResourceBase* resource)
+    static const AtomicString& fromStringResource(WebCoreStringResource* resource)
     {
         return resource->atomicString();
     }
-    static bool is16BitAtomicString(AtomicString& string)
+
+    static AtomicString fromV8String(v8::Handle<v8::String> v8String, int length)
     {
-        return !string.string().is8Bit();
+        ASSERT(v8String->Length() == length);
+        static const int inlineBufferSize = 16;
+        if (length <= inlineBufferSize) {
+            UChar inlineBuffer[inlineBufferSize];
+            v8String->Write(reinterpret_cast<uint16_t*>(inlineBuffer), 0, length);
+            return AtomicString(inlineBuffer, length);
+        }
+        UChar* buffer;
+        String string = String::createUninitialized(length, buffer);
+        v8String->Write(reinterpret_cast<uint16_t*>(buffer), 0, length);
+        return AtomicString(string);
     }
-    template<bool ascii>
-    static AtomicString fromV8String(v8::Handle<v8::String>, int);
 };
 
-template<>
-String StringTraits<String>::fromV8String<false>(v8::Handle<v8::String> v8String, int length)
-{
-    ASSERT(v8String->Length() == length);
-    UChar* buffer;
-    String result = String::createUninitialized(length, buffer);
-    v8String->Write(reinterpret_cast<uint16_t*>(buffer), 0, length);
-    return result;
-}
-
-template<>
-AtomicString StringTraits<AtomicString>::fromV8String<false>(v8::Handle<v8::String> v8String, int length)
-{
-    ASSERT(v8String->Length() == length);
-    static const int inlineBufferSize = 16;
-    if (length <= inlineBufferSize) {
-        UChar inlineBuffer[inlineBufferSize];
-        v8String->Write(reinterpret_cast<uint16_t*>(inlineBuffer), 0, length);
-        return AtomicString(inlineBuffer, length);
-    }
-    UChar* buffer;
-    String string = String::createUninitialized(length, buffer);
-    v8String->Write(reinterpret_cast<uint16_t*>(buffer), 0, length);
-    return AtomicString(string);
-}
-
-template<>
-String StringTraits<String>::fromV8String<true>(v8::Handle<v8::String> v8String, int length)
-{
-    ASSERT(v8String->Length() == length);
-    LChar* buffer;
-    String result = String::createUninitialized(length, buffer);
-    v8String->WriteAscii(reinterpret_cast<char*>(buffer), 0, length, v8::String::PRESERVE_ASCII_NULL);
-    return result;
-}
-
-template<>
-inline AtomicString StringTraits<AtomicString>::fromV8String<true>(v8::Handle<v8::String> v8String, int length)
-{
-    // FIXME: There is no inline fast path for 8 bit atomic strings.
-    String result = StringTraits<String>::fromV8String<true>(v8String, length);
-    return AtomicString(result);
-}
-
-template<typename StringType>
+template <typename StringType>
 StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external)
 {
-    {
-        // A lot of WebCoreStringResourceBase::toWebCoreStringResourceBase is copied here by hand for performance reasons.
-        // This portion of this function is very hot in certain Dromeao benchmarks.
-        v8::String::Encoding encoding;
-        v8::String::ExternalStringResourceBase* resource = v8String->GetExternalStringResourceBase(&encoding);
-        if (LIKELY(!!resource)) {
-            WebCoreStringResourceBase* base;
-            if (encoding == v8::String::ASCII_ENCODING)
-                base = static_cast<WebCoreStringResource8*>(resource);
-            else
-                base = static_cast<WebCoreStringResource16*>(resource);
-            return StringTraits<StringType>::fromStringResource(base);
-        }
-    }
+    WebCoreStringResource* stringResource = WebCoreStringResource::toStringResource(v8String);
+    if (stringResource)
+        return StringTraits<StringType>::fromStringResource(stringResource);
 
     int length = v8String->Length();
-    if (UNLIKELY(!length))
+    if (!length)
         return String("");
 
-    bool nonAscii = v8String->MayContainNonAscii();
-    StringType result(nonAscii ? StringTraits<StringType>::template fromV8String<false>(v8String, length) : StringTraits<StringType>::template fromV8String<true>(v8String, length));
+    StringType result(StringTraits<StringType>::fromV8String(v8String, length));
 
-    if (external != Externalize || !v8String->CanMakeExternal())
-        return result;
-
-    if (!nonAscii && !StringTraits<StringType>::is16BitAtomicString(result)) {
-        WebCoreStringResource8* stringResource = new WebCoreStringResource8(result);
-        if (UNLIKELY(!v8String->MakeExternal(stringResource)))
+    if (external == Externalize && v8String->CanMakeExternal()) {
+        stringResource = new WebCoreStringResource(result);
+        if (!v8String->MakeExternal(stringResource)) {
+            // In case of a failure delete the external resource as it was not used.
             delete stringResource;
-    } else {
-        WebCoreStringResource16* stringResource = new WebCoreStringResource16(result);
-        if (UNLIKELY(!v8String->MakeExternal(stringResource)))
-            delete stringResource;
+        }
     }
     return result;
 }
