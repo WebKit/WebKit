@@ -1,0 +1,23 @@
+Tests negative timestamps.
+
+Test that cues with negative startTime are not added:
+EXPECTED (testTrack.track.cues.length == '4') OK
+RUN(textCue = new TextTrackCue('sausage-cue', -3439332606, 3.4, 'Sausage?'))
+RUN(testTrack.track.addCue(textCue))
+EXPECTED (testTrack.track.cues.length == '4') OK
+
+Test that cues with negative startTime and negative endTime are not added:
+EXPECTED (testTrack.track.cues.length == '4') OK
+RUN(textCue = new TextTrackCue('pepperoni-cue', -110, -3.4, 'Pepperoni?'))
+RUN(testTrack.track.addCue(textCue))
+EXPECTED (testTrack.track.cues.length == '4') OK
+
+Test that setting startTime and endTime to negative values does not affect the value:
+EXPECTED (testTrack.track.cues[3].startTime == '121') OK
+RUN(testTrack.track.cues[3].startTime = -5)
+EXPECTED (testTrack.track.cues[3].startTime == '121') OK
+EXPECTED (testTrack.track.cues[3].endTime == '361200.5') OK
+RUN(testTrack.track.cues[3].endTime = -3439332606)
+EXPECTED (testTrack.track.cues[3].endTime == '361200.5') OK
+END OF TEST
+

@@ -193,6 +193,10 @@ void TextTrack::addCue(PassRefPtr<TextTrackCue> prpCue, ExceptionCode& ec)
 
     RefPtr<TextTrackCue> cue = prpCue;
 
+    // TODO(93143): Add spec-compliant behavior for negative time values.
+    if (cue->startTime() < 0 || cue->endTime() < 0)
+        return;
+
     // 4.8.10.12.4 Text track API
 
     // The addCue(cue) method of TextTrack objects, when invoked, must run the following steps:
