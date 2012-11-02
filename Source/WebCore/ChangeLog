@@ -1,3 +1,18 @@
+2012-11-02  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        Web Inspector: a small defect in "WorkersSidebarPanel.js"
+        https://bugs.webkit.org/show_bug.cgi?id=101022
+
+        Reviewed by Yury Semikhatsky.
+
+        In "autoattachToWorkersClicked", the "event.target.checked" doesn't alwyas valid, since the
+        "event.target" might be a label.
+
+        The problem just causes an error report, doesn't effect function, so no new test case.
+
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.WorkersSidebarPane.prototype._autoattachToWorkersClicked):
+
 2012-11-01  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Element should have getter and setter of attribute 'pseudo'
