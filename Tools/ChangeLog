@@ -1,3 +1,39 @@
+2012-11-02  Dirk Pranke  <dpranke@chromium.org>
+
+        webkit-patch analyze-baselines output is weak
+        https://bugs.webkit.org/show_bug.cgi?id=100998
+
+        Reviewed by Ojan Vafai.
+
+        Currently analyze-baselines prints a list of baselines that have
+        the same checksum per line, but the format is hard to read;
+        this patch cleans up the output to print by directory instead
+        and use the same format I recently added for debugging optimize-baselines,
+        then refactors the code so that we share and adds tests for
+        analyze-baselines (which was untested).
+
+        Also, I got rid of a couple of unnecessarily-hardcoded port names,
+        and modified the baseline optimizer to log the current world when
+        optimize fails.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        (BaselineOptimizer.read_results_by_directory):
+        (BaselineOptimizer.write_by_directory):
+        (BaselineOptimizer.optimize):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (OptimizeBaselines.execute):
+        (AnalyzeBaselines.__init__):
+        (AnalyzeBaselines._write):
+        (AnalyzeBaselines._analyze_baseline):
+        (AnalyzeBaselines.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (_FakeOptimizer):
+        (_FakeOptimizer.read_results_by_directory):
+        (TestAnalyzeBaselines):
+        (TestAnalyzeBaselines.setUp):
+        (TestAnalyzeBaselines.test_default):
+        (TestAnalyzeBaselines.test_missing_baselines):
+
 2012-11-02  Adam Barth  <abarth@webkit.org>
 
         ENABLE(UNDO_MANAGER) is disabled everywhere and is not under active development

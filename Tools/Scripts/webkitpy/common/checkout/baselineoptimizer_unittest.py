@@ -42,7 +42,7 @@ class TestBaselineOptimizer(BaselineOptimizer):
 
     # We override this method for testing so we don't have to construct an
     # elaborate mock file system.
-    def _read_results_by_directory(self, baseline_name):
+    def read_results_by_directory(self, baseline_name):
         return self._mock_results_by_directory
 
     def _move_baselines(self, baseline_name, results_by_directory, new_results_by_directory):
