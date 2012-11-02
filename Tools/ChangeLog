@@ -1,3 +1,19 @@
+2012-11-01  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Make File Chooser dialog modal in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=100962
+
+        Reviewed by Gyuyoung Kim.
+
+        Make File Chooser dialog modal in MiniBrowser and make
+        sure it is closed and freed when its parent window is
+        closed.
+
+        * MiniBrowser/efl/main.c:
+        (close_file_picker):
+        (on_filepicker_parent_deletion):
+        (on_file_chooser_request):
+
 2012-11-01  Seonae Kim  <sunaeluv.kim@samsung.com>
 
         [EFL][DRT] Support Geolocation

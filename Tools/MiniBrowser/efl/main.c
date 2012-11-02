@@ -309,15 +309,25 @@ on_download_request(void *user_data, Evas_Object *webview, void *event_info)
 }
 
 typedef struct {
+    Evas_Object *parent;
     Evas_Object *window;
     Ewk_File_Chooser_Request *request;
 } FileSelectorData;
 
+static void on_filepicker_parent_deletion(void *user_data, Evas *evas, Evas_Object *window, void *event);
+
 static void close_file_picker(FileSelectorData* fs_data)
 {
+    evas_object_event_callback_del(fs_data->parent, EVAS_CALLBACK_DEL, on_filepicker_parent_deletion);
     evas_object_del(fs_data->window);
     ewk_file_chooser_request_unref(fs_data->request);
     free(fs_data);
+}
+
+static void
+on_filepicker_parent_deletion(void *user_data, Evas *evas, Evas_Object *window, void *event)
+{
+    close_file_picker((FileSelectorData *)user_data);
 }
 
 static void
@@ -341,16 +351,21 @@ on_fileselector_done(void *user_data, Evas_Object *file_selector, void *event_in
 static void
 on_file_chooser_request(void *user_data, Evas_Object *webview, void *event_info)
 {
+    Browser_Window *app_data = (Browser_Window *)user_data;
     Ewk_File_Chooser_Request *request = (Ewk_File_Chooser_Request *)event_info;
 
     // Show basic file picker which does not currently support multiple files
     // or MIME type filtering.
-    Evas_Object *window = elm_win_util_standard_add("file-picker-window", "File picker");
+    Evas_Object *window = elm_win_add(app_data->window, "file-picker-window", ELM_WIN_DIALOG_BASIC);
+    elm_win_title_set(window, "File picker");
+    elm_win_modal_set(window, EINA_TRUE);
 
     FileSelectorData* fs_data = (FileSelectorData*)malloc(sizeof(FileSelectorData));
+    fs_data->parent = app_data->window;
     fs_data->window = window;
     fs_data->request = ewk_file_chooser_request_ref(request);
     evas_object_smart_callback_add(window, "delete,request", on_filepicker_deletion, fs_data);
+    evas_object_event_callback_add(app_data->window, EVAS_CALLBACK_DEL, on_filepicker_parent_deletion, fs_data);
 
     Evas_Object *file_selector = elm_fileselector_add(window);
     const char *home_path = getenv("HOME");
