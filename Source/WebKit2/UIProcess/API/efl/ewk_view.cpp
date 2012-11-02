@@ -659,17 +659,6 @@ const char* ewk_view_title_get(const Evas_Object* ewkView)
     return impl->title();
 }
 
-/**
- * @internal
- * Reports that the requested text was found.
- *
- * Emits signal: "text,found" with the number of matches.
- */
-void ewk_view_text_found(Evas_Object* ewkView, unsigned int matchCount)
-{
-    evas_object_smart_callback_call(ewkView, "text,found", &matchCount);
-}
-
 double ewk_view_load_progress_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, -1.0);
