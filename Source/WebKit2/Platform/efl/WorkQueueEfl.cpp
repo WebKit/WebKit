@@ -127,6 +127,7 @@ void WorkQueue::insertTimerWorkItem(PassOwnPtr<TimerWorkItem> item)
 
     size_t position = 0;
 
+    MutexLocker locker(m_timerWorkItemsLock);
     // m_timerWorkItems should be ordered by expire time.
     for (; position < m_timerWorkItems.size(); ++position)
         if (item->expireTime() < m_timerWorkItems[position]->expireTime())
@@ -153,7 +154,6 @@ void WorkQueue::performTimerWork()
 
     for (size_t i = 0; i < timerWorkItems.size(); ++i) {
         if (!timerWorkItems[i]->expired(current)) {
-            MutexLocker locker(m_timerWorkItemsLock);
             // If a timer work item does not expired, keep it to the m_timerWorkItems.
             // m_timerWorkItems should be ordered by expire time.
             insertTimerWorkItem(timerWorkItems[i].release());
@@ -167,6 +167,7 @@ void WorkQueue::performTimerWork()
 
 void WorkQueue::sendMessageToThread(const char* message)
 {
+    MutexLocker locker(m_writeToPipeDescriptorLock);
     if (write(m_writeToPipeDescriptor, message, threadMessageSize) == -1)
         LOG_ERROR("Failed to wake up WorkQueue Thread");
 }
@@ -209,8 +210,11 @@ void WorkQueue::unregisterSocketEventHandler(int fileDescriptor)
 
 void WorkQueue::dispatch(const Function<void()>& function)
 {
-    MutexLocker locker(m_workItemQueueLock);
-    m_workItemQueue.append(function);
+    {
+        MutexLocker locker(m_workItemQueueLock);
+        m_workItemQueue.append(function);
+    }
+
     sendMessageToThread(wakupThreadMessage);
 }
 
@@ -219,7 +223,6 @@ void WorkQueue::dispatchAfterDelay(const Function<void()>& function, double dela
     if (delay < 0)
         return;
 
-    MutexLocker locker(m_timerWorkItemsLock);
     OwnPtr<TimerWorkItem> timerWorkItem = TimerWorkItem::create(function, currentTime() + delay);
     if (!timerWorkItem)
         return;

@@ -1,3 +1,26 @@
+2012-11-02  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] Change the scope of locking in WorkQueueEfl.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=98978
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Release the m_workItemQueueLock and m_timerWorkItemsLock mutexes
+        immediately after the protected resource is no longer modified to
+        prevent a possible source of a deadlock.
+
+        And additional mutex locker for the m_writeToPipeDescriptor is added
+        to ensure thread-safety of the sendMessageToThread() function.
+
+        * Platform/WorkQueue.h:
+        (WorkQueue):
+        * Platform/efl/WorkQueueEfl.cpp:
+        (WorkQueue::insertTimerWorkItem):
+        (WorkQueue::performTimerWork):
+        (WorkQueue::sendMessageToThread):
+        (WorkQueue::dispatch):
+        (WorkQueue::dispatchAfterDelay):
+
 2012-11-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Add API unit tests for Ewk_Object

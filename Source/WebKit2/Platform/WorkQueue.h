@@ -206,6 +206,8 @@ private:
     int m_maxFileDescriptor;
     int m_readFromPipeDescriptor;
     int m_writeToPipeDescriptor;
+    Mutex m_writeToPipeDescriptorLock;
+
     bool m_threadLoop;
 
     Vector<Function<void()> > m_workItemQueue;
