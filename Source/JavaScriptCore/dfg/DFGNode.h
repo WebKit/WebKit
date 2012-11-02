@@ -255,9 +255,9 @@ struct Node {
     
     void convertToStructureTransitionWatchpoint(Structure* structure)
     {
-        ASSERT(m_op == CheckStructure || m_op == ForwardCheckStructure);
+        ASSERT(m_op == CheckStructure || m_op == ForwardCheckStructure || m_op == ArrayifyToStructure);
         m_opInfo = bitwise_cast<uintptr_t>(structure);
-        if (m_op == CheckStructure)
+        if (m_op == CheckStructure || m_op == ArrayifyToStructure)
             m_op = StructureTransitionWatchpoint;
         else
             m_op = ForwardStructureTransitionWatchpoint;

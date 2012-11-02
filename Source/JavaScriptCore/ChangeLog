@@ -1,5 +1,19 @@
 2012-11-02  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::Node::converToStructureTransitionWatchpoint should take kindly to ArrayifyToStructure
+        https://bugs.webkit.org/show_bug.cgi?id=101117
+
+        Reviewed by Gavin Barraclough.
+
+        We have logic to convert ArrayifyToStructure to StructureTransitionWatchpoint, which is awesome, except
+        that previously convertToStructureTransitionWatchpoint was (a) asserting that it never saw an
+        ArrayifyToStructure and (b) would incorrectly create a ForwardStructureTransitionWatchpoint if it did.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToStructureTransitionWatchpoint):
+
+2012-11-02  Filip Pizlo  <fpizlo@apple.com>
+
         DFG::SpeculativeJIT::typedArrayDescriptor should use the Float64Array descriptor for Float64Arrays
         https://bugs.webkit.org/show_bug.cgi?id=101114
 
