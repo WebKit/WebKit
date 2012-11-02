@@ -1,3 +1,22 @@
+2012-11-02  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: show popup for CPU bars.
+        https://bugs.webkit.org/show_bug.cgi?id=100951
+
+        Reviewed by Pavel Feldman.
+
+        Each CPU bar can represent a combination of several shorter messages.
+        We should show information about combined messages - start time,
+        total duration, CPU time, message count.
+
+        * English.lproj/localizedStrings.js: Added "Message Count" string.
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._refreshMainThreadBars):
+        Supply elements with underlying info.
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.prototype.generateMainThreadBarPopupContent):
+        Added.
+
 2012-11-02  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Network panel grid UI is misaligned after r132888

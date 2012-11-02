@@ -785,6 +785,7 @@ localizedStrings["JavaScript external strings"] = "JavaScript external strings";
 localizedStrings["Show CPU activity on the ruler"] = "Show CPU activity on the ruler";
 localizedStrings["Render tree"] = "Render tree";
 localizedStrings["Canvas inspection"] = "Canvas inspection";
+localizedStrings["Message Count"] = "Message Count";
 localizedStrings["Used JavaScript heap"] = "Used JavaScript heap";
 localizedStrings["JavaScript external resources"] = "JavaScript external resources";
 localizedStrings["Glyph cache resources"] = "Glyph cache resources";

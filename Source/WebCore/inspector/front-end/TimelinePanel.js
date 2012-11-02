@@ -131,7 +131,7 @@ WebInspector.TimelinePanel = function()
 
     this._headerLineCount = 1;
 
-    this._mainThreadTasks = [];
+    this._mainThreadTasks = /** @type {!Array.<{startTime: number, endTime: number}>} */ [];
     this._mainThreadMonitoringEnabled = false;
     if (WebInspector.settings.showCpuOnTimelineRuler.get() && Capabilities.timelineCanMonitorMainThread)
         this._enableMainThreadMonitoring();
@@ -893,6 +893,7 @@ WebInspector.TimelinePanel.prototype = {
                 var gap = Math.floor(left) - Math.ceil(lastRight);
                 if (gap < minGap) {
                     lastRight = right;
+                    lastElement._tasksInfo.lastTaskIndex = taskIndex;
                     continue;
                 }
                 lastElement.style.width = (lastRight - lastLeft) + "px";
@@ -902,6 +903,7 @@ WebInspector.TimelinePanel.prototype = {
                 element = container.createChild("div", "timeline-graph-bar");
 
             element.style.left = left + "px";
+            element._tasksInfo = {tasks: tasks, firstTaskIndex: taskIndex, lastTaskIndex: taskIndex};
             lastLeft = left;
             lastRight = right;
 
@@ -914,6 +916,7 @@ WebInspector.TimelinePanel.prototype = {
 
         while (element) {
             var nextElement = element.nextSibling;
+            element._tasksInfo = null;
             container.removeChild(element);
             element = nextElement;
         }
@@ -993,6 +996,8 @@ WebInspector.TimelinePanel.prototype = {
         } else {
             if (anchor.row && anchor.row._record)
                 anchor.row._record.generatePopupContent(showCallback);
+            else if (anchor._tasksInfo)
+                popover.show(this._presentationModel.generateMainThreadBarPopupContent(anchor._tasksInfo), anchor);
         }
 
         function showCallback(popupContent)
