@@ -1,3 +1,31 @@
+2012-11-02  Mike West  <mkwst@chromium.org>
+
+        Prefer 'Content-Security-Policy' to 'X-WebKit-CSP'.
+        https://bugs.webkit.org/show_bug.cgi?id=101043
+
+        Reviewed by Adam Barth.
+
+        The canonical 'Content-Security-Policy' header landed in 133095, but we
+        missed a few tests while updating to the new hotness. We also should
+        start using the canonical header for the inspector.
+
+        This patch should have no visible change; tests should continue to pass
+        with the new header, just as they did with the old header.
+
+        * http/tests/inspector/stacktraces/csp-injected-content-warning-contains-stacktrace.html:
+        * http/tests/inspector/stacktraces/csp-inline-warning-contains-stacktrace.html:
+        * http/tests/inspector/stacktraces/csp-setInterval-warning-contains-stacktrace.html:
+        * http/tests/inspector/stacktraces/csp-setTimeout-warning-contains-stacktrace.html:
+        * http/tests/security/contentSecurityPolicy/img-blocked-no-gc-crash.html:
+        * http/tests/security/isolatedWorld/bypass-main-world-csp.html:
+        * inspector/console/console-eval-blocked.html:
+        * inspector/debugger/debugger-pause-on-blocked-event-handler.html:
+        * inspector/debugger/debugger-pause-on-blocked-script-injection.html:
+        * inspector/debugger/debugger-pause-on-blocked-script-url.html:
+        * inspector/debugger/eval-on-pause-blocked.html:
+        * inspector/elements/resolve-node-blocked.html:
+        * media/csp-blocks-video.html:
+
 2012-11-02  Alice Boxhall  <aboxhall@google.com>
 
         Unreviewed gardening. Marking object-clip-rects-assertion.html as flaky.

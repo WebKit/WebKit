@@ -1,3 +1,19 @@
+2012-11-02  Mike West  <mkwst@chromium.org>
+
+        Prefer 'Content-Security-Policy' to 'X-WebKit-CSP'.
+        https://bugs.webkit.org/show_bug.cgi?id=101043
+
+        Reviewed by Adam Barth.
+
+        The canonical 'Content-Security-Policy' header landed in 133095, but we
+        missed a few tests while updating to the new hotness. We also should
+        start using the canonical header for the inspector.
+
+        This patch should have no visible change; tests should continue to pass
+        with the new header, just as they did with the old header.
+
+        * inspector/front-end/inspector.html:
+
 2012-11-02  Adam Barth  <abarth@webkit.org>
 
         ENABLE(UNDO_MANAGER) is disabled everywhere and is not under active development
