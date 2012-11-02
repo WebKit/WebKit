@@ -70,10 +70,8 @@ void MemoryInstrumentationClientImpl::countObjectSize(const void* object, Memory
     if (!checkInstrumentedObjects())
         return;
 
-    if (object) {
+    if (object)
         m_countedObjects.add(object, size);
-        checkCountedObject(object);
-    }
 }
 
 bool MemoryInstrumentationClientImpl::visited(const void* object)

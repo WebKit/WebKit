@@ -1,3 +1,19 @@
+2012-11-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Memory instrumentation: do not call checkCountedObject with wrong pointers
+        https://bugs.webkit.org/show_bug.cgi?id=100958
+
+        Reviewed by Alexander Pavlov.
+
+        Removed calls to checkCountedObject from places where the pointer may contain
+        an address of a base class which may differ from the actual object pointer. Instead
+        checkCountedObject is only called right after processing deferred pointer where
+        we know real address.
+
+        * wtf/MemoryInstrumentation.h:
+        (WTF::MemoryInstrumentation::addObjectImpl):
+        (WTF::::process):
+
 2012-11-01  Alexey Proskuryakov  <ap@apple.com>
 
         Rename HAVE(NETWORK_CFDATA_ARRAY_CALLBACK) to USE(NETWORK_CFDATA_ARRAY_CALLBACK)

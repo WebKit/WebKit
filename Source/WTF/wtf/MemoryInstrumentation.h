@@ -230,7 +230,6 @@ void MemoryInstrumentation::addObjectImpl(const T* const& object, MemoryObjectTy
     } else {
         if (!object || visited(object))
             return;
-        checkCountedObject(object);
         deferInstrumentedPointer(adoptPtr(new InstrumentedPointer<T>(object, ownerObjectType)));
     }
 }
@@ -262,6 +261,7 @@ void MemoryInstrumentation::InstrumentedPointer<T>::process(MemoryInstrumentatio
     if (pointer != m_pointer && memoryInstrumentation->visited(pointer))
         return;
     memoryInstrumentation->countObjectSize(pointer, memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
+    memoryInstrumentation->checkCountedObject(pointer);
 }
 
 // Link time guard for classes with external memory instrumentation.
