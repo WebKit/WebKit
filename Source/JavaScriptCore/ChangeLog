@@ -1,3 +1,15 @@
+2012-11-02  Filip Pizlo  <fpizlo@apple.com>
+
+        JIT::privateCompileGetByVal should use MacroAssemblerCodePtr::createFromExecutableAddress like JIT::privateCompilePutByVal
+        https://bugs.webkit.org/show_bug.cgi?id=101109
+
+        Reviewed by Gavin Barraclough.
+
+        This fixes crashes on ARMv7 resulting from the return address already being tagged with the THUMB2 bit.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByVal):
+
 2012-11-02  Simon Fraser  <simon.fraser@apple.com>
 
         Enable SUBPIXEL_LAYOUT on Mac
