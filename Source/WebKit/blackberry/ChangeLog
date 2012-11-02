@@ -1,3 +1,16 @@
+2012-11-01  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        [BlackBerry] Simplify the code of returning JSValue in "BlackBerry::WebKit::WebPagePrivate::executeJavaScript"
+        https://bugs.webkit.org/show_bug.cgi?id=100941
+
+        Reviewed by Yong Li.
+
+        Remove the unnecessary steps, just directly deal with returned JSValue.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::executeJavaScript):
+        (BlackBerry::WebKit::WebPagePrivate::executeJavaScriptInIsolatedWorld):
+
 2012-11-01  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Add a prompt to enable global location services

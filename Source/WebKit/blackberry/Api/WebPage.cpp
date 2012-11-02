@@ -780,36 +780,25 @@ bool WebPagePrivate::executeJavaScript(const BlackBerry::Platform::String& scrip
         return false;
     }
 
-    JSC::ExecState* exec = m_mainFrame->script()->globalObject(mainThreadNormalWorld())->globalExec();
-    JSGlobalContextRef context = toGlobalRef(exec);
-
-    JSC::JSLockHolder lock(exec);
-    JSType type = JSValueGetType(context, toRef(exec, value));
-
-    switch (type) {
-    case kJSTypeNull:
-        returnType = JSNull;
-        break;
-    case kJSTypeBoolean:
-        returnType = JSBoolean;
-        break;
-    case kJSTypeNumber:
-        returnType = JSNumber;
-        break;
-    case kJSTypeString:
-        returnType = JSString;
-        break;
-    case kJSTypeObject:
-        returnType = JSObject;
-        break;
-    case kJSTypeUndefined:
-    default:
+    if (value.isUndefined())
         returnType = JSUndefined;
-        break;
-    }
+    else if (value.isNull())
+        returnType = JSNull;
+    else if (value.isBoolean())
+        returnType = JSBoolean;
+    else if (value.isNumber())
+        returnType = JSNumber;
+    else if (value.isString())
+        returnType = JSString;
+    else if (value.isObject())
+        returnType = JSObject;
+    else
+        returnType = JSUndefined;
 
-    if (returnType == JSBoolean || returnType == JSNumber || returnType == JSString || returnType == JSObject)
+    if (returnType == JSBoolean || returnType == JSNumber || returnType == JSString || returnType == JSObject) {
+        JSC::ExecState* exec = m_mainFrame->script()->globalObject(mainThreadNormalWorld())->globalExec();
         returnValue = result.toString(exec);
+    }
 
     return true;
 }
@@ -832,36 +821,25 @@ bool WebPagePrivate::executeJavaScriptInIsolatedWorld(const ScriptSourceCode& so
         return false;
     }
 
-    JSC::ExecState* exec = m_mainFrame->script()->globalObject(m_isolatedWorld.get())->globalExec();
-    JSGlobalContextRef context = toGlobalRef(exec);
-
-    JSC::JSLockHolder lock(exec);
-    JSType type = JSValueGetType(context, toRef(exec, value));
-
-    switch (type) {
-    case kJSTypeNull:
-        returnType = JSNull;
-        break;
-    case kJSTypeBoolean:
-        returnType = JSBoolean;
-        break;
-    case kJSTypeNumber:
-        returnType = JSNumber;
-        break;
-    case kJSTypeString:
-        returnType = JSString;
-        break;
-    case kJSTypeObject:
-        returnType = JSObject;
-        break;
-    case kJSTypeUndefined:
-    default:
+    if (value.isUndefined())
         returnType = JSUndefined;
-        break;
-    }
+    else if (value.isNull())
+        returnType = JSNull;
+    else if (value.isBoolean())
+        returnType = JSBoolean;
+    else if (value.isNumber())
+        returnType = JSNumber;
+    else if (value.isString())
+        returnType = JSString;
+    else if (value.isObject())
+        returnType = JSObject;
+    else
+        returnType = JSUndefined;
 
-    if (returnType == JSBoolean || returnType == JSNumber || returnType == JSString || returnType == JSObject)
+    if (returnType == JSBoolean || returnType == JSNumber || returnType == JSString || returnType == JSObject) {
+        JSC::ExecState* exec = m_mainFrame->script()->globalObject(mainThreadNormalWorld())->globalExec();
         returnValue = result.toString(exec);
+    }
 
     return true;
 }
