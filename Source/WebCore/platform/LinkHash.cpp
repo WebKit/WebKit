@@ -30,7 +30,8 @@
 
 namespace WebCore {
 
-static inline size_t findSlashDotDotSlash(const UChar* characters, size_t length, size_t position)
+template <typename CharacterType>
+static inline size_t findSlashDotDotSlash(const CharacterType* characters, size_t length, size_t position)
 {
     if (length < 4)
         return notFound;
@@ -42,7 +43,8 @@ static inline size_t findSlashDotDotSlash(const UChar* characters, size_t length
     return notFound;
 }
 
-static inline size_t findSlashSlash(const UChar* characters, size_t length, size_t position)
+template <typename CharacterType>
+static inline size_t findSlashSlash(const CharacterType* characters, size_t length, size_t position)
 {
     if (length < 2)
         return notFound;
@@ -54,7 +56,8 @@ static inline size_t findSlashSlash(const UChar* characters, size_t length, size
     return notFound;
 }
 
-static inline size_t findSlashDotSlash(const UChar* characters, size_t length, size_t position)
+template <typename CharacterType>
+static inline size_t findSlashDotSlash(const CharacterType* characters, size_t length, size_t position)
 {
     if (length < 3)
         return notFound;
@@ -66,7 +69,8 @@ static inline size_t findSlashDotSlash(const UChar* characters, size_t length, s
     return notFound;
 }
 
-static inline bool containsColonSlashSlash(const UChar* characters, unsigned length)
+template <typename CharacterType>
+static inline bool containsColonSlashSlash(const CharacterType* characters, unsigned length)
 {
     if (length < 3)
         return false;
@@ -78,7 +82,8 @@ static inline bool containsColonSlashSlash(const UChar* characters, unsigned len
     return false;
 }
 
-static inline void squeezeOutNullCharacters(Vector<UChar, 512>& string)
+template <typename CharacterType>
+static inline void squeezeOutNullCharacters(Vector<CharacterType, 512>& string)
 {
     size_t size = string.size();
     size_t i = 0;
@@ -90,14 +95,15 @@ static inline void squeezeOutNullCharacters(Vector<UChar, 512>& string)
         return;
     size_t j = i;
     for (++i; i < size; ++i) {
-        if (UChar character = string[i])
+        if (CharacterType character = string[i])
             string[j++] = character;
     }
     ASSERT(j < size);
     string.shrink(j);
 }
 
-static void cleanSlashDotDotSlashes(Vector<UChar, 512>& path, size_t firstSlash)
+template <typename CharacterType>
+static void cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t slash = firstSlash;
     do {
@@ -116,7 +122,8 @@ static void cleanSlashDotDotSlashes(Vector<UChar, 512>& path, size_t firstSlash)
     squeezeOutNullCharacters(path);
 }
 
-static void mergeDoubleSlashes(Vector<UChar, 512>& path, size_t firstSlash)
+template <typename CharacterType>
+static void mergeDoubleSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t refPos = find(path.data(), path.size(), '#');
     if (!refPos || refPos == notFound)
@@ -134,7 +141,8 @@ static void mergeDoubleSlashes(Vector<UChar, 512>& path, size_t firstSlash)
     squeezeOutNullCharacters(path);
 }
 
-static void cleanSlashDotSlashes(Vector<UChar, 512>& path, size_t firstSlash)
+template <typename CharacterType>
+static void cleanSlashDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t slash = firstSlash;
     do {
@@ -145,7 +153,8 @@ static void cleanSlashDotSlashes(Vector<UChar, 512>& path, size_t firstSlash)
     squeezeOutNullCharacters(path);
 }
 
-static inline void cleanPath(Vector<UChar, 512>& path)
+template <typename CharacterType>
+static inline void cleanPath(Vector<CharacterType, 512>& path)
 {
     // FIXME: Should not do this in the query or anchor part of the URL.
     size_t firstSlash = findSlashDotDotSlash(path.data(), path.size(), 0);
@@ -163,12 +172,14 @@ static inline void cleanPath(Vector<UChar, 512>& path)
         cleanSlashDotSlashes(path, firstSlash);
 }
 
-static inline bool matchLetter(UChar c, UChar lowercaseLetter)
+template <typename CharacterType>
+static inline bool matchLetter(CharacterType c, char lowercaseLetter)
 {
     return (c | 0x20) == lowercaseLetter;
 }
 
-static inline bool needsTrailingSlash(const UChar* characters, unsigned length)
+template <typename CharacterType>
+static inline bool needsTrailingSlash(const CharacterType* characters, unsigned length)
 {
     if (length < 6)
         return false;
@@ -214,13 +225,11 @@ LinkHash visitedLinkHash(const UChar* url, unsigned length)
     return visitedLinkHashInline(url, length);
 }
 
-static ALWAYS_INLINE void visitedURLInline(const KURL& base, const AtomicString& attributeURL, Vector<UChar, 512>& buffer)
+template <typename CharacterType>
+static ALWAYS_INLINE void visitedURLInline(const KURL& base, const CharacterType* characters, unsigned length, Vector<CharacterType, 512>& buffer)
 {
-    if (attributeURL.isNull())
+    if (!length)
         return;
-
-    const UChar* characters = attributeURL.characters();
-    unsigned length = attributeURL.length();
 
     // This is a poor man's completeURL. Faster with less memory allocation.
     // FIXME: It's missing a lot of what completeURL does and a lot of what KURL does.
@@ -236,7 +245,7 @@ static ALWAYS_INLINE void visitedURLInline(const KURL& base, const AtomicString&
     bool hasColonSlashSlash = containsColonSlashSlash(characters, length);
 
     if (hasColonSlashSlash && !needsTrailingSlash(characters, length)) {
-        buffer.append(attributeURL.characters(), attributeURL.length());
+        buffer.append(characters, length);
         return;
     }
 
@@ -250,17 +259,17 @@ static ALWAYS_INLINE void visitedURLInline(const KURL& base, const AtomicString&
     }
 
     if (!length)
-        buffer.append(base.string().characters(), base.string().length());
+        buffer.append(base.string().getCharactersWithUpconvert<CharacterType>(), base.string().length());
     else {
         switch (characters[0]) {
             case '/':
-                buffer.append(base.string().characters(), base.pathStart());
+                buffer.append(base.string().getCharactersWithUpconvert<CharacterType>(), base.pathStart());
                 break;
             case '#':
-                buffer.append(base.string().characters(), base.pathEnd());
+                buffer.append(base.string().getCharactersWithUpconvert<CharacterType>(), base.pathEnd());
                 break;
             default:
-                buffer.append(base.string().characters(), base.pathAfterLastSlash());
+                buffer.append(base.string().getCharactersWithUpconvert<CharacterType>(), base.pathAfterLastSlash());
                 break;
         }
     }
@@ -277,13 +286,22 @@ static ALWAYS_INLINE void visitedURLInline(const KURL& base, const AtomicString&
 
 void visitedURL(const KURL& base, const AtomicString& attributeURL, Vector<UChar, 512>& buffer)
 {
-    return visitedURLInline(base, attributeURL, buffer);
+    return visitedURLInline(base, attributeURL.characters(), attributeURL.length(), buffer);
 }
 
 LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
 {
+    if (base.string().is8Bit() && attributeURL.is8Bit()) {
+        Vector<LChar, 512> url;
+        visitedURLInline(base, attributeURL.characters8(), attributeURL.length(), url);
+        if (url.isEmpty())
+            return 0;
+
+        return visitedLinkHashInline(url.data(), url.size());
+    }
+
     Vector<UChar, 512> url;
-    visitedURLInline(base, attributeURL, url);
+    visitedURLInline(base, attributeURL.characters(), attributeURL.length(), url);
     if (url.isEmpty())
         return 0;
 

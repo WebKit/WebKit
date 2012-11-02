@@ -1,3 +1,32 @@
+2012-11-02  Michael Saboff  <msaboff@apple.com>
+
+        visitedHashLink() converts 8 bit URLs and attributes to 16 bits.
+        https://bugs.webkit.org/show_bug.cgi?id=101014
+
+        Reviewed by Geoffrey Garen.
+
+        Converted most of the static methods to templated based on character type.  Changed visitedHashLink to 
+        check bitness of both the base URL and attribute.  If both are 8 bit, then we process using the LChar
+        version of the templated methods.  Otherwise we use the 16 bit flavor.
+
+        Changes covered by existing tests.
+
+        * platform/LinkHash.cpp:
+        (WebCore::findSlashDotDotSlash):
+        (WebCore::findSlashSlash):
+        (WebCore::findSlashDotSlash):
+        (WebCore::containsColonSlashSlash):
+        (WebCore::squeezeOutNullCharacters):
+        (WebCore::cleanSlashDotDotSlashes):
+        (WebCore::mergeDoubleSlashes):
+        (WebCore::cleanSlashDotSlashes):
+        (WebCore::cleanPath):
+        (WebCore::matchLetter):
+        (WebCore::needsTrailingSlash):
+        (WebCore::visitedURLInline):
+        (WebCore::visitedURL):
+        (WebCore::visitedLinkHash):
+
 2012-11-02  Ian Vollick  <vollick@chromium.org>
 
         Support invalidation tracking for composited layers
