@@ -1,3 +1,21 @@
+2012-11-02  Ian Vollick  <vollick@chromium.org>
+
+        [Mac] REGRESSION (r130411-r130414): fast/images/repaint-subrect-grid.html failing on Apple MountainLion Debug WK2 (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=98523
+
+        Reviewed by Simon Fraser.
+
+        The repaint-subrect-grid.html layout test is now text-based and
+        doesn't use testRunner.displayInvalidatedRegion().
+
+        * fast/images/repaint-subrect-grid-expected.txt:
+        * fast/images/repaint-subrect-grid.html:
+        * platform/chromium/fast/images/repaint-subrect-grid-expected.png: Removed.
+        * platform/efl/fast/images/repaint-subrect-grid-expected.png: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/images/repaint-subrect-grid-expected.txt: Added.
+        * platform/qt/TestExpectations:
+
 2012-11-02  Alice Boxhall  <aboxhall@google.com>
 
         Unreviewed gardening. Marking some repaint tests as flaky.

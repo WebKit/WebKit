@@ -1210,7 +1210,6 @@ loader/go-back-to-different-window-size.html
 editing/text-iterator/findString.html
 
 # Missing layoutTestController.testRepaint()
-fast/images/repaint-subrect-grid.html
 fast/repaint/table-writing-modes-h.html
 fast/repaint/table-writing-modes-v.html
 fast/repaint/text-emphasis-h.html
