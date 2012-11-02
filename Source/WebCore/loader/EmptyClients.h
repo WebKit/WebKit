@@ -173,7 +173,7 @@ public:
     virtual PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color&) OVERRIDE;
 #endif
 
-#if ENABLE(CALENDAR_PICKER)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     virtual PassRefPtr<DateTimeChooser> openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&) OVERRIDE;
 #endif
 

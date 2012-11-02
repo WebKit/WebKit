@@ -1,3 +1,91 @@
+2012-11-01  Kent Tamura  <tkent@chromium.org>
+
+        Introduce ENABLE_DATE_AND_TIME_INPUT_TYPES, and clarify usage of other related flags
+        https://bugs.webkit.org/show_bug.cgi?id=101007
+
+        Reviewed by Kentaro Hara.
+
+        ChromeClient::openDateTimeChooser and Locale::formatDateTime are
+        necessary if one of date/time input types is enabled and even if
+        ENABLE_INPUT_MULTIPLE_FIELDS_UI is disabled. So they should be wrapped
+        with ENABLE(DATE_AND_TIME_INPUT_TYPES).
+
+        The following clases are used only for ChromeClient::openDateTimeChooser.
+        They should be wrapped with the same flag.
+          - class DateTimeChooser
+          - class DateTiemChooserClient
+
+        The following classes/functions are used for
+        Locale::formatDateTime. They should be wrapped with the same flag.
+          - Locale::dateFormat
+          - Locale::monthFormat
+          - Locale::timeFormat
+          - Locale::shortTimeFormat
+          - Locale::monthLabels
+          - Locale::shortMonthLabels
+          - Locale::standAloneMonthLabels
+          - Locale::shortStandAloneMonthLabels
+          - class DateTimeFormat
+
+        Also, we change the meaning of ENABLE_CALENDAR_PICKER. It meant
+         1) <input> supports calendar picker UI, and
+         2) WebCore/Resources/pagepopups/ is used for the calendar UI implementation.
+        Now ENABLE_CALENDAR_PICKER means only 2.
+
+        No new tests because of no behavior changes.
+
+        * html/BaseDateAndTimeInputType.h: This is necessary only if date/time
+        input types are enabled because this is a common super class of
+        date/time InputType classes.
+        * html/BaseDateAndTimeInputType.cpp: Ditto.
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp: Ditto.
+        * html/BaseChooserOnlyDateAndTimeInputType.h: Ditto.
+
+        * page/ChromeClient.h: Change the flag for openDateTimeChooser, and add a comment.
+        * loader/EmptyClients.cpp: Follow the openDateTimeChooser flag change.
+        * loader/EmptyClients.h: Ditto.
+        * platform/DateTimeChooser.h:
+        This is needed only if ChromeClient::openDateTimeChooser is available.
+        * platform/DateTimeChooserClient.h: Ditto.
+
+        * platform/LocalizedStrings.h:
+        weekFormatInLDML is necessary if ENABLE(INPUT_TYPE_WEEK) regardless of
+        ENABLE(INPUT_MULTIPLE_FIELDS_UI).
+
+        * platform/text/PlatformLocale.h:
+        Change the condition for Locale::formatDateTime and the code used by
+        Locale::formatDateTime.
+        * platform/text/PlatformLocale.cpp:
+        (WebCore::Locale::formatDateTime):
+        This is necessary even if !ENABLE(INPUT_MULTIPLE_FIELDS_UI), to produce
+        localized representations of date/time values.
+        * platform/text/LocaleICU.cpp:
+        Change the condition for the code used by Locale::formatDateTime.
+        * platform/text/LocaleICU.h: Ditto.
+        * platform/text/LocaleNone.cpp: Ditto.
+        * platform/text/mac/LocaleMac.h: Ditto.
+        * platform/text/mac/LocaleMac.mm: Ditto.
+        * platform/text/win/LocaleWin.cpp: Ditto.
+        * platform/text/win/LocaleWin.h: Ditto.
+        * platform/text/DateTimeFormat.cpp: Ditto.
+        * platform/text/DateTimeFormat.h: Ditto.
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.h:
+        Remove some #if-#endif for a picker indicator element because
+        ENABLE_CALENDAR_PICKER meaning is changed.
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp: Ditto.
+
+        * html/shadow/PickerIndicatorElement.cpp: CALENDAR_PICKER ->
+        INPUT_MULTIPLE_FIELDS_UI because ENABLE_CALENDAR_PICKER meaning is changed.
+        * html/shadow/PickerIndicatorElement.h: Ditto.
+        * rendering/RenderDetailsMarker.cpp: Ditto.
+        * rendering/RenderDetailsMarker.h: Ditto.
+        * rendering/RenderTheme.h: Ditto.
+        * rendering/RenderThemeChromiumCommon.cpp: Ditto.
+        * rendering/RenderThemeChromiumCommon.h: Ditto.
+        * rendering/RenderThemeChromiumMac.h: Ditto.
+        * rendering/RenderThemeChromiumSkia.h: Ditto.
+
 2012-11-02  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Revert QCocoaNativeInterface workaround from r131720.

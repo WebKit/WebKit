@@ -58,7 +58,7 @@ LocaleICU::LocaleICU(const char* locale)
 #if ENABLE(CALENDAR_PICKER)
     , m_firstDayOfWeek(0)
 #endif
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     , m_mediumTimeFormat(0)
     , m_shortTimeFormat(0)
     , m_didCreateTimeFormat(false)
@@ -70,7 +70,7 @@ LocaleICU::~LocaleICU()
 {
     unum_close(m_numberFormat);
     udat_close(m_shortDateFormat);
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     udat_close(m_mediumTimeFormat);
     udat_close(m_shortTimeFormat);
 #endif
@@ -155,7 +155,7 @@ UDateFormat* LocaleICU::openDateFormat(UDateFormatStyle timeStyle, UDateFormatSt
     return udat_open(timeStyle, dateStyle, m_locale.data(), gmtTimezone, WTF_ARRAY_LENGTH(gmtTimezone), 0, -1, &status);
 }
 
-#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 static String getDateFormatPattern(const UDateFormat* dateFormat)
 {
     if (!dateFormat)
@@ -172,9 +172,7 @@ static String getDateFormatPattern(const UDateFormat* dateFormat)
         return emptyString();
     return String::adopt(buffer);
 }
-#endif
 
-#if ENABLE(CALENDAR_PICKER)
 PassOwnPtr<Vector<String> > LocaleICU::createLabelVector(const UDateFormat* dateFormat, UDateFormatSymbolType type, int32_t startIndex, int32_t size)
 {
     if (!dateFormat)
@@ -198,7 +196,9 @@ PassOwnPtr<Vector<String> > LocaleICU::createLabelVector(const UDateFormat* date
     }
     return labels.release();
 }
+#endif
 
+#if ENABLE(CALENDAR_PICKER)
 static PassOwnPtr<Vector<String> > createFallbackWeekDayShortLabels()
 {
     OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
@@ -231,7 +231,7 @@ void LocaleICU::initializeCalendar()
 }
 #endif
 
-#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 static PassOwnPtr<Vector<String> > createFallbackMonthLabels()
 {
     OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());
@@ -275,7 +275,7 @@ bool LocaleICU::isRTL()
 }
 #endif
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 static PassOwnPtr<Vector<String> > createFallbackAMPMLabels()
 {
     OwnPtr<Vector<String> > labels = adoptPtr(new Vector<String>());

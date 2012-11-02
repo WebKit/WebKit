@@ -46,7 +46,7 @@ bool RenderThemeChromiumCommon::supportsDataListUI(const AtomicString& type)
         || type == InputTypeNames::range();
 }
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI) && ENABLE(CALENDAR_PICKER)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 bool RenderThemeChromiumCommon::supportsCalendarPicker(const AtomicString& type)
 {
     // FIXME: We'd like to support datetime, datetime-local, month, and week too.

@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include "BaseDateAndTimeInputType.h"
 
 #include "HTMLInputElement.h"
@@ -180,3 +181,4 @@ String BaseDateAndTimeInputType::sanitizeValue(const String& proposedValue) cons
 }
 
 } // namespace WebCore
+#endif

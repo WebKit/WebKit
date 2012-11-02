@@ -29,9 +29,8 @@
  */
 
 #include "config.h"
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "PickerIndicatorElement.h"
-
-#if ENABLE(CALENDAR_PICKER)
 
 #include "Chrome.h"
 #include "ChromeClient.h"

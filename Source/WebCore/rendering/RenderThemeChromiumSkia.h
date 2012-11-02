@@ -181,7 +181,7 @@ private:
 #if ENABLE(DATALIST_ELEMENT)
     virtual LayoutUnit sliderTickSnappingThreshold() const OVERRIDE;
 #endif
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI) && ENABLE(CALENDAR_PICKER)
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     virtual bool supportsCalendarPicker(const AtomicString& type) const OVERRIDE;
 #endif
 

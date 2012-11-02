@@ -29,9 +29,8 @@
  */
 
 #include "config.h"
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeChooserImpl.h"
-
-#if ENABLE(CALENDAR_PICKER)
 
 #include "CalendarPicker.h"
 #include "ChromeClientImpl.h"
@@ -47,6 +46,10 @@
 #include "WebViewImpl.h"
 #include <public/Platform.h>
 #include <public/WebLocalizedString.h>
+
+#if !ENABLE(CALENDAR_PICKER)
+#error "ENABLE_INPUT_MULTIPLE_FIELDS_UI requires ENABLE_CALENDAR_PICKER in Chromium."
+#endif
 
 using namespace WebCore;
 
@@ -170,4 +173,4 @@ void DateTimeChooserImpl::didClosePopup()
 
 } // namespace WebKit
 
-#endif // ENABLE(CALENDAR_PICKER)
+#endif // ENABLE(INPUT_MULTIPLE_FIELDS_UI)

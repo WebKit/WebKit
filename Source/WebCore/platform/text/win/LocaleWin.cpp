@@ -32,9 +32,7 @@
 #include "LocaleWin.h"
 
 #include "DateComponents.h"
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeFormat.h"
-#endif
 #include "Language.h"
 #include "LocalizedStrings.h"
 #include <limits>
@@ -354,7 +352,7 @@ void LocaleWin::ensureWeekDayShortLabels()
     }
 }
 
-#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 const Vector<String>& LocaleWin::monthLabels()
 {
     ensureMonthLabels();
@@ -381,7 +379,7 @@ bool LocaleWin::isRTL()
 }
 #endif
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 static String convertWindowsDateFormatToLDML(const Vector<DateFormatToken>& tokens)
 {
     StringBuilder buffer;

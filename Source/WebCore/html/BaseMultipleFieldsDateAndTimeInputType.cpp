@@ -172,19 +172,16 @@ void BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree()
     m_spinButtonElement = spinButton.get();
     container->appendChild(spinButton);
 
-#if ENABLE(DATALIST_ELEMENT) || ENABLE(CALENDAR_PICKER)
     bool shouldAddPickerIndicator = false;
 #if ENABLE(DATALIST_ELEMENT)
     if (InputType::themeSupportsDataListUI(this))
         shouldAddPickerIndicator = true;
 #endif
-#if ENABLE(CALENDAR_PICKER)
     RefPtr<RenderTheme> theme = document->page() ? document->page()->theme() : RenderTheme::defaultTheme();
     if (theme->supportsCalendarPicker(formControlType())) {
         shouldAddPickerIndicator = true;
         m_pickerIndicatorIsAlwaysVisible = true;
     }
-#endif
     if (shouldAddPickerIndicator) {
         RefPtr<PickerIndicatorElement> pickerElement = PickerIndicatorElement::create(document);
         m_pickerIndicatorElement = pickerElement.get();
@@ -192,7 +189,6 @@ void BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree()
         m_pickerIndicatorIsVisible = true;
         updatePickerIndicatorVisibility();
     }
-#endif // ENABLE(DATALIST_ELEMENT) || ENABLE(CALENDAR_PICKER)
 }
 
 void BaseMultipleFieldsDateAndTimeInputType::destroyShadowSubtree()
@@ -345,15 +341,12 @@ void BaseMultipleFieldsDateAndTimeInputType::listAttributeTargetChanged()
 }
 #endif
 
-#if ENABLE(DATALIST_ELEMENT) || ENABLE(CALENDAR_PICKER)
 void BaseMultipleFieldsDateAndTimeInputType::updatePickerIndicatorVisibility()
 {
-#if ENABLE(CALENDAR_PICKER)
     if (m_pickerIndicatorIsAlwaysVisible) {
         showPickerIndicator();
         return;
     }
-#endif
 #if ENABLE(DATALIST_ELEMENT)
     if (HTMLDataListElement* dataList = element()->dataList()) {
         RefPtr<HTMLCollection> options = dataList->options();
@@ -385,7 +378,6 @@ void BaseMultipleFieldsDateAndTimeInputType::showPickerIndicator()
     ASSERT(m_pickerIndicatorElement);
     m_pickerIndicatorElement->removeInlineStyleProperty(CSSPropertyDisplay);
 }
-#endif // ENABLE(DATALIST_ELEMENT) || ENABLE(CALENDAR_PICKER)
 
 int BaseMultipleFieldsDateAndTimeInputType::fullYear(const String& source) const
 {

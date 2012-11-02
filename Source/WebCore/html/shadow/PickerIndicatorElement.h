@@ -31,8 +31,7 @@
 #ifndef PickerIndicatorElement_h
 #define PickerIndicatorElement_h
 
-#if ENABLE(CALENDAR_PICKER)
-
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeChooser.h"
 #include "DateTimeChooserClient.h"
 #include "HTMLDivElement.h"

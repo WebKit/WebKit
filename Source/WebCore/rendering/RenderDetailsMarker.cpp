@@ -21,7 +21,7 @@
 #include "config.h"
 #include "RenderDetailsMarker.h"
 
-#if ENABLE(DETAILS_ELEMENT) || ENABLE(CALENDAR_PICKER)
+#if ENABLE(DETAILS_ELEMENT) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "Element.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"

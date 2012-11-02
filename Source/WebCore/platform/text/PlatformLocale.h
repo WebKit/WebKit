@@ -56,7 +56,9 @@ public:
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     // Returns localized decimal separator, e.g. "." for English, "," for French.
     String localizedDecimalSeparator();
+#endif
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     // Returns date format in Unicode TR35 LDML[1] containing day of month,
     // month, and year, e.g. "dd/mm/yyyy"
     // [1] LDML http://unicode.org/reports/tr35/#Date_Format_Patterns
@@ -99,9 +101,7 @@ public:
 
     // Returns localized period field(AM/PM) strings.
     virtual const Vector<String>& timeAMPMLabels() = 0;
-#endif
 
-#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     // Returns a vector of string of which size is 12. The first item is a
     // localized string of January, and the last item is a localized string of
     // December. These strings should not be abbreviations.
@@ -122,12 +122,14 @@ public:
     virtual bool isRTL() = 0;
 #endif
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     enum FormatType { FormatTypeUnspecified, FormatTypeShort, FormatTypeMedium };
 
     // Serializes the specified date into a formatted date string to
     // display to the user. If an implementation doesn't support
     // localized dates the function should return an empty string.
     String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified);
+#endif
 
     virtual ~Locale();
 
@@ -139,7 +141,7 @@ protected:
         DecimalSymbolsSize
     };
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     String m_dateTimeFormatWithSeconds;
     String m_dateTimeFormatWithoutSeconds;
 #endif

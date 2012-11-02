@@ -31,6 +31,7 @@
 #ifndef DateTimeChooserClient_h
 #define DateTimeChooserClient_h
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 namespace WebCore {
 
 class DateTimeChooserClient {
@@ -44,5 +45,5 @@ public:
 };
 
 } // namespace WebCore
-
+#endif
 #endif // DateTimeChooserClient_h

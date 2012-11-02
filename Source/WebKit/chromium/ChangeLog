@@ -1,3 +1,21 @@
+2012-11-01  Kent Tamura  <tkent@chromium.org>
+
+        Introduce ENABLE_DATE_AND_TIME_INPUT_TYPES, and clarify usage of other related flags
+        https://bugs.webkit.org/show_bug.cgi?id=101007
+
+        Reviewed by Kentaro Hara.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::openDateTimeChooser):
+        Follow the ChromeClient::openDateTimeChooser flag change.
+        Also, add an empty implemenatation for Android.
+        * src/ChromeClientImpl.h:
+        Follow the ChromeClient::openDateTimeChooser flag change.
+        * src/DateTimeChooserImpl.cpp: Wrapped with
+        ENABLE(INPUT_MULTIPLE_FIELDS_UI). This class is not used in Android.
+        * src/DateTimeChooserImpl.h: Ditto.
+        * src/LocalizedStrings.cpp: Follow the LocalizedString.h change.
+
 2012-11-01  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: add methods to support id-based backend APIs

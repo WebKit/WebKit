@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 class DateTimeStringBuilder : private DateTimeFormat::TokenHandler {
     WTF_MAKE_NONCOPYABLE(DateTimeStringBuilder);
@@ -314,7 +314,9 @@ String Locale::localizedDecimalSeparator()
     initializeLocaleData();
     return m_decimalSymbols[DecimalSeparatorIndex];
 }
+#endif
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 String Locale::dateTimeFormatWithSeconds()
 {
     if (!m_dateTimeFormatWithSeconds.isNull())
@@ -340,24 +342,20 @@ String Locale::dateTimeFormatWithoutSeconds()
     m_dateTimeFormatWithoutSeconds = builder.toString();
     return m_dateTimeFormatWithoutSeconds;
 }
-#endif
 
 String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
 {
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     if (date.type() != DateComponents::Time && date.type() != DateComponents::Date)
         return String();
+    // FIXME: Supports all types.
+
     DateTimeStringBuilder builder(*this, date);
     if (date.type() == DateComponents::Time)
         builder.build(formatType == FormatTypeShort ? shortTimeFormat() : timeFormat());
     else if (date.type() == DateComponents::Date)
         builder.build(dateFormat());
     return builder.toString();
-#else
-    UNUSED_PARAM(date);
-    UNUSED_PARAM(formatType);
-    return String();
-#endif
 }
+#endif
 
 }

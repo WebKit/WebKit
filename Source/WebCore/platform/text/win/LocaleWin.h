@@ -51,21 +51,17 @@ public:
     virtual unsigned firstDayOfWeek() OVERRIDE;
     virtual bool isRTL() OVERRIDE;
 #endif
-#if ENABLE(CALENDAR_PICKER) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    virtual const Vector<String>& monthLabels() OVERRIDE;
-#endif
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     virtual String dateFormat() OVERRIDE;
     virtual String monthFormat() OVERRIDE;
     virtual String timeFormat() OVERRIDE;
     virtual String shortTimeFormat() OVERRIDE;
+    virtual const Vector<String>& monthLabels() OVERRIDE;
     virtual const Vector<String>& shortMonthLabels() OVERRIDE;
     virtual const Vector<String>& standAloneMonthLabels() OVERRIDE;
     virtual const Vector<String>& shortStandAloneMonthLabels() OVERRIDE;
     virtual const Vector<String>& timeAMPMLabels() OVERRIDE;
-#endif
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     static String dateFormat(const String&);
 #endif
 
@@ -84,9 +80,9 @@ private:
 
     LCID m_lcid;
     Vector<DateFormatToken> m_shortDateTokens;
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     Vector<String> m_shortMonthLabels;
     Vector<String> m_monthLabels;
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     String m_dateFormat;
     String m_monthFormat;
     String m_timeFormatWithSeconds;

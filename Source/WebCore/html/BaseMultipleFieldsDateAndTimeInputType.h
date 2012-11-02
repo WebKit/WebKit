@@ -95,13 +95,9 @@ private:
 
     DateTimeEditElement* m_dateTimeEditElement;
     SpinButtonElement* m_spinButtonElement;
-#if ENABLE(DATALIST_ELEMENT) || ENABLE(CALENDAR_PICKER)
     PickerIndicatorElement* m_pickerIndicatorElement;
     bool m_pickerIndicatorIsVisible;
-#if ENABLE(CALENDAR_PICKER)
     bool m_pickerIndicatorIsAlwaysVisible;
-#endif
-#endif
 };
 
 } // namespace WebCore

@@ -1,3 +1,14 @@
+2012-11-01  Kent Tamura  <tkent@chromium.org>
+
+        Introduce ENABLE_DATE_AND_TIME_INPUT_TYPES, and clarify usage of other related flags
+        https://bugs.webkit.org/show_bug.cgi?id=101007
+
+        Reviewed by Kentaro Hara.
+
+        * wtf/Platform.h:
+        Add ENABLE_DATE_AND_TIME_INPUT_TYPES.  It's a union of
+        ENABLE_INPUT_TYPE_{DATE,DATETIME,DATETIMELOCAL,MONTH,TIME,WEEK}.
+
 2012-11-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: do not call checkCountedObject with wrong pointers

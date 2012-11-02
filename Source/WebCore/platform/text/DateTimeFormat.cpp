@@ -26,7 +26,7 @@
 #include "config.h"
 #include "DateTimeFormat.h"
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include <wtf/ASCIICType.h>
 #include <wtf/text/StringBuilder.h>
 

@@ -26,7 +26,7 @@
 #ifndef BaseChooserOnlyDateAndTimeInputType_h
 #define BaseChooserOnlyDateAndTimeInputType_h
 
-#if !ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "BaseDateAndTimeInputType.h"
 
 namespace WebCore {

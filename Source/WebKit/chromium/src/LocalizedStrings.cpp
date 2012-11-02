@@ -268,7 +268,9 @@ String placeholderForYearField()
 {
     return query(WebLocalizedString::PlaceholderForYearField);
 }
+#endif
 
+#if ENABLE(INPUT_TYPE_WEEK)
 String weekFormatInLDML()
 {
     String templ = query(WebLocalizedString::WeekFormatTemplate);

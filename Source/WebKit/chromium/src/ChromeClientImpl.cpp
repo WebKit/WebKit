@@ -42,6 +42,7 @@
 #include "Console.h"
 #include "Cursor.h"
 #include "DatabaseTracker.h"
+#include "DateTimeChooser.h"
 #include "DateTimeChooserImpl.h"
 #include "Document.h"
 #include "DocumentLoader.h"
@@ -692,10 +693,15 @@ PassOwnPtr<WebColorChooser> ChromeClientImpl::createWebColorChooser(WebColorChoo
 }
 #endif
 
-#if ENABLE(CALENDAR_PICKER)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 PassRefPtr<DateTimeChooser> ChromeClientImpl::openDateTimeChooser(DateTimeChooserClient* pickerClient, const DateTimeChooserParameters& parameters)
 {
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     return DateTimeChooserImpl::create(this, pickerClient, parameters);
+#else
+    notImplemented();
+    return PassRefPtr<DateTimeChooser>();
+#endif
 }
 #endif
 

@@ -26,7 +26,7 @@
 #ifndef DateTimeFormat_h
 #define DateTimeFormat_h
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include <wtf/Forward.h>
 
 namespace WebCore {
