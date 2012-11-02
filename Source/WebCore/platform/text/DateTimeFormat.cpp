@@ -241,10 +241,20 @@ bool DateTimeFormat::parse(const String& source, TokenHandler& tokenHandler)
     return false;
 }
 
+static bool isASCIIAlphabetOrQuote(UChar ch)
+{
+    return isASCIIAlpha(ch) || ch == '\'';
+}
+
 void DateTimeFormat::quoteAndAppendLiteral(const String& literal, StringBuilder& buffer)
 {
     if (literal.length() <= 0)
         return;
+
+    if (literal.find(isASCIIAlphabetOrQuote) == notFound) {
+        buffer.append(literal);
+        return;
+    }
     
     if (literal.find('\'') == notFound) {
         buffer.append("'");

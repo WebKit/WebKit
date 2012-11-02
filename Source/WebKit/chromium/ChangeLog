@@ -1,3 +1,13 @@
+2012-11-02  Kent Tamura  <tkent@chromium.org>
+
+        Optimize DateTimeFormat::quoteAndAppendLiteral output
+        https://bugs.webkit.org/show_bug.cgi?id=101040
+
+        Reviewed by Kentaro Hara.
+
+        * tests/LocaleWinTest.cpp:
+        (TEST_F): Update test results.
+
 2012-11-01  Kent Tamura  <tkent@chromium.org>
 
         Introduce ENABLE_DATE_AND_TIME_INPUT_TYPES, and clarify usage of other related flags

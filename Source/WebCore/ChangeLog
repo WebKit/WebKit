@@ -1,3 +1,21 @@
+2012-11-02  Kent Tamura  <tkent@chromium.org>
+
+        Optimize DateTimeFormat::quoteAndAppendLiteral output
+        https://bugs.webkit.org/show_bug.cgi?id=101040
+
+        Reviewed by Kentaro Hara.
+
+        In LDML date format pattern, only ASCII alphabet and quote have special
+        roles. So we don't need to quote the input string if it doesn't contain
+        them.
+
+        No new tests. Updated WebKit/chromium/tests/LocaleWinTest.cpp
+
+        * platform/text/DateTimeFormat.cpp:
+        (WebCore::isASCIIAlphabetOrQuote): A helper to check special characters.
+        (WebCore::DateTimeFormat::quoteAndAppendLiteral):
+        Append the input string as is if it has no special character.
+
 2012-11-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI instrument NodeRareData::Map. It uses ~250k on nytimes.com
