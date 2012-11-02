@@ -93,7 +93,9 @@ PassRefPtr<EventListener> Dictionary::getEventListener(const char* propertyName,
         return 0;
     if (eventListener.hasNoValue())
         return 0;
-    
+    if (!eventListener.isObject())
+        return 0;
+
     return JSEventListener::create(asObject(eventListener.jsValue()), asJSObject(target), true, currentWorld(m_dictionary.execState()));
 }
 

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+if (window.layoutTestController) {
+	layoutTestController.waitUntilDone();
+	setTimeout(function() {
+		testPassed('No crash.');
+		layoutTestController.notifyDone();
+	}, 0);
+}
+
+new Notification("title", { onclick: null });
+successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
