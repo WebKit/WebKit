@@ -1,3 +1,22 @@
+2012-11-01  Seonae Kim  <sunaeluv.kim@samsung.com>
+
+        [EFL][DRT] Support Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=97427
+
+        Reviewed by Gyuyoung Kim. 
+
+        Implement methods to use GeolocationClientMock in DumpRenderTree.
+        This client attaches to the page whenever a view is created.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::attachClientToPage):
+        (DumpRenderTreeSupportEfl::resetGeolocationClientMock):
+        (DumpRenderTreeSupportEfl::setMockGeolocationPermission):
+        (DumpRenderTreeSupportEfl::setMockGeolocationPosition):
+        (DumpRenderTreeSupportEfl::setMockGeolocationPositionUnavailableError):
+        (DumpRenderTreeSupportEfl::numberOfPendingGeolocationPermissionRequests):
+        * WebCoreSupport/DumpRenderTreeSupportEfl.h:
+
 2012-10-31  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL][DRT] EventSender requires contextClick implementation

@@ -49,6 +49,9 @@ public:
 
     ~DumpRenderTreeSupportEfl() { }
 
+    static void setDumpRenderTreeModeEnabled(bool);
+    static bool dumpRenderTreeModeEnabled();
+
     static unsigned activeAnimationsCount(const Evas_Object* ewkFrame);
     static bool callShouldCloseOnWebView(Evas_Object* ewkFrame);
     static void clearFrameName(Evas_Object* ewkFrame);
@@ -127,6 +130,16 @@ public:
     static void confirmComposition(Evas_Object*, const char*);
     static WebCore::IntRect firstRectForCharacterRange(Evas_Object*, int, int);
     static bool selectedRange(Evas_Object*, int*, int*);
+
+    // Geolocation
+    static void resetGeolocationClientMock(const Evas_Object*);
+    static void setMockGeolocationPermission(const Evas_Object*, bool allowed);
+    static void setMockGeolocationPosition(const Evas_Object*, double latitude, double longitude, double accuracy, bool canProvideAltitude, double altitude, bool canProvideAltitudeAccuracy, double altitudeAccuracy, bool canProvideHeading, double heading, bool canProvideSpeed, double speed);
+    static void setMockGeolocationPositionUnavailableError(const Evas_Object*, const char* errorMessage);
+    static int numberOfPendingGeolocationPermissionRequests(const Evas_Object*);
+
+private:
+    static bool s_drtRun;
 };
 
 #endif // DumpRenderTreeSupportEfl_h

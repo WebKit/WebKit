@@ -31,6 +31,7 @@
 #include "ContextMenuController.h"
 #include "DocumentLoader.h"
 #include "DragClientEfl.h"
+#include "DumpRenderTreeSupportEfl.h"
 #include "EditorClientEfl.h"
 #include "EflScreenUtilities.h"
 #include "EventHandler.h"
@@ -83,6 +84,11 @@
 #if ENABLE(DEVICE_ORIENTATION)
 #include "DeviceMotionClientEfl.h"
 #include "DeviceOrientationClientEfl.h"
+#endif
+
+#if ENABLE(GEOLOCATION)
+#include "GeolocationClientMock.h"
+#include "GeolocationController.h"
 #endif
 
 #if ENABLE(VIBRATION)
@@ -782,6 +788,14 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
     priv->navigatorContentUtilsClient = WebCore::NavigatorContentUtilsClientEfl::create(smartData->self);
     WebCore::provideNavigatorContentUtilsTo(priv->page.get(), priv->navigatorContentUtilsClient.get());
+#endif
+
+#if ENABLE(GEOLOCATION)
+    if (DumpRenderTreeSupportEfl::dumpRenderTreeModeEnabled()) {
+        WebCore::GeolocationClientMock* mock = new WebCore::GeolocationClientMock;
+        WebCore::provideGeolocationTo(priv->page.get(), mock);
+        mock->setController(WebCore::GeolocationController::from(priv->page.get()));
+    }
 #endif
 
     priv->pageSettings = priv->page->settings();

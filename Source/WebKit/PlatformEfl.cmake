@@ -7,6 +7,7 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/graphics/efl"
+    "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/platform/network/soup"
     ${CAIRO_INCLUDE_DIRS}
     ${ECORE_INCLUDE_DIRS}
@@ -83,6 +84,12 @@ IF (WTF_USE_TEXTURE_MAPPER_GL)
     "${WEBCORE_DIR}/platform/graphics/surfaces"
     "${WEBCORE_DIR}/platform/graphics/texmap"
     "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
+  )
+ENDIF ()
+
+IF (ENABLE_GEOLOCATION)
+  LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/Modules/geolocation"
   )
 ENDIF ()
 

@@ -62,6 +62,14 @@
 #include <workers/WorkerThread.h>
 #include <wtf/HashMap.h>
 
+#if ENABLE(GEOLOCATION)
+#include <GeolocationClientMock.h>
+#include <GeolocationController.h>
+#include <GeolocationError.h>
+#include <GeolocationPosition.h>
+#include <wtf/CurrentTime.h>
+#endif
+
 #define DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, ...) \
     WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);  \
     if (!frame)                                               \
@@ -71,7 +79,19 @@
     WebCore::Page* page = EWKPrivate::corePage(ewkView);  \
     if (!page)                                            \
         return __VA_ARGS__;
-    
+
+bool DumpRenderTreeSupportEfl::s_drtRun = false;
+
+void DumpRenderTreeSupportEfl::setDumpRenderTreeModeEnabled(bool enabled)
+{
+    s_drtRun = enabled;
+}
+
+bool DumpRenderTreeSupportEfl::dumpRenderTreeModeEnabled()
+{
+    return s_drtRun;
+}
+
 unsigned DumpRenderTreeSupportEfl::activeAnimationsCount(const Evas_Object* ewkFrame)
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, 0);
@@ -778,4 +798,78 @@ bool DumpRenderTreeSupportEfl::selectedRange(Evas_Object* ewkView, int* start, i
 void DumpRenderTreeSupportEfl::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String& scheme)
 {
     WebCore::SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
+}
+
+void DumpRenderTreeSupportEfl::resetGeolocationClientMock(const Evas_Object* ewkView)
+{
+#if ENABLE(GEOLOCATION)
+    DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
+
+    WebCore::GeolocationClientMock* mock = static_cast<WebCore::GeolocationClientMock*>(WebCore::GeolocationController::from(page)->client());
+    mock->reset();
+#else
+    UNUSED_PARAM(ewkView);
+#endif
+}
+
+void DumpRenderTreeSupportEfl::setMockGeolocationPermission(const Evas_Object* ewkView, bool allowed)
+{
+#if ENABLE(GEOLOCATION)
+    DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
+
+    WebCore::GeolocationClientMock* mock = static_cast<WebCore::GeolocationClientMock*>(WebCore::GeolocationController::from(page)->client());
+    mock->setPermission(allowed);
+#else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(allowed);
+#endif
+}
+
+void DumpRenderTreeSupportEfl::setMockGeolocationPosition(const Evas_Object* ewkView, double latitude, double longitude, double accuracy, bool canProvideAltitude, double altitude, bool canProvideAltitudeAccuracy, double altitudeAccuracy, bool canProvideHeading, double heading, bool canProvideSpeed, double speed)
+{
+#if ENABLE(GEOLOCATION)
+    DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
+
+    WebCore::GeolocationClientMock* mock = static_cast<WebCore::GeolocationClientMock*>(WebCore::GeolocationController::from(page)->client());
+    mock->setPosition(WebCore::GeolocationPosition::create(currentTime(), latitude, longitude, accuracy, canProvideAltitude, altitude, canProvideAltitudeAccuracy, altitudeAccuracy, canProvideHeading, heading, canProvideSpeed, speed));
+#else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(latitude);
+    UNUSED_PARAM(longitude);
+    UNUSED_PARAM(accuracy);
+    UNUSED_PARAM(canProvideAltitude);
+    UNUSED_PARAM(altitude);
+    UNUSED_PARAM(canProvideAltitudeAccuracy);
+    UNUSED_PARAM(altitudeAccuracy);
+    UNUSED_PARAM(canProvideHeading);
+    UNUSED_PARAM(heading);
+    UNUSED_PARAM(canProvideSpeed);
+    UNUSED_PARAM(speed);
+#endif
+}
+
+void DumpRenderTreeSupportEfl::setMockGeolocationPositionUnavailableError(const Evas_Object* ewkView, const char* errorMessage)
+{
+#if ENABLE(GEOLOCATION)
+    DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
+
+    WebCore::GeolocationClientMock* mock = static_cast<WebCore::GeolocationClientMock*>(WebCore::GeolocationController::from(page)->client());
+    mock->setPositionUnavailableError(errorMessage);
+#else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(errorMessage);
+#endif
+}
+
+int DumpRenderTreeSupportEfl::numberOfPendingGeolocationPermissionRequests(const Evas_Object* ewkView)
+{
+#if ENABLE(GEOLOCATION)
+    DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page, -1);
+
+    WebCore::GeolocationClientMock* mock = static_cast<WebCore::GeolocationClientMock*>(WebCore::GeolocationController::from(page)->client());
+    return mock->numberOfPendingPermissionRequests();
+#else
+    UNUSED_PARAM(ewkView);
+    return 0;
+#endif
 }

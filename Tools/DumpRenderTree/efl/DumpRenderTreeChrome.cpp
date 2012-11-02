@@ -196,6 +196,8 @@ void DumpRenderTreeChrome::removeWindow(Evas_Object* view)
 
 bool DumpRenderTreeChrome::initialize()
 {
+    // Notifies that DRT is running for ewkView to create testable objects.
+    DumpRenderTreeSupportEfl::setDumpRenderTreeModeEnabled(true);
     DumpRenderTreeSupportEfl::setMockScrollbarsEnabled(true);
 
     m_mainView = createView();
@@ -308,6 +310,7 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::clearOpener(mainFrame());
     DumpRenderTreeSupportEfl::clearUserScripts(mainView());
     DumpRenderTreeSupportEfl::clearUserStyleSheets(mainView());
+    DumpRenderTreeSupportEfl::resetGeolocationClientMock(mainView());
     DumpRenderTreeSupportEfl::setInteractiveFormValidationEnabled(mainView(), true);
     DumpRenderTreeSupportEfl::setValidationMessageTimerMagnification(mainView(), -1);
     DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(mainView(), true);

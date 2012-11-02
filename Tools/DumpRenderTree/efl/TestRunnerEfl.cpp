@@ -365,30 +365,41 @@ void TestRunner::setMockDeviceOrientation(bool, double, bool, double, bool, doub
     notImplemented();
 }
 
-void TestRunner::setMockGeolocationPosition(double, double, double, bool, double, bool, double, bool, double, bool, double)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool canProvideAltitude, double altitude, bool canProvideAltitudeAccuracy, double altitudeAccuracy, bool canProvideHeading, double heading, bool canProvideSpeed, double speed)
 {
-    // FIXME: Implement for Geolocation layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=28264.
-    notImplemented();
+    Evas_Object* view = browser->mainView();
+    if (browser->extraViews().size() > 0)
+        view = browser->extraViews().last();
+
+    DumpRenderTreeSupportEfl::setMockGeolocationPosition(view, latitude, longitude, accuracy, canProvideAltitude, altitude, canProvideAltitudeAccuracy, altitudeAccuracy, canProvideHeading, heading, canProvideSpeed, speed);
 }
 
-void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef)
+void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
 {
-    // FIXME: Implement for Geolocation layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=28264.
-    notImplemented();
+    Evas_Object* view = browser->mainView();
+    if (browser->extraViews().size() > 0)
+        view = browser->extraViews().last();
+
+    DumpRenderTreeSupportEfl::setMockGeolocationPositionUnavailableError(view, message->string().utf8().data());
 }
 
 void TestRunner::setGeolocationPermission(bool allow)
 {
-    // FIXME: Implement for Geolocation layout tests.
     setGeolocationPermissionCommon(allow);
+    Evas_Object* view = browser->mainView();
+    if (browser->extraViews().size() > 0)
+        view = browser->extraViews().last();
+
+    DumpRenderTreeSupportEfl::setMockGeolocationPermission(view, allow);
 }
 
 int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
-    // FIXME: Implement for Geolocation layout tests.
-    return -1;
+    Evas_Object* view = browser->mainView();
+    if (browser->extraViews().size() > 0)
+        view = browser->extraViews().last();
+
+    return DumpRenderTreeSupportEfl::numberOfPendingGeolocationPermissionRequests(view);
 }
 
 void TestRunner::addMockSpeechInputResult(JSStringRef, double, JSStringRef)

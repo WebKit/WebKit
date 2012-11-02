@@ -1,3 +1,14 @@
+2012-11-01  Seonae Kim  <sunaeluv.kim@samsung.com>
+
+        [EFL][DRT] Support Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=97427
+
+        Reviewed by Gyuyoung Kim.
+
+        Change the comment of Geolocation test cases.
+
+        * platform/efl/TestExpectations:
+
 2012-11-01  Simon Fraser  <simon.fraser@apple.com>
 
         New image results for compositing tests. Cross-platform image results seem
