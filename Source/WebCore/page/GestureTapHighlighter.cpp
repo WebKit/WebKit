@@ -165,9 +165,13 @@ Path absolutePathForRenderer(RenderObject* const o)
     LayoutRect first;
     LayoutRect last;
 
-    // Add the first box, but merge it with the center boxes if it intersects.
+    // Add the first box, but merge it with the center boxes if it intersects or if the center box is empty.
     if (rects.size() && !rects.first().isEmpty()) {
-        if (!mid.isEmpty() && mid.intersects(rects.first()))
+        // If the mid box is empty at this point, unite it with the first box. This allows the first box to be
+        // united with the last box if they intersect in the following check for last. Not uniting them would
+        // trigger in assert in addHighlighRect due to the first and the last box intersecting, but being passed
+        // as two separate boxes.
+        if (mid.isEmpty() || mid.intersects(rects.first()))
             mid.unite(rects.first());
         else {
             first = rects.first();
@@ -178,7 +182,7 @@ Path absolutePathForRenderer(RenderObject* const o)
     // Add the last box, but merge it with the center boxes if it intersects.
     if (rects.size() > 1 && !rects.last().isEmpty()) {
         // Adjust center boxes to boundary of last
-        if (!mid.isEmpty() && mid.intersects(rects.last()))
+        if (mid.intersects(rects.last()))
             mid.unite(rects.last());
         else {
             last = rects.last();

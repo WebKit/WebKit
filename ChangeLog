@@ -1,3 +1,16 @@
+2012-11-02  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt][WK2] ASSERT hit for every mouse click
+        https://bugs.webkit.org/show_bug.cgi?id=100607
+
+        Reviewed by Jocelyn Turcotte.
+
+        Added a test with a link that contains an <em> tag surrounding the entire inner text.
+        The test should be run on an assert enabled build and the assert should not be
+        triggered when tapping the link.
+
+        * ManualTests/tap-gesture-on-em-link-tap-highlight-assert.html: Added.
+
 2012-11-01  Ami Fischman  <fischman@chromium.org>
 
         HTMLMediaPlayer should free m_player when src is set/changed
