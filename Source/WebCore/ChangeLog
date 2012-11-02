@@ -1,3 +1,28 @@
+2012-11-02  Mike West  <mkwst@chromium.org>
+
+        Measure the usage of the various CSP headers.
+        https://bugs.webkit.org/show_bug.cgi?id=100974
+
+        Reviewed by Adam Barth.
+
+        Currently, we're collecting metrics regarding usage of the
+        'X-WebKit-CSP' and 'X-WebKit-CSP-Report-Only' HTTP headers. We've
+        recently added support for the canonical 'Content-Security-Policy'
+        and 'Content-Security-Policy-Report-Only' headers. This patch adds
+        those headers explicitly into the metrics, giving insight into uptake
+        of the unprefixed header, and into usage of pure reporting vs.
+        enforcement.
+
+        No visible functionality should change; all Content Security Policy
+        tests should continue to pass.
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+            Convert the CSP header type into a FeatureObserver::Feature, and
+            observe it.
+        * page/FeatureObserver.h:
+            Add three new values to the enum to cover the new header types.
+
 2012-11-02  Ojan Vafai  <ojan@chromium.org>
 
         Fix silly mistake from http://trac.webkit.org/changeset/133315.

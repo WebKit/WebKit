@@ -142,6 +142,22 @@ bool isDirectiveName(const String& name)
     );
 }
 
+FeatureObserver::Feature getFeatureObserverType(ContentSecurityPolicy::HeaderType type)
+{
+    switch (type) {
+    case ContentSecurityPolicy::EnforceAllDirectives:
+        return FeatureObserver::PrefixedContentSecurityPolicy;
+    case ContentSecurityPolicy::EnforceStableDirectives:
+        return FeatureObserver::ContentSecurityPolicy;
+    case ContentSecurityPolicy::ReportAllDirectives:
+        return FeatureObserver::PrefixedContentSecurityPolicyReportOnly;
+    case ContentSecurityPolicy::ReportStableDirectives:
+        return FeatureObserver::ContentSecurityPolicyReportOnly;
+    }
+    ASSERT_NOT_REACHED();
+    return FeatureObserver::NumberOfFeatures;
+}
+
 } // namespace
 
 static bool skipExactly(const UChar*& position, const UChar* end, UChar delimiter)
@@ -1329,7 +1345,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType ty
     if (m_scriptExecutionContext->isDocument()) {
         Document* document = static_cast<Document*>(m_scriptExecutionContext);
         if (document->domWindow())
-            FeatureObserver::observe(document->domWindow(), FeatureObserver::PrefixedContentSecurityPolicy);
+            FeatureObserver::observe(document->domWindow(), getFeatureObserverType(type));
     }
 
     // RFC2616, section 4.2 specifies that headers appearing multiple times can
