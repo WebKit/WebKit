@@ -35,6 +35,9 @@ namespace WTF {
 
 PassRefPtr<StringImpl> AtomicString::add(CFStringRef string)
 {
+    if (!string)
+        return 0;
+
     CFIndex length = CFStringGetLength(string);
 
     if (const LChar* ptr = reinterpret_cast<const LChar*>(CFStringGetCStringPtr(string, kCFStringEncodingISOLatin1)))

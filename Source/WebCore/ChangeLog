@@ -1,3 +1,15 @@
+2012-11-03  Mark Rowe  <mrowe@apple.com>
+
+        REGRESSION (r132858): Crash below -[DOMElement setClassName:] when called with a nil string
+
+        Reviewed by Anders Carlsson.
+
+        The changes in r132858 introduced an overload of AtomicString::add for CFStrings. However, the overload
+        that was introduced is not null safe.
+
+        * platform/text/cf/AtomicStringCF.cpp:
+        (WTF::AtomicString::add): Handle a null string by returning a null StringImpl.
+
 2012-11-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] setPlatformStrategies always asserts after r132744
