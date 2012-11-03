@@ -1,5 +1,22 @@
 2012-11-03  Stephen White  <senorblanco@chromium.org>
 
+        [chromium] New baselines for no-longer-flaky tests.  Unreviewed.
+
+        * platform/chromium-linux/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
+        * platform/chromium-win/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl-wk1/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png: Renamed from LayoutTests/platform/efl/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png.
+        * platform/efl-wk1/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png: Renamed from LayoutTests/platform/efl/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png.
+
+2012-11-03  Stephen White  <senorblanco@chromium.org>
+
         [chromium] Unreviewed gardening.
 
         * platform/chromium-win/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
