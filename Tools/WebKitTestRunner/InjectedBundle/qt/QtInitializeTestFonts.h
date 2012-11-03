@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,18 +26,5 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ActivateFonts.h"
-#include "DumpRenderTreeSupportQt.h"
-#include "QtInitializeTestFonts.h"
-#include <QCoreApplication>
+#include "../../../DumpRenderTree/qt/QtInitializeTestFonts.h"
 
-namespace WTR {
-
-void activateFonts()
-{
-    WebKit::initializeTestFonts();
-    QCoreApplication::setAttribute(Qt::AA_Use96Dpi, true);
-}
-
-}

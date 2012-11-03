@@ -36,9 +36,9 @@
 #include "DumpRenderTreeSupportQt.h"
 #include "EventSenderQt.h"
 #include "GCControllerQt.h"
-#include "QtTestSupport.h"
 #include "TestRunnerQt.h"
 #include "TextInputControllerQt.h"
+#include "QtInitializeTestFonts.h"
 #include "testplugin.h"
 #include "WorkQueue.h"
 
@@ -49,6 +49,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QFocusEvent>
+#include <QFontDatabase>
 #include <QLabel>
 #include <QLocale>
 #include <QNetworkAccessManager>
@@ -622,9 +623,9 @@ void DumpRenderTree::open(const QUrl& url)
     QFocusEvent ev(QEvent::FocusIn);
     m_page->event(&ev);
 
-    WebKit::QtTestSupport::clearMemoryCaches();
-
-    WebKit::QtTestSupport::initializeTestFonts();
+    QWebSettings::clearMemoryCaches();
+    QFontDatabase::removeAllApplicationFonts();
+    WebKit::initializeTestFonts();
 
     DumpRenderTreeSupportQt::dumpFrameLoader(url.toString().contains("loading/"));
     setTextOutputEnabled(true);

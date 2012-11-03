@@ -7,7 +7,6 @@
 TEMPLATE = app
 
 INCLUDEPATH += \
-    $${ROOT_WEBKIT_DIR}/Source/WebCore/platform/qt \
     $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport \
     $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/ \
     $${ROOT_WEBKIT_DIR}/Source/WTF
