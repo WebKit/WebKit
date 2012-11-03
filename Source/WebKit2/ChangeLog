@@ -1,5 +1,21 @@
 2012-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Very speculative ArgumentDecoder crash fix
+        https://bugs.webkit.org/show_bug.cgi?id=101130
+        <rdar://problem/11917046>
+
+        Reviewed by Sam Weinig.
+
+        Switch from fastMalloc/fastFree to system malloc/free in the hopes that it'll give more information about
+        a crash inside TCMalloc when freeing the argument data. (It seems unlikely that this is a bug in TCMalloc, but
+        switching to the system malloc could potentially give better error reporting).
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::~ArgumentDecoder):
+        (CoreIPC::ArgumentDecoder::initialize):
+
+2012-11-02  Anders Carlsson  <andersca@apple.com>
+
         Don't instantiate the Java plug-in if it's inactive
         https://bugs.webkit.org/show_bug.cgi?id=101102
         <rdar://problem/12595679>
