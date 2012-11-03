@@ -1,3 +1,42 @@
+2012-11-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] setPlatformStrategies always asserts after r132744
+        https://bugs.webkit.org/show_bug.cgi?id=100838
+
+        Reviewed by Simon Hausmann.
+
+        Reland with build fix.
+
+        The problem here is that we use QWebSettings::clearMemoryCaches, a WebKit1 API
+        from the injected bundle, which calls initializeWebCoreQt and it sets the platform
+        strategies to the one for WebKit1. We should stop using WebKit1 API's from WebKit2
+        code. In order to keep the behavior, this patch adds exported helpers to WebCore
+        that can be used from DumpRenderTree and WebKitTestRunner. This is the same idea
+        as WebCoreTestSupport but these helpers are specific to Qt. Technically we could
+        add it to the WebKit1 API for the time being, but my goal was to move in the direction
+        of removing the WebKit1 dependency from WebKitTestRunner. We only build the file
+        in non production mode.
+
+        Basically covered by all tests.
+
+        * Target.pri:
+        * WebCore.pri: We need to link against fontconfig (only in non-production mode) since
+        initializeTestFonts uses it.
+        * platform/qt/QtTestSupport.cpp: Added. I choose GPL license because code from qwebsettings.cpp
+        is also under that.
+        (WebKit):
+        (WebKit::QtTestSupport::clearMemoryCaches): This is basically a copy of QWebSettings::clearMemoryCaches
+        without calling initializeWebCoreQt.
+        (WebKit::QtTestSupport::initializeTestFonts): I moved this code here as well now that we have to expose
+        symbols from WebCore anyway. The advantage is that now we don't have to build it twice and we don't need
+        additional files to forward it from the directory of DumpRenderTree for WebKitTestRunner.
+        I added a call to FontCace::invalidate in the case when the font set has been changed so that it will do
+        the job even if we would stop clearing all caches between tests. Also moved the call to
+        QFontDatabase::removeAllApplicationFonts from callers to here.
+        * platform/qt/QtTestSupport.h:
+        (WebKit):
+        (QtTestSupport):
+
 2012-11-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133397.
