@@ -338,11 +338,12 @@ AtomicString CSSParserString::lowerSubstring(unsigned position, unsigned length)
     return AtomicString(result);
 }
 
-void CSSParser::setupParser(const char* prefix, const String& string, const char* suffix)
+void CSSParser::setupParser(const char* prefix, unsigned prefixLength, const String& string, const char* suffix, unsigned suffixLength)
 {
-    m_parsedTextPrefixLength = strlen(prefix);
+    m_parsedTextPrefixLength = prefixLength;
     unsigned stringLength = string.length();
-    unsigned length = stringLength + m_parsedTextPrefixLength + strlen(suffix) + 1;
+    unsigned length = stringLength + m_parsedTextPrefixLength + suffixLength + 1;
+    m_length = length;
 
     if (!stringLength || string.is8Bit()) {
         m_dataStart8 = adoptArrayPtr(new LChar[length]);
@@ -353,7 +354,7 @@ void CSSParser::setupParser(const char* prefix, const String& string, const char
             memcpy(m_dataStart8.get() + m_parsedTextPrefixLength, string.characters8(), stringLength * sizeof(LChar));
 
         unsigned start = m_parsedTextPrefixLength + stringLength;
-        unsigned end = start + strlen(suffix);
+        unsigned end = start + suffixLength;
         for (unsigned i = start; i < end; i++)
             m_dataStart8[i] = suffix[i - start];
 
@@ -363,7 +364,6 @@ void CSSParser::setupParser(const char* prefix, const String& string, const char
         m_currentCharacter8 = m_dataStart8.get();
         m_currentCharacter16 = 0;
         setTokenStart<LChar>(m_currentCharacter8);
-        m_length = length;
         m_lexFunc = &CSSParser::realLex<LChar>;
         return;
     }
@@ -375,7 +375,7 @@ void CSSParser::setupParser(const char* prefix, const String& string, const char
     memcpy(m_dataStart16.get() + m_parsedTextPrefixLength, string.characters(), stringLength * sizeof(UChar));
 
     unsigned start = m_parsedTextPrefixLength + stringLength;
-    unsigned end = start + strlen(suffix);
+    unsigned end = start + suffixLength;
     for (unsigned i = start; i < end; i++)
         m_dataStart16[i] = suffix[i - start];
 
@@ -385,7 +385,6 @@ void CSSParser::setupParser(const char* prefix, const String& string, const char
     m_currentCharacter8 = 0;
     m_currentCharacter16 = m_dataStart16.get();
     setTokenStart<UChar>(m_currentCharacter16);
-    m_length = length;
     m_lexFunc = &CSSParser::realLex<UChar>;
 }
 
