@@ -93,6 +93,7 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
     , m_originalDialogElementEnabled(RuntimeEnabledFeatures::dialogElementEnabled())
 #endif
     , m_canStartMedia(page->canStartMedia())
+    , m_originalCompositingForFixedPositionEnabled(settings->acceleratedCompositingForFixedPositionEnabled())
     , m_originalMockScrollbarsEnabled(settings->mockScrollbarsEnabled())
     , m_langAttributeAwareFormControlUIEnabled(RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled())
     , m_imagesEnabled(settings->areImagesEnabled())
@@ -135,6 +136,7 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
     RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
 #endif
     page->setCanStartMedia(m_canStartMedia);
+    settings->setAcceleratedCompositingForFixedPositionEnabled(m_originalCompositingForFixedPositionEnabled);
     settings->setMockScrollbarsEnabled(m_originalMockScrollbarsEnabled);
     RuntimeEnabledFeatures::setLangAttributeAwareFormControlUIEnabled(m_langAttributeAwareFormControlUIEnabled);
     settings->setImagesEnabled(m_imagesEnabled);
