@@ -1,5 +1,27 @@
 2012-11-02  Dirk Pranke  <dpranke@chromium.org>
 
+        webkit-patch rebaseline is broken
+        https://bugs.webkit.org/show_bug.cgi?id=101081
+
+        Reviewed by Ojan Vafai.
+
+        I broke this in r133061 and the unit tests weren't covering this
+        code path. Fixed the issue and the tests. --results-directory
+        doesn't make sense for either 'webkit-patch rebaseline' or
+        'webkit-patch rebaseline-expectations', so we don't want to expose
+        that as a command line option, but they all call a common
+        _rebaseline() routine that references options.results_directory,
+        so we need to set a default value.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineExpectations.execute):
+        (Rebaseline.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline):
+        (TestRebaseline.test_rebaseline):
+
+2012-11-02  Dirk Pranke  <dpranke@chromium.org>
+
         lint-webkitpy doesn't autoinstall pylint properly
         https://bugs.webkit.org/show_bug.cgi?id=101106
 

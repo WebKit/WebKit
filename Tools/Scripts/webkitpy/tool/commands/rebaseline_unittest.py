@@ -278,23 +278,15 @@ class TestRebaselineJson(_BaseTestCase):
 class TestRebaseline(_BaseTestCase):
     # This command shares most of its logic with RebaselineJson, so these tests just test what is different.
 
-    command_constructor = Rebaseline  # AKA webkit-patch rebaseline-test
+    command_constructor = Rebaseline  # AKA webkit-patch rebaseline
 
     def test_tests_to_update(self):
         build = Mock()
         OutputCapture().assert_outputs(self, self.command._tests_to_update, [build])
 
     def test_rebaseline(self):
-        # This test basically tests the path from command.execute() to command._rebaseline();
-        # it doesn't test that _rebaseline() actually does anything (that is tested in TestRebaselineJson.
-        self.test_list = {}
-
-        def rebaseline_stub(options, test_list):
-            self.test_list = test_list
-
         self.command._builders_to_pull_from = lambda: [MockBuilder('MOCK builder')]
         self.command._tests_to_update = lambda builder: ['mock/path/to/test.html']
-        self.command._rebaseline = rebaseline_stub
 
         self._zero_out_test_expectations()
 
@@ -305,12 +297,14 @@ class TestRebaseline(_BaseTestCase):
                 "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
             }
             oc.capture_output()
-            self.command.execute(MockOptions(optimize=True, builders=None, suffixes=["txt"], verbose=True), [], self.tool)
+            self.command.execute(MockOptions(optimize=False, builders=None, suffixes=["txt"], verbose=True, move_overwritten_baselines=False), [], self.tool)
         finally:
             oc.restore_output()
             builders._exact_matches = old_exact_matches
 
-        self.assertEquals(self.test_list, {'mock/path/to/test.html': {'MOCK builder': ['txt']}})
+        calls = filter(lambda x: x != ['qmake', '-v'] and x[0] != 'perl', self.tool.executive.calls)
+        self.assertEquals(calls,
+            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html', '--verbose']]])
 
 
 class TestRebaselineExpectations(_BaseTestCase):

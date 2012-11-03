@@ -405,6 +405,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
             self._test_list[test_name][builder_name] = suffixes
 
     def execute(self, options, args, tool):
+        options.results_directory = None
         self._test_list = {}
         for port_name in tool.port_factory.all_port_names():
             self._add_tests_to_rebaseline_for_port(port_name)
@@ -461,6 +462,7 @@ class Rebaseline(AbstractParallelRebaselineCommand):
         return list(suffixes)
 
     def execute(self, options, args, tool):
+        options.results_directory = None
         if options.builders:
             builders = []
             for builder_names in options.builders:
