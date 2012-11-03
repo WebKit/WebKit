@@ -1,3 +1,39 @@
+2012-11-02  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Clean up shape-inside tests' subpixel snapping code
+        https://bugs.webkit.org/show_bug.cgi?id=100704
+
+        Reviewed by Dirk Schulze.
+
+        Factor out the pixel snapping behavior from polygon tests to be shared with
+        the rounded rectangle tests. In sub-pixel layout, the rounding behavior may be
+        slightly different. This adds a new file, subpixel-utils.js, which tests for the
+        feature availability and provides functions for rounding at line left & line right.
+        I've also taken the opportunity to factor the window.internal.settings code into
+        rounded-rectangle.js and simple-polygon.js.
+
+        * fast/exclusions/resources/rounded-rectangle.js:
+        (simulateShape): Use the new subpixel rounding code.
+        * fast/exclusions/resources/simple-polygon.js:
+        (polygonXIntercepts): Ditto.
+        * fast/exclusions/resources/subpixel-utils.js: Added.
+        (SubPixelLayout): Adding the SubPixelLayout object which has helper methods
+        for determining how line edges should round, and whether subpixel layout is enabled.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-002-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-002.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-003.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-004-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-004.html:
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-001-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-001.html:
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-002-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-002.html:
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-003-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-003.html:
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-004-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-simple-polygon-004.html:
+
 2012-11-02  Chris Rogers  <crogers@google.com>
 
         Rebaseline some webaudio tests due to increased precision in AudioParamTimeline

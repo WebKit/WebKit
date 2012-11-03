@@ -1,5 +1,7 @@
 // The functions in this file are intended to be used to test non-complex polygons
 // where horizontal lines that overlap the polygon only cross the polygon twice.
+if (window.internals)
+    window.internals.settings.setCSSExclusionsEnabled(true);
 
 function createPolygon(vertices) {
     var xCoordinates = vertices.map( function(p) { return p.x; } );
@@ -31,10 +33,6 @@ function createRegularPolygonVertices(size, nSides)
     }
 
     return vertices;
-}
-
-function subpixelRound(f) { 
-    return Math.floor(!hasSubpixelSupport ? f : (Math.floor(f * 64) + 32) / 64);  // see FractionLayoutUnit::round()
 }
 
 // Return two X intercepts of the horizontal line at y. We're assuming that the polygon
@@ -91,7 +89,7 @@ function polygonXIntercepts(polygon, y) {
     if (!foundXIntercept)
         return [];
 
-    return [subpixelRound(interceptsMinX), Math.floor(interceptsMaxX)];
+    return [SubPixelLayout.roundLineLeft(interceptsMinX), SubPixelLayout.roundLineRight(interceptsMaxX)];
 }
 
 function polygonLineIntercepts(polygon, y, lineHeight) {

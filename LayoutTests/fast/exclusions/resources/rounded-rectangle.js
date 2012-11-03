@@ -1,3 +1,6 @@
+if (window.internals)
+    window.internals.settings.setCSSExclusionsEnabled(true);
+
 function xFromEllipseCenter(yFromEllipseCenter, radiusX, radiusY) {
     return radiusX * Math.sqrt(1 - Math.pow(yFromEllipseCenter / radiusY, 2));
 }
@@ -52,12 +55,12 @@ function simulateShape(elementId, stylesheet, dimensions, lineHeight) {
 
         var paddingLeft = document.createElement("div");
         paddingLeft.setAttribute("class", "float left");
-        paddingLeft.style.width = dimensions.shapeX + inset + "px";
+        paddingLeft.style.width = SubPixelLayout.roundLineLeft(dimensions.shapeX + inset) + "px";
         element.appendChild(paddingLeft);
 
         var paddingRight = document.createElement("div");
         paddingRight.setAttribute("class", "float right");
-        paddingRight.style.width = Math.floor((dimensions.width - dimensions.shapeWidth - dimensions.shapeX) + inset) + "px";
+        paddingRight.style.width = SubPixelLayout.roundLineRight((dimensions.width - dimensions.shapeWidth - dimensions.shapeX) + inset) + "px";
         element.appendChild(paddingRight);
     }
 }

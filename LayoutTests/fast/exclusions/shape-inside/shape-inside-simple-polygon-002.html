@@ -1,20 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="../resources/subpixel-utils.js"></script>
 <script src="../resources/simple-polygon.js"></script>
 <script>
-    if (window.internals)
-        window.internals.settings.setCSSExclusionsEnabled(true);
-
     // Concave assymetric simple polygon with horizontal top and bottom edges.  Similar to test 001 
     // but with a single right edge.
     var vertices = [{x:40, y:40}, {x:440, y:40}, {x:480, y:320}, {x:80, y:320}, {x:200, y:200}];
     var lineHeight = 40;
-    var hasSubpixelSupport;
 
     function init() {
-        var rect = document.getElementById("subpixel-test").getBoundingClientRect();
-        hasSubpixelSupport = rect.width != Math.floor(rect.width);
         createPolygonShapeInsideTestCase();
     }
 </script>
@@ -35,7 +30,6 @@
       This test requires the Ahem font. It creates a polygonal shape-inside and a matching
       filled SVG polygon. The content should just fill the shape with alternating black and
       empty rectangles on each line.</p>
-  <div id="subpixel-test" style="width: 4.5px; height: 5px;"></div>
 </body>
 
 </html>
