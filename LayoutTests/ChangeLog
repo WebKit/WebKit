@@ -1,3 +1,14 @@
+2012-11-02  Chris Rogers  <crogers@google.com>
+
+        Rebaseline some webaudio tests due to increased precision in AudioParamTimeline
+        https://bugs.webkit.org/show_bug.cgi?id=101134
+
+        Unreviewed rebaseline.
+
+        * platform/chromium-linux/webaudio/audiobuffersource-loop-points-expected.wav:
+        * platform/chromium/webaudio/audiobuffersource-loop-points-expected.wav: Copied from LayoutTests/platform/chromium-linux/webaudio/audiobuffersource-loop-points-expected.wav.
+        * platform/chromium/webaudio/audiobuffersource-playbackrate-expected.wav: Added.
+
 2012-11-02  Glenn Adams  <glenn@skynav.com>
 
         Add support to -webkit-line-break property for CSS3 Text line-break property values and semantics.
