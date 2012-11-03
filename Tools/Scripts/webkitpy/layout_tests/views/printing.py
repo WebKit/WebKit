@@ -299,7 +299,7 @@ class Printer(object):
             desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result]
             if not_passing and len(results):
                 pct = len(results) * 100.0 / not_passing
-                self._print_for_bot("  %5d %-24s (%4.1f%%)" % (len(results), desc[0], pct))
+                self._print_for_bot("  %5d %-24s (%4.1f%%)" % (len(results), desc, pct))
 
     def _print_one_line_summary(self, total, expected, unexpected):
         incomplete = total - expected - unexpected
@@ -357,28 +357,33 @@ class Printer(object):
     def print_finished_test(self, result, expected, exp_str, got_str):
         self.num_completed += 1
         test_name = result.test_name
+
+        result_message = self._result_message(result.type, result.failures, expected, self._options.verbose)
+
         if self._options.details:
             self._print_test_trace(result, exp_str, got_str)
         elif (self._options.verbose and not self._options.debug_rwt_logging) or not expected:
-            desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result.type]
-            suffix = ' ' + desc[1]
-            if not expected:
-                suffix += ' unexpectedly' + desc[2]
-            self.writeln(self._test_status_line(test_name, suffix))
+            self.writeln(self._test_status_line(test_name, result_message))
         elif self.num_completed == self.num_tests:
             self._meter.write_update('')
         else:
-            desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result.type]
-            suffix = ' ' + desc[1]
             if test_name == self._running_tests[0]:
-                self._completed_tests.insert(0, [test_name, suffix])
+                self._completed_tests.insert(0, [test_name, result_message])
             else:
-                self._completed_tests.append([test_name, suffix])
+                self._completed_tests.append([test_name, result_message])
 
-            for test_name, suffix in self._completed_tests:
-                self._meter.write_throttled_update(self._test_status_line(test_name, suffix))
+            for test_name, result_message in self._completed_tests:
+                self._meter.write_throttled_update(self._test_status_line(test_name, result_message))
             self._completed_tests = []
         self._running_tests.remove(test_name)
+
+    def _result_message(self, result_type, failures, expected, verbose):
+        exp_string = ' unexpectedly' if not expected else ''
+        if result_type == test_expectations.PASS:
+            return ' passed%s' % exp_string
+        else:
+            return ' failed%s (%s)' % (exp_string, ', '.join(failure.message() for failure in failures))
+
 
     def _print_test_trace(self, result, exp_str, got_str):
         test_name = result.test_name
@@ -448,7 +453,7 @@ class Printer(object):
             descriptions = TestExpectations.EXPECTATION_DESCRIPTIONS
             for key, tests in flaky.iteritems():
                 result = TestExpectations.EXPECTATIONS[key.lower()]
-                self._print_for_bot("Unexpected flakiness: %s (%d)" % (descriptions[result][0], len(tests)))
+                self._print_for_bot("Unexpected flakiness: %s (%d)" % (descriptions[result], len(tests)))
                 tests.sort()
 
                 for test in tests:
@@ -466,10 +471,10 @@ class Printer(object):
             descriptions = TestExpectations.EXPECTATION_DESCRIPTIONS
             for key, tests in regressions.iteritems():
                 result = TestExpectations.EXPECTATIONS[key.lower()]
-                self._print_for_bot("Regressions: Unexpected %s : (%d)" % (descriptions[result][0], len(tests)))
+                self._print_for_bot("Regressions: Unexpected %s (%d)" % (descriptions[result], len(tests)))
                 tests.sort()
                 for test in tests:
-                    self._print_for_bot("  %s [ %s ] " % (test, TestExpectationParser._inverted_expectation_tokens[key]))
+                    self._print_for_bot("  %s [ %s ]" % (test, TestExpectationParser._inverted_expectation_tokens[key]))
                 self._print_for_bot("")
 
         if len(unexpected_results['tests']) and self._options.debug_rwt_logging:

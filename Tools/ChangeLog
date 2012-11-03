@@ -1,5 +1,51 @@
 2012-11-02  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt prints an awkward result message for missing results
+        https://bugs.webkit.org/show_bug.cgi?id=100915
+
+        Reviewed by Ojan Vafai.
+
+        Completely rework how we print out the description of
+        each tests's result - we now will print either "passed" or "failed",
+        followed by " unexpectedly" if we weren't expecting the result,
+        followed by a short description of each type of failure that happened
+        (in parentheses). Also reworked the description of each type of
+        failure slightly to be clearer.
+
+        Also rework the tests to make sure we have coverage of all of the
+        messages. Examples of the new output are posted as an attachment to
+        the bug.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations):
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (FailureTimeout.message):
+        (FailureMissingResult.message):
+        (FailureTextMismatch.message):
+        (FailureMissingImageHash.message):
+        (FailureMissingImage.message):
+        (FailureImageHashMismatch.message):
+        (FailureImageHashIncorrect.message):
+        (FailureReftestMismatch.message):
+        (FailureReftestMismatchDidNotOccur.message):
+        (FailureReftestNoImagesGenerated.message):
+        (FailureMissingAudio.message):
+        (FailureAudioMismatch.message):
+        (FailureEarlyExit.message):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_run_singly_actually_runs_tests):
+        (MainTest.test_missing_and_unexpected_results):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer._print_result_summary_entry):
+        (Printer.print_finished_test):
+        (Printer._result_message):
+        (Printer._print_unexpected_results):
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
+2012-11-02  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: clean up logging in common.system.autoinstall
         https://bugs.webkit.org/show_bug.cgi?id=101090
 

@@ -110,20 +110,18 @@ class TestFailure(object):
 
 
 class FailureTimeout(TestFailure):
-    """Test timed out.  We also want to restart DumpRenderTree if this happens."""
     def __init__(self, is_reftest=False):
         super(FailureTimeout, self).__init__()
         self.is_reftest = is_reftest
 
     def message(self):
-        return "Test timed out"
+        return "test timed out"
 
     def driver_needs_restart(self):
         return True
 
 
 class FailureCrash(TestFailure):
-    """DumpRenderTree/WebKitTestRunner crashed."""
     def __init__(self, is_reftest=False, process_name='DumpRenderTree', pid=None):
         super(FailureCrash, self).__init__()
         self.process_name = process_name
@@ -132,7 +130,7 @@ class FailureCrash(TestFailure):
 
     def message(self):
         if self.pid:
-            return "%s (pid %d) crashed" % (self.process_name, self.pid)
+            return "%s crashed [pid=%d]" % (self.process_name, self.pid)
         return self.process_name + " crashed"
 
     def driver_needs_restart(self):
@@ -140,101 +138,79 @@ class FailureCrash(TestFailure):
 
 
 class FailureMissingResult(TestFailure):
-    """Expected result was missing."""
-
     def message(self):
-        return "No expected results found"
+        return "-expected.txt was missing"
 
 
 class FailureTextMismatch(TestFailure):
-    """Text diff output failed."""
-
     def message(self):
-        return "Text diff mismatch"
-
+        return "text diff"
 
 class FailureMissingImageHash(TestFailure):
-    """Actual result hash was missing."""
-
     def message(self):
-        return "No expected image hash found"
+        return "-expected.png was missing an embedded checksum"
 
 
 class FailureMissingImage(TestFailure):
-    """Actual result image was missing."""
-
     def message(self):
-        return "No expected image found"
+        return "-expected.png was missing"
 
 
 class FailureImageHashMismatch(TestFailure):
-    """Image hashes didn't match."""
     def __init__(self, diff_percent=0):
         super(FailureImageHashMismatch, self).__init__()
         self.diff_percent = diff_percent
 
     def message(self):
-        return "Image mismatch"
+        return "image diff"
 
 
 class FailureImageHashIncorrect(TestFailure):
-    """Actual result hash is incorrect."""
-
     def message(self):
-        return "Images match, expected image hash incorrect. "
+        return "-expected.png embedded checksum is incorrect"
 
 
 class FailureReftestMismatch(TestFailure):
-    """The result didn't match the reference rendering."""
-
     def __init__(self, reference_filename=None):
         super(FailureReftestMismatch, self).__init__()
         self.reference_filename = reference_filename
         self.diff_percent = None
 
     def message(self):
-        return "Mismatch with reference"
+        return "reference mismatch"
 
 
 class FailureReftestMismatchDidNotOccur(TestFailure):
-    """Unexpected match between the result and the reference rendering."""
-
     def __init__(self, reference_filename=None):
         super(FailureReftestMismatchDidNotOccur, self).__init__()
         self.reference_filename = reference_filename
 
     def message(self):
-        return "Mismatch with the reference did not occur"
+        return "reference mismatch didn't happen"
 
 
 class FailureReftestNoImagesGenerated(TestFailure):
-    """Both the reftest and the -expected html file didn't generate pixel results."""
-
     def __init__(self, reference_filename=None):
         super(FailureReftestNoImagesGenerated, self).__init__()
         self.reference_filename = reference_filename
 
     def message(self):
-        return "Reftest didn't generate pixel results."
+        return "reference didn't generate pixel results."
 
 
 class FailureMissingAudio(TestFailure):
-    """Actual result image was missing."""
-
     def message(self):
-        return "No expected audio found"
+        return "expected audio result was missing"
 
 
 class FailureAudioMismatch(TestFailure):
-    """Audio files didn't match."""
-
     def message(self):
-        return "Audio mismatch"
+        return "audio mismatch"
 
 
 class FailureEarlyExit(TestFailure):
     def message(self):
-        return "Skipped due to early exit"
+        return "skipped due to early exit"
 
 
 # Convenient collection of all failure classes for anything that might

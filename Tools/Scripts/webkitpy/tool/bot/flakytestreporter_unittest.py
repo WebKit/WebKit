@@ -113,7 +113,7 @@ foo/bar.html has been flaky on the dummy-queue.
 foo/bar.html was authored by abarth@webkit.org.
 http://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
 
-The dummy-queue just saw foo/bar.html flake (Text diff mismatch) while processing attachment 10000 on bug 50000.
+The dummy-queue just saw foo/bar.html flake (text diff) while processing attachment 10000 on bug 50000.
 Bot: mock-bot-id  Port: MockPort  Platform: MockPlatform 1.0
 
 The bots will update this with information from each new failure.

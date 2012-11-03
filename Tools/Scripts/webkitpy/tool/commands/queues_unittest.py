@@ -403,14 +403,14 @@ MOCK: release_work_item: commit-queue 10000
         queue = TestCommitQueue(MockTool())
         expected_stderr = """MOCK bug comment: bug_id=50002, cc=None
 --- Begin comment ---
-The commit-queue just saw foo/bar.html flake (Text diff mismatch) while processing attachment 10000 on bug 50000.
+The commit-queue just saw foo/bar.html flake (text diff) while processing attachment 10000 on bug 50000.
 Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
 MOCK add_attachment_to_bug: bug_id=50002, description=Failure diff from bot filename=failure.diff mimetype=None
 MOCK bug comment: bug_id=50002, cc=None
 --- Begin comment ---
-The commit-queue just saw bar/baz.html flake (Text diff mismatch) while processing attachment 10000 on bug 50000.
+The commit-queue just saw bar/baz.html flake (text diff) while processing attachment 10000 on bug 50000.
 Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 

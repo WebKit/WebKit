@@ -758,16 +758,16 @@ class TestExpectations(object):
                     'missing': MISSING}
 
     # (aggregated by category, pass/fail/skip, type)
-    EXPECTATION_DESCRIPTIONS = {SKIP: ('skipped', 'skipped', ''),
-                                PASS: ('passes', 'passed', ''),
-                                FAIL: ('failures', 'failed', ''),
-                                IMAGE: ('image-only failures', 'failed', ' (image diff)'),
-                                TEXT: ('text-only failures', 'failed', ' (text diff)'),
-                                IMAGE_PLUS_TEXT: ('image and text failures', 'failed', ' (image and text diff)'),
-                                AUDIO: ('audio failures', 'failed', ' (audio diff)'),
-                                CRASH: ('crashes', 'crashed', ''),
-                                TIMEOUT: ('timeouts', 'timed out', ''),
-                                MISSING: ('no expected results found', 'no expected result found', '')}
+    EXPECTATION_DESCRIPTIONS = {SKIP: 'skipped',
+                                PASS: 'passes',
+                                FAIL: 'failures',
+                                IMAGE: 'image-only failures',
+                                TEXT: 'text-only failures',
+                                IMAGE_PLUS_TEXT: 'image and text failures',
+                                AUDIO: 'audio failures',
+                                CRASH: 'crashes',
+                                TIMEOUT: 'timeouts',
+                                MISSING: 'missing results'}
 
     EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, FAIL, IMAGE, SKIP)
 
