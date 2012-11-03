@@ -1,3 +1,18 @@
+2012-11-02  Andreas Kling  <kling@webkit.org>
+
+        Cut overgrown ElementAttributeData bitfield.
+        <http://webkit.org/b/101129>
+
+        Reviewed by Anders Carlsson.
+
+        Make sure the ElementAttributeData bitfield fits into 32 bits. Added a compile-time assertion
+        to guard against future bloatage.
+
+        * dom/ElementAttributeData.cpp:
+        (SameSizeAsElementAttributeData):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+
 2012-11-02  Michael Saboff  <msaboff@apple.com>
 
         Crash calling is8Bit() in visitedLinkHash()

@@ -123,7 +123,7 @@ protected:
     unsigned m_isMutable : 1;
     mutable unsigned m_styleAttributeIsDirty : 1;
     mutable unsigned m_presentationAttributeStyleIsDirty : 1;
-    unsigned m_arraySize : 31;
+    unsigned m_arraySize : 29;
 
     mutable RefPtr<StylePropertySet> m_inlineStyleDecl;
     mutable RefPtr<StylePropertySet> m_presentationAttributeStyle;

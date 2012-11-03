@@ -35,6 +35,12 @@
 
 namespace WebCore {
 
+struct SameSizeAsElementAttributeData : public RefCounted<SameSizeAsElementAttributeData> {
+    unsigned bitfield;
+    void* pointers[4];
+};
+COMPILE_ASSERT(sizeof(ElementAttributeData) == sizeof(ElementAttributeData), element_attribute_data_should_stay_small);
+
 static size_t sizeForImmutableElementAttributeDataWithAttributeCount(unsigned count)
 {
     return sizeof(ImmutableElementAttributeData) - sizeof(void*) + sizeof(Attribute) * count;
