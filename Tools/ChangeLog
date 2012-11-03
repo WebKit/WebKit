@@ -1,5 +1,33 @@
 2012-11-02  Dirk Pranke  <dpranke@chromium.org>
 
+        lint-webkitpy doesn't autoinstall pylint properly
+        https://bugs.webkit.org/show_bug.cgi?id=101106
+
+        Reviewed by Ojan Vafai.
+
+        Turns out the autoinstalling code for pylint didn't install
+        pylint's dependencies, and the autoinstaller code didn't work
+        using nested directories (e.g., "logilab/astng"). Fix those issues,
+        clean up the autoinstaller code, and add tests to make sure everything
+        imports successfully.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller._create_scratch_directory):
+        (AutoInstaller._install):
+        (AutoInstaller.install):
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._ensure_autoinstalled_dir_is_in_sys_path):
+        (AutoinstallImportHook._install_pylint):
+        (AutoinstallImportHook._install_coverage):
+        (AutoinstallImportHook._install_eliza):
+        (AutoinstallImportHook._install):
+        * Scripts/webkitpy/thirdparty/__init___unittest.py:
+        (ThirdpartyTest.test_import_hook.MockImportHook.__init__):
+        (ThirdpartyTest.test_import_hook):
+        (ThirdpartyTest.test_imports):
+
+2012-11-02  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt prints an awkward result message for missing results
         https://bugs.webkit.org/show_bug.cgi?id=100915
 
