@@ -1,3 +1,15 @@
+2012-11-02  Michael Saboff  <msaboff@apple.com>
+
+        Crash calling is8Bit() in visitedLinkHash()
+        https://bugs.webkit.org/show_bug.cgi?id=101119
+
+        Reviewed by Filip Pizlo.
+
+        Added an isEmpty() check to AttributeURL and KURL.
+
+        * platform/LinkHash.cpp:
+        (WebCore::visitedLinkHash):
+
 2012-11-02  Glenn Adams  <glenn@skynav.com>
 
         Add support to -webkit-line-break property for CSS3 Text line-break property values and semantics.

@@ -291,7 +291,10 @@ void visitedURL(const KURL& base, const AtomicString& attributeURL, Vector<UChar
 
 LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL)
 {
-    if (base.string().is8Bit() && attributeURL.is8Bit()) {
+    if (attributeURL.isEmpty())
+        return 0;
+
+    if (!base.string().isEmpty() && base.string().is8Bit() && attributeURL.is8Bit()) {
         Vector<LChar, 512> url;
         visitedURLInline(base, attributeURL.characters8(), attributeURL.length(), url);
         if (url.isEmpty())
