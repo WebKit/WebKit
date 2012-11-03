@@ -39,6 +39,7 @@ DEFINES += USE_SYSTEM_MALLOC=1
 
 INCLUDEPATH += \
     $$PWD \
+    $${ROOT_WEBKIT_DIR}/Source/WebCore/platform/qt \
     $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt
 
 PREFIX_HEADER = WebKitTestRunnerPrefix.h
