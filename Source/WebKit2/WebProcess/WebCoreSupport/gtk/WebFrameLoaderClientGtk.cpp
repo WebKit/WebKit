@@ -36,7 +36,7 @@ using WebCore::AuthenticationChallenge;
 
 void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long, const AuthenticationChallenge& challenge)
 {
-    GtkAuthenticationDialog* dialog = new GtkAuthenticationDialog(0, challenge.soupSession(), challenge.soupMessage(), challenge.soupAuth());
+    GtkAuthenticationDialog* dialog = new GtkAuthenticationDialog(0, challenge);
     dialog->show();
 }
 

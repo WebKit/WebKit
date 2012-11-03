@@ -1,3 +1,22 @@
+2012-10-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Move soup authentication from GtkAuthenticationDialog to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=99914
+
+        Reviewed by Carlos Garcia Campos.
+
+        The calls which actually authenticate a soup message are gone from the GtkAuthenticationDialog. Since the
+        GtkAuthenticationDialog exposed by the WebKitSoupAuthentication class in the GTK+ API work without a
+        ResourceHandle (they are more general), we add a WebKitSoupAuthDialogAuthenticationClient added to avoid
+        breaking API. This is unused by either Epiphany or internally in WebKitGTK+.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge): The authentication dialog
+        now just takes the AuthenticationChallenge instead of the libsoup objects.
+        * webkit/webkitsoupauthdialog.cpp:
+        (WebKitSoupAuthDialogAuthenticationClient): Added this helper.
+        (sessionAuthenticate): Use the new WebKitSoupAuthDialogAuthenticationClient.
+
 2012-11-02  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove dependency on SoupPasswordManager

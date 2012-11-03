@@ -76,4 +76,11 @@ AuthenticationChallenge::AuthenticationChallenge(SoupSession* soupSession, SoupM
 {
 }
 
+bool AuthenticationChallenge::platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b)
+{
+    return a.soupSession() == b.soupSession()
+        && a.soupMessage() == b.soupMessage()
+        && a.soupAuth() == b.soupAuth();
+}
+
 } // namespace WebCore

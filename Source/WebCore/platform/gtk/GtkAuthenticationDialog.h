@@ -20,7 +20,7 @@
 #ifndef GtkAuthenticationDialog_h
 #define GtkAuthenticationDialog_h
 
-#include <wtf/gobject/GOwnPtr.h>
+#include "AuthenticationChallenge.h"
 #include "GRefPtrGtk.h"
 #include <libsoup/soup.h>
 #include <wtf/FastAllocBase.h>
@@ -34,7 +34,7 @@ class GtkAuthenticationDialog {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    GtkAuthenticationDialog(GtkWindow*, SoupSession*, SoupMessage*, SoupAuth*);
+    GtkAuthenticationDialog(GtkWindow*, const AuthenticationChallenge&);
     ~GtkAuthenticationDialog();
 
     void show();
@@ -46,15 +46,11 @@ private:
     static void savePasswordCallback(SoupMessage*, GtkAuthenticationDialog*);
     static void authenticationDialogResponseCallback(GtkWidget*, gint responseID, GtkAuthenticationDialog*);
 
+    AuthenticationChallenge m_challenge;
     GtkWidget* m_dialog;
-    SoupSession* m_session;
-    GRefPtr<SoupMessage> m_message;
-    GRefPtr<SoupAuth> m_auth;
-
     GtkWidget* m_loginEntry;
     GtkWidget* m_passwordEntry;
     GtkWidget* m_rememberCheckButton;
-
     bool m_isSavingPassword;
     unsigned long m_savePasswordHandler;
     CString m_username;

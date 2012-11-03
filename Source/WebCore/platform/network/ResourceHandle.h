@@ -97,7 +97,7 @@ enum StoredCredentials {
 template <typename T> class Timer;
 
 class ResourceHandle : public RefCounted<ResourceHandle>
-#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL) || PLATFORM(EFL)
+#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL) || USE(SOUP)
     , public AuthenticationClient
 #endif
     {
@@ -114,7 +114,7 @@ public:
     void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
     bool shouldUseCredentialStorage();
 #endif
-#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL) || PLATFORM(EFL)
+#if PLATFORM(MAC) || USE(CFNETWORK) || USE(CURL) || USE(SOUP)
     void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
     virtual void receivedCredential(const AuthenticationChallenge&, const Credential&);
     virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
@@ -174,11 +174,6 @@ public:
     static void setHostAllowsAnyHTTPSCertificate(const String&);
     static void setClientCertificate(const String& host, GTlsCertificate*);
     static void setIgnoreSSLErrors(bool);
-
-#if PLATFORM(GTK)
-    void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-    virtual void receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&);
-#endif
 #endif
 
     // Used to work around the fact that you don't get any more NSURLConnection callbacks until you return from the one you're in.

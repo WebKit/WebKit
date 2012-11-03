@@ -1,3 +1,40 @@
+2012-10-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Move soup authentication from GtkAuthenticationDialog to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=99914
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the actual soup authentication code from the GtkAuthenticationDialog to ResourceHandleSoup.
+        This allows a more generic implementation of authentication, for example, one where a WebKit2
+        client can completely handle authentication.
+
+        No new tests. This does not change behavior.
+
+        * platform/gtk/GtkAuthenticationDialog.cpp: Remove references to the SoupPasswordManager, which
+        is going away in the next release of Gnome. Instead we always assume that the authentication backend has
+        support for remembering passwords and pass that information along with the answer to the authentication
+        request.
+
+        The rest of the changes to this class can be summarized as:
+        1. Getting the information from the AuthenticationChallenge instead of directly from the libsoup
+           objects.
+        2. Using the AuthenticationClient to accomplish the authentication instead of talking to libsoup
+           directly.
+        * platform/gtk/GtkAuthenticationDialog.h:
+        (GtkAuthenticationDialog): Remove members which are no longer used.
+        * platform/network/ResourceHandle.h:
+        (ResourceHandle): ResourceHandleSoup now implements the entire AuthenticationClient interface.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::WebCoreSynchronousLoader::didReceiveAuthenticationChallenge): Don't handle authentication
+        for synchronous handles.
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Now set the current challenge on
+        the internal data structure.
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential): Added.
+        (WebCore::ResourceHandle::receivedCredential): Added.
+        (WebCore::ResourceHandle::receivedCancellation): Added.
+        (WebCore::authenicateCallback): Pass the handle as the authentication client.
+
 2012-11-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Improve CSSParser::setupParser() since the prefix/suffix are literals

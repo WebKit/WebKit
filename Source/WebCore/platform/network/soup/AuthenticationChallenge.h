@@ -45,13 +45,15 @@ public:
     }
 
     AuthenticationChallenge(SoupSession*, SoupMessage*, SoupAuth*, bool retrying, AuthenticationClient*);
-
     AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
     SoupSession* soupSession() const { return m_soupSession.get(); }
     SoupMessage* soupMessage() const { return m_soupMessage.get(); }
     SoupAuth* soupAuth() const { return m_soupAuth.get(); }
 
 private:
+    friend class AuthenticationChallengeBase;
+    static bool platformCompare(const AuthenticationChallenge&, const AuthenticationChallenge&);
+
     GRefPtr<SoupSession> m_soupSession;
     GRefPtr<SoupMessage> m_soupMessage;
     GRefPtr<SoupAuth> m_soupAuth;

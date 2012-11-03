@@ -149,12 +149,8 @@ public:
 
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge)
     {
-#if PLATFORM(EFL)
-        // Authentication is not handled for synchronous XMLHTTPRequests.
+        // We do not handle authentication for synchronous XMLHttpRequests.
         challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
-#else
-        UNUSED_PARAM(challenge);
-#endif
     }
 
     void run()
@@ -860,18 +856,6 @@ void ResourceHandle::setIgnoreSSLErrors(bool ignoreSSLErrors)
     gIgnoreSSLErrors = ignoreSSLErrors;
 }
 
-#if PLATFORM(GTK)
-void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
-{
-    if (client())
-        client()->didReceiveAuthenticationChallenge(this, challenge);
-}
-
-void ResourceHandle::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge&)
-{
-}
-
-#elif PLATFORM(EFL)
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
     ASSERT(d->m_currentWebChallenge.isNull());
@@ -888,7 +872,8 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
 void ResourceHandle::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& challenge)
 {
     ASSERT(!challenge.isNull());
-
+    if (challenge != d->m_currentWebChallenge)
+        return;
     soup_session_unpause_message(challenge.soupSession(), challenge.soupMessage());
 
     clearAuthentication();
@@ -897,6 +882,8 @@ void ResourceHandle::receivedRequestToContinueWithoutCredential(const Authentica
 void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
 {
     ASSERT(!challenge.isNull());
+    if (challenge != d->m_currentWebChallenge)
+        return;
 
     ASSERT(challenge.soupSession());
     ASSERT(challenge.soupMessage());
@@ -909,14 +896,16 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
 void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challenge)
 {
     ASSERT(!challenge.isNull());
+    if (challenge != d->m_currentWebChallenge)
+        return;
 
-    ASSERT(challenge.soupSession());
-    ASSERT(challenge.soupMessage());
     soup_session_unpause_message(challenge.soupSession(), challenge.soupMessage());
+
+    if (client())
+        client()->receivedCancellation(this, challenge);
 
     clearAuthentication();
 }
-#endif
 
 static bool waitingToSendRequest(ResourceHandle* handle)
 {
@@ -1070,28 +1059,13 @@ static gboolean requestTimeoutCallback(gpointer data)
     return FALSE;
 }
 
-#if PLATFORM(GTK)
 static void authenticateCallback(SoupSession* session, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(G_OBJECT(soupMessage), "handle"));
     if (!handle)
         return;
-
-    // We don't need to pass a client here, because GTK+ does not yet use the AuthenticationClient to
-    // respond to the AuthenticationChallenge -- instead dealing with the Soup objects directly.
-    handle->didReceiveAuthenticationChallenge(AuthenticationChallenge(session, soupMessage, soupAuth, retrying, 0));
-}
-
-#elif PLATFORM(EFL)
-static void authenticateCallback(SoupSession* session, SoupMessage* soupMessage, SoupAuth* soupAuth, gboolean retrying)
-{
-    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(g_object_get_data(G_OBJECT(soupMessage), "handle"));
-    if (!handle)
-        return;
-
     handle->didReceiveAuthenticationChallenge(AuthenticationChallenge(session, soupMessage, soupAuth, retrying, handle.get()));
 }
-#endif
 
 SoupSession* ResourceHandle::defaultSession()
 {
@@ -1113,9 +1087,7 @@ SoupSession* ResourceHandle::defaultSession()
                      SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_PROXY_RESOLVER_DEFAULT,
                      SOUP_SESSION_USE_THREAD_CONTEXT, TRUE,
                      NULL);
-#if PLATFORM(GTK) || PLATFORM(EFL)
         g_signal_connect(session, "authenticate", G_CALLBACK(authenticateCallback), 0);
-#endif
 
 #if ENABLE(WEB_TIMING)
         g_signal_connect(session, "request-started", G_CALLBACK(requestStartedCallback), 0);

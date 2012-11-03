@@ -1,3 +1,16 @@
+2012-10-25  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Move soup authentication from GtkAuthenticationDialog to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=99914
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of passing the libsoup objects to the GtkAuthenticationDialog, pass the
+        AuthenticationChallenge itself.
+
+        * WebProcess/WebCoreSupport/gtk/WebFrameLoaderClientGtk.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge):
+
 2012-11-02  Anders Carlsson  <andersca@apple.com>
 
         Very speculative ArgumentDecoder crash fix
