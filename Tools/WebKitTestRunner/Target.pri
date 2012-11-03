@@ -8,7 +8,6 @@ TEMPLATE = app
 TARGET = WebKitTestRunner
 
 HEADERS += \
-    $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.h \
     EventSenderProxy.h \
     GeolocationProviderMock.h \
     PlatformWebView.h \
@@ -19,7 +18,6 @@ HEADERS += \
     WorkQueueManager.h
 
 SOURCES += \
-    $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.cpp \
     qt/main.cpp \
     qt/EventSenderProxyQt.cpp \
     qt/PlatformWebViewQt.cpp \
@@ -38,8 +36,6 @@ QT = core core-private gui gui-private widgets network testlib quick quick-priva
 WEBKIT += wtf javascriptcore webkit2
 
 DEFINES += USE_SYSTEM_MALLOC=1
-
-have?(FONTCONFIG): PKGCONFIG += fontconfig
 
 INCLUDEPATH += \
     $$PWD \

@@ -1,3 +1,35 @@
+2012-11-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] setPlatformStrategies always asserts after r132744
+        https://bugs.webkit.org/show_bug.cgi?id=100838
+
+        Reviewed by Simon Hausmann.
+
+        Turned test runners to use the new QtTestSupport.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeMain.cpp:
+        (main):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::open):
+        * QtTestBrowser/QtTestBrowser.pro:
+        * QtTestBrowser/qttestbrowser.cpp:
+        (LauncherApplication::handleUserOptions):
+        * WebKitTestRunner/InjectedBundle/Target.pri:
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+        (WTR::activateFonts):
+        * WebKitTestRunner/InjectedBundle/qt/QtInitializeTestFonts.cpp: Removed.
+        * WebKitTestRunner/InjectedBundle/qt/QtInitializeTestFonts.h: Removed.
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundleQt.cpp:
+        * WebKitTestRunner/InjectedBundle/qt/TestRunnerQt.cpp:
+        (WTR::TestRunner::platformInitialize): Removed the comment from here
+        because it was just lying, apparently two times. First, it is not incorrect
+        to reinitialize our font set and clear font caches, it is what the tests
+        expect. Second, the use of QRawFont has nothing to do with the font cache.
+        * WebKitTestRunner/Target.pri:
+        * WebKitTestRunner/qt/main.cpp:
+        (main):
+
 2012-11-02  Dirk Pranke  <dpranke@chromium.org>
 
         webkit-patch rebaseline is broken
