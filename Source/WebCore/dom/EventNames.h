@@ -243,6 +243,9 @@ namespace WebCore {
     \
     macro(webkitdeviceproximity) \
     \
+    macro(autocomplete) \
+    macro(autocompleteerror) \
+    \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 

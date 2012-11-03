@@ -349,6 +349,10 @@ namespace WebCore {
 #if ENABLE(MEDIA_STREAM)
         virtual void dispatchWillStartUsingPeerConnectionHandler(RTCPeerConnectionHandler*) { }
 #endif
+
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+        virtual void didRequestAutocomplete(PassRefPtr<FormState>) = 0;
+#endif
     };
 
 } // namespace WebCore

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+jsTestIsAsync = true;
+
+var numErrors = 0;
+var numErrorsExpected = 0;
+
+function runTests()
+{
+    if (typeof HTMLFormElement.prototype.requestAutocomplete != 'function') {
+        testFailed('no requestAutocomplete function');
+        finishJSTest();
+        return;
+    }
+
+    checkDynamicAttributes();
+    checkParsedAttributes();
+}
+
+function checkForEnumerableProperties(form)
+{
+    var enumerated = false;
+    for (var field in form) {
+        if (/onautocomplete/.test(field))
+            testFailed('enumerable form attribute found on HTMLFormElement: ' + field);
+        enumerated = true;
+    }
+    if (enumerated)
+        testPassed('no enumerable properties on HTMLFormElement');
+    else
+        testFailed('failed to enumerate HTMLFormElement properties');
+}
+
+function checkParsedAttributes()
+{
+    numErrorsExpected += 1;
+
+    var form = document.forms[0];
+    checkForEnumerableProperties(form);
+    form.requestAutocomplete();
+}
+
+function checkDynamicAttributes()
+{
+    numErrorsExpected += 1;
+
+    var form = document.createElement('form');
+    checkForEnumerableProperties(form);
+
+    form.autocomplete = 'off';
+    form.onautocompleteerror = onError;
+    form.requestAutocomplete();
+}
+
+function onError()
+{
+    numErrors += 1;
+    if (numErrors > numErrorsExpected)
+        testFailed('too many error events');
+    else if (numErrors == numErrorsExpected) {
+        testPassed('got expected number of error events (' + numErrorsExpected + ')');
+        finishJSTest();
+    }
+}
+
+window.addEventListener('load', runTests, true);
+</script>
+</head>
+<body>
+<p> Bug <a href="http://bugs.webkit.org/show_bug.cgi?id=100557">100557</a>: Implement HTMLFormElement#requestAutocomplete and associated events </p>
+<p> For this test to pass, you should see all PASSED below. </p>
+<form autocomplete="off" onautocompleteerror="onError();"></form>
+<p id="console"></p>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

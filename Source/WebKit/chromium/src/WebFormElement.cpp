@@ -102,6 +102,13 @@ void WebFormElement::getFormControlElements(WebVector<WebFormControlElement>& re
     result.assign(tempVector);
 }
 
+void WebFormElement::finishRequestAutocomplete(WebFormElement::AutocompleteResult result)
+{
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    unwrap<HTMLFormElement>()->finishRequestAutocomplete(static_cast<HTMLFormElement::AutocompleteResult>(result));
+#endif
+}
+
 WebFormElement::WebFormElement(const PassRefPtr<HTMLFormElement>& e)
     : WebElement(e)
 {

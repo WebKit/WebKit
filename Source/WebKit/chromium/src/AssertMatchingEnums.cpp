@@ -48,6 +48,9 @@
 #include "FontSmoothingMode.h"
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+#include "HTMLFormElement.h"
+#endif
 #include "HTMLInputElement.h"
 #include "IDBCursor.h"
 #include "IDBDatabaseException.h"
@@ -86,6 +89,9 @@
 #include "WebFileError.h"
 #include "WebFileInfo.h"
 #include "WebFontDescription.h"
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+#include "WebFormElement.h"
+#endif
 #include "WebGeolocationError.h"
 #include "WebGeolocationPosition.h"
 #include "WebIDBCursor.h"
@@ -633,3 +639,8 @@ COMPILE_ASSERT_MATCHING_ENUM(WebURLResponse::HTTP_1_1, ResourceResponse::HTTP_1_
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::CORSModeUnspecified, MediaPlayerClient::Unspecified);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::CORSModeAnonymous, MediaPlayerClient::Anonymous);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::CORSModeUseCredentials, MediaPlayerClient::UseCredentials);
+
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+COMPILE_ASSERT_MATCHING_ENUM(WebFormElement::AutocompleteResultSuccess, HTMLFormElement::AutocompleteResultSuccess);
+COMPILE_ASSERT_MATCHING_ENUM(WebFormElement::AutocompleteResultError, HTMLFormElement::AutocompleteResultError);
+#endif

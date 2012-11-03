@@ -42,4 +42,8 @@
 #endif
     void reset();
     boolean checkValidity();
+
+    [Conditional=REQUEST_AUTOCOMPLETE] void requestAutocomplete();
+    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventListener onautocomplete;
+    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventListener onautocompleteerror;
 };

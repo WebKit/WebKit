@@ -1,3 +1,28 @@
+2012-11-03  Dan Beam  <dbeam@chromium.org>
+
+        Implement HTMLFormElement#requestAutocomplete and associated events
+        https://bugs.webkit.org/show_bug.cgi?id=100557
+
+        Reviewed by Adam Barth.
+
+        Adds tests for an initial implementation of the proposal for interactive autocomplete outlined in this email:
+        http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2012-October/037711.html
+
+        The goal of this patch is to allow web authors to call formElement.requestAutocomplete(); after subscribing
+        for autocomplete/autocompleteerror events on formElement. If the form's [autocomplete] attribute is "off" an
+        error will be dispatched. Otherwise, a request will be issued to the FrameLoaderClient. At the moment, the
+        implementation in Chrome (https://codereview.chromium.org/11270018/) will simply dispatch an error until the
+        UI on Chrome's side is built. Both autocomplete and autocompleteerror events will be dispatched asynchronously
+        after a small delay to behave consistently in all situations and implementations.
+
+        Currently the implementation is behind the feature flag REQUEST_AUTOCOMPLETE, which is disabled, so the test
+        is expected to fail. This test verifies that currently no client implements this method on HTMLFormElement
+        (HTMLFormElement#requestAutocomplete) and returns. When the chrome-side lands I'll add a success case in
+        LayoutTests/platform/chromium/fast/forms/ with the expected successful results.
+
+        * fast/forms/form-request-autocomplete-expected.txt: Added.
+        * fast/forms/form-request-autocomplete.html: Added.
+
 2012-11-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: %d, %i, and %f log formatters have same result

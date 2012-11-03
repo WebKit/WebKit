@@ -74,6 +74,9 @@ HTMLFormElement::HTMLFormElement(const QualifiedName& tagName, Document* documen
     , m_shouldSubmit(false)
     , m_isInResetFunction(false)
     , m_wasDemoted(false)
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    , m_requestAutocompleteTimer(this, &HTMLFormElement::requestAutocompleteTimerFired)
+#endif
 {
     ASSERT(hasTagName(formTag));
 }
@@ -387,6 +390,44 @@ void HTMLFormElement::reset()
     m_isInResetFunction = false;
 }
 
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+void HTMLFormElement::requestAutocomplete()
+{
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
+    if (!shouldAutocomplete()) {
+        finishRequestAutocomplete(AutocompleteResultError);
+        return;
+    }
+
+    StringPairVector controlNamesAndValues;
+    getTextFieldValues(controlNamesAndValues);
+    RefPtr<FormState> formState = FormState::create(this, controlNamesAndValues, document(), SubmittedByJavaScript);
+    frame->loader()->client()->didRequestAutocomplete(formState.release());
+}
+
+void HTMLFormElement::finishRequestAutocomplete(AutocompleteResult result)
+{
+    RefPtr<Event> event(Event::create(result == AutocompleteResultSuccess ? eventNames().autocompleteEvent : eventNames().autocompleteerrorEvent, false, false));
+    event->setTarget(this);
+    m_pendingAutocompleteEvents.append(event.release());
+
+    // Dispatch events later as this API is meant to work asynchronously in all situations and implementations.
+    if (!m_requestAutocompleteTimer.isActive())
+        m_requestAutocompleteTimer.startOneShot(0);
+}
+
+void HTMLFormElement::requestAutocompleteTimerFired(Timer<HTMLFormElement>*)
+{
+    Vector<RefPtr<Event> > pendingEvents;
+    m_pendingAutocompleteEvents.swap(pendingEvents);
+    for (size_t i = 0; i < pendingEvents.size(); ++i)
+        dispatchEvent(pendingEvents[i].release());
+}
+#endif
+
 void HTMLFormElement::parseAttribute(const Attribute& attribute)
 {
     if (attribute.name() == actionAttr)
@@ -408,6 +449,12 @@ void HTMLFormElement::parseAttribute(const Attribute& attribute)
         setAttributeEventListener(eventNames().submitEvent, createAttributeEventListener(this, attribute));
     else if (attribute.name() == onresetAttr)
         setAttributeEventListener(eventNames().resetEvent, createAttributeEventListener(this, attribute));
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    else if (attribute.name() == onautocompleteAttr)
+        setAttributeEventListener(eventNames().autocompleteEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onautocompleteerrorAttr)
+        setAttributeEventListener(eventNames().autocompleteerrorEvent, createAttributeEventListener(this, attribute));
+#endif
     else
         HTMLElement::parseAttribute(attribute);
 }

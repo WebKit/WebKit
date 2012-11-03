@@ -1,3 +1,96 @@
+2012-11-03  Dan Beam  <dbeam@chromium.org>
+
+        Implement HTMLFormElement#requestAutocomplete and associated events
+        https://bugs.webkit.org/show_bug.cgi?id=100557
+
+        Reviewed by Adam Barth.
+
+        Implements an initial version of the proposal for interactive autocomplete outlined in this email:
+        http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2012-October/037711.html
+
+        The goal of this patch is to allow web authors to call formElement.requestAutocomplete(); after subscribing for
+        autocomplete/autocompleteerror events on formElement. If the form's [autocomplete] attribute is "off" an
+        error will be dispatched. Otherwise, a request will be issued to the FrameLoaderClient.  At the moment, the
+        implementation in Chrome (https://codereview.chromium.org/11270018/) will simply dispatch an error until the
+        UI on Chrome's side is built. Both autocomplete and autocompleteerror events will be dispatched asynchronously
+        after a small delay to behave consistently in all situations and implementations.
+
+        Currently this is behind the feature flag REQUEST_AUTOCOMPLETE, which is disabled.
+
+        Test: fast/forms/form-request-autocomplete.html
+
+        * dom/EventNames.h:
+        (WebCore):
+
+        Added autocomplete and autocompleteerror events. The autocomplete event is dispatched after a user adds more
+        information to a form using the future UI. This is not currently dispatched in any implementation (including Chrome)
+        but will be in the future. The autocompleteerror event is dispatched when the form has [autocomplete="off"] on the
+        node being asked for an interactive autocomplete. The user agent may also dispatch this event if it doesn't implement
+        this API but has turned on the feature flag, can't currently show an autocomplete UI (e.g. running headlessly or in
+        an HTML notification, security concerns, or any other reason it desires).
+
+        * html/HTMLAttributeNames.in:
+
+        Added onautocomplete and onautocompleteerror attributes so they can be parsed when creating form elements and used
+        as event listeners. For example:
+
+          <form onautocomplete="/* when autocomplete succeeds */" autocompleteerror="/* when autocomplete fails */">
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement):
+        (WebCore):
+
+        Added m_requestAutocompleteTimer (a timer that's used to dispatch events asynchronously) to the initializer list that
+        triggers requestAutocompleteTimerFired when it times out.
+
+        (WebCore::HTMLFormElement::requestAutocomplete):
+
+        Called when HTMLFormElement#requestAutocomplete is called from JS (also see HTMLFormElement.idl) and decides whether
+        to dispatch an error and exit early (in the case where autocomplete="off") or pass the request on to the
+        FrameLoaderClient.
+
+        (WebCore::HTMLFormElement::finishRequestAutocomplete):
+
+        Called when the request for an interactive autocomplete is finished with either a success or error result. This
+        causes an event to queue and fired after a 0 second delay. Events are owned by HTMLFormElement and reference the
+        target element (this) until fired.
+
+        (WebCore::HTMLFormElement::requestAutocompleteTimerFired):
+
+        Called when the event timer runs out to pump the queue of current events. Events are released on dispatch.
+
+        (WebCore::HTMLFormElement::parseAttribute):
+
+        Encountering onautocomplete or onautocompleteerror attributes while parsing HTMLFormElements now adds event listeners
+        for autocomplete an autocompleteerror events (respectively) to dispatch the value of the attribute as a script.
+
+        * html/HTMLFormElement.h:
+        (HTMLFormElement):
+
+        Added various methods and data members as required by the implementation.
+
+        * html/HTMLFormElement.idl:
+
+        Added the method requestAutocomplete and associated DOM event handler attributes (onautocomplete/onautocompleteerror)
+        to HTMLFormElement's public DOM API (unprefixed, as per Ian Hickson's advice). All are require the Conditional
+        REQUEST_AUTOCOMPLETE to be enabled to be activated.
+
+        * loader/EmptyClients.cpp:
+        (WebCore):
+        (WebCore::EmptyFrameLoaderClient::didRequestAutocomplete):
+
+        Added noop implementation for FrameLoader::didRequestAutocomplete.
+
+        * loader/EmptyClients.h:
+        (EmptyFrameLoaderClient):
+
+        Added FrameLoader::didRequestAutocomplete to EmptyFrameLoaderClient interface.
+
+        * loader/FrameLoaderClient.h:
+        (FrameLoaderClient):
+
+        Added noop implementation to FrameLoaderClient interface (which is implemented chromium's FrameLoaderLoaderImpl.cpp).
+
 2012-11-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: %d, %i, and %f log formatters have same result

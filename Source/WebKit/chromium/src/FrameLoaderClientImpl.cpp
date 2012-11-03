@@ -62,6 +62,9 @@
 #endif
 #include "Settings.h"
 #include "SocketStreamHandleInternal.h"
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+#include "WebAutofillClient.h"
+#endif
 #include "WebDOMEvent.h"
 #include "WebDataSourceImpl.h"
 #include "WebDevToolsAgentPrivate.h"
@@ -1651,5 +1654,12 @@ void FrameLoaderClientImpl::dispatchWillStartUsingPeerConnectionHandler(RTCPeerC
 }
 #endif
 
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+void FrameLoaderClientImpl::didRequestAutocomplete(PassRefPtr<FormState> formState)
+{
+    if (m_webFrame->viewImpl() && m_webFrame->viewImpl()->autofillClient())
+        m_webFrame->viewImpl()->autofillClient()->didRequestAutocomplete(m_webFrame, WebFormElement(formState->form()));
+}
+#endif
 
 } // namespace WebKit

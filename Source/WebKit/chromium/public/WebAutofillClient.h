@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+class WebFormElement;
+class WebFrame;
 class WebInputElement;
 class WebKeyboardEvent;
 class WebNode;
@@ -74,6 +76,9 @@ public:
     // Autofill suggestions popup. This happens when a user uses the arrow
     // keys to navigate outside the range of possible selections.
     virtual void didClearAutofillSelection(const WebNode&) { }
+
+    // Informs the browser an interactive autocomplete has been requested.
+    virtual void didRequestAutocomplete(WebFrame*, const WebFormElement&) { }
 
     // Instructs the browser to remove the Autocomplete entry specified from
     // its DB.

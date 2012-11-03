@@ -69,6 +69,9 @@ namespace WebKit {
         WEBKIT_EXPORT void getNamedElements(const WebString&, WebVector<WebNode>&);
         WEBKIT_EXPORT void getFormControlElements(WebVector<WebFormControlElement>&) const;
 
+        enum AutocompleteResult { AutocompleteResultSuccess, AutocompleteResultError };
+        WEBKIT_EXPORT void finishRequestAutocomplete(WebFormElement::AutocompleteResult);
+
 #if WEBKIT_IMPLEMENTATION
         WebFormElement(const WTF::PassRefPtr<WebCore::HTMLFormElement>&);
         WebFormElement& operator=(const WTF::PassRefPtr<WebCore::HTMLFormElement>&);

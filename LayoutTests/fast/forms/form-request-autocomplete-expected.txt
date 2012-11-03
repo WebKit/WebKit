@@ -1,0 +1,9 @@
+Bug 100557: Implement HTMLFormElement#requestAutocomplete and associated events
+
+For this test to pass, you should see all PASSED below.
+
+FAIL no requestAutocomplete function
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

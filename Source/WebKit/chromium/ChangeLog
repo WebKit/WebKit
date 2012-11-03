@@ -1,3 +1,60 @@
+2012-11-03  Dan Beam  <dbeam@chromium.org>
+
+        Implement HTMLFormElement#requestAutocomplete and associated events
+        https://bugs.webkit.org/show_bug.cgi?id=100557
+
+        Reviewed by Adam Barth.
+
+        Implements an initial version of the proposal for interactive autocomplete outlined in this email:
+        http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2012-October/037711.html
+
+        The goal of this patch is to allow web authors to call formElement.requestAutocomplete(); after subscribing for
+        autocomplete/autocompleteerror events on formElement. If the form's [autocomplete] attribute is "off" an
+        error will be dispatched. Otherwise, a request will be issued to the FrameLoaderClient.  At the moment, the
+        implementation in Chrome (https://codereview.chromium.org/11270018/) will simply dispatch an error until the
+        UI on Chrome's side is built. Both autocomplete and autocompleteerror events will be dispatched asynchronously
+        after a small delay to behave consistently in all situations and implementations.
+
+        Currently this is behind the feature flag REQUEST_AUTOCOMPLETE, which is disabled.
+
+        Test: fast/forms/form-request-autocomplete.html
+
+        * public/WebAutofillClient.h:
+        (WebKit):
+        (WebAutofillClient):
+        (WebKit::WebAutofillClient::didRequestAutocomplete):
+
+        Added WebAutofillClient::didRequestAutocomplete to chrome's public WebKit interface.
+
+        * public/WebFormElement.h:
+
+        Added an enum that matches HTMLFormElement::AutocompleteResult (and added compile time assert) and a public method
+        (WebFormElement::finishRequestAutocomplete) to WebFormElement's public interface.
+
+        * src/AssertMatchingEnums.cpp:
+
+        Added a compile time assert to guarantee the HTMLFormElement::AutocompleteResult enum matches the
+        WebFormElement::AutocompleteResult enum.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit):
+        (WebKit::FrameLoaderClientImpl::didRequestAutocomplete):
+
+        Implemented the added FrameLoaderClient::didRequestAutocomplete, which simply passes through to the
+        WebAutofillClient.
+
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+
+        Implementing FrameLoaderClient::didRequestAutocomplete.
+
+        * src/WebFormElement.cpp:
+        (WebKit::WebFormElement::finishRequestAutocomplete):
+        (WebKit):
+
+        Added WebFormElement::finishRequestAutocomplete to allow chromium's renderer a public API to call to finish the
+        autocomplete request on a WebFormElement.
+
 2012-11-02  Anders Carlsson  <andersca@apple.com>
 
         Add a PluginInactive plug-in unavailability reason

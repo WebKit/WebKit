@@ -225,6 +225,10 @@ public:
     virtual void dispatchWillStartUsingPeerConnectionHandler(WebCore::RTCPeerConnectionHandler*) OVERRIDE;
 #endif
 
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    virtual void didRequestAutocomplete(PassRefPtr<WebCore::FormState>) OVERRIDE;
+#endif
+
 private:
     void makeDocumentView();
 

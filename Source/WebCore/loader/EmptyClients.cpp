@@ -194,4 +194,10 @@ PassOwnPtr<ContextMenu> EmptyContextMenuClient::customizeMenu(PassOwnPtr<Context
 #endif
 #endif
 
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+void EmptyFrameLoaderClient::didRequestAutocomplete(PassRefPtr<FormState>)
+{
+}
+#endif
+
 }

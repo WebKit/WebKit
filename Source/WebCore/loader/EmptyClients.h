@@ -384,6 +384,10 @@ public:
 #if ENABLE(WEB_INTENTS)
     virtual void dispatchIntent(PassRefPtr<IntentRequest>) OVERRIDE;
 #endif
+
+#if ENABLE(REQUEST_AUTOCOMPLETE)
+    virtual void didRequestAutocomplete(PassRefPtr<FormState>) OVERRIDE;
+#endif
 };
 
 class EmptyTextCheckerClient : public TextCheckerClient {
