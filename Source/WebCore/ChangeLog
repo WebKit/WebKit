@@ -1,5 +1,18 @@
 2012-11-02  KyungTae Kim  <ktf.kim@samsung.com>
 
+        sCurrentPaintTimeStamp is not initialized when FrameView::paintContents returns in the middle
+        https://bugs.webkit.org/show_bug.cgi?id=99990
+
+        Reviewed by Darin Adler.
+
+        Move initialization code for sCurrentPaintTimeStamp to the below of early returns,
+        because it was not reset after early return.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+
+2012-11-02  KyungTae Kim  <ktf.kim@samsung.com>
+
         Fix build warning in PluginView.cpp on release build
         https://bugs.webkit.org/show_bug.cgi?id=101049
 
