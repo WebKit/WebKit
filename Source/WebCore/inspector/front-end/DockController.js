@@ -40,7 +40,7 @@ WebInspector.DockController = function()
     if (Preferences.showDockToRight)
         this._dockToggleButton.makeLongClickEnabled(this._createDockOptions.bind(this));
 
-    this.setDockSide(WebInspector.queryParamsObject["dockSide"]);
+    this.setDockSide(WebInspector.queryParamsObject["dockSide"] || "bottom");
 }
 
 WebInspector.DockController.State = {

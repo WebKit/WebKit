@@ -328,8 +328,8 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     inspectorPage->initializePolicyClient(&policyClient);
 
     String url = inspectorPageURL();
-    if (m_isAttached)
-        url.append("?docked=true");
+    url.append("?dockSide=");
+    url.append(m_isAttached ? "bottom" : "undocked");
 
     m_page->process()->assumeReadAccessToBaseURL(inspectorBaseURL());
 
