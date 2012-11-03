@@ -218,7 +218,6 @@ void Attr::detachFromElementWithValue(const AtomicString& value)
 {
     ASSERT(m_element);
     ASSERT(m_standaloneValue.isNull());
-    m_element->attributeData()->removeAttr(m_element, qualifiedName());
     m_standaloneValue = value;
     m_element = 0;
 }

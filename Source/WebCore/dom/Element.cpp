@@ -124,6 +124,52 @@ private:
     StyleResolver* m_pushedStyleResolver;
 };
 
+typedef Vector<RefPtr<Attr> > AttrNodeList;
+typedef HashMap<Element*, OwnPtr<AttrNodeList> > AttrNodeListMap;
+
+static AttrNodeListMap& attrNodeListMap()
+{
+    DEFINE_STATIC_LOCAL(AttrNodeListMap, map, ());
+    return map;
+}
+
+static AttrNodeList* attrNodeListForElement(Element* element)
+{
+    if (!element->hasSyntheticAttrChildNodes())
+        return 0;
+    ASSERT(attrNodeListMap().contains(element));
+    return attrNodeListMap().get(element);
+}
+
+static AttrNodeList* ensureAttrNodeListForElement(Element* element)
+{
+    if (element->hasSyntheticAttrChildNodes()) {
+        ASSERT(attrNodeListMap().contains(element));
+        return attrNodeListMap().get(element);
+    }
+    ASSERT(!attrNodeListMap().contains(element));
+    element->setHasSyntheticAttrChildNodes(true);
+    AttrNodeListMap::AddResult result = attrNodeListMap().add(element, adoptPtr(new AttrNodeList));
+    return result.iterator->value.get();
+}
+
+static void removeAttrNodeListForElement(Element* element)
+{
+    ASSERT(element->hasSyntheticAttrChildNodes());
+    ASSERT(attrNodeListMap().contains(element));
+    attrNodeListMap().remove(element);
+    element->setHasSyntheticAttrChildNodes(false);
+}
+
+static Attr* findAttrNodeInList(AttrNodeList* attrNodeList, const QualifiedName& name)
+{
+    for (unsigned i = 0; i < attrNodeList->size(); ++i) {
+        if (attrNodeList->at(i)->qualifiedName() == name)
+            return attrNodeList->at(i).get();
+    }
+    return 0;
+}
+
 PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new Element(tagName, document, CreateElement));
@@ -145,10 +191,8 @@ Element::~Element()
         elementRareData()->m_shadow.clear();
     }
 
-    if (hasAttrList()) {
-        ASSERT(m_attributeData);
-        m_attributeData->detachAttrObjectsFromElement(this);
-    }
+    if (hasSyntheticAttrChildNodes())
+        detachAllAttrNodesFromElement();
 }
 
 inline ElementRareData* Element::elementRareData() const
@@ -207,14 +251,14 @@ PassRefPtr<Attr> Element::detachAttribute(size_t index)
     const Attribute* attribute = attributeData()->attributeItem(index);
     ASSERT(attribute);
 
-    RefPtr<Attr> attr = attrIfExists(attribute->name());
-    if (attr)
-        attr->detachFromElementWithValue(attribute->value());
+    RefPtr<Attr> attrNode = attrIfExists(attribute->name());
+    if (attrNode)
+        detachAttrNodeFromElementWithValue(attrNode.get(), attribute->value());
     else
-        attr = Attr::create(document(), attribute->name(), attribute->value());
+        attrNode = Attr::create(document(), attribute->name(), attribute->value());
 
     removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
-    return attr.release();
+    return attrNode.release();
 }
 
 void Element::removeAttribute(const QualifiedName& name)
@@ -1487,20 +1531,20 @@ void Element::formatForDebugger(char* buffer, unsigned length) const
 }
 #endif
 
-PassRefPtr<Attr> Element::setAttributeNode(Attr* attr, ExceptionCode& ec)
+PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
 {
-    if (!attr) {
+    if (!attrNode) {
         ec = TYPE_MISMATCH_ERR;
         return 0;
     }
 
-    RefPtr<Attr> oldAttr = attrIfExists(attr->qualifiedName());
-    if (oldAttr.get() == attr)
-        return attr; // This Attr is already attached to the element.
+    RefPtr<Attr> oldAttrNode = attrIfExists(attrNode->qualifiedName());
+    if (oldAttrNode.get() == attrNode)
+        return attrNode; // This Attr is already attached to the element.
 
     // INUSE_ATTRIBUTE_ERR: Raised if node is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
-    if (attr->ownerElement()) {
+    if (attrNode->ownerElement()) {
         ec = INUSE_ATTRIBUTE_ERR;
         return 0;
     }
@@ -1508,17 +1552,20 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attr, ExceptionCode& ec)
     updateInvalidAttributes();
     ElementAttributeData* attributeData = mutableAttributeData();
 
-    size_t index = attributeData->getAttributeItemIndex(attr->qualifiedName());
+    size_t index = attributeData->getAttributeItemIndex(attrNode->qualifiedName());
     if (index != notFound) {
-        if (oldAttr)
-            oldAttr->detachFromElementWithValue(attributeData->attributeItem(index)->value());
+        if (oldAttrNode)
+            detachAttrNodeFromElementWithValue(oldAttrNode.get(), attributeData->attributeItem(index)->value());
         else
-            oldAttr = Attr::create(document(), attr->qualifiedName(), attributeData->attributeItem(index)->value());
+            oldAttrNode = Attr::create(document(), attrNode->qualifiedName(), attributeData->attributeItem(index)->value());
     }
 
-    setAttributeInternal(index, attr->qualifiedName(), attr->value(), NotInSynchronizationOfLazyAttribute);
-    attributeData->setAttr(this, attr->qualifiedName(), attr);
-    return oldAttr.release();
+    setAttributeInternal(index, attrNode->qualifiedName(), attrNode->value(), NotInSynchronizationOfLazyAttribute);
+
+    attrNode->attachToElement(this);
+    ensureAttrNodeListForElement(this)->append(attrNode);
+
+    return oldAttrNode.release();
 }
 
 PassRefPtr<Attr> Element::setAttributeNodeNS(Attr* attr, ExceptionCode& ec)
@@ -1591,10 +1638,8 @@ void Element::removeAttributeInternal(size_t index, SynchronizationOfLazyAttribu
             willModifyAttribute(name, valueBeingRemoved, nullAtom);
     }
 
-    if (hasAttrList()) {
-        if (RefPtr<Attr> attr = attributeData->attrIfExists(this, name))
-            attr->detachFromElementWithValue(attributeData->attributeItem(index)->value());
-    }
+    if (RefPtr<Attr> attrNode = attrIfExists(name))
+        detachAttrNodeFromElementWithValue(attrNode.get(), attributeData->attributeItem(index)->value());
 
     attributeData->removeAttribute(index);
 
@@ -1636,7 +1681,10 @@ PassRefPtr<Attr> Element::getAttributeNode(const AtomicString& name)
     const ElementAttributeData* attributeData = updatedAttributeData();
     if (!attributeData)
         return 0;
-    return attributeData->getAttributeNode(name, shouldIgnoreAttributeCase(this), this);
+    const Attribute* attribute = attributeData->getAttributeItem(name, shouldIgnoreAttributeCase(this));
+    if (!attribute)
+        return 0;
+    return ensureAttr(attribute->name());
 }
 
 PassRefPtr<Attr> Element::getAttributeNodeNS(const AtomicString& namespaceURI, const AtomicString& localName)
@@ -1644,7 +1692,10 @@ PassRefPtr<Attr> Element::getAttributeNodeNS(const AtomicString& namespaceURI, c
     const ElementAttributeData* attributeData = updatedAttributeData();
     if (!attributeData)
         return 0;
-    return attributeData->getAttributeNode(QualifiedName(nullAtom, localName, namespaceURI), this);
+    const Attribute* attribute = attributeData->getAttributeItem(QualifiedName(nullAtom, localName, namespaceURI));
+    if (!attribute)
+        return 0;
+    return ensureAttr(attribute->name());
 }
 
 bool Element::hasAttribute(const AtomicString& name) const
@@ -1880,15 +1931,9 @@ void Element::cancelFocusAppearanceUpdate()
 
 void Element::normalizeAttributes()
 {
-    if (!hasAttrList())
-        return;
-
-    const ElementAttributeData* attributeData = updatedAttributeData();
-    ASSERT(attributeData);
-
-    for (size_t i = 0; i < attributeData->length(); ++i) {
-        if (RefPtr<Attr> attr = attrIfExists(attributeData->attributeItem(i)->name()))
-            attr->normalize();
+    if (AttrNodeList* attrNodeList = attrNodeListForElement(this)) {
+        for (unsigned i = 0; i < attrNodeList->size(); ++i)
+            attrNodeList->at(i)->normalize();
     }
 }
 
@@ -2338,16 +2383,51 @@ void Element::setSavedLayerScrollOffset(const IntSize& size)
 
 PassRefPtr<Attr> Element::attrIfExists(const QualifiedName& name)
 {
-    if (!hasAttrList())
-        return 0;
-    ASSERT(attributeData());
-    return attributeData()->attrIfExists(this, name);
+    if (AttrNodeList* attrNodeList = attrNodeListForElement(this))
+        return findAttrNodeInList(attrNodeList, name);
+    return 0;
 }
 
 PassRefPtr<Attr> Element::ensureAttr(const QualifiedName& name)
 {
-    ASSERT(attributeData());
-    return attributeData()->ensureAttr(this, name);
+    AttrNodeList* attrNodeList = ensureAttrNodeListForElement(this);
+    RefPtr<Attr> attrNode = findAttrNodeInList(attrNodeList, name);
+    if (!attrNode) {
+        attrNode = Attr::create(this, name);
+        attrNodeList->append(attrNode);
+    }
+    return attrNode.release();
+}
+
+void Element::detachAttrNodeFromElementWithValue(Attr* attrNode, const AtomicString& value)
+{
+    ASSERT(hasSyntheticAttrChildNodes());
+    attrNode->detachFromElementWithValue(value);
+
+    AttrNodeList* attrNodeList = attrNodeListForElement(this);
+    for (unsigned i = 0; i < attrNodeList->size(); ++i) {
+        if (attrNodeList->at(i)->qualifiedName() == attrNode->qualifiedName()) {
+            attrNodeList->remove(i);
+            if (attrNodeList->isEmpty())
+                removeAttrNodeListForElement(this);
+            return;
+        }
+    }
+    ASSERT_NOT_REACHED();
+}
+
+void Element::detachAllAttrNodesFromElement()
+{
+    AttrNodeList* attrNodeList = attrNodeListForElement(this);
+    ASSERT(attrNodeList);
+
+    for (unsigned i = 0; i < attributeCount(); ++i) {
+        const Attribute* attribute = attributeItem(i);
+        if (RefPtr<Attr> attrNode = findAttrNodeInList(attrNodeList, attribute->name()))
+            attrNode->detachFromElementWithValue(attribute->value());
+    }
+
+    removeAttrNodeListForElement(this);
 }
 
 bool Element::willRecalcStyle(StyleChange)
@@ -2371,10 +2451,13 @@ PassRefPtr<RenderStyle> Element::customStyleForRenderer()
 
 void Element::cloneAttributesFromElement(const Element& other)
 {
+    if (hasSyntheticAttrChildNodes())
+        detachAllAttrNodesFromElement();
+
     if (const ElementAttributeData* attributeData = other.updatedAttributeData())
         mutableAttributeData()->cloneDataFrom(*attributeData, other, *this);
     else if (m_attributeData) {
-        m_attributeData->clearAttributes(this);
+        m_attributeData->clearAttributes();
         m_attributeData.clear();
     }
 }

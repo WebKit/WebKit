@@ -1,3 +1,58 @@
+2012-11-03  Andreas Kling  <kling@webkit.org>
+
+        Decouple Attr logic from ElementAttributeData.
+        <http://webkit.org/b/101126>
+
+        Reviewed by Antti Koivisto.
+
+        Move all logic dealing with Attr DOM nodes from ElementAttributeData to Element.
+        This makes more sense since an Attr is tied to a single Element, but an ElementAttributeData
+        can be shared by any number of Elements at a given time.
+
+        Also updated naming convention from just "Attr" to "Attr node" in the code I was touching.
+        "Attr" is way too generic, and has been historically confused with WebCore::Attribute a lot.
+
+        * dom/Element.h:
+        * dom/ElementAttributeData.h:
+        * dom/Element.cpp:
+        (WebCore::attrNodeListMap):
+        (WebCore::attrNodeListForElement):
+        (WebCore::ensureAttrNodeListForElement):
+        (WebCore::removeAttrNodeListForElement):
+        (WebCore::findAttrNodeInList):
+        (WebCore::Element::~Element):
+        (WebCore::Element::detachAttribute):
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::removeAttributeInternal):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::normalizeAttributes):
+        (WebCore::Element::attrIfExists):
+        (WebCore::Element::ensureAttr):
+        (WebCore::Element::detachAttrNodeFromElementWithValue):
+        (WebCore::Element::detachAllAttrNodesFromElement):
+        (WebCore::Element::cloneAttributesFromElement):
+
+            Move everything Attr-related into Element.cpp while simplifying some loops and remove
+            conditions that are no longer needed as they used to depend on having an attributeData().
+
+        * dom/Node.h:
+        (WebCore::Node::hasSyntheticAttrChildNodes):
+        (WebCore::Node::setHasSyntheticAttrChildNodes):
+
+            Renamed the hasAttrList() node flag to hasSyntheticAttrChildNodes().
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::detachFromElementWithValue):
+
+            Remove awkward indirection and let the call site deal with removing the Attr node from
+            the Element's list of Attr nodes.
+
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::clearAttributes):
+
+            Remove now-unused Element* argument.
+
 2012-11-03  Pavel Feldman  <pfeldman@chromium.org>
 
         REGRESSION (r132014-r132047): Webkit Inspector Window docking broken
