@@ -1,3 +1,15 @@
+2012-11-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: %d, %i, and %f log formatters have same result
+        https://bugs.webkit.org/show_bug.cgi?id=101148
+
+        Reviewed by Alexander Pavlov.
+
+        * inspector/console/console-format-expected.txt:
+        * inspector/console/console-format.html:
+        * inspector/console/console-message-format-expected.txt: Added.
+        * inspector/console/console-message-format.html: Added.
+
 2012-11-02  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] ShadowRoot should be able to know the existence of <content>

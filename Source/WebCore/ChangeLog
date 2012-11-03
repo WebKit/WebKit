@@ -1,3 +1,19 @@
+2012-11-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: %d, %i, and %f log formatters have same result
+        https://bugs.webkit.org/show_bug.cgi?id=101148
+
+        Reviewed by Alexander Pavlov.
+
+        Added separate formatters for %f, %i, %d and %s.
+
+        Test: inspector/console/console-message-format.html
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype.stringFormatter):
+        (WebInspector.ConsoleMessageImpl.prototype.floatFormatter):
+        (WebInspector.ConsoleMessageImpl.prototype.integerFormatter):
+
 2012-11-03  Andreas Kling  <kling@webkit.org>
 
         Decouple Attr logic from ElementAttributeData.

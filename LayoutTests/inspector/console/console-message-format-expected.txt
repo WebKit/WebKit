@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: line 9: Message format number %i, %d and %f
+CONSOLE MESSAGE: line 10: Message %s for %s
+CONSOLE MESSAGE: line 11: Object %o
+CONSOLE MESSAGE: line 12: Floating as integers: %d %i
+CONSOLE MESSAGE: line 13: Floating as is: %f
+CONSOLE MESSAGE: line 14: Non-numbers as numbers: %d %i %f
+CONSOLE MESSAGE: line 15: String as is: %s
+CONSOLE MESSAGE: line 16: Object as string: %s
+Tests that console logging uses proper message formatting.
+
+Message format number 1, 2 and 3.5 console-message-format.html:9
+Message format for string console-message-format.html:10
+Object Object console-message-format.html:11
+Floating as integers: 42 42 console-message-format.html:12
+Floating as is: 42.5 console-message-format.html:13
+Non-numbers as numbers: NaN NaN NaN console-message-format.html:14
+String as is: string console-message-format.html:15
+Object as string: #document console-message-format.html:16
+
