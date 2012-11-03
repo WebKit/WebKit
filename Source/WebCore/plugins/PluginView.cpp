@@ -1474,6 +1474,11 @@ NPError PluginView::setValueForURL(NPNURLVariable variable, const char* url, con
 
 NPError PluginView::getAuthenticationInfo(const char* protocol, const char* host, int32_t port, const char* /* scheme */, const char* /* realm */, char**  /* username */, uint32_t* /* ulen */, char** /* password */, uint32_t* /* plen */)
 {
+#if LOG_DISABLED
+    UNUSED_PARAM(protocol);
+    UNUSED_PARAM(host);
+    UNUSED_PARAM(port);
+#endif
     LOG(Plugins, "PluginView::getAuthenticationInfo: protocol=%s, host=%s, port=%d", protocol, host, port);
     notImplemented();
     return NPERR_GENERIC_ERROR;
