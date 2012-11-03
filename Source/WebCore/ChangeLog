@@ -1,3 +1,42 @@
+2012-11-02  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] ShadowRoot should be able to know the existence of <content>
+        https://bugs.webkit.org/show_bug.cgi?id=100921
+
+        Reviewed by Dimitri Glazkov.
+
+        When <content> is inserted into or removed from a shadow subtree, ShadowRoot counts the number of <content>.
+        It provides O(1) method to check the existence of <content>.
+
+        This is necessary when we implement a fast checking path for distribution invalidation when an element attribute
+        is changed. Larger context is explained in Bug 100451.
+
+        Test: fast/dom/shadow/has-content-elements.html
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::hasInsertionPoint): Since we track both <content> and <shadow>, we don't need to traverse
+        all the descendants of ShadowRoot anymore.
+        * dom/ShadowRoot.h:
+        (WebCore::ShadowRoot::registerContentElement):
+        (WebCore::ShadowRoot::unregisterContentElement):
+        (WebCore::ShadowRoot::hasContentElement):
+        (ShadowRoot):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::HTMLContentElement):
+        (WebCore::HTMLContentElement::insertedInto): When <content> is inserted into ShadowDOM subtree,
+        we notify it to the ShadowRoot. Note that only active <content> element is counted.
+        (WebCore):
+        (WebCore::HTMLContentElement::removedFrom):
+        * html/shadow/HTMLContentElement.h:
+        (HTMLContentElement):
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasContentElement):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-11-02  KyungTae Kim  <ktf.kim@samsung.com>
 
         sCurrentPaintTimeStamp is not initialized when FrameView::paintContents returns in the middle

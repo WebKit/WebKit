@@ -91,6 +91,10 @@ public:
     void unregisterShadowElement() { --m_numberOfShadowElementChildren; }
     bool hasShadowInsertionPoint() const { return m_numberOfShadowElementChildren > 0; }
 
+    void registerContentElement() { ++m_numberOfContentElementChildren; }
+    void unregisterContentElement() { --m_numberOfContentElementChildren; }
+    bool hasContentElement() const { return m_numberOfContentElementChildren > 0; }
+
     virtual void registerScopedHTMLStyleChild() OVERRIDE;
     virtual void unregisterScopedHTMLStyleChild() OVERRIDE;
 
@@ -116,6 +120,7 @@ private:
     bool m_resetStyleInheritance : 1;
     InsertionPoint* m_insertionPointAssignedTo;
     size_t m_numberOfShadowElementChildren;
+    size_t m_numberOfContentElementChildren;
     size_t m_numberOfStyles;
 
 #ifndef NDEBUG

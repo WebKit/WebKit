@@ -63,6 +63,7 @@ PassRefPtr<HTMLContentElement> HTMLContentElement::create(const QualifiedName& t
 
 HTMLContentElement::HTMLContentElement(const QualifiedName& name, Document* document)
     : InsertionPoint(name, document)
+    , m_registeredWithShadowRoot(false)
 {
 }
 
@@ -93,6 +94,31 @@ void HTMLContentElement::parseAttribute(const Attribute& attribute)
             root->owner()->invalidateDistribution();
     } else
         InsertionPoint::parseAttribute(attribute);
+}
+
+Node::InsertionNotificationRequest HTMLContentElement::insertedInto(ContainerNode* insertionPoint)
+{
+    InsertionPoint::insertedInto(insertionPoint);
+
+    if (insertionPoint->inDocument() && isActive()) {
+        shadowRoot()->registerContentElement();
+        m_registeredWithShadowRoot = true;
+    }
+
+    return InsertionDone;
+}
+
+void HTMLContentElement::removedFrom(ContainerNode* insertionPoint)
+{
+    if (insertionPoint->inDocument() && m_registeredWithShadowRoot) {
+        ShadowRoot* root = shadowRoot();
+        if (!root)
+            root = insertionPoint->shadowRoot();
+        if (root)
+            root->unregisterContentElement();
+        m_registeredWithShadowRoot = false;
+    }
+    InsertionPoint::removedFrom(insertionPoint);
 }
 
 }

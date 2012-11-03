@@ -48,6 +48,7 @@
     Node youngerShadowRoot(in Node root) raises (DOMException);
 #endif
     boolean hasShadowInsertionPoint(in Node root) raises (DOMException);
+    boolean hasContentElement(in Node root) raises (DOMException);
     Element includerFor(in Node node) raises (DOMException);
     DOMString shadowPseudoId(in Element element) raises (DOMException);
     void setShadowPseudoId(in Element element, in DOMString id) raises (DOMException);

@@ -1,0 +1,23 @@
+Test for Bug 100921: https://bugs.webkit.org/show_bug.cgi?id=100921 - [Shadow] ShadowRoot should be able to know the existence of <content>
+
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is true
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is true
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is true
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(innerShadowRoot1) is true
+PASS internals.hasContentElement(innerShadowRoot2) is true
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is true
+PASS internals.hasContentElement(youngerShadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(youngerShadowRoot) is false
+PASS internals.hasContentElement(shadowRoot) is false
+PASS internals.hasContentElement(youngerShadowRoot) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

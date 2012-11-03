@@ -315,6 +315,15 @@ bool Internals::hasShadowInsertionPoint(const Node* root, ExceptionCode& ec) con
     return 0;
 }
 
+bool Internals::hasContentElement(const Node* root, ExceptionCode& ec) const
+{
+    if (root && root->isShadowRoot())
+        return toShadowRoot(root)->hasContentElement();
+
+    ec = INVALID_ACCESS_ERR;
+    return 0;
+}
+
 bool Internals::attached(Node* node, ExceptionCode& ec)
 {
     if (!node) {

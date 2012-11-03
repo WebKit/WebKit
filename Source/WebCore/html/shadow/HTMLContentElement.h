@@ -51,8 +51,13 @@ public:
 protected:
     HTMLContentElement(const QualifiedName&, Document*);
 
+    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
+    virtual void removedFrom(ContainerNode*) OVERRIDE;
+
 private:
     virtual void parseAttribute(const Attribute&) OVERRIDE;
+
+    bool m_registeredWithShadowRoot;
 };
 
 inline bool isHTMLContentElement(const Node* node)
