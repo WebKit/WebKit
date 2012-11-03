@@ -1,3 +1,79 @@
+2012-11-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133375.
+        http://trac.webkit.org/changeset/133375
+        https://bugs.webkit.org/show_bug.cgi?id=101138
+
+        Caused 3 tests to fail on Mac (Requested by aboxhall-laptop on
+        #webkit).
+
+        * css3/line-break/line-break-auto-centered-expected.html: Removed.
+        * css3/line-break/line-break-auto-centered.html: Removed.
+        * css3/line-break/line-break-auto-half-kana-expected.html: Removed.
+        * css3/line-break/line-break-auto-half-kana.html: Removed.
+        * css3/line-break/line-break-auto-hyphens-expected.html: Removed.
+        * css3/line-break/line-break-auto-hyphens.html: Removed.
+        * css3/line-break/line-break-auto-inseparables-expected.html: Removed.
+        * css3/line-break/line-break-auto-inseparables.html: Removed.
+        * css3/line-break/line-break-auto-iteration-marks-expected.html: Removed.
+        * css3/line-break/line-break-auto-iteration-marks.html: Removed.
+        * css3/line-break/line-break-auto-postfixes-expected.html: Removed.
+        * css3/line-break/line-break-auto-postfixes.html: Removed.
+        * css3/line-break/line-break-auto-prefixes-expected.html: Removed.
+        * css3/line-break/line-break-auto-prefixes.html: Removed.
+        * css3/line-break/line-break-auto-sound-marks-expected.html: Removed.
+        * css3/line-break/line-break-auto-sound-marks.html: Removed.
+        * css3/line-break/line-break-loose-centered-expected.html: Removed.
+        * css3/line-break/line-break-loose-centered.html: Removed.
+        * css3/line-break/line-break-loose-half-kana-expected.html: Removed.
+        * css3/line-break/line-break-loose-half-kana.html: Removed.
+        * css3/line-break/line-break-loose-hyphens-expected.html: Removed.
+        * css3/line-break/line-break-loose-hyphens.html: Removed.
+        * css3/line-break/line-break-loose-inseparables-expected.html: Removed.
+        * css3/line-break/line-break-loose-inseparables.html: Removed.
+        * css3/line-break/line-break-loose-iteration-marks-expected.html: Removed.
+        * css3/line-break/line-break-loose-iteration-marks.html: Removed.
+        * css3/line-break/line-break-loose-postfixes-expected.html: Removed.
+        * css3/line-break/line-break-loose-postfixes.html: Removed.
+        * css3/line-break/line-break-loose-prefixes-expected.html: Removed.
+        * css3/line-break/line-break-loose-prefixes.html: Removed.
+        * css3/line-break/line-break-loose-sound-marks-expected.html: Removed.
+        * css3/line-break/line-break-loose-sound-marks.html: Removed.
+        * css3/line-break/line-break-normal-centered-expected.html: Removed.
+        * css3/line-break/line-break-normal-centered.html: Removed.
+        * css3/line-break/line-break-normal-half-kana-expected.html: Removed.
+        * css3/line-break/line-break-normal-half-kana.html: Removed.
+        * css3/line-break/line-break-normal-hyphens-expected.html: Removed.
+        * css3/line-break/line-break-normal-hyphens.html: Removed.
+        * css3/line-break/line-break-normal-inseparables-expected.html: Removed.
+        * css3/line-break/line-break-normal-inseparables.html: Removed.
+        * css3/line-break/line-break-normal-iteration-marks-expected.html: Removed.
+        * css3/line-break/line-break-normal-iteration-marks.html: Removed.
+        * css3/line-break/line-break-normal-postfixes-expected.html: Removed.
+        * css3/line-break/line-break-normal-postfixes.html: Removed.
+        * css3/line-break/line-break-normal-prefixes-expected.html: Removed.
+        * css3/line-break/line-break-normal-prefixes.html: Removed.
+        * css3/line-break/line-break-normal-sound-marks-expected.html: Removed.
+        * css3/line-break/line-break-normal-sound-marks.html: Removed.
+        * css3/line-break/line-break-strict-centered-expected.html: Removed.
+        * css3/line-break/line-break-strict-centered.html: Removed.
+        * css3/line-break/line-break-strict-half-kana-expected.html: Removed.
+        * css3/line-break/line-break-strict-half-kana.html: Removed.
+        * css3/line-break/line-break-strict-hyphens-expected.html: Removed.
+        * css3/line-break/line-break-strict-hyphens.html: Removed.
+        * css3/line-break/line-break-strict-inseparables-expected.html: Removed.
+        * css3/line-break/line-break-strict-inseparables.html: Removed.
+        * css3/line-break/line-break-strict-iteration-marks-expected.html: Removed.
+        * css3/line-break/line-break-strict-iteration-marks.html: Removed.
+        * css3/line-break/line-break-strict-postfixes-expected.html: Removed.
+        * css3/line-break/line-break-strict-postfixes.html: Removed.
+        * css3/line-break/line-break-strict-prefixes-expected.html: Removed.
+        * css3/line-break/line-break-strict-prefixes.html: Removed.
+        * css3/line-break/line-break-strict-sound-marks-expected.html: Removed.
+        * css3/line-break/line-break-strict-sound-marks.html: Removed.
+        * platform/chromium-linux/css3/line-break/line-break-auto-half-kana-expected.html: Removed.
+        * platform/chromium-linux/css3/line-break/line-break-auto-sound-marks-expected.html: Removed.
+
 2012-11-02  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Clean up shape-inside tests' subpixel snapping code

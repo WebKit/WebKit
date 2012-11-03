@@ -26,15 +26,14 @@
 #ifndef LineBreakIteratorPoolICU_h
 #define LineBreakIteratorPoolICU_h
 
-#include "TextBreakIterator.h"
 #include "TextBreakIteratorInternalICU.h"
+#include <unicode/ubrk.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -49,38 +48,11 @@ public:
 
     static PassOwnPtr<LineBreakIteratorPool> create() { return adoptPtr(new LineBreakIteratorPool); }
 
-    static String makeLocaleWithBreakKeyword(const AtomicString& locale, LineBreakIteratorMode mode)
+    UBreakIterator* take(const AtomicString& locale)
     {
-        StringBuilder localeWithKeyword;
-        localeWithKeyword.append(locale);
-        localeWithKeyword.appendLiteral("@break=");
-        switch (mode) {
-        case LineBreakIteratorModeUAX14:
-            break;
-        case LineBreakIteratorModeUAX14Loose:
-            localeWithKeyword.appendLiteral("loose");
-            break;
-        case LineBreakIteratorModeUAX14Normal:
-            localeWithKeyword.appendLiteral("normal");
-            break;
-        case LineBreakIteratorModeUAX14Strict:
-            localeWithKeyword.appendLiteral("strict");
-            break;
-        }
-        return localeWithKeyword.toString();
-    }
-
-    TextBreakIterator* take(const AtomicString& locale, LineBreakIteratorMode mode, bool isCJK)
-    {
-        AtomicString localeWithOptionalBreakKeyword;
-        if (mode == LineBreakIteratorModeUAX14)
-            localeWithOptionalBreakKeyword = locale;
-        else
-            localeWithOptionalBreakKeyword = makeLocaleWithBreakKeyword(locale, mode);
-
-        TextBreakIterator* iterator = 0;
+        UBreakIterator* iterator = 0;
         for (size_t i = 0; i < m_pool.size(); ++i) {
-            if (m_pool[i].first == localeWithOptionalBreakKeyword) {
+            if (m_pool[i].first == locale) {
                 iterator = m_pool[i].second;
                 m_pool.remove(i);
                 break;
@@ -88,22 +60,33 @@ public:
         }
 
         if (!iterator) {
-            iterator = openLineBreakIterator(localeWithOptionalBreakKeyword, mode, isCJK);
-            if (!iterator)
+            UErrorCode openStatus = U_ZERO_ERROR;
+            bool localeIsEmpty = locale.isEmpty();
+            iterator = ubrk_open(UBRK_LINE, localeIsEmpty ? currentTextBreakLocaleID() : locale.string().utf8().data(), 0, 0, &openStatus);
+            // locale comes from a web page and it can be invalid, leading ICU
+            // to fail, in which case we fall back to the default locale.
+            if (!localeIsEmpty && U_FAILURE(openStatus)) {
+                openStatus = U_ZERO_ERROR;
+                iterator = ubrk_open(UBRK_LINE, currentTextBreakLocaleID(), 0, 0, &openStatus);
+            }
+                
+            if (U_FAILURE(openStatus)) {
+                LOG_ERROR("ubrk_open failed with status %d", openStatus);
                 return 0;
+            }
         }
 
         ASSERT(!m_vendedIterators.contains(iterator));
-        m_vendedIterators.set(iterator, localeWithOptionalBreakKeyword);
+        m_vendedIterators.set(iterator, locale);
         return iterator;
     }
 
-    void put(TextBreakIterator* iterator)
+    void put(UBreakIterator* iterator)
     {
         ASSERT_ARG(iterator, m_vendedIterators.contains(iterator));
 
         if (m_pool.size() == capacity) {
-            closeLineBreakIterator(m_pool[0].second);
+            ubrk_close(m_pool[0].second);
             m_pool.remove(0);
         }
 
@@ -115,10 +98,10 @@ private:
 
     static const size_t capacity = 4;
 
-    typedef pair<AtomicString, TextBreakIterator*> Entry;
+    typedef pair<AtomicString, UBreakIterator*> Entry;
     typedef Vector<Entry, capacity> Pool;
     Pool m_pool;
-    HashMap<TextBreakIterator*, AtomicString> m_vendedIterators;
+    HashMap<UBreakIterator*, AtomicString> m_vendedIterators;
 
     friend WTF::ThreadSpecific<LineBreakIteratorPool>::operator LineBreakIteratorPool*();
 };

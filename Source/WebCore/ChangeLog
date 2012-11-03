@@ -1,3 +1,41 @@
+2012-11-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133375.
+        http://trac.webkit.org/changeset/133375
+        https://bugs.webkit.org/show_bug.cgi?id=101138
+
+        Caused 3 tests to fail on Mac (Requested by aboxhall-laptop on
+        #webkit).
+
+        * platform/text/LineBreakIteratorPoolICU.h:
+        (WebCore::LineBreakIteratorPool::take):
+        (WebCore::LineBreakIteratorPool::put):
+        (LineBreakIteratorPool):
+        * platform/text/TextBreakIterator.h:
+        (WebCore):
+        (WebCore::LazyLineBreakIterator::LazyLineBreakIterator):
+        (WebCore::LazyLineBreakIterator::get):
+        (WebCore::LazyLineBreakIterator::reset):
+        (LazyLineBreakIterator):
+        * platform/text/TextBreakIteratorICU.cpp:
+        (WebCore::acquireLineBreakIterator):
+        (WebCore::releaseLineBreakIterator):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        * rendering/RenderText.h:
+        (WebCore):
+        * rendering/break_lines.cpp:
+        (WebCore):
+        (WebCore::isBreakableSpace):
+        (WebCore::needsLineBreakIterator):
+        (WebCore::nextBreakablePosition):
+        (WebCore::nextBreakablePositionIgnoringNBSP):
+        * rendering/break_lines.h:
+        (WebCore):
+        (WebCore::isBreakable):
+
 2012-11-02  Andreas Kling  <kling@webkit.org>
 
         Cut overgrown ElementAttributeData bitfield.

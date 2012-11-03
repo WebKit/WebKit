@@ -31,13 +31,6 @@ namespace WebCore {
 
     // Note: The returned iterator is good only until you get another iterator, with the exception of acquireLineBreakIterator.
 
-    enum LineBreakIteratorMode {
-        LineBreakIteratorModeUAX14,
-        LineBreakIteratorModeUAX14Loose,
-        LineBreakIteratorModeUAX14Normal,
-        LineBreakIteratorModeUAX14Strict,
-    };
-
     // This is similar to character break iterator in most cases, but is subject to
     // platform UI conventions. One notable example where this can be different
     // from character break iterator is Thai prepend characters, see bug 24342.
@@ -45,11 +38,9 @@ namespace WebCore {
     TextBreakIterator* cursorMovementIterator(const UChar*, int length);
 
     TextBreakIterator* wordBreakIterator(const UChar*, int length);
-    TextBreakIterator* acquireLineBreakIterator(const LChar*, int length, const AtomicString& locale, LineBreakIteratorMode, bool isCJK);
-    TextBreakIterator* acquireLineBreakIterator(const UChar*, int length, const AtomicString& locale, LineBreakIteratorMode, bool isCJK);
+    TextBreakIterator* acquireLineBreakIterator(const LChar*, int length, const AtomicString& locale);
+    TextBreakIterator* acquireLineBreakIterator(const UChar*, int length, const AtomicString& locale);
     void releaseLineBreakIterator(TextBreakIterator*);
-    TextBreakIterator* openLineBreakIterator(const AtomicString& locale, LineBreakIteratorMode, bool isCJK);
-    void closeLineBreakIterator(TextBreakIterator*&);
     TextBreakIterator* sentenceBreakIterator(const UChar*, int length);
 
     int textBreakFirst(TextBreakIterator*);
@@ -64,24 +55,18 @@ namespace WebCore {
 
     const int TextBreakDone = -1;
 
-    bool isCJKLocale(const AtomicString&);
-
 class LazyLineBreakIterator {
 public:
     LazyLineBreakIterator()
-        : m_mode(LineBreakIteratorModeUAX14)
-        , m_isCJK(false)
-        , m_iterator(0)
+        : m_iterator(0)
     {
     }
 
-    LazyLineBreakIterator(String string, const AtomicString& locale = AtomicString(), LineBreakIteratorMode mode = LineBreakIteratorModeUAX14)
+    LazyLineBreakIterator(String string, const AtomicString& locale = AtomicString())
         : m_string(string)
         , m_locale(locale)
-        , m_mode(mode)
         , m_iterator(0)
     {
-        m_isCJK = isCJKLocale(locale);
     }
 
     ~LazyLineBreakIterator()
@@ -91,36 +76,31 @@ public:
     }
 
     String string() const { return m_string; }
-    bool isLooseCJKMode() const { return m_isCJK && m_mode == LineBreakIteratorModeUAX14Loose; }
 
     TextBreakIterator* get()
     {
         if (!m_iterator) {
             if (m_string.is8Bit())
-                m_iterator = acquireLineBreakIterator(m_string.characters8(), m_string.length(), m_locale, m_mode, m_isCJK);
+                m_iterator = acquireLineBreakIterator(m_string.characters8(), m_string.length(), m_locale);
             else
-                m_iterator = acquireLineBreakIterator(m_string.characters16(), m_string.length(), m_locale, m_mode, m_isCJK);
+                m_iterator = acquireLineBreakIterator(m_string.characters16(), m_string.length(), m_locale);
         }
         return m_iterator;
     }
 
-    void reset(String string, const AtomicString& locale, LineBreakIteratorMode mode)
+    void reset(String string, const AtomicString& locale)
     {
         if (m_iterator)
             releaseLineBreakIterator(m_iterator);
 
         m_string = string;
         m_locale = locale;
-        m_mode = mode;
-        m_isCJK = isCJKLocale(locale);
         m_iterator = 0;
     }
 
 private:
     String m_string;
     AtomicString m_locale;
-    LineBreakIteratorMode m_mode;
-    bool m_isCJK;
     TextBreakIterator* m_iterator;
 };
 
