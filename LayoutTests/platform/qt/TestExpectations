@@ -216,6 +216,7 @@ fast/dom/shadow/focus-navigation-with-distributed-nodes.html
 fast/dom/shadow/form-in-shadow.html
 fast/dom/shadow/get-element-by-id-in-shadow-mutation.html
 fast/dom/shadow/get-element-by-id-in-shadow-root.html
+fast/dom/shadow/has-content-elements.html
 fast/dom/shadow/has-shadow-insertion-point.html
 fast/dom/shadow/iframe-shadow.html
 fast/dom/shadow/input-with-validation.html
@@ -2027,6 +2028,17 @@ http/tests/inspector/console-websocket-error.html
 svg/as-image/animated-svg-repaints-completely-in-hidpi.html
 transitions/default-timing-function.html
 
+# --- new tests without expected files, need investigation
+fast/repaint/box-shadow-inset-repaint.html
+fast/text/word-space.html
+fast/events/touch/gesture/right-click-gestures-set-cursor-at-correct-position.html
+fast/events/touch/gesture/context-menu-on-long-press.html
+fast/xsl/xslt-extra-content-at-end.xml
+svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse.svg
+css2.1/t100801-c548-ln-ht-01-b-ag.html
+css2.1/20110323/inline-non-replaced-height-003.htm
+css2.1/20110323/inline-non-replaced-height-002.htm
+
 
 # ============================================================================= #
 # Regressions occured after Qt version update
@@ -2514,3 +2526,12 @@ webkit.org/b/100636 jquery/manipulation.html
 webkit.org/b/100636 jquery/traversing.html
 
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
+
+# New test introduced in r133416, but fails on Qt
+fast/events/touch/gesture/disabled-input-text-selection.html
+
+# New, but failing test
+webkit.org/b/101035 fast/images/exif-orientation-image-document.html
+
+# Fails after test refactoring, maybe rebaseline needed
+webkit.org/b/98523 fast/images/repaint-subrect-grid.html
