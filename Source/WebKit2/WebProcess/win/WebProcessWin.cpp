@@ -71,11 +71,9 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 {
 #if USE(CFNETWORK)
     RetainPtr<CFStringRef> cfurlCacheDirectory;
-#if USE(CFURLSTORAGESESSIONS)
     if (CFURLStorageSessionRef defaultStorageSession = ResourceHandle::defaultStorageSession())
         cfurlCacheDirectory.adoptCF(wkCopyFoundationCacheDirectory(defaultStorageSession));
     else
-#endif
         cfurlCacheDirectory.adoptCF(wkCopyFoundationCacheDirectory(0));
 
     if (!cfurlCacheDirectory)
@@ -103,11 +101,9 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     pageCache()->setCapacity(pageCacheCapacity);
 
     RetainPtr<CFURLCacheRef> cfurlCache;
-#if USE(CFURLSTORAGESESSIONS)
     if (CFURLStorageSessionRef defaultStorageSession = ResourceHandle::defaultStorageSession())
         cfurlCache.adoptCF(wkCopyURLCache(defaultStorageSession));
     else
-#endif // USE(CFURLSTORAGESESSIONS)
         cfurlCache.adoptCF(CFURLCacheCopySharedURLCache());
 
     CFURLCacheSetMemoryCapacity(cfurlCache.get(), urlCacheMemoryCapacity);
@@ -122,11 +118,9 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
         return;
 
     RetainPtr<CFURLCacheRef> cache;
-#if USE(CFURLSTORAGESESSIONS)
     if (CFURLStorageSessionRef defaultStorageSession = ResourceHandle::defaultStorageSession())
         cache.adoptCF(wkCopyURLCache(defaultStorageSession));
     else
-#endif // USE(CFURLSTORAGESESSIONS)
         cache.adoptCF(CFURLCacheCopySharedURLCache());
 
     CFURLCacheRemoveAllCachedResponses(cache.get());

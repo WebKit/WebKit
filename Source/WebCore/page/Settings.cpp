@@ -590,7 +590,7 @@ void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
     // 4. The WebPage settings get applied to the new Page and setPrivateBrowsingEnabled(false)
     //    is called, but an if (m_privateBrowsingEnabled == privateBrowsingEnabled) early return
     //    prevents the global values from getting changed from true to false.
-#if USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFNETWORK)
     ResourceHandle::setPrivateBrowsingEnabled(privateBrowsingEnabled);
 #endif
     setCookieStoragePrivateBrowsingEnabled(privateBrowsingEnabled);

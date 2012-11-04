@@ -185,14 +185,10 @@ void ResourceRequest::applyWebArchiveHackForMail()
     [NSURLProtocol setProperty:@"" forKey:@"WebDataRequest" inRequest:(NSMutableURLRequest *)nsURLRequest()];
 }
 
-#if USE(CFURLSTORAGESESSIONS)
-
 void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 {
     m_nsRequest.adoptNS(wkCopyRequestWithStorageSession(storageSession, m_nsRequest.get()));
 }
-
-#endif
     
 #endif // USE(CFNETWORK)
 

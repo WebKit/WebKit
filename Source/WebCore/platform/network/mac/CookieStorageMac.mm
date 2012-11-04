@@ -79,15 +79,6 @@ namespace WebCore {
 
 void setCookieStoragePrivateBrowsingEnabled(bool enabled)
 {
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060 && USE(CFURLSTORAGESESSIONS)
-    // Don't call wkSetCookieStoragePrivateBrowsingEnabled() when cookie storage is set up via sessions.
-    // That would make NSURLConnect use global private browsing cookie storage regardless of request session.
-    // The global private cookie storage has different semantics - it makes new cookies non-persistent,
-    // but doesn't start with a clean state.
-    if (enabled && currentCFHTTPCookieStorage())
-        return;
-#endif
-
     // FIXME: When Private Browsing is enabled, the Private Browsing Cookie Storage should be
     // observed for changes, not the default Cookie Storage.
 

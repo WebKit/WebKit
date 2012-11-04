@@ -1285,21 +1285,17 @@ static NSString *classIBCreatorID = nil;
 
 + (void)_switchNetworkLoaderToNewTestingSession
 {
-#if USE(CFURLSTORAGESESSIONS)
     // Set a private session for testing to avoid interfering with global cookies. This should be different from private browsing session.
     RetainPtr<CFURLStorageSessionRef> session = ResourceHandle::createPrivateBrowsingStorageSession(CFSTR("WebKit Testing Session"));
     ResourceHandle::setDefaultStorageSession(session.get());
-#endif
 }
 
 + (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy
 {
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:policy];
 
-#if USE(CFURLSTORAGESESSIONS)
     if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage())
         WKSetHTTPCookieAcceptPolicy(cookieStorage.get(), policy);
-#endif
 }
 
 - (BOOL)isDOMPasteAllowed

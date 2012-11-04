@@ -136,9 +136,7 @@ void ResourceRequest::doUpdatePlatformRequest()
         CFURLRequestSetTimeoutInterval(cfRequest, timeoutInterval());
     } else
         cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval(), firstPartyForCookies.get());
-#if USE(CFURLSTORAGESESSIONS)
     wkSetRequestStorageSession(ResourceHandle::currentStorageSession(), cfRequest);
-#endif
 
     CFURLRequestSetHTTPRequestMethod(cfRequest, httpMethod().createCFString().get());
 
@@ -224,8 +222,6 @@ void ResourceRequest::doUpdateResourceRequest()
     m_httpBody = httpBodyFromRequest(m_cfRequest.get());
 }
 
-#if USE(CFURLSTORAGESESSIONS)
-
 void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 {
     CFMutableURLRequestRef cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
@@ -235,8 +231,6 @@ void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
     updateNSURLRequest();
 #endif
 }
-
-#endif
 
 #if PLATFORM(MAC)
 void ResourceRequest::applyWebArchiveHackForMail()
@@ -265,7 +259,6 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     // Always set the connection count per host, even when pipelining.
     unsigned maximumHTTPConnectionCountPerHost = wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 
-#if USE(CFNETWORK) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     static const unsigned unlimitedConnectionCount = 10000;
 
     Boolean keyExistsAndHasValidFormat = false;
@@ -282,7 +275,6 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
         // When pipelining do not rate-limit requests sent from WebCore since CFNetwork handles that.
         return unlimitedConnectionCount;
     }
-#endif
 
     return maximumHTTPConnectionCountPerHost;
 }

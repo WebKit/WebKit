@@ -266,18 +266,14 @@ static RetainPtr<CFCachedURLResponseRef> cachedResponseForURL(WebPage* webPage, 
 {
     RetainPtr<CFURLRef> cfURL(AdoptCF, url.createCFURL());
     RetainPtr<CFMutableURLRequestRef> request(AdoptCF, CFURLRequestCreateMutable(0, cfURL.get(), kCFURLRequestCachePolicyReloadIgnoringCache, 60, 0));
-#if USE(CFURLSTORAGESESSIONS)
     wkSetRequestStorageSession(ResourceHandle::currentStorageSession(), request.get());
-#endif
 
     CFURLRequestSetHTTPHeaderFieldValue(request.get(), CFSTR("User-Agent"), webPage->userAgent().createCFString().get());
 
     RetainPtr<CFURLCacheRef> cache;
-#if USE(CFURLSTORAGESESSIONS)
     if (CFURLStorageSessionRef currentStorageSession = ResourceHandle::currentStorageSession())
         cache.adoptCF(wkCopyURLCache(currentStorageSession));
     else
-#endif
         cache.adoptCF(CFURLCacheCopySharedURLCache());
 
     RetainPtr<CFCachedURLResponseRef> response(AdoptCF, CFURLCacheCopyResponseForRequest(cache.get(), request.get()));

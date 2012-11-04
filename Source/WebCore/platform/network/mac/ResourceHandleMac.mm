@@ -150,23 +150,19 @@ static bool shouldRelaxThirdPartyCookiePolicy(const KURL& url)
     NSHTTPCookieStorage *sharedStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
 
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy;
-#if USE(CFURLSTORAGESESSIONS)
     RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage();
     if (cfCookieStorage)
         cookieAcceptPolicy = static_cast<NSHTTPCookieAcceptPolicy>(wkGetHTTPCookieAcceptPolicy(cfCookieStorage.get()));
     else
-#endif
         cookieAcceptPolicy = [sharedStorage cookieAcceptPolicy];
 
     if (cookieAcceptPolicy != NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
         return false;
 
     NSArray *cookies;
-#if USE(CFURLSTORAGESESSIONS)
     if (cfCookieStorage)
         cookies = wkHTTPCookiesForURL(cfCookieStorage.get(), url);
     else
-#endif
         cookies = [sharedStorage cookiesForURL:url];
 
     return [cookies count];
@@ -217,10 +213,8 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     static bool supportsSettingConnectionProperties = [NSURLConnection instancesRespondToSelector:@selector(_initWithRequest:delegate:usesCache:maxContentLength:startImmediately:connectionProperties:)];
 #endif
 
-#if USE(CFURLSTORAGESESSIONS)
     if (CFURLStorageSessionRef storageSession = currentStorageSession())
         nsRequest = [wkCopyRequestWithStorageSession(storageSession, nsRequest) autorelease];
-#endif
 
     if (supportsSettingConnectionProperties) {
         NSDictionary *sessionID = shouldUseCredentialStorage ? [NSDictionary dictionary] : [NSDictionary dictionaryWithObject:@"WebKitPrivateSession" forKey:@"_kCFURLConnectionSessionID"];
@@ -482,10 +476,8 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
         }
     }
 
-#if USE(CFURLSTORAGESESSIONS)
     if (CFURLStorageSessionRef storageSession = currentStorageSession())
         request.setStorageSession(storageSession);
-#endif
 
     client()->willSendRequest(this, request, redirectResponse);
 }
@@ -631,14 +623,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         client()->receivedCancellation(this, challenge);
 }
 
-#if USE(CFURLSTORAGESESSIONS)
-
 String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 {
     return String([[NSBundle mainBundle] bundleIdentifier]);
 }
-
-#endif
 
 } // namespace WebCore
 

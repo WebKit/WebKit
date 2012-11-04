@@ -82,11 +82,9 @@ String cookies(const Document*, const KURL& url)
 
     NSURL *cookieURL = url;
     NSArray *cookies;
-#if USE(CFURLSTORAGESESSIONS)
     if (RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage())
         cookies = wkHTTPCookiesForURL(cfCookieStorage.get(), cookieURL);
     else
-#endif
         cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:cookieURL];
 
     return [[NSHTTPCookie requestHeaderFieldsWithCookies:filterCookies(cookies).get()] objectForKey:@"Cookie"];
@@ -101,11 +99,9 @@ String cookieRequestHeaderFieldValue(const Document*, const KURL& url)
 
     NSURL *cookieURL = url;
     NSArray *cookies;
-#if USE(CFURLSTORAGESESSIONS)
     if (RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage())
         cookies = wkHTTPCookiesForURL(cfCookieStorage.get(), cookieURL);
     else
-#endif
         cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:cookieURL];
 
     return [[NSHTTPCookie requestHeaderFieldsWithCookies:cookies] objectForKey:@"Cookie"];
@@ -130,11 +126,9 @@ void setCookies(Document* document, const KURL& url, const String& cookieStr)
     NSURL *cookieURL = url;    
     RetainPtr<NSArray> filteredCookies = filterCookies([NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:cookieURL]);
 
-#if USE(CFURLSTORAGESESSIONS)
     if (RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage())
         wkSetHTTPCookiesForURL(cfCookieStorage.get(), filteredCookies.get(), cookieURL, document->firstPartyForCookies());
     else
-#endif
         [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookies:filteredCookies.get() forURL:cookieURL mainDocumentURL:document->firstPartyForCookies()];
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -145,11 +139,9 @@ bool cookiesEnabled(const Document*)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy;
-#if USE(CFURLSTORAGESESSIONS)
     if (RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage())
         cookieAcceptPolicy = static_cast<NSHTTPCookieAcceptPolicy>(wkGetHTTPCookieAcceptPolicy(cfCookieStorage.get()));
     else
-#endif
         cookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
 
     return cookieAcceptPolicy == NSHTTPCookieAcceptPolicyAlways || cookieAcceptPolicy == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
@@ -165,11 +157,9 @@ bool getRawCookies(const Document*, const KURL& url, Vector<Cookie>& rawCookies)
 
     NSURL *cookieURL = url;
     NSArray *cookies;
-#if USE(CFURLSTORAGESESSIONS)
     if (RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage())
         cookies = wkHTTPCookiesForURL(cfCookieStorage.get(), cookieURL);
     else
-#endif
         cookies = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:cookieURL];
 
     NSUInteger count = [cookies count];
@@ -198,12 +188,10 @@ void deleteCookie(const Document*, const KURL& url, const String& cookieName)
     NSURL *cookieURL = url;
     NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
     NSArray *cookies;
-#if USE(CFURLSTORAGESESSIONS)
     RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = currentCFHTTPCookieStorage();
     if (cfCookieStorage)
         cookies = wkHTTPCookiesForURL(cfCookieStorage.get(), cookieURL);
     else
-#endif
         cookies = [cookieStorage cookiesForURL:cookieURL];
 
     NSString *cookieNameString = (NSString *) cookieName;
@@ -212,11 +200,9 @@ void deleteCookie(const Document*, const KURL& url, const String& cookieName)
     for (NSUInteger i = 0; i < count; ++i) {
         NSHTTPCookie *cookie = (NSHTTPCookie *)[cookies objectAtIndex:i];
         if ([[cookie name] isEqualToString:cookieNameString]) {
-#if USE(CFURLSTORAGESESSIONS)
             if (cfCookieStorage)
                 wkDeleteHTTPCookie(cfCookieStorage.get(), cookie);
             else
-#endif
                 [cookieStorage deleteCookie:cookie];
             break;
         }

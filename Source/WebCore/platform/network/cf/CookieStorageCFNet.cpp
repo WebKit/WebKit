@@ -28,8 +28,6 @@
 
 #include "CookieStorageCFNet.h"
 
-#if USE(CFNETWORK) || USE(CFURLSTORAGESESSIONS)
-
 #include "ResourceHandle.h"
 #include <wtf/MainThread.h>
 
@@ -46,8 +44,6 @@
 #include "PlatformStrategies.h"
 #endif
 
-#endif
-
 namespace WebCore {
 
 #if PLATFORM(WIN)
@@ -60,8 +56,6 @@ static RetainPtr<CFHTTPCookieStorageRef>& cookieStorageOverride()
 
 #endif
 
-#if USE(CFNETWORK) || USE(CFURLSTORAGESESSIONS)
-
 RetainPtr<CFHTTPCookieStorageRef> currentCFHTTPCookieStorage()
 {
 #if PLATFORM(WIN)
@@ -69,10 +63,8 @@ RetainPtr<CFHTTPCookieStorageRef> currentCFHTTPCookieStorage()
         return override;
 #endif
 
-#if USE(CFNETWORK) || USE(CFURLSTORAGESESSIONS)
     if (CFURLStorageSessionRef session = ResourceHandle::currentStorageSession())
         return RetainPtr<CFHTTPCookieStorageRef>(AdoptCF, wkCopyHTTPCookieStorage(session));
-#endif
 
 #if USE(CFNETWORK)
     return wkGetDefaultHTTPCookieStorage();
@@ -82,9 +74,7 @@ RetainPtr<CFHTTPCookieStorageRef> currentCFHTTPCookieStorage()
 #endif
 }
 
-#endif // USE(CFNETWORK) || USE(CFURLSTORAGESESSIONS)
-
-#if USE(CFNETWORK) && PLATFORM(WIN)
+#if PLATFORM(WIN)
 
 void overrideCookieStorage(CFHTTPCookieStorageRef cookieStorage)
 {
@@ -156,6 +146,6 @@ void stopObservingCookieChanges()
     CFHTTPCookieStorageUnscheduleFromRunLoop(cookieStorage.get(), runLoop, kCFRunLoopCommonModes);
 }
 
-#endif // USE(CFNETWORK) && PLATFORM(WIN)
+#endif // PLATFORM(WIN)
 
 } // namespace WebCore

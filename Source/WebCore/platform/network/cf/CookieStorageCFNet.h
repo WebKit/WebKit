@@ -26,8 +26,6 @@
 #ifndef CookieStorageCFNet_h
 #define CookieStorageCFNet_h
 
-#if USE(CFNETWORK) || USE(CFURLSTORAGESESSIONS)
-
 #include <wtf/RetainPtr.h>
 
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
@@ -42,7 +40,5 @@ void overrideCookieStorage(CFHTTPCookieStorageRef);
 #endif
 
 }
-
-#endif // USE(CFNETWORK) || USE(CFURLSTORAGESESSIONS)
 
 #endif // CookieStorageCFNet_h

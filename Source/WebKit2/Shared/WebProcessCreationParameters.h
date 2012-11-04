@@ -91,7 +91,7 @@ struct WebProcessCreationParameters {
 
     double defaultRequestTimeoutInterval;
 
-#if PLATFORM(MAC) || USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFNETWORK)
     String uiProcessBundleIdentifier;
 #endif
 
@@ -119,9 +119,9 @@ struct WebProcessCreationParameters {
 
     bool shouldPaintNativeControls;
 
-#if USE(CFURLSTORAGESESSIONS)
+#if USE(CFNETWORK)
     RetainPtr<CFDataRef> serializedDefaultStorageSession;
-#endif // USE(CFURLSTORAGESESSIONS)
+#endif
 #endif // PLATFORM(WIN)
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

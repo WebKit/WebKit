@@ -165,9 +165,7 @@ static CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef 
             RetainPtr<CFStringRef> newMethod = adoptCF(CFURLRequestCopyHTTPRequestMethod(cfRequest));
             if (CFStringCompareWithOptions(lastHTTPMethod.get(), newMethod.get(), CFRangeMake(0, CFStringGetLength(lastHTTPMethod.get())), kCFCompareCaseInsensitive)) {
                 RetainPtr<CFMutableURLRequestRef> mutableRequest(AdoptCF, CFURLRequestCreateMutableCopy(0, cfRequest));
-#if USE(CFURLSTORAGESESSIONS)
                 wkSetRequestStorageSession(ResourceHandle::currentStorageSession(), mutableRequest.get());
-#endif
                 CFURLRequestSetHTTPRequestMethod(mutableRequest.get(), lastHTTPMethod.get());
 
                 FormData* body = handle->firstRequest().httpBody();
@@ -397,9 +395,7 @@ ResourceHandle::~ResourceHandle()
 static CFURLRequestRef makeFinalRequest(const ResourceRequest& request, bool shouldContentSniff)
 {
     CFMutableURLRequestRef newRequest = CFURLRequestCreateMutableCopy(kCFAllocatorDefault, request.cfURLRequest());
-#if USE(CFURLSTORAGESESSIONS)
     wkSetRequestStorageSession(ResourceHandle::currentStorageSession(), newRequest);
-#endif
     
     if (!shouldContentSniff)
         wkSetCFURLRequestShouldContentSniff(newRequest, false);
@@ -570,9 +566,7 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
         }
     }
 
-#if USE(CFURLSTORAGESESSIONS)
      request.setStorageSession(ResourceHandle::currentStorageSession());
-#endif
 
     client()->willSendRequest(this, request, redirectResponse);
 }
@@ -944,8 +938,6 @@ void ResourceHandle::handleDataArray(CFArrayRef dataArray)
 }
 #endif
 
-#if USE(CFURLSTORAGESESSIONS)
-
 RetainPtr<CFURLStorageSessionRef> ResourceHandle::createPrivateBrowsingStorageSession(CFStringRef identifier)
 {
 #if PLATFORM(WIN)
@@ -1024,8 +1016,6 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 }
 
 #endif // PLATFORM(WIN)
-
-#endif // USE(CFURLSTORAGESESSIONS)
 
 } // namespace WebCore
 

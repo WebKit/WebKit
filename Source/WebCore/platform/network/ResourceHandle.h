@@ -48,7 +48,7 @@ typedef void* LPVOID;
 typedef LPVOID HINTERNET;
 #endif
 
-#if PLATFORM(MAC) || USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFNETWORK)
 #include <wtf/RetainPtr.h>
 #endif
 
@@ -68,9 +68,7 @@ typedef int CFHTTPCookieStorageAcceptPolicy;
 typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 #endif
 
-#if USE(CFURLSTORAGESESSIONS) && PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 1060
-typedef struct __CFURLStorageSession* CFURLStorageSessionRef;
-#elif USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFNETWORK)
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 #endif
 
@@ -198,7 +196,7 @@ public:
 
     void fireFailure(Timer<ResourceHandle>*);
 
-#if USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFNETWORK)
     static CFURLStorageSessionRef currentStorageSession();
     static void setDefaultStorageSession(CFURLStorageSessionRef);
     static CFURLStorageSessionRef defaultStorageSession();
@@ -206,7 +204,7 @@ public:
 
     static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
     static RetainPtr<CFURLStorageSessionRef> createPrivateBrowsingStorageSession(CFStringRef identifier);
-#endif // USE(CFURLSTORAGESESSIONS)
+#endif
 
     using RefCounted<ResourceHandle>::ref;
     using RefCounted<ResourceHandle>::deref;
@@ -247,7 +245,7 @@ private:
     void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff);
 #endif
 
-#if USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFNETWORK)
     static String privateBrowsingStorageSessionIdentifierDefaultBase();
     static CFURLStorageSessionRef privateBrowsingStorageSession();
 #endif

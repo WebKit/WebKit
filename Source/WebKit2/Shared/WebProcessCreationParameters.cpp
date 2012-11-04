@@ -27,7 +27,7 @@
 #include "WebProcessCreationParameters.h"
 
 #include "ArgumentCoders.h"
-#if USE(CFURLSTORAGESESSIONS) && PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CFNETWORK)
 #include "ArgumentCodersCF.h"
 #endif
 
@@ -83,7 +83,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) con
     encoder << textCheckerState;
     encoder << fullKeyboardAccessEnabled;
     encoder << defaultRequestTimeoutInterval;
-#if PLATFORM(MAC) || USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFNETWORK)
     encoder << uiProcessBundleIdentifier;
 #endif
 #if PLATFORM(MAC)
@@ -101,12 +101,12 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) con
     encoder << cfURLCacheDiskCapacity;
     encoder << cfURLCacheMemoryCapacity;
     encoder << initialHTTPCookieAcceptPolicy;
-#if USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFNETWORK)
     CFDataRef storageSession = serializedDefaultStorageSession.get();
     encoder << static_cast<bool>(storageSession);
     if (storageSession)
         CoreIPC::encode(encoder, storageSession);
-#endif // USE(CFURLSTORAGESESSIONS)
+#endif
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -178,7 +178,7 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.defaultRequestTimeoutInterval))
         return false;
-#if PLATFORM(MAC) || USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFNETWORK)
     if (!decoder->decode(parameters.uiProcessBundleIdentifier))
         return false;
 #endif
@@ -211,13 +211,13 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.initialHTTPCookieAcceptPolicy))
         return false;
-#if USE(CFURLSTORAGESESSIONS)
+#if PLATFORM(MAC) || USE(CFNETWORK)
     bool hasStorageSession = false;
     if (!decoder->decode(hasStorageSession))
         return false;
     if (hasStorageSession && !CoreIPC::decode(decoder, parameters.serializedDefaultStorageSession))
         return false;
-#endif // USE(CFURLSTORAGESESSIONS)
+#endif
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

@@ -68,10 +68,8 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (parameters.diskCacheDirectory.endsWith(UChar('\\')))
         parameters.diskCacheDirectory.remove(parameters.diskCacheDirectory.length() - 1);
 
-#if USE(CFURLSTORAGESESSIONS)
     parameters.uiProcessBundleIdentifier = String(reinterpret_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleIdentifierKey)));
     parameters.serializedDefaultStorageSession.adoptCF(wkCopySerializedDefaultStorageSession());
-#endif // USE(CFURLSTORAGESESSIONS)
 
     parameters.initialHTTPCookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
 

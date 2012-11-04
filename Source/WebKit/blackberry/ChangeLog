@@ -1,3 +1,13 @@
+2012-11-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Get rid of USE(CFURLSTORAGESESSIONS)
+        https://bugs.webkit.org/show_bug.cgi?id=101131
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/AboutDataUseFeatures.in: Not sure what this list is about, but
+        CFURLSTORAGESESSIONS probably doesn't need to stay here.
+
 2012-11-02  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Fix compile-time warning of a possible empty-body if statement

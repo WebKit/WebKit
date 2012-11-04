@@ -1,3 +1,49 @@
+2012-11-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Get rid of USE(CFURLSTORAGESESSIONS)
+        https://bugs.webkit.org/show_bug.cgi?id=101131
+
+        Reviewed by Sam Weinig.
+
+        This is always enabled on CFNetwork based platforms.
+
+        * WebCore.exp.in:
+        * page/Settings.cpp:
+        (WebCore::Settings::setPrivateBrowsingEnabled):
+        * platform/mac/CookieJar.mm:
+        (WebCore::cookies):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::setCookies):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        * platform/network/ResourceHandle.h:
+        (ResourceHandle):
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore):
+        (WebCore::currentCFHTTPCookieStorage):
+        * platform/network/cf/CookieStorageCFNet.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest):
+        (WebCore::makeFinalRequest):
+        (WebCore::ResourceHandle::willSendRequest):
+        (WebCore):
+        * platform/network/cf/ResourceRequest.h:
+        (ResourceRequest):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore):
+        * platform/network/mac/CookieStorageMac.mm:
+        (WebCore::setCookieStoragePrivateBrowsingEnabled):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::shouldRelaxThirdPartyCookiePolicy):
+        (WebCore::ResourceHandle::createNSURLConnection):
+        (WebCore::ResourceHandle::willSendRequest):
+        (WebCore):
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore):
+        (WebCore::ResourceRequest::setStorageSession):
+
 2012-11-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] setPlatformStrategies always asserts after r132744
