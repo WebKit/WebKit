@@ -1,3 +1,9 @@
+2012-11-04  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Add a now-failing test.  Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-04  Florin Malita  <fmalita@chromium.org>
 
         Color-profile property triggers assert
