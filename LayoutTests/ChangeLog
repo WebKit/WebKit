@@ -1,5 +1,14 @@
 2012-11-04  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][WK2] Unreviewed weekend gardening, skip failing tests, update expected files.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Updated after r133019.
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt: Updated after r133019.
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Updated after r133019.
+
+2012-11-04  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed weekend gardening, skip one more failing test.
 
         * platform/qt/TestExpectations:
