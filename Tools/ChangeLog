@@ -1,3 +1,26 @@
+2012-11-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133381.
+        http://trac.webkit.org/changeset/133381
+        https://bugs.webkit.org/show_bug.cgi?id=101161
+
+        It made webkit-patch useless (Requested by Ossy_weekend on
+        #webkit).
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller._create_scratch_directory):
+        (AutoInstaller._install):
+        (AutoInstaller.install):
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.__init__):
+        (AutoinstallImportHook._install_pylint):
+        (AutoinstallImportHook._install_coverage):
+        (AutoinstallImportHook._install_eliza):
+        (AutoinstallImportHook._install):
+        * Scripts/webkitpy/thirdparty/__init___unittest.py:
+        (ThirdpartyTest.test_import_hook.MockImportHook.__init__):
+        (ThirdpartyTest.test_import_hook):
+
 2012-11-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133403, r133404, and r133409.

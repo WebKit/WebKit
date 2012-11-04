@@ -154,7 +154,7 @@ class AutoInstaller(object):
         temp directory if it does not already exist.
 
         """
-        prefix = target_name.replace(os.sep, "_") + "_"
+        prefix = target_name + "_"
         try:
             scratch_dir = self._create_scratch_directory_inner(prefix)
         except OSError:
@@ -338,15 +338,10 @@ class AutoInstaller(object):
             else:
                 os.remove(target_path)
 
-        # shutil.move() command creates intermediate directories if they do not exist.
+        # The shutil.move() command creates intermediate directories if they
+        # do not exist, but we do not rely on this behavior since we
+        # need to create the __init__.py file anyway.
         shutil.move(source_path, target_path)
-
-        # ensure all the new directories are importable.
-        intermediate_dirs = os.path.dirname(os.path.relpath(target_path, self._target_dir))
-        parent_dirname = self._target_dir
-        for dirname in intermediate_dirs.split(os.sep):
-            parent_dirname = os.path.join(parent_dirname, dirname)
-            self._make_package(parent_dirname)
 
         self._record_url_downloaded(package_name, url)
 
@@ -383,8 +378,7 @@ class AutoInstaller(object):
         if not should_refresh and self._is_downloaded(target_name, url):
             return False
 
-        package_name = target_name.replace(os.sep, '.')
-        _log.info("Auto-installing package: %s" % package_name)
+        _log.info("Auto-installing package: %s" % target_name)
 
         # The scratch directory is where we will download and prepare
         # files specific to this install until they are ready to move
@@ -392,7 +386,7 @@ class AutoInstaller(object):
         scratch_dir = self._create_scratch_directory(target_name)
 
         try:
-            self._install(package_name=package_name,
+            self._install(package_name=target_name,
                           target_path=target_path,
                           scratch_dir=scratch_dir,
                           url=url,

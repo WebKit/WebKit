@@ -65,11 +65,6 @@ class AutoinstallImportHook(object):
     def __init__(self, filesystem=None):
         self._fs = filesystem or FileSystem()
 
-    def _ensure_autoinstalled_dir_is_in_sys_path(self):
-        # Some packages require that the are being put somewhere under a directory in sys.path.
-        if not _AUTOINSTALLED_DIR in sys.path:
-            sys.path.append(_AUTOINSTALLED_DIR)
-
     def find_module(self, fullname, path):
         # This method will run before each import. See http://www.python.org/dev/peps/pep-0302/
         if '.autoinstalled' not in fullname:
@@ -103,13 +98,10 @@ class AutoinstallImportHook(object):
                              "pep8-0.5.0/pep8.py")
 
     def _install_pylint(self):
-        self._ensure_autoinstalled_dir_is_in_sys_path()
         did_install_something = False
         if not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "pylint")):
-            installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
-            did_install_something = installer.install("http://pypi.python.org/packages/source/l/logilab-common/logilab-common-0.58.1.tar.gz#md5=77298ab2d8bb8b4af9219791e7cee8ce", url_subpath="logilab-common-0.58.1", target_name="logilab/common")
-            did_install_something |= installer.install("http://pypi.python.org/packages/source/l/logilab-astng/logilab-astng-0.24.1.tar.gz#md5=ddaf66e4d85714d9c47a46d4bed406de", url_subpath="logilab-astng-0.24.1", target_name="logilab/astng")
-            did_install_something |= installer.install('http://pypi.python.org/packages/source/p/pylint/pylint-0.25.1.tar.gz#md5=728bbc2b339bc3749af013709a7f87a5', url_subpath="pylint-0.25.1", target_name="pylint")
+            did_install_something = self._install('http://pypi.python.org/packages/source/p/pylint/pylint-0.25.1.tar.gz#md5=728bbc2b339bc3749af013709a7f87a5', 'pylint-0.25.1')
+            self._fs.move(self._fs.join(_AUTOINSTALLED_DIR, "pylint-0.25.1"), self._fs.join(_AUTOINSTALLED_DIR, "pylint"))
         return did_install_something
 
     # autoinstalled.buildbot is used by BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py
@@ -134,11 +126,18 @@ class AutoinstallImportHook(object):
         return did_install_something
 
     def _install_coverage(self):
-        self._ensure_autoinstalled_dir_is_in_sys_path()
-        return self._install(url="http://pypi.python.org/packages/source/c/coverage/coverage-3.5.1.tar.gz#md5=410d4c8155a4dab222f2bc51212d4a24", url_subpath="coverage-3.5.1/coverage")
+        installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
+        did_install_something = installer.install(url="http://pypi.python.org/packages/source/c/coverage/coverage-3.5.1.tar.gz#md5=410d4c8155a4dab222f2bc51212d4a24", url_subpath="coverage-3.5.1/coverage")
+
+        # Note that coverage needs to be under a directory already in sys.path for its
+        # internal imports to work correctly :(.
+        if not _AUTOINSTALLED_DIR in sys.path:
+            sys.path.append(_AUTOINSTALLED_DIR)
+        return did_install_something
 
     def _install_eliza(self):
-        return self._install(url="http://www.adambarth.com/webkit/eliza", target_name="eliza.py")
+        installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
+        return installer.install(url="http://www.adambarth.com/webkit/eliza", target_name="eliza.py")
 
     def _install_irc(self):
         # Since irclib and ircbot are two top-level packages, we need to import
@@ -163,9 +162,9 @@ class AutoinstallImportHook(object):
             self._fs.write_text_file(init_path, "")
         return did_install_something
 
-    def _install(self, url, url_subpath=None, target_name=None):
+    def _install(self, url, url_subpath):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
-        return installer.install(url=url, url_subpath=url_subpath, target_name=target_name)
+        return installer.install(url=url, url_subpath=url_subpath)
 
 
 _hook = AutoinstallImportHook()
