@@ -3279,9 +3279,6 @@ webkit.org/b/82297 [ Mac ] fast/events/scrollbar-double-click.html [ Failure Pas
 # this test appears to consistently fail during the main run but usually passes on a retry.
 webkit.org/b/82404 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
 
-webkit.org/b/82410 css2.1/20110323/abspos-containing-block-initial-004b.htm [ ImageOnlyFailure Pass ]
-webkit.org/b/82410 css2.1/20110323/abspos-containing-block-initial-004d.htm [ ImageOnlyFailure Pass ]
-
 webkit.org/b/82413 [ Android Linux ] fast/filesystem/workers/async-operations.html [ Pass Timeout ]
 webkit.org/b/82413 [ Mac Debug ] fast/filesystem/workers/async-operations.html [ Pass Timeout ]
 
