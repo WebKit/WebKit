@@ -1,3 +1,18 @@
+2012-11-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] udis86_itab.c is always regenerated
+        https://bugs.webkit.org/show_bug.cgi?id=100756
+
+        Reviewed by Simon Hausmann.
+
+        * DerivedSources.pri: Generate sources to the generated directory.
+        * disassembler/udis86/differences.txt:
+        * disassembler/udis86/itab.py: Add --outputDir option.
+        (UdItabGenerator.__init__):
+        (genItabH):
+        (genItabC):
+        (main):
+
 2012-11-02  Filip Pizlo  <fpizlo@apple.com>
 
         LLInt 32-bit put_by_val ArrayStorage case should use the right register (t3, not t2) for the index in the publicLength updating path

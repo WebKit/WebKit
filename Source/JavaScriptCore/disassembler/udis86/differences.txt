@@ -20,3 +20,5 @@ here:
 - Made the code in udis86_syn.h use vsnprintf() instead of vsprintf().
 
 - Fixed udis86_syn-att.c's jump destination printing to work correctly in 64-bit mode.
+
+- Add --outputDir option to itab.py.

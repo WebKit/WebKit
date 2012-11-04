@@ -118,7 +118,7 @@ linux-*:if(isEqual(QT_ARCH, "i386")|isEqual(QT_ARCH, "x86_64")) {
     disassembler.input = DISASSEMBLER_FILES
     disassembler.script = $$PWD/disassembler/udis86/itab.py
     disassembler.depends = $$DISASSEMBLER_DEPENDENCY
-    disassembler.commands = python $$disassembler.script ${QMAKE_FILE_NAME}
+    disassembler.commands = python $$disassembler.script ${QMAKE_FILE_NAME} --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
     disassembler.CONFIG += no_link
     GENERATORS += disassembler
 }
