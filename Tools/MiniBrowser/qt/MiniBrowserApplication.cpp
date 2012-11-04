@@ -29,7 +29,7 @@
 #include "MiniBrowserApplication.h"
 
 #include "BrowserWindow.h"
-#include "QtTestSupport.h"
+#include "QtInitializeTestFonts.h"
 #include "private/qquickwebview_p.h"
 #include "utils.h"
 #include <QRegExp>
@@ -335,7 +335,7 @@ void MiniBrowserApplication::handleUserOptions()
     }
 
     if (takeOptionFlag(&args, QStringLiteral("--use-test-fonts")))
-        WebKit::QtTestSupport::initializeTestFonts();
+        WebKit::initializeTestFonts();
 
     if (args.contains("-r")) {
         QString listFile = takeOptionValue(&args, "-r");

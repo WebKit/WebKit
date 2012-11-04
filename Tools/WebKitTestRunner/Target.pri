@@ -8,6 +8,7 @@ TEMPLATE = app
 TARGET = WebKitTestRunner
 
 HEADERS += \
+    $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.h \
     EventSenderProxy.h \
     GeolocationProviderMock.h \
     PlatformWebView.h \
@@ -18,6 +19,7 @@ HEADERS += \
     WorkQueueManager.h
 
 SOURCES += \
+    $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.cpp \
     qt/main.cpp \
     qt/EventSenderProxyQt.cpp \
     qt/PlatformWebViewQt.cpp \
@@ -37,9 +39,10 @@ WEBKIT += wtf javascriptcore webkit2
 
 DEFINES += USE_SYSTEM_MALLOC=1
 
+have?(FONTCONFIG): PKGCONFIG += fontconfig
+
 INCLUDEPATH += \
     $$PWD \
-    $${ROOT_WEBKIT_DIR}/Source/WebCore/platform/qt \
     $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt
 
 PREFIX_HEADER = WebKitTestRunnerPrefix.h
