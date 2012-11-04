@@ -1,3 +1,18 @@
+2012-11-04  Florin Malita  <fmalita@chromium.org>
+
+        Color-profile property triggers assert
+        https://bugs.webkit.org/show_bug.cgi?id=101080
+
+        Reviewed by Dirk Schulze.
+
+        CSSPropertyColorProfile is not handled in StyleResolver::applySVGProperty(), triggering the
+        unimplemented property assert. Adding a stub entry to avoid that.
+
+        Test: svg/css/color-profile-crash.html
+
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::StyleResolver::applySVGProperty):
+
 2012-11-04  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         Unable to copy text on disabled input fields on long press gesture

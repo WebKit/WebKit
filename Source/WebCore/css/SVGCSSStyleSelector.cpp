@@ -185,6 +185,11 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
                 svgstyle->setColorInterpolationFilters(*primitiveValue);
             break;
         }
+        case CSSPropertyColorProfile:
+        {
+            // Not implemented.
+            break;
+        }
         case CSSPropertyColorRendering:
         {
             HANDLE_INHERIT_AND_INITIAL(colorRendering, ColorRendering)
