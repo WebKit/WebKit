@@ -29,8 +29,7 @@
 
 #include "DumpRenderTreeQt.h"
 
-#include "QtInitializeTestFonts.h"
-
+#include "QtTestSupport.h"
 #include <qapplication.h>
 #include <qdebug.h>
 #include <qdir.h>
@@ -115,7 +114,7 @@ int main(int argc, char* argv[])
     if (suppressQtDebugOutput)
         qInstallMessageHandler(messageHandler);
 
-    WebKit::initializeTestFonts();
+    WebKit::QtTestSupport::initializeTestFonts();
 
     QApplication::setStyle(new QWindowsStyle);
     QApplication::setDesktopSettingsAware(false);

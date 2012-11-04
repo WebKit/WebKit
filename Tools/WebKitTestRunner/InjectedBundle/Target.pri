@@ -28,7 +28,6 @@ SOURCES += \
     Bindings/JSWrapper.cpp \
     qt/ActivateFontsQt.cpp \
     qt/InjectedBundleQt.cpp \
-    qt/QtInitializeTestFonts.cpp \
     qt/TestRunnerQt.cpp
 
 # Adds the generated sources to SOURCES
@@ -46,7 +45,6 @@ HEADERS += \
     InjectedBundlePage.h \
     TestRunner.h \
     TextInputController.h \
-    qt/QtInitializeTestFonts.h
 
 DESTDIR = $${ROOT_BUILD_DIR}/lib
 
@@ -62,6 +60,7 @@ INCLUDEPATH += \
     $$PWD \
     $$PWD/.. \
     $$PWD/Bindings \
+    $${ROOT_WEBKIT_DIR}/Source/WebCore/platform/qt \
     $${ROOT_WEBKIT_DIR}/Source/WebCore/testing/js \
     $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport
 
