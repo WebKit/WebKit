@@ -33,5 +33,31 @@ BaseChooserOnlyDateAndTimeInputType::~BaseChooserOnlyDateAndTimeInputType()
 {
 }
 
+void BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent(Event*)
+{
+    // FIXME: start date-time chooser. webkit.org/b/101038.
+}
+
+void BaseChooserOnlyDateAndTimeInputType::handleKeydownEvent(KeyboardEvent* event)
+{
+    BaseClickableWithKeyInputType::handleKeydownEvent(element(), event);
+}
+
+void BaseChooserOnlyDateAndTimeInputType::handleKeypressEvent(KeyboardEvent* event)
+{
+    BaseClickableWithKeyInputType::handleKeypressEvent(element(), event);
+}
+
+void BaseChooserOnlyDateAndTimeInputType::handleKeyupEvent(KeyboardEvent* event)
+{
+    BaseClickableWithKeyInputType::handleKeyupEvent(*this, event);
+}
+
+void BaseChooserOnlyDateAndTimeInputType::accessKeyAction(bool sendMouseEvents)
+{
+    BaseDateAndTimeInputType::accessKeyAction(sendMouseEvents);
+    BaseClickableWithKeyInputType::accessKeyAction(element(), sendMouseEvents);
+}
+
 }
 #endif

@@ -306,10 +306,11 @@ public:
     virtual unsigned height() const;
     virtual unsigned width() const;
 
+    void dispatchSimulatedClickIfActive(KeyboardEvent*) const;
+
 protected:
     InputType(HTMLInputElement* element) : m_element(element) { }
     HTMLInputElement* element() const { return m_element; }
-    void dispatchSimulatedClickIfActive(KeyboardEvent*) const;
     Chrome* chrome() const;
     Decimal parseToNumberOrNaN(const String&) const;
 

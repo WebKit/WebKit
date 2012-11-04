@@ -39,21 +39,21 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-void BaseClickableWithKeyInputType::handleKeydownEvent(KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeydownEvent(HTMLInputElement* element, KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     if (key == "U+0020") {
-        element()->setActive(true, true);
+        element->setActive(true, true);
         // No setDefaultHandled(), because IE dispatches a keypress in this case
         // and the caller will only dispatch a keypress if we don't call setDefaultHandled().
     }
 }
 
-void BaseClickableWithKeyInputType::handleKeypressEvent(KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeypressEvent(HTMLInputElement* element, KeyboardEvent* event)
 {
     int charCode = event->charCode();
     if (charCode == '\r') {
-        element()->dispatchSimulatedClick(event);
+        element->dispatchSimulatedClick(event);
         event->setDefaultHandled();
         return;
     }
@@ -63,23 +63,42 @@ void BaseClickableWithKeyInputType::handleKeypressEvent(KeyboardEvent* event)
     }
 }
 
-void BaseClickableWithKeyInputType::handleKeyupEvent(KeyboardEvent* event)
+void BaseClickableWithKeyInputType::handleKeyupEvent(InputType& inputType, KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     if (key != "U+0020")
         return;
     // Simulate mouse click for spacebar for button types.
-    dispatchSimulatedClickIfActive(event);
+    inputType.dispatchSimulatedClickIfActive(event);
 }
 
 // FIXME: Could share this with BaseCheckableInputType and RangeInputType if we had a common base class.
+void BaseClickableWithKeyInputType::accessKeyAction(HTMLInputElement* element, bool sendMouseEvents)
+{
+    // Send mouse button events if the caller specified sendMouseEvents.
+    // FIXME: The comment above is no good. It says what we do, but not why.
+    element->dispatchSimulatedClick(0, sendMouseEvents);
+}
+
+void BaseClickableWithKeyInputType::handleKeydownEvent(KeyboardEvent* event)
+{
+    handleKeydownEvent(element(), event);
+}
+
+void BaseClickableWithKeyInputType::handleKeypressEvent(KeyboardEvent* event)
+{
+    handleKeypressEvent(element(), event);
+}
+
+void BaseClickableWithKeyInputType::handleKeyupEvent(KeyboardEvent* event)
+{
+    handleKeyupEvent(*this, event);
+}
+
 void BaseClickableWithKeyInputType::accessKeyAction(bool sendMouseEvents)
 {
     InputType::accessKeyAction(sendMouseEvents);
-
-    // Send mouse button events if the caller specified sendMouseEvents.
-    // FIXME: The comment above is no good. It says what we do, but not why.
-    element()->dispatchSimulatedClick(0, sendMouseEvents);
+    accessKeyAction(element(), sendMouseEvents);
 }
 
 } // namespace WebCore

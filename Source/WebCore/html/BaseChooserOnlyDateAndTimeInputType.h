@@ -27,6 +27,7 @@
 #define BaseChooserOnlyDateAndTimeInputType_h
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+#include "BaseClickableWithKeyInputType.h"
 #include "BaseDateAndTimeInputType.h"
 
 namespace WebCore {
@@ -37,7 +38,13 @@ protected:
     BaseChooserOnlyDateAndTimeInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
     virtual ~BaseChooserOnlyDateAndTimeInputType();
 
-    // FIXME: Composite BaseClickableWithKeyInputType behavior. webkit.org/b/101039.
+private:
+    // InputType functions:
+    virtual void handleDOMActivateEvent(Event*) OVERRIDE;
+    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
+    virtual void handleKeypressEvent(KeyboardEvent*) OVERRIDE;
+    virtual void handleKeyupEvent(KeyboardEvent*) OVERRIDE;
+    virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
 };
 
 }
