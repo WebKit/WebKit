@@ -39,6 +39,7 @@
 #include "WebEvent.h"
 #include "WebFindOptions.h"
 #include "WebNumber.h"
+#include "WebSecurityOrigin.h"
 #include "WebString.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"
@@ -48,6 +49,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutMilestones.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
 #include <wtf/TypeTraits.h>
@@ -195,6 +197,13 @@ inline ProxyingRefPtr<WebURLRequest> toAPI(const WebCore::ResourceRequest& reque
 inline ProxyingRefPtr<WebURLResponse> toAPI(const WebCore::ResourceResponse& response)
 {
     return ProxyingRefPtr<WebURLResponse>(WebURLResponse::create(response));
+}
+
+inline WKSecurityOriginRef toCopiedAPI(WebCore::SecurityOrigin* origin)
+{
+    if (!origin)
+        return 0;
+    return toAPI(WebSecurityOrigin::create(origin).leakRef());
 }
 
 /* Geometry conversions */

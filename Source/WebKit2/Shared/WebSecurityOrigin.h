@@ -38,26 +38,24 @@ public:
 
     static PassRefPtr<WebSecurityOrigin> createFromString(const String& string)
     {
-        RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::createFromString(string);
-        if (!securityOrigin)
-            return 0;
-        return adoptRef(new WebSecurityOrigin(securityOrigin.release()));
+        return create(WebCore::SecurityOrigin::createFromString(string));
     }
 
     static PassRefPtr<WebSecurityOrigin> createFromDatabaseIdentifier(const String& identifier)
     {
-        RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::createFromDatabaseIdentifier(identifier);
-        if (!securityOrigin)
-            return 0;
-        return adoptRef(new WebSecurityOrigin(securityOrigin.release()));
+        return create(WebCore::SecurityOrigin::createFromDatabaseIdentifier(identifier));
     }
 
     static PassRefPtr<WebSecurityOrigin> create(const String& protocol, const String& host, int port)
     {
-        RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::create(protocol, host, port);
+        return create(WebCore::SecurityOrigin::create(protocol, host, port));
+    }
+
+    static PassRefPtr<WebSecurityOrigin> create(PassRefPtr<WebCore::SecurityOrigin> securityOrigin)
+    {
         if (!securityOrigin)
             return 0;
-        return adoptRef(new WebSecurityOrigin(securityOrigin.release()));
+        return adoptRef(new WebSecurityOrigin(securityOrigin));
     }
 
     const String protocol() const { return m_securityOrigin->protocol(); }

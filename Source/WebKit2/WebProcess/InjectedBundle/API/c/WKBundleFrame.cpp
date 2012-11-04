@@ -32,6 +32,7 @@
 #include "WKBundleAPICast.h"
 #include "WKData.h"
 #include "WebFrame.h"
+#include "WebSecurityOrigin.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 
@@ -285,4 +286,13 @@ bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frameRef)
 WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frameRef, WKPoint point)
 {
     return toAPI(toImpl(frameRef)->hitTest(toIntPoint(point)).leakRef());
+}
+
+WKSecurityOriginRef WKBundleFrameCopySecurityOrigin(WKBundleFrameRef frameRef)
+{
+    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    if (!coreFrame)
+        return 0;
+
+    return toCopiedAPI(coreFrame->document()->securityOrigin());
 }

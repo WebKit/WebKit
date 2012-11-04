@@ -1,3 +1,35 @@
+2012-11-04  Jon Lee  <jonlee@apple.com>
+
+        Expose security origin to BundleFrame
+        https://bugs.webkit.org/show_bug.cgi?id=101139
+        <rdar://problem/12629900>
+
+        Reviewed by Darin Adler.
+
+        Create a WebSecurityOrigin instance, sharing the security origin instance
+        that comes directly from the frame's document. We can do this because the
+        WK2 API only retrieves information about the origin, and because those
+        results are returned as copies. The security origin holds no references
+        that could lead to a retain cycle, avoiding the possibility that the
+        injected bundle accidentally keeps something alive.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toCopiedAPI): Create copied API for WebCore::SecurityOrigin
+        instances.
+        * Shared/WebSecurityOrigin.h:
+        (WebKit::WebSecurityOrigin::create): Add a new create() function that
+        takes a PassRefPtr to a WebCore SecurityOrigin instance.
+        (WebKit::WebSecurityOrigin::createFromString): Refactor to use new create()
+        function.
+        (WebKit::WebSecurityOrigin::createFromDatabaseIdentifier): Refactor to
+        use new create() function.
+        (WebKit::WebSecurityOrigin::create): Refactor to use new create()
+        function.
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameCopySecurityOrigin): Add function to retrieve the security
+        origin as a WK2 API object.
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+
 2012-11-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL] Unify transforms in WK2
