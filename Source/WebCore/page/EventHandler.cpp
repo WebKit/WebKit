@@ -2622,7 +2622,7 @@ bool EventHandler::handleGestureForTextSelectionOrContextMenu(const PlatformGest
     IntPoint hitTestPoint = m_frame->view()->windowToContents(gestureEvent.position());
     HitTestResult result = hitTestResultAtPoint(hitTestPoint, true);
     Node* innerNode = result.targetNode();
-    if (!result.isLiveLink() && innerNode && (innerNode->isContentEditable() || innerNode->isTextNode())) {
+    if (!result.isLiveLink() && innerNode && canMouseDownStartSelect(innerNode)) {
         selectClosestWordFromHitTestResult(result, DontAppendTrailingWhitespace);
         if (m_frame->selection()->isRange())
             return true;
@@ -2739,7 +2739,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
         // FIXME: In the editable case, word selection sometimes selects content that isn't underneath the mouse.
         // If the selection is non-editable, we do word selection to make it easier to use the contextual menu items
         // available for text selections.  But only if we're above text.
-        && (m_frame->selection()->isContentEditable() || (mev.targetNode() && mev.targetNode()->isTextNode()))) {
+        && canMouseDownStartSelect(mev.targetNode())) {
         m_mouseDownMayStartSelect = true; // context menu events are always allowed to perform a selection
         selectClosestWordOrLinkFromMouseEvent(mev);
     }

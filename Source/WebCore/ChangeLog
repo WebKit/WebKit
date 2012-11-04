@@ -1,3 +1,18 @@
+2012-11-04  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        Unable to copy text on disabled input fields on long press gesture
+        https://bugs.webkit.org/show_bug.cgi?id=99698
+
+        Reviewed by Ryosuke Niwa.
+
+        Text from disabled input/text should be allowed to select. Replaced isContentEditable()
+        with canStartSelection()
+
+        Test: fast/events/touch/gesture/disabled-input-text-selection.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleGestureLongPress):
+
 2012-11-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133403, r133404, and r133409.

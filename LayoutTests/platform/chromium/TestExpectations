@@ -3124,6 +3124,8 @@ webkit.org/b/81145 [ Lion ] fast/writing-mode/broken-ideographic-font.html [ Cra
 webkit.org/b/81145 [ Lion ] fast/writing-mode/japanese-rl-text-with-broken-font.html [ Crash ]
 
 webkit.org/b/81537 fast/events/touch/gesture/pad-gesture-fling.html [ Failure Pass ]
+# Skip test as its Android Specific and gestureLongPress does not select text in chromium port
+webkit.org/b/99698 fast/events/touch/gesture/disabled-input-text-selection.html [ Skip ]
 
 webkit.org/b/81638 [ Mac Debug ] editing/selection/iframe.html [ ImageOnlyFailure Pass ]
 

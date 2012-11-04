@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<input id="input" type="text" disabled value="Disabled" size="60"><br>
+<div id="console"></div>
+<script>
+description("This test checks that if the text from disabled input/text area is selected on long press gesture.");
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var input = document.getElementById("input");
+
+var x = input.offsetParent.offsetLeft + input.offsetLeft + 4;
+var y = input.offsetParent.offsetTop + input.offsetTop + input.offsetHeight / 2;
+
+if (window.eventSender) {
+
+ if (eventSender.gestureLongPress)
+    eventSender.gestureLongPress(x, y);
+ else
+    debug("gestureLongPress not implemented by this platform");
+ shouldBe('window.getSelection().toString()', "'Disabled'");
+}
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
