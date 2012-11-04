@@ -1,3 +1,31 @@
+2012-11-02  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL] Unify transforms in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=101051
+
+        Reviewed by Simon Hausmann.
+
+        Move our transforms into EwkViewImpl and use them
+        everywhere needed.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::smartData):
+        (EwkViewImpl::transformFromScene):
+        (EwkViewImpl::transformToScene):
+        (EwkViewImpl::transformToScreen):
+        (EwkViewImpl::displayTimerFired):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebCore):
+        (EwkViewImpl):
+        (EwkViewImpl::pageViewportControllerClient):
+        (EwkViewImpl::pageViewportController):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_mouse_wheel):
+        (_ewk_view_smart_mouse_down):
+        (_ewk_view_smart_mouse_up):
+        (_ewk_view_smart_mouse_move):
+        (ewk_view_feed_touch_event):
+
 2012-11-03  Alexey Proskuryakov  <ap@apple.com>
 
         Get rid of USE(CFURLSTORAGESESSIONS)

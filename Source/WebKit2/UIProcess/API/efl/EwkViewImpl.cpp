@@ -51,6 +51,7 @@
 #include "ewk_view.h"
 #include "ewk_view_private.h"
 #include <Ecore_Evas.h>
+#include <Ecore_X.h>
 #include <Edje.h>
 #include <WebCore/Cursor.h>
 
@@ -169,7 +170,7 @@ EwkViewImpl::~EwkViewImpl()
     EwkViewImpl::removeFromPageViewMap(this);
 }
 
-Ewk_View_Smart_Data* EwkViewImpl::smartData()
+Ewk_View_Smart_Data* EwkViewImpl::smartData() const
 {
     return static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(m_view));
 }
@@ -239,6 +240,55 @@ void EwkViewImpl::setCursor(const Cursor& cursor)
     ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release().leakRef(), EVAS_LAYER_MAX, hotspotX, hotspotY);
 }
 
+AffineTransform EwkViewImpl::transformFromScene() const
+{
+    AffineTransform transform;
+
+#if USE(TILED_BACKING_STORE)
+    IntPoint scrollPos = pageViewportControllerClient()->scrollPosition();
+    transform.translate(scrollPos.x(), scrollPos.y());
+    transform.scale(1 / pageViewportControllerClient()->scaleFactor());
+#endif
+
+    Ewk_View_Smart_Data* sd = smartData();
+    transform.translate(-sd->view.x, -sd->view.y);
+
+    return transform;
+}
+
+AffineTransform EwkViewImpl::transformToScene() const
+{
+    return transformFromScene().inverse();
+}
+
+AffineTransform EwkViewImpl::transformToScreen() const
+{
+    AffineTransform transform;
+
+    int windowGlobalX = 0;
+    int windowGlobalY = 0;
+
+    Ewk_View_Smart_Data* sd = smartData();
+
+#ifdef HAVE_ECORE_X
+    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
+    Ecore_X_Window window = ecore_evas_software_x11_window_get(ecoreEvas); // Returns 0 if none.
+
+    int x, y; // x, y are relative to parent (in a reparenting window manager).
+    while (window) {
+        ecore_x_window_geometry_get(window, &x, &y, 0, 0);
+        windowGlobalX += x;
+        windowGlobalY += y;
+        window = ecore_x_window_parent_get(window);
+    }
+#endif
+
+    transform.translate(-sd->view.x, -sd->view.y);
+    transform.translate(windowGlobalX, windowGlobalY);
+
+    return transform;
+}
+
 void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
 {
 #if USE(COORDINATED_GRAPHICS)
@@ -249,19 +299,11 @@ void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
     // We are supposed to clip to the actual viewport, nothing less.
     IntRect viewport(sd->view.x, sd->view.y, sd->view.w, sd->view.h);
 
-    IntPoint scrollPosition = m_pageViewportControllerClient->scrollPosition();
-    float scaleFactor = m_pageViewportControllerClient->scaleFactor();
-
-    WebCore::TransformationMatrix matrix;
-    matrix.translate(viewport.x(), viewport.y());
-    matrix.scale(scaleFactor);
-    matrix.translate(-scrollPosition.x(), -scrollPosition.y());
-
     LayerTreeRenderer* renderer = page()->drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer();
     renderer->setActive(true);
     renderer->syncRemoteContent();
 
-    renderer->paintToCurrentGLContext(matrix, /* opacity */ 1, viewport);
+    renderer->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
 
     evas_object_image_data_update_add(sd->image, viewport.x(), viewport.y(), viewport.width(), viewport.height());
 #endif

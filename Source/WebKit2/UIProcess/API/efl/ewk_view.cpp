@@ -50,7 +50,6 @@
 #include "ewk_settings_private.h"
 #include "ewk_view_private.h"
 #include <Ecore_Evas.h>
-#include <Ecore_X.h>
 #include <WebKit2/WKPageGroup.h>
 #include <wtf/text/CString.h>
 
@@ -169,53 +168,11 @@ static Eina_Bool _ewk_view_smart_focus_out(Ewk_View_Smart_Data* smartData)
     return true;
 }
 
-static AffineTransform toDeviceScreenTransform(Ewk_View_Smart_Data* smartData)
-{
-    AffineTransform transform;
-    EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, transform);
-
-    int windowGlobalX = 0;
-    int windowGlobalY = 0;
-
-#ifdef HAVE_ECORE_X
-    Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(smartData->base.evas);
-    Ecore_X_Window window = ecore_evas_software_x11_window_get(ecoreEvas); // Returns 0 if none.
-
-    int x, y; // x, y are relative to parent (in a reparenting window manager).
-    while (window) {
-        ecore_x_window_geometry_get(window, &x, &y, 0, 0);
-        windowGlobalX += x;
-        windowGlobalY += y;
-        window = ecore_x_window_parent_get(window);
-    }
-#endif
-
-    transform.translate(-smartData->view.x, -smartData->view.y);
-    transform.translate(windowGlobalX, windowGlobalY);
-
-    return transform;
-}
-
-static AffineTransform toWebContentTransform(Ewk_View_Smart_Data* smartData)
-{
-    AffineTransform transform;
-    EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, transform);
-
-#if USE(TILED_BACKING_STORE)
-    IntPoint scrollPos = impl->pageViewportControllerClient()->scrollPosition();
-    transform.translate(scrollPos.x(), scrollPos.y());
-    transform.scale(1 / impl->pageViewportControllerClient()->scaleFactor());
-#endif
-    transform.translate(-smartData->view.x, -smartData->view.y);
-
-    return transform;
-}
-
 static Eina_Bool _ewk_view_smart_mouse_wheel(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Wheel* wheelEvent)
 {
     EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, false);
 
-    impl->page()->handleWheelEvent(NativeWebWheelEvent(wheelEvent, toWebContentTransform(smartData), toDeviceScreenTransform(smartData)));
+    impl->page()->handleWheelEvent(NativeWebWheelEvent(wheelEvent, impl->transformFromScene(), impl->transformToScreen()));
     return true;
 }
 
@@ -223,7 +180,7 @@ static Eina_Bool _ewk_view_smart_mouse_down(Ewk_View_Smart_Data* smartData, cons
 {
     EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, false);
 
-    impl->page()->handleMouseEvent(NativeWebMouseEvent(downEvent, toWebContentTransform(smartData), toDeviceScreenTransform(smartData)));
+    impl->page()->handleMouseEvent(NativeWebMouseEvent(downEvent, impl->transformFromScene(), impl->transformToScreen()));
     return true;
 }
 
@@ -231,7 +188,7 @@ static Eina_Bool _ewk_view_smart_mouse_up(Ewk_View_Smart_Data* smartData, const 
 {
     EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, false);
 
-    impl->page()->handleMouseEvent(NativeWebMouseEvent(upEvent, toWebContentTransform(smartData), toDeviceScreenTransform(smartData)));
+    impl->page()->handleMouseEvent(NativeWebMouseEvent(upEvent, impl->transformFromScene(), impl->transformToScreen()));
 
     InputMethodContextEfl* inputMethodContext = impl->inputMethodContext();
     if (inputMethodContext)
@@ -244,7 +201,7 @@ static Eina_Bool _ewk_view_smart_mouse_move(Ewk_View_Smart_Data* smartData, cons
 {
     EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, false);
 
-    impl->page()->handleMouseEvent(NativeWebMouseEvent(moveEvent, toWebContentTransform(smartData), toDeviceScreenTransform(smartData)));
+    impl->page()->handleMouseEvent(NativeWebMouseEvent(moveEvent, impl->transformFromScene(), impl->transformToScreen()));
     return true;
 }
 
@@ -865,7 +822,7 @@ Eina_Bool ewk_view_feed_touch_event(Evas_Object* ewkView, Ewk_Touch_Event_Type t
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_IMPL_GET_BY_SD_OR_RETURN(smartData, impl, false);
 
-    impl->page()->handleTouchEvent(NativeWebTouchEvent(type, points, modifiers, toWebContentTransform(smartData), toDeviceScreenTransform(smartData), ecore_time_get()));
+    impl->page()->handleTouchEvent(NativeWebTouchEvent(type, points, modifiers, impl->transformFromScene(), impl->transformToScreen(), ecore_time_get()));
 
     return true;
 #else

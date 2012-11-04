@@ -62,6 +62,7 @@ class WebPopupMenuProxyEfl;
 }
 
 namespace WebCore {
+class AffineTransform;
 class Color;
 class Cursor;
 class IntSize;
@@ -106,6 +107,10 @@ public:
     WebCore::IntSize size() const;
     bool isFocused() const;
     bool isVisible() const;
+
+    WebCore::AffineTransform transformToScene() const;
+    WebCore::AffineTransform transformFromScene() const;
+    WebCore::AffineTransform transformToScreen() const;
 
     const char* url() const { return m_url; }
     const char* faviconURL() const { return m_faviconURL; }
@@ -174,8 +179,8 @@ public:
     unsigned long long informDatabaseQuotaReached(const String& databaseName, const String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);
 
 #if USE(TILED_BACKING_STORE)
-    WebKit::PageViewportControllerClientEfl* pageViewportControllerClient() { return m_pageViewportControllerClient.get(); }
-    WebKit::PageViewportController* pageViewportController() { return m_pageViewportController.get(); }
+    WebKit::PageViewportControllerClientEfl* pageViewportControllerClient() const { return m_pageViewportControllerClient.get(); }
+    WebKit::PageViewportController* pageViewportController() const { return m_pageViewportController.get(); }
 #endif
 #if USE(ACCELERATED_COMPOSITING)
     Evas_GL* evasGL() { return m_evasGL.get(); }
@@ -188,7 +193,7 @@ public:
     void informURLChange();
 
 private:
-    inline Ewk_View_Smart_Data* smartData();
+    inline Ewk_View_Smart_Data* smartData() const;
     void displayTimerFired(WebCore::Timer<EwkViewImpl>*);
 
     void informIconChange();
