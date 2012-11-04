@@ -319,8 +319,8 @@ bool AccessibilityMediaTimeDisplay::accessibilityIsIgnored() const
 
 String AccessibilityMediaTimeDisplay::accessibilityDescription() const
 {
-    DEFINE_STATIC_LOCAL(const String, currentTimeDisplay, ("CurrentTimeDisplay"));
-    DEFINE_STATIC_LOCAL(const String, timeRemainingDisplay, ("TimeRemainingDisplay"));
+    DEFINE_STATIC_LOCAL(const String, currentTimeDisplay, (ASCIILiteral("CurrentTimeDisplay")));
+    DEFINE_STATIC_LOCAL(const String, timeRemainingDisplay, (ASCIILiteral("TimeRemainingDisplay")));
 
     if (controlType() == MediaCurrentTimeDisplay)
         return localizedMediaControlElementString(currentTimeDisplay);
