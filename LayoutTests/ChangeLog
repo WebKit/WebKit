@@ -1,5 +1,11 @@
 2012-11-03  Stephen White  <senorblanco@chromium.org>
 
+        [chromium] Remove some now-passing tests.  Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-03  Stephen White  <senorblanco@chromium.org>
+
         [chromium] New baselines for no-longer-flaky tests.  Unreviewed.
 
         * platform/chromium-linux/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png:
