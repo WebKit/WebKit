@@ -1,0 +1,12 @@
+
+PASS Rule with no attributes 
+PASS Shorthands with double value 
+PASS Shorthands with single value 
+PASS Shorthands should override properties if defined later 
+PASS All valid properties with valid intial values 
+PASS All valid properties with valid values 
+PASS All valid properties with invalid intial values 
+PASS Negative numbers should be dropped on zoom attribute 
+PASS Viewport attributes inside selectors should be dropped 
+PASS Invalid attributes among valid should be dropped 
+

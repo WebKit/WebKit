@@ -1,3 +1,32 @@
+2012-11-05  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Validate CSS Device Adaptation properties and resolve shorthands
+        https://bugs.webkit.org/show_bug.cgi?id=95962
+
+        Reviewed by Alexis Menard.
+
+        Add the missing keywords and properties for the viewport at-rule.
+        Note that we have to mark that we are inside a viewport scope because
+        some properties are not validated as they would be inside a style
+        rule. As an example, the semantics of CSSPropertyWidth are completely
+        different: on a viewport rule, it stands for a shorthand for the
+        minimum and maximum width.
+
+        Test: css3/device-adapt/viewport-properties-validation.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore):
+        (WebCore::CSSParser::parseViewportProperty):
+        (WebCore::CSSParser::parseViewportShorthand):
+        * css/CSSParser.h:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+
 2012-11-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133286, r133385, and r133394.

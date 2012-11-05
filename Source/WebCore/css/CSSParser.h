@@ -524,6 +524,9 @@ private:
     bool m_allowNamespaceDeclarations;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
+    bool parseViewportProperty(CSSPropertyID propId, bool important);
+    bool parseViewportShorthand(CSSPropertyID propId, CSSPropertyID first, CSSPropertyID second, bool important);
+
     bool inViewport() const { return m_inViewport; }
     bool m_inViewport;
 #endif

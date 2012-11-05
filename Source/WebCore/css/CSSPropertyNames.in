@@ -402,6 +402,12 @@ z-index
 -webkit-wrap-through
 -webkit-wrap
 #endif
+#if defined(ENABLE_CSS_DEVICE_ADAPTATION) && ENABLE_CSS_DEVICE_ADAPTATION
+max-zoom
+min-zoom
+orientation
+user-zoom
+#endif
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
 -webkit-tap-highlight-color
 #endif

@@ -681,6 +681,12 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
 #if ENABLE(DRAGGABLE_REGION)
     case CSSPropertyWebkitAppRegion:
 #endif
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    case CSSPropertyMaxZoom:
+    case CSSPropertyMinZoom:
+    case CSSPropertyOrientation:
+    case CSSPropertyUserZoom:
+#endif
         return false;
     case CSSPropertyInvalid:
         ASSERT_NOT_REACHED();

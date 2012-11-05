@@ -2649,6 +2649,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
 #endif
             break;
 
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+        case CSSPropertyMaxZoom:
+        case CSSPropertyMinZoom:
+        case CSSPropertyOrientation:
+        case CSSPropertyUserZoom:
+            break;
+#endif
+
 #if ENABLE(SVG)
         case CSSPropertyClipPath:
         case CSSPropertyClipRule:

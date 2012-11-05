@@ -6,6 +6,7 @@
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1729,6 +1730,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         return true;
     }
 
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    if (inViewport())
+        return parseViewportProperty(propId, important);
+#endif
+
     bool validPrimitive = false;
     RefPtr<CSSValue> parsedValue;
 
@@ -2856,6 +2862,17 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         // These properties should be handled before in isValidKeywordPropertyAndValue().
         ASSERT_NOT_REACHED();
         return false;
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    // Properties bellow are validated inside parseViewportProperty, because we
+    // check for parser state inViewportScope. We need to invalidate if someone
+    // adds them outside a @viewport rule.
+    case CSSPropertyMaxZoom:
+    case CSSPropertyMinZoom:
+    case CSSPropertyOrientation:
+    case CSSPropertyUserZoom:
+        validPrimitive = false;
+        break;
+#endif
 #if ENABLE(SVG)
     default:
         return parseSVGValue(propId, important);
@@ -10416,6 +10433,84 @@ StyleRuleBase* CSSParser::createViewportRule()
     processAndAddNewRuleToSourceTreeIfNeeded();
 
     return result;
+}
+
+bool CSSParser::parseViewportProperty(CSSPropertyID propId, bool important)
+{
+    CSSParserValue* value = m_valueList->current();
+    if (!value)
+        return false;
+
+    int id = value->id;
+    bool validPrimitive = false;
+
+    switch (propId) {
+    case CSSPropertyMinWidth: // auto | device-width | device-height | <length> | <percentage>
+    case CSSPropertyMaxWidth:
+    case CSSPropertyMinHeight:
+    case CSSPropertyMaxHeight:
+        if (id == CSSValueAuto || id == CSSValueDeviceWidth || id == CSSValueDeviceHeight)
+            validPrimitive = true;
+        else
+            validPrimitive = (!id && validUnit(value, FLength | FPercent | FNonNeg));
+        break;
+    case CSSPropertyWidth: // shorthand
+        return parseViewportShorthand(propId, CSSPropertyMinWidth, CSSPropertyMaxWidth, important);
+    case CSSPropertyHeight:
+        return parseViewportShorthand(propId, CSSPropertyMinHeight, CSSPropertyMaxHeight, important);
+    case CSSPropertyMinZoom: // auto | <number> | <percentage>
+    case CSSPropertyMaxZoom:
+    case CSSPropertyZoom:
+        if (id == CSSValueAuto)
+            validPrimitive = true;
+        else
+            validPrimitive = (!id && validUnit(value, FNumber | FPercent | FNonNeg));
+        break;
+    case CSSPropertyUserZoom: // zoom | fixed
+        if (id == CSSValueZoom || id == CSSValueFixed)
+            validPrimitive = true;
+        break;
+    case CSSPropertyOrientation: // auto | portrait | landscape
+        if (id == CSSValueAuto || id == CSSValuePortrait || id == CSSValueLandscape)
+            validPrimitive = true;
+    default:
+        break;
+    }
+
+    RefPtr<CSSValue> parsedValue;
+    if (validPrimitive) {
+        parsedValue = parseValidPrimitive(id, value);
+        m_valueList->next();
+    }
+
+    if (parsedValue) {
+        if (!m_valueList->current() || inShorthand()) {
+            addProperty(propId, parsedValue.release(), important);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool CSSParser::parseViewportShorthand(CSSPropertyID propId, CSSPropertyID first, CSSPropertyID second, bool important)
+{
+    unsigned numValues = m_valueList->size();
+
+    if (numValues > 2)
+        return false;
+
+    ShorthandScope scope(this, propId);
+
+    if (!parseViewportProperty(first, important))
+        return false;
+
+    // If just one value is supplied, the second value
+    // is implicitly initialized with the first value.
+    if (numValues == 1)
+        m_valueList->previous();
+
+    return parseViewportProperty(second, important);
 }
 #endif
 
