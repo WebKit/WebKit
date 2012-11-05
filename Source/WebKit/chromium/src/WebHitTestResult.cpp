@@ -32,8 +32,10 @@
 #include "Node.h"
 #include "RenderObject.h"
 #include "VisiblePosition.h"
+#include "WebElement.h"
 #include "WebNode.h"
 #include <public/WebPoint.h>
+#include <public/WebURL.h>
 
 using namespace WebCore;
 
@@ -47,6 +49,26 @@ WebNode WebHitTestResult::node() const
 WebPoint WebHitTestResult::localPoint() const
 {
     return roundedIntPoint(m_private->localPoint());
+}
+
+WebElement WebHitTestResult::urlElement() const
+{
+    return WebElement(m_private->URLElement());
+}
+
+WebURL WebHitTestResult::absoluteImageURL() const
+{
+    return m_private->absoluteImageURL();
+}
+
+WebURL WebHitTestResult::absoluteLinkURL() const
+{
+    return m_private->absoluteLinkURL();
+}
+
+bool WebHitTestResult::isContentEditable() const
+{
+    return m_private->isContentEditable();
 }
 
 WebHitTestResult::WebHitTestResult(const HitTestResult& result)

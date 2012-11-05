@@ -48,16 +48,17 @@ class WebDragData;
 class WebFrame;
 class WebFrameClient;
 class WebGraphicsContext3D;
+class WebHitTestResult;
 class WebNode;
 class WebPageOverlay;
 class WebPermissionClient;
 class WebPrerendererClient;
-class WebViewBenchmarkSupport;
 class WebRange;
 class WebSettings;
 class WebSpellCheckClient;
 class WebString;
 class WebTextFieldDecoratorClient;
+class WebViewBenchmarkSupport;
 class WebViewClient;
 struct WebActiveWheelFlingParameters;
 struct WebMediaPlayerAction;
@@ -312,6 +313,9 @@ public:
 
 
     // Data exchange -------------------------------------------------------
+
+    // Do a hit test at given point and return the HitTestResult.
+    virtual WebHitTestResult hitTestResultAt(const WebPoint&) = 0;
 
     // Copy to the clipboard the image located at a particular point in the
     // WebView (if there is such an image)

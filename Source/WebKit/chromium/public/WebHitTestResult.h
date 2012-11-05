@@ -34,7 +34,9 @@ class HitTestResult;
 
 namespace WebKit {
 
+class WebElement;
 class WebNode;
+class WebURL;
 struct WebPoint;
 
 // Properties of a hit test result, i.e. properties of the nodes at a given point
@@ -55,6 +57,19 @@ public:
 
     // Coordinates of the point that was hit. Relative to the node.
     WEBKIT_EXPORT WebPoint localPoint() const;
+
+    // If a link (eg. anchor or area tag) is hit, return the element.
+    // Return null otheriwse.
+    WEBKIT_EXPORT WebElement urlElement() const;
+
+    // If an image is hit, return the image source. Return empty otherwise.
+    WEBKIT_EXPORT WebURL absoluteImageURL() const;
+
+    // If an link is hit, return the link url source. Return empty otherwise.
+    WEBKIT_EXPORT WebURL absoluteLinkURL() const;
+
+    // Return whether an editable input element was hit.
+    WEBKIT_EXPORT bool isContentEditable() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebHitTestResult(const WebCore::HitTestResult&);

@@ -249,6 +249,7 @@ public:
     virtual void performPluginAction(
         const WebPluginAction&,
         const WebPoint&);
+    virtual WebHitTestResult hitTestResultAt(const WebPoint&);
     virtual void copyImageAt(const WebPoint& point);
     virtual void dragSourceEndedAt(
         const WebPoint& clientPoint,

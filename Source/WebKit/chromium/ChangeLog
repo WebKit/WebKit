@@ -1,3 +1,38 @@
+2012-11-05  Bo Liu  <boliu@chromium.org>
+
+        Expose hit test related methods in public chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=101204
+
+        Reviewed by Adam Barth.
+
+        The methods are needed in implementating hit test related methods in the
+        Android WebView API.
+
+        The specific methods are:
+        [Web]HitTestResult::urlElement
+        [Web]HitTestResult::absoluteImageURL
+        [Web]HitTestResult::absoluteLinkURL
+        [Web]HitTestResult::isContentEditable
+        WebViewImpl::hitTestResultAt
+
+        * public/WebHitTestResult.h:
+        (WebKit):
+        (WebHitTestResult):
+        * public/WebView.h:
+        (WebKit):
+        (WebView):
+        * src/WebHitTestResult.cpp:
+        (WebKit::WebHitTestResult::urlElement):
+        (WebKit):
+        (WebKit::WebHitTestResult::absoluteImageURL):
+        (WebKit::WebHitTestResult::absoluteLinkURL):
+        (WebKit::WebHitTestResult::isContentEditable):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::hitTestResultAt):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-11-05  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] Pass canPaintLCDText to WebContentLayerClient::paintContents

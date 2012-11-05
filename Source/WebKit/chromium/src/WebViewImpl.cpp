@@ -3151,6 +3151,11 @@ void WebViewImpl::performPluginAction(const WebPluginAction& action,
     }
 }
 
+WebHitTestResult WebViewImpl::hitTestResultAt(const WebPoint& point)
+{
+    return hitTestResultForWindowPos(point);
+}
+
 void WebViewImpl::copyImageAt(const WebPoint& point)
 {
     if (!m_page)
