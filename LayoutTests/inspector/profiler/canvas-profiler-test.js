@@ -23,6 +23,9 @@ InspectorTest.enableCanvasAgent = function(callback)
 
 function createWebGLContext(opt_canvas)
 {
+    if (window.testRunner)
+        testRunner.overridePreference("WebKitWebGLEnabled", "1");
+
     var canvas = opt_canvas || document.createElement("canvas");
     var contextIds = ["experimental-webgl", "webkit-3d", "3d"];
     for (var i = 0, contextId; contextId = contextIds[i]; ++i) {
@@ -33,5 +36,8 @@ function createWebGLContext(opt_canvas)
     return null;
 }
 
-if (window.testRunner)
-    testRunner.overridePreference("WebKitWebGLEnabled", "1");
+function createCanvas2DContext(opt_canvas)
+{
+    var canvas = opt_canvas || document.createElement("canvas");
+    return canvas.getContext("2d");
+}

@@ -1,3 +1,23 @@
+2012-11-04  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [Canvas] do not blow up the capturing log
+        https://bugs.webkit.org/show_bug.cgi?id=100752
+
+        Reviewed by Pavel Feldman.
+
+        Added test for track Canvas 2D API changes, as well as basics for the capturing.
+
+        * inspector/profiler/canvas-profiler-test.js: Renamed from LayoutTests/inspector/profiler/webgl/webgl-profiler-test.js.
+        (initialize_CanvasWebGLProfilerTest.InspectorTest.enableCanvasAgent):
+        (initialize_CanvasWebGLProfilerTest):
+        (createWebGLContext):
+        (createCanvas2DContext):
+        * inspector/profiler/canvas2d/canvas2d-api-changes-expected.txt: Added.
+        * inspector/profiler/canvas2d/canvas2d-api-changes.html: Added.
+        * inspector/profiler/canvas2d/canvas2d-profiler-capturing-basics-expected.txt: Added.
+        * inspector/profiler/canvas2d/canvas2d-profiler-capturing-basics.html: Added.
+        * inspector/profiler/webgl/webgl-profiler-get-error.html:
+
 2012-11-04  Nandor Huszka  <hnandor@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.

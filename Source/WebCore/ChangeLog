@@ -1,3 +1,25 @@
+2012-11-04  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [Canvas] do not blow up the capturing log
+        https://bugs.webkit.org/show_bug.cgi?id=100752
+
+        Reviewed by Pavel Feldman.
+
+        Clear obsolete calls in the canvas 2D capturing log in runtime.
+        Now we store in the log only minimum number of calls that are necessary to replay a
+        canvas 2D context. To achieve that we find in runtime those calls in the log that no
+        longer contribute to the final context state and remove them.
+        These are the rules according which we find and remove such calls:
+        - all PATH methods between a clip() call and beginPath() call can be removed
+        - all MATRIX methods before a restore() or setTransform() call but after any PATH or corresponding save() method
+        - all consecutive save() + restore() calls
+
+        Tests: inspector/profiler/canvas2d/canvas2d-api-changes.html
+               inspector/profiler/canvas2d/canvas2d-profiler-capturing-basics.html
+
+        * inspector/InjectedScriptCanvasModuleSource.js:
+        (.):
+
 2012-11-04  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] ShadowRoot should have a method to return ShadowRootType.

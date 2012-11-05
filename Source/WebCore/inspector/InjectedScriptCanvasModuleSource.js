@@ -38,7 +38,7 @@
 var TypeUtils = {
     /**
      * http://www.khronos.org/registry/typedarray/specs/latest/#7
-     * @type {Array.<Function>}
+     * @type {!Array.<Function>}
      */
     _typedArrayClasses: (function(typeNames) {
         var result = [];
@@ -114,6 +114,20 @@ var TypeUtils = {
 
         console.error("ASSERT_NOT_REACHED: failed to clone object: ", obj);
         return obj;
+    },
+
+    /**
+     * @param {Object=} obj
+     * @return {Object}
+     */
+    cloneObject: function(obj)
+    {
+        if (!obj)
+            return null;
+        var result = {};
+        for (var key in obj)
+            result[key] = obj[key];
+        return result;
     },
 
     /**
@@ -358,6 +372,28 @@ Call.prototype = {
         this._result = result;
     },
 
+    /**
+     * @param {string} name
+     * @param {Object} attachment
+     */
+    setAttachment: function(name, attachment)
+    {
+        if (attachment) {
+            this._attachments = this._attachments || {};
+            this._attachments[name] = attachment;
+        } else if (this._attachments)
+            delete this._attachments[name];
+    },
+
+    /**
+     * @param {string} name
+     * @return {Object}
+     */
+    attachment: function(name)
+    {
+        return this._attachments && this._attachments[name];
+    },
+
     freeze: function()
     {
         if (this._freezed)
@@ -382,7 +418,8 @@ Call.prototype = {
         var args = this._args.map(function(obj) {
             return Resource.toReplayable(obj, cache);
         });
-        return new ReplayableCall(thisObject, this._functionName, args, result, this._stackTrace);
+        var attachments = TypeUtils.cloneObject(this._attachments);
+        return new ReplayableCall(thisObject, this._functionName, args, result, this._stackTrace, attachments);
     },
 
     /**
@@ -417,6 +454,9 @@ Call.prototype = {
         this._result = replayResult;
         this._stackTrace = replayableCall.stackTrace();
         this._freezed = true;
+        var attachments = replayableCall.attachments();
+        if (attachments)
+            this._attachments = TypeUtils.cloneObject(attachments);
         return this;
     }
 }
@@ -428,14 +468,17 @@ Call.prototype = {
  * @param {Array.<ReplayableResource|*>} args
  * @param {ReplayableResource|*} result
  * @param {StackTrace} stackTrace
+ * @param {Object.<string, Object>} attachments
  */
-function ReplayableCall(thisObject, functionName, args, result, stackTrace)
+function ReplayableCall(thisObject, functionName, args, result, stackTrace, attachments)
 {
     this._thisObject = thisObject;
     this._functionName = functionName;
     this._args = args;
     this._result = result;
     this._stackTrace = stackTrace;
+    if (attachments)
+        this._attachments = attachments;
 }
 
 ReplayableCall.prototype = {
@@ -485,6 +528,23 @@ ReplayableCall.prototype = {
     stackTrace: function()
     {
         return this._stackTrace;
+    },
+
+    /**
+     * @return {Object.<string, Object>}
+     */
+    attachments: function()
+    {
+        return this._attachments;
+    },
+
+    /**
+     * @param {string} name
+     * @return {Object}
+     */
+    attachment: function(name)
+    {
+        return this._attachments && this._attachments[name];
     },
 
     /**
@@ -722,7 +782,9 @@ Resource.prototype = {
                 Object.defineProperty(proxy, property, {
                     get: function()
                     {
-                        return wrappedObject[property];
+                        var obj = wrappedObject[property];
+                        var resource = Resource.forObject(obj);
+                        return resource ? resource : obj;
                     },
                     set: self._wrapPropertySetter(self, wrappedObject, property),
                     enumerable: true
@@ -804,12 +866,12 @@ Resource.prototype = {
         {
             var manager = resource.manager();
             if (!manager || !manager.capturing()) {
-                originalObject[propertyName] = value;
+                originalObject[propertyName] = Resource.wrappedObject(value);
                 return;
             }
             var args = [propertyName, value];
             manager.captureArguments(resource, args);
-            originalObject[propertyName] = value;
+            originalObject[propertyName] = Resource.wrappedObject(value);
             var stackTrace = StackTrace.create(1, arguments.callee);
             var call = new Call(resource, "", args, undefined, stackTrace);
             manager.captureCall(call);
@@ -1350,7 +1412,7 @@ function WebGLRenderingContextResource(glContext, replayContextCallback)
 
 /**
  * @const
- * @type {Array.<string>}
+ * @type {!Array.<string>}
  */
 WebGLRenderingContextResource.GLCapabilities = [
     "BLEND",
@@ -1366,7 +1428,7 @@ WebGLRenderingContextResource.GLCapabilities = [
 
 /**
  * @const
- * @type {Array.<string>}
+ * @type {!Array.<string>}
  */
 WebGLRenderingContextResource.PixelStoreParameters = [
     "PACK_ALIGNMENT",
@@ -1378,7 +1440,7 @@ WebGLRenderingContextResource.PixelStoreParameters = [
 
 /**
  * @const
- * @type {Array.<string>}
+ * @type {!Array.<string>}
  */
 WebGLRenderingContextResource.StateParameters = [
     "ACTIVE_TEXTURE",
@@ -1819,12 +1881,11 @@ function CanvasRenderingContext2DResource(context, replayContextCallback)
 {
     Resource.call(this, context);
     this._replayContextCallback = replayContextCallback;
-    this._attributesStack = [];
 }
 
 /**
  * @const
- * @type {Array.<string>}
+ * @type {!Array.<string>}
  */
 CanvasRenderingContext2DResource.AttributeProperties = [
     "strokeStyle",
@@ -1841,12 +1902,16 @@ CanvasRenderingContext2DResource.AttributeProperties = [
     "globalCompositeOperation",
     "font",
     "textAlign",
-    "textBaseline"
+    "textBaseline",
+    "lineDashOffset",
+    // FIXME: Temporary properties implemented in JSC, but not in V8.
+    "webkitLineDash",
+    "webkitLineDashOffset"
 ];
 
 /**
  * @const
- * @type {Array.<string>}
+ * @type {!Array.<string>}
  */
 CanvasRenderingContext2DResource.PathMethods = [
     "beginPath",
@@ -1862,7 +1927,7 @@ CanvasRenderingContext2DResource.PathMethods = [
 
 /**
  * @const
- * @type {Array.<string>}
+ * @type {!Array.<string>}
  */
 CanvasRenderingContext2DResource.TransformationMatrixMethods = [
     "scale",
@@ -1881,8 +1946,13 @@ CanvasRenderingContext2DResource.prototype = {
     _populateReplayableData: function(data, cache)
     {
         data.replayContextCallback = this._replayContextCallback;
-        data.attributesStack = this._attributesStack.slice(0);
         data.currentAttributes = this._currentAttributesState();
+        var ctx = this.wrappedObject();
+        try {
+            data.originalImageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+        } catch (e) {
+            console.error("ASSERT_NOT_REACHED: getImageData failed.", e);
+        }
     },
 
     /**
@@ -1893,21 +1963,24 @@ CanvasRenderingContext2DResource.prototype = {
     _doReplayCalls: function(data, cache)
     {
         this._replayContextCallback = data.replayContextCallback;
-        this._attributesStack = data.attributesStack.slice(0);
 
         var ctx = Resource.wrappedObject(this._replayContextCallback());
         this.setWrappedObject(ctx);
 
-        var saveCalls = 0;
+        if (data.originalImageData) {
+            try {
+                ctx.putImageData(data.originalImageData, 0, 0);
+            } catch (e) {
+                console.error("ASSERT_NOT_REACHED: putImageData failed.", e);
+            }
+        }
+
         for (var i = 0, n = data.calls.length; i < n; ++i) {
             var replayableCall = data.calls[i];
-            if (replayableCall.functionName() === "save") {
-                console.assert(saveCalls < this._attributesStack.length, "Size of attributes stack is less than 'save' calls");
-                this._applyAttributesState(this._attributesStack[saveCalls++]);
-            }
+            if (replayableCall.functionName() === "save")
+                this._applyAttributesState(replayableCall.attachment("canvas2dAttributesState"));
             this._calls.push(replayableCall.replay(cache));
         }
-        console.assert(saveCalls === this._attributesStack.length, "Size of attributes stack should be equal to the number of 'save' calls");
         this._applyAttributesState(data.currentAttributes);
     },
 
@@ -1916,7 +1989,11 @@ CanvasRenderingContext2DResource.prototype = {
      */
     pushCall_setTransform: function(call)
     {
-        // FIXME: Remove obsolete transform matrix methods.
+        var saveCallIndex = this._lastIndexOfMatchingSaveCall();
+        var index = this._lastIndexOfAnyCall(CanvasRenderingContext2DResource.PathMethods);
+        index = Math.max(index, saveCallIndex);
+        if (this._removeCallsFromLog(CanvasRenderingContext2DResource.TransformationMatrixMethods, index + 1))
+            this._removeAllObsoleteCallsFromLog();
         this.pushCall(call);
     },
 
@@ -1925,7 +2002,9 @@ CanvasRenderingContext2DResource.prototype = {
      */
     pushCall_beginPath: function(call)
     {
-        // FIXME: Remove obsolete path methods.
+        var index = this._lastIndexOfAnyCall(["clip"]);
+        if (this._removeCallsFromLog(CanvasRenderingContext2DResource.PathMethods, index + 1))
+            this._removeAllObsoleteCallsFromLog();
         this.pushCall(call);
     },
 
@@ -1934,7 +2013,7 @@ CanvasRenderingContext2DResource.prototype = {
      */
     pushCall_save: function(call)
     {
-        this._attributesStack.push(this._currentAttributesState());
+        call.setAttachment("canvas2dAttributesState", this._currentAttributesState());
         this.pushCall(call);
     },
 
@@ -1943,9 +2022,138 @@ CanvasRenderingContext2DResource.prototype = {
      */
     pushCall_restore: function(call)
     {
-        this._attributesStack.pop();
-        // FIXME: Remove obsolete clip,save methods.
-        this.pushCall(call);
+        var lastIndexOfSave = this._lastIndexOfMatchingSaveCall();
+        if (lastIndexOfSave === -1)
+            return;
+        this._calls[lastIndexOfSave].setAttachment("canvas2dAttributesState", null); // No longer needed, free memory.
+
+        var modified = false;
+        if (this._removeCallsFromLog(["clip"], lastIndexOfSave + 1))
+            modified = true;
+
+        var lastIndexOfAnyPathMethod = this._lastIndexOfAnyCall(CanvasRenderingContext2DResource.PathMethods);
+        var index = Math.max(lastIndexOfSave, lastIndexOfAnyPathMethod);
+        if (this._removeCallsFromLog(CanvasRenderingContext2DResource.TransformationMatrixMethods, index + 1))
+            modified = true;
+
+        if (modified)
+            this._removeAllObsoleteCallsFromLog();
+
+        var lastCall = this._calls[this._calls.length - 1];
+        if (lastCall && lastCall.functionName() === "save")
+            this._calls.pop();
+        else
+            this.pushCall(call);
+    },
+
+    /**
+     * @param {number=} fromIndex
+     * @return {number}
+     */
+    _lastIndexOfMatchingSaveCall: function(fromIndex)
+    {
+        if (typeof fromIndex !== "number")
+            fromIndex = this._calls.length - 1;
+        else
+            fromIndex = Math.min(fromIndex, this._calls.length - 1);
+        var stackDepth = 1;
+        for (var i = fromIndex; i >= 0; --i) {
+            var functionName = this._calls[i].functionName();
+            if (functionName === "restore")
+                ++stackDepth;
+            else if (functionName === "save") {
+                --stackDepth;
+                if (!stackDepth)
+                    return i;
+            }
+        }
+        return -1;
+    },
+
+    /**
+     * @param {!Array.<string>} functionNames
+     * @param {number=} fromIndex
+     * @return {number}
+     */
+    _lastIndexOfAnyCall: function(functionNames, fromIndex)
+    {
+        if (typeof fromIndex !== "number")
+            fromIndex = this._calls.length - 1;
+        else
+            fromIndex = Math.min(fromIndex, this._calls.length - 1);
+        for (var i = fromIndex; i >= 0; --i) {
+            if (functionNames.indexOf(this._calls[i].functionName()) !== -1)
+                return i;
+        }
+        return -1;
+    },
+
+    _removeAllObsoleteCallsFromLog: function()
+    {
+        // Remove all PATH methods between clip() and beginPath() calls.
+        var lastIndexOfBeginPath = this._lastIndexOfAnyCall(["beginPath"]);
+        while (lastIndexOfBeginPath !== -1) {
+            var index = this._lastIndexOfAnyCall(["clip"], lastIndexOfBeginPath - 1);
+            this._removeCallsFromLog(CanvasRenderingContext2DResource.PathMethods, index + 1, lastIndexOfBeginPath);
+            lastIndexOfBeginPath = this._lastIndexOfAnyCall(["beginPath"], index - 1);
+        }
+
+        // Remove all TRASFORMATION MATRIX methods before restore() or setTransform() but after any PATH or corresponding save() method.
+        var lastRestore = this._lastIndexOfAnyCall(["restore", "setTransform"]);
+        while (lastRestore !== -1) {
+            var saveCallIndex = this._lastIndexOfMatchingSaveCall(lastRestore - 1);
+            var index = this._lastIndexOfAnyCall(CanvasRenderingContext2DResource.PathMethods, lastRestore - 1);
+            index = Math.max(index, saveCallIndex);
+            this._removeCallsFromLog(CanvasRenderingContext2DResource.TransformationMatrixMethods, index + 1, lastRestore);
+            lastRestore = this._lastIndexOfAnyCall(["restore", "setTransform"], index - 1);
+        }
+
+        // Remove all save-restore consecutive pairs.
+        var restoreCalls = 0;
+        for (var i = this._calls.length - 1; i >= 0; --i) {
+            var functionName = this._calls[i].functionName();
+            if (functionName === "restore") {
+                ++restoreCalls;
+                continue;
+            }
+            if (functionName === "save" && restoreCalls > 0) {
+                var saveCallIndex = i;
+                for (var j = i - 1; j >= 0 && i - j < restoreCalls; --j) {
+                    if (this._calls[j].functionName() === "save")
+                        saveCallIndex = j;
+                    else
+                        break;
+                }
+                this._calls.splice(saveCallIndex, (i - saveCallIndex + 1) * 2);
+                i = saveCallIndex;
+            }
+            restoreCalls = 0;
+        }
+    },
+
+    /**
+     * @param {!Array.<string>} functionNames
+     * @param {number} fromIndex
+     * @param {number=} toIndex
+     * @return {boolean}
+     */
+    _removeCallsFromLog: function(functionNames, fromIndex, toIndex)
+    {
+        var oldLength = this._calls.length;
+        if (typeof toIndex !== "number")
+            toIndex = oldLength;
+        else
+            toIndex = Math.min(toIndex, oldLength);
+        var newIndex = Math.min(fromIndex, oldLength);
+        for (var i = newIndex; i < toIndex; ++i) {
+            var call = this._calls[i];
+            if (functionNames.indexOf(call.functionName()) === -1)
+                this._calls[newIndex++] = call;
+        }
+        if (newIndex >= toIndex)
+            return false;
+        this._calls.splice(newIndex, toIndex - newIndex);
+        return true;
     },
 
     /**
@@ -1955,21 +2163,30 @@ CanvasRenderingContext2DResource.prototype = {
     {
         var ctx = this.wrappedObject();
         var state = {};
+        state.attributes = {};
         CanvasRenderingContext2DResource.AttributeProperties.forEach(function(attribute) {
-            state[attribute] = ctx[attribute];
+            state.attributes[attribute] = ctx[attribute];
         });
+        if (ctx.getLineDash)
+            state.lineDash = ctx.getLineDash();
         return state;
     },
 
     /**
-     * @param {!Object.<string, string>} state
+     * @param {Object.<string, string>=} state
      */
     _applyAttributesState: function(state)
     {
+        if (!state)
+            return;
         var ctx = this.wrappedObject();
-        Object.keys(state).forEach(function(attribute) {
-            ctx[attribute] = state[attribute];
-        });
+        if (state.attributes) {
+            Object.keys(state.attributes).forEach(function(attribute) {
+                ctx[attribute] = state.attributes[attribute];
+            });
+        }
+        if (ctx.setLineDash)
+            ctx.setLineDash(state.lineDash);
     },
 
     /**
@@ -1982,6 +2199,7 @@ CanvasRenderingContext2DResource.prototype = {
         if (!wrapFunctions) {
             wrapFunctions = Object.create(null);
 
+            // FIXME: Save state of the CanvasGradient objects.
             wrapFunctions["createLinearGradient"] = Resource.WrapFunction.resourceFactoryMethod(Resource);
             wrapFunctions["createRadialGradient"] = Resource.WrapFunction.resourceFactoryMethod(Resource);
             wrapFunctions["createPattern"] = Resource.WrapFunction.resourceFactoryMethod(Resource);
@@ -2006,14 +2224,12 @@ CanvasRenderingContext2DResource.prototype = {
                     }
                 }
             }
-            CanvasRenderingContext2DResource.TransformationMatrixMethods.forEach(function(methodName) {
-                var func = methodName === "setTransform" ? this.pushCall_setTransform : null;
-                stateModifyingWrapFunction(methodName, func);
-            });
-            CanvasRenderingContext2DResource.PathMethods.forEach(function(methodName) {
-                var func = methodName === "beginPath" ? this.pushCall_beginPath : null;
-                stateModifyingWrapFunction(methodName, func);
-            });
+
+            for (var i = 0, methodName; methodName = CanvasRenderingContext2DResource.TransformationMatrixMethods[i]; ++i)
+                stateModifyingWrapFunction(methodName, methodName === "setTransform" ? this.pushCall_setTransform : null);
+            for (var i = 0, methodName; methodName = CanvasRenderingContext2DResource.PathMethods[i]; ++i)
+                stateModifyingWrapFunction(methodName, methodName === "beginPath" ? this.pushCall_beginPath : null);
+
             stateModifyingWrapFunction("save", this.pushCall_save);
             stateModifyingWrapFunction("restore", this.pushCall_restore);
             stateModifyingWrapFunction("clip");
@@ -2401,20 +2617,10 @@ InjectedScript.prototype = {
      */
     _constructCanvas2DReplayContext: function(originalContext)
     {
-        var replayContext = originalContext["__replayContext"];
-        if (!replayContext) {
-            var canvas = originalContext.canvas.cloneNode(true);
-            replayContext = /** @type {CanvasRenderingContext2D} */ Resource.wrappedObject(canvas.getContext("2d"));
-            Object.defineProperty(originalContext, "__replayContext", {
-                value: replayContext,
-                writable: false,
-                enumerable: false,
-                configurable: true
-            });
-            this._replayContext = replayContext;
-        } else {
-            // FIXME: Clear the canvas.
-        }
+        // Create a new 2D context each time to start with an empty context drawing state stack (managed by save() and restore() methods).
+        var canvas = originalContext.canvas.cloneNode(true);
+        var replayContext = /** @type {CanvasRenderingContext2D} */ Resource.wrappedObject(canvas.getContext("2d"));
+        this._replayContext = replayContext;
         return replayContext;
     }
 }
