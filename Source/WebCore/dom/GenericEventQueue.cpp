@@ -85,6 +85,7 @@ void GenericEventQueue::timerFired(Timer<GenericEventQueue>*)
     Vector<RefPtr<Event> > pendingEvents;
     m_pendingEvents.swap(pendingEvents);
 
+    RefPtr<EventTarget> protect(m_owner);
     for (unsigned i = 0; i < pendingEvents.size(); ++i) {
         EventTarget* target = pendingEvents[i]->target() ? pendingEvents[i]->target() : m_owner;
         target->dispatchEvent(pendingEvents[i].release());

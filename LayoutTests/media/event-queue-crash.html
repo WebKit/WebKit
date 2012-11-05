@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<script src="media-file.js"></script>
+        
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function onLoad()
+    {
+        setSrcByTagName('video', findMediaFile('video', 'content/test-25fps'));
+        // Removes the video element here.
+        container.innerHTML = "PASS. WebKit didn't crash.";
+
+        setTimeout(function() {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 10);
+    }
+</script>
+
+<body onload="onLoad()">
+    <p>When an element containing video is removed, WebKit should not crash.</p>
+    <div id="container">
+        <div id="contents">
+            <!-- This is required to reproduce. -->
+            <video>
+            <!-- Only if we cannot eval the content of oncanplaythrough (i.e. only if the content of oncanplaythough
+                 has invalid syntax), this test causes a crash. -->
+            <video oncanplaythrough='if'>
+        </div>
+    </div>
+</body>
+</html>
