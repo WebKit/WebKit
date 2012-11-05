@@ -1,3 +1,9 @@
+2012-11-05  Alok Priyadarshi  <alokp@chromium.org>
+
+        Unreviewed. Rolled DEPS.
+
+        * DEPS:
+
 2012-11-05  Miguel Garcia  <miguelg@chromium.org>
 
         [Chromium] Disable registerProtocolHandler on Android
