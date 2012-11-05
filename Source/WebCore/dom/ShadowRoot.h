@@ -98,9 +98,7 @@ public:
     virtual void registerScopedHTMLStyleChild() OVERRIDE;
     virtual void unregisterScopedHTMLStyleChild() OVERRIDE;
 
-#ifndef NDEBUG
     ShadowRootType type() const { return m_type; }
-#endif
 
     PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
 
@@ -118,14 +116,11 @@ private:
     ShadowRoot* m_next;
     bool m_applyAuthorStyles : 1;
     bool m_resetStyleInheritance : 1;
+    ShadowRootType m_type : 1;
     InsertionPoint* m_insertionPointAssignedTo;
     size_t m_numberOfShadowElementChildren;
     size_t m_numberOfContentElementChildren;
     size_t m_numberOfStyles;
-
-#ifndef NDEBUG
-    ShadowRootType m_type;
-#endif
 };
 
 inline Element* ShadowRoot::host() const
