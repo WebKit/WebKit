@@ -460,6 +460,28 @@ static CollapsedBorderValue chooseBorder(const CollapsedBorderValue& border1, co
     return border.style() == BHIDDEN ? CollapsedBorderValue() : border;
 }
 
+bool RenderTableCell::hasStartBorderAdjoiningTable() const
+{
+    bool isStartColumn = !col();
+    bool isEndColumn = table()->colToEffCol(col() + colSpan() - 1) == table()->numEffCols() - 1;
+    bool hasSameDirectionAsTable = hasSameDirectionAs(table());
+
+    // The table direction determines the row direction. In mixed directionality, we cannot guarantee that
+    // we have a common border with the table (think a ltr table with rtl start cell).
+    return (isStartColumn && hasSameDirectionAsTable) || (isEndColumn && !hasSameDirectionAsTable);
+}
+
+bool RenderTableCell::hasEndBorderAdjoiningTable() const
+{
+    bool isStartColumn = !col();
+    bool isEndColumn = table()->colToEffCol(col() + colSpan() - 1) == table()->numEffCols() - 1;
+    bool hasSameDirectionAsTable = hasSameDirectionAs(table());
+
+    // The table direction determines the row direction. In mixed directionality, we cannot guarantee that
+    // we have a common border with the table (think a ltr table with ltr end cell).
+    return (isStartColumn && !hasSameDirectionAsTable) || (isEndColumn && hasSameDirectionAsTable);
+}
+
 CollapsedBorderValue RenderTableCell::collapsedStartBorder(IncludeBorderColorOrNot includeColor) const
 {
     CollapsedBorderValue result = computeCollapsedStartBorder(includeColor);
@@ -486,7 +508,10 @@ CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderC
         result = chooseBorder(cellBeforeAdjoiningBorder, result);
         if (!result.exists())
             return result;
-    } else {
+    }
+
+    bool startBorderAdjoinsTable = hasStartBorderAdjoiningTable();
+    if (startBorderAdjoinsTable) {
         // (3) Our row's start border.
         result = chooseBorder(result, CollapsedBorderValue(row()->borderAdjoiningStartCell(this), includeColor ? parent()->style()->visitedDependentColor(startColorProperty) : Color(), BROW));
         if (!result.exists())
@@ -545,7 +570,9 @@ CollapsedBorderValue RenderTableCell::computeCollapsedStartBorder(IncludeBorderC
                 }
             }
         }
-    } else {
+    }
+
+    if (startBorderAdjoinsTable) {
         // (7) The table's start border.
         result = chooseBorder(result, CollapsedBorderValue(table->tableStartBorderAdjoiningCell(this), includeColor ? table->style()->visitedDependentColor(startColorProperty) : Color(), BTABLE));
         if (!result.exists())
@@ -584,7 +611,10 @@ CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderCol
             if (!result.exists())
                 return result;
         }
-    } else {
+    }
+
+    bool endBorderAdjoinsTable = hasEndBorderAdjoiningTable();
+    if (endBorderAdjoinsTable) {
         // (3) Our row's end border.
         result = chooseBorder(result, CollapsedBorderValue(row()->borderAdjoiningEndCell(this), includeColor ? parent()->style()->visitedDependentColor(endColorProperty) : Color(), BROW));
         if (!result.exists())
@@ -642,7 +672,9 @@ CollapsedBorderValue RenderTableCell::computeCollapsedEndBorder(IncludeBorderCol
                 }
             }
         }
-    } else {
+    }
+
+    if (endBorderAdjoinsTable) {
         // (7) The table's end border.
         result = chooseBorder(result, CollapsedBorderValue(table->tableEndBorderAdjoiningCell(this), includeColor ? table->style()->visitedDependentColor(endColorProperty) : Color(), BTABLE));
         if (!result.exists())

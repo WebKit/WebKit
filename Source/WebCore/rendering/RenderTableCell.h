@@ -164,7 +164,7 @@ public:
     // on all table parts and writing-mode on cells.
     const RenderStyle* styleForCellFlow() const
     {
-        return section()->style();
+        return row()->style();
     }
 
     const BorderValue& borderAdjoiningTableStart() const
@@ -239,6 +239,9 @@ private:
     void setIntrinsicPaddingBefore(int p) { m_intrinsicPaddingBefore = p; }
     void setIntrinsicPaddingAfter(int p) { m_intrinsicPaddingAfter = p; }
     void setIntrinsicPadding(int before, int after) { setIntrinsicPaddingBefore(before); setIntrinsicPaddingAfter(after); }
+
+    bool hasStartBorderAdjoiningTable() const;
+    bool hasEndBorderAdjoiningTable() const;
 
     CollapsedBorderValue collapsedStartBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;
     CollapsedBorderValue collapsedEndBorder(IncludeBorderColorOrNot = IncludeBorderColor) const;

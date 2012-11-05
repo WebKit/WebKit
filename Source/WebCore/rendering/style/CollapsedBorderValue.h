@@ -51,7 +51,7 @@ public:
     {
     }
 
-    unsigned width() const { return m_width; }
+    unsigned width() const { return m_style > BHIDDEN ? m_width : 0; }
     EBorderStyle style() const { return static_cast<EBorderStyle>(m_style); }
     bool exists() const { return m_precedence != BOFF; }
     Color color() const { return Color(m_color, m_colorIsValid); }

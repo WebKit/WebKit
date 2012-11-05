@@ -987,6 +987,7 @@ LayoutRect RenderTableSection::logicalRectForWritingModeAndDirection(const Layou
         tableAlignedRect = tableAlignedRect.transposedRect();
 
     const Vector<int>& columnPos = table()->columnPositions();
+    // FIXME: The table's direction should determine our row's direction, not the section's (see bug 96691).
     if (!style()->isLeftToRightDirection())
         tableAlignedRect.setX(columnPos[columnPos.size() - 1] - tableAlignedRect.maxX());
 
@@ -1266,16 +1267,14 @@ unsigned RenderTableSection::numColumns() const
 
 const BorderValue& RenderTableSection::borderAdjoiningStartCell(const RenderTableCell* cell) const
 {
-    ASSERT_UNUSED(cell, !table()->cellBefore(cell));
-    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
-    return style()->borderStart();
+    ASSERT(cell->isFirstOrLastCellInRow());
+    return hasSameDirectionAs(cell) ? style()->borderStart() : style()->borderEnd();
 }
 
 const BorderValue& RenderTableSection::borderAdjoiningEndCell(const RenderTableCell* cell) const
 {
-    ASSERT_UNUSED(cell, !table()->cellAfter(cell));
-    // FIXME: https://webkit.org/b/79272 - Add support for mixed directionality at the cell level.
-    return style()->borderEnd();
+    ASSERT(cell->isFirstOrLastCellInRow());
+    return hasSameDirectionAs(cell) ? style()->borderEnd() : style()->borderStart();
 }
 
 const RenderTableCell* RenderTableSection::firstRowCellAdjoiningTableStart() const
@@ -1429,7 +1428,8 @@ void RenderTableSection::setLogicalPositionForCell(RenderTableCell* cell, unsign
     LayoutPoint cellLocation(0, m_rowPos[cell->rowIndex()]);
     int horizontalBorderSpacing = table()->hBorderSpacing();
 
-    if (!cell->styleForCellFlow()->isLeftToRightDirection())
+    // FIXME: The table's direction should determine our row's direction, not the section's (see bug 96691).
+    if (!style()->isLeftToRightDirection())
         cellLocation.setX(table()->columnPositions()[table()->numEffCols()] - table()->columnPositions()[table()->colToEffCol(cell->col() + cell->colSpan())] + horizontalBorderSpacing);
     else
         cellLocation.setX(table()->columnPositions()[effectiveColumn] + horizontalBorderSpacing);

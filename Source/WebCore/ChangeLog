@@ -1,3 +1,61 @@
+2012-11-04  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Fix the collapsing border code to handle mixed directionality at the row level
+        https://bugs.webkit.org/show_bug.cgi?id=101060
+
+        Reviewed by Ojan Vafai.
+
+        After bug 87900, we support mixed directionality at the row-group level. For coherency
+        - as the underlying code didn't support it - we were artificially ignoring 'direction'
+        below the row-group. This change relaxes the restriction and patches the collapsing
+        borders code to query the right style and border.
+
+        Tests: fast/table/border-collapsing/table-ltr-rows-mixed-direction.html
+               fast/table/border-collapsing/table-rtl-row-mixed-direction.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::tableStartBorderAdjoiningCell):
+        (WebCore::RenderTable::tableEndBorderAdjoiningCell):
+        Changed to query the row's direction.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::hasStartBorderAdjoiningTable):
+        (WebCore::RenderTableCell::hasEndBorderAdjoiningTable):
+        Added 2 helper functions. They determine if a specific cell's border
+        adjoins the table. This code is required as the last cell's end border
+        can be resolved against the start border.
+
+        (WebCore::RenderTableCell::computeCollapsedStartBorder):
+        (WebCore::RenderTableCell::computeCollapsedEndBorder):
+        Updated these functions now that being the start / end column doesn't mean
+        that we have to resolve against the row / row-group / table's border.
+
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::styleForCellFlow):
+        Updated to return the row's style.
+
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::borderAdjoiningStartCell):
+        (WebCore::RenderTableRow::borderAdjoiningEndCell):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::borderAdjoiningStartCell):
+        (WebCore::RenderTableSection::borderAdjoiningEndCell):
+        Updated these functions to work with mixed directionality.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::setLogicalPositionForCell):
+        Changed this function to use the section's direction. This is wrong and should be changed
+        once we properly fix the collapsing border code.
+
+        (WebCore::RenderTableSection::logicalRectForWritingModeAndDirection):
+        Added a FIXME.
+
+        * rendering/style/CollapsedBorderValue.h:
+        (WebCore::CollapsedBorderValue::width):
+        This is a bug in our implementation: we used to return a non-zero width for inexistant borders (per CSS 2.1,
+        'border-style: off | hidden' should have a 0 width). This is covered by our existing tests (among others by
+        fast/table/border-collapsing/last-cell-left-border-hidden-table-ltr-section-rtl.html).
+
 2012-11-04  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [Canvas] do not blow up the capturing log
