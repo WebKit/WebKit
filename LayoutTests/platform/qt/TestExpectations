@@ -1584,7 +1584,6 @@ fast/forms/textarea-scrollbar.html
 fast/forms/textarea-scrolled-type.html
 fast/invalid/missing-end-tag.xhtml
 fast/invalid/residual-style.html
-fast/js/string-capitalization.html
 fast/lists/drag-into-marker.html
 fast/overflow/clip-rects-fixed-ancestor.html
 fast/overflow/overflow-rtl.html
@@ -2236,10 +2235,6 @@ fast/notifications/notifications-without-permission.html
 # https://bugs.webkit.org/show_bug.cgi?id=76379
 fast/js/large-expressions.html
 
-# New fast/js/dfg-arrayify-elimination.html introduced in r132554 fails on 32 bit platforms
-# https://bugs.webkit.org/show_bug.cgi?id=100474
-fast/js/dfg-arrayify-elimination.html
-
 # This should only be a layer change.
 # http://webkit.org/b/82129
 fast/box-shadow/shadow-buffer-partial.html
@@ -2523,10 +2518,6 @@ webkit.org/b/100117 editing/style/iframe-onload-crash-mac.html
 webkit.org/b/100196 http/tests/inspector/network/image-as-text-loading-data-url.html
 
 webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
-
-# REGRESSION(r132757): It made 2 jquery tests assert
-webkit.org/b/100636 jquery/manipulation.html
-webkit.org/b/100636 jquery/traversing.html
 
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
 

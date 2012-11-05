@@ -1,3 +1,9 @@
+2012-11-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unskip now passing tests.
+
+        * platform/qt/TestExpectations:
+
 2012-11-05  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Mark inspector-protocol/debugger-pause-dedicated-worker.html
