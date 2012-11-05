@@ -313,9 +313,6 @@ protected:
     typedef HashSet<RenderWidget*> RenderWidgetSet;
     RenderWidgetSet m_widgets;
 
-    typedef HashSet<RenderBox*> RenderBoxSet;
-    OwnPtr<RenderBoxSet> m_fixedPositionedElements;
-
 private:
     bool shouldUsePrintingLayout() const;
 
