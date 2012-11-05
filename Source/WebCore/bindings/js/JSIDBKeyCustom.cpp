@@ -39,8 +39,11 @@ namespace WebCore {
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, IDBKey* key)
 {
-    if (!key)
+    if (!key) {
+        // This should be undefined, not null.
+        // Spec: http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html#idl-def-IDBKeyRange
         return jsUndefined();
+    }
 
     switch (key->type()) {
     case IDBKey::ArrayType:

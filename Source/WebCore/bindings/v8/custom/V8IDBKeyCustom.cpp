@@ -40,8 +40,11 @@ namespace WebCore {
 
 v8::Handle<v8::Value> toV8(IDBKey* key, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
-    if (!key)
+    if (!key) {
+        // This should be undefined, not null.
+        // Spec: http://dvcs.w3.org/hg/IndexedDB/raw-file/tip/Overview.html#idl-def-IDBKeyRange
         return v8Undefined();
+    }
 
     switch (key->type()) {
     case IDBKey::InvalidType:
