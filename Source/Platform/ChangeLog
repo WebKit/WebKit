@@ -1,3 +1,18 @@
+2012-11-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use const SkBitmap& parameter for WebLayerTreeView::setFontAtlas
+        https://bugs.webkit.org/show_bug.cgi?id=101016
+
+        Reviewed by Adrienne Walker.
+
+        Passing SkBitmap by value requires including SkBitmap.h, which is tricky for some clients to do since it
+        requires having the rest of skia's headers on the include path and setting up the correct config to set
+        preprocessor defines.  Also shuffles the parameter order around to make rolling easier since you can't override
+        just by const ref-ness.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::setFontAtlas):
+
 2012-11-05  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] Pass canPaintLCDText to WebContentLayerClient::paintContents

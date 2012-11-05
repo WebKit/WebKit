@@ -4003,7 +4003,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
                 WebRect asciiToRectTable[128];
                 int fontHeight;
                 SkBitmap bitmap = WebCore::CompositorHUDFontAtlas::generateFontAtlas(asciiToRectTable, fontHeight);
-                m_layerTreeView->setFontAtlas(bitmap, asciiToRectTable, fontHeight);
+                m_layerTreeView->setFontAtlas(asciiToRectTable, bitmap, fontHeight);
             }
         } else {
             m_nonCompositedContentHost.clear();
