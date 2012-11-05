@@ -1,3 +1,10 @@
+2012-11-05  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Build fix after http://trac.webkit.org/changeset/133488.
+        Removed a deleted file.  Unreviewed.
+
+        * WebCore.gypi:
+
 2012-11-05  Kentaro Hara  <haraken@chromium.org>
 
         [V8] toV8(impl) should return null if impl is 0

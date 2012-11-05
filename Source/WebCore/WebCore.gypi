@@ -4764,7 +4764,6 @@
             'platform/efl/ScrollbarEfl.h',
             'platform/efl/ScrollbarThemeEfl.cpp',
             'platform/efl/ScrollbarThemeEfl.h',
-            'platform/efl/SharedBufferEfl.cpp',
             'platform/efl/SharedTimerEfl.cpp',
             'platform/efl/SoundEfl.cpp',
             'platform/efl/SystemTimeEfl.cpp',
