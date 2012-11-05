@@ -6645,16 +6645,6 @@ void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, Grap
     context.restore();
 }
 
-bool WebView::showDebugBorders(const GraphicsLayer*) const
-{
-    return m_page->settings()->showDebugBorders();
-}
-
-bool WebView::showRepaintCounter(const GraphicsLayer*) const
-{
-    return m_page->settings()->showRepaintCounter();
-}
-
 void WebView::flushPendingGraphicsLayerChanges()
 {
     Frame* coreFrame = core(m_mainFrame);

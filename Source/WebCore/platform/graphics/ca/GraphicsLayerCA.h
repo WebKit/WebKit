@@ -121,6 +121,9 @@ public:
 
     virtual bool hasContentsLayer() const { return m_contentsLayer; }
     
+    virtual void setShowDebugBorder(bool) OVERRIDE;
+    virtual void setShowRepaintCounter(bool) OVERRIDE;
+
     virtual void setDebugBackgroundColor(const Color&);
     virtual void setDebugBorder(const Color&, float borderWidth);
 
@@ -152,7 +155,7 @@ private:
     virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime);
     virtual CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return contentsOrientation(); }
     virtual void platformCALayerPaintContents(GraphicsContext&, const IntRect& clip);
-    virtual bool platformCALayerShowDebugBorders() const { return showDebugBorders(); }
+    virtual bool platformCALayerShowDebugBorders() const { return isShowingDebugBorder(); }
     virtual bool platformCALayerShowRepaintCounter(PlatformCALayer*) const;
     virtual int platformCALayerIncrementRepaintCount() { return incrementRepaintCount(); }
 
@@ -326,6 +329,7 @@ private:
     void updateLayerAnimations();
     void updateContentsNeedsDisplay();
     void updateAcceleratesDrawing();
+    void updateDebugBorder();
     void updateVisibleRect(const FloatRect& oldVisibleRect);
     void updateContentsScale(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     
@@ -377,9 +381,8 @@ private:
         ContentsScaleChanged = 1 << 23,
         ContentsVisibilityChanged = 1 << 24,
         VisibleRectChanged = 1 << 25,
-#if ENABLE(CSS_FILTERS)
         FiltersChanged = 1 << 26,
-#endif
+        DebugIndicatorsChanged = 1 << 27
     };
     typedef unsigned LayerChangeFlags;
     void noteLayerPropertyChanged(LayerChangeFlags flags);

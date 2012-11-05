@@ -169,16 +169,6 @@ void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, Graphics
     copyRectFromCairoSurfaceToContext(m_webView->priv->backingStore->cairoSurface(), cr, IntSize(), rectToPaint);
 }
 
-bool AcceleratedCompositingContext::showDebugBorders(const GraphicsLayer*) const
-{
-    return false;
-}
-
-bool AcceleratedCompositingContext::showRepaintCounter(const GraphicsLayer*) const
-{
-    return false;
-}
-
 } // namespace WebKit
 
 #endif // USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_CAIRO)

@@ -583,6 +583,10 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
         if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
             scrollingCoordinator->frameViewFixedObjectsDidChange(m_renderView->frameView());
     }
+    
+    if (layer->backing())
+        layer->backing()->updateDebugIndicators(m_showDebugBorders, m_showRepaintCounter);
+
     return layerChanged;
 }
 
@@ -2042,22 +2046,6 @@ void RenderLayerCompositor::resetTrackedRepaintRects()
 void RenderLayerCompositor::setTracksRepaints(bool tracksRepaints)
 {
     m_isTrackingRepaints = tracksRepaints;
-}
-
-bool RenderLayerCompositor::showDebugBorders(const GraphicsLayer* layer) const
-{
-    if (layer == m_layerForHorizontalScrollbar || layer == m_layerForVerticalScrollbar || layer == m_layerForScrollCorner)
-        return m_showDebugBorders;
-
-    return false;
-}
-
-bool RenderLayerCompositor::showRepaintCounter(const GraphicsLayer* layer) const
-{
-    if (layer == m_layerForHorizontalScrollbar || layer == m_layerForVerticalScrollbar || layer == m_layerForScrollCorner)
-        return m_showDebugBorders;
-
-    return false;
 }
 
 bool RenderLayerCompositor::isTrackingRepaints() const

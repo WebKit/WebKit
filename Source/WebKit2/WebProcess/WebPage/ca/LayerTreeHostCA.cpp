@@ -203,16 +203,6 @@ void LayerTreeHostCA::paintContents(const GraphicsLayer* graphicsLayer, Graphics
     }
 }
 
-bool LayerTreeHostCA::showDebugBorders(const GraphicsLayer*) const
-{
-    return m_webPage->corePage()->settings()->showDebugBorders();
-}
-
-bool LayerTreeHostCA::showRepaintCounter(const GraphicsLayer*) const
-{
-    return m_webPage->corePage()->settings()->showRepaintCounter();
-}
-
 float LayerTreeHostCA::deviceScaleFactor() const
 {
     return m_webPage->corePage()->deviceScaleFactor();

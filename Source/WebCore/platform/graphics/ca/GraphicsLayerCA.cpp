@@ -286,8 +286,6 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     }
 
     m_layer = PlatformCALayer::create(layerType, this);
-
-    updateDebugIndicators();
     noteLayerPropertyChanged(ContentsScaleChanged);
 }
 
@@ -520,7 +518,7 @@ void GraphicsLayerCA::setMasksToBounds(bool masksToBounds)
         return;
 
     GraphicsLayer::setMasksToBounds(masksToBounds);
-    noteLayerPropertyChanged(MasksToBoundsChanged);
+    noteLayerPropertyChanged(MasksToBoundsChanged | DebugIndicatorsChanged);
 }
 
 void GraphicsLayerCA::setDrawsContent(bool drawsContent)
@@ -529,7 +527,7 @@ void GraphicsLayerCA::setDrawsContent(bool drawsContent)
         return;
 
     GraphicsLayer::setDrawsContent(drawsContent);
-    noteLayerPropertyChanged(DrawsContentChanged);
+    noteLayerPropertyChanged(DrawsContentChanged | DebugIndicatorsChanged);
 }
 
 void GraphicsLayerCA::setContentsVisible(bool contentsVisible)
@@ -1044,7 +1042,7 @@ bool GraphicsLayerCA::platformCALayerShowRepaintCounter(PlatformCALayer* platfor
     if (m_isPageTileCacheLayer && platformLayer)
         return false;
     
-    return showRepaintCounter();
+    return isShowingRepaintCounter();
 }
 
 void GraphicsLayerCA::platformCALayerPaintContents(GraphicsContext& context, const IntRect& clip)
@@ -1150,6 +1148,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, c
     
     if (m_uncommittedChanges & AcceleratesDrawingChanged)
         updateAcceleratesDrawing();
+
+    if (m_uncommittedChanges & DebugIndicatorsChanged)
+        updateDebugBorder();
 
     if (m_uncommittedChanges & ChildrenChanged) {
         updateSublayerList();
@@ -1343,8 +1344,6 @@ void GraphicsLayerCA::updateMasksToBounds()
         for (LayerMap::const_iterator it = layerCloneMap->begin(); it != end; ++it)
             it->value->setMasksToBounds(m_masksToBounds);
     }
-
-    updateDebugIndicators();
 }
 
 void GraphicsLayerCA::updateContentsVisibility()
@@ -1528,12 +1527,19 @@ void GraphicsLayerCA::updateLayerDrawsContent(float pageScaleFactor, const Float
                 it->value->setContents(0);
         }
     }
-    updateDebugIndicators();
 }
 
 void GraphicsLayerCA::updateAcceleratesDrawing()
 {
     m_layer->setAcceleratesDrawing(m_acceleratesDrawing);
+}
+
+void GraphicsLayerCA::updateDebugBorder()
+{
+    if (isShowingDebugBorder())
+        updateDebugIndicators();
+    else
+        m_layer->setBorderWidth(0);
 }
 
 FloatRect GraphicsLayerCA::adjustTiledLayerVisibleRect(TiledBacking* tiledBacking, const FloatRect& oldVisibleRect, const FloatSize& oldSize) const
@@ -2498,6 +2504,24 @@ void GraphicsLayerCA::updateContentsScale(float pageScaleFactor, const FloatPoin
         m_layer->setNeedsDisplay();
 }
 
+void GraphicsLayerCA::setShowDebugBorder(bool showBorder)
+{
+    if (showBorder == m_showDebugBorder)
+        return;
+
+    GraphicsLayer::setShowDebugBorder(showBorder);
+    noteLayerPropertyChanged(DebugIndicatorsChanged);
+}
+
+void GraphicsLayerCA::setShowRepaintCounter(bool showCounter)
+{
+    if (showCounter == m_showRepaintCounter)
+        return;
+
+    GraphicsLayer::setShowRepaintCounter(showCounter);
+    noteLayerPropertyChanged(DebugIndicatorsChanged);
+}
+
 void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
 {    
     if (color.isValid())
@@ -2611,10 +2635,9 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float /*pageSca
         | BackgroundColorChanged
         | ContentsScaleChanged
         | AcceleratesDrawingChanged
-#if ENABLE(CSS_FILTERS)
         | FiltersChanged
-#endif
-        | OpacityChanged;
+        | OpacityChanged
+        | DebugIndicatorsChanged;
     
 #ifndef NDEBUG
     String name = String::format("%sCALayer(%p) GraphicsLayer(%p) ", (m_layer->layerType() == PlatformCALayer::LayerTypeWebTiledLayer) ? "Tiled " : "", m_layer->platformLayer(), this) + m_name;
@@ -2626,8 +2649,6 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float /*pageSca
     
     // need to tell new layer to draw itself
     setNeedsDisplay();
-    
-    updateDebugIndicators();
 }
 
 GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContentsOrientation() const
@@ -2651,7 +2672,7 @@ void GraphicsLayerCA::setupContentsLayer(PlatformCALayer* contentsLayer)
     } else
         contentsLayer->setAnchorPoint(FloatPoint3D());
 
-    if (showDebugBorders()) {
+    if (isShowingDebugBorder()) {
         contentsLayer->setBorderColor(Color(0, 0, 128, 180));
         contentsLayer->setBorderWidth(1.0f);
     }
@@ -2846,7 +2867,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::cloneLayer(PlatformCALayer *layer, 
         moveOrCopyAnimations(Copy, layer, newLayer.get());
     }
     
-    if (showDebugBorders()) {
+    if (isShowingDebugBorder()) {
         newLayer->setBorderColor(Color(255, 122, 251));
         newLayer->setBorderWidth(2);
     }

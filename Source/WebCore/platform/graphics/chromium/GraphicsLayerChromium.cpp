@@ -848,7 +848,7 @@ void GraphicsLayerChromium::setupContentsLayer(WebLayer* contentsLayer)
         // shadow content that must display in front of the video.
         m_layer->layer()->insertChild(m_contentsLayer, 0);
 
-        if (showDebugBorders()) {
+        if (isShowingDebugBorder()) {
             m_contentsLayer->setDebugBorderColor(Color(0, 0, 128, 180).rgb());
             m_contentsLayer->setDebugBorderWidth(1);
         }

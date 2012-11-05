@@ -352,24 +352,26 @@ public:
     // For hosting this GraphicsLayer in a native layer hierarchy.
     virtual PlatformLayer* platformLayer() const { return 0; }
     
-    void dumpLayer(TextStream&, int indent = 0, LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
-
-    int repaintCount() const { return m_repaintCount; }
-    int incrementRepaintCount() { return ++m_repaintCount; }
-
     enum CompositingCoordinatesOrientation { CompositingCoordinatesTopDown, CompositingCoordinatesBottomUp };
 
     // Flippedness of the contents of this layer. Does not affect sublayer geometry.
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
     CompositingCoordinatesOrientation contentsOrientation() const { return m_contentsOrientation; }
 
-    bool showDebugBorders() const { return m_client ? m_client->showDebugBorders(this) : false; }
-    bool showRepaintCounter() const { return m_client ? m_client->showRepaintCounter(this) : false; }
-    
-    void updateDebugIndicators();
-    
+    void dumpLayer(TextStream&, int indent = 0, LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
+
+    virtual void setShowDebugBorder(bool show) { m_showDebugBorder = show; }
+    bool isShowingDebugBorder() const { return m_showDebugBorder; }
+
+    virtual void setShowRepaintCounter(bool show) { m_showRepaintCounter = show; }
+    bool isShowingRepaintCounter() const { return m_showRepaintCounter; }
+
+    int repaintCount() const { return m_repaintCount; }
+    int incrementRepaintCount() { return ++m_repaintCount; }
+
     virtual void setDebugBackgroundColor(const Color&) { }
     virtual void setDebugBorder(const Color&, float /*borderWidth*/) { }
+
     // z-position is the z-equivalent of position(). It's only used for debugging purposes.
     virtual float zPosition() const { return m_zPosition; }
     virtual void setZPosition(float);
@@ -415,6 +417,8 @@ public:
     typedef PassOwnPtr<GraphicsLayer> GraphicsLayerFactoryCallback(GraphicsLayerClient*);
     static void setGraphicsLayerFactory(GraphicsLayerFactoryCallback);
 #endif
+
+    void updateDebugIndicators();
 
 protected:
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.
@@ -486,7 +490,9 @@ protected:
     bool m_acceleratesDrawing : 1;
     bool m_maintainsPixelAlignment : 1;
     bool m_appliesPageScale : 1; // Set for the layer which has the page scale applied to it.
-
+    bool m_showDebugBorder : 1;
+    bool m_showRepaintCounter : 1;
+    
     GraphicsLayerPaintingPhase m_paintingPhase;
     CompositingCoordinatesOrientation m_contentsOrientation; // affects orientation of layer contents
 

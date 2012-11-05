@@ -56,15 +56,6 @@ void InspectorOverlay::paintContents(const WebCore::GraphicsLayer*, WebCore::Gra
     context.restore();
 }
 
-bool InspectorOverlay::showDebugBorders(const WebCore::GraphicsLayer* layer) const
-{
-    return m_webPage->showDebugBorders(layer);
-}
-
-bool InspectorOverlay::showRepaintCounter(const WebCore::GraphicsLayer* layer) const
-{
-    return m_webPage->showRepaintCounter(layer);
-}
 #endif
 
 InspectorOverlay::~InspectorOverlay() { }

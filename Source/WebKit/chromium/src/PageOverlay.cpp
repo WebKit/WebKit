@@ -94,16 +94,6 @@ public:
         return m_webViewImpl->pageScaleFactor();
     }
 
-    virtual bool showDebugBorders(const GraphicsLayer*) const
-    {
-        return m_webViewImpl->page()->settings()->showDebugBorders();
-    }
-
-    virtual bool showRepaintCounter(const GraphicsLayer*) const
-    {
-        return m_webViewImpl->page()->settings()->showRepaintCounter();
-    }
-
 private:
     OverlayGraphicsLayerClientImpl(WebViewImpl* webViewImpl, WebPageOverlay* overlay)
         : m_overlay(overlay)

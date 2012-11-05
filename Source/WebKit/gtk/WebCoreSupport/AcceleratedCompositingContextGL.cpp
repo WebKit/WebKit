@@ -383,16 +383,6 @@ void AcceleratedCompositingContext::paintContents(const GraphicsLayer*, Graphics
     context.restore();
 }
 
-bool AcceleratedCompositingContext::showDebugBorders(const GraphicsLayer*) const
-{
-    return false;
-}
-
-bool AcceleratedCompositingContext::showRepaintCounter(const GraphicsLayer*) const
-{
-    return false;
-}
-
 } // namespace WebKit
 
 #endif // USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)

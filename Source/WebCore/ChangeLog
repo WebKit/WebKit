@@ -1,3 +1,64 @@
+2012-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix layer borders to cleaning appear and disappear on switching
+        https://bugs.webkit.org/show_bug.cgi?id=101136
+
+        Reviewed by Sam Weinig.
+
+        GraphicsLayers decided whether to show layer borders based
+        on a callback through the GraphicsLayerClient. This made it
+        hard to manage state, resulting in a failure to cleanly
+        hide layers when toggled off via the preference.
+        
+        Changed the layer border and repaint counter visibility to be bits
+        stored on GraphicsLayer just like other properties, with getters
+        and setters. RenderLayerBacking now updates these debug
+        indicators when we update other compositing layer properties.
+        
+        In GraphicsLayerCA, avoid calling updateDebugIndicators() explicitly
+        in several places by setting the change flag DebugIndicatorsChanged
+        for properties whose values affect the appearance of the debug border.
+
+        Removed the GraphicsLayerClient methods showDebugBorders() and
+        showRepaintCounter() which are no longer required.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        (WebCore::GraphicsLayer::updateDebugIndicators):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setShowDebugBorder):
+        (WebCore::GraphicsLayer::isShowingDebugBorder):
+        (WebCore::GraphicsLayer::setShowRepaintCounter):
+        (WebCore::GraphicsLayer::isShowingRepaintCounter):
+        (WebCore::GraphicsLayer::repaintCount):
+        (WebCore::GraphicsLayer::incrementRepaintCount):
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::setMasksToBounds):
+        (WebCore::GraphicsLayerCA::setDrawsContent):
+        (WebCore::GraphicsLayerCA::platformCALayerShowRepaintCounter):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateMasksToBounds):
+        (WebCore::GraphicsLayerCA::updateLayerDrawsContent):
+        (WebCore::GraphicsLayerCA::updateDebugBorder):
+        (WebCore::GraphicsLayerCA::setShowDebugBorder):
+        (WebCore::GraphicsLayerCA::setShowRepaintCounter):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        (WebCore::GraphicsLayerCA::setupContentsLayer):
+        (WebCore::GraphicsLayerCA::cloneLayer):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::platformCALayerShowDebugBorders):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDebugIndicators):
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+
 2012-11-05  Genevieve Mak  <gmak@rim.com>
 
         [BLACKBERRY] Update touch code to reflect touch refactor

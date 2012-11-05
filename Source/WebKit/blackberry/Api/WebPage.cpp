@@ -5733,16 +5733,6 @@ void WebPagePrivate::notifyFlushRequired(const GraphicsLayer*)
 {
     scheduleRootLayerCommit();
 }
-
-bool WebPagePrivate::showDebugBorders(const GraphicsLayer*) const
-{
-    return m_page->settings()->showDebugBorders();
-}
-
-bool WebPagePrivate::showRepaintCounter(const GraphicsLayer*) const
-{
-    return m_page->settings()->showRepaintCounter();
-}
 #endif // USE(ACCELERATED_COMPOSITING)
 
 void WebPagePrivate::enterFullscreenForNode(Node* node)

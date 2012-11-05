@@ -202,11 +202,6 @@ public:
 
     String layerTreeAsText(LayerTreeFlags);
 
-    // These are named to avoid conflicts with the functions in GraphicsLayerClient
-    // These return the actual internal variables.
-    bool compositorShowDebugBorders() const { return m_showDebugBorders; }
-    bool compositorShowRepaintCounter() const { return m_showRepaintCounter; }
-
     virtual float deviceScaleFactor() const OVERRIDE;
     virtual float pageScaleFactor() const OVERRIDE;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const OVERRIDE;
@@ -238,9 +233,6 @@ private:
     virtual void notifyAnimationStarted(const GraphicsLayer*, double) OVERRIDE { }
     virtual void notifyFlushRequired(const GraphicsLayer*) OVERRIDE { scheduleLayerFlush(); }
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&) OVERRIDE;
-
-    virtual bool showDebugBorders(const GraphicsLayer*) const OVERRIDE;
-    virtual bool showRepaintCounter(const GraphicsLayer*) const OVERRIDE;
 
     virtual bool isTrackingRepaints() const OVERRIDE;
     

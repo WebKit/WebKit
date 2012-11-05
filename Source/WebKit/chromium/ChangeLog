@@ -1,3 +1,20 @@
+2012-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix layer borders to cleaning appear and disappear on switching
+        https://bugs.webkit.org/show_bug.cgi?id=101136
+
+        Reviewed by Sam Weinig.
+
+        Remove the GraphicsLayerClient methods showDebugBorders() and
+        showRepaintCounter().
+
+        * src/NonCompositedContentHost.cpp:
+        * src/NonCompositedContentHost.h:
+        (NonCompositedContentHost):
+        * src/PageOverlay.cpp:
+        * tests/GraphicsLayerChromiumTest.cpp:
+        * tests/ImageLayerChromiumTest.cpp:
+
 2012-11-05  Bo Liu  <boliu@chromium.org>
 
         Expose hit test related methods in public chromium port

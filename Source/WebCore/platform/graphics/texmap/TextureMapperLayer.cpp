@@ -129,7 +129,7 @@ void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, Graphi
     context->translate(-dirtyRect.x(), -dirtyRect.y());
     layer->paintGraphicsLayerContents(*context, dirtyRect);
 
-    if (layer->showRepaintCounter()) {
+    if (layer->isShowingRepaintCounter()) {
         layer->incrementRepaintCount();
         drawRepaintCounter(context, layer);
     }
@@ -138,7 +138,7 @@ void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, Graphi
     TextureMapperTiledBackingStore* backingStore = static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get());
     backingStore->updateContents(textureMapper, image.get(), m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
 
-    backingStore->setShowDebugBorders(layer->showDebugBorders());
+    backingStore->setShowDebugBorders(layer->isShowingDebugBorder());
     backingStore->setDebugBorder(m_debugBorderColor, m_debugBorderWidth);
 
     m_state.needsDisplay = false;
@@ -617,7 +617,7 @@ void TextureMapperLayer::drawRepaintCounter(GraphicsContext* context, GraphicsLa
     cairo_text_extents(cr, repaintCount.data(), &repaintTextExtents);
 
     static const int repaintCountBorderWidth = 10;
-    setSourceRGBAFromColor(cr, layer->showDebugBorders() ? m_debugBorderColor : Color(0, 255, 0, 127));
+    setSourceRGBAFromColor(cr, layer->isShowingDebugBorder() ? m_debugBorderColor : Color(0, 255, 0, 127));
     cairo_rectangle(cr, 0, 0,
                     repaintTextExtents.width + (repaintCountBorderWidth * 2),
                     repaintTextExtents.height + (repaintCountBorderWidth * 2));

@@ -258,16 +258,6 @@ void LayerTreeHostGtk::paintContents(const GraphicsLayer* graphicsLayer, Graphic
     }
 }
 
-bool LayerTreeHostGtk::showDebugBorders(const GraphicsLayer*) const
-{
-    return m_webPage->corePage()->settings()->showDebugBorders();
-}
-
-bool LayerTreeHostGtk::showRepaintCounter(const GraphicsLayer*) const
-{
-    return m_webPage->corePage()->settings()->showRepaintCounter();
-}
-
 gboolean LayerTreeHostGtk::layerFlushTimerFiredCallback(LayerTreeHostGtk* layerTreeHost)
 {
     layerTreeHost->layerFlushTimerFired();

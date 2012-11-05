@@ -52,8 +52,6 @@ class MockGraphicsLayerClient : public GraphicsLayerClient {
     virtual void notifyAnimationStarted(const GraphicsLayer*, double time) OVERRIDE { }
     virtual void notifyFlushRequired(const GraphicsLayer*) OVERRIDE { }
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip) OVERRIDE { }
-    virtual bool showDebugBorders(const GraphicsLayer*) const OVERRIDE { return false; }
-    virtual bool showRepaintCounter(const GraphicsLayer*) const OVERRIDE { return false; }
     virtual float deviceScaleFactor() const OVERRIDE { return 2; }
 };
 

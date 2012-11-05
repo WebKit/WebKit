@@ -89,6 +89,8 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     , m_acceleratesDrawing(false)
     , m_maintainsPixelAlignment(false)
     , m_appliesPageScale(false)
+    , m_showDebugBorder(false)
+    , m_showRepaintCounter(false)
     , m_paintingPhase(GraphicsLayerPaintAllWithOverflowClip)
     , m_contentsOrientation(CompositingCoordinatesTopDown)
     , m_parent(0)
@@ -374,7 +376,7 @@ void GraphicsLayer::getDebugBorderInfo(Color& color, float& width) const
 
 void GraphicsLayer::updateDebugIndicators()
 {
-    if (!GraphicsLayer::showDebugBorders())
+    if (!isShowingDebugBorder())
         return;
 
     Color borderColor;

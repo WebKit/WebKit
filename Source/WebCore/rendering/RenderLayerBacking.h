@@ -141,6 +141,8 @@ public:
     TiledBacking* tiledBacking() const;
     void adjustTileCacheCoverage();
     
+    void updateDebugIndicators(bool showBorder, bool showRepaintCounter);
+    
     // GraphicsLayerClient interface
     virtual bool shouldUseTileCache(const GraphicsLayer*) const OVERRIDE;
     virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime) OVERRIDE;
@@ -153,9 +155,6 @@ public:
     virtual float pageScaleFactor() const OVERRIDE;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const OVERRIDE;
     virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const OVERRIDE;
-
-    virtual bool showDebugBorders(const GraphicsLayer*) const OVERRIDE;
-    virtual bool showRepaintCounter(const GraphicsLayer*) const OVERRIDE;
 
     virtual bool isTrackingRepaints() const OVERRIDE;
 

@@ -273,16 +273,6 @@ void TiledCoreAnimationDrawingArea::paintContents(const GraphicsLayer* graphicsL
     m_webPage->drawPageOverlay(graphicsContext, clipRect);
 }
 
-bool TiledCoreAnimationDrawingArea::showDebugBorders(const GraphicsLayer*) const
-{
-    return m_webPage->corePage()->settings()->showDebugBorders();
-}
-
-bool TiledCoreAnimationDrawingArea::showRepaintCounter(const GraphicsLayer*) const
-{
-    return m_webPage->corePage()->settings()->showRepaintCounter();
-}
-
 float TiledCoreAnimationDrawingArea::deviceScaleFactor() const
 {
     return m_webPage->corePage()->deviceScaleFactor();

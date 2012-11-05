@@ -1,3 +1,19 @@
+2012-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix layer borders to cleaning appear and disappear on switching
+        https://bugs.webkit.org/show_bug.cgi?id=101136
+
+        Reviewed by Sam Weinig.
+
+        Remove the GraphicsLayerClient methods showDebugBorders() and
+        showRepaintCounter().
+
+        * WebCoreSupport/AcceleratedCompositingContext.h:
+        (AcceleratedCompositingContext):
+        * WebCoreSupport/AcceleratedCompositingContextCairo.cpp:
+        * WebCoreSupport/AcceleratedCompositingContextClutter.cpp:
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+
 2012-10-25  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Move soup authentication from GtkAuthenticationDialog to WebCore

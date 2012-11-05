@@ -203,6 +203,31 @@ void RenderLayerBacking::adjustTileCacheCoverage()
     tiledBacking()->setTileCoverage(tileCoverage);
 }
 
+void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaintCounter)
+{
+    m_graphicsLayer->setShowDebugBorder(showBorder);
+    m_graphicsLayer->setShowRepaintCounter(showRepaintCounter);
+    
+    if (m_ancestorClippingLayer)
+        m_ancestorClippingLayer->setShowDebugBorder(showBorder);
+
+    if (m_foregroundLayer) {
+        m_foregroundLayer->setShowDebugBorder(showBorder);
+        m_foregroundLayer->setShowRepaintCounter(showRepaintCounter);
+    }
+
+    if (m_maskLayer) {
+        m_maskLayer->setShowDebugBorder(showBorder);
+        m_maskLayer->setShowRepaintCounter(showRepaintCounter);
+    }
+
+    if (m_scrollingLayer)
+        m_scrollingLayer->setShowDebugBorder(showBorder);
+
+    if (m_scrollingContentsLayer)
+        m_scrollingContentsLayer->setShowDebugBorder(showBorder);
+}
+
 void RenderLayerBacking::createPrimaryGraphicsLayer()
 {
     String layerName;
@@ -1584,16 +1609,6 @@ bool RenderLayerBacking::getCurrentTransform(const GraphicsLayer* graphicsLayer,
         return true;
     }
     return false;
-}
-
-bool RenderLayerBacking::showDebugBorders(const GraphicsLayer*) const
-{
-    return compositor() ? compositor()->compositorShowDebugBorders() : false;
-}
-
-bool RenderLayerBacking::showRepaintCounter(const GraphicsLayer*) const
-{
-    return compositor() ? compositor()->compositorShowRepaintCounter() : false;
 }
 
 bool RenderLayerBacking::isTrackingRepaints() const

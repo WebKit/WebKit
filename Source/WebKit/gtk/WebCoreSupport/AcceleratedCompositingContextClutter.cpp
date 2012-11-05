@@ -165,18 +165,6 @@ void AcceleratedCompositingContext::paintContents(const WebCore::GraphicsLayer*,
     ASSERT_NOT_REACHED();
 }
 
-bool AcceleratedCompositingContext::showDebugBorders(const WebCore::GraphicsLayer*) const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AcceleratedCompositingContext::showRepaintCounter(const WebCore::GraphicsLayer*) const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 } // namespace WebKit
 
 #endif // USE(ACCELERATED_COMPOSITING) && USE(CLUTTER)

@@ -578,16 +578,6 @@ void LayerTreeCoordinator::paintContents(const WebCore::GraphicsLayer* graphicsL
     }
 }
 
-bool LayerTreeCoordinator::showDebugBorders(const WebCore::GraphicsLayer*) const
-{
-    return m_webPage->corePage()->settings()->showDebugBorders();
-}
-
-bool LayerTreeCoordinator::showRepaintCounter(const WebCore::GraphicsLayer*) const
-{
-    return m_webPage->corePage()->settings()->showRepaintCounter();
-}
-
 PassOwnPtr<GraphicsLayer> LayerTreeCoordinator::createGraphicsLayer(GraphicsLayerClient* client)
 {
     return adoptPtr(new CoordinatedGraphicsLayer(client));

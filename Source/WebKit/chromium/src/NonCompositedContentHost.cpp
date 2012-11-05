@@ -191,16 +191,6 @@ void NonCompositedContentHost::setShowDebugBorders(bool showDebugBorders)
     m_graphicsLayer->updateDebugIndicators();
 }
 
-bool NonCompositedContentHost::showDebugBorders(const WebCore::GraphicsLayer*) const
-{
-    return m_showDebugBorders;
-}
-
-bool NonCompositedContentHost::showRepaintCounter(const WebCore::GraphicsLayer*) const
-{
-    return false;
-}
-
 bool NonCompositedContentHost::isTrackingRepaints() const
 {
     return m_webView->isTrackingRepaints();
