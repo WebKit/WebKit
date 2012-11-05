@@ -65,9 +65,7 @@ webkit.org/b/100334 fast/dom/navigator-vibration.html [ Crash ]
 
 webkit.org/b/97560 http/tests/inspector/extensions-useragent.html [ Failure Pass ]
 webkit.org/b/97560 inspector/extensions/extensions-api.html [ Failure Pass ]
-webkit.org/b/97560 inspector/extensions/extensions-audits-content-script.html [ Failure Pass ]
 webkit.org/b/97560 inspector/extensions/extensions-audits.html [ Failure Pass ]
-webkit.org/b/97560 inspector/extensions/extensions-eval-content-script.html [ Failure Pass ]
 
 Bug(EFL) editing/selection/fake-doubleclick.html [ Failure Pass ]
 Bug(EFL) http/tests/security/contentSecurityPolicy/connect-src-websocket-blocked.html [ Crash Pass ]
