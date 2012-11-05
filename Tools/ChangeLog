@@ -1,3 +1,16 @@
+2012-11-05  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Fix build warning in EWebLauncher/main.c
+        https://bugs.webkit.org/show_bug.cgi?id=101197
+
+        Reviewed by Kentaro Hara.
+
+        Because the strp of _Ecore_Getopt_Value is char** (Ecore_Getopt.h),
+        The parameter of ECORE_GETOPT_VALUE_STR should be char*
+
+        * EWebLauncher/main.c:
+        (_User_Arguments):
+
 2012-11-05  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Add --window-size command line option to EFL MiniBrowser

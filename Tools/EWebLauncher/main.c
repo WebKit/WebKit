@@ -143,16 +143,16 @@ static const Ecore_Getopt options = {
 };
 
 typedef struct _User_Arguments {
-    const char *engine;
+    char *engine;
     Eina_Bool quitOption;
-    const char *backingStore;
+    char *backingStore;
     Eina_Bool enableEncodingDetector;
     Eina_Bool isFlattening;
     Eina_Bool isFullscreen;
     Eina_Rectangle geometry;
-    const char *theme;
-    const char *userAgent;
-    const char *databasePath;
+    char *theme;
+    char *userAgent;
+    char *databasePath;
 } User_Arguments;
 
 typedef struct _ELauncher {
