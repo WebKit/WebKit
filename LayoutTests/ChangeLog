@@ -1,3 +1,12 @@
+2012-11-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        A followup to r133453, adding a baseline for http/tests/inspector/console-websocket-error.html.
+
+        * platform/gtk/http/tests/inspector: Added.
+        * platform/gtk/http/tests/inspector/console-websocket-error-expected.txt: Added.
+
 2012-11-05  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Validate CSS Device Adaptation properties and resolve shorthands

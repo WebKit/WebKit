@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: line 32: testDNSLookup: Test started.
+CONSOLE MESSAGE: WebSocket network error: Error resolving 'nonexistent.domain.invalid': No address associated with hostname
+CONSOLE MESSAGE: line 43: testDNSLookup: onclose is called.
+CONSOLE MESSAGE: line 50: testSSLCertificate: Test started.
+CONSOLE MESSAGE: WebSocket network error: Unacceptable TLS certificate
+CONSOLE MESSAGE: line 64: testSSLCertificate: onclose is called.
+WebSocket's network errors should be logged to console.
+
+testDNSLookup: Test started. console-websocket-error.html:32
+WebSocket network error: Error resolving 'nonexistent.domain.invalid': No address associated with hostname ws://nonexistent.domain.invalid/
+testDNSLookup: onclose is called. console-websocket-error.html:43
+testSSLCertificate: Test started. console-websocket-error.html:50
+WebSocket network error: Unacceptable TLS certificate wss://127.0.0.1:8443/
+testSSLCertificate: onclose is called. console-websocket-error.html:64
+
