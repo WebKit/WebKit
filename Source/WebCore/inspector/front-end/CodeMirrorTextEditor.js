@@ -61,6 +61,7 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
 
     this.element.firstChild.addStyleClass("source-code");
     this.element.firstChild.addStyleClass("fill");
+    this._elementToWidget = new Map();
 }
 
 WebInspector.CodeMirrorTextEditor.prototype = {
@@ -168,7 +169,8 @@ WebInspector.CodeMirrorTextEditor.prototype = {
      */
     addDecoration: function(lineNumber, element)
     {
-        // TODO implement so that it doesn't hide context code
+        var widget = this._codeMirror.addLineWidget(lineNumber, element);
+        this._elementToWidget.put(element, widget);
     },
 
     /**
@@ -177,7 +179,9 @@ WebInspector.CodeMirrorTextEditor.prototype = {
      */
     removeDecoration: function(lineNumber, element)
     {
-        // TODO implement so that it doesn't hide context code
+        var widget = this._elementToWidget.remove(element);
+        if (widget)
+            this._codeMirror.removeLineWidget(widget);
     },
 
     /**
@@ -249,6 +253,11 @@ WebInspector.CodeMirrorTextEditor.prototype = {
 
     _change: function()
     {
+        var widgets = this._elementToWidget.values();
+        for (var i = 0; i < widgets.length; ++i)
+            this._codeMirror.removeLineWidget(widgets[i]);
+        this._elementToWidget.clear();
+
         var newRange = this.range();
         this._delegate.onTextChanged(this._lastRange, newRange);
         this._lastRange = newRange;

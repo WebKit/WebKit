@@ -58,33 +58,30 @@
 .cm-s-web-inspector-html span.cm-attribute {color: rgb(153, 69, 0);}
 .cm-s-web-inspector-html span.cm-link {color: #00e;}
 
-.webkit-html-message-bubble {
+.CodeMirror .webkit-html-message-bubble {
     -webkit-box-shadow: black 0px 2px 5px;
     -webkit-border-radius: 9px;
     -webkit-border-fit: lines;
     font-size: 10px;
     font-family: Lucida Grande, sans-serif;
     font-weight: bold;
-    margin: 0px 10px;
-    padding: 0 7px 1px;
+    margin: 3px 10px;
+    padding: 1px 2px 0;
     z-index: 5;
 }
-.webkit-html-warning-message {
+
+.CodeMirror .webkit-html-message-bubble img {
+    position: relative;
+    top: 1px;
+    margin-right: 2px;
+}
+
+.CodeMirror .webkit-html-warning-message {
     background-color: rgb(100%, 62%, 42%);
     border: 2px solid rgb(100%, 52%, 21%);
 }
-.webkit-html-error-message {
+
+.CodeMirror .webkit-html-error-message {
     background-color: rgb(100%, 42%, 42%);
     border: 2px solid rgb(100%, 31%, 31%);
-}
-.webkit-html-message-line {
-    padding-left: 23px;
-    text-indent: -20px;
-}
-.webkit-html-message-line-hover {
-    padding-left: 23px;
-    text-indent: -20px;
-    white-space: auto;
-    text-overflow: auto;
-    overflow: auto;
 }

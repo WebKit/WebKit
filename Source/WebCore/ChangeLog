@@ -1,3 +1,28 @@
+2012-11-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: render message bubbles in CodeMirror experiment.
+        https://bugs.webkit.org/show_bug.cgi?id=101164
+
+        Reviewed by Vsevolod Vlasov.
+
+        It sounds like addLineWidget just makes it happen.
+
+        * inspector/front-end/CodeMirrorTextEditor.js:
+        (WebInspector.CodeMirrorTextEditor):
+        (WebInspector.CodeMirrorTextEditor.prototype.addDecoration):
+        (WebInspector.CodeMirrorTextEditor.prototype.get if):
+        (WebInspector.CodeMirrorTextEditor.prototype.removeDecoration):
+        (WebInspector.CodeMirrorTextEditor.prototype._change):
+        * inspector/front-end/DefaultTextEditor.js:
+        (.preventDefaultOnMouseUp):
+        * inspector/front-end/PresentationConsoleMessageHelper.js:
+        (WebInspector.PresentationConsoleMessageHelper):
+        * inspector/front-end/cm/cmdevtools.css:
+        (.CodeMirror .webkit-html-message-bubble):
+        (.CodeMirror .webkit-html-message-bubble img):
+        (.CodeMirror .webkit-html-warning-message):
+        (.CodeMirror .webkit-html-error-message):
+
 2012-11-05  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Validate CSS Device Adaptation properties and resolve shorthands

@@ -48,7 +48,7 @@ WebInspector.DefaultTextEditor = function(url, delegate)
 
     // Prevent middle-click pasting in the editor unless it is explicitly enabled for certain component.
     this.element.addEventListener("mouseup", preventDefaultOnMouseUp.bind(this), false);
-    function preventDefaultOnMouseUp()
+    function preventDefaultOnMouseUp(event)
     {
         if (event.button === 1)
             event.consume(true);
@@ -73,7 +73,7 @@ WebInspector.DefaultTextEditor = function(url, delegate)
 
     // Explicitly enable middle-click pasting in the editor main panel.
     this._mainPanel.element.addEventListener("mouseup", consumeMouseUp.bind(this), false);
-    function consumeMouseUp()
+    function consumeMouseUp(event)
     {
         if (event.button === 1)
             event.consume(false);
