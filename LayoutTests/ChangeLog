@@ -1,5 +1,11 @@
 2012-11-05  Stephen White  <senorblanco@chromium.org>
 
+        [chromium] Mark a flaky test.  Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-05  Stephen White  <senorblanco@chromium.org>
+
         [chromium] Add a now-failing test, remove a now-passing test.  Unreviewed.
 
         * platform/chromium/TestExpectations:

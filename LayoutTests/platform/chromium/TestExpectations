@@ -4122,6 +4122,10 @@ Bug(senorblanco) fast/repaint/block-selection-gap-in-table-cell.html [ ImageOnly
 # Started failing at r133443.
 webkit.org/b/101218 [ Win ] fast/dom/shadow/shadowroot-type.html  [ Failure Crash ]
 
+# Started failing/flaky around r133332
+webkit.org/b/101219 compositing/repaint/invalidations-on-composited-layers.html [ Failure Pass ]
+webkit.org/b/101219 platform/chromium/virtual/softwarecompositing/repaint/invalidations-on-composited-layers.html [ Failure Pass ]
+
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]
 
