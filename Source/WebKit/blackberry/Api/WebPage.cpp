@@ -5507,6 +5507,7 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
         return false;
     }
 
+    willComposite();
     m_needsCommit = false;
     // We get here either due to the commit timer, which would have called
     // render if a one shot sync was needed. Or we get called from render
@@ -5539,6 +5540,7 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
             contentsSizeForCompositing,
             drawsRootLayer));
 
+    didComposite();
     return true;
 }
 
@@ -6256,6 +6258,20 @@ const HitTestResult& WebPagePrivate::hitTestResult(const IntPoint& contentPos)
 void WebPagePrivate::clearCachedHitTestResult()
 {
     m_cachedHitTestContentPos = WebCore::IntPoint(-1, -1);
+}
+
+void WebPagePrivate::willComposite()
+{
+    if (!m_page->settings()->developerExtrasEnabled())
+        return;
+    InspectorInstrumentation::willComposite(m_page);
+}
+
+void WebPagePrivate::didComposite()
+{
+    if (!m_page->settings()->developerExtrasEnabled())
+        return;
+    InspectorInstrumentation::didComposite(m_page);
 }
 
 }

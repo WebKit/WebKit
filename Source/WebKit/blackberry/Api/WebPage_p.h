@@ -468,6 +468,9 @@ public:
 
     WebCore::IntSize screenSize() const;
 
+    void willComposite();
+    void didComposite();
+
     WebPage* m_webPage;
     WebPageClient* m_client;
     WebCore::InspectorClientBlackBerry* m_inspectorClient;

@@ -1,3 +1,23 @@
+2012-11-05  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Web Inspector: Add InspectorInstrumentaiton calls for timeline compositing.
+        https://bugs.webkit.org/show_bug.cgi?id=101213
+        RIM PR 178131
+
+        Reviewed by Rob Buis.
+
+        Internally Reviewed by Arvid Nilsson.
+
+        Added compositing events to the timeline for BlackBerry.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayerIfNeeded):
+        (BlackBerry::WebKit::WebPagePrivate::willComposite):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::didComposite):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-11-03  Alexey Proskuryakov  <ap@apple.com>
 
         Get rid of USE(CFURLSTORAGESESSIONS)
