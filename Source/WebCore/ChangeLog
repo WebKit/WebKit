@@ -1,3 +1,24 @@
+2012-11-05  Antti Koivisto  <antti@apple.com>
+
+        Protect against resource deletion during iteration in MemoryCache::pruneDeadResourcesToSize
+        https://bugs.webkit.org/show_bug.cgi?id=101211
+
+        Reviewed by Andreas Kling.
+        
+        Some crashes have been seen under MemoryCache::pruneDeadResourcesToSize. A possible cause is that
+        destroyDecodedData() call ends up evicting the resource pointed by 'previous' pointer during iteration
+        and deleting the object. This looks in principle possible via stylesheets and SVG images.
+        
+        Speculative fix, no repro, no obvious way to construct a test.
+
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneDeadResourcesToSize):
+        
+            Use CachedResourceHandle to protect the 'previous' pointer during iteration. Check if the
+            resource has been kicked out from the cache during destroyDecodedData() and stop iterating
+            if has (as it may die when CachedResourceHandle releases it).
+            The 'current' pointer is not protected as the resource it points to is allowed to die.
+            
 2012-11-05  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: Fix jscompiler cast syntax
