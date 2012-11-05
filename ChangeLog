@@ -1,3 +1,11 @@
+2012-11-05  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Trivial unreviewed: Add missing module dependencies for builds in Qt CI system.
+
+        These fields aren't used by anyone except some perl scripts in the Qt CI builds.
+
+        * Source/sync.profile:
+
 2012-11-02  Adam Barth  <abarth@webkit.org>
 
         ENABLE(UNDO_MANAGER) is disabled everywhere and is not under active development
