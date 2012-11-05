@@ -208,7 +208,7 @@ class OptimizeBaselines(AbstractRebaseliningCommand):
     argument_names = "TEST_NAMES"
 
     def __init__(self):
-        return super(OptimizeBaselines, self).__init__(options=[self.suffixes_option])
+        super(OptimizeBaselines, self).__init__(options=[self.suffixes_option] + self.platform_options)
 
     def _optimize_baseline(self, test_name):
         for suffix in self._baseline_suffix_list:
@@ -218,8 +218,13 @@ class OptimizeBaselines(AbstractRebaseliningCommand):
 
     def execute(self, options, args, tool):
         self._baseline_suffix_list = options.suffixes.split(',')
-        self._baseline_optimizer = BaselineOptimizer(tool)
-        self._port = tool.port_factory.get()
+        port_names = tool.port_factory.all_port_names(options.platform)
+        if not port_names:
+            print "No port names match '%s'" % options.platform
+            return
+
+        self._baseline_optimizer = BaselineOptimizer(tool, port_names)
+        self._port = tool.port_factory.get(port_names[0])
         for test_name in self._port.tests(args):
             _log.info("Optimizing %s" % test_name)
             self._optimize_baseline(test_name)
@@ -234,7 +239,7 @@ class AnalyzeBaselines(AbstractRebaseliningCommand):
         super(AnalyzeBaselines, self).__init__(options=[
             self.suffixes_option,
             optparse.make_option('--missing', action='store_true', default=False, help='show missing baselines as well'),
-            ])
+            ] + self.platform_options)
         self._optimizer_class = BaselineOptimizer  # overridable for testing
 
     def _write(self, msg):
@@ -252,8 +257,13 @@ class AnalyzeBaselines(AbstractRebaseliningCommand):
 
     def execute(self, options, args, tool):
         self._baseline_suffix_list = options.suffixes.split(',')
-        self._baseline_optimizer = self._optimizer_class(tool)
-        self._port = tool.port_factory.get()
+        port_names = tool.port_factory.all_port_names(options.platform)
+        if not port_names:
+            print "No port names match '%s'" % options.platform
+            return
+
+        self._baseline_optimizer = self._optimizer_class(tool, port_names)
+        self._port = tool.port_factory.get(port_names[0])
         for test_name in self._port.tests(args):
             self._analyze_baseline(options, test_name)
 

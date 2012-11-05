@@ -37,7 +37,7 @@ from webkitpy.common.host_mock import MockHost
 class TestBaselineOptimizer(BaselineOptimizer):
     def __init__(self, mock_results_by_directory):
         host = MockHost()
-        BaselineOptimizer.__init__(self, host)
+        BaselineOptimizer.__init__(self, host, host.port_factory.all_port_names())
         self._mock_results_by_directory = mock_results_by_directory
 
     # We override this method for testing so we don't have to construct an
@@ -64,7 +64,7 @@ class BaselineOptimizerTest(unittest.TestCase):
         host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium-win/another/test-expected.txt', 'result A')
         host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium-mac/another/test-expected.txt', 'result A')
         host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium/another/test-expected.txt', 'result B')
-        baseline_optimizer = BaselineOptimizer(host)
+        baseline_optimizer = BaselineOptimizer(host, host.port_factory.all_port_names())
         baseline_optimizer._move_baselines('another/test-expected.txt', {
             'LayoutTests/platform/chromium-win': 'aaa',
             'LayoutTests/platform/chromium-mac': 'aaa',

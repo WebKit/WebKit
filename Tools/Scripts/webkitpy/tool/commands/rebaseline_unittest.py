@@ -376,14 +376,14 @@ class TestAnalyzeBaselines(_BaseTestCase):
         self.command._write = lambda msg: self.lines.append(msg)
 
     def test_default(self):
-        self.command.execute(MockOptions(suffixes='txt', missing=False), ['passes/text.html'], self.tool)
+        self.command.execute(MockOptions(suffixes='txt', missing=False, platform=None), ['passes/text.html'], self.tool)
         self.assertEquals(self.lines,
             ['passes/text-expected.txt:',
              '  (generic): 123456',
              '  test-mac-leopard: abcdef'])
 
     def test_missing_baselines(self):
-        self.command.execute(MockOptions(suffixes='png,txt', missing=True), ['passes/text.html'], self.tool)
+        self.command.execute(MockOptions(suffixes='png,txt', missing=True, platform=None), ['passes/text.html'], self.tool)
         self.assertEquals(self.lines,
             ['passes/text-expected.png: (no baselines found)',
              'passes/text-expected.txt:',

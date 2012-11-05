@@ -32,10 +32,11 @@ import logging
 
 _log = logging.getLogger(__name__)
 
+
 # Yes, it's a hypergraph.
 # FIXME: Should this function live with the ports somewhere?
 # Perhaps this should move onto PortFactory?
-def _baseline_search_hypergraph(host):
+def _baseline_search_hypergraph(host, port_names):
     hypergraph = {}
 
     # These edges in the hypergraph aren't visible on build.webkit.org,
@@ -46,7 +47,7 @@ def _baseline_search_hypergraph(host):
     fallback_path = ['LayoutTests']
 
     port_factory = host.port_factory
-    for port_name in port_factory.all_port_names():
+    for port_name in port_names:
         port = port_factory.get(port_name)
         webkit_base = port.webkit_base()
         search_path = port.baseline_search_path()
@@ -74,11 +75,11 @@ def _invert_dictionary(dictionary):
 
 
 class BaselineOptimizer(object):
-    def __init__(self, host):
+    def __init__(self, host, port_names):
         self._host = host
         self._filesystem = self._host.filesystem
         self._scm = self._host.scm()
-        self._hypergraph = _baseline_search_hypergraph(host)
+        self._hypergraph = _baseline_search_hypergraph(host, port_names)
         self._directories = reduce(set.union, map(set, self._hypergraph.values()))
 
     def read_results_by_directory(self, baseline_name):

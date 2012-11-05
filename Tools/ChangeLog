@@ -1,5 +1,32 @@
 2012-11-05  Dirk Pranke  <dpranke@chromium.org>
 
+        webkit-patch optimize-baselines should take a --platform arg
+        https://bugs.webkit.org/show_bug.cgi?id=97623
+
+        Reviewed by Ojan Vafai.
+
+        So that we can optionally limit/control which platforms' results
+        are affected.
+
+        This patch adds --platform to analyze-baselines as well.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        (_baseline_search_hypergraph):
+        (BaselineOptimizer.__init__):
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        (TestBaselineOptimizer.__init__):
+        (BaselineOptimizerTest.test_move_baselines):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (OptimizeBaselines.__init__):
+        (OptimizeBaselines.execute):
+        (AnalyzeBaselines.__init__):
+        (AnalyzeBaselines.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestAnalyzeBaselines.test_default):
+        (TestAnalyzeBaselines.test_missing_baselines):
+
+2012-11-05  Dirk Pranke  <dpranke@chromium.org>
+
         webkit-patch rebaseline-expectations should take a --platform arg
         https://bugs.webkit.org/show_bug.cgi?id=97621
 
