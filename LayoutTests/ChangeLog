@@ -1,3 +1,9 @@
+2012-11-05  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Unreviewed gardening.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+
 2012-11-05  Glenn Adams  <glenn@skynav.com>
 
         Add support to -webkit-line-break property for CSS3 Text line-break property values and semantics.
