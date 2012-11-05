@@ -25,8 +25,6 @@
 #include <Elementary.h>
 #include <Evas.h>
 
-static const int DEFAULT_WIDTH = 800;
-static const int DEFAULT_HEIGHT = 600;
 static const char DEFAULT_URL[] = "http://www.google.com/";
 static const char APP_NAME[] = "EFL MiniBrowser";
 static const int TOOL_BAR_ICON_SIZE = 24;
@@ -42,6 +40,8 @@ static int verbose = 1;
 static Eina_List *windows = NULL;
 static char *evas_engine_name = NULL;
 static Eina_Bool frame_flattening_enabled = EINA_FALSE;
+static int window_width = 800;
+static int window_height = 600;
 
 static Ewk_View_Smart_Class* miniBrowserViewSmartClass()
 {
@@ -67,6 +67,8 @@ static const Ecore_Getopt options = {
     EINA_TRUE, {
         ECORE_GETOPT_STORE_STR
             ('e', "engine", "ecore-evas engine to use."),
+        ECORE_GETOPT_STORE_STR
+            ('s', "window-size", "window size in following format (width)x(height)."),
         ECORE_GETOPT_CALLBACK_NOARGS
             ('E', "list-engines", "list ecore-evas engines.",
              ecore_getopt_callback_ecore_evas_list_engines, NULL),
@@ -947,12 +949,37 @@ static Browser_Window *window_create(const char *url)
     if (url)
         ewk_view_url_set(app_data->webview, url);
 
-    evas_object_resize(app_data->window, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    evas_object_resize(app_data->window, window_width, window_height);
     evas_object_show(app_data->window);
 
     view_focus_set(app_data, EINA_TRUE);
 
     return app_data;
+}
+
+static void
+parse_window_size(const char *input_string, int *width, int *height)
+{
+    static const unsigned max_length = 4;
+    int parsed_width;
+    int parsed_height;
+    char **arr;
+    unsigned elements;
+
+    arr = eina_str_split_full(input_string, "x", 0, &elements);
+
+    if (elements == 2 && (strlen(arr[0]) <= max_length) && (strlen(arr[1]) <= max_length)) {
+        parsed_width = atoi(arr[0]);
+        if (width && parsed_width)
+            *width = parsed_width;
+
+        parsed_height = atoi(arr[1]);
+        if (height && parsed_height)
+            *height = parsed_height;
+    }
+
+    free(arr[0]);
+    free(arr);
 }
 
 EAPI_MAIN int
@@ -961,9 +988,11 @@ elm_main(int argc, char *argv[])
     int args = 1;
     unsigned char quitOption = 0;
     Browser_Window *window;
+    char *window_size_string = NULL;
 
     Ecore_Getopt_Value values[] = {
         ECORE_GETOPT_VALUE_STR(evas_engine_name),
+        ECORE_GETOPT_VALUE_STR(window_size_string),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(frame_flattening_enabled),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
@@ -998,6 +1027,9 @@ elm_main(int argc, char *argv[])
     // Enable favicon database.
     Ewk_Context *context = ewk_context_default_get();
     ewk_context_favicon_database_directory_set(context, NULL);
+
+    if (window_size_string)
+        parse_window_size(window_size_string, &window_width, &window_height);
 
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
