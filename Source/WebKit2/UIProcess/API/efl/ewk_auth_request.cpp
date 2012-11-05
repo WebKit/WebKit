@@ -47,7 +47,7 @@ Ewk_Auth_Request::Ewk_Auth_Request(AuthenticationChallengeProxy* authenticationC
 Ewk_Auth_Request::~Ewk_Auth_Request()
 {
     if (!m_wasHandled)
-        cancel();
+        continueWithoutCredential();
 }
 
 const char* Ewk_Auth_Request::suggestedUsername() const
@@ -98,13 +98,13 @@ const char* Ewk_Auth_Request::host() const
     return m_host;
 }
 
-bool Ewk_Auth_Request::cancel()
+bool Ewk_Auth_Request::continueWithoutCredential()
 {
     if (m_wasHandled)
         return false;
 
     m_wasHandled = true;
-    m_authenticationChallenge->cancel();
+    m_authenticationChallenge->useCredential(0);
 
     return true;
 }
@@ -153,7 +153,7 @@ Eina_Bool ewk_auth_request_cancel(Ewk_Auth_Request* request)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
 
-    return request->cancel();
+    return request->continueWithoutCredential();
 }
 
 Eina_Bool ewk_auth_request_authenticate(Ewk_Auth_Request* request, const char* username, const char* password)

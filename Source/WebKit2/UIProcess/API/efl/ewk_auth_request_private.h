@@ -48,7 +48,7 @@ public:
     const char* host() const;
     bool isRetrying() const;
 
-    bool cancel();
+    bool continueWithoutCredential();
     bool authenticate(const String& username, const String& password);
 
 private:

@@ -1,5 +1,27 @@
 2012-11-05  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] EWK2UnitTestBase.ewk_auth_request_cancel API test is failing after r133389
+        https://bugs.webkit.org/show_bug.cgi?id=101203
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Attempt for continue without credential when the client cancels
+        authentication (or does not handle the authentication request)
+        instead of cancelling the load. We now get a 402 error when
+        when cancelling the authentication, which is the behavior we
+        want (and the behavior we used to have before r133389).
+
+        * UIProcess/API/efl/ewk_auth_request.cpp:
+        (Ewk_Auth_Request::~Ewk_Auth_Request):
+        (Ewk_Auth_Request::continueWithoutCredential):
+        (ewk_auth_request_cancel):
+        * UIProcess/API/efl/ewk_auth_request_private.h:
+        (Ewk_Auth_Request):
+        * UIProcess/API/efl/tests/test_ewk2_auth_request.cpp:
+        (TEST_F):
+
+2012-11-05  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] The icon database path should be set by the client
         https://bugs.webkit.org/show_bug.cgi?id=101182
 

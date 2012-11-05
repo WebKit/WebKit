@@ -185,12 +185,13 @@ TEST_F(EWK2UnitTestBase, ewk_auth_request_cancel)
     int statusCode = 0;
     evas_object_smart_callback_add(webView(), "resource,request,response", onResourceLoadResponse, &statusCode);
 
-    // Cancels authentication by default.
+    // Will attempt to continue without authentication by default.
     ewk_auth_request_unref(authenticationRequest);
 
     while (!statusCode)
         ecore_main_loop_iterate();
 
+    // We should get a "402 Unauthorized" error.
     EXPECT_EQ(SOUP_STATUS_UNAUTHORIZED, statusCode);
 
     evas_object_smart_callback_del(webView(), "resource,request,response", onResourceLoadResponse);
