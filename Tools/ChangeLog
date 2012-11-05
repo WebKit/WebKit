@@ -1,3 +1,31 @@
+2012-11-05  Dirk Pranke  <dpranke@chromium.org>
+
+        webkitpy: clean up options for specifying multiple platforms at once
+        https://bugs.webkit.org/show_bug.cgi?id=101140
+
+        Reviewed by Ojan Vafai.
+
+        This patch reworks how we display the help strings for --platform
+        options and how we filter out platforms matching a glob. This will
+        be useful as I add patches to ensure that all the webkit-patch
+        commands are using --platform consistently to filter ports.
+
+        There should be no functional changes resulting from this patch.
+
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (platform_options):
+        (PortFactory.all_port_names):
+        (PortFactory.get_from_builder_name):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations.__init__):
+        (PrintBaselines.__init__):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractRebaseliningCommand):
+        (RebaselineJson.__init__):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineExpectations.setUp):
+        (TestRebaselineExpectations.test_rebaseline_expectations):
+
 2012-11-05  Peter Beverloo  <peter@chromium.org>
 
         The layout test runner shouldn't wait for data if stdout/stderr have been closed

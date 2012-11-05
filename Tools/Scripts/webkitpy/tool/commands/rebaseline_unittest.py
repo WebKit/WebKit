@@ -312,7 +312,8 @@ class TestRebaselineExpectations(_BaseTestCase):
 
     def setUp(self):
         super(TestRebaselineExpectations, self).setUp()
-        self.options = MockOptions(optimize=True, builders=None, suffixes=['txt'], verbose=False)
+        self.options = MockOptions(optimize=False, builders=None, suffixes=['txt'], verbose=False, platform=None,
+                                   move_overwritten_baselines=False, results_directory=None)
 
     def test_rebaseline_expectations(self):
         self._zero_out_test_expectations()
@@ -320,7 +321,7 @@ class TestRebaselineExpectations(_BaseTestCase):
         self.tool.executive = MockExecutive2()
 
         self.command._tests_to_rebaseline = lambda port: {'userscripts/another-test.html': set(['txt']), 'userscripts/images.svg': set(['png'])}
-        self.command.execute(MockOptions(optimize=False, verbose=False, move_overwritten_baselines=False, results_directory=None), [], self.tool)
+        self.command.execute(self.options, [], self.tool)
 
         # FIXME: change this to use the test- ports.
         calls = filter(lambda x: x != ['qmake', '-v'], self.tool.executive.calls)

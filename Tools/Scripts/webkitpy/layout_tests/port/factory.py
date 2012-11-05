@@ -29,26 +29,32 @@
 
 """Factory method to retrieve the appropriate port implementation."""
 
+import fnmatch
 import optparse
 import re
 
 from webkitpy.layout_tests.port import builders
 
 
-def platform_options(**help_strings):
+def platform_options(use_globs=False):
     return [
         optparse.make_option('--platform', action='store',
-            help=help_strings.get('platform', 'Platform/Port being tested (e.g., "mac-lion")')),
-        optparse.make_option('--chromium', action='store_const', const='chromium', dest='platform',
-            help='Alias for --platform=chromium'),
-        optparse.make_option('--chromium-android', action='store_const', const='chromium-android', dest='platform',
-            help='Alias for --platform=chromium-android'),
-        optparse.make_option('--efl', action='store_const', const='efl', dest="platform",
-            help='Alias for --platform=efl'),
-        optparse.make_option('--gtk', action='store_const', const='gtk', dest="platform",
-            help='Alias for --platform=gtk'),
-        optparse.make_option('--qt', action='store_const', const='qt', dest="platform",
-            help='Alias for --platform=qt'),
+            help=('Glob-style list of platform/ports to use (e.g., "mac*")' if use_globs else 'Platform to use (e.g., "mac-lion")')),
+        optparse.make_option('--chromium', action='store_const', dest='platform',
+            const=('chromium*' if use_globs else 'chromium'),
+            help=('Alias for --platform=chromium*' if use_globs else 'Alias for --platform=chromium')),
+        optparse.make_option('--chromium-android', action='store_const', dest='platform',
+            const=('chromium-android*' if use_globs else 'chromium-android'),
+            help=('Alias for --platform=chromium-android*' if use_globs else 'Alias for --platform=chromium')),
+        optparse.make_option('--efl', action='store_const', dest='platform',
+            const=('efl*' if use_globs else 'efl'),
+            help=('Alias for --platform=efl*' if use_globs else 'Alias for --platform=efl')),
+        optparse.make_option('--gtk', action='store_const', dest='platform',
+            const=('gtk*' if use_globs else 'gtk'),
+            help=('Alias for --platform=gtk*' if use_globs else 'Alias for --platform=gtk')),
+        optparse.make_option('--qt', action='store_const', dest="platform",
+            const=('qt*' if use_globs else 'qt'),
+            help=('Alias for --platform=qt' if use_globs else 'Alias for --platform=qt')),
         ]
 
 
@@ -122,18 +128,18 @@ class PortFactory(object):
                 return cls(self._host, port_name, options=options, **kwargs)
         raise NotImplementedError('unsupported platform: "%s"' % port_name)
 
-    def all_port_names(self):
+    def all_port_names(self, platform=None):
         """Return a list of all valid, fully-specified, "real" port names.
 
         This is the list of directories that are used as actual baseline_paths()
         by real ports. This does not include any "fake" names like "test"
-        or "mock-mac", and it does not include any directories that are not ."""
-        # FIXME: There's probably a better way to generate this list ...
-        return builders.all_port_names()
+        or "mock-mac", and it does not include any directories that are not.
+
+        If platform is not specified, we will glob-match all ports"""
+        platform = platform or '*'
+        return fnmatch.filter(builders.all_port_names(), platform)
 
     def get_from_builder_name(self, builder_name):
         port_name = builders.port_name_for_builder_name(builder_name)
-        assert(port_name)  # Need to update port_name_for_builder_name
-        port = self.get(port_name, _builder_options(builder_name))
-        assert(port)  # Need to update port_name_for_builder_name
-        return port
+        assert port_name, "unrecognized builder name '%s'" % builder_name
+        return self.get(port_name, _builder_options(builder_name))

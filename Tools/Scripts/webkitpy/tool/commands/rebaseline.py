@@ -67,7 +67,7 @@ class AbstractRebaseliningCommand(AbstractDeclarativeCommand):
         help=('Do not optimize/de-dup the expectations after rebaselining (default is to de-dup automatically). '
               'You can use "webkit-patch optimize-baselines" to optimize separately.'))
 
-    platform_options = factory.platform_options()
+    platform_options = factory.platform_options(use_globs=True)
 
     results_directory_option = optparse.make_option("--results-directory", help="Local results directory to use")
 
@@ -353,7 +353,7 @@ class RebaselineJson(AbstractParallelRebaselineCommand):
     help_text = "Rebaseline based off JSON passed to stdin. Intended to only be called from other scripts."
 
     def __init__(self,):
-        return super(RebaselineJson, self).__init__(options=[
+        super(RebaselineJson, self).__init__(options=[
             self.move_overwritten_baselines_option,
             self.no_optimize_option,
             self.results_directory_option,
