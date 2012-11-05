@@ -226,6 +226,11 @@ class ServerProcess(object):
         return output
 
     def _wait_for_data_and_update_buffers_using_select(self, deadline, stopping=False):
+        if self._proc.stdout.closed or self._proc.stderr.closed:
+            # If the process crashed and is using FIFOs, like Chromium Android, the
+            # stdout and stderr pipes will be closed.
+            return
+
         out_fd = self._proc.stdout.fileno()
         err_fd = self._proc.stderr.fileno()
         select_fds = (out_fd, err_fd)
