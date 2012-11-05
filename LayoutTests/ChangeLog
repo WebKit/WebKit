@@ -1,3 +1,304 @@
+2012-11-04  Kent Tamura  <tkent@chromium.org>
+
+        Move *-multiple-fields-appearance-*.html from fast/forms/*-multiple-fields/ to fast/forms/*/
+        https://bugs.webkit.org/show_bug.cgi?id=101186
+
+        Rubber-stamped by Kentaro Hara.
+
+        The fast/forms/{date,month,time,week}-multiple-fields/
+        {date,month,time,week}-multiple-fields-appearance-*.html tests don't
+        depend on the multiple-fields UI, and should work for non
+        multiple-fields configuration too. They should be moved to
+        fast/forms/{date,month,time,week}/.
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.txt: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic.html: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.txt: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n.html: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.txt: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes.html: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements.html: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.txt: Removed.
+        * fast/forms/date-multiple-fields/date-multiple-fields-appearance-style.html: Removed.
+        * fast/forms/date/date-appearance-basic-expected.txt: Copied from LayoutTests/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.txt.
+        * fast/forms/date/date-appearance-basic.html: Copied from LayoutTests/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic.html.
+        * fast/forms/date/date-appearance-l10n-expected.txt: Copied from LayoutTests/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.txt.
+        * fast/forms/date/date-appearance-l10n.html: Copied from LayoutTests/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n.html.
+        * fast/forms/date/date-appearance-pseudo-classes-expected.txt: Copied from LayoutTests/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.txt.
+        * fast/forms/date/date-appearance-pseudo-classes.html: Copied from LayoutTests/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes.html.
+        * fast/forms/date/date-appearance-pseudo-elements-expected.txt: Copied from LayoutTests/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.txt.
+        * fast/forms/date/date-appearance-pseudo-elements.html: Copied from LayoutTests/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements.html.
+        * fast/forms/date/date-appearance-style-expected.txt: Copied from LayoutTests/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.txt.
+        * fast/forms/date/date-appearance-style.html: Copied from LayoutTests/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style.html.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.txt: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic.html: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.txt: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n.html: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.txt: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes.html: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements.html: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.txt: Removed.
+        * fast/forms/month-multiple-fields/month-multiple-fields-appearance-style.html: Removed.
+        * fast/forms/month/month-appearance-basic-expected.txt: Copied from LayoutTests/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.txt.
+        * fast/forms/month/month-appearance-basic.html: Copied from LayoutTests/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic.html.
+        * fast/forms/month/month-appearance-l10n-expected.txt: Copied from LayoutTests/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.txt.
+        * fast/forms/month/month-appearance-l10n.html: Copied from LayoutTests/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n.html.
+        * fast/forms/month/month-appearance-pseudo-classes-expected.txt: Copied from LayoutTests/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.txt.
+        * fast/forms/month/month-appearance-pseudo-classes.html: Copied from LayoutTests/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes.html.
+        * fast/forms/month/month-appearance-pseudo-elements-expected.txt: Copied from LayoutTests/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.txt.
+        * fast/forms/month/month-appearance-pseudo-elements.html: Copied from LayoutTests/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements.html.
+        * fast/forms/month/month-appearance-style-expected.txt: Copied from LayoutTests/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.txt.
+        * fast/forms/month/month-appearance-style.html: Copied from LayoutTests/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style.html.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.txt: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.txt: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly.html: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.txt: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes.html: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.txt: Removed.
+        * fast/forms/time-multiple-fields/time-multiple-fields-appearance-style.html: Removed.
+        * fast/forms/time/time-appearance-basic-expected.txt: Copied from LayoutTests/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.txt.
+        * fast/forms/time/time-appearance-basic.html: Copied from LayoutTests/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic.html.
+        * fast/forms/time/time-appearance-disabled-readonly-expected.txt: Copied from LayoutTests/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.txt.
+        * fast/forms/time/time-appearance-disabled-readonly.html: Copied from LayoutTests/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly.html.
+        * fast/forms/time/time-appearance-pseudo-classes-expected.txt: Copied from LayoutTests/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.txt.
+        * fast/forms/time/time-appearance-pseudo-classes.html: Copied from LayoutTests/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes.html.
+        * fast/forms/time/time-appearance-pseudo-elements-expected.txt: Copied from LayoutTests/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.txt.
+        * fast/forms/time/time-appearance-pseudo-elements.html: Copied from LayoutTests/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements.html.
+        * fast/forms/time/time-appearance-style-expected.txt: Copied from LayoutTests/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.txt.
+        * fast/forms/time/time-appearance-style.html: Copied from LayoutTests/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style.html.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.txt: Removed.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic.html: Removed.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.txt: Removed.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes.html: Removed.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.txt: Removed.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements.html: Removed.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.txt: Removed.
+        * fast/forms/week-multiple-fields/week-multiple-fields-appearance-style.html: Removed.
+        * fast/forms/week/week-appearance-basic-expected.txt: Copied from LayoutTests/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.txt.
+        * fast/forms/week/week-appearance-basic.html: Copied from LayoutTests/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic.html.
+        * fast/forms/week/week-appearance-pseudo-classes-expected.txt: Copied from LayoutTests/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.txt.
+        * fast/forms/week/week-appearance-pseudo-classes.html: Copied from LayoutTests/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes.html.
+        * fast/forms/week/week-appearance-pseudo-elements-expected.txt: Copied from LayoutTests/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.txt.
+        * fast/forms/week/week-appearance-pseudo-elements.html: Copied from LayoutTests/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements.html.
+        * fast/forms/week/week-appearance-style-expected.txt: Copied from LayoutTests/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.txt.
+        * fast/forms/week/week-appearance-style.html: Copied from LayoutTests/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style.html.
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/date/date-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-linux/fast/forms/date/date-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-linux/fast/forms/date/date-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-linux/fast/forms/date/date-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-linux/fast/forms/date/date-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-linux/fast/forms/month: Added.
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/month/month-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-linux/fast/forms/month/month-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-linux/fast/forms/month/month-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-linux/fast/forms/month/month-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-linux/fast/forms/month/month-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-linux/fast/forms/time: Added.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/time/time-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-linux/fast/forms/time/time-appearance-disabled-readonly-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png.
+        * platform/chromium-linux/fast/forms/time/time-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-linux/fast/forms/time/time-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-linux/fast/forms/time/time-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-linux/fast/forms/week: Added.
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/week/week-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-linux/fast/forms/week/week-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-linux/fast/forms/week/week-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-linux/fast/forms/week/week-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/date/date-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac-lion/fast/forms/date/date-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-mac-lion/fast/forms/date/date-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac-lion/fast/forms/date/date-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac-lion/fast/forms/date/date-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac-lion/fast/forms/month: Added.
+        * platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac-lion/fast/forms/time: Added.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/time/time-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac-lion/fast/forms/time/time-appearance-disabled-readonly-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png.
+        * platform/chromium-mac-lion/fast/forms/time/time-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac-lion/fast/forms/time/time-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac-lion/fast/forms/time/time-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac-lion/fast/forms/week: Added.
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac-lion/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/month: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/time: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/time/time-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/time/time-appearance-disabled-readonly-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/time/time-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/time/time-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/time/time-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/week: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date/date-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac/fast/forms/date/date-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-mac/fast/forms/date/date-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac/fast/forms/date/date-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac/fast/forms/date/date-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac/fast/forms/month: Added.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/month/month-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac/fast/forms/month/month-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-mac/fast/forms/month/month-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac/fast/forms/month/month-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac/fast/forms/month/month-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac/fast/forms/time: Added.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time/time-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac/fast/forms/time/time-appearance-disabled-readonly-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png.
+        * platform/chromium-mac/fast/forms/time/time-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac/fast/forms/time/time-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac/fast/forms/time/time-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-mac/fast/forms/week: Added.
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/week/week-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-mac/fast/forms/week/week-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-mac/fast/forms/week/week-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-mac/fast/forms/week/week-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-win-xp/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-win-xp/fast/forms/date/date-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-win-xp/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-win-xp/fast/forms/month: Added.
+        * platform/chromium-win-xp/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-win-xp/fast/forms/month/month-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-win-xp/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-win/fast/forms/date/date-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-win/fast/forms/date/date-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-win/fast/forms/date/date-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-win/fast/forms/date/date-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-win/fast/forms/date/date-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/date-multiple-fields/date-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-win/fast/forms/month: Added.
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png: Removed.
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-win/fast/forms/month/month-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-win/fast/forms/month/month-appearance-l10n-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-l10n-expected.png.
+        * platform/chromium-win/fast/forms/month/month-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-win/fast/forms/month/month-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-win/fast/forms/month/month-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-win/fast/forms/time: Added.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-win/fast/forms/time/time-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-win/fast/forms/time/time-appearance-disabled-readonly-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-disabled-readonly-expected.png.
+        * platform/chromium-win/fast/forms/time/time-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-win/fast/forms/time/time-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-win/fast/forms/time/time-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/time-multiple-fields/time-multiple-fields-appearance-style-expected.png.
+        * platform/chromium-win/fast/forms/week: Added.
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png: Removed.
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png: Removed.
+        * platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png: Removed.
+        * platform/chromium-win/fast/forms/week/week-appearance-basic-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-basic-expected.png.
+        * platform/chromium-win/fast/forms/week/week-appearance-pseudo-classes-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-classes-expected.png.
+        * platform/chromium-win/fast/forms/week/week-appearance-pseudo-elements-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-pseudo-elements-expected.png.
+        * platform/chromium-win/fast/forms/week/week-appearance-style-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/week-multiple-fields/week-multiple-fields-appearance-style-expected.png.
+        * platform/chromium/TestExpectations:
+
 2012-11-04  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Fix the collapsing border code to handle mixed directionality at the row level

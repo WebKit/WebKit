@@ -1871,6 +1871,23 @@ webkit.org/b/98901 [ Android ] fast/multicol/image-inside-nested-blocks-with-bor
 # [Chromium-Android] Some frame-related tests are timing out
 webkit.org/b/98900 [ Android ] fast/dom/frame-loading-via-document-write.html [ Timeout Pass ]
 
+# Need rebaseline
+webkit.org/b/101186 fast/forms/date/date-appearance-basic.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/date/date-appearance-l10n.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/date/date-appearance-pseudo-classes.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/date/date-appearance-pseudo-elements.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/date/date-appearance-style.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/month/month-appearance-basic.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/month/month-appearance-l10n.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/month/month-appearance-pseudo-classes.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/month/month-appearance-pseudo-elements.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/month/month-appearance-style.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/time/time-appearance-basic.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/time/time-appearance-disabled-readonly.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/time/time-appearance-pseudo-classes.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/time/time-appearance-pseudo-elements.html [ ImageOnlyFailure ]
+webkit.org/b/101186 fast/forms/time/time-appearance-style.html [ ImageOnlyFailure ]
+
 #####################
 # Android tests which we'll probably want to triage. See comments for remarks
 # in more detail.
