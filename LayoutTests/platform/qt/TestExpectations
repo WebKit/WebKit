@@ -323,6 +323,7 @@ fast/dom/shadow/shadow-root-resetStyleInheritance.html
 fast/dom/shadow/shadow-ul-li.html
 fast/dom/shadow/style-of-distributed-node.html
 fast/dom/shadow/style-scoped-not-enabled.html
+fast/dom/shadow/styling-pseudo-attribute.html
 fast/dom/shadow/suppress-mutation-events-in-shadow-characterdata.html
 fast/dom/shadow/tab-order-iframe-and-shadow.html
 fast/dom/shadow/transition-on-shadow-host-with-distributed-node.html
@@ -2527,9 +2528,6 @@ webkit.org/b/100636 jquery/manipulation.html
 webkit.org/b/100636 jquery/traversing.html
 
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
-
-# New test introduced in r133416, but fails on Qt
-fast/events/touch/gesture/disabled-input-text-selection.html
 
 # New, but failing test
 webkit.org/b/101035 fast/images/exif-orientation-image-document.html
