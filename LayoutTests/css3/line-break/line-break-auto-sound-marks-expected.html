@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <title>Line breaks using [-webkit-]line-break : auto - before sound marks</title>
+        <style>
+          div > div {
+            font-family: 'Lucida Grande';
+            font-size: 16pt;
+            width: 4.1em;
+          }
+          div > p {
+            border: solid blue 1px;
+          }
+        </style>
+    </head>
+    <body>
+        <div lang="en">
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;</nobr><br>&#x56db;&#x30fc;</p>
+            </div>
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;</nobr><br>&#x56db;&#xff70;</p>
+            </div>
+        </div>
+        <div lang="ja">
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x30fc;</p>
+            </div>
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#xff70;</p>
+            </div>
+        </div>
+        <div lang="ko">
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x30fc;</p>
+            </div>
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#xff70;</p>
+            </div>
+        </div>
+        <div lang="zh">
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#x30fc;</p>
+            </div>
+            <div>
+                <p><nobr>&#x4e00;&#x4e8c;&#x4e09;&#x56db;</nobr><br>&#xff70;</p>
+            </div>
+        </div>
+    </body>
+</html>
