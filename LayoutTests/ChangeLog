@@ -1,3 +1,18 @@
+2012-11-05  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Polygon edges should span colinear vertices
+        https://bugs.webkit.org/show_bug.cgi?id=99343
+
+        Reviewed by Dirk Schulze.
+
+        Verify that exclusion polygonal shape-inside layout is unaffected by coincident
+        or collinear vertices.
+
+        * fast/exclusions/shape-inside/shape-inside-coincident-vertices-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-coincident-vertices.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-collinear-vertices-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-collinear-vertices.html: Added.
+
 2012-11-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, unskip now passing tests.

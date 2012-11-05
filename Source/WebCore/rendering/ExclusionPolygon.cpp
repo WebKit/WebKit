@@ -47,6 +47,45 @@ struct EdgeIntersection {
     EdgeIntersectionType type;
 };
 
+static inline float determinant(const FloatSize& a, const FloatSize& b)
+{
+    return a.width() * b.height() - a.height() * b.width();
+}
+
+static inline bool areCollinearPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2)
+{
+    return !determinant(p1 - p0, p2 - p0);
+}
+
+static inline bool areCoincidentPoints(const FloatPoint& p0, const FloatPoint& p1)
+{
+    return p0.x() == p1.x() && p0.y() == p1.y();
+}
+
+static inline unsigned nextVertexIndex(unsigned vertexIndex, unsigned nVertices, bool clockwise)
+{
+    return ((clockwise) ? vertexIndex + 1 : vertexIndex - 1 + nVertices) % nVertices;
+}
+
+unsigned ExclusionPolygon::findNextEdgeVertexIndex(unsigned vertexIndex1, bool clockwise) const
+{
+    unsigned nVertices = numberOfVertices();
+    unsigned vertexIndex2 = nextVertexIndex(vertexIndex1, nVertices, clockwise);
+    unsigned lastVertexIndex = (clockwise) ? 0 : nVertices - 1;
+
+    while (vertexIndex2 != lastVertexIndex && areCoincidentPoints(vertexAt(vertexIndex1), vertexAt(vertexIndex2)))
+        vertexIndex2 = nextVertexIndex(vertexIndex2, nVertices, clockwise);
+
+    while (vertexIndex2 != lastVertexIndex) {
+        unsigned vertexIndex3 = nextVertexIndex(vertexIndex2, nVertices, clockwise);
+        if (!areCollinearPoints(vertexAt(vertexIndex1), vertexAt(vertexIndex2), vertexAt(vertexIndex3)))
+            break;
+        vertexIndex2 = vertexIndex3;
+    }
+
+    return vertexIndex2;
+}
+
 ExclusionPolygon::ExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, WindRule fillRule)
     : ExclusionShape()
     , m_vertices(vertices)
@@ -59,19 +98,42 @@ ExclusionPolygon::ExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, Win
     if (nVertices)
         m_boundingBox.setLocation(vertexAt(0));
 
-    for (unsigned i = 0; i < nVertices; i++) {
-        const FloatPoint& vertex = vertexAt(i);
-        m_boundingBox.extend(vertex);
-        m_edges[i].polygon = this;
-        m_edges[i].vertexIndex1 = i;
-        m_edges[i].vertexIndex2 = (i + 1) % nVertices;
-        m_edges[i].edgeIndex = i;
+    if (m_empty)
+        return;
+
+    unsigned edgeIndex = 0;
+    unsigned vertexIndex1 = 0;
+    do {
+        m_boundingBox.extend(vertexAt(vertexIndex1));
+        unsigned vertexIndex2 = findNextEdgeVertexIndex(vertexIndex1, true);
+        m_edges[edgeIndex].polygon = this;
+        m_edges[edgeIndex].vertexIndex1 = vertexIndex1;
+        m_edges[edgeIndex].vertexIndex2 = vertexIndex2;
+        m_edges[edgeIndex].edgeIndex = edgeIndex;
+        edgeIndex++;
+        vertexIndex1 = vertexIndex2;
+    } while (vertexIndex1);
+
+    if (edgeIndex > 3) {
+        const ExclusionPolygonEdge& firstEdge = m_edges[0];
+        const ExclusionPolygonEdge& lastEdge = m_edges[edgeIndex - 1];
+        if (areCollinearPoints(lastEdge.vertex1(), lastEdge.vertex2(), firstEdge.vertex2())) {
+            m_edges[0].vertexIndex1 = lastEdge.vertexIndex1;
+            edgeIndex--;
+        }
     }
+
+    m_edges.resize(edgeIndex);
+    m_empty = m_edges.size() < 3;
+
+    if (m_empty)
+        return;
 
     for (unsigned i = 0; i < m_edges.size(); i++) {
         ExclusionPolygonEdge* edge = &m_edges[i];
         m_edgeTree.add(EdgeInterval(edge->minY(), edge->maxY(), edge));
     }
+
 }
 
 static bool computeXIntersection(const ExclusionPolygonEdge* edgePointer, float y, EdgeIntersection& result)

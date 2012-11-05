@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+    #shape-inside {
+        position: relative;
+        top: 50px;
+        left: 50px;
+        width: 250px;
+        height: 250px;
+        font: 50px/1 Ahem, sans-serif;
+        color: green;
+    }
+</style>
+</head>
+<body>
+    Requires Ahem font. Verifies that polygonal shapes with multiple coincident vertices produce 
+    the same output as they would with only the unique vertices.  This test should display two
+    indentical solid green rectilinear triangles.
+    <div id="shape-inside">XXX<br/>XX<br/>X</div>
+    <div id="shape-inside">XXX<br/>XX<br/>X</div>
+</body>
+</html>

@@ -1,3 +1,29 @@
+2012-11-05  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Polygon edges should span colinear vertices
+        https://bugs.webkit.org/show_bug.cgi?id=99343
+
+        Reviewed by Dirk Schulze.
+
+        ExclusionPolygonEdges now span coincident and collinear vertices. Currently
+        pairs of vertices are only considered coincident if their coordinates are exactly
+        equal. Similarly, a vertex is only considered collinear with an edge if the area
+        of the triangle defined by the three vertices is exactly zero.  In the future it
+        may be useful to relax the comparison with zero.
+
+        Tests: fast/exclusions/shape-inside/shape-inside-coincident-vertices.html
+               fast/exclusions/shape-inside/shape-inside-collinear-vertices.html
+
+        * rendering/ExclusionPolygon.cpp:
+        (WebCore::determinant): Used to measure collinearity.
+        (WebCore):
+        (WebCore::areCollinearPoints): True if three FloatPoint arguments are collinear per the test outlined above.
+        (WebCore::areCoincidentPoints): True if the two FloatPoint arguments are equal.
+        (WebCore::nextVertexIndex): The next vertex index in clockwise or counterclockwise order.
+        (WebCore::ExclusionPolygon::findNextEdgeVertexIndex): Return the index of the next non-coincident, non-collinear vertex.
+        (WebCore::ExclusionPolygon::ExclusionPolygon): Skip coincident and collinear vertices when building the list of edges.
+        * rendering/ExclusionPolygon.h: Added private findNextEdgeVertexIndex() declaration.
+
 2012-11-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Use POSIX implementation of SharedBuffer::createWithContentsOfFile()

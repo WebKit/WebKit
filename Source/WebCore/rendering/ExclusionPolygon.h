@@ -70,6 +70,7 @@ public:
 private:
     void computeXIntersections(float y, Vector<ExclusionInterval>&) const;
     void computeEdgeIntersections(float minY, float maxY, Vector<ExclusionInterval>&) const;
+    unsigned findNextEdgeVertexIndex(unsigned vertexIndex1, bool clockwise) const;
 
     typedef PODInterval<float, ExclusionPolygonEdge*> EdgeInterval;
     typedef PODIntervalTree<float, ExclusionPolygonEdge*> EdgeIntervalTree;
