@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaType_h
-#define DrawingAreaType_h
+#ifndef RemoteLayerTreeDrawingAreaProxy_h
+#define RemoteLayerTreeDrawingAreaProxy_h
+
+#include "DrawingAreaProxy.h"
 
 namespace WebKit {
 
-enum DrawingAreaType {
-    DrawingAreaTypeImpl,
-#if PLATFORM(MAC) && ENABLE(THREADED_SCROLLING)
-    DrawingAreaTypeTiledCoreAnimation,
-#endif
-#if PLATFORM(MAC)
-    DrawingAreaTypeRemoteLayerTree,
-#endif
+class RemoteLayerTreeDrawingAreaProxy : public DrawingAreaProxy {
+public:
+    static PassOwnPtr<RemoteLayerTreeDrawingAreaProxy> create(WebPageProxy*);
+    virtual ~RemoteLayerTreeDrawingAreaProxy();
+
+private:
+    explicit RemoteLayerTreeDrawingAreaProxy(WebPageProxy*);
+
+    virtual void sizeDidChange() OVERRIDE;
+    virtual void deviceScaleFactorDidChange() OVERRIDE;
 };
 
 } // namespace WebKit
 
-#endif // DrawingAreaType_h
+#endif // RemoteLayerTreeDrawingAreaProxy_h

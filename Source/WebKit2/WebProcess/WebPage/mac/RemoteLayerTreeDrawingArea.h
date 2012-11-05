@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaType_h
-#define DrawingAreaType_h
+#ifndef RemoteLayerTreeDrawingArea_h
+#define RemoteLayerTreeDrawingArea_h
+
+#include "DrawingArea.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
-enum DrawingAreaType {
-    DrawingAreaTypeImpl,
-#if PLATFORM(MAC) && ENABLE(THREADED_SCROLLING)
-    DrawingAreaTypeTiledCoreAnimation,
-#endif
-#if PLATFORM(MAC)
-    DrawingAreaTypeRemoteLayerTree,
-#endif
+class RemoteLayerTreeDrawingArea : public DrawingArea {
+public:
+    static PassOwnPtr<RemoteLayerTreeDrawingArea> create(WebPage*, const WebPageCreationParameters&);
+    virtual ~RemoteLayerTreeDrawingArea();
+
+private:
+    RemoteLayerTreeDrawingArea(WebPage*, const WebPageCreationParameters&);
+
+    // DrawingArea
+    virtual void setNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
+    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) OVERRIDE;
+
+    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
+    virtual void scheduleCompositingLayerFlush() OVERRIDE;
 };
 
 } // namespace WebKit
 
-#endif // DrawingAreaType_h
+#endif // RemoteLayerTreeDrawingArea_h

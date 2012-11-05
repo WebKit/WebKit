@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaType_h
-#define DrawingAreaType_h
+#include "config.h"
+#include "RemoteLayerTreeDrawingArea.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-enum DrawingAreaType {
-    DrawingAreaTypeImpl,
-#if PLATFORM(MAC) && ENABLE(THREADED_SCROLLING)
-    DrawingAreaTypeTiledCoreAnimation,
-#endif
-#if PLATFORM(MAC)
-    DrawingAreaTypeRemoteLayerTree,
-#endif
-};
+PassOwnPtr<RemoteLayerTreeDrawingArea> RemoteLayerTreeDrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
+{
+    return adoptPtr(new RemoteLayerTreeDrawingArea(webPage, parameters));
+}
+
+RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const WebPageCreationParameters&)
+    : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
+{
+}
+
+RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
+{
+}
+
+void RemoteLayerTreeDrawingArea::setNeedsDisplay(const IntRect&)
+{
+}
+
+void RemoteLayerTreeDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
+{
+}
+
+void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer*)
+{
+}
+
+void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
+{
+}
 
 } // namespace WebKit
-
-#endif // DrawingAreaType_h

@@ -33,6 +33,10 @@
 #include "TiledCoreAnimationDrawingArea.h"
 #endif
 
+#if PLATFORM(MAC)
+#include "RemoteLayerTreeDrawingArea.h"
+#endif
+
 #include "WebPageCreationParameters.h"
 
 namespace WebKit {
@@ -45,6 +49,10 @@ PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreat
 #if PLATFORM(MAC) && ENABLE(THREADED_SCROLLING)
     case DrawingAreaTypeTiledCoreAnimation:
         return TiledCoreAnimationDrawingArea::create(webPage, parameters);
+#endif
+#if PLATFORM(MAC)
+    case DrawingAreaTypeRemoteLayerTree:
+        return RemoteLayerTreeDrawingArea::create(webPage, parameters);
 #endif
     }
 
