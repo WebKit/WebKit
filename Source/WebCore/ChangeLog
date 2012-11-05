@@ -1,3 +1,19 @@
+2012-11-05  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] toV8(impl) should return null if impl is 0
+        https://bugs.webkit.org/show_bug.cgi?id=101206
+
+        Reviewed by Adam Barth.
+
+        toV8(impl) should return null if impl is 0. However,
+        V8HTMLCollection::toV8() does not have the null check.
+        All other toV8()s return null.
+
+        No tests. I think there will be no call path that hits the change.
+
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        (WebCore::toV8):
+
 2012-11-05  David Barton  <dbarton@mathscribe.com>
 
         Implement SimpleFontData::platformBoundsForGlyph on skia

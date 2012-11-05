@@ -86,6 +86,9 @@ v8::Handle<v8::Value> V8HTMLCollection::namedItemCallback(const v8::Arguments& a
 
 v8::Handle<v8::Value> toV8(HTMLCollection* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
+    if (!impl)
+        return v8NullWithCheck(isolate);
+
     if (impl->type() == DocAll)
         return toV8(static_cast<HTMLAllCollection*>(impl), creationContext, isolate);
     return V8HTMLCollection::wrap(impl, creationContext, isolate);
