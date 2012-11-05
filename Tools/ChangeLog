@@ -1,3 +1,14 @@
+2012-11-05  Glenn Adams  <glenn@skynav.com>
+
+        Add IRC alias for Glenn Adams
+        https://bugs.webkit.org/show_bug.cgi?id=101262
+
+        Reviewed by Eric Seidel.
+
+        Add IRC alias for Glenn Adams.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-11-05  Dima Gorbik  <dgorbik@apple.com>
 
         Back out controversial changes from Bug 98665.
