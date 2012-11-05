@@ -1,3 +1,21 @@
+2012-11-05  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [Cairo] Make Cairo honor image orientation
+        https://bugs.webkit.org/show_bug.cgi?id=101207
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip and rebaseline exif orientation tests for EFL.
+
+        * platform/efl-wk1/TestExpectations: Tests not passing here yet, since DRT needs a setShouldRespectImageOrientation setting.
+        * platform/efl/TestExpectations: Unskipping three exif orientation tests.
+        * platform/efl/fast/images/exif-orientation-css-expected.png: Added.
+        * platform/efl/fast/images/exif-orientation-css-expected.txt: Added.
+        * platform/efl/fast/images/exif-orientation-expected.png: Added.
+        * platform/efl/fast/images/exif-orientation-expected.txt: Added.
+        * platform/efl/fast/images/exif-orientation-image-document-expected.png: Added.
+        * platform/efl/fast/images/exif-orientation-image-document-expected.txt: Added.
+
 2012-11-05  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Layout of the first shape-inside line can be incorrect

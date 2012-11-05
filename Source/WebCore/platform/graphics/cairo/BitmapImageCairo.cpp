@@ -73,6 +73,11 @@ BitmapImage::BitmapImage(NativeImageCairo* nativeImage, ImageObserver* observer)
 
 void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op)
 {
+    draw(context, dst, src, styleColorSpace, op, DoNotRespectImageOrientation);
+}
+
+void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation)
+{
     if (!dst.width() || !dst.height() || !src.width() || !src.height())
         return;
 
@@ -103,7 +108,25 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
     FloatRect adjustedSrcRect(src);
 #endif
 
-    context->platformContext()->drawSurfaceToContext(nativeImage->surface(), dst, adjustedSrcRect, context);
+    ImageOrientation orientation = DefaultImageOrientation;
+    if (shouldRespectImageOrientation == RespectImageOrientation)
+        orientation = frameOrientationAtIndex(m_currentFrame);
+
+    FloatRect dstRect = dst;
+
+    if (orientation != DefaultImageOrientation) {
+        // ImageOrientation expects the origin to be at (0, 0).
+        context->translate(dstRect.x(), dstRect.y());
+        dstRect.setLocation(FloatPoint());
+        context->concatCTM(orientation.transformFromDefault(dstRect.size()));
+        if (orientation.usesWidthAsHeight()) {
+            // The destination rectangle will have it's width and height already reversed for the orientation of
+            // the image, as it was needed for page layout, so we need to reverse it back here.
+            dstRect = FloatRect(dstRect.x(), dstRect.y(), dstRect.height(), dstRect.width());
+        }
+    }
+
+    context->platformContext()->drawSurfaceToContext(nativeImage->surface(), dstRect, adjustedSrcRect, context);
 
     context->restore();
 

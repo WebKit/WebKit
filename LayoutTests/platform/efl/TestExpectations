@@ -1217,11 +1217,6 @@ webkit.org/b/95297 fast/events/constructors/media-key-event-constructor.html [ S
 webkit.org/b/88080 pointer-lock [ Skip ]
 webkit.org/b/88080 http/tests/pointer-lock [ Skip ]
 
-# EXIF orientation support has not yet been implemented for EFL port
-webkit.org/b/95299 fast/images/exif-orientation-css.html [ Skip ]
-webkit.org/b/95299 fast/images/exif-orientation-image-document.html [ Skip ]
-webkit.org/b/95299 fast/images/exif-orientation.html [ Skip ]
-
 # Requires WEB_AUDIO support.
 webkit.org/b/91738 webaudio [ Skip ]
 

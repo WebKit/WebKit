@@ -1,3 +1,22 @@
+2012-11-05  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [Cairo] Make Cairo honor image orientation
+        https://bugs.webkit.org/show_bug.cgi?id=101207
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement transformed image drawing in BitmapImageCairo, similar
+        as it was done for Skia in bug 100179, r132384.
+        The image drawing code needs to transform the graphics context
+        depending on exif orientation in order for this to work.
+
+        No new tests, covered by fast/images/exif-* which are passing now.
+
+        * platform/graphics/BitmapImage.h: Enable draw function which respects image orientation for Cairo.
+        * platform/graphics/cairo/BitmapImageCairo.cpp:
+        (WebCore::BitmapImage::draw): Apply ImageOrientation's transformFromDefault() transformation to context.
+        (WebCore):
+
 2012-11-05  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Dispose() and Clear() should be always coupled for safety
