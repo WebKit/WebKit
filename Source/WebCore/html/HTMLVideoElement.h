@@ -74,7 +74,6 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 #endif
     virtual void attach();
-    virtual void detach();
     virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForAttribute(Attribute*, StylePropertySet*) OVERRIDE;
