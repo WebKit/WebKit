@@ -75,6 +75,7 @@ private:
     virtual void setHaveFiredLoadEvent(bool haveFiredLoadEvent) { ScriptElement::setHaveFiredLoadEvent(haveFiredLoadEvent); }
     virtual bool isParserInserted() const { return ScriptElement::isParserInserted(); }
     virtual bool haveFiredLoadEvent() const { return ScriptElement::haveFiredLoadEvent(); }
+    virtual Timer<SVGElement>* svgLoadEventTimer() OVERRIDE { return &m_svgLoadEventTimer; }
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGScriptElement)
         DECLARE_ANIMATED_STRING(Href, href)
@@ -82,6 +83,7 @@ private:
     END_DECLARE_ANIMATED_PROPERTIES
 
     String m_type;
+    Timer<SVGElement> m_svgLoadEventTimer;
 };
 
 } // namespace WebCore

@@ -27,6 +27,7 @@
 #include "SVGParsingError.h"
 #include "SVGPropertyInfo.h"
 #include "StyledElement.h"
+#include "Timer.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -72,6 +73,9 @@ public:
     virtual void animatedPropertyTypeForAttribute(const QualifiedName&, Vector<AnimatedPropertyType>&);
 
     void sendSVGLoadEventIfPossible(bool sendParentLoadEvents = false);
+    void sendSVGLoadEventIfPossibleAsynchronously();
+    void svgLoadEventTimerFired(Timer<SVGElement>*);
+    virtual Timer<SVGElement>* svgLoadEventTimer();
 
     virtual AffineTransform* supplementalTransform() { return 0; }
 

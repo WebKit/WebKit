@@ -1,5 +1,19 @@
 2012-11-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r125147
+
+    2012-08-08  MORITA Hajime  <morrita@google.com>
+
+            [SVG] load events shouldn't be fired during Node::insrtedInto()
+            https://bugs.webkit.org/show_bug.cgi?id=92969
+
+            Reviewed by Ryosuke Niwa.
+
+            * svg/custom/loadevents-async-expected.txt: Added.
+            * svg/custom/loadevents-async.html: Added.
+
+2012-11-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r125052
 
     2012-08-08  Tom Sepez  <tsepez@chromium.org>
@@ -10903,6 +10917,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .
