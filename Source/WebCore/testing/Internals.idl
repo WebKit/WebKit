@@ -47,6 +47,7 @@
     Node oldestShadowRoot(in Element host) raises (DOMException);
     Node youngerShadowRoot(in Node root) raises (DOMException);
 #endif
+    DOMString shadowRootType(in Node root) raises (DOMException);
     boolean hasShadowInsertionPoint(in Node root) raises (DOMException);
     boolean hasContentElement(in Node root) raises (DOMException);
     Element includerFor(in Node node) raises (DOMException);

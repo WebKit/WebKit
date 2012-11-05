@@ -482,6 +482,24 @@ Internals::ShadowRootIfShadowDOMEnabledOrNode* Internals::olderShadowRoot(Node* 
     return toShadowRoot(shadow)->olderShadowRoot();
 }
 
+String Internals::shadowRootType(const Node* root, ExceptionCode& ec) const
+{
+    if (!root || !root->isShadowRoot()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    switch (toShadowRoot(root)->type()) {
+    case ShadowRoot::UserAgentShadowRoot:
+        return String("UserAgentShadowRoot");
+    case ShadowRoot::AuthorShadowRoot:
+        return String("AuthorShadowRoot");
+    default:
+        ASSERT_NOT_REACHED();
+        return String("Unknown");
+    }
+}
+
 Element* Internals::includerFor(Node* node, ExceptionCode& ec)
 {
     if (!node) {

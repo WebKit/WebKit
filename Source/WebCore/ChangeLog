@@ -1,3 +1,23 @@
+2012-11-05  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] ShadowRoot type is not set correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=101188
+
+        Reviewed by Hajime Morita.
+
+        ShadowRoot type is not set correctly in Release build. We have had to remove #ifndef block.
+
+        Test: fast/dom/shadow/shadowroot-type.html
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::create):
+        * testing/Internals.cpp:
+        (WebCore::Internals::shadowRootType):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-11-05  Kent Tamura  <tkent@chromium.org>
 
         BaseChooserOnlyDateAndTimeInputType should implement DateTimeChooserClient

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+
+<div id="container">
+    <div id="host"></div>
+    <input id="input" type="text">
+</div>
+<pre id="console"></pre>
+
+<script>
+description("This test ensures ShadowRootType is correctly reflected");
+
+var shadowRootForDiv = new WebKitShadowRoot(host);
+var shadowRootForInput = internals.shadowRoot(input);
+
+shouldBe('"AuthorShadowRoot"', 'internals.shadowRootType(shadowRootForDiv)');
+shouldBe('"UserAgentShadowRoot"', 'internals.shadowRootType(shadowRootForInput)');
+
+container.innerHTML = "";
+
+finishJSTest();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
