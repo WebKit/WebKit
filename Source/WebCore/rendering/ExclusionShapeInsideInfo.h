@@ -54,16 +54,10 @@ public:
     static void removeExclusionShapeInsideInfoForRenderBlock(const RenderBlock*);
     static bool isExclusionShapeInsideInfoEnabledForRenderBlock(const RenderBlock*);
 
-    LayoutUnit shapeLogicalTop() const 
-    { 
-        ASSERT(m_shape);
-        return m_shape->shapeLogicalBoundingBox().y();
-    }
-    LayoutUnit shapeLogicalBottom() const
-    {
-        ASSERT(m_shape);
-        return m_shape->shapeLogicalBoundingBox().maxY();
-    }
+    LayoutUnit shapeLogicalTop() const { return shapeLogicalBoundsY(); }
+    LayoutUnit shapeLogicalBottom() const { return shapeLogicalBoundsMaxY(); }
+    bool lineOverlapsShapeBounds() const { return m_lineTop < shapeLogicalBottom() && m_lineTop + m_lineHeight >= shapeLogicalTop(); }
+
     bool hasSegments() const
     {
         return lineOverlapsShapeBounds() && m_segments.size();
@@ -74,12 +68,25 @@ public:
         return m_segments;
     }
     bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight);
-    bool lineOverlapsShapeBounds() const;
     void computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight);
     void dirtyShapeSize() { m_shapeSizeDirty = true; }
 
 private:
     ExclusionShapeInsideInfo(RenderBlock*);
+
+    inline LayoutUnit shapeLogicalBoundsY() const
+    {
+        ASSERT(m_shape);
+        // Use fromFloatCeil() to ensure that the returned LayoutUnit value is within the shape's bounds.
+        return FractionalLayoutUnit::fromFloatCeil(m_shape->shapeLogicalBoundingBox().y());
+    }
+
+    inline LayoutUnit shapeLogicalBoundsMaxY() const
+    {
+        ASSERT(m_shape);
+        // Use fromFloatFloor() to ensure that the returned LayoutUnit value is within the shape's bounds.
+        return FractionalLayoutUnit::fromFloatFloor(m_shape->shapeLogicalBoundingBox().maxY());
+    }
 
     RenderBlock* m_block;
     OwnPtr<ExclusionShape> m_shape;
@@ -92,13 +99,6 @@ private:
     SegmentList m_segments;
     bool m_shapeSizeDirty;
 };
-
-inline bool ExclusionShapeInsideInfo::lineOverlapsShapeBounds() const
-{
-    ASSERT(m_shape);
-    FloatRect shapeBounds = m_shape->shapeLogicalBoundingBox();
-    return m_lineTop < shapeBounds.maxY() && m_lineTop + m_lineHeight >= shapeBounds.y();
-}
 
 }
 #endif

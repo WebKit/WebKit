@@ -1,3 +1,16 @@
+2012-11-05  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Layout of the first shape-inside line can be incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=100996
+
+        Reviewed by Dirk Schulze.
+
+        Verify that the first line of shape-inside content is laid out correctly
+        when the top of the shape's bounds has a non-integral value.
+
+        * fast/exclusions/shape-inside/shape-inside-shape-logical-top-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-shape-logical-top.html: Added.
+
 2012-11-05  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Mark a flaky test.  Unreviewed.
