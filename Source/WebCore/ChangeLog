@@ -1,3 +1,15 @@
+2012-11-05  Peng Huang  <penghuang@google.com>
+
+        Webkit does not handle some media keys correctly On Linux gtk platform.
+        https://bugs.webkit.org/show_bug.cgi?id=101221
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add media keyboard support on Linux gtk platform.
+
+        * platform/chromium/KeyCodeConversionGtk.cpp:
+        (WebCore::windowsKeyCodeForKeyEvent):
+
 2012-11-05  Glenn Adams  <glenn@skynav.com>
 
         Add support to -webkit-line-break property for CSS3 Text line-break property values and semantics.

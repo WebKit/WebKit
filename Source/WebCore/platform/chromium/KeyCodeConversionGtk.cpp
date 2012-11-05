@@ -303,24 +303,41 @@ int windowsKeyCodeForKeyEvent(unsigned keycode)
         // VKEY_RCONTROL (A3) Right CONTROL key
         // VKEY_LMENU (A4) Left MENU key
         // VKEY_RMENU (A5) Right MENU key
-        // VKEY_BROWSER_BACK (A6) Windows 2000/XP: Browser Back key
-        // VKEY_BROWSER_FORWARD (A7) Windows 2000/XP: Browser Forward key
-        // VKEY_BROWSER_REFRESH (A8) Windows 2000/XP: Browser Refresh key
-        // VKEY_BROWSER_STOP (A9) Windows 2000/XP: Browser Stop key
-        // VKEY_BROWSER_SEARCH (AA) Windows 2000/XP: Browser Search key
-        // VKEY_BROWSER_FAVORITES (AB) Windows 2000/XP: Browser Favorites key
-        // VKEY_BROWSER_HOME (AC) Windows 2000/XP: Browser Start and Home key
-        // VKEY_VOLUME_MUTE (AD) Windows 2000/XP: Volume Mute key
-        // VKEY_VOLUME_DOWN (AE) Windows 2000/XP: Volume Down key
-        // VKEY_VOLUME_UP (AF) Windows 2000/XP: Volume Up key
-        // VKEY_MEDIA_NEXT_TRACK (B0) Windows 2000/XP: Next Track key
-        // VKEY_MEDIA_PREV_TRACK (B1) Windows 2000/XP: Previous Track key
-        // VKEY_MEDIA_STOP (B2) Windows 2000/XP: Stop Media key
-        // VKEY_MEDIA_PLAY_PAUSE (B3) Windows 2000/XP: Play/Pause Media key
-        // VKEY_LAUNCH_MAIL (B4) Windows 2000/XP: Start Mail key
+    case GDK_Back:
+        return VKEY_BROWSER_BACK; // (A6) Windows 2000/XP: Browser Back key
+    case GDK_Forward:
+        return VKEY_BROWSER_FORWARD; // (A7) Windows 2000/XP: Browser Forward key
+    case GDK_Refresh:
+        return VKEY_BROWSER_REFRESH; // (A8) Windows 2000/XP: Browser Refresh key
+    case GDK_Stop:
+        return VKEY_BROWSER_STOP; // (A9) Windows 2000/XP: Browser Stop key
+    case GDK_Search:
+        return VKEY_BROWSER_SEARCH; // (AA) Windows 2000/XP: Browser Search key
+    case GDK_Favorites:
+        return VKEY_BROWSER_FAVORITES; // (AB) Windows 2000/XP: Browser Favorites key
+    case GDK_HomePage:
+        return VKEY_BROWSER_HOME; // (AC) Windows 2000/XP: Browser Start and Home key
+    case GDK_AudioMute:
+        return VKEY_VOLUME_MUTE; // (AD) Windows 2000/XP: Volume Mute key
+    case GDK_AudioLowerVolume:
+        return VKEY_VOLUME_DOWN; // (AE) Windows 2000/XP: Volume Down key
+    case GDK_AudioRaiseVolume:
+        return VKEY_VOLUME_UP; // (AF) Windows 2000/XP: Volume Up key
+    case GDK_AudioNext:
+        return VKEY_MEDIA_NEXT_TRACK; // (B0) Windows 2000/XP: Next Track key
+    case GDK_AudioPrev:
+        return VKEY_MEDIA_PREV_TRACK; // (B1) Windows 2000/XP: Previous Track key
+    case GDK_AudioStop:
+        return VKEY_MEDIA_STOP; // (B2) Windows 2000/XP: Stop Media key
+    case GDK_AudioPlay:
+        return VKEY_MEDIA_PLAY_PAUSE; // (B3) Windows 2000/XP: Play/Pause Media key
+    case GDK_Mail:
+        return VKEY_MEDIA_LAUNCH_MAIL; // (B4) Windows 2000/XP: Start Mail key
         // VKEY_LAUNCH_MEDIA_SELECT (B5) Windows 2000/XP: Select Media key
-        // VKEY_LAUNCH_APP1 (B6) Windows 2000/XP: Start Application 1 key
-        // VKEY_LAUNCH_APP2 (B7) Windows 2000/XP: Start Application 2 key
+    case GDK_LaunchA:
+        return VKEY_MEDIA_LAUNCH_APP1; // (B6) Windows 2000/XP: Start Application 1 key
+    case GDK_LaunchB:
+        return VKEY_MEDIA_LAUNCH_APP2; // (B7) Windows 2000/XP: Start Application 2 key
 
         // VKEY_OEM_1 (BA) Used for miscellaneous characters; it can vary by keyboard. Windows 2000/XP: For the US standard keyboard, the ';:' key
     case GDK_semicolon:
