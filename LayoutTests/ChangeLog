@@ -1,8 +1,17 @@
+2012-11-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] New compositing/tiling tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=101166
+
+        Unskip now passing tests after r133513.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2012-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         [Qt][WK2] New compositing/tiling tests fail
         https://bugs.webkit.org/show_bug.cgi?id=101166
-        
+
         The platform-independent results should not contain visibleRect, since this is
         only dumped on Mac.
 
@@ -12,7 +21,7 @@
 2012-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline some Lion results that were affected by enabling subpixel layout.
-        
+
         * platform/mac-lion/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
         * platform/mac-lion/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
         * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
