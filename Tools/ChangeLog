@@ -1,5 +1,45 @@
 2012-11-05  Dirk Pranke  <dpranke@chromium.org>
 
+        webkit-patch rebaseline-expectations should take a --platform arg
+        https://bugs.webkit.org/show_bug.cgi?id=97621
+
+        Reviewed by Ojan Vafai.
+
+        So that we can limit which platforms we attempt to rebaseline;
+        this can reduce the noise the command produces if some ports
+        have errors or warnings in their TestExpectations files and/or
+        help produce more predictable results.
+
+        In testing this patch, I realized that the rebaseline-in-parallel
+        commands (rebaseline-json, rebaseline-expectations, etc.) can
+        cause multiple rebaseline-test-internal commands to attempt to
+        modify the TestExpectations files concurrently, and that we needed
+        to lock the files to prevent corruption; it would be nice if
+        we can split the updating-the-expectations-files out separately
+        from updating the filesystem (much like we do with the scm updates)
+        to avoid this concurrency.
+
+        * Scripts/webkitpy/common/system/file_lock_mock.py: Added.
+        (MockFileLock):
+        (MockFileLock.__init__):
+        (MockFileLock.acquire_lock):
+        (MockFileLock.release_lock):
+        * Scripts/webkitpy/common/system/systemhost.py:
+        (SystemHost.copy_current_environment):
+        (SystemHost):
+        (SystemHost.make_file_lock):
+        * Scripts/webkitpy/common/system/systemhost_mock.py:
+        (MockSystemHost.copy_current_environment):
+        (MockSystemHost):
+        (MockSystemHost.make_file_lock):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._update_expectations_file):
+        (RebaselineExpectations.__init__):
+        (RebaselineExpectations._add_tests_to_rebaseline_for_port):
+        (RebaselineExpectations.execute):
+
+2012-11-05  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: clean up options for specifying multiple platforms at once
         https://bugs.webkit.org/show_bug.cgi?id=101140
 

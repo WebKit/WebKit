@@ -30,7 +30,7 @@ import os
 import platform
 import sys
 
-from webkitpy.common.system import environment, executive, filesystem, platforminfo, user, workspace
+from webkitpy.common.system import environment, executive, file_lock, filesystem, platforminfo, user, workspace
 
 
 class SystemHost(object):
@@ -43,3 +43,6 @@ class SystemHost(object):
 
     def copy_current_environment(self):
         return environment.Environment(os.environ.copy())
+
+    def make_file_lock(self, path):
+        return file_lock.FileLock(path)

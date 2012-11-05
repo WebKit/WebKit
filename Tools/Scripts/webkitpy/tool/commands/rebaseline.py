@@ -150,13 +150,24 @@ class RebaselineTest(AbstractRebaseliningCommand):
 
     def _update_expectations_file(self, builder_name, test_name):
         port = self._tool.port_factory.get_from_builder_name(builder_name)
-        expectations = TestExpectations(port, include_overrides=False)
 
-        for test_configuration in port.all_test_configurations():
-            if test_configuration.version == port.test_configuration().version:
-                expectationsString = expectations.remove_configuration_from_test(test_name, test_configuration)
+        # Since rebaseline-test-internal can be called multiple times in parallel,
+        # we need to ensure that we're not trying to update the expectations file
+        # concurrently as well.
+        # FIXME: We should rework the code to not need this; maybe just download
+        # the files in parallel and rebaseline local files serially?
+        try:
+            path = port.path_to_test_expectations_file()
+            lock = self._tool.make_file_lock(path + '.lock')
+            lock.acquire_lock()
+            expectations = TestExpectations(port, include_overrides=False)
+            for test_configuration in port.all_test_configurations():
+                if test_configuration.version == port.test_configuration().version:
+                    expectationsString = expectations.remove_configuration_from_test(test_name, test_configuration)
 
-        self._tool.filesystem.write_text_file(port.path_to_test_expectations_file(), expectationsString)
+            self._tool.filesystem.write_text_file(path, expectationsString)
+        finally:
+            lock.release_lock()
 
     def _test_root(self, test_name):
         return os.path.splitext(test_name)[0]
@@ -368,11 +379,10 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
     help_text = "Rebaselines the tests indicated in TestExpectations."
 
     def __init__(self):
-        # FIXME: We should also support platform_options here so that we only look at some TestExpectations files instead of all of them.
-        return super(RebaselineExpectations, self).__init__(options=[
+        super(RebaselineExpectations, self).__init__(options=[
             self.move_overwritten_baselines_option,
             self.no_optimize_option,
-            ])
+            ] + self.platform_options)
 
     def _update_expectations_files(self, port_name):
         port = self._tool.port_factory.get(port_name)
@@ -396,7 +406,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
         tests = self._tests_to_rebaseline(self._tool.port_factory.get(port_name)).items()
 
         if tests:
-            _log.debug("Retrieving results for %s from %s." % (port_name, builder_name))
+            _log.info("Retrieving results for %s from %s." % (port_name, builder_name))
 
         for test_name, suffixes in tests:
             _log.info("    %s (%s)" % (test_name, ','.join(suffixes)))
@@ -407,7 +417,8 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
     def execute(self, options, args, tool):
         options.results_directory = None
         self._test_list = {}
-        for port_name in tool.port_factory.all_port_names():
+        port_names = tool.port_factory.all_port_names(options.platform)
+        for port_name in port_names:
             self._add_tests_to_rebaseline_for_port(port_name)
         if not self._test_list:
             _log.warning("Did not find any tests marked Rebaseline.")
@@ -415,7 +426,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
 
         self._rebaseline(options, self._test_list)
 
-        for port_name in tool.port_factory.all_port_names():
+        for port_name in port_names:
             self._update_expectations_files(port_name)
 
 

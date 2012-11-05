@@ -29,6 +29,7 @@
 from webkitpy.common.system.environment import Environment
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
+from webkitpy.common.system.file_lock_mock import MockFileLock
 from webkitpy.common.system.platforminfo_mock import MockPlatformInfo
 from webkitpy.common.system.user_mock import MockUser
 from webkitpy.common.system.workspace_mock import MockWorkspace
@@ -50,3 +51,6 @@ class MockSystemHost(object):
 
     def copy_current_environment(self):
         return Environment({"MOCK_ENVIRON_COPY": '1'})
+
+    def make_file_lock(self, path):
+        return MockFileLock(path)
