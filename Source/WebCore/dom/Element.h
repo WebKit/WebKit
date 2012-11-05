@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -465,8 +465,6 @@ protected:
     // svgAttributeChanged (called when element.className.baseValue is set)
     void classAttributeChanged(const AtomicString& newClassString);
 
-    bool styleAttributeIsDirty() const;
-
 private:
     // FIXME: Remove the need for Attr to call willModifyAttribute/didModifyAttribute.
     friend class Attr;
@@ -529,9 +527,6 @@ private:
 private:
     ElementRareData* elementRareData() const;
     ElementRareData* ensureElementRareData();
-
-    void detachAllAttrNodesFromElement();
-    void detachAttrNodeFromElementWithValue(Attr*, const AtomicString& value);
 
     RefPtr<ElementAttributeData> m_attributeData;
 };
@@ -733,14 +728,9 @@ inline Attribute* Element::getAttributeItem(const QualifiedName& name)
     return mutableAttributeData()->getAttributeItem(name);
 }
 
-inline bool Element::styleAttributeIsDirty() const
-{
-    return m_attributeData && m_attributeData->styleAttributeIsDirty();
-}
-
 inline void Element::updateInvalidAttributes() const
 {
-    if (styleAttributeIsDirty())
+    if (!isStyleAttributeValid())
         updateStyleAttribute();
 
 #if ENABLE(SVG)

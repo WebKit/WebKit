@@ -1,3 +1,83 @@
+2012-11-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133286, r133385, and r133394.
+        http://trac.webkit.org/changeset/133286
+        http://trac.webkit.org/changeset/133385
+        http://trac.webkit.org/changeset/133394
+        https://bugs.webkit.org/show_bug.cgi?id=101198
+
+        Broke image placement on some web sites. (Requested by kling
+        on #webkit).
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::sweepMatchedPropertiesCache):
+        (WebCore::StyleResolver::matchAllRules):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        * dom/Attr.cpp:
+        (WebCore::Attr::detachFromElementWithValue):
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::detachAttribute):
+        (WebCore::Element::getAttribute):
+        (WebCore::Element::setAttributeNode):
+        (WebCore::Element::removeAttributeInternal):
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::normalizeAttributes):
+        (WebCore::Element::attrIfExists):
+        (WebCore::Element::ensureAttr):
+        (WebCore::Element::cloneAttributesFromElement):
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::updateInvalidAttributes):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::MutableElementAttributeData::MutableElementAttributeData):
+        (WebCore):
+        (WebCore::attrListMap):
+        (WebCore::attrListForElement):
+        (WebCore::ensureAttrListForElement):
+        (WebCore::removeAttrListForElement):
+        (WebCore::findAttrInList):
+        (WebCore::ElementAttributeData::attrIfExists):
+        (WebCore::ElementAttributeData::ensureAttr):
+        (WebCore::ElementAttributeData::setAttr):
+        (WebCore::ElementAttributeData::removeAttr):
+        (WebCore::ElementAttributeData::detachAttrObjectsFromElement):
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        (WebCore::ElementAttributeData::cloneDataFrom):
+        (WebCore::ElementAttributeData::clearAttributes):
+        (WebCore::ElementAttributeData::getAttributeNode):
+        * dom/ElementAttributeData.h:
+        (WebCore):
+        (WebCore::ElementAttributeData::attributeStyle):
+        (WebCore::ElementAttributeData::setAttributeStyle):
+        (ElementAttributeData):
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        * dom/Node.h:
+        (WebCore):
+        (WebCore::Node::hasAttrList):
+        (WebCore::Node::attributeStyleDirty):
+        (WebCore::Node::setAttributeStyleDirty):
+        (WebCore::Node::clearAttributeStyleDirty):
+        (Node):
+        (WebCore::Node::setHasAttrList):
+        (WebCore::Node::clearHasAttrList):
+        (WebCore::Node::isStyleAttributeValid):
+        (WebCore::Node::setIsStyleAttributeValid):
+        (WebCore::Node::clearIsStyleAttributeValid):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateStyleAttribute):
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::styleAttributeChanged):
+        (WebCore::StyledElement::inlineStyleChanged):
+        (WebCore::StyledElement::updateAttributeStyle):
+        * dom/StyledElement.h:
+        (StyledElement):
+        (WebCore::StyledElement::invalidateStyleAttribute):
+        (WebCore::StyledElement::attributeStyle):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+
 2012-11-05  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed trivial Qt build fix.

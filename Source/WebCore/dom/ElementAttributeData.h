@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class Attr;
 class Element;
 class ImmutableElementAttributeData;
 class MutableElementAttributeData;
@@ -62,11 +63,14 @@ public:
     void destroyInlineStyle(StyledElement*);
     void detachCSSOMWrapperIfNeeded(StyledElement*);
 
-    const StylePropertySet* presentationAttributeStyle() const { return m_presentationAttributeStyle.get(); }
-    void setPresentationAttributeStyle(PassRefPtr<StylePropertySet> style) const { m_presentationAttributeStyle= style; }
+    const StylePropertySet* attributeStyle() const { return m_attributeStyle.get(); }
+    void setAttributeStyle(PassRefPtr<StylePropertySet> style) const { m_attributeStyle = style; }
 
     size_t length() const;
     bool isEmpty() const { return !length(); }
+
+    PassRefPtr<Attr> getAttributeNode(const String&, bool shouldIgnoreAttributeCase, Element*) const;
+    PassRefPtr<Attr> getAttributeNode(const QualifiedName&, Element*) const;
 
     // Internal interface.
     const Attribute* attributeItem(unsigned index) const;
@@ -85,10 +89,11 @@ public:
 
     bool isEquivalent(const ElementAttributeData* other) const;
 
-    bool styleAttributeIsDirty() const { return m_styleAttributeIsDirty; }
-    void setStyleAttributeIsDirty(bool f) const { m_styleAttributeIsDirty = f; }
-    bool presentationAttributeStyleIsDirty() const { return m_presentationAttributeStyleIsDirty; }
-    void setPresentationAttributeStyleIsDirty(bool f) const { m_presentationAttributeStyleIsDirty = f; }
+    void setAttr(Element*, const QualifiedName&, Attr*) const;
+    void removeAttr(Element*, const QualifiedName&) const;
+    PassRefPtr<Attr> attrIfExists(Element*, const QualifiedName&) const;
+    PassRefPtr<Attr> ensureAttr(Element*, const QualifiedName&) const;
+    void detachAttrObjectsFromElement(Element*) const;
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
@@ -98,25 +103,19 @@ public:
 protected:
     ElementAttributeData()
         : m_isMutable(true)
-        , m_styleAttributeIsDirty(false)
-        , m_presentationAttributeStyleIsDirty(false)
         , m_arraySize(0)
     { }
 
     ElementAttributeData(unsigned arraySize)
         : m_isMutable(false)
-        , m_styleAttributeIsDirty(false)
-        , m_presentationAttributeStyleIsDirty(false)
         , m_arraySize(arraySize)
     { }
 
     unsigned m_isMutable : 1;
-    mutable unsigned m_styleAttributeIsDirty : 1;
-    mutable unsigned m_presentationAttributeStyleIsDirty : 1;
-    unsigned m_arraySize : 29;
+    unsigned m_arraySize : 31;
 
     mutable RefPtr<StylePropertySet> m_inlineStyleDecl;
-    mutable RefPtr<StylePropertySet> m_presentationAttributeStyle;
+    mutable RefPtr<StylePropertySet> m_attributeStyle;
     mutable SpaceSplitString m_classNames;
     mutable AtomicString m_idForStyleResolution;
 
@@ -130,7 +129,7 @@ private:
     const Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
     size_t getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
     void cloneDataFrom(const ElementAttributeData& sourceData, const Element& sourceElement, Element& targetElement);
-    void clearAttributes();
+    void clearAttributes(Element*);
 
     PassRefPtr<ElementAttributeData> makeMutableCopy() const;
 
