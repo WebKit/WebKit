@@ -1,3 +1,21 @@
+2012-11-05  Lianghui Chen  <liachen@rim.com>
+
+        [BlackBerry] Do not display error page for failed downloads
+        https://bugs.webkit.org/show_bug.cgi?id=101246
+
+        Internal PR: 236318
+        Internal reviewed by Joe Mason, Leo Yang.
+        Reviewed by Rob Buis.
+
+        Right now when a main load, including all downloads, failed, it will
+        display an error page. This is not very user friendly, especially for
+        WebWorks application, which want to use its own user interface to info
+        user about the failure.
+        So we just stop displaying error page for downloads.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad):
+
 2012-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix layer borders to cleaning appear and disappear on switching

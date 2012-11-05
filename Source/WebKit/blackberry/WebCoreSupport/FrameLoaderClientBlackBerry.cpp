@@ -709,33 +709,38 @@ void FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad(const ResourceE
     if (!isMainFrame())
         return;
 
-    String errorPage = m_webPagePrivate->m_client->getErrorPage(error.errorCode(), error.localizedDescription(), error.failingURL());
-
     // Make sure we're still in the provisionalLoad state - getErrorPage runs a
     // nested event loop while it's waiting for client resources to load so
     // there's a small window for the user to hit stop.
-    if (m_frame->loader()->provisionalDocumentLoader()) {
-        SubstituteData errorData(utf8Buffer(errorPage), "text/html", "utf-8", KURL(KURL(), error.failingURL()));
+    if (!m_frame->loader()->provisionalDocumentLoader())
+        return;
 
-        ResourceRequest originalRequest = m_frame->loader()->provisionalDocumentLoader()->originalRequest();
+    ResourceRequest originalRequest = m_frame->loader()->provisionalDocumentLoader()->originalRequest();
 
-        // Loading using SubstituteData will replace the original request with our
-        // error data. This must be done within dispatchDidFailProvisionalLoad,
-        // and do NOT call stopAllLoaders first, because the loader checks the
-        // provisionalDocumentLoader to decide the load type; if called any other
-        // way, the error page is added to the end of the history instead of
-        // replacing the failed load.
-        //
-        // If this comes from a back/forward navigation, we need to save the current viewstate
-        // to original historyitem, and prevent the restore of view state to the error page.
-        if (isBackForwardLoadType(m_frame->loader()->loadType())) {
-            m_frame->loader()->history()->saveScrollPositionAndViewStateToItem(m_frame->loader()->history()->currentItem());
-            ASSERT(m_frame->loader()->history()->provisionalItem());
-            m_frame->loader()->history()->provisionalItem()->viewState().shouldSaveViewState = false;
-        }
-        m_loadingErrorPage = true;
-        m_frame->loader()->load(originalRequest, errorData, false);
+    // Do not show error page for a failed download.
+    if (originalRequest.forceDownload())
+        return;
+
+    String errorPage = m_webPagePrivate->m_client->getErrorPage(error.errorCode(), error.localizedDescription(), error.failingURL());
+    SubstituteData errorData(utf8Buffer(errorPage), "text/html", "utf-8", KURL(KURL(), error.failingURL()));
+
+    // Loading using SubstituteData will replace the original request with our
+    // error data. This must be done within dispatchDidFailProvisionalLoad,
+    // and do NOT call stopAllLoaders first, because the loader checks the
+    // provisionalDocumentLoader to decide the load type; if called any other
+    // way, the error page is added to the end of the history instead of
+    // replacing the failed load.
+    //
+    // If this comes from a back/forward navigation, we need to save the current viewstate
+    // to original historyitem, and prevent the restore of view state to the error page.
+    if (isBackForwardLoadType(m_frame->loader()->loadType())) {
+        m_frame->loader()->history()->saveScrollPositionAndViewStateToItem(m_frame->loader()->history()->currentItem());
+        ASSERT(m_frame->loader()->history()->provisionalItem());
+        m_frame->loader()->history()->provisionalItem()->viewState().shouldSaveViewState = false;
     }
+
+    m_loadingErrorPage = true;
+    m_frame->loader()->load(originalRequest, errorData, false);
 }
 
 void FrameLoaderClientBlackBerry::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState>)
