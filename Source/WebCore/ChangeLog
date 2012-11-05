@@ -1,3 +1,18 @@
+2012-11-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Use POSIX implementation of SharedBuffer::createWithContentsOfFile()
+        https://bugs.webkit.org/show_bug.cgi?id=101228
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Get rid of EFL-specific implementation of SharedBuffer::createWithContentsOfFile()
+        and reuse the POSIX one since it is pretty much the same.
+
+        No new tests, no behavior change.
+
+        * PlatformEfl.cmake:
+        * platform/efl/SharedBufferEfl.cpp: Removed.
+
 2012-11-05  Kentaro Hara  <haraken@chromium.org>
 
         Add a comment about a return value of IDBKey::toV8()
