@@ -528,6 +528,9 @@ private:
     ElementRareData* elementRareData() const;
     ElementRareData* ensureElementRareData();
 
+    void detachAllAttrNodesFromElement();
+    void detachAttrNodeFromElementWithValue(Attr*, const AtomicString& value);
+
     RefPtr<ElementAttributeData> m_attributeData;
 };
     

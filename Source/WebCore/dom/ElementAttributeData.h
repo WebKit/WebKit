@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class Attr;
 class Element;
 class ImmutableElementAttributeData;
 class MutableElementAttributeData;
@@ -69,9 +68,6 @@ public:
     size_t length() const;
     bool isEmpty() const { return !length(); }
 
-    PassRefPtr<Attr> getAttributeNode(const String&, bool shouldIgnoreAttributeCase, Element*) const;
-    PassRefPtr<Attr> getAttributeNode(const QualifiedName&, Element*) const;
-
     // Internal interface.
     const Attribute* attributeItem(unsigned index) const;
     const Attribute* getAttributeItem(const QualifiedName&) const;
@@ -88,12 +84,6 @@ public:
     bool hasClass() const { return !m_classNames.isNull(); }
 
     bool isEquivalent(const ElementAttributeData* other) const;
-
-    void setAttr(Element*, const QualifiedName&, Attr*) const;
-    void removeAttr(Element*, const QualifiedName&) const;
-    PassRefPtr<Attr> attrIfExists(Element*, const QualifiedName&) const;
-    PassRefPtr<Attr> ensureAttr(Element*, const QualifiedName&) const;
-    void detachAttrObjectsFromElement(Element*) const;
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
@@ -129,7 +119,7 @@ private:
     const Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
     size_t getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
     void cloneDataFrom(const ElementAttributeData& sourceData, const Element& sourceElement, Element& targetElement);
-    void clearAttributes(Element*);
+    void clearAttributes();
 
     PassRefPtr<ElementAttributeData> makeMutableCopy() const;
 

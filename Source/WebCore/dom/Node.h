@@ -237,8 +237,10 @@ public:
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
     bool inNamedFlow() const { return getFlag(InNamedFlowFlag); }
-    bool hasAttrList() const { return getFlag(HasAttrListFlag); }
     bool hasCustomCallbacks() const { return getFlag(HasCustomCallbacksFlag); }
+
+    bool hasSyntheticAttrChildNodes() const { return getFlag(HasSyntheticAttrChildNodesFlag); }
+    void setHasSyntheticAttrChildNodes(bool flag) { setFlag(flag, HasSyntheticAttrChildNodesFlag); }
 
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns 0.
     Element* shadowHost() const;
@@ -354,9 +356,6 @@ public:
 
     void setInNamedFlow() { setFlag(InNamedFlowFlag); }
     void clearInNamedFlow() { clearFlag(InNamedFlowFlag); }
-
-    void setHasAttrList() { setFlag(HasAttrListFlag); }
-    void clearHasAttrList() { clearFlag(HasAttrListFlag); }
 
     bool hasScopedHTMLStyleChild() const { return getFlag(HasScopedHTMLStyleChildFlag); }
     void setHasScopedHTMLStyleChild(bool flag) { setFlag(flag, HasScopedHTMLStyleChildFlag); }
@@ -733,7 +732,7 @@ private:
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag,
 #endif
         InNamedFlowFlag = 1 << 26,
-        HasAttrListFlag = 1 << 27,
+        HasSyntheticAttrChildNodesFlag = 1 << 27,
         HasCustomCallbacksFlag = 1 << 28,
         HasScopedHTMLStyleChildFlag = 1 << 29,
         HasEventTargetDataFlag = 1 << 30,

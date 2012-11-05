@@ -87,101 +87,6 @@ PassRefPtr<ElementAttributeData> ElementAttributeData::makeMutableCopy() const
     return adoptRef(new MutableElementAttributeData(static_cast<const ImmutableElementAttributeData&>(*this)));
 }
 
-typedef Vector<RefPtr<Attr> > AttrList;
-typedef HashMap<Element*, OwnPtr<AttrList> > AttrListMap;
-
-static AttrListMap& attrListMap()
-{
-    DEFINE_STATIC_LOCAL(AttrListMap, map, ());
-    return map;
-}
-
-static AttrList* attrListForElement(Element* element)
-{
-    ASSERT(element);
-    if (!element->hasAttrList())
-        return 0;
-    ASSERT(attrListMap().contains(element));
-    return attrListMap().get(element);
-}
-
-static AttrList* ensureAttrListForElement(Element* element)
-{
-    ASSERT(element);
-    if (element->hasAttrList()) {
-        ASSERT(attrListMap().contains(element));
-        return attrListMap().get(element);
-    }
-    ASSERT(!attrListMap().contains(element));
-    element->setHasAttrList();
-    AttrListMap::AddResult result = attrListMap().add(element, adoptPtr(new AttrList));
-    return result.iterator->value.get();
-}
-
-static void removeAttrListForElement(Element* element)
-{
-    ASSERT(element);
-    ASSERT(element->hasAttrList());
-    ASSERT(attrListMap().contains(element));
-    attrListMap().remove(element);
-    element->clearHasAttrList();
-}
-
-static Attr* findAttrInList(AttrList* attrList, const QualifiedName& name)
-{
-    for (unsigned i = 0; i < attrList->size(); ++i) {
-        if (attrList->at(i)->qualifiedName() == name)
-            return attrList->at(i).get();
-    }
-    return 0;
-}
-
-PassRefPtr<Attr> ElementAttributeData::attrIfExists(Element* element, const QualifiedName& name) const
-{
-    if (AttrList* attrList = attrListForElement(element))
-        return findAttrInList(attrList, name);
-    return 0;
-}
-
-PassRefPtr<Attr> ElementAttributeData::ensureAttr(Element* element, const QualifiedName& name) const
-{
-    AttrList* attrList = ensureAttrListForElement(element);
-    RefPtr<Attr> attr = findAttrInList(attrList, name);
-    if (!attr) {
-        attr = Attr::create(element, name);
-        attrList->append(attr);
-    }
-    return attr.release();
-}
-
-void ElementAttributeData::setAttr(Element* element, const QualifiedName& name, Attr* attr) const
-{
-    AttrList* attrList = ensureAttrListForElement(element);
-
-    if (findAttrInList(attrList, name))
-        return;
-
-    attrList->append(attr);
-    attr->attachToElement(element);
-}
-
-void ElementAttributeData::removeAttr(Element* element, const QualifiedName& name) const
-{
-    AttrList* attrList = attrListForElement(element);
-    ASSERT(attrList);
-
-    for (unsigned i = 0; i < attrList->size(); ++i) {
-        if (attrList->at(i)->qualifiedName() == name) {
-            attrList->remove(i);
-            if (attrList->isEmpty())
-                removeAttrListForElement(element);
-            return;
-        }
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
 StylePropertySet* ElementAttributeData::ensureInlineStyle(StyledElement* element)
 {
     ASSERT(isMutable());
@@ -258,20 +163,6 @@ bool ElementAttributeData::isEquivalent(const ElementAttributeData* other) const
     return true;
 }
 
-void ElementAttributeData::detachAttrObjectsFromElement(Element* element) const
-{
-    ASSERT(element->hasAttrList());
-
-    for (unsigned i = 0; i < length(); ++i) {
-        const Attribute* attribute = attributeItem(i);
-        if (RefPtr<Attr> attr = attrIfExists(element, attribute->name()))
-            attr->detachFromElementWithValue(attribute->value());
-    }
-
-    // The loop above should have cleaned out this element's Attr map.
-    ASSERT(!element->hasAttrList());
-}
-
 void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     size_t actualSize = m_isMutable ? sizeof(ElementAttributeData) : sizeForImmutableElementAttributeDataWithAttributeCount(m_arraySize);
@@ -322,7 +213,7 @@ void ElementAttributeData::cloneDataFrom(const ElementAttributeData& sourceData,
     if (!oldName.isNull() || !newName.isNull())
         targetElement.updateName(oldName, newName);
 
-    clearAttributes(&targetElement);
+    clearAttributes();
 
     if (sourceData.isMutable())
         mutableAttributeVector() = sourceData.mutableAttributeVector();
@@ -347,33 +238,11 @@ void ElementAttributeData::cloneDataFrom(const ElementAttributeData& sourceData,
     }
 }
 
-void ElementAttributeData::clearAttributes(Element* element)
+void ElementAttributeData::clearAttributes()
 {
     ASSERT(isMutable());
-
-    if (element->hasAttrList())
-        detachAttrObjectsFromElement(element);
-
     clearClass();
     mutableAttributeVector().clear();
-}
-
-PassRefPtr<Attr> ElementAttributeData::getAttributeNode(const String& name, bool shouldIgnoreAttributeCase, Element* element) const
-{
-    ASSERT(element);
-    const Attribute* attribute = getAttributeItem(name, shouldIgnoreAttributeCase);
-    if (!attribute)
-        return 0;
-    return ensureAttr(element, attribute->name());
-}
-
-PassRefPtr<Attr> ElementAttributeData::getAttributeNode(const QualifiedName& name, Element* element) const
-{
-    ASSERT(element);
-    const Attribute* attribute = getAttributeItem(name);
-    if (!attribute)
-        return 0;
-    return ensureAttr(element, attribute->name());
 }
 
 }
