@@ -1,3 +1,10 @@
+2012-11-05  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Mark inspector-protocol/debugger-pause-dedicated-worker.html
+        as also crashy, and give it a bug ID.  Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-05  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [Cairo] Make Cairo honor image orientation
