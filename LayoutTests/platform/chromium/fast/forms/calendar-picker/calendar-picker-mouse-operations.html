@@ -20,21 +20,21 @@ openPicker(document.getElementById('date'), test);
 
 function test() {
     shouldBe('selectedDate()', '"2000-01-02"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
 
     debug('Check that hovering over an entry highlights it.');
     hoverOverElement(popupWindow.document.getElementsByClassName("day")[5]);
     shouldBe('selectedDate()', '"1999-12-31"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
 
     hoverOverElement(popupWindow.document.getElementsByClassName("day")[9]);
     shouldBe('selectedDate()', '"2000-01-04"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
 
     debug('Check that navigating between months maintains selection position.');
     eventSender.keyDown('m');
     shouldBe('selectedDate()', '"2000-02-08"');
-    shouldBe('currentMonth()', '"2000-1"');
+    shouldBe('currentMonth()', '"2000-02"');
 
     debug('Check that moving the mouse outside the popup de-highlights entries.');
     hoverOverElement(document.getElementById('description'));

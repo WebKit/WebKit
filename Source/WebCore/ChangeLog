@@ -1,3 +1,43 @@
+2012-11-04  Keishi Hattori  <keishi@webkit.org>
+
+        Introduce Month class to calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=101024
+
+        Reviewed by Kent Tamura.
+
+        Month class needs to be introduced to implement a month picker. This
+        patch just introduces the Month class into the calendar picker without
+        changing the current behavior.
+
+        No new tests. Covered by existing calendar-picker-*.html tests.
+
+        * Resources/pagepopups/calendarPicker.js:
+        (Month.prototype.toLocaleString): Returns a localized month string.
+        (Month): Takes a Month object, number representing the month, or year and month numbers.
+        (Month.parse): Returns a new Month from an ISO month string.
+        (Month.createFromDate): Returns a new Month containing the given datetime.
+        (Month.prototype.equals): Returns true if the given month is the same.
+        (Month.prototype.previous): Returns the previous month.
+        (Month.prototype.next): Returns the next month.
+        (Month.prototype.startDate): Returns a datetime that is the start of this month. The value is inclusive.
+        (Month.prototype.endDate): Returns a datetime that is the end of this month. The value is exclusive.
+        (Month.prototype.valueOf): Returns a number representing the month.
+        (Month.prototype.toString): Returns an ISO month string.
+        (YearMonthController): Use Month object.
+        (YearMonthController.prototype.attachTo): Year 275760 ends in September so use the year before to measure the label width.
+        (YearMonthController.prototype.setMonth): Take a month object.
+        (YearMonthController.prototype._redraw): Use ISO month string for element.dataset.value.
+        (YearMonthController.prototype._handleYearMonthChange):
+        (YearMonthController.prototype.moveRelatively):
+        (DaysTable): Use Month object.
+        (DaysTable.prototype._renderMonth): Take a month object. Testing for isNaN is moved up to fix a bug when showing September, 275760.
+        (DaysTable.prototype._navigateToMonth): Take a month object.
+        (DaysTable.prototype._navigateToMonthWithAnimation): Take a month object.
+        (DaysTable.prototype.navigateToMonthAndKeepSelectionPosition): Take a month object.
+        (DaysTable.prototype.selectDate):
+        (DaysTable.prototype._maybeSetPreviousMonth): Use Month object to calculate the previous month.
+        (DaysTable.prototype._maybeSetNextMonth): Use Month object to calculate the next month.
+
 2012-11-04  Halton Huo  <halton.huo@intel.com>
 
         [EFL] Use _LIBRARIES instead of _LIBRARY

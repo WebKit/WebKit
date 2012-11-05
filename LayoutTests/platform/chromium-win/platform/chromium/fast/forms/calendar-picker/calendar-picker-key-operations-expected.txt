@@ -8,40 +8,40 @@ PASS document.getElementById("mock-page-popup") is null
 Check that page popup exists.
 PASS popupWindow.pagePopupController.toString() is "[object PagePopupController]"
 PASS selectedDate() is "2000-01-02"
-PASS currentMonth() is "2000-0"
+PASS currentMonth() is "2000-01"
 Check that arrow keys work properly even when going between weeks and months.
 PASS selectedDate() is "1999-12-26"
-PASS currentMonth() is "2000-0"
+PASS currentMonth() is "2000-01"
 PASS selectedDate() is "2000-01-02"
-PASS currentMonth() is "1999-11"
+PASS currentMonth() is "1999-12"
 PASS selectedDate() is "1999-12-26"
-PASS currentMonth() is "2000-0"
+PASS currentMonth() is "2000-01"
 PASS selectedDate() is "2000-01-02"
-PASS currentMonth() is "2000-0"
+PASS currentMonth() is "2000-01"
 PASS selectedDate() is "1999-12-26"
-PASS currentMonth() is "2000-0"
+PASS currentMonth() is "2000-01"
 PASS selectedDate() is "2000-01-08"
-PASS currentMonth() is "1999-11"
+PASS currentMonth() is "1999-12"
 PASS selectedDate() is "1999-12-26"
-PASS currentMonth() is "2000-0"
+PASS currentMonth() is "2000-01"
 press m
 PASS selectedDate() is "2000-01-30"
-PASS currentMonth() is "2000-1"
+PASS currentMonth() is "2000-02"
 press shift + m
 PASS selectedDate() is "1999-12-26"
-PASS currentMonth() is "2000-0"
+PASS currentMonth() is "2000-01"
 press y
 PASS selectedDate() is "2000-12-31"
-PASS currentMonth() is "2001-0"
+PASS currentMonth() is "2001-01"
 press shift + y
 PASS selectedDate() is "1999-12-26"
-PASS currentMonth() is "2000-0"
+PASS currentMonth() is "2000-01"
 press d
 PASS selectedDate() is "2009-12-27"
-PASS currentMonth() is "2010-0"
+PASS currentMonth() is "2010-01"
 press shift + d
 PASS selectedDate() is "1999-12-26"
-PASS currentMonth() is "2000-0"
+PASS currentMonth() is "2000-01"
 PASS document.getElementById("mock-page-popup") is null
 PASS document.getElementById("date").value is "1999-12-26"
 PASS testToday() || testToday() is true

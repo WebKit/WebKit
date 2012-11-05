@@ -22,67 +22,67 @@ function test1() {
     shouldBe('popupWindow.pagePopupController.toString()', '"[object PagePopupController]"');
 
     shouldBe('selectedDate()', '"2000-01-02"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
 
     debug('Check that arrow keys work properly even when going between weeks and months.');
 
     eventSender.keyDown('upArrow');
     shouldBe('selectedDate()', '"1999-12-26"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
     // Move from first row of January 2000 to last row of December 1999.
     eventSender.keyDown('upArrow');
     shouldBe('selectedDate()', '"2000-01-02"');
-    shouldBe('currentMonth()', '"1999-11"');
+    shouldBe('currentMonth()', '"1999-12"');
     
     eventSender.keyDown('downArrow');
     shouldBe('selectedDate()', '"1999-12-26"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
     eventSender.keyDown('downArrow');
     shouldBe('selectedDate()', '"2000-01-02"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
 
     eventSender.keyDown('upArrow');
     shouldBe('selectedDate()', '"1999-12-26"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
 
     // Move from top left of January 2000 to bottom right of December 1999.
     eventSender.keyDown('leftArrow');
     shouldBe('selectedDate()', '"2000-01-08"');
-    shouldBe('currentMonth()', '"1999-11"');
+    shouldBe('currentMonth()', '"1999-12"');
 
     eventSender.keyDown('rightArrow');
     shouldBe('selectedDate()', '"1999-12-26"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
 
     debug("press m");
     eventSender.keyDown('m');
     shouldBe('selectedDate()', '"2000-01-30"');
-    shouldBe('currentMonth()', '"2000-1"');
+    shouldBe('currentMonth()', '"2000-02"');
 
     debug("press shift + m");
     eventSender.keyDown('M');
     shouldBe('selectedDate()', '"1999-12-26"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
 
     debug("press y");
     eventSender.keyDown('y');
     shouldBe('selectedDate()', '"2000-12-31"');
-    shouldBe('currentMonth()', '"2001-0"');
+    shouldBe('currentMonth()', '"2001-01"');
 
     debug("press shift + y");
     eventSender.keyDown('Y');
     shouldBe('selectedDate()', '"1999-12-26"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
 
     debug("press d");
     eventSender.keyDown('d');
     shouldBe('selectedDate()', '"2009-12-27"');
-    shouldBe('currentMonth()', '"2010-0"');
+    shouldBe('currentMonth()', '"2010-01"');
 
     debug("press shift + d");
     eventSender.keyDown('D');
     shouldBe('selectedDate()', '"1999-12-26"');
-    shouldBe('currentMonth()', '"2000-0"');
+    shouldBe('currentMonth()', '"2000-01"');
 
     eventSender.keyDown('\n');
     shouldBeNull('document.getElementById("mock-page-popup")');
@@ -121,7 +121,7 @@ function testToday() {
     eventSender.keyDown('t');
     var now = new Date();
     var expectedDate = serializeDate(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-    var expectedMonth = now.getUTCFullYear() + "-" + now.getMonth();
+    var expectedMonth = popupWindow.Month.createFromDate(now).toString();
     return selectedDate() === expectedDate && currentMonth() === expectedMonth;
 }
 
