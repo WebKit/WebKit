@@ -1,3 +1,16 @@
+2012-11-05  Miguel Garcia  <miguelg@chromium.org>
+
+        [Chromium] Disable registerProtocolHandler on Android
+        https://bugs.webkit.org/show_bug.cgi?id=101199
+
+        Reviewed by Julien Chaffraix.
+
+        Chromium for Android has been exposing registerProtocolHandler, but the feature wasn't
+        actually wired up internally. Disable the feature to avoid breaking feature detection
+        until we can implement it properly.
+
+        * features.gypi:
+
 2012-11-04  MORITA Hajime  <morrita@google.com>
 
         Shadow DOM should be able to be disabled per context.

@@ -166,6 +166,7 @@
           'ENABLE_ORIENTATION_EVENTS=1',
           'ENABLE_PAGE_POPUP=0',
           'ENABLE_PRINTING=0',
+          'ENABLE_REGISTER_PROTOCOL_HANDLER=0',
           # FIXME: Disable once the linking error has been resolved.
           # https://bugs.webkit.org/show_bug.cgi?id=88636
           'ENABLE_SHARED_WORKERS=1',
