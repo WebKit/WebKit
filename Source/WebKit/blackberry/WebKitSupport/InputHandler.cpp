@@ -962,7 +962,7 @@ PassRefPtr<Range> InputHandler::getRangeForSpellCheckWithFineGranularity(Visible
 
 bool InputHandler::openDatePopup(HTMLInputElement* element, BlackBerryInputType type)
 {
-    if (!element || element->disabled() || !DOMSupport::isDateTimeInputField(element))
+    if (!element || element->disabled() || element->readOnly() || !DOMSupport::isDateTimeInputField(element))
         return false;
 
     if (isActiveTextEdit())
@@ -991,7 +991,7 @@ bool InputHandler::openDatePopup(HTMLInputElement* element, BlackBerryInputType 
 
 bool InputHandler::openColorPopup(HTMLInputElement* element)
 {
-    if (!element || element->disabled() || !DOMSupport::isColorInputField(element))
+    if (!element || element->disabled() || element->readOnly() || !DOMSupport::isColorInputField(element))
         return false;
 
     if (isActiveTextEdit())
