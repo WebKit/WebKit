@@ -1862,15 +1862,6 @@ webkit.org/b/98781 [ Android ] fast/block/float/shrink-to-avoid-float-complexity
 # [Chromium-Android] getComputedStyle for scrolling returns "visible" instead of "scroll" in some cases
 webkit.org/b/98782 [ Android ] fast/css/getComputedStyle/computed-style-select-overflow.html [ Failure ]
 
-# [Chromium-Android] Date and time input fields don't have equal functionaliy on Android
-webkit.org/b/98783 [ Android ] fast/forms/time/time-input-visible-string.html [ Failure ]
-webkit.org/b/98783 [ Android ] fast/forms/month/month-stepup-stepdown-from-renderer.html [ Failure ]
-webkit.org/b/98783 [ Android ] fast/forms/month/month-input-visible-string.html [ Failure ]
-webkit.org/b/98783 [ Android ] fast/forms/datetimelocal/datetimelocal-stepup-stepdown-from-renderer.html [ Failure ]
-webkit.org/b/98783 [ Android ] fast/forms/datetimelocal/datetimelocal-input-visible-string.html [ Failure ]
-webkit.org/b/98783 [ Android ] fast/forms/datetime/datetime-stepup-stepdown-from-renderer.html [ Failure ]
-webkit.org/b/98783 [ Android ] fast/forms/datetime/datetime-input-visible-string.html [ Failure ]
-
 # [Chromium-Android] No <input type=week> implementation.
 crbug.com/135938 [ Android ] fast/forms/week/ [ Failure Pass ]
 
