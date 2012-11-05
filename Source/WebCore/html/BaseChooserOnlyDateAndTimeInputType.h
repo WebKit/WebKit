@@ -29,22 +29,32 @@
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES) && !ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "BaseClickableWithKeyInputType.h"
 #include "BaseDateAndTimeInputType.h"
+#include "DateTimeChooser.h"
+#include "DateTimeChooserClient.h"
 
 namespace WebCore {
 
-// FIXME: This class should implement DateTimeChooserClient. webkit.org/b/101038.
-class BaseChooserOnlyDateAndTimeInputType : public BaseDateAndTimeInputType {
+class BaseChooserOnlyDateAndTimeInputType : public BaseDateAndTimeInputType, public DateTimeChooserClient {
 protected:
     BaseChooserOnlyDateAndTimeInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
     virtual ~BaseChooserOnlyDateAndTimeInputType();
 
 private:
+    void closeDateTimeChooser();
+
     // InputType functions:
+    virtual void detach() OVERRIDE;
     virtual void handleDOMActivateEvent(Event*) OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual void handleKeypressEvent(KeyboardEvent*) OVERRIDE;
     virtual void handleKeyupEvent(KeyboardEvent*) OVERRIDE;
     virtual void accessKeyAction(bool sendMouseEvents) OVERRIDE;
+
+    // DateTimeChooserClient functions:
+    virtual void didChooseValue(const String&) OVERRIDE;
+    virtual void didEndChooser() OVERRIDE;
+
+    RefPtr<DateTimeChooser> m_dateTimeChooser;
 };
 
 }

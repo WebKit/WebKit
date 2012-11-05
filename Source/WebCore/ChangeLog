@@ -1,3 +1,55 @@
+2012-11-05  Kent Tamura  <tkent@chromium.org>
+
+        BaseChooserOnlyDateAndTimeInputType should implement DateTimeChooserClient
+        https://bugs.webkit.org/show_bug.cgi?id=101038
+
+        Reviewed by Hajime Morita.
+
+        Add DateTimeChooserClient behavior to BaseChooserOnlyDateAndTimeInputType.
+        It means that date/time input elements without
+        ENABLE_INPUT_MULTIPLE_FIELDS_UI can open date/time choosers by
+        DOMActivate event.
+
+        This patch doesn't change behavior yet because Chromimum-Android port
+        intercepts user events and doesn't deliver them to date/time input
+        elements. <http://crbug.com/159381>
+
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        Add DateTimeChooserClient behavior. The code is similar to
+        PickerIndicatorElement.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::~BaseChooserOnlyDateAndTimeInputType):
+        Closes DateTimeChooser.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent):
+        Open DateTimeChooser if
+         - The element is not disabled,
+         - The element is not read-only,
+         - The element has a renderer,
+         - This event is created by a user gesture, and
+         - The element has no DateTimeChooser.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::detach):
+        Closes DateTimeChooser.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::didChooseValue):
+        Set a string value coming from a chooser to the input element.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::didEndChooser):
+        Clear m_dateTimeChooser when the chooser was closed.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::closeDateTimeChooser):
+        Requests to close the chooser.
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+        (BaseChooserOnlyDateAndTimeInputType):
+         - Implement DateTimeChooserClient
+         - Add closeDateTimeChooser helper function.
+         - Add detach override.
+         - Add m_dateTimeChooser.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters):
+        Added. The code is moved from PickerIndicatorElement.cpp in order to
+        share it with BaseChooserOnlyDateAndTimeInputType.
+        * html/HTMLInputElement.h:
+        (HTMLInputElement): Declare setupDateTimeChooserParameters.
+        * html/shadow/PickerIndicatorElement.cpp:
+        (WebCore::PickerIndicatorElement::openPopup):
+        Move some code to HTMLInputElement::setupDateTimeChooserParameters.
+
 2012-11-04  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Fix the collapsing border code to handle mixed directionality at the row level

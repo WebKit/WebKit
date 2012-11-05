@@ -33,6 +33,7 @@
 #include "BeforeTextInsertedEvent.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "DateTimeChooser.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -40,6 +41,7 @@
 #include "FileList.h"
 #include "FormController.h"
 #include "Frame.h"
+#include "FrameView.h"
 #include "HTMLCollection.h"
 #include "HTMLDataListElement.h"
 #include "HTMLFormElement.h"
@@ -1900,6 +1902,45 @@ void HTMLInputElement::setRangeText(const String& replacement, unsigned start, u
 
     HTMLTextFormControlElement::setRangeText(replacement, start, end, selectionMode, ec);
 }
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters& parameters)
+{
+    if (!document()->view())
+        return false;
+
+    parameters.type = type();
+    parameters.minimum = minimum();
+    parameters.maximum = maximum();
+    parameters.required = required();
+
+    StepRange stepRange = createStepRange(RejectAny);
+    if (stepRange.hasStep()) {
+        parameters.step = stepRange.step().toDouble();
+        parameters.stepBase = stepRange.stepBase().toDouble();
+    } else {
+        parameters.step = 1.0;
+        parameters.stepBase = 0;
+    }
+
+    parameters.anchorRectInRootView = document()->view()->contentsToRootView(pixelSnappedBoundingBox());
+    parameters.currentValue = value();
+    parameters.isAnchorElementRTL = computedStyle()->direction() == RTL;
+#if ENABLE(DATALIST_ELEMENT)
+    if (HTMLDataListElement* dataList = this->dataList()) {
+        RefPtr<HTMLCollection> options = dataList->options();
+        for (unsigned i = 0; HTMLOptionElement* option = toHTMLOptionElement(options->item(i)); ++i) {
+            if (!isValidValue(option->value()))
+                continue;
+            parameters.suggestionValues.append(sanitizeValue(option->value()));
+            parameters.localizedSuggestionValues.append(localizeValue(option->value()));
+            parameters.suggestionLabels.append(option->value() == option->label() ? String() : option->label());
+        }
+    }
+#endif
+    return true;
+}
+#endif
 
 void HTMLInputElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {

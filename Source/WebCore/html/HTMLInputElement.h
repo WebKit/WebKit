@@ -41,6 +41,7 @@ class Icon;
 class InputType;
 class KURL;
 class ListAttributeTargetObserver;
+struct DateTimeChooserParameters;
 
 class HTMLInputElement : public HTMLTextFormControlElement, public ImageLoaderClientBase<HTMLInputElement> {
 public:
@@ -291,6 +292,9 @@ public:
     virtual void setRangeText(const String& replacement, ExceptionCode&) OVERRIDE;
     virtual void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&) OVERRIDE;
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+    bool setupDateTimeChooserParameters(DateTimeChooserParameters&);
+#endif
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 protected:
