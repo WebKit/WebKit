@@ -1,5 +1,30 @@
 2012-11-05  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: lint, clean up rebaseline.py
+        https://bugs.webkit.org/show_bug.cgi?id=101240
+
+        Reviewed by Ojan Vafai.
+
+        Miscellaneous cleanup of lint errors and warnings.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractRebaseliningCommand):
+        (RebaselineTest._test_root):
+        (OptimizeBaselines._optimize_baseline):
+        (OptimizeBaselines.execute):
+        (AnalyzeBaselines.__init__):
+        (AbstractParallelRebaselineCommand):
+        (AbstractParallelRebaselineCommand._builders_to_fetch_from):
+        (AbstractParallelRebaselineCommand._files_to_add):
+        (AbstractParallelRebaselineCommand._rebaseline):
+        (RebaselineExpectations.__init__):
+        (Rebaseline.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (_BaseTestCase.setUp):
+        (TestAnalyzeBaselines.setUp):
+
+2012-11-05  Dirk Pranke  <dpranke@chromium.org>
+
         webkit-patch optimize-baselines should take a --platform arg
         https://bugs.webkit.org/show_bug.cgi?id=97623
 

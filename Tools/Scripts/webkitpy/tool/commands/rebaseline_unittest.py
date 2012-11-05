@@ -45,7 +45,7 @@ class _BaseTestCase(unittest.TestCase):
 
     def setUp(self):
         self.tool = MockTool()
-        self.command = self.command_constructor()
+        self.command = self.command_constructor()  # lint warns that command_constructor might not be set, but this is intentional; pylint: disable-msg=E1102
         self.command.bind_to_tool(self.tool)
         self.lion_port = self.tool.port_factory.get_from_builder_name("WebKit Mac10.7")
         self.lion_expectations_path = self.lion_port.path_to_test_expectations_file()
@@ -370,10 +370,10 @@ class TestAnalyzeBaselines(_BaseTestCase):
     def setUp(self):
         super(TestAnalyzeBaselines, self).setUp()
         self.port = self.tool.port_factory.get('test')
-        self.tool.port_factory.get = lambda port_name=None, options=None: self.port
+        self.tool.port_factory.get = (lambda port_name=None, options=None: self.port)
         self.lines = []
         self.command._optimizer_class = _FakeOptimizer
-        self.command._write = lambda msg: self.lines.append(msg)
+        self.command._write = (lambda msg: self.lines.append(msg))  # pylint bug warning about unnecessary lambda? pylint: disable-msg=W0108
 
     def test_default(self):
         self.command.execute(MockOptions(suffixes='txt', missing=False, platform=None), ['passes/text.html'], self.tool)
