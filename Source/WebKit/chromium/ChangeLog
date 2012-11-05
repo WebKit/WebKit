@@ -1,3 +1,13 @@
+2012-11-05  Adam Barth  <abarth@webkit.org>
+
+        [V8] IntrusiveDOMWrapperMap should be usable for more than just Nodes
+        https://bugs.webkit.org/show_bug.cgi?id=101110
+
+        Reviewed by Kentaro Hara.
+
+        * src/WebScriptController.cpp:
+            - Remove unneeded include of deleted file.
+
 2012-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix layer borders to cleaning appear and disappear on switching

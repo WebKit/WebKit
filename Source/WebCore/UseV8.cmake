@@ -48,7 +48,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/V8Binding.cpp
     bindings/v8/V8Collection.cpp
     bindings/v8/V8DOMConfiguration.cpp,
-    bindings/v8/V8DOMMap.cpp
     bindings/v8/V8DOMWindowShell.cpp
     bindings/v8/V8DOMWrapper.cpp
     bindings/v8/V8EventListener.cpp

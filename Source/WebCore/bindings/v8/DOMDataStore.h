@@ -57,17 +57,60 @@ public:
     explicit DOMDataStore(Type);
     ~DOMDataStore();
 
-    static DOMDataStore* current(v8::Isolate*);
+    static DOMDataStore* current(v8::Isolate* = 0);
 
-    DOMWrapperMap<Node>& domNodeMap() { return *m_domNodeMap; }
-    DOMWrapperMap<void>& domObjectMap() { return *m_domObjectMap; }
+    // Callers need to be careful when calling get() and set() that they use
+    // the correct compile-time type. We use the compile-time type to decide
+    // whether the wrapper is stored in a hashmap or whether the wrapper is
+    // stored inline in the object. If callers use the wrong type, we'll either
+    // store the wrapper in the wrong place or look for it in the wrong place.
+
+    template<typename T>
+    inline v8::Handle<v8::Object> get(T* object) const
+    {
+        if (wrapperIsStoredInObject(object))
+            return getWrapperFromObject(object);
+        return m_wrapperMap.get(object);
+    }
+
+    // Takes ownership of |object| and |wrapper|.
+    template<typename T>
+    inline void set(T* object, v8::Persistent<v8::Object> wrapper)
+    {
+        if (setWrapperInObject(object, wrapper))
+            return;
+        m_wrapperMap.set(object, wrapper);
+    }
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
-protected:
+private:
+    inline bool wrapperIsStoredInObject(void*) const { return false; }
+    inline bool wrapperIsStoredInObject(ScriptWrappable*) const { return m_type == MainWorld; }
+
+    inline v8::Handle<v8::Object> getWrapperFromObject(void* object) const { ASSERT_NOT_REACHED(); return v8::Handle<v8::Object>(); }
+    inline v8::Handle<v8::Object> getWrapperFromObject(ScriptWrappable* key) const
+    {
+        ASSERT(m_type == MainWorld);
+        return key->wrapper();
+    }
+
+    inline bool setWrapperInObject(void*, v8::Persistent<v8::Object>) { return false; }
+    inline bool setWrapperInObject(ScriptWrappable* key, v8::Persistent<v8::Object> wrapper)
+    {
+        if (m_type != MainWorld)
+            return false;
+        ASSERT(key->wrapper().IsEmpty());
+        ASSERT(m_wrapperMap.get(toNative(wrapper)).IsEmpty());
+        key->setWrapper(wrapper);
+        wrapper.MakeWeak(key, weakCallback);
+        return true;
+    }
+
+    static void weakCallback(v8::Persistent<v8::Value>, void* context);
+
     Type m_type;
-    OwnPtr<DOMWrapperMap<Node> > m_domNodeMap;
-    OwnPtr<DOMWrapperMap<void> > m_domObjectMap;
+    DOMWrapperHashMap<void> m_wrapperMap;
 };
 
 } // namespace WebCore

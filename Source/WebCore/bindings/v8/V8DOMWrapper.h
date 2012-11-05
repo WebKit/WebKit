@@ -37,7 +37,6 @@
 #include "Node.h"
 #include "NodeFilter.h"
 #include "V8CustomXPathNSResolver.h"
-#include "V8DOMMap.h"
 #include "V8DOMWindowShell.h"
 #include "V8Utilities.h"
 #include "WrapperTypeInfo.h"
@@ -96,7 +95,6 @@ namespace WebCore {
 
         template<typename T>
         static v8::Persistent<v8::Object> setJSWrapperForDOMObject(PassRefPtr<T>, v8::Handle<v8::Object>, v8::Isolate* = 0);
-        static v8::Persistent<v8::Object> setJSWrapperForDOMNode(PassRefPtr<Node>, v8::Handle<v8::Object>, v8::Isolate* = 0);
 
         static bool isValidDOMObject(v8::Handle<v8::Value>);
 
@@ -121,8 +119,17 @@ namespace WebCore {
                 return node->wrapper();
 
             DOMDataStore* store = context->world()->domDataStore();
-            DOMWrapperMap<Node>& domNodeMap = store->domNodeMap();
-            return domNodeMap.get(node);
+            return store->get(node);
+        }
+    private:
+        static void setWrapperClass(void*, v8::Persistent<v8::Object> wrapper)
+        {
+            wrapper.SetWrapperClassId(v8DOMObjectClassId);
+        }
+
+        static void setWrapperClass(Node*, v8::Persistent<v8::Object> wrapper)
+        {
+            wrapper.SetWrapperClassId(v8DOMNodeClassId);
         }
     };
 
@@ -131,8 +138,8 @@ namespace WebCore {
     {
         v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
         ASSERT(maybeDOMWrapper(wrapperHandle));
-        wrapperHandle.SetWrapperClassId(v8DOMObjectClassId);
-        getDOMObjectMap(isolate).set(object.leakRef(), wrapperHandle);
+        setWrapperClass(object.get(), wrapperHandle);
+        DOMDataStore::current(isolate)->set(object.leakRef(), wrapperHandle);
         return wrapperHandle;
     }
 

@@ -39,22 +39,8 @@
 
 namespace WebCore {
 
-class DOMDataStore;
-
 template<class KeyType>
-class DOMWrapperMap {
-public:
-    virtual ~DOMWrapperMap() { }
-
-    virtual v8::Persistent<v8::Object> get(KeyType*) = 0;
-    virtual void set(KeyType*, v8::Persistent<v8::Object>) = 0;
-    virtual void clear() = 0;
-
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const = 0;
-};
-
-template<class KeyType>
-class DOMWrapperHashMap : public DOMWrapperMap<KeyType> {
+class DOMWrapperHashMap {
 public:
     typedef HashMap<KeyType*, v8::Persistent<v8::Object> > MapType;
 
@@ -63,12 +49,12 @@ public:
     {
     }
 
-    virtual v8::Persistent<v8::Object> get(KeyType* key) OVERRIDE
+    v8::Persistent<v8::Object> get(KeyType* key) const
     {
         return m_map.get(key);
     }
 
-    virtual void set(KeyType* key, v8::Persistent<v8::Object> wrapper) OVERRIDE
+    void set(KeyType* key, v8::Persistent<v8::Object> wrapper)
     {
         ASSERT(!m_map.contains(key));
         ASSERT(static_cast<KeyType*>(toNative(wrapper)) == key);
@@ -76,7 +62,7 @@ public:
         m_map.set(key, wrapper);
     }
 
-    virtual void clear() OVERRIDE
+    void clear()
     {
         for (typename MapType::iterator it = m_map.begin(); it != m_map.end(); ++it) {
             v8::Persistent<v8::Object> wrapper = it->value;
@@ -87,13 +73,13 @@ public:
         m_map.clear();
     }
 
-    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
         info.addMember(m_map);
     }
 
-    virtual void remove(KeyType* key, v8::Persistent<v8::Object> wrapper)
+    void remove(KeyType* key, v8::Persistent<v8::Object> wrapper)
     {
         typename MapType::iterator it = m_map.find(key);
         ASSERT(it != m_map.end());

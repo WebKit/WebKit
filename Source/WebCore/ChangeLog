@@ -1,3 +1,118 @@
+2012-11-05  Adam Barth  <abarth@webkit.org>
+
+        [V8] IntrusiveDOMWrapperMap should be usable for more than just Nodes
+        https://bugs.webkit.org/show_bug.cgi?id=101110
+
+        Reviewed by Kentaro Hara.
+
+        This patch generalizes our support for storing wrappers in DOM objects
+        to be usable for more than just nodes. After this patch, any object
+        with a ScriptWrappable base class will have its wrapper stored inline
+        in the object in the main world.
+
+        To achieve this goal, this patch hides the details of how we map from
+        objects to wrappers inside DOMDataStore and then removes the
+        IntrusiveDOMWrapperMap class entirely. This approach lets us remove the
+        DOMWrapperMap base class and make all of these functions non-virtual.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+            - Remove deleted files.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateNormalAttrGetter):
+        (GenerateConstructorCallback):
+        (GenerateNamedConstructorCallback):
+        (GenerateToV8Converters):
+            - Rather than grabbing at the DOMWrapperMap directly, we now ask
+              the DOMDataStore to do this work for us.
+        * bindings/scripts/test/V8/V8Float64Array.h:
+        (WebCore::V8Float64Array::wrap):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.h:
+        (WebCore::V8TestActiveDOMObject::wrap):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.h:
+        (WebCore::V8TestCustomNamedGetter::wrap):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h:
+        (WebCore::V8TestEventConstructor::wrap):
+        * bindings/scripts/test/V8/V8TestEventTarget.h:
+        (WebCore::V8TestEventTarget::wrap):
+        * bindings/scripts/test/V8/V8TestException.h:
+        (WebCore::V8TestException::wrap):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (WebCore::V8TestInterface::wrap):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        (WebCore::V8TestMediaQueryListListener::wrap):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h:
+        (WebCore::V8TestNamedConstructor::wrap):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore::V8TestNode::constructorCallback):
+        (WebCore::V8TestNode::wrapSlow):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::readOnlyTestObjAttrAttrGetter):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        (WebCore::V8TestObj::wrap):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+        (WebCore::V8TestSerializedScriptValueInterface::wrap):
+        * bindings/v8/DOMDataStore.cpp:
+            - Updated run-bindings-test results.
+        (WebCore::DOMDataStore::DOMDataStore):
+        (WebCore::DOMDataStore::~DOMDataStore):
+            - Simplify constructor and destructor now that there is only one
+              hash map.
+        (WebCore::DOMDataStore::current):
+            - Now that V8DOMMap.cpp doesn't handle the null isolate case, we
+              need to handle it here.
+        (WebCore::DOMDataStore::reportMemoryUsage):
+            - Simplfied now that there is only one wrapper map.
+        (WebCore::DOMDataStore::weakCallback):
+            - Moved from IntrusiveDOMWrapperMap.h
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::get):
+        (WebCore::DOMDataStore::set):
+            - These functions now handle the intrusive case with a branch
+              rather than with a virtual function call. In many cases, the
+              branch can be optimized away by the compiler when the overloaded
+              inline functions are inlined.
+        (WebCore::DOMDataStore::wrapperIsStoredInObject):
+            - Overloaded functions to determine whether to store the wrapper
+              inside the object or in the hashmap.
+        (WebCore::DOMDataStore::getWrapperFromObject):
+        (WebCore::DOMDataStore::storeWrapperInObject):
+            - Overloaded functions to get/set the wrapper from inside the
+              object itself.
+        * bindings/v8/DOMWrapperMap.h:
+        (WebCore::DOMWrapperHashMap::get):
+        (WebCore::DOMWrapperHashMap::set):
+        (WebCore::DOMWrapperHashMap::clear):
+        (WebCore::DOMWrapperHashMap::reportMemoryUsage):
+        (WebCore::DOMWrapperHashMap::remove):
+            - These functions are no longer virtual.
+        * bindings/v8/DOMWrapperWorld.h:
+        * bindings/v8/IntrusiveDOMWrapperMap.h: Removed.
+        * bindings/v8/ScriptProfiler.cpp:
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::neuterBinding):
+            - We need to keep the type information slightly longer so that we
+              look in the right wrapper map.
+        * bindings/v8/V8DOMMap.cpp: Removed.
+        * bindings/v8/V8DOMMap.h: Removed.
+        * bindings/v8/V8DOMWindowShell.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::getCachedWrapper):
+            - Defer this work to the store.
+        (WebCore::V8DOMWrapper::setWrapperClass):
+            - An overloaded function to set the right wrapper class.
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMObject):
+            - This function is now general enough to handle ever kind of object.
+        * bindings/v8/V8GCController.cpp:
+        * bindings/v8/V8NPObject.cpp:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        * bindings/v8/WorkerScriptController.cpp:
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+            - Call the more general function (instead of the now-deleted specialized function).
+
 2012-11-05  Alexey Proskuryakov  <ap@apple.com>
 
         Get rid of setCookieStoragePrivateBrowsingEnabled.

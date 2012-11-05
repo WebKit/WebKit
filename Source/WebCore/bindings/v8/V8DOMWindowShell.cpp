@@ -51,7 +51,6 @@
 #include "StylePropertySet.h"
 #include "V8Binding.h"
 #include "V8Collection.h"
-#include "V8DOMMap.h"
 #include "V8DOMWindow.h"
 #include "V8Document.h"
 #include "V8GCController.h"

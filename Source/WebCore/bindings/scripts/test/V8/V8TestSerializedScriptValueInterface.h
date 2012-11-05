@@ -56,7 +56,7 @@ private:
 
 v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrap(TestSerializedScriptValueInterface* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
-        v8::Handle<v8::Object> wrapper = getDOMObjectMap(isolate).get(impl);
+        v8::Handle<v8::Object> wrapper = DOMDataStore::current(isolate)->get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     return V8TestSerializedScriptValueInterface::wrapSlow(impl, creationContext, isolate);

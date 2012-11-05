@@ -2206,13 +2206,14 @@ SerializedScriptValue::SerializedScriptValue()
 {
 }
 
-static void neuterBinding(void* domObject) 
+template<typename T>
+inline void neuterBinding(T* object) 
 {
     Vector<DOMDataStore*>& allStores = V8PerIsolateData::current()->allStores();
     for (size_t i = 0; i < allStores.size(); i++) {
-        v8::Handle<v8::Object> obj = allStores[i]->domObjectMap().get(domObject);
-        if (!obj.IsEmpty())
-            obj->SetIndexedPropertiesToExternalArrayData(0, v8::kExternalByteArray, 0);
+        v8::Handle<v8::Object> wrapper = allStores[i]->get(object);
+        if (!wrapper.IsEmpty())
+            wrapper->SetIndexedPropertiesToExternalArrayData(0, v8::kExternalByteArray, 0);
     }
 }
 
