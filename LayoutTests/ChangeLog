@@ -1,3 +1,10 @@
+2012-11-05  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Mark several compositing tests as only failing Image
+        and not Text, after r133513.  Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] New compositing/tiling tests fail
