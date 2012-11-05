@@ -1,3 +1,36 @@
+2012-11-05  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Dispose() and Clear() should be always coupled for safety
+        https://bugs.webkit.org/show_bug.cgi?id=101191
+
+        Reviewed by Adam Barth.
+
+        Clear() is not mandatory. However, to avoid misusing already
+        disposed wrappers, Clear() should be always called just
+        after Dispose().
+
+        No tests. No change in behavior.
+
+        * bindings/v8/DOMWrapperMap.h:
+        (WebCore::DOMWrapperHashMap::defaultWeakCallback):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        (WebCore::IntrusiveDOMWrapperMap::weakCallback):
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::freeV8NPObject):
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::~ScheduledAction):
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::V8NPTemplateMap::dispose):
+        (WebCore::weakNPObjectCallback):
+        (WebCore::forgetV8ObjectForNPObject):
+        * bindings/v8/V8PerContextData.cpp:
+        (WebCore::V8PerContextData::dispose):
+        * bindings/v8/V8ValueCache.cpp:
+        (WebCore::cachedStringCallback):
+        (WebCore::IntegerCache::~IntegerCache):
+        * bindings/v8/custom/V8InjectedScriptManager.cpp:
+        (WebCore::WeakReferenceCallback):
+
 2012-11-05  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Layout of the first shape-inside line can be incorrect

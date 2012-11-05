@@ -82,6 +82,7 @@ public:
             v8::Persistent<v8::Object> wrapper = it->value;
             toWrapperTypeInfo(wrapper)->derefObject(it->key);
             wrapper.Dispose();
+            wrapper.Clear();
         }
         m_map.clear();
     }
@@ -111,6 +112,7 @@ private:
 
         map->remove(key, wrapper);
         wrapper.Dispose();
+        wrapper.Clear();
         type->derefObject(key);
     }
 

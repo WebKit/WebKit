@@ -46,6 +46,7 @@ static void cachedStringCallback(v8::Persistent<v8::Value> wrapper, void* parame
     StringImpl* stringImpl = static_cast<StringImpl*>(parameter);
     V8PerIsolateData::current()->stringCache()->remove(stringImpl);
     wrapper.Dispose();
+    wrapper.Clear();
     stringImpl->deref();
 }
 
@@ -113,8 +114,10 @@ void IntegerCache::createSmallIntegers(v8::Isolate* isolate)
 IntegerCache::~IntegerCache()
 {
     if (m_initialized) {
-        for (int value = 0; value < numberOfCachedSmallIntegers; value++)
+        for (int value = 0; value < numberOfCachedSmallIntegers; value++) {
             m_smallIntegers[value].Dispose();
+            m_smallIntegers[value].Clear();
+        }
         m_initialized = false;
     }
 }

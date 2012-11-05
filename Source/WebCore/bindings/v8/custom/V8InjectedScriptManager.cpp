@@ -49,6 +49,7 @@ static void WeakReferenceCallback(v8::Persistent<v8::Value> object, void* parame
     InjectedScriptHost* nativeObject = static_cast<InjectedScriptHost*>(parameter);
     nativeObject->deref();
     object.Dispose();
+    object.Clear();
 }
 
 static v8::Local<v8::Object> createInjectedScriptHostV8Wrapper(InjectedScriptHost* host)

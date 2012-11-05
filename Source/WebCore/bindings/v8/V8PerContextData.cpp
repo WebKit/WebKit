@@ -55,6 +55,7 @@ void V8PerContextData::dispose()
         for (; it != m_wrapperBoilerplates.end(); ++it) {
             v8::Persistent<v8::Object> wrapper = it->value;
             wrapper.Dispose();
+            wrapper.Clear();
         }
         m_wrapperBoilerplates.clear();
     }
@@ -64,6 +65,7 @@ void V8PerContextData::dispose()
         for (; it != m_constructorMap.end(); ++it) {
             v8::Persistent<v8::Function> wrapper = it->value;
             wrapper.Dispose();
+            wrapper.Clear();
         }
         m_constructorMap.clear();
     }

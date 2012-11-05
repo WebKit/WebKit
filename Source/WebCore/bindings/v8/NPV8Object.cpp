@@ -92,6 +92,7 @@ static void freeV8NPObject(NPObject* npObject)
             v8NPObjectMap->remove(v8ObjectHash);
     }
     v8NpObject->v8Object.Dispose();
+    v8NpObject->v8Object.Clear();
     free(v8NpObject);
 }
 

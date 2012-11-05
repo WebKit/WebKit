@@ -70,6 +70,7 @@ private:
 
         key->clearWrapper();
         value.Dispose();
+        value.Clear();
         key->deref();
     }
 };
