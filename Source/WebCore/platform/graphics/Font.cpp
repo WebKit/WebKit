@@ -75,6 +75,7 @@ Font::Font()
     , m_wordSpacing(0)
     , m_isPlatformFont(false)
     , m_needsTranscoding(false)
+    , m_typesettingFeatures(0)
 {
 }
 
@@ -84,6 +85,7 @@ Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing)
     , m_wordSpacing(wordSpacing)
     , m_isPlatformFont(false)
     , m_needsTranscoding(fontTranscoder().needsTranscoding(fd))
+    , m_typesettingFeatures(computeTypesettingFeatures())
 {
 }
 
@@ -92,6 +94,7 @@ Font::Font(const FontPlatformData& fontData, bool isPrinterFont, FontSmoothingMo
     , m_letterSpacing(0)
     , m_wordSpacing(0)
     , m_isPlatformFont(true)
+    , m_typesettingFeatures(computeTypesettingFeatures())
 {
     m_fontDescription.setUsePrinterFont(isPrinterFont);
     m_fontDescription.setFontSmoothing(fontSmoothingMode);
@@ -106,6 +109,7 @@ Font::Font(const Font& other)
     , m_wordSpacing(other.m_wordSpacing)
     , m_isPlatformFont(other.m_isPlatformFont)
     , m_needsTranscoding(other.m_needsTranscoding)
+    , m_typesettingFeatures(computeTypesettingFeatures())
 {
 }
 
@@ -117,6 +121,7 @@ Font& Font::operator=(const Font& other)
     m_wordSpacing = other.m_wordSpacing;
     m_isPlatformFont = other.m_isPlatformFont;
     m_needsTranscoding = other.m_needsTranscoding;
+    m_typesettingFeatures = other.m_typesettingFeatures;
     return *this;
 }
 
@@ -148,6 +153,7 @@ void Font::update(PassRefPtr<FontSelector> fontSelector) const
     if (!m_fontFallbackList)
         m_fontFallbackList = FontFallbackList::create();
     m_fontFallbackList->invalidate(fontSelector);
+    m_typesettingFeatures = computeTypesettingFeatures();
 }
 
 void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
@@ -210,11 +216,7 @@ float Font::width(const TextRun& run, int& charsConsumed, String& glyphName) con
 
     charsConsumed = run.length();
     glyphName = "";
-
-    if (codePath(run) != Complex)
-        return floatWidthForSimpleText(run);
-
-    return floatWidthForComplexText(run);
+    return width(run);
 }
 
 #if !(PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)))

@@ -121,47 +121,7 @@ public:
     
     FontRenderingMode renderingMode() const { return m_fontDescription.renderingMode(); }
 
-    TypesettingFeatures typesettingFeatures() const
-    {
-        TextRenderingMode textRenderingMode = m_fontDescription.textRenderingMode();
-        TypesettingFeatures features = s_defaultTypesettingFeatures;
-
-        switch(textRenderingMode) {
-        case AutoTextRendering:
-            break;
-        case OptimizeSpeed:
-            features &= ~(Kerning | Ligatures);
-            break;
-        case GeometricPrecision:
-        case OptimizeLegibility:
-            features |= Kerning | Ligatures;
-            break;
-        }
-
-        switch (m_fontDescription.kerning()) {
-        case FontDescription::NoneKerning:
-            features &= ~Kerning;
-            break;
-        case FontDescription::NormalKerning:
-            features |= Kerning;
-            break;
-        case FontDescription::AutoKerning:
-            break;
-        }
-
-        switch (m_fontDescription.commonLigaturesState()) {
-        case FontDescription::DisabledLigaturesState:
-            features &= ~Ligatures;
-            break;
-        case FontDescription::EnabledLigaturesState:
-            features |= Ligatures;
-            break;
-        case FontDescription::NormalLigaturesState:
-            break;
-        }
-
-        return features;
-    }
+    TypesettingFeatures typesettingFeatures() const { return m_typesettingFeatures; }
 
     FontFamily& firstFamily() { return m_fontDescription.firstFamily(); }
     const FontFamily& family() const { return m_fontDescription.family(); }
@@ -287,6 +247,48 @@ private:
         return m_fontFallbackList && m_fontFallbackList->loadingCustomFonts();
     }
 
+    TypesettingFeatures computeTypesettingFeatures() const
+    {
+        TextRenderingMode textRenderingMode = m_fontDescription.textRenderingMode();
+        TypesettingFeatures features = s_defaultTypesettingFeatures;
+
+        switch (textRenderingMode) {
+        case AutoTextRendering:
+            break;
+        case OptimizeSpeed:
+            features &= ~(Kerning | Ligatures);
+            break;
+        case GeometricPrecision:
+        case OptimizeLegibility:
+            features |= Kerning | Ligatures;
+            break;
+        }
+
+        switch (m_fontDescription.kerning()) {
+        case FontDescription::NoneKerning:
+            features &= ~Kerning;
+            break;
+        case FontDescription::NormalKerning:
+            features |= Kerning;
+            break;
+        case FontDescription::AutoKerning:
+            break;
+        }
+
+        switch (m_fontDescription.commonLigaturesState()) {
+        case FontDescription::DisabledLigaturesState:
+            features &= ~Ligatures;
+            break;
+        case FontDescription::EnabledLigaturesState:
+            features |= Ligatures;
+            break;
+        case FontDescription::NormalLigaturesState:
+            break;
+        }
+
+        return features;
+    }
+
 #if PLATFORM(QT)
     void initFormatForTextLayout(QTextLayout*) const;
 #endif
@@ -299,6 +301,7 @@ private:
     short m_wordSpacing;
     bool m_isPlatformFont;
     bool m_needsTranscoding;
+    mutable TypesettingFeatures m_typesettingFeatures; // Caches values computed from m_fontDescription.
 };
 
 inline Font::~Font()

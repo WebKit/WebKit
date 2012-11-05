@@ -1,3 +1,27 @@
+2012-11-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Cleaned up the Font class in preparation for optimizing kerning and ligatures
+        https://bugs.webkit.org/show_bug.cgi?id=101258
+
+        Reviewed by Dan Bernstein.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::typesettingFeatures):
+        (WebCore::Font::computeTypesettingFeatures): Compute and cache our
+        typesetting features instead of recomputing each time a client asks
+        for them. This makes the class interface easier to use because
+        "typesettingFeatures()" can appear in more than one expression without
+        undue performance cost. This may also be a small speedup to code that
+        calls typesettingFeatures() often for other reasons.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::Font):
+        (WebCore::Font::operator=):
+        (WebCore::Font::update): Ditto.
+
+        (WebCore::Font::width): Unforked the width() function so all width-related
+        interfaces can benefit from optimization without duplicate code.
+
 2012-11-05  Peng Huang  <penghuang@google.com>
 
         Webkit does not handle some media keys correctly On Linux gtk platform.
