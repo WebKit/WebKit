@@ -24,10 +24,6 @@ fast/multicol/hit-test-above-or-below.html
 # https://bugs.webkit.org/show_bug.cgi?id=87956
 fast/dom/Window/mozilla-focus-blur.html
 
-# [Qt] http/tests/incremental/slow-utf8-text.pl times out with Qt5-WK1
-# https://bugs.webkit.org/show_bug.cgi?id=79655
-http/tests/incremental/slow-utf8-text.pl
-
 # https://bugs.webkit.org/show_bug.cgi?id=77380
 fast/url/path.html
 

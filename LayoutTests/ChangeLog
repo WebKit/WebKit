@@ -1,3 +1,9 @@
+2012-11-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unskip a now passing test.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+
 2012-11-05  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Polygon edges should span colinear vertices
