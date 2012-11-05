@@ -1,5 +1,13 @@
 2012-11-05  Stephen White  <senorblanco@chromium.org>
 
+        Remove fast/forms/week-multiple-fields from
+        platform/mac/TestExpectations, since it no longer exists and makes the
+        style script complain.  Unreviewed.
+
+        * platform/mac/TestExpectations:
+
+2012-11-05  Stephen White  <senorblanco@chromium.org>
+
         [chromium] Give actual bug IDs to some past gardening.  Unreviewed.
 
         * platform/chromium/TestExpectations:

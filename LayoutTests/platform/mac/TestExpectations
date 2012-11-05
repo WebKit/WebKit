@@ -801,7 +801,6 @@ css3/flexbox/flex-rounding.html
 fast/forms/date-multiple-fields
 fast/forms/month-multiple-fields
 fast/forms/time-multiple-fields
-fast/forms/week-multiple-fields
 
 # <rdar://problem/11224160> Focus not transferring properly in DumpRenderTree in Mountain Lion
 fast/events/show-modal-dialog-onblur-onfocus.html
