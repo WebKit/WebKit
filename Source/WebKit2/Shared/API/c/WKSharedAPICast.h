@@ -758,6 +758,28 @@ inline ImageOptions toImageOptions(WKImageOptions wkImageOptions)
     return static_cast<ImageOptions>(imageOptions);
 }
 
+inline SnapshotOptions snapshotOptionsFromImageOptions(WKImageOptions wkImageOptions)
+{
+    unsigned snapshotOptions = 0;
+
+    if (wkImageOptions & kWKImageOptionsShareable)
+        snapshotOptions |= SnapshotOptionsShareable;
+
+    return snapshotOptions;
+}
+
+inline SnapshotOptions toSnapshotOptions(WKSnapshotOptions wkSnapshotOptions)
+{
+    unsigned snapshotOptions = 0;
+
+    if (wkSnapshotOptions & kWKSnapshotOptionsShareable)
+        snapshotOptions |= SnapshotOptionsShareable;
+    if (wkSnapshotOptions & kWKSnapshotOptionsExcludeSelectionHighlighting)
+        snapshotOptions |= SnapshotOptionsExcludeSelectionHighlighting;
+
+    return snapshotOptions;
+}
+
 } // namespace WebKit
 
 #endif // WKSharedAPICast_h
