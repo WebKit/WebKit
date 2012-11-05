@@ -1464,7 +1464,7 @@ IntPoint FrameView::currentMousePosition() const
 
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
-    RenderBlock::PositionedObjectsListHashSet* positionedObjects = 0;
+    TrackedRendererListHashSet* positionedObjects = 0;
     if (RenderView* root = rootRenderer(this))
         positionedObjects = root->positionedObjects();
 
@@ -1477,8 +1477,8 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 
     // Get the rects of the fixed objects visible in the rectToScroll
     Region regionToUpdate;
-    RenderBlock::PositionedObjectsListHashSet::const_iterator end = positionedObjects->end();
-    for (RenderBlock::PositionedObjectsListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
+    TrackedRendererListHashSet::const_iterator end = positionedObjects->end();
+    for (TrackedRendererListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
         RenderBox* renderBox = *it;
         if (renderBox->style()->position() != FixedPosition)
             continue;

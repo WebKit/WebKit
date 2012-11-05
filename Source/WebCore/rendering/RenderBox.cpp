@@ -290,12 +290,8 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
         }
     }
 
-    if (isPositioned()) {
-        for (RenderObject* curr = parent(); curr; curr = curr->parent()) {
-            if (curr->isRenderBlock())
-                toRenderBlock(curr)->removePositionedObject(this);
-        }
-    }
+    if (isPositioned())
+        RenderBlock::removePositionedObject(this);
 }
 
 void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
