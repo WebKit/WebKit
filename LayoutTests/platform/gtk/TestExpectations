@@ -191,26 +191,16 @@ webkit.org/b/98934 fast/forms/datalist [ Skip ]
 webkit.org/b/98935 fast/forms/color [ Skip ]
 
 # ENABLE_INPUT_TYPE_* are not enabled.
-webkit.org/b/98936 fast/forms/date [ Failure ]
-webkit.org/b/98936 fast/forms/date/date-interactive-validation-required.html [ Pass ]
-webkit.org/b/98936 fast/forms/date/date-reset-value.html [ Pass ]
-webkit.org/b/98936 fast/forms/date/date-stepup-stepdown-from-renderer.html [ Pass ]
-webkit.org/b/98936 fast/forms/date/no-page-popup-controller.html [ Pass ]
-webkit.org/b/98936 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailure ]
 webkit.org/b/98936 fast/css/pseudo-in-range.html [ Failure ]
 webkit.org/b/98936 fast/css/pseudo-out-of-range.html [ Failure ]
 webkit.org/b/98936 fast/css/pseudo-in-range-invalid-value.html [ Failure ]
-webkit.org/b/98936 fast/forms/datetime [ Failure ]
-webkit.org/b/98936 fast/forms/datetime/datetime-interactive-validation-required.html [ Pass ]
-webkit.org/b/98936 fast/forms/datetimelocal [ Failure ]
-webkit.org/b/98936 fast/forms/datetimelocal/datetimelocal-interactive-validation-required.html [ Pass ]
-webkit.org/b/98936 fast/forms/datetimelocal/input-valueasdate-datetimelocal.html [ Pass ]
-webkit.org/b/98936 fast/forms/month [ Failure ]
-webkit.org/b/98936 fast/forms/month/month-interactive-validation-required.html [ Pass ]
-webkit.org/b/98936 fast/forms/time [ Failure ]
-webkit.org/b/98936 fast/forms/time/time-interactive-validation-required.html [ Pass ]
-webkit.org/b/98936 fast/forms/week [ Failure ]
-webkit.org/b/98936 fast/forms/week/week-interactive-validation-required.html [ Pass ]
+webkit.org/b/98936 fast/forms/date [ Skip ]
+webkit.org/b/98936 fast/forms/datetime [ Skip ]
+webkit.org/b/98936 fast/forms/datetimelocal [ Skip ]
+webkit.org/b/98936 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailure ]
+webkit.org/b/98936 fast/forms/month [ Skip ]
+webkit.org/b/98936 fast/forms/time [ Skip ]
+webkit.org/b/98936 fast/forms/week [ Skip ]
 
 # ENABLE_GAMEPAD not enabled.
 webkit.org/b/98937 gamepad [ Skip ]
@@ -354,28 +344,7 @@ webkit.org/b/85211 ietestcenter/css3/flexbox/flexbox-align-stretch-001.htm [ Ima
 webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyFailure ]
 
 # These tests require subpixel layout to be enabled
-webkit.org/b/94792 fast/sub-pixel [ Failure ImageOnlyFailure ]
-webkit.org/b/94792 fast/sub-pixel/auto-table-layout-should-avoid-text-wrapping.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/block-preferred-widths-with-sub-pixel-floats.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/column-clipping.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/file-upload-control-at-fractional-offset.html [ ImageOnlyFailure ]
-webkit.org/b/94792 fast/sub-pixel/float-containing-block-with-margin.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/float-precision.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/float-with-margin-in-container.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/float-with-right-margin-zoom.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/float-wrap-with-subpixel-top.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/inline-block-should-not-wrap.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/inline-block-with-margin.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/replaced-element-baseline.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/size-of-span-with-different-positions.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/sub-pixel-accumulates-to-layers.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/sub-pixel-iframe-copy-on-scroll.html [ Missing ]
-webkit.org/b/94792 fast/sub-pixel/table-cells-have-stable-width.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/table-cells-with-padding-do-not-wrap.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/table-rows-have-stable-height.html [ Skip ]
-webkit.org/b/94792 fast/sub-pixel/table-rows-no-gaps.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/vertical-align-middle-overflow.html [ Pass ]
-webkit.org/b/94792 fast/sub-pixel/zoomed-image-tiles.html [ Skip ]
+webkit.org/b/94792 fast/sub-pixel [ Skip ]
 
 # Mediastream implementation is not complete yet.
 webkit.org/b/79203 fast/mediastream [ Skip ]
@@ -436,6 +405,9 @@ webkit.org/b/97390 mathml/presentation/subsup.xhtml [ Failure Pass ]
 
 # Requires Resolution Media Query support
 webkit.org/b/100137 fast/media/mq-resolution.html [ Failure ]
+
+# CSS Device Adaptation is not enabled.
+webkit.org/b/95959 css3/device-adapt [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -1063,9 +1035,6 @@ Bug(GTK) http/tests/security/drag-over-remote-content-iframe.html [ Failure ]
 Bug(GTK) fast/events/drag-in-frames.html [ Failure ]
 Bug(GTK) http/tests/misc/bubble-drag-events.html [ Failure ]
 
-# Fails with "Received error from worker: ReferenceError: Can't find variable: revokeObjectURL
-webkit.org/b/100136 fast/files/workers/worker-apply-blob-url-to-xhr.html [ Failure ]
-
 # Dragging images and links results in a DataTransfer object containing a non-empty files array
 webkit.org/b/52094 editing/pasteboard/files-during-page-drags.html [ Failure ]
 
@@ -1442,6 +1411,3 @@ webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
-
-# CSS Device Adaptation is not enabled.
-webkit.org/b/95959 css3/device-adapt [ Skip ]

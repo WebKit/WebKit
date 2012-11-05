@@ -1,3 +1,18 @@
+2012-11-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Skipping ENABLE_SUBPIXEL- and ENABLE_INPUT_TYPE_*-related testing
+        directories. These features are not enabled yet and most of the
+        tests fail.
+
+        Removing failure expectation for fast/files/workers/worker-apply-blob-url-to-xhr.html,
+        the issue was fixed in r132973.
+
+        Moving the skip entry for css3/device-adapt to the proper section.
+
+        * platform/gtk/TestExpectations:
+
 2012-11-05  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] ShadowRoot type is not set correctly.
