@@ -1,3 +1,14 @@
+2012-11-05  Dima Gorbik  <dgorbik@apple.com>
+
+        Back out controversial changes from Bug 98665.
+        https://bugs.webkit.org/show_bug.cgi?id=101244
+
+        Reviewed by David Kilzer.
+
+        Backing out changes from Bug 98665 until further discussions take place on rules for including Platform.h in Assertions.h.
+
+        * wtf/Assertions.h:
+
 2012-11-03  Alexey Proskuryakov  <ap@apple.com>
 
         Get rid of USE(CFURLSTORAGESESSIONS)

@@ -30,7 +30,6 @@
 #include "JSStringRef.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <wtf/Platform.h>
 #include <wtf/Assertions.h>
 #include <wtf/UnusedParam.h>
 

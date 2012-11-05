@@ -29,7 +29,6 @@
 #include "JSObjectRefPrivate.h"
 #include <math.h>
 #define ASSERT_DISABLED 0
-#include <wtf/Platform.h>
 #include <wtf/Assertions.h>
 #include <wtf/UnusedParam.h>
 

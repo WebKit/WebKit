@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <wtf/Platform.h>
+#import "config.h"
 #import "MockGeolocationProvider.h"
 
 @implementation MockGeolocationProvider
