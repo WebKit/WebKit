@@ -140,6 +140,7 @@ bool ContextFeaturesClientImpl::askIfIsEnabled(Document* document, ContextFeatur
         return defaultValue;
 
     switch (type) {
+    case ContextFeatures::ShadowDOM:
     case ContextFeatures::StyleScoped:
         return m_client->allowWebComponents(WebDocument(document), defaultValue);
     case ContextFeatures::HTMLNotifications:

@@ -392,9 +392,9 @@
     attribute EntityConstructor Entity;
     attribute EntityReferenceConstructor EntityReference;
     attribute ProcessingInstructionConstructor ProcessingInstruction;
-    [Conditional=SHADOW_DOM, V8EnabledAtRuntime=shadowDOM] attribute ShadowRootConstructor WebKitShadowRoot;
-    [Conditional=SHADOW_DOM, V8EnabledAtRuntime=shadowDOM] attribute HTMLContentElementConstructor HTMLContentElement;
-    [Conditional=SHADOW_DOM, V8EnabledAtRuntime=shadowDOM] attribute HTMLShadowElementConstructor HTMLShadowElement;
+    [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] attribute ShadowRootConstructor WebKitShadowRoot;
+    [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] attribute HTMLContentElementConstructor HTMLContentElement;
+    [Conditional=SHADOW_DOM, V8EnabledPerContext=shadowDOM] attribute HTMLShadowElementConstructor HTMLShadowElement;
 
     attribute DOMSelectionConstructor Selection;
     attribute DOMWindowConstructor Window;

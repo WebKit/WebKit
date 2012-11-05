@@ -1,3 +1,33 @@
+2012-11-04  MORITA Hajime  <morrita@google.com>
+
+        Shadow DOM should be able to be disabled per context.
+        https://bugs.webkit.org/show_bug.cgi?id=101173
+
+        Reviewed by Dimitri Glazkov.
+
+        This change pulls back relevant bits from r131549. Note that if
+        the the port enables runtime Shadow DOM flag, this can cause slow
+        down on some Chromium page cycler test cases (which r131549
+        attempted to fix).
+
+        This change is temporal and the flags should be switched back from
+        ContextFeatures to RuntimeEnabledFeatures once it gains sufficent
+        stability.
+
+        * dom/ContextFeatures.cpp:
+        (WebCore::ContextFeatures::shadowDOMEnabled):
+        (WebCore):
+        * dom/ContextFeatures.h:
+        * dom/Position.cpp:
+        (WebCore::Position::Position):
+        (WebCore::Position::findParent):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getSelection):
+        * html/HTMLTagNames.in:
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::contentTagName):
+        * page/DOMWindow.idl:
+
 2012-11-04  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Implement custom pseudo-elements styling

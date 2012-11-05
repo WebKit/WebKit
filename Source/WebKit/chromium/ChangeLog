@@ -1,3 +1,13 @@
+2012-11-04  MORITA Hajime  <morrita@google.com>
+
+        Shadow DOM should be able to be disabled per context.
+        https://bugs.webkit.org/show_bug.cgi?id=101173
+
+        Reviewed by Dimitri Glazkov.
+
+        * src/ContextFeaturesClientImpl.cpp:
+        (WebKit::ContextFeaturesClientImpl::askIfIsEnabled):
+
 2012-11-03  Dan Beam  <dbeam@chromium.org>
 
         Implement HTMLFormElement#requestAutocomplete and associated events

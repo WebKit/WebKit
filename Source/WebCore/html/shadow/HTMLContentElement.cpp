@@ -29,10 +29,10 @@
 
 #include "ContentDistributor.h"
 #include "ContentSelectorQuery.h"
+#include "ContextFeatures.h"
 #include "ElementShadow.h"
 #include "HTMLNames.h"
 #include "QualifiedName.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ShadowRoot.h"
 #include <wtf/StdLibExtras.h>
 
@@ -40,13 +40,14 @@ namespace WebCore {
 
 using HTMLNames::selectAttr;
 
-const QualifiedName& HTMLContentElement::contentTagName(Document*)
+const QualifiedName& HTMLContentElement::contentTagName(Document* document)
 {
 #if ENABLE(SHADOW_DOM)
-    if (!RuntimeEnabledFeatures::shadowDOMEnabled())
+    if (!ContextFeatures::shadowDOMEnabled(document))
         return HTMLNames::webkitShadowContentTag;
     return HTMLNames::contentTag;
 #else
+    UNUSED_PARAM(document);
     return HTMLNames::webkitShadowContentTag;
 #endif
 }
