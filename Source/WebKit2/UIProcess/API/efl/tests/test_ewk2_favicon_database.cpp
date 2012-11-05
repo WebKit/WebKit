@@ -89,6 +89,10 @@ TEST_F(EWK2UnitTestBase, ewk_favicon_database_url_get)
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
 
+    // Set favicon database path and enable functionality.
+    Ewk_Context* context = ewk_view_context_get(webView());
+    ewk_context_favicon_database_directory_set(context, 0);
+
     bool iconChanged = false;
     evas_object_smart_callback_add(webView(), "icon,changed", onIconChanged, &iconChanged);
 
@@ -103,7 +107,6 @@ TEST_F(EWK2UnitTestBase, ewk_favicon_database_url_get)
     evas_object_smart_callback_del(webView(), "icon,changed", onIconChanged);
 
     // Check the API retrieving a favicon URL.
-    Ewk_Context* context = ewk_view_context_get(webView());
     Ewk_Favicon_Database* faviconDatabase = ewk_context_favicon_database_get(context);
     ASSERT_TRUE(faviconDatabase);
 
@@ -145,6 +148,10 @@ TEST_F(EWK2UnitTestBase, ewk_favicon_database_async_icon_get)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
     httpServer->run(serverCallback);
+
+    // Set favicon database path and enable functionality.
+    Ewk_Context* context = ewk_view_context_get(webView());
+    ewk_context_favicon_database_directory_set(context, 0);
 
     IconRequestData data = { webView(), 0 };
     evas_object_smart_callback_add(webView(), "icon,changed", requestFaviconData, &data);

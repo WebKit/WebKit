@@ -26,11 +26,13 @@
 #ifndef ewk_favicon_database_private_h
 #define ewk_favicon_database_private_h
 
-#include "WKIconDatabase.h"
-#include "WKRetainPtr.h"
 #include "ewk_favicon_database.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/HashMap.h>
+
+namespace WebKit {
+class WebIconDatabase;
+}
 
 struct IconChangeCallbackData {
     Ewk_Favicon_Database_Icon_Change_Cb callback;
@@ -71,10 +73,11 @@ typedef HashMap<String /* pageURL */, PendingIconRequestVector> PendingIconReque
 
 class Ewk_Favicon_Database {
 public:
-    static PassOwnPtr<Ewk_Favicon_Database> create(WKIconDatabaseRef iconDatabaseRef)
+    static PassOwnPtr<Ewk_Favicon_Database> create(WebKit::WebIconDatabase* iconDatabase)
     {
-        return adoptPtr(new Ewk_Favicon_Database(iconDatabaseRef));
+        return adoptPtr(new Ewk_Favicon_Database(iconDatabase));
     }
+    ~Ewk_Favicon_Database();
 
     String iconURLForPageURL(const String& pageURL) const;
     void iconForPageURL(const String& pageURL, const IconRequestCallbackData& callbackData);
@@ -83,14 +86,14 @@ public:
     void unwatchChanges(Ewk_Favicon_Database_Icon_Change_Cb callback);
 
 private:
-    explicit Ewk_Favicon_Database(WKIconDatabaseRef iconDatabaseRef);
+    explicit Ewk_Favicon_Database(WebKit::WebIconDatabase* iconDatabase);
 
     PassRefPtr<cairo_surface_t> getIconSurfaceSynchronously(const String& pageURL) const;
 
     static void didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
     static void iconDataReadyForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
 
-    WKRetainPtr<WKIconDatabaseRef> m_wkIconDatabase;
+    RefPtr<WebKit::WebIconDatabase> m_iconDatabase;
     ChangeListenerMap m_changeListeners;
     PendingIconRequestMap m_iconRequests;
 };

@@ -145,17 +145,36 @@ Ewk_Cookie_Manager* Ewk_Context::cookieManager()
     return m_cookieManager.get();
 }
 
+void Ewk_Context::ensureFaviconDatabase()
+{
+    if (m_faviconDatabase)
+        return;
+
+    m_faviconDatabase = Ewk_Favicon_Database::create(toImpl(m_context.get())->iconDatabase());
+}
+
+bool Ewk_Context::setFaviconDatabaseDirectoryPath(const String& databaseDirectory)
+{
+    ensureFaviconDatabase();
+
+    WebContext* webContext = toImpl(m_context.get());
+
+    // The database path is already open so its path was
+    // already set.
+    if (webContext->iconDatabase()->isOpen())
+        return false;
+
+    // If databaseDirectory is empty, we use the default database path for the platform.
+    String databasePath = databaseDirectory.isEmpty() ? webContext->iconDatabasePath() : pathByAppendingComponent(databaseDirectory, WebCore::IconDatabase::defaultDatabaseFilename());
+    webContext->setIconDatabasePath(databasePath);
+
+    return true;
+}
+
 Ewk_Favicon_Database* Ewk_Context::faviconDatabase()
 {
-    if (!m_faviconDatabase) {
-        WKRetainPtr<WKIconDatabaseRef> iconDatabase = WKContextGetIconDatabase(m_context.get());
-        // Set the database path if it is not open yet.
-        if (!toImpl(iconDatabase.get())->isOpen()) {
-            WebContext* webContext = toImpl(m_context.get());
-            webContext->setIconDatabasePath(webContext->iconDatabasePath());
-        }
-        m_faviconDatabase = Ewk_Favicon_Database::create(iconDatabase.get());
-    }
+    ensureFaviconDatabase();
+    ASSERT(m_faviconDatabase);
 
     return m_faviconDatabase.get();
 }
@@ -213,6 +232,13 @@ Ewk_Cookie_Manager* ewk_context_cookie_manager_get(const Ewk_Context* ewkContext
     EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, 0);
 
     return const_cast<Ewk_Context*>(ewkContext)->cookieManager();
+}
+
+Eina_Bool ewk_context_favicon_database_directory_set(Ewk_Context* ewkContext, const char* directoryPath)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, false);
+
+    return ewkContext->setFaviconDatabaseDirectoryPath(String::fromUTF8(directoryPath));
 }
 
 Ewk_Favicon_Database* ewk_context_favicon_database_get(const Ewk_Context* ewkContext)

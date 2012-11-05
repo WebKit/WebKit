@@ -55,6 +55,7 @@ public:
 
     Ewk_Cookie_Manager* cookieManager();
 
+    bool setFaviconDatabaseDirectoryPath(const String& databaseDirectory);
     Ewk_Favicon_Database* faviconDatabase();
 
     Ewk_Storage_Manager* storageManager() const;
@@ -81,6 +82,8 @@ public:
 
 private:
     explicit Ewk_Context(WKContextRef);
+
+    void ensureFaviconDatabase();
 
     WKRetainPtr<WKContextRef> m_context;
 

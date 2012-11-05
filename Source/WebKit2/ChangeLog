@@ -1,3 +1,44 @@
+2012-11-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] The icon database path should be set by the client
+        https://bugs.webkit.org/show_bug.cgi?id=101182
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No longer set the favicon database path in database instance getter.
+        Instead, a new ewk_context_favicon_database_directory_set() API
+        function was added to let the client set the icon database path.
+        This is needed because the icon database path can only be set once
+        and setting it unconditionally in the getter prevents the client
+        from setting it.
+
+        This will also avoid crashes in WebKitTestRunner since WKTR was
+        setting the path once and ewk_context was attempting to override it.
+
+        Note that the favicon database functionality is disabled until the
+        client sets its path.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (Ewk_Context::ensureFaviconDatabase):
+        (Ewk_Context::setFaviconDatabaseDirectoryPath):
+        (Ewk_Context::faviconDatabase):
+        (ewk_context_favicon_database_directory_set):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        (Ewk_Context):
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (Ewk_Favicon_Database::Ewk_Favicon_Database):
+        (Ewk_Favicon_Database::~Ewk_Favicon_Database):
+        (Ewk_Favicon_Database::iconURLForPageURL):
+        (Ewk_Favicon_Database::iconForPageURL):
+        (Ewk_Favicon_Database::getIconSurfaceSynchronously):
+        * UIProcess/API/efl/ewk_favicon_database_private.h:
+        (WebKit):
+        (Ewk_Favicon_Database::create):
+        (Ewk_Favicon_Database):
+        * UIProcess/API/efl/tests/test_ewk2_favicon_database.cpp:
+        (TEST_F):
+
 2012-11-04  Halton Huo  <halton.huo@intel.com>
 
         [EFL] Use _LIBRARIES instead of _LIBRARY

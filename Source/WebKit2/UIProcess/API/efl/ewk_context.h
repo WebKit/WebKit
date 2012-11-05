@@ -184,6 +184,25 @@ EAPI Ewk_Context *ewk_context_new_with_injected_bundle_path(const char *path);
 EAPI Ewk_Cookie_Manager *ewk_context_cookie_manager_get(const Ewk_Context *context);
 
 /**
+ * Sets the favicon database directory for this @a context.
+ *
+ * Sets the directory path to be used to store the favicons database
+ * for @a context on disk. Passing @c NULL as @a directory_path will
+ * result in using the default directory for the platform.
+ *
+ * Calling this method also means enabling the favicons database for
+ * its use from the applications, it is therefore expected to be
+ * called only once. Further calls for the same instance of
+ * @a context will not have any effect.
+ *
+ * @param context context object to update
+ * @param directory_path database directory path to set
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_context_favicon_database_directory_set(Ewk_Context *context, const char *directory_path);
+
+/**
  * Gets the favicon database instance for this @a context.
  *
  * @param context context object to query.

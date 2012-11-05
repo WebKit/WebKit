@@ -1,3 +1,16 @@
+2012-11-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] The icon database path should be set by the client
+        https://bugs.webkit.org/show_bug.cgi?id=101182
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable favicon database functionality in MiniBrowser since
+        it is used and it is no longer enabled by default.
+
+        * MiniBrowser/efl/main.c:
+        (elm_main):
+
 2012-11-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] setPlatformStrategies always asserts after r132744

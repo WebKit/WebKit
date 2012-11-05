@@ -995,6 +995,10 @@ elm_main(int argc, char *argv[])
     }
 #endif
 
+    // Enable favicon database.
+    Ewk_Context *context = ewk_context_default_get();
+    ewk_context_favicon_database_directory_set(context, NULL);
+
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
         window = window_create(url);
