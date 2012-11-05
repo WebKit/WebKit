@@ -1354,20 +1354,17 @@ ShadowRoot* Element::userAgentShadowRoot() const
 
 const AtomicString& Element::shadowPseudoId() const
 {
-    return hasRareData() ? elementRareData()->m_shadowPseudoId : nullAtom;
+    return pseudo();
 }
 
 void Element::setShadowPseudoId(const AtomicString& id, ExceptionCode& ec)
 {
-    if (!hasRareData() && id == nullAtom)
-        return;
-
     if (!CSSSelector::isUnknownPseudoType(id)) {
         ec = SYNTAX_ERR;
         return;
     }
 
-    ensureElementRareData()->m_shadowPseudoId = id;
+    setPseudo(id);
 }
 
 bool Element::childTypeAllowed(NodeType type) const
