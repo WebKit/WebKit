@@ -320,6 +320,7 @@ fast/dom/shadow/shadow-root-js-api.html
 fast/dom/shadow/shadow-root-new.html
 fast/dom/shadow/shadowroot-of-insertionpoint.html
 fast/dom/shadow/shadow-root-resetStyleInheritance.html
+fast/dom/shadow/shadowroot-type.html
 fast/dom/shadow/shadow-ul-li.html
 fast/dom/shadow/style-of-distributed-node.html
 fast/dom/shadow/style-scoped-not-enabled.html
