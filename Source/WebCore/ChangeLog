@@ -1,3 +1,13 @@
+2012-11-05  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed trivial Qt build fix.
+
+        Surround imports from QtGui by QT_{BEGIN,END}_NAMESPACE to fix namespaced
+        builds.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/graphics/qt/ImageQt.cpp:
+
 2012-11-05  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] ShadowRoot type is not set correctly.
