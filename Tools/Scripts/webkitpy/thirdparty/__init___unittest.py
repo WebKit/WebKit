@@ -32,13 +32,14 @@ import unittest
 
 from webkitpy.thirdparty import AutoinstallImportHook
 
+
 class ThirdpartyTest(unittest.TestCase):
     def test_import_hook(self):
         # Add another import hook and make sure we get called.
         class MockImportHook(AutoinstallImportHook):
             def __init__(self):
                 AutoinstallImportHook.__init__(self)
-                self._eliza_installed = False
+                self.eliza_installed = False
 
             def _install_eliza(self):
                 self.eliza_installed = True
@@ -48,11 +49,26 @@ class ThirdpartyTest(unittest.TestCase):
             # The actual AutoinstallImportHook should be installed before us,
             # so these modules will get installed before MockImportHook runs.
             sys.meta_path.append(mock_import_hook)
+            # unused-variable, import failures - pylint: disable-msg=W0612,E0611,F0401
             from webkitpy.thirdparty.autoinstalled import eliza
             self.assertTrue(mock_import_hook.eliza_installed)
 
         finally:
             sys.meta_path.remove(mock_import_hook)
+
+    def test_imports(self):
+        # This method tests that we can actually import everything.
+        # unused-variable, import failures - pylint: disable-msg=W0612,E0611,F0401
+        import webkitpy.thirdparty.autoinstalled.buildbot
+        import webkitpy.thirdparty.autoinstalled.coverage
+        import webkitpy.thirdparty.autoinstalled.eliza
+        import webkitpy.thirdparty.autoinstalled.irc.ircbot
+        import webkitpy.thirdparty.autoinstalled.irc.irclib
+        import webkitpy.thirdparty.autoinstalled.mechanize
+        import webkitpy.thirdparty.autoinstalled.pylint
+        import webkitpy.thirdparty.autoinstalled.webpagereplay
+        import webkitpy.thirdparty.autoinstalled.pep8
+
 
 if __name__ == '__main__':
     unittest.main()
