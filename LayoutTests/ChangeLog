@@ -1,3 +1,14 @@
+2012-11-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Clean up the inspector-related test expectations. Instead of marking
+        many tests as skipped, proper failure expectations are put in place.
+        The tests are still being skipped as their current behavior on the
+        buildbots is unknown.
+
+        * platform/gtk/TestExpectations:
+
 2012-11-05  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
