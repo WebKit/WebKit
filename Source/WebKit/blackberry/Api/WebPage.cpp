@@ -4033,7 +4033,7 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
         tEvent.m_points[i].m_screenPos = d->mapFromTransformed(tEvent.m_points[i].m_screenPos);
     }
 
-    if (event.hasGesture(Platform::Gesture::SingleTap))
+    if (event.isSingleTap())
         d->m_pluginMayOpenNewTab = true;
     else if (tEvent.m_type == Platform::TouchEvent::TouchStart || tEvent.m_type == Platform::TouchEvent::TouchCancel)
         d->m_pluginMayOpenNewTab = false;
@@ -4043,7 +4043,7 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
 
     bool handled = false;
 
-    if (d->m_needTouchEvents && !event.hasGesture(Platform::Gesture::Injected))
+    if (d->m_needTouchEvents && !event.m_type != Platform::TouchEvent::TouchInjected)
         handled = d->m_mainFrame->eventHandler()->handleTouchEvent(PlatformTouchEvent(&tEvent));
 
     // Unpress mouse if touch end is consumed by a JavaScript touch handler, otherwise the mouse state will remain pressed
@@ -4063,7 +4063,7 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
         return true;
     }
 
-    if (event.hasGesture(Platform::Gesture::TouchHold))
+    if (event.isTouchHold())
         d->m_touchEventHandler->touchHoldEvent();
 #endif
 
@@ -4094,9 +4094,9 @@ bool WebPagePrivate::dispatchTouchEventToFullScreenPlugin(PluginView* plugin, co
 {
     NPTouchEvent npTouchEvent;
 
-    if (event.hasGesture(Platform::Gesture::DoubleTap))
+    if (event.isDoubleTap())
         npTouchEvent.type = TOUCH_EVENT_DOUBLETAP;
-    else if (event.hasGesture(Platform::Gesture::TouchHold))
+    else if (event.isTouchHold())
         npTouchEvent.type = TOUCH_EVENT_TOUCHHOLD;
     else {
         switch (event.m_type) {

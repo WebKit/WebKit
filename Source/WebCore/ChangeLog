@@ -1,3 +1,17 @@
+2012-11-05  Genevieve Mak  <gmak@rim.com>
+
+        [BLACKBERRY] Update touch code to reflect touch refactor
+        https://bugs.webkit.org/show_bug.cgi?id=101227
+
+        Reviewed by Rob Buis.
+
+        PR #2706785
+        Reviewed Internally by: Mike Lattanzio
+
+        * platform/blackberry/PlatformTouchEventBlackBerry.cpp:
+        (WebCore::touchEventType):
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+
 2012-11-05  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] Pass canPaintLCDText to WebContentLayerClient::paintContents
