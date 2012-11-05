@@ -211,9 +211,26 @@ void SimpleFontData::determinePitch()
     m_treatAsFixedPitch = platformData().isFixedPitch();
 }
 
-FloatRect SimpleFontData::platformBoundsForGlyph(Glyph) const
+FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 {
-    return FloatRect();
+    if (!m_platformData.size())
+        return FloatRect();
+
+    SkASSERT(sizeof(glyph) == 2); // compile-time assert
+
+    SkPaint paint;
+
+    m_platformData.setupPaint(&paint);
+
+    paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+    SkRect bounds;
+    paint.measureText(&glyph, 2, &bounds);
+    if (!paint.isSubpixelText()) {
+        SkIRect ir;
+        bounds.round(&ir);
+        bounds.set(ir);
+    }
+    return FloatRect(bounds);
 }
     
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const

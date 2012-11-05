@@ -1,3 +1,14 @@
+2012-11-05  David Barton  <dbarton@mathscribe.com>
+
+        Implement SimpleFontData::platformBoundsForGlyph on skia
+        https://bugs.webkit.org/show_bug.cgi?id=101115
+
+        Reviewed by Eric Seidel.
+
+        Some lineboxcontain/etc. tests will need rebaselining.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, unskip a now passing test.

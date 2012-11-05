@@ -2505,12 +2505,14 @@ crbug.com/66751 http/tests/local/link-stylesheet-load-order.html [ Failure Pass 
 webkit.org/b/90363 [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ Pass Timeout ]
 webkit.org/b/90363 [ Android Release ] fast/overflow/lots-of-sibling-inline-boxes.html [ Pass Timeout ]
 
-# WebKit roll 74255:74308
+# WebKit roll 74255:74308 (74281?)
 crbug.com/67416 [ Android Linux Win ] fast/text/emphasis.html [ Failure ]
 crbug.com/67416 fast/text/emphasis-vertical.html [ Failure ImageOnlyFailure ]
 crbug.com/67540 [ Android Linux ] fast/text/emphasis-avoid-ruby.html [ ImageOnlyFailure ]
 crbug.com/67540 [ Android Linux SnowLeopard Win ] fast/repaint/text-emphasis-h.html [ ImageOnlyFailure ]
 crbug.com/67540 [ Android Linux ] fast/repaint/text-emphasis-v.html [ ImageOnlyFailure ]
+
+crbug.com/67540 webkit.org/b/94735 [ Linux ] fast/text/emphasis-overlap.html [ Failure ImageOnlyFailure ]
 
 # See also CRBUG139863
 crbug.com/67442 [ Android Linux Win ] fast/canvas/fillText-shadow.html [ Failure ]
@@ -2639,9 +2641,12 @@ crbug.com/76610 [ Mac Win Debug ] platform/chromium/virtual/gpu/canvas/philip/te
 crbug.com/76616 [ Android Linux Win ] fast/text/emphasis-combined-text.html [ Failure ]
 crbug.com/76616 [ SnowLeopard ] fast/text/emphasis-combined-text.html [ ImageOnlyFailure Pass ]
 
-# New CSS3 feature in r81684. Some tests fail outside Mac.
-crbug.com/77095 [ Android Linux Win ] fast/block/lineboxcontain/block-glyphs-replaced.html [ Failure ]
-crbug.com/77095 [ Android Linux Win ] fast/block/lineboxcontain/glyphs.html [ Failure ]
+# New CSS3 feature in r81684. Some tests fail outside Mac. They should be ok and need rebaseline after webkit.org/b/101115.
+crbug.com/77095 webkit.org/b/101115 [ Android Linux Win ] fast/block/lineboxcontain/block-glyphs-replaced.html [ Failure Pass ]
+crbug.com/77095 webkit.org/b/101115 [ Android Linux Win ] fast/block/lineboxcontain/glyphs.html [ Failure Pass ]
+webkit.org/b/101115 [ Linux ] fast/block/lineboxcontain/block-glyphs.html [ Failure ]
+webkit.org/b/101115 [ Linux ] mathml/xHeight.xhtml [ Failure ]
+webkit.org/b/101115 [ Linux ] fast/repaint/stacked-diacritics.html [ ImageOnlyFailure ]
 
 # Has been timing out, initiated at:
 # Webkit patches in range [r81976, r81981]
@@ -3726,8 +3731,6 @@ webkit.org/b/94528 [ Mac ] fast/text-autosizing/nested-em-line-height.html [ Ima
 webkit.org/b/94532 [ Linux ] fast/forms/formmethod-attribute-button-html.html [ Missing Pass ]
 
 webkit.org/b/94660 fast/js/create-lots-of-workers.html [ Crash Pass Timeout ]
-
-crbug.com/67540 webkit.org/b/94735 [ Linux ] fast/text/emphasis-overlap.html [ Failure ImageOnlyFailure ]
 
 webkit.org/b/94793 http/tests/notifications/event-listener-crash.html [ Failure Pass ]
 
