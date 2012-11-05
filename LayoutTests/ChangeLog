@@ -1,5 +1,19 @@
 2012-11-05  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r125234
+
+    2012-08-09  Julien Chaffraix  <jchaffraix@webkit.org>
+
+            Crash in WebCore::RenderTable::cellBefore
+            https://bugs.webkit.org/show_bug.cgi?id=91160
+
+            Reviewed by Abhishek Arya.
+
+            * fast/table/split-anonymous-boxes-around-table-repaint-crash-expected.txt: Added.
+            * fast/table/split-anonymous-boxes-around-table-repaint-crash.html: Added.
+
+2012-11-05  Lucas Forschler  <lforschler@apple.com>
+
         Merge r125162
 
     2012-08-09  MORITA Hajime  <morrita@google.com>
@@ -10944,6 +10958,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .
