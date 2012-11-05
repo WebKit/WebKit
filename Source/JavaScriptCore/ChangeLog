@@ -1,3 +1,32 @@
+2012-11-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT should use structure watchpoints whenever possible
+        https://bugs.webkit.org/show_bug.cgi?id=101146
+
+        Reviewed by Sam Weinig.
+
+        No speed-up yet except on toy programs. I think that it will start to show
+        speed-ups with https://bugs.webkit.org/show_bug.cgi?id=101147, which this is
+        a step towards.
+
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::addStructureTransitionCheck):
+        (JSC):
+        (JSC::JIT::testPrototype):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+
 2012-11-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] udis86_itab.c is always regenerated

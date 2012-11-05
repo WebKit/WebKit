@@ -681,7 +681,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     failureCases.append(emitJumpIfNotJSCell(regT0));
     failureCases.append(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(oldStructure)));
     
-    testPrototype(oldStructure->storedPrototype(), failureCases);
+    testPrototype(oldStructure->storedPrototype(), failureCases, stubInfo);
     
     ASSERT(oldStructure->storedPrototype().isNull() || oldStructure->storedPrototype().asCell()->structure() == chain->head()->get());
 
@@ -689,7 +689,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     if (!direct) {
         for (WriteBarrier<Structure>* it = chain->head(); *it; ++it) {
             ASSERT((*it)->storedPrototype().isNull() || (*it)->storedPrototype().asCell()->structure() == it[1].get());
-            testPrototype((*it)->storedPrototype(), failureCases);
+            testPrototype((*it)->storedPrototype(), failureCases, stubInfo);
         }
     }
 
@@ -841,8 +841,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     Jump failureCases1 = checkStructure(regT0, structure);
 
     // Check the prototype object's Structure had not changed.
-    move(TrustedImmPtr(protoObject), regT3);
-    Jump failureCases2 = branchPtr(NotEqual, Address(regT3, JSCell::structureOffset()), TrustedImmPtr(prototypeStructure));
+    Jump failureCases2 = addStructureTransitionCheck(protoObject, prototypeStructure, stubInfo, regT3);
 
     bool needsStubLink = false;
     
@@ -871,7 +870,8 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel slowCaseBegin = stubInfo->callReturnLocation.labelAtOffset(-stubInfo->patch.baseline.u.get.coldPathBegin);
     patchBuffer.link(failureCases1, slowCaseBegin);
-    patchBuffer.link(failureCases2, slowCaseBegin);
+    if (failureCases2.isSet())
+        patchBuffer.link(failureCases2, slowCaseBegin);
 
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
@@ -976,8 +976,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     Jump failureCases1 = checkStructure(regT0, structure);
 
     // Check the prototype object's Structure had not changed.
-    move(TrustedImmPtr(protoObject), regT3);
-    Jump failureCases2 = branchPtr(NotEqual, Address(regT3, JSCell::structureOffset()), TrustedImmPtr(prototypeStructure));
+    Jump failureCases2 = addStructureTransitionCheck(protoObject, prototypeStructure, stubInfo, regT3);
 
     // Checks out okay!
     bool needsStubLink = false;
@@ -1017,7 +1016,8 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel lastProtoBegin = CodeLocationLabel(JITStubRoutine::asCodePtr(prototypeStructures->list[currentIndex - 1].stubRoutine));
     patchBuffer.link(failureCases1, lastProtoBegin);
-    patchBuffer.link(failureCases2, lastProtoBegin);
+    if (failureCases2.isSet())
+        patchBuffer.link(failureCases2, lastProtoBegin);
 
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
@@ -1054,7 +1054,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     for (unsigned i = 0; i < count; ++i, ++it) {
         protoObject = asObject(currStructure->prototypeForLookup(callFrame));
         currStructure = it->get();
-        testPrototype(protoObject, bucketsOfFail);
+        testPrototype(protoObject, bucketsOfFail, stubInfo);
     }
     ASSERT(protoObject);
     
@@ -1133,7 +1133,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     for (unsigned i = 0; i < count; ++i, ++it) {
         protoObject = asObject(currStructure->prototypeForLookup(callFrame));
         currStructure = it->get();
-        testPrototype(protoObject, bucketsOfFail);
+        testPrototype(protoObject, bucketsOfFail, stubInfo);
     }
     ASSERT(protoObject);
 
@@ -1308,14 +1308,40 @@ void JIT::emitWriteBarrier(JSCell* owner, RegisterID value, RegisterID scratch, 
 #endif
 }
 
-void JIT::testPrototype(JSValue prototype, JumpList& failureCases)
+JIT::Jump JIT::addStructureTransitionCheck(JSCell* object, Structure* structure, StructureStubInfo* stubInfo, RegisterID scratch)
+{
+    if (object->structure() == structure && structure->transitionWatchpointSetIsStillValid()) {
+        structure->addTransitionWatchpoint(stubInfo->addWatchpoint(m_codeBlock));
+#if !ASSERT_DISABLED
+        move(TrustedImmPtr(object), scratch);
+        Jump ok = branchPtr(Equal, Address(scratch, JSCell::structureOffset()), TrustedImmPtr(structure));
+        breakpoint();
+        ok.link(this);
+#endif
+        Jump result; // Returning an unset jump this way because otherwise VC++ would complain.
+        return result;
+    }
+    
+    move(TrustedImmPtr(object), scratch);
+    return branchPtr(NotEqual, Address(scratch, JSCell::structureOffset()), TrustedImmPtr(structure));
+}
+
+void JIT::addStructureTransitionCheck(JSCell* object, Structure* structure, StructureStubInfo* stubInfo, JumpList& failureCases, RegisterID scratch)
+{
+    Jump failureCase = addStructureTransitionCheck(object, structure, stubInfo, scratch);
+    if (!failureCase.isSet())
+        return;
+    
+    failureCases.append(failureCase);
+}
+
+void JIT::testPrototype(JSValue prototype, JumpList& failureCases, StructureStubInfo* stubInfo)
 {
     if (prototype.isNull())
         return;
 
     ASSERT(prototype.isCell());
-    move(TrustedImmPtr(prototype.asCell()), regT3);
-    failureCases.append(branchPtr(NotEqual, Address(regT3, JSCell::structureOffset()), TrustedImmPtr(prototype.asCell()->structure())));
+    addStructureTransitionCheck(prototype.asCell(), prototype.asCell()->structure(), stubInfo, failureCases, regT3);
 }
 
 void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, MethodCallLinkInfo& methodCallLinkInfo, StructureStubInfo& stubInfo, JSObject* callee, Structure* structure, JSObject* proto, ReturnAddressPtr returnAddress)

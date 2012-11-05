@@ -428,6 +428,7 @@ namespace JSC {
         void privateCompileLinkPass();
         void privateCompileSlowCases();
         JITCode privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffort);
+        
         void privateCompileGetByIdProto(StructureStubInfo*, Structure*, Structure* prototypeStructure, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset, ReturnAddressPtr, CallFrame*);
         void privateCompileGetByIdSelfList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset);
         void privateCompileGetByIdProtoList(StructureStubInfo*, PolymorphicAccessStructureList*, int, Structure*, Structure* prototypeStructure, const Identifier&, const PropertySlot&, PropertyOffset cachedOffset, CallFrame*);
@@ -466,7 +467,9 @@ namespace JSC {
         Jump emitJumpIfNotObject(RegisterID structureReg);
         Jump emitJumpIfNotType(RegisterID baseReg, RegisterID scratchReg, JSType);
 
-        void testPrototype(JSValue, JumpList& failureCases);
+        Jump addStructureTransitionCheck(JSCell*, Structure*, StructureStubInfo*, RegisterID scratch);
+        void addStructureTransitionCheck(JSCell*, Structure*, StructureStubInfo*, JumpList& failureCases, RegisterID scratch);
+        void testPrototype(JSValue, JumpList& failureCases, StructureStubInfo*);
 
         enum WriteBarrierMode { UnconditionalWriteBarrier, ShouldFilterImmediates };
         // value register in write barrier is used before any scratch registers

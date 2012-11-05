@@ -631,12 +631,12 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     JumpList failureCases;
     failureCases.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
     failureCases.append(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(oldStructure)));
-    testPrototype(oldStructure->storedPrototype(), failureCases);
+    testPrototype(oldStructure->storedPrototype(), failureCases, stubInfo);
     
     if (!direct) {
         // Verify that nothing in the prototype chain has a setter for this property. 
         for (WriteBarrier<Structure>* it = chain->head(); *it; ++it)
-            testPrototype((*it)->storedPrototype(), failureCases);
+            testPrototype((*it)->storedPrototype(), failureCases, stubInfo);
     }
 
     // If we succeed in all of our checks, and the code was optimizable, then make sure we
@@ -808,8 +808,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     Jump failureCases1 = checkStructure(regT0, structure);
     
     // Check the prototype object's Structure had not changed.
-    move(TrustedImmPtr(protoObject), regT3);
-    Jump failureCases2 = branchPtr(NotEqual, Address(regT3, JSCell::structureOffset()), TrustedImmPtr(prototypeStructure));
+    Jump failureCases2 = addStructureTransitionCheck(protoObject, prototypeStructure, stubInfo, regT3);
 
     bool needsStubLink = false;
     // Checks out okay!
@@ -839,7 +838,8 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel slowCaseBegin = stubInfo->callReturnLocation.labelAtOffset(-stubInfo->patch.baseline.u.get.coldPathBegin);
     patchBuffer.link(failureCases1, slowCaseBegin);
-    patchBuffer.link(failureCases2, slowCaseBegin);
+    if (failureCases2.isSet())
+        patchBuffer.link(failureCases2, slowCaseBegin);
     
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
@@ -948,8 +948,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     Jump failureCases1 = checkStructure(regT0, structure);
     
     // Check the prototype object's Structure had not changed.
-    move(TrustedImmPtr(protoObject), regT3);
-    Jump failureCases2 = branchPtr(NotEqual, Address(regT3, JSCell::structureOffset()), TrustedImmPtr(prototypeStructure));
+    Jump failureCases2 = addStructureTransitionCheck(protoObject, prototypeStructure, stubInfo, regT3);
     
     bool needsStubLink = false;
     bool isDirect = false;
@@ -986,7 +985,8 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel lastProtoBegin = CodeLocationLabel(JITStubRoutine::asCodePtr(prototypeStructures->list[currentIndex - 1].stubRoutine));
     patchBuffer.link(failureCases1, lastProtoBegin);
-    patchBuffer.link(failureCases2, lastProtoBegin);
+    if (failureCases2.isSet())
+        patchBuffer.link(failureCases2, lastProtoBegin);
     
     // On success return back to the hot patch code, at a point it will perform the store to dest for us.
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(stubInfo->patch.baseline.u.get.putResult));
@@ -1025,7 +1025,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     for (unsigned i = 0; i < count; ++i, ++it) {
         protoObject = asObject(currStructure->prototypeForLookup(callFrame));
         currStructure = it->get();
-        testPrototype(protoObject, bucketsOfFail);
+        testPrototype(protoObject, bucketsOfFail, stubInfo);
     }
     ASSERT(protoObject);
     
@@ -1104,7 +1104,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     for (unsigned i = 0; i < count; ++i, ++it) {
         protoObject = asObject(currStructure->prototypeForLookup(callFrame));
         currStructure = it->get();
-        testPrototype(protoObject, bucketsOfFail);
+        testPrototype(protoObject, bucketsOfFail, stubInfo);
     }
     ASSERT(protoObject);
     
