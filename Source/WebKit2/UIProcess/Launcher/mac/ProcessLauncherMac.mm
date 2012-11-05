@@ -169,7 +169,7 @@ void ProcessLauncher::launchProcess()
         posix_spawnattr_setflags(&attr, flags);
 
 #ifndef BUILDING_ON_SNOW_LEOPARD
-        DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], architecture);
+        DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], _NSGetMachExecuteHeader()->cputype);
         environmentExtractor.getExtractedEnvironmentVariables(environmentVariables);
 #endif
 
