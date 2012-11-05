@@ -235,7 +235,7 @@ namespace WebCore {
     macro(webkitpointerlockchange) \
     macro(webkitpointerlockerror) \
     \
-    macro(webkitRegionLayoutUpdate) \
+    macro(webkitregionlayoutupdate) \
     \
     macro(webkitnetworkinfochange) \
     \

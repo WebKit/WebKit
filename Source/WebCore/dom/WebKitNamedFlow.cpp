@@ -198,7 +198,7 @@ void WebKitNamedFlow::dispatchRegionLayoutUpdateEvent()
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(m_parentFlowThread);
 
-    RefPtr<Event> event = UIEvent::create(eventNames().webkitRegionLayoutUpdateEvent, false, false, m_parentFlowThread->document()->defaultView(), 0);
+    RefPtr<Event> event = UIEvent::create(eventNames().webkitregionlayoutupdateEvent, false, false, m_parentFlowThread->document()->defaultView(), 0);
 
     dispatchEvent(event);
 }

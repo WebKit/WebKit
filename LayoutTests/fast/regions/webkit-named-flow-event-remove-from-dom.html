@@ -54,7 +54,7 @@
     function regionLayoutUpdated(event) {
         shouldBeEqualToString("event.target.name", "article");
         if (++count > 1) {
-           event.target.removeEventListener("webkitRegionLayoutUpdate", regionLayoutUpdated);
+           event.target.removeEventListener("webkitregionlayoutupdate", regionLayoutUpdated);
            // this should be reached after region_2 is removed from DOM
            finishJSTest();
            return;
@@ -67,7 +67,7 @@
     
     function startTest() {
         var flow = getFlowByName("article");
-        flow.addEventListener("webkitRegionLayoutUpdate", regionLayoutUpdated);
+        flow.addEventListener("webkitregionlayoutupdate", regionLayoutUpdated);
         
         debug("Flow content");
         flowContent("article");

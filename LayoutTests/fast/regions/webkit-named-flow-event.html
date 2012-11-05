@@ -49,14 +49,14 @@
     
     function flowThreadUpdated(event) {
         shouldBeEqualToString("event.target.name", "article");
-        event.target.removeEventListener("webkitRegionLayoutUpdate", flowThreadUpdated);
+        event.target.removeEventListener("webkitregionlayoutupdate", flowThreadUpdated);
         
         finishJSTest();
     }
     
     function startTest() {    
         var flowThread = getFlowByName("article");
-        flowThread.addEventListener("webkitRegionLayoutUpdate", flowThreadUpdated);
+        flowThread.addEventListener("webkitregionlayoutupdate", flowThreadUpdated);
         
         debug("Flow content");
         flowContent("article");

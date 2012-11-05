@@ -1,5 +1,19 @@
 2012-11-05  Adam Barth  <abarth@webkit.org>
 
+        webkitRegionLayoutUpdate is incorrectly named
+        https://bugs.webkit.org/show_bug.cgi?id=100335
+
+        Reviewed by Ojan Vafai.
+
+        DOM event names are supposed to be lower case.
+
+        * dom/EventNames.h:
+        (WebCore):
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::dispatchRegionLayoutUpdateEvent):
+
+2012-11-05  Adam Barth  <abarth@webkit.org>
+
         [V8] IntrusiveDOMWrapperMap should be usable for more than just Nodes
         https://bugs.webkit.org/show_bug.cgi?id=101110
 

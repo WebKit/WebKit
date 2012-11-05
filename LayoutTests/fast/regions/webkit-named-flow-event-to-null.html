@@ -56,7 +56,7 @@ if (window.testRunner) {
     function regionLayoutUpdated(event) {
         shouldBeEqualToString("event.target.name", "article");
         if (++count > 1) {
-           event.target.removeEventListener("webkitRegionLayoutUpdate", regionLayoutUpdated);
+           event.target.removeEventListener("webkitregionlayoutupdate", regionLayoutUpdated);
            layoutUpdateDispatchedForNullFlow = true;
            return;
         }
@@ -81,7 +81,7 @@ if (window.testRunner) {
     
     function startTest() {
         var flow = getFlowByName("article");
-        flow.addEventListener("webkitRegionLayoutUpdate", regionLayoutUpdated);
+        flow.addEventListener("webkitregionlayoutupdate", regionLayoutUpdated);
         
         debug("Flow content");
         flowContent("article");

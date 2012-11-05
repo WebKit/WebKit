@@ -83,7 +83,7 @@ function flowThreadUpdated(event) {
 
     if (updatedCount == 2) {
     	shouldBeTrue("recreated");
-    	event.target.removeEventListener("webkitRegionLayoutUpdate", flowThreadUpdated);
+    	event.target.removeEventListener("webkitregionlayoutupdate", flowThreadUpdated);
     	makeFlowNull();
     	finishJSTest();
     	return;
@@ -98,7 +98,7 @@ function flowThreadUpdated(event) {
 
 function startTest() {    
     var flowThread = getFlowByName("article");
-    flowThread.addEventListener("webkitRegionLayoutUpdate", flowThreadUpdated);
+    flowThread.addEventListener("webkitregionlayoutupdate", flowThreadUpdated);
     
     debug("Flow content");
     flowContent("article");

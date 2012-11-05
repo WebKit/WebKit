@@ -1,3 +1,20 @@
+2012-11-05  Adam Barth  <abarth@webkit.org>
+
+        webkitRegionLayoutUpdate is incorrectly named
+        https://bugs.webkit.org/show_bug.cgi?id=100335
+
+        Reviewed by Ojan Vafai.
+
+        Update tests to use the proper name.
+
+        * fast/regions/webkit-named-flow-event-add-to-flow.html:
+        * fast/regions/webkit-named-flow-event-no-regions.html:
+        * fast/regions/webkit-named-flow-event-remove-from-dom.html:
+        * fast/regions/webkit-named-flow-event-remove-from-flow.html:
+        * fast/regions/webkit-named-flow-event-target.html:
+        * fast/regions/webkit-named-flow-event-to-null.html:
+        * fast/regions/webkit-named-flow-event.html:
+
 2012-11-05  Stephen White  <senorblanco@chromium.org>
 
         Remove fast/forms/week-multiple-fields from
