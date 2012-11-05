@@ -1,3 +1,161 @@
+2012-11-05  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=101001
+        Pages with position:fixed elements should still be able to scroll on 
+        the scrolling thread
+        -and corresponding-
+        <rdar://problem/10857315>
+
+        Reviewed by Simon Fraser.
+
+        This patch adds two new classes. ScrollingStateFixedNode is a class 
+        to represent fixed nodes in the state tree, and 
+        ScrollingTreeFixedNode represents fixed node in the scrolling tree 
+        over on the scrolling thread.
+        * WebCore.xcodeproj/project.pbxproj:
+
+        When we are (non-programatically) scrolling fixed objects on the 
+        scrolling thread, we do not want to do any work here. 
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateFixedElementsAfterScrolling):
+
+        Whenever we sync the position of the main frame's layer, we have to 
+        do the same for scrolling tree children.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPosition):
+
+        New ScrollingNodeType -- FixedNode, yay! And two new functions 
+        specific to dealing with FixedNodes.
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::updateViewportConstrainedNode):
+        (WebCore::ScrollingCoordinator::syncChildPositions):
+
+        This is the new class that represents fixed nodes in the state tree. 
+        All of the changed properties are stored within 
+        FixedPositionViewportConstraints.
+        * page/scrolling/ScrollingStateFixedNode.cpp: Added.
+        (WebCore):
+        (WebCore::ScrollingStateFixedNode::create):
+        (WebCore::ScrollingStateFixedNode::ScrollingStateFixedNode):
+        (WebCore::ScrollingStateFixedNode::~ScrollingStateFixedNode):
+        (WebCore::ScrollingStateFixedNode::updateConstraints):
+        (WebCore::ScrollingStateFixedNode::dumpProperties):
+        * page/scrolling/ScrollingStateFixedNode.h: Added.
+        (WebCore):
+        (ScrollingStateFixedNode):
+        (WebCore::ScrollingStateFixedNode::viewportConstraints):
+        (WebCore::toScrollingStateFixedNode):
+
+        Make sure to create the right type of clone for each node.
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::cloneAndReset):
+
+        Now that m_children may be anything other than null, I found this 
+        bug. We encounter it when the parameter to removeChild is this and we 
+        want to remove all of our children. In that case, this is obviously 
+        not found in its own child array.
+        (WebCore::ScrollingStateNode::removeChild):
+
+        ScrollingStateNode now caches the GraphicsLayer in addition to the 
+        PlatformLayer. This will allow us to sync the GraphicsLayer position 
+        at the appropriate times.
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::isScrollingStateFixedNode):
+        (WebCore::ScrollingStateNode::graphicsLayer):
+        (ScrollingStateNode):
+
+        Handle fixed nodes.
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateTreeFromStateNode):
+
+        New function parentScrollPositionDidChange() is called on children 
+        when the parent has scrolled.
+        * page/scrolling/ScrollingTreeNode.h:
+        (ScrollingTreeNode):
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+        (ScrollingTreeScrollingNode):
+
+        Return true for supportsFixedPositionLayers(). 
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        (ScrollingCoordinatorMac):
+
+        Handle fixed nodes.
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::attachToStateTree):
+
+        Now that m_children can be non-null I caught this pre-existing bug 
+        where we would come times remove a node without updating the HashMap. 
+        This patch fixes that by consolidating the removal into one function.
+        (WebCore::ScrollingCoordinatorMac::removeNode):
+        (WebCore::ScrollingCoordinatorMac::detachFromStateTree):
+        (WebCore::ScrollingCoordinatorMac::clearStateTree):
+
+        Update the GraphicsLayers to reflect the new position that the 
+        Scrolling thread has moved the underlying CALayer to already.
+        (WebCore::ScrollingCoordinatorMac::syncChildPositions):
+
+        Pass new constraints over to the appropriate state node.
+        (WebCore::ScrollingCoordinatorMac::updateViewportConstrainedNode):
+
+        Cache the GraphicsLayer in addition to the PlatformLayer.
+        * page/scrolling/mac/ScrollingStateNodeMac.mm:
+        (WebCore::ScrollingStateNode::setScrollLayer):
+
+        Here is the new class that represents fixed nodes over on the 
+        scrolling thread. 
+        * page/scrolling/mac/ScrollingTreeFixedNode.h: Added.
+        (WebCore):
+        (ScrollingTreeFixedNode):
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm: Added.
+        (WebCore):
+        (WebCore::ScrollingTreeFixedNode::create):
+        (WebCore::ScrollingTreeFixedNode::ScrollingTreeFixedNode):
+        (WebCore::ScrollingTreeFixedNode::~ScrollingTreeFixedNode):
+        (WebCore::ScrollingTreeFixedNode::update):
+
+        This is where the magic happens. re-position the fixed object when 
+        its parent has scrolled so that it appears to have not moved at all.
+        (WebCore::ScrollingTreeFixedNode::parentScrollPositionDidChange):
+
+        Whenever we change the position of a scrolling layer, tell our 
+        children.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+
+        Handle fixed nodes.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::attachToScrollingCoordinator):
+
+        detachFromScrollingCoordinator() needs to be public so that it can be 
+        called from RenderLayerCompositor for fixed nodes.
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+
+        RenderLayerCompositor takes control of attaching and detaching fixed 
+        nodes to/from the ScrollingCoordinator. 
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        (WebCore::RenderLayerCompositor::didFlushChangesForLayer):
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        (WebCore::RenderLayerCompositor::didMoveOnscreen):
+        (WebCore::RenderLayerCompositor::willMoveOffscreen):
+        (WebCore::RenderLayerCompositor::clearBackingForLayerIncludingDescendants):
+        (WebCore::isRootmostFixedOrStickyLayer):
+        (WebCore):
+        (WebCore::RenderLayerCompositor::updateViewportConstraintStatus):
+        (WebCore::RenderLayerCompositor::addViewportConstrainedLayer):
+        (WebCore::RenderLayerCompositor::removeViewportConstrainedLayer):
+        (WebCore::RenderLayerCompositor::computeViewportConstraints):
+        (WebCore::nearestScrollingCoordinatorAncestor):
+        (WebCore::RenderLayerCompositor::registerOrUpdateViewportConstrainedLayer):
+        (WebCore::RenderLayerCompositor::unregisterViewportConstrainedLayer):
+        (WebCore::RenderLayerCompositor::registerAllViewportConstrainedLayers):
+        (WebCore::RenderLayerCompositor::unregisterAllViewportConstrainedLayers):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore):
+        (RenderLayerCompositor):
+
 2012-11-05  Geoffrey Garen  <ggaren@apple.com>
 
         Cleaned up the Font class in preparation for optimizing kerning and ligatures

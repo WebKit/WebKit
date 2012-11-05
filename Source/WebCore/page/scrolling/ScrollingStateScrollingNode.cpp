@@ -78,6 +78,11 @@ ScrollingStateScrollingNode::~ScrollingStateScrollingNode()
 {
 }
 
+PassOwnPtr<ScrollingStateNode> ScrollingStateScrollingNode::clone()
+{
+    return adoptPtr(new ScrollingStateScrollingNode(*this));
+}
+
 void ScrollingStateScrollingNode::setViewportRect(const IntRect& viewportRect)
 {
     if (m_viewportRect == viewportRect)

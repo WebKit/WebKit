@@ -1,0 +1,27 @@
+(Scrolling node
+  (viewport rect 0 0 785 600)
+  (contents size 785 2221)
+  (requested scroll position 0 200)
+  (children 4
+    (Fixed node
+      (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
+      (viewport rect at last layout: 0.00 200.00 785.00 600.00)
+    )
+    (Fixed node
+      (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
+      (viewport rect at last layout: 0.00 200.00 785.00 600.00)
+      (layer position at last layout 10.00 200.00)
+    )
+    (Fixed node
+      (anchor edges: AnchorEdgeRight AnchorEdgeTop)
+      (viewport rect at last layout: 0.00 200.00 785.00 600.00)
+      (layer position at last layout 601.00 200.00)
+    )
+    (Fixed node
+      (anchor edges: AnchorEdgeLeft AnchorEdgeBottom)
+      (viewport rect at last layout: 0.00 200.00 785.00 600.00)
+      (layer position at last layout 0.00 516.00)
+    )
+  )
+)
+This is the top bar. This is the left bar. This is the right bar. This is the bottom bar.

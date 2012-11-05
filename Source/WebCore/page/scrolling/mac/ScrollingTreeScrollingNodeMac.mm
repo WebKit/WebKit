@@ -275,6 +275,13 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
 {
     ASSERT(!shouldUpdateScrollLayerPositionOnMainThread());
     m_scrollLayer.get().position = CGPointMake(-position.x() + scrollOrigin().x(), -position.y() + scrollOrigin().y());
+
+    if (!m_children)
+        return;
+
+    size_t size = m_children->size();
+    for (size_t i = 0; i < size; ++i)
+        m_children->at(i)->parentScrollPositionDidChange(IntRect(position, viewportRect().size()));
 }
 
 IntPoint ScrollingTreeScrollingNodeMac::minimumScrollPosition() const

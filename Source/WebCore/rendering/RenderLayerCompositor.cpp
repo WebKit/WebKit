@@ -52,6 +52,7 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScrollbarTheme.h"
+#include "ScrollingConstraints.h"
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "TiledBacking.h"
@@ -312,10 +313,20 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     
     ASSERT(m_flushingLayers);
     m_flushingLayers = false;
+
+    if (!m_viewportConstrainedLayersNeedingUpdate.isEmpty()) {
+        HashSet<RenderLayer*>::const_iterator end = m_viewportConstrainedLayersNeedingUpdate.end();
+        for (HashSet<RenderLayer*>::const_iterator it = m_viewportConstrainedLayersNeedingUpdate.begin(); it != end; ++it)
+            registerOrUpdateViewportConstrainedLayer(*it);
+        
+        m_viewportConstrainedLayersNeedingUpdate.clear();
+    }
 }
 
-void RenderLayerCompositor::didFlushChangesForLayer(RenderLayer*)
+void RenderLayerCompositor::didFlushChangesForLayer(RenderLayer* layer)
 {
+    if (m_viewportConstrainedLayers.contains(layer))
+        m_viewportConstrainedLayersNeedingUpdate.add(layer);
 }
 
 void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*)
@@ -535,6 +546,9 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
 
             layerChanged = true;
         }
+
+        // Need to add for every compositing layer, because a composited layer may change from being non-fixed to fixed.
+        updateViewportConstraintStatus(layer);
     } else {
         if (layer->backing()) {
             // If we're removing backing on a reflection, clear the source GraphicsLayer's pointer to
@@ -547,6 +561,8 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
                     backing->graphicsLayer()->setReplicatedByLayer(0);
                 }
             }
+
+            removeViewportConstrainedLayer(layer);
             
             layer->clearBacking();
             layerChanged = true;
@@ -662,6 +678,7 @@ void RenderLayerCompositor::layerWillBeRemoved(RenderLayer* parent, RenderLayer*
     if (!child->isComposited() || parent->renderer()->documentBeingDestroyed())
         return;
 
+    removeViewportConstrainedLayer(child);
     repaintInCompositedAncestor(child, child->backing()->compositedBounds());
 
     setCompositingParent(child, 0);
@@ -1408,8 +1425,10 @@ void RenderLayerCompositor::clearBackingForLayerIncludingDescendants(RenderLayer
     if (!layer)
         return;
 
-    if (layer->isComposited())
+    if (layer->isComposited()) {
+        removeViewportConstrainedLayer(layer);
         layer->clearBacking();
+    }
     
     for (RenderLayer* currLayer = layer->firstChild(); currLayer; currLayer = currLayer->nextSibling())
         clearBackingForLayerIncludingDescendants(currLayer);
@@ -2522,6 +2541,163 @@ void RenderLayerCompositor::deviceOrPageScaleFactorChanged()
 
     if (GraphicsLayer* rootLayer = viewLayer->backing()->graphicsLayer())
         rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+}
+
+static bool isRootmostFixedOrStickyLayer(RenderLayer* layer)
+{
+    if (layer->renderer()->isStickyPositioned())
+        return true;
+
+    if (layer->renderer()->style()->position() != FixedPosition)
+        return false;
+
+    for (RenderLayer* stackingContext = layer->stackingContext(); stackingContext; stackingContext = stackingContext->stackingContext()) {
+        if (stackingContext->isComposited() && stackingContext->renderer()->style()->position() == FixedPosition)
+            return false;
+    }
+
+    return true;
+}
+
+void RenderLayerCompositor::updateViewportConstraintStatus(RenderLayer* layer)
+{
+    if (isRootmostFixedOrStickyLayer(layer))
+        addViewportConstrainedLayer(layer);
+    else
+        removeViewportConstrainedLayer(layer);
+}
+
+void RenderLayerCompositor::addViewportConstrainedLayer(RenderLayer* layer)
+{
+    m_viewportConstrainedLayers.add(layer);
+    registerOrUpdateViewportConstrainedLayer(layer);
+}
+
+void RenderLayerCompositor::removeViewportConstrainedLayer(RenderLayer* layer)
+{
+    if (!m_viewportConstrainedLayers.contains(layer))
+        return;
+
+    unregisterViewportConstrainedLayer(layer);
+    m_viewportConstrainedLayers.remove(layer);
+}
+
+const FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportConstraints(RenderLayer* layer)
+{
+    ASSERT(layer->isComposited());
+
+    FrameView* frameView = m_renderView->frameView();
+    LayoutRect viewportRect = frameView->visibleContentRect();
+
+    FixedPositionViewportConstraints constraints = FixedPositionViewportConstraints();
+
+    GraphicsLayer* graphicsLayer = layer->backing()->graphicsLayer();
+
+    constraints.setLayerPositionAtLastLayout(graphicsLayer->position());
+    constraints.setViewportRectAtLastLayout(viewportRect);
+        
+    RenderStyle* style = layer->renderer()->style();
+    if (!style->left().isAuto())
+        constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeLeft);
+
+    if (!style->right().isAuto())
+        constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeRight);
+
+    if (!style->top().isAuto())
+        constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeTop);
+
+    if (!style->bottom().isAuto())
+        constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeBottom);
+
+    // If left and right are auto, use left.
+    if (style->left().isAuto() && style->right().isAuto())
+        constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeLeft);
+
+    // If top and bottom are auto, use top.
+    if (style->top().isAuto() && style->bottom().isAuto())
+        constraints.addAnchorEdge(ViewportConstraints::AnchorEdgeTop);
+        
+    return constraints;
+}
+
+const StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportConstraints(RenderLayer* layer)
+{
+    ASSERT(layer->isComposited());
+
+    FrameView* frameView = m_renderView->frameView();
+    LayoutRect viewportRect = frameView->visibleContentRect();
+
+    StickyPositionViewportConstraints constraints = StickyPositionViewportConstraints();
+
+    RenderBoxModelObject* renderer = toRenderBoxModelObject(layer->renderer());
+
+    renderer->computeStickyPositionConstraints(constraints, viewportRect);
+
+    GraphicsLayer* graphicsLayer = layer->backing()->graphicsLayer();
+
+    constraints.setLayerPositionAtLastLayout(graphicsLayer->position());
+    constraints.setStickyOffsetAtLastLayout(renderer->stickyPositionOffset());
+
+    return constraints;
+}
+
+static RenderLayerBacking* nearestScrollingCoordinatorAncestor(RenderLayer* layer)
+{
+    RenderLayer* ancestor = layer->parent();
+    while (ancestor) {
+        if (RenderLayerBacking* backing = ancestor->backing()) {
+            if (backing->scrollLayerID() && !ancestor->scrollsOverflow())
+                return backing;
+        }
+        ancestor = ancestor->parent();
+    }
+
+    return 0;
+}
+
+void RenderLayerCompositor::registerOrUpdateViewportConstrainedLayer(RenderLayer* layer)
+{
+    // FIXME: We should support sticky position here! And we should eventuall support fixed/sticky elements
+    // that are inside non-main frames once we get non-main frames scrolling with the ScrollingCoordinator.
+    if (layer->renderer()->isStickyPositioned() || m_renderView->document()->ownerElement())
+        return;
+
+    ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator();
+    if (!scrollingCoordinator)
+        return;
+
+    if (!scrollingCoordinator->supportsFixedPositionLayers() || !layer->parent())
+        return;
+
+    ASSERT(layer->renderer()->style()->position() == FixedPosition);
+    ASSERT(m_viewportConstrainedLayers.contains(layer));
+    ASSERT(layer->isComposited());
+
+    RenderLayerBacking* backing = layer->backing();
+    if (!backing)
+        return;
+
+    ScrollingNodeID nodeID = backing->scrollLayerID();
+    if (!nodeID) {
+        RenderLayerBacking* parent = nearestScrollingCoordinatorAncestor(layer);
+        if (!parent)
+            return;
+        backing->attachToScrollingCoordinator(parent);
+        nodeID = backing->scrollLayerID();
+    }
+
+    if (layer->renderer()->isStickyPositioned())
+        scrollingCoordinator->updateViewportConstrainedNode(nodeID, computeStickyViewportConstraints(layer), backing->graphicsLayer());
+    else
+        scrollingCoordinator->updateViewportConstrainedNode(nodeID, computeFixedViewportConstraints(layer), backing->graphicsLayer());
+}
+
+void RenderLayerCompositor::unregisterViewportConstrainedLayer(RenderLayer* layer)
+{
+    ASSERT(m_viewportConstrainedLayers.contains(layer));
+
+    if (RenderLayerBacking* backing = layer->backing())
+        backing->detachFromScrollingCoordinator();
 }
 
 void RenderLayerCompositor::windowScreenDidChange(PlatformDisplayID displayID)

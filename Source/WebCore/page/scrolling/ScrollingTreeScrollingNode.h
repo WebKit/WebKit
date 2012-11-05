@@ -46,6 +46,10 @@ public:
     virtual ~ScrollingTreeScrollingNode();
 
     virtual void update(ScrollingStateNode*) OVERRIDE;
+
+    // FIXME: We should implement this when we support ScrollingTreeScrollingNodes as children.
+    virtual void parentScrollPositionDidChange(const IntRect& /*viewportRect*/) OVERRIDE { }
+
     virtual void handleWheelEvent(const PlatformWheelEvent&) = 0;
     virtual void setScrollPosition(const IntPoint&) = 0;
 

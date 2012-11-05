@@ -32,6 +32,10 @@
 
 namespace WebCore {
 
+class ScrollingStateNode;
+class ScrollingStateScrollingNode;
+class ScrollingStateTree;
+
 class ScrollingCoordinatorMac : public ScrollingCoordinator {
 public:
     explicit ScrollingCoordinatorMac(Page*);
@@ -75,6 +79,16 @@ public:
     virtual String scrollingStateTreeAsText() const OVERRIDE;
 
 private:
+    // Return whether this scrolling coordinator can keep fixed position layers fixed to their
+    // containers while scrolling.
+    virtual bool supportsFixedPositionLayers() const OVERRIDE { return true; }
+
+    // This function will update the ScrollingStateNode for the given viewport constrained object.
+    virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) OVERRIDE;
+
+    // Called to synch the GraphicsLayer positions for child layers when their CALayers have been moved by the scrolling thread.
+    virtual void syncChildPositions(const LayoutRect& viewportRect) OVERRIDE;
+
     virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*);
     virtual void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);
 
@@ -108,6 +122,8 @@ private:
 
     void scrollingStateTreeCommitterTimerFired(Timer<ScrollingCoordinatorMac>*);
     void commitTreeState();
+
+    void removeNode(ScrollingStateNode*);
 
     OwnPtr<ScrollingStateTree> m_scrollingStateTree;
     RefPtr<ScrollingTree> m_scrollingTree;

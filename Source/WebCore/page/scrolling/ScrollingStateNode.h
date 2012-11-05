@@ -49,8 +49,10 @@ public:
     ScrollingStateNode(ScrollingStateTree*, ScrollingNodeID);
     virtual ~ScrollingStateNode();
 
-    virtual bool isScrollingStateScrollingNode() { return false; }
+    virtual bool isScrollingNode() { return false; }
+    virtual bool isFixedNode() { return false; }
 
+    virtual PassOwnPtr<ScrollingStateNode> clone() = 0;
     PassOwnPtr<ScrollingStateNode> cloneAndReset();
     void cloneAndResetChildren(ScrollingStateNode*);
 
@@ -59,8 +61,9 @@ public:
     virtual void resetChangedProperties() = 0;
     virtual void setHasChangedProperties() { setScrollLayerDidChange(true); }
 
+    GraphicsLayer* graphicsLayer() { return m_graphicsLayer; }
     PlatformLayer* platformScrollLayer() const;
-    void setScrollLayer(const GraphicsLayer*);
+    void setScrollLayer(GraphicsLayer*);
     void setScrollLayer(PlatformLayer*);
 
     bool scrollLayerDidChange() const { return m_scrollLayerDidChange; }
@@ -103,6 +106,7 @@ private:
 #if PLATFORM(MAC)
     RetainPtr<PlatformLayer> m_platformScrollLayer;
 #endif
+    GraphicsLayer* m_graphicsLayer;
 
 };
 

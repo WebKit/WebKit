@@ -43,7 +43,7 @@ void ScrollingStateNode::setScrollLayer(PlatformLayer* platformLayer)
     m_platformScrollLayer = platformLayer;
 }
 
-void ScrollingStateNode::setScrollLayer(const GraphicsLayer* graphicsLayer)
+void ScrollingStateNode::setScrollLayer(GraphicsLayer* graphicsLayer)
 {
     PlatformLayer* platformScrollLayer = graphicsLayer ? graphicsLayer->platformLayer() : nil;
 
@@ -51,6 +51,8 @@ void ScrollingStateNode::setScrollLayer(const GraphicsLayer* graphicsLayer)
         return;
 
     m_platformScrollLayer = platformScrollLayer;
+    m_graphicsLayer = graphicsLayer;
+
     m_scrollLayerDidChange = true;
     m_scrollingStateTree->setHasChangedProperties(true);
 }

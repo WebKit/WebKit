@@ -23,56 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeNode_h
-#define ScrollingTreeNode_h
+#ifndef ScrollingTreeFixedNode_h
+#define ScrollingTreeFixedNode_h
 
 #if ENABLE(THREADED_SCROLLING)
 
-#include "IntRect.h"
-#include "ScrollTypes.h"
-#include "ScrollingCoordinator.h"
-#include <wtf/PassOwnPtr.h>
+#include "ScrollingConstraints.h"
+#include "ScrollingTreeNode.h"
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS CALayer;
 
 namespace WebCore {
 
-class ScrollingStateFixedNode;
-class ScrollingStateNode;
-class ScrollingStateScrollingNode;
+class FixedPositionViewportConstraints;
 
-class ScrollingTreeNode {
+class ScrollingTreeFixedNode : public ScrollingTreeNode {
 public:
-    explicit ScrollingTreeNode(ScrollingTree*);
-    virtual ~ScrollingTreeNode();
+    static PassOwnPtr<ScrollingTreeFixedNode> create(ScrollingTree*);
 
-    virtual void update(ScrollingStateNode*) = 0;
-
-    virtual void parentScrollPositionDidChange(const IntRect& viewportRect) = 0;
-
-    ScrollingNodeID scrollingNodeID() const { return m_nodeID; }
-    void setScrollingNodeID(ScrollingNodeID nodeID) { m_nodeID = nodeID; }
-
-    ScrollingTreeNode* parent() const { return m_parent; }
-    void setParent(ScrollingTreeNode* parent) { m_parent = parent; }
-
-    void appendChild(PassOwnPtr<ScrollingTreeNode>);
-    void removeChild(ScrollingTreeNode*);
-
-protected:
-    ScrollingTree* scrollingTree() const { return m_scrollingTree; }
-
-    typedef Vector<OwnPtr<ScrollingTreeNode> > ScrollingTreeChildrenVector;
-    OwnPtr<ScrollingTreeChildrenVector> m_children;
+    virtual ~ScrollingTreeFixedNode();
 
 private:
-    ScrollingTree* m_scrollingTree;
+    ScrollingTreeFixedNode(ScrollingTree*);
 
-    ScrollingNodeID m_nodeID;
+    virtual void update(ScrollingStateNode*) OVERRIDE;
+    virtual void parentScrollPositionDidChange(const IntRect& viewportRect) OVERRIDE;
 
-    ScrollingTreeNode* m_parent;
+    FixedPositionViewportConstraints m_constraints;
+    RetainPtr<CALayer> m_layer;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(THREADED_SCROLLING)
 
-#endif // ScrollingTreeNode_h
+#endif // ScrollingTreeFixedNode_h

@@ -390,6 +390,8 @@ private:
     void updateCanBlitOnScrollRecursively();
     bool contentsInCompositedLayer() const;
 
+    bool shouldUpdateFixedElementsAfterScrolling();
+
     void applyOverflowToViewport(RenderObject*, ScrollbarMode& hMode, ScrollbarMode& vMode);
     void applyPaginationToViewport();
 

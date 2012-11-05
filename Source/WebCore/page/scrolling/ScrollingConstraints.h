@@ -46,15 +46,6 @@ public:
         AnchorEdgeBottom = 1 << 3
     };
     typedef unsigned AnchorEdges;
-    
-    ViewportConstraints()
-        : m_anchorEdges(0)
-    { }
-
-    ViewportConstraints(ViewportConstraints* constraints)
-        : m_alignmentOffset(constraints->alignmentOffset())
-        , m_anchorEdges(constraints->anchorEdges())
-    { }
 
     virtual ~ViewportConstraints() { }
     
@@ -69,6 +60,15 @@ public:
     void setAlignmentOffset(const FloatSize& offset) { m_alignmentOffset = offset; }
 
 protected:
+    ViewportConstraints()
+        : m_anchorEdges(0)
+    { }
+
+    ViewportConstraints(const ViewportConstraints& constraints)
+        : m_alignmentOffset(constraints.alignmentOffset())
+        , m_anchorEdges(constraints.anchorEdges())
+    { }
+
     FloatSize m_alignmentOffset;
     AnchorEdges m_anchorEdges;
 };
@@ -78,10 +78,10 @@ public:
     FixedPositionViewportConstraints()
     { }
 
-    FixedPositionViewportConstraints(FixedPositionViewportConstraints* constraints)
+    FixedPositionViewportConstraints(const FixedPositionViewportConstraints& constraints)
         : ViewportConstraints(constraints)
-        , m_viewportRectAtLastLayout(constraints->viewportRectAtLastLayout())
-        , m_layerPositionAtLastLayout(constraints->layerPositionAtLastLayout())
+        , m_viewportRectAtLastLayout(constraints.viewportRectAtLastLayout())
+        , m_layerPositionAtLastLayout(constraints.layerPositionAtLastLayout())
     { }
 
     virtual ConstraintType constraintType() const OVERRIDE { return FixedPositionConstaint; };
@@ -93,6 +93,16 @@ public:
 
     const FloatPoint& layerPositionAtLastLayout() const { return m_layerPositionAtLastLayout; }
     void setLayerPositionAtLastLayout(const FloatPoint& point) { m_layerPositionAtLastLayout = point; }
+
+    bool operator==(const FixedPositionViewportConstraints& other) const
+    {
+        return m_alignmentOffset == other.m_alignmentOffset
+            && m_anchorEdges == other.m_anchorEdges
+            && m_viewportRectAtLastLayout == other.m_viewportRectAtLastLayout
+            && m_layerPositionAtLastLayout == other.m_layerPositionAtLastLayout;
+    }
+
+    bool operator!=(const FixedPositionViewportConstraints& other) const { return !(*this == other); }
 
 private:
     FloatRect m_viewportRectAtLastLayout;

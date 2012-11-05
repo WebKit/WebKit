@@ -41,7 +41,8 @@ class ScrollingStateScrollingNode : public ScrollingStateNode {
 public:
     static PassOwnPtr<ScrollingStateScrollingNode> create(ScrollingStateTree*, ScrollingNodeID);
 
-    ScrollingStateScrollingNode(const ScrollingStateScrollingNode&);
+    virtual PassOwnPtr<ScrollingStateNode> clone();
+
     virtual ~ScrollingStateScrollingNode();
 
     enum ChangedProperty {
@@ -60,7 +61,7 @@ public:
         RequestedScrollPosition = 1 << 12,
     };
 
-    virtual bool isScrollingStateScrollingNode() OVERRIDE { return true; }
+    virtual bool isScrollingNode() OVERRIDE { return true; }
 
     virtual bool hasChangedProperties() const OVERRIDE { return m_changedProperties; }
     virtual unsigned changedProperties() const OVERRIDE { return m_changedProperties; }
@@ -111,6 +112,7 @@ public:
 
 private:
     ScrollingStateScrollingNode(ScrollingStateTree*, ScrollingNodeID);
+    ScrollingStateScrollingNode(const ScrollingStateScrollingNode&);
 
     unsigned m_changedProperties;
 
@@ -139,7 +141,7 @@ private:
 
 inline ScrollingStateScrollingNode* toScrollingStateScrollingNode(ScrollingStateNode* node)
 {
-    ASSERT(!node || node->isScrollingStateScrollingNode());
+    ASSERT(!node || node->isScrollingNode());
     return static_cast<ScrollingStateScrollingNode*>(node);
 }
     

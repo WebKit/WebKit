@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollingStateNode.h"
 
+#include "ScrollingStateFixedNode.h"
 #include "ScrollingStateTree.h"
 #include "TextStream.h"
 
@@ -61,7 +62,7 @@ ScrollingStateNode::~ScrollingStateNode()
 
 PassOwnPtr<ScrollingStateNode> ScrollingStateNode::cloneAndReset()
 {
-    OwnPtr<ScrollingStateScrollingNode> clone = adoptPtr(new ScrollingStateScrollingNode(*toScrollingStateScrollingNode(this)));
+    OwnPtr<ScrollingStateNode> clone = this->clone();
 
     // Now that this node is cloned, reset our change properties.
     setScrollLayerDidChange(false);
@@ -96,7 +97,11 @@ void ScrollingStateNode::removeChild(ScrollingStateNode* node)
     if (!m_children)
         return;
 
-    if (size_t index = m_children->find(node)) {
+    size_t index = m_children->find(node);
+
+    // The index will be notFound if the node to remove is a deeper-than-1-level descendant or
+    // if node is the root state node.
+    if (index != notFound) {
         m_scrollingStateTree->didRemoveNode(node->scrollingNodeID());
         m_children->remove(index);
         return;

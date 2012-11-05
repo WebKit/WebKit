@@ -1037,7 +1037,14 @@ void RenderLayerBacking::attachToScrollingCoordinator(RenderLayerBacking* parent
     if (!scrollingCoordinator)
         return;
 
-    ScrollingNodeType nodeType = ScrollingNode;
+    // FIXME: When we support overflow areas, we will have to refine this for overflow areas that are also
+    // positon:fixed.
+    ScrollingNodeType nodeType;
+    if (renderer()->style()->position() == FixedPosition)
+        nodeType = FixedNode;
+    else
+        nodeType = ScrollingNode;
+
     ScrollingNodeID parentID = parent ? parent->scrollLayerID() : 0;
     m_scrollLayerID = scrollingCoordinator->attachToStateTree(nodeType, scrollingCoordinator->uniqueScrollLayerID(), parentID);
 }

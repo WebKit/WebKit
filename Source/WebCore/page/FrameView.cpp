@@ -1845,13 +1845,44 @@ void FrameView::repaintFixedElementsAfterScrolling()
     }
 }
 
+bool FrameView::shouldUpdateFixedElementsAfterScrolling()
+{
+#if ENABLE(THREADED_SCROLLING)
+    Page* page = m_frame->page();
+    if (!page)
+        return true;
+
+    // If the scrolling thread is updating the fixed elements, then the FrameView should not update them as well.
+    if (page->mainFrame() != m_frame)
+        return true;
+
+    ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator();
+    if (!scrollingCoordinator)
+        return true;
+
+    if (!scrollingCoordinator->supportsFixedPositionLayers())
+        return true;
+
+    if (scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread())
+        return true;
+
+    if (inProgrammaticScroll())
+        return true;
+
+    return false;
+#endif
+    return true;
+}
+
 void FrameView::updateFixedElementsAfterScrolling()
 {
 #if USE(ACCELERATED_COMPOSITING)
+    if (!shouldUpdateFixedElementsAfterScrolling())
+        return;
+
     if (m_nestedLayoutCount <= 1 && hasViewportConstrainedObjects()) {
-        if (RenderView* root = rootRenderer(this)) {
+        if (RenderView* root = rootRenderer(this))
             root->compositor()->updateCompositingLayers(CompositingUpdateOnScroll);
-        }
     }
 #endif
 }

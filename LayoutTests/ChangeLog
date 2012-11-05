@@ -1,3 +1,38 @@
+2012-11-05  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=101001
+        Pages with position:fixed elements should still be able to scroll on 
+        the scrolling thread
+        -and corresponding-
+        <rdar://problem/10857315>
+
+        Reviewed by Simon Fraser.
+
+        New tests.
+        * platform/mac/tiled-drawing/fixed: Added.
+        * platform/mac/tiled-drawing/fixed/absolute-inside-fixed-expected.txt: Added.
+        * platform/mac/tiled-drawing/fixed/absolute-inside-fixed.html: Added.
+        * platform/mac/tiled-drawing/fixed/fixed-position-out-of-view-expected.txt: Added.
+        * platform/mac/tiled-drawing/fixed/fixed-position-out-of-view-negative-zindex-expected.txt: Added.
+        * platform/mac/tiled-drawing/fixed/fixed-position-out-of-view-negative-zindex.html: Added.
+        * platform/mac/tiled-drawing/fixed/fixed-position-out-of-view.html: Added.
+        * platform/mac/tiled-drawing/fixed/four-bars-expected.txt: Added.
+        * platform/mac/tiled-drawing/fixed/four-bars.html: Added.
+        * platform/mac/tiled-drawing/fixed/nested-fixed-expected.txt: Added.
+        * platform/mac/tiled-drawing/fixed/nested-fixed.html: Added.
+        * platform/mac/tiled-drawing/fixed/percentage-inside-fixed-expected.txt: Added.
+        * platform/mac/tiled-drawing/fixed/percentage-inside-fixed.html: Added.
+
+        These two tests are supposed to be in "slow scrolling" mode. Now that 
+        fixed elements can scroll "fast," we need something else to force 
+        slow scrolling. We should probably just add something to 
+        window.internals to do that, but in the meantime, 
+        background-attachment:fixed will work.
+        * platform/mac/tiled-drawing/scrolling-tree-slow-scrolling-expected.txt:
+        * platform/mac/tiled-drawing/scrolling-tree-slow-scrolling.html:
+        * platform/mac/tiled-drawing/tile-coverage-slow-scrolling-expected.txt:
+        * platform/mac/tiled-drawing/tile-coverage-slow-scrolling.html:
+
 2012-11-05  Alice Boxhall  <aboxhall@chromium.org>
 
         Unreviewed gardening. Mark fonts/cursive.html as flaky on MountainLion as well as Lion.

@@ -32,6 +32,7 @@
 #include "ScrollingCoordinator.h"
 #include "ScrollingStateTree.h"
 #include "ScrollingThread.h"
+#include "ScrollingTreeFixedNode.h"
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeScrollingNode.h"
 #include <wtf/MainThread.h>
@@ -162,9 +163,13 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
             m_nodeMap.set(stateNode->scrollingNodeID(), m_rootNode.get());
             m_rootNode->update(stateNode);
         } else {
-            // FIXME: In the future, we will have more than just ScrollingTreeScrollingNode, so we'll have to
-            // figure out which type of node to create.
-            OwnPtr<ScrollingTreeNode> newNode = ScrollingTreeScrollingNode::create(this);
+            OwnPtr<ScrollingTreeNode> newNode;
+            if (stateNode->isScrollingNode())
+                newNode = ScrollingTreeScrollingNode::create(this);
+            else if (stateNode->isFixedNode())
+                newNode = ScrollingTreeFixedNode::create(this);
+            else
+                ASSERT_NOT_REACHED();
             ScrollingTreeNode* newNodeRawPtr = newNode.get();
             m_nodeMap.set(stateNode->scrollingNodeID(), newNodeRawPtr);
             ScrollingTreeNodeMap::const_iterator it = m_nodeMap.find(stateNode->parent()->scrollingNodeID());

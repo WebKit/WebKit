@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style type="text/css" media="screen">
+        body {
+            margin: 0;
+            height: 2200px;
+        }
+
+        .scrolly {
+            overflow: scroll;
+            width:200px;
+            height:200px;
+            border: 2px solid black;
+        }
+        
+        .big {
+            border:1px solid purple;
+            height: 500px;
+            width:50px;
+        }
+
+        .fixed {
+            height: 100px;
+            width: 100px;
+            position: fixed;
+            background: green;
+        }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+      if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+      }
+
+      function doScroll()
+      {
+        window.setTimeout(function() {
+        window.scrollTo(0, 200);
+          if (window.testRunner) {
+            document.getElementById('results').innerText = window.internals.scrollingStateTreeAsText(document);
+            testRunner.notifyDone();
+          }
+        }, 10);
+      }
+      
+      window.addEventListener('load', doScroll, false);
+    </script>
+</head>
+<body>
+    <pre id="results"></pre>
+    <div class="scrolly">
+        <div class="fixed"></div>
+        <div class="big"></div>
+    </div>
+</body>
+</html>

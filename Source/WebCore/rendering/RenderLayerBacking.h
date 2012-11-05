@@ -90,6 +90,7 @@ public:
     GraphicsLayer* scrollingContentsLayer() const { return m_scrollingContentsLayer.get(); }
 
     void attachToScrollingCoordinator(RenderLayerBacking* parent);
+    void detachFromScrollingCoordinator();
     uint64_t scrollLayerID() const { return m_scrollLayerID; }
     
     bool hasMaskLayer() const { return m_maskLayer != 0; }
@@ -202,8 +203,6 @@ private:
     bool requiresVerticalScrollbarLayer() const;
     bool requiresScrollCornerLayer() const;
     bool updateScrollingLayers(bool scrollingLayers);
-
-    void detachFromScrollingCoordinator();
 
     GraphicsLayerPaintingPhase paintingPhaseForPrimaryLayer() const;
     

@@ -240,8 +240,10 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
     if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView)) {
         if (programmaticScroll)
             scrollLayer->setPosition(-frameView->scrollPosition());
-        else
+        else {
             scrollLayer->syncPosition(-frameView->scrollPosition());
+            syncChildPositions(frameView->visibleContentRect());
+        }
     }
 #endif
 }

@@ -34,11 +34,13 @@
 
 namespace WebCore {
 
+class FixedPositionViewportConstraints;
 class GraphicsLayer;
 class GraphicsLayerUpdater;
 class RenderEmbeddedObject;
 class RenderPart;
 class ScrollingCoordinator;
+class StickyPositionViewportConstraints;
 #if ENABLE(VIDEO)
 class RenderVideo;
 #endif
@@ -223,6 +225,9 @@ public:
 
     void documentBackgroundColorDidChange();
 
+    void updateViewportConstraintStatus(RenderLayer*);
+    void removeViewportConstrainedLayer(RenderLayer*);
+
     void resetTrackedRepaintRects();
     void setTracksRepaints(bool);
 
@@ -311,6 +316,13 @@ private:
     bool requiresCompositingForOverflowScrolling(const RenderLayer*) const;
     bool requiresCompositingForIndirectReason(RenderObject*, bool hasCompositedDescendants, bool has3DTransformedDescendants, RenderLayer::IndirectCompositingReason&) const;
 
+    void addViewportConstrainedLayer(RenderLayer*);
+    void registerOrUpdateViewportConstrainedLayer(RenderLayer*);
+    void unregisterViewportConstrainedLayer(RenderLayer*);
+
+    const FixedPositionViewportConstraints computeFixedViewportConstraints(RenderLayer*);
+    const StickyPositionViewportConstraints computeStickyViewportConstraints(RenderLayer*);
+
     bool requiresScrollLayer(RootLayerAttachment) const;
     bool requiresHorizontalScrollbarLayer() const;
     bool requiresVerticalScrollbarLayer() const;
@@ -356,6 +368,9 @@ private:
     // Enclosing clipping layer for iframe content
     OwnPtr<GraphicsLayer> m_clipLayer;
     OwnPtr<GraphicsLayer> m_scrollLayer;
+
+    HashSet<RenderLayer*> m_viewportConstrainedLayers;
+    HashSet<RenderLayer*> m_viewportConstrainedLayersNeedingUpdate;
 
     // Enclosing layer for overflow controls and the clipping layer
     OwnPtr<GraphicsLayer> m_overflowControlsHostLayer;

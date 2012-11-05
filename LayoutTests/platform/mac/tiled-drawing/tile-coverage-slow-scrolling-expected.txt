@@ -12,13 +12,6 @@
       (children 1
         (GraphicsLayer
           (visible rect 0.00, 0.00 0.00 x 0.00)
-          (children 1
-            (GraphicsLayer
-              (position 8.00 13.00)
-              (bounds 100.00 100.00)
-              (visible rect 0.00, 0.00 100.00 x 100.00)
-            )
-          )
         )
       )
     )

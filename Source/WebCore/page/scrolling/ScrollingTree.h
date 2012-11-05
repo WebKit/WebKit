@@ -47,9 +47,10 @@ OBJC_CLASS CALayer;
 namespace WebCore {
 
 class IntPoint;
+class ScrollingStateNode;
+class ScrollingStateTree;
 class ScrollingTreeNode;
 class ScrollingTreeScrollingNode;
-class ScrollingStateTree;
 
 // The ScrollingTree class lives almost exclusively on the scrolling thread and manages the
 // hierarchy of scrollable regions on the page. It's also responsible for dispatching events
