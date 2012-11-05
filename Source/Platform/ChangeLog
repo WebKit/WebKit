@@ -1,3 +1,16 @@
+2012-11-05  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] Pass canPaintLCDText to WebContentLayerClient::paintContents
+        https://bugs.webkit.org/show_bug.cgi?id=99083
+
+        Reviewed by Stephen White.
+
+        Use LCD text setting passed to WebContentLayerClient::paintContents instead of turning it off for all composited layers.
+
+        * chromium/public/WebContentLayerClient.h:
+        (WebContentLayerClient):
+        (WebKit::WebContentLayerClient::paintContents):
+
 2012-11-01  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Provide WebKit API interface for platform gesture curves

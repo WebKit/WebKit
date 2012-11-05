@@ -1,3 +1,22 @@
+2012-11-05  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] Pass canPaintLCDText to WebContentLayerClient::paintContents
+        https://bugs.webkit.org/show_bug.cgi?id=99083
+
+        Reviewed by Stephen White.
+
+        Use LCD text setting passed to WebContentLayerClient::paintContents instead of turning it off for all composited layers.
+
+        No new tests needed. This patch does not change anything functionally.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setContentsOpaque):
+        (WebCore::GraphicsLayerChromium::paint):
+        * platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.cpp:
+        (WebCore::OpaqueRectTrackingContentLayerDelegate::paintContents):
+        * platform/graphics/chromium/OpaqueRectTrackingContentLayerDelegate.h:
+        (OpaqueRectTrackingContentLayerDelegate):
+
 2012-11-05  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Build fix after http://trac.webkit.org/changeset/133488.

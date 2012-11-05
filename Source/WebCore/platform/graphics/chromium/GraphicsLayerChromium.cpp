@@ -300,6 +300,7 @@ void GraphicsLayerChromium::setContentsOpaque(bool opaque)
 {
     GraphicsLayer::setContentsOpaque(opaque);
     m_layer->layer()->setOpaque(m_contentsOpaque);
+    m_opaqueRectTrackingContentLayerDelegate->setOpaque(m_contentsOpaque);
 }
 
 static bool copyWebCoreFilterOperationsToWebFilterOperations(const FilterOperations& filters, WebFilterOperations& webFilters)
@@ -868,7 +869,6 @@ bool GraphicsLayerChromium::appliesPageScale() const
 
 void GraphicsLayerChromium::paint(GraphicsContext& context, const IntRect& clip)
 {
-    context.platformContext()->setDrawingToImageBuffer(true);
     paintGraphicsLayerContents(context, clip);
 }
 
