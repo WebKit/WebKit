@@ -43,6 +43,24 @@
 
 2012-11-05  Rob Buis  <rbuis@rim.com>
 
+        [BlackBerry] screenX/Y gives wrong values
+        https://bugs.webkit.org/show_bug.cgi?id=101259
+
+        Reviewed by Yong Li.
+
+        PR 237071
+
+        Reviewed internally by Gen Mak.
+
+        Do not transform screenPos coordinates.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::mouseEvent):
+        (BlackBerry::WebKit::WebPage::touchEvent):
+        (BlackBerry::WebKit::WebPage::touchPointAsMouseEvent):
+
+2012-11-05  Rob Buis  <rbuis@rim.com>
+
         [BlackBerry] Input date should not popup dialog when readonly is set
         https://bugs.webkit.org/show_bug.cgi?id=101234
 

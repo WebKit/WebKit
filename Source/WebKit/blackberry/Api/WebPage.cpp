@@ -3895,15 +3895,13 @@ bool WebPage::mouseEvent(const Platform::MouseEvent& mouseEvent, bool* wheelDelt
         buttonType = MiddleButton;
 
     // Create our event.
-    PlatformMouseEvent platformMouseEvent(d->mapFromTransformed(mouseEvent.position()),
-                                          d->mapFromTransformed(mouseEvent.screenPosition()),
+    PlatformMouseEvent platformMouseEvent(d->mapFromTransformed(mouseEvent.position()), mouseEvent.screenPosition(),
                                           toWebCoreMouseEventType(mouseEvent.type()), clickCount, buttonType, PointingDevice);
     d->m_lastMouseEvent = platformMouseEvent;
     bool success = d->handleMouseEvent(platformMouseEvent);
 
     if (mouseEvent.wheelTicks()) {
-        PlatformWheelEvent wheelEvent(d->mapFromTransformed(mouseEvent.position()),
-                                      d->mapFromTransformed(mouseEvent.screenPosition()),
+        PlatformWheelEvent wheelEvent(d->mapFromTransformed(mouseEvent.position()), mouseEvent.screenPosition(),
                                       0, -mouseEvent.wheelDelta(),
                                       0, -mouseEvent.wheelTicks(),
                                       ScrollByPixelWheelEvent,
@@ -4030,7 +4028,7 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
     Platform::TouchEvent tEvent = event;
     for (unsigned i = 0; i < event.m_points.size(); i++) {
         tEvent.m_points[i].m_pos = d->mapFromTransformed(tEvent.m_points[i].m_pos);
-        tEvent.m_points[i].m_screenPos = d->mapFromTransformed(tEvent.m_points[i].m_screenPos);
+        tEvent.m_points[i].m_screenPos = tEvent.m_points[i].m_screenPos;
     }
 
     if (event.isSingleTap())
@@ -4161,7 +4159,7 @@ bool WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point, bool use
 
     Platform::TouchPoint tPoint = point;
     tPoint.m_pos = d->mapFromTransformed(tPoint.m_pos);
-    tPoint.m_screenPos = d->mapFromTransformed(tPoint.m_screenPos);
+    tPoint.m_screenPos = tPoint.m_screenPos;
 
     return d->m_touchEventHandler->handleTouchPoint(tPoint, useFatFingers);
 }
