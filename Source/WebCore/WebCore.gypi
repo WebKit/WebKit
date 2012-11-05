@@ -5659,7 +5659,6 @@
             'platform/network/soup/SoupURIUtils.h',
             'platform/network/win/AuthenticationChallenge.h',
             'platform/network/win/CookieJarWin.cpp',
-            'platform/network/win/CookieStorageWin.cpp',
             'platform/network/win/DownloadBundleWin.cpp',
             'platform/network/win/NetworkStateNotifierWin.cpp',
             'platform/network/win/ProxyServerWin.cpp',

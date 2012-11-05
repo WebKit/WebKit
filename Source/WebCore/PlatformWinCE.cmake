@@ -80,7 +80,6 @@ LIST(APPEND WebCore_SOURCES
 
     platform/network/win/CredentialStorageWin.cpp
     platform/network/win/CookieJarWin.cpp
-    platform/network/win/CookieStorageWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
     platform/network/win/ProxyServerWin.cpp
     platform/network/win/ResourceHandleWin.cpp

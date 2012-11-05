@@ -83,16 +83,6 @@ void overrideCookieStorage(CFHTTPCookieStorageRef cookieStorage)
     cookieStorageOverride().adoptCF(cookieStorage);
 }
 
-void setCookieStoragePrivateBrowsingEnabled(bool)
-{
-    ASSERT(isMainThread());
-
-    // Nothing to do here - we'll just use a private session from ResourceHandle.
-
-    // FIXME: When Private Browsing is enabled, the Private Browsing Cookie Storage should be
-    // observed for changes, not the default Cookie Storage.
-}
-
 static void notifyCookiesChangedOnMainThread(void*)
 {
     ASSERT(isMainThread());

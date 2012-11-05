@@ -593,7 +593,6 @@ void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 #if PLATFORM(MAC) || USE(CFNETWORK)
     ResourceHandle::setPrivateBrowsingEnabled(privateBrowsingEnabled);
 #endif
-    setCookieStoragePrivateBrowsingEnabled(privateBrowsingEnabled);
 
     if (m_privateBrowsingEnabled == privateBrowsingEnabled)
         return;

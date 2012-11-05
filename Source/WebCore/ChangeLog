@@ -1,3 +1,43 @@
+2012-11-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Get rid of setCookieStoragePrivateBrowsingEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=101247
+
+        Reviewed by Brady Eidson.
+
+        We were only doing anything here on Mac, and only because we couldn't know if
+        sessions were in use. But sessions are always in use, and those obsolete changing
+        cookie storage explicitly.
+
+        * platform/network/win/CookieStorageWin.cpp: Removed.
+        * PlatformWinCE.cmake:
+        * WebCore.gypi:
+        No more CookieStorageWin.cpp with an empty implementation.
+    
+        * WebCore.exp.in:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        We no longer need this WKSI function.
+
+        * page/Settings.cpp: (WebCore::Settings::setPrivateBrowsingEnabled):
+        Removed the only call to setCookieStoragePrivateBrowsingEnabled().
+
+        * platform/network/CookieStorage.h:
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        * platform/network/curl/CookieJarCurl.cpp:
+        * platform/network/soup/CookieStorageSoup.cpp:
+        * platform/qt/TemporaryLinkStubsQt.cpp:
+        Removed empty setCookieStoragePrivateBrowsingEnabled implementations.
+
+        * platform/network/mac/CookieStorageMac.mm: This function used to have a FIXME
+        that we should observe private storage while in private browsing mode. I don't think
+        that it was correct - Safari doesn't display content of private storage, and thus
+        doesn't need to know about changes.
+        The removal of this function has an effect on WebKit1 clients that enable private
+        browsing. We used to globally change cookie storage, even for loads not initiated
+        by WebKit. Now we match API description: "If private browsing is enabled, WebKit
+        will not store information about sites the user visits."
+
 2012-11-05  Florin Malita  <fmalita@chromium.org>
 
         Crash when mixing layers, foreignObjects and SVG hidden containers

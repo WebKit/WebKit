@@ -88,10 +88,6 @@ bool PluginDatabase::isPreferredPluginDirectory(const String& directory)
     return false;
 }
 
-void PluginView::privateBrowsingStateChanged(bool)
-{
-}
-
 PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
 {
     return 0;

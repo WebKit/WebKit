@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-void setCookieStoragePrivateBrowsingEnabled(bool);
+// These are always observing the main cookie storage, even when in private browsing mode.
 void startObservingCookieChanges();
 void stopObservingCookieChanges();
 

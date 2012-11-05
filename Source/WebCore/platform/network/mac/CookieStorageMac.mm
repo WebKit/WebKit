@@ -77,16 +77,6 @@ using namespace WebCore;
 
 namespace WebCore {
 
-void setCookieStoragePrivateBrowsingEnabled(bool enabled)
-{
-    // FIXME: When Private Browsing is enabled, the Private Browsing Cookie Storage should be
-    // observed for changes, not the default Cookie Storage.
-
-    // There is nothing to do here if sessions are supported. But we don't know if they are,
-    // so enable legacy private browsing mode on sharedHTTPCookieStorage, too.
-    wkSetCookieStoragePrivateBrowsingEnabled(enabled);
-}
-
 static WebCookieStorageObjCAdapter *cookieStorageAdapter;
 
 void startObservingCookieChanges()

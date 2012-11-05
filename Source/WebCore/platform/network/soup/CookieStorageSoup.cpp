@@ -31,11 +31,6 @@
 
 namespace WebCore {
 
-void setCookieStoragePrivateBrowsingEnabled(bool)
-{
-    notImplemented();
-}
-
 #if USE(PLATFORM_STRATEGIES)
 static void soupCookiesChanged(SoupCookieJar* jar, SoupCookie*, SoupCookie*, gpointer)
 {

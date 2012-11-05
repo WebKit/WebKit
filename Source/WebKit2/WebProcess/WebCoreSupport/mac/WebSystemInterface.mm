@@ -100,7 +100,6 @@ void InitWebCoreSystemInterface(void)
         INIT(SetCGFontRenderingMode);
         INIT(SetCONNECTProxyAuthorizationForStream);
         INIT(SetCONNECTProxyForStream);
-        INIT(SetCookieStoragePrivateBrowsingEnabled);
         INIT(SetDragImage);
         INIT(SetHTTPPipeliningMaximumPriority);
         INIT(SetHTTPPipeliningPriority);

@@ -1,3 +1,16 @@
+2012-11-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Get rid of setCookieStoragePrivateBrowsingEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=101247
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::switchNetworkLoaderToNewTestingSession): Added a FIXME.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm: (InitWebCoreSystemInterface):
+        We no longer have this function.
+
 2012-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix layer borders to cleaning appear and disappear on switching
