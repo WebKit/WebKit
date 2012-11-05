@@ -37,26 +37,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for Ewk_Url_Response */
-typedef struct Ewk_Url_Response Ewk_Url_Response;
-
 /**
- * Increases the reference count of the given object.
+ * Declare Ewk_Url_Response as Ewk_Object.
  *
- * @param response the URL response object to increase the reference count
- *
- * @return a pointer to the object on success, @c NULL otherwise.
+ * @see Ewk_Object
  */
-EAPI Ewk_Url_Response *ewk_url_response_ref(Ewk_Url_Response *response);
-
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count reaches 0, the URL response is freed.
- *
- * @param response the URL response object to decrease the reference count
- */
-EAPI void ewk_url_response_unref(Ewk_Url_Response *response);
+typedef struct Ewk_Object Ewk_Url_Response;
 
 /**
  * Query URL for this response.

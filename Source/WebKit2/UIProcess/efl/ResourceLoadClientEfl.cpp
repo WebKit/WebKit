@@ -57,7 +57,7 @@ void ResourceLoadClientEfl::didInitiateLoadForResource(WKPageRef, WKFrameRef wkF
     // Keep the resource internally to reuse it later.
     resourceLoadClient->m_loadingResourcesMap.add(resourceIdentifier, resource);
 
-    RefPtr<Ewk_Url_Request> request = Ewk_Url_Request::create(wkRequest);
+    RefPtr<Ewk_Url_Request> request = EwkUrlRequest::create(wkRequest);
     Ewk_Resource_Request resourceRequest = {resource.get(), request.get(), 0};
     resourceLoadClient->m_viewImpl->smartCallback<ResourceLoadStarted>().call(&resourceRequest);
 }
@@ -71,8 +71,8 @@ void ResourceLoadClientEfl::didSendRequestForResource(WKPageRef, WKFrameRef, uin
     if (!resource)
         return;
 
-    RefPtr<Ewk_Url_Request> request = Ewk_Url_Request::create(wkRequest);
-    RefPtr<Ewk_Url_Response> redirectResponse = Ewk_Url_Response::create(wkRedirectResponse);
+    RefPtr<Ewk_Url_Request> request = EwkUrlRequest::create(wkRequest);
+    RefPtr<Ewk_Url_Response> redirectResponse = EwkUrlResponse::create(wkRedirectResponse);
     Ewk_Resource_Request resourceRequest = {resource.get(), request.get(), redirectResponse.get()};
     resourceLoadClient->m_viewImpl->smartCallback<ResourceRequestSent>().call(&resourceRequest);
 }
@@ -86,7 +86,7 @@ void ResourceLoadClientEfl::didReceiveResponseForResource(WKPageRef, WKFrameRef,
     if (!resource)
         return;
 
-    RefPtr<Ewk_Url_Response> response = Ewk_Url_Response::create(wkResponse);
+    RefPtr<Ewk_Url_Response> response = EwkUrlResponse::create(wkResponse);
     Ewk_Resource_Load_Response resourceLoadResponse = {resource.get(), response.get()};
     resourceLoadClient->m_viewImpl->smartCallback<ResourceLoadResponse>().call(&resourceLoadResponse);
 }

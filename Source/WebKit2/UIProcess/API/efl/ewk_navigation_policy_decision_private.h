@@ -46,8 +46,7 @@ public:
 
     static PassRefPtr<Ewk_Navigation_Policy_Decision> create(WKFrameNavigationType navigationType, WKEventMouseButton mouseButton, WKEventModifiers modifiers, WKURLRequestRef requestRef, const char* frameName, WKFramePolicyListenerRef listener)
     {
-        RefPtr<Ewk_Url_Request> request = Ewk_Url_Request::create(requestRef);
-        return adoptRef(new Ewk_Navigation_Policy_Decision(listener, static_cast<Ewk_Navigation_Type>(navigationType), static_cast<Event_Mouse_Button>(mouseButton), static_cast<Event_Modifier_Keys>(modifiers), request.release(), frameName));
+        return adoptRef(new Ewk_Navigation_Policy_Decision(listener, static_cast<Ewk_Navigation_Type>(navigationType), static_cast<Event_Mouse_Button>(mouseButton), static_cast<Event_Modifier_Keys>(modifiers), EwkUrlRequest::create(requestRef), frameName));
     }
 
     void accept();
@@ -58,17 +57,17 @@ public:
     Event_Mouse_Button mouseButton() const;
     Event_Modifier_Keys modifiers() const;
     const char* frameName() const;
-    Ewk_Url_Request* request() const;
+    EwkUrlRequest* request() const;
 
 private:
-    Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<Ewk_Url_Request> request, const char* frameName);
+    Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<EwkUrlRequest> request, const char* frameName);
 
     WKRetainPtr<WKFramePolicyListenerRef> m_listener;
     bool m_actedUponByClient;
     Ewk_Navigation_Type m_navigationType;
     Event_Mouse_Button m_mouseButton;
     Event_Modifier_Keys m_modifiers;
-    RefPtr<Ewk_Url_Request> m_request;
+    RefPtr<EwkUrlRequest> m_request;
     WKEinaSharedString m_frameName;
 };
 

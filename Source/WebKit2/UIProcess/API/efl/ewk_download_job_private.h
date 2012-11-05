@@ -53,9 +53,9 @@ public:
     Ewk_Download_Job_State state() const;
     void setState(Ewk_Download_Job_State);
 
-    Ewk_Url_Request* request() const;
-    Ewk_Url_Response* response() const;
-    void setResponse(PassRefPtr<Ewk_Url_Response>);
+    EwkUrlRequest* request() const;
+    EwkUrlResponse* response() const;
+    void setResponse(PassRefPtr<EwkUrlResponse>);
 
     const char* destination() const;
     void setDestination(const char* destination);
@@ -75,8 +75,8 @@ private:
     WebKit::DownloadProxy* m_downloadProxy;
     EwkViewImpl* m_viewImpl;
     Ewk_Download_Job_State m_state;
-    mutable RefPtr<Ewk_Url_Request> m_request;
-    RefPtr<Ewk_Url_Response> m_response;
+    mutable RefPtr<EwkUrlRequest> m_request;
+    RefPtr<EwkUrlResponse> m_response;
     double m_startTime;
     double m_endTime;
     uint64_t m_downloaded; // length already downloaded

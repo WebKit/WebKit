@@ -64,7 +64,7 @@ void DownloadManagerEfl::didReceiveResponse(WKContextRef, WKDownloadRef wkDownlo
 {
     Ewk_Download_Job* download = toDownloadManagerEfl(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
     ASSERT(download);
-    download->setResponse(Ewk_Url_Response::create(wkResponse));
+    download->setResponse(EwkUrlResponse::create(wkResponse));
 }
 
 void DownloadManagerEfl::didCreateDestination(WKContextRef, WKDownloadRef wkDownload, WKStringRef /*path*/, const void* clientInfo)

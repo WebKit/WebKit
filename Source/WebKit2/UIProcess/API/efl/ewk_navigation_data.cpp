@@ -30,60 +30,44 @@
 
 using namespace WebKit;
 
-Ewk_Navigation_Data::Ewk_Navigation_Data(WKNavigationDataRef dataRef)
-    : m_request(Ewk_Url_Request::create(adoptWK(WKNavigationDataCopyOriginalRequest(dataRef)).get()))
+EwkNavigationData::EwkNavigationData(WKNavigationDataRef dataRef)
+    : m_request(EwkUrlRequest::create(adoptWK(WKNavigationDataCopyOriginalRequest(dataRef)).get()))
     , m_title(AdoptWK, WKNavigationDataCopyTitle(dataRef))
     , m_url(AdoptWK, WKNavigationDataCopyURL(dataRef))
 { }
 
-Ewk_Url_Request* Ewk_Navigation_Data::originalRequest() const
+EwkUrlRequest* EwkNavigationData::originalRequest() const
 {
     return m_request.get();
 }
 
-const char* Ewk_Navigation_Data::title() const
+const char* EwkNavigationData::title() const
 {
     return m_title;
 }
 
-const char* Ewk_Navigation_Data::url() const
+const char* EwkNavigationData::url() const
 {
     return m_url;
 }
 
-Ewk_Navigation_Data* ewk_navigation_data_ref(Ewk_Navigation_Data* data)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
-
-    data->ref();
-
-    return data;
-}
-
-void ewk_navigation_data_unref(Ewk_Navigation_Data* data)
-{
-    EINA_SAFETY_ON_NULL_RETURN(data);
-
-    data->deref();
-}
-
 const char* ewk_navigation_data_title_get(const Ewk_Navigation_Data* data)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationData, data, impl, 0);
 
-    return data->title();
+    return impl->title();
 }
 
 Ewk_Url_Request* ewk_navigation_data_original_request_get(const Ewk_Navigation_Data* data)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationData, data, impl, 0);
 
-    return data->originalRequest();
+    return impl->originalRequest();
 }
 
 const char* ewk_navigation_data_url_get(const Ewk_Navigation_Data* data)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationData, data, impl, 0);
 
-    return data->url();
+    return impl->url();
 }

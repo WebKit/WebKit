@@ -32,7 +32,7 @@
 
 using namespace WebKit;
 
-Ewk_Navigation_Policy_Decision::Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<Ewk_Url_Request> request, const char* frameName)
+Ewk_Navigation_Policy_Decision::Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<EwkUrlRequest> request, const char* frameName)
     : m_listener(listener)
     , m_actedUponByClient(false)
     , m_navigationType(navigationType)
@@ -69,7 +69,7 @@ const char* Ewk_Navigation_Policy_Decision::frameName() const
     return m_frameName;
 }
 
-Ewk_Url_Request* Ewk_Navigation_Policy_Decision::request() const
+EwkUrlRequest* Ewk_Navigation_Policy_Decision::request() const
 {
     return m_request.get();
 }

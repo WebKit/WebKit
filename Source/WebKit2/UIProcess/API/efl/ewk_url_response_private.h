@@ -29,21 +29,24 @@
 #include "WKAPICast.h"
 #include "WKEinaSharedString.h"
 #include "WKURLResponse.h"
+#include "ewk_object_private.h"
 #include <WebCore/ResourceResponse.h>
 #include <wtf/PassRefPtr.h>
 
 /**
- * \struct  Ewk_Url_Response
+ * \struct  EwkUrlResponse
  * @brief   Contains the URL response data.
  */
-class Ewk_Url_Response : public RefCounted<Ewk_Url_Response> {
+class EwkUrlResponse : public Ewk_Object {
 public:
-    static PassRefPtr<Ewk_Url_Response> create(WKURLResponseRef wkResponse)
+    EWK_OBJECT_DECLARE(EwkUrlResponse)
+
+    static PassRefPtr<EwkUrlResponse> create(WKURLResponseRef wkResponse)
     {
         if (!wkResponse)
             return 0;
 
-        return adoptRef(new Ewk_Url_Response(WebKit::toImpl(wkResponse)->resourceResponse()));
+        return adoptRef(new EwkUrlResponse(WebKit::toImpl(wkResponse)->resourceResponse()));
     }
 
     int httpStatusCode() const;
@@ -52,7 +55,7 @@ public:
     unsigned long contentLength() const;
 
 private:
-    explicit Ewk_Url_Response(const WebCore::ResourceResponse& coreResponse);
+    explicit EwkUrlResponse(const WebCore::ResourceResponse& coreResponse);
 
     WebCore::ResourceResponse m_coreResponse;
     WKEinaSharedString m_url;

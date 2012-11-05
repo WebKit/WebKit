@@ -1,3 +1,72 @@
+2012-11-05  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Make Ewk_Url_Request, Ewk_Url_Response, Ewk_Navigation_Data  Ewk_Objects
+        https://bugs.webkit.org/show_bug.cgi?id=101205
+
+        Reviewed by Gyuyoung Kim.
+
+        Ewk_Url_Request, Ewk_Url_Response, Ewk_Navigation_Data are using common Ewk_Object interface now.
+
+        * UIProcess/API/efl/EwkViewImpl.h:
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (Ewk_Download_Job::request):
+        (Ewk_Download_Job::response):
+        (Ewk_Download_Job::setResponse):
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        (Ewk_Download_Job):
+        * UIProcess/API/efl/ewk_navigation_data.cpp:
+        (EwkNavigationData::EwkNavigationData):
+        (EwkNavigationData::originalRequest):
+        (EwkNavigationData::title):
+        (EwkNavigationData::url):
+        (ewk_navigation_data_title_get):
+        (ewk_navigation_data_original_request_get):
+        (ewk_navigation_data_url_get):
+        * UIProcess/API/efl/ewk_navigation_data.h:
+        * UIProcess/API/efl/ewk_navigation_data_private.h:
+        (EwkNavigationData):
+        (EwkNavigationData::create):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (Ewk_Navigation_Policy_Decision::Ewk_Navigation_Policy_Decision):
+        (Ewk_Navigation_Policy_Decision::request):
+        * UIProcess/API/efl/ewk_navigation_policy_decision_private.h:
+        (Ewk_Navigation_Policy_Decision::create):
+        (Ewk_Navigation_Policy_Decision):
+        * UIProcess/API/efl/ewk_url_request.cpp:
+        (EwkUrlRequest::EwkUrlRequest):
+        (EwkUrlRequest::url):
+        (EwkUrlRequest::firstParty):
+        (EwkUrlRequest::httpMethod):
+        (ewk_url_request_url_get):
+        (ewk_request_cookies_first_party_get):
+        (ewk_url_request_http_method_get):
+        * UIProcess/API/efl/ewk_url_request.h:
+        * UIProcess/API/efl/ewk_url_request_private.h:
+        (EwkUrlRequest):
+        (EwkUrlRequest::create):
+        * UIProcess/API/efl/ewk_url_response.cpp:
+        (EwkUrlResponse::EwkUrlResponse):
+        (EwkUrlResponse::httpStatusCode):
+        (EwkUrlResponse::url):
+        (EwkUrlResponse::mimeType):
+        (EwkUrlResponse::contentLength):
+        (ewk_url_response_url_get):
+        (ewk_url_response_status_code_get):
+        (ewk_url_response_mime_type_get):
+        (ewk_url_response_content_length_get):
+        * UIProcess/API/efl/ewk_url_response.h:
+        * UIProcess/API/efl/ewk_url_response_private.h:
+        (EwkUrlResponse):
+        (EwkUrlResponse::create):
+        * UIProcess/efl/ContextHistoryClientEfl.cpp:
+        (WebKit::ContextHistoryClientEfl::didNavigateWithNavigationData):
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::didReceiveResponse):
+        * UIProcess/efl/ResourceLoadClientEfl.cpp:
+        (WebKit::ResourceLoadClientEfl::didInitiateLoadForResource):
+        (WebKit::ResourceLoadClientEfl::didSendRequestForResource):
+        (WebKit::ResourceLoadClientEfl::didReceiveResponseForResource):
+
 2012-11-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] EWK2UnitTestBase.ewk_auth_request_cancel API test is failing after r133389

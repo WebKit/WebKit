@@ -80,8 +80,6 @@ class Ewk_Navigation_Policy_Decision;
 class Ewk_Resource;
 class Ewk_Popup_Menu;
 class Ewk_Settings;
-class Ewk_Url_Request;
-class Ewk_Url_Response;
 
 #if USE(ACCELERATED_COMPOSITING)
 typedef struct _Evas_GL_Context Evas_GL_Context;

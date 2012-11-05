@@ -99,11 +99,11 @@ Ewk_Url_Request* ewk_download_job_request_get(const Ewk_Download_Job* download)
     return download->request();
 }
 
-Ewk_Url_Request* Ewk_Download_Job::request() const
+EwkUrlRequest* Ewk_Download_Job::request() const
 {
     if (!m_request) {
         WKRetainPtr<WKURLRequestRef> wkURLRequest(AdoptWK, toAPI(WebURLRequest::create(m_downloadProxy->request()).leakRef()));
-        m_request = Ewk_Url_Request::create(wkURLRequest.get());
+        m_request = EwkUrlRequest::create(wkURLRequest.get());
     }
 
     return m_request.get();
@@ -116,7 +116,7 @@ Ewk_Url_Response* ewk_download_job_response_get(const Ewk_Download_Job* download
     return download->response();
 }
 
-Ewk_Url_Response* Ewk_Download_Job::response() const
+EwkUrlResponse* Ewk_Download_Job::response() const
 {
     return m_response.get();
 }
@@ -222,7 +222,7 @@ double Ewk_Download_Job::elapsedTime() const
  * @internal
  * Sets the URL @a response for this @a download.
  */
-void Ewk_Download_Job::setResponse(PassRefPtr<Ewk_Url_Response> response)
+void Ewk_Download_Job::setResponse(PassRefPtr<EwkUrlResponse> response)
 {
     ASSERT(response);
 

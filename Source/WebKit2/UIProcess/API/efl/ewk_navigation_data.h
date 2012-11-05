@@ -38,26 +38,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for Ewk_Navigation_Data */
-typedef struct Ewk_Navigation_Data Ewk_Navigation_Data;
-
 /**
- * Increases the reference count of the given object.
+ * Declare Ewk_Navigation_Data as Ewk_Object.
  *
- * @param data the navigation data object to increase the reference count
- *
- * @return a pointer to the object on success, @c NULL otherwise.
+ * @see Ewk_Object
  */
-EAPI Ewk_Navigation_Data *ewk_navigation_data_ref(Ewk_Navigation_Data *data);
-
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count reaches 0, the object is freed.
- *
- * @param data the navigation data object to decrease the reference count
- */
-EAPI void ewk_navigation_data_unref(Ewk_Navigation_Data *data);
+typedef struct Ewk_Object Ewk_Navigation_Data;
 
 /**
  * Returns title for this navigation data.
