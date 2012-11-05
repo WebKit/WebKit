@@ -1,3 +1,50 @@
+2012-11-05  Florin Malita  <fmalita@chromium.org>
+
+        Crash when mixing layers, foreignObjects and SVG hidden containers
+        https://bugs.webkit.org/show_bug.cgi?id=87297
+
+        Reviewed by Dirk Schulze.
+
+        * platform/chromium-mac-snowleopard/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/chromium-win/svg/foreignObject/fO-parent-display-none-expected.txt:
+        * platform/chromium-win/svg/foreignObject/fO-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/chromium-win/svg/foreignObject/fO-parent-of-parent-display-none-expected.txt:
+        * platform/chromium-win/svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/chromium/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/chromium/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/chromium/svg/foreignObject/fO-parent-display-none-expected.txt:
+        * platform/chromium/svg/foreignObject/fO-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/chromium/svg/foreignObject/fO-parent-of-parent-display-none-expected.txt:
+        * platform/chromium/svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/efl/svg/foreignObject/fO-parent-display-none-expected.txt:
+        * platform/efl/svg/foreignObject/fO-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/efl/svg/foreignObject/fO-parent-of-parent-display-none-expected.txt:
+        * platform/efl/svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/gtk/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/gtk/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/gtk/svg/foreignObject/fO-parent-display-none-expected.txt:
+        * platform/gtk/svg/foreignObject/fO-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/gtk/svg/foreignObject/fO-parent-of-parent-display-none-expected.txt:
+        * platform/gtk/svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/mac/svg/foreignObject/fO-parent-display-none-expected.txt:
+        * platform/mac/svg/foreignObject/fO-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/mac/svg/foreignObject/fO-parent-of-parent-display-none-expected.txt:
+        * platform/mac/svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/qt/svg/foreignObject/fO-parent-display-none-expected.txt:
+        * platform/qt/svg/foreignObject/fO-parent-display-none-with-relative-pos-content-expected.txt:
+        * platform/qt/svg/foreignObject/fO-parent-of-parent-display-none-expected.txt:
+        * platform/qt/svg/foreignObject/fO-parent-of-parent-display-none-with-relative-pos-content-expected.txt:
+        * svg/custom/use-on-g-containing-foreignObject-and-image-expected.txt:
+        * svg/foreignObject/foreign-object-defs-crash-expected.txt: Added.
+        * svg/foreignObject/foreign-object-defs-crash.svg: Added.
+        * svg/foreignObject/text-tref-02-b-expected.txt:
+
 2012-11-05  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Mark several compositing tests as only failing Image

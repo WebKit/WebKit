@@ -1,3 +1,23 @@
+2012-11-05  Florin Malita  <fmalita@chromium.org>
+
+        Crash when mixing layers, foreignObjects and SVG hidden containers
+        https://bugs.webkit.org/show_bug.cgi?id=87297
+
+        Reviewed by Dirk Schulze.
+
+        Foreign objects may introduce content which requires layers, but layer creation is
+        suppressed within RenderSVGHiddenContainer subtrees and this yields an inconsistent render
+        tree state. This patch prevents foreignObject renderer instantiation under
+        RenderSVGHiddenContainers.
+
+        Test: svg/foreignObject/foreign-object-defs-crash.svg
+
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::rendererIsNeeded):
+        (WebCore):
+        * svg/SVGForeignObjectElement.h:
+        (SVGForeignObjectElement):
+
 2012-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Remove the unused m_fixedPositionedElements from RenderView

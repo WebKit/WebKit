@@ -148,6 +148,24 @@ bool SVGForeignObjectElement::childShouldCreateRenderer(const NodeRenderingConte
     return StyledElement::childShouldCreateRenderer(childContext);
 }
 
+bool SVGForeignObjectElement::rendererIsNeeded(const NodeRenderingContext& context)
+{
+    // Suppress foreignObject renderers in SVG hidden containers.
+    // (https://bugs.webkit.org/show_bug.cgi?id=87297)
+    // Note that we currently do not support foreignObject instantiation via <use>, hence it is safe
+    // to use parentElement() here. If that changes, this method should be updated to use
+    // parentOrHostElement() instead.
+    Element* ancestor = parentElement();
+    while (ancestor && ancestor->isSVGElement()) {
+        if (ancestor->renderer() && ancestor->renderer()->isSVGHiddenContainer())
+            return false;
+
+        ancestor = ancestor->parentElement();
+    }
+
+    return SVGStyledTransformableElement::rendererIsNeeded(context);
+}
+
 bool SVGForeignObjectElement::selfHasRelativeLengths() const
 {
     return x().isRelative()
