@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (8,0) size 89x19
           RenderText at (0,0) size 89x13
             text run at (0,0) width 89: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"
-      RenderBR {BR} at (109,49) size 0x0
+      RenderBR {BR} at (108,49) size 1x0
       RenderInline {SPAN} at (0,0) size 122x18
         RenderText {#text} at (0,59) size 122x18
           text run at (0,59) width 122: "\x{915}\x{93F}\x{938}\x{940} \x{92D}\x{940} \x{924}\x{930}\x{939} \x{906}\x{917}\x{947} \x{92C}"

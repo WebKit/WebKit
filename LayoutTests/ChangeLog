@@ -1,3 +1,20 @@
+2012-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline some Lion results that were affected by enabling subpixel layout.
+        
+        * platform/mac-lion/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/mac-lion/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/mac-lion/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/mac-lion/fast/text/international/hindi-spacing-expected.txt:
+        * platform/mac-lion/fast/text/international/vertical-text-glyph-test-expected.txt:
+        * platform/mac-lion/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+        * platform/mac-lion/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt:
+        * platform/mac-lion/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt:
+        * platform/mac-lion/fast/writing-mode/vertical-font-fallback-expected.txt:
+
 2012-11-05  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Mark css3/filters/custom/custom-filter-animation.html
