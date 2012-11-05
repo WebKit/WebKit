@@ -1,3 +1,11 @@
+2012-11-05  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Fix broken comment in WK2 TestExpectations
+
+        Unreviewed fix, just an obviously missing '#' character.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2012-11-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         fast/events/popup-allowed-from-gesture-initiated-event.html is flaky

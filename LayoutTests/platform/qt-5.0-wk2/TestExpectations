@@ -367,7 +367,7 @@ webkit.org/b/100490 compositing/tiling/tile-cache-zoomed.html
 # [Qt][WK2]New compositing/repaint/invalidations-on-composited-layers.html fails
 webkit.org/b/101165 compositing/repaint/invalidations-on-composited-layers.html
 
-[Qt][WK2] New compositing/tiling tests fail
+#[Qt][WK2] New compositing/tiling tests fail
 webkit.org/b/101166 compositing/tiling/rotated-tiled-clamped.html
 webkit.org/b/101166 compositing/tiling/rotated-tiled-preserve3d-clamped.html
 
