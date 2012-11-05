@@ -28,7 +28,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
-#include "PageClientImpl.h"
+#include "PageClientBase.h"
 #include "PageLoadClientEfl.h"
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
@@ -392,8 +392,8 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
             impl->createGLSurface(IntSize(width, height));
         }
 #endif
-#if USE(COORDINATED_GRAPHICS)
-        impl->pageViewportControllerClient()->updateViewportSize(IntSize(width, height));
+#if USE(TILED_BACKING_STORE)
+        impl->pageClient()->updateViewportSize(IntSize(width, height));
 #endif
     }
 }
@@ -494,7 +494,7 @@ static inline Evas_Smart* createEwkViewSmartClass(void)
     return smart;
 }
 
-static inline Evas_Object* createEwkView(Evas* canvas, Evas_Smart* smart, PassRefPtr<Ewk_Context> context, WKPageGroupRef pageGroupRef = 0)
+static inline Evas_Object* createEwkView(Evas* canvas, Evas_Smart* smart, PassRefPtr<Ewk_Context> context, WKPageGroupRef pageGroupRef = 0, EwkViewImpl::ViewBehavior behavior = EwkViewImpl::DefaultBehavior)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smart, 0);
@@ -511,8 +511,7 @@ static inline Evas_Object* createEwkView(Evas* canvas, Evas_Smart* smart, PassRe
 
     ASSERT(!smartData->priv);
     RefPtr<WebPageGroup> pageGroup = pageGroupRef ? toImpl(pageGroupRef) : WebPageGroup::create();
-    smartData->priv = new EwkViewImpl(ewkView, context, pageGroup);
-
+    smartData->priv = new EwkViewImpl(ewkView, context, pageGroup, behavior);
     return ewkView;
 }
 
@@ -522,7 +521,7 @@ static inline Evas_Object* createEwkView(Evas* canvas, Evas_Smart* smart, PassRe
  */
 Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
-    return createEwkView(canvas, createEwkViewSmartClass(), Ewk_Context::create(contextRef), pageGroupRef);
+    return createEwkView(canvas, createEwkViewSmartClass(), Ewk_Context::create(contextRef), pageGroupRef, EwkViewImpl::LegacyBehavior);
 }
 
 Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* context)

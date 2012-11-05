@@ -82,7 +82,9 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/efl/FormClientEfl.cpp
     UIProcess/efl/InputMethodContextEfl.cpp
     UIProcess/efl/NetworkInfoProvider.cpp
-    UIProcess/efl/PageClientImpl.cpp
+    UIProcess/efl/PageClientBase.cpp
+    UIProcess/efl/PageClientLegacyImpl.cpp
+    UIProcess/efl/PageClientDefaultImpl.cpp
     UIProcess/efl/PageLoadClientEfl.cpp
     UIProcess/efl/PagePolicyClientEfl.cpp
     UIProcess/efl/PageUIClientEfl.cpp

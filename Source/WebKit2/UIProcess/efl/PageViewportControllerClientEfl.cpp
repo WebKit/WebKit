@@ -64,7 +64,6 @@ void PageViewportControllerClientEfl::setRendererActive(bool active)
 void PageViewportControllerClientEfl::updateViewportSize(const IntSize& viewportSize)
 {
     m_viewportSize = viewportSize;
-    m_viewImpl->page()->setViewportSize(viewportSize);
 
     ASSERT(m_controller);
     m_controller->didChangeViewportSize(viewportSize);
@@ -79,21 +78,26 @@ void PageViewportControllerClientEfl::setVisibleContentsRect(const IntPoint& new
     m_controller->didChangeContentsVisibility(m_scrollPosition, m_scaleFactor, trajectory);
 }
 
-void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& size)
+void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize&)
 {
     m_viewImpl->update();
 }
 
 void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPoint& contentsPoint)
 {
-    setVisibleContentsRect(IntPoint(contentsPoint.x(), contentsPoint.y()), m_scaleFactor, FloatPoint());
+    IntPoint position(contentsPoint.x(), contentsPoint.y());
+    setVisibleContentsRect(position, m_scaleFactor, FloatPoint());
+    m_viewImpl->setScrollPosition(position);
 }
 
 void PageViewportControllerClientEfl::setContentsScale(float newScale, bool treatAsInitialValue)
 {
-    if (treatAsInitialValue)
+    if (treatAsInitialValue) {
         m_scrollPosition = IntPoint();
+        m_viewImpl->setScrollPosition(IntPoint());
+    }
     m_scaleFactor = newScale;
+    m_viewImpl->setScaleFactor(newScale);
 }
 
 void PageViewportControllerClientEfl::didResumeContent()

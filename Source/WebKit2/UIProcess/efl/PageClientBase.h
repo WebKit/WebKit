@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageClientImpl_h
-#define PageClientImpl_h
+#ifndef PageClientBase_h
+#define PageClientBase_h
 
 #include "DefaultUndoController.h"
 #include "PageClient.h"
@@ -34,23 +34,19 @@ class EwkViewImpl;
 
 namespace WebKit {
 
-class PageViewportController;
-
-class PageClientImpl : public PageClient {
+class PageClientBase : public PageClient {
 public:
-    static PassOwnPtr<PageClientImpl> create(EwkViewImpl* viewImpl)
-    {
-        return adoptPtr(new PageClientImpl(viewImpl));
-    }
-    ~PageClientImpl();
+    virtual ~PageClientBase();
+
+    // Called from the view
+    virtual void didCommitLoad() = 0;
+    virtual void updateViewportSize(const WebCore::IntSize&) = 0;
+    virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;
 
     EwkViewImpl* viewImpl() const;
-#if USE(TILED_BACKING_STORE)
-    void setPageViewportController(PageViewportController* controller) { m_pageViewportController = controller; }
-#endif
 
-private:
-    explicit PageClientImpl(EwkViewImpl*);
+protected:
+    explicit PageClientBase(EwkViewImpl*);
 
     // PageClient
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
@@ -71,7 +67,7 @@ private:
 
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);
-    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);
+    virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&) = 0;
 
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
@@ -116,24 +112,16 @@ private:
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned);
 
 #if USE(TILED_BACKING_STORE)
-    virtual void pageDidRequestScroll(const WebCore::IntPoint&);
+    virtual void pageDidRequestScroll(const WebCore::IntPoint&) = 0;
+    virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect) = 0;
+    virtual void pageTransitionViewportReady() = 0;
 #endif
 
-    virtual void didChangeContentsSize(const WebCore::IntSize&);
-
-#if USE(TILED_BACKING_STORE)
-    virtual void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
-    virtual void pageTransitionViewportReady();
-#endif
-
-private:
+protected:
     EwkViewImpl* m_viewImpl;
     DefaultUndoController m_undoController;
-#if USE(TILED_BACKING_STORE)
-    PageViewportController* m_pageViewportController;
-#endif
 };
 
 } // namespace WebKit
 
-#endif // PageClientImpl_h
+#endif // PageClientBase_h

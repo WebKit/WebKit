@@ -29,7 +29,7 @@
 #include "EwkViewImpl.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NotImplemented.h"
-#include "PageClientImpl.h"
+#include "PageClientBase.h"
 #include "WebKitVersion.h"
 #include "WebPageMessages.h"
 #include "WebProcessProxy.h"
@@ -40,7 +40,7 @@ namespace WebKit {
 
 Evas_Object* WebPageProxy::viewWidget()
 {
-    return static_cast<PageClientImpl*>(m_pageClient)->viewImpl()->view();
+    return static_cast<PageClientBase*>(m_pageClient)->viewImpl()->view();
 }
 
 String WebPageProxy::standardUserAgent(const String& /*applicationNameForUserAgent*/)

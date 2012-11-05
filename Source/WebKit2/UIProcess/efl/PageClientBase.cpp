@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "PageClientImpl.h"
+#include "PageClientBase.h"
 
 #include "DrawingAreaProxyImpl.h"
 #include "EwkViewImpl.h"
@@ -44,78 +44,74 @@
 #include "ewk_private.h"
 #include "ewk_view.h"
 
-#if USE(TILED_BACKING_STORE)
-#include "PageViewportController.h"
-#endif
-
 using namespace WebCore;
 using namespace EwkViewCallbacks;
 
 namespace WebKit {
 
-PageClientImpl::PageClientImpl(EwkViewImpl* viewImpl)
+PageClientBase::PageClientBase(EwkViewImpl* viewImpl)
     : m_viewImpl(viewImpl)
 {
 }
 
-PageClientImpl::~PageClientImpl()
+PageClientBase::~PageClientBase()
 {
 }
 
-EwkViewImpl* PageClientImpl::viewImpl() const
+EwkViewImpl* PageClientBase::viewImpl() const
 {
     return m_viewImpl;
 }
 
 // PageClient
-PassOwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
+PassOwnPtr<DrawingAreaProxy> PageClientBase::createDrawingAreaProxy()
 {
     return DrawingAreaProxyImpl::create(m_viewImpl->page());
 }
 
-void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
+void PageClientBase::setViewNeedsDisplay(const WebCore::IntRect& rect)
 {
     m_viewImpl->update(rect);
 }
 
-void PageClientImpl::displayView()
+void PageClientBase::displayView()
 {
     notImplemented();
 }
 
-void PageClientImpl::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize&)
+void PageClientBase::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize&)
 {
     setViewNeedsDisplay(scrollRect);
 }
 
-WebCore::IntSize PageClientImpl::viewSize()
+WebCore::IntSize PageClientBase::viewSize()
 {
     return m_viewImpl->size();
 }
 
-bool PageClientImpl::isViewWindowActive()
+bool PageClientBase::isViewWindowActive()
 {
     notImplemented();
     return true;
 }
 
-bool PageClientImpl::isViewFocused()
+bool PageClientBase::isViewFocused()
 {
     return m_viewImpl->isFocused();
 }
 
-bool PageClientImpl::isViewVisible()
+bool PageClientBase::isViewVisible()
 {
     return m_viewImpl->isVisible();
 }
 
-bool PageClientImpl::isViewInWindow()
+bool PageClientBase::isViewInWindow()
 {
     notImplemented();
     return true;
 }
 
-void PageClientImpl::processDidCrash()
+void PageClientBase::processDidCrash()
 {
     // Check if loading was ongoing, when web process crashed.
     double loadProgress = ewk_view_load_progress_get(m_viewImpl->view());
@@ -136,19 +132,19 @@ void PageClientImpl::processDidCrash()
     }
 }
 
-void PageClientImpl::didRelaunchProcess()
+void PageClientBase::didRelaunchProcess()
 {
     const char* themePath = m_viewImpl->themePath();
     if (themePath)
         m_viewImpl->page()->setThemePath(themePath);
 }
 
-void PageClientImpl::pageClosed()
+void PageClientBase::pageClosed()
 {
     notImplemented();
 }
 
-void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
+void PageClientBase::toolTipChanged(const String&, const String& newToolTip)
 {
     if (newToolTip.isEmpty())
         m_viewImpl->smartCallback<TooltipTextUnset>().call();
@@ -156,202 +152,165 @@ void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
         m_viewImpl->smartCallback<TooltipTextSet>().call(newToolTip);
 }
 
-void PageClientImpl::setCursor(const Cursor& cursor)
+void PageClientBase::setCursor(const Cursor& cursor)
 {
     m_viewImpl->setCursor(cursor);
 }
 
-void PageClientImpl::setCursorHiddenUntilMouseMoves(bool)
+void PageClientBase::setCursorHiddenUntilMouseMoves(bool)
 {
     notImplemented();
 }
 
-void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)
-{
-#if USE(TILED_BACKING_STORE)
-    m_pageViewportController->didChangeViewportAttributes(attr);
-#else
-    UNUSED_PARAM(attr);
-#endif
-}
-
-void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
+void PageClientBase::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
     m_undoController.registerEditCommand(command, undoOrRedo);
 }
 
-void PageClientImpl::clearAllEditCommands()
+void PageClientBase::clearAllEditCommands()
 {
     m_undoController.clearAllEditCommands();
 }
 
-bool PageClientImpl::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
+bool PageClientBase::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
     return m_undoController.canUndoRedo(undoOrRedo);
 }
 
-void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
+void PageClientBase::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
     m_undoController.executeUndoRedo(undoOrRedo);
 }
 
-FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& viewRect)
+FloatRect PageClientBase::convertToDeviceSpace(const FloatRect& viewRect)
 {
     notImplemented();
     return viewRect;
 }
 
-FloatRect PageClientImpl::convertToUserSpace(const FloatRect& viewRect)
+FloatRect PageClientBase::convertToUserSpace(const FloatRect& viewRect)
 {
     notImplemented();
     return viewRect;
 }
 
-IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
+IntPoint PageClientBase::screenToWindow(const IntPoint& point)
 {
     notImplemented();
     return point;
 }
 
-IntRect PageClientImpl::windowToScreen(const IntRect&)
+IntRect PageClientBase::windowToScreen(const IntRect&)
 {
     notImplemented();
     return IntRect();
 }
 
-void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
+void PageClientBase::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 {
     notImplemented();
 }
 
 #if ENABLE(TOUCH_EVENTS)
-void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent&, bool /*wasEventHandled*/)
+void PageClientBase::doneWithTouchEvent(const NativeWebTouchEvent&, bool /*wasEventHandled*/)
 {
     notImplemented();
 }
 #endif
 
-PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
+PassRefPtr<WebPopupMenuProxy> PageClientBase::createPopupMenuProxy(WebPageProxy* page)
 {
     return WebPopupMenuProxyEfl::create(m_viewImpl, page);
 }
 
-PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy*)
+PassRefPtr<WebContextMenuProxy> PageClientBase::createContextMenuProxy(WebPageProxy*)
 {
     notImplemented();
     return 0;
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-PassRefPtr<WebColorChooserProxy> PageClientImpl::createColorChooserProxy(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&)
+PassRefPtr<WebColorChooserProxy> PageClientBase::createColorChooserProxy(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&)
 {
     notImplemented();
     return 0;
 }
 #endif
 
-void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
+void PageClientBase::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
 {
     notImplemented();
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext&)
+void PageClientBase::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
     m_viewImpl->enterAcceleratedCompositingMode();
 }
 
-void PageClientImpl::exitAcceleratedCompositingMode()
+void PageClientBase::exitAcceleratedCompositingMode()
 {
     m_viewImpl->exitAcceleratedCompositingMode();
 }
 
-void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
+void PageClientBase::updateAcceleratedCompositingMode(const LayerTreeContext&)
 {
     notImplemented();
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
-void PageClientImpl::didChangeScrollbarsForMainFrame() const
+void PageClientBase::didChangeScrollbarsForMainFrame() const
 {
     notImplemented();
 }
 
-void PageClientImpl::didCommitLoadForMainFrame(bool)
+void PageClientBase::didCommitLoadForMainFrame(bool)
 {
     notImplemented();
 }
 
-void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const String&, const CoreIPC::DataReference&)
+void PageClientBase::didFinishLoadingDataForCustomRepresentation(const String&, const CoreIPC::DataReference&)
 {
     notImplemented();
 }
 
-double PageClientImpl::customRepresentationZoomFactor()
+double PageClientBase::customRepresentationZoomFactor()
 {
     notImplemented();
     return 0;
 }
 
-void PageClientImpl::setCustomRepresentationZoomFactor(double)
+void PageClientBase::setCustomRepresentationZoomFactor(double)
 {
     notImplemented();
 }
 
-void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
+void PageClientBase::flashBackingStoreUpdates(const Vector<IntRect>&)
 {
     notImplemented();
 }
 
-void PageClientImpl::findStringInCustomRepresentation(const String&, FindOptions, unsigned)
+void PageClientBase::findStringInCustomRepresentation(const String&, FindOptions, unsigned)
 {
     notImplemented();
 }
 
-void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned)
+void PageClientBase::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned)
 {
     notImplemented();
 }
 
-void PageClientImpl::updateTextInputState()
+void PageClientBase::updateTextInputState()
 {
     InputMethodContextEfl* inputMethodContext = m_viewImpl->inputMethodContext();
     if (inputMethodContext)
         inputMethodContext->updateTextInputState();
 }
 
-void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
+void PageClientBase::handleDownloadRequest(DownloadProxy* download)
 {
     Ewk_Context* context = m_viewImpl->ewkContext();
     context->downloadManager()->registerDownload(download, m_viewImpl);
 }
-
-#if USE(TILED_BACKING_STORE)
-void PageClientImpl::pageDidRequestScroll(const IntPoint& position)
-{
-    m_pageViewportController->pageDidRequestScroll(position);
-}
-#endif
-
-void PageClientImpl::didChangeContentsSize(const WebCore::IntSize& size)
-{
-#if USE(TILED_BACKING_STORE)
-    m_pageViewportController->didChangeContentsSize(size);
-#else
-    m_viewImpl->informContentsSizeChange(size);
-#endif
-}
-
-#if USE(TILED_BACKING_STORE)
-void PageClientImpl::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect)
-{
-    m_pageViewportController->didRenderFrame(contentsSize, coveredRect);
-}
-
-void PageClientImpl::pageTransitionViewportReady()
-{
-    m_pageViewportController->pageTransitionViewportReady();
-}
-#endif
 
 } // namespace WebKit

@@ -1,3 +1,125 @@
+2012-11-05  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2] Allow using ACCELERATED_COMPOSITING without COORDINATED_GRAPHICS
+        https://bugs.webkit.org/show_bug.cgi?id=100674
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make a distinction between calling ewk_view_base_add and ewk_view_smart_add.
+        Calling ewk_view_base_add creates a desktop style view, that does not support
+        fixed layout size, while calling ewk_view_smart_add does support fixed layout size.
+        As a result, WebKitTestRunner and the inspector window do not support
+        fixed layout size, while MiniBrowser does. This change allows many DumpAsText
+        layout tests to pass without modification, when AC is enabled.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::transformFromScene):
+        (EwkViewImpl::informLoadCommitted):
+        (EwkViewImpl::enterAcceleratedCompositingMode):
+        (EwkViewImpl::informContentsSizeChange):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebKit):
+        (EwkViewImpl):
+        (EwkViewImpl::pageClient):
+        (EwkViewImpl::setScaleFactor):
+        (EwkViewImpl::scaleFactor):
+        (EwkViewImpl::setScrollPosition):
+        (EwkViewImpl::scrollPosition):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+        (createEwkView):
+        (ewk_view_base_add):
+        * UIProcess/efl/PageClientBase.cpp: Copied from Source/WebKit2/UIProcess/efl/PageClientImpl.cpp.
+        (WebKit::PageClientBase::PageClientBase):
+        (WebKit::PageClientBase::~PageClientBase):
+        (WebKit::PageClientBase::viewImpl):
+        (WebKit::PageClientBase::createDrawingAreaProxy):
+        (WebKit::PageClientBase::setViewNeedsDisplay):
+        (WebKit::PageClientBase::displayView):
+        (WebKit::PageClientBase::scrollView):
+        (WebKit::PageClientBase::viewSize):
+        (WebKit::PageClientBase::isViewWindowActive):
+        (WebKit::PageClientBase::isViewFocused):
+        (WebKit::PageClientBase::isViewVisible):
+        (WebKit::PageClientBase::isViewInWindow):
+        (WebKit::PageClientBase::processDidCrash):
+        (WebKit::PageClientBase::didRelaunchProcess):
+        (WebKit::PageClientBase::pageClosed):
+        (WebKit::PageClientBase::toolTipChanged):
+        (WebKit::PageClientBase::setCursor):
+        (WebKit::PageClientBase::setCursorHiddenUntilMouseMoves):
+        (WebKit::PageClientBase::registerEditCommand):
+        (WebKit::PageClientBase::clearAllEditCommands):
+        (WebKit::PageClientBase::canUndoRedo):
+        (WebKit::PageClientBase::executeUndoRedo):
+        (WebKit::PageClientBase::convertToDeviceSpace):
+        (WebKit::PageClientBase::convertToUserSpace):
+        (WebKit::PageClientBase::screenToWindow):
+        (WebKit::PageClientBase::windowToScreen):
+        (WebKit::PageClientBase::doneWithKeyEvent):
+        (WebKit::PageClientBase::doneWithTouchEvent):
+        (WebKit::PageClientBase::createPopupMenuProxy):
+        (WebKit::PageClientBase::createContextMenuProxy):
+        (WebKit::PageClientBase::createColorChooserProxy):
+        (WebKit::PageClientBase::setFindIndicator):
+        (WebKit::PageClientBase::enterAcceleratedCompositingMode):
+        (WebKit::PageClientBase::exitAcceleratedCompositingMode):
+        (WebKit::PageClientBase::updateAcceleratedCompositingMode):
+        (WebKit::PageClientBase::didChangeScrollbarsForMainFrame):
+        (WebKit::PageClientBase::didCommitLoadForMainFrame):
+        (WebKit::PageClientBase::didFinishLoadingDataForCustomRepresentation):
+        (WebKit::PageClientBase::customRepresentationZoomFactor):
+        (WebKit::PageClientBase::setCustomRepresentationZoomFactor):
+        (WebKit::PageClientBase::flashBackingStoreUpdates):
+        (WebKit::PageClientBase::findStringInCustomRepresentation):
+        (WebKit::PageClientBase::countStringMatchesInCustomRepresentation):
+        (WebKit::PageClientBase::updateTextInputState):
+        (WebKit::PageClientBase::handleDownloadRequest):
+        * UIProcess/efl/PageClientBase.h: Copied from Source/WebKit2/UIProcess/efl/PageClientImpl.h.
+        (PageClientBase):
+        * UIProcess/efl/PageClientDefaultImpl.cpp: Added.
+        (WebKit):
+        (WebKit::PageClientDefaultImpl::PageClientDefaultImpl):
+        (WebKit::PageClientDefaultImpl::didCommitLoad):
+        (WebKit::PageClientDefaultImpl::updateViewportSize):
+        (WebKit::PageClientDefaultImpl::didChangeViewportProperties):
+        (WebKit::PageClientDefaultImpl::didChangeContentsSize):
+        (WebKit::PageClientDefaultImpl::pageDidRequestScroll):
+        (WebKit::PageClientDefaultImpl::didRenderFrame):
+        (WebKit::PageClientDefaultImpl::pageTransitionViewportReady):
+        * UIProcess/efl/PageClientDefaultImpl.h: Added.
+        (WebKit):
+        (PageClientDefaultImpl):
+        (WebKit::PageClientDefaultImpl::create):
+        (WebKit::PageClientDefaultImpl::~PageClientDefaultImpl):
+        * UIProcess/efl/PageClientImpl.cpp: Removed.
+        * UIProcess/efl/PageClientImpl.h: Removed.
+        * UIProcess/efl/PageClientLegacyImpl.cpp: Added.
+        (WebKit):
+        (WebKit::PageClientLegacyImpl::PageClientLegacyImpl):
+        (WebKit::PageClientLegacyImpl::didCommitLoad):
+        (WebKit::PageClientLegacyImpl::updateViewportSize):
+        (WebKit::PageClientLegacyImpl::didChangeViewportProperties):
+        (WebKit::PageClientLegacyImpl::didChangeContentsSize):
+        (WebKit::PageClientLegacyImpl::pageDidRequestScroll):
+        (WebKit::PageClientLegacyImpl::didRenderFrame):
+        (WebKit::PageClientLegacyImpl::pageTransitionViewportReady):
+        * UIProcess/efl/PageClientLegacyImpl.h: Added.
+        (WebKit):
+        (PageClientLegacyImpl):
+        (WebKit::PageClientLegacyImpl::create):
+        (WebKit::PageClientLegacyImpl::~PageClientLegacyImpl):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::updateViewportSize):
+        (WebKit::PageViewportControllerClientEfl::didChangeContentsSize):
+        (WebKit::PageViewportControllerClientEfl::setViewportPosition):
+        (WebKit::PageViewportControllerClientEfl::setContentsScale):
+        * UIProcess/efl/PageViewportControllerClientEfl.h:
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::viewWidget):
+
 2012-11-05  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Make Ewk_Url_Request, Ewk_Url_Response, Ewk_Navigation_Data  Ewk_Objects

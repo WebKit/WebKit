@@ -28,7 +28,7 @@
 
 #if USE(TILED_BACKING_STORE)
 
-#include "PageClientImpl.h"
+#include "PageClientBase.h"
 #include "PageViewportControllerClient.h"
 #include <wtf/PassOwnPtr.h>
 

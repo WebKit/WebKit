@@ -27,12 +27,12 @@
 #include "InputMethodContextEfl.h"
 #include "LayerTreeCoordinatorProxy.h"
 #include "LayerTreeRenderer.h"
-#include "PageClientImpl.h"
+#include "PageClientBase.h"
+#include "PageClientDefaultImpl.h"
+#include "PageClientLegacyImpl.h"
 #include "PageLoadClientEfl.h"
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
-#include "PageViewportController.h"
-#include "PageViewportControllerClientEfl.h"
 #include "ResourceLoadClientEfl.h"
 #include "WKString.h"
 #include "WebContext.h"
@@ -96,10 +96,10 @@ const Evas_Object* EwkViewImpl::viewFromPageViewMap(const WKPageRef page)
     return pageViewMap().get(page);
 }
 
-EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, PassRefPtr<WebPageGroup> pageGroup)
+EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, PassRefPtr<WebPageGroup> pageGroup, ViewBehavior behavior)
     : m_view(view)
     , m_context(context)
-    , m_pageClient(PageClientImpl::create(this))
+    , m_pageClient(behavior == DefaultBehavior ? PageClientDefaultImpl::create(this) : PageClientLegacyImpl::create(this))
     , m_pageProxy(toImpl(m_context->wkContext())->createWebPage(m_pageClient.get(), pageGroup.get()))
     , m_pageLoadClient(PageLoadClientEfl::create(this))
     , m_pagePolicyClient(PagePolicyClientEfl::create(this))
@@ -109,8 +109,7 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, Pas
     , m_formClient(FormClientEfl::create(this))
     , m_backForwardList(Ewk_Back_Forward_List::create(toAPI(m_pageProxy->backForwardList())))
 #if USE(TILED_BACKING_STORE)
-    , m_pageViewportControllerClient(PageViewportControllerClientEfl::create(this))
-    , m_pageViewportController(adoptPtr(new PageViewportController(m_pageProxy.get(), m_pageViewportControllerClient.get())))
+    , m_scaleFactor(1)
 #endif
     , m_settings(Ewk_Settings::create(this))
     , m_cursorGroup(0)
@@ -131,14 +130,11 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, Pas
 #if ENABLE(WEBGL)
     m_pageProxy->pageGroup()->preferences()->setWebGLEnabled(true);
 #endif
-    m_pageProxy->setUseFixedLayout(true);
+    if (behavior == DefaultBehavior)
+        m_pageProxy->setUseFixedLayout(true);
 #endif
 
     m_pageProxy->initializeWebPage();
-
-#if USE(TILED_BACKING_STORE)
-    m_pageClient->setPageViewportController(m_pageViewportController.get());
-#endif
 
 #if ENABLE(FULLSCREEN_API)
     m_pageProxy->fullScreenManager()->setWebView(m_view);
@@ -245,9 +241,8 @@ AffineTransform EwkViewImpl::transformFromScene() const
     AffineTransform transform;
 
 #if USE(TILED_BACKING_STORE)
-    IntPoint scrollPos = pageViewportControllerClient()->scrollPosition();
-    transform.translate(scrollPos.x(), scrollPos.y());
-    transform.scale(1 / pageViewportControllerClient()->scaleFactor());
+    transform.translate(m_scrollPosition.x(), m_scrollPosition.y());
+    transform.scale(1 / m_scaleFactor);
 #endif
 
     Ewk_View_Smart_Data* sd = smartData();
@@ -370,7 +365,7 @@ void EwkViewImpl::setImageData(void* imageData, const IntSize& size)
 #if USE(TILED_BACKING_STORE)
 void EwkViewImpl::informLoadCommitted()
 {
-    m_pageViewportController->didCommitLoad();
+    m_pageClient->didCommitLoad();
 }
 #endif
 
@@ -559,7 +554,7 @@ bool EwkViewImpl::enterAcceleratedCompositingMode()
         return false;
     }
 
-    m_pageViewportControllerClient->setRendererActive(true);
+    page()->drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer()->setActive(true);
     return true;
 }
 
@@ -618,7 +613,7 @@ void EwkViewImpl::dismissColorPicker()
 void EwkViewImpl::informContentsSizeChange(const IntSize& size)
 {
 #if USE(COORDINATED_GRAPHICS)
-    m_pageViewportControllerClient->didChangeContentsSize(size);
+    m_pageClient->didChangeContentsSize(size);
 #else
     UNUSED_PARAM(size);
 #endif
