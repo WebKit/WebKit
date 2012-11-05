@@ -1,3 +1,10 @@
+2012-11-05  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Mark css3/filters/custom/custom-filter-animation.html
+        as timing out intermittently.  Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-05  David Barton  <dbarton@mathscribe.com>
 
         Implement SimpleFontData::platformBoundsForGlyph on skia

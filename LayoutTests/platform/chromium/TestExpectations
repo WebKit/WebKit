@@ -99,6 +99,9 @@ webkit.org/b/66989 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Fail
 # The test has been timing out since landed in r130587.
 webkit.org/b/98659 [ Debug ] fast/dom/gc-dom-tree-lifetime.html [ Pass Timeout ]
 
+# Has been timing out intermittently for a long time.
+webkit.org/b/101236 [ Debug ] css3/filters/custom/custom-filter-animation.html [ Pass Timeout ]
+
 # -----------------------------------------------------------------
 # TEMPORARILY SKIPPED TESTS
 # -----------------------------------------------------------------
