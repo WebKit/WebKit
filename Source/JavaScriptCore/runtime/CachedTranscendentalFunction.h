@@ -74,8 +74,8 @@ private:
         // Lazily allocate the table, populate with NaN->NaN mapping.
         m_cache = static_cast<CacheEntry*>(fastMalloc(s_cacheSize * sizeof(CacheEntry)));
         for (unsigned x = 0; x < s_cacheSize; ++x) {
-            m_cache[x].operand = std::numeric_limits<double>::quiet_NaN();
-            m_cache[x].result = std::numeric_limits<double>::quiet_NaN();
+            m_cache[x].operand = QNaN;
+            m_cache[x].result = QNaN;
         }
     }
 

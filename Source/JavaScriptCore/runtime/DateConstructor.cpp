@@ -131,7 +131,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
             || (numArgs >= 5 && !isfinite(doubleArguments[4]))
             || (numArgs >= 6 && !isfinite(doubleArguments[5]))
             || (numArgs >= 7 && !isfinite(doubleArguments[6])))
-            value = std::numeric_limits<double>::quiet_NaN();
+            value = QNaN;
         else {
             GregorianDateTime t;
             int year = JSC::toInt32(doubleArguments[0]);

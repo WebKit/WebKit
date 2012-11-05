@@ -2416,7 +2416,7 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(const TypedArrayDescriptor
     case 8: {
         m_jit.loadDouble(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), resultReg);
         MacroAssembler::Jump notNaN = m_jit.branchDouble(MacroAssembler::DoubleEqual, resultReg, resultReg);
-        static const double NaN = std::numeric_limits<double>::quiet_NaN();
+        static const double NaN = QNaN;
         m_jit.loadDouble(&NaN, resultReg);
         notNaN.link(&m_jit);
         break;

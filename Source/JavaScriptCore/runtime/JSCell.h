@@ -279,7 +279,7 @@ namespace JSC {
             return true;
         }
         ASSERT(isUndefined());
-        number = std::numeric_limits<double>::quiet_NaN();
+        number = QNaN;
         value = *this;
         return true;
     }

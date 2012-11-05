@@ -247,7 +247,7 @@ double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateSt
     int offset;
     double ms = WTF::parseDateFromNullTerminatedCharacters(dateString, haveTZ, offset);
     if (isnan(ms))
-        return std::numeric_limits<double>::quiet_NaN();
+        return QNaN;
 
     // fall back to local timezone
     if (!haveTZ) {

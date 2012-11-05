@@ -175,7 +175,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncMax(ExecState* exec)
     for (unsigned k = 0; k < argsCount; ++k) {
         double val = exec->argument(k).toNumber(exec);
         if (isnan(val)) {
-            result = std::numeric_limits<double>::quiet_NaN();
+            result = QNaN;
             break;
         }
         if (val > result || (val == 0 && result == 0 && !signbit(val)))
@@ -191,7 +191,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncMin(ExecState* exec)
     for (unsigned k = 0; k < argsCount; ++k) {
         double val = exec->argument(k).toNumber(exec);
         if (isnan(val)) {
-            result = std::numeric_limits<double>::quiet_NaN();
+            result = QNaN;
             break;
         }
         if (val < result || (val == 0 && result == 0 && signbit(val)))

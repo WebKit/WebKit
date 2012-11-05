@@ -35,6 +35,10 @@
 
 namespace JSC {
 
+// This is used a lot throughout JavaScriptCore for everything from value boxing to marking
+// values as being missing, so it is useful to have it abbreviated.
+#define QNaN (std::numeric_limits<double>::quiet_NaN())
+
     class ExecState;
     class JSCell;
     class JSGlobalData;

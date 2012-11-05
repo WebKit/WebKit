@@ -48,7 +48,7 @@ JSValue InterruptedExecutionError::defaultValue(const JSObject*, ExecState* exec
 {
     if (hint == PreferString)
         return jsNontrivialString(exec, String(ASCIILiteral("JavaScript execution exceeded timeout.")));
-    return JSValue(std::numeric_limits<double>::quiet_NaN());
+    return JSValue(QNaN);
 }
 
 JSObject* createInterruptedExecutionException(JSGlobalData* globalData)
@@ -75,7 +75,7 @@ JSValue TerminatedExecutionError::defaultValue(const JSObject*, ExecState* exec,
 {
     if (hint == PreferString)
         return jsNontrivialString(exec, String(ASCIILiteral("JavaScript execution terminated.")));
-    return JSValue(std::numeric_limits<double>::quiet_NaN());
+    return JSValue(QNaN);
 }
 
 JSObject* createTerminatedExecutionException(JSGlobalData* globalData)

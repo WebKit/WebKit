@@ -276,7 +276,7 @@ static double parseInt(const String& s, const CharType* data, int radix)
 
     // 8.a If R < 2 or R > 36, then return NaN.
     if (radix < 2 || radix > 36)
-        return std::numeric_limits<double>::quiet_NaN();
+        return QNaN;
 
     // 13. Let mathInt be the mathematical integer value that is represented by Z in radix-R notation, using the letters
     //     A-Z and a-z for digits with values 10 through 35. (However, if R is 10 and Z contains more than 20 significant
@@ -299,7 +299,7 @@ static double parseInt(const String& s, const CharType* data, int radix)
 
     // 12. If Z is empty, return NaN.
     if (!sawDigit)
-        return std::numeric_limits<double>::quiet_NaN();
+        return QNaN;
 
     // Alternate code path for certain large numbers.
     if (number >= mantissaOverflowLowerBound) {
@@ -397,7 +397,7 @@ static double jsStrDecimalLiteral(const CharType*& data, const CharType* end)
     }
 
     // Not a number.
-    return std::numeric_limits<double>::quiet_NaN();
+    return QNaN;
 }
 
 template <typename CharType>
@@ -427,7 +427,7 @@ static double toDouble(const CharType* characters, unsigned size)
             break;
     }
     if (characters != endCharacters)
-        return std::numeric_limits<double>::quiet_NaN();
+        return QNaN;
     
     return number;
 }
@@ -443,7 +443,7 @@ double jsToNumber(const String& s)
             return c - '0';
         if (isStrWhiteSpace(c))
             return 0;
-        return std::numeric_limits<double>::quiet_NaN();
+        return QNaN;
     }
 
     if (s.is8Bit())
@@ -459,7 +459,7 @@ static double parseFloat(const String& s)
         UChar c = s[0];
         if (isASCIIDigit(c))
             return c - '0';
-        return std::numeric_limits<double>::quiet_NaN();
+        return QNaN;
     }
 
     if (s.is8Bit()) {
@@ -474,7 +474,7 @@ static double parseFloat(const String& s)
 
         // Empty string.
         if (data == end)
-            return std::numeric_limits<double>::quiet_NaN();
+            return QNaN;
 
         return jsStrDecimalLiteral(data, end);
     }
@@ -490,7 +490,7 @@ static double parseFloat(const String& s)
 
     // Empty string.
     if (data == end)
-        return std::numeric_limits<double>::quiet_NaN();
+        return QNaN;
 
     return jsStrDecimalLiteral(data, end);
 }

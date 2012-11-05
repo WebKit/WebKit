@@ -45,8 +45,8 @@ namespace JSC {
 
     private:
         DateInstanceData()
-            : m_gregorianDateTimeCachedForMS(std::numeric_limits<double>::quiet_NaN())
-            , m_gregorianDateTimeUTCCachedForMS(std::numeric_limits<double>::quiet_NaN())
+            : m_gregorianDateTimeCachedForMS(QNaN)
+            , m_gregorianDateTimeUTCCachedForMS(QNaN)
         {
         }
     };
@@ -61,7 +61,7 @@ namespace JSC {
         void reset()
         {
             for (size_t i = 0; i < cacheSize; ++i)
-                m_cache[i].key = std::numeric_limits<double>::quiet_NaN();
+                m_cache[i].key = QNaN;
         }
         
         DateInstanceData* add(double d)

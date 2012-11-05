@@ -62,7 +62,7 @@ namespace JSC {
 
     inline JSValue jsNaN()
     {
-        return JSValue(std::numeric_limits<double>::quiet_NaN());
+        return JSValue(QNaN);
     }
 
     inline JSValue::JSValue(char i)

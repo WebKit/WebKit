@@ -1,3 +1,53 @@
+2012-11-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Reduce the verbosity of referring to QNaN in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=101174
+
+        Reviewed by Geoffrey Garen.
+
+        Introduces a #define QNaN in JSValue.h, and replaces all previous uses of
+        std::numeric_limits<double>::quiet_NaN() with QNaN.
+
+        * API/JSValueRef.cpp:
+        (JSValueMakeNumber):
+        (JSValueToNumber):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        * runtime/CachedTranscendentalFunction.h:
+        (JSC::CachedTranscendentalFunction::initialize):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/DateInstanceCache.h:
+        (JSC::DateInstanceData::DateInstanceData):
+        (JSC::DateInstanceCache::reset):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::defaultValue):
+        (JSC::TerminatedExecutionError::defaultValue):
+        * runtime/JSCell.h:
+        (JSC::JSValue::getPrimitiveNumber):
+        * runtime/JSDateMath.cpp:
+        (JSC::parseDateFromNullTerminatedCharacters):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::resetDateCache):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::parseInt):
+        (JSC::jsStrDecimalLiteral):
+        (JSC::toDouble):
+        (JSC::jsToNumber):
+        (JSC::parseFloat):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::toNumberSlowCase):
+        * runtime/JSValue.h:
+        (JSC):
+        * runtime/JSValueInlineMethods.h:
+        (JSC::jsNaN):
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncMax):
+        (JSC::mathProtoFuncMin):
+
 2012-11-03  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT should use structure watchpoints whenever possible

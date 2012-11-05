@@ -170,7 +170,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, HeapType heapType)
     , sizeOfLastScratchBuffer(0)
 #endif
     , dynamicGlobalObject(0)
-    , cachedUTCOffset(std::numeric_limits<double>::quiet_NaN())
+    , cachedUTCOffset(QNaN)
     , m_enabledProfiler(0)
     , m_regExpCache(new RegExpCache(this))
 #if ENABLE(REGEXP_TRACING)
@@ -400,10 +400,10 @@ JSGlobalData::ClientData::~ClientData()
 
 void JSGlobalData::resetDateCache()
 {
-    cachedUTCOffset = std::numeric_limits<double>::quiet_NaN();
+    cachedUTCOffset = QNaN;
     dstOffsetCache.reset();
     cachedDateString = String();
-    cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
+    cachedDateStringValue = QNaN;
     dateInstanceCache.reset();
 }
 
