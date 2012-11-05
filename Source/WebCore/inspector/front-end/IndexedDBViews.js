@@ -183,7 +183,7 @@ WebInspector.IDBDataView.prototype = {
             }
             keyColumnHeaderFragment.appendChild(document.createTextNode("]"));
         } else {
-            var keyPathString = /** @type {string} */ keyPath;
+            var keyPathString = /** @type {string} */ (keyPath);
             keyColumnHeaderFragment.appendChild(this._keyPathStringFragment(keyPathString));
         }
         keyColumnHeaderFragment.appendChild(document.createTextNode(")"));

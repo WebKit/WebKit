@@ -138,7 +138,7 @@ var TypeUtils = {
         var context = TypeUtils._dummyCanvas2dContextInstance;
         if (!context) {
             var canvas = inspectedWindow.document.createElement("canvas");
-            context = /** @type {CanvasRenderingContext2D} */ Resource.wrappedObject(canvas.getContext("2d"));
+            context = /** @type {CanvasRenderingContext2D} */ (Resource.wrappedObject(canvas.getContext("2d")));
             TypeUtils._dummyCanvas2dContextInstance = context;
         }
         return context;
@@ -189,7 +189,7 @@ function StackTraceV8(stackTraceLimit, topMostFunctionToIgnore)
     if (typeof stackTraceLimit === "number")
         Error.stackTraceLimit = stackTraceLimit;
 
-    this._error = /** @type {{stack: Array}} */ {};
+    this._error = /** @type {{stack: Array}} */ ({});
     Error.captureStackTrace(this._error, topMostFunctionToIgnore || arguments.callee);
 
     Error.stackTraceLimit = oldStackTraceLimit;
@@ -413,7 +413,7 @@ Call.prototype = {
     toReplayable: function(cache)
     {
         this.freeze();
-        var thisObject = /** @type {ReplayableResource} */ Resource.toReplayable(this._thisObject, cache);
+        var thisObject = /** @type {ReplayableResource} */ (Resource.toReplayable(this._thisObject, cache));
         var result = Resource.toReplayable(this._result, cache);
         var args = this._args.map(function(obj) {
             return Resource.toReplayable(obj, cache);
@@ -679,7 +679,7 @@ Resource.prototype = {
      */
     toReplayable: function(cache)
     {
-        var result = /** @type {ReplayableResource} */ cache.get(this._id);
+        var result = /** @type {ReplayableResource} */ (cache.get(this._id));
         if (result)
             return result;
         var data = {
@@ -710,7 +710,7 @@ Resource.prototype = {
      */
     replay: function(data, cache)
     {
-        var resource = /** @type {ReplayableResource} */ cache.get(data.id);
+        var resource = /** @type {ReplayableResource} */ (cache.get(data.id));
         if (resource)
             return resource;
         this._id = data.id;
@@ -2594,7 +2594,7 @@ InjectedScript.prototype = {
             for (var i = 0, contextId; contextId = contextIds[i]; ++i) {
                 replayContext = canvas.getContext(contextId, attributes);
                 if (replayContext) {
-                    replayContext = /** @type {WebGLRenderingContext} */ Resource.wrappedObject(replayContext);
+                    replayContext = /** @type {WebGLRenderingContext} */ (Resource.wrappedObject(replayContext));
                     break;
                 }
             }
@@ -2619,7 +2619,7 @@ InjectedScript.prototype = {
     {
         // Create a new 2D context each time to start with an empty context drawing state stack (managed by save() and restore() methods).
         var canvas = originalContext.canvas.cloneNode(true);
-        var replayContext = /** @type {CanvasRenderingContext2D} */ Resource.wrappedObject(canvas.getContext("2d"));
+        var replayContext = /** @type {CanvasRenderingContext2D} */ (Resource.wrappedObject(canvas.getContext("2d")));
         this._replayContext = replayContext;
         return replayContext;
     }

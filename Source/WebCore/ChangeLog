@@ -1,3 +1,194 @@
+2012-11-05  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: Fix jscompiler cast syntax
+        https://bugs.webkit.org/show_bug.cgi?id=101066
+
+        Reviewed by Pavel Feldman.
+
+        Casts should be in the form of "/** @type {TypeName} */ (expr)" instead of "/** @type {TypeName} */ expr".
+
+        * inspector/InjectedScriptCanvasModuleSource.js:
+        (.):
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/front-end/ApplicationCacheModel.js:
+        (WebInspector.ApplicationCacheModel.prototype._frameNavigated):
+        (WebInspector.ApplicationCacheModel.prototype._frameDetached):
+        * inspector/front-end/AuditLauncherView.js:
+        (WebInspector.AuditLauncherView.prototype._onRequestStarted):
+        (WebInspector.AuditLauncherView.prototype._onRequestFinished):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype._uiSourceCodeAdded):
+        (WebInspector.BreakpointManager.prototype._uiSourceCodeFormatted):
+        (WebInspector.BreakpointManager.prototype._uiSourceCodeRemoved):
+        (WebInspector.BreakpointManager.prototype._breakpointResolved):
+        (WebInspector.BreakpointManager.Breakpoint.prototype._locationUpdated):
+        (WebInspector.BreakpointManager.Storage):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointAdded):
+        * inspector/front-end/CSSNamedFlowCollectionsView.js:
+        (WebInspector.CSSNamedFlowCollectionsView.prototype._documentUpdated):
+        (WebInspector.CSSNamedFlowCollectionsView.prototype._namedFlowCreated):
+        (WebInspector.CSSNamedFlowCollectionsView.prototype._regionLayoutUpdated):
+        (WebInspector.CSSNamedFlowCollectionsView.prototype._selectedNodeChanged):
+        * inspector/front-end/CSSSelectorProfileView.js:
+        (WebInspector.CSSProfileHeader.prototype.createView):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.LiveLocation.prototype.uiLocation):
+        (WebInspector.CSSStyleDeclaration.parseComputedStylePayload):
+        * inspector/front-end/CompilerScriptMapping.js:
+        (WebInspector.CompilerScriptMapping.prototype.rawLocationToUILocation):
+        (WebInspector.CompilerScriptMapping.prototype.loadSourceMapForScript):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._frameAdded):
+        (WebInspector.ConsoleView.prototype._frameRemoved):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMDocument):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.didSetBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpointByURL):
+        (WebInspector.DebuggerModel.prototype.):
+        (WebInspector.DebuggerModel.prototype.setBreakpointBySourceId):
+        (WebInspector.DebuggerModel.CallFrame.prototype.get location):
+        * inspector/front-end/DebuggerScriptMapping.js:
+        (WebInspector.DebuggerScriptMapping.prototype._parsedScriptSource):
+        * inspector/front-end/DirectoryContentView.js:
+        (WebInspector.DirectoryContentView.prototype._sort):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._updateBreadcrumbIfNeeded):
+        * inspector/front-end/ElementsPanelDescriptor.js:
+        (WebInspector.ElementsPanelDescriptor.prototype.appendApplicableItems):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (.get node):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onAddRequestHeaders):
+        (WebInspector.ExtensionServer.prototype._handleOpenURL):
+        (WebInspector.ExtensionServer.prototype._onGetResourceContent):
+        (WebInspector.ExtensionServer.prototype._onSetResourceContent):
+        (WebInspector.ExtensionServer.prototype._notifyResourceAdded):
+        (WebInspector.ExtensionServer.prototype._notifyUISourceCodeContentCommitted):
+        (WebInspector.ExtensionServer.prototype._notifyRequestFinished):
+        * inspector/front-end/FileContentView.js:
+        (WebInspector.FileContentView.prototype._metadataReceived):
+        (WebInspector.FileContentView.FileContentProvider.prototype.requestContent):
+        * inspector/front-end/FileSystemModel.js:
+        (WebInspector.FileSystemModel.prototype._frameAdded):
+        (WebInspector.FileSystemModel.prototype._frameNavigated):
+        (WebInspector.FileSystemModel.prototype._frameDetached):
+        * inspector/front-end/FileSystemView.js:
+        (WebInspector.FileSystemView.EntryTreeElement.prototype.onselect):
+        (WebInspector.FileSystemView.EntryTreeElement.prototype.refresh):
+        * inspector/front-end/HandlerRegistry.js:
+        (WebInspector.HandlerRegistry.prototype._appendHrefItems):
+        * inspector/front-end/HeapSnapshotLoader.js:
+        (WebInspector.HeapSnapshotLoader.prototype.write):
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapSnapshotView.prototype._changeBase):
+        (WebInspector.HeapProfileHeader.prototype.load):
+        (WebInspector.HeapProfileHeader.prototype._snapshotReceived):
+        * inspector/front-end/IndexedDBModel.js:
+        (WebInspector.IndexedDBModel.prototype._frameNavigated):
+        (WebInspector.IndexedDBModel.prototype._frameDetached):
+        * inspector/front-end/IndexedDBViews.js:
+        (WebInspector.IDBDataView.prototype._keyColumnHeaderFragment):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype._onFormattedChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype._breakpointAdded):
+        (WebInspector.JavaScriptSourceFrame.prototype._breakpointRemoved):
+        (WebInspector.JavaScriptSourceFrame.prototype._consoleMessageAdded):
+        (WebInspector.JavaScriptSourceFrame.prototype._consoleMessageRemoved):
+        (WebInspector.JavaScriptSourceFrame.prototype._handleGutterClick):
+        (WebInspector.JavaScriptSourceFrame.prototype._continueToLine):
+        * inspector/front-end/MemoryStatistics.js:
+        (WebInspector.MemoryStatistics.prototype.show):
+        * inspector/front-end/NavigatorView.js:
+        (WebInspector.NavigatorView.prototype._uiSourceCodeTitleChanged):
+        (WebInspector.NavigatorView.prototype._uiSourceCodeWorkingCopyChanged):
+        (WebInspector.NavigatorView.prototype._uiSourceCodeWorkingCopyCommitted):
+        (WebInspector.NavigatorView.prototype._uiSourceCodeFormattedChanged):
+        * inspector/front-end/NetworkLog.js:
+        (WebInspector.NetworkLog.prototype._onRequestStarted):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype._cacheDisabledSettingChanged):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._onRequestUpdated):
+        (WebInspector.NetworkLogView.prototype._mainFrameNavigated):
+        (WebInspector.NetworkPanel.prototype.reveal):
+        (WebInspector.NetworkPanel.prototype.appendApplicableItems):
+        * inspector/front-end/NetworkUISourceCodeProvider.js:
+        (WebInspector.NetworkUISourceCodeProvider.prototype._parsedScriptSource):
+        (WebInspector.NetworkUISourceCodeProvider.prototype._resourceAdded):
+        * inspector/front-end/ObjectPopoverHelper.js:
+        (WebInspector.ObjectPopoverHelper.prototype.):
+        (WebInspector.ObjectPopoverHelper.prototype._showObjectPopover):
+        * inspector/front-end/PresentationConsoleMessageHelper.js:
+        (WebInspector.PresentationConsoleMessageHelper.prototype._consoleMessageAdded):
+        (WebInspector.PresentationConsoleMessageHelper.prototype._parsedScriptSource):
+        * inspector/front-end/ProfilesPanel.js:
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptMapping.prototype.rawLocationToUILocation):
+        (WebInspector.ResourceScriptMapping.prototype._uiSourceCodeAddedToWorkspace):
+        (WebInspector.ResourceScriptFile.prototype._workingCopyCommitted):
+        (WebInspector.ResourceScriptFile.prototype._workingCopyChanged):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._onRequestFinished):
+        (WebInspector.ResourceTreeModel.prototype._consoleMessageAdded):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._databaseAdded):
+        (WebInspector.ResourcesPanel.prototype._domStorageAdded):
+        (WebInspector.IndexedDBTreeElement.prototype._indexedDBAdded):
+        (WebInspector.IndexedDBTreeElement.prototype._indexedDBRemoved):
+        (WebInspector.IndexedDBTreeElement.prototype._indexedDBLoaded):
+        (WebInspector.FileSystemListTreeElement.prototype._fileSystemAdded):
+        (WebInspector.FileSystemListTreeElement.prototype._fileSystemRemoved):
+        (WebInspector.FileSystemListTreeElement.prototype._fileSystemTreeElementByName):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype._traverseNext):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype._traversePrevious):
+        * inspector/front-end/RevisionHistoryView.js:
+        (WebInspector.RevisionHistoryView.prototype._uiSourceCodeRemoved):
+        * inspector/front-end/SASSSourceMapping.js:
+        (rawLocationToUILocation):
+        * inspector/front-end/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane.prototype.update):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.Location.prototype.uiLocation):
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.prototype.get _worker):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeAdded):
+        (WebInspector.ScriptsPanel.prototype._uiSourceCodeRemoved):
+        (WebInspector.ScriptsPanel.prototype._editorClosed):
+        (WebInspector.ScriptsPanel.prototype._editorSelected):
+        (WebInspector.ScriptsPanel.prototype._scriptSelected):
+        (WebInspector.ScriptsPanel.prototype.canSearchAndReplace):
+        (WebInspector.ScriptsPanel.prototype.replaceSelectionWith):
+        (WebInspector.ScriptsPanel.prototype.replaceAllWith):
+        (WebInspector.ScriptsPanel.prototype._toggleBreakpoint):
+        (WebInspector.ScriptsPanel.prototype.set _fileRenamed):
+        (WebInspector.ScriptsPanel.prototype._appendUISourceCodeItems):
+        * inspector/front-end/ScriptsPanelDescriptor.js:
+        (WebInspector.ScriptsPanelDescriptor.prototype.appendApplicableItems):
+        * inspector/front-end/StylesSourceMapping.js:
+        (WebInspector.StylesSourceMapping.prototype.rawLocationToUILocation):
+        (WebInspector.StylesSourceMapping.prototype._uiSourceCodeAddedToWorkspace):
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer.prototype._scrollChanged):
+        (WebInspector.TabbedEditorContainer.prototype._selectionChanged):
+        (WebInspector.TabbedEditorContainer.prototype._tabClosed):
+        (WebInspector.TabbedEditorContainer.prototype._tabSelected):
+        (WebInspector.TabbedEditorContainer.prototype._uiSourceCodeTitleChanged):
+        (WebInspector.TabbedEditorContainer.prototype._uiSourceCodeWorkingCopyChanged):
+        (WebInspector.TabbedEditorContainer.prototype._uiSourceCodeWorkingCopyCommitted):
+        (WebInspector.TabbedEditorContainer.prototype._uiSourceCodeFormattedChanged):
+        * inspector/front-end/TimelineModel.js:
+        (WebInspector.TimelineModelLoader.prototype.write):
+        * inspector/front-end/UISourceCodeFrame.js:
+        (WebInspector.UISourceCodeFrame.prototype._onFormattedChanged):
+        * inspector/front-end/Workspace.js:
+        (WebInspector.WorkspaceController.prototype._frameAdded):
+        (WebInspector.Project.prototype._fileAdded):
+        (WebInspector.Project.prototype._fileRemoved):
+
 2012-11-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: render message bubbles in CodeMirror experiment.

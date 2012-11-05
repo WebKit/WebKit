@@ -127,14 +127,14 @@ WebInspector.TabbedEditorContainer.prototype = {
 
     _scrollChanged: function(event)
     {
-        var lineNumber = /** @type {number} */ event.data;
+        var lineNumber = /** @type {number} */ (event.data);
         this._history.updateScrollLineNumber(this._currentFile.url, lineNumber);
         this._history.save(this._previouslyViewedFilesSetting);
     },
 
     _selectionChanged: function(event)
     {
-        var range = /** @type {WebInspector.TextRange} */ event.data;
+        var range = /** @type {WebInspector.TextRange} */ (event.data);
         this._history.updateSelectionRange(this._currentFile.url, range);
         this._history.save(this._previouslyViewedFilesSetting);
     },
@@ -295,8 +295,8 @@ WebInspector.TabbedEditorContainer.prototype = {
      */
     _tabClosed: function(event)
     {
-        var tabId = /** @type {string} */ event.data.tabId;
-        var userGesture = /** @type {boolean} */ event.data.isUserGesture;
+        var tabId = /** @type {string} */ (event.data.tabId);
+        var userGesture = /** @type {boolean} */ (event.data.isUserGesture);
 
         var uiSourceCode = this._files[tabId];
         if (this._currentFile === uiSourceCode) {
@@ -319,8 +319,8 @@ WebInspector.TabbedEditorContainer.prototype = {
      */
     _tabSelected: function(event)
     {
-        var tabId = /** @type {string} */ event.data.tabId;
-        var userGesture = /** @type {boolean} */ event.data.isUserGesture;
+        var tabId = /** @type {string} */ (event.data.tabId);
+        var userGesture = /** @type {boolean} */ (event.data.isUserGesture);
 
         var uiSourceCode = this._files[tabId];
         this._innerShowFile(uiSourceCode, userGesture);
@@ -362,25 +362,25 @@ WebInspector.TabbedEditorContainer.prototype = {
 
     _uiSourceCodeTitleChanged: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.target);
         this._updateFileTitle(uiSourceCode);
     },
 
     _uiSourceCodeWorkingCopyChanged: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.target);
         this._updateFileTitle(uiSourceCode);
     },
 
     _uiSourceCodeWorkingCopyCommitted: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.target);
         this._updateFileTitle(uiSourceCode);
     },
 
     _uiSourceCodeFormattedChanged: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.target);
         this._updateFileTitle(uiSourceCode);
     },
 

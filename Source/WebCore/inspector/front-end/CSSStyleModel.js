@@ -548,7 +548,7 @@ WebInspector.CSSStyleModel.LiveLocation.prototype = {
      */
     uiLocation: function()
     {
-        var cssLocation = /** @type WebInspector.CSSLocation */ this.rawLocation();
+        var cssLocation = /** @type WebInspector.CSSLocation */ (this.rawLocation());
         return WebInspector.cssModel._rawLocationToUILocation(cssLocation);
     },
 
@@ -636,7 +636,7 @@ WebInspector.CSSStyleDeclaration.parsePayload = function(payload)
  */
 WebInspector.CSSStyleDeclaration.parseComputedStylePayload = function(payload)
 {
-    var newPayload = /** @type {CSSAgent.CSSStyle} */ { cssProperties: [], shorthandEntries: [], width: "", height: "" };
+    var newPayload = /** @type {CSSAgent.CSSStyle} */ ({ cssProperties: [], shorthandEntries: [], width: "", height: "" });
     if (payload)
         newPayload.cssProperties = payload;
 

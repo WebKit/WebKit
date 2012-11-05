@@ -67,7 +67,7 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
      */
     _parsedScriptSource: function(event)
     {
-        var script = /** @type {WebInspector.Script} */ event.data;
+        var script = /** @type {WebInspector.Script} */ (event.data);
         if (!script.sourceURL || script.isInlineScript())
             return;
         var isDynamicAnonymousScript;
@@ -93,7 +93,7 @@ WebInspector.NetworkUISourceCodeProvider.prototype = {
      */
     _resourceAdded: function(event)
     {
-        var resource = /** @type {WebInspector.Resource} */ event.data;
+        var resource = /** @type {WebInspector.Resource} */ (event.data);
         this._addFile(resource.url, resource);
     },
 

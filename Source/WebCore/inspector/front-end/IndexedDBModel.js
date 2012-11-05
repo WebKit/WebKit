@@ -198,7 +198,7 @@ WebInspector.IndexedDBModel.prototype = {
      */
     _frameNavigated: function(event)
     {
-        var resourceTreeFrame = /** @type {WebInspector.ResourceTreeFrame} */ event.data;
+        var resourceTreeFrame = /** @type {WebInspector.ResourceTreeFrame} */ (event.data);
         this._processFrameNavigated(resourceTreeFrame);
     },
 
@@ -207,7 +207,7 @@ WebInspector.IndexedDBModel.prototype = {
      */
     _frameDetached: function(event)
     {
-        var resourceTreeFrame = /** @type {WebInspector.ResourceTreeFrame} */ event.data;
+        var resourceTreeFrame = /** @type {WebInspector.ResourceTreeFrame} */ (event.data);
         this._originRemovedFromFrame(resourceTreeFrame.id);
     },
 

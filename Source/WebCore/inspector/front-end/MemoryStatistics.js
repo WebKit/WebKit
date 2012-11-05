@@ -409,7 +409,7 @@ WebInspector.MemoryStatistics.prototype = {
 
     show: function()
     {
-        var anchor = /** @type {Element|null} */ this._containerAnchor.nextSibling;
+        var anchor = /** @type {Element|null} */ (this._containerAnchor.nextSibling);
         this._memorySplitView.show(this._timelinePanel.element, anchor);
         this._updateSize();
         this._refreshDividers();

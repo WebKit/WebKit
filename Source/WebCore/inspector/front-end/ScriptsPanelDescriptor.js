@@ -47,7 +47,7 @@ WebInspector.ScriptsPanelDescriptor.prototype = {
         var hasApplicableItems = target instanceof WebInspector.UISourceCode;
 
         if (!hasApplicableItems && target instanceof WebInspector.RemoteObject) {
-            var remoteObject = /** @type {WebInspector.RemoteObject} */ target;
+            var remoteObject = /** @type {WebInspector.RemoteObject} */ (target);
             if (remoteObject.type !== "function")
                 return;
         }

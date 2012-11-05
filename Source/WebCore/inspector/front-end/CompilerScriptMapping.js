@@ -58,7 +58,7 @@ WebInspector.CompilerScriptMapping.prototype = {
      */
     rawLocationToUILocation: function(rawLocation)
     {
-        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
+        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ (rawLocation);
         var sourceMap = this._sourceMapForScriptId[debuggerModelLocation.scriptId];
         var lineNumber = debuggerModelLocation.lineNumber;
         var columnNumber = debuggerModelLocation.columnNumber || 0;
@@ -146,7 +146,7 @@ WebInspector.CompilerScriptMapping.prototype = {
             var response = InspectorFrontendHost.loadResourceSynchronously(sourceMapURL);
             if (response.slice(0, 3) === ")]}")
                 response = response.substring(response.indexOf('\n'));
-            var payload = /** @type {WebInspector.SourceMapPayload} */ JSON.parse(response);
+            var payload = /** @type {WebInspector.SourceMapPayload} */ (JSON.parse(response));
             sourceMap = new WebInspector.SourceMapParser(sourceMapURL, payload);
         } catch(e) {
             console.error(e.message);

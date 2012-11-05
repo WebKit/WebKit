@@ -140,7 +140,7 @@ WebInspector.ConsoleView.prototype = {
      */
     _frameAdded: function(event)
     {
-        var contextList = /** @type {WebInspector.FrameExecutionContextList} */ event.data;
+        var contextList = /** @type {WebInspector.FrameExecutionContextList} */ (event.data);
         this._addFrame(contextList);
     },
 
@@ -165,7 +165,7 @@ WebInspector.ConsoleView.prototype = {
      */
     _frameRemoved: function(event)
     {
-        var contextList = /** @type {WebInspector.FrameExecutionContextList} */ event.data;
+        var contextList = /** @type {WebInspector.FrameExecutionContextList} */ (event.data);
         this._frameSelector.removeOption(contextList._consoleOption);
         this._frameChanged();
     },

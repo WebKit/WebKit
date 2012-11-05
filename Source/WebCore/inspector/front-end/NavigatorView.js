@@ -84,25 +84,25 @@ WebInspector.NavigatorView.prototype = {
 
     _uiSourceCodeTitleChanged: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.target);
         this._updateScriptTitle(uiSourceCode)
     },
 
     _uiSourceCodeWorkingCopyChanged: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.target);
         this._updateScriptTitle(uiSourceCode)
     },
 
     _uiSourceCodeWorkingCopyCommitted: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.target);
         this._updateScriptTitle(uiSourceCode)
     },
 
     _uiSourceCodeFormattedChanged: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.target;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.target);
         this._updateScriptTitle(uiSourceCode);
     },
 

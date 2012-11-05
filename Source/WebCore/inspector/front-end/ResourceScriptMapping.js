@@ -56,7 +56,7 @@ WebInspector.ResourceScriptMapping.prototype = {
      */
     rawLocationToUILocation: function(rawLocation)
     {
-        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ rawLocation;
+        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ (rawLocation);
         var script = WebInspector.debuggerModel.scriptForId(debuggerModelLocation.scriptId);
         var uiSourceCode = this._workspaceUISourceCodeForScript(script) || this._getOrCreateTemporaryUISourceCode(script);
         if (uiSourceCode.scriptFile() && uiSourceCode.scriptFile().hasDivergedFromVM())
@@ -276,7 +276,7 @@ WebInspector.ResourceScriptMapping.prototype = {
 
     _uiSourceCodeAddedToWorkspace: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data);
         console.assert(!!uiSourceCode.url);
 
         var scripts = this._scriptsForUISourceCode(uiSourceCode);
@@ -398,7 +398,7 @@ WebInspector.ResourceScriptFile.prototype = {
             this.dispatchEventToListeners(WebInspector.ScriptFile.Events.DidMergeToVM, this);
         }
 
-        var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ this._uiSourceCode.uiLocationToRawLocation(0, 0);
+        var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ (this._uiSourceCode.uiLocationToRawLocation(0, 0));
         if (!rawLocation)
             return;
         var script = WebInspector.debuggerModel.scriptForId(rawLocation.scriptId);
@@ -407,7 +407,7 @@ WebInspector.ResourceScriptFile.prototype = {
 
     _workingCopyChanged: function(event)
     {
-        var wasDirty = /** @type {boolean} */ event.data.wasDirty;
+        var wasDirty = /** @type {boolean} */ (event.data.wasDirty);
         if (!wasDirty && this._uiSourceCode.isDirty() && !this._hasDivergedFromVM) {
             this._isDivergingFromVM = true;
             this.dispatchEventToListeners(WebInspector.ScriptFile.Events.WillDivergeFromVM, this._uiSourceCode);

@@ -56,7 +56,7 @@ WebInspector.PresentationConsoleMessageHelper.prototype = {
      */
     _consoleMessageAdded: function(event)
     {
-        var message = /** @type {WebInspector.ConsoleMessage} */ event.data;
+        var message = /** @type {WebInspector.ConsoleMessage} */ (event.data);
         if (!message.url || !message.isErrorOrWarning())
             return;
 
@@ -93,7 +93,7 @@ WebInspector.PresentationConsoleMessageHelper.prototype = {
      */
     _parsedScriptSource: function(event)
     {
-        var script = /** @type {WebInspector.Script} */ event.data;
+        var script = /** @type {WebInspector.Script} */ (event.data);
 
         var messages = this._pendingConsoleMessages[script.sourceURL];
         if (!messages)
@@ -102,7 +102,7 @@ WebInspector.PresentationConsoleMessageHelper.prototype = {
         var pendingMessages = [];
         for (var i = 0; i < messages.length; i++) {
             var message = messages[i];
-            var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ message.location();
+            var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ (message.location());
             if (script.scriptId === rawLocation.scriptId)
                 this._addConsoleMessageToScript(message, rawLocation);
             else

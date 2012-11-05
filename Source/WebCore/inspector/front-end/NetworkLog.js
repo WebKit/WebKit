@@ -97,7 +97,7 @@ WebInspector.NetworkLog.prototype = {
      */
     _onRequestStarted: function(event)
     {
-        var request = /** @type {WebInspector.NetworkRequest} */ event.data;
+        var request = /** @type {WebInspector.NetworkRequest} */ (event.data);
         this._requests.push(request);
         this._requestForId[request.requestId] = request;
         request.__page = this._currentPageLoad;

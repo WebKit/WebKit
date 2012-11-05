@@ -795,7 +795,7 @@ WebInspector.NetworkLogView.prototype = {
      */
     _onRequestUpdated: function(event)
     {
-        var request = /** @type {WebInspector.NetworkRequest} */ event.data;
+        var request = /** @type {WebInspector.NetworkRequest} */ (event.data);
         this._refreshRequest(request);
     },
 
@@ -820,7 +820,7 @@ WebInspector.NetworkLogView.prototype = {
         if (this._preserveLogToggle.toggled)
             return;
 
-        var frame = /** @type {WebInspector.ResourceTreeFrame} */ event.data;
+        var frame = /** @type {WebInspector.ResourceTreeFrame} */ (event.data);
         var loaderId = frame.loaderId;
 
         // Preserve provisional load requests.
@@ -1518,7 +1518,7 @@ WebInspector.NetworkPanel.prototype = {
         function reveal()
         {
             WebInspector.inspectorView.setCurrentPanel(this);
-            this.revealAndHighlightRequest(/** @type {WebInspector.NetworkRequest} */ target);
+            this.revealAndHighlightRequest(/** @type {WebInspector.NetworkRequest} */ (target));
         }
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Reveal in network panel" : "Reveal in Network Panel"), reveal.bind(this));
     },

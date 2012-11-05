@@ -128,7 +128,7 @@ WebInspector.RevisionHistoryView.prototype = {
 
     _revisionAdded: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data.uiSourceCode);
         var uiSourceCodeItem = this._uiSourceCodeItems.get(uiSourceCode);
         if (!uiSourceCodeItem) {
             uiSourceCodeItem = this._createUISourceCodeItem(uiSourceCode);
@@ -156,7 +156,7 @@ WebInspector.RevisionHistoryView.prototype = {
 
     _uiSourceCodeRemoved: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data);
         this._removeUISourceCode(uiSourceCode);
     },
 

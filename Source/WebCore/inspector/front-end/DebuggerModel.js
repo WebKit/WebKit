@@ -205,7 +205,7 @@ WebInspector.DebuggerModel.prototype = {
         function didSetBreakpoint(error, breakpointId, locations)
         {
             if (callback) {
-                var rawLocations = /** @type {Array.<WebInspector.DebuggerModel.Location>} */ locations;
+                var rawLocations = /** @type {Array.<WebInspector.DebuggerModel.Location>} */ (locations);
                 callback(error ? null : breakpointId, rawLocations);
             }
         }
@@ -229,7 +229,7 @@ WebInspector.DebuggerModel.prototype = {
         function didSetBreakpoint(error, breakpointId, actualLocation)
         {
             if (callback) {
-                var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ actualLocation;
+                var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ (actualLocation);
                 callback(error ? null : breakpointId, [rawLocation]);
             }
         }
@@ -726,7 +726,7 @@ WebInspector.DebuggerModel.CallFrame.prototype = {
      */
     get location()
     {
-        var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ this._payload.location;
+        var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ (this._payload.location);
         return rawLocation;
     },
 

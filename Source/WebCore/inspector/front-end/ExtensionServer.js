@@ -178,7 +178,7 @@ WebInspector.ExtensionServer.prototype = {
         }
         for (var name in message.headers)
             extensionHeaders[name] = message.headers[name];
-        var allHeaders = /** @type NetworkAgent.Headers */ {};
+        var allHeaders = /** @type NetworkAgent.Headers */ ({});
         for (var extension in this._extraHeaders) {
             var headers = this._extraHeaders[extension];
             for (name in headers) {
@@ -290,7 +290,7 @@ WebInspector.ExtensionServer.prototype = {
 
     _handleOpenURL: function(port, details)
     {
-        var url = /** @type {string} */ details.url;
+        var url = /** @type {string} */ (details.url);
         var contentProvider = WebInspector.workspace.uiSourceCodeForURL(url) || WebInspector.resourceForURL(url);
         if (!contentProvider)
             return false;
@@ -482,7 +482,7 @@ WebInspector.ExtensionServer.prototype = {
 
     _onGetResourceContent: function(message, port)
     {
-        var url = /** @type {string} */ message.url;
+        var url = /** @type {string} */ (message.url);
         var contentProvider = WebInspector.workspace.uiSourceCodeForURL(url) || WebInspector.resourceForURL(url);
         if (!contentProvider)
             return this._status.E_NOTFOUND(url);
@@ -500,7 +500,7 @@ WebInspector.ExtensionServer.prototype = {
             this._dispatchCallback(message.requestId, port, response);
         }
 
-        var url = /** @type {string} */ message.url;
+        var url = /** @type {string} */ (message.url);
         var uiSourceCode = WebInspector.workspace.uiSourceCodeForURL(url);
         if (!uiSourceCode) {
             var resource = WebInspector.resourceTreeModel.resourceForURL(url);
@@ -625,20 +625,20 @@ WebInspector.ExtensionServer.prototype = {
 
     _notifyResourceAdded: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data);
         this._postNotification(WebInspector.extensionAPI.Events.ResourceAdded, this._makeResource(uiSourceCode));
     },
 
     _notifyUISourceCodeContentCommitted: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data.uiSourceCode;
-        var content = /** @type {string} */ event.data.content;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data.uiSourceCode);
+        var content = /** @type {string} */ (event.data.content);
         this._postNotification(WebInspector.extensionAPI.Events.ResourceContentCommitted, this._makeResource(uiSourceCode), content);
     },
 
     _notifyRequestFinished: function(event)
     {
-        var request = /** @type {WebInspector.NetworkRequest} */ event.data;
+        var request = /** @type {WebInspector.NetworkRequest} */ (event.data);
         this._postNotification(WebInspector.extensionAPI.Events.NetworkRequestFinished, this._requestId(request), (new WebInspector.HAREntry(request)).build());
     },
 

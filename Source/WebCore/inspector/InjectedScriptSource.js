@@ -614,7 +614,7 @@ InjectedScript.prototype = {
         var object = this.findObjectById(objectId);
         if (!object || this._subtype(object) !== "node")
             return null;
-        return /** @type {Node} */ object;
+        return /** @type {Node} */ (object);
     },
 
     /**
@@ -705,7 +705,7 @@ InjectedScript.prototype = {
         if (this.isPrimitiveValue(obj))
             return null;
 
-        obj = /** @type {Object} */ obj;
+        obj = /** @type {Object} */ (obj);
 
         // Type is object, get subtype.
         var subtype = this._subtype(obj);
@@ -792,7 +792,7 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType, 
         return;
     }
 
-    object = /** @type {Object} */ object;
+    object = /** @type {Object} */ (object);
 
     this.objectId = injectedScript._bind(object, objectGroupName);
     var subtype = injectedScript._subtype(object);

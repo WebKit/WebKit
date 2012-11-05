@@ -399,7 +399,7 @@ WebInspector.CSSProfileHeader.prototype = {
      */
     createView: function(profilesPanel)
     {
-        var profile = /** @type {CSSAgent.SelectorProfile} */this._protocolData;
+        var profile = /** @type {CSSAgent.SelectorProfile} */ (this._protocolData);
         return new WebInspector.CSSSelectorProfileView(profile);
     },
 

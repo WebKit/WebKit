@@ -91,7 +91,7 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
      */
     _documentUpdated: function(event)
     {
-        var document = /** @type {WebInspector.DOMDocument} */ event.data;
+        var document = /** @type {WebInspector.DOMDocument} */ (event.data);
         this._setDocument(document);
     },
 
@@ -219,7 +219,7 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
         if (event.data.documentNodeId !== this._document.id)
             return;
 
-        var flow = /** @type {WebInspector.NamedFlow} */ event.data;
+        var flow = /** @type {WebInspector.NamedFlow} */ (event.data);
         this._appendNamedFlow(flow);
     },
 
@@ -244,7 +244,7 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
         if (event.data.documentNodeId !== this._document.id)
             return;
 
-        var flow = /** @type {WebInspector.NamedFlow} */ event.data;
+        var flow = /** @type {WebInspector.NamedFlow} */ (event.data);
         this._updateNamedFlow(flow);
     },
 
@@ -298,7 +298,7 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
      */
     _selectedNodeChanged: function(event)
     {
-        var node = /** @type {WebInspector.DOMNode} */ event.data;
+        var node = /** @type {WebInspector.DOMNode} */ (event.data);
         this._showNamedFlowForNode(node);
     },
 

@@ -67,7 +67,7 @@ WebInspector.SASSSourceMapping.prototype = {
      */
     _fileSaveFinished: function(event)
     {
-        var sassURL = /** @type {string} */ event.data;
+        var sassURL = /** @type {string} */ (event.data);
         function callback()
         {
             delete this._timeoutForURL[sassURL];
@@ -104,7 +104,7 @@ WebInspector.SASSSourceMapping.prototype = {
      */
     _resourceAdded: function(event)
     {
-        var resource = /** @type {WebInspector.Resource} */ event.data;
+        var resource = /** @type {WebInspector.Resource} */ (event.data);
         if (resource.type !== WebInspector.resourceTypes.Stylesheet)
             return;
 
@@ -189,7 +189,7 @@ WebInspector.SASSSourceMapping.prototype = {
      */
     rawLocationToUILocation: function(rawLocation)
     {
-        var location = /** @type WebInspector.CSSLocation */ rawLocation;
+        var location = /** @type WebInspector.CSSLocation */ (rawLocation);
         var uiLocation = this._uiLocations[location.url + ":" + location.lineNumber];
         if (!uiLocation) {
             var uiSourceCode = this._workspace.uiSourceCodeForURL(location.url);

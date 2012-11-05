@@ -224,7 +224,7 @@ WebInspector.Script.Location.prototype = {
      */
     uiLocation: function()
     {
-        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ this.rawLocation();
+        var debuggerModelLocation = /** @type {WebInspector.DebuggerModel.Location} */ (this.rawLocation());
         return this._script.rawLocationToUILocation(debuggerModelLocation.lineNumber, debuggerModelLocation.columnNumber);
     },
 

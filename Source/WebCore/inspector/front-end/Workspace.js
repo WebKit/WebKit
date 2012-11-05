@@ -50,7 +50,7 @@ WebInspector.WorkspaceController.prototype = {
 
     _frameAdded: function(event)
     {
-        var frame = /** @type {WebInspector.ResourceTreeFrame} */ event.data;
+        var frame = /** @type {WebInspector.ResourceTreeFrame} */ (event.data);
         if (frame.isMainFrame())
             WebInspector.Revision.filterOutStaleRevisions();
     }
@@ -141,7 +141,7 @@ WebInspector.Project.prototype = {
 
     _fileAdded: function(event)
     {
-        var fileDescriptor = /** @type {WebInspector.FileDescriptor} */ event.data;
+        var fileDescriptor = /** @type {WebInspector.FileDescriptor} */ (event.data);
         var uiSourceCode = this.uiSourceCodeForURL(fileDescriptor.path);
         if (uiSourceCode) {
             // FIXME: Implement
@@ -156,7 +156,7 @@ WebInspector.Project.prototype = {
 
     _fileRemoved: function(event)
     {
-        var path = /** @type {string} */ event.data;
+        var path = /** @type {string} */ (event.data);
         var uiSourceCode = this.uiSourceCodeForURL(path);
         if (!uiSourceCode)
             return;

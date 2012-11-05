@@ -84,7 +84,7 @@ WebInspector.DirectoryContentView.prototype = {
 
     _sort: function()
     {
-        var column = /** @type {string} */ this.sortColumnIdentifier;
+        var column = /** @type {string} */ (this.sortColumnIdentifier);
         this.sortNodes(WebInspector.DirectoryContentView.Node.comparator(column, this.sortOrder === "descending"), false);
     },
 

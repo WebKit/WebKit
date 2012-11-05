@@ -129,7 +129,7 @@ WebInspector.HeapSnapshotLoader.prototype = {
             var closingBracketIndex = WebInspector.findBalancedCurlyBrackets(this._json);
             if (closingBracketIndex === -1)
                 return;
-            this._snapshot.snapshot = /** @type {HeapSnapshotHeader} */JSON.parse(this._json.slice(0, closingBracketIndex));
+            this._snapshot.snapshot = /** @type {HeapSnapshotHeader} */ (JSON.parse(this._json.slice(0, closingBracketIndex)));
             this._json = this._json.slice(closingBracketIndex);
             this._state = "find-nodes";
         }

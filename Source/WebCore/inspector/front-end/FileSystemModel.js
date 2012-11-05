@@ -56,7 +56,7 @@ WebInspector.FileSystemModel.prototype = {
      */
     _frameAdded: function(event)
     {
-        var frame = /** @type {WebInspector.ResourceTreeFrame} */ event.data;
+        var frame = /** @type {WebInspector.ResourceTreeFrame} */ (event.data);
         this._attachFrameRecursively(frame);
     },
 
@@ -65,7 +65,7 @@ WebInspector.FileSystemModel.prototype = {
      */
     _frameNavigated: function(event)
     {
-        var frame = /** @type {WebInspector.ResourceTreeFrame} */ event.data;
+        var frame = /** @type {WebInspector.ResourceTreeFrame} */ (event.data);
         this._attachFrameRecursively(frame);
     },
 
@@ -74,7 +74,7 @@ WebInspector.FileSystemModel.prototype = {
      */
     _frameDetached: function(event)
     {
-        var frame = /** @type {WebInspector.ResourceTreeFrame} */ event.data;
+        var frame = /** @type {WebInspector.ResourceTreeFrame} */ (event.data);
         this._detachFrameRecursively(frame);
     },
 

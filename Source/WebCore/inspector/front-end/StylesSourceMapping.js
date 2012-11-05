@@ -49,7 +49,7 @@ WebInspector.StylesSourceMapping.prototype = {
      */
     rawLocationToUILocation: function(rawLocation)
     {
-        var location = /** @type WebInspector.CSSLocation */ rawLocation;
+        var location = /** @type WebInspector.CSSLocation */ (rawLocation);
         var uiSourceCode = this._uiSourceCodeForURL[location.url];
         return new WebInspector.UILocation(uiSourceCode, location.lineNumber, 0);
     },
@@ -67,7 +67,7 @@ WebInspector.StylesSourceMapping.prototype = {
 
     _uiSourceCodeAddedToWorkspace: function(event)
     {
-        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ event.data;
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data);
         if (!uiSourceCode.url || this._uiSourceCodeForURL[uiSourceCode.url])
             return;
         if (uiSourceCode.contentType() !== WebInspector.resourceTypes.Stylesheet)

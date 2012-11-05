@@ -104,7 +104,7 @@ WebInspector.NetworkManager.prototype = {
      */
     _cacheDisabledSettingChanged: function(event)
     {
-        var enabled = /** @type {boolean} */ event.data;
+        var enabled = /** @type {boolean} */ (event.data);
         NetworkAgent.setCacheDisabled(enabled);
     },
 

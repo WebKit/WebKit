@@ -1091,7 +1091,7 @@ WebInspector.ProfilesPanel.prototype = {
         if (WebInspector.inspectorView.currentPanel() !== this)
             return;
 
-        var object = /** @type {WebInspector.RemoteObject} */ target;
+        var object = /** @type {WebInspector.RemoteObject} */ (target);
         var objectId = object.objectId;
         if (!objectId)
             return;

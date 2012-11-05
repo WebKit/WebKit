@@ -82,7 +82,7 @@ WebInspector.UISourceCodeFrame.prototype = {
      */
     _onFormattedChanged: function(event)
     {
-        var content = /** @type {string} */ event.data.content;
+        var content = /** @type {string} */ (event.data.content);
         this._innerSetContent(content);
     },
 

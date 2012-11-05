@@ -415,7 +415,7 @@ WebInspector.ElementsPanel.prototype = {
             return;
         }
         
-        var node = /** @type {WebInspector.DOMNode} */ treeElement.representedObject;
+        var node = /** @type {WebInspector.DOMNode} */ (treeElement.representedObject);
 
         if (!node.nodeName() || node.nodeName().toLowerCase() !== "img") {
             callback();
@@ -604,7 +604,7 @@ WebInspector.ElementsPanel.prototype = {
         if (name !== "class" && name !== "id")
             return;
 
-        var node = /** @type {WebInspector.DOMNode} */ event.data.node;
+        var node = /** @type {WebInspector.DOMNode} */ (event.data.node);
         var crumbs = this.crumbsElement;
         var crumb = crumbs.firstChild;
         while (crumb) {
@@ -1121,7 +1121,7 @@ WebInspector.ElementsPanel.prototype = {
     {
         if (!(target instanceof WebInspector.RemoteObject))
             return;
-        var remoteObject = /** @type {WebInspector.RemoteObject} */ target;
+        var remoteObject = /** @type {WebInspector.RemoteObject} */ (target);
         if (remoteObject.subtype !== "node")
             return;
 

@@ -131,7 +131,7 @@ WebInspector.TimelinePanel = function()
 
     this._headerLineCount = 1;
 
-    this._mainThreadTasks = /** @type {!Array.<{startTime: number, endTime: number}>} */ [];
+    this._mainThreadTasks = /** @type {!Array.<{startTime: number, endTime: number}>} */ ([]);
     this._mainThreadMonitoringEnabled = false;
     if (WebInspector.settings.showCpuOnTimelineRuler.get() && Capabilities.timelineCanMonitorMainThread)
         this._enableMainThreadMonitoring();

@@ -71,7 +71,7 @@ WebInspector.AuditLauncherView.prototype = {
 
     _onRequestStarted: function(event)
     {
-        var request = /** @type {WebInspector.NetworkRequest} */ event.data;
+        var request = /** @type {WebInspector.NetworkRequest} */ (event.data);
         // Ignore long-living WebSockets for the sake of progress indicator, as we won't be waiting them anyway.
         if (request.type === WebInspector.resourceTypes.WebSocket)
             return;
@@ -81,7 +81,7 @@ WebInspector.AuditLauncherView.prototype = {
 
     _onRequestFinished: function(event)
     {
-        var request = /** @type {WebInspector.NetworkRequest} */ event.data;
+        var request = /** @type {WebInspector.NetworkRequest} */ (event.data);
         // See resorceStarted for details.
         if (request.type === WebInspector.resourceTypes.WebSocket)
             return;

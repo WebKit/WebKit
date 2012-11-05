@@ -135,7 +135,7 @@ WebInspector.FileSystemView.EntryTreeElement.prototype = {
             if (this._entry.isDirectory)
                 this._view = new WebInspector.DirectoryContentView();
             else {
-                var file = /** @type {WebInspector.FileSystemModel.File} */ this._entry;
+                var file = /** @type {WebInspector.FileSystemModel.File} */ (this._entry);
                 this._view = new WebInspector.FileContentView(file);
             }
         }
@@ -211,7 +211,7 @@ WebInspector.FileSystemView.EntryTreeElement.prototype = {
     {
         if (!this._entry.isDirectory) {
             if (this._view && this._view === this._fileSystemView.visibleView) {
-                var fileContentView = /** @type {WebInspector.FileContentView} */ this._view;
+                var fileContentView = /** @type {WebInspector.FileContentView} */ (this._view);
                 fileContentView.refresh();
             }
         } else

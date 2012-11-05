@@ -111,7 +111,7 @@ WebInspector.HandlerRegistry.prototype = {
     {
         if (!(target instanceof WebInspector.UISourceCode || target instanceof WebInspector.Resource || target instanceof WebInspector.NetworkRequest))
             return;
-        var contentProvider = /** @type {WebInspector.ContentProvider} */ target;
+        var contentProvider = /** @type {WebInspector.ContentProvider} */ (target);
         if (!contentProvider.contentURL())
             return;
 
@@ -143,7 +143,7 @@ WebInspector.HandlerRegistry.prototype = {
         function save(forceSaveAs)
         {
             if (contentProvider instanceof WebInspector.UISourceCode) {
-                var uiSourceCode = /** @type {WebInspector.UISourceCode} */ contentProvider;
+                var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (contentProvider);
                 if (uiSourceCode.isDirty()) {
                     doSave(forceSaveAs, uiSourceCode.workingCopy());
                     uiSourceCode.commitWorkingCopy(function() { });
@@ -166,7 +166,7 @@ WebInspector.HandlerRegistry.prototype = {
     {
         if (!(target instanceof Node))
             return;
-        var targetNode = /** @type {Node} */ target;
+        var targetNode = /** @type {Node} */ (target);
 
         var anchorElement = targetNode.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || targetNode.enclosingNodeOrSelfWithClass("webkit-html-external-link");
         if (!anchorElement)

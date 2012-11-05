@@ -54,7 +54,7 @@ WebInspector.DebuggerScriptMapping.prototype = {
      */
     _parsedScriptSource: function(event)
     {
-        var script = /** @type {WebInspector.Script} */ event.data;
+        var script = /** @type {WebInspector.Script} */ (event.data);
         var mapping = this._mappingForScript(script);
         mapping.addScript(script);
     },

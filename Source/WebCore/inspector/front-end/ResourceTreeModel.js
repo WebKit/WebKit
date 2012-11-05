@@ -176,7 +176,7 @@ WebInspector.ResourceTreeModel.prototype = {
         if (!this._cachedResourcesProcessed)
             return;
 
-        var request = /** @type {WebInspector.NetworkRequest} */ event.data;
+        var request = /** @type {WebInspector.NetworkRequest} */ (event.data);
         if (request.failed || request.type === WebInspector.resourceTypes.XHR)
             return;
 
@@ -233,7 +233,7 @@ WebInspector.ResourceTreeModel.prototype = {
      */
     _consoleMessageAdded: function(event)
     {
-        var msg = /** @type {WebInspector.ConsoleMessage} */ event.data;
+        var msg = /** @type {WebInspector.ConsoleMessage} */ (event.data);
         var resource = msg.url ? this.resourceForURL(msg.url) : null;
         if (resource)
             this._addConsoleMessageToResource(msg, resource);

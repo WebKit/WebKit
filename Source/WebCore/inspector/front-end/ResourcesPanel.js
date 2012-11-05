@@ -297,7 +297,7 @@ WebInspector.ResourcesPanel.prototype = {
      */
     _databaseAdded: function(event)
     {
-        var database = /** @type {WebInspector.Database} */ event.data;
+        var database = /** @type {WebInspector.Database} */ (event.data);
         this._addDatabase(database);
     },
 
@@ -331,7 +331,7 @@ WebInspector.ResourcesPanel.prototype = {
      */
     _domStorageAdded: function(event)
     {
-        var domStorage = /** @type {WebInspector.DOMStorage}*/ event.data;
+        var domStorage = /** @type {WebInspector.DOMStorage}*/ (event.data);
         this._addDOMStorage(domStorage);
     },
 
@@ -577,7 +577,7 @@ WebInspector.ResourcesPanel.prototype = {
      */
     _domStorageUpdated: function(event)
     {
-        var storage = /** @type {WebInspector.DOMStorage}*/ event.data;
+        var storage = /** @type {WebInspector.DOMStorage}*/ (event.data);
         var view = this._domStorageViews.get(storage);
         if (this.visibleView && view === this.visibleView)
             view.update();
@@ -1446,7 +1446,7 @@ WebInspector.IndexedDBTreeElement.prototype = {
      */
     _indexedDBAdded: function(event)
     {
-        var databaseId = /** @type {WebInspector.IndexedDBModel.DatabaseId} */ event.data;
+        var databaseId = /** @type {WebInspector.IndexedDBModel.DatabaseId} */ (event.data);
 
         var idbDatabaseTreeElement = new WebInspector.IDBDatabaseTreeElement(this._storagePanel, this._indexedDBModel, databaseId);
         this._idbDatabaseTreeElements.push(idbDatabaseTreeElement);
@@ -1460,7 +1460,7 @@ WebInspector.IndexedDBTreeElement.prototype = {
      */
     _indexedDBRemoved: function(event)
     {
-        var databaseId = /** @type {WebInspector.IndexedDBModel.DatabaseId} */ event.data;
+        var databaseId = /** @type {WebInspector.IndexedDBModel.DatabaseId} */ (event.data);
 
         var idbDatabaseTreeElement = this._idbDatabaseTreeElement(databaseId)
         if (!idbDatabaseTreeElement)
@@ -1476,7 +1476,7 @@ WebInspector.IndexedDBTreeElement.prototype = {
      */
     _indexedDBLoaded: function(event)
     {
-        var database = /** @type {WebInspector.IndexedDBModel.Database} */ event.data;
+        var database = /** @type {WebInspector.IndexedDBModel.Database} */ (event.data);
 
         var idbDatabaseTreeElement = this._idbDatabaseTreeElement(database.databaseId)
         if (!idbDatabaseTreeElement)
@@ -1538,14 +1538,14 @@ WebInspector.FileSystemListTreeElement.prototype = {
 
     _fileSystemAdded: function(event)
     {
-        var fileSystem = /** @type {WebInspector.FileSystemModel.FileSystem} */ event.data;
+        var fileSystem = /** @type {WebInspector.FileSystemModel.FileSystem} */ (event.data);
         var fileSystemTreeElement = new WebInspector.FileSystemTreeElement(this._storagePanel, fileSystem);
         this.appendChild(fileSystemTreeElement);
     },
 
     _fileSystemRemoved: function(event)
     {
-        var fileSystem = /** @type {WebInspector.FileSystemModel.FileSystem} */ event.data;
+        var fileSystem = /** @type {WebInspector.FileSystemModel.FileSystem} */ (event.data);
         var fileSystemTreeElement = this._fileSystemTreeElementByName(fileSystem.name);
         if (!fileSystemTreeElement)
             return;
@@ -1556,7 +1556,7 @@ WebInspector.FileSystemListTreeElement.prototype = {
     _fileSystemTreeElementByName: function(fileSystemName)
     {
         for (var i = 0; i < this.children.length; ++i) {
-            var child = /** @type {WebInspector.FileSystemTreeElement} */ this.children[i];
+            var child = /** @type {WebInspector.FileSystemTreeElement} */ (this.children[i]);
             if (child.fileSystemName === fileSystemName)
                 return this.children[i];
         }
@@ -2211,7 +2211,7 @@ WebInspector.SearchResultsTreeElementsTraverser.prototype = {
      */
     _traverseNext: function(treeElement)
     {
-        return /** @type {WebInspector.BaseStorageTreeElement} */ treeElement.traverseNextTreeElement(false, this._root, true);
+        return /** @type {WebInspector.BaseStorageTreeElement} */ (treeElement.traverseNextTreeElement(false, this._root, true));
     },
 
     /**
@@ -2220,7 +2220,7 @@ WebInspector.SearchResultsTreeElementsTraverser.prototype = {
      */
     _traversePrevious: function(treeElement)
     {
-        return /** @type {WebInspector.BaseStorageTreeElement} */ treeElement.traversePreviousTreeElement(false, true);
+        return /** @type {WebInspector.BaseStorageTreeElement} */ (treeElement.traversePreviousTreeElement(false, true));
     },
 
     /**

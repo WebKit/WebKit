@@ -105,7 +105,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     _onFormattedChanged: function(event)
     {
-        var content = /** @type {string} */ event.data.content;
+        var content = /** @type {string} */ (event.data.content);
         this._innerSetContent(content);
     },
 
@@ -489,23 +489,23 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _breakpointAdded: function(event)
     {
-        var uiLocation = /** @type {WebInspector.UILocation} */ event.data.uiLocation;
+        var uiLocation = /** @type {WebInspector.UILocation} */ (event.data.uiLocation);
 
         if (uiLocation.uiSourceCode !== this._uiSourceCode)
             return;
 
-        var breakpoint = /** @type {WebInspector.BreakpointManager.Breakpoint} */ event.data.breakpoint;
+        var breakpoint = /** @type {WebInspector.BreakpointManager.Breakpoint} */ (event.data.breakpoint);
         if (this.loaded)
             this._addBreakpointDecoration(uiLocation.lineNumber, breakpoint.condition(), breakpoint.enabled(), false);
     },
 
     _breakpointRemoved: function(event)
     {
-        var uiLocation = /** @type {WebInspector.UILocation} */ event.data.uiLocation;
+        var uiLocation = /** @type {WebInspector.UILocation} */ (event.data.uiLocation);
         if (uiLocation.uiSourceCode !== this._uiSourceCode)
             return;
 
-        var breakpoint = /** @type {WebInspector.BreakpointManager.Breakpoint} */ event.data.breakpoint;
+        var breakpoint = /** @type {WebInspector.BreakpointManager.Breakpoint} */ (event.data.breakpoint);
         var remainingBreakpoint = this._breakpointManager.findBreakpoint(this._uiSourceCode, uiLocation.lineNumber);
         if (!remainingBreakpoint && this.loaded)
             this._removeBreakpointDecoration(uiLocation.lineNumber);
@@ -513,14 +513,14 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _consoleMessageAdded: function(event)
     {
-        var message = /** @type {WebInspector.PresentationConsoleMessage} */ event.data;
+        var message = /** @type {WebInspector.PresentationConsoleMessage} */ (event.data);
         if (this.loaded)
             this.addMessageToSource(message.lineNumber, message.originalMessage);
     },
 
     _consoleMessageRemoved: function(event)
     {
-        var message = /** @type {WebInspector.PresentationConsoleMessage} */ event.data;
+        var message = /** @type {WebInspector.PresentationConsoleMessage} */ (event.data);
         if (this.loaded)
             this.removeMessageFromSource(message.lineNumber, message.originalMessage);
     },
@@ -582,7 +582,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             return;
 
         var lineNumber = event.data.lineNumber;
-        var eventObject = /** @type {Event} */ event.data.event;
+        var eventObject = /** @type {Event} */ (event.data.event);
 
         if (eventObject.button != 0 || eventObject.altKey || eventObject.ctrlKey || eventObject.metaKey)
             return;
@@ -630,7 +630,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     _continueToLine: function(lineNumber)
     {
-        var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ this._uiSourceCode.uiLocationToRawLocation(lineNumber, 0);
+        var rawLocation = /** @type {WebInspector.DebuggerModel.Location} */ (this._uiSourceCode.uiLocationToRawLocation(lineNumber, 0));
         WebInspector.debuggerModel.continueToLocation(rawLocation);
     },
 
