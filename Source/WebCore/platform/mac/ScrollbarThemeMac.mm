@@ -483,13 +483,8 @@ static void scrollbarPainterPaint(ScrollbarPainter scrollbarPainter, bool enable
     [scrollbarPainter setDoubleValue:value];
     [scrollbarPainter setKnobProportion:proportion];
 
-    // The scrollbar's frameRect includes a side inset for overlay scrollers, so we have to use the 
-    // trackWidth for drawKnobSlotInRect
-    NSRect trackRect;
-    if ([scrollbarPainter isHorizontal])
-        trackRect = NSMakeRect(0, 0, frameRect.size.width, [scrollbarPainter trackWidth]);
-    else
-        trackRect = NSMakeRect(0, 0, [scrollbarPainter trackWidth], frameRect.size.height);
+    // Use rectForPart: here; it will take the expansion transition progress into account.
+    NSRect trackRect = [scrollbarPainter rectForPart:NSScrollerKnobSlot];
     [scrollbarPainter drawKnobSlotInRect:trackRect highlight:NO];
 
     // If the scrollbar is not enabled, then there is nothing to scroll to, and we shouldn't
