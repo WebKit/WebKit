@@ -4117,13 +4117,13 @@ webkit.org/b/83471 [ Debug ] svg/as-image/img-relative-height.html [ ImageOnlyFa
 webkit.org/b/83471 [ Debug ] svg/as-image/img-relative-width.html [ ImageOnlyFailure Pass ]
 
 # Seems to have been flaky for quite a while.
-Bug(senorblanco) [ Lion Debug ] ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Pass Failure ]
+webkit.org/b/101253 [ Lion Debug ] ietestcenter/css3/bordersbackgrounds/background-attachment-local-scrolling.htm [ Pass Failure ]
 
 # Has been flaky since at least r133043
 webkit.org/b/101229 inspector-protocol/debugger-pause-dedicated-worker.html [ Failure Pass Crash ]
 
 # Started failing with r133224-133226 (probably 133224)
-Bug(senorblanco) fast/repaint/block-selection-gap-in-table-cell.html [ ImageOnlyFailure ]
+webkit.org/b/101255 fast/repaint/block-selection-gap-in-table-cell.html [ ImageOnlyFailure ]
 
 # Started failing at r133443.
 webkit.org/b/101218 [ Win ] fast/dom/shadow/shadowroot-type.html  [ Failure Crash ]

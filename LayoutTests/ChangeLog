@@ -1,3 +1,9 @@
+2012-11-05  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Give actual bug IDs to some past gardening.  Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-05  Florin Malita  <fmalita@chromium.org>
 
         Crash when mixing layers, foreignObjects and SVG hidden containers
