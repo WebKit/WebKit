@@ -1110,6 +1110,7 @@ webkit.org/b/79766 compositing/overflow/scrolling-content-clip-to-viewport.html 
 webkit.org/b/79766 compositing/overflow/textarea-scroll-touch.html [ Failure ]
 webkit.org/b/79766 compositing/plugins/no-backing-store.html [ Failure ]
 webkit.org/b/79766 compositing/plugins/small-to-large-composited-plugin.html [ Failure ]
+webkit.org/b/79766 compositing/repaint/invalidations-on-composited-layers.html [ Failure ]
 webkit.org/b/79766 compositing/rtl/rtl-absolute-overflow-scrolled.html [ Failure ]
 webkit.org/b/79766 compositing/rtl/rtl-absolute-overflow.html [ Failure ]
 webkit.org/b/79766 compositing/rtl/rtl-absolute.html [ Failure ]
