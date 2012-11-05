@@ -4119,8 +4119,8 @@ Bug(senorblanco) inspector-protocol/debugger-pause-dedicated-worker.html [ Failu
 # Started failing with r133224-133226 (probably 133224)
 Bug(senorblanco) fast/repaint/block-selection-gap-in-table-cell.html [ ImageOnlyFailure ]
 
-# This seems to have regressed on Mac; probably by r133416
-Bug(senorblanco) [ Mac ] editing/selection/5354455-2.html [ Failure ]
+# Started failing at r133443.
+webkit.org/b/101218 [ Win ] fast/dom/shadow/shadowroot-type.html  [ Failure Crash ]
 
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]

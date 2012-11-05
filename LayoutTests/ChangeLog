@@ -1,3 +1,9 @@
+2012-11-05  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Add a now-failing test, remove a now-passing test.  Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-05  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Fix broken comment in WK2 TestExpectations
