@@ -1,3 +1,15 @@
+2012-11-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] fast/forms/week-multiple-fields does not exist and should be removed from TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=101202
+
+        Unreviewed EFL gardening.
+
+        Remove fast/forms/week-multiple-fields from TestExpections since it does
+        not exist and makes the style script complain.
+
+        * platform/efl/TestExpectations:
+
 2012-11-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
