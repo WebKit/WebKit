@@ -7,8 +7,10 @@
         <button id="button2" onclick="testButton2()">Click Here Too</button>
         <button id="test" onclick="popup()" style="display:none"></button>
         <div id="console"></div>
-        <script> 
+        <script>
+            var testNum = 0;
             var win;
+
             function popup() {
                 win = window.open("about:blank", "blank");
                 shouldBeNonNull("win");
@@ -24,6 +26,40 @@
                 document.getElementById("test").dispatchEvent(clickEvent);
             }
 
+            function closeWindowAndRunNextTest() {
+                if (!win)
+                    nextTest();
+
+                win.close();
+                setTimeout(doneHandler, 1);
+
+                function doneHandler() {
+                    if (win.closed) {
+                        setTimeout(nextTest, 1);
+                        return;
+                    }
+                    setTimeout(doneHandler, 1);
+                }
+            }
+
+            function nextTest() {
+                if (testNum == 0) {
+                    var button1 = document.getElementById("button1");
+                    eventSender.mouseMoveTo(button1.offsetLeft + button1.offsetWidth / 2, button1.offsetTop + button1.offsetHeight / 2);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                } else if (testNum == 1) {
+                    var button2 = document.getElementById("button2");
+                    eventSender.mouseMoveTo(button2.offsetLeft + button2.offsetWidth / 2, button2.offsetTop + button2.offsetHeight / 2);
+                    eventSender.mouseDown();
+                    eventSender.mouseUp();
+                } else {
+                    testRunner.notifyDone();
+                }
+                ++testNum;
+                closeWindowAndRunNextTest();
+            }
+
             if (window.testRunner) {
                 testRunner.dumpAsText();
                 testRunner.setCanOpenWindows();
@@ -31,19 +67,7 @@
                 testRunner.setCloseRemainingWindowsWhenComplete(true);
                 testRunner.waitUntilDone();
 
-                var button1 = document.getElementById("button1");
-                var button2 = document.getElementById("button2");
-
-                if (window.eventSender) {
-                    eventSender.mouseMoveTo(button1.offsetLeft + button1.offsetWidth / 2, button1.offsetTop + button1.offsetHeight / 2);
-                    eventSender.mouseDown();
-                    eventSender.mouseUp();
-                    eventSender.mouseMoveTo(button2.offsetLeft + button2.offsetWidth / 2, button2.offsetTop + button2.offsetHeight / 2);
-                    eventSender.mouseDown();
-                    eventSender.mouseUp();
-                }
-
-                testRunner.notifyDone();
+                nextTest();
             }
         </script> 
     </body> 
