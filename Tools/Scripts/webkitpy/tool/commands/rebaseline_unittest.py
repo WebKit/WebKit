@@ -297,14 +297,14 @@ class TestRebaseline(_BaseTestCase):
                 "MOCK builder": {"port_name": "test-mac-leopard", "specifiers": set(["mock-specifier"])},
             }
             oc.capture_output()
-            self.command.execute(MockOptions(optimize=False, builders=None, suffixes=["txt"], verbose=True, move_overwritten_baselines=False), [], self.tool)
+            self.command.execute(MockOptions(optimize=False, builders=None, suffixes="txt,png", verbose=True, move_overwritten_baselines=False), [], self.tool)
         finally:
             oc.restore_output()
             builders._exact_matches = old_exact_matches
 
         calls = filter(lambda x: x != ['qmake', '-v'] and x[0] != 'perl', self.tool.executive.calls)
         self.assertEquals(calls,
-            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html', '--verbose']]])
+            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'mock/path/to/test.html', '--verbose']]])
 
 
 class TestRebaselineExpectations(_BaseTestCase):

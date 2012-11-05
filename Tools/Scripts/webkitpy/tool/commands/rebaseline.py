@@ -455,12 +455,6 @@ class Rebaseline(AbstractParallelRebaselineCommand):
         failing_tests = builder.latest_layout_test_results().tests_matching_failure_types([test_failures.FailureTextMismatch])
         return self._tool.user.prompt_with_list("Which test(s) to rebaseline for %s:" % builder.name(), failing_tests, can_choose_multiple=True)
 
-    def _suffixes_to_update(self, options):
-        suffixes = set()
-        for suffix_list in options.suffixes:
-            suffixes |= set(suffix_list.split(","))
-        return list(suffixes)
-
     def execute(self, options, args, tool):
         options.results_directory = None
         if options.builders:
@@ -471,13 +465,14 @@ class Rebaseline(AbstractParallelRebaselineCommand):
             builders = self._builders_to_pull_from()
 
         test_list = {}
+        suffixes_to_update = options.suffixes.split(",")
 
         for builder in builders:
             tests = args or self._tests_to_update(builder)
             for test in tests:
                 if test not in test_list:
                     test_list[test] = {}
-                test_list[test][builder.name()] = self._suffixes_to_update(options)
+                test_list[test][builder.name()] = suffixes_to_update
 
         if options.verbose:
             _log.debug("rebaseline-json: " + str(test_list))

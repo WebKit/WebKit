@@ -1,5 +1,22 @@
 2012-11-05  Dirk Pranke  <dpranke@chromium.org>
 
+        webkit-patch rebaseline is broken
+        https://bugs.webkit.org/show_bug.cgi?id=101235
+
+        Reviewed by Ojan Vafai.
+
+        It didn't get updated to handle the change in parsing --suffixes
+        properly, and the unit test didn't get updated either, masking the
+        problem.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (Rebaseline._tests_to_update):
+        (Rebaseline.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline):
+
+2012-11-05  Dirk Pranke  <dpranke@chromium.org>
+
         lint-webkitpy doesn't autoinstall pylint properly.
         https://bugs.webkit.org/show_bug.cgi?id=101106
 
