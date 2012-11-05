@@ -1,3 +1,32 @@
+2012-11-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining MathML tests after r132264 and r133221 and updating
+        pixel baselines with outdated hash.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/mathml/presentation/attributes-expected.png:
+        * platform/gtk/mathml/presentation/fenced-expected.png:
+        * platform/gtk/mathml/presentation/fenced-expected.txt:
+        * platform/gtk/mathml/presentation/mo-expected.png:
+        * platform/gtk/mathml/presentation/mo-expected.txt:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.png:
+        * platform/gtk/mathml/presentation/mo-stretch-expected.txt:
+        * platform/gtk/mathml/presentation/mroot-pref-width-expected.png:
+        * platform/gtk/mathml/presentation/over-expected.png:
+        * platform/gtk/mathml/presentation/over-expected.txt:
+        * platform/gtk/mathml/presentation/roots-expected.png:
+        * platform/gtk/mathml/presentation/row-alignment-expected.png:
+        * platform/gtk/mathml/presentation/row-alignment-expected.txt:
+        * platform/gtk/mathml/presentation/row-expected.png:
+        * platform/gtk/mathml/presentation/row-expected.txt:
+        * platform/gtk/mathml/presentation/style-expected.png:
+        * platform/gtk/mathml/presentation/subsup-expected.png:
+        * platform/gtk/mathml/presentation/subsup-expected.txt:
+        * platform/gtk/mathml/presentation/tables-expected.png:
+        * platform/gtk/mathml/presentation/tables-expected.txt:
+
 2012-11-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Skip compositing/repaint/invalidations-on-composited-layers.html

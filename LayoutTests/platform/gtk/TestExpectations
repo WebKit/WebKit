@@ -391,18 +391,6 @@ webkit.org/b/99059 fast/dom/timer-throttling-hidden-page.html [ Skip ]
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 
-webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
-# Needs rebaseline
-webkit.org/b/99921 mathml/presentation/fenced.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/mo.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/over.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/row.xhtml [ Failure ]
-# Needs rebaseline after bug 97390
-webkit.org/b/97390 mathml/presentation/mo-stretch.html [ Failure Pass ]
-webkit.org/b/97390 mathml/presentation/row-alignment.xhtml [ Failure Pass ]
-webkit.org/b/97390 mathml/presentation/tables.xhtml [ Failure Pass ]
-webkit.org/b/97390 mathml/presentation/subsup.xhtml [ Failure Pass ]
-
 # Requires Resolution Media Query support
 webkit.org/b/100137 fast/media/mq-resolution.html [ Failure ]
 
