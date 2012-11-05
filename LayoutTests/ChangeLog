@@ -1,3 +1,16 @@
+2012-11-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding failure expectations for accessibility/svg-remote-element,
+        fast/images/exif-orientation-image-document.html and
+        svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg.
+        Rebaselining fast/images/repaint-subrect-grid.html, the new baseline
+        matches the one Mac port uses.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/images/repaint-subrect-grid-expected.txt: Added.
+
 2012-11-04  Keishi Hattori  <keishi@webkit.org>
 
         Introduce Month class to calendar picker
