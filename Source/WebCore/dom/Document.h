@@ -981,7 +981,14 @@ public:
 
     String displayStringModifiedByEncoding(const String&) const;
     PassRefPtr<StringImpl> displayStringModifiedByEncoding(PassRefPtr<StringImpl>) const;
-    void displayBufferModifiedByEncoding(UChar* buffer, unsigned len) const;
+    void displayBufferModifiedByEncoding(LChar* buffer, unsigned len) const
+    {
+        displayBufferModifiedByEncodingInternal(buffer, len);
+    }
+    void displayBufferModifiedByEncoding(UChar* buffer, unsigned len) const
+    {
+        displayBufferModifiedByEncodingInternal(buffer, len);
+    }
 
     // Quirk for the benefit of Apple's Dictionary application.
     void setFrameElementsShouldIgnoreScrolling(bool ignore) { m_frameElementsShouldIgnoreScrolling = ignore; }
@@ -1207,6 +1214,9 @@ private:
     void pendingTasksTimerFired(Timer<Document>*);
 
     static void didReceiveTask(void*);
+    
+    template <typename CharacterType>
+    void displayBufferModifiedByEncodingInternal(CharacterType*, unsigned) const;
 
 #if ENABLE(PAGE_VISIBILITY_API)
     PageVisibilityState visibilityState() const;

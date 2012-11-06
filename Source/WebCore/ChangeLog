@@ -1,3 +1,28 @@
+2012-11-06  Michael Saboff  <msaboff@apple.com>
+
+        canonicalizedTitle() shouldn't convert 8 bit title strings to 16 bit
+        https://bugs.webkit.org/show_bug.cgi?id=101105
+
+        Reviewed by Darin Adler.
+
+        Turned canonicalizedTitle() into a templated function based on character type.
+        Changed call in updateTitle() to check the bitness of the title string to call
+        the right template flavor of canonicalizedTitle().
+        Made supporting changes by adding displayBufferModifiedByEncoding(LChar*, ...)
+        and made TextEncoding::displayBuffer() a templated function as well.
+
+        No new tests needed, as functionality is unchanged.
+
+        * dom/Document.cpp:
+        (WebCore::canonicalizedTitle):
+        (WebCore::Document::updateTitle):
+        (WebCore::Document::displayBufferModifiedByEncodingInternal):
+        * dom/Document.h:
+        (WebCore::Document::displayBufferModifiedByEncoding):
+        * platform/text/TextEncoding.h:
+        (TextEncoding):
+        (WebCore::TextEncoding::displayBuffer):
+
 2012-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix RenderGeometryMap assertion when layers are scrolled during layout

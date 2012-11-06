@@ -50,7 +50,8 @@ namespace WebCore {
                 return str;
             return str->replace('\\', m_backslashAsCurrencySymbol);
         }
-        void displayBuffer(UChar* characters, unsigned len) const
+        template <typename CharacterType>
+        void displayBuffer(CharacterType* characters, unsigned len) const
         {
             if (m_backslashAsCurrencySymbol == '\\')
                 return;
