@@ -1,3 +1,29 @@
+2012-11-05  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][WK2][PixelTests] Add missing expectations
+        https://bugs.webkit.org/show_bug.cgi?id=101289
+
+        Unreviewed, EFL gardening.
+
+        Add 16 missing pixel test expectations.
+
+        * platform/efl/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png: Added.
+        * platform/efl/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png: Added.
+        * platform/efl/compositing/geometry/fixed-position-transform-composited-page-scale-expected.png: Added.
+        * platform/efl/compositing/overflow/overflow-compositing-descendant-expected.png: Added.
+        * platform/efl/compositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/efl/compositing/reflections/nested-reflection-anchor-point-expected.png: Added.
+        * platform/efl/fast/forms/basic-inputs-expected.png: Added.
+        * platform/efl/fast/media/view-mode-media-feature-expected.png: Added.
+        * platform/efl/media/video-aspect-ratio-expected.png: Added.
+        * platform/efl/media/video-layer-crash-expected.png: Added.
+        * platform/efl/media/video-transformed-expected.png: Added.
+        * platform/efl/media/video-zoom-controls-expected.png: Added.
+        * platform/efl/media/video-zoom-expected.png: Added.
+        * platform/efl/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png: Added.
+        * platform/efl/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png: Added.
+
 2012-11-05  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, update chromium-mac-mountainlion baselines for svg failures after r133538
