@@ -1,3 +1,9 @@
+2012-11-06  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-06  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Fix failing tests on Mac after sub-pixel layout was enabled

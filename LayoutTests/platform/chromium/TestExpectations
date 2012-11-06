@@ -3532,7 +3532,7 @@ webkit.org/b/89702 compositing/scaling/tiled-layer-recursion.html [ ImageOnlyFai
 webkit.org/b/89702 platform/chromium/virtual/softwarecompositing/scaling/tiled-layer-recursion.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/89789 [ Mac ] plugins/embed-attributes-style.html [ ImageOnlyFailure Pass ]
-webkit.org/b/89789 [ Mac ] userscripts/user-script-video-document.html [ Crash Pass ]
+webkit.org/b/89789 [ Mac Win7 Debug ] userscripts/user-script-video-document.html [ Crash Pass ]
 
 # Flaky
 webkit.org/b/89794 [ Mac ] fast/regions/get-regions-by-content2.html [ Crash Pass ]
