@@ -1,3 +1,13 @@
+2012-11-06  Keishi Hattori  <keishi@webkit.org>
+
+        The "Rect" class in WebCore/Resources/pagepopups/pickerCommon.js should be renamed
+        https://bugs.webkit.org/show_bug.cgi?id=101304
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium/fast/forms/page-popup/page-popup-adjust-rect-expected.txt: Replace Rect with Rectangle.
+        * platform/chromium/fast/forms/page-popup/page-popup-adjust-rect.html: Ditto.
+
 2012-11-06  Kangil Han  <kangil.han@samsung.com>
 
         [EFL] Exclude fast/css/style-scoped cases from layout test running

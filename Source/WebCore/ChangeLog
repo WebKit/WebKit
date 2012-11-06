@@ -1,3 +1,21 @@
+2012-11-06  Keishi Hattori  <keishi@webkit.org>
+
+        The "Rect" class in WebCore/Resources/pagepopups/pickerCommon.js should be renamed
+        https://bugs.webkit.org/show_bug.cgi?id=101304
+
+        Reviewed by Kent Tamura.
+
+        The name Rect conflicts with CSS Rect.
+
+        No new tests. Just renaming.
+
+        * Resources/pagepopups/pickerCommon.js:
+        (Rectangle): Renamed from Rect.
+        (Rectangle.prototype.toString):
+        (Rectangle.intersection):
+        (adjustWindowRect):
+        (hideWindow):
+
 2012-11-06  Kentaro Hara  <haraken@chromium.org>
 
         Replace setDOMWrapper(wrapper, 0) with resetDOMWrapper(wrapper)

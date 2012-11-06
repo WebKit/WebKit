@@ -45,7 +45,7 @@ function createElement(tagName, opt_class, opt_text) {
     return element;
 }
 
-function Rect(xOrRect, y, width, height) {
+function Rectangle(xOrRect, y, width, height) {
     if (typeof xOrRect === "object") {
         y = xOrRect.y;
         width = xOrRect.width;
@@ -58,18 +58,18 @@ function Rect(xOrRect, y, width, height) {
     this.height = height;
 }
 
-Rect.prototype = {
+Rectangle.prototype = {
     get maxX() { return this.x + this.width; },
     get maxY() { return this.y + this.height; },
-    toString: function() { return "Rect(" + this.x + "," + this.y + "," + this.width + "," + this.height + ")"; }
+    toString: function() { return "Rectangle(" + this.x + "," + this.y + "," + this.width + "," + this.height + ")"; }
 };
 
 /**
- * @param {!number} Rect
- * @param {!number} Rect
- * @return {?Rect}
+ * @param {!Rectangle} rect1
+ * @param {!Rectangle} rect2
+ * @return {?Rectangle}
  */
-Rect.intersection = function(rect1, rect2) {
+Rectangle.intersection = function(rect1, rect2) {
     var x = Math.max(rect1.x, rect2.x);
     var maxX = Math.min(rect1.maxX, rect2.maxX);
     var y = Math.max(rect1.y, rect2.y);
@@ -78,7 +78,7 @@ Rect.intersection = function(rect1, rect2) {
     var height = maxY - y;
     if (width < 0 || height < 0)
         return null;
-    return new Rect(x, y, width, height);
+    return new Rectangle(x, y, width, height);
 };
 
 /**
@@ -94,7 +94,7 @@ function resizeWindow(width, height) {
  * @param {!number} height
  * @param {?number} minWidth
  * @param {?number} minHeight
- * @return {!Rect}
+ * @return {!Rectangle}
  */
 function adjustWindowRect(width, height, minWidth, minHeight) {
     if (typeof minWidth !== "number")
@@ -102,16 +102,16 @@ function adjustWindowRect(width, height, minWidth, minHeight) {
     if (typeof minHeight !== "number")
         minHeight = 0;
 
-    var windowRect = new Rect(0, 0, width, height);
+    var windowRect = new Rectangle(0, 0, width, height);
 
     if (!global.params.anchorRectInScreen)
         return windowRect;
 
-    var anchorRect = new Rect(global.params.anchorRectInScreen);
-    var rootViewRect = new Rect(global.params.rootViewRectInScreen);
-    var availRect = new Rect(window.screen.availLeft, window.screen.availTop, window.screen.availWidth, window.screen.availHeight);
+    var anchorRect = new Rectangle(global.params.anchorRectInScreen);
+    var rootViewRect = new Rectangle(global.params.rootViewRectInScreen);
+    var availRect = new Rectangle(window.screen.availLeft, window.screen.availTop, window.screen.availWidth, window.screen.availHeight);
     if (global.params.confineToRootView)
-        availRect = Rect.intersection(availRect, rootViewRect) || new Rect(0, 0, 0, 0);
+        availRect = Rectangle.intersection(availRect, rootViewRect) || new Rectangle(0, 0, 0, 0);
 
     _adjustWindowRectVertically(windowRect, availRect, anchorRect, minHeight);
     _adjustWindowRectHorizontally(windowRect, availRect, anchorRect, minWidth);
@@ -151,7 +151,7 @@ function _adjustWindowRectHorizontally(windowRect, availRect, anchorRect, minWid
 }
 
 /**
- * @param {!Rect} rect
+ * @param {!Rectangle} rect
  */
 function setWindowRect(rect) {
     if (window.frameElement) {
@@ -164,7 +164,7 @@ function setWindowRect(rect) {
 }
 
 function hideWindow() {
-    setWindowRect(new Rect(0, 0, 1, 1));
+    setWindowRect(new Rectangle(0, 0, 1, 1));
 }
 
 window.addEventListener("resize", function() {
