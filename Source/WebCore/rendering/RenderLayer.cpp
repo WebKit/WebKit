@@ -1885,6 +1885,7 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
         frameView->resumeScheduledEvents();
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 static FrameView* frameViewFromLayer(const RenderLayer* layer)
 {
     Frame* frame = layer->renderer()->frame();
@@ -1893,6 +1894,7 @@ static FrameView* frameViewFromLayer(const RenderLayer* layer)
 
     return frame->view();
 }
+#endif
 
 void RenderLayer::updateCompositingLayersAfterScroll()
 {

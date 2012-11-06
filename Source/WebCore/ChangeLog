@@ -1,3 +1,16 @@
+2012-11-06  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Fix build warning in RenderLayer.cpp caused by r133628
+        https://bugs.webkit.org/show_bug.cgi?id=101401
+
+        Reviewed by Simon Fraser.
+
+        The static function WebCore::frameViewFromLayer is only used when USE(ACCELERATED_COMPOSITING),
+        so define it only that case for removing -Wunused-function warning
+
+        * rendering/RenderLayer.cpp:
+        (WebCore):
+
 2012-11-06  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Store ExclusionPolygonEdge vertices in clockwise order
