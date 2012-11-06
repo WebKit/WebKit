@@ -3830,9 +3830,15 @@ void SpeculativeJIT::compile(Node& node)
         
         ASSERT(node.structureSet().size());
         
+        ExitKind exitKind;
+        if (m_jit.graph()[node.child1()].op() == WeakJSConstant)
+            exitKind = BadWeakConstantCache;
+        else
+            exitKind = BadCache;
+        
         if (node.structureSet().size() == 1) {
             speculationCheckWithConditionalDirection(
-                BadCache, JSValueRegs(base.gpr()), NoNode,
+                exitKind, JSValueRegs(base.gpr()), NoNode,
                 m_jit.branchWeakPtr(
                     JITCompiler::NotEqual,
                     JITCompiler::Address(base.gpr(), JSCell::structureOffset()),
@@ -3849,7 +3855,7 @@ void SpeculativeJIT::compile(Node& node)
                 done.append(m_jit.branchWeakPtr(JITCompiler::Equal, structure.gpr(), node.structureSet()[i]));
             
             speculationCheckWithConditionalDirection(
-                BadCache, JSValueRegs(base.gpr()), NoNode,
+                exitKind, JSValueRegs(base.gpr()), NoNode,
                 m_jit.branchWeakPtr(
                     JITCompiler::NotEqual, structure.gpr(), node.structureSet().last()),
                 node.op() == ForwardCheckStructure);
@@ -3873,7 +3879,8 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.addWeakReference(node.structure());
         node.structure()->addTransitionWatchpoint(
             speculationWatchpointWithConditionalDirection(
-                BadCache, node.op() == ForwardStructureTransitionWatchpoint));
+                m_jit.graph()[node.child1()].op() == WeakJSConstant ? BadWeakConstantCache : BadCache,
+                node.op() == ForwardStructureTransitionWatchpoint));
 
 #if !ASSERT_DISABLED
         SpeculateCellOperand op1(this, node.child1());

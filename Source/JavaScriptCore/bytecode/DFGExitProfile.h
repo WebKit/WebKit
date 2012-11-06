@@ -36,6 +36,7 @@ enum ExitKind {
     ExitKindUnset,
     BadType, // We exited because a type prediction was wrong.
     BadCache, // We exited because an inline cache was wrong.
+    BadWeakConstantCache, // We exited because a cache on a weak constant (usually a prototype) was wrong.
     BadIndexingType, // We exited because an indexing type was wrong.
     Overflow, // We exited because of overflow.
     NegativeZero, // We exited because we encountered negative zero.
@@ -55,6 +56,8 @@ inline const char* exitKindToString(ExitKind kind)
         return "BadType";
     case BadCache:
         return "BadCache";
+    case BadWeakConstantCache:
+        return "BadWeakConstantCache";
     case Overflow:
         return "Overflow";
     case NegativeZero:
