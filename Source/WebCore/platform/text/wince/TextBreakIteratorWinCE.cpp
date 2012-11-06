@@ -256,7 +256,7 @@ NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()
 
 static TextBreakIterator* staticLineBreakIterator;
 
-TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length, const AtomicString&, LineBreakIteratorMode, bool)
+TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length, const AtomicString&)
 {
     TextBreakIterator* lineBreakIterator = 0;
     if (staticLineBreakIterator) {
