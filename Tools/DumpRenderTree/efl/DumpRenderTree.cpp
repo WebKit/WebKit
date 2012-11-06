@@ -66,6 +66,7 @@ RefPtr<TestRunner> gTestRunner;
 volatile bool done = false;
 
 static bool dumpPixelsForCurrentTest;
+static int dumpPixelsForAllTests = false;
 static int dumpTree = true;
 static int printSeparators = true;
 
@@ -192,6 +193,7 @@ static bool parseCommandLineOptions(int argc, char** argv)
 {
     static const option options[] = {
         {"notree", no_argument, &dumpTree, false},
+        {"pixel-tests", no_argument, &dumpPixelsForAllTests, true},
         {"tree", no_argument, &dumpTree, true},
         {0, 0, 0, 0}
     };
@@ -258,7 +260,7 @@ static void runTest(const char* inputLine)
     TestCommand command = parseInputLine(inputLine);
     const String testPathOrURL(command.pathOrURL.c_str());
     ASSERT(!testPathOrURL.isEmpty());
-    dumpPixelsForCurrentTest = command.shouldDumpPixels;
+    dumpPixelsForCurrentTest = command.shouldDumpPixels || dumpPixelsForAllTests;
     const String expectedPixelHash(command.expectedPixelHash.c_str());
 
     // Convert the path into a full file URL if it does not look

@@ -1,3 +1,46 @@
+2012-11-06  Balazs Kelemen  <kbalazs@webkit.org>
+
+        DumpRenderTree should have --pixel-tests option again
+        https://bugs.webkit.org/show_bug.cgi?id=98648
+
+        Reviewed by Dirk Pranke.
+
+        Add back the --pixel-tests command line option to DumpRenderTree.
+        It was removed r124581 because tools don't use it after that patch.
+        However, it turned out that it is useful for debugging and working
+        with pixel tests.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (parseCommandLineOptions):
+        (runTest):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeGlobalsFromCommandLineOptions):
+        (runTest):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions):
+        (runTest):
+        * DumpRenderTree/qt/DumpRenderTreeMain.cpp:
+        (isOption):
+        (printUsage):
+        (main):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::processLine):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (WebCore::DumpRenderTree::setShouldDumpPixelsForAllTests):
+        (DumpRenderTree):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (runTest):
+        (dllLauncherEntryPoint):
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (runTest):
+        (MyApp::OnInit):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+
 2012-11-05  Dirk Pranke  <dpranke@chromium.org>
 
         webkit-patch rebaseline*: fix typo for --results-directory

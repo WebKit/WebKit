@@ -105,6 +105,7 @@ public:
 
     void setTimeout(int);
     void setShouldTimeout(bool flag);
+    void setShouldDumpPixelsForAllTests() { m_dumpPixelsForAllTests = true; }
 
 public Q_SLOTS:
     void initJSObjects();
@@ -141,6 +142,7 @@ private:
     TestRunner *m_controller;
 
     bool m_dumpPixelsForCurrentTest;
+    bool m_dumpPixelsForAllTests;
     QString m_expectedHash;
     QStringList m_standAloneModeTestList;
 

@@ -388,7 +388,8 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
 }
 
 DumpRenderTree::DumpRenderTree()
-    : m_stdin(0)
+    : m_dumpPixelsForAllTests(false)
+    , m_stdin(0)
     , m_enableTextOutput(false)
     , m_standAloneMode(false)
     , m_graphicsBased(false)
@@ -691,7 +692,7 @@ void DumpRenderTree::processLine(const QString &input)
 {
     TestCommand command = parseInputLine(std::string(input.toLatin1().constData()));
     QString pathOrURL = QLatin1String(command.pathOrURL.c_str());
-    m_dumpPixelsForCurrentTest = command.shouldDumpPixels;
+    m_dumpPixelsForCurrentTest = command.shouldDumpPixels || m_dumpPixelsForAllTests;
     m_expectedHash = QLatin1String(command.expectedPixelHash.c_str());
 
     if (pathOrURL.startsWith(QLatin1String("http:"))

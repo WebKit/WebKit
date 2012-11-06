@@ -50,6 +50,7 @@
 volatile bool done = true;
 volatile bool notified = false;
 static bool printSeparators = true;
+static int dumpPixelsForAllTests = false;
 static int dumpPixelsForCurrentTest;
 static int dumpTree = 1;
 time_t startTime; // to detect timeouts / failed tests
@@ -225,7 +226,7 @@ static void runTest(const wxString inputLine)
 
     TestCommand command = parseInputLine(std::string(inputLine.ToAscii()));
     string& pathOrURL = command.pathOrURL;
-    dumpPixelsForCurrentTest = command.shouldDumpPixels;
+    dumpPixelsForCurrentTest = command.shouldDumpPixels || dumpPixelsForAllTests;
     
     // CURL isn't happy if we don't have a protocol.
     size_t http = pathOrURL.find("http://");
@@ -279,6 +280,11 @@ bool MyApp::OnInit()
         
         if (!option.CmpNoCase(_T("--tree"))) {
             dumpTree = true;
+            continue;
+        }
+
+        if (!option.CmpNoCase(_T("--pixel-tests"))) {
+            dumpPixelsForAllTests = true;
             continue;
         }
     }

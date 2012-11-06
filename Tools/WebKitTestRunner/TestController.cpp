@@ -81,6 +81,7 @@ TestController::TestController(int argc, const char* argv[])
     , m_printSeparators(false)
     , m_usingServerMode(false)
     , m_gcBetweenTests(false)
+    , m_shouldDumpPixelsForAllTests(false)
     , m_state(Initial)
     , m_doneResetting(false)
     , m_longTimeout(defaultLongTimeout)
@@ -283,10 +284,15 @@ void TestController::initialize(int argc, const char* argv[])
             m_gcBetweenTests = true;
             continue;
         }
+        if (argument == "--pixel-tests" || argument == "-p") {
+            m_shouldDumpPixelsForAllTests = true;
+            continue;
+        }
         if (argument == "--print-supported-features") {
             printSupportedFeatures = true;
             break;
         }
+
 
         // Skip any other arguments that begin with '--'.
         if (argument.length() >= 2 && argument[0] == '-' && argument[1] == '-')
@@ -660,7 +666,7 @@ bool TestController::runTest(const char* inputLine)
     m_state = RunningTest;
 
     m_currentInvocation = adoptPtr(new TestInvocation(command.pathOrURL));
-    if (command.shouldDumpPixels)
+    if (command.shouldDumpPixels || m_shouldDumpPixelsForAllTests)
         m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
 
     m_currentInvocation->invoke();

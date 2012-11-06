@@ -80,6 +80,7 @@ static LPCWSTR fontsEnvironmentVariable = L"WEBKIT_TESTFONTS";
 const LPCWSTR kDumpRenderTreeClassName = L"DumpRenderTreeWindow";
 
 static bool dumpTree = true;
+static bool dumpPixelsForAllTests = false;
 static bool dumpPixelsForCurrentTest;
 static bool dumpAllPixels;
 static bool printSeparators;
@@ -952,7 +953,7 @@ static void runTest(const string& inputLine)
 {
     TestCommand command = parseInputLine(inputLine);
     const string& pathOrURL = command.pathOrURL;
-    dumpPixelsForCurrentTest = command.shouldDumpPixels;
+    dumpPixelsForCurrentTest = command.shouldDumpPixels || dumpPixelsForAllTests;
 
     static BSTR methodBStr = SysAllocString(TEXT("GET"));
 
@@ -1338,6 +1339,11 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
 
         if (!stricmp(argv[i], "--print-supported-features")) {
             printSupportedFeatures = true;
+            continue;
+        }
+
+        if (!stricmp(argv[i], "--pixel-tests")) {
+            dumpPixelsForAllTests = true;
             continue;
         }
 

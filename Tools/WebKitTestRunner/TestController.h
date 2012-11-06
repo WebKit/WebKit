@@ -140,6 +140,7 @@ private:
     bool m_printSeparators;
     bool m_usingServerMode;
     bool m_gcBetweenTests;
+    bool m_shouldDumpPixelsForAllTests;
     std::vector<std::string> m_paths;
     WKRetainPtr<WKStringRef> m_injectedBundlePath;
     WKRetainPtr<WKStringRef> m_testPluginDirectory;
