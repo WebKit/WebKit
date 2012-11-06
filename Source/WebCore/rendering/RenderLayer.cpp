@@ -1885,10 +1885,25 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& rect, const ScrollAlignm
         frameView->resumeScheduledEvents();
 }
 
+static FrameView* frameViewFromLayer(const RenderLayer* layer)
+{
+    Frame* frame = layer->renderer()->frame();
+    if (!frame)
+        return 0;
+
+    return frame->view();
+}
+
 void RenderLayer::updateCompositingLayersAfterScroll()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (compositor()->inCompositingMode()) {
+        // If we're in the middle of layout, we'll just update compositiong once layout has finished.
+        if (FrameView* frameView = frameViewFromLayer(this)) {
+            if (frameView->isInLayout())
+                return;
+        }
+
         // Our stacking context is guaranteed to contain all of our descendants that may need
         // repositioning, so update compositing layers from there.
         if (RenderLayer* compositingAncestor = stackingContext()->enclosingCompositingLayer()) {

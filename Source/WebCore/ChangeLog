@@ -1,3 +1,26 @@
+2012-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix RenderGeometryMap assertion when layers are scrolled during layout
+        https://bugs.webkit.org/show_bug.cgi?id=101292
+
+        Reviewed by Beth Dakin.
+
+        When we set RenderLayer scroll positions as part of layout, we don't want
+        to update compositing layers right away. Updating compositing layers
+        requires that the entire layer tree has been updated from renderers,
+        so that the geometry of all RenderLayers can be trusted. When this state
+        was violated, RenderGeometryMap asserts.
+        
+        Fix by bailing from updateCompositingLayersAfterScroll() if FrameView
+        tells us that we're doing layout. A full update of the compositing layers
+        will happen later anyway.
+
+        Test: compositing/geometry/geometry-map-scroll-during-layout-assertion.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::frameViewFromLayer):
+        (WebCore::RenderLayer::updateCompositingLayersAfterScroll):
+
 2012-11-06  Michael Saboff  <msaboff@apple.com>
 
         quoteCSSString() always creates a 16 bit string

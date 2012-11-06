@@ -1,3 +1,15 @@
+2012-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix RenderGeometryMap assertion when layers are scrolled during layout
+        https://bugs.webkit.org/show_bug.cgi?id=101292
+
+        Reviewed by Beth Dakin.
+
+        Test that hit the assertion before the fix.
+
+        * compositing/geometry/geometry-map-scroll-during-layout-assertion-expected.txt: Added.
+        * compositing/geometry/geometry-map-scroll-during-layout-assertion.html: Added.
+
 2012-11-06  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Unreviewed gardening - more rebaselines following bug 101115.
