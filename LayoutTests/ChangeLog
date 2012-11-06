@@ -22,6 +22,13 @@
 
         [Chromium] Unreviewed gardening.
 
+        * platform/chromium-mac-lion/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png: Removed.
+        * platform/efl/svg/dynamic-updates/SVGUseElement-dom-requiredFeatures-expected.png: Removed.
+
+2012-11-06  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
         * platform/chromium/TestExpectations:
 
 2012-11-06  Vsevolod Vlasov  <vsevik@chromium.org>
