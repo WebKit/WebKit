@@ -1,3 +1,35 @@
+2012-11-06  David Barton  <dbarton@mathscribe.com>
+
+        Unreviewed gardening after bug 101115 fixed.
+
+        * platform/chromium-linux-x86/fast/block/lineboxcontain: Added.
+        * platform/chromium-linux-x86/fast/block/lineboxcontain/block-glyphs-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/block/lineboxcontain/block-glyphs-replaced-expected.png: Added.
+        * platform/chromium-linux-x86/fast/block/lineboxcontain/block-glyphs-replaced-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/block/lineboxcontain/glyphs-expected.png: Added.
+        * platform/chromium-linux-x86/fast/block/lineboxcontain/glyphs-expected.txt: Added.
+        * platform/chromium-linux/fast/block/lineboxcontain/block-glyphs-expected.png:
+        * platform/chromium-linux/fast/block/lineboxcontain/block-glyphs-expected.txt: Added.
+        * platform/chromium-linux/fast/block/lineboxcontain/block-glyphs-replaced-expected.png: Added.
+        * platform/chromium-linux/fast/block/lineboxcontain/block-glyphs-replaced-expected.txt: Added.
+        * platform/chromium-linux/fast/block/lineboxcontain/glyphs-expected.png: Added.
+        * platform/chromium-linux/fast/block/lineboxcontain/glyphs-expected.txt: Added.
+        * platform/chromium-linux/fast/repaint/stacked-diacritics-expected.png:
+        * platform/chromium-mac/fast/block/lineboxcontain/block-glyphs-expected.png:
+        * platform/chromium-mac/fast/block/lineboxcontain/block-glyphs-replaced-expected.png:
+        * platform/chromium-mac/fast/block/lineboxcontain/glyphs-expected.png:
+        * platform/chromium-mac/fast/repaint/stacked-diacritics-expected.png:
+        * platform/chromium-win-xp/fast/block/lineboxcontain: Added.
+        * platform/chromium-win-xp/fast/block/lineboxcontain/block-glyphs-replaced-expected.png: Added.
+        * platform/chromium-win-xp/fast/block/lineboxcontain/block-glyphs-replaced-expected.txt: Added.
+        * platform/chromium-win-xp/fast/block/lineboxcontain/glyphs-expected.png: Added.
+        * platform/chromium-win-xp/fast/block/lineboxcontain/glyphs-expected.txt: Added.
+        * platform/chromium-win/fast/block/lineboxcontain/block-glyphs-replaced-expected.png: Added.
+        * platform/chromium-win/fast/block/lineboxcontain/block-glyphs-replaced-expected.txt: Added.
+        * platform/chromium-win/fast/block/lineboxcontain/glyphs-expected.png: Added.
+        * platform/chromium-win/fast/block/lineboxcontain/glyphs-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-11-06  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Make webkit_lint happy.  Unreviewed.

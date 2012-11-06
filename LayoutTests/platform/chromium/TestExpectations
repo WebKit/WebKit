@@ -2666,12 +2666,6 @@ crbug.com/76610 [ Mac Win Debug ] platform/chromium/virtual/gpu/canvas/philip/te
 crbug.com/76616 [ Android Linux Win ] fast/text/emphasis-combined-text.html [ Failure ]
 crbug.com/76616 [ SnowLeopard ] fast/text/emphasis-combined-text.html [ ImageOnlyFailure Pass ]
 
-# New CSS3 feature in r81684. Some tests fail outside Mac. They should be ok and need rebaseline after webkit.org/b/101115.
-crbug.com/77095 webkit.org/b/101115 [ Android Linux Win ] fast/block/lineboxcontain/block-glyphs-replaced.html [ Failure Pass ]
-crbug.com/77095 webkit.org/b/101115 [ Android Linux Win ] fast/block/lineboxcontain/glyphs.html [ Failure Pass ]
-webkit.org/b/101115 [ Linux ] fast/block/lineboxcontain/block-glyphs.html [ Failure ]
-webkit.org/b/101115 [ Linux ] fast/repaint/stacked-diacritics.html [ ImageOnlyFailure ]
-
 # Has been timing out, initiated at:
 # Webkit patches in range [r81976, r81981]
 # Chromium patches in range [r79428, r79442]
