@@ -76,6 +76,11 @@ class _BaseTestCase(unittest.TestCase):
 class TestRebaselineTest(_BaseTestCase):
     command_constructor = RebaselineTest  # AKA webkit-patch rebaseline-test-internal
 
+    def setUp(self):
+        super(TestRebaselineTest, self).setUp()
+        self.options = MockOptions(builder="WebKit Mac10.7", test="userscripts/another-test.html", suffixes="txt",
+                                   move_overwritten_baselines_to=None, results_directory=None)
+
     def test_baseline_directory(self):
         command = self.command
         self.assertEqual(command._baseline_directory("Apple Win XP Debug (Tests)"), "/mock-checkout/LayoutTests/platform/win-xp")
@@ -97,7 +102,8 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self._write("fast/css/large-list-of-rules-crash.html", "Dummy test contents")
         self._write("userscripts/another-test.html", "Dummy test contents")
 
-        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None, self.WEB_PREFIX)
+        self.options.suffixes = "png,wav,txt"
+        self.command._rebaseline_test_and_update_expectations(self.options)
 
         self.assertEquals(self.tool.web.urls_fetched,
             [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
@@ -112,7 +118,8 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self._write(self.lion_expectations_path, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
         self._write("userscripts/another-test.html", "Dummy test contents")
 
-        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None, self.WEB_PREFIX)
+        self.options.suffixes = 'png,wav,txt'
+        self.command._rebaseline_test_and_update_expectations(self.options)
 
         self.assertEquals(self.tool.web.urls_fetched,
             [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
@@ -126,7 +133,8 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self._write(self.lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), "Bug(y) [ Mac ] other-test.html [ Failure ]\n")
         self._write("userscripts/another-test.html", "Dummy test contents")
 
-        self.command._rebaseline_test_and_update_expectations("WebKit Mac10.7", "userscripts/another-test.html", None, self.WEB_PREFIX)
+        self.options.suffixes = 'png,wav,txt'
+        self.command._rebaseline_test_and_update_expectations(self.options)
 
         self.assertEquals(self.tool.web.urls_fetched,
             [self.WEB_PREFIX + '/userscripts/another-test-actual.png',
@@ -141,8 +149,10 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self.assertEquals(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
 
     def test_rebaseline_test_with_results_directory(self):
-        self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt", '/tmp')
-        self.assertEquals(self.tool.web.urls_fetched, ['/tmp/userscripts/another-test-actual.txt'])
+        self._write(self.lion_expectations_path, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
+        self.options.results_directory = '/tmp'
+        self.command._rebaseline_test_and_update_expectations(self.options)
+        self.assertEquals(self.tool.web.urls_fetched, ['file:///tmp/userscripts/another-test-actual.txt'])
 
     def test_rebaseline_test_and_print_scm_changes(self):
         self.command._print_scm_changes = True

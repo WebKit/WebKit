@@ -1,3 +1,25 @@
+2012-11-05  Dirk Pranke  <dpranke@chromium.org>
+
+        webkit-patch rebaseline*: fix handling of local file urls
+        https://bugs.webkit.org/show_bug.cgi?id=101296
+
+        Reviewed by Ojan Vafai.
+
+        When using --results-directory, we need to make sure we're converting
+        paths to file:/// urls for urllib to work correctly. Also, this
+        patch reworks the unit tests to get better coverage (of the execute()
+        command) and reduce copy/pasting of mock options.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._rebaseline_test_and_update_expectations):
+        (RebaselineTest.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.setUp):
+        (test_rebaseline_updates_expectations_file):
+        (test_rebaseline_does_not_include_overrides):
+        (test_rebaseline_test_with_results_directory):
+        (test_rebaseline_test_internal_with_move_overwritten_baselines_to):
+
 2012-11-05  Kenneth Russell  <kbr@google.com>
 
         Added secondary email address and IRC nick.

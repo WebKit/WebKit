@@ -182,15 +182,18 @@ class RebaselineTest(AbstractRebaseliningCommand):
         _log.debug("Retrieving %s." % source_baseline)
         self._save_baseline(self._tool.web.get_binary(source_baseline, convert_404_to_None=True), target_baseline)
 
-    def _rebaseline_test_and_update_expectations(self, builder_name, test_name, platforms_to_move_existing_baselines_to, results_url):
+    def _rebaseline_test_and_update_expectations(self, options):
+        if options.results_directory:
+            results_url = 'file://' + options.results_directory
+        else:
+            results_url = self._results_url(options.builder)
+        self._baseline_suffix_list = options.suffixes.split(',')
         for suffix in self._baseline_suffix_list:
-            self._rebaseline_test(builder_name, test_name, platforms_to_move_existing_baselines_to, suffix, results_url)
-        self._update_expectations_file(builder_name, test_name)
+            self._rebaseline_test(options.builder, options.test, options.move_overwritten_baselines_to, suffix, results_url)
+        self._update_expectations_file(options.builder, options.test)
 
     def execute(self, options, args, tool):
-        self._baseline_suffix_list = options.suffixes.split(',')
-        results_url = options.results_directory or self._results_url(options.builder)
-        self._rebaseline_test_and_update_expectations(options.builder, options.test, options.move_overwritten_baselines_to, results_url)
+        self._rebaseline_test_and_update_expectations(options)
         print json.dumps(self._scm_changes)
 
 
