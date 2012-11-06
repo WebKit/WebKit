@@ -37,6 +37,7 @@
 #include "DOMImplementation.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "IntrusiveDOMWrapperMap.h"
 #include "MemoryUsageSupport.h"
 #include "MessagePort.h"
 #include "RetainedDOMInfo.h"

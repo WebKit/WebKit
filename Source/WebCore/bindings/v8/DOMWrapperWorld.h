@@ -33,6 +33,7 @@
 
 #include "DOMDataStore.h"
 #include "SecurityOrigin.h"
+#include "V8DOMMap.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

@@ -101,7 +101,7 @@ static v8::Handle<v8::Value> readOnlyTestObjAttrAttrGetter(v8::Local<v8::String>
     INC_STATS("DOM.TestObj.readOnlyTestObjAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     RefPtr<TestObj> result = imp->readOnlyTestObjAttr();
-    v8::Handle<v8::Value> wrapper = result.get() ? v8::Handle<v8::Value>(DOMDataStore::current(info.GetIsolate())->get(result.get())) : v8Undefined();
+    v8::Handle<v8::Value> wrapper = result.get() ? getDOMObjectMap(info.GetIsolate()).get(result.get()) : v8Undefined();
     if (wrapper.IsEmpty()) {
         wrapper = toV8(result.get(), info.Holder(), info.GetIsolate());
         if (!wrapper.IsEmpty())

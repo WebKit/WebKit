@@ -1,3 +1,92 @@
+2012-11-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133526.
+        http://trac.webkit.org/changeset/133526
+        https://bugs.webkit.org/show_bug.cgi?id=101388
+
+        May have caused 15% memory regression in Chromium (Requested
+        by jsbell|gardener on #webkit).
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateNormalAttrGetter):
+        (GenerateConstructorCallback):
+        (GenerateNamedConstructorCallback):
+        (GenerateToV8Converters):
+        (GetDomMapFunction):
+        (GetDomMapName):
+        * bindings/scripts/test/V8/V8Float64Array.h:
+        (WebCore::V8Float64Array::wrap):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.h:
+        (WebCore::V8TestActiveDOMObject::wrap):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.h:
+        (WebCore::V8TestCustomNamedGetter::wrap):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h:
+        (WebCore::V8TestEventConstructor::wrap):
+        * bindings/scripts/test/V8/V8TestEventTarget.h:
+        (WebCore::V8TestEventTarget::wrap):
+        * bindings/scripts/test/V8/V8TestException.h:
+        (WebCore::V8TestException::wrap):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (WebCore::V8TestInterface::wrap):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        (WebCore::V8TestMediaQueryListListener::wrap):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h:
+        (WebCore::V8TestNamedConstructor::wrap):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore::V8TestNode::constructorCallback):
+        (WebCore::V8TestNode::wrapSlow):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::readOnlyTestObjAttrAttrGetter):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        (WebCore::V8TestObj::wrap):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+        (WebCore::V8TestSerializedScriptValueInterface::wrap):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::DOMDataStore):
+        (WebCore::DOMDataStore::~DOMDataStore):
+        (WebCore::DOMDataStore::current):
+        (WebCore::DOMDataStore::reportMemoryUsage):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::domNodeMap):
+        (WebCore::DOMDataStore::domObjectMap):
+        (DOMDataStore):
+        * bindings/v8/DOMWrapperMap.h:
+        (WebCore):
+        (DOMWrapperMap):
+        (WebCore::DOMWrapperMap::~DOMWrapperMap):
+        (WebCore::DOMWrapperHashMap::remove):
+        * bindings/v8/DOMWrapperWorld.h:
+        * bindings/v8/IntrusiveDOMWrapperMap.h: Copied from Source/WebKit/chromium/src/WebScriptController.cpp.
+        (WebCore):
+        (IntrusiveDOMWrapperMap):
+        (WebCore::IntrusiveDOMWrapperMap::weakCallback):
+        * bindings/v8/ScriptProfiler.cpp:
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::neuterBinding):
+        * bindings/v8/V8DOMMap.cpp: Copied from Source/WebKit/chromium/src/WebScriptController.cpp.
+        (WebCore):
+        (WebCore::getDOMNodeMap):
+        (WebCore::getDOMObjectMap):
+        * bindings/v8/V8DOMMap.h: Copied from Source/WebKit/chromium/src/WebScriptController.cpp.
+        (WebCore):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMNode):
+        (WebCore):
+        * bindings/v8/V8DOMWrapper.h:
+        (V8DOMWrapper):
+        (WebCore::V8DOMWrapper::getCachedWrapper):
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMObject):
+        * bindings/v8/V8GCController.cpp:
+        * bindings/v8/V8NPObject.cpp:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        * bindings/v8/WorkerScriptController.cpp:
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+
 2012-11-06  Alexey Proskuryakov  <ap@apple.com>
 
         Some cookie code cleanup

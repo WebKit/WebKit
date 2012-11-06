@@ -68,6 +68,15 @@
 
 namespace WebCore {
 
+v8::Persistent<v8::Object> V8DOMWrapper::setJSWrapperForDOMNode(PassRefPtr<Node> node, v8::Handle<v8::Object> wrapper, v8::Isolate* isolate)
+{
+    v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
+    ASSERT(maybeDOMWrapper(wrapperHandle));
+    wrapperHandle.SetWrapperClassId(v8DOMNodeClassId);
+    getDOMNodeMap(isolate).set(node.leakRef(), wrapperHandle);
+    return wrapperHandle;
+}
+
 void V8DOMWrapper::setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child)
 {
     ASSERT(name);

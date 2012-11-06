@@ -28,62 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DOMDataStore.h"
+#ifndef V8DOMMap_h
+#define V8DOMMap_h
 
 #include "DOMWrapperMap.h"
-#include "IntrusiveDOMWrapperMap.h"
-#include "V8Binding.h"
+#include "Node.h"
 #include "WebCoreMemoryInstrumentation.h"
-#include <wtf/MainThread.h>
+#include <wtf/Forward.h>
+#include <wtf/HashMap.h>
+#include <wtf/MemoryInstrumentationHashMap.h>
+#include <wtf/OwnPtr.h>
+#include <v8.h>
 
 namespace WebCore {
 
-DOMDataStore::DOMDataStore(Type type)
-    : m_type(type)
-{
-    if (type == MainWorld)
-        m_domNodeMap = adoptPtr(new IntrusiveDOMWrapperMap<Node>);
-    else {
-        ASSERT(type == IsolatedWorld || type == Worker);
-        // FIXME: In principle, we shouldn't need to create this
-        // wrapper map for workers because there are no Nodes on
-        // worker threads.
-        m_domNodeMap = adoptPtr(new DOMWrapperHashMap<Node>);
-    }
-    m_domObjectMap = adoptPtr(new DOMWrapperHashMap<void>);
-
-    V8PerIsolateData::current()->registerDOMDataStore(this);
-}
-
-DOMDataStore::~DOMDataStore()
-{
-    ASSERT(m_type != MainWorld); // We never actually destruct the main world's DOMDataStore.
-
-    V8PerIsolateData::current()->unregisterDOMDataStore(this);
-
-    if (m_type == IsolatedWorld)
-        m_domNodeMap->clear();
-    m_domObjectMap->clear();
-}
-
-DOMDataStore* DOMDataStore::current(v8::Isolate* isolate)
-{
-    DEFINE_STATIC_LOCAL(DOMDataStore, defaultStore, (MainWorld));
-    V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    if (UNLIKELY(!!data->domDataStore()))
-        return data->domDataStore();
-    V8DOMWindowShell* context = V8DOMWindowShell::getEntered();
-    if (UNLIKELY(!!context))
-        return context->world()->domDataStore();
-    return &defaultStore;
-}
-
-void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
-    info.addMember(m_domNodeMap);
-    info.addMember(m_domObjectMap);
-}
+DOMWrapperMap<Node>& getDOMNodeMap(v8::Isolate* = 0);
+DOMWrapperMap<void>& getDOMObjectMap(v8::Isolate* = 0);
 
 } // namespace WebCore
+
+#endif // V8DOMMap_h

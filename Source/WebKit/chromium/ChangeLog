@@ -1,5 +1,16 @@
 2012-11-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r133526.
+        http://trac.webkit.org/changeset/133526
+        https://bugs.webkit.org/show_bug.cgi?id=101388
+
+        May have caused 15% memory regression in Chromium (Requested
+        by jsbell|gardener on #webkit).
+
+        * src/WebScriptController.cpp:
+
+2012-11-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed.  Rolled DEPS.
 
         * DEPS:

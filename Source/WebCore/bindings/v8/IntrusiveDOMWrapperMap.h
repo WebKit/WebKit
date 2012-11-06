@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,31 +28,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebScriptController.h"
+#ifndef IntrusiveDOMWrapperMap_h
+#define IntrusiveDOMWrapperMap_h
 
-#include "ScriptController.h"
-#include "V8Binding.h"
-#include "V8DOMMap.h"
-#include <public/WebString.h>
+#include "DOMWrapperMap.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
+template<class KeyType>
+class IntrusiveDOMWrapperMap : public DOMWrapperMap<KeyType> {
+public:
+    virtual v8::Persistent<v8::Object> get(KeyType* key) OVERRIDE
+    {
+        return key->wrapper();
+    }
 
-void WebScriptController::registerExtension(v8::Extension* extension)
-{
-    ScriptController::registerExtensionIfNeeded(extension);
-}
+    virtual void set(KeyType* key, v8::Persistent<v8::Object> wrapper) OVERRIDE
+    {
+        ASSERT(key && key->wrapper().IsEmpty());
+        key->setWrapper(wrapper);
+        wrapper.MakeWeak(key, weakCallback);
+    }
 
-void WebScriptController::enableV8SingleThreadMode()
-{
-    // FIXME: remove this method after all it's usages are gone.
-}
+    virtual void clear() OVERRIDE
+    {
+        ASSERT_NOT_REACHED();
+    }
 
-void WebScriptController::flushConsoleMessages()
-{
-    // FIXME: remove this method after all it's usages are gone.
-}
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
+    {
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
+        UNUSED_PARAM(info);
+    }
 
-} // namespace WebKit
+private:
+    static void weakCallback(v8::Persistent<v8::Value> value, void* context)
+    {
+        KeyType* key = static_cast<KeyType*>(context);
+        ASSERT(value->IsObject());
+        ASSERT(key->wrapper() == v8::Persistent<v8::Object>::Cast(value));
+
+        key->clearWrapper();
+        value.Dispose();
+        value.Clear();
+        key->deref();
+    }
+};
+
+} // namespace WebCore
+
+#endif
