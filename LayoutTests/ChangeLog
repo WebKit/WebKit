@@ -1,3 +1,9 @@
+2012-11-06  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, update chromium-mac-mountainlion expectations to remove passing tests.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+
 2012-11-06  Stephen White  <senorblanco@chromium.org>
 
         Don't dump pixels for filter-empty-element-crash.
