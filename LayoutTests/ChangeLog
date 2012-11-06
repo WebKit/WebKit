@@ -1,3 +1,15 @@
+2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Qt] Disable all tests fast/dom/shadow
+        https://bugs.webkit.org/show_bug.cgi?id=101324
+
+        Reviewed by Csaba Osztrogonác.
+
+        Since Qt does not have SHADOW_DOM flag enabled, a lot of tests are failing.
+        Let's skip all tests.
+
+        * platform/qt/TestExpectations:
+
 2012-11-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Displayed name/path of urls in network tab of dev tools is inconsistent
