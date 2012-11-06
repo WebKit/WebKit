@@ -1485,6 +1485,7 @@
 		4FA3B90A125CD12200300BAD /* InspectorState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FA3B908125CD12100300BAD /* InspectorState.cpp */; };
 		4FA3B90B125CD12200300BAD /* InspectorState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FA3B909125CD12200300BAD /* InspectorState.h */; };
 		4FB390AD15EF61F3007AD51F /* GeneratedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FB390AC15EF61F3007AD51F /* GeneratedImage.cpp */; };
+		4FC8534C1644272300D1C275 /* CachedMetadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FC853491644271B00D1C275 /* CachedMetadata.cpp */; };
 		4FD8D0F2119C718B002FA825 /* ScriptGCEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FD8D0F0119C718B002FA825 /* ScriptGCEvent.cpp */; };
 		4FD8D0F3119C718B002FA825 /* ScriptGCEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FD8D0F1119C718B002FA825 /* ScriptGCEvent.h */; };
 		4FFC022B1643B710004E1638 /* NodeRareData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FAB48661643A67E00F70C07 /* NodeRareData.cpp */; };
@@ -8701,6 +8702,8 @@
 		4FAB48641643A66D00F70C07 /* ElementRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ElementRareData.cpp; sourceTree = "<group>"; };
 		4FAB48661643A67E00F70C07 /* NodeRareData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NodeRareData.cpp; sourceTree = "<group>"; };
 		4FB390AC15EF61F3007AD51F /* GeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratedImage.cpp; sourceTree = "<group>"; };
+		4FC853491644271B00D1C275 /* CachedMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedMetadata.cpp; sourceTree = "<group>"; };
+		4FC8534A1644271B00D1C275 /* CachedMetadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedMetadata.h; sourceTree = "<group>"; };
 		4FD8D0F0119C718B002FA825 /* ScriptGCEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptGCEvent.cpp; sourceTree = "<group>"; };
 		4FD8D0F1119C718B002FA825 /* ScriptGCEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptGCEvent.h; sourceTree = "<group>"; };
 		501BAAA813950E2C00F7ACEB /* WindRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindRule.h; sourceTree = "<group>"; };
@@ -20692,6 +20695,8 @@
 				5126E6B60A2E3AEF005C29FA /* icon */,
 				93A1EAA20A5634D8006960A0 /* mac */,
 				E1C416160F6563180092D2FB /* CrossOriginAccessControl.cpp */,
+				4FC853491644271B00D1C275 /* CachedMetadata.cpp */,
+				4FC8534A1644271B00D1C275 /* CachedMetadata.h */,
 				E1C416110F6562FD0092D2FB /* CrossOriginAccessControl.h */,
 				E1C415DD0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp */,
 				E1C415D90F655D6F0092D2FB /* CrossOriginPreflightResultCache.h */,
@@ -28772,6 +28777,7 @@
 				4FFC022D1643B726004E1638 /* ElementRareData.cpp in Sources */,
 				93C38BFE164473C700091EB2 /* ScrollingStateFixedNode.cpp in Sources */,
 				93C38C04164473DD00091EB2 /* ScrollingTreeFixedNode.mm in Sources */,
+				4FC8534C1644272300D1C275 /* CachedMetadata.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

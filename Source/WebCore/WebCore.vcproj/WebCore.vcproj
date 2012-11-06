@@ -27407,6 +27407,14 @@
 			Name="loader"
 			>
 			<File
+				RelativePath="..\loader\CachedMetadata.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\CachedMetadata.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\CrossOriginAccessControl.cpp"
 				>
 			</File>

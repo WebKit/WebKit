@@ -1,3 +1,24 @@
+2012-11-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI instrument CachedMetadata. It uses ~300k on plus.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=101067
+
+        Reviewed by Yury Semikhatsky.
+
+        Plain vanilla instrumentation for CachedMetadata class.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/CachedMetadata.cpp: Added.
+        (WebCore):
+        (WebCore::CachedMetadata::reportMemoryUsage):
+        * loader/CachedMetadata.h:
+        (CachedMetadata):
+
 2012-11-06  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: report physical memory really committed for JS heap in NMI

@@ -804,6 +804,7 @@ SOURCES += \
     loader/appcache/ManifestParser.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
+    loader/CachedMetadata.cpp \
     loader/cache/MemoryCache.cpp \
     loader/cache/CachedCSSStyleSheet.cpp \
     loader/cache/CachedFont.cpp \

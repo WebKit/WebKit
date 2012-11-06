@@ -2956,6 +2956,7 @@
             'inspector/WorkerInspectorController.h',
             'inspector/WorkerRuntimeAgent.cpp',
             'inspector/WorkerRuntimeAgent.h',
+            'loader/CachedMetadata.cpp',
             'loader/CachedMetadata.h',
             'loader/CrossOriginAccessControl.cpp',
             'loader/CrossOriginAccessControl.h',
