@@ -1,3 +1,13 @@
+2012-11-06  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Overrides] Add Chrome for Android and Firefox for Android user agent strings
+        https://bugs.webkit.org/show_bug.cgi?id=100666
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.UserAgentSettingsTab.prototype._createUserAgentSelectRowElement.get const):
+
 2012-11-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: JavaScript web workers debugging crashes
