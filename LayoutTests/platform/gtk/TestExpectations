@@ -1309,7 +1309,6 @@ webkit.org/b/94083 media/video-controls-fullscreen-volume.html [ Skip ]
 Bug(GTK) fast/forms/date-multiple-fields [ Skip ]
 webkit.org/b/97299 fast/forms/month-multiple-fields
 webkit.org/b/94186 fast/forms/time-multiple-fields
-webkit.org/b/97877 fast/forms/week-multiple-fields
 
 webkit.org/b/70485 fast/events/drag-selects-image.html [ Failure ]
 

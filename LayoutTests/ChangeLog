@@ -1,3 +1,15 @@
+2012-11-06  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        [QT] [GTK] Remove fast/forms/week-multiple-fields from TestExpectations of gtk and qt.
+        https://bugs.webkit.org/show_bug.cgi?id=101317
+
+        Unreviewed gardening.
+
+        fast/forms/week-multiple-fields is removed by http://trac.webkit.org/changeset/133440.
+
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-11-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: JavaScript web workers debugging crashes

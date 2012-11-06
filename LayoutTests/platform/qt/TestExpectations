@@ -464,7 +464,6 @@ fast/dom/timer-throttling-hidden-page.html
 fast/forms/date-multiple-fields
 fast/forms/month-multiple-fields
 fast/forms/time-multiple-fields
-fast/forms/week-multiple-fields
 
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
