@@ -110,6 +110,7 @@ TestShell::TestShell()
     , m_dumpPixelsForCurrentTest(false)
     , m_allowExternalPages(false)
     , m_acceleratedCompositingForVideoEnabled(false)
+    , m_acceleratedCompositingForFixedPositionEnabled(false)
     , m_softwareCompositingEnabled(false)
     , m_threadedCompositingEnabled(false)
     , m_forceCompositingMode(false)
@@ -229,6 +230,7 @@ void TestShell::resetWebSettings(WebView& webView)
     m_prefs.reset();
     m_prefs.acceleratedCompositingEnabled = true;
     m_prefs.acceleratedCompositingForVideoEnabled = m_acceleratedCompositingForVideoEnabled;
+    m_prefs.acceleratedCompositingForFixedPositionEnabled = m_acceleratedCompositingForFixedPositionEnabled;
     m_prefs.forceCompositingMode = m_forceCompositingMode;
     m_prefs.accelerated2dCanvasEnabled = m_accelerated2dCanvasEnabled;
     m_prefs.deferred2dCanvasEnabled = m_deferred2dCanvasEnabled;

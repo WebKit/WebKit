@@ -105,6 +105,7 @@ struct WebPreferences {
     bool hyperlinkAuditingEnabled;
     bool caretBrowsingEnabled;
     bool acceleratedCompositingForVideoEnabled;
+    bool acceleratedCompositingForFixedPositionEnabled;
     bool acceleratedCompositingEnabled;
     bool forceCompositingMode;
     bool accelerated2dCanvasEnabled;

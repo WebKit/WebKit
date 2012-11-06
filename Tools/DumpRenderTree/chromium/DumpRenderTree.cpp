@@ -62,6 +62,7 @@ static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-c
 static const char optionEnableDeferred2DCanvas[] = "--enable-deferred-2d-canvas";
 static const char optionEnableAcceleratedPainting[] = "--enable-accelerated-painting";
 static const char optionEnableAcceleratedCompositingForVideo[] = "--enable-accelerated-video";
+static const char optionEnableAcceleratedFixedPosition[] = "--enable-accelerated-fixed-position";
 static const char optionUseGraphicsContext3DImplementation[] = "--use-graphics-context-3d-implementation=";
 static const char optionEnablePerTilePainting[] = "--enable-per-tile-painting";
 static const char optionEnableDeferredImageDecoding[] = "--enable-deferred-image-decoding";
@@ -127,6 +128,7 @@ int main(int argc, char* argv[])
     bool allowExternalPages = false;
     bool startupDialog = false;
     bool acceleratedCompositingForVideoEnabled = false;
+    bool acceleratedCompositingForFixedPositionEnabled = false;
     bool softwareCompositingEnabled = false;
     bool threadedCompositingEnabled = false;
     bool forceCompositingMode = false;
@@ -164,6 +166,8 @@ int main(int argc, char* argv[])
             hardwareAcceleratedGL = true;
         else if (argument == optionEnableAcceleratedCompositingForVideo)
             acceleratedCompositingForVideoEnabled = true;
+        else if (argument == optionEnableAcceleratedFixedPosition)
+            acceleratedCompositingForFixedPositionEnabled = true;
         else if (argument == optionEnableSoftwareCompositing)
             softwareCompositingEnabled = true;
         else if (argument == optionEnableThreadedCompositing)
@@ -220,6 +224,7 @@ int main(int argc, char* argv[])
         TestShell shell;
         shell.setAllowExternalPages(allowExternalPages);
         shell.setAcceleratedCompositingForVideoEnabled(acceleratedCompositingForVideoEnabled);
+        shell.setAcceleratedCompositingForFixedPositionEnabled(acceleratedCompositingForFixedPositionEnabled);
         shell.setSoftwareCompositingEnabled(softwareCompositingEnabled);
         shell.setThreadedCompositingEnabled(threadedCompositingEnabled);
         shell.setForceCompositingMode(forceCompositingMode);

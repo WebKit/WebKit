@@ -180,7 +180,9 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
     def additional_drt_flag(self):
         # The Chromium port for Android always uses the hardware GPU path.
-        return ['--encode-binary', '--enable-hardware-gpu']
+        return ['--encode-binary', '--enable-hardware-gpu',
+                '--force-compositing-mode',
+                '--enable-accelerated-fixed-position']
 
     def default_timeout_ms(self):
         # Android platform has less computing power than desktop platforms.
