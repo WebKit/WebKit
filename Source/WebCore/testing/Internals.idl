@@ -50,6 +50,7 @@
     DOMString shadowRootType(in Node root) raises (DOMException);
     boolean hasShadowInsertionPoint(in Node root) raises (DOMException);
     boolean hasContentElement(in Node root) raises (DOMException);
+    unsigned long countElementShadow(in Node Root) raises (DOMException);
     Element includerFor(in Node node) raises (DOMException);
     DOMString shadowPseudoId(in Element element) raises (DOMException);
     void setShadowPseudoId(in Element element, in DOMString id) raises (DOMException);

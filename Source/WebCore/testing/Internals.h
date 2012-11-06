@@ -86,6 +86,7 @@ public:
     String shadowRootType(const Node*, ExceptionCode&) const;
     bool hasShadowInsertionPoint(const Node*, ExceptionCode&) const;
     bool hasContentElement(const Node*, ExceptionCode&) const;
+    size_t countElementShadow(const Node*, ExceptionCode&) const;
     Element* includerFor(Node*, ExceptionCode&);
     String shadowPseudoId(Element*, ExceptionCode&);
     void setShadowPseudoId(Element*, const String&, ExceptionCode&);

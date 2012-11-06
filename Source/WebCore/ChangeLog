@@ -1,3 +1,36 @@
+2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] ShadowRoot should know the existence of elements having ElementShadow.
+        https://bugs.webkit.org/show_bug.cgi?id=100922
+
+        Reviewed by Hajime Morita.
+
+        We count the elements having ElementShadow in ShadowRoot. This is a prepation patch for to solve Bug 100451.
+        We have a count-up and count-down login in ShadowRoot::insertedInto and ShadowRoot::removedFrom.
+
+        For performance reason, we have a flag that an element should be unregistered in ShadowRoot.
+
+        Test: fast/dom/shadow/has-elementshadow.html
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::insertedInto): Count up the number of elements having ElementShadow. ElementShadow
+        is created only when the oldest ShadowRoot is created, we only count up only when this ShadowRoot is oldest.
+        (WebCore):
+        (WebCore::ShadowRoot::removedFrom): Count down if we used this ShadowRoot for count up.
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        (WebCore::ShadowRoot::registerElementShadow):
+        (WebCore::ShadowRoot::unregisterElementShadow):
+        (WebCore::ShadowRoot::hasElementShadow):
+        (WebCore::ShadowRoot::countElementShadow):
+        * testing/Internals.cpp:
+        (WebCore::Internals::countElementShadow):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-11-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: show "debugging session terminated" message when remote debuggign connection is closed unexpectedly.

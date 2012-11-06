@@ -55,9 +55,11 @@ ShadowRoot::ShadowRoot(Document* document)
     , m_next(0)
     , m_applyAuthorStyles(false)
     , m_resetStyleInheritance(false)
+    , m_registeredWithParentShadowRoot(false)
     , m_insertionPointAssignedTo(0)
     , m_numberOfShadowElementChildren(0)
     , m_numberOfContentElementChildren(0)
+    , m_numberOfElementShadowChildren(0)
     , m_numberOfStyles(0)
 {
     ASSERT(document);
@@ -233,6 +235,42 @@ void ShadowRoot::attach()
     styleResolver->pushParentShadowRoot(this);
     DocumentFragment::attach();
     styleResolver->popParentShadowRoot(this);
+}
+
+Node::InsertionNotificationRequest ShadowRoot::insertedInto(ContainerNode* insertionPoint)
+{
+    DocumentFragment::insertedInto(insertionPoint);
+
+    if (!insertionPoint->inDocument() || !isOldest())
+        return InsertionDone;
+
+    // FIXME: When parsing <video controls>, insertedInto() is called many times without invoking removedFrom.
+    // For now, we check m_registeredWithParentShadowroot. We would like to ASSERT(!m_registeredShadowRoot) here.
+    // https://bugs.webkit.org/show_bug.cig?id=101316
+    if (m_registeredWithParentShadowRoot)
+        return InsertionDone;
+
+    if (ShadowRoot* root = host()->shadowRoot()) {
+        root->registerElementShadow();
+        m_registeredWithParentShadowRoot = true;
+    }
+
+    return InsertionDone;
+}
+
+void ShadowRoot::removedFrom(ContainerNode* insertionPoint)
+{
+    if (insertionPoint->inDocument() && m_registeredWithParentShadowRoot) {
+        ShadowRoot* root = host()->shadowRoot();
+        if (!root)
+            root = insertionPoint->shadowRoot();
+
+        if (root)
+            root->unregisterElementShadow();
+        m_registeredWithParentShadowRoot = false;
+    }
+
+    DocumentFragment::removedFrom(insertionPoint);
 }
 
 void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

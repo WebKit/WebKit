@@ -1,3 +1,13 @@
+2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] ShadowRoot should know the existence of elements having ElementShadow.
+        https://bugs.webkit.org/show_bug.cgi?id=100922
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/has-elementshadow-expected.txt: Added.
+        * fast/dom/shadow/has-elementshadow.html: Added.
+
 2012-11-06  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         [QT] [GTK] Remove fast/forms/week-multiple-fields from TestExpectations of gtk and qt.

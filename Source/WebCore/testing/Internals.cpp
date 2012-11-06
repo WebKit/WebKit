@@ -324,6 +324,16 @@ bool Internals::hasContentElement(const Node* root, ExceptionCode& ec) const
     return 0;
 }
 
+size_t Internals::countElementShadow(const Node* root, ExceptionCode& ec) const
+{
+    if (!root || !root->isShadowRoot()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return toShadowRoot(root)->countElementShadow();
+}
+
 bool Internals::attached(Node* node, ExceptionCode& ec)
 {
     if (!node) {

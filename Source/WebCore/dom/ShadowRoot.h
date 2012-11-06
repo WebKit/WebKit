@@ -83,6 +83,9 @@ public:
 
     virtual void attach();
 
+    virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
+    virtual void removedFrom(ContainerNode*) OVERRIDE;
+
     bool isUsedForRendering() const;
     InsertionPoint* assignedTo() const;
     void setAssignedTo(InsertionPoint*);
@@ -94,6 +97,11 @@ public:
     void registerContentElement() { ++m_numberOfContentElementChildren; }
     void unregisterContentElement() { --m_numberOfContentElementChildren; }
     bool hasContentElement() const { return m_numberOfContentElementChildren > 0; }
+
+    void registerElementShadow() { ++m_numberOfElementShadowChildren; }
+    void unregisterElementShadow() { ASSERT(hasElementShadow()); --m_numberOfElementShadowChildren; }
+    bool hasElementShadow() const { return m_numberOfElementShadowChildren > 0; }
+    size_t countElementShadow() const { return m_numberOfElementShadowChildren; }
 
     virtual void registerScopedHTMLStyleChild() OVERRIDE;
     virtual void unregisterScopedHTMLStyleChild() OVERRIDE;
@@ -119,9 +127,11 @@ private:
     bool m_applyAuthorStyles : 1;
     bool m_resetStyleInheritance : 1;
     bool m_isAuthorShadowRoot : 1;
+    bool m_registeredWithParentShadowRoot : 1;
     InsertionPoint* m_insertionPointAssignedTo;
     size_t m_numberOfShadowElementChildren;
     size_t m_numberOfContentElementChildren;
+    size_t m_numberOfElementShadowChildren;
     size_t m_numberOfStyles;
 };
 
