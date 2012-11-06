@@ -502,7 +502,7 @@ reviewers_list = [
     Reviewer("Justin Garcia", "justin.garcia@apple.com", "justing"),
     Reviewer("Ken Kocienda", "kocienda@apple.com"),
     Reviewer("Kenneth Rohde Christiansen", ["kenneth@webkit.org", "kenneth.r.christiansen@intel.com", "kenneth.christiansen@gmail.com"], ["kenneth_", "kenneth", "kenne"]),
-    Reviewer("Kenneth Russell", "kbr@google.com", "kbr_google"),
+    Reviewer("Kenneth Russell", ["kbr@google.com", "kbr@chromium.org"], ["kbr_google", "kbrgg"]),
     Reviewer("Kent Tamura", ["tkent@chromium.org", "tkent@google.com"], "tkent"),
     Reviewer("Kentaro Hara", ["haraken@chromium.org"], "haraken"),
     Reviewer("Kevin Decker", "kdecker@apple.com", "superkevin"),
