@@ -53,7 +53,7 @@ private:
     virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
     virtual void removedFrom(Node*) OVERRIDE;
 
-    void updateReferencedText();
+    void updateReferencedText(Element*);
 
     void detachTarget();
 
