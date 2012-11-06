@@ -225,10 +225,6 @@ webkit.org/b/99436 editing/selection/doubleclick-whitespace.html [ Failure ]
 # Text input controller needs selectedRange implementation
 webkit.org/b/99438 editing/selection/mixed-editability-10.html [ Failure ]
 
-# BUG: wrong test results that need investigation
-editing/selection/anchor-focus3.html [ Failure ]
-editing/selection/click-in-margins-inside-editable-div.html [ Failure ]
-
 # NPN_ReloadPlugins is not implemented.
 webkit.org/b/98744 plugins/reloadplugins-and-pages.html [ Failure ]
 
