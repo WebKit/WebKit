@@ -19,5 +19,11 @@ Breakpoint sidebar pane while paused in raw
     script-formatter-breakpoints.html:11
     var f=0;
 Script execution resumed.
+
+Running: testBreakpointSetInOriginalAndRemovedInFormatted
+Adding breakpoint.
+Formatting.
+Removing breakpoint.
+Unformatting.
 Debugger was disabled.
 

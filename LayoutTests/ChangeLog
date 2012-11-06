@@ -1,3 +1,13 @@
+2012-11-06  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Breakpoint is not removed when it was set in non-formatted mode and then removed while in formatted mode.
+        https://bugs.webkit.org/show_bug.cgi?id=100595
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/script-formatter-breakpoints-expected.txt:
+        * inspector/debugger/script-formatter-breakpoints.html:
+
 2012-11-06  Alexis Menard  <alexis@webkit.org>
 
         Add an extra test for background-position parsing.

@@ -21,13 +21,11 @@ var test = function()
     InspectorTest.runDebuggerTestSuite([
         function testBreakpointsInOriginalAndFormattedSource(next)
         {
-            var root;
             InspectorTest.showScriptSource("script-formatter-breakpoints.html", didShowScriptSource);
 
             function didShowScriptSource(frame)
             {
                 sourceFrame = frame;
-                root = sourceFrame._url.substr(0, sourceFrame._url.lastIndexOf("/") + 1);
                 InspectorTest.setBreakpoint(sourceFrame, 10, "", true);
                 InspectorTest.waitUntilPaused(pausedInF1);
                 InspectorTest.evaluateInPageWithTimeout("f1()");
@@ -58,7 +56,34 @@ var test = function()
                 dumpBreakpointSidebarPane("while paused in pretty printed");
                 sourceFrame._uiSourceCode.setFormatted(false);
                 dumpBreakpointSidebarPane("while paused in raw");
+                InspectorTest.removeBreakpoint(sourceFrame, 10);
                 InspectorTest.resumeExecution(next);
+            }
+        },
+
+        function testBreakpointSetInOriginalAndRemovedInFormatted(next)
+        {
+            InspectorTest.showScriptSource("script-formatter-breakpoints.html", didShowScriptSource);
+
+            function didShowScriptSource(frame)
+            {
+                sourceFrame = frame;
+                InspectorTest.addResult("Adding breakpoint.");
+                InspectorTest.setBreakpoint(sourceFrame, 10, "", true);
+                InspectorTest.addSniffer(WebInspector.UISourceCode.prototype, "updateLiveLocations", didFormatPage);
+                InspectorTest.addResult("Formatting.");
+                sourceFrame._uiSourceCode.setFormatted(true);
+            }
+
+            function didFormatPage()
+            {
+                InspectorTest.addResult("Removing breakpoint.");
+                InspectorTest.removeBreakpoint(sourceFrame, 17);
+                InspectorTest.addResult("Unformatting.");
+                sourceFrame._uiSourceCode.setFormatted(false);
+                var breakpoints = WebInspector.breakpointManager._storage._setting.get();
+                InspectorTest.assertEquals(breakpoints.length, 0, "There should not be any breakpoints in the storage.");
+                next();
             }
         }
     ]);

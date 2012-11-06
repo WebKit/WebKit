@@ -1,3 +1,25 @@
+2012-11-06  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Breakpoint is not removed when it was set in non-formatted mode and then removed while in formatted mode.
+        https://bugs.webkit.org/show_bug.cgi?id=100595
+
+        Reviewed by Yury Semikhatsky.
+
+        Breakpoints in storage are now updated/removed by file name saved from primary location when they were created,
+        not by the name returned by UISourceCode (as this one could change when UISourceCode is formatted).
+        SourceFileId is now used across BreakpointManager to specify file name.
+        And breakpointStorageId is now used to specify (fileName, lineNumber) pair.
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.sourceFileId):
+        (WebInspector.BreakpointManager.prototype._restoreBreakpoints):
+        (WebInspector.BreakpointManager.prototype._uiSourceCodeRemoved): Removed redundant check.
+        (WebInspector.BreakpointManager.prototype.breakpointLocationsForUISourceCode):
+        (WebInspector.BreakpointManager.Breakpoint):
+        (WebInspector.BreakpointManager.Breakpoint.prototype._breakpointStorageId):
+        (WebInspector.BreakpointManager.Storage.prototype._restoreBreakpoints):
+        (set WebInspector.BreakpointManager.Storage.Item):
+
 2012-11-06  Keishi Hattori  <keishi@webkit.org>
 
         The "Rect" class in WebCore/Resources/pagepopups/pickerCommon.js should be renamed
