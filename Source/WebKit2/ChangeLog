@@ -1,3 +1,26 @@
+2012-11-06  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Declare all smart callbacks in EwkViewCallbacks.h
+        https://bugs.webkit.org/show_bug.cgi?id=101360
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Declare all EwkView smart callbacks in EwkViewCallbacks.h
+        and remove remaining calls to evas_object_smart_callback_call().
+        It is a good idea to have all the callbacks declared in one
+        place for convenience and consistency. We also have better
+        argument type checking if we use the new callback mechanism.
+
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        (EwkViewCallbacks::CallBack::call):
+        (CallBack):
+        (EwkViewCallbacks):
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::informIconChange):
+        (EwkViewImpl::informURLChange):
+        (EwkViewImpl::createNewPage):
+        (EwkViewImpl::closePage):
+
 2012-11-05  Anders Carlsson  <andersca@apple.com>
 
         Hook up the remote layer tree drawing area to an environment variable

@@ -64,6 +64,7 @@
 #include <Evas_GL.h>
 #endif
 
+using namespace EwkViewCallbacks;
 using namespace WebCore;
 using namespace WebKit;
 
@@ -495,7 +496,7 @@ void EwkViewImpl::informIconChange()
     ASSERT(iconDatabase);
 
     m_faviconURL = ewk_favicon_database_icon_url_get(iconDatabase, m_url);
-    evas_object_smart_callback_call(m_view, "icon,changed", 0);
+    smartCallback<IconChanged>().call();
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -726,8 +727,7 @@ void EwkViewImpl::informURLChange()
         return;
 
     m_url = rawActiveURL.data();
-    const char* callbackArgument = static_cast<const char*>(m_url);
-    evas_object_smart_callback_call(m_view, "url,changed", const_cast<char*>(callbackArgument));
+    smartCallback<URLChanged>().call(m_url);
 
     // Update the view's favicon.
     informIconChange();
@@ -736,7 +736,7 @@ void EwkViewImpl::informURLChange()
 WKPageRef EwkViewImpl::createNewPage()
 {
     Evas_Object* newEwkView = 0;
-    evas_object_smart_callback_call(m_view, "create,window", &newEwkView);
+    smartCallback<CreateWindow>().call(&newEwkView);
 
     if (!newEwkView)
         return 0;
@@ -749,7 +749,7 @@ WKPageRef EwkViewImpl::createNewPage()
 
 void EwkViewImpl::closePage()
 {
-    evas_object_smart_callback_call(m_view, "close,window", 0);
+    smartCallback<CloseWindow>().call();
 }
 
 void EwkViewImpl::onMouseDown(void* data, Evas*, Evas_Object*, void* eventInfo)
