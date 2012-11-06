@@ -151,11 +151,10 @@ else
 end
 
 # This must match wtf/Vector.h
+const VectorSizeOffset = 0
 if JSVALUE64
-    const VectorSizeOffset = 0
     const VectorBufferOffset = 8
 else
-    const VectorSizeOffset = 0
     const VectorBufferOffset = 4
 end
 
@@ -344,9 +343,9 @@ macro functionInitialization(profileArgSkip)
         addp t2, t3
     .argumentProfileLoop:
         if JSVALUE64
-            loadp ThisArgumentOffset + 8 - profileArgSkip * 8[cfr, t0], t2
+            loadq ThisArgumentOffset + 8 - profileArgSkip * 8[cfr, t0], t2
             subp sizeof ValueProfile, t3
-            storep t2, profileArgSkip * sizeof ValueProfile + ValueProfile::m_buckets[t3]
+            storeq t2, profileArgSkip * sizeof ValueProfile + ValueProfile::m_buckets[t3]
         else
             loadi ThisArgumentOffset + TagOffset + 8 - profileArgSkip * 8[cfr, t0], t2
             subp sizeof ValueProfile, t3
@@ -546,13 +545,13 @@ macro getPutToBaseOperationField(scratch, scratch1, fieldOffset, fieldGetter)
 end
 
 macro moveJSValueFromRegisterWithoutProfiling(value, destBuffer, destOffsetReg)
-    storep value, [destBuffer, destOffsetReg, 8]
+    storeq value, [destBuffer, destOffsetReg, 8]
 end
 
 
 macro moveJSValueFromRegistersWithoutProfiling(tag, payload, destBuffer, destOffsetReg)
-    storep tag, TagOffset[destBuffer, destOffsetReg, 8]
-    storep payload, PayloadOffset[destBuffer, destOffsetReg, 8]
+    storei tag, TagOffset[destBuffer, destOffsetReg, 8]
+    storei payload, PayloadOffset[destBuffer, destOffsetReg, 8]
 end
 
 macro putToBaseVariableBody(variableOffset, scratch1, scratch2, scratch3)
@@ -613,15 +612,15 @@ end
 
 macro moveJSValue(sourceBuffer, sourceOffsetReg, destBuffer, destOffsetReg, profileOffset, scratchRegister)
     if JSVALUE64
-        loadp [sourceBuffer, sourceOffsetReg, 8], scratchRegister
-        storep scratchRegister, [destBuffer, destOffsetReg, 8]
+        loadq [sourceBuffer, sourceOffsetReg, 8], scratchRegister
+        storeq scratchRegister, [destBuffer, destOffsetReg, 8]
         loadpFromInstruction(profileOffset, destOffsetReg)
         valueProfile(scratchRegister, destOffsetReg)
     else
-        loadp PayloadOffset[sourceBuffer, sourceOffsetReg, 8], scratchRegister
-        storep scratchRegister, PayloadOffset[destBuffer, destOffsetReg, 8]
-        loadp TagOffset[sourceBuffer, sourceOffsetReg, 8], sourceOffsetReg
-        storep sourceOffsetReg, TagOffset[destBuffer, destOffsetReg, 8]
+        loadi PayloadOffset[sourceBuffer, sourceOffsetReg, 8], scratchRegister
+        storei scratchRegister, PayloadOffset[destBuffer, destOffsetReg, 8]
+        loadi TagOffset[sourceBuffer, sourceOffsetReg, 8], sourceOffsetReg
+        storei sourceOffsetReg, TagOffset[destBuffer, destOffsetReg, 8]
         loadpFromInstruction(profileOffset, destOffsetReg)
         valueProfile(sourceOffsetReg, scratchRegister, destOffsetReg)
     end
@@ -629,29 +628,29 @@ end
 
 macro moveJSValueFromSlot(slot, destBuffer, destOffsetReg, profileOffset, scratchRegister)
     if JSVALUE64
-        loadp [slot], scratchRegister
-        storep scratchRegister, [destBuffer, destOffsetReg, 8]
+        loadq [slot], scratchRegister
+        storeq scratchRegister, [destBuffer, destOffsetReg, 8]
         loadpFromInstruction(profileOffset, destOffsetReg)
         valueProfile(scratchRegister, destOffsetReg)
     else
-        loadp PayloadOffset[slot], scratchRegister
-        storep scratchRegister, PayloadOffset[destBuffer, destOffsetReg, 8]
-        loadp TagOffset[slot], slot
-        storep slot, TagOffset[destBuffer, destOffsetReg, 8]
+        loadi PayloadOffset[slot], scratchRegister
+        storei scratchRegister, PayloadOffset[destBuffer, destOffsetReg, 8]
+        loadi TagOffset[slot], slot
+        storei slot, TagOffset[destBuffer, destOffsetReg, 8]
         loadpFromInstruction(profileOffset, destOffsetReg)
         valueProfile(slot, scratchRegister, destOffsetReg)
     end
 end
 
 macro moveJSValueFromRegister(value, destBuffer, destOffsetReg, profileOffset)
-    storep value, [destBuffer, destOffsetReg, 8]
+    storeq value, [destBuffer, destOffsetReg, 8]
     loadpFromInstruction(profileOffset, destOffsetReg)
     valueProfile(value, destOffsetReg)
 end
 
 macro moveJSValueFromRegisters(tag, payload, destBuffer, destOffsetReg, profileOffset)
-    storep tag, TagOffset[destBuffer, destOffsetReg, 8]
-    storep payload, PayloadOffset[destBuffer, destOffsetReg, 8]
+    storei tag, TagOffset[destBuffer, destOffsetReg, 8]
+    storei payload, PayloadOffset[destBuffer, destOffsetReg, 8]
     loadpFromInstruction(profileOffset, destOffsetReg)
     valueProfile(tag, payload, destOffsetReg)
 end
@@ -887,10 +886,11 @@ macro interpretResolveWithBase(opcodeLength, slowPath)
     # t1 now contains the index for the base register
 
     bineq t2, ResolveOperationSetBaseToScope, .notSetBaseToScope
-        storep t3, PayloadOffset[cfr, t1, 8]
         if JSVALUE64
+            storeq t3, [cfr, t1, 8]
         else
-            storep CellTag, TagOffset[cfr, t1, 8]
+            storei t3, PayloadOffset[cfr, t1, 8]
+            storei CellTag, TagOffset[cfr, t1, 8]
         end
         jmp .haveSetBase
 
@@ -898,10 +898,10 @@ macro interpretResolveWithBase(opcodeLength, slowPath)
 
     bineq t2, ResolveOperationSetBaseToUndefined, .notSetBaseToUndefined
         if JSVALUE64
-            storep ValueUndefined, PayloadOffset[cfr, t1, 8]
+            storeq ValueUndefined, [cfr, t1, 8]
         else
-            storep 0, PayloadOffset[cfr, t1, 8]
-            storep UndefinedTag, TagOffset[cfr, t1, 8]
+            storei 0, PayloadOffset[cfr, t1, 8]
+            storei UndefinedTag, TagOffset[cfr, t1, 8]
         end
         jmp .haveSetBase
 
@@ -909,10 +909,11 @@ macro interpretResolveWithBase(opcodeLength, slowPath)
     bineq t2, ResolveOperationSetBaseToGlobal, .slowPath
         loadp JSCell::m_structure[t3], t2
         loadp Structure::m_globalObject[t2], t2
-        storep t2, PayloadOffset[cfr, t1, 8]
         if JSVALUE64
+            storeq t2, [cfr, t1, 8]
         else
-            storep CellTag, TagOffset[cfr, t1, 8]
+            storei t2, PayloadOffset[cfr, t1, 8]
+            storei CellTag, TagOffset[cfr, t1, 8]
         end
 
     .haveSetBase:

@@ -1,3 +1,28 @@
+2012-11-05  Yuqiang Xian  <yuqiang.xian@intel.com>
+
+        Refactor LLInt64 to distinguish the pointer operations from the 64-bit integer operations
+        https://bugs.webkit.org/show_bug.cgi?id=100321
+
+        Reviewed by Filip Pizlo.
+
+        We have refactored the MacroAssembler and JIT compilers to distinguish
+        the pointer operations from the 64-bit integer operations (see bug #99154).
+        Now we want to do the similar work for LLInt, and the goal is same as
+        the one mentioned in 99154.
+
+        This is the second part of the modification: in the low level interpreter,
+        changing the operations on 64-bit integers to use the "<foo>q" instructions.
+        This also removes some unused/meaningless "<foo>p" instructions.
+
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/armv7.rb:
+        * offlineasm/cloop.rb:
+        * offlineasm/instructions.rb:
+        * offlineasm/x86.rb:
+
 2012-11-05  Filip Pizlo  <fpizlo@apple.com>
 
         Prototype chain caching should check that the path from the base object to the slot base involves prototype hops only

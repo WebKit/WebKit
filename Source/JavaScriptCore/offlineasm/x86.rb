@@ -820,18 +820,6 @@ class Instruction
             $asm.puts "push #{operands[0].x86Operand(:ptr)}"
         when "move"
             handleMove
-        when "sxi2p"
-            if isX64
-                $asm.puts "movslq #{operands[0].x86Operand(:int)}, #{operands[1].x86Operand(:quad)}"
-            else
-                handleMove
-            end
-        when "zxi2p"
-            if isX64
-                $asm.puts "movl #{operands[0].x86Operand(:int)}, #{operands[1].x86Operand(:int)}"
-            else
-                handleMove
-            end
         when "sxi2q"
             $asm.puts "movslq #{operands[0].x86Operand(:int)}, #{operands[1].x86Operand(:quad)}"
         when "zxi2q"
@@ -1128,9 +1116,9 @@ class Instruction
             $asm.puts "movsd #{operands[0].x86Operand(:double)}, %xmm7"
             $asm.puts "psrlq $32, %xmm7"
             $asm.puts "movsd %xmm7, #{operands[2].x86Operand(:int)}"
-        when "fq2d", "fp2d"
+        when "fq2d"
             $asm.puts "movd #{operands[0].x86Operand(:quad)}, #{operands[1].x86Operand(:double)}"
-        when "fd2q", "fd2p"
+        when "fd2q"
             $asm.puts "movd #{operands[0].x86Operand(:double)}, #{operands[1].x86Operand(:quad)}"
         when "bo"
             $asm.puts "jo #{operands[0].asmLabel}"

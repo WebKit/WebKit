@@ -401,7 +401,7 @@ class Instruction
             $asm.puts "pop #{operands[0].armV7Operand}"
         when "push"
             $asm.puts "push #{operands[0].armV7Operand}"
-        when "move", "sxi2p", "zxi2p"
+        when "move"
             if operands[0].is_a? Immediate
                 armV7MoveImmediate(operands[0].value, operands[1])
             else

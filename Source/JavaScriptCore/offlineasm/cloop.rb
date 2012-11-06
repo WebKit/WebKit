@@ -46,7 +46,7 @@ def cloopMapType(type)
     when :nativeFunc;     ".nativeFunc"
     when :double;         ".d"
     when :castToDouble;   ".castToDouble"
-    when :castToVoidPtr;  ".castToVoidPtr"
+    when :castToInt64;    ".castToInt64"
     when :opcode;         ".opcode"
     else;
         raise "Unsupported type"
@@ -717,10 +717,6 @@ class Instruction
 
         when "move"
             $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].clValue(:int)};"
-        when "sxi2p"
-            $asm.putc "#{operands[1].clValue(:int)} = #{operands[0].clValue(:int32)};"
-        when "zxi2p"
-            $asm.putc "#{operands[1].clValue(:uint)} = #{operands[0].clValue(:uint32)};"
         when "sxi2q"
             $asm.putc "#{operands[1].clValue(:int64)} = #{operands[0].clValue(:int32)};"
         when "zxi2q"
@@ -1033,13 +1029,13 @@ class Instruction
 
         # 64-bit instruction: fq2d int64Op dblOp (based on X64)
         # Copy a bit-encoded double in a 64-bit int register to a double register.
-        when "fq2d", "fp2d"
+        when "fq2d"
             $asm.putc "#{operands[1].clValue(:double)} = #{operands[0].clValue(:castToDouble)};"
 
         # 64-bit instruction: fd2q dblOp int64Op (based on X64 instruction set)
         # Copy a double as a bit-encoded double into a 64-bit int register.
-        when "fd2q", "fd2p"
-            $asm.putc "#{operands[1].clValue(:voidPtr)} = #{operands[0].clValue(:castToVoidPtr)};"
+        when "fd2q"
+            $asm.putc "#{operands[1].clValue(:int64)} = #{operands[0].clValue(:castToInt64)};"
 
         when "leai"
             operands[0].cloopEmitLea(operands[1], :int32)

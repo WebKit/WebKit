@@ -261,7 +261,7 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
     union CLoopDoubleRegister {
         double d;
 #if USE(JSVALUE64)
-        void* castToVoidPtr;
+        int64_t castToInt64;
 #endif
     };
 
