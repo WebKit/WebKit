@@ -1359,7 +1359,7 @@ const AtomicString& Element::shadowPseudoId() const
 
 void Element::setShadowPseudoId(const AtomicString& id, ExceptionCode& ec)
 {
-    if (!CSSSelector::isUnknownPseudoType(id)) {
+    if (!CSSSelector::isCustomPseudoType(id)) {
         ec = SYNTAX_ERR;
         return;
     }

@@ -191,7 +191,8 @@ public:
     void adoptSelectorVector(CSSSelectorVector&);
 
     CSSSelector::PseudoType pseudoType() const { return m_selector->pseudoType(); }
-    bool isUnknownPseudoElement() const { return m_selector->isUnknownPseudoElement(); }
+    bool isCustomPseudoElement() const { return m_selector->isCustomPseudoElement(); }
+
     bool isSimple() const { return !m_tagHistory && m_selector->isSimple(); }
     bool hasShadowDescendant() const;
 

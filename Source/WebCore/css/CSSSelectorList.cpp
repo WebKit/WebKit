@@ -197,17 +197,17 @@ bool CSSSelectorList::selectorsNeedNamespaceResolution()
     return forEachSelector(functor, this);
 }
 
-class SelectorHasUnknownPseudoElementFunctor {
+class SelectorHasInvalidSelectorFunctor {
 public:
     bool operator()(CSSSelector* selector)
     {
-        return selector->isUnknownPseudoElement();
+        return selector->isUnknownPseudoElement() || selector->isCustomPseudoElement();
     }
 };
 
-bool CSSSelectorList::hasUnknownPseudoElements() const
+bool CSSSelectorList::hasInvalidSelector() const
 {
-    SelectorHasUnknownPseudoElementFunctor functor;
+    SelectorHasInvalidSelectorFunctor functor;
     return forEachSelector(functor, this);
 }
 

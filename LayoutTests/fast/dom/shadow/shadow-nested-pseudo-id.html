@@ -4,15 +4,15 @@
 <script src="../../js/resources/js-test-pre.js"></script>
 <style>
 
-p::-shadow-child {
+p::x-shadow-child {
   color: red;
 }
 
-a::-nested-shadow-child {
+a::x-nested-shadow-child {
   color: blue;
 }
 
-p::-shadow-child::-nested-shadow-child {
+p::x-shadow-child::x-nested-shadow-child {
   background-color: green;
 }
 
@@ -39,9 +39,9 @@ if (!window.internals)
     fail("You need window.internals to run this test");
     
 var host = document.getElementById("host");
-var tuple = buildShadowWithOneChild(host, "a", "-shadow-child");
+var tuple = buildShadowWithOneChild(host, "a", "x-shadow-child");
 shouldBe("window.getComputedStyle(tuple.shadowChild).color", "'rgb(255, 0, 0)'");
-var shadowTuple = buildShadowWithOneChild(tuple.shadowChild, "b", "-nested-shadow-child");
+var shadowTuple = buildShadowWithOneChild(tuple.shadowChild, "b", "x-nested-shadow-child");
 shouldBe("window.getComputedStyle(shadowTuple.shadowChild).color", "'rgb(0, 0, 255)'");
 shouldBe("window.getComputedStyle(shadowTuple.shadowChild).backgroundColor", "'rgb(0, 128, 0)'");
 

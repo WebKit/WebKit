@@ -1,5 +1,16 @@
 2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
 
+        [Shadow] Using isUnknownPseudoElement() for shadow pseudo id seems confusing
+        https://bugs.webkit.org/show_bug.cgi?id=100826
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/shadow-nested-pseudo-id.html: Fixed a testcase so that shadowPseudoId starts with 'x-'.
+        * fast/dom/shadow/shadow-pseudo-id-expected.html: Added.
+        * fast/dom/shadow/shadow-pseudo-id.html: Added.
+
+2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
+
         [Shadow] ShadowRoot should know the existence of elements having ElementShadow.
         https://bugs.webkit.org/show_bug.cgi?id=100922
 

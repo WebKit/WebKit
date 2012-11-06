@@ -180,7 +180,7 @@ SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document* 
     CSSSelectorList selectorList;
     parser.parseSelector(selectors, selectorList);
 
-    if (!selectorList.first() || selectorList.hasUnknownPseudoElements()) {
+    if (!selectorList.first() || selectorList.hasInvalidSelector()) {
         ec = SYNTAX_ERR;
         return 0;
     }

@@ -59,7 +59,7 @@ public:
     }
 
     bool selectorsNeedNamespaceResolution();
-    bool hasUnknownPseudoElements() const;
+    bool hasInvalidSelector() const;
 
     String selectorsText() const;
 

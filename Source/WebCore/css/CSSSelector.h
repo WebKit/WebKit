@@ -154,6 +154,8 @@ namespace WebCore {
 #endif
             PseudoInRange,
             PseudoOutOfRange,
+            PseudoUserAgentCustomElement,
+            PseudoWebKitCustomElement,
         };
 
         enum MarginBoxType {
@@ -183,7 +185,7 @@ namespace WebCore {
         }
 
         static PseudoType parsePseudoType(const AtomicString&);
-        static bool isUnknownPseudoType(const AtomicString&);
+        static bool isCustomPseudoType(const AtomicString&);        
         static PseudoId pseudoId(PseudoType);
 
         // Selectors are kept in an array by CSSSelectorList. The next component of the selector is
@@ -211,6 +213,7 @@ namespace WebCore {
 
         bool matchesPseudoElement() const;
         bool isUnknownPseudoElement() const;
+        bool isCustomPseudoElement() const;
         bool isSiblingSelector() const;
         bool isAttributeSelector() const;
 
@@ -289,6 +292,11 @@ inline bool CSSSelector::matchesPseudoElement() const
 inline bool CSSSelector::isUnknownPseudoElement() const
 {
     return m_match == PseudoElement && m_pseudoType == PseudoUnknown;
+}
+
+inline bool CSSSelector::isCustomPseudoElement() const
+{
+    return m_match == PseudoElement && (m_pseudoType == PseudoUserAgentCustomElement || m_pseudoType == PseudoWebKitCustomElement);
 }
 
 inline bool CSSSelector::isSiblingSelector() const

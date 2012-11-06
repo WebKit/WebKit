@@ -10257,7 +10257,7 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
 {
     AtomicString determinedNamespace = namespacePrefix != nullAtom && m_styleSheet ? m_styleSheet->determineNamespace(namespacePrefix) : m_defaultNamespace;
     QualifiedName tag = QualifiedName(namespacePrefix, elementName, determinedNamespace);
-    if (!specifiers->isUnknownPseudoElement()) {
+    if (!specifiers->isCustomPseudoElement()) {
         specifiers->setTag(tag);
         return;
     }
@@ -10266,7 +10266,7 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
     CSSParserSelector* history = specifiers;
     while (history->tagHistory()) {
         history = history->tagHistory();
-        if (history->isUnknownPseudoElement() || history->hasShadowDescendant())
+        if (history->isCustomPseudoElement() || history->hasShadowDescendant())
             lastShadowDescendant = history;
     }
 
@@ -10285,12 +10285,12 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
 
 CSSParserSelector* CSSParser::updateSpecifiers(CSSParserSelector* specifiers, CSSParserSelector* newSpecifier)
 {
-    if (newSpecifier->isUnknownPseudoElement()) {
+    if (newSpecifier->isCustomPseudoElement()) {
         // Unknown pseudo element always goes at the top of selector chain.
         newSpecifier->appendTagHistory(CSSSelector::ShadowDescendant, sinkFloatingSelector(specifiers));
         return newSpecifier;
     }
-    if (specifiers->isUnknownPseudoElement()) {
+    if (specifiers->isCustomPseudoElement()) {
         // Specifiers for unknown pseudo element go right behind it in the chain.
         specifiers->insertTagHistory(CSSSelector::SubSelector, sinkFloatingSelector(newSpecifier), CSSSelector::ShadowDescendant);
         return specifiers;

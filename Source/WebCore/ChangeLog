@@ -1,5 +1,53 @@
 2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
 
+        [Shadow] Using isUnknownPseudoElement() for shadow pseudo id seems confusing
+        https://bugs.webkit.org/show_bug.cgi?id=100826
+
+        Reviewed by Hajime Morita.
+
+        We used isUnknownPseudoElement() for these 3 meanings: 1) the element is a custom pseudo-element (starting with 'x-'),
+        2) the element is a webkit custom pseudo-element (starting with '-webkit-'), and 3) the element has an unknown type.
+        We would like to distinguish them when parsing CSSSelector types. Also, we disable using (3) type for using
+        shadowPseudoId.
+
+        In this patch, we allow using WebKitCustomPseudoElement in AuthorShadowRoot, and CustomPseudoElement in
+        UAShadowRoot. However, we will disable them later.
+
+        Test: fast/dom/shadow/shadow-pseudo-id.html
+
+        * css/CSSGrammar.y.in: Now we can discard UNKNOWN type. It should not match anything.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::updateSpecifiersWithElementName):
+        (WebCore::CSSParser::updateSpecifiers):
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserSelector::isCustomPseudoElement):
+        (CSSParserSelector):
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::CSSSelector::parsePseudoType):
+        (WebCore::CSSSelector::isCustomPseudoType): Returns true if the type is PseudoUserAgentCustomElement or PseudoWebKitCustomElement.
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        (CSSSelector):
+        (WebCore::CSSSelector::isCustomPseudoElement):
+        (WebCore):
+        * css/CSSSelectorList.cpp:
+        (WebCore::SelectorHasInvalidSelectorFunctor::operator()): We will reject all selectors which were judged as
+        UNKNOWN before. i.e. It contians all three types for now.
+        (WebCore::CSSSelectorList::hasInvalidSelector): Renamed.
+        * css/CSSSelectorList.h:
+        (CSSSelectorList):
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRule):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        * dom/Element.cpp:
+        (WebCore::Element::setShadowPseudoId):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorQueryCache::add):
+
+2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
+
         [Shadow] ShadowRoot should know the existence of elements having ElementShadow.
         https://bugs.webkit.org/show_bug.cgi?id=100922
 

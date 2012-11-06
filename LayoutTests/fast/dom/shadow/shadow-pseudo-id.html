@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div::x-shadow {
+    color: red;
+}
+
+div::-test {
+    color: red;
+}
+
+div::foobar {
+    color: red;
+}
+</style>
+</head>
+<body>
+
+<p>This test checks a custom pseudo element selector is valid only if it starts with 'x-'</p>
+
+<div id="console"></div>
+<div id="host1"></div>
+<div id="host2"></div>
+<div id="host3"></div>
+
+<script>
+var shadowRoot1 = new WebKitShadowRoot(host1);
+var div1 = document.createElement('div');
+div1.innerHTML = "pseudo is x-shadow: This should be red.";
+div1.pseudo = "x-shadow";
+shadowRoot1.appendChild(div1);
+
+var shadowRoot2 = new WebKitShadowRoot(host2);
+var div2 = document.createElement('div');
+div2.innerHTML = "pseudo is -test: This should not be red.";
+div2.pseudo = "-test";
+shadowRoot2.appendChild(div2);
+
+var shadowRoot3 = new WebKitShadowRoot(host3);
+var div3 = document.createElement('div');
+div3.innerHTML = "pseudo is foobar: This should not be red.";
+div3.pseudo = "foobar";
+shadowRoot3.appendChild(div3);
+</script>
+
+</body>
+</html>

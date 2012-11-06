@@ -1307,7 +1307,9 @@ pseudo:
         $3.lower();
         $$->setValue($3);
         // FIXME: This call is needed to force selector to compute the pseudoType early enough.
-        $$->pseudoType();
+        CSSSelector::PseudoType type = $$->pseudoType();
+        if (type == CSSSelector::PseudoUnknown)
+            $$ = 0;
     }
     // use by :-webkit-any.
     // FIXME: should we support generic selectors here or just simple_selectors?

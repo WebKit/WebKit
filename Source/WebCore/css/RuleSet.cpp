@@ -229,7 +229,7 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
         addToRuleSet(selector->value().impl(), m_classRules, ruleData);
         return;
     }
-    if (selector->isUnknownPseudoElement()) {
+    if (selector->isCustomPseudoElement()) {
         addToRuleSet(selector->value().impl(), m_shadowPseudoElementRules, ruleData);
         return;
     }

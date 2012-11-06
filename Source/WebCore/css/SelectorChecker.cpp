@@ -446,7 +446,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
         return SelectorFailsLocally;
 
     if (context.selector->m_match == CSSSelector::PseudoElement) {
-        if (context.selector->isUnknownPseudoElement()) {
+        if (context.selector->isCustomPseudoElement()) {
             if (context.element->shadowPseudoId() != context.selector->value())
                 return SelectorFailsLocally;
         } else {
