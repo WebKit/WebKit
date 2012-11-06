@@ -1,3 +1,70 @@
+2012-11-05  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, update chromium-mac-mountainlion baselines for svg failures after r133538
+
+        * platform/chromium-mac-lion/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.png.
+        * platform/chromium-mac-lion/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.png.
+        * platform/chromium-mac-lion/svg/batik/filters/filterRegions-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/filters/filterRegions-expected.png.
+        * platform/chromium-mac-lion/svg/batik/masking/maskRegions-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/masking/maskRegions-expected.png.
+        * platform/chromium-mac-lion/svg/batik/paints/gradientLimit-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/paints/gradientLimit-expected.png.
+        * platform/chromium-mac-lion/svg/batik/paints/patternPreserveAspectRatioA-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/paints/patternPreserveAspectRatioA-expected.png.
+        * platform/chromium-mac-lion/svg/batik/paints/patternRegionA-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/paints/patternRegionA-expected.png.
+        * platform/chromium-mac-lion/svg/batik/paints/patternRegions-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/paints/patternRegions-expected.png.
+        * platform/chromium-mac-lion/svg/batik/paints/patternRegions-positioned-objects-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/paints/patternRegions-positioned-objects-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/longTextOnPath-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/longTextOnPath-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/smallFonts-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/smallFonts-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textAnchor-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textAnchor-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textDecoration-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textDecoration-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textEffect-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textEffect-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textEffect2-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textEffect2-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textEffect3-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textEffect3-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textFeatures-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textFeatures-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textLayout-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textLayout-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textLayout2-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textLayout2-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textLength-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textLength-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textOnPath-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textOnPath-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textOnPathSpaces-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textOnPathSpaces-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textPosition-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textPosition-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textPosition2-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textPosition2-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textProperties-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textProperties-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textProperties2-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textProperties2-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/textStyles-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/textStyles-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/verticalText-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/verticalText-expected.png.
+        * platform/chromium-mac-lion/svg/batik/text/verticalTextOnPath-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/batik/text/verticalTextOnPath-expected.png.
+        * platform/chromium-mac-lion/svg/dynamic-updates/SVGUseElement-dom-href2-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGUseElement-dom-href2-attr-expected.png.
+        * platform/chromium-mac-lion/svg/dynamic-updates/SVGUseElement-svgdom-href2-prop-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGUseElement-svgdom-href2-prop-expected.png.
+        * platform/chromium-mac/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t-expected.png:
+        * platform/chromium-mac/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-mac/svg/batik/masking/maskRegions-expected.png:
+        * platform/chromium-mac/svg/batik/paints/gradientLimit-expected.png:
+        * platform/chromium-mac/svg/batik/paints/patternPreserveAspectRatioA-expected.png:
+        * platform/chromium-mac/svg/batik/paints/patternRegionA-expected.png:
+        * platform/chromium-mac/svg/batik/paints/patternRegions-expected.png:
+        * platform/chromium-mac/svg/batik/paints/patternRegions-positioned-objects-expected.png:
+        * platform/chromium-mac/svg/batik/text/longTextOnPath-expected.png:
+        * platform/chromium-mac/svg/batik/text/smallFonts-expected.png:
+        * platform/chromium-mac/svg/batik/text/textAnchor-expected.png:
+        * platform/chromium-mac/svg/batik/text/textDecoration-expected.png:
+        * platform/chromium-mac/svg/batik/text/textEffect-expected.png:
+        * platform/chromium-mac/svg/batik/text/textEffect2-expected.png:
+        * platform/chromium-mac/svg/batik/text/textEffect3-expected.png:
+        * platform/chromium-mac/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-mac/svg/batik/text/textLayout-expected.png:
+        * platform/chromium-mac/svg/batik/text/textLayout2-expected.png:
+        * platform/chromium-mac/svg/batik/text/textLength-expected.png:
+        * platform/chromium-mac/svg/batik/text/textOnPath-expected.png:
+        * platform/chromium-mac/svg/batik/text/textOnPathSpaces-expected.png:
+        * platform/chromium-mac/svg/batik/text/textPosition-expected.png:
+        * platform/chromium-mac/svg/batik/text/textPosition2-expected.png:
+        * platform/chromium-mac/svg/batik/text/textProperties-expected.png:
+        * platform/chromium-mac/svg/batik/text/textProperties2-expected.png:
+        * platform/chromium-mac/svg/batik/text/textStyles-expected.png:
+        * platform/chromium-mac/svg/batik/text/verticalText-expected.png:
+        * platform/chromium-mac/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGUseElement-dom-href2-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGUseElement-svgdom-href2-prop-expected.png:
+
 2012-11-05  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Unicode combining diacritical aren't always combined on Linux
