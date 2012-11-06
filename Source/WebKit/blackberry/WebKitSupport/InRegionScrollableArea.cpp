@@ -19,6 +19,7 @@
 #include "config.h"
 #include "InRegionScrollableArea.h"
 
+#include "Document.h"
 #include "Frame.h"
 #include "LayerWebKitThread.h"
 #include "InRegionScroller_p.h"
@@ -52,10 +53,15 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
     : m_webPage(webPage)
     , m_layer(layer)
     , m_hasWindowVisibleRectCalculated(false)
+    , m_document(0)
 {
     ASSERT(webPage);
     ASSERT(layer);
     m_isNull = false;
+
+    // Add a pointer to the enclosing document as the pointer to layer or node along the way may become invalid.
+    if (m_layer->enclosingElement())
+        m_document = m_layer->enclosingElement()->document();
 
     // FIXME: Add an ASSERT here as the 'layer' must be scrollable.
 
@@ -137,6 +143,12 @@ RenderLayer* InRegionScrollableArea::layer() const
 {
     ASSERT(!m_isNull);
     return m_layer;
+}
+
+Document* InRegionScrollableArea::document() const
+{
+    ASSERT(!m_isNull);
+    return m_document;
 }
 
 }

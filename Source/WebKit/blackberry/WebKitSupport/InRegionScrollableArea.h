@@ -24,6 +24,7 @@
 #include <interaction/ScrollViewBase.h>
 
 namespace WebCore {
+class Document;
 class LayerWebKitThread;
 class Node;
 class RenderLayer;
@@ -45,10 +46,12 @@ public:
     Platform::IntRect visibleWindowRect() const;
 
     WebCore::RenderLayer* layer() const;
+    WebCore::Document* document() const;
 
 private:
     WebPagePrivate* m_webPage;
     WebCore::RenderLayer* m_layer;
+    WebCore::Document* m_document;
 
     // We either cache one here: in case of a composited scrollable layer
     // cache the LayerWebKitThread. Otherwise, the Node.

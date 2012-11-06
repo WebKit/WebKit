@@ -1,3 +1,25 @@
+2012-11-06  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Crash in InRegionScrollerPrivate.
+        https://bugs.webkit.org/show_bug.cgi?id=101399
+
+        Reviewed by Rob Buis.
+
+        Add a pointer to the enclosing document as the pointer to layer
+        or node along the way may become invalid.
+        Use document pointer in clearDocumentData.
+        PR #238469
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::clearDocumentData):
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+        (BlackBerry::WebKit::InRegionScrollableArea::document):
+        (WebKit):
+        * WebKitSupport/InRegionScrollableArea.h:
+        (WebCore):
+        (InRegionScrollableArea):
+
 2012-11-06  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Pushing window.external.* events to webplatform

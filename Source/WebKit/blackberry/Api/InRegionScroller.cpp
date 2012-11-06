@@ -102,8 +102,7 @@ void InRegionScrollerPrivate::clearDocumentData(const Document* documentGoingAwa
 
     InRegionScrollableArea* scrollableArea = static_cast<InRegionScrollableArea*>(m_activeInRegionScrollableAreas[0]);
     ASSERT(scrollableArea);
-    Node* node = scrollableArea->layer()->enclosingElement();
-    if (node && node->document() == documentGoingAway)
+    if (scrollableArea->document() == documentGoingAway)
         reset();
 }
 
