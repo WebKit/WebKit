@@ -3,14 +3,14 @@
   <body>
     <script src="../resources/securitypolicy-tests-base.js"></script>
     <script>
-      if (document.SecurityPolicy.allowsMediaFrom('http://example.com/'))
+      if (document.securityPolicy.allowsMediaFrom('http://example.com/'))
           log('PASS media is allowed when no policy exists.');
       else
           log('FAIL media is not allowed when no policy exists.');
 
       injectPolicy("media-src http://notexample.com;");
 
-      if (!document.SecurityPolicy.allowsMediaFrom('http://example.com/'))
+      if (!document.securityPolicy.allowsMediaFrom('http://example.com/'))
           log('PASS media is not allowed when policy exists.');
       else
           log('FAIL media is allowed when policy exists.');

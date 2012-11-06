@@ -366,7 +366,7 @@
     [Conditional=PAGE_VISIBILITY_API] readonly attribute boolean webkitHidden;
 
     // Security Policy API: http://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#script-interfaces
-    [Conditional=CSP_NEXT] readonly attribute DOMSecurityPolicy SecurityPolicy;
+    [Conditional=CSP_NEXT] readonly attribute DOMSecurityPolicy securityPolicy;
 
 };
 

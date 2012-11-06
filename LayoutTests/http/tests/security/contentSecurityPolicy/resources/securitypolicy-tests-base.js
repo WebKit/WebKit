@@ -14,6 +14,6 @@ function injectPolicy(policy) {
     document.head.appendChild(meta);
 }
 
-if (!document.SecurityPolicy)
+if (!document.securityPolicy)
     log('FAIL document.securityPolicy is not defined.')
 

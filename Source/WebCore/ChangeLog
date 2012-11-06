@@ -1,3 +1,31 @@
+2012-11-06  Mike West  <mkwst@chromium.org>
+
+        CSP 1.1: Tweak the script interface to match the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=101321
+
+        Reviewed by Adam Barth.
+
+       This patch brings WebKit in line with the changes made to the spec in
+       https://dvcs.w3.org/hg/content-security-policy/rev/5a29424a37d4.
+       Specifically, the following:
+
+       - Renamed 'document.SecurityPolicy' to 'document.securityPolicy'
+       - Converted the following to read-only boolean attributes:
+         - 'allowsEval'
+         - 'allowsInlineScript'
+         - 'allowsInlineStyle'
+         - 'isActive'
+
+        These changes only have effect for ports with CSP_NEXT enabled.
+
+        Tests: http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowinlinescript.html
+               http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowinlinestyle.html
+
+        * dom/Document.idl:
+        * page/DOMSecurityPolicy.idl:
+            Tweaking the IDL files to match the new definition of the
+            functionlity in the spec.
+
 2012-11-06  Andrey Lushnikov  <lushnikov@google.com>
 
         Added console.clear() method

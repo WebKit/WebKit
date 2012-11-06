@@ -27,9 +27,12 @@
     OmitConstructor,
     InterfaceName=SecurityPolicy
 ] interface DOMSecurityPolicy {
-    readonly attribute DOMStringList reportURIs;
+    readonly attribute boolean allowsEval;
+    readonly attribute boolean allowsInlineScript;
+    readonly attribute boolean allowsInlineStyle;
+    readonly attribute boolean isActive;
 
-    boolean isActive();
+    readonly attribute DOMStringList reportURIs;
 
     boolean allowsConnectionTo(in DOMString url);
     boolean allowsFontFrom(in DOMString url);
@@ -41,9 +44,4 @@
     boolean allowsPluginType(in DOMString type);
     boolean allowsScriptFrom(in DOMString url);
     boolean allowsStyleFrom(in DOMString url);
-
-    boolean allowsEval();
-    boolean allowsInlineScript();
-    boolean allowsInlineStyle();
 };
-

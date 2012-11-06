@@ -1,3 +1,34 @@
+2012-11-06  Mike West  <mkwst@chromium.org>
+
+        CSP 1.1: Tweak the script interface to match the spec.
+        https://bugs.webkit.org/show_bug.cgi?id=101321
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowconnectionto.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-alloweval.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowfontfrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowformaction.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowframefrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowimagefrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowmediafrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowobjectfrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowplugintype.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowscriptfrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowstylefrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-isactive-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-isactive.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-reporturi-expected.txt:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-reporturi.html:
+        * http/tests/security/contentSecurityPolicy/resources/securitypolicy-tests-base.js:
+            s/document.SecurityPolicy/document.securityPolicy/g
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowinlinescript-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowinlinescript.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowinlinestyle-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowinlinestyle.html: Added.
+            For whatever reason, we never wrote tests for these methods. Now we
+            have, which is good.
+
 2012-11-06  David Barton  <dbarton@mathscribe.com>
 
         Unreviewed gardening after bug 101115 fixed.

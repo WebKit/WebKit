@@ -3,7 +3,7 @@
   <body>
     <script src="../resources/securitypolicy-tests-base.js"></script>
     <script>
-      if (document.SecurityPolicy.allowsFormAction('http://example.com/'))
+      if (document.securityPolicy.allowsFormAction('http://example.com/'))
           log('PASS form action is allowed when no policy exists.');
       else
           log('FAIL form action is not allowed when no policy exists.');
@@ -11,7 +11,7 @@
 
       injectPolicy("form-action http://notexample.com;");
 
-      if (!document.SecurityPolicy.allowsFormAction('http://example.com/'))
+      if (!document.securityPolicy.allowsFormAction('http://example.com/'))
           log('PASS form action is not allowed when policy exists.');
       else
           log('FAIL form action is allowed when policy exists.');

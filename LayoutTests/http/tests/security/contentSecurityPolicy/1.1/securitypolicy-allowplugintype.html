@@ -3,7 +3,7 @@
   <body>
     <script src="../resources/securitypolicy-tests-base.js"></script>
     <script>
-      if (document.SecurityPolicy.allowsPluginType('application/x-shockwave-flash'))
+      if (document.securityPolicy.allowsPluginType('application/x-shockwave-flash'))
           log('PASS plugin type is allowed when no policy exists.');
       else
           log('FAIL plugin type is not allowed when no policy exists.');
@@ -11,7 +11,7 @@
 
       injectPolicy("plugin-types application/x-webkit-test-netscape;");
 
-      if (!document.SecurityPolicy.allowsPluginType('application/x-shockwave-flash'))
+      if (!document.securityPolicy.allowsPluginType('application/x-shockwave-flash'))
           log('PASS plugin type is not allowed when policy exists.');
       else
           log('FAIL plugin type is allowed when policy exists.');
