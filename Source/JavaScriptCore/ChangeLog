@@ -1,5 +1,16 @@
 2012-11-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Indentation of JSArray.h is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=101314
+
+        Reviewed by Alexey Proskuryakov.
+
+        Just removing the indentation inside the namespace body.
+
+        * runtime/JSArray.h:
+
+2012-11-05  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should not fall down to patchable GetById just because a prototype had things added to it
         https://bugs.webkit.org/show_bug.cgi?id=101299
 
