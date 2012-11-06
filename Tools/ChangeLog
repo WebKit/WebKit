@@ -1,3 +1,18 @@
+2012-11-06  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL][WK2] Minibrowser forgets http variables when url includes ampersand
+        https://bugs.webkit.org/show_bug.cgi?id=101061
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Elementary entry only returns 'markup' text, meaning ampersands
+        in a url will become "&amp;". Use elm_entry_markup_to_utf8() and
+        elm_entry_utf8_to_markup() when interacting with the entry.
+
+        * MiniBrowser/efl/main.c:
+        (on_url_changed):
+        (on_url_bar_activated):
+
 2012-11-06  Balazs Kelemen  <kbalazs@webkit.org>
 
         DumpRenderTree should have --pixel-tests option again

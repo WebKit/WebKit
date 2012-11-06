@@ -233,7 +233,11 @@ static void
 on_url_changed(void *user_data, Evas_Object *webview, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
-    elm_entry_entry_set(window->url_bar, ewk_view_url_get(window->webview));
+
+    char *url = elm_entry_utf8_to_markup(ewk_view_url_get(window->webview));
+    elm_entry_entry_set(window->url_bar, url);
+
+    free(url);
 }
 
 static void
@@ -455,9 +459,12 @@ on_url_bar_activated(void *user_data, Evas_Object *url_bar, void *event_info)
 {
     Browser_Window *app_data = (Browser_Window *)user_data;
 
-    const char *user_url = elm_entry_entry_get(url_bar);
+    const char *markup_url = elm_entry_entry_get(url_bar);
+    char *user_url = elm_entry_markup_to_utf8(markup_url);
     char *url = url_from_user_input(user_url);
     ewk_view_url_set(app_data->webview, url);
+
+    free(user_url);
     free(url);
 
     /* Give focus back to the view */
