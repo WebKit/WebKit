@@ -1,3 +1,9 @@
+2012-11-06  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Gardening. Unskip test that's been passing for a while.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-06  Andrey Lushnikov  <lushnikov@google.com>
 
         Added console.clear() method
