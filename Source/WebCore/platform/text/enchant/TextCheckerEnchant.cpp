@@ -68,6 +68,10 @@ void TextCheckerEnchant::learnWord(const String& word)
 
 void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspellingLocation, int& misspellingLength)
 {
+    // Assume that the words in the string are spelled correctly.
+    misspellingLocation = -1;
+    misspellingLength = 0;
+
     if (m_enchantDictionaries.isEmpty())
         return;
 

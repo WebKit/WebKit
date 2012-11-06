@@ -1,3 +1,18 @@
+2012-11-06  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2][EFL][GTK] early return of checkSpellingOfString treats correct words as misspelled
+        https://bugs.webkit.org/show_bug.cgi?id=101215
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Save the misspelled location and length of the string to the default values (-1, 0)
+        at the beginning of the checkSpellingOfString method.
+        It assumes that the words are spelled correctly and early return of method doesn't
+        cause assertions in findFirstMisspelling (WebCore/editing/TextCheckingHelper.cpp).
+
+        * platform/text/enchant/TextCheckerEnchant.cpp:
+        (TextCheckerEnchant::checkSpellingOfString):
+
 2012-11-06  Huang Dongsung  <luxtella@company100.net>
 
         [TexMap] Remove unused textures in the texture pool.
