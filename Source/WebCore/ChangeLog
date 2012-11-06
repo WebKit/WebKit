@@ -1,3 +1,49 @@
+2012-11-06  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Automatically go fullscreen on video play
+        https://bugs.webkit.org/show_bug.cgi?id=101100
+
+        Reviewed by Eric Carlson.
+
+        There is a requirement to have HTML5 video automatically enter
+        fullscreen when a video starts playing (PR131774). This change
+        implements this feature, with restrictions. The main restriction
+        is adherence to WebKit's philosophy of only entering fullscreen
+        due to a user gesture. This is important in order to avoid
+        pop-up advertisements and other unwanted fullscreen content.
+        One consequence of this is that video elements with the autoplay
+        attribute will not automatically enter fullscreen.
+
+        Other caveats:
+        - This feature applies only to "small screen" devices where
+        automatically going fullscreen makes more sense.
+        - Fullscreen will only be entered automatically when the
+        video is played from the beginning (current time is zero).
+        It is assumed that if the user is resuming play from a paused
+        state and is not in fullscreen mode, then they exited fullscreen
+        mode intentionally.
+
+        Test: platform/blackberry/media/video-automatic-fullscreen.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerEnterFullscreen):
+        (WebCore):
+        (WebCore::HTMLMediaElement::mediaPlayerIsFullscreen):
+        (WebCore::HTMLMediaElement::mediaPlayerIsFullscreenPermitted):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerEnterFullscreen):
+        (WebCore::MediaPlayerClient::mediaPlayerIsFullscreen):
+        (WebCore::MediaPlayerClient::mediaPlayerIsFullscreenPermitted):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::waitMetadataTimerFired):
+        (WebCore::MediaPlayerPrivate::conditionallyGoFullscreenAfterPlay):
+        (WebCore):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.h:
+        (MediaPlayerPrivate):
+
 2012-11-06  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [WK2][EFL][GTK] early return of checkSpellingOfString treats correct words as misspelled

@@ -428,7 +428,10 @@ private:
     virtual bool mediaPlayerNeedsSiteSpecificHacks() const OVERRIDE;
     virtual String mediaPlayerDocumentHost() const OVERRIDE;
 
+    virtual void mediaPlayerEnterFullscreen() OVERRIDE;
     virtual void mediaPlayerExitFullscreen() OVERRIDE;
+    virtual bool mediaPlayerIsFullscreen() const OVERRIDE;
+    virtual bool mediaPlayerIsFullscreenPermitted() const OVERRIDE;
     virtual bool mediaPlayerIsVideo() const OVERRIDE;
     virtual LayoutRect mediaPlayerContentBoxRect() const OVERRIDE;
     virtual void mediaPlayerSetSize(const IntSize&) OVERRIDE;

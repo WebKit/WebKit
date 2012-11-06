@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Element - Test automatic Enter Fullscreen on play</title>
+    <script src=../../../media/video-test.js></script>
+    <script src=../../../media/media-file.js></script>
+    <script src=../../../media/media-controls.js></script>
+    <script src=../../../fullscreen/full-screen-test.js></script>
+    <script>
+        var volumeSlider;
+
+        var startTest = function() {
+            findMediaElement();
+            waitForEvent(video, 'canplay', oncanplay);
+            video.src = findMediaFile('video', '../../../media/content/test');
+        };
+
+        var oncanplay = function() {
+            waitForEvent(video, 'webkitfullscreenchange', onfullscreenchange);
+            runWithKeyDown(function(){ video.play(); })
+        };
+
+        var onfullscreenchange = function() {
+            endTest();
+        };
+    </script>
+</head>
+<body onload="startTest()">
+    
+    <video controls></video>    
+    
+</body>
+</html>

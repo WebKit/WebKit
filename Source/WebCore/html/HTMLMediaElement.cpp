@@ -4523,9 +4523,24 @@ String HTMLMediaElement::mediaPlayerDocumentHost() const
     return document()->url().host();
 }
 
+void HTMLMediaElement::mediaPlayerEnterFullscreen()
+{
+    enterFullscreen();
+}
+
 void HTMLMediaElement::mediaPlayerExitFullscreen()
 {
     exitFullscreen();
+}
+
+bool HTMLMediaElement::mediaPlayerIsFullscreen() const
+{
+    return isFullscreen();
+}
+
+bool HTMLMediaElement::mediaPlayerIsFullscreenPermitted() const
+{
+    return !userGestureRequiredForFullscreen() || ScriptController::processingUserGesture();
 }
 
 bool HTMLMediaElement::mediaPlayerIsVideo() const
