@@ -1,3 +1,20 @@
+2012-11-06  Alexis Menard  <alexis@webkit.org>
+
+        Add an extra test for background-position parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=101245
+
+        Reviewed by Eric Seidel.
+
+        This test may overlap some existing tests but they are usually
+        old tests where the parsing is tested but mixed with the rendering
+        verification, therefore it is not ideal to add new parsing tests.
+        This will be useful for the upcoming support of background-position with 4
+        values as this test will be extended to verify the parsing and later another
+        test/patch will be added to check/support the rendering.
+
+        * fast/backgrounds/background-position-parsing-2-expected.txt: Added.
+        * fast/backgrounds/background-position-parsing-2.html: Added.
+
 2012-11-06  Keishi Hattori  <keishi@webkit.org>
 
         The "Rect" class in WebCore/Resources/pagepopups/pickerCommon.js should be renamed
