@@ -1,3 +1,17 @@
+2012-11-06  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        [EFL] [WK2] Random crash in Minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=101241
+
+        Reviewed by Gyuyoung Kim.
+
+        Do not clear GL context and GL surface in exitAcceleratedCompositing.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::createGLSurface):
+        (EwkViewImpl::enterAcceleratedCompositingMode):
+        (EwkViewImpl::exitAcceleratedCompositingMode):
+
 2012-11-05  Sam Weinig  <sam@webkit.org>
 
         Need a way to send and receive messages between the WKWebProcessPlugIn object and the client

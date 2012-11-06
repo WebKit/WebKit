@@ -501,6 +501,21 @@ void EwkViewImpl::informIconChange()
 #if USE(ACCELERATED_COMPOSITING)
 bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
 {
+    if (!m_evasGL) {
+        Evas* evas = evas_object_evas_get(m_view);
+        m_evasGL = adoptPtr(evas_gl_new(evas));
+        if (!m_evasGL)
+            return false;
+    }
+
+    if (!m_evasGLContext) {
+        m_evasGLContext = EvasGLContext::create(evasGL());
+        if (!m_evasGLContext) {
+            WARN("Failed to create GLContext.");
+            return false;
+        }
+    }
+
     Ewk_View_Smart_Data* sd = smartData();
 
     Evas_GL_Config evasGLConfig = {
@@ -530,28 +545,11 @@ bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
 
 bool EwkViewImpl::enterAcceleratedCompositingMode()
 {
-    if (m_evasGL) {
-        EINA_LOG_DOM_WARN(_ewk_log_dom, "Accelerated compositing mode already entered.");
-        return false;
-    }
-
-    Evas* evas = evas_object_evas_get(m_view);
-    m_evasGL = adoptPtr(evas_gl_new(evas));
-    if (!m_evasGL)
-        return false;
-
-    m_evasGLContext = EvasGLContext::create(evasGL());
-    if (!m_evasGLContext) {
-        EINA_LOG_DOM_WARN(_ewk_log_dom, "Failed to create GLContext.");
-        m_evasGL.clear();
-        return false;
-    }
-
-    if (!createGLSurface(size())) {
-        EINA_LOG_DOM_WARN(_ewk_log_dom, "Failed to create GLSurface.");
-        m_evasGLContext.clear();
-        m_evasGL.clear();
-        return false;
+    if (!m_evasGLSurface) {
+        if (!createGLSurface(size())) {
+            WARN("Failed to create GLSurface.");
+            return false;
+        }
     }
 
     page()->drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer()->setActive(true);
@@ -560,12 +558,6 @@ bool EwkViewImpl::enterAcceleratedCompositingMode()
 
 bool EwkViewImpl::exitAcceleratedCompositingMode()
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(m_evasGL, false);
-
-    m_evasGLSurface.clear();
-    m_evasGLContext.clear();
-    m_evasGL.clear();
-
     return true;
 }
 #endif
