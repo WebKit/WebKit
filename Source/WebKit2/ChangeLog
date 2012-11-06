@@ -1,3 +1,16 @@
+2012-11-06  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Remove two methods' virtual modifiers in CoordinatedGraphicsLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=101141
+
+        Reviewed by Noam Rosenthal.
+
+        The methods exist for only CoordinatedGraphicsLayer and we have no plan to
+        extend CoordinatedGraphicsLayer.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayer):
+
 2012-11-06  Balazs Kelemen  <kbalazs@webkit.org>
 
         [CoordinatedGraphics] Access to LayerTreeRenderer::m_renderQueue should be thread safe

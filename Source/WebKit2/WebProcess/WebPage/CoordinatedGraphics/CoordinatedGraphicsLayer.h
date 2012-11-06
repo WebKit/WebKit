@@ -122,8 +122,8 @@ public:
     virtual void pauseAnimation(const String&, double) OVERRIDE;
     virtual void removeAnimation(const String&) OVERRIDE;
     
-    virtual void setContentsScale(float);
-    virtual void setVisibleContentRectTrajectoryVector(const FloatPoint&);
+    void setContentsScale(float);
+    void setVisibleContentRectTrajectoryVector(const FloatPoint&);
 
     void setRootLayer(bool);
 
