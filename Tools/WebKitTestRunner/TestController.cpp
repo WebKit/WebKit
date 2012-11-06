@@ -96,9 +96,6 @@ TestController::TestController(int argc, const char* argv[])
     , m_isGeolocationPermissionAllowed(false)
     , m_policyDelegateEnabled(false)
     , m_policyDelegatePermissive(false)
-#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
-    , m_eventSenderProxy(new EventSenderProxy(this))
-#endif
 {
     initialize(argc, argv);
     controller = this;
@@ -503,6 +500,11 @@ bool TestController::resetStateToConsistentValues()
     WKContextSetCacheModel(TestController::shared().context(), kWKCacheModelDocumentBrowser);
 
     // FIXME: This function should also ensure that there is only one page open.
+
+    // Reset the EventSender for each test.
+#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
+    m_eventSenderProxy = adoptPtr(new EventSenderProxy(this));
+#endif
 
     // Reset preferences
     WKPreferencesRef preferences = WKPageGroupGetPreferences(m_pageGroup.get());

@@ -72,6 +72,10 @@ EventSenderProxy::EventSenderProxy(TestController* testController)
     isReplayingEvents = false;
 }
 
+EventSenderProxy::~EventSenderProxy()
+{
+}
+
 static Qt::MouseButton getMouseButton(unsigned button)
 {
     Qt::MouseButton mouseButton;

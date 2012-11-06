@@ -1,3 +1,32 @@
+2012-11-06  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [WTR] Reset EventSender before running each test.
+        https://bugs.webkit.org/show_bug.cgi?id=101353
+
+        Reviewed by Simon Fraser.
+
+        Contrary to what was done to at least some ports in DumpRenderTree,
+        EventSender did not currently reset its values in WTR. This caused
+        flakiness if a test such as editing/selection/fake-doubleclick.html was
+        run twice in a row, since the click count was not reset across each
+        run.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController): Do not create m_eventSenderProxy
+        in the constructor anymore, it is created in
+        resetStateToConsistentValues now.
+        (WTR::TestController::resetStateToConsistentValues): Recreate
+        m_eventSenderProxy every time this method is run.
+        * WebKitTestRunner/TestController.h: Make m_eventSenderProxy an OwnPtr
+        and guard it with a platform #ifdef.
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::~EventSenderProxy): Add an empty
+        implementation.
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::~EventSenderProxy): Ditto.
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp:
+        (WTR::EventSenderProxy::~EventSenderProxy): Ditto.
+
 2012-11-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Refactor Ewk_Auth_Request, Ewk_Url_Scheme_Request and Ewk_Download_Job to be Ewk_Objects

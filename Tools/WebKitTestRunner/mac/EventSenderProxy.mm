@@ -111,6 +111,10 @@ EventSenderProxy::EventSenderProxy(TestController* testController)
 {
 }
 
+EventSenderProxy::~EventSenderProxy()
+{
+}
+
 void EventSenderProxy::updateClickCountForButton(int button)
 {
     if (m_time - m_clickTime < 1 && m_position == m_clickPosition && button == m_clickButton) {

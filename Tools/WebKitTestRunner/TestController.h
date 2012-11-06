@@ -178,7 +178,9 @@ private:
     bool m_policyDelegateEnabled;
     bool m_policyDelegatePermissive;
 
-    EventSenderProxy* m_eventSenderProxy;
+#if PLATFORM(MAC) || PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
+    OwnPtr<EventSenderProxy> m_eventSenderProxy;
+#endif
 
     WorkQueueManager m_workQueueManager;
 };

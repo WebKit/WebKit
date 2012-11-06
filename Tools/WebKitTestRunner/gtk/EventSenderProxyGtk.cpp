@@ -83,6 +83,10 @@ EventSenderProxy::EventSenderProxy(TestController* testController)
 {
 }
 
+EventSenderProxy::~EventSenderProxy()
+{
+}
+
 static guint getMouseButtonModifiers(int gdkButton)
 {
     if (gdkButton == 1)
