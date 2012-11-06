@@ -1,3 +1,25 @@
+2012-11-06  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Page can't back to whole screen after zoom out and orientation change
+        https://bugs.webkit.org/show_bug.cgi?id=101350
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        PR: 229321
+        When rotating device during touch interaction, bitmap zooming was
+        unexpected ended by resetBitmapZoomScale() so that it couldn't bounce
+        back. The call resetBitmapZoomScale() is ancient, which just resets the
+        scale of the bitmap before. Right now it only ends the bitmap zooming
+        which caused the issue. As UI viewport will be updated by zoomChanged()
+        right after that, we can remove this trouble maker.
+        Update the interaction views if the rotation is being changed so that
+        ZoomHandler can get the updated views.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::zoomAboutPoint):
+        * Api/WebPageClient.h:
+
 2012-11-05  Lianghui Chen  <liachen@rim.com>
 
         [BlackBerry] Do not show error page for main loads denied by client application

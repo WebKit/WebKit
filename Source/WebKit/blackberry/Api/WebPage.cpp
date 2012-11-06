@@ -1255,8 +1255,6 @@ bool WebPagePrivate::zoomAboutPoint(double unclampedScale, const FloatPoint& anc
     // We need to invalidate all tiles both visible and non-visible if we're loading.
     m_backingStore->d->updateTiles(isLoading /* updateVisible */, false /* immediate */);
 
-    m_client->resetBitmapZoomScale(m_transformationMatrix->m11());
-
     bool shouldRender = !isLoading || m_userPerformedManualZoom || forceRendering;
     bool shouldClearVisibleZoom = isLoading && shouldRender;
 
@@ -1267,6 +1265,9 @@ bool WebPagePrivate::zoomAboutPoint(double unclampedScale, const FloatPoint& anc
     }
 
     m_client->zoomChanged(m_webPage->isMinZoomed(), m_webPage->isMaxZoomed(), !shouldZoomOnEscape(), currentScale());
+
+    if (m_pendingOrientation != -1)
+        m_client->updateInteractionViews();
 
     // Clear window to make sure there are no artifacts.
     if (shouldRender) {

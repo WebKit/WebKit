@@ -132,6 +132,7 @@ public:
     virtual void contentsSizeChanged(const Platform::IntSize&) const = 0;
     virtual void scrollChanged(const Platform::IntPoint&) const = 0;
     virtual void zoomChanged(bool isMinZoomed, bool isMaxZoomed, bool isAtInitialZoom, double newZoom) const = 0;
+    virtual void updateInteractionViews() = 0;
 
     virtual void requestUpdateViewport(int width, int height) = 0;
 
