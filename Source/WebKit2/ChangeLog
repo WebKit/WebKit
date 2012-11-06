@@ -1,5 +1,20 @@
 2012-11-06  Huang Dongsung  <luxtella@company100.net>
 
+        Coordinated Graphics: Remove a parent member in WebLayerInfo.
+        https://bugs.webkit.org/show_bug.cgi?id=101142
+
+        Reviewed by Noam Rosenthal.
+
+        The parent member is not used in UI Process, and GraphicsLayer::setParent is
+        internally used only, so we don't need to send the parent layer id to UI Process.
+
+        * Shared/WebLayerTreeInfo.h:
+        (WebKit::WebLayerInfo::WebLayerInfo):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::syncLayerState):
+
+2012-11-06  Huang Dongsung  <luxtella@company100.net>
+
         Coordinated Graphics: Remove two methods' virtual modifiers in CoordinatedGraphicsLayer.
         https://bugs.webkit.org/show_bug.cgi?id=101141
 

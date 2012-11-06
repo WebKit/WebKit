@@ -37,14 +37,12 @@ enum { InvalidWebLayerID = 0 };
 // NOTE: WebLayerInfo should only use POD types, as to make serialization faster.
 struct WebLayerInfo {
     WebLayerInfo()
-        : parent(InvalidWebLayerID)
-        , replica(InvalidWebLayerID)
+        : replica(InvalidWebLayerID)
         , mask(InvalidWebLayerID)
         , imageBackingStoreID(0)
         , opacity(0)
         , flags(0) { }
 
-    WebLayerID parent;
     WebLayerID replica;
     WebLayerID mask;
     int64_t imageBackingStoreID;

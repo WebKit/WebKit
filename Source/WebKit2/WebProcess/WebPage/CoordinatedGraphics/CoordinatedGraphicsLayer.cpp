@@ -476,7 +476,6 @@ void CoordinatedGraphicsLayer::syncLayerState()
     m_layerInfo.mask = toWebLayerID(maskLayer());
     m_layerInfo.masksToBounds = masksToBounds();
     m_layerInfo.opacity = opacity();
-    m_layerInfo.parent = toWebLayerID(parent());
     m_layerInfo.pos = position();
     m_layerInfo.preserves3D = preserves3D();
     m_layerInfo.replica = toWebLayerID(replicaLayer());
