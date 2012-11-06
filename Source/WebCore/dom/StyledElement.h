@@ -48,6 +48,7 @@ public:
     bool setInlineStyleProperty(CSSPropertyID, double value, CSSPrimitiveValue::UnitTypes, bool important = false);
     bool setInlineStyleProperty(CSSPropertyID, const String& value, bool important = false);
     bool removeInlineStyleProperty(CSSPropertyID);
+    void removeAllInlineStyleProperties();
     
     virtual CSSStyleDeclaration* style() OVERRIDE;
 

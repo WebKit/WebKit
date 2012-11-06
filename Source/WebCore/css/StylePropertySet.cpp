@@ -978,6 +978,12 @@ static const CSSPropertyID blockProperties[] = {
     CSSPropertyWidows
 };
 
+void StylePropertySet::clear()
+{
+    ASSERT(isMutable());
+    mutablePropertyVector().clear();
+}
+
 const unsigned numBlockProperties = WTF_ARRAY_LENGTH(blockProperties);
 
 PassRefPtr<StylePropertySet> StylePropertySet::copyBlockProperties() const

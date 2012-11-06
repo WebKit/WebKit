@@ -221,6 +221,17 @@ bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
     return changes;
 }
 
+void StyledElement::removeAllInlineStyleProperties()
+{
+    if (!attributeData() || !attributeData()->inlineStyle())
+        return;
+    StylePropertySet* inlineStylePropertySet = ensureInlineStyle();
+    if (inlineStylePropertySet->isEmpty())
+        return;
+    inlineStylePropertySet->clear();
+    inlineStyleChanged();
+}
+
 void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     if (const StylePropertySet* inlineStyle = attributeData() ? attributeData()->inlineStyle() : 0)

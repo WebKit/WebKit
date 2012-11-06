@@ -1,3 +1,42 @@
+2012-11-06  Takashi Sakamoto  <tasak@google.com>
+
+        removeAttribute('style') not working in certain circumstances
+        https://bugs.webkit.org/show_bug.cgi?id=99295
+
+        Reviewed by Ryosuke Niwa.
+
+        After web developers did style.XXXX=YYYY for some element, the inline
+        style should be always removable by using "removeAttribute('style')".
+        Currently it depends on whether web developers invokes
+        getAttribute('style'), setAttribute('style), and so on. E.g. once they
+        invoke getAttribute('style'), removeAttribute('style') works. This is
+        very confusing behavior.
+        Looking at Firefox browser, removeAttribute('style') always removes
+        all inline styles.
+
+        Test: fast/css/remove-attribute-style.html
+
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::clear):
+        Added a new method to remove all style properties.
+        (WebCore):
+        * css/StylePropertySet.h:
+        (StylePropertySet):
+        * dom/Element.cpp:
+        (WebCore::Element::removeAttribute):
+        If 'style' is given but the element has no style attribute, the old
+        code did nothing. However, if the element is styled element and has any
+        inline styles, the inline styles should be removed. So invoke
+        StyledElement::removeAllInlineStyleProperties and if any inline styles
+        are removed, invoke style recalc, too.
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::removeAllInlineStyleProperties):
+        Added a new method to remove all inline style propeties. If any inline
+        style is removed, invoke inlineStyleChanged() to force style recalc.
+        (WebCore):
+        * dom/StyledElement.h:
+        (StyledElement):
+
 2012-11-06  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: dim size bar for expanded item in native memory snapshot grid

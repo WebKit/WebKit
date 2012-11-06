@@ -1,3 +1,13 @@
+2012-11-06  Takashi Sakamoto  <tasak@google.com>
+
+        removeAttribute('style') not working in certain circumstances
+        https://bugs.webkit.org/show_bug.cgi?id=99295
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/css/remove-attribute-style-expected.txt: Added.
+        * fast/css/remove-attribute-style.html: Added.
+
 2012-11-06  Peter Beverloo  <peter@chromium.org>
 
         [Chromium-Android] Skip a number of crashing tests.

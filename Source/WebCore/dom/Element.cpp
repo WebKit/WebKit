@@ -1662,8 +1662,11 @@ void Element::removeAttribute(const AtomicString& name)
 
     AtomicString localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
     size_t index = attributeData()->getAttributeItemIndex(localName, false);
-    if (index == notFound)
+    if (index == notFound) {
+        if (UNLIKELY(localName == styleAttr) && !isStyleAttributeValid() && isStyledElement())
+            static_cast<StyledElement*>(this)->removeAllInlineStyleProperties();
         return;
+    }
 
     removeAttributeInternal(index, NotInSynchronizationOfLazyAttribute);
 }
