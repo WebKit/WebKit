@@ -1,3 +1,15 @@
+2012-11-06  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL] Exclude fast/css/style-scoped cases from layout test running
+        https://bugs.webkit.org/show_bug.cgi?id=101326
+
+        Unreviewed, EFL gardening.
+
+        According to BUG 49142, html5 style scoped attribute implementation is on progress.
+        Therefore, we can skip its test cases from regular layout test running.
+
+        * platform/efl/TestExpectations:
+
 2012-11-06  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] There shouldn't be linting errors about our TestExpectation files

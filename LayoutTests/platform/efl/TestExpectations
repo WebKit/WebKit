@@ -1248,7 +1248,7 @@ webkit.org/b/75747 fast/css/color-correction.html [ Missing Failure ]
 
 webkit.org/b/65536 fast/css/text-rendering.html [ Missing Failure ]
 
-webkit.org/b/49142 fast/css/style-scoped [ Failure ]
+webkit.org/b/49142 fast/css/style-scoped [ Skip ]
 
 # ENABLE(INPUT_TYPE_*) are not enabled.
 webkit.org/b/29359 fast/css/pseudo-in-range.html [ Failure ]
