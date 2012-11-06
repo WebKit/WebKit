@@ -1,5 +1,20 @@
 2012-11-05  Dirk Pranke  <dpranke@chromium.org>
 
+        webkit-patch rebaseline*: fix typo for --results-directory
+        https://bugs.webkit.org/show_bug.cgi?id=101295
+
+        Reviewed by Ojan Vafai.
+
+        Had --results_directory instead of --results-directory in both the
+        code and the unit test.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractParallelRebaselineCommand._rebaseline_commands):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineJson.test_results_directory):
+
+2012-11-05  Dirk Pranke  <dpranke@chromium.org>
+
         webkit-patch rebaseline*: fix handling of local file urls
         https://bugs.webkit.org/show_bug.cgi?id=101296
 

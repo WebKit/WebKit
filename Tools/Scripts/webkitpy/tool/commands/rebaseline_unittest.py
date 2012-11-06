@@ -282,7 +282,7 @@ class TestRebaselineJson(_BaseTestCase):
 
         # Note that we have only one run_in_parallel() call
         self.assertEquals(self.tool.executive.calls,
-            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'user-scripts/another-test.html', '--results_directory', '/tmp', '--verbose']]])
+            [[['echo', 'rebaseline-test-internal', '--suffixes', 'txt,png', '--builder', 'MOCK builder', '--test', 'user-scripts/another-test.html', '--results-directory', '/tmp', '--verbose']]])
 
 
 class TestRebaseline(_BaseTestCase):

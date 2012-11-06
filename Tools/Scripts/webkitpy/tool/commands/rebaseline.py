@@ -312,7 +312,7 @@ class AbstractParallelRebaselineCommand(AbstractRebaseliningCommand):
                     for platform in move_overwritten_baselines_to:
                         cmd_line.extend(['--move-overwritten-baselines-to', platform])
                 if options.results_directory:
-                    cmd_line.extend(['--results_directory', options.results_directory])
+                    cmd_line.extend(['--results-directory', options.results_directory])
                 if options.verbose:
                     cmd_line.append('--verbose')
                 commands.append(tuple([cmd_line, cwd]))
