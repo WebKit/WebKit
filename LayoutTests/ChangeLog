@@ -1,3 +1,9 @@
+2012-11-06  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Breakpoint is not removed when it was set in non-formatted mode and then removed while in formatted mode.
