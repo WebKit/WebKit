@@ -1,3 +1,32 @@
+2012-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        RenderGeometryMap asserts when loading http://en.softonic.com/mac
+        https://bugs.webkit.org/show_bug.cgi?id=101284
+        <rdar://problem/11540560>
+
+        Reviewed by Tim Horton.
+
+        When FrameView::layout() calls document->updateStyleIfNeeded(), we
+        can be in a state where FrameView::needsLayout() is false. However,
+        this is a bad time to update compositing layers, because we're about
+        to do layout, which will require us to update them again soon anyway,
+        and some RenderLayers may not have been sized or positioned yet.
+        
+        Fix by adding a m_doingPreLayoutStyleUpdate member to FrameView,
+        and toggling it around this call to updateStyleIfNeeded().
+        Read this state in updateCompositingLayersAfterStyleChange(), which is
+        now called unconditionally by recalcStyle(), but returns early
+        if this flag is set, or layout is pending.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::updateCompositingLayersAfterStyleChange):
+        (WebCore::FrameView::layout):
+        * page/FrameView.h:
+        (FrameView):
+
 2012-11-05  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=101275

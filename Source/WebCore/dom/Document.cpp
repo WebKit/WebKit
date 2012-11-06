@@ -1852,14 +1852,10 @@ void Document::recalcStyle(StyleChange change)
                 element->recalcStyle(change);
         }
 
-    #if USE(ACCELERATED_COMPOSITING)
-        if (view()) {
-            bool layoutPending = view()->layoutPending() || renderer()->needsLayout();
-            // If we didn't update compositing layers because of layout(), we need to do so here.
-            if (!layoutPending)
-                view()->updateCompositingLayersAfterStyleChange();
-        }
-    #endif
+#if USE(ACCELERATED_COMPOSITING)
+        if (view())
+            view()->updateCompositingLayersAfterStyleChange();
+#endif
 
     bailOut:
         clearNeedsStyleRecalc();
