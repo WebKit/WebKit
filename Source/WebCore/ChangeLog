@@ -1,3 +1,35 @@
+2012-11-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        TransformOperationInfo's constructor is really slow
+        https://bugs.webkit.org/show_bug.cgi?id=101143
+
+        Reviewed by Sam Weinig.
+
+        TransformOperationInfo() was slow for a few reasons:
+        -The function used a lot of branches. The basic assumption is that the input
+         is incorrect, thus every character is an opportunity to fail.
+        -Every branch had to be tested in order. If the name was matching the last if()
+         all the previous names had to be tested.
+        -Since equalIgnoringCase() was used in every branch, it was forcing the case folding
+         every time.
+        -When the string is 16bits, the case folding was using ICU, which was incredibly inefficient.
+
+        This can be fixed by either
+        1) Compute the lowercase name, then match it to a HashMap.
+        2) Write a tree to quickly reduce the number of branch needed.
+
+        The first solution is not viable because 16bits strings case folding
+        remains an important bottleneck.
+
+        Instead, the code now splits the names on simple characteristics to
+        match any name in a limited number of branches.
+
+        The assumption is the input is correct, so & is used instead of && to
+        avoid branches in favor of conditional instructions.
+
+        * css/CSSParser.cpp:
+        (WebCore::TransformOperationInfo::TransformOperationInfo):
+
 2012-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         RenderGeometryMap asserts when loading http://en.softonic.com/mac

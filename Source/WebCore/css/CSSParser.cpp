@@ -7230,76 +7230,241 @@ public:
         , m_allowSingleArgument(false)
         , m_unit(CSSParser::FUnknown)
     {
-        if (equalIgnoringCase(name, "scale(") || equalIgnoringCase(name, "scalex(") || equalIgnoringCase(name, "scaley(") || equalIgnoringCase(name, "scalez(")) {
-            m_unit = CSSParser::FNumber;
-            if (equalIgnoringCase(name, "scale("))
-                m_type = WebKitCSSTransformValue::ScaleTransformOperation;
-            else if (equalIgnoringCase(name, "scalex("))
-                m_type = WebKitCSSTransformValue::ScaleXTransformOperation;
-            else if (equalIgnoringCase(name, "scaley("))
-                m_type = WebKitCSSTransformValue::ScaleYTransformOperation;
-            else
-                m_type = WebKitCSSTransformValue::ScaleZTransformOperation;
-        } else if (equalIgnoringCase(name, "scale3d(")) {
-            m_type = WebKitCSSTransformValue::Scale3DTransformOperation;
-            m_argCount = 5;
-            m_unit = CSSParser::FNumber;
-        } else if (equalIgnoringCase(name, "rotate(")) {
-            m_type = WebKitCSSTransformValue::RotateTransformOperation;
-            m_unit = CSSParser::FAngle;
-        } else if (equalIgnoringCase(name, "rotatex(") ||
-                   equalIgnoringCase(name, "rotatey(") ||
-                   equalIgnoringCase(name, "rotatez(")) {
-            m_unit = CSSParser::FAngle;
-            if (equalIgnoringCase(name, "rotatex("))
-                m_type = WebKitCSSTransformValue::RotateXTransformOperation;
-            else if (equalIgnoringCase(name, "rotatey("))
-                m_type = WebKitCSSTransformValue::RotateYTransformOperation;
-            else
-                m_type = WebKitCSSTransformValue::RotateZTransformOperation;
-        } else if (equalIgnoringCase(name, "rotate3d(")) {
-            m_type = WebKitCSSTransformValue::Rotate3DTransformOperation;
-            m_argCount = 7;
-            m_unit = CSSParser::FNumber;
-        } else if (equalIgnoringCase(name, "skew(") || equalIgnoringCase(name, "skewx(") || equalIgnoringCase(name, "skewy(")) {
-            m_unit = CSSParser::FAngle;
-            if (equalIgnoringCase(name, "skew("))
-                m_type = WebKitCSSTransformValue::SkewTransformOperation;
-            else if (equalIgnoringCase(name, "skewx("))
-                m_type = WebKitCSSTransformValue::SkewXTransformOperation;
-            else
-                m_type = WebKitCSSTransformValue::SkewYTransformOperation;
-        } else if (equalIgnoringCase(name, "translate(") || equalIgnoringCase(name, "translatex(") || equalIgnoringCase(name, "translatey(") || equalIgnoringCase(name, "translatez(")) {
-            m_unit = CSSParser::FLength | CSSParser::FPercent;
-            if (equalIgnoringCase(name, "translate("))
-                m_type = WebKitCSSTransformValue::TranslateTransformOperation;
-            else if (equalIgnoringCase(name, "translatex("))
-                m_type = WebKitCSSTransformValue::TranslateXTransformOperation;
-            else if (equalIgnoringCase(name, "translatey("))
-                m_type = WebKitCSSTransformValue::TranslateYTransformOperation;
-            else
-                m_type = WebKitCSSTransformValue::TranslateZTransformOperation;
-        } else if (equalIgnoringCase(name, "translate3d(")) {
-            m_type = WebKitCSSTransformValue::Translate3DTransformOperation;
-            m_argCount = 5;
-            m_unit = CSSParser::FLength | CSSParser::FPercent;
-        } else if (equalIgnoringCase(name, "matrix(")) {
-            m_type = WebKitCSSTransformValue::MatrixTransformOperation;
-            m_argCount = 11;
-            m_unit = CSSParser::FNumber;
-        } else if (equalIgnoringCase(name, "matrix3d(")) {
-            m_type = WebKitCSSTransformValue::Matrix3DTransformOperation;
-            m_argCount = 31;
-            m_unit = CSSParser::FNumber;
-        } else if (equalIgnoringCase(name, "perspective(")) {
-            m_type = WebKitCSSTransformValue::PerspectiveTransformOperation;
-            m_unit = CSSParser::FNumber;
-        }
+        const UChar* characters;
+        unsigned nameLength = name.length();
 
-        if (equalIgnoringCase(name, "scale(") || equalIgnoringCase(name, "skew(") || equalIgnoringCase(name, "translate(")) {
-            m_allowSingleArgument = true;
-            m_argCount = 3;
-        }
+        const unsigned longestNameLength = 12;
+        UChar characterBuffer[longestNameLength];
+        if (name.is8Bit()) {
+            unsigned length = std::min(longestNameLength, nameLength);
+            const LChar* characters8 = name.characters8();
+            for (unsigned i = 0; i < length; ++i)
+                characterBuffer[i] = characters8[i];
+            characters = characterBuffer;
+        } else
+            characters = name.characters16();
+
+        switch (nameLength) {
+        case 5:
+            // Valid name: skew(.
+            if (((characters[0] == 's') || (characters[0] == 'S'))
+                & ((characters[1] == 'k') || (characters[1] == 'K'))
+                & ((characters[2] == 'e') || (characters[2] == 'E'))
+                & ((characters[3] == 'w') || (characters[3] == 'W'))
+                & (characters[4] == '(')) {
+                m_unit = CSSParser::FAngle;
+                m_type = WebKitCSSTransformValue::SkewTransformOperation;
+                m_allowSingleArgument = true;
+                m_argCount = 3;
+            }
+            break;
+        case 6:
+            // Valid names: skewx(, skewy(, scale(.
+            if ((characters[1] == 'c') || (characters[1] == 'C')) {
+                if (((characters[0] == 's') || (characters[0] == 'S'))
+                    & ((characters[2] == 'a') || (characters[2] == 'A'))
+                    & ((characters[3] == 'l') || (characters[3] == 'L'))
+                    & ((characters[4] == 'e') || (characters[4] == 'E'))
+                    & (characters[5] == '(')) {
+                    m_unit = CSSParser::FNumber;
+                    m_type = WebKitCSSTransformValue::ScaleTransformOperation;
+                    m_allowSingleArgument = true;
+                    m_argCount = 3;
+                }
+            } else if (((characters[0] == 's') || (characters[0] == 'S'))
+                       & ((characters[1] == 'k') || (characters[1] == 'K'))
+                       & ((characters[2] == 'e') || (characters[2] == 'E'))
+                       & ((characters[3] == 'w') || (characters[3] == 'W'))
+                       & (characters[5] == '(')) {
+                if ((characters[4] == 'x') || (characters[4] == 'X')) {
+                    m_unit = CSSParser::FAngle;
+                    m_type = WebKitCSSTransformValue::SkewXTransformOperation;
+                } else if ((characters[4] == 'y') || (characters[4] == 'Y')) {
+                    m_unit = CSSParser::FAngle;
+                    m_type = WebKitCSSTransformValue::SkewYTransformOperation;
+                }
+            }
+            break;
+        case 7:
+            // Valid names: matrix(, rotate(, scalex(, scaley(, scalez(.
+            if ((characters[0] == 'm') || (characters[0] == 'M')) {
+                if (((characters[1] == 'a') || (characters[1] == 'A'))
+                    & ((characters[2] == 't') || (characters[2] == 'T'))
+                    & ((characters[3] == 'r') || (characters[3] == 'R'))
+                    & ((characters[4] == 'i') || (characters[4] == 'I'))
+                    & ((characters[5] == 'x') || (characters[5] == 'X'))
+                    & (characters[6] == '(')) {
+                    m_unit = CSSParser::FNumber;
+                    m_type = WebKitCSSTransformValue::MatrixTransformOperation;
+                    m_argCount = 11;
+                }
+            } else if ((characters[0] == 'r') || (characters[0] == 'R')) {
+                if (((characters[1] == 'o') || (characters[1] == 'O'))
+                    & ((characters[2] == 't') || (characters[2] == 'T'))
+                    & ((characters[3] == 'a') || (characters[3] == 'A'))
+                    & ((characters[4] == 't') || (characters[4] == 'T'))
+                    & ((characters[5] == 'e') || (characters[5] == 'E'))
+                    & (characters[6] == '(')) {
+                    m_unit = CSSParser::FAngle;
+                    m_type = WebKitCSSTransformValue::RotateTransformOperation;
+                }
+            } else if (((characters[0] == 's') || (characters[0] == 'S'))
+                       & ((characters[1] == 'c') || (characters[1] == 'C'))
+                       & ((characters[2] == 'a') || (characters[2] == 'A'))
+                       & ((characters[3] == 'l') || (characters[3] == 'L'))
+                       & ((characters[4] == 'e') || (characters[4] == 'E'))
+                       & (characters[6] == '(')) {
+                if ((characters[5] == 'x') || (characters[5] == 'X')) {
+                    m_unit = CSSParser::FNumber;
+                    m_type = WebKitCSSTransformValue::ScaleXTransformOperation;
+                } else if ((characters[5] == 'y') || (characters[5] == 'Y')) {
+                    m_unit = CSSParser::FNumber;
+                    m_type = WebKitCSSTransformValue::ScaleYTransformOperation;
+                } else if ((characters[5] == 'z') || (characters[5] == 'Z')) {
+                    m_unit = CSSParser::FNumber;
+                    m_type = WebKitCSSTransformValue::ScaleZTransformOperation;
+                }
+            }
+            break;
+        case 8:
+            // Valid names: rotatex(, rotatey(, rotatez(, scale3d(.
+            if ((characters[0] == 's') || (characters[0] == 'S')) {
+                if (((characters[1] == 'c') || (characters[1] == 'C'))
+                    & ((characters[2] == 'a') || (characters[2] == 'A'))
+                    & ((characters[3] == 'l') || (characters[3] == 'L'))
+                    & ((characters[4] == 'e') || (characters[4] == 'E'))
+                    & (characters[5] == '3')
+                    & ((characters[6] == 'd') || (characters[6] == 'D'))
+                    & (characters[7] == '(')) {
+                    m_unit = CSSParser::FNumber;
+                    m_type = WebKitCSSTransformValue::Scale3DTransformOperation;
+                    m_argCount = 5;
+                }
+            } else if (((characters[0] == 'r') || (characters[0] == 'R'))
+                       & ((characters[1] == 'o') || (characters[1] == 'O'))
+                       & ((characters[2] == 't') || (characters[2] == 'T'))
+                       & ((characters[3] == 'a') || (characters[3] == 'A'))
+                       & ((characters[4] == 't') || (characters[4] == 'T'))
+                       & ((characters[5] == 'e') || (characters[5] == 'E'))
+                       & (characters[7] == '(')) {
+                if ((characters[6] == 'x') || (characters[6] == 'X')) {
+                    m_unit = CSSParser::FAngle;
+                    m_type = WebKitCSSTransformValue::RotateXTransformOperation;
+                } else if ((characters[6] == 'y') || (characters[6] == 'Y')) {
+                    m_unit = CSSParser::FAngle;
+                    m_type = WebKitCSSTransformValue::RotateYTransformOperation;
+                } else if ((characters[6] == 'z') || (characters[6] == 'Z')) {
+                    m_unit = CSSParser::FAngle;
+                    m_type = WebKitCSSTransformValue::RotateZTransformOperation;
+                }
+            }
+            break;
+        case 9:
+            // Valid names: matrix3d(, rotate3d(.
+            if ((characters[0] == 'm') || (characters[0] == 'M')) {
+                if (((characters[1] == 'a') || (characters[1] == 'A'))
+                    & ((characters[2] == 't') || (characters[2] == 'T'))
+                    & ((characters[3] == 'r') || (characters[3] == 'R'))
+                    & ((characters[4] == 'i') || (characters[4] == 'I'))
+                    & ((characters[5] == 'x') || (characters[5] == 'X'))
+                    & (characters[6] == '3')
+                    & ((characters[7] == 'd') || (characters[7] == 'D'))
+                    & (characters[8] == '(')) {
+                    m_unit = CSSParser::FNumber;
+                    m_type = WebKitCSSTransformValue::Matrix3DTransformOperation;
+                    m_argCount = 31;
+                }
+            } else if (((characters[0] == 'r') || (characters[0] == 'R'))
+                       & ((characters[1] == 'o') || (characters[1] == 'O'))
+                       & ((characters[2] == 't') || (characters[2] == 'T'))
+                       & ((characters[3] == 'a') || (characters[3] == 'A'))
+                       & ((characters[4] == 't') || (characters[4] == 'T'))
+                       & ((characters[5] == 'e') || (characters[5] == 'E'))
+                       & (characters[6] == '3')
+                       & ((characters[7] == 'd') || (characters[7] == 'D'))
+                       & (characters[8] == '(')) {
+                m_unit = CSSParser::FNumber;
+                m_type = WebKitCSSTransformValue::Rotate3DTransformOperation;
+                m_argCount = 7;
+            }
+            break;
+        case 10:
+            // Valid name: translate(.
+            if (((characters[0] == 't') || (characters[0] == 'T'))
+                & ((characters[1] == 'r') || (characters[1] == 'R'))
+                & ((characters[2] == 'a') || (characters[2] == 'A'))
+                & ((characters[3] == 'n') || (characters[3] == 'N'))
+                & ((characters[4] == 's') || (characters[4] == 'S'))
+                & ((characters[5] == 'l') || (characters[5] == 'L'))
+                & ((characters[6] == 'a') || (characters[6] == 'A'))
+                & ((characters[7] == 't') || (characters[7] == 'T'))
+                & ((characters[8] == 'e') || (characters[8] == 'E'))
+                & (characters[9] == '(')) {
+                m_unit = CSSParser::FLength | CSSParser::FPercent;
+                m_type = WebKitCSSTransformValue::TranslateTransformOperation;
+                m_allowSingleArgument = true;
+                m_argCount = 3;
+            }
+            break;
+        case 11:
+            // Valid names: translatex(, translatey(, translatez(.
+            if (((characters[0] == 't') || (characters[0] == 'T'))
+                & ((characters[1] == 'r') || (characters[1] == 'R'))
+                & ((characters[2] == 'a') || (characters[2] == 'A'))
+                & ((characters[3] == 'n') || (characters[3] == 'N'))
+                & ((characters[4] == 's') || (characters[4] == 'S'))
+                & ((characters[5] == 'l') || (characters[5] == 'L'))
+                & ((characters[6] == 'a') || (characters[6] == 'A'))
+                & ((characters[7] == 't') || (characters[7] == 'T'))
+                & ((characters[8] == 'e') || (characters[8] == 'E'))
+                & (characters[10] == '(')) {
+                if ((characters[9] == 'x') || (characters[9] == 'X')) {
+                    m_unit = CSSParser::FLength | CSSParser::FPercent;
+                    m_type = WebKitCSSTransformValue::TranslateXTransformOperation;
+                } else if ((characters[9] == 'y') || (characters[9] == 'Y')) {
+                    m_unit = CSSParser::FLength | CSSParser::FPercent;
+                    m_type = WebKitCSSTransformValue::TranslateYTransformOperation;
+                } else if ((characters[9] == 'z') || (characters[9] == 'Z')) {
+                    m_unit = CSSParser::FLength | CSSParser::FPercent;
+                    m_type = WebKitCSSTransformValue::TranslateZTransformOperation;
+                }
+            }
+            break;
+        case 12:
+            // Valid names: perspective(, translate3d(.
+            if ((characters[0] == 'p') || (characters[0] == 'P')) {
+                if (((characters[1] == 'e') || (characters[1] == 'E'))
+                    & ((characters[2] == 'r') || (characters[2] == 'R'))
+                    & ((characters[3] == 's') || (characters[3] == 'S'))
+                    & ((characters[4] == 'p') || (characters[4] == 'P'))
+                    & ((characters[5] == 'e') || (characters[5] == 'E'))
+                    & ((characters[6] == 'c') || (characters[6] == 'C'))
+                    & ((characters[7] == 't') || (characters[7] == 'T'))
+                    & ((characters[8] == 'i') || (characters[8] == 'I'))
+                    & ((characters[9] == 'v') || (characters[9] == 'V'))
+                    & ((characters[10] == 'e') || (characters[10] == 'E'))
+                    & (characters[11] == '(')) {
+                    m_unit = CSSParser::FNumber;
+                    m_type = WebKitCSSTransformValue::PerspectiveTransformOperation;
+                }
+            } else if (((characters[0] == 't') || (characters[0] == 'T'))
+                       & ((characters[1] == 'r') || (characters[1] == 'R'))
+                       & ((characters[2] == 'a') || (characters[2] == 'A'))
+                       & ((characters[3] == 'n') || (characters[3] == 'N'))
+                       & ((characters[4] == 's') || (characters[4] == 'S'))
+                       & ((characters[5] == 'l') || (characters[5] == 'L'))
+                       & ((characters[6] == 'a') || (characters[6] == 'A'))
+                       & ((characters[7] == 't') || (characters[7] == 'T'))
+                       & ((characters[8] == 'e') || (characters[8] == 'E'))
+                       & (characters[9] == '3')
+                       & ((characters[10] == 'd') || (characters[10] == 'D'))
+                       & (characters[11] == '(')) {
+                m_unit = CSSParser::FLength | CSSParser::FPercent;
+                m_type = WebKitCSSTransformValue::Translate3DTransformOperation;
+                m_argCount = 5;
+            }
+            break;
+        } // end switch ()
     }
 
     WebKitCSSTransformValue::TransformOperationType type() const { return m_type; }
