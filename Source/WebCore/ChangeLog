@@ -1,3 +1,19 @@
+2012-11-06  Michael Saboff  <msaboff@apple.com>
+
+        quoteCSSString() always creates a 16 bit string
+        https://bugs.webkit.org/show_bug.cgi?id=101004
+
+        Reviewed by Darin Adler.
+
+        Added a new templated helper based on character type from the logic of quoteCSSString() to process
+        the argument string based on its native bitness.
+
+        Functionality covered by existing tests.
+
+        * css/CSSParser.cpp:
+        (WebCore::quoteCSSStringInternal):
+        (WebCore::quoteCSSString):
+
 2012-11-06  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Fit-to-width broken on pages with viewport meta tag

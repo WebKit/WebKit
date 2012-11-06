@@ -10871,20 +10871,16 @@ static bool isCSSTokenizerURL(const String& string)
     return isCSSTokenizerURL(string.characters(), length);
 }
 
-// We use single quotes for now because markup.cpp uses double quotes.
-String quoteCSSString(const String& string)
-{
-    // This function expands each character to at most 3 characters ('\u0010' -> '\' '1' '0') as well as adds
-    // 2 quote characters (before and after). Make sure the resulting size (3 * length + 2) will not overflow unsigned.
-    if (string.length() >= (std::numeric_limits<unsigned>::max() / 3) - 2)
-        return "";
 
+template <typename CharacterType>
+static inline String quoteCSSStringInternal(const CharacterType* characters, unsigned length)
+{
     // For efficiency, we first pre-calculate the length of the quoted string, then we build the actual one.
     // Please see below for the actual logic.
     unsigned quotedStringSize = 2; // Two quotes surrounding the entire string.
     bool afterEscape = false;
-    for (unsigned i = 0; i < string.length(); ++i) {
-        UChar ch = string[i];
+    for (unsigned i = 0; i < length; ++i) {
+        CharacterType ch = characters[i];
         if (ch == '\\' || ch == '\'') {
             quotedStringSize += 2;
             afterEscape = false;
@@ -10897,12 +10893,12 @@ String quoteCSSString(const String& string)
         }
     }
 
-    StringBuffer<UChar> buffer(quotedStringSize);
+    StringBuffer<CharacterType> buffer(quotedStringSize);
     unsigned index = 0;
     buffer[index++] = '\'';
     afterEscape = false;
-    for (unsigned i = 0; i < string.length(); ++i) {
-        UChar ch = string[i];
+    for (unsigned i = 0; i < length; ++i) {
+        CharacterType ch = characters[i];
         if (ch == '\\' || ch == '\'') {
             buffer[index++] = '\\';
             buffer[index++] = ch;
@@ -10923,6 +10919,25 @@ String quoteCSSString(const String& string)
 
     ASSERT(quotedStringSize == index);
     return String::adopt(buffer);
+}
+
+// We use single quotes for now because markup.cpp uses double quotes.
+String quoteCSSString(const String& string)
+{
+    // This function expands each character to at most 3 characters ('\u0010' -> '\' '1' '0') as well as adds
+    // 2 quote characters (before and after). Make sure the resulting size (3 * length + 2) will not overflow unsigned.
+
+    unsigned length = string.length();
+
+    if (!length)
+        return String("\'\'");
+
+    if (length > std::numeric_limits<unsigned>::max() / 3 - 2)
+        return emptyString();
+
+    if (string.is8Bit())
+        return quoteCSSStringInternal(string.characters8(), length);
+    return quoteCSSStringInternal(string.characters16(), length);
 }
 
 String quoteCSSStringIfNeeded(const String& string)
