@@ -1,5 +1,14 @@
 2012-11-06  Joshua Bell  <jsbell@chromium.org>
 
+        http/tests/inspector-enabled/dynamic-scripts.html is flakey
+        https://bugs.webkit.org/show_bug.cgi?id=100926
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-06  Joshua Bell  <jsbell@chromium.org>
+
         [Chromium] platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html flaky on linux debug
         https://bugs.webkit.org/show_bug.cgi?id=101377
 

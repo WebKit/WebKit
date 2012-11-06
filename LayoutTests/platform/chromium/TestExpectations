@@ -1064,6 +1064,8 @@ webkit.org/b/75647 http/tests/inspector/network/download.html [ Pass Timeout ]
 webkit.org/b/78810 [ Linux Win Debug ] inspector/debugger/script-formatter-console.html [ Pass Slow ]
 webkit.org/b/99338 [ Linux Win ] inspector/debugger/dynamic-scripts.html [ Pass Failure ]
 
+webkit.org/b/100926 [ Win ] http/tests/inspector-enabled/dynamic-scripts.html [ Pass Failure ]
+
 # -----------------------------------------------------------------
 # Editing tests
 # -----------------------------------------------------------------
