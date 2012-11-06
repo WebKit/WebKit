@@ -120,7 +120,7 @@ void DownloadManagerEfl::didFinish(WKContextRef, WKDownloadRef wkDownload, const
     downloadManager->unregisterDownloadJob(downloadId);
 }
 
-DownloadManagerEfl::DownloadManagerEfl(Ewk_Context* context)
+DownloadManagerEfl::DownloadManagerEfl(EwkContext* context)
     : m_context(context)
 {
     WKContextDownloadClient wkDownloadClient;

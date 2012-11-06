@@ -66,9 +66,10 @@ class Cursor;
 class IntSize;
 }
 
+class EwkContext;
+
 class Ewk_Back_Forward_List;
 class Ewk_Color_Picker;
-class Ewk_Context;
 class Ewk_Download_Job;
 class Ewk_Error;
 class Ewk_Form_Submission_Request;
@@ -93,7 +94,7 @@ public:
         LegacyBehavior,
         DefaultBehavior
     };
-    EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, PassRefPtr<WebKit::WebPageGroup> pageGroup, ViewBehavior);
+    EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, PassRefPtr<WebKit::WebPageGroup> pageGroup, ViewBehavior);
     ~EwkViewImpl();
 
     static EwkViewImpl* fromEvasObject(const Evas_Object* view);
@@ -101,7 +102,7 @@ public:
     Evas_Object* view() { return m_view; }
     WKPageRef wkPage();
     WebKit::WebPageProxy* page() { return m_pageProxy.get(); }
-    Ewk_Context* ewkContext() { return m_context.get(); }
+    EwkContext* ewkContext() { return m_context.get(); }
     Ewk_Settings* settings() { return m_settings.get(); }
     Ewk_Back_Forward_List* backForwardList() { return m_backForwardList.get(); }
 
@@ -217,7 +218,7 @@ private:
 
     // Note, initialization matters.
     Evas_Object* m_view;
-    RefPtr<Ewk_Context> m_context;
+    RefPtr<EwkContext> m_context;
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<Evas_GL> m_evasGL;
     OwnPtr<WebKit::EvasGLContext> m_evasGLContext;

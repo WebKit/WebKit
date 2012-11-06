@@ -96,7 +96,7 @@ const Evas_Object* EwkViewImpl::viewFromPageViewMap(const WKPageRef page)
     return pageViewMap().get(page);
 }
 
-EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<Ewk_Context> context, PassRefPtr<WebPageGroup> pageGroup, ViewBehavior behavior)
+EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, PassRefPtr<WebPageGroup> pageGroup, ViewBehavior behavior)
     : m_view(view)
     , m_context(context)
     , m_pageClient(behavior == DefaultBehavior ? PageClientDefaultImpl::create(this) : PageClientLegacyImpl::create(this))

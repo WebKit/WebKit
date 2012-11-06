@@ -309,7 +309,7 @@ void PageClientBase::updateTextInputState()
 
 void PageClientBase::handleDownloadRequest(DownloadProxy* download)
 {
-    Ewk_Context* context = m_viewImpl->ewkContext();
+    EwkContext* context = m_viewImpl->ewkContext();
     context->downloadManager()->registerDownload(download, m_viewImpl);
 }
 

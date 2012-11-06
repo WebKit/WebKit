@@ -48,8 +48,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for @a Ewk_Context. */
-typedef struct Ewk_Context Ewk_Context;
+/**
+ * Declare Ewk_Context as Ewk_Object.
+ *
+ * @see Ewk_Object
+ */
+typedef struct Ewk_Object Ewk_Context;
 
 /**
  * \enum    Ewk_Cache_Model
@@ -119,24 +123,6 @@ typedef void (*Ewk_History_Title_Update_Cb)(const Evas_Object *view, const char 
  * @see ewk_context_visited_link_add
  */
 typedef void (*Ewk_History_Populate_Visited_Links_Cb)(void *user_data);
-
-/**
- * Increases the reference count of the given object.
- *
- * @param context context object to increase the reference count
- *
- * @return Ewk_Context object on success or @c NULL on failure
- */
-EAPI Ewk_Context *ewk_context_ref(Ewk_Context *context);
-
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count it's reached 0, the Ewk_Context is freed.
- *
- * @param context context object to decrease the reference count
- */
-EAPI void ewk_context_unref(Ewk_Context *context);
 
 /**
  * Gets default Ewk_Context instance.

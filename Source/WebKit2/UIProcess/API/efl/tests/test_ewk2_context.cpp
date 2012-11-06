@@ -187,21 +187,12 @@ TEST_F(EWK2UnitTestBase, ewk_context_new)
 {
     Ewk_Context* context = ewk_context_new();
     ASSERT_TRUE(context);
-    ewk_context_unref(context);
+    ewk_object_unref(context);
 }
 
 TEST_F(EWK2UnitTestBase, ewk_context_new_with_injected_bundle_path)
 {
     Ewk_Context* context = ewk_context_new_with_injected_bundle_path(environment->injectedBundleSample());
     ASSERT_TRUE(context);
-    ewk_context_unref(context);
+    ewk_object_unref(context);
 }
-
-TEST_F(EWK2UnitTestBase, ewk_context_ref)
-{
-    Ewk_Context* context = ewk_context_new();
-    ASSERT_EQ(context, ewk_context_ref(context));
-    ewk_context_unref(context);
-    ewk_context_unref(context);
-}
-

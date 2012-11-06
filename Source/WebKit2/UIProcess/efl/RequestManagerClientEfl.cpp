@@ -66,7 +66,7 @@ void RequestManagerClientEfl::didReceiveURIRequest(WKSoupRequestManagerRef soupR
     handler.callback(schemeRequest.get(), handler.userData);
 }
 
-RequestManagerClientEfl::RequestManagerClientEfl(Ewk_Context* context)
+RequestManagerClientEfl::RequestManagerClientEfl(EwkContext* context)
     : m_soupRequestManager(WKContextGetSoupRequestManager(context->wkContext()))
 {
     ASSERT(context);
