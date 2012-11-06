@@ -1,5 +1,22 @@
 2012-11-06  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r125988
+
+    2012-08-19  MORITA Hajime  <morrita@google.com>
+
+            DOM mutation against including <link> shouldn't trigger pending HTML parser.
+            https://bugs.webkit.org/show_bug.cgi?id=93641
+
+            Reviewed by Ryosuke Niwa.
+
+            Note that the test content need to be such cryptic because HTML parser is involving the
+            captured bug and adding explanations can affect the behavior then mask the bug.
+
+            * http/tests/loading/remove-child-triggers-parser-expected.txt: Added.
+            * http/tests/loading/remove-child-triggers-parser.html: Added.
+
+2012-11-06  Lucas Forschler  <lforschler@apple.com>
+
         Merge r126144
 
     2012-08-21  Chris Evans  <cevans@google.com>
@@ -11032,6 +11049,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .

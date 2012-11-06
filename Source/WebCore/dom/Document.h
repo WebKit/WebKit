@@ -477,7 +477,13 @@ public:
     /**
      * Updates the pending sheet count and then calls updateActiveStylesheets.
      */
-    void removePendingSheet();
+    enum RemovePendingSheetNotificationType {
+        RemovePendingSheetNotifyImmediately,
+        RemovePendingSheetNotifyLater
+    };
+
+    void removePendingSheet(RemovePendingSheetNotificationType = RemovePendingSheetNotifyImmediately);
+    void notifyRemovePendingSheetIfNeeded();
 
     /**
      * This method returns true if all top-level stylesheets have loaded (including
@@ -1208,6 +1214,8 @@ private:
     void collectActiveStylesheets(Vector<RefPtr<StyleSheet> >&);
     bool testAddedStylesheetRequiresStyleRecalc(StyleSheetInternal*);
     void analyzeStylesheetChange(StyleResolverUpdateFlag, const Vector<RefPtr<StyleSheet> >& newStylesheets, bool& requiresStyleResolverReset, bool& requiresFullStyleRecalc);
+    void didRemoveAllPendingStylesheet();
+    void setNeedsNotifyRemoveAllPendingStylesheet() { m_needsNotifyRemoveAllPendingStylesheet = true; }
 
     void deleteCustomFonts();
 
@@ -1276,7 +1284,8 @@ private:
 
     // But sometimes you need to ignore pending stylesheet count to
     // force an immediate layout when requested by JS.
-    bool m_ignorePendingStylesheets;
+    bool m_ignorePendingStylesheets : 1;
+    bool m_needsNotifyRemoveAllPendingStylesheet : 1;
 
     // If we do ignore the pending stylesheet count, then we need to add a boolean
     // to track that this happened so that we can do a full repaint when the stylesheets
@@ -1510,6 +1519,12 @@ private:
     bool m_didDispatchViewportPropertiesChanged;
 #endif
 };
+
+inline void Document::notifyRemovePendingSheetIfNeeded()
+{
+    if (m_needsNotifyRemoveAllPendingStylesheet)
+        didRemoveAllPendingStylesheet();
+}
 
 // Put these methods here, because they require the Document definition, but we really want to inline them.
 
