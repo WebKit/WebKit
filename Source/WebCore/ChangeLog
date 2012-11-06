@@ -1,3 +1,16 @@
+2012-11-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Make Document::updateStyleIfNeeded() non-virtual
+        https://bugs.webkit.org/show_bug.cgi?id=101273
+
+        Reviewed by Eric Seidel.
+
+        Document::updateStyleIfNeeded() has been virtual like forever, but
+        no-one ever overrides it, so make it non-virtual.
+
+        * dom/Document.h:
+        (Document):
+
 2012-11-05  Philip Rogers  <pdr@google.com>
 
         Unblock SVG external references
