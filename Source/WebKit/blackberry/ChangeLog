@@ -1,5 +1,22 @@
 2012-11-06  Otto Derek Cheung  <otcheung@rim.com>
 
+        [BlackBerry] Pushing window.external.* events to webplatform
+        https://bugs.webkit.org/show_bug.cgi?id=101386
+
+        Reviewed by Rob Buis.
+
+        Adding calls to trigger window.external events so we can handle them on the
+        browser side.
+
+        PR 170059
+
+        * Api/WebPageClient.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::addSearchProvider):
+        (WebCore::ChromeClientBlackBerry::isSearchProviderInstalled):
+
+2012-11-06  Otto Derek Cheung  <otcheung@rim.com>
+
         [BlackBerry] Adding window.external to our port
         https://bugs.webkit.org/show_bug.cgi?id=100868
 

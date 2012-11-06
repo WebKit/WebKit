@@ -262,6 +262,9 @@ public:
     virtual bool createPopupWebView(const Platform::IntRect&) = 0;
     virtual void closePopupWebView() = 0;
 
+    virtual void addSearchProvider(const Platform::String&) = 0;
+    virtual int  isSearchProviderInstalled(const Platform::String&) = 0;
+
     // Match with ChromeClient::CustomHandlersState.
     enum ProtocolHandlersState {
         ProtocolHandlersNew,

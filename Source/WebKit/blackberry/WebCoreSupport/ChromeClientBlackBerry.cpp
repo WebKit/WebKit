@@ -838,7 +838,11 @@ void ChromeClientBlackBerry::unregisterProtocolHandler(const String& scheme, con
 
 void ChromeClientBlackBerry::addSearchProvider(const BlackBerry::Platform::String& originURL, const BlackBerry::Platform::String& newURL)
 {
-    notImplemented();
+    // See if the input URL host matches of the origin host.
+    KURL originHost = KURL(KURL(), originURL);
+    KURL url = KURL(KURL(), newURL);
+    if (url.isValid() && originHost.host() == url.host())
+        m_webPagePrivate->client()->addSearchProvider(newURL);
 }
 
 int ChromeClientBlackBerry::isSearchProviderInstalled(const BlackBerry::Platform::String& originURL, const BlackBerry::Platform::String& newURL)
@@ -847,6 +851,12 @@ int ChromeClientBlackBerry::isSearchProviderInstalled(const BlackBerry::Platform
 //    0 - None of the installed search engines match url.
 //    1 - One or more installed search engines match url, but none are the user's default search engine.
 //    2 - The user's default search engine matches url.
+
+    // See if the input URL host matches of the origin host.
+    KURL originHost = KURL(KURL(), originURL);
+    KURL url = KURL(KURL(), newURL);
+    if (url.isValid() && originHost.host() == url.host())
+        return m_webPagePrivate->client()->isSearchProviderInstalled(newURL);
     return 0;
 }
 
