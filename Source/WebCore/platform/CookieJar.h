@@ -33,22 +33,22 @@
 
 namespace WebCore {
 
-    class Document;
-    class KURL;
+class Document;
+class KURL;
+struct Cookie;
 
-    struct Cookie;
+// These two functions implement document.cookie API, with special rules for HttpOnly cookies.
+String cookies(const Document*, const KURL&);
+void setCookies(Document*, const KURL&, const String&);
 
-    // cookies omits HttpOnly cookies.
-    String cookies(const Document*, const KURL&);
-    String cookieRequestHeaderFieldValue(const Document*, const KURL&);
-    void setCookies(Document*, const KURL&, const String&);
-    bool cookiesEnabled(const Document*);
-    bool getRawCookies(const Document*, const KURL&, Vector<Cookie>&);
-    void deleteCookie(const Document*, const KURL&, const String&);
+bool cookiesEnabled(const Document*);
+String cookieRequestHeaderFieldValue(const Document*, const KURL&);
+bool getRawCookies(const Document*, const KURL&, Vector<Cookie>&);
+void deleteCookie(const Document*, const KURL&, const String&);
 
-    void getHostnamesWithCookies(HashSet<String>& hostnames);
-    void deleteCookiesForHostname(const String& hostname);
-    void deleteAllCookies();
+void getHostnamesWithCookies(HashSet<String>& hostnames);
+void deleteCookiesForHostname(const String& hostname);
+void deleteAllCookies();
 
 }
 

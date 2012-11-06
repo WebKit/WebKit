@@ -1,3 +1,28 @@
+2012-11-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Some cookie code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=101375
+
+        Reviewed by Dan Bernstein.
+
+        * platform/CookieJar.h: Fixed style. Grouped functions by which storage they operate
+        on in Mac port, but didn't add explanatory comments yet, because this is different
+        in some ports.
+
+        * platform/mac/CookieJar.mm:
+        (WebCore): Removed special code for isHTTPOnly, it's present in Foundation in all
+        supported OS X versions.
+        (WebCore::filterCookies): Use -isHTTPOnly directly.
+        (WebCore::cookies): Get rid of a variable for URL, implicit conversion works just as well.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        (WebCore::setCookies): Assert that no more than one cookie was created from one
+        Set-Cookie header, document.cookie can only be used to set one cookie at a time.
+        (WebCore::getRawCookies): Removed useless local variables.
+
+        * platform/network/CookieStorage.h: Removed an unneeded include, clarified a comment.
+
+        * platform/network/HTTPHeaderMap.h: Added a FIXME.
+
 2012-11-06  John Griggs  <jgriggs@rim.com>
 
         Implement MediaPlayerPrivate::didLoadingProgress for BlackBerry platform
