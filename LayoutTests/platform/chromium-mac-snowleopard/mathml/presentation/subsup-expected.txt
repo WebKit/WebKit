@@ -1,32 +1,32 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x307
-  RenderBlock {html} at (0,0) size 800x307
-    RenderBody {body} at (8,16) size 784x275
-      RenderBlock {p} at (0,0) size 784x20
+layer at (0,0) size 800x312
+  RenderBlock {html} at (0,0) size 800x312
+    RenderBody {body} at (8,16) size 784x280
+      RenderBlock {p} at (0,0) size 784x21
         RenderText {#text} at (0,1) size 36x18
           text run at (0,1) width 36: "both: "
-        RenderMathMLMath {math} at (36,0) size 17x20 [padding: 0 1 0 1]
-          RenderMathMLSubSup {msubsup} at (1,0) size 15x20
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 7x20 [padding: 7 0 3 0]
-              RenderBlock {mi} at (0,7) size 7x11
+        RenderMathMLMath {math} at (36,0) size 17x22 [padding: 0 1 0 1]
+          RenderMathMLSubSup {msubsup} at (1,0) size 15x22
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 7x22 [padding: 7 0 5 0]
+              RenderBlock {mi} at (0,7) size 7x9
                 RenderText {#text} at (0,-6) size 7x18
                   text run at (0,-6) width 7: "x"
-            RenderMathMLBlock (anonymous, flex) at (7,0) size 8x20
-              RenderBlock {mn} at (0,10) size 8x10
+            RenderMathMLBlock (anonymous, flex) at (7,0) size 8x22
+              RenderBlock {mn} at (0,11) size 8x11
                 RenderText {#text} at (0,-2) size 6x14
                   text run at (0,-2) width 6: "1"
               RenderBlock {mi} at (1,0) size 7x10
                 RenderText {#text} at (0,-2) size 5x14
                   text run at (0,-2) width 5: "k"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,36) size 784x22
+      RenderBlock {p} at (0,37) size 784x22
         RenderText {#text} at (0,0) size 148x18
           text run at (0,0) width 148: "long subscript w/ both: "
         RenderMathMLMath {math} at (148,0) size 54x22 [padding: 0 1 0 1]
           RenderMathMLSubSup {msubsup} at (1,0) size 52x22
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 9x22 [padding: 4 0 0 0]
-              RenderBlock {mi} at (0,3) size 9x19
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 9x22 [padding: 4 0 6 0]
+              RenderBlock {mi} at (0,3) size 9x13
                 RenderText {#text} at (0,-3) size 9x18
                   text run at (0,-3) width 9: "Z"
             RenderMathMLBlock (anonymous, flex) at (9,0) size 43x22
@@ -54,17 +54,17 @@ layer at (0,0) size 800x307
                 RenderText {#text} at (0,-3) size 3x14
                   text run at (0,-3) width 3: "j"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,74) size 784x19
+      RenderBlock {p} at (0,75) size 784x20
         RenderText {#text} at (0,1) size 160x18
           text run at (0,1) width 160: "long superscript w/ both: "
-        RenderMathMLMath {math} at (160,0) size 35x20 [padding: 0 1 0 1]
-          RenderMathMLSubSup {msubsup} at (1,0) size 33x20
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 9x20 [padding: 5 0 3 0]
+        RenderMathMLMath {math} at (160,0) size 35x21 [padding: 0 1 0 1]
+          RenderMathMLSubSup {msubsup} at (1,0) size 33x21
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 9x21 [padding: 5 0 4 0]
               RenderBlock {mi} at (0,4) size 9x13
                 RenderText {#text} at (0,-3) size 9x18
                   text run at (0,-3) width 9: "Z"
-            RenderMathMLBlock (anonymous, flex) at (9,0) size 24x20
-              RenderBlock {mi} at (0,12) size 24x8
+            RenderMathMLBlock (anonymous, flex) at (9,0) size 24x21
+              RenderBlock {mi} at (0,13) size 24x8
                 RenderText {#text} at (0,-5) size 5x14
                   text run at (0,-5) width 5: "x"
               RenderMathMLRow {mrow} at (1,0) size 23x12
@@ -80,13 +80,13 @@ layer at (0,0) size 800x307
                   RenderText {#text} at (0,-3) size 3x14
                     text run at (0,-3) width 3: "j"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,109) size 784x23
+      RenderBlock {p} at (0,111) size 784x23
         RenderText {#text} at (0,1) size 88x18
           text run at (0,1) width 88: "long w/ both: "
         RenderMathMLMath {math} at (88,0) size 54x23 [padding: 0 1 0 1]
           RenderMathMLSubSup {msubsup} at (1,0) size 52x23
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 9x23 [padding: 5 0 0 0]
-              RenderBlock {mi} at (0,4) size 9x19
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 9x23 [padding: 5 0 6 0]
+              RenderBlock {mi} at (0,4) size 9x13
                 RenderText {#text} at (0,-3) size 9x18
                   text run at (0,-3) width 9: "Z"
             RenderMathMLBlock (anonymous, flex) at (9,0) size 43x23
@@ -123,35 +123,35 @@ layer at (0,0) size 800x307
                   RenderText {#text} at (0,-3) size 3x14
                     text run at (0,-3) width 3: "j"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,148) size 784x20
+      RenderBlock {p} at (0,150) size 784x21
         RenderText {#text} at (0,1) size 123x18
           text run at (0,1) width 123: "Wrapped in mrow: "
-        RenderMathMLMath {math} at (123,0) size 17x21 [padding: 0 1 0 1]
-          RenderMathMLRow {mrow} at (1,0) size 15x21
-            RenderMathMLSubSup {msubsup} at (0,0) size 15x21
-              RenderMathMLBlock (anonymous, flex) at (0,0) size 7x21 [padding: 7 0 4 0]
+        RenderMathMLMath {math} at (123,0) size 17x22 [padding: 0 1 0 1]
+          RenderMathMLRow {mrow} at (1,0) size 15x22
+            RenderMathMLSubSup {msubsup} at (0,0) size 15x22
+              RenderMathMLBlock (anonymous, flex) at (0,0) size 7x22 [padding: 7 0 5 0]
                 RenderBlock {mi} at (0,7) size 7x9
                   RenderText {#text} at (0,-6) size 7x18
                     text run at (0,-6) width 7: "x"
-              RenderMathMLBlock (anonymous, flex) at (7,0) size 8x21
-                RenderBlock {mn} at (0,10) size 8x11
+              RenderMathMLBlock (anonymous, flex) at (7,0) size 8x22
+                RenderBlock {mn} at (0,11) size 8x11
                   RenderText {#text} at (0,-2) size 6x14
                     text run at (0,-2) width 6: "1"
                 RenderBlock {mi} at (1,0) size 7x10
                   RenderText {#text} at (0,-2) size 5x14
                     text run at (0,-2) width 5: "k"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,184) size 784x51
+      RenderBlock {p} at (0,187) size 784x53
         RenderText {#text} at (0,16) size 169x18
           text run at (0,16) width 169: "parts with various heights: "
-        RenderMathMLMath {math} at (169,0) size 123x52 [padding: 0 1 0 1]
-          RenderMathMLSubSup {msubsup} at (1,0) size 17x35
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 7x35 [padding: 22 0 3 0]
+        RenderMathMLMath {math} at (169,0) size 123x54 [padding: 0 1 0 1]
+          RenderMathMLSubSup {msubsup} at (1,0) size 17x36
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 7x36 [padding: 22 0 4 0]
               RenderBlock {mi} at (0,22) size 7x10
                 RenderText {#text} at (0,-6) size 7x18
                   text run at (0,-6) width 7: "x"
-            RenderMathMLBlock (anonymous, flex) at (7,0) size 10x35
-              RenderBlock {mi} at (0,27) size 10x8
+            RenderMathMLBlock (anonymous, flex) at (7,0) size 10x36
+              RenderBlock {mi} at (0,28) size 10x8
                 RenderText {#text} at (0,-5) size 6x14
                   text run at (0,-5) width 6: "n"
               RenderMathMLFraction {mfrac} at (1,0) size 8x27
@@ -168,13 +168,13 @@ layer at (0,0) size 800x307
               RenderBlock (anonymous) at (0,0) size 9x11
                 RenderText {mo} at (0,-7) size 9x21
                   text run at (0,-7) width 9: "+"
-          RenderMathMLSubSup {msubsup} at (33,18) size 17x34
-            RenderMathMLBlock (anonymous, flex) at (0,0) size 7x34 [padding: 4 0 3 0]
-              RenderBlock {mi} at (0,4) size 7x27
+          RenderMathMLSubSup {msubsup} at (33,18) size 17x36
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 7x36 [padding: 4 0 22 0]
+              RenderBlock {mi} at (0,4) size 7x9
                 RenderText {#text} at (0,-6) size 7x18
                   text run at (0,-6) width 7: "x"
-            RenderMathMLBlock (anonymous, flex) at (7,0) size 10x34
-              RenderMathMLFraction {mfrac} at (1,7) size 8x27
+            RenderMathMLBlock (anonymous, flex) at (7,0) size 10x36
+              RenderMathMLFraction {mfrac} at (1,8) size 8x28
                 RenderMathMLBlock (anonymous, flex) at (0,0) size 8x15
                   RenderBlock {mi} at (1,0) size 5x12
                     RenderText {#text} at (0,-2) size 3x14
@@ -213,7 +213,7 @@ layer at (0,0) size 800x307
                 RenderText {#text} at (0,-5) size 5x14
                   text run at (0,-5) width 5: "x"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,251) size 784x24
+      RenderBlock {p} at (0,256) size 784x24
         RenderText {#text} at (0,6) size 26x18
           text run at (0,6) width 26: "For "
         RenderInline {a} at (0,0) size 71x18 [color=#0000EE]
@@ -241,41 +241,41 @@ layer at (0,0) size 800x307
                     RenderText {#text} at (0,-1) size 5x10
                       text run at (0,-1) width 5: "2"
         RenderText {#text} at (0,0) size 0x0
-layer at (243,207) size 16x15 scrollHeight 18
+layer at (243,210) size 16x15 scrollHeight 18
   RenderMathMLBlock (flex) {mfenced} at (0,0) size 16x15
     RenderBlock (anonymous) at (0,0) size 16x15
       RenderText {mfenced} at (0,-3) size 16x21
         text run at (0,-3) width 16: "\x{239B}"
-layer at (243,222) size 16x10 scrollHeight 19
+layer at (243,225) size 16x10 scrollHeight 19
   RenderMathMLBlock (flex) {mfenced} at (0,15) size 16x10
     RenderBlock (anonymous) at (0,0) size 16x10
-layer at (243,232) size 16x15 scrollHeight 19
+layer at (243,235) size 16x15 scrollHeight 19
   RenderMathMLBlock (flex) {mfenced} at (0,25) size 16x15
     RenderBlock (anonymous) at (0,0) size 16x15
-layer at (274,207) size 16x15 scrollHeight 18
+layer at (274,210) size 16x15 scrollHeight 18
   RenderMathMLBlock (flex) {mfenced} at (0,0) size 16x15
     RenderBlock (anonymous) at (0,0) size 16x15
       RenderText {mfenced} at (0,-3) size 16x21
         text run at (0,-3) width 16: "\x{239E}"
-layer at (274,222) size 16x10 scrollHeight 19
+layer at (274,225) size 16x10 scrollHeight 19
   RenderMathMLBlock (flex) {mfenced} at (0,15) size 16x10
     RenderBlock (anonymous) at (0,0) size 16x10
-layer at (274,232) size 16x15 scrollHeight 19
+layer at (274,235) size 16x15 scrollHeight 19
   RenderMathMLBlock (flex) {mfenced} at (0,25) size 16x15
     RenderBlock (anonymous) at (0,0) size 16x15
-layer at (243,221) size 16x17 backgroundClip at (243,222) size 16x10 clip at (243,222) size 16x10 outlineClip at (243,222) size 16x10
+layer at (243,224) size 16x17 backgroundClip at (243,225) size 16x10 clip at (243,225) size 16x10 outlineClip at (243,225) size 16x10
   RenderBlock (relative positioned) {mfenced} at (0,0) size 16x17
     RenderText {mfenced} at (0,-2) size 16x21
       text run at (0,-2) width 16: "\x{239C}"
-layer at (243,231) size 16x17 backgroundClip at (243,232) size 16x15 clip at (243,232) size 16x15 outlineClip at (243,232) size 16x15
+layer at (243,234) size 16x17 backgroundClip at (243,235) size 16x15 clip at (243,235) size 16x15 outlineClip at (243,235) size 16x15
   RenderBlock (relative positioned) {mfenced} at (0,0) size 16x17
     RenderText {mfenced} at (0,-2) size 16x21
       text run at (0,-2) width 16: "\x{239D}"
-layer at (274,221) size 16x17 backgroundClip at (274,222) size 16x10 clip at (274,222) size 16x10 outlineClip at (274,222) size 16x10
+layer at (274,224) size 16x17 backgroundClip at (274,225) size 16x10 clip at (274,225) size 16x10 outlineClip at (274,225) size 16x10
   RenderBlock (relative positioned) {mfenced} at (0,0) size 16x17
     RenderText {mfenced} at (0,-2) size 16x21
       text run at (0,-2) width 16: "\x{239F}"
-layer at (274,231) size 16x17 backgroundClip at (274,232) size 16x15 clip at (274,232) size 16x15 outlineClip at (274,232) size 16x15
+layer at (274,234) size 16x17 backgroundClip at (274,235) size 16x15 clip at (274,235) size 16x15 outlineClip at (274,235) size 16x15
   RenderBlock (relative positioned) {mfenced} at (0,0) size 16x17
     RenderText {mfenced} at (0,-2) size 16x21
       text run at (0,-2) width 16: "\x{23A0}"

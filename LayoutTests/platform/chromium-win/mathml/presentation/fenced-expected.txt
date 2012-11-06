@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x93
+  RenderBlock {html} at (0,0) size 800x93
+    RenderBody {body} at (8,16) size 784x61
+      RenderBlock {p} at (0,0) size 784x61
+        RenderMathMLMath {math} at (0,0) size 211x61 [padding: 0 1 0 1]
+          RenderMathMLFenced {mfenced} at (1,0) size 209x61
+            RenderMathMLOperator {mfenced} at (1,0) size 23x52
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 22x52
+                RenderBlock (anonymous) at (0,0) size 22x52
+                  RenderText {mfenced} at (0,-14) size 22x67
+                    text run at (0,-14) width 22: "("
+            RenderBlock {mtext} at (25,13) size 49x48
+              RenderBlock {div} at (0,0) size 48x48 [bgcolor=#00FF00]
+            RenderMathMLOperator {mfenced} at (73,38) size 4x4
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 3x4
+                RenderBlock (anonymous) at (0,0) size 3x4
+                  RenderText {mfenced} at (0,-13) size 3x19
+                    text run at (0,-13) width 3: ","
+            RenderBlock {mtext} at (80,13) size 49x48
+              RenderBlock {div} at (0,0) size 48x48 [bgcolor=#00FF00]
+            RenderMathMLOperator {mfenced} at (128,38) size 4x4
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 3x4
+                RenderBlock (anonymous) at (0,0) size 3x4
+                  RenderText {mfenced} at (0,-13) size 3x19
+                    text run at (0,-13) width 3: ","
+            RenderBlock {mtext} at (135,13) size 49x48
+              RenderBlock {div} at (0,0) size 48x48 [bgcolor=#00FF00]
+            RenderMathMLOperator {mfenced} at (184,0) size 23x52
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 22x52
+                RenderBlock (anonymous) at (0,0) size 22x52
+                  RenderText {mfenced} at (0,-14) size 22x67
+                    text run at (0,-14) width 22: ")"
+        RenderText {#text} at (0,0) size 0x0

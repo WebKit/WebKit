@@ -1994,13 +1994,6 @@ crbug.com/20345 fast/js/getOwnPropertyDescriptor.html [ Failure ]
 crbug.com/22526 fast/js/Object-defineProperty.html [ Failure ]
 
 webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
-# The mathml pixel tests will be changing for a few days. They'll need rebaseline after that.
-webkit.org/b/96960 [ Linux Win ] mathml/presentation [ Pass Failure ImageOnlyFailure ]
-# Needs rebaseline after bug 97390
-webkit.org/b/97390 [ Mac ] mathml/presentation/mo-stretch.html [ Failure Pass ]
-webkit.org/b/97390 [ Mac ] mathml/presentation/row-alignment.xhtml [ Failure Pass ]
-webkit.org/b/97390 [ Mac ] mathml/presentation/tables.xhtml [ Failure Pass ]
-webkit.org/b/97390 [ Mac ] mathml/presentation/subsup.xhtml [ Failure Pass ]
 # Once chromium decides to definitely enable MathML, we can delete the old platform/chromium baseline for this:
 webkit.org/b/96960 http/tests/xmlviewer/dumpAsText/mathml.xml [ Pass Failure ]
 
@@ -2657,7 +2650,6 @@ crbug.com/76616 [ SnowLeopard ] fast/text/emphasis-combined-text.html [ ImageOnl
 crbug.com/77095 webkit.org/b/101115 [ Android Linux Win ] fast/block/lineboxcontain/block-glyphs-replaced.html [ Failure Pass ]
 crbug.com/77095 webkit.org/b/101115 [ Android Linux Win ] fast/block/lineboxcontain/glyphs.html [ Failure Pass ]
 webkit.org/b/101115 [ Linux ] fast/block/lineboxcontain/block-glyphs.html [ Failure ]
-webkit.org/b/101115 [ Linux ] mathml/xHeight.xhtml [ Failure ]
 webkit.org/b/101115 [ Linux ] fast/repaint/stacked-diacritics.html [ ImageOnlyFailure ]
 
 # Has been timing out, initiated at:

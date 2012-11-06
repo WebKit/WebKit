@@ -7,9 +7,9 @@ layer at (0,0) size 800x54
         RenderText {#text} at (0,0) size 286x19
           text run at (0,0) width 286: "The green square should be vertically centered: "
         RenderMathMLMath {math} at (286,2) size 32x20 [padding: 0 1 0 1]
-          RenderBlock {mi} at (1,13) size 10x1
-            RenderText {#text} at (0,-15) size 8x19
-              text run at (0,-15) width 8: "x"
+          RenderBlock {mi} at (1,6) size 10x8
+            RenderText {#text} at (0,-8) size 8x19
+              text run at (0,-8) width 8: "x"
           RenderBlock {mtext} at (10,0) size 21x20
             RenderBlock {div} at (0,0) size 20x20 [bgcolor=#00FF00]
             RenderText {#text} at (0,0) size 0x0

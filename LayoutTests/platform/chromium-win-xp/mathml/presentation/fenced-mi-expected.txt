@@ -1,0 +1,160 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x160
+  RenderBlock {html} at (0,0) size 800x160
+    RenderBody {body} at (8,16) size 784x128
+      RenderBlock {p} at (0,0) size 784x20
+        RenderMathMLMath {math} at (0,3) size 63x15 [padding: 0 1 0 1]
+          RenderMathMLFenced {mfenced} at (1,0) size 61x15
+            RenderMathMLOperator {mfenced} at (1,0) size 6x14
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 5x14
+                RenderBlock (anonymous) at (0,0) size 5x14
+                  RenderText {mfenced} at (0,-5) size 5x20
+                    text run at (0,-5) width 5: "("
+            RenderBlock {mi} at (8,5) size 10x8
+              RenderText {#text} at (0,-8) size 8x19
+                text run at (0,-8) width 8: "x"
+            RenderMathMLOperator {mfenced} at (17,10) size 6x4
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 5x4
+                RenderBlock (anonymous) at (0,0) size 5x4
+                  RenderText {mfenced} at (0,-15) size 5x20
+                    text run at (0,-15) width 5: ","
+            RenderBlock {mi} at (26,5) size 10x10
+              RenderText {#text} at (0,-8) size 7x19
+                text run at (0,-8) width 7: "y"
+            RenderMathMLOperator {mfenced} at (35,10) size 6x4
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 5x4
+                RenderBlock (anonymous) at (0,0) size 5x4
+                  RenderText {mfenced} at (0,-15) size 5x20
+                    text run at (0,-15) width 5: ","
+            RenderBlock {mi} at (44,5) size 8x8
+              RenderText {#text} at (0,-8) size 6x19
+                text run at (0,-8) width 6: "z"
+            RenderMathMLOperator {mfenced} at (53,0) size 6x14
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 5x14
+                RenderBlock (anonymous) at (0,0) size 5x14
+                  RenderText {mfenced} at (0,-5) size 5x20
+                    text run at (0,-5) width 5: ")"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,36) size 784x20
+        RenderMathMLMath {math} at (0,3) size 67x15 [padding: 0 1 0 1]
+          RenderMathMLOperator {mo} at (2,0) size 6x14
+            RenderMathMLBlock (flex) {mo} at (0,0) size 5x14
+              RenderBlock (anonymous) at (0,0) size 5x14
+                RenderText {mo} at (0,-5) size 5x20
+                  text run at (0,-5) width 5: "("
+          RenderBlock {mi} at (9,5) size 10x8
+            RenderText {#text} at (0,-8) size 8x19
+              text run at (0,-8) width 8: "x"
+          RenderMathMLOperator {mo} at (21,10) size 6x4
+            RenderMathMLBlock (flex) {mo} at (0,0) size 5x4
+              RenderBlock (anonymous) at (0,0) size 5x4
+                RenderText {mo} at (0,-15) size 5x20
+                  text run at (0,-15) width 5: ","
+          RenderBlock {mi} at (30,5) size 9x10
+            RenderText {#text} at (0,-8) size 7x19
+              text run at (0,-8) width 7: "y"
+          RenderMathMLOperator {mo} at (41,10) size 6x4
+            RenderMathMLBlock (flex) {mo} at (0,0) size 5x4
+              RenderBlock (anonymous) at (0,0) size 5x4
+                RenderText {mo} at (0,-15) size 5x20
+                  text run at (0,-15) width 5: ","
+          RenderBlock {mi} at (50,5) size 8x8
+            RenderText {#text} at (0,-8) size 6x19
+              text run at (0,-8) width 6: "z"
+          RenderMathMLOperator {mo} at (59,0) size 6x14
+            RenderMathMLBlock (flex) {mo} at (0,0) size 5x14
+              RenderBlock (anonymous) at (0,0) size 5x14
+                RenderText {mo} at (0,-5) size 5x20
+                  text run at (0,-5) width 5: ")"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,72) size 784x20
+        RenderMathMLMath {math} at (0,3) size 73x15 [padding: 0 1 0 1]
+          RenderMathMLFenced {mfenced} at (1,0) size 71x15
+            RenderMathMLOperator {mfenced} at (1,0) size 6x14
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 5x14
+                RenderBlock (anonymous) at (0,0) size 5x14
+                  RenderText {mfenced} at (0,-5) size 5x20
+                    text run at (0,-5) width 5: "{"
+            RenderBlock {mi} at (8,5) size 10x8
+              RenderText {#text} at (0,-8) size 8x19
+                text run at (0,-8) width 8: "x"
+            RenderMathMLOperator {mfenced} at (17,0) size 11x13
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 10x13
+                RenderBlock (anonymous) at (0,0) size 10x13
+                  RenderText {mfenced} at (0,-5) size 10x20
+                    text run at (0,-5) width 10: "1"
+            RenderBlock {mi} at (31,5) size 10x10
+              RenderText {#text} at (0,-8) size 7x19
+                text run at (0,-8) width 7: "y"
+            RenderMathMLOperator {mfenced} at (40,0) size 11x13
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 10x13
+                RenderBlock (anonymous) at (0,0) size 10x13
+                  RenderText {mfenced} at (0,-5) size 10x20
+                    text run at (0,-5) width 10: "2"
+            RenderBlock {mi} at (54,5) size 8x8
+              RenderText {#text} at (0,-8) size 6x19
+                text run at (0,-8) width 6: "z"
+            RenderMathMLOperator {mfenced} at (63,0) size 6x14
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 5x14
+                RenderBlock (anonymous) at (0,0) size 5x14
+                  RenderText {mfenced} at (0,-5) size 5x20
+                    text run at (0,-5) width 5: "}"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,108) size 784x20
+        RenderMathMLMath {math} at (0,3) size 146x15 [padding: 0 1 0 1]
+          RenderMathMLFenced {mfenced} at (1,0) size 144x15
+            RenderMathMLOperator {mfenced} at (1,0) size 6x14
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 5x14
+                RenderBlock (anonymous) at (0,0) size 5x14
+                  RenderText {mfenced} at (0,-5) size 5x20
+                    text run at (0,-5) width 5: "("
+            RenderBlock {mi} at (8,5) size 10x8
+              RenderText {#text} at (0,-8) size 8x19
+                text run at (0,-8) width 8: "x"
+            RenderMathMLOperator {mfenced} at (17,0) size 11x13
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 10x13
+                RenderBlock (anonymous) at (0,0) size 10x13
+                  RenderText {mfenced} at (0,-5) size 10x20
+                    text run at (0,-5) width 10: "1"
+            RenderBlock {mi} at (31,5) size 10x10
+              RenderText {#text} at (0,-8) size 7x19
+                text run at (0,-8) width 7: "y"
+            RenderMathMLOperator {mfenced} at (40,0) size 11x13
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 10x13
+                RenderBlock (anonymous) at (0,0) size 10x13
+                  RenderText {mfenced} at (0,-5) size 10x20
+                    text run at (0,-5) width 10: "2"
+            RenderBlock {mi} at (54,5) size 8x8
+              RenderText {#text} at (0,-8) size 6x19
+                text run at (0,-8) width 6: "z"
+            RenderMathMLOperator {mfenced} at (61,0) size 11x13
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 10x13
+                RenderBlock (anonymous) at (0,0) size 10x13
+                  RenderText {mfenced} at (0,-5) size 10x20
+                    text run at (0,-5) width 10: "3"
+            RenderBlock {mi} at (75,5) size 11x8
+              RenderText {#text} at (0,-8) size 8x19
+                text run at (0,-8) width 8: "u"
+            RenderMathMLOperator {mfenced} at (85,0) size 11x13
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 10x13
+                RenderBlock (anonymous) at (0,0) size 10x13
+                  RenderText {mfenced} at (0,-5) size 10x20
+                    text run at (0,-5) width 10: "3"
+            RenderBlock {mi} at (99,5) size 11x8
+              RenderText {#text} at (0,-8) size 8x19
+                text run at (0,-8) width 8: "v"
+            RenderMathMLOperator {mfenced} at (109,0) size 11x13
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 10x13
+                RenderBlock (anonymous) at (0,0) size 10x13
+                  RenderText {mfenced} at (0,-5) size 10x20
+                    text run at (0,-5) width 10: "3"
+            RenderBlock {mi} at (123,5) size 13x8
+              RenderText {#text} at (0,-8) size 11x19
+                text run at (0,-8) width 11: "w"
+            RenderMathMLOperator {mfenced} at (137,0) size 6x14
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 5x14
+                RenderBlock (anonymous) at (0,0) size 5x14
+                  RenderText {mfenced} at (0,-5) size 5x20
+                    text run at (0,-5) width 5: ")"
+        RenderText {#text} at (0,0) size 0x0

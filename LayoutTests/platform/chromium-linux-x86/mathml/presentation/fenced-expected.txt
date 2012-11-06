@@ -1,0 +1,79 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x89
+  RenderBlock {html} at (0,0) size 800x89
+    RenderBody {body} at (8,16) size 784x57
+      RenderBlock {p} at (0,0) size 784x57
+        RenderMathMLMath {math} at (0,0) size 187x57 [padding: 0 1 0 1]
+          RenderMathMLFenced {mfenced} at (1,0) size 185x57
+            RenderMathMLOperator {mfenced} at (1,0) size 9x57
+            RenderBlock {mtext} at (11,6) size 49x48
+              RenderBlock {div} at (0,0) size 48x48 [bgcolor=#00FF00]
+            RenderMathMLOperator {mfenced} at (59,31) size 6x4
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 5x4
+                RenderBlock (anonymous) at (0,0) size 5x4
+                  RenderText {mfenced} at (0,-13) size 5x19
+                    text run at (0,-13) width 5: ","
+            RenderBlock {mtext} at (68,6) size 49x48
+              RenderBlock {div} at (0,0) size 48x48 [bgcolor=#00FF00]
+            RenderMathMLOperator {mfenced} at (116,31) size 6x4
+              RenderMathMLBlock (flex) {mfenced} at (0,0) size 5x4
+                RenderBlock (anonymous) at (0,0) size 5x4
+                  RenderText {mfenced} at (0,-13) size 5x19
+                    text run at (0,-13) width 5: ","
+            RenderBlock {mtext} at (125,6) size 49x48
+              RenderBlock {div} at (0,0) size 48x48 [bgcolor=#00FF00]
+            RenderMathMLOperator {mfenced} at (174,0) size 9x57
+        RenderText {#text} at (0,0) size 0x0
+layer at (11,16) size 8x18
+  RenderMathMLBlock (flex) {mfenced} at (0,0) size 8x18
+    RenderBlock (anonymous) at (0,0) size 8x18
+      RenderText {mfenced} at (0,-2) size 8x19
+        text run at (0,-2) width 8: "\x{239B}"
+layer at (11,34) size 8x17 scrollHeight 18
+  RenderMathMLBlock (flex) {mfenced} at (0,18) size 8x17
+    RenderBlock (anonymous) at (0,0) size 8x17
+layer at (11,51) size 8x5 scrollHeight 18
+  RenderMathMLBlock (flex) {mfenced} at (0,35) size 8x5
+    RenderBlock (anonymous) at (0,0) size 8x5
+layer at (11,56) size 8x17
+  RenderMathMLBlock (flex) {mfenced} at (0,40) size 8x17
+    RenderBlock (anonymous) at (0,0) size 8x17
+layer at (184,16) size 8x18
+  RenderMathMLBlock (flex) {mfenced} at (0,0) size 8x18
+    RenderBlock (anonymous) at (0,0) size 8x18
+      RenderText {mfenced} at (0,-2) size 8x19
+        text run at (0,-2) width 8: "\x{239E}"
+layer at (184,34) size 8x17 scrollHeight 18
+  RenderMathMLBlock (flex) {mfenced} at (0,18) size 8x17
+    RenderBlock (anonymous) at (0,0) size 8x17
+layer at (184,51) size 8x5 scrollHeight 18
+  RenderMathMLBlock (flex) {mfenced} at (0,35) size 8x5
+    RenderBlock (anonymous) at (0,0) size 8x5
+layer at (184,56) size 8x17
+  RenderMathMLBlock (flex) {mfenced} at (0,40) size 8x17
+    RenderBlock (anonymous) at (0,0) size 8x17
+layer at (11,33) size 8x18 backgroundClip at (11,34) size 8x17 clip at (11,34) size 8x17 outlineClip at (11,34) size 8x17
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x18
+    RenderText {mfenced} at (0,-2) size 8x19
+      text run at (0,-2) width 8: "\x{239C}"
+layer at (11,50) size 8x18 backgroundClip at (11,51) size 8x5 clip at (11,51) size 8x5 outlineClip at (11,51) size 8x5
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x18
+    RenderText {mfenced} at (0,-2) size 8x19
+      text run at (0,-2) width 8: "\x{239C}"
+layer at (11,55) size 8x17 backgroundClip at (11,56) size 8x17 clip at (11,56) size 8x17 outlineClip at (11,56) size 8x17
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x17
+    RenderText {mfenced} at (0,-2) size 8x19
+      text run at (0,-2) width 8: "\x{239D}"
+layer at (184,33) size 8x18 backgroundClip at (184,34) size 8x17 clip at (184,34) size 8x17 outlineClip at (184,34) size 8x17
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x18
+    RenderText {mfenced} at (0,-2) size 8x19
+      text run at (0,-2) width 8: "\x{239F}"
+layer at (184,50) size 8x18 backgroundClip at (184,51) size 8x5 clip at (184,51) size 8x5 outlineClip at (184,51) size 8x5
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x18
+    RenderText {mfenced} at (0,-2) size 8x19
+      text run at (0,-2) width 8: "\x{239F}"
+layer at (184,55) size 8x17 backgroundClip at (184,56) size 8x17 clip at (184,56) size 8x17 outlineClip at (184,56) size 8x17
+  RenderBlock (relative positioned) {mfenced} at (0,0) size 8x17
+    RenderText {mfenced} at (0,-2) size 8x19
+      text run at (0,-2) width 8: "\x{23A0}"

@@ -1,0 +1,40 @@
+layer at (0,0) size 823x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x108
+  RenderBlock {html} at (0,0) size 800x108
+    RenderBody {body} at (8,16) size 784x76
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 73x19
+          text run at (0,0) width 73: "superscript: "
+        RenderMathMLMath {math} at (73,0) size 18x16 [padding: 0 1 0 1]
+          RenderMathMLSubSup {msup} at (1,0) size 16x16
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 10x16 [padding: 8 0 0 0]
+              RenderBlock {mi} at (0,8) size 10x8
+                RenderText {#text} at (0,-8) size 8x19
+                  text run at (0,-8) width 8: "x"
+            RenderMathMLBlock (anonymous, flex) at (9,0) size 7x16
+              RenderBlock {mn} at (0,0) size 6x10
+                RenderText {#text} at (0,-3) size 6x15
+                  text run at (0,-3) width 6: "2"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,36) size 784x40
+        RenderText {#text} at (0,0) size 26x19
+          text run at (0,0) width 26: "For "
+        RenderInline {a} at (0,0) size 68x19 [color=#0000EE]
+          RenderText {#text} at (26,0) size 68x19
+            text run at (26,0) width 68: "Bug 95404"
+        RenderText {#text} at (94,0) size 381x19
+          text run at (94,0) width 14: " - "
+          text run at (108,0) width 367: "mathml.css: Add more { white-space: nowrap } declarations:"
+        RenderBR {br} at (475,0) size 0x19
+        RenderMathMLMath {math} at (0,23) size 815x14 [padding: 0 1 0 1]
+          RenderMathMLSubSup {msup} at (1,0) size 813x14
+            RenderMathMLBlock (anonymous, flex) at (0,0) size 408x14 [padding: 6 0 0 0]
+              RenderBlock {mi} at (0,5) size 408x9
+                RenderText {#text} at (0,-8) size 8x19
+                  text run at (0,-8) width 8: "x"
+            RenderMathMLBlock (anonymous, flex) at (408,0) size 405x14
+              RenderBlock {mi} at (0,0) size 405x9
+                RenderText {#text} at (0,-6) size 5x15
+                  text run at (0,-6) width 5: "y"
+        RenderText {#text} at (0,0) size 0x0

@@ -1,3 +1,208 @@
+2012-11-05  David Barton  <dbarton@mathscribe.com>
+
+        Unreviewed gardening. Updating MathML chromium baselines.
+
+        * platform/chromium-linux-x86/mathml/presentation: Added.
+        * platform/chromium-linux-x86/mathml/presentation/attributes-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/attributes-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/fenced-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/fenced-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/fenced-mi-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/fenced-mi-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/fractions-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/fractions-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/fractions-vertical-alignment-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/fractions-vertical-alignment-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/mo-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/mo-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/mo-stretch-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/mo-stretch-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/mroot-pref-width-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/mroot-pref-width-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/over-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/over-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/roots-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/roots-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/row-alignment-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/row-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/row-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/style-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/style-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/sub-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/sub-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/subsup-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/subsup-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/sup-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/sup-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/tables-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/tables-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/tokenElements-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/tokenElements-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/under-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/under-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/presentation/underover-expected.png: Added.
+        * platform/chromium-linux-x86/mathml/presentation/underover-expected.txt: Added.
+        * platform/chromium-linux-x86/mathml/xHeight-expected.txt:
+        * platform/chromium-linux/mathml/presentation: Added.
+        * platform/chromium-linux/mathml/presentation/attributes-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/attributes-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/fenced-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/fenced-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/fenced-mi-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/fenced-mi-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/fractions-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/fractions-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/fractions-vertical-alignment-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/fractions-vertical-alignment-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/mo-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/mo-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/mo-stretch-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/mo-stretch-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/mroot-pref-width-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/mroot-pref-width-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/over-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/over-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/roots-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/roots-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/row-alignment-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/row-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/row-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/style-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/style-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/sub-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/sub-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/subsup-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/subsup-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/sup-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/sup-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/tables-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/tables-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/tokenElements-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/tokenElements-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/under-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/under-expected.txt: Added.
+        * platform/chromium-linux/mathml/presentation/underover-expected.png: Added.
+        * platform/chromium-linux/mathml/presentation/underover-expected.txt: Added.
+        * platform/chromium-linux/mathml/xHeight-expected.txt:
+        * platform/chromium-mac-lion/mathml/presentation/mo-stretch-expected.txt: Added.
+        * platform/chromium-mac-lion/mathml/presentation/row-alignment-expected.png:
+        * platform/chromium-mac-lion/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/chromium-mac-lion/mathml/presentation/subsup-expected.png:
+        * platform/chromium-mac-lion/mathml/presentation/subsup-expected.txt:
+        * platform/chromium-mac-lion/mathml/presentation/tables-expected.png:
+        * platform/chromium-mac-lion/mathml/presentation/tables-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/mathml/presentation/mo-stretch-expected.txt:
+        * platform/chromium-mac-snowleopard/mathml/presentation/row-alignment-expected.png:
+        * platform/chromium-mac-snowleopard/mathml/presentation/row-alignment-expected.txt:
+        * platform/chromium-mac-snowleopard/mathml/presentation/subsup-expected.png:
+        * platform/chromium-mac-snowleopard/mathml/presentation/subsup-expected.txt:
+        * platform/chromium-mac-snowleopard/mathml/presentation/tables-expected.png:
+        * platform/chromium-mac-snowleopard/mathml/presentation/tables-expected.txt:
+        * platform/chromium-mac/mathml/presentation/mo-stretch-expected.txt: Added.
+        * platform/chromium-mac/mathml/presentation/row-alignment-expected.png:
+        * platform/chromium-mac/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/chromium-mac/mathml/presentation/subsup-expected.png:
+        * platform/chromium-mac/mathml/presentation/subsup-expected.txt:
+        * platform/chromium-mac/mathml/presentation/tables-expected.png:
+        * platform/chromium-mac/mathml/presentation/tables-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation: Added.
+        * platform/chromium-win-xp/mathml/presentation/attributes-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/attributes-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/fenced-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/fenced-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/fenced-mi-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/fenced-mi-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/fractions-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/fractions-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/fractions-vertical-alignment-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/fractions-vertical-alignment-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/mo-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/mo-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/mo-stretch-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/mo-stretch-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/mroot-pref-width-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/mroot-pref-width-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/over-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/over-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/roots-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/roots-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/row-alignment-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/row-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/row-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/style-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/style-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/sub-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/sub-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/subsup-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/subsup-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/sup-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/sup-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/tables-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/tables-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/tokenElements-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/tokenElements-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/under-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/under-expected.txt: Added.
+        * platform/chromium-win-xp/mathml/presentation/underover-expected.png: Added.
+        * platform/chromium-win-xp/mathml/presentation/underover-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation: Added.
+        * platform/chromium-win/mathml/presentation/attributes-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/attributes-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/fenced-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/fenced-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/fenced-mi-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/fenced-mi-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/fractions-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/fractions-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/fractions-vertical-alignment-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/fractions-vertical-alignment-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/mo-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/mo-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/mo-stretch-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/mo-stretch-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/mroot-pref-width-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/mroot-pref-width-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/over-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/over-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/roots-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/roots-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/row-alignment-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/row-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/row-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/style-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/style-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/sub-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/sub-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/subsup-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/subsup-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/sup-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/sup-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/tables-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/tables-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/tokenElements-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/tokenElements-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/under-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/under-expected.txt: Added.
+        * platform/chromium-win/mathml/presentation/underover-expected.png: Added.
+        * platform/chromium-win/mathml/presentation/underover-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/mathml/presentation/attributes-expected.png: Removed.
+        * platform/chromium/mathml/presentation/fractions-expected.png: Removed.
+        * platform/chromium/mathml/presentation/fractions-vertical-alignment-expected.png: Removed.
+        * platform/chromium/mathml/presentation/mo-expected.png: Removed.
+        * platform/chromium/mathml/presentation/mo-stretch-expected.png: Removed.
+        * platform/chromium/mathml/presentation/mroot-pref-width-expected.png: Removed.
+        * platform/chromium/mathml/presentation/over-expected.png: Removed.
+        * platform/chromium/mathml/presentation/roots-expected.png: Removed.
+        * platform/chromium/mathml/presentation/row-alignment-expected.png: Removed.
+        * platform/chromium/mathml/presentation/row-expected.png: Removed.
+        * platform/chromium/mathml/presentation/style-expected.png: Removed.
+        * platform/chromium/mathml/presentation/subsup-expected.png: Removed.
+
 2012-11-05  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK2][PixelTests] Add missing expectations

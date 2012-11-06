@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x88
+  RenderBlock {html} at (0,0) size 800x88
+    RenderBody {body} at (8,16) size 784x56
+      RenderBlock {p} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 272x19
+          text run at (0,0) width 272: "Following elements should use a regular font: "
+        RenderMathMLMath {math} at (272,5) size 65x11 [padding: 0 1 0 1]
+          RenderBlock {mn} at (1,0) size 9x11
+            RenderText {#text} at (0,-5) size 9x19
+              text run at (0,-5) width 9: "1"
+          RenderMathMLOperator {mo} at (13,0) size 11x11
+            RenderMathMLBlock (flex) {mo} at (0,0) size 10x11
+              RenderBlock (anonymous) at (0,0) size 10x11
+                RenderText {mo} at (0,-5) size 10x19
+                  text run at (0,-5) width 10: "\x{2207}"
+          RenderBlock {mtext} at (26,1) size 27x10
+            RenderText {#text} at (0,-6) size 26x19
+              text run at (0,-6) width 26: "text"
+          RenderBlock {ms} at (52,0) size 12x11
+            RenderText {#text} at (0,-5) size 11x19
+              text run at (0,-5) width 11: "&"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {p} at (0,36) size 784x20
+        RenderText {#text} at (0,0) size 223x19
+          text run at (0,0) width 223: "Following element should be in italic: "
+        RenderMathMLMath {math} at (223,8) size 11x8 [padding: 0 1 0 1]
+          RenderBlock {mi} at (1,0) size 9x8
+            RenderText {#text} at (0,-8) size 7x19
+              text run at (0,-8) width 7: "x"
+        RenderText {#text} at (0,0) size 0x0

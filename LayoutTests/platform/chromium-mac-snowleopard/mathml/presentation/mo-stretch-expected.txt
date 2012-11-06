@@ -64,8 +64,8 @@ layer at (0,0) size 800x351
               RenderMathMLRow {mrow} at (9,0) size 75x55
                 RenderMathMLOperator {mo} at (1,0) size 17x55
                 RenderMathMLSubSup {msubsup} at (19,5) size 37x46
-                  RenderMathMLBlock (anonymous, flex) at (0,0) size 7x46 [padding: 18 0 0 0]
-                    RenderBlock {mi} at (0,18) size 7x28
+                  RenderMathMLBlock (anonymous, flex) at (0,0) size 7x46 [padding: 18 0 18 0]
+                    RenderBlock {mi} at (0,18) size 7x10
                       RenderText {#text} at (0,-6) size 7x18
                         text run at (0,-6) width 7: "x"
                   RenderMathMLBlock (anonymous, flex) at (7,0) size 29x46
