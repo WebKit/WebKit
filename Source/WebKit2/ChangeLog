@@ -1,3 +1,21 @@
+2012-11-06  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [CoordinatedGraphics] compositing/iframes/connect-compositing-iframe.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=101232
+
+        Reviewed by Jocelyn Turcotte.
+
+        The crash is happening in CoordinatedGraphicsLayer::flushCompositingState
+        because we dereferencing a null m_coordinatedGraphicsLayerClient.
+        This happens when the root layer became composited because it has content overlapping
+        with an inner iframe that is composited. In this case the RenderLayerCompositor attaches
+        the layer with RootLayerAttachedViaEnclosingFrame attachment flag and do not call
+        ChromeClient::attachRootGraphcisLayer so we don't have a chance to set m_coordinatedGraphicsLayerClient.
+        The solution is to set the client early in the factory method.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::createGraphicsLayer):
+
 2012-11-06  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         [EFL] [WK2] Random crash in Minibrowser

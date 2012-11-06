@@ -580,7 +580,9 @@ void LayerTreeCoordinator::paintContents(const WebCore::GraphicsLayer* graphicsL
 
 PassOwnPtr<GraphicsLayer> LayerTreeCoordinator::createGraphicsLayer(GraphicsLayerClient* client)
 {
-    return adoptPtr(new CoordinatedGraphicsLayer(client));
+    CoordinatedGraphicsLayer* newLayer = new CoordinatedGraphicsLayer(client);
+    newLayer->setCoordinatedGraphicsLayerClient(this);
+    return adoptPtr(newLayer);
 }
 
 bool LayerTreeHost::supportsAcceleratedCompositing()
