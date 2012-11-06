@@ -71,12 +71,11 @@ unsigned ExclusionPolygon::findNextEdgeVertexIndex(unsigned vertexIndex1, bool c
 {
     unsigned nVertices = numberOfVertices();
     unsigned vertexIndex2 = nextVertexIndex(vertexIndex1, nVertices, clockwise);
-    unsigned lastVertexIndex = (clockwise) ? 0 : nVertices - 1;
 
-    while (vertexIndex2 != lastVertexIndex && areCoincidentPoints(vertexAt(vertexIndex1), vertexAt(vertexIndex2)))
+    while (vertexIndex2 && areCoincidentPoints(vertexAt(vertexIndex1), vertexAt(vertexIndex2)))
         vertexIndex2 = nextVertexIndex(vertexIndex2, nVertices, clockwise);
 
-    while (vertexIndex2 != lastVertexIndex) {
+    while (vertexIndex2) {
         unsigned vertexIndex3 = nextVertexIndex(vertexIndex2, nVertices, clockwise);
         if (!areCollinearPoints(vertexAt(vertexIndex1), vertexAt(vertexIndex2), vertexAt(vertexIndex3)))
             break;
@@ -101,11 +100,21 @@ ExclusionPolygon::ExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, Win
     if (m_empty)
         return;
 
+    unsigned minVertexIndex = 0;
+    for (unsigned i = 1; i < nVertices; ++i) {
+        const FloatPoint& vertex = vertexAt(i);
+        if (vertex.y() < vertexAt(minVertexIndex).y() || (vertex.y() == vertexAt(minVertexIndex).y() && vertex.x() < vertexAt(minVertexIndex).x()))
+            minVertexIndex = i;
+    }
+    FloatPoint nextVertex = vertexAt((minVertexIndex + 1) % nVertices);
+    FloatPoint prevVertex = vertexAt((minVertexIndex + nVertices - 1) % nVertices);
+    bool clockwise = determinant(vertexAt(minVertexIndex) - prevVertex, nextVertex - prevVertex) > 0;
+
     unsigned edgeIndex = 0;
     unsigned vertexIndex1 = 0;
     do {
         m_boundingBox.extend(vertexAt(vertexIndex1));
-        unsigned vertexIndex2 = findNextEdgeVertexIndex(vertexIndex1, true);
+        unsigned vertexIndex2 = findNextEdgeVertexIndex(vertexIndex1, clockwise);
         m_edges[edgeIndex].polygon = this;
         m_edges[edgeIndex].vertexIndex1 = vertexIndex1;
         m_edges[edgeIndex].vertexIndex2 = vertexIndex2;
@@ -133,7 +142,6 @@ ExclusionPolygon::ExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, Win
         ExclusionPolygonEdge* edge = &m_edges[i];
         m_edgeTree.add(EdgeInterval(edge->minY(), edge->maxY(), edge));
     }
-
 }
 
 static bool computeXIntersection(const ExclusionPolygonEdge* edgePointer, float y, EdgeIntersection& result)
@@ -194,7 +202,7 @@ static inline bool getVertexIntersectionVertices(const EdgeIntersection& interse
     return true;
 }
 
-static bool appendIntervalX(float x, bool inside, Vector<ExclusionInterval>& result)
+static inline bool appendIntervalX(float x, bool inside, Vector<ExclusionInterval>& result)
 {
     if (!inside)
         result.append(ExclusionInterval(x));

@@ -1,3 +1,16 @@
+2012-11-06  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Store ExclusionPolygonEdge vertices in clockwise order
+        https://bugs.webkit.org/show_bug.cgi?id=100763
+
+        Reviewed by Darin Adler.
+
+        Verify that a shape-inside polygon whose vertices are specified in counterclockwise
+        order is handled correctly.
+
+        * fast/exclusions/shape-inside/shape-inside-counterclockwise-polygon-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-counterclockwise-polygon.html: Added.
+
 2012-11-06  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, remove a couple of passing tests from chromium expectations.

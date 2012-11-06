@@ -1,3 +1,27 @@
+2012-11-06  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Store ExclusionPolygonEdge vertices in clockwise order
+        https://bugs.webkit.org/show_bug.cgi?id=100763
+
+        Reviewed by Darin Adler.
+
+        The ExclusionPolygon's internal logic, notably getVertexIntersectionVertices(),
+        assumes that ExclusionPolygonEdge vertices are stored in clockwise order.
+        If this is not true, then we construct the polygon's edges in reverse.
+
+        To determine if the vertices are in clockwise order, we compare the slope
+        of the line between the top,left vertex and its previous vertex, with the
+        the slope of the line of vertices before and after the top,left vertex.
+        If the slope of the latter is greater, then top,left vertex is located
+        to its left, and the vertices are clockwise.
+
+        Test: fast/exclusions/shape-inside/shape-inside-counterclockwise-polygon.html
+
+        * rendering/ExclusionPolygon.cpp:
+        (WebCore::determinant): Used to decide if the min vertex is on the left side of the line that passes through its adjacent vertices.
+        (WebCore::ExclusionPolygon::ExclusionPolygon): If the polygon's vertices are specified in counterclockwise order, construct the edges in reverse.
+        (WebCore::appendIntervalX): Made this an inline since it was only defined as a function for the sake of clarity.
+
 2012-11-06  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update BB10 form theme.
