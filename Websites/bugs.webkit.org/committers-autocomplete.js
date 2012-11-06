@@ -391,14 +391,11 @@ WebKitCommitters = (function() {
         updateMenu();
     }
 
-    document.addEventListener('focusin', function(e) {
-        for (var i = 0; i < EMAIL_INPUTS.length; i++) {
-            if (e.target.name == EMAIL_INPUTS[i]) {
-                enableAutoComplete(e.target);
-                break;
-            }
-        }
-    }, false);
+    for (var i = 0; i < EMAIL_INPUTS.length; i++) {
+        var field = document.getElementsByName(EMAIL_INPUTS[i])[0];
+        if (field)
+            field.addEventListener("focus", function(e) { enableAutoComplete(e.target); }, false);
+    }
 
     WebKitCommitters.getCommitters(function (committers) {
         m_committers = committers;

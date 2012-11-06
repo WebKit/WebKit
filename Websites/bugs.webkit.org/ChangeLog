@@ -1,3 +1,15 @@
+2012-11-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        committers-autocomplete.js works only with WebKit based browsers
+        https://bugs.webkit.org/show_bug.cgi?id=66752
+
+        Reviewed by Csaba Osztrogonác.
+
+        Based on the patch posted by Peter Gal. Attach event listeners
+        to all input elements we want to enable auto-completions on.
+
+        * committers-autocomplete.js:
+
 2012-10-03  Simon Fraser  <simon.fraser@apple.com>
 
         Make the status bubble iframe big enough to show all the bubbles
