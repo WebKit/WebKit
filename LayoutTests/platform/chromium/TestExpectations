@@ -111,6 +111,8 @@ Bug(senorblanco) [ Release ] fast/js/toString-and-valueOf-override.html [ Failur
 # Failing since r133592.
 Bug(senorblanco) inspector/debugger/script-formatter-breakpoints.html [ Failure ]
 
+webkit.org/b/101362 [ Debug ] fast/dom/Window/customized-property-survives-gc.html [ Pass Slow ]
+
 # -----------------------------------------------------------------
 # TEMPORARILY SKIPPED TESTS
 # -----------------------------------------------------------------

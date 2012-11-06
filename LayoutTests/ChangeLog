@@ -1,3 +1,12 @@
+2012-11-06  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] fast/dom/Window/customized-property-survives-gc.html slow on debug
+        https://bugs.webkit.org/show_bug.cgi?id=101362
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-06  Mike West  <mkwst@chromium.org>
 
         CSP 1.1: Tweak the script interface to match the spec.
