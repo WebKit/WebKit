@@ -1,3 +1,18 @@
+2012-11-05  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=101275
+        Clean up ScrollingConstraints.h
+
+        Reviewed by Simon Fraser.
+
+        This class cleans up ScrollingConstraints.h by removing the constructors since the 
+        compiler will generate those constructors for us anyway. The patch also makes the 
+        two override functions private.
+        * page/scrolling/ScrollingConstraints.h:
+        (ViewportConstraints):
+        (FixedPositionViewportConstraints):
+        (StickyPositionViewportConstraints):
+
 2012-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Make Document::updateStyleIfNeeded() non-virtual
