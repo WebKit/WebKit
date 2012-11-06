@@ -1,3 +1,19 @@
+2012-11-05  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Fix wrong coding style in the boilerplates
+        https://bugs.webkit.org/show_bug.cgi?id=101283
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix boilerplate which have wrong coding style.
+
+        * UIProcess/efl/InputMethodContextEfl.cpp:
+        * UIProcess/efl/InputMethodContextEfl.h:
+        * UIProcess/efl/PageClientDefaultImpl.cpp:
+        * UIProcess/efl/PageClientDefaultImpl.h:
+        * UIProcess/efl/PageClientLegacyImpl.cpp:
+        * UIProcess/efl/PageClientLegacyImpl.h:
+
 2012-11-05  KyungTae Kim  <ktf.kim@samsung.com>
 
         [EFL][WK2] Fix build warning in PageClientLegacyImpl.cpp
