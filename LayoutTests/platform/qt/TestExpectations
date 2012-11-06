@@ -2526,3 +2526,6 @@ webkit.org/b/101035 fast/images/exif-orientation-image-document.html
 
 # Fails after test refactoring, maybe rebaseline needed
 webkit.org/b/98523 fast/images/repaint-subrect-grid.html
+
+# [Qt] Newly added css3/line-break/* tests fail
+webkit.org/b/101302 css3/line-break
