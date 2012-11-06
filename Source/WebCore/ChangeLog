@@ -1,3 +1,20 @@
+2012-11-06  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update BB10 form theme.
+        https://bugs.webkit.org/show_bug.cgi?id=100760
+
+        Reviewed by Rob Buis.
+
+        RIM PR 238123
+        Internal Reviewed by Chris Hutten-Czapski
+        BB10 selection theme use slice image function to draw selection button,
+        any border-radius setting other than 0 will make the button corner
+        clipped. Always set button border-radius: 0 for BB10 theme.
+
+        * css/themeBlackBerry.css:
+        (select[size][multiple]):
+        (select[size="1"]):
+
 2012-11-06  Elliott Sprehn  <esprehn@chromium.org>
 
         Remove branch from inside RenderObject::view now that renderer() is more expensive

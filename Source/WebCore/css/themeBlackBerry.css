@@ -35,6 +35,11 @@ select {
     border-radius: 0;
 }
 
+select[size="0"],
+select[size="1"] {
+    border-radius: 0;
+}
+
 ::-webkit-validation-bubble-message {
     padding-left: 10px;
     padding-right: 10px;
