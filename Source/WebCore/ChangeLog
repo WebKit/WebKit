@@ -1,3 +1,25 @@
+2012-11-06  Stephen White  <senorblanco@chromium.org>
+
+        Implement save and restore for a bunch of InternalSettings state
+        https://bugs.webkit.org/show_bug.cgi?id=101394
+
+        Reviewed by Dirk Pranke.
+
+        In http://trac.webkit.org/changeset/133399, I resolved a bunch of 
+        flaky tests by saving and restoring the InternalSettings state
+        EnableCompositingForFixedPosition.  On a hunch, I git grepped for all
+        internal settings state which is being set by layout tests but not
+        saved and restored.  It turns out there about 15 calls.
+
+        This patch takes care of five of them, mostly compositing-related.
+        The others I was either not sure about, or were already at least
+        being reset to known values by the testing harness.
+
+        Hopefully this will alleviate some further test flakiness.
+
+        * testing/InternalSettings.cpp:
+        * testing/InternalSettings.h:
+
 2012-11-06  KyungTae Kim  <ktf.kim@samsung.com>
 
         Fix build warning in RenderLayer.cpp caused by r133628

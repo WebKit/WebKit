@@ -53,7 +53,9 @@ public:
 
         double m_originalPasswordEchoDurationInSeconds;
         bool m_originalPasswordEchoEnabled;
+        bool m_originalFixedElementsLayoutRelativeToFrame;
         bool m_originalCSSExclusionsEnabled;
+        bool m_originalCSSVariablesEnabled;
 #if ENABLE(SHADOW_DOM)
         bool m_originalShadowDOMEnabled;
         bool m_originalAuthorShadowDOMForAnyElementEnabled;
@@ -79,7 +81,10 @@ public:
         bool m_originalDialogElementEnabled;
 #endif
         bool m_canStartMedia;
+        bool m_originalForceCompositingMode;
         bool m_originalCompositingForFixedPositionEnabled;
+        bool m_originalCompositingForScrollableFramesEnabled;
+        bool m_originalAcceleratedDrawingEnabled;
         bool m_originalMockScrollbarsEnabled;
         bool m_langAttributeAwareFormControlUIEnabled;
         bool m_imagesEnabled;
