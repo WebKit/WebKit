@@ -1,3 +1,19 @@
+2012-11-06  Rick Byers  <rbyers@chromium.org>
+
+        [chromium] Two touchadjustment tests are failing on mac
+        https://bugs.webkit.org/show_bug.cgi?id=100833
+
+        Reviewed by Antonio Gomes.
+
+        Re-enable these two tests with appropriate tweaks.  Also avoid the platform dependant
+        behavior by switching to the Ahem font.
+
+        * platform/chromium/TestExpectations: Remove the failure expectations.
+        * touchadjustment/html-label.html: Tweak one very borderline case to be closer to pass
+        reliably.  Previously this passed only due to a bug in the test infrastructure fixed in r132929.
+        * touchadjustment/nested-touch.html: Tweak borderline case to compensate for inclusion of
+        the border in the measurement of the size of the div.
+
 2012-11-06  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Unreviewed gardening.

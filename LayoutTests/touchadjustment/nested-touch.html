@@ -5,7 +5,7 @@
     <script src="../fast/js/resources/js-test-pre.js"></script>
     <script src="resources/touchadjustment.js"></script>
     <style>
-        #sandbox { }
+        #sandbox { font: 16px Ahem; }
         .box { border: 1px solid black; border-radius: 5px 5px; margin: 12px; max-width: 40em; }
     </style>
 </head>
@@ -76,7 +76,7 @@
         // First test was centered, now move the test closer to the wrong node, and ensure we still get the prefered node.
         testTouchPoint(touchPointDoubleTouch(e.mybox1, e.mybox2, 5), e.mybox1);
 
-        testTouchPoint(touchPointDoubleTouch(e.mybox1, e.mybox2, 10), e.mybox1);
+        testTouchPoint(touchPointDoubleTouch(e.mybox1, e.mybox2, 8), e.mybox1);
     }
 
     function runTests()

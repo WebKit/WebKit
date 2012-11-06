@@ -9,6 +9,7 @@
             position: absolute;
             left: 0px;
             top: 0px;
+            font: 16px Ahem;
         }
     </style>
 </head>
@@ -42,10 +43,10 @@
         testTouchPoint(touchpoint, element);
     }
 
-    function testIndirectTouch(element)
+    function testIndirectTouch(element, offset)
     {
         // Touch just right of the element.
-        var touchpoint = offsetTouchPoint(findAbsoluteBounds(element), 'right', 10, 30, 20);
+        var touchpoint = offsetTouchPoint(findAbsoluteBounds(element), 'right', offset, 30, 20);
         testTouchPoint(touchpoint, element);
     }
 
@@ -62,9 +63,14 @@
     {
         debug('Testing indirect hits.');
 
-        testIndirectTouch(e.mylink);
-        testIndirectTouch(e.mylabel);
-        testIndirectTouch(e.myinput);
+        testIndirectTouch(e.mylink, 10);
+
+        // This case is very borderline - there's not much reason to adjust
+        // left to the label instead of up to the link (it's closer to
+        // the label, but overlaps with more of the link).
+        testIndirectTouch(e.mylabel, 1);
+
+        testIndirectTouch(e.myinput, 10);
     }
 
     function runTests()
