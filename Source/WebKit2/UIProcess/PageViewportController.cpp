@@ -56,6 +56,7 @@ PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, Page
     m_rawAttributes.minimumScale = 1;
     m_rawAttributes.maximumScale = 1;
     m_rawAttributes.userScalable = m_allowsUserScaling;
+    m_rawAttributes.initiallyFitToViewport = true;
 
     ASSERT(m_client);
     m_client->setController(this);
@@ -141,7 +142,8 @@ void PageViewportController::pageTransitionViewportReady()
 {
     if (!m_rawAttributes.layoutSize.isEmpty()) {
         m_hadUserInteraction = false;
-        applyScaleAfterRenderingContents(innerBoundedViewportScale(toViewportScale(m_rawAttributes.initialScale)));
+        float initialScale = m_rawAttributes.initiallyFitToViewport ? m_minimumScaleToFit : m_rawAttributes.initialScale;
+        applyScaleAfterRenderingContents(innerBoundedViewportScale(toViewportScale(initialScale)));
     }
 
     // At this point we should already have received the first viewport arguments and the requested scroll

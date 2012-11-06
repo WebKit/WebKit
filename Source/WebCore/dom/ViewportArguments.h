@@ -50,6 +50,7 @@ struct ViewportAttributes {
     float maximumScale;
 
     float userScalable;
+    bool initiallyFitToViewport;
 };
 
 struct ViewportArguments {

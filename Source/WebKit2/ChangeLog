@@ -1,3 +1,26 @@
+2012-11-06  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Fit-to-width broken on pages with viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=99715
+
+        Reviewed by Jocelyn Turcotte.
+
+        The initial scale from the viewport attributes should only
+        be applied if the scale was explicitly specified in the
+        viewport meta tag.
+        If the initial scale is auto it should be calculated using
+        the final contents size, which might be larger than the
+        layout size, so that the content fits horizontally into
+        the view.
+
+        Also add QML unit tests that cover this functionality.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_fitToView.qml:
+        * UIProcess/API/qt/tests/qmltests/common/test5.html: Added.
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::pageTransitionViewportReady):
+
 2012-11-06  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Remove a parent member in WebLayerInfo.

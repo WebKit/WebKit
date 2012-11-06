@@ -90,6 +90,8 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
     if (args.height != ViewportArguments::ValueAuto)
         args.height = min(float(10000), max(args.height, float(1)));
 
+    result.initiallyFitToViewport = args.initialScale == ViewportArguments::ValueAuto;
+
     if (args.initialScale != ViewportArguments::ValueAuto)
         args.initialScale = min(float(10), max(args.initialScale, float(0.1)));
     if (args.minimumScale != ViewportArguments::ValueAuto)

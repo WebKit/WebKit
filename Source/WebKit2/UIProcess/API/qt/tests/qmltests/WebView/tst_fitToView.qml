@@ -93,5 +93,39 @@ Item {
             compare(documentSize(), "960x1440")
             compare(test.contentsScale, 1.0)
         }
+
+        function test_localPageDeviceWidth() {
+            webView.url = "about:blank"
+            verify(webView.waitForLoadSucceeded())
+
+            webView.url = "../common/test5.html"
+            verify(webView.waitForLoadSucceeded())
+            compare(test.contentsScale, 0.5)
+
+            // Add user interaction.
+            test.touchTap(webView, 10, 10)
+
+            webView.reload()
+            verify(webView.waitForLoadSucceeded())
+            // The page should still fit to view after a reload
+            compare(test.contentsScale, 0.5)
+        }
+
+        function test_localPageInitialScale() {
+            webView.url = "about:blank"
+            verify(webView.waitForLoadSucceeded())
+
+            webView.url = "../common/test4.html"
+            verify(webView.waitForLoadSucceeded())
+
+            compare(test.contentsScale, 2.0)
+
+            // Add user interaction.
+            test.touchTap(webView, 10, 10)
+
+            webView.reload()
+            verify(webView.waitForLoadSucceeded())
+            compare(test.contentsScale, 2.0)
+        }
     }
 }
