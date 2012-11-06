@@ -1,3 +1,16 @@
+2012-11-06  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [EFL] Simplify the build system
+        https://bugs.webkit.org/show_bug.cgi?id=101392
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use WTF_USE_3D_GRAPHICS to guard the inclusion of surfaces and textmap 
+        directories under WebCore/graphics to be consistent with 
+        WebCore/PlatformEfl.cmake.
+
+        * PlatformEfl.cmake:
+
 2012-11-04  Halton Huo  <halton.huo@intel.com>
 
         [EFL] Use _LIBRARIES instead of _LIBRARY

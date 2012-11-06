@@ -79,7 +79,7 @@ IF (ENABLE_NAVIGATOR_CONTENT_UTILS)
   )
 ENDIF ()
 
-IF (WTF_USE_TEXTURE_MAPPER_GL)
+IF (WTF_USE_3D_GRAPHICS)
   LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/surfaces"
     "${WEBCORE_DIR}/platform/graphics/texmap"

@@ -1,3 +1,16 @@
+2012-11-06  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [EFL] Simplify the build system
+        https://bugs.webkit.org/show_bug.cgi?id=101392
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove unused cmake variables. In addition there is no longer a need to define 
+        WTF_USE_TEXTURE_MAPPER_GL in the build system as that is now handled in Platform.h
+        (see r133623).
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-11-05  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Trivial unreviewed: Add missing module dependencies for builds in Qt CI system.
