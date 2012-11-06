@@ -126,6 +126,11 @@
     padding-right: 5px;
 }
 
+.native-snapshot-view .data-grid .expanded div.size-bar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(hsla(0, 100%, 100%, 0.85)), to(hsla(0, 100%, 100%, 0.65)));
+    color: hsla(0, 0%, 0%, 0.5);
+}
+
 .native-snapshot-view .data-grid div.size-bar {
     text-align: center;
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.5)), to(rgba(192, 192, 192, 0)));

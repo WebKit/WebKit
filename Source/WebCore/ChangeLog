@@ -1,3 +1,13 @@
+2012-11-06  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: dim size bar for expanded item in native memory snapshot grid
+        https://bugs.webkit.org/show_bug.cgi?id=101062
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/nativeMemoryProfiler.css:
+        (.native-snapshot-view .data-grid .expanded div.size-bar):
+
 2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Using isUnknownPseudoElement() for shadow pseudo id seems confusing
