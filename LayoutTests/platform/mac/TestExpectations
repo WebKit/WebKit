@@ -28,6 +28,10 @@ svg/custom/use-referencing-style-crash.svg
 # This test requires media controls has a volume slider.
 media/video-volume-slider.html
 
+# This test requires generation of progress events during loading
+# https://bugs.webkit.org/show_bug.cgi?id=100984
+media/progress-events-generated-correctly.html
+
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html

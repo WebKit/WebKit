@@ -1,3 +1,19 @@
+2012-11-06  John Griggs  <jgriggs@rim.com>
+
+        Implement MediaPlayerPrivate::didLoadingProgress for BlackBerry platform
+        https://bugs.webkit.org/show_bug.cgi?id=100378
+
+        Reviewed by Eric Carlson.
+
+        Implement this method for BlackBerry platform.
+
+        New test: LayoutTests/media/progress-events-generated-correctly.html
+
+        * media/progress-events-generated-correctly-expected.txt: Added.
+        * media/progress-events-generated-correctly.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-11-06  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Unreviewed gardening.

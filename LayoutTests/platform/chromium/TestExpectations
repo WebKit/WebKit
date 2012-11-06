@@ -192,6 +192,9 @@ webkit.org/b/75123 webintents/intent-tag.html
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
 
+# Requires generation of progress events during loading
+webkit.org/b/100985 media/progress-events-generated-correctly.html
+
 # Resolution media query is not yet enabled.
 webkit.org/b/85262 fast/media/mq-resolution.html [ Skip ]
 

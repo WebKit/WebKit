@@ -1,0 +1,50 @@
+<html>
+    <meta name="viewport" content="width=device-width">
+    <title>Progress Events Generated Correctly During Loading</title>
+    <body>
+    <p>Test that progress events are generated during loading of media resource.</p>
+
+    <script src=./video-test.js></script>
+    <script src=./media-file.js></script>
+    <script>
+        function errorListener(event)
+        {
+            logResult(false, "Caught 'error' event, media.error.code = " + this.error.code);
+            endTest();
+        }
+
+        function canplaythroughListener(event)
+        {
+            consoleWrite("EVENT(canplaythrough)");
+            this.play();
+        }
+
+        function playingListener(event)
+        {
+            consoleWrite("EVENT(playing)");
+        }
+
+        function progressListener(event)
+        {
+            ++progressCount;
+        }
+
+        function endedListener(event)
+        {
+            consoleWrite("EVENT(ended)");
+            testExpected("progressCount", 1, ">");
+            endTest();
+        }
+
+        document.write("<video controls></video>");
+        var videoElement = document.getElementsByTagName('video')[0];
+        var progressCount = 0;
+        videoElement.addEventListener('error', errorListener);
+        videoElement.addEventListener('canplaythrough', canplaythroughListener);
+        videoElement.addEventListener('playing', playingListener);
+        videoElement.addEventListener('ended', endedListener);
+        videoElement.src = findMediaFile("video", "./content/counting");
+        videoElement.addEventListener('progress', progressListener);
+    </script>
+</body>
+</html>

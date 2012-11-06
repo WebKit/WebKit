@@ -114,6 +114,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 #endif
     , m_userDrivenSeekTimer(this, &MediaPlayerPrivate::userDrivenSeekTimerFired)
     , m_lastSeekTime(0)
+    , m_lastLoadingTime(0)
     , m_lastSeekTimePending(false)
     , m_isAuthenticationChallenging(false)
     , m_waitMetadataTimer(this, &MediaPlayerPrivate::waitMetadataTimerFired)
@@ -340,8 +341,15 @@ PassRefPtr<TimeRanges> MediaPlayerPrivate::buffered() const
 
 bool MediaPlayerPrivate::didLoadingProgress() const
 {
-    notImplemented();
-    return false;
+    if (!m_platformPlayer)
+        return false;
+
+    float bufferLoaded = m_platformPlayer->bufferLoaded();
+    if (bufferLoaded == m_lastLoadingTime)
+        return false;
+
+    m_lastLoadingTime = bufferLoaded;
+    return true;
 }
 
 void MediaPlayerPrivate::setSize(const IntSize&)
