@@ -2295,10 +2295,10 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
             bool isSVGText = t->isSVGInlineText();
 #endif
 
-            RenderStyle* style = t->style(lineInfo.isFirstLine());
-            if (style->hasTextCombine() && current.m_obj->isCombineText() && !toRenderCombineText(current.m_obj)->isCombined())
+            if (t->style()->hasTextCombine() && current.m_obj->isCombineText() && !toRenderCombineText(current.m_obj)->isCombined())
                 toRenderCombineText(current.m_obj)->combineText();
 
+            RenderStyle* style = t->style(lineInfo.isFirstLine());
             const Font& f = style->font();
             bool isFixedPitch = f.isFixedPitch();
             bool canHyphenate = style->hyphens() == HyphensAuto && WebCore::canHyphenate(style->locale());
