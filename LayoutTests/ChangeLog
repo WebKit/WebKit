@@ -1,3 +1,12 @@
+2012-11-06  Stephen White  <senorblanco@chromium.org>
+
+        Don't dump pixels for filter-empty-element-crash.
+        https://bugs.webkit.org/show_bug.cgi?id=101359
+
+        Reviewed by Adrienne Walker.
+
+        * css3/filters/filter-empty-element-crash.html:
+
 2012-11-06  Simon Fraser  <simon.fraser@apple.com>
 
         (r133351): Number of test failures from enabling SUBPIXEL_LAYOUT on Mac
