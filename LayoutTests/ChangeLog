@@ -1,3 +1,9 @@
+2012-11-06  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-06  Aaron Colwell  <acolwell@chromium.org>
 
         Heap-buffer-overflow in WebCore::TextTrackCueList::add

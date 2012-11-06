@@ -108,6 +108,9 @@ Bug(senorblanco) fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ 
 # Has been failing since r133544-133546
 Bug(senorblanco) [ Release ] fast/js/toString-and-valueOf-override.html [ Failure ]
 
+# Failing since r133592.
+Bug(senorblanco) inspector/debugger/script-formatter-breakpoints.html [ Failure ]
+
 # -----------------------------------------------------------------
 # TEMPORARILY SKIPPED TESTS
 # -----------------------------------------------------------------
