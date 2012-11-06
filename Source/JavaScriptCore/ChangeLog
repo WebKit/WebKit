@@ -1,3 +1,25 @@
+2012-11-06  Michael Saboff  <msaboff@apple.com>
+
+        Lexer::scanRegExp, create 8 bit pattern and flag Identifiers from 16 bit source when possible
+        https://bugs.webkit.org/show_bug.cgi?id=101013
+
+        Reviewed by Darin Adler.
+
+        Changed scanRegExp so that it will create 8 bit identifiers from 8 bit sources and from 16 bit sources
+        whan all the characters are 8 bit.  Using two templated helpers, the "is all 8 bit" check is only performed
+        on 16 bit sources.  The first helper is orCharacter() that will accumulate the or value of all characters
+        only for 16 bit sources.  Replaced the helper Lexer::makeIdentifierSameType() with Lexer::makeRightSizedIdentifier().
+
+        * parser/Lexer.cpp:
+        (JSC::orCharacter<LChar>): Explicit template that serves as a placeholder.
+        (JSC::orCharacter<UChar>): Explicit template that actually or accumulates characters.
+        (JSC::Lexer::scanRegExp):
+        * parser/Lexer.h:
+        (Lexer):
+        (JSC::Lexer::makeRightSizedIdentifier<LChar>): New template that always creates an 8 bit Identifier.
+        (JSC::Lexer::makeRightSizedIdentifier<UChar>): New template that creates an 8 bit Identifier for 8 bit
+        data in a 16 bit source.
+
 2012-11-06  Filip Pizlo  <fpizlo@apple.com>
 
         Indentation of JSCell.h is wrong

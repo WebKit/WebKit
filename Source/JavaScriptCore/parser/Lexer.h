@@ -148,7 +148,7 @@ private:
     ALWAYS_INLINE const Identifier* makeIdentifier(const UChar* characters, size_t length);
     ALWAYS_INLINE const Identifier* makeLCharIdentifier(const LChar* characters, size_t length);
     ALWAYS_INLINE const Identifier* makeLCharIdentifier(const UChar* characters, size_t length);
-    ALWAYS_INLINE const Identifier* makeIdentifierSameType(const UChar* characters, size_t length);
+    ALWAYS_INLINE const Identifier* makeRightSizedIdentifier(const UChar* characters, size_t length, UChar orAllChars);
     ALWAYS_INLINE const Identifier* makeIdentifierLCharFromUChar(const UChar* characters, size_t length);
 
     ALWAYS_INLINE bool lastTokenWasRestrKeyword() const;
@@ -242,14 +242,17 @@ ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifier(const UChar* characters
 }
 
 template <>
-ALWAYS_INLINE const Identifier* Lexer<LChar>::makeIdentifierSameType(const UChar* characters, size_t length)
+ALWAYS_INLINE const Identifier* Lexer<LChar>::makeRightSizedIdentifier(const UChar* characters, size_t length, UChar)
 {
     return &m_arena->makeIdentifierLCharFromUChar(m_globalData, characters, length);
 }
 
 template <>
-ALWAYS_INLINE const Identifier* Lexer<UChar>::makeIdentifierSameType(const UChar* characters, size_t length)
+ALWAYS_INLINE const Identifier* Lexer<UChar>::makeRightSizedIdentifier(const UChar* characters, size_t length, UChar orAllChars)
 {
+    if (!(orAllChars & ~0xff))
+        return &m_arena->makeIdentifierLCharFromUChar(m_globalData, characters, length);
+
     return &m_arena->makeIdentifier(m_globalData, characters, length);
 }
 

@@ -1686,12 +1686,25 @@ returnError:
 }
 
 template <typename T>
+static inline void orCharacter(UChar&, UChar);
+
+template <>
+inline void orCharacter<LChar>(UChar&, UChar) { }
+
+template <>
+inline void orCharacter<UChar>(UChar& orAccumulator, UChar character)
+{
+    orAccumulator |= character;
+}
+
+template <typename T>
 bool Lexer<T>::scanRegExp(const Identifier*& pattern, const Identifier*& flags, UChar patternPrefix)
 {
     ASSERT(m_buffer16.isEmpty());
 
     bool lastWasEscape = false;
     bool inBrackets = false;
+    UChar charactersOredTogether = 0;
 
     if (patternPrefix) {
         ASSERT(!isLineTerminator(patternPrefix));
@@ -1714,6 +1727,7 @@ bool Lexer<T>::scanRegExp(const Identifier*& pattern, const Identifier*& flags, 
             break;
 
         record16(prev);
+        orCharacter<T>(charactersOredTogether, prev);
 
         if (lastWasEscape) {
             lastWasEscape = false;
@@ -1733,15 +1747,18 @@ bool Lexer<T>::scanRegExp(const Identifier*& pattern, const Identifier*& flags, 
         }
     }
 
-    pattern = makeIdentifierSameType(m_buffer16.data(), m_buffer16.size());
+    pattern = makeRightSizedIdentifier(m_buffer16.data(), m_buffer16.size(), charactersOredTogether);
+
     m_buffer16.resize(0);
+    charactersOredTogether = 0;
 
     while (isIdentPart(m_current)) {
         record16(m_current);
+        orCharacter<T>(charactersOredTogether, m_current);
         shift();
     }
 
-    flags = makeIdentifierSameType(m_buffer16.data(), m_buffer16.size());
+    flags = makeRightSizedIdentifier(m_buffer16.data(), m_buffer16.size(), charactersOredTogether);
     m_buffer16.resize(0);
 
     return true;
