@@ -1,3 +1,15 @@
+2012-11-06  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: show "debugging session terminated" message when remote debuggign connection is closed unexpectedly.
+        https://bugs.webkit.org/show_bug.cgi?id=101030
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.loaded.WebInspector.socket.onclose):
+        (WebInspector.loaded):
+        (WebInspector.detached):
+
 2012-11-06  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Overrides] Add Chrome for Android and Firefox for Android user agent strings
