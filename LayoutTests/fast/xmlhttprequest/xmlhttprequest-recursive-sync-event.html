@@ -7,6 +7,81 @@ function log(s)
     logDiv.appendChild(document.createElement("br"));
 }
 
+// This test is flaky because it depends on the size of the available native
+// stack, the size of native stack frames, and the layering of function calls
+// in the JavaScript VM code. Together, these variables determine when a
+// StackOverflowError will be thrown in the course of this test of unbounded
+// recursion.
+//
+// From experience with this test, StackOverflow error tends to be thrown in
+// 2 scenarios:
+//
+// Scenario 1: Overflowed while calling xhr.open()
+// ===============================================
+// In this scenario, the VM is executing xhr.open() and succeeds in setting
+// up the new request. In response to having opened the request, it tries to
+// dispatch an event with readyState 1 (OPENED). Unfortunately, there is not
+// enough stack and we get an overflow error and 1 console error message here.
+//
+// The error is thrown but is then eaten up by the EventDispatcher. Hence,
+// onreadystatechange() back in JS land does not even see this error.
+//
+// open() eventually returns to onreadystatechange(), and we call xhr.send()
+// next. xhr.send() overflows the stack again, and we get a 2nd error and
+// a 2nd console error message.
+//
+// Note: the lastReadyStateObserved in this case is 4 because the event
+// dispatch for OPENED failed to execute onreadystatechange().
+//
+// The total number of error messages seen is 2.
+//
+// Scenario 2: Overflowed while calling xhr.send()
+// ===============================================
+// In this scenario, the VM is executing xhr.send() and a readyState change
+// to 4 (DONE) occurs. An event is dispatched and the VM tries to call
+// onreadystatechange() but overflows the stack. Here, we see 1 error and
+// 1 console error message.
+//
+// Since we never succeeded in reentering onreadystatechange(), we did not
+// not set up anymore requests, and will not attempt to re-enter
+// onreadystatechange() after this. Hence, we will not see anymore overflow
+// errors nor console error messages.
+//
+// In contrast with scenario 1, we did not see an overflow error for xhr.open()
+// before we saw the error for xhr.send().
+//
+// Note: lastReadyStateObserved in this case is 1 because the event
+// dispatch for OPENED succeeded in executing onreadystatechange(), and
+// lastReadyStateObserved was set to 1.
+//
+// The total number of error messages seen is 1.
+//
+// Flakiness
+// =========
+// Since we can end up with scenario 1 or 2 depending on variables outside the
+// control of this test, the result of the test would be inherently flaky i.e.
+// we can see 1 or 2 console error messages.
+//
+// That is unless we do some compensation. In the case of scenario 2, we can
+// check if the lastReadyStateObserved is 1 which means we would have only seen
+// one console error message. If so, we can call xhr.send() again just to
+// trigger another one so that we'll have a total of 2.
+//
+// Note that in the compensation case, we'll need to call xhr.open() again
+// before calling xhr.send(). This is because the previous xhr request has
+// already been closed. Here, xhr.open() should not trigger an overflow error
+// just like it didn't before the previous xhr.send() triggered the error (the
+// fact that it succeeded without an error before means it will succeed this
+// time too). And this leaves it up to our compensating call to xhr.send()
+// to generate the 2nd expected overflow error and console error message.
+//
+// Note also that we'll need to make sure that we do this compensation only
+// once, and not repeatedly do the compensating xhr.send() call on every
+// onreadystatechange() frame on the return path.
+
+lastReadyStateObserved = 0;
+hasCompensatedAlready = false;
+
 function test()
 {
     if (window.testRunner) {
@@ -14,9 +89,17 @@ function test()
     }
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
+        lastReadyStateObserved = xhr.readyState;
         if (xhr.readyState == 4) {
             xhr.open("GET", "recurse.html", false);
             xhr.send(null);
+
+            // Compensate for test flakiness if needed:
+            if (!hasCompensatedAlready && lastReadyStateObserved == 1) {
+                xhr.open("GET", "recurse.html", false);
+                xhr.send(null);
+                hasCompensatedAlready = true;
+            }
         }
     };
     xhr.open("GET", "recurse.html", false);
