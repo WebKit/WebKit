@@ -169,7 +169,6 @@ fast/text/find-kana.html
 fast/text/find-russian.html
 fast/text/find-soft-hyphen.html
 fast/text/soft-hyphen-5.html
-http/tests/inspector/network/network-initiator-from-console.html
 http/tests/inspector/network/network-sidebar-width.html
 http/tests/inspector/resource-har-pages.html
 inspector/debugger/source-frame.html

@@ -1,5 +1,13 @@
 2012-11-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Unreviewed unskip passing tests.
+
+        * platform/qt-arm/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
+2012-11-06  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Flakyness in http/tests/inspector/network/network-initiator-from-console.html
         https://bugs.webkit.org/show_bug.cgi?id=101195
 
