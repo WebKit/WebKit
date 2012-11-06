@@ -1,3 +1,12 @@
+2012-11-05  Andika Triwidada  <andika@gmail.com>
+
+        [l10n] updated id.po for WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=100264
+
+        Rubber-stamped by Gustavo Noronha.
+
+        * id.po: updated.
+
 2012-10-26  Christian Kirbach  <Christian.Kirbach@gmail.com>
 
         German de.po translation needs update
