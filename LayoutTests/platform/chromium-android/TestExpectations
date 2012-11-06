@@ -84,7 +84,6 @@ webkit.org/b/95378 http/tests/local/fileapi/file-last-modified.html [ WontFix ]
 fast/forms/date-multiple-fields [ WontFix ]
 fast/forms/month-multiple-fields [ WontFix ]
 fast/forms/time-multiple-fields [ WontFix ]
-fast/forms/week-multiple-fields [ WontFix ]
 
 # Page popup UI is for desktop platforms
 platform/chromium/fast/forms/page-popup [ WontFix ]

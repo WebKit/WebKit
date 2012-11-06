@@ -1,3 +1,15 @@
+2012-11-06  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] There shouldn't be linting errors about our TestExpectation files
+
+        Unreviewed test expectation update.
+
+        A number of linting errors were being displayed, partially because of my
+        recent additions. Fix them.
+
+        * platform/chromium-android/TestExpectations:
+        * platform/chromium/TestExpectations:
+
 2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Qt] Disable all tests fast/dom/shadow
