@@ -365,8 +365,6 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_get_by_id_custom_stub(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_get_by_id_generic(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_get_by_id_getter_stub(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-    EncodedJSValue JIT_STUB cti_op_get_by_id_method_check(STUB_ARGS_DECLARATION) WTF_INTERNAL;
-    EncodedJSValue JIT_STUB cti_op_get_by_id_method_check_update(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_get_by_id_proto_fail(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_get_by_id_proto_list(STUB_ARGS_DECLARATION) WTF_INTERNAL;
     EncodedJSValue JIT_STUB cti_op_get_by_id_proto_list_full(STUB_ARGS_DECLARATION) WTF_INTERNAL;

@@ -50,7 +50,6 @@
 #include "ExecutionCounter.h"
 #include "ExpressionRangeInfo.h"
 #include "HandlerInfo.h"
-#include "MethodCallLinkInfo.h"
 #include "Options.h"
 #include "Instruction.h"
 #include "JITCode.h"
@@ -248,16 +247,6 @@ namespace JSC {
         CallLinkInfo& getCallLinkInfo(unsigned bytecodeIndex)
         {
             return *(binarySearch<CallLinkInfo, unsigned, getCallLinkInfoBytecodeIndex>(m_callLinkInfos.begin(), m_callLinkInfos.size(), bytecodeIndex));
-        }
-
-        MethodCallLinkInfo& getMethodCallLinkInfo(ReturnAddressPtr returnAddress)
-        {
-            return *(binarySearch<MethodCallLinkInfo, void*, getMethodCallLinkInfoReturnLocation>(m_methodCallLinkInfos.begin(), m_methodCallLinkInfos.size(), returnAddress.value()));
-        }
-
-        MethodCallLinkInfo& getMethodCallLinkInfo(unsigned bytecodeIndex)
-        {
-            return *(binarySearch<MethodCallLinkInfo, unsigned, getMethodCallLinkInfoBytecodeIndex>(m_methodCallLinkInfos.begin(), m_methodCallLinkInfos.size(), bytecodeIndex));
         }
 #endif // ENABLE(JIT)
 
@@ -643,10 +632,6 @@ namespace JSC {
         void setNumberOfCallLinkInfos(size_t size) { m_callLinkInfos.grow(size); }
         size_t numberOfCallLinkInfos() const { return m_callLinkInfos.size(); }
         CallLinkInfo& callLinkInfo(int index) { return m_callLinkInfos[index]; }
-
-        void addMethodCallLinkInfos(unsigned n) { ASSERT(m_globalData->canUseJIT()); m_methodCallLinkInfos.grow(n); }
-        MethodCallLinkInfo& methodCallLinkInfo(int index) { return m_methodCallLinkInfos[index]; }
-        size_t numberOfMethodCallLinkInfos() { return m_methodCallLinkInfos.size(); }
 #endif
         
 #if ENABLE(VALUE_PROFILER)
@@ -1315,7 +1300,6 @@ namespace JSC {
         Vector<StructureStubInfo> m_structureStubInfos;
         Vector<ByValInfo> m_byValInfos;
         Vector<CallLinkInfo> m_callLinkInfos;
-        Vector<MethodCallLinkInfo> m_methodCallLinkInfos;
         JITCode m_jitCode;
         MacroAssemblerCodePtr m_jitCodeWithArityCheck;
         SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo> > m_incomingCalls;

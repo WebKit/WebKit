@@ -190,7 +190,6 @@ namespace JSC {
         macro(op_ret, 2) \
         macro(op_call_put_result, 3) /* has value profiling */ \
         macro(op_ret_object_or_this, 3) \
-        macro(op_method_check, 1) \
         \
         macro(op_construct, 6) \
         macro(op_strcat, 4) \

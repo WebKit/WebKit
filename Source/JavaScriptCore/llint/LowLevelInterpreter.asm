@@ -1204,12 +1204,6 @@ _llint_op_strcat:
     dispatch(4)
 
 
-_llint_op_method_check:
-    traceExecution()
-    # We ignore method checks and use normal get_by_id optimizations.
-    dispatch(1)
-
-
 _llint_op_get_pnames:
     traceExecution()
     callSlowPath(_llint_slow_path_get_pnames)

@@ -440,71 +440,6 @@ void JIT::emit_op_del_by_id(Instruction* currentInstruction)
     stubCall.call(currentInstruction[1].u.operand);
 }
 
-void JIT::emit_op_method_check(Instruction* currentInstruction)
-{
-    // Assert that the following instruction is a get_by_id.
-    ASSERT(m_interpreter->getOpcodeID((currentInstruction + OPCODE_LENGTH(op_method_check))->u.opcode) == op_get_by_id
-        || m_interpreter->getOpcodeID((currentInstruction + OPCODE_LENGTH(op_method_check))->u.opcode) == op_get_by_id_out_of_line);
-
-    currentInstruction += OPCODE_LENGTH(op_method_check);
-    unsigned resultVReg = currentInstruction[1].u.operand;
-    unsigned baseVReg = currentInstruction[2].u.operand;
-    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
-
-    emitGetVirtualRegister(baseVReg, regT0);
-
-    // Do the method check - check the object & its prototype's structure inline (this is the common case).
-    m_methodCallCompilationInfo.append(MethodCallCompilationInfo(m_bytecodeOffset, m_propertyAccessCompilationInfo.size()));
-    MethodCallCompilationInfo& info = m_methodCallCompilationInfo.last();
-
-    Jump notCell = emitJumpIfNotJSCell(regT0);
-
-    BEGIN_UNINTERRUPTED_SEQUENCE(sequenceMethodCheck);
-
-    Jump structureCheck = branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), info.structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
-    DataLabelPtr protoStructureToCompare, protoObj = moveWithPatch(TrustedImmPtr(0), regT1);
-    Jump protoStructureCheck = branchPtrWithPatch(NotEqual, Address(regT1, JSCell::structureOffset()), protoStructureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
-
-    // This will be relinked to load the function without doing a load.
-    DataLabelPtr putFunction = moveWithPatch(TrustedImmPtr(0), regT0);
-
-    END_UNINTERRUPTED_SEQUENCE(sequenceMethodCheck);
-
-    Jump match = jump();
-
-    // Link the failure cases here.
-    notCell.link(this);
-    structureCheck.link(this);
-    protoStructureCheck.link(this);
-
-    // Do a regular(ish) get_by_id (the slow case will be link to
-    // cti_op_get_by_id_method_check instead of cti_op_get_by_id.
-    compileGetByIdHotPath(baseVReg, ident);
-
-    match.link(this);
-    emitValueProfilingSite(m_bytecodeOffset + OPCODE_LENGTH(op_method_check));
-    emitPutVirtualRegister(resultVReg);
-
-    // We've already generated the following get_by_id, so make sure it's skipped over.
-    m_bytecodeOffset += OPCODE_LENGTH(op_get_by_id);
-
-    m_propertyAccessCompilationInfo.last().addMethodCheckInfo(info.structureToCompare, protoObj, protoStructureToCompare, putFunction);
-}
-
-void JIT::emitSlow_op_method_check(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-{
-    currentInstruction += OPCODE_LENGTH(op_method_check);
-    unsigned resultVReg = currentInstruction[1].u.operand;
-    unsigned baseVReg = currentInstruction[2].u.operand;
-    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
-
-    compileGetByIdSlowCase(resultVReg, baseVReg, ident, iter, true);
-    emitValueProfilingSite(m_bytecodeOffset + OPCODE_LENGTH(op_method_check));
-
-    // We've already generated the following get_by_id, so make sure it's skipped over.
-    m_bytecodeOffset += OPCODE_LENGTH(op_get_by_id);
-}
-
 void JIT::emit_op_get_by_id(Instruction* currentInstruction)
 {
     unsigned resultVReg = currentInstruction[1].u.operand;
@@ -555,11 +490,11 @@ void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCase
     unsigned baseVReg = currentInstruction[2].u.operand;
     Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
 
-    compileGetByIdSlowCase(resultVReg, baseVReg, ident, iter, false);
+    compileGetByIdSlowCase(resultVReg, baseVReg, ident, iter);
     emitValueProfilingSite();
 }
 
-void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck)
+void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter)
 {
     // As for the hot path of get_by_id, above, we ensure that we can use an architecture specific offset
     // so that we only need track one pointer into the slow case code - we track a pointer to the location
@@ -573,7 +508,7 @@ void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident
     BEGIN_UNINTERRUPTED_SEQUENCE(sequenceGetByIdSlowCase);
 
     Label coldPathBegin(this);
-    JITStubCall stubCall(this, isMethodCheck ? cti_op_get_by_id_method_check : cti_op_get_by_id);
+    JITStubCall stubCall(this, cti_op_get_by_id);
     stubCall.addArgument(regT0);
     stubCall.addArgument(TrustedImmPtr(ident));
     Call call = stubCall.call(resultVReg);
@@ -1342,20 +1277,6 @@ void JIT::testPrototype(JSValue prototype, JumpList& failureCases, StructureStub
 
     ASSERT(prototype.isCell());
     addStructureTransitionCheck(prototype.asCell(), prototype.asCell()->structure(), stubInfo, failureCases, regT3);
-}
-
-void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, MethodCallLinkInfo& methodCallLinkInfo, StructureStubInfo& stubInfo, JSObject* callee, Structure* structure, JSObject* proto, ReturnAddressPtr returnAddress)
-{
-    RepatchBuffer repatchBuffer(codeBlock);
-    
-    CodeLocationDataLabelPtr structureLocation = methodCallLinkInfo.cachedStructure.location();
-    methodCallLinkInfo.cachedStructure.set(globalData, structureLocation, codeBlock->ownerExecutable(), structure);
-    
-    Structure* prototypeStructure = proto->structure();
-    methodCallLinkInfo.cachedPrototypeStructure.set(globalData, structureLocation.dataLabelPtrAtOffset(stubInfo.patch.baseline.methodCheckProtoStructureToCompare), codeBlock->ownerExecutable(), prototypeStructure);
-    methodCallLinkInfo.cachedPrototype.set(globalData, structureLocation.dataLabelPtrAtOffset(stubInfo.patch.baseline.methodCheckProtoObj), codeBlock->ownerExecutable(), proto);
-    methodCallLinkInfo.cachedFunction.set(globalData, structureLocation.dataLabelPtrAtOffset(stubInfo.patch.baseline.methodCheckPutFunction), codeBlock->ownerExecutable(), callee);
-    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_method_check_update));
 }
 
 bool JIT::isDirectPutById(StructureStubInfo* stubInfo)

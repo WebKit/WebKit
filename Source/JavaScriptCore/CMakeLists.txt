@@ -49,8 +49,6 @@ SET(JavaScriptCore_SOURCES
     bytecode/GetByIdStatus.cpp
     bytecode/JumpTable.cpp
     bytecode/LazyOperandValueProfile.cpp
-    bytecode/MethodCallLinkInfo.cpp
-    bytecode/MethodCallLinkStatus.cpp
     bytecode/MethodOfGettingAValueProfile.cpp
     bytecode/Opcode.cpp
     bytecode/PolymorphicPutByIdList.cpp

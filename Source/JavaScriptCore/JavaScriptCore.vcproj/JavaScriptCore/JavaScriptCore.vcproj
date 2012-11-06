@@ -1678,22 +1678,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\bytecode\MethodCallLinkInfo.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bytecode\MethodCallLinkInfo.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bytecode\MethodCallLinkStatus.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bytecode\MethodCallLinkStatus.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\bytecode\MethodOfGettingAValueProfile.cpp"
 				>
 			</File>

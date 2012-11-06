@@ -1,3 +1,78 @@
+2012-11-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of method_check
+        https://bugs.webkit.org/show_bug.cgi?id=101147
+
+        Reviewed by Geoffrey Garen.
+
+        op_method_check no longer buys us anything, since get_by_id proto caching
+        gives just as much profiling information and the DFG inlines monomorphic
+        proto accesses anyway.
+        
+        This also has the potential for a speed-up since it makes parsing of
+        profiling data easier. No longer do we have to deal with the confusion of
+        the get_by_id portion of a method_check appearing monomorphic even though
+        we're really dealing with a bimorphic access (method_check specializes for
+        one case and get_by_id for another).
+
+        This looks like a 1% speed-up on both SunSpider and V8v7.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::shrinkToFit):
+        (JSC::CodeBlock::unlinkCalls):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getCallLinkInfo):
+        (JSC::CodeBlock::callLinkInfo):
+        (CodeBlock):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        * bytecode/MethodCallLinkInfo.cpp: Removed.
+        * bytecode/MethodCallLinkInfo.h: Removed.
+        * bytecode/MethodCallLinkStatus.cpp: Removed.
+        * bytecode/MethodCallLinkStatus.h: Removed.
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC):
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallDotNode::emitBytecode):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::PropertyStubCompilationInfo::copyToStubInfo):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::PropertyStubCompilationInfo::slowCaseInfo):
+        (PropertyStubCompilationInfo):
+        (JSC):
+        (JIT):
+        * jit/JITPropertyAccess.cpp:
+        (JSC):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::compileGetByIdSlowCase):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC):
+        (JSC::JIT::compileGetByIdSlowCase):
+        * jit/JITStubs.cpp:
+        (JSC):
+        * jit/JITStubs.h:
+        * llint/LowLevelInterpreter.asm:
+
 2012-11-05  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Refactor LLInt64 to distinguish the pointer operations from the 64-bit integer operations

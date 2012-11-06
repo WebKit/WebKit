@@ -421,8 +421,6 @@ namespace JSC {
 
         RegisterID* emitPutToBase(RegisterID* base, const Identifier&, RegisterID* value, NonlocalResolveInfo&);
 
-        void emitMethodCheck();
-
         RegisterID* emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property);
         RegisterID* emitGetArgumentsLength(RegisterID* dst, RegisterID* base);
         RegisterID* emitPutById(RegisterID* base, const Identifier& property, RegisterID* value);

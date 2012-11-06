@@ -1502,11 +1502,6 @@ RegisterID* BytecodeGenerator::emitInitGlobalConst(const Identifier& identifier,
     return value;
 }
 
-void BytecodeGenerator::emitMethodCheck()
-{
-    emitOpcode(op_method_check);
-}
-
 RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
     m_codeBlock->addPropertyAccessInstruction(instructions().size());

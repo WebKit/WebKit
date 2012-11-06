@@ -69,8 +69,6 @@
 		0F0B83AD14BCF60400885B4F /* LineInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83AC14BCF60200885B4F /* LineInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B83B014BCF71600885B4F /* CallLinkInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */; };
 		0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F0B83B414BCF86000885B4F /* MethodCallLinkInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0B83B214BCF85E00885B4F /* MethodCallLinkInfo.cpp */; };
-		0F0B83B514BCF86200885B4F /* MethodCallLinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83B314BCF85E00885B4F /* MethodCallLinkInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B83B914BCF95F00885B4F /* CallReturnOffsetToBytecodeOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0CD4C215F1A6070032F1C0 /* PutDirectIndexMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0CD4C415F6B6BB0032F1C0 /* SparseArrayValueMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0CD4C315F6B6B50032F1C0 /* SparseArrayValueMap.cpp */; };
@@ -178,8 +176,6 @@
 		0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F93329F14CA7DCA0085F3C6 /* GetByIdStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */; };
 		0F9332A014CA7DCD0085F3C6 /* GetByIdStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329614CA7DC10085F3C6 /* GetByIdStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F9332A114CA7DD10085F3C6 /* MethodCallLinkStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93329714CA7DC10085F3C6 /* MethodCallLinkStatus.cpp */; };
-		0F9332A214CA7DD30085F3C6 /* MethodCallLinkStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329814CA7DC10085F3C6 /* MethodCallLinkStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9332A314CA7DD70085F3C6 /* PutByIdStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */; };
 		0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9332A514CA7DDD0085F3C6 /* StructureSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329B14CA7DC10085F3C6 /* StructureSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -853,8 +849,6 @@
 		0F0B83AC14BCF60200885B4F /* LineInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineInfo.h; sourceTree = "<group>"; };
 		0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallLinkInfo.cpp; sourceTree = "<group>"; };
 		0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkInfo.h; sourceTree = "<group>"; };
-		0F0B83B214BCF85E00885B4F /* MethodCallLinkInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MethodCallLinkInfo.cpp; sourceTree = "<group>"; };
-		0F0B83B314BCF85E00885B4F /* MethodCallLinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MethodCallLinkInfo.h; sourceTree = "<group>"; };
 		0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallReturnOffsetToBytecodeOffset.h; sourceTree = "<group>"; };
 		0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutDirectIndexMode.h; sourceTree = "<group>"; };
 		0F0CD4C315F6B6B50032F1C0 /* SparseArrayValueMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SparseArrayValueMap.cpp; sourceTree = "<group>"; };
@@ -963,8 +957,6 @@
 		0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkStatus.h; sourceTree = "<group>"; };
 		0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetByIdStatus.cpp; sourceTree = "<group>"; };
 		0F93329614CA7DC10085F3C6 /* GetByIdStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetByIdStatus.h; sourceTree = "<group>"; };
-		0F93329714CA7DC10085F3C6 /* MethodCallLinkStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MethodCallLinkStatus.cpp; sourceTree = "<group>"; };
-		0F93329814CA7DC10085F3C6 /* MethodCallLinkStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MethodCallLinkStatus.h; sourceTree = "<group>"; };
 		0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PutByIdStatus.cpp; sourceTree = "<group>"; };
 		0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutByIdStatus.h; sourceTree = "<group>"; };
 		0F93329B14CA7DC10085F3C6 /* StructureSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureSet.h; sourceTree = "<group>"; };
@@ -2518,14 +2510,6 @@
 				0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */,
 				0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */,
 				0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */,
-				0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */,
-				0F93329614CA7DC10085F3C6 /* GetByIdStatus.h */,
-				0F93329714CA7DC10085F3C6 /* MethodCallLinkStatus.cpp */,
-				0F93329814CA7DC10085F3C6 /* MethodCallLinkStatus.h */,
-				0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */,
-				0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */,
-				A7AFC17715F7EFE30048F57B /* ResolveOperation.h */,
-				0F93329B14CA7DC10085F3C6 /* StructureSet.h */,
 				0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */,
 				969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */,
 				969A07910ED1D3AE00F1F681 /* CodeBlock.h */,
@@ -2549,10 +2533,6 @@
 				0FB5467614F59AD1002C2989 /* LazyOperandValueProfile.h */,
 				0F0B83AC14BCF60200885B4F /* LineInfo.h */,
 				0F0FC45814BD15F100B81154 /* LLIntCallLinkInfo.h */,
-				0F0B83B214BCF85E00885B4F /* MethodCallLinkInfo.cpp */,
-				0F0B83B314BCF85E00885B4F /* MethodCallLinkInfo.h */,
-				0F93329714CA7DC10085F3C6 /* MethodCallLinkStatus.cpp */,
-				0F93329814CA7DC10085F3C6 /* MethodCallLinkStatus.h */,
 				0FB5467C14F5CFD3002C2989 /* MethodOfGettingAValueProfile.cpp */,
 				0FB5467A14F5C7D4002C2989 /* MethodOfGettingAValueProfile.h */,
 				969A07940ED1D3AE00F1F681 /* Opcode.cpp */,
@@ -2565,6 +2545,7 @@
 				0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */,
 				0FF4276E159275D2004CB9FF /* ResolveGlobalStatus.cpp */,
 				0FF4276F159275D2004CB9FF /* ResolveGlobalStatus.h */,
+				A7AFC17715F7EFE30048F57B /* ResolveOperation.h */,
 				1429D8830ED21C3D00B89619 /* SamplingTool.cpp */,
 				1429D8840ED21C3D00B89619 /* SamplingTool.h */,
 				0F5541AF1613C1FB00CE3E25 /* SpecialPointer.cpp */,
@@ -2572,6 +2553,7 @@
 				0FD82E84141F3FDA00179C94 /* SpeculatedType.cpp */,
 				0FD82E4F141DAEA100179C94 /* SpeculatedType.h */,
 				0F93329B14CA7DC10085F3C6 /* StructureSet.h */,
+				0F93329514CA7DC10085F3C6 /* GetByIdStatus.cpp */,
 				0F766D3615AE4A1A008F363E /* StructureStubClearingWatchpoint.cpp */,
 				0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */,
 				BCCF0D0B0EF0B8A500413C8F /* StructureStubInfo.cpp */,
@@ -2581,6 +2563,10 @@
 				0F426A461460CBAB00131F8F /* VirtualRegister.h */,
 				0F919D2215853CDE004A4E7D /* Watchpoint.cpp */,
 				0F919D2315853CDE004A4E7D /* Watchpoint.h */,
+				0F93329614CA7DC10085F3C6 /* GetByIdStatus.h */,
+				0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */,
+				0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */,
+				0F93329B14CA7DC10085F3C6 /* StructureSet.h */,
 			);
 			path = bytecode;
 			sourceTree = "<group>";
@@ -2899,7 +2885,6 @@
 				0F0B83AB14BCF5BB00885B4F /* ExpressionRangeInfo.h in Headers */,
 				0F0B83AD14BCF60400885B4F /* LineInfo.h in Headers */,
 				0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */,
-				0F0B83B514BCF86200885B4F /* MethodCallLinkInfo.h in Headers */,
 				0F0B83B914BCF95F00885B4F /* CallReturnOffsetToBytecodeOffset.h in Headers */,
 				0F0FC45A14BD15F500B81154 /* LLIntCallLinkInfo.h in Headers */,
 				0F21C26814BE5F6800ADC64B /* JITDriver.h in Headers */,
@@ -2913,7 +2898,6 @@
 				0F7B294D14C3CD4C007C3DB1 /* DFGCommon.h in Headers */,
 				0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */,
 				0F9332A014CA7DCD0085F3C6 /* GetByIdStatus.h in Headers */,
-				0F9332A214CA7DD30085F3C6 /* MethodCallLinkStatus.h in Headers */,
 				0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */,
 				0F9332A514CA7DDD0085F3C6 /* StructureSet.h in Headers */,
 				0F55F0F514D1063C00AC7649 /* AbstractPC.h in Headers */,
@@ -3507,10 +3491,8 @@
 				0F0B839A14BCF45D00885B4F /* LLIntEntrypoints.cpp in Sources */,
 				0F0B839C14BCF46300885B4F /* LLIntThunks.cpp in Sources */,
 				0F0B83B014BCF71600885B4F /* CallLinkInfo.cpp in Sources */,
-				0F0B83B414BCF86000885B4F /* MethodCallLinkInfo.cpp in Sources */,
 				0F93329D14CA7DC30085F3C6 /* CallLinkStatus.cpp in Sources */,
 				0F93329F14CA7DCA0085F3C6 /* GetByIdStatus.cpp in Sources */,
-				0F9332A114CA7DD10085F3C6 /* MethodCallLinkStatus.cpp in Sources */,
 				0F9332A314CA7DD70085F3C6 /* PutByIdStatus.cpp in Sources */,
 				0F55F0F414D1063900AC7649 /* AbstractPC.cpp in Sources */,
 				86B5826714D2796C00A9C306 /* CodeProfile.cpp in Sources */,

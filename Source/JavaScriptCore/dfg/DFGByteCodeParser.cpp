@@ -35,7 +35,6 @@
 #include "DFGByteCodeCache.h"
 #include "DFGCapabilities.h"
 #include "GetByIdStatus.h"
-#include "MethodCallLinkStatus.h"
 #include "PutByIdStatus.h"
 #include "ResolveGlobalStatus.h"
 #include <wtf/HashMap.h>
@@ -2489,48 +2488,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_by_val);
         }
             
-        case op_method_check: {
-            m_currentProfilingIndex += OPCODE_LENGTH(op_method_check);
-            Instruction* getInstruction = currentInstruction + OPCODE_LENGTH(op_method_check);
-            
-            SpeculatedType prediction = getPrediction();
-            
-            ASSERT(interpreter->getOpcodeID(getInstruction->u.opcode) == op_get_by_id
-                   || interpreter->getOpcodeID(getInstruction->u.opcode) == op_get_by_id_out_of_line);
-            
-            NodeIndex base = get(getInstruction[2].u.operand);
-            unsigned identifier = m_inlineStackTop->m_identifierRemap[getInstruction[3].u.operand];
-                
-            // Check if the method_check was monomorphic. If so, emit a CheckXYZMethod
-            // node, which is a lot more efficient.
-            GetByIdStatus getByIdStatus = GetByIdStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock,
-                m_currentIndex,
-                m_codeBlock->identifier(identifier));
-            MethodCallLinkStatus methodCallStatus = MethodCallLinkStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock, m_currentIndex);
-            
-            if (methodCallStatus.isSet()
-                && !getByIdStatus.wasSeenInJIT()
-                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
-                // It's monomorphic as far as we can tell, since the method_check was linked
-                // but the slow path (i.e. the normal get_by_id) never fired.
-
-                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(methodCallStatus.structure())), base);
-                if (methodCallStatus.needsPrototypeCheck()) {
-                    addStructureTransitionCheck(
-                        methodCallStatus.prototype(), methodCallStatus.prototypeStructure());
-                    addToGraph(Phantom, base);
-                }
-                set(getInstruction[1].u.operand, cellConstant(methodCallStatus.function()));
-            } else {
-                handleGetById(
-                    getInstruction[1].u.operand, prediction, base, identifier, getByIdStatus);
-            }
-            
-            m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
-            continue;
-        }
         case op_get_by_id:
         case op_get_by_id_out_of_line:
         case op_get_array_length: {

@@ -114,10 +114,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/LazyOperandValueProfile.cpp \
 	Source/JavaScriptCore/bytecode/LazyOperandValueProfile.h \
 	Source/JavaScriptCore/bytecode/LineInfo.h \
-	Source/JavaScriptCore/bytecode/MethodCallLinkInfo.cpp \
-	Source/JavaScriptCore/bytecode/MethodCallLinkInfo.h \
-	Source/JavaScriptCore/bytecode/MethodCallLinkStatus.cpp \
-	Source/JavaScriptCore/bytecode/MethodCallLinkStatus.h \
 	Source/JavaScriptCore/bytecode/MethodOfGettingAValueProfile.cpp \
 	Source/JavaScriptCore/bytecode/MethodOfGettingAValueProfile.h \
 	Source/JavaScriptCore/bytecode/Opcode.cpp \
