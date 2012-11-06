@@ -1,5 +1,20 @@
 2012-11-06  Aaron Colwell  <acolwell@chromium.org>
 
+        Heap-buffer-overflow in WebCore::TextTrackCueList::add
+        https://bugs.webkit.org/show_bug.cgi?id=101018
+
+        Reviewed by Eric Carlson.
+
+        Added an extra check to avoid using a negative array index when a cue
+        is added to the beginning of the list.
+
+        Test case added to LayoutTests/media/track/track-add-remove-cue.html.
+
+        * html/track/TextTrackCueList.cpp:
+        (WebCore::TextTrackCueList::add):
+
+2012-11-06  Aaron Colwell  <acolwell@chromium.org>
+
         Regression(r132681): Heap-use-after-free in WebCore::RenderTextTrackCue::layout
         https://bugs.webkit.org/show_bug.cgi?id=100981
 
