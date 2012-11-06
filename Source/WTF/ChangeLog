@@ -1,3 +1,17 @@
+2012-11-05  Philip Rogers  <pdr@google.com>
+
+        Unblock SVG external references
+        https://bugs.webkit.org/show_bug.cgi?id=100635
+
+        Reviewed by Adam Barth.
+
+        This patch reverts r132849 and r132869 because the potential XSS issue
+        turned out to not be an issue after all.
+
+        Covered by existing tests, many of which are re-whitelisted with this patch.
+
+        * wtf/Platform.h:
+
 2012-11-05  Dima Gorbik  <dgorbik@apple.com>
 
         Back out controversial changes from Bug 98665.

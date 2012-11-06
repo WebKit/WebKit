@@ -1360,6 +1360,13 @@ webkit.org/b/84230 svg/as-image/img-preserveAspectRatio-support-1.html [ ImageOn
 
 webkit.org/b/84719 [ Win ] svg/text/select-text-svgfont.html [ Failure Pass ]
 
+webkit.org/b/84854 [ Android Linux ] svg/batik/text/textOnPath.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/84854 [ Android Linux ] svg/batik/text/verticalTextOnPath.svg [ ImageOnlyFailure Pass ]
+
+# Just need a rebaseline.
+webkit.org/b/101248 svg/dynamic-updates/SVGUseElement-dom-href1-attr.html [ ImageOnlyFailure ]
+webkit.org/b/101248 svg/dynamic-updates/SVGUseElement-svgdom-href1-prop.html [ ImageOnlyFailure ]
+
 webkit.org/b/85107 svg/as-image/svg-as-relative-image-with-explicit-size.html [ ImageOnlyFailure Pass ]
 webkit.org/b/85107 svg/as-image/animated-svg-as-image.html [ ImageOnlyFailure Pass ]
 
@@ -2140,6 +2147,8 @@ crbug.com/40680 fast/media/media-query-list-04.html
 crbug.com/40680 fast/media/media-query-list-05.html
 crbug.com/40680 fast/media/media-query-list-06.html
 crbug.com/40680 fast/media/media-query-list-07.html
+
+crbug.com/117597 svg/batik/filters/feTile.svg [ ImageOnlyFailure ] 
 
 # Caused by http://trac.webkit.org/changeset/56394.
 crbug.com/143475 [ Win ] http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Failure Pass Timeout ]
@@ -3912,42 +3921,6 @@ crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/repaint/n
 crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/scrollbar-painting.html [ ImageOnlyFailure ]
 crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/absolute-position-changed-with-composited-parent-layer.html [ Skip ]
 crbug.com/152953 [ Win ] platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment.html [ ImageOnlyFailure ]
-
-# These tests disabled pending a security review of external SVG references.
-webkit.org/b/100635 css3/filters/effect-reference-external.html [ ImageOnlyFailure ]
-webkit.org/b/100635 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t.svg [ Failure ]
-webkit.org/b/100635 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t.svg [ Failure ]
-webkit.org/b/100635 svg/batik/filters/feTile.svg [ Failure ImageOnlyFailure ]
-webkit.org/b/100635 svg/batik/filters/filterRegions.svg [ Failure ]
-webkit.org/b/100635 svg/batik/masking/maskRegions.svg [ Failure ]
-webkit.org/b/100635 svg/batik/paints/patternPreserveAspectRatioA.svg [ Failure ]
-webkit.org/b/100635 svg/batik/paints/patternRegionA.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/longTextOnPath.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/smallFonts.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textAnchor.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textDecoration.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textEffect2.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textFeatures.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textLayout.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textLayout2.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textLength.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textOnPath.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textOnPathSpaces.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textPosition.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textPosition2.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textProperties.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textProperties2.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/textStyles.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/verticalText.svg [ Failure ]
-webkit.org/b/100635 svg/batik/text/verticalTextOnPath.svg [ Failure ]
-webkit.org/b/100635 svg/custom/use-extern-href.svg [ Failure ]
-webkit.org/b/100635 svg/custom/use-referencing-indirectly-itself.svg [ ImageOnlyFailure ]
-webkit.org/b/100635 svg/dynamic-updates/SVGUseElement-dom-href1-attr.html [ Timeout ]
-webkit.org/b/100635 svg/dynamic-updates/SVGUseElement-dom-href2-attr.html [ Timeout ]
-webkit.org/b/100635 svg/dynamic-updates/SVGUseElement-svgdom-href1-prop.html [ Timeout ]
-webkit.org/b/100635 svg/dynamic-updates/SVGUseElement-svgdom-href2-prop.html [ Timeout ]
-webkit.org/b/100635 svg/hixie/error/014.xml [ Failure ]
-webkit.org/b/100635 svg/hixie/use/002.xml [ Failure ]
 
 # Render surfaces do not draw anything in the software compositor.
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-alpha-large.html [ ImageOnlyFailure ]

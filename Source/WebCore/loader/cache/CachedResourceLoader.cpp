@@ -306,11 +306,6 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
         return 0;
     }
 
-#if ENABLE(SVG) && !ENABLE(EXTERNAL_SVG_REFERENCES)
-    if (type == CachedResource::SVGDocumentResource)
-        return false;
-#endif
-
     bool shouldBypassMainWorldContentSecurityPolicy = (frame() && frame()->script()->shouldBypassMainWorldContentSecurityPolicy());
 
     // Some types of resources can be loaded only from the same origin.  Other
