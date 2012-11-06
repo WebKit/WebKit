@@ -1,3 +1,15 @@
+2012-11-05  Anders Carlsson  <andersca@apple.com>
+
+        Hook up the remote layer tree drawing area to an environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=101267
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::sizeDidChange):
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange):
+
 2012-11-06  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Fit-to-width broken on pages with viewport meta tag

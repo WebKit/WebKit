@@ -46,6 +46,7 @@
 #import "PDFViewController.h"
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
+#import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
@@ -2277,8 +2278,12 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
 #if ENABLE(THREADED_SCROLLING)
-    if ([self _shouldUseTiledDrawingArea])
+    if ([self _shouldUseTiledDrawingArea]) {
+        if (getenv("WK_USE_REMOTE_LAYER_TREE_DRAWING_AREA"))
+            return RemoteLayerTreeDrawingAreaProxy::create(_data->_page.get());
+
         return TiledCoreAnimationDrawingAreaProxy::create(_data->_page.get());
+    }
 #endif
 
     return DrawingAreaProxyImpl::create(_data->_page.get());

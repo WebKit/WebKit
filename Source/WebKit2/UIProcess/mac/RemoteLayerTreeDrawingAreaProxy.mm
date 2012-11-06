@@ -42,4 +42,12 @@ RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
 {
 }
 
+void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
+{
+}
+
+void RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange()
+{
+}
+
 } // namespace WebKit
