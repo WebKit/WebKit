@@ -1906,23 +1906,6 @@ webkit.org/b/101330 [ Android ] compositing/overflow/image-load-overflow-scrollb
 webkit.org/b/101330 [ Android ] compositing/overflow/theme-affects-visual-overflow.html [ Skip ]
 webkit.org/b/101330 [ Android ] compositing/overflow/overflow-auto-with-touch-no-overflow.html [ Skip ]
 
-# Need rebaseline
-webkit.org/b/101186 fast/forms/date/date-appearance-basic.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/date/date-appearance-l10n.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/date/date-appearance-pseudo-classes.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/date/date-appearance-pseudo-elements.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/date/date-appearance-style.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/month/month-appearance-basic.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/month/month-appearance-l10n.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/month/month-appearance-pseudo-classes.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/month/month-appearance-pseudo-elements.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/month/month-appearance-style.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/time/time-appearance-basic.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/time/time-appearance-disabled-readonly.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/time/time-appearance-pseudo-classes.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/time/time-appearance-pseudo-elements.html [ ImageOnlyFailure ]
-webkit.org/b/101186 fast/forms/time/time-appearance-style.html [ ImageOnlyFailure ]
-
 #####################
 # Android tests which we'll probably want to triage. See comments for remarks
 # in more detail.
@@ -3550,7 +3533,7 @@ webkit.org/b/89812 [ Debug ] fast/parser/parser-yield-timing.html [ Failure Pass
 # Flaky
 webkit.org/b/89813 [ Android Linux Debug ] fast/js/large-expressions.html [ Pass Timeout ]
 
-webkit.org/b/89820 fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
+webkit.org/b/89820 [ Linux Win ] fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 
 # Kerning seems disabled for some reason.
 webkit.org/b/89936 [ XP ] fast/text/atsui-kerning-and-ligatures.html [ ImageOnlyFailure ]

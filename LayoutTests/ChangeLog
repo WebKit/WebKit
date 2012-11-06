@@ -1,3 +1,15 @@
+2012-11-06  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed chromium, chromium-mac-mountainlion gardening
+
+        Remove a bunch of passing tests, and clean up a couple of ML issues.
+
+        * platform/chromium-mac-lion/media/track/track-cue-rendering-horizontal-expected.png: Removed.
+        * platform/chromium-mac-lion/media/track/track-cue-rendering-horizontal-expected.txt: Removed.
+        * platform/chromium-mac/media/track/track-cue-rendering-horizontal-expected.png:
+        * platform/chromium-mac/media/track/track-cue-rendering-horizontal-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-11-06  John Griggs  <jgriggs@rim.com>
 
         Implement MediaPlayerPrivate::didLoadingProgress for BlackBerry platform
