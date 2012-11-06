@@ -1,3 +1,17 @@
+2012-11-06  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Refactor setting TEXTURE_MAPPER_GL
+        https://bugs.webkit.org/show_bug.cgi?id=99758
+
+        Reviewed by Noam Rosenthal.
+
+        Make the rule that sets the default for USE(3D_GRAPHICS) port independent.
+
+        If not set, set USE(TEXTURE_MAPPER_GL) when USE(TEXTURE_MAPPER) and 
+        USE(3D_GRAPHICS) is enabled.
+
+        * wtf/Platform.h:
+
 2012-11-05  Philip Rogers  <pdr@google.com>
 
         Unblock SVG external references
