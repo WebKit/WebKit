@@ -1,5 +1,17 @@
 2012-11-05  Lianghui Chen  <liachen@rim.com>
 
+        [BlackBerry] Do not show error page for main loads denied by client application
+        https://bugs.webkit.org/show_bug.cgi?id=101287
+
+        Internal PR: 237574.
+        Internally reviewed by Arvid Nilsson, Joe Mason.
+        Reviewed by George Staikos.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad):
+
+2012-11-05  Lianghui Chen  <liachen@rim.com>
+
         [BlackBerry] Do not display error page for failed downloads
         https://bugs.webkit.org/show_bug.cgi?id=101246
 

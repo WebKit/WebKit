@@ -709,6 +709,12 @@ void FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad(const ResourceE
     if (!isMainFrame())
         return;
 
+    if (error.domain() == ResourceError::platformErrorDomain
+        && (error.errorCode() == BlackBerry::Platform::FilterStream::StatusDeniedByApplication)) {
+        // Do not display error page for loading DENYed by application.
+        return;
+    }
+
     // Make sure we're still in the provisionalLoad state - getErrorPage runs a
     // nested event loop while it's waiting for client resources to load so
     // there's a small window for the user to hit stop.
