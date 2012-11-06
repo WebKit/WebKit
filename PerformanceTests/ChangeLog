@@ -1,3 +1,16 @@
+2012-11-06  Adam Barth  <abarth@webkit.org>
+
+        DOMImplementation should use ScriptWrappable
+        https://bugs.webkit.org/show_bug.cgi?id=101279
+
+        Reviewed by Eric Seidel.
+
+        This simple PerformanceTest measure how quickly we can access
+        document.implementation. The goal of this performance test is just to
+        validate that using ScriptWrappable actually makes the bindings faster.
+
+        * Bindings/document-implementation.html: Added.
+
 2012-11-05  Geoffrey Garen  <ggaren@apple.com>
 
         WebKit should have performance tests for book chapter reflow

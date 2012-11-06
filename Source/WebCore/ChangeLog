@@ -1,3 +1,19 @@
+2012-11-06  Adam Barth  <abarth@webkit.org>
+
+        DOMImplementation should use ScriptWrappable
+        https://bugs.webkit.org/show_bug.cgi?id=101279
+
+        Reviewed by Eric Seidel.
+
+        This patch makes DOMImplementation ScriptWrappable. Both the V8 and JSC
+        bindings automatically detect the presence of this base class and use
+        it to optimize getting and setting JavaScript wrappers.
+
+        This patch is a 23% progression on Bindings/document-implementation for
+        the V8 bindings and a 69% progression for the JSC bindings.
+
+        * dom/DOMImplementation.h:
+
 2012-11-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Speed up TransformationMatrix::multiply() on modern ARM

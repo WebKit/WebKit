@@ -42,7 +42,7 @@ class RegularExpression;
 
 typedef int ExceptionCode;
 
-class DOMImplementation {
+class DOMImplementation : public ScriptWrappable {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<DOMImplementation> create(Document* document) { return adoptPtr(new DOMImplementation(document)); }
