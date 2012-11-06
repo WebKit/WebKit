@@ -157,11 +157,11 @@ Node::InsertionNotificationRequest HTMLFrameElementBase::insertedInto(Node* inse
 {
     HTMLFrameOwnerElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument())
-        return InsertionShouldCallDidNotifyDescendantInseretions;
+        return InsertionShouldCallDidNotifySubtreeInsertions;
     return InsertionDone;
 }
 
-void HTMLFrameElementBase::didNotifyDescendantInseretions(Node* insertionPoint)
+void HTMLFrameElementBase::didNotifySubtreeInsertions(Node* insertionPoint)
 {
     ASSERT_UNUSED(insertionPoint, insertionPoint->inDocument());
 

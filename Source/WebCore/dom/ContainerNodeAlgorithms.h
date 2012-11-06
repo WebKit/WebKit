@@ -46,6 +46,7 @@ private:
     void notifyNodeInsertedIntoTree(ContainerNode*);
 
     Node* m_insertionPoint;
+    Vector< RefPtr<Node> > m_postInsertionNotificationTargets;
 };
 
 class ChildNodeRemovalNotifier {
@@ -196,8 +197,16 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoDocument(Node* nod
     if (node->isContainerNode())
         notifyDescendantInsertedIntoDocument(toContainerNode(node));
 
-    if (request == Node::InsertionShouldCallDidNotifyDescendantInseretions)
+    switch (request) {
+    case Node::InsertionDone:
+        break;
+    case Node::InsertionShouldCallDidNotifyDescendantInseretions:
         node->didNotifyDescendantInseretions(m_insertionPoint);
+        break;
+    case Node::InsertionShouldCallDidNotifySubtreeInsertions:
+        m_postInsertionNotificationTargets.append(node);
+        break;
+    }
 }
 
 inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode* node)
@@ -234,6 +243,9 @@ inline void ChildNodeInsertionNotifier::notify(Node* node)
         notifyNodeInsertedIntoDocument(node);
     else if (node->isContainerNode())
         notifyNodeInsertedIntoTree(toContainerNode(node));
+
+    for (size_t i = 0; i < m_postInsertionNotificationTargets.size(); ++i)
+        m_postInsertionNotificationTargets[i]->didNotifySubtreeInsertions(m_insertionPoint);
 }
 
 

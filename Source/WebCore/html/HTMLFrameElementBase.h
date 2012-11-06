@@ -55,7 +55,7 @@ protected:
 
     virtual void parseAttribute(Attribute*) OVERRIDE;
     virtual InsertionNotificationRequest insertedInto(Node*) OVERRIDE;
-    virtual void didNotifyDescendantInseretions(Node*) OVERRIDE;
+    virtual void didNotifySubtreeInsertions(Node*) OVERRIDE;
     virtual void attach();
 
 private:
