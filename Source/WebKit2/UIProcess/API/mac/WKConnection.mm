@@ -27,10 +27,17 @@
 #import "WKConnection.h"
 #import "WKConnectionInternal.h"
 
+#import "ArgumentCodersMac.h"
+#import "ArgumentDecoder.h"
+#import "ArgumentEncoder.h"
 #import "WKConnectionRef.h"
+#import "WKData.h"
 #import "WKRetainPtr.h"
+#import "WKString.h"
 #import "WKStringCF.h"
 #import <wtf/RetainPtr.h>
+
+using namespace WebKit;
 
 @interface WKConnectionData : NSObject {
 @public
@@ -55,6 +62,17 @@
     [super dealloc];
 }
 
+- (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody
+{
+    OwnPtr<CoreIPC::ArgumentEncoder> messageData = CoreIPC::ArgumentEncoder::create();
+    encode(*messageData, messageBody);
+
+    WKRetainPtr<WKStringRef> wkMessageName = adoptWK(WKStringCreateWithCFString((CFStringRef)messageName));
+    WKRetainPtr<WKDataRef> wkMessageBody = adoptWK(WKDataCreate(messageData->buffer(), messageData->bufferSize()));
+
+    WKConnectionPostMessage(_data->_connectionRef.get(), wkMessageName.get(), wkMessageBody.get());
+}
+
 #pragma mark Delegates
 
 - (id<WKConnectionDelegate>)delegate
@@ -75,9 +93,17 @@ static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRe
 {
     WKConnection *connection = (WKConnection *)clientInfo;
     if ([connection.delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
-        // FIXME: Add messageBody conversion.
         RetainPtr<CFStringRef> cfMessageName = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, messageName));
-        [connection.delegate connection:connection didReceiveMessageWithName:(NSString *)cfMessageName.get() body:nil];
+
+        WKDataRef messageData = (WKDataRef)messageBody;
+        OwnPtr<CoreIPC::ArgumentDecoder> decoder = CoreIPC::ArgumentDecoder::create(WKDataGetBytes(messageData), WKDataGetSize(messageData));
+
+        RetainPtr<id> messageDictionary;
+        // FIXME: Don't just silently drop decoding failures on the ground.
+        if (!decode(decoder.get(), messageDictionary))
+            return;
+
+        [connection.delegate connection:connection didReceiveMessageWithName:(NSString *)cfMessageName.get() body:messageDictionary.get()];
     }
 }
 

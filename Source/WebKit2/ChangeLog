@@ -1,3 +1,46 @@
+2012-11-05  Sam Weinig  <sam@webkit.org>
+
+        Need a way to send and receive messages between the WKWebProcessPlugIn object and the client
+        https://bugs.webkit.org/show_bug.cgi?id=101282
+
+        Reviewed by Anders Carlsson.
+
+        API wise, this adds:
+            - A connection property on the WKWebProcessPlugInController
+            - A method to send messages across a WKConnection (sendMessageWithName:body).
+
+        It also implements message sending and receiving for WKConnection. Message bodies are currently
+        restricted to being object graphs with values that are property list types, but in the future, should
+        support all types conforming to the NSSecureCoding protocol.
+
+        * Shared/WebConnection.cpp:
+        (WebKit::WebConnection::postMessage):
+        (WebKit::WebConnection::handleMessage):
+        * Shared/WebConnection.h:
+        (WebConnection):
+        * Shared/WebConnection.messages.in:
+        Switch HandleMessage to be a variadic message to avoid an extra copy and support attachments correctly.
+
+        * Shared/mac/ArgumentCodersMac.h:
+        * Shared/mac/ArgumentCodersMac.mm:
+        (CoreIPC::typeFromObject):
+        (CoreIPC::encode):
+        (CoreIPC::decode):
+        Add support for encoding/decoding NSArray, NSDate and NSData.
+
+        * UIProcess/API/mac/WKConnection.h:
+        * UIProcess/API/mac/WKConnection.mm:
+        (-[WKConnection sendMessageWithName:body:]):
+        (didReceiveMessage):
+        Implement message sending and receiving.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        (-[WKWebProcessPlugInController _initWithPrincipalClassInstance:bundleRef:]):
+        (-[WKWebProcessPlugInController connection]):
+        Add a wrapper for the WKConnectionRef vended via WKBundleGetApplicationConnection() and expose it as
+        API on the WKWebProcessPlugInController.
+
 2012-11-05  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Fix wrong coding style in the boilerplates

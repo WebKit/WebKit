@@ -63,7 +63,7 @@ protected:
 
     // Implemented in generated WebConnectionMessageReceiver.cpp
     void didReceiveWebConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    void handleMessage(const CoreIPC::DataReference& messageData);
+    void handleMessage(CoreIPC::MessageDecoder&);
 
     RefPtr<CoreIPC::Connection> m_connection;
     WebConnectionClient m_client;

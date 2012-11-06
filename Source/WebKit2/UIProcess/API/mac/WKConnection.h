@@ -41,6 +41,8 @@ WK_EXPORT
     WKConnectionData *_data;
 }
 
+- (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody;
+
 #pragma mark Delegates
 
 @property(assign) id<WKConnectionDelegate> delegate;

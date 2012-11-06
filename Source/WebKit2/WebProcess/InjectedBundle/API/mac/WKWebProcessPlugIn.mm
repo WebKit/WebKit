@@ -31,6 +31,7 @@
 #import "WKWebProcessPlugInInternal.h"
 
 #import "InjectedBundle.h"
+#import "WKConnectionInternal.h"
 #import "WKBundle.h"
 #import "WKBundleAPICast.h"
 #import "WKRetainPtr.h"
@@ -43,6 +44,7 @@ typedef HashMap<WKBundlePageRef, RetainPtr<WKWebProcessPlugInBrowserContextContr
     RetainPtr<id<WKWebProcessPlugIn> > _principalClassInstance;
     WKRetainPtr<WKBundleRef> _bundleRef;
     BundlePageWrapperCache _bundlePageWrapperCache;
+    RetainPtr<WKConnection *> _connectionWrapper;
 }
 @end
 
@@ -111,6 +113,7 @@ static WKWebProcessPlugInController *sharedInstance;
 
     _principalClassInstance = principalClassInstance;
     _bundleRef = bundleRef;
+    _connectionWrapper = adoptNS([[WKConnection alloc] _initWithConnectionRef:WKBundleGetApplicationConnection(_bundleRef.get())]);
 
     ASSERT_WITH_MESSAGE(!sharedInstance, "WKWebProcessPlugInController initialized multiple times.");
     sharedInstance = self;
@@ -123,6 +126,11 @@ static WKWebProcessPlugInController *sharedInstance;
 @end
 
 @implementation WKWebProcessPlugInController
+
+- (WKConnection *)connection
+{
+    return _connectionWrapper.get();
+}
 
 @end
 

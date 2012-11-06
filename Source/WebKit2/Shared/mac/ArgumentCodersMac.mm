@@ -43,11 +43,14 @@ enum NSType {
     NSColorType,
 #endif
     NSDictionaryType,
+    NSArrayType,
 #if USE(APPKIT)
     NSFontType,
 #endif
     NSNumberType,
     NSStringType,
+    NSDateType,
+    NSDataType,
     Unknown,
 };
 
@@ -71,12 +74,18 @@ static NSType typeFromObject(id object)
         return NSNumberType;
     if ([object isKindOfClass:[NSString class]])
         return NSStringType;
+    if ([object isKindOfClass:[NSArray class]])
+        return NSArrayType;
+    if ([object isKindOfClass:[NSDate class]])
+        return NSDateType;
+    if ([object isKindOfClass:[NSData class]])
+        return NSDataType;
 
     ASSERT_NOT_REACHED();
     return Unknown;
 }
 
-static void encode(ArgumentEncoder& encoder, id object)
+void encode(ArgumentEncoder& encoder, id object)
 {
     NSType type = typeFromObject(object);
     encoder.encodeEnum(type);
@@ -104,6 +113,15 @@ static void encode(ArgumentEncoder& encoder, id object)
     case NSStringType:
         encode(encoder, static_cast<NSString *>(object));
         return;
+    case NSArrayType:
+        encode(encoder, static_cast<NSArray *>(object));
+        return;
+    case NSDateType:
+        encode(encoder, static_cast<NSDate *>(object));
+        return;
+    case NSDataType:
+        encode(encoder, static_cast<NSData *>(object));
+        return;
     case Unknown:
         break;
     }
@@ -111,7 +129,7 @@ static void encode(ArgumentEncoder& encoder, id object)
     ASSERT_NOT_REACHED();
 }
 
-static bool decode(ArgumentDecoder* decoder, RetainPtr<id>& result)
+bool decode(ArgumentDecoder* decoder, RetainPtr<id>& result)
 {
     NSType type;
     if (!decoder->decodeEnum(type))
@@ -162,6 +180,27 @@ static bool decode(ArgumentDecoder* decoder, RetainPtr<id>& result)
         if (!decode(decoder, string))
             return false;
         result = string;
+        return true;
+    }
+    case NSArrayType: {
+        RetainPtr<NSArray> array;
+        if (!decode(decoder, array))
+            return false;
+        result = array;
+        return true;
+    }
+    case NSDateType: {
+        RetainPtr<NSDate> date;
+        if (!decode(decoder, date))
+            return false;
+        result = date;
+        return true;
+    }
+    case NSDataType: {
+        RetainPtr<NSData> data;
+        if (!decode(decoder, data))
+            return false;
+        result = data;
         return true;
     }
     case Unknown:
@@ -356,6 +395,71 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSString>& result)
         return false;
 
     result.adoptCF((NSString *)string.leakRef());
+    return true;
+}
+
+void encode(ArgumentEncoder& encoder, NSArray *array)
+{
+    NSUInteger size = [array count];
+    encoder << static_cast<uint64_t>(size);
+
+    for (NSUInteger i = 0; i < size; ++i) {
+        id value = [array objectAtIndex:i];
+
+        // Ignore values we don't recognize.
+        if (typeFromObject(value) == Unknown)
+            continue;
+
+        encode(encoder, value);
+    }
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<NSArray>& result)
+{
+    uint64_t size;
+    if (!decoder->decodeUInt64(size))
+        return false;
+
+    RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] initWithCapacity:size]);
+    for (uint64_t i = 0; i < size; ++i) {
+        RetainPtr<id> value;
+        if (!decode(decoder, value))
+            return false;
+
+        [array.get() addObject:value.get()];
+    }
+
+    result.adoptNS(array.leakRef());
+    return true;
+}
+
+void encode(ArgumentEncoder& encoder, NSDate *date)
+{
+    encode(encoder, (CFDateRef)date);
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<NSDate>& result)
+{
+    RetainPtr<CFDateRef> date;
+    if (!decode(decoder, date))
+        return false;
+
+    result.adoptCF((NSDate *)date.leakRef());
+    return true;
+}
+
+void encode(ArgumentEncoder& encoder, NSData *data)
+{
+    encode(encoder, (CFDataRef)data);
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<NSData>& result)
+{
+    RetainPtr<CFDataRef> data;
+    if (!decode(decoder, data))
+        return false;
+
+    result.adoptCF((NSData *)data.leakRef());
     return true;
 }
 

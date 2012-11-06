@@ -28,6 +28,7 @@
 #import <Foundation/Foundation.h>
 #import <WebKit2/WKBase.h>
 
+@class WKConnection;
 @class WKWebProcessPlugInController;
 @class WKWebProcessPlugInBrowserContextController;
 
@@ -40,6 +41,9 @@
 
 WK_EXPORT
 @interface WKWebProcessPlugInController : NSObject
+
+@property(readonly) WKConnection *connection;
+
 @end
 
 #endif // defined(__LP64__) && defined(__clang__)
