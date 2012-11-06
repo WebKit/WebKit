@@ -1706,7 +1706,6 @@ webkit.org/b/98763 [ Android ] platform/chromium/virtual/softwarecompositing/rtl
 webkit.org/b/98763 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-absolute.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-overflow-invalidation.html [ ImageOnlyFailure ]
 
-
 # [Chromium-Android] Some compositing tests have a blue mock scrollbar instead of an actual one
 webkit.org/b/98816 [ Android ] compositing/rtl/rtl-absolute-overflow-scrolled.html [ ImageOnlyFailure ]
 webkit.org/b/98816 [ Android ] compositing/rtl/rtl-absolute-overflow.html [ ImageOnlyFailure ]
@@ -1880,6 +1879,17 @@ webkit.org/b/98901 [ Android ] fast/multicol/image-inside-nested-blocks-with-bor
 
 # [Chromium-Android] Some frame-related tests are timing out
 webkit.org/b/98900 [ Android ] fast/dom/frame-loading-via-document-write.html [ Timeout Pass ]
+
+# [Chromium-Android] A lot of layout tests related to composited 3D transforms/perspective elements are crashing
+webkit.org/b/101330 [ Android ] platform/chromium/virtual/threaded/compositing/visibility/visibility-composited-transforms.html [ Skip ]
+webkit.org/b/101330 [ Android ] platform/chromium/virtual/threaded/compositing/visibility/visibility-composited.html [ Skip ]
+webkit.org/b/101330 [ Android ] platform/chromium/virtual/softwarecompositing/overflow/image-load-overflow-scrollbars.html [ Skip ]
+webkit.org/b/101330 [ Android ] platform/chromium/virtual/softwarecompositing/overflow/theme-affects-visual-overflow.html [ Skip ]
+webkit.org/b/101330 [ Android ] platform/chromium/virtual/softwarecompositing/overflow/overflow-auto-with-touch-no-overflow.html [ Skip ]
+webkit.org/b/101330 [ Android ] platform/chromium/virtual/threaded/compositing/visibility/layer-visible-content.html [ Skip ]
+webkit.org/b/101330 [ Android ] compositing/overflow/image-load-overflow-scrollbars.html [ Skip ]
+webkit.org/b/101330 [ Android ] compositing/overflow/theme-affects-visual-overflow.html [ Skip ]
+webkit.org/b/101330 [ Android ] compositing/overflow/overflow-auto-with-touch-no-overflow.html [ Skip ]
 
 # Need rebaseline
 webkit.org/b/101186 fast/forms/date/date-appearance-basic.html [ ImageOnlyFailure ]

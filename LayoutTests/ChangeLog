@@ -1,3 +1,11 @@
+2012-11-06  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium-Android] Skip a number of crashing tests.
+
+        Unreviewed rebaselining.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Using isUnknownPseudoElement() for shadow pseudo id seems confusing
