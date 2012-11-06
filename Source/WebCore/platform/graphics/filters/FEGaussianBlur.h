@@ -75,6 +75,7 @@ private:
     inline void platformApplyGeneric(Uint8ClampedArray* srcPixelArray, Uint8ClampedArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
 #if USE(SKIA)
     virtual bool platformApplySkia();
+    virtual SkImageFilter* createImageFilter(SkiaImageFilterBuilder*);
 #endif
 
     float m_stdX;

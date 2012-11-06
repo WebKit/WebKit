@@ -51,6 +51,7 @@ public:
                            unsigned colorArrayLength);
 #if USE(SKIA)
     virtual bool platformApplySkia();
+    virtual SkImageFilter* createImageFilter(SkiaImageFilterBuilder*);
 #endif
 
     virtual void platformApplySoftware();

@@ -29,7 +29,9 @@
 #include "FEComponentTransfer.h"
 
 #include "NativeImageSkia.h"
+#include "SkColorFilterImageFilter.h"
 #include "SkTableColorFilter.h"
+#include "SkiaImageFilterBuilder.h"
 
 namespace WebCore {
 
@@ -53,6 +55,18 @@ bool FEComponentTransfer::platformApplySkia()
     canvas->drawBitmap(bitmap, 0, 0, &paint);
 
     return true;
+}
+
+SkImageFilter* FEComponentTransfer::createImageFilter(SkiaImageFilterBuilder* builder)
+{
+    SkImageFilter* input = builder->build(inputEffect(0));
+
+    unsigned char rValues[256], gValues[256], bValues[256], aValues[256];
+    getValues(rValues, gValues, bValues, aValues);
+
+    SkAutoTUnref<SkColorFilter> colorFilter(SkTableColorFilter::CreateARGB(aValues, rValues, gValues, bValues));
+
+    return SkColorFilterImageFilter::Create(colorFilter, input);
 }
 
 } // namespace WebCore

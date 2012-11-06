@@ -1,3 +1,67 @@
+2012-10-23  Stephen White  <senorblanco@chromium.org>
+
+        [skia] Implement reference (url) filters on composited layers.
+        https://bugs.webkit.org/show_bug.cgi?id=100142
+
+        Reviewed by James Robinson.
+
+        Covered by css3/filters/effect-reference-hw.html
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        Add new files.
+        * WebCore.xcodeproj/project.pbxproj:
+        Mark FilterEffect.h as "private".
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setFilters):
+        Use the new SkImageFilter builder and setLayer() infrastructure, but
+        only if there's a reference filter in the chain.
+        * platform/graphics/filters/FEBlend.h:
+        * platform/graphics/filters/FEColorMatrix.h:
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FELighting.h:
+        * platform/graphics/filters/FEMorphology.h:
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::createImageFilter):
+        Add createImageFilter() factory function for building SkImageFilters.
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore::FilterOperation::ReferenceFilterOperation::filterEffect):
+        (WebCore::FilterOperation::ReferenceFilterOperation::setFilterEffect):
+        Add a FilterEffect member to ReferenceFilterOperation, and accessors
+        for it.
+        * platform/graphics/filters/skia/FEBlendSkia.cpp:
+        (WebCore::FEBlend::createImageFilter):
+        Implement SkImageFilter building for FEBlend filter.
+        * platform/graphics/filters/skia/FEColorMatrixSkia.cpp:
+        (WebCore::createColorFilter):
+        (WebCore::FEColorMatrix::platformApplySkia):
+        Refactor creation of SkColorFilter from an FEColorMatrix filter.
+        (WebCore::FEColorMatrix::createImageFilter):
+        Implement SkImageFilter building for FEColorMatrix filter.
+        * platform/graphics/filters/skia/FEGaussianBlurSkia.cpp:
+        (WebCore::FEGaussianBlur::createImageFilter):
+        Implement SkImageFilter building for FEGaussianBlur filter.
+        * platform/graphics/filters/skia/FELightingSkia.cpp:
+        (WebCore::FELighting::createImageFilter):
+        Implement SkImageFilter building for FELighting filters.
+        * platform/graphics/filters/skia/FEMorphologySkia.cpp:
+        (WebCore::FEMorphology::createImageFilter):
+        Implement SkImageFilter building for FEMorphology filter.
+        * platform/graphics/filters/skia/SkiaImageFilterBuilder.cpp: Added.
+        (WebCore::SkiaImageFilterBuilder::SkiaImageFilterBuilder):
+        (WebCore::SkiaImageFilterBuilder::build):
+        * platform/graphics/filters/skia/SkiaImageFilterBuilder.h:
+        Implement new helper class for building an SkImageFilter DAG from
+        a FilterEffect DAG.  Can also build from FilterOperations list.
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::build):
+        When building FilterEffects from a reference filter, also store the
+        generated DAG on the ReferenceFilterOperation itself.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateOrRemoveFilterEffect):
+        Even when in composited mode, if there's a reference filter in the 
+        chain, build the FilterEffect DAG from it.
+
 2012-11-06  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Automatically go fullscreen on video play

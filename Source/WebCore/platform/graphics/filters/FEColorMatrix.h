@@ -51,6 +51,7 @@ public:
     virtual void platformApplySoftware();
 #if USE(SKIA)
     virtual bool platformApplySkia();
+    virtual SkImageFilter* createImageFilter(SkiaImageFilterBuilder*);
 #endif
     virtual void dump();
 

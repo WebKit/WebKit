@@ -113,6 +113,7 @@
       '../platform/graphics/chromium/cc',
       '../platform/graphics/filters',
       '../platform/graphics/filters/arm',
+      '../platform/graphics/filters/skia',
       '../platform/graphics/gpu',
       '../platform/graphics/opentype',
       '../platform/graphics/skia',

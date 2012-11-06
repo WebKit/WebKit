@@ -204,7 +204,9 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
         FilterOperation* filterOperation = operations.operations().at(i).get();
         switch (filterOperation->getOperationType()) {
         case FilterOperation::REFERENCE: {
-            effect = buildReferenceFilter(document, previousEffect, static_cast<ReferenceFilterOperation*>(filterOperation));
+            ReferenceFilterOperation* referenceOperation = static_cast<ReferenceFilterOperation*>(filterOperation);
+            effect = buildReferenceFilter(document, previousEffect, referenceOperation);
+            referenceOperation->setFilterEffect(effect);
             break;
         }
         case FilterOperation::GRAYSCALE: {

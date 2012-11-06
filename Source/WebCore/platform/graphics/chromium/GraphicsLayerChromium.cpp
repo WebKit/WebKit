@@ -54,7 +54,9 @@
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #include "ScrollableArea.h"
+#include "SkImageFilter.h"
 #include "SkMatrix44.h"
+#include "SkiaImageFilterBuilder.h"
 #include "SystemTime.h"
 #include <public/Platform.h>
 #include <public/WebAnimation.h>
@@ -381,15 +383,25 @@ static bool copyWebCoreFilterOperationsToWebFilterOperations(const FilterOperati
 
 bool GraphicsLayerChromium::setFilters(const FilterOperations& filters)
 {
-    WebFilterOperations webFilters;
-    if (!copyWebCoreFilterOperationsToWebFilterOperations(filters, webFilters)) {
-        // Make sure the filters are removed from the platform layer, as they are
-        // going to fallback to software mode.
-        m_layer->layer()->setFilters(WebFilterOperations());
-        GraphicsLayer::setFilters(FilterOperations());
-        return false;
+    // FIXME: For now, we only use SkImageFilters if there is a reference
+    // filter in the chain. Once all issues have been ironed out, we should
+    // switch all filtering over to this path, and remove setFilters() and
+    // WebFilterOperations altogether.
+    if (filters.hasReferenceFilter()) {
+        SkiaImageFilterBuilder builder;
+        SkAutoTUnref<SkImageFilter> imageFilter(builder.build(filters));
+        m_layer->layer()->setFilter(imageFilter);
+    } else {
+        WebFilterOperations webFilters;
+        if (!copyWebCoreFilterOperationsToWebFilterOperations(filters, webFilters)) {
+            // Make sure the filters are removed from the platform layer, as they are
+            // going to fallback to software mode.
+            m_layer->layer()->setFilters(WebFilterOperations());
+            GraphicsLayer::setFilters(FilterOperations());
+            return false;
+        }
+        m_layer->layer()->setFilters(webFilters);
     }
-    m_layer->layer()->setFilters(webFilters);
     return GraphicsLayer::setFilters(filters);
 }
 

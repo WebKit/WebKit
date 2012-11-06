@@ -31,6 +31,7 @@
 #include "NativeImageSkia.h"
 #include "SkBitmapSource.h"
 #include "SkBlendImageFilter.h"
+#include "SkiaImageFilterBuilder.h"
 
 namespace WebCore {
 
@@ -82,6 +83,14 @@ bool FEBlend::platformApplySkia()
     SkCanvas* canvas = resultImage->context()->platformContext()->canvas();
     canvas->drawBitmap(foregroundBitmap, 0, 0, &paint);
     return true;
+}
+
+SkImageFilter* FEBlend::createImageFilter(SkiaImageFilterBuilder* builder)
+{
+    SkImageFilter* foreground = builder->build(inputEffect(0));
+    SkImageFilter* background = builder->build(inputEffect(1));
+    SkBlendImageFilter::Mode mode = toSkiaMode(m_mode);
+    return new SkBlendImageFilter(mode, background, foreground);
 }
 
 } // namespace WebCore

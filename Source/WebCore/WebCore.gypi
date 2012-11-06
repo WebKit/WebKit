@@ -5053,6 +5053,8 @@
             'platform/graphics/filters/skia/FEGaussianBlurSkia.cpp',
             'platform/graphics/filters/skia/FEMorphologySkia.cpp',
             'platform/graphics/filters/skia/FELightingSkia.cpp',
+            'platform/graphics/filters/skia/SkiaImageFilterBuilder.cpp',
+            'platform/graphics/filters/skia/SkiaImageFilterBuilder.h',
             'platform/graphics/freetype/FontCacheFreeType.cpp',
             'platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp',
             'platform/graphics/freetype/FontPlatformData.h',

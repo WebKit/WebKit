@@ -1,7 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" version="1.1">
   <defs>
-    <filter id="MyFilter">
+    <filter id="colormatrix">
       <feColorMatrix type="hueRotate" values="180"/>
+    </filter>
+    <filter id="morphology">
+      <feMorphology radius="10" operator="dilate"/>
+    </filter>
+    <filter id="componenttransfer">
+      <feComponentTransfer>
+        <feFuncR type="linear" slope="0.5">
+        <feFuncG type="linear" slope="0.5">
+        <feFuncB type="linear" slope="0.5">
+        <feFuncA type="identity">
+      </feComponentTransfer>
+    </filter>
+    <filter id="blurY">
+      <feGaussianBlur stdDeviation="0 5"/>
     </filter>
   </defs>
 </svg>
@@ -10,4 +24,8 @@ img {
     margin: 10px;
 }
 </style>
-<img style="-webkit-filter: url(#MyFilter); filter: url(#MyFilter);" src="resources/reference.png">
+<img src="resources/reference.png">
+<img style="-webkit-filter: url(#colormatrix); filter: url(#colormatrix);" src="resources/reference.png">
+<img style="-webkit-filter: url(#morphology); filter: url(#morphology);" src="resources/reference.png">
+<img style="-webkit-filter: url(#componenttransfer); filter: url(#componenttransfer);" src="resources/reference.png">
+<img style="-webkit-filter: url(#blurY); filter: url(#blurY);" src="resources/reference.png">

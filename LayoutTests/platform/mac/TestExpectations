@@ -1161,3 +1161,7 @@ platform/mac/tiled-drawing/ [ Skip ]
 
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Skip ]
+
+webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Fail ]
+webkit.org/b/100142 css3/filters/effect-reference-ordering-hw.html [ Fail ]
+webkit.org/b/100142 css3/filters/effect-reference.html [ Fail ]

@@ -28,7 +28,9 @@
 #include "FEColorMatrix.h"
 
 #include "NativeImageSkia.h"
+#include "SkColorFilterImageFilter.h"
 #include "SkColorMatrixFilter.h"
+#include "SkiaImageFilterBuilder.h"
 
 namespace WebCore {
 
@@ -80,6 +82,34 @@ static void luminanceToAlphaMatrix(SkScalar matrix[20])
     matrix[17] = 0.0721f;
 }
 
+static SkColorFilter* createColorFilter(ColorMatrixType type, const float* values)
+{
+    SkScalar matrix[20];
+    switch (type) {
+    case FECOLORMATRIX_TYPE_UNKNOWN:
+        break;
+    case FECOLORMATRIX_TYPE_MATRIX:
+        for (int i = 0; i < 20; ++i)
+            matrix[i] = values[i];
+
+        matrix[4] *= SkScalar(255);
+        matrix[9] *= SkScalar(255);
+        matrix[14] *= SkScalar(255);
+        matrix[19] *= SkScalar(255);
+        break;
+    case FECOLORMATRIX_TYPE_SATURATE: 
+        saturateMatrix(values[0], matrix);
+        break;
+    case FECOLORMATRIX_TYPE_HUEROTATE:
+        hueRotateMatrix(values[0], matrix);
+        break;
+    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
+        luminanceToAlphaMatrix(matrix);
+        break;
+    }
+    return new SkColorMatrixFilter(matrix);
+}
+
 bool FEColorMatrix::platformApplySkia()
 {
     ImageBuffer* resultImage = createImageBufferResult();
@@ -90,30 +120,7 @@ bool FEColorMatrix::platformApplySkia()
 
     IntRect imageRect(IntPoint(), absolutePaintRect().size());
 
-    SkScalar matrix[20];
-
-    switch (m_type) {
-    case FECOLORMATRIX_TYPE_UNKNOWN:
-        break;
-    case FECOLORMATRIX_TYPE_MATRIX:
-        for (int i = 0; i < 20; ++i)
-            matrix[i] = m_values[i];
-
-        matrix[4] *= SkScalar(255);
-        matrix[9] *= SkScalar(255);
-        matrix[14] *= SkScalar(255);
-        matrix[19] *= SkScalar(255);
-        break;
-    case FECOLORMATRIX_TYPE_SATURATE: 
-        saturateMatrix(m_values[0], matrix);
-        break;
-    case FECOLORMATRIX_TYPE_HUEROTATE:
-        hueRotateMatrix(m_values[0], matrix);
-        break;
-    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-        luminanceToAlphaMatrix(matrix);
-        break;
-    }
+    SkAutoTUnref<SkColorFilter> filter(createColorFilter(m_type, m_values.data()));
 
     RefPtr<Image> image = in->asImageBuffer()->copyImage(DontCopyBackingStore);
     NativeImageSkia* nativeImage = image->nativeImageForCurrentFrame();
@@ -122,10 +129,17 @@ bool FEColorMatrix::platformApplySkia()
 
     SkCanvas* canvas = resultImage->context()->platformContext()->canvas();
     SkPaint paint;
-    paint.setColorFilter(new SkColorMatrixFilter(matrix))->unref();
+    paint.setColorFilter(filter);
     paint.setXfermodeMode(SkXfermode::kSrc_Mode);
     canvas->drawBitmap(nativeImage->bitmap(), 0, 0, &paint);
     return true;
+}
+
+SkImageFilter* FEColorMatrix::createImageFilter(SkiaImageFilterBuilder* builder)
+{
+    SkAutoTUnref<SkImageFilter> input(builder->build(inputEffect(0)));
+    SkAutoTUnref<SkColorFilter> filter(createColorFilter(m_type, m_values.data()));
+    return SkColorFilterImageFilter::Create(filter, input);
 }
 
 } // namespace WebCore

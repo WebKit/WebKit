@@ -5170,7 +5170,12 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
         // for loading CSS shader files.
         if (RenderLayerFilterInfo* filterInfo = this->filterInfo())
             filterInfo->setRenderer(0);
-        return;
+
+        // Early-return only if we *don't* have reference filters.
+        // For reference filters, we still want the FilterEffect graph built
+        // for us, even if we're composited.
+        if (!renderer()->style()->filter().hasReferenceFilter())
+            return;
     }
     
     RenderLayerFilterInfo* filterInfo = ensureFilterInfo();

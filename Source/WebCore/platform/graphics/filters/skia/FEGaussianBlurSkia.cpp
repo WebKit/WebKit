@@ -29,6 +29,7 @@
 
 #include "BitmapImageSingleFrameSkia.h"
 #include "SkBlurImageFilter.h"
+#include "SkiaImageFilterBuilder.h"
 
 namespace WebCore {
 
@@ -59,6 +60,12 @@ bool FEGaussianBlur::platformApplySkia()
     dstContext->drawImage(image.get(), ColorSpaceDeviceRGB, drawingRegion.location(), CompositeCopy);
     platformContext->restoreLayer();
     return true;
+}
+
+SkImageFilter* FEGaussianBlur::createImageFilter(SkiaImageFilterBuilder* builder)
+{
+    SkAutoTUnref<SkImageFilter> input(builder->build(inputEffect(0)));
+    return new SkBlurImageFilter(SkFloatToScalar(m_stdX), SkFloatToScalar(m_stdY), input);
 }
 
 };

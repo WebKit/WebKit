@@ -28,6 +28,7 @@
 #include "FEMorphology.h"
 
 #include "SkMorphologyImageFilter.h"
+#include "SkiaImageFilterBuilder.h"
 
 namespace WebCore {
 
@@ -60,6 +61,16 @@ bool FEMorphology::platformApplySkia()
     dstContext->drawImage(image.get(), ColorSpaceDeviceRGB, drawingRegion.location(), CompositeCopy);
     platformContext->restoreLayer();
     return true;
+}
+
+SkImageFilter* FEMorphology::createImageFilter(SkiaImageFilterBuilder* builder)
+{
+    SkAutoTUnref<SkImageFilter> input(builder->build(inputEffect(0)));
+    SkScalar radiusX = SkFloatToScalar(m_radiusX);
+    SkScalar radiusY = SkFloatToScalar(m_radiusY);
+    if (m_type == FEMORPHOLOGY_OPERATOR_DILATE)
+        return new SkDilateImageFilter(radiusX, radiusY, input);
+    return new SkErodeImageFilter(radiusX, radiusY, input);
 }
 
 };
