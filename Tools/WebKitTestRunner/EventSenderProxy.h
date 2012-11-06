@@ -127,7 +127,7 @@ private:
 #endif
 #elif PLATFORM(EFL)
     Deque<WTREvent> m_eventQueue;
-    unsigned m_mouseButton;
+    WKEventMouseButton m_mouseButton;
 #if ENABLE(TOUCH_EVENTS)
     Eina_List* m_touchPoints;
 #endif

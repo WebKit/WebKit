@@ -1,3 +1,26 @@
+2012-11-06  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][WTR] EventSender: Get rid of the WTRMouseButton enum.
+        https://bugs.webkit.org/show_bug.cgi?id=101340
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Get rid of an enum which was basically a duplicate of the
+        WKEventMouseButton one in the shared API.
+
+        The only difference is that it also had a case for a 4th mouse
+        button that we treat in a special way in evasMouseButton() now.
+
+        * WebKitTestRunner/EventSenderProxy.h:
+        (EventSenderProxy):
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        (WTR::evasMouseButton):
+        (WTR::EventSenderProxy::EventSenderProxy):
+        (WTR::EventSenderProxy::mouseUp):
+        (WTR::EventSenderProxy::mouseMoveTo):
+        (WTR::EventSenderProxy::mouseScrollBy):
+        (WTR::EventSenderProxy::leapForward):
+
 2012-11-06  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL][WK2] Minibrowser forgets http variables when url includes ampersand

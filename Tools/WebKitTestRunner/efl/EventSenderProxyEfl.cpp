@@ -56,14 +56,6 @@ enum WTREventType {
     WTREventTypeLeapForward
 };
 
-enum WTRMouseButton {
-    WTRMouseButtonNone = -1,
-    WTRMouseButtonLeft,
-    WTRMouseButtonMiddle,
-    WTRMouseButtonRight,
-    WTRMouseButtonMiddleDuplicated,
-};
-
 enum EvasMouseButton {
     EvasMouseButtonNone = 0,
     EvasMouseButtonLeft,
@@ -121,15 +113,14 @@ struct KeyEventInfo : public RefCounted<KeyEventInfo> {
 
 static unsigned evasMouseButton(unsigned button)
 {
-    if (button == WTRMouseButtonLeft)
-        return EvasMouseButtonLeft;
-    if (button == WTRMouseButtonMiddle)
+    // The common case involves converting from a WKEventMouseButton (which
+    // starts at -1) to an EvasMouseButton (which a starts at 0). The special
+    // case for button 3 exists because of fast/events/mouse-click-events.html,
+    // which tests whether a 4th mouse button behaves as the middle one.
+    if (button <= kWKEventMouseButtonRightButton)
+        return button + 1;
+    if (button == kWKEventMouseButtonRightButton + 1)
         return EvasMouseButtonMiddle;
-    if (button == WTRMouseButtonRight)
-        return EvasMouseButtonRight;
-    if (button == WTRMouseButtonMiddleDuplicated)
-        return EvasMouseButtonMiddle;
-
     return EvasMouseButtonNone;
 }
 
@@ -292,8 +283,8 @@ EventSenderProxy::EventSenderProxy(TestController* testController)
     , m_leftMouseButtonDown(false)
     , m_clickCount(0)
     , m_clickTime(0)
-    , m_clickButton(WTRMouseButtonNone)
-    , m_mouseButton(WTRMouseButtonNone)
+    , m_clickButton(kWKEventMouseButtonNoButton)
+    , m_mouseButton(kWKEventMouseButtonNoButton)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchPoints(0)
 #endif
@@ -371,7 +362,7 @@ void EventSenderProxy::mouseUp(unsigned button, WKEventModifiers wkModifiers)
     sendOrQueueEvent(WTREvent(WTREventTypeMouseUp, 0, wkModifiers, evasMouseButton(button)));
 
     if (m_mouseButton == button)
-        m_mouseButton = WTRMouseButtonNone;
+        m_mouseButton = kWKEventMouseButtonNoButton;
 
     m_clickPosition = m_position;
     m_clickTime = ecore_time_get();
@@ -382,12 +373,12 @@ void EventSenderProxy::mouseMoveTo(double x, double y)
     m_position.x = x;
     m_position.y = y;
 
-    sendOrQueueEvent(WTREvent(WTREventTypeMouseMove, 0, 0, WTRMouseButtonNone));
+    sendOrQueueEvent(WTREvent(WTREventTypeMouseMove, 0, 0, kWKEventMouseButtonNoButton));
 }
 
 void EventSenderProxy::mouseScrollBy(int horizontal, int vertical)
 {
-    WTREvent event(WTREventTypeMouseScrollBy, 0, 0, WTRMouseButtonNone);
+    WTREvent event(WTREventTypeMouseScrollBy, 0, 0, kWKEventMouseButtonNoButton);
     // We need to invert scrolling values since in EFL negative z value means that
     // canvas is scrolling down
     event.horizontal = -horizontal;
@@ -403,7 +394,7 @@ void EventSenderProxy::continuousMouseScrollBy(int horizontal, int vertical, boo
 void EventSenderProxy::leapForward(int milliseconds)
 {
     if (m_eventQueue.isEmpty())
-        m_eventQueue.append(WTREvent(WTREventTypeLeapForward, milliseconds, 0, WTRMouseButtonNone));
+        m_eventQueue.append(WTREvent(WTREventTypeLeapForward, milliseconds, 0, kWKEventMouseButtonNoButton));
 
     m_time += milliseconds / 1000.0;
 }
