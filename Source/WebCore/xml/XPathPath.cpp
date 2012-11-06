@@ -93,11 +93,16 @@ Value LocationPath::evaluate() const
 {
     EvaluationContext& evaluationContext = Expression::evaluationContext();
     EvaluationContext backupContext = evaluationContext;
-    // For absolute location paths, the context node is ignored - the
-    // document's root node is used instead.
+    // For absolute location paths, the context node is ignored. The
+    // document's root node is used for attached nodes, otherwise the root
+    // node of the detached subtree is used.
     Node* context = evaluationContext.node.get();
-    if (m_absolute && context->nodeType() != Node::DOCUMENT_NODE) 
-        context = context->ownerDocument();
+    if (m_absolute && context->nodeType() != Node::DOCUMENT_NODE)  {
+        if (context->inDocument())
+            context = context->ownerDocument();
+        else
+            context = context->highestAncestor();
+    }
 
     NodeSet nodes;
     nodes.append(context);
