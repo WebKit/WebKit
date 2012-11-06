@@ -1,3 +1,9 @@
+2012-11-06  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-11-05  Adam Barth  <abarth@webkit.org>
 
         [V8] IntrusiveDOMWrapperMap should be usable for more than just Nodes
