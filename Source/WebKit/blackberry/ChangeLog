@@ -1,3 +1,14 @@
+2012-11-06  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Adding window.external to our port
+        https://bugs.webkit.org/show_bug.cgi?id=100868
+
+        Reviewed by Rob Buis.
+
+        Patching the method names to match the ones in the spec.
+
+        * WebCoreSupport/ExternalExtension.cpp:
+
 2012-11-06  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Page can't back to whole screen after zoom out and orientation change

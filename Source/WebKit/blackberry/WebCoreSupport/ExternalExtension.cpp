@@ -108,8 +108,8 @@ static void externalExtensionFinalize(JSObjectRef object)
 }
 
 static JSStaticFunction externalExtensionStaticFunctions[] = {
-    { "addSearchProvider", addSearchProviderMethod, kJSPropertyAttributeNone },
-    { "isSearchProviderInstalled", IsSearchProviderInstalledMethod, kJSPropertyAttributeReadOnly },
+    { "AddSearchProvider", addSearchProviderMethod, kJSPropertyAttributeNone },
+    { "IsSearchProviderInstalled", IsSearchProviderInstalledMethod, kJSPropertyAttributeReadOnly },
     { 0, 0, 0 }
 };
 
