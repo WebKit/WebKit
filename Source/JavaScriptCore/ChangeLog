@@ -1,3 +1,19 @@
+2012-11-06  Oliver Hunt  <oliver@apple.com>
+
+        Reduce direct m_symbolTable usage in CodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=101391
+
+        Reviewed by Sam Weinig.
+
+        Simple refactoring.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::dumpStatistics):
+        (JSC::CodeBlock::nameForRegister):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isCaptured):
+
 2012-11-06  Michael Saboff  <msaboff@apple.com>
 
         Lexer::scanRegExp, create 8 bit pattern and flag Identifiers from 16 bit source when possible

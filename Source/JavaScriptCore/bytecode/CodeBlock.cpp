@@ -492,8 +492,8 @@ void CodeBlock::dump(ExecState* exec)
         static_cast<unsigned long>(instructions().size() * sizeof(Instruction)),
         this, codeTypeToString(codeType()), m_numParameters, m_numCalleeRegisters,
         m_numVars);
-    if (m_symbolTable->captureCount())
-        dataLog("; %d captured var(s)", m_symbolTable->captureCount());
+    if (symbolTable()->captureCount())
+        dataLog("; %d captured var(s)", symbolTable()->captureCount());
     if (usesArguments()) {
         dataLog(
             "; uses arguments, in r%d, r%d",
@@ -1491,9 +1491,9 @@ void CodeBlock::dumpStatistics()
             FOR_EACH_MEMBER_VECTOR(GET_STATS)
         #undef GET_STATS
 
-        if (!codeBlock->m_symbolTable.isEmpty()) {
+        if (!codeBlock->symbolTable().isEmpty()) {
             symbolTableIsNotEmpty++;
-            symbolTableTotalSize += (codeBlock->m_symbolTable.capacity() * (sizeof(SymbolTable::KeyType) + sizeof(SymbolTable::MappedType)));
+            symbolTableTotalSize += (codeBlock->symbolTable().capacity() * (sizeof(SymbolTable::KeyType) + sizeof(SymbolTable::MappedType)));
         }
 
         if (codeBlock->m_rareData) {
@@ -2807,8 +2807,8 @@ bool CodeBlock::usesOpcode(OpcodeID opcodeID)
 
 String CodeBlock::nameForRegister(int registerNumber)
 {
-    SymbolTable::iterator end = m_symbolTable->end();
-    for (SymbolTable::iterator ptr = m_symbolTable->begin(); ptr != end; ++ptr) {
+    SymbolTable::iterator end = symbolTable()->end();
+    for (SymbolTable::iterator ptr = symbolTable()->begin(); ptr != end; ++ptr) {
         if (ptr->value.getIndex() == registerNumber)
             return String(ptr->key);
     }

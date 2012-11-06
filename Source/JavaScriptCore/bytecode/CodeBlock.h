@@ -589,8 +589,8 @@ namespace JSC {
             if (usesArguments() && operand == unmodifiedArgumentsRegister(argumentsRegister()))
                 return true;
 
-            return operand >= m_symbolTable->captureStart() 
-                && operand < m_symbolTable->captureEnd();
+            return operand >= symbolTable()->captureStart()
+                && operand < symbolTable()->captureEnd();
         }
 
         CodeType codeType() const { return m_codeType; }
@@ -964,7 +964,7 @@ namespace JSC {
         StringJumpTable& stringSwitchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
 
 
-        SharedSymbolTable* symbolTable() { return m_symbolTable.get(); }
+        SharedSymbolTable* symbolTable() const { return m_symbolTable.get(); }
 
         EvalCodeCache& evalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_evalCodeCache; }
 
