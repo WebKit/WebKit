@@ -302,6 +302,14 @@
 #define HAVE_ARM_NEON_INTRINSICS 1
 #endif
 
+#if (defined(__VFP_FP__) && !defined(__SOFTFP__))
+#define WTF_CPU_ARM_VFP 1
+#endif
+
+#if defined(__ARM_ARCH_7S__)
+#define WTF_CPU_APPLE_ARMV7S 1
+#endif
+
 #endif /* ARM */
 
 #if CPU(ARM) || CPU(MIPS) || CPU(SH4) || CPU(SPARC)

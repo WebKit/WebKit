@@ -1,3 +1,26 @@
+2012-11-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        Speed up TransformationMatrix::multiply() on modern ARM
+        https://bugs.webkit.org/show_bug.cgi?id=101084
+
+        Reviewed by Gavin Barraclough.
+
+        The main improvements are:
+        -Store the full source matrix in the registers d16 to d31. This way we avoid going
+         back and forth to memory to use the operands.
+         Since the full matrix is in register, we can also directly modify the memory of m_matrix,
+         we no longer need the temporary matrix memcopied at the end.
+        -Use of LoadMultiple and StoreMultiple to load-store the matrix parameters.
+        -Use Multiply-Accumulate instead of VMUL followed by VADD. This half the number of instruction.
+        -On regular ARMv7, using a loop to reuse the same code for each row also improve the performance.
+
+        Depending on the hardware, the new code takes 20% to 42% less time than the basic implementation.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::multiply):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (TransformationMatrix):
+
 2012-11-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133529 and r133562.

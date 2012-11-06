@@ -1,3 +1,14 @@
+2012-11-06  Benjamin Poulain  <benjamin@webkit.org>
+
+        Speed up TransformationMatrix::multiply() on modern ARM
+        https://bugs.webkit.org/show_bug.cgi?id=101084
+
+        Reviewed by Gavin Barraclough.
+
+        * wtf/Platform.h:
+        Add CPU(ARM_VFP) for detecting VFP availability.
+        Add CPU(APPLE_ARMV7S) for the Apple ARMv7S architecture.
+
 2012-11-06  Laszlo Gombos  <l.gombos@samsung.com>
 
         Refactor setting TEXTURE_MAPPER_GL
