@@ -96,6 +96,9 @@ void PageViewportController::didCommitLoad()
     // Do not count the previous committed page contents as covered.
     m_lastFrameCoveredRect = FloatRect();
 
+    // Do not continue to use the content size of the previous page.
+    m_contentsSize = IntSize();
+
     // Reset the position to the top, page/history scroll requests may override this before we re-enable rendering.
     applyPositionAfterRenderingContents(FloatPoint());
 }

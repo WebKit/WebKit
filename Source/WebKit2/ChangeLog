@@ -1,3 +1,16 @@
+2012-11-06  Yael Aharon  <yael.aharon@intel.com>
+
+        [WK2] Wrong scroll position when going back in history
+        https://bugs.webkit.org/show_bug.cgi?id=101358
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Reset the contentsSize after a new load was committed. We should not continue
+        to use the contentsSize of the previous page in any calculation.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::didCommitLoad):
+
 2012-11-06  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Declare all smart callbacks in EwkViewCallbacks.h
