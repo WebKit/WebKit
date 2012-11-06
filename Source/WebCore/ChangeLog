@@ -1,3 +1,56 @@
+2012-11-05  Keishi Hattori  <keishi@webkit.org>
+
+        Introduce Day class to calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=101194
+
+        Reviewed by Kent Tamura.
+
+        Introducing Day class so day, week, and month can all be abstracted. To
+        solve some of the complexity around which months to show, I made
+        CalendarPicker in charge of it. This also made YearMonthController and
+        DaysTable independent of each other.
+
+        No new tests. Covered by existing calendar-picker-*.html tests.
+
+        * Resources/pagepopups/calendarPicker.js:
+        (createUTCDate): Allow negative month or date.
+        (parseDateString): Will return Day or Month depending on string format.
+        (Day): Represents a day.
+        (Day.parse): Parse yyyy-mm-dd.
+        (Day.createFromDate): Creates a Day that contains a datetime.
+        (Day.createFromToday): Creates Day for today. A method with the same name will be added to Week and Month in the future.
+        (Day.prototype.equals): Returns true if they are the same.
+        (Day.prototype.previous): Returns the previous day.
+        (Day.prototype.next): Returns the next day.
+        (Day.prototype.startDate): Returns the datetime that is the start of this day.
+        (Day.prototype.endDate): Returns the datetime that is the start of this day.
+        (Day.prototype.valueOf): Returns the milliseconds since epoch.
+        (Day.prototype.toString): Returns an ISO date string.
+        (Month): Fix bug in calculating month from value.
+        (Month.prototype.endDate): Use Day.Maximum.
+        (CalendarPicker): Added _currentMonth. yearMonthController and daysTable can be private members now.
+        (CalendarPicker.prototype._layout):
+        (CalendarPicker.prototype.handleToday): Use Day.createFromToday.
+        (CalendarPicker.prototype.shouldShowMonth): Returns true if the month should be shown.
+        (CalendarPicker.prototype.showMonth): Shows the given month. If the month is out of the range of months that should be shown, we clamp the month and show that.
+        (CalendarPicker.prototype.currentMonth): Returns the current month that is shown.
+        (YearMonthController): Removed _currentMonth.
+        (YearMonthController.prototype.attachTo):
+        (YearMonthController.prototype.setMonth):
+        (YearMonthController.prototype._handleYearMonthChange): Use CalendarPicker.showMonth
+        (YearMonthController.prototype.moveRelatively):
+        (DaysTable):
+        (CalendarPicker.prototype._stepMismatch): Made private.
+        (CalendarPicker.prototype._outOfRange): Made private.
+        (CalendarPicker.prototype.isValidDate): Take Day or Month instead of milliseconds since epoch.
+        (DaysTable.prototype._renderMonth):
+        (DaysTable.prototype.navigateToMonth): Shows a given month. Can use animation and leave the selection position as is.
+        (DaysTable.prototype.selectRange): Select a range.
+        (DaysTable.prototype._maybeSetPreviousMonth):
+        (DaysTable.prototype._maybeSetNextMonth):
+        (DaysTable.prototype._handleKey):
+        (CalendarPicker.prototype._handleBodyKeyDown):
+
 2012-11-05  Kenichi Ishibashi  <bashi@chromium.org>
 
         Unreviewed, Adding #if PLATFORM(CHROMIUM) for the fix of
