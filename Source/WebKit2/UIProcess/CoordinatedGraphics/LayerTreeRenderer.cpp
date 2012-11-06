@@ -462,8 +462,16 @@ void LayerTreeRenderer::syncRemoteContent()
     // We enqueue messages and execute them during paint, as they require an active GL context.
     ensureRootLayer();
 
-    for (size_t i = 0; i < m_renderQueue.size(); ++i)
-        m_renderQueue[i]();
+    Vector<Function<void()> > renderQueue;
+    bool calledOnMainThread = WTF::isMainThread();
+    if (!calledOnMainThread)
+        m_renderQueueMutex.lock();
+    renderQueue.swap(m_renderQueue);
+    if (!calledOnMainThread)
+        m_renderQueueMutex.unlock();
+
+    for (size_t i = 0; i < renderQueue.size(); ++i)
+        renderQueue[i]();
 
     m_renderQueue.clear();
 }
@@ -522,6 +530,8 @@ void LayerTreeRenderer::appendUpdate(const Function<void()>& function)
     if (!m_isActive)
         return;
 
+    ASSERT(isMainThread());
+    MutexLocker locker(m_renderQueueMutex);
     m_renderQueue.append(function);
 }
 

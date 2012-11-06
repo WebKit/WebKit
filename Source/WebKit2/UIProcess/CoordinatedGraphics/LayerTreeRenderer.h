@@ -126,6 +126,7 @@ private:
 
     // Render queue can be accessed ony from main thread or updatePaintNode call stack!
     Vector<Function<void()> > m_renderQueue;
+    Mutex m_renderQueueMutex;
 
 #if USE(TEXTURE_MAPPER)
     OwnPtr<WebCore::TextureMapper> m_textureMapper;

@@ -1,3 +1,19 @@
+2012-11-06  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [CoordinatedGraphics] Access to LayerTreeRenderer::m_renderQueue should be thread safe
+        https://bugs.webkit.org/show_bug.cgi?id=101341
+
+        Reviewed by Noam Rosenthal.
+
+        The queue can be accessed from public API so we should make
+        sure it is not updated concurrently with a threaded render loop.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::syncRemoteContent):
+        (WebKit::LayerTreeRenderer::appendUpdate):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+
 2012-11-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Make Ewk_Context Ewk_Object
