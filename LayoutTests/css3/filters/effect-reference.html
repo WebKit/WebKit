@@ -17,6 +17,17 @@
     <filter id="blurY">
       <feGaussianBlur stdDeviation="0 5"/>
     </filter>
+    <filter id="blend">
+      <feGaussianBlur stdDeviation="5 5"/>
+      <feBlend in2="SourceGraphic" mode="screen">
+    </filter>
+    <filter id="lighting">
+      <feSpecularLighting>
+        <feSpotLight pointsAtX="160" pointsAtY="130" pointsAtZ="0" specularExponent="1" limitingConeAngle="20" x="0" y="0" z="10"/>
+      </feSpecularLighting>
+      <feColorMatrix type="matrix" values="0 0 0 1 0  0 0 0 1 0  0 0 0 1 0  0 0 0 0 1"/>
+      <feBlend in2="SourceGraphic" mode="multiply"/>
+    </filter>
   </defs>
 </svg>
 <style>
@@ -29,3 +40,5 @@ img {
 <img style="-webkit-filter: url(#morphology); filter: url(#morphology);" src="resources/reference.png">
 <img style="-webkit-filter: url(#componenttransfer); filter: url(#componenttransfer);" src="resources/reference.png">
 <img style="-webkit-filter: url(#blurY); filter: url(#blurY);" src="resources/reference.png">
+<img style="-webkit-filter: url(#blend); filter: url(#blend);" src="resources/reference.png">
+<img style="-webkit-filter: url(#lighting); filter: url(#lighting);" src="resources/reference.png">

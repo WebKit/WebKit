@@ -1,3 +1,14 @@
+2012-11-06  Stephen White  <senorblanco@chromium.org>
+
+        Add new test cases to layout test effect-reference and effect-reference-hw.
+        https://bugs.webkit.org/show_bug.cgi?id=101366
+
+        Reviewed by Dean Jackson.
+
+        * css3/filters/effect-reference-hw.html:
+        * css3/filters/effect-reference.html:
+        Add some test cases for feBlend and feSpecularLighting.
+
 2012-11-06  Rick Byers  <rbyers@chromium.org>
 
         [chromium] Two touchadjustment tests are failing on mac
