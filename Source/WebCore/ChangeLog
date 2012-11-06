@@ -1,3 +1,20 @@
+2012-11-06  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update BB10 form theme.
+        https://bugs.webkit.org/show_bug.cgi?id=100760
+
+        Reviewed by Rob Buis.
+
+        Revert webkit/ce306dcc698199a6f7ce679daf0a30c25d3a3d43 slider theme
+        change which break media control and vertical slider.
+
+        RIM PR 236993
+        Internal Reviewed by Jeff Rogers.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::RenderThemeBlackBerry::paintSliderTrackRect):
+        (WebCore::RenderThemeBlackBerry::paintSliderThumb):
+
 2012-11-06  Michael Saboff  <msaboff@apple.com>
 
         canonicalizedTitle() shouldn't convert 8 bit title strings to 16 bit
