@@ -1,3 +1,14 @@
+2012-11-06  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Remove the valgrind issue with MockWebRTCPeerConnectionHandler
+        https://bugs.webkit.org/show_bug.cgi?id=101336
+
+        Reviewed by Andreas Kling.
+
+        This patch changes the delete to delete [] to match the new[].
+
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+
 2012-11-06  Mihai Balan  <mibalan@adobe.com>
 
         Add Adobe's bug tracker to committers.py

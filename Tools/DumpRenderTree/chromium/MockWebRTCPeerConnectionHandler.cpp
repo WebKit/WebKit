@@ -161,7 +161,7 @@ public:
     virtual void runIfValid() OVERRIDE
     {
         m_dataChannel.dataArrived(m_data, m_length);
-        delete m_data;
+        delete [] m_data;
     }
 
 private:
