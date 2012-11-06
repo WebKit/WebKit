@@ -1,3 +1,14 @@
+2012-11-05  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed, Adding #if PLATFORM(CHROMIUM) for the fix of
+        https://bugs.webkit.org/show_bug.cgi?id=101009
+
+        This fix requires the most recent version of harfbuzz-ng.
+        EFL port uses version 0.9.2, which doesn't have the fix.
+
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::shapeHarfBuzzRuns):
+
 2012-11-05  Glenn Adams  <glenn@skynav.com>
 
         Ensure acquireLineBreakIterator signature consistency on non-ICU ports.

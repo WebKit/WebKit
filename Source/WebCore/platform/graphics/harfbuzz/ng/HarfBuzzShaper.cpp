@@ -322,10 +322,13 @@ bool HarfBuzzShaper::shapeHarfBuzzRuns()
         HarfBuzzRun* currentRun = m_harfbuzzRuns[runIndex].get();
         const SimpleFontData* currentFontData = currentRun->fontData();
 
+        // This #if should be removed after all ports update harfbuzz-ng.
+#if PLATFORM(CHROMIUM)
         // Add a space as pre-context to the buffer. This prevents showing dotted-circle
         // for combining marks at the beginning of runs.
         static const uint16_t preContext = ' ';
         hb_buffer_add_utf16(harfbuzzBuffer.get(), &preContext, 1, 1, 0);
+#endif
 
         if (m_font->isSmallCaps() && u_islower(m_normalizedBuffer[currentRun->startIndex()])) {
             String upperText = String(m_normalizedBuffer.get() + currentRun->startIndex(), currentRun->numCharacters());
