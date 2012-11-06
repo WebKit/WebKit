@@ -32,29 +32,6 @@
 
 namespace WebCore {
 
-inline JSDOMWrapper* getInlineCachedWrapper(DOMWrapperWorld* world, Node* node)
-{
-    if (!world->isNormal())
-        return 0;
-    return node->wrapper();
-}
-
-inline bool setInlineCachedWrapper(DOMWrapperWorld* world, Node* node, JSDOMWrapper* wrapper)
-{
-    if (!world->isNormal())
-        return false;
-    node->setWrapper(*world->globalData(), wrapper, wrapperOwner(world, node), wrapperContext(world, node));
-    return true;
-}
-
-inline bool clearInlineCachedWrapper(DOMWrapperWorld* world, Node* node, JSDOMWrapper* wrapper)
-{
-    if (!world->isNormal())
-        return false;
-    node->clearWrapper(wrapper);
-    return true;
-}
-
 JSC::JSValue createWrapper(JSC::ExecState*, JSDOMGlobalObject*, Node*);
 
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)

@@ -32,6 +32,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "MediaList.h"
+#include "ScriptWrappable.h"
 #include "StylePropertySet.h"
 #include "StyledElement.h"
 #include <heap/Weak.h>
@@ -129,10 +130,32 @@ enum ParameterDefaultPolicy {
         return JSC::jsCast<JSC::JSObject*>(asObject(getDOMStructure<WrapperClass>(exec, JSC::jsCast<JSDOMGlobalObject*>(globalObject))->storedPrototype()));
     }
 
-    // Overload these functions to provide a fast path for wrapper access.
     inline JSDOMWrapper* getInlineCachedWrapper(DOMWrapperWorld*, void*) { return 0; }
-    inline bool setInlineCachedWrapper(DOMWrapperWorld*, void*, JSDOMWrapper*) { return false; }
+    inline bool setInlineCachedWrapper(DOMWrapperWorld*, void*, JSDOMWrapper*, JSC::WeakHandleOwner*, void*) { return false; }
     inline bool clearInlineCachedWrapper(DOMWrapperWorld*, void*, JSDOMWrapper*) { return false; }
+
+    inline JSDOMWrapper* getInlineCachedWrapper(DOMWrapperWorld* world, ScriptWrappable* domObject)
+    {
+        if (!world->isNormal())
+            return 0;
+        return domObject->wrapper();
+    }
+
+    inline bool setInlineCachedWrapper(DOMWrapperWorld* world, ScriptWrappable* domObject, JSDOMWrapper* wrapper, JSC::WeakHandleOwner* wrapperOwner, void* context)
+    {
+        if (!world->isNormal())
+            return false;
+        domObject->setWrapper(*world->globalData(), wrapper, wrapperOwner, context);
+        return true;
+    }
+
+    inline bool clearInlineCachedWrapper(DOMWrapperWorld* world, ScriptWrappable* domObject, JSDOMWrapper* wrapper)
+    {
+        if (!world->isNormal())
+            return false;
+        domObject->clearWrapper(wrapper);
+        return true;
+    }
 
     template <typename DOMClass> inline JSDOMWrapper* getCachedWrapper(DOMWrapperWorld* world, DOMClass* domObject)
     {
@@ -143,9 +166,11 @@ enum ParameterDefaultPolicy {
 
     template <typename DOMClass> inline void cacheWrapper(DOMWrapperWorld* world, DOMClass* domObject, JSDOMWrapper* wrapper)
     {
-        if (setInlineCachedWrapper(world, domObject, wrapper))
+        JSC::WeakHandleOwner* owner = wrapperOwner(world, domObject);
+        void* context = wrapperContext(world, domObject);
+        if (setInlineCachedWrapper(world, domObject, wrapper, owner, context))
             return;
-        JSC::PassWeak<JSDOMWrapper> passWeak(wrapper, wrapperOwner(world, domObject), wrapperContext(world, domObject));
+        JSC::PassWeak<JSDOMWrapper> passWeak(wrapper, owner, context);
         weakAdd(world->m_wrappers, (void*)domObject, passWeak);
     }
 

@@ -1,3 +1,21 @@
+2012-11-06  Adam Barth  <abarth@webkit.org>
+
+        ScriptWrappable should work for more than just Node
+        https://bugs.webkit.org/show_bug.cgi?id=101319
+
+        Reviewed by Eric Seidel.
+
+        This patch generalizes the inline cached wrapper code path to work with
+        all subclasses of ScriptWrappable, not just Node.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::setInlineCachedWrapper):
+        (WebCore::getInlineCachedWrapper):
+        (WebCore):
+        (WebCore::clearInlineCachedWrapper):
+        (WebCore::cacheWrapper):
+        * bindings/js/JSNodeCustom.h:
+
 2012-11-06  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update BB10 form theme.
