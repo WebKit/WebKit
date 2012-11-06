@@ -556,7 +556,8 @@ public:
 
     RenderArena* renderArena() { return m_renderArena.get(); }
 
-    RenderView* renderView() const;
+    RenderView* renderView() const { return m_renderView; }
+    void setRenderer(RenderObject*);
 
     void clearAXObjectCache();
     AXObjectCache* axObjectCache() const;
@@ -1435,6 +1436,7 @@ private:
     bool m_sawElementsInKnownNamespaces;
     bool m_isSrcdocDocument;
 
+    RenderView* m_renderView;
     RefPtr<DocumentEventQueue> m_eventQueue;
 
     RefPtr<DocumentWeakReference> m_weakReference;
