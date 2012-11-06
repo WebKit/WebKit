@@ -1,3 +1,12 @@
+2012-11-06  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] fast/images/exif-orientation-image-document.html failing on WK2 bots
+        https://bugs.webkit.org/show_bug.cgi?id=101344
+
+        Unreviewed gardening.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-06  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.
