@@ -1,0 +1,9 @@
+This test makes sure that removing a track by setting video.innerHTML doesn't crash (https://bugs.webkit.org/show_bug.cgi?id=100981).
+If this test does not crash, it passes.
+
+EVENT(canplaythrough)
+EVENT(seeked)
+RUN(video.currentTime = 7.9)
+EVENT(seeked)
+END OF TEST
+

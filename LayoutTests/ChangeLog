@@ -1,3 +1,15 @@
+2012-11-06  Aaron Colwell  <acolwell@chromium.org>
+
+        Regression(r132681): Heap-use-after-free in WebCore::RenderTextTrackCue::layout
+        https://bugs.webkit.org/show_bug.cgi?id=100981
+
+        Reviewed by Eric Carlson.
+
+        Added a test that removes track elements by setting innerHTML on the track's parent.
+
+        * media/track/track-remove-by-setting-innerHTML-expected.txt: Added.
+        * media/track/track-remove-by-setting-innerHTML.html: Added.
+
 2012-11-06  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] Automatically go fullscreen on video play

@@ -2831,6 +2831,14 @@ void HTMLMediaElement::willRemoveTrack(HTMLTrackElement* trackElement)
     // then the user agent must remove the track element's corresponding text track from the 
     // media element's list of text tracks.
     m_textTracks->remove(textTrack.get());
+    if (textTrack->cues()) {
+        TextTrackCueList* cues = textTrack->cues();
+        beginIgnoringTrackDisplayUpdateRequests();
+        for (size_t i = 0; i < cues->length(); ++i)
+            textTrackRemoveCue(cues->item(i)->track(), cues->item(i));
+        endIgnoringTrackDisplayUpdateRequests();
+    }
+
     size_t index = m_textTracksWhenResourceSelectionBegan.find(textTrack.get());
     if (index != notFound)
         m_textTracksWhenResourceSelectionBegan.remove(index);
