@@ -457,7 +457,7 @@ void forgetV8ObjectForNPObject(NPObject* object)
     v8::Persistent<v8::Object> wrapper = staticNPObjectMap().get(object);
     if (!wrapper.IsEmpty()) {
         v8::HandleScope scope;
-        V8DOMWrapper::setDOMWrapper(wrapper, npObjectTypeInfo(), 0);
+        V8DOMWrapper::clearDOMWrapper(wrapper, npObjectTypeInfo());
         staticNPObjectMap().remove(object, wrapper);
         wrapper.Dispose();
         wrapper.Clear();

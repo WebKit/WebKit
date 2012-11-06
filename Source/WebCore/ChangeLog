@@ -1,3 +1,23 @@
+2012-11-06  Kentaro Hara  <haraken@chromium.org>
+
+        Replace setDOMWrapper(wrapper, 0) with resetDOMWrapper(wrapper)
+        https://bugs.webkit.org/show_bug.cgi?id=101190
+
+        Reviewed by Adam Barth.
+
+        To guarantee that we never stores NULL pointers to V8 internal
+        fields, we want to insert ASSERT()s to setDOMWrapper().
+        This patch replaces setDOMWrapper() that intentionally
+        passes NULL pointers with clearDOMWrapper().
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8DOMWrapper.h:
+        (V8DOMWrapper):
+        (WebCore::V8DOMWrapper::clearDOMWrapper):
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::forgetV8ObjectForNPObject):
+
 2012-11-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Displayed name/path of urls in network tab of dev tools is inconsistent
