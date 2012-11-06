@@ -627,17 +627,19 @@ String CSSSelector::selectorText() const
 
     if (CSSSelector* tagHistory = cs->tagHistory()) {
         String tagHistoryText = tagHistory->selectorText();
-        if (cs->relation() == CSSSelector::DirectAdjacent)
-            return tagHistoryText + " + " + str.toString();
-        else if (cs->relation() == CSSSelector::IndirectAdjacent)
-            return tagHistoryText + " ~ " + str.toString();
-        else if (cs->relation() == CSSSelector::Child)
-            return tagHistoryText + " > " + str.toString();
-        else if (cs->relation() == CSSSelector::ShadowDescendant)
-            return tagHistoryText + str.toString();
-        else {
-            // Descendant
+        switch (cs->relation()) {
+        case CSSSelector::Descendant:
             return tagHistoryText + " " + str.toString();
+        case CSSSelector::Child:
+            return tagHistoryText + " > " + str.toString();
+        case CSSSelector::DirectAdjacent:
+            return tagHistoryText + " + " + str.toString();
+        case CSSSelector::IndirectAdjacent:
+            return tagHistoryText + " ~ " + str.toString();
+        case CSSSelector::SubSelector:
+            ASSERT_NOT_REACHED();
+        case CSSSelector::ShadowDescendant:
+            return tagHistoryText + str.toString();
         }
     }
 
