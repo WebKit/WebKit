@@ -98,7 +98,7 @@ public:
     virtual void registerScopedHTMLStyleChild() OVERRIDE;
     virtual void unregisterScopedHTMLStyleChild() OVERRIDE;
 
-    ShadowRootType type() const { return m_type; }
+    ShadowRootType type() const { return m_isAuthorShadowRoot ? AuthorShadowRoot : UserAgentShadowRoot; }
 
     PassRefPtr<Node> cloneNode(bool, ExceptionCode&);
 
@@ -112,11 +112,13 @@ private:
     virtual bool childTypeAllowed(NodeType) const;
     virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta) OVERRIDE;
 
+    void setType(ShadowRootType type) { m_isAuthorShadowRoot = type == AuthorShadowRoot; }
+
     ShadowRoot* m_prev;
     ShadowRoot* m_next;
     bool m_applyAuthorStyles : 1;
     bool m_resetStyleInheritance : 1;
-    ShadowRootType m_type : 1;
+    bool m_isAuthorShadowRoot : 1;
     InsertionPoint* m_insertionPointAssignedTo;
     size_t m_numberOfShadowElementChildren;
     size_t m_numberOfContentElementChildren;

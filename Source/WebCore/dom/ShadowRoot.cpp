@@ -129,7 +129,7 @@ PassRefPtr<ShadowRoot> ShadowRoot::create(Element* element, ShadowRootType type,
     }
 
     RefPtr<ShadowRoot> shadowRoot = adoptRef(new ShadowRoot(element->document()));
-    shadowRoot->m_type = type;
+    shadowRoot->setType(type);
 
     ec = 0;
     element->ensureShadow()->addShadowRoot(element, shadowRoot, type, ec);

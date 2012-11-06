@@ -1,3 +1,20 @@
+2012-11-05  Shinya Kawanaka  <shinyak@chromium.org>
+
+        LayoutTest fast/dom/shadow/shadowroot-type.html is failing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=101201
+
+        Reviewed by Hajime Morita.
+
+        When we use a bit field for enum, Windows compiler seems returning some wrong value.
+        We would like to avoid using a bit field for enum value.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::create):
+        * dom/ShadowRoot.h:
+        (WebCore::ShadowRoot::type):
+        (WebCore::ShadowRoot::setType):
+        (ShadowRoot):
+
 2012-11-05  Benjamin Poulain  <benjamin@webkit.org>
 
         TransformOperationInfo's constructor is really slow
