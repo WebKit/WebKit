@@ -63,6 +63,7 @@ public:
     }
     virtual ~WorkerFrontendChannel()
     {
+        disconnectFromWorkerContext();
     }
 
     int id() const { return m_id; }
@@ -136,9 +137,9 @@ void InspectorWorkerAgent::restore()
 
 void InspectorWorkerAgent::clearFrontend()
 {
-    m_inspectorFrontend = 0;
     m_state->setBoolean(WorkerAgentState::autoconnectToWorkers, false);
-    destroyWorkerFrontendChannels();
+    disable(0);
+    m_inspectorFrontend = 0;
 }
 
 void InspectorWorkerAgent::enable(ErrorString*)

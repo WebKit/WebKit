@@ -2815,3 +2815,4 @@ webkit.org/b/95959 css3/device-adapt [ Skip ]
 webkit.org/b/86146 css3/supports.html
 
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
+webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Skip ]

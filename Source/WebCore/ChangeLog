@@ -1,3 +1,19 @@
+2012-11-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: JavaScript web workers debugging crashes
+        https://bugs.webkit.org/show_bug.cgi?id=101065
+
+        Reviewed by Alexander Pavlov.
+
+        Clear m_pageInspector when page inspector instance is deleted.
+        Disable worker inspection when front-end disconnects.
+
+        Test: inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html
+
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::~WorkerFrontendChannel): notify
+        WorkerMessagingProxy so that it can clear pointer to the channel.
+
 2012-11-06  Nikita Vasilyev  <me@elv1s.ru>
 
         Web Inspector: Console: wrap long URLs

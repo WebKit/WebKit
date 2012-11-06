@@ -1,0 +1,83 @@
+<html>
+<head>
+<script type="text/javascript" src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+
+
+var worker;
+
+function startWorkerAndRunTest()
+{
+    worker = new Worker("resources/dedicated-worker.js");
+    worker.onmessage = function(event) { };
+    worker.postMessage(1);
+    log("Started worker");
+    runTest();
+}
+
+
+function test()
+{
+
+    var workerId;
+    var workerRequestId = 1;
+    function sendCommandToWorker(method, params)
+    {
+        InspectorTest.sendCommand("Worker.sendMessageToWorker",
+            {
+                "workerId": workerId,
+                "message": { "method": method,
+                             "params": params,
+                             "id": workerRequestId++
+                           }
+            });
+    }
+
+    function didEnableWorkerDebugging(messageObject)
+    {
+        if ("error" in messageObject) {
+            InspectorTest.log("FAIL: Couldn't enable worker debugger: " + messageObject.error.message);
+            InspectorTest.completeTest();
+            return;
+        }
+        InspectorTest.log("didEnableWorkerDebugging");
+    }
+    InspectorTest.sendCommand("Worker.enable", {}, didEnableWorkerDebugging);
+
+
+    InspectorTest.eventHandler["Worker.workerCreated"] = function(messageObject)
+    {
+        workerId = messageObject["params"]["workerId"];
+        InspectorTest.log("Worker created");
+        InspectorTest.sendCommand("Worker.connectToWorker", { "workerId": workerId }, didConnectToWorker);
+
+        function didConnectToWorker(messageObject)
+        {
+            InspectorTest.log("didConnectToWorker");
+            sendCommandToWorker("Debugger.enable", {});
+            sendCommandToWorker("Debugger.pause", {});
+        }
+    }
+
+    InspectorTest.eventHandler["Worker.dispatchMessageFromWorker"] = function(messageObject)
+    {
+        var message = messageObject["params"]["message"];
+        if (message["method"] === "Debugger.paused") {
+            InspectorTest.log("Worker paused");
+            InspectorTest.sendCommand("Runtime.evaluate", { "expression": "worker.terminate()" }, didTerminateWorker);
+        }
+    }
+
+    function didTerminateWorker(messageObject)
+    {
+        InspectorTest.log("SUCCESS: Did terminate paused worker");
+        InspectorTest.completeTest();
+    }
+
+}
+</script>
+</head>
+<body onLoad="startWorkerAndRunTest();">Test that inspected page won't crash if inspected worker is terminated while it is paused. Test passes if it doesn't crash.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=101065">Bug 101065.</a>
+</body>
+</html>
