@@ -69,23 +69,21 @@ WebInspector.ParsedURL = function(url)
         this.path = this.url;
     }
 
-    if (this.path) {
-        // First cut the query params.
-        var path = this.path;
-        var indexOfQuery = path.indexOf("?");
-        if (indexOfQuery !== -1) {
-            this.queryParams = path.substring(indexOfQuery + 1)
-            path = path.substring(0, indexOfQuery);
-        }
-
-        // Then take last path component.
-        var lastSlashIndex = path.lastIndexOf("/");
-        if (lastSlashIndex !== -1) {
-            this.folderPathComponents = path.substring(0, lastSlashIndex);
-            this.lastPathComponent = path.substring(lastSlashIndex + 1);
-        } else
-            this.lastPathComponent = path;
+    // First cut the query params.
+    var path = this.path;
+    var indexOfQuery = path.indexOf("?");
+    if (indexOfQuery !== -1) {
+        this.queryParams = path.substring(indexOfQuery + 1)
+        path = path.substring(0, indexOfQuery);
     }
+
+    // Then take last path component.
+    var lastSlashIndex = path.lastIndexOf("/");
+    if (lastSlashIndex !== -1) {
+        this.folderPathComponents = path.substring(0, lastSlashIndex);
+        this.lastPathComponent = path.substring(lastSlashIndex + 1);
+    } else
+        this.lastPathComponent = path;
 }
 
 /**
@@ -146,12 +144,9 @@ WebInspector.ParsedURL.prototype = {
         if (this._displayName)
             return this._displayName;
 
-        if (this.scheme === "data") {
-            this._displayName = this.url.trimEnd(20);
-            return this._displayName;
-        }
-
-        if (this.url === "about:blank")
+        if (this.isDataURL())
+            return this.dataURLDisplayName();
+        if (this.isAboutBlank())
             return this.url;
 
         this._displayName = this.lastPathComponent;
@@ -162,6 +157,26 @@ WebInspector.ParsedURL.prototype = {
         if (this._displayName === "/")
             this._displayName = this.url;
         return this._displayName;
+    },
+
+    dataURLDisplayName: function()
+    {
+        if (this._dataURLDisplayName)
+            return this._dataURLDisplayName;
+        if (!this.isDataURL())
+            return "";
+        this._dataURLDisplayName = this.url.trimEnd(20);
+        return this._dataURLDisplayName;
+    },
+
+    isAboutBlank: function()
+    {
+        return this.url === "about:blank";
+    },
+
+    isDataURL: function()
+    {
+        return this.scheme === "data";
     }
 }
 

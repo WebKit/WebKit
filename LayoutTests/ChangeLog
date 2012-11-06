@@ -1,3 +1,13 @@
+2012-11-06  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Displayed name/path of urls in network tab of dev tools is inconsistent
+        https://bugs.webkit.org/show_bug.cgi?id=101064
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/network/request-name-path-expected.txt: Added.
+        * http/tests/inspector/network/request-name-path.html: Added.
+
 2012-11-06  Takashi Sakamoto  <tasak@google.com>
 
         removeAttribute('style') not working in certain circumstances

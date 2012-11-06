@@ -97,6 +97,8 @@ WebInspector.NetworkRequest.prototype = {
         this._url = x;
         this._parsedURL = new WebInspector.ParsedURL(x);
         delete this._parsedQueryParameters;
+        delete this._name;
+        delete this._path;
     },
 
     /**
@@ -354,6 +356,45 @@ WebInspector.NetworkRequest.prototype = {
     get displayName()
     {
         return this._parsedURL.displayName;
+    },
+
+    name: function()
+    {
+        if (this._name)
+            return this._name;
+        this._parseNameAndPathFromURL();
+        return this._name;
+    },
+
+    path: function()
+    {
+        if (this._path)
+            return this._path;
+        this._parseNameAndPathFromURL();
+        return this._path;
+    },
+
+    _parseNameAndPathFromURL: function()
+    {
+        if (this._parsedURL.isDataURL()) {
+            this._name = this._parsedURL.dataURLDisplayName();
+            this._path = "";
+        } else if (this._parsedURL.isAboutBlank()) {
+            this._name = this._parsedURL.url;
+            this._path = "";
+        } else {
+            this._path = this._parsedURL.host + this._parsedURL.folderPathComponents;
+            this._path = this._path.trimURL(WebInspector.inspectedPageDomain ? WebInspector.inspectedPageDomain : "");
+            if (this._parsedURL.lastPathComponent || this._parsedURL.queryParams)
+                this._name = this._parsedURL.lastPathComponent + (this._parsedURL.queryParams ? "?" + this._parsedURL.queryParams : "");
+            else if (this._parsedURL.folderPathComponents) {
+                this._name = this._parsedURL.folderPathComponents.substring(this._parsedURL.folderPathComponents.lastIndexOf("/") + 1) + "/";
+                this._path = this._path.substring(0, this._path.lastIndexOf("/"));
+            } else {
+                this._name = this._parsedURL.host;
+                this._path = "";
+            }
+        }
     },
 
     /**

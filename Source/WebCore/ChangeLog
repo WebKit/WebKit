@@ -1,3 +1,34 @@
+2012-11-06  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Displayed name/path of urls in network tab of dev tools is inconsistent
+        https://bugs.webkit.org/show_bug.cgi?id=101064
+
+        Reviewed by Yury Semikhatsky.
+
+        Extracted some generic methods from ParsedURL displayName getters (about:blank and data url handlers).
+        Implemented consistent name() and path() method on NetworkRequest based on ParsedURL.
+        NetworkPanel now uses name() and path() methods on NetworkRequest to show requests and search for them.
+
+        Test: http/tests/inspector/network/request-name-path.html
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._matchRequest):
+        (WebInspector.NetworkLogView.prototype._highlightMatchedRequests):
+        (WebInspector.NetworkLogView.prototype.performFilter):
+        (WebInspector.NetworkDataGridNode.prototype._refreshNameCell):
+        (WebInspector.NetworkDataGridNode.NameComparator):
+        * inspector/front-end/NetworkRequest.js:
+        (WebInspector.NetworkRequest.prototype.set url):
+        (WebInspector.NetworkRequest.prototype.name):
+        (WebInspector.NetworkRequest.prototype.path):
+        (WebInspector.NetworkRequest.prototype._parseNameAndPathFromURL):
+        * inspector/front-end/ParsedURL.js:
+        (WebInspector.ParsedURL):
+        (WebInspector.ParsedURL.prototype.get displayName):
+        (WebInspector.ParsedURL.prototype.dataURLDisplayName):
+        (WebInspector.ParsedURL.prototype.isAboutBlank):
+        (WebInspector.ParsedURL.prototype.isDataURL):
+
 2012-11-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: make Spectrum and Popover WebInspector.Views in order to enable reuse

@@ -1070,7 +1070,7 @@ WebInspector.NetworkLogView.prototype = {
         if (!this._searchRegExp)
             return -1;
 
-        if ((!request.displayName || !request.displayName.match(this._searchRegExp)) && !request.folder.match(this._searchRegExp))
+        if (!request.name().match(this._searchRegExp) && !request.path().match(this._searchRegExp))
             return -1;
 
         if (request.requestId in this._matchedRequestsMap)
@@ -1136,8 +1136,8 @@ WebInspector.NetworkLogView.prototype = {
             var request = requests[i];
             var node = this._requestGridNode(request);
             if (node) {
-                var nameMatched = request.displayName && request.displayName.match(regExp);
-                var pathMatched = request.parsedURL.path && request.folder.match(regExp);
+                var nameMatched = request.name().match(regExp);
+                var pathMatched = request.path().match(regExp);
                 if (!nameMatched && pathMatched && !this._largerRequestsButton.toggled)
                     this._toggleLargerRequests();
                 var highlightedSubstringChanges = node._highlightMatchedSubstring(regExp);
@@ -1202,8 +1202,8 @@ WebInspector.NetworkLogView.prototype = {
         for (var i = 0; i < this._dataGrid.rootNode().children.length; ++i) {
             var node = this._dataGrid.rootNode().children[i];
             node.element.removeStyleClass("filtered-out");
-            var nameMatched = node._request.displayName && node._request.displayName.match(filterRegExp);
-            var pathMatched = node._request.parsedURL.path && node._request.folder.match(filterRegExp);
+            var nameMatched = node._request.name().match(filterRegExp);
+            var pathMatched = node._request.path().match(filterRegExp);
             if (!nameMatched && !pathMatched) {
                 node.element.addStyleClass("filtered-out");
                 this._filteredOutRequests.put(this._requests[i], true);
@@ -1929,23 +1929,9 @@ WebInspector.NetworkDataGridNode.prototype = {
             iconElement.className = "icon";
         }
         this._nameCell.appendChild(iconElement);
-        this._nameCell.appendChild(document.createTextNode(this._fileName()));
-
-        var subtitle = this._request.parsedURL.host === WebInspector.inspectedPageDomain ? "" : this._request.parsedURL.host;
-
-        if (this._request.parsedURL.path)
-            subtitle += this._request.folder;
-
-        this._appendSubtitle(this._nameCell, subtitle);
+        this._nameCell.appendChild(document.createTextNode(this._request.name()));
+        this._appendSubtitle(this._nameCell, this._request.path());
         this._nameCell.title = this._request.url;
-    },
-
-    _fileName: function()
-    {
-        var fileName = this._request.displayName;
-        if (this._request.queryString())
-            fileName += "?" + this._request.queryString();
-        return fileName;
     },
 
     _refreshStatusCell: function()
@@ -2173,8 +2159,8 @@ WebInspector.NetworkDataGridNode.prototype = {
 
 WebInspector.NetworkDataGridNode.NameComparator = function(a, b)
 {
-    var aFileName = a._request.displayName + (a._request.queryString() ? a._request.queryString() : "");
-    var bFileName = b._request.displayName + (b._request.queryString() ? b._request.queryString() : "");
+    var aFileName = a._request.name();
+    var bFileName = b._request.name();
     if (aFileName > bFileName)
         return 1;
     if (bFileName > aFileName)
