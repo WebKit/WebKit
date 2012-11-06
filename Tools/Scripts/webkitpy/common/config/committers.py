@@ -107,6 +107,7 @@ watchers_who_are_not_contributors = [
 
 
 contributors_who_are_not_committers = [
+    Contributor("Adobe Bug Tracker", "WebkitBugTracker@adobe.com"),
     Contributor("Aharon Lanin", "aharon@google.com"),
     Contributor("Alan Stearns", "stearns@adobe.com", "astearns"),
     Contributor("Alejandro Pineiro", "apinheiro@igalia.com"),

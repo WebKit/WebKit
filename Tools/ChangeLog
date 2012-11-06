@@ -1,3 +1,15 @@
+2012-11-06  Mihai Balan  <mibalan@adobe.com>
+
+        Add Adobe's bug tracker to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=101338
+
+        Reviewed by Kentaro Hara.
+
+        Adding Adobe's bug tracker mailing list to committers.py
+        to enable its inclusion in the autocomplete list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-11-06  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Enable fixed position compositing on Android DRT
