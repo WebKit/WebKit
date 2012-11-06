@@ -21,33 +21,105 @@
 #include "TextureMapper.h"
 
 #include "TextureMapperImageBuffer.h"
+#include "Timer.h"
+#include <wtf/CurrentTime.h>
+#include <wtf/NonCopyingSort.h>
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
 namespace WebCore {
 
-PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size)
+struct BitmapTexturePoolEntry {
+    explicit BitmapTexturePoolEntry(PassRefPtr<BitmapTexture> texture)
+        : m_texture(texture)
+    { }
+    inline void markUsed() { m_timeLastUsed = monotonicallyIncreasingTime(); }
+    static bool compareTimeLastUsed(const BitmapTexturePoolEntry& a, const BitmapTexturePoolEntry& b)
+    {
+        return a.m_timeLastUsed - b.m_timeLastUsed > 0;
+    }
+
+    RefPtr<BitmapTexture> m_texture;
+    double m_timeLastUsed;
+};
+
+class BitmapTexturePool {
+    WTF_MAKE_NONCOPYABLE(BitmapTexturePool);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    BitmapTexturePool();
+
+    PassRefPtr<BitmapTexture> acquireTexture(const IntSize&, TextureMapper*);
+
+private:
+    void scheduleReleaseUnusedTextures();
+    void releaseUnusedTexturesTimerFired(Timer<BitmapTexturePool>*);
+
+    Vector<BitmapTexturePoolEntry> m_textures;
+    Timer<BitmapTexturePool> m_releaseUnusedTexturesTimer;
+
+    static const double s_releaseUnusedSecondsTolerance = 3;
+    static const double s_releaseUnusedTexturesTimerInterval = 0.5;
+};
+
+BitmapTexturePool::BitmapTexturePool()
+    : m_releaseUnusedTexturesTimer(this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
+{ }
+
+void BitmapTexturePool::scheduleReleaseUnusedTextures()
 {
-    RefPtr<BitmapTexture> selectedTexture;
+    if (m_releaseUnusedTexturesTimer.isActive())
+        m_releaseUnusedTexturesTimer.stop();
 
-    for (size_t i = 0; i < m_texturePool.size(); ++i) {
-        RefPtr<BitmapTexture>& texture = m_texturePool[i];
+    m_releaseUnusedTexturesTimer.startOneShot(s_releaseUnusedTexturesTimerInterval);
+}
 
-        // If the surface has only one reference (the one in m_texturePool), we can safely reuse it.
-        if (texture->refCount() > 1)
+void BitmapTexturePool::releaseUnusedTexturesTimerFired(Timer<BitmapTexturePool>*)
+{
+    if (m_textures.isEmpty())
+        return;
+
+    // Delete entries, which have been unused in s_releaseUnusedSecondsTolerance.
+    nonCopyingSort(m_textures.begin(), m_textures.end(), BitmapTexturePoolEntry::compareTimeLastUsed);
+
+    double minUsedTime = monotonicallyIncreasingTime() - s_releaseUnusedSecondsTolerance;
+    for (size_t i = 0; i < m_textures.size(); ++i) {
+        if (m_textures[i].m_timeLastUsed < minUsedTime) {
+            m_textures.remove(i, m_textures.size() - i);
+            break;
+        }
+    }
+}
+
+PassRefPtr<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, TextureMapper* textureMapper)
+{
+    BitmapTexturePoolEntry* selectedEntry = 0;
+    for (size_t i = 0; i < m_textures.size(); ++i) {
+        BitmapTexturePoolEntry* entry = &m_textures[i];
+
+        // If the surface has only one reference (the one in m_textures), we can safely reuse it.
+        if (entry->m_texture->refCount() > 1)
             continue;
 
-        if (texture->canReuseWith(size)) {
-            selectedTexture = texture;
+        if (entry->m_texture->canReuseWith(size)) {
+            selectedEntry = entry;
             break;
         }
     }
 
-    if (!selectedTexture) {
-        selectedTexture = createTexture();
-        m_texturePool.append(selectedTexture);
+    if (!selectedEntry) {
+        m_textures.append(BitmapTexturePoolEntry(textureMapper->createTexture()));
+        selectedEntry = &m_textures.last();
     }
 
+    scheduleReleaseUnusedTextures();
+    selectedEntry->markUsed();
+    return selectedEntry->m_texture;
+}
+
+PassRefPtr<BitmapTexture> TextureMapper::acquireTextureFromPool(const IntSize& size)
+{
+    RefPtr<BitmapTexture> selectedTexture = m_texturePool->acquireTexture(size, this);
     selectedTexture->reset(size, BitmapTexture::SupportsAlpha);
     return selectedTexture;
 }
@@ -58,6 +130,16 @@ PassOwnPtr<TextureMapper> TextureMapper::create(AccelerationMode mode)
         return TextureMapperImageBuffer::create();
     return platformCreateAccelerated();
 }
+
+TextureMapper::TextureMapper(AccelerationMode accelerationMode)
+    : m_interpolationQuality(InterpolationDefault)
+    , m_textDrawingMode(TextModeFill)
+    , m_texturePool(adoptPtr(new BitmapTexturePool()))
+    , m_accelerationMode(accelerationMode)
+{ }
+
+TextureMapper::~TextureMapper()
+{ }
 
 }
 #endif
