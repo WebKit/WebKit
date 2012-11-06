@@ -1,3 +1,17 @@
+2012-11-06  Michael Saboff  <msaboff@apple.com>
+
+        JSStringCreateWithCFString() Should create an 8 bit String if possible
+        https://bugs.webkit.org/show_bug.cgi?id=101104
+
+        Reviewed by Darin Adler.
+
+        Try converting the CFString to an 8 bit string using CFStringGetBytes(...,
+        kCFStringEncodingISOLatin1, ...) and return the 8 bit string if successful.
+        If not proceed with 16 bit conversion.
+
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+
 2012-11-06  Oliver Hunt  <oliver@apple.com>
 
         Reduce direct m_symbolTable usage in CodeBlock
