@@ -1,3 +1,75 @@
+2012-11-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: make Spectrum and Popover WebInspector.Views in order to enable reuse
+        https://bugs.webkit.org/show_bug.cgi?id=101200
+
+        Reviewed by Yury Semikhatsky.
+
+        - Split Spectrum and SpectrumPopoverHelper (first is a component, second is controller)
+        - Made Popover a root view in order to enable lazy style loading for potential subviews (such as Spectrum)
+        - Extracted spectrum's css into a separate file
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/DOMExtension.js:
+        (Element.prototype.positionAt):
+        (Size):
+        (Element.prototype.measurePreferredSize):
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapSnapshotView.prototype.willHide):
+        (WebInspector.HeapSnapshotView.prototype._helpClicked):
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover):
+        (WebInspector.Popover.prototype.show):
+        (WebInspector.Popover.prototype.showView):
+        (WebInspector.Popover.prototype._innerShow):
+        (WebInspector.Popover.prototype.hide):
+        (WebInspector.Popover.prototype.dispose):
+        (WebInspector.Popover.prototype._positionElement):
+        * inspector/front-end/Spectrum.js:
+        (WebInspector.Spectrum.alphaDrag):
+        (WebInspector.Spectrum):
+        (WebInspector.Spectrum.prototype.wasShown):
+        (WebInspector.SpectrumPopupHelper):
+        (WebInspector.SpectrumPopupHelper.prototype.spectrum):
+        (WebInspector.SpectrumPopupHelper.prototype.toggle):
+        (WebInspector.SpectrumPopupHelper.prototype.show):
+        (WebInspector.SpectrumPopupHelper.prototype.reposition):
+        (WebInspector.SpectrumPopupHelper.prototype.hide):
+        (WebInspector.ColorSwatch):
+        (WebInspector.ColorSwatch.prototype.setColorString):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane):
+        (WebInspector.StylesSidebarPane.prototype.update):
+        (WebInspector.StylesSidebarPane.prototype.willHide):
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.):
+        * inspector/front-end/View.js:
+        (WebInspector.View.prototype.measurePreferredSize):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/elementsPanel.css:
+        (.image-preview-container img):
+        * inspector/front-end/inspector.css:
+        (.swatch):
+        (.swatch-inner):
+        (.swatch-inner:hover):
+        * inspector/front-end/spectrum.css: Added.
+        (.spectrum-container):
+        (.spectrum-top):
+        (.spectrum-color):
+        (.spectrum-display-value):
+        (.spectrum-hue):
+        (.spectrum-fill):
+        (.spectrum-range-container):
+        (.spectrum-range-container *):
+        (.spectrum-range-container label):
+        (.spectrum-range-container input):
+        (.spectrum-dragger, .spectrum-slider):
+        (.spectrum-sat):
+        (.spectrum-val):
+        (.spectrum-dragger):
+        (.spectrum-slider):
+        (.spectrum-container .swatch):
+
 2012-11-06  Takashi Sakamoto  <tasak@google.com>
 
         removeAttribute('style') not working in certain circumstances

@@ -216,7 +216,7 @@ WebInspector.HeapSnapshotView.prototype = {
     {
         this._currentSearchResultIndex = -1;
         this._popoverHelper.hidePopover();
-        if (this.helpPopover && this.helpPopover.visible)
+        if (this.helpPopover && this.helpPopover.isShowing())
             this.helpPopover.hide();
     },
 
@@ -646,7 +646,7 @@ WebInspector.HeapSnapshotView.prototype = {
             this._helpPopoverContentElement = contentElement;
             this.helpPopover = new WebInspector.Popover();
         }
-        if (this.helpPopover.visible)
+        if (this.helpPopover.isShowing())
             this.helpPopover.hide();
         else
             this.helpPopover.show(this._helpPopoverContentElement, this.helpButton.element);

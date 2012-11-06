@@ -30,11 +30,13 @@
 
 /**
  * @constructor
+ * @extends {WebInspector.View}
  * @param {WebInspector.PopoverHelper=} popoverHelper
  */
 WebInspector.Popover = function(popoverHelper)
 {
-    this.element = document.createElement("div");
+    WebInspector.View.call(this);
+    this.markAsRoot();
     this.element.className = "popover custom-popup-vertical-scroll custom-popup-horizontal-scroll";
 
     this._popupArrowElement = document.createElement("div");
@@ -43,37 +45,66 @@ WebInspector.Popover = function(popoverHelper)
 
     this._contentDiv = document.createElement("div");
     this._contentDiv.className = "content";
-    this._visible = false;
+    this.element.appendChild(this._contentDiv);
+
     this._popoverHelper = popoverHelper;
 }
 
 WebInspector.Popover.prototype = {
     /**
+     * @param {Element} element
+     * @param {Element} anchor
      * @param {number=} preferredWidth
      * @param {number=} preferredHeight
      */
-    show: function(contentElement, anchor, preferredWidth, preferredHeight)
+    show: function(element, anchor, preferredWidth, preferredHeight)
+    {
+        this._innerShow(null, element, anchor, preferredWidth, preferredHeight);
+    },
+
+    /**
+     * @param {WebInspector.View} view
+     * @param {Element} anchor
+     * @param {number=} preferredWidth
+     * @param {number=} preferredHeight
+     */
+    showView: function(view, anchor, preferredWidth, preferredHeight)
+    {
+        this._innerShow(view, view.element, anchor, preferredWidth, preferredHeight);
+    },
+
+    /**
+     * @param {WebInspector.View?} view
+     * @param {Element} contentElement
+     * @param {Element} anchor
+     * @param {number=} preferredWidth
+     * @param {number=} preferredHeight
+     */
+    _innerShow: function(view, contentElement, anchor, preferredWidth, preferredHeight)
     {
         if (this._disposed)
             return;
         this.contentElement = contentElement;
 
         // This should not happen, but we hide previous popup to be on the safe side.
-        if (WebInspector.Popover._popoverElement)
-            document.body.removeChild(WebInspector.Popover._popoverElement);
-        WebInspector.Popover._popoverElement = this.element;
+        if (WebInspector.Popover._popover)
+            WebInspector.Popover._popover.detach();
+        WebInspector.Popover._popover = this;
 
         // Temporarily attach in order to measure preferred dimensions.
-        this.contentElement.positionAt(0, 0);
-        document.body.appendChild(this.contentElement);
-        preferredWidth = preferredWidth || this.contentElement.offsetWidth;
-        preferredHeight = preferredHeight || this.contentElement.offsetHeight;
+        var preferredSize = view ? view.measurePreferredSize() : this.contentElement.measurePreferredSize();
+        preferredWidth = preferredWidth || preferredSize.width;
+        preferredHeight = preferredHeight || preferredSize.height;
 
-        this._contentDiv.appendChild(this.contentElement);
-        this.element.appendChild(this._contentDiv);
-        document.body.appendChild(this.element);
+        WebInspector.View.prototype.show.call(this, document.body);
+
+        if (view)
+            view.show(this._contentDiv);
+        else
+            this._contentDiv.appendChild(this.contentElement);
+
         this._positionElement(anchor, preferredWidth, preferredHeight);
-        this._visible = true;
+
         if (this._popoverHelper) {
             contentElement.addEventListener("mousemove", this._popoverHelper._killHidePopoverTimer.bind(this._popoverHelper), true);
             this.element.addEventListener("mouseout", this._popoverHelper._mouseOut.bind(this._popoverHelper), true);
@@ -82,16 +113,8 @@ WebInspector.Popover.prototype = {
 
     hide: function()
     {
-        if (WebInspector.Popover._popoverElement) {
-            delete WebInspector.Popover._popoverElement;
-            document.body.removeChild(this.element);
-        }
-        this._visible = false;
-    },
-
-    get visible()
-    {
-        return this._visible;
+        this.detach();
+        delete WebInspector.Popover._popover;
     },
 
     get disposed()
@@ -101,7 +124,7 @@ WebInspector.Popover.prototype = {
 
     dispose: function()
     {
-        if (this.visible)
+        if (this.isShowing())
             this.hide();
         this._disposed = true;
     },
@@ -187,7 +210,9 @@ WebInspector.Popover.prototype = {
         this.element.positionAt(newElementPosition.x - borderWidth, newElementPosition.y - borderWidth);
         this.element.style.width = newElementPosition.width + borderWidth * 2 + "px";
         this.element.style.height = newElementPosition.height + borderWidth * 2 + "px";
-    }
+    },
+
+    __proto__: WebInspector.View.prototype
 }
 
 /**

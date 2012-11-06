@@ -166,10 +166,21 @@ Element.prototype.hasStyleClass = function(className)
     return this.classList.contains(className);
 }
 
+/**
+ * @param {number|undefined} x
+ * @param {number|undefined} y
+ */
 Element.prototype.positionAt = function(x, y)
 {
-    this.style.left = x + "px";
-    this.style.top = y + "px";
+    if (typeof x === "number")
+        this.style.setProperty("left", x + "px");
+    else
+        this.style.removeProperty("left");
+
+    if (typeof y === "number")
+        this.style.setProperty("top", y + "px");
+    else
+        this.style.removeProperty("top");
 }
 
 Element.prototype.pruneEmptyTextNodes = function()
@@ -187,6 +198,30 @@ Element.prototype.isScrolledToBottom = function()
 {
     // This code works only for 0-width border
     return this.scrollTop + this.clientHeight === this.scrollHeight;
+}
+
+/**
+ * @constructor
+ * @param {number} width
+ * @param {number} height
+ */
+function Size(width, height)
+{
+    this.width = width;
+    this.height = height;
+}
+
+/**
+ * @return {Size}
+ */
+Element.prototype.measurePreferredSize = function()
+{
+    document.body.appendChild(this);
+    this.positionAt(0, 0);
+    var result = new Size(this.offsetWidth, this.offsetHeight);
+    this.positionAt(undefined, undefined);
+    document.body.removeChild(this);
+    return result;
 }
 
 Node.prototype.enclosingNodeOrSelfWithNodeNameInArray = function(nameArray)

@@ -76682,6 +76682,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\spectrum.css"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\splitView.css"
 					>
 				</File>

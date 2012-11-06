@@ -360,6 +360,21 @@ WebInspector.View.prototype = {
         WebInspector.setCurrentFocusElement(element);
     },
 
+    /**
+     * @return {Size}
+     */
+    measurePreferredSize: function()
+    {
+        this._loadCSSIfNeeded();
+        WebInspector.View._originalAppendChild.call(document.body, this.element);
+        this.element.positionAt(0, 0);
+        var result = new Size(this.element.offsetWidth, this.element.offsetHeight);
+        this.element.positionAt(undefined, undefined);
+        WebInspector.View._originalRemoveChild.call(document.body, this.element);
+        this._disableCSSIfNeeded();
+        return result;
+    },
+
     __proto__: WebInspector.Object.prototype
 }
 

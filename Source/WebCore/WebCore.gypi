@@ -6502,6 +6502,7 @@
             'inspector/front-end/inspector.css',
             'inspector/front-end/inspectorSyntaxHighlight.css',
             'inspector/front-end/popover.css',
+            'inspector/front-end/spectrum.css',
             '<@(webinspector_modules_js_files)',
             '<@(webinspector_standalone_css_files)',
         ],
