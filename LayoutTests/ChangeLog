@@ -1,5 +1,11 @@
 2012-11-06  Joshua Bell  <jsbell@chromium.org>
 
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-06  Joshua Bell  <jsbell@chromium.org>
+
         [Chromium] css3/line-break/line-break-strict-sound-marks.html image flaky on Mac 10.7
         https://bugs.webkit.org/show_bug.cgi?id=101368
 
