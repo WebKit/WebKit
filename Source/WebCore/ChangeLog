@@ -1,3 +1,19 @@
+2012-11-06  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: report physical memory really committed for JS heap in NMI
+        https://bugs.webkit.org/show_bug.cgi?id=101335
+
+        Some OSes (e.g. Linux) perform lazy commits of requested memory.
+        Because of that the committed memory may not retain any physical
+        memory until the very first access to the committed chunk.
+        That led to JS heap reported more physical memory than was currently
+        in use.
+
+        Reviewed by Vsevolod Vlasov.
+
+        * bindings/v8/ScriptGCEvent.cpp:
+        (WebCore::ScriptGCEvent::getHeapSize):
+
 2012-11-06  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Breakpoint is not removed when it was set in non-formatted mode and then removed while in formatted mode.
