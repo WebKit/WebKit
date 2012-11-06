@@ -1,3 +1,16 @@
+2012-11-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Prototype chain caching should check that the path from the base object to the slot base involves prototype hops only
+        https://bugs.webkit.org/show_bug.cgi?id=101276
+
+        Reviewed by Gavin Barraclough.
+
+        This test already covered this case, but only for method_check. Modified it to
+        also cover the get_by_id case.
+
+        * fast/js/toString-and-valueOf-override-expected.txt:
+        * fast/js/toString-and-valueOf-override.html:
+
 2012-11-05  Mark Lam  <mark.lam@apple.com>
 
         Fixed flaky fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html.

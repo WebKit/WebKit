@@ -525,7 +525,6 @@ namespace JSC {
         bool isNameScopeObject() const;
         bool isActivationObject() const;
         bool isErrorInstance() const;
-        bool isProxy() const;
 
         void seal(JSGlobalData&);
         void freeze(JSGlobalData&);
@@ -932,11 +931,6 @@ inline bool JSObject::isActivationObject() const
 inline bool JSObject::isErrorInstance() const
 {
     return structure()->typeInfo().type() == ErrorInstanceType;
-}
-
-inline bool JSObject::isProxy() const
-{
-    return structure()->typeInfo().type() == ProxyType;
 }
 
 inline void JSObject::setButterfly(JSGlobalData& globalData, Butterfly* butterfly, Structure* structure)

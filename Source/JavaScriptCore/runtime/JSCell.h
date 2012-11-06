@@ -75,6 +75,7 @@ namespace JSC {
         bool isString() const;
         bool isObject() const;
         bool isGetterSetter() const;
+        bool isProxy() const;
         bool inherits(const ClassInfo*) const;
         bool isAPIValueWrapper() const;
 

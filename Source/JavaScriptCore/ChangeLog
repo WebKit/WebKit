@@ -1,3 +1,30 @@
+2012-11-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Prototype chain caching should check that the path from the base object to the slot base involves prototype hops only
+        https://bugs.webkit.org/show_bug.cgi?id=101276
+
+        Reviewed by Gavin Barraclough.
+
+        Changed normalizePrototypeChain() to report an invalid prototype chain if any object is a proxy.
+        This catches cases where our prototype chain checks would have been insufficient to guard against
+        newly introduced properties, despecialized properties, or deleted properties in the chain of
+        objects involved in the access.
+
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDProtoList):
+        (JSC::DFG::tryCachePutByID):
+        (JSC::DFG::tryBuildPutByIdList):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/Operations.h:
+        (JSC):
+        (JSC::normalizePrototypeChain):
+
 2012-11-05  Dima Gorbik  <dgorbik@apple.com>
 
         Back out controversial changes from Bug 98665.

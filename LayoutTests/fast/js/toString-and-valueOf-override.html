@@ -12,6 +12,8 @@
             try { print('[' + type + '] : ' + [object]); } catch(e) { print(e); }
             try { print('String(' + type + ') : ' + String(object)); } catch(e) { print(e); }
             try { print('String([' + type + ']) : ' + String([object])); } catch(e) { print(e); }
+            try { print(type + '.toString : ' + object.toString); } catch(e) { print(e); }
+            try { var toString = object.toString; print(type + '.toString() (cached in variable) : ' + toString()); } catch(e) { print(e); }
             try { print(type + '.toString() : ' + object.toString()); } catch(e) { print(e); }
             try { print('[' + type + '].toString() : ' + [object].toString()); } catch(e) { print(e); }
             try { print(type + '.valueOf() : ' + object.valueOf()); } catch(e) { print(e); }

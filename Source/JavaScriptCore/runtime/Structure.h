@@ -521,6 +521,11 @@ namespace JSC {
         return m_structure->typeInfo().type() == GetterSetterType;
     }
 
+    inline bool JSCell::isProxy() const
+    {
+        return structure()->typeInfo().type() == ProxyType;
+    }
+
     inline bool JSCell::isAPIValueWrapper() const
     {
         return m_structure->typeInfo().type() == APIValueWrapperType;

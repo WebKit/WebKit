@@ -1001,32 +1001,32 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                     // below may GC.
                     pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id);
 
-                    normalizePrototypeChain(exec, baseCell);
-                    
-                    ASSERT(structure->previousID()->isObject());
-                    pc[4].u.structure.set(
-                        globalData, codeBlock->ownerExecutable(), structure->previousID());
-                    if (isInlineOffset(slot.cachedOffset()))
-                        pc[5].u.operand = offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + JSObject::offsetOfInlineStorage();
-                    else
-                        pc[5].u.operand = offsetInButterfly(slot.cachedOffset()) * sizeof(JSValue);
-                    pc[6].u.structure.set(
-                        globalData, codeBlock->ownerExecutable(), structure);
-                    StructureChain* chain = structure->prototypeChain(exec);
-                    ASSERT(chain);
-                    pc[7].u.structureChain.set(
-                        globalData, codeBlock->ownerExecutable(), chain);
-                    
-                    if (pc[8].u.operand) {
+                    if (normalizePrototypeChain(exec, baseCell) != InvalidPrototypeChain) {
+                        ASSERT(structure->previousID()->isObject());
+                        pc[4].u.structure.set(
+                            globalData, codeBlock->ownerExecutable(), structure->previousID());
                         if (isInlineOffset(slot.cachedOffset()))
-                            pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_direct);
+                            pc[5].u.operand = offsetInInlineStorage(slot.cachedOffset()) * sizeof(JSValue) + JSObject::offsetOfInlineStorage();
                         else
-                            pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_direct_out_of_line);
-                    } else {
-                        if (isInlineOffset(slot.cachedOffset()))
-                            pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_normal);
-                        else
-                            pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_normal_out_of_line);
+                            pc[5].u.operand = offsetInButterfly(slot.cachedOffset()) * sizeof(JSValue);
+                        pc[6].u.structure.set(
+                            globalData, codeBlock->ownerExecutable(), structure);
+                        StructureChain* chain = structure->prototypeChain(exec);
+                        ASSERT(chain);
+                        pc[7].u.structureChain.set(
+                            globalData, codeBlock->ownerExecutable(), chain);
+                    
+                        if (pc[8].u.operand) {
+                            if (isInlineOffset(slot.cachedOffset()))
+                                pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_direct);
+                            else
+                                pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_direct_out_of_line);
+                        } else {
+                            if (isInlineOffset(slot.cachedOffset()))
+                                pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_normal);
+                            else
+                                pc[0].u.opcode = LLInt::getOpcode(llint_op_put_by_id_transition_normal_out_of_line);
+                        }
                     }
                 }
             } else {

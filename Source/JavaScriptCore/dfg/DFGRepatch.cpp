@@ -324,7 +324,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     
     PropertyOffset offset = slot.cachedOffset();
     size_t count = normalizePrototypeChain(exec, baseValue, slot.slotBase(), propertyName, offset);
-    if (!count)
+    if (count == InvalidPrototypeChain)
         return false;
 
     StructureChain* prototypeChain = structure->prototypeChain(exec);
@@ -550,7 +550,7 @@ static bool tryBuildGetByIDProtoList(ExecState* exec, JSValue baseValue, const I
     
     PropertyOffset offset = slot.cachedOffset();
     size_t count = normalizePrototypeChain(exec, baseValue, slot.slotBase(), propertyName, offset);
-    if (!count)
+    if (count == InvalidPrototypeChain)
         return false;
 
     Structure* structure = baseValue.asCell()->structure();
@@ -964,7 +964,8 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
             if (hasIndexingHeader(oldStructure->indexingType()))
                 return false;
             
-            normalizePrototypeChain(exec, baseCell);
+            if (normalizePrototypeChain(exec, baseCell) == InvalidPrototypeChain)
+                return false;
             
             StructureChain* prototypeChain = structure->prototypeChain(exec);
             
@@ -1035,7 +1036,8 @@ static bool tryBuildPutByIdList(ExecState* exec, JSValue baseValue, const Identi
             if (hasIndexingHeader(oldStructure->indexingType()))
                 return false;
             
-            normalizePrototypeChain(exec, baseCell);
+            if (normalizePrototypeChain(exec, baseCell) == InvalidPrototypeChain)
+                return false;
             
             StructureChain* prototypeChain = structure->prototypeChain(exec);
             
