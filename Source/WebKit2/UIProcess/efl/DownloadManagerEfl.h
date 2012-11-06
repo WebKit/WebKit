@@ -32,7 +32,7 @@
 #include <wtf/RefPtr.h>
 
 class EwkContext;
-class Ewk_Download_Job;
+class EwkDownloadJob;
 
 namespace WebKit {
 
@@ -48,7 +48,7 @@ public:
 private:
     DownloadManagerEfl(EwkContext*);
 
-    Ewk_Download_Job* downloadJob(uint64_t id) const;
+    EwkDownloadJob* downloadJob(uint64_t id) const;
     void unregisterDownloadJob(uint64_t id);
 
     static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef, WKStringRef filename, bool* allowOverwrite, const void* clientInfo);
@@ -60,7 +60,7 @@ private:
     static void didFinish(WKContextRef, WKDownloadRef, const void* clientInfo);
 
     EwkContext* m_context;
-    HashMap<uint64_t, RefPtr<Ewk_Download_Job> > m_downloadJobs;
+    HashMap<uint64_t, RefPtr<EwkDownloadJob> > m_downloadJobs;
 };
 
 } // namespace WebKit

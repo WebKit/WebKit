@@ -27,6 +27,7 @@
 #define ewk_auth_request_private_h
 
 #include "WKEinaSharedString.h"
+#include "ewk_object_private.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -35,13 +36,15 @@ namespace WebKit {
 class AuthenticationChallengeProxy;
 }
 
-class Ewk_Auth_Request : public RefCounted<Ewk_Auth_Request> {
+class EwkAuthRequest : public Ewk_Object {
 public:
-    static PassRefPtr<Ewk_Auth_Request> create(WebKit::AuthenticationChallengeProxy* authenticationChallenge)
+    EWK_OBJECT_DECLARE(EwkAuthRequest)
+
+    static PassRefPtr<EwkAuthRequest> create(WebKit::AuthenticationChallengeProxy* authenticationChallenge)
     {
-        return adoptRef(new Ewk_Auth_Request(authenticationChallenge));
+        return adoptRef(new EwkAuthRequest(authenticationChallenge));
     }
-    ~Ewk_Auth_Request();
+    ~EwkAuthRequest();
 
     const char* suggestedUsername() const;
     const char* realm() const;
@@ -52,7 +55,7 @@ public:
     bool authenticate(const String& username, const String& password);
 
 private:
-    explicit Ewk_Auth_Request(WebKit::AuthenticationChallengeProxy* authenticationChallenge);
+    explicit EwkAuthRequest(WebKit::AuthenticationChallengeProxy* authenticationChallenge);
 
     RefPtr<WebKit::AuthenticationChallengeProxy> m_authenticationChallenge;
     bool m_wasHandled;

@@ -1,3 +1,16 @@
+2012-11-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Refactor Ewk_Auth_Request, Ewk_Url_Scheme_Request and Ewk_Download_Job to be Ewk_Objects
+        https://bugs.webkit.org/show_bug.cgi?id=101383
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Ewk_Auth_Request, Ewk_Url_Scheme_Request and Ewk_Download_Job are Ewk_Objects now.
+
+        * MiniBrowser/efl/main.c:
+        (auth_popup_close):
+        (on_authentication_request):
+
 2012-11-06  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Remove the valgrind issue with MockWebRTCPeerConnectionHandler

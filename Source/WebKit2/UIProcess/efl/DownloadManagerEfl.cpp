@@ -45,7 +45,7 @@ static inline DownloadManagerEfl* toDownloadManagerEfl(const void* clientInfo)
 
 WKStringRef DownloadManagerEfl::decideDestinationWithSuggestedFilename(WKContextRef, WKDownloadRef wkDownload, WKStringRef filename, bool* /*allowOverwrite*/, const void* clientInfo)
 {
-    Ewk_Download_Job* download = toDownloadManagerEfl(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
+    EwkDownloadJob* download = toDownloadManagerEfl(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
     ASSERT(download);
 
     download->setSuggestedFileName(toImpl(filename)->string().utf8().data());
@@ -62,14 +62,14 @@ WKStringRef DownloadManagerEfl::decideDestinationWithSuggestedFilename(WKContext
 
 void DownloadManagerEfl::didReceiveResponse(WKContextRef, WKDownloadRef wkDownload, WKURLResponseRef wkResponse, const void* clientInfo)
 {
-    Ewk_Download_Job* download = toDownloadManagerEfl(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
+    EwkDownloadJob* download = toDownloadManagerEfl(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
     ASSERT(download);
     download->setResponse(EwkUrlResponse::create(wkResponse));
 }
 
 void DownloadManagerEfl::didCreateDestination(WKContextRef, WKDownloadRef wkDownload, WKStringRef /*path*/, const void* clientInfo)
 {
-    Ewk_Download_Job* download = toDownloadManagerEfl(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
+    EwkDownloadJob* download = toDownloadManagerEfl(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_DOWNLOADING);
@@ -77,7 +77,7 @@ void DownloadManagerEfl::didCreateDestination(WKContextRef, WKDownloadRef wkDown
 
 void DownloadManagerEfl::didReceiveData(WKContextRef, WKDownloadRef wkDownload, uint64_t length, const void* clientInfo)
 {
-    Ewk_Download_Job* download = toDownloadManagerEfl(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
+    EwkDownloadJob* download = toDownloadManagerEfl(clientInfo)->downloadJob(toImpl(wkDownload)->downloadID());
     ASSERT(download);
     download->incrementReceivedData(length);
 }
@@ -86,7 +86,7 @@ void DownloadManagerEfl::didFail(WKContextRef, WKDownloadRef wkDownload, WKError
 {
     DownloadManagerEfl* downloadManager = toDownloadManagerEfl(clientInfo);
     uint64_t downloadId = toImpl(wkDownload)->downloadID();
-    Ewk_Download_Job* download = downloadManager->downloadJob(downloadId);
+    EwkDownloadJob* download = downloadManager->downloadJob(downloadId);
     ASSERT(download);
 
     OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(error);
@@ -100,7 +100,7 @@ void DownloadManagerEfl::didCancel(WKContextRef, WKDownloadRef wkDownload, const
 {
     DownloadManagerEfl* downloadManager = toDownloadManagerEfl(clientInfo);
     uint64_t downloadId = toImpl(wkDownload)->downloadID();
-    Ewk_Download_Job* download = downloadManager->downloadJob(downloadId);
+    EwkDownloadJob* download = downloadManager->downloadJob(downloadId);
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_CANCELLED);
@@ -112,7 +112,7 @@ void DownloadManagerEfl::didFinish(WKContextRef, WKDownloadRef wkDownload, const
 {
     DownloadManagerEfl* downloadManager = toDownloadManagerEfl(clientInfo);
     uint64_t downloadId = toImpl(wkDownload)->downloadID();
-    Ewk_Download_Job* download = downloadManager->downloadJob(downloadId);
+    EwkDownloadJob* download = downloadManager->downloadJob(downloadId);
     ASSERT(download);
 
     download->setState(EWK_DOWNLOAD_JOB_STATE_FINISHED);
@@ -145,11 +145,11 @@ void DownloadManagerEfl::registerDownload(DownloadProxy* download, EwkViewImpl* 
     if (m_downloadJobs.contains(downloadId))
         return;
 
-    RefPtr<Ewk_Download_Job> ewkDownload = Ewk_Download_Job::create(download, viewImpl);
+    RefPtr<EwkDownloadJob> ewkDownload = EwkDownloadJob::create(download, viewImpl);
     m_downloadJobs.add(downloadId, ewkDownload);
 }
 
-Ewk_Download_Job* DownloadManagerEfl::downloadJob(uint64_t id) const
+EwkDownloadJob* DownloadManagerEfl::downloadJob(uint64_t id) const
 {
     return m_downloadJobs.get(id).get();
 }

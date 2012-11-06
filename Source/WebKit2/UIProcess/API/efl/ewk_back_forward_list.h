@@ -96,7 +96,7 @@ EAPI unsigned ewk_back_forward_list_count(Ewk_Back_Forward_List *list);
  * @param limit the number of items to retrieve
  *
  * @return @c Eina_List containing @c Ewk_Back_Forward_List_Item elements or @c NULL in case of error,
- *            the Eina_List and its items should be freed after use. Use ewk_back_forward_list_item_unref()
+ *            the Eina_List and its items should be freed after use. Use ewk_object_unref()
  *            to free the items
  */
 EAPI Eina_List *ewk_back_forward_list_n_back_items_copy(const Ewk_Back_Forward_List *list, int limit);
@@ -111,7 +111,7 @@ EAPI Eina_List *ewk_back_forward_list_n_back_items_copy(const Ewk_Back_Forward_L
  * @param limit the number of items to retrieve
  *
  * @return @c Eina_List containing @c Ewk_Back_Forward_List_Item elements or @c NULL in case of error,
- *            the Eina_List and its items should be freed after use. Use ewk_back_forward_list_item_unref()
+ *            the Eina_List and its items should be freed after use. Use ewk_object_unref()
  *            to free the items
  */
 EAPI Eina_List *ewk_back_forward_list_n_forward_items_copy(const Ewk_Back_Forward_List *list, int limit);
@@ -124,7 +124,7 @@ EAPI Eina_List *ewk_back_forward_list_n_forward_items_copy(const Ewk_Back_Forwar
  * @param list the back-forward list instance
  *
  * @return @c Eina_List containing @c Ewk_Back_Forward_List_Item elements or @c NULL in case of error,
- *            the Eina_List and its items should be freed after use. Use ewk_back_forward_list_item_unref()
+ *            the Eina_List and its items should be freed after use. Use ewk_object_unref()
  *            to free the items
  *
  * @see ewk_back_forward_list_n_back_items_copy
@@ -140,7 +140,7 @@ EAPI Eina_List *ewk_back_forward_list_n_forward_items_copy(const Ewk_Back_Forwar
  * @param list the back-forward list instance
  *
  * @return @c Eina_List containing @c Ewk_Back_Forward_List_Item elements or @c NULL in case of error,
- *            the Eina_List and its items should be freed after use. Use ewk_back_forward_list_item_unref()
+ *            the Eina_List and its items should be freed after use. Use ewk_object_unref()
  *            to free the items
  *
  * @see ewk_back_forward_list_n_forward_items_copy

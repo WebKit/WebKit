@@ -43,8 +43,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for Ewk_Download_Job */
-typedef struct Ewk_Download_Job Ewk_Download_Job;
+/**
+ * Declare Ewk_Download_Job as Ewk_Object.
+ *
+ * @see Ewk_Object
+ */
+typedef struct Ewk_Object Ewk_Download_Job;
 
 /// Defines the possible states of a download.
 enum Ewk_Download_Job_State {
@@ -65,24 +69,6 @@ enum Ewk_Download_Job_State {
 };
 /// Creates a type name for @a Ewk_Download_Job_State.
 typedef enum Ewk_Download_Job_State Ewk_Download_Job_State;
-
-/**
- * Increases the reference count of the given object.
- *
- * @param download the download object to increase the reference count
- *
- * @return a pointer to the object on success, @c NULL otherwise.
- */
-EAPI Ewk_Download_Job *ewk_download_job_ref(Ewk_Download_Job *download);
-
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count reaches 0, the download is freed.
- *
- * @param download the download object to decrease the reference count
- */
-EAPI void ewk_download_job_unref(Ewk_Download_Job *download);
 
 /**
  * Query the state for this download.

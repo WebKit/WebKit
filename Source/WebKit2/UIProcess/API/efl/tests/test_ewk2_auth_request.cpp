@@ -77,7 +77,7 @@ static void onAuthenticationRequest(void* userData, Evas_Object*, void* eventInf
     Ewk_Auth_Request* request = static_cast<Ewk_Auth_Request*>(eventInfo);
     ASSERT_TRUE(request);
 
-    *returnRequest = ewk_auth_request_ref(request);
+    *returnRequest = ewk_object_ref(request);
 }
 
 TEST_F(EWK2UnitTestBase, ewk_auth_request_success)
@@ -102,7 +102,7 @@ TEST_F(EWK2UnitTestBase, ewk_auth_request_success)
 
     ASSERT_TRUE(ewk_auth_request_authenticate(authenticationRequest, TEST_USERNAME, TEST_PASSWORD));
 
-    ewk_auth_request_unref(authenticationRequest);
+    ewk_object_unref(authenticationRequest);
 
     ASSERT_TRUE(waitUntilTitleChangedTo("EFLWebKit2 Authentication test"));
 }
@@ -128,7 +128,7 @@ TEST_F(EWK2UnitTestBase, ewk_auth_request_failure_then_success)
 
     ASSERT_TRUE(ewk_auth_request_authenticate(authenticationRequest, TEST_USERNAME, "wrongpassword"));
 
-    ewk_auth_request_unref(authenticationRequest);
+    ewk_object_unref(authenticationRequest);
     authenticationRequest = 0;
 
     // We expect a second authentication request since the first one failed.
@@ -143,7 +143,7 @@ TEST_F(EWK2UnitTestBase, ewk_auth_request_failure_then_success)
     // Now provide the right password.
     ASSERT_TRUE(ewk_auth_request_authenticate(authenticationRequest, TEST_USERNAME, TEST_PASSWORD));
 
-    ewk_auth_request_unref(authenticationRequest);
+    ewk_object_unref(authenticationRequest);
 
     ASSERT_TRUE(waitUntilTitleChangedTo("EFLWebKit2 Authentication test"));
 }
@@ -186,7 +186,7 @@ TEST_F(EWK2UnitTestBase, ewk_auth_request_cancel)
     evas_object_smart_callback_add(webView(), "resource,request,response", onResourceLoadResponse, &statusCode);
 
     // Will attempt to continue without authentication by default.
-    ewk_auth_request_unref(authenticationRequest);
+    ewk_object_unref(authenticationRequest);
 
     while (!statusCode)
         ecore_main_loop_iterate();

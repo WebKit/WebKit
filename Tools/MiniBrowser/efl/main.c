@@ -658,7 +658,7 @@ typedef struct {
 static void
 auth_popup_close(AuthData *auth_data)
 {
-    ewk_auth_request_unref(auth_data->request);
+    ewk_object_unref(auth_data->request);
     evas_object_del(auth_data->popup);
     free(auth_data);
 }
@@ -689,7 +689,7 @@ static void
 on_authentication_request(void *user_data, Evas_Object *obj, void *event_info)
 {
     Browser_Window *window = (Browser_Window *)user_data;
-    Ewk_Auth_Request *request = ewk_auth_request_ref((Ewk_Auth_Request *)event_info);
+    Ewk_Auth_Request *request = ewk_object_ref((Ewk_Auth_Request *)event_info);
 
     AuthData *auth_data = (AuthData *)malloc(sizeof(AuthData));
     auth_data->request = request;

@@ -1,3 +1,101 @@
+2012-11-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Refactor Ewk_Auth_Request, Ewk_Url_Scheme_Request and Ewk_Download_Job to be Ewk_Objects
+        https://bugs.webkit.org/show_bug.cgi?id=101383
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Ewk_Auth_Request, Ewk_Url_Scheme_Request and Ewk_Download_Job are Ewk_Objects now.
+
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        * UIProcess/API/efl/EwkViewImpl.h:
+        * UIProcess/API/efl/ewk_auth_request.cpp:
+        (EwkAuthRequest::EwkAuthRequest):
+        (EwkAuthRequest::~EwkAuthRequest):
+        (EwkAuthRequest::suggestedUsername):
+        (EwkAuthRequest::realm):
+        (EwkAuthRequest::host):
+        (EwkAuthRequest::continueWithoutCredential):
+        (EwkAuthRequest::authenticate):
+        (EwkAuthRequest::isRetrying):
+        (ewk_auth_request_suggested_username_get):
+        (ewk_auth_request_cancel):
+        (ewk_auth_request_authenticate):
+        (ewk_auth_request_retrying_get):
+        (ewk_auth_request_realm_get):
+        (ewk_auth_request_host_get):
+        * UIProcess/API/efl/ewk_auth_request.h:
+        * UIProcess/API/efl/ewk_auth_request_private.h:
+        (EwkAuthRequest):
+        (EwkAuthRequest::create):
+        * UIProcess/API/efl/ewk_back_forward_list.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        (EwkContext):
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (EwkDownloadJob::EwkDownloadJob):
+        (EwkDownloadJob::id):
+        (EwkDownloadJob::viewImpl):
+        (ewk_download_job_state_get):
+        (EwkDownloadJob::state):
+        (ewk_download_job_request_get):
+        (EwkDownloadJob::request):
+        (ewk_download_job_response_get):
+        (EwkDownloadJob::response):
+        (ewk_download_job_destination_get):
+        (EwkDownloadJob::destination):
+        (ewk_download_job_destination_set):
+        (EwkDownloadJob::setDestination):
+        (ewk_download_job_suggested_filename_get):
+        (EwkDownloadJob::suggestedFileName):
+        (ewk_download_job_cancel):
+        (EwkDownloadJob::cancel):
+        (ewk_download_job_estimated_progress_get):
+        (EwkDownloadJob::estimatedProgress):
+        (ewk_download_job_elapsed_time_get):
+        (EwkDownloadJob::elapsedTime):
+        (EwkDownloadJob::setResponse):
+        (EwkDownloadJob::setSuggestedFileName):
+        (EwkDownloadJob::incrementReceivedData):
+        (EwkDownloadJob::setState):
+        * UIProcess/API/efl/ewk_download_job.h:
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        (EwkDownloadJob):
+        (EwkDownloadJob::create):
+        * UIProcess/API/efl/ewk_url_scheme_request.cpp:
+        (EwkUrlSchemeRequest::EwkUrlSchemeRequest):
+        (EwkUrlSchemeRequest::id):
+        (EwkUrlSchemeRequest::url):
+        (EwkUrlSchemeRequest::scheme):
+        (EwkUrlSchemeRequest::path):
+        (EwkUrlSchemeRequest::finish):
+        (ewk_url_scheme_request_scheme_get):
+        (ewk_url_scheme_request_url_get):
+        (ewk_url_scheme_request_path_get):
+        (ewk_url_scheme_request_finish):
+        * UIProcess/API/efl/ewk_url_scheme_request.h:
+        * UIProcess/API/efl/ewk_url_scheme_request_private.h:
+        (EwkUrlSchemeRequest):
+        (EwkUrlSchemeRequest::create):
+        * UIProcess/API/efl/tests/test_ewk2_auth_request.cpp:
+        (onAuthenticationRequest):
+        (TEST_F):
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::decideDestinationWithSuggestedFilename):
+        (WebKit::DownloadManagerEfl::didReceiveResponse):
+        (WebKit::DownloadManagerEfl::didCreateDestination):
+        (WebKit::DownloadManagerEfl::didReceiveData):
+        (WebKit::DownloadManagerEfl::didFail):
+        (WebKit::DownloadManagerEfl::didCancel):
+        (WebKit::DownloadManagerEfl::didFinish):
+        (WebKit::DownloadManagerEfl::registerDownload):
+        (WebKit::DownloadManagerEfl::downloadJob):
+        * UIProcess/efl/DownloadManagerEfl.h:
+        (DownloadManagerEfl):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didReceiveAuthenticationChallengeInFrame):
+        * UIProcess/efl/RequestManagerClientEfl.cpp:
+        (WebKit::RequestManagerClientEfl::didReceiveURIRequest):
+
 2012-11-06  Yael Aharon  <yael.aharon@intel.com>
 
         [WK2] Wrong scroll position when going back in history

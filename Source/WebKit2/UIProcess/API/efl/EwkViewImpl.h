@@ -70,12 +70,10 @@ class EwkContext;
 
 class Ewk_Back_Forward_List;
 class Ewk_Color_Picker;
-class Ewk_Download_Job;
 class Ewk_Error;
 class Ewk_Form_Submission_Request;
 class Ewk_Intent;
 class Ewk_Intent_Service;
-class Ewk_Navigation_Policy_Decision;
 class Ewk_Resource;
 class Ewk_Popup_Menu;
 class Ewk_Settings;

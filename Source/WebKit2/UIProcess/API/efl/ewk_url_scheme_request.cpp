@@ -33,7 +33,7 @@
 
 using namespace WebKit;
 
-Ewk_Url_Scheme_Request::Ewk_Url_Scheme_Request(WKSoupRequestManagerRef manager, WKURLRef url, uint64_t requestID)
+EwkUrlSchemeRequest::EwkUrlSchemeRequest(WKSoupRequestManagerRef manager, WKURLRef url, uint64_t requestID)
     : m_wkRequestManager(manager)
     , m_url(url)
     , m_requestID(requestID)
@@ -43,27 +43,27 @@ Ewk_Url_Scheme_Request::Ewk_Url_Scheme_Request(WKSoupRequestManagerRef manager, 
     m_path = soupURI->path;
 }
 
-uint64_t Ewk_Url_Scheme_Request::id() const
+uint64_t EwkUrlSchemeRequest::id() const
 {
     return m_requestID;
 }
 
-const char* Ewk_Url_Scheme_Request::url() const
+const char* EwkUrlSchemeRequest::url() const
 {
     return m_url;
 }
 
-const char* Ewk_Url_Scheme_Request::scheme() const
+const char* EwkUrlSchemeRequest::scheme() const
 {
     return m_scheme;
 }
 
-const char* Ewk_Url_Scheme_Request::path() const
+const char* EwkUrlSchemeRequest::path() const
 {
     return m_path;
 }
 
-void Ewk_Url_Scheme_Request::finish(const void* contentData, uint64_t contentLength, const char* mimeType)
+void EwkUrlSchemeRequest::finish(const void* contentData, uint64_t contentLength, const char* mimeType)
 {
     WKRetainPtr<WKDataRef> wkData(AdoptWK, WKDataCreate(contentLength ? reinterpret_cast<const unsigned char*>(contentData) : 0, contentLength));
     WKRetainPtr<WKStringRef> wkMimeType = mimeType ? adoptWK(WKStringCreateWithUTF8CString(mimeType)) : 0;
@@ -72,47 +72,32 @@ void Ewk_Url_Scheme_Request::finish(const void* contentData, uint64_t contentLen
     WKSoupRequestManagerDidHandleURIRequest(m_wkRequestManager.get(), wkData.get(), contentLength, wkMimeType.get(), m_requestID);
 }
 
-Ewk_Url_Scheme_Request* ewk_url_scheme_request_ref(Ewk_Url_Scheme_Request* request)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
-    request->ref();
-
-    return request;
-}
-
-void ewk_url_scheme_request_unref(Ewk_Url_Scheme_Request* request)
-{
-    EINA_SAFETY_ON_NULL_RETURN(request);
-
-    request->deref();
-}
-
 const char* ewk_url_scheme_request_scheme_get(const Ewk_Url_Scheme_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlSchemeRequest, request, impl, 0);
 
-    return request->scheme();
+    return impl->scheme();
 }
 
 const char* ewk_url_scheme_request_url_get(const Ewk_Url_Scheme_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlSchemeRequest, request, impl, 0);
 
-    return request->url();
+    return impl->url();
 }
 
 const char* ewk_url_scheme_request_path_get(const Ewk_Url_Scheme_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkUrlSchemeRequest, request, impl, 0);
 
-    return request->path();
+    return impl->path();
 }
 
 Eina_Bool ewk_url_scheme_request_finish(Ewk_Url_Scheme_Request* request, const void* contentData, uint64_t contentLength, const char* mimeType)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkUrlSchemeRequest, request, impl, false);
 
-    request->finish(contentData, contentLength, mimeType);
+    impl->finish(contentData, contentLength, mimeType);
 
     return true;
 }

@@ -166,7 +166,7 @@ void PageLoadClientEfl::didReceiveAuthenticationChallengeInFrame(WKPageRef, WKFr
 {
     EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
 
-    RefPtr<Ewk_Auth_Request> authenticationRequest = Ewk_Auth_Request::create(toImpl(authenticationChallenge));
+    RefPtr<Ewk_Auth_Request> authenticationRequest = EwkAuthRequest::create(toImpl(authenticationChallenge));
     viewImpl->smartCallback<AuthenticationRequest>().call(authenticationRequest.get());
 }
 

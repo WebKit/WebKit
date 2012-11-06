@@ -37,26 +37,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for Ewk_Auth_Request */
-typedef struct Ewk_Auth_Request Ewk_Auth_Request;
-
 /**
- * Increases the reference count of the given object.
+ * Declare Ewk_Auth_Request as Ewk_Object.
  *
- * @param request the request object to increase the reference count
- *
- * @return a pointer to the object on success, @c NULL otherwise
+ * @see Ewk_Object
  */
-EAPI Ewk_Auth_Request *ewk_auth_request_ref(Ewk_Auth_Request *request);
-
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count reaches 0, the request is freed
- *
- * @param request the request object to decrease the reference count
- */
-EAPI void ewk_auth_request_unref(Ewk_Auth_Request *request);
+typedef struct Ewk_Object Ewk_Auth_Request;
 
 /**
  * Queries the suggested username to be used for authenticating.

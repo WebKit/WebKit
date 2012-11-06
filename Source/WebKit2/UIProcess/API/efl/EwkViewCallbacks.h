@@ -32,8 +32,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-struct Ewk_Auth_Request;
-struct Ewk_Download_Job;
+typedef struct Ewk_Object Ewk_Auth_Request;
+typedef struct Ewk_Object Ewk_Download_Job;
 struct Ewk_Download_Job_Error;
 struct Ewk_File_Chooser_Request;
 struct Ewk_Form_Submission_Request;

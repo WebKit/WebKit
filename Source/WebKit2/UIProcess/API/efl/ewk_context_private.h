@@ -26,7 +26,6 @@
 #include "ewk_context.h"
 #include "ewk_object_private.h"
 
-class Ewk_Url_Scheme_Request;
 class Ewk_Cookie_Manager;
 class Ewk_Favicon_Database;
 
@@ -76,8 +75,6 @@ public:
     Ewk_Cache_Model cacheModel() const;
 
     WKContextRef wkContext();
-
-    void urlSchemeRequestReceived(Ewk_Url_Scheme_Request*);
 
     WebKit::DownloadManagerEfl* downloadManager() const;
 

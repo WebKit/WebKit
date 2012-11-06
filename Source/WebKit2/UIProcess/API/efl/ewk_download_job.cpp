@@ -36,7 +36,7 @@
 
 using namespace WebKit;
 
-Ewk_Download_Job::Ewk_Download_Job(WebKit::DownloadProxy* download, EwkViewImpl* viewImpl)
+EwkDownloadJob::EwkDownloadJob(WebKit::DownloadProxy* download, EwkViewImpl* viewImpl)
     : m_downloadProxy(download)
     , m_viewImpl(viewImpl)
     , m_state(EWK_DOWNLOAD_JOB_STATE_NOT_STARTED)
@@ -45,27 +45,11 @@ Ewk_Download_Job::Ewk_Download_Job(WebKit::DownloadProxy* download, EwkViewImpl*
     , m_downloaded(0)
 { }
 
-Ewk_Download_Job* ewk_download_job_ref(Ewk_Download_Job* download)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
-
-    download->ref();
-
-    return download;
-}
-
-void ewk_download_job_unref(Ewk_Download_Job* download)
-{
-    EINA_SAFETY_ON_NULL_RETURN(download);
-
-    download->deref();
-}
-
 /**
  * @internal
  * Queries the identifier for this download
  */
-uint64_t Ewk_Download_Job::id() const
+uint64_t EwkDownloadJob::id() const
 {
     return m_downloadProxy->downloadID();
 }
@@ -75,31 +59,31 @@ uint64_t Ewk_Download_Job::id() const
  * Returns the view this download is attached to.
  * The view is needed to send notification signals.
  */
-EwkViewImpl* Ewk_Download_Job::viewImpl() const
+EwkViewImpl* EwkDownloadJob::viewImpl() const
 {
     return m_viewImpl;
 }
 
 Ewk_Download_Job_State ewk_download_job_state_get(const Ewk_Download_Job* download)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, EWK_DOWNLOAD_JOB_STATE_UNKNOWN);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, EWK_DOWNLOAD_JOB_STATE_UNKNOWN);
 
-    return download->state();
+    return impl->state();
 }
 
-Ewk_Download_Job_State Ewk_Download_Job::state() const
+Ewk_Download_Job_State EwkDownloadJob::state() const
 {
     return m_state;
 }
 
 Ewk_Url_Request* ewk_download_job_request_get(const Ewk_Download_Job* download)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, 0);
 
-    return download->request();
+    return impl->request();
 }
 
-EwkUrlRequest* Ewk_Download_Job::request() const
+EwkUrlRequest* EwkDownloadJob::request() const
 {
     if (!m_request) {
         WKRetainPtr<WKURLRequestRef> wkURLRequest(AdoptWK, toAPI(WebURLRequest::create(m_downloadProxy->request()).leakRef()));
@@ -111,63 +95,63 @@ EwkUrlRequest* Ewk_Download_Job::request() const
 
 Ewk_Url_Response* ewk_download_job_response_get(const Ewk_Download_Job* download)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, 0);
 
-    return download->response();
+    return impl->response();
 }
 
-EwkUrlResponse* Ewk_Download_Job::response() const
+EwkUrlResponse* EwkDownloadJob::response() const
 {
     return m_response.get();
 }
 
 const char* ewk_download_job_destination_get(const Ewk_Download_Job* download)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, 0);
 
-    return download->destination();
+    return impl->destination();
 }
 
-const char* Ewk_Download_Job::destination() const
+const char* EwkDownloadJob::destination() const
 {
     return m_destination;
 }
 
 Eina_Bool ewk_download_job_destination_set(Ewk_Download_Job* download, const char* destination)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkDownloadJob, download, impl, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(destination, false);
 
-    download->setDestination(destination);
+    impl->setDestination(destination);
 
     return true;
 }
 
-void Ewk_Download_Job::setDestination(const char* destination)
+void EwkDownloadJob::setDestination(const char* destination)
 {
     m_destination = destination;
 }
 
 const char* ewk_download_job_suggested_filename_get(const Ewk_Download_Job* download)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, 0);
 
-    return download->suggestedFileName();
+    return impl->suggestedFileName();
 }
 
-const char* Ewk_Download_Job::suggestedFileName() const
+const char* EwkDownloadJob::suggestedFileName() const
 {
     return m_suggestedFilename;
 }
 
 Eina_Bool ewk_download_job_cancel(Ewk_Download_Job* download)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkDownloadJob, download, impl, false);
 
-    return download->cancel();
+    return impl->cancel();
 }
 
-bool Ewk_Download_Job::cancel()
+bool EwkDownloadJob::cancel()
 {
     if (m_state != EWK_DOWNLOAD_JOB_STATE_DOWNLOADING)
         return false;
@@ -179,12 +163,12 @@ bool Ewk_Download_Job::cancel()
 
 double ewk_download_job_estimated_progress_get(const Ewk_Download_Job* download)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, 0);
 
-    return download->estimatedProgress();
+    return impl->estimatedProgress();
 }
 
-double Ewk_Download_Job::estimatedProgress() const
+double EwkDownloadJob::estimatedProgress() const
 {
     if (!m_response)
         return 0;
@@ -198,12 +182,12 @@ double Ewk_Download_Job::estimatedProgress() const
 
 double ewk_download_job_elapsed_time_get(const Ewk_Download_Job* download)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(download, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkDownloadJob, download, impl, 0);
 
-    return download->elapsedTime();
+    return impl->elapsedTime();
 }
 
-double Ewk_Download_Job::elapsedTime() const
+double EwkDownloadJob::elapsedTime() const
 {
     // Download has not started yet.
     if (m_startTime < 0)
@@ -222,7 +206,7 @@ double Ewk_Download_Job::elapsedTime() const
  * @internal
  * Sets the URL @a response for this @a download.
  */
-void Ewk_Download_Job::setResponse(PassRefPtr<EwkUrlResponse> response)
+void EwkDownloadJob::setResponse(PassRefPtr<EwkUrlResponse> response)
 {
     ASSERT(response);
 
@@ -233,7 +217,7 @@ void Ewk_Download_Job::setResponse(PassRefPtr<EwkUrlResponse> response)
  * @internal
  * Sets the suggested file name for this @a download.
  */
-void Ewk_Download_Job::setSuggestedFileName(const char* suggestedFilename)
+void EwkDownloadJob::setSuggestedFileName(const char* suggestedFilename)
 {
     m_suggestedFilename = suggestedFilename;
 }
@@ -242,7 +226,7 @@ void Ewk_Download_Job::setSuggestedFileName(const char* suggestedFilename)
  * @internal
  * Report a given amount of data was received.
  */
-void Ewk_Download_Job::incrementReceivedData(uint64_t length)
+void EwkDownloadJob::incrementReceivedData(uint64_t length)
 {
     m_downloaded += length;
 }
@@ -251,7 +235,7 @@ void Ewk_Download_Job::incrementReceivedData(uint64_t length)
  * @internal
  * Sets the state of the download.
  */
-void Ewk_Download_Job::setState(Ewk_Download_Job_State state)
+void EwkDownloadJob::setState(Ewk_Download_Job_State state)
 {
     m_state = state;
 

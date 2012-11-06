@@ -37,20 +37,20 @@
 using namespace WebKit;
 using namespace WebCore;
 
-Ewk_Auth_Request::Ewk_Auth_Request(AuthenticationChallengeProxy* authenticationChallenge)
+EwkAuthRequest::EwkAuthRequest(AuthenticationChallengeProxy* authenticationChallenge)
     : m_authenticationChallenge(authenticationChallenge)
     , m_wasHandled(false)
 {
     ASSERT(m_authenticationChallenge);
 }
 
-Ewk_Auth_Request::~Ewk_Auth_Request()
+EwkAuthRequest::~EwkAuthRequest()
 {
     if (!m_wasHandled)
         continueWithoutCredential();
 }
 
-const char* Ewk_Auth_Request::suggestedUsername() const
+const char* EwkAuthRequest::suggestedUsername() const
 {
     if (!m_suggestedUsername) {
         WebCredential* credential = m_authenticationChallenge->proposedCredential();
@@ -66,7 +66,7 @@ const char* Ewk_Auth_Request::suggestedUsername() const
     return m_suggestedUsername;
 }
 
-const char* Ewk_Auth_Request::realm() const
+const char* EwkAuthRequest::realm() const
 {
     if (!m_realm) {
         WebProtectionSpace* protectionSpace = m_authenticationChallenge->protectionSpace();
@@ -82,7 +82,7 @@ const char* Ewk_Auth_Request::realm() const
     return m_realm;
 }
 
-const char* Ewk_Auth_Request::host() const
+const char* EwkAuthRequest::host() const
 {
     if (!m_host) {
         WebProtectionSpace* protectionSpace = m_authenticationChallenge->protectionSpace();
@@ -98,7 +98,7 @@ const char* Ewk_Auth_Request::host() const
     return m_host;
 }
 
-bool Ewk_Auth_Request::continueWithoutCredential()
+bool EwkAuthRequest::continueWithoutCredential()
 {
     if (m_wasHandled)
         return false;
@@ -109,7 +109,7 @@ bool Ewk_Auth_Request::continueWithoutCredential()
     return true;
 }
 
-bool Ewk_Auth_Request::authenticate(const String& username, const String& password)
+bool EwkAuthRequest::authenticate(const String& username, const String& password)
 {
     if (m_wasHandled)
         return false;
@@ -121,67 +121,51 @@ bool Ewk_Auth_Request::authenticate(const String& username, const String& passwo
     return true;
 }
 
-bool Ewk_Auth_Request::isRetrying() const
+bool EwkAuthRequest::isRetrying() const
 {
     return m_authenticationChallenge->previousFailureCount() > 0;
 }
 
-Ewk_Auth_Request* ewk_auth_request_ref(Ewk_Auth_Request* request)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
-
-    request->ref();
-
-    return request;
-}
-
-void ewk_auth_request_unref(Ewk_Auth_Request* request)
-{
-    EINA_SAFETY_ON_NULL_RETURN(request);
-
-    request->deref();
-}
-
 const char* ewk_auth_request_suggested_username_get(const Ewk_Auth_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkAuthRequest, request, impl, 0);
 
-    return request->suggestedUsername();
+    return impl->suggestedUsername();
 }
 
 Eina_Bool ewk_auth_request_cancel(Ewk_Auth_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkAuthRequest, request, impl, false);
 
-    return request->continueWithoutCredential();
+    return impl->continueWithoutCredential();
 }
 
 Eina_Bool ewk_auth_request_authenticate(Ewk_Auth_Request* request, const char* username, const char* password)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkAuthRequest, request, impl, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(username, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(password, false);
 
-    return request->authenticate(String::fromUTF8(username), String::fromUTF8(password));
+    return impl->authenticate(String::fromUTF8(username), String::fromUTF8(password));
 }
 
 Eina_Bool ewk_auth_request_retrying_get(const Ewk_Auth_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkAuthRequest, request, impl, false);
 
-    return request->isRetrying();
+    return impl->isRetrying();
 }
 
 const char* ewk_auth_request_realm_get(const Ewk_Auth_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkAuthRequest, request, impl, 0);
 
-    return request->realm();
+    return impl->realm();
 }
 
 const char* ewk_auth_request_host_get(const Ewk_Auth_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkAuthRequest, request, impl, 0);
 
-    return request->host();
+    return impl->host();
 }
