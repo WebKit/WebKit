@@ -1,3 +1,15 @@
+2012-11-06  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Enable the JavaScript i18n API for Android
+        https://bugs.webkit.org/show_bug.cgi?id=101357
+
+        Reviewed by Adam Barth.
+
+        Enable the JavaScript i18n API for Chromium on Android. This adds a
+        grand total of 18.7 KiB of data to the content shell apk.
+
+        * features.gypi:
+
 2012-11-06  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed.  Rolled DEPS.

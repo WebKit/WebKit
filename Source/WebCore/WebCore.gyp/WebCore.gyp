@@ -2033,6 +2033,7 @@
         'WEBKIT_IMPLEMENTATION=1',
       ],
       'dependencies': [
+        '<(chromium_src_dir)/third_party/v8-i18n/build/all.gyp:v8-i18n',
         'webcore_prerequisites',
       ],
       # This is needed for mac because of webkit_system_interface. It'd be nice
@@ -2130,11 +2131,6 @@
             '-fno-strict-aliasing',
           ],
         }, { # OS!="android"
-          'dependencies': [
-            # Android doesn't have this third party repository, so can't
-            # include it. It's not used by Android in any case.
-            '<(chromium_src_dir)/third_party/v8-i18n/build/all.gyp:v8-i18n',
-          ],
           'sources/': [['exclude', 'Android\\.cpp$']]
         }],
         ['OS!="mac"', {
