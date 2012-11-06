@@ -968,6 +968,11 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     -webkit-flex: 1;
 }
 
+.console-info {
+    color: rgb(128, 128, 128);
+    font-style: italic;
+}
+
 .console-group .console-group > .console-group-messages {
     margin-left: 16px;
 }

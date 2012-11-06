@@ -231,6 +231,7 @@ WebInspector.ConsoleMessage.MessageType = {
     Dir: "dir",
     DirXML: "dirxml",
     Trace: "trace",
+    Clear: "clear",
     StartGroup: "startGroup",
     StartGroupCollapsed: "startGroupCollapsed",
     EndGroup: "endGroup",

@@ -112,6 +112,7 @@ static TypeBuilder::Console::ConsoleMessage::Type::Enum messageTypeValue(Message
 {
     switch (type) {
     case LogMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Log;
+    case ClearMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Clear;
     case DirMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Dir;
     case DirXMLMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Dirxml;
     case TraceMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Trace;

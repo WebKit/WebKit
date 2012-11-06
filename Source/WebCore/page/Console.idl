@@ -58,6 +58,7 @@
     [CallWith=ScriptArguments|CallStack] void group();
     [CallWith=ScriptArguments|CallStack] void groupCollapsed();
     void groupEnd();
+    [CallWith=ScriptArguments|CallStack] void clear();
 
     [V8CustomGetter] readonly attribute MemoryInfo memory;
 };

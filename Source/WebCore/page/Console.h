@@ -62,6 +62,7 @@ public:
     void error(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void info(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void log(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
+    void clear(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void warn(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void dir(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void dirxml(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);

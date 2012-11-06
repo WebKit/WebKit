@@ -1,0 +1,13 @@
+CONSOLE MESSAGE: line 10: one
+CONSOLE MESSAGE: line 11: two
+CONSOLE MESSAGE: line 12: three
+Tests that console is cleared via console.clear() method
+
+Bug 101021
+=== Before clear ===
+one console-clear-function.html:10
+two console-clear-function.html:11
+three console-clear-function.html:12
+=== After clear ===
+Console was cleared console-clear-function.html:19
+

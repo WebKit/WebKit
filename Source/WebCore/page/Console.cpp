@@ -232,6 +232,11 @@ void Console::dirxml(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCal
     addMessage(DirXMLMessageType, LogMessageLevel, arguments, callStack);
 }
 
+void Console::clear(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
+{
+    addMessage(ClearMessageType, LogMessageLevel, arguments, callStack, true);
+}
+
 void Console::trace(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> prpCallStack)
 {
     RefPtr<ScriptCallStack> callStack = prpCallStack;

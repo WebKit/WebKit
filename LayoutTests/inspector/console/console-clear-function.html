@@ -1,0 +1,47 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function log()
+{
+    // Fill console.
+    console.log("one");
+    console.log("two");
+    console.log("three");
+}
+
+log();
+
+function foo()
+{
+    console.clear();
+}
+
+function test()
+{
+    InspectorTest.addResult("=== Before clear ===");
+    InspectorTest.dumpConsoleMessages();
+
+    RuntimeAgent.evaluate("foo();", step1);
+
+    function step1()
+    {
+        InspectorTest.addResult("=== After clear ===");
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    };
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that console is cleared via console.clear() method
+</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=101021">Bug 101021 </a>
+
+</body>
+</html>

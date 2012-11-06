@@ -1,3 +1,35 @@
+2012-11-06  Andrey Lushnikov  <lushnikov@google.com>
+
+        Added console.clear() method
+
+        Web Inspector: add console.clear()
+        https://bugs.webkit.org/show_bug.cgi?id=101021
+
+        Reviewed by Vsevolod Vlasov.
+
+        Adds native implementation of console.clear
+
+        Test: inspector/console/console-clear-function.html
+
+        * English.lproj/localizedStrings.js: Adds 'Console was cleared' string
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::messageTypeValue): Adds ClearMessageType
+        * inspector/Inspector.json:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::addMessageToConsole):
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._formatMessage): Display strategy for "clear" message
+        * inspector/front-end/ConsoleModel.js:
+        * inspector/front-end/inspector.css:
+        (.console-info): Adds style for the 'console was cleared' message
+        * page/Console.cpp: backend binging for console.clear()
+        (WebCore::Console::clear):
+        (WebCore):
+        * page/Console.h:
+        (Console):
+        * page/Console.idl: Adds 'clear' message to protocol
+        * page/ConsoleTypes.h:
+
 2012-11-06  Aaron Colwell  <acolwell@chromium.org>
 
         Heap-buffer-overflow in WebCore::TextTrackCueList::add

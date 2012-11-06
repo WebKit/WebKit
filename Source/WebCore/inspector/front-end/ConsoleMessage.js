@@ -76,6 +76,10 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 case WebInspector.ConsoleMessage.MessageType.Trace:
                     this._messageElement = document.createTextNode("console.trace()");
                     break;
+                case WebInspector.ConsoleMessage.MessageType.Clear:
+                    this._messageElement = document.createTextNode(WebInspector.UIString("Console was cleared"));
+                    this._formattedMessage.addStyleClass("console-info");
+                    break;
                 case WebInspector.ConsoleMessage.MessageType.Assert:
                     var args = [WebInspector.UIString("Assertion failed:")];
                     if (this._parameters)

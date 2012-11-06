@@ -99,6 +99,7 @@ NSString *WebConsoleMessageOtherMessageSource = @"OtherMessageSource";
 
 NSString *WebConsoleMessageLogMessageType = @"LogMessageType";
 NSString *WebConsoleMessageDirMessageType = @"DirMessageType";
+NSString *WebConsoleMessageClearMessageType = @"ClearMessageType";
 NSString *WebConsoleMessageDirXMLMessageType = @"DirXMLMessageType";
 NSString *WebConsoleMessageTraceMessageType = @"TraceMessageType";
 NSString *WebConsoleMessageStartGroupMessageType = @"StartGroupMessageType";
@@ -360,6 +361,8 @@ inline static NSString *stringForMessageType(MessageType type)
     switch (type) {
     case LogMessageType:
         return WebConsoleMessageLogMessageType;
+    case ClearMessageType:
+        return WebConsoleMessageClearMessageType;
     case DirMessageType:
         return WebConsoleMessageDirMessageType;
     case DirXMLMessageType:

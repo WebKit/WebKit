@@ -114,6 +114,7 @@ localizedStrings["Collect JavaScript CPU Profile"] = "Collect JavaScript CPU Pro
 localizedStrings["Computed Style"] = "Computed Style";
 localizedStrings["Connecting"] = "Connecting";
 localizedStrings["Console"] = "Console";
+localizedStrings["Console was cleared"] = "Console was cleared";
 localizedStrings["Constructor"] = "Constructor";
 localizedStrings["Continue to Here"] = "Continue to Here";
 localizedStrings["Continue to here"] = "Continue to here";

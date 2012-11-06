@@ -155,6 +155,12 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
 {
     if (!developerExtrasEnabled())
         return;
+
+    if (type == ClearMessageType) {
+        ErrorString error;
+        clearMessages(&error);
+    }
+
     addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, arguments, callStack, requestIdentifier)));
 }
 
