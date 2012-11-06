@@ -1062,6 +1062,7 @@ ol.watch-expressions > li.hovered {
 
 .console-message-url {
     float: right;
+    max-width: 100%;
     margin-left: 4px;
 }
 

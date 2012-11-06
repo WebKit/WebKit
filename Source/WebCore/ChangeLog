@@ -1,3 +1,13 @@
+2012-11-06  Nikita Vasilyev  <me@elv1s.ru>
+
+        Web Inspector: Console: wrap long URLs
+        https://bugs.webkit.org/show_bug.cgi?id=100970
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/inspector.css:
+        (.console-message-url):
+
 2012-11-05  Keishi Hattori  <keishi@webkit.org>
 
         Introduce Day class to calendar picker
