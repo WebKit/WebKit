@@ -1,3 +1,13 @@
+2012-11-06  Simon Fraser  <simon.fraser@apple.com>
+
+        (r133351): Number of test failures from enabling SUBPIXEL_LAYOUT on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=101220
+
+        New baselines for two more tests whose output was affected by enabling subpixel layout.
+
+        * platform/mac/fast/dynamic/subtree-parent-static-y-expected.txt:
+        * platform/mac/fast/images/repaint-subrect-grid-expected.txt:
+
 2012-11-06  Stephen White  <senorblanco@chromium.org>
 
         Add new test cases to layout test effect-reference and effect-reference-hw.
