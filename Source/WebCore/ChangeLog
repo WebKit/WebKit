@@ -1,3 +1,23 @@
+2012-11-05  Glenn Adams  <glenn@skynav.com>
+
+        Ensure acquireLineBreakIterator signature consistency on non-ICU ports.
+        https://bugs.webkit.org/show_bug.cgi?id=101281
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix (newly) inconsistent signature for acquireLineBreakIterator for non-ICU ports
+        caused by http://trac.webkit.org/changeset/133529.
+
+        See new tests added from https://bugs.webkit.org/show_bug.cgi?id=89235.
+
+        * platform/text/TextBreakIterator.cpp:
+        (WebCore::acquireLineBreakIterator):
+        * platform/text/gtk/TextBreakIteratorGtk.cpp:
+        (WebCore::setUpIterator):
+        (WebCore::acquireLineBreakIterator):
+        * platform/text/wince/TextBreakIteratorWinCE.cpp:
+        (WebCore::acquireLineBreakIterator):
+
 2012-11-05  Hayato Ito  <hayato@chromium.org>
 
         Use switch/case statements instead of if/elseif in CSSSelector.cpp

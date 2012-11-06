@@ -50,12 +50,12 @@ unsigned numCharactersInGraphemeClusters(const String& s, unsigned numGraphemeCl
 }
 
 #if !USE(ICU_UNICODE)
-TextBreakIterator* acquireLineBreakIterator(const LChar* string, int length, const AtomicString& locale)
+TextBreakIterator* acquireLineBreakIterator(const LChar* string, int length, const AtomicString& locale, LineBreakIteratorMode mode, bool isCJK)
 {
     Vector<UChar> utf16string(length);
     for (int i = 0; i < length; ++i)
         utf16string[i] = string[i];
-    return acquireLineBreakIterator(utf16string.data(), length, locale);
+    return acquireLineBreakIterator(utf16string.data(), length, locale, mode, isCJK);
 }
 #endif
 

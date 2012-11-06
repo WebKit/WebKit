@@ -194,7 +194,7 @@ public:
 };
 
 static TextBreakIterator* setUpIterator(bool& createdIterator, TextBreakIterator*& iterator,
-    UBreakIteratorType type, const UChar* string, int length)
+    UBreakIteratorType type, const UChar* string, int length, LineBreakIteratorMode, bool)
 {
     if (!string)
         return 0;
@@ -254,17 +254,17 @@ TextBreakIterator* wordBreakIterator(const UChar* string, int length)
 static bool createdLineBreakIterator = false;
 static TextBreakIterator* staticLineBreakIterator;
 
-TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length, const AtomicString&)
+TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length, const AtomicString&, LineBreakIteratorMode mode, bool isCJK)
 {
     TextBreakIterator* lineBreakIterator = 0;
     if (!createdLineBreakIterator || staticLineBreakIterator) {
-        setUpIterator(createdLineBreakIterator, staticLineBreakIterator, UBRK_LINE, string, length);
+        setUpIterator(createdLineBreakIterator, staticLineBreakIterator, UBRK_LINE, string, length, mode, isCJK);
         swap(staticLineBreakIterator, lineBreakIterator);
     }
 
     if (!lineBreakIterator) {
         bool createdNewLineBreakIterator = false;
-        setUpIterator(createdNewLineBreakIterator, lineBreakIterator, UBRK_LINE, string, length);
+        setUpIterator(createdNewLineBreakIterator, lineBreakIterator, UBRK_LINE, string, length, mode, isCJK);
     }
 
     return lineBreakIterator;
