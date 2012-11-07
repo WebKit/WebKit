@@ -129,6 +129,12 @@ const RGBA32 activeTextColor = 0xfffafafa;
 
 float RenderThemeBlackBerry::defaultFontSize = 16;
 
+const String& RenderThemeBlackBerry::defaultGUIFont()
+{
+    DEFINE_STATIC_LOCAL(String, fontFace, (ASCIILiteral("Slate Pro")));
+    return fontFace;
+}
+
 static PassRefPtr<Gradient> createLinearGradient(RGBA32 top, RGBA32 bottom, const IntPoint& a, const IntPoint& b)
 {
     RefPtr<Gradient> gradient = Gradient::create(a, b);
@@ -282,9 +288,10 @@ void RenderThemeBlackBerry::systemFont(int propId, FontDescription& fontDescript
         fontSize -= (2.0f / pointsPerInch) * pixelsPerInch;
     }
 
+    fontDescription.firstFamily().setFamily(defaultGUIFont());
     fontDescription.setSpecifiedSize(fontSize);
     fontDescription.setIsAbsoluteSize(true);
-    fontDescription.setGenericFamily(FontDescription::SansSerifFamily);
+    fontDescription.setGenericFamily(FontDescription::NoFamily);
     fontDescription.setWeight(FontWeightNormal);
     fontDescription.setItalic(false);
 }

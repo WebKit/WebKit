@@ -1,3 +1,20 @@
+2012-11-07  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update BB10 form theme.
+        https://bugs.webkit.org/show_bug.cgi?id=100760
+
+        Reviewed by Rob Buis.
+
+        RIM PR 236997
+        Internally Reviewed by Jakob Petsovits.
+
+        Set font family to fix DRT test fast/forms/input-type-text-min-width.html
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::RenderThemeBlackBerry::defaultGUIFont):
+        (WebCore):
+        (WebCore::RenderThemeBlackBerry::systemFont):
+
 2012-11-07  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=101303
