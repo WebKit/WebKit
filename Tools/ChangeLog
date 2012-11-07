@@ -1,3 +1,15 @@
+2012-11-07  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] API tests crash
+        https://bugs.webkit.org/show_bug.cgi?id=101480
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When AC is enabled, 8 API tests are crashing. We need to properly set the evas engine for these tests.
+
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::initEcoreEvas):
+
 2012-11-07  Peter Beverloo  <peter@chromium.org>
 
         Don't show the Android tester in garden-o-matic yet
