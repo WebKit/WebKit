@@ -1,3 +1,12 @@
+2012-11-07  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Unreviewed gardening. Rebaseline the tests added
+        in http://trac.webkit.org/changeset/133686 - part deux.
+
+        * platform/chromium-win/fast/backgrounds/transformed-body-background-expected.png: Added.
+        * platform/chromium-win/fast/backgrounds/transformed-body-html-background-expected.png: Added.
+        * platform/chromium-win/fast/backgrounds/transformed-html-body-background-expected.png: Added.
+
 2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Layout Test inspector/debugger/script-formatter-breakpoints.html is failing
