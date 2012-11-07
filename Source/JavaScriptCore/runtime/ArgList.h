@@ -29,153 +29,153 @@
 
 namespace JSC {
 
-    class SlotVisitor;
+class SlotVisitor;
 
-    class MarkedArgumentBuffer {
-        WTF_MAKE_NONCOPYABLE(MarkedArgumentBuffer);
-        friend class JSGlobalData;
-        friend class ArgList;
+class MarkedArgumentBuffer {
+    WTF_MAKE_NONCOPYABLE(MarkedArgumentBuffer);
+    friend class JSGlobalData;
+    friend class ArgList;
 
-    private:
-        static const size_t inlineCapacity = 8;
-        typedef Vector<Register, inlineCapacity> VectorType;
-        typedef HashSet<MarkedArgumentBuffer*> ListSet;
+private:
+    static const size_t inlineCapacity = 8;
+    typedef Vector<Register, inlineCapacity> VectorType;
+    typedef HashSet<MarkedArgumentBuffer*> ListSet;
 
-    public:
-        // Constructor for a read-write list, to which you may append values.
-        // FIXME: Remove all clients of this API, then remove this API.
-        MarkedArgumentBuffer()
-            : m_size(0)
-            , m_capacity(inlineCapacity)
-            , m_buffer(&m_inlineBuffer[m_capacity - 1])
-            , m_markSet(0)
-        {
-        }
+public:
+    // Constructor for a read-write list, to which you may append values.
+    // FIXME: Remove all clients of this API, then remove this API.
+    MarkedArgumentBuffer()
+        : m_size(0)
+        , m_capacity(inlineCapacity)
+        , m_buffer(&m_inlineBuffer[m_capacity - 1])
+        , m_markSet(0)
+    {
+    }
 
-        ~MarkedArgumentBuffer()
-        {
-            if (m_markSet)
-                m_markSet->remove(this);
+    ~MarkedArgumentBuffer()
+    {
+        if (m_markSet)
+            m_markSet->remove(this);
 
-            if (EncodedJSValue* base = mallocBase())
-                delete [] base;
-        }
+        if (EncodedJSValue* base = mallocBase())
+            delete [] base;
+    }
 
-        size_t size() const { return m_size; }
-        bool isEmpty() const { return !m_size; }
+    size_t size() const { return m_size; }
+    bool isEmpty() const { return !m_size; }
 
-        JSValue at(int i) const
-        {
-            if (i >= m_size)
-                return jsUndefined();
+    JSValue at(int i) const
+    {
+        if (i >= m_size)
+            return jsUndefined();
 
-            return JSValue::decode(slotFor(i));
-        }
+        return JSValue::decode(slotFor(i));
+    }
 
-        void clear()
-        {
-            m_size = 0;
-        }
+    void clear()
+    {
+        m_size = 0;
+    }
 
-        void append(JSValue v)
-        {
-            if (m_size >= m_capacity)
-                return slowAppend(v);
+    void append(JSValue v)
+    {
+        if (m_size >= m_capacity)
+            return slowAppend(v);
 
-            slotFor(m_size) = JSValue::encode(v);
-            ++m_size;
-        }
+        slotFor(m_size) = JSValue::encode(v);
+        ++m_size;
+    }
 
-        void removeLast()
-        { 
-            ASSERT(m_size);
-            m_size--;
-        }
+    void removeLast()
+    { 
+        ASSERT(m_size);
+        m_size--;
+    }
 
-        JSValue last() 
-        {
-            ASSERT(m_size);
-            return JSValue::decode(slotFor(m_size - 1));
-        }
+    JSValue last() 
+    {
+        ASSERT(m_size);
+        return JSValue::decode(slotFor(m_size - 1));
+    }
         
-        static void markLists(HeapRootVisitor&, ListSet&);
+    static void markLists(HeapRootVisitor&, ListSet&);
 
-    private:
-        JS_EXPORT_PRIVATE void slowAppend(JSValue);
+private:
+    JS_EXPORT_PRIVATE void slowAppend(JSValue);
         
-        EncodedJSValue& slotFor(int item) const
-        {
-            return m_buffer[-item];
-        }
+    EncodedJSValue& slotFor(int item) const
+    {
+        return m_buffer[-item];
+    }
         
-        EncodedJSValue* mallocBase()
-        {
-            if (m_capacity == static_cast<int>(inlineCapacity))
-                return 0;
-            return &slotFor(m_capacity - 1);
-        }
+    EncodedJSValue* mallocBase()
+    {
+        if (m_capacity == static_cast<int>(inlineCapacity))
+            return 0;
+        return &slotFor(m_capacity - 1);
+    }
         
-        int m_size;
-        int m_capacity;
-        EncodedJSValue m_inlineBuffer[inlineCapacity];
-        EncodedJSValue* m_buffer;
-        ListSet* m_markSet;
+    int m_size;
+    int m_capacity;
+    EncodedJSValue m_inlineBuffer[inlineCapacity];
+    EncodedJSValue* m_buffer;
+    ListSet* m_markSet;
 
-    private:
-        // Prohibits new / delete, which would break GC.
-        void* operator new(size_t size)
-        {
-            return fastMalloc(size);
-        }
-        void operator delete(void* p)
-        {
-            fastFree(p);
-        }
+private:
+    // Prohibits new / delete, which would break GC.
+    void* operator new(size_t size)
+    {
+        return fastMalloc(size);
+    }
+    void operator delete(void* p)
+    {
+        fastFree(p);
+    }
 
-        void* operator new[](size_t);
-        void operator delete[](void*);
+    void* operator new[](size_t);
+    void operator delete[](void*);
 
-        void* operator new(size_t, void*);
-        void operator delete(void*, size_t);
-    };
+    void* operator new(size_t, void*);
+    void operator delete(void*, size_t);
+};
 
-    class ArgList {
-        friend class JIT;
-    public:
-        ArgList()
-            : m_args(0)
-            , m_argCount(0)
-        {
-        }
+class ArgList {
+    friend class JIT;
+public:
+    ArgList()
+        : m_args(0)
+        , m_argCount(0)
+    {
+    }
 
-        ArgList(ExecState* exec)
-            : m_args(reinterpret_cast<JSValue*>(&exec[CallFrame::argumentOffset(0)]))
-            , m_argCount(exec->argumentCount())
-        {
-        }
+    ArgList(ExecState* exec)
+        : m_args(reinterpret_cast<JSValue*>(&exec[CallFrame::argumentOffset(0)]))
+        , m_argCount(exec->argumentCount())
+    {
+    }
 
-        ArgList(const MarkedArgumentBuffer& args)
-            : m_args(reinterpret_cast<JSValue*>(args.m_buffer))
-            , m_argCount(args.size())
-        {
-        }
+    ArgList(const MarkedArgumentBuffer& args)
+        : m_args(reinterpret_cast<JSValue*>(args.m_buffer))
+        , m_argCount(args.size())
+    {
+    }
 
-        JSValue at(int i) const
-        {
-            if (i >= m_argCount)
-                return jsUndefined();
-            return m_args[-i];
-        }
+    JSValue at(int i) const
+    {
+        if (i >= m_argCount)
+            return jsUndefined();
+        return m_args[-i];
+    }
 
-        bool isEmpty() const { return !m_argCount; }
-        size_t size() const { return m_argCount; }
+    bool isEmpty() const { return !m_argCount; }
+    size_t size() const { return m_argCount; }
         
-        JS_EXPORT_PRIVATE void getSlice(int startIndex, ArgList& result) const;
+    JS_EXPORT_PRIVATE void getSlice(int startIndex, ArgList& result) const;
 
-    private:
-        JSValue* m_args;
-        int m_argCount;
-    };
+private:
+    JSValue* m_args;
+    int m_argCount;
+};
 
 } // namespace JSC
 

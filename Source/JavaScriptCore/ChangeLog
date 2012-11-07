@@ -1,3 +1,14 @@
+2012-11-07  Filip Pizlo  <fpizlo@apple.com>
+
+        Indentation of ArgList.h is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=101441
+
+        Reviewed by Andreas Kling.
+
+        Just unindented by 4 spaces.
+
+        * runtime/ArgList.h:
+
 2012-11-07  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         [Qt][ARM] REGRESSION(r133688): It made all JSC and layout tests crash on ARM traditional platform
