@@ -1,3 +1,80 @@
+2012-11-06  Kiran Muppala  <cmuppala@apple.com>
+
+        Add application occlusion criterion to enable/disable process suppression on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=100997
+
+        Reviewed by Alexey Proskuryakov.
+
+        Provide support for enabling and disabling process suppression when application is completely occluded on Mac.
+
+        * NetworkProcess/NetworkProcess.messages.in: Added message to update application occlusion status.
+        * NetworkProcess/mac/NetworkProcessMainMac.mm:
+        (WebKit::NetworkProcessMain): Removed call to take process suppression assertion since ChildProcess
+        takes one on constrution.
+        * PluginProcess/PluginProcess.messages.in: Added message to update application occlusion status.
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain): Removed call to take process suppression assertion since ChildProcess
+        takes one on construction.
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::ChildProcess): Take process suppression assertion on construction.
+        * Shared/ChildProcess.h:
+        (WebKit::ChildProcess::applicationIsOccluded):
+        * Shared/mac/ChildProcessMac.mm: Added.
+        (WebKit::ChildProcess::setApplicationIsOccluded): Release process suppression assertion if application
+        becomes occluded or take a new assertion if application becomes visible.
+        (WebKit::ChildProcess::disableProcessSuppression):
+        (WebKit::ChildProcess::enableProcessSuppression):
+        Helper methods to take and release process suppression assertion.
+        * SharedWorkerProcess/SharedWorkerProcess.messages.in: Added message to update application occlusion status.
+        * SharedWorkerProcess/mac/SharedWorkerProcessMainMac.mm:
+        (WebKit::SharedWorkerProcessMain): Removed call to take process suppression assertion since ChildProcess
+        takes one on construction.
+        * UIProcess/Network/NetworkProcessManager.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didFinishLaunching): Update application occlusion status post launch.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        (WebKit::NetworkProcessProxy::isValid):
+        * UIProcess/Network/mac/NetworkProcessManagerMac.mm: Added.
+        (WebKit::NetworkProcessManager::setApplicationIsOccluded):
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::NetworkProcessProxy::setApplicationIsOccluded):
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching): Update application occlusion status post launch.
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        (WebKit::PluginProcessProxy::isValid):
+        * UIProcess/Plugins/mac/PluginProcessManagerMac.mm: Added.
+        (WebKit::PluginProcessManager::setApplicationIsOccluded):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::setApplicationIsOccluded):
+        * UIProcess/SharedWorkers/SharedWorkerProcessManager.h:
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.cpp:
+        (WebKit::SharedWorkerProcessProxy::didFinishLaunching): Update application occlusion status post launch.
+        * UIProcess/SharedWorkers/SharedWorkerProcessProxy.h:
+        (WebKit::SharedWorkerProcessProxy::isValid):
+        * UIProcess/SharedWorkers/mac/SharedWorkerProcessManagerMac.mm: Added.
+        (WebKit::SharedWorkerProcessManager::setApplicationIsOccluded):
+        * UIProcess/SharedWorkers/mac/SharedWorkerProcessProxyMac.mm: Added.
+        (WebKit::SharedWorkerProcessProxy::setApplicationIsOccluded):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::create): Added call to initialize process suppression support.
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::applicationIsOccluded):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching): Update application occlusion status post launch.
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::applicationBecameVisible):
+        (WebKit::WebContext::applicationBecameOccluded):
+        Notification handlers for informing non UI WebKit2 processes of changes to application occlusion state.
+        (WebKit::WebContext::registerOcclusionNotificationHandlers):
+        (WebKit::WebContext::initializeProcessSuppressionSupport):
+        Helper method to register occlusion notification handlers if process suppression support is enabled.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.messages.in: Added message to update application occlusion status.
+        * WebProcess/mac/WebProcessInitialization.mm:
+        (WebKit::InitializeWebProcess): Removed call to take process supression assertion since ChildProcess
+        takes one on construction.
+
 2012-11-06  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up which storage cookie jar functions use

@@ -30,6 +30,10 @@ messages -> SharedWorkerProcess {
     # The shared worker process sends back a DidCreateWebProcessConnection message with
     # a connection identifier.
     CreateWebProcessConnection()
+
+#if PLATFORM(MAC)
+    SetApplicationIsOccluded(bool flag)
+#endif
 }
 
 #endif // ENABLE(SHARED_WORKER_PROCESS)

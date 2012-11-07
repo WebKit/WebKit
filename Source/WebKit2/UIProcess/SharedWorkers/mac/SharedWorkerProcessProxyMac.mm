@@ -24,30 +24,22 @@
  */
 
 #import "config.h"
-#import "NetworkProcessProxy.h"
+#import "SharedWorkerProcessProxy.h"
 
-#import "NetworkProcessCreationParameters.h"
-#import "NetworkProcessMessages.h"
+#if ENABLE(SHARED_WORKER_PROCESS)
 
-#if ENABLE(NETWORK_PROCESS)
-
-using namespace WebCore;
+#import "SharedWorkerProcessMessages.h"
 
 namespace WebKit {
 
-void NetworkProcessProxy::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
-{
-    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
-}
-
-void NetworkProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
+void SharedWorkerProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
 {
     if (!isValid())
         return;
-    
-    m_connection->send(Messages::NetworkProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
+
+    m_connection->send(Messages::SharedWorkerProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
 }
 
 } // namespace WebKit
 
-#endif // ENABLE(NETWORK_PROCESS)
+#endif // ENABLE(SHARED_WORKER_PROCESS)

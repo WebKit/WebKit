@@ -531,6 +531,11 @@ void WebProcessProxy::didFinishLaunching(CoreIPC::Connection::Identifier connect
 
     // Tell the context that we finished launching.
     m_context->processDidFinishLaunching(this);
+
+#if PLATFORM(MAC)
+    if (WebContext::applicationIsOccluded())
+        connection()->send(Messages::WebProcess::SetApplicationIsOccluded(true), 0);
+#endif
 }
 
 WebFrameProxy* WebProcessProxy::webFrame(uint64_t frameID) const

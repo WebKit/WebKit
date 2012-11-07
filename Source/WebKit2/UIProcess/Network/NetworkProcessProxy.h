@@ -45,6 +45,12 @@ public:
 
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
 
+    bool isValid() const { return m_connection; }
+
+#if PLATFORM(MAC)
+    void setApplicationIsOccluded(bool);
+#endif
+
 private:
     NetworkProcessProxy(NetworkProcessManager*);
 

@@ -53,6 +53,10 @@ public:
     void getSharedWorkerProcessConnection(const String& url, const String& name, PassRefPtr<Messages::WebProcessProxy::GetSharedWorkerProcessConnection::DelayedReply>);
     void removeSharedWorkerProcessProxy(SharedWorkerProcessProxy*);
 
+#if PLATFORM(MAC)
+    void setApplicationIsOccluded(bool);
+#endif
+
 private:
     SharedWorkerProcessManager();
 

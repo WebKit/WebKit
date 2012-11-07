@@ -50,6 +50,10 @@ public:
     
     void removeNetworkProcessProxy(NetworkProcessProxy*);
 
+#if PLATFORM(MAC)
+    void setApplicationIsOccluded(bool);
+#endif
+
 private:
     NetworkProcessManager();
 

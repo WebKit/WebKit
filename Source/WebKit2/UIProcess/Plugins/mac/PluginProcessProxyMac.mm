@@ -30,6 +30,7 @@
 
 #import "EnvironmentVariables.h"
 #import "PluginProcessCreationParameters.h"
+#import "PluginProcessMessages.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
 #import <spawn.h>
@@ -315,6 +316,13 @@ void PluginProcessProxy::applicationDidBecomeActive()
     makePluginProcessTheFrontProcess();
 }
 
+void PluginProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
+{
+    if (!isValid())
+        return;
+
+    m_connection->send(Messages::PluginProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
+}
 
 } // namespace WebKit
 

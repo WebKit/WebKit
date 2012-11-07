@@ -38,6 +38,10 @@ messages -> PluginProcess {
     # Asks the plug-in to clear data for the given sites. The plug-in process sends back
     # a DidClearSiteData message when done.
     ClearSiteData(Vector<WTF::String> sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
+
+#if PLATFORM(MAC)
+    SetApplicationIsOccluded(bool flag);
+#endif
 }
 
 #endif

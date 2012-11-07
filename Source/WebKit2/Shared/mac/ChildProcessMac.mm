@@ -24,30 +24,42 @@
  */
 
 #import "config.h"
-#import "NetworkProcessProxy.h"
-
-#import "NetworkProcessCreationParameters.h"
-#import "NetworkProcessMessages.h"
-
-#if ENABLE(NETWORK_PROCESS)
-
-using namespace WebCore;
+#import "ChildProcess.h"
 
 namespace WebKit {
 
-void NetworkProcessProxy::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
-{
-    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
-}
+NSString * const ChildProcess::processSuppressionVisibleApplicationReason = @"Application is Visible";
 
-void NetworkProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
+void ChildProcess::setApplicationIsOccluded(bool applicationIsOccluded)
 {
-    if (!isValid())
+    if (m_applicationIsOccluded == applicationIsOccluded)
         return;
-    
-    m_connection->send(Messages::NetworkProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    m_applicationIsOccluded = applicationIsOccluded;
+    if (m_applicationIsOccluded)
+        enableProcessSuppression(processSuppressionVisibleApplicationReason);
+    else
+        disableProcessSuppression(processSuppressionVisibleApplicationReason);
+#endif
 }
 
-} // namespace WebKit
+void ChildProcess::disableProcessSuppression(NSString *reason)
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    // The following assumes that a process enabling AutomaticTerminationSupport also
+    // takes a AutomaticTermination assertion for the lifetime of the process.
+    [[NSProcessInfo processInfo] disableAutomaticTermination:reason];
+#endif
+}
 
-#endif // ENABLE(NETWORK_PROCESS)
+void ChildProcess::enableProcessSuppression(NSString *reason)
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    // The following assumes that a process enabling AutomaticTerminationSupport also
+    // takes a AutomaticTermination assertion for the lifetime of the process.
+    [[NSProcessInfo processInfo] enableAutomaticTermination:reason];
+#endif
+}
+
+}

@@ -535,6 +535,11 @@
 		93FC67BE12D3CCF200A60610 /* DecoderAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FC679E12D3CC7400A60610 /* DecoderAdapter.h */; };
 		93FC67BF12D3CCF200A60610 /* EncoderAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FC679F12D3CC7400A60610 /* EncoderAdapter.cpp */; };
 		93FC67C012D3CCF200A60610 /* EncoderAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FC67A012D3CC7400A60610 /* EncoderAdapter.h */; };
+		9F4F59421648B40700493B7E /* SharedWorkerProcessManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F59411648B40700493B7E /* SharedWorkerProcessManagerMac.mm */; };
+		9F4F59441648B67F00493B7E /* SharedWorkerProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F59431648B67F00493B7E /* SharedWorkerProcessProxyMac.mm */; };
+		9F4F59461648BA8E00493B7E /* NetworkProcessManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F59451648BA8E00493B7E /* NetworkProcessManagerMac.mm */; };
+		9F54F88F16488E87007DF81A /* ChildProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F54F88E16488E87007DF81A /* ChildProcessMac.mm */; };
+		9F54F8951648AE0F007DF81A /* PluginProcessManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */; };
 		B62E7310143047A60069EC35 /* WKHitTestResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B62E730F143047A60069EC35 /* WKHitTestResult.cpp */; };
 		B62E7312143047B00069EC35 /* WKHitTestResult.h in Headers */ = {isa = PBXBuildFile; fileRef = B62E7311143047B00069EC35 /* WKHitTestResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B63403F914910D57001070B5 /* APIObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B63403F814910D57001070B5 /* APIObject.cpp */; };
@@ -1746,6 +1751,11 @@
 		93FC679E12D3CC7400A60610 /* DecoderAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecoderAdapter.h; sourceTree = "<group>"; };
 		93FC679F12D3CC7400A60610 /* EncoderAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncoderAdapter.cpp; sourceTree = "<group>"; };
 		93FC67A012D3CC7400A60610 /* EncoderAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncoderAdapter.h; sourceTree = "<group>"; };
+		9F4F59411648B40700493B7E /* SharedWorkerProcessManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedWorkerProcessManagerMac.mm; sourceTree = "<group>"; };
+		9F4F59431648B67F00493B7E /* SharedWorkerProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedWorkerProcessProxyMac.mm; sourceTree = "<group>"; };
+		9F4F59451648BA8E00493B7E /* NetworkProcessManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkProcessManagerMac.mm; path = mac/NetworkProcessManagerMac.mm; sourceTree = "<group>"; };
+		9F54F88E16488E87007DF81A /* ChildProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChildProcessMac.mm; sourceTree = "<group>"; };
+		9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessManagerMac.mm; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSerializedScriptValue.h; sourceTree = "<group>"; };
 		B396EA5512E0ED2D00F4FEB7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		B62E730F143047A60069EC35 /* WKHitTestResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKHitTestResult.cpp; sourceTree = "<group>"; };
@@ -2906,6 +2916,7 @@
 		1AEFCC0D11D01F41008219D3 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */,
 				1AEFCCBC11D02C5E008219D3 /* PluginInfoStoreMac.mm */,
 				1A2D90BA1281C931001EB962 /* PluginProcessProxyMac.mm */,
 			);
@@ -3108,6 +3119,7 @@
 		516319931628980E00E22F00 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				9F4F59451648BA8E00493B7E /* NetworkProcessManagerMac.mm */,
 				516319911628980A00E22F00 /* NetworkProcessProxyMac.mm */,
 			);
 			name = mac;
@@ -3177,6 +3189,15 @@
 				BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */,
 			);
 			name = mac;
+			sourceTree = "<group>";
+		};
+		9F4F59401648B40700493B7E /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				9F4F59411648B40700493B7E /* SharedWorkerProcessManagerMac.mm */,
+				9F4F59431648B67F00493B7E /* SharedWorkerProcessProxyMac.mm */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		BC017D1016260FFD007054F5 /* DOM */ = {
@@ -3638,6 +3659,7 @@
 				E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */,
 				E1A31731134CEA6C007C9A4F /* AttributedString.h */,
 				E1A31734134CEA80007C9A4F /* AttributedString.mm */,
+				9F54F88E16488E87007DF81A /* ChildProcessMac.mm */,
 				1A2A4AFE158693920090C9E9 /* ColorSpaceData.h */,
 				1A2A4AFD158693920090C9E9 /* ColorSpaceData.mm */,
 				1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */,
@@ -4298,6 +4320,7 @@
 		E1EDFDAA1628878E0039ECDA /* SharedWorkers */ = {
 			isa = PBXGroup;
 			children = (
+				9F4F59401648B40700493B7E /* mac */,
 				E1EDFE0F1628CF4E0039ECDA /* SharedWorkerProcessManager.h */,
 				E1EDFE111628CFB20039ECDA /* SharedWorkerProcessManager.cpp */,
 				E1EDFDAB162887B00039ECDA /* SharedWorkerProcessProxy.messages.in */,
@@ -5756,6 +5779,11 @@
 				2D2ADF1016364D8200197E47 /* PDFPluginChoiceAnnotation.mm in Sources */,
 				1AB16ADD1648598400290D62 /* RemoteLayerTreeDrawingArea.mm in Sources */,
 				1AB16AE11648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.mm in Sources */,
+				9F54F88F16488E87007DF81A /* ChildProcessMac.mm in Sources */,
+				9F54F8951648AE0F007DF81A /* PluginProcessManagerMac.mm in Sources */,
+				9F4F59421648B40700493B7E /* SharedWorkerProcessManagerMac.mm in Sources */,
+				9F4F59441648B67F00493B7E /* SharedWorkerProcessProxyMac.mm in Sources */,
+				9F4F59461648BA8E00493B7E /* NetworkProcessManagerMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -26,8 +26,12 @@
 #import "config.h"
 #import "WebContext.h"
 
+#import "NetworkProcessManager.h"
+#import "PluginProcessManager.h"
+#import "SharedWorkerProcessManager.h"
 #import "WebKitSystemInterface.h"
 #import "WebProcessCreationParameters.h"
+#import "WebProcessMessages.h"
 #import <WebCore/Color.h>
 #import <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
@@ -51,6 +55,8 @@ static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNot
 NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
 
 namespace WebKit {
+
+bool WebContext::s_applicationIsOccluded = false;
 
 String WebContext::applicationCacheDirectory()
 {
@@ -257,5 +263,72 @@ void WebContext::setPasteboardBufferForType(const String& pasteboardName, const 
     PlatformPasteboard(pasteboardName).setBufferForType(buffer, pasteboardType);
 }
 
-} // namespace WebKit
+void WebContext::applicationBecameVisible(uint32_t, void*, uint32_t, void*, uint32_t)
+{
+    if (s_applicationIsOccluded) {
+        s_applicationIsOccluded = false;
 
+        const Vector<WebContext*>& contexts = WebContext::allContexts();
+        for (size_t i = 0, count = contexts.size(); i < count; ++i)
+            contexts[i]->sendToAllProcesses(Messages::WebProcess::SetApplicationIsOccluded(false));
+
+#if ENABLE(PLUGIN_PROCESS)
+        PluginProcessManager::shared().setApplicationIsOccluded(false);
+#endif
+#if ENABLE(NETWORK_PROCESS)
+        NetworkProcessManager::shared().setApplicationIsOccluded(false);
+#endif
+#if ENABLE(SHARED_WORKER_PROCESS)
+        SharedWorkerProcessManager::shared().setApplicationIsOccluded(false);
+#endif
+    }
+}
+
+void WebContext::applicationBecameOccluded(uint32_t, void*, uint32_t, void*, uint32_t)
+{
+    if (!s_applicationIsOccluded) {
+        s_applicationIsOccluded = true;
+        const Vector<WebContext*>& contexts = WebContext::allContexts();
+        for (size_t i = 0, count = contexts.size(); i < count; ++i)
+            contexts[i]->sendToAllProcesses(Messages::WebProcess::SetApplicationIsOccluded(true));
+
+#if ENABLE(PLUGIN_PROCESS)
+        PluginProcessManager::shared().setApplicationIsOccluded(true);
+#endif
+#if ENABLE(NETWORK_PROCESS)
+        NetworkProcessManager::shared().setApplicationIsOccluded(true);
+#endif
+#if ENABLE(SHARED_WORKER_PROCESS)
+        SharedWorkerProcessManager::shared().setApplicationIsOccluded(true);
+#endif
+    }
+}
+
+void WebContext::initializeProcessSuppressionSupport()
+{
+    static bool didInitialize = false;
+    if (didInitialize)
+        return;
+
+    didInitialize = true;
+    // A temporary default until process suppression is enabled by default, at which point a context setting can be added with the
+    // interpretation that any context disabling process suppression disables it for plugin/network and shared worker processes.
+    bool processSuppressionSupportEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitProcessSuppressionSupportEnabled"];
+    if (processSuppressionSupportEnabled)
+        registerOcclusionNotificationHandlers();
+}
+
+void WebContext::registerOcclusionNotificationHandlers()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameVisible, applicationBecameVisible)) {
+        WTFLogAlways("Registeration of \"App Became Visible\" notification handler failed.\n");
+        return;
+    }
+
+    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameOccluded))
+        WTFLogAlways("Registeration of \"App Became Occluded\" notification handler failed.\n");
+#endif
+}
+
+} // namespace WebKit

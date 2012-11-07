@@ -80,7 +80,11 @@ public:
     // Terminates the plug-in process.
     void terminate();
 
+    bool isValid() const { return m_connection; }
+
 #if PLATFORM(MAC)
+    void setApplicationIsOccluded(bool);
+
     // Returns whether the plug-in needs the heap to be marked executable.
     static bool pluginNeedsExecutableHeap(const PluginModuleInfo&);
 

@@ -24,28 +24,18 @@
  */
 
 #import "config.h"
-#import "NetworkProcessProxy.h"
-
-#import "NetworkProcessCreationParameters.h"
-#import "NetworkProcessMessages.h"
+#import "NetworkProcessManager.h"
 
 #if ENABLE(NETWORK_PROCESS)
 
-using namespace WebCore;
+#import "NetworkProcessProxy.h"
 
 namespace WebKit {
 
-void NetworkProcessProxy::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
+void NetworkProcessManager::setApplicationIsOccluded(bool applicationIsOccluded)
 {
-    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
-}
-
-void NetworkProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
-{
-    if (!isValid())
-        return;
-    
-    m_connection->send(Messages::NetworkProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
+    if (m_networkProcess)
+        return m_networkProcess->setApplicationIsOccluded(applicationIsOccluded);
 }
 
 } // namespace WebKit

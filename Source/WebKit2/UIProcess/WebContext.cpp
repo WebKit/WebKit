@@ -100,6 +100,9 @@ PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
     JSC::initializeThreading();
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
+#if PLATFORM(MAC)
+    WebContext::initializeProcessSuppressionSupport();
+#endif
     return adoptRef(new WebContext(ProcessModelSharedSecondaryProcess, injectedBundlePath));
 }
 

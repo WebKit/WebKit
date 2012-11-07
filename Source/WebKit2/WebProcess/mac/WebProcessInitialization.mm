@@ -46,10 +46,6 @@ void InitializeWebProcess(const String& clientIdentifier, CoreIPC::Connection::I
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    [[NSProcessInfo processInfo] disableAutomaticTermination:@"Disable WebProcess Auto Termination"];
-#endif
-
     WebProcess::shared().initializeShim();
     WebProcess::shared().initializeSandbox(clientIdentifier);
     WebProcess::shared().initialize(connectionIdentifier, RunLoop::main());

@@ -56,6 +56,12 @@ public:
     // Terminates the shared worker process.
     void terminate();
 
+    bool isValid() const { return m_connection; }
+
+#if PLATFORM(MAC)
+    void setApplicationIsOccluded(bool);
+#endif
+
 private:
     SharedWorkerProcessProxy(SharedWorkerProcessManager*, const String& url, const String& name);
 
