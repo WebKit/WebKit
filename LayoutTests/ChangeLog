@@ -1,3 +1,14 @@
+2012-11-06  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL][WK2] fast/dom/shadow/shadowdom-for-object-only-shadow.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=101417
+
+        Unreviewed, EFL gardening.
+
+        shadowdom-for-object-only-shadow.html test is flaky in WK2 only.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Pseudo custom-elements should start with 'x-'.

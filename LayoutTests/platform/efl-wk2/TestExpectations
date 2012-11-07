@@ -166,6 +166,8 @@ webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Failure Pas
 # Flaky, probably because the result is sometimes taken before data about visited link have passed through IPC.
 webkit.org/b/81797 fast/history/visited-link-background-color.html [ Failure  Pass ]
 
+webkit.org/b/101417 fast/dom/shadow/shadowdom-for-object-only-shadow.html [ ImageOnlyFailure Pass ]
+
 # Also flaky at least on GTK+
 webkit.org/b/72698 media/audio-garbage-collect.html
 
