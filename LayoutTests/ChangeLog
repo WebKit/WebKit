@@ -1,3 +1,15 @@
+2012-11-06  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash due to column span under button element
+        https://bugs.webkit.org/show_bug.cgi?id=101402
+
+        Reviewed by Abhishek Arya.
+
+        Test creates crashing condition for bug 101402.
+
+        * fast/block/colspan-under-button-crash.html: Added.
+        * fast/block/colspan-under-button-crash-expected.txt: Added.
+
 2012-11-06  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL][WK2] fast/dom/shadow/shadowdom-for-object-only-shadow.html fails

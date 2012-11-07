@@ -1,3 +1,30 @@
+2012-11-06  Ken Buchanan  <kenrb@chromium.org>
+
+        Crash due to column span under button element
+        https://bugs.webkit.org/show_bug.cgi?id=101402
+
+        Reviewed by Abhishek Arya.
+
+        When there is a column-spanning child of a RenderButton
+        splitBlocks() must split the RenderButton as well as its
+        only permitted direct child, the anonymous block referenced
+        by m_inner. A crash was occurring because splitBlocks()
+        calls addChildIgnoringAnonymousColumnBlocks() to add the
+        cloned m_inner to the cloned RenderButton, which meant the
+        m_inner for the cloned RenderButton was not being set even
+        though a child was being added. This violates state
+        assumptions in the RenderButton code.
+
+        This patch prevents any descendants of RenderButton from
+        spanning columns. Also, it adds a precautionary check in
+        RenderButton::removeChild() to mitigate problems if similar
+        state problems are found in future.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::containingColumnsBlock):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::removeChild):
+
 2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Pseudo custom-elements should start with 'x-'.

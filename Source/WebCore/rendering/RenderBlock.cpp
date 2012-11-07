@@ -533,7 +533,10 @@ RenderBlock* RenderBlock::containingColumnsBlock(bool allowAnonymousColumnBlock)
         // FIXME: Table manages its own table parts, most of which are RenderBoxes.
         // Multi-column code cannot handle splitting the flow in table. Disabling it
         // to prevent crashes.
-        if (curr->isTable())
+        // Similarly, RenderButton maintains an anonymous block child and overrides
+        // addChild() to prevent itself from having additional direct children. This
+        // causes problems for split flows.
+        if (curr->isTable() || curr->isRenderButton())
             return 0;
         
         RenderBlock* currBlock = toRenderBlock(curr);
