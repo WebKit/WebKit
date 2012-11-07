@@ -1684,3 +1684,6 @@ webkit.org/b/100855 ietestcenter/css3/text/textshadow-008.htm [ ImageOnlyFailure
 
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Skip ]
+
+# New media test introduced in r133660 fails.
+webkit.org/b/101439 media/progress-events-generated-correctly.html [ Failure ]

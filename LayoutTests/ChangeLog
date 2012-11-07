@@ -1,5 +1,13 @@
 2012-11-07  Dominik Röttsches  <dominik.rottsches@intel.com>
 
+        [EFL] Unreviewed gardening.
+
+        Marking new test media/progress-events-generated-correctly.html as failing on EFL.
+
+        * platform/efl/TestExpectations:
+
+2012-11-07  Dominik Röttsches  <dominik.rottsches@intel.com>
+
         [EFL] Fix execution of exif-orientation-image-document.html on EFL Wk2 bot
         https://bugs.webkit.org/show_bug.cgi?id=101343
 
