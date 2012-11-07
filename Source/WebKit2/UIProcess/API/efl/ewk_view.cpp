@@ -390,7 +390,8 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
         if (impl->evasGLSurface())
             impl->clearEvasGLSurface();
 
-        impl->createGLSurface(IntSize(width, height));
+        if (width && height)
+            impl->createGLSurface(IntSize(width, height));
 #endif
 #if USE(TILED_BACKING_STORE)
         impl->pageClient()->updateViewportSize(IntSize(width, height));

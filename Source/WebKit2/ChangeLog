@@ -1,3 +1,15 @@
+2012-11-07  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] Avoid creating an empty surface
+        https://bugs.webkit.org/show_bug.cgi?id=101464
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make sure we have a valid view size before creating a GL surface.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+
 2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][UNIX] Crash in WebKit::PluginProcessProxy::scanPlugin()
