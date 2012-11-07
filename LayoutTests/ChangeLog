@@ -1,3 +1,19 @@
+2012-11-06  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Changeset r133384 defeated the rectilinear polygon tests
+        https://bugs.webkit.org/show_bug.cgi?id=101405
+
+        Reviewed by Dirk Schulze.
+
+        When the exclusions/shape-inside subpixel layout JS code was refactored,
+        (see https://bugs.webkit.org/show_bug.cgi?id=100704) these two tests were not
+        properly updated. They now include subpixel-utils.js, which simple-polygon.js depends on.
+
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-001-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-001.html:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-002-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-002.html:
+
 2012-11-06  Stephen White  <senorblanco@chromium.org>
 
         Don't write pixels for crash-hw-sw-switch test; if it doesn't crash, it
