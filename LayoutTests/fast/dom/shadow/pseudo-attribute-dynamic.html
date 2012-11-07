@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+<style>
+#host::x-foo {
+    color: red;
+}
+
+#host::x-bar {
+    color: blue;
+}
+</style>
+</head>
+<body>
+
+<p>This test checks dynamic 'pseudo' attribute should reflect style.</p>
+
+<div id="host"></div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var shadowRoot = new WebKitShadowRoot(host);
+var div = document.createElement('div');
+div.pseudo = 'x-foo';
+div.innerHTML = "This should be blue.";
+shadowRoot.appendChild(div);
+
+setTimeout(function() {
+    div.pseudo = 'x-bar';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>

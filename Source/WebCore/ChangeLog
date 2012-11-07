@@ -1,3 +1,20 @@
+2012-11-07  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Style should update when 'pseudo' attribute is dynamically updated
+        https://bugs.webkit.org/show_bug.cgi?id=100918
+
+        Reviewed by Dimitri Glazkov.
+
+        When 'pseudo' attribute is changed and its element is in ShadowTree, we enable the styleShouldRecalc flag.
+
+        It would be fast if we have a set of pseudo attribute style value in RuleFeatureSet,
+        but it might consume a lot of memory.
+
+        Test: fast/dom/shadow/pseudo-attribute-dynamic.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+
 2012-11-07  Ulan Degenbaev  <ulan@chromium.org>
 
         [V8] WebKit sends unnecessary low memory notification when running memory benchmarks

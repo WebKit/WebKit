@@ -776,6 +776,8 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ne
         }
     } else if (name == HTMLNames::nameAttr)
         setHasName(!newValue.isNull());
+    else if (name == HTMLNames::pseudoAttr)
+        shouldInvalidateStyle |= testShouldInvalidateStyle && isInShadowTree();
 
     shouldInvalidateStyle |= testShouldInvalidateStyle && styleResolver->hasSelectorForAttribute(name.localName());
 

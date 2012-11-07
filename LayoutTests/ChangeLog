@@ -1,3 +1,13 @@
+2012-11-07  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Style should update when 'pseudo' attribute is dynamically updated
+        https://bugs.webkit.org/show_bug.cgi?id=100918
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/pseudo-attribute-dynamic-expected.html: Added.
+        * fast/dom/shadow/pseudo-attribute-dynamic.html: Added.
+
 2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed test expectations update.
