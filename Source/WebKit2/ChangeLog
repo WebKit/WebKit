@@ -1,3 +1,30 @@
+2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Allow client to override setWindowFrame() / getWindowFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=101496
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add window_geometry_set() / window_geometry_get() smart functions to
+        ewk_view allowing the client to provide its own implementation for
+        those.
+
+        This is particularly useful if the application uses elm_win because
+        the default implementation will not behave correctly in this case.
+        This is due to the fact that the default implementation interacts
+        with the Ecore_Evas that contains the view and is not aware of the
+        parent window widget.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::windowGeometry):
+        (EwkViewImpl::setWindowGeometry):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::getWindowFrame):
+        (WebKit::PageUIClientEfl::setWindowFrame):
+
 2012-11-07  Alexandru Chiculita  <achicu@adobe.com>
 
         CoordinatedGraphicsArgumentCoders should use ValidatedCustomFitlerOperation instead

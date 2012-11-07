@@ -24,6 +24,7 @@
 #include "EwkViewCallbacks.h"
 #include "RefPtrEfl.h"
 #include "WKEinaSharedString.h"
+#include "WKGeometry.h"
 #include "WKRetainPtr.h"
 #include <Evas.h>
 #include <WebCore/IntRect.h>
@@ -136,6 +137,9 @@ public:
     void enterFullScreen();
     void exitFullScreen();
 #endif
+
+    WKRect windowGeometry() const;
+    void setWindowGeometry(const WKRect&);
 
 #if USE(ACCELERATED_COMPOSITING)
     bool createGLSurface(const WebCore::IntSize& viewSize);

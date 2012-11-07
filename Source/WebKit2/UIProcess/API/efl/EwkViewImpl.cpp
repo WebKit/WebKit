@@ -352,6 +352,29 @@ void EwkViewImpl::exitFullScreen()
 }
 #endif
 
+WKRect EwkViewImpl::windowGeometry() const
+{
+    Evas_Coord x, y, width, height;
+    Ewk_View_Smart_Data* sd = smartData();
+
+    if (!sd->api->window_geometry_get || !sd->api->window_geometry_get(sd, &x, &y, &width, &height)) {
+        Ecore_Evas* ee = ecore_evas_ecore_evas_get(sd->base.evas);
+        ecore_evas_request_geometry_get(ee, &x, &y, &width, &height);
+    }
+
+    return WKRectMake(x, y, width, height);
+}
+
+void EwkViewImpl::setWindowGeometry(const WKRect& rect)
+{
+    Ewk_View_Smart_Data* sd = smartData();
+
+    if (!sd->api->window_geometry_set || !sd->api->window_geometry_set(sd, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)) {
+        Ecore_Evas* ee = ecore_evas_ecore_evas_get(sd->base.evas);
+        ecore_evas_move_resize(ee, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    }
+}
+
 void EwkViewImpl::setImageData(void* imageData, const IntSize& size)
 {
     Ewk_View_Smart_Data* sd = smartData();

@@ -127,6 +127,8 @@ struct Ewk_View_Smart_Class {
     Eina_Bool (*mouse_move)(Ewk_View_Smart_Data *sd, const Evas_Event_Mouse_Move *ev);
     Eina_Bool (*key_down)(Ewk_View_Smart_Data *sd, const Evas_Event_Key_Down *ev);
     Eina_Bool (*key_up)(Ewk_View_Smart_Data *sd, const Evas_Event_Key_Up *ev);
+    Eina_Bool (*window_geometry_set)(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height);
+    Eina_Bool (*window_geometry_get)(Ewk_View_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *width, Evas_Coord *height);
 
     // javascript popup:
     //   - All strings should be guaranteed to be stringshared.
@@ -148,7 +150,7 @@ struct Ewk_View_Smart_Class {
  * The version you have to put into the version field
  * in the @a Ewk_View_Smart_Class structure.
  */
-#define EWK_VIEW_SMART_CLASS_VERSION 6UL
+#define EWK_VIEW_SMART_CLASS_VERSION 7UL
 
 /**
  * Initializer for whole Ewk_View_Smart_Class structure.
@@ -160,7 +162,7 @@ struct Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializer to zero a whole Ewk_View_Smart_Class structure.

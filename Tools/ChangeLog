@@ -1,3 +1,18 @@
+2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Allow client to override setWindowFrame() / getWindowFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=101496
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Provide implementation for on_window_geometry_get() / on_window_geometry_set()
+        smart functions that interact with the elm_win widget.
+
+        * MiniBrowser/efl/main.c:
+        (on_window_geometry_get):
+        (on_window_geometry_set):
+        (window_create):
+
 2012-11-07  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2][AC] API tests crash

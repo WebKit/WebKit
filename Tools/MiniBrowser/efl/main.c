@@ -655,6 +655,25 @@ on_javascript_prompt(Ewk_View_Smart_Data *smartData, const char *message, const 
     return prompt_text;
 }
 
+static Eina_Bool on_window_geometry_get(Ewk_View_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *width, Evas_Coord *height)
+{
+    Browser_Window *window = browser_view_find(sd->self);
+
+    evas_object_geometry_get(window->window, x, y, width, height);
+
+    return EINA_TRUE;
+}
+
+static Eina_Bool on_window_geometry_set(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height)
+{
+    Browser_Window *window = browser_view_find(sd->self);
+
+    evas_object_move(window->window, x, y);
+    evas_object_resize(window->window, width, height);
+
+    return EINA_TRUE;
+}
+
 typedef struct {
     Evas_Object *popup;
     Ewk_Auth_Request *request;
@@ -925,6 +944,8 @@ static Browser_Window *window_create(const char *url)
     ewkViewClass->run_javascript_alert = on_javascript_alert;
     ewkViewClass->run_javascript_confirm = on_javascript_confirm;
     ewkViewClass->run_javascript_prompt = on_javascript_prompt;
+    ewkViewClass->window_geometry_get = on_window_geometry_get;
+    ewkViewClass->window_geometry_set = on_window_geometry_set;
 
     Evas *evas = evas_object_evas_get(app_data->window);
     Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);

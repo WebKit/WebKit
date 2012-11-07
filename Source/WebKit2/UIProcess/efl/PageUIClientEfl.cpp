@@ -111,18 +111,12 @@ void PageUIClientEfl::takeFocus(WKPageRef, WKFocusDirection, const void* clientI
 
 WKRect PageUIClientEfl::getWindowFrame(WKPageRef, const void* clientInfo)
 {
-    int x, y, width, height;
-
-    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(toPageUIClientEfl(clientInfo)->m_viewImpl->view()));
-    ecore_evas_request_geometry_get(ee, &x, &y, &width, &height);
-
-    return WKRectMake(x, y, width, height);
+    return toPageUIClientEfl(clientInfo)->m_viewImpl->windowGeometry();
 }
 
 void PageUIClientEfl::setWindowFrame(WKPageRef, WKRect frame, const void* clientInfo)
 {
-    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(toPageUIClientEfl(clientInfo)->m_viewImpl->view()));
-    ecore_evas_move_resize(ee, frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+    toPageUIClientEfl(clientInfo)->m_viewImpl->setWindowGeometry(frame);
 }
 
 void PageUIClientEfl::runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
