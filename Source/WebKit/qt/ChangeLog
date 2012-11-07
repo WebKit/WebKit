@@ -1,3 +1,18 @@
+2012-11-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Open link in this window action
+        https://bugs.webkit.org/show_bug.cgi?id=101226
+
+        Reviewed by Simon Hausmann.
+
+        Adds the action to QtWebKit.
+
+        * Api/qwebpage.cpp:
+        (webActionForContextMenuAction):
+        (QWebPage::triggerAction):
+        (QWebPage::action):
+        * Api/qwebpage.h:
+
 2012-11-01  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, rolling out r133143.

@@ -251,10 +251,14 @@ static QMenu* createContextMenu(QWebPage* page, QPoint position)
     QWebHitTestResult r = page->mainFrame()->hitTestContent(position);
 
     if (!r.linkUrl().isEmpty()) {
+#ifndef QT_NO_DESKTOPSERVICES
         WebPage* webPage = qobject_cast<WebPage*>(page);
         QAction* newTabAction = menu->addAction("Open in Default &Browser", webPage, SLOT(openUrlInDefaultBrowser()));
         newTabAction->setData(r.linkUrl());
         menu->insertAction(menu->actions().at(2), newTabAction);
+#endif
+        if (r.linkTargetFrame() != r.frame())
+            menu->insertAction(menu->actions().at(0), page->action(QWebPage::OpenLinkInThisWindow));
     }
     return menu;
 }

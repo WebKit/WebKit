@@ -164,6 +164,7 @@ namespace WebCore {
         ContextMenuItemTagMediaPlayPause,
         ContextMenuItemTagMediaMute,
         ContextMenuItemTagDictationAlternative,
+        ContextMenuItemTagOpenLinkInThisWindow,
         ContextMenuItemBaseCustomTag = 5000,
         ContextMenuItemCustomTagNoAction = 5998,
         ContextMenuItemLastCustomTag = 5999,

@@ -180,6 +180,8 @@ public:
 
         CopyImageUrlToClipboard,
 
+        OpenLinkInThisWindow,
+
         WebActionCount
     };
 

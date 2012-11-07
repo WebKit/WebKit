@@ -368,6 +368,9 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         else
             openNewWindow(m_hitTestResult.absoluteLinkURL(), frame);
         break;
+    case ContextMenuItemTagOpenLinkInThisWindow:
+        frame->loader()->loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(m_hitTestResult.absoluteLinkURL(), frame->loader()->outgoingReferrer())), false, false, 0, 0, MaybeSendReferrer);
+        break;
     case ContextMenuItemTagBold:
         frame->editor()->command("ToggleBold").execute();
         break;
@@ -1297,6 +1300,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
 #endif
         case ContextMenuItemTagNoAction:
         case ContextMenuItemTagOpenLinkInNewWindow:
+        case ContextMenuItemTagOpenLinkInThisWindow:
         case ContextMenuItemTagDownloadLinkToDisk:
         case ContextMenuItemTagCopyLinkToClipboard:
         case ContextMenuItemTagOpenImageInNewWindow:
