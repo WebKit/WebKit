@@ -1,3 +1,18 @@
+2012-11-06  Adam Barth  <abarth@webkit.org>
+
+        [V8] neuterBinding should remember the type of its argument
+        https://bugs.webkit.org/show_bug.cgi?id=101413
+
+        Reviewed by Kentaro Hara.
+
+        This is a small part of the patch in
+        https://bugs.webkit.org/show_bug.cgi?id=101110 that we can land
+        separately to try to tease out what is causing the memory regression.
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore):
+        (WebCore::neuterBinding):
+
 2012-11-06  Alexey Proskuryakov  <ap@apple.com>
 
         Clean up which storage cookie jar functions use
