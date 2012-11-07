@@ -1,3 +1,13 @@
+2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Layout Test inspector/debugger/script-formatter-breakpoints.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=101361
+
+        Unreviewed test fix.
+
+        * inspector/debugger/script-formatter-breakpoints.html:
+        * platform/chromium/TestExpectations:
+
 2012-11-07  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Unreviewed gardening

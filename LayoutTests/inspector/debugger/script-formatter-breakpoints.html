@@ -69,7 +69,12 @@ var test = function()
             {
                 sourceFrame = frame;
                 InspectorTest.addResult("Adding breakpoint.");
+                InspectorTest.addSniffer(WebInspector.BreakpointManager.Breakpoint.prototype, "_addResolvedLocation", breakpointResolved);
                 InspectorTest.setBreakpoint(sourceFrame, 10, "", true);
+            }
+
+            function breakpointResolved()
+            {
                 InspectorTest.addSniffer(WebInspector.UISourceCode.prototype, "updateLiveLocations", didFormatPage);
                 InspectorTest.addResult("Formatting.");
                 sourceFrame._uiSourceCode.setFormatted(true);
