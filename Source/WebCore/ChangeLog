@@ -1,3 +1,17 @@
+2012-11-07  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Fix execution of exif-orientation-image-document.html on EFL Wk2 bot
+        https://bugs.webkit.org/show_bug.cgi?id=101343
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Cairo to the list of backends that support shouldRespectImageOrientation.
+
+        No new tests, fixes exif-orientation-image-document.html.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::shouldRespectImageOrientation):
+
 2012-11-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Console not displaying all properties of an Object once native Constructor overwritten

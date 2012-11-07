@@ -256,9 +256,6 @@ webkit.org/b/98740 plugins/npruntime/delete-plugin-within-hasProperty-return-fal
 webkit.org/b/98740 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
 webkit.org/b/98740 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
 
-# Test fails because WebKit is in shouldRespectImageOrientation=0 mode.
-webkit.org/b/101343 fast/images/exif-orientation-image-document.html [ Failure ]
-
 # Http plugin test failures.
 webkit.org/b/99561 http/tests/plugins/plugin-document-has-focus.html [ Failure ]
 webkit.org/b/99562 http/tests/plugins/post-url-file.html [ Failure ]
