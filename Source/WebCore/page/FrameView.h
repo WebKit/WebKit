@@ -216,7 +216,7 @@ public:
 
     void beginDeferredRepaints();
     void endDeferredRepaints();
-    void checkFlushDeferredRepaintsAfterLoadComplete();
+    void handleLoadCompleted();
     void flushDeferredRepaints();
     void startDeferredRepaintTimer(double delay);
     void resetDeferredRepaintDelay();

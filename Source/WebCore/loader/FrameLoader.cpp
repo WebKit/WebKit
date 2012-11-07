@@ -742,7 +742,7 @@ void FrameLoader::checkCompleted()
     m_shouldCallCheckCompleted = false;
 
     if (m_frame->view())
-        m_frame->view()->checkFlushDeferredRepaintsAfterLoadComplete();
+        m_frame->view()->handleLoadCompleted();
 
     // Have we completed before?
     if (m_isComplete)
@@ -779,7 +779,7 @@ void FrameLoader::checkCompleted()
         checkLoadComplete();
 
     if (m_frame->view())
-        m_frame->view()->checkFlushDeferredRepaintsAfterLoadComplete();
+        m_frame->view()->handleLoadCompleted();
 }
 
 void FrameLoader::checkTimerFired(Timer<FrameLoader>*)

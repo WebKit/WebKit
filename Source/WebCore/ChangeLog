@@ -1,3 +1,26 @@
+2012-11-07  Fady Samuel  <fsamuel@chromium.org>
+
+        Autoresize should work even if turned on while the page is loading.
+        https://bugs.webkit.org/show_bug.cgi?id=101380
+
+        Reviewed by David Levin.
+
+        Autoresize does not work in cases where it is turned on while loading.
+        This patch addresses this by allowing autoSize to complete if it's turned on
+        while loading and doing a final pass after loading.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkCompleted):
+        Adjust to call renamed function.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::handleLoadCompleted):
+        Rename function to encompass its expanded responsibilities (which include doing the final auto size after the load is completed).
+        (WebCore::FrameView::autoSizeIfEnabled):
+        Allow the size to shrink if autosize is adjusted while the page is loading.
+        * page/FrameView.h:
+        (FrameView):
+        Renamed 'checkFlushDeferredRepaintsAfterLoadComplete' to 'handleLoadComplete'
+
 2012-11-07  Philip Rogers  <pdr@google.com>
 
         Skip SVG repaint tracking when parent container transforms
