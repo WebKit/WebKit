@@ -1,3 +1,16 @@
+2012-11-07  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Rebaselining a few ruby tests.
+
+        * platform/efl/fast/writing-mode/japanese-ruby-horizontal-bt-expected.png:
+        * platform/efl/fast/writing-mode/japanese-ruby-horizontal-bt-expected.txt:
+        * platform/efl/fast/writing-mode/japanese-ruby-vertical-lr-expected.png:
+        * platform/efl/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt:
+        * platform/efl/fast/writing-mode/japanese-ruby-vertical-rl-expected.png:
+        * platform/efl/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt:
+
 2012-11-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening after r133688, remove unnecessary platform specific expected files.
