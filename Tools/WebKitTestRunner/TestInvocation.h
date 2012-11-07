@@ -44,7 +44,7 @@ public:
     void didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
 
-    static void dumpWebProcessUnresponsiveness(const char* textToStdout);
+    void dumpWebProcessUnresponsiveness();
 private:
     void dumpResults();
     static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);
@@ -71,6 +71,9 @@ private:
     WKRetainPtr<WKStringRef> m_textOutput;
     WKRetainPtr<WKImageRef> m_pixelResult;
     WKRetainPtr<WKArrayRef> m_repaintRects;
+    std::string m_errorMessage;
+    bool m_webProcessIsUnrensponsive;
+
 };
 
 } // namespace WTR

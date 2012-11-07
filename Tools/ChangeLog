@@ -1,3 +1,32 @@
+2012-11-07  Balazs Kelemen  <kbalazs@webkit.org>
+
+        WebKitTestRunner flakily hangs when running pixel tests on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=100686
+
+        Reviewed by Csaba Osztrogonác.
+
+        Make WebKitTestRunner harden against the situation when the coordinated
+        graphics rendering synchronisation fails. If we time out when waiting
+        for the forced repaint to finish it usually a symptom of the synchronisation
+        has been broken. In this case all other tests will fail with the same error.
+        The underlying problem is not yet known. Ths patch make us report this situation
+        as web process unresponsiveness, so the test harness will kill us and launch
+        a new instance. This will make our pixel test bot usable while it should not limit
+        us debugging the underlying bug.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::run):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::TestInvocation):
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::dumpWebProcessUnresponsiveness):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+        (TestInvocation): Introduce new members to hold our state
+        that was local to invoke() so far.
+        * WebKitTestRunner/qt/TestInvocationQt.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2012-11-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Open link in this window action

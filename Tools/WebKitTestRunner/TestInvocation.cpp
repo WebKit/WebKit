@@ -104,6 +104,7 @@ TestInvocation::TestInvocation(const std::string& pathOrURL)
     , m_gotFinalMessage(false)
     , m_gotRepaint(false)
     , m_error(false)
+    , m_webProcessIsUnrensponsive(false)
 {
 }
 
@@ -186,16 +187,14 @@ void TestInvocation::invoke()
 
     WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), beginTestMessageBody.get());
 
-    const char* errorMessage = 0;
     TestController::shared().runUntil(m_gotInitialResponse, TestController::ShortTimeout);
     if (!m_gotInitialResponse) {
-        errorMessage = "Timed out waiting for initial response from web process\n";
+        m_errorMessage = "Timed out waiting for initial response from web process\n";
+        m_webProcessIsUnrensponsive = true;
         goto end;
     }
-    if (m_error) {
-        errorMessage = "FAIL\n";
+    if (m_error)
         goto end;
-    }
 
 #if ENABLE(INSPECTOR)
     if (shouldOpenWebInspector(m_pathOrURL.c_str()))
@@ -206,13 +205,12 @@ void TestInvocation::invoke()
 
     TestController::shared().runUntil(m_gotFinalMessage, TestController::shared().useWaitToDumpWatchdogTimer() ? TestController::LongTimeout : TestController::NoTimeout);
     if (!m_gotFinalMessage) {
-        errorMessage = "Timed out waiting for final message from web process\n";
+        m_errorMessage = "Timed out waiting for final message from web process\n";
+        m_webProcessIsUnrensponsive = true;
         goto end;
     }
-    if (m_error) {
-        errorMessage = "FAIL\n";
+    if (m_error)
         goto end;
-    }
 
     dumpResults();
 
@@ -222,13 +220,15 @@ end:
         WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
 #endif // ENABLE(INSPECTOR)
 
-    if (errorMessage)
-        dumpWebProcessUnresponsiveness(errorMessage);
-    else if (!TestController::shared().resetStateToConsistentValues())
-        dumpWebProcessUnresponsiveness("Timed out loading about:blank before the next test");
+    if (m_webProcessIsUnrensponsive)
+        dumpWebProcessUnresponsiveness();
+    else if (!TestController::shared().resetStateToConsistentValues()) {
+        m_errorMessage = "Timed out loading about:blank before the next test";
+        dumpWebProcessUnresponsiveness();
+    }
 }
 
-void TestInvocation::dumpWebProcessUnresponsiveness(const char* textToStdout)
+void TestInvocation::dumpWebProcessUnresponsiveness()
 {
     const char* errorMessageToStderr = 0;
 #if PLATFORM(MAC)
@@ -240,7 +240,7 @@ void TestInvocation::dumpWebProcessUnresponsiveness(const char* textToStdout)
     errorMessageToStderr = "#PROCESS UNRESPONSIVE - WebProcess";
 #endif
 
-    dump(textToStdout, errorMessageToStderr, true);
+    dump(m_errorMessage.c_str(), errorMessageToStderr, true);
 }
 
 void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bool seenError)
@@ -292,6 +292,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         m_gotInitialResponse = true;
         m_gotFinalMessage = true;
         m_error = true;
+        m_errorMessage = "FAIL\n";
         TestController::shared().notifyDone();
         return;
     }

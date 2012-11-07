@@ -703,7 +703,7 @@ void TestController::runTestingServerLoop()
 void TestController::run()
 {
     if (!resetStateToConsistentValues()) {
-        TestInvocation::dumpWebProcessUnresponsiveness("Failed to reset to consistent state before the first test");
+        m_currentInvocation->dumpWebProcessUnresponsiveness();
         return;
     }
 

@@ -83,10 +83,10 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef imageRef, WKArr
         if (m_gotRepaint)
             image = WKImageCreateQImage(TestController::shared().mainWebView()->windowSnapshotImage().get());
         else {
-            // The test harness expects an image so we output an empty one.
-            WKRect windowRect = TestController::shared().mainWebView()->windowFrame();
-            image = QImage(QSize(windowRect.size.width, windowRect.size.height), QImage::Format_ARGB32_Premultiplied);
-            image.fill(Qt::red);
+            m_error = true;
+            m_errorMessage = "Timed out waiting for repaint\n";
+            m_webProcessIsUnrensponsive = true;
+            return;
         }
     } else
         image = WKImageCreateQImage(imageRef);
