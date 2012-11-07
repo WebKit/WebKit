@@ -1,3 +1,13 @@
+2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Pseudo custom-elements should start with 'x-'.
+        https://bugs.webkit.org/show_bug.cgi?id=100919
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/pseudo-attribute-rendering-expected.html: Added.
+        * fast/dom/shadow/pseudo-attribute-rendering.html: Added.
+
 2012-11-06  Alice Boxhall  <aboxhall@chromium.org>
 
         Unreviewed gardening. Rebaseline the tests added in http://trac.webkit.org/changeset/133686 for different platforms.

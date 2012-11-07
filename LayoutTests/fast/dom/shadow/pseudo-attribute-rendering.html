@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+<style>
+div::x-foo {
+    color: red;
+}
+div::-webkit-foobar {
+    color: red;
+}
+</style>
+</head>
+<body>
+<p>This test checks element.pseudo starting '-webkit-' only works in UserAgentShadowRoot.</p>
+
+<div id="host1"></div>
+<div id="host2"></div>
+
+<script>
+var shadowRoot1 = new WebKitShadowRoot(host1);
+var div1 = document.createElement('div');
+div1.pseudo = 'x-foo';
+div1.innerHTML = "This text should be red.";
+shadowRoot1.appendChild(div1);
+
+var shadowRoot2 = new WebKitShadowRoot(host2);
+var div2 = document.createElement('div');
+div2.pseudo = '-webkit-foobar';
+div2.innerHTML = "This text should not be red.";
+shadowRoot2.appendChild(div2);
+</script>
+
+</body>
+</html>

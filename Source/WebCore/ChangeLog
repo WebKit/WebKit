@@ -1,3 +1,18 @@
+2012-11-06  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Pseudo custom-elements should start with 'x-'.
+        https://bugs.webkit.org/show_bug.cgi?id=100919
+
+        Reviewed by Dimitri Glazkov.
+
+        Pseuco custom-elements should start with 'x-'. 'Pseudo' starting with '-webkit-' should work
+        only in UserAgent ShadowDOM. If it's used in Author ShadowDOM, it should not work.
+
+        Test: fast/dom/shadow/pseudo-attribute-rendering.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector): Added ShadowRoot type check.
+
 2012-11-06  Chris Evans  <cevans@google.com>
 
         Re-order variables in BidiRun and LayoutState
