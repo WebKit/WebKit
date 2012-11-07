@@ -91,7 +91,7 @@ function test()
 
         function step4()
         {
-            addIDBValues(9, refreshDatabaseNames);
+            addIDBValues(6, refreshDatabaseNames);
         }
     }
 
@@ -110,61 +110,61 @@ function test()
     function runObjectStoreTests()
     {
         indexedDBModel.removeEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, runObjectStoreTests);
-        loadValuesAndDump(false, null, 0, 3, step2)
+        loadValuesAndDump(false, null, 0, 2, step2)
 
         function step2()
         {
-            loadValuesAndDump(false, null, 3, 3, step3)
+            loadValuesAndDump(false, null, 2, 2, step3)
         }
 
         function step3()
         {
-            loadValuesAndDump(false, null, 6, 3, step4);
+            loadValuesAndDump(false, null, 4, 2, step4);
         }
 
         function step4()
         {
-            loadValuesAndDump(false, null, 7, 3, step5);
+            loadValuesAndDump(false, null, 5, 2, step5);
         }
 
         function step5()
         {
-            loadValuesAndDump(false, null, 9, 3, step6);
+            loadValuesAndDump(false, null, 6, 2, step6);
         }
 
         function step6()
         {
-            loadValuesAndDump(false, null, 10, 3, step7);
+            loadValuesAndDump(false, null, 7, 2, step7);
         }
 
         function step7()
         {
-            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 0, 4, step8);
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 0, 2, step8);
         }
 
         function step8()
         {
-            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 0, 5, step9);
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 0, 3, step9);
         }
 
         function step9()
         {
-            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 0, 6, step10);
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 0, 4, step10);
         }
 
         function step10()
         {
-            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 1, 4, step11);
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 1, 2, step11);
         }
 
         function step11()
         {
-            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 1, 5, step12);
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 1, 3, step12);
         }
 
         function step12()
         {
-            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_07", true, false), 1, 6, step13);
+            loadValuesAndDump(false, IDBKeyRange.bound("key_02", "key_05", true, false), 1, 4, step13);
         }
 
         function step13()
@@ -175,7 +175,7 @@ function test()
 
     function runIndexTests()
     {
-        loadValuesAndDump(true, null, 0, 3, step2)
+        loadValuesAndDump(true, null, 0, 2, step2)
 
         function step2()
         {

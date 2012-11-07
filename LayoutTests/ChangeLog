@@ -1,3 +1,15 @@
+2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed inspector test polish.
+        Made http/tests/indexeddb/database-data.html test faster, added more verbose errors for test debugging.
+
+        * http/tests/inspector/indexeddb/database-data-expected.txt:
+        * http/tests/inspector/indexeddb/database-data.html:
+        * http/tests/inspector/indexeddb/indexeddb-test.js:
+        (onIndexedDBError):
+        (onIndexedDBBlocked):
+        (doWithDatabase):
+
 2012-11-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Gardening. Add or fix a few pixel expectations.

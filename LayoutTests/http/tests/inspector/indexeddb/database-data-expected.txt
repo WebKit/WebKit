@@ -9,80 +9,60 @@ CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback6
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback7
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback8
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback9
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback10
+CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback11
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback12
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback13
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback14
-CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback15
 Tests that data is correctly loaded by IndexedDBModel from IndexedDB object store and index.
 
-Dumping values, fromIndex = false, skipCount = 0, pageSize = 3, idbKeyRange = null
+Dumping values, fromIndex = false, skipCount = 0, pageSize = 2, idbKeyRange = null
     Key = key_01, primaryKey = key_01, value = {"key":"key_01","value":"value_01"}
     Key = key_02, primaryKey = key_02, value = {"key":"key_02","value":"value_02"}
-    Key = key_03, primaryKey = key_03, value = {"key":"key_03","value":"value_03"}
     hasMore = true
-Dumping values, fromIndex = false, skipCount = 3, pageSize = 3, idbKeyRange = null
+Dumping values, fromIndex = false, skipCount = 2, pageSize = 2, idbKeyRange = null
+    Key = key_03, primaryKey = key_03, value = {"key":"key_03","value":"value_03"}
     Key = key_04, primaryKey = key_04, value = {"key":"key_04","value":"value_04"}
-    Key = key_05, primaryKey = key_05, value = {"key":"key_05","value":"value_05"}
-    Key = key_06, primaryKey = key_06, value = {"key":"key_06","value":"value_06"}
     hasMore = true
-Dumping values, fromIndex = false, skipCount = 6, pageSize = 3, idbKeyRange = null
-    Key = key_07, primaryKey = key_07, value = {"key":"key_07","value":"value_07"}
-    Key = key_08, primaryKey = key_08, value = {"key":"key_08","value":"value_08"}
-    Key = key_09, primaryKey = key_09, value = {"key":"key_09","value":"value_09"}
-    hasMore = false
-Dumping values, fromIndex = false, skipCount = 7, pageSize = 3, idbKeyRange = null
-    Key = key_08, primaryKey = key_08, value = {"key":"key_08","value":"value_08"}
-    Key = key_09, primaryKey = key_09, value = {"key":"key_09","value":"value_09"}
-    hasMore = false
-Dumping values, fromIndex = false, skipCount = 9, pageSize = 3, idbKeyRange = null
-    hasMore = false
-Dumping values, fromIndex = false, skipCount = 10, pageSize = 3, idbKeyRange = null
-    hasMore = false
-Dumping values, fromIndex = false, skipCount = 0, pageSize = 4, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_07",upperOpen:false}
-    Key = key_03, primaryKey = key_03, value = {"key":"key_03","value":"value_03"}
-    Key = key_04, primaryKey = key_04, value = {"key":"key_04","value":"value_04"}
+Dumping values, fromIndex = false, skipCount = 4, pageSize = 2, idbKeyRange = null
     Key = key_05, primaryKey = key_05, value = {"key":"key_05","value":"value_05"}
     Key = key_06, primaryKey = key_06, value = {"key":"key_06","value":"value_06"}
+    hasMore = false
+Dumping values, fromIndex = false, skipCount = 5, pageSize = 2, idbKeyRange = null
+    Key = key_06, primaryKey = key_06, value = {"key":"key_06","value":"value_06"}
+    hasMore = false
+Dumping values, fromIndex = false, skipCount = 6, pageSize = 2, idbKeyRange = null
+    hasMore = false
+Dumping values, fromIndex = false, skipCount = 7, pageSize = 2, idbKeyRange = null
+    hasMore = false
+Dumping values, fromIndex = false, skipCount = 0, pageSize = 2, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_05",upperOpen:false}
+    Key = key_03, primaryKey = key_03, value = {"key":"key_03","value":"value_03"}
+    Key = key_04, primaryKey = key_04, value = {"key":"key_04","value":"value_04"}
     hasMore = true
-Dumping values, fromIndex = false, skipCount = 0, pageSize = 5, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_07",upperOpen:false}
+Dumping values, fromIndex = false, skipCount = 0, pageSize = 3, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_05",upperOpen:false}
     Key = key_03, primaryKey = key_03, value = {"key":"key_03","value":"value_03"}
     Key = key_04, primaryKey = key_04, value = {"key":"key_04","value":"value_04"}
     Key = key_05, primaryKey = key_05, value = {"key":"key_05","value":"value_05"}
-    Key = key_06, primaryKey = key_06, value = {"key":"key_06","value":"value_06"}
-    Key = key_07, primaryKey = key_07, value = {"key":"key_07","value":"value_07"}
     hasMore = false
-Dumping values, fromIndex = false, skipCount = 0, pageSize = 6, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_07",upperOpen:false}
+Dumping values, fromIndex = false, skipCount = 0, pageSize = 4, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_05",upperOpen:false}
     Key = key_03, primaryKey = key_03, value = {"key":"key_03","value":"value_03"}
     Key = key_04, primaryKey = key_04, value = {"key":"key_04","value":"value_04"}
     Key = key_05, primaryKey = key_05, value = {"key":"key_05","value":"value_05"}
-    Key = key_06, primaryKey = key_06, value = {"key":"key_06","value":"value_06"}
-    Key = key_07, primaryKey = key_07, value = {"key":"key_07","value":"value_07"}
     hasMore = false
-Dumping values, fromIndex = false, skipCount = 1, pageSize = 4, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_07",upperOpen:false}
+Dumping values, fromIndex = false, skipCount = 1, pageSize = 2, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_05",upperOpen:false}
     Key = key_04, primaryKey = key_04, value = {"key":"key_04","value":"value_04"}
     Key = key_05, primaryKey = key_05, value = {"key":"key_05","value":"value_05"}
-    Key = key_06, primaryKey = key_06, value = {"key":"key_06","value":"value_06"}
-    Key = key_07, primaryKey = key_07, value = {"key":"key_07","value":"value_07"}
     hasMore = false
-Dumping values, fromIndex = false, skipCount = 1, pageSize = 5, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_07",upperOpen:false}
+Dumping values, fromIndex = false, skipCount = 1, pageSize = 3, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_05",upperOpen:false}
     Key = key_04, primaryKey = key_04, value = {"key":"key_04","value":"value_04"}
     Key = key_05, primaryKey = key_05, value = {"key":"key_05","value":"value_05"}
-    Key = key_06, primaryKey = key_06, value = {"key":"key_06","value":"value_06"}
-    Key = key_07, primaryKey = key_07, value = {"key":"key_07","value":"value_07"}
     hasMore = false
-Dumping values, fromIndex = false, skipCount = 1, pageSize = 6, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_07",upperOpen:false}
+Dumping values, fromIndex = false, skipCount = 1, pageSize = 4, idbKeyRange = {lower:"key_02",lowerOpen:true,upper:"key_05",upperOpen:false}
     Key = key_04, primaryKey = key_04, value = {"key":"key_04","value":"value_04"}
     Key = key_05, primaryKey = key_05, value = {"key":"key_05","value":"value_05"}
-    Key = key_06, primaryKey = key_06, value = {"key":"key_06","value":"value_06"}
-    Key = key_07, primaryKey = key_07, value = {"key":"key_07","value":"value_07"}
     hasMore = false
-Dumping values, fromIndex = true, skipCount = 0, pageSize = 3, idbKeyRange = null
+Dumping values, fromIndex = true, skipCount = 0, pageSize = 2, idbKeyRange = null
     Key = value_01, primaryKey = key_01, value = {"key":"key_01","value":"value_01"}
     Key = value_02, primaryKey = key_02, value = {"key":"key_02","value":"value_02"}
-    Key = value_03, primaryKey = key_03, value = {"key":"key_03","value":"value_03"}
     hasMore = true
 

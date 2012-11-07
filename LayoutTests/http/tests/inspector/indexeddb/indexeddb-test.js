@@ -110,7 +110,12 @@ function dispatchCallback(callbackId)
 
 function onIndexedDBError(e)
 {
-    console.log(e);
+    console.error("IndexedDB error: " + e);
+}
+
+function onIndexedDBBlocked(e)
+{
+    console.error("IndexedDB blocked: " + e);
 }
 
 function doWithDatabase(databaseName, callback)
@@ -122,7 +127,7 @@ function doWithDatabase(databaseName, callback)
     }
 
     var request = indexedDB.open(databaseName);
-    request.onblocked = onIndexedDBError;
+    request.onblocked = onIndexedDBBlocked;
     request.onerror = onIndexedDBError;
     request.onsuccess = innerCallback;
 }
@@ -134,7 +139,7 @@ function doWithVersionTransaction(databaseName, callback, commitCallback)
     function step2(db)
     {
         var request = db.setVersion(Number(db.version) + 1);
-        request.onblocked = onIndexedDBError;
+        request.onblocked = onIndexedDBBlocked;
         request.onerror = onIndexedDBError;
         request.onsuccess = step3;
 
