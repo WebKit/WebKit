@@ -171,7 +171,6 @@ static const char* editorCommandWebActions[] =
     0, // OpenLink,
 
     0, // OpenLinkInNewWindow,
-    0, // OpenLinkInThisWindow,
     0, // OpenFrameInNewWindow,
 
     0, // DownloadLinkToDisk,
@@ -253,6 +252,8 @@ static const char* editorCommandWebActions[] =
     0, // StopScheduledPageRefresh,
 
     0, // CopyImageUrlToClipboard,
+
+    0, // OpenLinkInThisWindow,
 
     0 // WebActionCount
 };

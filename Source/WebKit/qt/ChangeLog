@@ -3,6 +3,15 @@
         [Qt] Open link in this window action
         https://bugs.webkit.org/show_bug.cgi?id=101226
 
+        Reviewed by Csaba Osztrogonác.
+
+        * Api/qwebpage.cpp: Fix after r133763, move the initialization of OpenLinkInThisWindow to the proper place.
+
+2012-11-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Open link in this window action
+        https://bugs.webkit.org/show_bug.cgi?id=101226
+
         Reviewed by Simon Hausmann.
 
         Adds the action to QtWebKit.
