@@ -34,6 +34,14 @@
 #import <Foundation/Foundation.h>
 #endif
 
+#ifndef CF_RELEASES_ARGUMENT
+#define CF_RELEASES_ARGUMENT
+#endif
+
+#ifndef NS_RELEASES_ARGUMENT
+#define NS_RELEASES_ARGUMENT
+#endif
+
 namespace WTF {
 
     // Unlike most most of our smart pointers, RetainPtr can take either the pointer type or the pointed-to type,
@@ -257,13 +265,13 @@ namespace WTF {
         return a != b.get(); 
     }
 
-    template<typename T> inline RetainPtr<T> adoptCF(T) WARN_UNUSED_RETURN;
+    template<typename T> inline RetainPtr<T> adoptCF(T CF_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
     template<typename T> inline RetainPtr<T> adoptCF(T o)
     {
         return RetainPtr<T>(AdoptCF, o);
     }
 
-    template<typename T> inline RetainPtr<T> adoptNS(T) WARN_UNUSED_RETURN;
+    template<typename T> inline RetainPtr<T> adoptNS(T NS_RELEASES_ARGUMENT) WARN_UNUSED_RETURN;
     template<typename T> inline RetainPtr<T> adoptNS(T o)
     {
         return RetainPtr<T>(AdoptNS, o);

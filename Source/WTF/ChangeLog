@@ -1,3 +1,17 @@
+2012-11-07  Remy Demarest  <rdemarest@apple.com>
+
+        Function adoptNS and adoptCF should not generate memory leak diagnostic with Clang Static Analyzer.
+        https://bugs.webkit.org/show_bug.cgi?id=101420
+
+        Reviewed by Benjamin Poulain.
+
+        Add attributes to the adoptNS and adoptCF function arguments to remove Clang Static Analyzer diagnotics.
+        Define CF_RELEASES_ARGUMENT and NS_RELEASES_ARGUMENT if not available, use them in function declarations.
+
+        * wtf/RetainPtr.h:
+        (WTF::adoptCF): Adds CF_RELEASES_ARGUMENT attribute to the argument.
+        (WTF::adoptNS): Adds NS_RELEASES_ARGUMENT attribute to the argument.
+
 2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         Add replaceWithLiteral() method to WTF::String
