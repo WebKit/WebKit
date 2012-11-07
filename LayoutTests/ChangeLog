@@ -1,3 +1,9 @@
+2012-11-07  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-07  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=101303

@@ -3317,7 +3317,7 @@ webkit.org/b/ [ Win Release ] http/tests/xmlhttprequest/redirect-cross-origin-po
 crbug.com/121442 [ Linux Debug ] plugins/iframe-shims.html [ Crash ]
 crbug.com/121442 [ Linux Release ] plugins/iframe-shims.html [ Crash Pass ]
 
-webkit.org/b/83219 [ Lion MountainLion ] fonts/cursive.html [ Failure Pass ]
+webkit.org/b/83219 [ Lion MountainLion ] fonts/cursive.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/83324 [ Win Debug ] fast/js/cross-global-object-inline-global-var.html [ Failure Pass ]
 
 crbug.com/122462 [ Linux Win ] http/tests/inspector/inspect-element.html [ Failure Slow ]
