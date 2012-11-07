@@ -33,6 +33,7 @@ typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 namespace WebCore {
 
 RetainPtr<CFHTTPCookieStorageRef> currentCFHTTPCookieStorage(); // Will be null when using shared NSHTTPCookieStorage.
+RetainPtr<CFHTTPCookieStorageRef> defaultCFHTTPCookieStorage(); // Doesn't take current session into account.
 
 #if PLATFORM(WIN)
 // Needed for WebKit1 API only.

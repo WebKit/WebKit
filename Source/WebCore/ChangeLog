@@ -1,3 +1,49 @@
+2012-11-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up which storage cookie jar functions use
+        https://bugs.webkit.org/show_bug.cgi?id=101395
+
+        Reviewed by Brady Eidson.
+
+        * WebCore.exp.in:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        Updated for two new WKSI functions.
+
+        * platform/CookieJar.h: Added explanatory comments.
+
+        * platform/mac/CookieJar.mm:
+        (WebCore::cookies): Removed fallback on NSHTTPCookieStorage, the WKSI function
+        already implements it.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        (WebCore::setCookies): Ditto.
+        (WebCore::cookiesEnabled): Ditto.
+        (WebCore::getRawCookies): Ditto.
+        (WebCore::deleteCookie): Ditto.
+        (WebCore::getHostnamesWithCookies): This function used to look at NSHTTPCookieStorage
+        exclusively. While it makes sense to bypass private storage session, default storage
+        session (currently only used for testing on Mac) is never OK to bypass. Changed to
+        use a WKSI function that supports both.
+        (WebCore::deleteCookiesForHostname): Ditto.
+        (WebCore::deleteAllCookies): Ditto.
+
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostname):
+        (WebCore::deleteAllCookies):
+        Updated to match Foundation, so now these functions bypass private session.
+
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::currentCFHTTPCookieStorage): Updated a comment.
+        (WebCore::defaultCFHTTPCookieStorage):  Added a function that returns cookie storage
+        for non-private session (or null if that would be an NSHTTPCookieStorage).        
+        (WebCore::startObservingCookieChanges): We do not want to observe private cookies
+        here, and we certainly don't want a mismatch between start/stop due to private
+        browsing mode changes.
+        (WebCore::stopObservingCookieChanges): Ditto.
+
+        * platform/network/cf/CookieStorageCFNet.h: Added defaultCFHTTPCookieStorage().
+
 2012-11-06  Huang Dongsung  <luxtella@company100.net>
 
         Build fix. r133601 broke the Windows build.

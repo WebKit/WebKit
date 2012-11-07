@@ -41,11 +41,13 @@ struct Cookie;
 String cookies(const Document*, const KURL&);
 void setCookies(Document*, const KURL&, const String&);
 
+// These methods use current cookie storage, thus taking private browsing mode into account.
 bool cookiesEnabled(const Document*);
 String cookieRequestHeaderFieldValue(const Document*, const KURL&);
 bool getRawCookies(const Document*, const KURL&, Vector<Cookie>&);
 void deleteCookie(const Document*, const KURL&, const String&);
 
+// These functions always access default cookie storage, not taking private browsing mode into account.
 void getHostnamesWithCookies(HashSet<String>& hostnames);
 void deleteCookiesForHostname(const String& hostname);
 void deleteAllCookies();

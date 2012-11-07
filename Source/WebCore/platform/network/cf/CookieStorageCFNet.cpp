@@ -69,7 +69,25 @@ RetainPtr<CFHTTPCookieStorageRef> currentCFHTTPCookieStorage()
 #if USE(CFNETWORK)
     return wkGetDefaultHTTPCookieStorage();
 #else
-    // When using NSURLConnection, we also use its default cookie storage.
+    // When using NSURLConnection, we also use its shared cookie storage.
+    return 0;
+#endif
+}
+
+RetainPtr<CFHTTPCookieStorageRef> defaultCFHTTPCookieStorage()
+{
+#if PLATFORM(WIN)
+    if (RetainPtr<CFHTTPCookieStorageRef>& override = cookieStorageOverride())
+        return override;
+#endif
+
+    if (CFURLStorageSessionRef session = ResourceHandle::defaultStorageSession())
+        return RetainPtr<CFHTTPCookieStorageRef>(AdoptCF, wkCopyHTTPCookieStorage(session));
+
+#if USE(CFNETWORK)
+    return wkGetDefaultHTTPCookieStorage();
+#else
+    // When using NSURLConnection, we also use its shared cookie storage.
     return 0;
 #endif
 }
@@ -115,7 +133,7 @@ void startObservingCookieChanges()
     CFRunLoopRef runLoop = cookieStorageObserverRunLoop();
     ASSERT(runLoop);
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = defaultCFHTTPCookieStorage();
     ASSERT(cookieStorage);
 
     CFHTTPCookieStorageScheduleWithRunLoop(cookieStorage.get(), runLoop, kCFRunLoopCommonModes);
@@ -129,7 +147,7 @@ void stopObservingCookieChanges()
     CFRunLoopRef runLoop = cookieStorageObserverRunLoop();
     ASSERT(runLoop);
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = defaultCFHTTPCookieStorage();
     ASSERT(cookieStorage);
 
     CFHTTPCookieStorageRemoveObserver(cookieStorage.get(), runLoop, kCFRunLoopDefaultMode, notifyCookiesChanged, 0);

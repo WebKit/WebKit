@@ -1520,6 +1520,7 @@ _wkCreateCTLineWithUniCharProvider
 _wkCreateCustomCFReadStream
 _wkCreateNSURLConnectionDelegateProxy
 _wkCreatePrivateStorageSession
+_wkDeleteAllHTTPCookies
 _wkDeleteHTTPCookie
 _wkGetCFURLResponseHTTPResponse
 _wkGetCFURLResponseMIMEType
@@ -1529,6 +1530,7 @@ _wkGetHTTPPipeliningPriority
 _wkGetMIMETypeForExtension
 _wkGetNSURLResponseLastModifiedDate
 _wkGetUserToBaseCTM
+_wkHTTPCookies
 _wkHTTPCookiesForURL
 _wkInitializeMaximumHTTPConnectionCountPerHost
 _wkSetBaseCTM

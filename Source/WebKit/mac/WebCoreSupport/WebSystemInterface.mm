@@ -165,8 +165,10 @@ void InitWebCoreSystemInterface(void)
     INIT(CopyRequestWithStorageSession);
     INIT(CopyHTTPCookieStorage);
     INIT(GetHTTPCookieAcceptPolicy);
+    INIT(HTTPCookies);
     INIT(HTTPCookiesForURL);
     INIT(SetHTTPCookiesForURL);
+    INIT(DeleteAllHTTPCookies);
     INIT(DeleteHTTPCookie);
 
     INIT(GetCFURLResponseMIMEType);

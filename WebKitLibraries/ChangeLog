@@ -1,5 +1,18 @@
 2012-11-06  Alexey Proskuryakov  <ap@apple.com>
 
+        Clean up which storage cookie jar functions use
+        https://bugs.webkit.org/show_bug.cgi?id=101395
+
+        Reviewed by Brady Eidson.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+        Added WKHTTPCookies() and WKDeleteAllHTTPCookies(). Updated ifdefs for currently
+        supported OS versions.
+
+2012-11-06  Alexey Proskuryakov  <ap@apple.com>
+
         Delete Leopard and Snow Leopard versions of WKSI. These have not been updated in ages.
 
         Rubber-stampted by Mark Rowe.

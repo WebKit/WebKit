@@ -1,3 +1,13 @@
+2012-11-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Clean up which storage cookie jar functions use
+        https://bugs.webkit.org/show_bug.cgi?id=101395
+
+        Reviewed by Brady Eidson.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm: (InitWebCoreSystemInterface):
+        Updated for two new functions.
+
 2012-11-06  Jihye Kang  <jye.kang@samsung.com>
 
         [EFL][WK2] Add ewk_database_manager APIs
