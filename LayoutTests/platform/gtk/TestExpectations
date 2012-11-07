@@ -653,6 +653,11 @@ webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-async.html [ Timeout 
 webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-paste.html [ Timeout ]
 webkit.org/b/50740 [ Release ] editing/spelling/spellcheck-queue.html [ Timeout ]
 
+webkit.org/b/101428 media/audio-concurrent-supported.html [ Timeout ]
+webkit.org/b/101428 media/media-continues-playing-after-replace-source.html [ Timeout ]
+
+Bug(GTK) media/progress-events-generated-correctly.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,13 @@
+2012-11-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding a timeout expectation for the test introduced in r133660.
+        Adding timeout expectations for two media tests that started timing
+        out probably after r133633.
+
+        * platform/gtk/TestExpectations:
+
 2012-11-07  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.
