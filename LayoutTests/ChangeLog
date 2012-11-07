@@ -1,3 +1,11 @@
+2012-11-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r133688, remove unnecessary platform specific expected files.
+
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt: Removed.
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt: Removed.
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt: Removed.
+
 2012-11-07  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.
