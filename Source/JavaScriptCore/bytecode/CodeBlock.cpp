@@ -1806,6 +1806,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
             instructions[i + opLength - 1] = &m_arrayProfiles[arrayProfileIndex];
             // fallthrough
+#if !ENABLE(LLINT)
+            break;
+#endif
         }
 #endif
 #if ENABLE(LLINT)
