@@ -598,10 +598,8 @@ void WebProcessProxy::shouldTerminate(bool& shouldTerminate)
 
 void WebProcessProxy::updateTextCheckerState()
 {
-    if (!isValid())
-        return;
-
-    send(Messages::WebProcess::SetTextCheckerState(TextChecker::state()), 0);
+    if (canSendMessage())
+        send(Messages::WebProcess::SetTextCheckerState(TextChecker::state()), 0);
 }
 
 void WebProcessProxy::didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID) 

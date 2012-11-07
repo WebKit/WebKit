@@ -93,11 +93,7 @@ void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
 
 void TextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
 {
-#if ENABLE(SPELLCHECK)
-    textCheckerState.isContinuousSpellCheckingEnabled = enabled;
-#else
-    UNUSED_PARAM(enabled);
-#endif
+    TextChecker::setContinuousSpellCheckingEnabled(enabled);
 }
 
 void TextChecker::grammarCheckingEnabledStateChanged(bool enabled)

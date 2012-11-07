@@ -1,3 +1,16 @@
+2012-11-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        WebKitTestRunner needs to turn on 'setContinuousSpellCheckingEnabled'
+        https://bugs.webkit.org/show_bug.cgi?id=93611
+
+        Reviewed by Gyuyoung Kim.
+
+        WebKitTestRunner enables spelling feature to pass the layout tests from editing/spelling.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        Enables spelling by WebKit2 C API.
+
 2012-11-07  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Switch the efl-linux-slave-2 to Wk2 Release

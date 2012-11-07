@@ -1,3 +1,32 @@
+2012-11-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        WebKitTestRunner needs to turn on 'setContinuousSpellCheckingEnabled'
+        https://bugs.webkit.org/show_bug.cgi?id=93611
+
+        Reviewed by Gyuyoung Kim.
+
+        When WebKitTestRunner turns on the spelling feature with the resetStateToConsistentValues() method,
+        it happens that the WebProcess is still not launched (although it is already created).
+        In this case, isValid() method returns false.
+
+        This fix sends a message to the WebProcess messages queue, and the message
+        will be handled once the WebProcess is ready.
+
+        * Target.pri:
+        Adds missing files to compile spellcheking feature for WebKit2-Qt
+        to use WebKit C API from WKTextChecker.h.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateTextCheckerState):
+        Uses canSendMessage() method instead of isValid() to check whether the message to
+        the WebProcess can be sent.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::continuousSpellCheckingEnabledStateChanged):
+        Calls TextChecker::setContinuousSpellCheckingEnabled which additionaly invokes the client's method.
+        WK2-EFL settings for text checker (ewk_settings.cpp) set the default language (if it wasn't set earlier) to
+        perform the spelling. It allows to pass the tests from editing/spelling directory.
+
 2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         Add replaceWithLiteral() method to WTF::String

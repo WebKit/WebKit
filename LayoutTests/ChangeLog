@@ -1,3 +1,18 @@
+2012-11-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] WebKitTestRunner needs to turn on 'setContinuousSpellCheckingEnabled'
+        https://bugs.webkit.org/show_bug.cgi?id=93611
+
+        Reviewed by Gyuyoung Kim.
+
+        Unskip the spelling tests from efl-wk2/TestExpectations to run them for WebKit2-EFL.
+        Add new missing baselines for two spelling tests for EFL platform.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/editing/spelling/inline_spelling_markers-expected.txt: Added.
+        * platform/efl/editing/spelling/spelling-expected.txt: Added.
+
 2012-11-07  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.

@@ -28,6 +28,13 @@
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
+editing/spelling/design-mode-spellcheck-off.html [ Pass ]
+editing/spelling/spellcheck-api-crash.html [ Pass ]
+editing/spelling/spellcheck-attribute.html [ Pass ]
+editing/spelling/spelling-attribute-at-child.html [ Pass ]
+editing/spelling/spelling-attribute-change.html [ Pass ]
+editing/spelling/spelling-hasspellingmarker.html [ Pass ]
+editing/spelling/spelling-linebreak.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # TESTS EXPECTED TO FAIL
@@ -193,6 +200,13 @@ Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
 Bug(EFL) fast/media/media-query-list-07.html [ Failure ]
 Bug(EFL) fast/media/view-mode-media-feature.html [ Failure ]
 
+# Needs grammar checking
+Bug(EFL) editing/spelling/grammar-edit-word.html [ Failure ]
+Bug(EFL) editing/spelling/markers.html [ Failure ]
+
+# Unified text checking is failing
+Bug(EFL) editing/spelling/spelling-unified-emulation.html [ Failure ]
+
 # WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousKeyDown
 webkit.org/b/93979 fast/mutation/end-of-task-delivery.html [ Failure ]
 
@@ -263,9 +277,6 @@ webkit.org/b/99562 http/tests/plugins/post-url-file.html [ Failure ]
 # Comparison of two javascript objects in C++ is failing.
 webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]
 
-# EFL WK2 does not support the spellchecker feature
-webkit.org/b/91854 editing/spelling [ Skip ]
-
 # WebKitTestRunner needs an implementation for eventSender.contextClick
 webkit.org/b/86881 editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
 webkit.org/b/86881 editing/selection/5354455-1.html [ Failure ]
@@ -275,6 +286,7 @@ webkit.org/b/86881 editing/selection/context-menu-on-text.html [ Failure ]
 webkit.org/b/86881 editing/selection/context-menu-text-selection.html [ Failure ]
 webkit.org/b/86881 editing/selection/empty-cell-right-click.html [ Failure ]
 webkit.org/b/86881 editing/shadow/rightclick-on-meter-in-shadow-crash.html [ Failure ]
+webkit.org/b/86881 editing/spelling/context-menu-suggestions.html [ Failure ]
 webkit.org/b/86881 fast/events/context-no-deselect.html [ Failure ]
 webkit.org/b/86881 fast/events/context-onmousedown-event.html [ Failure ]
 webkit.org/b/86881 fast/events/contextmenu-scrolled-page-with-frame.html [ Failure ]
