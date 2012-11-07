@@ -1,3 +1,10 @@
+2012-11-06  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed attempt to fix the chromium-mac build.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2012-11-06  Anders Carlsson  <andersca@apple.com>
 
         Update Java related WKSI function names
