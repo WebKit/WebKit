@@ -1,3 +1,26 @@
+2012-11-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix failing platform/mac/tiled-drawing on Lion.
+        
+        It's not possible to use TestExpectations to skip tests on all but current mac-wk2,
+        so just land results for Lion.
+
+        * platform/mac-lion/platform/mac/tiled-drawing/fixed/absolute-inside-fixed-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/fixed/fixed-in-overflow-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/fixed/fixed-position-out-of-view-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/fixed/fixed-position-out-of-view-negative-zindex-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/fixed/four-bars-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/fixed/nested-fixed-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/fixed/percentage-inside-fixed-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/scrolling-tree-after-scroll-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/scrolling-tree-slow-scrolling-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/tile-coverage-after-scroll-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/tile-coverage-scroll-to-bottom-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/tile-coverage-slow-scrolling-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/tiled-drawing-zoom-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/tiled-drawing-zoom-scrolled-expected.txt: Added.
+        * platform/mac-lion/platform/mac/tiled-drawing/use-tiled-drawing-expected.txt: Added.
+
 2012-11-07  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Style should update when 'pseudo' attribute is dynamically updated
