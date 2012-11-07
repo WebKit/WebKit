@@ -1,3 +1,43 @@
+2012-11-06  Jihye Kang  <jye.kang@samsung.com>
+
+        [EFL][WK2] Add ewk_database_manager APIs
+        https://bugs.webkit.org/show_bug.cgi?id=101193
+
+        Reviewed by Gyuyoung Kim.
+
+        Add ewk_database_manager to manage web database and
+        ewk_database_manaager_origins_get to get origins list of web storage.
+        Add unit tests for ewk_database_manager APIs.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_context.cpp:
+        (Ewk_Context::Ewk_Context):
+        (Ewk_Context::databaseManager):
+        (ewk_context_database_manager_get):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        (Ewk_Context):
+        * UIProcess/API/efl/ewk_database_manager.cpp: Added.
+        (Ewk_Database_Manager::Ewk_Database_Manager):
+        (Ewk_Database_Manager::getDatabaseOrigins):
+        (Ewk_Database_Manager::createOriginList):
+        (Ewk_Database_Origins_Async_Get_Context):
+        (Ewk_Database_Origins_Async_Get_Context::Ewk_Database_Origins_Async_Get_Context):
+        (getDatabaseOriginsCallback):
+        (ewk_database_manager_origins_get):
+        * UIProcess/API/efl/ewk_database_manager.h: Added.
+        * UIProcess/API/efl/ewk_database_manager_private.h: Added.
+        (Ewk_Database_Manager):
+        (Ewk_Database_Manager::create):
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_database_manager.cpp: Added.
+        (OriginData):
+        (OriginData::OriginData):
+        (getDatabaseOriginsCallback):
+        (timerCallback):
+        (TEST_F):
+
 2012-11-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Refactor Ewk_Auth_Request, Ewk_Url_Scheme_Request and Ewk_Download_Job to be Ewk_Objects

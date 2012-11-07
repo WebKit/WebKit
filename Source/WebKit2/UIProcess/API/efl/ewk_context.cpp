@@ -36,6 +36,7 @@
 #include "WebSoupRequestManagerProxy.h"
 #include "ewk_context_private.h"
 #include "ewk_cookie_manager_private.h"
+#include "ewk_database_manager_private.h"
 #include "ewk_favicon_database_private.h"
 #include "ewk_private.h"
 #include "ewk_storage_manager_private.h"
@@ -63,6 +64,7 @@ static inline ContextMap& contextMap()
 
 EwkContext::EwkContext(WKContextRef context)
     : m_context(context)
+    , m_databaseManager(Ewk_Database_Manager::create(WKContextGetDatabaseManager(m_context.get())))
     , m_storageManager(Ewk_Storage_Manager::create(WKContextGetKeyValueStorageManager(m_context.get())))
 #if ENABLE(BATTERY_STATUS)
     , m_batteryProvider(BatteryProvider::create(context))
@@ -145,6 +147,11 @@ Ewk_Cookie_Manager* EwkContext::cookieManager()
     return m_cookieManager.get();
 }
 
+Ewk_Database_Manager* EwkContext::databaseManager()
+{
+    return m_databaseManager.get();
+}
+
 void EwkContext::ensureFaviconDatabase()
 {
     if (m_faviconDatabase)
@@ -216,6 +223,13 @@ Ewk_Cookie_Manager* ewk_context_cookie_manager_get(const Ewk_Context* ewkContext
     EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, 0);
 
     return const_cast<EwkContext*>(impl)->cookieManager();
+}
+
+Ewk_Database_Manager* ewk_context_database_manager_get(const Ewk_Context* ewkContext)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, 0);
+
+    return const_cast<EwkContext*>(impl)->databaseManager();
 }
 
 Eina_Bool ewk_context_favicon_database_directory_set(Ewk_Context* ewkContext, const char* directoryPath)

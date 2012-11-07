@@ -57,6 +57,8 @@ public:
 
     Ewk_Cookie_Manager* cookieManager();
 
+    Ewk_Database_Manager* databaseManager();
+
     bool setFaviconDatabaseDirectoryPath(const String& databaseDirectory);
     Ewk_Favicon_Database* faviconDatabase();
 
@@ -88,6 +90,7 @@ private:
     WKRetainPtr<WKContextRef> m_context;
 
     OwnPtr<Ewk_Cookie_Manager> m_cookieManager;
+    OwnPtr<Ewk_Database_Manager> m_databaseManager;
     OwnPtr<Ewk_Favicon_Database> m_faviconDatabase;
     OwnPtr<Ewk_Storage_Manager> m_storageManager;
 #if ENABLE(BATTERY_STATUS)

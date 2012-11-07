@@ -53,6 +53,14 @@ TEST_F(EWK2UnitTestBase, ewk_context_cookie_manager_get)
     ASSERT_EQ(cookieManager, ewk_context_cookie_manager_get(context));
 }
 
+TEST_F(EWK2UnitTestBase, ewk_context_database_manager_get)
+{
+    Ewk_Context* context = ewk_view_context_get(webView());
+    Ewk_Database_Manager* databaseManager = ewk_context_database_manager_get(context);
+    ASSERT_TRUE(databaseManager);
+    ASSERT_EQ(databaseManager, ewk_context_database_manager_get(context));
+}
+
 TEST_F(EWK2UnitTestBase, ewk_context_favicon_database_get)
 {
     Ewk_Context* context = ewk_view_context_get(webView());
