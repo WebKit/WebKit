@@ -28399,7 +28399,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\FractionalLayoutUnit.h"
+				RelativePath="..\platform\LayoutUnit.h"
 				>
 			</File>
 			<File
@@ -29486,27 +29486,27 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FractionalLayoutBoxExtent.h"
+					RelativePath="..\platform\graphics\LayoutBoxExtent.h"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FractionalLayoutBoxExtent.cpp"
+					RelativePath="..\platform\graphics\LayoutBoxExtent.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FractionalLayoutPoint.h"
+					RelativePath="..\platform\graphics\LayoutPoint.h"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FractionalLayoutRect.cpp"
+					RelativePath="..\platform\graphics\LayoutRect.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FractionalLayoutRect.h"
+					RelativePath="..\platform\graphics\LayoutRect.h"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\FractionalLayoutSize.h"
+					RelativePath="..\platform\graphics\LayoutSize.h"
 					>
 				</File>
 				<File
@@ -38960,10 +38960,6 @@
 			</File>
 			<File
 				RelativePath="..\rendering\LayoutState.h"
-				>
-			</File>
-			<File
-				RelativePath="..\rendering\LayoutTypes.h"
 				>
 			</File>
 			<File

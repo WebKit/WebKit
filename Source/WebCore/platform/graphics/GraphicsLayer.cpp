@@ -32,7 +32,7 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
-#include "LayoutTypesInlineMethods.h"
+#include "LayoutRect.h"
 #include "RotateTransformOperation.h"
 #include "TextStream.h"
 #include <wtf/HashMap.h>

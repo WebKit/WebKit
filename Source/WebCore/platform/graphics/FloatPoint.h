@@ -68,15 +68,15 @@ class AffineTransform;
 class TransformationMatrix;
 class IntPoint;
 class IntSize;
-class FractionalLayoutPoint;
-class FractionalLayoutSize;
+class LayoutPoint;
+class LayoutSize;
 
 class FloatPoint {
 public:
     FloatPoint() : m_x(0), m_y(0) { }
     FloatPoint(float x, float y) : m_x(x), m_y(y) { }
     FloatPoint(const IntPoint&);
-    FloatPoint(const FractionalLayoutPoint&);
+    FloatPoint(const LayoutPoint&);
     explicit FloatPoint(const FloatSize& size) : m_x(size.width()), m_y(size.height()) { }
 
     static FloatPoint zero() { return FloatPoint(); }
@@ -103,7 +103,7 @@ public:
         m_x += a.width();
         m_y += a.height();
     }
-    void move(const FractionalLayoutSize&);
+    void move(const LayoutSize&);
     void move(const FloatSize& a)
     {
         m_x += a.width();
@@ -114,7 +114,7 @@ public:
         m_x += a.x();
         m_y += a.y();
     }
-    void moveBy(const FractionalLayoutPoint&);
+    void moveBy(const LayoutPoint&);
     void moveBy(const FloatPoint& a)
     {
         m_x += a.x();

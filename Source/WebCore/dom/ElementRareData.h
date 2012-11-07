@@ -125,7 +125,7 @@ public:
 
 inline IntSize defaultMinimumSizeForResizing()
 {
-    return IntSize(MAX_LAYOUT_UNIT, MAX_LAYOUT_UNIT);
+    return IntSize(LayoutUnit::max(), LayoutUnit::max());
 }
 
 inline ElementRareData::ElementRareData()

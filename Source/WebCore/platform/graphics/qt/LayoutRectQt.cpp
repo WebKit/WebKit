@@ -18,28 +18,28 @@
 */
 
 #include "config.h"
-#include "FractionalLayoutPoint.h"
+#include "LayoutRect.h"
 
-#include <QPoint>
-#include <QPointF>
+#include <QRect>
+#include <QRectF>
 
 namespace WebCore {
 
-FractionalLayoutPoint::FractionalLayoutPoint(const QPoint& point)
-    : m_x(point.x())
-    , m_y(point.y())
+LayoutRect::LayoutRect(const QRect& r)
+    : m_location(r.topLeft())
+    , m_size(r.width(), r.height())
 {
 }
 
-FractionalLayoutPoint::FractionalLayoutPoint(const QPointF& point)
-    : m_x(point.x())
-    , m_y(point.y())
+LayoutRect::LayoutRect(const QRectF& r)
+    : m_location(r.topLeft())
+    , m_size(r.width(), r.height())
 {
 }
 
-FractionalLayoutPoint::operator QPointF() const
+LayoutRect::operator QRectF() const
 {
-    return QPointF(m_x, m_y);
+    return QRectF(x(), y(), width(), height());
 }
 
 } // namespace

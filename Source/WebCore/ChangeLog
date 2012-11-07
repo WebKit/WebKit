@@ -1,3 +1,153 @@
+2012-11-05  Emil A Eklund  <eae@chromium.org>
+
+        Remove LayoutTypes abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=93050
+
+        Reviewed by Levi Weintraub.
+
+        Remove LayoutTypes abstraction and rename FractionalLayout* to
+        Layout* now that all platforms use the FractionalLayout version
+        (albeit with different fractions).
+
+        No new tests, no change in functionality.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityNodeObject.cpp:
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.h:
+        * css/LengthFunctions.cpp:
+        * css/LengthFunctions.h:
+        * dom/Document.h:
+        * dom/DocumentMarkerController.h:
+        * dom/ElementRareData.h:
+        * dom/MouseRelatedEvent.h:
+        * dom/Node.h:
+        * dom/Touch.h:
+        * editing/FrameSelection.cpp:
+        * editing/FrameSelection.h:
+        * editing/RenderedPosition.h:
+        * html/HTMLAreaElement.h:
+        * inspector/InspectorOverlay.h:
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        * inspector/TimelineRecordFactory.h:
+        * loader/cache/CachedImage.h:
+        * page/FocusController.h:
+        * page/FrameView.h:
+        * page/Page.h:
+        * page/SpatialNavigation.cpp:
+        * page/SpatialNavigation.h:
+        * platform/FractionalLayoutUnit.h: Removed.
+        * platform/LayoutUnit.h: Copied from Source/WebCore/platform/FractionalLayoutUnit.h.
+        * platform/Length.h:
+        * platform/PopupMenuClient.h:
+        * platform/animation/AnimationUtilities.h:
+        * platform/graphics/FloatPoint.cpp:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.cpp:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.cpp:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/FractionalLayoutBoxExtent.cpp: Removed.
+        * platform/graphics/FractionalLayoutBoxExtent.h: Removed.
+        * platform/graphics/FractionalLayoutPoint.h: Removed.
+        * platform/graphics/FractionalLayoutRect.cpp: Removed.
+        * platform/graphics/FractionalLayoutRect.h: Removed.
+        * platform/graphics/FractionalLayoutSize.h: Removed.
+        * platform/graphics/GraphicsLayer.cpp:
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        * platform/graphics/IntRect.cpp:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/LayoutBoxExtent.cpp: Copied from Source/WebCore/platform/graphics/FractionalLayoutBoxExtent.cpp.
+        * platform/graphics/LayoutBoxExtent.h: Copied from Source/WebCore/platform/graphics/FractionalLayoutBoxExtent.h.
+        * platform/graphics/LayoutPoint.h: Copied from Source/WebCore/platform/graphics/FractionalLayoutPoint.h.
+        * platform/graphics/LayoutRect.cpp: Copied from Source/WebCore/platform/graphics/FractionalLayoutRect.cpp.
+        * platform/graphics/LayoutRect.h: Copied from Source/WebCore/platform/graphics/FractionalLayoutRect.h.
+        * platform/graphics/LayoutSize.h: Copied from Source/WebCore/platform/graphics/FractionalLayoutSize.h.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/filters/CustomFilterOperation.h:
+        * platform/graphics/filters/CustomFilterParameterList.h:
+        * platform/graphics/filters/FilterOperation.h:
+        * platform/graphics/filters/FilterOperations.h:
+        * platform/graphics/filters/ValidatedCustomFilterOperation.cpp:
+        * platform/graphics/filters/ValidatedCustomFilterOperation.h:
+        * platform/graphics/qt/FractionalLayoutPointQt.cpp: Removed.
+        * platform/graphics/qt/FractionalLayoutRectQt.cpp: Removed.
+        * platform/graphics/qt/FractionalLayoutSizeQt.cpp: Removed.
+        * platform/graphics/qt/LayoutPointQt.cpp: Copied from Source/WebCore/platform/graphics/qt/FractionalLayoutPointQt.cpp.
+        * platform/graphics/qt/LayoutRectQt.cpp: Added.
+        * platform/graphics/qt/LayoutSizeQt.cpp: Copied from Source/WebCore/platform/graphics/qt/FractionalLayoutSizeQt.cpp.
+        * platform/graphics/transforms/TransformOperations.h:
+        * platform/graphics/transforms/TransformState.h:
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * rendering/AutoTableLayout.h:
+        * rendering/ColumnInfo.h:
+        * rendering/ExclusionShapeInsideInfo.h:
+        * rendering/FilterEffectRenderer.h:
+        * rendering/FixedTableLayout.h:
+        * rendering/GapRects.h:
+        * rendering/HitTestResult.h:
+        * rendering/HitTestingTransformState.cpp:
+        * rendering/HitTestingTransformState.h:
+        * rendering/InlineFlowBox.cpp:
+        * rendering/LayoutRepainter.cpp:
+        * rendering/LayoutRepainter.h:
+        * rendering/LayoutState.h:
+        * rendering/LayoutTypes.h:
+        * rendering/LayoutTypesInlineMethods.h:
+        * rendering/PaintInfo.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        * rendering/RenderFieldset.cpp:
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/RenderFlowThread.cpp:
+        * rendering/RenderGeometryMap.h:
+        * rendering/RenderImageResource.h:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayerFilterInfo.h:
+        * rendering/RenderLineBoxList.cpp:
+        * rendering/RenderListMarker.cpp:
+        * rendering/RenderMarquee.cpp:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderMultiColumnBlock.cpp:
+        * rendering/RenderMultiColumnSet.cpp:
+        * rendering/RenderNamedFlowThread.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderOverflow.h:
+        * rendering/RenderRegion.cpp:
+        * rendering/RenderReplaced.cpp:
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTable.h:
+        * rendering/RenderText.cpp:
+        * rendering/RenderThemeChromiumCommon.cpp:
+        * rendering/RenderThemeChromiumCommon.h:
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/RenderTreeAsText.h:
+        * rendering/RenderView.h:
+        * rendering/style/NinePieceImage.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/ShadowData.cpp:
+        * rendering/style/ShadowData.h:
+        * rendering/style/StyleCachedImageSet.h:
+        * rendering/style/StyleImage.h:
+        * rendering/svg/SVGRenderSupport.h:
+
 2012-11-07  Alexandru Chiculita  <achicu@adobe.com>
 
         CoordinatedGraphicsArgumentCoders should use ValidatedCustomFitlerOperation instead

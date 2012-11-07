@@ -31,7 +31,7 @@
 #ifndef TimelineRecordFactory_h
 #define TimelineRecordFactory_h
 
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {

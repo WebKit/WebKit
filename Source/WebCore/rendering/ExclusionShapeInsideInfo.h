@@ -34,7 +34,7 @@
 
 #include "ExclusionShape.h"
 #include "FloatRect.h"
-#include "LayoutTypesInlineMethods.h"
+#include "LayoutUnit.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -78,14 +78,14 @@ private:
     {
         ASSERT(m_shape);
         // Use fromFloatCeil() to ensure that the returned LayoutUnit value is within the shape's bounds.
-        return FractionalLayoutUnit::fromFloatCeil(m_shape->shapeLogicalBoundingBox().y());
+        return LayoutUnit::fromFloatCeil(m_shape->shapeLogicalBoundingBox().y());
     }
 
     inline LayoutUnit shapeLogicalBoundsMaxY() const
     {
         ASSERT(m_shape);
         // Use fromFloatFloor() to ensure that the returned LayoutUnit value is within the shape's bounds.
-        return FractionalLayoutUnit::fromFloatFloor(m_shape->shapeLogicalBoundingBox().maxY());
+        return LayoutUnit::fromFloatFloor(m_shape->shapeLogicalBoundingBox().maxY());
     }
 
     RenderBlock* m_block;

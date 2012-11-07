@@ -34,7 +34,7 @@
 
 #include "IntRect.h"
 #include "KURL.h"
-#include "LayoutTypesInlineMethods.h"
+#include "LayoutRect.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>

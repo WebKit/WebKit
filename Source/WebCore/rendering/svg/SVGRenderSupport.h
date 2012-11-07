@@ -25,7 +25,6 @@
 #define SVGRenderSupport_h
 
 #if ENABLE(SVG)
-#include "LayoutTypes.h"
 #include "PaintInfo.h"
 
 namespace WebCore {
@@ -33,6 +32,7 @@ namespace WebCore {
 class FloatPoint;
 class FloatRect;
 class ImageBuffer;
+class LayoutRect;
 class RenderBoxModelObject;
 class RenderGeometryMap;
 class RenderLayerModelObject;

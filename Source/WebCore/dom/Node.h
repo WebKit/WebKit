@@ -27,9 +27,8 @@
 
 #include "EditingBoundary.h"
 #include "EventTarget.h"
-#include "FractionalLayoutRect.h"
 #include "KURLHash.h"
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 #include "MutationObserver.h"
 #include "RenderStyleConstants.h"
 #include "ScriptWrappable.h"

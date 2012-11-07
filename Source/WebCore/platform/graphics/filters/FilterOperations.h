@@ -29,7 +29,6 @@
 #if ENABLE(CSS_FILTERS)
 
 #include "FilterOperation.h"
-#include "LayoutTypes.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

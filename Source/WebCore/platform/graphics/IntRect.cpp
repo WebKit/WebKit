@@ -26,8 +26,8 @@
 #include "config.h"
 #include "IntRect.h"
 
-#include "FractionalLayoutRect.h"
 #include "FloatRect.h"
+#include "LayoutRect.h"
 #include <algorithm>
 
 using std::max;
@@ -41,7 +41,7 @@ IntRect::IntRect(const FloatRect& r)
 {
 }
 
-IntRect::IntRect(const FractionalLayoutRect& r)
+IntRect::IntRect(const LayoutRect& r)
     : m_location(r.x(), r.y())
     , m_size(r.width(), r.height())
 {

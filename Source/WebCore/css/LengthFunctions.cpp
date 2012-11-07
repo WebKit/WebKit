@@ -24,7 +24,7 @@
 #include "config.h"
 #include "LengthFunctions.h"
 
-#include "LayoutTypes.h"
+#include "LayoutUnit.h"
 #include "Length.h"
 #include "RenderView.h"
 
@@ -55,20 +55,20 @@ LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, 
     case ViewportPercentageWidth:
         if (renderView)
             return static_cast<LayoutUnit>(renderView->viewportSize().width() * length.viewportPercentageLength() / 100.0f);
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     case ViewportPercentageHeight:
         if (renderView)
             return static_cast<LayoutUnit>(renderView->viewportSize().height() * length.viewportPercentageLength() / 100.0f);
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     case ViewportPercentageMin:
         if (renderView) {
             IntSize viewportSize = renderView->viewportSize();
             return static_cast<LayoutUnit>(std::min(viewportSize.width(), viewportSize.height()) * length.viewportPercentageLength() / 100.0f);
         }
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     case FillAvailable:
     case Auto:
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     case Relative:
     case Intrinsic:
     case MinIntrinsic:
@@ -77,10 +77,10 @@ LayoutUnit minimumValueForLength(const Length& length, LayoutUnit maximumValue, 
     case FitContent:
     case Undefined:
         ASSERT_NOT_REACHED();
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     }
     ASSERT_NOT_REACHED();
-    return ZERO_LAYOUT_UNIT;
+    return 0;
 }
 
 LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue, RenderView* renderView, bool roundPercentages)
@@ -104,10 +104,10 @@ LayoutUnit valueForLength(const Length& length, LayoutUnit maximumValue, RenderV
     case FitContent:
     case Undefined:
         ASSERT_NOT_REACHED();
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     }
     ASSERT_NOT_REACHED();
-    return ZERO_LAYOUT_UNIT;
+    return 0;
 }
 
 // FIXME: when subpixel layout is supported this copy of floatValueForLength() can be removed. See bug 71143.

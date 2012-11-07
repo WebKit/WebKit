@@ -4278,7 +4278,7 @@ webcore_sources += \
 	Source/WebCore/platform/FileSystem.cpp \
 	Source/WebCore/platform/FileSystem.h \
 	Source/WebCore/platform/FloatConversion.h \
-	Source/WebCore/platform/FractionalLayoutUnit.h \
+	Source/WebCore/platform/LayoutUnit.h \
 	Source/WebCore/platform/Gamepads.h \
 	Source/WebCore/platform/HashTools.h \
 	Source/WebCore/platform/HistogramSupport.cpp \
@@ -4442,12 +4442,12 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/FontSmoothingMode.h \
 	Source/WebCore/platform/graphics/FontTraitsMask.h \
 	Source/WebCore/platform/graphics/FontWidthVariant.h \
-	Source/WebCore/platform/graphics/FractionalLayoutBoxExtent.cpp \
-	Source/WebCore/platform/graphics/FractionalLayoutBoxExtent.h \
-	Source/WebCore/platform/graphics/FractionalLayoutPoint.h \
-	Source/WebCore/platform/graphics/FractionalLayoutRect.cpp \
-	Source/WebCore/platform/graphics/FractionalLayoutRect.h \
-	Source/WebCore/platform/graphics/FractionalLayoutSize.h \
+	Source/WebCore/platform/graphics/LayoutBoxExtent.cpp \
+	Source/WebCore/platform/graphics/LayoutBoxExtent.h \
+	Source/WebCore/platform/graphics/LayoutPoint.h \
+	Source/WebCore/platform/graphics/LayoutRect.cpp \
+	Source/WebCore/platform/graphics/LayoutRect.h \
+	Source/WebCore/platform/graphics/LayoutSize.h \
 	Source/WebCore/platform/graphics/GeneratedImage.cpp \
 	Source/WebCore/platform/graphics/GeneratedImage.h \
 	Source/WebCore/platform/graphics/Generator.h \
@@ -4990,8 +4990,6 @@ webcore_sources += \
 	Source/WebCore/rendering/InlineTextBox.h \
 	Source/WebCore/rendering/LayoutState.cpp \
 	Source/WebCore/rendering/LayoutState.h \
-	Source/WebCore/rendering/LayoutTypes.h \
-	Source/WebCore/rendering/LayoutTypesInlineMethods.h \
 	Source/WebCore/rendering/LayoutRepainter.h \
 	Source/WebCore/rendering/LayoutRepainter.cpp \
 	Source/WebCore/rendering/OverlapTestRequestClient.h \

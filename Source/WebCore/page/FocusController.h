@@ -27,7 +27,7 @@
 #define FocusController_h
 
 #include "FocusDirection.h"
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>

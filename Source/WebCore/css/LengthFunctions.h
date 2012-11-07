@@ -24,10 +24,9 @@
 #ifndef LengthFunctions_h
 #define LengthFunctions_h
 
-#include "LayoutTypes.h"
-
 namespace WebCore {
 
+class LayoutUnit;
 class RenderView;
 struct Length;
 

@@ -59,7 +59,7 @@ public:
     FloatPoint mappedPoint() const;
     FloatQuad mappedQuad() const;
     FloatQuad mappedArea() const;
-    FractionalLayoutRect boundsOfMappedArea() const;
+    LayoutRect boundsOfMappedArea() const;
     void flatten();
 
     FloatPoint m_lastPlanarPoint;

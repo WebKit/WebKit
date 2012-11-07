@@ -37,7 +37,7 @@
 #include "Event.h"
 #include "InspectorValues.h"
 #include "IntRect.h"
-#include "LayoutTypesInlineMethods.h"
+#include "LayoutRect.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptCallStack.h"

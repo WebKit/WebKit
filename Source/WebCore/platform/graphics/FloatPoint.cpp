@@ -28,10 +28,10 @@
 #include "FloatPoint.h"
 
 #include "AffineTransform.h"
-#include "FractionalLayoutPoint.h"
 #include "FloatConversion.h"
-#include "FractionalLayoutSize.h"
 #include "IntPoint.h"
+#include "LayoutPoint.h"
+#include "LayoutSize.h"
 #include "TransformationMatrix.h"
 #include <limits>
 #include <math.h>
@@ -42,7 +42,7 @@ FloatPoint::FloatPoint(const IntPoint& p) : m_x(p.x()), m_y(p.y())
 {
 }
 
-FloatPoint::FloatPoint(const FractionalLayoutPoint& p) : m_x(p.x()), m_y(p.y())
+FloatPoint::FloatPoint(const LayoutPoint& p) : m_x(p.x()), m_y(p.y())
 {
 }
 
@@ -61,13 +61,13 @@ float FloatPoint::length() const
     return sqrtf(lengthSquared());
 }
 
-void FloatPoint::move(const FractionalLayoutSize& size)
+void FloatPoint::move(const LayoutSize& size)
 {
     m_x += size.width();
     m_y += size.height();
 }
 
-void FloatPoint::moveBy(const FractionalLayoutPoint& point)
+void FloatPoint::moveBy(const LayoutPoint& point)
 {
     m_x += point.x();
     m_y += point.y();

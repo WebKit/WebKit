@@ -23,7 +23,7 @@
 #ifndef GapRects_h
 #define GapRects_h
 
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 
 namespace WebCore {
 

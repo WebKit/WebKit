@@ -28,7 +28,7 @@
 #include "AdjustViewSizeOrNot.h"
 #include "Color.h"
 #include "Frame.h"
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 #include "Pagination.h"
 #include "PaintPhase.h"
 #include "ScrollView.h"

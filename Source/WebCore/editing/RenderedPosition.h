@@ -32,11 +32,11 @@
 #define RenderedPosition_h
 
 #include "InlineBox.h"
-#include "LayoutTypes.h"
 #include "TextAffinity.h"
 
 namespace WebCore {
 
+class LayoutUnit;
 class Position;
 class RenderObject;
 class VisiblePosition;

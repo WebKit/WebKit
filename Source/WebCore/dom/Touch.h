@@ -29,7 +29,7 @@
 #if ENABLE(TOUCH_EVENTS)
 
 #include "EventTarget.h"
-#include "LayoutTypesInlineMethods.h"
+#include "LayoutPoint.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

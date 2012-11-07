@@ -30,7 +30,7 @@
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "IntSize.h"
-#include "LayoutTypesInlineMethods.h"
+#include "LayoutSize.h"
 #include "TransformationMatrix.h"
 #include <wtf/OwnPtr.h>
 

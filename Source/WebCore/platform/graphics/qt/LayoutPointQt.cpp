@@ -18,29 +18,28 @@
 */
 
 #include "config.h"
+#include "LayoutPoint.h"
 
-#include "FractionalLayoutSize.h"
-
-#include <QSize>
-#include <QSizeF>
+#include <QPoint>
+#include <QPointF>
 
 namespace WebCore {
 
-FractionalLayoutSize::FractionalLayoutSize(const QSize& size)
-    : m_width(size.width())
-    , m_height(size.height())
+LayoutPoint::LayoutPoint(const QPoint& point)
+    : m_x(point.x())
+    , m_y(point.y())
 {
 }
 
-FractionalLayoutSize::FractionalLayoutSize(const QSizeF& size)
-    : m_width(size.width())
-    , m_height(size.height())
+LayoutPoint::LayoutPoint(const QPointF& point)
+    : m_x(point.x())
+    , m_y(point.y())
 {
 }
 
-FractionalLayoutSize::operator QSizeF() const
+LayoutPoint::operator QPointF() const
 {
-    return QSizeF(width(), height());
+    return QPointF(m_x, m_y);
 }
 
 } // namespace

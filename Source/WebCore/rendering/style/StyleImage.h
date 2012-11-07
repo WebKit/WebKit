@@ -27,7 +27,7 @@
 #include "CSSValue.h"
 #include "Image.h"
 #include "IntSize.h"
-#include "LayoutTypes.h"
+#include "LayoutSize.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

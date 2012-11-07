@@ -26,7 +26,7 @@
 #include "config.h"
 #include "HitTestingTransformState.h"
 
-#include "FractionalLayoutRect.h"
+#include "LayoutRect.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -80,7 +80,7 @@ FloatQuad HitTestingTransformState::mappedArea() const
     return m_accumulatedTransform.inverse().projectQuad(m_lastPlanarArea);
 }
 
-FractionalLayoutRect HitTestingTransformState::boundsOfMappedArea() const
+LayoutRect HitTestingTransformState::boundsOfMappedArea() const
 {
     return m_accumulatedTransform.inverse().clampedBoundsOfProjectedQuad(m_lastPlanarArea);
 }

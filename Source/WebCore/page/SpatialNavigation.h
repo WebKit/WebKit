@@ -23,7 +23,7 @@
 
 #include "FocusDirection.h"
 #include "HTMLFrameOwnerElement.h"
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 #include "Node.h"
 
 #include <limits>

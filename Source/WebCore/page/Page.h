@@ -25,7 +25,7 @@
 #include "FrameLoaderTypes.h"
 #include "FindOptions.h"
 #include "LayoutMilestones.h"
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 #include "PageVisibilityState.h"
 #include "Pagination.h"
 #include "PlatformScreen.h"

@@ -25,7 +25,7 @@
 #ifndef TransformOperations_h
 #define TransformOperations_h
 
-#include "LayoutTypes.h"
+#include "LayoutSize.h"
 #include "TransformOperation.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

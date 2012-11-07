@@ -434,7 +434,7 @@ static bool isContainedInNodes(Vector<Node*> others, Node* node)
 
 static bool boxIntersectsRegion(LayoutUnit logicalTopForBox, LayoutUnit logicalBottomForBox, LayoutUnit logicalTopForRegion, LayoutUnit logicalBottomForRegion)
 {
-    bool regionIsEmpty = logicalBottomForRegion != MAX_LAYOUT_UNIT && logicalTopForRegion != MIN_LAYOUT_UNIT
+    bool regionIsEmpty = logicalBottomForRegion != LayoutUnit::max() && logicalTopForRegion != LayoutUnit::min()
         && (logicalBottomForRegion - logicalTopForRegion) <= 0;
     return  (logicalBottomForBox - logicalTopForBox) > 0
         && !regionIsEmpty
@@ -448,13 +448,13 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range> >& rangeObjects, cons
 
     // extend the first region top to contain everything up to its logical height
     if (region->isFirstRegion())
-        logicalTopForRegion = MIN_LAYOUT_UNIT;
+        logicalTopForRegion = LayoutUnit::min();
     else
         logicalTopForRegion =  region->logicalTopForFlowThreadContent();
 
     // extend the last region to contain everything above its y()
     if (region->isLastRegion())
-        logicalBottomForRegion = MAX_LAYOUT_UNIT;
+        logicalBottomForRegion = LayoutUnit::max();
     else
         logicalBottomForRegion = region->logicalBottomForFlowThreadContent();
 
@@ -496,8 +496,8 @@ void RenderNamedFlowThread::getRanges(Vector<RefPtr<Range> >& rangeObjects, cons
             }
 
             LayoutUnit offsetTop = renderer->containingBlock()->offsetFromLogicalTopOfFirstPage();
-            const LayoutPoint logicalOffsetFromTop(isHorizontalWritingMode() ? ZERO_LAYOUT_UNIT :  offsetTop,
-                isHorizontalWritingMode() ? offsetTop : ZERO_LAYOUT_UNIT);
+            const LayoutPoint logicalOffsetFromTop(isHorizontalWritingMode() ? LayoutUnit() :  offsetTop,
+                isHorizontalWritingMode() ? offsetTop : LayoutUnit());
 
             boundingBox.moveBy(logicalOffsetFromTop);
 

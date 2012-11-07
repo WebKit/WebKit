@@ -27,7 +27,7 @@
 #define ScrollingCoordinator_h
 
 #include "IntRect.h"
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
 #include "Timer.h"

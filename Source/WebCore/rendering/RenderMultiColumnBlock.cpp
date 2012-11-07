@@ -37,8 +37,8 @@ RenderMultiColumnBlock::RenderMultiColumnBlock(Node* node)
     : RenderBlock(node)
     , m_flowThread(0)
     , m_columnCount(1)
-    , m_columnWidth(ZERO_LAYOUT_UNIT)
-    , m_columnHeight(ZERO_LAYOUT_UNIT)
+    , m_columnWidth(0)
+    , m_columnHeight(0)
 {
 }
 
@@ -83,13 +83,13 @@ void RenderMultiColumnBlock::checkForPaginationLogicalHeightChange(LayoutUnit& /
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
     updateLogicalHeight();
     LayoutUnit newContentLogicalHeight = contentLogicalHeight();
-    if (newContentLogicalHeight > ZERO_LAYOUT_UNIT) {
+    if (newContentLogicalHeight > 0) {
         // The regions will be invalidated when we lay them out and they change size to
         // the new column height.
         if (columnHeight() != newContentLogicalHeight)
             setColumnHeight(newContentLogicalHeight);
     }
-    setLogicalHeight(ZERO_LAYOUT_UNIT);
+    setLogicalHeight(0);
 
     // Set up our column sets.
     ensureColumnSets();

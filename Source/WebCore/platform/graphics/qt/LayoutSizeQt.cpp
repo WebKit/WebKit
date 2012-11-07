@@ -18,28 +18,29 @@
 */
 
 #include "config.h"
-#include "FractionalLayoutRect.h"
 
-#include <QRect>
-#include <QRectF>
+#include "LayoutSize.h"
+
+#include <QSize>
+#include <QSizeF>
 
 namespace WebCore {
 
-FractionalLayoutRect::FractionalLayoutRect(const QRect& r)
-    : m_location(r.topLeft())
-    , m_size(r.width(), r.height())
+LayoutSize::LayoutSize(const QSize& size)
+    : m_width(size.width())
+    , m_height(size.height())
 {
 }
 
-FractionalLayoutRect::FractionalLayoutRect(const QRectF& r)
-    : m_location(r.topLeft())
-    , m_size(r.width(), r.height())
+LayoutSize::LayoutSize(const QSizeF& size)
+    : m_width(size.width())
+    , m_height(size.height())
 {
 }
 
-FractionalLayoutRect::operator QRectF() const
+LayoutSize::operator QSizeF() const
 {
-    return QRectF(x(), y(), width(), height());
+    return QSizeF(width(), height());
 }
 
 } // namespace

@@ -30,7 +30,6 @@
 #include "Color.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "LayoutTypes.h"
 #include "Node.h"
 #include "NonCompositedContentHost.h"
 #include "PlatformContextSkia.h"

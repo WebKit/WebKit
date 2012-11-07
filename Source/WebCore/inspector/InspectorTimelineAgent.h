@@ -36,7 +36,7 @@
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 #include "PlatformInstrumentation.h"
 #include "ScriptGCEvent.h"
 #include "ScriptGCEventListener.h"

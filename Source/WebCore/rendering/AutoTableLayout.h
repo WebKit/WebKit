@@ -21,7 +21,7 @@
 #ifndef AutoTableLayout_h
 #define AutoTableLayout_h
 
-#include "LayoutTypes.h"
+#include "LayoutUnit.h"
 #include "Length.h"
 #include "TableLayout.h"
 #include <wtf/Vector.h>

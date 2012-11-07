@@ -28,8 +28,8 @@
 #include "FloatRect.h"
 
 #include "FloatConversion.h"
-#include "FractionalLayoutRect.h"
 #include "IntRect.h"
+#include "LayoutRect.h"
 #include <algorithm>
 #include <math.h>
 #include <wtf/MathExtras.h>
@@ -43,7 +43,7 @@ FloatRect::FloatRect(const IntRect& r) : m_location(r.location()), m_size(r.size
 {
 }
 
-FloatRect::FloatRect(const FractionalLayoutRect& r) : m_location(r.location()), m_size(r.size())
+FloatRect::FloatRect(const LayoutRect& r) : m_location(r.location()), m_size(r.size())
 {
 }
 

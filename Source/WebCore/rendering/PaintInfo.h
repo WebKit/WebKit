@@ -32,7 +32,7 @@
 
 #include "GraphicsContext.h"
 #include "IntRect.h"
-#include "LayoutTypesInlineMethods.h"
+#include "LayoutRect.h"
 #include "PaintPhase.h"
 #include <limits>
 #include <wtf/HashMap.h>

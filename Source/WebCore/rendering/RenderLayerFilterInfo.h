@@ -36,8 +36,7 @@
 #include "CachedSVGDocument.h"
 #endif
 #include "FilterOperation.h"
-#include "FractionalLayoutRect.h"
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>

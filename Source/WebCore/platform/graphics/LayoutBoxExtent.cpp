@@ -29,31 +29,31 @@
  */
 
 #include "config.h"
-#include "FractionalLayoutBoxExtent.h"
+#include "LayoutBoxExtent.h"
 
 namespace WebCore {
 
-FractionalLayoutUnit FractionalLayoutBoxExtent::logicalTop(WritingMode writingMode) const
+LayoutUnit LayoutBoxExtent::logicalTop(WritingMode writingMode) const
 {
     return isHorizontalWritingMode(writingMode) ? m_top : m_left;
 }
 
-FractionalLayoutUnit FractionalLayoutBoxExtent::logicalBottom(WritingMode writingMode) const
+LayoutUnit LayoutBoxExtent::logicalBottom(WritingMode writingMode) const
 {
     return isHorizontalWritingMode(writingMode) ? m_bottom : m_right;
 }
 
-FractionalLayoutUnit FractionalLayoutBoxExtent::logicalLeft(WritingMode writingMode) const
+LayoutUnit LayoutBoxExtent::logicalLeft(WritingMode writingMode) const
 {
     return isHorizontalWritingMode(writingMode) ? m_left : m_top;
 }
 
-FractionalLayoutUnit FractionalLayoutBoxExtent::logicalRight(WritingMode writingMode) const
+LayoutUnit LayoutBoxExtent::logicalRight(WritingMode writingMode) const
 {
     return isHorizontalWritingMode(writingMode) ? m_right : m_bottom;
 }
 
-FractionalLayoutUnit FractionalLayoutBoxExtent::before(WritingMode writingMode) const
+LayoutUnit LayoutBoxExtent::before(WritingMode writingMode) const
 {
     switch (writingMode) {
     case TopToBottomWritingMode:
@@ -69,7 +69,7 @@ FractionalLayoutUnit FractionalLayoutBoxExtent::before(WritingMode writingMode) 
     return m_top;
 }
 
-FractionalLayoutUnit FractionalLayoutBoxExtent::after(WritingMode writingMode) const
+LayoutUnit LayoutBoxExtent::after(WritingMode writingMode) const
 {
     switch (writingMode) {
     case TopToBottomWritingMode:
@@ -85,21 +85,21 @@ FractionalLayoutUnit FractionalLayoutBoxExtent::after(WritingMode writingMode) c
     return m_bottom;
 }
 
-FractionalLayoutUnit FractionalLayoutBoxExtent::start(WritingMode writingMode, TextDirection direction) const
+LayoutUnit LayoutBoxExtent::start(WritingMode writingMode, TextDirection direction) const
 {
     if (isHorizontalWritingMode(writingMode))
         return isLeftToRightDirection(direction) ? m_left : m_right;
     return isLeftToRightDirection(direction) ? m_top : m_bottom;
 }
 
-FractionalLayoutUnit FractionalLayoutBoxExtent::end(WritingMode writingMode, TextDirection direction) const
+LayoutUnit LayoutBoxExtent::end(WritingMode writingMode, TextDirection direction) const
 {
     if (isHorizontalWritingMode(writingMode))
         return isLeftToRightDirection(direction) ? m_right : m_left;
     return isLeftToRightDirection(direction) ? m_bottom : m_top;
 }
 
-void FractionalLayoutBoxExtent::setBefore(WritingMode writingMode, FractionalLayoutUnit value)
+void LayoutBoxExtent::setBefore(WritingMode writingMode, LayoutUnit value)
 {
     switch (writingMode) {
     case TopToBottomWritingMode:
@@ -120,7 +120,7 @@ void FractionalLayoutBoxExtent::setBefore(WritingMode writingMode, FractionalLay
     }
 }
 
-void FractionalLayoutBoxExtent::setAfter(WritingMode writingMode, FractionalLayoutUnit value)
+void LayoutBoxExtent::setAfter(WritingMode writingMode, LayoutUnit value)
 {
     switch (writingMode) {
     case TopToBottomWritingMode:
@@ -141,7 +141,7 @@ void FractionalLayoutBoxExtent::setAfter(WritingMode writingMode, FractionalLayo
     }
 }
 
-void FractionalLayoutBoxExtent::setStart(WritingMode writingMode, TextDirection direction, FractionalLayoutUnit value)
+void LayoutBoxExtent::setStart(WritingMode writingMode, TextDirection direction, LayoutUnit value)
 {
     if (isHorizontalWritingMode(writingMode)) {
         if (isLeftToRightDirection(direction))
@@ -156,7 +156,7 @@ void FractionalLayoutBoxExtent::setStart(WritingMode writingMode, TextDirection 
     }
 }
 
-void FractionalLayoutBoxExtent::setEnd(WritingMode writingMode, TextDirection direction, FractionalLayoutUnit value)
+void LayoutBoxExtent::setEnd(WritingMode writingMode, TextDirection direction, LayoutUnit value)
 {
     if (isHorizontalWritingMode(writingMode)) {
         if (isLeftToRightDirection(direction))
@@ -171,23 +171,23 @@ void FractionalLayoutBoxExtent::setEnd(WritingMode writingMode, TextDirection di
     }
 }
 
-FractionalLayoutUnit& FractionalLayoutBoxExtent::mutableLogicalLeft(WritingMode writingMode)
+LayoutUnit& LayoutBoxExtent::mutableLogicalLeft(WritingMode writingMode)
 {
     return isHorizontalWritingMode(writingMode) ? m_left : m_top;
 }
 
-FractionalLayoutUnit& FractionalLayoutBoxExtent::mutableLogicalRight(WritingMode writingMode)
+LayoutUnit& LayoutBoxExtent::mutableLogicalRight(WritingMode writingMode)
 {
     return isHorizontalWritingMode(writingMode) ? m_right : m_bottom;
 }
 
-FractionalLayoutUnit& FractionalLayoutBoxExtent::mutableBefore(WritingMode writingMode)
+LayoutUnit& LayoutBoxExtent::mutableBefore(WritingMode writingMode)
 {
     return isHorizontalWritingMode(writingMode) ? (isFlippedBlocksWritingMode(writingMode) ? m_bottom : m_top) :
                                                   (isFlippedBlocksWritingMode(writingMode) ? m_right: m_left);
 }
 
-FractionalLayoutUnit& FractionalLayoutBoxExtent::mutableAfter(WritingMode writingMode)
+LayoutUnit& LayoutBoxExtent::mutableAfter(WritingMode writingMode)
 {
     return isHorizontalWritingMode(writingMode) ? (isFlippedBlocksWritingMode(writingMode) ? m_top : m_bottom) :
                                                   (isFlippedBlocksWritingMode(writingMode) ? m_left: m_right);

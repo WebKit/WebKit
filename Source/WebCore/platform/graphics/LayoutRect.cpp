@@ -29,10 +29,10 @@
  */
 
 #include "config.h"
-#include "FractionalLayoutRect.h"
+#include "LayoutRect.h"
 
 #include "FloatRect.h"
-#include "FractionalLayoutUnit.h"
+#include "LayoutUnit.h"
 #include <algorithm>
 
 using std::max;
@@ -40,13 +40,13 @@ using std::min;
 
 namespace WebCore {
 
-FractionalLayoutRect::FractionalLayoutRect(const FloatRect& r)
-    : m_location(FractionalLayoutPoint(r.location()))
-    , m_size(FractionalLayoutSize(r.size()))
+LayoutRect::LayoutRect(const FloatRect& r)
+    : m_location(LayoutPoint(r.location()))
+    , m_size(LayoutSize(r.size()))
 {
 }
 
-bool FractionalLayoutRect::intersects(const FractionalLayoutRect& other) const
+bool LayoutRect::intersects(const LayoutRect& other) const
 {
     // Checking emptiness handles negative widths as well as zero.
     return !isEmpty() && !other.isEmpty()
@@ -54,28 +54,28 @@ bool FractionalLayoutRect::intersects(const FractionalLayoutRect& other) const
         && y() < other.maxY() && other.y() < maxY();
 }
 
-bool FractionalLayoutRect::contains(const FractionalLayoutRect& other) const
+bool LayoutRect::contains(const LayoutRect& other) const
 {
     return x() <= other.x() && maxX() >= other.maxX()
         && y() <= other.y() && maxY() >= other.maxY();
 }
 
-void FractionalLayoutRect::intersect(const FractionalLayoutRect& other)
+void LayoutRect::intersect(const LayoutRect& other)
 {
-    FractionalLayoutPoint newLocation(max(x(), other.x()), max(y(), other.y()));
-    FractionalLayoutPoint newMaxPoint(min(maxX(), other.maxX()), min(maxY(), other.maxY()));
+    LayoutPoint newLocation(max(x(), other.x()), max(y(), other.y()));
+    LayoutPoint newMaxPoint(min(maxX(), other.maxX()), min(maxY(), other.maxY()));
 
     // Return a clean empty rectangle for non-intersecting cases.
     if (newLocation.x() >= newMaxPoint.x() || newLocation.y() >= newMaxPoint.y()) {
-        newLocation = FractionalLayoutPoint(0, 0);
-        newMaxPoint = FractionalLayoutPoint(0, 0);
+        newLocation = LayoutPoint(0, 0);
+        newMaxPoint = LayoutPoint(0, 0);
     }
 
     m_location = newLocation;
     m_size = newMaxPoint - newLocation;
 }
 
-void FractionalLayoutRect::unite(const FractionalLayoutRect& other)
+void LayoutRect::unite(const LayoutRect& other)
 {
     // Handle empty special cases first.
     if (other.isEmpty())
@@ -85,14 +85,14 @@ void FractionalLayoutRect::unite(const FractionalLayoutRect& other)
         return;
     }
 
-    FractionalLayoutPoint newLocation(min(x(), other.x()), min(y(), other.y()));
-    FractionalLayoutPoint newMaxPoint(max(maxX(), other.maxX()), max(maxY(), other.maxY()));
+    LayoutPoint newLocation(min(x(), other.x()), min(y(), other.y()));
+    LayoutPoint newMaxPoint(max(maxX(), other.maxX()), max(maxY(), other.maxY()));
 
     m_location = newLocation;
     m_size = newMaxPoint - newLocation;
 }
 
-void FractionalLayoutRect::uniteIfNonZero(const FractionalLayoutRect& other)
+void LayoutRect::uniteIfNonZero(const LayoutRect& other)
 {
     // Handle empty special cases first.
     if (!other.width() && !other.height())
@@ -102,22 +102,22 @@ void FractionalLayoutRect::uniteIfNonZero(const FractionalLayoutRect& other)
         return;
     }
 
-    FractionalLayoutPoint newLocation(min(x(), other.x()), min(y(), other.y()));
-    FractionalLayoutPoint newMaxPoint(max(maxX(), other.maxX()), max(maxY(), other.maxY()));
+    LayoutPoint newLocation(min(x(), other.x()), min(y(), other.y()));
+    LayoutPoint newMaxPoint(max(maxX(), other.maxX()), max(maxY(), other.maxY()));
 
     m_location = newLocation;
     m_size = newMaxPoint - newLocation;
 }
 
-void FractionalLayoutRect::scale(float s)
+void LayoutRect::scale(float s)
 {
     m_location.scale(s, s);
     m_size.scale(s);
 }
 
-FractionalLayoutRect unionRect(const Vector<FractionalLayoutRect>& rects)
+LayoutRect unionRect(const Vector<LayoutRect>& rects)
 {
-    FractionalLayoutRect result;
+    LayoutRect result;
 
     size_t count = rects.size();
     for (size_t i = 0; i < count; ++i)
@@ -126,7 +126,7 @@ FractionalLayoutRect unionRect(const Vector<FractionalLayoutRect>& rects)
     return result;
 }
 
-IntRect enclosingIntRect(const FractionalLayoutRect& rect)
+IntRect enclosingIntRect(const LayoutRect& rect)
 {
     IntPoint location = flooredIntPoint(rect.minXMinYCorner());
     IntPoint maxPoint = ceiledIntPoint(rect.maxXMaxYCorner());
@@ -134,13 +134,13 @@ IntRect enclosingIntRect(const FractionalLayoutRect& rect)
     return IntRect(location, maxPoint - location);
 }
 
-FractionalLayoutRect enclosingFractionalLayoutRect(const FloatRect& rect)
+LayoutRect enclosingLayoutRect(const FloatRect& rect)
 {
 #if ENABLE(SUBPIXEL_LAYOUT)
-    FractionalLayoutPoint location = flooredFractionalLayoutPoint(rect.minXMinYCorner());
-    FractionalLayoutPoint maxPoint = ceiledFractionalLayoutPoint(rect.maxXMaxYCorner());
+    LayoutPoint location = flooredLayoutPoint(rect.minXMinYCorner());
+    LayoutPoint maxPoint = ceiledLayoutPoint(rect.maxXMaxYCorner());
 
-    return FractionalLayoutRect(location, maxPoint - location);
+    return LayoutRect(location, maxPoint - location);
 #else
     return enclosingIntRect(rect);
 #endif

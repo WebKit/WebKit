@@ -22,7 +22,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayerAnimation.h"
 
-#include "FractionalLayoutSize.h"
+#include "LayoutSize.h"
 #include "UnitBezier.h"
 #include <wtf/CurrentTime.h>
 

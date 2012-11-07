@@ -30,7 +30,7 @@
 #define AccessibilityRenderObject_h
 
 #include "AccessibilityNodeObject.h"
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {

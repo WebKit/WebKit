@@ -28,7 +28,7 @@
 
 #include "EditingStyle.h"
 #include "IntRect.h"
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 #include "Range.h"
 #include "ScrollBehavior.h"
 #include "Timer.h"

@@ -35,7 +35,7 @@
 #include "CustomFilterParameterList.h"
 #include "CustomFilterProgram.h"
 #include "FilterOperation.h"
-#include "LayoutTypes.h"
+#include "LayoutSize.h"
 
 namespace WebCore {
 

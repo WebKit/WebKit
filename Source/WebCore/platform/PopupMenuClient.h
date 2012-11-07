@@ -22,7 +22,7 @@
 #ifndef PopupMenuClient_h
 #define PopupMenuClient_h
 
-#include "LayoutTypes.h"
+#include "LayoutUnit.h"
 #include "PopupMenuStyle.h"
 #include "ScrollTypes.h"
 #include <wtf/Forward.h>

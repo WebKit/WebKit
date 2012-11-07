@@ -30,7 +30,7 @@
 
 #include "Color.h"
 #include "FilterEffect.h"
-#include "LayoutTypes.h"
+#include "LayoutSize.h"
 #include "Length.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>

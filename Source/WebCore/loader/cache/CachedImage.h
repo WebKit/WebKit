@@ -26,7 +26,7 @@
 #include "CachedResource.h"
 #include "ImageObserver.h"
 #include "IntRect.h"
-#include "LayoutTypesInlineMethods.h"
+#include "LayoutSize.h"
 #include "SVGImageCache.h"
 #include <wtf/Vector.h>
 

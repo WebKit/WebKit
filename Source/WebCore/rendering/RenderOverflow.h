@@ -21,7 +21,7 @@
 #ifndef RenderOverflow_h
 #define RenderOverflow_h
 
-#include "LayoutTypes.h"
+#include "LayoutRect.h"
 
 namespace WebCore
 {

@@ -24,7 +24,7 @@
 #ifndef NinePieceImage_h
 #define NinePieceImage_h
 
-#include "LayoutTypes.h"
+#include "LayoutUnit.h"
 #include "LengthBox.h"
 #include "StyleImage.h"
 

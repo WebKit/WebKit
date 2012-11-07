@@ -200,7 +200,7 @@ void RenderFlowThread::updateLogicalWidth()
         RenderRegion* region = *iter;
         LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
         if (regionLogicalWidth != logicalWidth) {
-            LayoutUnit logicalLeft = style()->direction() == LTR ? ZERO_LAYOUT_UNIT : logicalWidth - regionLogicalWidth;
+            LayoutUnit logicalLeft = style()->direction() == LTR ? LayoutUnit() : logicalWidth - regionLogicalWidth;
             region->setRenderBoxRegionInfo(this, logicalLeft, regionLogicalWidth, false);
         }
     }
@@ -326,7 +326,7 @@ RenderRegion* RenderFlowThread::regionAtBlockOffset(LayoutUnit offset, bool exte
     // the last valid region. It is similar to auto extending the size of the last region. 
     RenderRegion* lastValidRegion = 0;
 
-    LayoutUnit accumulatedLogicalHeight = ZERO_LAYOUT_UNIT;
+    LayoutUnit accumulatedLogicalHeight = 0;
     
     // FIXME: The regions are always in order, optimize this search.
     for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
@@ -362,7 +362,7 @@ RenderRegion* RenderFlowThread::regionAtBlockOffset(LayoutUnit offset, bool exte
 LayoutUnit RenderFlowThread::pageLogicalTopForOffset(LayoutUnit offset) const
 {
     RenderRegion* region = regionAtBlockOffset(offset);
-    return region ? region->pageLogicalTopForOffset(offset) : ZERO_LAYOUT_UNIT;
+    return region ? region->pageLogicalTopForOffset(offset) : LayoutUnit();
 }
 
 LayoutUnit RenderFlowThread::pageLogicalWidthForOffset(LayoutUnit offset) const
@@ -375,9 +375,9 @@ LayoutUnit RenderFlowThread::pageLogicalHeightForOffset(LayoutUnit offset) const
 {
     RenderRegion* region = regionAtBlockOffset(offset);
     if (!region)
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     if (region->needsOverrideLogicalContentHeightComputation())
-        return MAX_LAYOUT_UNIT / 2;
+        return LayoutUnit::max() / 2;
     return region->pageLogicalHeight();
 }
 
@@ -385,9 +385,9 @@ LayoutUnit RenderFlowThread::pageRemainingLogicalHeightForOffset(LayoutUnit offs
 {
     RenderRegion* region = regionAtBlockOffset(offset);
     if (!region)
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     if (region->needsOverrideLogicalContentHeightComputation())
-        return MAX_LAYOUT_UNIT / 2;
+        return LayoutUnit::max() / 2;
 
     LayoutUnit pageLogicalTop = region->pageLogicalTopForOffset(offset);
     LayoutUnit pageLogicalHeight = region->pageLogicalHeight();
@@ -486,7 +486,7 @@ LayoutUnit RenderFlowThread::contentLogicalWidthOfFirstRegion() const
 {
     RenderRegion* firstValidRegionInFlow = firstRegion();
     if (!firstValidRegionInFlow)
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     return isHorizontalWritingMode() ? firstValidRegionInFlow->contentWidth() : firstValidRegionInFlow->contentHeight();
 }
 
@@ -494,7 +494,7 @@ LayoutUnit RenderFlowThread::contentLogicalHeightOfFirstRegion() const
 {
     RenderRegion* firstValidRegionInFlow = firstRegion();
     if (!firstValidRegionInFlow)
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     return isHorizontalWritingMode() ? firstValidRegionInFlow->contentHeight() : firstValidRegionInFlow->contentWidth();
 }
 
@@ -502,7 +502,7 @@ LayoutUnit RenderFlowThread::contentLogicalLeftOfFirstRegion() const
 {
     RenderRegion* firstValidRegionInFlow = firstRegion();
     if (!firstValidRegionInFlow)
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     return isHorizontalWritingMode() ? firstValidRegionInFlow->flowThreadPortionRect().x() : firstValidRegionInFlow->flowThreadPortionRect().y();
 }
 
@@ -786,7 +786,7 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect()
         LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
         LayoutUnit regionLogicalHeight = region->logicalHeightOfAllFlowThreadContent();
 
-        LayoutRect regionRect(style()->direction() == LTR ? ZERO_LAYOUT_UNIT : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
+        LayoutRect regionRect(style()->direction() == LTR ? LayoutUnit() : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
 
         // When a flow thread has more than one auto logical height region,
         // we have to take into account the override logical content height value,
@@ -882,7 +882,7 @@ bool RenderFlowThread::addForcedRegionBreak(LayoutUnit offsetBreakInFlowThread, 
         updateRegionsFlowThreadPortionRect();
 
     if (offsetBreakAdjustment)
-        *offsetBreakAdjustment = max<LayoutUnit>(ZERO_LAYOUT_UNIT, currentRegionOffsetInFlowThread - offsetBreakInFlowThread);
+        *offsetBreakAdjustment = max<LayoutUnit>(0, currentRegionOffsetInFlowThread - offsetBreakInFlowThread);
 
     return overrideLogicalContentHeightComputed;
 }

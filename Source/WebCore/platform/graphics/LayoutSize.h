@@ -28,12 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FractionalLayoutSize_h
-#define FractionalLayoutSize_h
+#ifndef LayoutSize_h
+#define LayoutSize_h
 
 #include "FloatSize.h"
-#include "FractionalLayoutUnit.h"
 #include "IntSize.h"
+#include "LayoutUnit.h"
 
 #if PLATFORM(QT)
 #include <qglobal.h>
@@ -45,28 +45,28 @@ QT_END_NAMESPACE
 
 namespace WebCore {
 
-class FractionalLayoutPoint;
+class LayoutPoint;
 
-class FractionalLayoutSize {
+class LayoutSize {
 public:
-    FractionalLayoutSize() : m_width(0), m_height(0) { }
-    FractionalLayoutSize(const IntSize& size) : m_width(size.width()), m_height(size.height()) { }
-    FractionalLayoutSize(FractionalLayoutUnit width, FractionalLayoutUnit height) : m_width(width), m_height(height) { }
+    LayoutSize() : m_width(0), m_height(0) { }
+    LayoutSize(const IntSize& size) : m_width(size.width()), m_height(size.height()) { }
+    LayoutSize(LayoutUnit width, LayoutUnit height) : m_width(width), m_height(height) { }
 
-    explicit FractionalLayoutSize(const FloatSize& size) : m_width(size.width()), m_height(size.height()) { }
+    explicit LayoutSize(const FloatSize& size) : m_width(size.width()), m_height(size.height()) { }
     
-    FractionalLayoutUnit width() const { return m_width; }
-    FractionalLayoutUnit height() const { return m_height; }
+    LayoutUnit width() const { return m_width; }
+    LayoutUnit height() const { return m_height; }
 
-    void setWidth(FractionalLayoutUnit width) { m_width = width; }
-    void setHeight(FractionalLayoutUnit height) { m_height = height; }
+    void setWidth(LayoutUnit width) { m_width = width; }
+    void setHeight(LayoutUnit height) { m_height = height; }
 
     bool isEmpty() const { return m_width <= 0 || m_height <= 0; }
     bool isZero() const { return !m_width && !m_height; }
 
     float aspectRatio() const { return static_cast<float>(m_width) / static_cast<float>(m_height); }
     
-    void expand(FractionalLayoutUnit width, FractionalLayoutUnit height)
+    void expand(LayoutUnit width, LayoutUnit height)
     {
         m_width += width;
         m_height += height;
@@ -84,24 +84,24 @@ public:
         m_height *= heightScale;
     }
     
-    FractionalLayoutSize expandedTo(const FractionalLayoutSize& other) const
+    LayoutSize expandedTo(const LayoutSize& other) const
     {
-        return FractionalLayoutSize(m_width > other.m_width ? m_width : other.m_width,
+        return LayoutSize(m_width > other.m_width ? m_width : other.m_width,
             m_height > other.m_height ? m_height : other.m_height);
     }
 
-    FractionalLayoutSize shrunkTo(const FractionalLayoutSize& other) const
+    LayoutSize shrunkTo(const LayoutSize& other) const
     {
-        return FractionalLayoutSize(m_width < other.m_width ? m_width : other.m_width,
+        return LayoutSize(m_width < other.m_width ? m_width : other.m_width,
             m_height < other.m_height ? m_height : other.m_height);
     }
 
     void clampNegativeToZero()
     {
-        *this = expandedTo(FractionalLayoutSize());
+        *this = expandedTo(LayoutSize());
     }
     
-    void clampToMinimumSize(const FractionalLayoutSize& minimumSize)
+    void clampToMinimumSize(const LayoutSize& minimumSize)
     {
         if (m_width < minimumSize.width())
             m_width = minimumSize.width();
@@ -109,70 +109,79 @@ public:
             m_height = minimumSize.height();
     }
 
-    FractionalLayoutSize transposedSize() const
+    LayoutSize transposedSize() const
     {
-        return FractionalLayoutSize(m_height, m_width);
+        return LayoutSize(m_height, m_width);
     }
 
 #if PLATFORM(QT)
-    explicit FractionalLayoutSize(const QSize&);
-    explicit FractionalLayoutSize(const QSizeF&);
+    explicit LayoutSize(const QSize&);
+    explicit LayoutSize(const QSizeF&);
     operator QSizeF() const;
 #endif
 
 private:
-    FractionalLayoutUnit m_width, m_height;
+    LayoutUnit m_width, m_height;
 };
 
-inline FractionalLayoutSize& operator+=(FractionalLayoutSize& a, const FractionalLayoutSize& b)
+inline LayoutSize& operator+=(LayoutSize& a, const LayoutSize& b)
 {
     a.setWidth(a.width() + b.width());
     a.setHeight(a.height() + b.height());
     return a;
 }
 
-inline FractionalLayoutSize& operator-=(FractionalLayoutSize& a, const FractionalLayoutSize& b)
+inline LayoutSize& operator-=(LayoutSize& a, const LayoutSize& b)
 {
     a.setWidth(a.width() - b.width());
     a.setHeight(a.height() - b.height());
     return a;
 }
 
-inline FractionalLayoutSize operator+(const FractionalLayoutSize& a, const FractionalLayoutSize& b)
+inline LayoutSize operator+(const LayoutSize& a, const LayoutSize& b)
 {
-    return FractionalLayoutSize(a.width() + b.width(), a.height() + b.height());
+    return LayoutSize(a.width() + b.width(), a.height() + b.height());
 }
 
-inline FractionalLayoutSize operator-(const FractionalLayoutSize& a, const FractionalLayoutSize& b)
+inline LayoutSize operator-(const LayoutSize& a, const LayoutSize& b)
 {
-    return FractionalLayoutSize(a.width() - b.width(), a.height() - b.height());
+    return LayoutSize(a.width() - b.width(), a.height() - b.height());
 }
 
-inline FractionalLayoutSize operator-(const FractionalLayoutSize& size)
+inline LayoutSize operator-(const LayoutSize& size)
 {
-    return FractionalLayoutSize(-size.width(), -size.height());
+    return LayoutSize(-size.width(), -size.height());
 }
 
-inline bool operator==(const FractionalLayoutSize& a, const FractionalLayoutSize& b)
+inline bool operator==(const LayoutSize& a, const LayoutSize& b)
 {
     return a.width() == b.width() && a.height() == b.height();
 }
 
-inline bool operator!=(const FractionalLayoutSize& a, const FractionalLayoutSize& b)
+inline bool operator!=(const LayoutSize& a, const LayoutSize& b)
 {
     return a.width() != b.width() || a.height() != b.height();
 }
 
-inline IntSize flooredIntSize(const FractionalLayoutSize& s)
+inline IntSize flooredIntSize(const LayoutSize& s)
 {
     return IntSize(s.width().floor(), s.height().floor());
 }
 
-inline IntSize roundedIntSize(const FractionalLayoutSize& s)
+inline IntSize roundedIntSize(const LayoutSize& s)
 {
     return IntSize(s.width().round(), s.height().round());
 }
 
+inline LayoutSize roundedLayoutSize(const FloatSize& s)
+{
+#if ENABLE(SUBPIXEL_LAYOUT)
+    return LayoutSize(s);
+#else
+    return roundedIntSize(s);
+#endif
+}
+
 } // namespace WebCore
 
-#endif // FractionalLayoutSize_h
+#endif // LayoutSize_h

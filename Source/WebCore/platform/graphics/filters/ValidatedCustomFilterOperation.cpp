@@ -34,7 +34,7 @@
 
 #include "CustomFilterParameter.h"
 #include "CustomFilterValidatedProgram.h"
-#include "FractionalLayoutSize.h"
+#include "LayoutSize.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {

@@ -31,8 +31,8 @@
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatQuad.h"
-#include "FractionalLayoutRect.h"
 #include "IntRect.h"
+#include "LayoutRect.h"
 
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
@@ -617,10 +617,10 @@ FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q, bool* clamped) c
 static float clampEdgeValue(float f)
 {
     ASSERT(!isnan(f));
-    return min<float>(max<float>(f, -FractionalLayoutUnit::max() / 2), FractionalLayoutUnit::max() / 2);
+    return min<float>(max<float>(f, -LayoutUnit::max() / 2), LayoutUnit::max() / 2);
 }
 
-FractionalLayoutRect TransformationMatrix::clampedBoundsOfProjectedQuad(const FloatQuad& q) const
+LayoutRect TransformationMatrix::clampedBoundsOfProjectedQuad(const FloatQuad& q) const
 {
     FloatRect mappedQuadBounds = projectQuad(q).boundingBox();
 
@@ -629,18 +629,17 @@ FractionalLayoutRect TransformationMatrix::clampedBoundsOfProjectedQuad(const Fl
 
     float right;
     if (isinf(mappedQuadBounds.x()) && isinf(mappedQuadBounds.width()))
-        right = FractionalLayoutUnit::max() / 2;
+        right = LayoutUnit::max() / 2;
     else
         right = clampEdgeValue(ceilf(mappedQuadBounds.maxX()));
 
     float bottom;
     if (isinf(mappedQuadBounds.y()) && isinf(mappedQuadBounds.height()))
-        bottom = FractionalLayoutUnit::max() / 2;
+        bottom = LayoutUnit::max() / 2;
     else
         bottom = clampEdgeValue(ceilf(mappedQuadBounds.maxY()));
 
-    return FractionalLayoutRect(FractionalLayoutUnit::clamp(left), FractionalLayoutUnit::clamp(top), 
-                                FractionalLayoutUnit::clamp(right - left), FractionalLayoutUnit::clamp(bottom - top));
+    return LayoutRect(LayoutUnit::clamp(left), LayoutUnit::clamp(top),  LayoutUnit::clamp(right - left), LayoutUnit::clamp(bottom - top));
 }
 
 FloatPoint TransformationMatrix::mapPoint(const FloatPoint& p) const
@@ -670,9 +669,9 @@ IntRect TransformationMatrix::mapRect(const IntRect &rect) const
     return enclosingIntRect(mapRect(FloatRect(rect)));
 }
 
-FractionalLayoutRect TransformationMatrix::mapRect(const FractionalLayoutRect& r) const
+LayoutRect TransformationMatrix::mapRect(const LayoutRect& r) const
 {
-    return enclosingFractionalLayoutRect(mapRect(FloatRect(r)));
+    return enclosingLayoutRect(mapRect(FloatRect(r)));
 }
 
 FloatRect TransformationMatrix::mapRect(const FloatRect& r) const

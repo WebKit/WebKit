@@ -371,7 +371,7 @@ void RenderFlexibleBox::paintChildren(PaintInfo& paintInfo, const LayoutPoint& p
 
 void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(OrderIterator& iterator, WTF::Vector<LineContext>& lineContexts, LayoutUnit& oldClientAfterEdge)
 {
-    LayoutUnit crossAxisStartEdge = lineContexts.isEmpty() ? ZERO_LAYOUT_UNIT : lineContexts[0].crossAxisOffset;
+    LayoutUnit crossAxisStartEdge = lineContexts.isEmpty() ? LayoutUnit() : lineContexts[0].crossAxisOffset;
     alignFlexLines(iterator, lineContexts);
 
     // If we have a single line flexbox, the line height is all the available space.
@@ -894,7 +894,7 @@ bool RenderFlexibleBox::computeNextFlexLine(OrderIterator& iterator, OrderedFlex
     if (!iterator.currentChild())
         return false;
 
-    LayoutUnit lineBreakLength = mainAxisContentExtent(MAX_LAYOUT_UNIT);
+    LayoutUnit lineBreakLength = mainAxisContentExtent(LayoutUnit::max());
 
     for (RenderBox* child = iterator.currentChild(); child; child = iterator.next()) {
         if (child->isOutOfFlowPositioned()) {
@@ -1234,7 +1234,7 @@ void RenderFlexibleBox::alignChildren(OrderIterator& iterator, const WTF::Vector
 
     RenderBox* child = iterator.first();
     for (size_t lineNumber = 0; lineNumber < lineContexts.size(); ++lineNumber) {
-        LayoutUnit minMarginAfterBaseline = MAX_LAYOUT_UNIT;
+        LayoutUnit minMarginAfterBaseline = LayoutUnit::max();
         LayoutUnit lineCrossAxisExtent = lineContexts[lineNumber].crossAxisExtent;
         LayoutUnit maxAscent = lineContexts[lineNumber].maxAscent;
 
@@ -1319,7 +1319,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUni
     } else if (isColumnFlow() && child->style()->logicalWidth().isAuto()) {
         // FIXME: If the child doesn't have orthogonal flow, then it already has an override width set, so use it.
         if (hasOrthogonalFlow(child)) {
-            LayoutUnit childWidth = std::max(ZERO_LAYOUT_UNIT, lineCrossAxisExtent - crossAxisMarginExtentForChild(child));
+            LayoutUnit childWidth = std::max<LayoutUnit>(0, lineCrossAxisExtent - crossAxisMarginExtentForChild(child));
             childWidth = child->constrainLogicalWidthInRegionByMinMax(childWidth, childWidth, this);
 
             if (childWidth != child->logicalWidth()) {

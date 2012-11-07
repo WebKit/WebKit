@@ -37,7 +37,6 @@
 #include "IconURL.h"
 #include "InspectorCounters.h"
 #include "IntRect.h"
-#include "LayoutTypes.h"
 #include "MutationObserver.h"
 #include "PageVisibilityState.h"
 #include "PlatformScreen.h"
@@ -106,6 +105,8 @@ class HTMLNameCollection;
 class HitTestRequest;
 class HitTestResult;
 class IntPoint;
+class LayoutPoint;
+class LayoutRect;
 class DOMWrapperWorld;
 class JSNode;
 class Locale;

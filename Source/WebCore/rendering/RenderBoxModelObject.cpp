@@ -552,7 +552,7 @@ int RenderBoxModelObject::pixelSnappedOffsetHeight() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const
 {
-    LayoutUnit w = ZERO_LAYOUT_UNIT;
+    LayoutUnit w = 0;
     RenderView* renderView = 0;
     Length padding = style()->paddingTop();
     if (padding.isPercent())
@@ -564,7 +564,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const
 {
-    LayoutUnit w = ZERO_LAYOUT_UNIT;
+    LayoutUnit w = 0;
     RenderView* renderView = 0;
     Length padding = style()->paddingBottom();
     if (padding.isPercent())
@@ -576,7 +576,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const
 {
-    LayoutUnit w = ZERO_LAYOUT_UNIT;
+    LayoutUnit w = 0;
     RenderView* renderView = 0;
     Length padding = style()->paddingLeft();
     if (padding.isPercent())
@@ -588,7 +588,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const
 {
-    LayoutUnit w = ZERO_LAYOUT_UNIT;
+    LayoutUnit w = 0;
     RenderView* renderView = 0;
     Length padding = style()->paddingRight();
     if (padding.isPercent())
@@ -600,7 +600,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const
 {
-    LayoutUnit w = ZERO_LAYOUT_UNIT;
+    LayoutUnit w = 0;
     RenderView* renderView = 0;
     Length padding = style()->paddingBefore();
     if (padding.isPercent())
@@ -612,7 +612,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const
 {
-    LayoutUnit w = ZERO_LAYOUT_UNIT;
+    LayoutUnit w = 0;
     RenderView* renderView = 0;
     Length padding = style()->paddingAfter();
     if (padding.isPercent())
@@ -624,7 +624,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const
 {
-    LayoutUnit w = ZERO_LAYOUT_UNIT;
+    LayoutUnit w = 0;
     RenderView* renderView = 0;
     Length padding = style()->paddingStart();
     if (padding.isPercent())
@@ -636,7 +636,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const
 
 LayoutUnit RenderBoxModelObject::computedCSSPaddingEnd() const
 {
-    LayoutUnit w = ZERO_LAYOUT_UNIT;
+    LayoutUnit w = 0;
     RenderView* renderView = 0;
     Length padding = style()->paddingEnd();
     if (padding.isPercent())
@@ -800,8 +800,8 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     
     int bLeft = includeLeftEdge ? borderLeft() : 0;
     int bRight = includeRightEdge ? borderRight() : 0;
-    LayoutUnit pLeft = includeLeftEdge ? paddingLeft() : ZERO_LAYOUT_UNIT;
-    LayoutUnit pRight = includeRightEdge ? paddingRight() : ZERO_LAYOUT_UNIT;
+    LayoutUnit pLeft = includeLeftEdge ? paddingLeft() : LayoutUnit();
+    LayoutUnit pRight = includeRightEdge ? paddingRight() : LayoutUnit();
 
     GraphicsContextStateSaver clipWithScrollingStateSaver(*context, clippedWithLocalScrolling);
     LayoutRect scrolledPaintRect = rect;
@@ -825,10 +825,10 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         // Clip to the padding or content boxes as necessary.
         if (!clipToBorderRadius) {
             bool includePadding = bgLayer->clip() == ContentFillBox;
-            LayoutRect clipRect = LayoutRect(scrolledPaintRect.x() + bLeft + (includePadding ? pLeft : ZERO_LAYOUT_UNIT),
-                scrolledPaintRect.y() + borderTop() + (includePadding ? paddingTop() : ZERO_LAYOUT_UNIT),
-                scrolledPaintRect.width() - bLeft - bRight - (includePadding ? pLeft + pRight : ZERO_LAYOUT_UNIT),
-                scrolledPaintRect.height() - borderTop() - borderBottom() - (includePadding ? paddingTop() + paddingBottom() : ZERO_LAYOUT_UNIT));
+            LayoutRect clipRect = LayoutRect(scrolledPaintRect.x() + bLeft + (includePadding ? pLeft : LayoutUnit()),
+                scrolledPaintRect.y() + borderTop() + (includePadding ? paddingTop() : LayoutUnit()),
+                scrolledPaintRect.width() - bLeft - bRight - (includePadding ? pLeft + pRight : LayoutUnit()),
+                scrolledPaintRect.height() - borderTop() - borderBottom() - (includePadding ? paddingTop() + paddingBottom() : LayoutUnit()));
             backgroundClipStateSaver.save();
             context->clip(clipRect);
         }
@@ -2729,7 +2729,7 @@ LayoutRect RenderBoxModelObject::localCaretRectForEmptyElement(LayoutUnit width,
             x -= textIndentOffset;
         break;
     }
-    x = min(x, max(maxX - caretWidth, ZERO_LAYOUT_UNIT));
+    x = min(x, max<LayoutUnit>(maxX - caretWidth, 0));
 
     LayoutUnit y = paddingTop() + borderTop();
 

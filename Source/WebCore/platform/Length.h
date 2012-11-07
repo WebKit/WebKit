@@ -64,7 +64,7 @@ public:
         ASSERT(t != Calculated);
     }
     
-    Length(FractionalLayoutUnit v, LengthType t, bool q = false)
+    Length(LayoutUnit v, LengthType t, bool q = false)
         : m_floatValue(v.toFloat()), m_quirk(q), m_type(t), m_isFloat(true)
     {
         ASSERT(t != Calculated);
@@ -172,7 +172,7 @@ public:
         m_isFloat = true;    
     }
 
-    void setValue(LengthType t, FractionalLayoutUnit value)
+    void setValue(LengthType t, LayoutUnit value)
     {
         m_type = t;
         m_floatValue = value;

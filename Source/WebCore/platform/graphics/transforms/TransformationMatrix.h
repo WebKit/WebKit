@@ -64,7 +64,7 @@ namespace WebCore {
 
 class AffineTransform;
 class IntRect;
-class FractionalLayoutRect;
+class LayoutRect;
 class FloatPoint3D;
 class FloatRect;
 class FloatQuad;
@@ -157,7 +157,7 @@ public:
     // Rounds the resulting mapped rectangle out. This is helpful for bounding
     // box computations but may not be what is wanted in other contexts.
     IntRect mapRect(const IntRect&) const;
-    FractionalLayoutRect mapRect(const FractionalLayoutRect&) const;
+    LayoutRect mapRect(const LayoutRect&) const;
 
     // If the matrix has 3D components, the z component of the result is
     // dropped, effectively projecting the quad into the z=0 plane
@@ -173,7 +173,7 @@ public:
     FloatQuad projectQuad(const FloatQuad&,  bool* clamped = 0) const;
     // Projects the four corners of the quad and takes a bounding box,
     // while sanitizing values created when the w component is negative.
-    FractionalLayoutRect clampedBoundsOfProjectedQuad(const FloatQuad&) const;
+    LayoutRect clampedBoundsOfProjectedQuad(const FloatQuad&) const;
 
     double m11() const { return m_matrix[0][0]; }
     void setM11(double f) { m_matrix[0][0] = f; }

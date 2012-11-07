@@ -370,14 +370,14 @@ void RenderRegion::deleteAllRenderBoxRegionInfo()
 LayoutUnit RenderRegion::logicalTopOfFlowThreadContentRect(const LayoutRect& rect) const
 {
     if (!m_isValid || !flowThread())
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     return flowThread()->isHorizontalWritingMode() ? rect.y() : rect.x();
 }
 
 LayoutUnit RenderRegion::logicalBottomOfFlowThreadContentRect(const LayoutRect& rect) const
 {
     if (!m_isValid || !flowThread())
-        return ZERO_LAYOUT_UNIT;
+        return 0;
     return flowThread()->isHorizontalWritingMode() ? rect.maxY() : rect.maxX();
 }
 

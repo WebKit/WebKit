@@ -29,7 +29,7 @@
 #include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "Image.h"
-#include "LayoutTypesInlineMethods.h"
+#include "LayoutSize.h"
 #include "StyleImage.h"
 
 namespace WebCore {
