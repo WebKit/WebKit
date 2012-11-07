@@ -1,3 +1,17 @@
+2012-11-07  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [Canvas] Save CanvasGradient objects state for a replay
+        https://bugs.webkit.org/show_bug.cgi?id=101432
+
+        Reviewed by Pavel Feldman.
+
+        Save CanvasGradient resource state for a subsequent replay. The gradient's state is modified by the gradient.addColorStop() call.
+
+        Test: inspector/profiler/canvas2d/canvas2d-gradient-capturing.html
+
+        * inspector/InjectedScriptCanvasModuleSource.js:
+        (.):
+
 2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Regression] Snippets evaluations should not appear in Sources tab of navigator.

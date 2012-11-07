@@ -879,11 +879,11 @@ Resource.prototype = {
     },
 
     /**
-     * @return {Object.<string, Function>}
+     * @return {!Object.<string, Function>}
      */
     _customWrapFunctions: function()
     {
-        return {}; // May be overridden by subclasses.
+        return Object.create(null); // May be overridden by subclasses.
     }
 }
 
@@ -992,6 +992,39 @@ ReplayableResource.prototype = {
 ReplayableResource.replay = function(obj, cache)
 {
     return (obj instanceof ReplayableResource) ? obj.replay(cache).wrappedObject() : obj;
+}
+
+/**
+ * @constructor
+ * @extends {Resource}
+ */
+function LogEverythingResource(wrappedObject)
+{
+    Resource.call(this, wrappedObject);
+}
+
+LogEverythingResource.prototype = {
+    /**
+     * @override
+     * @return {!Object.<string, Function>}
+     */
+    _customWrapFunctions: function()
+    {
+        var wrapFunctions = Object.create(null);
+        var wrappedObject = this.wrappedObject();
+        if (wrappedObject) {
+            for (var property in wrappedObject) {
+                /** @this Resource.WrapFunction */
+                wrapFunctions[property] = function()
+                {
+                    this._resource.pushCall(this.call());
+                }
+            }
+        }
+        return wrapFunctions;
+    },
+
+    __proto__: Resource.prototype
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1171,12 +1204,11 @@ WebGLTextureResource.prototype = {
         this.pushCall(call);
     },
 
-    pushCall_texParameteri: WebGLTextureResource.prototype.pushCall_texParameterf,
-
-    pushCall_copyTexSubImage2D: WebGLTextureResource.prototype.pushCall_copyTexImage2D,
-
     __proto__: WebGLBoundResource.prototype
 }
+
+WebGLTextureResource.prototype.pushCall_texParameteri = WebGLTextureResource.prototype.pushCall_texParameterf;
+WebGLTextureResource.prototype.pushCall_copyTexSubImage2D = WebGLTextureResource.prototype.pushCall_copyTexImage2D;
 
 /**
  * @constructor
@@ -1787,7 +1819,7 @@ WebGLRenderingContextResource.prototype = {
 
     /**
      * @override
-     * @return {Object.<string, Function>}
+     * @return {!Object.<string, Function>}
      */
     _customWrapFunctions: function()
     {
@@ -2191,7 +2223,7 @@ CanvasRenderingContext2DResource.prototype = {
 
     /**
      * @override
-     * @return {Object.<string, Function>}
+     * @return {!Object.<string, Function>}
      */
     _customWrapFunctions: function()
     {
@@ -2199,10 +2231,9 @@ CanvasRenderingContext2DResource.prototype = {
         if (!wrapFunctions) {
             wrapFunctions = Object.create(null);
 
-            // FIXME: Save state of the CanvasGradient objects.
-            wrapFunctions["createLinearGradient"] = Resource.WrapFunction.resourceFactoryMethod(Resource);
-            wrapFunctions["createRadialGradient"] = Resource.WrapFunction.resourceFactoryMethod(Resource);
-            wrapFunctions["createPattern"] = Resource.WrapFunction.resourceFactoryMethod(Resource);
+            wrapFunctions["createLinearGradient"] = Resource.WrapFunction.resourceFactoryMethod(LogEverythingResource);
+            wrapFunctions["createRadialGradient"] = Resource.WrapFunction.resourceFactoryMethod(LogEverythingResource);
+            wrapFunctions["createPattern"] = Resource.WrapFunction.resourceFactoryMethod(LogEverythingResource);
 
             /**
              * @param {string} methodName

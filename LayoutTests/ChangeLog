@@ -1,3 +1,18 @@
+2012-11-07  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [Canvas] Save CanvasGradient objects state for a replay
+        https://bugs.webkit.org/show_bug.cgi?id=101432
+
+        Reviewed by Pavel Feldman.
+
+        Alerts about API changes to CanvasGradient and CanvasPattern classes.
+        Checks capturing for CanvasGradient objects' state.
+
+        * inspector/profiler/canvas2d/canvas2d-api-changes-expected.txt:
+        * inspector/profiler/canvas2d/canvas2d-api-changes.html:
+        * inspector/profiler/canvas2d/canvas2d-gradient-capturing-expected.txt: Added.
+        * inspector/profiler/canvas2d/canvas2d-gradient-capturing.html: Added.
+
 2012-11-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Unreviewed gardening.

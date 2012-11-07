@@ -104,6 +104,15 @@ CanvasRenderingContext2DResource.IgnoreProperties = [
     "webkitPutImageDataHD"
 ];
 
+function collectPropertyNames(obj)
+{
+    var propertyNames = [];
+    for (var property in obj)
+        propertyNames.push(property);
+    propertyNames.sort();
+    return propertyNames;
+}
+
 function test()
 {
     var canvas = document.createElement("canvas");
@@ -112,13 +121,8 @@ function test()
         output("ERROR: Could not create canvas 2D context.");
         return;
     }
-
-    var propertyNames = [];
-    for (var property in ctx)
-        propertyNames.push(property);
-    propertyNames.sort();
-
     output("New properties and functions that should be manually examined (should be empty to pass the test):");
+    var propertyNames = collectPropertyNames(ctx);
     var trackedProperties = CanvasRenderingContext2DResource.AttributeProperties.concat(CanvasRenderingContext2DResource.PathMethods, CanvasRenderingContext2DResource.TransformationMatrixMethods, CanvasRenderingContext2DResource.IgnoreProperties);
     for (var i = 0; i < propertyNames.length; ++i) {
         var property = propertyNames[i];
@@ -126,6 +130,29 @@ function test()
             continue;
         output(property);
     }
+
+    var gradient = ctx.createLinearGradient(0, 0, 1, 1);
+    if (!gradient) {
+        output("ERROR: Could not create a gradient object.");
+        return;
+    }
+    output("New properties and functions of CanvasGradient object that should be manually examined (should be empty to pass the test):");
+    propertyNames = collectPropertyNames(gradient);
+    for (var i = 0; i < propertyNames.length; ++i) {
+        var property = propertyNames[i];
+        if (property === "addColorStop")
+            continue;
+        output(property);
+    }
+
+    var pattern = ctx.createPattern(new Image(), "repeat");
+    if (!pattern) {
+        output("ERROR: Could not create a pattern object.");
+        return;
+    }
+    output("New properties and functions of CanvasPattern object that should be manually examined (should be empty to pass the test):");
+    for (var property in pattern)
+        output(property);
 }
 
 function runTest()
