@@ -30,19 +30,21 @@
 
 #include "WKEinaSharedString.h"
 #include "WKIntentServiceInfo.h"
+#include "ewk_object_private.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 
 /**
- * \struct Ewk_Intent_Service
+ * \struct EwkIntentService
  * @brief Contains the intent service data.
  */
-class Ewk_Intent_Service : public RefCounted<Ewk_Intent_Service> {
+class EwkIntentService : public Ewk_Object {
 public:
-    static PassRefPtr<Ewk_Intent_Service> create(WKIntentServiceInfoRef serviceRef)
+    EWK_OBJECT_DECLARE(EwkIntentService)
+
+    static PassRefPtr<EwkIntentService> create(WKIntentServiceInfoRef serviceRef)
     {
-        return adoptRef(new Ewk_Intent_Service(serviceRef));
+        return adoptRef(new EwkIntentService(serviceRef));
     }
 
     const char* action() const;
@@ -52,7 +54,7 @@ public:
     const char* disposition() const;
 
 private:
-    explicit Ewk_Intent_Service(WKIntentServiceInfoRef serviceRef);
+    explicit EwkIntentService(WKIntentServiceInfoRef serviceRef);
 
     WKEinaSharedString m_action;
     WKEinaSharedString m_type;

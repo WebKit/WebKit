@@ -333,7 +333,7 @@ static void close_file_picker(FileSelectorData* fs_data)
 {
     evas_object_event_callback_del(fs_data->parent, EVAS_CALLBACK_DEL, on_filepicker_parent_deletion);
     evas_object_del(fs_data->window);
-    ewk_file_chooser_request_unref(fs_data->request);
+    ewk_object_unref(fs_data->request);
     free(fs_data);
 }
 
@@ -376,7 +376,7 @@ on_file_chooser_request(void *user_data, Evas_Object *webview, void *event_info)
     FileSelectorData* fs_data = (FileSelectorData*)malloc(sizeof(FileSelectorData));
     fs_data->parent = app_data->window;
     fs_data->window = window;
-    fs_data->request = ewk_file_chooser_request_ref(request);
+    fs_data->request = ewk_object_ref(request);
     evas_object_smart_callback_add(window, "delete,request", on_filepicker_deletion, fs_data);
     evas_object_event_callback_add(app_data->window, EVAS_CALLBACK_DEL, on_filepicker_parent_deletion, fs_data);
 

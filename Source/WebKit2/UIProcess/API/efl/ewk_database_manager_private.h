@@ -28,7 +28,7 @@
 
 #include "WKDatabaseManager.h"
 #include "WKRetainPtr.h"
-#include "ewk_security_origin_private.h"
+#include "ewk_security_origin.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 

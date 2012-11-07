@@ -1,3 +1,152 @@
+2012-11-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Make EWK classes Ewk_Objects
+        https://bugs.webkit.org/show_bug.cgi?id=101057
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Now all the existing EWK classes share common Ewk_Object ref/unref API.
+
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_database_manager.cpp:
+        (Ewk_Database_Manager::createOriginList):
+        * UIProcess/API/efl/ewk_database_manager_private.h:
+        * UIProcess/API/efl/ewk_file_chooser_request.cpp:
+        (EwkFileChooserRequest::EwkFileChooserRequest):
+        (EwkFileChooserRequest::~EwkFileChooserRequest):
+        (EwkFileChooserRequest::allowMultipleFiles):
+        (EwkFileChooserRequest::acceptedMIMETypes):
+        (EwkFileChooserRequest::cancel):
+        (EwkFileChooserRequest::chooseFiles):
+        (ewk_file_chooser_request_allow_multiple_files_get):
+        (ewk_file_chooser_request_accepted_mimetypes_get):
+        (ewk_file_chooser_request_cancel):
+        (ewk_file_chooser_request_files_choose):
+        (ewk_file_chooser_request_file_choose):
+        * UIProcess/API/efl/ewk_file_chooser_request.h:
+        * UIProcess/API/efl/ewk_file_chooser_request_private.h:
+        (EwkFileChooserRequest):
+        (EwkFileChooserRequest::create):
+        * UIProcess/API/efl/ewk_form_submission_request.cpp:
+        (EwkFormSubmissionRequest::EwkFormSubmissionRequest):
+        (EwkFormSubmissionRequest::~EwkFormSubmissionRequest):
+        (EwkFormSubmissionRequest::fieldValue):
+        (EwkFormSubmissionRequest::fieldNames):
+        (EwkFormSubmissionRequest::submit):
+        (ewk_form_submission_request_field_names_get):
+        (ewk_form_submission_request_field_value_get):
+        (ewk_form_submission_request_submit):
+        * UIProcess/API/efl/ewk_form_submission_request.h:
+        * UIProcess/API/efl/ewk_form_submission_request_private.h:
+        (EwkFormSubmissionRequest):
+        (EwkFormSubmissionRequest::create):
+        * UIProcess/API/efl/ewk_intent.cpp:
+        (EwkIntent::EwkIntent):
+        (EwkIntent::webIntentData):
+        (EwkIntent::action):
+        (EwkIntent::type):
+        (EwkIntent::service):
+        (EwkIntent::suggestions):
+        (EwkIntent::extra):
+        (EwkIntent::extraKeys):
+        (ewk_intent_action_get):
+        (ewk_intent_type_get):
+        (ewk_intent_service_get):
+        (ewk_intent_suggestions_get):
+        (ewk_intent_extra_get):
+        (ewk_intent_extra_names_get):
+        * UIProcess/API/efl/ewk_intent.h:
+        * UIProcess/API/efl/ewk_intent_private.h:
+        (EwkIntent):
+        (EwkIntent::create):
+        * UIProcess/API/efl/ewk_intent_service.cpp:
+        (EwkIntentService::EwkIntentService):
+        (EwkIntentService::action):
+        (EwkIntentService::type):
+        (EwkIntentService::href):
+        (EwkIntentService::title):
+        (EwkIntentService::disposition):
+        (ewk_intent_service_action_get):
+        (ewk_intent_service_type_get):
+        (ewk_intent_service_href_get):
+        (ewk_intent_service_title_get):
+        (ewk_intent_service_disposition_get):
+        * UIProcess/API/efl/ewk_intent_service.h:
+        * UIProcess/API/efl/ewk_intent_service_private.h:
+        (EwkIntentService):
+        (EwkIntentService::create):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (EwkNavigationPolicyDecision::EwkNavigationPolicyDecision):
+        (EwkNavigationPolicyDecision::~EwkNavigationPolicyDecision):
+        (EwkNavigationPolicyDecision::navigationType):
+        (EwkNavigationPolicyDecision::mouseButton):
+        (EwkNavigationPolicyDecision::modifiers):
+        (EwkNavigationPolicyDecision::frameName):
+        (EwkNavigationPolicyDecision::request):
+        (EwkNavigationPolicyDecision::accept):
+        (EwkNavigationPolicyDecision::reject):
+        (EwkNavigationPolicyDecision::download):
+        (ewk_navigation_policy_navigation_type_get):
+        (ewk_navigation_policy_mouse_button_get):
+        (ewk_navigation_policy_modifiers_get):
+        (ewk_navigation_policy_frame_name_get):
+        (ewk_navigation_policy_request_get):
+        (ewk_navigation_policy_decision_accept):
+        (ewk_navigation_policy_decision_reject):
+        (ewk_navigation_policy_decision_download):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.h:
+        * UIProcess/API/efl/ewk_navigation_policy_decision_private.h:
+        (EwkNavigationPolicyDecision):
+        (EwkNavigationPolicyDecision::create):
+        * UIProcess/API/efl/ewk_resource.cpp:
+        (EwkResource::EwkResource):
+        (EwkResource::url):
+        (EwkResource::isMainResource):
+        (ewk_resource_url_get):
+        (ewk_resource_main_resource_get):
+        * UIProcess/API/efl/ewk_resource.h:
+        * UIProcess/API/efl/ewk_resource_private.h:
+        (EwkResource):
+        (EwkResource::create):
+        * UIProcess/API/efl/ewk_security_origin.cpp:
+        (EwkSecurityOrigin::EwkSecurityOrigin):
+        (EwkSecurityOrigin::host):
+        (EwkSecurityOrigin::protocol):
+        (EwkSecurityOrigin::port):
+        (ewk_security_origin_host_get):
+        (ewk_security_origin_protocol_get):
+        (ewk_security_origin_port_get):
+        * UIProcess/API/efl/ewk_security_origin.h:
+        * UIProcess/API/efl/ewk_security_origin_private.h:
+        (EwkSecurityOrigin):
+        (EwkSecurityOrigin::create):
+        * UIProcess/API/efl/ewk_storage_manager.cpp:
+        (Ewk_Storage_Manager::createOriginList):
+        * UIProcess/API/efl/ewk_url_scheme_request_private.h:
+        (EwkUrlSchemeRequest):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_intent_deliver):
+        * UIProcess/API/efl/tests/test_ewk2_file_chooser_request.cpp:
+        (onFileChooserRequest):
+        (TEST_F):
+        * UIProcess/API/efl/tests/test_ewk2_storage_manager.cpp:
+        (TEST_F):
+        * UIProcess/efl/FormClientEfl.cpp:
+        (WebKit::FormClientEfl::willSubmitForm):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didReceiveIntentForFrame):
+        (WebKit::PageLoadClientEfl::registerIntentServiceForFrame):
+        * UIProcess/efl/PagePolicyClientEfl.cpp:
+        (WebKit::PagePolicyClientEfl::decidePolicyForNavigationAction):
+        (WebKit::PagePolicyClientEfl::decidePolicyForNewWindowAction):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::runOpenPanel):
+        * UIProcess/efl/ResourceLoadClientEfl.cpp:
+        (WebKit::ResourceLoadClientEfl::didInitiateLoadForResource):
+        * UIProcess/efl/ResourceLoadClientEfl.h:
+
 2012-11-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [WK2] Return earlier if a plugin snapshot cannot be created.

@@ -26,6 +26,7 @@
 #ifndef ResourceLoadClientEfl_h
 #define ResourceLoadClientEfl_h
 
+#include "ewk_resource.h"
 #include "ewk_resource_private.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>

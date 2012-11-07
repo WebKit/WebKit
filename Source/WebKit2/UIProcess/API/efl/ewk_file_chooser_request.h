@@ -37,27 +37,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for Ewk_File_Chooser_Request */
-typedef struct Ewk_File_Chooser_Request Ewk_File_Chooser_Request;
-
 /**
- * Increases the reference count of the given object.
+ * Declare Ewk_File_Chooser_Request as Ewk_Object.
  *
- * @param request the request object to increase the reference count
- *
- * @return a pointer to the object on success, @c NULL otherwise
+ * @see Ewk_Object
  */
-EAPI Ewk_File_Chooser_Request *ewk_file_chooser_request_ref(Ewk_File_Chooser_Request *request);
-
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count reaches 0, the file chooser request is freed. The request
- * will be cancelled by default if the client did not act on it.
- *
- * @param request the request object to decrease the reference count
- */
-EAPI void ewk_file_chooser_request_unref(Ewk_File_Chooser_Request *request);
+typedef struct Ewk_Object Ewk_File_Chooser_Request;
 
 /**
  * Queries if it is allowed to select multiple files or not.

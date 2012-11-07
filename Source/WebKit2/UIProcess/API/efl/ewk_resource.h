@@ -37,26 +37,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for @a Ewk_Resource. */
-typedef struct Ewk_Resource Ewk_Resource;
-
 /**
- * Increases the reference count of the given object.
+ * Declare Ewk_Resource as Ewk_Object.
  *
- * @param resource the resource object to increase the reference count
- *
- * @return a pointer to the object on success, @c NULL otherwise.
+ * @see Ewk_Object
  */
-EAPI Ewk_Resource *ewk_resource_ref(Ewk_Resource *resource);
-
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count reaches 0, the resource is freed.
- *
- * @param resource the resource object to decrease the reference count
- */
-EAPI void ewk_resource_unref(Ewk_Resource *resource);
+typedef struct Ewk_Object Ewk_Resource;
 
 /**
  * Query URL for this resource.

@@ -34,21 +34,22 @@
 
 typedef struct Ewk_Object Ewk_Auth_Request;
 typedef struct Ewk_Object Ewk_Download_Job;
+typedef struct Ewk_Object Ewk_File_Chooser_Request;
+typedef struct Ewk_Object Ewk_Form_Submission_Request;
+typedef struct Ewk_Object Ewk_Navigation_Policy_Decision;
+typedef struct Ewk_Object Ewk_Resource;
+#if ENABLE(WEB_INTENTS)
+typedef struct Ewk_Object Ewk_Intent;
+#endif
+#if ENABLE(WEB_INTENTS_TAG)
+typedef struct Ewk_Object Ewk_Intent_Service;
+#endif
+
 struct Ewk_Download_Job_Error;
-struct Ewk_File_Chooser_Request;
-struct Ewk_Form_Submission_Request;
 struct Ewk_Error;
 struct Ewk_Resource_Request;
 struct Ewk_Resource_Load_Response;
 struct Ewk_Resource_Load_Error;
-struct Ewk_Resource;
-struct Ewk_Navigation_Policy_Decision;
-#if ENABLE(WEB_INTENTS)
-struct Ewk_Intent;
-#endif
-#if ENABLE(WEB_INTENTS_TAG)
-struct Ewk_Intent_Service;
-#endif
 
 namespace EwkViewCallbacks {
 

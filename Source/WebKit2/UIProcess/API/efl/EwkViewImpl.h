@@ -67,14 +67,8 @@ class IntSize;
 }
 
 class EwkContext;
-
 class Ewk_Back_Forward_List;
 class Ewk_Color_Picker;
-class Ewk_Error;
-class Ewk_Form_Submission_Request;
-class Ewk_Intent;
-class Ewk_Intent_Service;
-class Ewk_Resource;
 class Ewk_Popup_Menu;
 class Ewk_Settings;
 
@@ -214,7 +208,7 @@ private:
 #endif
     static void onFaviconChanged(const char* pageURL, void* eventInfo);
 
-    // Note, initialization matters.
+    // Note, initialization order matters.
     Evas_Object* m_view;
     RefPtr<EwkContext> m_context;
 #if USE(ACCELERATED_COMPOSITING)

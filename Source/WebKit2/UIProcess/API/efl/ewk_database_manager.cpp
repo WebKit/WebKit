@@ -55,7 +55,7 @@ Eina_List* Ewk_Database_Manager::createOriginList(WKArrayRef origins) const
         WKSecurityOriginRef wkOriginRef = static_cast<WKSecurityOriginRef>(WKArrayGetItemAtIndex(origins, i));
         RefPtr<Ewk_Security_Origin> origin = m_wrapperCache.get(wkOriginRef);
         if (!origin) {
-            origin = Ewk_Security_Origin::create(wkOriginRef);
+            origin = EwkSecurityOrigin::create(wkOriginRef);
             m_wrapperCache.set(wkOriginRef, origin);
         }
         originList = eina_list_append(originList, origin.release().leakRef());

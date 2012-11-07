@@ -48,7 +48,7 @@ void PagePolicyClientEfl::decidePolicyForNavigationAction(WKPageRef, WKFrameRef,
 {
     PagePolicyClientEfl* policyClient = toPagePolicyClientEfl(clientInfo);
 
-    RefPtr<Ewk_Navigation_Policy_Decision> decision = Ewk_Navigation_Policy_Decision::create(navigationType, mouseButton, modifiers, request, 0, listener);
+    RefPtr<Ewk_Navigation_Policy_Decision> decision = EwkNavigationPolicyDecision::create(navigationType, mouseButton, modifiers, request, 0, listener);
     policyClient->m_viewImpl->smartCallback<NavigationPolicyDecision>().call(decision.get());
 }
 
@@ -56,7 +56,7 @@ void PagePolicyClientEfl::decidePolicyForNewWindowAction(WKPageRef, WKFrameRef, 
 {
     PagePolicyClientEfl* policyClient = toPagePolicyClientEfl(clientInfo);
 
-    RefPtr<Ewk_Navigation_Policy_Decision> decision = Ewk_Navigation_Policy_Decision::create(navigationType, mouseButton, modifiers, request, toImpl(frameName)->string().utf8().data(), listener);
+    RefPtr<Ewk_Navigation_Policy_Decision> decision = EwkNavigationPolicyDecision::create(navigationType, mouseButton, modifiers, request, toImpl(frameName)->string().utf8().data(), listener);
     policyClient->m_viewImpl->smartCallback<NewWindowPolicyDecision>().call(decision.get());
 }
 

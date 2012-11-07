@@ -29,47 +29,31 @@
 #include "ewk_resource_private.h"
 #include <wtf/text/CString.h>
 
-Ewk_Resource::Ewk_Resource(WKURLRef url, bool isMainResource)
+EwkResource::EwkResource(WKURLRef url, bool isMainResource)
     : m_url(url)
     , m_isMainResource(isMainResource)
 { }
 
-const char* Ewk_Resource::url() const
+const char* EwkResource::url() const
 {
     return m_url;
 }
 
-bool Ewk_Resource::isMainResource() const
+bool EwkResource::isMainResource() const
 {
     return m_isMainResource;
 }
 
-Ewk_Resource* ewk_resource_ref(Ewk_Resource* resource)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(resource, 0);
-
-    resource->ref();
-
-    return resource;
-}
-
-void ewk_resource_unref(Ewk_Resource* resource)
-{
-    EINA_SAFETY_ON_NULL_RETURN(resource);
-
-    resource->deref();
-}
-
 const char* ewk_resource_url_get(const Ewk_Resource* resource)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(resource, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkResource, resource, impl, 0);
 
-    return resource->url();
+    return impl->url();
 }
 
 Eina_Bool ewk_resource_main_resource_get(const Ewk_Resource* resource)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(resource, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkResource, resource, impl, false);
 
-    return resource->isMainResource();
+    return impl->isMainResource();
 }

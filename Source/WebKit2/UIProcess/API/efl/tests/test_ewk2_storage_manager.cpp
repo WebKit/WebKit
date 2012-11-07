@@ -129,6 +129,6 @@ TEST_F(EWK2UnitTestBase, ewk_storage_manager_origins_get)
     Ewk_Security_Origin* origin = 0;
     EXPECT_TRUE(checkOrigin(originData.originList, &origin));
 
-    EXPECT_EQ(origin, ewk_security_origin_ref(origin));
-    ewk_security_origin_unref(origin);
+    EXPECT_EQ(origin, ewk_object_ref(origin));
+    ewk_object_unref(origin);
 }

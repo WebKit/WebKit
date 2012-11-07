@@ -59,7 +59,7 @@ void PageLoadClientEfl::didReceiveTitleForFrame(WKPageRef, WKStringRef title, WK
 void PageLoadClientEfl::didReceiveIntentForFrame(WKPageRef, WKFrameRef, WKIntentDataRef intent, WKTypeRef, const void* clientInfo)
 {
     EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
-    RefPtr<Ewk_Intent> ewkIntent = Ewk_Intent::create(intent);
+    RefPtr<Ewk_Intent> ewkIntent = EwkIntent::create(intent);
     viewImpl->smartCallback<IntentRequest>().call(ewkIntent.get());
 }
 #endif
@@ -68,7 +68,7 @@ void PageLoadClientEfl::didReceiveIntentForFrame(WKPageRef, WKFrameRef, WKIntent
 void PageLoadClientEfl::registerIntentServiceForFrame(WKPageRef, WKFrameRef, WKIntentServiceInfoRef serviceInfo, WKTypeRef, const void* clientInfo)
 {
     EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
-    RefPtr<Ewk_Intent_Service> ewkIntentService = Ewk_Intent_Service::create(serviceInfo);
+    RefPtr<Ewk_Intent_Service> ewkIntentService = EwkIntentService::create(serviceInfo);
     viewImpl->smartCallback<IntentServiceRegistration>().call(ewkIntentService.get());
 }
 #endif

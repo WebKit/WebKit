@@ -52,7 +52,7 @@ void ResourceLoadClientEfl::didInitiateLoadForResource(WKPageRef, WKFrameRef wkF
     bool isMainResource = (WKFrameIsMainFrame(wkFrame) && pageIsProvisionallyLoading);
     WKRetainPtr<WKURLRef> wkUrl(AdoptWK, WKURLRequestCopyURL(wkRequest));
 
-    RefPtr<Ewk_Resource> resource = Ewk_Resource::create(wkUrl.get(), isMainResource);
+    RefPtr<Ewk_Resource> resource = EwkResource::create(wkUrl.get(), isMainResource);
 
     // Keep the resource internally to reuse it later.
     resourceLoadClient->m_loadingResourcesMap.add(resourceIdentifier, resource);

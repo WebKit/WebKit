@@ -32,7 +32,7 @@
 
 using namespace WebKit;
 
-Ewk_Navigation_Policy_Decision::Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<EwkUrlRequest> request, const char* frameName)
+EwkNavigationPolicyDecision::EwkNavigationPolicyDecision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<EwkUrlRequest> request, const char* frameName)
     : m_listener(listener)
     , m_actedUponByClient(false)
     , m_navigationType(navigationType)
@@ -42,126 +42,110 @@ Ewk_Navigation_Policy_Decision::Ewk_Navigation_Policy_Decision(WKFramePolicyList
     , m_frameName(frameName)
 { }
 
-Ewk_Navigation_Policy_Decision::~Ewk_Navigation_Policy_Decision()
+EwkNavigationPolicyDecision::~EwkNavigationPolicyDecision()
 {
     // This is the default choice for all policy decisions in WebPageProxy.cpp.
     if (!m_actedUponByClient)
         WKFramePolicyListenerUse(m_listener.get());
 }
 
-Ewk_Navigation_Type Ewk_Navigation_Policy_Decision::navigationType() const
+Ewk_Navigation_Type EwkNavigationPolicyDecision::navigationType() const
 {
     return m_navigationType;
 }
 
-Event_Mouse_Button Ewk_Navigation_Policy_Decision::mouseButton() const
+Event_Mouse_Button EwkNavigationPolicyDecision::mouseButton() const
 {
     return m_mouseButton;
 }
 
-Event_Modifier_Keys Ewk_Navigation_Policy_Decision::modifiers() const
+Event_Modifier_Keys EwkNavigationPolicyDecision::modifiers() const
 {
     return m_modifiers;
 }
 
-const char* Ewk_Navigation_Policy_Decision::frameName() const
+const char* EwkNavigationPolicyDecision::frameName() const
 {
     return m_frameName;
 }
 
-EwkUrlRequest* Ewk_Navigation_Policy_Decision::request() const
+EwkUrlRequest* EwkNavigationPolicyDecision::request() const
 {
     return m_request.get();
 }
 
-void Ewk_Navigation_Policy_Decision::accept()
+void EwkNavigationPolicyDecision::accept()
 {
     WKFramePolicyListenerUse(m_listener.get());
     m_actedUponByClient = true;
 }
 
-void Ewk_Navigation_Policy_Decision::reject()
+void EwkNavigationPolicyDecision::reject()
 {
     WKFramePolicyListenerIgnore(m_listener.get());
     m_actedUponByClient = true;
 }
 
-void Ewk_Navigation_Policy_Decision::download()
+void EwkNavigationPolicyDecision::download()
 {
     WKFramePolicyListenerDownload(m_listener.get());
     m_actedUponByClient = true;
 }
 
-Ewk_Navigation_Policy_Decision* ewk_navigation_policy_decision_ref(Ewk_Navigation_Policy_Decision* decision)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(decision, 0);
-
-    decision->ref();
-
-    return decision;
-}
-
-void ewk_navigation_policy_decision_unref(Ewk_Navigation_Policy_Decision* decision)
-{
-    EINA_SAFETY_ON_NULL_RETURN(decision);
-
-    decision->deref();
-}
-
 Ewk_Navigation_Type ewk_navigation_policy_navigation_type_get(const Ewk_Navigation_Policy_Decision* decision)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(decision, EWK_NAVIGATION_TYPE_OTHER);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, EWK_NAVIGATION_TYPE_OTHER);
 
-    return decision->navigationType();
+    return impl->navigationType();
 }
 
 Event_Mouse_Button ewk_navigation_policy_mouse_button_get(const Ewk_Navigation_Policy_Decision* decision)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(decision, EVENT_MOUSE_BUTTON_NONE);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, EVENT_MOUSE_BUTTON_NONE);
 
-    return decision->mouseButton();
+    return impl->mouseButton();
 }
 
 Event_Modifier_Keys ewk_navigation_policy_modifiers_get(const Ewk_Navigation_Policy_Decision* decision)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(decision, static_cast<Event_Modifier_Keys>(0));
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, static_cast<Event_Modifier_Keys>(0));
 
-    return decision->modifiers();
+    return impl->modifiers();
 }
 
 const char* ewk_navigation_policy_frame_name_get(const Ewk_Navigation_Policy_Decision* decision)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(decision, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, 0);
 
-    return decision->frameName();
+    return impl->frameName();
 }
 
 Ewk_Url_Request* ewk_navigation_policy_request_get(const Ewk_Navigation_Policy_Decision* decision)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(decision, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkNavigationPolicyDecision, decision, impl, 0);
 
-    return decision->request();
+    return impl->request();
 }
 
 void ewk_navigation_policy_decision_accept(Ewk_Navigation_Policy_Decision* decision)
 {
-    EINA_SAFETY_ON_NULL_RETURN(decision);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkNavigationPolicyDecision, decision, impl);
 
-    decision->accept();
+    impl->accept();
 }
 
 void ewk_navigation_policy_decision_reject(Ewk_Navigation_Policy_Decision* decision)
 {
-    EINA_SAFETY_ON_NULL_RETURN(decision);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkNavigationPolicyDecision, decision, impl);
 
-    decision->reject();
+    impl->reject();
 }
 
 void ewk_navigation_policy_decision_download(Ewk_Navigation_Policy_Decision* decision)
 {
-    EINA_SAFETY_ON_NULL_RETURN(decision);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkNavigationPolicyDecision, decision, impl);
 
-    decision->download();
+    impl->download();
 }
 
 // Ewk_Navigation_Type enum validation

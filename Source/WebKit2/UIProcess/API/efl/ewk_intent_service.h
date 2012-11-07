@@ -37,26 +37,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for Ewk_Intent_Service */
-typedef struct Ewk_Intent_Service Ewk_Intent_Service;
-
 /**
- * Increases the reference count of the given object.
+ * Declare Ewk_Intent_Service as Ewk_Object.
  *
- * @param service the intent service object to increase the reference count
- *
- * @return a pointer to the object on success, @c NULL otherwise.
+ * @see Ewk_Object
  */
-EAPI Ewk_Intent_Service *ewk_intent_service_ref(Ewk_Intent_Service *service);
-
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count reaches 0, the intent service is freed.
- *
- * @param service the intent service object to decrease the reference count
- */
-EAPI void ewk_intent_service_unref(Ewk_Intent_Service *service);
+typedef struct Ewk_Object Ewk_Intent_Service;
 
 /**
  * Query action for this intent service.

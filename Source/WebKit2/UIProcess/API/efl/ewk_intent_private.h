@@ -31,9 +31,9 @@
 #include "WKEinaSharedString.h"
 #include "WKIntentData.h"
 #include "WKRetainPtr.h"
+#include "ewk_object_private.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -41,14 +41,16 @@ class WebIntentData;
 }
 
 /**
- * \struct  Ewk_Intent
+ * \struct  EwkIntent
  * @brief   Contains the intent data.
  */
-class Ewk_Intent : public RefCounted<Ewk_Intent> {
+class EwkIntent : public Ewk_Object {
 public:
-    static PassRefPtr<Ewk_Intent> create(WKIntentDataRef intentRef)
+    EWK_OBJECT_DECLARE(EwkIntent)
+
+    static PassRefPtr<EwkIntent> create(WKIntentDataRef intentRef)
     {
-        return adoptRef(new Ewk_Intent(intentRef));
+        return adoptRef(new EwkIntent(intentRef));
     }
 
     WebKit::WebIntentData* webIntentData() const;
@@ -60,7 +62,7 @@ public:
     WKRetainPtr<WKArrayRef> extraKeys() const;
 
 private:
-    explicit Ewk_Intent(WKIntentDataRef intentRef);
+    explicit EwkIntent(WKIntentDataRef intentRef);
 
     WKRetainPtr<WKIntentDataRef> m_wkIntent;
     WKEinaSharedString m_action;

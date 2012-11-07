@@ -37,16 +37,18 @@
 #include <wtf/PassRefPtr.h>
 
 /**
- * \struct  Ewk_Navigation_Policy_Decision
+ * \struct  EwkNavigationPolicyDecision
  * @brief   Contains the navigation policy decision data.
  */
-class Ewk_Navigation_Policy_Decision : public RefCounted<Ewk_Navigation_Policy_Decision> {
+class EwkNavigationPolicyDecision : public Ewk_Object {
 public:
-    ~Ewk_Navigation_Policy_Decision();
+    EWK_OBJECT_DECLARE(EwkNavigationPolicyDecision)
 
-    static PassRefPtr<Ewk_Navigation_Policy_Decision> create(WKFrameNavigationType navigationType, WKEventMouseButton mouseButton, WKEventModifiers modifiers, WKURLRequestRef requestRef, const char* frameName, WKFramePolicyListenerRef listener)
+    ~EwkNavigationPolicyDecision();
+
+    static PassRefPtr<EwkNavigationPolicyDecision> create(WKFrameNavigationType navigationType, WKEventMouseButton mouseButton, WKEventModifiers modifiers, WKURLRequestRef requestRef, const char* frameName, WKFramePolicyListenerRef listener)
     {
-        return adoptRef(new Ewk_Navigation_Policy_Decision(listener, static_cast<Ewk_Navigation_Type>(navigationType), static_cast<Event_Mouse_Button>(mouseButton), static_cast<Event_Modifier_Keys>(modifiers), EwkUrlRequest::create(requestRef), frameName));
+        return adoptRef(new EwkNavigationPolicyDecision(listener, static_cast<Ewk_Navigation_Type>(navigationType), static_cast<Event_Mouse_Button>(mouseButton), static_cast<Event_Modifier_Keys>(modifiers), EwkUrlRequest::create(requestRef), frameName));
     }
 
     void accept();
@@ -60,7 +62,7 @@ public:
     EwkUrlRequest* request() const;
 
 private:
-    Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<EwkUrlRequest> request, const char* frameName);
+    EwkNavigationPolicyDecision(WKFramePolicyListenerRef listener, Ewk_Navigation_Type navigationType, Event_Mouse_Button mouseButton, Event_Modifier_Keys modifiers, PassRefPtr<EwkUrlRequest> request, const char* frameName);
 
     WKRetainPtr<WKFramePolicyListenerRef> m_listener;
     bool m_actedUponByClient;

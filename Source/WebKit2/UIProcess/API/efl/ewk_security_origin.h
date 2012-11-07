@@ -42,26 +42,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for Ewk_Security_Origin. */
-typedef struct Ewk_Security_Origin Ewk_Security_Origin;
-
 /**
- * Increases the reference count of the given object.
+ * Declare Ewk_Security_Origin as Ewk_Object.
  *
- * @param origin the origin object to increase the reference count
- *
- * @return a pointer to the object on success, @c NULL otherwise
+ * @see Ewk_Object
  */
-EAPI Ewk_Security_Origin *ewk_security_origin_ref(Ewk_Security_Origin *o);
-
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count reaches 0, the origin is freed.
- *
- * @param origin the origin object to decrease the reference count
- */
-EAPI void ewk_security_origin_unref(Ewk_Security_Origin *o);
+typedef struct Ewk_Object Ewk_Security_Origin;
 
 /**
  * Returns the host of the security origin.

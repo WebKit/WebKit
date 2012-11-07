@@ -38,8 +38,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for Ewk_Navigation_Policy_Decision */
-typedef struct Ewk_Navigation_Policy_Decision Ewk_Navigation_Policy_Decision;
+/**
+ * Declare Ewk_Navigation_Policy_Decision as Ewk_Object.
+ *
+ * @see Ewk_Object
+ */
+typedef struct Ewk_Object Ewk_Navigation_Policy_Decision;
 
 /// Enum containing navigation types
 typedef enum  {
@@ -65,24 +69,6 @@ typedef enum {
     EVENT_MODIFIER_KEY_ALT = 1 << 2,
     EVENT_MODIFIER_KEY_META = 1 << 3
 } Event_Modifier_Keys;
-
-/**
- * Increases the reference count of the given object.
- *
- * @param decision the policy decision object to increase the reference count
- *
- * @return a pointer to the object on success, @c NULL otherwise.
- */
-EAPI Ewk_Navigation_Policy_Decision *ewk_navigation_policy_decision_ref(Ewk_Navigation_Policy_Decision *decision);
-
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count reaches 0, the object is freed.
- *
- * @param decision the policy decision object to decrease the reference count
- */
-EAPI void ewk_navigation_policy_decision_unref(Ewk_Navigation_Policy_Decision *decision);
 
 /**
  * Query type for this navigation policy decision.

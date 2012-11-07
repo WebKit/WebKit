@@ -40,30 +40,12 @@
 extern "C" {
 #endif
 
-/** Creates a type name for Ewk_Form_Submission_Request */
-typedef struct Ewk_Form_Submission_Request Ewk_Form_Submission_Request;
-
 /**
- * Increases the reference count of the given object.
+ * Declare Ewk_Form_Submission_Request as Ewk_Object.
  *
- * @param request the request object to increase the reference count
- *
- * @return a pointer to the object on success, @c NULL otherwise.
+ * @see Ewk_Object
  */
-EAPI Ewk_Form_Submission_Request *ewk_form_submission_request_ref(Ewk_Form_Submission_Request *request);
-
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count reaches 0, the request is freed.
- *
- * If the reference count reaches 0 and the form request has not be submitted yet,
- * ewk_form_submission_request_submit() will be called automatically before
- * destruction.
- *
- * @param request the request object to decrease the reference count
- */
-EAPI void ewk_form_submission_request_unref(Ewk_Form_Submission_Request *request);
+typedef struct Ewk_Object Ewk_Form_Submission_Request;
 
 /**
  * Returns the list of field names contained in the form associated to @a request.

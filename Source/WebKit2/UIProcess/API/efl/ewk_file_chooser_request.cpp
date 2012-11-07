@@ -37,7 +37,7 @@
 
 using namespace WebKit;
 
-Ewk_File_Chooser_Request::Ewk_File_Chooser_Request(WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
+EwkFileChooserRequest::EwkFileChooserRequest(WebOpenPanelParameters* parameters, WebOpenPanelResultListenerProxy* listener)
     : m_parameters(parameters)
     , m_listener(listener)
     , m_wasRequestHandled(false)
@@ -46,30 +46,30 @@ Ewk_File_Chooser_Request::Ewk_File_Chooser_Request(WebOpenPanelParameters* param
     ASSERT(listener);
 }
 
-Ewk_File_Chooser_Request::~Ewk_File_Chooser_Request()
+EwkFileChooserRequest::~EwkFileChooserRequest()
 {
     if (!m_wasRequestHandled)
         m_listener->cancel();
 }
 
-bool Ewk_File_Chooser_Request::allowMultipleFiles() const
+bool EwkFileChooserRequest::allowMultipleFiles() const
 {
     return m_parameters->allowMultipleFiles();
 }
 
-PassRefPtr<ImmutableArray> Ewk_File_Chooser_Request::acceptedMIMETypes() const
+PassRefPtr<ImmutableArray> EwkFileChooserRequest::acceptedMIMETypes() const
 {
     return m_parameters->acceptMIMETypes();
 }
 
-void Ewk_File_Chooser_Request::cancel()
+void EwkFileChooserRequest::cancel()
 {
     m_wasRequestHandled = true;
 
     return m_listener->cancel();
 }
 
-void Ewk_File_Chooser_Request::chooseFiles(Vector< RefPtr<APIObject> >& fileURLs)
+void EwkFileChooserRequest::chooseFiles(Vector< RefPtr<APIObject> >& fileURLs)
 {
     ASSERT(!fileURLs.isEmpty());
     ASSERT(fileURLs.size() == 1 || m_parameters->allowMultipleFiles());
@@ -78,35 +78,19 @@ void Ewk_File_Chooser_Request::chooseFiles(Vector< RefPtr<APIObject> >& fileURLs
     m_listener->chooseFiles(ImmutableArray::adopt(fileURLs).get());
 }
 
-Ewk_File_Chooser_Request* ewk_file_chooser_request_ref(Ewk_File_Chooser_Request* request)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
-
-    request->ref();
-
-    return request;
-}
-
-void ewk_file_chooser_request_unref(Ewk_File_Chooser_Request* request)
-{
-    EINA_SAFETY_ON_NULL_RETURN(request);
-
-    request->deref();
-}
-
 Eina_Bool ewk_file_chooser_request_allow_multiple_files_get(const Ewk_File_Chooser_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkFileChooserRequest, request, impl, false);
 
-    return request->allowMultipleFiles();
+    return impl->allowMultipleFiles();
 }
 
 Eina_List* ewk_file_chooser_request_accepted_mimetypes_get(const Ewk_File_Chooser_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkFileChooserRequest, request, impl, 0);
 
     Eina_List* mimeTypeList = 0;
-    RefPtr<ImmutableArray> mimeTypes = request->acceptedMIMETypes();
+    RefPtr<ImmutableArray> mimeTypes = impl->acceptedMIMETypes();
 
     const size_t size = mimeTypes->size();
     for (size_t i = 0; i < size; ++i) {
@@ -121,20 +105,20 @@ Eina_List* ewk_file_chooser_request_accepted_mimetypes_get(const Ewk_File_Choose
 
 Eina_Bool ewk_file_chooser_request_cancel(Ewk_File_Chooser_Request* request)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
-    EINA_SAFETY_ON_TRUE_RETURN_VAL(request->wasHandled(), false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkFileChooserRequest, request, impl, false);
+    EINA_SAFETY_ON_TRUE_RETURN_VAL(impl->wasHandled(), false);
 
-    request->cancel();
+    impl->cancel();
 
     return true;
 }
 
 Eina_Bool ewk_file_chooser_request_files_choose(Ewk_File_Chooser_Request* request, const Eina_List* chosenFiles)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkFileChooserRequest, request, impl, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(chosenFiles, false);
-    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_list_count(chosenFiles) == 1 || request->allowMultipleFiles(), false);
-    EINA_SAFETY_ON_TRUE_RETURN_VAL(request->wasHandled(), false);
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_list_count(chosenFiles) == 1 || impl->allowMultipleFiles(), false);
+    EINA_SAFETY_ON_TRUE_RETURN_VAL(impl->wasHandled(), false);
 
     Vector< RefPtr<APIObject> > fileURLs;
 
@@ -146,22 +130,22 @@ Eina_Bool ewk_file_chooser_request_files_choose(Ewk_File_Chooser_Request* reques
         fileURLs.append(WebURL::create(fileURL));
     }
 
-    request->chooseFiles(fileURLs);
+    impl->chooseFiles(fileURLs);
 
     return true;
 }
 
 Eina_Bool ewk_file_chooser_request_file_choose(Ewk_File_Chooser_Request* request, const char* chosenFile)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkFileChooserRequest, request, impl, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(chosenFile, false);
-    EINA_SAFETY_ON_TRUE_RETURN_VAL(request->wasHandled(), false);
+    EINA_SAFETY_ON_TRUE_RETURN_VAL(impl->wasHandled(), false);
 
     Vector< RefPtr<APIObject> > fileURLs;
     String fileURL = "file://" + String::fromUTF8(chosenFile);
     fileURLs.append(WebURL::create(fileURL));
 
-    request->chooseFiles(fileURLs);
+    impl->chooseFiles(fileURLs);
 
     return true;
 }

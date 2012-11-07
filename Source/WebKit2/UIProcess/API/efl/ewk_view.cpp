@@ -696,10 +696,11 @@ Eina_Bool ewk_view_intent_deliver(Evas_Object* ewkView, Ewk_Intent* intent)
 {
 #if ENABLE(WEB_INTENTS)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(intent, false);
+    EwkIntent* intentImpl = ewk_object_cast<EwkIntent*>(intent);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(intentImpl, false);
 
     WebPageProxy* page = impl->page();
-    page->deliverIntentToFrame(page->mainFrame(), intent->webIntentData());
+    page->deliverIntentToFrame(page->mainFrame(), intentImpl->webIntentData());
 
     return true;
 #else

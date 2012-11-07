@@ -32,59 +32,44 @@
 
 using namespace WebKit;
 
-Ewk_Security_Origin::Ewk_Security_Origin(WKSecurityOriginRef originRef)
+EwkSecurityOrigin::EwkSecurityOrigin(WKSecurityOriginRef originRef)
     : m_wkOrigin(originRef)
     , m_host(AdoptWK, WKSecurityOriginCopyHost(originRef))
     , m_protocol(AdoptWK, WKSecurityOriginCopyProtocol(originRef))
 { }
 
-const char* Ewk_Security_Origin::host() const
+const char* EwkSecurityOrigin::host() const
 {
     return m_host;
 }
 
-const char* Ewk_Security_Origin::protocol() const
+const char* EwkSecurityOrigin::protocol() const
 {
     return m_protocol;
 }
 
-uint32_t Ewk_Security_Origin::port() const
+uint32_t EwkSecurityOrigin::port() const
 {
     return WKSecurityOriginGetPort(m_wkOrigin.get());
 }
 
-Ewk_Security_Origin* ewk_security_origin_ref(Ewk_Security_Origin* origin)
-{
-    EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
-
-    origin->ref();
-    return origin;
-}
-
-void ewk_security_origin_unref(Ewk_Security_Origin* origin)
-{
-    EINA_SAFETY_ON_NULL_RETURN(origin);
-
-    origin->deref();
-}
-
 const char* ewk_security_origin_host_get(const Ewk_Security_Origin* origin)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkSecurityOrigin, origin, impl, 0);
 
-    return origin->host();
+    return impl->host();
 }
 
 const char* ewk_security_origin_protocol_get(const Ewk_Security_Origin* origin)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkSecurityOrigin, origin, impl, 0);
 
-    return origin->protocol();
+    return impl->protocol();
 }
 
 uint32_t ewk_security_origin_port_get(const Ewk_Security_Origin* origin)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(origin, 0);
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkSecurityOrigin, origin, impl, 0);
 
-    return origin->port();
+    return impl->port();
 }

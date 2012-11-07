@@ -36,7 +36,7 @@
 using namespace WebKit;
 
 #if ENABLE(WEB_INTENTS_TAG)
-Ewk_Intent_Service::Ewk_Intent_Service(WKIntentServiceInfoRef serviceRef)
+EwkIntentService::EwkIntentService(WKIntentServiceInfoRef serviceRef)
     : m_action(AdoptWK, WKIntentServiceInfoCopyAction(serviceRef))
     , m_type(AdoptWK, WKIntentServiceInfoCopyType(serviceRef))
     , m_href(AdoptWK, WKIntentServiceInfoCopyHref(serviceRef))
@@ -44,92 +44,83 @@ Ewk_Intent_Service::Ewk_Intent_Service(WKIntentServiceInfoRef serviceRef)
     , m_disposition(AdoptWK, WKIntentServiceInfoCopyDisposition(serviceRef))
 { }
 
-const char* Ewk_Intent_Service::action() const
+const char* EwkIntentService::action() const
 {
     return m_action;
 }
 
-const char* Ewk_Intent_Service::type() const
+const char* EwkIntentService::type() const
 {
     return m_type;
 }
 
-const char* Ewk_Intent_Service::href() const
+const char* EwkIntentService::href() const
 {
     return m_href;
 }
 
-const char* Ewk_Intent_Service::title() const
+const char* EwkIntentService::title() const
 {
     return m_title;
 }
 
-const char* Ewk_Intent_Service::disposition() const
+const char* EwkIntentService::disposition() const
 {
     return m_disposition;
 }
 #endif
 
-Ewk_Intent_Service* ewk_intent_service_ref(Ewk_Intent_Service* service)
-{
-#if ENABLE(WEB_INTENTS_TAG)
-    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
-    service->ref();
-#endif
-
-    return service;
-}
-
-void ewk_intent_service_unref(Ewk_Intent_Service* service)
-{
-#if ENABLE(WEB_INTENTS_TAG)
-    EINA_SAFETY_ON_NULL_RETURN(service);
-
-    service->deref();
-#endif
-}
-
 const char* ewk_intent_service_action_get(const Ewk_Intent_Service* service)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
-
 #if ENABLE(WEB_INTENTS_TAG)
-    return service->action();
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkIntentService, service, impl, 0);
+    return impl->action();
+#else
+    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
+    return 0;
 #endif
 }
 
 const char* ewk_intent_service_type_get(const Ewk_Intent_Service* service)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
-
 #if ENABLE(WEB_INTENTS_TAG)
-    return service->type();
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkIntentService, service, impl, 0);
+    return impl->type();
+#else
+    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
+    return 0;
 #endif
 }
 
 const char* ewk_intent_service_href_get(const Ewk_Intent_Service* service)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
-
 #if ENABLE(WEB_INTENTS_TAG)
-    return service->href();
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkIntentService, service, impl, 0);
+    return impl->href();
+#else
+    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
+    return 0;
 #endif
 }
 
 const char* ewk_intent_service_title_get(const Ewk_Intent_Service* service)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
-
 #if ENABLE(WEB_INTENTS_TAG)
-    return service->title();
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkIntentService, service, impl, 0);
+    return impl->title();
+#else
+    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
+    return 0;
 #endif
 }
 
 const char* ewk_intent_service_disposition_get(const Ewk_Intent_Service* service)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
-
 #if ENABLE(WEB_INTENTS_TAG)
-    return service->disposition();
+    EWK_OBJ_GET_IMPL_OR_RETURN(const EwkIntentService, service, impl, 0);
+    return impl->disposition();
+#else
+    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
+    return 0;
 #endif
 }

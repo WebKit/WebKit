@@ -29,17 +29,20 @@
 #include "WKDictionary.h"
 #include "WKFormSubmissionListener.h"
 #include "WKRetainPtr.h"
+#include "ewk_object_private.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
-class Ewk_Form_Submission_Request : public RefCounted<Ewk_Form_Submission_Request> {
+class EwkFormSubmissionRequest : public Ewk_Object {
 public:
-    ~Ewk_Form_Submission_Request();
+    EWK_OBJECT_DECLARE(EwkFormSubmissionRequest)
 
-    static PassRefPtr<Ewk_Form_Submission_Request> create(WKDictionaryRef values, WKFormSubmissionListenerRef listener)
+    ~EwkFormSubmissionRequest();
+
+    static PassRefPtr<EwkFormSubmissionRequest> create(WKDictionaryRef values, WKFormSubmissionListenerRef listener)
     {
-        return adoptRef(new Ewk_Form_Submission_Request(values, listener));
+        return adoptRef(new EwkFormSubmissionRequest(values, listener));
     }
 
     WKRetainPtr<WKArrayRef> fieldNames() const;
@@ -48,7 +51,7 @@ public:
     void submit();
 
 private:
-    Ewk_Form_Submission_Request(WKDictionaryRef values, WKFormSubmissionListenerRef listener);
+    EwkFormSubmissionRequest(WKDictionaryRef values, WKFormSubmissionListenerRef listener);
 
     WKRetainPtr<WKDictionaryRef> m_wkValues;
     WKRetainPtr<WKFormSubmissionListenerRef> m_wkListener;

@@ -40,6 +40,7 @@
 class EwkUrlSchemeRequest : public Ewk_Object {
 public:
     EWK_OBJECT_DECLARE(EwkUrlSchemeRequest)
+
     static PassRefPtr<EwkUrlSchemeRequest> create(WKSoupRequestManagerRef manager, WKURLRef url, uint64_t requestID)
     {
         if (!manager || !url)

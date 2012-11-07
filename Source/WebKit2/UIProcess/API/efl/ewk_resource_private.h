@@ -28,23 +28,26 @@
 
 #include "WKEinaSharedString.h"
 #include "WKURL.h"
+#include "ewk_object_private.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-class Ewk_Resource : public RefCounted<Ewk_Resource> {
+class EwkResource : public Ewk_Object {
 public:
-    static PassRefPtr<Ewk_Resource> create(WKURLRef url, bool isMainResource)
+    EWK_OBJECT_DECLARE(EwkResource)
+
+    static PassRefPtr<EwkResource> create(WKURLRef url, bool isMainResource)
     {
-        return adoptRef(new Ewk_Resource(url, isMainResource));
+        return adoptRef(new EwkResource(url, isMainResource));
     }
 
     const char* url() const;
     bool isMainResource() const;
 
 private:
-    Ewk_Resource(WKURLRef url, bool isMainResource);
+    EwkResource(WKURLRef url, bool isMainResource);
 
     WKEinaSharedString m_url;
     bool m_isMainResource;
