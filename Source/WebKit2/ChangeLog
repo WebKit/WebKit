@@ -1,3 +1,15 @@
+2012-11-06  Anders Carlsson  <andersca@apple.com>
+
+        Update Java related WKSI function names
+        https://bugs.webkit.org/show_bug.cgi?id=101414
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        (WebKit::PluginInfoStore::policyForPlugin):
+        (WebKit::PluginInfoStore::reactivateInactivePlugin):
+
 2012-11-06  Kiran Muppala  <cmuppala@apple.com>
 
         Add application occlusion criterion to enable/disable process suppression on Mac

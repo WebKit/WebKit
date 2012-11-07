@@ -625,7 +625,7 @@ void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmb
 
         if (pluginPackage && [pluginPackage bundleIdentifier] == "com.oracle.java.JavaAppletPlugin") {
             // Reactivate the plug-in and reload the page so the plug-in will be instantiated correctly.
-            WKJLReportWebComponentsUsed();
+            WKActivateJavaPlugIn();
             [m_webView reload:nil];
         }
 
