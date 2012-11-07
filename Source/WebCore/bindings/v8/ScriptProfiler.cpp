@@ -37,7 +37,6 @@
 #include "ScriptObject.h"
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
-#include "V8DOMMap.h"
 #include "V8Node.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WrapperTypeInfo.h"

@@ -1,3 +1,14 @@
+2012-11-07  Adam Barth  <abarth@webkit.org>
+
+        [V8] We should hide the DOMWrapperMaps inside DOMDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=101430
+
+        Reviewed by Kentaro Hara.
+
+        Remove unneeded header includes.
+
+        * src/WebScriptController.cpp:
+
 2012-11-07  Varun Jain  <varunjain@chromium.org>
 
         Add new gesture type, LongTap, which is basically the completion of a GestureLongPress

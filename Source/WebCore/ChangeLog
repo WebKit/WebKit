@@ -1,3 +1,33 @@
+2012-11-07  Adam Barth  <abarth@webkit.org>
+
+        [V8] We should hide the DOMWrapperMaps inside DOMDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=101430
+
+        Reviewed by Kentaro Hara.
+
+        This is yet another incremental step towards landing the patch in bug
+        101110. In this patch, we hide the existence of DOMWrapperMaps inside
+        DOMDataStore. In the process, we can remove V8DOMMap.cpp.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::set):
+        * bindings/v8/DOMWrapperWorld.h:
+        * bindings/v8/ScriptProfiler.cpp:
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::neuterBinding):
+        * bindings/v8/V8DOMMap.cpp: Removed.
+        * bindings/v8/V8DOMMap.h: Removed.
+        * bindings/v8/V8DOMWindowShell.cpp:
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::getCachedWrapper):
+        (WebCore::V8DOMWrapper::setWrapperClass):
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMObject):
+        * bindings/v8/V8NPObject.cpp:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        * bindings/v8/WorkerScriptController.cpp:
+
 2012-11-07  Varun Jain  <varunjain@chromium.org>
 
         Add new gesture type, LongTap, which is basically the completion of a GestureLongPress

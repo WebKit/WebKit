@@ -37,7 +37,6 @@
 #include "Node.h"
 #include "NodeFilter.h"
 #include "V8CustomXPathNSResolver.h"
-#include "V8DOMMap.h"
 #include "V8DOMWindowShell.h"
 #include "V8Utilities.h"
 #include "WrapperTypeInfo.h"
@@ -123,20 +122,18 @@ namespace WebCore {
             if (LIKELY(!context))
                 return node->wrapper();
 
-            return context->world()->domDataStore()->domNodeMap().get(node);
+            return context->world()->domDataStore()->get(node);
         }
 
     private:
-        static void setJSWrapperPrivate(void* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
+        static void setWrapperClass(void*, v8::Persistent<v8::Object> wrapper)
         {
             wrapper.SetWrapperClassId(v8DOMObjectClassId);
-            getDOMObjectMap(isolate).set(object, wrapper);
         }
 
-        static void setJSWrapperPrivate(Node* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
+        static void setWrapperClass(Node*, v8::Persistent<v8::Object> wrapper)
         {
             wrapper.SetWrapperClassId(v8DOMNodeClassId);
-            getDOMNodeMap(isolate).set(object, wrapper);
         }
     };
 
@@ -145,7 +142,8 @@ namespace WebCore {
     {
         v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
         ASSERT(maybeDOMWrapper(wrapperHandle));
-        setJSWrapperPrivate(object.leakRef(), wrapperHandle, isolate);
+        setWrapperClass(object.get(), wrapperHandle);
+        DOMDataStore::current(isolate)->set(object.leakRef(), wrapperHandle);
         return wrapperHandle;
     }
 

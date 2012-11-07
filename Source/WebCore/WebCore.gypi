@@ -2300,8 +2300,6 @@
             'bindings/v8/V8DependentRetained.h',
             'bindings/v8/V8DOMConfiguration.cpp',
             'bindings/v8/V8DOMConfiguration.h',
-            'bindings/v8/V8DOMMap.cpp',
-            'bindings/v8/V8DOMMap.h',
             'bindings/v8/V8DOMWindowShell.cpp',
             'bindings/v8/V8DOMWindowShell.h',
             'bindings/v8/V8DOMWrapper.cpp',

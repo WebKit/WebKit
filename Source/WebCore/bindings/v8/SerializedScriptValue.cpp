@@ -2211,7 +2211,7 @@ inline void neuterBinding(T* object)
 {
     Vector<DOMDataStore*>& allStores = V8PerIsolateData::current()->allStores();
     for (size_t i = 0; i < allStores.size(); i++) {
-        v8::Handle<v8::Object> wrapper = allStores[i]->domObjectMap().get(object);
+        v8::Handle<v8::Object> wrapper = allStores[i]->get(object);
         if (!wrapper.IsEmpty())
             wrapper->SetIndexedPropertiesToExternalArrayData(0, v8::kExternalByteArray, 0);
     }
