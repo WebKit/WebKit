@@ -1,3 +1,22 @@
+2012-11-07  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Qt] Implement deleteCookie() for persistent storage
+        https://bugs.webkit.org/show_bug.cgi?id=101272
+
+        Reviewed by Jocelyn Turcotte.
+
+        Individual cookies were never persistently cleared as the
+        deleteCookie() virtual method was not implemented for persistent
+        storage. That's why cookies were only deleted for the current
+        session.
+
+        * platform/qt/CookieJarQt.cpp:
+        (WebCore::SharedCookieJarQt::deleteCookie):
+        (WebCore): added deleteCookie() implementation for persistent
+        storage.
+        * platform/qt/CookieJarQt.h:
+        (SharedCookieJarQt):
+
 2012-11-07  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Style should update when 'pseudo' attribute is dynamically updated

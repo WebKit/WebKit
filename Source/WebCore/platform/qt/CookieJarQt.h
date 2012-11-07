@@ -38,6 +38,7 @@ public:
     void destroy();
 
     void getHostnamesWithCookies(HashSet<String>&);
+    bool deleteCookie(const QNetworkCookie&);
     void deleteCookiesForHostname(const String&);
     void deleteAllCookies();
     bool setCookiesFromUrl(const QList<QNetworkCookie>&, const QUrl&);
