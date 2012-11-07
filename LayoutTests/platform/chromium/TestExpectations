@@ -3670,7 +3670,7 @@ webkit.org/b/93938 [ Linux Win Debug ] fast/forms/range/slider-onchange-event.ht
 # Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
 webkit.org/b/89826 [ Mac Win ] fast/css/word-space-extra.html [ Failure ]
 
-webkit.org/b/94002 [ Win7 ] inspector/debugger [ Pass Timeout ]
+webkit.org/b/94002 [ Win7 Debug ] inspector/debugger [ Pass Timeout ]
 
 # Flaky
 webkit.org/b/99389 [ Win ] inspector/debugger/xhr-breakpoints.html [ Pass Text ]
