@@ -68,9 +68,11 @@ private:
     virtual void setPaintingEnabled(bool);
     virtual void updatePreferences(const WebPreferencesStore&) OVERRIDE;
 
+#if USE(ACCELERATED_COMPOSITING)
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void scheduleCompositingLayerFlush() OVERRIDE;
+#endif
 
 #if PLATFORM(WIN)
     virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&);

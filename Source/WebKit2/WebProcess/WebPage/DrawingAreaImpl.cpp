@@ -307,6 +307,7 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
 #endif
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 GraphicsLayerFactory* DrawingAreaImpl::graphicsLayerFactory()
 {
     if (m_layerTreeHost)
@@ -361,6 +362,7 @@ void DrawingAreaImpl::scheduleCompositingLayerFlush()
         return;
     m_layerTreeHost->scheduleLayerFlush();
 }
+#endif
 
 void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {

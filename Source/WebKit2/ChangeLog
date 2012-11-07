@@ -1,3 +1,18 @@
+2012-11-06  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Move DrawingAreaImpl methods graphicsLayerFactory, setRootCompositingLayer & scheduleCompositingLayerSync under ACCELERATED_COMPOSITING
+        https://bugs.webkit.org/show_bug.cgi?id=101427
+
+        Reviewed by Anders Carlsson.
+
+        Moving these methods under the ACCELERATED_COMPOSITING flag.
+        This fixes broken wincairo due to use of override specifier.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl):
+
 2012-11-06  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         [EFL][WK2] API test crash with accelerated compositing on.
