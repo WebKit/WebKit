@@ -387,10 +387,10 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 
 #if USE(ACCELERATED_COMPOSITING)
         // Recreate surface if needed.
-        if (impl->evasGLSurface()) {
+        if (impl->evasGLSurface())
             impl->clearEvasGLSurface();
-            impl->createGLSurface(IntSize(width, height));
-        }
+
+        impl->createGLSurface(IntSize(width, height));
 #endif
 #if USE(TILED_BACKING_STORE)
         impl->pageClient()->updateViewportSize(IntSize(width, height));

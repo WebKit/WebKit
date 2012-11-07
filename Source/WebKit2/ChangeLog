@@ -1,3 +1,21 @@
+2012-11-06  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        [EFL][WK2] API test crash with accelerated compositing on.
+        https://bugs.webkit.org/show_bug.cgi?id=101384
+
+        Reviewed by Gyuyoung Kim.
+
+        If accelerated compositing is enabled API tests should create GL evas engine
+        instead of default one.
+        Also, in API tests first window resize and display often comes earlier
+        than enterAcceleratedCompositingMode call, so let's create GL surface in
+        _ewk_view_smart_calculate on first window resize.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+
 2012-11-06  Anders Carlsson  <andersca@apple.com>
 
         Update Java related WKSI function names
