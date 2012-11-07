@@ -1,3 +1,21 @@
+2012-11-06  Alice Boxhall  <aboxhall@chromium.org>
+
+        Unreviewed gardening. Rebaseline the tests added in http://trac.webkit.org/changeset/133686 for different platforms.
+
+        * platform/chromium-linux/fast/backgrounds/transformed-body-background-expected.png: Added.
+        * platform/chromium-linux/fast/backgrounds/transformed-body-html-background-expected.png: Added.
+        * platform/chromium-linux/fast/backgrounds/transformed-html-body-background-expected.png: Added.
+        * platform/chromium-mac-lion/compositing/repaint/composited-document-element-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/repaint/composited-document-element-expected.png: Added.
+        * platform/chromium-mac-snowleopard/compositing/repaint/composited-document-element-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/repaint/composited-document-element-expected.png: Added.
+        * platform/chromium-mac/compositing/repaint/composited-document-element-expected.png:
+        * platform/chromium-mac/fast/backgrounds/transformed-body-background-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/transformed-body-html-background-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/transformed-html-body-background-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/repaint/composited-document-element-expected.png: Added.
+        * platform/efl-wk1/compositing/repaint/composited-document-element-expected.png: Renamed from LayoutTests/platform/efl/compositing/repaint/composited-document-element-expected.png.
+
 2012-11-06  Joshua Bell  <jsbell@chromium.org>
 
         fast/forms/select-set-length-with-mutation-remove is slow on chromium debug builds
