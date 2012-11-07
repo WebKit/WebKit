@@ -1,3 +1,18 @@
+2012-11-07  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r129535
+
+    2012-09-25  Akash Vaswani  <avaswani@apple.com>
+
+            Crash after clicking in plugin at kauaiexplorer.com
+            <rdar://problem/11525987/> and https://bugs.webkit.org/show_bug.cgi?id=90925
+
+            Reviewed by Sam Weinig.
+
+            * http/tests/plugins/get-url-beforeunload-destroys-plugin-expected.txt: Added.
+            * http/tests/plugins/get-url-beforeunload-destroys-plugin.html: Added.
+            * http/tests/plugins/resources/notify-done.html: Added.
+
 2012-11-06  Lucas Forschler  <lforschler@apple.com>
 
         Merge r129469
@@ -11140,6 +11155,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .
