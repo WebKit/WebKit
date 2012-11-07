@@ -1,7 +1,6 @@
 (Scrolling node
   (viewport rect 0 0 785 600)
   (contents size 785 1021)
-  (Scrolling on main thread because: Has non-layer fixed objects, )
   (children 1
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)

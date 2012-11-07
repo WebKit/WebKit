@@ -155,7 +155,7 @@ private:
     virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*) { }
     virtual void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons) { }
 
-    bool hasNonLayerFixedObjects(FrameView*) const;
+    virtual bool hasVisibleSlowRepaintFixedObjects(FrameView*) const;
     void updateShouldUpdateScrollLayerPositionOnMainThread();
 
     bool m_forceMainThreadScrollLayerPositionUpdates;

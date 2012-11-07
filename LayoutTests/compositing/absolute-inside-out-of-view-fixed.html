@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            height: 2500px;
+        }
+
+        .box {
+          height: 100px;
+          width: 100px;
+        }
+
+        .fixed {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+        }
+
+        .wrapper {
+          position: absolute;
+          background-color: green;
+        }
+        
+    </style>
+    <script>
+      if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+        if (window.internals) {
+            window.internals.settings.setEnableCompositingForFixedPosition(true);
+            window.internals.settings.setFixedPositionCreatesStackingContext(true);
+        }
+      }
+
+      function doScroll()
+      {
+        window.setTimeout(function() {
+          window.scrollTo(0, 200);
+          if (window.internals) {
+            document.getElementById('results').innerText = internals.layerTreeAsText(document);
+            testRunner.notifyDone();
+          }
+        }, 10);
+      }
+      
+      window.addEventListener('load', doScroll, false);
+    </script>
+</head>
+<body>
+  <pre id="results"></pre>
+  <div class="fixed">
+    <div class="wrapper box">
+    </div>
+  </div>
+</body>
+</html>

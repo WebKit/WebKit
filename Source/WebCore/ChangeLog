@@ -1,3 +1,40 @@
+2012-11-07  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=101303
+        Fixed position elements that are out of view still end up forcing 
+        non-threaded scrolling
+        -and corresponding-
+        <rdar://problem/12642222>
+
+        Reviewed by Simon Fraser.
+
+        Re-name hasNonLayerFixedObjects() to 
+        hasVisibleSlowRepaintFixedObjects() and make it virtual. 
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::hasVisibleSlowRepaintFixedObjects):
+        (WebCore::ScrollingCoordinator::mainThreadScrollingReasons):
+        * page/scrolling/ScrollingCoordinator.h:
+        (ScrollingCoordinator):
+
+        Override hasVisibleSlowRepaintFixedObjects() to always return false. 
+        We don't want to bother with the extra computation in the 
+        ScrollingCoordinator implementation, though other ports might still 
+        want it.
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        (WebCore::ScrollingCoordinatorMac::hasVisibleSlowRepaintFixedObjects):
+        (ScrollingCoordinatorMac):
+
+        Make this function const so that we can call it from 
+        requiresCompositingForPosition().
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+
+        Actually be thorough here and check if the fixed object has any 
+        descendants that are visible in the view. If it does, then we do 
+        want to composite the fixed object.
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+        * rendering/RenderLayerCompositor.h:
+
 2012-11-07  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Style fix following r133262.

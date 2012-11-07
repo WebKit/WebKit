@@ -1,3 +1,24 @@
+2012-11-07  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=101303
+        Fixed position elements that are out of view still end up forcing 
+        non-threaded scrolling
+        -and corresponding-
+        <rdar://problem/12642222>
+
+        Reviewed by Simon Fraser.
+
+        New tests for an invisible fixed object that has visible children.
+        * compositing/absolute-inside-out-of-view-fixed-expected.txt: Added.
+        * compositing/absolute-inside-out-of-view-fixed.html: Added.
+        * platform/mac/tiled-drawing/fixed/absolute-inside-out-of-view-fixed-expected.txt: Added.
+        * platform/mac/tiled-drawing/fixed/absolute-inside-out-of-view-fixed.html: Added.
+
+        Updated results because these tests can now scroll on the scrolling 
+        thread, yay!
+        * platform/mac/tiled-drawing/fixed/fixed-position-out-of-view-expected.txt:
+        * platform/mac/tiled-drawing/fixed/fixed-position-out-of-view-negative-zindex-expected.txt:
+
 2012-11-07  Philip Rogers  <pdr@google.com>
 
         Update expectations for svg/text/text-rescale.svg
