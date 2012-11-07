@@ -1,3 +1,13 @@
+2012-11-06  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] New baselines for some CSS3 filter tests.  Unreviewed.
+
+        * platform/chromium-mac/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-mac/css3/filters/effect-reference-expected.png:
+        * platform/chromium-mac/css3/filters/effect-reference-expected.txt:
+        * platform/chromium-win/css3/filters/effect-reference-expected.png:
+        * platform/chromium-win/css3/filters/effect-reference-expected.txt:
+
 2012-11-06  Simon Fraser  <simon.fraser@apple.com>
 
         -webkit-background-clip:text produces artifacts when applied to the body and the browser is resized
