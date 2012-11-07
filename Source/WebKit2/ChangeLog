@@ -1,3 +1,29 @@
+2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][UNIX] Crash in WebKit::PluginProcessProxy::scanPlugin()
+        https://bugs.webkit.org/show_bug.cgi?id=101446
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make sure that the disposition of the SIGCHLD signal is reset to the default
+        before calling g_spawn_sync(). If the disposition is set to SIG_IGN, then
+        g_spawn_sync() will not be able to return the exit status of the child
+        process, our exit failure check will be useless and the following warning
+        will be printed:
+
+        GLib-WARNING **: In call to g_spawn_sync(), exit status of a child process
+        was requested but SIGCHLD action was set to SIG_IGN and ECHILD was received
+        by waitpid(), so exit status can't be returned. This is a bug in the
+        program calling g_spawn_sync(); either don't request the exit status, or
+        don't set the SIGCHLD action.
+
+        This patch also adds a NULL-check for stdOut to avoid crashing in such
+        case and makes use of String::split() to parse stdOut instead of doing it
+        manually.
+
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+
 2012-11-07  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Use setPseudo() instead of setShadowPseudoId().

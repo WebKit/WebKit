@@ -72,28 +72,34 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     int status;
     char* stdOut = 0;
 
+    // If the disposition of SIGCLD signal is set to SIG_IGN (default)
+    // then the signal will be ignored and g_spawn_sync() will not be
+    // able to return the status.
+    // As a consequence, we make sure that the disposition is set to
+    // SIG_DFL before calling g_spawn_sync().
+    struct sigaction action;
+    sigaction(SIGCLD, 0, &action);
+    if (action.sa_handler == SIG_IGN) {
+        action.sa_handler = SIG_DFL;
+        sigaction(SIGCLD, &action, 0);
+    }
+
     if (!g_spawn_sync(0, argv, 0, G_SPAWN_STDERR_TO_DEV_NULL, 0, 0, &stdOut, 0, &status, 0))
         return false;
 
-    if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS) {
+    if (!WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS || !stdOut) {
         free(stdOut);
         return false;
     }
 
-    const unsigned kNumLinesExpected = 3;
-    String lines[kNumLinesExpected];
-    unsigned lineIndex = 0;
+    String stdOutString(reinterpret_cast<const UChar*>(stdOut));
+    free(stdOut);
 
-    const UChar* current = reinterpret_cast<const UChar*>(stdOut);
+    Vector<String> lines;
+    stdOutString.split(UChar('\n'), lines);
 
-    while (lineIndex < kNumLinesExpected) {
-        const UChar* start = current;
-        while (*current++ != UChar('\n')) { }
-        lines[lineIndex++] = String(start, current - start - 1);
-    }
-
-    if (stdOut)
-        free(stdOut);
+    if (lines.size() < 3)
+        return false;
 
     result.name.swap(lines[0]);
     result.description.swap(lines[1]);
