@@ -1,3 +1,23 @@
+2012-11-06  Elliott Sprehn  <esprehn@chromium.org>
+
+        Make Document::renderer faster by using the cached ptr for RenderView
+        https://bugs.webkit.org/show_bug.cgi?id=101409
+
+        Reviewed by Eric Seidel.
+
+        In Bug 101277 I made Document::renderView() just return m_renderView instead
+        of casting the result of renderer(). While this made renderView() cheaper it
+        makes more sense to just make renderer() faster for Document pointers and
+        go back to the out of line method in RenderView.h because lots of places in
+        the code do document()->renderer().
+
+        No new tests, this is just a refactor.
+
+        * dom/Document.h:
+        (WebCore::Document::renderer):
+        * rendering/RenderView.h:
+        (WebCore::Document::renderView):
+
 2012-11-06  Adam Barth  <abarth@webkit.org>
 
         [V8] neuterBinding should remember the type of its argument

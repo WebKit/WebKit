@@ -349,6 +349,11 @@ inline const RenderView* toRenderView(const RenderObject* object)
 // This will catch anyone doing an unnecessary cast.
 void toRenderView(const RenderView*);
 
+ALWAYS_INLINE RenderView* Document::renderView() const
+{
+    return toRenderView(renderer());
+}
+
 // Stack-based class to assist with LayoutState push/pop
 class LayoutStateMaintainer {
     WTF_MAKE_NONCOPYABLE(LayoutStateMaintainer);

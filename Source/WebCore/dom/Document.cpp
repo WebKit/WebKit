@@ -478,7 +478,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_isViewSource(false)
     , m_sawElementsInKnownNamespaces(false)
     , m_isSrcdocDocument(false)
-    , m_renderView(0)
+    , m_renderer(0)
     , m_eventQueue(DocumentEventQueue::create(this))
     , m_weakReference(DocumentWeakReference::create(this))
     , m_idAttributeName(idAttr)
@@ -2053,12 +2053,6 @@ void Document::createStyleResolver()
 void Document::clearStyleResolver()
 {
     m_styleResolver.clear();
-}
-
-void Document::setRenderer(RenderObject* renderer)
-{
-    m_renderView = toRenderView(renderer);
-    Node::setRenderer(renderer);
 }
 
 void Document::attach()

@@ -556,8 +556,17 @@ public:
 
     RenderArena* renderArena() { return m_renderArena.get(); }
 
-    RenderView* renderView() const { return m_renderView; }
-    void setRenderer(RenderObject*);
+    // Implemented in RenderView.h to avoid a cyclic header dependency this just
+    // returns renderer so callers can avoid verbose casts.
+    RenderView* renderView() const;
+
+    // Shadow the implementations on Node to provide faster access for documents.
+    RenderObject* renderer() const { return m_renderer; }
+    void setRenderer(RenderObject* renderer)
+    {
+        m_renderer = renderer;
+        Node::setRenderer(renderer);
+    }
 
     void clearAXObjectCache();
     AXObjectCache* axObjectCache() const;
@@ -1436,7 +1445,7 @@ private:
     bool m_sawElementsInKnownNamespaces;
     bool m_isSrcdocDocument;
 
-    RenderView* m_renderView;
+    RenderObject* m_renderer;
     RefPtr<DocumentEventQueue> m_eventQueue;
 
     RefPtr<DocumentWeakReference> m_weakReference;
