@@ -191,6 +191,9 @@ public:
     virtual void setNonFastScrollableRegion(const WebVector<WebRect>&) = 0;
     virtual WebVector<WebRect> nonFastScrollableRegion() const = 0;
 
+    virtual void setTouchEventHandlerRegion(const WebVector<WebRect>&) { };
+    virtual WebVector<WebRect> touchEventHandlerRegion() const { return WebVector<WebRect>();}
+
     virtual void setIsContainerForFixedPositionLayers(bool) = 0;
     virtual bool isContainerForFixedPositionLayers() const = 0;
 

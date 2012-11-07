@@ -1,3 +1,17 @@
+2012-11-07  Yusuf Ozuysal  <yusufo@google.com>
+
+        Add API for touchEventHandlerRegion to WebLayer
+        https://bugs.webkit.org/show_bug.cgi?id=101406
+
+        Reviewed by James Robinson.
+
+        These will be used to keep track of JavaScript touch event handlers from the compositor thread.
+
+        * chromium/public/WebLayer.h:
+        (WebKit::WebLayer::setTouchEventHandlerRegion):
+        (WebKit::WebLayer::touchEventHandlerRegion):
+        (WebLayer):
+
 2012-10-23  Stephen White  <senorblanco@chromium.org>
 
         [skia] Implement reference (url) filters on composited layers.
