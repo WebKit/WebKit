@@ -1,3 +1,22 @@
+2012-11-07  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Assertion failure with open() within upgradeneeded
+        https://bugs.webkit.org/show_bug.cgi?id=96947
+
+        Reviewed by Dimitri Glazkov.
+
+        Postpone creation of the "pending second half open" until the version change
+        transaction has started.
+
+        Test: storage/indexeddb/unblocked-version-changes.html
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::setIntVersionInternal):
+        (WebCore::IDBDatabaseBackendImpl::runIntVersionChangeTransaction):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBDatabaseCallbacks.h:
+
 2012-11-07  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Add CustomFilterMeshBoxType to ValidatedCustomFilterOperation

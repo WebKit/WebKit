@@ -1,3 +1,24 @@
+2012-11-07  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Assertion failure with open() within upgradeneeded
+        https://bugs.webkit.org/show_bug.cgi?id=96947
+
+        Reviewed by Dimitri Glazkov.
+
+        Exercise the code path leading to the assert by having a second version change transaction
+        unblocked by the first's connection closing. Includes a known failure due to metadata
+        snapshot timing.
+
+        * storage/indexeddb/resources/unblocked-version-changes.js: Added.
+        (test):
+        (openConnection):
+        (onUpgradeNeeded):
+        (onError):
+        (onUpgradeNeeded2):
+        (onSuccess):
+        * storage/indexeddb/unblocked-version-changes-expected.txt: Added.
+        * storage/indexeddb/unblocked-version-changes.html: Added.
+
 2012-11-06  Simon Fraser  <simon.fraser@apple.com>
 
         Fix failing platform/mac/tiled-drawing on Lion.

@@ -304,8 +304,9 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
     callbacks->onSuccess(PassRefPtr<IDBTransactionBackendInterface>(transaction));
 }
 
-void IDBDatabaseBackendImpl::setIntVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
+void IDBDatabaseBackendImpl::setIntVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, int64_t version, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
+    RefPtr<IDBCallbacks> callbacks(prpCallbacks);
     int64_t databaseId = database->id();
     int64_t oldVersion = database->m_metadata.intVersion;
     ASSERT(version > oldVersion);
@@ -316,6 +317,8 @@ void IDBDatabaseBackendImpl::setIntVersionInternal(ScriptExecutionContext*, Pass
         transaction->abort(error);
         return;
     }
+    ASSERT(!database->m_pendingSecondHalfOpenWithVersion);
+    database->m_pendingSecondHalfOpenWithVersion = PendingOpenWithVersionCall::create(callbacks, databaseCallbacks, version);
     callbacks->onUpgradeNeeded(oldVersion, transaction, database);
 }
 
@@ -498,7 +501,7 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVer
     ASSERT(!ec);
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
-    OwnPtr<ScriptExecutionContext::Task> intVersionTask = createCallbackTask(&IDBDatabaseBackendImpl::setIntVersionInternal, database, requestedVersion, callbacks, transaction);
+    OwnPtr<ScriptExecutionContext::Task> intVersionTask = createCallbackTask(&IDBDatabaseBackendImpl::setIntVersionInternal, database, requestedVersion, callbacks, databaseCallbacks, transaction);
     OwnPtr<ScriptExecutionContext::Task> resetVersionOnAbortTask = createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_metadata.version, m_metadata.intVersion);
     if (!transaction->scheduleTask(intVersionTask.release(), resetVersionOnAbortTask.release())) {
         // FIXME: Remove one of the following lines.
@@ -506,7 +509,6 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVer
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
     }
     ASSERT(!m_pendingSecondHalfOpenWithVersion);
-    m_pendingSecondHalfOpenWithVersion = PendingOpenWithVersionCall::create(callbacks, databaseCallbacks, requestedVersion);
     m_databaseCallbacksSet.add(databaseCallbacks);
 }
 
