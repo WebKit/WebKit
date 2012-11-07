@@ -1,5 +1,22 @@
 2012-11-06  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r128792
+
+    2012-09-17  Anders Carlsson  <andersca@apple.com>
+
+            Crash if we fail to allocate memory for the argument encoder buffer.
+            https://bugs.webkit.org/show_bug.cgi?id=88367
+
+            Reviewed by Andreas Kling.
+            <rdar://problem/11488239>
+
+            Since there's no way to recover from malloc returning null here, just crash.
+
+            * Platform/CoreIPC/ArgumentEncoder.cpp:
+            (CoreIPC::ArgumentEncoder::grow):
+
+2012-11-06  Lucas Forschler  <lforschler@apple.com>
+
         Merge r128774
 
     2012-09-17  Anders Carlsson  <andersca@apple.com>
@@ -47419,6 +47436,7 @@
         socketpair().
 
 == Rolled over to ChangeLog-2011-06-04 ==
+.
 .
 .
 .

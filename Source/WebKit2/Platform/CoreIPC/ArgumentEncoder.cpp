@@ -80,8 +80,9 @@ uint8_t* ArgumentEncoder::grow(unsigned alignment, size_t size)
             m_buffer = static_cast<uint8_t*>(malloc(newCapacity));
         else
             m_buffer = static_cast<uint8_t*>(realloc(m_buffer, newCapacity));
-        
-        // FIXME: What should we do if allocating memory fails?
+
+        if (!m_buffer)
+            CRASH();
 
         m_bufferCapacity = newCapacity;        
     }
