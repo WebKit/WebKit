@@ -71,6 +71,7 @@ private:
     void getLocaleInfo(LCTYPE, DWORD&);
     void ensureShortMonthLabels();
     void ensureMonthLabels();
+    void ensureShortDateTokens();
 #if ENABLE(CALENDAR_PICKER)
     void ensureWeekDayShortLabels();
 #endif
@@ -78,6 +79,7 @@ private:
     virtual void initializeLocaleData() OVERRIDE;
 
     LCID m_lcid;
+    Vector<DateFormatToken> m_shortDateTokens;
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     Vector<String> m_shortMonthLabels;
     Vector<String> m_monthLabels;
