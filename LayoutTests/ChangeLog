@@ -1,3 +1,16 @@
+2012-11-07  Philip Rogers  <pdr@google.com>
+
+        Skip SVG repaint tracking when parent container transforms
+        https://bugs.webkit.org/show_bug.cgi?id=101177
+
+        Reviewed by Eric Seidel.
+
+        The repaint area in svg/repaint/inner-svg-change-viewBox.svg has
+        been tightened as a result of this patch.
+
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-11-07  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Text on scaled layer is blurry

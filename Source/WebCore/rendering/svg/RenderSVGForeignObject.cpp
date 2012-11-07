@@ -127,7 +127,7 @@ void RenderSVGForeignObject::layout()
     ASSERT(needsLayout());
     ASSERT(!view()->layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(this));
     SVGForeignObjectElement* foreign = static_cast<SVGForeignObjectElement*>(node());
 
     bool updateCachedBoundariesInParents = false;

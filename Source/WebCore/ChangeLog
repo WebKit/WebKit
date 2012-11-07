@@ -1,3 +1,46 @@
+2012-11-07  Philip Rogers  <pdr@google.com>
+
+        Skip SVG repaint tracking when parent container transforms
+        https://bugs.webkit.org/show_bug.cgi?id=101177
+
+        Reviewed by Eric Seidel.
+
+        This patch skips child repaint rect checks when a parent container is transformed, leading
+        to a 75% increase on the RoboHornet SVG benchmark:
+            http://www.robohornet.org/#et=svg  (average of 2 runs)
+            Before patch: 161.6ms
+            After patch: 38.5ms
+
+        SVG transforms are relative to the local container which makes calculating an absolute
+        repaint rect expensive because it requires multiplying the local repaint rect by each
+        parent container's local transform. See SVGRenderSupport::computeFloatRectForRepaint
+        as an example of this calculation.
+
+        This patch takes advantage of SVG's container rules: when a parent container's transform
+        changes, all children must be repainted (there is no absolute positioning in SVG).
+        SVGRenderSupport::checkForSVGRepaintDuringLayout has been added which checks for whether
+        the parent transform changed before doing child repaint checks. A similar optimization is
+        used in HTML (see RenderObject::checkForRepaintDuringLayout) where no repaint checking
+        is done when the view is fully repainted.
+
+        This code is tested in existing tests.
+
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::layout):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::layout):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::layout):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::checkForSVGRepaintDuringLayout):
+        (WebCore):
+        * rendering/svg/SVGRenderSupport.h:
+        (SVGRenderSupport):
+
 2012-11-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Textfields don't get focus when navigated to from 'show all tabs' button

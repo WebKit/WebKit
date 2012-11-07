@@ -349,7 +349,7 @@ void RenderSVGText::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this, SVGRenderSupport::checkForSVGRepaintDuringLayout(this));
 
     bool updateCachedBoundariesInParents = false;
     if (m_needsTransformUpdate) {
