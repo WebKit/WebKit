@@ -306,9 +306,20 @@ void V8GCController::checkMemoryUsage()
         MutexLocker locker(workingSetEstimateMBMutex());
         workingSetEstimateMBCopy = workingSetEstimateMB;
     }
-
-    if ((memoryUsageMB > lowMemoryUsageMB && memoryUsageMB > 2 * workingSetEstimateMBCopy) || (memoryUsageMB > highMemoryUsageMB && memoryUsageMB > workingSetEstimateMBCopy + highUsageDeltaMB))
+    if (memoryUsageMB > lowMemoryUsageMB && memoryUsageMB > 2 * workingSetEstimateMBCopy) {
+        // Memory usage is large and doubled since the last GC.
+        // Check if we need to send low memory notification.
+        v8::HeapStatistics heapStatistics;
+        v8::V8::GetHeapStatistics(&heapStatistics);
+        int heapSizeMB = heapStatistics.total_heap_size() >> 20;
+        // Do not send low memory notification if V8 heap size is more than 7/8
+        // of total memory usage. Let V8 to schedule GC itself in this case.
+        if (heapSizeMB < memoryUsageMB / 8 * 7)
+            v8::V8::LowMemoryNotification();
+    } else if (memoryUsageMB > highMemoryUsageMB && memoryUsageMB > workingSetEstimateMBCopy + highUsageDeltaMB) {
+        // We are approaching OOM and memory usage increased by highUsageDeltaMB since the last GC.
         v8::V8::LowMemoryNotification();
+    }
 #endif
 }
 

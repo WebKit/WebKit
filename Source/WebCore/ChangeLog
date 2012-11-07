@@ -1,3 +1,17 @@
+2012-11-07  Ulan Degenbaev  <ulan@chromium.org>
+
+        [V8] WebKit sends unnecessary low memory notification when running memory benchmarks
+        https://bugs.webkit.org/show_bug.cgi?id=101474
+
+        Reviewed by Kentaro Hara.
+
+        Do not send low memory notification to V8 when most of memory usage
+        comes from V8 heap and not DOM objects. In this case V8 can schedule GC
+        itself more optimally.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::checkMemoryUsage):
+
 2012-11-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Open link in this window action
