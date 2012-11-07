@@ -60,16 +60,31 @@ public:
     static DOMDataStore* current(v8::Isolate*);
 
     inline v8::Handle<v8::Object> get(void* object) const { return m_domObjectMap->get(object); }
-    inline v8::Handle<v8::Object> get(Node* object) const { return m_domNodeMap->get(object); }
+    inline v8::Handle<v8::Object> get(Node* object) const
+    {
+        if (m_type == MainWorld)
+            return object->wrapper();
+        return m_domObjectMap->get(object);
+    }
 
-    inline void set(void* object, v8::Persistent<v8::Object> wrapper) { return m_domObjectMap->set(object, wrapper); }
-    inline void set(Node* object, v8::Persistent<v8::Object> wrapper) { return m_domNodeMap->set(object, wrapper); }
+    inline void set(void* object, v8::Persistent<v8::Object> wrapper) { m_domObjectMap->set(object, wrapper); }
+    inline void set(Node* object, v8::Persistent<v8::Object> wrapper)
+    {
+        if (m_type == MainWorld) {
+            ASSERT(object->wrapper().IsEmpty());
+            object->setWrapper(wrapper);
+            wrapper.MakeWeak(object, weakCallback);
+            return;
+        }
+        m_domObjectMap->set(object, wrapper);
+    }
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
-protected:
+private:
+    static void weakCallback(v8::Persistent<v8::Value>, void* context);
+
     Type m_type;
-    OwnPtr<DOMWrapperMap<Node> > m_domNodeMap;
     OwnPtr<DOMWrapperMap<void> > m_domObjectMap;
 };
 

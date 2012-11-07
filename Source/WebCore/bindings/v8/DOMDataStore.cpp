@@ -32,7 +32,6 @@
 #include "DOMDataStore.h"
 
 #include "DOMWrapperMap.h"
-#include "IntrusiveDOMWrapperMap.h"
 #include "V8Binding.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MainThread.h>
@@ -42,28 +41,14 @@ namespace WebCore {
 DOMDataStore::DOMDataStore(Type type)
     : m_type(type)
 {
-    if (type == MainWorld)
-        m_domNodeMap = adoptPtr(new IntrusiveDOMWrapperMap<Node>);
-    else {
-        ASSERT(type == IsolatedWorld || type == Worker);
-        // FIXME: In principle, we shouldn't need to create this
-        // wrapper map for workers because there are no Nodes on
-        // worker threads.
-        m_domNodeMap = adoptPtr(new DOMWrapperHashMap<Node>);
-    }
     m_domObjectMap = adoptPtr(new DOMWrapperHashMap<void>);
-
     V8PerIsolateData::current()->registerDOMDataStore(this);
 }
 
 DOMDataStore::~DOMDataStore()
 {
     ASSERT(m_type != MainWorld); // We never actually destruct the main world's DOMDataStore.
-
     V8PerIsolateData::current()->unregisterDOMDataStore(this);
-
-    if (m_type == IsolatedWorld)
-        m_domNodeMap->clear();
     m_domObjectMap->clear();
 }
 
@@ -82,8 +67,19 @@ DOMDataStore* DOMDataStore::current(v8::Isolate* isolate)
 void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
-    info.addMember(m_domNodeMap);
     info.addMember(m_domObjectMap);
+}
+
+void DOMDataStore::weakCallback(v8::Persistent<v8::Value> value, void* context)
+{
+    Node* object = static_cast<Node*>(context);
+    ASSERT(value->IsObject());
+    ASSERT(object->wrapper() == v8::Persistent<v8::Object>::Cast(value));
+
+    object->clearWrapper();
+    value.Dispose();
+    value.Clear();
+    object->deref();
 }
 
 } // namespace WebCore
