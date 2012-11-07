@@ -1,5 +1,19 @@
 2012-11-06  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r129469
+
+    2012-09-25  MORITA Hajime  <morrita@google.com>
+
+            adoptNode() shouldn't reset ownerDocument if the source node failed to remove itself
+            https://bugs.webkit.org/show_bug.cgi?id=97527
+
+            Reviewed by Ryosuke Niwa.
+
+            * fast/dom/adopt-node-prevented-expected.txt: Added.
+            * fast/dom/adopt-node-prevented.html: Added.
+
+2012-11-06  Lucas Forschler  <lforschler@apple.com>
+
         Merge r128654
 
     2012-09-14  Tom Sepez  <tsepez@chromium.org>
@@ -11126,6 +11140,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .
