@@ -39,10 +39,6 @@
 
 namespace WebCore {
 
-enum CustomFilterProgramType {
-    PROGRAM_TYPE_NO_ELEMENT_TEXTURE,
-    PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE
-};
 
 struct CustomFilterProgramMixSettings {
     CustomFilterProgramMixSettings()

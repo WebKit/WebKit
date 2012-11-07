@@ -35,12 +35,12 @@
 #include "CustomFilterRenderer.h"
 
 #include "CustomFilterArrayParameter.h"
+#include "CustomFilterCompiledProgram.h"
 #include "CustomFilterConstants.h"
 #include "CustomFilterMesh.h"
 #include "CustomFilterNumberParameter.h"
 #include "CustomFilterParameter.h"
 #include "CustomFilterTransformParameter.h"
-#include "CustomFilterValidatedProgram.h"
 #include "GraphicsContext3D.h"
 #include "TransformationMatrix.h"
 
@@ -68,17 +68,16 @@ static void orthogonalProjectionMatrix(TransformationMatrix& matrix, float left,
     matrix.setM44(1.0f);
 }
 
-PassRefPtr<CustomFilterRenderer> CustomFilterRenderer::create(PassRefPtr<GraphicsContext3D> context, PassRefPtr<CustomFilterValidatedProgram> validatedProgram, const CustomFilterParameterList& parameters,
+PassRefPtr<CustomFilterRenderer> CustomFilterRenderer::create(PassRefPtr<GraphicsContext3D> context, CustomFilterProgramType programType, const CustomFilterParameterList& parameters,
     unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType meshBoxType, CustomFilterMeshType meshType)
 {
-    return adoptRef(new CustomFilterRenderer(context, validatedProgram, parameters, meshRows, meshColumns, meshBoxType, meshType));
+    return adoptRef(new CustomFilterRenderer(context, programType, parameters, meshRows, meshColumns, meshBoxType, meshType));
 }
 
-CustomFilterRenderer::CustomFilterRenderer(PassRefPtr<GraphicsContext3D> context, PassRefPtr<CustomFilterValidatedProgram> validatedProgram, const CustomFilterParameterList& parameters,
+CustomFilterRenderer::CustomFilterRenderer(PassRefPtr<GraphicsContext3D> context, CustomFilterProgramType programType, const CustomFilterParameterList& parameters,
     unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType, CustomFilterMeshType meshType)
     : m_context(context)
-    , m_validatedProgram(validatedProgram)
-    , m_compiledProgram(0) // Don't compile the program unless we need to paint.
+    , m_programType(programType)
     , m_parameters(parameters)
     , m_meshRows(meshRows)
     , m_meshColumns(meshColumns)
@@ -92,7 +91,7 @@ CustomFilterRenderer::~CustomFilterRenderer()
 
 bool CustomFilterRenderer::premultipliedAlpha() const
 {
-    return m_validatedProgram->programInfo().programType() == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE;
+    return m_programType == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE;
 }
 
 bool CustomFilterRenderer::programNeedsInputTexture() const
@@ -112,25 +111,18 @@ void CustomFilterRenderer::draw(Platform3DObject inputTexture, const IntSize& si
     unbindVertexAttributes();
 }
 
+void CustomFilterRenderer::setCompiledProgram(PassRefPtr<CustomFilterCompiledProgram> compiledProgram)
+{
+    m_compiledProgram = compiledProgram;
+}
+
 bool CustomFilterRenderer::prepareForDrawing()
 {
     m_context->makeContextCurrent();
-    initializeCompiledProgramIfNeeded();
-
-    // If the shader had compiler errors we cannot draw anything.
-    if (!m_compiledProgram->isInitialized())
+    if (!m_compiledProgram || !m_compiledProgram->isInitialized())
         return false;
-
     initializeMeshIfNeeded();
     return true;
-}
-
-void CustomFilterRenderer::initializeCompiledProgramIfNeeded()
-{
-    if (m_compiledProgram.get())
-        return;
-
-    m_compiledProgram = m_validatedProgram->compiledProgram();
 }
 
 void CustomFilterRenderer::initializeMeshIfNeeded()
@@ -241,7 +233,7 @@ void CustomFilterRenderer::bindProgramAndBuffers(Platform3DObject inputTexture)
 
     if (programNeedsInputTexture()) {
         // We should be binding the DOM element texture sampler only if the author is using the CSS mix function.
-        ASSERT(m_validatedProgram->programInfo().programType() == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE);
+        ASSERT(m_programType == PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE);
         ASSERT(m_compiledProgram->samplerLocation() != -1);
 
         m_context->activeTexture(GraphicsContext3D::TEXTURE0);

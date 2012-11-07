@@ -48,7 +48,7 @@ FECustomFilter::FECustomFilter(Filter* filter, PassRefPtr<GraphicsContext3D> con
     unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType meshBoxType, CustomFilterMeshType meshType)
     : FilterEffect(filter)
     , m_context(context)
-    , m_customFilterRenderer(CustomFilterRenderer::create(m_context, validatedProgram, parameters, meshRows, meshColumns, meshBoxType, meshType))
+    , m_validatedProgram(validatedProgram)
     , m_inputTexture(0)
     , m_frameBuffer(0)
     , m_depthBuffer(0)
@@ -58,6 +58,8 @@ FECustomFilter::FECustomFilter(Filter* filter, PassRefPtr<GraphicsContext3D> con
     , m_multisampleRenderBuffer(0)
     , m_multisampleDepthBuffer(0)
 {
+    // We will not pass a CustomFilterCompiledProgram here, as we only want to compile it when we actually need it in the first paint.
+    m_customFilterRenderer = CustomFilterRenderer::create(m_context, m_validatedProgram->programInfo().programType(), parameters, meshRows, meshColumns, meshBoxType, meshType);
 }
 
 PassRefPtr<FECustomFilter> FECustomFilter::create(Filter* filter, PassRefPtr<GraphicsContext3D> context, PassRefPtr<CustomFilterValidatedProgram> validatedProgram, const CustomFilterParameterList& parameters,
@@ -153,6 +155,10 @@ void FECustomFilter::drawFilterMesh(Platform3DObject inputTexture)
 bool FECustomFilter::prepareForDrawing()
 {
     m_context->makeContextCurrent();
+
+    // Lazily inject the compiled program into the CustomFilterRenderer.
+    if (!m_customFilterRenderer->compiledProgram())
+        m_customFilterRenderer->setCompiledProgram(m_validatedProgram->compiledProgram());
 
     if (!m_customFilterRenderer->prepareForDrawing())
         return false;

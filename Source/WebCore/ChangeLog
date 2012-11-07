@@ -1,3 +1,38 @@
+2012-11-07  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Remove the dependency on CustomFilterValidatedProgram from CustomFilterRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=101071
+
+        Reviewed by Dean Jackson.
+
+        I've removed the need to get a CustomFilterValidatedProgram from FilterEffectRenderer. It was only
+        used to delay the compilation of the shader until it was really needed. Instead, the FilterEffectRenderer
+        will directly get the compiled shader in the constructor. The callers that still want to avoid 
+        compiling the shader until it is really needed can use the setCompiledProgram to inject the shader
+        at a later time, before painting.
+
+        No new tests, the change is covered by the css3/filters/custom/ tests.
+
+        * platform/graphics/filters/CustomFilterConstants.h:
+        * platform/graphics/filters/CustomFilterProgramInfo.h:
+        * platform/graphics/filters/CustomFilterRenderer.cpp:
+        (WebCore::CustomFilterRenderer::create):
+        (WebCore::CustomFilterRenderer::CustomFilterRenderer):
+        (WebCore::CustomFilterRenderer::premultipliedAlpha):
+        (WebCore::CustomFilterRenderer::setCompiledProgram):
+        (WebCore):
+        (WebCore::CustomFilterRenderer::prepareForDrawing):
+        (WebCore::CustomFilterRenderer::bindProgramAndBuffers):
+        * platform/graphics/filters/CustomFilterRenderer.h:
+        (WebCore):
+        (CustomFilterRenderer):
+        (WebCore::CustomFilterRenderer::compiledProgram):
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::FECustomFilter):
+        (WebCore::FECustomFilter::prepareForDrawing):
+        * platform/graphics/filters/FECustomFilter.h:
+        (FECustomFilter):
+
 2012-11-07  Adam Barth  <abarth@webkit.org>
 
         [V8] IntrusiveDOMWrapperMap is no longer needed and can be deleted

@@ -87,6 +87,7 @@ private:
     void deleteRenderBuffers();
 
     RefPtr<GraphicsContext3D> m_context;
+    RefPtr<CustomFilterValidatedProgram> m_validatedProgram;
     RefPtr<CustomFilterRenderer> m_customFilterRenderer;
     IntSize m_contextSize;
 
