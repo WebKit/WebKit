@@ -1,3 +1,10 @@
+2012-11-06  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Unreviewed gardening. A couple of expectation updates c/o dbarton@mathscribe.com
+        and marking calendar-picker-key-operations.html flaky per webkit.org/b/101408
+
+        * platform/chromium/TestExpectations:
+
 2012-11-06  Stephen White  <senorblanco@chromium.org>
 
         Removed useless image baselines for filter-empty-element-crash.

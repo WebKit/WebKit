@@ -2003,7 +2003,6 @@ crbug.com/20345 fast/js/getOwnPropertyDescriptor.html [ Failure ]
 # WebKit merge 48500:48585, newly implemented Object.defineProperty.
 crbug.com/22526 fast/js/Object-defineProperty.html [ Failure ]
 
-webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
 # Once chromium decides to definitely enable MathML, we can delete the old platform/chromium baseline for this:
 webkit.org/b/96960 http/tests/xmlviewer/dumpAsText/mathml.xml [ Pass Failure ]
 
@@ -2520,7 +2519,7 @@ crbug.com/66751 http/tests/local/link-stylesheet-load-order.html [ Failure Pass 
 webkit.org/b/90363 [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ Pass Timeout ]
 webkit.org/b/90363 [ Android Release ] fast/overflow/lots-of-sibling-inline-boxes.html [ Pass Timeout ]
 
-# WebKit roll 74255:74308 (74281?)
+# WebKit roll 74255:74308
 crbug.com/67416 [ Android Linux Win ] fast/text/emphasis.html [ Failure ]
 crbug.com/67416 fast/text/emphasis-vertical.html [ Failure ImageOnlyFailure ]
 crbug.com/67540 [ Android Linux ] fast/text/emphasis-avoid-ruby.html [ ImageOnlyFailure ]
@@ -4144,3 +4143,5 @@ webkit.org/b/100806 [ Win ] svg/custom/font-face-simple.svg [ Failure ]
 webkit.org/b/100955 http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Skip ]
 
 webkit.org/b/101377 [ Linux Debug ] platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html [ Failure ImageOnlyFailure Pass ]
+
+webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure Pass ]
