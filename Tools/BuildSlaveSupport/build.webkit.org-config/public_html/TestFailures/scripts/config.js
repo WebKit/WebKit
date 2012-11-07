@@ -140,6 +140,29 @@ config.kPlatforms = {
             return builderName.indexOf('Qt') != -1;
         },
     },
+    'efl' : {
+        label : 'EFL',
+        buildConsoleURL: 'http://build.webkit.org',
+        layoutTestResultsURL: 'http://build.webkit.org/results',
+        waterfallURL: 'http://build.webkit.org/waterfall',
+        builders: {
+            'EFL Linux 64-bit Debug WK2' : {version : '64-bit WK2', debug: true},
+            'EFL Linux 64-bit Release WK2' : {version: '64-bit WK2'},
+            'EFL Linux 64-bit Release' : {version: '64-bit'},
+        },
+        haveBuilderAccumulatedResults : false,
+        useDirectoryListingForOldBuilds: false,
+        useFlakinessDashboard: false,
+        resultsDirectoryNameFromBuilderName: function(builderName) {
+            return encodeURIComponent(builderName);
+        },
+        resultsDirectoryForBuildNumber: function(buildNumber, revision) {
+            return encodeURIComponent('r' + revision + ' (' + buildNumber + ')');
+        },
+        _builderApplies: function(builderName) {
+            return builderName.indexOf('EFL') != -1;
+        },
+    },
 };
 
 config.kTracURL = 'http://trac.webkit.org';
