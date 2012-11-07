@@ -164,7 +164,7 @@ void FileReader::abort()
 {
     LOG(FileAPI, "FileReader: aborting\n");
 
-    if (m_aborting)
+    if (m_aborting || m_state != LOADING)
         return;
     m_aborting = true;
 

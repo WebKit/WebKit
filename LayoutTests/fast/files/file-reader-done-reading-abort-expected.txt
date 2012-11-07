@@ -1,0 +1,3 @@
+Test that FileReader.abort after reading is done doesn't fire events.
+DONE
+

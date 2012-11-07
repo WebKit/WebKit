@@ -1,5 +1,24 @@
 2012-11-06  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r127082
+
+    2012-08-29  Michael Saboff  <msaboff@apple.com>
+
+            use after free in WebCore::FileReader::doAbort
+            https://bugs.webkit.org/show_bug.cgi?id=91004
+
+            Reviewed by Jian Li.
+
+            New tests to check that FileReader::abort doesn't crash or create events before
+            or after reading.
+
+            * fast/files/file-reader-done-reading-abort-expected.txt: Added.
+            * fast/files/file-reader-done-reading-abort.html: Added.
+            * fast/files/file-reader-immediate-abort-expected.txt: Added.
+            * fast/files/file-reader-immediate-abort.html: Added.
+
+2012-11-06  Lucas Forschler  <lforschler@apple.com>
+
         Merge r126657
 
     2012-08-24  Florin Malita  <fmalita@chromium.org>
@@ -11091,6 +11110,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .
