@@ -746,7 +746,8 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         break;
     }
     case WebInputEvent::GestureTwoFingerTap:
-    case WebInputEvent::GestureLongPress: {
+    case WebInputEvent::GestureLongPress:
+    case WebInputEvent::GestureLongTap: {
         if (!mainFrameImpl() || !mainFrameImpl()->frameView())
             break;
 

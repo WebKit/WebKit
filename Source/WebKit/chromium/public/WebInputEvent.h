@@ -120,6 +120,7 @@ public:
         GestureDoubleTap,
         GestureTwoFingerTap,
         GestureLongPress,
+        GestureLongTap,
         GesturePinchBegin,
         GesturePinchEnd,
         GesturePinchUpdate,
@@ -211,6 +212,7 @@ public:
             || type == GestureDoubleTap
             || type == GestureTwoFingerTap
             || type == GestureLongPress
+            || type == GestureLongTap
             || type == GesturePinchBegin
             || type == GesturePinchEnd
             || type == GesturePinchUpdate;

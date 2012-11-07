@@ -1,3 +1,14 @@
+2012-11-07  Varun Jain  <varunjain@chromium.org>
+
+        Add new gesture type, LongTap, which is basically the completion of a GestureLongPress
+        https://bugs.webkit.org/show_bug.cgi?id=101385
+
+        Reviewed by Adam Barth.
+
+        Test: Only creating the new enum. No functionality change, hence no tests required.
+
+        * platform/PlatformEvent.h:
+
 2012-11-05  Emil A Eklund  <eae@chromium.org>
 
         Remove LayoutTypes abstraction

@@ -177,6 +177,10 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
         m_type = PlatformEvent::GestureLongPress;
         m_area = IntSize(e.data.longPress.width, e.data.longPress.height);
         break;
+    case WebInputEvent::GestureLongTap:
+        m_type = PlatformEvent::GestureLongTap;
+        m_area = IntSize(e.data.longPress.width, e.data.longPress.height);
+        break;
     case WebInputEvent::GesturePinchBegin:
         m_type = PlatformEvent::GesturePinchBegin;
         break;

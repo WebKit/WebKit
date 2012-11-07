@@ -158,6 +158,7 @@ bool PageWidgetDelegate::handleInputEvent(Page* page, PageWidgetEventHandler& ha
     case WebInputEvent::GestureDoubleTap:
     case WebInputEvent::GestureTwoFingerTap:
     case WebInputEvent::GestureLongPress:
+    case WebInputEvent::GestureLongTap:
         return handler.handleGestureEvent(*static_cast<const WebGestureEvent*>(&event));
 #endif
 

@@ -459,6 +459,7 @@ bool TestWebPlugin::handleInputEvent(const WebKit::WebInputEvent& event, WebKit:
     case WebKit::WebInputEvent::GestureDoubleTap:    eventName = "GestureDoubleTap"; break;
     case WebKit::WebInputEvent::GestureTwoFingerTap: eventName = "GestureTwoFingerTap"; break;
     case WebKit::WebInputEvent::GestureLongPress:    eventName = "GestureLongPress"; break;
+    case WebKit::WebInputEvent::GestureLongTap:      eventName = "GestureLongTap"; break;
     case WebKit::WebInputEvent::GesturePinchBegin:   eventName = "GesturePinchBegin"; break;
     case WebKit::WebInputEvent::GesturePinchEnd:     eventName = "GesturePinchEnd"; break;
     case WebKit::WebInputEvent::GesturePinchUpdate:  eventName = "GesturePinchUpdate"; break;
