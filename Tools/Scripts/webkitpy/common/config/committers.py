@@ -321,6 +321,7 @@ committers_unable_to_review = [
     Committer("Kristof Kosztyo", "kkristof@inf.u-szeged.hu", "kkristof"),
     Committer("Krzysztof Kowalczyk", "kkowalczyk@gmail.com"),
     Committer("Kwang Yul Seo", ["skyul@company100.net", "kseo@webkit.org"], "kseo"),
+    Committer("Lauro Neto", "lauro.neto@openbossa.org", "lmoura"),
     Committer("Leandro Gracia Gil", "leandrogracia@chromium.org", "leandrogracia"),
     Committer("Leandro Pereira", ["leandro@profusion.mobi", "leandro@webkit.org"], "acidx"),
     Committer("Leo Yang", ["leoyang@rim.com", "leoyang@webkit.org", "leoyang.webkit@gmail.com"], "leoyang"),
