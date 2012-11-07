@@ -103,7 +103,6 @@ namespace WebCore {
 
         template<typename T>
         static v8::Persistent<v8::Object> setJSWrapperForDOMObject(PassRefPtr<T>, v8::Handle<v8::Object>, v8::Isolate* = 0);
-        static v8::Persistent<v8::Object> setJSWrapperForDOMNode(PassRefPtr<Node>, v8::Handle<v8::Object>, v8::Isolate* = 0);
 
         static bool isValidDOMObject(v8::Handle<v8::Value>);
 
@@ -131,6 +130,19 @@ namespace WebCore {
             DOMWrapperMap<Node>& domNodeMap = store->domNodeMap();
             return domNodeMap.get(node);
         }
+
+    private:
+        static void setJSWrapperPrivate(void* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
+        {
+            wrapper.SetWrapperClassId(v8DOMObjectClassId);
+            getDOMObjectMap(isolate).set(object, wrapper);
+        }
+
+        static void setJSWrapperPrivate(Node* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
+        {
+            wrapper.SetWrapperClassId(v8DOMNodeClassId);
+            getDOMNodeMap(isolate).set(object, wrapper);
+        }
     };
 
     template<typename T>
@@ -138,8 +150,7 @@ namespace WebCore {
     {
         v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
         ASSERT(maybeDOMWrapper(wrapperHandle));
-        wrapperHandle.SetWrapperClassId(v8DOMObjectClassId);
-        getDOMObjectMap(isolate).set(object.leakRef(), wrapperHandle);
+        setJSWrapperPrivate(object.leakRef(), wrapperHandle, isolate);
         return wrapperHandle;
     }
 

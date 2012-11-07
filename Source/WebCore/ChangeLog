@@ -1,3 +1,60 @@
+2012-11-06  Adam Barth  <abarth@webkit.org>
+
+        [V8] Unify setJSWrapperForDOMObject and setJSWrapperForDOMNode
+        https://bugs.webkit.org/show_bug.cgi?id=101422
+
+        Reviewed by Kentaro Hara.
+
+        This patch is another incremental step towards the patch in Bug 10110.
+        In this step, we unify setJSWrapperForDOMObject and
+        setJSWrapperForDOMNode.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateNormalAttrGetter):
+        (GenerateConstructorCallback):
+        (GenerateNamedConstructorCallback):
+        (GenerateToV8Converters):
+        * bindings/scripts/test/V8/V8Float64Array.h:
+        (WebCore::V8Float64Array::wrap):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.h:
+        (WebCore::V8TestActiveDOMObject::wrap):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.h:
+        (WebCore::V8TestCustomNamedGetter::wrap):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h:
+        (WebCore::V8TestEventConstructor::wrap):
+        * bindings/scripts/test/V8/V8TestEventTarget.h:
+        (WebCore::V8TestEventTarget::wrap):
+        * bindings/scripts/test/V8/V8TestException.h:
+        (WebCore::V8TestException::wrap):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (WebCore::V8TestInterface::wrap):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        (WebCore::V8TestMediaQueryListListener::wrap):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h:
+        (WebCore::V8TestNamedConstructor::wrap):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore::V8TestNode::constructorCallback):
+        (WebCore::V8TestNode::wrapSlow):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::readOnlyTestObjAttrAttrGetter):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        (WebCore::V8TestObj::wrap):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+        (WebCore::V8TestSerializedScriptValueInterface::wrap):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::current):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::get):
+        (DOMDataStore):
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8DOMWrapper.h:
+        (V8DOMWrapper):
+        (WebCore::V8DOMWrapper::setJSWrapperPrivate):
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMObject):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+
 2012-11-06  Ken Buchanan  <kenrb@chromium.org>
 
         Crash due to column span under button element

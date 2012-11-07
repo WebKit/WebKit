@@ -55,7 +55,7 @@ private:
 
 v8::Handle<v8::Object> V8Float64Array::wrap(Float64Array* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
-        v8::Handle<v8::Object> wrapper = getDOMObjectMap(isolate).get(impl);
+        v8::Handle<v8::Object> wrapper = DOMDataStore::current(isolate)->get(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     return V8Float64Array::wrapSlow(impl, creationContext, isolate);

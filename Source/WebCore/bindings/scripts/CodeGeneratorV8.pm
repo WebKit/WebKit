@@ -502,8 +502,7 @@ END
 v8::Handle<v8::Object> ${className}::wrap(${nativeType}* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
 END
-    my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName, "isolate");
-    my $getCachedWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getCachedWrapper(impl)" : "${domMapFunction}.get(impl)";
+    my $getCachedWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getCachedWrapper(impl)" : "DOMDataStore::current(isolate)->get(impl)";
     push(@headerContent, <<END);
         v8::Handle<v8::Object> wrapper = $getCachedWrapper;
         if (!wrapper.IsEmpty())
@@ -1037,8 +1036,7 @@ END
         # Check for a wrapper in the wrapper cache. If there is one, we know that a hidden reference has already
         # been created. If we don't find a wrapper, we create both a wrapper and a hidden reference.
         push(@implContentDecls, "    RefPtr<$returnType> result = ${getterString};\n");
-        my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName, "info.GetIsolate()");
-        push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? ${domMapFunction}.get(result.get()) : v8Undefined();\n");
+        push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? v8::Handle<v8::Value>(DOMDataStore::current(info.GetIsolate())->get(result.get())) : v8Undefined();\n");
         push(@implContentDecls, "    if (wrapper.IsEmpty()) {\n");
         push(@implContentDecls, "        wrapper = toV8(result.get(), info.Holder(), info.GetIsolate());\n");
         push(@implContentDecls, "        if (!wrapper.IsEmpty())\n");
@@ -1942,11 +1940,10 @@ END
         push(@implContent, "        goto fail;\n");
     }
 
-    my $DOMObject = GetDomMapName($dataNode, $implClassName);
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
-    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), wrapper, args.GetIsolate());
+    V8DOMWrapper::setJSWrapperForDOMObject(impl.release(), wrapper, args.GetIsolate());
     return wrapper;
 END
 
@@ -2134,11 +2131,10 @@ END
         push(@implContent, "        goto fail;\n");
     }
 
-    my $DOMObject = GetDomMapName($dataNode, $implClassName);
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(wrapper, &V8${implClassName}Constructor::info, impl.get());
-    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), wrapper, args.GetIsolate());
+    V8DOMWrapper::setJSWrapperForDOMObject(impl.release(), wrapper, args.GetIsolate());
     return wrapper;
 END
 
@@ -3402,7 +3398,6 @@ sub GenerateToV8Converters
     my $className = shift;
     my $nativeType = shift;
 
-    my $domMapName = GetDomMapName($dataNode, $interfaceName);
     my $wrapSlowArgumentType = GetPassRefPtrType($nativeType);
     my $baseType = BaseInterfaceName($dataNode);
 
@@ -3463,30 +3458,12 @@ END
         return wrapper;
 
     installPerContextProperties(wrapper, impl.get());
-    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperFor${domMapName}(impl, wrapper, isolate);
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
     return wrapper;
 }
 END
-}
-
-sub GetDomMapFunction
-{
-    my $dataNode = shift;
-    my $interfaceName = shift;
-    my $getIsolate = shift;
-
-    return "get" . GetDomMapName($dataNode, $interfaceName) . "Map(" . $getIsolate . ")";
-}
-
-sub GetDomMapName
-{
-    my $dataNode = shift;
-    my $type = shift;
-
-    return "DOMNode" if IsNodeSubType($dataNode);
-    return "DOMObject";
 }
 
 sub GetNativeTypeForConversions

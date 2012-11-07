@@ -80,7 +80,7 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arg
     RefPtr<HTMLImageElement> image = HTMLImageElement::createForJSConstructor(document, optionalWidth, optionalHeight);
     v8::Handle<v8::Object> wrapper = args.Holder();
     V8DOMWrapper::setDOMWrapper(wrapper, &V8HTMLImageElementConstructor::info, image.get());
-    V8DOMWrapper::setJSWrapperForDOMNode(image.release(), wrapper);
+    V8DOMWrapper::setJSWrapperForDOMObject(image.release(), wrapper);
     return wrapper;
 }
 

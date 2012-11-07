@@ -59,6 +59,9 @@ public:
 
     static DOMDataStore* current(v8::Isolate*);
 
+    inline v8::Handle<v8::Object> get(void* object) const { return m_domObjectMap->get(object); }
+    inline v8::Handle<v8::Object> get(Node* object) const { return m_domNodeMap->get(object); }
+
     DOMWrapperMap<Node>& domNodeMap() { return *m_domNodeMap; }
     DOMWrapperMap<void>& domObjectMap() { return *m_domObjectMap; }
 
