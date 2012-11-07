@@ -1,3 +1,15 @@
+2012-11-07  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Use setPseudo() instead of setShadowPseudoId().
+        https://bugs.webkit.org/show_bug.cgi?id=101306
+
+        Reviewed by Kent Tamura.
+
+        Exposes necessary symbols.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-11-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Make EWK classes Ewk_Objects

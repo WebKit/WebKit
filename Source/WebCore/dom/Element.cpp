@@ -1357,16 +1357,6 @@ const AtomicString& Element::shadowPseudoId() const
     return pseudo();
 }
 
-void Element::setShadowPseudoId(const AtomicString& id, ExceptionCode& ec)
-{
-    if (!CSSSelector::isCustomPseudoType(id)) {
-        ec = SYNTAX_ERR;
-        return;
-    }
-
-    setPseudo(id);
-}
-
 bool Element::childTypeAllowed(NodeType type) const
 {
     switch (type) {

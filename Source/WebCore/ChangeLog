@@ -1,3 +1,50 @@
+2012-11-07  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Use setPseudo() instead of setShadowPseudoId().
+        https://bugs.webkit.org/show_bug.cgi?id=101306
+
+        Reviewed by Kent Tamura.
+
+        We would like to remove setShadowPseudoId() and use setPseudo() instead, since ShadowDOM spec now has
+        'pseudo' attribute.
+
+        We change all setShadowPseudoId() invocation to setPseudo() invocation. Also, when AtomicString is not
+        constructed with AtomicStringFromLiteral, we use it.
+
+        No new tests, refactoring.
+
+        * WebCore.exp.in:
+        * dom/Element.cpp:
+        * dom/Element.h:
+        (Element):
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createShadowSubtree):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree):
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitLiteral):
+        (WebCore::DateTimeEditElement::DateTimeEditElement):
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::initialize):
+        * html/shadow/DateTimeFieldElement.h:
+        (DateTimeFieldElement):
+        * html/shadow/PickerIndicatorElement.cpp:
+        (WebCore::PickerIndicatorElement::PickerIndicatorElement):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCueBox::TextTrackCueBox):
+        (WebCore::TextTrackCue::updateDisplayTree):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setShadowPseudoId):
+
 2012-11-07  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [Canvas] Save CanvasGradient objects state for a replay
