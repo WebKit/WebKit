@@ -89,11 +89,13 @@ config.kPlatforms = {
             // that the gardener only need to look at garden-o-matic and never at the waterfall. Not really sure who
             // watches the GPU bots.
             // The 10.8 Tests bot is really an FYI bot at this point
+            // WebKit Android doesn't upload its results yet.
             return builderName.indexOf('GPU') == -1 &&
                    builderName.indexOf('deps') == -1 &&
                    builderName.indexOf('ASAN') == -1 &&
                    builderName.indexOf('Content Shell') == -1 &&
-                   builderName.indexOf('Mac10.8 Tests') == -1;
+                   builderName.indexOf('Mac10.8 Tests') == -1 &&
+                   builderName.indexOf('WebKit Android') == -1;
         },
     },
     'gtk' : {
