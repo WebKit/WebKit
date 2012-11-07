@@ -1,3 +1,17 @@
+2012-11-07  Dan Carney  <dcarney@google.com>
+
+        [V8] Cleanup V8DOMWrapper::getCachedWrapper
+        https://bugs.webkit.org/show_bug.cgi?id=100853
+
+        Reviewed by Adam Barth.
+
+        Slight cleanup. Removed redundant branch.
+
+        No new tests. No change in functionality.
+
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::getCachedWrapper):
+
 2012-11-07  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Unreviewed trivial build fix adapting to QtMultimedia API changes
