@@ -1,3 +1,37 @@
+2012-11-06  Keishi Hattori  <keishi@webkit.org>
+
+        Implement month picking to calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=101333
+
+        Reviewed by Kent Tamura.
+
+        This adds month picker mode to CalendarPicker.
+
+        No new tests. Tests will be added later when this feature is enabled in DRT.
+
+        * Resources/pagepopups/calendarPicker.css:
+        (.month-mode .day): Remove rounded corners when in month mode.
+        * Resources/pagepopups/calendarPicker.js:
+        (Month.createFromToday): Creates month containing today.
+        (CalendarPicker): Set this.selectionConstructor to Day or Month depending on the mode. Create DayTables or MonthPickerDaysTable depending on the mode.
+        (CalendarPicker.prototype.handleToday):
+        (CalendarPicker.prototype._layoutButtons):
+        (DaysTable.prototype._renderMonth): Set element.dataset.monthValue for all date nodes.
+        (DaysTable.prototype._markRangeAsSelected): Marks all day nodes in range as selected.
+        (DaysTable.prototype.selectRange): Selects a day.
+        (DaysTable.prototype.selectRangeAndShowEntireRange): Same as selectRange.
+        (DaysTable.prototype._selectRangeContainingNode):
+        (DaysTable.prototype._rangeForNode): Returns Day for node.
+        (DaysTable.prototype.startDate): Start datetime of visible date range. This value is inclusive.
+        (DaysTable.prototype.endDate): End datetime of visible date range. This value is exclusive.
+        (DaysTable.prototype._handleKey):
+        (MonthPickerDaysTable):
+        (MonthPickerDaysTable.prototype._markRangeAsSelected): Marks all day nodes in range as selected.
+        (MonthPickerDaysTable.prototype.selectRange): Selects month. If month is not visible, navigates to that month.
+        (MonthPickerDaysTable.prototype.selectRangeAndShowEntireRange): Selects month. Navigates to the month.
+        (MonthPickerDaysTable.prototype._rangeForNode): Returns Month for node.
+        (MonthPickerDaysTable.prototype._handleKey): Arrow keys simply move the selection forwards or backwards.
+
 2012-11-06  Dan Beam  <dbeam@chromium.org>
 
         Enable REQUEST_AUTOCOMPLETE for chromium port

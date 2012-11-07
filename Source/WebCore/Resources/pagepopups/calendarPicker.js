@@ -46,6 +46,7 @@ var ClassNames = {
     DayLabelContainer: "day-label-container",
     DaysArea: "days-area",
     DaysAreaContainer: "days-area-container",
+    MonthMode: "month-mode",
     MonthSelector: "month-selector",
     MonthSelectorBox: "month-selector-box",
     MonthSelectorPopup: "month-selector-popup",
@@ -214,8 +215,8 @@ function Day(valueOrDayOrYear, month, date) {
 Day.ISOStringRegExp = /^(\d+)-(\d+)-(\d+)$/;
 
 // See WebCore/platform/DateComponents.h.
-Day.Minimum = new Date(-62135596800000.0);
-Day.Maximum = new Date(8640000000000000.0);
+Day.Minimum = new Day(-62135596800000.0);
+Day.Maximum = new Day(8640000000000000.0);
 
 /**
  * @param {!string} str
@@ -230,6 +231,7 @@ Day.parse = function(str) {
     var date = parseInt(match[3], 10);
     return new Day(year, month, date);
 };
+
 /**
  * @param {!Date} date
  * @return {!Month}
@@ -238,10 +240,13 @@ Day.createFromDate = function(date) {
     return new Day(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
 };
 
+/**
+ * @return {!Month}
+ */
 Day.createFromToday = function() {
     var now = new Date();
     return new Day(now.getFullYear(), now.getMonth(), now.getDate());
-}
+};
 
 /**
  * @param {!Day} other
@@ -322,6 +327,7 @@ function Month(valueOrMonthOrYear, month) {
 Month.ISOStringRegExp = /^(\d+)-(\d+)$/;
 
 // See WebCore/platform/DateComponents.h.
+Month.Minimum = new Month(1, 0);
 Month.Maximum = new Month(275760, 8);
 
 /**
@@ -343,6 +349,14 @@ Month.parse = function(str) {
  */
 Month.createFromDate = function(date) {
     return new Month(date.getUTCFullYear(), date.getUTCMonth());
+};
+
+/**
+ * @return {!Month}
+ */
+Month.createFromToday = function() {
+    var now = new Date();
+    return new Month(now.getFullYear(), now.getMonth());
 };
 
 /**
@@ -500,32 +514,40 @@ function openCalendarPicker() {
  */
 function CalendarPicker(element, config) {
     Picker.call(this, element, config);
+    if (this._config.mode === "month") {
+        this.selectionConstructor = Month;
+        this._daysTable = new MonthPickerDaysTable(this);
+        this._element.classList.add(ClassNames.MonthMode);
+    } else {
+        this.selectionConstructor = Day;
+        this._daysTable = new DaysTable(this);
+    }
     this._element.classList.add("calendar-picker");
     this._element.classList.add("preparing");
     this._handleWindowResizeBound = this._handleWindowResize.bind(this);
     window.addEventListener("resize", this._handleWindowResizeBound, false);
-    // We assume this._config.min is a valid date.
-    this._minimumValue = (typeof this._config.min !== "undefined") ? parseDateString(this._config.min).valueOf() : Day.Minimum.valueOf();
-    // We assume this._config.max is a valid date.
-    this._maximumValue = (typeof this._config.max !== "undefined") ? parseDateString(this._config.max).valueOf() : Day.Maximum.valueOf();
+    // We assume this._config.min/max are valid dates or months.
+    var minimum = (typeof this._config.min !== "undefined") ? parseDateString(this._config.min) : this.selectionConstructor.Minimum;
+    var maximum = (typeof this._config.max !== "undefined") ? parseDateString(this._config.max) : this.selectionConstructor.Maximum;
+    this._minimumValue = minimum.valueOf();
+    this._maximumValue = maximum.valueOf();
     this.step = (typeof this._config.step !== undefined) ? Number(this._config.step) : CalendarPicker.DefaultStepScaleFactor;
     this.stepBase = (typeof this._config.stepBase !== "undefined") ? Number(this._config.stepBase) : CalendarPicker.DefaultStepBase;
-    this._minimumMonth = Month.createFromDate(new Date(this._minimumValue));
-    this.maximumMonth = Month.createFromDate(new Date(this._maximumValue));
+    this._minimumMonth = Month.createFromDate(minimum.startDate());
+    this.maximumMonth = Month.createFromDate(maximum.startDate());
     this._currentMonth = new Month(NaN, NaN);
     this._yearMonthController = new YearMonthController(this);
-    this._daysTable = new DaysTable(this);
     this._hadKeyEvent = false;
     this._layout();
     var initialSelection = parseDateString(this._config.currentValue);
     if (!initialSelection)
-        initialSelection = Day.createFromToday();
+        initialSelection = this.selectionConstructor.createFromToday();
     if (initialSelection.valueOf() < this._minimumValue)
-        initialSelection = new Day(this._minimumValue);
+        initialSelection = new this.selectionConstructor(this._minimumValue);
     else if (initialSelection.valueOf() > this._maximumValue)
-        initialSelection = new Day(this._maximumValue);
+        initialSelection = new this.selectionConstructor(this._maximumValue);
     this.showMonth(Month.createFromDate(initialSelection.startDate()), false);
-    this._daysTable.selectRange(initialSelection);
+    this._daysTable.selectRangeAndShowEntireRange(initialSelection);
     this.fixWindowSize();
     this._handleBodyKeyDownBound = this._handleBodyKeyDown.bind(this);
     document.body.addEventListener("keydown", this._handleBodyKeyDownBound, false);
@@ -555,8 +577,8 @@ CalendarPicker.prototype._layout = function() {
 };
 
 CalendarPicker.prototype.handleToday = function() {
-    var today = Day.createFromToday();
-    this._daysTable.selectRange(today);
+    var today = this.selectionConstructor.createFromToday();
+    this._daysTable.selectRangeAndShowEntireRange(today);
     this.submitValue(today.toString());
 };
 
@@ -601,6 +623,7 @@ CalendarPicker.prototype.fixWindowSize = function() {
 CalendarPicker.prototype._layoutButtons = function() {
     var container = createElement("div", ClassNames.TodayClearArea);
     this.today = createElement("input", ClassNames.TodayButton);
+    this.today.disabled = !this.isValidDate(this.selectionConstructor.createFromToday());
     this.today.type = "button";
     this.today.value = this._config.todayLabel;
     this.today.addEventListener("click", this.handleToday.bind(this), false);
@@ -1080,10 +1103,11 @@ DaysTable.prototype._renderMonth = function(month) {
             element.innerText = localizeNumber(dayIterator.getUTCDate());
             element.className = ClassNames.Day;
             element.dataset.submitValue = Day.createFromDate(dayIterator).toString();
+            element.dataset.monthValue = iterMonth.toString();
             if (isNaN(time)) {
                 element.innerText = "-";
                 element.classList.add(ClassNames.Unavailable);
-            } else if (!this.picker.isValidDate(Day.createFromDate(dayIterator)))
+            } else if (!this.picker.isValidDate(this._rangeForNode(element)))
                 element.classList.add(ClassNames.Unavailable);
             else if (!iterMonth.equals(month)) {
                 element.classList.add(ClassNames.Available);
@@ -1093,8 +1117,6 @@ DaysTable.prototype._renderMonth = function(month) {
             dayIterator.setUTCDate(dayIterator.getUTCDate() + 1);
         }
     }
-
-    this.picker.today.disabled = !this.picker.isValidDate(Day.createFromToday().valueOf());
 };
 
 /**
@@ -1130,11 +1152,9 @@ DaysTable.prototype._moveInDays = function() {
 };
 
 /**
- * @param {!Date} date
+ * @param {!Day} day
  */
-DaysTable.prototype.selectRange = function(day) {
-    this._deselect();
-    this.picker.showMonth(Month.createFromDate(day.startDate()), true);
+DaysTable.prototype._markRangeAsSelected = function(day) {
     var dateString = day.toString();
     for (var w = 0; w < DaysTable._Weeks; w++) {
         for (var d = 0; d < 7; d++) {
@@ -1147,14 +1167,54 @@ DaysTable.prototype.selectRange = function(day) {
 };
 
 /**
+ * @param {!Day} day
+ */
+DaysTable.prototype.selectRange = function(day) {
+    this._deselect();
+    if (this.startDate() > day.startDate() || this.endDate() < day.endDate())
+        this.picker.showMonth(Month.createFromDate(day.startDate()), false);
+    this._markRangeAsSelected(day);
+};
+
+/**
+ * @param {!Day} day
+ */
+DaysTable.prototype.selectRangeAndShowEntireRange = function(day) {
+    this.selectRange(day);
+};
+
+/**
  * @param {!Element} dayNode
  */
 DaysTable.prototype._selectRangeContainingNode = function(dayNode) {
-    this._deselect();
-    if (!dayNode || !dayNode.classList.contains(ClassNames.Day) || !dayNode.classList.contains(ClassNames.Available))
+    var range = this._rangeForNode(dayNode);
+    if (!range)
         return;
-    // FIXME: Select date, week or month depending on the config.
-    dayNode.classList.add(ClassNames.Selected);
+    this.selectRange(range);
+};
+
+/**
+ * @param {!Element} dayNode
+ * @return {?Day}
+ */
+DaysTable.prototype._rangeForNode = function(dayNode) {
+    if (!dayNode)
+        return null;
+    return Day.parse(dayNode.dataset.submitValue);
+};
+
+/**
+ * @return {!Date}
+ */
+DaysTable.prototype.startDate = function() {
+    return Day.parse(this._days[0][0].dataset.submitValue).startDate();
+};
+
+/**
+ * @return {!Date}
+ */
+DaysTable.prototype.endDate = function() {
+    return Day.parse(this._days[DaysTable._Weeks - 1][7 - 1].dataset.submitValue).endDate();
 };
 
 /**
@@ -1306,7 +1366,7 @@ DaysTable.prototype._handleKey = function(event) {
         }
 
     } else if (key == "U+0054") { // 't'
-        this.selectRange(Day.createFromToday());
+        this.selectRangeAndShowEntireRange(Day.createFromToday());
         event.stopPropagation();
         event.preventDefault();
     }
@@ -1321,6 +1381,102 @@ DaysTable.prototype.updateSelection = function(event, x, y) {
     this._selectRangeAtPosition(x, y);
     event.stopPropagation();
     event.preventDefault();
+};
+
+/**
+ * @constructor
+ * @param{!CalendarPicker} picker
+ */
+function MonthPickerDaysTable(picker) {
+    DaysTable.call(this, picker);
+}
+MonthPickerDaysTable.prototype = Object.create(DaysTable.prototype);
+
+/**
+ * @param {!Month} month
+ */
+MonthPickerDaysTable.prototype._markRangeAsSelected = function(month) {
+    var monthString = month.toString();
+    for (var w = 0; w < DaysTable._Weeks; w++) {
+        for (var d = 0; d < 7; d++) {
+            if (this._days[w][d].dataset.monthValue == monthString) {
+                this._days[w][d].classList.add(ClassNames.Selected);
+            }
+        }
+    }
+};
+
+/**
+ * @param {!Month} month
+ */
+MonthPickerDaysTable.prototype.selectRange = function(month) {
+    this._deselect();
+    if (this.startDate() >= month.endDate() || this.endDate() <= month.startDate())
+        this.picker.showMonth(month, true);
+    this._markRangeAsSelected(month);
+};
+
+/**
+ * @param {!Month} month
+ */
+MonthPickerDaysTable.prototype.selectRangeAndShowEntireRange = function(month) {
+    this._deselect();
+    this.picker.showMonth(month, true);
+    this._markRangeAsSelected(month);
+};
+
+/**
+ * @param {!Element} dayNode
+ * @return {?Month}
+ */
+MonthPickerDaysTable.prototype._rangeForNode = function(dayNode) {
+    if (!dayNode)
+        return null;
+    return Month.parse(dayNode.dataset.monthValue);
+};
+
+/**
+ * @param {Event} event
+ */
+MonthPickerDaysTable.prototype._handleKey = function(event) {
+    this.picker.maybeUpdateFocusStyle();
+    var key = event.keyIdentifier;
+    var eventHandled = false;
+    var currentMonth = this.picker.currentMonth();
+    var firstNodeInSelectedRange = this._firstNodeInSelectedRange();
+    if (!firstNodeInSelectedRange
+        && (key == "Right" || key == "Left" || key == "Up" || key == "Down" || key == "PageUp" || key == "PageDown")) {
+        this.selectRange(currentMonth);
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+    var selectedMonth = this._rangeForNode(firstNodeInSelectedRange);
+    if (key == (global.params.isCalendarRTL ? "Right" : "Left") || key == "Up" || key == "PageUp") {
+        if (selectedMonth.valueOf() > currentMonth.valueOf())
+            this.selectRangeAndShowEntireRange(currentMonth);
+        else
+            this.selectRangeAndShowEntireRange(currentMonth.previous());
+        eventHandled = true;
+    } else if (key == (global.params.isCalendarRTL ? "Left" : "Right") || key == "Down" || key == "PageDown") {
+        if (selectedMonth.valueOf() < currentMonth.valueOf())
+            this.selectRangeAndShowEntireRange(currentMonth);
+        else
+            this.selectRangeAndShowEntireRange(currentMonth.next());
+        eventHandled = true;
+    } else if (this._hasSelection() && key == "Enter") {
+        if (currentSelection) {
+            this.picker.submitValue(currentSelection.toString());
+            eventHandled = true;
+        }
+    } else if (key == "U+0054") { // 't'
+        this.selectRangeAndShowEntireRange(Month.createFromToday());
+        eventHandled = true;
+    }
+    if (eventHandled) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
 };
 
 /**

@@ -1,3 +1,12 @@
+2012-11-06  Keishi Hattori  <keishi@webkit.org>
+
+        Implement month picking to calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=101333
+
+        Reviewed by Kent Tamura.
+
+        * ManualTests/forms/calendar-picker.html: Added test for month picker.
+
 2012-11-06  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Simplify the build system

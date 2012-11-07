@@ -27,6 +27,7 @@ iframe {
  <option>with long datalist</option>
  <option>Arabic with datalist</option>
  <option>Arabic with long datalist</option>
+ <option>Month</option>
 </select>
 
 <div><input type="text" id="date"></div>
@@ -238,6 +239,21 @@ var arabicLongDatalistArguments = {
     suggestionHighlightColor: "#0000ff",
     suggestionHighlightTextColor: "#ffffff"
 };
+var monthArguments = {
+    locale: 'en-US',
+    monthLabels : ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'],
+    dayLabels : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    todayLabel : 'This Month',
+    clearLabel : 'Clear',
+    cancelLabel : 'Cancel',
+    weekStartDay : 0,
+    step : "1",
+    stepBase: "0",
+    currentValue : '2000-01',
+    max : '2099-03',
+    mode: "month"
+};
 
 function openCalendar(args) {
     var frame = document.getElementsByTagName('iframe')[0];
@@ -309,6 +325,9 @@ function selected(select) {
         break;
     case 6:
         openCalendar(arabicLongDatalistArguments);
+        break;
+    case 7:
+        openCalendar(monthArguments);
         break;
     }
 }

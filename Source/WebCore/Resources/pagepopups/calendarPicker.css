@@ -224,3 +224,9 @@ body {
 .preparing .unavailable {
     -webkit-transition: none;
 }
+
+.month-mode .day {
+    -webkit-transition: none;
+    border-radius: 0;
+    border: 1px solid transparent;
+}
