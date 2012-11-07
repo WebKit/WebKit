@@ -1,3 +1,15 @@
+2012-11-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Remove support for "desktop-width" in the viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=101217
+
+        Reviewed by Gyuyoung Kim.
+
+        Sync WebViewportArguments enum with the one in
+        WebCore::ViewportArguments
+
+        * Api/WebViewportArguments.h:
+
 2012-11-06  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Crash in InRegionScrollerPrivate.

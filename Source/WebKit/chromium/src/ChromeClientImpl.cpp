@@ -615,13 +615,6 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     if (!m_webView->settings()->viewportEnabled() || !m_webView->isFixedLayoutModeEnabled() || !m_webView->client() || !m_webView->page())
         return;
 
-    ViewportArguments args;
-    if (arguments == args) {
-        // Default viewport arguments passed in. This is a signal to reset the viewport.
-        args.width = ViewportArguments::ValueDesktopWidth;
-    } else
-        args = arguments;
-
     FrameView* frameView = m_webView->mainFrameImpl()->frameView();
     int dpi = screenHorizontalDPI(frameView);
     ASSERT(dpi > 0);
@@ -636,7 +629,7 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     float devicePixelRatio = dpi / ViewportArguments::deprecatedTargetDPI;
     // Call the common viewport computing logic in ViewportArguments.cpp.
     ViewportAttributes computed = computeViewportAttributes(
-        args, settings->layoutFallbackWidth(), deviceRect.width, deviceRect.height,
+        arguments, settings->layoutFallbackWidth(), deviceRect.width, deviceRect.height,
         devicePixelRatio, IntSize(deviceRect.width, deviceRect.height));
 
     restrictScaleFactorToInitialScaleIfNotUserScalable(computed);

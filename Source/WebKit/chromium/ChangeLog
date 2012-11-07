@@ -1,3 +1,20 @@
+2012-11-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Remove support for "desktop-width" in the viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=101217
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove some code trying to use the set desktop width (say 980) for
+        sites not using a viewport meta element.
+
+        Removing this code should have no effect as it ends up being set
+        to desktop width in that case anyway, by the ViewportArguments
+        algorithm.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+
 2012-11-06  Dan Beam  <dbeam@chromium.org>
 
         Enable REQUEST_AUTOCOMPLETE for chromium port

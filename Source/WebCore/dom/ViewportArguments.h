@@ -68,9 +68,8 @@ struct ViewportArguments {
 
     enum {
         ValueAuto = -1,
-        ValueDesktopWidth = -2,
-        ValueDeviceWidth = -3,
-        ValueDeviceHeight = -4,
+        ValueDeviceWidth = -2,
+        ValueDeviceHeight = -3,
     };
 
     ViewportArguments(Type type = Implicit)

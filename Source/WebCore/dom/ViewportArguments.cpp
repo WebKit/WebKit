@@ -61,9 +61,6 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
     }
 
     switch (int(args.width)) {
-    case ViewportArguments::ValueDesktopWidth:
-        args.width = desktopWidth;
-        break;
     case ViewportArguments::ValueDeviceWidth:
         args.width = deviceWidth;
         break;
@@ -73,9 +70,6 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
     }
 
     switch (int(args.height)) {
-    case ViewportArguments::ValueDesktopWidth:
-        args.height = desktopWidth;
-        break;
     case ViewportArguments::ValueDeviceWidth:
         args.height = deviceWidth;
         break;
@@ -218,8 +212,6 @@ static float findSizeValue(const String& keyString, const String& valueString, D
     // 3) device-width and device-height are used as keywords.
     // 4) Other keywords and unknown values translate to 0.0.
 
-    if (equalIgnoringCase(valueString, "desktop-width"))
-        return ViewportArguments::ValueDesktopWidth;
     if (equalIgnoringCase(valueString, "device-width"))
         return ViewportArguments::ValueDeviceWidth;
     if (equalIgnoringCase(valueString, "device-height"))
@@ -245,8 +237,6 @@ static float findScaleValue(const String& keyString, const String& valueString, 
         return 1;
     if (equalIgnoringCase(valueString, "no"))
         return 0;
-    if (equalIgnoringCase(valueString, "desktop-width"))
-        return 10;
     if (equalIgnoringCase(valueString, "device-width"))
         return 10;
     if (equalIgnoringCase(valueString, "device-height"))
@@ -273,8 +263,6 @@ static float findUserScalableValue(const String& keyString, const String& valueS
         return 1;
     if (equalIgnoringCase(valueString, "no"))
         return 0;
-    if (equalIgnoringCase(valueString, "desktop-width"))
-        return 1;
     if (equalIgnoringCase(valueString, "device-width"))
         return 1;
     if (equalIgnoringCase(valueString, "device-height"))

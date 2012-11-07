@@ -1,3 +1,23 @@
+2012-11-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Remove support for "desktop-width" in the viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=101217
+
+        Reviewed by Gyuyoung Kim.
+
+        This has been removed from the CSS Device Adaptation spec, and
+        should be safe to remove as it is not documented anywhere (neither
+        in blog posts).
+
+        The viewport meta should only support the legacy features.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes):
+        (WebCore::findSizeValue):
+        (WebCore::findScaleValue):
+        (WebCore::findUserScalableValue):
+        * dom/ViewportArguments.h:
+
 2012-11-07  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Fix execution of exif-orientation-image-document.html on EFL Wk2 bot

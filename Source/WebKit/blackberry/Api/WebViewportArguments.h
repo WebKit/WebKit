@@ -47,9 +47,8 @@ public:
     // This matches the enum found in WebCore::ViewportArguments
     enum {
         ValueAuto = -1,
-        ValueDesktopWidth = -2,
-        ValueDeviceWidth = -3,
-        ValueDeviceHeight = -4,
+        ValueDeviceWidth = -2,
+        ValueDeviceHeight = -3,
     };
 
     float initialScale() const;
