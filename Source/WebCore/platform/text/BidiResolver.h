@@ -113,10 +113,10 @@ inline bool operator!=(const BidiStatus& status1, const BidiStatus& status2)
 
 struct BidiCharacterRun {
     BidiCharacterRun(int start, int stop, BidiContext* context, WTF::Unicode::Direction dir)
-        : m_start(start)
-        , m_stop(stop)
-        , m_override(context->override())
+        : m_override(context->override())
         , m_next(0)
+        , m_start(start)
+        , m_stop(stop)
     {
         if (dir == WTF::Unicode::OtherNeutral)
             dir = context->dir();
@@ -146,11 +146,13 @@ struct BidiCharacterRun {
     BidiCharacterRun* next() const { return m_next; }
     void setNext(BidiCharacterRun* next) { m_next = next; }
 
+    // Do not add anything apart from bitfields until after m_next. See https://bugs.webkit.org/show_bug.cgi?id=100173
+    bool m_override:1;
+    bool m_hasHyphen:1; // Used by BidiRun subclass which is a layering violation but enables us to save 8 bytes per object on 64-bit.
     unsigned char m_level;
+    BidiCharacterRun* m_next;
     int m_start;
     int m_stop;
-    bool m_override;
-    BidiCharacterRun* m_next;
 };
 
 enum VisualDirectionOverride {

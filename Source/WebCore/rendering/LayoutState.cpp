@@ -39,11 +39,11 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
     : m_columnInfo(columnInfo)
     , m_lineGrid(0)
     , m_next(prev)
-#ifndef NDEBUG
-    , m_renderer(renderer)
-#endif
 #if ENABLE(CSS_EXCLUSIONS)
     , m_exclusionShapeInsideInfo(0)
+#endif
+#ifndef NDEBUG
+    , m_renderer(renderer)
 #endif
 {
     ASSERT(m_next);
@@ -139,20 +139,20 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
 LayoutState::LayoutState(RenderObject* root)
     : m_clipped(false)
     , m_isPaginated(false)
+    , m_pageLogicalHeightChanged(false)
 #if !ASSERT_DISABLED && ENABLE(SATURATED_LAYOUT_ARITHMETIC)
     , m_layoutDeltaXSaturated(false)
     , m_layoutDeltaYSaturated(false)
 #endif    
-    , m_pageLogicalHeight(0)
-    , m_pageLogicalHeightChanged(false)
     , m_columnInfo(0)
     , m_lineGrid(0)
     , m_next(0)
-#ifndef NDEBUG
-    , m_renderer(root)
-#endif
 #if ENABLE(CSS_EXCLUSIONS)
     , m_exclusionShapeInsideInfo(0)
+#endif
+    , m_pageLogicalHeight(0)
+#ifndef NDEBUG
+    , m_renderer(root)
 #endif
 {
     RenderObject* container = root->container();

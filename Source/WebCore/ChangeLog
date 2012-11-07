@@ -1,3 +1,28 @@
+2012-11-06  Chris Evans  <cevans@google.com>
+
+        Re-order variables in BidiRun and LayoutState
+        https://bugs.webkit.org/show_bug.cgi?id=100173
+
+        Reviewed by Eric Seidel.
+
+        The variable re-ordering and use of bitfields for bools has two benefits:
+        1) Size reduction. sizeof(BidiRun) goes down from 48 to 40 bytes on 64-bit. This is achieved by removing a bool member variable from BidiRun and packing it together with other bools in the BidiCharacterRun base class.
+        2) Security improvement. We have a lot of use-after-free in the RenderObject hierarchy, and the RenderArena class protects us from a lot of trouble by ensuring that objects of arbitrary type cannot be overlayed on top of freed RenderObjects. This change additionally makes sure that non-virtual RenderArena allocated objects do not have member variables which fully overlap the freed vtable pointer. This leaves re-used vtable pointers always pointing to either a valid vtable or an invalid address due to the freelist high-bit poisoning.
+
+        This change is exclusively about size savings; it is performance neutral as you would expect, including on Parser/html5-full-render.html
+
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiCharacterRun::BidiCharacterRun): impact from re-ordering members.
+        (BidiCharacterRun): provide an efficiently packed bit of storage for BidiRun subclass to use, and re-order members to place bools adjacent.
+        * rendering/BidiRun.h:
+        (WebCore::BidiRun::BidiRun): use base class' efficiently packed bit storage for m_hasHyphen.
+        (BidiRun): m_hasHyphen is now stored in the base class.
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::LayoutState): impact from re-ordering members.
+        (LayoutState): re-order members to place bools adjacently.
+
 2012-11-06  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-win] Refactor date/time format conversion code in LocaleWin
