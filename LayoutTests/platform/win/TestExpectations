@@ -2286,7 +2286,6 @@ tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html
 http/tests/fullscreen/fullscreenelement-different-origin.html
 http/tests/fullscreen/fullscreenelement-same-origin.html
 http/tests/history/back-with-fragment-change.php
-http/tests/images/jpg-img-partial-load.html
 http/tests/inspector/console-cross-origin-iframe-logging.html
 http/tests/inspector/inspect-element.html
 http/tests/inspector/resource-har-conversion.html
