@@ -83,6 +83,7 @@ WebInspector.UISourceCodeFrame.prototype = {
     _onFormattedChanged: function(event)
     {
         var content = /** @type {string} */ (event.data.content);
+        this._textEditor.setReadOnly(this._uiSourceCode.formatted());
         this._innerSetContent(content);
     },
 
