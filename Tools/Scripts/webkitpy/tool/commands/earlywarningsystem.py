@@ -158,11 +158,17 @@ class EflEWS(AbstractEarlyWarningSystem):
 class QtEWS(AbstractEarlyWarningSystem):
     name = "qt-ews"
     port_name = "qt"
+    watchers = AbstractEarlyWarningSystem.watchers + [
+        "webkit-ews@sed.inf.u-szeged.hu",
+    ]
 
 
 class QtWK2EWS(AbstractEarlyWarningSystem):
     name = "qt-wk2-ews"
     port_name = "qt"
+    watchers = AbstractEarlyWarningSystem.watchers + [
+        "webkit-ews@sed.inf.u-szeged.hu",
+    ]
 
 
 class WinEWS(AbstractEarlyWarningSystem):

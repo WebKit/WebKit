@@ -1,3 +1,11 @@
+2012-11-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed. Add Qt EWS bots to the watchers list.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (QtEWS):
+        (QtWK2EWS):
+
 2012-11-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         WebKitTestRunner needs to turn on 'setContinuousSpellCheckingEnabled'
