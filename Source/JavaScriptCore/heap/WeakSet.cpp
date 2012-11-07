@@ -36,7 +36,7 @@ WeakSet::~WeakSet()
     WeakBlock* next = 0;
     for (WeakBlock* block = m_blocks.head(); block; block = next) {
         next = block->next();
-        WeakBlock::destroy(block);
+        heap()->blockAllocator().deallocate(WeakBlock::destroy(block));
     }
     m_blocks.clear();
 }
@@ -73,7 +73,7 @@ WeakBlock::FreeCell* WeakSet::tryFindAllocator()
 
 WeakBlock::FreeCell* WeakSet::addAllocator()
 {
-    WeakBlock* block = WeakBlock::create();
+    WeakBlock* block = WeakBlock::create(heap()->blockAllocator().allocate<WeakBlock>());
     heap()->didAllocate(WeakBlock::blockSize);
     m_blocks.append(block);
     WeakBlock::SweepResult sweepResult = block->takeSweepResult();

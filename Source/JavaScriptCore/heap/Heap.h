@@ -188,6 +188,7 @@ namespace JSC {
         friend class SlotVisitor;
         friend class IncrementalSweeper;
         friend class HeapStatistics;
+        friend class WeakSet;
         template<typename T> friend void* allocateCell(Heap&);
         template<typename T> friend void* allocateCell(Heap&, size_t);
 

@@ -1,3 +1,31 @@
+2012-11-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        WeakBlocks should be HeapBlocks
+        https://bugs.webkit.org/show_bug.cgi?id=101411
+
+        Reviewed by Oliver Hunt.
+
+        Currently WeakBlocks use fastMalloc memory. They are very similar to the other HeapBlocks, however, 
+        so we should change them to being allocated with the BlockAllocator.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::BlockAllocator):
+        * heap/BlockAllocator.h: Added a new RegionSet for WeakBlocks.
+        (JSC):
+        (BlockAllocator):
+        (JSC::WeakBlock):
+        * heap/Heap.h: Friended WeakSet to allow access to the BlockAllocator.
+        (Heap):
+        * heap/WeakBlock.cpp:
+        (JSC::WeakBlock::create): Refactored to use HeapBlocks rather than fastMalloc.
+        (JSC::WeakBlock::WeakBlock):
+        * heap/WeakBlock.h: Changed the WeakBlock size to 4 KB so that it divides evenly into the Region size.
+        (JSC):
+        (WeakBlock):
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::~WeakSet):
+        (JSC::WeakSet::addAllocator):
+
 2012-11-07  Filip Pizlo  <fpizlo@apple.com>
 
         Indentation of ArgList.h is wrong

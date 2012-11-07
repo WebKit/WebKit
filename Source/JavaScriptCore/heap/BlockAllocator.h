@@ -39,6 +39,7 @@ class BlockAllocator;
 class CopiedBlock;
 class MarkedBlock;
 class Region;
+class WeakBlock;
 
 // Simple allocator to reduce VM cost by holding onto blocks of memory for
 // short periods of time and then freeing them on a secondary thread.
@@ -184,6 +185,7 @@ private:
 
     RegionSet m_copiedRegionSet;
     RegionSet m_markedRegionSet;
+    RegionSet m_weakRegionSet;
 
     DoublyLinkedList<Region> m_emptyRegions;
     size_t m_numberOfEmptyRegions;
@@ -311,6 +313,12 @@ inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<MarkedBlock>()
 }
 
 template <>
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<WeakBlock>()
+{
+    return m_weakRegionSet;
+}
+
+template <>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopiedBlock> >()
 {
     return m_copiedRegionSet;
@@ -320,6 +328,12 @@ template <>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<MarkedBlock> >()
 {
     return m_markedRegionSet;
+}
+
+template <>
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<WeakBlock> >()
+{
+    return m_weakRegionSet;
 }
 
 template <typename T>
