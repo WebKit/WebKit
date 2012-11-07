@@ -243,6 +243,13 @@ void StringBuilder::append(const UChar* characters, unsigned length)
     ASSERT(characters);
 
     if (m_is8Bit) {
+        if (length == 1 && !(*characters & ~0xff)) {
+            // Append as 8 bit character
+            LChar lChar = static_cast<LChar>(*characters);
+            append(&lChar, 1);
+            return;
+        }
+
         // Calculate the new size of the builder after appending.
         unsigned requiredLength = length + m_length;
         if (requiredLength < length)

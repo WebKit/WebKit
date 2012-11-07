@@ -111,10 +111,18 @@ public:
 
     void append(UChar c)
     {
-        if (m_buffer && !m_is8Bit && m_length < m_buffer->length() && m_string.isNull())
-            m_bufferCharacters16[m_length++] = c;
-        else
-            append(&c, 1);
+        if (m_buffer && m_length < m_buffer->length() && m_string.isNull()) {
+            if (!m_is8Bit) {
+                m_bufferCharacters16[m_length++] = c;
+                return;
+            }
+
+            if (!(c & ~0xff)) {
+                m_bufferCharacters8[m_length++] = static_cast<LChar>(c);
+                return;
+            }
+        }
+        append(&c, 1);
     }
 
     void append(LChar c)

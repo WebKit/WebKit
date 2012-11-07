@@ -1,3 +1,18 @@
+2012-11-06  Michael Saboff  <msaboff@apple.com>
+
+        StringBuilder::append(UChar) with an 8 bit quantity shouldn't change the contents to 16 bits
+        https://bugs.webkit.org/show_bug.cgi?id=101421
+
+        Reviewed by Anders Carlsson.
+
+        If the string builder contains only 8 bit data, check if the character being appended contains
+        8 bit data.  If so, append it to the 8 bit buffer instead of converting the buffer to 16 bits.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::append):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::append):
+
 2012-11-06  Benjamin Poulain  <benjamin@webkit.org>
 
         Speed up TransformationMatrix::multiply() on modern ARM
