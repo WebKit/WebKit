@@ -1,3 +1,12 @@
+2012-11-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        fast/repaint/block-selection-gap-in-table-cell.html is not
+        rendering correctly, so skip it when running pixel tests. Need a
+
+        * platform/efl/TestExpectations:
+
 2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed inspector test polish.
