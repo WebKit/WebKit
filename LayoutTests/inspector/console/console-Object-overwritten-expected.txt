@@ -1,0 +1,5 @@
+Tests that Web Inspector's console is not broken if Object is overwritten in the inspected page. Test passes if the expression is evaluated in the console and no errors printed. Bug 101320.
+
+var foo = {bar:2012}; foo
+Object {bar: 2012}
+

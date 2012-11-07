@@ -1,3 +1,17 @@
+2012-11-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Console not displaying all properties of an Object once native Constructor overwritten
+        https://bugs.webkit.org/show_bug.cgi?id=101320
+
+        Reviewed by Pavel Feldman.
+
+        Use Object instance from {}.constructor when formatting inspector messages in the
+        injected script. Otherwise inspected page may overwrite Object value and break inspector.
+
+        Test: inspector/console/console-Object-overwritten.html
+
+        * inspector/InjectedScriptSource.js:
+
 2012-11-06  Keishi Hattori  <keishi@webkit.org>
 
         Implement month picking to calendar picker

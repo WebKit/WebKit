@@ -33,6 +33,9 @@
  */
 (function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
 
+// Protect against Object overwritten by the user code.
+var Object = {}.constructor;
+
 /**
  * @param {Arguments} array
  * @param {number=} index

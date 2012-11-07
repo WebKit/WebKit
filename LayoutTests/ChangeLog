@@ -1,3 +1,16 @@
+2012-11-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Console not displaying all properties of an Object once native Constructor overwritten
+        https://bugs.webkit.org/show_bug.cgi?id=101320
+
+        Reviewed by Pavel Feldman.
+
+        Check that Web Inspector's console works fine if Object is overwritten in the inspected
+        page.
+
+        * inspector/console/console-Object-overwritten-expected.txt: Added.
+        * inspector/console/console-Object-overwritten.html: Added.
+
 2012-11-06  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK2] media/media-continues-playing-after-replace-source.html fails
