@@ -31,8 +31,6 @@
 #include <PageCache.h>
 #include <ViewportArguments.h>
 #include <wtf/HashSet.h>
-#include <wtf/Vector.h>
-#include <wtf/text/Base64.h>
 
 namespace BlackBerry {
 namespace WebKit {
@@ -94,7 +92,6 @@ DEFINE_STATIC_LOCAL(String, WebKitDeviceSupportsMouse, (ASCIILiteral("WebKitDevi
 DEFINE_STATIC_LOCAL(String, WebKitSansSeriffFontFamily, (ASCIILiteral("WebKitSansSeriffFontFamily")));
 DEFINE_STATIC_LOCAL(String, WebKitSeriffFontFamily, (ASCIILiteral("WebKitSeriffFontFamily")));
 DEFINE_STATIC_LOCAL(String, WebKitStandardFontFamily, (ASCIILiteral("WebKitStandardFontFamily")));
-DEFINE_STATIC_LOCAL(String, WebKitUserStyleSheet, (ASCIILiteral("WebKitUserStyleSheet")));
 DEFINE_STATIC_LOCAL(String, WebKitUserStyleSheetLocation, (ASCIILiteral("WebKitUserStyleSheetLocation")));
 DEFINE_STATIC_LOCAL(String, WebKitWebSocketsEnabled, (ASCIILiteral("WebKitWebSocketsEnabled")));
 DEFINE_STATIC_LOCAL(String, WebKitXSSAuditorEnabled, (ASCIILiteral("WebKitXSSAuditorEnabled")));
@@ -456,32 +453,6 @@ bool WebSettings::doesGetFocusNodeContext() const
 void WebSettings::setGetFocusNodeContext(bool enabled)
 {
     m_private->setBoolean(BlackBerryGetFocusNodeContextEnabled, enabled);
-}
-
-BlackBerry::Platform::String WebSettings::userStyleSheetString() const
-{
-    return m_private->getString(WebKitUserStyleSheet);
-}
-
-void WebSettings::setUserStyleSheetString(const BlackBerry::Platform::String& userStyleSheetString)
-{
-    // FIXME: This doesn't seem like the appropriate place to do this as WebSettings should ideally be a state store.
-    // Either the caller of this function should do this conversion or caller of the getter corresponding to this function
-    // should do this conversion.
-
-    Vector<char> data;
-    data.append(userStyleSheetString.c_str(), userStyleSheetString.length());
-
-    Vector<char> encodedData;
-    base64Encode(data, encodedData);
-
-    const char prefix[] = "data:text/css;charset=utf-8;base64,";
-    size_t prefixLength = sizeof(prefix) - 1;
-    Vector<char> dataURL;
-    dataURL.reserveCapacity(prefixLength + encodedData.size());
-    dataURL.append(prefix, prefixLength);
-    dataURL.append(encodedData);
-    m_private->setString(WebKitUserStyleSheet, String(dataURL.data(), dataURL.size()));
 }
 
 BlackBerry::Platform::String WebSettings::userStyleSheetLocation()

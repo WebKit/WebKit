@@ -5906,9 +5906,7 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setSpatialNavigationEnabled(m_webSettings->isSpatialNavigationEnabled());
     coreSettings->setAsynchronousSpellCheckingEnabled(m_webSettings->isAsynchronousSpellCheckingEnabled());
 
-    BlackBerry::Platform::String stylesheetURL = webSettings->userStyleSheetString();
-    if (stylesheetURL.empty())
-        stylesheetURL = webSettings->userStyleSheetLocation();
+    BlackBerry::Platform::String stylesheetURL = webSettings->userStyleSheetLocation();
     if (!stylesheetURL.empty())
         coreSettings->setUserStyleSheetLocation(KURL(KURL(), stylesheetURL));
 

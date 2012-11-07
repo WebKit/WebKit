@@ -126,9 +126,6 @@ public:
     bool doesGetFocusNodeContext() const;
     void setGetFocusNodeContext(bool);
 
-    BlackBerry::Platform::String userStyleSheetString() const;
-    void setUserStyleSheetString(const BlackBerry::Platform::String&);
-
     BlackBerry::Platform::String userStyleSheetLocation();
     void setUserStyleSheetLocation(const BlackBerry::Platform::String&);
 

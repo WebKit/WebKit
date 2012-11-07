@@ -1,3 +1,18 @@
+2012-11-07  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Remove setUserStyleSheetString/userStyleSheetString
+        https://bugs.webkit.org/show_bug.cgi?id=101490
+
+        Reviewed by Yong Li.
+
+        We no longer need this API.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        * Api/WebSettings.cpp:
+        (WebKit):
+        * Api/WebSettings.h:
+
 2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         Add replaceWithLiteral() method to WTF::String
