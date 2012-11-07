@@ -79,6 +79,18 @@ public:
     const CustomFilterProgramInfo& programInfo() const { return m_programInfo; }
     PassRefPtr<CustomFilterCompiledProgram> compiledProgram();
 
+    const String& validatedVertexShader() const 
+    {
+        ASSERT(m_isInitialized); 
+        return m_validatedVertexShader; 
+    }
+
+    const String& validatedFragmentShader() const 
+    { 
+        ASSERT(m_isInitialized); 
+        return m_validatedFragmentShader; 
+    }
+
 #if PLATFORM(BLACKBERRY)
     PlatformCompiledProgram* platformCompiledProgram();
 #endif

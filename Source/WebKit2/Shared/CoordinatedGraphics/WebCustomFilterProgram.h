@@ -43,9 +43,13 @@ public:
 
     virtual bool operator==(const CustomFilterProgram& o) const OVERRIDE
     {
+        // We don't use the != operator because that would recursively call this method.
+        if (!CustomFilterProgram::operator==(o))
+            return false;
+
         // The following cast is ugly, but WebCustomFilterProgram is the single implementation of CustomFilterProgram on UI Process.
         const WebCustomFilterProgram* other = static_cast<const WebCustomFilterProgram*>(&o);
-        return mixSettings() == other->mixSettings() && m_vertexShaderString == other->vertexShaderString() && m_fragmentShaderString == other->fragmentShaderString();
+        return m_vertexShaderString == other->vertexShaderString() && m_fragmentShaderString == other->fragmentShaderString();
     }
 
 protected:

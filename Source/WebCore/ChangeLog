@@ -1,3 +1,19 @@
+2012-11-07  Alexandru Chiculita  <achicu@adobe.com>
+
+        CoordinatedGraphicsArgumentCoders should use ValidatedCustomFitlerOperation instead
+        https://bugs.webkit.org/show_bug.cgi?id=100905
+
+        Reviewed by Noam Rosenthal.
+
+        Added getters for the validated shaders, so that platform code could extract them.
+
+        No new tests, just added two getters.
+
+        * platform/graphics/filters/CustomFilterValidatedProgram.h:
+        (WebCore::CustomFilterValidatedProgram::validatedVertexShader):
+        (WebCore::CustomFilterValidatedProgram::validatedFragmentShader):
+        (CustomFilterValidatedProgram):
+
 2012-11-07  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Assertion failure with open() within upgradeneeded

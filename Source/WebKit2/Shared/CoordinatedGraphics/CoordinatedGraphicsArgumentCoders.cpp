@@ -59,8 +59,9 @@
 #include <WebCore/CustomFilterOperation.h>
 #include <WebCore/CustomFilterProgram.h>
 #include <WebCore/CustomFilterTransformParameter.h>
+#include <WebCore/CustomFilterValidatedProgram.h>
+#include <WebCore/ValidatedCustomFilterOperation.h>
 #endif
-
 
 #if USE(GRAPHICS_SURFACE)
 #include <WebCore/GraphicsSurface.h>
@@ -135,19 +136,24 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
             break;
         }
 #if ENABLE(CSS_SHADERS)
-        case FilterOperation::CUSTOM: {
-            const CustomFilterOperation* customOperation = static_cast<const CustomFilterOperation*>(filter);
+        case FilterOperation::CUSTOM:
+            // Custom Filters are converted to VALIDATED_CUSTOM before reaching this point.
+            ASSERT_NOT_REACHED();
+            break;
+        case FilterOperation::VALIDATED_CUSTOM: {
+            const ValidatedCustomFilterOperation* customOperation = static_cast<const ValidatedCustomFilterOperation*>(filter);
 
-            ASSERT(customOperation->program());
-            RefPtr<CustomFilterProgram> program = customOperation->program();
-            ASSERT(program->isLoaded());
-            encoder << program->vertexShaderString();
-            encoder << program->fragmentShaderString();
-            encoder.encodeEnum(program->programType());
-            CustomFilterProgramMixSettings mixSettings = program->mixSettings();
+            ASSERT(customOperation->validatedProgram());
+            RefPtr<CustomFilterValidatedProgram> program = customOperation->validatedProgram();
+            ASSERT(program->isInitialized());
+            encoder << program->validatedVertexShader();
+            encoder << program->validatedFragmentShader();
+            const CustomFilterProgramInfo& programInfo = program->programInfo();
+            encoder.encodeEnum(programInfo.programType());
+            const CustomFilterProgramMixSettings& mixSettings = programInfo.mixSettings();
             encoder.encodeEnum(mixSettings.blendMode);
             encoder.encodeEnum(mixSettings.compositeOperator);
-            encoder.encodeEnum(program->meshType());
+            encoder.encodeEnum(programInfo.meshType());
 
             CustomFilterParameterList parameters = customOperation->parameters();
             encoder << static_cast<uint32_t>(parameters.size());
@@ -181,7 +187,9 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
 
             encoder << customOperation->meshRows();
             encoder << customOperation->meshColumns();
-            encoder.encodeEnum(customOperation->meshBoxType());
+            // FIXME: The ValidatedCustomFilterOperation doesn't have the meshBoxType yet, we just use the default one for now.
+            // https://bugs.webkit.org/show_bug.cgi?id=100890
+            encoder.encodeEnum(MeshBoxTypeFilter);
             break;
         }
 #endif
@@ -247,7 +255,11 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
             break;
         }
 #if ENABLE(CSS_SHADERS)
-        case FilterOperation::CUSTOM: {
+        case FilterOperation::CUSTOM:
+            // Custom Filters are converted to VALIDATED_CUSTOM before reaching this point.
+            ASSERT_NOT_REACHED();
+            break;
+        case FilterOperation::VALIDATED_CUSTOM: {
             String vertexShaderString;
             String fragmentShaderString;
             CustomFilterProgramType programType;
@@ -331,7 +343,8 @@ bool ArgumentCoder<WebCore::FilterOperations>::decode(ArgumentDecoder* decoder, 
             if (!decoder->decodeEnum(meshBoxType))
                 return false;
 
-            filter = CustomFilterOperation::create(program, parameters, meshRows, meshColumns, meshBoxType, meshType);
+            // At this point the Shaders are already validated, so we just use CustomFilterOperation for transportation.
+            filter = CustomFilterOperation::create(program.release(), parameters, meshRows, meshColumns, meshBoxType, meshType);
             break;
         }
 #endif
