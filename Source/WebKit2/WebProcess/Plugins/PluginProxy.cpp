@@ -232,6 +232,9 @@ PassRefPtr<ShareableBitmap> PluginProxy::snapshot()
     ShareableBitmap::Handle snapshotStoreHandle;
     m_connection->connection()->sendSync(Messages::PluginControllerProxy::Snapshot(), Messages::PluginControllerProxy::Snapshot::Reply(snapshotStoreHandle), m_pluginInstanceID);
 
+    if (snapshotStoreHandle.isNull())
+        return 0;
+
     RefPtr<ShareableBitmap> snapshotBuffer = ShareableBitmap::create(snapshotStoreHandle);
     return snapshotBuffer.release();
 }

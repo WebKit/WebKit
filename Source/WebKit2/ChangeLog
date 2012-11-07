@@ -1,3 +1,18 @@
+2012-11-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [WK2] Return earlier if a plugin snapshot cannot be created.
+        https://bugs.webkit.org/show_bug.cgi?id=101445
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Currently only the Mac port has support for creating snapshots of
+        Netscape plugins. Return earlier in PluginProxy::snapshot() so
+        that we do not pass a null handler to ShareableBitmap::create()
+        and avoid crashing when running pixel tests with plugins.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::snapshot):
+
 2012-11-07  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK2] Change encoding detector API names
