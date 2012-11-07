@@ -23,6 +23,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import BaseHTTPServer
+import SocketServer
 import logging
 import json
 import os
@@ -52,7 +53,7 @@ class BuildCoverageExtrapolator(object):
         return self._covered_test_configurations_for_builder_name()[builder_name]
 
 
-class GardeningHTTPServer(BaseHTTPServer.HTTPServer):
+class GardeningHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     def __init__(self, httpd_port, config):
         server_name = ''
         self.tool = config['tool']
@@ -81,9 +82,6 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
 
     allow_cross_origin_requests = True
     debug_output = ''
-
-    def _run_webkit_patch(self, args):
-        return self.server.tool.executive.run_command([self.server.tool.path()] + args, cwd=self.server.tool.scm().checkout_root)
 
     def rollout(self):
         revision = self.query['revision'][0]

@@ -1,3 +1,30 @@
+2012-11-07  Dirk Pranke  <dpranke@chromium.org>
+
+        garden-o-matic should handle concurrent requests
+        https://bugs.webkit.org/show_bug.cgi?id=101407
+
+        Reviewed by Ojan Vafai.
+
+        Garden-o-Matic is implemented on top of the BaseHttpServer
+        python library, which implements a single-threaded (one request at
+        a time) server. This means that we can only rebaseline one test at
+        a time, and when using a local results file, even fetching the results
+        for diffs is single-threaded.
+
+        Mixing in the ThreadingMixin enables concurrent requests (subject
+        to the global python interpreter lock). Given that we're doing all
+        of the work in webkit-patch subprocesses, I think this is safe.
+
+        Of course, it may not be safe to do some of the subprocesses in
+        parallel (e.g., rollout), but I think as long as we don't issue
+        commands that touch overlapping sets of files things should be fine.
+        The file locking over modifying testexpectations should keep that
+        from being corrupted.
+
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPServer):
+        (GardeningHTTPRequestHandler):
+
 2012-11-07  Andreas Kling  <akling@apple.com>
 
         Remove build-webkit dependency on Java SDK for Apple Mac WebKit.
