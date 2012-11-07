@@ -43,7 +43,6 @@
 #include <wtf/MathExtras.h>
 
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
-#include "CustomFilterConstants.h"
 #include "CustomFilterGlobalContext.h"
 #include "CustomFilterOperation.h"
 #include "CustomFilterProgram.h"
@@ -94,11 +93,8 @@ static PassRefPtr<FECustomFilter> createCustomFilterEffect(Filter* filter, Docum
     if (!globalContext->context())
         return 0;
 
-    // FIXME: Use the right CustomFilterMeshBoxType when that will be available on the ValidatedCustomFilterOperation.
-    // Right now the implementation doesn't use that parameter anyway, so just pass the default MeshBoxTypeFilter.
-    // https://bugs.webkit.org/show_bug.cgi?id=100890
     return FECustomFilter::create(filter, globalContext->context(), operation->validatedProgram(), operation->parameters(),
-        operation->meshRows(), operation->meshColumns(), MeshBoxTypeFilter, operation->meshType());
+        operation->meshRows(), operation->meshColumns(), operation->meshBoxType(), operation->meshType());
 }
 #endif
 
