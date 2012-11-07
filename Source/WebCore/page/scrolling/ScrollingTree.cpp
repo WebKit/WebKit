@@ -34,6 +34,7 @@
 #include "ScrollingTreeNode.h"
 #include "ScrollingTreeState.h"
 #include <wtf/MainThread.h>
+#include <wtf/TemporaryChange.h>
 
 namespace WebCore {
 
@@ -50,6 +51,7 @@ ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
     , m_canGoForward(false)
     , m_mainFramePinnedToTheLeft(false)
     , m_mainFramePinnedToTheRight(false)
+    , m_isHandlingProgrammaticScroll(false)
 {
 }
 
@@ -131,6 +133,8 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingTreeState> scrollingT
         if (scrollingTreeState->changedProperties() & ScrollingTreeState::NonFastScrollableRegion)
             m_nonFastScrollableRegion = scrollingTreeState->nonFastScrollableRegion();
     }
+    
+    TemporaryChange<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollingTreeState->requestedScrollPositionRepresentsProgrammaticScroll());
 
     m_rootNode->update(scrollingTreeState.get());
 
@@ -155,7 +159,7 @@ void ScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition
         m_mainFrameScrollPosition = scrollPosition;
     }
 
-    callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPosition, m_scrollingCoordinator.get(), scrollPosition));
+    callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPosition, m_scrollingCoordinator.get(), scrollPosition, m_isHandlingProgrammaticScroll));
 }
 
 IntPoint ScrollingTree::mainFrameScrollPosition()

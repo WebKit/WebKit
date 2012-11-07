@@ -115,6 +115,8 @@ private:
     bool m_canGoForward;
     bool m_mainFramePinnedToTheLeft;
     bool m_mainFramePinnedToTheRight;
+    
+    bool m_isHandlingProgrammaticScroll;
 
 #if PLATFORM(MAC)
     RetainPtr<CALayer> m_debugInfoLayer;
