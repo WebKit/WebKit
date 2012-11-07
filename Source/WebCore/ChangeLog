@@ -1,3 +1,21 @@
+2012-11-07  Adam Barth  <abarth@webkit.org>
+
+        [V8] IntrusiveDOMWrapperMap should be usable for more than just Nodes
+        https://bugs.webkit.org/show_bug.cgi?id=101110
+
+        Reviewed by Kentaro Hara.
+
+        This patch generalizes our support for storing wrappers in DOM objects
+        to be usable for more than just nodes. After this patch, any object
+        with a ScriptWrappable base class will have its wrapper stored inline
+        in the object in the main world.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::weakCallback):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::get):
+        (WebCore::DOMDataStore::set):
+
 2012-11-07  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update BB10 form theme.
