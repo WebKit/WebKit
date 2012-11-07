@@ -5702,6 +5702,10 @@ void Document::setFullScreenRendererBackgroundColor(Color backgroundColor)
     
 void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
 {
+    // Since we dispatch events in this function, it's possible that the
+    // document will be detached and GC'd. We protect it here to make sure we
+    // can finish the function successfully.
+    RefPtr<Document> protectDocument(this);
     Deque<RefPtr<Node> > changeQueue;
     m_fullScreenChangeEventTargetQueue.swap(changeQueue);
 
@@ -5709,6 +5713,9 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
         RefPtr<Node> node = changeQueue.takeFirst();
         if (!node)
             node = documentElement();
+        // The dispatchEvent below may have blown away our documentElement.
+        if (!node)
+            continue;
 
         // If the element was removed from our tree, also message the documentElement.
         if (!contains(node.get()))
@@ -5724,6 +5731,9 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
         RefPtr<Node> node = errorQueue.takeFirst();
         if (!node)
             node = documentElement();
+        // The dispatchEvent below may have blown away our documentElement.
+        if (!node)
+            continue;
         
         // If the node was removed from our tree, also message the documentElement.
         if (!contains(node.get()))
