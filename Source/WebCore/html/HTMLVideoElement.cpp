@@ -118,8 +118,6 @@ void HTMLVideoElement::parseAttribute(Attribute* attr)
                 m_imageLoader = adoptPtr(new HTMLImageLoader(this));
             m_imageLoader->updateFromElementIgnoringPreviousError();
         } else {
-            if (m_imageLoader)
-                m_imageLoader.clear();
             if (renderer())
                 toRenderImage(renderer())->imageResource()->setCachedImage(0); 
         }

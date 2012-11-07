@@ -105,8 +105,6 @@ void HTMLObjectElement::parseAttribute(Attribute* attr)
             m_serviceType = m_serviceType.left(pos);
         if (renderer())
             setNeedsWidgetUpdate(true);
-        if (!isImageType() && m_imageLoader)
-            m_imageLoader.clear();
     } else if (attr->name() == dataAttr) {
         m_url = stripLeadingAndTrailingHTMLSpaces(attr->value());
         if (renderer()) {
