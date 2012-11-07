@@ -1,3 +1,10 @@
+2012-11-06  Stephen White  <senorblanco@chromium.org>
+
+        Don't write pixels for crash-hw-sw-switch test; if it doesn't crash, it
+        passes.  Unreviewed.
+
+        * css3/filters/crash-hw-sw-switch.html:
+
 2012-11-06  Noel Gordon  <noel.gordon@gmail.com>
 
         (r125185) http/tests/images/jpg-img-partial-load.html timeout on Lion
