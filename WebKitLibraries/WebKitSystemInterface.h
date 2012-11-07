@@ -485,9 +485,6 @@ CGFloat WKNSElasticDeltaForReboundDelta(CGFloat delta);
 CGFloat WKNSReboundDeltaForElasticDelta(CGFloat delta);
 #endif
 
-Boolean WKJLIsRuntimeAndWebComponentsInstalled(void);
-void WKJLReportWebComponentsUsed(void);
-
 typedef enum {
     WKCaptionFontStyleDefault = 0,
     WKCaptionFontStyleMonospacedWithSerif,
@@ -534,6 +531,9 @@ typedef void (*WKOcclusionNotificationHandler)(uint32_t, void*, uint32_t, void*,
 bool WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
 bool WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
 #endif
+
+bool WKIsJavaPlugInActive(void);
+void WKActivateJavaPlugIn(void);
 
 #ifdef __cplusplus
 }

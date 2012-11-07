@@ -1,5 +1,11 @@
 2012-11-06  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * WebKitSystemInterface.h:
+
+2012-11-06  Anders Carlsson  <andersca@apple.com>
+
         Update Java related WKSI function names
         https://bugs.webkit.org/show_bug.cgi?id=101414
 
