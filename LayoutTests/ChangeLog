@@ -1,5 +1,19 @@
 2012-11-06  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r126657
+
+    2012-08-24  Florin Malita  <fmalita@chromium.org>
+
+            ASSERTION FAILED: !attached() in WebCore::Node::attach()
+            https://bugs.webkit.org/show_bug.cgi?id=94650
+
+            Reviewed by Abhishek Arya.
+
+            * svg/custom/system-language-crash-expected.txt: Added.
+            * svg/custom/system-language-crash.html: Added.
+
+2012-11-06  Lucas Forschler  <lforschler@apple.com>
+
         Merge r126205
 
     2012-08-21  Florin Malita  <fmalita@chromium.org>
@@ -11077,6 +11091,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .

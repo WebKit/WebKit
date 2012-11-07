@@ -152,11 +152,14 @@ bool SVGTests::handleAttributeChange(SVGElement* targetElement, const QualifiedN
         return false;
     if (!targetElement->inDocument())
         return true;
+
     bool valid = targetElement->isValid();
-    if (valid && !targetElement->attached())
+    bool attached = targetElement->attached();
+    if (valid && !attached && targetElement->parentNode()->attached())
         targetElement->attach();
-    if (!valid && targetElement->attached())
+    else if (!valid && attached)
         targetElement->detach();
+
     return true;
 }
 
