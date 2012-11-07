@@ -1,5 +1,18 @@
 2012-11-06  KyungTae Kim  <ktf.kim@samsung.com>
 
+        [WK2][EFL] Add shortcut for setting a pagination mode on Minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=100301
+
+        Reviewed by Gyuyoung Kim.
+
+        Setting pagination modes is for a paginated view - left to right / right to left / top to bottom / bottom to top.
+        Assign a shortcut "F7" to set pagination modes for tests.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+
+2012-11-06  KyungTae Kim  <ktf.kim@samsung.com>
+
         [EFL][EWebLauncher] Use Ctrl +/-  to zoom in EWebLauncher
         https://bugs.webkit.org/show_bug.cgi?id=100207
 

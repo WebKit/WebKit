@@ -165,6 +165,13 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
     } else if (!strcmp(ev->key, "F6")) {
         info("Stop (F6) was pressed, stop loading.\n");
         ewk_view_stop(obj);
+    } else if  (!strcmp(ev->key, "F7")) {
+        Ewk_Pagination_Mode mode =  ewk_view_pagination_mode_get(obj);
+        mode = (++mode) % (EWK_PAGINATION_MODE_BOTTOM_TO_TOP + 1);
+        if (ewk_view_pagination_mode_set(obj, mode))
+            info("Change Pagination Mode (F7) was pressed, changed to: %d\n", mode);
+        else
+            info("Change Pagination Mode (F7) was pressed, but NOT changed!");
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
         info("Create new window (Ctrl+n) was pressed.\n");
         Browser_Window *window = window_create(DEFAULT_URL);
