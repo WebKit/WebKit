@@ -43,7 +43,9 @@
     void reset();
     boolean checkValidity();
 
-    [Conditional=REQUEST_AUTOCOMPLETE] void requestAutocomplete();
-    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventListener onautocomplete;
-    [NotEnumerable, Conditional=REQUEST_AUTOCOMPLETE] attribute EventListener onautocompleteerror;
+#if defined(ENABLE_REQUEST_AUTOCOMPLETE) && ENABLE_REQUEST_AUTOCOMPLETE
+    [V8EnabledAtRuntime=requestAutocomplete] void requestAutocomplete();
+    [V8EnabledAtRuntime=requestAutocomplete,NotEnumerable] attribute EventListener onautocomplete;
+    [V8EnabledAtRuntime=requestAutocomplete,NotEnumerable] attribute EventListener onautocompleteerror;
+#endif
 };

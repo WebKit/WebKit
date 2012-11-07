@@ -1,3 +1,35 @@
+2012-11-06  Dan Beam  <dbeam@chromium.org>
+
+        Enable REQUEST_AUTOCOMPLETE for chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=101376
+
+        Reviewed by Adam Barth.
+
+        This patch enables the feature flag REQUEST_AUTOCOMPLETE in WebKit/chromium only to allow web authors to start to use
+        HTMLFormElement#requestAutocomplete as the chrome-side work progresses further.
+
+        * features.gypi:
+
+        Turned on the *compile* time flag for REQUEST_AUTOCOMPLETE in chromium's webkit port but also added a *run* time flag
+        that functionally enables the behavior.  This means the chromium port will compile in support but will require a run
+        time flag to enable.
+
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures):
+
+        Added a method to the public chromium run time features interface to allow chrome to enable/disable this feature.
+
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableRequestAutocomplete):
+        (WebKit):
+
+        A setter than can be called from chrome code to change the enable/disable requestAutocomplete and associated events at
+        runtime.
+
+        (WebKit::WebRuntimeFeatures::isRequestAutocompleteEnabled):
+
+        A getter that returns whether the requestAutocomplete run time feature is enabled.
+
 2012-11-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133526.

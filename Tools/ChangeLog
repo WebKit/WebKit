@@ -1,3 +1,18 @@
+2012-11-06  Dan Beam  <dbeam@chromium.org>
+
+        Enable REQUEST_AUTOCOMPLETE for chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=101376
+
+        Reviewed by Adam Barth.
+
+        This patch enables the feature flag REQUEST_AUTOCOMPLETE in WebKit/chromium only to allow web authors to start to use
+        HTMLFormElement#requestAutocomplete as the chrome-side work progresses further.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+
+        Enables the requestAutocomplete runtime feature flag during tests.
+
 2012-11-06  KyungTae Kim  <ktf.kim@samsung.com>
 
         [WK2][EFL] Add shortcut for setting a pagination mode on Minibrowser

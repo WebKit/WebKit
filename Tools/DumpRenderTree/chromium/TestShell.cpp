@@ -146,6 +146,7 @@ TestShell::TestShell()
     WebRuntimeFeatures::enableShadowDOM(true);
     WebRuntimeFeatures::enableStyleScoped(true);
     WebRuntimeFeatures::enableScriptedSpeech(true);
+    WebRuntimeFeatures::enableRequestAutocomplete(true);
 
     // 30 second is the same as the value in Mac DRT.
     // If we use a value smaller than the timeout value of

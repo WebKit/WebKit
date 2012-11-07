@@ -159,6 +159,9 @@ public:
     WEBKIT_EXPORT static void enableCSSExclusions(bool);
     WEBKIT_EXPORT static bool isCSSExclusionsEnabled();
 
+    WEBKIT_EXPORT static void enableRequestAutocomplete(bool);
+    WEBKIT_EXPORT static bool isRequestAutocompleteEnabled();
+
 private:
     WebRuntimeFeatures();
 };

@@ -1,3 +1,32 @@
+2012-11-06  Dan Beam  <dbeam@chromium.org>
+
+        Enable REQUEST_AUTOCOMPLETE for chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=101376
+
+        Reviewed by Adam Barth.
+
+        Added a runtime enabled feature to control whether HTMLFormElement#requestAutocomplete is visible from JavaScript.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (RuntimeEnabledFeatures):
+
+        Added a binding from RuntimeEnabledFeatures that triggers [V8EnabledAtRuntime=requestAutocomplete].
+
+        (WebCore::RuntimeEnabledFeatures::requestAutocompleteEnabled):
+
+        Added a getter to WebCore to ask whether the runtime flag requestAutocomplete is on.
+
+        (WebCore::RuntimeEnabledFeatures::setRequestAutocompleteEnabled):
+
+        Added a setter to WebCore to affect the runtime flag requestAutocomplete.
+
+        * html/HTMLFormElement.idl:
+
+        Wrapped commonly grouped features in an #if defined(ENABLED_REQUEST_AUTOCOMPLETE) block and added [V8EnableAtRuntime]
+        so these features can be changed with a command line switch in the chromium port.
+
 2012-11-06  Adam Barth  <abarth@webkit.org>
 
         [V8] Unify setJSWrapperForDOMObject and setJSWrapperForDOMNode

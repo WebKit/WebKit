@@ -1,3 +1,26 @@
+2012-11-06  Dan Beam  <dbeam@chromium.org>                                                                                          
+
+        Enable REQUEST_AUTOCOMPLETE for chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=101376
+
+        Reviewed by Adam Barth.
+
+        This patch enables the feature flag REQUEST_AUTOCOMPLETE in WebKit/chromium only to allow web authors to start to use
+        HTMLFormElement#requestAutocomplete as the chrome-side work progresses further.
+
+        * fast/forms/form-request-autocomplete-expected.txt:
+
+        Updated to match form-request-autocomplete.html changes.
+
+        * fast/forms/form-request-autocomplete.html:
+
+        Remove bug number as per Adam Barth <abarth@webkit.org>'s advice.
+
+        * platform/chromium/fast/forms/form-request-autocomplete-expected.txt: Added.
+
+        Adding expected successful layout test for form-request-autocomplete.html tests to chromium specific directory
+        (as chromium is currently the only place the feature is enabled).
+
 2012-11-06  Ken Buchanan  <kenrb@chromium.org>
 
         Crash due to column span under button element
