@@ -309,7 +309,7 @@ EAPI Eina_List *ewk_settings_spell_checking_languages_get(void);
  *
  * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
-EAPI Eina_Bool ewk_setting_encoding_detector_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+EAPI Eina_Bool ewk_settings_encoding_detector_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
 
 /**
 * Returns whether the encoding detector is enabled or not.
@@ -319,7 +319,7 @@ EAPI Eina_Bool ewk_setting_encoding_detector_enabled_set(Ewk_Settings *settings,
  * @return @c EINA_TRUE if the encoding detector is enabled
  *         @c EINA_FALSE if not or on failure
  */
-EAPI Eina_Bool ewk_setting_encoding_detector_enabled_get(const Ewk_Settings *settings);
+EAPI Eina_Bool ewk_settings_encoding_detector_enabled_get(const Ewk_Settings *settings);
 
 #ifdef __cplusplus
 }

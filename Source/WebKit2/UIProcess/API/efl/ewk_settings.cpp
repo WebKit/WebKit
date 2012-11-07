@@ -271,7 +271,7 @@ Eina_List* ewk_settings_spell_checking_languages_get()
     return listOflanguages;
 }
 
-Eina_Bool ewk_setting_encoding_detector_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
+Eina_Bool ewk_settings_encoding_detector_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
@@ -280,7 +280,7 @@ Eina_Bool ewk_setting_encoding_detector_enabled_set(Ewk_Settings* settings, Eina
     return true;
 }
 
-Eina_Bool ewk_setting_encoding_detector_enabled_get(const Ewk_Settings* settings)
+Eina_Bool ewk_settings_encoding_detector_enabled_get(const Ewk_Settings* settings)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
 
