@@ -1,3 +1,25 @@
+2012-11-07  Adam Barth  <abarth@webkit.org>
+
+        [V8] DOMWrapperMap doesn't need to use virtual functions
+        https://bugs.webkit.org/show_bug.cgi?id=101494
+
+        Reviewed by Kentaro Hara.
+
+        DOMWrapperMap has only one subclass. There's no reason to use virtual functions.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::DOMDataStore):
+        * bindings/v8/DOMWrapperMap.h:
+        (WebCore::DOMWrapperMap::DOMWrapperMap):
+        (WebCore::DOMWrapperMap::get):
+        (WebCore::DOMWrapperMap::set):
+        (WebCore::DOMWrapperMap::clear):
+        (WebCore::DOMWrapperMap::reportMemoryUsage):
+        (WebCore::DOMWrapperMap::remove):
+        (WebCore::DOMWrapperMap::defaultWeakCallback):
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::staticNPObjectMap):
+
 2012-11-07  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Remove the dependency on CustomFilterValidatedProgram from CustomFilterRenderer

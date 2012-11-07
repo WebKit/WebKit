@@ -378,9 +378,9 @@ v8::Handle<v8::Array> npObjectIndexedPropertyEnumerator(const v8::AccessorInfo& 
 
 static void weakNPObjectCallback(v8::Persistent<v8::Value>, void*);
 
-static DOMWrapperHashMap<NPObject>& staticNPObjectMap()
+static DOMWrapperMap<NPObject>& staticNPObjectMap()
 {
-    DEFINE_STATIC_LOCAL(DOMWrapperHashMap<NPObject>, npObjectMap, (&weakNPObjectCallback));
+    DEFINE_STATIC_LOCAL(DOMWrapperMap<NPObject>, npObjectMap, (&weakNPObjectCallback));
     return npObjectMap;
 }
 

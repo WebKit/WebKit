@@ -41,7 +41,7 @@ namespace WebCore {
 DOMDataStore::DOMDataStore(Type type)
     : m_type(type)
 {
-    m_domObjectMap = adoptPtr(new DOMWrapperHashMap<void>);
+    m_domObjectMap = adoptPtr(new DOMWrapperMap<void>);
     V8PerIsolateData::current()->registerDOMDataStore(this);
 }
 
