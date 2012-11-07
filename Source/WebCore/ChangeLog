@@ -1,3 +1,18 @@
+2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [Regression] Snippets evaluations should not appear in Sources tab of navigator.
+        https://bugs.webkit.org/show_bug.cgi?id=101354
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DebuggerScriptMapping.js:
+        * inspector/front-end/NetworkUISourceCodeProvider.js:
+        (WebInspector.NetworkUISourceCodeProvider.prototype._parsedScriptSource):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.isSnippet):
+        * inspector/front-end/ScriptSnippetModel.js:
+        (WebInspector.ScriptSnippetModel.prototype._snippetIdForSourceURL):
+
 2012-11-07  Dan Carney  <dcarney@google.com>
 
         [V8] Cleanup V8DOMWrapper::getCachedWrapper

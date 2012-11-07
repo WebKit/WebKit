@@ -51,8 +51,6 @@ WebInspector.ScriptSnippetModel = function(workspace, networkWorkspaceProvider)
     this._loadSnippets();
 }
 
-WebInspector.ScriptSnippetModel.snippetSourceURLPrefix = "snippets:///";
-
 WebInspector.ScriptSnippetModel.prototype = {
     /**
      * @return {WebInspector.SnippetScriptMapping}
@@ -302,6 +300,8 @@ WebInspector.ScriptSnippetModel.prototype = {
     _addScript: function(script)
     {
         var snippetId = this._snippetIdForSourceURL(script.sourceURL);
+        if (!snippetId)
+            return;
         var uiSourceCode = this._uiSourceCodeForSnippetId[snippetId];
 
         if (!uiSourceCode || this._evaluationSourceURL(uiSourceCode) !== script.sourceURL) {
@@ -381,10 +381,9 @@ WebInspector.ScriptSnippetModel.prototype = {
      */
     _evaluationSourceURL: function(uiSourceCode)
     {
-        var snippetPrefix = WebInspector.ScriptSnippetModel.snippetSourceURLPrefix;
         var evaluationSuffix = "_" + uiSourceCode._evaluationIndex;
         var snippetId = this._snippetIdForUISourceCode.get(uiSourceCode);
-        return snippetPrefix + snippetId + evaluationSuffix;
+        return WebInspector.Script.snippetSourceURLPrefix + snippetId + evaluationSuffix;
     },
 
     /**
@@ -393,7 +392,7 @@ WebInspector.ScriptSnippetModel.prototype = {
      */
     _snippetIdForSourceURL: function(sourceURL)
     {
-        var snippetPrefix = WebInspector.ScriptSnippetModel.snippetSourceURLPrefix;
+        var snippetPrefix = WebInspector.Script.snippetSourceURLPrefix;
         if (!sourceURL.startsWith(snippetPrefix))
             return null;
         var splittedURL = sourceURL.substring(snippetPrefix.length).split("_");

@@ -50,6 +50,8 @@ WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endL
     this._locations = [];
 }
 
+WebInspector.Script.snippetSourceURLPrefix = "snippets:///";
+
 WebInspector.Script.prototype = {
     /**
      * @return {string}
@@ -167,6 +169,14 @@ WebInspector.Script.prototype = {
     isAnonymousScript: function()
     {
         return !this.sourceURL;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isSnippet: function()
+    {
+        return this.sourceURL && this.sourceURL.startsWith(WebInspector.Script.snippetSourceURLPrefix);
     },
 
     /**

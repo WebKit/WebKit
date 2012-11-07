@@ -65,10 +65,8 @@ WebInspector.DebuggerScriptMapping.prototype = {
      */
     _mappingForScript: function(script)
     {
-        if (WebInspector.experimentsSettings.snippetsSupport.isEnabled()) {
-            if (this._snippetMapping && this._snippetMapping.snippetIdForSourceURL(script.sourceURL))
-                return this._snippetMapping;
-        }
+        if (WebInspector.experimentsSettings.snippetsSupport.isEnabled() && script.isSnippet())
+            return this._snippetMapping;
 
         if (WebInspector.settings.sourceMapsEnabled.get() && script.sourceMapURL) {
             if (this._compilerMapping.loadSourceMapForScript(script))
