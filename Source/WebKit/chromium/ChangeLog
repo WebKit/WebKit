@@ -1,3 +1,9 @@
+2012-11-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-11-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Remove support for "desktop-width" in the viewport meta tag
