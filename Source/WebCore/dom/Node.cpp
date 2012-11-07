@@ -2105,8 +2105,8 @@ void Node::showNode(const char* prefix) const
         prefix = "";
     if (isTextNode()) {
         String value = nodeValue();
-        value.replace('\\', "\\\\");
-        value.replace('\n', "\\n");
+        value.replaceWithLiteral('\\', "\\\\");
+        value.replaceWithLiteral('\n', "\\n");
         fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().utf8().data(), this, value.utf8().data());
     } else {
         StringBuilder attrs;

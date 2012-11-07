@@ -273,8 +273,8 @@ static String makeURLString(const char* url)
     String urlString(url);
     
     // Strip return characters.
-    urlString.replace('\r', "");
-    urlString.replace('\n', "");
+    urlString.replaceWithLiteral('\r', "");
+    urlString.replaceWithLiteral('\n', "");
 
     return urlString;
 }

@@ -1,3 +1,16 @@
+2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Add replaceWithLiteral() method to WTF::String
+        https://bugs.webkit.org/show_bug.cgi?id=101257
+
+        Reviewed by Benjamin Poulain.
+
+        Substitute String::replace() calls by String::replaceWithLiteral() where
+        adequate, for efficiency.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::makeURLString):
+
 2012-11-06  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Move DrawingAreaImpl methods graphicsLayerFactory, setRootCompositingLayer & scheduleCompositingLayerSync under ACCELERATED_COMPOSITING

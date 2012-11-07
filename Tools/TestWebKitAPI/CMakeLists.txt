@@ -84,6 +84,7 @@ ADD_EXECUTABLE(test_wtf
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Vector.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/VectorBasic.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/VectorReverse.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WTF/WTFString.cpp
 )
 
 TARGET_LINK_LIBRARIES(test_wtf ${test_wtf_LIBRARIES})

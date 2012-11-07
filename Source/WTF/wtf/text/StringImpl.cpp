@@ -1382,21 +1382,30 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar pattern, StringImpl* replacemen
 {
     if (!replacement)
         return this;
-        
-    unsigned repStrLength = replacement->length();
+
+    if (replacement->is8Bit())
+        return replace(pattern, replacement->m_data8, replacement->length());
+
+    return replace(pattern, replacement->m_data16, replacement->length());
+}
+
+PassRefPtr<StringImpl> StringImpl::replace(UChar pattern, const LChar* replacement, unsigned repStrLength)
+{
+    ASSERT(replacement);
+
     size_t srcSegmentStart = 0;
     unsigned matchCount = 0;
-    
+
     // Count the matches.
     while ((srcSegmentStart = find(pattern, srcSegmentStart)) != notFound) {
         ++matchCount;
         ++srcSegmentStart;
     }
-    
+
     // If we have 0 matches then we don't have to do any more work.
     if (!matchCount)
         return this;
-    
+
     if (repStrLength && matchCount > numeric_limits<unsigned>::max() / repStrLength)
         CRASH();
 
@@ -1412,16 +1421,8 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar pattern, StringImpl* replacemen
     unsigned srcSegmentLength;
     srcSegmentStart = 0;
     unsigned dstOffset = 0;
-    bool srcIs8Bit = is8Bit();
-    bool replacementIs8Bit = replacement->is8Bit();
-    
-    // There are 4 cases:
-    // 1. This and replacement are both 8 bit.
-    // 2. This and replacement are both 16 bit.
-    // 3. This is 8 bit and replacement is 16 bit.
-    // 4. This is 16 bit and replacement is 8 bit.
-    if (srcIs8Bit && replacementIs8Bit) {
-        // Case 1
+
+    if (is8Bit()) {
         LChar* data;
         RefPtr<StringImpl> newImpl = createUninitialized(newSize, data);
 
@@ -1429,7 +1430,7 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar pattern, StringImpl* replacemen
             srcSegmentLength = srcSegmentEnd - srcSegmentStart;
             memcpy(data + dstOffset, m_data8 + srcSegmentStart, srcSegmentLength * sizeof(LChar));
             dstOffset += srcSegmentLength;
-            memcpy(data + dstOffset, replacement->m_data8, repStrLength * sizeof(LChar));
+            memcpy(data + dstOffset, replacement, repStrLength * sizeof(LChar));
             dstOffset += repStrLength;
             srcSegmentStart = srcSegmentEnd + 1;
         }
@@ -1447,36 +1448,98 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar pattern, StringImpl* replacemen
 
     while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
         srcSegmentLength = srcSegmentEnd - srcSegmentStart;
-        if (srcIs8Bit) {
-            // Case 3.
-            for (unsigned i = 0; i < srcSegmentLength; i++)
-                data[i + dstOffset] = m_data8[i + srcSegmentStart];
-        } else {
-            // Cases 2 & 4.
-            memcpy(data + dstOffset, m_data16 + srcSegmentStart, srcSegmentLength * sizeof(UChar));
-        }
+        memcpy(data + dstOffset, m_data16 + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+
         dstOffset += srcSegmentLength;
-        if (replacementIs8Bit) {
-            // Case 4.
-            for (unsigned i = 0; i < repStrLength; i++)
-                data[i + dstOffset] = replacement->m_data8[i];
-        } else {
-            // Cases 2 & 3.
-            memcpy(data + dstOffset, replacement->m_data16, repStrLength * sizeof(UChar));
-        }
+        for (unsigned i = 0; i < repStrLength; ++i)
+            data[i + dstOffset] = replacement[i];
+
         dstOffset += repStrLength;
         srcSegmentStart = srcSegmentEnd + 1;
     }
 
     srcSegmentLength = m_length - srcSegmentStart;
-    if (srcIs8Bit) {
-        // Case 3.
-        for (unsigned i = 0; i < srcSegmentLength; i++)
-            data[i + dstOffset] = m_data8[i + srcSegmentStart];
-    } else {
-        // Cases 2 & 4.
-        memcpy(data + dstOffset, m_data16 + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+    memcpy(data + dstOffset, m_data16 + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+
+    ASSERT(dstOffset + srcSegmentLength == newImpl->length());
+
+    return newImpl.release();
+}
+
+PassRefPtr<StringImpl> StringImpl::replace(UChar pattern, const UChar* replacement, unsigned repStrLength)
+{
+    ASSERT(replacement);
+
+    size_t srcSegmentStart = 0;
+    unsigned matchCount = 0;
+
+    // Count the matches.
+    while ((srcSegmentStart = find(pattern, srcSegmentStart)) != notFound) {
+        ++matchCount;
+        ++srcSegmentStart;
     }
+
+    // If we have 0 matches then we don't have to do any more work.
+    if (!matchCount)
+        return this;
+
+    if (repStrLength && matchCount > numeric_limits<unsigned>::max() / repStrLength)
+        CRASH();
+
+    unsigned replaceSize = matchCount * repStrLength;
+    unsigned newSize = m_length - matchCount;
+    if (newSize >= (numeric_limits<unsigned>::max() - replaceSize))
+        CRASH();
+
+    newSize += replaceSize;
+
+    // Construct the new data.
+    size_t srcSegmentEnd;
+    unsigned srcSegmentLength;
+    srcSegmentStart = 0;
+    unsigned dstOffset = 0;
+
+    if (is8Bit()) {
+        UChar* data;
+        RefPtr<StringImpl> newImpl = createUninitialized(newSize, data);
+
+        while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
+            srcSegmentLength = srcSegmentEnd - srcSegmentStart;
+            for (unsigned i = 0; i < srcSegmentLength; ++i)
+                data[i + dstOffset] = m_data8[i + srcSegmentStart];
+
+            dstOffset += srcSegmentLength;
+            memcpy(data + dstOffset, replacement, repStrLength * sizeof(UChar));
+
+            dstOffset += repStrLength;
+            srcSegmentStart = srcSegmentEnd + 1;
+        }
+
+        srcSegmentLength = m_length - srcSegmentStart;
+        for (unsigned i = 0; i < srcSegmentLength; ++i)
+            data[i + dstOffset] = m_data8[i + srcSegmentStart];
+
+        ASSERT(dstOffset + srcSegmentLength == newImpl->length());
+
+        return newImpl.release();
+    }
+
+    UChar* data;
+    RefPtr<StringImpl> newImpl = createUninitialized(newSize, data);
+
+    while ((srcSegmentEnd = find(pattern, srcSegmentStart)) != notFound) {
+        srcSegmentLength = srcSegmentEnd - srcSegmentStart;
+        memcpy(data + dstOffset, m_data16 + srcSegmentStart, srcSegmentLength * sizeof(UChar));
+
+        dstOffset += srcSegmentLength;
+        memcpy(data + dstOffset, replacement, repStrLength * sizeof(UChar));
+
+        dstOffset += repStrLength;
+        srcSegmentStart = srcSegmentEnd + 1;
+    }
+
+    srcSegmentLength = m_length - srcSegmentStart;
+    memcpy(data + dstOffset, m_data16 + srcSegmentStart, srcSegmentLength * sizeof(UChar));
 
     ASSERT(dstOffset + srcSegmentLength == newImpl->length());
 

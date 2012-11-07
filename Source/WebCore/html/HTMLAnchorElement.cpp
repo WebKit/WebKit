@@ -463,7 +463,7 @@ void HTMLAnchorElement::setSearch(const String& value)
     KURL url = href();
     String newSearch = (value[0] == '?') ? value.substring(1) : value;
     // Make sure that '#' in the query does not leak to the hash.
-    url.setQuery(newSearch.replace('#', "%23"));
+    url.setQuery(newSearch.replaceWithLiteral('#', "%23"));
 
     setHref(url.string());
 }

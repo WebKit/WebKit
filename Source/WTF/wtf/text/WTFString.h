@@ -307,6 +307,15 @@ public:
     String& replace(const String& a, const String& b) { if (m_impl) m_impl = m_impl->replace(a.impl(), b.impl()); return *this; }
     String& replace(unsigned index, unsigned len, const String& b) { if (m_impl) m_impl = m_impl->replace(index, len, b.impl()); return *this; }
 
+    template<unsigned charactersCount>
+    ALWAYS_INLINE String& replaceWithLiteral(UChar a, const char (&characters)[charactersCount])
+    {
+        if (m_impl)
+            m_impl = m_impl->replace(a, characters, charactersCount - 1);
+
+        return *this;
+    }
+
     void makeLower() { if (m_impl) m_impl = m_impl->lower(); }
     void makeUpper() { if (m_impl) m_impl = m_impl->upper(); }
     void fill(UChar c) { if (m_impl) m_impl = m_impl->fill(c); }

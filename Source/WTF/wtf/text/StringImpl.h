@@ -709,6 +709,9 @@ public:
 
     WTF_EXPORT_STRING_API PassRefPtr<StringImpl> replace(UChar, UChar);
     WTF_EXPORT_STRING_API PassRefPtr<StringImpl> replace(UChar, StringImpl*);
+    ALWAYS_INLINE PassRefPtr<StringImpl> replace(UChar pattern, const char* replacement, unsigned replacementLength) { return replace(pattern, reinterpret_cast<const LChar*>(replacement), replacementLength); }
+    WTF_EXPORT_STRING_API PassRefPtr<StringImpl> replace(UChar, const LChar*, unsigned replacementLength);
+    PassRefPtr<StringImpl> replace(UChar, const UChar*, unsigned replacementLength);
     WTF_EXPORT_STRING_API PassRefPtr<StringImpl> replace(StringImpl*, StringImpl*);
     WTF_EXPORT_STRING_API PassRefPtr<StringImpl> replace(unsigned index, unsigned len, StringImpl*);
 

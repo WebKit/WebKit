@@ -84,7 +84,7 @@ static void soupProxyResolverWkSetProperty(GObject* object, uint propID, const G
     case PROP_NO_PROXY:
         priv->noProxy = g_value_get_string(value);
         priv->proxyExceptions.clear();
-        String::fromUTF8(priv->noProxy.data()).replace(' ', "").split(',', priv->proxyExceptions);
+        String::fromUTF8(priv->noProxy.data()).replaceWithLiteral(' ', "").split(',', priv->proxyExceptions);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propID, pspec);

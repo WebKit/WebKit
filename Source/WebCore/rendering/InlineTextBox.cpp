@@ -1436,8 +1436,8 @@ void InlineTextBox::showBox(int printedCharacters) const
     const RenderText* obj = toRenderText(renderer());
     String value = obj->text();
     value = value.substring(start(), len());
-    value.replace('\\', "\\\\");
-    value.replace('\n', "\\n");
+    value.replaceWithLiteral('\\', "\\\\");
+    value.replaceWithLiteral('\n', "\\n");
     printedCharacters += fprintf(stderr, "%s\t%p", boxName(), this);
     for (; printedCharacters < showTreeCharacterOffset; printedCharacters++)
         fputc(' ', stderr);

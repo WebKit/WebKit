@@ -548,8 +548,8 @@ static KURL makeURL(const KURL& baseURL, const char* relativeURLString)
     String urlString = relativeURLString;
 
     // Strip return characters.
-    urlString.replace('\n', "");
-    urlString.replace('\r', "");
+    urlString.replaceWithLiteral('\n', "");
+    urlString.replaceWithLiteral('\r', "");
 
     return KURL(baseURL, urlString);
 }

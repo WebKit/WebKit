@@ -115,7 +115,45 @@ TEST(WTF, StringNumberToStringECMAScriptRegularNumbers)
     testNumberToStringECMAScript(phi, "1.618033988749895");
 }
 
+TEST(WTF, StringReplaceWithLiteral)
+{
+    // Cases for 8Bit source.
+    String testString = "1224";
+    ASSERT_TRUE(testString.is8Bit());
+    testString.replaceWithLiteral('2', "");
+    ASSERT_STREQ("14", testString.utf8().data());
 
+    testString = "1224";
+    ASSERT_TRUE(testString.is8Bit());
+    testString.replaceWithLiteral('2', "3");
+    ASSERT_STREQ("1334", testString.utf8().data());
+
+    testString = "1224";
+    ASSERT_TRUE(testString.is8Bit());
+    testString.replaceWithLiteral('2', "555");
+    ASSERT_STREQ("15555554", testString.utf8().data());
+
+    testString = "1224";
+    ASSERT_TRUE(testString.is8Bit());
+    testString.replaceWithLiteral('3', "NotFound");
+    ASSERT_STREQ("1224", testString.utf8().data());
+
+    // Cases for 16Bit source.
+    testString = String::fromUTF8("résumé");
+    ASSERT_FALSE(testString.is8Bit());
+    testString.replaceWithLiteral(UChar(0x00E9 /*U+00E9 is 'é'*/), "e");
+    ASSERT_STREQ("resume", testString.utf8().data());
+
+    testString = String::fromUTF8("résumé");
+    ASSERT_FALSE(testString.is8Bit());
+    testString.replaceWithLiteral(UChar(0x00E9 /*U+00E9 is 'é'*/), "");
+    ASSERT_STREQ("rsum", testString.utf8().data());
+
+    testString = String::fromUTF8("résumé");
+    ASSERT_FALSE(testString.is8Bit());
+    testString.replaceWithLiteral('3', "NotFound");
+    ASSERT_STREQ("résumé", testString.utf8().data());
+}
 
 
 } // namespace TestWebKitAPI
