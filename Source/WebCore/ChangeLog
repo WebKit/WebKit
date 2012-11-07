@@ -1,3 +1,14 @@
+2012-11-07  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Unreviewed trivial build fix adapting to QtMultimedia API changes
+
+        The QtMultimedia namespace is now called QMultimedia and
+        QtMultimedia::MetaData is now QMediaMetaData.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::supportsType):
+        (WebCore::MediaPlayerPrivateQt::totalBytes):
+
 2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         Add replaceWithLiteral() method to WTF::String

@@ -45,6 +45,8 @@
 #include <QTimer>
 #include <QUrl>
 #include <limits>
+#include <qmediametadata.h>
+#include <qmultimedia.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/CString.h>
 
@@ -92,7 +94,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateQt::supportsType(const String& mime,
             codecListTrimmed.append(codecStrTrimmed);
     }
 
-    if (QMediaPlayer::hasSupport(mime, codecListTrimmed) >= QtMultimedia::ProbablySupported)
+    if (QMediaPlayer::hasSupport(mime, codecListTrimmed) >= QMultimedia::ProbablySupported)
         return MediaPlayer::IsSupported;
 
     return MediaPlayer::MayBeSupported;
@@ -366,8 +368,8 @@ bool MediaPlayerPrivateQt::didLoadingProgress() const
 
 unsigned MediaPlayerPrivateQt::totalBytes() const
 {
-    if (m_mediaPlayer->availableMetaData().contains(QtMultimedia::MetaData::Size))
-        return m_mediaPlayer->metaData(QtMultimedia::MetaData::Size).toInt();
+    if (m_mediaPlayer->availableMetaData().contains(QMediaMetaData::Size))
+        return m_mediaPlayer->metaData(QMediaMetaData::Size).toInt();
 
     return 100;
 }
