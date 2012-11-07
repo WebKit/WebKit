@@ -1516,13 +1516,21 @@ void AccessibilityRenderObject::setFocused(bool on)
     if (!canSetFocusAttribute())
         return;
     
+    Document* document = this->document();
     if (!on)
-        m_renderer->document()->setFocusedNode(0);
+        document->setFocusedNode(0);
     else {
-        if (m_renderer->node()->isElementNode())
-            static_cast<Element*>(m_renderer->node())->focus();
-        else
-            m_renderer->document()->setFocusedNode(m_renderer->node());
+        Node* node = this->node();
+        if (node && node->isElementNode()) {
+            // If this node is already the currently focused node, then calling focus() won't do anything.
+            // That is a problem when focus is removed from the webpage to chrome, and then returns.
+            // In these cases, we need to do what keyboard and mouse focus do, which is reset focus first.
+            if (document->focusedNode() == node)
+                document->setFocusedNode(0);
+            
+            toElement(node)->focus();
+        } else
+            document->setFocusedNode(node);
     }
 }
 

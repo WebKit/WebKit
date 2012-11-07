@@ -1,3 +1,24 @@
+2012-11-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Textfields don't get focus when navigated to from 'show all tabs' button
+        https://bugs.webkit.org/show_bug.cgi?id=101369
+
+        Reviewed by Darin Adler.
+
+        When focus leaves a webpage, the webpage does not normally clear its focused node. When focus
+        returns (through tab, or mouse click), then focus will be cleared and restored.
+
+        However, when focus is returned through accessibility means, focus is not cleared first, which
+        means subsequent focus actions do nothing.
+
+        This fix will check if the focused node is the same as the node being focused, and if so, clear the focus first.
+
+        Making a layout test for this is not possible because it requires setting focus to something in the chrome, and then
+        moving focus back to the webpage.
+      
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setFocused):
+
 2012-11-07  Adam Barth  <abarth@webkit.org>
 
         [V8] We should hide the DOMWrapperMaps inside DOMDataStore
