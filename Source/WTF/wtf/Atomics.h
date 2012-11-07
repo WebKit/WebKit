@@ -142,8 +142,8 @@ inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned n
 #endif
 {
 #if ENABLE(COMPARE_AND_SWAP)
-    bool result;
 #if CPU(X86) || CPU(X86_64)
+    unsigned char result;
     asm volatile(
         "lock; cmpxchgl %3, %2\n\t"
         "sete %1"
@@ -153,6 +153,7 @@ inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned n
         );
 #elif CPU(ARM_THUMB2)
     unsigned tmp;
+    unsigned result;
     asm volatile(
         "movw %1, #1\n\t"
         "ldrex %2, %0\n\t"
@@ -173,7 +174,7 @@ inline bool weakCompareAndSwap(unsigned* location, unsigned expected, unsigned n
     UNUSED_PARAM(expected);
     UNUSED_PARAM(newValue);
     CRASH();
-    return 0;
+    return false;
 #endif
 }
 

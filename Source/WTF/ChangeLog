@@ -1,3 +1,27 @@
+2012-11-07  Hans Wennborg  <hans@chromium.org>
+
+        Fix asm operand type for weakCompareAndSwap on ARM_THUMB2
+        https://bugs.webkit.org/show_bug.cgi?id=101238
+
+        Reviewed by Benjamin Poulain.
+
+        'result' was a bool, but the asm was expecting a 32-bit register. A
+        recent version of Clang warned about this:
+
+          WebKit/Source/WTF/wtf/Atomics.h:163:34: error: the size being stored
+          is truncated, use a modifier to specify the size [-Werror,-Wasm-operand-widths]
+
+        This patch fixes it by making 'result' an unsigned. It does not change
+        the functionality in practice ('result' would be in a 32-bit register
+        anyway), but it makes the code more correct and makes the warning go
+        away.
+
+        Also make 'result' for the X86 version an 'unsigned char' to make it
+        more clear that it is a byte.
+
+        * wtf/Atomics.h:
+        (WTF::weakCompareAndSwap):
+
 2012-11-07  Remy Demarest  <rdemarest@apple.com>
 
         Function adoptNS and adoptCF should not generate memory leak diagnostic with Clang Static Analyzer.
