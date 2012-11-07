@@ -935,6 +935,7 @@ static Browser_Window *window_create(const char *url)
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
     ewk_settings_frame_flattening_enabled_set(settings, frame_flattening_enabled);
     ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE);
+    ewk_settings_preferred_minimum_contents_width_set(settings, 0);
 
     evas_object_smart_callback_add(app_data->webview, "authentication,request", on_authentication_request, app_data);
     evas_object_smart_callback_add(app_data->webview, "close,window", on_close_window, app_data);

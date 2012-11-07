@@ -286,3 +286,19 @@ Eina_Bool ewk_settings_encoding_detector_enabled_get(const Ewk_Settings* setting
 
     return settings->preferences()->usesEncodingDetector();
 }
+
+Eina_Bool ewk_settings_preferred_minimum_contents_width_set(Ewk_Settings *settings, unsigned width)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    settings->preferences()->setLayoutFallbackWidth(width);
+
+    return true;
+}
+
+unsigned ewk_settings_preferred_minimum_contents_width_get(const Ewk_Settings *settings)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    return settings->preferences()->layoutFallbackWidth();
+}

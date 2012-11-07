@@ -321,6 +321,30 @@ EAPI Eina_Bool ewk_settings_encoding_detector_enabled_set(Ewk_Settings *settings
  */
 EAPI Eina_Bool ewk_settings_encoding_detector_enabled_get(const Ewk_Settings *settings);
 
+/**
+ * Sets preferred minimum contents width which is used as default minimum contents width
+ * for non viewport meta element sites.
+ *
+ * By default, preferred minimum contents width is equal to @c 980.
+ *
+ * @param settings settings object to set the encoding detector
+ * @param enable @c EINA_TRUE to enable the encoding detector,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_settings_preferred_minimum_contents_width_set(Ewk_Settings *settings, unsigned width);
+
+/**
+ * Returns preferred minimum contents width or @c 0 on failure.
+ *
+ * @param settings settings object to query preferred minimum contents width
+ *
+ * @return preferred minimum contents width
+ *         @c 0 on failure
+ */
+EAPI unsigned ewk_settings_preferred_minimum_contents_width_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif
