@@ -12,7 +12,7 @@ function log(message)
 {
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
 }
-            
+
 function startOrVerify()
 {
     var query = window.location.search;
@@ -22,7 +22,6 @@ function startOrVerify()
             log('PASS: ' + query);
         else
             log('FAIL: ' + query);
-        testRunner.dumpAsText();
         testRunner.notifyDone();
     } else {
         // Start the test
@@ -34,6 +33,7 @@ function startOrVerify()
 }
 
 if (window.eventSender) {
+    testRunner.dumpAsText();
     testRunner.waitUntilDone();
     window.onload = startOrVerify;
 }

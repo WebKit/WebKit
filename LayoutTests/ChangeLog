@@ -1,3 +1,19 @@
+2012-11-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Enable text dump in fast/forms/file/get-file-upload.html earlier.
+        https://bugs.webkit.org/show_bug.cgi?id=101468
+
+        Reviewed by Kentaro Hara.
+
+        Do not call testRunner.dumpAsText() only when processing the form
+        submission, since that will not be triggered if a port does not
+        support, say, beginDragWithFiles(), and a useless pixel result
+        will be generated in that case.
+
+        Instead, call dumpAsText() as early as possible.
+
+        * fast/forms/file/get-file-upload.html:
+
 2012-11-07  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Assertion failure with open() within upgradeneeded
