@@ -1,3 +1,16 @@
+2012-11-07  Stephen White  <senorblanco@chromium.org>
+
+        Now that it no longer produces image results, remove unnecessary
+        PNGs for crash-hw-sw-switch.html.  Unreviewed.
+
+        * platform/chromium-android/css3/filters/crash-hw-sw-switch-expected.png: Removed.
+        * platform/chromium-linux/css3/filters/crash-hw-sw-switch-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/filters/crash-hw-sw-switch-expected.png: Removed.
+        * platform/chromium-mac/css3/filters/crash-hw-sw-switch-expected.png: Removed.
+        * platform/chromium-win/css3/filters/crash-hw-sw-switch-expected.png: Removed.
+        * platform/mac-snowleopard/css3/filters/crash-hw-sw-switch-expected.png: Removed.
+        * platform/qt/css3/filters/crash-hw-sw-switch-expected.png: Removed.
+
 2012-11-07  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] WebKitTestRunner needs to turn on 'setContinuousSpellCheckingEnabled'
