@@ -1,3 +1,15 @@
+2012-11-07  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Unreviewed gardening
+
+        Some image expectetions was accidentally added for reference tests and it consused nrwt.
+        Deleted them.
+
+        * platform/qt-5.0-wk2/compositing/text-on-scaled-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/compositing/text-on-scaled-surface-expected.png: Removed.
+        * platform/qt/css2.1/20110323/margin-collapse-clear-016-expected.png: Removed.
+        * platform/qt/svg/animations/animateMotion-additive-2c-expected.png: Removed.
+
 2012-11-07  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
