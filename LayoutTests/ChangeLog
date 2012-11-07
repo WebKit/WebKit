@@ -1,5 +1,17 @@
 2012-11-06  Stephen White  <senorblanco@chromium.org>
 
+        Removed useless image baselines for filter-empty-element-crash.
+        Unreviewed.
+
+        * platform/chromium-linux/css3/filters/filter-empty-element-crash-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css3/filters/filter-empty-element-crash-expected.png: Removed.
+        * platform/chromium-mac/css3/filters/filter-empty-element-crash-expected.png: Removed.
+        * platform/chromium-win/css3/filters/filter-empty-element-crash-expected.png: Removed.
+        * platform/mac-snowleopard/css3/filters/filter-empty-element-crash-expected.png: Removed.
+        * platform/qt-5.0-wk2/css3/filters/filter-empty-element-crash-expected.png: Removed.
+
+2012-11-06  Stephen White  <senorblanco@chromium.org>
+
         [Chromium] New baselines for some CSS3 filter tests.  Unreviewed.
 
         * platform/chromium-mac/css3/filters/crash-hw-sw-switch-expected.png:
