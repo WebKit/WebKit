@@ -1,3 +1,29 @@
+2012-11-06  Simon Fraser  <simon.fraser@apple.com>
+
+        -webkit-background-clip:text produces artifacts when applied to the body and the browser is resized
+        https://bugs.webkit.org/show_bug.cgi?id=89287
+
+        Reviewed by Beth Dakin.
+
+        Test with -webkit-background-clip: text on the body, which scrolls.
+        
+        Some additional tests that exercise different combinations of html and
+        body transform and background.
+
+        * compositing/repaint/composited-document-element.html:
+        * fast/backgrounds/background-clip-text-on-body-expected.png: Added.
+        * fast/backgrounds/background-clip-text-on-body-expected.txt: Added.
+        * fast/backgrounds/background-clip-text-on-body.html: Added.
+        * fast/backgrounds/transformed-body-background-expected.png: Added.
+        * fast/backgrounds/transformed-body-background-expected.txt: Added.
+        * fast/backgrounds/transformed-body-background.html: Added.
+        * fast/backgrounds/transformed-body-html-background-expected.png: Added.
+        * fast/backgrounds/transformed-body-html-background-expected.txt: Added.
+        * fast/backgrounds/transformed-body-html-background.html: Added.
+        * fast/backgrounds/transformed-html-body-background-expected.png: Added.
+        * fast/backgrounds/transformed-html-body-background-expected.txt: Added.
+        * fast/backgrounds/transformed-html-body-background.html: Added.
+
 2012-11-06  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Store ExclusionPolygonEdge vertices in clockwise order

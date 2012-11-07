@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <style type="text/css">
+  <style>
     html {
       -webkit-perspective: 1200px;
       background-color: red;
@@ -11,7 +11,7 @@
       background-color: transparent;
     }
     body {
-      -webkit-transform-style: preserve-3d;
+      -webkit-transform: translateZ(0);
     }
     .box {
       width: 100px;
@@ -19,7 +19,7 @@
       background-color: blue;
     }
   </style>
-  <script type="text/javascript" charset="utf-8">
+  <script>
     if (window.testRunner)
       testRunner.waitUntilDone();
 

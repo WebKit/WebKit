@@ -1,3 +1,33 @@
+2012-11-06  Simon Fraser  <simon.fraser@apple.com>
+
+        -webkit-background-clip:text produces artifacts when applied to the body and the browser is resized
+        https://bugs.webkit.org/show_bug.cgi?id=89287
+
+        Reviewed by Beth Dakin.
+
+        If the body had -webkit-background-clip: text, we'd fail to paint
+        anything behind it, so would see garbage pixels.
+        
+        Fix by having RenderView::paintBoxDecorations() check for a background-clip of "text"
+        on the renderer that paints the root background.
+        
+        Added some new pixel tests for combinations of html and body transform
+        and backgrounds; earlier versions of the patch broke some of these tests.
+
+        Tests: fast/backgrounds/background-clip-text-on-body.html
+               fast/backgrounds/transformed-body-background.html
+               fast/backgrounds/transformed-body-html-background.html
+               fast/backgrounds/transformed-html-body-background.html
+
+        * rendering/RenderView.cpp:
+        (WebCore::rendererObscuresBackground): Broke up the single condition
+        into early 'false' returns when possible. We need to also check whether
+        the renderer that actually paints the background (which might be the body)
+        will fill it; background-clip: text does not.
+        (WebCore::RenderView::paintBoxDecorations): Rather than checking firstChild(),
+        actually check the root renderer, so that we can reliably get to the renderer
+        that mains the root background.
+
 2012-11-06  Stephen White  <senorblanco@chromium.org>
 
         Implement save and restore for a bunch of InternalSettings state
