@@ -1,3 +1,12 @@
+2012-11-07  Andreas Kling  <akling@apple.com>
+
+        Remove build-webkit dependency on Java SDK for Apple Mac WebKit.
+        <http://webkit.org/b/101492>
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.xcodeproj/project.pbxproj: Remove WebJavaPlugIn.h
+
 2012-11-06  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Simplify the build system

@@ -43,7 +43,6 @@ use webkitperl::FeatureList qw(getFeatureOptionList);
 use POSIX;
 
 sub cMakeArgsFromFeatures();
-sub checkForJavaSDK();
 sub formatBuildTime($);
 sub writeCongrats();
 
@@ -220,7 +219,6 @@ if (isGtk()) {
     push @options, "--prefix=" . $prefixPath if defined($prefixPath);
     push @options, "--makeargs=" . $makeArgs if $makeArgs;
 } elsif (isAppleMacWebKit()) {
-    checkForJavaSDK();
     push @options, XcodeOptions();
 
     sub option($$$)
@@ -428,21 +426,6 @@ sub cMakeArgsFromFeatures()
         }
     }
     return @args;
-}
-
-sub checkForJavaSDK()
-{
-    my $jniHeader = "/System/Library/Frameworks/JavaVM.framework/Headers/jni.h";
-    if (-e $jniHeader) {
-        return;
-    }
-    print "\nCan't find required $jniHeader, build will fail.\n\n";
-    print "After installing \"Java for Mac OS X 10.6 Update 3\", the Java Developer Package is required to build WebKit.\n";
-    print "Please install the package from http://connect.apple.com (found under Downloads > Java).\n\n";
-    print "For more information, see:\n";
-    print "https://lists.webkit.org/pipermail/webkit-dev/2010-October/014867.html\n";
-    print "https://webkit.org/building/tools.html\n\n";
-    exit 1;
 }
 
 sub formatBuildTime($)

@@ -1,3 +1,16 @@
+2012-11-07  Andreas Kling  <akling@apple.com>
+
+        Remove build-webkit dependency on Java SDK for Apple Mac WebKit.
+        <http://webkit.org/b/101492>
+
+        Reviewed by Anders Carlsson.
+
+        Don't check for a Java SDK before building the Apple Mac port. It's no longer needed for
+        the build after the Java bridge was removed.
+
+        * Scripts/build-webkit:
+        (cMakeArgsFromFeatures):
+
 2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Allow client to override setWindowFrame() / getWindowFrame()
