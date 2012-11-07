@@ -1,3 +1,19 @@
+2012-11-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Gardening. Add or fix a few pixel expectations.
+
+        * platform/efl/compositing/plugins/composited-plugin-expected.png:
+        * platform/efl/compositing/repaint/composited-document-element-expected.png: Added.
+        * platform/efl/fast/writing-mode/japanese-ruby-horizontal-bt-expected.png:
+        * platform/efl/fast/writing-mode/japanese-ruby-horizontal-bt-expected.txt:
+        * platform/efl/fast/writing-mode/japanese-ruby-vertical-lr-expected.png:
+        * platform/efl/fast/writing-mode/japanese-ruby-vertical-lr-expected.txt:
+        * platform/efl/fast/writing-mode/japanese-ruby-vertical-rl-expected.png:
+        * platform/efl/fast/writing-mode/japanese-ruby-vertical-rl-expected.txt:
+        * platform/efl/plugins/iframe-plugin-bgcolor-expected.png: Added.
+        * platform/efl/plugins/mouse-click-plugin-clears-selection-expected.png: Added.
+        * platform/efl/plugins/netscape-dom-access-expected.png: Added.
+
 2012-11-07  Stephen White  <senorblanco@chromium.org>
 
         Now that it no longer produces image results, remove unnecessary
