@@ -58,9 +58,12 @@ private:
     Vector<BitmapTexturePoolEntry> m_textures;
     Timer<BitmapTexturePool> m_releaseUnusedTexturesTimer;
 
-    static const double s_releaseUnusedSecondsTolerance = 3;
-    static const double s_releaseUnusedTexturesTimerInterval = 0.5;
+    static const double s_releaseUnusedSecondsTolerance;
+    static const double s_releaseUnusedTexturesTimerInterval;
 };
+
+const double BitmapTexturePool::s_releaseUnusedSecondsTolerance = 3;
+const double BitmapTexturePool::s_releaseUnusedTexturesTimerInterval = 0.5;
 
 BitmapTexturePool::BitmapTexturePool()
     : m_releaseUnusedTexturesTimer(this, &BitmapTexturePool::releaseUnusedTexturesTimerFired)
