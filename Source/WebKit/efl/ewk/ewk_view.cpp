@@ -48,7 +48,6 @@
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "JSLock.h"
-#include "LayoutTypes.h"
 #include "PageClientEfl.h"
 #include "PageGroup.h"
 #include "PlatformMouseEvent.h"

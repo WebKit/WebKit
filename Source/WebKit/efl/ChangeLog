@@ -1,3 +1,9 @@
+2012-11-07  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed EFL build fix.
+
+        * ewk/ewk_view.cpp:
+
 2012-11-01  Seonae Kim  <sunaeluv.kim@samsung.com>
 
         [EFL][DRT] Support Geolocation
