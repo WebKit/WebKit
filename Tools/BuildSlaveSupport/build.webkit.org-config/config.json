@@ -314,8 +314,8 @@
                       "slavenames": ["efl-linux-slave-1"]
                     },
                     {
-                      "name": "EFL Linux 64-bit Debug", "type": "BuildAndTest", "builddir": "efl-linux-64-debug",
-                      "platform": "efl", "configuration": "debug", "architectures": ["x86_64"],
+                      "name": "EFL Linux 64-bit Release WK2", "type": "BuildAndTestWebKit2", "builddir": "efl-linux-64-release-wk2",
+                      "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-slave-2"]
                     },
                     {
@@ -337,7 +337,7 @@
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt Mountain Lion Release",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Android Release",
-                                       "EFL Linux 64-bit Release", "EFL Linux 64-bit Debug", "EFL Linux 32-bit Release (Build)", "EFL Linux 64-bit Debug WK2",
+                                       "EFL Linux 64-bit Release", "EFL Linux 64-bit Release WK2", "EFL Linux 32-bit Release (Build)", "EFL Linux 64-bit Debug WK2",
                                        "WinCairo Release", "WinCE Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-lion", "branch": "trunk", "treeStableTimer": 45.0,

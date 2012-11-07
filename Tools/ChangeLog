@@ -1,3 +1,14 @@
+2012-11-07  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Switch the efl-linux-slave-2 to Wk2 Release
+        https://bugs.webkit.org/show_bug.cgi?id=101345
+
+        Reviewed by Gyuyoung Kim.
+
+        Switching efl-linux-slave-2 to Wk2 Release.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         Add replaceWithLiteral() method to WTF::String
