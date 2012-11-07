@@ -25,9 +25,6 @@ ROOT_WEBKIT_DIR = $$replace(PWD, /Tools/qmake/mkspecs/features$,)
 WEBKIT_SUBDIR = $$replace(_PRO_FILE_PWD_, $${ROOT_WEBKIT_DIR},)
 ROOT_BUILD_DIR = $$replace(OUT_PWD, $${WEBKIT_SUBDIR}$,)
 
-# The qmake generated module files belong into our Tools/qmake dir
-MODULE_QMAKE_OUTDIR = $$ROOT_BUILD_DIR/Tools/qmake
-
 # Now we're ready to load default_pre from Qt
 load(default_pre)
 

@@ -1,3 +1,16 @@
+2012-11-07  Oswald Buddenhagen <oswald.buddenhagen@nokia.com>
+
+        [Qt] Fix build of modules depending on QtWebKit when using prefix
+        https://bugs.webkit.org/show_bug.cgi?id=101437
+
+        Reviewed by Simon Hausmann.
+
+        .qmake.conf loads qt_build_config.prf, which nowadays is responsible for
+        adding the path to .qmake.super (before it was done by default_pre.prf,
+        so having setting the path in our default_pre wrapper was sufficient).
+
+        * .qmake.conf:
+
 2012-11-06  Keishi Hattori  <keishi@webkit.org>
 
         Implement month picking to calendar picker

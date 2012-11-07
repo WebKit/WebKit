@@ -1,3 +1,14 @@
+2012-11-07  Oswald Buddenhagen <oswald.buddenhagen@nokia.com>
+
+        [Qt] Fix build of modules depending on QtWebKit when using prefix
+        https://bugs.webkit.org/show_bug.cgi?id=101437
+
+        Reviewed by Simon Hausmann.
+
+        Remove setting of MODULE_QMAKE_OUTDIR from here, it's been moved to .qmake.conf.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-11-06  Dan Beam  <dbeam@chromium.org>
 
         Enable REQUEST_AUTOCOMPLETE for chromium port
