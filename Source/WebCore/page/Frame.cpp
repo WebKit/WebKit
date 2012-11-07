@@ -607,14 +607,7 @@ void Frame::injectUserScriptsForWorld(DOMWrapperWorld* world, const UserScriptVe
 
 RenderView* Frame::contentRenderer() const
 {
-    Document* doc = document();
-    if (!doc)
-        return 0;
-    RenderObject* object = doc->renderer();
-    if (!object)
-        return 0;
-    ASSERT(object->isRenderView());
-    return toRenderView(object);
+    return document() ? document()->renderView() : 0;
 }
 
 RenderPart* Frame::ownerRenderer() const

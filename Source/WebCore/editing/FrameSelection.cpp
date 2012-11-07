@@ -337,7 +337,7 @@ static void clearRenderViewSelection(const Position& position)
 {
     RefPtr<Document> document = position.anchorNode()->document();
     document->updateStyleIfNeeded();
-    if (RenderView* view = toRenderView(document->renderer()))
+    if (RenderView* view = document->renderView())
         view->clearSelection();
 }
 
@@ -1342,7 +1342,7 @@ bool FrameSelection::recomputeCaretRect()
     m_absoluteCaretRepaintBounds = caretRepaintRect(m_selection.start().deprecatedNode());
 
 #if ENABLE(TEXT_CARET)
-    if (RenderView* view = toRenderView(m_frame->document()->renderer())) {
+    if (RenderView* view = m_frame->document()->renderView()) {
         // FIXME: make caret repainting container-aware.
         view->repaintRectangleInViewAndCompositedLayers(oldAbsoluteCaretRepaintBounds, false);
         if (shouldRepaintCaret(view, isContentEditable()))
@@ -1383,9 +1383,11 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged)
     // away after clicking.
     m_caretRectNeedsUpdate = true;
 
-    if (!caretRectChanged) {
-        RenderView* view = toRenderView(node->document()->renderer());
-        if (view && shouldRepaintCaret(view, node->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable)))
+    if (caretRectChanged)
+        return;
+
+    if (RenderView* view = node->document()->renderView()) {
+        if (shouldRepaintCaret(view, node->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable)))
             view->repaintRectangleInViewAndCompositedLayers(caretRepaintRect(node), false);
     }
 }
@@ -1652,7 +1654,7 @@ void FrameSelection::focusedOrActiveStateChanged()
     // Because RenderObject::selectionBackgroundColor() and
     // RenderObject::selectionForegroundColor() check if the frame is active,
     // we have to update places those colors were painted.
-    if (RenderView* view = toRenderView(m_frame->document()->renderer()))
+    if (RenderView* view = m_frame->document()->renderView())
         view->repaintRectangleInViewAndCompositedLayers(enclosingIntRect(bounds()));
 
     // Caret appears in the active frame.

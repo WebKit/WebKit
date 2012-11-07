@@ -1,3 +1,38 @@
+2012-11-07  Elliott Sprehn  <esprehn@chromium.org>
+
+        Clean up confused use of Document::renderer and renderView
+        https://bugs.webkit.org/show_bug.cgi?id=101484
+
+        Reviewed by Ojan Vafai.
+
+        Document::renderer and Document::renderView are the same thing, but it seems
+        people don't always realize it and check if document()->renderer() is a RenderView.
+
+        This patch cleans up usage of document()->renderer() and document()->renderView() and
+        simplifies the code that was written without realizing they were the same thing.
+
+        No new tests, this is just a refactor.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint): Lots of simplification.
+        * dom/Element.cpp:
+        (WebCore::Element::screenRect):
+        (WebCore::Element::unregisterNamedFlowContentNode): Remove unneeded conditional.
+        * editing/FrameSelection.cpp: Remove verbose casts.
+        (WebCore::clearRenderViewSelection):
+        (WebCore::FrameSelection::recomputeCaretRect):
+        (WebCore::CaretBase::invalidateCaretRect):
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        * page/Frame.cpp:
+        (WebCore::Frame::contentRenderer): Vastly simplified.
+        * page/PrintContext.cpp: Remove verbose casts.
+        (WebCore::PrintContext::computePageRects):
+        (WebCore::PrintContext::computePageRectsWithPageSizeInternal):
+        * page/wince/FrameWinCE.cpp:
+        (WebCore::computePageRectsForFrame): Remove unreachable code.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::maximalOutlineSize): Remove verbose cast.
+
 2012-11-07  Adam Barth  <abarth@webkit.org>
 
         [V8] IntrusiveDOMWrapperMap should be usable for more than just Nodes

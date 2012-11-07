@@ -649,7 +649,7 @@ IntRect Element::screenRect() const
     if (!renderer())
         return IntRect();
     // FIXME: this should probably respect transforms
-    return renderer()->view()->frameView()->contentsToScreen(renderer()->absoluteBoundingBoxRectIgnoringTransforms());
+    return document()->view()->contentsToScreen(renderer()->absoluteBoundingBoxRectIgnoringTransforms());
 }
 
 static inline bool shouldIgnoreAttributeCase(const Element* e)
@@ -1130,10 +1130,8 @@ void Element::attach()
 
 void Element::unregisterNamedFlowContentNode()
 {
-    if (document()->cssRegionsEnabled() && inNamedFlow()) {
-        if (document()->renderer() && document()->renderer()->view())
-            document()->renderer()->view()->flowThreadController()->unregisterNamedFlowContentNode(this);
-    }
+    if (document()->cssRegionsEnabled() && inNamedFlow() && document()->renderView())
+        document()->renderView()->flowThreadController()->unregisterNamedFlowContentNode(this);
 }
 
 void Element::detach()

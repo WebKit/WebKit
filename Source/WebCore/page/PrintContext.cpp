@@ -60,7 +60,7 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
     m_pageRects.clear();
     outPageHeight = 0;
 
-    if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderer())
+    if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderView())
         return;
 
     if (userScaleFactor <= 0) {
@@ -68,7 +68,7 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
         return;
     }
 
-    RenderView* view = toRenderView(m_frame->document()->renderer());
+    RenderView* view = m_frame->document()->renderView();
     const IntRect& documentRect = view->documentRect();
     FloatSize pageSize = m_frame->resizePageRectsKeepingRatio(FloatSize(printRect.width(), printRect.height()), FloatSize(documentRect.width(), documentRect.height()));
     float pageWidth = pageSize.width();
@@ -93,10 +93,10 @@ void PrintContext::computePageRectsWithPageSize(const FloatSize& pageSizeInPixel
 
 void PrintContext::computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowInlineDirectionTiling)
 {
-    if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderer())
+    if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderView())
         return;
 
-    RenderView* view = toRenderView(m_frame->document()->renderer());
+    RenderView* view = m_frame->document()->renderView();
 
     IntRect docRect = view->documentRect();
 

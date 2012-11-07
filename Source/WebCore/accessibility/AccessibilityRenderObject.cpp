@@ -1899,20 +1899,16 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
 {
     if (!m_renderer)
         return VisiblePosition();
-    
+
     // convert absolute point to view coordinates
-    Document* topDoc = topDocument();
-    if (!topDoc || !topDoc->renderer() || !topDoc->renderer()->view())
-        return VisiblePosition();
-    
-    FrameView* frameView = topDoc->renderer()->view()->frameView();
-    if (!frameView)
-        return VisiblePosition();
-    
     RenderView* renderView = topRenderer();
     if (!renderView)
         return VisiblePosition();
-    
+
+    FrameView* frameView = renderView->frameView();
+    if (!frameView)
+        return VisiblePosition();
+
     Node* innerNode = 0;
     
     // locate the node containing the point

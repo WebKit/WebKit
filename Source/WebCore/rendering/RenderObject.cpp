@@ -2841,7 +2841,7 @@ int RenderObject::maximalOutlineSize(PaintPhase p) const
 {
     if (p != PaintPhaseOutline && p != PaintPhaseSelfOutline && p != PaintPhaseChildOutlines)
         return 0;
-    return toRenderView(document()->renderer())->maximalOutlineSize();
+    return view()->maximalOutlineSize();
 }
 
 int RenderObject::caretMinOffset() const
