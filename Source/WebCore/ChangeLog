@@ -1,3 +1,19 @@
+2012-11-07  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [AC] glXChooseFBConfig() and glXGetVisualFromFBConfig() return values are leaking in GraphicsSurface
+        https://bugs.webkit.org/show_bug.cgi?id=101475
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Free the memory returned by glXChooseFBConfig and glXGetVisualFromFBConfig
+        using XFree to avoid memory leaks.
+
+        No tests. No change in behavior.
+
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurfacePrivate::~GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::createSurface):
+
 2012-11-07  Fady Samuel  <fsamuel@chromium.org>
 
         Autoresize should work even if turned on while the page is loading.

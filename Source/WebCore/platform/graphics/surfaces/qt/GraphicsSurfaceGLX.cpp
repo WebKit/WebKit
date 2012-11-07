@@ -187,6 +187,9 @@ struct GraphicsSurfacePrivate {
             XFreePixmap(m_display, m_xPixmap);
         m_xPixmap = 0;
 
+        if (m_fbConfigs)
+            XFree(m_fbConfigs);
+
         if (m_glContext)
             glXDestroyContext(m_display, m_glContext);
     }
@@ -207,6 +210,7 @@ struct GraphicsSurfacePrivate {
             CWBackPixel | CWBorderPixel | CWColormap, &a);
         XSetWindowBackgroundPixmap(m_display, m_surface, 0);
         XCompositeRedirectWindow(m_display, m_surface, CompositeRedirectManual);
+        XFree(visualInfo);
 
         // Make sure the XRender Extension is available.
         int eventBasep, errorBasep;
