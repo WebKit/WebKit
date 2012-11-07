@@ -1,3 +1,14 @@
+2012-11-07  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Text on scaled layer is blurry
+        https://bugs.webkit.org/show_bug.cgi?id=101491
+
+        Unreviewed gardening.
+
+        Mark tests as ImageOnlyFailure.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2012-11-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Enable text dump in fast/forms/file/get-file-upload.html earlier.

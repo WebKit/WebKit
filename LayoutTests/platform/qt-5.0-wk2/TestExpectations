@@ -776,3 +776,7 @@ fast/dom/shadow/wheel-event-on-input-in-shadow-dom.html
 # [Qt][WK2] REGRESSION(r132907): It made animations/negative-delay.html fail
 webkit.org/b/100769 animations/negative-delay.html
 webkit.org/b/100769 transitions/negative-delay.html
+
+# [Qt] Text on scaled layer is blurry
+webkit.org/b/101491 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
+webkit.org/b/101491 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
