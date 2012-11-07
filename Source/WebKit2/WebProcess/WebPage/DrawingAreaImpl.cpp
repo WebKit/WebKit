@@ -117,6 +117,9 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOff
     if (m_webPage->mainFrameHasCustomRepresentation())
         return;
 
+    if (scrollRect.isEmpty())
+        return;
+
     if (!m_scrollRect.isEmpty() && scrollRect != m_scrollRect) {
         unsigned scrollArea = scrollRect.width() * scrollRect.height();
         unsigned currentScrollArea = m_scrollRect.width() * m_scrollRect.height();
