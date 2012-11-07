@@ -1,3 +1,12 @@
+2012-11-07  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Style fix following r133262.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+
 2012-11-07  Adam Barth  <abarth@webkit.org>
 
         [V8] DOMWrapperMap doesn't need to use virtual functions
