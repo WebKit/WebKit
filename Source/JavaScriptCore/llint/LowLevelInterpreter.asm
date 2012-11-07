@@ -96,7 +96,7 @@ const SlowPutArrayStorageShape = 30
 
 # Type constants.
 const StringType = 5
-const ObjectType = 13
+const ObjectType = 17
 
 # Type flags constants.
 const MasqueradesAsUndefined = 1
@@ -1234,10 +1234,10 @@ _llint_op_throw:
     dispatch(2)
 
 
-_llint_op_throw_reference_error:
+_llint_op_throw_static_error:
     traceExecution()
-    callSlowPath(_llint_slow_path_throw_reference_error)
-    dispatch(2)
+    callSlowPath(_llint_slow_path_throw_static_error)
+    dispatch(3)
 
 
 _llint_op_profile_will_call:
@@ -1326,6 +1326,8 @@ _llint_op_put_by_id_replace:
 _llint_op_put_by_id_transition:
     notSupported()
 
+_llint_op_init_global_const_nop:
+    dispatch(5)
 
 # Indicate the end of LLInt.
 _llint_end:

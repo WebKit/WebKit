@@ -41,6 +41,11 @@ enum JSType {
     ProgramExecutableType,
     FunctionExecutableType,
 
+    UnlinkedFunctionExecutableType,
+    UnlinkedProgramCodeBlockType,
+    UnlinkedEvalCodeBlockType,
+    UnlinkedFunctionCodeBlockType,
+
     // The ObjectType value must come before any JSType that is a subclass of JSObject.
     ObjectType,
     FinalObjectType,

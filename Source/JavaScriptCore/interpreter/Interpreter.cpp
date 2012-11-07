@@ -948,10 +948,13 @@ failedJSONP:
     // object.
 
     // Compile source to bytecode if necessary:
-    JSObject* error = program->compile(callFrame, scope);
-    if (error)
+    if (JSObject* error = program->initalizeGlobalProperties(globalData, callFrame, scope))
         return checkedReturn(throwError(callFrame, error));
-    CodeBlock* codeBlock = &program->generatedBytecode();
+
+    if (JSObject* error = program->compile(callFrame, scope))
+        return checkedReturn(throwError(callFrame, error));
+
+    ProgramCodeBlock* codeBlock = &program->generatedBytecode();
 
     // Push the call frame for this invocation:
     ASSERT(codeBlock->numParameters() == 1); // 1 parameter for 'this'.

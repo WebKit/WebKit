@@ -36,6 +36,7 @@
 #include "BooleanConstructor.h"
 #include "BooleanPrototype.h"
 #include "CodeBlock.h"
+#include "CodeCache.h"
 #include "DateConstructor.h"
 #include "DatePrototype.h"
 #include "Debugger.h"
@@ -579,5 +580,59 @@ void slowValidateCell(JSGlobalObject* globalObject)
         CRASH();
     ASSERT_GC_OBJECT_INHERITS(globalObject, &JSGlobalObject::s_info);
 }
+
+UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* callFrame, ProgramExecutable* executable, JSObject** exception)
+{
+    ParserError error;
+    JSParserStrictness strictness = executable->isStrictMode() ? JSParseStrict : JSParseNormal;
+    DebuggerMode debuggerMode = hasDebugger() ? DebuggerOn : DebuggerOff;
+    ProfilerMode profilerMode = hasProfiler() ? ProfilerOn : ProfilerOff;
+    UnlinkedProgramCodeBlock* unlinkedCode = globalData().codeCache()->getProgramCodeBlock(globalData(), executable, executable->source(), strictness, debuggerMode, profilerMode, error);
+
+    if (hasDebugger())
+        debugger()->sourceParsed(callFrame, executable->source().provider(), error.m_line, error.m_message);
+
+    if (error.m_type != ParserError::ErrorNone) {
+        *exception = error.toErrorObject(this, executable->source());
+        return 0;
+    }
+    
+    return unlinkedCode;
+}
+
+UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame, EvalExecutable* executable, JSObject** exception)
+{
+    ParserError error;
+    JSParserStrictness strictness = executable->isStrictMode() ? JSParseStrict : JSParseNormal;
+    DebuggerMode debuggerMode = hasDebugger() ? DebuggerOn : DebuggerOff;
+    ProfilerMode profilerMode = hasProfiler() ? ProfilerOn : ProfilerOff;
+    UnlinkedEvalCodeBlock* unlinkedCode = globalData().codeCache()->getEvalCodeBlock(globalData(), executable, executable->source(), strictness, debuggerMode, profilerMode, error);
+
+    if (hasDebugger())
+        debugger()->sourceParsed(callFrame, executable->source().provider(), error.m_line, error.m_message);
+
+    if (error.m_type != ParserError::ErrorNone) {
+        *exception = error.toErrorObject(this, executable->source());
+        return 0;
+    }
+
+    return unlinkedCode;
+}
+
+UnlinkedFunctionExecutable* JSGlobalObject::createFunctionExecutableFromGlobalCode(CallFrame* callFrame, const Identifier& name, const SourceCode& code, JSObject** exception)
+{
+    ParserError error;
+    UnlinkedFunctionExecutable* executable = globalData().codeCache()->getFunctionExecutableFromGlobalCode(globalData(), name, code, error);
+    if (hasDebugger())
+        debugger()->sourceParsed(callFrame, code.provider(), error.m_line, error.m_message);
+
+    if (error.m_type != ParserError::ErrorNone) {
+        *exception = error.toErrorObject(this, code);
+        return 0;
+    }
+
+    return executable;
+}
+
 
 } // namespace JSC

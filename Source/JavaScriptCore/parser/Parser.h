@@ -76,6 +76,49 @@ COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
 enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
 
+struct ParserError {
+    enum ErrorType { ErrorNone, StackOverflow, SyntaxError, EvalError, OutOfMemory } m_type;
+    String m_message;
+    int m_line;
+    ParserError()
+        : m_type(ErrorNone)
+        , m_line(-1)
+    {
+    }
+
+    ParserError(ErrorType type)
+        : m_type(type)
+        , m_line(-1)
+    {
+    }
+
+    ParserError(ErrorType type, String msg, int line)
+        : m_type(type)
+        , m_message(msg)
+        , m_line(line)
+    {
+    }
+
+    JSObject* toErrorObject(JSGlobalObject* globalObject, const SourceCode& source)
+    {
+        switch (m_type) {
+        case ErrorNone:
+            return 0;
+        case SyntaxError:
+            return addErrorInfo(globalObject->globalExec(), createSyntaxError(globalObject, m_message), m_line, source);
+        case EvalError:
+            return createSyntaxError(globalObject, m_message);
+        case StackOverflow:
+            return createStackOverflowError(globalObject);
+        case OutOfMemory:
+            return createOutOfMemoryError(globalObject);
+        }
+        CRASH();
+        return createOutOfMemoryError(globalObject); // Appease Qt bot
+    }
+
+};
+
 template <typename T> inline bool isEvalNode() { return false; }
 template <> inline bool isEvalNode<EvalNode>() { return true; }
 
@@ -370,7 +413,7 @@ public:
     ~Parser();
 
     template <class ParsedNode>
-    PassRefPtr<ParsedNode> parse(JSGlobalObject* lexicalGlobalObject, Debugger*, ExecState*, JSObject**);
+    PassRefPtr<ParsedNode> parse(ParserError&);
 
 private:
     struct AllowInOverride {
@@ -890,7 +933,7 @@ private:
         return m_lastTokenEnd;
     }
 
-    mutable const JSGlobalData* m_globalData;
+    JSGlobalData* m_globalData;
     const SourceCode* m_source;
     ParserArena* m_arena;
     OwnPtr<LexerType> m_lexer;
@@ -935,12 +978,11 @@ private:
     };
 };
 
+
 template <typename LexerType>
 template <class ParsedNode>
-PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObject, Debugger* debugger, ExecState* debuggerExecState, JSObject** exception)
+PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
 {
-    ASSERT(lexicalGlobalObject);
-    ASSERT(exception && !*exception);
     int errLine;
     String errMsg;
 
@@ -971,7 +1013,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
         JSTokenLocation location;
         location.line = m_lexer->lastLineNumber();
         location.column = m_lexer->currentColumnNumber();
-        result = ParsedNode::create(&lexicalGlobalObject->globalData(),
+        result = ParsedNode::create(m_globalData,
                                     location,
                                     m_sourceElements,
                                     m_varDeclarations ? &m_varDeclarations->data : 0,
@@ -981,7 +1023,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
                                     m_features,
                                     m_numConstants);
         result->setLoc(m_source->firstLine(), m_lastLine, m_lexer->currentColumnNumber());
-    } else if (lexicalGlobalObject) {
+    } else {
         // We can never see a syntax error when reparsing a function, since we should have
         // reported the error when parsing the containing program or eval code. So if we're
         // parsing a function body node, we assume that what actually happened here is that
@@ -989,15 +1031,12 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
         // code we assume that it was a syntax error since running out of stack is much less
         // likely, and we are currently unable to distinguish between the two cases.
         if (isFunctionBodyNode(static_cast<ParsedNode*>(0)) || m_hasStackOverflow)
-            *exception = createStackOverflowError(lexicalGlobalObject);
+            error = ParserError::StackOverflow;
         else if (isEvalNode<ParsedNode>())
-            *exception = createSyntaxError(lexicalGlobalObject, errMsg);
+            error = ParserError(ParserError::EvalError, errMsg, errLine);
         else
-            *exception = addErrorInfo(lexicalGlobalObject->globalExec(), createSyntaxError(lexicalGlobalObject, errMsg), errLine, *m_source);
+            error = ParserError(ParserError::SyntaxError, errMsg, errLine);
     }
-
-    if (debugger && !ParsedNode::scopeIsFunction)
-        debugger->sourceParsed(debuggerExecState, m_source->provider(), errLine, errMsg);
 
     m_arena->reset();
 
@@ -1005,19 +1044,18 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
 }
 
 template <class ParsedNode>
-PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, Debugger* debugger, ExecState* execState, JSObject** exception)
+PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode, ParserError& error)
 {
     SamplingRegion samplingRegion("Parsing");
 
     ASSERT(!source.provider()->source().isNull());
-
     if (source.provider()->source().is8Bit()) {
         Parser< Lexer<LChar> > parser(globalData, source, parameters, name, strictness, parserMode);
-        return parser.parse<ParsedNode>(lexicalGlobalObject, debugger, execState, exception);
+        return parser.parse<ParsedNode>(error);
     }
     Parser< Lexer<UChar> > parser(globalData, source, parameters, name, strictness, parserMode);
-    return parser.parse<ParsedNode>(lexicalGlobalObject, debugger, execState, exception);
+    return parser.parse<ParsedNode>(error);
 }
 
-} // namespace 
+} // namespace
 #endif

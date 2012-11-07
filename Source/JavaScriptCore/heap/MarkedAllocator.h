@@ -74,10 +74,18 @@ inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t c
 inline void* MarkedAllocator::allocate(size_t bytes)
 {
     MarkedBlock::FreeCell* head = m_freeList.head;
-    if (UNLIKELY(!head))
-        return allocateSlowCase(bytes);
+    if (UNLIKELY(!head)) {
+        void* result = allocateSlowCase(bytes);
+#ifndef NDEBUG
+        memset(result, 0xCD, bytes);
+#endif
+        return result;
+    }
     
     m_freeList.head = head->next;
+#ifndef NDEBUG
+    memset(head, 0xCD, bytes);
+#endif
     return head;
 }
 

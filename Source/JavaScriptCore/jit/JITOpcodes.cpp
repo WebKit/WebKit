@@ -1069,13 +1069,14 @@ void JIT::emit_op_switch_string(Instruction* currentInstruction)
     jump(regT0);
 }
 
-void JIT::emit_op_throw_reference_error(Instruction* currentInstruction)
+void JIT::emit_op_throw_static_error(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_throw_reference_error);
+    JITStubCall stubCall(this, cti_op_throw_static_error);
     if (!m_codeBlock->getConstant(currentInstruction[1].u.operand).isNumber())
         stubCall.addArgument(TrustedImm64(JSValue::encode(m_codeBlock->getConstant(currentInstruction[1].u.operand))));
     else
         stubCall.addArgument(Imm64(JSValue::encode(m_codeBlock->getConstant(currentInstruction[1].u.operand))));
+    stubCall.addArgument(TrustedImm32(currentInstruction[2].u.operand));
     stubCall.call();
 }
 

@@ -158,7 +158,7 @@ public:
             // Nope, so try to parse one.
             JSObject* exception;
             value.owned = true;
-            value.codeBlock = key.executable()->produceCodeBlockFor(scope, OptimizingCompilation, key.kind(), exception).leakPtr();
+            value.codeBlock = key.executable()->produceCodeBlockFor(scope, key.kind(), exception).leakPtr();
         }
         
         // Check if there is any reason to reject this from our cache. If so, then

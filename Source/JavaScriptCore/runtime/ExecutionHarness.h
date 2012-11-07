@@ -49,7 +49,7 @@ inline bool prepareForExecution(ExecState* exec, OwnPtr<CodeBlockType>& codeBloc
     return jitCompileIfAppropriate(exec, codeBlock, jitCode, jitType, bytecodeIndex, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
 }
 
-inline bool prepareFunctionForExecution(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, WriteBarrier<SharedSymbolTable>& symbolTable, JITCode::JITType jitType, unsigned bytecodeIndex, CodeSpecializationKind kind)
+inline bool prepareFunctionForExecution(ExecState* exec, OwnPtr<FunctionCodeBlock>& codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck, JITCode::JITType jitType, unsigned bytecodeIndex, CodeSpecializationKind kind)
 {
 #if ENABLE(LLINT)
     if (JITCode::isBaselineCode(jitType)) {
@@ -61,7 +61,7 @@ inline bool prepareFunctionForExecution(ExecState* exec, OwnPtr<FunctionCodeBloc
 #else
     UNUSED_PARAM(kind);
 #endif // ENABLE(LLINT)
-    return jitCompileFunctionIfAppropriate(exec, codeBlock, jitCode, jitCodeWithArityCheck, symbolTable, jitType, bytecodeIndex, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
+    return jitCompileFunctionIfAppropriate(exec, codeBlock, jitCode, jitCodeWithArityCheck, jitType, bytecodeIndex, JITCode::isBaselineCode(jitType) ? JITCompilationMustSucceed : JITCompilationCanFail);
 }
 
 } // namespace JSC

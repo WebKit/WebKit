@@ -2144,7 +2144,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_push_activation)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    JSActivation* activation = JSActivation::create(stackFrame.callFrame->globalData(), stackFrame.callFrame, static_cast<FunctionExecutable*>(stackFrame.callFrame->codeBlock()->ownerExecutable()));
+    JSActivation* activation = JSActivation::create(stackFrame.callFrame->globalData(), stackFrame.callFrame, stackFrame.callFrame->codeBlock());
     stackFrame.callFrame->setScope(activation);
     return activation;
 }
@@ -3336,13 +3336,16 @@ DEFINE_STUB_FUNCTION(void, op_put_getter_setter)
     baseObj->putDirectAccessor(callFrame, stackFrame.args[1].identifier(), accessor, Accessor);
 }
 
-DEFINE_STUB_FUNCTION(void, op_throw_reference_error)
+DEFINE_STUB_FUNCTION(void, op_throw_static_error)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
     CallFrame* callFrame = stackFrame.callFrame;
     String message = stackFrame.args[0].jsValue().toString(callFrame)->value(callFrame);
-    stackFrame.globalData->exception = createReferenceError(callFrame, message);
+    if (stackFrame.args[1].asInt32)
+        stackFrame.globalData->exception = createReferenceError(callFrame, message);
+    else
+        stackFrame.globalData->exception = createTypeError(callFrame, message);
     VM_THROW_EXCEPTION_AT_END();
 }
 

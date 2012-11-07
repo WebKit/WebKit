@@ -335,6 +335,8 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_put_by_index)
         DEFINE_OP(op_put_by_val)
         DEFINE_OP(op_put_getter_setter)
+        case op_init_global_const_nop:
+            NEXT_OPCODE(op_init_global_const_nop);
         DEFINE_OP(op_init_global_const)
         DEFINE_OP(op_init_global_const_check)
 
@@ -371,7 +373,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_tear_off_activation)
         DEFINE_OP(op_tear_off_arguments)
         DEFINE_OP(op_throw)
-        DEFINE_OP(op_throw_reference_error)
+        DEFINE_OP(op_throw_static_error)
         DEFINE_OP(op_to_jsnumber)
         DEFINE_OP(op_to_primitive)
 

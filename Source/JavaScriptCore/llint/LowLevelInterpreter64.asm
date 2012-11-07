@@ -830,7 +830,7 @@ _llint_op_init_global_const:
     loadConstantOrVariable(t1, t2)
     writeBarrier(t2)
     storeq t2, [t0]
-    dispatch(3)
+    dispatch(5)
 
 
 _llint_op_init_global_const_check:

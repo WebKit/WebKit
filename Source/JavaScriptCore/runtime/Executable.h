@@ -35,6 +35,7 @@
 #include "LLIntCLoop.h"
 #include "Nodes.h"
 #include "SamplingTool.h"
+#include "UnlinkedCodeBlock.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace JSC {
@@ -364,8 +365,18 @@ namespace JSC {
         bool isStrictMode() const { return m_features & StrictModeFeature; }
 
         void unlinkCalls();
+
+        CodeFeatures features() const { return m_features; }
         
         static const ClassInfo s_info;
+
+        void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine)
+        {
+            m_features = features;
+            m_hasCapturedVariables = hasCapturedVariables;
+            m_firstLine = firstLine;
+            m_lastLine = lastLine;
+        }
 
     protected:
         void finishCreation(JSGlobalData& globalData)
@@ -377,14 +388,6 @@ namespace JSC {
             if (SamplingTool* sampler = globalData.interpreter->sampler())
                 sampler->notifyOfScope(globalData, this);
 #endif
-        }
-
-        void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine)
-        {
-            m_features = features;
-            m_hasCapturedVariables = hasCapturedVariables;
-            m_firstLine = firstLine;
-            m_lastLine = lastLine;
         }
 
         SourceCode m_source;
@@ -448,6 +451,8 @@ namespace JSC {
 
         void clearCode();
 
+        ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false); }
+
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         EvalExecutable(ExecState*, const SourceCode&, bool);
@@ -456,6 +461,7 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
         OwnPtr<EvalCodeBlock> m_evalCodeBlock;
+        WriteBarrier<UnlinkedEvalCodeBlock> m_unlinkedEvalCodeBlock;
     };
 
     class ProgramExecutable : public ScriptExecutable {
@@ -469,6 +475,9 @@ namespace JSC {
             executable->finishCreation(exec->globalData());
             return executable;
         }
+
+
+        JSObject* initalizeGlobalProperties(JSGlobalData&, CallFrame*, JSScope*);
 
         static void destroy(JSCell*);
 
@@ -515,13 +524,21 @@ namespace JSC {
 
         void clearCode();
 
+        ExecutableInfo executableInfo() const { return ExecutableInfo(needsActivation(), usesEval(), isStrictMode(), false); }
+
     private:
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
+
         ProgramExecutable(ExecState*, const SourceCode&);
+
+        enum ConstantMode { IsConstant, IsVariable };
+        enum FunctionMode { IsFunctionToSpecialize, NotFunctionOrNotSpecializable };
+        int addGlobalVar(JSGlobalObject*, const Identifier&, ConstantMode, FunctionMode);
 
         JSObject* compileInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
         static void visitChildren(JSCell*, SlotVisitor&);
 
+        WriteBarrier<UnlinkedProgramCodeBlock> m_unlinkedProgramCodeBlock;
         OwnPtr<ProgramCodeBlock> m_programCodeBlock;
     };
 
@@ -531,9 +548,9 @@ namespace JSC {
     public:
         typedef ScriptExecutable Base;
 
-        static FunctionExecutable* create(JSGlobalData& globalData, FunctionBodyNode* node)
+        static FunctionExecutable* create(JSGlobalData& globalData, const SourceCode& source, UnlinkedFunctionExecutable* unlinkedExecutable, unsigned firstLine, unsigned lastLine)
         {
-            FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(globalData.heap)) FunctionExecutable(globalData, node);
+            FunctionExecutable* executable = new (NotNull, allocateCell<FunctionExecutable>(globalData.heap)) FunctionExecutable(globalData, source, unlinkedExecutable, firstLine, lastLine);
             executable->finishCreation(globalData);
             return executable;
         }
@@ -554,7 +571,7 @@ namespace JSC {
         
         FunctionCodeBlock* codeBlockWithBytecodeFor(CodeSpecializationKind);
         
-        PassOwnPtr<FunctionCodeBlock> produceCodeBlockFor(JSScope*, CompilationKind, CodeSpecializationKind, JSObject*& exception);
+        PassOwnPtr<FunctionCodeBlock> produceCodeBlockFor(JSScope*, CodeSpecializationKind, JSObject*& exception);
 
         JSObject* compileForCall(ExecState* exec, JSScope* scope)
         {
@@ -679,14 +696,15 @@ namespace JSC {
             return baselineCodeBlockFor(kind);
         }
         
-        const Identifier& name() { return m_name; }
-        const Identifier& inferredName() { return m_inferredName; }
-        JSString* nameValue() const { return m_nameValue.get(); }
-        size_t parameterCount() const { return m_parameters->size(); } // Excluding 'this'!
+        const Identifier& name() { return m_unlinkedExecutable->name(); }
+        const Identifier& inferredName() { return m_unlinkedExecutable->inferredName(); }
+        JSString* nameValue() const { return m_unlinkedExecutable->nameValue(); }
+        size_t parameterCount() const { return m_unlinkedExecutable->parameterCount(); } // Excluding 'this'!
         String paramString() const;
-        SharedSymbolTable* symbolTable() const { return m_symbolTable.get(); }
+        SharedSymbolTable* symbolTable(CodeSpecializationKind kind) const { return m_unlinkedExecutable->symbolTable(kind); }
 
         void clearCodeIfNotCompiling();
+        void clearUnlinkedCodeIfNotCompiling();
         static void visitChildren(JSCell*, SlotVisitor&);
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {
@@ -699,15 +717,8 @@ namespace JSC {
 
         void clearCode();
 
-    protected:
-        void finishCreation(JSGlobalData& globalData)
-        {
-            Base::finishCreation(globalData);
-            m_nameValue.set(globalData, this, jsString(&globalData, name().string()));
-        }
-
     private:
-        FunctionExecutable(JSGlobalData&, FunctionBodyNode*);
+        FunctionExecutable(JSGlobalData&, const SourceCode&, UnlinkedFunctionExecutable*, unsigned firstLine, unsigned lastLine);
 
         JSObject* compileForCallInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
         JSObject* compileForConstructInternal(ExecState*, JSScope*, JITCode::JITType, unsigned bytecodeIndex = UINT_MAX);
@@ -732,16 +743,9 @@ namespace JSC {
         }
 
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
-        bool m_forceUsesArguments;
-
-        RefPtr<FunctionParameters> m_parameters;
+        WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
         OwnPtr<FunctionCodeBlock> m_codeBlockForCall;
         OwnPtr<FunctionCodeBlock> m_codeBlockForConstruct;
-        Identifier m_name;
-        Identifier m_inferredName;
-        FunctionNameIsInScopeToggle m_functionNameIsInScopeToggle;
-        WriteBarrier<JSString> m_nameValue;
-        WriteBarrier<SharedSymbolTable> m_symbolTable;
     };
 
     inline JSFunction::JSFunction(JSGlobalData& globalData, FunctionExecutable* executable, JSScope* scope)

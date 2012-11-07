@@ -984,7 +984,7 @@ _llint_op_init_global_const:
     writeBarrier(t2, t3)
     storei t2, TagOffset[t0]
     storei t3, PayloadOffset[t0]
-    dispatch(3)
+    dispatch(5)
 
 
 _llint_op_init_global_const_check:

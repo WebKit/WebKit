@@ -204,7 +204,7 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_push_with_scope);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_pop_scope);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_push_name_scope);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_throw);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_throw_reference_error);
+LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_throw_static_error);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_debug);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_profile_will_call);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_profile_did_call);

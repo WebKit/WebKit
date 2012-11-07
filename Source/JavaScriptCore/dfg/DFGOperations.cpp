@@ -1157,8 +1157,7 @@ JSCell* DFG_OPERATION operationCreateActivation(ExecState* exec)
 {
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
-    JSActivation* activation = JSActivation::create(
-        globalData, exec, static_cast<FunctionExecutable*>(exec->codeBlock()->ownerExecutable()));
+    JSActivation* activation = JSActivation::create(globalData, exec, exec->codeBlock());
     exec->setScope(activation);
     return activation;
 }

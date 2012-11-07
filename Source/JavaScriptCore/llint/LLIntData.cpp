@@ -103,7 +103,7 @@ void Data::performAssertions(JSGlobalData& globalData)
     ASSERT(ValueNull == TagBitTypeOther);
 #endif
     ASSERT(StringType == 5);
-    ASSERT(ObjectType == 13);
+    ASSERT(ObjectType == 17);
     ASSERT(MasqueradesAsUndefined == 1);
     ASSERT(ImplementsHasInstance == 2);
     ASSERT(ImplementsDefaultHasInstance == 8);

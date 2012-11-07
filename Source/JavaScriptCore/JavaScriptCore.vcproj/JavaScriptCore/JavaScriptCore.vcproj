@@ -638,6 +638,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\CodeCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\CodeCache.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\CommonIdentifiers.cpp"
 				>
 			</File>
@@ -1746,6 +1754,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\bytecode\UnlinkedCodeBlock.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\UnlinkedCodeBlock.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\ValueProfile.h"
 				>
 			</File>
@@ -2227,6 +2243,10 @@
 			</File>
 			<File
 				RelativePath="..\..\parser\Parser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\parser\ParserModes.h"
 				>
 			</File>
 			<File

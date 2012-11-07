@@ -294,6 +294,8 @@ ALWAYS_INLINE void SlotVisitor::internalAppend(JSValue* slot)
     if (!cell)
         return;
 
+    validate(cell);
+
     if (m_shouldHashConst && cell->isString()) {
         JSString* string = jsCast<JSString*>(cell);
         if (string->shouldTryHashConst() && string->tryHashConstLock()) {
@@ -355,6 +357,10 @@ void SlotVisitor::validate(JSCell* cell)
                 cell->structure()->structure(), parentClassName, cell, cell->structure(), ourClassName);
         CRASH();
     }
+
+    // Make sure we can walk the ClassInfo chain
+    const ClassInfo* info = cell->classInfo();
+    do { } while ((info = info->parentClass));
 }
 #else
 void SlotVisitor::validate(JSCell*)

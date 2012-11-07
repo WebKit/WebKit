@@ -267,8 +267,7 @@ namespace JSC {
         m_overrodeCallee = false;
         m_overrodeCaller = false;
         m_isStrictMode = jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->isStrictMode();
-
-        ASSERT(!jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->symbolTable()->slowArguments());
+        ASSERT(!jsCast<FunctionExecutable*>(inlineCallFrame->executable.get())->symbolTable(inlineCallFrame->isCall ? CodeForCall : CodeForConstruct)->slowArguments());
 
         // The bytecode generator omits op_tear_off_activation in cases of no
         // declared parameters, so we need to tear off immediately.

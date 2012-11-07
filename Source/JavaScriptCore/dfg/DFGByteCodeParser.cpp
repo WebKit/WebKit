@@ -2614,6 +2614,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_put_by_id);
         }
 
+        case op_init_global_const_nop: {
+            NEXT_OPCODE(op_init_global_const_nop);
+        }
+
         case op_init_global_const: {
             NodeIndex value = get(currentInstruction[2].u.operand);
             addToGraph(
@@ -2851,10 +2855,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(Throw, get(currentInstruction[1].u.operand));
             LAST_OPCODE(op_throw);
             
-        case op_throw_reference_error:
+        case op_throw_static_error:
             flushArgumentsAndCapturedVariables();
             addToGraph(ThrowReferenceError);
-            LAST_OPCODE(op_throw_reference_error);
+            LAST_OPCODE(op_throw_static_error);
             
         case op_call:
             handleCall(interpreter, currentInstruction, Call, CodeForCall);
@@ -3597,7 +3601,7 @@ void ByteCodeParser::parseCodeBlock()
     dataLog("Parsing code block %p. codeType = %s, captureCount = %u, needsFullScopeChain = %s, needsActivation = %s, isStrictMode = %s\n",
             codeBlock,
             codeTypeToString(codeBlock->codeType()),
-            codeBlock->symbolTable()->captureCount(),
+            codeBlock->symbolTable() ? codeBlock->symbolTable()->captureCount() : 0,
             codeBlock->needsFullScopeChain()?"true":"false",
             codeBlock->ownerExecutable()->needsActivation()?"true":"false",
             codeBlock->ownerExecutable()->isStrictMode()?"true":"false");

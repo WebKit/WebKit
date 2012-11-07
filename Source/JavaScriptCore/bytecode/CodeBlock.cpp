@@ -527,13 +527,13 @@ void CodeBlock::dump(ExecState* exec)
         } while (i < m_constantRegisters.size());
     }
 
-    if (m_rareData && !m_rareData->m_regexps.isEmpty()) {
+    if (size_t count = m_unlinkedCode->numberOfRegExps()) {
         dataLog("\nm_regexps:\n");
         size_t i = 0;
         do {
-            dataLog("  re%u = %s\n", static_cast<unsigned>(i), regexpToSourceString(m_rareData->m_regexps[i].get()).utf8().data());
+            dataLog("  re%u = %s\n", static_cast<unsigned>(i), regexpToSourceString(m_unlinkedCode->regexp(i)).utf8().data());
             ++i;
-        } while (i < m_rareData->m_regexps.size());
+        } while (i < count);
     }
 
 #if ENABLE(JIT)
@@ -667,7 +667,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int dst = (++it)->u.operand;
             int argv = (++it)->u.operand;
             int argc = (++it)->u.operand;
-            dataLog("[%4d] new_array_buffer %s, %d, %d", location, registerName(exec, dst).data(), argv, argc);
+            dataLog("[%4d] new_array_buffer\t %s, %d, %d", location, registerName(exec, dst).data(), argv, argc);
             dumpBytecodeCommentAndNewLine(location);
             break;
         }
@@ -675,7 +675,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r0 = (++it)->u.operand;
             int re0 = (++it)->u.operand;
             dataLog("[%4d] new_regexp\t %s, ", location, registerName(exec, r0).data());
-            if (r0 >=0 && r0 < (int)numberOfRegExps())
+            if (r0 >=0 && r0 < (int)m_unlinkedCode->numberOfRegExps())
                 dataLog("%s", regexpName(re0, regexp(re0)).data());
             else
                 dataLog("bad_regexp(%d)", re0);
@@ -885,11 +885,22 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             it++;
             break;
         }
+        case op_init_global_const_nop: {
+            dataLog("[%4d] init_global_const_nop\t", location);
+            dumpBytecodeCommentAndNewLine(location);
+            it++;
+            it++;
+            it++;
+            it++;
+            break;
+        }
         case op_init_global_const: {
             WriteBarrier<Unknown>* registerPointer = (++it)->u.registerPointer;
             int r0 = (++it)->u.operand;
             dataLog("[%4d] init_global_const\t g%d(%p), %s", location, m_globalObject->findRegisterIndex(registerPointer), registerPointer, registerName(exec, r0).data());
             dumpBytecodeCommentAndNewLine(location);
+            it++;
+            it++;
             break;
         }
         case op_init_global_const_check: {
@@ -1391,9 +1402,10 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             dumpBytecodeCommentAndNewLine(location);
             break;
         }
-        case op_throw_reference_error: {
+        case op_throw_static_error: {
             int k0 = (++it)->u.operand;
-            dataLog("[%4d] throw_reference_error\t %s", location, constantName(exec, k0, getConstant(k0)).data());
+            int k1 = (++it)->u.operand;
+            dataLog("[%4d] throw_static_error\t %s, %s", location, constantName(exec, k0, getConstant(k0)).data(), k1 ? "true" : "false");
             dumpBytecodeCommentAndNewLine(location);
             break;
         }
@@ -1491,9 +1503,9 @@ void CodeBlock::dumpStatistics()
             FOR_EACH_MEMBER_VECTOR(GET_STATS)
         #undef GET_STATS
 
-        if (!codeBlock->symbolTable().isEmpty()) {
+        if (codeBlock->symbolTable() && !codeBlock->symbolTable()->isEmpty()) {
             symbolTableIsNotEmpty++;
-            symbolTableTotalSize += (codeBlock->symbolTable().capacity() * (sizeof(SymbolTable::KeyType) + sizeof(SymbolTable::MappedType)));
+            symbolTableTotalSize += (codeBlock->symbolTable()->capacity() * (sizeof(SymbolTable::KeyType) + sizeof(SymbolTable::MappedType)));
         }
 
         if (codeBlock->m_rareData) {
@@ -1561,33 +1573,26 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_numCalleeRegisters(other.m_numCalleeRegisters)
     , m_numVars(other.m_numVars)
     , m_isConstructor(other.m_isConstructor)
+    , m_unlinkedCode(*other.m_globalData, other.m_ownerExecutable.get(), other.m_unlinkedCode.get())
     , m_ownerExecutable(*other.m_globalData, other.m_ownerExecutable.get(), other.m_ownerExecutable.get())
     , m_globalData(other.m_globalData)
     , m_instructions(other.m_instructions)
     , m_thisRegister(other.m_thisRegister)
     , m_argumentsRegister(other.m_argumentsRegister)
     , m_activationRegister(other.m_activationRegister)
-    , m_needsFullScopeChain(other.m_needsFullScopeChain)
-    , m_usesEval(other.m_usesEval)
-    , m_isNumericCompareFunction(other.m_isNumericCompareFunction)
     , m_isStrictMode(other.m_isStrictMode)
-    , m_codeType(other.m_codeType)
     , m_source(other.m_source)
     , m_sourceOffset(other.m_sourceOffset)
 #if ENABLE(VALUE_PROFILER)
     , m_executionEntryCount(0)
 #endif
-    , m_jumpTargets(other.m_jumpTargets)
-    , m_loopTargets(other.m_loopTargets)
     , m_identifiers(other.m_identifiers)
     , m_constantRegisters(other.m_constantRegisters)
     , m_functionDecls(other.m_functionDecls)
     , m_functionExprs(other.m_functionExprs)
-    , m_symbolTable(*other.m_globalData, other.m_ownerExecutable.get(), other.symbolTable())
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
-    , m_lineInfo(other.m_lineInfo)
     , m_resolveOperations(other.m_resolveOperations)
     , m_putToBaseOperations(other.m_putToBaseOperations)
 #if ENABLE(BYTECODE_COMMENTS)
@@ -1605,36 +1610,31 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
         createRareDataIfNecessary();
         
         m_rareData->m_exceptionHandlers = other.m_rareData->m_exceptionHandlers;
-        m_rareData->m_regexps = other.m_rareData->m_regexps;
         m_rareData->m_constantBuffers = other.m_rareData->m_constantBuffers;
         m_rareData->m_immediateSwitchJumpTables = other.m_rareData->m_immediateSwitchJumpTables;
         m_rareData->m_characterSwitchJumpTables = other.m_rareData->m_characterSwitchJumpTables;
         m_rareData->m_stringSwitchJumpTables = other.m_rareData->m_stringSwitchJumpTables;
-        m_rareData->m_expressionInfo = other.m_rareData->m_expressionInfo;
     }
 }
 
-CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlobalObject *globalObject, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, bool isConstructor, PassOwnPtr<CodeBlock> alternative)
+CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSGlobalObject* globalObject, unsigned baseScopeDepth, PassRefPtr<SourceProvider> sourceProvider, unsigned sourceOffset, PassOwnPtr<CodeBlock> alternative)
     : m_globalObject(globalObject->globalData(), ownerExecutable, globalObject)
     , m_heap(&m_globalObject->globalData().heap)
-    , m_numCalleeRegisters(0)
-    , m_numVars(0)
-    , m_isConstructor(isConstructor)
-    , m_numParameters(0)
+    , m_numCalleeRegisters(unlinkedCodeBlock->m_numCalleeRegisters)
+    , m_numVars(unlinkedCodeBlock->m_numVars)
+    , m_isConstructor(unlinkedCodeBlock->isConstructor())
+    , m_unlinkedCode(globalObject->globalData(), ownerExecutable, unlinkedCodeBlock)
     , m_ownerExecutable(globalObject->globalData(), ownerExecutable, ownerExecutable)
-    , m_globalData(0)
-    , m_argumentsRegister(-1)
-    , m_needsFullScopeChain(ownerExecutable->needsActivation())
-    , m_usesEval(ownerExecutable->usesEval())
-    , m_isNumericCompareFunction(false)
-    , m_isStrictMode(ownerExecutable->isStrictMode())
-    , m_codeType(codeType)
+    , m_globalData(unlinkedCodeBlock->globalData())
+    , m_thisRegister(unlinkedCodeBlock->thisRegister())
+    , m_argumentsRegister(unlinkedCodeBlock->argumentsRegister())
+    , m_activationRegister(unlinkedCodeBlock->activationRegister())
+    , m_isStrictMode(unlinkedCodeBlock->isStrictMode())
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
 #if ENABLE(VALUE_PROFILER)
     , m_executionEntryCount(0)
 #endif
-    , m_symbolTable(globalObject->globalData(), ownerExecutable, SharedSymbolTable::create(globalObject->globalData()))
     , m_alternative(alternative)
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
@@ -1643,7 +1643,10 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_bytecodeCommentIterator(0)
 #endif
 {
+    m_globalData->startedCompiling(this);
+
     ASSERT(m_source);
+    setNumParameters(unlinkedCodeBlock->numParameters());
 
     optimizeAfterWarmUp();
     jitAfterWarmUp();
@@ -1651,9 +1654,208 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
 #if DUMP_CODE_BLOCK_STATISTICS
     liveCodeBlockSet.add(this);
 #endif
-    // We have a stub putToBase operation to allow resolve_base to
-    // remain branchless
-    m_putToBaseOperations.append(PutToBaseOperation(isStrictMode()));
+    setIdentifiers(unlinkedCodeBlock->identifiers());
+    setConstantRegisters(unlinkedCodeBlock->constantRegisters());
+
+    m_functionDecls.grow(unlinkedCodeBlock->numberOfFunctionDecls());
+    for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
+        UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
+        unsigned lineCount = unlinkedExecutable->lineCount();
+        unsigned firstLine = ownerExecutable->lineNo() + unlinkedExecutable->firstLineOffset();
+        unsigned startOffset = sourceOffset + unlinkedExecutable->startOffset();
+        unsigned sourceLength = unlinkedExecutable->sourceLength();
+        SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine);
+        FunctionExecutable* executable = FunctionExecutable::create(*m_globalData, code, unlinkedExecutable, firstLine, firstLine + lineCount);
+        m_functionDecls[i].set(*m_globalData, ownerExecutable, executable);
+    }
+
+    m_functionExprs.grow(unlinkedCodeBlock->numberOfFunctionExprs());
+    for (size_t count = unlinkedCodeBlock->numberOfFunctionExprs(), i = 0; i < count; ++i) {
+        UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
+        unsigned lineCount = unlinkedExecutable->lineCount();
+        unsigned firstLine = ownerExecutable->lineNo() + unlinkedExecutable->firstLineOffset();
+        unsigned startOffset = sourceOffset + unlinkedExecutable->startOffset();
+        unsigned sourceLength = unlinkedExecutable->sourceLength();
+        SourceCode code(m_source, startOffset, startOffset + sourceLength, firstLine);
+        FunctionExecutable* executable = FunctionExecutable::create(*m_globalData, code, unlinkedExecutable, firstLine, firstLine + lineCount);
+        m_functionExprs[i].set(*m_globalData, ownerExecutable, executable);
+    }
+
+    if (unlinkedCodeBlock->hasRareData()) {
+        createRareDataIfNecessary();
+        if (size_t count = unlinkedCodeBlock->constantBufferCount()) {
+            m_rareData->m_constantBuffers.grow(count);
+            for (size_t i = 0; i < count; i++) {
+                const UnlinkedCodeBlock::ConstantBuffer& buffer = unlinkedCodeBlock->constantBuffer(i);
+                m_rareData->m_constantBuffers[i] = buffer;
+            }
+        }
+        if (size_t count = unlinkedCodeBlock->numberOfExceptionHandlers()) {
+            m_rareData->m_exceptionHandlers.grow(count);
+            for (size_t i = 0; i < count; i++) {
+                const UnlinkedHandlerInfo& handler = unlinkedCodeBlock->exceptionHandler(i);
+                m_rareData->m_exceptionHandlers[i].start = handler.start;
+                m_rareData->m_exceptionHandlers[i].end = handler.end;
+                m_rareData->m_exceptionHandlers[i].target = handler.target;
+                m_rareData->m_exceptionHandlers[i].scopeDepth = handler.scopeDepth + baseScopeDepth;
+#if ENABLE(JIT) && ENABLE(LLINT)
+                m_rareData->m_exceptionHandlers[i].nativeCode = CodeLocationLabel(MacroAssemblerCodePtr::createFromExecutableAddress(LLInt::getCodePtr(llint_op_catch)));
+#endif
+            }
+        }
+
+        if (size_t count = unlinkedCodeBlock->numberOfStringSwitchJumpTables()) {
+            m_rareData->m_stringSwitchJumpTables.grow(count);
+            for (size_t i = 0; i < count; i++) {
+                UnlinkedStringJumpTable::StringOffsetTable::iterator ptr = unlinkedCodeBlock->stringSwitchJumpTable(i).offsetTable.begin();
+                UnlinkedStringJumpTable::StringOffsetTable::iterator end = unlinkedCodeBlock->stringSwitchJumpTable(i).offsetTable.end();
+                for (; ptr != end; ++ptr) {
+                    OffsetLocation offset;
+                    offset.branchOffset = ptr->value;
+                    m_rareData->m_stringSwitchJumpTables[i].offsetTable.add(ptr->key, offset);
+                }
+            }
+        }
+
+        if (size_t count = unlinkedCodeBlock->numberOfImmediateSwitchJumpTables()) {
+            m_rareData->m_immediateSwitchJumpTables.grow(count);
+            for (size_t i = 0; i < count; i++) {
+                UnlinkedSimpleJumpTable& sourceTable = unlinkedCodeBlock->immediateSwitchJumpTable(i);
+                SimpleJumpTable& destTable = m_rareData->m_immediateSwitchJumpTables[i];
+                destTable.branchOffsets = sourceTable.branchOffsets;
+                destTable.min = sourceTable.min;
+            }
+        }
+
+        if (size_t count = unlinkedCodeBlock->numberOfCharacterSwitchJumpTables()) {
+            m_rareData->m_characterSwitchJumpTables.grow(count);
+            for (size_t i = 0; i < count; i++) {
+                UnlinkedSimpleJumpTable& sourceTable = unlinkedCodeBlock->characterSwitchJumpTable(i);
+                SimpleJumpTable& destTable = m_rareData->m_characterSwitchJumpTables[i];
+                destTable.branchOffsets = sourceTable.branchOffsets;
+                destTable.min = sourceTable.min;
+            }
+        }
+    }
+
+    // Allocate metadata buffers for the bytecode
+#if ENABLE(LLINT)
+    if (size_t size = unlinkedCodeBlock->numberOfLLintCallLinkInfos())
+        m_llintCallLinkInfos.grow(size);
+#endif
+#if ENABLE(DFG_JIT)
+    if (size_t size = unlinkedCodeBlock->numberOfArrayProfiles())
+        m_arrayProfiles.grow(size);
+    if (size_t size = unlinkedCodeBlock->numberOfValueProfiles())
+        m_valueProfiles.grow(size);
+#endif
+    if (size_t size = unlinkedCodeBlock->numberOfResolveOperations())
+        m_resolveOperations.grow(size);
+    size_t putToBaseCount = unlinkedCodeBlock->numberOfPutToBaseOperations();
+    m_putToBaseOperations.reserveCapacity(putToBaseCount);
+    for (size_t i = 0; i < putToBaseCount; ++i)
+        m_putToBaseOperations.append(PutToBaseOperation(isStrictMode()));
+
+    ASSERT(m_putToBaseOperations.capacity() == putToBaseCount);
+
+    // Copy and translate the UnlinkedInstructions
+    size_t instructionCount = unlinkedCodeBlock->instructions().size();
+    UnlinkedInstruction* pc = unlinkedCodeBlock->instructions().data();
+    Vector<Instruction> instructions(instructionCount);
+    for (size_t i = 0; i < unlinkedCodeBlock->instructions().size(); ) {
+        unsigned opLength = opcodeLength(pc[i].u.opcode);
+        instructions[i] = globalData()->interpreter->getOpcode(pc[i].u.opcode);
+        for (size_t j = 1; j < opLength; ++j) {
+            if (sizeof(int32_t) != sizeof(intptr_t))
+                instructions[i + j].u.pointer = 0;
+            instructions[i + j].u.operand = pc[i + j].u.operand;
+        }
+        switch (pc[i].u.opcode) {
+#if ENABLE(DFG_JIT)
+        case op_get_by_val:
+        case op_get_argument_by_val: {
+            int arrayProfileIndex = pc[i + opLength - 2].u.operand;
+            m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
+
+            instructions[i + opLength - 2] = &m_arrayProfiles[arrayProfileIndex];
+            // fallthrough
+        }
+        case op_convert_this:
+        case op_resolve:
+        case op_resolve_base:
+        case op_resolve_with_base:
+        case op_resolve_with_this:
+        case op_get_by_id:
+        case op_call_put_result: {
+            ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
+            ASSERT(profile->m_bytecodeOffset == -1);
+            profile->m_bytecodeOffset = i;
+            instructions[i + opLength - 1] = profile;
+            break;
+        }
+        case op_put_by_val: {
+            int arrayProfileIndex = pc[i + opLength - 1].u.operand;
+            m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
+            instructions[i + opLength - 1] = &m_arrayProfiles[arrayProfileIndex];
+            break;
+        }
+
+        case op_call:
+        case op_call_eval: {
+            int arrayProfileIndex = pc[i + opLength - 1].u.operand;
+            m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
+            instructions[i + opLength - 1] = &m_arrayProfiles[arrayProfileIndex];
+            // fallthrough
+        }
+#endif
+#if ENABLE(LLINT)
+        case op_construct:
+            instructions[i + 4] = &m_llintCallLinkInfos[pc[i + 4].u.operand];
+            break;
+#endif
+        case op_get_by_id_out_of_line:
+        case op_get_by_id_self:
+        case op_get_by_id_proto:
+        case op_get_by_id_chain:
+        case op_get_by_id_getter_self:
+        case op_get_by_id_getter_proto:
+        case op_get_by_id_getter_chain:
+        case op_get_by_id_custom_self:
+        case op_get_by_id_custom_proto:
+        case op_get_by_id_custom_chain:
+        case op_get_by_id_generic:
+        case op_get_array_length:
+        case op_get_string_length:
+            CRASH();
+
+        case op_init_global_const_nop: {
+            ASSERT(codeType() == GlobalCode);
+            Identifier ident = identifier(pc[i + 4].u.operand);
+            SymbolTableEntry entry = globalObject->symbolTable()->get(ident.impl());
+            if (entry.isNull())
+                break;
+
+            if (entry.couldBeWatched()) {
+                instructions[i + 0] = globalData()->interpreter->getOpcode(op_init_global_const_check);
+                instructions[i + 1] = &globalObject->registerAt(entry.getIndex());
+                instructions[i + 3] = entry.addressOfIsWatched();
+                break;
+            }
+
+            instructions[i + 0] = globalData()->interpreter->getOpcode(op_init_global_const);
+            instructions[i + 1] = &globalObject->registerAt(entry.getIndex());
+            break;
+        }
+        default:
+            break;
+        }
+        i += opLength;
+    }
+    m_instructions = WTF::RefCountedArray<Instruction>(instructions);
+
+    if (BytecodeGenerator::dumpsGeneratedCode())
+        dump(m_globalObject->globalExec());
+    m_globalData->finishedCompiling(this);
 }
 
 CodeBlock::~CodeBlock()
@@ -1701,15 +1903,6 @@ void CodeBlock::setNumParameters(int newValue)
 
 #if ENABLE(VALUE_PROFILER)
     m_argumentValueProfiles.resize(newValue);
-#endif
-}
-
-void CodeBlock::addParameter()
-{
-    m_numParameters++;
-
-#if ENABLE(VALUE_PROFILER)
-    m_argumentValueProfiles.append(ValueProfile());
 #endif
 }
 
@@ -1794,6 +1987,8 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     
     if (!!m_alternative)
         m_alternative->visitAggregate(visitor);
+
+    visitor.append(&m_unlinkedCode);
 
     // There are three things that may use unconditional finalizers: lazy bytecode freeing,
     // inline cache clearing, and jettisoning. The probability of us wanting to do at
@@ -1909,8 +2104,9 @@ void CodeBlock::finalizeUnconditionally()
 #if ENABLE(LLINT)
     Interpreter* interpreter = m_globalData->interpreter;
     if (!!numberOfInstructions()) {
-        for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i) {
-            Instruction* curInstruction = &instructions()[m_propertyAccessInstructions[i]];
+        const Vector<unsigned>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
+        for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
+            Instruction* curInstruction = &instructions()[propertyAccessInstructions[i]];
             switch (interpreter->getOpcodeID(curInstruction[0].u.opcode)) {
             case op_get_by_id:
             case op_get_by_id_out_of_line:
@@ -2062,14 +2258,9 @@ void CodeBlock::stronglyVisitStrongReferences(SlotVisitor& visitor)
 {
     visitor.append(&m_globalObject);
     visitor.append(&m_ownerExecutable);
-    visitor.append(&m_symbolTable);
-    if (m_rareData) {
+    visitor.append(&m_unlinkedCode);
+    if (m_rareData)
         m_rareData->m_evalCodeCache.visitAggregate(visitor);
-        size_t regExpCount = m_rareData->m_regexps.size();
-        WriteBarrier<RegExp>* regexps = m_rareData->m_regexps.data();
-        for (size_t i = 0; i < regExpCount; i++)
-            visitor.append(regexps + i);
-    }
     visitor.appendValues(m_constantRegisters.data(), m_constantRegisters.size());
     for (size_t i = 0; i < m_functionExprs.size(); ++i)
         visitor.append(&m_functionExprs[i]);
@@ -2196,64 +2387,17 @@ HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 int CodeBlock::lineNumberForBytecodeOffset(unsigned bytecodeOffset)
 {
     ASSERT(bytecodeOffset < instructions().size());
-
-    Vector<LineInfo>& lineInfo = m_lineInfo;
-
-    int low = 0;
-    int high = lineInfo.size();
-    while (low < high) {
-        int mid = low + (high - low) / 2;
-        if (lineInfo[mid].instructionOffset <= bytecodeOffset)
-            low = mid + 1;
-        else
-            high = mid;
-    }
-
-    if (!low)
-        return m_ownerExecutable->source().firstLine();
-    return lineInfo[low - 1].lineNumber;
+    return m_ownerExecutable->lineNo() + m_unlinkedCode->lineNumberForBytecodeOffset(bytecodeOffset);
 }
 
 void CodeBlock::expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset)
 {
-    ASSERT(bytecodeOffset < instructions().size());
-
-    if (!m_rareData) {
-        startOffset = 0;
-        endOffset = 0;
-        divot = 0;
-        return;
-    }
-
-    Vector<ExpressionRangeInfo>& expressionInfo = m_rareData->m_expressionInfo;
-
-    int low = 0;
-    int high = expressionInfo.size();
-    while (low < high) {
-        int mid = low + (high - low) / 2;
-        if (expressionInfo[mid].instructionOffset <= bytecodeOffset)
-            low = mid + 1;
-        else
-            high = mid;
-    }
-
-    ASSERT(low);
-    if (!low) {
-        startOffset = 0;
-        endOffset = 0;
-        divot = 0;
-        return;
-    }
-
-    startOffset = expressionInfo[low - 1].startOffset;
-    endOffset = expressionInfo[low - 1].endOffset;
-    divot = expressionInfo[low - 1].divotPoint + m_sourceOffset;
-    return;
+    m_unlinkedCode->expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset);
+    divot += m_sourceOffset;
 }
 
 void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 {
-    m_propertyAccessInstructions.shrinkToFit();
 #if ENABLE(LLINT)
     m_llintCallLinkInfos.shrinkToFit();
 #endif
@@ -2264,7 +2408,6 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
 #if ENABLE(VALUE_PROFILER)
     if (shrinkMode == EarlyShrink)
         m_argumentValueProfiles.shrinkToFit();
-    m_valueProfiles.shrinkToFit();
     m_rareCaseProfiles.shrinkToFit();
     m_specialFastCaseProfiles.shrinkToFit();
 #endif
@@ -2276,15 +2419,11 @@ void CodeBlock::shrinkToFit(ShrinkMode shrinkMode)
         m_constantRegisters.shrinkToFit();
     } // else don't shrink these, because we would have already pointed pointers into these tables.
 
-    m_resolveOperations.shrinkToFit();
-    m_lineInfo.shrinkToFit();
     if (m_rareData) {
         m_rareData->m_exceptionHandlers.shrinkToFit();
-        m_rareData->m_regexps.shrinkToFit();
         m_rareData->m_immediateSwitchJumpTables.shrinkToFit();
         m_rareData->m_characterSwitchJumpTables.shrinkToFit();
         m_rareData->m_stringSwitchJumpTables.shrinkToFit();
-        m_rareData->m_expressionInfo.shrinkToFit();
 #if ENABLE(JIT)
         m_rareData->m_callReturnIndexVector.shrinkToFit();
 #endif
@@ -2312,7 +2451,7 @@ void CodeBlock::createActivation(CallFrame* callFrame)
     ASSERT(codeType() == FunctionCode);
     ASSERT(needsFullScopeChain());
     ASSERT(!callFrame->uncheckedR(activationRegister()).jsValue());
-    JSActivation* activation = JSActivation::create(callFrame->globalData(), callFrame, static_cast<FunctionExecutable*>(ownerExecutable()));
+    JSActivation* activation = JSActivation::create(callFrame->globalData(), callFrame, this);
     callFrame->uncheckedR(activationRegister()) = JSValue(activation);
     callFrame->setScope(activation);
 }

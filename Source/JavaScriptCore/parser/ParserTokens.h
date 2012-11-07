@@ -26,6 +26,8 @@
 #ifndef ParserTokens_h
 #define ParserTokens_h
 
+#include "ParserModes.h"
+
 namespace JSC {
 
 class Identifier;
@@ -161,9 +163,6 @@ struct JSToken {
     JSTokenLocation m_location;
 };
 
-enum JSParserStrictness { JSParseNormal, JSParseStrict };
-enum JSParserMode { JSParseProgramCode, JSParseFunctionCode };
-    
 }
 
 

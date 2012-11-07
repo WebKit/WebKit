@@ -731,7 +731,7 @@ namespace JSC {
         void emit_op_tear_off_activation(Instruction*);
         void emit_op_tear_off_arguments(Instruction*);
         void emit_op_throw(Instruction*);
-        void emit_op_throw_reference_error(Instruction*);
+        void emit_op_throw_static_error(Instruction*);
         void emit_op_to_jsnumber(Instruction*);
         void emit_op_to_primitive(Instruction*);
         void emit_op_unexpected_load(Instruction*);

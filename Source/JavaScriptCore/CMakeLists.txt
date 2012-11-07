@@ -59,6 +59,7 @@ SET(JavaScriptCore_SOURCES
     bytecode/SpecialPointer.cpp
     bytecode/StructureStubClearingWatchpoint.cpp
     bytecode/StructureStubInfo.cpp
+    bytecode/UnlinkedCodeBlock.cpp
     bytecode/Watchpoint.cpp
 
     bytecompiler/BytecodeGenerator.cpp
@@ -174,6 +175,7 @@ SET(JavaScriptCore_SOURCES
     runtime/BooleanObject.cpp
     runtime/BooleanPrototype.cpp
     runtime/CallData.cpp
+    runtime/CodeCache.cpp
     runtime/CommonIdentifiers.cpp
     runtime/Completion.cpp
     runtime/ConstructData.cpp

@@ -41,6 +41,7 @@
 #include "SymbolTable.h"
 #include "Debugger.h"
 #include "Nodes.h"
+#include "UnlinkedCodeBlock.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>
@@ -211,18 +212,18 @@ namespace JSC {
         JS_EXPORT_PRIVATE static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
         static bool dumpsGeneratedCode();
 
-        BytecodeGenerator(ProgramNode*, JSScope*, SharedSymbolTable*, ProgramCodeBlock*, CompilationKind);
-        BytecodeGenerator(FunctionBodyNode*, JSScope*, SharedSymbolTable*, CodeBlock*, CompilationKind);
-        BytecodeGenerator(EvalNode*, JSScope*, SharedSymbolTable*, EvalCodeBlock*, CompilationKind);
+        BytecodeGenerator(JSGlobalData&, ProgramNode*, UnlinkedProgramCodeBlock*, DebuggerMode, ProfilerMode);
+        BytecodeGenerator(JSGlobalData&, FunctionBodyNode*, UnlinkedFunctionCodeBlock*, DebuggerMode, ProfilerMode);
+        BytecodeGenerator(JSGlobalData&, EvalNode*, UnlinkedEvalCodeBlock*, DebuggerMode, ProfilerMode);
 
         ~BytecodeGenerator();
         
         JSGlobalData* globalData() const { return m_globalData; }
         const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
 
-        bool isConstructor() { return m_codeBlock->m_isConstructor; }
+        bool isConstructor() { return m_codeBlock->isConstructor(); }
 
-        JSObject* generate();
+        ParserError generate();
 
         bool isArgumentNumber(const Identifier&, int);
 
@@ -332,10 +333,7 @@ namespace JSC {
 
         void emitExpressionInfo(unsigned divot, unsigned startOffset, unsigned endOffset)
         {
-            if (!m_shouldEmitRichSourceInfo)
-                return;
-
-            divot -= m_codeBlock->sourceOffset();
+            divot -= m_scopeNode->source().startOffset();
             if (divot > ExpressionRangeInfo::MaxDivot) {
                 // Overflow has occurred, we can only give line number info for errors for this region
                 divot = 0;
@@ -508,8 +506,6 @@ namespace JSC {
         bool shouldEmitProfileHooks() { return m_shouldEmitProfileHooks; }
         
         bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
-        
-        JSScope* scope() const { return m_scope.get(); }
 
     private:
         friend class Label;
@@ -527,11 +523,10 @@ namespace JSC {
 #endif
 
         void emitOpcode(OpcodeID);
-        ArrayProfile* newArrayProfile();
-        ValueProfile* emitProfiledOpcode(OpcodeID);
+        UnlinkedArrayProfile newArrayProfile();
+        UnlinkedValueProfile emitProfiledOpcode(OpcodeID);
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);
         void retrieveLastUnaryOp(int& dstIndex, int& srcIndex);
-        void retrieveLastUnaryOp(WriteBarrier<Unknown>*& dstPointer, int& srcIndex);
         ALWAYS_INLINE void rewindBinaryOp();
         ALWAYS_INLINE void rewindUnaryOp();
 
@@ -574,10 +569,6 @@ namespace JSC {
         }
 
         // Returns the index of the added var.
-        enum ConstantMode { IsConstant, IsVariable };
-        enum FunctionMode { IsFunctionToSpecialize, NotFunctionOrNotSpecializable };
-        int addGlobalVar(const Identifier&, ConstantMode, FunctionMode);
-
         void addParameter(const Identifier&, int parameterIndex);
         RegisterID* resolveCallee(FunctionBodyNode*);
         void addCallee(FunctionBodyNode*, RegisterID*);
@@ -604,17 +595,22 @@ namespace JSC {
 
         unsigned addConstantBuffer(unsigned length);
         
+        UnlinkedFunctionExecutable* makeFunction(FunctionBodyNode* body)
+        {
+            return UnlinkedFunctionExecutable::create(m_globalData, m_scopeNode->source(), body);
+        }
+
         JSString* addStringConstant(const Identifier&);
 
         void addLineInfo(unsigned lineNo)
         {
-            m_codeBlock->addLineInfo(instructions().size(), lineNo);
+            m_codeBlock->addLineInfo(instructions().size(), lineNo - m_scopeNode->firstLine());
         }
 
         RegisterID* emitInitLazyRegister(RegisterID*);
 
     public:
-        Vector<Instruction>& instructions() { return m_instructions; }
+        Vector<UnlinkedInstruction>& instructions() { return m_instructions; }
 
         SharedSymbolTable& symbolTable() { return *m_symbolTable; }
 #if ENABLE(BYTECODE_COMMENTS)
@@ -652,13 +648,11 @@ namespace JSC {
         void createActivationIfNecessary();
         RegisterID* createLazyRegisterIfNecessary(RegisterID*);
         
-        Vector<Instruction> m_instructions;
+        Vector<UnlinkedInstruction> m_instructions;
 
         bool m_shouldEmitDebugHooks;
         bool m_shouldEmitProfileHooks;
-        bool m_shouldEmitRichSourceInfo;
 
-        Strong<JSScope> m_scope;
         SharedSymbolTable* m_symbolTable;
 
 #if ENABLE(BYTECODE_COMMENTS)
@@ -667,7 +661,7 @@ namespace JSC {
 #endif
 
         ScopeNode* m_scopeNode;
-        CodeBlock* m_codeBlock;
+        Strong<UnlinkedCodeBlock> m_codeBlock;
 
         // Some of these objects keep pointers to one another. They are arranged
         // to ensure a sane destruction order that avoids references to freed memory.
@@ -685,7 +679,6 @@ namespace JSC {
         RefPtr<RegisterID> m_lastVar;
         int m_finallyDepth;
         int m_dynamicScopeDepth;
-        int m_baseScopeDepth;
         CodeType m_codeType;
 
         Vector<ControlFlowContext> m_scopeContextStack;

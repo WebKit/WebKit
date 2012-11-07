@@ -460,7 +460,7 @@ LLINT_SLOW_PATH_DECL(slow_path_create_activation)
 #if LLINT_SLOW_PATH_TRACING
     dataLog("Creating an activation, exec = %p!\n", exec);
 #endif
-    JSActivation* activation = JSActivation::create(globalData, exec, static_cast<FunctionExecutable*>(exec->codeBlock()->ownerExecutable()));
+    JSActivation* activation = JSActivation::create(globalData, exec, exec->codeBlock());
     exec->setScope(activation);
     LLINT_RETURN(JSValue(activation));
 }
@@ -1622,10 +1622,13 @@ LLINT_SLOW_PATH_DECL(slow_path_throw)
     LLINT_THROW(LLINT_OP_C(1).jsValue());
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_throw_reference_error)
+LLINT_SLOW_PATH_DECL(slow_path_throw_static_error)
 {
     LLINT_BEGIN();
-    LLINT_THROW(createReferenceError(exec, LLINT_OP_C(1).jsValue().toString(exec)->value(exec)));
+    if (pc[2].u.operand)
+        LLINT_THROW(createReferenceError(exec, LLINT_OP_C(1).jsValue().toString(exec)->value(exec)));
+    else
+        LLINT_THROW(createTypeError(exec, LLINT_OP_C(1).jsValue().toString(exec)->value(exec)));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_debug)

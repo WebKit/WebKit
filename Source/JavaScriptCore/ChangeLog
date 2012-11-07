@@ -1,3 +1,92 @@
+2012-11-06  Oliver Hunt  <oliver@apple.com>
+
+        Reduce parser overhead in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=101127
+
+        Reviewed by Filip Pizlo.
+
+        An exciting journey into the world of architecture in which our hero
+        adds yet another layer to JSC codegeneration.
+
+        This patch adds a marginally more compact form of bytecode that is
+        free from any data specific to a given execution context, and that
+        does store any data structures necessary for execution.  To actually
+        execute this UnlinkedBytecode we still need to instantiate a real
+        CodeBlock, but this is a much faster linear time operation than any
+        of the earlier parsing or code generation passes.
+
+        As the unlinked code is context free we can then simply use a cache
+        from source to unlinked code mapping to completely avoid all of the
+        old parser overhead.  The cache is currently very simple and memory
+        heavy, using the complete source text as a key (rather than SourceCode
+        or equivalent), and a random eviction policy.
+
+        This seems to produce a substantial win when loading identical content
+        in different contexts.
+
+        * API/tests/testapi.c:
+        (main):
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        * bytecode/CodeBlock.h:
+            Moved a number of fields, and a bunch of logic to UnlinkedCodeBlock.h/cpp
+        * bytecode/Opcode.h:
+            Added a global const init no op instruction needed to get correct
+            behaviour without any associated semantics.
+        * bytecode/UnlinkedCodeBlock.cpp: Added.
+        * bytecode/UnlinkedCodeBlock.h: Added.
+            A fairly shallow, GC allocated version of the old CodeBlock
+            classes with a 32bit instruction size, and just metadata
+            size tracking.
+        * bytecompiler/BytecodeGenerator.cpp:
+        * bytecompiler/BytecodeGenerator.h:
+            Replace direct access to m_symbolTable with access through
+            symbolTable().  ProgramCode no longer has a symbol table at
+            all so some previously unconditional (and pointless) uses
+            of symbolTable get null checks.
+            A few other changes to deal with type changes due to us generating
+            unlinked code (eg. pointer free, so profile indices rather than
+            pointers).
+        * dfg/DFGByteCodeParser.cpp:
+        * dfg/DFGCapabilities.h:
+            Support global_init_nop        
+        * interpreter/Interpreter.cpp:
+            Now get the ProgramExecutable to initialise new global properties
+            before starting execution.        
+        * jit/JIT.cpp:
+        * jit/JITDriver.h:
+        * jit/JITStubs.cpp:
+        * llint/LLIntData.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+            Adding init_global_const_nop everywhere else
+        * parser/Parser.h:
+        * parser/ParserModes.h: Added.
+        * parser/ParserTokens.h:
+            Parser no longer needs a global object or callframe to function        
+        * runtime/CodeCache.cpp: Added.
+        * runtime/CodeCache.h: Added.
+            A simple, random eviction, Source->UnlinkedCode cache        
+        * runtime/Executable.cpp:
+        * runtime/Executable.h:
+            Executables now reference their unlinked counterparts, and
+            request code specifically for the target global object.        
+        * runtime/JSGlobalData.cpp:
+        * runtime/JSGlobalData.h:
+            GlobalData now owns a CodeCache and a set of new structures
+            for the unlinked code types.  
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSGlobalObject.h:
+            Utility functions used by executables to perform compilation
+ 
+        * runtime/JSType.h:
+          Add new JSTypes for unlinked code
+
 2012-11-06  Michael Saboff  <msaboff@apple.com>
 
         JSStringCreateWithCFString() Should create an 8 bit String if possible
@@ -2017,7 +2106,7 @@
         (JSC::JIT::emit_op_next_pname):
         (JSC::JIT::compileOpStrictEq):
         (JSC::JIT::emit_op_catch):
-        (JSC::JIT::emit_op_throw_reference_error):
+        (JSC::JIT::emit_op_throw_static_error):
         (JSC::JIT::emit_op_eq_null):
         (JSC::JIT::emit_op_neq_null):
         (JSC::JIT::emit_op_create_activation):
