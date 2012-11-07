@@ -1,3 +1,17 @@
+2012-11-06  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL][EWebLauncher] Use Ctrl +/-  to zoom in EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=100207
+
+        Reviewed by Gyuyoung Kim.
+
+        Use "Ctrl -" instead of "F7" to zoom out, and use "Ctrl +" instead of "F8" to zoom in, 
+        and use "Ctrl 0" to set to default zoom level.
+        They are more common shortcuts on usual browsers.
+
+        * EWebLauncher/main.c:
+        (on_key_down):
+
 2012-11-06  Oliver Hunt  <oliver@apple.com>
 
         Don't warn about RefPtr* parameters

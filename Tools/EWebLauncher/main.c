@@ -576,14 +576,18 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         Eina_Bool status = ewk_view_setting_spatial_navigation_get(obj);
         ewk_view_setting_spatial_navigation_set(obj, !status);
         info("Command::keyboard navigation toggle\n");
-    } else if (!strcmp(ev->key, "F7")) {
-        info("Zoom out (F7) was pressed.\n");
+    } else if ((!strcmp(ev->key, "minus") || !strcmp(ev->key, "KP_Subtract")) && ctrlPressed) {
         if (currentZoomLevel > MIN_ZOOM_LEVEL && zoom_level_set(obj, currentZoomLevel - 1))
             currentZoomLevel--;
-    } else if (!strcmp(ev->key, "F8")) {
-        info("Zoom in (F8) was pressed.\n");
+        info("Zoom out (Ctrl + '-') was pressed, zoom level became %.2f\n", zoomLevels[currentZoomLevel] / 100.0);
+    } else if ((!strcmp(ev->key, "equal") || !strcmp(ev->key, "KP_Add")) && ctrlPressed) {
         if (currentZoomLevel < MAX_ZOOM_LEVEL && zoom_level_set(obj, currentZoomLevel + 1))
             currentZoomLevel++;
+        info("Zoom in (Ctrl + '+') was pressed, zoom level became %.2f\n", zoomLevels[currentZoomLevel] / 100.0);
+    } else if (!strcmp(ev->key, "0") && ctrlPressed) {
+        if (zoom_level_set(obj, DEFAULT_ZOOM_LEVEL))
+            currentZoomLevel = DEFAULT_ZOOM_LEVEL;
+        info("Zoom to default (Ctrl + '0') was pressed, zoom level became %.2f\n", zoomLevels[currentZoomLevel] / 100.0);
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
         info("Create new window (Ctrl+n) was pressed.\n");
         browserCreate("http://www.google.com", app->userArgs);
