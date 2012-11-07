@@ -1,5 +1,16 @@
 2012-11-07  Philip Rogers  <pdr@google.com>
 
+        Update expectations for svg/text/text-rescale.svg
+
+        Unreviewed update of test expectations.
+
+        This test needed a rebaseline after r133786.
+
+        * platform/chromium-win/svg/text/text-rescale-expected.png:
+        * platform/efl/svg/text/text-rescale-expected.png: Removed.
+
+2012-11-07  Philip Rogers  <pdr@google.com>
+
         Skip SVG repaint tracking when parent container transforms
         https://bugs.webkit.org/show_bug.cgi?id=101177
 
