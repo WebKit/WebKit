@@ -57,21 +57,19 @@ InRegionScroller::~InRegionScroller()
     delete d;
 }
 
-bool InRegionScroller::setScrollPositionCompositingThread(unsigned camouflagedLayer, const Platform::IntPoint& scrollPosition)
+bool InRegionScroller::setDocumentScrollPositionCompositingThread(unsigned camouflagedLayer, const Platform::IntPoint& documentScrollPosition)
 {
     ASSERT(Platform::userInterfaceThreadMessageClient()->isCurrentThread());
 
-    // FIXME: Negative values won't work with map{To,From}Transform methods.
-    return d->setScrollPositionCompositingThread(camouflagedLayer, d->m_webPage->mapFromTransformed(scrollPosition));
+    return d->setScrollPositionCompositingThread(camouflagedLayer, documentScrollPosition);
 }
 
-bool InRegionScroller::setScrollPositionWebKitThread(unsigned camouflagedLayer, const Platform::IntPoint& scrollPosition,
+bool InRegionScroller::setDocumentScrollPositionWebKitThread(unsigned camouflagedLayer, const Platform::IntPoint& documentScrollPosition,
     bool supportsAcceleratedScrolling, Platform::ScrollViewBase::ScrollTarget scrollTarget)
 {
     ASSERT(Platform::webKitThreadMessageClient()->isCurrentThread());
 
-    // FIXME: Negative values won't work with map{To,From}Transform methods.
-    return d->setScrollPositionWebKitThread(camouflagedLayer, d->m_webPage->mapFromTransformed(scrollPosition), supportsAcceleratedScrolling, scrollTarget);
+    return d->setScrollPositionWebKitThread(camouflagedLayer, documentScrollPosition, supportsAcceleratedScrolling, scrollTarget);
 }
 
 InRegionScrollerPrivate::InRegionScrollerPrivate(WebPagePrivate* webPagePrivate)
@@ -196,12 +194,12 @@ void InRegionScrollerPrivate::calculateActiveAndShrinkCachedScrollableAreas(Rend
     m_needsActiveScrollableAreaCalculation = false;
 }
 
-void InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint(const WebCore::IntPoint& point)
+void InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint(const WebCore::IntPoint& documentPoint)
 {
     ASSERT(m_activeInRegionScrollableAreas.empty());
     m_needsActiveScrollableAreaCalculation = false;
 
-    const HitTestResult& result = m_webPage->hitTestResult(m_webPage->mapFromViewportToContents(point));
+    const HitTestResult& result = m_webPage->hitTestResult(documentPoint);
     Node* node = result.innerNonSharedNode();
     if (!node || !node->renderer())
         return;

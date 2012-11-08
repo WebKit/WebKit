@@ -1,3 +1,82 @@
+2012-11-08  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Rework the API to use document coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=101608
+        RIM PR 173292
+
+        Reviewed by Adam Treat.
+
+        Scrolling and zooming APIs used to operate on
+        transformed coordinates, which is a bad idea:
+        The UI thread might long have moved on to a
+        different scale and scroll position so outdated
+        pixel coordinates are of limited value.
+
+        Moreover, more transformation calculations are
+        needed than if we operate purely on document
+        coordinates.
+
+        With webkitThreadViewportAccessor() exposed,
+        the caller has a choice between how to handle
+        coordinates and the means to perform conversions
+        with little effort and overhead if needed.
+        Therefore, we should remove pixel coordinates
+        from the public API. This commit makes this change.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::didRenderContent):
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScroller::setDocumentScrollPositionCompositingThread):
+        (BlackBerry::WebKit::InRegionScroller::setDocumentScrollPositionWebKitThread):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint):
+        * Api/InRegionScroller.h:
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::shouldZoomAboutPoint):
+        (BlackBerry::WebKit::WebPagePrivate::zoomAboutPoint):
+        (BlackBerry::WebKit::WebPage::setDocumentScrollPosition):
+        (BlackBerry::WebKit::WebPagePrivate::hasVirtualViewport):
+        (BlackBerry::WebKit::WebPagePrivate::notifyTransformedContentsSizeChanged):
+        (BlackBerry::WebKit::WebPagePrivate::notifyTransformedScrollChanged):
+        (BlackBerry::WebKit::WebPagePrivate::setCursor):
+        (BlackBerry::WebKit::WebPagePrivate::notifyPopupAutofillDialog):
+        (BlackBerry::WebKit::WebPagePrivate::fixedLayoutSize):
+        (BlackBerry::WebKit::WebPagePrivate::bestNodeForZoomUnderPoint):
+        (BlackBerry::WebKit::WebPagePrivate::blockZoomRectForNode):
+        (BlackBerry::WebKit::WebPagePrivate::zoomBlock):
+        (BlackBerry::WebKit::WebPage::setVirtualViewportSize):
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+        (BlackBerry::WebKit::WebPagePrivate::dispatchViewportPropertiesDidChange):
+        (BlackBerry::WebKit::WebPagePrivate::resumeBackingStore):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        (BlackBerry::WebKit::WebPage::setDefaultLayoutSize):
+        (BlackBerry::WebKit::WebPagePrivate::setScrollOriginPoint):
+        (BlackBerry::WebKit::WebPage::setDocumentScrollOriginPoint):
+        (BlackBerry::WebKit::handleScrolling):
+        (BlackBerry::WebKit::WebPage::selectionContainsDocumentPoint):
+        (BlackBerry::WebKit::WebPage::setDocumentSelection):
+        (BlackBerry::WebKit::WebPage::setDocumentCaretPosition):
+        (BlackBerry::WebKit::WebPage::selectAtDocumentPoint):
+        (BlackBerry::WebKit::WebPagePrivate::setTextReflowAnchorPoint):
+        (BlackBerry::WebKit::WebPage::pinchZoomAboutPoint):
+        (BlackBerry::WebKit::WebPage::blockZoom):
+        (BlackBerry::WebKit::WebPage::nodeAtDocumentPoint):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullscreenForNode):
+        * Api/WebPage.h:
+        (Platform):
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/AutofillManager.cpp:
+        (WebCore::AutofillManager::didChangeInTextField):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidLayout):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        (BlackBerry::WebKit::SelectionHandler::caretPositionChanged):
+
 2012-11-08  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Verify touched element using the rootEditableElement

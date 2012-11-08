@@ -1,3 +1,21 @@
+2012-11-08  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Rework the API to use document coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=101608
+        RIM PR 173292
+
+        Reviewed by Adam Treat.
+
+        Provide a better API for WebPage to relay.
+        See Source/WebKit/blackberry/ChangeLog for details.
+
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::getWindowScreenRect):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.h:
+        (Platform):
+        (BlackBerry):
+        (MediaPlayerPrivate):
+
 2012-11-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133892.

@@ -191,7 +191,6 @@
 #include "PlatformScreen.h"
 #endif
 
-#define DEBUG_BLOCK_ZOOM 0
 #define DEBUG_TOUCH_EVENTS 0
 #define DEBUG_WEBPAGE_LOAD 0
 #define DEBUG_AC_COMMIT 0
@@ -379,8 +378,6 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_nestedLayoutFinishedCount(0)
     , m_actualVisibleWidth(rect.width())
     , m_actualVisibleHeight(rect.height())
-    , m_virtualViewportWidth(0)
-    , m_virtualViewportHeight(0)
     , m_defaultLayoutSize(minimumLayoutSize)
     , m_didRestoreFromPageCache(false)
     , m_viewMode(WebPagePrivate::Desktop) // Default to Desktop mode for PB.
@@ -1078,14 +1075,11 @@ void WebPagePrivate::setLoadState(LoadState state)
             m_userPerformedManualZoom = false;
             m_userPerformedManualScroll = false;
             m_shouldUseFixedDesktopMode = false;
-            if (m_resetVirtualViewportOnCommitted) { // For DRT.
-                m_virtualViewportWidth = 0;
-                m_virtualViewportHeight = 0;
-            }
-            if (m_webSettings->viewportWidth() > 0) {
-                m_virtualViewportWidth = m_webSettings->viewportWidth();
-                m_virtualViewportHeight = m_defaultLayoutSize.height();
-            }
+            if (m_resetVirtualViewportOnCommitted) // For DRT.
+                m_virtualViewportSize = IntSize();
+            if (m_webSettings->viewportWidth() > 0)
+                m_virtualViewportSize = IntSize(m_webSettings->viewportWidth(), m_defaultLayoutSize.height());
+
             // Check if we have already process the meta viewport tag, this only happens on history navigation.
             // For back/forward history navigation, we should only keep these previous values if the document
             // has the meta viewport tag when the state is Committed in setLoadState.
@@ -1103,8 +1097,8 @@ void WebPagePrivate::setLoadState(LoadState state)
                 // content it will overwrite the fallback arguments soon.
                 dispatchViewportPropertiesDidChange(m_userViewportArguments);
             } else {
-                IntSize virtualViewport = recomputeVirtualViewportFromViewportArguments();
-                m_webPage->setVirtualViewportSize(virtualViewport.width(), virtualViewport.height());
+                Platform::IntSize virtualViewport = recomputeVirtualViewportFromViewportArguments();
+                m_webPage->setVirtualViewportSize(virtualViewport);
             }
 
 #if ENABLE(EVENT_MODE_METATAGS)
@@ -1144,7 +1138,7 @@ void WebPagePrivate::setLoadState(LoadState state)
     case Finished:
     case Failed:
         // Notify client of the initial zoom change.
-        m_client->zoomChanged(m_webPage->isMinZoomed(), m_webPage->isMaxZoomed(), !shouldZoomOnEscape(), currentScale());
+        m_client->scaleChanged();
         m_backingStore->d->updateTiles(true /* updateVisible */, false /* immediate */);
         break;
     default:
@@ -1173,7 +1167,7 @@ bool WebPagePrivate::shouldZoomAboutPoint(double scale, const FloatPoint&, bool 
     *clampedScale = scale;
 
     if (currentScale() == scale) {
-        m_client->zoomChanged(m_webPage->isMinZoomed(), m_webPage->isMaxZoomed(), !shouldZoomOnEscape(), currentScale());
+        m_client->scaleChanged();
         return false;
     }
 
@@ -1264,7 +1258,7 @@ bool WebPagePrivate::zoomAboutPoint(double unclampedScale, const FloatPoint& anc
         m_backingStore->d->clearVisibleZoom();
     }
 
-    m_client->zoomChanged(m_webPage->isMinZoomed(), m_webPage->isMaxZoomed(), !shouldZoomOnEscape(), currentScale());
+    m_client->scaleChanged();
 
     if (m_pendingOrientation != -1)
         m_client->updateInteractionViews();
@@ -1334,9 +1328,10 @@ void WebPagePrivate::setScrollPosition(const IntPoint& pos)
 }
 
 // Setting the scroll position is in transformed coordinates.
-void WebPage::setScrollPosition(const Platform::IntPoint& point)
+void WebPage::setDocumentScrollPosition(const Platform::IntPoint& documentScrollPosition)
 {
-    if (d->transformedPointEqualsUntransformedPoint(point, d->scrollPosition()))
+    WebCore::IntPoint scrollPosition = documentScrollPosition;
+    if (scrollPosition == d->scrollPosition())
         return;
 
     // If the user recently performed an event, this new scroll position
@@ -1352,7 +1347,7 @@ void WebPage::setScrollPosition(const Platform::IntPoint& point)
     // WebKit thread to avoid scroll position clamping during scrolling, and restore it to what it was after that.
     bool constrainsScrollingToContentEdge = d->m_mainFrame->view()->constrainsScrollingToContentEdge();
     d->m_mainFrame->view()->setConstrainsScrollingToContentEdge(false);
-    d->setScrollPosition(d->mapFromTransformed(point));
+    d->setScrollPosition(scrollPosition);
     d->m_mainFrame->view()->setConstrainsScrollingToContentEdge(constrainsScrollingToContentEdge);
 
     d->m_backingStoreClient->setIsClientGeneratedScroll(false);
@@ -1414,19 +1409,6 @@ void WebPagePrivate::deferredTasksTimerFired(WebCore::Timer<WebPagePrivate>*)
     task->perform(this);
 }
 
-void WebPagePrivate::scrollBy(int deltaX, int deltaY)
-{
-    IntSize delta(deltaX, deltaY);
-    setScrollPosition(scrollPosition() + delta);
-}
-
-void WebPage::scrollBy(const Platform::IntSize& delta)
-{
-    d->m_backingStoreClient->setIsClientGeneratedScroll(true);
-    d->scrollBy(delta.width(), delta.height());
-    d->m_backingStoreClient->setIsClientGeneratedScroll(false);
-}
-
 void WebPagePrivate::notifyInRegionScrollStopped()
 {
     if (m_inRegionScroller->d->isActive()) {
@@ -1460,7 +1442,7 @@ IntSize WebPagePrivate::actualVisibleSize() const
 
 bool WebPagePrivate::hasVirtualViewport() const
 {
-    return m_virtualViewportWidth && m_virtualViewportHeight;
+    return !m_virtualViewportSize.isEmpty();
 }
 
 void WebPagePrivate::updateViewportSize(bool setFixedReportedSize, bool sendResizeEvent)
@@ -1686,11 +1668,6 @@ double WebPagePrivate::zoomToFitScale() const
     return std::max(zoomToFitScale, minimumZoomToFitScale);
 }
 
-double WebPage::zoomToFitScale() const
-{
-    return d->zoomToFitScale();
-}
-
 double WebPagePrivate::initialScale() const
 {
     if (m_initialScale > 0.0)
@@ -1776,12 +1753,6 @@ void WebPagePrivate::resetScales()
 IntPoint WebPagePrivate::transformedScrollPosition() const
 {
     return m_backingStoreClient->transformedScrollPosition();
-}
-
-// Returned scroll position is in transformed coordinates.
-Platform::IntPoint WebPage::scrollPosition() const
-{
-    return d->transformedScrollPosition();
 }
 
 IntPoint WebPagePrivate::transformedMaximumScrollPosition() const
@@ -1967,14 +1938,14 @@ void WebPagePrivate::notifyTransformedContentsSizeChanged()
 
     const IntSize size = transformedContentsSize();
     m_backingStore->d->contentsSizeChanged(size);
-    m_client->contentsSizeChanged(size);
+    m_client->contentsSizeChanged();
 }
 
 void WebPagePrivate::notifyTransformedScrollChanged()
 {
     const IntPoint pos = transformedScrollPosition();
     m_backingStore->d->scrollChanged(pos);
-    m_client->scrollChanged(pos);
+    m_client->scrollChanged();
 }
 
 bool WebPagePrivate::setViewMode(ViewMode mode)
@@ -2031,7 +2002,7 @@ void WebPagePrivate::setCursor(PlatformCursor handle)
 {
     if (m_currentCursor.type() != handle.type()) {
         m_currentCursor = handle;
-        m_client->cursorChanged(handle.type(), handle.url().c_str(), handle.hotspot().x(), handle.hotspot().y());
+        m_client->cursorChanged(handle.type(), handle.url().c_str(), handle.hotspot());
     }
 }
 
@@ -2227,12 +2198,12 @@ void WebPagePrivate::syncProxyCredential(const WebCore::Credential& credential)
     m_client->syncProxyCredential(credential.user(), credential.password());
 }
 
-void WebPagePrivate::notifyPopupAutofillDialog(const Vector<String>& candidates, const WebCore::IntRect& screenRect)
+void WebPagePrivate::notifyPopupAutofillDialog(const Vector<String>& candidates)
 {
     vector<BlackBerry::Platform::String> textItems;
     for (size_t i = 0; i < candidates.size(); i++)
         textItems.push_back(candidates[i]);
-    m_client->notifyPopupAutofillDialog(textItems, screenRect);
+    m_client->notifyPopupAutofillDialog(textItems);
 }
 
 void WebPagePrivate::notifyDismissAutofillDialog()
@@ -2405,7 +2376,7 @@ void WebPagePrivate::updateCursor()
 IntSize WebPagePrivate::fixedLayoutSize(bool snapToIncrement) const
 {
     if (hasVirtualViewport())
-        return IntSize(m_virtualViewportWidth, m_virtualViewportHeight);
+        return m_virtualViewportSize;
 
     const int defaultLayoutWidth = m_defaultLayoutSize.width();
     const int defaultLayoutHeight = m_defaultLayoutSize.height();
@@ -2676,11 +2647,10 @@ static inline int distanceBetweenPoints(IntPoint p1, IntPoint p2)
     return sqrt((dx * dx) + (dy * dy));
 }
 
-Node* WebPagePrivate::bestNodeForZoomUnderPoint(const IntPoint& point)
+Node* WebPagePrivate::bestNodeForZoomUnderPoint(const IntPoint& documentPoint)
 {
-    IntPoint pt = mapFromTransformed(point);
-    IntRect clickRect(pt.x() - blockClickRadius, pt.y() - blockClickRadius, 2 * blockClickRadius, 2 * blockClickRadius);
-    Node* originalNode = nodeForZoomUnderPoint(point);
+    IntRect clickRect(documentPoint.x() - blockClickRadius, documentPoint.y() - blockClickRadius, 2 * blockClickRadius, 2 * blockClickRadius);
+    Node* originalNode = nodeForZoomUnderPoint(documentPoint);
     if (!originalNode)
         return 0;
     Node* node = bestChildNodeForClickRect(originalNode, clickRect);
@@ -2939,28 +2909,6 @@ IntRect WebPagePrivate::blockZoomRectForNode(Node* node)
     blockRect = mapToTransformed(blockRect);
     clipToTransformedContentsRect(blockRect);
 
-#if DEBUG_BLOCK_ZOOM
-    if (!m_backingStore->d->isSuspended()) {
-        // Re-paint the backingstore to screen to erase other annotations.
-        if (m_backingStore->d->shouldDirectRenderingToWindow())
-            m_backingStore->d->renderVisibleContents();
-        else
-            m_backingStore->d->blitVisibleContents();
-
-        // Render a black square over the calculated block and a gray square over the original block for visual inspection.
-        originalRect = mapToTransformed(originalRect);
-        clipToTransformedContentsRect(originalRect);
-        IntRect renderRect = mapFromTransformedContentsToTransformedViewport(blockRect);
-        IntRect originalRenderRect = mapFromTransformedContentsToTransformedViewport(originalRect);
-        IntSize viewportSize = transformedViewportSize();
-        renderRect.intersect(IntRect(0, 0, viewportSize.width(), viewportSize.height()));
-        originalRenderRect.intersect(IntRect(0, 0, viewportSize.width(), viewportSize.height()));
-        m_backingStore->d->clearWindow(renderRect, 0, 0, 0);
-        m_backingStore->d->clearWindow(originalRenderRect, 120, 120, 120);
-        m_backingStore->d->invalidateWindow(renderRect);
-    }
-#endif
-
     return blockRect;
 }
 
@@ -2971,7 +2919,7 @@ void WebPagePrivate::zoomBlock()
     if (!m_mainFrame)
         return;
 
-    IntPoint anchor(roundUntransformedPoint(mapFromTransformedFloatPoint(m_finalBlockPoint)));
+    IntPoint anchor(roundUntransformedPoint(m_finalBlockPoint));
     bool willUseTextReflow = false;
 
 #if ENABLE(VIEWPORT_REFLOW)
@@ -3040,7 +2988,7 @@ void WebPagePrivate::zoomBlock()
     }
 
     notifyTransformChanged();
-    m_client->zoomChanged(m_webPage->isMinZoomed(), m_webPage->isMaxZoomed(), !shouldZoomOnEscape(), currentScale());
+    m_client->scaleChanged();
     m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
 }
 
@@ -3409,10 +3357,9 @@ void WebPage::setColorInput(const BlackBerry::Platform::String& value)
     d->m_inputHandler->setInputValue(value);
 }
 
-void WebPage::setVirtualViewportSize(int width, int height)
+void WebPage::setVirtualViewportSize(const Platform::IntSize& size)
 {
-    d->m_virtualViewportWidth = width;
-    d->m_virtualViewportHeight = height;
+    d->m_virtualViewportSize = WebCore::IntSize(size);
 }
 
 void WebPage::resetVirtualViewportOnCommitted(bool reset)
@@ -3420,7 +3367,7 @@ void WebPage::resetVirtualViewportOnCommitted(bool reset)
     d->m_resetVirtualViewportOnCommitted = reset;
 }
 
-IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
+Platform::IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
 {
     static const ViewportArguments defaultViewportArguments;
     if (m_viewportArguments == defaultViewportArguments)
@@ -3441,7 +3388,7 @@ IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
     if (result.maximumScale > 0)
         setMaximumScale(result.maximumScale * devicePixelRatio);
 
-    return IntSize(result.layoutSize.width(), result.layoutSize.height());
+    return Platform::IntSize(result.layoutSize.width(), result.layoutSize.height());
 }
 
 #if ENABLE(EVENT_MODE_METATAGS)
@@ -3483,8 +3430,8 @@ void WebPagePrivate::dispatchViewportPropertiesDidChange(const ViewportArguments
     if (!m_viewportArguments.height)
         m_viewportArguments.height = ViewportArguments::ValueDeviceHeight;
 
-    IntSize virtualViewport = recomputeVirtualViewportFromViewportArguments();
-    m_webPage->setVirtualViewportSize(virtualViewport.width(), virtualViewport.height());
+    Platform::IntSize virtualViewport = recomputeVirtualViewportFromViewportArguments();
+    m_webPage->setVirtualViewportSize(virtualViewport);
 
     if (loadState() == WebKit::WebPagePrivate::Committed)
         zoomToInitialScaleOnLoad();
@@ -3543,7 +3490,7 @@ void WebPagePrivate::resumeBackingStore()
         if (m_backingStore->d->renderVisibleContents()) {
             if (!m_backingStore->d->isSuspended() && !directRendering)
                 m_backingStore->d->blitVisibleContents();
-            m_client->notifyContentRendered(m_backingStore->d->visibleContentsRect());
+            m_client->notifyPixelContentRendered(m_backingStore->d->visibleContentsRect());
         }
     } else {
         if (m_backingStore->d->isOpenGLCompositing())
@@ -3656,9 +3603,9 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     static ViewportArguments defaultViewportArguments;
     if (m_viewportArguments != defaultViewportArguments) {
         // We may need to infer the width and height for the viewport with respect to the rotation.
-        IntSize newVirtualViewport = recomputeVirtualViewportFromViewportArguments();
+        Platform::IntSize newVirtualViewport = recomputeVirtualViewportFromViewportArguments();
         ASSERT(!newVirtualViewport.isEmpty());
-        m_webPage->setVirtualViewportSize(newVirtualViewport.width(), newVirtualViewport.height());
+        m_webPage->setVirtualViewportSize(newVirtualViewport);
         m_mainFrame->view()->setUseFixedLayout(useFixedLayout());
         m_mainFrame->view()->setFixedLayoutSize(fixedLayoutSize());
         needsLayout = true;
@@ -3671,33 +3618,34 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
 
     IntSize viewportSizeAfter = actualVisibleSize();
 
-    IntPoint offset(roundf((viewportSizeBefore.width() - viewportSizeAfter.width()) / 2.0),
-                    roundf((viewportSizeBefore.height() - viewportSizeAfter.height()) / 2.0));
+    IntSize offset(
+        roundf((viewportSizeBefore.width() - viewportSizeAfter.width()) / 2.0),
+        roundf((viewportSizeBefore.height() - viewportSizeAfter.height()) / 2.0));
 
     // As a special case, if we were anchored to the top left position at
     // the beginning of the rotation then preserve that anchor.
     if (atTop)
-        offset.setY(0);
+        offset.setHeight(0);
     if (atLeft)
-        offset.setX(0);
+        offset.setWidth(0);
 
     // If we're about to overscroll, cap the offset to valid content.
     IntPoint bottomRight(
         scrollPosition().x() + viewportSizeAfter.width(),
         scrollPosition().y() + viewportSizeAfter.height());
 
-    if (bottomRight.x() + offset.x() > contentsSize().width())
-        offset.setX(contentsSize().width() - bottomRight.x());
-    if (bottomRight.y() + offset.y() > contentsSize().height())
-        offset.setY(contentsSize().height() - bottomRight.y());
-    if (scrollPosition().x() + offset.x() < 0)
-        offset.setX(-scrollPosition().x());
-    if (scrollPosition().y() + offset.y() < 0)
-        offset.setY(-scrollPosition().y());
+    if (bottomRight.x() + offset.width() > contentsSize().width())
+        offset.setWidth(contentsSize().width() - bottomRight.x());
+    if (bottomRight.y() + offset.height() > contentsSize().height())
+        offset.setHeight(contentsSize().height() - bottomRight.y());
+    if (scrollPosition().x() + offset.width() < 0)
+        offset.setWidth(-scrollPosition().x());
+    if (scrollPosition().y() + offset.height() < 0)
+        offset.setHeight(-scrollPosition().y());
 
     // ...before scrolling, because the backing store will align its
     // tile matrix with the viewport as reported by the ScrollView.
-    scrollBy(offset.x(), offset.y());
+    setScrollPosition(scrollPosition() + offset);
     notifyTransformedScrollChanged();
 
     m_backingStore->d->orientationChanged();
@@ -3849,9 +3797,9 @@ void WebPagePrivate::setDefaultLayoutSize(const IntSize& size)
     m_defaultLayoutSize = size.expandedTo(minimumLayoutSize).shrunkTo(screenSize);
 }
 
-void WebPage::setDefaultLayoutSize(int width, int height)
+void WebPage::setDefaultLayoutSize(const Platform::IntSize& platformSize)
 {
-    IntSize size(width, height);
+    WebCore::IntSize size = platformSize;
     if (size == d->m_defaultLayoutSize)
         return;
 
@@ -4069,7 +4017,7 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
     return false;
 }
 
-void WebPagePrivate::setScrollOriginPoint(const Platform::IntPoint& point)
+void WebPagePrivate::setScrollOriginPoint(const Platform::IntPoint& documentScrollOrigin)
 {
     m_inRegionScroller->d->reset();
 
@@ -4077,16 +4025,15 @@ void WebPagePrivate::setScrollOriginPoint(const Platform::IntPoint& point)
         return;
 
     postponeDocumentStyleRecalc();
-    m_inRegionScroller->d->calculateInRegionScrollableAreasForPoint(point);
+    m_inRegionScroller->d->calculateInRegionScrollableAreasForPoint(documentScrollOrigin);
     if (!m_inRegionScroller->d->activeInRegionScrollableAreas().empty())
         m_client->notifyInRegionScrollableAreasChanged(m_inRegionScroller->d->activeInRegionScrollableAreas());
     resumeDocumentStyleRecalc();
 }
 
-void WebPage::setScrollOriginPoint(const Platform::IntPoint& point)
+void WebPage::setDocumentScrollOriginPoint(const Platform::IntPoint& documentScrollOrigin)
 {
-    Platform::IntPoint untransformedPoint = d->mapFromTransformed(point);
-    d->setScrollOriginPoint(untransformedPoint);
+    d->setScrollOriginPoint(documentScrollOrigin);
 }
 
 bool WebPagePrivate::dispatchTouchEventToFullScreenPlugin(PluginView* plugin, const Platform::TouchEvent& event)
@@ -4294,7 +4241,7 @@ static void handleScrolling(unsigned short character, WebPagePrivate* scroller)
             pos.setY(scroller->contentsSize().height() - scroller->actualVisibleSize().height());
 
         scroller->m_mainFrame->view()->setScrollPosition(pos);
-        scroller->m_client->scrollChanged(pos);
+        scroller->m_client->scrollChanged();
     }
 }
 
@@ -4409,9 +4356,9 @@ void WebPage::selectionCancelled()
     d->m_selectionHandler->cancelSelection();
 }
 
-bool WebPage::selectionContains(const Platform::IntPoint& point)
+bool WebPage::selectionContainsDocumentPoint(const Platform::IntPoint& point)
 {
-    return d->m_selectionHandler->selectionContains(d->mapFromTransformed(point));
+    return d->m_selectionHandler->selectionContains(point);
 }
 
 BlackBerry::Platform::String WebPage::title() const
@@ -4474,43 +4421,29 @@ void WebPage::selectAll()
     d->m_inputHandler->selectAll();
 }
 
-void WebPage::setSelection(const Platform::IntPoint& startPoint, const Platform::IntPoint& endPoint)
+void WebPage::setDocumentSelection(const Platform::IntPoint& documentStartPoint, const Platform::IntPoint& documentEndPoint)
 {
     if (d->m_page->defersLoading())
         return;
-    // Transform this events coordinates to webkit content coordinates.
-    // FIXME: Don't transform the sentinel, because it may be transformed to a floating number
-    // which could be rounded to 0 or other numbers. This workaround should be removed after
-    // the error of roundUntransformedPoint() is fixed.
-    bool invalidPoint = IntPoint(startPoint) == DOMSupport::InvalidPoint;
-    IntPoint start = invalidPoint ? DOMSupport::InvalidPoint : d->mapFromTransformed(startPoint);
-    invalidPoint = IntPoint(endPoint) == DOMSupport::InvalidPoint;
-    IntPoint end = invalidPoint ? DOMSupport::InvalidPoint : d->mapFromTransformed(endPoint);
 
-    d->m_selectionHandler->setSelection(start, end);
+    d->m_selectionHandler->setSelection(documentStartPoint, documentEndPoint);
 }
 
-void WebPage::setCaretPosition(const Platform::IntPoint& position)
+void WebPage::setDocumentCaretPosition(const Platform::IntPoint& documentCaretPosition)
 {
     if (d->m_page->defersLoading())
         return;
+
     // Handled by selection handler as it's point based.
-    // Transform this events coordinates to webkit content coordinates.
-    d->m_selectionHandler->setCaretPosition(d->mapFromTransformed(position));
+    d->m_selectionHandler->setCaretPosition(documentCaretPosition);
 }
 
-void WebPage::selectAtPoint(const Platform::IntPoint& location)
+void WebPage::selectAtDocumentPoint(const Platform::IntPoint& documentPoint)
 {
     if (d->m_page->defersLoading())
         return;
-    // Transform this events coordinates to webkit content coordinates if it
-    // is not the sentinel value.
-    IntPoint selectionLocation =
-            IntPoint(location) == DOMSupport::InvalidPoint ?
-            DOMSupport::InvalidPoint :
-            d->mapFromTransformed(location);
 
-    d->m_selectionHandler->selectAtPoint(selectionLocation);
+    d->m_selectionHandler->selectAtPoint(documentPoint);
 }
 
 BackingStore* WebPage::backingStore() const
@@ -4523,46 +4456,35 @@ InRegionScroller* WebPage::inRegionScroller() const
     return d->m_inRegionScroller.get();
 }
 
-bool WebPage::zoomToFit()
-{
-    if (d->contentsSize().isEmpty() || !d->isUserScalable())
-        return false;
-
-    d->m_userPerformedManualZoom = true;
-
-    // TODO: We may need to use (0,0) as the anchor point when textReflow is enabled.
-    // IF the minimum font size is ginormous, we may still want the scroll position to be 0,0.
-    return d->zoomAboutPoint(d->zoomToFitScale(), d->centerOfVisibleContentsRect());
-}
-
-void WebPagePrivate::setTextReflowAnchorPoint(const Platform::IntPoint& focalPoint)
+void WebPagePrivate::setTextReflowAnchorPoint(const Platform::IntPoint& documentFocalPoint)
 {
     // Should only be invoked when text reflow is enabled.
     ASSERT(m_webPage->settings()->textReflowMode() == WebSettings::TextReflowEnabled);
 
-    m_currentPinchZoomNode = bestNodeForZoomUnderPoint(focalPoint);
+    m_currentPinchZoomNode = bestNodeForZoomUnderPoint(documentFocalPoint);
     if (!m_currentPinchZoomNode)
         return;
 
     IntRect nodeRect = rectForNode(m_currentPinchZoomNode.get());
-    m_anchorInNodeRectRatio.set(static_cast<float>(mapFromTransformed(focalPoint).x() - nodeRect.x()) / nodeRect.width(),
-                                static_cast<float>(mapFromTransformed(focalPoint).y() - nodeRect.y()) / nodeRect.height());
+    m_anchorInNodeRectRatio.set(
+        static_cast<float>(documentFocalPoint.x() - nodeRect.x()) / nodeRect.width(),
+        static_cast<float>(documentFocalPoint.y() - nodeRect.y()) / nodeRect.height());
 }
 
-bool WebPage::pinchZoomAboutPoint(double scale, int x, int y)
+bool WebPage::pinchZoomAboutPoint(double scale, const Platform::FloatPoint& documentFocalPoint)
 {
-    IntPoint anchor(x, y);
     d->m_userPerformedManualZoom = true;
     d->m_userPerformedManualScroll = true;
 
     if (d->m_webPage->settings()->textReflowMode() == WebSettings::TextReflowEnabled) {
-        d->setTextReflowAnchorPoint(anchor);
-        // Theoretically, d->nodeForZoomUnderPoint(anchor) can return null.
+        d->setTextReflowAnchorPoint(webkitThreadViewportAccessor()->roundedDocumentContents(documentFocalPoint));
+
+        // Theoretically, d->nodeForZoomUnderPoint(documentFocalPoint) can return null.
         if (!d->m_currentPinchZoomNode)
             return false;
     }
 
-    return d->zoomAboutPoint(scale, d->mapFromTransformed(anchor));
+    return d->zoomAboutPoint(scale, documentFocalPoint);
 }
 
 #if ENABLE(VIEWPORT_REFLOW)
@@ -4573,12 +4495,12 @@ void WebPagePrivate::toggleTextReflowIfEnabledForBlockZoomOnly(bool shouldEnable
 }
 #endif
 
-bool WebPage::blockZoom(int x, int y)
+bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
 {
     if (!d->m_mainFrame->view() || !d->isUserScalable())
         return false;
 
-    Node* node = d->bestNodeForZoomUnderPoint(IntPoint(x, y));
+    Node* node = d->bestNodeForZoomUnderPoint(documentTargetPoint);
     if (!node)
         return false;
 
@@ -4626,20 +4548,6 @@ bool WebPage::blockZoom(int x, int y)
 
     newScale = std::min(d->newScaleForBlockZoomRect(blockRect, oldScale, margin), d->maxBlockZoomScale());
     newScale = std::max(newScale, minimumScale());
-
-#if DEBUG_BLOCK_ZOOM
-    // Render the double tap point for visual reference.
-    IntRect renderRect(x, y, 1, 1);
-    renderRect = d->mapFromTransformedContentsToTransformedViewport(renderRect);
-    IntSize viewportSize = d->transformedViewportSize();
-    renderRect.intersect(IntRect(0, 0, viewportSize.width(), viewportSize.height()));
-    d->m_backingStore->d->clearWindow(renderRect, 0, 0, 0);
-    d->m_backingStore->d->invalidateWindow(renderRect);
-
-    // Uncomment this to return in order to see the blocks being selected.
-    // d->m_client->zoomChanged(isMinZoomed(), isMaxZoomed(), isAtInitialZoom(), currentZoomLevel());
-    // return true;
-#endif
 
 #if ENABLE(VIEWPORT_REFLOW)
     // If reflowing, adjust the reflow-width of text node to make sure the font is a reasonable size.
@@ -4716,10 +4624,9 @@ bool WebPage::blockZoom(int x, int y)
     // Make sure that the original node rect is visible in the screen after the zoom. This is necessary because the identified block rect might
     // not be the same as the original node rect, and it could force the original node rect off the screen.
     FloatRect br(anchor, FloatSize(scaledViewportWidth, scaledViewportHeight));
-    IntPoint clickPoint = d->mapFromTransformed(IntPoint(x, y));
-    if (!br.contains(clickPoint)) {
-        d->m_finalBlockPointReflowOffset.move(0, (clickPoint.y() - scaledViewportHeight / 2) - d->m_finalBlockPoint.y());
-        d->m_finalBlockPoint = FloatPoint(d->m_finalBlockPoint.x(), clickPoint.y() - scaledViewportHeight / 2);
+    if (!br.contains(IntPoint(documentTargetPoint))) {
+        d->m_finalBlockPointReflowOffset.move(0, (documentTargetPoint.y() - scaledViewportHeight / 2) - d->m_finalBlockPoint.y());
+        d->m_finalBlockPoint = FloatPoint(d->m_finalBlockPoint.x(), documentTargetPoint.y() - scaledViewportHeight / 2);
     }
 
     // Clamp the finalBlockPoint to not cause any overflow scrolling.
@@ -4739,20 +4646,18 @@ bool WebPage::blockZoom(int x, int y)
         d->m_finalBlockPointReflowOffset.setY(0);
     }
 
-    d->m_finalBlockPoint = d->mapToTransformedFloatPoint(d->m_finalBlockPoint);
-
     // Don't block zoom if the user is zooming and the new scale is only marginally different from the
     // oldScale with only a marginal change in scroll position. Ignore scroll difference in the special case
     // that the zoom level is the minimumScale.
     if (!endOfBlockZoomMode && abs(newScale - oldScale) / oldScale < minimumExpandingRatio) {
-        const double minimumDisplacement = minimumExpandingRatio * d->transformedActualVisibleSize().width();
-        if (oldScale == d->minimumScale() || (distanceBetweenPoints(roundTransformedPoint(d->mapToTransformed(d->scrollPosition())), roundTransformedPoint(d->m_finalBlockPoint)) < minimumDisplacement && abs(newScale - oldScale) / oldScale < 0.10)) {
+        const double minimumDisplacement = minimumExpandingRatio * webkitThreadViewportAccessor()->documentViewportSize().width();
+        if (oldScale == d->minimumScale() || (distanceBetweenPoints(d->scrollPosition(), roundUntransformedPoint(d->m_finalBlockPoint)) < minimumDisplacement && abs(newScale - oldScale) / oldScale < 0.10)) {
             if (isFirstZoom) {
                 d->resetBlockZoom();
                 return false;
             }
             // Zoom out of block zoom.
-            blockZoom(x, y);
+            blockZoom(documentTargetPoint);
             return true;
         }
     }
@@ -4762,7 +4667,7 @@ bool WebPage::blockZoom(int x, int y)
     // We set this here to make sure we don't try to re-render the page at a different zoom level during loading.
     d->m_userPerformedManualZoom = true;
     d->m_userPerformedManualScroll = true;
-    d->m_client->animateBlockZoom(d->m_finalBlockPoint, d->m_blockZoomFinalScale);
+    d->m_client->animateBlockZoom(d->m_blockZoomFinalScale, d->m_finalBlockPoint);
 
     return true;
 }
@@ -4780,39 +4685,6 @@ bool WebPage::isMinZoomed() const
 bool WebPage::isAtInitialZoom() const
 {
     return (d->currentScale() == d->initialScale()) || !d->isUserScalable();
-}
-
-bool WebPagePrivate::shouldZoomOnEscape() const
-{
-    if (!isUserScalable())
-        return false;
-
-    // If the initial scale is not reachable, don't try to zoom.
-    if (initialScale() < minimumScale() || initialScale() > maximumScale())
-        return false;
-
-    // Don't ever zoom in when we press escape.
-    if (initialScale() >= currentScale())
-        return false;
-
-    return currentScale() != initialScale();
-}
-
-void WebPage::zoomToInitialScale()
-{
-    if (!d->isUserScalable())
-        return;
-
-    d->zoomAboutPoint(d->initialScale(), d->centerOfVisibleContentsRect());
-}
-
-bool WebPage::zoomToOneOne()
-{
-    if (!d->isUserScalable())
-        return false;
-
-    double scale = 1;
-    return d->zoomAboutPoint(scale, d->centerOfVisibleContentsRect());
 }
 
 class DeferredTaskSetFocused: public DeferredTask<&WebPagePrivate::m_wouldSetFocused> {
@@ -5029,9 +4901,9 @@ WebDOMDocument WebPage::document() const
     return WebDOMDocument(d->m_mainFrame->document());
 }
 
-WebDOMNode WebPage::nodeAtPoint(int x, int y)
+WebDOMNode WebPage::nodeAtDocumentPoint(const Platform::IntPoint& documentPoint)
 {
-    HitTestResult result = d->m_mainFrame->eventHandler()->hitTestResultAtPoint(d->mapFromTransformed(IntPoint(x, y)), false);
+    HitTestResult result = d->m_mainFrame->eventHandler()->hitTestResultAtPoint(WebCore::IntPoint(documentPoint), false);
     Node* node = result.innerNonSharedNode();
     return WebDOMNode(node);
 }
@@ -5752,16 +5624,13 @@ void WebPagePrivate::enterFullscreenForNode(Node* node)
     if (!window)
         return;
 
-    unsigned x, y, width, height;
-    mmrPlayer->getWindowPosition(x, y, width, height);
-
     const char* contextName = mmrPlayer->mmrContextName();
     if (!contextName)
         return;
 
     mmrPlayer->setFullscreenWebPageClient(m_client);
     m_fullscreenVideoNode = node;
-    m_client->fullscreenStart(contextName, window, x, y, width, height);
+    m_client->fullscreenStart(contextName, window, mmrPlayer->getWindowScreenRect());
 #endif
 }
 

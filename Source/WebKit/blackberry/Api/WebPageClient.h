@@ -128,10 +128,10 @@ public:
     virtual void javascriptPaused(const unsigned short* stack, unsigned stackLength) = 0;
     virtual void javascriptContinued() = 0;
 
-    // All of these methods use transformed coordinates.
-    virtual void contentsSizeChanged(const Platform::IntSize&) const = 0;
-    virtual void scrollChanged(const Platform::IntPoint&) const = 0;
-    virtual void zoomChanged(bool isMinZoomed, bool isMaxZoomed, bool isAtInitialZoom, double newZoom) const = 0;
+    virtual void contentsSizeChanged() = 0;
+    virtual void scrollChanged() = 0;
+    virtual void scaleChanged() = 0;
+
     virtual void updateInteractionViews() = 0;
 
     virtual void requestUpdateViewport(int width, int height) = 0;
@@ -140,7 +140,7 @@ public:
 
     virtual Platform::Graphics::Window* window() const = 0;
 
-    virtual void notifyContentRendered(const Platform::IntRect&) = 0;
+    virtual void notifyPixelContentRendered(const Platform::IntRect&) = 0;
     virtual void resizeSurfaceIfNeeded() = 0;
 
     virtual void inputFocusGained(int64_t inputStyle, Platform::VirtualKeyboardType, Platform::VirtualKeyboardEnterKeyType) = 0;
@@ -154,12 +154,12 @@ public:
     virtual void requestSpellingCheckingOptions(imf_sp_text_t&) = 0;
     virtual int32_t checkSpellingOfStringAsync(wchar_t* text, int length) = 0;
 
-    virtual void notifySelectionDetailsChanged(const Platform::IntRect& start, const Platform::IntRect& end, const Platform::IntRectRegion&, bool overrideTouchHandling = false) = 0;
+    virtual void notifySelectionDetailsChanged(const Platform::IntRect& documentStartRect, const Platform::IntRect& documentEndRect, const Platform::IntRectRegion& documentRegion, bool overrideTouchHandling = false) = 0;
     virtual void cancelSelectionVisuals() = 0;
     virtual void notifySelectionHandlesReversed() = 0;
-    virtual void notifyCaretChanged(const Platform::IntRect& caret, bool userTouchTriggered, bool singleLineInput = false, const Platform::IntRect& singleLineBoundingBox = Platform::IntRect()) = 0;
+    virtual void notifyCaretChanged(const Platform::IntRect& documentCaretRect, bool userTouchTriggered, bool isSingleLineInput = false, const Platform::IntRect& singleLineDocumentBoundingBox = Platform::IntRect()) = 0;
 
-    virtual void cursorChanged(Platform::CursorType, const char* url, int x, int y) = 0;
+    virtual void cursorChanged(Platform::CursorType, const char* url, const Platform::IntPoint& hotSpotInImage) = 0;
 
     virtual void requestGlobalLocalServicePermission(Platform::GeoTrackerListener*, const BlackBerry::Platform::String& origin) = 0;
 
@@ -174,16 +174,6 @@ public:
 
     virtual void openPopupList(bool multiple, int size, const ScopeArray<BlackBerry::Platform::String>& labels, const bool* enableds, const int* itemType, const bool* selecteds) = 0;
     virtual bool chooseFilenames(bool allowMultiple, const SharedArray<BlackBerry::Platform::String>& acceptTypes, const SharedArray<BlackBerry::Platform::String>& initialFiles, const BlackBerry::Platform::String& capture, SharedArray<BlackBerry::Platform::String>& chosenFiles) = 0;
-
-    virtual void loadPluginForMimetype(int, int width, int height, const SharedArray<BlackBerry::Platform::String>& paramNames, const SharedArray<BlackBerry::Platform::String>& paramValues, const char* url) = 0;
-    virtual void notifyPluginRectChanged(int, Platform::IntRect rectChanged) = 0;
-    virtual void destroyPlugin(int) = 0;
-    virtual void playMedia(int) = 0;
-    virtual void pauseMedia(int) = 0;
-    virtual float getTime(int) = 0;
-    virtual void setTime(int, float) = 0;
-    virtual void setVolume(int, float) = 0;
-    virtual void setMuted(int, bool) = 0;
 
     virtual WebPage* createWindow(int x, int y, int width, int height, unsigned flags, const BlackBerry::Platform::String& url, const BlackBerry::Platform::String& windowName) = 0;
 
@@ -213,13 +203,13 @@ public:
     virtual BlackBerry::Platform::ViewportAccessor* userInterfaceViewportAccessor() const = 0;
 
     virtual void resetBitmapZoomScale(double scale) = 0;
-    virtual void animateBlockZoom(const Platform::FloatPoint& finalPoint, double finalScale) = 0;
+    virtual void animateBlockZoom(double finalScale, const Platform::FloatPoint& finalDocumentScrollPosition) = 0;
 
     virtual void setPreventsScreenIdleDimming(bool noDimming) = 0;
     virtual bool authenticationChallenge(const unsigned short* realm, unsigned realmLength, BlackBerry::Platform::String& username, BlackBerry::Platform::String& password) = 0;
     virtual SaveCredentialType notifyShouldSaveCredential(bool isNew) = 0;
     virtual void syncProxyCredential(const BlackBerry::Platform::String& username, const BlackBerry::Platform::String& password) = 0;
-    virtual void notifyPopupAutofillDialog(const std::vector<BlackBerry::Platform::String>&, const Platform::IntRect&) = 0;
+    virtual void notifyPopupAutofillDialog(const std::vector<BlackBerry::Platform::String>&) = 0;
     virtual void notifyDismissAutofillDialog() = 0;
 
     virtual bool shouldPluginEnterFullScreen() = 0;
@@ -242,11 +232,11 @@ public:
     virtual void downloadRequested(Platform::FilterStream*, const BlackBerry::Platform::String& suggestedFilename) = 0;
 
     virtual int fullscreenStart() = 0;
-    virtual int fullscreenStart(const char* contextName, Platform::Graphics::Window*, unsigned x, unsigned y, unsigned width, unsigned height) = 0;
+    virtual int fullscreenStart(const char* contextName, Platform::Graphics::Window*, const BlackBerry::Platform::IntRect& windowScreenRect) = 0;
 
     virtual int fullscreenStop() = 0;
 
-    virtual int fullscreenWindowSet(unsigned x, unsigned y, unsigned width, unsigned height) = 0;
+    virtual int fullscreenSetWindowRect(const BlackBerry::Platform::IntRect& newWindowScreenRect) = 0;
 
     virtual void drawVerticalScrollbar() = 0;
     virtual void drawHorizontalScrollbar() = 0;

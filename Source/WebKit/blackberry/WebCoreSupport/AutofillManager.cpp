@@ -48,7 +48,7 @@ void AutofillManager::didChangeInTextField(HTMLInputElement* element)
         m_element = element;
 
     Vector<String> candidates = autofillBackingStore().get(element->getAttribute(HTMLNames::nameAttr).string(), element->value());
-    m_webPagePrivate->notifyPopupAutofillDialog(candidates, element->screenRect());
+    m_webPagePrivate->notifyPopupAutofillDialog(candidates);
 }
 
 void AutofillManager::textFieldDidEndEditing(HTMLInputElement*)

@@ -937,17 +937,6 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
 
             // Find the top corner and bottom corner.
             adjustCaretRects(startCaret, shouldClipStartCaret, endCaret, shouldClipEndCaret, visibleSelectionRegion.rects(), startCaretReferencePoint, endCaretReferencePoint, isRTL);
-
-            // Translate the caret values as they must be in transformed coordinates.
-            if (!shouldClipStartCaret) {
-                startCaret = m_webPage->mapToTransformed(startCaret);
-                m_webPage->clipToTransformedContentsRect(startCaret);
-            }
-
-            if (!shouldClipEndCaret) {
-                endCaret = m_webPage->mapToTransformed(endCaret);
-                m_webPage->clipToTransformedContentsRect(endCaret);
-            }
         }
     }
 
@@ -972,7 +961,6 @@ void SelectionHandler::notifyCaretPositionChangedIfNeeded()
     }
 }
 
-// NOTE: This function is not in WebKit coordinates.
 void SelectionHandler::caretPositionChanged()
 {
     SelectionLog(LogLevelInfo, "SelectionHandler::caretPositionChanged");
@@ -1009,26 +997,20 @@ void SelectionHandler::caretPositionChanged()
     SelectionLog(LogLevelInfo, "SelectionHandler::caretPositionChanged caret Rect %d, %d, %dx%d",
                         caretLocation.x(), caretLocation.y(), caretLocation.width(), caretLocation.height());
 
-    caretLocation = m_webPage->mapToTransformed(caretLocation);
-    m_webPage->clipToTransformedContentsRect(caretLocation);
-
-    bool singleLineInput = !m_webPage->m_inputHandler->isMultilineInputMode();
-    WebCore::IntRect nodeBoundingBox = singleLineInput ? m_webPage->m_inputHandler->boundingBoxForInputField() : WebCore::IntRect();
+    bool isSingleLineInput = !m_webPage->m_inputHandler->isMultilineInputMode();
+    WebCore::IntRect nodeBoundingBox = isSingleLineInput ? m_webPage->m_inputHandler->boundingBoxForInputField() : WebCore::IntRect();
 
     if (!nodeBoundingBox.isEmpty()) {
         nodeBoundingBox.move(frameOffset.x(), frameOffset.y());
 
         // Clip against the containing frame and node boundaries.
         nodeBoundingBox.intersect(clippingRectForContent);
-
-        nodeBoundingBox = m_webPage->mapToTransformed(nodeBoundingBox);
-        m_webPage->clipToTransformedContentsRect(nodeBoundingBox);
     }
 
-    SelectionLog(LogLevelInfo, "SelectionHandler::single line %s single line bounding box %d, %d, %dx%d",
-                    singleLineInput ? "true" : "false", nodeBoundingBox.x(), nodeBoundingBox.y(), nodeBoundingBox.width(), nodeBoundingBox.height());
+    SelectionLog(LogLevelInfo, "SelectionHandler::caretPositionChanged: %s line input, single line bounding box (%d, %d) %dx%d",
+        isSingleLineInput ? "single" : "multi", nodeBoundingBox.x(), nodeBoundingBox.y(), nodeBoundingBox.width(), nodeBoundingBox.height());
 
-    m_webPage->m_client->notifyCaretChanged(caretLocation, m_webPage->m_touchEventHandler->lastFatFingersResult().isTextInput() /* userTouchTriggered */, singleLineInput, nodeBoundingBox);
+    m_webPage->m_client->notifyCaretChanged(caretLocation, m_webPage->m_touchEventHandler->lastFatFingersResult().isTextInput() /* userTouchTriggered */, isSingleLineInput, nodeBoundingBox);
 }
 
 bool SelectionHandler::selectionContains(const WebCore::IntPoint& point)

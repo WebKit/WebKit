@@ -409,7 +409,7 @@ void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
             if (render(rect)) {
                 if (!shouldDirectRenderingToWindow() && !m_webPage->d->commitRootLayerIfNeeded())
                     blitVisibleContents();
-                m_webPage->d->m_client->notifyContentRendered(rect);
+                m_webPage->d->m_client->notifyPixelContentRendered(rect);
             }
         } else
             m_renderQueue->addToQueue(RenderQueue::RegularRender, rect);
@@ -2570,7 +2570,7 @@ void BackingStorePrivate::didRenderContent(const Platform::IntRect& renderedRect
     } else
         invalidateWindow();
 
-    m_webPage->client()->notifyContentRendered(renderedRect);
+    m_webPage->client()->notifyPixelContentRendered(renderedRect);
 }
 
 BackingStore::BackingStore(WebPage* webPage, BackingStoreClient* client)

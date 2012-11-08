@@ -1,3 +1,18 @@
+2012-11-08  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Rework the API to use document coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=101608
+        RIM PR 173292
+
+        Reviewed by Adam Treat.
+
+        Adapt to changed WebPage API.
+        See Source/WebKit/blackberry/ChangeLog for details.
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::DumpRenderTree):
+        (BlackBerry::WebKit::DumpRenderTree::resetToConsistentStateBeforeTesting):
+
 2012-11-08  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL] Turn on WTF_USE_TILED_BACKING_STORE by default

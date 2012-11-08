@@ -40,6 +40,7 @@
 #include "WebPageClient.h"
 
 #include <BlackBerryPlatformDeviceInfo.h>
+#include <BlackBerryPlatformPrimitives.h>
 #include <BlackBerryPlatformSettings.h>
 #include <FrameLoaderClientBlackBerry.h>
 #include <set>
@@ -465,9 +466,11 @@ BlackBerry::Platform::Graphics::Window* MediaPlayerPrivate::getPeerWindow(const 
     return m_platformPlayer->getPeerWindow(uniqueID);
 }
 
-int MediaPlayerPrivate::getWindowPosition(unsigned& x, unsigned& y, unsigned& width, unsigned& height) const
+BlackBerry::Platform::IntRect MediaPlayerPrivate::getWindowScreenRect() const
 {
-    return m_platformPlayer->getWindowPosition(x, y, width, height);
+    unsigned x, y, width, height;
+    m_platformPlayer->getWindowPosition(x, y, width, height);
+    return BlackBerry::Platform::IntRect(x, y, width, height);
 }
 
 const char* MediaPlayerPrivate::mmrContextName()

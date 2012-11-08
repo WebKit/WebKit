@@ -50,6 +50,7 @@ template<typename T> class SharedArray;
 
 namespace BlackBerry {
 namespace Platform {
+class FloatPoint;
 class IntPoint;
 class IntRect;
 class IntSize;
@@ -139,13 +140,13 @@ public:
 
     Platform::ViewportAccessor* webkitThreadViewportAccessor() const;
     Platform::IntSize viewportSize() const;
-    void setViewportSize(const Platform::IntSize& viewportSize, bool ensureFocusElementVisible = true);
+    void setViewportSize(const Platform::IntSize&, bool ensureFocusElementVisible = true);
 
     void resetVirtualViewportOnCommitted(bool reset);
-    void setVirtualViewportSize(int width, int height);
+    void setVirtualViewportSize(const Platform::IntSize&);
 
     // Used for default layout size unless overridden by web content or by other APIs.
-    void setDefaultLayoutSize(int width, int height);
+    void setDefaultLayoutSize(const Platform::IntSize&);
 
     bool mouseEvent(const Platform::MouseEvent&, bool* wheelDeltaAccepted = 0);
 
@@ -175,28 +176,23 @@ public:
     BlackBerry::Platform::String forcedTextEncoding();
     void setForcedTextEncoding(const BlackBerry::Platform::String&);
 
-    // Scroll position returned is in transformed coordinates.
-    Platform::IntPoint scrollPosition() const;
-    // Scroll position provided should be in transformed coordinates.
-    void setScrollPosition(const Platform::IntPoint&);
-    void scrollBy(const Platform::IntSize&);
+    // Scroll position provided should be in document coordinates.
+    // Use webkitThreadViewportAccessor() to retrieve the scroll position.
+    void setDocumentScrollPosition(const Platform::IntPoint&);
     void notifyInRegionScrollStopped();
-    void setScrollOriginPoint(const Platform::IntPoint&);
+    void setDocumentScrollOriginPoint(const Platform::IntPoint&);
 
     BackingStore* backingStore() const;
 
     InRegionScroller* inRegionScroller() const;
 
-    bool zoomToFit();
-    bool zoomToOneOne();
-    void zoomToInitialScale();
-    bool blockZoom(int x, int y);
+    bool blockZoom(const Platform::IntPoint& documentTargetPoint);
     void blockZoomAnimationFinished();
     void resetBlockZoom();
     bool isAtInitialZoom() const;
     bool isMaxZoomed() const;
     bool isMinZoomed() const;
-    bool pinchZoomAboutPoint(double scale, int x, int y);
+    bool pinchZoomAboutPoint(double scale, const Platform::FloatPoint& documentFocalPoint);
 
     bool isUserScalable() const;
     void setUserScalable(bool);
@@ -254,11 +250,11 @@ public:
     void spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t*);
     void spellCheckingRequestCancelled(int32_t transactionId);
 
-    void setSelection(const Platform::IntPoint& startPoint, const Platform::IntPoint& endPoint);
-    void setCaretPosition(const Platform::IntPoint&);
-    void selectAtPoint(const Platform::IntPoint&);
+    void setDocumentSelection(const Platform::IntPoint& documentStartPoint, const Platform::IntPoint& documentEndPoint);
+    void setDocumentCaretPosition(const Platform::IntPoint&);
+    void selectAtDocumentPoint(const Platform::IntPoint&);
     void selectionCancelled();
-    bool selectionContains(const Platform::IntPoint&);
+    bool selectionContainsDocumentPoint(const Platform::IntPoint&);
 
     void popupListClosed(int size, const bool* selecteds);
     void popupListClosed(int index);
@@ -300,7 +296,7 @@ public:
 
 #if defined(ENABLE_WEBDOM) && ENABLE_WEBDOM
     WebDOMDocument document() const;
-    WebDOMNode nodeAtPoint(int x, int y);
+    WebDOMNode nodeAtDocumentPoint(const Platform::IntPoint&);
     bool getNodeRect(const WebDOMNode&, Platform::IntRect& result);
     bool setNodeFocus(const WebDOMNode&, bool on);
     bool setNodeHovered(const WebDOMNode&, bool on);

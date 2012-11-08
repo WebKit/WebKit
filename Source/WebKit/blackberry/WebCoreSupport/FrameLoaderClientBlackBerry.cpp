@@ -883,7 +883,7 @@ void FrameLoaderClientBlackBerry::dispatchDidLayout(LayoutMilestones milestones)
             if (backingStorePrivate->renderVisibleContents()) {
                 if (!backingStorePrivate->shouldDirectRenderingToWindow())
                     backingStorePrivate->blitVisibleContents();
-                m_webPagePrivate->m_client->notifyContentRendered(backingStorePrivate->visibleContentsRect());
+                m_webPagePrivate->m_client->notifyPixelContentRendered(backingStorePrivate->visibleContentsRect());
             }
         }
 

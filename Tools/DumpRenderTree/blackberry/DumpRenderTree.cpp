@@ -59,6 +59,7 @@
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 #include <BlackBerryPlatformLayoutTest.h>
+#include <BlackBerryPlatformPrimitives.h>
 #include <WebSettings.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -164,7 +165,7 @@ DumpRenderTree::DumpRenderTree(BlackBerry::WebKit::WebPage* page)
     m_doneFile = sdcardPath + "/done" + workerNumber;
     m_currentTestFile = sdcardPath + "/current" + workerNumber + ".drt";
     m_page->resetVirtualViewportOnCommitted(false);
-    m_page->setVirtualViewportSize(800, 600);
+    m_page->setVirtualViewportSize(Platform::IntSize(800, 600));
     s_currentInstance = this;
 }
 
@@ -292,7 +293,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, cons
     setAcceptsEditing(true);
     DumpRenderTreeSupport::setLinksIncludedInFocusChain(true);
 
-    m_page->setVirtualViewportSize(800, 600);
+    m_page->setVirtualViewportSize(Platform::IntSize(800, 600));
     m_page->resetVirtualViewportOnCommitted(false);
     m_page->setUserScalable(true);
     m_page->setJavaScriptCanAccessClipboard(true);
