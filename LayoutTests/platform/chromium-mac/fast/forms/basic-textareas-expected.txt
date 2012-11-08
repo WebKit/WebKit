@@ -567,7 +567,7 @@ layer at (0,0) size 785x1438
                 text run at (0,143) width 34: "fghijkl"
                 text run at (0,156) width 31: "mnop"
                 text run at (0,169) width 34: "qrstuv"
-        layer at (3,503) size 161x47 clip at (4,504) size 159x30 scrollWidth 427
+        layer at (3,503) size 161x47 clip at (4,504) size 159x30 scrollWidth 426
           RenderTextControl {TEXTAREA} at (3,17) size 161x47 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 155x13
               RenderText {#text} at (0,0) size 425x13
@@ -1266,7 +1266,7 @@ layer at (0,0) size 785x1438
                 text run at (0,143) width 34: "fghijkl"
                 text run at (0,156) width 31: "mnop"
                 text run at (0,169) width 34: "qrstuv"
-        layer at (3,479) size 161x47 clip at (4,480) size 159x30 scrollWidth 427
+        layer at (3,479) size 161x47 clip at (4,480) size 159x30 scrollWidth 426
           RenderTextControl {TEXTAREA} at (3,17) size 161x47 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
             RenderBlock {DIV} at (3,3) size 155x13
               RenderText {#text} at (0,0) size 425x13

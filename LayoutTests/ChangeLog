@@ -1,3 +1,68 @@
+2012-11-08  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium mac rebaseline for r101497.
+
+        * platform/chromium-mac-lion/fast/css/text-overflow-ellipsis-bidi-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/text-overflow-ellipsis-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/text-overflow-ellipsis-strict-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/input-readonly-autoscroll-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/input-readonly-autoscroll-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/forms/search-rtl-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/multicol/span: Added.
+        * platform/chromium-mac-lion/fast/multicol/span/anonymous-split-block-crash-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/replaced/width100percent-textarea-expected.txt: Added.
+        * platform/chromium-mac-lion/svg/text/text-overflow-ellipsis-svgfont-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-ellipsis-bidi-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-ellipsis-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-ellipsis-strict-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/forms/input-readonly-autoscroll-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/input-readonly-autoscroll-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/search-rtl-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/multicol/span/anonymous-split-block-crash-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-textarea-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-textarea-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/svg/text/text-overflow-ellipsis-svgfont-expected.txt: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-bidi-expected.png:
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-bidi-expected.txt: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-expected.png:
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-expected.txt: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-strict-expected.png:
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-strict-expected.txt: Added.
+        * platform/chromium-mac/fast/css/text-overflow-input-expected.png:
+        * platform/chromium-mac/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png:
+        * platform/chromium-mac/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/chromium-mac/fast/forms/basic-textareas-expected.png:
+        * platform/chromium-mac/fast/forms/basic-textareas-expected.txt:
+        * platform/chromium-mac/fast/forms/basic-textareas-quirks-expected.png:
+        * platform/chromium-mac/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/chromium-mac/fast/forms/input-disabled-color-expected.png:
+        * platform/chromium-mac/fast/forms/input-disabled-color-expected.txt:
+        * platform/chromium-mac/fast/forms/input-readonly-autoscroll-expected.png:
+        * platform/chromium-mac/fast/forms/input-readonly-autoscroll-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/input-readonly-dimmed-expected.png:
+        * platform/chromium-mac/fast/forms/input-text-scroll-left-on-blur-expected.png:
+        * platform/chromium-mac/fast/forms/search-rtl-expected.png:
+        * platform/chromium-mac/fast/forms/search-rtl-expected.txt: Added.
+        * platform/chromium-mac/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-mac/fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * platform/chromium-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/chromium-mac/fast/replaced/width100percent-textarea-expected.png:
+        * platform/chromium-mac/fast/replaced/width100percent-textarea-expected.txt: Added.
+        * platform/chromium-mac/svg/text/text-overflow-ellipsis-svgfont-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/css/text-overflow-input-expected.txt: Removed.
+        * platform/chromium/fast/forms/input-readonly-dimmed-expected.txt: Removed.
+        * platform/chromium/fast/forms/input-text-scroll-left-on-blur-expected.txt: Removed.
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.txt: Removed.
+        * platform/mac/fast/css/text-overflow-input-expected.txt: Removed.
+        * platform/mac/fast/forms/input-readonly-dimmed-expected.txt: Removed.
+        * platform/mac/fast/forms/input-text-scroll-left-on-blur-expected.txt: Removed.
+
 2012-11-08  Wei Fanzhe  <whyer1@gmail.com>
 
         While absolute positioning is put before the first flexitem, flexitems will move to a new line.

@@ -2622,7 +2622,6 @@ webkit.org/b/54051 [ Mac ] plugins/windowless_plugin_paint_test.html [ Timeout ]
 
 # Actual failures
 webkit.org/b/54322 [ SnowLeopard ] fast/images/favicon-as-image.html [ Failure ]
-webkit.org/b/54322 [ SnowLeopard ] fast/replaced/width100percent-textarea.html [ ImageOnlyFailure ]
 webkit.org/b/54322 [ SnowLeopard ] fast/text/international/text-combine-image-test.html [ ImageOnlyFailure ]
 
 webkit.org/b/54322 [ SnowLeopard ] fast/loader/loadInProgress.html [ Pass Slow ]
