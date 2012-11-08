@@ -149,7 +149,7 @@ public:
 
     enum ContentType { ShadowContentAllowed, ShadowContentNotAllowed };
 
-    WebCore::Node* node(ContentType type = ShadowContentAllowed) const
+    WebCore::Node* node(ContentType type = ShadowContentAllowed, bool shouldUseRootEditableElement = false) const
     {
         if (!m_nodeUnderFatFinger || !m_nodeUnderFatFinger->inDocument())
             return 0;
@@ -163,12 +163,23 @@ public:
         while (result->isInShadowTree())
             result = toElement(result->shadowAncestorNode());
 
+        if (!shouldUseRootEditableElement || !result->isElementNode())
+            return result;
+
+        // Retrieve the top level editable node
+        while (!result->isRootEditableElement()) {
+            WebCore::Element* parentElement = result->parentElement();
+            if (!parentElement)
+                break;
+            result = parentElement;
+        }
+
         return result;
     }
 
-    WebCore::Element* nodeAsElementIfApplicable(ContentType type = ShadowContentAllowed) const
+    WebCore::Element* nodeAsElementIfApplicable(ContentType type = ShadowContentAllowed, bool shouldUseRootEditableElement = false) const
     {
-        WebCore::Node* result = node(type);
+        WebCore::Node* result = node(type, shouldUseRootEditableElement);
         if (!result || !result->isElementNode())
             return 0;
 

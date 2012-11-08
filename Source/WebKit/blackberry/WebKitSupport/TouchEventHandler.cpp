@@ -239,7 +239,7 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFa
 
             if (m_lastFatFingersResult.isTextInput())
                 shouldRequestSpellCheckOptions = m_webPage->m_inputHandler->shouldRequestSpellCheckingOptionsForPoint(point.m_pos
-                                                                                                                      , m_lastFatFingersResult.nodeAsElementIfApplicable(FatFingersResult::ShadowContentNotAllowed)
+                                                                                                                      , m_lastFatFingersResult.nodeAsElementIfApplicable(FatFingersResult::ShadowContentNotAllowed, true /* shouldUseRootEditableElement */)
                                                                                                                       , spellCheckOptionRequest);
 
             // Apply any suppressed changes. This does not eliminate the need

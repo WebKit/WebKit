@@ -699,13 +699,27 @@ SpellChecker* InputHandler::getSpellChecker()
 
 bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint& point, const Element* touchedElement, imf_sp_text_t& spellCheckingOptionRequest)
 {
-    if (!isActiveTextEdit() || touchedElement != m_currentFocusElement)
+    if (!isActiveTextEdit())
+        return false;
+
+    Element* currentFocusElement = m_currentFocusElement.get();
+    if (!currentFocusElement || !currentFocusElement->isElementNode())
+        return false;
+
+    while (!currentFocusElement->isRootEditableElement()) {
+        Element* parentElement = currentFocusElement->parentElement();
+        if (!parentElement)
+            break;
+        currentFocusElement = parentElement;
+    }
+
+    if (touchedElement != currentFocusElement)
         return false;
 
     LayoutPoint contentPos(m_webPage->mapFromViewportToContents(point));
     contentPos = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), m_webPage->focusedOrMainFrame(), roundedIntPoint(contentPos));
 
-    Document* document = m_currentFocusElement->document();
+    Document* document = currentFocusElement->document();
     ASSERT(document);
 
     RenderedDocumentMarker* marker = document->markers()->renderedMarkerContainingPoint(contentPos, DocumentMarker::Spelling);
