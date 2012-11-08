@@ -4190,11 +4190,11 @@ webkit.org/b/101547 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]
 webkit.org/b/101547 fast/repaint/delete-into-nested-block.html [ ImageOnlyFailure ]
 webkit.org/b/101547 fast/repaint/inline-outline-repaint.html [ ImageOnlyFailure ]
 # The following test has prior expectations which were disabled. Re-enable when removing this:
-webkit.org/b/101547 fast/repaint/japanese-rl-selection-clear.html [ ImageOnlyFailure ]
+webkit.org/b/101547 fast/repaint/japanese-rl-selection-clear.html [ ImageOnlyFailure Failure ]
 # The following test has prior expectations which were disabled. Re-enable when removing this:
-webkit.org/b/101547 fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure ]
+webkit.org/b/101547 fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure Failure ]
 # The following test has prior expectations which were disabled. Re-enable when removing this:
-webkit.org/b/101547 fast/repaint/japanese-rl-selection-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/101547 fast/repaint/japanese-rl-selection-repaint.html [ ImageOnlyFailure Failure ]
 webkit.org/b/101547 fast/repaint/no-caret-repaint-in-non-content-editable-element.html [ ImageOnlyFailure ]
 webkit.org/b/101547 fast/repaint/repaint-across-writing-mode-boundary.html [ ImageOnlyFailure ]
 webkit.org/b/101547 fast/repaint/selection-after-delete.html [ ImageOnlyFailure ]

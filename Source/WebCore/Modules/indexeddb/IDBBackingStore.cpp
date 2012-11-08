@@ -74,7 +74,7 @@ static inline void recordInternalError(IDBLevelDBBackingStoreInternalErrorType t
     } while (0)
 
 template <typename DBOrTransaction>
-static bool getBool(DBOrTransaction* db, const Vector<char>& key, bool& foundBool)
+static bool getBool(DBOrTransaction* db, const LevelDBSlice& key, bool& foundBool)
 {
     Vector<char> result;
     if (!db->get(key, result))
@@ -84,14 +84,13 @@ static bool getBool(DBOrTransaction* db, const Vector<char>& key, bool& foundBoo
     return true;
 }
 
-template <typename DBOrTransaction>
-static bool putBool(DBOrTransaction* db, const Vector<char>& key, bool value)
+static void putBool(LevelDBTransaction* transaction, const LevelDBSlice& key, bool value)
 {
-    return db->put(key, encodeBool(value));
+    transaction->put(key, encodeBool(value));
 }
 
 template <typename DBOrTransaction>
-static bool getInt(DBOrTransaction* db, const Vector<char>& key, int64_t& foundInt)
+static bool getInt(DBOrTransaction* db, const LevelDBSlice& key, int64_t& foundInt)
 {
     Vector<char> result;
     if (!db->get(key, result))
@@ -101,17 +100,14 @@ static bool getInt(DBOrTransaction* db, const Vector<char>& key, int64_t& foundI
     return true;
 }
 
-template <typename DBOrTransaction>
-static bool putInt(DBOrTransaction* db, const Vector<char>& key, int64_t value)
+static void putInt(LevelDBTransaction* transaction, const LevelDBSlice& key, int64_t value)
 {
     ASSERT(value >= 0);
-    if (value < 0)
-        return false;
-    return db->put(key, encodeInt(value));
+    transaction->put(key, encodeInt(value));
 }
 
 template <typename DBOrTransaction>
-static bool getVarInt(DBOrTransaction* db, const Vector<char>& key, int64_t& foundInt)
+static bool getVarInt(DBOrTransaction* db, const LevelDBSlice& key, int64_t& foundInt)
 {
     Vector<char> result;
     if (!db->get(key, result))
@@ -120,14 +116,13 @@ static bool getVarInt(DBOrTransaction* db, const Vector<char>& key, int64_t& fou
     return decodeVarInt(result.begin(), result.end(), foundInt) == result.end();
 }
 
-template <typename DBOrTransaction>
-static bool putVarInt(DBOrTransaction* db, const Vector<char>& key, int64_t value)
+static void putVarInt(LevelDBTransaction* transaction, const LevelDBSlice& key, int64_t value)
 {
-    return db->put(key, encodeVarInt(value));
+    transaction->put(key, encodeVarInt(value));
 }
 
 template <typename DBOrTransaction>
-static bool getString(DBOrTransaction* db, const Vector<char>& key, String& foundString)
+static bool getString(DBOrTransaction* db, const LevelDBSlice& key, String& foundString)
 {
     Vector<char> result;
     if (!db->get(key, result))
@@ -137,20 +132,14 @@ static bool getString(DBOrTransaction* db, const Vector<char>& key, String& foun
     return true;
 }
 
-template <typename DBOrTransaction>
-static bool putString(DBOrTransaction* db, const Vector<char> key, const String& value)
+static void putString(LevelDBTransaction* transaction, const LevelDBSlice& key, const String& value)
 {
-    if (!db->put(key, encodeString(value)))
-        return false;
-    return true;
+    transaction->put(key, encodeString(value));
 }
 
-template <typename DBOrTransaction>
-static bool putIDBKeyPath(DBOrTransaction* db, const Vector<char> key, const IDBKeyPath& value)
+static void putIDBKeyPath(LevelDBTransaction* transaction, const LevelDBSlice& key, const IDBKeyPath& value)
 {
-    if (!db->put(key, encodeIDBKeyPath(value)))
-        return false;
-    return true;
+    transaction->put(key, encodeIDBKeyPath(value));
 }
 
 static int compareKeys(const LevelDBSlice& a, const LevelDBSlice& b)
@@ -182,50 +171,37 @@ static bool isSchemaKnown(LevelDBDatabase* db)
 static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
 {
     const Vector<char> metaDataKey = SchemaVersionKey::encode();
+    RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(db);
 
     int64_t schemaVersion = 0;
-    if (!getInt(db, metaDataKey, schemaVersion)) {
+    if (!getInt(transaction.get(), metaDataKey, schemaVersion)) {
         schemaVersion = latestSchemaVersion;
-        if (!putInt(db, metaDataKey, latestSchemaVersion)) {
-            InternalError(IDBLevelDBBackingStoreWriteError);
-            return false;
-        }
+        putInt(transaction.get(), metaDataKey, latestSchemaVersion);
     } else {
         ASSERT(schemaVersion <= latestSchemaVersion);
         if (!schemaVersion) {
             schemaVersion = latestSchemaVersion;
-            RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(db);
-            transaction->put(metaDataKey, encodeInt(schemaVersion));
-
+            putInt(transaction.get(), metaDataKey, schemaVersion);
             const Vector<char> startKey = DatabaseNameKey::encodeMinKeyForOrigin(origin);
             const Vector<char> stopKey = DatabaseNameKey::encodeStopKeyForOrigin(origin);
             OwnPtr<LevelDBIterator> it = db->createIterator();
             for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
-                Vector<char> value;
-                bool ok = transaction->get(it->key(), value);
-                if (!ok) {
+                int64_t databaseId = 0;
+                if (!getInt(transaction.get(), it->key(), databaseId)) {
                     InternalError(IDBLevelDBBackingStoreReadError);
                     return false;
                 }
-                int databaseId = decodeInt(value.begin(), value.end());
                 Vector<char> intVersionKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::UserIntVersion);
-                transaction->put(intVersionKey, encodeVarInt(IDBDatabaseMetadata::DefaultIntVersion));
-                ok = transaction->get(it->key(), value);
-                if (!ok) {
-                    InternalError(IDBLevelDBBackingStoreReadError);
-                    return false;
-                }
-            }
-            bool ok = transaction->commit();
-            if (!ok) {
-                InternalError(IDBLevelDBBackingStoreWriteError);
-                return false;
+                putVarInt(transaction.get(), intVersionKey, IDBDatabaseMetadata::DefaultIntVersion);
             }
         }
     }
 
     ASSERT(schemaVersion == latestSchemaVersion);
-
+    if (!transaction->commit()) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
+        return false;
+    }
     return true;
 }
 
@@ -299,7 +275,7 @@ PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securit
         if (db && !isSchemaKnown(db.get())) {
             LOG_ERROR("IndexedDB backing store had unknown schema, treating it as failure to open");
             HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedUnknownSchema, IDBLevelDBBackingStoreOpenMax);
-            db.release();
+            db.clear();
         }
 
         if (db)
@@ -389,16 +365,20 @@ bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, IDBDatab
 
 static int64_t getNewDatabaseId(LevelDBDatabase* db)
 {
+    RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(db);
+
     int64_t maxDatabaseId = -1;
-    if (!getInt(db, MaxDatabaseIdKey::encode(), maxDatabaseId))
+    if (!getInt(transaction.get(), MaxDatabaseIdKey::encode(), maxDatabaseId))
         maxDatabaseId = 0;
 
     ASSERT(maxDatabaseId >= 0);
 
     int64_t databaseId = maxDatabaseId + 1;
-    if (!putInt(db, MaxDatabaseIdKey::encode(), databaseId))
+    putInt(transaction.get(), MaxDatabaseIdKey::encode(), databaseId);
+    if (!transaction->commit()) {
+        InternalError(IDBLevelDBBackingStoreWriteError);
         return -1;
-
+    }
     return databaseId;
 }
 
@@ -408,18 +388,14 @@ bool IDBLevelDBBackingStore::createIDBDatabaseMetaData(const String& name, const
     if (rowId < 0)
         return false;
 
-    const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
-    if (!putInt(m_db.get(), key, rowId)) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-    if (!putString(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version)) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
     if (intVersion == IDBDatabaseMetadata::NoIntVersion)
         intVersion = IDBDatabaseMetadata::DefaultIntVersion;
-    if (!putVarInt(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion)) {
+
+    RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(m_db.get());
+    putInt(transaction.get(), DatabaseNameKey::encode(m_identifier, name), rowId);
+    putString(transaction.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version);
+    putVarInt(transaction.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion);
+    if (!transaction->commit()) {
         InternalError(IDBLevelDBBackingStoreWriteError);
         return false;
     }
@@ -431,34 +407,21 @@ bool IDBLevelDBBackingStore::updateIDBDatabaseIntVersion(IDBBackingStore::Transa
     if (intVersion == IDBDatabaseMetadata::NoIntVersion)
         intVersion = IDBDatabaseMetadata::DefaultIntVersion;
     ASSERT_WITH_MESSAGE(intVersion >= 0, "intVersion was %lld", static_cast<long long>(intVersion));
-    if (!putVarInt(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion)) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
+    putVarInt(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion);
     return true;
 }
 
 bool IDBLevelDBBackingStore::updateIDBDatabaseMetaData(IDBBackingStore::Transaction* transaction, int64_t rowId, const String& version)
 {
-    if (!putString(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version)) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
+    putString(Transaction::levelDBTransactionFrom(transaction), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version);
     return true;
 }
 
-static bool deleteRange(LevelDBTransaction* transaction, const Vector<char>& begin, const Vector<char>& end)
+static void deleteRange(LevelDBTransaction* transaction, const Vector<char>& begin, const Vector<char>& end)
 {
     OwnPtr<LevelDBIterator> it = transaction->createIterator();
-    for (it->seek(begin); it->isValid() && compareKeys(it->key(), end) < 0; it->next()) {
-        if (!transaction->remove(it->key())) {
-            InternalError(IDBLevelDBBackingStoreWriteError);
-            return false;
-        }
-    }
-
-    return true;
+    for (it->seek(begin); it->isValid() && compareKeys(it->key(), end) < 0; it->next())
+        transaction->remove(it->key());
 }
 
 
@@ -598,10 +561,7 @@ static bool setMaxObjectStoreId(LevelDBTransaction* transaction, int64_t databas
         InternalError(IDBLevelDBBackingStoreConsistencyError);
         return false;
     }
-    if (!putInt(transaction, maxObjectStoreIdKey, objectStoreId)) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
+    putInt(transaction, maxObjectStoreIdKey, objectStoreId);
     return true;
 }
 
@@ -622,60 +582,15 @@ bool IDBLevelDBBackingStore::createObjectStore(IDBBackingStore::Transaction* tra
     const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::KeyGeneratorCurrentNumber);
     const Vector<char> namesKey = ObjectStoreNamesKey::encode(databaseId, name);
 
-    bool ok = putString(levelDBTransaction, nameKey, name);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
-    ok = putIDBKeyPath(levelDBTransaction, keyPathKey, keyPath);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
-    ok = putInt(levelDBTransaction, autoIncrementKey, autoIncrement);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
-    ok = putInt(levelDBTransaction, evictableKey, false);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
-    ok = putInt(levelDBTransaction, lastVersionKey, 1);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
-    ok = putInt(levelDBTransaction, maxIndexIdKey, MinimumIndexId);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
-    ok = putBool(levelDBTransaction, hasKeyPathKey, !keyPath.isNull());
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
-    ok = putInt(levelDBTransaction, keyGeneratorCurrentNumberKey, KeyGeneratorInitialNumber);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
-    ok = putInt(levelDBTransaction, namesKey, objectStoreId);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
+    putString(levelDBTransaction, nameKey, name);
+    putIDBKeyPath(levelDBTransaction, keyPathKey, keyPath);
+    putInt(levelDBTransaction, autoIncrementKey, autoIncrement);
+    putInt(levelDBTransaction, evictableKey, false);
+    putInt(levelDBTransaction, lastVersionKey, 1);
+    putInt(levelDBTransaction, maxIndexIdKey, MinimumIndexId);
+    putBool(levelDBTransaction, hasKeyPathKey, !keyPath.isNull());
+    putInt(levelDBTransaction, keyGeneratorCurrentNumberKey, KeyGeneratorInitialNumber);
+    putInt(levelDBTransaction, namesKey, objectStoreId);
     return true;
 }
 
@@ -687,21 +602,12 @@ void IDBLevelDBBackingStore::deleteObjectStore(IDBBackingStore::Transaction* tra
     String objectStoreName;
     getString(levelDBTransaction, ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::Name), objectStoreName);
 
-    if (!deleteRange(levelDBTransaction, ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 0), ObjectStoreMetaDataKey::encodeMaxKey(databaseId, objectStoreId))) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return; // FIXME: Report error.
-    }
+    deleteRange(levelDBTransaction, ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 0), ObjectStoreMetaDataKey::encodeMaxKey(databaseId, objectStoreId));
 
     levelDBTransaction->remove(ObjectStoreNamesKey::encode(databaseId, objectStoreName));
 
-    if (!deleteRange(levelDBTransaction, IndexFreeListKey::encode(databaseId, objectStoreId, 0), IndexFreeListKey::encodeMaxKey(databaseId, objectStoreId))) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return; // FIXME: Report error.
-    }
-    if (!deleteRange(levelDBTransaction, IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0), IndexMetaDataKey::encodeMaxKey(databaseId, objectStoreId))) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return; // FIXME: Report error.
-    }
+    deleteRange(levelDBTransaction, IndexFreeListKey::encode(databaseId, objectStoreId, 0), IndexFreeListKey::encodeMaxKey(databaseId, objectStoreId));
+    deleteRange(levelDBTransaction, IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0), IndexMetaDataKey::encodeMaxKey(databaseId, objectStoreId));
 
     clearObjectStore(transaction, databaseId, objectStoreId);
 }
@@ -760,8 +666,7 @@ static int64_t getNewVersionNumber(LevelDBTransaction* transaction, int64_t data
     ASSERT(lastVersion >= 0);
 
     int64_t version = lastVersion + 1;
-    bool ok = putInt(transaction, lastVersionKey, version);
-    ASSERT_UNUSED(ok, ok);
+    putInt(transaction, lastVersionKey, version);
 
     ASSERT(version > lastVersion); // FIXME: Think about how we want to handle the overflow scenario.
 
@@ -780,16 +685,10 @@ bool IDBLevelDBBackingStore::putRecord(IDBBackingStore::Transaction* transaction
     v.append(encodeVarInt(version));
     v.append(encodeString(value));
 
-    if (!levelDBTransaction->put(objectStoredataKey, v)) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
+    levelDBTransaction->put(objectStoredataKey, v);
 
     const Vector<char> existsEntryKey = ExistsEntryKey::encode(databaseId, objectStoreId, key);
-    if (!levelDBTransaction->put(existsEntryKey, encodeInt(version))) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
+    levelDBTransaction->put(existsEntryKey, encodeInt(version));
 
     LevelDBRecordIdentifier* levelDBRecordIdentifier = static_cast<LevelDBRecordIdentifier*>(recordIdentifier);
     levelDBRecordIdentifier->setPrimaryKey(encodeIDBKey(key));
@@ -879,11 +778,7 @@ bool IDBLevelDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStor
     }
 
     const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::KeyGeneratorCurrentNumber);
-    bool ok = putInt(levelDBTransaction, keyGeneratorCurrentNumberKey, newNumber);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
+    putInt(levelDBTransaction, keyGeneratorCurrentNumberKey, newNumber);
     return true;
 }
 
@@ -990,10 +885,7 @@ static bool setMaxIndexId(LevelDBTransaction* transaction, int64_t databaseId, i
         return false;
     }
 
-    if (!putInt(transaction, maxIndexIdKey, indexId)) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
+    putInt(transaction, maxIndexIdKey, indexId);
     return true;
 }
 
@@ -1009,30 +901,10 @@ bool IDBLevelDBBackingStore::createIndex(IDBBackingStore::Transaction* transacti
     const Vector<char> keyPathKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::KeyPath);
     const Vector<char> multiEntryKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, IndexMetaDataKey::MultiEntry);
 
-    bool ok = putString(levelDBTransaction, nameKey, name);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
-    ok = putBool(levelDBTransaction, uniqueKey, isUnique);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
-    ok = putIDBKeyPath(levelDBTransaction, keyPathKey, keyPath);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
-    ok = putBool(levelDBTransaction, multiEntryKey, isMultiEntry);
-    if (!ok) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return false;
-    }
-
+    putString(levelDBTransaction, nameKey, name);
+    putBool(levelDBTransaction, uniqueKey, isUnique);
+    putIDBKeyPath(levelDBTransaction, keyPathKey, keyPath);
+    putBool(levelDBTransaction, multiEntryKey, isMultiEntry);
     return true;
 }
 
@@ -1043,19 +915,11 @@ void IDBLevelDBBackingStore::deleteIndex(IDBBackingStore::Transaction* transacti
 
     const Vector<char> indexMetaDataStart = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 0);
     const Vector<char> indexMetaDataEnd = IndexMetaDataKey::encodeMaxKey(databaseId, objectStoreId, indexId);
-
-    if (!deleteRange(levelDBTransaction, indexMetaDataStart, indexMetaDataEnd)) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return;
-    }
+    deleteRange(levelDBTransaction, indexMetaDataStart, indexMetaDataEnd);
 
     const Vector<char> indexDataStart = IndexDataKey::encodeMinKey(databaseId, objectStoreId, indexId);
     const Vector<char> indexDataEnd = IndexDataKey::encodeMaxKey(databaseId, objectStoreId, indexId);
-
-    if (!deleteRange(levelDBTransaction, indexDataStart, indexDataEnd)) {
-        InternalError(IDBLevelDBBackingStoreWriteError);
-        return;
-    }
+    deleteRange(levelDBTransaction, indexDataStart, indexDataEnd);
 }
 
 bool IDBLevelDBBackingStore::putIndexDataForRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, const RecordIdentifier* recordIdentifier)
@@ -1072,7 +936,8 @@ bool IDBLevelDBBackingStore::putIndexDataForRecord(IDBBackingStore::Transaction*
     data.append(encodeVarInt(levelDBRecordIdentifier->version()));
     data.append(levelDBRecordIdentifier->primaryKey());
 
-    return levelDBTransaction->put(indexDataKey, data);
+    levelDBTransaction->put(indexDataKey, data);
+    return true;
 }
 
 static bool findGreatestKeyLessThanOrEqual(LevelDBTransaction* transaction, const Vector<char>& target, Vector<char>& foundKey)

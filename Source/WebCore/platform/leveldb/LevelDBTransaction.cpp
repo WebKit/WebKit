@@ -76,7 +76,7 @@ static void initVector(const LevelDBSlice& slice, Vector<char>* vector)
     vector->append(slice.begin(), slice.end() - slice.begin());
 }
 
-bool LevelDBTransaction::set(const LevelDBSlice& key, const Vector<char>& value, bool deleted)
+void LevelDBTransaction::set(const LevelDBSlice& key, const Vector<char>& value, bool deleted)
 {
     ASSERT(!m_finished);
     bool newNode = false;
@@ -93,17 +93,16 @@ bool LevelDBTransaction::set(const LevelDBSlice& key, const Vector<char>& value,
 
     if (newNode)
         notifyIteratorsOfTreeChange();
-    return true;
 }
 
-bool LevelDBTransaction::put(const LevelDBSlice& key, const Vector<char>& value)
+void LevelDBTransaction::put(const LevelDBSlice& key, const Vector<char>& value)
 {
-    return set(key, value, false);
+    set(key, value, false);
 }
 
-bool LevelDBTransaction::remove(const LevelDBSlice& key)
+void LevelDBTransaction::remove(const LevelDBSlice& key)
 {
-    return set(key, Vector<char>(), true);
+    set(key, Vector<char>(), true);
 }
 
 bool LevelDBTransaction::get(const LevelDBSlice& key, Vector<char>& value)

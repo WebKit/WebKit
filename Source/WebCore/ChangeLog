@@ -1,3 +1,41 @@
+2012-11-08  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove unused error handling clauses when writing to transaction
+        https://bugs.webkit.org/show_bug.cgi?id=100700
+
+        Reviewed by Tony Chang.
+
+        Transactions are written into in-memory data structures. This can only fail if allocation
+        fails, so "success" results are always returned. Change the return types to void, and delete
+        all of the unreachable error handling code.
+
+        No new tests - just refactoring/dead code removal.
+
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore::putBool): Only write to transactions.
+        (WebCore):
+        (WebCore::putInt): Ditto.
+        (WebCore::putVarInt): Ditto.
+        (WebCore::putString): Ditto.
+        (WebCore::putIDBKeyPath): Ditto.
+        (WebCore::IDBLevelDBBackingStore::updateIDBDatabaseIntVersion):
+        (WebCore::IDBLevelDBBackingStore::updateIDBDatabaseMetaData):
+        (WebCore::deleteRange): Writes only to transaction, so can't fail.
+        (WebCore::setMaxObjectStoreId):
+        (WebCore::IDBLevelDBBackingStore::createObjectStore):
+        (WebCore::getNewVersionNumber):
+        (WebCore::IDBLevelDBBackingStore::putObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber):
+        (WebCore::setMaxIndexId):
+        (WebCore::IDBLevelDBBackingStore::createIndex):
+        (WebCore::IDBLevelDBBackingStore::putIndexDataForRecord):
+        * platform/leveldb/LevelDBTransaction.cpp:
+        (WebCore::LevelDBTransaction::set): Return type is void.
+        (WebCore::LevelDBTransaction::put): Ditto.
+        (WebCore::LevelDBTransaction::remove): Ditto.
+        * platform/leveldb/LevelDBTransaction.h:
+        (LevelDBTransaction):
+
 2012-11-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         On Chromium, click-after-nested-block.html, focus_editable_html.html, and autoscroll.html
