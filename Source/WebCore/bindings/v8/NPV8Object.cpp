@@ -120,7 +120,7 @@ static v8::Local<v8::String> npIdentifierToV8Identifier(NPIdentifier name)
 
 NPObject* v8ObjectToNPObject(v8::Handle<v8::Object> object)
 {
-    return reinterpret_cast<NPObject*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex)); 
+    return reinterpret_cast<NPObject*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex)); 
 }
 
 static NPClass V8NPObjectClass = { NP_CLASS_STRUCT_VERSION,
@@ -135,7 +135,7 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, DOMWind
 {
     // Check to see if this object is already wrapped.
     if (object->InternalFieldCount() == npObjectInternalFieldCount) {
-        WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetPointerFromInternalField(v8DOMWrapperTypeIndex));
+        WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
         if (typeInfo == npObjectTypeInfo()) {
 
             NPObject* returnValue = v8ObjectToNPObject(object);

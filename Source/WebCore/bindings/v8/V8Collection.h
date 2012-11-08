@@ -50,7 +50,7 @@ template<class T> static v8::Handle<v8::Value> getV8Object(T* implementation, v8
 
 template<class Collection> static Collection* toNativeCollection(v8::Local<v8::Object> object)
 {
-    return reinterpret_cast<Collection*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+    return reinterpret_cast<Collection*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
 }
 
 template<class T> static v8::Handle<v8::Value> getV8Object(PassRefPtr<T> implementation, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
