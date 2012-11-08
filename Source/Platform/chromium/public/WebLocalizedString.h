@@ -102,6 +102,7 @@ struct WebLocalizedString {
         ValidationValueMissingForRadio,
         ValidationValueMissingForSelect,
         WeekFormatTemplate,
+        WeekNumberLabel,
     };
 };
 

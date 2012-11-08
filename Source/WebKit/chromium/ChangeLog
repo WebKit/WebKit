@@ -1,3 +1,15 @@
+2012-11-08  Keishi Hattori  <keishi@webkit.org>
+
+        Add properties for week/month picker in DateTimeChooserImpl::writeDocument
+        https://bugs.webkit.org/show_bug.cgi?id=101552
+
+        Reviewed by Kent Tamura.
+
+        Changing the arguments for calendar picker to support week/month picker.
+
+        * src/DateTimeChooserImpl.cpp:
+        (WebKit::DateTimeChooserImpl::writeDocument):
+
 2012-11-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r133429.

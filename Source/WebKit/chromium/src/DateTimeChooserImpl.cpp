@@ -90,11 +90,18 @@ WebCore::IntSize DateTimeChooserImpl::contentSize()
 
 void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
 {
-    WebCore::DateComponents date;
-    date.setMillisecondsSinceEpochForDate(m_parameters.minimum);
-    String minString = date.toString();
-    date.setMillisecondsSinceEpochForDate(m_parameters.maximum);
-    String maxString = date.toString();
+    WebCore::DateComponents minDate;
+    WebCore::DateComponents maxDate;
+    if (m_parameters.type == WebCore::InputTypeNames::month()) {
+        minDate.setMonthsSinceEpoch(m_parameters.minimum);
+        maxDate.setMonthsSinceEpoch(m_parameters.maximum);
+    } else if (m_parameters.type == WebCore::InputTypeNames::week()) {
+        minDate.setMillisecondsSinceEpochForWeek(m_parameters.minimum);
+        maxDate.setMillisecondsSinceEpochForWeek(m_parameters.maximum);
+    } else {
+        minDate.setMillisecondsSinceEpochForDate(m_parameters.minimum);
+        maxDate.setMillisecondsSinceEpochForDate(m_parameters.maximum);
+    }
     String stepString = String::number(m_parameters.step);
     String stepBaseString = String::number(m_parameters.stepBase, 11, WTF::TruncateTrailingZeros);
     IntRect anchorRectInScreen = m_chromeClient->rootViewToScreen(m_parameters.anchorRectInRootView);
@@ -102,6 +109,13 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     IntRect rootViewVisibleContentRect = view->visibleContentRect(true /* include scrollbars */);
     IntRect rootViewRectInScreen = m_chromeClient->rootViewToScreen(rootViewVisibleContentRect);
     rootViewRectInScreen.move(-view->scrollX(), -view->scrollY());
+    String todayLabelString;
+    if (m_parameters.type == WebCore::InputTypeNames::month())
+        todayLabelString = Platform::current()->queryLocalizedString(WebLocalizedString::ThisMonthButtonLabel);
+    else if (m_parameters.type == WebCore::InputTypeNames::week())
+        todayLabelString = Platform::current()->queryLocalizedString(WebLocalizedString::ThisWeekButtonLabel);
+    else
+        todayLabelString = Platform::current()->queryLocalizedString(WebLocalizedString::CalendarToday);
 
     addString("<!DOCTYPE html><head><meta charset='UTF-8'><style>\n", writer);
     writer.addData(WebCore::pickerCommonCss, sizeof(WebCore::pickerCommonCss));
@@ -119,20 +133,22 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
 #else
     addProperty("confineToRootView", false, writer);
 #endif
-    addProperty("min", minString, writer);
-    addProperty("max", maxString, writer);
+    addProperty("min", minDate.toString(), writer);
+    addProperty("max", maxDate.toString(), writer);
     addProperty("step", stepString, writer);
     addProperty("stepBase", stepBaseString, writer);
     addProperty("required", m_parameters.required, writer);
     addProperty("currentValue", m_parameters.currentValue, writer);
     addProperty("locale", WebCore::defaultLanguage(), writer);
-    addProperty("todayLabel", Platform::current()->queryLocalizedString(WebLocalizedString::CalendarToday), writer);
+    addProperty("todayLabel", todayLabelString, writer);
     addProperty("clearLabel", Platform::current()->queryLocalizedString(WebLocalizedString::CalendarClear), writer);
+    addProperty("weekLabel", Platform::current()->queryLocalizedString(WebLocalizedString::WeekNumberLabel), writer);
     addProperty("weekStartDay", m_locale->firstDayOfWeek(), writer);
     addProperty("monthLabels", m_locale->monthLabels(), writer);
     addProperty("dayLabels", m_locale->weekDayShortLabels(), writer);
     addProperty("isCalendarRTL", m_locale->isRTL(), writer);
     addProperty("isRTL", m_parameters.isAnchorElementRTL, writer);
+    addProperty("mode", m_parameters.type.string(), writer);
     if (m_parameters.suggestionValues.size()) {
         addProperty("inputWidth", static_cast<unsigned>(m_parameters.anchorRectInRootView.width()), writer);
         addProperty("suggestionValues", m_parameters.suggestionValues, writer);
