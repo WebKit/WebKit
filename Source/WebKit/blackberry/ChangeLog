@@ -1,3 +1,25 @@
+2012-11-08  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Janitor: Remove unused m_isValid bool
+        https://bugs.webkit.org/show_bug.cgi?id=101610
+
+        Reviewed by Rob Buis.
+
+        It's not used anywhere, but as we have a constructor
+        that creates an invalid TileIndex, let's add another
+        method to check validity - now a correct check.
+
+        On top of that, make the stylebot happy by reducing
+        "unsigned int" to just "unsigned".
+
+        * WebKitSupport/TileIndex.h:
+        (BlackBerry::WebKit::TileIndex::TileIndex):
+        (BlackBerry::WebKit::TileIndex::i):
+        (BlackBerry::WebKit::TileIndex::j):
+        (BlackBerry::WebKit::TileIndex::setIndex):
+        (BlackBerry::WebKit::TileIndex::isValid):
+        (TileIndex):
+
 2012-11-08  Eli Fidler  <efidler@rim.com>
 
         [BlackBerry] Increase memory cache size

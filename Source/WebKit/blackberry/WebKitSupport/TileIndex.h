@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,25 +27,30 @@ namespace WebKit {
 class TileIndex {
 public:
     TileIndex()
-        : m_i(std::numeric_limits<unsigned int>::max())
-        , m_j(std::numeric_limits<unsigned int>::max()) { }
-    TileIndex(unsigned int i, unsigned int j)
+        : m_i(std::numeric_limits<unsigned>::max())
+        , m_j(std::numeric_limits<unsigned>::max()) { }
+    TileIndex(unsigned i, unsigned j)
         : m_i(i)
         , m_j(j) { }
     ~TileIndex() { }
 
-    unsigned int i() const { return m_i; }
-    unsigned int j() const { return m_j; }
-    void setIndex(unsigned int i, unsigned int j)
+    unsigned i() const { return m_i; }
+    unsigned j() const { return m_j; }
+    void setIndex(unsigned i, unsigned j)
     {
         m_i = i;
         m_j = j;
     }
 
+    bool isValid() const
+    {
+        return m_i != std::numeric_limits<unsigned>::max()
+            && m_j != std::numeric_limits<unsigned>::max();
+    }
+
 private:
-    bool m_isValid;
-    unsigned int m_i;
-    unsigned int m_j;
+    unsigned m_i;
+    unsigned m_j;
 };
 
 inline bool operator==(const BlackBerry::WebKit::TileIndex& a, const BlackBerry::WebKit::TileIndex& b)
