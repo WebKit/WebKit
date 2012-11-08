@@ -1,5 +1,16 @@
 2012-11-07  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, chromium expectations cleanup
+
+        Remove entries for a couple of passing tests and one stale pixel
+        result for a reftest.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+        * platform/chromium-mac/fast/sub-pixel/float-wrap-zoom-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+
+2012-11-07  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, update chromium-mac-ml expectations after r133811 and r133814.
 
         * platform/chromium-mac-mountainlion/TestExpectations:
