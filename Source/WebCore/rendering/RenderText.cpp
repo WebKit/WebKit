@@ -1632,7 +1632,7 @@ LayoutRect RenderText::linesVisualOverflowBoundingBox() const
     return rect;
 }
 
-LayoutRect RenderText::clippedOverflowRectForRepaint(RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderText::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
     RenderObject* rendererToRepaint = containingBlock();
 
@@ -1648,7 +1648,7 @@ LayoutRect RenderText::clippedOverflowRectForRepaint(RenderLayerModelObject* rep
     return rendererToRepaint->clippedOverflowRectForRepaint(repaintContainer);
 }
 
-LayoutRect RenderText::selectionRectForRepaint(RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
+LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 

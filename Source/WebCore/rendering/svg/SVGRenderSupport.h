@@ -66,9 +66,9 @@ public:
 
     // Important functions used by nearly all SVG renderers centralizing coordinate transformations / repaint rect calculations
     static FloatRect repaintRectForRendererInLocalCoordinatesExcludingSVGShadow(const RenderObject*);
-    static LayoutRect clippedOverflowRectForRepaint(const RenderObject*, RenderLayerModelObject* repaintContainer);
-    static void computeFloatRectForRepaint(const RenderObject*, RenderLayerModelObject* repaintContainer, FloatRect&, bool fixed);
-    static void mapLocalToContainer(const RenderObject*, RenderLayerModelObject* repaintContainer, TransformState&, bool snapOffsetForTransforms = true, bool* wasFixed = 0);
+    static LayoutRect clippedOverflowRectForRepaint(const RenderObject*, const RenderLayerModelObject* repaintContainer);
+    static void computeFloatRectForRepaint(const RenderObject*, const RenderLayerModelObject* repaintContainer, FloatRect&, bool fixed);
+    static void mapLocalToContainer(const RenderObject*, const RenderLayerModelObject* repaintContainer, TransformState&, bool snapOffsetForTransforms = true, bool* wasFixed = 0);
     static const RenderObject* pushMappingToContainer(const RenderObject*, const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&);
     static bool checkForSVGRepaintDuringLayout(RenderObject*);
 

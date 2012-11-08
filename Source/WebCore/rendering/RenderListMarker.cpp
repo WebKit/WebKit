@@ -1703,7 +1703,7 @@ void RenderListMarker::setSelectionState(SelectionState state)
             root->setHasSelectedChildren(state != SelectionNone);
 }
 
-LayoutRect RenderListMarker::selectionRectForRepaint(RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
+LayoutRect RenderListMarker::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
 {
     ASSERT(!needsLayout());
 

@@ -71,13 +71,13 @@ private:
     virtual void computePreferredLogicalWidths();
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) { }
 
-    virtual LayoutRect clippedOverflowRectForRepaint(RenderLayerModelObject* repaintContainer) const OVERRIDE;
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE;
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&);
     
     virtual bool canBeSelectionLeaf() const { return true; }
 
-    virtual LayoutRect selectionRectForRepaint(RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
+    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
     void computeAspectRatioInformationForRenderBox(RenderBox*, FloatSize& constrainedSize, double& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
 
     mutable LayoutSize m_intrinsicSize;

@@ -108,13 +108,13 @@ public:
 
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual void setSelectionState(SelectionState s);
-    virtual LayoutRect selectionRectForRepaint(RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
+    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
 
     virtual LayoutUnit marginLeft() const { return minimumValueForLength(style()->marginLeft(), 0, view()); }
     virtual LayoutUnit marginRight() const { return minimumValueForLength(style()->marginRight(), 0, view()); }
 
-    virtual LayoutRect clippedOverflowRectForRepaint(RenderLayerModelObject* repaintContainer) const OVERRIDE;
+    virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE;
 
     InlineTextBox* firstTextBox() const { return m_firstTextBox; }
     InlineTextBox* lastTextBox() const { return m_lastTextBox; }

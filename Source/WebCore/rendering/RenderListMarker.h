@@ -65,7 +65,7 @@ private:
     bool isText() const { return !isImage(); }
 
     virtual void setSelectionState(SelectionState);
-    virtual LayoutRect selectionRectForRepaint(RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
+    virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) OVERRIDE;
     virtual bool canBeSelectionLeaf() const { return true; }
 
     void updateMargins();

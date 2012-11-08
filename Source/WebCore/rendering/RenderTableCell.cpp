@@ -306,7 +306,7 @@ LayoutSize RenderTableCell::offsetFromContainer(RenderObject* o, const LayoutPoi
     return offset;
 }
 
-LayoutRect RenderTableCell::clippedOverflowRectForRepaint(RenderLayerModelObject* repaintContainer) const
+LayoutRect RenderTableCell::clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const
 {
     // If the table grid is dirty, we cannot get reliable information about adjoining cells,
     // so we ignore outside borders. This should not be a problem because it means that
@@ -357,7 +357,7 @@ LayoutRect RenderTableCell::clippedOverflowRectForRepaint(RenderLayerModelObject
     return r;
 }
 
-void RenderTableCell::computeRectForRepaint(RenderLayerModelObject* repaintContainer, LayoutRect& r, bool fixed) const
+void RenderTableCell::computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect& r, bool fixed) const
 {
     if (repaintContainer == this)
         return;

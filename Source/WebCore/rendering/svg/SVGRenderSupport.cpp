@@ -56,7 +56,7 @@ FloatRect SVGRenderSupport::repaintRectForRendererInLocalCoordinatesExcludingSVG
     return object->repaintRectInLocalCoordinates();
 }
 
-LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* object, RenderLayerModelObject* repaintContainer)
+LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* object, const RenderLayerModelObject* repaintContainer)
 {
     // Return early for any cases where we don't actually paint
     if (object->style()->visibility() != VISIBLE && !object->enclosingLayer()->hasVisibleContent())
@@ -72,7 +72,7 @@ LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* o
     return enclosingLayoutRect(repaintRect);
 }
 
-void SVGRenderSupport::computeFloatRectForRepaint(const RenderObject* object, RenderLayerModelObject* repaintContainer, FloatRect& repaintRect, bool fixed)
+void SVGRenderSupport::computeFloatRectForRepaint(const RenderObject* object, const RenderLayerModelObject* repaintContainer, FloatRect& repaintRect, bool fixed)
 {
     const SVGRenderStyle* svgStyle = object->style()->svgStyle();
     if (const ShadowData* shadow = svgStyle->shadow())
@@ -84,7 +84,7 @@ void SVGRenderSupport::computeFloatRectForRepaint(const RenderObject* object, Re
     object->parent()->computeFloatRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
-void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderLayerModelObject* repaintContainer, TransformState& transformState, bool snapOffsetForTransforms, bool* wasFixed)
+void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, const RenderLayerModelObject* repaintContainer, TransformState& transformState, bool snapOffsetForTransforms, bool* wasFixed)
 {
     transformState.applyTransform(object->localToParentTransform());
 

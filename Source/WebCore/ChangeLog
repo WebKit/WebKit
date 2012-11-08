@@ -1,3 +1,108 @@
+2012-11-07  Simon Fraser  <simon.fraser@apple.com>
+
+        constify ALL the repaint containers
+        https://bugs.webkit.org/show_bug.cgi?id=101541
+
+        Reviewed by Beth Dakin.
+
+        Make all the RenderLayerModelObject* repaintContainer arguments const, since
+        these member functions should have no need to mutate this object.
+
+        * WebCore.exp.in:
+        * rendering/RenderBR.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        (WebCore::RenderBlock::rectWithOutlineForRepaint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::outlineBoundsForRepaint):
+        (WebCore::RenderBox::mapLocalToContainer):
+        (WebCore::RenderBox::clippedOverflowRectForRepaint):
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::repaintRectangleInRegions): Need to use a const_iterator.
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderInline::rectWithOutlineForRepaint):
+        (WebCore::RenderInline::computeRectForRepaint):
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderInline.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::selectionRectForRepaint):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::repaintUsingContainer):
+        (WebCore::RenderObject::repaintAfterLayoutIfNeeded):
+        (WebCore::RenderObject::rectWithOutlineForRepaint):
+        (WebCore::RenderObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderObject::computeRectForRepaint):
+        (WebCore::RenderObject::computeFloatRectForRepaint):
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::localToContainerQuad):
+        (WebCore::RenderObject::localToContainerPoint):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::selectionRectForRepaint):
+        (WebCore::RenderObject::outlineBoundsForRepaint):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::selectionRectForRepaint):
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        (WebCore::RenderTableCell::computeRectForRepaint):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::clippedOverflowRectForRepaint):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::clippedOverflowRectForRepaint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::clippedOverflowRectForRepaint):
+        (WebCore::RenderText::selectionRectForRepaint):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        (WebCore::RenderView::computeRectForRepaint):
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGForeignObject::computeFloatRectForRepaint):
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGGradientStop.h:
+        * rendering/svg/RenderSVGHiddenContainer.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGInline::computeFloatRectForRepaint):
+        (WebCore::RenderSVGInline::mapLocalToContainer):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGModelObject::computeFloatRectForRepaint):
+        (WebCore::RenderSVGModelObject::mapLocalToContainer):
+        (WebCore::RenderSVGModelObject::outlineBoundsForRepaint):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGRoot::computeFloatRectForRepaint):
+        (WebCore::RenderSVGRoot::mapLocalToContainer):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGText::computeRectForRepaint):
+        (WebCore::RenderSVGText::computeFloatRectForRepaint):
+        (WebCore::RenderSVGText::mapLocalToContainer):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::clippedOverflowRectForRepaint):
+        (WebCore::SVGRenderSupport::computeFloatRectForRepaint):
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+        * rendering/svg/SVGRenderSupport.h:
+        (SVGRenderSupport):
+
 2012-11-07  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-win] Refactor date/time format conversion code in LocaleWin

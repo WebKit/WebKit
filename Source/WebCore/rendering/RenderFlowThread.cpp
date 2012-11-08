@@ -300,7 +300,7 @@ bool RenderFlowThread::shouldRepaint(const LayoutRect& r) const
     return true;
 }
 
-void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, bool immediate)
+void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, bool immediate) const
 {
     if (!shouldRepaint(repaintRect) || !hasValidRegionInfo())
         return;
@@ -311,7 +311,7 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
     // Let each region figure out the proper enclosing flow thread.
     CurrentRenderFlowThreadDisabler disabler(view());
     
-    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
 
         region->repaintFlowThreadContent(repaintRect, immediate);
