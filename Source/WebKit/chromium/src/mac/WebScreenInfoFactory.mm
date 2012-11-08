@@ -98,6 +98,7 @@ WebScreenInfo WebScreenInfoFactory::screenInfo(NSView* view)
     float deviceDPI = 160 * deviceScaleFactor(view);
     results.horizontalDPI = deviceDPI;
     results.verticalDPI = deviceDPI;
+    results.deviceScaleFactor = static_cast<int>(deviceScaleFactor(view));
 
     results.depth = NSBitsPerPixelFromDepth([screen depth]);
     results.depthPerComponent = NSBitsPerSampleFromDepth([screen depth]);

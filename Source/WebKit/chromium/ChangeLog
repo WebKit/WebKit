@@ -1,3 +1,22 @@
+2012-11-08  Sami Kyostila  <skyostil@chromium.org>
+
+        Introduce WebScreenInfo.deviceScaleFactor
+        https://bugs.webkit.org/show_bug.cgi?id=101613
+
+        Reviewed by Adam Barth.
+
+        Introduce the WebScreenInfo.deviceScaleFactor property, which specifies the
+        ratio between physical and logical pixels. This is the first step in replacing
+        horizontalDPI/verticalDPI in favor of the deviceScaleFactor.
+
+        For now, this value is only initialized on Mac, because the other ports that
+        use it initialize the value in Chromium, whereas Windows and X11 default to a
+        factor of 1. The value on Mac is truncated to an integer to match the
+        expectation in Chromium's RenderWidget.
+
+        * src/mac/WebScreenInfoFactory.mm:
+        (WebKit::WebScreenInfoFactory::screenInfo):
+
 2012-11-08  Dan Carney  <dcarney@google.com>
 
         Cleanup IDBBindingUtilitiesTest
