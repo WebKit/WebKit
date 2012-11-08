@@ -224,10 +224,10 @@ EXPORTS
         ?setPageScaleFactor@Page@WebCore@@QAEXMABVIntPoint@2@@Z
         ?setPagination@Page@WebCore@@QAEXABUPagination@2@@Z
         ?setPictographFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
-        ?setPseudo@Element@WebCore@@QAEXABVAtomicString@WTF@@@Z
         ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
         ?setSansSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setScrollbarsSuppressed@ScrollView@WebCore@@QAEX_N0@Z
+        ?setShadowPseudoId@Element@WebCore@@QAEXABVAtomicString@WTF@@AAH@Z
         ?setDelegatesScrolling@ScrollView@WebCore@@QAEX_N@Z
         ?setScrollOffsetFromInternals@ScrollableArea@WebCore@@QAEXABVIntPoint@2@@Z
         ?setSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z

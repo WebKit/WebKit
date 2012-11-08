@@ -48,7 +48,7 @@ using namespace HTMLNames;
 inline PickerIndicatorElement::PickerIndicatorElement(Document* document)
     : HTMLDivElement(divTag, document)
 {
-    setPseudo(AtomicString("-webkit-calendar-picker-indicator", AtomicString::ConstructFromLiteral));
+    setShadowPseudoId("-webkit-calendar-picker-indicator");
 }
 
 PassRefPtr<PickerIndicatorElement> PickerIndicatorElement::create(Document* document)

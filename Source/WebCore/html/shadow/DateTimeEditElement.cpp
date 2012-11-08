@@ -235,7 +235,7 @@ void DateTimeEditBuilder::visitLiteral(const String& text)
     DEFINE_STATIC_LOCAL(AtomicString, textPseudoId, ("-webkit-datetime-edit-text", AtomicString::ConstructFromLiteral));
     ASSERT(text.length());
     RefPtr<HTMLDivElement> element = HTMLDivElement::create(m_editElement.document());
-    element->setPseudo(textPseudoId);
+    element->setShadowPseudoId(textPseudoId);
     element->appendChild(Text::create(m_editElement.document(), text));
     m_editElement.appendChild(element);
 }
@@ -250,8 +250,8 @@ DateTimeEditElement::DateTimeEditElement(Document* document, EditControlOwner& e
     : HTMLDivElement(divTag, document)
     , m_editControlOwner(&editControlOwner)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, dateTimeEditPseudoId, ("-webkit-datetime-edit", AtomicString::ConstructFromLiteral));
-    setPseudo(dateTimeEditPseudoId);
+    DEFINE_STATIC_LOCAL(AtomicString, dateTimeEditPseudoId, ("-webkit-datetime-edit"));
+    setShadowPseudoId(dateTimeEditPseudoId);
 }
 
 DateTimeEditElement::~DateTimeEditElement()

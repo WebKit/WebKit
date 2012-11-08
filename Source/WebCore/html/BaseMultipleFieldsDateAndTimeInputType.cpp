@@ -161,7 +161,7 @@ void BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree()
     Document* document = element()->document();
     RefPtr<HTMLDivElement> container = HTMLDivElement::create(document);
     element()->userAgentShadowRoot()->appendChild(container);
-    container->setPseudo(dateAndTimeInputContainerPseudoId);
+    container->setShadowPseudoId(dateAndTimeInputContainerPseudoId);
 
     RefPtr<DateTimeEditElement> dateTimeEditElement(DateTimeEditElement::create(document, *this));
     m_dateTimeEditElement = dateTimeEditElement.get();

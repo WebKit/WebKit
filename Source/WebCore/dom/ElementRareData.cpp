@@ -42,6 +42,7 @@ void ElementRareData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) cons
     NodeRareData::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_cachedCollections);
     info.addMember(m_computedStyle);
+    info.addMember(m_shadowPseudoId);
 
     info.addMember(m_datasetDOMStringMap);
     info.addMember(m_classList);
