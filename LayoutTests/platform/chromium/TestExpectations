@@ -2043,7 +2043,7 @@ crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-on-background-im
 crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-untagged-images.html [ Failure ]
 
 # Timeout on Debug.
-webkit.org/b/82954 svg/hixie/perf/007.xml [ Pass Slow ]
+webkit.org/b/82954 [ SnowLeopard Lion Win Linux ] svg/hixie/perf/007.xml [ Pass Slow ]
 
 crbug.com/22700 [ Android Linux Win ] fast/canvas/canvas-shadow.html [ Failure ]
 
@@ -4133,7 +4133,14 @@ webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-a
 webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-applies-to-004.htm [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-applies-to-013.htm [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-applies-to-014.htm [ ImageOnlyFailure ]
-
+webkit.org/b/99749 [ MountainLion ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] svg/hixie/perf/007.xml [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] svg/repaint/image-with-clip-path.svg [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] svg/custom/foreignObject-crash-on-hover.xml [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] svg/custom/hit-test-unclosed-subpaths.svg [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] svg/custom/hit-test-with-br.xhtml [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] svg/custom/use-clipped-hit.svg [ ImageOnlyFailure ]
 
 webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure ]
 webkit.org/b/100142 css3/filters/effect-reference-ordering-hw.html [ Failure ImageOnlyFailure Missing ]
