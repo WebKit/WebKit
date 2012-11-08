@@ -1625,7 +1625,7 @@ void JIT::emit_resolve_operations(ResolveOperations* resolveOperations, const in
             break;
         case ResolveOperation::ReturnScopeAsBase:
             emitStoreCell(*baseVR, scope);
-            ASSERT(!value);
+            ASSERT(value == regT0);
             move(scope, value);
 #if USE(JSVALUE32_64)
             move(TrustedImm32(JSValue::CellTag), valueTag);

@@ -1,3 +1,15 @@
+2012-11-08  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        ASSERT problem on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=100589
+
+        Reviewed by Oliver Hunt.
+
+        ASSERT fix for MIPS arch.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_resolve_operations):
+
 2012-11-08  Michael Saboff  <msaboff@apple.com>
 
         OpaqueJSClassContextData() should use StringImpl::isolatedCopy() to make string copies
