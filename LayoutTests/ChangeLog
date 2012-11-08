@@ -21,6 +21,14 @@
 
         Unreviewed, WebKit gardening.
 
+        Put the deleted line back in r133849 and delete the other one.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-07  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed, WebKit gardening.
+
         Remove a duplication which caused a webkit-lint error.
 
         * platform/chromium/TestExpectations:
