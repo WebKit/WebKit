@@ -99,18 +99,34 @@ void checkKeyPathNumberValue(const ScriptValue& value, const String& keyPath, in
     ASSERT_TRUE(expected == idbKey->number());
 }
 
-static v8::Handle<v8::Context> context()
-{
-    static WebView* webView;
-    if (!webView) {
-        webView = FrameTestHelpers::createWebViewAndLoad("about:blank");
-        webView->setFocus(true);
+class IDBKeyFromValueAndKeyPathTest : public testing::Test {
+public:
+    IDBKeyFromValueAndKeyPathTest()
+        : m_webView(0)
+    {
     }
-    ScriptExecutionContext* context = static_cast<WebFrameImpl*>(webView->mainFrame())->frame()->document();
-    return toV8Context(context, WorldContextHandle(UseCurrentWorld));
-}
 
-TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyStringValue)
+    void SetUp() OVERRIDE
+    {
+        m_webView = FrameTestHelpers::createWebViewAndLoad("about:blank");
+        m_webView->setFocus(true);
+    }
+
+    void TearDown() OVERRIDE
+    {
+        m_webView->close();
+    }
+
+    v8::Handle<v8::Context> context()
+    {
+        return static_cast<WebFrameImpl*>(m_webView->mainFrame())->frame()->script()->mainWorldContext();
+    }
+
+private:
+    WebView* m_webView;
+};
+
+TEST_F(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyStringValue)
 {
     v8::HandleScope handleScope;
     v8::Context::Scope scope(context());
@@ -124,7 +140,7 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyStringValue)
     checkKeyPathNullValue(scriptValue, "bar");
 }
 
-TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
+TEST_F(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
 {
     v8::HandleScope handleScope;
     v8::Context::Scope scope(context());
@@ -138,7 +154,7 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
     checkKeyPathNullValue(scriptValue, "bar");
 }
 
-TEST(IDBKeyFromValueAndKeyPathTest, SubProperty)
+TEST_F(IDBKeyFromValueAndKeyPathTest, SubProperty)
 {
     v8::HandleScope handleScope;
     v8::Context::Scope scope(context());
@@ -154,7 +170,10 @@ TEST(IDBKeyFromValueAndKeyPathTest, SubProperty)
     checkKeyPathNullValue(scriptValue, "bar");
 }
 
-TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
+class InjectIDBKeyTest : public IDBKeyFromValueAndKeyPathTest {
+};
+
+TEST_F(InjectIDBKeyTest, TopLevelPropertyStringValue)
 {
     v8::HandleScope handleScope;
     v8::Context::Scope scope(context());
@@ -169,7 +188,7 @@ TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
     checkInjectionFails(IDBKey::createString("key"), foozoo, "foo.bar");
 }
 
-TEST(InjectIDBKeyTest, SubProperty)
+TEST_F(InjectIDBKeyTest, SubProperty)
 {
     v8::HandleScope handleScope;
     v8::Context::Scope scope(context());

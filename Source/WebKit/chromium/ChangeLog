@@ -1,3 +1,20 @@
+2012-11-08  Dan Carney  <dcarney@google.com>
+
+        Cleanup IDBBindingUtilitiesTest
+        https://bugs.webkit.org/show_bug.cgi?id=100860
+
+        Reviewed by Adam Barth.
+
+        Small cleanup of IDBBindingUtilitiesTest as per
+        https://bugs.webkit.org/show_bug.cgi?id=99975#c38
+
+        * tests/IDBBindingUtilitiesTest.cpp:
+        (IDBKeyFromValueAndKeyPathTest):
+        (WebKit::IDBKeyFromValueAndKeyPathTest::IDBKeyFromValueAndKeyPathTest):
+        (WebKit::IDBKeyFromValueAndKeyPathTest::context):
+        (WebKit):
+        (WebKit::TEST_F):
+
 2012-11-08  Keishi Hattori  <keishi@webkit.org>
 
         Add properties for week/month picker in DateTimeChooserImpl::writeDocument
