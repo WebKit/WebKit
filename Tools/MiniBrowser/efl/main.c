@@ -39,6 +39,7 @@ static const int TOOL_BAR_BUTTON_SIZE = 32;
 static int verbose = 1;
 static Eina_List *windows = NULL;
 static char *evas_engine_name = NULL;
+static Eina_Bool encoding_detector_enabled = EINA_FALSE;
 static Eina_Bool frame_flattening_enabled = EINA_FALSE;
 static int window_width = 800;
 static int window_height = 600;
@@ -72,6 +73,8 @@ static const Ecore_Getopt options = {
         ECORE_GETOPT_CALLBACK_NOARGS
             ('E', "list-engines", "list ecore-evas engines.",
              ecore_getopt_callback_ecore_evas_list_engines, NULL),
+        ECORE_GETOPT_STORE_DEF_BOOL
+            ('c', "encoding-detector", "enable/disable encoding detector", EINA_FALSE),
         ECORE_GETOPT_STORE_DEF_BOOL
             ('f', "flattening", "frame flattening.", EINA_FALSE),
         ECORE_GETOPT_VERSION
@@ -954,6 +957,7 @@ static Browser_Window *window_create(const char *url)
 
     Ewk_Settings *settings = ewk_view_settings_get(app_data->webview);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
+    ewk_settings_encoding_detector_enabled_set(settings, encoding_detector_enabled);
     ewk_settings_frame_flattening_enabled_set(settings, frame_flattening_enabled);
     ewk_settings_developer_extras_enabled_set(settings, EINA_TRUE);
     ewk_settings_preferred_minimum_contents_width_set(settings, 0);
@@ -1030,6 +1034,7 @@ elm_main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_STR(evas_engine_name),
         ECORE_GETOPT_VALUE_STR(window_size_string),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
+        ECORE_GETOPT_VALUE_BOOL(encoding_detector_enabled),
         ECORE_GETOPT_VALUE_BOOL(frame_flattening_enabled),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
