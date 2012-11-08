@@ -1,3 +1,16 @@
+2012-11-08  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Turn WTF_USE_TILED_BACKING_STORE in OptionsEfl.cmake.
+        https://bugs.webkit.org/show_bug.cgi?id=101559
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Follow-up to 133859; also change the default value in
+        OptionsEfl.cmake so that the default changes for people not using
+        build-webkit (ie. users) as well.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-11-08  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL] Turn on WTF_USE_TILED_BACKING_STORE by default
