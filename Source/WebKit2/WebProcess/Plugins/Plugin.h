@@ -83,6 +83,10 @@ public:
     // Sets the active plug-in controller and initializes the plug-in.
     bool initialize(PluginController*, const Parameters&);
 
+    // Forces synchronous initialization of a plugin previously initialized asynchronously.
+    virtual void waitForAsynchronousInitialization() = 0;
+    virtual bool isBeingAsynchronouslyInitialized() const = 0;
+
     // Destroys the plug-in.
     void destroyPlugin();
 

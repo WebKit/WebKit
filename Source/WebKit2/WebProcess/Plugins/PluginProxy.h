@@ -49,6 +49,8 @@ class ShareableBitmap;
 class NPVariantData;
 class PluginProcessConnection;
 
+struct PluginCreationParameters;
+
 class PluginProxy : public Plugin {
 public:
     static PassRefPtr<PluginProxy> create(const String& pluginPath);
@@ -60,11 +62,16 @@ public:
     void didReceivePluginProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments);
     void didReceiveSyncPluginProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
 
+    bool isBeingAsynchronouslyInitialized() const { return m_waitingOnAsynchronousInitialization; }
+
 private:
     explicit PluginProxy(const String& pluginPath);
 
     // Plugin
     virtual bool initialize(const Parameters&);
+    bool initializeSynchronously();
+
+    virtual void waitForAsynchronousInitialization();
     virtual void destroy();
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
     virtual PassRefPtr<ShareableBitmap> snapshot();
@@ -141,6 +148,14 @@ private:
     void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID);
 #endif
 
+    bool canInitializeAsynchronously() const;
+
+    void didCreatePlugin(bool wantsWheelEvents, uint32_t remoteLayerClientID);
+    void didFailToCreatePlugin();
+    
+    void didCreatePluginInternal(bool wantsWheelEvents, uint32_t remoteLayerClientID);
+    void didFailToCreatePluginInternal();
+
     String m_pluginPath;
 
     RefPtr<PluginProcessConnection> m_connection;
@@ -174,6 +189,9 @@ private:
 
     // The client ID for the CA layer in the plug-in process. Will be 0 if the plug-in is not a CA plug-in.
     uint32_t m_remoteLayerClientID;
+    
+    OwnPtr<PluginCreationParameters> m_pendingPluginCreationParameters;
+    bool m_waitingOnAsynchronousInitialization;
 
 #if PLATFORM(MAC)
     RetainPtr<CALayer> m_pluginLayer;

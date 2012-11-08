@@ -32,8 +32,9 @@
 #include "Attachment.h"
 #include "NetscapePlugin.h"
 #include "NetscapePluginModule.h"
-#include "PluginProcessProxyMessages.h"
+#include "PluginProcessConnectionMessages.h"
 #include "PluginProcessCreationParameters.h"
+#include "PluginProcessProxyMessages.h"
 #include "WebProcessConnection.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RunLoop.h>
@@ -74,6 +75,7 @@ PluginProcess& PluginProcess::shared()
 
 PluginProcess::PluginProcess()
     : ChildProcess(shutdownTimeout)
+    , m_supportsAsynchronousPluginInitialization(false)
 #if PLATFORM(MAC)
     , m_compositingRenderServerPort(MACH_PORT_NULL)
 #endif
@@ -159,6 +161,7 @@ void PluginProcess::initializePluginProcess(const PluginProcessCreationParameter
     ASSERT(!m_pluginModule);
 
     m_pluginPath = parameters.pluginPath;
+    m_supportsAsynchronousPluginInitialization = parameters.supportsAsynchronousPluginInitialization;
 
     platformInitialize(parameters);
 }
@@ -177,7 +180,7 @@ void PluginProcess::createWebProcessConnection()
     m_webProcessConnections.append(connection.release());
 
     CoreIPC::Attachment clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-    m_connection->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientPort), 0);
+    m_connection->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientPort, m_supportsAsynchronousPluginInitialization), 0);
 #elif USE(UNIX_DOMAIN_SOCKETS)
     int sockets[2];
     if (socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) == -1) {
@@ -209,7 +212,7 @@ void PluginProcess::createWebProcessConnection()
     m_webProcessConnections.append(connection.release());
 
     CoreIPC::Attachment clientSocket(sockets[0]);
-    m_connection->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientSocket), 0);
+    m_connection->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientSocket, m_supportsAsynchronousPluginInitialization), 0);
 #else
     notImplemented();
 #endif

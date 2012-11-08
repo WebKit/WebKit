@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,49 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PluginProcessCreationParameters.h"
+#include "PluginTest.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#include <string.h>
 
-#include "ArgumentCoders.h"
+using namespace std;
 
-namespace WebKit {
+class SlowNPPNew : public PluginTest {
+public:
+    SlowNPPNew(NPP npp, const string& identifier)
+        : PluginTest(npp, identifier)
+    {
+    }
+    
+private:
+    
+    virtual NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData *saved)
+    {
+        usleep(550000);
+        return NPERR_NO_ERROR;
+    }
+};
 
-PluginProcessCreationParameters::PluginProcessCreationParameters()
-    : supportsAsynchronousPluginInitialization(false)
-{
-}
-
-void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
-{
-    encoder->encode(pluginPath);
-    encoder->encode(supportsAsynchronousPluginInitialization);
-
-#if PLATFORM(MAC)
-    encoder->encode(parentProcessName);
-    encoder->encode(acceleratedCompositingPort);
-#endif
-}
-
-bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, PluginProcessCreationParameters& result)
-{
-    if (!decoder->decode(result.pluginPath))
-        return false;
-    if (!decoder->decode(result.supportsAsynchronousPluginInitialization))
-        return false;
-
-#if PLATFORM(MAC)
-    if (!decoder->decode(result.parentProcessName))
-        return false;
-    if (!decoder->decode(result.acceleratedCompositingPort))
-        return false;
-#endif
-
-    return true;
-}
-
-
-} // namespace WebKit
-
-#endif // ENABLE(PLUGIN_PROCESS)
+static PluginTest::Register<SlowNPPNew> slowNPPNew("slow-npp-new");

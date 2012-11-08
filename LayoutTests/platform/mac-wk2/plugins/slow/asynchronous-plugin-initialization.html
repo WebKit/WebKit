@@ -1,0 +1,49 @@
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+function createTestPlugin(testName)
+{
+    var plugin = document.createElement("embed");
+    plugin.type = "application/x-webkit-test-netscape";
+    plugin.setAttribute('test', testName);
+
+    return plugin;
+}
+
+function runTest() 
+{
+    if (!window.testRunner) {
+        debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
+        return;
+    }
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabled", "1");
+    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabledForAllPlugins", "1");
+
+    var beforeDate = new Date;
+    
+    plugin = createTestPlugin('slow-npp-new');
+    document.body.appendChild(plugin);
+    // Try to force a layout so the plug-in instantiates
+    var foo = document.body.offsetTop;
+    
+    var afterDate = new Date;
+    
+    if (afterDate - beforeDate > 500)
+        testFailed("Appending plug-in element took over 500ms (" + (afterDate - beforeDate) + "ms) so the plug-in was probably being initialized synchronously");
+    else
+        testPassed("Appending plug-in element took under 500ms, plug-in initializing asynchronously.");
+    
+    testRunner.notifyDone();
+}
+
+description("Test that loading a slow loading plug-in (550ms second sleep in NPP_new) doesn't block the WebProcess");
+
+</script>
