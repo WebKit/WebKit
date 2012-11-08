@@ -436,49 +436,33 @@ WebInspector.DataGrid.prototype = {
     },
 
     /**
-     * @param {number=} maxDescentLevel
+     * @param {Array<number>} widths
+     * @param {number} minPercent
+     * @param {number=} maxPercent
      */
-    autoSizeColumns: function(minPercent, maxPercent, maxDescentLevel)
+    _autoSizeWidths: function(widths, minPercent, maxPercent)
     {
         if (minPercent)
-            minPercent = Math.min(minPercent, Math.floor(100 / this._columnCount));
-        var widths = {};
-        var columns = this.columns;
-        for (var columnIdentifier in columns)
-            widths[columnIdentifier] = (columns[columnIdentifier].title || "").length;
-
-        maxDescentLevel = maxDescentLevel || 0;
-        var children = this._enumerateChildren(this._rootNode, [], maxDescentLevel + 1);
-        for (var i = 0; i < children.length; ++i) {
-            var node = children[i];
-            for (var columnIdentifier in columns) {
-                var text = node.data[columnIdentifier] || "";
-                if (text.length > widths[columnIdentifier])
-                    widths[columnIdentifier] = text.length;
-            }
-        }
-
-        var totalColumnWidths = 0;
-        for (var columnIdentifier in columns)
-            totalColumnWidths += widths[columnIdentifier];
-
-        var recoupPercent = 0;
-        for (var columnIdentifier in columns) {
-            var width = Math.round(100 * widths[columnIdentifier] / totalColumnWidths);
-            if (minPercent && width < minPercent) {
-                recoupPercent += (minPercent - width);
+            minPercent = Math.min(minPercent, Math.floor(100 / widths.length));
+        var totalWidth = 0;
+        for (var i = 0; i < widths.length; ++i)
+            totalWidth += widths[i];
+        var totalPercentWidth = 0;
+        for (var i = 0; i < widths.length; ++i) {
+            var width = Math.round(100 * widths[i] / totalWidth);
+            if (minPercent && width < minPercent)
                 width = minPercent;
-            } else if (maxPercent && width > maxPercent) {
-                recoupPercent -= (width - maxPercent);
+            else if (maxPercent && width > maxPercent)
                 width = maxPercent;
-            }
-            widths[columnIdentifier] = width;
+            totalPercentWidth += width;
+            widths[i] = width;
         }
+        var recoupPercent = totalPercentWidth - 100;
 
         while (minPercent && recoupPercent > 0) {
-            for (var columnIdentifier in columns) {
-                if (widths[columnIdentifier] > minPercent) {
-                    --widths[columnIdentifier];
+            for (var i = 0; i < widths.length; ++i) {
+                if (widths[i] > minPercent) {
+                    --widths[i];
                     --recoupPercent;
                     if (!recoupPercent)
                         break;
@@ -487,9 +471,9 @@ WebInspector.DataGrid.prototype = {
         }
 
         while (maxPercent && recoupPercent < 0) {
-            for (var columnIdentifier in columns) {
-                if (widths[columnIdentifier] < maxPercent) {
-                    ++widths[columnIdentifier];
+            for (var i = 0; i < widths.length; ++i) {
+                if (widths[i] < maxPercent) {
+                    ++widths[i];
                     ++recoupPercent;
                     if (!recoupPercent)
                         break;
@@ -497,8 +481,36 @@ WebInspector.DataGrid.prototype = {
             }
         }
 
-        for (var columnIdentifier in columns)
-            columns[columnIdentifier].element.style.width = widths[columnIdentifier] + "%";
+        return widths;
+    },
+
+    /**
+     * @param {number} minPercent
+     * @param {number=} maxPercent
+     * @param {number=} maxDescentLevel
+     */
+    autoSizeColumns: function(minPercent, maxPercent, maxDescentLevel)
+    {
+        var widths = [];
+        var columnIdentifiers = Object.keys(this.columns);
+        for (var i = 0; i < columnIdentifiers.length; ++i)
+            widths[i] = (this.columns[columnIdentifiers[i]].title || "").length;
+
+        maxDescentLevel = maxDescentLevel || 0;
+        var children = this._enumerateChildren(this._rootNode, [], maxDescentLevel + 1);
+        for (var i = 0; i < children.length; ++i) {
+            var node = children[i];
+            for (var j = 0; j < columnIdentifiers.length; ++j) {
+                var text = node.data[columnIdentifiers[j]] || "";
+                if (text.length > widths[j])
+                    widths[j] = text.length;
+            }
+        }
+
+        widths = this._autoSizeWidths(widths, minPercent, maxPercent);
+
+        for (var i = 0; i < columnIdentifiers.length; ++i)
+            this.columns[columnIdentifiers[i]].element.style.width = widths[i] + "%";
         this._columnWidthsInitialized = false;
         this.updateWidths();
     },

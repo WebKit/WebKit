@@ -1,3 +1,13 @@
+2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Infinite loop in DataGrid::autoSizeColumn
+        https://bugs.webkit.org/show_bug.cgi?id=101363
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/datagrid-autosize-expected.txt: Added.
+        * inspector/datagrid-autosize.html: Added.
+
 2012-11-07  Keishi Hattori  <keishi@webkit.org>
 
         Implement week picking to calendar picker
