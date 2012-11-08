@@ -4581,7 +4581,7 @@ void StyleResolver::loadPendingSVGDocuments()
         return;
 
     CachedResourceLoader* cachedResourceLoader = m_element->document()->cachedResourceLoader();
-    Vector<RefPtr<FilterOperation> >& filterOperations = m_style->filter().operations();
+    Vector<RefPtr<FilterOperation> >& filterOperations = m_style->mutableFilter().operations();
     for (unsigned i = 0; i < filterOperations.size(); ++i) {
         RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
         if (filterOperation->getOperationType() == FilterOperation::REFERENCE) {
@@ -4625,7 +4625,7 @@ void StyleResolver::loadPendingShaders()
 
     CachedResourceLoader* cachedResourceLoader = m_element->document()->cachedResourceLoader();
 
-    Vector<RefPtr<FilterOperation> >& filterOperations = m_style->filter().operations();
+    Vector<RefPtr<FilterOperation> >& filterOperations = m_style->mutableFilter().operations();
     for (unsigned i = 0; i < filterOperations.size(); ++i) {
         RefPtr<FilterOperation> filterOperation = filterOperations.at(i);
         if (filterOperation->getOperationType() == FilterOperation::CUSTOM) {

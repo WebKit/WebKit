@@ -1,3 +1,22 @@
+2012-11-08  Andreas Kling  <kling@webkit.org>
+
+        4.68MB below RenderStyle::filter() on Membuster3.
+        <http://webkit.org/b/101624>
+        <rdar://problem/12663822>
+
+        Reviewed by Darin Adler.
+
+        Rename the non-const RenderStyle::filter() to mutableFilter() since using it causes us to detach
+        from the rare non-inherited data (copy-on-write.)
+        Most call sites were calling filter() on a RenderStyle* which was causing the bloat.
+
+        4.68MB progression on Membuster3.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingSVGDocuments):
+        (WebCore::StyleResolver::loadPendingShaders):
+        * rendering/style/RenderStyle.h:
+
 2012-11-08  Alexey Proskuryakov  <ap@apple.com>
 
         Create loader/blackberry directory, because svn-apply cannot apply a patch that
