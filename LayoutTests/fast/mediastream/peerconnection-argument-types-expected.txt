@@ -44,11 +44,11 @@ PASS new webkitPeerConnection00("TURN NONE",emptyFunction) did not throw excepti
 PASS new webkitPeerConnection00("TURNS NONE",emptyFunction) did not throw exception.
 PASS new webkitPeerConnection00("STUN NONE",emptyFunction) did not throw exception.
 PASS new webkitPeerConnection00("STUNS NONE",emptyFunction) did not throw exception.
-PASS new webkitPeerConnection00("TURN NONE",undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS new webkitPeerConnection00("TURNS NONE",{}) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS new webkitPeerConnection00("STUN NONE",42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS new webkitPeerConnection00("STUNS NONE",Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS new webkitPeerConnection00("STUNS NONE",-Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS new webkitPeerConnection00("TURN NONE",undefined) threw exception TypeError: Type error.
+PASS new webkitPeerConnection00("TURNS NONE",{}) threw exception TypeError: Type error.
+PASS new webkitPeerConnection00("STUN NONE",42) threw exception TypeError: Type error.
+PASS new webkitPeerConnection00("STUNS NONE",Infinity) threw exception TypeError: Type error.
+PASS new webkitPeerConnection00("STUNS NONE",-Infinity) threw exception TypeError: Type error.
 PASS successfullyParsed is true
 
 TEST COMPLETE

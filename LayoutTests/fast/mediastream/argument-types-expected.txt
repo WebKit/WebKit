@@ -22,26 +22,26 @@ PASS navigator.webkitGetUserMedia(42, emptyFunction) threw exception TypeError: 
 PASS navigator.webkitGetUserMedia(Infinity, emptyFunction) threw exception TypeError: Not an object..
 PASS navigator.webkitGetUserMedia(-Infinity, emptyFunction) threw exception TypeError: Not an object..
 PASS navigator.webkitGetUserMedia(emptyFunction, emptyFunction) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
-PASS navigator.webkitGetUserMedia({video: true}, "foobar") threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS navigator.webkitGetUserMedia({video: true}, undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS navigator.webkitGetUserMedia({video: true}, null) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS navigator.webkitGetUserMedia({video: true}, {}) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS navigator.webkitGetUserMedia({video: true}, true) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS navigator.webkitGetUserMedia({video: true}, 42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS navigator.webkitGetUserMedia({video: true}, Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS navigator.webkitGetUserMedia({video: true}, -Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia({video: true}, "foobar") threw exception TypeError: Type error.
+PASS navigator.webkitGetUserMedia({video: true}, undefined) threw exception TypeError: Type error.
+PASS navigator.webkitGetUserMedia({video: true}, null) threw exception TypeError: Type error.
+PASS navigator.webkitGetUserMedia({video: true}, {}) threw exception TypeError: Type error.
+PASS navigator.webkitGetUserMedia({video: true}, true) threw exception TypeError: Type error.
+PASS navigator.webkitGetUserMedia({video: true}, 42) threw exception TypeError: Type error.
+PASS navigator.webkitGetUserMedia({video: true}, Infinity) threw exception TypeError: Type error.
+PASS navigator.webkitGetUserMedia({video: true}, -Infinity) threw exception TypeError: Type error.
 PASS navigator.webkitGetUserMedia({ }, emptyFunction, emptyFunction) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, emptyFunction) did not throw exception.
 PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, undefined) did not throw exception.
 PASS navigator.webkitGetUserMedia({audio:true, video:true}, emptyFunction, undefined) did not throw exception.
 PASS navigator.webkitGetUserMedia({audio:true}, emptyFunction, undefined) did not throw exception.
-PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, "video") threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, "video") threw exception TypeError: Type error.
 PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, null) did not throw exception.
-PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, {}) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, true) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, 42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, -Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, {}) threw exception TypeError: Type error.
+PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, true) threw exception TypeError: Type error.
+PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, 42) threw exception TypeError: Type error.
+PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, Infinity) threw exception TypeError: Type error.
+PASS navigator.webkitGetUserMedia({video: true}, emptyFunction, -Infinity) threw exception TypeError: Type error.
 PASS successfullyParsed is true
 
 TEST COMPLETE

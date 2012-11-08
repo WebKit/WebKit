@@ -3,9 +3,9 @@ description("Tests the acceptable types for arguments to method for PeerConnecti
 function test(expression, expressionShouldThrow, expectedException) {
     if (expressionShouldThrow) {
         if (expectedException)
-            shouldThrow(expression, '(function() { return "' + expectedException + '"; })();');
+            shouldThrow(expression, '"' + expectedException + '"');
         else
-            shouldThrow(expression, '(function() { return "Error: TYPE_MISMATCH_ERR: DOM Exception 17"; })();');
+            shouldThrow(expression, '"TypeError: Type error"');
     } else {
         shouldNotThrow(expression);
     }
