@@ -72,18 +72,14 @@ void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 
 void DOMDataStore::weakCallback(v8::Persistent<v8::Value> value, void* context)
 {
-    ScriptWrappable* key = static_cast<ScriptWrappable*>(context);
+    Node* object = static_cast<Node*>(context);
     ASSERT(value->IsObject());
-    v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
-    ASSERT(key->wrapper() == wrapper);
-    // Note: |object| might not be equal to |key|, e.g., if ScriptWrappable isn't a left-most base class.
-    void* object = toNative(wrapper);
-    WrapperTypeInfo* info = toWrapperTypeInfo(wrapper);
+    ASSERT(object->wrapper() == v8::Persistent<v8::Object>::Cast(value));
 
-    key->clearWrapper();
+    object->clearWrapper();
     value.Dispose();
     value.Clear();
-    info->derefObject(object);
+    object->deref();
 }
 
 } // namespace WebCore

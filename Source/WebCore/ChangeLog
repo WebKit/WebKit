@@ -1,3 +1,19 @@
+2012-11-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133810.
+        http://trac.webkit.org/changeset/133810
+        https://bugs.webkit.org/show_bug.cgi?id=101520
+
+        This patch made ws_single_peak_r regress by 15% (Requested by
+        abarth on #webkit).
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::weakCallback):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::get):
+        (WebCore::DOMDataStore::set):
+        (DOMDataStore):
+
 2012-11-07  Elliott Sprehn  <esprehn@chromium.org>
 
         Clean up confused use of Document::renderer and renderView
