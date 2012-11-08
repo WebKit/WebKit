@@ -1,3 +1,22 @@
+2012-11-07  Philip Rogers  <pdr@google.com>
+
+        Rebaselinene after external SVG unblocked in WK100485
+        https://bugs.webkit.org/show_bug.cgi?id=101248
+
+        Unreviewed update of test expectations.
+
+        * platform/chromium-linux/svg/dynamic-updates/SVGUseElement-dom-href1-attr-expected.png: Added property svn:mime-type.
+        * platform/chromium-linux/svg/dynamic-updates/SVGUseElement-svgdom-href1-prop-expected.png: Added property svn:mime-type.
+        * platform/chromium-mac-lion/svg/dynamic-updates/SVGUseElement-dom-href1-attr-expected.png: Added.
+        * platform/chromium-mac-lion/svg/dynamic-updates/SVGUseElement-svgdom-href1-prop-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGUseElement-dom-href1-attr-expected.png: Added property svn:mime-type.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGUseElement-svgdom-href1-prop-expected.png: Added property svn:mime-type.
+        * platform/chromium-mac/svg/dynamic-updates/SVGUseElement-dom-href1-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGUseElement-svgdom-href1-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGUseElement-dom-href1-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGUseElement-svgdom-href1-prop-expected.png: Added property svn:mime-type.
+        * platform/chromium/TestExpectations:
+
 2012-11-07  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, update chromium-mac-mountainlion baselines for css2.1

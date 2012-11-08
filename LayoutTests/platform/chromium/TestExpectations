@@ -1376,10 +1376,6 @@ webkit.org/b/84719 [ Win ] svg/text/select-text-svgfont.html [ Failure Pass ]
 webkit.org/b/84854 [ Android Linux ] svg/batik/text/textOnPath.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/84854 [ Android Linux ] svg/batik/text/verticalTextOnPath.svg [ ImageOnlyFailure Pass ]
 
-# Just need a rebaseline.
-webkit.org/b/101248 svg/dynamic-updates/SVGUseElement-dom-href1-attr.html [ ImageOnlyFailure ]
-webkit.org/b/101248 svg/dynamic-updates/SVGUseElement-svgdom-href1-prop.html [ ImageOnlyFailure ]
-
 webkit.org/b/85107 svg/as-image/svg-as-relative-image-with-explicit-size.html [ ImageOnlyFailure Pass ]
 webkit.org/b/85107 svg/as-image/animated-svg-as-image.html [ ImageOnlyFailure Pass ]
 
