@@ -38,3 +38,6 @@ qnx {
 mac {
     LIBS += -framework AppKit
 }
+
+# MSVC is lacking stdint.h as well as inttypes.h.
+win32-msvc*|win32-icc|wince*: INCLUDEPATH += $$ROOT_WEBKIT_DIR/Source/JavaScriptCore/os-win32

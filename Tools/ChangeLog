@@ -1,3 +1,27 @@
+2012-11-08  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Fix build with MSVC 2012 and Angle
+        https://bugs.webkit.org/show_bug.cgi?id=101588
+
+        Reviewed by Tor Arne Vestbø.
+
+        Angle includes STL's <memory> header file, which with MSVC 2012 includes stdint.h. MSVC 2012
+        does ship stdint.h, but it's lacking other headers such as inttypes.h.
+
+        So for the rest of WebKit we have to continue to use our own versions of these files from
+        JavaScriptCore/os-win32. But for Angle we are just including a shipped STL header file (memory)
+        and so it's up to the compiler to make that work, i.e. using the stdint.h it ships.
+
+        This patch moves the addition of JavaScriptCore/os-win32 out of default_post.prf, so that it
+        doesn't apply to each and every target anymore. In particular it won't apply to Angle anymore,
+        because its presence causes a build issue where due to the addition of os-win32/ we end up
+        including our own stdint.h but are lacking WTF/ to be in the include search path (which our own
+        stdint.h requires). So out of default_post.prf and into WTF.pri, our own wrappers are now only
+        used where WTF is also needed, and since os-win32/stdint.h depends on wtf/Platform.h, it seems
+        like a logical location.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2012-11-08  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Unreviewed, rolling out r133859.
