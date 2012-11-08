@@ -1,32 +1,6 @@
 2012-11-07  Dirk Pranke  <dpranke@chromium.org>
 
-        Unreviewed, fix mistakenly added pngs for failing compositing ref tests :(.
-
-        * platform/chromium-mac/compositing/text-on-scaled-layer-expected.png: Removed.
-        * platform/chromium-mac/compositing/text-on-scaled-surface-expected.png: Removed.
-        * platform/chromium/TestExpectations:
-
-2012-11-07  Dirk Pranke  <dpranke@chromium.org>
-
-        Unreviewed, clean up chromium-mac-mountainlion for remaining compositing, css3 (non selectors3) tests.
-
-        * platform/chromium-mac-lion/css3/css3-modsel-33-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/css3-modsel-33-expected.png.
-        * platform/chromium-mac-lion/css3/css3-modsel-35-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/css3-modsel-35-expected.png.
-        * platform/chromium-mac-lion/css3/css3-modsel-36-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/css3-modsel-36-expected.png.
-        * platform/chromium-mac-lion/css3/css3-modsel-37-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/css3-modsel-37-expected.png.
-        * platform/chromium-mac-lion/css3/flexbox/repaint-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/flexbox/repaint-expected.png.
-        * platform/chromium-mac-lion/css3/font-feature-settings-rendering-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/font-feature-settings-rendering-expected.png.
-        * platform/chromium-mac-lion/css3/unicode-bidi-isolate-basic-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/unicode-bidi-isolate-basic-expected.png.
-        * platform/chromium-mac-mountainlion/TestExpectations:
-        * platform/chromium-mac/compositing/text-on-scaled-layer-expected.png: Added.
-        * platform/chromium-mac/compositing/text-on-scaled-surface-expected.png: Added.
-        * platform/chromium-mac/css3/css3-modsel-33-expected.png:
-        * platform/chromium-mac/css3/css3-modsel-35-expected.png:
-        * platform/chromium-mac/css3/css3-modsel-36-expected.png:
-        * platform/chromium-mac/css3/css3-modsel-37-expected.png:
-        * platform/chromium-mac/css3/flexbox/repaint-expected.png:
-        * platform/chromium-mac/css3/font-feature-settings-rendering-expected.png:
-        * platform/chromium-mac/css3/unicode-bidi-isolate-basic-expected.png:
+        Unreviewed, new chromium-mac-mountainlion baselines for css3/selectors3.
 
 2012-11-07  Dirk Pranke  <dpranke@chromium.org>
 
