@@ -4,6 +4,10 @@ description(
 
 var element = document.createElement("input");
 
+shouldThrow('element.setAttributeNode();');
+shouldThrow('element.setAttributeNodeNS();');
+shouldThrow('element.removeAttributeNode();');
+
 shouldThrow('element.setAttributeNode("style");');
 shouldThrow('element.setAttributeNode(null);');
 shouldThrow('element.setAttributeNode(undefined);');

@@ -33,9 +33,9 @@
         raises(DOMException);
     void removeAttribute(in [Optional=DefaultIsUndefined] DOMString name);
     Attr getAttributeNode(in [Optional=DefaultIsUndefined] DOMString name);
-    Attr setAttributeNode(in [Optional=DefaultIsUndefined] Attr newAttr)
+    Attr setAttributeNode(in Attr newAttr)
         raises(DOMException);
-    Attr removeAttributeNode(in [Optional=DefaultIsUndefined] Attr oldAttr)
+    Attr removeAttributeNode(in Attr oldAttr)
         raises(DOMException);
     NodeList getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString name);
 
@@ -53,7 +53,7 @@
                                                    in [Optional=DefaultIsUndefined] DOMString localName);
     [ObjCLegacyUnnamedParameters] Attr getAttributeNodeNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
                                            in [Optional=DefaultIsUndefined] DOMString localName);
-    Attr setAttributeNodeNS(in [Optional=DefaultIsUndefined] Attr newAttr)
+    Attr setAttributeNodeNS(in Attr newAttr)
         raises(DOMException);
     boolean hasAttribute(in DOMString name);
     [ObjCLegacyUnnamedParameters] boolean hasAttributeNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,

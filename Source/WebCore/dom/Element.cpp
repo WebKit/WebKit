@@ -1521,7 +1521,7 @@ void Element::formatForDebugger(char* buffer, unsigned length) const
 PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
 {
     if (!attrNode) {
-        ec = TYPE_MISMATCH_ERR;
+        ec = NATIVE_TYPE_ERR;
         return 0;
     }
 
@@ -1563,7 +1563,7 @@ PassRefPtr<Attr> Element::setAttributeNodeNS(Attr* attr, ExceptionCode& ec)
 PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
 {
     if (!attr) {
-        ec = TYPE_MISMATCH_ERR;
+        ec = NATIVE_TYPE_ERR;
         return 0;
     }
     if (attr->ownerElement() != this) {

@@ -1,3 +1,19 @@
+2012-11-08  Erik Arvidsson  <arv@chromium.org>
+
+        setAttributeNode and friends should not have optional argument
+        https://bugs.webkit.org/show_bug.cgi?id=101631
+
+        Reviewed by Ojan Vafai.
+
+        Fix getAttributeNode, getAttributeNodeNS and removeAttributeNode to make the Attr
+        argument mandatory.
+
+        These used to throw DOMExceptions when an invalid type was passed instead of
+        TypeError which is also a spec violation.
+
+        * fast/dom/Element/attr-param-typechecking-expected.txt:
+        * fast/dom/Element/script-tests/attr-param-typechecking.js:
+
 2012-11-08  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Unreviewed gardening.
