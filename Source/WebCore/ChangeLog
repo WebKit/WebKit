@@ -1,3 +1,23 @@
+2012-11-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r133429.
+        http://trac.webkit.org/changeset/133429
+        https://bugs.webkit.org/show_bug.cgi?id=101173
+
+        Speculative roll out, investigating perf regression.
+
+        * dom/ContextFeatures.cpp:
+        * dom/ContextFeatures.h:
+        * dom/Position.cpp:
+        (WebCore::Position::Position):
+        (WebCore::Position::findParent):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::getSelection):
+        * html/HTMLTagNames.in:
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::contentTagName):
+        * page/DOMWindow.idl:
+
 2012-11-07  Emil A Eklund  <eae@chromium.org>
 
         Fix enclosingLayoutRect calls in InlineFlowBox.h

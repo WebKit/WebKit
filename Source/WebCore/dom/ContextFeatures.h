@@ -40,7 +40,6 @@ class ContextFeatures : public RefCountedSupplement<Page, ContextFeatures> {
 public:
     enum FeatureType {
         DialogElement = 0,
-        ShadowDOM,
         StyleScoped,
         PagePopup,
         HTMLNotifications,
@@ -54,7 +53,6 @@ public:
     static PassRefPtr<ContextFeatures> create(ContextFeaturesClient*);
 
     static bool dialogElementEnabled(Document*);
-    static bool shadowDOMEnabled(Document*);
     static bool styleScopedEnabled(Document*);
     static bool pagePopupEnabled(Document*);
     static bool htmlNotificationsEnabled(Document*);
