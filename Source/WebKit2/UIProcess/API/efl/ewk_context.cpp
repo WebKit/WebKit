@@ -201,6 +201,13 @@ Ewk_Cache_Model EwkContext::cacheModel() const
     return static_cast<Ewk_Cache_Model>(m_context->cacheModel());
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+void EwkContext::setAdditionalPluginPath(const String& path)
+{
+    m_webContext->setAdditionalPluginsDirectory(path);
+}
+#endif
+
 Ewk_Cookie_Manager* ewk_context_cookie_manager_get(const Ewk_Context* ewkContext)
 {
     EWK_OBJ_GET_IMPL_OR_RETURN(const EwkContext, ewkContext, impl, 0);
@@ -310,3 +317,15 @@ Ewk_Cache_Model ewk_context_cache_model_get(const Ewk_Context* ewkContext)
     return impl->cacheModel();
 }
 
+Eina_Bool ewk_context_additional_plugin_path_set(Ewk_Context* ewkContext, const char* path)
+{
+    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(path, false);
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    impl->setAdditionalPluginPath(String::fromUTF8(path));
+    return true;
+#else
+    return false;
+#endif
+}

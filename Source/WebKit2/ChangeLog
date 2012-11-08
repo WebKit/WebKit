@@ -1,3 +1,21 @@
+2012-11-08  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL][WK2] Add ewk_context_additional_plugin_path_set API
+        https://bugs.webkit.org/show_bug.cgi?id=101530
+
+        Reviewed by Gyuyoung Kim.
+
+        Add ewk_context_additional_plugin_path_set() to set additional plugin directory.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::setAdditionalPluginPath):
+        (ewk_context_additional_plugin_path_set):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        (EwkContext):
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        (TEST_F):
+
 2012-11-08  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Use explicit constructor in BatteryProvider, DownloadManagerEfl, NetworkInfoProvider

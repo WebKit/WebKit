@@ -124,3 +124,16 @@ TEST_F(EWK2UnitTestBase, ewk_context_new_with_injected_bundle_path)
     ASSERT_TRUE(context);
     ewk_object_unref(context);
 }
+
+TEST_F(EWK2UnitTestBase, ewk_context_additional_plugin_path_set)
+{
+    Ewk_Context* context = ewk_view_context_get(webView());
+
+    char* path = 0;
+    ASSERT_FALSE(ewk_context_additional_plugin_path_set(context, path));
+
+    path = "/plugins";
+    ASSERT_TRUE(ewk_context_additional_plugin_path_set(context, path));
+
+    /* FIXME: Get additional plugin path and compare with the path. */
+}

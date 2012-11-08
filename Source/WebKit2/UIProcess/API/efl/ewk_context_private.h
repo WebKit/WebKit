@@ -78,6 +78,10 @@ public:
 
     WebKit::ContextHistoryClientEfl* historyClient();
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    void setAdditionalPluginPath(const String&);
+#endif
+
 private:
     explicit EwkContext(PassRefPtr<WebContext>);
 

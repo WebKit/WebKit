@@ -301,6 +301,16 @@ EAPI Eina_Bool ewk_context_cache_model_set(Ewk_Context *context, Ewk_Cache_Model
  */
 EAPI Ewk_Cache_Model ewk_context_cache_model_get(const Ewk_Context *context);
 
+/**
+ * Sets additional plugin path for @a context.
+ *
+ * @param context context object to set additional plugin path
+ * @param path the path to be used for plugins
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_context_additional_plugin_path_set(Ewk_Context *context, const char *path);
+
 #ifdef __cplusplus
 }
 #endif
