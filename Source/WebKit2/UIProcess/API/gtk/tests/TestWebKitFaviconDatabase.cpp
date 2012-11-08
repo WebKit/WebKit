@@ -36,11 +36,10 @@ public:
         : m_webContext(webkit_web_context_get_default())
         , m_favicon(0)
         , m_error(0)
-        , m_iconReadySignalReceived(false)
         , m_faviconNotificationReceived(false)
     {
         WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(m_webContext);
-        g_signal_connect(database, "favicon-ready", G_CALLBACK(iconReadyCallback), this);
+        g_signal_connect(database, "favicon-changed", G_CALLBACK(faviconChangedCallback), this);
     }
 
     ~FaviconDatabaseTest()
@@ -52,13 +51,13 @@ public:
         g_signal_handlers_disconnect_matched(database, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
     }
 
-    static void iconReadyCallback(WebKitFaviconDatabase* database, const char* pageURI, FaviconDatabaseTest* test)
+    static void faviconChangedCallback(WebKitFaviconDatabase* database, const char* pageURI, const char* faviconURI, FaviconDatabaseTest* test)
     {
-        g_assert_cmpstr(webkit_web_view_get_uri(test->m_webView), ==, pageURI);
-        test->m_iconReadySignalReceived = true;
+        if (!g_strcmp0(webkit_web_view_get_uri(test->m_webView), pageURI))
+            test->m_faviconURI = faviconURI;
     }
 
-    static void faviconChangedCallback(WebKitWebView* webView, GParamSpec* pspec, gpointer data)
+    static void viewFaviconChangedCallback(WebKitWebView* webView, GParamSpec* pspec, gpointer data)
     {
         FaviconDatabaseTest* test = static_cast<FaviconDatabaseTest*>(data);
         g_assert(test->m_webView == webView);
@@ -77,7 +76,7 @@ public:
     void waitUntilFaviconChanged()
     {
         m_faviconNotificationReceived = false;
-        unsigned long handlerID = g_signal_connect(m_webView, "notify::favicon", G_CALLBACK(faviconChangedCallback), this);
+        unsigned long handlerID = g_signal_connect(m_webView, "notify::favicon", G_CALLBACK(viewFaviconChangedCallback), this);
         g_main_loop_run(m_mainLoop);
         g_signal_handler_disconnect(m_webView, handlerID);
     }
@@ -89,6 +88,7 @@ public:
             cairo_surface_destroy(m_favicon);
             m_favicon = 0;
         }
+
         WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(m_webContext);
         webkit_favicon_database_get_favicon(database, pageURI, 0, getFaviconCallback, this);
         g_main_loop_run(m_mainLoop);
@@ -96,8 +96,8 @@ public:
 
     WebKitWebContext* m_webContext;
     cairo_surface_t* m_favicon;
+    CString m_faviconURI;
     GOwnPtr<GError> m_error;
-    bool m_iconReadySignalReceived;
     bool m_faviconNotificationReceived;
 };
 
@@ -109,29 +109,34 @@ serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHash
         return;
     }
 
-    char* contents;
-    gsize length;
     if (g_str_equal(path, "/favicon.ico")) {
-        GOwnPtr<char> pathToFavicon(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "blank.ico", NULL));
-        g_file_get_contents(pathToFavicon.get(), &contents, &length, 0);
-    } else if (g_str_equal(path, "/nofavicon/favicon.ico")) {
         soup_message_set_status(message, SOUP_STATUS_NOT_FOUND);
         soup_message_body_complete(message->response_body);
         return;
+    }
+
+    char* contents;
+    gsize length;
+    if (g_str_equal(path, "/icon/favicon.ico")) {
+        GOwnPtr<char> pathToFavicon(g_build_filename(Test::getWebKit1TestResoucesDir().data(), "blank.ico", NULL));
+        g_file_get_contents(pathToFavicon.get(), &contents, &length, 0);
+        soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, length);
+    } else if (g_str_equal(path, "/nofavicon")) {
+        static const char* noFaviconHTML = "<html><head><body>test</body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, noFaviconHTML, strlen(noFaviconHTML));
     } else {
-        contents = g_strdup("<html><body>test</body></html>");
-        length = strlen(contents);
+        static const char* contentsHTML = "<html><head><link rel='icon' href='/icon/favicon.ico' type='image/x-ico; charset=binary'></head><body>test</body></html>";
+        soup_message_body_append(message->response_body, SOUP_MEMORY_STATIC, contentsHTML, strlen(contentsHTML));
     }
 
     soup_message_set_status(message, SOUP_STATUS_OK);
-    soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, contents, length);
     soup_message_body_complete(message->response_body);
 }
 
 static void testNotInitialized(FaviconDatabaseTest* test, gconstpointer)
 {
     // Try to retrieve a valid favicon from a not initialized database.
-    test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/").data());
+    test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").data());
     g_assert(!test->m_favicon);
     g_assert(test->m_error);
     g_assert_cmpint(test->m_error->code, ==, WEBKIT_FAVICON_DATABASE_ERROR_NOT_INITIALIZED);
@@ -156,39 +161,50 @@ static void testGetFavicon(FaviconDatabaseTest* test, gconstpointer)
 {
     // We need to load the page first to ensure the icon data will be
     // in the database in case there's an associated favicon.
-    test->loadURI(kServer->getURIForPath("/").data());
+    test->loadURI(kServer->getURIForPath("/foo").data());
     test->waitUntilFaviconChanged();
-    g_assert(test->m_iconReadySignalReceived);
+    CString faviconURI = kServer->getURIForPath("/icon/favicon.ico");
 
     // Check the API retrieving a valid favicon.
-    test->m_iconReadySignalReceived = false;
-    test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/").data());
+    test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").data());
     g_assert(test->m_favicon);
+    g_assert_cmpstr(test->m_faviconURI.data(), ==, faviconURI.data());
     g_assert(!test->m_error);
-    g_assert(!test->m_iconReadySignalReceived);
 
     // Check that width and height match those from blank.ico (16x16 favicon).
     g_assert_cmpint(cairo_image_surface_get_width(test->m_favicon), ==, 16);
     g_assert_cmpint(cairo_image_surface_get_height(test->m_favicon), ==, 16);
 
+    // Check that another page with the same favicon return the same icon.
+    cairo_surface_t* favicon = cairo_surface_reference(test->m_favicon);
+    test->loadURI(kServer->getURIForPath("/bar").data());
+    // It's a new page in the database, so favicon will change twice, first to reset it
+    // and then when the icon is loaded.
+    test->waitUntilFaviconChanged();
+    test->waitUntilFaviconChanged();
+    test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/bar").data());
+    g_assert(test->m_favicon);
+    g_assert_cmpstr(test->m_faviconURI.data(), ==, faviconURI.data());
+    g_assert(test->m_favicon == favicon);
+    g_assert(!test->m_error);
+    cairo_surface_destroy(favicon);
+
     // Check the API retrieving an invalid favicon.
     test->loadURI(kServer->getURIForPath("/nofavicon").data());
     test->waitUntilFaviconChanged();
-    g_assert(!test->m_iconReadySignalReceived);
 
-    test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/nofavicon/").data());
+    test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/nofavicon").data());
     g_assert(!test->m_favicon);
     g_assert(test->m_error);
-    g_assert(!test->m_iconReadySignalReceived);
 }
 
 static void testGetFaviconURI(FaviconDatabaseTest* test, gconstpointer)
 {
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext);
 
-    const char* baseURI = kServer->getURIForPath("/").data();
+    const char* baseURI = kServer->getURIForPath("/foo").data();
     GOwnPtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, baseURI));
-    g_assert_cmpstr(iconURI.get(), ==, kServer->getURIForPath("/favicon.ico").data());
+    g_assert_cmpstr(iconURI.get(), ==, kServer->getURIForPath("/icon/favicon.ico").data());
 }
 
 static void testWebViewFavicon(FaviconDatabaseTest* test, gconstpointer)
@@ -196,9 +212,12 @@ static void testWebViewFavicon(FaviconDatabaseTest* test, gconstpointer)
     cairo_surface_t* iconFromWebView = webkit_web_view_get_favicon(test->m_webView);
     g_assert(!iconFromWebView);
 
-    test->loadURI(kServer->getURIForPath("/").data());
+    test->loadURI(kServer->getURIForPath("/foo").data());
     test->waitUntilFaviconChanged();
     g_assert(test->m_faviconNotificationReceived);
+    // The icon is known and hasn't changed in the database, so notify::favicon is emitted
+    // but WebKitFaviconDatabase::icon-changed isn't.
+    g_assert(test->m_faviconURI.isNull());
 
     iconFromWebView = webkit_web_view_get_favicon(test->m_webView);
     g_assert(iconFromWebView);
@@ -220,8 +239,8 @@ void beforeAll()
     FaviconDatabaseTest::add("WebKitFaviconDatabase", "set-directory", testSetDirectory);
     FaviconDatabaseTest::add("WebKitFaviconDatabase", "get-favicon", testGetFavicon);
     FaviconDatabaseTest::add("WebKitFaviconDatabase", "get-favicon-uri", testGetFaviconURI);
-    FaviconDatabaseTest::add("WebKitFaviconDatabase", "clear-database", testClearDatabase);
     FaviconDatabaseTest::add("WebKitWebView", "favicon", testWebViewFavicon);
+    FaviconDatabaseTest::add("WebKitFaviconDatabase", "clear-database", testClearDatabase);
 }
 
 static void webkitFaviconDatabaseFinalizedCallback(gpointer, GObject*)

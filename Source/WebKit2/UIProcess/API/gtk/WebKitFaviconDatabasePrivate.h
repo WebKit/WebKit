@@ -22,9 +22,7 @@
 
 #include "WebIconDatabase.h"
 #include "WebKitFaviconDatabase.h"
-#include <wtf/text/CString.h>
 
 WebKitFaviconDatabase* webkitFaviconDatabaseCreate(WebKit::WebIconDatabase*);
-cairo_surface_t* webkitFaviconDatabaseGetFavicon(WebKitFaviconDatabase*, const CString&);
 
 #endif // WebKitFaviconDatabasePrivate_h

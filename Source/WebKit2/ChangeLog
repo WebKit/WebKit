@@ -1,3 +1,64 @@
+2012-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebKitWebView doesn't notify of favicon changes for known favicons but new pages
+        https://bugs.webkit.org/show_bug.cgi?id=98874
+
+        Reviewed by Martin Robinson.
+
+        If the page is unknown (not registered in the icon database) but
+        the icon is known (registered by another page) favicon-ready
+        signal is not emitted because the icon has already been imported
+        from the database. The view always asks for the favicon when the
+        load has been committed, but it's usually too early and the
+        favicon of the page is still unkown. We can use
+        didChangeIconForPageURLCallback to know when to ask for the
+        favicon emitting a favicon-changed signal. The callback
+        iconDataReadyForPageURLCallback is still useful to process pending
+        icon requests, but the favicon-ready signal can be removed in
+        favor of favicon-changed.
+
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (_WebKitFaviconDatabasePrivate): Keep a map of page icons that has
+        been imported to make sure we only emit favicon-changed signal
+        when the favicon URI has actually changed, because
+        didChangeIconForPageURLCallback can be called multiple times for
+        the same favicon URI in some cases.
+        (webkit_favicon_database_class_init): Remove favicon-ready signal
+        and add favicon-changed that includes the new favicon URI for the
+        given page URI.
+        (didChangeIconForPageURLCallback): Emit favicon-changed signal if
+        the favicon URI is new or has changed for the given page URI.
+        (iconDataReadyForPageURLCallback): Process pending icon requests.
+        (webkitFaviconDatabaseCreate): Add implementation for
+        didChangeIconForPageURLCallback.
+        * UIProcess/API/gtk/WebKitFaviconDatabasePrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate): Add favicon URI to make sure we only ask for a
+        new favicon when the favicon URI has changed.
+        (webkitWebViewUpdateFavicon): Update the favicon and emit
+        notify::favicon if it has changed.
+        (gotFaviconCallback): Update the favicon if the request hasn't
+        been cancelled.
+        (webkitWebViewRequestFavicon): Ask for the page favicon.
+        (webkitWebViewUpdateFaviconURI): Updated the favicon URI and
+        request the page favicon if the favicon URI has changed.
+        (faviconChangedCallback): Call webkitWebViewUpdateFaviconURI() with
+        the given favicon URI.
+        (webkitWebViewWatchForChangesInFavicon): Connect to
+        WebKitFaviconDatabase::favicon-changed.
+        (webkitWebViewDisconnectFaviconDatabaseSignalHandlers): Disconnect
+        WebKitFaviconDatabase::favicon-changed signal.
+        (webkitWebViewLoadChanged): Call webkitWebViewUpdateFaviconURI()
+        with the current favicon URI when the load has been committed.
+        * UIProcess/API/gtk/tests/TestWebKitFaviconDatabase.cpp:
+        (serverCallback):
+        (testNotInitialized):
+        (testGetFavicon):
+        (testGetFaviconURI):
+        (testWebViewFavicon):
+        (beforeAll):
+        * UIProcess/API/gtk/webkit2marshal.list: Add new marshaler.
+
 2012-11-08  Anders Carlsson  <andersca@apple.com>
 
         Attempt to silence a compiler warning.

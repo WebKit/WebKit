@@ -124,8 +124,7 @@ struct _WebKitWebViewPrivate {
     bool isLoading;
 
     bool waitingForMainResource;
-    gulong mainResourceResponseHandlerID;
-    gulong watchForChangesInFaviconHandlerID;
+    unsigned long mainResourceResponseHandlerID;
     WebKitLoadEvent lastDelayedEvent;
 
     GRefPtr<WebKitBackForwardList> backForwardList;
@@ -148,6 +147,8 @@ struct _WebKitWebViewPrivate {
 
     RefPtr<cairo_surface_t> favicon;
     GRefPtr<GCancellable> faviconCancellable;
+    CString faviconURI;
+    unsigned long faviconChangedHandlerID;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -269,6 +270,16 @@ static void userAgentChanged(WebKitSettings* settings, GParamSpec*, WebKitWebVie
     getPage(webView)->setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
 }
 
+static void webkitWebViewUpdateFavicon(WebKitWebView* webView, cairo_surface_t* favicon)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (priv->favicon.get() == favicon)
+        return;
+
+    priv->favicon = favicon;
+    g_object_notify(G_OBJECT(webView), "favicon");
+}
+
 static void webkitWebViewCancelFaviconRequest(WebKitWebView* webView)
 {
     if (!webView->priv->faviconCancellable)
@@ -278,26 +289,43 @@ static void webkitWebViewCancelFaviconRequest(WebKitWebView* webView)
     webView->priv->faviconCancellable = 0;
 }
 
-static void webkitWebViewUpdateFavicon(WebKitWebView* webView, cairo_surface_t* favicon)
+static void gotFaviconCallback(GObject* object, GAsyncResult* result, gpointer userData)
 {
-    if (webView->priv->favicon.get() == favicon)
+    GOwnPtr<GError> error;
+    RefPtr<cairo_surface_t> favicon = adoptRef(webkit_favicon_database_get_favicon_finish(WEBKIT_FAVICON_DATABASE(object), result, &error.outPtr()));
+    if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
         return;
 
-    webView->priv->favicon = favicon;
-    g_object_notify(G_OBJECT(webView), "favicon");
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(userData);
+    webkitWebViewUpdateFavicon(webView, favicon.get());
+    webView->priv->faviconCancellable = 0;
 }
 
-static void iconReadyCallback(WebKitFaviconDatabase* database, const char* uri, WebKitWebView* webView)
+static void webkitWebViewRequestFavicon(WebKitWebView* webView)
 {
-    // Consider only the icon matching the active URI for this webview.
-    if (webView->priv->activeURI != uri)
+    webkitWebViewCancelFaviconRequest(webView);
+
+    WebKitWebViewPrivate* priv = webView->priv;
+    priv->faviconCancellable = adoptGRef(g_cancellable_new());
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context);
+    webkit_favicon_database_get_favicon(database, priv->activeURI.data(), priv->faviconCancellable.get(), gotFaviconCallback, webView);
+}
+
+static void webkitWebViewUpdateFaviconURI(WebKitWebView* webView, const char* faviconURI)
+{
+    if (webView->priv->faviconURI == faviconURI)
         return;
 
-    // Update the favicon only if we don't have one already.
-    if (!webView->priv->favicon) {
-        RefPtr<cairo_surface_t> favicon = adoptRef(webkitFaviconDatabaseGetFavicon(database, webView->priv->activeURI));
-        webkitWebViewUpdateFavicon(webView, favicon.get());
-    }
+    webView->priv->faviconURI = faviconURI;
+    webkitWebViewRequestFavicon(webView);
+}
+
+static void faviconChangedCallback(WebKitFaviconDatabase* database, const char* pageURI, const char* faviconURI, WebKitWebView* webView)
+{
+    if (webView->priv->activeURI != pageURI)
+        return;
+
+    webkitWebViewUpdateFaviconURI(webView, faviconURI);
 }
 
 static void webkitWebViewSetSettings(WebKitWebView* webView, WebKitSettings* settings)
@@ -328,24 +356,19 @@ static void webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(WebK
 static void webkitWebViewWatchForChangesInFavicon(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* priv = webView->priv;
-    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context);
-
-    // Make sure we only connect to this signal once per view.
-    if (priv->watchForChangesInFaviconHandlerID)
+    if (priv->faviconChangedHandlerID)
         return;
 
-    priv->watchForChangesInFaviconHandlerID =
-        g_signal_connect(database, "favicon-ready", G_CALLBACK(iconReadyCallback), webView);
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context);
+    priv->faviconChangedHandlerID = g_signal_connect(database, "favicon-changed", G_CALLBACK(faviconChangedCallback), webView);
 }
 
 static void webkitWebViewDisconnectFaviconDatabaseSignalHandlers(WebKitWebView* webView)
 {
     WebKitWebViewPrivate* priv = webView->priv;
-    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context);
-
-    if (priv->watchForChangesInFaviconHandlerID)
-        g_signal_handler_disconnect(database, priv->watchForChangesInFaviconHandlerID);
-    priv->watchForChangesInFaviconHandlerID = 0;
+    if (priv->faviconChangedHandlerID)
+        g_signal_handler_disconnect(webkit_web_context_get_favicon_database(priv->context), priv->faviconChangedHandlerID);
+    priv->faviconChangedHandlerID = 0;
 }
 
 static void fileChooserDialogResponseCallback(GtkDialog* dialog, gint responseID, WebKitFileChooserRequest* request)
@@ -1270,25 +1293,6 @@ static void webkitWebViewEmitDelayedLoadEvents(WebKitWebView* webView)
     priv->waitingForMainResource = false;
 }
 
-static void getFaviconReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
-{
-    GOwnPtr<GError> error;
-    RefPtr<cairo_surface_t> favicon = adoptRef(webkit_favicon_database_get_favicon_finish(WEBKIT_FAVICON_DATABASE(object), result, &error.outPtr()));
-    if (!g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-        WebKitWebView* webView = WEBKIT_WEB_VIEW(userData);
-        webkitWebViewUpdateFavicon(webView, favicon.get());
-        webView->priv->faviconCancellable = 0;
-    }
-}
-
-static void webkitWebViewRequestFavicon(WebKitWebView* webView)
-{
-    WebKitWebViewPrivate* priv = webView->priv;
-    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context);
-    priv->faviconCancellable = adoptGRef(g_cancellable_new());
-    webkit_favicon_database_get_favicon(database, priv->activeURI.data(), priv->faviconCancellable.get(), getFaviconReadyCallback, webView);
-}
-
 void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
     WebKitWebViewPrivate* priv = webView->priv;
@@ -1301,7 +1305,9 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         priv->mainResource = 0;
         priv->waitingForMainResource = false;
     } else if (loadEvent == WEBKIT_LOAD_COMMITTED) {
-        webkitWebViewRequestFavicon(webView);
+        WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context);
+        GOwnPtr<char> faviconURI(webkit_favicon_database_get_favicon_uri(database, priv->activeURI.data()));
+        webkitWebViewUpdateFaviconURI(webView, faviconURI.get());
 
         priv->subresourcesMap.clear();
         if (!priv->mainResource) {

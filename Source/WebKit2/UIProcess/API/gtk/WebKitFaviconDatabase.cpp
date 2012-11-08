@@ -21,6 +21,7 @@
 #include "WebKitFaviconDatabase.h"
 
 #include "WebKitFaviconDatabasePrivate.h"
+#include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/Image.h>
@@ -35,7 +36,7 @@
 using namespace WebKit;
 
 enum {
-    ICON_READY,
+    FAVICON_CHANGED,
 
     LAST_SIGNAL
 };
@@ -48,6 +49,7 @@ typedef HashMap<String, PendingIconRequestVector*> PendingIconRequestMap;
 struct _WebKitFaviconDatabasePrivate {
     RefPtr<WebIconDatabase> iconDatabase;
     PendingIconRequestMap pendingIconRequests;
+    HashMap<String, String> pageURLToIconURLMap;
 };
 
 G_DEFINE_TYPE(WebKitFaviconDatabase, webkit_favicon_database, G_TYPE_OBJECT)
@@ -84,24 +86,28 @@ static void webkit_favicon_database_class_init(WebKitFaviconDatabaseClass* favic
     gObjectClass->finalize = webkitFaviconDatabaseFinalize;
 
     /**
-     * WebKitFaviconDatabase::favicon-ready:
+     * WebKitFaviconDatabase::favicon-changed:
      * @database: the object on which the signal is emitted
-     * @page_uri: the URI of the Web page containing the icon.
+     * @page_uri: the URI of the Web page containing the icon
+     * @favicon_uri: the URI of the favicon
      *
-     * This signal gets emitted when the favicon of @page_uri is
-     * ready. This means that the favicon's data is ready to be used
-     * by the application, either because it has been loaded from the
-     * network, if it's the first time it gets retrieved, or because
-     * it has been already imported from the icon database.
+     * This signal is emitted when the favicon URI of @page_uri has
+     * been changed to @favicon_uri in the database. You can connect
+     * to this signal and call webkit_favicon_database_get_favicon()
+     * to get the favicon. If you are interested in the favicon of a
+     * #WebKitWebView it's easier to use the #WebKitWebView:favicon
+     * property. See webkit_web_view_get_favicon() for more details.
      */
-    signals[ICON_READY] =
-        g_signal_new("favicon-ready",
-                     G_TYPE_FROM_CLASS(faviconDatabaseClass),
-                     G_SIGNAL_RUN_LAST,
-                     0, 0, 0,
-                     g_cclosure_marshal_VOID__STRING,
-                     G_TYPE_NONE, 1,
-                     G_TYPE_STRING);
+    signals[FAVICON_CHANGED] =
+        g_signal_new(
+            "favicon-changed",
+            G_TYPE_FROM_CLASS(faviconDatabaseClass),
+            G_SIGNAL_RUN_LAST,
+            0, 0, 0,
+            webkit_marshal_VOID__STRING_STRING,
+            G_TYPE_NONE, 2,
+            G_TYPE_STRING,
+            G_TYPE_STRING);
 
     g_type_class_add_private(faviconDatabaseClass, sizeof(WebKitFaviconDatabasePrivate));
 }
@@ -174,15 +180,32 @@ static void processPendingIconsForPageURL(WebKitFaviconDatabase* database, const
     deletePendingIconRequests(database, pendingIconRequests, pageURL);
 }
 
+static void didChangeIconForPageURLCallback(WKIconDatabaseRef wkIconDatabase, WKURLRef wkPageURL, const void* clientInfo)
+{
+    WebKitFaviconDatabase* database = WEBKIT_FAVICON_DATABASE(clientInfo);
+    if (!database->priv->iconDatabase->isUrlImportCompleted())
+        return;
+
+    // Wait until there's an icon record in the database for this page URL.
+    String pageURL = toImpl(wkPageURL)->string();
+    WebCore::Image* iconImage = database->priv->iconDatabase->imageForPageURL(pageURL, WebCore::IntSize(1, 1));
+    if (!iconImage || iconImage->isNull())
+        return;
+
+    String currentIconURL;
+    database->priv->iconDatabase->synchronousIconURLForPageURL(pageURL, currentIconURL);
+    const String& iconURL = database->priv->pageURLToIconURLMap.get(pageURL);
+    if (iconURL == currentIconURL)
+        return;
+
+    database->priv->pageURLToIconURLMap.set(pageURL, currentIconURL);
+    g_signal_emit(database, signals[FAVICON_CHANGED], 0, pageURL.utf8().data(), currentIconURL.utf8().data());
+}
+
 static void iconDataReadyForPageURLCallback(WKIconDatabaseRef wkIconDatabase, WKURLRef wkPageURL, const void* clientInfo)
 {
     ASSERT(isMainThread());
-
-    WebKitFaviconDatabase* database = WEBKIT_FAVICON_DATABASE(clientInfo);
-    String pageURL = toImpl(wkPageURL)->string();
-
-    processPendingIconsForPageURL(database, pageURL);
-    g_signal_emit(database, signals[ICON_READY], 0, pageURL.utf8().data());
+    processPendingIconsForPageURL(WEBKIT_FAVICON_DATABASE(clientInfo), toImpl(wkPageURL)->string());
 }
 
 WebKitFaviconDatabase* webkitFaviconDatabaseCreate(WebIconDatabase* iconDatabase)
@@ -193,24 +216,12 @@ WebKitFaviconDatabase* webkitFaviconDatabaseCreate(WebIconDatabase* iconDatabase
     WKIconDatabaseClient wkIconDatabaseClient = {
         kWKIconDatabaseClientCurrentVersion,
         faviconDatabase, // clientInfo
-        0, // didChangeIconForPageURLCallback
+        didChangeIconForPageURLCallback,
         0, // didRemoveAllIconsCallback
         iconDataReadyForPageURLCallback,
     };
     WKIconDatabaseSetIconDatabaseClient(toAPI(iconDatabase), &wkIconDatabaseClient);
     return faviconDatabase;
-}
-
-cairo_surface_t* webkitFaviconDatabaseGetFavicon(WebKitFaviconDatabase* database, const CString& pageURL)
-{
-    ASSERT(WEBKIT_IS_FAVICON_DATABASE(database));
-    ASSERT(!pageURL.isNull());
-
-    cairo_surface_t* iconSurface = getIconSurfaceSynchronously(database, String::fromUTF8(pageURL.data()), 0);
-    if (!iconSurface)
-        return 0;
-
-    return cairo_surface_reference(iconSurface);
 }
 
 static PendingIconRequestVector* getOrCreatePendingIconRequests(WebKitFaviconDatabase* database, const String& pageURL)
