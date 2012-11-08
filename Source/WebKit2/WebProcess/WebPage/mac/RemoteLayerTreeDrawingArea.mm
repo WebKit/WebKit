@@ -23,8 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteLayerTreeDrawingArea.h"
+#import "config.h"
+#import "RemoteLayerTreeDrawingArea.h"
+
+#import "RemoteLayerTreeController.h"
 
 using namespace WebCore;
 
@@ -37,6 +39,7 @@ PassOwnPtr<RemoteLayerTreeDrawingArea> RemoteLayerTreeDrawingArea::create(WebPag
 
 RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const WebPageCreationParameters&)
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
+    , m_remoteLayerTreeController(RemoteLayerTreeController::create())
 {
 }
 

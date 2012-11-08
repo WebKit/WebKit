@@ -23,34 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerTreeDrawingArea_h
-#define RemoteLayerTreeDrawingArea_h
+#ifndef RemoteLayerTree_h
+#define RemoteLayerTree_h
 
-#include "DrawingArea.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
-class RemoteLayerTreeController;
-
-class RemoteLayerTreeDrawingArea : public DrawingArea {
+class RemoteLayerTreeController {
 public:
-    static PassOwnPtr<RemoteLayerTreeDrawingArea> create(WebPage*, const WebPageCreationParameters&);
-    virtual ~RemoteLayerTreeDrawingArea();
+    static PassOwnPtr<RemoteLayerTreeController> create();
+    ~RemoteLayerTreeController();
 
 private:
-    RemoteLayerTreeDrawingArea(WebPage*, const WebPageCreationParameters&);
-
-    // DrawingArea
-    virtual void setNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
-    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) OVERRIDE;
-
-    virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
-    virtual void scheduleCompositingLayerFlush() OVERRIDE;
-
-    OwnPtr<RemoteLayerTreeController> m_remoteLayerTreeController;
+    RemoteLayerTreeController();
 };
 
 } // namespace WebKit
 
-#endif // RemoteLayerTreeDrawingArea_h
+#endif // RemoteLayerTree_h

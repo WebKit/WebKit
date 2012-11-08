@@ -1,3 +1,20 @@
+2012-11-07  Anders Carlsson  <andersca@apple.com>
+
+        Add empty RemoteLayerTree class
+        https://bugs.webkit.org/show_bug.cgi?id=101524
+
+        Reviewed by Simon Fraser.
+
+        Add a new RemoteLayerTree class which will contain the remote graphics layers.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/mac/RemoteLayerTree.h: Added.
+        * WebProcess/WebPage/mac/RemoteLayerTree.mm: Added.
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        (RemoteLayerTreeDrawingArea):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+
 2012-11-07  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Allow client to override setWindowFrame() / getWindowFrame()
