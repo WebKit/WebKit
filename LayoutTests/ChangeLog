@@ -1,3 +1,11 @@
+2012-11-07  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed gardening.
+
+        Marking new test editing/execCommand/switch-list-type-with-orphaned-li.html per webkit.org/b/101539.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-07  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, new chromium-mac-mountainlion baselines for remaining dirs outside of fast, svg, and tables.
