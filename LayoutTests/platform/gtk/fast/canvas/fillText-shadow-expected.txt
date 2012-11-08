@@ -40,7 +40,7 @@ PASS imgdata[3] is 0
 PASS imgdata[0] is 255
 PASS imgdata[1] is 0
 PASS imgdata[2] is 0
-FAIL imgdata[3] should be 255. Was 191.
+PASS imgdata[3] is 255
 Testing with blur of 1 pixels
 PASS imgdata[0] is 0
 PASS imgdata[1] is 0

@@ -1,3 +1,16 @@
+2012-11-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding a failure expectation for editing/execCommand/switch-list-type-with-orphaned-li.html,
+        the test regressed in r133820
+        Further rebaselining after r133834.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/canvas/fillText-shadow-expected.txt:
+        * platform/gtk/svg/css/group-with-shadow-expected.png:
+        * platform/gtk/svg/css/group-with-shadow-expected.txt:
+
 2012-11-08  Mike West  <mkwst@chromium.org>
 
         Warn when parsing an invalid X-Frame-Options header.
