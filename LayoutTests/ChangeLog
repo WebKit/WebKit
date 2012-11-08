@@ -1,3 +1,14 @@
+2012-11-07  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Remove exif-orientation-image-document.html from failure list
+        https://bugs.webkit.org/show_bug.cgi?id=101518
+
+        Unreviewed gardening.
+
+        fast/images/exif-orientation-image-document.html passes after r133728
+
+        * platform/efl-wk1/TestExpectations:
+
 2012-11-07  Philip Rogers  <pdr@google.com>
 
         Rebaselinene after external SVG unblocked in WK100485

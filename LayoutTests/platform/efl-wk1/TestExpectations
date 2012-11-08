@@ -248,5 +248,4 @@ webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
 webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
 
 # DRT needs a setting for setShouldRespectImageOrientation
-webkit.org/b/101210 fast/images/exif-orientation-image-document.html [ Failure ]
 webkit.org/b/101210 fast/images/exif-orientation.html [ Failure ]
