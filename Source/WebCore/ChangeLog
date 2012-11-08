@@ -1,3 +1,21 @@
+2012-11-08  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [Canvas] UI iterations: image on the top, auto replay
+        https://bugs.webkit.org/show_bug.cgi?id=101584
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/CanvasProfileView.js:
+        (WebInspector.CanvasProfileView):
+        (WebInspector.CanvasProfileView.prototype._showTraceLog):
+        (WebInspector.CanvasProfileView.prototype._onTraceLogItemClick):
+        (WebInspector.CanvasProfileView.prototype._replayTraceLog.didReplayTraceLog):
+        (WebInspector.CanvasProfileView.prototype._replayTraceLog):
+        * inspector/front-end/canvasProfiler.css:
+        (.canvas-trace-log):
+        (#canvas-replay-image-container):
+        (#canvas-replay-image):
+
 2012-11-08  Wei Fanzhe  <whyer1@gmail.com>
 
         While absolute positioning is put before the first flexitem, flexitems will move to a new line.

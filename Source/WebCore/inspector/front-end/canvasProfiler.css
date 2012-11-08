@@ -39,13 +39,13 @@
 
 .canvas-trace-log {
     position: absolute;
-    top: 10px;
-    left: 0;
+    top: 400px;
+    left: 5px;
+    right: 5px;
     bottom: 10px;
     font-size: 13px;
     overflow: auto;
     white-space: nowrap;
-    padding: 0 20px;
 }
 
 .canvas-trace-log div {
@@ -53,15 +53,18 @@
 }
 
 #canvas-replay-image-container {
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 10px;
+    height: 400px;
+    text-align: center;
+    padding: 5px 5px 16px 5px;
     background-color: white;
 }
 
 #canvas-replay-image {
-    width: 400px;
-    height: 400px;
+    zoom: 100;
+    height: auto;
+    width: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
     display: block;
 }

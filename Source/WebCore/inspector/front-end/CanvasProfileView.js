@@ -100,8 +100,9 @@ WebInspector.CanvasProfileView.prototype = {
         function didReceiveTraceLog(error, traceLog)
         {
             this._traceLogElement.textContent = "";
-            if (!traceLog)
+            if (error || !traceLog)
                 return;
+            var fragment = document.createDocumentFragment();
             var calls = traceLog.calls;
             for (var i = 0, n = calls.length; i < n; ++i) {
                 var call = calls[i];
@@ -128,20 +129,39 @@ WebInspector.CanvasProfileView.prototype = {
 
                 if (typeof call.result !== "undefined")
                     traceLogItem.appendChild(document.createTextNode(" => " + call.result));
-                this._traceLogElement.appendChild(traceLogItem);
+                fragment.appendChild(traceLogItem);
+            }
+            this._traceLogElement.appendChild(fragment);
+
+            var lastItem = this._traceLogElement.lastChild;
+            if (lastItem) {
+                lastItem.scrollIntoViewIfNeeded();
+                this._replayTraceLog(lastItem);
             }
         }
         CanvasAgent.getTraceLog(this._profile.traceLogId(), didReceiveTraceLog.bind(this));
     },
 
+    /**
+     * @param {Event} e
+     */
     _onTraceLogItemClick: function(e)
     {
-        var item = e.target;
+        this._replayTraceLog(/** @type {Element} */ (e.target));
+    },
+
+    /**
+     * @param {Element} item
+     */
+    _replayTraceLog: function(item)
+    {
         if (!item || !item.traceLogId)
             return;
         var time = Date.now();
         function didReplayTraceLog(error, dataURL)
         {
+            if (error)
+                return;
             this._debugInfoElement.textContent = "Replay time: " + (Date.now() - time) + "ms";
             if (this._activeTraceLogItem)
                 this._activeTraceLogItem.style.backgroundColor = "";
