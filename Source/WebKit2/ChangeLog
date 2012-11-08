@@ -1,3 +1,48 @@
+2012-11-08  Tim Horton  <timothy_horton@apple.com>
+
+        [WK2] Print preview should vend images to the UIProcess instead of PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=101382
+        <rdar://problem/9866766>
+
+        Reviewed by Alexey Proskuryakov.
+
+        In the interests of keeping PDF processing inside the WebProcess, we should
+        remove print preview's reliance on PDFs, by handing bitmaps back instead.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::create): Add an optional SharedMemory::Protection argument, so we can make
+        ShareableBitmaps from read-only handles if desired. Defaults to read-write as previously.
+        (WebKit::ShareableBitmap::createHandle): Add an optional SharedMemory::Protection argument, so we can make
+        read-only handles if desired. Defaults to read-write as previously.
+        * Shared/ShareableBitmap.h:
+        * UIProcess/API/mac/WKPrintingView.h:
+        (WebImage): Store WebImages instead of raw PDF data for previews.
+        * UIProcess/API/mac/WKPrintingView.mm:
+        (pageDidDrawToImage): Add a callback for when a preview we've requested is done rendering into an image.
+        Cache the image in _pagePreviews if appropriate.
+        (pageDidDrawToPDF): Do not handle PDF data unless we are expecting a real print callback (not a preview).
+        (-[WKPrintingView _drawPreview:]): Request an image instead of PDF data when doing a print preview.
+        * UIProcess/GenericCallback.h:
+        (ImageCallback): Add a callback type with one argument: a ShareableBitmap::Handle.
+        I can't use the GenericCallback template because ShareableBitmap::Handle doesn't have a corresponding WK type.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Add support for ImageCallback.
+        (WebKit::WebPageProxy::imageCallback): Add support for ImageCallback.
+        (WebKit::WebPageProxy::drawRectToImage): Rename drawRectToPDF to drawRectToImage.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): Rename drawRectToPDF to drawRectToImage, add support for ImageCallback.
+        * UIProcess/WebPageProxy.messages.in: Add support for ImageCallback.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRectToImage): Rename drawRectToPDF to drawRectToImage.
+        Make drawRectToImage create a bitmap snapshot of the page (using the normal snapshotting code),
+        or, if the page is backed by a *PDFPlugin, draw the PDF document into a bitmap and use that.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Rename drawRectToPDF to drawRectToImage.
+        * WebProcess/WebPage/WebPage.messages.in: Rename drawRectToPDF to drawRectToImage.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::drawPDFDocument): Rename drawRectToPDFFromPDFDocument to drawPDFDocument,
+        because it's more like drawImage than anything else.
+
 2012-11-08  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix build without WebKit1

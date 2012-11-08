@@ -29,9 +29,11 @@
 #import "Logging.h"
 #import "PDFKitImports.h"
 #import "PrintInfo.h"
+#import "ShareableBitmap.h"
 #import "WebData.h"
 #import "WebPageProxy.h"
 #import <PDFKit/PDFKit.h>
+#import <WebCore/GraphicsContext.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/MainThread.h>
 
@@ -205,6 +207,35 @@ struct IPCCallbackContext {
     uint64_t callbackID;
 };
 
+static void pageDidDrawToImage(const ShareableBitmap::Handle& imageHandle, WKErrorRef, void* untypedContext)
+{
+    ASSERT(isMainThread());
+
+    OwnPtr<IPCCallbackContext> context = adoptPtr(static_cast<IPCCallbackContext*>(untypedContext));
+    WKPrintingView *view = context->view.get();
+
+    // If the user has already changed print setup, then this response is obsolete. And if this callback is not in response to the latest request,
+    // then the user has already moved to another page - we'll cache the response, but won't draw it.
+    HashMap<uint64_t, WebCore::IntRect>::iterator iter = view->_expectedPreviewCallbacks.find(context->callbackID);
+    if (iter != view->_expectedPreviewCallbacks.end()) {
+        ASSERT([view _isPrintingPreview]);
+
+        if (!imageHandle.isNull()) {
+            RefPtr<ShareableBitmap> image = ShareableBitmap::create(imageHandle, SharedMemory::ReadOnly);
+
+            if (image)
+                view->_pagePreviews.add(iter->value, image);
+        }
+
+        view->_expectedPreviewCallbacks.remove(context->callbackID);
+        bool receivedResponseToLatestRequest = view->_latestExpectedPreviewCallback == context->callbackID;
+        if (receivedResponseToLatestRequest) {
+            view->_latestExpectedPreviewCallback = 0;
+            [view _updatePreview];
+        }
+    }
+}
+
 static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext)
 {
     ASSERT(isMainThread());
@@ -221,24 +252,6 @@ static void pageDidDrawToPDF(WKDataRef dataRef, WKErrorRef, void* untypedContext
             view->_printedPagesData.append(data->bytes(), data->size());
         view->_expectedPrintCallback = 0;
         view->_printingCallbackCondition.signal();
-    } else {
-        // If the user has already changed print setup, then this response is obsolete. And this callback is not in response to the latest request,
-        // then the user has already moved to another page - we'll cache the response, but won't draw it.
-        HashMap<uint64_t, WebCore::IntRect>::iterator iter = view->_expectedPreviewCallbacks.find(context->callbackID);
-        if (iter != view->_expectedPreviewCallbacks.end()) {
-            ASSERT([view _isPrintingPreview]);
-
-            if (data) {
-                HashMap<WebCore::IntRect, Vector<uint8_t> >::AddResult entry = view->_pagePreviews.add(iter->value, Vector<uint8_t>());
-                entry.iterator->value.append(data->bytes(), data->size());
-            }
-            view->_expectedPreviewCallbacks.remove(context->callbackID);
-            bool receivedResponseToLatestRequest = view->_latestExpectedPreviewCallback == context->callbackID;
-            if (receivedResponseToLatestRequest) {
-                view->_latestExpectedPreviewCallback = 0;
-                [view _updatePreview];
-            }
-        }
     }
 }
 
@@ -461,7 +474,7 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
 
     IntRect rect(nsRect);
     rect.scale(1 / _totalScaleFactorForPrinting);
-    HashMap<WebCore::IntRect, Vector<uint8_t> >::iterator pagePreviewIterator = _pagePreviews.find(rect);
+    HashMap<WebCore::IntRect, RefPtr<ShareableBitmap> >::iterator pagePreviewIterator = _pagePreviews.find(rect);
     if (pagePreviewIterator == _pagePreviews.end())  {
         // It's too early to ask for page preview if we don't even know page size and scale.
         if ([self _hasPageRects]) {
@@ -478,14 +491,14 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
                 _webFrame->page()->beginPrinting(_webFrame.get(), PrintInfo([_printOperation printInfo]));
 
                 IPCCallbackContext* context = new IPCCallbackContext;
-                RefPtr<DataCallback> callback = DataCallback::create(context, pageDidDrawToPDF);
+                RefPtr<ImageCallback> callback = ImageCallback::create(context, pageDidDrawToImage);
                 _latestExpectedPreviewCallback = callback->callbackID();
                 _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, rect);
 
                 context->view = self;
                 context->callbackID = callback->callbackID();
 
-                _webFrame->page()->drawRectToPDF(_webFrame.get(), PrintInfo([_printOperation printInfo]), rect, callback.get());
+                _webFrame->page()->drawRectToImage(_webFrame.get(), PrintInfo([_printOperation printInfo]), rect, callback.get());
                 return;
             }
         }
@@ -494,11 +507,20 @@ static void prepareDataForPrintingOnSecondaryThread(void* untypedContext)
         return;
     }
 
-    const Vector<uint8_t>& pdfDataBytes = pagePreviewIterator->value;
-    RetainPtr<NSData> pdfData(AdoptNS, [[NSData alloc] initWithBytes:pdfDataBytes.data() length:pdfDataBytes.size()]);
-    RetainPtr<PDFDocument> pdfDocument(AdoptNS, [[pdfDocumentClass() alloc] initWithData:pdfData.get()]);
+    RefPtr<ShareableBitmap> bitmap = pagePreviewIterator->value;
+    CGContextRef cgContext = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
 
-    [self _drawPDFDocument:pdfDocument.get() page:0 atPoint:NSMakePoint(nsRect.origin.x, nsRect.origin.y)];
+    GraphicsContext context(cgContext);
+    GraphicsContextStateSaver stateSaver(context);
+
+    context.translate(nsRect.origin.x, nsRect.origin.y);
+    context.scale(FloatSize(_totalScaleFactorForPrinting, _totalScaleFactorForPrinting));
+
+    // FIXME: Should we get the WebPage's deviceScaleFactor from here instead?
+    const IntRect& imageBounds = bitmap->bounds();
+    float imageScaleFactor = imageBounds.width() / rect.width();
+
+    bitmap->paint(context, imageScaleFactor, IntPoint(), imageBounds);
 }
 
 - (void)drawRect:(NSRect)nsRect

@@ -30,6 +30,7 @@
 @class PDFDocument;
 
 namespace WebKit {
+    class ShareableBitmap;
     class WebFrameProxy;
 }
 
@@ -41,7 +42,7 @@ namespace WebKit {
     RefPtr<WebKit::WebFrameProxy> _webFrame;
     Vector<WebCore::IntRect> _printingPageRects;
     double _totalScaleFactorForPrinting;
-    HashMap<WebCore::IntRect, Vector<uint8_t> > _pagePreviews;
+    HashMap<WebCore::IntRect, RefPtr<WebKit::ShareableBitmap> > _pagePreviews;
 
     Vector<uint8_t> _printedPagesData;
     RetainPtr<PDFDocument> _printedPagesPDFDocument;

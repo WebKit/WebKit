@@ -26,8 +26,8 @@
 #ifndef GenericCallback_h
 #define GenericCallback_h
 
+#include "ShareableBitmap.h"
 #include "WKAPICast.h"
-
 #include "WebError.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -192,6 +192,51 @@ private:
     {
     }
 
+    CallbackFunction m_callback;
+};
+
+class ImageCallback : public CallbackBase {
+public:
+    typedef void (*CallbackFunction)(const ShareableBitmap::Handle&, WKErrorRef, void*);
+
+    static PassRefPtr<ImageCallback> create(void* context, CallbackFunction callback)
+    {
+        return adoptRef(new ImageCallback(context, callback));
+    }
+
+    virtual ~ImageCallback()
+    {
+        ASSERT(!m_callback);
+    }
+
+    void performCallbackWithReturnValue(const ShareableBitmap::Handle& returnValue1)
+    {
+        ASSERT(m_callback);
+
+        m_callback(returnValue1, 0, context());
+
+        m_callback = 0;
+    }
+
+    void invalidate()
+    {
+        ASSERT(m_callback);
+
+        RefPtr<WebError> error = WebError::create();
+        ShareableBitmap::Handle handle;
+        m_callback(handle, toAPI(error.get()), context());
+
+        m_callback = 0;
+    }
+
+private:
+
+    ImageCallback(void* context, CallbackFunction callback)
+        : CallbackBase(context)
+        , m_callback(callback)
+    {
+    }
+    
     CallbackFunction m_callback;
 };
 

@@ -89,21 +89,21 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags f
     return adoptRef(new ShareableBitmap(size, flags, sharedMemory));
 }
 
-PassRefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle)
+PassRefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle, SharedMemory::Protection protection)
 {
     // Create the shared memory.
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle.m_handle, SharedMemory::ReadWrite);
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle.m_handle, protection);
     if (!sharedMemory)
         return 0;
 
     return create(handle.m_size, handle.m_flags, sharedMemory.release());
 }
 
-bool ShareableBitmap::createHandle(Handle& handle)
+bool ShareableBitmap::createHandle(Handle& handle, SharedMemory::Protection protection)
 {
     ASSERT(isBackedBySharedMemory());
 
-    if (!m_sharedMemory->createHandle(handle.m_handle, SharedMemory::ReadWrite))
+    if (!m_sharedMemory->createHandle(handle.m_handle, protection))
         return false;
     handle.m_size = m_size;
     handle.m_flags = m_flags;
