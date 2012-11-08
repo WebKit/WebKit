@@ -118,10 +118,10 @@ static bool cookieSorter(ParsedCookie* a, ParsedCookie* b)
     return a->path().length() > b->path().length();
 }
 
-// Returns whether the protocol supports domains
-static bool shouldIgnoreDomain(const String protocol)
+// Return whether we should ignore the scheme
+static bool shouldIgnoreScheme(const String& protocol)
 {
-    // ignore domain security for file and local
+    // We want to ignore file and local schemes
     return protocol == "file" || protocol == "local";
 }
 
@@ -212,8 +212,9 @@ void CookieManager::getRawCookies(Vector<ParsedCookie*> &stackOfCookies, const K
 {
     CookieLog("CookieManager - getRawCookies - processing url with domain - %s & protocol: %s & path: %s\n", requestURL.host().utf8().data(), requestURL.protocol().utf8().data(), requestURL.path().utf8().data());
 
-    bool specialCaseForLocal = (requestURL.protocolIs("local") || requestURL.protocolIs("file")) && m_shouldDumpAllCookies;
-    bool isConnectionSecure = requestURL.protocolIs("https") || requestURL.protocolIs("wss") || specialCaseForLocal;
+    const bool invalidScheme = shouldIgnoreScheme(requestURL.protocol());
+    const bool specialCaseForWebWorks = invalidScheme && m_shouldDumpAllCookies;
+    const bool isConnectionSecure = requestURL.protocolIs("https") || requestURL.protocolIs("wss") || specialCaseForWebWorks;
 
     Vector<ParsedCookie*> cookieCandidates;
     Vector<CookieMap*> protocolsToSearch;
@@ -230,8 +231,13 @@ void CookieManager::getRawCookies(Vector<ParsedCookie*> &stackOfCookies, const K
             targetMap = m_managerMap.get("ws");
     }
 
-    if (specialCaseForLocal)
+    // Decide which scheme tree we should look at.
+    // Return on invalid schemes. cookies are currently disabled on file and local.
+    // We only want to enable them for WebWorks that enabled a special flag.
+    if (specialCaseForWebWorks)
         copyValuesToVector(m_managerMap, protocolsToSearch);
+    else if (invalidScheme)
+        return;
     else {
         protocolsToSearch.append(targetMap);
         // FIXME: this is a hack for webworks apps; RFC 6265 says "Cookies do not provide isolation by scheme"
@@ -264,7 +270,7 @@ void CookieManager::getRawCookies(Vector<ParsedCookie*> &stackOfCookies, const K
         CookieLog("CookieManager - looking at protocol map %s \n", currentMap->getName().utf8().data());
 
         // Special case for local and files - because WebApps expect to get ALL cookies from the backing-store on local protocol
-        if (specialCaseForLocal) {
+        if (specialCaseForWebWorks) {
             CookieLog("CookieManager - special case find in protocol map - %s\n", currentMap->getName().utf8().data());
             currentMap->getAllChildCookies(&cookieCandidates);
         } else {
@@ -300,7 +306,7 @@ void CookieManager::getRawCookies(Vector<ParsedCookie*> &stackOfCookies, const K
         if (!equalIgnoringCase(path, requestURL.path()) && !path.endsWith("/", false))
             path = path + "/";
 
-        // Only secure connections have access to secure cookies. Unless specialCaseForLocal is true
+        // Only secure connections have access to secure cookies. Unless specialCaseForWebWorks is true.
         // Get the cookies filtering out HttpOnly cookies if requested.
         if (requestURL.path().startsWith(path, false) && (isConnectionSecure || !cookie->isSecure()) && (filter == WithHttpOnlyCookies || !cookie->isHttpOnly())) {
             CookieLog("CookieManager - cookie chosen - %s\n", cookie->toString().utf8().data());
@@ -334,13 +340,15 @@ void CookieManager::checkAndTreatCookie(ParsedCookie* candidateCookie, BackingSt
 {
     CookieLog("CookieManager - checkAndTreatCookie - processing url with domain - %s & protocol %s\n", candidateCookie->domain().utf8().data(), candidateCookie->protocol().utf8().data());
 
-    // A cookie which is not from http shouldn't have a httpOnly property.
-    if (filter == NoHttpOnlyCookie && candidateCookie->isHttpOnly()) {
+    // Delete invalid cookies:
+    // 1) A cookie which is not from http shouldn't have a httpOnly property.
+    // 2) Cookies coming from schemes that we do not support and the special flag isn't on
+    if ((filter == NoHttpOnlyCookie && candidateCookie->isHttpOnly()) || (shouldIgnoreScheme(candidateCookie->protocol()) && !m_shouldDumpAllCookies)) {
         delete candidateCookie;
         return;
     }
 
-    const bool ignoreDomain = shouldIgnoreDomain(candidateCookie->protocol());
+    const bool ignoreDomain = (candidateCookie->protocol() == "file" || candidateCookie->protocol() == "local");
 
     // Determine which protocol tree to add the cookie to. Create one if necessary.
     CookieMap* curMap = 0;

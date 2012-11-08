@@ -1,3 +1,23 @@
+2012-11-08  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Disable cookies on file://
+        https://bugs.webkit.org/show_bug.cgi?id=101646
+
+        Reviewed by Rob Buis.
+
+        Disabling cookies on file and local in the browser app.
+
+        PR 239779
+
+        Tested by trying to set and retrieve cookies on WI while browsing
+        files on the file scheme.
+
+        * platform/blackberry/CookieManager.cpp:
+        (WebCore):
+        (WebCore::shouldIgnoreScheme):
+        (WebCore::CookieManager::getRawCookies):
+        (WebCore::CookieManager::checkAndTreatCookie):
+
 2012-11-08  Joshua Bell  <jsbell@chromium.org>
 
         Expose snapshots in platform/leveldb wrapper API
