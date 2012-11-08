@@ -1,3 +1,64 @@
+2012-11-07  Tim Horton  <timothy_horton@apple.com>
+
+        Repaint issues with -webkit-svg-shadow used on a container
+        https://bugs.webkit.org/show_bug.cgi?id=65643
+        <rdar://problem/7600532>
+
+        Reviewed by Simon Fraser.
+
+        SVG renderer repaint rects are currently expanded only by the shadow of
+        the renderer itself; however, the area they need to repaint can be larger
+        than that, if their parents also have shadows. We need to take into account
+        parent's shadows (respecting transforms, as well).
+
+        clippedOverflowRectForRepaint already recurses upwards through the render tree,
+        and ends up with a rect in layout coordinates, so we manually apply the shadow
+        at each step (repaintRectInLocalCoordinatesExcludingSVGShadow was added to allow
+        us to get the raw repaint rect without the shadow baked-in).
+
+        repaintRectInLocalCoordinates now includes shadows from all parents.
+
+        Also, RenderSVGRoot was clipping repaint rects to the viewport before applying
+        shadows, so offscreen elements with on-screen shadows (applied by the root) would not paint the shadows.
+        We can just swap the order of these things to correct this.
+
+        Tests: svg/css/parent-shadow-offscreen.svg, svg/css/root-shadow-offscreen.svg, svg/repaint/repaint-webkit-svg-shadow.svg
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addChild): Mark the child being added as having an SVG shadow if it is being added as a child of an element that does.
+        (WebCore::RenderObject::styleDidChange): Mark the child being added as having an SVG shadow if its new style has a shadow.
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout): Cache the repaint rect before intersecting it with the shadow.
+        * rendering/svg/RenderSVGImage.h:
+        (WebCore::RenderSVGImage::repaintRectInLocalCoordinatesExcludingSVGShadow): Return the cached repaint rect for the renderer without the shadow included.
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::RenderSVGModelObject): Renderers do not have a shadow by default.
+        * rendering/svg/RenderSVGModelObject.h:
+        (WebCore::RenderSVGModelObject::repaintRectInLocalCoordinatesExcludingSVGShadow): Return the cached repaint rect for the renderer without the shadow included.
+        (WebCore::RenderSVGModelObject::hasSVGShadow): Return whether or not the renderer has a shadow.
+        (WebCore::RenderSVGModelObject::setHasSVGShadow): Set whether or not the renderer has a shadow.
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::computeFloatRectForRepaint): Apply the shadow before clipping to the viewport, so we draw shadows for elements outside the viewport.
+        (WebCore::RenderSVGRoot::updateCachedBoundaries): Cache the repaint rect before intersecting it with the shadow.
+        * rendering/svg/RenderSVGRoot.h:
+        (WebCore::RenderSVGRoot::hasSVGShadow): Return whether or not the renderer has a shadow.
+        (WebCore::RenderSVGRoot::setHasSVGShadow): Set whether or not the renderer has a shadow.
+        (WebCore::RenderSVGRoot::repaintRectInLocalCoordinatesExcludingSVGShadow): Return the cached repaint rect for the renderer without the shadow included.
+        * rendering/svg/RenderSVGShape.cpp:
+        (WebCore::RenderSVGShape::updateRepaintBoundingBox): Cache the repaint rect before intersecting it with the shadow.
+        * rendering/svg/RenderSVGShape.h:
+        (WebCore::RenderSVGShape::repaintRectInLocalCoordinatesExcludingSVGShadow): Return the cached repaint rect for the renderer without the shadow included.
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::repaintRectForRendererInLocalCoordinatesExcludingSVGShadow): Return the cached repaint rect for the renderer without the shadow included.
+        (WebCore::SVGRenderSupport::clippedOverflowRectForRepaint): Apply shadows as we walk through our parents, instead of only applying the renderer's own shadow.
+        (WebCore::SVGRenderSupport::rendererHasSVGShadow): Return whether or not the renderer has a shadow.
+        (WebCore::SVGRenderSupport::setRendererHasSVGShadow): Set whether or not the renderer has a shadow.
+        (WebCore::SVGRenderSupport::intersectRepaintRectWithShadows): Walk through the element's parents, adding shadows to the repaint rect as we go, eventually
+        transforming the repaint rect back into local coordinates.
+        (WebCore::SVGRenderSupport::intersectRepaintRectWithResources): Don't add shadows by default, just other resources, so that we can cache repaint rects with and without shadows.
+        * rendering/svg/SVGRenderSupport.h:
+
 2012-11-07  Anders Carlsson  <andersca@apple.com>
 
         Add RemoteGraphicsLayer class

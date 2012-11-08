@@ -1,3 +1,39 @@
+2012-11-07  Tim Horton  <timothy_horton@apple.com>
+
+        Repaint issues with -webkit-svg-shadow used on a container
+        https://bugs.webkit.org/show_bug.cgi?id=65643
+        <rdar://problem/7600532>
+
+        Reviewed by Simon Fraser.
+
+        * platform/chromium/TestExpectations: Mark tests as needing rebaseline.
+        * platform/efl/TestExpectations: Mark tests as needing rebaseline.
+        * platform/gtk/TestExpectations: Mark tests as needing rebaseline.
+        * platform/qt/TestExpectations: Mark tests as needing rebaseline.
+
+        * platform/mac/fast/repaint/moving-shadow-on-container-expected.txt:
+        * platform/mac/svg/css/arrow-with-shadow-expected.txt:
+        * platform/mac/svg/css/clippath-with-shadow-expected.txt:
+        * platform/mac/svg/css/composite-shadow-example-expected.txt:
+        * platform/mac/svg/css/composite-shadow-with-opacity-expected.txt:
+        * platform/mac/svg/css/group-with-shadow-expected.txt:
+        * platform/mac/svg/css/shadow-changes-expected.txt:
+        * platform/mac/svg/custom/simple-text-double-shadow-expected.txt:
+        Rebaseline Mac results due to this change.
+
+        * svg/css/parent-shadow-offscreen-expected.svg: Added.
+        * svg/css/parent-shadow-offscreen.svg: Added.
+        Add a new test that ensures that <g> with -webkit-svg-shadow applied draws when children are offscreen but the shadow is not.
+
+        * svg/css/root-shadow-offscreen-expected.svg: Added.
+        * svg/css/root-shadow-offscreen.svg: Added.
+        Add a new test that ensures that <svg> with -webkit-svg-shadow applied draws when children are offscreen but the shadow is not.
+
+        * platform/mac/svg/repaint/repaint-webkit-svg-shadow-expected.png: Added.
+        * svg/repaint/repaint-webkit-svg-shadow-expected.txt: Added.
+        * svg/repaint/repaint-webkit-svg-shadow.svg: Added.
+        Add a new test that ensures that SVG elements with -webkit-svg-shadow are correctly invalidated.
+
 2012-11-07  Roger Fong  <roger_fong@apple.com>
 
         Enable Subpixel Layout on Windows. Rebaseline any failing tests that were rebaselined in r133351.

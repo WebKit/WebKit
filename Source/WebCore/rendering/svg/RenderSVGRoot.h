@@ -67,6 +67,9 @@ public:
     // method during layout when they are invalidated by a filter.
     static void addResourceForClientInvalidation(RenderSVGResourceContainer*);
 
+    bool hasSVGShadow() const { return m_hasSVGShadow; }
+    void setHasSVGShadow(bool hasShadow) { m_hasSVGShadow = hasShadow; }
+
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
@@ -93,6 +96,7 @@ private:
     virtual FloatRect objectBoundingBox() const { return m_objectBoundingBox; }
     virtual FloatRect strokeBoundingBox() const { return m_strokeBoundingBox; }
     virtual FloatRect repaintRectInLocalCoordinates() const { return m_repaintBoundingBox; }
+    virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const { return m_repaintBoundingBoxExcludingShadow; }
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
@@ -114,11 +118,13 @@ private:
     bool m_objectBoundingBoxValid;
     FloatRect m_strokeBoundingBox;
     FloatRect m_repaintBoundingBox;
+    FloatRect m_repaintBoundingBoxExcludingShadow;
     mutable AffineTransform m_localToParentTransform;
     AffineTransform m_localToBorderBoxTransform;
     HashSet<RenderSVGResourceContainer*> m_resourcesNeedingToInvalidateClients;
     bool m_isLayoutSizeChanged : 1;
     bool m_needsBoundariesOrTransformUpdate : 1;
+    bool m_hasSVGShadow : 1;
 };
 
 inline RenderSVGRoot* toRenderSVGRoot(RenderObject* object)

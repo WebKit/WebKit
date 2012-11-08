@@ -50,6 +50,8 @@ public:
     // Helper function determining wheter overflow is hidden
     static bool isOverflowHidden(const RenderObject*);
 
+    static void intersectRepaintRectWithShadows(const RenderObject*, FloatRect&);
+
     // Calculates the repaintRect in combination with filter, clipper and masker in local coordinates.
     static void intersectRepaintRectWithResources(const RenderObject*, FloatRect&);
 
@@ -63,6 +65,7 @@ public:
     static bool paintInfoIntersectsRepaintRect(const FloatRect& localRepaintRect, const AffineTransform& localTransform, const PaintInfo&);
 
     // Important functions used by nearly all SVG renderers centralizing coordinate transformations / repaint rect calculations
+    static FloatRect repaintRectForRendererInLocalCoordinatesExcludingSVGShadow(const RenderObject*);
     static LayoutRect clippedOverflowRectForRepaint(const RenderObject*, RenderLayerModelObject* repaintContainer);
     static void computeFloatRectForRepaint(const RenderObject*, RenderLayerModelObject* repaintContainer, FloatRect&, bool fixed);
     static void mapLocalToContainer(const RenderObject*, RenderLayerModelObject* repaintContainer, TransformState&, bool snapOffsetForTransforms = true, bool* wasFixed = 0);
@@ -74,6 +77,13 @@ public:
 
     // Determines if any ancestor's transform has changed.
     static bool transformToRootChanged(RenderObject*);
+
+    // Helper functions to keep track of whether a renderer has an SVG shadow applied.
+    static bool rendererHasSVGShadow(const RenderObject*);
+    static void setRendererHasSVGShadow(RenderObject*, bool hasShadow);
+
+    static void childAdded(RenderObject* parent, RenderObject* child);
+    static void styleChanged(RenderObject*);
 
     // FIXME: These methods do not belong here.
     static const RenderSVGRoot* findTreeRootObject(const RenderObject*);

@@ -407,8 +407,11 @@ FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
 
 void RenderSVGShape::updateRepaintBoundingBox()
 {
-    m_repaintBoundingBox = strokeBoundingBox();
-    SVGRenderSupport::intersectRepaintRectWithResources(this, m_repaintBoundingBox);
+    m_repaintBoundingBoxExcludingShadow = strokeBoundingBox();
+    SVGRenderSupport::intersectRepaintRectWithResources(this, m_repaintBoundingBoxExcludingShadow);
+
+    m_repaintBoundingBox = m_repaintBoundingBoxExcludingShadow;
+    SVGRenderSupport::intersectRepaintRectWithShadows(this, m_repaintBoundingBox);
 }
 
 float RenderSVGShape::strokeWidth() const

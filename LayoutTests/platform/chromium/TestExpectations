@@ -1381,6 +1381,17 @@ webkit.org/b/85107 svg/as-image/animated-svg-as-image.html [ ImageOnlyFailure Pa
 
 webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Failure Pass Timeout ]
 
+# These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=65643
+webkit.org/b/101396 svg/css/shadow-changes.svg
+webkit.org/b/101396 svg/repaint/repaint-webkit-svg-shadow.svg
+webkit.org/b/101396 svg/css/composite-shadow-example.html
+webkit.org/b/101396 svg/css/composite-shadow-with-opacity.html
+webkit.org/b/101396 fast/repaint/moving-shadow-on-container.html
+webkit.org/b/101396 svg/css/composite-shadow-text.svg
+webkit.org/b/101396 svg/custom/simple-text-double-shadow.svg
+webkit.org/b/101396 svg/css/clippath-with-shadow.svg
+webkit.org/b/101396 svg/css/arrow-with-shadow.svg
+
 # -----------------------------------------------------------------
 # End SVG TESTS
 # -----------------------------------------------------------------

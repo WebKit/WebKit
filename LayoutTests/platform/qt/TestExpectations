@@ -2383,6 +2383,17 @@ webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while
 # New, but failing test
 webkit.org/b/101035 fast/images/exif-orientation-image-document.html
 
+# These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=65643
+webkit.org/b/101397 svg/css/shadow-changes.svg
+webkit.org/b/101397 svg/repaint/repaint-webkit-svg-shadow.svg
+webkit.org/b/101397 svg/css/composite-shadow-example.html
+webkit.org/b/101397 svg/css/composite-shadow-with-opacity.html
+webkit.org/b/101397 fast/repaint/moving-shadow-on-container.html
+webkit.org/b/101397 svg/css/composite-shadow-text.svg
+webkit.org/b/101397 svg/custom/simple-text-double-shadow.svg
+webkit.org/b/101397 svg/css/clippath-with-shadow.svg
+webkit.org/b/101397 svg/css/arrow-with-shadow.svg
+
 # Fails after test refactoring, maybe rebaseline needed
 webkit.org/b/98523 fast/images/repaint-subrect-grid.html
 

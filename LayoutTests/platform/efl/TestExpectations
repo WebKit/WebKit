@@ -1651,6 +1651,17 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
 # Regression after r131640.
 webkit.org/b/99691 gamepad/gamepad-out-of-range-crasher.html [ Failure ]
 
+# These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=65643
+webkit.org/b/101400 svg/css/shadow-changes.svg
+webkit.org/b/101400 svg/repaint/repaint-webkit-svg-shadow.svg
+webkit.org/b/101400 svg/css/composite-shadow-example.html
+webkit.org/b/101400 svg/css/composite-shadow-with-opacity.html
+webkit.org/b/101400 fast/repaint/moving-shadow-on-container.html
+webkit.org/b/101400 svg/css/composite-shadow-text.svg
+webkit.org/b/101400 svg/custom/simple-text-double-shadow.svg
+webkit.org/b/101400 svg/css/clippath-with-shadow.svg
+webkit.org/b/101400 svg/css/arrow-with-shadow.svg
+
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 
