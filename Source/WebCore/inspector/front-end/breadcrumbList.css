@@ -65,10 +65,6 @@
     display: none;
 }
 
-.crumbs .crumb.dimmed {
-    color: rgba(0, 0, 0, 0.45);
-}
-
 .crumbs .crumb.start {
     padding-left: 7px;
 }
@@ -96,11 +92,6 @@
 .crumbs .crumb:hover {
     -webkit-border-image: url(Images/segmentHover.png) 0 12 0 2;
     color: black;
-}
-
-.crumbs .crumb.dimmed:hover {
-    -webkit-border-image: url(Images/segmentHover.png) 0 12 0 2;
-    color: rgba(0, 0, 0, 0.75);
 }
 
 .crumbs .crumb.end:hover {

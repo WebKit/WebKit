@@ -627,17 +627,8 @@ WebInspector.ElementsPanel.prototype = {
         var crumbs = this.crumbsElement;
 
         var handled = false;
-        var foundRoot = false;
         var crumb = crumbs.firstChild;
         while (crumb) {
-            if (crumb.representedObject === this.treeOutline.rootDOMNode)
-                foundRoot = true;
-
-            if (foundRoot)
-                crumb.addStyleClass("dimmed");
-            else
-                crumb.removeStyleClass("dimmed");
-
             if (crumb.representedObject === this.selectedDOMNode()) {
                 crumb.addStyleClass("selected");
                 handled = true;
@@ -685,13 +676,9 @@ WebInspector.ElementsPanel.prototype = {
             event.preventDefault();
         }
 
-        foundRoot = false;
         for (var current = this.selectedDOMNode(); current; current = current.parentNode) {
             if (current.nodeType() === Node.DOCUMENT_NODE)
                 continue;
-
-            if (current === this.treeOutline.rootDOMNode)
-                foundRoot = true;
 
             crumb = document.createElement("span");
             crumb.className = "crumb";
@@ -727,8 +714,6 @@ WebInspector.ElementsPanel.prototype = {
                 crumb.title = crumbTitle;
             }
 
-            if (foundRoot)
-                crumb.addStyleClass("dimmed");
             if (current === this.selectedDOMNode())
                 crumb.addStyleClass("selected");
             if (!crumbs.childNodes.length)
@@ -946,18 +931,6 @@ WebInspector.ElementsPanel.prototype = {
                 coalesceCollapsedCrumbs();
         }
 
-        function compactDimmed(crumb)
-        {
-            if (crumb.hasStyleClass("dimmed"))
-                compact(crumb);
-        }
-
-        function collapseDimmed(crumb)
-        {
-            if (crumb.hasStyleClass("dimmed"))
-                collapse(crumb, false);
-        }
-
         if (!focusedCrumb) {
             // When not focused on a crumb we can be biased and collapse less important
             // crumbs that the user might not care much about.
@@ -968,14 +941,6 @@ WebInspector.ElementsPanel.prototype = {
 
             // Collapse child crumbs.
             if (makeCrumbsSmaller(collapse, ChildSide))
-                return;
-
-            // Compact dimmed ancestor crumbs.
-            if (makeCrumbsSmaller(compactDimmed, AncestorSide))
-                return;
-
-            // Collapse dimmed ancestor crumbs.
-            if (makeCrumbsSmaller(collapseDimmed, AncestorSide))
                 return;
         }
 

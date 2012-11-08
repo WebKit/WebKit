@@ -1,3 +1,12 @@
+2012-08-20  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Drop dimmed crumb handling
+        https://bugs.webkit.org/show_bug.cgi?id=94457
+
+        Reviewed by Vsevolod Vlasov.
+
+        * src/js/devTools.css:
+
 2012-11-07  Adam Barth  <abarth@webkit.org>
 
         [V8] We should hide the DOMWrapperMaps inside DOMDataStore

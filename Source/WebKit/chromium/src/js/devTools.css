@@ -88,10 +88,6 @@ body.platform-linux #scripts-files {
     -webkit-border-image: url(Images/segmentHoverChromium.png) 0 12 0 2;
 }
 
-.crumbs .crumb.dimmed:hover {
-    -webkit-border-image: url(Images/segmentHoverChromium.png) 0 12 0 2;
-}
-
 .crumbs .crumb.end:hover {
     -webkit-border-image: url(Images/segmentHoverEndChromium.png) 0 2 0 2;
 }
