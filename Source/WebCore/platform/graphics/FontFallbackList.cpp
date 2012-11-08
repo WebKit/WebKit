@@ -60,6 +60,7 @@ void FontFallbackList::invalidate(PassRefPtr<FontSelector> fontSelector)
     m_fontSelector = fontSelector;
     m_fontSelectorVersion = m_fontSelector ? m_fontSelector->version() : 0;
     m_generation = fontCache()->generation();
+    m_widthCache.clear();
 }
 
 void FontFallbackList::releaseFontData()

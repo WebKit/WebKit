@@ -34142,6 +34142,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\WidthCache.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\WidthIterator.cpp"
 					>
 				</File>

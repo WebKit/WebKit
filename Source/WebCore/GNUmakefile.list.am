@@ -4559,6 +4559,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/transforms/TranslateTransformOperation.h \
 	Source/WebCore/platform/graphics/TypesettingFeatures.h \
 	Source/WebCore/platform/graphics/UnitBezier.h \
+	Source/WebCore/platform/graphics/WidthCache.h \
 	Source/WebCore/platform/graphics/WidthIterator.cpp \
 	Source/WebCore/platform/graphics/WidthIterator.h \
 	Source/WebCore/platform/graphics/WindRule.h \

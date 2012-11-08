@@ -23,6 +23,7 @@
 
 #include "FontSelector.h"
 #include "SimpleFontData.h"
+#include "WidthCache.h"
 #include <wtf/Forward.h>
 #include <wtf/MainThread.h>
 
@@ -79,6 +80,8 @@ public:
     unsigned fontSelectorVersion() const { return m_fontSelectorVersion; }
     unsigned generation() const { return m_generation; }
 
+    WidthCache& widthCache() const { return m_widthCache; }
+
 private:
     FontFallbackList();
 
@@ -102,6 +105,7 @@ private:
     mutable GlyphPageTreeNode* m_pageZero;
     mutable const SimpleFontData* m_cachedPrimarySimpleFontData;
     RefPtr<FontSelector> m_fontSelector;
+    mutable WidthCache m_widthCache;
     unsigned m_fontSelectorVersion;
     mutable int m_familyIndex;
     unsigned short m_generation;

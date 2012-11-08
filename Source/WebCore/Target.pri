@@ -2186,6 +2186,7 @@ HEADERS += \
     platform/graphics/transforms/TransformState.h \
     platform/graphics/transforms/TranslateTransformOperation.h \
     platform/graphics/WidthIterator.h \
+    platform/graphics/WidthCache.h \
     platform/image-decoders/bmp/BMPImageDecoder.h \
     platform/image-decoders/bmp/BMPImageReader.h \
     platform/image-decoders/ico/ICOImageDecoder.h \

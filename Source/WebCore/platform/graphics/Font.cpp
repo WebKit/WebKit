@@ -198,13 +198,29 @@ float Font::width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFo
 {
     CodePath codePathToUse = codePath(run);
     if (codePathToUse != Complex) {
-        // If the complex text implementation cannot return fallback fonts, avoid
-        // returning them for simple text as well.
-        static bool returnFallbackFonts = canReturnFallbackFontsForComplexText();
-        return floatWidthForSimpleText(run, returnFallbackFonts ? fallbackFonts : 0, codePathToUse == SimpleWithGlyphOverflow || (glyphOverflow && glyphOverflow->computeBounds) ? glyphOverflow : 0);
+        // The complex path is more restrictive about returning fallback fonts than the simple path, so we need an explicit test to make their behaviors match.
+        if (!canReturnFallbackFontsForComplexText())
+            fallbackFonts = 0;
+        // The simple path can optimize the case where glyph overflow is not observable.
+        if (codePathToUse != SimpleWithGlyphOverflow && (glyphOverflow && !glyphOverflow->computeBounds))
+            glyphOverflow = 0;
     }
 
-    return floatWidthForComplexText(run, fallbackFonts, glyphOverflow);
+    bool hasKerningOrLigatures = typesettingFeatures() & (Kerning | Ligatures);
+    bool hasWordSpacingOrLetterSpacing = wordSpacing() | letterSpacing();
+    float* cacheEntry = m_fontFallbackList->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), hasKerningOrLigatures, hasWordSpacingOrLetterSpacing, glyphOverflow);
+    if (cacheEntry && !isnan(*cacheEntry))
+        return *cacheEntry;
+
+    float result;
+    if (codePathToUse == Complex)
+        result = floatWidthForComplexText(run, fallbackFonts, glyphOverflow);
+    else
+        result = floatWidthForSimpleText(run, fallbackFonts, glyphOverflow);
+
+    if (cacheEntry && (!fallbackFonts || fallbackFonts->isEmpty()))
+        *cacheEntry = result;
+    return result;
 }
 
 float Font::width(const TextRun& run, int& charsConsumed, String& glyphName) const

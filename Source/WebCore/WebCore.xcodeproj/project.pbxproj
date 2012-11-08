@@ -303,6 +303,7 @@
 		14115B5209F84B7100CA4FC1 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B5109F84B7100CA4FC1 /* Node.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14115B7209F84CD600CA4FC1 /* JSNodeFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */; };
 		14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */; };
+		1411DCB1164C39A800D49BC1 /* WidthCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1411DCB0164C39A800D49BC1 /* WidthCache.h */; };
 		1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 1419D2C40CEA6F6100FF507A /* TreeShared.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141DC0481648348F00371E5A /* LayoutUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 141DC0471648348F00371E5A /* LayoutUnit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141DC04F164834B900371E5A /* LayoutBoxExtent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 141DC049164834B900371E5A /* LayoutBoxExtent.cpp */; };
@@ -7383,6 +7384,7 @@
 		14115B5109F84B7100CA4FC1 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSNodeFilter.cpp; sourceTree = "<group>"; };
 		14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSNodeFilter.h; sourceTree = "<group>"; };
+		1411DCB0164C39A800D49BC1 /* WidthCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WidthCache.h; sourceTree = "<group>"; };
 		1419D2C40CEA6F6100FF507A /* TreeShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeShared.h; sourceTree = "<group>"; };
 		141B94E509EC4223000E9413 /* MouseEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = MouseEvent.idl; sourceTree = "<group>"; };
 		141B94EE09EC425A000E9413 /* UIEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = UIEvent.idl; sourceTree = "<group>"; };
@@ -20065,6 +20067,7 @@
 				1AF89A411518FDEA00E547B5 /* TiledBacking.h */,
 				37C28A6710F659CC008C7813 /* TypesettingFeatures.h */,
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
+				1411DCB0164C39A800D49BC1 /* WidthCache.h */,
 				939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */,
 				939B02ED0EA2DBC400C54570 /* WidthIterator.h */,
 				501BAAA813950E2C00F7ACEB /* WindRule.h */,
@@ -25684,6 +25687,7 @@
 				3FFFF9A9159D9A550020BBD5 /* WebKitCSSViewportRule.h in Headers */,
 				93C38BFF164473C700091EB2 /* ScrollingStateFixedNode.h in Headers */,
 				93C38C03164473DD00091EB2 /* ScrollingTreeFixedNode.h in Headers */,
+				1411DCB1164C39A800D49BC1 /* WidthCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

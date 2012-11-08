@@ -1,3 +1,99 @@
+2012-11-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Optimized kerning and ligatures using caching
+        https://bugs.webkit.org/show_bug.cgi?id=101269
+
+        Reviewed by Dan Bernstein.
+
+        Consider three kinds of text layout, and the value of caching for each:
+
+            (1) 1 layout of 100% unique words: small negative value.
+
+            (2) 1 layout of English prose: medium positive value.
+
+            (3) Many layouts of anything: extra-extra-large positive value.
+
+        Since we can't distinguish betwen these workflows a priori, we use statistical
+        sampling. To minimize cost in (1) and maximize benefit in (2) and (3), we treat
+        each cache access as a statistical sample, and use the cache in proportion to
+        the observed probability of duplicate text measurement.
+
+        Benchmark results:
+            plt3: 1% faster
+            chapter-reflow-once-random: No change [*]
+            chapter-reflow-once: 23% faster
+            chapter-reflow-twice: 52% faster
+            chapter-reflow-thrice: 68% faster
+            chapter-reflow: 263% faster
+            line-layout: 270% faster
+
+            [*] This is a stress test designed to make everything go wrong for
+            caching. It does not represent real world content.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/WidthCache.h: Added.
+
+        (WidthCache): Added a class that caches common word widths. This cache
+        could cache more things or more cases in future -- but for now it seems
+        to cover the common cases.
+
+        (SmallStringKey): Early profiling showed that allocating an AtomicString
+        or String measurably added to the cost of the cache, so I added a custom
+        string key that can be stored directly inside the table by value --
+        empirically answering an age-old question with which Apple WebKit engineers
+        seem to be obsessed.
+
+        (WebCore::WidthCache::SmallStringKey::capacity):
+        (WebCore::WidthCache::SmallStringKey::SmallStringKey):
+        (WebCore::WidthCache::SmallStringKey::characters):
+        (WebCore::WidthCache::SmallStringKey::length):
+        (WebCore::WidthCache::SmallStringKey::hash):
+        (WebCore::WidthCache::SmallStringKey::isHashTableDeletedValue):
+        (WebCore::WidthCache::SmallStringKey::isHashTableEmptyValue):
+        (WebCore::WidthCache::SmallStringKeyHash::hash):
+        (WebCore::WidthCache::SmallStringKeyHash::equal):
+        (SmallStringKeyHash):
+        (SmallStringKeyHashTraits):
+        (WebCore::WidthCache::SmallStringKeyHashTraits::isEmptyValue): Ditto.
+
+        (WebCore::WidthCache::WidthCache):
+        (WebCore::WidthCache::add): Separate out the "don't use the cache" case
+        so the compiler can inline it separate, hopefully further reducing cases
+        of (1).
+
+        (WebCore::WidthCache::addSlowCase): There's a little subtlety to the
+        sampling policy here. Lots of different approaches are possible, and I
+        just picked a simple one that seemed to work based on benchmarking. I'll
+        point out some interesting sublteties I'm aware of here:
+
+            (*) Since we start at the min sampling rate, a font used for 20 words
+            or fewer never allocates a cache. Anecdotally, some fonts seem to
+            be used this way.
+
+            (*) When the sampling rate is x / y, sampling all x words in a row
+            seems smart because some words may occur more commonly in relation to
+            each other (such as 'each' and 'other'), and repeat workloads will
+            lay out the same words in order. Intuitively, these are both reasons
+            this policy may ramp up more effectively under load.
+
+            (*) I opted for linear back-off instead of, say, exponential back-off
+            because we're not trying to back off to infinity -- just to our min
+            sampling rate. Since we don't expect the cache to hit for every word,
+            my guess is that exponential back-off would be too aggressive.
+
+            (*) Our "eviction" policy has an IQ of 1. I expect this is sufficient
+            because it would be surprising to see a million unique words all used
+            in the same document. (I would not like to play a Letterpress game
+            against such a document.)
+
+        (WebCore::WidthCache::clear): Needed because a font can change, in which
+        case we need to ditch its cache.
+
+        (WebCore::operator==): Needed for hashing.
+
 2012-11-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: show statistics over selected frame range in Timeline's Frame mode
