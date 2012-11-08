@@ -126,7 +126,7 @@ void IDBIndexBackendImpl::countInternal(ScriptExecutionContext*, PassRefPtr<IDBI
     do {
         ++count;
     } while (backingStoreCursor->continueFunction(0));
-    backingStoreCursor->close();
+
     callbacks->onSuccess(count);
 }
 
@@ -155,12 +155,11 @@ void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBInd
             return;
         }
         key = backingStoreCursor->key();
-        backingStoreCursor->close();
     }
 
     RefPtr<IDBKey> primaryKey = index->backingStore()->getPrimaryKeyViaIndex(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *key);
 
-    String value = index->backingStore()->getObjectStoreRecord(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), *primaryKey);
+    String value = index->backingStore()->getRecord(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), *primaryKey);
 
     if (value.isNull()) {
         callbacks->onSuccess();
@@ -189,11 +188,9 @@ void IDBIndexBackendImpl::getKeyInternal(ScriptExecutionContext* context, PassRe
     RefPtr<IDBKey> keyResult = index->backingStore()->getPrimaryKeyViaIndex(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *backingStoreCursor->key());
     if (!keyResult) {
         callbacks->onSuccess(static_cast<IDBKey*>(0));
-        backingStoreCursor->close();
         return;
     }
     callbacks->onSuccess(keyResult.get());
-    backingStoreCursor->close();
 }
 
 

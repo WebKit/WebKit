@@ -1,3 +1,46 @@
+2012-11-08  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Rename methods and remove dead code from IDBBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=101488
+
+        Reviewed by Ojan Vafai.
+
+        In preparation for merging IDBBackingStore and IDBLevelDBBackingStore:
+
+        1) rename ObjectStoreRecordIdentifier to RecordIdentifier
+        2) remove IDBBackingStore::forEachRecord and friends
+        3) remove IDBBackingStore::Cursor::close, since it was an empty method.
+
+        No new tests as this is purely code cleanup.
+
+        * Modules/indexeddb/IDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::getRecord):
+        (WebCore):
+        (WebCore::IDBLevelDBBackingStore::putRecord):
+        (WebCore::IDBLevelDBBackingStore::createInvalidRecordIdentifier):
+        (WebCore::IDBLevelDBBackingStore::deleteRecord):
+        (WebCore::IDBLevelDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBLevelDBBackingStore::putIndexDataForRecord):
+        (WebCore::IDBLevelDBBackingStore::deleteIndexDataForRecord):
+        * Modules/indexeddb/IDBBackingStore.h:
+        (WebCore::IDBBackingStore::RecordIdentifier::~RecordIdentifier):
+        (IDBBackingStore):
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::close):
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::countInternal):
+        (WebCore::IDBIndexBackendImpl::getInternal):
+        (WebCore::IDBIndexBackendImpl::getKeyInternal):
+        * Modules/indexeddb/IDBLevelDBBackingStore.h:
+        (IDBLevelDBBackingStore):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::getInternal):
+        (WebCore):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+        (WebCore::IDBObjectStoreBackendImpl::countInternal):
+
 2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: console error after inspecting IndexedDB

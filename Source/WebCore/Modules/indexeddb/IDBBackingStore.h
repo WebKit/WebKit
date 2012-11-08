@@ -61,33 +61,26 @@ public:
     virtual bool createObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) = 0;
     virtual void deleteObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) = 0;
 
-    class ObjectStoreRecordIdentifier : public RefCounted<ObjectStoreRecordIdentifier> {
+    class RecordIdentifier : public RefCounted<RecordIdentifier> {
     public:
         virtual bool isValid() const = 0;
-        virtual ~ObjectStoreRecordIdentifier() {}
+        virtual ~RecordIdentifier() { }
     };
-    virtual PassRefPtr<ObjectStoreRecordIdentifier> createInvalidRecordIdentifier() = 0;
+    virtual PassRefPtr<RecordIdentifier> createInvalidRecordIdentifier() = 0;
 
-    virtual String getObjectStoreRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&) = 0;
-    virtual bool putObjectStoreRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, ObjectStoreRecordIdentifier*) = 0;
+    virtual String getRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&) = 0;
+    virtual bool putRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, RecordIdentifier*) = 0;
     virtual void clearObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) = 0;
-    virtual void deleteObjectStoreRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const ObjectStoreRecordIdentifier*) = 0;
+    virtual void deleteRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const RecordIdentifier*) = 0;
     virtual int64_t getKeyGeneratorCurrentNumber(Transaction*, int64_t databaseId, int64_t objectStoreId) = 0;
     virtual bool maybeUpdateKeyGeneratorCurrentNumber(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent) = 0;
-    virtual bool keyExistsInObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, ObjectStoreRecordIdentifier* foundRecordIdentifier) = 0;
-
-    class ObjectStoreRecordCallback {
-    public:
-         virtual bool callback(const ObjectStoreRecordIdentifier*, const String& value) = 0;
-         virtual ~ObjectStoreRecordCallback() {};
-    };
-    virtual bool forEachObjectStoreRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, ObjectStoreRecordCallback&) = 0;
+    virtual bool keyExistsInObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, RecordIdentifier* foundRecordIdentifier) = 0;
 
     virtual Vector<IDBIndexMetadata> getIndexes(int64_t databaseId, int64_t objectStoreId) = 0;
     virtual bool createIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool isUnique, bool isMultiEntry) = 0;
     virtual void deleteIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId) = 0;
-    virtual bool putIndexDataForRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, const ObjectStoreRecordIdentifier*) = 0;
-    virtual bool deleteIndexDataForRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const ObjectStoreRecordIdentifier*) = 0;
+    virtual bool putIndexDataForRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, const RecordIdentifier*) = 0;
+    virtual bool deleteIndexDataForRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const RecordIdentifier*) = 0;
     virtual PassRefPtr<IDBKey> getPrimaryKeyViaIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&) = 0;
     virtual bool keyExistsInIndex(Transaction*, int64_t databaseid, int64_t objectStoreId, int64_t indexId, const IDBKey& indexKey, RefPtr<IDBKey>& foundPrimaryKey) = 0;
 
@@ -104,8 +97,7 @@ public:
         virtual PassRefPtr<IDBKey> key() = 0;
         virtual PassRefPtr<IDBKey> primaryKey() = 0;
         virtual String value() = 0;
-        virtual PassRefPtr<ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() = 0;
-        virtual void close() = 0;
+        virtual PassRefPtr<RecordIdentifier> objectStoreRecordIdentifier() = 0;
         virtual ~Cursor() { };
     };
 
