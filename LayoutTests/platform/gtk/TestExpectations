@@ -189,11 +189,14 @@ webkit.org/b/98936 fast/css/pseudo-in-range.html [ Failure ]
 webkit.org/b/98936 fast/css/pseudo-out-of-range.html [ Failure ]
 webkit.org/b/98936 fast/css/pseudo-in-range-invalid-value.html [ Failure ]
 webkit.org/b/98936 fast/forms/date [ Skip ]
+webkit.org/b/98936 fast/forms/date-multiple-fields [ Skip ]
 webkit.org/b/98936 fast/forms/datetime [ Skip ]
 webkit.org/b/98936 fast/forms/datetimelocal [ Skip ]
 webkit.org/b/98936 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailure ]
 webkit.org/b/98936 fast/forms/month [ Skip ]
+webkit.org/b/98936 fast/forms/month-multiple-fields [ Skip ]
 webkit.org/b/98936 fast/forms/time [ Skip ]
+webkit.org/b/98936 fast/forms/time-multiple-fields [ Skip ]
 webkit.org/b/98936 fast/forms/week [ Skip ]
 
 # ENABLE_GAMEPAD not enabled.
@@ -393,6 +396,15 @@ webkit.org/b/100137 fast/media/mq-resolution.html [ Failure ]
 # CSS Device Adaptation is not enabled.
 webkit.org/b/95959 css3/device-adapt [ Skip ]
 
+# User Timing is not enable yet, so skip it.
+webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
+
+# Resource Timing is not enable yet, so skip it.
+webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
+
+# Skip tests in fast/text/shaping
+webkit.org/b/90951 fast/text/shaping [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -451,6 +463,8 @@ webkit.org/b/100688 fast/text/custom-font-data-crash2.html [ Crash Pass ]
 webkit.org/b/100688 fast/css/first-letter-text-fragment-crash.html [ Crash Pass ]
 webkit.org/b/100688 editing/selection/first-letter-selection-crash.html [ Crash Pass ]
 webkit.org/b/100688 editing/text-iterator/backward-textiterator-first-letter-crash.html [ Crash Pass ]
+
+webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -929,7 +943,7 @@ webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting-fields.html 
 webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-sorting-instances.html [ Failure ]
 webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html [ Failure ]
 
-webkit.org/b/37613 printing [ Skip ]
+webkit.org/b/37613 webkit.org/b/20011 printing [ Skip ]
 webkit.org/b/37613 editing/execCommand/print.html [ Skip ]
 
 # Need to dump context menu items on eventSender.contextClick(true).
@@ -1006,11 +1020,6 @@ webkit.org/b/38437 editing/pasteboard/5761530-1.html [ Failure ]
 
 # Missing DRT API.
 Bug(GTK) http/tests/loading/preload-slow-loading.php [ Failure ]
-
-# Need setPrinting.
-webkit.org/b/20011 printing/setPrinting.html [ Skip ]
-webkit.org/b/20011 printing/single-line-must-not-be-split-into-two-pages.html [ Skip ]
-webkit.org/b/20011 printing/width-overflow.html [ Skip ]
 
 # Tests that fail because they assume a certain number of mouse
 # movements during drags or fail only in Xvfb
@@ -1282,9 +1291,6 @@ webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions
 
 webkit.org/b/89231 fast/js/global-constructors.html [ Failure ]
 
-# Skip tests in fast/text/shaping
-webkit.org/b/90951 fast/text/shaping
-
 webkit.org/b/88684 fast/text/descent-clip-in-scaled-page.html [ ImageOnlyFailure ]
 
 # This failure appears to be GTK-specific
@@ -1303,10 +1309,6 @@ webkit.org/b/94003 fast/css/word-spacing-characters-complex-text.html [ ImageOnl
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 
 webkit.org/b/94083 media/video-controls-fullscreen-volume.html [ Skip ]
-
-Bug(GTK) fast/forms/date-multiple-fields [ Skip ]
-webkit.org/b/97299 fast/forms/month-multiple-fields
-webkit.org/b/94186 fast/forms/time-multiple-fields
 
 webkit.org/b/70485 fast/events/drag-selects-image.html [ Failure ]
 
@@ -1366,20 +1368,11 @@ webkit.org/b/99071 media/context-menu-actions.html [ Failure ]
 
 webkit.org/b/98950 transitions/blendmode-transitions.html [ Failure ]
 
-# User Timing is not enable yet. so skip it.
-webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
-
-# Resource Timing is not enable yet, skip it.
-webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
-
 webkit.org/b/99825 accessibility/title-ui-element-correctness.html [ Failure ]
 
 webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure ]
 
 webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
-
-webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
-webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Skip ]
 
 webkit.org/b/95299 fast/images/exif-orientation.html [ Failure ]
 webkit.org/b/95299 fast/images/exif-orientation-image-document.html [ Failure ]

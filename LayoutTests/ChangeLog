@@ -1,3 +1,12 @@
+2012-11-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Moving some expectations to proper sections, unskiping a couple of tests
+        and merging expectations for tests in printing/.
+
+        * platform/gtk/TestExpectations:
+
 2012-11-08  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: Improve time/timeEnd appearance.
