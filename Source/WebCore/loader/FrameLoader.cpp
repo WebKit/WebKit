@@ -2900,7 +2900,7 @@ void FrameLoader::applyUserAgent(ResourceRequest& request)
     request.setHTTPUserAgent(userAgent);
 }
 
-bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, const KURL& url)
+bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, const KURL& url, unsigned long requestIdentifier)
 {
     Frame* topFrame = m_frame->tree()->top();
     if (m_frame == topFrame)
@@ -2908,11 +2908,13 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
 
     if (equalIgnoringCase(content, "deny"))
         return true;
-
-    if (equalIgnoringCase(content, "sameorigin")) {
+    else if (equalIgnoringCase(content, "sameorigin")) {
         RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url);
         if (!origin->isSameSchemeHostPort(topFrame->document()->securityOrigin()))
             return true;
+    } else {
+        String message = "Invalid 'X-Frame-Options' header encountered when loading '" + url.string() + "': '" + content + "' is not a recognized directive. The header will be ignored.";
+        m_frame->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, url.string(), 0, 0, requestIdentifier);
     }
 
     return false;

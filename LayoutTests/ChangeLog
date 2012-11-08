@@ -1,3 +1,15 @@
+2012-11-08  Mike West  <mkwst@chromium.org>
+
+        Warn when parsing an invalid X-Frame-Options header.
+        https://bugs.webkit.org/show_bug.cgi?id=101447
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/XFrameOptions/resources/x-frame-options-invalid.cgi: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-invalid-expected.txt: Added.
+        * http/tests/security/XFrameOptions/x-frame-options-invalid.html: Added.
+            New test with an invalid frame option value.
+
 2012-11-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

@@ -246,7 +246,7 @@ public:
 
     void applyUserAgent(ResourceRequest&);
 
-    bool shouldInterruptLoadForXFrameOptions(const String&, const KURL&);
+    bool shouldInterruptLoadForXFrameOptions(const String&, const KURL&, unsigned long requestIdentifier);
 
     void completed();
     bool allAncestorsAreComplete() const; // including this

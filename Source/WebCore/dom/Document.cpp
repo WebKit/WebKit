@@ -2946,12 +2946,11 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
     else if (equalIgnoringCase(equiv, "x-frame-options")) {
         if (frame) {
             FrameLoader* frameLoader = frame->loader();
-            if (frameLoader->shouldInterruptLoadForXFrameOptions(content, url())) {
-                unsigned long requestIdentifier = 0;
-                if (frameLoader->activeDocumentLoader() && frameLoader->activeDocumentLoader()->mainResourceLoader())
-                    requestIdentifier = frameLoader->activeDocumentLoader()->mainResourceLoader()->identifier();
+            unsigned long requestIdentifier = 0;
+            if (frameLoader->activeDocumentLoader() && frameLoader->activeDocumentLoader()->mainResourceLoader())
+                requestIdentifier = frameLoader->activeDocumentLoader()->mainResourceLoader()->identifier();
+            if (frameLoader->shouldInterruptLoadForXFrameOptions(content, url(), requestIdentifier)) {
                 String message = "Refused to display '" + url().string() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
-
                 frameLoader->stopAllLoaders();
                 frame->navigationScheduler()->scheduleLocationChange(securityOrigin(), blankURL(), String());
                 addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, url().string(), 0, 0, requestIdentifier);

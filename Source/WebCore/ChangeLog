@@ -1,3 +1,32 @@
+2012-11-08  Mike West  <mkwst@chromium.org>
+
+        Warn when parsing an invalid X-Frame-Options header.
+        https://bugs.webkit.org/show_bug.cgi?id=101447
+
+        Reviewed by Adam Barth.
+
+        An 'X-Frame-Options' header that contains an invalid option (that is,
+        neither 'DENY' nor 'SAMEORIGIN') is ignored. This patch adds a console
+        warning to notify developers that they've made a mistake.
+
+        Test: http/tests/security/XFrameOptions/x-frame-options-invalid.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::processHttpEquiv):
+            Move the request identifier generation out of the failure block in
+            order to pass it into 'shouldInterruptLoadForXFrameOptions'. This
+            ensures that the console message is properly tied to a request.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldInterruptLoadForXFrameOptions):
+        * loader/FrameLoader.h:
+        (FrameLoader):
+            'shouldInterruptLoadForXFrameOptions' now accepts a request
+            identifier as a parameter, and generates a console message if the
+            load is blocked.
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse):
+            Pass the request identifier into 'shouldInterruptLoadForXFrameOptions'.
+
 2012-11-08  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: Improve time/timeEnd appearance.
