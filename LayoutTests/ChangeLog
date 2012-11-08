@@ -1,3 +1,14 @@
+2012-11-08  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed Gardening.
+
+        Skip a failing after r133820. Added new baseline after 133834. Update expectation after 133638.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/css3/filters/effect-reference-expected.png:
+        * platform/qt/css3/filters/effect-reference-expected.txt:
+        * platform/qt/svg/css/group-with-shadow-expected.txt:
+
 2012-11-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
