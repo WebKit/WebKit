@@ -737,29 +737,23 @@ bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint&
     return true;
 }
 
-void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOptionRequest)
+void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOptionRequest, const WebCore::IntSize& screenOffset)
 {
     // If the caret is no longer active, no message should be sent.
     if (m_webPage->focusedOrMainFrame()->selection()->selectionType() != VisibleSelection::CaretSelection)
         return;
 
     // imf_sp_text_t should be generated in pixel viewport coordinates.
-    WebCore::IntRect caretLocation = m_webPage->focusedOrMainFrame()->selection()->selection().visibleStart().absoluteCaretBounds();
-    caretLocation = m_webPage->mapToTransformed(m_webPage->focusedOrMainFrame()->view()->contentsToWindow(enclosingIntRect(caretLocation)));
-    m_webPage->clipToTransformedContentsRect(caretLocation);
+    WebCore::IntRect caretRect = m_webPage->focusedOrMainFrame()->selection()->selection().visibleStart().absoluteCaretBounds();
+    caretRect = m_webPage->focusedOrMainFrame()->view()->contentsToRootView(caretRect);
+    const WebCore::IntPoint scrollPosition = m_webPage->mainFrame()->view()->scrollPosition();
+    caretRect.move(scrollPosition.x(), scrollPosition.y());
 
-    spellCheckingOptionRequest.caret_rect.caret_top_x = caretLocation.x();
-    spellCheckingOptionRequest.caret_rect.caret_top_y = caretLocation.y();
-    spellCheckingOptionRequest.caret_rect.caret_bottom_x = caretLocation.x();
-    spellCheckingOptionRequest.caret_rect.caret_bottom_y = caretLocation.y() + caretLocation.height();
+    InputLog(LogLevelInfo, "InputHandler::requestSpellingCheckingOptions caretRect topLeft=(%d,%d), bottomRight=(%d,%d), startTextPosition=%d, endTextPosition=%d"
+                            , caretRect.minXMinYCorner().x(), caretRect.minXMinYCorner().y(), caretRect.maxXMaxYCorner().x(), caretRect.maxXMaxYCorner().y()
+                            , spellCheckingOptionRequest.startTextPosition, spellCheckingOptionRequest.endTextPosition);
 
-    SpellingLog(LogLevelInfo, "InputHandler::requestSpellingCheckingOptions Sending request:\ncaret_rect.caret_top_x = %d\ncaret_rect.caret_top_y = %d" \
-                              "\ncaret_rect.caret_bottom_x = %d\ncaret_rect.caret_bottom_y = %d\nstartTextPosition = %d\nendTextPosition = %d",
-                              spellCheckingOptionRequest.caret_rect.caret_top_x, spellCheckingOptionRequest.caret_rect.caret_top_y,
-                              spellCheckingOptionRequest.caret_rect.caret_bottom_x, spellCheckingOptionRequest.caret_rect.caret_bottom_y,
-                              spellCheckingOptionRequest.startTextPosition, spellCheckingOptionRequest.endTextPosition);
-
-    m_webPage->m_client->requestSpellingCheckingOptions(spellCheckingOptionRequest);
+    m_webPage->m_client->requestSpellingCheckingOptions(spellCheckingOptionRequest, caretRect, screenOffset);
 }
 
 void InputHandler::setElementUnfocused(bool refocusOccuring)

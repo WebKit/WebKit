@@ -273,8 +273,10 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFa
             PlatformMouseEvent mouseEvent(adjustedPoint, m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, TouchScreen);
             m_webPage->handleMouseEvent(mouseEvent);
             m_lastFatFingersResult.reset(); // Reset the fat finger result as its no longer valid when a user's finger is not on the screen.
-            if (shouldRequestSpellCheckOptions)
-                m_webPage->m_inputHandler->requestSpellingCheckingOptions(spellCheckOptionRequest);
+            if (shouldRequestSpellCheckOptions) {
+                IntPoint pixelPositionRelativeToViewport = m_webPage->mapToTransformed(adjustedPoint);
+                m_webPage->m_inputHandler->requestSpellingCheckingOptions(spellCheckOptionRequest, IntSize(m_lastScreenPoint - pixelPositionRelativeToViewport));
+            }
             return true;
         }
     case Platform::TouchPoint::TouchMoved:

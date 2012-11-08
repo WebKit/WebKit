@@ -1,3 +1,26 @@
+2012-11-08  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Provide pixel coordinates to IMF relative to the screen
+        https://bugs.webkit.org/show_bug.cgi?id=101628
+
+        Reviewed by Rob Buis.
+
+        Reviewed internally by Mike Fenton and Jakob Petsovits.
+
+        We need to provide the correct pixel coordinates to IMF,
+        accounting for webkit based fields in UIB as well as browser.
+        Getting an offset value from the screen point to the document
+        content point allows us to adjust for when the document,
+        such as in UIB, does not start at 0,0.
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestSpellingCheckingOptions):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2012-11-08  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Janitor: Remove unused m_isValid bool

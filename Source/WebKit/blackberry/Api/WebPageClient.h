@@ -151,7 +151,7 @@ public:
 
     virtual void showVirtualKeyboard(bool) = 0;
 
-    virtual void requestSpellingCheckingOptions(imf_sp_text_t&) = 0;
+    virtual void requestSpellingCheckingOptions(imf_sp_text_t&, const BlackBerry::Platform::IntRect& documentCaretRect, const BlackBerry::Platform::IntSize& screenOffset) = 0;
     virtual int32_t checkSpellingOfStringAsync(wchar_t* text, int length) = 0;
 
     virtual void notifySelectionDetailsChanged(const Platform::IntRect& documentStartRect, const Platform::IntRect& documentEndRect, const Platform::IntRectRegion& documentRegion, bool overrideTouchHandling = false) = 0;

@@ -141,7 +141,7 @@ public:
     void spellCheckingRequestCancelled(int32_t transactionId);
 
     bool shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint&, const WebCore::Element*, imf_sp_text_t&);
-    void requestSpellingCheckingOptions(imf_sp_text_t&);
+    void requestSpellingCheckingOptions(imf_sp_text_t&, const WebCore::IntSize& screenOffset);
 
 private:
     enum PendingKeyboardStateChange { NoChange, Visible, NotVisible };
