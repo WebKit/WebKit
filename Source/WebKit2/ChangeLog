@@ -1,5 +1,22 @@
 2012-11-08  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r125100
+
+    2012-08-08  Anders Carlsson  <andersca@apple.com>
+
+            REGRESSION: Crash when plug-in initialization fails
+            https://bugs.webkit.org/show_bug.cgi?id=93534
+            <rdar://problem/12059786>
+
+            Reviewed by Simon Fraser.
+
+            Protect the PluginProxy while calling out to functions that could cause it to be destroyed.
+
+            * WebProcess/Plugins/PluginProxy.cpp:
+            (WebKit::PluginProxy::didFailToCreatePluginInternal):
+
+2012-11-08  Lucas Forschler  <lforschler@apple.com>
+
         Merge r124815
 
     2012-08-03  Brady Eidson  <beidson@apple.com>
@@ -47711,6 +47728,7 @@
         socketpair().
 
 == Rolled over to ChangeLog-2011-06-04 ==
+.
 .
 .
 .
