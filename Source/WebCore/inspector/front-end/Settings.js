@@ -109,6 +109,7 @@ WebInspector.Settings = function()
     this.cssReloadEnabled = this.createSetting("cssReloadEnabled", false);
     this.cssReloadTimeout = this.createSetting("cssReloadTimeout", 1000);
     this.showCpuOnTimelineRuler = this.createSetting("showCpuOnTimelineRuler", false);
+    this.showMetricsRulers = this.createSetting("showMetricsRulers", false);
 
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused

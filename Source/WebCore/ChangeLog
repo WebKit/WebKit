@@ -1,3 +1,32 @@
+2012-11-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Add option to disable rulers (Elements panel)
+        https://bugs.webkit.org/show_bug.cgi?id=101554
+
+        Reviewed by Pavel Feldman.
+
+        A new setting, showMetricsRulers, has been introduced (off by default, so users need to opt in to see the rulers).
+        The setting value is passed into InspectorDOMAgent, down to the InspectorOverlayPage, which affects the drawGrid() and
+        drawRulers() calls. As a side effect, the issue when the rulers were painted for elements having no renderers has been fixed.
+
+        No new tests, a UI change.
+
+        * English.lproj/localizedStrings.js: Add "Show rulers" string.
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::highlightConfigFromInspectorObject): Copy over the showRulers value.
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildObjectForHighlight): Copy over the showRulers value.
+        * inspector/InspectorOverlay.h:
+        (HighlightConfig): Add |bool showRulers|.
+        (WebCore::Highlight::Highlight): Initialize fields.
+        (Highlight): Add |bool showRulers|.
+        (WebCore::Highlight::setDataFromConfig):
+        * inspector/InspectorOverlayPage.html:
+        * inspector/front-end/DOMAgent.js: Make use of WebInspector.settings.showMetricsRulers when building the highlight DTO.
+        * inspector/front-end/Settings.js: Add showMetricsRulers.
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.GenericSettingsTab): Add "Show rulers" checkbox in the Elements panel section.
+
 2012-11-08  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         Warn in the inspector console when using dpi and dpcm units outside of media="print"

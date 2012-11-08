@@ -58,6 +58,7 @@ public:
     Color border;
     Color margin;
     bool showInfo;
+    bool showRulers;
 };
 
 enum HighlightType {
@@ -66,13 +67,20 @@ enum HighlightType {
 };
 
 struct Highlight {
-    void setColors(const HighlightConfig& highlightConfig)
+    Highlight()
+        : type(HighlightTypeNode)
+        , showRulers(false)
+    {
+    }
+
+    void setDataFromConfig(const HighlightConfig& highlightConfig)
     {
         contentColor = highlightConfig.content;
         contentOutlineColor = highlightConfig.contentOutline;
         paddingColor = highlightConfig.padding;
         borderColor = highlightConfig.border;
         marginColor = highlightConfig.margin;
+        showRulers = highlightConfig.showRulers;
     }
 
     Color contentColor;
@@ -85,6 +93,7 @@ struct Highlight {
     // When the type is Rects, this is just a list of quads.
     HighlightType type;
     Vector<FloatQuad> quads;
+    bool showRulers;
 };
 
 class InspectorOverlay {

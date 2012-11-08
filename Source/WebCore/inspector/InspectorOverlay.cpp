@@ -109,7 +109,7 @@ static void buildNodeHighlight(Node* node, const HighlightConfig& highlightConfi
     if (!renderer || !containingFrame)
         return;
 
-    highlight->setColors(highlightConfig);
+    highlight->setDataFromConfig(highlightConfig);
     FrameView* containingView = containingFrame->view();
     FrameView* mainView = containingFrame->page()->mainFrame()->view();
     IntRect boundingBox = pixelSnappedIntRect(containingView->contentsToRootView(renderer->absoluteBoundingBoxRect()));
@@ -186,7 +186,7 @@ static void buildRectHighlight(Page* page, IntRect* rect, const HighlightConfig&
 {
     if (!page)
         return;
-    highlight->setColors(highlightConfig);
+    highlight->setDataFromConfig(highlightConfig);
     FloatRect highlightRect(*rect);
     highlight->type = HighlightTypeRects;
     highlight->quads.append(highlightRect);
@@ -336,6 +336,7 @@ static PassRefPtr<InspectorObject> buildObjectForHighlight(FrameView* mainView, 
     for (size_t i = 0; i < highlight.quads.size(); ++i)
         array->pushArray(buildArrayForQuad(highlight.quads[i]));
     object->setArray("quads", array.release());
+    object->setBoolean("showRulers", highlight.showRulers);
     object->setString("contentColor", highlight.contentColor.serialized());
     object->setString("contentOutlineColor", highlight.contentOutlineColor.serialized());
     object->setString("paddingColor", highlight.paddingColor.serialized());

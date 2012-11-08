@@ -124,6 +124,8 @@ function drawPausedInDebuggerMessage(message)
 
 function _drawGrid(highlight, rulerAtRight, rulerAtBottom)
 {
+    if (!highlight.showRulers)
+        return;
     context.save();
 
     var width = canvas.width;
@@ -403,6 +405,8 @@ function _drawElementTitle(highlight)
 
 function _drawRulers(highlight, rulerAtRight, rulerAtBottom)
 {
+    if (!highlight.showRulers)
+        return;
     context.save();
     var width = canvas.width;
     var height = canvas.height;
