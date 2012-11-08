@@ -1,3 +1,7 @@
+2012-11-07  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, new chromium-mac-mountainlion baselines for remaining dirs outside of fast, svg, and tables.
+
 2012-11-07  Tim Horton  <timothy_horton@apple.com>
 
         Repaint issues with -webkit-svg-shadow used on a container

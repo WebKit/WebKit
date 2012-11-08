@@ -4125,6 +4125,14 @@ webkit.org/b/99749 [ MountainLion ] css2.1/20110323/overflow-applies-to-013.htm 
 webkit.org/b/99749 [ MountainLion ] css2.1/20110323/overflow-applies-to-014.htm [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] css2.1/20110323/overflow-applies-to-015.htm [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] css2.1/20110323/text-indent-014.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-block-formatting-context-001.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-containing-block-003.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-applies-to-001.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-applies-to-002.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-applies-to-003.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-applies-to-004.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-applies-to-013.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-applies-to-014.htm [ ImageOnlyFailure ]
 
 
 webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure ]
