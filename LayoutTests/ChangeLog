@@ -1,5 +1,14 @@
 2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        [Chromium] Web Inspector: some tests failing with "Cannot call method 'hasTextContent' of undefined"
+        https://bugs.webkit.org/show_bug.cgi?id=94501
+
+        Unreviewed unskipped test.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Migrate inspector IndexedDB support to frontend API.
         https://bugs.webkit.org/show_bug.cgi?id=101457
 

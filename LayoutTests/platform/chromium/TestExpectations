@@ -3732,9 +3732,6 @@ webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/overfl
 
 webkit.org/b/90488 [ Win ] http/tests/inspector/network-preflight-options.html [ Pass Slow ]
 
-webkit.org/b/94501 [ Win ] http/tests/inspector/resource-tree/resource-tree-invalid-mime-type-css-content.html [ Failure Pass ]
-webkit.org/b/94501 [ Linux Win ] http/tests/inspector/resource-tree/resource-tree-frame-navigate.html [ Failure Pass ]
-
 webkit.org/b/94521 [ Linux ] fast/loader/loadInProgress.html [ Crash Pass ]
 
 webkit.org/b/94528 [ Mac ] fast/text-autosizing/nested-em-line-height.html [ ImageOnlyFailure Pass ]
