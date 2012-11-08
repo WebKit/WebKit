@@ -1,3 +1,34 @@
+2012-11-07  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed, WebKit gardening.
+
+        Rebaseline after r133384.
+        
+        * fast/repaint/moving-shadow-on-container-expected.txt: Renamed from LayoutTests/platform/chromium-linux-x86/fast/repaint/moving-shadow-on-container-expected.txt.
+        * platform/chromium-linux-x86/svg/css/group-with-shadow-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/css/group-with-shadow-expected.txt.
+        * platform/chromium-linux/fast/repaint/moving-shadow-on-container-expected.txt: Removed.
+        * platform/chromium-linux/svg/css/group-with-shadow-expected.png: Added.
+        * platform/chromium-linux/svg/css/group-with-shadow-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/css/group-with-shadow-expected.txt.
+        * platform/chromium-mac-lion/svg/css/group-with-shadow-expected.png: Renamed from LayoutTests/platform/chromium-mac-snowleopard/svg/css/group-with-shadow-expected.png.
+        * platform/chromium-mac-lion/svg/css/group-with-shadow-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/css/group-with-shadow-expected.txt.
+        * platform/chromium-mac-snowleopard/svg/css/group-with-shadow-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/css/group-with-shadow-expected.txt.
+        * platform/chromium-mac/fast/repaint/moving-shadow-on-container-expected.png:
+        * platform/chromium-mac/fast/repaint/moving-shadow-on-container-expected.txt:
+        * platform/chromium-mac/svg/css/group-with-shadow-expected.png: Added.
+        * platform/chromium-mac/svg/css/group-with-shadow-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/css/group-with-shadow-expected.txt.
+        * platform/chromium-win-xp/fast/repaint/moving-shadow-on-container-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/css/group-with-shadow-expected.png: Added.
+        * platform/chromium-win-xp/svg/css/group-with-shadow-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/css/group-with-shadow-expected.txt.
+        * platform/chromium-win/fast/repaint/moving-shadow-on-container-expected.txt: Removed.
+        * platform/chromium-win/svg/css/group-with-shadow-expected.png: Added.
+        * platform/chromium-win/svg/css/group-with-shadow-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/repaint/moving-shadow-on-container-expected.txt: Removed.
+        * platform/chromium/svg/css/group-with-shadow-expected.png: Removed.
+        * platform/efl-wk1/fast/repaint/moving-shadow-on-container-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/moving-shadow-on-container-expected.png.
+        * platform/efl-wk1/svg/css/group-with-shadow-expected.png: Renamed from LayoutTests/platform/efl/svg/css/group-with-shadow-expected.png.
+        * platform/efl/fast/repaint/moving-shadow-on-container-expected.txt: Removed.
+
 2012-11-07  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, new chromium-mac-mountainlion svg baselines.
