@@ -30,6 +30,7 @@
 #if USE(LEVELDB)
 
 #include "LevelDBComparator.h"
+#include "LevelDBDatabase.h"
 #include "LevelDBIterator.h"
 #include "LevelDBSlice.h"
 #include <wtf/AVLTree.h>
@@ -42,7 +43,6 @@
 
 namespace WebCore {
 
-class LevelDBDatabase;
 class LevelDBWriteBatch;
 
 using WTF::AVLTree;
@@ -164,6 +164,7 @@ private:
     void notifyIteratorsOfTreeChange();
 
     LevelDBDatabase* m_db;
+    const LevelDBSnapshot m_snapshot;
     const LevelDBComparator* m_comparator;
     TreeType m_tree;
     bool m_finished;

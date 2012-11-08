@@ -89,6 +89,17 @@ private:
     const LevelDBComparator* m_comparator;
 };
 
+LevelDBSnapshot::LevelDBSnapshot(LevelDBDatabase* db)
+    : m_db(db->m_db.get())
+    , m_snapshot(m_db->GetSnapshot())
+{
+}
+
+LevelDBSnapshot::~LevelDBSnapshot()
+{
+    m_db->ReleaseSnapshot(m_snapshot);
+}
+
 LevelDBDatabase::LevelDBDatabase()
 {
 }
@@ -187,11 +198,12 @@ bool LevelDBDatabase::remove(const LevelDBSlice& key)
     return false;
 }
 
-bool LevelDBDatabase::get(const LevelDBSlice& key, Vector<char>& value)
+bool LevelDBDatabase::get(const LevelDBSlice& key, Vector<char>& value, const LevelDBSnapshot* snapshot)
 {
     std::string result;
     leveldb::ReadOptions readOptions;
     readOptions.verify_checksums = true; // FIXME: Disable this if the performance impact is too great.
+    readOptions.snapshot = snapshot ? snapshot->m_snapshot : 0;
 
     const leveldb::Status s = m_db->Get(readOptions, makeSlice(key), &result);
     if (s.ok()) {
@@ -293,10 +305,11 @@ LevelDBSlice IteratorImpl::value() const
     return makeLevelDBSlice(m_iterator->value());
 }
 
-PassOwnPtr<LevelDBIterator> LevelDBDatabase::createIterator()
+PassOwnPtr<LevelDBIterator> LevelDBDatabase::createIterator(const LevelDBSnapshot* snapshot)
 {
     leveldb::ReadOptions readOptions;
     readOptions.verify_checksums = true; // FIXME: Disable this if the performance impact is too great.
+    readOptions.snapshot = snapshot ? snapshot->m_snapshot : 0;
     OwnPtr<leveldb::Iterator> i = adoptPtr(m_db->NewIterator(readOptions));
     if (!i) // FIXME: Double check if we actually need to check this.
         return nullptr;

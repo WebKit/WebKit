@@ -26,12 +26,13 @@
 #include "config.h"
 #include "LevelDBTransaction.h"
 
+#if ENABLE(INDEXED_DATABASE)
+#if USE(LEVELDB)
+
 #include "LevelDBDatabase.h"
 #include "LevelDBSlice.h"
 #include "LevelDBWriteBatch.h"
-
-#if ENABLE(INDEXED_DATABASE)
-#if USE(LEVELDB)
+#include <leveldb/db.h>
 
 namespace WebCore {
 
@@ -42,6 +43,7 @@ PassRefPtr<LevelDBTransaction> LevelDBTransaction::create(LevelDBDatabase* db)
 
 LevelDBTransaction::LevelDBTransaction(LevelDBDatabase* db)
     : m_db(db)
+    , m_snapshot(db)
     , m_comparator(db->comparator())
     , m_finished(false)
 {
@@ -118,7 +120,7 @@ bool LevelDBTransaction::get(const LevelDBSlice& key, Vector<char>& value)
         return true;
     }
 
-    return m_db->get(key, value);
+    return m_db->get(key, value, &m_snapshot);
 }
 
 bool LevelDBTransaction::commit()
@@ -257,7 +259,7 @@ LevelDBTransaction::TransactionIterator::TransactionIterator(PassRefPtr<LevelDBT
     : m_transaction(transaction)
     , m_comparator(m_transaction->m_comparator)
     , m_treeIterator(TreeIterator::create(m_transaction.get()))
-    , m_dbIterator(m_transaction->m_db->createIterator())
+    , m_dbIterator(m_transaction->m_db->createIterator(&m_transaction->m_snapshot))
     , m_current(0)
     , m_direction(kForward)
     , m_treeChanged(false)

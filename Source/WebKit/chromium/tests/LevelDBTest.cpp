@@ -30,7 +30,9 @@
 #include "FileSystem.h"
 #include "LevelDBComparator.h"
 #include "LevelDBDatabase.h"
+#include "LevelDBIterator.h"
 #include "LevelDBSlice.h"
+#include "LevelDBTransaction.h"
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
 #include <wtf/Vector.h>
@@ -53,7 +55,7 @@ Vector<char> encodeString(const std::string& s)
 {
     Vector<char> ret(s.size());
     for (size_t i = 0; i < s.size(); ++i)
-        ret.append(s[i]);
+        ret[i] = s[i];
     return ret;
 }
 
@@ -98,6 +100,97 @@ TEST(LevelDBDatabaseTest, CorruptionTest)
     EXPECT_TRUE(leveldb);
     success = leveldb->get(key, gotValue);
     EXPECT_FALSE(success);
+}
+
+TEST(LevelDBDatabaseTest, Transaction)
+{
+    OwnPtr<webkit_support::ScopedTempDirectory> tempDirectory = adoptPtr(webkit_support::CreateScopedTempDirectory());
+    tempDirectory->CreateUniqueTempDir();
+    const String path = String::fromUTF8(tempDirectory->path().c_str());
+
+    const Vector<char> key = encodeString("key");
+    Vector<char> gotValue;
+    SimpleComparator comparator;
+
+    OwnPtr<LevelDBDatabase> leveldb = LevelDBDatabase::open(path, &comparator);
+    EXPECT_TRUE(leveldb);
+
+    const Vector<char> oldValue = encodeString("value");
+    bool success = leveldb->put(key, oldValue);
+    EXPECT_TRUE(success);
+
+    RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(leveldb.get());
+
+    const Vector<char> newValue = encodeString("new value");
+    success = leveldb->put(key, newValue);
+    EXPECT_TRUE(success);
+
+    success = transaction->get(key, gotValue);
+    EXPECT_TRUE(success);
+    EXPECT_EQ(comparator.compare(gotValue, oldValue), 0);
+
+    success = leveldb->get(key, gotValue);
+    EXPECT_TRUE(success);
+    EXPECT_EQ(comparator.compare(gotValue, newValue), 0);
+
+    const Vector<char> addedKey = encodeString("added key");
+    const Vector<char> addedValue = encodeString("added value");
+    success = leveldb->put(addedKey, addedValue);
+    EXPECT_TRUE(success);
+
+    success = leveldb->get(addedKey, gotValue);
+    EXPECT_TRUE(success);
+    EXPECT_EQ(comparator.compare(gotValue, addedValue), 0);
+
+    success = transaction->get(addedKey, gotValue);
+    EXPECT_FALSE(success);
+}
+
+TEST(LevelDBDatabaseTest, TransactionIterator)
+{
+    OwnPtr<webkit_support::ScopedTempDirectory> tempDirectory = adoptPtr(webkit_support::CreateScopedTempDirectory());
+    tempDirectory->CreateUniqueTempDir();
+    const String path = String::fromUTF8(tempDirectory->path().c_str());
+
+    const Vector<char> start = encodeString("");
+    const Vector<char> key1 = encodeString("key1");
+    const Vector<char> value1 = encodeString("value1");
+    const Vector<char> key2 = encodeString("key2");
+    const Vector<char> value2 = encodeString("value2");
+
+    SimpleComparator comparator;
+    bool success;
+
+    OwnPtr<LevelDBDatabase> leveldb = LevelDBDatabase::open(path, &comparator);
+    EXPECT_TRUE(leveldb);
+
+    success = leveldb->put(key1, value1);
+    EXPECT_TRUE(success);
+    success = leveldb->put(key2, value2);
+    EXPECT_TRUE(success);
+
+    RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(leveldb.get());
+
+    success = leveldb->remove(key2);
+    EXPECT_TRUE(success);
+
+    OwnPtr<LevelDBIterator> it = transaction->createIterator();
+
+    it->seek(start);
+
+    EXPECT_TRUE(it->isValid());
+    EXPECT_EQ(comparator.compare(it->key(), key1), 0);
+    EXPECT_EQ(comparator.compare(it->value(), value1), 0);
+
+    it->next();
+
+    EXPECT_TRUE(it->isValid());
+    EXPECT_EQ(comparator.compare(it->key(), key2), 0);
+    EXPECT_EQ(comparator.compare(it->value(), value2), 0);
+
+    it->next();
+
+    EXPECT_FALSE(it->isValid());
 }
 
 } // namespace
