@@ -2313,13 +2313,11 @@ sub buildQMakeProjects
     close(QMAKE);
     $result = $?;
 
-    $command = "$make";
-
     if ($result ne 0) {
        die "\nFailed to set up build environment using $qmakebin!\n";
     }
 
-    my $needsCleanBuild = 0;
+    my $maybeNeedsCleanBuild = 0;
     my $needsIncrementalBuild = 0;
 
     if ($svnRevision ne $previousSvnRevision) {
@@ -2334,18 +2332,19 @@ sub buildQMakeProjects
                 m/\.qmake.conf$/ or
                 m/^Tools\/qmake\//
                ) {
-                print "Change to $_ detected, clean build needed.\n";
-                $needsCleanBuild = 1;
+                print "Change to $_ detected, clean build may be needed.\n";
+                $maybeNeedsCleanBuild = 1;
                 last;
             }
         }
     }
 
-    if ($configChanged or $needsCleanBuild) {
-        print "Calling '$command wipeclean' in " . $dir . "\n\n";
-        $result = system "$command wipeclean";
+    if ($configChanged) {
+        print "Calling '$make wipeclean' in " . $dir . "\n\n";
+        $result = system "$make wipeclean";
     }
 
+    $command = "$make";
     if ($needsIncrementalBuild) {
         $command .= " incremental";
     }
@@ -2383,6 +2382,14 @@ or passing --makeargs="qmake_all" to build-webkit.
 
 EOF
         print "$failMessage";
+    } elsif ($maybeNeedsCleanBuild) {
+        print "\nIncremental build failed, clean build needed. \n";
+        print "Calling '$make wipeclean' in " . $dir . "\n\n";
+        chdir $dir or die;
+        system "$make wipeclean";
+
+        print "\nCalling '$make' in " . $dir . "\n\n";
+        $result = system $make;
     }
 
     return $result;
