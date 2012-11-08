@@ -1,3 +1,12 @@
+2012-11-08  Anders Carlsson  <andersca@apple.com>
+
+        Roll WebKitSystemInterface DEPS.
+
+        Rubber-stamped by Andreas Kling.
+
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2012-11-07  Roger Fong  <roger_fong@apple.com>
 
         Enable Subpixel Layout on Windows. Rebaseline any failing tests that were rebaselined in r133351.
