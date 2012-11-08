@@ -1,3 +1,49 @@
+2012-11-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133841.
+        http://trac.webkit.org/changeset/133841
+        https://bugs.webkit.org/show_bug.cgi?id=101542
+
+        Reverted patches were innocent (Requested by shinyak on
+        #webkit).
+
+        * WebCore.exp.in:
+        * dom/Element.cpp:
+        (WebCore::Element::shadowPseudoId):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementRareData.cpp:
+        (WebCore::ElementRareData::reportMemoryUsage):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createShadowSubtree):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::updatePlaceholderText):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree):
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitLiteral):
+        (WebCore::DateTimeEditElement::DateTimeEditElement):
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::initialize):
+        * html/shadow/DateTimeFieldElement.h:
+        (DateTimeFieldElement):
+        * html/shadow/PickerIndicatorElement.cpp:
+        (WebCore::PickerIndicatorElement::PickerIndicatorElement):
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCueBox::TextTrackCueBox):
+        (WebCore::TextTrackCue::updateDisplayTree):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setShadowPseudoId):
+
 2012-11-07  Simon Fraser  <simon.fraser@apple.com>
 
         Fix EFL build, which has accelerated compositing disabled, by making

@@ -234,7 +234,6 @@ EXPORTS
         ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
         ?setSansSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setScrollbarsSuppressed@ScrollView@WebCore@@QAEX_N0@Z
-        ?setShadowPseudoId@Element@WebCore@@QAEXABVAtomicString@WTF@@AAH@Z
         ?setDelegatesScrolling@ScrollView@WebCore@@QAEX_N@Z
         ?setScrollOffsetFromInternals@ScrollableArea@WebCore@@QAEXABVIntPoint@2@@Z
         ?setSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
@@ -242,6 +241,7 @@ EXPORTS
         ?setStorageBlockingPolicy@Settings@WebCore@@QAEXW4StorageBlockingPolicy@SecurityOrigin@2@@Z
         ?setSuggestedValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
         ?setEditingValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
+        ?setPseudo@Element@WebCore@@QAEXABVAtomicString@WTF@@@Z
         ?setResolutionOverride@Settings@WebCore@@QAEXABVIntSize@2@@Z
         ?setMediaTypeOverride@Settings@WebCore@@QAEXABVString@WTF@@@Z
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
