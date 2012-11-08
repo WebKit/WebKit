@@ -1,0 +1,36 @@
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabled", "1");
+    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabledForAllPlugins", "1");
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest() 
+{
+    if (!window.testRunner) {
+        debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
+        return;
+    }
+	
+	// This call should force synchronous initialization of the plug-in instance which should *not* result in a Web vs Plugin process deadlock.
+	var unused = document.getElementById("TestElement").madeUpProperty;
+
+    testPassed("Waiting on synchronous initialization of the plug-in instance did not deadlock the Web and Plugin processes.");
+
+    testRunner.notifyDone();
+}
+</script>
+
+</head>
+<body onload="setTimeout('runTest()', 0)">
+<embed id="TestElement" type="application/x-webkit-test-netscape" test="evalute-js-within-npp-new"></embed>
+<p id="description"></p>
+<div id="console"></div>
+</body>
+
+<script>
+description("Test that a plug-in initializing asynchronous that calls out to NPP_Evaluate within NPP_New doesn't deadlock against a WebProcess that is trying to call in to the plug-in element, waiting for it to complete initialization.");
+</script>

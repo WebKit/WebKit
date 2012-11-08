@@ -43,6 +43,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IdentifierRep.h>
 #include <WebCore/NotImplemented.h>
+#include <wtf/TemporaryChange.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -66,6 +67,7 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, c
 #if USE(ACCELERATED_COMPOSITING)
     , m_isAcceleratedCompositingEnabled(creationParameters.isAcceleratedCompositingEnabled)
 #endif
+    , m_isInitializing(false)
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
     , m_pluginDestructionProtectCount(0)
     , m_pluginDestroyTimer(RunLoop::main(), this, &PluginControllerProxy::destroy)
@@ -91,9 +93,22 @@ PluginControllerProxy::~PluginControllerProxy()
         releaseNPObject(m_pluginElementNPObject);
 }
 
+void PluginControllerProxy::setInitializationReply(PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> reply)
+{
+    ASSERT(!m_initializationReply);
+    m_initializationReply = reply;
+}
+
+PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply> PluginControllerProxy::takeInitializationReply()
+{
+    return m_initializationReply.release();
+}
+
 bool PluginControllerProxy::initialize(const PluginCreationParameters& creationParameters)
 {
     ASSERT(!m_plugin);
+    
+    TemporaryChange<bool> initializing(m_isInitializing, true);
 
     m_plugin = NetscapePlugin::create(PluginProcess::shared().netscapePluginModule());
     if (!m_plugin) {

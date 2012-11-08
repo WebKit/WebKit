@@ -1,5 +1,19 @@
 2012-11-08  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r125457
+
+    2012-08-13  Brady Eidson  <beidson@apple.com>
+
+            With asynchronous plug-in initialization, WebProcess and PluginProcess can deadlock
+            <rdar://problem/12062125> and https://bugs.webkit.org/show_bug.cgi?id=93894
+
+            Reviewed by Alexey Proskuryakov.
+
+            * platform/mac-wk2/plugins/asychronous-deadlock-with-timer-and-evaluate-expected.txt: Added.
+            * platform/mac-wk2/plugins/asychronous-deadlock-with-timer-and-evaluate.html: Added.
+
+2012-11-08  Lucas Forschler  <lforschler@apple.com>
+
         Merge r124815
 
     2012-08-03  Brady Eidson  <beidson@apple.com>
@@ -11174,6 +11188,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .
