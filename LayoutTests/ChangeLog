@@ -1,3 +1,16 @@
+2012-11-08  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        Rebaseline fast/media/w3c/test_media_queries.html and fast/media/mq-resolution.html after r133884
+        https://bugs.webkit.org/show_bug.cgi?id=101597
+
+        Unreviewed, WebKit gardening.
+
+        Layout tests fast/media/w3c/test_media_queries.html and fast/media/mq-resolution.html
+        need new test expectations after r133884.
+
+        * fast/media/mq-resolution-expected.txt:
+        * fast/media/w3c/test_media_queries-expected.txt:
+
 2012-11-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Rebaseline fast/canvas/fillText-shadow.html
