@@ -16,6 +16,8 @@ macx: QT += xml
 
 haveQtModule(widgets): QT += widgets
 
+build?(webkit1): DEFINES += HAVE_WEBKIT1
+
 INSTALLS += target
 
 isEmpty(INSTALL_BINS) {

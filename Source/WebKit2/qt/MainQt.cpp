@@ -42,7 +42,7 @@ typedef QApplication ApplicationType;
 
 namespace WebKit {
 Q_DECL_IMPORT int WebProcessMainQt(QGuiApplication*);
-#if !defined(QT_NO_WIDGETS)
+#if defined(HAVE_WEBKIT1)
 Q_DECL_IMPORT void initializeWebKit2Theme();
 #endif
 }
@@ -82,7 +82,7 @@ int main(int argc, char** argv)
     }
 #endif
 
-#if !defined(QT_NO_WIDGETS)
+#if defined(HAVE_WEBKIT1)
     WebKit::initializeWebKit2Theme();
 #endif
 
