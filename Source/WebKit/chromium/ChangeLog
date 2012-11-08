@@ -1,3 +1,9 @@
+2012-11-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-11-08  Sami Kyostila  <skyostil@chromium.org>
 
         Introduce WebScreenInfo.deviceScaleFactor
