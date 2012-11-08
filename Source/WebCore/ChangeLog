@@ -1,3 +1,19 @@
+2012-11-07  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Seam occurred between pieces of ShadowBlur on floating point zoom
+        https://bugs.webkit.org/show_bug.cgi?id=101435
+
+        Reviewed by Simon Fraser.
+
+        When paint Shadow that doesn't have blurred edge on floating point zoom,
+        pixel seam (pixel cracks) occurred between pieces of the ShadowBlur because of unaligned clip rect.
+        So, enlarge the clipping area 1 pixel so that the fill does not bleed (due to antialiasing)
+        even if the unaligned clip rect occurred.
+
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::calculateLayerBoundingRect):
+
 2012-11-07  Tim Horton  <timothy_horton@apple.com>
 
         Repaint issues with -webkit-svg-shadow used on a container

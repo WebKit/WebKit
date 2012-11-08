@@ -411,6 +411,11 @@ IntRect ShadowBlur::calculateLayerBoundingRect(GraphicsContext* context, const F
         if (m_type == BlurShadow) {
             inflatedClip.inflateX(edgeSize.width());
             inflatedClip.inflateY(edgeSize.height());
+        } else {
+            // Enlarge the clipping area 1 pixel so that the fill does not
+            // bleed (due to antialiasing) even if the unaligned clip rect occurred
+            inflatedClip.inflateX(1);
+            inflatedClip.inflateY(1);
         }
         
         layerRect.intersect(inflatedClip);
