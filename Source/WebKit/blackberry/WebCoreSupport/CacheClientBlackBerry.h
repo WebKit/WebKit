@@ -30,7 +30,6 @@ public:
 
 private:
     CacheClientBlackBerry();
-    unsigned m_lastCapacity;
 };
 
 } // WebCore

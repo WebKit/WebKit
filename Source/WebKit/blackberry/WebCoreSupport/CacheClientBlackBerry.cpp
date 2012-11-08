@@ -32,7 +32,6 @@ CacheClientBlackBerry* CacheClientBlackBerry::get()
 }
 
 CacheClientBlackBerry::CacheClientBlackBerry()
-    : m_lastCapacity(0)
 {
 }
 
@@ -56,14 +55,11 @@ void CacheClientBlackBerry::updateCacheCapacity()
 #if ENABLE(BLACKBERRY_DEBUG_MEMORY)
     // We're debugging memory usage. So keep it disabled.
 #else
-    unsigned cacheCapacity = BlackBerry::Platform::Settings::instance()->getSuggestedCacheCapacity(memoryCache()->totalSize());
-    if (m_lastCapacity == cacheCapacity) {
-        // Suggested capacity hasn't been changed.
-        return;
-    }
+    unsigned cacheTotalCapacity = 64 * 1024 * 1024;
+    unsigned cacheMinDeadCapacity = cacheTotalCapacity / 4;
+    unsigned cacheMaxDeadCapacity = cacheTotalCapacity / 2;
 
-    m_lastCapacity = cacheCapacity;
-    memoryCache()->setCapacities(0, m_lastCapacity, m_lastCapacity);
+    memoryCache()->setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
 #endif
 }
 
