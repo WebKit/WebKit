@@ -1,3 +1,13 @@
+2012-11-08  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Unreviewed, rolling out r133859.
+        http://trac.webkit.org/changeset/133859
+        https://bugs.webkit.org/show_bug.cgi?id=101526
+
+        Breaks EFL bots test execution.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-11-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Reduce the number of clean builds

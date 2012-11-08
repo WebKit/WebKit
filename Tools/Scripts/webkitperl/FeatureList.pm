@@ -391,7 +391,7 @@ my @features = (
       define => "ENABLE_TEXT_AUTOSIZING", default => 0, value => \$textAutosizingSupport },
 
     { option => "tiled-backing-store", desc => "Toggle Tiled Backing Store support",
-      define => "WTF_USE_TILED_BACKING_STORE", default => (isQt() || isEfl()), value => \$tiledBackingStoreSupport },
+      define => "WTF_USE_TILED_BACKING_STORE", default => isQt(), value => \$tiledBackingStoreSupport },
 
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", default => (isQt() || isBlackBerry() || isEfl()), value => \$touchEventsSupport },
