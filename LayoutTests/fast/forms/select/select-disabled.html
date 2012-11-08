@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<select id=select1 size=3>
+<option selected>a</option>
+<option>b</option>
+<option>c</option>
+</select>
+
+<select id=select2>
+<option selected>a</option>
+<option>b</option>
+<option>c</option>
+</select>
+
+<script>
+description('Tests that user cannot change disabled select by keyboard');
+
+var select1 = document.getElementById('select1');
+select1.focus();
+shouldBeEqualToString('select1.value', 'a');
+eventSender.keyDown('downArrow');
+shouldBeEqualToString('select1.value', 'b');
+select1.disabled = true;
+eventSender.keyDown('downArrow');
+shouldBeEqualToString('select1.value', 'b');
+eventSender.keyDown('c');
+shouldBeEqualToString('select1.value', 'b');
+
+var select2 = document.getElementById('select2');
+select2.focus();
+shouldBeEqualToString('select2.value', 'a');
+eventSender.keyDown('b');
+shouldBeEqualToString('select2.value', 'b');
+select2.disabled = true;
+eventSender.keyDown('downArrow');
+shouldBeEqualToString('select2.value', 'b');
+eventSender.keyDown('c');
+shouldBeEqualToString('select2.value', 'b');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

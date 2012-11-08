@@ -1,3 +1,15 @@
+2012-11-08  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        User can change a disabled select (drop down box)
+        https://bugs.webkit.org/show_bug.cgi?id=100932
+
+        Reviewed by Kent Tamura.
+
+        Verify that keyboard events do not change value of disabled select.
+
+        * fast/forms/select/select-disabled-expected.txt: Added.
+        * fast/forms/select/select-disabled.html: Added.
+
 2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         [Chromium] Web Inspector: some tests failing with "Cannot call method 'hasTextContent' of undefined"

@@ -1440,6 +1440,11 @@ void HTMLSelectElement::defaultEventHandler(Event* event)
     if (!renderer())
         return;
 
+    if (disabled()) {
+        HTMLFormControlElementWithState::defaultEventHandler(event);
+        return;
+    }
+
     if (usesMenuList())
         menuListDefaultEventHandler(event);
     else 
