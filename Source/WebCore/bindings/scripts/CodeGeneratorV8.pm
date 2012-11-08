@@ -2060,20 +2060,15 @@ sub GenerateNamedConstructorCallback
     my @beforeArgumentList;
     my @afterArgumentList;
 
+    my $toActiveDOMObject = "0";
     if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
-        push(@implContent, <<END);
-WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, V8${implClassName}::derefObject, V8${implClassName}::toActiveDOMObject, 0, V8${implClassName}::installPerContextPrototypeProperties, 0, WrapperTypeObjectPrototype };
-
-END
-    } else {
-        push(@implContent, <<END);
-WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, 0, 0, 0, V8${implClassName}::installPerContextPrototypeProperties, 0, WrapperTypeObjectPrototype };
-
-END
+        $toActiveDOMObject = "V8${implClassName}::toActiveDOMObject";
     }
-
     AddToImplIncludes("Frame.h");
+
     push(@implContent, <<END);
+WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constructor::GetTemplate, V8${implClassName}::derefObject, ${toActiveDOMObject}, 0, V8${implClassName}::installPerContextPrototypeProperties, 0, WrapperTypeObjectPrototype };
+
 static v8::Handle<v8::Value> V8${implClassName}ConstructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.${implClassName}.Constructor");

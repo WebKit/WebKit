@@ -74,12 +74,16 @@ void DOMDataStore::weakCallback(v8::Persistent<v8::Value> value, void* context)
 {
     Node* object = static_cast<Node*>(context);
     ASSERT(value->IsObject());
-    ASSERT(object->wrapper() == v8::Persistent<v8::Object>::Cast(value));
+    v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
+    ASSERT(object->wrapper() == wrapper);
+    ASSERT(object = static_cast<Node*>(toNative(wrapper)));
+    WrapperTypeInfo* info = toWrapperTypeInfo(wrapper);
+    ASSERT(info->derefObjectFunction);
 
     object->clearWrapper();
     value.Dispose();
     value.Clear();
-    object->deref();
+    info->derefObject(object);
 }
 
 } // namespace WebCore

@@ -94,6 +94,7 @@ private:
         ASSERT(value->IsObject());
         v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
         WrapperTypeInfo* type = toWrapperTypeInfo(wrapper);
+        ASSERT(type->derefObjectFunction);
         KeyType* key = static_cast<KeyType*>(toNative(wrapper));
 
         map->remove(key, wrapper);
