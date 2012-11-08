@@ -44,11 +44,12 @@ def getLatestSVNRevision(SVNServer):
 
 
 def waitForSVNRevision(SVNServer, revision):
-    if not revision:
+    if not revision or not revision.isdigit():
         latestRevision = int(getLatestSVNRevision(SVNServer))
-        print "Latest SVN revision on %s is r%d. Don't wait, because revision argument is empty." % (SVNServer, latestRevision)
+        print "Latest SVN revision on %s is r%d. Don't wait, because revision argument isn't a valid SVN revision." % (SVNServer, latestRevision)
         return
 
+    revision = int(revision)
     while True:
         latestRevision = int(getLatestSVNRevision(SVNServer))
         if latestRevision < revision:
@@ -61,7 +62,7 @@ def waitForSVNRevision(SVNServer, revision):
 
 if __name__ == '__main__':
     parser = OptionParser()
-    parser.add_option("-r", "--revision", dest="revision", type="int", help="SVN revision number")
+    parser.add_option("-r", "--revision", dest="revision", help="SVN revision number")
     parser.add_option("-s", "--svn-server", dest="SVNServer", help="SVN server")
     options, args = parser.parse_args()
     waitForSVNRevision(options.SVNServer, options.revision)

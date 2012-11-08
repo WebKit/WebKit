@@ -1,3 +1,13 @@
+2012-11-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Make wait-for-SVN-server.py accept empty string as revision
+        https://bugs.webkit.org/show_bug.cgi?id=98014
+
+        Reviewed by Dirk Pranke.
+
+        * BuildSlaveSupport/wait-for-SVN-server.py:
+        (waitForSVNRevision):
+
 2012-11-07  Dirk Pranke  <dpranke@chromium.org>
 
         garden-o-matic should handle concurrent requests
