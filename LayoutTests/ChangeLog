@@ -1,5 +1,16 @@
 2012-11-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
+        [EFL] Rebaseline fast/canvas/fillText-shadow.html
+        https://bugs.webkit.org/show_bug.cgi?id=101587
+
+        Unreviewed gardening.
+
+        Test fast/canvas/fillText-shadow.html has to be rebased after r133834.
+
+        * platform/efl/fast/canvas/fillText-shadow-expected.txt:
+
+2012-11-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
         [EFL] Gardening after r133807 and r133820
         https://bugs.webkit.org/show_bug.cgi?id=101585
 
