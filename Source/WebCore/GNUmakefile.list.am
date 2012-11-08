@@ -1872,7 +1872,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBKeyPath.h \
 	Source/WebCore/Modules/indexeddb/IDBKeyRange.cpp \
 	Source/WebCore/Modules/indexeddb/IDBKeyRange.h \
-	Source/WebCore/Modules/indexeddb/IDBLevelDBBackingStore.cpp \
+	Source/WebCore/Modules/indexeddb/IDBBackingStore.cpp \
 	Source/WebCore/Modules/indexeddb/IDBLevelDBBackingStore.h \
 	Source/WebCore/Modules/indexeddb/IDBLevelDBCoding.cpp \
 	Source/WebCore/Modules/indexeddb/IDBLevelDBCoding.h \

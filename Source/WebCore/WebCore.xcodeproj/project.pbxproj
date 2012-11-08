@@ -3474,7 +3474,7 @@
 		9712A5DF15004EDA0048AF10 /* IDBKeyPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58615004EDA0048AF10 /* IDBKeyPath.h */; };
 		9712A5E215004EDA0048AF10 /* IDBKeyRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A58915004EDA0048AF10 /* IDBKeyRange.cpp */; };
 		9712A5E315004EDA0048AF10 /* IDBKeyRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58A15004EDA0048AF10 /* IDBKeyRange.h */; };
-		9712A5E515004EDA0048AF10 /* IDBLevelDBBackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A58C15004EDA0048AF10 /* IDBLevelDBBackingStore.cpp */; };
+		9712A5E515004EDA0048AF10 /* IDBBackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A58C15004EDA0048AF10 /* IDBBackingStore.cpp */; };
 		9712A5E615004EDA0048AF10 /* IDBLevelDBBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58D15004EDA0048AF10 /* IDBLevelDBBackingStore.h */; };
 		9712A5E715004EDA0048AF10 /* IDBLevelDBCoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9712A58E15004EDA0048AF10 /* IDBLevelDBCoding.cpp */; };
 		9712A5E815004EDA0048AF10 /* IDBLevelDBCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 9712A58F15004EDA0048AF10 /* IDBLevelDBCoding.h */; };
@@ -10701,8 +10701,8 @@
 		9712A58915004EDA0048AF10 /* IDBKeyRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBKeyRange.cpp; path = Modules/indexeddb/IDBKeyRange.cpp; sourceTree = "<group>"; };
 		9712A58A15004EDA0048AF10 /* IDBKeyRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBKeyRange.h; path = Modules/indexeddb/IDBKeyRange.h; sourceTree = "<group>"; };
 		9712A58B15004EDA0048AF10 /* IDBKeyRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = IDBKeyRange.idl; path = Modules/indexeddb/IDBKeyRange.idl; sourceTree = "<group>"; };
-		9712A58C15004EDA0048AF10 /* IDBLevelDBBackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBLevelDBBackingStore.cpp; path = Modules/indexeddb/IDBLevelDBBackingStore.cpp; sourceTree = "<group>"; };
-		9712A58D15004EDA0048AF10 /* IDBLevelDBBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBLevelDBBackingStore.h; path = Modules/indexeddb/IDBLevelDBBackingStore.h; sourceTree = "<group>"; };
+		9712A58C15004EDA0048AF10 /* IDBBackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBBackingStore.cpp; path = Modules/indexeddb/IDBBackingStore.cpp; sourceTree = "<group>"; };
+		9712A58D15004EDA0048AF10 /* IDBBackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBLevelDBBackingStore.h; path = Modules/indexeddb/IDBLevelDBBackingStore.h; sourceTree = "<group>"; };
 		9712A58E15004EDA0048AF10 /* IDBLevelDBCoding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBLevelDBCoding.cpp; path = Modules/indexeddb/IDBLevelDBCoding.cpp; sourceTree = "<group>"; };
 		9712A58F15004EDA0048AF10 /* IDBLevelDBCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IDBLevelDBCoding.h; path = Modules/indexeddb/IDBLevelDBCoding.h; sourceTree = "<group>"; };
 		9712A59015004EDA0048AF10 /* IDBObjectStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDBObjectStore.cpp; path = Modules/indexeddb/IDBObjectStore.cpp; sourceTree = "<group>"; };
@@ -17893,7 +17893,7 @@
 				9712A58915004EDA0048AF10 /* IDBKeyRange.cpp */,
 				9712A58A15004EDA0048AF10 /* IDBKeyRange.h */,
 				9712A58B15004EDA0048AF10 /* IDBKeyRange.idl */,
-				9712A58C15004EDA0048AF10 /* IDBLevelDBBackingStore.cpp */,
+				9712A58C15004EDA0048AF10 /* IDBBackingStore.cpp */,
 				9712A58D15004EDA0048AF10 /* IDBLevelDBBackingStore.h */,
 				9712A58E15004EDA0048AF10 /* IDBLevelDBCoding.cpp */,
 				9712A58F15004EDA0048AF10 /* IDBLevelDBCoding.h */,
@@ -27019,7 +27019,7 @@
 				9712A5DB15004EDA0048AF10 /* IDBKey.cpp in Sources */,
 				9712A5DE15004EDA0048AF10 /* IDBKeyPath.cpp in Sources */,
 				9712A5E215004EDA0048AF10 /* IDBKeyRange.cpp in Sources */,
-				9712A5E515004EDA0048AF10 /* IDBLevelDBBackingStore.cpp in Sources */,
+				9712A5E515004EDA0048AF10 /* IDBBackingStore.cpp in Sources */,
 				9712A5E715004EDA0048AF10 /* IDBLevelDBCoding.cpp in Sources */,
 				9712A5E915004EDA0048AF10 /* IDBObjectStore.cpp in Sources */,
 				9712A5EC15004EDA0048AF10 /* IDBObjectStoreBackendImpl.cpp in Sources */,

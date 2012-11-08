@@ -1,3 +1,23 @@
+2012-11-07  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Prepare for IDBBackingStore merge by renaming IDBLevelDBBackingStore.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=101486
+
+        Reviewed by Ojan Vafai.
+
+        Rename IDBLevelDBBackingStore.cpp to IDBBackingStore.cpp in
+        preparation for merging these classes. This will make the merge
+        diffs sane. See https://bugs.webkit.org/show_bug.cgi?id=101415
+        for the final goal.
+
+        No new tests, this is is just a rename and minor style fix.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/indexeddb/IDBBackingStore.cpp: Renamed from Source/WebCore/Modules/indexeddb/IDBLevelDBBackingStore.cpp.
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-11-07  Adam Barth  <abarth@webkit.org>
 
         [V8] Prepare DOMDataStore to be able to store ScriptWrappable wrappers inline

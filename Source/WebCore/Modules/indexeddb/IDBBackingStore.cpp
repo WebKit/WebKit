@@ -24,27 +24,28 @@
  */
 
 #include "config.h"
-#include "IDBLevelDBBackingStore.h"
-#include "IDBTracing.h"
+#include "IDBBackingStore.h"
 
 #if ENABLE(INDEXED_DATABASE)
 #if USE(LEVELDB)
 
-#include <wtf/Assertions.h>
 #include "FileSystem.h"
 #include "HistogramSupport.h"
 #include "IDBFactoryBackendImpl.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
+#include "IDBLevelDBBackingStore.h"
 #include "IDBLevelDBCoding.h"
 #include "IDBMetadata.h"
+#include "IDBTracing.h"
 #include "LevelDBComparator.h"
 #include "LevelDBDatabase.h"
 #include "LevelDBIterator.h"
 #include "LevelDBSlice.h"
 #include "LevelDBTransaction.h"
 #include "SecurityOrigin.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -741,7 +742,7 @@ public:
 
 private:
     LevelDBRecordIdentifier(const Vector<char>& primaryKey, int64_t version) : m_primaryKey(primaryKey), m_version(version) { ASSERT(!primaryKey.isEmpty()); }
-    LevelDBRecordIdentifier() : m_primaryKey(), m_version(-1) {}
+    LevelDBRecordIdentifier() : m_primaryKey(), m_version(-1) { }
 
     Vector<char> m_primaryKey; // FIXME: Make it more clear that this is the *encoded* version of the key.
     int64_t m_version;
@@ -1260,7 +1261,7 @@ protected:
         }
     }
 
-    virtual ~CursorImplCommon() {}
+    virtual ~CursorImplCommon() { }
 
     bool isPastBounds() const;
     bool haveEnteredRange() const;
