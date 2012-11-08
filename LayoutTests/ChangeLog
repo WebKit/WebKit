@@ -1,5 +1,13 @@
 2012-11-08  Joshua Bell  <jsbell@chromium.org>
 
+        [Chromium] Test expectations for failing image tests following Chromium r166632.
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-08  Joshua Bell  <jsbell@chromium.org>
+
         [Chromium] Widen flaky crash expectation fast/workers/worker-multi-startup.html to include linux.
 
         Unreviewed gardening.
