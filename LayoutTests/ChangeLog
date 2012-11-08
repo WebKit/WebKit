@@ -1,3 +1,14 @@
+2012-11-07  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=101408
+
+        Reviewed by Kent Tamura.
+
+        Mistake with timezone was making this test flaky.
+
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html:
+
 2012-11-07  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, new chromium-mac-mountainlion baselines for css3/selectors3.
