@@ -4177,3 +4177,5 @@ webkit.org/b/101377 [ Linux Debug ] platform/chromium-linux/fast/text/internatio
 webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure Pass ]
 
 webkit.org/b/101539 [ Linux Win ] editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
+
+webkit.org/b/101618 [ Win7 Debug ] http/tests/inspector/indexeddb/database-data.html [ Crash ]
