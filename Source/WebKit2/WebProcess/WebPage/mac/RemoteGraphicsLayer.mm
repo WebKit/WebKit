@@ -23,32 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "RemoteLayerTreeController.h"
-
-#import "RemoteGraphicsLayer.h"
-#import <wtf/PassOwnPtr.h>
+#include "config.h"
+#include "RemoteGraphicsLayer.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<RemoteLayerTreeController> RemoteLayerTreeController::create()
+PassOwnPtr<GraphicsLayer> RemoteGraphicsLayer::create(GraphicsLayerClient* client, RemoteLayerTreeController* controller)
 {
-    return adoptPtr(new RemoteLayerTreeController);
+    return adoptPtr(new RemoteGraphicsLayer(client, controller));
 }
 
-RemoteLayerTreeController::RemoteLayerTreeController()
+RemoteGraphicsLayer::RemoteGraphicsLayer(GraphicsLayerClient* client, RemoteLayerTreeController* controller)
+    : GraphicsLayer(client)
+    , m_controller(controller)
 {
 }
 
-RemoteLayerTreeController::~RemoteLayerTreeController()
+RemoteGraphicsLayer::~RemoteGraphicsLayer()
 {
 }
 
-PassOwnPtr<GraphicsLayer> RemoteLayerTreeController::createGraphicsLayer(GraphicsLayerClient* client)
+void RemoteGraphicsLayer::setNeedsDisplay()
 {
-    return RemoteGraphicsLayer::create(client, this);
+    FloatRect hugeRect(-std::numeric_limits<float>::max() / 2, -std::numeric_limits<float>::max() / 2,
+                       std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+    setNeedsDisplayInRect(hugeRect);
+}
+
+void RemoteGraphicsLayer::setNeedsDisplayInRect(const FloatRect&)
+{
+    // FIXME: Implement this.
 }
 
 } // namespace WebKit

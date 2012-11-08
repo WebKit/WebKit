@@ -55,6 +55,11 @@ void RemoteLayerTreeDrawingArea::scroll(const IntRect& scrollRect, const IntSize
 {
 }
 
+GraphicsLayerFactory* RemoteLayerTreeDrawingArea::graphicsLayerFactory()
+{
+    return m_remoteLayerTreeController.get();
+}
+
 void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer*)
 {
 }

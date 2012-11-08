@@ -1,3 +1,16 @@
+2012-11-07  Anders Carlsson  <andersca@apple.com>
+
+        Add RemoteGraphicsLayer class
+        https://bugs.webkit.org/show_bug.cgi?id=101535
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in:
+        Export GraphicsLayer symbols required by WebKit2.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Make GraphicsLayerFactory.h a private header.
+
 2012-11-07  Adam Barth  <abarth@webkit.org>
 
         [V8] Don't leak <img> elements in content scripts

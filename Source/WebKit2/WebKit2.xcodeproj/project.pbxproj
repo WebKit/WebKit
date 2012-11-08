@@ -222,6 +222,8 @@
 		1AB16AE21648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16AE01648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h */; };
 		1AB16AE9164B3A8800290D62 /* RemoteLayerTreeController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB16AE7164B3A8800290D62 /* RemoteLayerTreeController.mm */; };
 		1AB16AEA164B3A8800290D62 /* RemoteLayerTreeController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16AE8164B3A8800290D62 /* RemoteLayerTreeController.h */; };
+		1AB16AED164B41E400290D62 /* RemoteGraphicsLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AB16AEB164B41E400290D62 /* RemoteGraphicsLayer.mm */; };
+		1AB16AEE164B41E400290D62 /* RemoteGraphicsLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16AEC164B41E400290D62 /* RemoteGraphicsLayer.h */; };
 		1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */; };
 		1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */; };
 		1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */; };
@@ -1400,6 +1402,8 @@
 		1AB16AE01648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDrawingAreaProxy.h; sourceTree = "<group>"; };
 		1AB16AE7164B3A8800290D62 /* RemoteLayerTreeController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeController.mm; sourceTree = "<group>"; };
 		1AB16AE8164B3A8800290D62 /* RemoteLayerTreeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeController.h; sourceTree = "<group>"; };
+		1AB16AEB164B41E400290D62 /* RemoteGraphicsLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteGraphicsLayer.mm; sourceTree = "<group>"; };
+		1AB16AEC164B41E400290D62 /* RemoteGraphicsLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsLayer.h; sourceTree = "<group>"; };
 		1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxy.h; sourceTree = "<group>"; };
 		1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxy.cpp; sourceTree = "<group>"; };
 		1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DownloadProxy.messages.in; sourceTree = "<group>"; };
@@ -3914,6 +3918,8 @@
 		BC963D6C113DD19500574BE2 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				1AB16AEC164B41E400290D62 /* RemoteGraphicsLayer.h */,
+				1AB16AEB164B41E400290D62 /* RemoteGraphicsLayer.mm */,
 				1AB16AE8164B3A8800290D62 /* RemoteLayerTreeController.h */,
 				1AB16AE7164B3A8800290D62 /* RemoteLayerTreeController.mm */,
 				1AB16ADC1648598400290D62 /* RemoteLayerTreeDrawingArea.h */,
@@ -4854,6 +4860,7 @@
 				1AB16ADE1648598400290D62 /* RemoteLayerTreeDrawingArea.h in Headers */,
 				1AB16AE21648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h in Headers */,
 				1AB16AEA164B3A8800290D62 /* RemoteLayerTreeController.h in Headers */,
+				1AB16AEE164B41E400290D62 /* RemoteGraphicsLayer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5792,6 +5799,7 @@
 				9F4F59441648B67F00493B7E /* SharedWorkerProcessProxyMac.mm in Sources */,
 				9F4F59461648BA8E00493B7E /* NetworkProcessManagerMac.mm in Sources */,
 				1AB16AE9164B3A8800290D62 /* RemoteLayerTreeController.mm in Sources */,
+				1AB16AED164B41E400290D62 /* RemoteGraphicsLayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

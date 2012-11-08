@@ -26,17 +26,20 @@
 #ifndef RemoteLayerTree_h
 #define RemoteLayerTree_h
 
-#include <wtf/PassOwnPtr.h>
+#include <WebCore/GraphicsLayerFactory.h>
 
 namespace WebKit {
 
-class RemoteLayerTreeController {
+class RemoteLayerTreeController : public WebCore::GraphicsLayerFactory {
 public:
     static PassOwnPtr<RemoteLayerTreeController> create();
     ~RemoteLayerTreeController();
 
 private:
     RemoteLayerTreeController();
+
+    // WebCore::GraphicsLayerFactory
+    virtual PassOwnPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;
 };
 
 } // namespace WebKit

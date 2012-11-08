@@ -1,3 +1,26 @@
+2012-11-07  Anders Carlsson  <andersca@apple.com>
+
+        Add RemoteGraphicsLayer class
+        https://bugs.webkit.org/show_bug.cgi?id=101535
+
+        Reviewed by Simon Fraser.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.h:
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.mm:
+        Add RemoteGraphicsLayer, a subclass of WebCore::GraphicsLayer.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeController.h:
+        Make RemoteLayerTreeController a GraphicsLayerFactory.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeController.mm:
+        (WebKit::RemoteLayerTreeController::createGraphicsLayer):
+        Create a new RemoteGraphicsLayer.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::graphicsLayerFactory):
+        Return the layer tree controller.
+
 2012-11-07  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [WK2] Make WebVibrationProxy to be a member of WebPageProxy.

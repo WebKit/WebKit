@@ -23,32 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "RemoteLayerTreeController.h"
+#ifndef RemoteGraphicsLayer_h
+#define RemoteGraphicsLayer_h
 
-#import "RemoteGraphicsLayer.h"
-#import <wtf/PassOwnPtr.h>
-
-using namespace WebCore;
+#include <WebCore/GraphicsLayer.h>
 
 namespace WebKit {
 
-PassOwnPtr<RemoteLayerTreeController> RemoteLayerTreeController::create()
-{
-    return adoptPtr(new RemoteLayerTreeController);
-}
+class RemoteLayerTreeController;
 
-RemoteLayerTreeController::RemoteLayerTreeController()
-{
-}
+class RemoteGraphicsLayer : public WebCore::GraphicsLayer {
+public:
+    static PassOwnPtr<WebCore::GraphicsLayer> create(WebCore::GraphicsLayerClient*, RemoteLayerTreeController*);
+    virtual ~RemoteGraphicsLayer();
 
-RemoteLayerTreeController::~RemoteLayerTreeController()
-{
-}
+private:
+    RemoteGraphicsLayer(WebCore::GraphicsLayerClient*, RemoteLayerTreeController*);
 
-PassOwnPtr<GraphicsLayer> RemoteLayerTreeController::createGraphicsLayer(GraphicsLayerClient* client)
-{
-    return RemoteGraphicsLayer::create(client, this);
-}
+    // WebCore::GraphicsLayer
+    virtual void setNeedsDisplay() OVERRIDE;
+    virtual void setNeedsDisplayInRect(const WebCore::FloatRect&) OVERRIDE;
+
+    RemoteLayerTreeController* m_controller;
+};
 
 } // namespace WebKit
+
+#endif // RemoteGraphicsLayer_h
