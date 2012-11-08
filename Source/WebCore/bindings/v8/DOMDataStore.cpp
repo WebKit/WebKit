@@ -54,14 +54,14 @@ DOMDataStore::~DOMDataStore()
 
 DOMDataStore* DOMDataStore::current(v8::Isolate* isolate)
 {
-    DEFINE_STATIC_LOCAL(DOMDataStore, mainWorldDOMDataStore, (MainWorld));
+    DEFINE_STATIC_LOCAL(DOMDataStore, defaultStore, (MainWorld));
     V8PerIsolateData* data = isolate ? V8PerIsolateData::from(isolate) : V8PerIsolateData::current();
     if (UNLIKELY(!!data->domDataStore()))
         return data->domDataStore();
     V8DOMWindowShell* context = V8DOMWindowShell::getEntered();
     if (UNLIKELY(!!context))
-        return context->world()->isolatedWorldDOMDataStore();
-    return &mainWorldDOMDataStore;
+        return context->world()->domDataStore();
+    return &defaultStore;
 }
 
 void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

@@ -78,9 +78,9 @@ public:
     bool isIsolatedWorld() { return isIsolatedWorldId(m_worldId); }
     int worldId() const { return m_worldId; }
     int extensionGroup() const { return m_extensionGroup; }
-    DOMDataStore* isolatedWorldDOMDataStore() const
+    DOMDataStore* domDataStore() const
     {
-        ASSERT(isIsolatedWorld());
+        ASSERT(m_worldId != uninitializedWorldId);
         return m_domDataStore.get();
     }
     void deref()
@@ -98,7 +98,7 @@ private:
         : m_worldId(worldId)
         , m_extensionGroup(extensionGroup)
     {
-        if (isIsolatedWorld())
+        if (worldId != uninitializedWorldId)
             m_domDataStore = adoptPtr(new DOMDataStore(DOMDataStore::IsolatedWorld));
     }
 

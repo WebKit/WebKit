@@ -1,3 +1,20 @@
+2012-11-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133892.
+        http://trac.webkit.org/changeset/133892
+        https://bugs.webkit.org/show_bug.cgi?id=101617
+
+        Compile failures on mac, android, linux (Requested by
+        jsbell|gardener on #webkit).
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::current):
+        * bindings/v8/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::domDataStore):
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::getCachedWrapper):
+
 2012-11-08  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [Canvas] UI iterations: image on the top, auto replay
