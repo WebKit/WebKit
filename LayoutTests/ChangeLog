@@ -1,5 +1,13 @@
 2012-11-07  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, fix mistakenly added pngs for failing compositing ref tests :(.
+
+        * platform/chromium-mac/compositing/text-on-scaled-layer-expected.png: Removed.
+        * platform/chromium-mac/compositing/text-on-scaled-surface-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+
+2012-11-07  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, clean up chromium-mac-mountainlion for remaining compositing, css3 (non selectors3) tests.
 
         * platform/chromium-mac-lion/css3/css3-modsel-33-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/css3-modsel-33-expected.png.

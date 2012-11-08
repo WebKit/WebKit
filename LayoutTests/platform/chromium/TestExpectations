@@ -4101,6 +4101,8 @@ webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOn
 
 webkit.org/b/99749 [ MountainLion ] compositing/color-matching/image-color-matching.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] compositing/direct-image-compositing.html [ ImageOnlyFailure ]
+webkit.org/b/99759 [ MountainLion ] compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
+webkit.org/b/99759 [ MountainLion ] compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] compositing/geometry/clipping-foreground.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] fast/canvas/font-update.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] css2.1/20110323/border-conflict-element-001d.htm [ ImageOnlyFailure ]
