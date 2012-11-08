@@ -1,5 +1,26 @@
 2012-11-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] API test tst_qwebinspector crashes
+        https://bugs.webkit.org/show_bug.cgi?id=101599
+
+        Reviewed by Simon Hausmann.
+
+        Delete the internal inspector from QWebPage destructor, instead of causing recursions
+        between QWebPagePrivate::setInspector and QWebInspector::setPage.
+
+        Also separate the three tests in tst_QWebInspector to better tell which one is failing.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::~QWebPagePrivate):
+        (QWebPagePrivate::setInspector):
+        * tests/qwebinspector/tst_qwebinspector.cpp:
+        (tst_QWebInspector):
+        (tst_QWebInspector::attachAndDestroyPageFirst):
+        (tst_QWebInspector::attachAndDestroyInspectorFirst):
+        (tst_QWebInspector::attachAndDestroyInternalInspector):
+
+2012-11-08  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt] Open link in this window action
         https://bugs.webkit.org/show_bug.cgi?id=101226
 

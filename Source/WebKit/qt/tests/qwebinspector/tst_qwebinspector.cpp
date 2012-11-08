@@ -28,39 +28,46 @@ class tst_QWebInspector : public QObject {
     Q_OBJECT
 
 private Q_SLOTS:
-    void attachAndDestroy();
+    void attachAndDestroyPageFirst();
+    void attachAndDestroyInspectorFirst();
+    void attachAndDestroyInternalInspector();
 };
 
-void tst_QWebInspector::attachAndDestroy()
+void tst_QWebInspector::attachAndDestroyPageFirst()
 {
-    {   // External inspector + manual destruction of page first
-        QWebPage* page = new QWebPage();
-        page->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-        QWebInspector* inspector = new QWebInspector();
-        inspector->setPage(page);
-        page->updatePositionDependentActions(QPoint(0, 0));
-        page->triggerAction(QWebPage::InspectElement);
+    // External inspector + manual destruction of page first
+    QWebPage* page = new QWebPage();
+    page->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+    QWebInspector* inspector = new QWebInspector();
+    inspector->setPage(page);
+    page->updatePositionDependentActions(QPoint(0, 0));
+    page->triggerAction(QWebPage::InspectElement);
 
-        delete page;
-        delete inspector;
-    }
-    {   // External inspector + manual destruction of inspector first
-        QWebPage* page = new QWebPage();
-        page->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-        QWebInspector* inspector = new QWebInspector();
-        inspector->setPage(page);
-        page->updatePositionDependentActions(QPoint(0, 0));
-        page->triggerAction(QWebPage::InspectElement);
+    delete page;
+    delete inspector;
+}
 
-        delete inspector;
-        delete page;
-    }
-    {   // Internal inspector
-        QWebPage page;
-        page.settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-        page.updatePositionDependentActions(QPoint(0, 0));
-        page.triggerAction(QWebPage::InspectElement);
-    }
+void tst_QWebInspector::attachAndDestroyInspectorFirst()
+{
+    // External inspector + manual destruction of inspector first
+    QWebPage* page = new QWebPage();
+    page->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+    QWebInspector* inspector = new QWebInspector();
+    inspector->setPage(page);
+    page->updatePositionDependentActions(QPoint(0, 0));
+    page->triggerAction(QWebPage::InspectElement);
+
+    delete inspector;
+    delete page;
+}
+
+void tst_QWebInspector::attachAndDestroyInternalInspector()
+{
+    // Internal inspector
+    QWebPage page;
+    page.settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+    page.updatePositionDependentActions(QPoint(0, 0));
+    page.triggerAction(QWebPage::InspectElement);
 }
 
 QTEST_MAIN(tst_QWebInspector)

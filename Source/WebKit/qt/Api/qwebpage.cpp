@@ -378,11 +378,6 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 
 QWebPagePrivate::~QWebPagePrivate()
 {
-    if (inspector && inspectorIsInternalOnly) {
-        // Since we have to delete an internal inspector,
-        // call setInspector(0) directly to prevent potential crashes
-        setInspector(0);
-    }
 #ifndef QT_NO_CONTEXTMENU
     delete currentContextMenu.data();
 #endif
@@ -392,8 +387,13 @@ QWebPagePrivate::~QWebPagePrivate()
     delete settings;
     delete page;
     
-    if (inspector)
-        inspector->setPage(0);
+    if (inspector) {
+        // If the inspector is ours, delete it, otherwise just detach from it.
+        if (inspectorIsInternalOnly)
+            delete inspector;
+        else
+            inspector->setPage(0);
+    }
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     NotificationPresenterClientQt::notificationPresenter()->removeClient();
@@ -1465,13 +1465,6 @@ void QWebPagePrivate::setInspector(QWebInspector* insp)
 {
     if (inspector)
         inspector->d->setFrontend(0);
-
-    if (inspectorIsInternalOnly) {
-        QWebInspector* inspToDelete = inspector;
-        inspector = 0;
-        inspectorIsInternalOnly = false;
-        delete inspToDelete;    // Delete after to prevent infinite recursion
-    }
 
     inspector = insp;
 
