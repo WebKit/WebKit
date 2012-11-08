@@ -134,7 +134,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::JSGlobalData&, OpaqueJSC
         OpaqueJSClassStaticValuesTable::const_iterator end = jsClass->m_staticValues->end();
         for (OpaqueJSClassStaticValuesTable::const_iterator it = jsClass->m_staticValues->begin(); it != end; ++it) {
             ASSERT(!it->key->isIdentifier());
-            staticValues->add(StringImpl::create(it->key->characters(), it->key->length()), adoptPtr(new StaticValueEntry(it->value->getProperty, it->value->setProperty, it->value->attributes)));
+            staticValues->add(it->key->isolatedCopy(), adoptPtr(new StaticValueEntry(it->value->getProperty, it->value->setProperty, it->value->attributes)));
         }
     }
 
@@ -143,7 +143,7 @@ OpaqueJSClassContextData::OpaqueJSClassContextData(JSC::JSGlobalData&, OpaqueJSC
         OpaqueJSClassStaticFunctionsTable::const_iterator end = jsClass->m_staticFunctions->end();
         for (OpaqueJSClassStaticFunctionsTable::const_iterator it = jsClass->m_staticFunctions->begin(); it != end; ++it) {
             ASSERT(!it->key->isIdentifier());
-            staticFunctions->add(StringImpl::create(it->key->characters(), it->key->length()), adoptPtr(new StaticFunctionEntry(it->value->callAsFunction, it->value->attributes)));
+            staticFunctions->add(it->key->isolatedCopy(), adoptPtr(new StaticFunctionEntry(it->value->callAsFunction, it->value->attributes)));
         }
     }
 }

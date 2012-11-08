@@ -1,3 +1,15 @@
+2012-11-08  Michael Saboff  <msaboff@apple.com>
+
+        OpaqueJSClassContextData() should use StringImpl::isolatedCopy() to make string copies
+        https://bugs.webkit.org/show_bug.cgi?id=101507
+
+        Reviewed by Andreas Kling.
+
+        Changed to use isolatedCopy() for key Strings.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+
 2012-11-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         WeakBlocks should be HeapBlocks
