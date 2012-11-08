@@ -1,3 +1,14 @@
+2012-11-08  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL] Turn on WTF_USE_TILED_BACKING_STORE by default
+        https://bugs.webkit.org/show_bug.cgi?id=101526
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Separate out ENABLE_WEBGL. It is not ready to be enabled by default.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-11-08  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Remove non-variable options from the build system

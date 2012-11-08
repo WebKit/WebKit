@@ -1,3 +1,14 @@
+2012-11-08  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL] Turn on WTF_USE_TILED_BACKING_STORE by default
+        https://bugs.webkit.org/show_bug.cgi?id=101526
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Turn on WTF_USE_TILED_BACKING_STORE for EFL port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-11-08  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix build with MSVC 2012 and Angle
