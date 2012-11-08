@@ -1,3 +1,54 @@
+2012-11-08  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium rebaselines.
+
+        * platform/chromium-linux-x86/fast/css/text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/chromium-linux-x86/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/chromium-mac-lion/fast/css/text-overflow-ellipsis-bidi-expected.png: Added.
+        * platform/chromium-mac-lion/fast/css/text-overflow-ellipsis-expected.png: Added.
+        * platform/chromium-mac-lion/fast/css/text-overflow-ellipsis-strict-expected.png: Added.
+        * platform/chromium-mac-lion/fast/css/text-overflow-input-expected.png: Added.
+        * platform/chromium-mac-lion/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/basic-textareas-quirks-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/input-disabled-color-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/input-readonly-dimmed-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/input-text-scroll-left-on-blur-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/search-rtl-expected.png: Added.
+        * platform/chromium-mac-lion/fast/multicol/span/anonymous-split-block-crash-expected.png: Added.
+        * platform/chromium-mac-lion/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png: Added.
+        * platform/chromium-mac-lion/fast/replaced/width100percent-textarea-expected.png: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-text-align-center-expected.png:
+        * platform/chromium-win-xp/fast/css/text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/chromium-win-xp/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/chromium-win/fast/css/text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/chromium-win/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/efl-wk1/fast/css: Added.
+        * platform/efl-wk1/fast/css/text-overflow-ellipsis-bidi-expected.png: Added.
+        * platform/efl-wk1/fast/css/text-overflow-ellipsis-expected.png: Added.
+        * platform/efl-wk1/fast/css/text-overflow-ellipsis-strict-expected.png: Added.
+        * platform/efl-wk1/fast/css/text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/efl-wk1/fast/css/text-overflow-input-expected.png: Added.
+        * platform/efl-wk1/fast/css/text-overflow-input-expected.txt: Added.
+        * platform/efl-wk1/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/efl/fast/css/text-overflow-ellipsis-bidi-expected.png: Removed.
+        * platform/efl/fast/css/text-overflow-ellipsis-expected.png: Removed.
+        * platform/efl/fast/css/text-overflow-ellipsis-strict-expected.png: Removed.
+        * platform/efl/fast/css/text-overflow-ellipsis-text-align-center-expected.png: Removed.
+        * platform/efl/fast/css/text-overflow-input-expected.png: Removed.
+        * platform/efl/fast/css/text-overflow-input-expected.txt: Removed.
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Removed.
+        * platform/efl/fast/forms/basic-textareas-quirks-expected.png: Removed.
+        * platform/efl/fast/forms/basic-textareas-quirks-expected.txt: Removed.
+        * platform/efl/fast/forms/input-disabled-color-expected.png: Removed.
+        * platform/efl/fast/forms/input-disabled-color-expected.txt: Removed.
+        * platform/efl/fast/forms/input-readonly-dimmed-expected.png: Removed.
+        * platform/efl/fast/forms/input-readonly-dimmed-expected.txt: Removed.
+        * platform/efl/fast/forms/input-text-scroll-left-on-blur-expected.png: Removed.
+        * platform/efl/fast/forms/input-text-scroll-left-on-blur-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/anonymous-split-block-crash-expected.png: Removed.
+        * platform/efl/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png: Removed.
+        * platform/efl/fast/replaced/width100percent-textarea-expected.png: Removed.
+
 2012-11-08  Tony Chang  <tony@chromium.org>
 
         Layout test editing/pasteboard/file-drag-to-editable.html flaky

@@ -83,7 +83,7 @@ layer at (8,623) size 310x82 clip at (9,624) size 308x80 scrollX 376 scrollWidth
     RenderText {#text} at (-355,61) size 661x19
       text run at (-355,61) width 661 RTL override: "em ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
     RenderBR {BR} at (0,0) size 0x0
-layer at (8,767) size 310x32 clip at (9,768) size 308x30 scrollX 406 scrollWidth 714
+layer at (8,767) size 310x32 clip at (9,768) size 308x30 scrollX 405 scrollWidth 714
   RenderBlock {DIV} at (0,758) size 310x33 [border: (1px solid #000000)]
     RenderText {#text} at (134,11) size 174x19
       text run at (134,11) width 174 RTL override: "Lorem ipsum dolor sit amet, "
