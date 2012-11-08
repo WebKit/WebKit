@@ -1,3 +1,35 @@
+2012-11-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Use smart pointers in EwkContext more actively
+        https://bugs.webkit.org/show_bug.cgi?id=101565
+
+        Reviewed by Gyuyoung Kim.
+
+        Since we're using WebContext instead of WKContext starting r133844 we should
+        use smart pointers accordingly including PassRefPtr.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        (EwkContext::~EwkContext):
+        (EwkContext::create):
+        (EwkContext::cookieManager):
+        (EwkContext::ensureFaviconDatabase):
+        (EwkContext::setFaviconDatabaseDirectoryPath):
+        (EwkContext::addVisitedLink):
+        (EwkContext::setCacheModel):
+        (EwkContext::cacheModel):
+        * UIProcess/API/efl/ewk_context_private.h:
+        (EwkContext):
+        (EwkContext::webContext):
+        * UIProcess/API/efl/ewk_database_manager_private.h:
+        (Ewk_Database_Manager::create):
+        * UIProcess/API/efl/ewk_storage_manager_private.h:
+        (Ewk_Storage_Manager::create):
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::DownloadManagerEfl):
+        * UIProcess/efl/RequestManagerClientEfl.cpp:
+        (WebKit::RequestManagerClientEfl::RequestManagerClientEfl):
+
 2012-11-08  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][MiniBrowser] Add encoding detector option.

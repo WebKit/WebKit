@@ -47,7 +47,7 @@ class EwkContext : public Ewk_Object {
 public:
     EWK_OBJECT_DECLARE(EwkContext)
 
-    static PassRefPtr<EwkContext> create(WebContext* context);
+    static PassRefPtr<EwkContext> create(PassRefPtr<WebContext> context);
     static PassRefPtr<EwkContext> create();
     static PassRefPtr<EwkContext> create(const String& injectedBundlePath);
 
@@ -72,18 +72,18 @@ public:
 
     Ewk_Cache_Model cacheModel() const;
 
-    WebContext* webContext() { return m_webContext.get(); }
+    PassRefPtr<WebContext> webContext() { return m_context; }
 
     WebKit::DownloadManagerEfl* downloadManager() const;
 
     WebKit::ContextHistoryClientEfl* historyClient();
 
 private:
-    explicit EwkContext(WebContext*);
+    explicit EwkContext(PassRefPtr<WebContext>);
 
     void ensureFaviconDatabase();
 
-    RefPtr<WebContext> m_webContext;
+    RefPtr<WebContext> m_context;
 
     OwnPtr<Ewk_Cookie_Manager> m_cookieManager;
     OwnPtr<Ewk_Database_Manager> m_databaseManager;

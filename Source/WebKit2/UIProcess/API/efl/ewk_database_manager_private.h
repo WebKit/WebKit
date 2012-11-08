@@ -37,7 +37,7 @@ using namespace WebKit;
 
 class Ewk_Database_Manager {
 public:
-    static PassOwnPtr<Ewk_Database_Manager> create(WebContext* context)
+    static PassOwnPtr<Ewk_Database_Manager> create(PassRefPtr<WebContext> context)
     {
         ASSERT(context);
         return adoptPtr(new Ewk_Database_Manager(context->databaseManagerProxy()));

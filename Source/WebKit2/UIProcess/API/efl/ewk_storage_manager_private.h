@@ -37,7 +37,7 @@ using namespace WebKit;
 
 class Ewk_Storage_Manager {
 public:
-    static PassOwnPtr<Ewk_Storage_Manager> create(WebContext* context)
+    static PassOwnPtr<Ewk_Storage_Manager> create(PassRefPtr<WebContext> context)
     {
         ASSERT(context);
         return adoptPtr(new Ewk_Storage_Manager(context->keyValueStorageManagerProxy()));
