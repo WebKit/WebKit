@@ -1,3 +1,15 @@
+2012-11-08  Wei Fanzhe  <whyer1@gmail.com>
+
+        While absolute positioning is put before the first flexitem, flexitems will move to a new line.
+        https://bugs.webkit.org/show_bug.cgi?id=101294
+
+        Reviewed by Ojan Vafai.
+
+        This issue has to do with RenderFlexibleBox::computeNextFlexLine. When determing line breaks, the algorithm sees if 1) the total width exceeds lineBreakLength and 2) whether orderedChildren is non-empty.  But then, if the total width exceeds lineBreakLength and there's only absolutely positioned elemments in orderedChildren then the conditions are met and the algorithm mistakenly breaks the line. The solution is to see if orderedChildren collects at least a flex item. If it does, break the line.  
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeNextFlexLine):
+
 2012-11-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r133429.

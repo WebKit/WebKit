@@ -895,6 +895,7 @@ bool RenderFlexibleBox::computeNextFlexLine(OrderIterator& iterator, OrderedFlex
         return false;
 
     LayoutUnit lineBreakLength = mainAxisContentExtent(LayoutUnit::max());
+    bool lineHasInFlowItem = false;
 
     for (RenderBox* child = iterator.currentChild(); child; child = iterator.next()) {
         if (child->isOutOfFlowPositioned()) {
@@ -906,9 +907,10 @@ bool RenderFlexibleBox::computeNextFlexLine(OrderIterator& iterator, OrderedFlex
         LayoutUnit childMainAxisMarginBoxExtent = mainAxisBorderAndPaddingExtentForChild(child) + childMainAxisExtent;
         childMainAxisMarginBoxExtent += isHorizontalFlow() ? child->marginWidth() : child->marginHeight();
 
-        if (isMultiline() && preferredMainAxisExtent + childMainAxisMarginBoxExtent > lineBreakLength && orderedChildren.size() > 0)
+        if (isMultiline() && preferredMainAxisExtent + childMainAxisMarginBoxExtent > lineBreakLength && lineHasInFlowItem)
             break;
         orderedChildren.append(child);
+        lineHasInFlowItem  = true;
         preferredMainAxisExtent += childMainAxisMarginBoxExtent;
         totalFlexGrow += child->style()->flexGrow();
         totalWeightedFlexShrink += child->style()->flexShrink() * childMainAxisExtent;
