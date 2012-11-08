@@ -38,9 +38,6 @@ class BatteryProvider;
 #if ENABLE(NETWORK_INFO)
 class NetworkInfoProvider;
 #endif
-#if ENABLE(VIBRATION)
-class VibrationProvider;
-#endif
 }
 
 class EwkContext : public Ewk_Object {
@@ -65,10 +62,6 @@ public:
     Ewk_Storage_Manager* storageManager() const;
 
     WebKit::RequestManagerClientEfl* requestManager();
-
-#if ENABLE(VIBRATION)
-    PassRefPtr<WebKit::VibrationProvider> vibrationProvider();
-#endif
 
     void addVisitedLink(const String& visitedURL);
 
@@ -98,9 +91,6 @@ private:
 #endif
 #if ENABLE(NETWORK_INFO)
     RefPtr<WebKit::NetworkInfoProvider> m_networkInfoProvider;
-#endif
-#if ENABLE(VIBRATION)
-    RefPtr<WebKit::VibrationProvider> m_vibrationProvider;
 #endif
     OwnPtr<WebKit::DownloadManagerEfl> m_downloadManager;
     OwnPtr<WebKit::RequestManagerClientEfl> m_requestManagerClient;

@@ -56,6 +56,7 @@ namespace EwkViewCallbacks {
 enum CallbackType {
     AuthenticationRequest,
     BackForwardListChange,
+    CancelVibration,
     CloseWindow,
     CreateWindow,
     DownloadJobCancelled,
@@ -83,6 +84,7 @@ enum CallbackType {
     TooltipTextUnset,
     TooltipTextSet,
     URLChanged,
+    Vibrate,
     WebProcessCrashed,
 #if ENABLE(WEB_INTENTS)
     IntentRequest,
@@ -161,6 +163,7 @@ struct CallBackInfo<callbackType> {                           \
 // Note: type 'void' means that no arguments are expected.
 DECLARE_EWK_VIEW_CALLBACK(AuthenticationRequest, "authentication,request", Ewk_Auth_Request);
 DECLARE_EWK_VIEW_CALLBACK(BackForwardListChange, "back,forward,list,changed", void);
+DECLARE_EWK_VIEW_CALLBACK(CancelVibration, "cancel,vibration", void);
 DECLARE_EWK_VIEW_CALLBACK(CloseWindow, "close,window", void);
 DECLARE_EWK_VIEW_CALLBACK(CreateWindow, "create,window", Evas_Object*);
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobCancelled, "download,cancelled", Ewk_Download_Job);
@@ -188,6 +191,7 @@ DECLARE_EWK_VIEW_CALLBACK(TitleChange, "title,changed", char);
 DECLARE_EWK_VIEW_CALLBACK(TooltipTextUnset, "tooltip,text,unset", void);
 DECLARE_EWK_VIEW_CALLBACK(TooltipTextSet, "tooltip,text,set", char);
 DECLARE_EWK_VIEW_CALLBACK(URLChanged, "url,changed", char);
+DECLARE_EWK_VIEW_CALLBACK(Vibrate, "vibrate", uint64_t);
 DECLARE_EWK_VIEW_CALLBACK(WebProcessCrashed, "webprocess,crashed", bool);
 #if ENABLE(WEB_INTENTS)
 DECLARE_EWK_VIEW_CALLBACK(IntentRequest, "intent,request,new", Ewk_Intent);

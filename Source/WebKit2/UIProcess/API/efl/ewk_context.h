@@ -80,20 +80,6 @@ typedef enum Ewk_Cache_Model Ewk_Cache_Model;
 typedef void (*Ewk_Url_Scheme_Request_Cb) (Ewk_Url_Scheme_Request *request, void *user_data);
 
 /**
- * @typedef Ewk_Vibration_Client_Vibrate_Cb Ewk_Vibration_Client_Vibrate_Cb
- * @brief Type definition for a function that will be called back when vibrate
- * request receiveed from the vibration controller.
- */
-typedef void (*Ewk_Vibration_Client_Vibrate_Cb)(uint64_t vibration_time, void *user_data);
-
-/**
- * @typedef Ewk_Vibration_Client_Vibration_Cancel_Cb Ewk_Vibration_Client_Vibration_Cancel_Cb
- * @brief Type definition for a function that will be called back when cancel
- * vibration request receiveed from the vibration controller.
- */
-typedef void (*Ewk_Vibration_Client_Vibration_Cancel_Cb)(void *user_data);
-
-/**
  * @typedef Ewk_History_Navigation_Cb Ewk_History_Navigation_Cb
  * @brief Type definition for a function that will be called back when @a view did navigation (loaded new URL).
  */
@@ -258,22 +244,6 @@ EAPI Ewk_Storage_Manager *ewk_context_storage_manager_get(const Ewk_Context *con
  * @endcode
  */
 EAPI Eina_Bool ewk_context_url_scheme_register(Ewk_Context *context, const char *scheme, Ewk_Url_Scheme_Request_Cb callback, void *user_data);
-
-/**
- * Sets vibration client callbacks to handle the tactile feedback in the form of
- * vibration in the client application when the content asks for vibration.
- *
- * To stop listening for vibration events, you may call this function with @c
- * NULL for the callbacks.
- *
- * @param context context object to set vibration client callbacks.
- * @param vibrate The function to call when the vibrate request received from the
- *        controller (may be @c NULL).
- * @param cancel The function to call when the cancel vibration request received
- *        from the controller (may be @c NULL).
- * @param data User data (may be @c NULL).
- */
-EAPI void ewk_context_vibration_client_callbacks_set(Ewk_Context *context, Ewk_Vibration_Client_Vibrate_Cb vibrate, Ewk_Vibration_Client_Vibration_Cancel_Cb cancel, void *data);
 
 /**
  * Sets history callbacks for the given @a context.

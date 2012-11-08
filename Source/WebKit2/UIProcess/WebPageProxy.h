@@ -168,6 +168,10 @@ struct WindowGeometry;
 class WebGestureEvent;
 #endif
 
+#if ENABLE(VIBRATION)
+class WebVibrationProxy;
+#endif
+
 #if ENABLE(WEB_INTENTS)
 struct IntentData;
 #endif
@@ -263,6 +267,10 @@ public:
 
 #if ENABLE(INSPECTOR)
     WebInspectorProxy* inspector();
+#endif
+
+#if ENABLE(VIBRATION)
+    WebVibrationProxy* vibration() { return m_vibration.get(); }
 #endif
 
 #if ENABLE(FULLSCREEN_API)
@@ -1061,6 +1069,10 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     RefPtr<WebFullScreenManagerProxy> m_fullScreenManager;
+#endif
+
+#if ENABLE(VIBRATION)
+    RefPtr<WebVibrationProxy> m_vibration;
 #endif
 
     HashMap<uint64_t, RefPtr<VoidCallback> > m_voidCallbacks;

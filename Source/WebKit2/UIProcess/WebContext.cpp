@@ -79,10 +79,6 @@
 #include "WebSoupRequestManagerProxy.h"
 #endif
 
-#if ENABLE(VIBRATION)
-#include "WebVibrationProxy.h"
-#endif
-
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -165,9 +161,6 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 #if USE(SOUP)
     m_soupRequestManagerProxy = WebSoupRequestManagerProxy::create(this);
 #endif
-#if ENABLE(VIBRATION)
-    m_vibrationProxy = WebVibrationProxy::create(this);
-#endif
     
 #if !LOG_DISABLED
     WebKit::initializeLogChannelsIfNecessary();
@@ -242,11 +235,6 @@ WebContext::~WebContext()
 #if USE(SOUP)
     m_soupRequestManagerProxy->invalidate();
     m_soupRequestManagerProxy->clearContext();
-#endif
-
-#if ENABLE(VIBRATION)
-    m_vibrationProxy->invalidate();
-    m_vibrationProxy->clearContext();
 #endif
 
     invalidateCallbackMap(m_dictionaryCallbacks);
@@ -552,9 +540,6 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     m_resourceCacheManagerProxy->invalidate();
 #if USE(SOUP)
     m_soupRequestManagerProxy->invalidate();
-#endif
-#if ENABLE(VIBRATION)
-    m_vibrationProxy->invalidate();
 #endif
 
     // When out of process plug-ins are enabled, we don't want to invalidate the plug-in site data

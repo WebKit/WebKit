@@ -35,35 +35,34 @@
 
 namespace WebKit {
 
-class WebContext;
+class WebPageProxy;
 
 class WebVibrationProxy : public APIObject, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeVibration;
 
-    static PassRefPtr<WebVibrationProxy> create(WebContext*);
+    static PassRefPtr<WebVibrationProxy> create(WebPageProxy*);
     virtual ~WebVibrationProxy();
 
     void invalidate();
-    void clearContext() { m_context = 0; }
 
     void initializeProvider(const WKVibrationProvider*);
 
+    // Implemented in generated WebVibrationProxyMessageReceiver.cpp
+    void didReceiveWebVibrationProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+
 private:
-    explicit WebVibrationProxy(WebContext*);
+    explicit WebVibrationProxy(WebPageProxy*);
 
     virtual Type type() const { return APIType; }
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
 
-    // Implemented in generated WebVibrationProxyMessageReceiver.cpp
-    void didReceiveWebVibrationProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-
     void vibrate(uint64_t vibrationTime);
     void cancelVibration();
 
-    WebContext* m_context;
+    WebPageProxy* m_page;
     WebVibrationProvider m_provider;
 };
 

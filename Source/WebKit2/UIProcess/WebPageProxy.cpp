@@ -111,6 +111,10 @@
 #include "WebSoupRequestManagerProxy.h"
 #endif
 
+#if ENABLE(VIBRATION)
+#include "WebVibrationProxy.h"
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -245,6 +249,10 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     WebContext::statistics().wkPageCount++;
 
     m_pageGroup->addPage(this);
+
+#if ENABLE(VIBRATION)
+    m_vibration = WebVibrationProxy::create(this);
+#endif
 }
 
 WebPageProxy::~WebPageProxy()
@@ -445,6 +453,10 @@ void WebPageProxy::close()
         m_fullScreenManager->invalidate();
         m_fullScreenManager = 0;
     }
+#endif
+
+#if ENABLE(VIBRATION)
+    m_vibration->invalidate();
 #endif
 
     if (m_openPanelResultListener) {
@@ -3609,6 +3621,10 @@ void WebPageProxy::processDidCrash()
         m_fullScreenManager->invalidate();
         m_fullScreenManager = nullptr;
     }
+#endif
+
+#if ENABLE(VIBRATION)
+    m_vibration->invalidate();
 #endif
 
     if (m_openPanelResultListener) {

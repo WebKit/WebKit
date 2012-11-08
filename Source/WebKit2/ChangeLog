@@ -1,3 +1,107 @@
+2012-11-07  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [WK2] Make WebVibrationProxy to be a member of WebPageProxy.
+        https://bugs.webkit.org/show_bug.cgi?id=100334
+
+        Reviewed by Anders Carlsson.
+
+        WebVibrationProxy should be a member of WebPageProxy, because the IPC
+        messages of WebVibrationProxy have page destination ID.
+
+        The r132386 proposed a way to add/delete message receivers that can
+        handle IPC messages with destination ID.
+
+        Previous implementation that creating WebVibrationProxy as a WebContext
+        member and using the global message receiver for the proxy can make
+        assertions after r132386.
+
+        To handle the vibration IPC messages properly, this patch will do the
+        followings.
+
+        1) Instead of WebContext, WebPageProxy will have the WebVibrationProxy.
+
+        2) WebVibrationProxy will add itself to the message receiver map of
+           the WebContext with page destination ID.
+
+        3) When WebProcessProxy received vibration ipc messages, it will
+           forward the messages to the WebContext first. Then the message
+           receiver map of the WebContext will handle the messages with the
+           registered WebVibrationProxy.
+
+        4) APIs will be modified to apply these changes.
+           a) WK API to get WKVibrationRef will use WKPageRef not WKContextRef.
+           b) EFL APIs and API test for the vibration will also be changed.
+              - EwkViewImpl will have vibration client. (EwkContext will not
+                have it)
+              - Previous API to register the vibration callback will be removed.
+              - New signals for vibration will be added to the EwkViewImpl.
+              - VibrationProxy will be renamed to VibrationClient for the
+                consistency with other clients in EwkViewImpl.
+              - VibrationClient will use EwkViewImpl instead of EwkContext.
+              - Previous API test for vibration will be moved from context test
+                to view test, and it will use the changed API.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetVibration):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        (EwkViewCallbacks):
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebKit):
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        (WebKit):
+        (EwkContext):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_context.cpp:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (VibrationCbData):
+        (onVibrate):
+        (onCancelVibration):
+        (loadVibrationHTMLString):
+        (TEST_F):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::disconnectProcess):
+        * UIProcess/WebContext.h:
+        (WebKit):
+        (WebContext):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::processDidCrash):
+        * UIProcess/WebPageProxy.h:
+        (WebKit):
+        (WebPageProxy):
+        (WebKit::WebPageProxy::vibration):
+        * UIProcess/WebVibrationProxy.cpp:
+        (WebKit::WebVibrationProxy::create):
+        (WebKit::WebVibrationProxy::WebVibrationProxy):
+        (WebKit::WebVibrationProxy::~WebVibrationProxy):
+        (WebKit::WebVibrationProxy::invalidate):
+        * UIProcess/WebVibrationProxy.h:
+        (WebKit):
+        (WebVibrationProxy):
+        * UIProcess/efl/VibrationClientEfl.cpp: Renamed from Source/WebKit2/UIProcess/efl/VibrationProvider.cpp.
+        (toVibrationClient):
+        (VibrationClientEfl::vibrateCallback):
+        (VibrationClientEfl::cancelVibrationCallback):
+        (VibrationClientEfl::create):
+        (VibrationClientEfl::VibrationClientEfl):
+        (VibrationClientEfl::~VibrationClientEfl):
+        * UIProcess/efl/VibrationClientEfl.h: Renamed from Source/WebKit2/UIProcess/efl/VibrationProvider.h.
+        (WebKit):
+        (VibrationClientEfl):
+
 2012-11-07  Anders Carlsson  <andersca@apple.com>
 
         Add empty RemoteLayerTree class

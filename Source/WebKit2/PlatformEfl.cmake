@@ -93,7 +93,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/efl/RequestManagerClientEfl.cpp
     UIProcess/efl/ResourceLoadClientEfl.cpp
     UIProcess/efl/TextCheckerEfl.cpp
-    UIProcess/efl/VibrationProvider.cpp
+    UIProcess/efl/VibrationClientEfl.cpp
     UIProcess/efl/WebContextEfl.cpp
     UIProcess/efl/WebFullScreenManagerProxyEfl.cpp
     UIProcess/efl/WebInspectorProxyEfl.cpp

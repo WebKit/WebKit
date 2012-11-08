@@ -25,7 +25,6 @@
 #include "ContextHistoryClientEfl.h"
 #include "NetworkInfoProvider.h"
 #include "RequestManagerClientEfl.h"
-#include "VibrationProvider.h"
 #include "WKAPICast.h"
 #include "WKContextSoup.h"
 #include "WKNumber.h"
@@ -71,9 +70,6 @@ EwkContext::EwkContext(WKContextRef context)
 #endif
 #if ENABLE(NETWORK_INFO)
     , m_networkInfoProvider(NetworkInfoProvider::create(context))
-#endif
-#if ENABLE(VIBRATION)
-    , m_vibrationProvider(VibrationProvider::create(context))
 #endif
     , m_downloadManager(DownloadManagerEfl::create(this))
     , m_requestManagerClient(RequestManagerClientEfl::create(this))
@@ -196,13 +192,6 @@ RequestManagerClientEfl* EwkContext::requestManager()
     return m_requestManagerClient.get();
 }
 
-#if ENABLE(VIBRATION)
-PassRefPtr<VibrationProvider> EwkContext::vibrationProvider()
-{
-    return m_vibrationProvider;
-}
-#endif
-
 void EwkContext::addVisitedLink(const String& visitedURL)
 {
     toImpl(m_context.get())->addVisitedLink(visitedURL);
@@ -294,15 +283,6 @@ Eina_Bool ewk_context_url_scheme_register(Ewk_Context* ewkContext, const char* s
     impl->requestManager()->registerURLSchemeHandler(String::fromUTF8(scheme), callback, userData);
 
     return true;
-}
-
-void ewk_context_vibration_client_callbacks_set(Ewk_Context* ewkContext, Ewk_Vibration_Client_Vibrate_Cb vibrate, Ewk_Vibration_Client_Vibration_Cancel_Cb cancel, void* data)
-{
-    EWK_OBJ_GET_IMPL_OR_RETURN(EwkContext, ewkContext, impl);
-
-#if ENABLE(VIBRATION)
-    impl->vibrationProvider()->setVibrationClientCallbacks(vibrate, cancel, data);
-#endif
 }
 
 void ewk_context_history_callbacks_set(Ewk_Context* ewkContext, Ewk_History_Navigation_Cb navigate, Ewk_History_Client_Redirection_Cb clientRedirect, Ewk_History_Server_Redirection_Cb serverRedirect, Ewk_History_Title_Update_Cb titleUpdate, Ewk_History_Populate_Visited_Links_Cb populateVisitedLinks, void* data)

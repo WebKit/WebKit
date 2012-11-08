@@ -69,9 +69,6 @@ class WebResourceCacheManagerProxy;
 #if USE(SOUP)
 class WebSoupRequestManagerProxy;
 #endif
-#if ENABLE(VIBRATION)
-class WebVibrationProxy;
-#endif
 struct StatisticsData;
 struct WebProcessCreationParameters;
     
@@ -202,9 +199,6 @@ public:
     WebResourceCacheManagerProxy* resourceCacheManagerProxy() const { return m_resourceCacheManagerProxy.get(); }
 #if USE(SOUP)
     WebSoupRequestManagerProxy* soupRequestManagerProxy() const { return m_soupRequestManagerProxy.get(); }
-#endif
-#if ENABLE(VIBRATION)
-    WebVibrationProxy* vibrationProxy() const { return m_vibrationProxy.get(); }
 #endif
 
     struct Statistics {
@@ -378,9 +372,6 @@ private:
     RefPtr<WebResourceCacheManagerProxy> m_resourceCacheManagerProxy;
 #if USE(SOUP)
     RefPtr<WebSoupRequestManagerProxy> m_soupRequestManagerProxy;
-#endif
-#if ENABLE(VIBRATION)
-    RefPtr<WebVibrationProxy> m_vibrationProxy;
 #endif
 
 #if PLATFORM(WIN)

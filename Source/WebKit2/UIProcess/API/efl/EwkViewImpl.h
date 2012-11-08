@@ -58,6 +58,10 @@ class WebPageGroup;
 class WebPageProxy;
 class WebPopupItem;
 class WebPopupMenuProxyEfl;
+
+#if ENABLE(VIBRATION)
+class VibrationClientEfl;
+#endif
 }
 
 namespace WebCore {
@@ -228,6 +232,9 @@ private:
     OwnPtr<WebKit::ResourceLoadClientEfl> m_resourceLoadClient;
     OwnPtr<WebKit::FindClientEfl> m_findClient;
     OwnPtr<WebKit::FormClientEfl> m_formClient;
+#if ENABLE(VIBRATION)
+    OwnPtr<WebKit::VibrationClientEfl> m_vibrationClient;
+#endif
     OwnPtr<Ewk_Back_Forward_List> m_backForwardList;
 #if USE(TILED_BACKING_STORE)
     float m_scaleFactor;

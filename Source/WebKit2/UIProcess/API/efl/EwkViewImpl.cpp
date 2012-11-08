@@ -55,6 +55,9 @@
 #include <Edje.h>
 #include <WebCore/Cursor.h>
 
+#if ENABLE(VIBRATION)
+#include "VibrationClientEfl.h"
+#endif
 
 #if ENABLE(FULLSCREEN_API)
 #include "WebFullScreenManagerProxy.h"
@@ -108,6 +111,9 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, Pass
     , m_resourceLoadClient(ResourceLoadClientEfl::create(this))
     , m_findClient(FindClientEfl::create(this))
     , m_formClient(FormClientEfl::create(this))
+#if ENABLE(VIBRATION)
+    , m_vibrationClient(VibrationClientEfl::create(this))
+#endif
     , m_backForwardList(Ewk_Back_Forward_List::create(toAPI(m_pageProxy->backForwardList())))
 #if USE(TILED_BACKING_STORE)
     , m_scaleFactor(1)

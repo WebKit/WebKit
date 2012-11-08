@@ -23,38 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VibrationProvider_h
-#define VibrationProvider_h
+#ifndef VibrationClientEfl_h
+#define VibrationClientEfl_h
 
 #if ENABLE(VIBRATION)
 
-#include "WKRetainPtr.h"
-#include "ewk_context.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
+#include <WebKit2/WKBase.h>
+#include <wtf/PassOwnPtr.h>
 
-typedef struct Ewk_Vibration_Client Ewk_Vibration_Client;
+class EwkViewImpl;
 
 namespace WebKit {
 
-class VibrationProvider : public RefCounted<VibrationProvider> {
+class VibrationClientEfl {
 public:
-    static PassRefPtr<VibrationProvider> create(WKContextRef);
-    virtual ~VibrationProvider();
+    static PassOwnPtr<VibrationClientEfl> create(EwkViewImpl*);
 
-    void vibrate(uint64_t vibrationTime);
-    void cancelVibration();
-    void setVibrationClientCallbacks(Ewk_Vibration_Client_Vibrate_Cb, Ewk_Vibration_Client_Vibration_Cancel_Cb, void*);
+    virtual ~VibrationClientEfl();
 
 private:
-    explicit VibrationProvider(WKContextRef);
+    explicit VibrationClientEfl(EwkViewImpl*);
 
-    WKRetainPtr<WKContextRef> m_wkContext;
-    OwnPtr<Ewk_Vibration_Client> m_vibrationClient;
+    static void vibrateCallback(WKVibrationRef, uint64_t vibrationTime, const void* clientInfo);
+    static void cancelVibrationCallback(WKVibrationRef, const void* clientInfo);
+
+    EwkViewImpl* m_viewImpl;
 };
 
 } // namespace WebKit
 
 #endif // ENABLE(VIBRATION)
 
-#endif // VibrationProvider_h
+#endif // VibrationClientEfl_h

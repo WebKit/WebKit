@@ -191,6 +191,16 @@ WKInspectorRef WKPageGetInspector(WKPageRef pageRef)
 #endif
 }
 
+WKVibrationRef WKPageGetVibration(WKPageRef page)
+{
+#if ENABLE(VIBRATION)
+    return toAPI(toImpl(page)->vibration());
+#else
+    UNUSED_PARAM(page);
+    return 0;
+#endif
+}
+
 double WKPageGetEstimatedProgress(WKPageRef pageRef)
 {
     return toImpl(pageRef)->estimatedProgress();

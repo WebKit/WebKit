@@ -29,6 +29,7 @@
  * - "authentication,request", Ewk_Auth_Request*: reports that user authentication was requested. Call
  *   ewk_auth_request_ref() on the request object to process the authentication asynchronously.
  * - "back,forward,list,changed", void: reports that the view's back / forward list had changed.
+ * - "cancel,vibration", void: request to cancel the vibration.
  * - "close,window", void: window is closed.
  * - "create,window", Evas_Object**: a new window is created.
  * - "download,cancelled", Ewk_Download_Job*: reports that a download was effectively cancelled.
@@ -73,6 +74,7 @@
  * - "tooltip,text,set", const char*: tooltip was set.
  * - "tooltip,text,unset", void: tooltip was unset.
  * - "url,changed", const char*: url of the main frame was changed.
+ * - "vibrate", uint64_t*: request to vibrate. (value is vibration time)
  * - "webprocess,crashed", Eina_Bool*: expects a @c EINA_TRUE if web process crash is handled; @c EINA_FALSE, otherwise.
  */
 
