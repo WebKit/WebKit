@@ -1,3 +1,11 @@
+2012-11-08  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Roll Chromium DEPS: 166678 => 166755
+
+        * DEPS:
+
 2012-11-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
