@@ -1,3 +1,34 @@
+2012-11-07  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-win] Refactor date/time format conversion code in LocaleWin
+        https://bugs.webkit.org/show_bug.cgi?id=101329
+
+        Reviewed by Kentaro Hara.
+
+        convertWindowsDateFormatToLDML and convertWindowsTimeFormatToLDML did
+        similar jobs with different code. We can merge them into one function.
+
+        As for the date format conversion, we have tokenized a format string and
+        stored token objects into a vector. We skip token object generation and
+        generate a LDML-compliant pattern string during parsing.
+
+        No new tests. This should make no behavior changes and
+        WebKit/chromium/tests/LocaleWinTest.cpp has test cases.
+
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore): Remove DateFormatToken, isFooSymbol, ensureShortDateTokens,
+        convertWindowsDateFormatToLDML, mapCharacterToDateTimeFieldType, and
+        convertWindowsTimeFormatToLDML.
+        (WebCore::commitLiteralToken): Store the result to the specified StringBuilder.
+        (WebCore::convertWindowsDateTimeFormat):
+        Renamed from parseDateFormat, and supports time format symbols.
+        (WebCore::LocaleWin::dateFormat): Use convertWindowsDateTimeFormat.
+        (WebCore::LocaleWin::monthFormat): Ditto.
+        (WebCore::LocaleWin::timeFormat): Ditto.
+        (WebCore::LocaleWin::shortTimeFormat): Ditto.
+        * platform/text/win/LocaleWin.h:
+        (LocaleWin): Remove ensureShortDateTokens and m_shortDateTokens.
+
 2012-11-07  Shinya Kawanaka  <shinyak@chromium.org>
 
         Unreviewed, rolling out r133428 and r133749
