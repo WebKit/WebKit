@@ -1,3 +1,17 @@
+2012-11-08  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update BB10 date input form.
+        https://bugs.webkit.org/show_bug.cgi?id=101075
+
+        Reviewed by Rob Buis.
+
+        RIM PR 234531
+        Internally Reviewed by Mike Fenton.
+        Change date input appearance to button and hide caret when click on them.
+
+        * css/themeBlackBerry.css:
+        (input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="time"], input[type="month"]):
+
 2012-11-08  Adam Barth  <abarth@webkit.org>
 
         [V8] Update callers to use the aligned pointer API rather than the deprecated unaligned pointer API

@@ -20,17 +20,6 @@ textarea {
     font-family: monospace;
 }
 
-input[type="datetime"],
-input[type="date"],
-input[type="week"],
-input[type="month"],
-input[type="time"],
-input[type="datetime-local"],
-input[type="number"],
-input[type="color"] {
-    border: solid 2px blue;
-}
-
 select {
     border-radius: 0;
 }
@@ -62,4 +51,9 @@ select[size="1"] {
 
 ::-webkit-validation-bubble-heading {
     font-weight: normal;
+}
+
+input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="time"], input[type="month"] {
+    -webkit-appearance: button;
+    text-align: center;
 }

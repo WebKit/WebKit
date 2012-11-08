@@ -23,6 +23,7 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentWriter.h"
+#include "Frame.h"
 #include "HTMLInputElement.h"
 #include "Page.h"
 #include "PagePopup.h"
@@ -127,6 +128,9 @@ void DatePickerClient::setValueAndClosePopup(int, const String& value)
 {
     // Return -1 if user cancel the selection.
     ASSERT(m_element);
+
+    // We hide caret when we select date input field, restore it when we close date picker.
+    m_element->document()->frame()->selection()->setCaretVisible(true);
 
     if (value != "-1")
         m_element->setValue(value);

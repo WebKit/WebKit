@@ -1,3 +1,19 @@
+2012-11-08  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update BB10 date input form.
+        https://bugs.webkit.org/show_bug.cgi?id=101075
+
+        Reviewed by Rob Buis.
+
+        RIM PR 234531
+        Internally Reviewed by Mike Fenton.
+        Change date input appearance to button and hide caret when click on them.
+
+        * WebCoreSupport/DatePickerClient.cpp:
+        (WebCore::DatePickerClient::setValueAndClosePopup):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::openDatePopup):
+
 2012-11-08  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Provide pixel coordinates to IMF relative to the screen

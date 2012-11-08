@@ -982,6 +982,9 @@ bool InputHandler::openDatePopup(HTMLInputElement* element, BlackBerryInputType 
     case BlackBerry::Platform::InputTypeDateTime:
     case BlackBerry::Platform::InputTypeDateTimeLocal:
     case BlackBerry::Platform::InputTypeMonth: {
+        // Date input have button appearance, we hide caret when they get clicked.
+        element->document()->frame()->selection()->setCaretVisible(false);
+
         // Check if popup already exists, close it if does.
         m_webPage->m_page->chrome()->client()->closePagePopup(0);
         WTF::String value = element->value();
