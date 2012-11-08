@@ -1,3 +1,20 @@
+2012-11-08  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [EFL] Remove non-variable options from the build system
+        https://bugs.webkit.org/show_bug.cgi?id=101506
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove WTF_USE_ICU_UNICODE, WTF_USE_CAIRO and WTF_USE_FREETYPE cmake variables
+        as these are always set to const 1 and not really configurable.
+
+        Remove duplicate platform/graphics/cairo include path from
+        PlatformEfl.cmake.
+
+        No new tests as there is no new functionality.
+
+        * PlatformEfl.cmake:
+
 2012-11-08  KyungTae Kim  <ktf.kim@samsung.com>
 
         Unused parameters on GraphicsLayerUpdater.cpp

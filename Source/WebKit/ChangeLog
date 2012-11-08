@@ -1,3 +1,15 @@
+2012-11-08  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [EFL] Remove non-variable options from the build system
+        https://bugs.webkit.org/show_bug.cgi?id=101506
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove WTF_USE_FREETYPE and ENABLE_GLIB_SUPPORT cmake variables
+        as these are always set to const 1 and not really configurable.
+
+        * PlatformEfl.cmake:
+
 2012-11-07  Andreas Kling  <akling@apple.com>
 
         Remove build-webkit dependency on Java SDK for Apple Mac WebKit.
