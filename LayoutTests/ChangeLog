@@ -1,3 +1,16 @@
+2012-11-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Rebaseline svg/css/group-with-shadow.svg
+        https://bugs.webkit.org/show_bug.cgi?id=101592
+
+        Unreviewed gardening.
+
+        Test svg/css/group-with-shadow.svg has to be rebaselined after r133834.
+
+        * platform/efl-wk1/svg/css/group-with-shadow-expected.png: Removed.
+        * platform/efl/svg/css/group-with-shadow-expected.png: Added.
+        * platform/efl/svg/css/group-with-shadow-expected.txt:
+
 2012-11-08  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         Warn in the inspector console when using dpi and dpcm units outside of media="print"
