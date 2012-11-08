@@ -1,5 +1,11 @@
 2012-11-08  Joshua Bell  <jsbell@chromium.org>
 
+        [Chromium] Unreviewed gardening - fix lint failures in expectations file.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-08  Joshua Bell  <jsbell@chromium.org>
+
         Multiple Layout Tests (e.g. fast/repaint/japanese-rl-selection-clear.html) is failing after r133840.
         https://bugs.webkit.org/show_bug.cgi?id=101547
 

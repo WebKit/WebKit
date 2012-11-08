@@ -2878,9 +2878,9 @@ webkit.org/b/70887 [ Debug ] jquery/css.html [ Pass Timeout ]
 
 webkit.org/b/65009 [ Mac ] scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 
-webkit.org/b/65124 [ Android Linux Win ] fast/repaint/japanese-rl-selection-clear.html [ Failure ]
-webkit.org/b/65124 [ Win ] fast/repaint/japanese-rl-selection-repaint.html [ Failure ]
-webkit.org/b/65124 [ Android Linux Win ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ]
+#webkit.org/b/65124 [ Android Linux Win ] fast/repaint/japanese-rl-selection-clear.html [ Failure ]
+#webkit.org/b/65124 [ Win ] fast/repaint/japanese-rl-selection-repaint.html [ Failure ]
+#webkit.org/b/65124 [ Android Linux Win ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ]
 webkit.org/b/65124 [ Android Linux Win ] fast/repaint/line-flow-with-floats-in-regions.html [ Failure ]
 
 webkit.org/b/65199 [ Android Linux SnowLeopard Win ] fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
@@ -3442,7 +3442,7 @@ webkit.org/b/86909 [ Win ] http/tests/inspector/appcache/appcache-iframe-manifes
 webkit.org/b/86909 [ Win ] http/tests/inspector/network/network-content-replacement-xhr.html [ Pass Timeout ]
 webkit.org/b/86909 [ Win Debug ] http/tests/security/referrer-policy-redirect-link.html [ Pass Timeout ]
 webkit.org/b/86909 [ Win Debug ] platform/chromium/virtual/gpu/fast/canvas/imagedata-contains-uint8clampedarray.html [ Pass Timeout ]
-webkit.org/b/86909 [ Win ] platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes-repaint.html [ Pass Slow ]
+#webkit.org/b/86909 [ Win ] platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes-repaint.html [ Pass Slow ]
 
 # Ref-tests can't have platform specific results.
 webkit.org/b/87175 fast/regions/floats-basic-in-variable-width-regions.html
@@ -4133,9 +4133,9 @@ webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-a
 webkit.org/b/99749 [ MountainLion ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] svg/hixie/perf/007.xml [ ImageOnlyFailure ]
-webkit.org/b/99749 [ MountainLion ] svg/custom/foreignObject-crash-on-hover.xml [ ImageOnlyFailure ]
-webkit.org/b/99749 [ MountainLion ] svg/custom/hit-test-unclosed-subpaths.svg [ ImageOnlyFailure ]
-webkit.org/b/99749 [ MountainLion ] svg/custom/hit-test-with-br.xhtml [ ImageOnlyFailure ]
+#webkit.org/b/99749 [ MountainLion ] svg/custom/foreignObject-crash-on-hover.xml [ ImageOnlyFailure ]
+#webkit.org/b/99749 [ MountainLion ] svg/custom/hit-test-unclosed-subpaths.svg [ ImageOnlyFailure ]
+#webkit.org/b/99749 [ MountainLion ] svg/custom/hit-test-with-br.xhtml [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] svg/custom/use-clipped-hit.svg [ ImageOnlyFailure ]
 
 webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure ]
@@ -4180,25 +4180,33 @@ webkit.org/b/101539 [ Linux Win ] editing/execCommand/switch-list-type-with-orph
 
 webkit.org/b/101618 [ Win7 Debug ] http/tests/inspector/indexeddb/database-data.html [ Crash ]
 
+# Failures following Chromium r166632:
+# The following test has prior expectations which were disabled. Re-enable when removing this:
 crbug.com/160075 fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure ]
 crbug.com/160075 fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure ]
 crbug.com/160075 platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure ]
 crbug.com/160075 platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure ]
 
 # Failures following r133840:
-webkit.org/b/101547 fast/repaint/selection-after-delete.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/delete-into-nested-block.html [ ImageOnlyFailure ]
-webkit.org/b/101547 svg/custom/hit-test-unclosed-subpaths.svg [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/no-caret-repaint-in-non-content-editable-element.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]
 webkit.org/b/101547 fast/repaint/4774354.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/repaint-across-writing-mode-boundary.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/japanese-rl-selection-clear.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/selection-rl.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/japanese-rl-selection-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/101547 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]
+webkit.org/b/101547 fast/repaint/delete-into-nested-block.html [ ImageOnlyFailure ]
 webkit.org/b/101547 fast/repaint/inline-outline-repaint.html [ ImageOnlyFailure ]
+# The following test has prior expectations which were disabled. Re-enable when removing this:
+webkit.org/b/101547 fast/repaint/japanese-rl-selection-clear.html [ ImageOnlyFailure ]
+# The following test has prior expectations which were disabled. Re-enable when removing this:
 webkit.org/b/101547 fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure ]
+# The following test has prior expectations which were disabled. Re-enable when removing this:
+webkit.org/b/101547 fast/repaint/japanese-rl-selection-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/101547 fast/repaint/no-caret-repaint-in-non-content-editable-element.html [ ImageOnlyFailure ]
+webkit.org/b/101547 fast/repaint/repaint-across-writing-mode-boundary.html [ ImageOnlyFailure ]
+webkit.org/b/101547 fast/repaint/selection-after-delete.html [ ImageOnlyFailure ]
+webkit.org/b/101547 fast/repaint/selection-rl.html [ ImageOnlyFailure ]
+# The following test has prior expectations which were disabled. Re-enable when removing this:
 webkit.org/b/101547 svg/custom/foreignObject-crash-on-hover.xml [ ImageOnlyFailure ]
+# The following test has prior expectations which were disabled. Re-enable when removing this:
+webkit.org/b/101547 svg/custom/hit-test-unclosed-subpaths.svg [ ImageOnlyFailure ]
+# The following test has prior expectations which were disabled. Re-enable when removing this:
 webkit.org/b/101547 svg/custom/hit-test-with-br.xhtml [ ImageOnlyFailure ]
 webkit.org/b/101576 [ Debug ] editing/selection/focus_editable_html.html [ Crash ]
 webkit.org/b/101576 [ Debug ] editing/selection/click-after-nested-block.html [ Crash ]
