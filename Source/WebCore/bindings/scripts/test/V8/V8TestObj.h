@@ -39,7 +39,7 @@ public:
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
     static TestObj* toNative(v8::Handle<v8::Object> object)
     {
-        return reinterpret_cast<TestObj*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
+        return reinterpret_cast<TestObj*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
     inline static v8::Handle<v8::Object> wrap(TestObj*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
     static void derefObject(void*);
