@@ -1,3 +1,38 @@
+2012-11-07  Roger Fong  <roger_fong@apple.com>
+
+        Enable Subpixel Layout on Windows. Rebaseline any failing tests that were rebaselined in r133351.
+        https://bugs.webkit.org/show_bug.cgi?id=101538
+
+        Rubberstamped by Tim Horton.
+
+        * platform/win/css1/font_properties/font-expected.txt:
+        * platform/win/css2.1/t0905-c5525-fltwidth-00-c-g-expected.txt:
+        * platform/win/editing/selection/caret-ltr-right-expected.txt:
+        * platform/win/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/win/editing/selection/caret-rtl-right-expected.txt:
+        * platform/win/editing/selection/mixed-editability-10-expected.txt:
+        * platform/win/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/win/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+        * platform/win/fast/borders/bidi-012-expected.txt:
+        * platform/win/fast/forms/fieldset-legend-padding-unclipped-fieldset-border-expected.txt:
+        * platform/win/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/win/fast/inline/inline-box-background-expected.txt:
+        * platform/win/fast/inline/inline-box-background-long-image-expected.txt:
+        * platform/win/fast/inline/inline-box-background-repeat-x-expected.txt:
+        * platform/win/fast/inline/inline-box-background-repeat-y-expected.txt:
+        * platform/win/fast/lists/003-vertical-expected.txt:
+        * platform/win/fast/text/international/vertical-text-glyph-test-expected.txt:
+        * platform/win/fast/writing-mode/Kusa-Makura-background-canvas-expected.txt:
+        * platform/win/transforms/2d/hindi-rotated-expected.txt:
+
 2012-11-07  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html is flaky
