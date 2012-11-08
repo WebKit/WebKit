@@ -39,6 +39,9 @@ RemoteGraphicsLayer::RemoteGraphicsLayer(GraphicsLayerClient* client, RemoteLaye
     : GraphicsLayer(client)
     , m_controller(controller)
 {
+    // FIXME: This is in place to silence a compiler warning. Remove this
+    // once we actually start using m_controller.
+    (void)m_controller;
 }
 
 RemoteGraphicsLayer::~RemoteGraphicsLayer()
