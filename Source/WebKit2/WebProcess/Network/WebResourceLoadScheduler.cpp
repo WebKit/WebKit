@@ -35,6 +35,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
+#include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/SubresourceLoader.h>
 #include <wtf/text/CString.h>
@@ -72,7 +73,7 @@ PassRefPtr<NetscapePlugInStreamLoader> WebResourceLoadScheduler::schedulePluginS
 
 void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, ResourceLoadPriority priority)
 {
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' priority %i", resourceLoader->url().string().utf8().data(), priority);
+    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::scheduleLoad, url '%s' priority %i", resourceLoader->url().string().utf8().data(), priority);
 
     ASSERT(resourceLoader);
     ASSERT(priority != ResourceLoadPriorityUnresolved);
@@ -107,7 +108,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
 
 void WebResourceLoadScheduler::addMainResourceLoad(ResourceLoader* resourceLoader)
 {
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::addMainResourceLoad, url '%s'", resourceLoader->url().string().utf8().data());
+    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::addMainResourceLoad, url '%s'", resourceLoader->url().string().utf8().data());
 
     ResourceLoadIdentifier identifier;
 
@@ -124,7 +125,7 @@ void WebResourceLoadScheduler::addMainResourceLoad(ResourceLoader* resourceLoade
 void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
 {
     ASSERT(resourceLoader);
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::remove, url '%s'", resourceLoader->url().string().utf8().data());
+    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::remove, url '%s'", resourceLoader->url().string().utf8().data());
 
     // FIXME (NetworkProcess): It's possible for a resourceLoader to be removed before it ever started,
     // meaning before it even has an identifier.
@@ -137,6 +138,8 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
         return;
     }
     
+    // FIXME (NetworkProcess): We should only tell the NetworkProcess to remove load identifiers for ResourceLoaders that were never started.
+    // If a resource load was actually started within the NetworkProcess then the NetworkProcess handles clearing out the identifier.
     WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(identifier), 0);
     
     ASSERT(m_pendingResourceLoaders.contains(identifier) || m_activeResourceLoaders.contains(identifier));
@@ -146,7 +149,7 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
 
 void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resourceLoader, const KURL& redirectURL)
 {
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::crossOriginRedirectReceived. From '%s' to '%s'", resourceLoader->url().string().utf8().data(), redirectURL.string().utf8().data());
+    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::crossOriginRedirectReceived. From '%s' to '%s'", resourceLoader->url().string().utf8().data(), redirectURL.string().utf8().data());
 
     ASSERT(resourceLoader);
     ASSERT(resourceLoader->identifier());
@@ -159,7 +162,7 @@ void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resou
 
 void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPriority)
 {
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::servePendingRequests");
+    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::servePendingRequests");
     
     // If this WebProcess has its own request suspension count then we don't even
     // have to bother messaging the NetworkProcess.
@@ -189,23 +192,40 @@ void WebResourceLoadScheduler::setSerialLoadingEnabled(bool enabled)
     WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::SetSerialLoadingEnabled(enabled), Messages::NetworkConnectionToWebProcess::SetSerialLoadingEnabled::Reply(), 0);
 }
 
-void WebResourceLoadScheduler::startResourceLoad(ResourceLoadIdentifier identifier)
+void WebResourceLoadScheduler::didReceiveResponse(ResourceLoadIdentifier identifier, const WebCore::ResourceResponse& response)
 {
-    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.take(identifier);
-    
-    // <rdar://problem/12596761> and http://webkit.org/b/100792
-    // There is a race condition where the WebProcess might tell the NetworkProcess to remove a resource load identifier
-    // at the very time the NetworkProcess is telling the WebProcess to start that particular load.
-    // We'd like to remove that race condition but it makes sense for release builds to do an early return.
+    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
     ASSERT(loader);
-    if (!loader)
-        return;
+
+    LOG(Network, "(WebProcess) WebResourceLoadScheduler::didReceiveResponse for '%s'", loader->url().string().utf8().data());
+    loader->didReceiveResponse(response);
+}
+
+void WebResourceLoadScheduler::didReceiveResource(ResourceLoadIdentifier identifier, const ResourceBuffer& buffer, double finishTime)
+{    
+    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
+    ASSERT(loader);
+
+    LOG(Network, "(WebProcess) WebResourceLoadScheduler::didReceiveResource for '%s'", loader->url().string().utf8().data());
     
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::startResourceLoad starting load for '%s'", loader->url().string().utf8().data());
+    // Only send data to the didReceiveData callback if it exists.
+    if (!buffer.isEmpty()) {
+        // FIXME (NetworkProcess): Give ResourceLoader the ability to take ResourceBuffer arguments.
+        // That will allow us to pass it along to CachedResources and allow them to hang on to the shared memory behind the scenes.
+        loader->didReceiveData(reinterpret_cast<const char*>(buffer.data()), buffer.size(), -1 /* encodedDataLength */, true);
+    }
 
-    m_activeResourceLoaders.set(identifier, loader);
+    loader->didFinishLoading(finishTime);
+}
 
-    startResourceLoader(loader.get());
+void WebResourceLoadScheduler::didFailResourceLoad(ResourceLoadIdentifier identifier, const WebCore::ResourceError& error)
+{
+    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
+    ASSERT(loader);
+
+    LOG(Network, "(WebProcess) WebResourceLoadScheduler::didFailResourceLoad for '%s'", loader->url().string().utf8().data());
+    
+    loader->didFail(error);
 }
 
 } // namespace WebKit

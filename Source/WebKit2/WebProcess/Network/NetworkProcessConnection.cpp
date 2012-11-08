@@ -27,8 +27,12 @@
 #include "NetworkProcessConnection.h"
 
 #include "WebProcess.h"
+#include "WebResourceBuffer.h"
+#include <WebCore/ResourceBuffer.h>
 
 #if ENABLE(NETWORK_PROCESS)
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -66,11 +70,29 @@ void NetworkProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, Co
 {
 }
 
-void NetworkProcessConnection::startResourceLoad(ResourceLoadIdentifier resourceLoadIdentifier)
+void NetworkProcessConnection::didReceiveResponse(ResourceLoadIdentifier resourceLoadIdentifier, const ResourceResponse& response)
 {
-    WebProcess::shared().webResourceLoadScheduler().startResourceLoad(resourceLoadIdentifier);
+    WebProcess::shared().webResourceLoadScheduler().didReceiveResponse(resourceLoadIdentifier, response);
 }
+
+void NetworkProcessConnection::didReceiveResource(ResourceLoadIdentifier resourceLoadIdentifier, const ShareableResource::Handle& handle, double finishTime)
+{
+    RefPtr<ResourceBuffer> resourceBuffer;
+
+    RefPtr<ShareableResource> resource = ShareableResource::create(handle);
+    if (resource)
+        resourceBuffer = WebResourceBuffer::create(resource.release());
+    else
+        resourceBuffer = ResourceBuffer::create();
     
+    WebProcess::shared().webResourceLoadScheduler().didReceiveResource(resourceLoadIdentifier, *resourceBuffer, finishTime);
+}
+
+void NetworkProcessConnection::didFailResourceLoad(ResourceLoadIdentifier resourceLoadIdentifier, const ResourceError& error)
+{
+    WebProcess::shared().webResourceLoadScheduler().didFailResourceLoad(resourceLoadIdentifier, error);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)

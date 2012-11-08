@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
+#ifndef WebResourceBuffer_h
+#define WebResourceBuffer_h
 
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
-
-#if !LOG_DISABLED
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+#include <WebCore/ResourceBuffer.h>
 
 namespace WebKit {
 
-extern WTFLogChannel LogContextMenu;
-extern WTFLogChannel LogIconDatabase;
-extern WTFLogChannel LogKeyHandling;
-extern WTFLogChannel LogPlugins;
-extern WTFLogChannel LogSessionState;
-extern WTFLogChannel LogTextInput;
-extern WTFLogChannel LogView;
-extern WTFLogChannel LogNetwork;
-extern WTFLogChannel LogNetworkScheduling;
+class ShareableResource;
 
-void initializeLogChannel(WTFLogChannel*);
-void initializeLogChannelsIfNecessary(void);
-#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
-WTFLogChannel* getChannelFromName(const String& channelName);
-#endif
+class WebResourceBuffer : public WebCore::ResourceBuffer {
+public:
+    static PassRefPtr<WebResourceBuffer> create(PassRefPtr<ShareableResource> resource) { return adoptRef(new WebResourceBuffer(resource)); }
+
+    virtual ~WebResourceBuffer() OVERRIDE;
+
+    virtual const char* data() const OVERRIDE;
+    virtual unsigned size() const OVERRIDE;
+
+private:
+    WebResourceBuffer(PassRefPtr<ShareableResource>);
+
+    RefPtr<ShareableResource> m_resource;
+};
 
 } // namespace WebKit
 
-#endif // !LOG_DISABLED
-
-#endif // Logging_h
+#endif // WebResourceBuffer_h

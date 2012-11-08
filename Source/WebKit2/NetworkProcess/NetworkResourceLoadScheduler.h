@@ -28,6 +28,7 @@
 
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Timer.h>
+#include <wtf/HashSet.h>
 
 #if ENABLE(NETWORK_PROCESS)
 
@@ -52,6 +53,9 @@ public:
     // Called by the WebProcess when a ResourceLoader is being cleaned up.
     void removeLoadIdentifier(ResourceLoadIdentifier);
 
+    // Called within the NetworkProcess on a background thread when a resource load has finished.
+    void scheduleRemoveLoadIdentifier(ResourceLoadIdentifier);
+
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const WebCore::KURL& redirectURL);
     void servePendingRequests(WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriorityVeryLow);
     void suspendPendingRequests();
@@ -72,6 +76,9 @@ private:
 
     unsigned platformInitializeMaximumHTTPConnectionCountPerHost();
 
+    static void removeScheduledLoadIdentifiers(void* context);
+    void removeScheduledLoadIdentifiers();
+
     typedef HashMap<String, HostRecord*, StringHash> HostMap;
     HostMap m_hosts;
 
@@ -84,6 +91,9 @@ private:
     bool m_isSerialLoadingEnabled;
 
     WebCore::Timer<NetworkResourceLoadScheduler> m_requestTimer;
+    
+    Mutex m_identifiersToRemoveMutex;
+    HashSet<ResourceLoadIdentifier> m_identifiersToRemove;
 };
 
 } // namespace WebKit

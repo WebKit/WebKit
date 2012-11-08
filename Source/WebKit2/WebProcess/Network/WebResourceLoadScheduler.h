@@ -57,13 +57,12 @@ public:
 
     virtual void setSerialLoadingEnabled(bool) OVERRIDE;
 
+    void didReceiveResponse(ResourceLoadIdentifier, const WebCore::ResourceResponse&);
+    void didReceiveResource(ResourceLoadIdentifier, const WebCore::ResourceBuffer&, double finishTime);
+    void didFailResourceLoad(ResourceLoadIdentifier, const WebCore::ResourceError&);
+
 private:
     void scheduleLoad(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority);
-
-    // NetworkProcessConnection gets to tell loads to actually start.
-    // FIXME (NetworkProcess): Once actual loading takes place in the NetworkProcess we won't need this.
-    friend class NetworkProcessConnection;
-    void startResourceLoad(ResourceLoadIdentifier);
     
     typedef HashMap<unsigned long, RefPtr<WebCore::ResourceLoader> > ResourceLoaderMap;
     ResourceLoaderMap m_pendingResourceLoaders;

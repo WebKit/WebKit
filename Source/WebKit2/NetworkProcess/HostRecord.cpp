@@ -65,6 +65,9 @@ void HostRecord::addLoadInProgress(ResourceLoadIdentifier identifier)
 
 void HostRecord::remove(ResourceLoadIdentifier identifier)
 {
+    // FIXME (NetworkProcess): Due to IPC race conditions, it's possible this HostRecord will be asked to remove the same identifer twice.
+    // It would be nice to know the identifier has already been removed and treat it as a no-op.
+
     if (m_requestsLoading.contains(identifier)) {
         m_requestsLoading.remove(identifier);
         return;

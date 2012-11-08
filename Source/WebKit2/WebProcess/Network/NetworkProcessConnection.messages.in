@@ -24,9 +24,10 @@
 
 messages -> NetworkProcessConnection {
 
-    // FIXME (NetworkProcess): This message is for the NetworkProcess to tell the WebProcess to start a load.
-    // Once the NetworkProcess is doing the loading itself then we should remove it.
-    StartResourceLoad(uint64_t resourceLoadIdentifier)
+    // FIXME (NetworkProcess): We'll need much more granularity for response messages.
+    DidReceiveResponse(uint64_t resourceLoadIdentifier, WebCore::ResourceResponse response)
+    DidReceiveResource(uint64_t resourceLoadIdentifier, WebKit::ShareableResource::Handle resource, double finishTime)
+    DidFailResourceLoad(uint64_t resourceLoadIdentifier, WebCore::ResourceError error)
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

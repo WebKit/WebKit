@@ -27,10 +27,16 @@
 #define NetworkProcessConnection_h
 
 #include "Connection.h"
+#include "ShareableResource.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(NETWORK_PROCESS)
+
+namespace WebCore {
+class ResourceError;
+class ResourceResponse;
+}
 
 namespace WebKit {
 
@@ -57,7 +63,9 @@ private:
 
     void didReceiveNetworkProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
-    void startResourceLoad(ResourceLoadIdentifier);
+    void didReceiveResponse(ResourceLoadIdentifier, const WebCore::ResourceResponse&);
+    void didReceiveResource(ResourceLoadIdentifier, const ShareableResource::Handle&, double finishTime);
+    void didFailResourceLoad(ResourceLoadIdentifier, const WebCore::ResourceError&);
 
     // The connection from the web process to the network process.
     RefPtr<CoreIPC::Connection> m_connection;

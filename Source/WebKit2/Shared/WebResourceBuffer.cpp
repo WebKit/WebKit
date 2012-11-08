@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,38 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitLogging_h
-#define WebKitLogging_h
+#include "config.h"
+#include "WebResourceBuffer.h"
 
-#include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
-
-#if !LOG_DISABLED
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
+#include "Logging.h"
+#include "ShareableResource.h"
 
 namespace WebKit {
 
-extern WTFLogChannel LogContextMenu;
-extern WTFLogChannel LogIconDatabase;
-extern WTFLogChannel LogKeyHandling;
-extern WTFLogChannel LogPlugins;
-extern WTFLogChannel LogSessionState;
-extern WTFLogChannel LogTextInput;
-extern WTFLogChannel LogView;
-extern WTFLogChannel LogNetwork;
-extern WTFLogChannel LogNetworkScheduling;
+WebResourceBuffer::WebResourceBuffer(PassRefPtr<ShareableResource> resource)
+    : m_resource(resource)
+{
+    ASSERT(m_resource);
+}
 
-void initializeLogChannel(WTFLogChannel*);
-void initializeLogChannelsIfNecessary(void);
-#if PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
-WTFLogChannel* getChannelFromName(const String& channelName);
-#endif
+WebResourceBuffer::~WebResourceBuffer()
+{
+}
+
+const char* WebResourceBuffer::data() const
+{
+    return reinterpret_cast<const char*>(m_resource->data());
+}
+
+unsigned WebResourceBuffer::size() const
+{
+    return m_resource->size();
+}
 
 } // namespace WebKit
-
-#endif // !LOG_DISABLED
-
-#endif // Logging_h

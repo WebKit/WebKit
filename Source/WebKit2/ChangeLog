@@ -1,3 +1,101 @@
+2012-11-08  Brady Eidson  <beidson@apple.com>
+
+        Have NetworkProcess do the actual loading of subresources.
+        https://bugs.webkit.org/show_bug.cgi?id=101640
+
+        Reviewed by Alexey Proskuryakov.
+
+        This adds actual loading of subresources in the NetworkProcess.
+
+        Currently a resource just gets its entire buffer of data built up and then delivered to the WebProcess in one chunk.
+
+        Many FIXMEs point the path towards much better behavior.
+
+        Project file stuff:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        Add a new Logging channel for scheduling so the one for loading can be separate:
+        * Platform/Logging.cpp:
+        * Platform/Logging.h:
+
+        Add an enhancement FIXME:
+        * NetworkProcess/HostRecord.cpp:
+        (WebKit::HostRecord::remove):
+
+        NetworkRequest now derives from ResourceHandleClient and does actual loading, messaging WebProcess as it does:
+        * NetworkProcess/NetworkRequest.cpp:
+        (WebKit::NetworkRequest::NetworkRequest):
+        (WebKit::NetworkRequest::~NetworkRequest):
+        (WebKit::NetworkRequest::start):
+        (WebKit::requestsToStopMutex):
+        (WebKit::requestsToStop):
+        (WebKit::NetworkRequest::scheduleStopOnMainThread): Stop
+        (WebKit::NetworkRequest::performStops):
+        (WebKit::NetworkRequest::stop): Does NetworkRequest cleanup that happens no matter the state of the network load.
+        (WebKit::NetworkRequest::didReceiveResponse):
+        (WebKit::NetworkRequest::didReceiveData):
+        (WebKit::NetworkRequest::didFinishLoading):
+        (WebKit::NetworkRequest::didFail):
+        * NetworkProcess/NetworkRequest.h:
+
+        Change some logging and now invalid asserts, as well as starting requests in-process instead of relying on WebProcess:
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::scheduleNetworkRequest):
+        (WebKit::NetworkResourceLoadScheduler::addLoadInProgress):
+        (WebKit::NetworkResourceLoadScheduler::removeLoadIdentifier):
+        (WebKit::NetworkResourceLoadScheduler::crossOriginRedirectReceived):
+        (WebKit::NetworkResourceLoadScheduler::servePendingRequests):
+        (WebKit::NetworkResourceLoadScheduler::servePendingRequestsForHost):
+        (WebKit::NetworkResourceLoadScheduler::removeScheduledLoadIdentifiers):
+        (WebKit::NetworkResourceLoadScheduler::scheduleRemoveLoadIdentifier):
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+        (NetworkResourceLoadScheduler):
+
+        Add a "ShareableResource" which includes a SharedMemory block, an offset into that block, and a size:
+        * Shared/ShareableResource.cpp: Added.
+        (WebKit::ShareableResource::Handle::Handle):
+        (WebKit::ShareableResource::Handle::encode):
+        (WebKit::ShareableResource::Handle::decode):
+        (WebKit::ShareableResource::create):
+        (WebKit::ShareableResource::ShareableResource):
+        (WebKit::ShareableResource::~ShareableResource):
+        (WebKit::ShareableResource::createHandle):
+        (WebKit::ShareableResource::data):
+        (WebKit::ShareableResource::size):
+        * Shared/ShareableResource.h: 
+        (WebKit::ShareableResource::Handle::isNull):
+        (WebKit::ShareableResource::Handle::size):
+
+        Add an implementation of WebCore::ResourceBuffer that wraps a ShareableResource instead of a SharedBuffer:
+        * Shared/WebResourceBuffer.cpp:
+        (WebKit::WebResourceBuffer::WebResourceBuffer):
+        (WebKit::WebResourceBuffer::~WebResourceBuffer):
+        (WebKit::WebResourceBuffer::data):
+        (WebKit::WebResourceBuffer::size):
+        * Shared/WebResourceBuffer.h:
+        (WebResourceBuffer):
+        (WebKit::WebResourceBuffer::create):
+
+        Add messaging that responds to resource load events from the NetworkProcess and passes them to the scheduler:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveResponse):
+        (WebKit::NetworkProcessConnection::didReceiveResource):
+        (WebKit::NetworkProcessConnection::didFailResourceLoad):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+
+        Takes resource load events passed from the NetworkProcess and hands them off directly to WebCore ResourceLoaders:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad): Update some logging.
+        (WebKit::WebResourceLoadScheduler::addMainResourceLoad): Ditto.
+        (WebKit::WebResourceLoadScheduler::remove): Ditto.
+        (WebKit::WebResourceLoadScheduler::crossOriginRedirectReceived): Ditto.
+        (WebKit::WebResourceLoadScheduler::servePendingRequests): Ditto.
+        (WebKit::WebResourceLoadScheduler::didReceiveResponse): Call through to ResourceLoader.
+        (WebKit::WebResourceLoadScheduler::didReceiveResource): Ditto.
+        (WebKit::WebResourceLoadScheduler::didFailResourceLoad): Ditto.
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+
 2012-11-08  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Remove an invisible TiledBackingStore of CoordinatedGraphicsLayer.
