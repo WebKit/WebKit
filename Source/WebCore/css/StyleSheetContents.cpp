@@ -26,6 +26,7 @@
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
 #include "Document.h"
+#include "MediaList.h"
 #include "Node.h"
 #include "SecurityOrigin.h"
 #include "StylePropertySet.h"
@@ -135,6 +136,13 @@ void StyleSheetContents::parserAppendRule(PassRefPtr<StyleRuleBase> rule)
         m_importRules.last()->requestStyleSheet();
         return;
     }
+
+#if ENABLE(RESOLUTION_MEDIA_QUERY)
+    // Add warning message to inspector if dpi/dpcm values are used for screen media.
+    if (rule->isMediaRule())
+        reportMediaQueryWarningIfNeeded(singleOwnerDocument(), static_cast<StyleRuleMedia*>(rule.get())->mediaQueries());
+#endif
+
     m_childRules.append(rule);
 }
 

@@ -1037,6 +1037,7 @@ fast/media/media-query-list-05.html
 fast/media/media-query-list-06.html
 fast/media/media-query-list-07.html
 fast/media/mq-resolution.html
+fast/media/mq-resolution-dpi-dpcm-warning.html
 
 # Need expectations. See https://bugs.webkit.org/show_bug.cgi?id=36461
 fast/repaint/overflow-scroll-body-appear.html
@@ -1996,7 +1997,6 @@ fast/css/word-space-extra.html
 fast/forms/date-multiple-fields
 fast/forms/month-multiple-fields
 fast/forms/time-multiple-fields
-fast/forms/week-multiple-fields
 
 # Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=84286
 fast/block/float/avoidance-rtl.html

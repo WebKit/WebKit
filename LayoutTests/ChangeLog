@@ -1,3 +1,23 @@
+2012-11-08  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        Warn in the inspector console when using dpi and dpcm units outside of media="print"
+        https://bugs.webkit.org/show_bug.cgi?id=100865
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added layout test that checks if warning is printed to console when dpi or dpcm CSS
+        units are used for resolution media feature.
+
+        * fast/media/mq-resolution-dpi-dpcm-warning-expected.txt: Added.
+        * fast/media/mq-resolution-dpi-dpcm-warning.html: Added.
+
+        Skip tests for platforms that doesn't support resolution media feature.
+
+        * platform/chromium/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2012-11-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

@@ -205,6 +205,11 @@ void CSSStyleSheet::setMediaQueries(PassRefPtr<MediaQuerySet> mediaQueries)
     m_mediaQueries = mediaQueries;
     if (m_mediaCSSOMWrapper && m_mediaQueries)
         m_mediaCSSOMWrapper->reattach(m_mediaQueries.get());
+
+#if ENABLE(RESOLUTION_MEDIA_QUERY)
+    // Add warning message to inspector whenever dpi/dpcm values are used for "screen" media.
+    reportMediaQueryWarningIfNeeded(ownerDocument(), m_mediaQueries.get());
+#endif
 }
 
 unsigned CSSStyleSheet::length() const

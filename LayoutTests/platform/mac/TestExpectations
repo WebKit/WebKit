@@ -978,6 +978,7 @@ webkit.org/b/85262 fast/css/image-resolution
 
 # Resolution media query is not yet enabled.
 webkit.org/b/85262 fast/media/mq-resolution.html [ Skip ]
+webkit.org/b/85262 fast/media/mq-resolution-dpi-dpcm-warning.html [ Skip ]
 
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation

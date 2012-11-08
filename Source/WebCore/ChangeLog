@@ -1,3 +1,28 @@
+2012-11-08  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        Warn in the inspector console when using dpi and dpcm units outside of media="print"
+        https://bugs.webkit.org/show_bug.cgi?id=100865
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added function that prints warning to inspector console whenever dpi or dpcm CSS units
+        are used for screen media.
+
+        Test: fast/media/mq-resolution-dpi-dpcm-warning.html
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::setMediaQueries):
+        * css/MediaList.cpp:
+        (WebCore):
+        (WebCore::addResolutionWarningMessageToConsole):
+        (WebCore::reportMediaQueryWarningIfNeeded):
+        * css/MediaList.h:
+        (WebCore):
+        * css/MediaQueryMatcher.cpp:
+        (WebCore::MediaQueryMatcher::matchMedia):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parserAppendRule):
+
 2012-11-08  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Console: "time" and "timeEnd" should have same number of required arguments
