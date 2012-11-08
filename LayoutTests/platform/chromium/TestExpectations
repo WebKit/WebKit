@@ -3948,7 +3948,7 @@ crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/remov
 crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/simple-composited-reflections.html [ Pass ]
 
 # Canvas2d not yet supported by software compositor.
-crbug.com/150018 [ Debug ] platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas.html [ Skip ]
+crbug.com/150018 platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas.html [ Skip ]
 crbug.com/150018 platform/chromium/virtual/softwarecompositing/overflow/overflow-hidden-canvas-layer.html [ Skip ]
 crbug.com/150018 platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant.html [ Skip ]
 crbug.com/150018 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-canvas2d-layer.html [ Skip ]

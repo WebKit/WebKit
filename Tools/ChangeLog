@@ -1,3 +1,15 @@
+2012-11-08  Slavomir Kaslev  <skaslev@google.com>
+
+        [Chromium] DumpRenderTree fix for canvas in software compositing
+        https://bugs.webkit.org/show_bug.cgi?id=101509
+
+        Reviewed by Adrienne Walker.
+
+        Don't use accelerated canvas 2d when in software compositing mode.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::runFileTest):
+
 2012-11-08  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Rework the API to use document coordinates

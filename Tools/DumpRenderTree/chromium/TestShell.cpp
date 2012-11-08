@@ -255,8 +255,9 @@ void TestShell::runFileTest(const TestParams& params, bool shouldDumpPixels)
         m_testRunner->setShouldDumpFrameLoadCallbacks(true);
 
     if (testUrl.find("compositing/") != string::npos || testUrl.find("compositing\\") != string::npos) {
+        if (!m_softwareCompositingEnabled)
+            m_prefs.accelerated2dCanvasEnabled = true;
         m_prefs.acceleratedCompositingForVideoEnabled = true;
-        m_prefs.accelerated2dCanvasEnabled = true;
         m_prefs.deferred2dCanvasEnabled = true;
         m_prefs.mockScrollbarsEnabled = true;
         m_prefs.applyTo(m_webView);
