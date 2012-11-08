@@ -1,3 +1,17 @@
+2012-11-08  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] correct coding oversight for clang
+        https://bugs.webkit.org/show_bug.cgi?id=101513
+
+        Reviewed by Kent Tamura.
+
+        https://bugs.webkit.org/show_bug.cgi?id=100675 contains an
+        incorrect declaration that precludes compiling embedder code
+        with clang: patch changes class to struct appropriately.
+
+        * chromium/public/WebGestureCurveTarget.h:
+        (WebKit):
+
 2012-11-07  Yusuf Ozuysal  <yusufo@google.com>
 
         Add API for touchEventHandlerRegion to WebLayer

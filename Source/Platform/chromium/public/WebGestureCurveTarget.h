@@ -27,7 +27,7 @@
 
 namespace WebKit {
 
-class WebPoint;
+struct WebPoint;
 
 class WebGestureCurveTarget {
 public:
