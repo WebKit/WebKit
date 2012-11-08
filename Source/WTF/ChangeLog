@@ -1,3 +1,16 @@
+2012-11-08  Michael Saboff  <msaboff@apple.com>
+
+        HashAndUTF8CharactersTranslator should create an 8 bit string if possible
+        https://bugs.webkit.org/show_bug.cgi?id=101515
+
+        Reviewed by Darin Adler.
+
+        Added isAllASCII flag that's passed to convertUTF8ToUTF16().  If on return it is true, create an
+        8 bit string, otherwise use the 16 bit string.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::HashAndUTF8CharactersTranslator::translate):
+
 2012-11-08  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix build with MSVC 2012 and Angle

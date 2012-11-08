@@ -220,12 +220,17 @@ struct HashAndUTF8CharactersTranslator {
     static void translate(StringImpl*& location, const HashAndUTF8Characters& buffer, unsigned hash)
     {
         UChar* target;
-        location = StringImpl::createUninitialized(buffer.utf16Length, target).leakRef();
+        RefPtr<StringImpl> newString = StringImpl::createUninitialized(buffer.utf16Length, target);
 
+        bool isAllASCII;
         const char* source = buffer.characters;
-        if (convertUTF8ToUTF16(&source, source + buffer.length, &target, target + buffer.utf16Length) != conversionOK)
+        if (convertUTF8ToUTF16(&source, source + buffer.length, &target, target + buffer.utf16Length, &isAllASCII) != conversionOK)
             ASSERT_NOT_REACHED();
 
+        if (isAllASCII)
+            newString = StringImpl::create(buffer.characters, buffer.length);
+
+        location = newString.release().leakRef();
         location->setHash(hash);
         location->setIsAtomic(true);
     }
