@@ -1,3 +1,20 @@
+2012-11-08  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Use explicit constructor in BatteryProvider, DownloadManagerEfl, NetworkInfoProvider
+        https://bugs.webkit.org/show_bug.cgi?id=101567
+
+        Reviewed by Kentaro Hara.
+
+        Added explicit keyword in constructors of BatteryProvider, DownloadManagerEfl,
+        and NetworkInfoProvider in order to avoid implicit type conversion.
+
+        * UIProcess/efl/BatteryProvider.h:
+        (BatteryProvider):
+        * UIProcess/efl/DownloadManagerEfl.h:
+        (DownloadManagerEfl):
+        * UIProcess/efl/NetworkInfoProvider.h:
+        (NetworkInfoProvider):
+
 2012-11-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Use smart pointers in EwkContext more actively

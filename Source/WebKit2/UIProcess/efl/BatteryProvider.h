@@ -46,7 +46,7 @@ public:
     void stopUpdating();
 
 private:
-    BatteryProvider(WKContextRef);
+    explicit BatteryProvider(WKContextRef);
 
     // BatteryProviderEflClient interface.
     virtual void didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<WebCore::BatteryStatus>);

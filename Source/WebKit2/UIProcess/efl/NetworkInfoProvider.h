@@ -49,7 +49,7 @@ public:
     virtual void stopUpdating();
 
 private:
-    NetworkInfoProvider(WKContextRef);
+    explicit NetworkInfoProvider(WKContextRef);
 
     WKRetainPtr<WKContextRef> m_wkContext;
     WebCore::NetworkInfoProviderEfl m_provider;

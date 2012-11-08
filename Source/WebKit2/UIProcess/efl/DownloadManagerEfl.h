@@ -46,7 +46,7 @@ public:
     void registerDownload(DownloadProxy*, EwkViewImpl*);
 
 private:
-    DownloadManagerEfl(EwkContext*);
+    explicit DownloadManagerEfl(EwkContext*);
 
     EwkDownloadJob* downloadJob(uint64_t id) const;
     void unregisterDownloadJob(uint64_t id);
