@@ -403,7 +403,7 @@ bool RenderView::shouldRepaint(const LayoutRect& r) const
     return true;
 }
 
-void RenderView::repaintViewRectangle(const LayoutRect& ur, bool immediate)
+void RenderView::repaintViewRectangle(const LayoutRect& ur, bool immediate) const
 {
     if (!shouldRepaint(ur))
         return;

@@ -78,7 +78,7 @@ public:
     FrameView* frameView() const { return m_frameView; }
 
     virtual void computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect&, bool fixed = false) const OVERRIDE;
-    virtual void repaintViewRectangle(const LayoutRect&, bool immediate = false);
+    virtual void repaintViewRectangle(const LayoutRect&, bool immediate = false) const;
     // Repaint the view, and all composited layers that intersect the given absolute rectangle.
     // FIXME: ideally we'd never have to do this, if all repaints are container-relative.
     virtual void repaintRectangleInViewAndCompositedLayers(const LayoutRect&, bool immediate = false);
