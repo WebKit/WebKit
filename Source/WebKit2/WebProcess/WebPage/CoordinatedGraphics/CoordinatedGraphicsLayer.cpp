@@ -563,7 +563,7 @@ float CoordinatedGraphicsLayer::effectiveContentsScale()
 
 void CoordinatedGraphicsLayer::adjustContentsScale()
 {
-    if (!drawsContent())
+    if (!drawsContent() || !contentsAreVisible() || m_size.isEmpty())
         return;
 
     if (!m_mainBackingStore || m_mainBackingStore->contentsScale() == effectiveContentsScale())

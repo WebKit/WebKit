@@ -72,9 +72,9 @@ void CoordinatedBackingStore::createTile(int id, float scale)
 
 void CoordinatedBackingStore::removeTile(int id)
 {
-    m_tilesToRemove.append(id);
+    ASSERT(m_tiles.contains(id));
+    m_tilesToRemove.add(id);
 }
-
 
 void CoordinatedBackingStore::updateTile(int id, const IntRect& sourceRect, const IntRect& targetRect, PassRefPtr<ShareableSurface> backBuffer, const IntPoint& offset)
 {
@@ -82,6 +82,11 @@ void CoordinatedBackingStore::updateTile(int id, const IntRect& sourceRect, cons
     ASSERT(it != m_tiles.end());
     it->value.incrementRepaintCount();
     it->value.setBackBuffer(targetRect, sourceRect, backBuffer, offset);
+}
+
+bool CoordinatedBackingStore::isEmpty() const
+{
+    return m_tiles.size() == m_tilesToRemove.size();
 }
 
 PassRefPtr<BitmapTexture> CoordinatedBackingStore::texture() const
@@ -149,8 +154,8 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper,
 
 void CoordinatedBackingStore::commitTileOperations(TextureMapper* textureMapper)
 {
-    Vector<int>::iterator tilesToRemoveEnd = m_tilesToRemove.end();
-    for (Vector<int>::iterator it = m_tilesToRemove.begin(); it != tilesToRemoveEnd; ++it)
+    HashSet<int>::iterator tilesToRemoveEnd = m_tilesToRemove.end();
+    for (HashSet<int>::iterator it = m_tilesToRemove.begin(); it != tilesToRemoveEnd; ++it)
         m_tiles.remove(*it);
     m_tilesToRemove.clear();
 

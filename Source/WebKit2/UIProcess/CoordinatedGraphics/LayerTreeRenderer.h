@@ -120,6 +120,9 @@ private:
     void renderNextFrame();
     void purgeBackingStores();
 
+    PassRefPtr<CoordinatedBackingStore> getBackingStore(WebLayerID);
+    void removeBackingStoreIfNeeded(WebLayerID, int tileID);
+
     typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerMap;
     WebCore::FloatSize m_contentsSize;
     WebCore::FloatRect m_visibleContentsRect;
@@ -128,12 +131,10 @@ private:
     Vector<Function<void()> > m_renderQueue;
     Mutex m_renderQueueMutex;
 
-#if USE(TEXTURE_MAPPER)
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
-    PassRefPtr<CoordinatedBackingStore> getBackingStore(WebLayerID);
     HashMap<int64_t, RefPtr<WebCore::TextureMapperBackingStore> > m_directlyCompositedImages;
     HashSet<RefPtr<CoordinatedBackingStore> > m_backingStoresWithPendingBuffers;
-#endif
+
 #if USE(GRAPHICS_SURFACE)
     typedef HashMap<WebLayerID, RefPtr<WebCore::TextureMapperSurfaceBackingStore> > SurfaceBackingStoreMap;
     SurfaceBackingStoreMap m_surfaceBackingStores;

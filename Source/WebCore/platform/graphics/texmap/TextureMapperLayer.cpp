@@ -169,11 +169,15 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
     float opacity = options.opacity;
     RefPtr<BitmapTexture> mask = options.mask;
 
-    if (m_backingStore)
+    if (m_backingStore) {
+        ASSERT(!layerRect().isEmpty());
         m_backingStore->paintToTextureMapper(options.textureMapper, layerRect(), transform, opacity, mask.get());
+    }
 
-    if (m_contentsLayer)
+    if (m_contentsLayer) {
+        ASSERT(!layerRect().isEmpty());
         m_contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, opacity, mask.get());
+    }
 }
 
 int TextureMapperLayer::compareGraphicsLayersZValue(const void* a, const void* b)
