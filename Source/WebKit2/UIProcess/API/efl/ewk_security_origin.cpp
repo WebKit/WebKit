@@ -28,14 +28,23 @@
 
 #include "WKAPICast.h"
 #include "WKSecurityOrigin.h"
+#include "WebSecurityOrigin.h"
 #include "ewk_security_origin_private.h"
+#include <WebCore/SecurityOrigin.h>
 
+using namespace WebCore;
 using namespace WebKit;
 
 EwkSecurityOrigin::EwkSecurityOrigin(WKSecurityOriginRef originRef)
     : m_wkOrigin(originRef)
     , m_host(AdoptWK, WKSecurityOriginCopyHost(originRef))
     , m_protocol(AdoptWK, WKSecurityOriginCopyProtocol(originRef))
+{ }
+
+EwkSecurityOrigin::EwkSecurityOrigin(const KURL& url)
+    : m_wkOrigin(AdoptWK, toAPI(WebSecurityOrigin::create(SecurityOrigin::create(url)).leakRef()))
+    , m_host(AdoptWK, WKSecurityOriginCopyHost(m_wkOrigin.get()))
+    , m_protocol(AdoptWK, WKSecurityOriginCopyProtocol(m_wkOrigin.get()))
 { }
 
 const char* EwkSecurityOrigin::host() const

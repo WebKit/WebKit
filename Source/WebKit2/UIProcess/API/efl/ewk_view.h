@@ -89,6 +89,7 @@
 #include "ewk_intent.h"
 #include "ewk_popup_menu.h"
 #include "ewk_resource.h"
+#include "ewk_security_origin.h"
 #include "ewk_settings.h"
 #include "ewk_touch.h"
 #include "ewk_url_request.h"
@@ -121,7 +122,7 @@ struct Ewk_View_Smart_Class {
     //  - if overridden, have to call parent method if desired
     Eina_Bool (*focus_in)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*focus_out)(Ewk_View_Smart_Data *sd);
-    Eina_Bool (*fullscreen_enter)(Ewk_View_Smart_Data *sd);
+    Eina_Bool (*fullscreen_enter)(Ewk_View_Smart_Data *sd, Ewk_Security_Origin *origin);
     Eina_Bool (*fullscreen_exit)(Ewk_View_Smart_Data *sd);
     Eina_Bool (*mouse_wheel)(Ewk_View_Smart_Data *sd, const Evas_Event_Mouse_Wheel *ev);
     Eina_Bool (*mouse_down)(Ewk_View_Smart_Data *sd, const Evas_Event_Mouse_Down *ev);
@@ -799,6 +800,15 @@ EAPI Eina_Bool ewk_view_pagination_mode_set(Evas_Object *o, Ewk_Pagination_Mode 
  * @return The pagination mode of the current web page
  */
 EAPI Ewk_Pagination_Mode ewk_view_pagination_mode_get(const Evas_Object *o);
+
+/**
+ * Exit fullscreen mode.
+ *
+ * @param o view object where to exit fullscreen
+ *
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE otherwise
+ */
+EAPI Eina_Bool ewk_view_fullscreen_exit(Evas_Object *o);
 
 #ifdef __cplusplus
 }

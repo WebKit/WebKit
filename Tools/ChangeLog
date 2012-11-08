@@ -1,3 +1,24 @@
+2012-11-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add proper support for fullscreen API to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=101615
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement fullscreen API support in MiniBrowser. When entering
+        fullscreen a popup is shown to notify the user that something
+        is displayed in fullscreen and to advertise that the Escape
+        key can be used to exit fullscreen. This behavior is according
+        to specification.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+        (on_fullscreen_accept):
+        (on_fullscreen_deny):
+        (on_fullscreen_enter):
+        (on_fullscreen_exit):
+        (window_create):
+
 2012-11-08  Slavomir Kaslev  <skaslev@google.com>
 
         [Chromium] DumpRenderTree fix for canvas in software compositing

@@ -139,9 +139,11 @@ static void window_close(Browser_Window *window)
 }
 
 static void
-on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
+on_key_down(void *user_data, Evas *e, Evas_Object *webview, void *event_info)
 {
+    Browser_Window *window = (Browser_Window *)user_data;
     Evas_Event_Key_Down *ev = (Evas_Event_Key_Down*) event_info;
+
     static const char *encodings[] = {
         "ISO-8859-1",
         "UTF-8",
@@ -152,26 +154,26 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
     if (!strcmp(ev->key, "F1")) {
         info("Back (F1) was pressed\n");
-        if (!ewk_view_back(obj))
+        if (!ewk_view_back(webview))
             info("Back ignored: No back history\n");
     } else if (!strcmp(ev->key, "F2")) {
         info("Forward (F2) was pressed\n");
-        if (!ewk_view_forward(obj))
+        if (!ewk_view_forward(webview))
             info("Forward ignored: No forward history\n");
     } else if (!strcmp(ev->key, "F3")) {
         currentEncoding = (currentEncoding + 1) % (sizeof(encodings) / sizeof(encodings[0]));
         info("Set encoding (F3) pressed. New encoding to %s", encodings[currentEncoding]);
-        ewk_view_setting_encoding_custom_set(obj, encodings[currentEncoding]);
+        ewk_view_setting_encoding_custom_set(webview, encodings[currentEncoding]);
     } else if (!strcmp(ev->key, "F5")) {
         info("Reload (F5) was pressed, reloading.\n");
-        ewk_view_reload(obj);
+        ewk_view_reload(webview);
     } else if (!strcmp(ev->key, "F6")) {
         info("Stop (F6) was pressed, stop loading.\n");
-        ewk_view_stop(obj);
+        ewk_view_stop(webview);
     } else if  (!strcmp(ev->key, "F7")) {
-        Ewk_Pagination_Mode mode =  ewk_view_pagination_mode_get(obj);
+        Ewk_Pagination_Mode mode =  ewk_view_pagination_mode_get(webview);
         mode = (++mode) % (EWK_PAGINATION_MODE_BOTTOM_TO_TOP + 1);
-        if (ewk_view_pagination_mode_set(obj, mode))
+        if (ewk_view_pagination_mode_set(webview, mode))
             info("Change Pagination Mode (F7) was pressed, changed to: %d\n", mode);
         else
             info("Change Pagination Mode (F7) was pressed, but NOT changed!");
@@ -181,7 +183,10 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
         windows = eina_list_append(windows, window);
     } else if (!strcmp(ev->key, "i") && ctrlPressed) {
         info("Show Inspector (Ctrl+i) was pressed.\n");
-        ewk_view_inspector_show(obj);
+        ewk_view_inspector_show(webview);
+    } else if (!strcmp(ev->key, "Escape")) {
+        if (elm_win_fullscreen_get(window->window))
+            ewk_view_fullscreen_exit(webview);
     }
 }
 
@@ -678,6 +683,75 @@ static Eina_Bool on_window_geometry_set(Ewk_View_Smart_Data *sd, Evas_Coord x, E
 }
 
 typedef struct {
+    Evas_Object *webview;
+    Evas_Object *permission_popup;
+} PermissionData;
+
+static void
+on_fullscreen_accept(void *user_data, Evas_Object *obj, void *event_info)
+{
+    PermissionData *permission_data = (PermissionData *)user_data;
+
+    evas_object_del(permission_data->permission_popup);
+    free(permission_data);
+}
+
+static void
+on_fullscreen_deny(void *user_data, Evas_Object *obj, void *event_info)
+{
+    PermissionData *permission_data = (PermissionData *)user_data;
+
+    ewk_view_fullscreen_exit(permission_data->webview);
+    evas_object_del(permission_data->permission_popup);
+    free(permission_data);
+}
+
+static Eina_Bool on_fullscreen_enter(Ewk_View_Smart_Data *sd, Ewk_Security_Origin *origin)
+{
+    Browser_Window *window = browser_view_find(sd->self);
+
+    /* Go fullscreen */
+    elm_win_fullscreen_set(window->window, EINA_TRUE);
+
+    /* Show user popup */
+    Evas_Object *permission_popup = elm_popup_add(window->window);
+    evas_object_size_hint_weight_set(permission_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+    Eina_Strbuf *message = eina_strbuf_new();
+    eina_strbuf_append_printf(message, "%s is now fullscreen.<br>Press ESC at any time to exit fullscreen.<br>Allow fullscreen?", ewk_security_origin_host_get(origin));
+    elm_object_text_set(permission_popup, eina_strbuf_string_get(message));
+    eina_strbuf_free(message);
+    elm_object_part_text_set(permission_popup, "title,text", "Fullscreen Permission");
+
+    /* Popup buttons */
+    PermissionData *permission_data = (PermissionData *)malloc(sizeof(PermissionData));
+    permission_data->webview = window->webview;
+    permission_data->permission_popup = permission_popup;
+    Evas_Object *accept_button = elm_button_add(permission_popup);
+    elm_object_text_set(accept_button, "Accept");
+    elm_object_part_content_set(permission_popup, "button1", accept_button);
+    evas_object_smart_callback_add(accept_button, "clicked", on_fullscreen_accept, permission_data);
+
+    Evas_Object *deny_button = elm_button_add(permission_popup);
+    elm_object_text_set(deny_button, "Deny");
+    elm_object_part_content_set(permission_popup, "button2", deny_button);
+    evas_object_smart_callback_add(deny_button, "clicked", on_fullscreen_deny, permission_data);
+
+    evas_object_show(permission_popup);
+
+    return EINA_TRUE;
+}
+
+static Eina_Bool on_fullscreen_exit(Ewk_View_Smart_Data *sd)
+{
+    Browser_Window *window = browser_view_find(sd->self);
+
+    elm_win_fullscreen_set(window->window, EINA_FALSE);
+
+    return EINA_TRUE;
+}
+
+typedef struct {
     Evas_Object *popup;
     Ewk_Auth_Request *request;
     Evas_Object *username_entry;
@@ -949,6 +1023,8 @@ static Browser_Window *window_create(const char *url)
     ewkViewClass->run_javascript_prompt = on_javascript_prompt;
     ewkViewClass->window_geometry_get = on_window_geometry_get;
     ewkViewClass->window_geometry_set = on_window_geometry_set;
+    ewkViewClass->fullscreen_enter = on_fullscreen_enter;
+    ewkViewClass->fullscreen_exit = on_fullscreen_exit;
 
     Evas *evas = evas_object_evas_get(app_data->window);
     Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);

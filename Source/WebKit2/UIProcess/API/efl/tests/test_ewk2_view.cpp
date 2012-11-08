@@ -242,7 +242,13 @@ TEST_F(EWK2UnitTestBase, ewk_view_mouse_events_enabled)
     ASSERT_FALSE(ewk_view_mouse_events_enabled_get(webView()));
 }
 
-static Eina_Bool fullScreenCallback(Ewk_View_Smart_Data* smartData)
+static Eina_Bool fullScreenCallback(Ewk_View_Smart_Data* smartData, Ewk_Security_Origin*)
+{
+    fullScreenCallbackCalled = true;
+    return false;
+}
+
+static Eina_Bool fullScreenExitCallback(Ewk_View_Smart_Data* smartData)
 {
     fullScreenCallbackCalled = true;
     return false;
@@ -278,7 +284,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_full_screen_exit)
         "}</script></head>"
         "<body><div id=\"fullscreen\" style=\"width:100px; height:100px\" onclick=\"makeFullScreenAndExit()\"></div></body>";
 
-    ewkViewClass()->fullscreen_exit = fullScreenCallback;
+    ewkViewClass()->fullscreen_exit = fullScreenExitCallback;
 
     ewk_view_html_string_load(webView(), fullscreenHTML, "file:///", 0);
     ASSERT_TRUE(waitUntilLoadFinished());

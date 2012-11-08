@@ -1,3 +1,29 @@
+2012-11-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add proper support for fullscreen API to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=101615
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::enterFullScreen):
+        * UIProcess/API/efl/ewk_security_origin.cpp:
+        (EwkSecurityOrigin::EwkSecurityOrigin):
+        * UIProcess/API/efl/ewk_security_origin_private.h:
+        (EwkSecurityOrigin::create): Add factory method to construct a
+        EwkSecurityOrigin from a KURL.
+        (EwkSecurityOrigin):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_fullscreen_exit): Add public API function to exit
+        fullscreen mode.
+        * UIProcess/API/efl/ewk_view.h: Add security origin parameter
+        to fullscreen_enter smart function since this information is
+        useful to the user agent.
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (fullScreenCallback):
+        (fullScreenExitCallback):
+        (TEST_F):
+
 2012-11-08  Brady Eidson  <beidson@apple.com>
 
         Have NetworkProcess do the actual loading of subresources.
