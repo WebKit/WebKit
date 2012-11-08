@@ -60,21 +60,21 @@ namespace WebCore {
 #if ENABLE(CONTEXT_MENUS)
 class FrontendMenuProvider : public ContextMenuProvider {
 public:
-    static PassRefPtr<FrontendMenuProvider> create(InspectorFrontendHost* frontendHost, ScriptObject webInspector, const Vector<ContextMenuItem>& items)
+    static PassRefPtr<FrontendMenuProvider> create(InspectorFrontendHost* frontendHost, ScriptObject frontendApiObject, const Vector<ContextMenuItem>& items)
     {
-        return adoptRef(new FrontendMenuProvider(frontendHost, webInspector, items));
+        return adoptRef(new FrontendMenuProvider(frontendHost, frontendApiObject, items));
     }
     
     void disconnect()
     {
-        m_webInspector = ScriptObject();
+        m_frontendApiObject = ScriptObject();
         m_frontendHost = 0;
     }
     
 private:
-    FrontendMenuProvider(InspectorFrontendHost* frontendHost, ScriptObject webInspector, const Vector<ContextMenuItem>& items)
+    FrontendMenuProvider(InspectorFrontendHost* frontendHost, ScriptObject frontendApiObject, const Vector<ContextMenuItem>& items)
         : m_frontendHost(frontendHost)
-        , m_webInspector(webInspector)
+        , m_frontendApiObject(frontendApiObject)
         , m_items(items)
     {
     }
@@ -96,7 +96,7 @@ private:
             UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
             int itemNumber = item->action() - ContextMenuItemBaseCustomTag;
 
-            ScriptFunctionCall function(m_webInspector, "contextMenuItemSelected");
+            ScriptFunctionCall function(m_frontendApiObject, "contextMenuItemSelected");
             function.appendArgument(itemNumber);
             function.call();
         }
@@ -105,7 +105,7 @@ private:
     virtual void contextMenuCleared()
     {
         if (m_frontendHost) {
-            ScriptFunctionCall function(m_webInspector, "contextMenuCleared");
+            ScriptFunctionCall function(m_frontendApiObject, "contextMenuCleared");
             function.call();
 
             m_frontendHost->m_menuProvider = 0;
@@ -114,7 +114,7 @@ private:
     }
 
     InspectorFrontendHost* m_frontendHost;
-    ScriptObject m_webInspector;
+    ScriptObject m_frontendApiObject;
     Vector<ContextMenuItem> m_items;
 };
 #endif
@@ -270,12 +270,12 @@ void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMe
 {
     ASSERT(m_frontendPage);
     ScriptState* frontendScriptState = scriptStateFromPage(debuggerWorld(), m_frontendPage);
-    ScriptObject webInspectorObj;
-    if (!ScriptGlobalObject::get(frontendScriptState, "WebInspector", webInspectorObj)) {
+    ScriptObject frontendApiObject;
+    if (!ScriptGlobalObject::get(frontendScriptState, "InspectorFrontendAPI", frontendApiObject)) {
         ASSERT_NOT_REACHED();
         return;
     }
-    RefPtr<FrontendMenuProvider> menuProvider = FrontendMenuProvider::create(this, webInspectorObj, items);
+    RefPtr<FrontendMenuProvider> menuProvider = FrontendMenuProvider::create(this, frontendApiObject, items);
     ContextMenuController* menuController = m_frontendPage->contextMenuController();
     menuController->showContextMenu(event, menuProvider);
     m_menuProvider = menuProvider.get();

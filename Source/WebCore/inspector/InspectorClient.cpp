@@ -55,7 +55,7 @@ bool InspectorClient::doDispatchMessageOnFrontendPage(Page* frontendPage, const 
     if (!scriptController)
         return false;
 
-    String dispatchToFrontend = "WebInspector.dispatchMessageFromBackend(" + message + ");";
+    String dispatchToFrontend = "InspectorFrontendAPI.dispatchMessageAsync(" + message + ");";
 
     // FIXME: This should execute the script in the appropriate world.
     scriptController->evaluate(ScriptSourceCode(dispatchToFrontend));

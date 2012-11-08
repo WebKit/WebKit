@@ -526,11 +526,6 @@ WebInspector.dispatch = function(message) {
     }, 0);
 }
 
-WebInspector.dispatchMessageFromBackend = function(messageObject)
-{
-    WebInspector.dispatch(messageObject);
-}
-
 WebInspector.windowResize = function(event)
 {
     if (WebInspector.inspectorView)

@@ -109,11 +109,11 @@ void WebDevToolsFrontendImpl::dispatchOnInspectorFrontend(const WebString& messa
     v8::HandleScope scope;
     v8::Handle<v8::Context> frameContext = frame->frame() ? frame->frame()->script()->currentWorldContext() : v8::Local<v8::Context>();
     v8::Context::Scope contextScope(frameContext);
-    v8::Handle<v8::Value> inspectorBackendValue = frameContext->Global()->Get(v8::String::New("InspectorBackend"));
-    if (!inspectorBackendValue->IsObject())
+    v8::Handle<v8::Value> inspectorFrontendApiValue = frameContext->Global()->Get(v8::String::New("InspectorFrontendAPI"));
+    if (!inspectorFrontendApiValue->IsObject())
         return;
-    v8::Handle<v8::Object> inspectorBackend = v8::Handle<v8::Object>::Cast(inspectorBackendValue);
-    v8::Handle<v8::Value> dispatchFunction = inspectorBackend->Get(v8::String::New("dispatch"));
+    v8::Handle<v8::Object> inspectorFrontendApi = v8::Handle<v8::Object>::Cast(inspectorFrontendApiValue);
+    v8::Handle<v8::Value> dispatchFunction = inspectorFrontendApi->Get(v8::String::New("dispatchMessage"));
      // The frame might have navigated away from the front-end page (which is still weird).
     if (!dispatchFunction->IsFunction())
         return;
@@ -122,7 +122,7 @@ void WebDevToolsFrontendImpl::dispatchOnInspectorFrontend(const WebString& messa
     args.append(ToV8String(message));
     v8::TryCatch tryCatch;
     tryCatch.SetVerbose(true);
-    ScriptController::callFunctionWithInstrumentation(frame->frame() ? frame->frame()->document() : 0, function, inspectorBackend, args.size(), args.data());
+    ScriptController::callFunctionWithInstrumentation(frame->frame() ? frame->frame()->document() : 0, function, inspectorFrontendApi, args.size(), args.data());
 }
 
 } // namespace WebKit

@@ -22,7 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-WebInspector = {};
+InspectorFrontendAPI = {};
 
 InspectorTest = {};
 InspectorTest._dispatchTable = [];
@@ -50,7 +50,7 @@ InspectorTest.sendCommand = function(method, params, handler)
 /**
  * @param {object} messageObject
  */
-WebInspector.dispatchMessageFromBackend = function(messageObject)
+InspectorFrontendAPI.dispatchMessageAsync = function(messageObject)
 {
     var messageId = messageObject["id"];
     if (typeof messageId === "number") {

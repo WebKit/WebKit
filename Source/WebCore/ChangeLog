@@ -1,3 +1,30 @@
+2012-11-08  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: move front-end methods called from native part to InspectorFrontendAPI
+        https://bugs.webkit.org/show_bug.cgi?id=101463
+
+        Reviewed by Vsevolod Vlasov.
+
+        Moved Web Inspector methods called from native code to InspectorFrontendAPI.
+
+        * inspector/InspectorClient.cpp:
+        (WebCore::InspectorClient::doDispatchMessageOnFrontendPage):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::FrontendMenuProvider::create):
+        (WebCore::FrontendMenuProvider::disconnect):
+        (WebCore::FrontendMenuProvider::FrontendMenuProvider):
+        (WebCore::FrontendMenuProvider::contextMenuItemSelected):
+        (WebCore::FrontendMenuProvider::contextMenuCleared):
+        (FrontendMenuProvider):
+        (WebCore::InspectorFrontendHost::showContextMenu):
+        * inspector/front-end/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.loadCompleted):
+        (InspectorFrontendAPI.contextMenuItemSelected):
+        (InspectorFrontendAPI.contextMenuCleared):
+        (InspectorFrontendAPI.dispatchMessageAsync):
+        (InspectorFrontendAPI.dispatchMessage):
+        * inspector/front-end/inspector.js:
+
 2012-11-08  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         User can change a disabled select (drop down box)

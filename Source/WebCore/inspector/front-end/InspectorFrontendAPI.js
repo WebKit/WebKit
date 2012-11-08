@@ -161,6 +161,26 @@ var InspectorFrontendAPI = {
         InspectorFrontendAPI._pendingCommands = [];
         if (window.opener)
             window.opener.postMessage(["loadCompleted"], "*");
+    },
+
+    contextMenuItemSelected: function(id)
+    {
+        WebInspector.contextMenuItemSelected(id);
+    },
+
+    contextMenuCleared: function()
+    {
+        WebInspector.contextMenuCleared();
+    },
+
+    dispatchMessageAsync: function(messageObject)
+    {
+        WebInspector.dispatch(messageObject);
+    },
+
+    dispatchMessage: function(messageObject)
+    {
+        InspectorBackend.dispatch(messageObject);
     }
 }
 
