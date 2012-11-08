@@ -243,6 +243,11 @@ struct GraphicsSurfacePrivate {
         XFree(configs);
     }
 
+    bool textureIsYInverted()
+    {
+        return m_textureIsYInverted;
+    }
+
     void makeCurrent()
     {
         m_detachedContext = glXGetCurrentContext();
@@ -382,7 +387,8 @@ void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper,
     TextureMapperGL* texMapGL = static_cast<TextureMapperGL*>(textureMapper);
     TransformationMatrix adjustedTransform = transform;
     adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_size), targetRect));
-    texMapGL->drawTexture(platformGetTextureID(), TextureMapperGL::ShouldFlipTexture, m_size, targetRect, adjustedTransform, opacity, mask);
+    TextureMapperGL::Flags flags = m_private->textureIsYInverted() ? TextureMapperGL::ShouldFlipTexture : 0;
+    texMapGL->drawTexture(platformGetTextureID(), flags, m_size, targetRect, adjustedTransform, opacity, mask);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const
