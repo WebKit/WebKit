@@ -1,3 +1,23 @@
+2012-11-07  Emil A Eklund  <eae@chromium.org>
+
+        Fix enclosingLayoutRect calls in InlineFlowBox.h
+        https://bugs.webkit.org/show_bug.cgi?id=101497
+
+        Reviewed by Levi Weintraub.
+
+        InlineFlowBox.h used to include LayoutTypesInlineMethods.h which
+        overrid enclosingLayoutRect to call closingIntRect. When we
+        removed the LayoutTypes abstraction we switched these to
+        enclosingIntRect to preserve the behavior.
+        This patch changes these back to enclosingLayoutRect which is
+        the desired behavior.
+
+        Covered by existing tests.
+
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::layoutOverflowRect):
+        (WebCore::InlineFlowBox::visualOverflowRect):
+
 2012-11-08  Philip Rogers  <pdr@google.com>
 
         Remove unnecessary save/restore in SVGTextRunRenderingContext

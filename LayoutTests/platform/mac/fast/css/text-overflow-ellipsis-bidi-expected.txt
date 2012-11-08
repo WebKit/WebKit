@@ -17,14 +17,14 @@ layer at (0,0) size 800x200
         RenderBR {BR} at (0,0) size 0x18
         RenderText {#text} at (0,18) size 64x18
           text run at (0,18) width 64: "LTR Text"
-layer at (8,80) size 207x19 scrollX 154 scrollWidth 361
+layer at (8,80) size 207x19 scrollX 153 scrollWidth 360
   RenderBlock {DIV} at (0,72) size 207x19
     RenderText {#text} at (-153,1) size 361x18
       text run at (-153,1) width 0 RTL: "\x{202C}"
       text run at (-153,1) width 275 RTL: " \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} "
       text run at (122,1) width 81: "English Text"
       text run at (203,1) width 4 RTL: "\x{202B} "
-layer at (8,99) size 207x19 scrollX 154 scrollWidth 361
+layer at (8,99) size 207x19 scrollX 153 scrollWidth 360
   RenderBlock {DIV} at (0,91) size 207x19
     RenderText {#text} at (-153,1) size 361x18
       text run at (-153,1) width 0 RTL: "\x{202C}"

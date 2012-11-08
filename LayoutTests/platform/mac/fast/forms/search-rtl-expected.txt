@@ -41,7 +41,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,119) size 784x18
         RenderText {#text} at (0,0) size 39x18
           text run at (0,0) width 39: "PASS"
-layer at (35,47) size 82x13 scrollX 53 scrollWidth 135
+layer at (35,47) size 82x13 scrollX 52 scrollWidth 135
   RenderBlock {DIV} at (0,0) size 82x13
     RenderText {#text} at (-52,0) size 135x13
       text run at (-52,0) width 22 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
@@ -49,7 +49,7 @@ layer at (35,47) size 82x13 scrollX 53 scrollWidth 135
       text run at (-11,0) width 44 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
       text run at (32,0) width 14: "he"
       text run at (45,0) width 37 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
-layer at (35,70) size 132x13 scrollX 3 scrollWidth 135
+layer at (35,70) size 132x13 scrollX 2 scrollWidth 135
   RenderBlock {DIV} at (0,0) size 132x13
     RenderText {#text} at (-2,0) size 135x13
       text run at (-2,0) width 22 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"

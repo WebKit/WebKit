@@ -9,15 +9,15 @@ layer at (8,16) size 784x171
       RenderInline {LABEL} at (0,0) size 102x18
         RenderText {#text} at (0,0) size 102x18
           text run at (0,0) width 102: "Some inline text"
-    RenderBlock (anonymous) at (5,23) size 379x288
-      RenderBlock {SUMMARY} at (0,0) size 379x288
+    RenderBlock (anonymous) at (5,23) size 379x287
+      RenderBlock {SUMMARY} at (0,0) size 379x287
         RenderBlock (anonymous) at (0,0) size 379x18
           RenderText {#text} at (0,0) size 102x18
             text run at (0,0) width 102: "Some block text"
         RenderBlock {H2} at (0,37) size 379x29 [bgcolor=#EEEEEE]
           RenderText {#text} at (0,0) size 58x28
             text run at (0,0) width 58: "PASS"
-        RenderBlock (anonymous) at (0,85) size 379x203
+        RenderBlock (anonymous) at (0,85) size 379x202
           RenderText {#text} at (0,0) size 369x201
             text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
             text run at (0,18) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
@@ -30,5 +30,5 @@ layer at (8,16) size 784x171
             text run at (0,147) width 369: "condimentum vestibulum. Suspendisse hendrerit quam nec"
             text run at (0,165) width 354: "felis. Sed varius turpis vitae pede. Lorem ipsum dolor sit"
             text run at (0,183) width 211: "amet, consectetuer adipiscing elit."
-    RenderBlock (anonymous) at (5,310) size 379x1
+    RenderBlock (anonymous) at (5,310) size 379x0
       RenderInline {LABEL} at (0,0) size 0x0

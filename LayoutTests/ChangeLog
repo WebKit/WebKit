@@ -1,3 +1,36 @@
+2012-11-07  Emil A Eklund  <eae@chromium.org>
+
+        Fix enclosingLayoutRect calls in InlineFlowBox.h
+        https://bugs.webkit.org/show_bug.cgi?id=101497
+
+        Reviewed by Levi Weintraub.
+
+        Update tests expectations to reflect change form
+        enclosingIntRect to enclosingLayoutRect.
+
+        * platform/chromium-linux/fast/css/text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/chromium-linux/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/chromium-win/fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * platform/chromium-win/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/chromium-win/svg/text/text-overflow-ellipsis-svgfont-expected.txt:
+        * platform/mac/fast/css/text-overflow-ellipsis-bidi-expected.txt:
+        * platform/mac/fast/css/text-overflow-ellipsis-expected.txt:
+        * platform/mac/fast/css/text-overflow-ellipsis-strict-expected.txt:
+        * platform/mac/fast/css/text-overflow-input-expected.txt:
+        * platform/mac/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/mac/fast/forms/input-disabled-color-expected.txt:
+        * platform/mac/fast/forms/input-readonly-autoscroll-expected.txt:
+        * platform/mac/fast/forms/input-readonly-dimmed-expected.txt:
+        * platform/mac/fast/forms/input-text-scroll-left-on-blur-expected.txt:
+        * platform/mac/fast/forms/search-rtl-expected.txt:
+        * platform/mac/fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * platform/mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/mac/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/mac/svg/text/text-overflow-ellipsis-svgfont-expected.txt:
+
 2012-11-08  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         Rebaseline fast/media/w3c/test_media_queries.html and fast/media/mq-resolution.html after r133884

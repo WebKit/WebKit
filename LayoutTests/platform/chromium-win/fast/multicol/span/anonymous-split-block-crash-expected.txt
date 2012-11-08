@@ -12,7 +12,7 @@ layer at (8,16) size 784x155
       RenderBlock {H2} at (0,0) size 379x27 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 58x26
           text run at (0,0) width 58: "PASS"
-    RenderBlock (anonymous) at (5,71) size 379x220
+    RenderBlock (anonymous) at (5,71) size 379x219
       RenderInline {JUNK} at (0,0) size 379x217
         RenderText {#text} at (0,0) size 379x217
           text run at (0,0) width 373: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla"

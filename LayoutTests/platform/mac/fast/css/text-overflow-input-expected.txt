@@ -124,13 +124,13 @@ layer at (0,0) size 800x290
         RenderText {#text} at (520,43) size 4x18
           text run at (520,43) width 4: " "
         RenderBR {BR} at (0,0) size 0x0
-layer at (13,73) size 117x13 scrollWidth 296
+layer at (13,73) size 117x13 scrollWidth 295
   RenderBlock {DIV} at (3,3) size 117x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 296x13
       text run at (0,0) width 296: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (13,73) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13
-layer at (152,73) size 96x13 scrollWidth 296
+layer at (152,73) size 96x13 scrollWidth 295
   RenderBlock {DIV} at (11,3) size 96x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 296x13
       text run at (0,0) width 296: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -148,37 +148,37 @@ layer at (537,73) size 117x13 scrollWidth 341
   RenderBlock {DIV} at (3,3) size 117x13
     RenderText {#text} at (0,0) size 340x13
       text run at (0,0) width 340: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
-layer at (13,96) size 117x13 scrollX 179 scrollWidth 296
+layer at (13,96) size 117x13 scrollX 178 scrollWidth 295
   RenderBlock {DIV} at (3,3) size 117x13 [color=#A9A9A9]
     RenderText {#text} at (-178,0) size 296x13
       text run at (-178,0) width 295: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (13,96) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13
-layer at (152,96) size 96x13 scrollX 200 scrollWidth 296
+layer at (152,96) size 96x13 scrollX 199 scrollWidth 295
   RenderBlock {DIV} at (11,3) size 96x13 [color=#A9A9A9]
     RenderText {#text} at (-199,0) size 296x13
       text run at (-199,0) width 295: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (152,96) size 96x13
   RenderBlock {DIV} at (0,0) size 96x13
-layer at (275,96) size 117x13 scrollX 179 scrollWidth 296
+layer at (275,96) size 117x13 scrollX 178 scrollWidth 295
   RenderBlock {DIV} at (3,3) size 117x13
     RenderText {#text} at (-178,0) size 296x13
       text run at (-178,0) width 295: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (414,96) size 96x13 scrollX 200 scrollWidth 296
+layer at (414,96) size 96x13 scrollX 199 scrollWidth 295
   RenderBlock {DIV} at (0,0) size 96x13
     RenderText {#text} at (-199,0) size 296x13
       text run at (-199,0) width 295: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (537,96) size 117x13 scrollX 223 scrollWidth 340
+layer at (537,96) size 117x13 scrollX 222 scrollWidth 339
   RenderBlock {DIV} at (3,3) size 117x13
     RenderText {#text} at (-222,0) size 340x13
       text run at (-222,0) width 339 RTL: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
-layer at (13,153) size 117x13 scrollWidth 296
+layer at (13,153) size 117x13 scrollWidth 295
   RenderBlock {DIV} at (3,3) size 117x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 296x13
       text run at (0,0) width 296: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (13,153) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13
-layer at (152,153) size 96x13 scrollWidth 296
+layer at (152,153) size 96x13 scrollWidth 295
   RenderBlock {DIV} at (11,3) size 96x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 296x13
       text run at (0,0) width 296: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -196,31 +196,31 @@ layer at (537,153) size 117x13 scrollWidth 341
   RenderBlock {DIV} at (3,3) size 117x13
     RenderText {#text} at (0,0) size 340x13
       text run at (0,0) width 340: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
-layer at (13,176) size 117x13 scrollX 179 scrollWidth 296
+layer at (13,176) size 117x13 scrollX 178 scrollWidth 295
   RenderBlock {DIV} at (3,3) size 117x13 [color=#A9A9A9]
     RenderText {#text} at (-178,0) size 296x13
       text run at (-178,0) width 295: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (13,176) size 117x13
   RenderBlock {DIV} at (3,3) size 117x13
-layer at (152,176) size 96x13 scrollX 200 scrollWidth 296
+layer at (152,176) size 96x13 scrollX 199 scrollWidth 295
   RenderBlock {DIV} at (11,3) size 96x13 [color=#A9A9A9]
     RenderText {#text} at (-199,0) size 296x13
       text run at (-199,0) width 295: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
 layer at (152,176) size 96x13
   RenderBlock {DIV} at (0,0) size 96x13
-layer at (275,176) size 117x13 scrollX 179 scrollWidth 296
+layer at (275,176) size 117x13 scrollX 178 scrollWidth 295
   RenderBlock {DIV} at (3,3) size 117x13
     RenderText {#text} at (-178,0) size 296x13
       text run at (-178,0) width 295: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (414,176) size 96x13 scrollX 200 scrollWidth 296
+layer at (414,176) size 96x13 scrollX 199 scrollWidth 295
   RenderBlock {DIV} at (0,0) size 96x13
     RenderText {#text} at (-199,0) size 296x13
       text run at (-199,0) width 295: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (537,176) size 117x13 scrollX 223 scrollWidth 340
+layer at (537,176) size 117x13 scrollX 222 scrollWidth 339
   RenderBlock {DIV} at (3,3) size 117x13
     RenderText {#text} at (-222,0) size 340x13
       text run at (-222,0) width 339 RTL: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
-layer at (252,233) size 117x13 scrollWidth 296
+layer at (252,233) size 117x13 scrollWidth 295
   RenderBlock {DIV} at (3,3) size 117x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 296x13
       text run at (0,0) width 296: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -230,7 +230,7 @@ layer at (383,233) size 117x13 scrollWidth 297
   RenderBlock {DIV} at (3,3) size 117x13
     RenderText {#text} at (0,0) size 296x13
       text run at (0,0) width 296: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-layer at (275,256) size 117x13 scrollWidth 296
+layer at (275,256) size 117x13 scrollWidth 295
   RenderBlock {DIV} at (3,3) size 117x13 [color=#A9A9A9]
     RenderText {#text} at (0,0) size 296x13
       text run at (0,0) width 296: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
