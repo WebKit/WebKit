@@ -712,9 +712,18 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
         haveComputedBounds = true;
         mustOverlapCompositedLayers = overlapMap->overlapsLayers(absBounds);
     }
-    
+
+#if ENABLE(VIDEO)
+    // Video is special. It's the only RenderLayer type that can both have
+    // RenderLayer children and whose children can't use its backing to render
+    // into. These children (the controls) always need to be promoted into their
+    // own layers to draw on top of the accelerated video.
+    if (compositingState.m_compositingAncestor && compositingState.m_compositingAncestor->renderer()->isVideo())
+        mustOverlapCompositedLayers = true;
+#endif
+
     layer->setMustOverlapCompositedLayers(mustOverlapCompositedLayers);
-    
+
     // The children of this layer don't need to composite, unless there is
     // a compositing layer among them, so start by inheriting the compositing
     // ancestor with m_subtreeIsCompositing set to false.
@@ -736,14 +745,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
             childState.m_testingOverlap = false;
         }
     }
-
-#if ENABLE(VIDEO)
-    // Video is special. It's a replaced element with a content layer, but has shadow content
-    // for the controller that must render in front. Without this, the controls fail to show
-    // when the video element is a stacking context (e.g. due to opacity or transform).
-    if (willBeComposited && layer->renderer()->isVideo())
-        childState.m_subtreeIsCompositing = true;
-#endif
 
 #if !ASSERT_DISABLED
     LayerListMutationDetector mutationChecker(layer);
