@@ -204,7 +204,7 @@ Ewk_Cache_Model EwkContext::cacheModel() const
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void EwkContext::setAdditionalPluginPath(const String& path)
 {
-    m_webContext->setAdditionalPluginsDirectory(path);
+    m_context->setAdditionalPluginsDirectory(path);
 }
 #endif
 
