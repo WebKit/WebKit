@@ -1,0 +1,85 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("timeline");
+
+    var data = ["Version",
+        {"startTime":13,"data":{},"endTime":19,"type":"Program","children":[
+            {"startTime":14,"data":{"type":"click"},"endTime":18,"type":"EventDispatch","frameId":"2","children":[
+                {"startTime":15,"data":{"scriptName":"foo.html","scriptLine":7},"endTime":17,"type":"FunctionCall","frameId":"2","children":[
+                    {"startTime":16,"data":{"message":"hello"},"type":"Time","frameId":"2"}
+                ]}
+            ]}
+        ]},
+        {"startTime":25,"data":{},"endTime":35,"type":"Program","children":[
+            {"startTime":26,"data":{"type":"click"},"endTime":34,"type":"EventDispatch","frameId":"2","children":[
+                {"startTime":27,"data":{"scriptName":"foo.html","scriptLine":15},"endTime":33,"type":"FunctionCall","frameId":"2","children":[
+                    {"startTime":28,"data":{"message":"boom"},"type":"Time","frameId":"2"},
+                    {"startTime":29,"data":{},"type":"ScheduleStyleRecalculation","frameId":"2"},
+                    {"startTime":30,"data":{},"children":[],"endTime":31,"type":"RecalculateStyles","frameId":"2"},
+                    {"startTime":32,"data":{"message":"boom"},"type":"TimeEnd","frameId":"2"}
+                ]}
+            ]}
+        ]},
+        {"startTime":41,"data":{},"endTime":47,"type":"Program","children":[
+            {"startTime":42,"data":{"type":"click"},"endTime":46,"type":"EventDispatch","frameId":"2","children":[
+                {"startTime":43,"data":{"scriptName":"foo.html","scriptLine":11},"endTime":45,"type":"FunctionCall","frameId":"2","children":[
+                    {"startTime":44,"data":{"message":"hello"},"type":"TimeEnd","frameId":"2"}
+                ]}
+            ]}
+        ]}
+    ];
+
+    var input = JSON.stringify(data);
+    var model = WebInspector.panels.timeline._model;
+    var presentationModel = WebInspector.panels.timeline._presentationModel;
+    presentationModel.setGlueRecords(true);
+
+    function createFileReader(file, delegate)
+    {
+        return new InspectorTest.FakeFileReader(input, delegate, onDataLoaded);
+    }
+
+    function onDataLoaded()
+    {
+        var root = presentationModel.rootRecord();
+        InspectorTest.assertEquals(5, root.children.length);
+
+        var time1 = root.children[1];
+        InspectorTest.assertEquals("Time", time1.type);
+        InspectorTest.assertEquals(1, time1.children.length);
+        var timeEnd1 = time1.children[0];
+        InspectorTest.assertEquals("TimeEnd", timeEnd1.type);
+        InspectorTest.assertEquals(time1, timeEnd1.timeRecord);
+        InspectorTest.assertEquals(timeEnd1, time1.timeEndRecord);
+
+        var time2 = root.children[3];
+        InspectorTest.assertEquals("Time", time2.type);
+        InspectorTest.assertEquals(1, time2.children.length);
+        var timeEnd2 = time2.children[0];
+        InspectorTest.assertEquals("TimeEnd", timeEnd2.type);
+        InspectorTest.assertEquals(time2, timeEnd2.timeRecord);
+        InspectorTest.assertEquals(timeEnd2, time2.timeEndRecord);
+
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.override(model, "_createFileReader", createFileReader);
+    model.loadFromFile({}, new WebInspector.Progress());
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test time/timeEnd nesting <a href="https://bugs.webkit.org/show_bug.cgi?id=100936">(Bug 100936)</a>
+</p>
+
+</body>
+</html>

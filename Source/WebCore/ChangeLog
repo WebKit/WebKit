@@ -1,3 +1,22 @@
+2012-11-08  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: Improve time/timeEnd appearance.
+        https://bugs.webkit.org/show_bug.cgi?id=100936
+
+        Reviewed by Yury Semikhatsky.
+
+        Changes:
+        - time/timeEnd records should be top level records only in "glue" mode
+        - time/timeEnd records should display "message" in record list / popover
+        - glued records add aggregated statistics to root record
+        - glued records do not reduce their origin self time
+
+        Test: inspector/timeline/timeline-time.html
+
+        * English.lproj/localizedStrings.js: Added "Message" string.
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.Record): Added "origin" field.
+
 2012-11-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: move front-end methods called from native part to InspectorFrontendAPI

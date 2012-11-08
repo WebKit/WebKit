@@ -710,6 +710,7 @@ localizedStrings["Note"] = "Note";
 localizedStrings["Forced synchronous layout is a possible performance bottleneck."] = "Forced synchronous layout is a possible performance bottleneck.";
 localizedStrings["Styles invalidated"] = "Styles invalidated";
 localizedStrings["Styles recalculation forced"] = "Styles recalculation forced";
+localizedStrings["Message"] = "Message";
 localizedStrings["Layout invalidated"] = "Layout invalidated";
 localizedStrings["Layout forced"] = "Layout forced";
 localizedStrings["Paused on assertion."] = "Paused on assertion.";

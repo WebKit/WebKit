@@ -1,0 +1,1 @@
+Test time/timeEnd nesting (Bug 100936)

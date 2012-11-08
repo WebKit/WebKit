@@ -1,3 +1,15 @@
+2012-11-08  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: Improve time/timeEnd appearance.
+        https://bugs.webkit.org/show_bug.cgi?id=100936
+
+        Reviewed by Yury Semikhatsky.
+
+        Tested gluing of time/timeEnd records.
+
+        * inspector/timeline/timeline-time-expected.txt: Added.
+        * inspector/timeline/timeline-time.html: Added.
+
 2012-11-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: move front-end methods called from native part to InspectorFrontendAPI

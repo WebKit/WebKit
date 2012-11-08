@@ -257,7 +257,7 @@ WebInspector.TimelinePresentationModel.prototype = {
     reset: function()
     {
         this._linkifier.reset();
-        this._rootRecord = new WebInspector.TimelinePresentationModel.Record(this, { type: WebInspector.TimelineModel.RecordType.Root }, null, null, false);
+        this._rootRecord = new WebInspector.TimelinePresentationModel.Record(this, { type: WebInspector.TimelineModel.RecordType.Root }, null, null, null, false);
         this._sendRequestRecords = {};
         this._scheduledResourceRequests = {};
         this._timerRecords = {};
@@ -296,14 +296,12 @@ WebInspector.TimelinePresentationModel.prototype = {
     {
         const recordTypes = WebInspector.TimelineModel.RecordType;
         var isHiddenRecord = record.type in WebInspector.TimelinePresentationModel._hiddenRecords;
-        var connectedToOldRecord = false;
-        if (record.type === recordTypes.Time)
-            parentRecord = this._rootRecord;
-        else if (!isHiddenRecord) {
+        var origin;
+        if (!isHiddenRecord) {
             var newParentRecord = this._findParentRecord(record);
             if (newParentRecord) {
+                origin = parentRecord;
                 parentRecord = newParentRecord;
-                connectedToOldRecord = true;
             }
         }
 
@@ -327,7 +325,7 @@ WebInspector.TimelinePresentationModel.prototype = {
             }
         }
 
-        var formattedRecord = new WebInspector.TimelinePresentationModel.Record(this, record, parentRecord, scriptDetails, isHiddenRecord);
+        var formattedRecord = new WebInspector.TimelinePresentationModel.Record(this, record, parentRecord, origin, scriptDetails, isHiddenRecord);
 
         if (isHiddenRecord)
             return formattedRecord;
@@ -340,20 +338,20 @@ WebInspector.TimelinePresentationModel.prototype = {
 
         formattedRecord.calculateAggregatedStats(WebInspector.TimelinePresentationModel.categories());
 
-        if (connectedToOldRecord) {
-            record = formattedRecord;
-            do {
-                var parent = record.parent;
-                parent._cpuTime += formattedRecord._cpuTime;
-                if (parent.lastChildEndTime < record.lastChildEndTime)
-                    parent.lastChildEndTime = record.lastChildEndTime;
-                for (var category in formattedRecord.aggregatedStats)
-                    parent.aggregatedStats[category] += formattedRecord.aggregatedStats[category];
-                record = parent;
-            } while (record.parent);
-        } else {
-            if (parentRecord !== this._rootRecord)
-                parentRecord.selfTime -= formattedRecord.endTime - formattedRecord.startTime;
+        if (origin) {
+            var lastChildEndTime = formattedRecord.lastChildEndTime;
+            var aggregatedStats = formattedRecord.aggregatedStats;
+            for (var currentRecord = formattedRecord.parent; !currentRecord.isRoot(); currentRecord = currentRecord.parent) {
+                currentRecord._cpuTime += formattedRecord._cpuTime;
+                if (currentRecord.lastChildEndTime < lastChildEndTime)
+                    currentRecord.lastChildEndTime = lastChildEndTime;
+                for (var category in aggregatedStats)
+                    currentRecord.aggregatedStats[category] += aggregatedStats[category];
+            }
+        }
+        origin = formattedRecord.origin();
+        if (!origin.isRoot()) {
+            origin.selfTime -= formattedRecord.endTime - formattedRecord.startTime;
         }
         return formattedRecord;
     },
@@ -378,6 +376,9 @@ WebInspector.TimelinePresentationModel.prototype = {
 
         case recordTypes.FireAnimationFrame:
             return this._requestAnimationFrameRecords[record.data["id"]];
+
+        case recordTypes.Time:
+            return this._rootRecord;
 
         case recordTypes.TimeEnd:
             return this._timeRecords[record.data["message"]];
@@ -480,10 +481,11 @@ WebInspector.TimelinePresentationModel.prototype = {
  * @param {WebInspector.TimelinePresentationModel} presentationModel
  * @param {Object} record
  * @param {WebInspector.TimelinePresentationModel.Record} parentRecord
+ * @param {WebInspector.TimelinePresentationModel.Record} origin
  * @param {Object|undefined} scriptDetails
  * @param {boolean} hidden
  */
-WebInspector.TimelinePresentationModel.Record = function(presentationModel, record, parentRecord, scriptDetails, hidden)
+WebInspector.TimelinePresentationModel.Record = function(presentationModel, record, parentRecord, origin, scriptDetails, hidden)
 {
     this._linkifier = presentationModel._linkifier;
     this._aggregatedStats = [];
@@ -493,6 +495,8 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
         this.parent = parentRecord;
         parentRecord.children.push(this);
     }
+    if (origin)
+        this._origin = origin;
 
     this._selfTime = this.endTime - this.startTime;
     this._lastChildEndTime = this.endTime;
@@ -566,8 +570,12 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
         break;
 
     case recordTypes.TimeEnd:
-        var timeRecord = presentationModel._timeRecords[record.data["message"]];
+        var message = record.data["message"];
+        var timeRecord = presentationModel._timeRecords[message];
+        delete presentationModel._timeRecords[message];
         if (timeRecord) {
+            this.timeRecord = timeRecord;
+            timeRecord.timeEndRecord = this;
             var intervalDuration = this.startTime - timeRecord.startTime;
             this.intervalDuration = intervalDuration;
             timeRecord.intervalDuration = intervalDuration;
@@ -629,6 +637,22 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
     isLong: function()
     {
         return (this._lastChildEndTime - this.startTime) > WebInspector.TimelinePresentationModel.shortRecordThreshold;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isRoot: function()
+    {
+        return this.type === WebInspector.TimelineModel.RecordType.Root;
+    },
+
+    /**
+     * @return {WebInspector.TimelinePresentationModel.Record}
+     */
+    origin: function()
+    {
+        return this._origin || this.parent;
     },
 
     /**
@@ -834,6 +858,7 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
                 break;
             case recordTypes.Time:
             case recordTypes.TimeEnd:
+                contentHelper._appendTextRow(WebInspector.UIString("Message"), this.data["message"]);
                 if (typeof this.intervalDuration === "number")
                     contentHelper._appendTextRow(WebInspector.UIString("Interval Duration"), Number.secondsToString(this.intervalDuration, true));
                 break;
@@ -917,6 +942,8 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
             case WebInspector.TimelineModel.RecordType.ResourceReceiveResponse:
             case WebInspector.TimelineModel.RecordType.ResourceFinish:
                 return WebInspector.displayNameForURL(this.url);
+            case WebInspector.TimelineModel.RecordType.Time:
+            case WebInspector.TimelineModel.RecordType.TimeEnd:
             case WebInspector.TimelineModel.RecordType.TimeStamp:
                 return this.data["message"];
             default:
