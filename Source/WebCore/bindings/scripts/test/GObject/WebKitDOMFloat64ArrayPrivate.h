@@ -22,8 +22,7 @@
 #define WebKitDOMFloat64ArrayPrivate_h
 
 #include "Float64Array.h"
-#include <glib-object.h>
-#include <webkit/WebKitDOMArrayBufferView.h>
+#include <webkit/WebKitDOMFloat64Array.h>
 
 namespace WebKit {
 WebKitDOMFloat64Array* wrapFloat64Array(WebCore::Float64Array*);

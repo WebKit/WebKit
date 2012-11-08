@@ -713,6 +713,7 @@ EOF
 
     $implContent = << "EOF";
 G_BEGIN_DECLS
+
 EOF
 
     push(@hBodyPre, $implContent);
@@ -743,54 +744,6 @@ ${lowerCaseIfaceName}_get_type (void);
 EOF
 
     push(@hBody, $implContent);
-}
-
-sub getIncludeHeader {
-    my $type = shift;
-    my $name = GetClassName($type);
-
-    return "" if $type eq "int";
-    return "" if $type eq "long";
-    return "" if $type eq "long long";
-    return "" if $type eq "short";
-    return "" if $type eq "char";
-    return "" if $type eq "float";
-    return "" if $type eq "double";
-    return "" if $type eq "unsigned";
-    return "" if $type eq "unsigned int";
-    return "" if $type eq "unsigned long";
-    return "" if $type eq "unsigned long long";
-    return "" if $type eq "unsigned short";
-    return "" if $type eq "DOMTimeStamp";
-    return "" if $type eq "EventListener";
-    return "" if $type eq "MediaQueryListListener";
-    return "" if $type eq "unsigned char";
-    return "" if $type eq "DOMString";
-    return "" if $type eq "float";
-    return "" if $type eq "boolean";
-    return "" if $type eq "void";
-    return "" if $type eq "CompareHow";
-
-    return "$name.h";
-}
-
-sub addIncludeInBody {
-    my $type = shift;
-
-    if ($type eq "DOMObject") {
-        return;
-    }
-
-    my $header = getIncludeHeader($type);
-    if ($header eq "") {
-        return;
-    }
-    
-    if (IsGDOMClassType($type)) {
-        $implIncludes{"webkit/$header"} = 1;
-    } else {
-        $implIncludes{$header} = 1
-    }
 }
 
 sub GenerateFunction {
@@ -828,7 +781,7 @@ sub GenerateFunction {
             # EventListeners are handled elsewhere.
             return;
         }
-        addIncludeInBody($paramIDLType);
+
         my $paramType = GetGlibTypeName($paramIDLType);
         my $const = $paramType eq "gchar*" ? "const " : "";
         my $paramName = $param->name;
@@ -838,7 +791,7 @@ sub GenerateFunction {
         my $paramIsGDOMType = IsGDOMClassType($paramIDLType);
         if ($paramIsGDOMType) {
             if ($paramIDLType ne "DOMObject") {
-                $implIncludes{"webkit/WebKitDOM${paramIDLType}Private.h"} = 1;
+                $implIncludes{"WebKitDOM${paramIDLType}Private.h"} = 1;
             }
         }
         if ($paramIsGDOMType || ($paramIDLType eq "DOMString") || ($paramIDLType eq "CompareHow")) {
@@ -849,13 +802,10 @@ sub GenerateFunction {
 
     if ($returnType ne "void" && $returnValueIsGDOMType && $functionSigType ne "DOMObject") {
         if ($functionSigType ne "EventTarget") {
-            $implIncludes{"webkit/WebKitDOM${functionSigType}Private.h"} = 1;
-            $implIncludes{"webkit/WebKitDOM${functionSigType}.h"} = 1;
+            $implIncludes{"WebKitDOM${functionSigType}Private.h"} = 1;
         } else {
             $implIncludes{"WebKitDOM${functionSigType}.h"} = 1;
         }
-
-        $implIncludes{"${functionSigType}.h"} = 1;
     }
 
     if (@{$function->raisesExceptions}) {
@@ -1334,15 +1284,11 @@ sub Generate {
     @cPrefix = split("\r", $licenceTemplate);
     push(@cPrefix, "\n");
 
-    $implIncludes{"webkitdefines.h"} = 1;
     $implIncludes{"webkitglobalsprivate.h"} = 1;
-    $implIncludes{"webkitmarshal.h"} = 1;
     $implIncludes{"DOMObjectCache.h"} = 1;
     $implIncludes{"WebKitDOMBinding.h"} = 1;
     $implIncludes{"gobject/ConvertToUTF8String.h"} = 1;
-    $implIncludes{"webkit/$className.h"} = 1;
-    $implIncludes{"webkit/${className}Private.h"} = 1;
-    $implIncludes{"${interfaceName}.h"} = 1;
+    $implIncludes{"${className}Private.h"} = 1;
     $implIncludes{"JSMainThreadExecState.h"} = 1;
     $implIncludes{"ExceptionCode.h"} = 1;
 
@@ -1378,7 +1324,6 @@ sub WriteData {
     my $interfaceName = $dataNode->name;
     my $filename = "$outputDir/" . $className . "Private.h";
     my $guard = "${className}Private_h";
-    my $parentClassName = GetParentClassName($dataNode);
 
     # Add the guard if the 'Conditional' extended attribute exists
     my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
@@ -1393,8 +1338,7 @@ sub WriteData {
 #define $guard
 
 #include "${interfaceName}.h"
-#include <glib-object.h>
-#include <webkit/${parentClassName}.h>
+#include <webkit/${className}.h>
 EOF
 
     print PRIVHEADER $text;
@@ -1454,10 +1398,8 @@ EOF
 
     # Remove the implementation header from the list of included files.
     %includesCopy = %implIncludes;
-    delete ($includesCopy{"webkit/$installedHeaderFilename"});
     print IMPL map { "#include \"$_\"\n" } sort keys(%includesCopy);
 
-    print IMPL "#include <glib-object.h>\n";
     print IMPL "#include <wtf/GetPtr.h>\n";
     print IMPL "#include <wtf/RefPtr.h>\n\n";
     print IMPL "#if ${conditionalString}\n\n" if $conditionalString;

@@ -23,20 +23,13 @@
 
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
-#include "Float64Array.h"
-#include "Int32Array.h"
 #include "JSMainThreadExecState.h"
 #include "WebKitDOMBinding.h"
+#include "WebKitDOMFloat32ArrayPrivate.h"
+#include "WebKitDOMFloat64ArrayPrivate.h"
+#include "WebKitDOMInt32ArrayPrivate.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "webkit/WebKitDOMFloat32Array.h"
-#include "webkit/WebKitDOMFloat32ArrayPrivate.h"
-#include "webkit/WebKitDOMFloat64ArrayPrivate.h"
-#include "webkit/WebKitDOMInt32Array.h"
-#include "webkit/WebKitDOMInt32ArrayPrivate.h"
-#include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
-#include "webkitmarshal.h"
-#include <glib-object.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 

@@ -22,8 +22,7 @@
 #define WebKitDOMTestActiveDOMObjectPrivate_h
 
 #include "TestActiveDOMObject.h"
-#include <glib-object.h>
-#include <webkit/WebKitDOMObject.h>
+#include <webkit/WebKitDOMTestActiveDOMObject.h>
 
 namespace WebKit {
 WebKitDOMTestActiveDOMObject* wrapTestActiveDOMObject(WebCore::TestActiveDOMObject*);

@@ -28,13 +28,6 @@
 #define WebKitHTMLElementWrapperFactory_h
 
 #include "HTMLElement.h"
-#include "glib-object.h"
-
-#include <wtf/Forward.h>
-
-namespace WebCore {
-class HTMLElement;
-}
 
 namespace WebKit {
 gpointer createHTMLElementWrapper(PassRefPtr<WebCore::HTMLElement>);

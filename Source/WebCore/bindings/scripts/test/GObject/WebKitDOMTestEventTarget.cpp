@@ -25,21 +25,13 @@
 #include "ExceptionCode.h"
 #include "GObjectEventListener.h"
 #include "JSMainThreadExecState.h"
-#include "Node.h"
-#include "TestEventTarget.h"
 #include "WebKitDOMBinding.h"
 #include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMEventTarget.h"
+#include "WebKitDOMNodePrivate.h"
+#include "WebKitDOMTestEventTargetPrivate.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "webkit/WebKitDOMEvent.h"
-#include "webkit/WebKitDOMEventPrivate.h"
-#include "webkit/WebKitDOMNode.h"
-#include "webkit/WebKitDOMNodePrivate.h"
-#include "webkit/WebKitDOMTestEventTargetPrivate.h"
-#include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
-#include "webkitmarshal.h"
-#include <glib-object.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 

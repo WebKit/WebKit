@@ -24,21 +24,13 @@
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
-#include "Node.h"
-#include "TestInterface.h"
-#include "TestObj.h"
 #include "TestSupplemental.h"
 #include "WebKitDOMBinding.h"
+#include "WebKitDOMNodePrivate.h"
+#include "WebKitDOMTestInterfacePrivate.h"
+#include "WebKitDOMTestObjPrivate.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "webkit/WebKitDOMNode.h"
-#include "webkit/WebKitDOMNodePrivate.h"
-#include "webkit/WebKitDOMTestInterfacePrivate.h"
-#include "webkit/WebKitDOMTestObj.h"
-#include "webkit/WebKitDOMTestObjPrivate.h"
-#include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
-#include "webkitmarshal.h"
-#include <glib-object.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 

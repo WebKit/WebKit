@@ -31,8 +31,8 @@
 #include "config.h"
 #include "WebKitDOMEventTarget.h"
 
-#include "EventTarget.h"
 #include "WebKitDOMEvent.h"
+#include "WebKitDOMEventTargetPrivate.h"
 
 typedef WebKitDOMEventTargetIface WebKitDOMEventTargetInterface;
 #if GLIB_CHECK_VERSION(2, 24, 0)

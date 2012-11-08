@@ -21,7 +21,6 @@
 
 #include "EventListener.h"
 #include "EventTarget.h"
-
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
 

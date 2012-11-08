@@ -34,11 +34,11 @@
 #include "WebKitDOMDOMWindowPrivate.h"
 #include "WebKitDOMElementPrivate.h"
 #include "WebKitDOMEventPrivate.h"
+#include "WebKitDOMMouseEventPrivate.h"
 #include "WebKitDOMNode.h"
 #include "WebKitDOMNodePrivate.h"
+#include "WebKitDOMUIEventPrivate.h"
 #include "WebKitHTMLElementWrapperFactory.h"
-#include "webkit/WebKitDOMMouseEventPrivate.h"
-#include "webkit/WebKitDOMUIEventPrivate.h"
 
 namespace WebKit {
 

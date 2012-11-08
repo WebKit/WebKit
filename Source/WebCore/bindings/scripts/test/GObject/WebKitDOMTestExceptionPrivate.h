@@ -22,8 +22,7 @@
 #define WebKitDOMTestExceptionPrivate_h
 
 #include "TestException.h"
-#include <glib-object.h>
-#include <webkit/WebKitDOMObject.h>
+#include <webkit/WebKitDOMTestException.h>
 
 namespace WebKit {
 WebKitDOMTestException* wrapTestException(WebCore::TestException*);

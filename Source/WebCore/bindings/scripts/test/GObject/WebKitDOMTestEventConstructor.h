@@ -27,6 +27,7 @@
 #include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
+
 #define WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR            (webkit_dom_test_event_constructor_get_type())
 #define WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR, WebKitDOMTestEventConstructor))
 #define WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR, WebKitDOMTestEventConstructorClass)

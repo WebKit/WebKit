@@ -27,6 +27,7 @@
 #include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
+
 #define WEBKIT_TYPE_DOM_TEST_MEDIA_QUERY_LIST_LISTENER            (webkit_dom_test_media_query_list_listener_get_type())
 #define WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_DOM_TEST_MEDIA_QUERY_LIST_LISTENER, WebKitDOMTestMediaQueryListListener))
 #define WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_DOM_TEST_MEDIA_QUERY_LIST_LISTENER, WebKitDOMTestMediaQueryListListenerClass)

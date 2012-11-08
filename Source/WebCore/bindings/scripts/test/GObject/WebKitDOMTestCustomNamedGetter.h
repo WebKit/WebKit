@@ -27,6 +27,7 @@
 #include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
+
 #define WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER            (webkit_dom_test_custom_named_getter_get_type())
 #define WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER, WebKitDOMTestCustomNamedGetter))
 #define WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER, WebKitDOMTestCustomNamedGetterClass)

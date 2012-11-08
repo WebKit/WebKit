@@ -27,6 +27,7 @@
 #include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
+
 #define WEBKIT_TYPE_DOM_TEST_CALLBACK            (webkit_dom_test_callback_get_type())
 #define WEBKIT_DOM_TEST_CALLBACK(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_DOM_TEST_CALLBACK, WebKitDOMTestCallback))
 #define WEBKIT_DOM_TEST_CALLBACK_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_DOM_TEST_CALLBACK, WebKitDOMTestCallbackClass)

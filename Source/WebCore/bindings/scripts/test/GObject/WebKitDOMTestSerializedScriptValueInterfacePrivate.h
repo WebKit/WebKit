@@ -22,8 +22,7 @@
 #define WebKitDOMTestSerializedScriptValueInterfacePrivate_h
 
 #include "TestSerializedScriptValueInterface.h"
-#include <glib-object.h>
-#include <webkit/WebKitDOMObject.h>
+#include <webkit/WebKitDOMTestSerializedScriptValueInterface.h>
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
 namespace WebKit {

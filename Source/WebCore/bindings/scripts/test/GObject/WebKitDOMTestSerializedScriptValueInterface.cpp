@@ -24,22 +24,13 @@
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
-#include "MessagePortArray.h"
-#include "SerializedScriptValue.h"
-#include "TestSerializedScriptValueInterface.h"
+#include "WebKitDOMArrayPrivate.h"
 #include "WebKitDOMBinding.h"
+#include "WebKitDOMMessagePortArrayPrivate.h"
+#include "WebKitDOMSerializedScriptValuePrivate.h"
+#include "WebKitDOMTestSerializedScriptValueInterfacePrivate.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "webkit/WebKitDOMArray.h"
-#include "webkit/WebKitDOMArrayPrivate.h"
-#include "webkit/WebKitDOMMessagePortArray.h"
-#include "webkit/WebKitDOMMessagePortArrayPrivate.h"
-#include "webkit/WebKitDOMSerializedScriptValue.h"
-#include "webkit/WebKitDOMSerializedScriptValuePrivate.h"
-#include "webkit/WebKitDOMTestSerializedScriptValueInterfacePrivate.h"
-#include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
-#include "webkitmarshal.h"
-#include <glib-object.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 

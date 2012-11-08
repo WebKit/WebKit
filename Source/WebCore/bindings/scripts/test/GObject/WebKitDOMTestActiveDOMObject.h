@@ -27,6 +27,7 @@
 #include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
+
 #define WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT            (webkit_dom_test_active_dom_object_get_type())
 #define WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT, WebKitDOMTestActiveDOMObject))
 #define WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT, WebKitDOMTestActiveDOMObjectClass)

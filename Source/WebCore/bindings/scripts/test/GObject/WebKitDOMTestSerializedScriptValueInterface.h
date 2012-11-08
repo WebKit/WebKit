@@ -27,6 +27,7 @@
 #include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
+
 #define WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE            (webkit_dom_test_serialized_script_value_interface_get_type())
 #define WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE, WebKitDOMTestSerializedScriptValueInterface))
 #define WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE, WebKitDOMTestSerializedScriptValueInterfaceClass)

@@ -20,11 +20,9 @@
 #include "GObjectEventListener.h"
 
 #include "Event.h"
-#include "EventListener.h"
-#include "webkit/WebKitDOMEvent.h"
-#include "webkit/WebKitDOMEventPrivate.h"
+#include "WebKitDOMEvent.h"
+#include "WebKitDOMEventPrivate.h"
 #include <glib-object.h>
-#include <glib.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {

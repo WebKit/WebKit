@@ -24,14 +24,10 @@
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
-#include "TestNamedConstructor.h"
 #include "WebKitDOMBinding.h"
+#include "WebKitDOMTestNamedConstructorPrivate.h"
 #include "gobject/ConvertToUTF8String.h"
-#include "webkit/WebKitDOMTestNamedConstructorPrivate.h"
-#include "webkitdefines.h"
 #include "webkitglobalsprivate.h"
-#include "webkitmarshal.h"
-#include <glib-object.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 

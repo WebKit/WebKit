@@ -21,7 +21,7 @@
 
 #include "Document.h"
 #include "Node.h"
-#include "glib-object.h"
+#include <glib-object.h>
 #include <wtf/HashMap.h>
 
 namespace WebKit {

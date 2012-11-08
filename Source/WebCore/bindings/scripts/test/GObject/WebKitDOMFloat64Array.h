@@ -27,6 +27,7 @@
 #include <webkit/webkitdomdefines.h>
 
 G_BEGIN_DECLS
+
 #define WEBKIT_TYPE_DOM_FLOAT64ARRAY            (webkit_dom_float64array_get_type())
 #define WEBKIT_DOM_FLOAT64ARRAY(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_DOM_FLOAT64ARRAY, WebKitDOMFloat64Array))
 #define WEBKIT_DOM_FLOAT64ARRAY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_DOM_FLOAT64ARRAY, WebKitDOMFloat64ArrayClass)
