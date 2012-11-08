@@ -23,8 +23,11 @@
 #include "DownloadManagerEfl.h"
 #include "WKAPICast.h"
 #include "WKRetainPtr.h"
+#include "WebContext.h"
 #include "ewk_context.h"
 #include "ewk_object_private.h"
+
+using namespace WebKit;
 
 class Ewk_Cookie_Manager;
 class Ewk_Favicon_Database;
@@ -44,7 +47,7 @@ class EwkContext : public Ewk_Object {
 public:
     EWK_OBJECT_DECLARE(EwkContext)
 
-    static PassRefPtr<EwkContext> create(WKContextRef context);
+    static PassRefPtr<EwkContext> create(WebContext* context);
     static PassRefPtr<EwkContext> create();
     static PassRefPtr<EwkContext> create(const String& injectedBundlePath);
 
@@ -69,18 +72,18 @@ public:
 
     Ewk_Cache_Model cacheModel() const;
 
-    WKContextRef wkContext();
+    WebContext* webContext() { return m_webContext.get(); }
 
     WebKit::DownloadManagerEfl* downloadManager() const;
 
     WebKit::ContextHistoryClientEfl* historyClient();
 
 private:
-    explicit EwkContext(WKContextRef);
+    explicit EwkContext(WebContext*);
 
     void ensureFaviconDatabase();
 
-    WKRetainPtr<WKContextRef> m_context;
+    RefPtr<WebContext> m_webContext;
 
     OwnPtr<Ewk_Cookie_Manager> m_cookieManager;
     OwnPtr<Ewk_Database_Manager> m_databaseManager;

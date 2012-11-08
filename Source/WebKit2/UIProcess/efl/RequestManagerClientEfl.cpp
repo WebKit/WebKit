@@ -67,7 +67,7 @@ void RequestManagerClientEfl::didReceiveURIRequest(WKSoupRequestManagerRef soupR
 }
 
 RequestManagerClientEfl::RequestManagerClientEfl(EwkContext* context)
-    : m_soupRequestManager(WKContextGetSoupRequestManager(context->wkContext()))
+    : m_soupRequestManager(WKContextGetSoupRequestManager(toAPI(context->webContext())))
 {
     ASSERT(context);
 

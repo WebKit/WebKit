@@ -136,7 +136,7 @@ DownloadManagerEfl::DownloadManagerEfl(EwkContext* context)
     wkDownloadClient.didFail = didFail;
     wkDownloadClient.didFinish = didFinish;
 
-    WKContextSetDownloadClient(context->wkContext(), &wkDownloadClient);
+    WKContextSetDownloadClient(toAPI(context->webContext()), &wkDownloadClient);
 }
 
 void DownloadManagerEfl::registerDownload(DownloadProxy* download, EwkViewImpl* viewImpl)
