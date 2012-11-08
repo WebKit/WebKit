@@ -4103,6 +4103,16 @@ webkit.org/b/99749 [ MountainLion ] compositing/color-matching/image-color-match
 webkit.org/b/99749 [ MountainLion ] compositing/direct-image-compositing.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] compositing/geometry/clipping-foreground.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] fast/canvas/font-update.html [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] css2.1/20110323/border-conflict-element-001d.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] css2.1/20110323/c541-word-sp-001.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] css2.1/20110323/overflow-applies-to-007.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] css2.1/20110323/overflow-applies-to-010.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] css2.1/20110323/overflow-applies-to-012.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] css2.1/20110323/overflow-applies-to-013.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] css2.1/20110323/overflow-applies-to-014.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] css2.1/20110323/overflow-applies-to-015.htm [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] css2.1/20110323/text-indent-014.htm [ ImageOnlyFailure ]
+
 
 webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure ]
 webkit.org/b/100142 css3/filters/effect-reference-ordering-hw.html [ Failure ImageOnlyFailure Missing ]

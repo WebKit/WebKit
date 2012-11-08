@@ -1,3 +1,18 @@
+2012-11-07  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, update chromium-mac-ml expectations after r133811 and r133814.
+
+        * platform/chromium-mac-mountainlion/TestExpectations:
+        * platform/chromium-mac/css2.1/20110323/border-conflict-element-001d-expected.png: Removed.
+        * platform/chromium-mac/css2.1/20110323/overflow-applies-to-007-expected.png: Removed.
+        * platform/chromium-mac/css2.1/20110323/overflow-applies-to-010-expected.png: Removed.
+        * platform/chromium-mac/css2.1/20110323/overflow-applies-to-012-expected.png: Removed.
+        * platform/chromium-mac/css2.1/20110323/overflow-applies-to-013-expected.png: Removed.
+        * platform/chromium-mac/css2.1/20110323/overflow-applies-to-014-expected.png: Removed.
+        * platform/chromium-mac/css2.1/20110323/overflow-applies-to-015-expected.png: Removed.
+        * platform/chromium-mac/css2.1/20110323/text-indent-014-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+
 2012-11-07  KyungTae Kim  <ktf.kim@samsung.com>
 
         [EFL] Remove exif-orientation-image-document.html from failure list
