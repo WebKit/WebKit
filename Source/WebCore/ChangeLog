@@ -1,3 +1,24 @@
+2012-11-07  Adam Barth  <abarth@webkit.org>
+
+        [V8] Prepare DOMDataStore to be able to store ScriptWrappable wrappers inline
+        https://bugs.webkit.org/show_bug.cgi?id=101523
+
+        Unreviewed. Technically this patch hasn't been reviewed, but it is part
+        of a patch that was reviewed by Kentaro Hara.
+
+        Sadly, my patch for bug 101110 triggered the regression again. This
+        patch is a smaller incremental step towards the patch in bug 101110. It
+        doesn't make that much sense on its own, but it will help me isolate
+        the source of the regression.
+
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::get):
+        (DOMDataStore):
+        (WebCore::DOMDataStore::set):
+        (WebCore::DOMDataStore::wrapperIsStoredInObject):
+        (WebCore::DOMDataStore::getWrapperFromObject):
+        (WebCore::DOMDataStore::setWrapperInObject):
+
 2012-11-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         SimplifyMarkupCommand takes a disproportionally long time to run when there are many nodes to remove

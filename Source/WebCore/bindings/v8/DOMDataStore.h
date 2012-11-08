@@ -59,29 +59,51 @@ public:
 
     static DOMDataStore* current(v8::Isolate*);
 
-    inline v8::Handle<v8::Object> get(void* object) const { return m_domObjectMap->get(object); }
-    inline v8::Handle<v8::Object> get(Node* object) const
+    template<typename T>
+    inline v8::Handle<v8::Object> get(T* object) const
     {
-        if (m_type == MainWorld)
-            return object->wrapper();
+        if (wrapperIsStoredInObject(object))
+            return getWrapperFromObject(object);
         return m_domObjectMap->get(object);
     }
 
-    inline void set(void* object, v8::Persistent<v8::Object> wrapper) { m_domObjectMap->set(object, wrapper); }
-    inline void set(Node* object, v8::Persistent<v8::Object> wrapper)
+    template<typename T>
+    inline void set(T* object, v8::Persistent<v8::Object> wrapper)
     {
-        if (m_type == MainWorld) {
-            ASSERT(object->wrapper().IsEmpty());
-            object->setWrapper(wrapper);
-            wrapper.MakeWeak(object, weakCallback);
+        if (setWrapperInObject(object, wrapper))
             return;
-        }
         m_domObjectMap->set(object, wrapper);
     }
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
+    bool wrapperIsStoredInObject(void*) const { return false; }
+    bool wrapperIsStoredInObject(Node*) const { return m_type == MainWorld; }
+
+    v8::Handle<v8::Object> getWrapperFromObject(void*) const
+    {
+        ASSERT_NOT_REACHED();
+        return v8::Handle<v8::Object>();
+    }
+
+    v8::Handle<v8::Object> getWrapperFromObject(Node* object) const
+    {
+        ASSERT(m_type == MainWorld);
+        return object->wrapper();
+    }
+
+    bool setWrapperInObject(void*, v8::Persistent<v8::Object>) { return false; }
+    bool setWrapperInObject(Node* object, v8::Persistent<v8::Object> wrapper)
+    {
+        if (m_type != MainWorld)
+            return false;
+        ASSERT(object->wrapper().IsEmpty());
+        object->setWrapper(wrapper);
+        wrapper.MakeWeak(object, weakCallback);
+        return true;
+    }
+
     static void weakCallback(v8::Persistent<v8::Value>, void* context);
 
     Type m_type;
