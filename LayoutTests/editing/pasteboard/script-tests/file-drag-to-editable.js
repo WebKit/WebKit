@@ -25,24 +25,23 @@ function dragFilesOntoEditableArea(files)
 function runTest()
 {
     window.onbeforeunload = function() {
-        shouldBeTrue('successfullyParsed');
-        debug('<br /><span class="pass">TEST COMPLETE</span>');
+        window.attemptedFileNavigation = true;
 
         // Don't remove the editable node, since we want to make sure there no stray file URLs were
         // inserted during the drop.
-
-        testRunner.notifyDone();
-
-        window.onbeforeunload = null;
     };
     dragFilesOntoEditableArea(['DRTFakeFile']);
-    testFailed('The test should have resulted in navigation');
+
+    shouldBeTrue("window.attemptedFileNavigation");
+    finishJSTest();
 }
 
 var successfullyParsed = true;
 
-if (window.eventSender) {
-    runTest();
+if (window.eventSender && window.testRunner) {
+    window.jsTestIsAsync = true;
+
+    window.onload = runTest;
 } else {
     testFailed('This test is not interactive, please run using DumpRenderTree');
 }

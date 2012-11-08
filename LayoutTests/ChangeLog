@@ -1,3 +1,25 @@
+2012-11-08  Tony Chang  <tony@chromium.org>
+
+        Layout test editing/pasteboard/file-drag-to-editable.html flaky
+        https://bugs.webkit.org/show_bug.cgi?id=101092
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix a flaky test.  The problem was that we were confusing the test harness by
+        trying to do a navigation before the initial load finished (the notifyDone()
+        call did nothing because waitUntilDone() was missing).  Depending on the state
+        of the frame loader when the test run, there was a race in whether or not we
+        would dump the results before or after completing the script execution.
+
+        Fix this by restructuring the test to run during onload and by calling notifyDone()
+        after the file load attempt failed.
+
+        * editing/pasteboard/file-drag-to-editable-expected.txt:
+        * editing/pasteboard/script-tests/file-drag-to-editable.js:
+        (runTest.window.onbeforeunload): Simplify and don't run nofityDone yet.
+        (runTest): Run test during onload event.
+        * platform/chromium/TestExpectations: Remove flaky marker.
+
 2012-11-08  Erik Arvidsson  <arv@chromium.org>
 
         Wrong error type is thrown for type errors in callbacks
