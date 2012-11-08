@@ -436,7 +436,7 @@ WebInspector.DataGrid.prototype = {
     },
 
     /**
-     * @param {Array<number>} widths
+     * @param {Array.<number>} widths
      * @param {number} minPercent
      * @param {number=} maxPercent
      */
