@@ -72,15 +72,16 @@ void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 
 void DOMDataStore::weakCallback(v8::Persistent<v8::Value> value, void* context)
 {
-    Node* object = static_cast<Node*>(context);
+    ScriptWrappable* key = static_cast<ScriptWrappable*>(context);
     ASSERT(value->IsObject());
     v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
-    ASSERT(object->wrapper() == wrapper);
-    ASSERT(object = static_cast<Node*>(toNative(wrapper)));
+    ASSERT(key->wrapper() == wrapper);
+    // Note: |object| might not be equal to |key|, e.g., if ScriptWrappable isn't a left-most base class.
+    void* object = toNative(wrapper);
     WrapperTypeInfo* info = toWrapperTypeInfo(wrapper);
     ASSERT(info->derefObjectFunction);
 
-    object->clearWrapper();
+    key->clearWrapper();
     value.Dispose();
     value.Clear();
     info->derefObject(object);

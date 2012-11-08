@@ -1,3 +1,21 @@
+2012-11-07  Adam Barth  <abarth@webkit.org>
+
+        [V8] IntrusiveDOMWrapperMap should be usable for more than just Nodes
+        https://bugs.webkit.org/show_bug.cgi?id=101110
+
+        Reviewed by Kentaro Hara.
+
+        Hopefully the memory issues with this patch have been resolved by
+        fixing bug 101525. This patch re-lands this patch again, hopefully for
+        the last time.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::weakCallback):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::wrapperIsStoredInObject):
+        (WebCore::DOMDataStore::getWrapperFromObject):
+        (WebCore::DOMDataStore::setWrapperInObject):
+
 2012-11-07  KyungTae Kim  <ktf.kim@samsung.com>
 
         Seam occurred between pieces of ShadowBlur on floating point zoom

@@ -79,7 +79,7 @@ public:
 
 private:
     bool wrapperIsStoredInObject(void*) const { return false; }
-    bool wrapperIsStoredInObject(Node*) const { return m_type == MainWorld; }
+    bool wrapperIsStoredInObject(ScriptWrappable*) const { return m_type == MainWorld; }
 
     v8::Handle<v8::Object> getWrapperFromObject(void*) const
     {
@@ -87,14 +87,14 @@ private:
         return v8::Handle<v8::Object>();
     }
 
-    v8::Handle<v8::Object> getWrapperFromObject(Node* object) const
+    v8::Handle<v8::Object> getWrapperFromObject(ScriptWrappable* object) const
     {
         ASSERT(m_type == MainWorld);
         return object->wrapper();
     }
 
     bool setWrapperInObject(void*, v8::Persistent<v8::Object>) { return false; }
-    bool setWrapperInObject(Node* object, v8::Persistent<v8::Object> wrapper)
+    bool setWrapperInObject(ScriptWrappable* object, v8::Persistent<v8::Object> wrapper)
     {
         if (m_type != MainWorld)
             return false;
