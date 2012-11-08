@@ -1,3 +1,10 @@
+2012-11-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Create loader/blackberry directory, because svn-apply cannot apply a patch that
+        creates a directory and moves a file into it.
+
+        * loader/blackberry: Added.
+
 2012-11-08  Geoffrey Garen  <ggaren@apple.com>
 
         Mac build fix: Mark WidthCache.h 'private' so WebKit can use it.
