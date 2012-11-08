@@ -225,24 +225,6 @@ private:
             break;
         }
 
-        case ArithMod: {
-            SpeculatedType left = m_graph[node.child1()].prediction();
-            SpeculatedType right = m_graph[node.child2()].prediction();
-            
-            if (left && right) {
-                if (isInt32Speculation(mergeSpeculations(left, right))
-                    && nodeCanSpeculateInteger(node.arithNodeFlags()))
-                    changed |= mergePrediction(SpecInt32);
-                else
-                    changed |= mergePrediction(SpecDouble);
-            }
-            
-            flags |= NodeUsedAsValue;
-            changed |= m_graph[node.child1()].mergeFlags(flags);
-            changed |= m_graph[node.child2()].mergeFlags(flags);
-            break;
-        }
-            
         case UInt32ToNumber: {
             if (nodeCanSpeculateInteger(node.arithNodeFlags()))
                 changed |= mergePrediction(SpecInt32);
@@ -258,7 +240,7 @@ private:
             SpeculatedType right = m_graph[node.child2()].prediction();
             
             if (left && right) {
-                if (isNumberSpeculation(left) && isNumberSpeculation(right)) {
+                if (isNumberSpeculationExpectingDefined(left) && isNumberSpeculationExpectingDefined(right)) {
                     if (m_graph.addShouldSpeculateInteger(node))
                         changed |= mergePrediction(SpecInt32);
                     else
@@ -333,7 +315,7 @@ private:
             SpeculatedType right = m_graph[node.child2()].prediction();
             
             if (left && right) {
-                if (isInt32Speculation(mergeSpeculations(left, right))
+                if (Node::shouldSpeculateIntegerForArithmetic(m_graph[node.child1()], m_graph[node.child2()])
                     && nodeCanSpeculateInteger(node.arithNodeFlags()))
                     changed |= mergePrediction(SpecInt32);
                 else
@@ -373,7 +355,7 @@ private:
             SpeculatedType right = m_graph[node.child2()].prediction();
             
             if (left && right) {
-                if (isInt32Speculation(mergeSpeculations(left, right))
+                if (Node::shouldSpeculateIntegerForArithmetic(m_graph[node.child1()], m_graph[node.child2()])
                     && nodeCanSpeculateInteger(node.arithNodeFlags()))
                     changed |= mergePrediction(SpecInt32);
                 else
@@ -382,10 +364,28 @@ private:
 
             // As soon as a multiply happens, we can easily end up in the part
             // of the double domain where the point at which you do truncation
-            // can change the outcome. So, ArithMul always checks for overflow
+            // can change the outcome. So, ArithDiv always checks for overflow
             // no matter what, and always forces its inputs to check as well.
             
             flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+            changed |= m_graph[node.child1()].mergeFlags(flags);
+            changed |= m_graph[node.child2()].mergeFlags(flags);
+            break;
+        }
+            
+        case ArithMod: {
+            SpeculatedType left = m_graph[node.child1()].prediction();
+            SpeculatedType right = m_graph[node.child2()].prediction();
+            
+            if (left && right) {
+                if (Node::shouldSpeculateIntegerForArithmetic(m_graph[node.child1()], m_graph[node.child2()])
+                    && nodeCanSpeculateInteger(node.arithNodeFlags()))
+                    changed |= mergePrediction(SpecInt32);
+                else
+                    changed |= mergePrediction(SpecDouble);
+            }
+            
+            flags |= NodeUsedAsValue;
             changed |= m_graph[node.child1()].mergeFlags(flags);
             changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
@@ -399,10 +399,11 @@ private:
             
         case ArithAbs: {
             SpeculatedType child = m_graph[node.child1()].prediction();
-            if (nodeCanSpeculateInteger(node.arithNodeFlags()))
-                changed |= mergePrediction(child);
+            if (isInt32SpeculationForArithmetic(child)
+                && nodeCanSpeculateInteger(node.arithNodeFlags()))
+                changed |= mergePrediction(SpecInt32);
             else
-                changed |= setPrediction(speculatedDoubleTypeForPrediction(child));
+                changed |= mergePrediction(speculatedDoubleTypeForPrediction(child));
 
             flags &= ~NodeNeedsNegZero;
             changed |= m_graph[node.child1()].mergeFlags(flags);
@@ -776,7 +777,7 @@ private:
                 
                 DoubleBallot ballot;
                 
-                if (isNumberSpeculation(left) && isNumberSpeculation(right)
+                if (isNumberSpeculationExpectingDefined(left) && isNumberSpeculationExpectingDefined(right)
                     && !m_graph.addShouldSpeculateInteger(node))
                     ballot = VoteDouble;
                 else
@@ -814,7 +815,7 @@ private:
                 DoubleBallot ballot;
                 
                 if (isNumberSpeculation(left) && isNumberSpeculation(right)
-                    && !(Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child1()])
+                    && !(Node::shouldSpeculateIntegerForArithmetic(m_graph[node.child1()], m_graph[node.child1()])
                          && node.canSpeculateInteger()))
                     ballot = VoteDouble;
                 else
@@ -827,7 +828,7 @@ private:
                 
             case ArithAbs:
                 DoubleBallot ballot;
-                if (!(m_graph[node.child1()].shouldSpeculateInteger()
+                if (!(m_graph[node.child1()].shouldSpeculateIntegerForArithmetic()
                       && node.canSpeculateInteger()))
                     ballot = VoteDouble;
                 else

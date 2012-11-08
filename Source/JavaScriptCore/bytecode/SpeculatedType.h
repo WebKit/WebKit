@@ -229,6 +229,16 @@ inline bool isInt32Speculation(SpeculatedType value)
     return value == SpecInt32;
 }
 
+inline bool isInt32SpeculationForArithmetic(SpeculatedType value)
+{
+    return !(value & SpecDouble);
+}
+
+inline bool isInt32SpeculationExpectingDefined(SpeculatedType value)
+{
+    return isInt32Speculation(value & ~SpecOther);
+}
+
 inline bool isDoubleRealSpeculation(SpeculatedType value)
 {
     return value == SpecDoubleReal;
@@ -239,6 +249,11 @@ inline bool isDoubleSpeculation(SpeculatedType value)
     return !!value && (value & SpecDouble) == value;
 }
 
+inline bool isDoubleSpeculationForArithmetic(SpeculatedType value)
+{
+    return !!(value & SpecDouble);
+}
+
 inline bool isRealNumberSpeculation(SpeculatedType value)
 {
     return !!(value & SpecRealNumber) && !(value & ~SpecRealNumber);
@@ -247,6 +262,11 @@ inline bool isRealNumberSpeculation(SpeculatedType value)
 inline bool isNumberSpeculation(SpeculatedType value)
 {
     return !!(value & SpecNumber) && !(value & ~SpecNumber);
+}
+
+inline bool isNumberSpeculationExpectingDefined(SpeculatedType value)
+{
+    return isNumberSpeculation(value & ~SpecOther);
 }
 
 inline bool isBooleanSpeculation(SpeculatedType value)

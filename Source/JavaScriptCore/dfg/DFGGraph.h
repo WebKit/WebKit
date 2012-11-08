@@ -220,7 +220,7 @@ public:
         if (right.hasConstant())
             return addImmediateShouldSpeculateInteger(add, left, right);
         
-        return Node::shouldSpeculateInteger(left, right) && add.canSpeculateInteger();
+        return Node::shouldSpeculateIntegerExpectingDefined(left, right) && add.canSpeculateInteger();
     }
     
     bool mulShouldSpeculateInteger(Node& mul)
@@ -235,13 +235,13 @@ public:
         if (right.hasConstant())
             return mulImmediateShouldSpeculateInteger(mul, left, right);
         
-        return Node::shouldSpeculateInteger(left, right) && mul.canSpeculateInteger() && !nodeMayOverflow(mul.arithNodeFlags());
+        return Node::shouldSpeculateIntegerForArithmetic(left, right) && mul.canSpeculateInteger() && !nodeMayOverflow(mul.arithNodeFlags());
     }
     
     bool negateShouldSpeculateInteger(Node& negate)
     {
         ASSERT(negate.op() == ArithNegate);
-        return at(negate.child1()).shouldSpeculateInteger() && negate.canSpeculateInteger();
+        return at(negate.child1()).shouldSpeculateIntegerForArithmetic() && negate.canSpeculateInteger();
     }
     
     bool addShouldSpeculateInteger(NodeIndex nodeIndex)
@@ -714,7 +714,7 @@ private:
         if (!immediateValue.isNumber())
             return false;
         
-        if (!variable.shouldSpeculateInteger())
+        if (!variable.shouldSpeculateIntegerExpectingDefined())
             return false;
         
         if (immediateValue.isInt32())
@@ -736,7 +736,7 @@ private:
         if (!immediateValue.isInt32())
             return false;
         
-        if (!variable.shouldSpeculateInteger())
+        if (!variable.shouldSpeculateIntegerForArithmetic())
             return false;
         
         int32_t intImmediate = immediateValue.asInt32();

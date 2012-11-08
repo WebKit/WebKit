@@ -1090,18 +1090,20 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     // access). So if we are DFG compiling anything in the program, we want this code to
     // ensure that it produces integers whenever possible.
     
-    // FIXME: This will fail to convert to integer if the result is zero. We should
-    // distinguish between positive zero and negative zero here.
-    
     JumpList notInteger;
     branchConvertDoubleToInt32(fpRegT0, regT0, notInteger, fpRegT1);
     // If we've got an integer, we might as well make that the result of the division.
     emitFastArithReTagImmediate(regT0, regT0);
     Jump isInteger = jump();
     notInteger.link(this);
-    add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset)->m_counter));
     moveDoubleTo64(fpRegT0, regT0);
+    Jump doubleZero = branchTest64(Zero, regT0);
+    add32(TrustedImm32(1), AbsoluteAddress(&m_codeBlock->addSpecialFastCaseProfile(m_bytecodeOffset)->m_counter));
     sub64(tagTypeNumberRegister, regT0);
+    Jump trueDouble = jump();
+    doubleZero.link(this);
+    move(tagTypeNumberRegister, regT0);
+    trueDouble.link(this);
     isInteger.link(this);
 #else
     // Double result.

@@ -2429,7 +2429,8 @@ void SpeculativeJIT::compile(Node& node)
         break;
 
     case ArithDiv: {
-        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
+        if (Node::shouldSpeculateIntegerForArithmetic(at(node.child1()), at(node.child2()))
+            && node.canSpeculateInteger()) {
 #if CPU(X86)
             compileIntegerArithDivForX86(node);
 #else // CPU(X86) -> so non-X86 code follows
@@ -2456,7 +2457,8 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ArithAbs: {
-        if (at(node.child1()).shouldSpeculateInteger() && node.canSpeculateInteger()) {
+        if (at(node.child1()).shouldSpeculateIntegerForArithmetic()
+            && node.canSpeculateInteger()) {
             SpeculateIntegerOperand op1(this, node.child1());
             GPRTemporary result(this, op1);
             GPRTemporary scratch(this);
@@ -2480,7 +2482,8 @@ void SpeculativeJIT::compile(Node& node)
         
     case ArithMin:
     case ArithMax: {
-        if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2())) && node.canSpeculateInteger()) {
+        if (Node::shouldSpeculateIntegerForArithmetic(at(node.child1()), at(node.child2()))
+            && node.canSpeculateInteger()) {
             SpeculateStrictInt32Operand op1(this, node.child1());
             SpeculateStrictInt32Operand op2(this, node.child2());
             GPRTemporary result(this, op1);

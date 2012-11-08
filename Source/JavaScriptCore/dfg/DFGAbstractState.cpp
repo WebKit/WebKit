@@ -451,7 +451,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(nodeIndex).set(SpecInt32);
             break;
         }
-        if (Node::shouldSpeculateNumber(m_graph[node.child1()], m_graph[node.child2()])) {
+        if (Node::shouldSpeculateNumberExpectingDefined(m_graph[node.child1()], m_graph[node.child2()])) {
             speculateNumberBinary(node);
             if (isRealNumberSpeculation(forNode(node.child1()).m_type)
                 && isRealNumberSpeculation(forNode(node.child2()).m_type))
@@ -571,7 +571,7 @@ bool AbstractState::execute(unsigned indexInBlock)
                 break;
             }
         }
-        if (Node::shouldSpeculateInteger(
+        if (Node::shouldSpeculateIntegerForArithmetic(
                 m_graph[node.child1()], m_graph[node.child2()])
             && node.canSpeculateInteger()) {
             speculateInt32Binary(node, true); // forcing can-exit, which is a bit on the conservative side.
@@ -591,7 +591,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             node.setCanExit(false);
             break;
         }
-        if (m_graph[node.child1()].shouldSpeculateInteger()
+        if (m_graph[node.child1()].shouldSpeculateIntegerForArithmetic()
             && node.canSpeculateInteger()) {
             speculateInt32Unary(node, true);
             forNode(nodeIndex).set(SpecInt32);

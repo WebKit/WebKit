@@ -259,7 +259,7 @@ private:
         case ValueAdd: {
             if (m_graph.addShouldSpeculateInteger(node))
                 break;
-            if (!Node::shouldSpeculateNumber(m_graph[node.child1()], m_graph[node.child2()]))
+            if (!Node::shouldSpeculateNumberExpectingDefined(m_graph[node.child1()], m_graph[node.child2()]))
                 break;
             fixDoubleEdge(0);
             fixDoubleEdge(1);
@@ -285,7 +285,7 @@ private:
         case ArithMin:
         case ArithMax:
         case ArithMod: {
-            if (Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child2()])
+            if (Node::shouldSpeculateIntegerForArithmetic(m_graph[node.child1()], m_graph[node.child2()])
                 && node.canSpeculateInteger())
                 break;
             fixDoubleEdge(0);
@@ -302,7 +302,7 @@ private:
         }
 
         case ArithDiv: {
-            if (Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child2()])
+            if (Node::shouldSpeculateIntegerForArithmetic(m_graph[node.child1()], m_graph[node.child2()])
                 && node.canSpeculateInteger()) {
                 if (isX86())
                     break;
@@ -330,7 +330,7 @@ private:
         }
             
         case ArithAbs: {
-            if (m_graph[node.child1()].shouldSpeculateInteger()
+            if (m_graph[node.child1()].shouldSpeculateIntegerForArithmetic()
                 && node.canSpeculateInteger())
                 break;
             fixDoubleEdge(0);

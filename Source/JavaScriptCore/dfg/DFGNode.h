@@ -949,14 +949,34 @@ struct Node {
         return isInt32Speculation(prediction());
     }
     
+    bool shouldSpeculateIntegerForArithmetic()
+    {
+        return isInt32SpeculationForArithmetic(prediction());
+    }
+    
+    bool shouldSpeculateIntegerExpectingDefined()
+    {
+        return isInt32SpeculationExpectingDefined(prediction());
+    }
+    
     bool shouldSpeculateDouble()
     {
         return isDoubleSpeculation(prediction());
     }
     
+    bool shouldSpeculateDoubleForArithmetic()
+    {
+        return isDoubleSpeculationForArithmetic(prediction());
+    }
+    
     bool shouldSpeculateNumber()
     {
         return isNumberSpeculation(prediction());
+    }
+    
+    bool shouldSpeculateNumberExpectingDefined()
+    {
+        return isNumberSpeculationExpectingDefined(prediction());
     }
     
     bool shouldSpeculateBoolean()
@@ -1064,9 +1084,29 @@ struct Node {
         return op1.shouldSpeculateInteger() && op2.shouldSpeculateInteger();
     }
     
+    static bool shouldSpeculateIntegerForArithmetic(Node& op1, Node& op2)
+    {
+        return op1.shouldSpeculateIntegerForArithmetic() && op2.shouldSpeculateIntegerForArithmetic();
+    }
+    
+    static bool shouldSpeculateIntegerExpectingDefined(Node& op1, Node& op2)
+    {
+        return op1.shouldSpeculateIntegerExpectingDefined() && op2.shouldSpeculateIntegerExpectingDefined();
+    }
+    
+    static bool shouldSpeculateDoubleForArithmetic(Node& op1, Node& op2)
+    {
+        return op1.shouldSpeculateDoubleForArithmetic() && op2.shouldSpeculateDoubleForArithmetic();
+    }
+    
     static bool shouldSpeculateNumber(Node& op1, Node& op2)
     {
         return op1.shouldSpeculateNumber() && op2.shouldSpeculateNumber();
+    }
+    
+    static bool shouldSpeculateNumberExpectingDefined(Node& op1, Node& op2)
+    {
+        return op1.shouldSpeculateNumberExpectingDefined() && op2.shouldSpeculateNumberExpectingDefined();
     }
     
     static bool shouldSpeculateFinalObject(Node& op1, Node& op2)

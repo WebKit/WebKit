@@ -1,3 +1,59 @@
+2012-11-07  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not assume that something is a double just because it might be undefined
+        https://bugs.webkit.org/show_bug.cgi?id=101438
+
+        Reviewed by Oliver Hunt.
+
+        This changes all non-bitop arithmetic to (a) statically expect that variables are
+        defined prior to use in arithmetic and (b) not fall off into double paths just
+        because a value may not be a number. This is accomplished with two new notions of
+        speculation:
+        
+        shouldSpeculateIntegerExpectingDefined: Should we speculate that the value is an
+        integer if we ignore undefined (i.e. SpecOther) predictions?
+        
+        shouldSpeculateIntegerForArithmetic: Should we speculate that the value is an
+        integer if we ignore non-numeric predictions?
+        
+        This is a ~2x speed-up on programs that seem to our prediction propagator to have
+        paths in which otherwise numeric variables are undefined.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isInt32SpeculationForArithmetic):
+        (JSC):
+        (JSC::isInt32SpeculationExpectingDefined):
+        (JSC::isDoubleSpeculationForArithmetic):
+        (JSC::isNumberSpeculationExpectingDefined):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::addShouldSpeculateInteger):
+        (JSC::DFG::Graph::mulShouldSpeculateInteger):
+        (JSC::DFG::Graph::negateShouldSpeculateInteger):
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInteger):
+        (JSC::DFG::Graph::mulImmediateShouldSpeculateInteger):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateIntegerForArithmetic):
+        (Node):
+        (JSC::DFG::Node::shouldSpeculateIntegerExpectingDefined):
+        (JSC::DFG::Node::shouldSpeculateDoubleForArithmetic):
+        (JSC::DFG::Node::shouldSpeculateNumberExpectingDefined):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_div):
+
 2012-11-06  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should infer when indexed storage contains only integers or doubles

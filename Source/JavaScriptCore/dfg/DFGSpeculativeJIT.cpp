@@ -2881,7 +2881,7 @@ void SpeculativeJIT::compileAdd(Node& node)
         return;
     }
         
-    if (Node::shouldSpeculateNumber(at(node.child1()), at(node.child2()))) {
+    if (Node::shouldSpeculateNumberExpectingDefined(at(node.child1()), at(node.child2()))) {
         SpeculateDoubleOperand op1(this, node.child1());
         SpeculateDoubleOperand op2(this, node.child2());
         FPRTemporary result(this, op1, op2);
@@ -3119,7 +3119,7 @@ void SpeculativeJIT::compileIntegerArithDivForX86(Node& node)
 
 void SpeculativeJIT::compileArithMod(Node& node)
 {
-    if (Node::shouldSpeculateInteger(at(node.child1()), at(node.child2()))
+    if (Node::shouldSpeculateIntegerForArithmetic(at(node.child1()), at(node.child2()))
         && node.canSpeculateInteger()) {
         compileSoftModulo(node);
         return;
