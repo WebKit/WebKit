@@ -46,6 +46,7 @@ var ClassNames = {
     DayLabelContainer: "day-label-container",
     DaysArea: "days-area",
     DaysAreaContainer: "days-area-container",
+    Monday: "monday",
     MonthMode: "month-mode",
     MonthSelector: "month-selector",
     MonthSelectorBox: "month-selector-box",
@@ -57,10 +58,13 @@ var ClassNames = {
     NotThisMonth: "not-this-month",
     Selected: "day-selected",
     SelectedMonthYear: "selected-month-year",
+    Sunday: "sunday",
     TodayButton: "today-button",
     TodayClearArea: "today-clear-area",
     Unavailable: "unavailable",
     WeekContainer: "week-container",
+    WeekColumn: "week-column",
+    WeekMode: "week-mode",
     YearMonthArea: "year-month-area",
     YearMonthButton: "year-month-button",
     YearMonthButtonLeft: "year-month-button-left",
@@ -185,12 +189,15 @@ function createUTCDate(year, month, date) {
 
 /**
  * @param {string} dateString
- * @return {?Day|Month}
+ * @return {?Day|Week|Month}
  */
 function parseDateString(dateString) {
     var month = Month.parse(dateString);
     if (month)
         return month;
+    var week = Week.parse(dateString);
+    if (week)
+        return week;
     return Day.parse(dateString);
 }
 
@@ -214,10 +221,6 @@ function Day(valueOrDayOrYear, month, date) {
 
 Day.ISOStringRegExp = /^(\d+)-(\d+)-(\d+)$/;
 
-// See WebCore/platform/DateComponents.h.
-Day.Minimum = new Day(-62135596800000.0);
-Day.Maximum = new Day(8640000000000000.0);
-
 /**
  * @param {!string} str
  * @return {?Month}
@@ -234,14 +237,14 @@ Day.parse = function(str) {
 
 /**
  * @param {!Date} date
- * @return {!Month}
+ * @return {!Day}
  */
 Day.createFromDate = function(date) {
     return new Day(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
 };
 
 /**
- * @return {!Month}
+ * @return {!Day}
  */
 Day.createFromToday = function() {
     var now = new Date();
@@ -301,6 +304,172 @@ Day.prototype.toString = function() {
     return yearString + "-" + ("0" + (this.month + 1)).substr(-2, 2) + "-" + ("0" + this.date).substr(-2, 2);
 };
 
+// See WebCore/platform/DateComponents.h.
+Day.Minimum = new Day(-62135596800000.0);
+Day.Maximum = new Day(8640000000000000.0);
+// See WebCore/html/DayInputType.cpp.
+Day.DefaultStep = 86400000;
+Day.DefaultStepBase = 0;
+
+/**
+ * @constructor
+ * @param {!number|Week} valueOrWeekOrYear
+ * @param {!number=} week
+ */
+function Week(valueOrWeekOrYear, week) {
+    if (arguments.length === 2) {
+        this.year = valueOrWeekOrYear;
+        this.week = week;
+        // Number of years per year is either 52 or 53.
+        if (this.week < 1 || (this.week > 52 && this.week > Week.numberOfWeeksInYear(this.year))) {
+            var normalizedWeek = Week.createFromDate(this.startDate());
+            this.year = normalizedWeek.year;
+            this.week = normalizedWeek.week;
+        }
+    } else if (valueOrMonthOrYear instanceof Week) {
+        this.year = valueOrWeekOrYear.year;
+        this.week = valueOrWeekOrYear.week;
+    } else {
+        var week = Week.createFromDate(new Date(valueOrWeekOrYear));
+        this.year = week.year;
+        this.week = week.week;
+    }
+}
+
+Week.MillisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
+Week.ISOStringRegExp = /^(\d+)-[wW](\d+)$/;
+// See WebCore/platform/DateComponents.h.
+Week.Minimum = new Week(1, 1);
+Week.Maximum = new Week(275760, 37);
+// See WebCore/html/WeekInputType.cpp.
+Week.DefaultStep = 604800000;
+Week.DefaultStepBase = -259200000;
+
+/**
+ * @param {!string} str
+ * @return {?Week}
+ */
+Week.parse = function(str) {
+    var match = Week.ISOStringRegExp.exec(str);
+    if (!match)
+        return null;
+    var year = parseInt(match[1], 10);
+    var week = parseInt(match[2], 10);
+    return new Week(year, week);
+};
+
+/**
+ * @param {!Date} date
+ * @return {!Week}
+ */
+Week.createFromDate = function(date) {
+    var year = date.getUTCFullYear();
+    if (year <= Week.Maximum.year && Week.weekOneStartDateForYear(year + 1).getTime() <= date.getTime())
+        year++;
+    else if (year > 1 && Week.weekOneStartDateForYear(year).getTime() > date.getTime())
+        year--;
+    var week = 1 + Week._numberOfWeeksSinceDate(Week.weekOneStartDateForYear(year), date);
+    return new Week(year, week);
+};
+
+/**
+ * @return {!Week}
+ */
+Week.createFromToday = function() {
+    var now = new Date();
+    return Week.createFromDate(createUTCDate(now.getFullYear(), now.getMonth(), now.getDate()));
+};
+
+/**
+ * @param {!number} year
+ * @return {!Date}
+ */
+Week.weekOneStartDateForYear = function(year) {
+    if (year < 1)
+        return createUTCDate(1, 0, 1);
+    // The week containing January 4th is week one.
+    var yearStartDay = createUTCDate(year, 0, 4).getUTCDay();
+    return createUTCDate(year, 0, 4 - (yearStartDay + 6) % 7);
+};
+
+/**
+ * @param {!number} year
+ * @return {!number}
+ */
+Week.numberOfWeeksInYear = function(year) {
+    if (year < 1 || year > Week.Maximum.year)
+        return 0;
+    else if (year === Week.Maximum.year)
+        return Week.Maximum.week;
+    return Week._numberOfWeeksSinceDate(Week.weekOneStartDateForYear(year), Week.weekOneStartDateForYear(year + 1));
+};
+
+/**
+ * @param {!Date} baseDate
+ * @param {!Date} date
+ * @return {!number}
+ */
+Week._numberOfWeeksSinceDate = function(baseDate, date) {
+    return Math.floor((date.getTime() - baseDate.getTime()) / Week.MillisecondsPerWeek);
+};
+
+/**
+ * @param {!Week} other
+ * @return {!bool}
+ */
+Week.prototype.equals = function(other) {
+    return this.year === other.year && this.week === other.week;
+};
+
+/**
+ * @return {!Week}
+ */
+Week.prototype.previous = function() {
+    return new Week(this.year, this.week - 1);
+};
+
+/**
+ * @return {!Week}
+ */
+Week.prototype.next = function() {
+    return new Week(this.year, this.week + 1);
+};
+
+/**
+ * @return {!Date}
+ */
+Week.prototype.startDate = function() {
+    var weekStartDate = Week.weekOneStartDateForYear(this.year);
+    weekStartDate.setUTCDate(weekStartDate.getUTCDate() + (this.week - 1) * 7);
+    return weekStartDate;
+};
+
+/**
+ * @return {!Date}
+ */
+Week.prototype.endDate = function() {
+    if (this.equals(Week.Maximum))
+        return Day.Maximum.startDate();
+    return this.next().startDate();
+};
+
+/**
+ * @return {!number}
+ */
+Week.prototype.valueOf = function() {
+    return this.startDate().getTime() - createUTCDate(1970, 0, 1).getTime();
+};
+
+/**
+ * @return {!string}
+ */
+Week.prototype.toString = function() {
+    var yearString = String(this.year);
+    if (yearString.length < 4)
+        yearString = ("000" + yearString).substr(-4, 4);
+    return yearString + "-W" + ("0" + this.week).substr(-2, 2);
+};
+
 /**
  * @param {!number|Month} valueOrMonthOrYear
  * @param {!number=} month
@@ -329,6 +498,9 @@ Month.ISOStringRegExp = /^(\d+)-(\d+)$/;
 // See WebCore/platform/DateComponents.h.
 Month.Minimum = new Month(1, 0);
 Month.Maximum = new Month(275760, 8);
+// See WebCore/html/MonthInputType.cpp.
+Month.DefaultStep = 1;
+Month.DefaultStepBase = 0;
 
 /**
  * @param {!string} str
@@ -518,6 +690,10 @@ function CalendarPicker(element, config) {
         this.selectionConstructor = Month;
         this._daysTable = new MonthPickerDaysTable(this);
         this._element.classList.add(ClassNames.MonthMode);
+    } else if (this._config.mode === "week") {
+        this.selectionConstructor = Week;
+        this._daysTable = new WeekPickerDaysTable(this);
+        this._element.classList.add(ClassNames.WeekMode);
     } else {
         this.selectionConstructor = Day;
         this._daysTable = new DaysTable(this);
@@ -531,8 +707,8 @@ function CalendarPicker(element, config) {
     var maximum = (typeof this._config.max !== "undefined") ? parseDateString(this._config.max) : this.selectionConstructor.Maximum;
     this._minimumValue = minimum.valueOf();
     this._maximumValue = maximum.valueOf();
-    this.step = (typeof this._config.step !== undefined) ? Number(this._config.step) : CalendarPicker.DefaultStepScaleFactor;
-    this.stepBase = (typeof this._config.stepBase !== "undefined") ? Number(this._config.stepBase) : CalendarPicker.DefaultStepBase;
+    this.step = (typeof this._config.step !== undefined) ? Number(this._config.step) : this.selectionConstructor.DefaultStep;
+    this.stepBase = (typeof this._config.stepBase !== "undefined") ? Number(this._config.stepBase) : this.selectionConstructor.DefaultStepBase;
     this._minimumMonth = Month.createFromDate(minimum.startDate());
     this.maximumMonth = Month.createFromDate(maximum.startDate());
     this._currentMonth = new Month(NaN, NaN);
@@ -546,7 +722,7 @@ function CalendarPicker(element, config) {
         initialSelection = new this.selectionConstructor(this._minimumValue);
     else if (initialSelection.valueOf() > this._maximumValue)
         initialSelection = new this.selectionConstructor(this._maximumValue);
-    this.showMonth(Month.createFromDate(initialSelection.startDate()), false);
+    this.showMonth(Month.createFromDate(initialSelection.startDate()));
     this._daysTable.selectRangeAndShowEntireRange(initialSelection);
     this.fixWindowSize();
     this._handleBodyKeyDownBound = this._handleBodyKeyDown.bind(this);
@@ -554,9 +730,11 @@ function CalendarPicker(element, config) {
 }
 CalendarPicker.prototype = Object.create(Picker.prototype);
 
-// See WebCore/html/DateInputType.cpp.
-CalendarPicker.DefaultStepScaleFactor = 86400000;
-CalendarPicker.DefaultStepBase = 0.0;
+CalendarPicker.NavigationBehaviour = {
+    None: 0,
+    Animate: 1 << 0,
+    KeepSelectionPosition: 1 << 1
+};
 
 CalendarPicker.prototype._handleWindowResize = function() {
     this._element.classList.remove("preparing");
@@ -651,10 +829,9 @@ CalendarPicker.prototype.shouldShowMonth = function(month) {
 
 /**
  * @param {!Month} month
- * @param {!bool=} animate
- * @param {!bool=} keepSelectionPosition
+ * @param {!CalendarPicker.NavigationBehaviour=} navigationBehaviour
  */
-CalendarPicker.prototype.showMonth = function(month, animate, keepSelectionPosition) {
+CalendarPicker.prototype.showMonth = function(month, navigationBehaviour) {
     if (this._currentMonth.equals(month))
         return;
     else if (month.valueOf() < this._minimumMonth.valueOf())
@@ -662,7 +839,7 @@ CalendarPicker.prototype.showMonth = function(month, animate, keepSelectionPosit
     else if (month.valueOf() > this.maximumMonth.valueOf())
         month = this.maximumMonth;
     this._yearMonthController.setMonth(month);
-    this._daysTable.navigateToMonth(month, animate, keepSelectionPosition);
+    this._daysTable.navigateToMonth(month, navigationBehaviour || CalendarPicker.NavigationBehaviour.None);
     this._currentMonth = month;
 };
 
@@ -724,7 +901,7 @@ YearMonthController.prototype.attachTo = function(element) {
         maxWidth = Math.max(maxWidth, this._month.offsetWidth);
         month = month.previous();
     }
-    if (getLanguage() == "ja" && ImperialEraLimit < maximumYear) {
+    if (getLanguage() == "ja" && ImperialEraLimit < this.picker.maximumMonth.year) {
         for (var m = 0; m < 12; ++m) {
             this._month.textContent = new Month(ImperialEraLimit, m).toLocaleString();
             maxWidth = Math.max(maxWidth, this._month.offsetWidth);
@@ -995,7 +1172,7 @@ YearMonthController.prototype._handleButtonClick = function(event) {
 YearMonthController.prototype.moveRelatively = function(amount) {
     var current = this.picker.currentMonth().valueOf();
     var updated = new Month(current + amount);
-    this.picker.showMonth(updated, true, true);
+    this.picker.showMonth(updated, CalendarPicker.NavigationBehaviour.Animate | CalendarPicker.NavigationBehaviour.KeepSelectionPosition);
 };
 
 // ----------------------------------------------------------------
@@ -1033,13 +1210,20 @@ DaysTable.prototype.attachTo = function(element) {
     this._daysContainer.addEventListener("webkitTransitionEnd", this._moveInDays.bind(this), false);
     var container = createElement("tr", ClassNames.DayLabelContainer);
     var weekStartDay = global.params.weekStartDay || 0;
+    container.appendChild(createElement("th", ClassNames.DayLabel + " " + ClassNames.WeekColumn, global.params.weekLabel));
     for (var i = 0; i < 7; i++)
         container.appendChild(createElement("th", ClassNames.DayLabel, global.params.dayLabels[(weekStartDay + i) % 7]));
     this._daysContainer.appendChild(container);
     this._days = [];
+    this._weekNumbers = [];
     for (var w = 0; w < DaysTable._Weeks; w++) {
         container = createElement("tr", ClassNames.WeekContainer);
         var week = [];
+        var weekNumberNode = createElement("td", ClassNames.Day + " " + ClassNames.WeekColumn, " ");
+        weekNumberNode.dataset.positionX = -1;
+        weekNumberNode.dataset.positionY = w;
+        this._weekNumbers.push(weekNumberNode);
+        container.appendChild(weekNumberNode);
         for (var d = 0; d < 7; d++) {
             var day = createElement("td", ClassNames.Day, " ");
             day.setAttribute("data-position-x", String(d));
@@ -1095,14 +1279,18 @@ DaysTable.prototype._renderMonth = function(month) {
     if (startOffset >= 0)
         startOffset -= 7;
     dayIterator.setUTCDate(startOffset + 1);
+    var mondayOffset = (8 - weekStartDay) % 7;
+    var sundayOffset = weekStartDay % 7;
     for (var w = 0; w < DaysTable._Weeks; w++) {
         for (var d = 0; d < 7; d++) {
             var iterMonth = Month.createFromDate(dayIterator);
+            var iterWeek = Week.createFromDate(dayIterator);
             var time = dayIterator.getTime();
             var element = this._days[w][d];
             element.innerText = localizeNumber(dayIterator.getUTCDate());
             element.className = ClassNames.Day;
             element.dataset.submitValue = Day.createFromDate(dayIterator).toString();
+            element.dataset.weekValue = iterWeek.toString();
             element.dataset.monthValue = iterMonth.toString();
             if (isNaN(time)) {
                 element.innerText = "-";
@@ -1114,6 +1302,18 @@ DaysTable.prototype._renderMonth = function(month) {
                 element.classList.add(ClassNames.NotThisMonth);
             } else
                 element.classList.add(ClassNames.Available);
+            if (d === mondayOffset) {
+                element.classList.add(ClassNames.Monday);
+                if (this._weekNumbers[w]) {
+                    this._weekNumbers[w].dataset.weekValue = iterWeek.toString();
+                    this._weekNumbers[w].innerText = localizeNumber(iterWeek.week);
+                    if (element.classList.contains(ClassNames.Available))
+                        this._weekNumbers[w].classList.add(ClassNames.Available);
+                    else
+                        this._weekNumbers[w].classList.add(ClassNames.Unavailable);
+                }
+            } else if (d === sundayOffset)
+                element.classList.add(ClassNames.Sunday);
             dayIterator.setUTCDate(dayIterator.getUTCDate() + 1);
         }
     }
@@ -1121,19 +1321,18 @@ DaysTable.prototype._renderMonth = function(month) {
 
 /**
  * @param {!Month} month
- * @param {!bool} animate
- * @param {!bool} keepSelectionPosition
+ * @param {!CalendarPicker.NavigationBehaviour} navigationBehaviour
  */
-DaysTable.prototype.navigateToMonth = function(month, animate, keepSelectionPosition) {
+DaysTable.prototype.navigateToMonth = function(month, navigationBehaviour) {
     var firstNodeInSelectedRange = this._firstNodeInSelectedRange();
-    if (animate) {
+    if (navigationBehaviour & CalendarPicker.NavigationBehaviour.Animate) {
         var daysStyle = this._daysContainer.style;
         daysStyle.position = "relative";
         daysStyle.webkitTransition = "left 0.1s ease";
         daysStyle.left = (this.picker.currentMonth().valueOf() > month.valueOf() ? "" : "-") + this._daysContainer.offsetWidth + "px";
     }
     this._renderMonth(month);
-    if (keepSelectionPosition && firstNodeInSelectedRange) {
+    if (navigationBehaviour & CalendarPicker.NavigationBehaviour.KeepSelectionPosition && firstNodeInSelectedRange) {
         var x = parseInt(firstNodeInSelectedRange.dataset.positionX, 10);
         var y = parseInt(firstNodeInSelectedRange.dataset.positionY, 10);
         this._selectRangeAtPosition(x, y);
@@ -1172,7 +1371,7 @@ DaysTable.prototype._markRangeAsSelected = function(day) {
 DaysTable.prototype.selectRange = function(day) {
     this._deselect();
     if (this.startDate() > day.startDate() || this.endDate() < day.endDate())
-        this.picker.showMonth(Month.createFromDate(day.startDate()), false);
+        this.picker.showMonth(Month.createFromDate(day.startDate()));
     this._markRangeAsSelected(day);
 };
 
@@ -1222,7 +1421,8 @@ DaysTable.prototype.endDate = function() {
  * @param {!number} y
  */
 DaysTable.prototype._selectRangeAtPosition = function(x, y) {
-    this._selectRangeContainingNode(this._days[y][x]);
+    var node = x === -1 ? this._weekNumbers[y] : this._days[y][x];
+    this._selectRangeContainingNode(node);
 };
 
 /**
@@ -1239,24 +1439,30 @@ DaysTable.prototype._deselect = function() {
 };
 
 /**
+ * @param {!CalendarPicker.NavigationBehaviour=} navigationBehaviour
  * @return {!boolean}
  */
-DaysTable.prototype._maybeSetPreviousMonth = function() {
+DaysTable.prototype._maybeSetPreviousMonth = function(navigationBehaviour) {
+    if (typeof navigationBehaviour === "undefined")
+        navigationBehaviour = CalendarPicker.NavigationBehaviour.Animate;
     var previousMonth = this.picker.currentMonth().previous();
     if (!this.picker.shouldShowMonth(previousMonth))
         return false;
-    this.picker.showMonth(previousMonth, true);
+    this.picker.showMonth(previousMonth, navigationBehaviour);
     return true;
 };
 
 /**
+ * @param {!CalendarPicker.NavigationBehaviour=} navigationBehaviour
  * @return {!boolean}
  */
-DaysTable.prototype._maybeSetNextMonth = function() {
+DaysTable.prototype._maybeSetNextMonth = function(navigationBehaviour) {
+    if (typeof navigationBehaviour === "undefined")
+        navigationBehaviour = CalendarPicker.NavigationBehaviour.Animate;
     var nextMonth = this.picker.currentMonth().next();
     if (!this.picker.shouldShowMonth(nextMonth))
         return false;
-    this.picker.showMonth(nextMonth, true);
+    this.picker.showMonth(nextMonth, navigationBehaviour);
     return true;
 };
 
@@ -1412,7 +1618,7 @@ MonthPickerDaysTable.prototype._markRangeAsSelected = function(month) {
 MonthPickerDaysTable.prototype.selectRange = function(month) {
     this._deselect();
     if (this.startDate() >= month.endDate() || this.endDate() <= month.startDate())
-        this.picker.showMonth(month, true);
+        this.picker.showMonth(month, CalendarPicker.NavigationBehaviour.Animate);
     this._markRangeAsSelected(month);
 };
 
@@ -1421,7 +1627,7 @@ MonthPickerDaysTable.prototype.selectRange = function(month) {
  */
 MonthPickerDaysTable.prototype.selectRangeAndShowEntireRange = function(month) {
     this._deselect();
-    this.picker.showMonth(month, true);
+    this.picker.showMonth(month, CalendarPicker.NavigationBehaviour.Animate);
     this._markRangeAsSelected(month);
 };
 
@@ -1444,15 +1650,12 @@ MonthPickerDaysTable.prototype._handleKey = function(event) {
     var eventHandled = false;
     var currentMonth = this.picker.currentMonth();
     var firstNodeInSelectedRange = this._firstNodeInSelectedRange();
+    var selectedMonth = this._rangeForNode(firstNodeInSelectedRange);
     if (!firstNodeInSelectedRange
         && (key == "Right" || key == "Left" || key == "Up" || key == "Down" || key == "PageUp" || key == "PageDown")) {
         this.selectRange(currentMonth);
-        event.stopPropagation();
-        event.preventDefault();
-        return;
-    }
-    var selectedMonth = this._rangeForNode(firstNodeInSelectedRange);
-    if (key == (global.params.isCalendarRTL ? "Right" : "Left") || key == "Up" || key == "PageUp") {
+        eventHandled = true;
+    } else if (key == (global.params.isCalendarRTL ? "Right" : "Left") || key == "Up" || key == "PageUp") {
         if (selectedMonth.valueOf() > currentMonth.valueOf())
             this.selectRangeAndShowEntireRange(currentMonth);
         else
@@ -1464,13 +1667,123 @@ MonthPickerDaysTable.prototype._handleKey = function(event) {
         else
             this.selectRangeAndShowEntireRange(currentMonth.next());
         eventHandled = true;
-    } else if (this._hasSelection() && key == "Enter") {
-        if (currentSelection) {
-            this.picker.submitValue(currentSelection.toString());
+    } else if (selectedMonth && key == "Enter") {
+        if (firstNodeInSelectedRange.classList.contains(ClassNames.Available)) {
+            this.picker.submitValue(selectedMonth.toString());
             eventHandled = true;
         }
     } else if (key == "U+0054") { // 't'
         this.selectRangeAndShowEntireRange(Month.createFromToday());
+        eventHandled = true;
+    }
+    if (eventHandled) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+};
+
+/**
+ * @constructor
+ * @param{!CalendarPicker} picker
+ */
+function WeekPickerDaysTable(picker) {
+    DaysTable.call(this, picker);
+}
+WeekPickerDaysTable.prototype = Object.create(DaysTable.prototype);
+
+/**
+ * @param {!Week} week
+ */
+WeekPickerDaysTable.prototype._markRangeAsSelected = function(week) {
+    var weekString = week.toString();
+    for (var w = 0; w < DaysTable._Weeks; w++) {
+        for (var d = 0; d < 7; d++) {
+            if (this._days[w][d].dataset.weekValue == weekString) {
+                this._days[w][d].classList.add(ClassNames.Selected);
+            }
+        }
+    }
+    for (var i = 0; i < this._weekNumbers.length; ++i) {
+        if (this._weekNumbers[i].dataset.weekValue === weekString) {
+            this._weekNumbers[i].classList.add(ClassNames.Selected);
+            break;
+        }
+    }
+};
+
+/**
+ * @param {!Week} week
+ */
+WeekPickerDaysTable.prototype.selectRange = function(week) {
+    this._deselect();
+    var weekStartDate = week.startDate();
+    var weekEndDate = week.endDate();
+    if (this.startDate() >= weekEndDate)
+        this.picker.showMonth(Month.createFromDate(weekEndDate), CalendarPicker.NavigationBehaviour.Animate);
+    else if (this.endDate() <= weekStartDate)
+        this.picker.showMonth(Month.createFromDate(weekStartDate), CalendarPicker.NavigationBehaviour.Animate);
+    this._markRangeAsSelected(week);
+};
+
+/**
+ * @param {!Week} week
+ */
+WeekPickerDaysTable.prototype.selectRangeAndShowEntireRange = function(week) {
+    this._deselect();
+    var weekStartDate = week.startDate();
+    var weekEndDate = week.endDate();
+    if (this.startDate() > weekStartDate)
+        this.picker.showMonth(Month.createFromDate(weekStartDate), CalendarPicker.NavigationBehaviour.Animate);
+    else if (this.endDate() < weekEndDate)
+        this.picker.showMonth(Month.createFromDate(weekEndDate), CalendarPicker.NavigationBehaviour.Animate);
+    this._markRangeAsSelected(week);
+};
+
+/**
+ * @param {!Element} dayNode
+ * @return {?Week}
+ */
+WeekPickerDaysTable.prototype._rangeForNode = function(dayNode) {
+    if (!dayNode)
+        return null;
+    return Week.parse(dayNode.dataset.weekValue);
+};
+
+/**
+ * @param {!Event} event
+ */
+WeekPickerDaysTable.prototype._handleKey = function(event) {
+    this.picker.maybeUpdateFocusStyle();
+    var key = event.keyIdentifier;
+    var eventHandled = false;
+    var currentMonth = this.picker.currentMonth();
+    var firstNodeInSelectedRange = this._firstNodeInSelectedRange();
+    var selectedWeek = this._rangeForNode(firstNodeInSelectedRange);
+    if (!firstNodeInSelectedRange
+        && (key == "Right" || key == "Left" || key == "Up" || key == "Down" || key == "PageUp" || key == "PageDown")) {
+        // Put the selection on a center cell.
+        this._selectRangeAtPosition(3, Math.floor(DaysTable._Weeks / 2 - 1));
+    } else if (key == (global.params.isCalendarRTL ? "Right" : "Left") || key == "Up") {
+        this.selectRangeAndShowEntireRange(selectedWeek.previous());
+        eventHandled = true;
+    } else if (key == (global.params.isCalendarRTL ? "Left" : "Right") || key == "Down") {
+        this.selectRangeAndShowEntireRange(selectedWeek.next());
+        eventHandled = true;
+    } else if (key == "PageUp") {
+        if (!this._maybeSetPreviousMonth(CalendarPicker.NavigationBehaviour.Animate | CalendarPicker.NavigationBehaviour.KeepSelectionPosition))
+            return;
+        eventHandled = true;
+    } else if (key == "PageDown") {
+        if (!this._maybeSetNextMonth(CalendarPicker.NavigationBehaviour.Animate | CalendarPicker.NavigationBehaviour.KeepSelectionPosition))
+            return;
+        eventHandled = true;
+    } else if (selectedWeek && key == "Enter") {
+        if (firstNodeInSelectedRange.classList.contains(ClassNames.Available)) {
+            this.picker.submitValue(selectedWeek.toString());
+            eventHandled = true;
+        }
+    } else if (key == "U+0054") { // 't'
+        this.selectRangeAndShowEntireRange(Week.createFromToday());
         eventHandled = true;
     }
     if (eventHandled) {

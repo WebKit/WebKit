@@ -1,3 +1,61 @@
+2012-11-07  Keishi Hattori  <keishi@webkit.org>
+
+        Implement week picking to calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=101449
+
+        Reviewed by Kent Tamura.
+
+        This adds week picker mode to CalendarPicker.
+
+        No new tests. Tests will be added later when this feature is enabled in DRT.
+
+        * Resources/pagepopups/calendarPicker.css:
+        (.month-mode .day):
+        (.week-mode .available.day-selected.monday): Rounded corners around week selection.
+        (.week-mode .available.day-selected.sunday): Ditto.
+        (.week-mode .unavailable.day-selected):
+        (.week-mode .unavailable.day-selected.monday):
+        (.week-mode .unavailable.day-selected.sunday):
+        (.week-mode .week-column.unavailable.day-selected):
+        (.week-column): Hide week column unless in week mode.
+        (.week-mode .week-column):
+        * Resources/pagepopups/calendarPicker.js:
+        (parseDateString): Support week string.
+        (Week):
+        (Week.parse): Parses "yyyy-Www" string.
+        (Week.createFromDate): Creates Week containing datetime.
+        (Week.createFromToday): Creates Week containing today.
+        (Week.weekOneStartDateForYear): Returns the start date for the first week of year.
+        (Week.numberOfWeeksInYear): Returns the number of weeks in year.
+        (Week._numberOfWeeksSinceDate): Returns number of weeks since a date.
+        (Week.prototype.equals): Returns true if the Weeks are the same.
+        (Week.prototype.previous): Returns the previous Week.
+        (Week.prototype.next): Returns the next Week.
+        (Week.prototype.startDate): Returns start datetime of Week.
+        (Week.prototype.endDate): Returns end datetime of Week.
+        (Week.prototype.valueOf): Returns the milliseconds since epoch.
+        (Week.prototype.toString): Returns ISO week string.
+        (CalendarPicker): Add week picker mode.
+        (CalendarPicker.prototype.showMonth): Use NavigationBehaviour instead of bools.
+        (YearMonthController.prototype.attachTo): Fix bug.
+        (YearMonthController.prototype.moveRelatively): Use new showMonth.
+        (DaysTable.prototype.attachTo): Add week number column.
+        (DaysTable.prototype._renderMonth): Render week numbers.
+        (DaysTable.prototype.navigateToMonth): Render week numbers.
+        (DaysTable.prototype.selectRange):
+        (DaysTable.prototype._selectRangeAtPosition): Week number nodes have an positionX of -1.
+        (DaysTable.prototype._maybeSetPreviousMonth):
+        (DaysTable.prototype._maybeSetNextMonth):
+        (MonthPickerDaysTable.prototype.selectRange):
+        (MonthPickerDaysTable.prototype.selectRangeAndShowEntireRange):
+        (MonthPickerDaysTable.prototype._handleKey):
+        (WeekPickerDaysTable): Added.
+        (WeekPickerDaysTable.prototype._markRangeAsSelected): Marks week as selected.
+        (WeekPickerDaysTable.prototype.selectRange): Selects week.
+        (WeekPickerDaysTable.prototype.selectRangeAndShowEntireRange): Selects week and navigate to show entire selection.
+        (WeekPickerDaysTable.prototype._rangeForNode): Returns Week for node.
+        (WeekPickerDaysTable.prototype._handleKey):
+
 2012-11-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133841.

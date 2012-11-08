@@ -23,11 +23,11 @@ function test() {
     shouldBe('currentMonth()', '"2000-01"');
 
     debug('Check that hovering over an entry highlights it.');
-    hoverOverElement(popupWindow.document.getElementsByClassName("day")[5]);
+    hoverOverElement(popupWindow.document.querySelectorAll(".day:not(.week-column)")[5]);
     shouldBe('selectedDate()', '"1999-12-31"');
     shouldBe('currentMonth()', '"2000-01"');
 
-    hoverOverElement(popupWindow.document.getElementsByClassName("day")[9]);
+    hoverOverElement(popupWindow.document.querySelectorAll(".day:not(.week-column)")[9]);
     shouldBe('selectedDate()', '"2000-01-04"');
     shouldBe('currentMonth()', '"2000-01"');
 
@@ -41,7 +41,7 @@ function test() {
     shouldBeUndefined('selectedDate()');
 
     debug('Check that mouse click closes the popup and sets the value.');
-    clickElement(popupWindow.document.getElementsByClassName("day")[6]);
+    clickElement(popupWindow.document.querySelectorAll(".day:not(.week-column)")[6]);
     shouldBeNull('document.getElementById("mock-page-popup")');
     shouldBe('document.getElementById("date").value', '"2000-02-05"');
 

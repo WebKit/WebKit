@@ -27,6 +27,7 @@ iframe {
  <option>with long datalist</option>
  <option>Arabic with datalist</option>
  <option>Arabic with long datalist</option>
+ <option>Week</option>
  <option>Month</option>
 </select>
 
@@ -239,6 +240,22 @@ var arabicLongDatalistArguments = {
     suggestionHighlightColor: "#0000ff",
     suggestionHighlightTextColor: "#ffffff"
 };
+var weekArguments = {
+    locale: 'en-US',
+    monthLabels : ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'],
+    dayLabels : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    todayLabel : 'This Week',
+    clearLabel : 'Clear',
+    cancelLabel : 'Cancel',
+    weekLabel: 'Week',
+    weekStartDay : 0,
+    step : "604800000",
+    stepBase: "-259200000",
+    currentValue : '2000-W01',
+    max : '2099-W03',
+    mode: "week"
+};
 var monthArguments = {
     locale: 'en-US',
     monthLabels : ['January', 'February', 'March', 'April', 'May', 'June',
@@ -327,6 +344,9 @@ function selected(select) {
         openCalendar(arabicLongDatalistArguments);
         break;
     case 7:
+        openCalendar(weekArguments);
+        break;
+    case 8:
         openCalendar(monthArguments);
         break;
     }

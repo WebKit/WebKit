@@ -225,8 +225,51 @@ body {
     -webkit-transition: none;
 }
 
+.week-mode .day,
 .month-mode .day {
     -webkit-transition: none;
     border-radius: 0;
-    border: 1px solid transparent;
+    border: none;
+    padding: 2px;
+}
+
+.week-mode .available.day-selected.monday {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.week-mode .available.day-selected.sunday {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.week-mode .unavailable.day-selected {
+    padding: 1px 2px;
+    border-top: 1px solid highlight;
+    border-bottom: 1px solid highlight;
+}
+
+.week-mode .unavailable.day-selected.monday {
+    padding-left: 1px;
+    border-left: 1px solid highlight;
+}
+
+.week-mode .unavailable.day-selected.sunday {
+    padding-right: 1px;
+    border-right: 1px solid highlight;
+}
+
+.week-mode .week-column.unavailable.day-selected {
+  padding: 1px;
+  border: 1px solid highlight;
+}
+
+.week-column {
+    display: none;
+}
+
+.week-mode .week-column {
+    display: block;
+    border-right: 1px solid #999;
+    padding-right: 1px;
 }
