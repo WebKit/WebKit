@@ -324,6 +324,8 @@ WebInspector.RemoteObject.prototype = {
 
     release: function()
     {
+        if (!this._objectId)
+            return;
         RuntimeAgent.releaseObject(this._objectId);
     },
 

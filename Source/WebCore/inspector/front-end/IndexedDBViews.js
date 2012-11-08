@@ -363,8 +363,9 @@ WebInspector.IDBDataView.prototype = {
     {
         this._dataGrid.rootNode().removeChildren();
         for (var i = 0; i < this._entries.length; ++i) {
-            var value = this._entries[i].value;
-            value.release();
+            this._entries[i].key.release();
+            this._entries[i].primaryKey.release();
+            this._entries[i].value.release();
         }
         this._entries = [];
     },

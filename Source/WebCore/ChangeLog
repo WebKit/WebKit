@@ -1,5 +1,20 @@
 2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: console error after inspecting IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=101481
+
+        Reviewed by Pavel Feldman.
+
+        Added objectId nullity check to RemoteOBject::release.
+        Drive-by added release for entry key and primaryKey.
+
+        * inspector/front-end/IndexedDBViews.js:
+        (WebInspector.IDBDataView.prototype.clear):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.release):
+
+2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Migrate inspector IndexedDB support to frontend API.
         https://bugs.webkit.org/show_bug.cgi?id=101457
 
