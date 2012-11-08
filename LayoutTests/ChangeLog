@@ -1,5 +1,14 @@
 2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Migrate inspector IndexedDB support to frontend API.
+        https://bugs.webkit.org/show_bug.cgi?id=101457
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/indexeddb/database-data.html:
+
+2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Infinite loop in DataGrid::autoSizeColumn
         https://bugs.webkit.org/show_bug.cgi?id=101363
 

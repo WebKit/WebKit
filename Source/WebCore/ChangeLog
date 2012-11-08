@@ -1,3 +1,28 @@
+2012-11-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Migrate inspector IndexedDB support to frontend API.
+        https://bugs.webkit.org/show_bug.cgi?id=101457
+
+        Reviewed by Pavel Feldman.
+
+        Migrated IndexedDB support to web facing IndexedDB API.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+        (WebCore::assertIDBFactory):
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNamesForFrame):
+        (WebCore::InspectorIndexedDBAgent::requestDatabase):
+        (WebCore::InspectorIndexedDBAgent::requestData):
+        * inspector/front-end/IndexedDBModel.js:
+        (WebInspector.IndexedDBModel.prototype.innerCallback):
+        (WebInspector.IndexedDBModel.prototype._requestData):
+        * inspector/front-end/IndexedDBViews.js:
+        (WebInspector.IDBDataView.prototype._updateData.callback):
+        (WebInspector.IDBDataView.prototype._updateData):
+        (WebInspector.IDBDataGridNode):
+        (WebInspector.IDBDataGridNode.prototype.createCell):
+
 2012-08-20  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Drop dimmed crumb handling

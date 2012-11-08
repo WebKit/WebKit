@@ -334,8 +334,7 @@ WebInspector.IDBDataView.prototype = {
                 data["value"] = entries[i].value;
 
                 var primaryKey = JSON.stringify(this._isIndex ? entries[i].primaryKey : entries[i].key);
-                var valueTitle = this._objectStore.name + "[" + primaryKey + "]";
-                var node = new WebInspector.IDBDataGridNode(valueTitle, data);
+                var node = new WebInspector.IDBDataGridNode(data);
                 this._dataGrid.rootNode().appendChild(node);
             }
 
@@ -376,14 +375,11 @@ WebInspector.IDBDataView.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.DataGridNode}
- * @param {string} valueTitle
  * @param {*} data
  */
-WebInspector.IDBDataGridNode = function(valueTitle, data)
+WebInspector.IDBDataGridNode = function(data)
 {
     WebInspector.DataGridNode.call(this, data, false);
-
-    this._valueTitle = valueTitle;
     this.selectable = false;
 }
 
@@ -398,13 +394,10 @@ WebInspector.IDBDataGridNode.prototype = {
 
         switch (columnIdentifier) {
         case "value":
-            cell.removeChildren();
-            this._formatValue(cell, value);
-            break;
         case "key":
         case "primaryKey":
             cell.removeChildren();
-            this._formatValue(cell, new WebInspector.LocalJSONObject(value));
+            this._formatValue(cell, value);
             break;
         default:
         }

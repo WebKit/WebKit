@@ -1242,8 +1242,8 @@
                 "type": "object",
                 "description": "Data entry.",
                 "properties": [
-                    { "name": "key", "$ref": "Key", "description": "Key." },
-                    { "name": "primaryKey", "$ref": "Key", "description": "Primary key." },
+                    { "name": "key", "$ref": "Runtime.RemoteObject", "description": "Key." },
+                    { "name": "primaryKey", "$ref": "Runtime.RemoteObject", "description": "Primary key." },
                     { "name": "value", "$ref": "Runtime.RemoteObject", "description": "Value." }
                 ]
             },

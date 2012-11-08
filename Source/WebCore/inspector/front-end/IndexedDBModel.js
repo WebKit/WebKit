@@ -61,31 +61,6 @@ WebInspector.IndexedDBModel.KeyPathTypes = {
     ArrayType:   "array"
 };
 
-/**
- * @param {IndexedDBAgent.Key} key
- */
-WebInspector.IndexedDBModel.idbKeyFromKey = function(key)
-{
-    var idbKey;
-    switch (key.type) {
-    case WebInspector.IndexedDBModel.KeyTypes.NumberType:
-        idbKey = key.number;
-        break;
-    case WebInspector.IndexedDBModel.KeyTypes.StringType:
-        idbKey = key.string;
-        break;
-    case WebInspector.IndexedDBModel.KeyTypes.DateType:
-        idbKey = new Date(key.date);
-        break;
-    case WebInspector.IndexedDBModel.KeyTypes.ArrayType:
-        idbKey = [];
-        for (var i = 0; i < key.array.length; ++i)
-            idbKey.push(WebInspector.IndexedDBModel.idbKeyFromKey(key.array[i]));
-        break;
-    }
-    return idbKey;
-}
-
 WebInspector.IndexedDBModel.keyFromIDBKey = function(idbKey)
 {
     if (typeof(idbKey) === "undefined" || idbKey === null)
@@ -473,8 +448,8 @@ WebInspector.IndexedDBModel.prototype = {
 
             var entries = [];
             for (var i = 0; i < dataEntries.length; ++i) {
-                var key = WebInspector.IndexedDBModel.idbKeyFromKey(dataEntries[i].key);
-                var primaryKey = WebInspector.IndexedDBModel.idbKeyFromKey(dataEntries[i].primaryKey);
+                var key = WebInspector.RemoteObject.fromPayload(dataEntries[i].key);
+                var primaryKey = WebInspector.RemoteObject.fromPayload(dataEntries[i].primaryKey);
                 var value = WebInspector.RemoteObject.fromPayload(dataEntries[i].value);
                 entries.push(new WebInspector.IndexedDBModel.Entry(key, primaryKey, value));
             }
@@ -490,8 +465,8 @@ WebInspector.IndexedDBModel.prototype = {
 
 /**
  * @constructor
- * @param {*} key
- * @param {*} primaryKey
+ * @param {WebInspector.RemoteObject} key
+ * @param {WebInspector.RemoteObject} primaryKey
  * @param {WebInspector.RemoteObject} value
  */
 WebInspector.IndexedDBModel.Entry = function(key, primaryKey, value)

@@ -67,7 +67,7 @@ function test()
 
             function dumped(value)
             {
-                InspectorTest.addResult("    Key = " + entry.key + ", primaryKey = " + entry.primaryKey + ", value = " + value);
+                InspectorTest.addResult("    Key = " + entry.key.description + ", primaryKey = " + entry.primaryKey.description + ", value = " + value);
                 dumpEntries();
             }
         }
