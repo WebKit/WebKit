@@ -1,3 +1,18 @@
+2012-11-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        On Chromium, click-after-nested-block.html, focus_editable_html.html, and autoscroll.html
+        hit assertion added in r133840
+        https://bugs.webkit.org/show_bug.cgi?id=101576
+
+        Reviewed by Abhishek Arya.
+
+        Update layout before invalidating caret rect as needed.
+        Existing tests cover this.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setCaretVisibility): Merged clearCaretRectIfNeeded.
+        * editing/FrameSelection.h:
+
 2012-11-08  Elliott Sprehn  <esprehn@chromium.org>
 
         Skip frame owner disconnect when there's no frames

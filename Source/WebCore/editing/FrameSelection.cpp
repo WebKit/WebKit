@@ -1797,19 +1797,17 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility)
 {
     if (caretVisibility() == visibility)
         return;
-    clearCaretRectIfNeeded();
-    CaretBase::setCaretVisibility(visibility);
-    updateAppearance();
-}
 
-void FrameSelection::clearCaretRectIfNeeded()
-{
 #if ENABLE(TEXT_CARET)
-    if (!m_caretPaint)
-        return;
-    m_caretPaint = false;
-    invalidateCaretRect();
+    m_frame->document()->updateLayoutIgnorePendingStylesheets();
+    if (m_caretPaint) {
+        m_caretPaint = false;
+        invalidateCaretRect();
+    }
+    CaretBase::setCaretVisibility(visibility);
 #endif
+
+    updateAppearance();
 }
 
 void FrameSelection::caretBlinkTimerFired(Timer<FrameSelection>*)
