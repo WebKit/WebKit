@@ -1,3 +1,16 @@
+2012-11-08  Anders Carlsson  <andersca@apple.com>
+
+        HeapStatistics::s_pauseTimeStarts and s_pauseTimeEnds should be Vectors
+        https://bugs.webkit.org/show_bug.cgi?id=101651
+
+        Reviewed by Andreas Kling.
+
+        HeapStatistics uses Deques when Vectors would work just as good.
+
+        * heap/HeapStatistics.cpp:
+        * heap/HeapStatistics.h:
+        (HeapStatistics):
+
 2012-11-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not assume that something is a double just because it might be undefined

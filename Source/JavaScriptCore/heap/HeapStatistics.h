@@ -49,8 +49,8 @@ public:
 
 private:
     static void logStatistics();
-    static Deque<double>* s_pauseTimeStarts;
-    static Deque<double>* s_pauseTimeEnds;
+    static Vector<double>* s_pauseTimeStarts;
+    static Vector<double>* s_pauseTimeEnds;
     static double s_startTime;
     static double s_endTime;
 };

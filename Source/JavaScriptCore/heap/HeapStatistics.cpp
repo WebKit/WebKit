@@ -41,8 +41,8 @@ namespace JSC {
 
 double HeapStatistics::s_startTime = 0.0;
 double HeapStatistics::s_endTime = 0.0;
-Deque<double>* HeapStatistics::s_pauseTimeStarts = 0;
-Deque<double>* HeapStatistics::s_pauseTimeEnds = 0;
+Vector<double>* HeapStatistics::s_pauseTimeStarts = 0;
+Vector<double>* HeapStatistics::s_pauseTimeEnds = 0;
 
 #if OS(UNIX) 
 
@@ -50,8 +50,8 @@ void HeapStatistics::initialize()
 {
     ASSERT(Options::recordGCPauseTimes());
     s_startTime = WTF::monotonicallyIncreasingTime();
-    s_pauseTimeStarts = new Deque<double>();
-    s_pauseTimeEnds = new Deque<double>();
+    s_pauseTimeStarts = new Vector<double>();
+    s_pauseTimeEnds = new Vector<double>();
 }
 
 void HeapStatistics::recordGCPauseTime(double start, double end)
@@ -82,8 +82,8 @@ void HeapStatistics::logStatistics()
 
     if (Options::recordGCPauseTimes()) {
         dataLog(", \"pause_times\": [");
-        Deque<double>::iterator startIt = s_pauseTimeStarts->begin();
-        Deque<double>::iterator endIt = s_pauseTimeEnds->begin();
+        Vector<double>::iterator startIt = s_pauseTimeStarts->begin();
+        Vector<double>::iterator endIt = s_pauseTimeEnds->begin();
         if (startIt != s_pauseTimeStarts->end() && endIt != s_pauseTimeEnds->end()) {
             dataLog("[%f, %f]", *startIt, *endIt);
             ++startIt;
