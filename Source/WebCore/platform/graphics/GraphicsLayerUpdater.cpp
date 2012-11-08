@@ -41,6 +41,8 @@ GraphicsLayerUpdater::GraphicsLayerUpdater(GraphicsLayerUpdaterClient* client, P
     DisplayRefreshMonitorManager::sharedManager()->registerClient(this);
     DisplayRefreshMonitorManager::sharedManager()->windowScreenDidChange(displayID, this);
     DisplayRefreshMonitorManager::sharedManager()->scheduleAnimation(this);
+#else
+    UNUSED_PARAM(displayID);
 #endif
 }
 
@@ -64,6 +66,8 @@ void GraphicsLayerUpdater::screenDidChange(PlatformDisplayID displayID)
 {
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     DisplayRefreshMonitorManager::sharedManager()->windowScreenDidChange(displayID, this);
+#else
+    UNUSED_PARAM(displayID);
 #endif
 }
 

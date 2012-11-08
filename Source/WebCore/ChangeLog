@@ -1,3 +1,17 @@
+2012-11-08  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Unused parameters on GraphicsLayerUpdater.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=101577
+
+        Reviewed by Kentaro Hara.
+
+        The parameter 'displayID' is not used when !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+        Use UNUSED_PARAM macro for removing -Wunused-parameter warnings
+
+        * platform/graphics/GraphicsLayerUpdater.cpp:
+        (WebCore::GraphicsLayerUpdater::GraphicsLayerUpdater):
+        (WebCore::GraphicsLayerUpdater::screenDidChange):
+
 2012-11-08  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Add option to disable rulers (Elements panel)
