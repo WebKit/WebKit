@@ -1,3 +1,18 @@
+2012-11-08  Philip Rogers  <pdr@google.com>
+
+        Remove unnecessary save/restore in SVGTextRunRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=101546
+
+        Reviewed by Andreas Kling.
+
+        This patch removes an unnecessary context save/restore SVGTextRunRenderingContext by
+        refactoring the code to save off the stroke thickness.
+
+        No new tests as this is heavily covered by existing tests.
+
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunRenderingContext::drawSVGGlyphs):
+
 2012-11-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Clean up includes in GObject DOM bindings code

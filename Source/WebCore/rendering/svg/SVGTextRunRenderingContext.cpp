@@ -142,8 +142,6 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const T
             continue;
          }
 
-        context->save();
-
         if (isVerticalText) {
             glyphOrigin.setX(svgGlyph.verticalOriginX * scale);
             glyphOrigin.setY(svgGlyph.verticalOriginY * scale);
@@ -157,14 +155,12 @@ void SVGTextRunRenderingContext::drawSVGGlyphs(GraphicsContext* context, const T
         glyphPath.transform(glyphPathTransform);
 
         if (activePaintingResource->applyResource(parentRenderObject, parentRenderObjectStyle, context, resourceMode)) {
-            if (renderObject && renderObject->isSVGInlineText()) {
-                const RenderSVGInlineText* textRenderer = toRenderSVGInlineText(renderObject);
-                context->setStrokeThickness(context->strokeThickness() * textRenderer->scalingFactor());
-            }
+            float strokeThickness = context->strokeThickness();
+            if (renderObject && renderObject->isSVGInlineText())
+                context->setStrokeThickness(strokeThickness * toRenderSVGInlineText(renderObject)->scalingFactor());
             activePaintingResource->postApplyResource(parentRenderObject, context, resourceMode, &glyphPath, 0);
-         }
- 
-        context->restore();
+            context->setStrokeThickness(strokeThickness);
+        }
 
         if (isVerticalText)
             currentPoint.move(0, advance);
