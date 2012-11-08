@@ -3118,7 +3118,7 @@ code.google.com/p/v8/issues/detail?id=1973 fast/js/caller-property.html [ Failur
 webkit.org/b/78684 fast/block/basic/fieldset-stretch-to-legend.html [ Failure ]
 webkit.org/b/78684 fast/borders/fieldsetBorderRadius.html [ Failure ]
 
-webkit.org/b/80498 [ Win ] fast/workers/worker-multi-startup.html [ Crash Pass ]
+webkit.org/b/80498 [ Linux Win ] fast/workers/worker-multi-startup.html [ Crash Pass ]
 
 webkit.org/b/91946 platform/chromium/fast/events/rtl-scrollbar.html [ Failure Pass ]
 

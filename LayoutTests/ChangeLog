@@ -1,5 +1,13 @@
 2012-11-08  Joshua Bell  <jsbell@chromium.org>
 
+        [Chromium] Widen flaky crash expectation fast/workers/worker-multi-startup.html to include linux.
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-08  Joshua Bell  <jsbell@chromium.org>
+
         [Chromium] http/tests/inspector/indexeddb/database-data.html ASSERT on Win7 following r133855
         https://bugs.webkit.org/show_bug.cgi?id=101618
 
