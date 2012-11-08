@@ -1,3 +1,32 @@
+2012-11-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining after r131974, r133037 and r133834.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/repaint/moving-shadow-on-container-expected.png:
+        * platform/gtk/fast/table/025-expected.png:
+        * platform/gtk/fast/table/025-expected.txt:
+        * platform/gtk/svg/css/arrow-with-shadow-expected.png:
+        * platform/gtk/svg/css/arrow-with-shadow-expected.txt:
+        * platform/gtk/svg/css/clippath-with-shadow-expected.txt:
+        * platform/gtk/svg/css/composite-shadow-example-expected.png:
+        * platform/gtk/svg/css/composite-shadow-example-expected.txt:
+        * platform/gtk/svg/css/composite-shadow-text-expected.png:
+        * platform/gtk/svg/css/composite-shadow-with-opacity-expected.png: Added.
+        * platform/gtk/svg/css/composite-shadow-with-opacity-expected.txt:
+        * platform/gtk/svg/css/shadow-changes-expected.png:
+        * platform/gtk/svg/css/shadow-changes-expected.txt:
+        * platform/gtk/svg/custom/pattern-scaling-expected.png: Added.
+        * platform/gtk/svg/custom/pattern-scaling-expected.txt: Added.
+        * platform/gtk/svg/custom/pattern-skew-transformed-expected.png:
+        * platform/gtk/svg/custom/pattern-skew-transformed-expected.txt: Added.
+        * platform/gtk/svg/custom/pattern-with-transformation-expected.png:
+        * platform/gtk/svg/custom/simple-text-double-shadow-expected.txt:
+        * platform/gtk/svg/repaint/repaint-webkit-svg-shadow-expected.png: Added.
+        * platform/gtk/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+
 2012-11-08  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         User can change a disabled select (drop down box)

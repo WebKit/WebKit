@@ -81,13 +81,6 @@ fast/css/draggable-region-parser.html [ WontFix ]
 inspector/styles/vendor-prefixes.html [ WontFix ]
 fast/css/apple-prefix.html [ WontFix ]
 
-# Need rebaselining after 99870
-webkit.org/b/99870 svg/custom/js-late-pattern-creation.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-skew-transformed.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-with-transformation.svg [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Pass ImageOnlyFailure ]
-webkit.org/b/99870 svg/custom/pattern-scaling.svg [ Pass ImageOnlyFailure Missing ]
-
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html [ WontFix ]
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
@@ -1368,20 +1361,6 @@ webkit.org/b/98612 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
 
 webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ]
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
-
-# These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=65643
-webkit.org/b/101398 svg/css/shadow-changes.svg
-webkit.org/b/101398 svg/repaint/repaint-webkit-svg-shadow.svg
-webkit.org/b/101398 svg/css/composite-shadow-example.html
-webkit.org/b/101398 svg/css/composite-shadow-with-opacity.html
-webkit.org/b/101398 fast/repaint/moving-shadow-on-container.html
-webkit.org/b/101398 svg/css/composite-shadow-text.svg
-webkit.org/b/101398 svg/custom/simple-text-double-shadow.svg
-webkit.org/b/101398 svg/css/clippath-with-shadow.svg
-webkit.org/b/101398 svg/css/arrow-with-shadow.svg
-
-# Requires rebaselining after https://bugs.webkit.org/show_bug.cgi?id=11645
-webkit.org/b/11645 fast/table/025.html [ Failure ]
 
 webkit.org/b/99071 media/context-menu-actions.html [ Failure ]
 
