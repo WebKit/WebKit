@@ -1,3 +1,14 @@
+2012-11-08  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Console: "time" and "timeEnd" should have same number of required arguments
+        https://bugs.webkit.org/show_bug.cgi?id=101451
+
+        Reviewed by Yury Semikhatsky.
+
+        Solution: make console.time "title" parameter mandatory.
+
+        * page/Console.idl: Changed parameter specification.
+
 2012-11-08  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed fixed inspector frontend compilation
