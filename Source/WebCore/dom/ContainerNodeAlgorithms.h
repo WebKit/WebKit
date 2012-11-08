@@ -23,6 +23,7 @@
 #define ContainerNodeAlgorithms_h
 
 #include "Document.h"
+#include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorInstrumentation.h"
 #include <wtf/Assertions.h>
@@ -272,6 +273,11 @@ public:
     explicit ChildFrameDisconnector(Node* root, ShouldIncludeRoot shouldIncludeRoot = IncludeRoot)
         : m_root(root)
     {
+        // If we know there's no frames to disconnect then don't bother traversing
+        // the tree looking for them.
+        Frame* frame = root->document()->frame();
+        if (frame && !frame->tree()->firstChild())
+            return;
         collectDescendant(m_root, shouldIncludeRoot);
         rootNodes().add(m_root);
     }

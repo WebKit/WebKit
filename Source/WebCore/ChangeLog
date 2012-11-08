@@ -1,3 +1,20 @@
+2012-11-08  Elliott Sprehn  <esprehn@chromium.org>
+
+        Skip frame owner disconnect when there's no frames
+        https://bugs.webkit.org/show_bug.cgi?id=101619
+
+        Reviewed by Ojan Vafai.
+
+        Even when there's no subframes in the document we traverse down every
+        subtree on Node removal looking for frames to disconnect. This patch
+        checks document()->frame()->tree()->firstChild() to skip this traversal
+        if there's no subframes.
+
+        No new tests, this just short circuits code for speed.
+
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildFrameDisconnector::ChildFrameDisconnector):
+
 2012-11-08  Erik Arvidsson  <arv@chromium.org>
 
         Wrong error type is thrown for type errors in callbacks
