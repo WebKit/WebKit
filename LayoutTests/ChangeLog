@@ -1,5 +1,17 @@
 2012-11-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
+        [EFL] Gardening after r133807 and r133820
+        https://bugs.webkit.org/show_bug.cgi?id=101585
+
+        Unreviewed gardening.
+
+        Skipping of compositing/absolute-inside-out-of-view-fixed.html and
+        editing/execCommand/switch-list-type-with-orphaned-li.html for EFL.
+
+        * platform/efl/TestExpectations:
+
+2012-11-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
         [EFL] Rebaseline svg/css/group-with-shadow.svg
         https://bugs.webkit.org/show_bug.cgi?id=101592
 

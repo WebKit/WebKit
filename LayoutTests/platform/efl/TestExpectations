@@ -1034,6 +1034,7 @@ webkit.org/b/100815 http/tests/security/isolatedWorld/bypass-main-world-csp.html
 Bug(EFL) http/tests/security/isolatedWorld/didClearWindowObject.html
 
 # EFL has accelerated compositing disabled
+webkit.org/b/79766 compositing/absolute-inside-out-of-view-fixed.html [ Failure ]
 webkit.org/b/79766 compositing/animation/animation-compositing.html [ Failure ]
 webkit.org/b/99043 compositing/backface-visibility/backface-visibility-3d.html [ ImageOnlyFailure ]
 webkit.org/b/99044 compositing/backface-visibility/backface-visibility-hierarchical-transform.html [ ImageOnlyFailure ]
@@ -1685,3 +1686,6 @@ webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while
 webkit.org/b/101439 media/progress-events-generated-correctly.html [ Failure ]
 
 webkit.org/b/101456 fast/repaint/block-selection-gap-in-table-cell.html [ ImageOnlyFailure ]
+
+# Identical failures on GTK, EFL and Qt.
+webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
