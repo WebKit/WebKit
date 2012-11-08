@@ -938,7 +938,7 @@ void DumpRenderTree::dump()
     fputs("#EOF\n", stdout);
     fputs("#EOF\n", stderr);
 
-    if (m_dumpPixelsForCurrentTest && !m_controller->shouldDumpAsText()) {
+    if (m_dumpPixelsForCurrentTest && m_controller->shouldDumpPixels()) {
         QImage image;
         if (!m_controller->isPrinting()) {
             image = QImage(m_page->viewportSize(), QImage::Format_ARGB32);

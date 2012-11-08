@@ -63,6 +63,7 @@ public:
 
     bool shouldDisallowIncreaseForApplicationCacheQuota() const { return m_disallowIncreaseForApplicationCacheQuota; }
     bool shouldDumpAsText() const { return m_textDump; }
+    bool shouldDumpPixels() const { return m_shouldDumpPixels; }
     bool shouldDumpBackForwardList() const { return m_dumpBackForwardList; }
     bool shouldDumpChildrenAsText() const { return m_dumpChildrenAsText; }
     bool shouldDumpChildFrameScrollPositions() const { return m_dumpChildFrameScrollPositions; }
@@ -98,7 +99,7 @@ Q_SIGNALS:
 public Q_SLOTS:
     void maybeDump(bool ok);
     void disallowIncreaseForApplicationCacheQuota() { m_disallowIncreaseForApplicationCacheQuota = true; }
-    void dumpAsText() { m_textDump = true; }
+    void dumpAsText(bool shouldDumpPixels = false);
     void dumpChildFramesAsText() { m_dumpChildrenAsText = true; }
     void dumpChildFrameScrollPositions() { m_dumpChildFrameScrollPositions = true; }
     void dumpDatabaseCallbacks() { m_dumpDatabaseCallbacks = true; }
@@ -284,6 +285,7 @@ private:
 private:
     bool m_hasDumped;
     bool m_textDump;
+    bool m_shouldDumpPixels;
     bool m_disallowIncreaseForApplicationCacheQuota;
     bool m_dumpBackForwardList;
     bool m_dumpChildrenAsText;
