@@ -47,10 +47,14 @@ InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(PassRefPtr<Text> node, unsi
 
 void InsertIntoTextNodeCommand::doApply()
 {
+    bool passwordEchoEnabled = document()->settings() && document()->settings()->passwordEchoEnabled();
+    if (passwordEchoEnabled)
+        document()->updateLayoutIgnorePendingStylesheets();
+
     if (!m_node->rendererIsEditable())
         return;
 
-    if (document()->settings() && document()->settings()->passwordEchoEnabled()) {
+    if (passwordEchoEnabled) {
         RenderText* renderText = toRenderText(m_node->renderer());
         if (renderText && renderText->isSecure())
             renderText->momentarilyRevealLastTypedCharacter(m_offset + m_text.length() - 1);

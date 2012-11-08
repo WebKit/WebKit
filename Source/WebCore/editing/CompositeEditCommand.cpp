@@ -317,10 +317,10 @@ bool CompositeEditCommand::isRemovableBlock(const Node* node)
     return false;
 }
 
-void CompositeEditCommand::insertNodeBefore(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild)
+void CompositeEditCommand::insertNodeBefore(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
     ASSERT(!refChild->hasTagName(bodyTag));
-    applyCommandToComposite(InsertNodeBeforeCommand::create(insertChild, refChild));
+    applyCommandToComposite(InsertNodeBeforeCommand::create(insertChild, refChild, shouldAssumeContentIsAlwaysEditable));
 }
 
 void CompositeEditCommand::insertNodeAfter(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild)
@@ -387,16 +387,16 @@ void CompositeEditCommand::removeChildrenInRange(PassRefPtr<Node> node, unsigned
         removeNode(children[i].release());
 }
 
-void CompositeEditCommand::removeNode(PassRefPtr<Node> node)
+void CompositeEditCommand::removeNode(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
     if (!node || !node->nonShadowBoundaryParentNode())
         return;
-    applyCommandToComposite(RemoveNodeCommand::create(node));
+    applyCommandToComposite(RemoveNodeCommand::create(node, shouldAssumeContentIsAlwaysEditable));
 }
 
-void CompositeEditCommand::removeNodePreservingChildren(PassRefPtr<Node> node)
+void CompositeEditCommand::removeNodePreservingChildren(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
-    applyCommandToComposite(RemoveNodePreservingChildrenCommand::create(node));
+    applyCommandToComposite(RemoveNodePreservingChildrenCommand::create(node, shouldAssumeContentIsAlwaysEditable));
 }
 
 void CompositeEditCommand::removeNodeAndPruneAncestors(PassRefPtr<Node> node)

@@ -73,6 +73,11 @@ private:
     CompositeEditCommand* m_parent;
 };
 
+enum ShouldAssumeContentIsAlwaysEditable {
+    AssumeContentIsAlwaysEditable,
+    DoNotAssumeContentIsAlwaysEditable,
+};
+
 class SimpleEditCommand : public EditCommand {
 public:
     virtual void doUnapply() = 0;

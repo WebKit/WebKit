@@ -41,7 +41,7 @@ SimplifyMarkupCommand::SimplifyMarkupCommand(Document* document, Node* firstNode
 void SimplifyMarkupCommand::doApply()
 {
     Node* rootNode = m_firstNode->parentNode();
-    Vector<Node*> nodesToRemove;
+    Vector<RefPtr<Node> > nodesToRemove;
     
     // Walk through the inserted nodes, to see if there are elements that could be removed
     // without affecting the style. The goal is to produce leaner markup even when starting
@@ -83,9 +83,42 @@ void SimplifyMarkupCommand::doApply()
                 nodesToRemove.append(node);
         }
     }
+
     // we perform all the DOM mutations at once.
-    for (size_t i = 0; i < nodesToRemove.size(); ++i)
-        removeNodePreservingChildren(nodesToRemove[i]);
+    for (size_t i = 0; i < nodesToRemove.size(); ++i) {
+        // FIXME: We can do better by directly moving children from nodesToRemove[i].
+        int numPrunedAncestors = pruneSubsequentAncestorsToRemove(nodesToRemove, i);
+        if (numPrunedAncestors < 0)
+            continue;
+        removeNodePreservingChildren(nodesToRemove[i], AssumeContentIsAlwaysEditable);
+        i += numPrunedAncestors;
+    }
+}
+
+int SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove(Vector<RefPtr<Node> >& nodesToRemove, size_t startNodeIndex)
+{
+    size_t pastLastNodeToRemove = startNodeIndex + 1;
+    for (; pastLastNodeToRemove < nodesToRemove.size(); ++pastLastNodeToRemove) {
+        if (nodesToRemove[pastLastNodeToRemove - 1]->parentNode() != nodesToRemove[pastLastNodeToRemove])
+            break;
+        ASSERT(nodesToRemove[pastLastNodeToRemove]->firstChild() == nodesToRemove[pastLastNodeToRemove]->lastChild());
+    }
+
+    if (pastLastNodeToRemove == startNodeIndex + 1)
+        return 0;
+
+    Node* highestAncestorToRemove = nodesToRemove[pastLastNodeToRemove - 1].get();
+
+    RefPtr<Node> nodeAfterHighestAncestorToRemove = highestAncestorToRemove->nextSibling();
+    RefPtr<ContainerNode> parent = highestAncestorToRemove->parentNode();
+    if (!parent) // Parent has already been removed.
+        return -1;
+
+    removeNode(nodesToRemove[startNodeIndex], AssumeContentIsAlwaysEditable);
+    insertNodeBefore(nodesToRemove[startNodeIndex], highestAncestorToRemove, AssumeContentIsAlwaysEditable);
+    removeNode(highestAncestorToRemove, AssumeContentIsAlwaysEditable);
+
+    return pastLastNodeToRemove - startNodeIndex - 1;
 }
 
 } // namespace WebCore

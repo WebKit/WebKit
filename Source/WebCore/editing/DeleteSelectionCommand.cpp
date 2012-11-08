@@ -333,7 +333,7 @@ static Position firstEditablePositionInNode(Node* node)
     return next ? firstPositionInOrBeforeNode(next) : Position();
 }
 
-void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
+void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
 {
     if (!node)
         return;
@@ -348,7 +348,7 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
             RefPtr<Node> child = node->firstChild();
             while (child) {
                 RefPtr<Node> nextChild = child->nextSibling();
-                removeNode(child.get());
+                removeNode(child.get(), shouldAssumeContentIsAlwaysEditable);
                 // Bail if nextChild is no longer node's child.
                 if (nextChild && nextChild->parentNode() != node)
                     return;
@@ -367,7 +367,7 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
         while (child) {
             Node* remove = child;
             child = child->nextSibling();
-            removeNode(remove);
+            removeNode(remove, shouldAssumeContentIsAlwaysEditable);
         }
         
         // Make sure empty cell has some height, if a placeholder can be inserted.
@@ -391,7 +391,7 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
     updatePositionForNodeRemoval(m_leadingWhitespace, node.get());
     updatePositionForNodeRemoval(m_trailingWhitespace, node.get());
     
-    CompositeEditCommand::removeNode(node);
+    CompositeEditCommand::removeNode(node, shouldAssumeContentIsAlwaysEditable);
 }
 
 static void updatePositionForTextRemoval(Node* node, int offset, int count, Position& position)

@@ -32,10 +32,12 @@
 
 namespace WebCore {
 
-InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild)
+InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild,
+    ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
     : SimpleEditCommand(refChild->document())
     , m_insertChild(insertChild)
     , m_refChild(refChild)
+    , m_shouldAssumeContentIsAlwaysEditable(shouldAssumeContentIsAlwaysEditable)
 {
     ASSERT(m_insertChild);
     ASSERT(!m_insertChild->parentNode());
@@ -48,11 +50,12 @@ InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, P
 void InsertNodeBeforeCommand::doApply()
 {
     ContainerNode* parent = m_refChild->parentNode();
-    if (!parent || !parent->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable))
+    if (!parent || (m_shouldAssumeContentIsAlwaysEditable == DoNotAssumeContentIsAlwaysEditable && !parent->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable)))
         return;
+    ASSERT(parent->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable));
 
     ExceptionCode ec;
-    parent->insertBefore(m_insertChild.get(), m_refChild.get(), ec);
+    parent->insertBefore(m_insertChild.get(), m_refChild.get(), ec, true /* lazyAttach */);
 
     if (AXObjectCache::accessibilityEnabled())
         document()->axObjectCache()->nodeTextChangeNotification(m_insertChild.get(), AXObjectCache::AXTextInserted, 0, m_insertChild->nodeValue());
@@ -62,7 +65,7 @@ void InsertNodeBeforeCommand::doUnapply()
 {
     if (!m_insertChild->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable))
         return;
-        
+
     // Need to notify this before actually deleting the text
     if (AXObjectCache::accessibilityEnabled())
         document()->axObjectCache()->nodeTextChangeNotification(m_insertChild.get(), AXObjectCache::AXTextDeleted, 0, m_insertChild->nodeValue());

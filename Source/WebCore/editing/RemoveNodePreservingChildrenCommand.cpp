@@ -31,9 +31,10 @@
 
 namespace WebCore {
 
-RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(PassRefPtr<Node> node)
+RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
     : CompositeEditCommand(node->document())
     , m_node(node)
+    , m_shouldAssumeContentIsAlwaysEditable(shouldAssumeContentIsAlwaysEditable)
 {
     ASSERT(m_node);
 }
@@ -47,10 +48,10 @@ void RemoveNodePreservingChildrenCommand::doApply()
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i) {
         RefPtr<Node> child = children[i].release();
-        removeNode(child);
-        insertNodeBefore(child.release(), m_node);
+        removeNode(child, m_shouldAssumeContentIsAlwaysEditable);
+        insertNodeBefore(child.release(), m_node, m_shouldAssumeContentIsAlwaysEditable);
     }
-    removeNode(m_node);
+    removeNode(m_node, m_shouldAssumeContentIsAlwaysEditable);
 }
 
 }

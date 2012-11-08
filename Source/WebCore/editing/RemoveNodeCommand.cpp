@@ -31,9 +31,10 @@
 
 namespace WebCore {
 
-RemoveNodeCommand::RemoveNodeCommand(PassRefPtr<Node> node)
+RemoveNodeCommand::RemoveNodeCommand(PassRefPtr<Node> node, ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
     : SimpleEditCommand(node->document())
     , m_node(node)
+    , m_shouldAssumeContentIsAlwaysEditable(shouldAssumeContentIsAlwaysEditable)
 {
     ASSERT(m_node);
     ASSERT(m_node->parentNode());
@@ -42,8 +43,10 @@ RemoveNodeCommand::RemoveNodeCommand(PassRefPtr<Node> node)
 void RemoveNodeCommand::doApply()
 {
     ContainerNode* parent = m_node->parentNode();
-    if (!parent || !parent->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable))
+    if (!parent || (m_shouldAssumeContentIsAlwaysEditable == DoNotAssumeContentIsAlwaysEditable
+        && !parent->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable) && parent->attached()))
         return;
+    ASSERT(parent->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable) || !parent->attached());
 
     m_parent = parent;
     m_refChild = m_node->nextSibling();

@@ -1,3 +1,70 @@
+2012-11-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SimplifyMarkupCommand takes a disproportionally long time to run when there are many nodes to remove
+        https://bugs.webkit.org/show_bug.cgi?id=101144
+
+        Reviewed by Enrica Casucci.
+
+        The bug was caused by attach() happening between each node removal. Since the command was trying
+        to remove millions of node in some cases, attach()ing render objects for each node being reinserted
+        imposed a huge runtime cost.
+
+        Fixed the bug by using lazy attach when removing nodes and avoiding calls to isContentEditable.
+        Also remove all ancestors at once when they are direct child/parent of each other so that we don't
+        remove an ancestor and then insert its child back only to remove it again in the next iteration.
+
+        No new tests since it doesn't change the asymptotic performance, and adding a new performance test for
+        this specific case is not the worth the increase in the bot cycle time. I'll note that the email
+        attached in the original radar bug (<rdar://problem/12179712>) took 100 seconds to open now only takes
+        7 seconds to open on my MacPro.
+
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::doApply): Takes a flag indicating whether we should assume nodes are editable
+        without calling isContentEditable or not.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyleToPushDown): Update the style as later code requires render
+        object.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeBefore): Passes a flag to the command.
+        (WebCore::CompositeEditCommand::removeNode): Ditto.
+        (WebCore::CompositeEditCommand::removeNodePreservingChildren): Ditto.
+        * editing/CompositeEditCommand.h:
+        (CompositeEditCommand):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removeNode): Takes a flag indicating whether we should assume nodes are
+        editable without calling isContentEditable or not.
+        * editing/DeleteSelectionCommand.h:
+        (DeleteSelectionCommand):
+        * editing/EditCommand.h:
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doApply): Update the layout when password echo is enabled since
+        we need to have render objects for echoing.
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::InsertNodeBeforeCommand): Ditto.
+        (WebCore::InsertNodeBeforeCommand::doApply): Ditto; also always use lazy attach.
+        (WebCore::InsertNodeBeforeCommand::doUnapply):
+        * editing/InsertNodeBeforeCommand.h:
+        (WebCore::InsertNodeBeforeCommand::create):
+        (InsertNodeBeforeCommand):
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::RemoveNodeCommand): Ditto about the flag.
+        (WebCore::RemoveNodeCommand::doApply):
+        * editing/RemoveNodeCommand.h:
+        (WebCore::RemoveNodeCommand::create):
+        (RemoveNodeCommand):
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        (WebCore::RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand): Ditto.
+        (WebCore::RemoveNodePreservingChildrenCommand::doApply):
+        * editing/RemoveNodePreservingChildrenCommand.h:
+        (WebCore::RemoveNodePreservingChildrenCommand::create):
+        (RemoveNodePreservingChildrenCommand):
+        * editing/SimplifyMarkupCommand.cpp:
+        (WebCore::SimplifyMarkupCommand::doApply):
+        (WebCore::SimplifyMarkupCommand::pruneSubsequentAncestorsToRemove): Added to optimize removals of multiple
+        ancestors.
+        * editing/SimplifyMarkupCommand.h:
+        (SimplifyMarkupCommand):
+
 2012-11-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133810.

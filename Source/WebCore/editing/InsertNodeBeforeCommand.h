@@ -32,13 +32,14 @@ namespace WebCore {
 
 class InsertNodeBeforeCommand : public SimpleEditCommand {
 public:
-    static PassRefPtr<InsertNodeBeforeCommand> create(PassRefPtr<Node> childToInsert, PassRefPtr<Node> childToInsertBefore)
+    static PassRefPtr<InsertNodeBeforeCommand> create(PassRefPtr<Node> childToInsert, PassRefPtr<Node> childToInsertBefore,
+        ShouldAssumeContentIsAlwaysEditable shouldAssumeContentIsAlwaysEditable)
     {
-        return adoptRef(new InsertNodeBeforeCommand(childToInsert, childToInsertBefore));
+        return adoptRef(new InsertNodeBeforeCommand(childToInsert, childToInsertBefore, shouldAssumeContentIsAlwaysEditable));
     }
 
 private:
-    InsertNodeBeforeCommand(PassRefPtr<Node> childToInsert, PassRefPtr<Node> childToInsertBefore);
+    InsertNodeBeforeCommand(PassRefPtr<Node> childToInsert, PassRefPtr<Node> childToInsertBefore, ShouldAssumeContentIsAlwaysEditable);
 
     virtual void doApply() OVERRIDE;
     virtual void doUnapply() OVERRIDE;
@@ -48,7 +49,8 @@ private:
 #endif
     
     RefPtr<Node> m_insertChild;
-    RefPtr<Node> m_refChild; 
+    RefPtr<Node> m_refChild;
+    ShouldAssumeContentIsAlwaysEditable m_shouldAssumeContentIsAlwaysEditable;
 };
 
 } // namespace WebCore

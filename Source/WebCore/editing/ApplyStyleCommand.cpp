@@ -942,6 +942,8 @@ void ApplyStyleCommand::applyInlineStyleToPushDown(Node* node, EditingStyle* sty
 {
     ASSERT(node);
 
+    node->document()->updateStyleIfNeeded();
+
     if (!style || style->isEmpty() || !node->renderer())
         return;
 

@@ -60,7 +60,7 @@ void AppendNodeCommand::doApply()
         return;
         
     ExceptionCode ec;
-    m_parent->appendChild(m_node.get(), ec);
+    m_parent->appendChild(m_node.get(), ec, true /* lazyAttach */);
 
     if (AXObjectCache::accessibilityEnabled())
         sendAXTextChangedIgnoringLineBreaks(m_node.get(), AXObjectCache::AXTextInserted);

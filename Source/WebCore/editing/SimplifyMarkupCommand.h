@@ -41,7 +41,8 @@ private:
     SimplifyMarkupCommand(Document*, Node* firstNode, Node* nodeAfterLast);
 
     virtual void doApply();
-    
+    int pruneSubsequentAncestorsToRemove(Vector<RefPtr<Node> >& nodesToRemove, size_t startNodeIndex);
+
     RefPtr<Node> m_firstNode;
     RefPtr<Node> m_nodeAfterLast;
 };
