@@ -88,10 +88,13 @@ else
 end
 
 # Constant for reasoning about butterflies.
-const IsArray = 1
-const IndexingShapeMask = 30
-const ContiguousShape = 26
-const ArrayStorageShape = 28
+const IsArray                  = 1
+const IndexingShapeMask        = 30
+const NoIndexingShape          = 0
+const Int32Shape               = 20
+const DoubleShape              = 22
+const ContiguousShape          = 26
+const ArrayStorageShape        = 28
 const SlowPutArrayStorageShape = 30
 
 # Type constants.
@@ -462,19 +465,19 @@ end
 _llint_op_new_array:
     traceExecution()
     callSlowPath(_llint_slow_path_new_array)
-    dispatch(4)
+    dispatch(5)
 
 
 _llint_op_new_array_with_size:
     traceExecution()
     callSlowPath(_llint_slow_path_new_array_with_size)
-    dispatch(3)
+    dispatch(4)
 
 
 _llint_op_new_array_buffer:
     traceExecution()
     callSlowPath(_llint_slow_path_new_array_buffer)
-    dispatch(4)
+    dispatch(5)
 
 
 _llint_op_new_regexp:

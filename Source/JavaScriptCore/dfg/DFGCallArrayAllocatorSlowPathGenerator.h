@@ -61,7 +61,7 @@ protected:
             jit->silentSpill(m_plans[i]);
         jit->callOperation(m_function, m_resultGPR, m_structure, m_size);
         GPRReg canTrample = SpeculativeJIT::pickCanTrample(m_resultGPR);
-        for (unsigned i = 0; i < m_plans.size(); ++i)
+        for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i], canTrample);
         jit->m_jit.loadPtr(MacroAssembler::Address(m_resultGPR, JSObject::butterflyOffset()), m_storageGPR);
         jumpTo(jit);
@@ -106,7 +106,7 @@ protected:
         done.link(&jit->m_jit);
         jit->callOperation(m_function, m_resultGPR, scratchGPR, m_sizeGPR);
         GPRReg canTrample = SpeculativeJIT::pickCanTrample(m_resultGPR);
-        for (unsigned i = 0; i < m_plans.size(); ++i)
+        for (unsigned i = m_plans.size(); i--;)
             jit->silentFill(m_plans[i], canTrample);
         jumpTo(jit);
     }

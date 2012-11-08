@@ -230,9 +230,16 @@ void JSGlobalObject::reset(JSValue prototype)
     m_callbackObjectStructure.set(exec->globalData(), this, JSCallbackObject<JSDestructibleObject>::createStructure(exec->globalData(), this, m_objectPrototype.get()));
 
     m_arrayPrototype.set(exec->globalData(), this, ArrayPrototype::create(exec, this, ArrayPrototype::createStructure(exec->globalData(), this, m_objectPrototype.get())));
-    m_arrayStructure.set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithContiguous));
-    m_arrayStructureWithArrayStorage.set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithArrayStorage));
-    m_arrayStructureForSlowPut.set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithSlowPutArrayStorage));
+    
+    m_originalArrayStructureForIndexingShape[UndecidedShape >> IndexingShapeShift].set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithUndecided));
+    m_originalArrayStructureForIndexingShape[Int32Shape >> IndexingShapeShift].set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithInt32));
+    m_originalArrayStructureForIndexingShape[DoubleShape >> IndexingShapeShift].set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithDouble));
+    m_originalArrayStructureForIndexingShape[ContiguousShape >> IndexingShapeShift].set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithContiguous));
+    m_originalArrayStructureForIndexingShape[ArrayStorageShape >> IndexingShapeShift].set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithArrayStorage));
+    m_originalArrayStructureForIndexingShape[SlowPutArrayStorageShape >> IndexingShapeShift].set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), this, m_arrayPrototype.get(), ArrayWithSlowPutArrayStorage));
+    for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)
+        m_arrayStructureForIndexingShapeDuringAllocation[i] = m_originalArrayStructureForIndexingShape[i];
+    
     m_regExpMatchesArrayStructure.set(exec->globalData(), this, RegExpMatchesArray::createStructure(exec->globalData(), this, m_arrayPrototype.get()));
 
     m_stringPrototype.set(exec->globalData(), this, StringPrototype::create(exec, this, StringPrototype::createStructure(exec->globalData(), this, m_objectPrototype.get())));
@@ -360,7 +367,9 @@ inline bool hasBrokenIndexing(JSObject* object)
 {
     // This will change if we have more indexing types.
     IndexingType type = object->structure()->indexingType();
-    return hasContiguous(type) || hasFastArrayStorage(type);
+    // This could be made obviously more efficient, but isn't made so right now, because
+    // we expect this to be an unlikely slow path anyway.
+    return hasUndecided(type) || hasInt32(type) || hasDouble(type) || hasContiguous(type) || hasFastArrayStorage(type);
 }
 
 void ObjectsWithBrokenIndexingFinder::operator()(JSCell* cell)
@@ -412,8 +421,8 @@ void JSGlobalObject::haveABadTime(JSGlobalData& globalData)
     
     // Make sure that all JSArray allocations that load the appropriate structure from
     // this object now load a structure that uses SlowPut.
-    m_arrayStructure.set(globalData, this, m_arrayStructureForSlowPut.get());
-    m_arrayStructureWithArrayStorage.set(globalData, this, m_arrayStructureForSlowPut.get());
+    for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)
+        m_arrayStructureForIndexingShapeDuringAllocation[i].set(globalData, this, originalArrayStructureForIndexingType(ArrayWithSlowPutArrayStorage));
     
     // Make sure that all objects that have indexed storage switch to the slow kind of
     // indexed storage.
@@ -488,9 +497,10 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_activationStructure);
     visitor.append(&thisObject->m_nameScopeStructure);
     visitor.append(&thisObject->m_argumentsStructure);
-    visitor.append(&thisObject->m_arrayStructure);
-    visitor.append(&thisObject->m_arrayStructureWithArrayStorage);
-    visitor.append(&thisObject->m_arrayStructureForSlowPut);
+    for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)
+        visitor.append(&thisObject->m_originalArrayStructureForIndexingShape[i]);
+    for (unsigned i = 0; i < NumberOfIndexingShapes; ++i)
+        visitor.append(&thisObject->m_arrayStructureForIndexingShapeDuringAllocation[i]);
     visitor.append(&thisObject->m_booleanObjectStructure);
     visitor.append(&thisObject->m_callbackConstructorStructure);
     visitor.append(&thisObject->m_callbackFunctionStructure);

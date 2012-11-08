@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +47,7 @@ namespace JSC {
     // curently actually use PolymorphicAccessStructureLists, which we should).  Anyway, this seems like the best
     // solution for now - will need to something smarter if/when we actually want mixed-mode operation.
 
+    class ArrayAllocationProfile;
     class ArrayProfile;
     class JSCell;
     class Structure;
@@ -193,6 +194,7 @@ namespace JSC {
         
         Instruction(ValueProfile* profile) { u.profile = profile; }
         Instruction(ArrayProfile* profile) { u.arrayProfile = profile; }
+        Instruction(ArrayAllocationProfile* profile) { u.arrayAllocationProfile = profile; }
         
         Instruction(WriteBarrier<Unknown>* registerPointer) { u.registerPointer = registerPointer; }
         
@@ -212,6 +214,7 @@ namespace JSC {
             LLIntCallLinkInfo* callLinkInfo;
             ValueProfile* profile;
             ArrayProfile* arrayProfile;
+            ArrayAllocationProfile* arrayAllocationProfile;
             void* pointer;
             bool* predicatePointer;
         } u;

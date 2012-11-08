@@ -58,6 +58,8 @@ inline const char* exitKindToString(ExitKind kind)
         return "BadCache";
     case BadWeakConstantCache:
         return "BadWeakConstantCache";
+    case BadIndexingType:
+        return "BadIndexingType";
     case Overflow:
         return "Overflow";
     case NegativeZero:

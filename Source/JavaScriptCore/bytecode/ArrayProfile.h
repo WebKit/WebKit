@@ -45,15 +45,20 @@ typedef unsigned ArrayModes;
 
 #define ALL_NON_ARRAY_ARRAY_MODES                       \
     (asArrayModes(NonArray)                             \
-     | asArrayModes(NonArrayWithContiguous)             \
-     | asArrayModes(NonArrayWithArrayStorage)           \
-     | asArrayModes(NonArrayWithSlowPutArrayStorage))
+    | asArrayModes(NonArrayWithInt32)                   \
+    | asArrayModes(NonArrayWithDouble)                  \
+    | asArrayModes(NonArrayWithContiguous)              \
+    | asArrayModes(NonArrayWithArrayStorage)            \
+    | asArrayModes(NonArrayWithSlowPutArrayStorage))
 
 #define ALL_ARRAY_ARRAY_MODES                           \
     (asArrayModes(ArrayClass)                           \
-     | asArrayModes(ArrayWithContiguous)                \
-     | asArrayModes(ArrayWithArrayStorage)              \
-     | asArrayModes(ArrayWithSlowPutArrayStorage))
+    | asArrayModes(ArrayWithUndecided)                  \
+    | asArrayModes(ArrayWithInt32)                      \
+    | asArrayModes(ArrayWithDouble)                     \
+    | asArrayModes(ArrayWithContiguous)                 \
+    | asArrayModes(ArrayWithArrayStorage)               \
+    | asArrayModes(ArrayWithSlowPutArrayStorage))
 
 #define ALL_ARRAY_MODES (ALL_NON_ARRAY_ARRAY_MODES | ALL_ARRAY_ARRAY_MODES)
 
@@ -77,6 +82,36 @@ inline bool mergeArrayModes(ArrayModes& left, ArrayModes right)
 inline bool arrayModesAlreadyChecked(ArrayModes proven, ArrayModes expected)
 {
     return (expected | proven) == expected;
+}
+
+inline bool arrayModesInclude(ArrayModes arrayModes, IndexingType shape)
+{
+    return !!(arrayModes & (asArrayModes(NonArray | shape) | asArrayModes(ArrayClass | shape)));
+}
+
+inline bool shouldUseSlowPutArrayStorage(ArrayModes arrayModes)
+{
+    return arrayModesInclude(arrayModes, SlowPutArrayStorageShape);
+}
+
+inline bool shouldUseFastArrayStorage(ArrayModes arrayModes)
+{
+    return arrayModesInclude(arrayModes, ArrayStorageShape);
+}
+
+inline bool shouldUseContiguous(ArrayModes arrayModes)
+{
+    return arrayModesInclude(arrayModes, ContiguousShape);
+}
+
+inline bool shouldUseDouble(ArrayModes arrayModes)
+{
+    return arrayModesInclude(arrayModes, DoubleShape);
+}
+
+inline bool shouldUseInt32(ArrayModes arrayModes)
+{
+    return arrayModesInclude(arrayModes, Int32Shape);
 }
 
 class ArrayProfile {
@@ -128,6 +163,7 @@ public:
         return !structureIsPolymorphic() && m_expectedStructure;
     }
     ArrayModes observedArrayModes() const { return m_observedArrayModes; }
+    ArrayModes updatedObservedArrayModes() const; // Computes the observed array modes without updating the profile.
     bool mayInterceptIndexedAccesses() const { return m_mayInterceptIndexedAccesses; }
     
     bool mayStoreToHole() const { return m_mayStoreToHole; }

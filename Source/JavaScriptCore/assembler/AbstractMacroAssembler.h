@@ -586,6 +586,13 @@ public:
 
     public:
         typedef Vector<Jump, 16> JumpVector;
+        
+        JumpList() { }
+        
+        JumpList(Jump jump)
+        {
+            append(jump);
+        }
 
         void link(AbstractMacroAssembler<AssemblerType>* masm)
         {

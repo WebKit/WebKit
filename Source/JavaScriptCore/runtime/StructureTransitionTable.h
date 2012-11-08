@@ -43,6 +43,9 @@ static const unsigned FirstInternalAttribute = 1 << 6; // Use for transitions th
 // Support for attributes used to indicate transitions not related to properties.
 // If any of these are used, the string portion of the key should be 0.
 enum NonPropertyTransition {
+    AllocateUndecided,
+    AllocateInt32,
+    AllocateDouble,
     AllocateContiguous,
     AllocateArrayStorage,
     AllocateSlowPutArrayStorage,
@@ -58,14 +61,23 @@ inline unsigned toAttributes(NonPropertyTransition transition)
 inline IndexingType newIndexingType(IndexingType oldType, NonPropertyTransition transition)
 {
     switch (transition) {
-    case AllocateContiguous:
+    case AllocateUndecided:
         ASSERT(!hasIndexedProperties(oldType));
-        return oldType | ContiguousShape;
+        return oldType | UndecidedShape;
+    case AllocateInt32:
+        ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType));
+        return (oldType & ~IndexingShapeMask) | Int32Shape;
+    case AllocateDouble:
+        ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType));
+        return (oldType & ~IndexingShapeMask) | DoubleShape;
+    case AllocateContiguous:
+        ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType) || hasDouble(oldType));
+        return (oldType & ~IndexingShapeMask) | ContiguousShape;
     case AllocateArrayStorage:
-        ASSERT(!hasIndexedProperties(oldType) || hasContiguous(oldType));
+        ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType) || hasDouble(oldType) || hasContiguous(oldType));
         return (oldType & ~IndexingShapeMask) | ArrayStorageShape;
     case AllocateSlowPutArrayStorage:
-        ASSERT(!hasIndexedProperties(oldType) || hasContiguous(oldType));
+        ASSERT(!hasIndexedProperties(oldType) || hasUndecided(oldType) || hasInt32(oldType) || hasDouble(oldType) || hasContiguous(oldType) || hasContiguous(oldType));
         return (oldType & ~IndexingShapeMask) | SlowPutArrayStorageShape;
     case SwitchToSlowPutArrayStorage:
         ASSERT(hasFastArrayStorage(oldType));

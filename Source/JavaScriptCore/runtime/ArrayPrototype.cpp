@@ -456,7 +456,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncConcat(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    JSArray* arr = constructEmptyArray(exec);
+    JSArray* arr = constructEmptyArray(exec, 0);
     unsigned n = 0;
     JSValue curArg = thisValue.toObject(exec);
     if (exec->hadException())
@@ -618,7 +618,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     // We return a new array
-    JSArray* resObj = constructEmptyArray(exec);
+    JSArray* resObj = constructEmptyArray(exec, 0);
     JSValue result = resObj;
 
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
@@ -733,7 +733,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         return JSValue::encode(jsUndefined());
     
     if (!exec->argumentCount())
-        return JSValue::encode(constructEmptyArray(exec));
+        return JSValue::encode(constructEmptyArray(exec, 0));
 
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
 
@@ -748,7 +748,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             deleteCount = static_cast<unsigned>(deleteDouble);
     }
 
-    JSArray* resObj = JSArray::tryCreateUninitialized(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), deleteCount);
+    JSArray* resObj = JSArray::tryCreateUninitialized(exec->globalData(), exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), deleteCount);
     if (!resObj)
         return JSValue::encode(throwOutOfMemoryError(exec));
 
@@ -820,7 +820,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState* exec)
         return throwVMTypeError(exec);
 
     JSValue applyThis = exec->argument(1);
-    JSArray* resultArray = constructEmptyArray(exec);
+    JSArray* resultArray = constructEmptyArray(exec, 0);
 
     unsigned filterIndex = 0;
     unsigned k = 0;
@@ -880,7 +880,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState* exec)
 
     JSValue applyThis = exec->argument(1);
 
-    JSArray* resultArray = constructEmptyArray(exec, length);
+    JSArray* resultArray = constructEmptyArray(exec, 0, length);
     unsigned k = 0;
     if (callType == CallTypeJS && isJSArray(thisObj)) {
         JSFunction* f = jsCast<JSFunction*>(function);

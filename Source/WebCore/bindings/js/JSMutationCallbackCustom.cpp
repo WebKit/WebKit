@@ -62,7 +62,7 @@ bool JSMutationCallback::handleEvent(MutationRecordArray* mutations, MutationObs
     JSValue jsObserver = toJS(exec, m_data->globalObject(), observer);
 
     MarkedArgumentBuffer args;
-    args.append(constructArray(exec, m_data->globalObject(), mutationList));
+    args.append(constructArray(exec, 0, m_data->globalObject(), mutationList));
     args.append(jsObserver);
 
     bool raisedException = false;

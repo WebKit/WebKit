@@ -870,7 +870,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
         return JSValue::encode(jsNull());
     }
 
-    return JSValue::encode(constructArray(exec, list));
+    return JSValue::encode(constructArray(exec, static_cast<ArrayAllocationProfile*>(0), list));
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
@@ -973,7 +973,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
 
     // 3. Let A be a new array created as if by the expression new Array()
     //    where Array is the standard built-in constructor with that name.
-    JSArray* result = constructEmptyArray(exec);
+    JSArray* result = constructEmptyArray(exec, 0);
 
     // 4. Let lengthA be 0.
     unsigned resultLength = 0;

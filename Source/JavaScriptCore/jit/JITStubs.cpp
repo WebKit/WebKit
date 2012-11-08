@@ -1877,6 +1877,11 @@ DEFINE_STUB_FUNCTION(void, optimize)
     ASSERT(optimizedCodeBlock->getJITType() == JITCode::DFGJIT);
     
     if (void* address = DFG::prepareOSREntry(callFrame, optimizedCodeBlock, bytecodeIndex)) {
+        if (Options::showDFGDisassembly()) {
+            dataLog(
+                "Performing OSR from code block %p to code block %p, address %p to %p.\n",
+                codeBlock, optimizedCodeBlock, (STUB_RETURN_ADDRESS).value(), address);
+        }
 #if ENABLE(JIT_VERBOSE_OSR)
         dataLog("Optimizing %p succeeded, performing OSR after a delay of %u.\n", codeBlock, codeBlock->optimizationDelayCounter());
 #endif
@@ -2228,21 +2233,21 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_array)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    return constructArray(stackFrame.callFrame, reinterpret_cast<JSValue*>(&stackFrame.callFrame->registers()[stackFrame.args[0].int32()]), stackFrame.args[1].int32());
+    return constructArray(stackFrame.callFrame, stackFrame.args[2].arrayAllocationProfile(), reinterpret_cast<JSValue*>(&stackFrame.callFrame->registers()[stackFrame.args[0].int32()]), stackFrame.args[1].int32());
 }
 
 DEFINE_STUB_FUNCTION(JSObject*, op_new_array_with_size)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     
-    return constructArrayWithSizeQuirk(stackFrame.callFrame, stackFrame.callFrame->lexicalGlobalObject(), stackFrame.args[0].jsValue());
+    return constructArrayWithSizeQuirk(stackFrame.callFrame, stackFrame.args[1].arrayAllocationProfile(), stackFrame.callFrame->lexicalGlobalObject(), stackFrame.args[0].jsValue());
 }
 
 DEFINE_STUB_FUNCTION(JSObject*, op_new_array_buffer)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
     
-    return constructArray(stackFrame.callFrame, stackFrame.callFrame->codeBlock()->constantBuffer(stackFrame.args[0].int32()), stackFrame.args[1].int32());
+    return constructArray(stackFrame.callFrame, stackFrame.args[2].arrayAllocationProfile(), stackFrame.callFrame->codeBlock()->constantBuffer(stackFrame.args[0].int32()), stackFrame.args[1].int32());
 }
 
 DEFINE_STUB_FUNCTION(void, op_init_global_const_check)
@@ -2470,7 +2475,7 @@ DEFINE_STUB_FUNCTION(void, op_put_by_val)
     JSValue baseValue = stackFrame.args[0].jsValue();
     JSValue subscript = stackFrame.args[1].jsValue();
     JSValue value = stackFrame.args[2].jsValue();
-
+    
     if (baseValue.isObject() && subscript.isInt32()) {
         // See if it's worth optimizing at all.
         JSObject* object = asObject(baseValue);

@@ -275,7 +275,7 @@ inline bool shouldJIT(ExecState* exec)
 // Returns true if we should try to OSR.
 inline bool jitCompileAndSetHeuristics(CodeBlock* codeBlock, ExecState* exec)
 {
-    codeBlock->updateAllPredictions();
+    codeBlock->updateAllValueProfilePredictions();
     
     if (!codeBlock->checkIfJITThresholdReached()) {
 #if ENABLE(JIT_VERBOSE_OSR)
@@ -510,19 +510,19 @@ LLINT_SLOW_PATH_DECL(slow_path_new_object)
 LLINT_SLOW_PATH_DECL(slow_path_new_array)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(constructArray(exec, bitwise_cast<JSValue*>(&LLINT_OP(2)), pc[3].u.operand));
+    LLINT_RETURN(constructArray(exec, pc[4].u.arrayAllocationProfile, bitwise_cast<JSValue*>(&LLINT_OP(2)), pc[3].u.operand));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_array_with_size)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(constructArrayWithSizeQuirk(exec, exec->lexicalGlobalObject(), LLINT_OP_C(2).jsValue()));
+    LLINT_RETURN(constructArrayWithSizeQuirk(exec, pc[3].u.arrayAllocationProfile, exec->lexicalGlobalObject(), LLINT_OP_C(2).jsValue()));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_array_buffer)
 {
     LLINT_BEGIN();
-    LLINT_RETURN(constructArray(exec, exec->codeBlock()->constantBuffer(pc[2].u.operand), pc[3].u.operand));
+    LLINT_RETURN(constructArray(exec, pc[4].u.arrayAllocationProfile, exec->codeBlock()->constantBuffer(pc[2].u.operand), pc[3].u.operand));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_regexp)

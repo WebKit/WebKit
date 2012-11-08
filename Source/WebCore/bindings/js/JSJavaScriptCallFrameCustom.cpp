@@ -90,7 +90,7 @@ JSValue JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
         ++iter;
     } while (iter != end);
 
-    return constructArray(exec, globalObject(), list);
+    return constructArray(exec, 0, globalObject(), list);
 }
 
 JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)

@@ -523,6 +523,7 @@ namespace JSC {
 #endif
 
         void emitOpcode(OpcodeID);
+        UnlinkedArrayAllocationProfile newArrayAllocationProfile();
         UnlinkedArrayProfile newArrayProfile();
         UnlinkedValueProfile emitProfiledOpcode(OpcodeID);
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);

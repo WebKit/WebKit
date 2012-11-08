@@ -543,12 +543,13 @@ Structure* Structure::nonPropertyTransition(JSGlobalData& globalData, Structure*
     unsigned attributes = toAttributes(transitionKind);
     IndexingType indexingType = newIndexingType(structure->indexingTypeIncludingHistory(), transitionKind);
     
-    JSGlobalObject* globalObject = structure->globalObject();
-    if (structure == globalObject->arrayStructure()) {
-        Structure* transition = globalObject->arrayStructureWithArrayStorage();
-        if (transition->indexingTypeIncludingHistory() == indexingType) {
-            structure->notifyTransitionFromThisStructure();
-            return transition;
+    if (JSGlobalObject* globalObject = structure->m_globalObject.get()) {
+        if (globalObject->isOriginalArrayStructure(structure)) {
+            Structure* result = globalObject->originalArrayStructureForIndexingType(indexingType);
+            if (result->indexingTypeIncludingHistory() == indexingType) {
+                structure->notifyTransitionFromThisStructure();
+                return result;
+            }
         }
     }
     

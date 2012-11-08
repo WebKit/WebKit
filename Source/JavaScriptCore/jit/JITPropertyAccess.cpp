@@ -98,7 +98,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     unsigned base = currentInstruction[2].u.operand;
     unsigned property = currentInstruction[3].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
-
+    
     emitGetVirtualRegisters(base, regT0, property, regT1);
     emitJumpSlowCaseIfNotImmediateInteger(regT1);
 
@@ -120,6 +120,12 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 
     JITArrayMode mode = chooseArrayMode(profile);
     switch (mode) {
+    case JITInt32:
+        slowCases = emitInt32GetByVal(currentInstruction, badType);
+        break;
+    case JITDouble:
+        slowCases = emitDoubleGetByVal(currentInstruction, badType);
+        break;
     case JITContiguous:
         slowCases = emitContiguousGetByVal(currentInstruction, badType);
         break;
@@ -148,11 +154,26 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     m_byValCompilationInfo.append(ByValCompilationInfo(m_bytecodeOffset, badType, mode, done));
 }
 
-JIT::JumpList JIT::emitContiguousGetByVal(Instruction*, PatchableJump& badType)
+JIT::JumpList JIT::emitDoubleGetByVal(Instruction*, PatchableJump& badType)
 {
     JumpList slowCases;
     
-    badType = patchableBranch32(NotEqual, regT2, TrustedImm32(ContiguousShape));
+    badType = patchableBranch32(NotEqual, regT2, TrustedImm32(DoubleShape));
+    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
+    slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
+    loadDouble(BaseIndex(regT2, regT1, TimesEight), fpRegT0);
+    slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
+    moveDoubleTo64(fpRegT0, regT0);
+    sub64(tagTypeNumberRegister, regT0);
+    
+    return slowCases;
+}
+
+JIT::JumpList JIT::emitContiguousGetByVal(Instruction*, PatchableJump& badType, IndexingType expectedShape)
+{
+    JumpList slowCases;
+    
+    badType = patchableBranch32(NotEqual, regT2, TrustedImm32(expectedShape));
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength())));
     load64(BaseIndex(regT2, regT1, TimesEight), regT0);
@@ -304,6 +325,12 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     
     JITArrayMode mode = chooseArrayMode(profile);
     switch (mode) {
+    case JITInt32:
+        slowCases = emitInt32PutByVal(currentInstruction, badType);
+        break;
+    case JITDouble:
+        slowCases = emitDoublePutByVal(currentInstruction, badType);
+        break;
     case JITContiguous:
         slowCases = emitContiguousPutByVal(currentInstruction, badType);
         break;
@@ -325,24 +352,49 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     emitWriteBarrier(regT0, regT3, regT1, regT3, ShouldFilterImmediates, WriteBarrierForPropertyAccess);
 }
 
-JIT::JumpList JIT::emitContiguousPutByVal(Instruction* currentInstruction, PatchableJump& badType)
+template<IndexingType indexingShape>
+JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction, PatchableJump& badType)
 {
     unsigned value = currentInstruction[3].u.operand;
     ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
     
-    badType = patchableBranch32(NotEqual, regT2, TrustedImm32(ContiguousShape));
+    JumpList slowCases;
+
+    badType = patchableBranch32(NotEqual, regT2, TrustedImm32(indexingShape));
     
     loadPtr(Address(regT0, JSObject::butterflyOffset()), regT2);
     Jump outOfBounds = branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfPublicLength()));
 
     Label storeResult = label();
     emitGetVirtualRegister(value, regT3);
-    store64(regT3, BaseIndex(regT2, regT1, TimesEight));
+    switch (indexingShape) {
+    case Int32Shape:
+        slowCases.append(emitJumpIfNotImmediateInteger(regT3));
+        store64(regT3, BaseIndex(regT2, regT1, TimesEight));
+        break;
+    case DoubleShape: {
+        Jump notInt = emitJumpIfNotImmediateInteger(regT3);
+        convertInt32ToDouble(regT3, fpRegT0);
+        Jump ready = jump();
+        notInt.link(this);
+        add64(tagTypeNumberRegister, regT3);
+        move64ToDouble(regT3, fpRegT0);
+        slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
+        ready.link(this);
+        storeDouble(fpRegT0, BaseIndex(regT2, regT1, TimesEight));
+        break;
+    }
+    case ContiguousShape:
+        store64(regT3, BaseIndex(regT2, regT1, TimesEight));
+        break;
+    default:
+        CRASH();
+        break;
+    }
     
     Jump done = jump();
     outOfBounds.link(this);
     
-    JumpList slowCases;
     slowCases.append(branch32(AboveOrEqual, regT1, Address(regT2, Butterfly::offsetOfVectorLength())));
     
     emitArrayProfileStoreToHoleSpecialCase(profile);
@@ -394,11 +446,22 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
     unsigned base = currentInstruction[1].u.operand;
     unsigned property = currentInstruction[2].u.operand;
     unsigned value = currentInstruction[3].u.operand;
+    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
 
     linkSlowCase(iter); // property int32 check
     linkSlowCaseIfNotJSCell(iter, base); // base cell check
     linkSlowCase(iter); // base not array check
     linkSlowCase(iter); // out of bounds
+    
+    JITArrayMode mode = chooseArrayMode(profile);
+    switch (mode) {
+    case JITInt32:
+    case JITDouble:
+        linkSlowCase(iter); // value type check
+        break;
+    default:
+        break;
+    }
     
     Label slowPath = label();
 
@@ -1312,6 +1375,12 @@ void JIT::privateCompileGetByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     JumpList slowCases;
     
     switch (arrayMode) {
+    case JITInt32:
+        slowCases = emitInt32GetByVal(currentInstruction, badType);
+        break;
+    case JITDouble:
+        slowCases = emitDoubleGetByVal(currentInstruction, badType);
+        break;
     case JITContiguous:
         slowCases = emitContiguousGetByVal(currentInstruction, badType);
         break;
@@ -1375,6 +1444,12 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     JumpList slowCases;
     
     switch (arrayMode) {
+    case JITInt32:
+        slowCases = emitInt32PutByVal(currentInstruction, badType);
+        break;
+    case JITDouble:
+        slowCases = emitDoublePutByVal(currentInstruction, badType);
+        break;
     case JITContiguous:
         slowCases = emitContiguousPutByVal(currentInstruction, badType);
         break;

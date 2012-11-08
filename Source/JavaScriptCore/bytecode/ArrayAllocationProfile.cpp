@@ -23,42 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IndexingHeaderInlineMethods_h
-#define IndexingHeaderInlineMethods_h
-
-#include "ArrayStorage.h"
-#include "IndexingHeader.h"
-#include "Structure.h"
+#include "config.h"
+#include "ArrayAllocationProfile.h"
 
 namespace JSC {
 
-inline size_t IndexingHeader::preCapacity(Structure* structure)
+void ArrayAllocationProfile::updateIndexingType()
 {
-    if (LIKELY(!hasArrayStorage(structure->indexingType())))
-        return 0;
-    
-    return arrayStorage()->m_indexBias;
-}
-
-inline size_t IndexingHeader::indexingPayloadSizeInBytes(Structure* structure)
-{
-    switch (structure->indexingType()) {
-    case ALL_UNDECIDED_INDEXING_TYPES:
-    case ALL_INT32_INDEXING_TYPES:
-    case ALL_DOUBLE_INDEXING_TYPES:
-    case ALL_CONTIGUOUS_INDEXING_TYPES:
-        return vectorLength() * sizeof(EncodedJSValue);
-        
-    case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-        return ArrayStorage::sizeFor(arrayStorage()->vectorLength());
-        
-    default:
-        ASSERT(!hasIndexedProperties(structure->indexingType()));
-        return 0;
-    }
+    if (!m_lastArray)
+        return;
+    m_currentIndexingType = leastUpperBoundOfIndexingTypes(m_currentIndexingType, m_lastArray->structure()->indexingType());
+    m_lastArray = 0;
 }
 
 } // namespace JSC
-
-#endif // IndexingHeaderInlineMethods_h
 

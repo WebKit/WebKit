@@ -1582,6 +1582,14 @@
 			Name="bytecode"
 			>
 			<File
+				RelativePath="..\..\bytecode\ArrayAllocationProfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\ArrayAllocationProfile.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\ArrayProfile.cpp"
 				>
 			</File>

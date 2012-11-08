@@ -764,11 +764,16 @@ class Instruction
         when "ci2d"
             $asm.puts "cvtsi2sd #{operands[0].x86Operand(:int)}, #{operands[1].x86Operand(:double)}"
         when "bdeq"
-            isUnordered = LocalLabel.unique("bdeq")
             $asm.puts "ucomisd #{operands[0].x86Operand(:double)}, #{operands[1].x86Operand(:double)}"
-            $asm.puts "jp #{LabelReference.new(codeOrigin, isUnordered).asmLabel}"
-            $asm.puts "je #{LabelReference.new(codeOrigin, operands[2]).asmLabel}"
-            isUnordered.lower("X86")
+            if operands[0] == operands[1]
+                # This is just a jump ordered, which is a jnp.
+                $asm.puts "jnp #{operands[2].asmLabel}"
+            else
+                isUnordered = LocalLabel.unique("bdeq")
+                $asm.puts "jp #{LabelReference.new(codeOrigin, isUnordered).asmLabel}"
+                $asm.puts "je #{LabelReference.new(codeOrigin, operands[2]).asmLabel}"
+                isUnordered.lower("X86")
+            end
         when "bdneq"
             handleX86DoubleBranch("jne", :normal)
         when "bdgt"
@@ -782,14 +787,19 @@ class Instruction
         when "bdequn"
             handleX86DoubleBranch("je", :normal)
         when "bdnequn"
-            isUnordered = LocalLabel.unique("bdnequn")
-            isEqual = LocalLabel.unique("bdnequn")
             $asm.puts "ucomisd #{operands[0].x86Operand(:double)}, #{operands[1].x86Operand(:double)}"
-            $asm.puts "jp #{LabelReference.new(codeOrigin, isUnordered).asmLabel}"
-            $asm.puts "je #{LabelReference.new(codeOrigin, isEqual).asmLabel}"
-            isUnordered.lower("X86")
-            $asm.puts "jmp #{operands[2].asmLabel}"
-            isEqual.lower("X86")
+            if operands[0] == operands[1]
+                # This is just a jump unordered, which is a jp.
+                $asm.puts "jp #{operands[2].asmLabel}"
+            else
+                isUnordered = LocalLabel.unique("bdnequn")
+                isEqual = LocalLabel.unique("bdnequn")
+                $asm.puts "jp #{LabelReference.new(codeOrigin, isUnordered).asmLabel}"
+                $asm.puts "je #{LabelReference.new(codeOrigin, isEqual).asmLabel}"
+                isUnordered.lower("X86")
+                $asm.puts "jmp #{operands[2].asmLabel}"
+                isEqual.lower("X86")
+            end
         when "bdgtun"
             handleX86DoubleBranch("jb", :reverse)
         when "bdgtequn"
@@ -1115,7 +1125,7 @@ class Instruction
             $asm.puts "movd #{operands[0].x86Operand(:double)}, #{operands[1].x86Operand(:int)}"
             $asm.puts "movsd #{operands[0].x86Operand(:double)}, %xmm7"
             $asm.puts "psrlq $32, %xmm7"
-            $asm.puts "movsd %xmm7, #{operands[2].x86Operand(:int)}"
+            $asm.puts "movd %xmm7, #{operands[2].x86Operand(:int)}"
         when "fq2d"
             $asm.puts "movd #{operands[0].x86Operand(:quad)}, #{operands[1].x86Operand(:double)}"
         when "fd2q"

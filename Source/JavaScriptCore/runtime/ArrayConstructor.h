@@ -60,7 +60,7 @@ namespace JSC {
         static CallType getCallData(JSCell*, CallData&);
     };
 
-    JSObject* constructArrayWithSizeQuirk(ExecState*, JSGlobalObject*, JSValue);
+    JSObject* constructArrayWithSizeQuirk(ExecState*, ArrayAllocationProfile*, JSGlobalObject*, JSValue);
 
 } // namespace JSC
 

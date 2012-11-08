@@ -88,9 +88,15 @@ public:
     template<typename T>
     T* indexingPayload() { return reinterpret_cast<T*>(this); }
     ArrayStorage* arrayStorage() { return indexingPayload<ArrayStorage>(); }
+    WriteBarrier<Unknown>* contiguousInt32() { return indexingPayload<WriteBarrier<Unknown> >(); }
+    double* contiguousDouble() { return indexingPayload<double>(); }
     WriteBarrier<Unknown>* contiguous() { return indexingPayload<WriteBarrier<Unknown> >(); }
     
     static Butterfly* fromContiguous(WriteBarrier<Unknown>* contiguous)
+    {
+        return reinterpret_cast<Butterfly*>(contiguous);
+    }
+    static Butterfly* fromContiguous(double* contiguous)
     {
         return reinterpret_cast<Butterfly*>(contiguous);
     }

@@ -1475,6 +1475,12 @@ public:
         return m_formatter.immediateRel32();
     }
 
+    AssemblerLabel jnp()
+    {
+        m_formatter.twoByteOp(jccRel32(ConditionNP));
+        return m_formatter.immediateRel32();
+    }
+
     AssemblerLabel jp()
     {
         m_formatter.twoByteOp(jccRel32(ConditionP));
@@ -2314,6 +2320,9 @@ private:
         // Format a REX prefix byte.
         inline void emitRex(bool w, int r, int x, int b)
         {
+            ASSERT(r >= 0);
+            ASSERT(x >= 0);
+            ASSERT(b >= 0);
             m_buffer.putByteUnchecked(PRE_REX | ((int)w << 3) | ((r>>3)<<2) | ((x>>3)<<1) | (b>>3));
         }
 

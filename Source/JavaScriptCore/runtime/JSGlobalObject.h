@@ -22,6 +22,7 @@
 #ifndef JSGlobalObject_h
 #define JSGlobalObject_h
 
+#include "ArrayAllocationProfile.h"
 #include "JSArray.h"
 #include "JSGlobalData.h"
 #include "JSSegmentedVariableObject.h"
@@ -130,9 +131,12 @@ namespace JSC {
         WriteBarrier<Structure> m_activationStructure;
         WriteBarrier<Structure> m_nameScopeStructure;
         WriteBarrier<Structure> m_argumentsStructure;
-        WriteBarrier<Structure> m_arrayStructure; // This gets set to m_arrayStructureForSlowPut as soon as we decide to have a bad time.
-        WriteBarrier<Structure> m_arrayStructureWithArrayStorage; // This gets set to m_arrayStructureForSlowPut as soon as we decide to have a bad time.
-        WriteBarrier<Structure> m_arrayStructureForSlowPut;
+        
+        // Lists the actual structures used for having these particular indexing shapes.
+        WriteBarrier<Structure> m_originalArrayStructureForIndexingShape[NumberOfIndexingShapes];
+        // Lists the structures we should use during allocation for these particular indexing shapes.
+        WriteBarrier<Structure> m_arrayStructureForIndexingShapeDuringAllocation[NumberOfIndexingShapes];
+        
         WriteBarrier<Structure> m_booleanObjectStructure;
         WriteBarrier<Structure> m_callbackConstructorStructure;
         WriteBarrier<Structure> m_callbackFunctionStructure;
@@ -275,14 +279,26 @@ namespace JSC {
         Structure* activationStructure() const { return m_activationStructure.get(); }
         Structure* nameScopeStructure() const { return m_nameScopeStructure.get(); }
         Structure* argumentsStructure() const { return m_argumentsStructure.get(); }
-        Structure* arrayStructure() const { return m_arrayStructure.get(); }
-        Structure* arrayStructureWithArrayStorage() const { return m_arrayStructureWithArrayStorage.get(); }
-        void* addressOfArrayStructure() { return &m_arrayStructure; }
-        void* addressOfArrayStructureWithArrayStorage() { return &m_arrayStructureWithArrayStorage; }
+        Structure* originalArrayStructureForIndexingType(IndexingType indexingType) const
+        {
+            ASSERT(indexingType & IsArray);
+            return m_originalArrayStructureForIndexingShape[(indexingType & IndexingShapeMask) >> IndexingShapeShift].get();
+        }
+        Structure* arrayStructureForIndexingTypeDuringAllocation(IndexingType indexingType) const
+        {
+            ASSERT(indexingType & IsArray);
+            return m_arrayStructureForIndexingShapeDuringAllocation[(indexingType & IndexingShapeMask) >> IndexingShapeShift].get();
+        }
+        Structure* arrayStructureForProfileDuringAllocation(ArrayAllocationProfile* profile) const
+        {
+            return arrayStructureForIndexingTypeDuringAllocation(ArrayAllocationProfile::selectIndexingTypeFor(profile));
+        }
+        
         bool isOriginalArrayStructure(Structure* structure)
         {
-            return structure == m_arrayStructure.get() || structure == m_arrayStructureWithArrayStorage.get();
+            return originalArrayStructureForIndexingType(structure->indexingType() | IsArray) == structure;
         }
+        
         Structure* booleanObjectStructure() const { return m_booleanObjectStructure.get(); }
         Structure* callbackConstructorStructure() const { return m_callbackConstructorStructure.get(); }
         Structure* callbackFunctionStructure() const { return m_callbackFunctionStructure.get(); }
@@ -497,34 +513,34 @@ namespace JSC {
         return constructEmptyObject(exec, exec->lexicalGlobalObject());
     }
 
-    inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject, unsigned initialLength = 0)
+    inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, unsigned initialLength = 0)
     {
-        return JSArray::create(exec->globalData(), initialLength >= MIN_SPARSE_ARRAY_INDEX ? globalObject->arrayStructureWithArrayStorage() : globalObject->arrayStructure(), initialLength);
+        return ArrayAllocationProfile::updateLastAllocationFor(profile, JSArray::create(exec->globalData(), initialLength >= MIN_SPARSE_ARRAY_INDEX ? globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage) : globalObject->arrayStructureForProfileDuringAllocation(profile), initialLength));
     }
 
-    inline JSArray* constructEmptyArray(ExecState* exec, unsigned initialLength = 0)
+    inline JSArray* constructEmptyArray(ExecState* exec, ArrayAllocationProfile* profile, unsigned initialLength = 0)
     {
-        return constructEmptyArray(exec, exec->lexicalGlobalObject(), initialLength);
+        return constructEmptyArray(exec, profile, exec->lexicalGlobalObject(), initialLength);
     }
  
-    inline JSArray* constructArray(ExecState* exec, JSGlobalObject* globalObject, const ArgList& values)
+    inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const ArgList& values)
     {
-        return constructArray(exec, globalObject->arrayStructure(), values);
+        return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, globalObject->arrayStructureForProfileDuringAllocation(profile), values));
     }
 
-    inline JSArray* constructArray(ExecState* exec, const ArgList& values)
+    inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, const ArgList& values)
     {
-        return constructArray(exec, exec->lexicalGlobalObject(), values);
+        return constructArray(exec, profile, exec->lexicalGlobalObject(), values);
     }
 
-    inline JSArray* constructArray(ExecState* exec, JSGlobalObject* globalObject, const JSValue* values, unsigned length)
+    inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, const JSValue* values, unsigned length)
     {
-        return constructArray(exec, globalObject->arrayStructure(), values, length);
+        return ArrayAllocationProfile::updateLastAllocationFor(profile, constructArray(exec, globalObject->arrayStructureForProfileDuringAllocation(profile), values, length));
     }
 
-    inline JSArray* constructArray(ExecState* exec, const JSValue* values, unsigned length)
+    inline JSArray* constructArray(ExecState* exec, ArrayAllocationProfile* profile, const JSValue* values, unsigned length)
     {
-        return constructArray(exec, exec->lexicalGlobalObject(), values, length);
+        return constructArray(exec, profile, exec->lexicalGlobalObject(), values, length);
     }
 
     class DynamicGlobalObjectScope {

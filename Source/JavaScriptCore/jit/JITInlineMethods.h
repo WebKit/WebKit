@@ -528,12 +528,12 @@ inline void JIT::emitArrayProfileStoreToHoleSpecialCase(ArrayProfile* arrayProfi
 #endif
 }
 
-static inline bool arrayProfileSaw(ArrayProfile* profile, IndexingType capability)
+static inline bool arrayProfileSaw(ArrayModes arrayModes, IndexingType capability)
 {
 #if ENABLE(VALUE_PROFILER)
-    return !!(profile->observedArrayModes() & (asArrayModes(NonArray | capability) | asArrayModes(ArrayClass | capability)));
+    return arrayModesInclude(arrayModes, capability);
 #else
-    UNUSED_PARAM(profile);
+    UNUSED_PARAM(arrayModes);
     UNUSED_PARAM(capability);
     return false;
 #endif
@@ -541,7 +541,13 @@ static inline bool arrayProfileSaw(ArrayProfile* profile, IndexingType capabilit
 
 inline JITArrayMode JIT::chooseArrayMode(ArrayProfile* profile)
 {
-    if (arrayProfileSaw(profile, ArrayStorageShape))
+    profile->computeUpdatedPrediction(m_codeBlock);
+    ArrayModes arrayModes = profile->observedArrayModes();
+    if (arrayProfileSaw(arrayModes, DoubleShape))
+        return JITDouble;
+    if (arrayProfileSaw(arrayModes, Int32Shape))
+        return JITInt32;
+    if (arrayProfileSaw(arrayModes, ArrayStorageShape))
         return JITArrayStorage;
     return JITContiguous;
 }

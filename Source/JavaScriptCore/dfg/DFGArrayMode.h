@@ -52,7 +52,10 @@ enum Type {
     ForceExit, // Implies that we have no idea how to execute this operation, so we should just give up.
     Generic,
     String,
-    
+
+    Undecided,
+    Int32,
+    Double,
     Contiguous,
     ArrayStorage,
     SlowPutArrayStorage,
@@ -81,7 +84,6 @@ enum Speculation {
     ToHole,
     OutOfBounds
 };
-
 enum Conversion {
     AsIs,
     Convert
@@ -169,7 +171,17 @@ public:
         return ArrayMode(type(), myArrayClass, mySpeculation, conversion());
     }
     
-    ArrayMode refine(SpeculatedType base, SpeculatedType index) const;
+    ArrayMode withType(Array::Type type) const
+    {
+        return ArrayMode(type, arrayClass(), speculation(), conversion());
+    }
+    
+    ArrayMode withTypeAndConversion(Array::Type type, Array::Conversion conversion) const
+    {
+        return ArrayMode(type, arrayClass(), speculation(), conversion);
+    }
+    
+    ArrayMode refine(SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone) const;
     
     bool alreadyChecked(AbstractValue&) const;
     
@@ -178,6 +190,8 @@ public:
     bool usesButterfly() const
     {
         switch (type()) {
+        case Array::Int32:
+        case Array::Double:
         case Array::Contiguous:
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
@@ -263,6 +277,7 @@ public:
         case Array::Unprofiled:
         case Array::ForceExit:
         case Array::Generic:
+        case Array::Undecided:
             return false;
         default:
             return true;
@@ -277,6 +292,8 @@ public:
         case Array::ForceExit:
         case Array::Generic:
             return false;
+        case Array::Int32:
+        case Array::Double:
         case Array::Contiguous:
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:
@@ -309,6 +326,10 @@ public:
         switch (type()) {
         case Array::Generic:
             return ALL_ARRAY_MODES;
+        case Array::Int32:
+            return arrayModesWithIndexingShape(Int32Shape);
+        case Array::Double:
+            return arrayModesWithIndexingShape(DoubleShape);
         case Array::Contiguous:
             return arrayModesWithIndexingShape(ContiguousShape);
         case Array::ArrayStorage:
@@ -353,6 +374,8 @@ private:
             return 0;
         }
     }
+    
+    bool alreadyChecked(AbstractValue&, IndexingType shape) const;
     
     union {
         struct {

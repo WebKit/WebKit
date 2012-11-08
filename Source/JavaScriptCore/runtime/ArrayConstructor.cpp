@@ -77,15 +77,15 @@ bool ArrayConstructor::getOwnPropertyDescriptor(JSObject* object, ExecState* exe
 
 // ------------------------------ Functions ---------------------------
 
-JSObject* constructArrayWithSizeQuirk(ExecState* exec, JSGlobalObject* globalObject, JSValue length)
+JSObject* constructArrayWithSizeQuirk(ExecState* exec, ArrayAllocationProfile* profile, JSGlobalObject* globalObject, JSValue length)
 {
     if (!length.isNumber())
-        return constructArray(exec, globalObject, &length, 1);
+        return constructArray(exec, profile, globalObject, &length, 1);
     
     uint32_t n = length.toUInt32(exec);
     if (n != length.toNumber(exec))
         return throwError(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer.")));
-    return constructEmptyArray(exec, globalObject, n);
+    return constructEmptyArray(exec, profile, globalObject, n);
 }
 
 static inline JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args)
@@ -94,10 +94,10 @@ static inline JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgLi
 
     // a single numeric argument denotes the array size (!)
     if (args.size() == 1)
-        return constructArrayWithSizeQuirk(exec, globalObject, args.at(0));
+        return constructArrayWithSizeQuirk(exec, 0, globalObject, args.at(0));
 
     // otherwise the array is constructed with the arguments in it
-    return constructArray(exec, globalObject, args);
+    return constructArray(exec, 0, globalObject, args);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState* exec)

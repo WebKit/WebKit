@@ -145,7 +145,30 @@ private:
         }
             
         case ArrayPush: {
+            // May need to refine the array mode in case the value prediction contravenes
+            // the array prediction. For example, we may have evidence showing that the
+            // array is in Int32 mode, but the value we're storing is likely to be a double.
+            // Then we should turn this into a conversion to Double array followed by the
+            // push. On the other hand, we absolutely don't want to refine based on the
+            // base prediction. If it has non-cell garbage in it, then we want that to be
+            // ignored. That's because ArrayPush can't handle any array modes that aren't
+            // array-related - so if refine() turned this into a "Generic" ArrayPush then
+            // that would break things.
+            node.setArrayMode(
+                node.arrayMode().refine(
+                    m_graph[node.child1()].prediction() & SpecCell,
+                    SpecInt32,
+                    m_graph[node.child2()].prediction()));
             blessArrayOperation(node.child1(), node.child2(), 2);
+            
+            Node* nodePtr = &m_graph[m_compileIndex];
+            switch (nodePtr->arrayMode().type()) {
+            case Array::Double:
+                fixDoubleEdge(1);
+                break;
+            default:
+                break;
+            }
             break;
         }
             
@@ -328,13 +351,17 @@ private:
             node.setArrayMode(
                 node.arrayMode().refine(
                     m_graph[child1].prediction(),
-                    m_graph[child2].prediction()));
+                    m_graph[child2].prediction(),
+                    m_graph[child3].prediction()));
             
             blessArrayOperation(child1, child2, 3);
             
             Node* nodePtr = &m_graph[m_compileIndex];
             
             switch (nodePtr->arrayMode().modeForPut().type()) {
+            case Array::Double:
+                fixDoubleEdge(2);
+                break;
             case Array::Int8Array:
             case Array::Int16Array:
             case Array::Int32Array:
@@ -351,6 +378,19 @@ private:
                 break;
             default:
                 break;
+            }
+            break;
+        }
+            
+        case NewArray: {
+            for (unsigned i = m_graph.varArgNumChildren(node); i--;) {
+                node.setIndexingType(
+                    leastUpperBoundOfIndexingTypeAndType(
+                        node.indexingType(), m_graph[m_graph.varArgChild(node, i)].prediction()));
+            }
+            if (node.indexingType() == ArrayWithDouble) {
+                for (unsigned i = m_graph.varArgNumChildren(node); i--;)
+                    fixDoubleEdge(i);
             }
             break;
         }
@@ -392,15 +432,17 @@ private:
             if (arrayMode.isJSArrayWithOriginalStructure()) {
                 JSGlobalObject* globalObject = m_graph.baselineCodeBlockFor(codeOrigin)->globalObject();
                 switch (arrayMode.type()) {
+                case Array::Int32:
+                    structure = globalObject->originalArrayStructureForIndexingType(ArrayWithInt32);
+                    break;
+                case Array::Double:
+                    structure = globalObject->originalArrayStructureForIndexingType(ArrayWithDouble);
+                    break;
                 case Array::Contiguous:
-                    structure = globalObject->arrayStructure();
-                    if (structure->indexingType() != ArrayWithContiguous)
-                        structure = 0;
+                    structure = globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous);
                     break;
                 case Array::ArrayStorage:
-                    structure = globalObject->arrayStructureWithArrayStorage();
-                    if (structure->indexingType() != ArrayWithArrayStorage)
-                        structure = 0;
+                    structure = globalObject->originalArrayStructureForIndexingType(ArrayWithArrayStorage);
                     break;
                 default:
                     break;

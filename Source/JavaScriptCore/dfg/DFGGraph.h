@@ -493,6 +493,8 @@ public:
         switch (node.arrayMode().type()) {
         case Array::Generic:
             return false;
+        case Array::Int32:
+        case Array::Double:
         case Array::Contiguous:
         case Array::ArrayStorage:
             return !node.arrayMode().isOutOfBounds();

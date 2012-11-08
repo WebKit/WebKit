@@ -716,6 +716,15 @@ UnlinkedArrayProfile BytecodeGenerator::newArrayProfile()
 #endif
 }
 
+UnlinkedArrayAllocationProfile BytecodeGenerator::newArrayAllocationProfile()
+{
+#if ENABLE(VALUE_PROFILER)
+    return m_codeBlock->addArrayAllocationProfile();
+#else
+    return 0;
+#endif
+}
+
 UnlinkedValueProfile BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
 {
 #if ENABLE(VALUE_PROFILER)
@@ -1605,6 +1614,7 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
             instructions().append(dst->index());
             instructions().append(constantBufferIndex);
             instructions().append(length);
+            instructions().append(newArrayAllocationProfile());
             return dst;
         }
     }
@@ -1622,6 +1632,7 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
     instructions().append(dst->index());
     instructions().append(argv.size() ? argv[0]->index() : 0); // argv
     instructions().append(argv.size()); // argc
+    instructions().append(newArrayAllocationProfile());
     return dst;
 }
 
@@ -1757,12 +1768,14 @@ ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst,
                 emitOpcode(op_new_array_with_size);
                 instructions().append(dst->index());
                 instructions().append(callArguments.argumentRegister(0)->index());
+                instructions().append(newArrayAllocationProfile());
             } else {
                 ASSERT(callArguments.argumentCountIncludingThis() == 1);
                 emitOpcode(op_new_array);
                 instructions().append(dst->index());
                 instructions().append(0);
                 instructions().append(0);
+                instructions().append(newArrayAllocationProfile());
             }
         }
         break;

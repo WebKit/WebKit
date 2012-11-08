@@ -23,42 +23,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IndexingHeaderInlineMethods_h
-#define IndexingHeaderInlineMethods_h
+#ifndef ArrayAllocationProfile_h
+#define ArrayAllocationProfile_h
 
-#include "ArrayStorage.h"
-#include "IndexingHeader.h"
-#include "Structure.h"
+#include "IndexingType.h"
+#include "JSArray.h"
 
 namespace JSC {
 
-inline size_t IndexingHeader::preCapacity(Structure* structure)
-{
-    if (LIKELY(!hasArrayStorage(structure->indexingType())))
-        return 0;
-    
-    return arrayStorage()->m_indexBias;
-}
-
-inline size_t IndexingHeader::indexingPayloadSizeInBytes(Structure* structure)
-{
-    switch (structure->indexingType()) {
-    case ALL_UNDECIDED_INDEXING_TYPES:
-    case ALL_INT32_INDEXING_TYPES:
-    case ALL_DOUBLE_INDEXING_TYPES:
-    case ALL_CONTIGUOUS_INDEXING_TYPES:
-        return vectorLength() * sizeof(EncodedJSValue);
-        
-    case ALL_ARRAY_STORAGE_INDEXING_TYPES:
-        return ArrayStorage::sizeFor(arrayStorage()->vectorLength());
-        
-    default:
-        ASSERT(!hasIndexedProperties(structure->indexingType()));
-        return 0;
+class ArrayAllocationProfile {
+public:
+    ArrayAllocationProfile()
+        : m_currentIndexingType(ArrayWithUndecided)
+        , m_lastArray(0)
+    {
     }
-}
+    
+    IndexingType selectIndexingType()
+    {
+        if (m_lastArray && UNLIKELY(m_lastArray->structure()->indexingType() != m_currentIndexingType))
+            updateIndexingType();
+        return m_currentIndexingType;
+    }
+    
+    JSArray* updateLastAllocation(JSArray* lastArray)
+    {
+        m_lastArray = lastArray;
+        return lastArray;
+    }
+    
+    JS_EXPORT_PRIVATE void updateIndexingType();
+    
+    static IndexingType selectIndexingTypeFor(ArrayAllocationProfile* profile)
+    {
+        if (!profile)
+            return ArrayWithUndecided;
+        return profile->selectIndexingType();
+    }
+    
+    static JSArray* updateLastAllocationFor(ArrayAllocationProfile* profile, JSArray* lastArray)
+    {
+        if (profile)
+            profile->updateLastAllocation(lastArray);
+        return lastArray;
+    }
+
+private:
+    
+    IndexingType m_currentIndexingType;
+    JSArray* m_lastArray;
+};
 
 } // namespace JSC
 
-#endif // IndexingHeaderInlineMethods_h
+#endif // ArrayAllocationProfile_h
 

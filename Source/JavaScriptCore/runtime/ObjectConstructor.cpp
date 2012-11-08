@@ -182,7 +182,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState* exe
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("Requested property names of a value that is not an object.")));
     PropertyNameArray properties(exec);
     asObject(exec->argument(0))->methodTable()->getOwnPropertyNames(asObject(exec->argument(0)), exec, properties, IncludeDontEnumProperties);
-    JSArray* names = constructEmptyArray(exec);
+    JSArray* names = constructEmptyArray(exec, 0);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
         names->push(exec, jsOwnedString(exec, properties[i].string()));
@@ -196,7 +196,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
         return throwVMError(exec, createTypeError(exec, ASCIILiteral("Requested keys of a value that is not an object.")));
     PropertyNameArray properties(exec);
     asObject(exec->argument(0))->methodTable()->getOwnPropertyNames(asObject(exec->argument(0)), exec, properties, ExcludeDontEnumProperties);
-    JSArray* keys = constructEmptyArray(exec);
+    JSArray* keys = constructEmptyArray(exec, 0);
     size_t numProperties = properties.size();
     for (size_t i = 0; i < numProperties; i++)
         keys->push(exec, jsOwnedString(exec, properties[i].string()));

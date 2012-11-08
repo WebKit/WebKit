@@ -1,3 +1,356 @@
+2012-11-06  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should infer when indexed storage contains only integers or doubles
+        https://bugs.webkit.org/show_bug.cgi?id=98606
+
+        Reviewed by Oliver Hunt.
+
+        This adds two new indexing types: int32 and double. It also adds array allocation profiling,
+        which allows array allocations to converge to allocating arrays using those types to which
+        those arrays would have been converted.
+        
+        20% speed-up on navier-stokes. 40% speed-up on various Kraken DSP tests. Some slow-downs too,
+        but a performance win overall on all benchmarks we track.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeArray):
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/AbstractMacroAssembler.h:
+        (JumpList):
+        (JSC::AbstractMacroAssembler::JumpList::JumpList):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchDouble):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::jnp):
+        (X86Assembler):
+        (JSC::X86Assembler::X86InstructionFormatter::emitRex):
+        * bytecode/ArrayAllocationProfile.cpp: Added.
+        (JSC):
+        (JSC::ArrayAllocationProfile::updateIndexingType):
+        * bytecode/ArrayAllocationProfile.h: Added.
+        (JSC):
+        (ArrayAllocationProfile):
+        (JSC::ArrayAllocationProfile::ArrayAllocationProfile):
+        (JSC::ArrayAllocationProfile::selectIndexingType):
+        (JSC::ArrayAllocationProfile::updateLastAllocation):
+        (JSC::ArrayAllocationProfile::selectIndexingTypeFor):
+        (JSC::ArrayAllocationProfile::updateLastAllocationFor):
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::updatedObservedArrayModes):
+        (JSC):
+        * bytecode/ArrayProfile.h:
+        (JSC):
+        (JSC::arrayModesInclude):
+        (JSC::shouldUseSlowPutArrayStorage):
+        (JSC::shouldUseFastArrayStorage):
+        (JSC::shouldUseContiguous):
+        (JSC::shouldUseDouble):
+        (JSC::shouldUseInt32):
+        (ArrayProfile):
+        * bytecode/ByValInfo.h:
+        (JSC::isOptimizableIndexingType):
+        (JSC::jitArrayModeForIndexingType):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        (JSC):
+        (JSC::CodeBlock::updateAllValueProfilePredictions):
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        (JSC::CodeBlock::updateAllPredictions):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::numberOfArrayAllocationProfiles):
+        (JSC::CodeBlock::addArrayAllocationProfile):
+        (JSC::CodeBlock::updateAllValueProfilePredictions):
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::exitKindToString):
+        * bytecode/Instruction.h:
+        (JSC):
+        (JSC::Instruction::Instruction):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/SpeculatedType.h:
+        (JSC):
+        (JSC::isRealNumberSpeculation):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC):
+        (JSC::UnlinkedCodeBlock::addArrayAllocationProfile):
+        (JSC::UnlinkedCodeBlock::numberOfArrayAllocationProfiles):
+        (UnlinkedCodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::newArrayAllocationProfile):
+        (JSC):
+        (JSC::BytecodeGenerator::emitNewArray):
+        (JSC::BytecodeGenerator::emitExpectedFunctionSnippet):
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::fromObserved):
+        (JSC::DFG::ArrayMode::refine):
+        (DFG):
+        (JSC::DFG::ArrayMode::alreadyChecked):
+        (JSC::DFG::arrayTypeToString):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::withType):
+        (ArrayMode):
+        (JSC::DFG::ArrayMode::withTypeAndConversion):
+        (JSC::DFG::ArrayMode::usesButterfly):
+        (JSC::DFG::ArrayMode::isSpecific):
+        (JSC::DFG::ArrayMode::supportsLength):
+        (JSC::DFG::ArrayMode::arrayModesThatPassFiltering):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getArrayMode):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::handleIntrinsic):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        (CCallHelpers):
+        * dfg/DFGCallArrayAllocatorSlowPathGenerator.h:
+        (JSC::DFG::CallArrayAllocatorSlowPathGenerator::generateInternal):
+        (JSC::DFG::CallArrayAllocatorWithVariableSizeSlowPathGenerator::generateInternal):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::byValIsPure):
+        * dfg/DFGNode.h:
+        (NewArrayBufferData):
+        (JSC::DFG::Node::hasIndexingType):
+        (Node):
+        (JSC::DFG::Node::indexingType):
+        (JSC::DFG::Node::setIndexingType):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSArray):
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        (JSC::DFG::SpeculativeJIT::compileGetArrayLength):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (SpeculativeJIT):
+        (SpeculateIntegerOperand):
+        (JSC::DFG::SpeculateIntegerOperand::use):
+        (SpeculateDoubleOperand):
+        (JSC::DFG::SpeculateDoubleOperand::use):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileContiguousPutByVal):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.h:
+        (JSC::JIT::emitInt32GetByVal):
+        (JIT):
+        (JSC::JIT::emitInt32PutByVal):
+        (JSC::JIT::emitDoublePutByVal):
+        (JSC::JIT::emitContiguousPutByVal):
+        * jit/JITExceptions.cpp:
+        (JSC::genericThrow):
+        * jit/JITInlineMethods.h:
+        (JSC::arrayProfileSaw):
+        (JSC::JIT::chooseArrayMode):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_array):
+        (JSC::JIT::emit_op_new_array_with_size):
+        (JSC::JIT::emit_op_new_array_buffer):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitDoubleGetByVal):
+        (JSC):
+        (JSC::JIT::emitContiguousGetByVal):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompilePutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitContiguousGetByVal):
+        (JSC::JIT::emitDoubleGetByVal):
+        (JSC):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC):
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/x86.rb:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/ArrayConstructor.h:
+        (JSC):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncConcat):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        * runtime/Butterfly.h:
+        (JSC::Butterfly::contiguousInt32):
+        (JSC::Butterfly::contiguousDouble):
+        (JSC::Butterfly::fromContiguous):
+        * runtime/ButterflyInlineMethods.h:
+        (JSC::Butterfly::createUninitializedDuringCollection):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::functionProtoFuncBind):
+        * runtime/IndexingHeaderInlineMethods.h:
+        (JSC::IndexingHeader::indexingPayloadSizeInBytes):
+        * runtime/IndexingType.cpp:
+        (JSC::leastUpperBoundOfIndexingTypes):
+        (JSC):
+        (JSC::leastUpperBoundOfIndexingTypeAndType):
+        (JSC::leastUpperBoundOfIndexingTypeAndValue):
+        (JSC::indexingTypeToString):
+        * runtime/IndexingType.h:
+        (JSC):
+        (JSC::hasUndecided):
+        (JSC::hasInt32):
+        (JSC::hasDouble):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLength):
+        (JSC::JSArray::pop):
+        (JSC::JSArray::push):
+        (JSC::JSArray::shiftCountWithAnyIndexingType):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        (JSC::compareNumbersForQSortWithInt32):
+        (JSC):
+        (JSC::compareNumbersForQSortWithDouble):
+        (JSC::JSArray::sortNumericVector):
+        (JSC::JSArray::sortNumeric):
+        (JSC::JSArray::sortCompactedVector):
+        (JSC::JSArray::sort):
+        (JSC::JSArray::sortVector):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+        (JSC::JSArray::compactForSorting):
+        * runtime/JSArray.h:
+        (JSArray):
+        (JSC::createContiguousArrayButterfly):
+        (JSC::JSArray::create):
+        (JSC::JSArray::tryCreateUninitialized):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC):
+        (JSC::JSGlobalObject::haveABadTime):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::originalArrayStructureForIndexingType):
+        (JSC::JSGlobalObject::arrayStructureForIndexingTypeDuringAllocation):
+        (JSC::JSGlobalObject::arrayStructureForProfileDuringAllocation):
+        (JSC::JSGlobalObject::isOriginalArrayStructure):
+        (JSC::constructEmptyArray):
+        (JSC::constructArray):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::copyButterfly):
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::JSObject::putByIndex):
+        (JSC::JSObject::enterDictionaryIndexingMode):
+        (JSC::JSObject::createInitialIndexedStorage):
+        (JSC):
+        (JSC::JSObject::createInitialUndecided):
+        (JSC::JSObject::createInitialInt32):
+        (JSC::JSObject::createInitialDouble):
+        (JSC::JSObject::createInitialContiguous):
+        (JSC::JSObject::convertUndecidedToInt32):
+        (JSC::JSObject::convertUndecidedToDouble):
+        (JSC::JSObject::convertUndecidedToContiguous):
+        (JSC::JSObject::constructConvertedArrayStorageWithoutCopyingElements):
+        (JSC::JSObject::convertUndecidedToArrayStorage):
+        (JSC::JSObject::convertInt32ToDouble):
+        (JSC::JSObject::convertInt32ToContiguous):
+        (JSC::JSObject::convertInt32ToArrayStorage):
+        (JSC::JSObject::convertDoubleToContiguous):
+        (JSC::JSObject::convertDoubleToArrayStorage):
+        (JSC::JSObject::convertContiguousToArrayStorage):
+        (JSC::JSObject::convertUndecidedForValue):
+        (JSC::JSObject::convertInt32ForValue):
+        (JSC::JSObject::setIndexQuicklyToUndecided):
+        (JSC::JSObject::convertInt32ToDoubleOrContiguousWhilePerformingSetIndex):
+        (JSC::JSObject::convertDoubleToContiguousWhilePerformingSetIndex):
+        (JSC::JSObject::ensureInt32Slow):
+        (JSC::JSObject::ensureDoubleSlow):
+        (JSC::JSObject::ensureContiguousSlow):
+        (JSC::JSObject::ensureArrayStorageSlow):
+        (JSC::JSObject::ensureArrayStorageExistsAndEnterDictionaryIndexingMode):
+        (JSC::JSObject::switchToSlowPutArrayStorage):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::putByIndexBeyondVectorLength):
+        (JSC::JSObject::putDirectIndexBeyondVectorLength):
+        (JSC::JSObject::getNewVectorLength):
+        (JSC::JSObject::countElements):
+        (JSC::JSObject::ensureLengthSlow):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getArrayLength):
+        (JSC::JSObject::getVectorLength):
+        (JSC::JSObject::canGetIndexQuickly):
+        (JSC::JSObject::getIndexQuickly):
+        (JSC::JSObject::tryGetIndexQuickly):
+        (JSC::JSObject::canSetIndexQuickly):
+        (JSC::JSObject::canSetIndexQuicklyForPutDirect):
+        (JSC::JSObject::setIndexQuickly):
+        (JSC::JSObject::initializeIndex):
+        (JSC::JSObject::hasSparseMap):
+        (JSC::JSObject::inSparseIndexingMode):
+        (JSObject):
+        (JSC::JSObject::ensureInt32):
+        (JSC::JSObject::ensureDouble):
+        (JSC::JSObject::ensureLength):
+        (JSC::JSObject::indexingData):
+        (JSC::JSObject::currentIndexingData):
+        (JSC::JSObject::getHolyIndexQuickly):
+        (JSC::JSObject::relevantLength):
+        (JSC::JSObject::currentRelevantLength):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::description):
+        * runtime/LiteralParser.cpp:
+        (JSC::::parse):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyNames):
+        (JSC::objectConstructorKeys):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSplit):
+        * runtime/Structure.cpp:
+        (JSC::Structure::nonPropertyTransition):
+        * runtime/StructureTransitionTable.h:
+        (JSC::newIndexingType):
+
 2012-11-08  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         ASSERT problem on MIPS

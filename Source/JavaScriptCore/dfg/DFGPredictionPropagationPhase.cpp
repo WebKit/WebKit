@@ -849,6 +849,24 @@ private:
                 break;
             }
                 
+            case PutByVal:
+            case PutByValAlias: {
+                Edge child1 = m_graph.varArgChild(node, 0);
+                Edge child2 = m_graph.varArgChild(node, 1);
+                Edge child3 = m_graph.varArgChild(node, 2);
+                m_graph.vote(child1, VoteValue);
+                m_graph.vote(child2, VoteValue);
+                switch (node.arrayMode().type()) {
+                case Array::Double:
+                    m_graph.vote(child3, VoteDouble);
+                    break;
+                default:
+                    m_graph.vote(child3, VoteValue);
+                    break;
+                }
+                break;
+            }
+                
             default:
                 m_graph.vote(node, VoteValue);
                 break;

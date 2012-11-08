@@ -142,7 +142,7 @@ JSC::JSValue jsArray(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Pass
         for (unsigned i = 0; i < stringList->length(); ++i)
             list.append(jsStringWithCache(exec, stringList->item(i)));
     }
-    return JSC::constructArray(exec, globalObject, list);
+    return JSC::constructArray(exec, 0, globalObject, list);
 }
 
 void reportException(ExecState* exec, JSValue exception)

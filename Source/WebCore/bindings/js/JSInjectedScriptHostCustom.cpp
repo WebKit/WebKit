@@ -197,7 +197,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState*)
 
 static JSArray* getJSListenerFunctions(ExecState* exec, Document* document, const EventListenerInfo& listenerInfo)
 {
-    JSArray* result = constructEmptyArray(exec);
+    JSArray* result = constructEmptyArray(exec, 0);
     size_t handlersCount = listenerInfo.eventListenerVector.size();
     for (size_t i = 0, outputIndex = 0; i < handlersCount; ++i) {
         const JSEventListener* jsListener = JSEventListener::cast(listenerInfo.eventListenerVector[i].listener.get());

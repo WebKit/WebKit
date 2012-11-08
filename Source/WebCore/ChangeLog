@@ -1,3 +1,35 @@
+2012-11-01  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should infer when indexed storage contains only integers or doubles
+        https://bugs.webkit.org/show_bug.cgi?id=98606
+
+        Reviewed by Oliver Hunt.
+
+        Just refactoring WebCore to pass 0 for the ArrayAllocationProfile*.
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::webkitLineDash):
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::types):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsArray):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::jsArray):
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::getJSListenerFunctions):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::scopeChain):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::ports):
+        * bindings/js/JSMutationCallbackCustom.cpp:
+        (WebCore::JSMutationCallback::handleEvent):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::JSWebGLRenderingContext::getAttachedShaders):
+        (WebCore::JSWebGLRenderingContext::getSupportedExtensions):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::deserialize):
+
 2012-11-08  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update BB10 date input form.

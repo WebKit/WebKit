@@ -826,11 +826,15 @@ public:
             m_assembler.ucomisd_rr(right, left);
 
         if (cond == DoubleEqual) {
+            if (left == right)
+                return Jump(m_assembler.jnp());
             Jump isUnordered(m_assembler.jp());
             Jump result = Jump(m_assembler.je());
             isUnordered.link(this);
             return result;
         } else if (cond == DoubleNotEqualOrUnordered) {
+            if (left == right)
+                return Jump(m_assembler.jp());
             Jump isUnordered(m_assembler.jp());
             Jump isEqual(m_assembler.je());
             isUnordered.link(this);

@@ -215,8 +215,8 @@ char* JSValue::description() const
 #endif
     } else if (isCell()) {
         snprintf(
-            description, size, "Cell: %p (%p: %s, %s)",
-            asCell(), asCell()->structure(), asCell()->structure()->classInfo()->className,
+            description, size, "Cell: %p -> %p (%p: %s, %s)",
+            asCell(), isObject() ? asObject(*this)->butterfly() : 0, asCell()->structure(), asCell()->structure()->classInfo()->className,
             indexingTypeToString(asCell()->structure()->indexingTypeIncludingHistory()));
     } else if (isTrue())
         snprintf(description, size, "True");

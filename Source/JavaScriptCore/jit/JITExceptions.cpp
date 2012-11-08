@@ -39,7 +39,7 @@ namespace JSC {
 ExceptionHandler genericThrow(JSGlobalData* globalData, ExecState* callFrame, JSValue exceptionValue, unsigned vPCIndex)
 {
     ASSERT(exceptionValue);
-
+    
     globalData->exception = JSValue();
     HandlerInfo* handler = globalData->interpreter->throwException(callFrame, exceptionValue, vPCIndex); // This may update callFrame & exceptionValue!
     globalData->exception = exceptionValue;

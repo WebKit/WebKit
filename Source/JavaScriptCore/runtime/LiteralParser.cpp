@@ -548,7 +548,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
         switch(state) {
             startParseArray:
             case StartParseArray: {
-                JSArray* array = constructEmptyArray(m_exec);
+                JSArray* array = constructEmptyArray(m_exec, 0);
                 objectStack.append(array);
                 // fallthrough
             }

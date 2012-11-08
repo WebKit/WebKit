@@ -65,6 +65,13 @@ const char* arrayModesToString(ArrayModes arrayModes)
     return result;
 }
 
+ArrayModes ArrayProfile::updatedObservedArrayModes() const
+{
+    if (m_lastSeenStructure)
+        return m_observedArrayModes | arrayModeFromStructure(m_lastSeenStructure);
+    return m_observedArrayModes;
+}
+
 void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, OperationInProgress operation)
 {
     if (m_lastSeenStructure) {

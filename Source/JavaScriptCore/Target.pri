@@ -50,6 +50,7 @@ SOURCES += \
     assembler/MacroAssembler.cpp \
     assembler/MacroAssemblerARM.cpp \
     assembler/MacroAssemblerSH4.cpp \
+    bytecode/ArrayAllocationProfile.cpp \
     bytecode/ArrayProfile.cpp \
     bytecode/CallLinkInfo.cpp \
     bytecode/CallLinkStatus.cpp \

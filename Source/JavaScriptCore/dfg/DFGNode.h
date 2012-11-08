@@ -62,6 +62,7 @@ struct StructureTransitionData {
 struct NewArrayBufferData {
     unsigned startConstant;
     unsigned numConstants;
+    IndexingType indexingType;
 };
 
 // This type used in passing an immediate argument to Node constructor;
@@ -431,6 +432,32 @@ struct Node {
     unsigned numConstants()
     {
         return newArrayBufferData()->numConstants;
+    }
+    
+    bool hasIndexingType()
+    {
+        switch (op()) {
+        case NewArray:
+        case NewArrayWithSize:
+        case NewArrayBuffer:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    IndexingType indexingType()
+    {
+        ASSERT(hasIndexingType());
+        if (op() == NewArrayBuffer)
+            return newArrayBufferData()->indexingType;
+        return m_opInfo;
+    }
+    
+    void setIndexingType(IndexingType indexingType)
+    {
+        ASSERT(hasIndexingType());
+        m_opInfo = indexingType;
     }
     
     bool hasRegexpIndex()

@@ -92,12 +92,12 @@ JSValue JSMessageEvent::ports(ExecState* exec) const
 {
     MessagePortArray* ports = static_cast<MessageEvent*>(impl())->ports();
     if (!ports)
-        return constructEmptyArray(exec, globalObject());
+        return constructEmptyArray(exec, 0, globalObject());
 
     MarkedArgumentBuffer list;
     for (size_t i = 0; i < ports->size(); i++)
         list.append(toJS(exec, globalObject(), (*ports)[i].get()));
-    return constructArray(exec, globalObject(), list);
+    return constructArray(exec, 0, globalObject(), list);
 }
 
 static JSC::JSValue handleInitMessageEvent(JSMessageEvent* jsEvent, JSC::ExecState* exec)

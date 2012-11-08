@@ -110,11 +110,12 @@ EXPORTS
     ?computeHash@SHA1@WTF@@QAEXAAV?$Vector@E$0BE@@2@@Z
     ?configurable@PropertyDescriptor@JSC@@QBE_NXZ
     ?construct@JSC@@YAPAVJSObject@1@PAVExecState@1@VJSValue@1@W4ConstructType@1@ABTConstructData@1@ABVArgList@1@@Z
-    ?constructArray@JSC@@YAPAVJSArray@1@PAVExecState@1@ABVArgList@1@@Z
     ?constructEmptyObject@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
     ?constructFunctionSkippingEvalEnabledCheck@JSC@@YAPAVJSObject@1@PAVExecState@1@PAVJSGlobalObject@1@ABVArgList@1@ABVIdentifier@1@ABVString@WTF@@ABVTextPosition@8@@Z
     ?constructNumber@JSC@@YAPAVNumberObject@1@PAVExecState@1@PAVJSGlobalObject@1@VJSValue@1@@Z
     ?constructString@JSC@@YAPAVStringObject@1@PAVExecState@1@PAVJSGlobalObject@1@VJSValue@1@@Z
+    ?convertDoubleToContiguousWhilePerformingSetIndex@JSObject@JSC@@AAEXAAVJSGlobalData@2@IVJSValue@2@@Z
+    ?convertInt32ToDoubleOrContiguousWhilePerformingSetIndex@JSObject@JSC@@AAEXAAVJSGlobalData@2@IVJSValue@2@@Z
     ?convertLatin1ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPBEPBEPAPADPAD@Z
     ?convertUTF16ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPB_WPB_WPAPADPAD_N@Z
     ?convertUTF8ToUTF16@Unicode@WTF@@YA?AW4ConversionResult@12@PAPBDPBDPAPA_WPA_WPA_N_N@Z
@@ -333,6 +334,7 @@ EXPORTS
     ?setGarbageCollectionTimerEnabled@Heap@JSC@@QAEX_N@Z
     ?setGetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
     ?setGlobalThis@JSGlobalObject@JSC@@IAEXAAVJSGlobalData@2@PAVJSObject@2@@Z
+    ?setIndexQuicklyToUndecided@JSObject@JSC@@AAEXAAVJSGlobalData@2@IVJSValue@2@@Z
     ?setLoc@StatementNode@JSC@@QAEXHH@Z
     ?setMainThreadCallbacksPaused@WTF@@YAX_N@Z
     ?setOption@Options@JSC@@SA_NPBD@Z
@@ -402,6 +404,7 @@ EXPORTS
     ?unlock@Mutex@WTF@@QAEXXZ
     ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
     ?unprotect@Heap@JSC@@QAE_NVJSValue@2@@Z
+    ?updateIndexingType@ArrayAllocationProfile@JSC@@QAEXXZ
     ?validate@SlotVisitor@JSC@@CAXPAVJSCell@2@@Z
     ?visitChildren@JSGlobalObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z
     ?visitChildren@JSObject@JSC@@SAXPAVJSCell@2@AAVSlotVisitor@2@@Z

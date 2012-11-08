@@ -287,6 +287,11 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
         dataLog("]");
         hasPrinted = true;
     }
+    if (node.hasIndexingType()) {
+        if (hasPrinted)
+            dataLog(", ");
+        dataLog("%s", indexingTypeToString(node.indexingType()));
+    }
     if (op == JSConstant) {
         dataLog("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
         JSValue value = valueOfJSConstant(nodeIndex);
