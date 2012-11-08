@@ -107,6 +107,35 @@ WebInspector.TimelineFrameController.prototype = {
 
 /**
  * @constructor
+ * @param {Array.<WebInspector.TimelineFrame>} frames
+ */
+WebInspector.FrameStatistics = function(frames)
+{
+    this.frameCount = frames.length;
+    this.minDuration = Infinity;
+    this.maxDuration = 0;
+    this.timeByCategory = {};
+    this.startOffset = frames[0].startTimeOffset;
+    var lastFrame = frames[this.frameCount - 1];
+    this.endOffset = lastFrame.startTimeOffset + lastFrame.duration;
+
+    var totalDuration = 0;
+    var sumOfSquares = 0;
+    for (var i = 0; i < this.frameCount; ++i) {
+        var duration = frames[i].duration;
+        totalDuration += duration;
+        sumOfSquares += duration * duration;
+        this.minDuration = Math.min(this.minDuration, duration);
+        this.maxDuration = Math.max(this.maxDuration, duration);
+        WebInspector.TimelineModel.aggregateTimeByCategory(this.timeByCategory, frames[i].timeByCategory);
+    }
+    this.average = totalDuration / this.frameCount;
+    var variance = sumOfSquares / this.frameCount - this.average * this.average;
+    this.stddev = Math.sqrt(variance);
+}
+
+/**
+ * @constructor
  */
 WebInspector.TimelineFrame = function()
 {

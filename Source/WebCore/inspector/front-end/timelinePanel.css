@@ -429,15 +429,21 @@
     background-color: rgb(66, 129, 235) !important;
 }
 
-.timeline-records-counter, .storage-application-cache-status, .storage-application-cache-connectivity {
+.timeline-records-stats, .storage-application-cache-status, .storage-application-cache-connectivity {
     font-size: 11px;
     text-shadow: white 0 1px 0;
 }
 
-.timeline-records-counter {
+.timeline-records-stats {
     float: right;
     margin-top: 5px;
     margin-right: 6px;
+}
+
+.timeline-frames-stats {
+    pointer-events: auto;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 #resources-container-content {

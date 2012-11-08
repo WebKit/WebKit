@@ -129,6 +129,16 @@ WebInspector.TimelineModel.aggregateTimeForRecord = function(total, rawRecord)
     total[categoryName] = (total[categoryName] || 0) + ownTime;
 }
 
+/**
+ * @param {Object} total
+ * @param {Object} addend
+ */
+WebInspector.TimelineModel.aggregateTimeByCategory = function(total, addend)
+{
+    for (var category in addend)
+        total[category] = (total[category] || 0) + addend[category];
+}
+
 WebInspector.TimelineModel.prototype = {
     startRecord: function()
     {

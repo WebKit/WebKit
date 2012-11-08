@@ -434,6 +434,23 @@ WebInspector.TimelinePresentationModel.prototype = {
         return recordsInWindow;
     },
 
+    filteredFrames: function(startTime, endTime)
+    {
+        function compareStartTime(value, object)
+        {
+            return value - object.startTime;
+        }
+        function compareEndTime(value, object)
+        {
+            return value - object.endTime;
+        }
+        var firstFrame = insertionIndexForObjectInListSortedByFunction(startTime, this._frames, compareStartTime);
+        var lastFrame = insertionIndexForObjectInListSortedByFunction(endTime, this._frames, compareEndTime);
+        while (lastFrame < this._frames.length && this._frames[lastFrame].endTime <= endTime)
+            ++lastFrame;
+        return this._frames.slice(firstFrame, lastFrame);
+    },
+
     isVisible: function(record)
     {
         for (var i = 0; i < this._filters.length; ++i) {
@@ -1122,6 +1139,33 @@ WebInspector.TimelinePresentationModel.generatePopupContentForFrame = function(f
     contentHelper._appendTextRow(WebInspector.UIString("CPU time"), Number.secondsToString(frame.cpuTime, true));
     contentHelper._appendElementRow(WebInspector.UIString("Aggregated Time"),
         WebInspector.TimelinePresentationModel._generateAggregatedInfo(frame.timeByCategory));
+
+    return contentHelper._contentTable;
+}
+
+/**
+ * @param {WebInspector.FrameStatistics} statistics
+ */
+WebInspector.TimelinePresentationModel.generatePopupContentForFrameStatistics = function(statistics)
+{
+    /**
+     * @param {number} time
+     */
+    function formatTimeAndFPS(time)
+    {
+        return WebInspector.UIString("%s (%.0f FPS)", Number.secondsToString(time, true), 1 / time);
+    }
+
+    var contentHelper = new WebInspector.TimelinePresentationModel.PopupContentHelper(WebInspector.UIString("Selected Range"));
+
+    contentHelper._appendTextRow(WebInspector.UIString("Selected range"), WebInspector.UIString("%s\u2013%s (%d frames)",
+        Number.secondsToString(statistics.startOffset, true), Number.secondsToString(statistics.endOffset, true), statistics.frameCount));
+    contentHelper._appendTextRow(WebInspector.UIString("Minimum Time"), formatTimeAndFPS(statistics.minDuration));
+    contentHelper._appendTextRow(WebInspector.UIString("Average Time"), formatTimeAndFPS(statistics.average));
+    contentHelper._appendTextRow(WebInspector.UIString("Maximum Time"), formatTimeAndFPS(statistics.maxDuration));
+    contentHelper._appendTextRow(WebInspector.UIString("Standard Deviation"), Number.secondsToString(statistics.stddev, true));
+    contentHelper._appendElementRow(WebInspector.UIString("Time by category"),
+        WebInspector.TimelinePresentationModel._generateAggregatedInfo(statistics.timeByCategory));
 
     return contentHelper._contentTable;
 }

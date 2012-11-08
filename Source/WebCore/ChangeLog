@@ -1,3 +1,41 @@
+2012-11-08  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: show statistics over selected frame range in Timeline's Frame mode
+        https://bugs.webkit.org/show_bug.cgi?id=101593
+
+        Reviewed by Pavel Feldman.
+
+        - change status bar records counter wording to "N of M frames|records shown" depending on mode;
+        - append average frame length and & stddev in frame mode;
+        - expand the above to a popover that includes frame count, range duration and min/avg/max/stddev on frame length;
+        - show frame bars & dividers iff selection range includes < 30 frames (drive-by)
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/TimelineFrameController.js:
+        (WebInspector.FrameStatistics):
+        * inspector/front-end/TimelineModel.js:
+        (WebInspector.TimelineModel.aggregateTimeByCategory):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.get statusBarItems):
+        (WebInspector.TimelinePanel.prototype._createStatusBarItems.getAnchor):
+        (WebInspector.TimelinePanel.prototype._createStatusBarItems):
+        (WebInspector.TimelinePanel.prototype._updateRecordsCounter):
+        (WebInspector.TimelinePanel.prototype._updateFrameStatistics):
+        (WebInspector.TimelinePanel.prototype._showFrameStatistics):
+        (WebInspector.TimelinePanel.prototype._updateFrameBars):
+        (WebInspector.TimelinePanel.prototype._overviewModeChanged.set if):
+        (WebInspector.TimelinePanel.prototype._overviewModeChanged):
+        (WebInspector.TimelinePanel.prototype._refresh):
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.prototype.):
+        (WebInspector.TimelinePresentationModel.prototype.compareEndTime):
+        (WebInspector.TimelinePresentationModel.prototype.filteredFrames):
+        (WebInspector.TimelinePresentationModel.generatePopupContentForFrameStatistics):
+        * inspector/front-end/timelinePanel.css:
+        (.timeline-records-stats, .storage-application-cache-status, .storage-application-cache-connectivity):
+        (.timeline-records-stats):
+        (.timeline-frames-stats):
+
 2012-11-08  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Rework the API to use document coordinates
