@@ -1,3 +1,9 @@
+2012-11-08  Yael Aharon  <yael.aharon@intel.com>
+
+        Unreviewed. Gardening after r133898.
+
+        * platform/efl/TestExpectations:
+
 2012-11-07  Emil A Eklund  <eae@chromium.org>
 
         Fix enclosingLayoutRect calls in InlineFlowBox.h
