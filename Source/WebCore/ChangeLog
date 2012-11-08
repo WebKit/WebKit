@@ -1,3 +1,11 @@
+2012-11-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Mac build fix: Mark WidthCache.h 'private' so WebKit can use it.
+
+        Not reviewed.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-11-05  Geoffrey Garen  <ggaren@apple.com>
 
         Optimized kerning and ligatures using caching

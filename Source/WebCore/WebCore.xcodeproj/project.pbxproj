@@ -303,7 +303,7 @@
 		14115B5209F84B7100CA4FC1 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B5109F84B7100CA4FC1 /* Node.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14115B7209F84CD600CA4FC1 /* JSNodeFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14115B7009F84CD600CA4FC1 /* JSNodeFilter.cpp */; };
 		14115B7309F84CD600CA4FC1 /* JSNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 14115B7109F84CD600CA4FC1 /* JSNodeFilter.h */; };
-		1411DCB1164C39A800D49BC1 /* WidthCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1411DCB0164C39A800D49BC1 /* WidthCache.h */; };
+		1411DCB1164C39A800D49BC1 /* WidthCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1411DCB0164C39A800D49BC1 /* WidthCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 1419D2C40CEA6F6100FF507A /* TreeShared.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141DC0481648348F00371E5A /* LayoutUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 141DC0471648348F00371E5A /* LayoutUnit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		141DC04F164834B900371E5A /* LayoutBoxExtent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 141DC049164834B900371E5A /* LayoutBoxExtent.cpp */; };
