@@ -1,3 +1,11 @@
+2012-11-08  Joshua Bell  <jsbell@chromium.org>
+
+       [Chromium] Unreviewed gardening. Added missing *-expected.txt following rebaselines.
+
+        * platform/chromium-mac/fast/css/text-overflow-input-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/input-readonly-dimmed-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/input-text-scroll-left-on-blur-expected.txt: Added.
+
 2012-11-08  Yael Aharon  <yael.aharon@intel.com>
 
         Unreviewed. Some more gardening after r133898.
