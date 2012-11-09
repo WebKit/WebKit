@@ -68,7 +68,7 @@ PassRefPtr<NetworkInfoProvider> NetworkInfoProvider::create(PassRefPtr<WebContex
 NetworkInfoProvider::NetworkInfoProvider(PassRefPtr<WebContext> context)
     : m_context(context)
 {
-    ASSERT(context);
+    ASSERT(m_context);
 
     WKNetworkInfoProvider wkNetworkInfoProvider = {
         kWKNetworkInfoProviderCurrentVersion,

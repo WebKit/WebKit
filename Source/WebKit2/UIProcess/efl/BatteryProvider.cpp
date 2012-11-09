@@ -70,7 +70,7 @@ BatteryProvider::BatteryProvider(PassRefPtr<WebContext> context)
     : m_context(context)
     , m_provider(this)
 {
-    ASSERT(context);
+    ASSERT(m_context);
 
     WKBatteryProvider wkBatteryProvider = {
         kWKBatteryProviderCurrentVersion,

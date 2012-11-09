@@ -1,3 +1,17 @@
+2012-11-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] REGRESSION (r134043): API tests crashes
+        https://bugs.webkit.org/show_bug.cgi?id=101742
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Do not assert on PassRefPtr<WebContext> after it becomes 0.
+
+        * UIProcess/efl/BatteryProvider.cpp:
+        (BatteryProvider::BatteryProvider):
+        * UIProcess/efl/NetworkInfoProvider.cpp:
+        (NetworkInfoProvider::NetworkInfoProvider):
+
 2012-11-09  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2][AC] Random crashes in layout tests on the bot
