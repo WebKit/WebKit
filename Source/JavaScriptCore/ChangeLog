@@ -1,3 +1,16 @@
+2012-11-09  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        [Qt] r133953 broke the ARM_TRADITIONAL build
+        https://bugs.webkit.org/show_bug.cgi?id=101706
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix the ARM_TRADITIONAL build after r133953
+
+        * dfg/DFGCCallHelpers.h:
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        (CCallHelpers):
+
 2012-11-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Fix the LLINT build from ARMv7 platform
