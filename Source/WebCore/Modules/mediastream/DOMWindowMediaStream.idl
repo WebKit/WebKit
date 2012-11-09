@@ -29,11 +29,8 @@
     Supplemental=DOMWindow
 ] interface DOMWindowMediaStream {
     [V8EnabledAtRuntime] attribute MediaStreamConstructor webkitMediaStream;
-    [V8EnabledAtRuntime] attribute PeerConnection00Constructor webkitPeerConnection00;
     [V8EnabledAtRuntime] attribute RTCPeerConnectionConstructor webkitRTCPeerConnection;
-    attribute SessionDescriptionConstructor SessionDescription;
     attribute RTCSessionDescriptionConstructor RTCSessionDescription;
-    attribute IceCandidateConstructor IceCandidate;
     attribute RTCIceCandidateConstructor RTCIceCandidate;
     attribute MediaStreamEventConstructor MediaStreamEvent;
 };

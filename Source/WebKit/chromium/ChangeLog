@@ -1,3 +1,29 @@
+2012-11-09  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Deleting all files relating to the deprecated PeerConnection00
+        https://bugs.webkit.org/show_bug.cgi?id=101730
+
+        Reviewed by Adam Barth.
+
+        Since RTCPeerConenction has superseeded PeerConnection00 this patch removes all
+        files relating to the old API.
+
+        * WebKit.gyp:
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures):
+        * public/platform/WebICECandidateDescriptor.h: Removed.
+        * public/platform/WebICEOptions.h: Removed.
+        * public/platform/WebMediaHints.h: Removed.
+        * public/platform/WebPeerConnection00Handler.h: Removed.
+        * public/platform/WebPeerConnection00HandlerClient.h: Removed.
+        * public/platform/WebPeerConnectionHandler.h: Removed.
+        * public/platform/WebPeerConnectionHandlerClient.h: Removed.
+        * public/platform/WebSessionDescriptionDescriptor.h: Removed.
+        * src/AssertMatchingEnums.cpp:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::isPeerConnectionEnabled):
+        * src/WebSessionDescriptionDescriptor.cpp: Removed.
+
 2012-11-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134010.

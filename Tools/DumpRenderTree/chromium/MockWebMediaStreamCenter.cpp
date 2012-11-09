@@ -33,13 +33,11 @@
 
 #include "MockWebMediaStreamCenter.h"
 
-#include <public/WebICECandidateDescriptor.h>
 #include <public/WebMediaStreamCenterClient.h>
 #include <public/WebMediaStreamComponent.h>
 #include <public/WebMediaStreamDescriptor.h>
 #include <public/WebMediaStreamSource.h>
 #include <public/WebMediaStreamSourcesRequest.h>
-#include <public/WebSessionDescriptionDescriptor.h>
 #include <public/WebVector.h>
 
 using namespace WebKit;
@@ -89,26 +87,6 @@ void MockWebMediaStreamCenter::didStopLocalMediaStream(const WebMediaStreamDescr
 
 void MockWebMediaStreamCenter::didCreateMediaStream(WebMediaStreamDescriptor&)
 {
-}
-
-WebString MockWebMediaStreamCenter::constructSDP(const WebICECandidateDescriptor& iceCandidate)
-{
-    string16 result = iceCandidate.label();
-    result += WebString(":");
-    result += iceCandidate.candidateLine();
-    result += WebString(";");
-    return result;
-}
-
-WebString MockWebMediaStreamCenter::constructSDP(const WebSessionDescriptionDescriptor& sessionDescription)
-{
-    string16 result = sessionDescription.initialSDP();
-    result += WebString(";");
-    for (size_t i = 0; i < sessionDescription.numberOfAddedCandidates(); ++i) {
-        result += constructSDP(sessionDescription.candidate(i));
-        result += WebString(";");
-    }
-    return result;
 }
 
 #endif // ENABLE(MEDIA_STREAM)

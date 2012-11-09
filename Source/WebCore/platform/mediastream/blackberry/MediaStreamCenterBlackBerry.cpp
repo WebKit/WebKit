@@ -35,10 +35,8 @@
 
 #include "MediaStreamCenterBlackBerry.h"
 
-#include "IceCandidateDescriptor.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSourcesQueryClient.h"
-#include "SessionDescriptionDescriptor.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -84,16 +82,6 @@ void MediaStreamCenterBlackBerry::didStopLocalMediaStream(MediaStreamDescriptor*
 
 void MediaStreamCenterBlackBerry::didCreateMediaStream(MediaStreamDescriptor*)
 {
-}
-
-String MediaStreamCenterBlackBerry::constructSDP(IceCandidateDescriptor*)
-{
-    return "";
-}
-
-String MediaStreamCenterBlackBerry::constructSDP(SessionDescriptionDescriptor*)
-{
-    return "";
 }
 
 } // namespace WebCore

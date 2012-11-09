@@ -59,13 +59,11 @@
 #include "IDBKeyPath.h"
 #include "IDBMetadata.h"
 #include "IDBTransactionBackendInterface.h"
-#include "IceOptions.h"
 #include "IconURL.h"
 #include "MediaPlayer.h"
 #include "MediaStreamSource.h"
 #include "NotificationClient.h"
 #include "PageVisibilityState.h"
-#include "PeerConnection00.h"
 #include "PlatformCursor.h"
 #include "RTCDataChannelDescriptor.h"
 #include "RTCPeerConnectionHandlerClient.h"
@@ -119,10 +117,7 @@
 #include <public/WebClipboard.h>
 #include <public/WebFileSystem.h>
 #include <public/WebFilterOperation.h>
-#include <public/WebICEOptions.h>
 #include <public/WebMediaStreamSource.h>
-#include <public/WebPeerConnection00Handler.h>
-#include <public/WebPeerConnection00HandlerClient.h>
 #include <public/WebRTCDataChannel.h>
 #include <public/WebRTCPeerConnectionHandler.h>
 #include <public/WebRTCPeerConnectionHandlerClient.h>
@@ -565,28 +560,6 @@ COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::TypeVideo, MediaStreamSource:
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::ReadyStateLive, MediaStreamSource::ReadyStateLive);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::ReadyStateMuted, MediaStreamSource::ReadyStateMuted);
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaStreamSource::ReadyStateEnded, MediaStreamSource::ReadyStateEnded);
-
-COMPILE_ASSERT_MATCHING_ENUM(WebICEOptions::CandidateTypeAll, IceOptions::ALL);
-COMPILE_ASSERT_MATCHING_ENUM(WebICEOptions::CandidateTypeNoRelay, IceOptions::NO_RELAY);
-COMPILE_ASSERT_MATCHING_ENUM(WebICEOptions::CandidateTypeOnlyRelay, IceOptions::ONLY_RELAY);
-
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00Handler::ActionSDPOffer, PeerConnection00::SDP_OFFER);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00Handler::ActionSDPPRanswer, PeerConnection00::SDP_PRANSWER);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00Handler::ActionSDPAnswer, PeerConnection00::SDP_ANSWER);
-
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ReadyStateNew, PeerConnection00::NEW);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ReadyStateOpening, PeerConnection00::OPENING);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ReadyStateNegotiating, PeerConnection00::OPENING);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ReadyStateActive, PeerConnection00::ACTIVE);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ReadyStateClosed, PeerConnection00::CLOSED);
-
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateGathering, PeerConnection00::ICE_GATHERING);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateWaiting, PeerConnection00::ICE_WAITING);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateChecking, PeerConnection00::ICE_CHECKING);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateConnected, PeerConnection00::ICE_CONNECTED);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateCompleted, PeerConnection00::ICE_COMPLETED);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateFailed, PeerConnection00::ICE_FAILED);
-COMPILE_ASSERT_MATCHING_ENUM(WebPeerConnection00HandlerClient::ICEStateClosed, PeerConnection00::ICE_CLOSED);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebRTCPeerConnectionHandlerClient::ReadyStateNew, RTCPeerConnectionHandlerClient::ReadyStateNew);
 COMPILE_ASSERT_MATCHING_ENUM(WebRTCPeerConnectionHandlerClient::ReadyStateOpening, RTCPeerConnectionHandlerClient::ReadyStateOpening);

@@ -39,11 +39,9 @@
 
 namespace WebCore {
 
-class IceCandidateDescriptor;
 class MediaStreamComponent;
 class MediaStreamDescriptor;
 class MediaStreamSourcesQueryClient;
-class SessionDescriptionDescriptor;
 
 class MediaStreamCenter {
 public:
@@ -61,8 +59,6 @@ public:
     virtual bool didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) = 0;
     virtual void didStopLocalMediaStream(MediaStreamDescriptor*) = 0;
     virtual void didCreateMediaStream(MediaStreamDescriptor*) = 0;
-    virtual String constructSDP(IceCandidateDescriptor*) = 0;
-    virtual String constructSDP(SessionDescriptionDescriptor*) = 0;
 
 protected:
     MediaStreamCenter();

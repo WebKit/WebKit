@@ -49,8 +49,6 @@ public:
     virtual bool didRemoveMediaStreamTrack(const WebKit::WebMediaStreamDescriptor&, const WebKit::WebMediaStreamComponent&) OVERRIDE;
     virtual void didStopLocalMediaStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
     virtual void didCreateMediaStream(WebKit::WebMediaStreamDescriptor&) OVERRIDE;
-    virtual WebKit::WebString constructSDP(const WebKit::WebICECandidateDescriptor&) OVERRIDE;
-    virtual WebKit::WebString constructSDP(const WebKit::WebSessionDescriptionDescriptor&) OVERRIDE;
 
 private:
     MockWebMediaStreamCenter() { }

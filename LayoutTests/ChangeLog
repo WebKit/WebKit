@@ -1,3 +1,36 @@
+2012-11-09  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Deleting all files relating to the deprecated PeerConnection00
+        https://bugs.webkit.org/show_bug.cgi?id=101730
+
+        Reviewed by Adam Barth.
+
+        Since RTCPeerConenction has superseeded PeerConnection00 this patch removes all
+        files relating to the old API.
+
+        * fast/mediastream/SessionDescription-expected.txt: Removed.
+        * fast/mediastream/SessionDescription.html: Removed.
+        * fast/mediastream/constructors-expected.txt:
+        * fast/mediastream/constructors.html:
+        * fast/mediastream/peerconnection-Attributes-expected.txt: Removed.
+        * fast/mediastream/peerconnection-Attributes.html: Removed.
+        * fast/mediastream/peerconnection-addstream-expected.txt: Removed.
+        * fast/mediastream/peerconnection-addstream.html: Removed.
+        * fast/mediastream/peerconnection-argument-types-expected.txt: Removed.
+        * fast/mediastream/peerconnection-argument-types.html: Removed.
+        * fast/mediastream/peerconnection-eventlistener-optional-argument-expected.txt: Removed.
+        * fast/mediastream/peerconnection-eventlistener-optional-argument.html: Removed.
+        * fast/mediastream/peerconnection-iceoptions-expected.txt: Removed.
+        * fast/mediastream/peerconnection-iceoptions.html: Removed.
+        * fast/mediastream/peerconnection-mediastreamlist-expected.txt: Removed.
+        * fast/mediastream/peerconnection-mediastreamlist.html: Removed.
+        * fast/mediastream/peerconnection-removestream-expected.txt: Removed.
+        * fast/mediastream/peerconnection-removestream.html: Removed.
+        * fast/mediastream/script-tests/peerconnection-Attributes.js: Removed.
+        * fast/mediastream/script-tests/peerconnection-addstream.js: Removed.
+        * fast/mediastream/script-tests/peerconnection-argument-types.js: Removed.
+        * fast/mediastream/script-tests/peerconnection-removestream.js: Removed.
+
 2012-11-09  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css] Text decoration's "blink" not valid when CSS3_TEXT is enabled

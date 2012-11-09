@@ -48,11 +48,9 @@ class WebMediaStreamDescriptor;
 
 namespace WebCore {
 
-class IceCandidateDescriptor;
 class MediaStreamComponent;
 class MediaStreamDescriptor;
 class MediaStreamSourcesQueryClient;
-class SessionDescriptionDescriptor;
 
 class MediaStreamCenterChromium : public MediaStreamCenter, public WebKit::WebMediaStreamCenterClient {
 public:
@@ -66,8 +64,6 @@ public:
     virtual bool didRemoveMediaStreamTrack(MediaStreamDescriptor*, MediaStreamComponent*) OVERRIDE;
     virtual void didStopLocalMediaStream(MediaStreamDescriptor*) OVERRIDE;
     virtual void didCreateMediaStream(MediaStreamDescriptor*) OVERRIDE;
-    virtual String constructSDP(IceCandidateDescriptor*) OVERRIDE;
-    virtual String constructSDP(SessionDescriptionDescriptor*) OVERRIDE;
 
     // WebKit::WebMediaStreamCenterClient
     virtual void stopLocalMediaStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;

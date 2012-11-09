@@ -359,24 +359,6 @@ bool WebRuntimeFeatures::isPeerConnectionEnabled()
 #endif
 }
 
-void WebRuntimeFeatures::enableDeprecatedPeerConnection(bool enable)
-{
-#if ENABLE(MEDIA_STREAM)
-    RuntimeEnabledFeatures::setDeprecatedPeerConnectionEnabled(enable);
-#else
-    UNUSED_PARAM(enable);
-#endif
-}
-
-bool WebRuntimeFeatures::isDeprecatedPeerConnectionEnabled()
-{
-#if ENABLE(MEDIA_STREAM)
-    return RuntimeEnabledFeatures::deprecatedPeerConnectionEnabled();
-#else
-    return false;
-#endif
-}
-
 void WebRuntimeFeatures::enableFullScreenAPI(bool enable)
 {
 #if ENABLE(FULLSCREEN_API)

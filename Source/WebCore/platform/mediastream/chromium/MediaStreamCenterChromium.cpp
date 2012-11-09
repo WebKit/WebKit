@@ -34,17 +34,13 @@
 
 #include "MediaStreamCenterChromium.h"
 
-#include "IceCandidateDescriptor.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSourcesQueryClient.h"
-#include "SessionDescriptionDescriptor.h"
 #include <public/Platform.h>
-#include <public/WebICECandidateDescriptor.h>
 #include <public/WebMediaStreamCenter.h>
 #include <public/WebMediaStreamComponent.h>
 #include <public/WebMediaStreamDescriptor.h>
 #include <public/WebMediaStreamSourcesRequest.h>
-#include <public/WebSessionDescriptionDescriptor.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -108,16 +104,6 @@ void MediaStreamCenterChromium::didCreateMediaStream(MediaStreamDescriptor* stre
         WebKit::WebMediaStreamDescriptor webStream(stream);
         m_private->didCreateMediaStream(webStream);
     }
-}
-
-String MediaStreamCenterChromium::constructSDP(IceCandidateDescriptor* iceCandidate)
-{
-    return m_private ? m_private->constructSDP(WebKit::WebICECandidateDescriptor(iceCandidate)) : "";
-}
-
-String MediaStreamCenterChromium::constructSDP(SessionDescriptionDescriptor* sessionDescription)
-{
-    return m_private ? m_private->constructSDP(WebKit::WebSessionDescriptionDescriptor(sessionDescription)) : "";
 }
 
 void MediaStreamCenterChromium::stopLocalMediaStream(const WebKit::WebMediaStreamDescriptor& stream)

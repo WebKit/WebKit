@@ -612,7 +612,6 @@
                 'src/WebSecurityPolicy.cpp',
                 'src/WebSelectElement.cpp',
                 'src/WebSerializedScriptValue.cpp',
-                'src/WebSessionDescriptionDescriptor.cpp',
                 'src/WebSettingsImpl.cpp',
                 'src/WebSettingsImpl.h',
                 'src/WebSharedWorkerImpl.cpp',

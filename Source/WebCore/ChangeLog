@@ -1,3 +1,68 @@
+2012-11-09  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Deleting all files relating to the deprecated PeerConnection00
+        https://bugs.webkit.org/show_bug.cgi?id=101730
+
+        Reviewed by Adam Barth.
+
+        Since RTCPeerConenction has superseeded PeerConnection00 this patch removes all
+        files relating to the old API.
+
+        No testing needed, the remaining tests makes sure that nothing else breaks.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/DOMWindowMediaStream.idl:
+        * Modules/mediastream/IceCallback.h: Removed.
+        * Modules/mediastream/IceCallback.idl: Removed.
+        * Modules/mediastream/IceCandidate.cpp: Removed.
+        * Modules/mediastream/IceCandidate.h: Removed.
+        * Modules/mediastream/IceCandidate.idl: Removed.
+        * Modules/mediastream/PeerConnection00.cpp: Removed.
+        * Modules/mediastream/PeerConnection00.h: Removed.
+        * Modules/mediastream/PeerConnection00.idl: Removed.
+        * Modules/mediastream/SessionDescription.cpp: Removed.
+        * Modules/mediastream/SessionDescription.h: Removed.
+        * Modules/mediastream/SessionDescription.idl: Removed.
+        * WebCore.gypi:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (RuntimeEnabledFeatures):
+        * dom/EventTargetFactory.in:
+        * platform/chromium/support/WebICECandidateDescriptor.cpp: Removed.
+        * platform/chromium/support/WebICEOptions.cpp: Removed.
+        * platform/chromium/support/WebMediaHints.cpp: Removed.
+        * platform/mediastream/IceCandidateDescriptor.cpp: Removed.
+        * platform/mediastream/IceCandidateDescriptor.h: Removed.
+        * platform/mediastream/IceOptions.cpp: Removed.
+        * platform/mediastream/IceOptions.h: Removed.
+        * platform/mediastream/MediaHints.cpp: Removed.
+        * platform/mediastream/MediaHints.h: Removed.
+        * platform/mediastream/MediaStreamCenter.h:
+        (WebCore):
+        (MediaStreamCenter):
+        * platform/mediastream/PeerConnection00Handler.cpp: Removed.
+        * platform/mediastream/PeerConnection00Handler.h: Removed.
+        * platform/mediastream/PeerConnection00HandlerClient.h: Removed.
+        * platform/mediastream/SessionDescriptionDescriptor.cpp: Removed.
+        * platform/mediastream/SessionDescriptionDescriptor.h: Removed.
+        * platform/mediastream/blackberry/MediaStreamCenterBlackBerry.cpp:
+        * platform/mediastream/blackberry/MediaStreamCenterBlackBerry.h:
+        (WebCore):
+        (MediaStreamCenterBlackBerry):
+        * platform/mediastream/chromium/MediaStreamCenterChromium.cpp:
+        * platform/mediastream/chromium/MediaStreamCenterChromium.h:
+        (WebCore):
+        (MediaStreamCenterChromium):
+        * platform/mediastream/chromium/PeerConnection00Handler.cpp: Removed.
+        * platform/mediastream/chromium/PeerConnection00HandlerInternal.cpp: Removed.
+        * platform/mediastream/chromium/PeerConnection00HandlerInternal.h: Removed.
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp:
+        * platform/mediastream/gstreamer/MediaStreamCenterGStreamer.h:
+        (WebCore):
+        (MediaStreamCenterGStreamer):
+
 2012-11-09  Jer Noble  <jer.noble@apple.com>
 
         Plugin diagnostic logging should send plugin file basename instead of MIME type.

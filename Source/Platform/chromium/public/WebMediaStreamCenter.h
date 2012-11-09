@@ -34,11 +34,9 @@
 #include "WebString.h"
 
 namespace WebKit {
-class WebICECandidateDescriptor;
 class WebMediaStreamComponent;
 class WebMediaStreamDescriptor;
 class WebMediaStreamSourcesRequest;
-class WebSessionDescriptionDescriptor;
 
 class WebMediaStreamCenter {
 public:
@@ -51,8 +49,6 @@ public:
     virtual bool didRemoveMediaStreamTrack(const WebMediaStreamDescriptor&, const WebMediaStreamComponent&) { return false; };
     virtual void didStopLocalMediaStream(const WebMediaStreamDescriptor&) = 0;
     virtual void didCreateMediaStream(WebMediaStreamDescriptor&) = 0;
-    virtual WebString constructSDP(const WebICECandidateDescriptor&) { return WebString(); }
-    virtual WebString constructSDP(const WebSessionDescriptionDescriptor&) { return WebString(); }
 };
 
 } // namespace WebKit

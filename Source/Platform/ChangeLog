@@ -1,3 +1,29 @@
+2012-11-09  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Deleting all files relating to the deprecated PeerConnection00
+        https://bugs.webkit.org/show_bug.cgi?id=101730
+
+        Reviewed by Adam Barth.
+
+        Since RTCPeerConenction has superseeded PeerConnection00 this patch removes all
+        files relating to the old API.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        * chromium/public/WebICECandidateDescriptor.h: Removed.
+        * chromium/public/WebICEOptions.h: Removed.
+        * chromium/public/WebMediaHints.h: Removed.
+        * chromium/public/WebMediaStreamCenter.h:
+        (WebKit):
+        (WebMediaStreamCenter):
+        * chromium/public/WebPeerConnection00Handler.h: Removed.
+        * chromium/public/WebPeerConnection00HandlerClient.h: Removed.
+        * chromium/public/WebPeerConnectionHandler.h: Removed.
+        * chromium/public/WebPeerConnectionHandlerClient.h: Removed.
+        * chromium/public/WebSessionDescriptionDescriptor.h: Removed.
+
 2012-11-08  Sami Kyostila  <skyostil@chromium.org>
 
         Introduce WebScreenInfo.deviceScaleFactor
