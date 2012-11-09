@@ -1,3 +1,17 @@
+2012-11-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        People with dichromacy can't tell crashes and passes on flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=101711
+
+        Reviewed by Ojan Vafai.
+
+        Lower the brightness of orange, and raise the brightness of green so that
+        people with color blindnes can still distinguish passes and crashes easily.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.css:
+        (.P):
+        (.C):
+
 2012-11-09  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Deleting all files relating to the deprecated PeerConnection00
