@@ -1,3 +1,19 @@
+2012-11-08  Roger Fong  <roger_fong@apple.com>
+
+        Null check URL key entries into WebHistory hash table. 
+        https://bugs.webkit.org/show_bug.cgi?id=101664
+        <rdar://problem/12440852>
+
+        Reviewed by Brady Eidson.
+        
+        Sometimes the _entriesByURL hash table used to keep track of web history is erroneously passed in null key entries, which causes an exception to fire.
+        This prevents the desired page navigation from taking effect. This is a workaround for the problem.
+        Ideally we would figure out where the null values for the key are coming from but for now we'll just set it to "" to prevent the exception from being thrown
+        so that navigation can continue as expected.
+
+        * History/WebHistory.mm:
+        (-[WebHistoryPrivate visitedURL:withTitle:increaseVisitCount:]):
+
 2012-11-07  Andreas Kling  <akling@apple.com>
 
         Remove build-webkit dependency on Java SDK for Apple Mac WebKit.
