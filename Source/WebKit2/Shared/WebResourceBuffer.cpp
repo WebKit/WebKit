@@ -51,4 +51,9 @@ unsigned WebResourceBuffer::size() const
     return m_resource->size();
 }
 
+bool WebResourceBuffer::isEmpty() const
+{
+    return !m_resource || !m_resource->size();
+}
+
 } // namespace WebKit

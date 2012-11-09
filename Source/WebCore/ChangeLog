@@ -1,3 +1,18 @@
+2012-11-09  Brady Eidson  <beidson@apple.com>
+
+        Implement WebResourceBuffer::isEmpty()
+        https://bugs.webkit.org/show_bug.cgi?id=101805
+
+        Reviewed by Alexey Proskuryakov.
+
+        This is required to make the existing subresource loading in NetworkProcess work correctly,
+        as there's an isEmpty() check in the WebProcess that decides whether or not to actually deliver 
+        the data to the ResourceLoader.
+
+        No new tests (No change in behavior in any configuration we test.)
+
+        * loader/ResourceBuffer.h: Make isEmpty() virtual.
+
 2012-11-09  Michael Saboff  <msaboff@apple.com>
 
         HTML Attributes names and values should be created as 8 bit string where possible

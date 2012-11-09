@@ -1,3 +1,18 @@
+2012-11-09  Brady Eidson  <beidson@apple.com>
+
+        Implement WebResourceBuffer::isEmpty()
+        https://bugs.webkit.org/show_bug.cgi?id=101805
+
+        Reviewed by Alexey Proskuryakov.
+
+        This is required to make the existing subresource loading in NetworkProcess work correctly,
+        as there's an isEmpty() check in the WebProcess that decides whether or not to actually deliver 
+        the data to the ResourceLoader.
+
+        * Shared/WebResourceBuffer.cpp:
+        (WebKit::WebResourceBuffer::isEmpty):
+        * Shared/WebResourceBuffer.h:
+
 2012-11-09  Hurnjoo Lee  <hurnjoo.lee@samsung.com>
 
         [EFL][WK2][AC] Fixed layers are shaking when scrolling

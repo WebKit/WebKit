@@ -52,7 +52,7 @@ public:
 
     virtual const char* data() const;
     virtual unsigned size() const;
-    bool isEmpty() const;
+    virtual bool isEmpty() const;
 
     void append(const char*, unsigned);
     void clear();

@@ -40,6 +40,7 @@ public:
 
     virtual const char* data() const OVERRIDE;
     virtual unsigned size() const OVERRIDE;
+    virtual bool isEmpty() const OVERRIDE;
 
 private:
     WebResourceBuffer(PassRefPtr<ShareableResource>);
