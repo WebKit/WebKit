@@ -3448,7 +3448,7 @@ webkit.org/b/86909 [ Win ] http/tests/inspector/appcache/appcache-iframe-manifes
 webkit.org/b/86909 [ Win ] http/tests/inspector/network/network-content-replacement-xhr.html [ Pass Timeout ]
 webkit.org/b/86909 [ Win Debug ] http/tests/security/referrer-policy-redirect-link.html [ Pass Timeout ]
 webkit.org/b/86909 [ Win Debug ] platform/chromium/virtual/gpu/fast/canvas/imagedata-contains-uint8clampedarray.html [ Pass Timeout ]
-#webkit.org/b/86909 [ Win ] platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes-repaint.html [ Pass Slow ]
+webkit.org/b/86909 [ Win ] platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes-repaint.html [ Pass Slow ]
 
 # Ref-tests can't have platform specific results.
 webkit.org/b/87175 fast/regions/floats-basic-in-variable-width-regions.html
@@ -4201,13 +4201,6 @@ webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker
 webkit.org/b/101539 [ Linux Win ] editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
 webkit.org/b/101618 [ Win7 Debug ] http/tests/inspector/indexeddb/database-data.html [ Crash ]
-
-# Failures following Chromium r166632:
-# The following test has prior expectations which were disabled. Re-enable when removing this:
-crbug.com/160075 fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure ]
-crbug.com/160075 fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure ]
-crbug.com/160075 platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure ]
-crbug.com/160075 platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure ]
 
 # Failures following r133840:
 webkit.org/b/101547 fast/repaint/4774354.html [ ImageOnlyFailure ]
