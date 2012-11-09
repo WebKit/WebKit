@@ -1,3 +1,15 @@
+2012-11-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        RemoveFormat command doesn't remove background color
+        https://bugs.webkit.org/show_bug.cgi?id=101682
+
+        Reviewed by Tony Chang.
+
+        Added a regression test.
+
+        * editing/execCommand/remove-format-background-color-expected.txt: Added.
+        * editing/execCommand/remove-format-background-color.html: Added.
+
 2012-11-09  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
