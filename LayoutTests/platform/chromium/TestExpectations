@@ -2457,6 +2457,13 @@ crbug.com/63921 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 # FIXME: Need to add tooling support for V8 bugs.
 code.google.com/p/v8/issues/detail?id=953 fast/regex/pcre-test-1.html [ Timeout ]
 
+# HTML extensions to String.prototype should throw an error if the `this` object
+# is not coercible (i.e. `null` or `undefined`)
+code.google.com/p/v8/issues/detail?id=2218 fast/js/string-anchor.html [ Failure ]
+code.google.com/p/v8/issues/detail?id=2218 fast/js/string-fontcolor.html [ Failure ]
+code.google.com/p/v8/issues/detail?id=2218 fast/js/string-fontsize.html [ Failure ]
+code.google.com/p/v8/issues/detail?id=2218 fast/js/string-link.html [ Failure ]
+
 webkit.org/b/50282 [ Android Linux Win ] fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Failure ]
 webkit.org/b/50282 [ Android Linux Win ] fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Failure ]
 webkit.org/b/50282 [ Android Linux Win ] fast/images/imagemap-focus-ring-outline-color.html [ Failure ]

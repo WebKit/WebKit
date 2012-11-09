@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description(
+'This is a test case for String.prototype.anchor(name).'
+);
+
+// This test is based on http://mathias.html5.org/tests/javascript/string/.
+
+// Simple case.
+shouldBe("'_'.anchor('b')", '"<a name=\\"b\\">_</a>"');
+
+// Does not escape special characters in `this` value.
+shouldBe("'<'.anchor('b')", '"<a name=\\"b\\"><</a>"');
+
+// first argument gets ToString()ed.
+shouldBe("'_'.anchor(0x2A)", '"<a name=\\"42\\">_</a>"');
+
+// Check that the quotation mark is correctly escaped.
+shouldBe("'_'.anchor('\"')", '"<a name=\\"&quot;\\">_</a>"');
+shouldBe("'_'.anchor('\" href=\"http://www.evil.com')", '"<a name=\\"&quot; href=&quot;http://www.evil.com\\">_</a>"');
+
+// Generic use on Number object.
+shouldBe("String.prototype.anchor.call(0x2A, 0x2A)", '"<a name=\\"42\\">42</a>"');
+
+// Generic use on non-coercible object `undefined`.
+shouldThrow("String.prototype.anchor.call(undefined)", '"TypeError: Type error"');
+
+// Generic use on non-coercible object `null`.
+shouldThrow("String.prototype.anchor.call(null)", '"TypeError: Type error"');
+
+// Check anchor.length.
+shouldBe("String.prototype.anchor.length", "1");
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

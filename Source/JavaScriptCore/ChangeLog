@@ -1,3 +1,28 @@
+2012-11-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [JSC] HTML extensions to String.prototype should escape " as &quot; in argument values
+        https://bugs.webkit.org/show_bug.cgi?id=90667
+
+        Reviewed by Benjamin Poulain.
+
+        Escape quotation mark as &quot; in argument values to:
+        - String.prototype.anchor(name)
+        - String.prototype.fontcolor(color)
+        - String.prototype.fontsize(size)
+        - String.prototype.link(href)
+
+        This behavior matches Chromium/V8 and Firefox/Spidermonkey
+        implementations and is requited by:
+        http://mathias.html5.org/specs/javascript/#escapeattributevalue
+
+        This also fixes a potential security risk (XSS vector).
+
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncFontcolor):
+        (JSC::stringProtoFuncFontsize):
+        (JSC::stringProtoFuncAnchor):
+        (JSC::stringProtoFuncLink):
+
 2012-11-08  Anders Carlsson  <andersca@apple.com>
 
         HeapStatistics::s_pauseTimeStarts and s_pauseTimeEnds should be Vectors

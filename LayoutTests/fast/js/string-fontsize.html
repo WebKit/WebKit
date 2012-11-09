@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description(
+'This is a test case for String.prototype.fontsize(size).'
+);
+
+// This test is based on http://mathias.html5.org/tests/javascript/string/.
+
+// Check that the quotation mark is correctly escaped.
+shouldBe("'_'.fontsize('\"')", '"<font size=\\"&quot;\\">_</font>"');
+
+// Simple case.
+shouldBe("'_'.fontsize('b')", '"<font size=\\"b\\">_</font>"');
+
+// Does not escape special characters in `this` value.
+shouldBe("'<'.fontsize('b')", '"<font size=\\"b\\"><</font>"');
+
+// First argument gets ToString()ed.
+shouldBe("'_'.fontsize(0x2A)", '"<font size=\\"42\\">_</font>"');
+
+// Check that the quotation mark is correctly escaped.
+shouldBe("'_'.fontsize('\"')", '"<font size=\\"&quot;\\">_</font>"');
+shouldBe("'_'.fontsize('\" color=\"b')", '"<font size=\\"&quot; color=&quot;b\\">_</font>"');
+
+// Generic use on Number object.
+shouldBe("String.prototype.fontsize.call(0x2A, 0x2A)", '"<font size=\\"42\\">42</font>"');
+
+// Generic use on non-coercible object `undefined`.
+shouldThrow("String.prototype.fontsize.call(undefined)", '"TypeError: Type error"');
+
+// Generic use on non-coercible object `null`.
+shouldThrow("String.prototype.fontsize.call(null)", '"TypeError: Type error"');
+
+// Check fontsize.length.
+shouldBe("String.prototype.fontsize.length", "1");
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

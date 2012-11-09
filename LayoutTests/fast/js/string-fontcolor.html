@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description(
+'This is a test case for String.prototype.fontcolor(color).'
+);
+
+// This test is based on http://mathias.html5.org/tests/javascript/string/.
+
+// Simple case.
+shouldBe("'_'.fontcolor('b')", '"<font color=\\"b\\">_</font>"');
+
+// Does not escape special characters in `this` value.
+shouldBe("'<'.fontcolor('b')", '"<font color=\\"b\\"><</font>"');
+
+// First argument gets ToString()ed.
+shouldBe("'_'.fontcolor(0x2A)", '"<font color=\\"42\\">_</font>"');
+
+// Check that the quotation mark is correctly escaped.
+shouldBe("'_'.fontcolor('\"')", '"<font color=\\"&quot;\\">_</font>"');
+shouldBe("'_'.fontcolor('\" size=\"2px')", '"<font color=\\"&quot; size=&quot;2px\\">_</font>"');
+
+// Generic use on Number object.
+shouldBe("String.prototype.fontcolor.call(0x2A, 0x2A)", '"<font color=\\"42\\">42</font>"');
+
+// Generic use on non-coercible object `undefined`.
+shouldThrow("String.prototype.fontcolor.call(undefined)", '"TypeError: Type error"');
+
+// Generic use on non-coercible object `null`.
+shouldThrow("String.prototype.fontcolor.call(null)", '"TypeError: Type error"');
+
+// Check fontcolor.length.
+shouldBe("String.prototype.fontcolor.length", "1");
+</script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

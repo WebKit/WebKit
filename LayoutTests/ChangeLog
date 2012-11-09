@@ -1,3 +1,30 @@
+2012-11-08  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [JSC] HTML extensions to String.prototype should escape " as &quot; in argument values
+        https://bugs.webkit.org/show_bug.cgi?id=90667
+
+        Reviewed by Benjamin Poulain.
+
+        Add layout test coverage for the following String.prototype methods:
+        - String.prototype.anchor(name)
+        - String.prototype.fontcolor(color)
+        - String.prototype.fontsize(size)
+        - String.prototype.link(href)
+
+        Those tests also check that the quotation mark is correctly escaped
+        in argument values to prevent potential exploits.
+
+        * fast/js/string-anchor-expected.txt: Added.
+        * fast/js/string-anchor.html: Added.
+        * fast/js/string-fontcolor-expected.txt: Added.
+        * fast/js/string-fontcolor.html: Added.
+        * fast/js/string-fontsize-expected.txt: Added.
+        * fast/js/string-fontsize.html: Added.
+        * fast/js/string-link-expected.txt: Added.
+        * fast/js/string-link.html: Added.
+        * platform/chromium/TestExpectations: Skip new tests for chromium port due
+        to http://code.google.com/p/v8/issues/detail?id=2218
+
 2012-11-08  Joshua Bell  <jsbell@chromium.org>
 
        [Chromium] Unreviewed gardening. Added missing *-expected.txt following rebaselines.
