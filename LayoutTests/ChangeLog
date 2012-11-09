@@ -1,3 +1,9 @@
+2012-11-09  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Unreviewed gardening, failing new hidpi tests in r134099/r134100
+
+        * platform/chromium/TestExpectations:
+
 2012-11-09  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, last few chromium-mac-mountainlion expectations cleaned up.

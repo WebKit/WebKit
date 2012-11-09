@@ -4282,3 +4282,8 @@ webkit.org/b/101547 svg/custom/foreignObject-crash-on-hover.xml [ ImageOnlyFailu
 webkit.org/b/101547 svg/custom/hit-test-unclosed-subpaths.svg [ ImageOnlyFailure ]
 # The following test has prior expectations which were disabled. Re-enable when removing this:
 webkit.org/b/101547 svg/custom/hit-test-with-br.xhtml [ ImageOnlyFailure ]
+
+webkit.org/b/101794 fast/canvas/canvas-as-image-hidpi.html [ ImageOnlyFailure ]
+webkit.org/b/101794 platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-hidpi.html [ ImageOnlyFailure ]
+webkit.org/b/101794 fast/canvas/canvas-resize-reset-pixelRatio.html [ Failure ]
+webkit.org/b/101794 platform/chromium/virtual/gpu/fast/canvas/canvas-resize-reset-pixelRatio.html [ Failure ]
