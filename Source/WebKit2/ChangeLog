@@ -1,3 +1,16 @@
+2012-11-08  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [WK2] Unused parameters on LayerTreeRenderer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=101653
+
+        Reviewed by Noam Rosenthal.
+
+        Because the 'tileID' parameter is not used now,
+        comment out it to fix build warning -Wunused-parameter
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::removeBackingStoreIfNeeded):
+
 2012-11-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add proper support for fullscreen API to MiniBrowser

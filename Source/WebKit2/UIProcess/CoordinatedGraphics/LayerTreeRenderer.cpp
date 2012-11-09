@@ -367,7 +367,7 @@ PassRefPtr<CoordinatedBackingStore> LayerTreeRenderer::getBackingStore(WebLayerI
     return backingStore;
 }
 
-void LayerTreeRenderer::removeBackingStoreIfNeeded(WebLayerID layerID, int tileID)
+void LayerTreeRenderer::removeBackingStoreIfNeeded(WebLayerID layerID, int /*tileID*/)
 {
     TextureMapperLayer* layer = toTextureMapperLayer(layerByID(layerID));
     ASSERT(layer);
