@@ -1,3 +1,38 @@
+2012-11-08  Oliver Hunt  <oliver@apple.com>
+
+        Improve effectiveness of function-level caching
+        https://bugs.webkit.org/show_bug.cgi?id=101667
+
+        Reviewed by Filip Pizlo.
+
+        Added a random-eviction based cache for unlinked functions, and switch
+        UnlinkedFunctionExecutable's code references to Weak<>, thereby letting
+        us remove the explicit UnlinkedFunctionExecutable::clearCode() calls that
+        were being triggered by GC.
+
+        Refactored the random eviction part of the CodeCache into a separate data
+        structure so that I didn't have to duplicate the code again, and then used
+        that for the new function cache.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::visitChildren):
+        (JSC::UnlinkedFunctionExecutable::codeBlockFor):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedFunctionExecutable::clearCodeForRecompilation):
+        (UnlinkedFunctionExecutable):
+        * debugger/Debugger.cpp:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getCodeBlock):
+        (JSC::CodeCache::generateFunctionCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        (JSC::CodeCache::usedFunctionCode):
+        (JSC):
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::clearUnlinkedCodeForRecompilationIfNotCompiling):
+        (JSC::FunctionExecutable::clearCode):
+        * runtime/Executable.h:
+        (FunctionExecutable):
+
 2012-11-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG constant folding and CFG simplification should be smart enough to know that if a logical op's operand is proven to have a non-masquerading structure then it always evaluates to true

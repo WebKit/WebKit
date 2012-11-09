@@ -34,6 +34,7 @@
 #include <wtf/FixedArray.h>
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RandomNumber.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -51,6 +52,41 @@ struct ParserError;
 class SourceCode;
 class SourceProvider;
 
+template <typename KeyType, typename EntryType, int CacheSize> class Thingy {
+    typedef typename HashMap<KeyType, unsigned>::iterator iterator;
+public:
+    Thingy()
+    : m_randomGenerator((static_cast<uint32_t>(randomNumber() * UINT32_MAX)))
+    {
+    }
+    const EntryType* find(const KeyType& key)
+    {
+        iterator result = m_map.find(key);
+        if (result == m_map.end())
+            return 0;
+        return &m_data[result->value].second;
+    }
+    void add(const KeyType& key, const EntryType& value)
+    {
+        iterator result = m_map.find(key);
+        if (result != m_map.end()) {
+            m_data[result->value].second = value;
+            return;
+        }
+        size_t newIndex = m_randomGenerator.getUint32() % CacheSize;
+        if (m_data[newIndex].second)
+            m_map.remove(m_data[newIndex].first);
+        m_map.add(key, newIndex);
+        m_data[newIndex].first = key;
+        m_data[newIndex].second = value;
+        ASSERT(m_map.size() <= CacheSize);
+    }
+private:
+    HashMap<KeyType, unsigned> m_map;
+    FixedArray<std::pair<KeyType, EntryType>, CacheSize> m_data;
+    WeakRandom m_randomGenerator;
+};
+
 class CodeCache {
 public:
     static PassOwnPtr<CodeCache> create() { return adoptPtr(new CodeCache); }
@@ -59,13 +95,12 @@ public:
     UnlinkedEvalCodeBlock* getEvalCodeBlock(JSGlobalData&, EvalExecutable*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
     UnlinkedFunctionCodeBlock* getFunctionCodeBlock(JSGlobalData&, UnlinkedFunctionExecutable*, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, ParserError&);
     UnlinkedFunctionExecutable* getFunctionExecutableFromGlobalCode(JSGlobalData&, const Identifier&, const SourceCode&, ParserError&);
+    void usedFunctionCode(JSGlobalData&, UnlinkedFunctionCodeBlock*);
     ~CodeCache();
 
     enum CodeType { EvalType, ProgramType, FunctionType };
     typedef std::pair<String, unsigned> CodeBlockKey;
-    typedef HashMap<CodeBlockKey, unsigned> CodeBlockIndicesMap;
     typedef std::pair<String, String> GlobalFunctionKey;
-    typedef HashMap<GlobalFunctionKey, unsigned> GlobalFunctionIndicesMap;
 
 private:
     CodeCache();
@@ -74,18 +109,17 @@ private:
 
     template <class UnlinkedCodeBlockType, class ExecutableType> inline UnlinkedCodeBlockType* getCodeBlock(JSGlobalData&, ExecutableType*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
     CodeBlockKey makeCodeBlockKey(const SourceCode&, CodeType, JSParserStrictness);
-    CodeBlockIndicesMap m_cachedCodeBlockIndices;
     GlobalFunctionKey makeGlobalFunctionKey(const SourceCode&, const String&);
-    GlobalFunctionIndicesMap m_cachedGlobalFunctionIndices;
 
     enum {
         kMaxCodeBlockEntries = 1024,
-        kMaxGlobalFunctionEntries = 1024
+        kMaxGlobalFunctionEntries = 1024,
+        kMaxFunctionCodeBlocks = 1024
     };
 
-    FixedArray<std::pair<CodeBlockKey, Strong<UnlinkedCodeBlock> >, kMaxCodeBlockEntries> m_cachedCodeBlocks;
-    FixedArray<std::pair<GlobalFunctionKey, Strong<UnlinkedFunctionExecutable> >, kMaxGlobalFunctionEntries> m_cachedGlobalFunctions;
-    WeakRandom m_randomGenerator;
+    Thingy<CodeBlockKey, Strong<UnlinkedCodeBlock>, kMaxCodeBlockEntries> m_cachedCodeBlocks;
+    Thingy<GlobalFunctionKey, Strong<UnlinkedFunctionExecutable>, kMaxGlobalFunctionEntries> m_cachedGlobalFunctions;
+    Thingy<UnlinkedFunctionCodeBlock*, Strong<UnlinkedFunctionCodeBlock>, kMaxFunctionCodeBlocks> m_cachedFunctionCode;
 };
 
 }

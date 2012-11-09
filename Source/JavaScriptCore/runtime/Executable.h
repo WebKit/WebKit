@@ -704,7 +704,7 @@ namespace JSC {
         SharedSymbolTable* symbolTable(CodeSpecializationKind kind) const { return m_unlinkedExecutable->symbolTable(kind); }
 
         void clearCodeIfNotCompiling();
-        void clearUnlinkedCodeIfNotCompiling();
+        void clearUnlinkedCodeForRecompilationIfNotCompiling();
         static void visitChildren(JSCell*, SlotVisitor&);
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue proto)
         {

@@ -36,6 +36,7 @@
 #include "Nodes.h"
 #include "RegExp.h"
 #include "SpecialPointer.h"
+#include "Weak.h"
 
 #include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>
@@ -108,7 +109,7 @@ public:
 
     FunctionExecutable* link(JSGlobalData&, const SourceCode&, size_t lineOffset, size_t sourceOffset);
 
-    void clearCode()
+    void clearCodeForRecompilation()
     {
         m_symbolTableForCall.clear();
         m_symbolTableForConstruct.clear();
@@ -136,8 +137,8 @@ public:
 
 private:
     UnlinkedFunctionExecutable(JSGlobalData*, Structure*, const SourceCode&, FunctionBodyNode*);
-    WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
-    WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
+    Weak<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
+    Weak<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 
     unsigned m_numCapturedVariables : 29;
     bool m_forceUsesArguments : 1;
