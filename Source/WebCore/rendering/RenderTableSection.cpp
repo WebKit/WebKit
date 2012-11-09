@@ -114,16 +114,13 @@ void RenderTableSection::styleDidChange(StyleDifference diff, const RenderStyle*
         table->invalidateCollapsedBorders();
 }
 
-void RenderTableSection::willBeDestroyed()
+void RenderTableSection::willBeRemovedFromTree()
 {
-    RenderTable* recalcTable = table();
-    
-    RenderBox::willBeDestroyed();
-    
-    // recalc cell info because RenderTable has unguarded pointers
-    // stored that point to this RenderTableSection.
-    if (recalcTable)
-        recalcTable->setNeedsSectionRecalc();
+    RenderBox::willBeRemovedFromTree();
+
+    // Preventively invalidate our cells as we may be re-inserted into
+    // a new table which would require us to rebuild our structure.
+    setNeedsCellRecalc();
 }
 
 void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild)
