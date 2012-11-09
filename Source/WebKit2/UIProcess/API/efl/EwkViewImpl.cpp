@@ -341,14 +341,19 @@ void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
 
 void EwkViewImpl::update(const IntRect& rect)
 {
+    Ewk_View_Smart_Data* sd = smartData();
 #if USE(COORDINATED_GRAPHICS)
     // Coordinated graphices needs to schedule an full update, not
     // repainting of a region. Update in the event loop.
     UNUSED_PARAM(rect);
+
+    // Guard for zero sized viewport.
+    if (!(sd->view.w && sd->view.h))
+        return;
+
     if (!m_displayTimer.isActive())
         m_displayTimer.startOneShot(0);
 #else
-    Ewk_View_Smart_Data* sd = smartData();
     if (!sd->image)
         return;
 

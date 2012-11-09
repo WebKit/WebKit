@@ -1,3 +1,17 @@
+2012-11-09  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] Random crashes in layout tests on the bot
+        https://bugs.webkit.org/show_bug.cgi?id=101687
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Speculative fix for a crash on the bot.
+        If didCommitLoad() is called before the view size was set, we will
+        try to paint an empty area, and that will crash.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::update):
+
 2012-11-09  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Make classes for client use WebContext instead of WKContext
