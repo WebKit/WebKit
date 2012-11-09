@@ -74,13 +74,13 @@ public:
     // Do not use this anywhere else!!
     static PassRefPtr<DOMWrapperWorld> createUninitializedWorld();
 
-    bool isMainWorld() { return m_worldId == mainWorldId; }
-    bool isIsolatedWorld() { return isIsolatedWorldId(m_worldId); }
+    bool isMainWorld() const { return m_worldId == mainWorldId; }
+    bool isIsolatedWorld() const { return isIsolatedWorldId(m_worldId); }
     int worldId() const { return m_worldId; }
     int extensionGroup() const { return m_extensionGroup; }
-    DOMDataStore* domDataStore() const
+    DOMDataStore* isolatedWorldDOMDataStore() const
     {
-        ASSERT(m_worldId != uninitializedWorldId);
+        ASSERT(isIsolatedWorld());
         return m_domDataStore.get();
     }
     void deref()
@@ -98,7 +98,7 @@ private:
         : m_worldId(worldId)
         , m_extensionGroup(extensionGroup)
     {
-        if (worldId != uninitializedWorldId)
+        if (isIsolatedWorld())
             m_domDataStore = adoptPtr(new DOMDataStore(DOMDataStore::IsolatedWorld));
     }
 

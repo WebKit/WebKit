@@ -122,7 +122,7 @@ namespace WebCore {
             if (LIKELY(!context))
                 return node->wrapper();
 
-            return context->world()->domDataStore()->get(node);
+            return context->world()->isolatedWorldDOMDataStore()->get(node);
         }
 
     private:

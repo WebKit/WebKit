@@ -1,3 +1,24 @@
+2012-11-09  Dan Carney  <dcarney@google.com>
+
+        [V8] Main world should have one DOMDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=101470
+
+        Reviewed by Kentaro Hara.
+
+        The main world DOMWrapperWorld held onto a DOMDataStore that should
+        never be used, as there is a static one optimized for speed in
+        DOMDataStore.
+
+        No new tests. No change in functionality.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::current):
+        * bindings/v8/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::isolatedWorldDomDataStore):
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::getCachedWrapper):
+
 2012-11-09  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Navigating around NMI snapshot grid with keys breaks the grid
