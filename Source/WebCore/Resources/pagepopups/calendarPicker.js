@@ -326,7 +326,7 @@ function Week(valueOrWeekOrYear, week) {
             this.year = normalizedWeek.year;
             this.week = normalizedWeek.week;
         }
-    } else if (valueOrMonthOrYear instanceof Week) {
+    } else if (valueOrWeekOrYear instanceof Week) {
         this.year = valueOrWeekOrYear.year;
         this.week = valueOrWeekOrYear.week;
     } else {

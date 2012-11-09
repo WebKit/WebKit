@@ -1,3 +1,17 @@
+2012-11-09  Keishi Hattori  <keishi@webkit.org>
+
+        Fix undefined variable in Week constructor for calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=101734
+
+        Reviewed by Kent Tamura.
+
+        Closer compiler found an undefined variable in the Week constructor.
+
+        No new tests. This code isn't used.
+
+        * Resources/pagepopups/calendarPicker.js:
+        (Week): Used wrong variable name.
+
 2012-11-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: render canvas log as a grid.
