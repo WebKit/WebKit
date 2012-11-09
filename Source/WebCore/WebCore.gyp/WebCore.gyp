@@ -1400,6 +1400,7 @@
       'direct_dependent_settings': {
         'defines': [
           'WEBCORE_NAVIGATOR_VENDOR="Google Inc."',
+          'WEBKIT_IMPLEMENTATION=1',
         ],
         'include_dirs': [
           '../../Platform/chromium',
@@ -1638,9 +1639,6 @@
       'type': 'static_library',
       'dependencies': [
         'webcore_prerequisites',
-      ],
-      'defines': [
-        'WEBKIT_IMPLEMENTATION=1',
       ],
       # This is needed for mac because of webkit_system_interface. It'd be nice
       # if this hard dependency could be split off the rest.
@@ -1917,9 +1915,6 @@
       'dependencies': [
         'webcore_prerequisites',
       ],
-      'defines': [
-        'WEBKIT_IMPLEMENTATION=1',
-      ],
       'sources': [
         '<@(webcore_platform_geometry_files)',
       ],
@@ -1959,9 +1954,6 @@
       'type': 'static_library',
       'dependencies': [
         'webcore_prerequisites',
-      ],
-      'defines': [
-        'WEBKIT_IMPLEMENTATION=1',
       ],
       'sources': [
         '<@(webcore_privateheader_files)',
@@ -2029,9 +2021,6 @@
     {
       'target_name': 'webcore_remaining',
       'type': 'static_library',
-      'defines': [
-        'WEBKIT_IMPLEMENTATION=1',
-      ],
       'dependencies': [
         '<(chromium_src_dir)/third_party/v8-i18n/build/all.gyp:v8-i18n',
         'webcore_prerequisites',
