@@ -1,3 +1,19 @@
+2012-11-09  Keishi Hattori  <keishi@webkit.org>
+
+        Month picker should select the current month when navigating while keeping selection position.
+        https://bugs.webkit.org/show_bug.cgi?id=101724
+
+        Reviewed by Kent Tamura.
+
+        Month picker needs to behave differently because selection won't be in the same position when changing current month.
+
+        No new tests. Test will be added in Bug 101556.
+
+        * Resources/pagepopups/calendarPicker.js:
+        (DaysTable.prototype.navigateToMonth): Date/Week picker should keep selection position for first selected date node.
+        (DaysTable.prototype._startMoveInAnimation): Moving shared code to separate function.
+        (MonthPickerDaysTable.prototype.navigateToMonth): Month picker should just select the month.
+
 2012-11-09  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Fix heap snapshots counted several times by NMI

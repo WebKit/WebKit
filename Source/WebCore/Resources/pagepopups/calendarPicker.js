@@ -1325,18 +1325,24 @@ DaysTable.prototype._renderMonth = function(month) {
  */
 DaysTable.prototype.navigateToMonth = function(month, navigationBehaviour) {
     var firstNodeInSelectedRange = this._firstNodeInSelectedRange();
-    if (navigationBehaviour & CalendarPicker.NavigationBehaviour.Animate) {
-        var daysStyle = this._daysContainer.style;
-        daysStyle.position = "relative";
-        daysStyle.webkitTransition = "left 0.1s ease";
-        daysStyle.left = (this.picker.currentMonth().valueOf() > month.valueOf() ? "" : "-") + this._daysContainer.offsetWidth + "px";
-    }
+    if (navigationBehaviour & CalendarPicker.NavigationBehaviour.Animate)
+        this._startMoveInAnimation(month);
     this._renderMonth(month);
     if (navigationBehaviour & CalendarPicker.NavigationBehaviour.KeepSelectionPosition && firstNodeInSelectedRange) {
         var x = parseInt(firstNodeInSelectedRange.dataset.positionX, 10);
         var y = parseInt(firstNodeInSelectedRange.dataset.positionY, 10);
         this._selectRangeAtPosition(x, y);
     }
+};
+
+/**
+ * @param {!Month} month
+ */
+DaysTable.prototype._startMoveInAnimation = function(month) {
+    var daysStyle = this._daysContainer.style;
+    daysStyle.position = "relative";
+    daysStyle.webkitTransition = "left 0.1s ease";
+    daysStyle.left = (this.picker.currentMonth().valueOf() > month.valueOf() ? "" : "-") + this._daysContainer.offsetWidth + "px";
 };
 
 DaysTable.prototype._moveInDays = function() {
@@ -1597,6 +1603,19 @@ function MonthPickerDaysTable(picker) {
     DaysTable.call(this, picker);
 }
 MonthPickerDaysTable.prototype = Object.create(DaysTable.prototype);
+
+/**
+ * @param {!Month} month
+ * @param {!CalendarPicker.NavigationBehaviour} navigationBehaviour
+ */
+MonthPickerDaysTable.prototype.navigateToMonth = function(month, navigationBehaviour) {
+    var hadSelection = this._hasSelection();
+    if (navigationBehaviour & CalendarPicker.NavigationBehaviour.Animate)
+        this._startMoveInAnimation(month);
+    this._renderMonth(month);
+    if (navigationBehaviour & CalendarPicker.NavigationBehaviour.KeepSelectionPosition && hadSelection)
+        this.selectRange(month);
+};
 
 /**
  * @param {!Month} month
