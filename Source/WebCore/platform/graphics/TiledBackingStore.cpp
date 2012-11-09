@@ -170,14 +170,9 @@ void TiledBackingStore::paint(GraphicsContext* context, const IntRect& rect)
     context->restore();
 }
 
-IntRect TiledBackingStore::visibleContentsRect() const
-{
-    return intersection(m_client->tiledBackingStoreVisibleRect(), m_client->tiledBackingStoreContentsRect());
-}
-
 IntRect TiledBackingStore::visibleRect() const
 {
-    return mapFromContents(visibleContentsRect());
+    return mapFromContents(m_client->tiledBackingStoreVisibleRect());
 }
 
 void TiledBackingStore::setContentsScale(float scale)
@@ -236,7 +231,8 @@ float TiledBackingStore::coverageRatio(const WebCore::IntRect& contentsRect) con
 
 bool TiledBackingStore::visibleAreaIsCovered() const
 {
-    return coverageRatio(visibleContentsRect()) == 1.0f;
+    IntRect boundedVisibleContentsRect = intersection(m_client->tiledBackingStoreVisibleRect(), m_client->tiledBackingStoreContentsRect());
+    return coverageRatio(boundedVisibleContentsRect) == 1.0f;
 }
 
 void TiledBackingStore::createTiles()
@@ -249,11 +245,35 @@ void TiledBackingStore::createTiles()
     const IntRect previousRect = m_rect;
     m_rect = mapFromContents(m_client->tiledBackingStoreContentsRect());
 
+    if (m_rect.isEmpty()) {
+        setCoverRect(IntRect());
+        setKeepRect(IntRect());
+        return;
+    }
+
+    /* We must compute cover and keep rects using the visibleRect, instead of the rect intersecting the visibleRect with m_rect,
+     * because TBS can be used as a backing store of GraphicsLayer and the visible rect usually does not intersect with m_rect.
+     * In the below case, the intersecting rect is an empty.
+     *
+     *  +---------------+
+     *  |               |
+     *  |   m_rect      |
+     *  |       +-------|-----------------------+
+     *  |       | HERE  |  cover or keep        |
+     *  +---------------+      rect             |
+     *          |         +---------+           |
+     *          |         | visible |           |
+     *          |         |  rect   |           |
+     *          |         +---------+           |
+     *          |                               |
+     *          |                               |
+     *          +-------------------------------+
+     *
+     * We must create or keep the tiles in the HERE region.
+     */
+
     const IntRect visibleRect = this->visibleRect();
     m_visibleRect = visibleRect;
-
-    if (visibleRect.isEmpty())
-        return;
 
     IntRect coverRect;
     IntRect keepRect;
@@ -261,6 +281,9 @@ void TiledBackingStore::createTiles()
 
     setCoverRect(coverRect);
     setKeepRect(keepRect);
+
+    if (coverRect.isEmpty())
+        return;
 
     // Resize tiles at the edge in case the contents size has changed, but only do so
     // after having dropped tiles outside the keep rect.
@@ -317,6 +340,12 @@ void TiledBackingStore::adjustForContentsRect(IntRect& rect) const
 {
     IntRect bounds = m_rect;
     IntSize candidateSize = rect.size();
+
+    // If candidateSize is bigger than bounds (i.e. TBS is used as a backing store of GraphicsLayer), we skip the below adjusting logic which expects bounds to cover the given rect.
+    if (candidateSize.width() > bounds.width() && candidateSize.height() > bounds.height()) {
+        rect.intersect(bounds);
+        return;
+    }
 
     // We will try to keep the cover and keep rect the same size at all time, which
     // might not be the case when at the content edges.
@@ -441,7 +470,8 @@ void TiledBackingStore::setKeepRect(const IntRect& keepRect)
 
 void TiledBackingStore::removeAllNonVisibleTiles()
 {
-    setKeepRect(visibleRect());
+    IntRect boundedVisibleRect = mapFromContents(intersection(m_client->tiledBackingStoreVisibleRect(), m_client->tiledBackingStoreContentsRect()));
+    setKeepRect(boundedVisibleRect);
 }
 
 PassRefPtr<Tile> TiledBackingStore::tileAt(const Tile::Coordinate& coordinate) const

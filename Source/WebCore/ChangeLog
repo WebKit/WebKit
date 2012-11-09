@@ -1,3 +1,54 @@
+2012-11-09  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Remove a backing store of GraphicsLayer when the layer is far from the viewport.
+        https://bugs.webkit.org/show_bug.cgi?id=101656
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        TiledBackingStore computes cover and keep rects to create, keep or remove tiles
+        smartly, but currently TiledBackingStore expects a contents rect is big enough
+        to cover the visibleRect. However, when CoordinatedGraphicsLayer uses TBS, it
+        is usually wrong expectation.
+
+        We must compute cover and keep rects using the visibleRect, instead of
+        the rect intersecting the visibleRect with m_rect, because TBS can be
+        used as a backing store of GraphicsLayer and the visible rect usually
+        does not intersect with m_rect.
+        In the below case, the intersecting rect is an empty.
+
+         +---------------+
+         |               |
+         |   m_rect      |
+         |       +-------|-----------------------+
+         |       | HERE  |  cover or keep        |
+         +---------------+      rect             |
+                 |         +---------+           |
+                 |         | visible |           |
+                 |         |  rect   |           |
+                 |         +---------+           |
+                 |                               |
+                 |                               |
+                 +-------------------------------+
+
+        We must create or keep the tiles in the HERE region. Currently in the
+        case, we do not create or keep tiles on the HERE region. Moreover, in
+        the case, we early return, which means we don't remove any tiles. It
+        causes to waste heap and video memory.
+
+        This patch changes TiledBackingStore to manage tiles smartly for
+        Coordinated Graphics.
+
+        Changing cache policy is not testable in layout tests.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::visibleRect):
+        (WebCore::TiledBackingStore::visibleAreaIsCovered):
+        (WebCore::TiledBackingStore::createTiles):
+        (WebCore::TiledBackingStore::adjustForContentsRect):
+        (WebCore::TiledBackingStore::removeAllNonVisibleTiles):
+        * platform/graphics/TiledBackingStore.h:
+        (TiledBackingStore):
+
 2012-11-09  Keishi Hattori  <keishi@webkit.org>
 
         Fix undefined variable in Week constructor for calendar picker

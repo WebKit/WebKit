@@ -102,7 +102,6 @@ private:
     void setTile(const Tile::Coordinate& coordinate, PassRefPtr<Tile> tile);
     void removeTile(const Tile::Coordinate& coordinate);
 
-    IntRect visibleContentsRect() const;
     IntRect visibleRect() const;
 
     float coverageRatio(const IntRect&) const;
