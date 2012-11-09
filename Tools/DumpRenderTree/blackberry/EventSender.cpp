@@ -131,11 +131,14 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         charCode = KEYCODE_UP;
     else if (JSStringIsEqualToUTF8CString(character, "downArrow"))
         charCode = KEYCODE_DOWN;
-    else if (JSStringIsEqualToUTF8CString(character, "pageUp")
-             || JSStringIsEqualToUTF8CString(character, "pageDown")
-             || JSStringIsEqualToUTF8CString(character, "home")
-             || JSStringIsEqualToUTF8CString(character, "end"))
-         return JSValueMakeUndefined(context);
+    else if (JSStringIsEqualToUTF8CString(character, "pageUp"))
+        charCode = KEYCODE_PG_UP;
+    else if (JSStringIsEqualToUTF8CString(character, "pageDown"))
+        charCode = KEYCODE_PG_DOWN;
+    else if (JSStringIsEqualToUTF8CString(character, "home"))
+        charCode = KEYCODE_HOME;
+    else if (JSStringIsEqualToUTF8CString(character, "end"))
+        charCode = KEYCODE_END;
     else if (JSStringIsEqualToUTF8CString(character, "delete"))
         charCode = KEYCODE_BACKSPACE;
     else {
@@ -178,7 +181,8 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
     if (needsCtrlKeyModifier)
         modifiers |= KEYMOD_CTRL;
 
-    page->keyEvent(BlackBerry::Platform::KeyboardEvent(charCode, BlackBerry::Platform::KeyboardEvent::KeyChar, modifiers));
+    page->keyEvent(BlackBerry::Platform::KeyboardEvent(charCode, BlackBerry::Platform::KeyboardEvent::KeyDown, modifiers));
+    page->keyEvent(BlackBerry::Platform::KeyboardEvent(charCode, BlackBerry::Platform::KeyboardEvent::KeyUp, modifiers));
 
     return JSValueMakeUndefined(context);
 }
@@ -394,8 +398,8 @@ static JSClassRef getClass(JSContextRef context)
 
     if (!eventSenderClass) {
         JSClassDefinition classDefinition = {
-                0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         classDefinition.staticFunctions = staticFunctions;
         classDefinition.staticValues = staticValues;
 

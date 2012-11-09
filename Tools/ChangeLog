@@ -1,3 +1,24 @@
+2012-11-09  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] DRT - eventSender.keyDown() needs to support pageUp, pageDown, home, end key
+        https://bugs.webkit.org/show_bug.cgi?id=100937
+
+        Reviewed by Rob Buis.
+
+        1. Translate these keys to their corresponding BlackBerry key code.
+        2. Break down a KeyChar event to a KeyDown/KeyUp pair. This is required
+        because we only handle scrolling on a KeyDown event in WebPage::keyEvent()
+        , and internally a KeyChar event is interpreted as a KeyDown event + a
+        KeyUp event in InputHandler::handleKeyboardInput().
+
+        Tests fixed:
+        1. editing/input/scroll-viewport-page-up-down.html
+        2. editing/selection/move-begin-end.html
+        3. fast/forms/select-popup-pagekeys.html
+
+        * DumpRenderTree/blackberry/EventSender.cpp:
+        (keyDownCallback):
+
 2012-11-09  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed prospective Qt/Windows build bot fix:
