@@ -1,3 +1,20 @@
+2012-11-09  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Region styling properties are not filtered correctly
+        https://bugs.webkit.org/show_bug.cgi?id=101768
+
+        Reviewed by Andreas Kling.
+
+        Region styling allows only a handful of css properties. There is a mechanism in place,
+        in StyleResolver::isValidRegionStyleProperty that filters the supported region style properties.
+        In order to be effective, this mechanism relies on RuleData::m_isInRegionRule being set correctly.
+        This patch makes sure that the flag RuleData::m_isInRegionRule is set properly in RuleData constructor.
+
+        Test: fast/regions/region-style-not-supported-properties.html
+
+        * css/RuleSet.cpp:
+        (WebCore::RuleData::RuleData):
+
 2012-11-09  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Deleting all files relating to the deprecated PeerConnection00

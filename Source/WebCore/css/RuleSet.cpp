@@ -118,7 +118,7 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
     , m_hasDocumentSecurityOrigin(addRuleFlags & RuleHasDocumentSecurityOrigin)
-    , m_isInRegionRule(addRuleFlags & RuleIsInRegionRule)
+    , m_isInRegionRule(!!(addRuleFlags & RuleIsInRegionRule))
 {
     ASSERT(m_position == position);
     ASSERT(m_selectorIndex == selectorIndex);
