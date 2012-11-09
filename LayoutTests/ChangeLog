@@ -1,3 +1,10 @@
+2012-11-09  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, baselines change - remove stray baselines for reftests.
+
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/text-on-scaled-layer-expected.png: Removed.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/text-on-scaled-surface-expected.png: Removed.
+
 2012-11-09  Erik Arvidsson  <arv@chromium.org>
 
         REGRESSION (r125239): classList contains() doesn't work after element was moved from strict mode document to quirks mode document
