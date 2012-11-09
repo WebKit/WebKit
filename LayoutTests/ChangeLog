@@ -1,3 +1,10 @@
+2012-11-08  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, chromium-mac-mountainlion baselines for tables/.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium-mac-mountainlion/TestExpectations:
+
 2012-11-08  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Unreviewed gardening following r133972.
