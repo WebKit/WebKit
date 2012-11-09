@@ -1,5 +1,36 @@
 2012-11-09  Jinwoo Song  <jinwoo7.song@samsung.com>
 
+        [EFL][WK2] Make classes for client use WebContext instead of WKContext
+        https://bugs.webkit.org/show_bug.cgi?id=101564
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        EwkContext class has been refactored to use WebContext instead of WKContext in r133844,
+        so this patch makes client classes use WebContext
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        * UIProcess/efl/BatteryProvider.cpp:
+        (BatteryProvider::~BatteryProvider):
+        (BatteryProvider::create):
+        (BatteryProvider::BatteryProvider):
+        (BatteryProvider::didChangeBatteryStatus):
+        * UIProcess/efl/BatteryProvider.h:
+        (BatteryProvider):
+        * UIProcess/efl/ContextHistoryClientEfl.cpp:
+        (WebKit::ContextHistoryClientEfl::ContextHistoryClientEfl):
+        * UIProcess/efl/ContextHistoryClientEfl.h:
+        (WebKit::ContextHistoryClientEfl::create):
+        (ContextHistoryClientEfl):
+        * UIProcess/efl/NetworkInfoProvider.cpp:
+        (NetworkInfoProvider::create):
+        (NetworkInfoProvider::NetworkInfoProvider):
+        (NetworkInfoProvider::~NetworkInfoProvider):
+        * UIProcess/efl/NetworkInfoProvider.h:
+        (NetworkInfoProvider):
+
+2012-11-09  Jinwoo Song  <jinwoo7.song@samsung.com>
+
         [EFL][WK2] Fix build warning in test_ewk2_context.cpp: [-Wwrite-strings]
         https://bugs.webkit.org/show_bug.cgi?id=101666
 

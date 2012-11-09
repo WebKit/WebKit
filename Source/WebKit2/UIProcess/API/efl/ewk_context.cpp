@@ -66,14 +66,14 @@ EwkContext::EwkContext(PassRefPtr<WebContext> context)
     , m_databaseManager(Ewk_Database_Manager::create(m_context))
     , m_storageManager(Ewk_Storage_Manager::create(m_context))
 #if ENABLE(BATTERY_STATUS)
-    , m_batteryProvider(BatteryProvider::create(toAPI(m_context.get()))) // FIXME: All below should be initialized consistently.
+    , m_batteryProvider(BatteryProvider::create(m_context))
 #endif
 #if ENABLE(NETWORK_INFO)
-    , m_networkInfoProvider(NetworkInfoProvider::create(toAPI(m_context.get())))
+    , m_networkInfoProvider(NetworkInfoProvider::create(m_context))
 #endif
     , m_downloadManager(DownloadManagerEfl::create(this))
     , m_requestManagerClient(RequestManagerClientEfl::create(this))
-    , m_historyClient(ContextHistoryClientEfl::create(toAPI(m_context.get())))
+    , m_historyClient(ContextHistoryClientEfl::create(m_context))
 {
     ContextMap::AddResult result = contextMap().add(m_context.get(), this);
     ASSERT_UNUSED(result, result.isNewEntry);

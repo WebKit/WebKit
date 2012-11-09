@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_INFO)
 
+#include "WebContext.h"
 #include <NetworkInfoClient.h>
 #include <NetworkInfoProviderEfl.h>
 #include <WebKit2/WKBase.h>
@@ -39,7 +40,7 @@ namespace WebKit {
 class NetworkInfoProvider : public RefCounted<NetworkInfoProvider>, public WebCore::NetworkInfoClient {
 public:
     virtual ~NetworkInfoProvider();
-    static PassRefPtr<NetworkInfoProvider> create(WKContextRef);
+    static PassRefPtr<NetworkInfoProvider> create(PassRefPtr<WebContext>);
 
     // NetworkInfoClient interface.
     virtual double bandwidth() const;
@@ -49,9 +50,9 @@ public:
     virtual void stopUpdating();
 
 private:
-    explicit NetworkInfoProvider(WKContextRef);
+    explicit NetworkInfoProvider(PassRefPtr<WebContext>);
 
-    WKRetainPtr<WKContextRef> m_wkContext;
+    RefPtr<WebContext> m_context;
     WebCore::NetworkInfoProviderEfl m_provider;
 };
 

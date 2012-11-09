@@ -30,8 +30,9 @@
 
 #include "WKAPICast.h"
 #include "WKBatteryManager.h"
-#include "WKBatteryStatus.h"
-#include "WKContext.h"
+#include "WebBatteryManagerProxy.h"
+#include "WebBatteryStatus.h"
+#include "WebContext.h"
 
 using namespace WebCore;
 using namespace WebKit;
@@ -55,25 +56,21 @@ BatteryProvider::~BatteryProvider()
 {
     m_provider.stopUpdating();
 
-    WKBatteryManagerRef wkBatteryManager = WKContextGetBatteryManager(m_wkContext.get());
-    ASSERT(wkBatteryManager);
-
-    WKBatteryManagerSetProvider(wkBatteryManager, 0);
+    ASSERT(m_context->batteryManagerProxy());
+    m_context->batteryManagerProxy()->initializeProvider(0);
 }
 
-PassRefPtr<BatteryProvider> BatteryProvider::create(WKContextRef wkContext)
+PassRefPtr<BatteryProvider> BatteryProvider::create(PassRefPtr<WebContext> context)
 {
-    return adoptRef(new BatteryProvider(wkContext));
+    ASSERT(context);
+    return adoptRef(new BatteryProvider(context));
 }
 
-BatteryProvider::BatteryProvider(WKContextRef wkContext)
-    : m_wkContext(wkContext)
+BatteryProvider::BatteryProvider(PassRefPtr<WebContext> context)
+    : m_context(context)
     , m_provider(this)
 {
-    ASSERT(m_wkContext);
-
-    WKBatteryManagerRef wkBatteryManager = WKContextGetBatteryManager(m_wkContext.get());
-    ASSERT(wkBatteryManager);
+    ASSERT(context);
 
     WKBatteryProvider wkBatteryProvider = {
         kWKBatteryProviderCurrentVersion,
@@ -81,7 +78,9 @@ BatteryProvider::BatteryProvider(WKContextRef wkContext)
         startUpdatingCallback,
         stopUpdatingCallback
     };
-    WKBatteryManagerSetProvider(wkBatteryManager, &wkBatteryProvider);
+
+    ASSERT(m_context->batteryManagerProxy());
+    m_context->batteryManagerProxy()->initializeProvider(&wkBatteryProvider);
 }
 
 void BatteryProvider::startUpdating()
@@ -96,11 +95,9 @@ void BatteryProvider::stopUpdating()
 
 void BatteryProvider::didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<BatteryStatus> status)
 {
-    WKBatteryManagerRef wkBatteryManager = WKContextGetBatteryManager(m_wkContext.get());
-    ASSERT(wkBatteryManager);
+    RefPtr<WebBatteryStatus> batteryStatus = WebBatteryStatus::create(status->charging(), status->chargingTime(), status->dischargingTime(), status->level());
 
-    WKRetainPtr<WKBatteryStatusRef> wkBatteryStatus(AdoptWK, WKBatteryStatusCreate(status->charging(), status->chargingTime(), status->dischargingTime(), status->level()));
-    WKBatteryManagerProviderDidChangeBatteryStatus(wkBatteryManager, toAPI(eventType.impl()), wkBatteryStatus.get());
+    ASSERT(m_context->batteryManagerProxy());
+    m_context->batteryManagerProxy()->providerDidChangeBatteryStatus(eventType, batteryStatus.get());
 }
-
 #endif // ENABLE(BATTERY_STATUS)
