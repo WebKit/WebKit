@@ -8249,6 +8249,8 @@ bool CSSParser::parseTextDecoration(CSSPropertyID propId, bool important)
 #if ENABLE(CSS3_TEXT)
             // Blink value is not accepted by -webkit-text-decoration-line.
             isValid = propId != CSSPropertyWebkitTextDecorationLine;
+            if (isValid)
+                list->append(cssValuePool().createIdentifierValue(value->id));
             break;
 #endif // CSS3_TEXT
         case CSSValueUnderline:

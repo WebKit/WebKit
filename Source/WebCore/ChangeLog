@@ -1,3 +1,21 @@
+2012-11-09  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css] Text decoration's "blink" not valid when CSS3_TEXT is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=101750
+
+        Reviewed by Ojan Vafai.
+
+        This patch fixes an issue regarding "blink" value, which is valid for CSS 2.1
+        "text-decoration" property, but recently have its parser function modified by
+        the addition of CSS3 "-webkit-text-decoration-line" property.
+
+        The 'fast/css/getComputedStyle/getComputedStyle-text-decoration.html'
+        layout test is updated with all possible value combinations.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseTextDecoration): Added 'blink' value to list
+        if accepted.
+
 2012-11-09  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Do not use 'ls' to list IDL files in EXTRA_DIST
