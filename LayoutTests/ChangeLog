@@ -1,3 +1,21 @@
+2012-11-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL] Update baselines for failing svg tests
+        https://bugs.webkit.org/show_bug.cgi?id=101726
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/svg/W3C-I18N/g-dirRTL-ubNone-expected.png:
+        * platform/efl/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt:
+        * platform/efl/svg/W3C-I18N/g-dirRTL-ubOverride-expected.png:
+        * platform/efl/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt:
+        * platform/efl/svg/W3C-I18N/text-dirRTL-ubNone-expected.png:
+        * platform/efl/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt:
+        * platform/efl/svg/W3C-I18N/tspan-direction-rtl-expected.png:
+        * platform/efl/svg/W3C-I18N/tspan-direction-rtl-expected.txt:
+        * platform/efl/svg/text/bidi-tspans-expected.png:
+        * platform/efl/svg/text/bidi-tspans-expected.txt:
+
 2012-11-09  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL] css3/flexbox/multiline-justify-content.html doesn't crash
