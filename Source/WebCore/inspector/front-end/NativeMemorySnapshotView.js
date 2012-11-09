@@ -314,7 +314,7 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
     }
     addBlock("hsl(  0,  0%,  60%)", "ProcessPrivateMemory", "Total");
     addBlock("hsl(  0,  0%,  80%)", "OwnersTypePlaceholder", "OwnersTypePlaceholder");
-    addBlock("hsl(  0,  0%,  80%)", "Other", "Other");
+    addBlock("hsl(  0,  0%,  60%)", "Other", "Other");
     addBlock("hsl(220, 80%,  70%)", "Page", "Page structures");
     addBlock("hsl(100, 60%,  50%)", "JSHeap", "JavaScript heap");
     addBlock("hsl( 90, 40%,  80%)", "JSExternalResources", "JavaScript external resources");
