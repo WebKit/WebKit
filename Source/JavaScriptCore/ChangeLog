@@ -1,5 +1,13 @@
 2012-11-08  Filip Pizlo  <fpizlo@apple.com>
 
+        Arguments.h should have correct indentation
+
+        Rubber stamped by Sam Weinig.
+
+        * runtime/Arguments.h:
+
+2012-11-08  Filip Pizlo  <fpizlo@apple.com>
+
         It should be possible to JIT compile get_by_vals and put_by_vals even if the DFG is disabled.
 
         Reviewed by Oliver Hunt.
