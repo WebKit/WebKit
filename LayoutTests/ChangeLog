@@ -1,3 +1,15 @@
+2012-11-08  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        table not aligned in center column and seems shrunk because of float:right (table-layout: fixed and width: 100%)
+        https://bugs.webkit.org/show_bug.cgi?id=18153
+
+        Reviewed by Beth Dakin.
+
+        * fast/table/fixed-table-layout/table-with-percent-width-expected.txt: Added.
+        * fast/table/fixed-table-layout/table-with-percent-width.html: Added.
+        Test added to verify the width of the fixed layout tables with 100%
+        width, in standards mode.
+
 2012-11-08  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Unreviewed test expectations update.

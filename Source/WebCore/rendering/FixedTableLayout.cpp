@@ -199,7 +199,7 @@ void FixedTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layou
     // In this example, the two inner tables should be as large as the outer table. 
     // We can achieve this effect by making the maxwidth of fixed tables with percentage
     // widths be infinite.
-    if (m_table->document()->inQuirksMode() && m_table->style()->logicalWidth().isPercent() && maxWidth < tableMaxWidth)
+    if (m_table->style()->logicalWidth().isPercent() && maxWidth < tableMaxWidth)
         maxWidth = tableMaxWidth;
 }
 
