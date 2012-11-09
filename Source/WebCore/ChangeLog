@@ -1,3 +1,18 @@
+2012-11-09  Andrey Lushnikov  <lushnikov@google.com>
+
+        Web Inspector: Ctrl+A in the network panel should select resource content, not the entire panel
+        https://bugs.webkit.org/show_bug.cgi?id=101591
+
+        Reviewed by Vsevolod Vlasov.
+
+        Intercept Ctrl+A event in DefaultTextEditor to select resource content
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype._registerShortcuts): Added Ctrl+A
+        (WebInspector.DefaultTextEditor.prototype._handleKeyDown): Intercept Ctrl+A even for readonly fields
+        (WebInspector.TextEditorMainPanel.prototype.handleSelectAll):
+        * inspector/front-end/KeyboardShortcut.js: Added SelectAll constant for Ctrl+A combination
+
 2012-11-09  Dan Carney  <dcarney@google.com>
 
         [V8] Main world should have one DOMDataStore

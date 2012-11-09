@@ -407,9 +407,10 @@ WebInspector.DefaultTextEditor.prototype = {
         var handleEnterKey = this._mainPanel.handleEnterKey.bind(this._mainPanel);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Enter.code, WebInspector.KeyboardShortcut.Modifiers.None)] = handleEnterKey;
 
-        var handleUndo = this._mainPanel.handleUndoRedo.bind(this._mainPanel, false);
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.CtrlOrMeta)] = this._mainPanel.handleUndoRedo.bind(this._mainPanel, false);
+        this._shortcuts[WebInspector.KeyboardShortcut.SelectAll] = this._handleSelectAll.bind(this);
+
         var handleRedo = this._mainPanel.handleUndoRedo.bind(this._mainPanel, true);
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.CtrlOrMeta)] = handleUndo;
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey("z", modifiers.Shift | modifiers.CtrlOrMeta)] = handleRedo;
         if (!WebInspector.isMac())
             this._shortcuts[WebInspector.KeyboardShortcut.makeKey("y", modifiers.CtrlOrMeta)] = handleRedo;
@@ -420,12 +421,16 @@ WebInspector.DefaultTextEditor.prototype = {
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code, modifiers.Shift)] = handleShiftTabKey;
     },
 
+    _handleSelectAll: function()
+    {
+        this.setSelection(this._textModel.range());
+        return true;
+    },
+
     _handleKeyDown: function(e)
     {
-        if (this.readOnly())
-            return;
-
         var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(e);
+
         var handler = this._shortcuts[shortcutKey];
         if (handler && handler())
             e.consume(true);
@@ -1456,6 +1461,9 @@ WebInspector.TextEditorMainPanel.prototype = {
      */
     handleUndoRedo: function(redo)
     {
+        if (this.readOnly())
+            return false;
+
         if (this._dirtyLines)
             return false;
 
@@ -1487,6 +1495,9 @@ WebInspector.TextEditorMainPanel.prototype = {
      */
     handleTabKeyPress: function(shiftKey)
     {
+        if (this.readOnly())
+            return false;
+
         if (this._dirtyLines)
             return false;
 
@@ -1592,6 +1603,9 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     handleEnterKey: function()
     {
+        if (this.readOnly())
+            return false;
+
         if (this._dirtyLines)
             return false;
 

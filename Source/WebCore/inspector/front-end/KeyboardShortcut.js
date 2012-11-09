@@ -175,3 +175,5 @@ WebInspector.KeyboardShortcut._modifiersToString = function(modifiers)
 
     return res;
 };
+
+WebInspector.KeyboardShortcut.SelectAll = WebInspector.KeyboardShortcut.makeKey("a", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta);
