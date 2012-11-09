@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ButterflyInlineMethods_h
-#define ButterflyInlineMethods_h
+#ifndef ButterflyInlines_h
+#define ButterflyInlines_h
 
 #include "ArrayStorage.h"
 #include "Butterfly.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "CopiedSpaceInlines.h"
 #include "CopyVisitor.h"
 #include "JSGlobalData.h"
 #include "Structure.h"
@@ -176,5 +176,5 @@ inline Butterfly* Butterfly::shift(Structure* structure, size_t numberOfSlots)
 
 } // namespace JSC
 
-#endif // ButterflyInlineMethods_h
+#endif // ButterflyInlines_h
 

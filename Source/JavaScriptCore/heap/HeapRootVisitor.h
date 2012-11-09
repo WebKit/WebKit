@@ -27,7 +27,7 @@
 #define HeapRootVisitor_h
 
 #include "SlotVisitor.h"
-#include "SlotVisitorInlineMethods.h"
+#include "SlotVisitorInlines.h"
 
 namespace JSC {
 

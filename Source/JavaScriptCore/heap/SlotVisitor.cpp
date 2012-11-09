@@ -3,7 +3,7 @@
 
 #include "ConservativeRoots.h"
 #include "CopiedSpace.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "CopiedSpaceInlines.h"
 #include "GCThread.h"
 #include "JSArray.h"
 #include "JSDestructibleObject.h"

@@ -21,8 +21,8 @@
 #include "config.h"
 #include "ObjectConstructor.h"
 
-#include "ButterflyInlineMethods.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "ButterflyInlines.h"
+#include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSFunction.h"

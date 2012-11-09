@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JITInlineMethods_h
-#define JITInlineMethods_h
+#ifndef JITInlines_h
+#define JITInlines_h
 
 
 #if ENABLE(JIT)
@@ -1009,4 +1009,5 @@ ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
 
 #endif // ENABLE(JIT)
 
-#endif
+#endif // JITInlines_h
+

@@ -24,14 +24,14 @@
 #include "config.h"
 #include "JSObject.h"
 
-#include "ButterflyInlineMethods.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "ButterflyInlines.h"
+#include "CopiedSpaceInlines.h"
 #include "CopyVisitor.h"
-#include "CopyVisitorInlineMethods.h"
+#include "CopyVisitorInlines.h"
 #include "DatePrototype.h"
 #include "ErrorConstructor.h"
 #include "GetterSetter.h"
-#include "IndexingHeaderInlineMethods.h"
+#include "IndexingHeaderInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "Lookup.h"
@@ -42,7 +42,7 @@
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
 #include "Reject.h"
-#include "SlotVisitorInlineMethods.h"
+#include "SlotVisitorInlines.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 

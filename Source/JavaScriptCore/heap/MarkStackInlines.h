@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MarkStackInlineMethods_h
-#define MarkStackInlineMethods_h
+#ifndef MarkStackInlines_h
+#define MarkStackInlines_h
 
 #include "GCThreadSharedData.h"
 #include "MarkStack.h"
@@ -37,14 +37,14 @@ inline size_t MarkStackArray::postIncTop()
     ASSERT(result == m_topSegment->m_top++);
     return result;
 }
-        
+
 inline size_t MarkStackArray::preDecTop()
 {
     size_t result = --m_top;
     ASSERT(result == --m_topSegment->m_top);
     return result;
 }
-        
+
 inline void MarkStackArray::setTopForFullSegment()
 {
     ASSERT(m_topSegment->m_top == m_segmentCapacity);
@@ -110,4 +110,5 @@ inline size_t MarkStackArray::size()
 
 } // namespace JSC
 
-#endif
+#endif // MarkStackInlines_h
+

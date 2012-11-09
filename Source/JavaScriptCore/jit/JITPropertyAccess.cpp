@@ -32,7 +32,7 @@
 #include "GCAwareJITStubRoutine.h"
 #include "GetterSetter.h"
 #include "Interpreter.h"
-#include "JITInlineMethods.h"
+#include "JITInlines.h"
 #include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSFunction.h"

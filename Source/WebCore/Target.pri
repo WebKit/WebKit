@@ -2736,10 +2736,10 @@ HEADERS += \
     workers/WorkerRunLoop.h \
     workers/WorkerScriptLoader.h \
     workers/WorkerThread.h \
-    xml/parser/CharacterReferenceParserInlineMethods.h \
+    xml/parser/CharacterReferenceParserInlines.h \
     xml/parser/MarkupTokenBase.h \
     xml/parser/MarkupTokenizerBase.h \
-    xml/parser/MarkupTokenizerInlineMethods.h \
+    xml/parser/MarkupTokenizerInlines.h \
     xml/parser/NewXMLDocumentParser.h \
     xml/parser/XMLCharacterReferenceParser.h \
     xml/parser/XMLDocumentParser.h \

@@ -30,7 +30,7 @@
 #if USE(JSVALUE32_64)
 #include "JIT.h"
 
-#include "JITInlineMethods.h"
+#include "JITInlines.h"
 #include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSCell.h"

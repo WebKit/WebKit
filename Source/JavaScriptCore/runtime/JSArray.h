@@ -22,7 +22,7 @@
 #define JSArray_h
 
 #include "ArrayConventions.h"
-#include "ButterflyInlineMethods.h"
+#include "ButterflyInlines.h"
 #include "JSObject.h"
 
 namespace JSC {

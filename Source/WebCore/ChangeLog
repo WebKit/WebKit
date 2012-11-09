@@ -1,3 +1,30 @@
+2012-11-08  Mark Lam  <mark.lam@apple.com>
+
+        Renamed ...InlineMethods.h files to ...Inlines.h.
+        https://bugs.webkit.org/show_bug.cgi?id=101145.
+
+        Reviewed by Geoffrey Garen.
+
+        This is only a refactoring effort to rename the files. There are no
+        functionality changes.
+
+        No new tests.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/HTMLEntityParser.cpp:
+        * html/parser/HTMLTokenizer.cpp:
+        * html/track/WebVTTTokenizer.cpp:
+        * xml/parser/CharacterReferenceParserInlineMethods.h: Removed.
+        * xml/parser/CharacterReferenceParserInlines.h: Copied from Source/WebCore/xml/parser/CharacterReferenceParserInlineMethods.h.
+        * xml/parser/MarkupTokenizerInlineMethods.h: Removed.
+        * xml/parser/MarkupTokenizerInlines.h: Copied from Source/WebCore/xml/parser/MarkupTokenizerInlineMethods.h.
+        * xml/parser/XMLCharacterReferenceParser.cpp:
+        * xml/parser/XMLTokenizer.cpp:
+
 2012-11-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133984.

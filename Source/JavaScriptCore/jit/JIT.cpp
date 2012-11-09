@@ -38,7 +38,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include <wtf/CryptographicallyRandomNumber.h>
 #include "DFGNode.h" // for DFG_SUCCESS_STATS
 #include "Interpreter.h"
-#include "JITInlineMethods.h"
+#include "JITInlines.h"
 #include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSFunction.h"

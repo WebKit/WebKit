@@ -256,9 +256,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/CopiedBlock.h \
 	Source/JavaScriptCore/heap/CopiedSpace.cpp \
 	Source/JavaScriptCore/heap/CopiedSpace.h \
-	Source/JavaScriptCore/heap/CopiedSpaceInlineMethods.h \
+	Source/JavaScriptCore/heap/CopiedSpaceInlines.h \
     Source/JavaScriptCore/heap/CopyVisitor.h \
-    Source/JavaScriptCore/heap/CopyVisitorInlineMethods.h \
+    Source/JavaScriptCore/heap/CopyVisitorInlines.h \
     Source/JavaScriptCore/heap/CopyVisitor.cpp \
 	Source/JavaScriptCore/heap/CardSet.h \
 	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
@@ -276,7 +276,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/IncrementalSweeper.cpp \
     Source/JavaScriptCore/heap/SlotVisitor.cpp \
 	Source/JavaScriptCore/heap/SlotVisitor.h \
-	Source/JavaScriptCore/heap/SlotVisitorInlineMethods.h \
+	Source/JavaScriptCore/heap/SlotVisitorInlines.h \
 	Source/JavaScriptCore/heap/HandleStack.cpp \
 	Source/JavaScriptCore/heap/HandleStack.h \
 	Source/JavaScriptCore/heap/HandleTypes.h \
@@ -299,7 +299,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/MachineStackMarker.h \
 	Source/JavaScriptCore/heap/MarkStack.cpp \
 	Source/JavaScriptCore/heap/MarkStack.h \
-    Source/JavaScriptCore/heap/MarkStackInlineMethods.h \
+    Source/JavaScriptCore/heap/MarkStackInlines.h \
 	Source/JavaScriptCore/heap/HeapRootVisitor.h \
 	Source/JavaScriptCore/heap/MarkedAllocator.cpp \
 	Source/JavaScriptCore/heap/MarkedAllocator.h \
@@ -400,7 +400,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JIT.h \
 	Source/JavaScriptCore/jit/JITExceptions.cpp \
 	Source/JavaScriptCore/jit/JITExceptions.h \
-	Source/JavaScriptCore/jit/JITInlineMethods.h \
+	Source/JavaScriptCore/jit/JITInlines.h \
 	Source/JavaScriptCore/jit/JITOpcodes32_64.cpp \
 	Source/JavaScriptCore/jit/JITOpcodes.cpp \
 	Source/JavaScriptCore/jit/JITPropertyAccess32_64.cpp \
@@ -483,7 +483,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/BooleanObject.h \
 	Source/JavaScriptCore/runtime/BooleanPrototype.cpp \
 	Source/JavaScriptCore/runtime/BooleanPrototype.h \
-	Source/JavaScriptCore/runtime/ButterflyInlineMethods.h \
+	Source/JavaScriptCore/runtime/ButterflyInlines.h \
 	Source/JavaScriptCore/runtime/Butterfly.h \
 	Source/JavaScriptCore/runtime/CachedTranscendentalFunction.h \
 	Source/JavaScriptCore/runtime/CallData.cpp \
@@ -531,7 +531,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/GetterSetter.h \
 	Source/JavaScriptCore/runtime/Identifier.cpp \
 	Source/JavaScriptCore/runtime/Identifier.h \
-	Source/JavaScriptCore/runtime/IndexingHeaderInlineMethods.h \
+	Source/JavaScriptCore/runtime/IndexingHeaderInlines.h \
 	Source/JavaScriptCore/runtime/IndexingHeader.h \
 	Source/JavaScriptCore/runtime/IndexingType.cpp \
 	Source/JavaScriptCore/runtime/IndexingType.h \
@@ -592,7 +592,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/JSTypeInfo.h \
 	Source/JavaScriptCore/runtime/JSValue.cpp \
 	Source/JavaScriptCore/runtime/JSValue.h \
-	Source/JavaScriptCore/runtime/JSValueInlineMethods.h \
+	Source/JavaScriptCore/runtime/JSValueInlines.h \
 	Source/JavaScriptCore/runtime/JSVariableObject.cpp \
 	Source/JavaScriptCore/runtime/JSVariableObject.h \
 	Source/JavaScriptCore/runtime/JSWithScope.h \

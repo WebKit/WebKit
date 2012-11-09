@@ -30,7 +30,7 @@
 
 using namespace WTF;
 
-#include "CharacterReferenceParserInlineMethods.h"
+#include "CharacterReferenceParserInlines.h"
 
 namespace WebCore {
 

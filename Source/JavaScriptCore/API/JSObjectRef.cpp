@@ -29,9 +29,9 @@
 #include "JSObjectRefPrivate.h"
 
 #include "APICast.h"
-#include "ButterflyInlineMethods.h"
+#include "ButterflyInlines.h"
 #include "CodeBlock.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "CopiedSpaceInlines.h"
 #include "DateConstructor.h"
 #include "ErrorConstructor.h"
 #include "FunctionConstructor.h"

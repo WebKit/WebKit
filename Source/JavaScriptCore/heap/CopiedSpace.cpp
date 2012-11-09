@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CopiedSpace.h"
 
-#include "CopiedSpaceInlineMethods.h"
+#include "CopiedSpaceInlines.h"
 #include "GCActivityCallback.h"
 #include "Options.h"
 

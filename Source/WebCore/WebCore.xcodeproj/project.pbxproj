@@ -45,7 +45,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		00022E6913CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */; };
+		00022E6913CE1BBA00282D5B /* CharacterReferenceParserInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlines.h */; };
 		0002EC5813C3F67D00040D47 /* XMLToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 0002EC5513C3F67D00040D47 /* XMLToken.h */; };
 		0002EC5913C3F67D00040D47 /* XMLTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0002EC5613C3F67D00040D47 /* XMLTokenizer.cpp */; };
 		0002EC5A13C3F67D00040D47 /* XMLTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0002EC5713C3F67D00040D47 /* XMLTokenizer.h */; };
@@ -60,7 +60,7 @@
 		00B9318913BA8DBC0035A948 /* XMLDocumentParserLibxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00B9318313BA867F0035A948 /* XMLDocumentParserLibxml2.cpp */; };
 		00B9318B13BA8DC90035A948 /* XMLDocumentParserScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00B9318513BA867F0035A948 /* XMLDocumentParserScope.cpp */; };
 		00B9318C13BA8DCC0035A948 /* XMLDocumentParserScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9318613BA867F0035A948 /* XMLDocumentParserScope.h */; };
-		00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h */; };
+		00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlines.h */; };
 		00C60E4213D797AE0092A275 /* MarkupTokenizerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 00C60E4113D797AE0092A275 /* MarkupTokenizerBase.h */; };
 		00CA93B213C6691600F7FE95 /* NewXMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 00CA93B113C6691600F7FE95 /* NewXMLDocumentParser.h */; };
 		00CA93B513C6697C00F7FE95 /* NewXMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */; };
@@ -7094,7 +7094,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterReferenceParserInlineMethods.h; sourceTree = "<group>"; };
+		00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterReferenceParserInlines.h; sourceTree = "<group>"; };
 		0002EC5513C3F67D00040D47 /* XMLToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLToken.h; sourceTree = "<group>"; };
 		0002EC5613C3F67D00040D47 /* XMLTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTokenizer.cpp; sourceTree = "<group>"; };
 		0002EC5713C3F67D00040D47 /* XMLTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTokenizer.h; sourceTree = "<group>"; };
@@ -7109,7 +7109,7 @@
 		00B9318313BA867F0035A948 /* XMLDocumentParserLibxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParserLibxml2.cpp; sourceTree = "<group>"; };
 		00B9318513BA867F0035A948 /* XMLDocumentParserScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParserScope.cpp; sourceTree = "<group>"; };
 		00B9318613BA867F0035A948 /* XMLDocumentParserScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocumentParserScope.h; sourceTree = "<group>"; };
-		00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupTokenizerInlineMethods.h; sourceTree = "<group>"; };
+		00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupTokenizerInlines.h; sourceTree = "<group>"; };
 		00C60E4113D797AE0092A275 /* MarkupTokenizerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupTokenizerBase.h; sourceTree = "<group>"; };
 		00CA93B113C6691600F7FE95 /* NewXMLDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewXMLDocumentParser.h; sourceTree = "<group>"; };
 		00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewXMLDocumentParser.cpp; sourceTree = "<group>"; };
@@ -14139,10 +14139,10 @@
 		00B9318013BA867F0035A948 /* parser */ = {
 			isa = PBXGroup;
 			children = (
-				00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */,
+				00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlines.h */,
 				00A629C013D0BEC70050AC52 /* MarkupTokenBase.h */,
 				00C60E4113D797AE0092A275 /* MarkupTokenizerBase.h */,
-				00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h */,
+				00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlines.h */,
 				00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */,
 				00CA93B113C6691600F7FE95 /* NewXMLDocumentParser.h */,
 				00D0464813C4D14500326FCC /* XMLCharacterReferenceParser.cpp */,
@@ -22568,7 +22568,7 @@
 				FD315FFF12B0267600C1A359 /* ChannelMergerNode.h in Headers */,
 				FD31600212B0267600C1A359 /* ChannelSplitterNode.h in Headers */,
 				6550B6A0099DF0270090D781 /* CharacterData.h in Headers */,
-				00022E6913CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h in Headers */,
+				00022E6913CE1BBA00282D5B /* CharacterReferenceParserInlines.h in Headers */,
 				B2C3DA2A0D006C1D00EF6F26 /* CharsetData.h in Headers */,
 				F55B3DB21251F12D003EF269 /* CheckboxInputType.h in Headers */,
 				A00B721A11DE6428008AB9FF /* CheckedInt.h in Headers */,
@@ -24524,7 +24524,7 @@
 				9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */,
 				00A629C113D0BEC70050AC52 /* MarkupTokenBase.h in Headers */,
 				00C60E4213D797AE0092A275 /* MarkupTokenizerBase.h in Headers */,
-				00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h in Headers */,
+				00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlines.h in Headers */,
 				FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */,
 				44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */,
 				FABE72F71059C1EB00D999DD /* MathMLInlineContainerElement.h in Headers */,

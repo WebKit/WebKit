@@ -24,14 +24,14 @@
 #include "JSArray.h"
 
 #include "ArrayPrototype.h"
-#include "ButterflyInlineMethods.h"
-#include "CopiedSpace.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "ButterflyInlines.h"
 #include "CachedCall.h"
+#include "CopiedSpace.h"
+#include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "Executable.h"
 #include "GetterSetter.h"
-#include "IndexingHeaderInlineMethods.h"
+#include "IndexingHeaderInlines.h"
 #include "PropertyNameArray.h"
 #include "Reject.h"
 #include <wtf/AVLTree.h>

@@ -1,3 +1,72 @@
+2012-11-08  Mark Lam  <mark.lam@apple.com>
+
+        Renamed ...InlineMethods.h files to ...Inlines.h.
+        https://bugs.webkit.org/show_bug.cgi?id=101145.
+
+        Reviewed by Geoffrey Garen.
+
+        This is only a refactoring effort to rename the files. There are no
+        functionality changes.
+
+        * API/JSObjectRef.cpp:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        * dfg/DFGOperations.cpp:
+        * heap/ConservativeRoots.cpp:
+        * heap/CopiedBlock.h:
+        * heap/CopiedSpace.cpp:
+        * heap/CopiedSpaceInlineMethods.h: Removed.
+        * heap/CopiedSpaceInlines.h: Copied from Source/JavaScriptCore/heap/CopiedSpaceInlineMethods.h.
+        * heap/CopyVisitor.cpp:
+        * heap/CopyVisitorInlineMethods.h: Removed.
+        * heap/CopyVisitorInlines.h: Copied from Source/JavaScriptCore/heap/CopyVisitorInlineMethods.h.
+        * heap/GCThread.cpp:
+        * heap/GCThreadSharedData.cpp:
+        * heap/HandleStack.cpp:
+        * heap/Heap.cpp:
+        * heap/HeapRootVisitor.h:
+        * heap/MarkStack.cpp:
+        * heap/MarkStackInlineMethods.h: Removed.
+        * heap/MarkStackInlines.h: Copied from Source/JavaScriptCore/heap/MarkStackInlineMethods.h.
+        * heap/SlotVisitor.cpp:
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlineMethods.h: Removed.
+        * heap/SlotVisitorInlines.h: Copied from Source/JavaScriptCore/heap/SlotVisitorInlineMethods.h.
+        * jit/HostCallReturnValue.cpp:
+        * jit/JIT.cpp:
+        * jit/JITArithmetic.cpp:
+        * jit/JITArithmetic32_64.cpp:
+        * jit/JITCall.cpp:
+        * jit/JITCall32_64.cpp:
+        * jit/JITInlineMethods.h: Removed.
+        * jit/JITInlines.h: Copied from Source/JavaScriptCore/jit/JITInlineMethods.h.
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITPropertyAccess.cpp:
+        * jit/JITPropertyAccess32_64.cpp:
+        * jsc.cpp:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/ButterflyInlineMethods.h: Removed.
+        * runtime/ButterflyInlines.h: Copied from Source/JavaScriptCore/runtime/ButterflyInlineMethods.h.
+        * runtime/IndexingHeaderInlineMethods.h: Removed.
+        * runtime/IndexingHeaderInlines.h: Copied from Source/JavaScriptCore/runtime/IndexingHeaderInlineMethods.h.
+        * runtime/JSActivation.h:
+        * runtime/JSArray.cpp:
+        * runtime/JSArray.h:
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        * runtime/JSValueInlineMethods.h: Removed.
+        * runtime/JSValueInlines.h: Copied from Source/JavaScriptCore/runtime/JSValueInlineMethods.h.
+        * runtime/LiteralParser.cpp:
+        * runtime/ObjectConstructor.cpp:
+        * runtime/Operations.h:
+        * runtime/RegExpMatchesArray.cpp:
+        * runtime/RegExpObject.cpp:
+        * runtime/StringPrototype.cpp:
+
 2012-11-08  Filip Pizlo  <fpizlo@apple.com>
 
         ArrayConstructor.h should have correct indentation

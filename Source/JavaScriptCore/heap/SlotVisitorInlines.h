@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SlotVisitorInlineMethods_h
-#define SlotVisitorInlineMethods_h
+#ifndef SlotVisitorInlines_h
+#define SlotVisitorInlines_h
 
-#include "CopiedSpaceInlineMethods.h"
+#include "CopiedSpaceInlines.h"
 #include "Options.h"
 #include "SlotVisitor.h"
 
@@ -170,5 +170,5 @@ inline void SlotVisitor::copyLater(void* ptr, size_t bytes)
     
 } // namespace JSC
 
-#endif // SlotVisitorInlineMethods_h
+#endif // SlotVisitorInlines_h
 

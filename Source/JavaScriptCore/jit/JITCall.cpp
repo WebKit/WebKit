@@ -31,7 +31,7 @@
 
 #include "Arguments.h"
 #include "CodeBlock.h"
-#include "JITInlineMethods.h"
+#include "JITInlines.h"
 #include "JITStubCall.h"
 #include "JSArray.h"
 #include "JSFunction.h"

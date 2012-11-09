@@ -28,7 +28,7 @@
 #include "config.h"
 #include "XMLTokenizer.h"
 
-#include "MarkupTokenizerInlineMethods.h"
+#include "MarkupTokenizerInlines.h"
 #include "NotImplemented.h"
 #include "XMLCharacterReferenceParser.h"
 #include "XMLToken.h"

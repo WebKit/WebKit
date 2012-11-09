@@ -44,7 +44,7 @@
 #include "JSValue.h"
 #include "LowLevelInterpreter.h"
 #include "RepatchBuffer.h"
-#include "SlotVisitorInlineMethods.h"
+#include "SlotVisitorInlines.h"
 #include <stdio.h>
 #include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>

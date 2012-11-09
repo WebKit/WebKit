@@ -28,7 +28,7 @@
 #include "config.h"
 #include "HTMLEntityParser.h"
 
-#include "CharacterReferenceParserInlineMethods.h"
+#include "CharacterReferenceParserInlines.h"
 #include "HTMLEntitySearch.h"
 #include "HTMLEntityTable.h"
 #include <wtf/text/StringBuilder.h>

@@ -25,8 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MarkupTokenizerInlineMethods_h
-#define MarkupTokenizerInlineMethods_h
+#ifndef MarkupTokenizerInlines_h
+#define MarkupTokenizerInlines_h
 
 #include "SegmentedString.h"
 
@@ -92,4 +92,4 @@ inline void advanceStringAndASSERT(SegmentedString& source, const char* expected
 
 }
 
-#endif // MarkupTokenizerInlineMethods_h
+#endif // MarkupTokenizerInlines_h

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CopiedSpaceInlineMethods_h
-#define CopiedSpaceInlineMethods_h
+#ifndef CopiedSpaceInlines_h
+#define CopiedSpaceInlines_h
 
 #include "CopiedBlock.h"
 #include "CopiedSpace.h"
@@ -182,4 +182,5 @@ inline CopiedBlock* CopiedSpace::blockFor(void* ptr)
 
 } // namespace JSC
 
-#endif
+#endif // CopiedSpaceInlines_h
+

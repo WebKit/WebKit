@@ -22,10 +22,10 @@
 
 #include "config.h"
 
-#include "ButterflyInlineMethods.h"
+#include "ButterflyInlines.h"
 #include "BytecodeGenerator.h"
 #include "Completion.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "CopiedSpaceInlines.h"
 #include "ExceptionHelpers.h"
 #include "HeapStatistics.h"
 #include "InitializeThreading.h"

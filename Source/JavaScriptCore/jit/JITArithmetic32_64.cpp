@@ -30,7 +30,7 @@
 #include "JIT.h"
 
 #include "CodeBlock.h"
-#include "JITInlineMethods.h"
+#include "JITInlines.h"
 #include "JITStubCall.h"
 #include "JITStubs.h"
 #include "JSArray.h"

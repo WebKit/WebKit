@@ -25,8 +25,8 @@
 #include "ArrayConstructor.h"
 
 #include "ArrayPrototype.h"
-#include "ButterflyInlineMethods.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "ButterflyInlines.h"
+#include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "ExceptionHelpers.h"
 #include "JSArray.h"

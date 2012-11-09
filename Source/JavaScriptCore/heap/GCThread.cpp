@@ -27,7 +27,7 @@
 #include "GCThread.h"
 
 #include "CopyVisitor.h"
-#include "CopyVisitorInlineMethods.h"
+#include "CopyVisitorInlines.h"
 #include "GCThreadSharedData.h"
 #include "SlotVisitor.h"
 #include <wtf/MainThread.h>

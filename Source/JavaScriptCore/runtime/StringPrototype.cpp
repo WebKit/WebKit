@@ -22,9 +22,9 @@
 #include "config.h"
 #include "StringPrototype.h"
 
-#include "ButterflyInlineMethods.h"
+#include "ButterflyInlines.h"
 #include "CachedCall.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "CopiedSpaceInlines.h"
 #include "Error.h"
 #include "Executable.h"
 #include "JSGlobalObjectFunctions.h"

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CopyVisitor.h"
 
-#include "CopyVisitorInlineMethods.h"
+#include "CopyVisitorInlines.h"
 #include "GCThreadSharedData.h"
 #include "JSCell.h"
 #include "JSObject.h"

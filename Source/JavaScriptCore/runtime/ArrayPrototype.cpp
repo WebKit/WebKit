@@ -24,10 +24,10 @@
 #include "config.h"
 #include "ArrayPrototype.h"
 
-#include "ButterflyInlineMethods.h"
+#include "ButterflyInlines.h"
 #include "CachedCall.h"
 #include "CodeBlock.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "CopiedSpaceInlines.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JSStringBuilder.h"

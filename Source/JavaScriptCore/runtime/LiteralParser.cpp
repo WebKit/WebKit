@@ -27,8 +27,8 @@
 #include "config.h"
 #include "LiteralParser.h"
 
-#include "ButterflyInlineMethods.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "ButterflyInlines.h"
+#include "CopiedSpaceInlines.h"
 #include "JSArray.h"
 #include "JSString.h"
 #include "Lexer.h"

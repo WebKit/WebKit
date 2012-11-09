@@ -27,7 +27,7 @@
 #define SlotVisitor_h
 
 #include "HandleTypes.h"
-#include "MarkStackInlineMethods.h"
+#include "MarkStackInlines.h"
 
 #include <wtf/text/StringHash.h>
 

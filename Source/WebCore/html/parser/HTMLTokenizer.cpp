@@ -32,7 +32,7 @@
 #include "HTMLToken.h"
 #include "HTMLTreeBuilder.h"
 #include "HTMLNames.h"
-#include "MarkupTokenizerInlineMethods.h"
+#include "MarkupTokenizerInlines.h"
 #include "NotImplemented.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/CurrentTime.h>

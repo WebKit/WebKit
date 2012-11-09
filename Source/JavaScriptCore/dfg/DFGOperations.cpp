@@ -27,9 +27,9 @@
 #include "DFGOperations.h"
 
 #include "Arguments.h"
-#include "ButterflyInlineMethods.h"
+#include "ButterflyInlines.h"
 #include "CodeBlock.h"
-#include "CopiedSpaceInlineMethods.h"
+#include "CopiedSpaceInlines.h"
 #include "DFGOSRExit.h"
 #include "DFGRepatch.h"
 #include "DFGThunks.h"
