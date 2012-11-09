@@ -523,11 +523,6 @@ ScriptExecutionContext* RTCPeerConnection::scriptExecutionContext() const
 
 void RTCPeerConnection::stop()
 {
-    if (m_readyState != ReadyStateClosed)
-        m_peerHandler->stop();
-
-    m_peerHandler.clear();
-
     m_iceState = IceStateClosed;
     m_readyState = ReadyStateClosed;
 

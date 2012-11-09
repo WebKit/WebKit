@@ -1,3 +1,19 @@
+2012-11-09  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Don't trigger any object deletion during RTCPeerConnection::stop
+        https://bugs.webkit.org/show_bug.cgi?id=101586
+
+        Reviewed by Adam Barth.
+
+        Stop calling stop on the RTCPeerConnectionHandler, and don't delete it, when
+        ActiveDOMObject::stop is called on RTCPeerConnection. Due to the async nature of the new
+        API some WebCore objects might be cleaned away which is not allowed at this stage.
+
+        This behaviour is not possible to test unfortunately in webkit.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::stop):
+
 2012-11-09  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Unreviewed gardening. Fix chromium-win builds following r134082
