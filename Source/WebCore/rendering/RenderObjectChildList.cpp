@@ -63,14 +63,6 @@ void RenderObjectChildList::destroyLeftoverChildren()
     }
 }
 
-static RenderNamedFlowThread* renderNamedFlowThreadContainer(RenderObject* object)
-{
-    while (object && object->isAnonymousBlock() && !object->isRenderNamedFlowThread())
-        object = object->parent();
-
-    return object && object->isRenderNamedFlowThread() ? toRenderNamedFlowThread(object) : 0;
-}
-
 RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, RenderObject* oldChild, bool fullRemove)
 {
     ASSERT(oldChild->parent() == owner);
@@ -123,7 +115,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
                 oldChild->enclosingRenderFlowThread()->clearRenderBoxCustomStyle(toRenderBox(oldChild));
         }
 
-        if (RenderNamedFlowThread* containerFlowThread = renderNamedFlowThreadContainer(owner))
+        if (RenderNamedFlowThread* containerFlowThread = owner->enclosingRenderNamedFlowThread())
             containerFlowThread->removeFlowChild(oldChild);
 
 #if ENABLE(SVG)
@@ -163,7 +155,7 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     return oldChild;
 }
 
-void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* newChild, bool fullAppend)
+void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* newChild, bool notifyRenderer)
 {
     ASSERT(newChild->parent() == 0);
     ASSERT(!owner->isBlockFlow() || (!newChild->isTableSection() && !newChild->isTableRow() && !newChild->isTableCell()));
@@ -179,36 +171,8 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
 
     setLastChild(newChild);
     
-    if (fullAppend) {
-        // Keep our layer hierarchy updated.  Optimize for the common case where we don't have any children
-        // and don't have a layer attached to ourselves.
-        RenderLayer* layer = 0;
-        if (newChild->firstChild() || newChild->hasLayer()) {
-            layer = owner->enclosingLayer();
-            newChild->addLayers(layer);
-        }
-
-        // if the new child is visible but this object was not, tell the layer it has some visible content
-        // that needs to be drawn and layer visibility optimization can't be used
-        if (owner->style()->visibility() != VISIBLE && newChild->style()->visibility() == VISIBLE && !newChild->hasLayer()) {
-            if (!layer)
-                layer = owner->enclosingLayer();
-            if (layer)
-                layer->setHasVisibleContent(true);
-        }
-
-        if (newChild->isListItem())
-            toRenderListItem(newChild)->updateListMarkerNumbers();
-
-        if (!newChild->isFloating() && owner->childrenInline())
-            owner->dirtyLinesFromChangedChild(newChild);
-
-        if (newChild->isRenderRegion())
-            toRenderRegion(newChild)->attachRegion();
-
-        if (RenderNamedFlowThread* containerFlowThread = renderNamedFlowThreadContainer(owner))
-            containerFlowThread->addFlowChild(newChild);
-    }
+    if (notifyRenderer)
+        newChild->insertedIntoTree();
 
     RenderCounter::rendererSubtreeAttached(newChild);
     RenderQuote::rendererSubtreeAttached(newChild);
@@ -220,10 +184,10 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
         owner->document()->axObjectCache()->childrenChanged(owner);
 }
 
-void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* child, RenderObject* beforeChild, bool fullInsert)
+void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* child, RenderObject* beforeChild, bool notifyRenderer)
 {
     if (!beforeChild) {
-        appendChildNode(owner, child, fullInsert);
+        appendChildNode(owner, child, notifyRenderer);
         return;
     }
 
@@ -246,36 +210,8 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
 
     child->setParent(owner);
     
-    if (fullInsert) {
-        // Keep our layer hierarchy updated.  Optimize for the common case where we don't have any children
-        // and don't have a layer attached to ourselves.
-        RenderLayer* layer = 0;
-        if (child->firstChild() || child->hasLayer()) {
-            layer = owner->enclosingLayer();
-            child->addLayers(layer);
-        }
-
-        // if the new child is visible but this object was not, tell the layer it has some visible content
-        // that needs to be drawn and layer visibility optimization can't be used
-        if (owner->style()->visibility() != VISIBLE && child->style()->visibility() == VISIBLE && !child->hasLayer()) {
-            if (!layer)
-                layer = owner->enclosingLayer();
-            if (layer)
-                layer->setHasVisibleContent(true);
-        }
-
-        if (child->isListItem())
-            toRenderListItem(child)->updateListMarkerNumbers();
-
-        if (!child->isFloating() && owner->childrenInline())
-            owner->dirtyLinesFromChangedChild(child);
-
-        if (child->isRenderRegion())
-            toRenderRegion(child)->attachRegion();
-
-        if (RenderNamedFlowThread* containerFlowThread = renderNamedFlowThreadContainer(owner))
-            containerFlowThread->addFlowChild(child, beforeChild);
-    }
+    if (notifyRenderer)
+        child->insertedIntoTree();
 
     RenderCounter::rendererSubtreeAttached(child);
     RenderQuote::rendererSubtreeAttached(child);

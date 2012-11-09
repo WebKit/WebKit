@@ -61,6 +61,7 @@ class RenderInline;
 class RenderBlock;
 class RenderFlowThread;
 class RenderLayer;
+class RenderNamedFlowThread;
 class RenderTable;
 class RenderTheme;
 class TransformState;
@@ -219,6 +220,8 @@ public:
 
     // Function to return our enclosing flow thread if we are contained inside one.
     RenderFlowThread* enclosingRenderFlowThread() const;
+
+    RenderNamedFlowThread* enclosingRenderNamedFlowThread() const;
 
     virtual bool isEmpty() const { return firstChild() == 0; }
 
@@ -917,6 +920,8 @@ protected:
     virtual LayoutRect outlineBoundsForRepaint(RenderBoxModelObject* /*repaintContainer*/, LayoutPoint* /*cachedOffsetToRepaintContainer*/ = 0) const { return LayoutRect(); }
 
     virtual bool canBeReplacedWithInlineRunIn() const;
+
+    virtual void insertedIntoTree();
 
 private:
     RenderStyle* firstLineStyleSlowCase() const;
