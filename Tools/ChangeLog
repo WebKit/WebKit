@@ -1,3 +1,18 @@
+2012-11-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][DRT] Force a repaint before tracking repaint rects.
+        https://bugs.webkit.org/show_bug.cgi?id=101743
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Do like other ports and force a repaint before we start tracking
+        repaints so that the pixel results generated look more in line
+        with what's expected.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (displayWebView): Call DRTSupport::forceLayout() before start
+        tracking repaints.
+
 2012-11-09  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] DRT - eventSender.keyDown() needs to support pageUp, pageDown, home, end key

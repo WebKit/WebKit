@@ -384,6 +384,7 @@ static void shutdownEfl()
 
 void displayWebView()
 {
+    DumpRenderTreeSupportEfl::forceLayout(browser->mainFrame());
     DumpRenderTreeSupportEfl::setTracksRepaints(browser->mainFrame(), true);
     DumpRenderTreeSupportEfl::resetTrackedRepaints(browser->mainFrame());
 }

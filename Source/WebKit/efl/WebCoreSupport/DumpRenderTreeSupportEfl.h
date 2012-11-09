@@ -87,6 +87,7 @@ public:
     static void setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled);
     static void setSelectTrailingWhitespaceEnabled(Evas_Object* ewkView, bool enabled);
 
+    static void forceLayout(Evas_Object* ewkFrame);
     static void setTracksRepaints(Evas_Object* ewkFrame, bool enabled);
     static void resetTrackedRepaints(Evas_Object* ewkFrame);
     static bool isTrackingRepaints(const Evas_Object* ewkFrame);
