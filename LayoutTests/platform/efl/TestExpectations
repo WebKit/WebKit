@@ -1543,9 +1543,6 @@ Bug(EFL) editing/pasteboard/emacs-cntl-y-001.html [ Missing ]
 Bug(EFL) editing/pasteboard/emacs-ctrl-a-k-y.html [ Missing ]
 Bug(EFL) editing/pasteboard/emacs-ctrl-k-y-001.html [ Missing ]
 
-# Requires rebaselining after https://bugs.webkit.org/show_bug.cgi?id=11645
-webkit.org/b/11645 fast/table/025.html [ Failure ]
-
 # Cairo 1.12.4 regressions
 webkit.org/b/99189 fast/backgrounds/background-leakage-transforms.html [ ImageOnlyFailure ]
 webkit.org/b/99189 fast/borders/borderRadiusAllStylesAllCorners.html [ ImageOnlyFailure ]
