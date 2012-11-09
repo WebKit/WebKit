@@ -25,42 +25,42 @@
 
 namespace JSC {
 
-    class ArrayPrototype;
-    class JSArray;
+class ArrayPrototype;
+class JSArray;
 
-    class ArrayConstructor : public InternalFunction {
-    public:
-        typedef InternalFunction Base;
+class ArrayConstructor : public InternalFunction {
+public:
+    typedef InternalFunction Base;
 
-        static ArrayConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrayPrototype)
-        {
-            ArrayConstructor* constructor = new (NotNull, allocateCell<ArrayConstructor>(*exec->heap())) ArrayConstructor(globalObject, structure);
-            constructor->finishCreation(exec, arrayPrototype);
-            return constructor;
-        }
+    static ArrayConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrayPrototype)
+    {
+        ArrayConstructor* constructor = new (NotNull, allocateCell<ArrayConstructor>(*exec->heap())) ArrayConstructor(globalObject, structure);
+        constructor->finishCreation(exec, arrayPrototype);
+        return constructor;
+    }
 
-        static const ClassInfo s_info;
+    static const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
-        {
-            return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
-        }
+    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+    }
 
-    protected:
-        void finishCreation(ExecState*, ArrayPrototype*);
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
+protected:
+    void finishCreation(ExecState*, ArrayPrototype*);
+    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
-    private:
-        ArrayConstructor(JSGlobalObject*, Structure*);
-        static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
+private:
+    ArrayConstructor(JSGlobalObject*, Structure*);
+    static bool getOwnPropertySlot(JSCell*, ExecState*, PropertyName, PropertySlot&);
 
-        static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
+    static bool getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
 
-        static ConstructType getConstructData(JSCell*, ConstructData&);
-        static CallType getCallData(JSCell*, CallData&);
-    };
+    static ConstructType getConstructData(JSCell*, ConstructData&);
+    static CallType getCallData(JSCell*, CallData&);
+};
 
-    JSObject* constructArrayWithSizeQuirk(ExecState*, ArrayAllocationProfile*, JSGlobalObject*, JSValue);
+JSObject* constructArrayWithSizeQuirk(ExecState*, ArrayAllocationProfile*, JSGlobalObject*, JSValue);
 
 } // namespace JSC
 
