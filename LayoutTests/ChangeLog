@@ -1,5 +1,18 @@
 2012-10-28  Timothy Hatcher  <timothy@apple.com>
 
+        Test if -webkit-canvas in CSS uses the full backing store instead
+        of always 1x when rendering.
+
+        https://bugs.webkit.org/show_bug.cgi?id=100611
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/canvas-as-image-hidpi-expected.png: Added.
+        * fast/canvas/canvas-as-image-hidpi-expected.txt: Added.
+        * fast/canvas/canvas-as-image-hidpi.html: Added.
+
+2012-10-28  Timothy Hatcher  <timothy@apple.com>
+
         Test the canvas backing store pixel ratio when the buffer resizes.
 
         https://bugs.webkit.org/show_bug.cgi?id=100608

@@ -75,6 +75,11 @@ namespace WebCore {
         Deferred
     };
 
+    enum ScaleBehavior {
+        Scaled,
+        Unscaled
+    };
+
     class ImageBuffer {
         WTF_MAKE_NONCOPYABLE(ImageBuffer); WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -96,7 +101,7 @@ namespace WebCore {
 
         GraphicsContext* context() const;
 
-        PassRefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore) const;
+        PassRefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, ScaleBehavior = Scaled) const;
 
         enum CoordinateSystem { LogicalCoordinateSystem, BackingStoreCoordinateSystem };
 

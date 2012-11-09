@@ -1,5 +1,33 @@
 2012-10-28  Timothy Hatcher  <timothy@apple.com>
 
+        Make -webkit-canvas in CSS use the full backing store instead
+        of always 1x when rendering.
+
+        https://bugs.webkit.org/show_bug.cgi?id=100611
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/canvas/canvas-as-image-hidpi.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::makePresentationCopy): Pass Unscaled to copyImage.
+        (WebCore::HTMLCanvasElement::copiedImage): Ditto.
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::copyImage): Added Scale parameter and use copyNativeImage for Unscaled.
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::copyImage): Added unnamed ScaleBehavior parameter.
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::copyImage): Ditto.
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::copyImage): Ditto.
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        (WebCore::ImageBuffer::copyImage): Ditto.
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::copyImage): Ditto.
+
+2012-10-28  Timothy Hatcher  <timothy@apple.com>
+
         Reset the canvas backing store pixel ratio when the buffer resizes.
 
         The backing store was not being recreated using the current page pixel ratio
