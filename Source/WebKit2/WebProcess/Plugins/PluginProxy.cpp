@@ -199,10 +199,12 @@ void PluginProxy::didFailToCreatePluginInternal()
 
 void PluginProxy::destroy()
 {
-    m_connection->connection()->sendSync(Messages::WebProcessConnection::DestroyPlugin(m_pluginInstanceID, m_waitingOnAsynchronousInitialization), Messages::WebProcessConnection::DestroyPlugin::Reply(), 0);
-
     m_isStarted = false;
 
+    if (!m_connection)
+        return;
+
+    m_connection->connection()->sendSync(Messages::WebProcessConnection::DestroyPlugin(m_pluginInstanceID, m_waitingOnAsynchronousInitialization), Messages::WebProcessConnection::DestroyPlugin::Reply(), 0);
     m_connection->removePluginProxy(this);
 }
 
