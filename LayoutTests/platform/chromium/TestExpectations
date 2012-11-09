@@ -4136,6 +4136,7 @@ webkit.org/b/99749 [ MountainLion ] ietestcenter/css3/multicolumn/column-width-a
 webkit.org/b/99749 [ MountainLion ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] svg/hixie/perf/007.xml [ ImageOnlyFailure ]
+webkit.org/b/99749 [ MountainLion ] svg/repaint/image-with-clip-path.svg [ ImageOnlyFailure ]
 #webkit.org/b/99749 [ MountainLion ] svg/custom/foreignObject-crash-on-hover.xml [ ImageOnlyFailure ]
 #webkit.org/b/99749 [ MountainLion ] svg/custom/hit-test-unclosed-subpaths.svg [ ImageOnlyFailure ]
 #webkit.org/b/99749 [ MountainLion ] svg/custom/hit-test-with-br.xhtml [ ImageOnlyFailure ]

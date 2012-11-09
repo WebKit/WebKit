@@ -1,5 +1,11 @@
 2012-11-08  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, update chromium expectations for chromium-mac-mountainlion svg failure.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-08  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, chromium-mac-mountainlion baselines for tables/.
 
         * platform/chromium/TestExpectations:
