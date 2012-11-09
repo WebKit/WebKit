@@ -99,6 +99,7 @@ private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
     virtual void insertedIntoTree() OVERRIDE;
+    virtual void willBeRemovedFromTree() OVERRIDE;
 
     PassRefPtr<RenderStyle> renderBoxRegionStyle(const RenderBox*);
     PassRefPtr<RenderStyle> computeStyleInRegion(const RenderBox*);

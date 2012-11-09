@@ -46,6 +46,8 @@ private:
     // renderers before going into the main render tree. Once we can ensure that insertIntoTree,
     // is called on an attached tree, we should override it here.
 
+    virtual void willBeRemovedFromTree() OVERRIDE;
+
     QuoteType m_type;
     int m_depth;
     RenderQuote* m_next;

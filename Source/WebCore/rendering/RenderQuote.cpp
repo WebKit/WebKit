@@ -63,6 +63,20 @@ RenderQuote::~RenderQuote()
 {
 }
 
+void RenderQuote::willBeRemovedFromTree()
+{
+    RenderText::willBeRemovedFromTree();
+
+#if PLATFORM(IOS)
+    // <rdar://problem/12568339>.
+    // Merge of http://trac.webkit.org/changeset/126048 depends on http://trac.webkit.org/changeset/125220 so did
+    // not fully apply.
+    // RenderObjectChildList::removeChildNode() still calls RenderQuote::rendererRemovedFromTree(oldChild),
+    // so this call should not be necessary. When merging OpenSource, restore this to the OpenSource version.
+    // detachQuote();
+#endif
+}
+
 const char* RenderQuote::renderName() const
 {
     return "RenderQuote";
