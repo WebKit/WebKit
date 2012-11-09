@@ -535,6 +535,20 @@ public:
             moveDouble(ARMRegisters::d2, FPRInfo::argumentFPR1);
         }
     }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(FPRReg arg1, GPRReg arg2)
+    {
+        moveDouble(arg1, FPRInfo::argumentFPR0);
+        move(arg2, GPRInfo::argumentGPR1);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, FPRReg arg3)
+    {
+        moveDouble(arg3, FPRInfo::argumentFPR0);
+        setupStubArguments(arg1, arg2);
+        move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    }
 #else
     ALWAYS_INLINE void setupArguments(FPRReg arg1)
     {
@@ -857,7 +871,20 @@ public:
         setupArgumentsWithExecState(arg1, arg2, arg3);
     }
 
+    ALWAYS_INLINE void setupArgumentsWithExecState(TrustedImm32 arg1, GPRReg arg2, TrustedImm32 arg3, GPRReg arg4)
+    {
+        poke(arg4);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
     ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, GPRReg arg4, GPRReg arg5)
+    {
+        poke(arg5, 1);
+        poke(arg4);
+        setupArgumentsWithExecState(arg1, arg2, arg3);
+    }
+
+    ALWAYS_INLINE void setupArgumentsWithExecState(GPRReg arg1, GPRReg arg2, TrustedImm32 arg3, GPRReg arg4, TrustedImm32 arg5)
     {
         poke(arg5, 1);
         poke(arg4);

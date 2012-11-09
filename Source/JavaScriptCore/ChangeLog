@@ -1,3 +1,16 @@
+2012-11-09  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        [Qt] r133953 broke the ARM_TRADITIONAL build
+        https://bugs.webkit.org/show_bug.cgi?id=101706
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix for both hardfp and softfp.
+
+        * dfg/DFGCCallHelpers.h:
+        (CCallHelpers):
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+
 2012-11-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134051.
