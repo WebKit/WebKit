@@ -1,3 +1,12 @@
+2012-11-08  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Unreviewed test expectations update.
+
+        Unskip and start generating results for fast/images/color-jpeg-with-color-profile.html
+        on Win to prepare for an upcoming rebaseline.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-08  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed, Unreviewed gardening following r133972.

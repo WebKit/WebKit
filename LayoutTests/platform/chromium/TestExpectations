@@ -2958,8 +2958,9 @@ webkit.org/b/72530 [ Debug ] fast/frames/sandboxed-iframe-navigation-targetlink.
 
 webkit.org/b/69998 [ Linux Win ] plugins/refcount-leaks.html [ Failure Pass ]
 
-# ICC color profiles are not supported on WIN, LINUX, ANDROID so SKIP for now.
-webkit.org/b/70001 [ Android Linux Win ] fast/images/color-jpeg-with-color-profile.html
+# ICC color profiles are not supported on LINUX, ANDROID so SKIP for now.
+webkit.org/b/70001 [ Android Linux ] fast/images/color-jpeg-with-color-profile.html
+webkit.org/b/70001 [ Win ] fast/images/color-jpeg-with-color-profile.html [ ImageOnlyFailure ]
 # Paletted PNG with ICC color profiles not working.
 webkit.org/b/86722 fast/images/paletted-png-with-color-profile.html [ Skip ]
 
