@@ -1,3 +1,20 @@
+2012-11-08  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Refactoring] Remove shadowPseudoId() and use pseudo() instead in TextTrackCue
+        https://bugs.webkit.org/show_bug.cgi?id=101702
+
+        Reviewed by Hajime Morita.
+
+        We're migrating shadowPseudoId() to pseudo(). We remove shadowPseudoId() from TextTrackCue and use
+        setPseudo()/pseudo() instead.
+
+        No new tests, simple refactoring.
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCueBox::TextTrackCueBox):
+        * html/track/TextTrackCue.h:
+        (TextTrackCueBox):
+
 2012-11-08  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         table not aligned in center column and seems shrunk because of float:right (table-layout: fixed and width: 100%)

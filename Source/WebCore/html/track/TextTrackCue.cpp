@@ -95,6 +95,7 @@ TextTrackCueBox::TextTrackCueBox(Document* document, TextTrackCue* cue)
     : HTMLElement(divTag, document)
     , m_cue(cue)
 {
+    setPseudo(textTrackCueBoxShadowPseudoId());
 }
 
 TextTrackCue* TextTrackCueBox::getCue() const
@@ -171,11 +172,6 @@ const AtomicString& TextTrackCueBox::textTrackCueBoxShadowPseudoId()
 {
     DEFINE_STATIC_LOCAL(const AtomicString, trackDisplayBoxShadowPseudoId, ("-webkit-media-text-track-display", AtomicString::ConstructFromLiteral));
     return trackDisplayBoxShadowPseudoId;
-}
-
-const AtomicString& TextTrackCueBox::shadowPseudoId() const
-{
-    return textTrackCueBoxShadowPseudoId();
 }
 
 RenderObject* TextTrackCueBox::createRenderer(RenderArena* arena, RenderStyle*)
