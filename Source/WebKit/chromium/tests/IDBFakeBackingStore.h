@@ -43,6 +43,8 @@ public:
     virtual bool createObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) OVERRIDE { return false; };
     virtual void deleteObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) OVERRIDE { }
 
+    virtual PassRefPtr<RecordIdentifier> createInvalidRecordIdentifier() OVERRIDE { return PassRefPtr<RecordIdentifier>(); }
+
     virtual String getRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&) OVERRIDE { return String(); }
     virtual bool putRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, RecordIdentifier*) OVERRIDE { return false; }
     virtual void clearObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) OVERRIDE { }
@@ -63,6 +65,8 @@ public:
     virtual PassRefPtr<Cursor> openObjectStoreCursor(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction) OVERRIDE { return PassRefPtr<Cursor>(); }
     virtual PassRefPtr<Cursor> openIndexKeyCursor(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction) OVERRIDE { return PassRefPtr<Cursor>(); }
     virtual PassRefPtr<Cursor> openIndexCursor(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction) OVERRIDE { return PassRefPtr<Cursor>(); }
+
+    virtual PassRefPtr<Transaction> createTransaction() OVERRIDE { return PassRefPtr<Transaction>(); }
 };
 
 } // namespace WebCore

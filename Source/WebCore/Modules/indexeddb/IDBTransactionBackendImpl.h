@@ -67,7 +67,7 @@ public:
     void addPendingEvents(int);
     void addPreemptiveEvent() { m_pendingPreemptiveEvents++; }
     void didCompletePreemptiveEvent() { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
-    IDBBackingStore::Transaction* backingStoreTransaction() { return &m_transaction; }
+    IDBBackingStore::Transaction* backingStoreTransaction() { return m_transaction.get(); }
 
 private:
     IDBTransactionBackendImpl(const Vector<int64_t>& objectStoreIds, unsigned short mode, IDBDatabaseBackendImpl*);
@@ -100,7 +100,7 @@ private:
     TaskQueue m_preemptiveTaskQueue;
     TaskQueue m_abortTaskQueue;
 
-    IDBBackingStore::Transaction m_transaction;
+    RefPtr<IDBBackingStore::Transaction> m_transaction;
 
     // FIXME: delete the timer once we have threads instead.
     Timer<IDBTransactionBackendImpl> m_taskTimer;

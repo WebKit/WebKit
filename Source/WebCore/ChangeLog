@@ -1,3 +1,82 @@
+2012-11-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134101.
+        http://trac.webkit.org/changeset/134101
+        https://bugs.webkit.org/show_bug.cgi?id=101790
+
+        IDBDatabaseBackendTest.BackingStoreRetention failing
+        (Requested by jsbell|gardener on #webkit).
+
+        * GNUmakefile.list.am:
+        * Modules/indexeddb/IDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::IDBLevelDBBackingStore):
+        (WebCore::IDBLevelDBBackingStore::~IDBLevelDBBackingStore):
+        (WebCore::IDBLevelDBBackingStore::open):
+        (WebCore::IDBLevelDBBackingStore::getDatabaseNames):
+        (WebCore::IDBLevelDBBackingStore::getIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::createIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::updateIDBDatabaseIntVersion):
+        (WebCore::IDBLevelDBBackingStore::updateIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::deleteDatabase):
+        (WebCore::IDBLevelDBBackingStore::getObjectStores):
+        (WebCore::IDBLevelDBBackingStore::createObjectStore):
+        (WebCore::IDBLevelDBBackingStore::deleteObjectStore):
+        (WebCore::IDBLevelDBBackingStore::getRecord):
+        (WebCore):
+        (WebCore::IDBLevelDBBackingStore::putRecord):
+        (WebCore::IDBLevelDBBackingStore::clearObjectStore):
+        (WebCore::IDBLevelDBBackingStore::createInvalidRecordIdentifier):
+        (WebCore::IDBLevelDBBackingStore::deleteRecord):
+        (WebCore::IDBLevelDBBackingStore::getKeyGeneratorCurrentNumber):
+        (WebCore::IDBLevelDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber):
+        (WebCore::IDBLevelDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBLevelDBBackingStore::getIndexes):
+        (WebCore::IDBLevelDBBackingStore::createIndex):
+        (WebCore::IDBLevelDBBackingStore::deleteIndex):
+        (WebCore::IDBLevelDBBackingStore::putIndexDataForRecord):
+        (WebCore::IDBLevelDBBackingStore::deleteIndexDataForRecord):
+        (WebCore::IDBLevelDBBackingStore::findKeyInIndex):
+        (WebCore::IDBLevelDBBackingStore::getPrimaryKeyViaIndex):
+        (WebCore::IDBLevelDBBackingStore::keyExistsInIndex):
+        (WebCore::IDBLevelDBBackingStore::openObjectStoreCursor):
+        (WebCore::IDBLevelDBBackingStore::openObjectStoreKeyCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexKeyCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexCursor):
+        (WebCore::IDBLevelDBBackingStore::createTransaction):
+        (WebCore::IDBLevelDBBackingStore::Transaction::create):
+        (WebCore::IDBLevelDBBackingStore::Transaction::Transaction):
+        (WebCore::IDBLevelDBBackingStore::Transaction::begin):
+        (WebCore::IDBLevelDBBackingStore::Transaction::commit):
+        (WebCore::IDBLevelDBBackingStore::Transaction::rollback):
+        (WebCore::IDBLevelDBBackingStore::backingStoreExists):
+        * Modules/indexeddb/IDBBackingStore.h:
+        (WebCore):
+        (WebCore::IDBBackingStore::~IDBBackingStore):
+        (IDBBackingStore):
+        (RecordIdentifier):
+        (WebCore::IDBBackingStore::Cursor::~Cursor):
+        (WebCore::IDBBackingStore::Transaction::~Transaction):
+        (Transaction):
+        * Modules/indexeddb/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::openBackingStore):
+        * Modules/indexeddb/IDBLevelDBBackingStore.h: Copied from Source/WebCore/Modules/indexeddb/IDBBackingStore.h.
+        (WebCore):
+        (IDBLevelDBBackingStore):
+        (Transaction):
+        (WebCore::IDBLevelDBBackingStore::Transaction::levelDBTransactionFrom):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore::IDBTransactionBackendImpl::commit):
+        (WebCore::IDBTransactionBackendImpl::taskTimerFired):
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        (WebCore::IDBTransactionBackendImpl::backingStoreTransaction):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-11-09  Erik Arvidsson  <arv@chromium.org>
 
         REGRESSION (r125239): classList contains() doesn't work after element was moved from strict mode document to quirks mode document

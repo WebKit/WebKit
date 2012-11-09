@@ -33,6 +33,7 @@
 #include "IDBBackingStore.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
+#include "IDBLevelDBBackingStore.h"
 #include "IDBTransactionCoordinator.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>
@@ -133,7 +134,12 @@ PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<S
     if (it2 != m_backingStoreMap.end())
         backingStore = it2->value;
     else {
-        backingStore = IDBBackingStore::open(securityOrigin.get(), dataDirectory, fileIdentifier, this);
+#if USE(LEVELDB)
+        backingStore = IDBLevelDBBackingStore::open(securityOrigin.get(), dataDirectory, fileIdentifier, this);
+#else
+        UNUSED_PARAM(dataDirectory);
+        ASSERT_NOT_REACHED();
+#endif
     }
 
     if (backingStore)

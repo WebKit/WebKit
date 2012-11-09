@@ -29,73 +29,60 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursor.h"
+#include "IDBKeyPath.h"
 #include "IDBMetadata.h"
-#include "LevelDBTransaction.h"
-#include <wtf/OwnPtr.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class LevelDBComparator;
-class LevelDBDatabase;
-class LevelDBTransaction;
-class IDBFactoryBackendImpl;
 class IDBKey;
 class IDBKeyRange;
+class SecurityOrigin;
+struct IDBDatabaseMetadata;
 
 class IDBBackingStore : public RefCounted<IDBBackingStore> {
 public:
     class Transaction;
 
-    virtual ~IDBBackingStore();
-    static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier, IDBFactoryBackendImpl*);
+    virtual ~IDBBackingStore() {};
 
-    virtual Vector<String> getDatabaseNames();
-    virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata*);
-    virtual bool createIDBDatabaseMetaData(const String& name, const String& version, int64_t intVersion, int64_t& rowId);
-    virtual bool updateIDBDatabaseMetaData(IDBBackingStore::Transaction*, int64_t rowId, const String& version);
-    virtual bool updateIDBDatabaseIntVersion(IDBBackingStore::Transaction*, int64_t rowId, int64_t intVersion);
-    virtual bool deleteDatabase(const String& name);
+    virtual Vector<String> getDatabaseNames() = 0;
+    virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata* foundMetadata) = 0;
+    virtual bool createIDBDatabaseMetaData(const String& name, const String& stringVersion, int64_t intVersion, int64_t& rowId) = 0;
+    virtual bool updateIDBDatabaseIntVersion(Transaction*, int64_t rowId, int64_t intVersion) = 0;
+    virtual bool updateIDBDatabaseMetaData(Transaction*, int64_t rowId, const String& version) = 0;
+    virtual bool deleteDatabase(const String& name) = 0;
 
-    virtual Vector<IDBObjectStoreMetadata> getObjectStores(int64_t databaseId);
-    virtual bool createObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement);
-    virtual void deleteObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId);
+    virtual Vector<IDBObjectStoreMetadata> getObjectStores(int64_t databaseId) = 0;
+    virtual bool createObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) = 0;
+    virtual void deleteObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) = 0;
 
     class RecordIdentifier : public RefCounted<RecordIdentifier> {
     public:
-        static PassRefPtr<RecordIdentifier> create(const Vector<char>& primaryKey, int64_t version) { return adoptRef(new RecordIdentifier(primaryKey, version)); }
-        static PassRefPtr<RecordIdentifier> create() { return adoptRef(new RecordIdentifier()); }
+        virtual bool isValid() const = 0;
         virtual ~RecordIdentifier() { }
-
-        virtual bool isValid() const { return m_primaryKey.isEmpty(); }
-        Vector<char> primaryKey() const { return m_primaryKey; }
-        void setPrimaryKey(const Vector<char>& primaryKey) { m_primaryKey = primaryKey; }
-        int64_t version() const { return m_version; }
-        void setVersion(int64_t version) { m_version = version; }
-
-    private:
-        RecordIdentifier(const Vector<char>& primaryKey, int64_t version) : m_primaryKey(primaryKey), m_version(version) { ASSERT(!primaryKey.isEmpty()); }
-        RecordIdentifier() : m_primaryKey(), m_version(-1) { }
-
-        Vector<char> m_primaryKey; // FIXME: Make it more clear that this is the *encoded* version of the key.
-        int64_t m_version;
     };
+    virtual PassRefPtr<RecordIdentifier> createInvalidRecordIdentifier() = 0;
 
-    virtual String getRecord(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&);
-    virtual bool putRecord(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, RecordIdentifier*);
-    virtual void clearObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId);
-    virtual void deleteRecord(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const RecordIdentifier*);
-    virtual int64_t getKeyGeneratorCurrentNumber(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId);
-    virtual bool maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t newState, bool checkCurrent);
-    virtual bool keyExistsInObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, RecordIdentifier* foundRecordIdentifier);
+    virtual String getRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&) = 0;
+    virtual bool putRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, RecordIdentifier*) = 0;
+    virtual void clearObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) = 0;
+    virtual void deleteRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const RecordIdentifier*) = 0;
+    virtual int64_t getKeyGeneratorCurrentNumber(Transaction*, int64_t databaseId, int64_t objectStoreId) = 0;
+    virtual bool maybeUpdateKeyGeneratorCurrentNumber(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent) = 0;
+    virtual bool keyExistsInObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, RecordIdentifier* foundRecordIdentifier) = 0;
 
-    virtual Vector<IDBIndexMetadata> getIndexes(int64_t databaseId, int64_t objectStoreId);
-    virtual bool createIndex(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool isUnique, bool isMultiEntry);
-    virtual void deleteIndex(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId);
-    virtual bool putIndexDataForRecord(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, const RecordIdentifier*);
-    virtual bool deleteIndexDataForRecord(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const RecordIdentifier*);
-    virtual PassRefPtr<IDBKey> getPrimaryKeyViaIndex(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&);
-    virtual bool keyExistsInIndex(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& indexKey, RefPtr<IDBKey>& foundPrimaryKey);
+    virtual Vector<IDBIndexMetadata> getIndexes(int64_t databaseId, int64_t objectStoreId) = 0;
+    virtual bool createIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const String& name, const IDBKeyPath&, bool isUnique, bool isMultiEntry) = 0;
+    virtual void deleteIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId) = 0;
+    virtual bool putIndexDataForRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, const RecordIdentifier*) = 0;
+    virtual bool deleteIndexDataForRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const RecordIdentifier*) = 0;
+    virtual PassRefPtr<IDBKey> getPrimaryKeyViaIndex(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&) = 0;
+    virtual bool keyExistsInIndex(Transaction*, int64_t databaseid, int64_t objectStoreId, int64_t indexId, const IDBKey& indexKey, RefPtr<IDBKey>& foundPrimaryKey) = 0;
 
     class Cursor : public RefCounted<Cursor> {
     public:
@@ -104,84 +91,33 @@ public:
             Seek
         };
 
-        struct CursorOptions {
-            Vector<char> lowKey;
-            bool lowOpen;
-            Vector<char> highKey;
-            bool highOpen;
-            bool forward;
-            bool unique;
-        };
-
-        Cursor(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
-            : m_transaction(transaction)
-            , m_cursorOptions(cursorOptions)
-        {
-        }
-        Cursor(const IDBBackingStore::Cursor* other);
-
-        PassRefPtr<IDBKey> key() const { return m_currentKey; }
-        bool continueFunction(const IDBKey* = 0, IteratorState = Seek);
-        bool advance(unsigned long);
-        bool firstSeek();
-
         virtual PassRefPtr<Cursor> clone() = 0;
-        virtual PassRefPtr<IDBKey> primaryKey() const { return m_currentKey; }
-        virtual String value() const = 0;
-        virtual PassRefPtr<RecordIdentifier> recordIdentifier() = 0;
-        virtual ~Cursor() { }
-        virtual bool loadCurrentRow() = 0;
-
-    protected:
-        bool isPastBounds() const;
-        bool haveEnteredRange() const;
-
-        LevelDBTransaction* m_transaction;
-        const CursorOptions m_cursorOptions;
-        OwnPtr<LevelDBIterator> m_iterator;
-        RefPtr<IDBKey> m_currentKey;
+        virtual bool advance(unsigned long) = 0;
+        virtual bool continueFunction(const IDBKey* = 0, IteratorState = Seek) = 0;
+        virtual PassRefPtr<IDBKey> key() = 0;
+        virtual PassRefPtr<IDBKey> primaryKey() = 0;
+        virtual String value() = 0;
+        virtual PassRefPtr<RecordIdentifier> objectStoreRecordIdentifier() = 0;
+        virtual ~Cursor() { };
     };
 
-    virtual PassRefPtr<Cursor> openObjectStoreKeyCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction);
-    virtual PassRefPtr<Cursor> openObjectStoreCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction);
-    virtual PassRefPtr<Cursor> openIndexKeyCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction);
-    virtual PassRefPtr<Cursor> openIndexCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction);
+    virtual PassRefPtr<Cursor> openObjectStoreCursor(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction) = 0;
+    virtual PassRefPtr<Cursor> openObjectStoreKeyCursor(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction) = 0;
+    virtual PassRefPtr<Cursor> openIndexKeyCursor(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction) = 0;
+    virtual PassRefPtr<Cursor> openIndexCursor(Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction) = 0;
 
-    class Transaction {
+    class Transaction : public RefCounted<Transaction> {
     public:
-        Transaction(IDBBackingStore*);
-        void begin();
-        bool commit();
-        void rollback();
-
-        static LevelDBTransaction* levelDBTransactionFrom(Transaction* transaction)
-        {
-            return static_cast<Transaction*>(transaction)->m_transaction.get();
-        }
-
-    private:
-        IDBBackingStore* m_backingStore;
-        RefPtr<LevelDBTransaction> m_transaction;
+        virtual ~Transaction() { }
+        virtual void begin() = 0;
+        virtual bool commit() = 0;
+        virtual void rollback() = 0;
     };
-
-protected:
-    IDBBackingStore(const String& identifier, IDBFactoryBackendImpl*, PassOwnPtr<LevelDBDatabase>);
-
-    // Should only used for mocking.
-    IDBBackingStore();
-
-private:
-    bool findKeyInIndex(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, Vector<char>& foundEncodedPrimaryKey);
-
-    String m_identifier;
-    RefPtr<IDBFactoryBackendImpl> m_factory;
-    OwnPtr<LevelDBDatabase> m_db;
-    OwnPtr<LevelDBComparator> m_comparator;
-
+    virtual PassRefPtr<Transaction> createTransaction() = 0;
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
 
 #endif // IDBBackingStore_h
