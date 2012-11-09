@@ -1,5 +1,14 @@
 2012-11-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
+        [EFL] Skip failing test perf/accessibility-title-ui-element.html
+        https://bugs.webkit.org/show_bug.cgi?id=101728
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/TestExpectations:
+
+2012-11-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
         [EFL] Update baselines for failing svg tests
         https://bugs.webkit.org/show_bug.cgi?id=101726
 
