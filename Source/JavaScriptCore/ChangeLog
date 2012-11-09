@@ -1,3 +1,20 @@
+2012-11-09  Filip Pizlo  <fpizlo@apple.com>
+
+        ArrayPrototype should start out with a blank indexing type
+        https://bugs.webkit.org/show_bug.cgi?id=101719
+
+        Reviewed by Mark Hahnenberg.
+
+        This allows us to track if the array prototype ever ends up with indexed
+        properties.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::create):
+        (JSC::ArrayPrototype::ArrayPrototype):
+        * runtime/ArrayPrototype.h:
+        (ArrayPrototype):
+        (JSC::ArrayPrototype::createStructure):
+
 2012-11-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         MarkStackArray should use the BlockAllocator instead of the MarkStackSegmentAllocator

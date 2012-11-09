@@ -116,15 +116,14 @@ const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, 0, ExecStat
 
 ArrayPrototype* ArrayPrototype::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
 {
-    Butterfly* butterfly = createArrayButterfly(exec->globalData(), 0);
-    ArrayPrototype* prototype = new (NotNull, allocateCell<ArrayPrototype>(*exec->heap())) ArrayPrototype(globalObject, structure, butterfly);
+    ArrayPrototype* prototype = new (NotNull, allocateCell<ArrayPrototype>(*exec->heap())) ArrayPrototype(globalObject, structure);
     prototype->finishCreation(globalObject);
     return prototype;
 }
 
 // ECMA 15.4.4
-ArrayPrototype::ArrayPrototype(JSGlobalObject* globalObject, Structure* structure, Butterfly* butterfly)
-    : JSArray(globalObject->globalData(), structure, butterfly)
+ArrayPrototype::ArrayPrototype(JSGlobalObject* globalObject, Structure* structure)
+    : JSArray(globalObject->globalData(), structure, 0)
 {
 }
 

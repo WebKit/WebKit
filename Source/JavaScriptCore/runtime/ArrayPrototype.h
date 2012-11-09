@@ -28,7 +28,7 @@ namespace JSC {
 
 class ArrayPrototype : public JSArray {
 private:
-    ArrayPrototype(JSGlobalObject*, Structure*, Butterfly*);
+    ArrayPrototype(JSGlobalObject*, Structure*);
 
 public:
     typedef JSArray Base;
@@ -42,7 +42,7 @@ public:
 
     static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, ArrayWithArrayStorage);
+        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info, ArrayClass);
     }
 
 protected:
