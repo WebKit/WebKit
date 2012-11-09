@@ -54,8 +54,9 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
         lineNumbers: true,
         gutters: ["CodeMirror-linenumbers", "breakpoints"]
     });
-    CodeMirror.on(this._codeMirror, "change", this._change.bind(this));
-    CodeMirror.on(this._codeMirror, "gutterClick", this._gutterClick.bind(this));
+
+    this._codeMirror.on("change", this._change.bind(this));
+    this._codeMirror.on("gutterClick", this._gutterClick.bind(this));
 
     this._lastRange = this.range();
 
@@ -117,8 +118,7 @@ WebInspector.CodeMirrorTextEditor.prototype = {
     revealLine: function(lineNumber)
     {
         this._codeMirror.setCursor({ line: lineNumber, ch: 0 });
-        var coords = this._codeMirror.cursorCoords();
-        this._codeMirror.scrollTo(coords.x, coords.y);
+        this._codeMirror.scrollIntoView();
     },
 
     _gutterClick: function(instance, lineNumber, gutter, event)
@@ -276,8 +276,8 @@ WebInspector.CodeMirrorTextEditor.prototype = {
      */
     selection: function(textRange)
     {
-        var start = this._codeMirror.cursorCoords(true);
-        var end = this._codeMirror.cursorCoords(false);
+        var start = this._codeMirror.getCursor(true);
+        var end = this._codeMirror.getCursor(false);
 
         if (start.line > end.line || (start.line == end.line && start.ch > end.ch))
             return this._toRange(end, start);

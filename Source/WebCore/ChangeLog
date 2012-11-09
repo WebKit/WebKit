@@ -1,3 +1,17 @@
+2012-11-08  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: stop using cursorCoords in CodeMirrorTextEditor
+        https://bugs.webkit.org/show_bug.cgi?id=101607
+
+        Reviewed by Vsevolod Vlasov.
+
+        API changes completing migration to v3.
+
+        * inspector/front-end/CodeMirrorTextEditor.js:
+        (WebInspector.CodeMirrorTextEditor):
+        (WebInspector.CodeMirrorTextEditor.prototype.revealLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.selection):
+
 2012-11-08  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: make "Other" bar color darker in NMI snapshot.
