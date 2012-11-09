@@ -142,7 +142,7 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
             keyPath = IDBKeyPath(keyPathString);
     }
 
-    if (m_metadata.containsObjectStore(name)) {
+    if (containsObjectStore(name)) {
         ec = IDBDatabaseException::CONSTRAINT_ERR;
         return 0;
     }
@@ -188,13 +188,13 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
         return;
     }
 
-    int64 objectStoreId = m_metadata.findObjectStore(name);
+    int64 objectStoreId = findObjectStoreId(name);
     if (objectStoreId == IDBObjectStoreMetadata::InvalidId) {
         ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return;
     }
 
-    m_backend->deleteObjectStore(name, m_versionChangeTransaction->backend(), ec);
+    m_backend->deleteObjectStore(objectStoreId, m_versionChangeTransaction->backend(), ec);
     if (!ec) {
         m_versionChangeTransaction->objectStoreDeleted(name);
         m_metadata.objectStores.remove(objectStoreId);
@@ -243,18 +243,21 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
         return 0;
     }
 
+    Vector<int64_t> objectStoreIds;
     for (size_t i = 0; i < storeNames->length(); ++i) {
-        if (!m_metadata.containsObjectStore(storeNames->item(i))) {
+        int64_t objectStoreId = findObjectStoreId(storeNames->item(i));
+        if (objectStoreId == IDBObjectStoreMetadata::InvalidId) {
             ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
             return 0;
         }
+        objectStoreIds.append(objectStoreId);
     }
 
     // We need to create a new transaction synchronously. Locks are acquired asynchronously. Operations
     // can be queued against the transaction at any point. They will start executing as soon as the
     // appropriate locks have been acquired.
     // Also note that each backend object corresponds to exactly one IDBTransaction object.
-    RefPtr<IDBTransactionBackendInterface> transactionBackend = m_backend->transaction(storeNames.get(), mode, ec);
+    RefPtr<IDBTransactionBackendInterface> transactionBackend = m_backend->transaction(objectStoreIds, mode);
     if (!transactionBackend) {
         ASSERT(ec);
         return 0;
@@ -352,6 +355,17 @@ bool IDBDatabase::dispatchEvent(PassRefPtr<Event> event)
             m_enqueuedEvents.remove(i);
     }
     return EventTarget::dispatchEvent(event.get());
+}
+
+int64_t IDBDatabase::findObjectStoreId(const String& name) const
+{
+    for (IDBDatabaseMetadata::ObjectStoreMap::const_iterator it = m_metadata.objectStores.begin(); it != m_metadata.objectStores.end(); ++it) {
+        if (it->value.name == name) {
+            ASSERT(it->key != IDBObjectStoreMetadata::InvalidId);
+            return it->key;
+        }
+    }
+    return IDBObjectStoreMetadata::InvalidId;
 }
 
 void IDBDatabase::stop()

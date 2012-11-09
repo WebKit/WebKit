@@ -62,20 +62,15 @@ public:
 
     typedef Vector<RefPtr<IDBKey> > IndexKeys;
 
-    virtual void putWithIndexKeys(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, const Vector<String>&, const Vector<IndexKeys>&, ExceptionCode&) = 0;
     virtual void put(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, const Vector<int64_t>&, const Vector<IndexKeys>&) = 0;
     virtual void deleteFunction(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 
     virtual void clear(PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 
     virtual PassRefPtr<IDBIndexBackendInterface> createIndex(int64_t, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
-    virtual void setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, const Vector<String>&, const Vector<IndexKeys>&, IDBTransactionBackendInterface*) = 0;
     virtual void setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t>&, const Vector<IndexKeys>&, IDBTransactionBackendInterface*) = 0;
-    virtual void setIndexesReady(const Vector<String>&, IDBTransactionBackendInterface*) = 0;
     virtual void setIndexesReady(const Vector<int64_t>&, IDBTransactionBackendInterface*) = 0;
-    virtual PassRefPtr<IDBIndexBackendInterface> index(const String& name, ExceptionCode&) = 0;
     virtual PassRefPtr<IDBIndexBackendInterface> index(int64_t) = 0;
-    virtual void deleteIndex(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 
     virtual void deleteIndex(int64_t, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 

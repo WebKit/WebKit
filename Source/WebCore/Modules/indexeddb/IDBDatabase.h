@@ -91,6 +91,12 @@ public:
     bool dispatchEvent(PassRefPtr<Event> event, ExceptionCode& ec) { return EventTarget::dispatchEvent(event, ec); }
     virtual bool dispatchEvent(PassRefPtr<Event>);
 
+    int64_t findObjectStoreId(const String& name) const;
+    bool containsObjectStore(const String& name) const
+    {
+        return findObjectStoreId(name) != IDBObjectStoreMetadata::InvalidId;
+    }
+
     using RefCounted<IDBDatabase>::ref;
     using RefCounted<IDBDatabase>::deref;
 
