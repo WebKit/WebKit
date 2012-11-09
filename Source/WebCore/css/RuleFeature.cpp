@@ -29,12 +29,34 @@
 #include "config.h"
 #include "RuleFeature.h"
 
+#include "CSSSelector.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationHashSet.h>
 #include <wtf/MemoryInstrumentationVector.h>
 
 namespace WebCore {
+
+void RuleFeatureSet::collectFeaturesFromSelector(const CSSSelector* selector)
+{
+    if (selector->m_match == CSSSelector::Id)
+        idsInRules.add(selector->value().impl());
+    else if (selector->m_match == CSSSelector::Class)
+        classesInRules.add(selector->value().impl());
+    else if (selector->isAttributeSelector())
+        attrsInRules.add(selector->attribute().localName().impl());
+    switch (selector->pseudoType()) {
+    case CSSSelector::PseudoFirstLine:
+        usesFirstLineRules = true;
+        break;
+    case CSSSelector::PseudoBefore:
+    case CSSSelector::PseudoAfter:
+        usesBeforeAfterRules = true;
+        break;
+    default:
+        break;
+    }
+}
 
 void RuleFeatureSet::add(const RuleFeatureSet& other)
 {

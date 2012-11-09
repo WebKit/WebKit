@@ -1,3 +1,23 @@
+2012-11-08  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Refactoring] Expose collectFeaturesFromSelector from RuleSet.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=101692
+
+        Reviewed by Dimitri Glazkov.
+
+        We expose collectFeaturesFromSelector in RuleSet.cpp to use it for collecting ShadowDOM select attribute features.
+
+        No new tests, simple refactoring.
+
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::collectFeaturesFromSelector): Moved from RuleSet.cpp.
+        (WebCore):
+        * css/RuleFeature.h:
+        (WebCore):
+        (RuleFeatureSet):
+        * css/RuleSet.cpp:
+        (WebCore::collectFeaturesFromRuleData):
+
 2012-11-08  Robert Sesek  <rsesek@chromium.org>
 
         Guard calls to WebKitSystemInterface media control drawing functions in RenderThemeMac with PLATFORM(MAC)
