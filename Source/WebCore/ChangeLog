@@ -1,3 +1,15 @@
+2012-11-09  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Do not use 'ls' to list IDL files in EXTRA_DIST
+        https://bugs.webkit.org/show_bug.cgi?id=101581
+
+        Reviewed by Martin Robinson.
+
+        Use normal GNU Make wildcards instead of 'ls' to list files in
+        EXTRA_DIST, it's safer and more straightforward.
+
+        * GNUmakefile.am: ditto.
+
 2012-11-09  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Need to clear exception in JSDictionary that might have been caused by previous operation.

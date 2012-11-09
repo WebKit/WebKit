@@ -718,35 +718,34 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(XT_CFLAGS)
 
 EXTRA_DIST += \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/filesystem/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/gamepad/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/geolocation/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/indexeddb/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/mediasource/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/navigatorcontentutils/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/notifications/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/quota/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/webaudio/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/webdatabase/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/Modules/websockets/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/css/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/dom/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/editing/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/fileapi/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/html/canvas/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/html/shadow/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/html/track/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/html/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/inspector/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/loader/appcache/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/page/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/plugins/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/storage/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/svg/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/testing/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/workers/*.idl) \
-	$(shell ls $(srcdir)/Source/WebCore/xml/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/filesystem/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/gamepad/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/geolocation/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/indexeddb/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/mediasource/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/mediastream/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/navigatorcontentutils/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/notifications/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/quota/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/webaudio/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/webdatabase/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/Modules/websockets/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/css/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/dom/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/fileapi/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/html/canvas/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/html/shadow/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/html/track/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/html/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/inspector/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/loader/appcache/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/page/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/plugins/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/storage/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/svg/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/testing/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/workers/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/xml/*.idl) \
 	Source/ThirdParty/ANGLE/src/compiler/glslang.l \
 	Source/ThirdParty/ANGLE/src/compiler/glslang.y \
 	Source/WebCore/bindings/scripts/CodeGeneratorGObject.pm \
