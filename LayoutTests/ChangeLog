@@ -1,5 +1,17 @@
 2012-11-09  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
+        [EFL] Rebaseline svg tests after 99870
+        https://bugs.webkit.org/show_bug.cgi?id=101756
+
+        Unreviewed svg baseline after https://bugs.webkit.org/show_bug.cgi?id=99870.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/svg/custom/pattern-scaling-expected.png: Added.
+        * platform/efl/svg/custom/pattern-scaling-expected.txt: Added.
+        * platform/efl/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+
+2012-11-09  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
         [EFL] Rebaseline fast/table/025-expected
         https://bugs.webkit.org/show_bug.cgi?id=101752
 
