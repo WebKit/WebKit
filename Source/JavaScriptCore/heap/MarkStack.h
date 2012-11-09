@@ -394,8 +394,6 @@ namespace JSC {
     {
         for (size_t i = 0; i < count; ++i) {
             JSValue& value = slot[i];
-            if (!value)
-                continue;
             internalAppend(value);
         }
     }
@@ -405,8 +403,7 @@ namespace JSC {
     {
         ASSERT(slot);
         JSCell* cell = *slot;
-        if (cell)
-            internalAppend(cell);
+        internalAppend(cell);
     }
     
     ALWAYS_INLINE void MarkStack::append(JSValue* slot)
@@ -423,8 +420,7 @@ namespace JSC {
 
     ALWAYS_INLINE void MarkStack::internalAppend(JSValue value)
     {
-        ASSERT(value);
-        if (!value.isCell())
+        if (!value || !value.isCell()) 
             return;
         internalAppend(value.asCell());
     }
