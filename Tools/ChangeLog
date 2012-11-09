@@ -1,3 +1,18 @@
+2012-11-09  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL] Give the view a size in TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=101770
+
+        Reviewed by Laszlo Gombos.
+
+        2 tests are currently failing, because they expect us to paint, but we don't paint if the view size is empty.
+
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::~PlatformWebView):
+        (TestWebKitAPI):
+        (TestWebKitAPI::PlatformWebView::resizeTo):
+
 2012-11-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134068.
