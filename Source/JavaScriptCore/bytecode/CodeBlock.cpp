@@ -1812,23 +1812,25 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + opLength - 1] = &m_arrayAllocationProfiles[arrayAllocationProfileIndex];
             break;
         }
+#endif
 
         case op_call:
         case op_call_eval: {
+#if ENABLE(DFG_JIT)
             int arrayProfileIndex = pc[i + opLength - 1].u.operand;
             m_arrayProfiles[arrayProfileIndex] = ArrayProfile(i);
             instructions[i + opLength - 1] = &m_arrayProfiles[arrayProfileIndex];
-            // fallthrough
-#if !ENABLE(LLINT)
-            break;
-#endif
-        }
 #endif
 #if ENABLE(LLINT)
-        case op_construct:
             instructions[i + 4] = &m_llintCallLinkInfos[pc[i + 4].u.operand];
-            break;
 #endif
+            break;
+        }
+        case op_construct:
+#if ENABLE(LLINT)
+            instructions[i + 4] = &m_llintCallLinkInfos[pc[i + 4].u.operand];
+#endif
+            break;
         case op_get_by_id_out_of_line:
         case op_get_by_id_self:
         case op_get_by_id_proto:

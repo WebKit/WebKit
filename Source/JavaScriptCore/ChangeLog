@@ -1,3 +1,15 @@
+2012-11-08  Filip Pizlo  <fpizlo@apple.com>
+
+        op_call should have LLInt call link info even if the DFG is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=101672
+
+        Reviewed by Oliver Hunt.
+
+        Get rid of the evil uses of fall-through.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+
 2012-11-08  Oliver Hunt  <oliver@apple.com>
 
         Improve effectiveness of function-level caching
