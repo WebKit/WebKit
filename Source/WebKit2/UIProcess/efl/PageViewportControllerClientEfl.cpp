@@ -78,8 +78,9 @@ void PageViewportControllerClientEfl::setVisibleContentsRect(const IntPoint& new
     m_controller->didChangeContentsVisibility(m_scrollPosition, m_scaleFactor, trajectory);
 }
 
-void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize&)
+void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& contentsSize)
 {
+    drawingArea()->layerTreeCoordinatorProxy()->setContentsSize(contentsSize);
     m_viewImpl->update();
 }
 

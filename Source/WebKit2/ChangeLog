@@ -1,3 +1,18 @@
+2012-11-09  Hurnjoo Lee  <hurnjoo.lee@samsung.com>
+
+        [EFL][WK2][AC] Fixed layers are shaking when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=101549
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        At the time of adjusting positions for fixed layers, the locations of
+        fixed layers are calculated incorrectly because the contentsSize is empty.
+
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::didChangeContentsSize): Call the
+        setContentsSize function in LayerTreeCoordinatorProxy in order to calculate
+        the locations of fixed layers correctly.
+
 2012-11-09  Brady Eidson  <beidson@apple.com>
 
         NetworkRequest refactoring
