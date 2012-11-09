@@ -45,84 +45,35 @@
 
 namespace JSC {
 
-MarkStackSegmentAllocator::MarkStackSegmentAllocator()
-    : m_nextFreeSegment(0)
-{
-    m_lock.Init();
-}
-
-MarkStackSegmentAllocator::~MarkStackSegmentAllocator()
-{
-    shrinkReserve();
-}
-
-MarkStackSegment* MarkStackSegmentAllocator::allocate()
-{
-    {
-        SpinLockHolder locker(&m_lock);
-        if (m_nextFreeSegment) {
-            MarkStackSegment* result = m_nextFreeSegment;
-            m_nextFreeSegment = result->m_previous;
-            return result;
-        }
-    }
-
-    return static_cast<MarkStackSegment*>(OSAllocator::reserveAndCommit(Options::gcMarkStackSegmentSize()));
-}
-
-void MarkStackSegmentAllocator::release(MarkStackSegment* segment)
-{
-    SpinLockHolder locker(&m_lock);
-    segment->m_previous = m_nextFreeSegment;
-    m_nextFreeSegment = segment;
-}
-
-void MarkStackSegmentAllocator::shrinkReserve()
-{
-    MarkStackSegment* segments;
-    {
-        SpinLockHolder locker(&m_lock);
-        segments = m_nextFreeSegment;
-        m_nextFreeSegment = 0;
-    }
-    while (segments) {
-        MarkStackSegment* toFree = segments;
-        segments = segments->m_previous;
-        OSAllocator::decommitAndRelease(toFree, Options::gcMarkStackSegmentSize());
-    }
-}
-
-MarkStackArray::MarkStackArray(MarkStackSegmentAllocator& allocator)
-    : m_allocator(allocator)
+MarkStackArray::MarkStackArray(BlockAllocator& blockAllocator)
+    : m_blockAllocator(blockAllocator)
     , m_segmentCapacity(MarkStackSegment::capacityFromSize(Options::gcMarkStackSegmentSize()))
     , m_top(0)
-    , m_numberOfPreviousSegments(0)
+    , m_numberOfSegments(0)
 {
-    m_topSegment = m_allocator.allocate();
-#if !ASSERT_DISABLED
-    m_topSegment->m_top = 0;
-#endif
-    m_topSegment->m_previous = 0;
+    ASSERT(MarkStackSegment::blockSize == WeakBlock::blockSize);
+    m_segments.push(MarkStackSegment::create(m_blockAllocator.allocate<MarkStackSegment>()));
+    m_numberOfSegments++;
 }
 
 MarkStackArray::~MarkStackArray()
 {
-    ASSERT(!m_topSegment->m_previous);
-    m_allocator.release(m_topSegment);
+    ASSERT(m_numberOfSegments == 1 && m_segments.size() == 1);
+    m_blockAllocator.deallocate(MarkStackSegment::destroy(m_segments.removeHead()));
 }
 
 void MarkStackArray::expand()
 {
-    ASSERT(m_topSegment->m_top == m_segmentCapacity);
+    ASSERT(m_segments.head()->m_top == m_segmentCapacity);
     
-    m_numberOfPreviousSegments++;
+    MarkStackSegment* nextSegment = MarkStackSegment::create(m_blockAllocator.allocate<MarkStackSegment>());
+    m_numberOfSegments++;
     
-    MarkStackSegment* nextSegment = m_allocator.allocate();
 #if !ASSERT_DISABLED
     nextSegment->m_top = 0;
 #endif
-    nextSegment->m_previous = m_topSegment;
-    m_topSegment = nextSegment;
+
+    m_segments.push(nextSegment);
     setTopForEmptySegment();
     validatePrevious();
 }
@@ -132,14 +83,9 @@ bool MarkStackArray::refill()
     validatePrevious();
     if (top())
         return true;
-    MarkStackSegment* toFree = m_topSegment;
-    MarkStackSegment* previous = m_topSegment->m_previous;
-    if (!previous)
-        return false;
-    ASSERT(m_numberOfPreviousSegments);
-    m_numberOfPreviousSegments--;
-    m_topSegment = previous;
-    m_allocator.release(toFree);
+    m_blockAllocator.deallocate(MarkStackSegment::destroy(m_segments.removeHead()));
+    ASSERT(m_numberOfSegments > 1);
+    m_numberOfSegments--;
     setTopForFullSegment();
     validatePrevious();
     return true;
@@ -153,7 +99,7 @@ void MarkStackArray::donateSomeCellsTo(MarkStackArray& other)
 
     ASSERT(m_segmentCapacity == other.m_segmentCapacity);
 
-    size_t segmentsToDonate = (m_numberOfPreviousSegments + 2 - 1) / 2; // Round up to donate 1 / 1 previous segments.
+    size_t segmentsToDonate = m_numberOfSegments / 2; // If we only have one segment (our head) we don't donate any segments.
 
     if (!segmentsToDonate) {
         size_t cellsToDonate = m_top / 2; // Round down to donate 0 / 1 cells.
@@ -167,21 +113,23 @@ void MarkStackArray::donateSomeCellsTo(MarkStackArray& other)
     validatePrevious();
     other.validatePrevious();
 
-    MarkStackSegment* previous = m_topSegment->m_previous;
-    while (segmentsToDonate--) {
-        ASSERT(previous);
-        ASSERT(m_numberOfPreviousSegments);
+    // Remove our head and the head of the other list before we start moving segments around.
+    // We'll add them back on once we're done donating.
+    MarkStackSegment* myHead = m_segments.removeHead();
+    MarkStackSegment* otherHead = other.m_segments.removeHead();
 
-        MarkStackSegment* current = previous;
-        previous = current->m_previous;
-            
-        current->m_previous = other.m_topSegment->m_previous;
-        other.m_topSegment->m_previous = current;
-            
-        m_numberOfPreviousSegments--;
-        other.m_numberOfPreviousSegments++;
+    while (segmentsToDonate--) {
+        MarkStackSegment* current = m_segments.removeHead();
+        ASSERT(current);
+        ASSERT(m_numberOfSegments > 1);
+        other.m_segments.push(current);
+        m_numberOfSegments--;
+        other.m_numberOfSegments++;
     }
-    m_topSegment->m_previous = previous;
+
+    // Put the original heads back in their places.
+    m_segments.push(myHead);
+    other.m_segments.push(otherHead);
 
     validatePrevious();
     other.validatePrevious();
@@ -198,21 +146,21 @@ void MarkStackArray::stealSomeCellsFrom(MarkStackArray& other, size_t idleThread
     other.validatePrevious();
         
     // If other has an entire segment, steal it and return.
-    if (other.m_topSegment->m_previous) {
-        ASSERT(other.m_topSegment->m_previous->m_top == m_segmentCapacity);
-            
-        // First remove a segment from other.
-        MarkStackSegment* current = other.m_topSegment->m_previous;
-        other.m_topSegment->m_previous = current->m_previous;
-        other.m_numberOfPreviousSegments--;
-            
-        ASSERT(!!other.m_numberOfPreviousSegments == !!other.m_topSegment->m_previous);
-            
-        // Now add it to this.
-        current->m_previous = m_topSegment->m_previous;
-        m_topSegment->m_previous = current;
-        m_numberOfPreviousSegments++;
-            
+    if (other.m_numberOfSegments > 1) {
+        // Move the heads of the lists aside. We'll push them back on after.
+        MarkStackSegment* otherHead = other.m_segments.removeHead();
+        MarkStackSegment* myHead = m_segments.removeHead();
+
+        ASSERT(other.m_segments.head()->m_top == m_segmentCapacity);
+
+        m_segments.push(other.m_segments.removeHead());
+
+        m_numberOfSegments++;
+        other.m_numberOfSegments--;
+        
+        m_segments.push(myHead);
+        other.m_segments.push(otherHead);
+    
         validatePrevious();
         other.validatePrevious();
         return;

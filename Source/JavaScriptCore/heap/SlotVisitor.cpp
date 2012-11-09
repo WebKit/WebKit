@@ -15,7 +15,7 @@
 namespace JSC {
 
 SlotVisitor::SlotVisitor(GCThreadSharedData& shared)
-    : m_stack(shared.m_segmentAllocator)
+    : m_stack(shared.m_globalData->heap.blockAllocator())
     , m_visitCount(0)
     , m_isInParallelMode(false)
     , m_shared(shared)

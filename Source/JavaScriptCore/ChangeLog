@@ -1,3 +1,51 @@
+2012-11-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        MarkStackArray should use the BlockAllocator instead of the MarkStackSegmentAllocator
+        https://bugs.webkit.org/show_bug.cgi?id=101642
+
+        Reviewed by Filip Pizlo.
+
+        MarkStackSegmentAllocator is like a miniature version of the BlockAllocator. Now that the BlockAllocator has support 
+        for a variety of block sizes, we should get rid of the MarkStackSegmentAllocator in favor of the BlockAllocator.
+
+        * heap/BlockAllocator.h: Add new specializations of regionSetFor for the new MarkStackSegments.
+        (JSC):
+        (JSC::MarkStackSegment):
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::GCThreadSharedData):
+        (JSC::GCThreadSharedData::reset):
+        * heap/GCThreadSharedData.h:
+        (GCThreadSharedData):
+        * heap/MarkStack.cpp: 
+        (JSC::MarkStackArray::MarkStackArray): We now have a doubly linked list of MarkStackSegments, so we need to refactor 
+        all the places that used the old custom tail/previous logic.
+        (JSC::MarkStackArray::~MarkStackArray):
+        (JSC::MarkStackArray::expand):
+        (JSC::MarkStackArray::refill):
+        (JSC::MarkStackArray::donateSomeCellsTo): Refactor to use the new linked list.
+        (JSC::MarkStackArray::stealSomeCellsFrom): Ditto.
+        * heap/MarkStack.h:
+        (JSC):
+        (MarkStackSegment):
+        (JSC::MarkStackSegment::MarkStackSegment):
+        (JSC::MarkStackSegment::sizeFromCapacity):
+        (MarkStackArray):
+        * heap/MarkStackInlines.h:
+        (JSC::MarkStackSegment::create):
+        (JSC):
+        (JSC::MarkStackArray::postIncTop):
+        (JSC::MarkStackArray::preDecTop):
+        (JSC::MarkStackArray::setTopForFullSegment):
+        (JSC::MarkStackArray::setTopForEmptySegment):
+        (JSC::MarkStackArray::top):
+        (JSC::MarkStackArray::validatePrevious):
+        (JSC::MarkStackArray::append):
+        (JSC::MarkStackArray::removeLast):
+        (JSC::MarkStackArray::isEmpty):
+        (JSC::MarkStackArray::size):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::SlotVisitor):
+
 2012-11-09  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         [Qt] r133953 broke the ARM_TRADITIONAL build

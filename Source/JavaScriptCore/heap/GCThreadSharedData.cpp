@@ -56,7 +56,7 @@ GCThreadSharedData::GCThreadSharedData(JSGlobalData* globalData)
     : m_globalData(globalData)
     , m_copiedSpace(&globalData->heap.m_storageSpace)
     , m_shouldHashConst(false)
-    , m_sharedMarkStack(m_segmentAllocator)
+    , m_sharedMarkStack(globalData->heap.blockAllocator())
     , m_numberOfActiveParallelMarkers(0)
     , m_parallelMarkersShouldExit(false)
     , m_blocksToCopy(globalData->heap.m_blockSnapshot)
@@ -110,7 +110,6 @@ void GCThreadSharedData::reset()
     ASSERT(m_sharedMarkStack.isEmpty());
     
 #if ENABLE(PARALLEL_GC)
-    m_segmentAllocator.shrinkReserve();
     m_opaqueRoots.clear();
 #else
     ASSERT(m_opaqueRoots.isEmpty());

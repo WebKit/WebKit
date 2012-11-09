@@ -31,35 +31,40 @@
 
 namespace JSC {
 
+inline MarkStackSegment* MarkStackSegment::create(DeadBlock* block)
+{
+    return new (NotNull, block) MarkStackSegment(block->region());
+}
+
 inline size_t MarkStackArray::postIncTop()
 {
     size_t result = m_top++;
-    ASSERT(result == m_topSegment->m_top++);
+    ASSERT(result == m_segments.head()->m_top++);
     return result;
 }
 
 inline size_t MarkStackArray::preDecTop()
 {
     size_t result = --m_top;
-    ASSERT(result == --m_topSegment->m_top);
+    ASSERT(result == --m_segments.head()->m_top);
     return result;
 }
 
 inline void MarkStackArray::setTopForFullSegment()
 {
-    ASSERT(m_topSegment->m_top == m_segmentCapacity);
+    ASSERT(m_segments.head()->m_top == m_segmentCapacity);
     m_top = m_segmentCapacity;
 }
 
 inline void MarkStackArray::setTopForEmptySegment()
 {
-    ASSERT(!m_topSegment->m_top);
+    ASSERT(!m_segments.head()->m_top);
     m_top = 0;
 }
 
 inline size_t MarkStackArray::top()
 {
-    ASSERT(m_top == m_topSegment->m_top);
+    ASSERT(m_top == m_segments.head()->m_top);
     return m_top;
 }
 
@@ -69,9 +74,9 @@ inline void MarkStackArray::validatePrevious() { }
 inline void MarkStackArray::validatePrevious()
 {
     unsigned count = 0;
-    for (MarkStackSegment* current = m_topSegment->m_previous; current; current = current->m_previous)
+    for (MarkStackSegment* current = m_segments.head(); current; current = current->next())
         count++;
-    ASSERT(count == m_numberOfPreviousSegments);
+    ASSERT(m_segments.size() == m_numberOfSegments);
 }
 #endif
 
@@ -79,7 +84,7 @@ inline void MarkStackArray::append(const JSCell* cell)
 {
     if (m_top == m_segmentCapacity)
         expand();
-    m_topSegment->data()[postIncTop()] = cell;
+    m_segments.head()->data()[postIncTop()] = cell;
 }
 
 inline bool MarkStackArray::canRemoveLast()
@@ -89,15 +94,15 @@ inline bool MarkStackArray::canRemoveLast()
 
 inline const JSCell* MarkStackArray::removeLast()
 {
-    return m_topSegment->data()[preDecTop()];
+    return m_segments.head()->data()[preDecTop()];
 }
 
 inline bool MarkStackArray::isEmpty()
 {
     if (m_top)
         return false;
-    if (m_topSegment->m_previous) {
-        ASSERT(m_topSegment->m_previous->m_top == m_segmentCapacity);
+    if (m_segments.head()->next()) {
+        ASSERT(m_segments.head()->next()->m_top == m_segmentCapacity);
         return false;
     }
     return true;
@@ -105,7 +110,7 @@ inline bool MarkStackArray::isEmpty()
 
 inline size_t MarkStackArray::size()
 {
-    return m_top + m_segmentCapacity * m_numberOfPreviousSegments;
+    return m_top + m_segmentCapacity * (m_numberOfSegments - 1);
 }
 
 } // namespace JSC

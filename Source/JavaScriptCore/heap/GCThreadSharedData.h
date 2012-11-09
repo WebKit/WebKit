@@ -80,8 +80,6 @@ private:
     JSGlobalData* m_globalData;
     CopiedSpace* m_copiedSpace;
     
-    MarkStackSegmentAllocator m_segmentAllocator;
-    
     bool m_shouldHashConst;
 
     Vector<GCThread*> m_gcThreads;
