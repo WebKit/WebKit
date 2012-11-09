@@ -142,8 +142,8 @@ PassRefPtr<IDBTransaction> IDBRequest::transaction() const
 const String& IDBRequest::readyState() const
 {
     ASSERT(m_readyState == PENDING || m_readyState == DONE);
-    DEFINE_STATIC_LOCAL(AtomicString, pending, ("pending"));
-    DEFINE_STATIC_LOCAL(AtomicString, done, ("done"));
+    DEFINE_STATIC_LOCAL(AtomicString, pending, ("pending", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, done, ("done", AtomicString::ConstructFromLiteral));
 
     if (m_readyState == PENDING)
         return pending;

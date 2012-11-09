@@ -45,7 +45,7 @@ NavigatorNetworkInfoConnection::~NavigatorNetworkInfoConnection()
 
 NavigatorNetworkInfoConnection* NavigatorNetworkInfoConnection::from(Navigator* navigator)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorNetworkInfoConnection"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorNetworkInfoConnection", AtomicString::ConstructFromLiteral));
     NavigatorNetworkInfoConnection* supplement = static_cast<NavigatorNetworkInfoConnection*>(Supplement<Navigator>::from(navigator, name));
     if (!supplement) {
         supplement = new NavigatorNetworkInfoConnection();

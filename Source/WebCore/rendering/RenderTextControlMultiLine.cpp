@@ -59,7 +59,7 @@ float RenderTextControlMultiLine::getAvgCharWidth(AtomicString family)
     // Since Lucida Grande is the default font, we want this to match the width
     // of Courier New, the default font for textareas in IE, Firefox and Safari Win.
     // 1229 is the avgCharWidth value in the OS/2 table for Courier New.
-    if (family == AtomicString("Lucida Grande"))
+    if (family == "Lucida Grande")
         return scaleEmToUnits(1229);
 
     return RenderTextControl::getAvgCharWidth(family);

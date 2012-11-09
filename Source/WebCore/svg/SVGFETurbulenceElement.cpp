@@ -65,13 +65,13 @@ PassRefPtr<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const Qualifie
 
 const AtomicString& SVGFETurbulenceElement::baseFrequencyXIdentifier()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyX"));
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyX", AtomicString::ConstructFromLiteral));
     return s_identifier;
 }
 
 const AtomicString& SVGFETurbulenceElement::baseFrequencyYIdentifier()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyY"));
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyY", AtomicString::ConstructFromLiteral));
     return s_identifier;
 }
 

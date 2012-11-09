@@ -128,7 +128,7 @@ void Vibration::timerStopFired(Timer<Vibration>* timer)
 
 const AtomicString& Vibration::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("Vibration"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("Vibration", AtomicString::ConstructFromLiteral));
     return name;
 }
 

@@ -323,11 +323,11 @@ PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescri
     // Sorted by most to least glyphs according to http://en.wikipedia.org/wiki/Unicode_typefaces
     // Start with Times New Roman also since it is the default if the user doesn't change prefs.
     static AtomicString fallbackFonts[] = {
-        AtomicString("Times New Roman"),
-        AtomicString("Microsoft Sans Serif"),
-        AtomicString("Tahoma"),
-        AtomicString("Lucida Sans Unicode"),
-        AtomicString("Arial")
+        AtomicString("Times New Roman", AtomicString::ConstructFromLiteral),
+        AtomicString("Microsoft Sans Serif", AtomicString::ConstructFromLiteral),
+        AtomicString("Tahoma", AtomicString::ConstructFromLiteral),
+        AtomicString("Lucida Sans Unicode", AtomicString::ConstructFromLiteral),
+        AtomicString("Arial", AtomicString::ConstructFromLiteral)
     };
     RefPtr<SimpleFontData> simpleFont;
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(fallbackFonts); ++i) {

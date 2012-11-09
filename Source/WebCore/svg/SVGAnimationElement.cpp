@@ -293,10 +293,10 @@ void SVGAnimationElement::updateAnimationMode()
 
 void SVGAnimationElement::setCalcMode(const AtomicString& calcMode)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, discrete, ("discrete"));
-    DEFINE_STATIC_LOCAL(const AtomicString, linear, ("linear"));
-    DEFINE_STATIC_LOCAL(const AtomicString, paced, ("paced"));
-    DEFINE_STATIC_LOCAL(const AtomicString, spline, ("spline"));
+    DEFINE_STATIC_LOCAL(const AtomicString, discrete, ("discrete", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, linear, ("linear", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, paced, ("paced", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, spline, ("spline", AtomicString::ConstructFromLiteral));
     if (calcMode == discrete)
         setCalcMode(CalcModeDiscrete);
     else if (calcMode == linear)
@@ -311,8 +311,8 @@ void SVGAnimationElement::setCalcMode(const AtomicString& calcMode)
 
 void SVGAnimationElement::setAttributeType(const AtomicString& attributeType)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, css, ("CSS"));
-    DEFINE_STATIC_LOCAL(const AtomicString, xml, ("XML"));
+    DEFINE_STATIC_LOCAL(const AtomicString, css, ("CSS", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, xml, ("XML", AtomicString::ConstructFromLiteral));
     if (attributeType == css)
         m_attributeType = AttributeTypeCSS;
     else if (attributeType == xml)
@@ -339,14 +339,14 @@ String SVGAnimationElement::fromValue() const
 
 bool SVGAnimationElement::isAdditive() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, sum, ("sum"));
+    DEFINE_STATIC_LOCAL(const AtomicString, sum, ("sum", AtomicString::ConstructFromLiteral));
     const AtomicString& value = fastGetAttribute(SVGNames::additiveAttr);
     return value == sum || animationMode() == ByAnimation;
 }
 
 bool SVGAnimationElement::isAccumulated() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, sum, ("sum"));
+    DEFINE_STATIC_LOCAL(const AtomicString, sum, ("sum", AtomicString::ConstructFromLiteral));
     const AtomicString& value = fastGetAttribute(SVGNames::accumulateAttr);
     return value == sum && animationMode() != ToAnimation;
 }
@@ -658,7 +658,7 @@ void SVGAnimationElement::adjustForInheritance(SVGElement* targetElement, const 
 static bool inheritsFromProperty(SVGElement* targetElement, const QualifiedName& attributeName, const String& value)
 {
     ASSERT(targetElement);
-    DEFINE_STATIC_LOCAL(const AtomicString, inherit, ("inherit"));
+    DEFINE_STATIC_LOCAL(const AtomicString, inherit, ("inherit", AtomicString::ConstructFromLiteral));
     
     if (value.isEmpty() || value != inherit || !targetElement->isStyled())
         return false;

@@ -44,7 +44,7 @@ NavigatorGeolocation::~NavigatorGeolocation()
 
 NavigatorGeolocation* NavigatorGeolocation::from(Navigator* navigator)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorGeolocation"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorGeolocation", AtomicString::ConstructFromLiteral));
     NavigatorGeolocation* supplement = static_cast<NavigatorGeolocation*>(Supplement<Navigator>::from(navigator, name));
     if (!supplement) {
         supplement = new NavigatorGeolocation(navigator->frame());

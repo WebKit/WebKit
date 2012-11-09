@@ -49,7 +49,7 @@ DOMWindowNotifications::~DOMWindowNotifications()
 
 DOMWindowNotifications* DOMWindowNotifications::from(DOMWindow* window)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, supplementName, ("DOMWindowNotifications"));
+    DEFINE_STATIC_LOCAL(AtomicString, supplementName, ("DOMWindowNotifications", AtomicString::ConstructFromLiteral));
     DOMWindowNotifications* supplement = static_cast<DOMWindowNotifications*>(Supplement<DOMWindow>::from(window, supplementName));
     if (!supplement) {
         supplement = new DOMWindowNotifications(window);

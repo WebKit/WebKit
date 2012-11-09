@@ -272,7 +272,7 @@ Vector<String> SavedFormState::getReferencedFilePaths() const
     Vector<String> toReturn;
     for (FormElementStateMap::const_iterator it = m_stateForNewFormElements.begin(); it != m_stateForNewFormElements.end(); ++it) {
         const FormElementKey& key = it->key;
-        if (AtomicString(key.type()) != AtomicString("file"))
+        if (!equal(key.type(), "file", 4))
             continue;
         const Deque<FormControlState>& queue = it->value;
         for (Deque<FormControlState>::const_iterator queIterator = queue.begin(); queIterator != queue.end(); ++queIterator) {
@@ -344,7 +344,7 @@ AtomicString FormKeyGenerator::formKey(const HTMLFormControlElementWithState& co
 {
     HTMLFormElement* form = ownerFormForState(control);
     if (!form) {
-        DEFINE_STATIC_LOCAL(AtomicString, formKeyForNoOwner, ("No owner"));
+        DEFINE_STATIC_LOCAL(AtomicString, formKeyForNoOwner, ("No owner", AtomicString::ConstructFromLiteral));
         return formKeyForNoOwner;
     }
     FormToKeyMap::const_iterator it = m_formToKeyMap.find(form);

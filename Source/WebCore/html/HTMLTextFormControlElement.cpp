@@ -394,9 +394,9 @@ int HTMLTextFormControlElement::computeSelectionEnd() const
 
 static const AtomicString& directionString(TextFieldSelectionDirection direction)
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, none, ("none"));
-    DEFINE_STATIC_LOCAL(const AtomicString, forward, ("forward"));
-    DEFINE_STATIC_LOCAL(const AtomicString, backward, ("backward"));
+    DEFINE_STATIC_LOCAL(const AtomicString, none, ("none", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, forward, ("forward", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, backward, ("backward", AtomicString::ConstructFromLiteral));
 
     switch (direction) {
     case SelectionHasNoDirection:

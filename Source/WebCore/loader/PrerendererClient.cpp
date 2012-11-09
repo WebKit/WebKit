@@ -43,7 +43,7 @@ namespace WebCore {
 // static
 const AtomicString& PrerendererClient::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("PrerendererClient"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("PrerendererClient", AtomicString::ConstructFromLiteral));
     return name;
 }
 

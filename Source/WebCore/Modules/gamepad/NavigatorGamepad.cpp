@@ -45,7 +45,7 @@ NavigatorGamepad::~NavigatorGamepad()
 
 NavigatorGamepad* NavigatorGamepad::from(Navigator* navigator)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorGamepad"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorGamepad", AtomicString::ConstructFromLiteral));
     NavigatorGamepad* supplement = static_cast<NavigatorGamepad*>(Supplement<Navigator>::from(navigator, name));
     if (!supplement) {
         supplement = new NavigatorGamepad();

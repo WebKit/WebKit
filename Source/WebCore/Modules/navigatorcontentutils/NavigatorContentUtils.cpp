@@ -203,7 +203,7 @@ void NavigatorContentUtils::unregisterProtocolHandler(Navigator* navigator, cons
 
 const AtomicString& NavigatorContentUtils::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorContentUtils"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorContentUtils", AtomicString::ConstructFromLiteral));
     return name;
 }
 

@@ -1284,7 +1284,7 @@ bool AccessibilityObject::ariaIsMultiline() const
 
 const AtomicString& AccessibilityObject::invalidStatus() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, invalidStatusFalse, ("false"));
+    DEFINE_STATIC_LOCAL(const AtomicString, invalidStatusFalse, ("false", AtomicString::ConstructFromLiteral));
     
     // aria-invalid can return false (default), grammer, spelling, or true.
     const AtomicString& ariaInvalid = getAttribute(aria_invalidAttr);

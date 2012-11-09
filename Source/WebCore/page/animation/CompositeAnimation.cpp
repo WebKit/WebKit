@@ -218,7 +218,7 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, Render
         // Toss the animation order map.
         m_keyframeAnimationOrderMap.clear();
 
-        DEFINE_STATIC_LOCAL(const AtomicString, none, ("none"));
+        DEFINE_STATIC_LOCAL(const AtomicString, none, ("none", AtomicString::ConstructFromLiteral));
         
         // Now mark any still active animations as active and add any new animations.
         if (targetStyle->animations()) {

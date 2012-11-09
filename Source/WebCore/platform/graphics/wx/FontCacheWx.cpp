@@ -67,7 +67,7 @@ PassRefPtr<SimpleFontData> FontCache::getSimilarFontPlatformData(const Font& fon
     while (currFamily && !simpleFontData) {
         if (currFamily->family().length()) {
             static String* matchWords[3] = { new String("Arabic"), new String("Pashto"), new String("Urdu") };
-            DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro"));
+            DEFINE_STATIC_LOCAL(AtomicString, geezaStr, ("Geeza Pro", AtomicString::ConstructFromLiteral));
             for (int j = 0; j < 3 && !simpleFontData; ++j)
                 if (currFamily->family().contains(*matchWords[j], false))
                     simpleFontData = getCachedFontData(font.fontDescription(), geezaStr);

@@ -81,21 +81,21 @@ RenderObject* MeterInnerElement::createRenderer(RenderArena* arena, RenderStyle*
 
 const AtomicString& MeterInnerElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-meter-inner-element"));
+    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-meter-inner-element", AtomicString::ConstructFromLiteral));
     return pseudId;
 }
 
 const AtomicString& MeterBarElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-meter-bar"));
+    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-meter-bar", AtomicString::ConstructFromLiteral));
     return pseudId;
 }
 
 const AtomicString& MeterValueElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, optimumPseudId, ("-webkit-meter-optimum-value"));
-    DEFINE_STATIC_LOCAL(AtomicString, suboptimumPseudId, ("-webkit-meter-suboptimum-value"));
-    DEFINE_STATIC_LOCAL(AtomicString, evenLessGoodPseudId, ("-webkit-meter-even-less-good-value"));
+    DEFINE_STATIC_LOCAL(AtomicString, optimumPseudId, ("-webkit-meter-optimum-value", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, suboptimumPseudId, ("-webkit-meter-suboptimum-value", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, evenLessGoodPseudId, ("-webkit-meter-even-less-good-value", AtomicString::ConstructFromLiteral));
 
     HTMLMeterElement* meter = meterElement();
     if (!meter)

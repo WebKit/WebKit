@@ -68,7 +68,7 @@ PassRefPtr<ProgressInnerElement> ProgressInnerElement::create(Document* document
 
 const AtomicString& ProgressInnerElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-inner-element"));
+    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-inner-element", AtomicString::ConstructFromLiteral));
     return pseudId;
 }
 
@@ -88,14 +88,14 @@ bool ProgressInnerElement::rendererIsNeeded(const NodeRenderingContext& context)
 
 const AtomicString& ProgressBarElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-bar"));
+    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-bar", AtomicString::ConstructFromLiteral));
     return pseudId;
 }
 
 
 const AtomicString& ProgressValueElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-value"));
+    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-value", AtomicString::ConstructFromLiteral));
     return pseudId;
 }
 

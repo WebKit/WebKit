@@ -50,7 +50,7 @@ BatteryManager* NavigatorBattery::webkitBattery(Navigator* navigator)
 
 NavigatorBattery* NavigatorBattery::from(Navigator* navigator)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorBattery"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("NavigatorBattery", AtomicString::ConstructFromLiteral));
     NavigatorBattery* supplement = static_cast<NavigatorBattery*>(Supplement<Navigator>::from(navigator, name));
     if (!supplement) {
         supplement = new NavigatorBattery();

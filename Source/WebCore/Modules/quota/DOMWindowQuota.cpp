@@ -51,7 +51,7 @@ DOMWindowQuota::~DOMWindowQuota()
 // static
 DOMWindowQuota* DOMWindowQuota::from(DOMWindow* window)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowQuota"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowQuota", AtomicString::ConstructFromLiteral));
     DOMWindowQuota* supplement = static_cast<DOMWindowQuota*>(Supplement<DOMWindow>::from(window, name));
     if (!supplement) {
         supplement = new DOMWindowQuota(window);

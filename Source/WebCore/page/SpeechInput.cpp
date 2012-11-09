@@ -119,7 +119,7 @@ void SpeechInput::cancelRecognition(int listenerId)
 
 const AtomicString& SpeechInput::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("SpeechInput"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("SpeechInput", AtomicString::ConstructFromLiteral));
     return name;
 }
 

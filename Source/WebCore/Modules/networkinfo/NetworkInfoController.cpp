@@ -77,7 +77,7 @@ void NetworkInfoController::didChangeNetworkInformation(const AtomicString& even
 
 const AtomicString& NetworkInfoController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("NetworkInfoController"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("NetworkInfoController", AtomicString::ConstructFromLiteral));
     return name;
 }
 

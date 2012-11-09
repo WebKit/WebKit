@@ -280,12 +280,12 @@ void ResourceResponseBase::setHTTPHeaderField(const AtomicString& name, const St
 {
     lazyInit(CommonAndUncommonFields);
 
-    DEFINE_STATIC_LOCAL(const AtomicString, ageHeader, ("age"));
-    DEFINE_STATIC_LOCAL(const AtomicString, cacheControlHeader, ("cache-control"));
-    DEFINE_STATIC_LOCAL(const AtomicString, dateHeader, ("date"));
-    DEFINE_STATIC_LOCAL(const AtomicString, expiresHeader, ("expires"));
-    DEFINE_STATIC_LOCAL(const AtomicString, lastModifiedHeader, ("last-modified"));
-    DEFINE_STATIC_LOCAL(const AtomicString, pragmaHeader, ("pragma"));
+    DEFINE_STATIC_LOCAL(const AtomicString, ageHeader, ("age", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, cacheControlHeader, ("cache-control", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, dateHeader, ("date", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, expiresHeader, ("expires", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, lastModifiedHeader, ("last-modified", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, pragmaHeader, ("pragma", AtomicString::ConstructFromLiteral));
     if (equalIgnoringCase(name, ageHeader))
         m_haveParsedAgeHeader = false;
     else if (equalIgnoringCase(name, cacheControlHeader) || equalIgnoringCase(name, pragmaHeader))
@@ -319,11 +319,11 @@ void ResourceResponseBase::parseCacheControlDirectives() const
     m_cacheControlContainsNoCache = false;
     m_cacheControlMaxAge = numeric_limits<double>::quiet_NaN();
 
-    DEFINE_STATIC_LOCAL(const AtomicString, cacheControlString, ("cache-control"));
-    DEFINE_STATIC_LOCAL(const AtomicString, noCacheDirective, ("no-cache"));
-    DEFINE_STATIC_LOCAL(const AtomicString, noStoreDirective, ("no-store"));
-    DEFINE_STATIC_LOCAL(const AtomicString, mustRevalidateDirective, ("must-revalidate"));
-    DEFINE_STATIC_LOCAL(const AtomicString, maxAgeDirective, ("max-age"));
+    DEFINE_STATIC_LOCAL(const AtomicString, cacheControlString, ("cache-control", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, noCacheDirective, ("no-cache", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, noStoreDirective, ("no-store", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, mustRevalidateDirective, ("must-revalidate", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, maxAgeDirective, ("max-age", AtomicString::ConstructFromLiteral));
 
     String cacheControlValue = m_httpHeaderFields.get(cacheControlString);
     if (!cacheControlValue.isEmpty()) {
@@ -357,7 +357,7 @@ void ResourceResponseBase::parseCacheControlDirectives() const
         // Handle Pragma: no-cache
         // This is deprecated and equivalent to Cache-control: no-cache
         // Don't bother tokenizing the value, it is not important
-        DEFINE_STATIC_LOCAL(const AtomicString, pragmaHeader, ("pragma"));
+        DEFINE_STATIC_LOCAL(const AtomicString, pragmaHeader, ("pragma", AtomicString::ConstructFromLiteral));
         String pragmaValue = m_httpHeaderFields.get(pragmaHeader);
 
         m_cacheControlContainsNoCache = pragmaValue.lower().contains(noCacheDirective);
@@ -389,8 +389,8 @@ bool ResourceResponseBase::hasCacheValidatorFields() const
 {
     lazyInit(CommonFieldsOnly);
 
-    DEFINE_STATIC_LOCAL(const AtomicString, lastModifiedHeader, ("last-modified"));
-    DEFINE_STATIC_LOCAL(const AtomicString, eTagHeader, ("etag"));
+    DEFINE_STATIC_LOCAL(const AtomicString, lastModifiedHeader, ("last-modified", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, eTagHeader, ("etag", AtomicString::ConstructFromLiteral));
     return !m_httpHeaderFields.get(lastModifiedHeader).isEmpty() || !m_httpHeaderFields.get(eTagHeader).isEmpty();
 }
 
@@ -421,7 +421,7 @@ double ResourceResponseBase::date() const
     lazyInit(CommonFieldsOnly);
 
     if (!m_haveParsedDateHeader) {
-        DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("date"));
+        DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("date", AtomicString::ConstructFromLiteral));
         m_date = parseDateValueInHeader(m_httpHeaderFields, headerName);
         m_haveParsedDateHeader = true;
     }
@@ -433,7 +433,7 @@ double ResourceResponseBase::age() const
     lazyInit(CommonFieldsOnly);
 
     if (!m_haveParsedAgeHeader) {
-        DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("age"));
+        DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("age", AtomicString::ConstructFromLiteral));
         String headerValue = m_httpHeaderFields.get(headerName);
         bool ok;
         m_age = headerValue.toDouble(&ok);
@@ -449,7 +449,7 @@ double ResourceResponseBase::expires() const
     lazyInit(CommonFieldsOnly);
 
     if (!m_haveParsedExpiresHeader) {
-        DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("expires"));
+        DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("expires", AtomicString::ConstructFromLiteral));
         m_expires = parseDateValueInHeader(m_httpHeaderFields, headerName);
         m_haveParsedExpiresHeader = true;
     }
@@ -461,7 +461,7 @@ double ResourceResponseBase::lastModified() const
     lazyInit(CommonFieldsOnly);
 
     if (!m_haveParsedLastModifiedHeader) {
-        DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("last-modified"));
+        DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("last-modified", AtomicString::ConstructFromLiteral));
         m_lastModified = parseDateValueInHeader(m_httpHeaderFields, headerName);
         m_haveParsedLastModifiedHeader = true;
     }
@@ -472,13 +472,13 @@ bool ResourceResponseBase::isAttachment() const
 {
     lazyInit(CommonAndUncommonFields);
 
-    DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("content-disposition"));
+    DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("content-disposition", AtomicString::ConstructFromLiteral));
     String value = m_httpHeaderFields.get(headerName);
     size_t loc = value.find(';');
     if (loc != notFound)
         value = value.left(loc);
     value = value.stripWhiteSpace();
-    DEFINE_STATIC_LOCAL(const AtomicString, attachmentString, ("attachment"));
+    DEFINE_STATIC_LOCAL(const AtomicString, attachmentString, ("attachment", AtomicString::ConstructFromLiteral));
     return equalIgnoringCase(value, attachmentString);
 }
   

@@ -121,7 +121,7 @@ void SVGSVGElement::didMoveToNewDocument(Document* oldDocument)
 
 const AtomicString& SVGSVGElement::contentScriptType() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/ecmascript"));
+    DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/ecmascript", AtomicString::ConstructFromLiteral));
     const AtomicString& n = fastGetAttribute(SVGNames::contentScriptTypeAttr);
     return n.isNull() ? defaultValue : n;
 }
@@ -133,7 +133,7 @@ void SVGSVGElement::setContentScriptType(const AtomicString& type)
 
 const AtomicString& SVGSVGElement::contentStyleType() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/css"));
+    DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/css", AtomicString::ConstructFromLiteral));
     const AtomicString& n = fastGetAttribute(SVGNames::contentStyleTypeAttr);
     return n.isNull() ? defaultValue : n;
 }

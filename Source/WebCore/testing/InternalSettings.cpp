@@ -159,7 +159,7 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
 
 InternalSettings* InternalSettings::from(Page* page)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("InternalSettings"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("InternalSettings", AtomicString::ConstructFromLiteral));
     if (!SuperType::from(page, name))
         SuperType::provideTo(page, name, adoptRef(new InternalSettings(page)));
     return static_cast<InternalSettings*>(SuperType::from(page, name));

@@ -557,7 +557,7 @@ bool V8DOMWindow::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::V
         return false;
 
     if (key->IsString()) {
-        DEFINE_STATIC_LOCAL(AtomicString, nameOfProtoProperty, ("__proto__"));
+        DEFINE_STATIC_LOCAL(AtomicString, nameOfProtoProperty, ("__proto__", AtomicString::ConstructFromLiteral));
 
         String name = toWebCoreString(key);
         Frame* childFrame = target->tree()->scopedChild(name);

@@ -52,7 +52,7 @@ PassRefPtr<HTMLOutputElement> HTMLOutputElement::create(const QualifiedName& tag
 
 const AtomicString& HTMLOutputElement::formControlType() const
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, output, ("output"));
+    DEFINE_STATIC_LOCAL(const AtomicString, output, ("output", AtomicString::ConstructFromLiteral));
     return output;
 }
 

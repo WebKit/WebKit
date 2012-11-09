@@ -134,7 +134,7 @@ GeolocationPosition* GeolocationController::lastPosition()
 
 const AtomicString& GeolocationController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("GeolocationController"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("GeolocationController", AtomicString::ConstructFromLiteral));
     return name;
 }
 

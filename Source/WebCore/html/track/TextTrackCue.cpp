@@ -169,7 +169,7 @@ void TextTrackCueBox::applyCSSProperties()
 
 const AtomicString& TextTrackCueBox::textTrackCueBoxShadowPseudoId()
 {
-    DEFINE_STATIC_LOCAL(const AtomicString, trackDisplayBoxShadowPseudoId, ("-webkit-media-text-track-display"));
+    DEFINE_STATIC_LOCAL(const AtomicString, trackDisplayBoxShadowPseudoId, ("-webkit-media-text-track-display", AtomicString::ConstructFromLiteral));
     return trackDisplayBoxShadowPseudoId;
 }
 

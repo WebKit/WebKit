@@ -198,14 +198,14 @@ void XMLTreeBuilder::processXMLDeclaration(const AtomicXMLToken& token)
 
 void XMLTreeBuilder::processDOCTYPE(const AtomicXMLToken& token)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, xhtmlTransitional, ("-//W3C//DTD XHTML 1.0 Transitional//EN"));
-    DEFINE_STATIC_LOCAL(AtomicString, xhtml11, ("-//W3C//DTD XHTML 1.1//EN"));
-    DEFINE_STATIC_LOCAL(AtomicString, xhtmlStrict, ("-//W3C//DTD XHTML 1.0 Strict//EN"));
-    DEFINE_STATIC_LOCAL(AtomicString, xhtmlFrameset, ("-//W3C//DTD XHTML 1.0 Frameset//EN"));
-    DEFINE_STATIC_LOCAL(AtomicString, xhtmlBasic, ("-//W3C//DTD XHTML Basic 1.0//EN"));
-    DEFINE_STATIC_LOCAL(AtomicString, xhtmlMathML, ("-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"));
-    DEFINE_STATIC_LOCAL(AtomicString, xhtmlMathMLSVG, ("-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"));
-    DEFINE_STATIC_LOCAL(AtomicString, xhtmlMobile, ("-//WAPFORUM//DTD XHTML Mobile 1.0//EN"));
+    DEFINE_STATIC_LOCAL(AtomicString, xhtmlTransitional, ("-//W3C//DTD XHTML 1.0 Transitional//EN", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, xhtml11, ("-//W3C//DTD XHTML 1.1//EN", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, xhtmlStrict, ("-//W3C//DTD XHTML 1.0 Strict//EN", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, xhtmlFrameset, ("-//W3C//DTD XHTML 1.0 Frameset//EN", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, xhtmlBasic, ("-//W3C//DTD XHTML Basic 1.0//EN", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, xhtmlMathML, ("-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, xhtmlMathMLSVG, ("-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, xhtmlMobile, ("-//WAPFORUM//DTD XHTML Mobile 1.0//EN", AtomicString::ConstructFromLiteral));
 
     if (!failOnText())
         return;
@@ -330,11 +330,11 @@ void XMLTreeBuilder::processAttributes(const AtomicXMLToken& token, NodeStackIte
 
 void XMLTreeBuilder::processXMLEntity(const AtomicXMLToken& token)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, amp, ("amp"));
-    DEFINE_STATIC_LOCAL(AtomicString, apos, ("apos"));
-    DEFINE_STATIC_LOCAL(AtomicString, gt, ("gt"));
-    DEFINE_STATIC_LOCAL(AtomicString, lt, ("lt"));
-    DEFINE_STATIC_LOCAL(AtomicString, quot, ("quot"));
+    DEFINE_STATIC_LOCAL(AtomicString, amp, ("amp", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, apos, ("apos", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, gt, ("gt", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, lt, ("lt", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, quot, ("quot", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(String, ampS, (ASCIILiteral("&")));
     DEFINE_STATIC_LOCAL(String, aposS, (ASCIILiteral("'")));
     DEFINE_STATIC_LOCAL(String, gtS, (ASCIILiteral(">")));

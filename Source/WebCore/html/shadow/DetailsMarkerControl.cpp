@@ -57,7 +57,7 @@ bool DetailsMarkerControl::rendererIsNeeded(const NodeRenderingContext& context)
 
 const AtomicString& DetailsMarkerControl::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-details-marker"));
+    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-details-marker", AtomicString::ConstructFromLiteral));
     return pseudId;
 }
 

@@ -59,31 +59,31 @@ PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* contex
 
 const AtomicString& IDBTransaction::modeReadOnly()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, readonly, ("readonly"));
+    DEFINE_STATIC_LOCAL(AtomicString, readonly, ("readonly", AtomicString::ConstructFromLiteral));
     return readonly;
 }
 
 const AtomicString& IDBTransaction::modeReadWrite()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, readwrite, ("readwrite"));
+    DEFINE_STATIC_LOCAL(AtomicString, readwrite, ("readwrite", AtomicString::ConstructFromLiteral));
     return readwrite;
 }
 
 const AtomicString& IDBTransaction::modeVersionChange()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, versionchange, ("versionchange"));
+    DEFINE_STATIC_LOCAL(AtomicString, versionchange, ("versionchange", AtomicString::ConstructFromLiteral));
     return versionchange;
 }
 
 const AtomicString& IDBTransaction::modeReadOnlyLegacy()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, readonly, ("0"));
+    DEFINE_STATIC_LOCAL(AtomicString, readonly, ("0", AtomicString::ConstructFromLiteral));
     return readonly;
 }
 
 const AtomicString& IDBTransaction::modeReadWriteLegacy()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, readwrite, ("1"));
+    DEFINE_STATIC_LOCAL(AtomicString, readwrite, ("1", AtomicString::ConstructFromLiteral));
     return readwrite;
 }
 

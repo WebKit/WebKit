@@ -91,7 +91,7 @@ void BatteryController::didChangeBatteryStatus(const AtomicString& eventType, Pa
 
 const AtomicString& BatteryController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("BatteryController"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("BatteryController", AtomicString::ConstructFromLiteral));
     return name;
 }
 

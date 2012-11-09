@@ -137,7 +137,7 @@ void DeviceMotionController::didChangeDeviceMotion(DeviceMotionData* deviceMotio
 
 const AtomicString& DeviceMotionController::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DeviceMotionController"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("DeviceMotionController", AtomicString::ConstructFromLiteral));
     return name;
 }
 

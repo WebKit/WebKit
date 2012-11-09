@@ -57,7 +57,7 @@ PassRefPtr<SpinButtonElement> SpinButtonElement::create(Document* document, Spin
 
 const AtomicString& SpinButtonElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, innerPseudoId, ("-webkit-inner-spin-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, innerPseudoId, ("-webkit-inner-spin-button", AtomicString::ConstructFromLiteral));
     return innerPseudoId;
 }
 

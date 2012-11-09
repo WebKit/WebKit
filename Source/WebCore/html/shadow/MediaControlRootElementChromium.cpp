@@ -71,7 +71,7 @@ PassRefPtr<MediaControlPanelEnclosureElement> MediaControlPanelEnclosureElement:
 
 const AtomicString& MediaControlPanelEnclosureElement::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-enclosure"));
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-enclosure", AtomicString::ConstructFromLiteral));
     return id;
 }
 
@@ -519,7 +519,7 @@ void MediaControlRootElementChromium::updateTextTrackDisplay()
 
 const AtomicString& MediaControlRootElementChromium::shadowPseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls"));
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls", AtomicString::ConstructFromLiteral));
     return id;
 }
 

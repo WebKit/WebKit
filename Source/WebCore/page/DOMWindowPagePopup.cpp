@@ -50,7 +50,7 @@ DOMWindowPagePopup::~DOMWindowPagePopup()
 
 const AtomicString& DOMWindowPagePopup::supplementName()
 {
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowPagePopup"));
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("DOMWindowPagePopup", AtomicString::ConstructFromLiteral));
     return name;
 }
 
