@@ -157,6 +157,8 @@ public:
     void touchEventCancel();
     bool touchPointAsMouseEvent(const Platform::TouchPoint&, bool useFatFingers = true);
 
+    void playSoundIfAnchorIsTarget() const;
+
     // Returns true if the key stroke was handled by WebKit.
     bool keyEvent(const Platform::KeyboardEvent&);
 

@@ -39,6 +39,8 @@ public:
     void touchEventCancel();
     void touchHoldEvent();
 
+    void playSoundIfAnchorIsTarget() const;
+
     bool shouldSuppressMouseDownOnTouchDown() const;
 
     const FatFingersResult& lastFatFingersResult() const { return m_lastFatFingersResult; }

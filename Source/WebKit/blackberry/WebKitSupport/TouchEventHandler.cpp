@@ -19,6 +19,7 @@
 #include "config.h"
 #include "TouchEventHandler.h"
 
+#include "BlackBerryPlatformSystemSound.h"
 #include "DOMSupport.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"
@@ -180,6 +181,13 @@ void TouchEventHandler::touchHoldEvent()
 static bool isMainFrameScrollable(const WebPagePrivate* page)
 {
     return page->viewportSize().width() < page->contentsSize().width() || page->viewportSize().height() < page->contentsSize().height();
+}
+
+
+void TouchEventHandler::playSoundIfAnchorIsTarget() const
+{
+    if (m_lastFatFingersResult.node() && m_lastFatFingersResult.node()->isLink())
+        BlackBerry::Platform::SystemSound::instance()->playSound(BlackBerry::Platform::SystemSoundType::InputKeypress);
 }
 
 bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFatFingers)

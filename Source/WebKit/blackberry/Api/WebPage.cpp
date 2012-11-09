@@ -4114,6 +4114,11 @@ bool WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point, bool use
     return d->m_touchEventHandler->handleTouchPoint(tPoint, useFatFingers);
 }
 
+void WebPage::playSoundIfAnchorIsTarget() const
+{
+    d->m_touchEventHandler->playSoundIfAnchorIsTarget();
+}
+
 bool WebPagePrivate::dispatchTouchPointAsMouseEventToFullScreenPlugin(PluginView* pluginView, const Platform::TouchPoint& point)
 {
     NPEvent npEvent;
