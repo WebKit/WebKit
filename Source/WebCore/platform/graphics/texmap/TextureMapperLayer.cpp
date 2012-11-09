@@ -492,7 +492,7 @@ void TextureMapperLayer::flushCompositingStateSelf(GraphicsLayerTextureMapper* g
     m_state.needsDisplay = m_state.needsDisplay || graphicsLayer->needsDisplay();
     if (!m_state.needsDisplay)
         m_state.needsDisplayRect.unite(graphicsLayer->needsDisplayRect());
-    m_contentsLayer = graphicsLayer->contentsLayer();
+    m_contentsLayer = graphicsLayer->platformLayer();
 
     m_transform.setPosition(adjustedPosition());
     m_transform.setAnchorPoint(m_state.anchorPoint);

@@ -72,7 +72,7 @@ public:
     virtual void flushCompositingState(const FloatRect&);
     virtual void flushCompositingStateForThisLayerOnly();
     virtual void setName(const String& name);
-    virtual PlatformLayer* platformLayer() const { return 0; }
+    virtual PlatformLayer* platformLayer() const { return m_contentsLayer; }
 
     void notifyChange(TextureMapperLayer::ChangeMask);
     inline int changeMask() const { return m_changeMask; }
@@ -84,7 +84,6 @@ public:
     void setAnimations(const GraphicsLayerAnimations&);
 
     TextureMapperLayer* layer() const { return m_layer.get(); }
-    TextureMapperPlatformLayer* contentsLayer() const { return m_contentsLayer; }
     bool needsDisplay() const { return m_needsDisplay; }
     IntRect needsDisplayRect() const { return enclosingIntRect(m_needsDisplayRect); }
 
