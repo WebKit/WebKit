@@ -1,5 +1,13 @@
 2012-11-09  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix indentation of BooleanConstructor.h
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * runtime/BooleanConstructor.h:
+
+2012-11-09  Filip Pizlo  <fpizlo@apple.com>
+
         Fix indentation of BatchedTransitionOptimizer.h
 
         Rubber stamped by Mark Hahnenberg.
