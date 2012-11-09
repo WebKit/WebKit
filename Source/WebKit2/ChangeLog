@@ -1,3 +1,22 @@
+2012-11-08  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Add a method to the TextCheckerEnchant class to check whether any dictionary is loaded
+        https://bugs.webkit.org/show_bug.cgi?id=101570
+
+        Reviewed by Gustavo Noronha Silva.
+
+        To do not get the vector of loaded languages, WebKit2-EFL calls
+        TextCheckerEnchant::hasDictionary() method to check whether the
+        dictionaries vector is empty.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_continuous_spell_checking_enabled_set):
+        * UIProcess/API/efl/ewk_text_checker.cpp:
+        (Ewk_Text_Checker::hasDictionary):
+        (Ewk_Text_Checker):
+        * UIProcess/API/efl/ewk_text_checker_private.h:
+        (Ewk_Text_Checker):
+
 2012-11-08  Timothy Hatcher  <timothy@apple.com>
 
         Always use a textured window for the Web Inspector.

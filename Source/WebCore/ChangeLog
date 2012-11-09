@@ -1,3 +1,27 @@
+2012-11-08  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Add a method to the TextCheckerEnchant class to check whether any dictionary is loaded
+        https://bugs.webkit.org/show_bug.cgi?id=101570
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Expose a new method to check whether a vector of loaded languages is empty.
+        WK2-EFL needs it to set the default language (if the client didn't set any) when
+        spelling setting is being enabled. This change makes it more convenient to check
+        whether the dictionaries vector is empty.
+
+        No new tests, no behavior change.
+
+        * platform/text/enchant/TextCheckerEnchant.cpp:
+        (TextCheckerEnchant::checkSpellingOfString):
+        (TextCheckerEnchant::getGuessesForWord):
+        (TextCheckerEnchant::loadedSpellCheckingLanguages):
+        A newly exposed method is used internally too.
+
+        * platform/text/enchant/TextCheckerEnchant.h:
+        (WebCore::TextCheckerEnchant::hasDictionary):
+        Add an inline hasDictionary() method.
+
 2012-11-08  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Refactoring] Remove shadowPseudoId() and use pseudo() instead in TextTrackCue

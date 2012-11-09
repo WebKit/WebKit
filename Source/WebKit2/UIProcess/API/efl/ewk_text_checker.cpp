@@ -162,6 +162,11 @@ Vector<String> loadedSpellCheckingLanguages()
     return textCheckerEnchant()->loadedSpellCheckingLanguages();
 }
 
+bool hasDictionary()
+{
+    return textCheckerEnchant()->hasDictionary();
+}
+
 /**
  * Initializes spellcheck feature.
  *

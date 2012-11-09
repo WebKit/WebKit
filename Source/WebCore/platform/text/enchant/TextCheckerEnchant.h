@@ -43,6 +43,7 @@ public:
     Vector<String> getGuessesForWord(const String&);
     void updateSpellCheckingLanguages(const Vector<String>& languages);
     Vector<String> loadedSpellCheckingLanguages() const;
+    bool hasDictionary() const { return !m_enchantDictionaries.isEmpty(); }
     Vector<String> availableSpellCheckingLanguages() const;
 
 private:

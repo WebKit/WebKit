@@ -225,7 +225,7 @@ void ewk_settings_continuous_spell_checking_enabled_set(Eina_Bool enable)
         WKTextCheckerContinuousSpellCheckingEnabledStateChanged(enable);
 
         // Sets the default language if user didn't specify any.
-        if (enable && Ewk_Text_Checker::loadedSpellCheckingLanguages().isEmpty())
+        if (enable && !Ewk_Text_Checker::hasDictionary())
             spellCheckingLanguagesSet(Vector<String>());
 
         if (ewkTextCheckerSettings.onContinuousSpellChecking)

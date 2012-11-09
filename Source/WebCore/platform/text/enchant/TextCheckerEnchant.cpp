@@ -72,7 +72,7 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
     misspellingLocation = -1;
     misspellingLength = 0;
 
-    if (m_enchantDictionaries.isEmpty())
+    if (!hasDictionary())
         return;
 
     size_t numberOfCharacters = string.length();
@@ -121,7 +121,7 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
 Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
 {
     Vector<String> guesses;
-    if (m_enchantDictionaries.isEmpty())
+    if (!hasDictionary())
         return guesses;
 
     for (Vector<EnchantDict*>::const_iterator iter = m_enchantDictionaries.begin(); iter != m_enchantDictionaries.end(); ++iter) {
@@ -180,7 +180,7 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const Vector<String>& lang
 Vector<String> TextCheckerEnchant::loadedSpellCheckingLanguages() const
 {
     Vector<String> languages;
-    if (m_enchantDictionaries.isEmpty())
+    if (!hasDictionary())
         return languages;
 
     // Get a Vector<CString> with the list of languages in use.
