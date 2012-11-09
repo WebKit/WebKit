@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest();" style="width:2000px;height:2000px;">
+<div>This test is successful if event.clientX/Y are consistent with the generated input.</div>
+<div id="result"></div>
+<script>
+function touched(e) {
+    document.getElementById("result").innerText = e.targetTouches[0].clientX + ', ' + e.targetTouches[0].clientY;
+    if (window.testRunner)
+        window.testRunner.notifyDone()
+}
+
+function runTest() {
+    if (window.internals)
+        window.internals.settings.setPageScaleFactor(2, 0, 0);
+    window.scrollTo(100,100);
+
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    document.addEventListener("touchstart", touched, false);
+    if (window.eventSender) {
+        eventSender.clearTouchPoints();
+        eventSender.addTouchPoint(30, 70);
+        eventSender.touchStart();
+    } else
+        debug("This test requires DumpRenderTree.");
+}
+</script>
+</script>
+</body>
+</html>

@@ -1,3 +1,16 @@
+2012-11-09  Tien-Ren Chen  <trchen@chromium.org>
+
+        Correct scroll adjustment for touchEvent.clientX/clientY
+        https://bugs.webkit.org/show_bug.cgi?id=101800
+
+        Reviewed by Adam Barth.
+
+        FrameView::scrollX/scrollY returns scroll offset in (scaled) frame coordinate.
+        Convert to document coordinate before passing to JavaScript.
+
+        * fast/events/touch/touch-scaled-scrolled-expected.txt: Added.
+        * fast/events/touch/touch-scaled-scrolled.html: Added.
+
 2012-11-09  Alexandru Chiculita  <achicu@adobe.com>
 
         [Texmap][CSS Shaders] Enable CSS Shaders in TextureMapperGL
