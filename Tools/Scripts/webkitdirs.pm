@@ -1873,11 +1873,13 @@ sub retrieveQMakespecVar
 sub qtMakeCommand($)
 {
     my ($qmakebin) = @_;
-    chomp(my $mkspec= `$qmakebin -query QMAKE_XSPEC`);
-    chomp(my $mkspecPath = `$qmakebin -query QT_HOST_DATA`);
-    $mkspecPath .= "/mkspecs/";
-    $mkspecPath .= $mkspec;
-    my $compiler = retrieveQMakespecVar("$mkspecPath/qmake.conf", "QMAKE_CC");
+    chomp(my $hostDataPath = `$qmakebin -query QT_HOST_DATA`);
+    my $mkspecPath = $hostDataPath . "/mkspecs/default/qmake.conf";
+    if (! -e $mkspecPath) {
+        chomp(my $mkspec= `$qmakebin -query QMAKE_XSPEC`);
+        $mkspecPath = $hostDataPath . "/mkspecs/" . $mkspec . "/qmake.conf";
+    }
+    my $compiler = retrieveQMakespecVar($mkspecPath, "QMAKE_CC");
 
     #print "default spec: " . $mkspec . "\n";
     #print "compiler found: " . $compiler . "\n";

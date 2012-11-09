@@ -1,3 +1,13 @@
+2012-11-09  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed prospective Qt/Windows build bot fix:
+
+        Make determination of qmake mkspec work with older versions of Qt that
+        still create a "mkspecs/default" directory.
+
+        * Scripts/webkitdirs.pm:
+        (qtMakeCommand):
+
 2012-11-09  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] Introduce a WebTestProxy to override methods in WebViewClient for layout tests
