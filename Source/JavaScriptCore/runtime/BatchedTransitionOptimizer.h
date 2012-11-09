@@ -31,25 +31,25 @@
 
 namespace JSC {
 
-    class BatchedTransitionOptimizer {
-        WTF_MAKE_NONCOPYABLE(BatchedTransitionOptimizer);
-    public:
-        BatchedTransitionOptimizer(JSGlobalData& globalData, JSObject* object)
-            : m_globalData(&globalData)
-            , m_object(object)
-        {
-        }
+class BatchedTransitionOptimizer {
+    WTF_MAKE_NONCOPYABLE(BatchedTransitionOptimizer);
+public:
+    BatchedTransitionOptimizer(JSGlobalData& globalData, JSObject* object)
+        : m_globalData(&globalData)
+        , m_object(object)
+    {
+    }
 
-        ~BatchedTransitionOptimizer()
-        {
-            if (m_object->structure()->isDictionary())
-                m_object->flattenDictionaryObject(*m_globalData);
-        }
+    ~BatchedTransitionOptimizer()
+    {
+        if (m_object->structure()->isDictionary())
+            m_object->flattenDictionaryObject(*m_globalData);
+    }
 
-    private:
-        JSGlobalData* m_globalData;
-        JSObject* m_object;
-    };
+private:
+    JSGlobalData* m_globalData;
+    JSObject* m_object;
+};
 
 } // namespace JSC
 

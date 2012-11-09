@@ -1,3 +1,11 @@
+2012-11-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix indentation of BatchedTransitionOptimizer.h
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * runtime/BatchedTransitionOptimizer.h:
+
 2012-11-09  Oliver Hunt  <oliver@apple.com>
 
         So Thingy probably isn't the best name for a class, so
