@@ -4208,7 +4208,6 @@ webkit.org/b/99749 [ MountainLion ] svg/custom/foreign-object-skew.svg [ ImageOn
 webkit.org/b/99749 [ MountainLion ] svg/custom/getscreenctm-in-scrollable-div-area-nested.xhtml [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] svg/custom/use-clipped-hit.svg [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] svg/hixie/perf/007.xml [ ImageOnlyFailure ]
-webkit.org/b/99749 [ MountainLion ] svg/repaint/image-with-clip-path.svg [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] tables/mozilla/bugs/bug11026.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] tables/mozilla/collapsing_borders/bug41262-3.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] tables/mozilla/core/bloomberg.html [ ImageOnlyFailure ]
@@ -4218,6 +4217,8 @@ webkit.org/b/99749 [ MountainLion ] tables/mozilla_expected_failures/core/captio
 webkit.org/b/99749 [ MountainLion ] tables/mozilla_expected_failures/core/captions3.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] tables/mozilla_expected_failures/marvin/backgr_border-table-column-group.html [ ImageOnlyFailure ]
+
+webkit.org/b/79446 svg/repaint/image-with-clip-path.svg [ Pass ImageOnlyFailure ]
 
 webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure ]
 webkit.org/b/100142 css3/filters/effect-reference-ordering-hw.html [ Failure ImageOnlyFailure Missing ]

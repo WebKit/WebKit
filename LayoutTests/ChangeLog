@@ -1,3 +1,9 @@
+2012-11-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed, update chromium expectations for svg/repaint/image-with-clip-path.svg.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-08  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK2] Make jquery/manipulation.html into one in TestExpectations
