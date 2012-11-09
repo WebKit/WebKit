@@ -1,3 +1,15 @@
+2012-11-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Fix the LLINT build from ARMv7 platform
+        https://bugs.webkit.org/show_bug.cgi?id=101712
+
+        Reviewed by Simon Hausmann.
+
+        Enable generating of LLIntAssembly.h on ARM platforms.
+
+        * DerivedSources.pri:
+        * JavaScriptCore.pro:
+
 2012-11-08  Filip Pizlo  <fpizlo@apple.com>
 
         ArrayPrototype.h should have correct indentation

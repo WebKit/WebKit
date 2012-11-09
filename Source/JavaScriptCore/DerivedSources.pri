@@ -102,7 +102,7 @@ for(dir, DIRS) {
     exists($$file): LLINT_FILES += $$file
 }
 
-if(linux-*|win32):!equals(QT_ARCH, "arm") {
+if(linux-*|win32) {
     #GENERATOR: LLInt
     llint.output = ${QMAKE_FILE_IN_PATH}$${QMAKE_DIR_SEP}LLIntAssembly.h
     llint.script = $$PWD/offlineasm/asm.rb
