@@ -39,7 +39,7 @@ char *
 url_from_user_input(const char *arg)
 {
     /* If it is already a URL, return the argument as is. */
-    if (has_scheme(arg))
+    if (has_scheme(arg) || !strcasecmp(arg, "about:blank"))
         return strdup(arg);
 
     Eina_Strbuf *buf = eina_strbuf_manage_new(eina_file_path_sanitize(arg));
