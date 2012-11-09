@@ -2343,6 +2343,7 @@
             'bindings/v8/custom/V8ClipboardCustom.cpp',
             'bindings/v8/custom/V8ConsoleCustom.cpp',
             'bindings/v8/custom/V8CoordinatesCustom.cpp',
+            'bindings/v8/custom/V8CustomEventCustom.cpp',
             'bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp',
             'bindings/v8/custom/V8CustomXPathNSResolver.cpp',
             'bindings/v8/custom/V8CustomXPathNSResolver.h',

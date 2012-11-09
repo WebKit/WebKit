@@ -34,7 +34,6 @@ CustomEventInit::CustomEventInit()
 {
 }
 
-
 CustomEvent::CustomEvent()
 {
 }
@@ -51,6 +50,7 @@ CustomEvent::~CustomEvent()
 
 void CustomEvent::initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue& detail)
 {
+    ASSERT(!m_serializedScriptValue.get());
     if (dispatched())
         return;
 
@@ -58,6 +58,19 @@ void CustomEvent::initCustomEvent(const AtomicString& type, bool canBubble, bool
 
     m_detail = detail;
 }
+
+#if USE(V8)
+void CustomEvent::initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> serializedScriptValue)
+{
+    ASSERT(m_detail.hasNoValue());
+    if (dispatched())
+        return;
+
+    initEvent(type, canBubble, cancelable);
+
+    m_serializedScriptValue = serializedScriptValue;
+}
+#endif // USE(V8)
 
 const AtomicString& CustomEvent::interfaceName() const
 {

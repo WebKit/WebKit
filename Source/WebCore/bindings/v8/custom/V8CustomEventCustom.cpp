@@ -28,47 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8HiddenPropertyName_h
-#define V8HiddenPropertyName_h
+#include "config.h"
+#include "V8CustomEvent.h"
 
-#include <v8.h>
+#include "BindingState.h"
+#include "ContextFeatures.h"
+#include "Dictionary.h"
+#include "ExceptionCode.h"
+#include "Frame.h"
+#include "RuntimeEnabledFeatures.h"
+#include "ScriptState.h"
+#include "ScriptValue.h"
+#include "V8Binding.h"
+#include "V8DOMWrapper.h"
+#include "V8Event.h"
+#include "V8HiddenPropertyName.h"
 
 namespace WebCore {
 
-#define V8_HIDDEN_PROPERTIES(V) \
-    V(attributeListener) \
-    V(detail) \
-    V(document) \
-    V(domStringMap) \
-    V(domTokenList) \
-    V(event) \
-    V(listener) \
-    V(ownerNode) \
-    V(perContextData) \
-    V(scriptState) \
-    V(sleepFunction) \
-    V(state) \
-    V(textTracks) \
-    V(toStringString)
-
-    enum V8HiddenPropertyCreationType { NewSymbol, NewString };
-
-    class V8HiddenPropertyName {
-    public:
-        V8HiddenPropertyName() { }
-#define V8_DECLARE_PROPERTY(name) static v8::Handle<v8::String> name();
-        V8_HIDDEN_PROPERTIES(V8_DECLARE_PROPERTY);
-#undef V8_DECLARE_PROPERTY
-
-        static v8::Handle<v8::String> hiddenReferenceName(const char*, unsigned, V8HiddenPropertyCreationType = NewSymbol);
-
-    private:
-        static v8::Persistent<v8::String> createString(const char* key);
-#define V8_DECLARE_FIELD(name) v8::Persistent<v8::String> m_##name;
-        V8_HIDDEN_PROPERTIES(V8_DECLARE_FIELD);
-#undef V8_DECLARE_FIELD
-    };
-
+v8::Handle<v8::Value> V8CustomEvent::detailAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.CustomEvent.detail._get");
+    CustomEvent* imp = V8CustomEvent::toNative(info.Holder());
+    SerializedScriptValue* serialized = imp->serializedScriptValue().get();
+    if (serialized) {
+        v8::Handle<v8::Value> value = info.Holder()->GetHiddenValue(V8HiddenPropertyName::detail());
+        if (value.IsEmpty()) {
+            value = serialized->deserialize();
+            info.Holder()->SetHiddenValue(V8HiddenPropertyName::detail(), value);
+        }
+        return value;
+    }
+    return imp->detail().v8Value();
 }
 
-#endif // V8HiddenPropertyName_h
+} // namespace WebCore

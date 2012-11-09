@@ -1,3 +1,29 @@
+2012-11-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        CustomEvent: Allow taking in a serialized value during initialization.
+        https://bugs.webkit.org/show_bug.cgi?id=101348
+
+        Reviewed by Adam Barth.
+
+        If a CustomEvent is initialized using a serialized value, then for each access
+        to |detail|, the value is deserialized first. This way, each world gets a different
+        deserialization.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/V8HiddenPropertyName.h:
+        (WebCore):
+        * bindings/v8/custom/V8CustomEventCustom.cpp: Copied from Source/WebCore/bindings/v8/V8HiddenPropertyName.h.
+        (WebCore):
+        (WebCore::V8CustomEvent::detailAccessorGetter):
+        * dom/CustomEvent.cpp:
+        (WebCore::CustomEvent::initCustomEvent):
+        (WebCore):
+        * dom/CustomEvent.h:
+        (CustomEvent):
+        (WebCore::CustomEvent::serializedScriptValue):
+        * dom/CustomEvent.idl:
+
 2012-11-09  Brady Eidson  <beidson@apple.com>
 
         Implement WebResourceBuffer::isEmpty()

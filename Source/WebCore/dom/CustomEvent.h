@@ -28,6 +28,7 @@
 
 #include "Event.h"
 #include "ScriptValue.h"
+#include "SerializedScriptValue.h"
 
 namespace WebCore {
 
@@ -52,16 +53,21 @@ public:
     }
 
     void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, const ScriptValue& detail);
+#if USE(V8)
+    void initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue>);
+#endif
 
     virtual const AtomicString& interfaceName() const;
 
     const ScriptValue& detail() const { return m_detail; }
+    PassRefPtr<SerializedScriptValue> serializedScriptValue() { return m_serializedScriptValue; }
 
 private:
     CustomEvent();
     CustomEvent(const AtomicString& type, const CustomEventInit& initializer);
 
     ScriptValue m_detail;
+    RefPtr<SerializedScriptValue> m_serializedScriptValue;
 };
 
 } // namespace WebCore
