@@ -61,9 +61,9 @@ public:
 private:
     class HarfBuzzRun {
     public:
-        static PassOwnPtr<HarfBuzzRun> create(const SimpleFontData* fontData, unsigned startIndex, unsigned numCharacters, TextDirection direction)
+        static PassOwnPtr<HarfBuzzRun> create(const SimpleFontData* fontData, unsigned startIndex, unsigned numCharacters, TextDirection direction, hb_script_t script)
         {
-            return adoptPtr(new HarfBuzzRun(fontData, startIndex, numCharacters, direction));
+            return adoptPtr(new HarfBuzzRun(fontData, startIndex, numCharacters, direction, script));
         }
 
         void applyShapeResult(hb_buffer_t*);
@@ -82,16 +82,18 @@ private:
         FloatPoint* offsets() { return &m_offsets[0]; }
         uint16_t* glyphToCharacterIndexes() { return &m_glyphToCharacterIndexes[0]; }
         float width() { return m_width; }
+        bool rtl() { return m_direction == RTL; }
+        hb_script_t script() { return m_script; }
 
     private:
-        HarfBuzzRun(const SimpleFontData*, unsigned startIndex, unsigned numCharacters, TextDirection);
-        bool rtl() { return m_direction == RTL; }
+        HarfBuzzRun(const SimpleFontData*, unsigned startIndex, unsigned numCharacters, TextDirection, hb_script_t);
 
         const SimpleFontData* m_fontData;
         unsigned m_startIndex;
         size_t m_numCharacters;
         unsigned m_numGlyphs;
         TextDirection m_direction;
+        hb_script_t m_script;
         Vector<uint16_t, 256> m_glyphs;
         Vector<float, 256> m_advances;
         Vector<uint16_t, 256> m_glyphToCharacterIndexes;
@@ -102,7 +104,7 @@ private:
     void setFontFeatures();
 
     bool collectHarfBuzzRuns();
-    bool shapeHarfBuzzRuns();
+    bool shapeHarfBuzzRuns(bool shouldSetDirection);
     bool fillGlyphBuffer(GlyphBuffer*);
     void fillGlyphBufferFromHarfBuzzRun(GlyphBuffer*, HarfBuzzRun*, FloatPoint& firstOffsetOfNextRun);
     void setGlyphPositionsForHarfBuzzRun(HarfBuzzRun*, hb_buffer_t*);

@@ -72,11 +72,12 @@ static inline float harfbuzzPositionToFloat(hb_position_t value)
     return static_cast<float>(value) / (1 << 16);
 }
 
-HarfBuzzShaper::HarfBuzzRun::HarfBuzzRun(const SimpleFontData* fontData, unsigned startIndex, unsigned numCharacters, TextDirection direction)
+HarfBuzzShaper::HarfBuzzRun::HarfBuzzRun(const SimpleFontData* fontData, unsigned startIndex, unsigned numCharacters, TextDirection direction, hb_script_t script)
     : m_fontData(fontData)
     , m_startIndex(startIndex)
     , m_numCharacters(numCharacters)
     , m_direction(direction)
+    , m_script(script)
 {
 }
 
@@ -230,7 +231,9 @@ bool HarfBuzzShaper::shape(GlyphBuffer* glyphBuffer)
         return false;
 
     m_totalWidth = 0;
-    if (!shapeHarfBuzzRuns())
+    // WebKit doesn't set direction when calulating widths. Leave the direction setting to
+    // HarfBuzz when we are calculating widths (except when directionalOverride() is set).
+    if (!shapeHarfBuzzRuns(glyphBuffer || m_run.directionalOverride()))
         return false;
     m_totalWidth = roundf(m_totalWidth);
 
@@ -301,7 +304,8 @@ bool HarfBuzzShaper::collectHarfBuzzRuns()
             currentCharacterPosition = iterator.characters();
         }
         unsigned numCharactersOfCurrentRun = iterator.currentCharacter() - startIndexOfCurrentRun;
-        m_harfbuzzRuns.append(HarfBuzzRun::create(currentFontData, startIndexOfCurrentRun, numCharactersOfCurrentRun, m_run.direction()));
+        hb_script_t script = hb_icu_script_to_script(currentScript);
+        m_harfbuzzRuns.append(HarfBuzzRun::create(currentFontData, startIndexOfCurrentRun, numCharactersOfCurrentRun, m_run.direction(), script));
         currentFontData = nextFontData;
         startIndexOfCurrentRun = iterator.currentCharacter();
     } while (iterator.consume(character, clusterLength));
@@ -309,18 +313,20 @@ bool HarfBuzzShaper::collectHarfBuzzRuns()
     return !m_harfbuzzRuns.isEmpty();
 }
 
-bool HarfBuzzShaper::shapeHarfBuzzRuns()
+bool HarfBuzzShaper::shapeHarfBuzzRuns(bool shouldSetDirection)
 {
     HarfBuzzScopedPtr<hb_buffer_t> harfbuzzBuffer(hb_buffer_create(), hb_buffer_destroy);
 
     hb_buffer_set_unicode_funcs(harfbuzzBuffer.get(), hb_icu_get_unicode_funcs());
-    if (m_run.rtl() || m_run.directionalOverride())
-        hb_buffer_set_direction(harfbuzzBuffer.get(), m_run.rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
 
     for (unsigned i = 0; i < m_harfbuzzRuns.size(); ++i) {
         unsigned runIndex = m_run.rtl() ? m_harfbuzzRuns.size() - i - 1 : i;
         HarfBuzzRun* currentRun = m_harfbuzzRuns[runIndex].get();
         const SimpleFontData* currentFontData = currentRun->fontData();
+
+        hb_buffer_set_script(harfbuzzBuffer.get(), currentRun->script());
+        if (shouldSetDirection)
+            hb_buffer_set_direction(harfbuzzBuffer.get(), currentRun->rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
 
         // This #if should be removed after all ports update harfbuzz-ng.
 #if PLATFORM(CHROMIUM)
@@ -354,8 +360,6 @@ bool HarfBuzzShaper::shapeHarfBuzzRuns()
         setGlyphPositionsForHarfBuzzRun(currentRun, harfbuzzBuffer.get());
 
         hb_buffer_reset(harfbuzzBuffer.get());
-        if (m_run.rtl() || m_run.directionalOverride())
-            hb_buffer_set_direction(harfbuzzBuffer.get(), m_run.rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
     }
 
     return true;
