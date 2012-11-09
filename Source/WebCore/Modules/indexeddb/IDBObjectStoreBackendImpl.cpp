@@ -232,7 +232,7 @@ void IDBObjectStoreBackendImpl::setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, c
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
 
     // FIXME: This method could be asynchronous, but we need to evaluate if it's worth the extra complexity.
-    RefPtr<IDBBackingStore::RecordIdentifier> recordIdentifier = backingStore()->createInvalidRecordIdentifier();
+    RefPtr<IDBBackingStore::RecordIdentifier> recordIdentifier = IDBBackingStore::RecordIdentifier::create();
     if (!backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), databaseId(), id(), *primaryKey, recordIdentifier.get())) {
         transaction->abort();
         return;
@@ -303,7 +303,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
     ASSERT(key && key->isValid());
 
-    RefPtr<IDBBackingStore::RecordIdentifier> recordIdentifier = objectStore->backingStore()->createInvalidRecordIdentifier();
+    RefPtr<IDBBackingStore::RecordIdentifier> recordIdentifier = IDBBackingStore::RecordIdentifier::create();
     if (putMode == AddOnly && objectStore->backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), *key, recordIdentifier.get())) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Key already exists in the object store."));
         return;
@@ -367,7 +367,7 @@ void IDBObjectStoreBackendImpl::deleteInternal(ScriptExecutionContext*, PassRefP
     if (backingStoreCursor) {
 
         do {
-            recordIdentifier = backingStoreCursor->objectStoreRecordIdentifier();
+            recordIdentifier = backingStoreCursor->recordIdentifier();
 
             for (IDBObjectStoreBackendImpl::IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it) {
                 bool success = objectStore->backingStore()->deleteIndexDataForRecord(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), it->key, recordIdentifier.get());

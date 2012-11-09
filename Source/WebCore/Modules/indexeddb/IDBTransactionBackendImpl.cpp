@@ -49,7 +49,7 @@ IDBTransactionBackendImpl::IDBTransactionBackendImpl(const Vector<int64_t>& obje
     , m_mode(mode)
     , m_state(Unused)
     , m_database(database)
-    , m_transaction(database->backingStore()->createTransaction())
+    , m_transaction(database->backingStore().get())
     , m_taskTimer(this, &IDBTransactionBackendImpl::taskTimerFired)
     , m_taskEventTimer(this, &IDBTransactionBackendImpl::taskEventTimerFired)
     , m_pendingPreemptiveEvents(0)
@@ -118,7 +118,7 @@ void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
     m_taskEventTimer.stop();
 
     if (wasRunning)
-        m_transaction->rollback();
+        m_transaction.rollback();
 
     // Run the abort tasks, if any.
     while (!m_abortTaskQueue.isEmpty()) {
@@ -211,7 +211,7 @@ void IDBTransactionBackendImpl::commit()
     bool unused = m_state == Unused;
     m_state = Finished;
 
-    bool committed = unused || m_transaction->commit();
+    bool committed = unused || m_transaction.commit();
 
     // Backing store resources (held via cursors) must be released before script callbacks
     // are fired, as the script callbacks may release references and allow the backing store
@@ -242,7 +242,7 @@ void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*
     ASSERT(!isTaskQueueEmpty());
 
     if (m_state == StartPending) {
-        m_transaction->begin();
+        m_transaction.begin();
         m_state = Running;
     }
 
