@@ -216,6 +216,11 @@ bool JSDictionary::getWithUndefinedOrNullCheck(const String& propertyName, Strin
 {
     ASSERT(isValid());
     JSValue value;
+
+    // FIXME: This check should be moved to the head of JSDictionary::tryGetProperty(propertyName, JSValue&)
+    // Currently we can't move the check there because it seems breaks some Qt/EFL tests for some reason.
+    if (m_exec->hadException()) // Clear exceptions that might have been caused by previous query.
+        m_exec->clearException();
     if (tryGetProperty(propertyName.utf8().data(), value) != PropertyFound || value.isUndefinedOrNull())
         return false;
 

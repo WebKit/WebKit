@@ -1,3 +1,21 @@
+2012-11-09  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        Need to clear exception in JSDictionary that might have been caused by previous operation.
+        https://bugs.webkit.org/show_bug.cgi?id=96614
+
+        Reviewed by George Staikos.
+
+        IndexedDB IDBDatabase::createObjectStore supports both String type of KeyPath and
+        String Array type of KeyPath. It will first try to get the keyPath as a String Array,
+        if fails, it will try to get KeyPath as a String, from the Dictionary. The first get
+        will leave the internal ExecState of Dictionary in exception state. We need to clear
+        the exception state before the 2nd query, otherwise the second query will also fail.
+
+        No new tests. The existing test case LayoutTests/storage/indexeddb/tutorial.html should
+        now work with this patch.
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::getWithUndefinedOrNullCheck):
+
 2012-11-09  Keishi Hattori  <keishi@webkit.org>
 
         Month/week picker should submit month/week string
