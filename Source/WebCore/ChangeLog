@@ -1,3 +1,23 @@
+2012-11-08  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Deferred image decoding fails with image orientation
+        https://bugs.webkit.org/show_bug.cgi?id=101648
+
+        Reviewed by Stephen White.
+
+        When an image is deferred save the orientation state. Once this state
+        is cached it can be used to reply future queries since this state is
+        static.
+
+        No new tests but platform/chromium/virtual/deferred/fast/images/image-orientation.html is passing now.
+
+        * platform/graphics/chromium/DeferredImageDecoder.cpp:
+        (WebCore::DeferredImageDecoder::DeferredImageDecoder):
+        (WebCore::DeferredImageDecoder::frameBufferAtIndex):
+        (WebCore::DeferredImageDecoder::orientation):
+        * platform/graphics/chromium/DeferredImageDecoder.h:
+        (DeferredImageDecoder):
+
 2012-11-08  Andreas Kling  <kling@webkit.org>
 
         DocumentLoader: Shrink-to-fit the ResourceResponse vector after loading completes.

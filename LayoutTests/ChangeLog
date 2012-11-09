@@ -1,3 +1,23 @@
+2012-11-08  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Deferred image decoding fails with image orientation
+        https://bugs.webkit.org/show_bug.cgi?id=101648
+
+        Reviewed by Stephen White.
+
+        Update test expectations and baselines accordingly since these two
+        tests are now passing with deferred image decoding.
+
+        fast/images/exif-orientation-image-document.html
+        fast/images/exif-orientation.html
+
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/exif-orientation-image-document-expected.png: Removed.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/exif-orientation-image-document-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/deferred/fast/images/exif-orientation-image-document-expected.png: Removed.
+        * platform/chromium-mac/platform/chromium/virtual/deferred/fast/images/exif-orientation-image-document-expected.png: Removed.
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/exif-orientation-image-document-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+
 2012-11-08  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Polygon with horizontal bottom edges returns incorrect segments

@@ -34,6 +34,7 @@ namespace WebCore {
 DeferredImageDecoder::DeferredImageDecoder(ImageDecoder* actualDecoder)
     : m_allDataReceived(false)
     , m_actualDecoder(adoptPtr(actualDecoder))
+    , m_orientation(DefaultImageOrientation)
 {
 }
 
@@ -72,6 +73,7 @@ ImageFrame* DeferredImageDecoder::frameBufferAtIndex(size_t index)
 
         m_size = m_actualDecoder->size();
         m_filenameExtension = m_actualDecoder->filenameExtension();
+        m_orientation = m_actualDecoder->orientation();
 
         SkBitmap lazyDecodedSkBitmap = ImageDecodingStore::instanceOnMainThread()->createLazyDecodedSkBitmap(m_actualDecoder.release());
         m_lazyDecodedFrame.setSkBitmap(lazyDecodedSkBitmap);
@@ -153,8 +155,7 @@ unsigned DeferredImageDecoder::frameBytesAtIndex(size_t index) const
 
 ImageOrientation DeferredImageDecoder::orientation() const
 {
-    // FIXME: Make this work with deferred decoding.
-    return m_actualDecoder ? m_actualDecoder->orientation() : DefaultImageOrientation;
+    return m_actualDecoder ? m_actualDecoder->orientation() : m_orientation;
 }
 
 } // namespace WebCore
