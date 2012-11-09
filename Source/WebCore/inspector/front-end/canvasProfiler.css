@@ -37,26 +37,12 @@
     bottom: 0;
 }
 
-.canvas-profile-view .split-view-resizer {
-    background: rgb(128, 128, 128);
-}
-
-.canvas-trace-log {
-    font-size: 13px;
-    overflow: auto;
-    white-space: nowrap;
-    padding: 5px;
-}
-
-.canvas-trace-log div {
-    padding-bottom: 4px;
-}
-
 #canvas-replay-image-container {
     text-align: center;
     background-color: black;
     overflow: hidden;
     padding: 5px;
+    color: white;
 }
 
 #canvas-replay-image {

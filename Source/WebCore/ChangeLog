@@ -1,3 +1,25 @@
+2012-11-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: render canvas log as a grid.
+        https://bugs.webkit.org/show_bug.cgi?id=101732
+
+        Reviewed by Vsevolod Vlasov.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/CanvasProfileView.js:
+        (WebInspector.CanvasProfileView):
+        (WebInspector.CanvasProfileView.prototype._onSelectTraceLog):
+        (WebInspector.CanvasProfileView.prototype._replayTraceLog.didReplayTraceLog):
+        (WebInspector.CanvasProfileView.prototype._replayTraceLog):
+        (WebInspector.CanvasProfileHeader.prototype.traceLogId):
+        (WebInspector.CanvasLogGrid):
+        (WebInspector.CanvasLogGrid.prototype._didReceiveTraceLog):
+        (WebInspector.CanvasLogGrid.prototype._createCallNode):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGridNode.prototype.createCell):
+        * inspector/front-end/canvasProfiler.css:
+        (#canvas-replay-image-container):
+
 2012-11-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Regression(r107593) Crash in ContextMenuController::addInspectElementItem()

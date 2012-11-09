@@ -1232,8 +1232,12 @@ WebInspector.DataGridNode.prototype = {
         if (alignment)
             cell.addStyleClass(alignment);
 
+        var data = this.data[columnIdentifier];
         var div = document.createElement("div");
-        div.textContent = this.data[columnIdentifier];
+        if (data instanceof Node)
+            div.appendChild(data);
+        else
+            div.textContent = data;
         cell.appendChild(div);
 
         if (columnIdentifier === this.dataGrid.disclosureColumnIdentifier) {

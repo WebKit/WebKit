@@ -95,6 +95,7 @@ localizedStrings["CSS SELECTOR PROFILES"] = "CSS SELECTOR PROFILES";
 localizedStrings["CSS selector profiles show how long the selector matching has taken in total and how many times a certain selector has matched DOM elements (the results are approximate due to matching algorithm optimizations.)"] = "CSS selector profiles show how long the selector matching has taken in total and how many times a certain selector has matched DOM elements (the results are approximate due to matching algorithm optimizations.)";
 localizedStrings["Call Site stack"] = "Call Site stack";
 localizedStrings["Call Stack"] = "Call Stack";
+localizedStrings["Call"] = "Call";
 localizedStrings["Calls"] = "Calls";
 localizedStrings["Cannot find corresponding heap snapshot node"] = "Cannot find corresponding heap snapshot node";
 localizedStrings["Clear all profiles."] = "Clear all profiles.";
