@@ -1,5 +1,11 @@
 2012-11-08  Hayato Ito  <hayato@chromium.org>
 
+        Unreviewed, Unreviewed gardening following r133972.
+
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/exif-orientation-expected.png: Added.
+
+2012-11-08  Hayato Ito  <hayato@chromium.org>
+
         Unreviewed, update chromium expectations for svg/repaint/image-with-clip-path.svg.
 
         * platform/chromium/TestExpectations:
