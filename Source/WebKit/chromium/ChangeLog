@@ -1,3 +1,15 @@
+2012-11-08  Keishi Hattori  <keishi@webkit.org>
+
+        WebPagePopupImpl::handleKeyEvent is called after WebPagePopupImpl::close
+        https://bugs.webkit.org/show_bug.cgi?id=93800
+
+        Reviewed by Kent Tamura.
+
+        We need to set m_closing to true in WebPagePopupImpl::close so we won't access m_page in WebPagePopupImpl::handleKeyEvent.
+
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::close): Set m_closing to true.
+
 2012-11-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133984.

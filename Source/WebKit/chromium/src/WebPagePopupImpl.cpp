@@ -304,6 +304,7 @@ void WebPagePopupImpl::setFocus(bool enable)
 
 void WebPagePopupImpl::close()
 {
+    m_closing = true;
     if (m_page && m_page->mainFrame())
         m_page->mainFrame()->loader()->frameDetached();
     m_page.clear();
