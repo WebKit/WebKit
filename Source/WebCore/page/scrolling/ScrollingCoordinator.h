@@ -116,6 +116,8 @@ public:
     // Force all scroll layer position updates to happen on the main thread.
     void setForceMainThreadScrollLayerPositionUpdates(bool);
 
+    bool shouldUpdateScrollLayerPositionOnMainThread() const;
+
 private:
     explicit ScrollingCoordinator(Page*);
 
@@ -143,6 +145,7 @@ private:
 
     void setScrollParameters(const ScrollParameters&);
     void setWheelEventHandlerCount(unsigned);
+
     void setShouldUpdateScrollLayerPositionOnMainThread(bool);
 
     void updateMainFrameScrollLayerPosition();

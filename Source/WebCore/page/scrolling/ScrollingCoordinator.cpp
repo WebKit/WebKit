@@ -359,12 +359,16 @@ void ScrollingCoordinator::recomputeWheelEventHandlerCount()
     setWheelEventHandlerCount(wheelEventHandlerCount);
 }
 
+bool ScrollingCoordinator::shouldUpdateScrollLayerPositionOnMainThread() const
+{
+    // FIXME: Having fixed objects on the page should not trigger the slow path.
+    FrameView* frameView = m_page->mainFrame()->view();
+    return m_forceMainThreadScrollLayerPositionUpdates || frameView->hasSlowRepaintObjects() || frameView->hasFixedObjects() || m_page->mainFrame()->document()->isImageDocument();
+}
+
 void ScrollingCoordinator::updateShouldUpdateScrollLayerPositionOnMainThread()
 {
-    FrameView* frameView = m_page->mainFrame()->view();
-
-    // FIXME: Having fixed objects on the page should not trigger the slow path.
-    setShouldUpdateScrollLayerPositionOnMainThread(m_forceMainThreadScrollLayerPositionUpdates || frameView->hasSlowRepaintObjects() || frameView->hasFixedObjects() || m_page->mainFrame()->document()->isImageDocument());
+    setShouldUpdateScrollLayerPositionOnMainThread(shouldUpdateScrollLayerPositionOnMainThread());
 }
 
 void ScrollingCoordinator::setForceMainThreadScrollLayerPositionUpdates(bool forceMainThreadScrollLayerPositionUpdates)

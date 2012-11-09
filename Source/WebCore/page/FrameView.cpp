@@ -2376,14 +2376,21 @@ void FrameView::performPostLayoutTasks()
             break;
     }
 
-    if (Page* page = m_frame->page()) {
+    Page* page = m_frame->page();
+    if (page) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator())
             scrollingCoordinator->frameViewLayoutUpdated(this);
     }
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (TiledBacking* tiledBacking = this->tiledBacking())
-        tiledBacking->setTileCoverage(canHaveScrollbars() ? TiledBacking::CoverageForScrolling : TiledBacking::CoverageForVisibleArea);
+    if (TiledBacking* tiledBacking = this->tiledBacking()) {
+        if (page) {
+            if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
+                bool shouldLimitTileCoverage = !canHaveScrollbars() || scrollingCoordinator->shouldUpdateScrollLayerPositionOnMainThread();
+                tiledBacking->setTileCoverage(shouldLimitTileCoverage ? TiledBacking::CoverageForVisibleArea : TiledBacking::CoverageForScrolling);
+            }
+        }
+    }
 #endif
 
     scrollToAnchor();
