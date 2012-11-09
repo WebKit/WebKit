@@ -1,3 +1,16 @@
+2012-11-08  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][WK2] Make jquery/manipulation.html into one in TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=101686
+
+        Unreviewed, EFL gardening.
+
+        Currently there are three definitions on jquery/manipulation.html case.
+        As BUG 100636 fixed, we don't need Crash definition anymore.
+        Therefore, this patch makes this case into one definition without Crash in TestExpectations.
+
+        * platform/efl/TestExpectations:
+
 2012-11-08  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed, update chromium expectations for tables/.
