@@ -1,3 +1,11 @@
+2012-11-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Unskip fast/dom/navigator-vibration.html after r133828.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-09  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Unreviewed gardening. Updated expectations following 134112.
