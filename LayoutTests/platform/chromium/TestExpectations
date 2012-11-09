@@ -3537,6 +3537,7 @@ webkit.org/b/89794 [ Mac ] fast/regions/get-regions-by-content2.html [ Crash Pas
 # Results are not useful and a bit indeterminate -- test needs help.
 # The test sometimes crashes on Android, part of webkit.org/b/98765.
 webkit.org/b/92811 compositing/video-page-visibility.html [ Crash Failure ImageOnlyFailure ]
+webkit.org/b/92811 platform/chromium/virtual/softwarecompositing/video-page-visibility.html [ Crash Failure ImageOnlyFailure ]
 
 # Flaky
 webkit.org/b/89812 [ Debug ] fast/parser/parser-yield-timing.html [ Failure Pass ]
@@ -3923,85 +3924,32 @@ webkit.org/b/97672 http/tests/security/xss-eval.html [ Failure ]
 webkit.org/b/96961 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 webkit.org/b/96961 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 
-# These tests appear to be making the EWS bots flaky. See bug for details. 
-webkit.org/b/96951 platform/chromium-linux/compositing/gestures [ Skip ] 
+# These tests appear to be making the EWS bots flaky. See bug for details.
+webkit.org/b/96951 platform/chromium-linux/compositing/gestures [ Skip ]
 
-# Numerous failures in software compositing.
-crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/images/direct-image-background-color.html [ ImageOnlyFailure ]
-crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/overflow/clip-content-under-overflow-controls.html [ ImageOnlyFailure ]
-crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/overflow/overflow-positioning.html [ ImageOnlyFailure ]
-crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/repaint/newly-composited-on-scroll.html [ ImageOnlyFailure ]
-crbug.com/152953 [ Mac ] platform/chromium/virtual/softwarecompositing/scrollbar-painting.html [ ImageOnlyFailure ]
-crbug.com/152953 [ Mac Win ] platform/chromium/virtual/softwarecompositing/absolute-position-changed-with-composited-parent-layer.html [ Skip ]
-crbug.com/152953 [ Win ] platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment.html [ ImageOnlyFailure ]
+# Video filtering differences in software compositor. Those need to be rebaselined.
+crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling.html [ ImageOnlyFailure ]
+crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay.html [ ImageOnlyFailure ]
+crbug.com/152007 platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll.html [ ImageOnlyFailure ]
+crbug.com/152007 platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant.html [ ImageOnlyFailure ]
+crbug.com/152007 platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update.html [ ImageOnlyFailure ]
+crbug.com/152007 platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection.html [ ImageOnlyFailure ]
+crbug.com/152007 platform/chromium/virtual/softwarecompositing/self-painting-layers.html [ ImageOnlyFailure ]
+crbug.com/152007 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-video-layer.html [ ImageOnlyFailure ]
 
-# Render surfaces do not draw anything in the software compositor.
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-alpha-large.html [ ImageOnlyFailure ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-alpha.html [ ImageOnlyFailure ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-blur-large.html [ ImageOnlyFailure ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-blur.html [ ImageOnlyFailure ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/flat-with-transformed-child.html [ ImageOnlyFailure ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/masks [ ImageOnlyFailure ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/masks/layer-mask-placement.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/masks/mask-of-clipped-layer.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections [ ImageOnlyFailure ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/backface-hidden-reflection.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/become-simple-composited-reflection.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/compositing-change-inside-reflection.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/deeply-nested-reflections.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/empty-reflection-with-mask.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/masked-reflection-on-composited.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/nested-reflection-on-overflow.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/nested-reflection-size-change.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/nested-reflection-transformed.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/nested-reflection-transformed2.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/nested-reflection.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/remove-reflection.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/reflection-on-composited.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/reflection-ordering.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/reflection-positioning.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/reflection-positioning2.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/remove-add-reflection.html [ Pass ]
-crbug.com/150010 platform/chromium/virtual/softwarecompositing/reflections/simple-composited-reflections.html [ Pass ]
+# Text-only failures in software compositor.
+crbug.com/160305 platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
 
-# Canvas2d not yet supported by software compositor.
-crbug.com/150018 platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas.html [ Skip ]
-crbug.com/150018 platform/chromium/virtual/softwarecompositing/overflow/overflow-hidden-canvas-layer.html [ Skip ]
-crbug.com/150018 platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant.html [ Skip ]
-crbug.com/150018 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-canvas2d-layer.html [ Skip ]
+# Filters not yet supported by the software compositor.
+crbug.com/160302 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-alpha-large.html [ ImageOnlyFailure ]
+crbug.com/160302 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-alpha.html [ ImageOnlyFailure ]
+crbug.com/160302 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-blur-large.html [ ImageOnlyFailure ]
+crbug.com/160302 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-blur.html [ ImageOnlyFailure ]
 
-# Video not yet supported by software compositor.
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling.html [ Skip ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay.html [ Skip ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll.html [ Skip ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update.html [ Skip ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/self-painting-layers.html [ Skip ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection.html [ Skip ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/video-page-visibility.html [ Skip ]
-crbug.com/150016 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-video-layer.html [ Skip ]
-
-# WebGL not yet supported by software compositor.
+# WebGL not yet supported by the software compositor.
 crbug.com/151713 platform/chromium/virtual/softwarecompositing/backface-visibility/backface-visibility-webgl.html [ Skip ]
-crbug.com/151713 platform/chromium/virtual/softwarecompositing/webgl [ Skip ]
 crbug.com/151713 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-webgl-layer.html [ Skip ]
-
-# No antialiasing on rotation in software compositor.
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/direct-image-compositing.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/layer-due-to-layer-children-deep.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/layer-due-to-layer-children.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/reflections/reflection-in-composited.html [ ImageOnlyFailure ]
-
-# Alpha blending ends up with slightly different green in software compositor.
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/repaint/opacity-between-absolute.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/repaint/opacity-between-absolute2.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/transitions/scale-transition-no-start.html [ ImageOnlyFailure ]
-
-# Various text/edge antialiasing/alpha quirks in software compositor.
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/color-matching/image-color-matching.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/bounds-ignores-hidden-dynamic-negzindex.html [ ImageOnlyFailure ]
-crbug.com/152007 [ Linux Mac ] platform/chromium/virtual/softwarecompositing/geometry/clipping-foreground.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
+crbug.com/151713 platform/chromium/virtual/softwarecompositing/webgl [ Skip ]
 
 webkit.org/b/98192 [ Win Debug ] fast/js/dfg-cross-global-object-inline-new-array-with-elements.html [ Failure Pass ]
 webkit.org/b/98192 fast/js/post-message-numeric-property.html [ Failure Pass ]
@@ -4017,10 +3965,10 @@ webkit.org/b/101177 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure 
 
 # These are real failues due to 95121.
 # This is spilling caused by LANCZOS3 scaling algorithm that samples outside the source rect.
-webkit.org/b/95121 fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ] 
+webkit.org/b/95121 fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ]
 
 # This is caused by misalignment with bitmap tiling which is not yet fixed by 95121.
-webkit.org/b/95121 fast/borders/border-image-side-reduction.html [ ImageOnlyFailure ] 
+webkit.org/b/95121 fast/borders/border-image-side-reduction.html [ ImageOnlyFailure ]
 
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
