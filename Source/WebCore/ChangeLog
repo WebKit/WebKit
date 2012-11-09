@@ -1,3 +1,18 @@
+2012-11-08  Andreas Kling  <kling@webkit.org>
+
+        DocumentLoader: Shrink-to-fit the ResourceResponse vector after loading completes.
+        <http://webkit.org/b/101657>
+
+        Reviewed by Anders Carlsson.
+
+        Shrink DocumentLoader::m_responses to exact size when we stop adding responses to it,
+        as we know it won't grow after that.
+
+        520kB progression on Membuster3.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopRecordingResponses):
+
 2012-11-08  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Polygon with horizontal bottom edges returns incorrect segments
