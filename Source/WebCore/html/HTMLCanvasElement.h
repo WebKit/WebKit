@@ -82,7 +82,7 @@ public:
 
     void setSize(const IntSize& newSize)
     { 
-        if (newSize == size())
+        if (newSize == size() && targetDeviceScaleFactor() == m_deviceScaleFactor)
             return;
         m_ignoreReset = true; 
         setWidth(newSize.width());
@@ -149,6 +149,8 @@ private:
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
     void reset();
+
+    float targetDeviceScaleFactor() const;
 
     void createImageBuffer() const;
     void clearImageBuffer() const;

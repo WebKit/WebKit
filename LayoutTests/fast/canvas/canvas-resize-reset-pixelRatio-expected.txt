@@ -1,0 +1,6 @@
+Testing webkitBackingStorePixelRatio after resize
+PASS: webkitBackingStorePixelRatio is 1.
+PASS: webkitBackingStorePixelRatio is 2.
+PASS: webkitBackingStorePixelRatio is 1.
+PASS: webkitBackingStorePixelRatio is 2.
+

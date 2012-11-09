@@ -1,3 +1,14 @@
+2012-10-28  Timothy Hatcher  <timothy@apple.com>
+
+        Test the canvas backing store pixel ratio when the buffer resizes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=100608
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/canvas-resize-reset-pixelRatio-expected.txt: Added.
+        * fast/canvas/canvas-resize-reset-pixelRatio.html: Added.
+
 2012-11-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         RemoveFormat command doesn't remove background color

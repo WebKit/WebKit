@@ -1,3 +1,25 @@
+2012-10-28  Timothy Hatcher  <timothy@apple.com>
+
+        Reset the canvas backing store pixel ratio when the buffer resizes.
+
+        The backing store was not being recreated using the current page pixel ratio
+        when a resize occurred.
+
+        https://bugs.webkit.org/show_bug.cgi?id=100608
+
+        Reviewed by Darin Adler.
+
+        Test: fast/canvas/canvas-resize-reset-pixelRatio.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement): Use targetDeviceScaleFactor.
+        (WebCore::HTMLCanvasElement::reset): Do a clear only if the pixel ratios also
+        match. Store the new pixel ratio in m_deviceScaleFactor.
+        (WebCore::HTMLCanvasElement::targetDeviceScaleFactor): Added.
+        * html/HTMLCanvasElement.h:
+        (WebCore::HTMLCanvasElement::setSize): Return early only if the sizes and
+        pixel ratios match.
+
 2012-11-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         RemoveFormat command doesn't remove background color

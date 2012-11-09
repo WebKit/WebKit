@@ -84,13 +84,7 @@ HTMLCanvasElement::HTMLCanvasElement(const QualifiedName& tagName, Document* doc
     , m_size(DefaultWidth, DefaultHeight)
     , m_rendererIsCanvas(false)
     , m_ignoreReset(false)
-#if ENABLE(HIGH_DPI_CANVAS)
-      // NOTE: High-DPI canvas requires the platform-specific ImageBuffer implementation to respect
-      // the resolutionScale parameter.
-    , m_deviceScaleFactor(document->frame() ? document->frame()->page()->deviceScaleFactor() : 1)
-#else
-    , m_deviceScaleFactor(1)
-#endif
+    , m_deviceScaleFactor(targetDeviceScaleFactor())
     , m_originClean(true)
     , m_hasCreatedImageBuffer(false)
     , m_didClearImageBuffer(false)
@@ -247,9 +241,11 @@ void HTMLCanvasElement::reset()
 
     bool ok;
     bool hadImageBuffer = hasCreatedImageBuffer();
+
     int w = getAttribute(widthAttr).toInt(&ok);
     if (!ok || w < 0)
         w = DefaultWidth;
+
     int h = getAttribute(heightAttr).toInt(&ok);
     if (!ok || h < 0)
         h = DefaultHeight;
@@ -266,14 +262,20 @@ void HTMLCanvasElement::reset()
     }
 
     IntSize oldSize = size();
+    IntSize newSize(w, h);
+    float newDeviceScaleFactor = targetDeviceScaleFactor();
+
     // If the size of an existing buffer matches, we can just clear it instead of reallocating.
     // This optimization is only done for 2D canvases for now.
-    if (m_hasCreatedImageBuffer && oldSize == IntSize(w, h) && m_context && m_context->is2d()) {
+    if (m_hasCreatedImageBuffer && oldSize == newSize && m_deviceScaleFactor == newDeviceScaleFactor && m_context && m_context->is2d()) {
         if (!m_didClearImageBuffer)
             clearImageBuffer();
         return;
     }
-    setSurfaceSize(IntSize(w, h));
+
+    m_deviceScaleFactor = newDeviceScaleFactor;
+
+    setSurfaceSize(newSize);
 
 #if ENABLE(WEBGL)
     if (m_context && m_context->is3d() && oldSize != size())
@@ -297,6 +299,15 @@ void HTMLCanvasElement::reset()
     HashSet<CanvasObserver*>::iterator end = m_observers.end();
     for (HashSet<CanvasObserver*>::iterator it = m_observers.begin(); it != end; ++it)
         (*it)->canvasResized(this);
+}
+
+float HTMLCanvasElement::targetDeviceScaleFactor() const
+{
+#if ENABLE(HIGH_DPI_CANVAS)
+    return document()->frame() ? document()->frame()->page()->deviceScaleFactor() : 1;
+#else
+    return 1;
+#endif
 }
 
 bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
