@@ -35,6 +35,7 @@
 #include "RemoteNetworkingContext.h"
 #include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceHandle.h>
 #include <wtf/MainThread.h>
@@ -179,6 +180,110 @@ void NetworkRequest::didFail(WebCore::ResourceHandle*, const WebCore::ResourceEr
     connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::DidFailResourceLoad(m_identifier, error), 0);
     scheduleStopOnMainThread();
 }
+
+// FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
+// Once we know what they are they can be removed.
+
+void NetworkRequest::willSendRequest(WebCore::ResourceHandle*, WebCore::ResourceRequest&, const WebCore::ResourceResponse& /*redirectResponse*/)
+{
+    notImplemented();
+}
+
+void NetworkRequest::didSendData(WebCore::ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/)
+{
+    notImplemented();
+}
+
+void NetworkRequest::didReceiveCachedMetadata(WebCore::ResourceHandle*, const char*, int)
+{
+    notImplemented();
+}
+
+void NetworkRequest::wasBlocked(WebCore::ResourceHandle*)
+{
+    notImplemented();
+}
+
+void NetworkRequest::cannotShowURL(WebCore::ResourceHandle*)
+{
+    notImplemented();
+}
+
+void NetworkRequest::willCacheResponse(WebCore::ResourceHandle*, WebCore::CacheStoragePolicy&)
+{
+    notImplemented();
+}
+
+bool NetworkRequest::shouldUseCredentialStorage(WebCore::ResourceHandle*)
+{
+    notImplemented();
+    return false;
+}
+
+void NetworkRequest::didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
+void NetworkRequest::didCancelAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
+void NetworkRequest::receivedCancellation(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&)
+{
+    notImplemented();
+}
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+bool NetworkRequest::canAuthenticateAgainstProtectionSpace(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&)
+{
+    notImplemented();
+    return false;
+}
+#endif
+
+#if HAVE(NETWORK_CFDATA_ARRAY_CALLBACK)
+bool NetworkRequest::supportsDataArray()
+{
+    notImplemented();
+    return false;
+}
+
+void NetworkRequest::didReceiveDataArray(WebCore::ResourceHandle*, CFArrayRef)
+{
+    notImplemented();
+}
+#endif
+
+#if PLATFORM(MAC)
+#if USE(CFNETWORK)
+CFCachedURLResponseRef NetworkRequest::willCacheResponse(WebCore::ResourceHandle*, CFCachedURLResponseRef response)
+{
+    notImplemented();
+    return response;
+}
+#else
+NSCachedURLResponse* NetworkRequest::willCacheResponse(WebCore::ResourceHandle*, NSCachedURLResponse* response)
+{
+    notImplemented();
+    return response;
+}
+#endif
+
+void NetworkRequest::willStopBufferingData(WebCore::ResourceHandle*, const char*, int)
+{
+    notImplemented();
+}
+#endif // PLATFORM(MAC)
+
+#if ENABLE(BLOB)
+WebCore::AsyncFileStream* NetworkRequest::createAsyncFileStream(WebCore::FileStreamClient*)
+{
+    notImplemented();
+    return 0;
+}
+#endif
 
 } // namespace WebKit
 

@@ -1,3 +1,33 @@
+2012-11-09  Brady Eidson  <beidson@apple.com>
+
+        NetworkRequest refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=101777
+
+        Reviewed by Alexey Proskuryakov.
+
+        Move all of the ResourceHandleClient stubs from the .h to the .cpp in one patch
+        to make future patches cleaner.
+
+        Also completely remove the declaration for shouldCacheResponse() for now.
+
+        * NetworkProcess/NetworkRequest.cpp:
+        (WebKit::NetworkRequest::willSendRequest):
+        (WebKit::NetworkRequest::didSendData):
+        (WebKit::NetworkRequest::didReceiveCachedMetadata):
+        (WebKit::NetworkRequest::wasBlocked):
+        (WebKit::NetworkRequest::cannotShowURL):
+        (WebKit::NetworkRequest::willCacheResponse):
+        (WebKit::NetworkRequest::shouldUseCredentialStorage):
+        (WebKit::NetworkRequest::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkRequest::didCancelAuthenticationChallenge):
+        (WebKit::NetworkRequest::receivedCancellation):
+        (WebKit::NetworkRequest::canAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkRequest::supportsDataArray):
+        (WebKit::NetworkRequest::didReceiveDataArray):
+        (WebKit::NetworkRequest::willStopBufferingData):
+        (WebKit::NetworkRequest::createAsyncFileStream):
+        * NetworkProcess/NetworkRequest.h:
+
 2012-11-09  Alexey Proskuryakov  <ap@apple.com>
 
         CookieJar uses Document class, which is a layering violation
