@@ -1,3 +1,13 @@
+2012-11-08  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, update chromium-mac-mountainlion baselines for fast/
+
+        Also roll remaining mountainlion-specific failures into the main
+        TestExpectations file.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium-mac-mountainlion/TestExpectations:
+
 2012-11-08  Keishi Hattori  <keishi@webkit.org>
 
         Enable calendar picker for input types week/month
