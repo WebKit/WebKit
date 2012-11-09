@@ -204,18 +204,17 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBObjectStoreBackendInterface::PutMo
         return 0;
     }
 
-    Vector<String> indexNames;
+    Vector<int64_t> indexIds;
     Vector<IndexKeys> indexKeys;
     for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it) {
         IndexKeys keys;
         generateIndexKeysForValue(it->value, value, &keys);
-        indexNames.append(it->value.name);
+        indexIds.append(it->key);
         indexKeys.append(keys);
     }
-    ASSERT(indexKeys.size() == indexNames.size());
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, source, m_transaction.get());
-    m_backend->putWithIndexKeys(serializedValue.release(), key.release(), putMode, request, m_transaction->backend(), indexNames, indexKeys, ec);
+    m_backend->put(serializedValue.release(), key.release(), putMode, request, m_transaction->backend(), indexIds, indexKeys);
     ASSERT(!ec);
     return request.release();
 }
@@ -319,8 +318,8 @@ private:
         if (cursorAny->type() == IDBAny::IDBCursorWithValueType)
             cursor = cursorAny->idbCursorWithValue();
 
-        Vector<String, 1> indexNames;
-        indexNames.append(m_indexMetadata.name);
+        Vector<int64_t, 1> indexIds;
+        indexIds.append(m_indexMetadata.id);
         if (cursor) {
             cursor->continueFunction(ec);
             ASSERT(!ec);
@@ -334,12 +333,12 @@ private:
             Vector<IDBObjectStore::IndexKeys, 1> indexKeysList;
             indexKeysList.append(indexKeys);
 
-            m_objectStoreBackend->setIndexKeys(primaryKey, indexNames, indexKeysList, m_transaction.get());
+            m_objectStoreBackend->setIndexKeys(primaryKey, indexIds, indexKeysList, m_transaction.get());
 
         } else {
             // Now that we are done indexing, tell the backend to go
             // back to processing tasks of type NormalTask.
-            m_objectStoreBackend->setIndexesReady(indexNames, m_transaction.get());
+            m_objectStoreBackend->setIndexesReady(indexIds, m_transaction.get());
             m_objectStoreBackend.clear();
             m_transaction.clear();
         }
@@ -382,7 +381,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::createIndex(ScriptExecutionContext* context
         ec = NATIVE_TYPE_ERR;
         return 0;
     }
-    if (m_metadata.containsIndex(name)) {
+    if (containsIndex(name)) {
         ec = IDBDatabaseException::CONSTRAINT_ERR;
         return 0;
     }
@@ -444,12 +443,13 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
     if (it != m_indexMap.end())
         return it->value;
 
-    if (!m_metadata.containsIndex(name)) {
+    int64_t indexId = findIndexId(name);
+    if (indexId == IDBIndexMetadata::InvalidId) {
         ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return 0;
     }
 
-    RefPtr<IDBIndexBackendInterface> indexBackend = m_backend->index(name, ec);
+    RefPtr<IDBIndexBackendInterface> indexBackend = m_backend->index(indexId);
     ASSERT(!ec && indexBackend);
 
     const IDBIndexMetadata* indexMetadata(0);
@@ -476,14 +476,14 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return;
     }
-    if (!m_metadata.containsIndex(name)) {
+    int64_t indexId = findIndexId(name);
+    if (indexId == IDBIndexMetadata::InvalidId) {
         ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return;
     }
 
-    m_backend->deleteIndex(name, m_transaction->backend(), ec);
+    m_backend->deleteIndex(indexId, m_transaction->backend(), ec);
     if (!ec) {
-        ASSERT(m_metadata.containsIndex(name));
         IDBIndexMap::iterator it = m_indexMap.find(name);
         if (it != m_indexMap.end()) {
             m_metadata.indexes.remove(it->value->id());
@@ -558,6 +558,16 @@ void IDBObjectStore::transactionFinished()
     m_indexMap.clear();
 }
 
+int64_t IDBObjectStore::findIndexId(const String& name) const
+{
+    for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it) {
+        if (it->value.name == name) {
+            ASSERT(it->key != IDBIndexMetadata::InvalidId);
+            return it->key;
+        }
+    }
+    return IDBIndexMetadata::InvalidId;
+}
 
 } // namespace WebCore
 

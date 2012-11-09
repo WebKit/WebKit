@@ -64,20 +64,15 @@ public:
 
     // IDBObjectStoreBackendInterface
     virtual void get(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void putWithIndexKeys(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, const Vector<String>&, const Vector<IndexKeys>&, ExceptionCode&);
     virtual void put(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, const Vector<int64_t>&, const Vector<IndexKeys>&);
 
     virtual void deleteFunction(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void clear(PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
     virtual PassRefPtr<IDBIndexBackendInterface> createIndex(int64_t, const String& name, const IDBKeyPath&, bool unique, bool multiEntry, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, const Vector<String>&, const Vector<IndexKeys>&, IDBTransactionBackendInterface*);
     virtual void setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, const Vector<int64_t>&, const Vector<IndexKeys>&, IDBTransactionBackendInterface*);
-    virtual void setIndexesReady(const Vector<String>&, IDBTransactionBackendInterface*);
     virtual void setIndexesReady(const Vector<int64_t>&, IDBTransactionBackendInterface*);
-    virtual PassRefPtr<IDBIndexBackendInterface> index(const String& name, ExceptionCode&);
     virtual PassRefPtr<IDBIndexBackendInterface> index(int64_t);
-    virtual void deleteIndex(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void deleteIndex(int64_t, IDBTransactionBackendInterface*, ExceptionCode&);
 
     virtual void openCursor(PassRefPtr<IDBKeyRange>, IDBCursor::Direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface::TaskType, IDBTransactionBackendInterface*, ExceptionCode&);
@@ -95,9 +90,6 @@ public:
 
     PassRefPtr<IDBBackingStore> backingStore() const { return m_database->backingStore(); }
     int64_t databaseId() const { return m_database->id(); }
-
-    int64_t getIndexId(const String&);
-    Vector<int64_t> getIndexIds(const Vector<String>&);
 
 private:
     IDBObjectStoreBackendImpl(const IDBDatabaseBackendImpl*, const IDBObjectStoreMetadata&);

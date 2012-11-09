@@ -47,14 +47,6 @@ WebIDBTransactionImpl::~WebIDBTransactionImpl()
 {
 }
 
-WebIDBObjectStore* WebIDBTransactionImpl::objectStore(const WebString& name, ExceptionCode& ec)
-{
-    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->objectStore(name, ec);
-    if (!objectStore)
-        return 0;
-    return new WebIDBObjectStoreImpl(objectStore);
-}
-
 WebIDBObjectStore* WebIDBTransactionImpl::objectStore(long long indexId, ExceptionCode& ec)
 {
     RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->objectStore(indexId, ec);

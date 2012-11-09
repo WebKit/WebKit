@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "DOMStringList.h"
 #include "IDBCallbacks.h"
 #include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseBackendInterface.h"

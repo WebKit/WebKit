@@ -160,13 +160,13 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, Excep
         ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return 0;
     }
-    RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->objectStore(name, ec);
+
+    int64_t objectStoreId = m_database->findObjectStoreId(name);
+    ASSERT(objectStoreId != IDBObjectStoreMetadata::InvalidId);
+    RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->objectStore(objectStoreId, ec);
     ASSERT(!ec && objectStoreBackend);
 
     const IDBDatabaseMetadata& metadata = m_database->metadata();
-    int64_t objectStoreId = metadata.findObjectStore(name);
-
-    ASSERT(objectStoreId != IDBObjectStoreMetadata::InvalidId);
 
     RefPtr<IDBObjectStore> objectStore = IDBObjectStore::create(metadata.objectStores.get(objectStoreId), objectStoreBackend, this);
     objectStoreCreated(name, objectStore);

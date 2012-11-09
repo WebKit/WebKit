@@ -46,19 +46,14 @@ public:
     ~WebIDBObjectStoreImpl();
 
     void get(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
-    void putWithIndexKeys(const WebSerializedScriptValue&, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebIDBTransaction&, const WebVector<WebString>&, const WebVector<WebIndexKeys>&, WebExceptionCode&);
     void put(const WebSerializedScriptValue&, const WebIDBKey&, PutMode, WebIDBCallbacks*, const WebIDBTransaction&, const WebVector<long long>&, const WebVector<WebIndexKeys>&);
-    void setIndexKeys(const WebIDBKey&, const WebVector<WebString>& indexNames, const WebVector<WebIndexKeys>&, const WebIDBTransaction&);
     void setIndexKeys(const WebIDBKey&, const WebVector<long long>& indexNames, const WebVector<WebIndexKeys>&, const WebIDBTransaction&);
-    void setIndexesReady(const WebVector<WebString>&, const WebIDBTransaction&);
     void setIndexesReady(const WebVector<long long>&, const WebIDBTransaction&);
     void deleteFunction(const WebIDBKeyRange&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
     void clear(WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
 
     WebIDBIndex* createIndex(long long, const WebString& name, const WebIDBKeyPath&, bool unique, bool multiEntry, const WebIDBTransaction&, WebExceptionCode&);
-    WebIDBIndex* index(const WebString& name, WebExceptionCode&);
     WebIDBIndex* index(long long);
-    void deleteIndex(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);
     void deleteIndex(long long, const WebIDBTransaction&, WebExceptionCode&);
 
     void openCursor(const WebIDBKeyRange&, WebIDBCursor::Direction, WebIDBCallbacks*, WebIDBTransaction::TaskType, const WebIDBTransaction&, WebExceptionCode&);
