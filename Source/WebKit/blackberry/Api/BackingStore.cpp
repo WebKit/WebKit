@@ -206,6 +206,7 @@ BackingStorePrivate::BackingStorePrivate()
     , m_renderQueue(adoptPtr(new RenderQueue(this)))
     , m_defersBlit(true)
     , m_hasBlitJobs(false)
+    , m_webPageBackgroundColor(WebCore::Color::white)
     , m_currentWindowBackBuffer(0)
     , m_preferredTileMatrixDimension(Vertical)
 #if USE(ACCELERATED_COMPOSITING)
@@ -2366,7 +2367,36 @@ void BackingStorePrivate::fillWindow(Platform::Graphics::FillPattern pattern,
             "Empty window buffer, couldn't fillWindow");
     }
 
+    if (pattern == BlackBerry::Platform::Graphics::CheckerboardPattern && BlackBerry::Platform::Settings::isPublicBuild()) {
+        // For public builds, convey the impression of less checkerboard.
+        // For developer builds, keep the checkerboard to get it fixed better.
+        BlackBerry::Platform::Graphics::clearBuffer(dstBuffer, dstRect,
+            m_webPageBackgroundColor.red(), m_webPageBackgroundColor.green(),
+            m_webPageBackgroundColor.blue(), m_webPageBackgroundColor.alpha());
+        return;
+    }
+
     BlackBerry::Platform::Graphics::fillBuffer(dstBuffer, pattern, dstRect, contentsOrigin, contentsScale);
+}
+
+WebCore::Color BackingStorePrivate::webPageBackgroundColorUserInterfaceThread() const
+{
+    ASSERT(BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread());
+    return m_webPageBackgroundColor;
+}
+
+void BackingStorePrivate::setWebPageBackgroundColor(const WebCore::Color& color)
+{
+    if (!BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread()) {
+        typedef void (BlackBerry::WebKit::BackingStorePrivate::*FunctionType)(const WebCore::Color&);
+
+        BlackBerry::Platform::userInterfaceThreadMessageClient()->dispatchMessage(
+            BlackBerry::Platform::createMethodCallMessage<FunctionType, BackingStorePrivate, WebCore::Color>(
+                &BackingStorePrivate::setWebPageBackgroundColor, this, color));
+        return;
+    }
+
+    m_webPageBackgroundColor = color;
 }
 
 void BackingStorePrivate::invalidateWindow()

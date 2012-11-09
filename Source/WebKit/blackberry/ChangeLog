@@ -1,3 +1,31 @@
+2012-11-08  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Replace checkerboard with page background color.
+        https://bugs.webkit.org/show_bug.cgi?id=101652
+        RIM PR 188235
+
+        Reviewed by George Staikos.
+
+        In order to do this, we introduce a new member variable for
+        BackingStore because when blitting, we can't access the
+        page background color in a threadsafe way.
+
+        Solid background color fill is still only used for public builds.
+        Developers and beta testers should still see checkerboard and
+        do something about it.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::fillWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::webPageBackgroundColorUserInterfaceThread):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::setWebPageBackgroundColor):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+
 2012-11-08  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update BB10 date input form.

@@ -1033,6 +1033,11 @@ void WebPagePrivate::setLoadState(LoadState state)
     if (state == Finished && m_mainFrame && m_mainFrame->document())
         m_mainFrame->document()->updateStyleIfNeeded();
 
+    // Dispatch the backingstore background color at important state changes.
+    m_backingStore->d->setWebPageBackgroundColor(m_mainFrame && m_mainFrame->view()
+        ? m_mainFrame->view()->documentBackgroundColor()
+        : m_webSettings->backgroundColor());
+
     m_loadState = state;
 
 #if DEBUG_WEBPAGE_LOAD
@@ -5848,6 +5853,11 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
 
         Platform::userInterfaceThreadMessageClient()->dispatchMessage(
             createMethodCallMessage(&WebPagePrivate::setCompositorBackgroundColor, this, backgroundColor));
+    }
+    if (m_backingStore) {
+        m_backingStore->d->setWebPageBackgroundColor(m_mainFrame && m_mainFrame->view()
+            ? m_mainFrame->view()->documentBackgroundColor()
+            : webSettings->backgroundColor());
     }
 
     m_page->setDeviceScaleFactor(webSettings->devicePixelRatio());
