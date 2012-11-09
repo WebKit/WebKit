@@ -1,3 +1,17 @@
+2012-11-08  Keishi Hattori  <keishi@webkit.org>
+
+        Enable calendar picker for input types week/month
+        https://bugs.webkit.org/show_bug.cgi?id=101553
+
+        Reviewed by Kent Tamura.
+
+        Enabling calendar picker for <input type=week/month>
+
+        No new tests. Tests will be added later in Bug 101556 and Bug 101555.
+
+        * rendering/RenderThemeChromiumCommon.cpp:
+        (WebCore::RenderThemeChromiumCommon::supportsCalendarPicker):
+
 2012-11-08  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Change the default return value of MediaPlayerPrivate::hasSingleSecurityOrigin

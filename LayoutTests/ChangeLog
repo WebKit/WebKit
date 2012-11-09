@@ -1,3 +1,12 @@
+2012-11-08  Keishi Hattori  <keishi@webkit.org>
+
+        Enable calendar picker for input types week/month
+        https://bugs.webkit.org/show_bug.cgi?id=101553
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium/TestExpectations: Mark week/month appearance tests as needs rebaseline.
+
 2012-11-08  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed, update chromium expectations to remove a duplication.
