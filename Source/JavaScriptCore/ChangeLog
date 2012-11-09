@@ -1,3 +1,11 @@
+2012-11-08  Filip Pizlo  <fpizlo@apple.com>
+
+        ArrayPrototype.h should have correct indentation
+
+        Rubber stamped by Sam Weinig.
+
+        * runtime/ArrayPrototype.h:
+
 2012-11-08  Mark Lam  <mark.lam@apple.com>
 
         Renamed ...InlineMethods.h files to ...Inlines.h.
