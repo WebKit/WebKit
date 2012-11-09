@@ -1,3 +1,16 @@
+2012-11-08  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Change the default return value of MediaPlayerPrivate::hasSingleSecurityOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=101681
+
+        Reviewed by George Staikos.
+
+        Since the platform player in BlackBerry disallows resources that come from different origins,
+        so it's safe to directly returns true here.
+
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::hasSingleSecurityOrigin):
+
 2012-11-08  Mark Lam  <mark.lam@apple.com>
 
         Renamed ...InlineMethods.h files to ...Inlines.h.
