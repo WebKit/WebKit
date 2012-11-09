@@ -1,3 +1,21 @@
+2012-11-09  Jer Noble  <jer.noble@apple.com>
+
+        Plugin diagnostic logging should send plugin file basename instead of MIME type.
+        https://bugs.webkit.org/show_bug.cgi?id=101679
+
+        Reviewed by Eric Carlson.
+
+        Log the basename of the plugin file rather than the mime type so as to more
+        accurately log which plugin was used to handle the request.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::logPluginRequest): Log the plugin 'file' field, if present.
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::pluginInfoForMimeType): Factored out from pluginNameForMimeType.
+        (WebCore::PluginData::pluginNameForMimeType): Use pluginInfoForMimeType to retrieve name field.
+        (WebCore::PluginData::pluginFileForMimeType): Use pluginInfoForMimeType to retrieve file field.
+        * plugins/PluginData.h:
+
 2012-11-09  Alexey Proskuryakov  <ap@apple.com>
 
         CookieJar uses Document class, which is a layering violation
