@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,8 @@
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
-#include <wtf/text/WTFString.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -39,13 +39,13 @@ struct Cookie;
 
 // These two functions implement document.cookie API, with special rules for HttpOnly cookies.
 String cookies(const Document*, const KURL&);
-void setCookies(Document*, const KURL&, const String&);
+void setCookies(Document*, const KURL&, const String& cookieString);
 
 // These methods use current cookie storage, thus taking private browsing mode into account.
 bool cookiesEnabled(const Document*);
 String cookieRequestHeaderFieldValue(const Document*, const KURL&);
 bool getRawCookies(const Document*, const KURL&, Vector<Cookie>&);
-void deleteCookie(const Document*, const KURL&, const String&);
+void deleteCookie(const Document*, const KURL&, const String& cookieName);
 
 // These functions always access default cookie storage, not taking private browsing mode into account.
 void getHostnamesWithCookies(HashSet<String>& hostnames);

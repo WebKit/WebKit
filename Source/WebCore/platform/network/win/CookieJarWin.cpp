@@ -24,11 +24,10 @@
  */
 
 #include "config.h"
-#include "CookieJar.h"
+#include "PlatformCookieJar.h"
 
 #include "Cookie.h"
 #include "KURL.h"
-#include "Document.h"
 #include "ResourceHandle.h"
 #include <windows.h>
 #include <Wininet.h>
@@ -36,16 +35,18 @@
 
 namespace WebCore {
 
-void setCookies(Document* /*document*/, const KURL& url, const String& value)
+void setCookiesFromDOM(NetworkingContext*, const KURL&, const KURL& url, const String& value)
 {
-    // FIXME: Deal with document->firstPartyForCookies().
+    // FIXME: Deal with firstParty argument.
     String str = url.string();
     String val = value;
     InternetSetCookie(str.charactersWithNullTermination(), 0, val.charactersWithNullTermination());
 }
 
-String cookies(const Document* /*document*/, const KURL& url)
+String cookiesForDOM(NetworkingContext*, const KURL&, const KURL& url)
 {
+    // FIXME: Deal with firstParty argument.
+
     String str = url.string();
 
     DWORD count = 0;
@@ -63,40 +64,40 @@ String cookies(const Document* /*document*/, const KURL& url)
     return String::adopt(buffer);
 }
 
-String cookieRequestHeaderFieldValue(const Document* document, const KURL& url)
+String cookieRequestHeaderFieldValue(NetworkingContext*, const KURL& url)
 {
     // FIXME: include HttpOnly cookie
-    return cookies(document, url);
+    return cookiesForDOM(context, url);
 }
 
-bool cookiesEnabled(const Document* /*document*/)
+bool cookiesEnabled(NetworkingContext*)
 {
     return true;
 }
 
-bool getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
+bool getRawCookies(NetworkingContext*, const KURL&, Vector<Cookie>& rawCookies)
 {
     // FIXME: Not yet implemented
     rawCookies.clear();
     return false; // return true when implemented
 }
 
-void deleteCookie(const Document*, const KURL&, const String&)
+void deleteCookie(NetworkingContext*, const KURL&, const String&)
 {
     // FIXME: Not yet implemented
 }
 
-void getHostnamesWithCookies(HashSet<String>& hostnames)
+void getHostnamesWithCookies(NetworkingContext*, HashSet<String>& hostnames)
 {
     // FIXME: Not yet implemented
 }
 
-void deleteCookiesForHostname(const String& hostname)
+void deleteCookiesForHostname(NetworkingContext*, const String& hostname)
 {
     // FIXME: Not yet implemented
 }
 
-void deleteAllCookies()
+void deleteAllCookies(NetworkingContext*)
 {
     // FIXME: Not yet implemented
 }

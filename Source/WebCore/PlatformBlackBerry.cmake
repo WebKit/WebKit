@@ -141,6 +141,7 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
 LIST(APPEND WebCore_SOURCES
     editing/blackberry/EditorBlackBerry.cpp
     editing/blackberry/SmartReplaceBlackBerry.cpp
+    loader/blackberry/CookieJarBlackBerry.cpp
     page/blackberry/AccessibilityObjectBlackBerry.cpp
     page/blackberry/DragControllerBlackBerry.cpp
     page/blackberry/EventHandlerBlackBerry.cpp
@@ -148,7 +149,6 @@ LIST(APPEND WebCore_SOURCES
     platform/blackberry/ClipboardBlackBerry.cpp
     platform/blackberry/ContextMenuBlackBerry.cpp
     platform/blackberry/ContextMenuItemBlackBerry.cpp
-    platform/blackberry/CookieJarBlackBerry.cpp
     platform/blackberry/CursorBlackBerry.cpp
     platform/blackberry/DragDataBlackBerry.cpp
     platform/blackberry/DragImageBlackBerry.cpp

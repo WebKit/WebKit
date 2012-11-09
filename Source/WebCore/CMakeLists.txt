@@ -1622,6 +1622,7 @@ SET(WebCore_SOURCES
     inspector/WorkerRuntimeAgent.cpp
 
     loader/CachedMetadata.cpp
+    loader/CookieJar.cpp
     loader/CrossOriginAccessControl.cpp
     loader/CrossOriginPreflightResultCache.cpp
     loader/DocumentLoadTiming.cpp

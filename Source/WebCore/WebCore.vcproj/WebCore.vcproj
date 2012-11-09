@@ -27415,6 +27415,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\CookieJar.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\CookieJar.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\CrossOriginAccessControl.cpp"
 				>
 			</File>
@@ -28284,10 +28292,6 @@
 			</File>
 			<File
 				RelativePath="..\platform\ContextMenuItem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\CookieJar.h"
 				>
 			</File>
 			<File
@@ -32515,6 +32519,10 @@
 				</File>
 				<File
 					RelativePath="..\platform\network\NetworkStateNotifier.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\PlatformCookieJar.h"
 					>
 				</File>
 				<File

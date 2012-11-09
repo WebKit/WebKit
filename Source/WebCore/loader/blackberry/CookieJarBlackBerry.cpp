@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+// FIXME: Unfork. This file is forked because all other platforms use NetworkingContext to access cookie jar, not Document or Frame.
+
 String cookies(Document const* document, KURL const& url)
 {
     Frame* frame = document->frame();

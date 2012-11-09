@@ -1,3 +1,119 @@
+2012-11-09  Alexey Proskuryakov  <ap@apple.com>
+
+        CookieJar uses Document class, which is a layering violation
+        https://bugs.webkit.org/show_bug.cgi?id=101621
+
+        Reviewed by Brady Eidson.
+
+        Split CookieJar in two parts, one that takes a Document, and another that is a pure
+        platform one, using NetworkingContext to access the correct platform storage.
+
+        * GNUmakefile.list.am:
+        * PlatformBlackBerry.cmake:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Updated.
+
+        * loader/CookieJar.cpp: Added.
+        (WebCore::networkingContext):
+        (WebCore::cookies):
+        (WebCore::setCookies):
+        (WebCore::cookiesEnabled):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostname):
+        (WebCore::deleteAllCookies):
+        * loader/CookieJar.h: Copied from Source/WebCore/platform/CookieJar.h.
+        This is an adaptor for pure platform implementations. Clients continue to use the
+        old interface unchanged.
+
+        * platform/blackberry/CookieJarBlackBerry.cpp: Removed.
+        * loader/blackberry/CookieJarBlackBerry.cpp: Copied from Source/WebCore/platform/blackberry/CookieJarBlackBerry.cpp.
+        * platform/network/chromium/CookieJarChromium.cpp: Removed.
+        * loader/chromium/CookieJarChromium.cpp: Copied from Source/WebCore/platform/network/chromium/CookieJarChromium.cpp.
+        These platforms do not have a pure platform implementation yet, so they just keep
+        to use original implementations. Since the code is not in platform/ any more, the
+        violation is resolved for Chromium and Blackberry, too.
+
+        * platform/CookieJar.h: Removed.
+        * platform/network/PlatformCookieJar.h: Copied from Source/WebCore/platform/CookieJar.h.
+        The platform interface is now more uniform - all functions take a NetworkingContext
+        instead of hardcoding which cookie storage to use in some cases.
+        Renamed functions that are only useful for document.cookie implementation to look
+        less generic.
+
+        * platform/mac/CookieJar.mm: Removed.
+        * platform/network/mac/CookieJarMac.mm: Copied from Source/WebCore/platform/mac/CookieJar.mm.
+        (WebCore::cookiesForDOM): This now takes a context instead of Document, and also
+        takes a firstParty URL (unused on Mac, but used on some other platforms).
+        (WebCore::cookieRequestHeaderFieldValue): Get cookie storage from context (and
+        use shared one if context is null).
+        (WebCore::setCookiesFromDOM): Ditto.
+        (WebCore::cookiesEnabled): Ditto.
+        (WebCore::getRawCookies): Ditto.
+        (WebCore::deleteCookie): Ditto.
+        (WebCore::getHostnamesWithCookies): Ditto. This used to only support default storage,
+        but its cleaner to have a uniform interface.
+        (WebCore::deleteCookiesForHostname): Ditto.
+        (WebCore::deleteAllCookies): Ditto.
+
+        * platform/network/cf/CookieJarCFNet.cpp:
+        Same changes as on Mac.
+
+        * platform/network/curl/CookieJarCurl.cpp:
+        Updated for new interface. Implementation is largely a dummy one.
+
+        * platform/qt/CookieJarQt.h: Removed.
+        * platform/network/qt/CookieJarQt.h: Copied from Source/WebCore/platform/qt/CookieJarQt.h.
+        Moved to a common location, most cookie files were in network/ already.
+
+        * platform/qt/CookieJarQt.cpp: Removed.
+        * platform/network/qt/CookieJarQt.cpp: Copied from Source/WebCore/platform/qt/CookieJarQt.cpp.
+        (WebCore::setCookiesFromDOM): Use context's or shared cooke jar as appropriate.
+        (WebCore::cookiesForDOM): Ditto.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        (WebCore::cookiesEnabled): Ditto.
+        (WebCore::getRawCookies): Ditto.
+        (WebCore::deleteCookie): Ditto.
+        (WebCore::getHostnamesWithCookies): Back-end implementation can only handle shared
+        jar here, assert that argument does not request another one.
+        (WebCore::deleteCookiesForHostname): Ditto.
+        (WebCore::deleteAllCookies): Ditto.
+
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::cookieJarForContext):
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookiesForContext):
+        (WebCore::cookiesForDOM):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostname):
+        (WebCore::deleteAllCookies):
+        Updated for new function signatures, and use the same cross-platform logic for
+        choosing a cookie jar.
+
+        * platform/network/soup/CookieJarSoup.h: Don't include unnecessary CooieJar.h.
+        
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookiesForDOM):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostname):
+        (WebCore::deleteAllCookies):
+        Updated for new function signatures.
+
 2012-11-09  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css] Text decoration's "blink" not valid when CSS3_TEXT is enabled

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008 Xan Lopez <xan@gnome.org>
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,15 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CookieJarSoup_h
-#define CookieJarSoup_h
+#ifndef PlatformCookieJar_h
+#define PlatformCookieJar_h
 
-#include <libsoup/soup.h>
+#include <wtf/Forward.h>
+#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-SoupCookieJar* soupCookieJar();
-void setSoupCookieJar(SoupCookieJar*);
+class KURL;
+class NetworkingContext;
+struct Cookie;
+
+// If networking context is null, default cookie storage is used.
+String cookiesForDOM(NetworkingContext*, const KURL& firstParty, const KURL&);
+void setCookiesFromDOM(NetworkingContext*, const KURL& firstParty, const KURL&, const String&);
+bool cookiesEnabled(NetworkingContext*);
+String cookieRequestHeaderFieldValue(NetworkingContext*, const KURL&);
+bool getRawCookies(NetworkingContext*, const KURL&, Vector<Cookie>&);
+void deleteCookie(NetworkingContext*, const KURL&, const String&);
+void getHostnamesWithCookies(NetworkingContext*, HashSet<String>& hostnames);
+void deleteCookiesForHostname(NetworkingContext*, const String& hostname);
+void deleteAllCookies(NetworkingContext*);
 
 }
 

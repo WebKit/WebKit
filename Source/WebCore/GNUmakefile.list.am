@@ -3857,6 +3857,8 @@ webcore_sources += \
 	Source/WebCore/loader/cache/CachePolicy.h \
 	Source/WebCore/loader/CachedMetadata.cpp \
 	Source/WebCore/loader/CachedMetadata.h \
+	Source/WebCore/loader/CookieJar.cpp \
+	Source/WebCore/loader/CookieJar.h \
 	Source/WebCore/loader/CrossOriginAccessControl.cpp \
 	Source/WebCore/loader/CrossOriginAccessControl.h \
 	Source/WebCore/loader/CrossOriginPreflightResultCache.cpp \
@@ -4247,7 +4249,6 @@ webcore_sources += \
 	Source/WebCore/platform/ContextMenuItem.h \
 	Source/WebCore/platform/Cookie.h \
 	Source/WebCore/platform/CookiesStrategy.h \
-	Source/WebCore/platform/CookieJar.h \
 	Source/WebCore/platform/CrossThreadCopier.cpp \
 	Source/WebCore/platform/CrossThreadCopier.h \
 	Source/WebCore/platform/Cursor.cpp \
@@ -4715,6 +4716,7 @@ webcore_sources += \
 	Source/WebCore/platform/network/ProxyServer.h \
 	Source/WebCore/platform/network/NetworkStateNotifier.cpp \
 	Source/WebCore/platform/network/NetworkStateNotifier.h \
+	Source/WebCore/platform/network/PlatformCookieJar.h \
 	Source/WebCore/platform/network/ProtectionSpaceHash.h \
 	Source/WebCore/platform/network/ProtectionSpace.cpp \
 	Source/WebCore/platform/network/ProtectionSpace.h \

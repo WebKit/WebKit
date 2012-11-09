@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,13 +24,12 @@
  */
 
 #include "config.h"
-#include "CookieJar.h"
+#include "PlatformCookieJar.h"
 
 #if USE(CFNETWORK)
 
 #include "Cookie.h"
 #include "CookieStorageCFNet.h"
-#include "Document.h"
 #include "KURL.h"
 #include "ResourceHandle.h"
 #include "SoftLinking.h"
@@ -95,18 +94,18 @@ static RetainPtr<CFArrayRef> filterCookies(CFArrayRef unfilteredCookies)
     return filteredCookies;
 }
 
-void setCookies(Document* document, const KURL& url, const String& value)
+void setCookiesFromDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url, const String& value)
 {
     // <rdar://problem/5632883> CFHTTPCookieStorage stores an empty cookie, which would be sent as "Cookie: =".
     if (value.isEmpty())
         return;
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
     if (!cookieStorage)
         return;
 
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
-    RetainPtr<CFURLRef> firstPartyForCookiesCF(AdoptCF, document->firstPartyForCookies().createCFURL());
+    RetainPtr<CFURLRef> firstPartyForCookiesCF(AdoptCF, firstParty.createCFURL());
 
     // <http://bugs.webkit.org/show_bug.cgi?id=6531>, <rdar://4409034>
     // cookiesWithResponseHeaderFields doesn't parse cookies without a value
@@ -123,9 +122,9 @@ void setCookies(Document* document, const KURL& url, const String& value)
     CFHTTPCookieStorageSetCookies(cookieStorage.get(), filterCookies(cookiesCF.get()).get(), urlCF.get(), firstPartyForCookiesCF.get());
 }
 
-String cookies(const Document* /*document*/, const KURL& url)
+String cookiesForDOM(NetworkingContext* context, const KURL&, const KURL& url)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
     if (!cookieStorage)
         return String();
 
@@ -137,9 +136,9 @@ String cookies(const Document* /*document*/, const KURL& url)
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 }
 
-String cookieRequestHeaderFieldValue(const Document* /*document*/, const KURL& url)
+String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& url)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
     if (!cookieStorage)
         return String();
 
@@ -151,18 +150,19 @@ String cookieRequestHeaderFieldValue(const Document* /*document*/, const KURL& u
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 }
 
-bool cookiesEnabled(const Document* /*document*/)
+bool cookiesEnabled(NetworkingContext* context)
 {
     CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain;
-    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage())
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
+    if (cookieStorage)
         policy = CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage.get());
     return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
 }
 
-bool getRawCookies(const Document*, const KURL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(NetworkingContext* context, const KURL& url, Vector<Cookie>& rawCookies)
 {
     rawCookies.clear();
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
     if (!cookieStorage)
         return false;
 
@@ -193,9 +193,9 @@ bool getRawCookies(const Document*, const KURL& url, Vector<Cookie>& rawCookies)
     return true;
 }
 
-void deleteCookie(const Document*, const KURL& url, const String& name)
+void deleteCookie(NetworkingContext* context, const KURL& url, const String& name)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
     if (!cookieStorage)
         return;
 
@@ -214,9 +214,9 @@ void deleteCookie(const Document*, const KURL& url, const String& name)
     }
 }
 
-void getHostnamesWithCookies(HashSet<String>& hostnames)
+void getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
     if (!cookieStorage)
         return;
 
@@ -232,9 +232,9 @@ void getHostnamesWithCookies(HashSet<String>& hostnames)
     }
 }
 
-void deleteCookiesForHostname(const String& hostname)
+void deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
     if (!cookieStorage)
         return;
 
@@ -251,9 +251,9 @@ void deleteCookiesForHostname(const String& hostname)
     }
 }
 
-void deleteAllCookies()
+void deleteAllCookies(NetworkingContext* context)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
     if (!cookieStorage)
         return;
 

@@ -1,3 +1,12 @@
+2012-11-09  Alexey Proskuryakov  <ap@apple.com>
+
+        CookieJar uses Document class, which is a layering violation
+        https://bugs.webkit.org/show_bug.cgi?id=101621
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/API/C/WKAPICast.h: Don't include CookieJar.h, its completely unnecessary.
+
 2012-11-09  peavo@outlook.com  <peavo@outlook.com>
 
         WinCairo build fails to link

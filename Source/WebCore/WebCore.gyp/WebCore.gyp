@@ -2075,6 +2075,7 @@
         ['exclude', 'inspector/InspectorFrontendClientLocal\\.cpp$'],
         ['exclude', 'inspector/JavaScript[^/]*\\.cpp$'],
         ['exclude', 'loader/UserStyleSheetLoader\\.cpp$'],
+        ['exclude', 'loader/CookieJar\\.cpp$'],
         ['exclude', 'loader/appcache/'],
         ['exclude', 'loader/archive/cf/LegacyWebArchiveMac\\.mm$'],
         ['exclude', 'loader/archive/cf/LegacyWebArchive\\.cpp$'],

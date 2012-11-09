@@ -30,12 +30,9 @@
 #include "CookieJarQt.h"
 
 #include "Cookie.h"
-#include "CookieJar.h"
-#include "Document.h"
-#include "Frame.h"
-#include "FrameLoader.h"
 #include "KURL.h"
 #include "NetworkingContext.h"
+#include "PlatformCookieJar.h"
 #include "ThirdPartyCookiesQt.h"
 #include <QDateTime>
 #include <QNetworkAccessManager>
@@ -49,30 +46,14 @@ namespace WebCore {
 
 static SharedCookieJarQt* s_sharedCookieJarQt = 0;
 
-static NetworkingContext* networkingContext(const Document* document)
+void setCookiesFromDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url, const String& value)
 {
-    if (!document)
-        return 0;
-    Frame* frame = document->frame();
-    if (!frame)
-        return 0;
-    FrameLoader* loader = frame->loader();
-    if (!loader)
-        return 0;
-    return loader->networkingContext();
-}
-
-void setCookies(Document* document, const KURL& url, const String& value)
-{
-    NetworkingContext* context = networkingContext(document);
-    if (!context)
-        return;
-    QNetworkCookieJar* jar = context->networkAccessManager()->cookieJar();
+    QNetworkCookieJar* jar = context ? context->networkAccessManager()->cookieJar() : SharedCookieJarQt::shared();
     if (!jar)
         return;
 
     QUrl urlForCookies(url);
-    QUrl firstPartyUrl(document->firstPartyForCookies());
+    QUrl firstPartyUrl(firstParty);
     if (!thirdPartyCookiePolicyPermits(context, urlForCookies, firstPartyUrl))
         return;
 
@@ -88,15 +69,14 @@ void setCookies(Document* document, const KURL& url, const String& value)
     jar->setCookiesFromUrl(cookies, urlForCookies);
 }
 
-String cookies(const Document* document, const KURL& url)
+String cookiesForDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url)
 {
-    NetworkingContext* context = networkingContext(document);
-    if (!context)
+    QNetworkCookieJar* jar = context ? context->networkAccessManager()->cookieJar() : SharedCookieJarQt::shared();
+    if (!jar)
         return String();
-    QNetworkCookieJar* jar = context->networkAccessManager()->cookieJar();
 
     QUrl urlForCookies(url);
-    QUrl firstPartyUrl(document->firstPartyForCookies());
+    QUrl firstPartyUrl(firstParty);
     if (!thirdPartyCookiePolicyPermits(context, urlForCookies, firstPartyUrl))
         return String();
 
@@ -114,12 +94,11 @@ String cookies(const Document* document, const KURL& url)
     return resultCookies.join(QLatin1String("; "));
 }
 
-String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
+String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL &url)
 {
-    NetworkingContext* context = networkingContext(document);
-    if (!context)
+    QNetworkCookieJar* jar = context ? context->networkAccessManager()->cookieJar() : SharedCookieJarQt::shared();
+    if (!jar)
         return String();
-    QNetworkCookieJar* jar = context->networkAccessManager()->cookieJar();
 
     QList<QNetworkCookie> cookies = jar->cookiesForUrl(QUrl(url));
     if (cookies.isEmpty())
@@ -132,42 +111,43 @@ String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
     return resultCookies.join(QLatin1String("; "));
 }
 
-bool cookiesEnabled(const Document* document)
+bool cookiesEnabled(NetworkingContext* context)
 {
-    NetworkingContext* context = networkingContext(document);
-    if (!context)
-        return false;
-    return context->networkAccessManager()->cookieJar();
+    QNetworkCookieJar* jar = context ? context->networkAccessManager()->cookieJar() : SharedCookieJarQt::shared();
+    return !!jar;
 }
 
-bool getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
+bool getRawCookies(NetworkingContext*, const KURL&, Vector<Cookie>& rawCookies)
 {
     // FIXME: Not yet implemented
     rawCookies.clear();
     return false; // return true when implemented
 }
 
-void deleteCookie(const Document*, const KURL&, const String&)
+void deleteCookie(NetworkingContext*, const KURL&, const String&)
 {
     // FIXME: Not yet implemented
 }
 
-void getHostnamesWithCookies(HashSet<String>& hostnames)
+void getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
 {
+    ASSERT_UNUSED(context, !context); // Not yet implemented for cookie jars other than the shared one.
     SharedCookieJarQt* jar = SharedCookieJarQt::shared();
     if (jar)
         jar->getHostnamesWithCookies(hostnames);
 }
 
-void deleteCookiesForHostname(const String& hostname)
+void deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
 {
+    ASSERT_UNUSED(context, !context); // Not yet implemented for cookie jars other than the shared one.
     SharedCookieJarQt* jar = SharedCookieJarQt::shared();
     if (jar)
         jar->deleteCookiesForHostname(hostname);
 }
 
-void deleteAllCookies()
+void deleteAllCookies(NetworkingContext* context)
 {
+    ASSERT_UNUSED(context, !context); // Not yet implemented for cookie jars other than the shared one.
     SharedCookieJarQt* jar = SharedCookieJarQt::shared();
     if (jar)
         jar->deleteAllCookies();
