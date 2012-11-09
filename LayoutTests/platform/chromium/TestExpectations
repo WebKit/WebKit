@@ -1297,8 +1297,6 @@ webkit.org/b/78830 [ Debug ] svg/custom/mask-invalidation.svg [ ImageOnlyFailure
 webkit.org/b/79454 [ Android Linux Mac ] svg/text/text-rescale.html [ ImageOnlyFailure Pass ]
 webkit.org/b/79454 [ Android Linux Mac ] svg/text/text-viewbox-rescale.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/79456 [ Debug ] svg/repaint/image-with-clip-path.svg [ ImageOnlyFailure Pass ]
-
 # These require more investigation. There is a small change, probably two pixels, in the filter offset
 # when comparing the former and new results. This may be due to bad test design or may be revealing a bug
 # in the code. Turbulence results are very different.

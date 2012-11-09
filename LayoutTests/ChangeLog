@@ -1,3 +1,9 @@
+2012-11-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed, update chromium expectations to remove a duplication.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-08  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         [QT] css3/line-break should be removed from TestExpectations.
