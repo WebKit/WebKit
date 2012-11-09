@@ -30,6 +30,7 @@
 #include "Image.h"
 
 #include "BitmapImage.h"
+#include "CairoUtilitiesEfl.h"
 #include "SharedBuffer.h"
 
 #include <cairo.h>
@@ -60,6 +61,12 @@ PassRefPtr<Image> Image::loadPlatformResource(const char* name)
     RefPtr<SharedBuffer> buffer = loadResourceSharedBuffer(name);
     img->setData(buffer.release(), true);
     return img.release();
+}
+
+Evas_Object* BitmapImage::getEvasObject(Evas* evas)
+{
+    NativeImageCairo* image = nativeImageForCurrentFrame();
+    return image ? evasObjectFromCairoImageSurface(evas, image->surface()).leakRef() : 0;
 }
 
 }

@@ -110,7 +110,8 @@ static const char* cursorString(Cursor::Type type)
         "cursor/zoom_out",
         "cursor/grab",
         "cursor/grabbing",
-        ""}; // FIXME: Just return "" for custom type. We don't support it now.
+        "" // Custom cursor.
+    };
     return cursorStrings[type];
 }
 

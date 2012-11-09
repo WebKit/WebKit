@@ -173,6 +173,10 @@ public:
     virtual GdkPixbuf* getGdkPixbuf();
 #endif
 
+#if PLATFORM(EFL)
+    virtual Evas_Object* getEvasObject(Evas*);
+#endif
+
     virtual NativeImagePtr nativeImageForCurrentFrame();
     virtual bool currentFrameHasAlpha();
 

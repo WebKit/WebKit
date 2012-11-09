@@ -1,3 +1,26 @@
+2012-11-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add support for custom cursors
+        https://bugs.webkit.org/show_bug.cgi?id=101723
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add getEvasObject() virtual method to Image class and
+        provide implementation for BitmapImage.
+
+        No new tests, no behavior change.
+
+        * platform/efl/CursorEfl.cpp:
+        (WebCore::cursorString):
+        * platform/graphics/BitmapImage.h:
+        (BitmapImage):
+        * platform/graphics/Image.h:
+        (Image):
+        (WebCore::Image::getEvasObject):
+        * platform/graphics/efl/ImageEfl.cpp:
+        (WebCore::BitmapImage::getEvasObject):
+        (WebCore):
+
 2012-11-09  Adam Barth  <abarth@webkit.org>
 
         IndexedDB should use mostly ScriptWrappable DOM objects

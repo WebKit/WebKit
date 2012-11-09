@@ -120,7 +120,7 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, Pass
     , m_scaleFactor(1)
 #endif
     , m_settings(Ewk_Settings::create(this))
-    , m_cursorGroup(0)
+    , m_cursorIdentifier(0)
     , m_mouseEventsEnabled(false)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchEventsEnabled(false)
@@ -199,11 +199,38 @@ WKPageRef EwkViewImpl::wkPage()
 
 void EwkViewImpl::setCursor(const Cursor& cursor)
 {
+    if (cursor.image()) {
+        // Custom cursor.
+        if (cursor.image() == m_cursorIdentifier)
+            return;
+
+        m_cursorIdentifier = cursor.image();
+
+        Ewk_View_Smart_Data* sd = smartData();
+        RefPtr<Evas_Object> cursorObject = adoptRef(cursor.image()->getEvasObject(sd->base.evas));
+        if (!cursorObject)
+            return;
+
+        // Resize cursor.
+        evas_object_resize(cursorObject.get(), cursor.image()->size().width(), cursor.image()->size().height());
+
+        // Get cursor hot spot.
+        IntPoint hotSpot;
+        cursor.image()->getHotSpot(hotSpot);
+
+        Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
+        // ecore_evas takes care of freeing the cursor object.
+        ecore_evas_object_cursor_set(ecoreEvas, cursorObject.release().leakRef(), EVAS_LAYER_MAX, hotSpot.x(), hotSpot.y());
+
+        return;
+    }
+
+    // Standard cursor.
     const char* group = cursor.platformCursor();
-    if (!group || group == m_cursorGroup)
+    if (!group || group == m_cursorIdentifier)
         return;
 
-    m_cursorGroup = group;
+    m_cursorIdentifier = group;
     Ewk_View_Smart_Data* sd = smartData();
     RefPtr<Evas_Object> cursorObject = adoptRef(edje_object_add(sd->base.evas));
 

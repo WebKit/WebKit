@@ -61,6 +61,11 @@ typedef struct HBITMAP__ *HBITMAP;
 typedef struct _GdkPixbuf GdkPixbuf;
 #endif
 
+#if PLATFORM(EFL)
+typedef struct _Evas Evas;
+typedef struct _Evas_Object Evas_Object;
+#endif
+
 namespace WebCore {
 
 class AffineTransform;
@@ -159,6 +164,10 @@ public:
 
 #if PLATFORM(QT)
     static void setPlatformResource(const char* name, const QPixmap&);
+#endif
+
+#if PLATFORM(EFL)
+    virtual Evas_Object* getEvasObject(Evas*) { return 0; }
 #endif
 
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,

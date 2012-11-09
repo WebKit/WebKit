@@ -241,7 +241,7 @@ private:
     WebCore::IntPoint m_scrollPosition;
 #endif
     OwnPtr<Ewk_Settings> m_settings;
-    const char* m_cursorGroup; // This is an address, do not free it or use WKEinaSharedString.
+    const void* m_cursorIdentifier; // This is an address, do not free it.
     WKEinaSharedString m_faviconURL;
     WKEinaSharedString m_url;
     mutable WKEinaSharedString m_title;
