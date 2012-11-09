@@ -201,10 +201,10 @@ public:
 
     template<typename M> void addMember(const M& member) { m_memoryInstrumentation->addObject(member, m_objectType); }
     void addRawBuffer(const void* const& buffer, size_t size) { m_memoryInstrumentation->addRawBuffer(buffer, m_objectType, size); }
-    void addPrivateBuffer(size_t size)
+    void addPrivateBuffer(size_t size, MemoryObjectType ownerObjectType = 0)
     {
         if (size)
-            m_memoryInstrumentation->countObjectSize(0, m_objectType, size);
+            m_memoryInstrumentation->countObjectSize(0, ownerObjectType ? ownerObjectType : m_objectType, size);
     }
 
     void addWeakPointer(void*) { }

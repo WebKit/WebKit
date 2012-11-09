@@ -1,3 +1,17 @@
+2012-11-09  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Fix heap snapshots counted several times by NMI
+        https://bugs.webkit.org/show_bug.cgi?id=101085
+
+        The fix moves snapshots size counting to V8PerIsolateData class. As long
+        as it has one instance per isolate its reportMemoryUsage should be
+        called once per isolate.
+
+        Reviewed by Yury Semikhatsky.
+
+        * wtf/MemoryInstrumentation.h:
+        (WTF::MemoryClassInfo::addPrivateBuffer):
+
 2012-11-08  Michael Saboff  <msaboff@apple.com>
 
         HashAndUTF8CharactersTranslator should create an 8 bit string if possible

@@ -27,6 +27,7 @@
 #include "V8PerIsolateData.h"
 
 #include "ScriptGCEvent.h"
+#include "ScriptProfiler.h"
 #include "V8Binding.h"
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationVector.h>
@@ -109,6 +110,8 @@ void V8PerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 
     for (size_t i = 0; i < m_domDataList.size(); i++)
         info.addMember(m_domDataList[i]);
+
+    info.addPrivateBuffer(ScriptProfiler::profilerSnapshotsSize(), WebCoreMemoryTypes::InspectorProfilerAgent);
 }
 
 #if ENABLE(INSPECTOR)
