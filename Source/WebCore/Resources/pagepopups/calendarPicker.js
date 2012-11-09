@@ -1479,7 +1479,7 @@ DaysTable.prototype._maybeSetNextMonth = function(navigationBehaviour) {
  */
 DaysTable.prototype._handleDayClick = function(event) {
     if (event.target.classList.contains(ClassNames.Available))
-        this.picker.submitValue(event.target.dataset.submitValue);
+        this.picker.submitValue(this._rangeForNode(event.target).toString());
 };
 
 /**

@@ -1,3 +1,17 @@
+2012-11-09  Keishi Hattori  <keishi@webkit.org>
+
+        Month/week picker should submit month/week string
+        https://bugs.webkit.org/show_bug.cgi?id=101744
+
+        Reviewed by Kent Tamura.
+
+        Month/week picker should submit month/week string and not yyyy-mm-dd.
+
+        No new tests. Test will be added in Bug 101555 and Bug 101556.
+
+        * Resources/pagepopups/calendarPicker.js:
+        (DaysTable.prototype._handleDayClick):
+
 2012-11-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: wrong output for empty object {}
