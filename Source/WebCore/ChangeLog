@@ -1,3 +1,33 @@
+2012-11-08  Robert Sesek  <rsesek@chromium.org>
+
+        Guard calls to WebKitSystemInterface media control drawing functions in RenderThemeMac with PLATFORM(MAC)
+        https://bugs.webkit.org/show_bug.cgi?id=101634
+
+        Reviewed by Adam Barth.
+
+        No new tests, just disabling unused code in Chromium port.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustMediaSliderThumbSize):
+        (WebCore::RenderThemeMac::paintMediaFullscreenButton):
+        (WebCore::RenderThemeMac::paintMediaMuteButton):
+        (WebCore::RenderThemeMac::paintMediaPlayButton):
+        (WebCore::RenderThemeMac::paintMediaSeekBackButton):
+        (WebCore::RenderThemeMac::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeMac::paintMediaSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaSliderThumb):
+        (WebCore::RenderThemeMac::paintMediaRewindButton):
+        (WebCore::RenderThemeMac::paintMediaReturnToRealtimeButton):
+        (WebCore::RenderThemeMac::paintMediaToggleClosedCaptionsButton):
+        (WebCore::RenderThemeMac::paintMediaControlsBackground):
+        (WebCore::RenderThemeMac::paintMediaCurrentTime):
+        (WebCore::RenderThemeMac::paintMediaTimeRemaining):
+        (WebCore::RenderThemeMac::paintMediaVolumeSliderContainer):
+        (WebCore::RenderThemeMac::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaVolumeSliderThumb):
+        (WebCore::RenderThemeMac::paintMediaFullScreenVolumeSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaFullScreenVolumeSliderThumb):
+
 2012-11-08  Keishi Hattori  <keishi@webkit.org>
 
         Enable calendar picker for input types week/month

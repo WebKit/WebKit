@@ -1786,6 +1786,7 @@ void RenderThemeMac::adjustSliderThumbSize(RenderStyle* style, Element*) const
 
 void RenderThemeMac::adjustMediaSliderThumbSize(RenderStyle* style) const
 {
+#if PLATFORM(MAC)
     int wkPart;
     switch (style->appearance()) {
     case MediaSliderThumbPart:
@@ -1814,6 +1815,9 @@ void RenderThemeMac::adjustMediaSliderThumbSize(RenderStyle* style) const
     float zoomLevel = style->effectiveZoom();
     style->setWidth(Length(static_cast<int>(width * zoomLevel), Fixed));
     style->setHeight(Length(static_cast<int>(height * zoomLevel), Fixed));
+#else
+    ASSERT_NOT_REACHED();
+#endif
 }
 
 enum WKMediaControllerThemeState { 
@@ -1851,6 +1855,7 @@ static FloatRect getUnzoomedRectAndAdjustCurrentContext(RenderObject* o, const P
 
 bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -1860,10 +1865,15 @@ bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const PaintInfo
         wkDrawMediaUIPart(mediaControlElementType(node), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     }
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     Node* mediaNode = node ? node->shadowHost() : 0;
     if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
@@ -1874,10 +1884,15 @@ bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const PaintInfo& pain
         wkDrawMediaUIPart(mediaControlElementType(node), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     }
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaPlayButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     Node* mediaNode = node ? node->shadowHost() : 0;
     if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
@@ -1888,10 +1903,15 @@ bool RenderThemeMac::paintMediaPlayButton(RenderObject* o, const PaintInfo& pain
         wkDrawMediaUIPart(mediaControlElementType(node), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     }
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -1899,10 +1919,15 @@ bool RenderThemeMac::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(MediaSeekBackButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaSeekForwardButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -1910,10 +1935,15 @@ bool RenderThemeMac::paintMediaSeekForwardButton(RenderObject* o, const PaintInf
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(MediaSeekForwardButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     Element* mediaNode = node ? node->shadowHost() : 0;
     if (!mediaNode || !mediaNode->isMediaElement())
@@ -1938,10 +1968,15 @@ bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
     wkDrawMediaSliderTrack(mediaControllerTheme(), context, unzoomedRect, 
         timeLoaded, currentTime, duration, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -1949,10 +1984,15 @@ bool RenderThemeMac::paintMediaSliderThumb(RenderObject* o, const PaintInfo& pai
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(MediaSliderThumb, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
     
 bool RenderThemeMac::paintMediaRewindButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -1960,10 +2000,15 @@ bool RenderThemeMac::paintMediaRewindButton(RenderObject* o, const PaintInfo& pa
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(MediaRewindButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaReturnToRealtimeButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -1971,10 +2016,15 @@ bool RenderThemeMac::paintMediaReturnToRealtimeButton(RenderObject* o, const Pai
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(MediaReturnToRealtimeButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaToggleClosedCaptionsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -1984,10 +2034,15 @@ bool RenderThemeMac::paintMediaToggleClosedCaptionsButton(RenderObject* o, const
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(mediaControlElementType(node), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
  
 bool RenderThemeMac::paintMediaControlsBackground(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -1995,10 +2050,15 @@ bool RenderThemeMac::paintMediaControlsBackground(RenderObject* o, const PaintIn
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(MediaTimelineContainer, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaCurrentTime(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -2008,10 +2068,15 @@ bool RenderThemeMac::paintMediaCurrentTime(RenderObject* o, const PaintInfo& pai
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
     wkDrawMediaUIPart(MediaCurrentTimeDisplay, mediaControllerTheme(), cgContextContainer.context(), unzoomedRect, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaTimeRemaining(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -2021,10 +2086,15 @@ bool RenderThemeMac::paintMediaTimeRemaining(RenderObject* o, const PaintInfo& p
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
     wkDrawMediaUIPart(MediaTimeRemainingDisplay, mediaControllerTheme(), cgContextContainer.context(), unzoomedRect, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaVolumeSliderContainer(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -2032,10 +2102,15 @@ bool RenderThemeMac::paintMediaVolumeSliderContainer(RenderObject* o, const Pain
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(MediaVolumeSliderContainer, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaVolumeSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -2043,10 +2118,15 @@ bool RenderThemeMac::paintMediaVolumeSliderTrack(RenderObject* o, const PaintInf
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(MediaVolumeSlider, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
     
 bool RenderThemeMac::paintMediaVolumeSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -2054,10 +2134,15 @@ bool RenderThemeMac::paintMediaVolumeSliderThumb(RenderObject* o, const PaintInf
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(MediaVolumeSliderThumb, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaFullScreenVolumeSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -2065,10 +2150,15 @@ bool RenderThemeMac::paintMediaFullScreenVolumeSliderTrack(RenderObject* o, cons
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(MediaFullScreenVolumeSlider, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 bool RenderThemeMac::paintMediaFullScreenVolumeSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
+#if PLATFORM(MAC)
     Node* node = o->node();
     if (!node)
         return false;
@@ -2076,6 +2166,10 @@ bool RenderThemeMac::paintMediaFullScreenVolumeSliderThumb(RenderObject* o, cons
     LocalCurrentGraphicsContext localContext(paintInfo.context);
     wkDrawMediaUIPart(MediaFullScreenVolumeSliderThumb, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
+#else
+    ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 String RenderThemeMac::extraMediaControlsStyleSheet()
