@@ -1,3 +1,17 @@
+2012-11-09  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r126490
+
+    2012-08-23  Brady Eidson  <beidson@apple.com>
+
+            REGRESSION (r124815): PDF in frame does not display any more
+            <rdar://problem/12063306> and https://bugs.webkit.org/show_bug.cgi?id=94869
+
+            Reviewed by Alexey Proskuryakov.
+
+            * WebProcess/Plugins/PDF/BuiltInPDFView.mm:
+            (WebKit::BuiltInPDFView::initialize): Tell the controller that initialization was successful.
+
 2012-11-08  Lucas Forschler  <lforschler@apple.com>
 
         Merge r125695
@@ -47784,6 +47798,7 @@
         socketpair().
 
 == Rolled over to ChangeLog-2011-06-04 ==
+.
 .
 .
 .
