@@ -1,3 +1,14 @@
+2012-11-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed, update chromium expectations for tables/.
+
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/backgrounds-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/captions1-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/captions2-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/core/captions3-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png:
+
 2012-11-08  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, update chromium-mac-mountainlion baselines for fast/
