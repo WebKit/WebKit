@@ -105,8 +105,7 @@
             # Project files for each target are intentionally left out, as those
             # mostly list source and header files, which would just add noise.
             "filename": r"Tools/qmake/"
-                        r"|WebKit.pro"
-                        r"|.*DerivedSources\.pri",
+                        r"|WebKit.pro",
         },
         "QtWebKit2PublicAPI": {
             "filename": r"Source/WebKit2/UIProcess/API/qt/"

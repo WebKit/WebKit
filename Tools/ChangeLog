@@ -1,3 +1,14 @@
+2012-11-09  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
+
+        [Qt] Stop watchlist from triggering QtBuildSystem rule on DerivedSources
+
+        Having DerivedSources.pri in the watchlist regexp was creating too much
+        noise.
+
+        Reviewed by Ossy.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-11-09  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         webkitpy/layouttests integration test fails if high shards/processes environment variables are used
