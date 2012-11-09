@@ -47,7 +47,7 @@ v8::Handle<v8::Value> toV8(SVGDocument* impl, v8::Handle<v8::Object> creationCon
         return wrapper;
     if (!V8DOMWindowShell::getEntered()) {
         if (Frame* frame = impl->frame())
-            frame->script()->windowShell()->updateDocumentWrapper(wrapper);
+            frame->script()->windowShell(mainThreadNormalWorld())->updateDocumentWrapper(wrapper);
     }
     return wrapper;
 }

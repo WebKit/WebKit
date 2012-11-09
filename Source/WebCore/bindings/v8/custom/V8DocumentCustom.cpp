@@ -110,7 +110,7 @@ v8::Handle<v8::Value> toV8(Document* impl, v8::Handle<v8::Object> creationContex
         return wrapper;
     if (!V8DOMWindowShell::getEntered()) {
         if (Frame* frame = impl->frame())
-            frame->script()->windowShell()->updateDocumentWrapper(wrapper);
+            frame->script()->windowShell(mainThreadNormalWorld())->updateDocumentWrapper(wrapper);
     }
     return wrapper;
 }

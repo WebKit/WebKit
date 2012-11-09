@@ -200,12 +200,6 @@ V8DOMWindowShell::V8DOMWindowShell(Frame* frame, PassRefPtr<DOMWrapperWorld> wor
 {
 }
 
-bool V8DOMWindowShell::isContextInitialized()
-{
-    ASSERT(m_context.isEmpty() || !m_global.isEmpty());
-    return !m_context.isEmpty();
-}
-
 void V8DOMWindowShell::destroyIsolatedShell()
 {
     disposeContext(true);
@@ -346,9 +340,8 @@ bool V8DOMWindowShell::initializeIfNeeded()
 
     // Flag context as isolated.
     if (!isMainWorld) {
-        V8DOMWindowShell* mainWindow = m_frame->script()->windowShell();
-        mainWindow->initializeIfNeeded();
-        if (!mainWindow->context().IsEmpty())
+        V8DOMWindowShell* mainWindow = m_frame->script()->existingWindowShell(mainThreadNormalWorld());
+        if (mainWindow && !mainWindow->context().IsEmpty())
             setInjectedScriptContextDebugId(m_context.get(), m_frame->script()->contextDebugId(mainWindow->context()));
         setIsolatedWorldField(this, context);
     }
@@ -388,13 +381,6 @@ bool V8DOMWindowShell::initializeIfNeeded()
         }
     }
     m_frame->loader()->client()->didCreateScriptContext(m_context.get(), m_world->extensionGroup(), m_world->worldId());
-
-    if (isMainWorld) {
-        // FIXME: This call is probably in the wrong spot, but causes a test timeout for http/tests/misc/window-open-then-write.html when removed.
-        // Additionally, ScriptController::existingWindowShell cannot be correctly implemented until this call is gone.
-        m_frame->loader()->dispatchDidClearWindowObjectInWorld(0);
-    }
-
     return true;
 }
 
@@ -552,7 +538,7 @@ void V8DOMWindowShell::updateDocument()
     ASSERT(m_world->isMainWorld());
     if (m_global.isEmpty())
         return;
-    if (!initializeIfNeeded())
+    if (m_context.isEmpty())
         return;
     updateDocumentProperty();
     updateSecurityOrigin();
@@ -577,7 +563,7 @@ void V8DOMWindowShell::namedItemAdded(HTMLDocument* document, const AtomicString
 {
     ASSERT(m_world->isMainWorld());
 
-    if (!initializeIfNeeded())
+    if (m_context.isEmpty())
         return;
 
     v8::HandleScope handleScope;
@@ -592,10 +578,10 @@ void V8DOMWindowShell::namedItemRemoved(HTMLDocument* document, const AtomicStri
 {
     ASSERT(m_world->isMainWorld());
 
-    if (document->hasNamedItem(name.impl()) || document->hasExtraNamedItem(name.impl()))
+    if (m_context.isEmpty())
         return;
 
-    if (!initializeIfNeeded())
+    if (document->hasNamedItem(name.impl()) || document->hasExtraNamedItem(name.impl()))
         return;
 
     v8::HandleScope handleScope;

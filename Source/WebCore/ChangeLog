@@ -1,3 +1,67 @@
+2012-11-09  Dan Carney  <dcarney@google.com>
+
+        [V8] Remove ScriptController::windowShell()
+        https://bugs.webkit.org/show_bug.cgi?id=100235
+
+        Reviewed by Adam Barth.
+
+        Refactored windowShell(DOMWrapperWorld*) and
+        existingWindowShell(DOMWrapperWorld*) to be like JSC.
+
+        No new tests. No change in functionality.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateToV8Converters):
+        * bindings/v8/DOMWrapperWorld.cpp:
+        (WebCore::isolatedWorldMap):
+        (WebCore::DOMWrapperWorld::getAllWorlds):
+        (WebCore):
+        * bindings/v8/DOMWrapperWorld.h:
+        (DOMWrapperWorld):
+        * bindings/v8/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::addListener):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::clearForOutOfMemory):
+        (WebCore):
+        (WebCore::ScriptController::clearForClose):
+        (WebCore::ScriptController::updateSecurityOrigin):
+        (WebCore::ScriptController::initializeMainWorld): Returns true if the main world was initialized.
+        (WebCore::existingWindowShellWorkaroundWorld):
+        (WebCore::ScriptController::existingWindowShell):
+        (WebCore::ScriptController::windowShell):
+        (WebCore::ScriptController::evaluateInIsolatedWorld):
+        (WebCore::ScriptController::currentWorldContext):
+        (WebCore::ScriptController::mainWorldContext):
+        (WebCore::ScriptController::haveInterpreter):
+        (WebCore::ScriptController::enableEval):
+        (WebCore::ScriptController::disableEval):
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::setContextDebugId):
+        (WebCore::ScriptController::updateDocument):
+        (WebCore::ScriptController::namedItemAdded):
+        (WebCore::ScriptController::namedItemRemoved):
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+        (WebCore::ScriptController::getAllWorlds):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::perContextDataForCurrentWorld):
+        (WebCore::handleOutOfMemory):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initializeIfNeeded):
+        (WebCore::V8DOMWindowShell::updateDocument):
+        (WebCore::V8DOMWindowShell::namedItemAdded):
+        (WebCore::V8DOMWindowShell::namedItemRemoved):
+        * bindings/v8/V8DOMWindowShell.h:
+        (WebCore::V8DOMWindowShell::isContextInitialized):
+        (WebCore::V8DOMWindowShell::isGlobalInitialized):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8SVGDocumentCustom.cpp:
+        (WebCore::toV8):
+
 2012-11-09  Adam Barth  <abarth@webkit.org>
 
         [V8] Remove a level of indirection in DOMDataStore

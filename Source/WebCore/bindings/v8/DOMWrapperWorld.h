@@ -51,6 +51,7 @@ public:
     static PassRefPtr<DOMWrapperWorld> ensureIsolatedWorld(int worldId, int extensionGroup);
     static bool isolatedWorldsExist() { return isolatedWorldCount; }
     static bool isIsolatedWorldId(int worldId) { return worldId != mainWorldId && worldId != uninitializedWorldId; }
+    static void getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds);
     // Associates an isolated world (see above for description) with a security
     // origin. XMLHttpRequest instances used in that world will be considered
     // to come from that origin, not the frame's.

@@ -92,8 +92,8 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
     }
     m_listenersMap.set(page, listener);
 
-    V8DOMWindowShell* shell = scriptController->windowShell();
-    if (!shell->isContextInitialized())
+    V8DOMWindowShell* shell = scriptController->existingWindowShell(mainThreadNormalWorld());
+    if (!shell || !shell->isContextInitialized())
         return;
     v8::Handle<v8::Context> context = shell->context();
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getScripts")));

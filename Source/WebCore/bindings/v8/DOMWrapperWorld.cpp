@@ -55,12 +55,20 @@ DOMWrapperWorld* mainThreadNormalWorld()
     return cachedNormalWorld.get();
 }
 
-// FIXME: This should probably go to PerIsolateData.
 typedef HashMap<int, DOMWrapperWorld*> WorldMap;
 static WorldMap& isolatedWorldMap()
 {
+    ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(WorldMap, map, ());
     return map;
+}
+
+void DOMWrapperWorld::getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds)
+{
+    worlds.append(mainThreadNormalWorld());
+    WorldMap& isolatedWorlds = isolatedWorldMap();
+    for (WorldMap::iterator it = isolatedWorlds.begin(); it != isolatedWorlds.end(); ++it)
+        worlds.append(it->value);
 }
 
 void DOMWrapperWorld::deallocate(DOMWrapperWorld* world)
