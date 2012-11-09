@@ -1,6 +1,7 @@
 /*
  Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  Copyright (C) 2012 Igalia S.L.
+ Copyright (C) 2012 Adobe Systems Incorporated
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -41,6 +42,15 @@
 #include "CairoUtilities.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
+#endif
+
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterCompiledProgram.h"
+#include "CustomFilterOperation.h"
+#include "CustomFilterProgram.h"
+#include "CustomFilterRenderer.h"
+#include "CustomFilterValidatedProgram.h"
+#include "ValidatedCustomFilterOperation.h"
 #endif
 
 #if !USE(TEXMAP_OPENGL_ES_2)
@@ -566,6 +576,7 @@ BitmapTextureGL::BitmapTextureGL(TextureMapperGL* textureMapper)
     : m_id(0)
     , m_fbo(0)
     , m_rbo(0)
+    , m_depthBufferObject(0)
     , m_shouldClear(true)
     , m_context3D(textureMapper->graphicsContext3D())
 {
@@ -755,6 +766,9 @@ static unsigned getPassesRequiredForFilter(FilterOperation::OperationType type)
     case FilterOperation::BRIGHTNESS:
     case FilterOperation::CONTRAST:
     case FilterOperation::OPACITY:
+#if ENABLE(CSS_SHADERS)
+    case FilterOperation::CUSTOM:
+#endif
         return 1;
     case FilterOperation::BLUR:
     case FilterOperation::DROP_SHADOW:
@@ -857,6 +871,53 @@ static void prepareFilterProgram(TextureMapperShaderProgram* program, const Filt
     }
 }
 
+#if ENABLE(CSS_SHADERS)
+bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapTexture& source, const FilterOperation& filter)
+{
+    RefPtr<CustomFilterRenderer> renderer;
+    switch (filter.getOperationType()) {
+    case FilterOperation::CUSTOM: {
+        // WebKit2 pipeline is using the CustomFilterOperation, that's because of the "de-serialization" that
+        // happens in CoordinatedGraphicsArgumentCoders.
+        const CustomFilterOperation* customFilter = static_cast<const CustomFilterOperation*>(&filter);
+        RefPtr<CustomFilterProgram> program = customFilter->program();
+        renderer = CustomFilterRenderer::create(m_context3D, program->programType(), customFilter->parameters(), 
+            customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshBoxType(), customFilter->meshType());
+        // FIXME: Optimize this by keeping a reference to the program across frames.
+        // https://bugs.webkit.org/show_bug.cgi?id=101801
+        RefPtr<CustomFilterCompiledProgram> compiledProgram = CustomFilterCompiledProgram::create(m_context3D, program->vertexShaderString(), program->fragmentShaderString(), program->programType());
+        renderer->setCompiledProgram(compiledProgram.release());
+        break;
+    }
+    case FilterOperation::VALIDATED_CUSTOM: {
+        // WebKit1 uses the ValidatedCustomFilterOperation.
+        // FIXME: This path is not working yet as GraphicsContext3D fails to initialize.
+        // https://bugs.webkit.org/show_bug.cgi?id=101532
+        return false;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+    if (!renderer || !renderer->prepareForDrawing())
+        return false;
+    static_cast<BitmapTextureGL&>(target).initializeDepthBuffer();
+    m_context3D->enable(GraphicsContext3D::BLEND);
+    m_context3D->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
+    m_context3D->enable(GraphicsContext3D::DEPTH_TEST);
+    m_context3D->depthFunc(GraphicsContext3D::LESS);
+    m_context3D->clearDepth(1);
+    m_context3D->depthMask(1);
+    m_context3D->clearColor(0, 0, 0, 0);
+    m_context3D->clear(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::DEPTH_BUFFER_BIT);
+    renderer->draw(static_cast<const BitmapTextureGL&>(source).id(), source.size());
+    m_context3D->disable(GraphicsContext3D::DEPTH_TEST);
+    m_context3D->disable(GraphicsContext3D::BLEND);
+    m_context3D->depthMask(0);
+    return true;
+}
+#endif
+
 void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTexture& contentTexture, const FilterOperation& filter, int pass)
 {
     // For standard filters, we always draw the whole texture without transformations.
@@ -888,6 +949,8 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper* textureMa
 
     RefPtr<BitmapTexture> source = this;
     RefPtr<BitmapTexture> target = textureMapper->acquireTextureFromPool(m_textureSize);
+
+    bool useContentTexture = true;
     for (size_t i = 0; i < filters.size(); ++i) {
         const FilterOperation* filter = filters.at(i);
         ASSERT(filter);
@@ -895,8 +958,20 @@ PassRefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper* textureMa
         int numPasses = getPassesRequiredForFilter(filter->getOperationType());
         for (int j = 0; j < numPasses; ++j) {
             textureMapperGL->bindSurface(target.get());
-            textureMapperGL->drawFiltered((i || j) ? *source : contentTexture, contentTexture, *filter, j);
+            const BitmapTexture& sourceTexture = useContentTexture ? contentTexture : *source;
+#if ENABLE(CSS_SHADERS)
+            if (filter->getOperationType() == FilterOperation::CUSTOM) {
+                if (textureMapperGL->drawUsingCustomFilter(*target, sourceTexture, *filter)) {
+                    // Only swap if the draw was successful.
+                    std::swap(source, target);
+                    useContentTexture = false;
+                }
+                continue;
+            }
+#endif
+            textureMapperGL->drawFiltered(sourceTexture, contentTexture, *filter, j);
             std::swap(source, target);
+            useContentTexture = false;
         }
     }
 
@@ -932,6 +1007,18 @@ void BitmapTextureGL::initializeStencil()
     m_context3D->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_rbo);
     m_context3D->clearStencil(0);
     m_context3D->clear(GraphicsContext3D::STENCIL_BUFFER_BIT);
+}
+
+void BitmapTextureGL::initializeDepthBuffer()
+{
+    if (m_depthBufferObject)
+        return;
+
+    m_depthBufferObject = m_context3D->createRenderbuffer();
+    m_context3D->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthBufferObject);
+    m_context3D->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT16, m_textureSize.width(), m_textureSize.height());
+    m_context3D->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
+    m_context3D->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBufferObject);
 }
 
 void BitmapTextureGL::clearIfNeeded()
@@ -978,6 +1065,9 @@ BitmapTextureGL::~BitmapTextureGL()
 
     if (m_rbo)
         m_context3D->deleteRenderbuffer(m_rbo);
+
+    if (m_depthBufferObject)
+        m_context3D->deleteRenderbuffer(m_depthBufferObject);
 }
 
 bool BitmapTextureGL::isValid() const

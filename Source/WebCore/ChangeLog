@@ -1,3 +1,28 @@
+2012-11-09  Alexandru Chiculita  <achicu@adobe.com>
+
+        [Texmap][CSS Shaders] Enable CSS Shaders in TextureMapperGL
+        https://bugs.webkit.org/show_bug.cgi?id=98990
+
+        Reviewed by Noam Rosenthal.
+
+        Added code that draws the Custom Filter in the TextureMapperGL. Also added 
+        required code to make a depth buffer for a BitmapTextureGL.
+
+        Note that the code is not optimized yet, so it will always recompile the shader.
+
+        Test: css3/filters/custom/composited/custom-filter-blend-modes.html
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::BitmapTextureGL::BitmapTextureGL):
+        (WebCore::getPassesRequiredForFilter):
+        (WebCore):
+        (WebCore::TextureMapperGL::drawUsingCustomFilter):
+        (WebCore::BitmapTextureGL::applyFilters):
+        (WebCore::BitmapTextureGL::initializeDepthBuffer):
+        (WebCore::BitmapTextureGL::~BitmapTextureGL):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        (BitmapTextureGL):
+
 2012-11-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         CustomEvent: Allow taking in a serialized value during initialization.
