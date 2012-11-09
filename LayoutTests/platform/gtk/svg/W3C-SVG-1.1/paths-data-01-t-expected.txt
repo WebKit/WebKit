@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (100,3) size 236x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 236x14
           chunk 1 text run 1 at (100.00,14.00) startOffset 0 endOffset 40 width 236.00: "Cubic bezier curves drawn with commands:"
-      RenderSVGPath {path} at (9,24) size 202x107 [stroke={[type=SOLID] [color=#00C000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 210 130 C 145 130 110 80 110 80 C 110 80 75 25 10 25 M 10 130 C 75 130 110 80 110 80 C 110 80 145 25 210 25"]
+      RenderSVGPath {path} at (10,24) size 200x107 [stroke={[type=SOLID] [color=#00C000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 210 130 C 145 130 110 80 110 80 C 110 80 75 25 10 25 M 10 130 C 75 130 110 80 110 80 C 110 80 145 25 210 25"]
       RenderSVGRect {rect} at (208,128) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [x=208.00] [y=128.00] [width=4.00] [height=4.00]
       RenderSVGRect {rect} at (108,78) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [x=108.00] [y=78.00] [width=4.00] [height=4.00]
       RenderSVGRect {rect} at (8,23) size 4x4 [fill={[type=SOLID] [color=#4A83FF]}] [x=8.00] [y=23.00] [width=4.00] [height=4.00]

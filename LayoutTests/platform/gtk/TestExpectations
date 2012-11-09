@@ -986,22 +986,6 @@ Bug(GTK) canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 Bug(GTK) canvas/philip/tests/type.prototype.html [ Failure ]
 
-# The following canvas test failures are fixed by using Cairo 1.12.4.
-
-# A testcase for this failure is already in cairo tree, but has not yet been fixed.
-# http://cgit.freedesktop.org/cairo/commit/?id=4d4056872db94573183473610ad1d81d5439fdc6
-webkit.org/b/54471 canvas/philip/tests/2d.path.arc.selfintersect.1.html [ Failure ]
-webkit.org/b/54471 canvas/philip/tests/2d.path.arc.shape.3.html [ Failure ]
-
-# A testcase for this failure is already in cairo tree, but has not yet been fixed.
-# http://cgit.freedesktop.org/cairo/commit/?id=303f56a2d34a23d933a02fa625873211fb51eb3b
-Bug(GTK) canvas/philip/tests/2d.path.rect.selfintersect.html [ Failure ]
-
-# Strangely set miter limit - calculations suggest it should be 1.414 (and the test passes
-# with miter limit set to that) but perhaps there are special steps to be taken because the
-# rectangle has zero height.
-Bug(GTK) canvas/philip/tests/2d.path.rect.zero.6.html [ Failure ]
-
 # pastes a space instead of a tab
 webkit.org/b/38437 editing/pasteboard/5761530-1.html [ Failure ]
 

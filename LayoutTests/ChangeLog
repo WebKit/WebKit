@@ -1,3 +1,40 @@
+2012-11-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining and removing stale expectations after the Cairo
+        version used in Jhbuild modules was bumped to 1.12.8 in r134073.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-08-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-83-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/paths-data-01-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/paths-data-02-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+        * platform/gtk/svg/batik/text/smallFonts-expected.png:
+        * platform/gtk/svg/batik/text/smallFonts-expected.txt:
+        * platform/gtk/svg/batik/text/textGlyphOrientationHorizontal-expected.png:
+        * platform/gtk/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPath-expected.png:
+        * platform/gtk/svg/batik/text/textOnPath-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPath2-expected.png:
+        * platform/gtk/svg/batik/text/textOnPath2-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPath3-expected.png:
+        * platform/gtk/svg/batik/text/textOnPath3-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPathSpaces-expected.png:
+        * platform/gtk/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/gtk/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/gtk/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/gtk/svg/custom/js-update-path-changes-expected.png:
+        * platform/gtk/svg/custom/js-update-path-changes-expected.txt:
+        * platform/gtk/svg/custom/js-update-path-removal-expected.png:
+        * platform/gtk/svg/custom/js-update-path-removal-expected.txt:
+        * platform/gtk/svg/custom/path-textPath-simulation-expected.png:
+        * platform/gtk/svg/custom/path-textPath-simulation-expected.txt:
+
 2012-11-09  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Region styling properties are not filtered correctly
