@@ -1,3 +1,14 @@
+2012-11-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134068.
+        http://trac.webkit.org/changeset/134068
+        https://bugs.webkit.org/show_bug.cgi?id=101766
+
+        Caused crashes on the bots. (Requested by rakuco on #webkit).
+
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+
 2012-11-09  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK] Bump the jhbuild Cairo version to 1.12.8
