@@ -27,12 +27,12 @@ NodeList[2] console-format-collections.html:35
 Array[2] console-format-collections.html:41
 NonArrayWithLength console-format-collections.html:44
 Arguments[2] console-format-collections.html:51
-[<select>] console-format-collections.html:15
- console-format-collections.html:19
-[<option>, <option>, selectedIndex: 0] console-format-collections.html:23
- console-format-collections.html:27
- console-format-collections.html:31
-[<input>, <input>] console-format-collections.html:35
+[<select>, item: function] console-format-collections.html:15
+[<script>, <script>, <script>, item: function, namedItem: function] console-format-collections.html:19
+[<option>, <option>, selectedIndex: 0, remove: function, add: function, item: function, namedItem: function] console-format-collections.html:23
+[<html>, <head>, <script>, <script>, <script>, <body>, <p>, <div>, <form>, <select>, <option>, <option>, <input>, <input>, namedItem: function, tags: function, item: function] console-format-collections.html:27
+[<select>, <input>, <input>, item: function, namedItem: function] console-format-collections.html:31
+[<input>, <input>, item: function] console-format-collections.html:35
 [1, Array[2]] console-format-collections.html:41
 NonArrayWithLength {keys: Array[0]} console-format-collections.html:44
 [1, "2"] console-format-collections.html:51

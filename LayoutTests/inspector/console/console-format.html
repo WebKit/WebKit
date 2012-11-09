@@ -9,9 +9,9 @@ var globals = [];
 
 function onload()
 {
-
-
-
+    var foo = { foo: "foo"};
+    var bar = { bar: "bar" };
+    bar.__proto__ = foo;
 
     var array = ["test", "test2"]; array.length = 10;
     array.foo = {}; 
@@ -43,7 +43,7 @@ function onload()
     globals = [
         regex1, regex2, str, str2, error, node, func, multilinefunc, num, linkify,
         null, undefined, valuelessAttribute, valuedAttribute, existingAttribute, throwingLengthGetter,
-        NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, array
+        NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, array, {}, [function() {}], bar 
     ];
 
     runTest();

@@ -328,8 +328,11 @@ WebInspector.ConsoleMessageImpl.prototype = {
                     span.addStyleClass("console-formatted-preview-node");
                 else if (property.subtype === "regexp")
                     span.addStyleClass("console-formatted-string");
-            }
-            span.textContent = property.value;
+                span.textContent = property.value;
+            } else if (property.type === "function")
+                span.textContent = "function";
+            else
+                span.textContent = property.value;
         }
         if (preview.overflow)
             titleElement.createChild("span").textContent = "\u2026";

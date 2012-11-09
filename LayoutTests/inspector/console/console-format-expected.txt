@@ -45,6 +45,12 @@ CONSOLE MESSAGE: line 54: -Infinity
 CONSOLE MESSAGE: line 55: -Infinity
 CONSOLE MESSAGE: line 54: test,test2,,,test4,,,,,
 CONSOLE MESSAGE: line 55: test,test2,,,test4,,,,,
+CONSOLE MESSAGE: line 54: [object Object]
+CONSOLE MESSAGE: line 55: [object Object]
+CONSOLE MESSAGE: line 54: function () {}
+CONSOLE MESSAGE: line 55: function () {}
+CONSOLE MESSAGE: line 54: [object Object]
+CONSOLE MESSAGE: line 55: [object Object]
 Tests that console logging dumps proper messages.
 
 Array[10] console-format.html:20
@@ -66,24 +72,22 @@ test named "test" console-format.html:54
 ["test named "test""] console-format.html:55
 globals[3]
 "test named "test""
-Error console-format.html:54
+Error {} console-format.html:54
 [Error] console-format.html:55
 globals[4]
-Error
+Error {}
 <p id="p">Tests that console logging dumps proper messages.</p> console-format.html:54
 [<p>] console-format.html:55
 globals[5]
 <p id="p">Tests that console logging dumps proper messages.</p>
 function () { return 1; } console-format.html:54
-[function () { return 1; }] console-format.html:55
+[function] console-format.html:55
 globals[6]
 function () { return 1; }
 function () {
         return 2;
     } console-format.html:54
-[function () {
-        return 2;
-    }] console-format.html:55
+[function] console-format.html:55
 globals[7]
 function () {
         return 2;
@@ -116,10 +120,10 @@ id="x""x" console-format.html:54
 [id] console-format.html:55
 globals[14]
 id="x""x"
-Object console-format.html:54
+Object {} console-format.html:54
 [Object] console-format.html:55
 globals[15]
-Object
+Object {}
 NaN console-format.html:54
 [NaN] console-format.html:55
 globals[16]
@@ -136,4 +140,16 @@ globals[18]
 [Array[10]] console-format.html:55
 globals[19]
 ["test", "test2", undefined × 2, "test4", undefined × 5]
+Object {} console-format.html:54
+[Object] console-format.html:55
+globals[20]
+Object {}
+[function] console-format.html:54
+[Array[1]] console-format.html:55
+globals[21]
+[function () {}]
+Object {bar: "bar", foo: "foo"} console-format.html:54
+[Object] console-format.html:55
+globals[22]
+Object {bar: "bar", foo: "foo"}
 

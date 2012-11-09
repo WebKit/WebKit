@@ -814,35 +814,45 @@ InjectedScript.RemoteObject.prototype = {
      */
     _generatePreview: function(object)
     {
-        var preview = {};
+        this.preview = {};
+        this.preview.lossless = true;
+        this.preview.overflow = false;
+        this.preview.properties = [];
+
         var isArray = this.subtype === "array";
         var elementsToDump = isArray ? 100 : 5;
-  
-        var propertyNames = Object.getOwnPropertyNames(/** @type {!Object} */(object));
-        preview.lossless = true;
-        preview.overflow = false;
-        var properties = preview.properties = [];
 
+        for (var o = object; injectedScript._isDefined(o); o = o.__proto__)
+            this._generateProtoPreview(o, elementsToDump);
+    },
+
+    /**
+     * @param {Object} object
+     * @param {number} elementsToDump
+     */
+    _generateProtoPreview: function(object, elementsToDump)
+    {
+        var propertyNames = Object.keys(/** @type {!Object} */(object));
         try {
             for (var i = 0; i < propertyNames.length; ++i) {
-                if (properties.length >= elementsToDump) {
-                    preview.overflow = true;
-                    preview.lossless = false;
+                if (this.preview.properties.length >= elementsToDump) {
+                    this.preview.overflow = true;
+                    this.preview.lossless = false;
                     break;
                 }
                 var name = propertyNames[i];
-                if (isArray && name === "length")
+                if (this.subtype === "array" && name === "length")
                     continue;
 
                 var descriptor = Object.getOwnPropertyDescriptor(/** @type {!Object} */(object), name);
                 if (!("value" in descriptor) || !descriptor.enumerable) {
-                    preview.lossless = false;
+                    this.preview.lossless = false;
                     continue;
                 }
 
                 var value = descriptor.value;
                 if (value === null) {
-                    properties.push({ name: name, type: "object", value: "null" });
+                    this.preview.properties.push({ name: name, type: "object", value: "null" });
                     continue;
                 }
     
@@ -853,27 +863,26 @@ InjectedScript.RemoteObject.prototype = {
                     if (type === "string") {
                         if (value.length > maxLength) {
                             value = this._abbreviateString(value, maxLength, true);
-                            preview.lossless = false;
+                            this.preview.lossless = false;
                         }
                         value = "\"" + value.replace(/\n/g, "\u21B5") + "\"";
                     }
-                    properties.push({ name: name, type: type, value: value + "" });
+                    this.preview.properties.push({ name: name, type: type, value: value + "" });
                     continue;
                 }
     
-                preview.lossless = false;
-
-                if (type === "function")
-                    continue;
+                this.preview.lossless = false;
 
                 var subtype = injectedScript._subtype(value);
-                var property = { name: name, type: type, value: this._abbreviateString(/** @type {string} */ (injectedScript._describe(value)), maxLength, subtype === "regexp") };
+                var description = "";
+                if (type !== "function")
+                    description = this._abbreviateString(/** @type {string} */ (injectedScript._describe(value)), maxLength, subtype === "regexp");
+
+                var property = { name: name, type: type, value: description };
                 if (subtype)
                     property.subtype = subtype;
-                properties.push(property);
+                this.preview.properties.push(property);
             }
-            if (properties.length)
-                this.preview = preview;
         } catch (e) {
         }
     },

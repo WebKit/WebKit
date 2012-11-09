@@ -1,3 +1,18 @@
+2012-11-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: wrong output for empty object {}
+        https://bugs.webkit.org/show_bug.cgi?id=101356
+
+        Reviewed by Vsevolod Vlasov.
+
+        Changed preview formatting to iterate over enumerable properties only + visit the prototypes.
+
+        * inspector/console/command-line-api-expected.txt:
+        * inspector/console/command-line-api-inspect-expected.txt:
+        * inspector/console/console-format-collections-expected.txt:
+        * inspector/console/console-format-expected.txt:
+        * platform/chromium/inspector/console/console-format-collections-expected.txt:
+
 2012-11-09  Kangil Han  <kangil.han@samsung.com>
 
         [EFL] Refactor TestExpectations file

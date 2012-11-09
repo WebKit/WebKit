@@ -1,3 +1,17 @@
+2012-11-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: wrong output for empty object {}
+        https://bugs.webkit.org/show_bug.cgi?id=101356
+
+        Reviewed by Vsevolod Vlasov.
+
+        Changed preview formatting to iterate over enumerable properties only + visit the prototypes.
+
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._appendObjectPreview):
+
 2012-11-09  Keishi Hattori  <keishi@webkit.org>
 
         Fix annotations in page popup files
