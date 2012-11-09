@@ -39,8 +39,6 @@
 #include "TestNavigationController.h"
 #include "TestShell.h"
 #include "TestWebPlugin.h"
-#include "WebAccessibilityController.h"
-#include "WebAccessibilityObject.h"
 #include "WebConsoleMessage.h"
 #include "WebContextMenuData.h"
 #include "WebDOMMessageEvent.h"
@@ -633,94 +631,6 @@ int WebViewHost::historyForwardListCount()
 {
     int currentIndex =navigationController()->lastCommittedEntryIndex();
     return navigationController()->entryCount() - currentIndex - 1;
-}
-
-void WebViewHost::postAccessibilityNotification(const WebAccessibilityObject& obj, WebAccessibilityNotification notification)
-{
-    if (notification == WebAccessibilityNotificationFocusedUIElementChanged)
-        m_shell->accessibilityController()->setFocusedElement(obj);
-
-    const char* notificationName;
-    switch (notification) {
-    case WebAccessibilityNotificationActiveDescendantChanged:
-        notificationName = "ActiveDescendantChanged";
-        break;
-    case WebAccessibilityNotificationAutocorrectionOccured:
-        notificationName = "AutocorrectionOccured";
-        break;
-    case WebAccessibilityNotificationCheckedStateChanged:
-        notificationName = "CheckedStateChanged";
-        break;
-    case WebAccessibilityNotificationChildrenChanged:
-        notificationName = "ChildrenChanged";
-        break;
-    case WebAccessibilityNotificationFocusedUIElementChanged:
-        notificationName = "FocusedUIElementChanged";
-        break;
-    case WebAccessibilityNotificationLayoutComplete:
-        notificationName = "LayoutComplete";
-        break;
-    case WebAccessibilityNotificationLoadComplete:
-        notificationName = "LoadComplete";
-        break;
-    case WebAccessibilityNotificationSelectedChildrenChanged:
-        notificationName = "SelectedChildrenChanged";
-        break;
-    case WebAccessibilityNotificationSelectedTextChanged:
-        notificationName = "SelectedTextChanged";
-        break;
-    case WebAccessibilityNotificationValueChanged:
-        notificationName = "ValueChanged";
-        break;
-    case WebAccessibilityNotificationScrolledToAnchor:
-        notificationName = "ScrolledToAnchor";
-        break;
-    case WebAccessibilityNotificationLiveRegionChanged:
-        notificationName = "LiveRegionChanged";
-        break;
-    case WebAccessibilityNotificationMenuListItemSelected:
-        notificationName = "MenuListItemSelected";
-        break;
-    case WebAccessibilityNotificationMenuListValueChanged:
-        notificationName = "MenuListValueChanged";
-        break;
-    case WebAccessibilityNotificationRowCountChanged:
-        notificationName = "RowCountChanged";
-        break;
-    case WebAccessibilityNotificationRowCollapsed:
-        notificationName = "RowCollapsed";
-        break;
-    case WebAccessibilityNotificationRowExpanded:
-        notificationName = "RowExpanded";
-        break;
-    case WebAccessibilityNotificationInvalidStatusChanged:
-        notificationName = "InvalidStatusChanged";
-        break;
-    case WebAccessibilityNotificationTextChanged:
-        notificationName = "TextChanged";
-        break;
-    case WebAccessibilityNotificationAriaAttributeChanged:
-        notificationName = "AriaAttributeChanged";
-        break;
-    default:
-        notificationName = "UnknownNotification";
-        break;
-    }
-
-    m_shell->accessibilityController()->notificationReceived(obj, notificationName);
-
-    if (m_shell->accessibilityController()->shouldLogAccessibilityEvents()) {
-        printf("AccessibilityNotification - %s", notificationName);
-
-        WebKit::WebNode node = obj.node();
-        if (!node.isNull() && node.isElementNode()) {
-            WebKit::WebElement element = node.to<WebKit::WebElement>();
-            if (element.hasAttribute("id"))
-                printf(" - id:%s", element.getAttribute("id").utf8().data());
-        }
-
-        printf("\n");
-    }
 }
 
 #if ENABLE(NOTIFICATIONS)

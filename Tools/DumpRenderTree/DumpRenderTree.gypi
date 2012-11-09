@@ -71,6 +71,7 @@
             'chromium/TestRunner/public/WebEventSender.h',
             'chromium/TestRunner/public/WebTask.h',
             'chromium/TestRunner/public/WebTestInterfaces.h',
+            'chromium/TestRunner/public/WebTestProxy.h',
             'chromium/TestRunner/src/AccessibilityControllerChromium.cpp',
             'chromium/TestRunner/src/AccessibilityControllerChromium.h',
             'chromium/TestRunner/src/AccessibilityUIElementChromium.cpp',
@@ -95,6 +96,7 @@
             'chromium/TestRunner/src/WebEventSender.cpp',
             'chromium/TestRunner/src/WebTask.cpp',
             'chromium/TestRunner/src/WebTestInterfaces.cpp',
+            'chromium/TestRunner/src/WebTestProxy.cpp',
         ],
         'test_plugin_files': [
             'TestNetscapePlugIn/PluginObject.cpp',

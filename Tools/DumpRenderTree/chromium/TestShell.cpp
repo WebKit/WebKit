@@ -47,6 +47,7 @@
 #include "WebRuntimeFeatures.h"
 #include "WebScriptController.h"
 #include "WebSettings.h"
+#include "WebTestProxy.h"
 #include "WebView.h"
 #include "WebViewHost.h"
 #include "platform/WebArrayBufferView.h"
@@ -751,7 +752,12 @@ WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url)
 
 WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url, DRTDevToolsAgent* devToolsAgent)
 {
-    WebViewHost* host = new WebViewHost(this);
+    WebTestRunner::WebTestProxy<WebViewHost, TestShell*>* host = new WebTestRunner::WebTestProxy<WebViewHost, TestShell*>(this);
+    host->setInterfaces(m_testInterfaces.get());
+    if (m_webViewHost)
+        host->setDelegate(m_webViewHost.get());
+    else
+        host->setDelegate(host);
     WebView* view = WebView::create(host);
     view->setPermissionClient(webPermissions());
     view->setDevToolsAgentClient(devToolsAgent);

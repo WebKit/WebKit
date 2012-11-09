@@ -1,3 +1,40 @@
+2012-11-09  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Introduce a WebTestProxy to override methods in WebViewClient for layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=101452
+
+        Reviewed by Adam Barth.
+
+        The WebTestProxy is template, so it can derive from an implementation
+        of the WebViewClient interface. That way, WebTestProxy can hook into
+        individual methods of the WebViewClient and forward all the rest to the
+        actual implementation.
+
+        To demonstrate how I want to use this, I moved the
+        postAccessibilityNotification method from WebViewHost to WebTestProxy.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h: Added.
+        (WebKit):
+        (WebTestRunner):
+        (WebTestProxyBase):
+        (WebTestProxy):
+        (WebTestRunner::WebTestProxy::WebTestProxy):
+        (WebTestRunner::WebTestProxy::~WebTestProxy):
+        (WebTestRunner::WebTestProxy::postAccessibilityNotification):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp: Added.
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::WebTestProxyBase):
+        (WebTestRunner::WebTestProxyBase::~WebTestProxyBase):
+        (WebTestRunner::WebTestProxyBase::setInterfaces):
+        (WebTestRunner::WebTestProxyBase::setDelegate):
+        (WebTestRunner::WebTestProxyBase::doPostAccessibilityNotification):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::createNewWindow):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-11-09  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Build with MSVC fails to use nmake instead of make
