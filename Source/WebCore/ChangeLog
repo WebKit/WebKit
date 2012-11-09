@@ -1,3 +1,16 @@
+2012-11-09  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Regression(r107593) Crash in ContextMenuController::addInspectElementItem()
+        https://bugs.webkit.org/show_bug.cgi?id=101595
+
+        Reviewed by Simon Hausmann.
+
+        If the contextMenu is a null pointer treat it as empty, appendItem will later
+        create it if necessary.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::addInspectElementItem):
+
 2012-11-09  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add support for custom cursors

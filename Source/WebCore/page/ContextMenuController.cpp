@@ -1099,9 +1099,9 @@ void ContextMenuController::addInspectElementItem()
 
     ContextMenuItem InspectElementItem(ActionType, ContextMenuItemTagInspectElement, contextMenuItemTagInspectElement());
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-    if (!m_contextMenu->items().isEmpty())
+    if (m_contextMenu && !m_contextMenu->items().isEmpty())
 #else
-    if (m_contextMenu->itemCount())
+    if (m_contextMenu && m_contextMenu->itemCount())
 #endif
         appendItem(*separatorItem(), m_contextMenu.get());
     appendItem(InspectElementItem, m_contextMenu.get());
