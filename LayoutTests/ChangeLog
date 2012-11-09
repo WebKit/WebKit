@@ -1,3 +1,14 @@
+2012-11-09  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL] Refactor TestExpectations file
+        https://bugs.webkit.org/show_bug.cgi?id=101738
+
+        Unreviewed, EFL gardening. 
+
+        Remove duplicated definitions.
+
+        * platform/efl/TestExpectations:
+
 2012-11-09  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL] Skip failing test perf/accessibility-title-ui-element.html

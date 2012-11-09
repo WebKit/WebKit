@@ -239,11 +239,6 @@ svg/as-image/image-respects-deviceScaleFactor.html
 # Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
 http/tests/websocket/tests/hybi/
 
-# Hits Cairo assertion
-fast/repaint/moving-shadow-on-container.html
-svg/css/composite-shadow-example.html
-svg/css/composite-shadow-with-opacity.html
-
 # Unclassified failures
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
@@ -1614,11 +1609,9 @@ Bug(EFL) compositing/absolute-position-changed-with-composited-parent-layer.html
 Bug(EFL) compositing/bounds-in-flipped-writing-mode.html [ Failure ]
 Bug(EFL) compositing/geometry/flipped-writing-mode.html [ Skip ]
 Bug(EFL) compositing/geometry/foreground-layer.html [ Skip ]
-Bug(EFL) compositing/geometry/preserve-3d-switching.html [ Skip ]
 Bug(EFL) compositing/geometry/repaint-foreground-layer.html [ Skip ]
 Bug(EFL) compositing/iframes/become-composited-nested-iframes.html [ Skip ]
 Bug(EFL) compositing/iframes/leave-compositing-iframe.html [ Failure ]
-Bug(EFL) compositing/iframes/page-cache-layer-tree.html [ Skip ]
 Bug(EFL) compositing/iframes/scroll-grandchild-iframe.html [ Skip ]
 Bug(EFL) compositing/layer-creation/animation-overlap-with-children.html [ Failure Pass ]
 Bug(EFL) compositing/layer-creation/fixed-position-and-transform.html [ Skip ]
@@ -1697,7 +1690,6 @@ Bug(EFL) transforms/3d/point-mapping/3d-point-mapping-origins.html [ Missing ]
 Bug(EFL) transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ Missing ]
 Bug(EFL) transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html [ Missing ]
 Bug(EFL) transforms/3d/point-mapping/3d-point-mapping.html [ Missing ]
-Bug(EFL) transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html [ Skip ]
 Bug(EFL) transitions/negative-delay.html [ Failure Pass ]
 
 # It may even be the case that the tests themselves are wrong.
