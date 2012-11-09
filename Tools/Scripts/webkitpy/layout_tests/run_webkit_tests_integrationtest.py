@@ -33,6 +33,7 @@ import codecs
 import itertools
 import json
 import logging
+import os
 import platform
 import Queue
 import re
@@ -309,10 +310,19 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
     def test_max_locked_shards(self):
+        # Tests for the default of using one locked shard even in the case of more than one child process.
         if not self.should_test_processes:
             return
+        save_env_webkit_test_max_locked_shards = None
+        if "WEBKIT_TEST_MAX_LOCKED_SHARDS" in os.environ:
+            save_env_webkit_test_max_locked_shards = os.environ["WEBKIT_TEST_MAX_LOCKED_SHARDS"]
+            del os.environ["WEBKIT_TEST_MAX_LOCKED_SHARDS"]
         _, _, regular_output, _ = logging_run(['--debug-rwt-logging', '--child-processes', '2'], shared_port=False)
-        self.assertTrue(any(['(1 locked)' in line for line in regular_output.buflist]))
+        try:
+            self.assertTrue(any(['(1 locked)' in line for line in regular_output.buflist]))
+        finally:
+            if save_env_webkit_test_max_locked_shards:
+                os.environ["WEBKIT_TEST_MAX_LOCKED_SHARDS"] = save_env_webkit_test_max_locked_shards
 
     def test_child_processes_2(self):
         if self.should_test_processes:
