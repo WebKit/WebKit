@@ -368,6 +368,9 @@ WebInspector.TimelinePresentationModel.prototype = {
         case recordTypes.ResourceReceivedData:
             return this._sendRequestRecords[record.data["requestId"]];
 
+        case recordTypes.ResourceSendRequest:
+            return this._rootRecord;
+
         case recordTypes.TimerFire:
             return this._timerRecords[record.data["timerId"]];
 

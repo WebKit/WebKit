@@ -18,6 +18,11 @@ function test()
     var requestId;
     var scriptUrl = "timeline-network-resource.js";
 
+    WebInspector.showPanel("timeline");
+    var model = WebInspector.panels.timeline._model;
+    var presentationModel = WebInspector.panels.timeline._presentationModel;
+    presentationModel.setGlueRecords(true);
+
     InspectorTest.startTimeline(step1);
 
     function step1()
@@ -33,16 +38,23 @@ function test()
 
     function step3()
     {
+        var lastRecordStartTime;
         function format(record)
         {
             if (record.type === WebInspector.TimelineModel.RecordType.ResourceSendRequest)
-                printSend(record);
+                printSend(record._record);
             else if (record.type === WebInspector.TimelineModel.RecordType.ResourceReceiveResponse)
-                printReceive(record);
+                printReceive(record._record);
             else if (record.type === WebInspector.TimelineModel.RecordType.ResourceFinish)
-                printFinish(record);
+                printFinish(record._record);
+
+            if (record.parent && record.parent.type === WebInspector.TimelineModel.RecordType.Root) {
+                if (lastRecordStartTime)
+                    InspectorTest.assertGreaterOrEqual(record.startTime, lastRecordStartTime, "Top level records order violation");
+                lastRecordStartTime = record.startTime;
+            }
         }
-        InspectorTest.printTimelineRecords(null, format);
+        WebInspector.TimelinePresentationModel.forAllRecords([presentationModel.rootRecord()], format);
         InspectorTest.completeTest();
     }
 

@@ -398,19 +398,8 @@ void InspectorTimelineAgent::didScheduleResourceRequest(const String& url, Frame
 
 void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, const ResourceRequest& request, Frame* frame)
 {
-    pushGCEventRecords();
-    RefPtr<InspectorObject> recordRaw = TimelineRecordFactory::createGenericRecord(timestamp(), m_maxCallStackDepth);
     String requestId = IdentifiersFactory::requestId(identifier);
-    recordRaw->setObject("data", TimelineRecordFactory::createResourceSendRequestData(requestId, request));
-    recordRaw->setString("type", TimelineRecordType::ResourceSendRequest);
-    if (frame && m_pageAgent) {
-        String frameId(m_pageAgent->frameId(frame));
-        recordRaw->setString("frameId", frameId);
-    }
-    setHeapSizeStatistics(recordRaw.get());
-    // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
-    RefPtr<TypeBuilder::Timeline::TimelineEvent> record = TypeBuilder::Timeline::TimelineEvent::runtimeCast(recordRaw.release());
-    m_frontend->eventRecorded(record.release());
+    appendRecord(TimelineRecordFactory::createResourceSendRequestData(requestId, request), TimelineRecordType::ResourceSendRequest, true, frame);
 }
 
 void InspectorTimelineAgent::willReceiveResourceData(unsigned long identifier, Frame* frame, int length)
