@@ -1,3 +1,13 @@
+2012-11-08  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed, update chromium-mac baselines.
+
+        * platform/chromium-mac/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-mac/platform/chromium/compositing/video-frame-size-change-expected.png:
+        * platform/chromium-mac/platform/chromium/media/video-frame-size-change-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/text-on-scaled-layer-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/text-on-scaled-surface-expected.png: Added.
+
 2012-11-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove Chromium test expectations after r133939.
