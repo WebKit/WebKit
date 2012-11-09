@@ -66,7 +66,7 @@ public:
         for (HTMLToken::AttributeList::const_iterator iter = attributes.begin();
              iter != attributes.end(); ++iter) {
             AtomicString attributeName(iter->m_name.data(), iter->m_name.size());
-            String attributeValue(iter->m_value.data(), iter->m_value.size());
+            String attributeValue = StringImpl::create8BitIfPossible(iter->m_value.data(), iter->m_value.size());
 
             if (attributeName == charsetAttr)
                 m_charset = attributeValue;

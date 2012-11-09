@@ -148,7 +148,7 @@ void HTMLViewSourceDocument::processTagToken(const String& source, HTMLToken& to
         }
 
         AtomicString name(iter->m_name.data(), iter->m_name.size());
-        String value(iter->m_value.data(), iter->m_value.size()); 
+        String value = StringImpl::create8BitIfPossible(iter->m_value.data(), iter->m_value.size()); 
 
         index = addRange(source, index, iter->m_nameRange.m_start - token.startIndex(), "");
         index = addRange(source, index, iter->m_nameRange.m_end - token.startIndex(), "webkit-html-attribute-name");

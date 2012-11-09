@@ -1,3 +1,23 @@
+2012-11-09  Michael Saboff  <msaboff@apple.com>
+
+        HTML Attributes names and values should be created as 8 bit string where possible
+        https://bugs.webkit.org/show_bug.cgi?id=101781
+
+        Reviewed by Filip Pizlo.
+
+        Given that almost all attribute names and values are lower case ASCII, we should try to
+        create 8 bit strings to process them.  Creating an AtomicString already tries to make
+        an 8 bit string, so that didn't need to change.
+
+        No new tests, functionality covered by existing tests.
+
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::processTagToken):
+        * html/parser/HTMLMetaCharsetParser.cpp:
+        (WebCore::HTMLMetaCharsetParser::processMeta):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::PreloadTask::processAttributes):
+
 2012-11-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Define WEBKIT_IMPLEMENTATION everywhere inside WebCore
