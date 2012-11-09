@@ -47,8 +47,11 @@
 #include "WebKitAccessibleUtil.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include "htmlediting.h"
+
+#if PLATFORM(GTK)
 #include <libgail-util/gail-util.h>
 #include <pango/pango.h>
+#endif
 
 using namespace WebCore;
 
@@ -156,6 +159,7 @@ static gchar* textForObject(AccessibilityObject* coreObject)
 
 static gchar* webkitAccessibleTextGetText(AtkText*, gint startOffset, gint endOffset);
 
+#if PLATFORM(GTK)
 static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
 {
     GailTextUtil* gailTextUtil = gail_text_util_new();
@@ -182,6 +186,7 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
     PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), textForObject(coreObject));
     return layout;
 }
+#endif
 
 static int baselinePositionForRenderObject(RenderObject* renderObject)
 {
@@ -561,17 +566,32 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
 
 static gchar* webkitAccessibleTextGetTextAfterOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
+#if PLATFORM(GTK)
     return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_AFTER_OFFSET, boundaryType, offset, startOffset, endOffset);
+#else
+    notImplemented();
+    return 0;
+#endif
 }
 
 static gchar* webkitAccessibleTextGetTextAtOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
+#if PLATFORM(GTK)
     return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_AT_OFFSET, boundaryType, offset, startOffset, endOffset);
+#else
+    notImplemented();
+    return 0;
+#endif
 }
 
 static gchar* webkitAccessibleTextGetTextBeforeOffset(AtkText* text, gint offset, AtkTextBoundary boundaryType, gint* startOffset, gint* endOffset)
 {
+#if PLATFORM(GTK)
     return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_BEFORE_OFFSET, boundaryType, offset, startOffset, endOffset);
+#else
+    notImplemented();
+    return 0;
+#endif
 }
 
 static gunichar webkitAccessibleTextGetCharacterAtOffset(AtkText*, gint)

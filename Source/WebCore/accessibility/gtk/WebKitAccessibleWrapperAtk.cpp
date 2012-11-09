@@ -59,7 +59,10 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <glib/gprintf.h>
+
+#if PLATFORM(GTK)
 #include <gtk/gtk.h>
+#endif
 
 using namespace WebCore;
 
@@ -232,6 +235,7 @@ static AtkObject* atkParentOfRootObject(AtkObject* object)
         if (!document)
             return 0;
 
+#if PLATFORM(GTK)
         HostWindow* hostWindow = document->view()->hostWindow();
         if (hostWindow) {
             PlatformPageClient scrollView = hostWindow->platformPageClient();
@@ -241,6 +245,7 @@ static AtkObject* atkParentOfRootObject(AtkObject* object)
                     return gtk_widget_get_accessible(scrollViewParent);
             }
         }
+#endif // PLATFORM(GTK)
     }
 
     if (!coreParent)
@@ -269,7 +274,7 @@ static AtkObject* webkitAccessibleGetParent(AtkObject* object)
     if (!coreParent)
         return 0;
 
-    // GTK doesn't expose table rows to Assistive technologies, but we
+    // We don't expose table rows to Assistive technologies, but we
     // need to have them anyway in the hierarchy from WebCore to
     // properly perform coordinates calculations when requested.
     if (coreParent->isTableRow() && coreObject->isTableCell())
@@ -301,7 +306,7 @@ static gint webkitAccessibleGetNChildren(AtkObject* object)
     AccessibilityObject* coreObject = core(object);
 
     // Tables should be treated in a different way because rows should
-    // be bypassed for GTK when exposing the accessible hierarchy.
+    // be bypassed when exposing the accessible hierarchy.
     if (coreObject->isAccessibilityTable())
         return getNChildrenForTable(coreObject);
 
@@ -341,8 +346,8 @@ static AtkObject* webkitAccessibleRefChild(AtkObject* object, gint index)
     AccessibilityObject* coreObject = core(object);
     AccessibilityObject* coreChild = 0;
 
-    // Tables are special cases in GTK because rows should be
-    // bypassed, but still taking their cells into account.
+    // Tables are special cases because rows should be bypassed, but
+    // still taking their cells into account.
     if (coreObject->isAccessibilityTable())
         coreChild = getChildForTable(coreObject, index);
     else {
@@ -418,7 +423,7 @@ static gint webkitAccessibleGetIndexInParent(AtkObject* object)
     }
 
     // Need to calculate the index of the cell in the table, as
-    // rows won't be exposed to assistive technologies in GTK.
+    // rows won't be exposed to assistive technologies.
     if (parent && parent->isTableRow() && coreObject->isTableCell())
         return getIndexInParentForCellInRow(coreObject);
 
@@ -429,7 +434,9 @@ static gint webkitAccessibleGetIndexInParent(AtkObject* object)
 static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
 {
     AtkAttributeSet* attributeSet = 0;
+#if PLATFORM(GTK)
     attributeSet = addToAtkAttributeSet(attributeSet, "toolkit", "WebKitGtk");
+#endif
 
     AccessibilityObject* coreObject = core(object);
     if (!coreObject)
@@ -660,16 +667,16 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
 
     if (coreObject->canSetSelectedAttribute()) {
         atk_state_set_add_state(stateSet, ATK_STATE_SELECTABLE);
-        // Items in focusable lists in Gtk have both STATE_SELECT{ABLE,ED}
-        // and STATE_FOCUS{ABLE,ED}. We'll fake the latter based on the
-        // former.
+        // Items in focusable lists have both STATE_SELECT{ABLE,ED}
+        // and STATE_FOCUS{ABLE,ED}. We'll fake the latter based on
+        // the former.
         if (isListBoxOption)
             atk_state_set_add_state(stateSet, ATK_STATE_FOCUSABLE);
     }
 
     if (coreObject->isSelected()) {
         atk_state_set_add_state(stateSet, ATK_STATE_SELECTED);
-        // Items in focusable lists in Gtk have both STATE_SELECT{ABLE,ED}
+        // Items in focusable lists have both STATE_SELECT{ABLE,ED}
         // and STATE_FOCUS{ABLE,ED}. We'll fake the latter based on the
         // former.
         if (isListBoxOption)
@@ -679,7 +686,7 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     // FIXME: Group both SHOWING and VISIBLE here for now
     // Not sure how to handle this in WebKit, see bug
     // http://bugzilla.gnome.org/show_bug.cgi?id=509650 for other
-    // issues with SHOWING vs VISIBLE within GTK+
+    // issues with SHOWING vs VISIBLE.
     if (!coreObject->isOffScreen()) {
         atk_state_set_add_state(stateSet, ATK_STATE_SHOWING);
         atk_state_set_add_state(stateSet, ATK_STATE_VISIBLE);

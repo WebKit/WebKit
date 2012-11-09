@@ -1,3 +1,31 @@
+2012-11-09  Mario Sanchez Prada  <mario@webkit.org>
+
+        [GTK] Isolate the GTK/Gail/Pango specific code in accessibility/gtk
+        https://bugs.webkit.org/show_bug.cgi?id=101727
+
+        Reviewed by Chris Fleizach.
+
+        Added conditional compilation checks for GTK+ specific
+        accessibility code, to pave the way for sharing this
+        implementation with other ports (e.g WebKitEFL).
+
+        * accessibility/gtk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextGetTextAfterOffset): Added conditional
+        compilation checks, only implementing it in GTK so far.
+        (webkitAccessibleTextGetTextAtOffset): Ditto.
+        (webkitAccessibleTextGetTextBeforeOffset): Ditto.
+        * accessibility/gtk/WebKitAccessibleWrapperAtk.cpp:
+        (atkParentOfRootObject): Added conditional compilation checks,
+        only implementing in GTK the part of getting the accessible object
+        for the root object.
+        (webkitAccessibleGetParent): Updated comments.
+        (webkitAccessibleGetNChildren): Ditto.
+        (webkitAccessibleRefChild): Ditto.
+        (webkitAccessibleGetIndexInParent): Ditto.
+        (webkitAccessibleGetAttributes): Only set the 'toolkit' attribute
+        for GTK. Other ports might be interested in this too.
+        (setAtkStateSetFromCoreObject): Updated comments.
+
 2012-11-09  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Don't trigger any object deletion during RTCPeerConnection::stop
