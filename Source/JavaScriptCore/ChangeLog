@@ -1,5 +1,15 @@
 2012-11-08  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should know that int == null is always false
+        https://bugs.webkit.org/show_bug.cgi?id=101665
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+
+2012-11-08  Filip Pizlo  <fpizlo@apple.com>
+
         Arguments.h should have correct indentation
 
         Rubber stamped by Sam Weinig.

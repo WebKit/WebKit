@@ -696,12 +696,13 @@ bool AbstractState::execute(unsigned indexInBlock)
     case CompareGreater:
     case CompareGreaterEq:
     case CompareEq: {
+        bool constantWasSet = false;
+
         JSValue leftConst = forNode(node.child1()).value();
         JSValue rightConst = forNode(node.child2()).value();
         if (leftConst && rightConst && leftConst.isNumber() && rightConst.isNumber()) {
             double a = leftConst.asNumber();
             double b = rightConst.asNumber();
-            bool constantWasSet;
             switch (node.op()) {
             case CompareLess:
                 constantWasSet = trySetConstant(nodeIndex, jsBoolean(a < b));
@@ -723,11 +724,20 @@ bool AbstractState::execute(unsigned indexInBlock)
                 constantWasSet = false;
                 break;
             }
-            if (constantWasSet) {
-                m_foundConstants = true;
-                node.setCanExit(false);
-                break;
-            }
+        }
+        
+        if (!constantWasSet && node.op() == CompareEq) {
+            SpeculatedType leftType = forNode(node.child1()).m_type;
+            SpeculatedType rightType = forNode(node.child2()).m_type;
+            if ((isInt32Speculation(leftType) && isOtherSpeculation(rightType))
+                || (isOtherSpeculation(leftType) && isInt32Speculation(rightType)))
+                constantWasSet = trySetConstant(nodeIndex, jsBoolean(false));
+        }
+        
+        if (constantWasSet) {
+            m_foundConstants = true;
+            node.setCanExit(false);
+            break;
         }
         
         forNode(nodeIndex).set(SpecBoolean);
