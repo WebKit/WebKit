@@ -1436,9 +1436,7 @@ RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, Register
 #if ENABLE(JIT)
     m_codeBlock->addGlobalResolveInfo(instructions().size());
 #endif
-#if ENABLE(CLASSIC_INTERPRETER)
     m_codeBlock->addGlobalResolveInstruction(instructions().size());
-#endif
     ValueProfile* profile = emitProfiledOpcode(requiresDynamicChecks ? op_resolve_global_dynamic : op_resolve_global);
     instructions().append(propDst->index());
     instructions().append(addConstant(property));
