@@ -544,15 +544,12 @@ void tst_QWebPage::viewModes()
     m_page->setProperty("_q_viewMode", "minimized");
 
     QVariant empty = m_page->mainFrame()->evaluateJavaScript("window.styleMedia.matchMedium(\"(-webkit-view-mode)\")");
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65531", Continue);
     QVERIFY(empty.type() == QVariant::Bool && empty.toBool());
 
     QVariant minimized = m_page->mainFrame()->evaluateJavaScript("window.styleMedia.matchMedium(\"(-webkit-view-mode: minimized)\")");
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65531", Continue);
     QVERIFY(minimized.type() == QVariant::Bool && minimized.toBool());
 
     QVariant maximized = m_page->mainFrame()->evaluateJavaScript("window.styleMedia.matchMedium(\"(-webkit-view-mode: maximized)\")");
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65531", Continue);
     QVERIFY(maximized.type() == QVariant::Bool && !maximized.toBool());
 }
 

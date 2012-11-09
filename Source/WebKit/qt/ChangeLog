@@ -1,3 +1,13 @@
+2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Unmark now passing tests
+        https://bugs.webkit.org/show_bug.cgi?id=65531
+
+        Reviewed by Csaba Osztrogonác.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::viewModes):
+
 2012-11-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] API test tst_qwebinspector crashes
