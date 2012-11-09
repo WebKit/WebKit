@@ -1,3 +1,22 @@
+2012-11-08  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [BlackBerry] need to call closePopup at setValueAndClosePopup
+        https://bugs.webkit.org/show_bug.cgi?id=101568
+
+        Reviewed by George Staikos.
+
+        When early return occurs, we need to call closePopup
+        at setValueAndClosePopup function. See the comments
+        in WebCore/page/PagePopupClient.h. If we have not it,
+        Webkit thread is held and browser will be unresponsive 
+        in BlackBerry port.
+        
+        RIM PR 232962
+        Internally reviewed by Charles Wei.
+
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::setValueAndClosePopup):
+
 2012-11-08  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Replace checkerboard with page background color.

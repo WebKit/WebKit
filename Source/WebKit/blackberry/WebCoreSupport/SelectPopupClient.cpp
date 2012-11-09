@@ -173,8 +173,11 @@ void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)
 
         const Vector<HTMLElement*>& items = m_element->listItems();
 
-        if (items.size() != static_cast<unsigned int>(m_size))
+        // If element changed after select UI showed, do nothing but closePopup().
+        if (items.size() != static_cast<unsigned>(m_size)) {
+            closePopup();
             return;
+        }
 
         HTMLOptionElement* option;
         for (unsigned i = 0; i < m_size; i++) {
