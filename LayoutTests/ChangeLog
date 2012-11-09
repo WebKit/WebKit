@@ -1,3 +1,14 @@
+2012-11-09  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL] css3/flexbox/multiline-justify-content.html doesn't crash
+        https://bugs.webkit.org/show_bug.cgi?id=101717
+
+        Unreviewed, EFL gardening. 
+
+        css3/flexbox/multiline-justify-content.html doesn't crash and can be passed.
+
+        * platform/efl/TestExpectations:
+
 2012-11-08  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed, update chromium-mac baselines.
