@@ -1,3 +1,23 @@
+2012-11-09  Erik Arvidsson  <arv@chromium.org>
+
+        REGRESSION (r125239): classList contains() doesn't work after element was moved from strict mode document to quirks mode document
+        https://bugs.webkit.org/show_bug.cgi?id=101627
+
+        Reviewed by Alexey Proskuryakov.
+
+        We used to only create m_classNamesForQuirksMode in the constructor or when the class attribute
+        was changed. If an element is moved from a standards document to a quirks mode document the
+        m_classNamesForQuirksMode would not be up to date which lead to wrong results.
+
+        Now we alway check if m_classNamesForQuirksMode is up to date (in quirks mode only).
+
+        Test: fast/dom/Element/class-list-move-between-document-with-different-quirks-mode.html
+
+        * html/ClassList.cpp:
+        (WebCore::ClassList::classNames): Create the m_classNamesForQuirksMode lazily as needed so that
+                                          it is up to date.
+        * html/ClassList.h:
+
 2012-11-09  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Combine IDBBackingStore and IDBLevelDBBackingStore

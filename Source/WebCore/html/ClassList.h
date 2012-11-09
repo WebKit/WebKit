@@ -29,9 +29,9 @@
 #include "Element.h"
 #include "HTMLNames.h"
 #include "SpaceSplitString.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
-
 
 namespace WebCore {
 
@@ -69,7 +69,7 @@ private:
     virtual void setValue(const AtomicString& value) OVERRIDE { m_element->setAttribute(classAttr, value); }
 
     Element* m_element;
-    SpaceSplitString m_classNamesForQuirksMode;
+    mutable OwnPtr<SpaceSplitString> m_classNamesForQuirksMode;
 };
 
 } // namespace WebCore

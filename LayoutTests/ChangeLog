@@ -1,3 +1,19 @@
+2012-11-09  Erik Arvidsson  <arv@chromium.org>
+
+        REGRESSION (r125239): classList contains() doesn't work after element was moved from strict mode document to quirks mode document
+        https://bugs.webkit.org/show_bug.cgi?id=101627
+
+        Reviewed by Alexey Proskuryakov.
+
+        We used to only create m_classNamesForQuirksMode in the constructor or when the class attribute
+        was changed. If an element is moved from a standards document to a quirks mode document the
+        m_classNamesForQuirksMode would not be up to date which lead to wrong results.
+
+        Now we alway check if m_classNamesForQuirksMode is up to date (in quirks mode only).
+
+        * fast/dom/Element/class-list-move-between-document-with-different-quirks-mode-expected.txt: Added.
+        * fast/dom/Element/class-list-move-between-document-with-different-quirks-mode.html: Added.
+
 2012-10-28  Timothy Hatcher  <timothy@apple.com>
 
         Test if -webkit-canvas in CSS uses the full backing store instead
