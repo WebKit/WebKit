@@ -571,9 +571,6 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
     WebCore::provideNetworkInfoTo(m_page, new WebCore::NetworkInfoClientBlackBerry(this));
 #endif
 
-    m_page->setCustomHTMLTokenizerChunkSize(256);
-    m_page->setCustomHTMLTokenizerTimeDelay(0.3);
-
     m_webSettings = WebSettings::createFromStandardSettings();
     m_webSettings->setUserAgentString(defaultUserAgent());
     m_page->setDeviceScaleFactor(m_webSettings->devicePixelRatio());

@@ -1,3 +1,15 @@
+2012-11-09  George Staikos  <staikos@webkit.org>
+
+        [BlackBerry] Remove obsolete tokenizer settings
+        https://bugs.webkit.org/show_bug.cgi?id=101689
+
+        Reviewed by Yong Li.
+
+        These tokenizer settings are obsolete and should not be here.  Remove them.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+
 2012-11-08  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [BlackBerry] need to call closePopup at setValueAndClosePopup
