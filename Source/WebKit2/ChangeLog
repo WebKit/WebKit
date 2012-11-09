@@ -1,3 +1,25 @@
+2012-11-08  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Don't send the messages for releasing resources during purging.
+        https://bugs.webkit.org/show_bug.cgi?id=101685
+
+        Reviewed by Noam Rosenthal.
+
+        We don't need to send the messages related to releasing resources to UI Process
+        during purging, because UI Process already had removed all resources.
+        This patch gives us reducing slight messaging overhead and increasing readability.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::purgeBackingStores):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::LayerTreeCoordinator):
+        (WebKit::LayerTreeCoordinator::purgeReleasedImages):
+        (WebKit::LayerTreeCoordinator::removeTile):
+        (WebKit::LayerTreeCoordinator::removeUpdateAtlas):
+        (WebKit::LayerTreeCoordinator::purgeBackingStores):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-11-08  KyungTae Kim  <ktf.kim@samsung.com>
 
         [WK2] Unused parameters on LayerTreeRenderer.cpp
