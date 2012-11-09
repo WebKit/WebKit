@@ -64,18 +64,14 @@ private:
 class ContentSelectorQuery {
     WTF_MAKE_NONCOPYABLE(ContentSelectorQuery);
 public:
-    explicit ContentSelectorQuery(const InsertionPoint*);
+    explicit ContentSelectorQuery(InsertionPoint*);
 
-    bool isValidSelector() const;
     bool matches(const Vector<RefPtr<Node> >& siblings, int nthNode) const;
 private:
-    bool validateSelectorList();
 
-    const InsertionPoint* m_insertionPoint;
+    InsertionPoint* m_insertionPoint;
     ContentSelectorDataList m_selectors;
-    CSSSelectorList m_selectorList;
     ContentSelectorChecker m_selectorChecker;
-    bool m_isValidSelector;
 };
 
 }

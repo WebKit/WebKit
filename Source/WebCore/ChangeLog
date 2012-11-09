@@ -1,3 +1,51 @@
+2012-11-08  Shinya Kawanaka  <shinyak@chromium.org>
+
+        HTMLContentElement should preserve parsed CSSSelectorList
+        https://bugs.webkit.org/show_bug.cgi?id=101543
+
+        Reviewed by Dimitri Glazkov.
+
+        We would like to preserve CSSSelectorList for select attribute of HTMLContentElement.
+
+        Before, we parsed and validated select attribute every time distribution happens. If we preserve the parsed
+        CSSSelectorList, we can reduce distribution time.
+
+        This is also a prepration patch for Bug 101180. It also needs the parsed CSSSelectorList. We don't want to
+        parse and validate it again.
+
+        No new tests, covered by exising tests.
+
+        * html/shadow/ContentSelectorQuery.cpp:
+        (WebCore::ContentSelectorQuery::ContentSelectorQuery): We don't parse select attribute here anymore.
+        if it's already parsed.
+        (WebCore::ContentSelectorQuery::matches):
+        * html/shadow/ContentSelectorQuery.h:
+        (ContentSelectorQuery):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::HTMLContentElement):
+        (WebCore::HTMLContentElement::isSelectValid):
+        (WebCore::HTMLContentElement::ensureSelectParsed): If we don't have parsed the current select attribute,
+        we parse and validate it.
+        (WebCore::HTMLContentElement::parseAttribute): When select attribute is changed, we have to have a flag enabled
+        to parse select attrite again.
+        (WebCore::validateSubSelector): Moved from ContentSelectorQuery.
+        (WebCore):
+        (WebCore::validateSelector): Moved from ContentSelectorQuery.
+        (WebCore::HTMLContentElement::validateSelect):
+        * html/shadow/HTMLContentElement.h:
+        (HTMLContentElement):
+        (WebCore::HTMLContentElement::setSelect):
+        (WebCore):
+        (WebCore::HTMLContentElement::selectorList):
+        * html/shadow/HTMLShadowElement.cpp:
+        (WebCore::HTMLShadowElement::emptySelectorList):
+        (WebCore):
+        * html/shadow/HTMLShadowElement.h:
+        (HTMLShadowElement):
+        (WebCore::HTMLShadowElement::selectorList):
+        * html/shadow/InsertionPoint.h:
+        (InsertionPoint):
+
 2012-11-08  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: switch frontend to use int64_t-based references

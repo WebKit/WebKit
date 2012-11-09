@@ -27,7 +27,6 @@
 #include "config.h"
 #include "ContentSelectorQuery.h"
 
-#include "CSSParser.h"
 #include "CSSSelectorList.h"
 #include "InsertionPoint.h"
 #include "SelectorChecker.h"
@@ -65,26 +64,12 @@ bool ContentSelectorDataList::matches(const ContentSelectorChecker& selectorChec
     return false;
 }
 
-ContentSelectorQuery::ContentSelectorQuery(const InsertionPoint* insertionPoint)
+ContentSelectorQuery::ContentSelectorQuery(InsertionPoint* insertionPoint)
     : m_insertionPoint(insertionPoint)
     , m_selectorChecker(insertionPoint->document(), !insertionPoint->document()->inQuirksMode())
 {
-    if (insertionPoint->select().isNull() || insertionPoint->select().isEmpty()) {
-        m_isValidSelector = true;
-        return;
-    }
-
-    CSSParser parser(insertionPoint->document());
-    parser.parseSelector(insertionPoint->select(), m_selectorList);
-
-    m_isValidSelector = ContentSelectorQuery::validateSelectorList();
-    if (m_isValidSelector)
-        m_selectors.initialize(m_selectorList);
-}
-
-bool ContentSelectorQuery::isValidSelector() const
-{
-    return m_isValidSelector;
+    if (insertionPoint->isSelectValid())
+        m_selectors.initialize(insertionPoint->selectorList());
 }
 
 bool ContentSelectorQuery::matches(const Vector<RefPtr<Node> >& siblings, int nth) const
@@ -95,94 +80,13 @@ bool ContentSelectorQuery::matches(const Vector<RefPtr<Node> >& siblings, int nt
     if (m_insertionPoint->select().isNull() || m_insertionPoint->select().isEmpty())
         return true;
 
-    if (!m_isValidSelector)
+    if (!m_insertionPoint->isSelectValid())
         return false;
 
     if (!node->isElementNode())
         return false;
 
     return m_selectors.matches(m_selectorChecker, siblings, nth);
-}
-
-static bool validateSubSelector(CSSSelector* selector)
-{
-    switch (selector->m_match) {
-    case CSSSelector::None:
-    case CSSSelector::Id:
-    case CSSSelector::Class:
-    case CSSSelector::Exact:
-    case CSSSelector::Set:
-    case CSSSelector::List:
-    case CSSSelector::Hyphen:
-    case CSSSelector::Contain:
-    case CSSSelector::Begin:
-    case CSSSelector::End:
-        return true;
-    case CSSSelector::PseudoElement:
-        return false;
-    case CSSSelector::PagePseudoClass:
-    case CSSSelector::PseudoClass:
-        break;
-    }
-
-    switch (selector->pseudoType()) {
-    case CSSSelector::PseudoEmpty:
-    case CSSSelector::PseudoLink:
-    case CSSSelector::PseudoVisited:
-    case CSSSelector::PseudoTarget:
-    case CSSSelector::PseudoEnabled:
-    case CSSSelector::PseudoDisabled:
-    case CSSSelector::PseudoChecked:
-    case CSSSelector::PseudoIndeterminate:
-    case CSSSelector::PseudoNthChild:
-    case CSSSelector::PseudoNthLastChild:
-    case CSSSelector::PseudoNthOfType:
-    case CSSSelector::PseudoNthLastOfType:
-    case CSSSelector::PseudoFirstChild:
-    case CSSSelector::PseudoLastChild:
-    case CSSSelector::PseudoFirstOfType:
-    case CSSSelector::PseudoLastOfType:
-    case CSSSelector::PseudoOnlyOfType:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool validateSelector(CSSSelector* selector)
-{
-    ASSERT(selector);
-
-    if (!validateSubSelector(selector))
-        return false;
-
-    CSSSelector* prevSubSelector = selector;
-    CSSSelector* subSelector = selector->tagHistory();
-
-    while (subSelector) {
-        if (prevSubSelector->relation() != CSSSelector::SubSelector)
-            return false;
-        if (!validateSubSelector(subSelector))
-            return false;
-
-        prevSubSelector = subSelector;
-        subSelector = subSelector->tagHistory();
-    }
-
-    return true;
-}
-
-bool ContentSelectorQuery::validateSelectorList()
-{
-    if (!m_selectorList.first())
-        return false;
-
-    for (CSSSelector* selector = m_selectorList.first(); selector; selector = m_selectorList.next(selector)) {
-        if (!validateSelector(selector))
-            return false;
-    }
-
-    return true;
 }
 
 }

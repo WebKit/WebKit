@@ -31,6 +31,7 @@
 #ifndef HTMLContentElement_h
 #define HTMLContentElement_h
 
+#include "CSSSelectorList.h"
 #include "InsertionPoint.h"
 #include <wtf/Forward.h>
 
@@ -44,9 +45,10 @@ public:
 
     virtual ~HTMLContentElement();
 
-    const AtomicString& select() const;
     void setSelect(const AtomicString&);
-    virtual bool isSelectValid() const;
+    virtual const AtomicString& select() const;
+    virtual bool isSelectValid();
+    virtual const CSSSelectorList& selectorList();
 
 protected:
     HTMLContentElement(const QualifiedName&, Document*);
@@ -56,9 +58,27 @@ protected:
 
 private:
     virtual void parseAttribute(const Attribute&) OVERRIDE;
+    void ensureSelectParsed();
+    bool validateSelect() const;
 
     bool m_registeredWithShadowRoot;
+
+    bool m_shouldParseSelectorList;
+    bool m_isValidSelector;
+    CSSSelectorList m_selectorList;
 };
+
+inline void HTMLContentElement::setSelect(const AtomicString& selectValue)
+{
+    setAttribute(HTMLNames::selectAttr, selectValue);
+    m_shouldParseSelectorList = true;
+}
+
+inline const CSSSelectorList& HTMLContentElement::selectorList()
+{
+    ensureSelectParsed();
+    return m_selectorList;
+}
 
 inline bool isHTMLContentElement(const Node* node)
 {

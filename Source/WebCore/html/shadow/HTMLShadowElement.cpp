@@ -87,4 +87,10 @@ void HTMLShadowElement::removedFrom(ContainerNode* insertionPoint)
     InsertionPoint::removedFrom(insertionPoint);
 }
 
+const CSSSelectorList& HTMLShadowElement::emptySelectorList()
+{
+    DEFINE_STATIC_LOCAL(CSSSelectorList, selectorList, (CSSSelectorList()));
+    return selectorList;
+}
+
 } // namespace WebCore
