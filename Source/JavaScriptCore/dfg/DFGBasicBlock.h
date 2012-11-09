@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractValue.h"
+#include "DFGBranchDirection.h"
 #include "DFGNode.h"
 #include "Operands.h"
 #include <wtf/OwnPtr.h>
@@ -46,6 +47,7 @@ struct BasicBlock : Vector<NodeIndex, 8> {
         , cfaShouldRevisit(false)
         , cfaFoundConstants(false)
         , cfaDidFinish(true)
+        , cfaBranchDirection(InvalidBranchDirection)
 #if !ASSERT_DISABLED
         , isLinked(false)
 #endif
@@ -105,6 +107,7 @@ struct BasicBlock : Vector<NodeIndex, 8> {
     bool cfaShouldRevisit;
     bool cfaFoundConstants;
     bool cfaDidFinish;
+    BranchDirection cfaBranchDirection;
 #if !ASSERT_DISABLED
     bool isLinked;
 #endif
