@@ -1,3 +1,15 @@
+2012-11-09  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Navigating around NMI snapshot grid with keys breaks the grid
+        https://bugs.webkit.org/show_bug.cgi?id=101611
+
+        Reviewed by Yury Semikhatsky.
+
+        Keys navigation cause populate message sent to the node. The node should
+        not react on populate messages but the first one.
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+
 2012-11-08  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: "Send Request" events are shown out of order.

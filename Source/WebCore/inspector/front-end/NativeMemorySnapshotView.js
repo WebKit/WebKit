@@ -146,6 +146,7 @@ WebInspector.NativeSnapshotNode.prototype = {
     },
 
     _populate: function() {
+        this.removeEventListener("populate", this._populate, this);
         function comparator(a, b) {
             return b.size - a.size;
         }
