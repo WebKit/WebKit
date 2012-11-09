@@ -68,11 +68,11 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this.debugToolbar = this._createDebugToolbar(helpSection);
 
     const initialDebugSidebarWidth = 225;
-    const maximalDebugSidebarWidthPercent = 50;
-    this.createSplitView(this.element, WebInspector.SplitView.SidebarPosition.Right, initialDebugSidebarWidth);
+    const minimumDebugSidebarWidthPercent = 50;
+    this.createSidebarView(this.element, WebInspector.SidebarView.SidebarPosition.Right, initialDebugSidebarWidth);
     this.splitView.element.id = "scripts-split-view";
-    this.splitView.minimalSidebarWidth = Preferences.minScriptsSidebarWidth;
-    this.splitView.minimalMainWidthPercent = 100 - maximalDebugSidebarWidthPercent;
+    this.splitView.setMinimumSidebarWidth(Preferences.minScriptsSidebarWidth);
+    this.splitView.setMinimumMainWidthPercent(minimumDebugSidebarWidthPercent);
 
     this.sidebarElement.appendChild(this.debugToolbar);
 
@@ -82,12 +82,12 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
 
     // Create scripts navigator
     const initialNavigatorWidth = 225;
-    const minimalViewsContainerWidthPercent = 50;
-    this.editorView = new WebInspector.SplitView(WebInspector.SplitView.SidebarPosition.Left, "scriptsPanelNavigatorSidebarWidth", initialNavigatorWidth);
+    const minimumViewsContainerWidthPercent = 50;
+    this.editorView = new WebInspector.SidebarView(WebInspector.SidebarView.SidebarPosition.Left, "scriptsPanelNavigatorSidebarWidth", initialNavigatorWidth);
     this.editorView.element.tabIndex = 0;
 
-    this.editorView.minimalSidebarWidth = Preferences.minScriptsSidebarWidth;
-    this.editorView.minimalMainWidthPercent = minimalViewsContainerWidthPercent;
+    this.editorView.setMinimumSidebarWidth(Preferences.minScriptsSidebarWidth);
+    this.editorView.setMinimumMainWidthPercent(minimumViewsContainerWidthPercent);
     this.editorView.show(this.splitView.mainElement);
 
     this._navigator = new WebInspector.ScriptsNavigator();

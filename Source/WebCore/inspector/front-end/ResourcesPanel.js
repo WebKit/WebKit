@@ -47,7 +47,7 @@ WebInspector.ResourcesPanel = function(database)
 
     WebInspector.settings.resourcesLastSelectedItem = WebInspector.settings.createSetting("resourcesLastSelectedItem", {});
 
-    this.createSplitViewWithSidebarTree();
+    this.createSidebarViewWithTree();
     this.sidebarElement.addStyleClass("outline-disclosure");
     this.sidebarElement.addStyleClass("filter-all");
     this.sidebarElement.addStyleClass("children");

@@ -28,19 +28,19 @@
 
 /**
  * @constructor
- * @param {WebInspector.SplitView} parentSplitView
+ * @param {WebInspector.SidebarView} parentSidebarView
  * @param {WebInspector.View} navigatorView
  * @param {WebInspector.View} editorView
  */
-WebInspector.NavigatorOverlayController = function(parentSplitView, navigatorView, editorView)
+WebInspector.NavigatorOverlayController = function(parentSidebarView, navigatorView, editorView)
 {
-    this._parentSplitView = parentSplitView;
+    this._parentSidebarView = parentSidebarView;
     this._navigatorView = navigatorView;
     this._editorView = editorView;
 
     this._navigatorSidebarResizeWidgetElement = document.createElement("div");
     this._navigatorSidebarResizeWidgetElement.addStyleClass("scripts-navigator-resizer-widget");
-    this._parentSplitView.installResizer(this._navigatorSidebarResizeWidgetElement);
+    this._parentSidebarView.installResizer(this._navigatorSidebarResizeWidgetElement);
     this._navigatorView.element.appendChild(this._navigatorSidebarResizeWidgetElement);
 
     this._navigatorShowHideButton = new WebInspector.StatusBarButton(WebInspector.UIString("Hide navigator"), "scripts-navigator-show-hide-button", 3);
@@ -79,12 +79,12 @@ WebInspector.NavigatorOverlayController.prototype = {
     {
         this._navigatorShowHideButton.state = "hidden";
         this._navigatorShowHideButton.title = WebInspector.UIString("Show navigator");
-        this._parentSplitView.element.appendChild(this._navigatorShowHideButton.element);
+        this._parentSidebarView.element.appendChild(this._navigatorShowHideButton.element);
 
         this._editorView.element.addStyleClass("navigator-hidden");
         this._navigatorSidebarResizeWidgetElement.addStyleClass("hidden");
 
-        this._parentSplitView.hideSidebarElement();
+        this._parentSidebarView.hideSidebarElement();
         this._navigatorView.detach();
         this._editorView.focus();
 
@@ -102,8 +102,8 @@ WebInspector.NavigatorOverlayController.prototype = {
         this._editorView.element.appendChild(this._navigatorShowHideButton.element);
 
         this._innerHideNavigatorOverlay();
-        this._parentSplitView.showSidebarElement();
-        this._navigatorView.show(this._parentSplitView.sidebarElement);
+        this._parentSidebarView.showSidebarElement();
+        this._navigatorView.show(this._parentSidebarView.sidebarElement);
         this._navigatorView.focus();
         WebInspector.settings.navigatorHidden.set(false);
     },
@@ -125,9 +125,9 @@ WebInspector.NavigatorOverlayController.prototype = {
 
         this._navigatorView.element.appendChild(this._navigatorShowHideButton.element);
         this._boundContainingElementFocused = this._containingElementFocused.bind(this);
-        this._parentSplitView.element.addEventListener("mousedown", this._boundContainingElementFocused, false);
+        this._parentSidebarView.element.addEventListener("mousedown", this._boundContainingElementFocused, false);
 
-        this._sidebarOverlay.show(this._parentSplitView.element);
+        this._sidebarOverlay.show(this._parentSidebarView.element);
         this._navigatorView.focus();
     },
 
@@ -149,7 +149,7 @@ WebInspector.NavigatorOverlayController.prototype = {
 
         this._navigatorShowHideButton.state = "hidden";
         this._navigatorShowHideButton.title = WebInspector.UIString("Show navigator");
-        this._parentSplitView.element.appendChild(this._navigatorShowHideButton.element);
+        this._parentSidebarView.element.appendChild(this._navigatorShowHideButton.element);
 
         this._innerHideNavigatorOverlay();
         this._editorView.focus();
@@ -157,7 +157,7 @@ WebInspector.NavigatorOverlayController.prototype = {
 
     _innerHideNavigatorOverlay: function()
     {
-        this._parentSplitView.element.removeEventListener("mousedown", this._boundContainingElementFocused, false);
+        this._parentSidebarView.element.removeEventListener("mousedown", this._boundContainingElementFocused, false);
         this._sidebarOverlay.element.removeEventListener("keydown", this._boundKeyDown, false);
         this._sidebarOverlay.hide();
     },

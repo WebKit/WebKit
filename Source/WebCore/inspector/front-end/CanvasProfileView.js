@@ -39,20 +39,21 @@ WebInspector.CanvasProfileView = function(profile)
     this._profile = profile;
     this.element.addStyleClass("canvas-profile-view");
 
-    this._traceLogElement = document.createElement("div");
-    this._traceLogElement.className = "canvas-trace-log";
+    this._splitView = new WebInspector.SplitView(false, "canvasProfileViewSplitLocation", 300);
+    this._traceLogElement = this._splitView.secondElement();
+    this._traceLogElement.addStyleClass("canvas-trace-log");
     this._traceLogElement.addEventListener("click", this._onTraceLogItemClick.bind(this), false);
-    this.element.appendChild(this._traceLogElement);
 
-    var replayImageContainer = document.createElement("div");
+    var replayImageContainer = this._splitView.firstElement();
     replayImageContainer.id = "canvas-replay-image-container";
-    this.element.appendChild(replayImageContainer);
 
     this._replayImageElement = document.createElement("image");
     this._replayImageElement.id = "canvas-replay-image";
     replayImageContainer.appendChild(this._replayImageElement);
 
     this._debugInfoElement = document.createElement("div");
+
+    this._splitView.show(this.element);
     replayImageContainer.appendChild(this._debugInfoElement);
 
     this._linkifier = new WebInspector.Linkifier();

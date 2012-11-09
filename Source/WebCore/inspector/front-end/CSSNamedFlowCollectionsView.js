@@ -29,11 +29,11 @@
 
 /**
  * @constructor
- * @extends {WebInspector.SplitView}
+ * @extends {WebInspector.SidebarView}
  */
 WebInspector.CSSNamedFlowCollectionsView = function()
 {
-    WebInspector.SplitView.call(this, WebInspector.SplitView.SidebarPosition.Left);
+    WebInspector.SidebarView.call(this, WebInspector.SidebarView.SidebarPosition.Left);
     this.registerRequiredCSS("cssNamedFlows.css");
 
     this._namedFlows = {};
@@ -343,7 +343,7 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
 
     wasShown: function()
     {
-        WebInspector.SplitView.prototype.wasShown.call(this);
+        WebInspector.SidebarView.prototype.wasShown.call(this);
 
         WebInspector.domAgent.requestDocument(this._setDocument.bind(this));
 
@@ -373,7 +373,7 @@ WebInspector.CSSNamedFlowCollectionsView.prototype = {
         this._tabbedPane.removeEventListener(WebInspector.TabbedPane.EventTypes.TabClosed, this._tabClosed, this);
     },
 
-    __proto__: WebInspector.SplitView.prototype
+    __proto__: WebInspector.SidebarView.prototype
 }
 
 /**

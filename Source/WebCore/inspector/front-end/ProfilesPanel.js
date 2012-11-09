@@ -193,7 +193,7 @@ WebInspector.ProfilesPanel = function()
     this.registerRequiredCSS("heapProfiler.css");
     this.registerRequiredCSS("profilesPanel.css");
 
-    this.createSplitViewWithSidebarTree();
+    this.createSidebarViewWithTree();
 
     this.profilesItemTreeElement = new WebInspector.ProfilesSidebarTreeElement(this);
     this.sidebarTree.appendChild(this.profilesItemTreeElement);

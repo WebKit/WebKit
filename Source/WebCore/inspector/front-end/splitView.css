@@ -37,10 +37,18 @@
 
 .split-view-contents {
     position: absolute;
-    top: 0;
-    bottom: 0;
     overflow: auto;
     cursor: default;
+}
+
+.split-view-contents.split-view-contents-vertical {
+    top: 0;
+    bottom: 0;
+}
+
+.split-view-contents.split-view-contents-horizontal {
+    left: 0;
+    right: 0;
 }
 
 .split-view-sidebar-left {
@@ -59,13 +67,22 @@
     border-right: none;
 }
 
-.split-view-resizer {
+.split-view-resizer.split-view-resizer-vertical {
     position: absolute;
     top: 0;
     bottom: 0;
     width: 5px;
-    z-index: 500;
+    z-index: 1500;
     cursor: ew-resize;
+}
+
+.split-view-resizer.split-view-resizer-horizontal {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 5px;
+    z-index: 1500;
+    cursor: ns-resize;
 }
 
 .sidebar-overlay {

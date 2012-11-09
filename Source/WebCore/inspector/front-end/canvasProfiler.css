@@ -37,15 +37,15 @@
     bottom: 0;
 }
 
+.canvas-profile-view .split-view-resizer {
+    background: rgb(128, 128, 128);
+}
+
 .canvas-trace-log {
-    position: absolute;
-    top: 400px;
-    left: 5px;
-    right: 5px;
-    bottom: 10px;
     font-size: 13px;
     overflow: auto;
     white-space: nowrap;
+    padding: 5px;
 }
 
 .canvas-trace-log div {
@@ -53,10 +53,10 @@
 }
 
 #canvas-replay-image-container {
-    height: 400px;
     text-align: center;
-    padding: 5px 5px 16px 5px;
-    background-color: white;
+    background-color: black;
+    overflow: hidden;
+    padding: 5px;
 }
 
 #canvas-replay-image {

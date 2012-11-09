@@ -76650,6 +76650,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SidebarView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SnippetJavaScriptSourceFrame.js"
 					>
 				</File>
@@ -76695,6 +76699,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\splitView.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\SidebarView.js"
 					>
 				</File>
 				<File

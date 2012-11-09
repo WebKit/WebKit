@@ -1285,7 +1285,7 @@ WebInspector.NetworkPanel = function()
     WebInspector.Panel.call(this, "network");
     this.registerRequiredCSS("networkPanel.css");
 
-    this.createSplitView();
+    this.createSidebarView();
     this.splitView.hideMainElement();
 
     this._networkLogView = new WebInspector.NetworkLogView();

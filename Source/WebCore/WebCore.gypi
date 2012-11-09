@@ -6466,6 +6466,7 @@
             'inspector/front-end/Settings.js',
             'inspector/front-end/SidebarOverlay.js',
             'inspector/front-end/SidebarPane.js',
+            'inspector/front-end/SidebarView.js',
             'inspector/front-end/SidebarTreeElement.js',
             'inspector/front-end/SnippetStorage.js',
             'inspector/front-end/SoftContextMenu.js',

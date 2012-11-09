@@ -1,3 +1,82 @@
+2012-11-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: split SplitView into SplitView and SidebarView
+        https://bugs.webkit.org/show_bug.cgi?id=101612
+
+        Reviewed by Vsevolod Vlasov.
+
+        Currently, SplitView is rather a sidebar view. I'm extracting the reusable split component from it.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel):
+        * inspector/front-end/CSSNamedFlowCollectionsView.js:
+        (WebInspector.CSSNamedFlowCollectionsView):
+        (WebInspector.CSSNamedFlowCollectionsView.prototype.wasShown):
+        * inspector/front-end/ElementsPanel.js:
+        * inspector/front-end/FileSystemView.js:
+        (WebInspector.FileSystemView):
+        * inspector/front-end/MemoryStatistics.js:
+        (WebInspector.CounterUI):
+        (WebInspector.MemoryStatistics.prototype.setTopPosition):
+        (WebInspector.MemoryStatistics.prototype.setSidebarWidth):
+        (WebInspector.MemoryStatistics.prototype.visible):
+        (WebInspector.MemoryStatistics.prototype.show):
+        (WebInspector.MemoryStatistics.prototype.hide):
+        * inspector/front-end/NavigatorOverlayController.js:
+        (WebInspector.NavigatorOverlayController.prototype.set _pinNavigator):
+        (WebInspector.NavigatorOverlayController.prototype.set showNavigatorOverlay):
+        (WebInspector.NavigatorOverlayController.prototype.hideNavigatorOverlay):
+        (WebInspector.NavigatorOverlayController.prototype._innerHideNavigatorOverlay):
+        * inspector/front-end/NetworkPanel.js:
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.createSidebarView):
+        (WebInspector.Panel.prototype.createSidebarViewWithTree):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        * inspector/front-end/ResourcesPanel.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        * inspector/front-end/SidebarView.js: Added.
+        (WebInspector.SidebarView):
+        (WebInspector.SidebarView.prototype._hasLeftSidebar):
+        (WebInspector.SidebarView.prototype.get mainElement):
+        (WebInspector.SidebarView.prototype.get sidebarElement):
+        (WebInspector.SidebarView.prototype._innerSetSidebarPosition):
+        (WebInspector.SidebarView.prototype.setMinimalSidebarWidth):
+        (WebInspector.SidebarView.prototype.setMinimalMainWidthPercent):
+        (WebInspector.SidebarView.prototype.setSidebarWidth):
+        (WebInspector.SidebarView.prototype.sidebarWidth):
+        (WebInspector.SidebarView.prototype.onResize):
+        (WebInspector.SidebarView.prototype.applyConstraints):
+        (WebInspector.SidebarView.prototype.hideMainElement):
+        (WebInspector.SidebarView.prototype.showMainElement):
+        (WebInspector.SidebarView.prototype.hideSidebarElement):
+        (WebInspector.SidebarView.prototype.showSidebarElement):
+        (WebInspector.SidebarView.prototype.elementsToRestoreScrollPositionsFor):
+        * inspector/front-end/SplitView.js:
+        (WebInspector.SplitView):
+        (WebInspector.SplitView.prototype.firstElement):
+        (WebInspector.SplitView.prototype.secondElement):
+        (WebInspector.SplitView.prototype.setChangeFirstOnResize):
+        (WebInspector.SplitView.prototype.resizerElement):
+        (WebInspector.SplitView.prototype.showOnlyFirst):
+        (WebInspector.SplitView.prototype.showOnlySecond):
+        (WebInspector.SplitView.prototype._showOnly):
+        (WebInspector.SplitView.prototype._removeAllLayoutProperties):
+        (WebInspector.SplitView.prototype.showBoth):
+        (WebInspector.SplitView.prototype.setResizable):
+        (WebInspector.SplitView.prototype.setSplitOffset):
+        (WebInspector.SplitView.prototype.splitOffset):
+        (WebInspector.SplitView.prototype._innerSetSplitOffset):
+        (WebInspector.SplitView.prototype._startResizerDragging):
+        * inspector/front-end/TimelinePanel.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/splitView.css:
+
 2012-11-09  Andrey Lushnikov  <lushnikov@google.com>
 
         Web Inspector: Ctrl+A in the network panel should select resource content, not the entire panel

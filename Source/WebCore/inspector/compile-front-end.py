@@ -142,6 +142,7 @@ modules = [
             "SourceTokenizer.js",
             "Spectrum.js",
             "SplitView.js",
+            "SidebarView.js",
             "StatusBarButton.js",
             "TabbedPane.js",
             "TextEditor.js",

@@ -43,13 +43,13 @@ WebInspector.MemoryStatistics = function(timelinePanel, model, sidebarWidth)
     model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this._onRecordsCleared, this);
 
     this._containerAnchor = timelinePanel.element.lastChild;
-    this._memorySplitView = new WebInspector.SplitView(WebInspector.SplitView.SidebarPosition.Left, undefined, sidebarWidth);
-    this._memorySplitView.sidebarElement.addStyleClass("sidebar");
-    this._memorySplitView.element.id = "memory-graphs-container";
+    this._memorySidebarView = new WebInspector.SidebarView(WebInspector.SidebarView.SidebarPosition.Left, undefined, sidebarWidth);
+    this._memorySidebarView.sidebarElement.addStyleClass("sidebar");
+    this._memorySidebarView.element.id = "memory-graphs-container";
 
-    this._memorySplitView.addEventListener(WebInspector.SplitView.EventTypes.Resized, this._sidebarResized.bind(this));
+    this._memorySidebarView.addEventListener(WebInspector.SidebarView.EventTypes.Resized, this._sidebarResized.bind(this));
 
-    this._canvasContainer = this._memorySplitView.mainElement;
+    this._canvasContainer = this._memorySidebarView.mainElement;
     this._canvasContainer.id = "memory-graphs-canvas-container";
     this._currentValuesBar = this._canvasContainer.createChild("div");
     this._currentValuesBar.id = "counter-values-bar";
@@ -66,7 +66,7 @@ WebInspector.MemoryStatistics = function(timelinePanel, model, sidebarWidth)
     this._canvasContainer.appendChild(this._timelineGrid.dividersElement);
 
     // Populate sidebar
-    this._memorySplitView.sidebarElement.createChild("div", "sidebar-tree sidebar-tree-section").textContent = WebInspector.UIString("COUNTERS");
+    this._memorySidebarView.sidebarElement.createChild("div", "sidebar-tree sidebar-tree-section").textContent = WebInspector.UIString("COUNTERS");
     function getDocumentCount(entry)
     {
         return entry.documentCount;
@@ -138,7 +138,7 @@ WebInspector.CounterUI = function(memoryCountersPane, title, currentValueLabel, 
 {
     this._memoryCountersPane = memoryCountersPane;
     this.valueGetter = valueGetter;
-    var container = memoryCountersPane._memorySplitView.sidebarElement.createChild("div", "memory-counter-sidebar-info");
+    var container = memoryCountersPane._memorySidebarView.sidebarElement.createChild("div", "memory-counter-sidebar-info");
     var swatchColor = "rgb(" + rgb.join(",") + ")";
     this._swatch = new WebInspector.SwatchCheckbox(WebInspector.UIString(title), swatchColor);
     this._swatch.addEventListener(WebInspector.SwatchCheckbox.Events.Changed, this._toggleCounterGraph.bind(this));
@@ -223,7 +223,7 @@ WebInspector.MemoryStatistics.prototype = {
 
     setTopPosition: function(top)
     {
-        this._memorySplitView.element.style.top = top + "px";
+        this._memorySidebarView.element.style.top = top + "px";
         this._updateSize();
     },
 
@@ -232,7 +232,7 @@ WebInspector.MemoryStatistics.prototype = {
         if (this._ignoreSidebarResize)
             return;
         this._ignoreSidebarResize = true;
-        this._memorySplitView.setSidebarWidth(width);
+        this._memorySidebarView.setSidebarWidth(width);
         this._ignoreSidebarResize = false;
     },
 
@@ -404,13 +404,13 @@ WebInspector.MemoryStatistics.prototype = {
 
     visible: function()
     {
-        return this._memorySplitView.isShowing();
+        return this._memorySidebarView.isShowing();
     },
 
     show: function()
     {
         var anchor = /** @type {Element|null} */ (this._containerAnchor.nextSibling);
-        this._memorySplitView.show(this._timelinePanel.element, anchor);
+        this._memorySidebarView.show(this._timelinePanel.element, anchor);
         this._updateSize();
         this._refreshDividers();
         setTimeout(this._draw.bind(this), 0);
@@ -426,7 +426,7 @@ WebInspector.MemoryStatistics.prototype = {
 
     hide: function()
     {
-        this._memorySplitView.detach();
+        this._memorySidebarView.detach();
     },
 
     _refreshDividers: function()
