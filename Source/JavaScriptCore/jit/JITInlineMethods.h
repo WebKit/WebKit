@@ -541,6 +541,7 @@ static inline bool arrayProfileSaw(ArrayModes arrayModes, IndexingType capabilit
 
 inline JITArrayMode JIT::chooseArrayMode(ArrayProfile* profile)
 {
+#if ENABLE(VALUE_PROFILER)        
     profile->computeUpdatedPrediction(m_codeBlock);
     ArrayModes arrayModes = profile->observedArrayModes();
     if (arrayProfileSaw(arrayModes, DoubleShape))
@@ -550,6 +551,10 @@ inline JITArrayMode JIT::chooseArrayMode(ArrayProfile* profile)
     if (arrayProfileSaw(arrayModes, ArrayStorageShape))
         return JITArrayStorage;
     return JITContiguous;
+#else
+    UNUSED_PARAM(profile);
+    return JITContiguous;
+#endif
 }
 
 #if USE(JSVALUE32_64)
