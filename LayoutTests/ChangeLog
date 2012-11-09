@@ -1,5 +1,11 @@
 2012-11-09  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, last few chromium-mac-mountainlion expectations cleaned up.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-09  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, baselines change - remove stray baselines for reftests.
 
         * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/text-on-scaled-layer-expected.png: Removed.
