@@ -1,3 +1,36 @@
+2012-11-08  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=101644
+        Fixed header on Facebook news feed becomes detached from top of 
+        viewport after rubber band scrolling
+        -and corresponding-
+        <rdar://problem/12651944>
+
+        Reviewed by Simon Fraser.
+
+        There is code to handle this for non-threaded scrolling on FrameView. 
+        This patch moves most of that code into a convenience function on 
+        ScrollingCoordinator.
+
+        Have FrameView::scrollOffsetForFixedPosition() call 
+        WebCore::scrollOffsetForFixedPosition() with all the right 
+        parameters.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollOffsetForFixedPosition):
+
+        Here's where all the math happens.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::fixedPositionScrollOffset):
+        (WebCore::scrollOffsetForFixedPosition):
+
+        The viewportRect in these three places needs to have the 
+        adjusted-for-fixed offset.
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPosition):
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollLayerPosition):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeFixedViewportConstraints):
+
 2012-11-08  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Deferred image decoding fails with image orientation

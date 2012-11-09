@@ -65,6 +65,40 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
     return adoptRef(new ScrollingCoordinator(page));
 }
 
+static int fixedPositionScrollOffset(int scrollPosition, int maxValue, int scrollOrigin, float dragFactor)
+{
+    if (!maxValue)
+        return 0;
+
+    if (!scrollOrigin) {
+        if (scrollPosition < 0)
+            scrollPosition = 0;
+        else if (scrollPosition > maxValue)
+            scrollPosition = maxValue;
+    } else {
+        if (scrollPosition > 0)
+            scrollPosition = 0;
+        else if (scrollPosition < -maxValue)
+            scrollPosition = -maxValue;
+    }
+    
+    return scrollPosition * dragFactor;
+}
+
+IntSize scrollOffsetForFixedPosition(const IntRect& visibleContentRect, const IntSize& contentsSize, const IntPoint& scrollPosition, const IntPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame)
+{
+    IntSize maxOffset(contentsSize.width() - visibleContentRect.width(), contentsSize.height() - visibleContentRect.height());
+    
+    FloatSize dragFactor = fixedElementsLayoutRelativeToFrame ? FloatSize(1, 1) : FloatSize(
+        (contentsSize.width() - visibleContentRect.width() * frameScaleFactor) / maxOffset.width(),
+        (contentsSize.height() - visibleContentRect.height() * frameScaleFactor) / maxOffset.height());
+
+    int x = fixedPositionScrollOffset(scrollPosition.x(), maxOffset.width(), scrollOrigin.x(), dragFactor.width() / frameScaleFactor);
+    int y = fixedPositionScrollOffset(scrollPosition.y(), maxOffset.height(), scrollOrigin.y(), dragFactor.height() / frameScaleFactor);
+
+    return IntSize(x, y);
+}
+
 ScrollingCoordinator::ScrollingCoordinator(Page* page)
     : m_page(page)
     , m_forceMainThreadScrollLayerPositionUpdates(false)
@@ -242,7 +276,9 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
             scrollLayer->setPosition(-frameView->scrollPosition());
         else {
             scrollLayer->syncPosition(-frameView->scrollPosition());
-            syncChildPositions(frameView->visibleContentRect());
+            LayoutRect viewportRect = frameView->visibleContentRect();
+            viewportRect.setLocation(toPoint(frameView->scrollOffsetForFixedPosition()));
+            syncChildPositions(viewportRect);
         }
     }
 #endif

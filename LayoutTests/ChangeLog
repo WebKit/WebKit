@@ -1,3 +1,18 @@
+2012-11-08  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=101644
+        Fixed header on Facebook news feed becomes detached from top of 
+        viewport after rubber band scrolling
+        -and corresponding-
+        <rdar://problem/12651944>
+
+        Reviewed by Simon Fraser.
+
+        New test ensures that negative offsets will not make their way into 
+        the FixedPositionViewportConstraints.
+        * platform/mac/tiled-drawing/fixed/negative-scroll-offset-expected.txt: Added.
+        * platform/mac/tiled-drawing/fixed/negative-scroll-offset.html: Added.
+
 2012-11-08  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Deferred image decoding fails with image orientation

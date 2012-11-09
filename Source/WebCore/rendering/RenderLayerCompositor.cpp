@@ -2590,7 +2590,9 @@ const FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewpo
     ASSERT(layer->isComposited());
 
     FrameView* frameView = m_renderView->frameView();
+
     LayoutRect viewportRect = frameView->visibleContentRect();
+    viewportRect.setLocation(toPoint(frameView->scrollOffsetForFixedPosition()));
 
     FixedPositionViewportConstraints constraints = FixedPositionViewportConstraints();
 
