@@ -1,3 +1,50 @@
+2012-11-08  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: switch frontend to use int64_t-based references
+        https://bugs.webkit.org/show_bug.cgi?id=100426
+
+        Reviewed by Tony Chang.
+
+        Remove String-based objectStore/index references, obsoleted by
+        https://bugs.webkit.org/show_bug.cgi?id=100425.
+
+        No new tests as this is the second half of a refactor.
+
+        * Modules/indexeddb/IDBCallbacks.h:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::deleteObjectStore):
+        (WebCore::IDBDatabase::transaction):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::transaction):
+        (WebCore::IDBDatabaseBackendImpl::runIntVersionChangeTransaction):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+        (IDBDatabaseBackendInterface):
+        * Modules/indexeddb/IDBMetadata.h:
+        (WebCore::IDBObjectStoreMetadata::findIndex):
+        (IDBObjectStoreMetadata):
+        (WebCore::IDBObjectStoreMetadata::containsIndex):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::put):
+        (WebCore):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::deleteIndex):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (IDBObjectStoreBackendImpl):
+        * Modules/indexeddb/IDBObjectStoreBackendInterface.h:
+        * inspector/Inspector-1.0.json:
+        * inspector/Inspector.json:
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore):
+        (WebCore::InspectorIndexedDBAgent::requestData):
+        * inspector/InspectorIndexedDBAgent.h:
+        (InspectorIndexedDBAgent):
+
 2012-11-08  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Refactoring] Expose collectFeaturesFromSelector from RuleSet.cpp

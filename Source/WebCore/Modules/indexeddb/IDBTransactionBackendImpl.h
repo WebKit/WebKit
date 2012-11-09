@@ -52,7 +52,6 @@ public:
     virtual ~IDBTransactionBackendImpl();
 
     // IDBTransactionBackendInterface
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, ExceptionCode&);
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(int64_t, ExceptionCode&);
     virtual void didCompleteTaskEvents();
     virtual void abort();
