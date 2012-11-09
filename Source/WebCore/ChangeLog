@@ -1,3 +1,9 @@
+2012-11-09  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Unreviewed gardening. Fix chromium-win builds following r134082
+
+        * WebCore.gypi:
+
 2012-11-09  Dan Carney  <dcarney@google.com>
 
         [V8] Remove ScriptController::windowShell()
