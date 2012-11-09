@@ -45,6 +45,13 @@ function createElement(tagName, opt_class, opt_text) {
     return element;
 }
 
+/**
+ * @constructor
+ * @param {!number|Rectangle|Object} xOrRect
+ * @param {!number} y
+ * @param {!number} width
+ * @param {!number} height
+ */
 function Rectangle(xOrRect, y, width, height) {
     if (typeof xOrRect === "object") {
         y = xOrRect.y;

@@ -24,6 +24,7 @@
  */
 
 /**
+ * @constructor
  * @param {!Element} element
  * @param {!Object} config
  */

@@ -110,7 +110,7 @@ function localizeNumber(number) {
     return window.pagePopupController.localizeNumberString(number);
 }
 
-/*
+/**
  * @const
  * @type {number}
  */
@@ -202,6 +202,7 @@ function parseDateString(dateString) {
 }
 
 /**
+ * @constructor
  * @param {!number|Day} valueOrDayOrYear
  * @param {!number=} month
  * @param {!number=} date
@@ -471,6 +472,7 @@ Week.prototype.toString = function() {
 };
 
 /**
+ * @constructor
  * @param {!number|Month} valueOrMonthOrYear
  * @param {!number=} month
  */
@@ -1115,32 +1117,32 @@ YearMonthController.prototype._handleYearMonthChange = function() {
     this.picker.showMonth(Month.parse(selection.dataset.value));
 };
 
-/*
+/**
  * @const
  * @type {number}
  */
 YearMonthController.PreviousTenYears = -120;
-/*
+/**
  * @const
  * @type {number}
  */
 YearMonthController.PreviousYear = -12;
-/*
+/**
  * @const
  * @type {number}
  */
 YearMonthController.PreviousMonth = -1;
-/*
+/**
  * @const
  * @type {number}
  */
 YearMonthController.NextMonth = 1;
-/*
+/**
  * @const
  * @type {number}
  */
 YearMonthController.NextYear = 12;
-/*
+/**
  * @const
  * @type {number}
  */
