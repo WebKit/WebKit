@@ -4291,8 +4291,3 @@ webkit.org/b/101547 svg/custom/foreignObject-crash-on-hover.xml [ ImageOnlyFailu
 webkit.org/b/101547 svg/custom/hit-test-unclosed-subpaths.svg [ ImageOnlyFailure ]
 # The following test has prior expectations which were disabled. Re-enable when removing this:
 webkit.org/b/101547 svg/custom/hit-test-with-br.xhtml [ ImageOnlyFailure ]
-webkit.org/b/101576 [ Debug ] editing/selection/focus_editable_html.html [ Crash ]
-webkit.org/b/101576 [ Debug ] editing/selection/click-after-nested-block.html [ Crash ]
-webkit.org/b/101576 [ Debug ] fast/events/autoscroll.html [ Crash ]
-
-

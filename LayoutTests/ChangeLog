@@ -1,3 +1,9 @@
+2012-11-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove Chromium test expectations after r133939.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-08  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         table not aligned in center column and seems shrunk because of float:right (table-layout: fixed and width: 100%)
