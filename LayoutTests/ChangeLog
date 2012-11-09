@@ -1,5 +1,19 @@
 2012-11-09  Joshua Bell  <jsbell@chromium.org>
 
+        [Chromium] Unreviewed gardening. A few more baselines following 134112.
+
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/overflow/overflow-positioning-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/overflow/overflow-positioning-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/reflections/reflection-opacity-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/overflow/clip-content-under-overflow-controls-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/overflow/overflow-positioning-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/reflections/reflection-opacity-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/repaint/newly-composited-on-scroll-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/absolute-position-changed-with-composited-parent-layer-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment-expected.png: Added.
+
+2012-11-09  Joshua Bell  <jsbell@chromium.org>
+
         [Chromium] Unreviewed gardening. Widen cross-fade-invalidation expectation to include all platforms.
 
         * platform/chromium/TestExpectations:
