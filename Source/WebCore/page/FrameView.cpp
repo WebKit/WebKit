@@ -2383,7 +2383,7 @@ void FrameView::performPostLayoutTasks()
 
 #if USE(ACCELERATED_COMPOSITING)
     if (TiledBacking* tiledBacking = this->tiledBacking())
-        tiledBacking->setCanHaveScrollbars(canHaveScrollbars());
+        tiledBacking->setTileCoverage(canHaveScrollbars() ? TiledBacking::CoverageForScrolling : TiledBacking::CoverageForVisibleArea);
 #endif
 
     scrollToAnchor();

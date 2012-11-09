@@ -74,7 +74,8 @@ private:
     // TiledBacking member functions.
     virtual void visibleRectChanged(const IntRect&) OVERRIDE;
     virtual void setIsInWindow(bool) OVERRIDE;
-    virtual void setCanHaveScrollbars(bool) OVERRIDE;
+    virtual void setTileCoverage(TileCoverage) OVERRIDE;
+    virtual TileCoverage tileCoverage() const OVERRIDE { return m_tileCoverage; }
 
     IntRect bounds() const;
 
@@ -108,7 +109,7 @@ private:
     CGFloat m_deviceScaleFactor;
 
     bool m_isInWindow;
-    bool m_canHaveScrollbars;
+    TileCoverage m_tileCoverage;
     bool m_acceleratesDrawing;
 
     RetainPtr<CGColorRef> m_tileDebugBorderColor;

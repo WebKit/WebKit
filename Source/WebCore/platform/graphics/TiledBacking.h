@@ -36,7 +36,18 @@ public:
 
     virtual void visibleRectChanged(const IntRect&) = 0;
     virtual void setIsInWindow(bool) = 0;
-    virtual void setCanHaveScrollbars(bool) = 0;
+
+    enum {
+        CoverageForVisibleArea = 0,
+        CoverageForVerticalScrolling = 1 << 0,
+        CoverageForHorizontalScrolling = 1 << 1,
+        CoverageForScrolling = CoverageForVerticalScrolling | CoverageForHorizontalScrolling
+    };
+    typedef unsigned TileCoverage;
+
+    virtual void setTileCoverage(TileCoverage) = 0;
+    virtual TileCoverage tileCoverage() const = 0;
+
 };
 
 } // namespace WebCore
