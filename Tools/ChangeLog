@@ -1,3 +1,14 @@
+2012-11-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Bump the jhbuild Cairo version to 1.12.8
+        https://bugs.webkit.org/show_bug.cgi?id=101721
+
+        Bump the Cairo version in Jhbuild moduleset to 1.12.8. This version
+        should fix multiple failures in canvas tests and also contains
+        fixes for X-related crashes that occurred from the 1.12.4 version onwards.
+
+        * gtk/jhbuild.modules:
+
 2012-11-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [WTR][Cairo] Do not call paintRepaintRectOverlay() when there is no repaint rect.
