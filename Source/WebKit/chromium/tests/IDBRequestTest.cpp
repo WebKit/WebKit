@@ -27,7 +27,6 @@
 
 #include "IDBRequest.h"
 
-#include "DOMStringList.h"
 #include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBTransactionCoordinator.h"

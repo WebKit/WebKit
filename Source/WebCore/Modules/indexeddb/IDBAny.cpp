@@ -34,7 +34,6 @@
 #include "IDBIndex.h"
 #include "IDBKeyPath.h"
 #include "IDBObjectStore.h"
-#include "DOMStringList.h"
 
 namespace WebCore {
 

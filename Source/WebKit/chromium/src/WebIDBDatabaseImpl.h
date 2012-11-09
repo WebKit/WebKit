@@ -53,8 +53,10 @@ public:
     virtual WebIDBMetadata metadata() const;
 
     virtual WebIDBObjectStore* createObjectStore(long long, const WebString& name, const WebIDBKeyPath&, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&);
+    virtual void deleteObjectStore(const WebString& name, const WebIDBTransaction&, WebExceptionCode&);
     virtual void deleteObjectStore(long long objectStoreId, const WebIDBTransaction&, WebExceptionCode&);
     virtual void setVersion(const WebString& version, WebIDBCallbacks*, WebExceptionCode&);
+    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, WebExceptionCode&);
     virtual WebIDBTransaction* transaction(const WebVector<long long>& names, unsigned short mode);
     virtual void forceClose();
     virtual void close();

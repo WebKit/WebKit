@@ -29,6 +29,7 @@
 #ifndef IDBCallbacks_h
 #define IDBCallbacks_h
 
+#include "DOMStringList.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
 #include "IDBKey.h"
@@ -40,7 +41,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {
-class DOMStringList;
 class IDBCursorBackendInterface;
 class IDBObjectStoreBackendInterface;
 

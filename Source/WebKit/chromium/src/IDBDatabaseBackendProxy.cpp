@@ -99,6 +99,17 @@ void IDBDatabaseBackendProxy::setVersion(const String& version, PassRefPtr<IDBCa
     m_webIDBDatabase->setVersion(version, new WebIDBCallbacksImpl(callbacks), ec);
 }
 
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendProxy::transaction(DOMStringList* storeNames, unsigned short mode, ExceptionCode& ec)
+{
+    WebDOMStringList names(storeNames);
+    OwnPtr<WebIDBTransaction> transaction = adoptPtr(m_webIDBDatabase->transaction(names, mode, ec));
+    if (!transaction) {
+        ASSERT(ec);
+        return 0;
+    }
+    return IDBTransactionBackendProxy::create(transaction.release());
+}
+
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendProxy::transaction(const Vector<int64_t>& objectStoreIds, unsigned short mode)
 {
     OwnPtr<WebIDBTransaction> transaction = adoptPtr(m_webIDBDatabase->transaction(objectStoreIds, mode));

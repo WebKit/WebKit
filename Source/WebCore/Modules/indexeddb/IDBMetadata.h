@@ -76,6 +76,14 @@ struct IDBObjectStoreMetadata {
     typedef HashMap<int64_t, IDBIndexMetadata> IndexMap;
     IndexMap indexes;
 
+    bool containsIndex(const String& name) const
+    {
+        for (IndexMap::const_iterator it = indexes.begin(); it != indexes.end(); ++it) {
+            if (it->value.name == name)
+                return true;
+        }
+        return false;
+    }
 };
 
 struct IDBDatabaseMetadata {
@@ -98,6 +106,22 @@ struct IDBDatabaseMetadata {
         , intVersion(intVersion)
         , maxObjectStoreId(maxObjectStoreId)
     {
+    }
+
+    int64_t findObjectStore(const String& name) const
+    {
+        for (ObjectStoreMap::const_iterator it = objectStores.begin(); it != objectStores.end(); ++it) {
+            if (it->value.name == name) {
+                ASSERT(it->key != IDBObjectStoreMetadata::InvalidId);
+                return it->key;
+            }
+        }
+        return IDBObjectStoreMetadata::InvalidId;
+    }
+
+    bool containsObjectStore(const String& name) const
+    {
+        return findObjectStore(name) != IDBObjectStoreMetadata::InvalidId;
     }
 
     String name;
