@@ -600,6 +600,11 @@ void InspectorResourceAgent::getResponseBody(ErrorString* errorString, const Str
         return;
     }
 
+    if (resourceData->isContentEvicted()) {
+        *errorString = "Request content was evicted from inspector cache";
+        return;
+    }
+
     if (resourceData->buffer() && !resourceData->textEncodingName().isNull()) {
         *base64Encoded = false;
         if (InspectorPageAgent::sharedBufferContent(resourceData->buffer(), resourceData->textEncodingName(), *base64Encoded, content))

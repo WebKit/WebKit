@@ -1,3 +1,27 @@
+2012-11-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add meaningful error message when request content was evicted from inspector cache.
+        https://bugs.webkit.org/show_bug.cgi?id=101578
+
+        Reviewed by Yury Semikhatsky.
+
+        Added specific error message when request content was evicted from inspector cache.
+        Replaced purge with evict in fields/methods names.
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::getResponseBody):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::ResourceData):
+        (WebCore::NetworkResourcesData::ResourceData::evictContent):
+        (WebCore::NetworkResourcesData::setResourceContent):
+        (WebCore::NetworkResourcesData::maybeAddResourceData):
+        (WebCore::NetworkResourcesData::maybeDecodeDataToContent):
+        (WebCore::NetworkResourcesData::ensureNoDataForRequestId):
+        (WebCore::NetworkResourcesData::ensureFreeSpace):
+        * inspector/NetworkResourcesData.h:
+        (WebCore::NetworkResourcesData::ResourceData::isContentEvicted):
+        (ResourceData):
+
 2012-11-09  Kent Tamura  <tkent@chromium.org>
 
         Don't use RenderTextControlSingleLine for date/time input types without the multiple-fields UI

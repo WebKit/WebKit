@@ -81,7 +81,7 @@ NetworkResourcesData::ResourceData::ResourceData(const String& requestId, const 
     : m_requestId(requestId)
     , m_loaderId(loaderId)
     , m_base64Encoded(false)
-    , m_isContentPurged(false)
+    , m_isContentEvicted(false)
     , m_type(InspectorPageAgent::OtherResource)
     , m_cachedResource(0)
 {
@@ -117,9 +117,9 @@ unsigned NetworkResourcesData::ResourceData::removeContent()
     return result;
 }
 
-unsigned NetworkResourcesData::ResourceData::purgeContent()
+unsigned NetworkResourcesData::ResourceData::evictContent()
 {
-    m_isContentPurged = true;
+    m_isContentEvicted = true;
     return removeContent();
 }
 
@@ -232,9 +232,9 @@ void NetworkResourcesData::setResourceContent(const String& requestId, const Str
     size_t dataLength = contentSizeInBytes(content);
     if (dataLength > m_maximumSingleResourceContentSize)
         return;
-    if (resourceData->isContentPurged())
+    if (resourceData->isContentEvicted())
         return;
-    if (ensureFreeSpace(dataLength) && !resourceData->isContentPurged()) {
+    if (ensureFreeSpace(dataLength) && !resourceData->isContentEvicted()) {
         // We can not be sure that we didn't try to save this request data while it was loading, so remove it, if any.
         if (resourceData->hasContent())
             m_contentSize -= resourceData->removeContent();
@@ -252,10 +252,10 @@ void NetworkResourcesData::maybeAddResourceData(const String& requestId, const c
     if (!resourceData->decoder())
         return;
     if (resourceData->dataLength() + dataLength > m_maximumSingleResourceContentSize)
-        m_contentSize -= resourceData->purgeContent();
-    if (resourceData->isContentPurged())
+        m_contentSize -= resourceData->evictContent();
+    if (resourceData->isContentEvicted())
         return;
-    if (ensureFreeSpace(dataLength) && !resourceData->isContentPurged()) {
+    if (ensureFreeSpace(dataLength) && !resourceData->isContentEvicted()) {
         m_requestIdsDeque.append(requestId);
         resourceData->appendData(data, dataLength);
         m_contentSize += dataLength;
@@ -272,7 +272,7 @@ void NetworkResourcesData::maybeDecodeDataToContent(const String& requestId)
     m_contentSize += resourceData->decodeDataToContent();
     size_t dataLength = contentSizeInBytes(resourceData->content());
     if (dataLength > m_maximumSingleResourceContentSize)
-        m_contentSize -= resourceData->purgeContent();
+        m_contentSize -= resourceData->evictContent();
 }
 
 void NetworkResourcesData::addCachedResource(const String& requestId, CachedResource* cachedResource)
@@ -388,7 +388,7 @@ void NetworkResourcesData::ensureNoDataForRequestId(const String& requestId)
     ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
     if (resourceData) {
         if (resourceData->hasContent() || resourceData->hasData())
-            m_contentSize -= resourceData->purgeContent();
+            m_contentSize -= resourceData->evictContent();
         delete resourceData;
         m_requestIdToResourceDataMap.remove(requestId);
     }
@@ -403,7 +403,7 @@ bool NetworkResourcesData::ensureFreeSpace(size_t size)
         String requestId = m_requestIdsDeque.takeFirst();
         ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
         if (resourceData)
-            m_contentSize -= resourceData->purgeContent();
+            m_contentSize -= resourceData->evictContent();
     }
     return true;
 }

@@ -94,8 +94,8 @@ public:
         bool base64Encoded() const { return m_base64Encoded; }
 
         unsigned removeContent();
-        bool isContentPurged() const { return m_isContentPurged; }
-        unsigned purgeContent();
+        bool isContentEvicted() const { return m_isContentEvicted; }
+        unsigned evictContent();
 
         InspectorPageAgent::ResourceType type() const { return m_type; }
         void setType(InspectorPageAgent::ResourceType type) { m_type = type; }
@@ -134,7 +134,7 @@ public:
         RefPtr<XHRReplayData> m_xhrReplayData;
         bool m_base64Encoded;
         RefPtr<SharedBuffer> m_dataBuffer;
-        bool m_isContentPurged;
+        bool m_isContentEvicted;
         InspectorPageAgent::ResourceType m_type;
         int m_httpStatusCode;
 
