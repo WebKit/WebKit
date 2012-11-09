@@ -1,3 +1,16 @@
+2012-11-09  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Unreviewed gardening - rebaseline a handful of image tests for chromium-mac-lion.
+
+        * platform/chromium-mac-lion/platform/chromium/compositing/layout-width-change-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/compositing/video-frame-size-change-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/core/backgrounds-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/core/captions1-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/core/captions2-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/core/captions3-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png: Added.
+
 2012-11-09  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL] Rebaseline svg tests after 99870
