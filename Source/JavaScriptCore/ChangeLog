@@ -1,3 +1,13 @@
+2012-11-09  Oliver Hunt  <oliver@apple.com>
+
+        So Thingy probably isn't the best name for a class, so
+        renamed to CacheMap.
+
+        RS=Geoff
+
+        * runtime/CodeCache.h:
+        (JSC::CacheMap::CacheMap):
+
 2012-11-09  Filip Pizlo  <fpizlo@apple.com>
 
         ArrayPrototype should start out with a blank indexing type

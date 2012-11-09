@@ -52,11 +52,11 @@ struct ParserError;
 class SourceCode;
 class SourceProvider;
 
-template <typename KeyType, typename EntryType, int CacheSize> class Thingy {
+template <typename KeyType, typename EntryType, int CacheSize> class CacheMap {
     typedef typename HashMap<KeyType, unsigned>::iterator iterator;
 public:
-    Thingy()
-    : m_randomGenerator((static_cast<uint32_t>(randomNumber() * UINT32_MAX)))
+    CacheMap()
+        : m_randomGenerator((static_cast<uint32_t>(randomNumber() * UINT32_MAX)))
     {
     }
     const EntryType* find(const KeyType& key)
@@ -117,9 +117,9 @@ private:
         kMaxFunctionCodeBlocks = 1024
     };
 
-    Thingy<CodeBlockKey, Strong<UnlinkedCodeBlock>, kMaxCodeBlockEntries> m_cachedCodeBlocks;
-    Thingy<GlobalFunctionKey, Strong<UnlinkedFunctionExecutable>, kMaxGlobalFunctionEntries> m_cachedGlobalFunctions;
-    Thingy<UnlinkedFunctionCodeBlock*, Strong<UnlinkedFunctionCodeBlock>, kMaxFunctionCodeBlocks> m_cachedFunctionCode;
+    CacheMap<CodeBlockKey, Strong<UnlinkedCodeBlock>, kMaxCodeBlockEntries> m_cachedCodeBlocks;
+    CacheMap<GlobalFunctionKey, Strong<UnlinkedFunctionExecutable>, kMaxGlobalFunctionEntries> m_cachedGlobalFunctions;
+    CacheMap<UnlinkedFunctionCodeBlock*, Strong<UnlinkedFunctionCodeBlock>, kMaxFunctionCodeBlocks> m_cachedFunctionCode;
 };
 
 }
