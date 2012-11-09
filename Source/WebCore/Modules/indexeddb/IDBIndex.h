@@ -33,6 +33,7 @@
 #include "IDBMetadata.h"
 #include "IDBObjectStore.h"
 #include "IDBRequest.h"
+#include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +43,7 @@ namespace WebCore {
 
 class IDBObjectStore;
 
-class IDBIndex : public RefCounted<IDBIndex> {
+class IDBIndex : public ScriptWrappable, public RefCounted<IDBIndex> {
 public:
     static PassRefPtr<IDBIndex> create(const IDBIndexMetadata& metadata, PassRefPtr<IDBIndexBackendInterface> backend, IDBObjectStore* objectStore, IDBTransaction* transaction)
     {

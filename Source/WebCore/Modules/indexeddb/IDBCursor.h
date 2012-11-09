@@ -31,6 +31,7 @@
 #include "IDBKey.h"
 #include "IDBTransaction.h"
 #include "ScriptValue.h"
+#include "ScriptWrappable.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -45,7 +46,7 @@ class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
-class IDBCursor : public RefCounted<IDBCursor> {
+class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor> {
 public:
     enum Direction {
         NEXT = 0,

@@ -35,6 +35,7 @@
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
+#include "ScriptWrappable.h"
 #include "SerializedScriptValue.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -48,7 +49,7 @@ namespace WebCore {
 class DOMStringList;
 class IDBAny;
 
-class IDBObjectStore : public RefCounted<IDBObjectStore> {
+class IDBObjectStore : public ScriptWrappable, public RefCounted<IDBObjectStore> {
 public:
     static PassRefPtr<IDBObjectStore> create(const IDBObjectStoreMetadata& metadata, PassRefPtr<IDBObjectStoreBackendInterface> backend, IDBTransaction* transaction)
     {

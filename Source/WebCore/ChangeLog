@@ -1,3 +1,24 @@
+2012-11-09  Adam Barth  <abarth@webkit.org>
+
+        IndexedDB should use mostly ScriptWrappable DOM objects
+        https://bugs.webkit.org/show_bug.cgi?id=101694
+
+        Reviewed by Kentaro Hara.
+
+        These object always have JavaScript wrappers, so we should store the
+        wrappers inline to use less memory and be faster.
+
+        * Modules/indexeddb/IDBAny.h:
+        * Modules/indexeddb/IDBCursor.h:
+        * Modules/indexeddb/IDBDatabase.h:
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBKey.h:
+        * Modules/indexeddb/IDBKeyRange.h:
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBTransaction.h:
+
 2012-11-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add meaningful error message when request content was evicted from inspector cache.

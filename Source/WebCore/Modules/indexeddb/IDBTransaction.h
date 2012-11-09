@@ -35,6 +35,7 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "IDBTransactionCallbacks.h"
+#include "ScriptWrappable.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 
@@ -47,7 +48,7 @@ class IDBOpenDBRequest;
 class IDBTransactionBackendInterface;
 struct IDBObjectStoreMetadata;
 
-class IDBTransaction : public IDBTransactionCallbacks, public EventTarget, public ActiveDOMObject {
+class IDBTransaction : public ScriptWrappable, public IDBTransactionCallbacks, public EventTarget, public ActiveDOMObject {
 public:
     enum Mode {
         READ_ONLY = 0,

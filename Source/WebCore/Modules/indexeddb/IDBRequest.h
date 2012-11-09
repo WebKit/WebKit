@@ -42,6 +42,7 @@
 #include "IDBCallbacks.h"
 #include "IDBCursor.h"
 #include "IDBCursorBackendInterface.h"
+#include "ScriptWrappable.h"
 #if USE(V8)
 #include "WorldContextHandle.h"
 #endif
@@ -52,7 +53,7 @@ class IDBTransaction;
 
 typedef int ExceptionCode;
 
-class IDBRequest : public IDBCallbacks, public EventTarget, public ActiveDOMObject {
+class IDBRequest : public ScriptWrappable, public IDBCallbacks, public EventTarget, public ActiveDOMObject {
 public:
     static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
     static PassRefPtr<IDBRequest> create(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface::TaskType, IDBTransaction*);

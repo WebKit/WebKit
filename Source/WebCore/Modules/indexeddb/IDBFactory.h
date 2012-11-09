@@ -30,6 +30,7 @@
 
 #include "IDBFactoryBackendInterface.h"
 #include "IDBOpenDBRequest.h"
+#include "ScriptWrappable.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -47,7 +48,7 @@ class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
-class IDBFactory : public RefCounted<IDBFactory> {
+class IDBFactory : public ScriptWrappable, public RefCounted<IDBFactory> {
 public:
     static PassRefPtr<IDBFactory> create(IDBFactoryBackendInterface* factory)
     {

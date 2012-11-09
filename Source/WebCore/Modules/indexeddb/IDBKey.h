@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -35,7 +36,7 @@
 
 namespace WebCore {
 
-class IDBKey : public ThreadSafeRefCounted<IDBKey> {
+class IDBKey : public ScriptWrappable, public ThreadSafeRefCounted<IDBKey> {
 public:
     typedef Vector<RefPtr<IDBKey> > KeyArray;
 
