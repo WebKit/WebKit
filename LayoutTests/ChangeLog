@@ -1,3 +1,20 @@
+2012-11-08  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Polygon with horizontal bottom edges returns incorrect segments
+        https://bugs.webkit.org/show_bug.cgi?id=100874
+
+        Reviewed by Dirk Schulze.
+
+        Added two additional tests for rectilinear polygons, where the tops and bottoms
+        of lines intersect the polygons' horizontal edges. More tests of this kind will
+        be needed when exclusion layout supports polygons that break horizontal lines up
+        into more than one segment.
+
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-003-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-003.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-004-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-004.html: Added.
+
 2012-11-08  Christophe Dumez  <christophe.dumez@intel.com>
 
         [JSC] HTML extensions to String.prototype should escape " as &quot; in argument values

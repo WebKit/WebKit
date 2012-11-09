@@ -1,3 +1,29 @@
+2012-11-08  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Polygon with horizontal bottom edges returns incorrect segments
+        https://bugs.webkit.org/show_bug.cgi?id=100874
+
+        Reviewed by Dirk Schulze.
+
+        Revised the way that computeXIntersections() handles intersections with horizotal polygon edges.
+        Deciding if a vertex intersection corresponds to a polygon "edge crossing", i.e. a change from inside
+        to outside or outside to inside, now depends on which side of the horizontal line the function's
+        y parameter corresponds to. If the y corresponds to the top of the line, then isaMinY the parameter
+        is true, and an intersection with a horizontal edge is only considered to be an edge crossing if
+        if the inside of the polygon is just below the horizontal edge.  When isMinY is false then the inside
+        of the polygon must be just above the horizontal edge.
+
+        Tests: fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-003.html
+               fast/exclusions/shape-inside/shape-inside-rectilinear-polygon-004.html
+
+        * rendering/ExclusionPolygon.cpp:
+        (WebCore::getVertexIntersectionVertices): Corrected two cases where the next/previous vertex was determined incorrectly.
+        (WebCore::ExclusionPolygon::computeXIntersections): Added a bool isMinY parameter which specifies if the y parameter corresponds to the top or bottom a horizontal line.
+        (WebCore::ExclusionPolygon::getExcludedIntervals): Added the new computeXIntersections() parameter.
+        (WebCore::ExclusionPolygon::getIncludedIntervals): Ditto.
+        * rendering/ExclusionPolygon.h:
+        (WebCore::ExclusionPolygonEdge::previousEdge): Corrected the previousEdge() function.
+
 2012-11-08  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Disable cookies on file://

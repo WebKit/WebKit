@@ -190,13 +190,13 @@ static inline bool getVertexIntersectionVertices(const EdgeIntersection& interse
 
     if ((intersection.type == VertexMinY && (thisEdge.vertex1().y() < thisEdge.vertex2().y()))
         || (intersection.type == VertexMaxY && (thisEdge.vertex1().y() > thisEdge.vertex2().y()))) {
-        prevVertex = polygon.vertexAt(thisEdge.previousEdge().vertexIndex2);
+        prevVertex = polygon.vertexAt(thisEdge.previousEdge().vertexIndex1);
         thisVertex = polygon.vertexAt(thisEdge.vertexIndex1);
         nextVertex = polygon.vertexAt(thisEdge.vertexIndex2);
     } else {
         prevVertex = polygon.vertexAt(thisEdge.vertexIndex1);
         thisVertex = polygon.vertexAt(thisEdge.vertexIndex2);
-        nextVertex = polygon.vertexAt(thisEdge.nextEdge().vertexIndex1);
+        nextVertex = polygon.vertexAt(thisEdge.nextEdge().vertexIndex2);
     }
 
     return true;
@@ -219,7 +219,7 @@ static bool compareEdgeIntersectionX(const EdgeIntersection& intersection1, cons
     return (x1 == x2) ? intersection1.type < intersection2.type : x1 < x2;
 }
 
-void ExclusionPolygon::computeXIntersections(float y, Vector<ExclusionInterval>& result) const
+void ExclusionPolygon::computeXIntersections(float y, bool isMinY, Vector<ExclusionInterval>& result) const
 {
     Vector<ExclusionPolygon::EdgeInterval> overlappingEdges;
     m_edgeTree.allOverlaps(ExclusionPolygon::EdgeInterval(y, y, 0), overlappingEdges);
@@ -265,19 +265,19 @@ void ExclusionPolygon::computeXIntersections(float y, Vector<ExclusionInterval>&
         }
 
         if (evenOddCrossing) {
-            bool edgeCrossing = false;
-            if (thisIntersection.type == Normal || !inside || index == intersections.size() - 1)
-                edgeCrossing = true;
-            else {
+            bool edgeCrossing = thisIntersection.type == Normal;
+            if (!edgeCrossing) {
                 FloatPoint prevVertex;
                 FloatPoint thisVertex;
                 FloatPoint nextVertex;
 
                 if (getVertexIntersectionVertices(thisIntersection, prevVertex, thisVertex, nextVertex)) {
-                    if (prevVertex.y() == y)
-                        edgeCrossing =  (thisVertex.x() > prevVertex.x()) ? nextVertex.y() > y : nextVertex.y() < y;
+                    if (nextVertex.y() == y)
+                        edgeCrossing = (isMinY) ? prevVertex.y() > y : prevVertex.y() < y;
+                    else if (prevVertex.y() == y)
+                        edgeCrossing = (isMinY) ? nextVertex.y() > y : nextVertex.y() < y;
                     else
-                        edgeCrossing = (nextVertex.y() != y);
+                        edgeCrossing = true;
                 }
             }
             if (edgeCrossing)
@@ -331,8 +331,8 @@ void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalHeigh
     float y2 = maxYForLogicalLine(logicalTop, logicalHeight);
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
-    computeXIntersections(y1, y1XIntervals);
-    computeXIntersections(y2, y2XIntervals);
+    computeXIntersections(y1, true, y1XIntervals);
+    computeXIntersections(y2, false, y2XIntervals);
 
     Vector<ExclusionInterval> mergedIntervals;
     mergeExclusionIntervals(y1XIntervals, y2XIntervals, mergedIntervals);
@@ -358,8 +358,8 @@ void ExclusionPolygon::getIncludedIntervals(float logicalTop, float logicalHeigh
     float y2 = maxYForLogicalLine(logicalTop, logicalHeight);
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
-    computeXIntersections(y1, y1XIntervals);
-    computeXIntersections(y2, y2XIntervals);
+    computeXIntersections(y1, true, y1XIntervals);
+    computeXIntersections(y2, false, y2XIntervals);
 
     Vector<ExclusionInterval> commonIntervals;
     intersectExclusionIntervals(y1XIntervals, y2XIntervals, commonIntervals);
