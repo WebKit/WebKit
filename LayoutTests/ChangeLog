@@ -1,3 +1,9 @@
+2012-11-09  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] Unreviewed gardening. Widen cross-fade-invalidation expectation to include all platforms.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Unreviewed gardening.

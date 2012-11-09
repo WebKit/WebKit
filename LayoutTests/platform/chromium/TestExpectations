@@ -3076,7 +3076,7 @@ webkit.org/b/76157 [ Mac ] platform/chromium/virtual/softwarecompositing/geometr
 
 webkit.org/b/76488 css3/images/cross-fade-background-size.html [ Failure ImageOnlyFailure ]
 
-webkit.org/b/81542 [ SnowLeopard ] css3/images/cross-fade-invalidation.html [ ImageOnlyFailure Pass ]
+webkit.org/b/81542 css3/images/cross-fade-invalidation.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/76727 fast/multicol/span/span-as-immediate-child-property-removal.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/76727 fast/multicol/span/span-as-immediate-columns-child-removal.html [ Failure ImageOnlyFailure Pass ]
