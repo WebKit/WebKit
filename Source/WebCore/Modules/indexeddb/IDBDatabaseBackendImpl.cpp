@@ -212,6 +212,16 @@ PassRefPtr<IDBObjectStoreBackendImpl> IDBDatabaseBackendImpl::objectStore(int64_
     return m_objectStores.get(id);
 }
 
+int64_t IDBDatabaseBackendImpl::getObjectStoreId(const String& name)
+{
+    for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it) {
+        if (it->value->name() == name)
+            return it->key;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 void IDBDatabaseBackendImpl::deleteObjectStore(int64_t id, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     ASSERT(m_objectStores.contains(id));
@@ -264,8 +274,8 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
         return;
     }
 
-    Vector<int64_t> objectStoreIds;
-    RefPtr<IDBTransactionBackendInterface> transactionInterface = this->transaction(objectStoreIds, IDBTransaction::VERSION_CHANGE);
+    RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
+    RefPtr<IDBTransactionBackendInterface> transactionInterface = this->transaction(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, ec);
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionInterface.get());
     ASSERT(!ec);
 
@@ -424,11 +434,17 @@ void IDBDatabaseBackendImpl::processPendingCalls()
     ASSERT(m_pendingOpenCalls.isEmpty());
 }
 
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(const Vector<int64_t>& objectStoreIds, unsigned short mode)
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList*, unsigned short mode, ExceptionCode&)
 {
-    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(objectStoreIds, mode, this);
+    // FIXME: First parameter isn't used for anything yet anyway, and this method is going away.
+    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(Vector<int64_t>(), mode, this);
     m_transactions.add(transaction.get());
     return transaction.release();
+}
+
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(const Vector<int64_t>& objectStoreIds, unsigned short mode)
+{
+    return transaction(objectStoreIds, mode);
 }
 
 void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
@@ -478,15 +494,19 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVer
         return;
     }
 
-    Vector<int64_t> objectStoreIds;
-    RefPtr<IDBTransactionBackendInterface> transactionInterface = transaction(objectStoreIds, IDBTransaction::VERSION_CHANGE);
+    RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
+    ExceptionCode ec = 0;
+    RefPtr<IDBTransactionBackendInterface> transactionInterface = transaction(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, ec);
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionInterface.get());
+    ASSERT(!ec);
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
     OwnPtr<ScriptExecutionContext::Task> intVersionTask = createCallbackTask(&IDBDatabaseBackendImpl::setIntVersionInternal, database, requestedVersion, callbacks, databaseCallbacks, transaction);
     OwnPtr<ScriptExecutionContext::Task> resetVersionOnAbortTask = createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_metadata.version, m_metadata.intVersion);
     if (!transaction->scheduleTask(intVersionTask.release(), resetVersionOnAbortTask.release())) {
+        // FIXME: Remove one of the following lines.
         ASSERT_NOT_REACHED();
+        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
     }
     ASSERT(!m_pendingSecondHalfOpenWithVersion);
     m_databaseCallbacksSet.add(databaseCallbacks);

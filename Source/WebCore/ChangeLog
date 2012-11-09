@@ -1,3 +1,65 @@
+2012-11-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133984.
+        http://trac.webkit.org/changeset/133984
+        https://bugs.webkit.org/show_bug.cgi?id=101684
+
+        windows build error. (Requested by hayato on #webkit).
+
+        * Modules/indexeddb/IDBCallbacks.h:
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::deleteObjectStore):
+        (WebCore::IDBDatabase::transaction):
+        * Modules/indexeddb/IDBDatabase.h:
+        (IDBDatabase):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::getObjectStoreId):
+        (WebCore):
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::transaction):
+        (WebCore::IDBDatabaseBackendImpl::runIntVersionChangeTransaction):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStore):
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+        (IDBDatabaseBackendInterface):
+        * Modules/indexeddb/IDBMetadata.h:
+        (WebCore::IDBObjectStoreMetadata::containsIndex):
+        (WebCore::IDBDatabaseMetadata::findObjectStore):
+        (IDBDatabaseMetadata):
+        (WebCore::IDBDatabaseMetadata::containsObjectStore):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::put):
+        (WebCore):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::deleteIndex):
+        * Modules/indexeddb/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::openCursor):
+        (IDBObjectStore):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::putWithIndexKeys):
+        (WebCore):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexesReady):
+        (WebCore::IDBObjectStoreBackendImpl::index):
+        (WebCore::IDBObjectStoreBackendImpl::getIndexId):
+        (WebCore::IDBObjectStoreBackendImpl::getIndexIds):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndex):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (IDBObjectStoreBackendImpl):
+        * Modules/indexeddb/IDBObjectStoreBackendInterface.h:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::objectStore):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::objectStore):
+        (WebCore):
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        (IDBTransactionBackendImpl):
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+
 2012-11-08  Shinya Kawanaka  <shinyak@chromium.org>
 
         HTMLContentElement should preserve parsed CSSSelectorList

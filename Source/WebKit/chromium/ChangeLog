@@ -1,3 +1,41 @@
+2012-11-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r133984.
+        http://trac.webkit.org/changeset/133984
+        https://bugs.webkit.org/show_bug.cgi?id=101684
+
+        windows build error. (Requested by hayato on #webkit).
+
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::putWithIndexKeys):
+        (WebKit):
+        (WebKit::IDBObjectStoreBackendProxy::setIndexKeys):
+        (WebKit::IDBObjectStoreBackendProxy::createIndex):
+        (WebKit::IDBObjectStoreBackendProxy::setIndexesReady):
+        (WebKit::IDBObjectStoreBackendProxy::index):
+        (WebKit::IDBObjectStoreBackendProxy::deleteIndex):
+        * src/IDBObjectStoreBackendProxy.h:
+        (IDBObjectStoreBackendProxy):
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::deleteObjectStore):
+        (WebKit):
+        (WebKit::WebIDBDatabaseImpl::transaction):
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::putWithIndexKeys):
+        (WebKit):
+        (WebKit::WebIDBObjectStoreImpl::setIndexKeys):
+        (WebKit::WebIDBObjectStoreImpl::setIndexesReady):
+        (WebKit::WebIDBObjectStoreImpl::index):
+        (WebKit::WebIDBObjectStoreImpl::deleteIndex):
+        * src/WebIDBObjectStoreImpl.h:
+        (WebIDBObjectStoreImpl):
+        * src/WebIDBTransactionImpl.cpp:
+        (WebKit::WebIDBTransactionImpl::objectStore):
+        (WebKit):
+        * src/WebIDBTransactionImpl.h:
+
 2012-11-08  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: switch frontend to use int64_t-based references
