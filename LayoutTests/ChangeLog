@@ -1,3 +1,9 @@
+2012-11-08  Yael Aharon  <yael.aharon@intel.com>
+
+        Unreviewed. Some more gardening after r133898.
+
+        * platform/efl/TestExpectations:
+
 2012-11-08  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=101644
