@@ -108,7 +108,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage, WKArra
 {
     cairo_surface_t* surface = WKImageCreateCairoSurface(wkImage);
 
-    if (repaintRects)
+    if (WKArrayGetSize(repaintRects))
         paintRepaintRectOverlay(surface, repaintRects);
 
     char actualHash[33];

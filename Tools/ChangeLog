@@ -1,3 +1,17 @@
+2012-11-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [WTR][Cairo] Do not call paintRepaintRectOverlay() when there is no repaint rect.
+        https://bugs.webkit.org/show_bug.cgi?id=101759
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp:
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected): Improve
+        the check for an empty repaintRect -- we need to check if the
+        WKArrayRef has any items. `if (repaintRect)' will return true
+        regardless of whether the array is empty or not.
+
+
 2012-11-09  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
 
         [Qt] Stop watchlist from triggering QtBuildSystem rule on DerivedSources
