@@ -1,3 +1,53 @@
+2012-11-09  Kent Tamura  <tkent@chromium.org>
+
+        Don't use RenderTextControlSingleLine for date/time input types without the multiple-fields UI
+        https://bugs.webkit.org/show_bug.cgi?id=101722
+
+        Reviewed by Hajime Morita.
+
+        Because the date/time input types are not textfields, we should not use
+        RenderTextControlSingleLine, and don't need to create shadow trees for
+        RenderTextControlSingleLine.
+
+        No new tests. Covered by fast/forms/*/*-appearance-*.html.
+
+        * css/html.css:
+        (input[type="date"]):
+        It has menulist appeanrace by default, and should be a flexible box to
+        center the inner text. 10em width is almost same as the default width of
+        text fields.
+        (input[type="datetime"]): Ditto.
+        (input[type="datetime-local"]): Ditto.
+        (input[type="month"]): Ditto.
+        (input[type="time"]): Ditto.
+        (input[type="week"]): Ditto.
+        (input::-webkit-date-and-time-value):
+        Added. A style for the inner text block.
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::createRenderer):
+        Don't create RenderTextControlSingleLine.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::updateInnerTextValue):
+        Skip TextFieldInputType::updateInnerTextValue.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::forwardEvent):
+        Skip TextFieldInputType::forwardEvent.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::createShadowSubtree):
+        Just add one element to the shadow root.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::updateAppearance):
+        Sets a localized value to the inner text block.
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::setValue):
+        Calls updateAppearance if the value is updated.
+        * html/BaseChooserOnlyDateAndTimeInputType.h:
+        (BaseChooserOnlyDateAndTimeInputType): Declare updateAppearance,
+        createRenderer, updateInnerTextValue, forwardEvent, createShadowSubtree,
+        and setValue.
+        * html/BaseDateAndTimeInputType.h:
+        (WebCore): Add a FIXME comment.
+        (BaseDateAndTimeInputType):
+        Make visibleValue protected. It is used by BaseChooserOnlyDateAndTimeInputType.
+        * html/TextFieldInputType.h:
+        (TextFieldInputType):
+        Make setValue protected. It is used by BaseChooserOnlyDateAndTimeInputType.
+
 2012-11-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Clarify meaning of different urls in protocol.

@@ -40,10 +40,16 @@ protected:
     virtual ~BaseChooserOnlyDateAndTimeInputType();
 
 private:
+    void updateAppearance();
     void closeDateTimeChooser();
 
     // InputType functions:
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
+    virtual void updateInnerTextValue() OVERRIDE;
+    void forwardEvent(Event*) OVERRIDE;
+    virtual void createShadowSubtree() OVERRIDE;
     virtual void detach() OVERRIDE;
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual void handleDOMActivateEvent(Event*) OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual void handleKeypressEvent(KeyboardEvent*) OVERRIDE;

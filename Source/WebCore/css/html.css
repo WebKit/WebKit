@@ -601,6 +601,67 @@ input[type="week"]::-webkit-inner-spin-button {
     position: static;
     -webkit-margin-start: 2px;
 }
+
+#else
+
+#if defined(ENABLE_INPUT_TYPE_DATE) && ENABLE_INPUT_TYPE_DATE
+input[type="date"] {
+    -webkit-align-items: center;
+    -webkit-appearance: menulist;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+    width: 10em;
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_DATETIME) && ENABLE_INPUT_TYPE_DATETIME
+input[type="datetime"] {
+    -webkit-align-items: center;
+    -webkit-appearance: menulist;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+    width: 10em;
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_DATETIMELOCAL) && ENABLE_INPUT_TYPE_DATETIMELOCAL
+input[type="datetime-local"] {
+    -webkit-align-items: center;
+    -webkit-appearance: menulist;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+    width: 10em;
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_MONTH) && ENABLE_INPUT_TYPE_MONTH
+input[type="month"] {
+    -webkit-align-items: center;
+    -webkit-appearance: menulist;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+    width: 10em;
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_TIME) && ENABLE_INPUT_TYPE_TIME
+input[type="time"] {
+    -webkit-align-items: center;
+    -webkit-appearance: menulist;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+    width: 10em;
+}
+#endif
+#if defined(ENABLE_INPUT_TYPE_WEEK) && ENABLE_INPUT_TYPE_WEEK
+input[type="week"] {
+    -webkit-align-items: center;
+    -webkit-appearance: menulist;
+    display: -webkit-inline-flex;
+    overflow: hidden;
+    width: 10em;
+}
+#endif
+
+input::-webkit-date-and-time-value {
+    margin-left: 4px;
+}
 #endif
 
 input::-webkit-inner-spin-button {

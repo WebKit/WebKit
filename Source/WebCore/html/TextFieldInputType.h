@@ -65,6 +65,7 @@ protected:
     virtual void disabledAttributeChanged() OVERRIDE;
     virtual void readonlyAttributeChanged() OVERRIDE;
     virtual void handleBlurEvent() OVERRIDE;
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual void updateInnerTextValue() OVERRIDE;
 
 private:
@@ -77,7 +78,6 @@ private:
     virtual bool shouldSubmitImplicitly(Event*) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
     virtual bool shouldUseInputMethod() const OVERRIDE;
-    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual String sanitizeValue(const String&) const OVERRIDE;
     virtual bool shouldRespectListAttribute() OVERRIDE;
     virtual HTMLElement* placeholderElement() const OVERRIDE;

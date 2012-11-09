@@ -29,9 +29,11 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "Page.h"
 #include "ScriptController.h"
+#include "ShadowRoot.h"
 
 namespace WebCore {
 
@@ -56,6 +58,55 @@ void BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent(Event*)
     if (!element()->setupDateTimeChooserParameters(parameters))
         return;
     m_dateTimeChooser = chrome->client()->openDateTimeChooser(this, parameters);
+}
+
+RenderObject* BaseChooserOnlyDateAndTimeInputType::createRenderer(RenderArena* arena, RenderStyle* style) const
+{
+    // Cancel the override by TextFieldInputType.
+    // FIXME: Remove this function when we stop inheriting TextFieldInputType.
+    return InputType::createRenderer(arena, style);
+}
+
+void BaseChooserOnlyDateAndTimeInputType::updateInnerTextValue()
+{
+    // Cancel the override by TextFieldInputType.
+    // FIXME: Remove this function when we stop inheriting TextFieldInputType.
+}
+
+void BaseChooserOnlyDateAndTimeInputType::forwardEvent(Event*)
+{
+    // Cancel the override by TextFieldInputType.
+    // FIXME: Remove this function when we stop inheriting TextFieldInputType.
+}
+
+void BaseChooserOnlyDateAndTimeInputType::createShadowSubtree()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, valueContainerPseudo, ("-webkit-date-and-time-value", AtomicString::ConstructFromLiteral));
+
+    RefPtr<HTMLDivElement> valueContainer = HTMLDivElement::create(element()->document());
+    valueContainer->setPseudo(valueContainerPseudo);
+    element()->userAgentShadowRoot()->appendChild(valueContainer.get());
+    updateAppearance();
+}
+
+void BaseChooserOnlyDateAndTimeInputType::updateAppearance()
+{
+    Node* node = element()->userAgentShadowRoot()->firstChild();
+    if (!node || !node->isHTMLElement())
+        return;
+    String displayValue = visibleValue();
+    if (displayValue.isEmpty()) {
+        // Need to put something to keep text baseline.
+        displayValue = ASCIILiteral(" ");
+    }
+    toHTMLElement(node)->setInnerText(displayValue, ASSERT_NO_EXCEPTION);
+}
+
+void BaseChooserOnlyDateAndTimeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior)
+{
+    BaseDateAndTimeInputType::setValue(value, valueChanged, eventBehavior);
+    if (valueChanged)
+        updateAppearance();
 }
 
 void BaseChooserOnlyDateAndTimeInputType::detach()
