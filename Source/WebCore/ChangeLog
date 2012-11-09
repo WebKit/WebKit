@@ -1,3 +1,23 @@
+2012-11-09  Adam Barth  <abarth@webkit.org>
+
+        [V8] Remove a level of indirection in DOMDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=101690
+
+        Reviewed by Kentaro Hara.
+
+        There is no longer any reason for the DOMDataStore to hold the wrapper
+        map via a pointer. It can just hold the wrapper map directly, saving a
+        level of indirection. I doubt this has any measurable performance gain.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::DOMDataStore):
+        (WebCore::DOMDataStore::~DOMDataStore):
+        (WebCore::DOMDataStore::reportMemoryUsage):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::get):
+        (WebCore::DOMDataStore::set):
+        (DOMDataStore):
+
 2012-11-09  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Region styling properties are not filtered correctly

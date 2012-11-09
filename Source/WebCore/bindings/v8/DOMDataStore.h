@@ -60,11 +60,11 @@ public:
     static DOMDataStore* current(v8::Isolate*);
 
     template<typename T>
-    inline v8::Handle<v8::Object> get(T* object) const
+    inline v8::Handle<v8::Object> get(T* object)
     {
         if (wrapperIsStoredInObject(object))
             return getWrapperFromObject(object);
-        return m_domObjectMap->get(object);
+        return m_wrapperMap.get(object);
     }
 
     template<typename T>
@@ -72,7 +72,7 @@ public:
     {
         if (setWrapperInObject(object, wrapper))
             return;
-        m_domObjectMap->set(object, wrapper);
+        m_wrapperMap.set(object, wrapper);
     }
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
@@ -107,7 +107,7 @@ private:
     static void weakCallback(v8::Persistent<v8::Value>, void* context);
 
     Type m_type;
-    OwnPtr<DOMWrapperMap<void> > m_domObjectMap;
+    DOMWrapperMap<void> m_wrapperMap;
 };
 
 } // namespace WebCore
