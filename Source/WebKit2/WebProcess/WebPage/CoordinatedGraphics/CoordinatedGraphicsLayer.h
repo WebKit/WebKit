@@ -107,6 +107,7 @@ public:
     virtual void setOpacity(float) OVERRIDE;
     virtual void setContentsRect(const IntRect&) OVERRIDE;
     virtual void setContentsToImage(Image*) OVERRIDE;
+    virtual bool shouldDirectlyCompositeImage(Image*) const OVERRIDE;
     virtual void setContentsToCanvas(PlatformLayer*) OVERRIDE;
     virtual void setMaskLayer(GraphicsLayer*) OVERRIDE;
     virtual void setReplicatedByLayer(GraphicsLayer*) OVERRIDE;

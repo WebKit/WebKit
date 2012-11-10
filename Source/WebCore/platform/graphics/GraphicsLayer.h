@@ -339,6 +339,7 @@ public:
     
     // Layer contents
     virtual void setContentsToImage(Image*) { }
+    virtual bool shouldDirectlyCompositeImage(Image*) const { return true; }
     virtual void setContentsToMedia(PlatformLayer*) { } // video or plug-in
     virtual void setContentsToBackgroundColor(const Color&) { }
     virtual void setContentsToCanvas(PlatformLayer*) { }

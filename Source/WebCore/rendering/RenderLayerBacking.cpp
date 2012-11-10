@@ -1303,8 +1303,14 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
 
     RenderImage* imageRenderer = toRenderImage(renderObject);
     if (CachedImage* cachedImage = imageRenderer->cachedImage()) {
-        if (cachedImage->hasImage())
-            return cachedImage->imageForRenderer(imageRenderer)->isBitmapImage();
+        if (!cachedImage->hasImage())
+            return false;
+
+        Image* image = cachedImage->imageForRenderer(imageRenderer);
+        if (!image->isBitmapImage())
+            return false;
+
+        return m_graphicsLayer->shouldDirectlyCompositeImage(image);
     }
 
     return false;

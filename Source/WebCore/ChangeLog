@@ -1,3 +1,20 @@
+2012-11-09  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Allow ports to decide whether an image should be directly composited
+        https://bugs.webkit.org/show_bug.cgi?id=101827
+
+        Reviewed by Simon Fraser.
+
+        Tested by compositing/tiling/huge-layer-img.html.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::shouldDirectlyCompositeImage):
+            Allow the GraphicsLayer implementation to decide if the image can be composited.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage):
+            Take onto account the new shouldDirectlyCompositeImage check.
+
 2012-11-09  Dan Bernstein  <mitz@apple.com>
 
         SimpleFontData::getCFStringAttributes sets some attributes to their default values, but shouldn’t

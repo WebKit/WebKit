@@ -387,6 +387,20 @@ void CoordinatedGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
 
 }
 
+bool CoordinatedGraphicsLayer::shouldDirectlyCompositeImage(Image* image) const
+{
+    if (!image || !image->isBitmapImage())
+        return false;
+
+    enum { kMaxDimenstionForDirectCompositing = 2000 };
+    if (image->width() > kMaxDimenstionForDirectCompositing || image->height() > kMaxDimenstionForDirectCompositing)
+        return false;
+
+    return true;
+
+    // TODO: don't directly composite images with more than one frame.
+}
+
 void CoordinatedGraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
 {
     if (layer == replicaLayer())
