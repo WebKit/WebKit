@@ -159,7 +159,7 @@ void AbstractState::initialize(Graph& graph)
     }
 }
 
-bool AbstractState::endBasicBlock(MergeMode mergeMode)
+bool AbstractState::endBasicBlock(MergeMode mergeMode, BranchDirection* branchDirectionPtr)
 {
     ASSERT(m_block);
     
@@ -167,7 +167,6 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
     
     block->cfaFoundConstants = m_foundConstants;
     block->cfaDidFinish = m_isValid;
-    block->cfaBranchDirection = m_branchDirection;
     
     if (!m_isValid) {
         reset();
@@ -196,8 +195,12 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
     
     ASSERT(mergeMode != DontMerge || !changed);
     
+    BranchDirection branchDirection = m_branchDirection;
+    if (branchDirectionPtr)
+        *branchDirectionPtr = branchDirection;
+    
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    dataLog("        Branch direction = %s\n", branchDirectionToString(m_branchDirection));
+    dataLog("        Branch direction = %s\n", branchDirectionToString(branchDirection));
 #endif
     
     reset();
@@ -205,7 +208,7 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
     if (mergeMode != MergeToSuccessors)
         return changed;
     
-    return mergeToSuccessors(m_graph, block);
+    return mergeToSuccessors(m_graph, block, branchDirection);
 }
 
 void AbstractState::reset()
@@ -613,18 +616,8 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
             
     case LogicalNot: {
-        // First check if we can fold because the source is a constant.
         JSValue childConst = forNode(node.child1()).value();
         if (childConst && trySetConstant(nodeIndex, jsBoolean(!childConst.toBoolean(m_codeBlock->globalObjectFor(node.codeOrigin)->globalExec())))) {
-            m_foundConstants = true;
-            node.setCanExit(false);
-            break;
-        }
-        // Next check if we can fold because we know that the source is an object or string and does not equal undefined.
-        if (isCellSpeculation(forNode(node.child1()).m_type)
-            && forNode(node.child1()).m_currentKnownStructure.hasSingleton()
-            && !forNode(node.child1()).m_currentKnownStructure.singleton()->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node.codeOrigin))
-            && trySetConstant(nodeIndex, jsBoolean(false))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -1112,7 +1105,6 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
             
     case Branch: {
-        // First check if we can fold because the source is a constant.
         JSValue value = forNode(node.child1()).value();
         if (value) {
             bool booleanValue = value.toBoolean(m_codeBlock->globalObjectFor(node.codeOrigin)->globalExec());
@@ -1120,14 +1112,6 @@ bool AbstractState::execute(unsigned indexInBlock)
                 m_branchDirection = TakeTrue;
             else
                 m_branchDirection = TakeFalse;
-            node.setCanExit(false);
-            break;
-        }
-        // Next check if we can fold because we know that the source is an object or string and does not equal undefined.
-        if (isCellSpeculation(forNode(node.child1()).m_type)
-            && forNode(node.child1()).m_currentKnownStructure.hasSingleton()
-            && !forNode(node.child1()).m_currentKnownStructure.singleton()->masqueradesAsUndefined(m_codeBlock->globalObjectFor(node.codeOrigin))) {
-            m_branchDirection = TakeTrue;
             node.setCanExit(false);
             break;
         }
@@ -1800,7 +1784,7 @@ inline bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
 }
 
 inline bool AbstractState::mergeToSuccessors(
-    Graph& graph, BasicBlock* basicBlock)
+    Graph& graph, BasicBlock* basicBlock, BranchDirection branchDirection)
 {
     Node& terminal = graph[basicBlock->last()];
     
@@ -1808,7 +1792,7 @@ inline bool AbstractState::mergeToSuccessors(
     
     switch (terminal.op()) {
     case Jump: {
-        ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
+        ASSERT(branchDirection == InvalidBranchDirection);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("        Merging to block #%u.\n", terminal.takenBlockIndex());
 #endif
@@ -1816,17 +1800,17 @@ inline bool AbstractState::mergeToSuccessors(
     }
         
     case Branch: {
-        ASSERT(basicBlock->cfaBranchDirection != InvalidBranchDirection);
+        ASSERT(branchDirection != InvalidBranchDirection);
         bool changed = false;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("        Merging to block #%u.\n", terminal.takenBlockIndex());
 #endif
-        if (basicBlock->cfaBranchDirection != TakeFalse)
+        if (branchDirection != TakeFalse)
             changed |= merge(basicBlock, graph.m_blocks[terminal.takenBlockIndex()].get());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLog("        Merging to block #%u.\n", terminal.notTakenBlockIndex());
 #endif
-        if (basicBlock->cfaBranchDirection != TakeTrue)
+        if (branchDirection != TakeTrue)
             changed |= merge(basicBlock, graph.m_blocks[terminal.notTakenBlockIndex()].get());
         return changed;
     }
@@ -1834,7 +1818,7 @@ inline bool AbstractState::mergeToSuccessors(
     case Return:
     case Throw:
     case ThrowReferenceError:
-        ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
+        ASSERT(branchDirection == InvalidBranchDirection);
         return false;
         
     default:
