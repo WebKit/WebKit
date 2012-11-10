@@ -71,6 +71,8 @@ private:
     CoordinatedBackingStore()
         : m_scale(1.)
     { }
+    void paintTilesToTextureMapper(Vector<WebCore::TextureMapperTile*>&, WebCore::TextureMapper*, const WebCore::TransformationMatrix&, float, WebCore::BitmapTexture*, const WebCore::FloatRect&);
+
     HashMap<int, CoordinatedBackingStoreTile> m_tiles;
     HashSet<int> m_tilesToRemove;
     WebCore::IntSize m_size;

@@ -123,17 +123,17 @@ static IntRect mapToContents(const IntRect& rect, float scale)
         rect.height() / scale));
 }
 
-static void paintTilesToTextureMapper(Vector<TextureMapperTile*>& tiles, TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, BitmapTexture* mask, unsigned edgesExposed)
+void CoordinatedBackingStore::paintTilesToTextureMapper(Vector<TextureMapperTile*>& tiles, TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, BitmapTexture* mask, const FloatRect& rect)
 {
     for (size_t i = 0; i < tiles.size(); ++i) {
         TextureMapperTile* tile = tiles[i];
-        tile->paint(textureMapper, transform, opacity, mask, edgesExposed);
+        tile->paint(textureMapper, transform, opacity, mask, calculateExposedTileEdges(rect, tile->rect()));
         static bool shouldDebug = shouldShowTileDebugVisuals();
         if (!shouldDebug)
             continue;
 
         textureMapper->drawBorder(Color(0xFF, 0, 0), 2, tile->rect(), transform);
-        textureMapper->drawRepaintCounter(static_cast<CoordinatedBackingStoreTile*>(tile)->repaintCount(), 8, tiles[i]->rect().location(), transform);
+        textureMapper->drawRepaintCounter(static_cast<CoordinatedBackingStoreTile*>(tile)->repaintCount(), 8, tile->rect().location(), transform);
     }
 }
 
@@ -164,12 +164,6 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper,
         previousTilesToPaint.append(&tile);
     }
 
-    // FIXME: When the TextureMapper makes a distinction between some edges exposed and no edges
-    // exposed, the value passed should be an accurate reflection of the tile subset that we are
-    // passing. For now we just "estimate" since CoordinatedBackingStore doesn't keep information about
-    // the total tiled surface rect at the moment.
-    unsigned edgesExposed = m_tiles.size() > 1 ? TextureMapper::NoEdges : TextureMapper::AllEdges;
-
     ASSERT(!m_size.isZero());
     FloatRect rectOnContents = mapToContents(IntRect(IntPoint::zero(), m_size), m_scale);
     TransformationMatrix adjustedTransform = transform;
@@ -177,8 +171,8 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper,
     // See TiledBackingStore.
     adjustedTransform.multiply(TransformationMatrix::rectToRect(rectOnContents, targetRect));
 
-    paintTilesToTextureMapper(previousTilesToPaint, textureMapper, adjustedTransform, opacity, mask, edgesExposed);
-    paintTilesToTextureMapper(tilesToPaint, textureMapper, adjustedTransform, opacity, mask, edgesExposed);
+    paintTilesToTextureMapper(previousTilesToPaint, textureMapper, adjustedTransform, opacity, mask, rectOnContents);
+    paintTilesToTextureMapper(tilesToPaint, textureMapper, adjustedTransform, opacity, mask, rectOnContents);
 }
 
 void CoordinatedBackingStore::commitTileOperations(TextureMapper* textureMapper)
