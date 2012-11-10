@@ -42,9 +42,7 @@ class MediaControlPlayButtonElement;
 class MediaControlSeekButtonElement;
 class MediaControlRewindButtonElement;
 class MediaControlReturnToRealtimeButtonElement;
-class MediaControlClosedCaptionsContainerElement;
 class MediaControlToggleClosedCaptionsButtonElement;
-class MediaControlClosedCaptionsTrackListElement;
 class MediaControlCurrentTimeDisplayElement;
 class MediaControlTimelineElement;
 class MediaControlTimeRemainingDisplayElement;
@@ -105,8 +103,6 @@ public:
     void updateTimeDisplay();
     void updateStatusDisplay();
 
-    void toggleClosedCaptionTrackList();
-
 #if ENABLE(VIDEO_TRACK)
     void createTextTrackDisplay();
     void showTextTrackDisplay();
@@ -145,8 +141,6 @@ private:
     MediaControlSeekBackButtonElement* m_seekBackButton;
     MediaControlSeekForwardButtonElement* m_seekForwardButton;
     MediaControlToggleClosedCaptionsButtonElement* m_toggleClosedCaptionsButton;
-    MediaControlClosedCaptionsTrackListElement* m_closedCaptionsTrackList;
-    MediaControlClosedCaptionsContainerElement* m_closedCaptionsContainer;
     MediaControlPanelMuteButtonElement* m_panelMuteButton;
     MediaControlVolumeSliderElement* m_volumeSlider;
     MediaControlVolumeSliderMuteButtonElement* m_volumeSliderMuteButton;

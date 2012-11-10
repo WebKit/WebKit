@@ -43,8 +43,6 @@ void removeLanguageChangeObserver(void* context);
 
 Vector<String> platformUserPreferredLanguages();
 
-String displayNameForLanguageLocale(const String&);
-
 // Called from platform specific code when the user's preferred language(s) change.
 void languageDidChange();
 }
