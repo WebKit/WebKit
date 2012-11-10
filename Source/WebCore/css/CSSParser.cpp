@@ -8236,7 +8236,7 @@ bool CSSParser::parseTextDecoration(CSSPropertyID propId, bool important)
 {
     CSSParserValue* value = m_valueList->current();
     if (value->id == CSSValueNone) {
-        addTextDecorationProperty(propId, cssValuePool().createExplicitInitialValue(), important);
+        addTextDecorationProperty(propId, cssValuePool().createIdentifierValue(CSSValueNone), important);
         m_valueList->next();
         return true;
     }

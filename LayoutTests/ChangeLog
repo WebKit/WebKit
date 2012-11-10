@@ -1,3 +1,20 @@
+2012-11-10  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css] text-decoration:none no longer valid
+        https://bugs.webkit.org/show_bug.cgi?id=101529
+
+        Reviewed by Ojan Vafai.
+
+        The getComputedStyle layout tests for 'text-decoration' and
+        '-webkit-text-decoration-line' CSS properties are updated with the correct
+        results for the 'none' value.
+
+        * fast/css/getComputedStyle/getComputedStyle-text-decoration-expected.txt:
+        * fast/css/getComputedStyle/script-tests/getComputedStyle-text-decoration.js:
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line-expected.txt:
+        * fast/css3-text/css3-text-decoration/getComputedStyle/script-tests/getComputedStyle-text-decoration-line.js:
+        * inspector/console/console-format-style-whitelist-expected.txt:
+
 2012-11-10  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Unreviewed. Rebaseline fast/images/color-jpeg-with-color-profile.html on Win.

@@ -37,7 +37,7 @@ debug('');
 
 debug("Value 'none':");
 e.style.webkitTextDecorationLine = 'none';
-testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[object CSSValue]", "initial");
+testElementStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[object CSSPrimitiveValue]", "none");
 testComputedStyle("webkitTextDecorationLine", "-webkit-text-decoration-line", "[object CSSPrimitiveValue]", "none");
 debug('');
 

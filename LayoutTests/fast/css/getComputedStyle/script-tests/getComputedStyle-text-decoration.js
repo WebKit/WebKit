@@ -37,7 +37,7 @@ debug('');
 
 debug("Value 'none':");
 e.style.textDecoration = 'none';
-testElementStyle("textDecoration", "text-decoration", "[object CSSValue]", "initial");
+testElementStyle("textDecoration", "text-decoration", "[object CSSPrimitiveValue]", "none");
 testComputedStyle("textDecoration", "text-decoration", "[object CSSPrimitiveValue]", "none");
 debug('');
 

@@ -18,9 +18,9 @@ PASS computedStyle.getPropertyCSSValue('text-decoration').toString() is '[object
 PASS computedStyle.getPropertyCSSValue('text-decoration').cssText is 'none'
 
 Value 'none':
-PASS e.style.textDecoration is 'initial'
-PASS e.style.getPropertyCSSValue('text-decoration').toString() is '[object CSSValue]'
-PASS e.style.getPropertyCSSValue('text-decoration').cssText is 'initial'
+PASS e.style.textDecoration is 'none'
+PASS e.style.getPropertyCSSValue('text-decoration').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('text-decoration').cssText is 'none'
 PASS computedStyle.textDecoration is 'none'
 PASS computedStyle.getPropertyCSSValue('text-decoration').toString() is '[object CSSPrimitiveValue]'
 PASS computedStyle.getPropertyCSSValue('text-decoration').cssText is 'none'
