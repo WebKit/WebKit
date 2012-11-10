@@ -30,6 +30,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
+#include <QLibraryInfo>
 
 namespace WebKit {
 
@@ -38,6 +39,11 @@ static String executablePath(QString baseName)
     QString expectedPath = QCoreApplication::applicationDirPath() + QDir::separator() + baseName;
     if (QFile::exists(expectedPath))
         return String(expectedPath);
+
+    expectedPath = QLibraryInfo::location(QLibraryInfo::BinariesPath) + QDir::separator() + baseName;
+    if (QFile::exists(expectedPath))
+        return String(expectedPath);
+
     return String(QString(baseName));
 }
 
