@@ -334,20 +334,6 @@ void PNGImageDecoder::headerAvailable()
     int bitDepth, colorType, interlaceType, compressionType, filterType, channels;
     png_get_IHDR(png, info, &width, &height, &bitDepth, &colorType, &interlaceType, &compressionType, &filterType);
 
-    if ((colorType == PNG_COLOR_TYPE_RGB || colorType == PNG_COLOR_TYPE_RGB_ALPHA) && !m_ignoreGammaAndColorProfile) {
-        // We currently support color profiles only for RGB and RGBA PNGs.  Supporting
-        // color profiles for gray-scale images is slightly tricky, at least using the
-        // CoreGraphics ICC library, because we expand gray-scale images to RGB but we
-        // don't similarly transform the color profile.  We'd either need to transform
-        // the color profile or we'd need to decode into a gray-scale image buffer and
-        // hand that to CoreGraphics.
-        readColorProfile(png, info, m_colorProfile);
-#if USE(QCMSLIB)
-        m_reader->createColorTransform(m_colorProfile, colorType & PNG_COLOR_MASK_ALPHA);
-        m_colorProfile.clear();
-#endif
-    }
-
     // The options we set here match what Mozilla does.
 
     // Expand to ensure we use 24-bit for RGB and 32-bit for RGBA.
@@ -366,6 +352,21 @@ void PNGImageDecoder::headerAvailable()
 
     if (colorType == PNG_COLOR_TYPE_GRAY || colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
         png_set_gray_to_rgb(png);
+
+    if ((colorType & PNG_COLOR_MASK_COLOR) && !m_ignoreGammaAndColorProfile) {
+        // We only support color profiles for color PALETTE and RGB[A] PNG. Supporting
+        // color profiles for gray-scale images is slightly tricky, at least using the
+        // CoreGraphics ICC library, because we expand gray-scale images to RGB but we
+        // do not similarly transform the color profile. We'd either need to transform
+        // the color profile or we'd need to decode into a gray-scale image buffer and
+        // hand that to CoreGraphics.
+        readColorProfile(png, info, m_colorProfile);
+#if USE(QCMSLIB)
+        bool decodedImageHasAlpha = (colorType & PNG_COLOR_MASK_ALPHA) || trnsCount;
+        m_reader->createColorTransform(m_colorProfile, decodedImageHasAlpha);
+        m_colorProfile.clear();
+#endif
+    }
 
     // Deal with gamma and keep it under our control.
     double gamma;

@@ -1,3 +1,20 @@
+2012-11-09  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Should pass fast/images/paletted-png-with-color-profile.html
+        https://bugs.webkit.org/show_bug.cgi?id=101551
+
+        Reviewed by Adam Barth.
+
+        Support decoding color PALETTE images that have an ICC color profile.
+
+        Covered by fast/images/png-suite/test.html and many other fast/image tests.
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::headerAvailable): Move the color profile code after the
+        transparency (tRNS) reader. Allow color PNG images: RGB, RGBA, PALLETE to be color
+        corrected. Use the transparency count from the tRNS reader to detect the expansion
+        of RGB and PALLETE image pixels to RGBA.
+
 2012-11-09  Tien-Ren Chen  <trchen@chromium.org>
 
         Correct hit-test point scaling for document.elementFromPoint

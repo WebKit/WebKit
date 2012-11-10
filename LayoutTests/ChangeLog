@@ -1,3 +1,17 @@
+2012-11-09  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Should pass fast/images/paletted-png-with-color-profile.html
+        https://bugs.webkit.org/show_bug.cgi?id=101551
+
+        Reviewed by Adam Barth.
+
+        Update fast/images/paletted-png-with-color-profile.html image results for
+        Mac and Win (Chromium Android and Linux don't support color profiles).
+
+        * platform/chromium-mac/fast/images/paletted-png-with-color-profile-expected.png: Added.
+        * platform/chromium-win/fast/images/paletted-png-with-color-profile-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-11-09  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] Unreviewed gardening. One more baseline following 134112.
