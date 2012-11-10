@@ -101,6 +101,11 @@ PassRefPtr<BitmapTexture> CoordinatedBackingStore::texture() const
     return PassRefPtr<BitmapTexture>();
 }
 
+void CoordinatedBackingStore::setSize(const WebCore::IntSize& size)
+{
+    m_size = size;
+}
+
 static bool shouldShowTileDebugVisuals()
 {
 #if PLATFORM(QT)
@@ -109,9 +114,33 @@ static bool shouldShowTileDebugVisuals()
     return false;
 }
 
-void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& /* targetRect */, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+// This function is copied from TiledBackingStore::mapToContents().
+static IntRect mapToContents(const IntRect& rect, float scale)
+{
+    return enclosingIntRect(FloatRect(rect.x() / scale,
+        rect.y() / scale,
+        rect.width() / scale,
+        rect.height() / scale));
+}
+
+static void paintTilesToTextureMapper(Vector<TextureMapperTile*>& tiles, TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, BitmapTexture* mask, unsigned edgesExposed)
+{
+    for (size_t i = 0; i < tiles.size(); ++i) {
+        TextureMapperTile* tile = tiles[i];
+        tile->paint(textureMapper, transform, opacity, mask, edgesExposed);
+        static bool shouldDebug = shouldShowTileDebugVisuals();
+        if (!shouldDebug)
+            continue;
+
+        textureMapper->drawBorder(Color(0xFF, 0, 0), 2, tile->rect(), transform);
+        textureMapper->drawRepaintCounter(static_cast<CoordinatedBackingStoreTile*>(tile)->repaintCount(), 8, tiles[i]->rect().location(), transform);
+    }
+}
+
+void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
     Vector<TextureMapperTile*> tilesToPaint;
+    Vector<TextureMapperTile*> previousTilesToPaint;
 
     // We have to do this every time we paint, in case the opacity has changed.
     HashMap<int, CoordinatedBackingStoreTile>::iterator end = m_tiles.end();
@@ -132,24 +161,24 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper,
         if (opacity < 0.95 && coveredRect.intersects(tile.rect()))
             continue;
 
-        tilesToPaint.prepend(&tile);
+        previousTilesToPaint.append(&tile);
     }
 
-    // TODO: When the TextureMapper makes a distinction between some edges exposed and no edges
+    // FIXME: When the TextureMapper makes a distinction between some edges exposed and no edges
     // exposed, the value passed should be an accurate reflection of the tile subset that we are
     // passing. For now we just "estimate" since CoordinatedBackingStore doesn't keep information about
     // the total tiled surface rect at the moment.
     unsigned edgesExposed = m_tiles.size() > 1 ? TextureMapper::NoEdges : TextureMapper::AllEdges;
-    for (size_t i = 0; i < tilesToPaint.size(); ++i) {
-        TextureMapperTile* tile = tilesToPaint[i];
-        tile->paint(textureMapper, transform, opacity, mask, edgesExposed);
-        static bool shouldDebug = shouldShowTileDebugVisuals();
-        if (!shouldDebug)
-            continue;
 
-        textureMapper->drawBorder(Color(0xFF, 0, 0), 2, tile->rect(), transform);
-        textureMapper->drawRepaintCounter(static_cast<CoordinatedBackingStoreTile*>(tile)->repaintCount(), 8, tilesToPaint[i]->rect().location(), transform);
-    }
+    ASSERT(!m_size.isZero());
+    FloatRect rectOnContents = mapToContents(IntRect(IntPoint::zero(), m_size), m_scale);
+    TransformationMatrix adjustedTransform = transform;
+    // targetRect is on the contents coordinate system, so we must compare two rects on the contents coordinate system.
+    // See TiledBackingStore.
+    adjustedTransform.multiply(TransformationMatrix::rectToRect(rectOnContents, targetRect));
+
+    paintTilesToTextureMapper(previousTilesToPaint, textureMapper, adjustedTransform, opacity, mask, edgesExposed);
+    paintTilesToTextureMapper(tilesToPaint, textureMapper, adjustedTransform, opacity, mask, edgesExposed);
 }
 
 void CoordinatedBackingStore::commitTileOperations(TextureMapper* textureMapper)

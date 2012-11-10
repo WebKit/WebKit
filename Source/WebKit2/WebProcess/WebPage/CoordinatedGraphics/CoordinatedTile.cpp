@@ -88,7 +88,7 @@ Vector<IntRect> CoordinatedTile::updateBackBuffer()
     static int id = 0;
     if (!m_ID) {
         m_ID = ++id;
-        m_client->createTile(m_ID, updateInfo, m_rect);
+        m_client->createTile(m_ID, updateInfo, m_rect, m_tiledBackingStore->rect().size());
     } else
         m_client->updateTile(m_ID, updateInfo, m_rect);
 

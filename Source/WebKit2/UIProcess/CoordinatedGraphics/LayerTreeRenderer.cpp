@@ -377,9 +377,11 @@ void LayerTreeRenderer::removeBackingStoreIfNeeded(WebLayerID layerID, int /*til
         layer->setBackingStore(0);
 }
 
-void LayerTreeRenderer::createTile(WebLayerID layerID, int tileID, float scale)
+void LayerTreeRenderer::createTile(WebLayerID layerID, int tileID, float scale, const WebCore::IntSize& backingSize)
 {
-    getBackingStore(layerID)->createTile(tileID, scale);
+    RefPtr<CoordinatedBackingStore> backingStore = getBackingStore(layerID);
+    backingStore->createTile(tileID, scale);
+    backingStore->setSize(backingSize);
 }
 
 void LayerTreeRenderer::removeTile(WebLayerID layerID, int tileID)

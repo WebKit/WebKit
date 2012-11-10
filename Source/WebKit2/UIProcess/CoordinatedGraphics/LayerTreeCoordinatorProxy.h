@@ -62,7 +62,7 @@ public:
     void setContentsSize(const WebCore::FloatSize&);
     void setVisibleContentsRect(const WebCore::FloatRect&, float scale, const WebCore::FloatPoint& trajectoryVector);
     void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
-    void createTileForLayer(int layerID, int tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
+    void createTileForLayer(int layerID, int tileID, const WebCore::IntRect& targetRect, const WebCore::IntSize& backingSize, const SurfaceUpdateInfo&);
     void updateTileForLayer(int layerID, int tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
     void removeTileForLayer(int layerID, int tileID);
     void createUpdateAtlas(int atlasID, const ShareableSurface::Handle&);

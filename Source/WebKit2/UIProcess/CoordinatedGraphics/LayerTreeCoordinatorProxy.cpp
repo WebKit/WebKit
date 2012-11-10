@@ -56,9 +56,9 @@ void LayerTreeCoordinatorProxy::dispatchUpdate(const Function<void()>& function)
     m_renderer->appendUpdate(function);
 }
 
-void LayerTreeCoordinatorProxy::createTileForLayer(int layerID, int tileID, const IntRect& targetRect, const WebKit::SurfaceUpdateInfo& updateInfo)
+void LayerTreeCoordinatorProxy::createTileForLayer(int layerID, int tileID, const WebCore::IntRect& targetRect, const WebCore::IntSize& backingSize, const WebKit::SurfaceUpdateInfo& updateInfo)
 {
-    dispatchUpdate(bind(&LayerTreeRenderer::createTile, m_renderer.get(), layerID, tileID, updateInfo.scaleFactor));
+    dispatchUpdate(bind(&LayerTreeRenderer::createTile, m_renderer.get(), layerID, tileID, updateInfo.scaleFactor, backingSize));
     updateTileForLayer(layerID, tileID, targetRect, updateInfo);
 }
 

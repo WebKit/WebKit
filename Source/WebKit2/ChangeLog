@@ -1,3 +1,51 @@
+2012-11-09  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Amend CoordinatedBackingStore::paintToTextureMapper to fit its own semantic.
+        https://bugs.webkit.org/show_bug.cgi?id=101701
+
+        Reviewed by Noam Rosenthal.
+
+        Currently, all subclasses of TextureMapperPlatformLayer implement
+        paintToTextureMapper to draw its own texture on the given targetRect. Subclasses
+        can scale the texture to fit the size of the targetRect. However, only
+        CoordinatedBackingStore::paintToTextureMapper draws its texture using its own
+        texture size. There is no bug yet, because TextureMapperLayer uses
+        CoordinatedBackingStore only as a backing store, not a content layer. So,
+        TextureMapperLayer always request CoordinatedBackingStore to draw using its own
+        texture size. However, we can use CoordinatedBackingStore as a content layer in
+        the future. So this patch fixes this potential bug.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStore::setSize):
+        (WebKit):
+        (WebKit::mapToContents):
+        (WebKit::paintTilesToTextureMapper):
+        (WebKit::CoordinatedBackingStore::paintToTextureMapper):
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.h:
+        (CoordinatedBackingStore):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::createTileForLayer):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::createTile):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::createTile):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        (CoordinatedGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp:
+        (WebKit::CoordinatedTile::updateBackBuffer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.h:
+        (CoordinatedTileClient):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::createTile):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-11-09  Brady Eidson  <beidson@apple.com>
 
         Implement NetworkProcess willSendRequest

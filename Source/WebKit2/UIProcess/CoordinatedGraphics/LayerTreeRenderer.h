@@ -85,7 +85,7 @@ public:
     void setLayerFilters(WebLayerID, const WebCore::FilterOperations&);
 #endif
 
-    void createTile(WebLayerID, int, float scale);
+    void createTile(WebLayerID, int, float scale, const WebCore::IntSize&);
     void removeTile(WebLayerID, int);
     void updateTile(WebLayerID, int, const TileUpdate&);
     void flushLayerChanges();
