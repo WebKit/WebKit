@@ -1,3 +1,19 @@
+2012-11-10  Andreas Kling  <kling@webkit.org>
+
+        Don't detach from shared ElementAttributeData when overwriting attribute with identical value.
+        <http://webkit.org/b/101849>
+
+        Reviewed by Anders Carlsson.
+
+        Defer the mutableAttributeData() call in Element::setAttributeInternal() until the last
+        possible moment, to avoid unnecessarily detaching and cloning from attribute data.
+
+        120 kB progression on Membuster3.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttributeInternal):
+        (WebCore::Element::addAttributeInternal):
+
 2012-11-10  Simon Fraser  <simon.fraser@apple.com>
 
         Some minor optimizations in RenderLayer

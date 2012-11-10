@@ -711,30 +711,29 @@ void Element::setSynchronizedLazyAttribute(const QualifiedName& name, const Atom
 
 inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& newValue, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
-    ElementAttributeData* attributeData = mutableAttributeData();
-
-    Attribute* existingAttribute = index != notFound ? attributeData->attributeItem(index) : 0;
     if (newValue.isNull()) {
-        if (existingAttribute)
+        if (index != notFound)
             removeAttributeInternal(index, inSynchronizationOfLazyAttribute);
         return;
     }
 
-    if (!existingAttribute) {
+    if (index == notFound) {
         addAttributeInternal(name, newValue, inSynchronizationOfLazyAttribute);
         return;
     }
 
     if (!inSynchronizationOfLazyAttribute)
-        willModifyAttribute(name, existingAttribute->value(), newValue);
+        willModifyAttribute(name, attributeItem(index)->value(), newValue);
 
-    // If there is an Attr node hooked to this attribute, the Attr::setValue() call below
-    // will write into the ElementAttributeData.
-    // FIXME: Refactor this so it makes some sense.
-    if (RefPtr<Attr> attrNode = attrIfExists(name))
-        attrNode->setValue(newValue);
-    else
-        existingAttribute->setValue(newValue);
+    if (newValue != attributeItem(index)->value()) {
+        // If there is an Attr node hooked to this attribute, the Attr::setValue() call below
+        // will write into the ElementAttributeData.
+        // FIXME: Refactor this so it makes some sense.
+        if (RefPtr<Attr> attrNode = attrIfExists(name))
+            attrNode->setValue(newValue);
+        else
+            mutableAttributeData()->attributeItem(index)->setValue(newValue);
+    }
 
     if (!inSynchronizationOfLazyAttribute)
         didModifyAttribute(name, newValue);
@@ -1636,11 +1635,9 @@ void Element::removeAttributeInternal(size_t index, SynchronizationOfLazyAttribu
 
 void Element::addAttributeInternal(const QualifiedName& name, const AtomicString& value, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
-    ASSERT(m_attributeData);
-    ASSERT(m_attributeData->isMutable());
     if (!inSynchronizationOfLazyAttribute)
         willModifyAttribute(name, nullAtom, value);
-    m_attributeData->addAttribute(Attribute(name, value));
+    mutableAttributeData()->addAttribute(Attribute(name, value));
     if (!inSynchronizationOfLazyAttribute)
         didAddAttribute(name, value);
 }
