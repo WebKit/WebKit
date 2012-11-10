@@ -1,3 +1,63 @@
+2012-11-09  Dean Jackson  <dino@apple.com>
+
+        Support list of tracks in caption media controls
+        https://bugs.webkit.org/show_bug.cgi?id=101669
+
+        Reviewed by Eric Carlson.
+
+        Attempt three of commit. The first two times caused build failures on Chromium.
+
+        Add some new elements to the media control shadow DOM that display the list of available
+        tracks on an audio/video element. The UI is hidden by default everywhere but on Mac,
+        where it is given a very basic design. At the moment only the list of available tracks
+        are displayed; The followup bug will make the UI active: https://bugs.webkit.org/show_bug.cgi?id=101670
+
+        No new tests - this doesn't expose any testable surface.
+
+        * css/mediaControls.css: Added default rules that hide the new elements.
+        * css/mediaControlsQuickTime.css: Specific rules that give a basic rendering of the new track list.
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlElement::isShowing): Tests for the visibility of a control.
+        (WebCore::MediaControlClosedCaptionsContainerElement::MediaControlClosedCaptionsContainerElement):
+        (WebCore::MediaControlClosedCaptionsContainerElement::create):
+        (WebCore::MediaControlClosedCaptionsContainerElement::shadowPseudoId):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::create): Now takes a reference to the media controls as a parameter.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::updateDisplayType):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::shadowPseudoId):
+        (WebCore::MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement): New element for holding a list of tracks to display.
+        * html/shadow/MediaControlElements.h:
+        (MediaControlElement):
+        (MediaControlToggleClosedCaptionsButtonElement):
+        (MediaControlClosedCaptionsContainerElement):
+        (MediaControlClosedCaptionsTrackListElement): Examines the media element to build a shadow DOM that lists all the tracks available.
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::MediaControlRootElement):
+        (WebCore::MediaControlRootElement::create): New track container and list elements created.
+        (WebCore::MediaControlRootElement::setMediaController): Hook up the new elements to the controller..
+        (WebCore::MediaControlRootElement::hide):
+        (WebCore::MediaControlRootElement::makeTransparent):
+        (WebCore::MediaControlRootElement::reset):
+        (WebCore::MediaControlRootElement::reportedError):
+        (WebCore::MediaControlRootElement::toggleClosedCaptionTrackList): Shows or hides the popup with the list of tracks.
+        (WebCore):
+        * html/shadow/MediaControlRootElement.h:
+        (WebCore):
+        (MediaControlRootElement):
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::initializeControls): Pass in the controls as a parameter.
+        * html/shadow/MediaControls.h:
+        (MediaControls):
+        * platform/Language.cpp:
+        (WebCore::displayNameForLanguageLocale): New function to return a human-readable name for a locale, given the identifier input.
+        * platform/Language.h:
+        (WebCore):
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::paintMediaControlsPart): New enum values into switch.
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::RenderMediaControlsChromium::paintMediaControlsPart): New enum values into switch.
+
 2012-11-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134152.

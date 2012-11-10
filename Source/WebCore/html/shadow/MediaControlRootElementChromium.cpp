@@ -166,7 +166,7 @@ bool MediaControlRootElementChromium::initializeControls(Document* document)
         return false;
 
     if (document->page()->theme()->supportsClosedCaptioning()) {
-        RefPtr<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(document);
+        RefPtr<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(document, this);
         m_toggleClosedCaptionsButton = toggleClosedCaptionsButton.get();
         panel->appendChild(toggleClosedCaptionsButton.release(), ec, true);
         if (ec)
