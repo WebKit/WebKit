@@ -1,3 +1,16 @@
+2012-11-09  Tien-Ren Chen  <trchen@chromium.org>
+
+        Correct hit-test point scaling for document.elementFromPoint
+        https://bugs.webkit.org/show_bug.cgi?id=101798
+
+        Reviewed by Adam Barth.
+
+        The hit-test point come from user JavaScript is in the document coordinate.
+        Convert to the frame coordinate with correct scale factor for hit test.
+
+        * fast/dom/elementFromPoint-scaled-scrolled-expected.txt: Added.
+        * fast/dom/elementFromPoint-scaled-scrolled.html: Added.
+
 2012-11-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] More gardening.

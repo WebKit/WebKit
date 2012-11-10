@@ -1436,8 +1436,8 @@ static Node* nodeFromPoint(Frame* frame, RenderView* renderView, int x, int y, L
     if (!frameView)
         return 0;
 
-    float zoomFactor = frame->pageZoomFactor();
-    IntPoint point = roundedIntPoint(FloatPoint(x * zoomFactor  + frameView->scrollX(), y * zoomFactor + frameView->scrollY()));
+    float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
+    IntPoint point = roundedIntPoint(FloatPoint(x * scaleFactor  + frameView->scrollX(), y * scaleFactor + frameView->scrollY()));
 
     if (!frameView->visibleContentRect().contains(point))
         return 0;
