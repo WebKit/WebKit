@@ -1,3 +1,18 @@
+2012-11-09  Rick Byers  <rbyers@chromium.org>
+
+        No tests for changing mouse cursors
+        https://bugs.webkit.org/show_bug.cgi?id=100550
+
+        Reviewed by Adam Barth.
+
+        Add a simple test covering the basic scenarios of changing a mouse
+        cursor with CSS.  This includes most of the cases currently covered
+        by ManualTests/*cursor*.
+
+        * fast/events/mouse-cursor-expected.txt: Added.
+        * fast/events/mouse-cursor.html: Added.
+        * platform/chromium/TestExpectations: Add failure expectation.
+
 2012-11-09  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium] Should pass fast/images/paletted-png-with-color-profile.html

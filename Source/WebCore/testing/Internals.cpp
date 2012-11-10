@@ -31,6 +31,7 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "ComposedShadowTreeWalker.h"
+#include "Cursor.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -38,6 +39,7 @@
 #include "DocumentMarkerController.h"
 #include "Element.h"
 #include "ElementShadow.h"
+#include "EventHandler.h"
 #include "ExceptionCode.h"
 #include "FormController.h"
 #include "Frame.h"
@@ -74,6 +76,8 @@
 #include "TextIterator.h"
 #include "TreeScope.h"
 #include "ViewportArguments.h"
+#include <wtf/text/StringBuffer.h>
+
 
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
@@ -93,7 +97,6 @@
 #endif
 
 #if ENABLE(TOUCH_ADJUSTMENT)
-#include "EventHandler.h"
 #include "WebKitPoint.h"
 #endif
 
@@ -1475,6 +1478,91 @@ void Internals::stopTrackingRepaints(Document* document, ExceptionCode& ec)
 
     FrameView* frameView = document->view();
     frameView->setTracksRepaints(false);
+}
+
+#if USE(LAZY_NATIVE_CURSOR)
+static const char* cursorTypeToString(Cursor::Type cursorType)
+{
+    switch (cursorType) {
+    case Cursor::Pointer: return "TypePointer";
+    case Cursor::Cross: return "TypeCross";
+    case Cursor::Hand: return "TypeHand";
+    case Cursor::IBeam: return "TypeIBeam";
+    case Cursor::Wait: return "TypeWait";
+    case Cursor::Help: return "TypeHelp";
+    case Cursor::EastResize: return "TypeEastResize";
+    case Cursor::NorthResize: return "TypeNorthResize";
+    case Cursor::NorthEastResize: return "TypeNorthEastResize";
+    case Cursor::NorthWestResize: return "TypeNorthWestResize";
+    case Cursor::SouthResize: return "TypeSouthResize";
+    case Cursor::SouthEastResize: return "TypeSouthEastResize";
+    case Cursor::SouthWestResize: return "TypeSouthWestResize";
+    case Cursor::WestResize: return "TypeWestResize";
+    case Cursor::NorthSouthResize: return "TypeNorthSouthResize";
+    case Cursor::EastWestResize: return "TypeEastWestResize";
+    case Cursor::NorthEastSouthWestResize: return "TypeNorthEastSouthWestResize";
+    case Cursor::NorthWestSouthEastResize: return "TypeNorthWestSouthEastResize";
+    case Cursor::ColumnResize: return "TypeColumnResize";
+    case Cursor::RowResize: return "TypeRowResize";
+    case Cursor::MiddlePanning: return "TypeMiddlePanning";
+    case Cursor::EastPanning: return "TypeEastPanning";
+    case Cursor::NorthPanning: return "TypeNorthPanning";
+    case Cursor::NorthEastPanning: return "TypeNorthEastPanning";
+    case Cursor::NorthWestPanning: return "TypeNorthWestPanning";
+    case Cursor::SouthPanning: return "TypeSouthPanning";
+    case Cursor::SouthEastPanning: return "TypeSouthEastPanning";
+    case Cursor::SouthWestPanning: return "TypeSouthWestPanning";
+    case Cursor::WestPanning: return "TypeWestPanning";
+    case Cursor::Move: return "TypeMove";
+    case Cursor::VerticalText: return "TypeVerticalText";
+    case Cursor::Cell: return "TypeCell";
+    case Cursor::ContextMenu: return "TypeContextMenu";
+    case Cursor::Alias: return "TypeAlias";
+    case Cursor::Progress: return "TypeProgress";
+    case Cursor::NoDrop: return "TypeNoDrop";
+    case Cursor::Copy: return "TypeCopy";
+    case Cursor::None: return "TypeNone";
+    case Cursor::NotAllowed: return "TypeNotAllowed";
+    case Cursor::ZoomIn: return "TypeZoomIn";
+    case Cursor::ZoomOut: return "TypeZoomOut";
+    case Cursor::Grab: return "TypeGrab";
+    case Cursor::Grabbing: return "TypeGrabbing";
+    case Cursor::Custom: return "TypeCustom";
+    }
+
+    ASSERT_NOT_REACHED();
+    return "UNKNOWN";
+}
+#endif
+
+String Internals::getCurrentCursorInfo(Document* document, ExceptionCode& ec)
+{
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    Cursor cursor = document->frame()->eventHandler()->currentMouseCursor();
+
+#if USE(LAZY_NATIVE_CURSOR)
+    StringBuilder result;
+    result.append("type=");
+    result.append(cursorTypeToString(cursor.type()));
+    result.append(" hotSpot=");
+    result.appendNumber(cursor.hotSpot().x());
+    result.append(",");
+    result.appendNumber(cursor.hotSpot().y());
+    if (cursor.image()) {
+        IntSize size = cursor.image()->size();
+        result.append(" image=");
+        result.appendNumber(size.width());
+        result.append("x");
+        result.appendNumber(size.height());
+    }
+    return result.toString();
+#else
+    return "FAIL: Cursor details not available on this platform.";
+#endif
 }
 
 }

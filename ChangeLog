@@ -1,3 +1,14 @@
+2012-11-09  Rick Byers  <rbyers@chromium.org>
+
+        No tests for changing mouse cursors
+        https://bugs.webkit.org/show_bug.cgi?id=100550
+
+        Reviewed by Adam Barth.
+
+        Add necessary exports for Internals::getCurrentCursorInfo
+
+        * Source/autotools/symbols.filter:
+
 2012-11-09  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Enable -Werror for the EFL port

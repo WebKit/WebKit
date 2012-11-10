@@ -1,3 +1,27 @@
+2012-11-09  Rick Byers  <rbyers@chromium.org>
+
+        No tests for changing mouse cursors
+        https://bugs.webkit.org/show_bug.cgi?id=100550
+
+        Reviewed by Adam Barth.
+
+        Add infrastructure to keep track of the last set mouse cursor,
+        and then to query it from DumpRenderTree.
+
+        Test: fast/events/mouse-cursor.html
+
+        * WebCore.exp.in: Add Cursor copy ctor export
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseMoveEvent): Keep track of last set mouse cursor
+        * page/EventHandler.h:
+        (WebCore::EventHandler::currentMouseCursor): New getter for last set mouse cursor
+        * testing/Internals.cpp:
+        (WebCore::cursorTypeToString): Helper to convert cursor type to enum
+        (WebCore):
+        (WebCore::Internals::getCurrentCursorInfo): New function to return a string describing the last set mouse cursor
+        * testing/Internals.h: Declare getCurrentCursorInfo
+        * testing/Internals.idl: Declare getCurrentCursorInfo
+
 2012-11-09  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Amend CoordinatedBackingStore::paintToTextureMapper to fit its own semantic.
