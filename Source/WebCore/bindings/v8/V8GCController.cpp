@@ -31,39 +31,17 @@
 #include "config.h"
 #include "V8GCController.h"
 
-#include "ActiveDOMObject.h"
 #include "Attr.h"
-#include "DOMDataStore.h"
-#include "DOMImplementation.h"
 #include "HTMLImageElement.h"
-#include "HTMLNames.h"
 #include "MemoryUsageSupport.h"
-#include "MessagePort.h"
-#include "RetainedDOMInfo.h"
-#include "RetainedObjectInfo.h"
+#include "TraceEvent.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
-#include "V8CSSRule.h"
-#include "V8CSSRuleList.h"
-#include "V8CSSStyleDeclaration.h"
-#include "V8DOMImplementation.h"
 #include "V8MessagePort.h"
 #include "V8Node.h"
 #include "V8RecursionScope.h"
-#include "V8StyleSheet.h"
-#include "V8StyleSheetList.h"
 #include "WrapperTypeInfo.h"
-
 #include <algorithm>
-#include <utility>
-#include <v8-debug.h>
-#include <wtf/HashMap.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/UnusedParam.h>
-
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
 
 namespace WebCore {
 
@@ -256,7 +234,6 @@ void V8GCController::majorGCPrologue()
     data->stringCache()->clearOnGC();
 }
 
-#if PLATFORM(CHROMIUM)
 static int workingSetEstimateMB = 0;
 
 static Mutex& workingSetEstimateMBMutex()
@@ -264,7 +241,6 @@ static Mutex& workingSetEstimateMBMutex()
     AtomicallyInitializedStatic(Mutex&, mutex = *new Mutex);
     return mutex;
 }
-#endif
 
 void V8GCController::gcEpilogue(v8::GCType type, v8::GCCallbackFlags flags)
 {
@@ -282,20 +258,17 @@ void V8GCController::majorGCEpilogue()
 {
     v8::HandleScope scope;
 
-#if PLATFORM(CHROMIUM)
     // The GC can happen on multiple threads in case of dedicated workers which run in-process.
     {
         MutexLocker locker(workingSetEstimateMBMutex());
         workingSetEstimateMB = MemoryUsageSupport::actualMemoryUsageMB();
     }
-#endif
 
     TRACE_EVENT_END0("v8", "GC");
 }
 
 void V8GCController::checkMemoryUsage()
 {
-#if PLATFORM(CHROMIUM)
     const int lowMemoryUsageMB = MemoryUsageSupport::lowMemoryUsageMB();
     const int highMemoryUsageMB = MemoryUsageSupport::highMemoryUsageMB();
     const int highUsageDeltaMB = MemoryUsageSupport::highUsageDeltaMB();
@@ -319,7 +292,6 @@ void V8GCController::checkMemoryUsage()
         // We are approaching OOM and memory usage increased by highUsageDeltaMB since the last GC.
         v8::V8::LowMemoryNotification();
     }
-#endif
 }
 
 void V8GCController::hintForCollectGarbage()
