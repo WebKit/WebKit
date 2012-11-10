@@ -1,3 +1,19 @@
+2012-11-09  Dan Bernstein  <mitz@apple.com>
+
+        SimpleFontData::getCFStringAttributes sets some attributes to their default values, but shouldn’t
+        https://bugs.webkit.org/show_bug.cgi?id=101799
+
+        Reviewed by Alexey Proskuryakov.
+
+        In some configurations, setting kCTLigatureAttributeName to its default value of 1 yields
+        different behavior from not setting it at all. We can get the correct behavior and greatly
+        simplify the code by not setting attributes to their default values.
+
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        Removed redundant #import directives and changed the remaining ones to #include.
+        (WebCore::SimpleFontData::getCFStringAttributes): Changed to use a mutable dictionary and
+        only add attributes that have non-default values.
+
 2012-11-09  Rick Byers  <rbyers@chromium.org>
 
         No tests for changing mouse cursors
