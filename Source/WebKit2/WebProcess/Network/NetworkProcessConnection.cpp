@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkProcessConnection.h"
 
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebResourceBuffer.h"
 #include <WebCore/ResourceBuffer.h>
@@ -68,6 +70,14 @@ void NetworkProcessConnection::didClose(CoreIPC::Connection*)
 
 void NetworkProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
 {
+}
+
+void NetworkProcessConnection::willSendRequest(uint64_t requestID, ResourceLoadIdentifier resourceLoadIdentifier, const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse)
+{
+    ResourceRequest newRequest = proposedRequest;
+    WebProcess::shared().webResourceLoadScheduler().willSendRequest(resourceLoadIdentifier, newRequest, redirectResponse);
+
+    WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::WillSendRequestHandled(requestID, newRequest), 0);
 }
 
 void NetworkProcessConnection::didReceiveResponse(ResourceLoadIdentifier resourceLoadIdentifier, const ResourceResponse& response)

@@ -117,6 +117,8 @@ private:
     RefPtr<WebCore::ResourceBuffer> m_buffer;
 };
 
+void didReceiveWillSendRequestHandled(uint64_t requestID, const WebCore::ResourceRequest&);
+
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)

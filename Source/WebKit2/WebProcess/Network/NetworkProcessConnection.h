@@ -35,6 +35,7 @@
 
 namespace WebCore {
 class ResourceError;
+class ResourceRequest;
 class ResourceResponse;
 }
 
@@ -63,6 +64,7 @@ private:
 
     void didReceiveNetworkProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
+    void willSendRequest(uint64_t requestID, ResourceLoadIdentifier, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void didReceiveResponse(ResourceLoadIdentifier, const WebCore::ResourceResponse&);
     void didReceiveResource(ResourceLoadIdentifier, const ShareableResource::Handle&, double finishTime);
     void didFailResourceLoad(ResourceLoadIdentifier, const WebCore::ResourceError&);

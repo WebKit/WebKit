@@ -1,3 +1,39 @@
+2012-11-09  Brady Eidson  <beidson@apple.com>
+
+        Implement NetworkProcess willSendRequest
+        https://bugs.webkit.org/show_bug.cgi?id=101812
+
+        Reviewed by Alexey Proskuryakov.
+
+        Message to the WebProcess to get the new request, if any.
+
+        Because network callbacks are coming in on a background thread we have to jump through hoops to synchronously
+        ask the WebProcess, but these hoops follow an established pattern of using async messaging with BlockingResourceMap.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::willSendRequestHandled): Pass the new request back to NetworkRequest for handling.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        * NetworkProcess/NetworkRequest.cpp:
+        (WebKit::NetworkRequest::didFail):
+        (WebKit::responseMap):
+        (WebKit::generateWillSendRequestID):
+        (WebKit::didReceiveWillSendRequestHandled):
+        (WebKit::NetworkRequest::willSendRequest): Asynchronously message the WebProcess but synchronous wait for a reply back.
+        * NetworkProcess/NetworkRequest.h:
+
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::willSendRequest): Ask the WebResourceLoadScheduler for the new request then
+          message back to the NetworkProcess with the reply.
+        * WebProcess/Network/NetworkProcessConnection.h:
+
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::willSendRequest):
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+
 2012-11-09  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin should support clicking on external links

@@ -28,6 +28,7 @@
 
 #include "ConnectionStack.h"
 #include "NetworkProcess.h"
+#include "NetworkRequest.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RunLoop.h>
 
@@ -146,6 +147,11 @@ void NetworkConnectionToWebProcess::resumePendingRequests()
 void NetworkConnectionToWebProcess::setSerialLoadingEnabled(bool enabled)
 {
     m_serialLoadingEnabled = enabled;
+}
+
+void NetworkConnectionToWebProcess::willSendRequestHandled(uint64_t requestID, const WebCore::ResourceRequest& newRequest)
+{
+    didReceiveWillSendRequestHandled(requestID, newRequest);
 }
 
 } // namespace WebKit

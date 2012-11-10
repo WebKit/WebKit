@@ -42,6 +42,8 @@ messages -> NetworkConnectionToWebProcess {
     ResumePendingRequests() -> ()
     
     SetSerialLoadingEnabled(bool enabled) -> ()
+    
+    WillSendRequestHandled(uint64_t requestID, WebCore::ResourceRequest newRequest)
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

@@ -25,6 +25,7 @@
 messages -> NetworkProcessConnection {
 
     // FIXME (NetworkProcess): We'll need much more granularity for response messages.
+    WillSendRequest(uint64_t requestID, uint64_t resourceLoadIdentifier, WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse)
     DidReceiveResponse(uint64_t resourceLoadIdentifier, WebCore::ResourceResponse response)
     DidReceiveResource(uint64_t resourceLoadIdentifier, WebKit::ShareableResource::Handle resource, double finishTime)
     DidFailResourceLoad(uint64_t resourceLoadIdentifier, WebCore::ResourceError error)

@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "BlockingResponseMap.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
@@ -175,7 +176,7 @@ void NetworkRequest::didFinishLoading(ResourceHandle*, double finishTime)
     scheduleStopOnMainThread();
 }
 
-void NetworkRequest::didFail(WebCore::ResourceHandle*, const WebCore::ResourceError& error)
+void NetworkRequest::didFail(ResourceHandle*, const ResourceError& error)
 {
     connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::DidFailResourceLoad(m_identifier, error), 0);
     scheduleStopOnMainThread();
@@ -184,9 +185,35 @@ void NetworkRequest::didFail(WebCore::ResourceHandle*, const WebCore::ResourceEr
 // FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
 // Once we know what they are they can be removed.
 
-void NetworkRequest::willSendRequest(WebCore::ResourceHandle*, WebCore::ResourceRequest&, const WebCore::ResourceResponse& /*redirectResponse*/)
+
+static BlockingResponseMap<ResourceRequest*>& responseMap()
 {
-    notImplemented();
+    AtomicallyInitializedStatic(BlockingResponseMap<ResourceRequest*>&, responseMap = *new BlockingResponseMap<ResourceRequest*>);
+    return responseMap;
+}
+
+static uint64_t generateWillSendRequestID()
+{
+    static int64_t uniqueWillSendRequestID;
+    return OSAtomicIncrement64Barrier(&uniqueWillSendRequestID);
+}
+
+void didReceiveWillSendRequestHandled(uint64_t requestID, const ResourceRequest& request)
+{
+    responseMap().didReceiveResponse(requestID, adoptPtr(new ResourceRequest(request)));
+}
+
+void NetworkRequest::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+    uint64_t requestID = generateWillSendRequestID();
+
+    if (!connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::WillSendRequest(requestID, m_identifier, request, redirectResponse), 0)) {
+        // FIXME (NetworkProcess): What should we do if we can't send the message?
+        return;
+    }
+    
+    OwnPtr<ResourceRequest> newRequest = responseMap().waitForResponse(requestID);
+    request = *newRequest;
 }
 
 void NetworkRequest::didSendData(WebCore::ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/)

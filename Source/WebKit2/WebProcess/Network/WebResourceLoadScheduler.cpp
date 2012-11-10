@@ -192,6 +192,15 @@ void WebResourceLoadScheduler::setSerialLoadingEnabled(bool enabled)
     WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::SetSerialLoadingEnabled(enabled), Messages::NetworkConnectionToWebProcess::SetSerialLoadingEnabled::Reply(), 0);
 }
 
+void WebResourceLoadScheduler::willSendRequest(ResourceLoadIdentifier identifier, WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
+{
+    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
+    ASSERT(loader);
+
+    LOG(Network, "(WebProcess) WebResourceLoadScheduler::willSendRequest to '%s'", request.url().string().utf8().data());
+    loader->willSendRequest(request, redirectResponse);
+}
+
 void WebResourceLoadScheduler::didReceiveResponse(ResourceLoadIdentifier identifier, const WebCore::ResourceResponse& response)
 {
     RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);

@@ -57,6 +57,7 @@ public:
 
     virtual void setSerialLoadingEnabled(bool) OVERRIDE;
 
+    void willSendRequest(ResourceLoadIdentifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
     void didReceiveResponse(ResourceLoadIdentifier, const WebCore::ResourceResponse&);
     void didReceiveResource(ResourceLoadIdentifier, const WebCore::ResourceBuffer&, double finishTime);
     void didFailResourceLoad(ResourceLoadIdentifier, const WebCore::ResourceError&);
