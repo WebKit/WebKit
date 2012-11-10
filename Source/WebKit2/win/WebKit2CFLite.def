@@ -235,6 +235,8 @@ EXPORTS
         ?setStorageBlockingPolicy@Settings@WebCore@@QAEXW4StorageBlockingPolicy@SecurityOrigin@2@@Z
         ?setSuggestedValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
         ?setEditingValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
+        ?setResolutionOverride@Settings@WebCore@@QAEXABVIntSize@2@@Z
+        ?setMediaTypeOverride@Settings@WebCore@@QAEXABVString@WTF@@@Z
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
         ?settings@Frame@WebCore@@QBEPAVSettings@2@XZ
         ?setFixedElementsLayoutRelativeToFrame@Settings@WebCore@@QAEX_N@Z
@@ -300,5 +302,6 @@ EXPORTS
         ?setProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@0@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVDOMWindow@1@@Z
         ?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UAEXXZ
+        ?layerTreeAsText@Frame@WebCore@@QBE?AVString@WTF@@I@Z
         ?trackedRepaintRectsAsText@Frame@WebCore@@QBE?AVString@WTF@@XZ
         ?setTracksRepaints@FrameView@WebCore@@QAEX_N@Z
