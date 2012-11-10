@@ -1083,7 +1083,7 @@ public:
 
     // W3C API
     bool webkitFullscreenEnabled() const;
-    Element* webkitFullscreenElement() const { return !m_fullScreenElementStack.isEmpty() ? m_fullScreenElementStack.first().get() : 0; }
+    Element* webkitFullscreenElement() const { return !m_fullScreenElementStack.isEmpty() ? m_fullScreenElementStack.last().get() : 0; }
     void webkitExitFullscreen();
 #endif
 
@@ -1458,7 +1458,7 @@ private:
 #if ENABLE(FULLSCREEN_API)
     bool m_areKeysEnabledInFullScreen;
     RefPtr<Element> m_fullScreenElement;
-    Deque<RefPtr<Element> > m_fullScreenElementStack;
+    Vector<RefPtr<Element> > m_fullScreenElementStack;
     RenderFullScreen* m_fullScreenRenderer;
     Timer<Document> m_fullScreenChangeDelayTimer;
     Deque<RefPtr<Node> > m_fullScreenChangeEventTargetQueue;

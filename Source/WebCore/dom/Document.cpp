@@ -5082,7 +5082,7 @@ void Document::requestFullScreenForElement(Element* element, unsigned short flag
         // The context object's node document fullscreen element stack is not empty and its top element
         // is not an ancestor of the context object. (NOTE: Ignore this requirement if the request was
         // made via the legacy Mozilla-style API.)
-        if (!m_fullScreenElementStack.isEmpty() && !m_fullScreenElementStack.first()->contains(element) && !inLegacyMozillaMode)
+        if (!m_fullScreenElementStack.isEmpty() && !m_fullScreenElementStack.last()->contains(element) && !inLegacyMozillaMode)
             break;
 
         // A descendant browsing context's document has a non-empty fullscreen element stack.
@@ -5188,8 +5188,8 @@ void Document::webkitCancelFullScreen()
 
     // To achieve that aim, remove all the elements from the top document's stack except for the first before
     // calling webkitExitFullscreen():
-    Deque<RefPtr<Element> > replacementFullscreenElementStack;
-    replacementFullscreenElementStack.prepend(topDocument()->webkitFullscreenElement());
+    Vector<RefPtr<Element> > replacementFullscreenElementStack;
+    replacementFullscreenElementStack.append(topDocument()->webkitFullscreenElement());
     topDocument()->m_fullScreenElementStack.swap(replacementFullscreenElementStack);
 
     topDocument()->webkitExitFullscreen();
@@ -5519,12 +5519,12 @@ void Document::popFullscreenElementStack()
     if (m_fullScreenElementStack.isEmpty())
         return;
 
-    m_fullScreenElementStack.removeFirst();
+    m_fullScreenElementStack.removeLast();
 }
 
 void Document::pushFullscreenElementStack(Element* element)
 {
-    m_fullScreenElementStack.prepend(element);
+    m_fullScreenElementStack.append(element);
 }
 
 void Document::addDocumentToFullScreenChangeEventQueue(Document* doc)
