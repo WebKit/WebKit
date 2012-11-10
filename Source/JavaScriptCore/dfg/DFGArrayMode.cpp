@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractValue.h"
+#include "DFGGraph.h"
 
 namespace JSC { namespace DFG {
 
@@ -200,22 +201,58 @@ ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, Speculate
     }
 }
 
-bool ArrayMode::alreadyChecked(AbstractValue& value, IndexingType shape) const
+Structure* ArrayMode::originalArrayStructure(Graph& graph, const CodeOrigin& codeOrigin) const
 {
-    if (isJSArray()) {
+    if (!isJSArrayWithOriginalStructure())
+        return 0;
+    
+    JSGlobalObject* globalObject = graph.globalObjectFor(codeOrigin);
+    
+    switch (type()) {
+    case Array::Int32:
+        return globalObject->originalArrayStructureForIndexingType(ArrayWithInt32);
+    case Array::Double:
+        return globalObject->originalArrayStructureForIndexingType(ArrayWithDouble);
+    case Array::Contiguous:
+        return globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous);
+    case Array::ArrayStorage:
+        return globalObject->originalArrayStructureForIndexingType(ArrayWithArrayStorage);
+    default:
+        CRASH();
+        return 0;
+    }
+}
+
+Structure* ArrayMode::originalArrayStructure(Graph& graph, Node& node) const
+{
+    return originalArrayStructure(graph, node.codeOrigin);
+}
+
+bool ArrayMode::alreadyChecked(Graph& graph, Node& node, AbstractValue& value, IndexingType shape) const
+{
+    switch (arrayClass()) {
+    case Array::OriginalArray:
+        return value.m_currentKnownStructure.hasSingleton()
+            && (value.m_currentKnownStructure.singleton()->indexingType() & IndexingShapeMask) == shape
+            && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray)
+            && graph.globalObjectFor(node.codeOrigin)->isOriginalArrayStructure(value.m_currentKnownStructure.singleton());
+        
+    case Array::Array:
         if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(shape | IsArray)))
             return true;
         return value.m_currentKnownStructure.hasSingleton()
             && (value.m_currentKnownStructure.singleton()->indexingType() & IndexingShapeMask) == shape
             && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
+        
+    default:
+        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(shape) | asArrayModes(shape | IsArray)))
+            return true;
+        return value.m_currentKnownStructure.hasSingleton()
+            && (value.m_currentKnownStructure.singleton()->indexingType() & IndexingShapeMask) == shape;
     }
-    if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(shape) | asArrayModes(shape | IsArray)))
-        return true;
-    return value.m_currentKnownStructure.hasSingleton()
-        && (value.m_currentKnownStructure.singleton()->indexingType() & IndexingShapeMask) == shape;
 }
 
-bool ArrayMode::alreadyChecked(AbstractValue& value) const
+bool ArrayMode::alreadyChecked(Graph& graph, Node& node, AbstractValue& value) const
 {
     switch (type()) {
     case Array::Generic:
@@ -228,29 +265,36 @@ bool ArrayMode::alreadyChecked(AbstractValue& value) const
         return speculationChecked(value.m_type, SpecString);
         
     case Array::Int32:
-        return alreadyChecked(value, Int32Shape);
+        return alreadyChecked(graph, node, value, Int32Shape);
         
     case Array::Double:
-        return alreadyChecked(value, DoubleShape);
+        return alreadyChecked(graph, node, value, DoubleShape);
         
     case Array::Contiguous:
-        return alreadyChecked(value, ContiguousShape);
+        return alreadyChecked(graph, node, value, ContiguousShape);
         
     case Array::ArrayStorage:
-        return alreadyChecked(value, ArrayStorageShape);
+        return alreadyChecked(graph, node, value, ArrayStorageShape);
         
     case Array::SlowPutArrayStorage:
-        if (isJSArray()) {
+        switch (arrayClass()) {
+        case Array::OriginalArray:
+            CRASH();
+            return false;
+        
+        case Array::Array:
             if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(ArrayWithArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
                 return true;
             return value.m_currentKnownStructure.hasSingleton()
                 && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType())
                 && (value.m_currentKnownStructure.singleton()->indexingType() & IsArray);
+        
+        default:
+            if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
+                return true;
+            return value.m_currentKnownStructure.hasSingleton()
+                && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
         }
-        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModes(NonArrayWithArrayStorage) | asArrayModes(ArrayWithArrayStorage) | asArrayModes(NonArrayWithSlowPutArrayStorage) | asArrayModes(ArrayWithSlowPutArrayStorage)))
-            return true;
-        return value.m_currentKnownStructure.hasSingleton()
-            && hasArrayStorage(value.m_currentKnownStructure.singleton()->indexingType());
         
     case Array::Arguments:
         return speculationChecked(value.m_type, SpecArguments);

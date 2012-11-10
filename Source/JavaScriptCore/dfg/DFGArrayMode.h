@@ -33,9 +33,15 @@
 #include "ArrayProfile.h"
 #include "SpeculatedType.h"
 
-namespace JSC { namespace DFG {
+namespace JSC {
 
+struct CodeOrigin;
+
+namespace DFG {
+
+class Graph;
 struct AbstractValue;
+struct Node;
 
 // Use a namespace + enum instead of enum alone to avoid the namespace collision
 // that would otherwise occur, since we say things like "Int8Array" and "JSArray"
@@ -161,7 +167,7 @@ public:
             mySpeculation = Array::InBounds;
         
         if (isJSArray()) {
-            if (profile->usesOriginalArrayStructures())
+            if (profile->usesOriginalArrayStructures() && benefitsFromOriginalArray())
                 myArrayClass = Array::OriginalArray;
             else
                 myArrayClass = Array::Array;
@@ -183,7 +189,7 @@ public:
     
     ArrayMode refine(SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone) const;
     
-    bool alreadyChecked(AbstractValue&) const;
+    bool alreadyChecked(Graph&, Node&, AbstractValue&) const;
     
     const char* toString() const;
     
@@ -303,6 +309,23 @@ public:
         }
     }
     
+    bool benefitsFromOriginalArray() const
+    {
+        switch (type()) {
+        case Array::Int32:
+        case Array::Double:
+        case Array::Contiguous:
+        case Array::ArrayStorage:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    // Returns 0 if this is not OriginalArray.
+    Structure* originalArrayStructure(Graph&, const CodeOrigin&) const;
+    Structure* originalArrayStructure(Graph&, Node&) const;
+    
     bool benefitsFromStructureCheck() const
     {
         switch (type()) {
@@ -375,7 +398,7 @@ private:
         }
     }
     
-    bool alreadyChecked(AbstractValue&, IndexingType shape) const;
+    bool alreadyChecked(Graph&, Node&, AbstractValue&, IndexingType shape) const;
     
     union {
         struct {

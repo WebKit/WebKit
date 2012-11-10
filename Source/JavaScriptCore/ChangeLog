@@ -1,5 +1,47 @@
 2012-11-09  Filip Pizlo  <fpizlo@apple.com>
 
+        If the DFG ArrayMode says that an access is on an OriginalArray, then the checks should always enforce this
+        https://bugs.webkit.org/show_bug.cgi?id=101720
+
+        Reviewed by Mark Hahnenberg.
+
+        Previously, "original" arrays was just a hint that we could find the structure
+        of the array if we needed to even if the array profile didn't have it due to
+        polymorphism. Now, "original" arrays are a property that is actually checked:
+        if an array access has ArrayMode::arrayClass() == Array::OriginalArray, then we
+        can be sure that the code performing the access is dealing with not just a
+        JSArray, but a JSArray that has no named properties, no indexed accessors, and
+        the ArrayPrototype as its prototype. This will be useful for optimizations that
+        are being done as part of https://bugs.webkit.org/show_bug.cgi?id=101720.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::originalArrayStructure):
+        (DFG):
+        (JSC::DFG::ArrayMode::alreadyChecked):
+        * dfg/DFGArrayMode.h:
+        (JSC):
+        (DFG):
+        (JSC::DFG::ArrayMode::withProfile):
+        (ArrayMode):
+        (JSC::DFG::ArrayMode::benefitsFromOriginalArray):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode):
+        (JSC::DFG::SpeculativeJIT::checkArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnString):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnArguments):
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentsLength):
+
+2012-11-09  Filip Pizlo  <fpizlo@apple.com>
+
         Fix indentation of BooleanPrototype.h
 
         Rubber stamped by Mark Hahnenberg.

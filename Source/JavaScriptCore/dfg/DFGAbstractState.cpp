@@ -1452,7 +1452,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         forNode(nodeIndex).clear(); // The result is not a JS value.
         break;
     case CheckArray: {
-        if (node.arrayMode().alreadyChecked(forNode(node.child1()))) {
+        if (node.arrayMode().alreadyChecked(m_graph, node, forNode(node.child1()))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;
@@ -1508,7 +1508,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
     }
     case Arrayify: {
-        if (node.arrayMode().alreadyChecked(forNode(node.child1()))) {
+        if (node.arrayMode().alreadyChecked(m_graph, node, forNode(node.child1()))) {
             m_foundConstants = true;
             node.setCanExit(false);
             break;

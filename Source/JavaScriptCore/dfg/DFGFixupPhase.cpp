@@ -424,30 +424,11 @@ private:
         
         m_graph.ref(array);
 
+        Structure* structure = arrayMode.originalArrayStructure(m_graph, codeOrigin);
+        
         if (arrayMode.doesConversion()) {
             if (index != NoNode)
                 m_graph.ref(index);
-            
-            Structure* structure = 0;
-            if (arrayMode.isJSArrayWithOriginalStructure()) {
-                JSGlobalObject* globalObject = m_graph.baselineCodeBlockFor(codeOrigin)->globalObject();
-                switch (arrayMode.type()) {
-                case Array::Int32:
-                    structure = globalObject->originalArrayStructureForIndexingType(ArrayWithInt32);
-                    break;
-                case Array::Double:
-                    structure = globalObject->originalArrayStructureForIndexingType(ArrayWithDouble);
-                    break;
-                case Array::Contiguous:
-                    structure = globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous);
-                    break;
-                case Array::ArrayStorage:
-                    structure = globalObject->originalArrayStructureForIndexingType(ArrayWithArrayStorage);
-                    break;
-                default:
-                    break;
-                }
-            }
             
             if (structure) {
                 Node arrayify(ArrayifyToStructure, codeOrigin, OpInfo(structure), OpInfo(arrayMode.asWord()), array, index);
@@ -463,11 +444,19 @@ private:
                 m_insertionSet.append(m_indexInBlock, arrayifyIndex);
             }
         } else {
-            Node checkArray(CheckArray, codeOrigin, OpInfo(arrayMode.asWord()), array);
-            checkArray.ref();
-            NodeIndex checkArrayIndex = m_graph.size();
-            m_graph.append(checkArray);
-            m_insertionSet.append(m_indexInBlock, checkArrayIndex);
+            if (structure) {
+                Node checkStructure(CheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(structure)), array);
+                checkStructure.ref();
+                NodeIndex checkStructureIndex = m_graph.size();
+                m_graph.append(checkStructure);
+                m_insertionSet.append(m_indexInBlock, checkStructureIndex);
+            } else {
+                Node checkArray(CheckArray, codeOrigin, OpInfo(arrayMode.asWord()), array);
+                checkArray.ref();
+                NodeIndex checkArrayIndex = m_graph.size();
+                m_graph.append(checkArray);
+                m_insertionSet.append(m_indexInBlock, checkArrayIndex);
+            }
         }
         
         if (!storageCheck(arrayMode))

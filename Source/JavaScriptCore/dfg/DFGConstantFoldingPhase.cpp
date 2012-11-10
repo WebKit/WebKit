@@ -116,7 +116,7 @@ private:
                 
             case CheckArray:
             case Arrayify: {
-                if (!node.arrayMode().alreadyChecked(m_state.forNode(node.child1())))
+                if (!node.arrayMode().alreadyChecked(m_graph, node, m_state.forNode(node.child1())))
                     break;
                 ASSERT(node.refCount() == 1);
                 node.setOpAndDefaultFlags(Phantom);

@@ -361,13 +361,22 @@ const TypedArrayDescriptor* SpeculativeJIT::typedArrayDescriptor(ArrayMode array
 
 JITCompiler::Jump SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGPR, ArrayMode arrayMode, IndexingType shape, bool invert)
 {
-    if (arrayMode.isJSArray()) {
+    switch (arrayMode.arrayClass()) {
+    case Array::OriginalArray: {
+        CRASH();
+        JITCompiler::Jump result; // I already know that VC++ takes unkindly to the expression "return Jump()", so I'm doing it this way in anticipation of someone eventually using VC++ to compile the DFG.
+        return result;
+    }
+        
+    case Array::Array:
         m_jit.and32(TrustedImm32(IsArray | IndexingShapeMask), tempGPR);
         return m_jit.branch32(
             invert ? MacroAssembler::Equal : MacroAssembler::NotEqual, tempGPR, TrustedImm32(IsArray | shape));
+        
+    default:
+        m_jit.and32(TrustedImm32(IndexingShapeMask), tempGPR);
+        return m_jit.branch32(invert ? MacroAssembler::Equal : MacroAssembler::NotEqual, tempGPR, TrustedImm32(shape));
     }
-    m_jit.and32(TrustedImm32(IndexingShapeMask), tempGPR);
-    return m_jit.branch32(invert ? MacroAssembler::Equal : MacroAssembler::NotEqual, tempGPR, TrustedImm32(shape));
 }
 
 JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGPR, ArrayMode arrayMode, bool invert)
@@ -386,12 +395,13 @@ JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGP
 
     case Array::ArrayStorage:
     case Array::SlowPutArrayStorage: {
+        ASSERT(!arrayMode.isJSArrayWithOriginalStructure());
+        
         if (arrayMode.isJSArray()) {
             if (arrayMode.isSlowPut()) {
                 if (invert) {
-                    JITCompiler::Jump slow = 
-                        m_jit.branchTest32(
-                            MacroAssembler::Zero, tempGPR, MacroAssembler::TrustedImm32(IsArray));
+                    JITCompiler::Jump slow = m_jit.branchTest32(
+                        MacroAssembler::Zero, tempGPR, MacroAssembler::TrustedImm32(IsArray));
                     m_jit.and32(TrustedImm32(IndexingShapeMask), tempGPR);
                     m_jit.sub32(TrustedImm32(ArrayStorageShape), tempGPR);
                     result.append(
@@ -449,7 +459,7 @@ void SpeculativeJIT::checkArray(Node& node)
     
     const TypedArrayDescriptor* result = typedArrayDescriptor(node.arrayMode());
     
-    if (node.arrayMode().alreadyChecked(m_state.forNode(node.child1()))) {
+    if (node.arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(node.child1()))) {
         noResult(m_compileIndex);
         return;
     }
@@ -1959,7 +1969,7 @@ void SpeculativeJIT::compileGetByValOnString(Node& node)
     GPRReg propertyReg = property.gpr();
     GPRReg storageReg = storage.gpr();
 
-    ASSERT(ArrayMode(Array::String).alreadyChecked(m_state.forNode(node.child1())));
+    ASSERT(ArrayMode(Array::String).alreadyChecked(m_jit.graph(), node, m_state.forNode(node.child1())));
 
     // unsigned comparison so we can filter out negative indices and indices that are too large
     speculationCheck(Uncountable, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSString::offsetOfLength())));
@@ -2368,7 +2378,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(const TypedArrayDescriptor& 
     GPRTemporary result(this);
     GPRReg resultReg = result.gpr();
 
-    ASSERT(node.arrayMode().alreadyChecked(m_state.forNode(node.child1())));
+    ASSERT(node.arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(node.child1())));
 
     speculationCheck(
         Uncountable, JSValueRegs(), NoNode,
@@ -2518,7 +2528,7 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(const TypedArrayDescriptor
     GPRReg propertyReg = property.gpr();
     GPRReg storageReg = storage.gpr();
 
-    ASSERT(node.arrayMode().alreadyChecked(m_state.forNode(node.child1())));
+    ASSERT(node.arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(node.child1())));
 
     FPRTemporary result(this);
     FPRReg resultReg = result.fpr();
@@ -2555,7 +2565,7 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(const TypedArrayDescripto
     
     SpeculateDoubleOperand valueOp(this, valueUse);
     
-    ASSERT_UNUSED(baseUse, node.arrayMode().alreadyChecked(m_state.forNode(baseUse)));
+    ASSERT_UNUSED(baseUse, node.arrayMode().alreadyChecked(m_jit.graph(), m_jit.graph()[m_compileIndex], m_state.forNode(baseUse)));
     
     GPRTemporary result(this);
     
@@ -3378,7 +3388,7 @@ void SpeculativeJIT::compileGetByValOnArguments(Node& node)
     if (!m_compileOkay)
         return;
   
-    ASSERT(ArrayMode(Array::Arguments).alreadyChecked(m_state.forNode(node.child1())));
+    ASSERT(ArrayMode(Array::Arguments).alreadyChecked(m_jit.graph(), node, m_state.forNode(node.child1())));
     
     // Two really lame checks.
     speculationCheck(
@@ -3435,7 +3445,7 @@ void SpeculativeJIT::compileGetArgumentsLength(Node& node)
     if (!m_compileOkay)
         return;
     
-    ASSERT(ArrayMode(Array::Arguments).alreadyChecked(m_state.forNode(node.child1())));
+    ASSERT(ArrayMode(Array::Arguments).alreadyChecked(m_jit.graph(), node, m_state.forNode(node.child1())));
     
     speculationCheck(
         Uncountable, JSValueSource(), NoNode,
