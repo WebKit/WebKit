@@ -719,6 +719,8 @@ webkit.org/b/98621 media/video-controls-rendering.html [ Failure Pass ]
 
 webkit.org/b/100636 [ Debug ] jquery/traversing.html [ Failure Crash Pass ]
 
+webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

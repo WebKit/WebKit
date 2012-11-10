@@ -1,5 +1,15 @@
 2012-11-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] More gardening.
+
+        media/video-seek-past-end-playing.html is still flaky on WK2, skip
+        it on both WK1 and WK2.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
+2012-11-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Unreviewed gardening.
 
         Skip fast/canvas/canvas-resize-reset-pixelRatio.html since
