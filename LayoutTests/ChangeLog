@@ -1,3 +1,12 @@
+2012-11-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Skip fast/canvas/canvas-resize-reset-pixelRatio.html since
+        HIGH_DPI_CANVAS is disabled by default.
+
+        * platform/efl/TestExpectations:
+
 2012-11-09  Tien-Ren Chen  <trchen@chromium.org>
 
         Correct scroll adjustment for touchEvent.clientX/clientY
