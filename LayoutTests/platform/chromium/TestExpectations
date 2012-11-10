@@ -2958,10 +2958,8 @@ webkit.org/b/72530 [ Debug ] fast/frames/sandboxed-iframe-navigation-targetlink.
 
 webkit.org/b/69998 [ Linux Win ] plugins/refcount-leaks.html [ Failure Pass ]
 
-# ICC color profiles are not supported on LINUX, ANDROID so SKIP for now.
+# ICC color profiles are not supported on LINUX, ANDROID.
 webkit.org/b/70001 [ Android Linux ] fast/images/color-jpeg-with-color-profile.html
-webkit.org/b/70001 [ Win ] fast/images/color-jpeg-with-color-profile.html [ ImageOnlyFailure ]
-# Paletted PNG with ICC color profiles not supported on LINUX, ANDROID.
 webkit.org/b/86722 [ Android Linux ] fast/images/paletted-png-with-color-profile.html
 
 # V8 handles stack overflow exceptions differently than JSC

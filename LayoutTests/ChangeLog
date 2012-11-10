@@ -1,3 +1,10 @@
+2012-11-10  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium] Unreviewed. Rebaseline fast/images/color-jpeg-with-color-profile.html on Win.
+
+        * platform/chromium-win/fast/images/color-jpeg-with-color-profile-expected.png: Rebaseline.
+        * platform/chromium/TestExpectations:
+
 2012-11-09  Ojan Vafai  <ojan@chromium.org>
 
         Should only fire a single set of mouse events and update hover state once when scrolling is done
