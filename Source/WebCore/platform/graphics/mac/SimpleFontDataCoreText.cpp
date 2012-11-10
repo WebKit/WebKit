@@ -27,7 +27,7 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
-#include <CoreText/CoreText.h>
+#include <ApplicationServices/ApplicationServices.h>
 
 namespace WebCore {
 

@@ -1,3 +1,20 @@
+2012-11-10  Mike West  <mkwst@chromium.org>
+
+        Including <CoreText/CoreText.h> breaks the chromium/mac build.
+        https://bugs.webkit.org/show_bug.cgi?id=101851
+
+        Reviewed by Dan Bernstein.
+
+        r134146 introduced inclusion of 'CoreText/CoreText.h' in
+        SimpleFontDataCoreText.cpp, which broke the chromium/mac build. Grepping
+        around, it looks like this needs to be modified to include
+        'ApplicationServices/ApplicationServices.h'.
+
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+            Drop 'CoreText.h' in favor of 'ApplicationServices.h'.
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+            Drop the platform-specific '#if' logic; just include 'ApplicationServices.h'.
+
 2012-11-10  Andreas Kling  <kling@webkit.org>
 
         Don't detach from shared ElementAttributeData when overwriting attribute with identical value.

@@ -31,11 +31,7 @@
 #include "TextRun.h"
 #include "WebCoreSystemInterface.h"
 
-#if PLATFORM(WX) || PLATFORM(CHROMIUM)
 #include <ApplicationServices/ApplicationServices.h>
-#else
-#include <CoreText/CoreText.h>
-#endif
 
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 // The following symbols are SPI in 10.5.
