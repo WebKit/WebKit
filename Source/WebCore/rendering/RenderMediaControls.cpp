@@ -197,6 +197,8 @@ bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, R
         ASSERT_NOT_REACHED();
     case MediaTextTrackDisplayContainer:
     case MediaTextTrackDisplay:
+    case MediaClosedCaptionsContainer:
+    case MediaClosedCaptionsTrackList:
         ASSERT_NOT_REACHED();
         break;
 }
