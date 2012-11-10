@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractValue.h"
+#include "DFGBranchDirection.h"
 #include "DFGGraph.h"
 #include "DFGNode.h"
 #include <wtf/Vector.h>
@@ -92,36 +93,6 @@ public:
         MergeToSuccessors
     };
     
-    enum BranchDirection {
-        // This is not a branch and so there is no branch direction, or
-        // the branch direction has yet to be set.
-        InvalidBranchDirection,
-        
-        // The branch takes the true case.
-        TakeTrue,
-        
-        // The branch takes the false case.
-        TakeFalse,
-        
-        // For all we know, the branch could go either direction, so we
-        // have to assume the worst.
-        TakeBoth
-    };
-    
-    static const char* branchDirectionToString(BranchDirection branchDirection)
-    {
-        switch (branchDirection) {
-        case InvalidBranchDirection:
-            return "Invalid";
-        case TakeTrue:
-            return "TakeTrue";
-        case TakeFalse:
-            return "TakeFalse";
-        case TakeBoth:
-            return "TakeBoth";
-        }
-    }
-
     AbstractState(Graph&);
     
     ~AbstractState();
@@ -174,11 +145,7 @@ public:
     //    A true return means that you must revisit (at least) the successor
     //    blocks. This also sets cfaShouldRevisit to true for basic blocks
     //    that must be visited next.
-    //
-    // If you'd like to know what direction the branch at the end of the
-    // basic block is thought to have taken, you can pass a non-0 pointer
-    // for BranchDirection.
-    bool endBasicBlock(MergeMode, BranchDirection* = 0);
+    bool endBasicBlock(MergeMode);
     
     // Reset the AbstractState. This throws away any results, and at this point
     // you can safely call beginBasicBlock() on any basic block.
@@ -211,8 +178,8 @@ public:
     // successors. Returns true if any of the successors' states changed. Note
     // that this is automatically called in endBasicBlock() if MergeMode is
     // MergeToSuccessors.
-    bool mergeToSuccessors(Graph&, BasicBlock*, BranchDirection);
-
+    bool mergeToSuccessors(Graph&, BasicBlock*);
+    
     void dump(FILE* out);
     
 private:
@@ -267,6 +234,13 @@ private:
         childValue1.filter(SpecNumber);
         childValue2.filter(SpecNumber);
     }
+    
+    enum BooleanResult {
+        UnknownBooleanResult,
+        DefinitelyFalse,
+        DefinitelyTrue
+    };
+    BooleanResult booleanResult(Node&, AbstractValue&);
     
     bool trySetConstant(NodeIndex nodeIndex, JSValue value)
     {

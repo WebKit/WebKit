@@ -1,3 +1,43 @@
+2012-11-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG constant folding and CFG simplification should be smart enough to know that if a logical op's operand is proven to have a non-masquerading structure then it always evaluates to true
+        https://bugs.webkit.org/show_bug.cgi?id=101511
+
+        Reviewed by Geoffrey Garen.
+        
+        This is the second attempt at this patch, which fixes the !"" case.
+
+        To make life easier, this moves BranchDirection into BasicBlock so that after
+        running the CFA, we always know, for each block, what direction the CFA
+        proved. CFG simplification now both uses and preserves cfaBranchDirection in
+        its transformations.
+        
+        Also made both LogicalNot and Branch check whether the operand is a known cell
+        with a known structure, and if so, made them do the appropriate folding.
+        
+        5% speed-up on V8/raytrace because it makes raytrace's own null checks
+        evaporate (i.e. idioms like 'if (!x) throw "unhappiness"') thanks to the fact
+        that we were already doing structure check hoisting.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::endBasicBlock):
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::mergeToSuccessors):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        * dfg/DFGBasicBlock.h:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (BasicBlock):
+        * dfg/DFGBranchDirection.h: Added.
+        (DFG):
+        (JSC::DFG::branchDirectionToString):
+        (JSC::DFG::isKnownDirection):
+        (JSC::DFG::branchCondition):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+
 2012-11-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133971.

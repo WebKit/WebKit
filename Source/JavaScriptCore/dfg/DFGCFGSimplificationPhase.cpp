@@ -99,9 +99,8 @@ public:
                 
                 case Branch: {
                     // Branch on constant -> jettison the not-taken block and merge.
-                    if (m_graph[m_graph[block->last()].child1()].hasConstant()) {
-                        bool condition =
-                            m_graph.valueOfJSConstant(m_graph[block->last()].child1().index()).toBoolean(m_graph.globalObjectFor(m_graph[block->last()].codeOrigin)->globalExec());
+                    if (isKnownDirection(block->cfaBranchDirection)) {
+                        bool condition = branchCondition(block->cfaBranchDirection);
                         BasicBlock* targetBlock = m_graph.m_blocks[
                             m_graph.successorForCondition(block, condition)].get();
                         if (targetBlock->m_predecessors.size() == 1) {
@@ -730,6 +729,7 @@ private:
         }
         
         firstBlock->valuesAtTail = secondBlock->valuesAtTail;
+        firstBlock->cfaBranchDirection = secondBlock->cfaBranchDirection;
         
         m_graph.m_blocks[secondBlockIndex].clear();
     }
