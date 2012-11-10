@@ -67,6 +67,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginData.h>
+#include <WebCore/PluginDocument.h>
 #include <WebCore/ProgressTracker.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceError.h>
@@ -1628,6 +1629,27 @@ void WebFrameLoaderClient::didChangeScrollOffset()
         return;
 
     webPage->didChangeScrollOffsetForMainFrame();
+}
+
+bool WebFrameLoaderClient::allowScript(bool enabledPerSettings)
+{
+    if (!enabledPerSettings)
+        return false;
+
+    Frame* coreFrame = m_frame->coreFrame();
+
+    if (coreFrame->document()->isPluginDocument()) {
+        PluginDocument* pluginDocument = static_cast<PluginDocument*>(coreFrame->document());
+
+        if (pluginDocument->pluginWidget() && pluginDocument->pluginWidget()->isPluginView()) {
+            PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
+
+            if (!pluginView->shouldAllowScripting())
+                return false;
+        }
+    }
+
+    return true;
 }
 
 bool WebFrameLoaderClient::shouldForceUniversalAccessFromLocalURL(const WebCore::KURL& url)

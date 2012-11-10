@@ -168,7 +168,9 @@ protected:
     virtual bool isEditingCommandEnabled(const String&) OVERRIDE;
     virtual bool handleEditingCommand(const String&, const String&) OVERRIDE;
     virtual bool handlesPageScaleFactor() OVERRIDE;
-    
+
+    virtual bool shouldAllowScripting() OVERRIDE { return false; }
+
 private:
 
     JSObjectRef makeJSPDFDoc(JSContextRef);

@@ -43,12 +43,16 @@
 #import <WebCore/Chrome.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/FocusController.h>
+#import <WebCore/FormState.h>
 #import <WebCore/Frame.h>
+#import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/HTMLElement.h>
+#import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTTPHeaderMap.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/MouseEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PluginData.h>
@@ -173,6 +177,11 @@ static const char* annotationStyle =
 - (void)saveToPDF
 {
     // FIXME: Implement.
+}
+
+- (void)pdfLayerController:(PDFLayerController *)pdfLayerController clickedLinkWithURL:(NSURL *)url
+{
+    _pdfPlugin->clickedLink(url);
 }
 
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeActiveAnnotation:(PDFAnnotation *)annotation
@@ -471,6 +480,8 @@ bool PDFPlugin::handleMouseEvent(const WebMouseEvent& event)
 {
     static bool mouseButtonIsDown;
 
+    m_lastMouseEvent = event;
+
     IntPoint mousePosition = event.position();
 
     // FIXME: Forward mouse events to the appropriate scrollbar.
@@ -587,6 +598,17 @@ void PDFPlugin::invalidateScrollCornerRect(const IntRect& rect)
 bool PDFPlugin::handlesPageScaleFactor()
 {
     return webFrame()->isMainFrame();
+}
+
+void PDFPlugin::clickedLink(NSURL *url)
+{
+    Frame* frame = webFrame()->coreFrame();
+
+    RefPtr<Event> coreEvent;
+    if (m_lastMouseEvent.type() != WebEvent::NoType)
+        coreEvent = MouseEvent::create(eventNames().clickEvent, frame->document()->defaultView(), platform(m_lastMouseEvent), 0, 0);
+
+    frame->loader()->urlSelected(url, emptyString(), coreEvent.get(), false, false, MaybeSendReferrer);
 }
 
 void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)

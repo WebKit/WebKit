@@ -1,3 +1,42 @@
+2012-11-09  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin should support clicking on external links
+        https://bugs.webkit.org/show_bug.cgi?id=101647
+        <rdar://problem/12555222>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h: Add details about clickedLinkWithURL: callback.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (PDFPlugin): Add clickedLink() and storage for the last mouse event that was dispatched.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFLayerControllerDelegate pdfLayerController:clickedLinkWithURL:]): Forward the URL to PDFPlugin.
+        (WebKit::PDFPlugin::handleMouseEvent): Store the last mouse event that was dispatched.
+        We use this to get the correct mouse button and modifier keys, so that command-clicking, etc. links works.
+        (WebKit::PDFPlugin::clickedLink): Request a load given the new URL.
+
+        * PluginProcess/PluginControllerProxy.h:
+        (PluginControllerProxy):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::shouldAllowScripting):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::shouldAllowScripting):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::shouldAllowScripting):
+        * WebProcess/Plugins/PluginView.h:
+        Add shouldAllowScripting() function to Plugin (and plumb through PluginProxy and PluginView, etc.)
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::allowScript): Override allowScript(); if the frame is hosting a PluginDocument,
+        ask its plugin whether it should allow execution of JavaScript and JavaScript URLs or not.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h: Disable scripting for SimplePDFPlugin (and, by inheritance, PDFPlugin).
+
 2012-11-09  Brady Eidson  <beidson@apple.com>
 
         Implement WebResourceBuffer::isEmpty()

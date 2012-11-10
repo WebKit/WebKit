@@ -193,6 +193,9 @@ public:
     
     // Ask the plug-in whether it will be able to handle the given editing command.
     virtual bool isEditingCommandEnabled(const String&) = 0;
+
+    // Ask the plug-in whether it should be allowed to execute JavaScript or navigate to JavaScript URLs.
+    virtual bool shouldAllowScripting() = 0;
     
     // Ask the plug-in whether it wants to override full-page zoom.
     virtual bool handlesPageScaleFactor() = 0;

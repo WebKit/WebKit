@@ -30,6 +30,7 @@
 
 #include "Plugin.h"
 #include "SimplePDFPlugin.h"
+#include "WebEvent.h"
 #include <WebCore/AffineTransform.h>
 #include <WebCore/ScrollableArea.h>
 #include <wtf/RetainPtr.h>
@@ -62,6 +63,8 @@ public:
     void setActiveAnnotation(PDFAnnotation *);
     
     using ScrollableArea::notifyScrollPositionChanged;
+
+    void clickedLink(NSURL *);
 
 private:
     explicit PDFPlugin(WebFrame*);
@@ -102,6 +105,7 @@ private:
 
     WebCore::AffineTransform m_rootViewToPluginTransform;
     WebCore::IntPoint m_lastMousePoint;
+    WebMouseEvent m_lastMouseEvent;
     
     RetainPtr<WKPDFLayerControllerDelegate> m_pdfLayerControllerDelegate;
 };

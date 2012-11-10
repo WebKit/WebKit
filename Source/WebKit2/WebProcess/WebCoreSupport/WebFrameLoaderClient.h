@@ -235,6 +235,8 @@ private:
 
     virtual void didChangeScrollOffset() OVERRIDE;
 
+    virtual bool allowScript(bool enabledPerSettings) OVERRIDE;
+
     virtual bool shouldForceUniversalAccessFromLocalURL(const WebCore::KURL&) OVERRIDE;
 
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext() OVERRIDE;

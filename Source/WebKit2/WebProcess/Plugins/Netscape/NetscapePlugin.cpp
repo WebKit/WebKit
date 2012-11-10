@@ -920,7 +920,12 @@ bool NetscapePlugin::isEditingCommandEnabled(const String& /* commandName */)
 {
     return false;
 }
-    
+
+bool NetscapePlugin::shouldAllowScripting()
+{
+    return true;
+}
+
 bool NetscapePlugin::handlesPageScaleFactor()
 {
     return false;

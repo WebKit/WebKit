@@ -784,6 +784,11 @@ bool PluginView::isEditingCommandEnabled(const String& commandName)
     return m_plugin->isEditingCommandEnabled(commandName);
 }
 
+bool PluginView::shouldAllowScripting()
+{
+    return m_plugin->shouldAllowScripting();
+}
+
 void PluginView::notifyWidget(WidgetNotification notification)
 {
     switch (notification) {

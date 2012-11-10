@@ -206,6 +206,8 @@ private:
 
     virtual bool handleEditingCommand(const String& commandName, const String& argument) OVERRIDE;
     virtual bool isEditingCommandEnabled(const String&) OVERRIDE;
+
+    virtual bool shouldAllowScripting() OVERRIDE;
     
     virtual bool handlesPageScaleFactor() OVERRIDE;
 

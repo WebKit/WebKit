@@ -90,6 +90,8 @@ public:
     virtual bool handleEditingCommand(const String& commandName, const String& argument);
     virtual bool isEditingCommandEnabled(const String& commandName);
 
+    bool shouldAllowScripting();
+
 private:
     PluginView(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
     virtual ~PluginView();
