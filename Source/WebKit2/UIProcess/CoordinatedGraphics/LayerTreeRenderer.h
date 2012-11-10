@@ -49,12 +49,12 @@ class LayerTreeRenderer : public ThreadSafeRefCounted<LayerTreeRenderer>, public
 public:
     struct TileUpdate {
         WebCore::IntRect sourceRect;
-        WebCore::IntRect targetRect;
+        WebCore::IntRect tileRect;
         RefPtr<ShareableSurface> surface;
         WebCore::IntPoint offset;
-        TileUpdate(const WebCore::IntRect& source, const WebCore::IntRect& target, PassRefPtr<ShareableSurface> newSurface, const WebCore::IntPoint& newOffset)
+        TileUpdate(const WebCore::IntRect& source, const WebCore::IntRect& tile, PassRefPtr<ShareableSurface> newSurface, const WebCore::IntPoint& newOffset)
             : sourceRect(source)
-            , targetRect(target)
+            , tileRect(tile)
             , surface(newSurface)
             , offset(newOffset)
         {

@@ -49,7 +49,7 @@ public:
 private:
     RefPtr<ShareableSurface> m_surface;
     WebCore::IntRect m_sourceRect;
-    WebCore::IntRect m_targetRect;
+    WebCore::IntRect m_tileRect;
     WebCore::IntPoint m_surfaceOffset;
     float m_scale;
     int m_repaintCount;

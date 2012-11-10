@@ -70,7 +70,7 @@ public:
     virtual int64_t adoptImageBackingStore(WebCore::Image*);
     virtual void releaseImageBackingStore(int64_t);
 
-    virtual void createTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect& targetRect, const WebCore::IntSize& backingSize);
+    virtual void createTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect& tileRect, const WebCore::IntSize& backingSize);
     virtual void updateTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
     virtual void removeTile(WebLayerID, int tileID);
     virtual WebCore::IntRect visibleContentsRect() const;

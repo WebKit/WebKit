@@ -35,11 +35,11 @@ void CoordinatedBackingStoreTile::swapBuffers(WebCore::TextureMapper* textureMap
     if (!m_surface)
         return;
 
-    FloatRect targetRect(m_targetRect);
-    targetRect.scale(1. / m_scale);
+    FloatRect tileRect(m_tileRect);
+    tileRect.scale(1. / m_scale);
     bool shouldReset = false;
-    if (targetRect != rect()) {
-        setRect(targetRect);
+    if (tileRect != rect()) {
+        setRect(tileRect);
         shouldReset = true;
     }
     RefPtr<BitmapTexture> texture = this->texture();
@@ -50,16 +50,16 @@ void CoordinatedBackingStoreTile::swapBuffers(WebCore::TextureMapper* textureMap
     }
 
     if (shouldReset)
-        texture->reset(m_targetRect.size(), m_surface->flags() & ShareableBitmap::SupportsAlpha ? BitmapTexture::SupportsAlpha : 0);
+        texture->reset(m_tileRect.size(), m_surface->flags() & ShareableBitmap::SupportsAlpha ? BitmapTexture::SupportsAlpha : 0);
 
     m_surface->copyToTexture(texture, m_sourceRect, m_surfaceOffset);
     m_surface.clear();
 }
 
-void CoordinatedBackingStoreTile::setBackBuffer(const IntRect& targetRect, const IntRect& sourceRect, PassRefPtr<ShareableSurface> buffer, const IntPoint& offset)
+void CoordinatedBackingStoreTile::setBackBuffer(const IntRect& tileRect, const IntRect& sourceRect, PassRefPtr<ShareableSurface> buffer, const IntPoint& offset)
 {
     m_sourceRect = sourceRect;
-    m_targetRect = targetRect;
+    m_tileRect = tileRect;
     m_surfaceOffset = offset;
     m_surface = buffer;
 }
@@ -76,12 +76,12 @@ void CoordinatedBackingStore::removeTile(int id)
     m_tilesToRemove.add(id);
 }
 
-void CoordinatedBackingStore::updateTile(int id, const IntRect& sourceRect, const IntRect& targetRect, PassRefPtr<ShareableSurface> backBuffer, const IntPoint& offset)
+void CoordinatedBackingStore::updateTile(int id, const IntRect& sourceRect, const IntRect& tileRect, PassRefPtr<ShareableSurface> backBuffer, const IntPoint& offset)
 {
     HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.find(id);
     ASSERT(it != m_tiles.end());
     it->value.incrementRepaintCount();
-    it->value.setBackBuffer(targetRect, sourceRect, backBuffer, offset);
+    it->value.setBackBuffer(tileRect, sourceRect, backBuffer, offset);
 }
 
 bool CoordinatedBackingStore::isEmpty() const

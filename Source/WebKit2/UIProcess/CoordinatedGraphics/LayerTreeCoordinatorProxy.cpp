@@ -56,17 +56,17 @@ void LayerTreeCoordinatorProxy::dispatchUpdate(const Function<void()>& function)
     m_renderer->appendUpdate(function);
 }
 
-void LayerTreeCoordinatorProxy::createTileForLayer(int layerID, int tileID, const WebCore::IntRect& targetRect, const WebCore::IntSize& backingSize, const WebKit::SurfaceUpdateInfo& updateInfo)
+void LayerTreeCoordinatorProxy::createTileForLayer(int layerID, int tileID, const WebCore::IntRect& tileRect, const WebCore::IntSize& backingSize, const WebKit::SurfaceUpdateInfo& updateInfo)
 {
     dispatchUpdate(bind(&LayerTreeRenderer::createTile, m_renderer.get(), layerID, tileID, updateInfo.scaleFactor, backingSize));
-    updateTileForLayer(layerID, tileID, targetRect, updateInfo);
+    updateTileForLayer(layerID, tileID, tileRect, updateInfo);
 }
 
-void LayerTreeCoordinatorProxy::updateTileForLayer(int layerID, int tileID, const IntRect& targetRect, const WebKit::SurfaceUpdateInfo& updateInfo)
+void LayerTreeCoordinatorProxy::updateTileForLayer(int layerID, int tileID, const IntRect& tileRect, const WebKit::SurfaceUpdateInfo& updateInfo)
 {
     SurfaceMap::iterator it = m_surfaces.find(updateInfo.atlasID);
     ASSERT(it != m_surfaces.end());
-    dispatchUpdate(bind(&LayerTreeRenderer::updateTile, m_renderer.get(), layerID, tileID, LayerTreeRenderer::TileUpdate(updateInfo.updateRect, targetRect, it->value, updateInfo.surfaceOffset)));
+    dispatchUpdate(bind(&LayerTreeRenderer::updateTile, m_renderer.get(), layerID, tileID, LayerTreeRenderer::TileUpdate(updateInfo.updateRect, tileRect, it->value, updateInfo.surfaceOffset)));
 }
 
 void LayerTreeCoordinatorProxy::removeTileForLayer(int layerID, int tileID)
