@@ -136,11 +136,17 @@ using namespace SVGNames;
 // When the autoscroll or the panScroll is triggered when do the scroll every 0.05s to make it smooth
 const double autoscrollInterval = 0.05;
 
-// The amount of time to wait before sending a fake mouse event, triggered
-// during a scroll. The short interval is used if the content responds to the mouse events quickly enough,
-// otherwise the long interval is used.
-const double fakeMouseMoveShortInterval = 0.1;
-const double fakeMouseMoveLongInterval = 0.250;
+// The amount of time to wait before sending a fake mouse event, triggered during a scroll.
+const double fakeMouseMoveMinimumInterval = 0.1;
+// Amount to increase the fake mouse event throttling when the running average exceeds the delay.
+// Picked fairly arbitrarily.
+const double fakeMouseMoveIntervalIncrease = 0.05;
+const double fakeMouseMoveRunningAverageCount = 10;
+// Decrease the fakeMouseMoveInterval when the current delay is >2x the running average,
+// but only decrease to 3/4 the current delay to avoid too much thrashing.
+// Not sure this distinction really matters in practice.
+const double fakeMouseMoveIntervalReductionLimit = 0.5;
+const double fakeMouseMoveIntervalReductionFraction = 0.75;
 
 enum NoCursorChangeType { NoCursorChange };
 
@@ -157,21 +163,28 @@ private:
     Cursor m_cursor;
 };
 
-class MaximumDurationTracker {
+class RunningAverageDurationTracker {
 public:
-    explicit MaximumDurationTracker(double *maxDuration)
-        : m_maxDuration(maxDuration)
+    RunningAverageDurationTracker(double* average, unsigned numberOfRunsToTrack)
+        : m_average(average)
+        , m_numberOfRunsToTrack(numberOfRunsToTrack)
         , m_start(monotonicallyIncreasingTime())
     {
     }
 
-    ~MaximumDurationTracker()
+    ~RunningAverageDurationTracker()
     {
-        *m_maxDuration = max(*m_maxDuration, monotonicallyIncreasingTime() - m_start);
+        double duration = monotonicallyIncreasingTime() - m_start;
+        if (!*m_average) {
+            *m_average = duration;
+            return;
+        }
+        *m_average = (*m_average * (m_numberOfRunsToTrack - 1) + (duration)) / m_numberOfRunsToTrack;
     }
 
 private:
-    double* m_maxDuration;
+    double* m_average;
+    unsigned m_numberOfRunsToTrack;
     double m_start;
 };
 
@@ -316,7 +329,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_autoscrollInProgress(false)
     , m_mouseDownMayStartAutoscroll(false)
     , m_mouseDownWasInSubframe(false)
-    , m_fakeMouseMoveEventTimer(this, &EventHandler::fakeMouseMoveEventTimerFired)
+    , m_fakeMouseMoveEventTimer(this, &EventHandler::fakeMouseMoveEventTimerFired, fakeMouseMoveMinimumInterval)
 #if ENABLE(SVG)
     , m_svgPan(false)
 #endif
@@ -333,7 +346,7 @@ EventHandler::EventHandler(Frame* frame)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchPressed(false)
 #endif
-    , m_maxMouseMovedDuration(0)
+    , m_mouseMovedDurationRunningAverage(0)
     , m_baseEventType(PlatformEvent::NoType)
 {
 }
@@ -385,7 +398,7 @@ void EventHandler::clear()
 #if ENABLE(GESTURE_EVENTS)
     m_scrollGestureHandlingNode = 0;
 #endif
-    m_maxMouseMovedDuration = 0;
+    m_mouseMovedDurationRunningAverage = 0;
     m_baseEventType = PlatformEvent::NoType;
 }
 
@@ -1732,7 +1745,7 @@ static RenderLayer* layerForNode(Node* node)
 bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
 {
     RefPtr<FrameView> protector(m_frame->view());
-    MaximumDurationTracker maxDurationTracker(&m_maxMouseMovedDuration);
+    RunningAverageDurationTracker durationTracker(&m_mouseMovedDurationRunningAverage, fakeMouseMoveRunningAverageCount);
 
 
 #if ENABLE(TOUCH_EVENTS)
@@ -2863,18 +2876,15 @@ void EventHandler::dispatchFakeMouseMoveEventSoon()
     if (settings && !settings->deviceSupportsMouse())
         return;
 
-    // If the content has ever taken longer than fakeMouseMoveShortInterval we
-    // reschedule the timer and use a longer time. This will cause the content
-    // to receive these moves only after the user is done scrolling, reducing
-    // pauses during the scroll.
-    if (m_maxMouseMovedDuration > fakeMouseMoveShortInterval) {
-        if (m_fakeMouseMoveEventTimer.isActive())
-            m_fakeMouseMoveEventTimer.stop();
-        m_fakeMouseMoveEventTimer.startOneShot(fakeMouseMoveLongInterval);
-    } else {
-        if (!m_fakeMouseMoveEventTimer.isActive())
-            m_fakeMouseMoveEventTimer.startOneShot(fakeMouseMoveShortInterval);
-    }
+    // Adjust the mouse move throttling so that it's roughly around our running average of the duration of mousemove events.
+    // This will cause the content to receive these moves only after the user is done scrolling, reducing pauses during the scroll.
+    // This will only measure the duration of the mousemove event though (not for example layouts),
+    // so maintain at least a minimum interval.
+    if (m_mouseMovedDurationRunningAverage > m_fakeMouseMoveEventTimer.delay())
+        m_fakeMouseMoveEventTimer.setDelay(m_mouseMovedDurationRunningAverage + fakeMouseMoveIntervalIncrease);
+    else if (m_mouseMovedDurationRunningAverage < fakeMouseMoveIntervalReductionLimit * m_fakeMouseMoveEventTimer.delay())
+        m_fakeMouseMoveEventTimer.setDelay(max(fakeMouseMoveMinimumInterval, fakeMouseMoveIntervalReductionFraction * m_fakeMouseMoveEventTimer.delay()));
+    m_fakeMouseMoveEventTimer.restart();
 }
 
 void EventHandler::dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad& quad)
@@ -2894,7 +2904,7 @@ void EventHandler::cancelFakeMouseMoveEvent()
     m_fakeMouseMoveEventTimer.stop();
 }
 
-void EventHandler::fakeMouseMoveEventTimerFired(Timer<EventHandler>* timer)
+void EventHandler::fakeMouseMoveEventTimerFired(DeferrableOneShotTimer<EventHandler>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_fakeMouseMoveEventTimer);
     ASSERT(!m_mousePressed);

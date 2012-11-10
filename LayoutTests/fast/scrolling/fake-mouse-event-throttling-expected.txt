@@ -1,0 +1,4 @@
+PASS numberOfMouseMoves is 0
+PASS numberOfMouseMoves is 1
+PASS numberOfMouseMoves is 2
+

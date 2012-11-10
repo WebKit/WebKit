@@ -282,7 +282,7 @@ private:
     static bool isKeyboardOptionTab(KeyboardEvent*);
     static bool eventInvertsTabsToLinksClientCallResult(KeyboardEvent*);
 
-    void fakeMouseMoveEventTimerFired(Timer<EventHandler>*);
+    void fakeMouseMoveEventTimerFired(DeferrableOneShotTimer<EventHandler>*);
     void cancelFakeMouseMoveEvent();
 
 #if ENABLE(TOUCH_EVENTS)
@@ -405,7 +405,7 @@ private:
     bool m_mouseDownMayStartAutoscroll;
     bool m_mouseDownWasInSubframe;
 
-    Timer<EventHandler> m_fakeMouseMoveEventTimer;
+    DeferrableOneShotTimer<EventHandler> m_fakeMouseMoveEventTimer;
 
 #if ENABLE(SVG)
     bool m_svgPan;
@@ -462,7 +462,7 @@ private:
     RefPtr<Node> m_scrollGestureHandlingNode;
 #endif
 
-    double m_maxMouseMovedDuration;
+    double m_mouseMovedDurationRunningAverage;
     PlatformEvent::Type m_baseEventType;
 };
 

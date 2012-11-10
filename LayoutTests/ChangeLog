@@ -1,3 +1,16 @@
+2012-11-09  Ojan Vafai  <ojan@chromium.org>
+
+        Should only fire a single set of mouse events and update hover state once when scrolling is done
+        https://bugs.webkit.org/show_bug.cgi?id=99940
+
+        Reviewed by Levi Weintraub.
+
+        Tests basic throttling. I couldn't think of a good way to test changing
+        the delay that wouldn't make for a test that takes minutes to run.
+
+        * fast/scrolling/fake-mouse-event-throttling-expected.txt: Added.
+        * fast/scrolling/fake-mouse-event-throttling.html: Added.
+
 2012-11-09  Rick Byers  <rbyers@chromium.org>
 
         [chromium] Move to USE(LAZY_NATIVE_CURSOR)

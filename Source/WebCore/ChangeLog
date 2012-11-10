@@ -1,3 +1,39 @@
+2012-11-09  Ojan Vafai  <ojan@chromium.org>
+
+        Should only fire a single set of mouse events and update hover state once when scrolling is done
+        https://bugs.webkit.org/show_bug.cgi?id=99940
+
+        Reviewed by Levi Weintraub.
+
+        -Use a DeferrableOneShotTimer instead of a Timer. By resetting when the
+        timer is fired, we ensure the actual goal of not firing fake mouse events
+        until the scroll is completed. This is the core part of this change.
+        -Change our mouse event throttling to keep a running average of how long
+        mouse events take and adjust throttling appropriately.
+        Test: fast/scrolling/fake-mouse-event-throttling.html
+        -Maintain a minimum throttle of 100ms.
+
+        * page/EventHandler.cpp:
+        (WebCore):
+        (WebCore::RunningAverageDurationTracker::RunningAverageDurationTracker):
+        (WebCore::RunningAverageDurationTracker::~RunningAverageDurationTracker):
+        Keep track of a running average instead of max. This lets us adjust throttling
+        dynamically without punishing a page for having a single mouse event handler
+        that takes disproportionately long.
+        (RunningAverageDurationTracker):
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::dispatchFakeMouseMoveEventSoon):
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired):
+        * page/EventHandler.h:
+        (EventHandler):
+        * platform/Timer.h:
+        (WebCore::DeferrableOneShotTimer::setDelay):
+        (WebCore::DeferrableOneShotTimer::delay):
+        Add a way of adjusting the timer delay.
+
 2012-11-09  Rick Byers  <rbyers@chromium.org>
 
         Move chromium to USE(LAZY_NATIVE_CURSOR)
