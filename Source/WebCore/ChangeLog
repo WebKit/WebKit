@@ -1,3 +1,19 @@
+2012-11-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Some minor optimizations in RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=101847
+
+        Reviewed by Anders Carlsson.
+
+        Some minor performance improvements in RenderLayer code.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition): isRenderInline() is a virtual call,
+        so prefix it with an isInline() check which tests a bit on RenderObject.
+        (WebCore::RenderLayer::localBoundingBox): Ditto.
+        (WebCore::RenderLayer::calculateLayerBounds): Pull layer->renderer()
+        into a local variable.
+
 2012-11-10  Anders Carlsson  <andersca@apple.com>
 
         Document::m_fullScreenElementStack should be a Vector

@@ -848,7 +848,7 @@ void RenderLayer::updateLayerPosition()
 {
     LayoutPoint localPoint;
     LayoutSize inlineBoundingBoxOffset; // We don't put this into the RenderLayer x/y for inlines, so we need to subtract it out when done.
-    if (renderer()->isRenderInline()) {
+    if (renderer()->isInline() && renderer()->isRenderInline()) {
         RenderInline* inlineFlow = toRenderInline(renderer());
         IntRect lineBox = inlineFlow->linesBoundingBox();
         setSize(lineBox.size());
@@ -4319,7 +4319,7 @@ LayoutRect RenderLayer::localBoundingBox() const
     // as part of our bounding box.  We do this because we are the responsible layer for both hit testing and painting those
     // floats.
     LayoutRect result;
-    if (renderer()->isRenderInline())
+    if (renderer()->isInline() && renderer()->isRenderInline())
         result = toRenderInline(renderer())->linesVisualOverflowBoundingBox();
     else if (renderer()->isTableRow()) {
         // Our bounding box is just the union of all of our cells' border/overflow rects.
@@ -4382,17 +4382,18 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
     if ((flags & ExcludeHiddenDescendants) && layer != ancestorLayer && !layer->hasVisibleContent() && !layer->hasVisibleDescendant())
         return IntRect();
 
+    RenderLayerModelObject* renderer = layer->renderer();
     LayoutRect boundingBoxRect = layer->localBoundingBox();
-    if (layer->renderer()->isBox())
-        layer->renderBox()->flipForWritingMode(boundingBoxRect);
+    if (renderer->isBox())
+        toRenderBox(renderer)->flipForWritingMode(boundingBoxRect);
     else
-        layer->renderer()->containingBlock()->flipForWritingMode(boundingBoxRect);
+        renderer->containingBlock()->flipForWritingMode(boundingBoxRect);
 
-    if (layer->renderer()->isRoot()) {
+    if (renderer->isRoot()) {
         // If the root layer becomes composited (e.g. because some descendant with negative z-index is composited),
         // then it has to be big enough to cover the viewport in order to display the background. This is akin
         // to the code in RenderBox::paintRootBoxFillLayers().
-        if (FrameView* frameView = layer->renderer()->view()->frameView()) {
+        if (FrameView* frameView = renderer->view()->frameView()) {
             LayoutUnit contentsWidth = frameView->contentsWidth();
             LayoutUnit contentsHeight = frameView->contentsHeight();
         
