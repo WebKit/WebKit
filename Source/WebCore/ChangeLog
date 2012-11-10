@@ -1,3 +1,48 @@
+2012-11-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134152.
+        http://trac.webkit.org/changeset/134152
+        https://bugs.webkit.org/show_bug.cgi?id=101831
+
+        broke chromium again (Requested by dino_ on #webkit).
+
+        * css/mediaControls.css:
+        * css/mediaControlsQuickTime.css:
+        (audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::create):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::updateDisplayType):
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::shadowPseudoId):
+        * html/shadow/MediaControlElements.h:
+        (MediaControlElement):
+        (MediaControlToggleClosedCaptionsButtonElement):
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::MediaControlRootElement):
+        (WebCore::MediaControlRootElement::create):
+        (WebCore::MediaControlRootElement::setMediaController):
+        (WebCore::MediaControlRootElement::hide):
+        (WebCore::MediaControlRootElement::makeTransparent):
+        (WebCore::MediaControlRootElement::reset):
+        (WebCore::MediaControlRootElement::reportedError):
+        * html/shadow/MediaControlRootElement.h:
+        (WebCore):
+        (MediaControlRootElement):
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::initializeControls):
+        * html/shadow/MediaControls.h:
+        (MediaControls):
+        * platform/Language.cpp:
+        (WebCore):
+        * platform/Language.h:
+        (WebCore):
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::paintMediaControlsPart):
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::RenderMediaControlsChromium::paintMediaControlsPart):
+
 2012-11-09  Dean Jackson  <dino@apple.com>
 
         Support list of tracks in caption media controls

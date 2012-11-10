@@ -383,10 +383,6 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
     case MediaTextTrackDisplay:
     case MediaFullScreenVolumeSlider:
     case MediaFullScreenVolumeSliderThumb:
-    case MediaFullScreenVolumeSlider:
-    case MediaFullScreenVolumeSliderThumb:
-    case MediaClosedCaptionsContainer:
-    case MediaClosedCaptionsTrackList:
         ASSERT_NOT_REACHED();
         break;
     }

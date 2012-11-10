@@ -43,7 +43,6 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
-#include "Language.h"
 #include "LayoutRepainter.h"
 #include "LocalizedStrings.h"
 #include "MediaControlRootElement.h"
@@ -63,9 +62,6 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "Text.h"
-#if ENABLE(VIDEO_TRACK)
-#include "TextTrackList.h"
-#endif
 
 namespace WebCore {
 
@@ -116,14 +112,6 @@ void MediaControlElement::show()
 void MediaControlElement::hide()
 {
     setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
-}
-
-bool MediaControlElement::isShowing() const
-{
-    const StylePropertySet* propertySet = inlineStyle();
-    // Following the code from show() and hide() above, we only have
-    // to check for the presense of inline display.
-    return (!propertySet || !propertySet->getPropertyCSSValue(CSSPropertyDisplay));
 }
 
 // ----------------------------
@@ -863,56 +851,25 @@ const AtomicString& MediaControlReturnToRealtimeButtonElement::shadowPseudoId() 
 
 // ----------------------------
 
-inline MediaControlClosedCaptionsContainerElement::MediaControlClosedCaptionsContainerElement(Document* document)
-    : MediaControlElement(document)
-{
-}
-
-PassRefPtr<MediaControlClosedCaptionsContainerElement> MediaControlClosedCaptionsContainerElement::create(Document* document)
-{
-    RefPtr<MediaControlClosedCaptionsContainerElement> element = adoptRef(new MediaControlClosedCaptionsContainerElement(document));
-    element->hide();
-    return element.release();
-}
-
-const AtomicString& MediaControlClosedCaptionsContainerElement::shadowPseudoId() const
-{
-    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-closed-captions-container", AtomicString::ConstructFromLiteral));
-    return id;
-}
-
-// ----------------------------
-
-inline MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement(Document* document, MediaControls* controls)
+inline MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement(Document* document)
     : MediaControlInputElement(document, MediaShowClosedCaptionsButton)
-    , m_controls(controls)
 {
 }
 
-PassRefPtr<MediaControlToggleClosedCaptionsButtonElement> MediaControlToggleClosedCaptionsButtonElement::create(Document* document, MediaControls* controls)
+PassRefPtr<MediaControlToggleClosedCaptionsButtonElement> MediaControlToggleClosedCaptionsButtonElement::create(Document* document)
 {
-    ASSERT(controls);
-
-    RefPtr<MediaControlToggleClosedCaptionsButtonElement> button = adoptRef(new MediaControlToggleClosedCaptionsButtonElement(document, controls));
+    RefPtr<MediaControlToggleClosedCaptionsButtonElement> button = adoptRef(new MediaControlToggleClosedCaptionsButtonElement(document));
     button->createShadowSubtree();
     button->setType("button");
     button->hide();
     return button.release();
 }
 
-void MediaControlToggleClosedCaptionsButtonElement::updateDisplayType()
-{
-    setDisplayType(mediaController()->closedCaptionsVisible() ? MediaHideClosedCaptionsButton : MediaShowClosedCaptionsButton);
-}
-
 void MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
-        // FIXME: This is now incorrectly doing two things at once: showing the list of captions and toggling display.
-        // https://bugs.webkit.org/show_bug.cgi?id=101670
         mediaController()->setClosedCaptionsVisible(!mediaController()->closedCaptionsVisible());
         setChecked(mediaController()->closedCaptionsVisible());
-        m_controls->toggleClosedCaptionTrackList();
         updateDisplayType();
         event->setDefaultHandled();
     }
@@ -920,115 +877,15 @@ void MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler(Event* e
     HTMLInputElement::defaultEventHandler(event);
 }
 
+void MediaControlToggleClosedCaptionsButtonElement::updateDisplayType()
+{
+    setDisplayType(mediaController()->closedCaptionsVisible() ? MediaHideClosedCaptionsButton : MediaShowClosedCaptionsButton);
+}
+
 const AtomicString& MediaControlToggleClosedCaptionsButtonElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-toggle-closed-captions-button", AtomicString::ConstructFromLiteral));
     return id;
-}
-
-// ----------------------------
-
-inline MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement(Document* document)
-    : MediaControlElement(document)
-{
-}
-
-PassRefPtr<MediaControlClosedCaptionsTrackListElement> MediaControlClosedCaptionsTrackListElement::create(Document* document)
-{
-    RefPtr<MediaControlClosedCaptionsTrackListElement> element = adoptRef(new MediaControlClosedCaptionsTrackListElement(document));
-    return element.release();
-}
-
-void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event* event)
-{
-    // FIXME: Hook this up to actual text tracks.
-    // https://bugs.webkit.org/show_bug.cgi?id=101670
-    UNUSED_PARAM(event);
-}
-
-const AtomicString& MediaControlClosedCaptionsTrackListElement::shadowPseudoId() const
-{
-    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-closed-captions-track-list", AtomicString::ConstructFromLiteral));
-    return id;
-}
-
-void MediaControlClosedCaptionsTrackListElement::updateDisplay()
-{
-#if ENABLE(VIDEO_TRACK)
-    // Remove any existing content.
-    removeChildren();
-
-    if (!mediaController()->hasClosedCaptions())
-        return;
-
-    HTMLMediaElement* mediaElement = toParentMediaElement(this);
-    if (!mediaElement)
-        return;
-
-    TextTrackList* trackList = mediaElement->textTracks();
-
-    if (!trackList || !trackList->length())
-        return;
-
-    Document* doc = document();
-
-    RefPtr<Element> captionsSection = doc->createElement(sectionTag, ASSERT_NO_EXCEPTION);
-    RefPtr<Element> captionsHeader = doc->createElement(h3Tag, ASSERT_NO_EXCEPTION);
-    captionsHeader->appendChild(doc->createTextNode("Closed Captions"));
-    captionsSection->appendChild(captionsHeader);
-    RefPtr<Element> captionsList = doc->createElement(ulTag, ASSERT_NO_EXCEPTION);
-
-    RefPtr<Element> subtitlesSection = doc->createElement(sectionTag, ASSERT_NO_EXCEPTION);
-    RefPtr<Element> subtitlesHeader = doc->createElement(h3Tag, ASSERT_NO_EXCEPTION);
-    subtitlesHeader->appendChild(doc->createTextNode("Subtitles"));
-    subtitlesSection->appendChild(subtitlesHeader);
-    RefPtr<Element> subtitlesList = doc->createElement(ulTag, ASSERT_NO_EXCEPTION);
-
-    RefPtr<Element> trackItem;
-
-    trackItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
-    trackItem->appendChild(doc->createTextNode("Off"));
-    // FIXME: These lists are not yet live. Mark the Off entry as the selected one for now.
-    trackItem->setAttribute(classAttr, "selected");
-    captionsList->appendChild(trackItem);
-
-    trackItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
-    trackItem->appendChild(doc->createTextNode("Off"));
-    // FIXME: These lists are not yet live. Mark the Off entry as the selected one for now.
-    trackItem->setAttribute(classAttr, "selected");
-    subtitlesList->appendChild(trackItem);
-
-    bool hasCaptions = false;
-    bool hasSubtitles = false;
-
-    for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
-        TextTrack* track = trackList->item(i);
-        trackItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
-        AtomicString labelText = track->label();
-        if (labelText.isNull() || labelText.isEmpty())
-            labelText = displayNameForLanguageLocale(track->language());
-        if (labelText.isNull() || labelText.isEmpty())
-            labelText = "No Label";
-
-        if (track->kind() == track->captionsKeyword()) {
-            hasCaptions = true;
-            captionsList->appendChild(trackItem);
-        }
-        if (track->kind() == track->subtitlesKeyword()) {
-            hasSubtitles = true;
-            subtitlesList->appendChild(trackItem);
-        }
-        trackItem->appendChild(doc->createTextNode(labelText));
-    }
-
-    captionsSection->appendChild(captionsList);
-    subtitlesSection->appendChild(subtitlesList);
-
-    if (hasCaptions)
-        appendChild(captionsSection);
-    if (hasSubtitles)
-        appendChild(subtitlesSection);
-#endif
 }
 
 // ----------------------------

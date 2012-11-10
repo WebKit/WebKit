@@ -70,8 +70,6 @@ class MediaControls : public HTMLDivElement {
     virtual void updateTimeDisplay() = 0;
     virtual void updateStatusDisplay() = 0;
 
-    virtual void toggleClosedCaptionTrackList() { }
-
     virtual bool shouldHideControls() = 0;
 
 #if ENABLE(VIDEO_TRACK)

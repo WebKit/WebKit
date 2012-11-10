@@ -27,12 +27,7 @@
 #include "Language.h"
 
 #include <wtf/HashMap.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
-
-#if PLATFORM(MAC)
-#include <CoreFoundation/CoreFoundation.h>
-#endif
 
 namespace WebCore {
 
@@ -147,14 +142,5 @@ String preferredLanguageFromList(const Vector<String>& languageList)
 
     return emptyString();
 }
-
-String displayNameForLanguageLocale(const String& localeName)
-{
-#if PLATFORM(MAC)
-    if (!localeName.isNull() && !localeName.isEmpty())
-        return CFLocaleCopyDisplayNameForPropertyValue(CFLocaleCopyCurrent(), kCFLocaleIdentifier, localeName.createCFString().get());
-#endif
-    return localeName;
-}
-
+    
 }
