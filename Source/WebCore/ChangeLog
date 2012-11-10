@@ -1,3 +1,141 @@
+2012-11-09  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Combine IDBBackingStore and IDBLevelDBBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=101415
+
+        Reviewed by Tony Chang.
+
+        Combine abstract interface IDBBackingStore with its only
+        implementation, IDBLevelDBBackingStore, to reduce code
+        complexity. The legacy structure existed to support a SQLLite
+        IDBBackingStore, but it is no longer worth the complexity to
+        support this abstraction.
+
+        Changes include:
+        1) Merging IDBLevelDBBackingStore into IDBBackingStore.
+
+        2) Merge together IDBBackingStore's inner classes: Cursor,
+        Transaction, and ObjectStoreRecordIdentfier with their respective
+        subclasses in IDBLevelDBBackingStore.
+
+        3) Simplifying the inner Transaction class to not be refcounted or
+        virtualized, to allow it to be a simple concrete member of its
+        owner, IDBTransactionBackendImpl.
+
+        No new tests as this is purely a refactor.
+
+        * Modules/indexeddb/IDBBackingStore.cpp:
+        (WebCore::recordInternalError):
+        (WebCore::setUpMetadata):
+        (WebCore::IDBBackingStore::IDBBackingStore):
+        (WebCore):
+        (WebCore::IDBBackingStore::~IDBBackingStore):
+        (WebCore::IDBBackingStore::open):
+        (WebCore::IDBBackingStore::getDatabaseNames):
+        (WebCore::IDBBackingStore::getIDBDatabaseMetaData):
+        (WebCore::IDBBackingStore::createIDBDatabaseMetaData):
+        (WebCore::IDBBackingStore::updateIDBDatabaseIntVersion):
+        (WebCore::IDBBackingStore::updateIDBDatabaseMetaData):
+        (WebCore::deleteRange):
+        (WebCore::IDBBackingStore::deleteDatabase):
+        (WebCore::IDBBackingStore::getObjectStores):
+        (WebCore::setMaxObjectStoreId):
+        (WebCore::IDBBackingStore::createObjectStore):
+        (WebCore::IDBBackingStore::deleteObjectStore):
+        (WebCore::IDBBackingStore::getRecord):
+        (WebCore::IDBBackingStore::putRecord):
+        (WebCore::IDBBackingStore::clearObjectStore):
+        (WebCore::IDBBackingStore::deleteRecord):
+        (WebCore::IDBBackingStore::getKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBBackingStore::getIndexes):
+        (WebCore::setMaxIndexId):
+        (WebCore::IDBBackingStore::createIndex):
+        (WebCore::IDBBackingStore::deleteIndex):
+        (WebCore::IDBBackingStore::putIndexDataForRecord):
+        (WebCore::IDBBackingStore::deleteIndexDataForRecord):
+        (WebCore::IDBBackingStore::findKeyInIndex):
+        (WebCore::IDBBackingStore::getPrimaryKeyViaIndex):
+        (WebCore::IDBBackingStore::keyExistsInIndex):
+        (WebCore::IDBBackingStore::Cursor::Cursor):
+        (WebCore::IDBBackingStore::Cursor::firstSeek):
+        (WebCore::IDBBackingStore::Cursor::advance):
+        (WebCore::IDBBackingStore::Cursor::continueFunction):
+        (WebCore::IDBBackingStore::Cursor::haveEnteredRange):
+        (WebCore::IDBBackingStore::Cursor::isPastBounds):
+        (WebCore::ObjectStoreKeyCursorImpl::create):
+        (ObjectStoreKeyCursorImpl):
+        (WebCore::ObjectStoreKeyCursorImpl::value):
+        (WebCore::ObjectStoreKeyCursorImpl::ObjectStoreKeyCursorImpl):
+        (WebCore::ObjectStoreKeyCursorImpl::loadCurrentRow):
+        (WebCore::ObjectStoreCursorImpl::create):
+        (ObjectStoreCursorImpl):
+        (WebCore::ObjectStoreCursorImpl::value):
+        (WebCore::ObjectStoreCursorImpl::ObjectStoreCursorImpl):
+        (WebCore::ObjectStoreCursorImpl::loadCurrentRow):
+        (WebCore::IndexKeyCursorImpl::create):
+        (IndexKeyCursorImpl):
+        (WebCore::IndexKeyCursorImpl::value):
+        (WebCore::IndexKeyCursorImpl::primaryKey):
+        (WebCore::IndexKeyCursorImpl::recordIdentifier):
+        (WebCore::IndexKeyCursorImpl::IndexKeyCursorImpl):
+        (WebCore::IndexKeyCursorImpl::loadCurrentRow):
+        (WebCore::IndexCursorImpl::create):
+        (IndexCursorImpl):
+        (WebCore::IndexCursorImpl::value):
+        (WebCore::IndexCursorImpl::primaryKey):
+        (WebCore::IndexCursorImpl::recordIdentifier):
+        (WebCore::IndexCursorImpl::IndexCursorImpl):
+        (WebCore::IndexCursorImpl::loadCurrentRow):
+        (WebCore::objectStoreCursorOptions):
+        (WebCore::indexCursorOptions):
+        (WebCore::IDBBackingStore::openObjectStoreCursor):
+        (WebCore::IDBBackingStore::openObjectStoreKeyCursor):
+        (WebCore::IDBBackingStore::openIndexKeyCursor):
+        (WebCore::IDBBackingStore::openIndexCursor):
+        (WebCore::IDBBackingStore::Transaction::Transaction):
+        (WebCore::IDBBackingStore::Transaction::begin):
+        (WebCore::IDBBackingStore::Transaction::commit):
+        (WebCore::IDBBackingStore::Transaction::rollback):
+        * Modules/indexeddb/IDBBackingStore.h:
+        (WebCore):
+        (IDBBackingStore):
+        (RecordIdentifier):
+        (WebCore::IDBBackingStore::RecordIdentifier::create):
+        (WebCore::IDBBackingStore::RecordIdentifier::~RecordIdentifier):
+        (WebCore::IDBBackingStore::RecordIdentifier::isValid):
+        (WebCore::IDBBackingStore::RecordIdentifier::primaryKey):
+        (WebCore::IDBBackingStore::RecordIdentifier::setPrimaryKey):
+        (WebCore::IDBBackingStore::RecordIdentifier::version):
+        (WebCore::IDBBackingStore::RecordIdentifier::setVersion):
+        (WebCore::IDBBackingStore::RecordIdentifier::RecordIdentifier):
+        (Transaction):
+        (WebCore::IDBBackingStore::Transaction::levelDBTransactionFrom):
+        (CursorOptions):
+        (Cursor):
+        (WebCore::IDBBackingStore::Cursor::Cursor):
+        (WebCore::IDBBackingStore::Cursor::key):
+        (WebCore::IDBBackingStore::Cursor::primaryKey):
+        (WebCore::IDBBackingStore::Cursor::~Cursor):
+        * Modules/indexeddb/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::openBackingStore):
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::countInternal):
+        * Modules/indexeddb/IDBLevelDBBackingStore.h: Removed.
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore::IDBTransactionBackendImpl::commit):
+        (WebCore::IDBTransactionBackendImpl::taskTimerFired):
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        (WebCore::IDBTransactionBackendImpl::backingStoreTransaction):
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-11-09  Tien-Ren Chen  <trchen@chromium.org>
 
         Correct scroll adjustment for touchEvent.clientX/clientY
