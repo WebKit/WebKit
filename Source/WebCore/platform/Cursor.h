@@ -41,8 +41,6 @@ typedef HICON HCURSOR;
 #include "GRefPtrGtk.h"
 #elif PLATFORM(QT)
 #include <QCursor>
-#elif PLATFORM(CHROMIUM)
-#include "PlatformCursor.h"
 #elif PLATFORM(BLACKBERRY)
 #include <BlackBerryPlatformCursor.h>
 #endif
@@ -60,7 +58,8 @@ typedef struct HICON__ *HICON;
 typedef HICON HCURSOR;
 #endif
 
-#if PLATFORM(WIN) || PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL)
+// Looks like it's just PLATFORM(WX) and PLATFORM(BLACKBERRY) still not using this?
+#if PLATFORM(WIN) || PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT) || PLATFORM(EFL) || PLATFORM(CHROMIUM)
 #define WTF_USE_LAZY_NATIVE_CURSOR 1
 #endif
 
@@ -90,8 +89,6 @@ namespace WebCore {
     typedef QCursor* PlatformCursor;
 #elif PLATFORM(WX)
     typedef wxCursor* PlatformCursor;
-#elif PLATFORM(CHROMIUM)
-    // See PlatformCursor.h
 #elif PLATFORM(BLACKBERRY)
     typedef BlackBerry::Platform::BlackBerryCursor PlatformCursor;
 #else

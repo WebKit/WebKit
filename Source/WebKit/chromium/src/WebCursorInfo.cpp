@@ -39,9 +39,9 @@ namespace WebKit {
 
 WebCursorInfo::WebCursorInfo(const Cursor& cursor)
 {
-    type = static_cast<Type>(cursor.impl().type());
-    hotSpot = cursor.impl().hotSpot();
-    customImage = cursor.impl().customImage();
+    type = static_cast<Type>(cursor.type());
+    hotSpot = cursor.hotSpot();
+    customImage = cursor.image();
 #ifdef WIN32
     externalHandle = 0;
 #endif

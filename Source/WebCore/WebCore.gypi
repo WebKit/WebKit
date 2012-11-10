@@ -4671,7 +4671,6 @@
             'platform/chromium/MIMETypeRegistryChromium.cpp',
             'platform/chromium/PageClientChromium.h',
             'platform/chromium/PasteboardChromium.cpp',
-            'platform/chromium/PlatformCursor.h',
             'platform/chromium/PlatformKeyboardEventChromium.cpp',
             'platform/chromium/PlatformScreenChromium.cpp',
             'platform/chromium/PlatformSupport.h',

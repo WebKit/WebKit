@@ -1,5 +1,17 @@
 2012-11-09  Rick Byers  <rbyers@chromium.org>
 
+        [chromium] Move to USE(LAZY_NATIVE_CURSOR)
+        https://bugs.webkit.org/show_bug.cgi?id=101501
+
+        Reviewed by Adam Barth.
+
+        Remove failure expectation for fast/events/mouse-cursor.html now that
+        chromium uses the same cursor architecture as other ports.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-09  Rick Byers  <rbyers@chromium.org>
+
         No tests for changing mouse cursors
         https://bugs.webkit.org/show_bug.cgi?id=100550
 

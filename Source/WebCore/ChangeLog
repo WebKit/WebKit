@@ -1,3 +1,30 @@
+2012-11-09  Rick Byers  <rbyers@chromium.org>
+
+        Move chromium to USE(LAZY_NATIVE_CURSOR)
+        https://bugs.webkit.org/show_bug.cgi?id=101501
+
+        Reviewed by Adam Barth.
+
+        This simplifies cursor handling in chromium and unifies it with other
+        ports for easier code sharing and testing by moving to the
+        USE_LAZY_CURSOR model and eliminating PlatformCursor entirely.
+
+        PlatformCursor adds no value in chromium since the sandboxing model
+        requires the cursor information be marshalled to the browser process
+        before being turned into a real OS cursor.
+
+        Test: fast/events/mouse-cursor.html
+
+        * WebCore.gypi:
+        * platform/Cursor.h:
+        (WebCore):
+        * platform/chromium/CursorChromium.cpp:
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::operator=):
+        (WebCore::Cursor::~Cursor):
+        (WebCore::Cursor::ensurePlatformCursor):
+        * platform/chromium/PlatformCursor.h: Removed.
+
 2012-11-09  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Allow ports to decide whether an image should be directly composited

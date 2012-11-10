@@ -4202,9 +4202,6 @@ webkit.org/b/101539 [ Linux Win ] editing/execCommand/switch-list-type-with-orph
 
 webkit.org/b/101618 [ Win7 Debug ] http/tests/inspector/indexeddb/database-data.html [ Crash ]
 
-# This test will be enabled shortly when chromium moves to the USE(LAZY_NATIVE_CURSOR) infrastructure
-webkit.org/b/101501 fast/events/mouse-cursor.html [ Failure ]
-
 # Failures following r133840:
 webkit.org/b/101547 fast/repaint/4774354.html [ ImageOnlyFailure ]
 webkit.org/b/101547 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]
