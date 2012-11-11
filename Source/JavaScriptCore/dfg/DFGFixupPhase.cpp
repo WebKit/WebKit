@@ -134,6 +134,16 @@ private:
                     m_graph[node.child2()].prediction()));
             
             blessArrayOperation(node.child1(), node.child2(), 2);
+            
+            ArrayMode arrayMode = node.arrayMode();
+            if (arrayMode.type() == Array::Double
+                && arrayMode.arrayClass() == Array::OriginalArray
+                && arrayMode.speculation() == Array::InBounds
+                && arrayMode.conversion() == Array::AsIs
+                && m_graph.globalObjectFor(node.codeOrigin)->arrayPrototypeChainIsSane()
+                && !(node.flags() & NodeUsedAsOther))
+                node.setArrayMode(arrayMode.withSpeculation(Array::SaneChain));
+            
             break;
         }
         case StringCharAt:

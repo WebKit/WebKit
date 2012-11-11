@@ -437,6 +437,14 @@ void JSGlobalObject::haveABadTime(JSGlobalData& globalData)
     }
 }
 
+bool JSGlobalObject::arrayPrototypeChainIsSane()
+{
+    return !hasIndexedProperties(m_arrayPrototype->structure()->indexingType())
+        && m_arrayPrototype->prototype() == m_objectPrototype.get()
+        && !hasIndexedProperties(m_objectPrototype->structure()->indexingType())
+        && m_objectPrototype->prototype().isNull();
+}
+
 void JSGlobalObject::createThrowTypeError(ExecState* exec)
 {
     JSFunction* thrower = JSFunction::create(exec, this, 0, String(), globalFuncThrowTypeError);

@@ -112,6 +112,12 @@ const char* nodeFlagsAsString(NodeFlags flags)
             ptr.strcat("PureNum");
             hasPrinted = true;
         }
+        if (flags & NodeUsedAsOther) {
+            if (hasPrinted)
+                ptr.strcat("|");
+            ptr.strcat("UseAsOther");
+            hasPrinted = true;
+        }
     }
     
     if (flags & NodeMayOverflow) {

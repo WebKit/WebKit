@@ -184,7 +184,7 @@ private:
         case BitURShift: {
             changed |= setPrediction(SpecInt32);
             flags |= NodeUsedAsInt;
-            flags &= ~(NodeUsedAsNumber | NodeNeedsNegZero);
+            flags &= ~(NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther);
             changed |= m_graph[node.child1()].mergeFlags(flags);
             changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
@@ -193,7 +193,7 @@ private:
         case ValueToInt32: {
             changed |= setPrediction(SpecInt32);
             flags |= NodeUsedAsInt;
-            flags &= ~(NodeUsedAsNumber | NodeNeedsNegZero);
+            flags &= ~(NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther);
             changed |= m_graph[node.child1()].mergeFlags(flags);
             break;
         }
@@ -221,7 +221,7 @@ private:
         case StringCharCodeAt: {
             changed |= mergePrediction(SpecInt32);
             changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue);
-            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);
+            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt);
             break;
         }
 
@@ -254,6 +254,8 @@ private:
             
             if (isNotNegZero(node.child1().index()) || isNotNegZero(node.child2().index()))
                 flags &= ~NodeNeedsNegZero;
+            if (m_graph[node.child1()].hasNumberResult() || m_graph[node.child2()].hasNumberResult())
+                flags &= ~NodeUsedAsOther;
             
             changed |= m_graph[node.child1()].mergeFlags(flags);
             changed |= m_graph[node.child2()].mergeFlags(flags);
@@ -273,6 +275,7 @@ private:
             
             if (isNotNegZero(node.child1().index()) || isNotNegZero(node.child2().index()))
                 flags &= ~NodeNeedsNegZero;
+            flags &= ~NodeUsedAsOther;
             
             changed |= m_graph[node.child1()].mergeFlags(flags);
             changed |= m_graph[node.child2()].mergeFlags(flags);
@@ -292,6 +295,7 @@ private:
 
             if (isNotZero(node.child1().index()) || isNotZero(node.child2().index()))
                 flags &= ~NodeNeedsNegZero;
+            flags &= ~NodeUsedAsOther;
             
             changed |= m_graph[node.child1()].mergeFlags(flags);
             changed |= m_graph[node.child2()].mergeFlags(flags);
@@ -305,6 +309,8 @@ private:
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPrediction(m_graph[node.child1()].prediction()));
             }
+
+            flags &= ~NodeUsedAsOther;
 
             changed |= m_graph[node.child1()].mergeFlags(flags);
             break;
@@ -323,6 +329,8 @@ private:
             }
 
             flags |= NodeUsedAsNumber;
+            flags &= ~NodeUsedAsOther;
+
             changed |= m_graph[node.child1()].mergeFlags(flags);
             changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
@@ -345,6 +353,8 @@ private:
             // no matter what, and always forces its inputs to check as well.
             
             flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+            flags &= ~NodeUsedAsOther;
+
             changed |= m_graph[node.child1()].mergeFlags(flags);
             changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
@@ -368,6 +378,8 @@ private:
             // no matter what, and always forces its inputs to check as well.
             
             flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+            flags &= ~NodeUsedAsOther;
+
             changed |= m_graph[node.child1()].mergeFlags(flags);
             changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
@@ -385,7 +397,9 @@ private:
                     changed |= mergePrediction(SpecDouble);
             }
             
-            flags |= NodeUsedAsValue;
+            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+            flags &= ~NodeUsedAsOther;
+
             changed |= m_graph[node.child1()].mergeFlags(flags);
             changed |= m_graph[node.child2()].mergeFlags(flags);
             break;
@@ -393,7 +407,9 @@ private:
             
         case ArithSqrt: {
             changed |= setPrediction(SpecDouble);
-            changed |= m_graph[node.child1()].mergeFlags(flags | NodeUsedAsValue);
+            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
+            flags &= ~NodeUsedAsOther;
+            changed |= m_graph[node.child1()].mergeFlags(flags);
             break;
         }
             
@@ -405,7 +421,6 @@ private:
             else
                 changed |= mergePrediction(speculatedDoubleTypeForPrediction(child));
 
-            flags &= ~NodeNeedsNegZero;
             changed |= m_graph[node.child1()].mergeFlags(flags);
             break;
         }
@@ -448,13 +463,13 @@ private:
                 changed |= mergePrediction(node.getHeapPrediction());
 
             changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue);
-            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);
+            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt);
             break;
         }
             
         case GetMyArgumentByValSafe: {
             changed |= mergePrediction(node.getHeapPrediction());
-            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);
+            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt);
             break;
         }
             
@@ -555,7 +570,7 @@ private:
             
         case NewArrayWithSize: {
             changed |= setPrediction(SpecArray);
-            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);
+            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue | NodeUsedAsInt);
             break;
         }
             
@@ -572,7 +587,7 @@ private:
         case StringCharAt: {
             changed |= setPrediction(SpecString);
             changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue);
-            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);
+            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt);
             break;
         }
             
@@ -581,7 +596,7 @@ private:
             for (unsigned childIdx = node.firstChild();
                  childIdx < node.firstChild() + node.numChildren();
                  ++childIdx)
-                changed |= m_graph[m_graph.m_varArgChildren[childIdx]].mergeFlags(NodeUsedAsNumber);
+                changed |= m_graph[m_graph.m_varArgChildren[childIdx]].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther);
             break;
         }
             
@@ -646,7 +661,7 @@ private:
         
         case PutByVal:
             changed |= m_graph[m_graph.varArgChild(node, 0)].mergeFlags(NodeUsedAsValue);
-            changed |= m_graph[m_graph.varArgChild(node, 1)].mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);
+            changed |= m_graph[m_graph.varArgChild(node, 1)].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt);
             changed |= m_graph[m_graph.varArgChild(node, 2)].mergeFlags(NodeUsedAsValue);
             break;
 

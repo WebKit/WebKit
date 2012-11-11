@@ -333,6 +333,8 @@ namespace JSC {
         }
         
         void haveABadTime(JSGlobalData&);
+        
+        bool arrayPrototypeChainIsSane();
 
         void setProfileGroup(unsigned value) { createRareDataIfNeeded(); m_rareData->profileGroup = value; }
         unsigned profileGroup() const

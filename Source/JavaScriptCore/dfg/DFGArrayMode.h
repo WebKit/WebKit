@@ -86,9 +86,10 @@ enum Class {
 };
 
 enum Speculation {
-    InBounds,
-    ToHole,
-    OutOfBounds
+    SaneChain, // In bounds and the array prototype chain is still intact, i.e. loading a hole doesn't require special treatment.
+    InBounds, // In bounds and not loading a hole.
+    ToHole, // Potentially storing to a hole.
+    OutOfBounds // Out-of-bounds access and anything can happen.
 };
 enum Conversion {
     AsIs,
@@ -223,9 +224,20 @@ public:
         return arrayClass() == Array::OriginalArray;
     }
     
+    bool isSaneChain() const
+    {
+        return speculation() == Array::SaneChain;
+    }
+    
     bool isInBounds() const
     {
-        return speculation() == Array::InBounds;
+        switch (speculation()) {
+        case Array::SaneChain:
+        case Array::InBounds:
+            return true;
+        default:
+            return false;
+        }
     }
     
     bool mayStoreToHole() const

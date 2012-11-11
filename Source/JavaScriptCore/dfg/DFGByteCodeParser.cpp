@@ -1703,7 +1703,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
 
         int thisOperand = registerOffset + argumentToOperand(0);
         int indexOperand = registerOffset + argumentToOperand(1);
-        NodeIndex charCode = addToGraph(StringCharCodeAt, OpInfo(Array::String), get(thisOperand), getToInt32(indexOperand));
+        NodeIndex charCode = addToGraph(StringCharCodeAt, OpInfo(ArrayMode(Array::String).asWord()), get(thisOperand), getToInt32(indexOperand));
 
         if (usesResult)
             set(resultOperand, charCode);
@@ -1716,7 +1716,7 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
 
         int thisOperand = registerOffset + argumentToOperand(0);
         int indexOperand = registerOffset + argumentToOperand(1);
-        NodeIndex charCode = addToGraph(StringCharAt, OpInfo(Array::String), get(thisOperand), getToInt32(indexOperand));
+        NodeIndex charCode = addToGraph(StringCharAt, OpInfo(ArrayMode(Array::String).asWord()), get(thisOperand), getToInt32(indexOperand));
 
         if (usesResult)
             set(resultOperand, charCode);

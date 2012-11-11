@@ -409,6 +409,8 @@ const char* arrayClassToString(Array::Class arrayClass)
 const char* arraySpeculationToString(Array::Speculation speculation)
 {
     switch (speculation) {
+    case Array::SaneChain:
+        return "SaneChain";
     case Array::InBounds:
         return "InBounds";
     case Array::ToHole:

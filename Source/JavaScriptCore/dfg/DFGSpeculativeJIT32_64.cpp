@@ -29,9 +29,11 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ArrayPrototype.h"
 #include "DFGCallArrayAllocatorSlowPathGenerator.h"
 #include "DFGSlowPathGenerator.h"
 #include "JSActivation.h"
+#include "ObjectPrototype.h"
 
 namespace JSC { namespace DFG {
 
@@ -2702,6 +2704,13 @@ void SpeculativeJIT::compile(Node& node)
         }
         case Array::Double: {
             if (node.arrayMode().isInBounds()) {
+                if (node.arrayMode().isSaneChain()) {
+                    JSGlobalObject* globalObject = m_jit.globalObjectFor(node.codeOrigin);
+                    ASSERT(globalObject->arrayPrototypeChainIsSane());
+                    globalObject->arrayPrototype()->structure()->addTransitionWatchpoint(speculationWatchpoint());
+                    globalObject->objectPrototype()->structure()->addTransitionWatchpoint(speculationWatchpoint());
+                }
+                
                 SpeculateStrictInt32Operand property(this, node.child2());
                 StorageOperand storage(this, node.child3());
             
@@ -2715,7 +2724,8 @@ void SpeculativeJIT::compile(Node& node)
             
                 FPRTemporary result(this);
                 m_jit.loadDouble(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight), result.fpr());
-                speculationCheck(OutOfBounds, JSValueRegs(), NoNode, m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, result.fpr(), result.fpr()));
+                if (!node.arrayMode().isSaneChain())
+                    speculationCheck(OutOfBounds, JSValueRegs(), NoNode, m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, result.fpr(), result.fpr()));
                 doubleResult(result.fpr(), m_compileIndex);
                 break;
             }

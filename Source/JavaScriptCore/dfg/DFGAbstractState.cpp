@@ -922,7 +922,9 @@ bool AbstractState::execute(unsigned indexInBlock)
             if (node.arrayMode().isOutOfBounds()) {
                 clobberWorld(node.codeOrigin, indexInBlock);
                 forNode(nodeIndex).makeTop();
-            } else
+            } else if (node.arrayMode().isSaneChain())
+                forNode(nodeIndex).set(SpecDouble);
+            else
                 forNode(nodeIndex).set(SpecDoubleReal);
             break;
         case Array::Contiguous:
