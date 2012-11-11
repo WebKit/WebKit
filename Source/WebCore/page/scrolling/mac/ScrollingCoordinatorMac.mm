@@ -373,7 +373,7 @@ void ScrollingCoordinatorMac::syncChildPositions(const LayoutRect& viewportRect)
     for (size_t i = 0; i < size; ++i) {
         ScrollingStateFixedNode* child = toScrollingStateFixedNode(children->at(i).get());
         FloatPoint position = child->viewportConstraints().layerPositionForViewportRect(viewportRect);
-        child->graphicsLayer()->setPosition(position);
+        child->graphicsLayer()->syncPosition(position);
     }
 }
 

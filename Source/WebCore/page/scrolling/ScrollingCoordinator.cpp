@@ -101,6 +101,9 @@ IntSize scrollOffsetForFixedPosition(const IntRect& visibleContentRect, const In
 
 ScrollingCoordinator::ScrollingCoordinator(Page* page)
     : m_page(page)
+    , m_updateMainFrameScrollPositionTimer(this, &ScrollingCoordinator::updateMainFrameScrollPositionTimerFired)
+    , m_scheduledUpdateIsProgrammaticScroll(false)
+    , m_scheduledScrollingLayerPositionAction(SyncScrollingLayerPosition)
     , m_forceMainThreadScrollLayerPositionUpdates(false)
 {
 }
@@ -248,6 +251,33 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
     frameViewLayoutUpdated(frameView);
     recomputeWheelEventHandlerCountForFrameView(frameView);
     updateShouldUpdateScrollLayerPositionOnMainThread();
+}
+
+void ScrollingCoordinator::scheduleUpdateMainFrameScrollPosition(const IntPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
+{
+    if (m_updateMainFrameScrollPositionTimer.isActive()) {
+        if (m_scheduledUpdateIsProgrammaticScroll == programmaticScroll
+            && m_scheduledScrollingLayerPositionAction == scrollingLayerPositionAction) {
+            m_scheduledUpdateScrollPosition = scrollPosition;
+            return;
+        }
+    
+        // If the parameters don't match what was previosly scheduled, dispatch immediately.
+        m_updateMainFrameScrollPositionTimer.stop();
+        updateMainFrameScrollPosition(m_scheduledUpdateScrollPosition, m_scheduledUpdateIsProgrammaticScroll, m_scheduledScrollingLayerPositionAction);
+        updateMainFrameScrollPosition(scrollPosition, programmaticScroll, scrollingLayerPositionAction);
+        return;
+    }
+
+    m_scheduledUpdateScrollPosition = scrollPosition;
+    m_scheduledUpdateIsProgrammaticScroll = programmaticScroll;
+    m_scheduledScrollingLayerPositionAction = scrollingLayerPositionAction;
+    m_updateMainFrameScrollPositionTimer.startOneShot(0);
+}
+
+void ScrollingCoordinator::updateMainFrameScrollPositionTimerFired(Timer<ScrollingCoordinator>*)
+{
+    updateMainFrameScrollPosition(m_scheduledUpdateScrollPosition, m_scheduledUpdateIsProgrammaticScroll, m_scheduledScrollingLayerPositionAction);
 }
 
 void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)

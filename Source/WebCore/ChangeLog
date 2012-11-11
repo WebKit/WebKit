@@ -1,5 +1,38 @@
 2012-11-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Coalesce main thread scroll position updates
+        https://bugs.webkit.org/show_bug.cgi?id=101855
+
+        Reviewed by Anders Carlsson.
+
+        When using threaded scrolling, the dispatched updateMainFrameScrollPosition() calls 
+        from ScrollingTree would pile up on the main thread, and we'd handle several per
+        runloop cycle when scrolling fast. This causes extra work especially on pages
+        with position:fixed elements which must update RenderLayers on scrolling.
+        
+        Fix by using a zero-delay timer in ScrollingCoordinator to coalesce these
+        scrolling updates to one per runloop.
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::ScrollingCoordinator): Initialized data members
+        for the scheduled scroll position update.
+        (WebCore::ScrollingCoordinator::scheduleUpdateMainFrameScrollPosition): If 
+        the timer is active and the parameters match, just update the target scroll
+        position and return. If the params don't match, dispatch the scheduled update,
+        and then the new one. Otherwise, prime the timer.
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPositionTimerFired): Call
+        the existing updateMainFrameScrollPosition() with the saved values.
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateMainFrameScrollPosition): Call scheduleUpdateMainFrameScrollPosition()
+        rather than updateMainFrameScrollPosition().
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::syncChildPositions): Fixed a bug that caused fixed
+        position elements to jiggle with the patch; we should be calling syncPosition() (which just
+        sets the position data, without touching CA layers).
+
+2012-11-10  Simon Fraser  <simon.fraser@apple.com>
+
         Remove ScrollingCoordinatorMac::updateMainFrameScrollPositionAndScrollLayerPosition()
         https://bugs.webkit.org/show_bug.cgi?id=101514
 

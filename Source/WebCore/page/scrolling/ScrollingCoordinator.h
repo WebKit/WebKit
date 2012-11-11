@@ -128,6 +128,7 @@ public:
     ScrollingNodeID uniqueScrollLayerID();
 
     // Dispatched by the scrolling tree whenever the main frame scroll position changes.
+    void scheduleUpdateMainFrameScrollPosition(const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
     void updateMainFrameScrollPosition(const IntPoint&, bool programmaticScroll, SetOrSyncScrollingLayerPosition);
 
     enum MainThreadScrollingReasonFlags {
@@ -164,6 +165,13 @@ private:
 
     virtual bool hasVisibleSlowRepaintFixedObjects(FrameView*) const;
     void updateShouldUpdateScrollLayerPositionOnMainThread();
+    
+    void updateMainFrameScrollPositionTimerFired(Timer<ScrollingCoordinator>*);
+
+    Timer<ScrollingCoordinator> m_updateMainFrameScrollPositionTimer;
+    IntPoint m_scheduledUpdateScrollPosition;
+    bool m_scheduledUpdateIsProgrammaticScroll;
+    SetOrSyncScrollingLayerPosition m_scheduledScrollingLayerPositionAction;
 
     bool m_forceMainThreadScrollLayerPositionUpdates;
 };
