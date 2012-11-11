@@ -65,9 +65,6 @@ public:
     // Handle the wheel event on the scrolling thread. Returns whether the event was handled or not.
     virtual bool handleWheelEvent(FrameView*, const PlatformWheelEvent&);
 
-    // Dispatched by the scrolling tree whenever the main frame scroll position changes and the scroll layer position needs to be updated as well.
-    virtual void updateMainFrameScrollPositionAndScrollLayerPosition();
-
     // These functions are used to indicate that a layer should be (or should not longer be) represented by a node
     // in the scrolling tree.
     virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID);

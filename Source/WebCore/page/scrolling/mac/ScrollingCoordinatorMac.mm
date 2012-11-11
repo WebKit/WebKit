@@ -186,7 +186,7 @@ bool ScrollingCoordinatorMac::requestScrollPositionUpdate(FrameView* frameView, 
         return false;
 
     if (frameView->inProgrammaticScroll() || frameView->frame()->document()->inPageCache())
-        updateMainFrameScrollPosition(scrollPosition, frameView->inProgrammaticScroll());
+        updateMainFrameScrollPosition(scrollPosition, frameView->inProgrammaticScroll(), SetScrollingLayerPosition);
 
     // If this frame view's document is being put into the page cache, we don't want to update our
     // main frame scroll position. Just let the FrameView think that we did.
@@ -213,27 +213,6 @@ bool ScrollingCoordinatorMac::handleWheelEvent(FrameView*, const PlatformWheelEv
     ScrollingThread::dispatch(bind(&ScrollingTree::handleWheelEvent, m_scrollingTree.get(), wheelEvent));
 
     return true;
-}
-
-void ScrollingCoordinatorMac::updateMainFrameScrollPositionAndScrollLayerPosition()
-{
-    ASSERT(isMainThread());
-
-    if (!m_page)
-        return;
-
-    FrameView* frameView = m_page->mainFrame()->view();
-    if (!frameView)
-        return;
-
-    IntPoint scrollPosition = m_scrollingTree->mainFrameScrollPosition();
-
-    frameView->setConstrainsScrollingToContentEdge(false);
-    frameView->notifyScrollPositionChanged(scrollPosition);
-    frameView->setConstrainsScrollingToContentEdge(true);
-
-    if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView))
-        scrollLayer->setPosition(-frameView->scrollPosition());
 }
 
 ScrollingNodeID ScrollingCoordinatorMac::attachToStateTree(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)

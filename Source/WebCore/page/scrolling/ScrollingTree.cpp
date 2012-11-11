@@ -214,7 +214,7 @@ void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheR
     m_mainFramePinnedToTheRight = pinnedToTheRight;
 }
 
-void ScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition)
+void ScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     if (!m_scrollingCoordinator)
         return;
@@ -224,26 +224,13 @@ void ScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition
         m_mainFrameScrollPosition = scrollPosition;
     }
 
-    callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPosition, m_scrollingCoordinator.get(), scrollPosition, m_isHandlingProgrammaticScroll));
+    callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPosition, m_scrollingCoordinator.get(), scrollPosition, m_isHandlingProgrammaticScroll, scrollingLayerPositionAction));
 }
 
 IntPoint ScrollingTree::mainFrameScrollPosition()
 {
     MutexLocker lock(m_mutex);
     return m_mainFrameScrollPosition;
-}
-
-void ScrollingTree::updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition)
-{
-    if (!m_scrollingCoordinator)
-        return;
-
-    {
-        MutexLocker lock(m_mutex);
-        m_mainFrameScrollPosition = scrollPosition;
-    }
-
-    callOnMainThread(bind(&ScrollingCoordinator::updateMainFrameScrollPositionAndScrollLayerPosition, m_scrollingCoordinator.get()));
 }
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))

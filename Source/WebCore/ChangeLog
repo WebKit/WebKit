@@ -1,3 +1,26 @@
+2012-11-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove ScrollingCoordinatorMac::updateMainFrameScrollPositionAndScrollLayerPosition()
+        https://bugs.webkit.org/show_bug.cgi?id=101514
+
+        Reviewed by Tim Horton.
+
+        ScrollingCoordinatorMac::updateMainFrameScrollPositionAndScrollLayerPosition() is very similar to
+        ScrollingCoordinator::updateMainFrameScrollPosition(). In order to eliminate updateMainFrameScrollPositionAndScrollLayerPosition(),
+        we just need to plumb through a flag that says that updateMainFrameScrollPosition() should
+        set the layer position (rather than just doing a 'sync').
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPosition):
+        * page/scrolling/ScrollingCoordinator.h:
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::updateMainFrameScrollPosition):
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.h:
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        * page/scrolling/mac/ScrollingTreeScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeMac::setScrollPositionWithoutContentEdgeConstraints):
+
 2012-11-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134069.

@@ -263,7 +263,7 @@ void ScrollingTreeScrollingNodeMac::setScrollPositionWithoutContentEdgeConstrain
 
     if (shouldUpdateScrollLayerPositionOnMainThread()) {
         m_probableMainThreadScrollPosition = scrollPosition;
-        scrollingTree()->updateMainFrameScrollPositionAndScrollLayerPosition(scrollPosition);
+        scrollingTree()->updateMainFrameScrollPosition(scrollPosition, SetScrollingLayerPosition);
         return;
     }
 

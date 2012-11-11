@@ -250,7 +250,7 @@ void ScrollingCoordinator::frameViewRootLayerDidChange(FrameView* frameView)
     updateShouldUpdateScrollLayerPositionOnMainThread();
 }
 
-void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollPosition, bool programmaticScroll)
+void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollPosition, bool programmaticScroll, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
 {
     ASSERT(isMainThread());
 
@@ -272,7 +272,7 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
 
 #if USE(ACCELERATED_COMPOSITING)
     if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView)) {
-        if (programmaticScroll)
+        if (programmaticScroll || scrollingLayerPositionAction == SetScrollingLayerPosition)
             scrollLayer->setPosition(-frameView->scrollPosition());
         else {
             scrollLayer->syncPosition(-frameView->scrollPosition());

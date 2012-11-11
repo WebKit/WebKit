@@ -83,8 +83,7 @@ public:
 
     void setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight);
 
-    void updateMainFrameScrollPosition(const IntPoint& scrollPosition);
-    void updateMainFrameScrollPositionAndScrollLayerPosition(const IntPoint& scrollPosition);
+    void updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition);
     IntPoint mainFrameScrollPosition();
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
