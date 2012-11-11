@@ -401,7 +401,8 @@ void RenderLayer::updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerP
         RenderLayerModelObject* repaintContainer = renderer()->containerForRepaint();
         LayoutRect oldRepaintRect = m_repaintRect;
         LayoutRect oldOutlineBox = m_outlineBox;
-        computeRepaintRects(offsetFromRoot);
+        computeRepaintRects(repaintContainer, offsetFromRoot);
+
         // FIXME: Should ASSERT that value calculated for m_outlineBox using the cached offset is the same
         // as the value not using the cached offset, but we can't due to https://bugs.webkit.org/show_bug.cgi?id=37048
         if (flags & CheckForRepaint) {
@@ -491,11 +492,10 @@ void RenderLayer::dirtyAncestorChainHasSelfPaintingLayerDescendantStatus()
     }
 }
 
-void RenderLayer::computeRepaintRects(LayoutPoint* offsetFromRoot)
+void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintContainer, LayoutPoint* offsetFromRoot)
 {
     ASSERT(!m_visibleContentStatusDirty);
 
-    RenderLayerModelObject* repaintContainer = renderer()->containerForRepaint();
     m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
     m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer, offsetFromRoot);
 }
@@ -505,7 +505,8 @@ void RenderLayer::computeRepaintRectsIncludingDescendants()
 {
     // FIXME: computeRepaintRects() has to walk up the parent chain for every layer to compute the rects.
     // We should make this more efficient.
-    computeRepaintRects();
+    // FIXME: it's wrong to call this when layout is not up-to-date, which we do.
+    computeRepaintRects(renderer()->containerForRepaint());
 
     for (RenderLayer* layer = firstChild(); layer; layer = layer->nextSibling())
         layer->computeRepaintRectsIncludingDescendants();
@@ -536,12 +537,13 @@ void RenderLayer::updateLayerPositionsAfterScroll(UpdateLayerPositionsAfterScrol
 
     if ((flags & HasSeenViewportConstrainedAncestor) || renderer()->style()->hasViewportConstrainedPosition()) {
         // FIXME: Is it worth passing the offsetFromRoot around like in updateLayerPositions?
-        computeRepaintRects();
+        // FIXME: We could track the repaint container as we walk down the tree.
+        computeRepaintRects(renderer()->containerForRepaint());
         flags |= HasSeenViewportConstrainedAncestor;
     } else if ((flags & HasSeenAncestorWithOverflowClip) && !m_canSkipRepaintRectsUpdateOnScroll) {
         // If we have seen an overflow clip, we should update our repaint rects as clippedOverflowRectForRepaint
         // intersects it with our ancestor overflow clip that may have moved.
-        computeRepaintRects();
+        computeRepaintRects(renderer()->containerForRepaint());
     }
 
     if (renderer()->hasOverflowClip())
@@ -702,7 +704,7 @@ void RenderLayer::setHasVisibleContent()
 
     m_visibleContentStatusDirty = false; 
     m_hasVisibleContent = true;
-    computeRepaintRects();
+    computeRepaintRects(renderer()->containerForRepaint());
     if (!isNormalFlowOnly()) {
         // We don't collect invisible layers in z-order lists if we are not in compositing mode.
         // As we became visible, we need to dirty our stacking contexts ancestors to be properly

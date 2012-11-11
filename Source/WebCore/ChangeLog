@@ -1,3 +1,26 @@
+2012-11-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Save one call to containerForRepaint() when updating layer positions
+        https://bugs.webkit.org/show_bug.cgi?id=101856
+
+        Reviewed by Dan Bernstein.
+
+         RenderLayer::updateLayerPositions() has already computed the repaint container,
+         but calls computeRepaintRects() which computes it again. Computing the repaint
+         container involves a walk back up the layer tree, so calling it during a tree
+         traversal is costly.
+         
+         Fix by passing the repaint container down into computeRepaintRects().
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::computeRepaintRects):
+        (WebCore::RenderLayer::computeRepaintRectsIncludingDescendants):
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+        (WebCore::RenderLayer::setHasVisibleContent):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+
 2012-11-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         WTFString::utf8() should have a mode of conversion to use replacement character

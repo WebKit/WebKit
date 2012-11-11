@@ -699,7 +699,7 @@ private:
     void setAncestorChainHasSelfPaintingLayerDescendant();
     void dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 
-    void computeRepaintRects(LayoutPoint* offsetFromRoot = 0);
+    void computeRepaintRects(const RenderLayerModelObject* repaintContainer, LayoutPoint* offsetFromRoot = 0);
     void computeRepaintRectsIncludingDescendants();
     void clearRepaintRects();
 
