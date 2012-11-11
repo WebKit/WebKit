@@ -1,3 +1,27 @@
+2012-11-11  Kenichi Ishibashi  <bashi@chromium.org>
+
+        WTFString::utf8() should have a mode of conversion to use replacement character
+        https://bugs.webkit.org/show_bug.cgi?id=101678
+
+        Reviewed by Alexey Proskuryakov.
+
+        Follow the change on String::utf8()
+
+        No new tests. No changes in behavior.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::close): Pass String::StrictConversion instead of true to String::utf8().
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::send): Ditto.
+        * html/MediaFragmentURIParser.cpp:
+        (WebCore::MediaFragmentURIParser::parseFragments): Ditto.
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::notifyChallengeResult): Ditto.
+        * platform/network/blackberry/rss/RSSFilterStream.cpp:
+        (WebCore::RSSFilterStream::convertContentToHtml): Ditto.
+        * platform/network/blackberry/rss/RSSGenerator.cpp:
+        (WebCore::RSSGenerator::generateHtml): Ditto.
+
 2012-11-10  Simon Fraser  <simon.fraser@apple.com>
 
         Coalesce main thread scroll position updates

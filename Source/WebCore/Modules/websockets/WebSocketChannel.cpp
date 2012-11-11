@@ -137,7 +137,7 @@ String WebSocketChannel::extensions()
 ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const String& message)
 {
     LOG(Network, "WebSocketChannel %p send %s", this, message.utf8().data());
-    CString utf8 = message.utf8(true);
+    CString utf8 = message.utf8(String::StrictConversion);
     if (utf8.isNull() && message.length())
         return InvalidMessage;
     enqueueTextFrame(utf8);

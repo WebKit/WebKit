@@ -32,6 +32,7 @@
 #include <wtf/StringExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/dtoa.h>
+#include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -753,7 +754,7 @@ static inline void putUTF8Triple(char*& buffer, UChar ch)
     *buffer++ = static_cast<char>((ch & 0x3F) | 0x80);
 }
 
-CString String::utf8(bool strict) const
+CString String::utf8(ConversionMode mode) const
 {
     unsigned length = this->length();
 
@@ -784,26 +785,48 @@ CString String::utf8(bool strict) const
     } else {
         const UChar* characters = this->characters16();
 
-        ConversionResult result = convertUTF16ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size(), strict);
-        ASSERT(result != targetExhausted); // (length * 3) should be sufficient for any conversion
+        if (mode == StrictConversionReplacingUnpairedSurrogatesWithFFFD) {
+            const UChar* charactersEnd = characters + length;
+            char* bufferEnd = buffer + bufferVector.size();
+            while (characters < charactersEnd) {
+                // Use strict conversion to detect unpaired surrogates.
+                ConversionResult result = convertUTF16ToUTF8(&characters, charactersEnd, &buffer, bufferEnd, true);
+                ASSERT(result != targetExhausted);
+                // Conversion fails when there is an unpaired surrogate.
+                // Put replacement character (U+FFFD) instead of the unpaired surrogate.
+                if (result != conversionOK) {
+                    ASSERT((0xD800 <= *characters && *characters <= 0xDFFF));
+                    // There should be room left, since one UChar hasn't been converted.
+                    ASSERT((buffer + 3) <= bufferEnd);
+                    putUTF8Triple(buffer, replacementCharacter);
+                    ++characters;
+                }
+            }
+        } else {
+            bool strict = mode == StrictConversion;
+            ConversionResult result = convertUTF16ToUTF8(&characters, characters + length, &buffer, buffer + bufferVector.size(), strict);
+            ASSERT(result != targetExhausted); // (length * 3) should be sufficient for any conversion
 
-        // Only produced from strict conversion.
-        if (result == sourceIllegal)
-            return CString();
-
-        // Check for an unconverted high surrogate.
-        if (result == sourceExhausted) {
-            if (strict)
+            // Only produced from strict conversion.
+            if (result == sourceIllegal) {
+                ASSERT(strict);
                 return CString();
-            // This should be one unpaired high surrogate. Treat it the same
-            // was as an unpaired high surrogate would have been handled in
-            // the middle of a string with non-strict conversion - which is
-            // to say, simply encode it to UTF-8.
-            ASSERT((characters + 1) == (this->characters() + length));
-            ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
-            // There should be room left, since one UChar hasn't been converted.
-            ASSERT((buffer + 3) <= (buffer + bufferVector.size()));
-            putUTF8Triple(buffer, *characters);
+            }
+
+            // Check for an unconverted high surrogate.
+            if (result == sourceExhausted) {
+                if (strict)
+                    return CString();
+                // This should be one unpaired high surrogate. Treat it the same
+                // was as an unpaired high surrogate would have been handled in
+                // the middle of a string with non-strict conversion - which is
+                // to say, simply encode it to UTF-8.
+                ASSERT((characters + 1) == (this->characters() + length));
+                ASSERT((*characters >= 0xD800) && (*characters <= 0xDBFF));
+                // There should be room left, since one UChar hasn't been converted.
+                ASSERT((buffer + 3) <= (buffer + bufferVector.size()));
+                putUTF8Triple(buffer, *characters);
+            }
         }
     }
 

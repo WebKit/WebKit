@@ -52,7 +52,7 @@ namespace JSC {
 
 static JSValue encode(ExecState* exec, const char* doNotEscape)
 {
-    CString cstr = exec->argument(0).toString(exec)->value(exec).utf8(true);
+    CString cstr = exec->argument(0).toString(exec)->value(exec).utf8(String::StrictConversion);
     if (!cstr.data())
         return throwError(exec, createURIError(exec, ASCIILiteral("String contained an illegal UTF-16 sequence.")));
 

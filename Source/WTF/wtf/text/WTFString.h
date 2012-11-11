@@ -211,7 +211,14 @@ public:
 
     WTF_EXPORT_STRING_API CString ascii() const;
     WTF_EXPORT_STRING_API CString latin1() const;
-    WTF_EXPORT_STRING_API CString utf8(bool strict = false) const;
+
+    typedef enum {
+        LenientConversion,
+        StrictConversion,
+        StrictConversionReplacingUnpairedSurrogatesWithFFFD,
+    } ConversionMode;
+
+    WTF_EXPORT_STRING_API CString utf8(ConversionMode = LenientConversion) const;
 
     UChar operator[](unsigned index) const
     {

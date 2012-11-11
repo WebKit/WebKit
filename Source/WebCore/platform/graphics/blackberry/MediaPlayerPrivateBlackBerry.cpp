@@ -749,9 +749,9 @@ void MediaPlayerPrivate::notifyChallengeResult(const KURL& url, const Protection
     if (result != AuthenticationChallengeSuccess || !url.isValid())
         return;
 
-    m_platformPlayer->reloadWithCredential(credential.user().utf8(true).data(),
-                                           credential.password().utf8(true).data(),
-                                           static_cast<MMRAuthChallenge::CredentialPersistence>(credential.persistence()));
+    m_platformPlayer->reloadWithCredential(credential.user().utf8(String::StrictConversion).data(),
+                                        credential.password().utf8(String::StrictConversion).data(),
+                                        static_cast<MMRAuthChallenge::CredentialPersistence>(credential.persistence()));
 }
 
 void MediaPlayerPrivate::onAuthenticationAccepted(const MMRAuthChallenge& authChallenge) const

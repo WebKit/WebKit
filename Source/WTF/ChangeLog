@@ -1,3 +1,24 @@
+2012-11-11  Kenichi Ishibashi  <bashi@chromium.org>
+
+        WTFString::utf8() should have a mode of conversion to use replacement character
+        https://bugs.webkit.org/show_bug.cgi?id=101678
+
+        Reviewed by Alexander Pavlov.
+
+        Introduce conversion mode to String::utf8().
+        There are three conversion modes; lenient mode, strict mode, and
+        "replacing unpaired surrogates with the replacement character" (replacement) mode.
+        Lenient mode converts unpaired surrogates. Strict mode fails when there is an unpaired
+        surrogates and returns CString(). Replacement mode replaces unpaired surrogates with
+        the replacement character(U+FFFD). Replacement mode implements the algorithm defined at
+        http://dev.w3.org/2006/webapi/WebIDL/#dfn-obtain-unicode. WebSocket::send() requires
+        this algorithm to encode a string to utf-8.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::utf8): Changed to take ConversionMode as the argument.
+        * wtf/text/WTFString.h:
+        (String):
+
 2012-11-09  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Fix heap snapshots counted several times by NMI

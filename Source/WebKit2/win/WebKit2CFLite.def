@@ -260,7 +260,7 @@ EXPORTS
         ?treeScope@Node@WebCore@@QBEPAVTreeScope@2@XZ
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ
-        ?utf8@String@WTF@@QBE?AVCString@2@_N@Z
+        ?utf8@String@WTF@@QBE?AVCString@2@W4ConversionMode@12@@Z
         ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
         ??1ContextDestructionObserver@WebCore@@MAE@XZ
         ?contextDestroyed@ContextDestructionObserver@WebCore@@UAEXXZ

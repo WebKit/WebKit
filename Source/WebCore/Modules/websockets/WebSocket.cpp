@@ -341,7 +341,7 @@ void WebSocket::close(int code, const String& reason, ExceptionCode& ec)
             ec = INVALID_ACCESS_ERR;
             return;
         }
-        CString utf8 = reason.utf8(true);
+        CString utf8 = reason.utf8(String::StrictConversion);
         if (utf8.length() > maxReasonSizeInBytes) {
             scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket close message is too long.");
             ec = SYNTAX_ERR;

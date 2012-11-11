@@ -527,7 +527,7 @@ bool RSSFilterStream::convertContentToHtml(std::string& result)
 
     OwnPtr<RSSGenerator> generator = adoptPtr(new RSSGenerator());
     String html = generator->generateHtml(parser->m_root);
-    result = html.utf8(true).data();
+    result = html.utf8(String::StrictConversion).data();
 
     return true;
 }
