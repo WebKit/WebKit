@@ -1,3 +1,19 @@
+2012-11-10  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: Multiple '%c' formatting options should all have effect.
+        https://bugs.webkit.org/show_bug.cgi?id=101495
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/console-test.js:
+        (initialize_ConsoleTest.InspectorTest.dumpConsoleMessagesWithStyles):
+            We're no longer putting the style directly on the message's
+            parent, but instead on each section of the message in order to
+            support multiple styles.
+        * inspector/console/console-format-style-expected.txt:
+        * inspector/console/console-format-style-whitelist-expected.txt:
+        * inspector/console/console-format-style.html:
+
 2012-11-10  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css] text-decoration:none no longer valid

@@ -1,5 +1,26 @@
 2012-11-10  Mike West  <mkwst@chromium.org>
 
+        Web Inspector: Multiple '%c' formatting options should all have effect.
+        https://bugs.webkit.org/show_bug.cgi?id=101495
+
+        Reviewed by Pavel Feldman.
+
+        This patch supports multiple '%c' formatting blocks in console messages.
+        'console.log("%cblue! %cgreen!", "color: blue;", "color: green;")' will
+        do exactly what you expect: "blue!" will be blue, and "green!" will be
+        green.
+
+        The implementation moves the styles off the message's parent 'span', and
+        onto new 'span' elements that wrap the various textual bits of the
+        message.
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype.):
+        (WebInspector.ConsoleMessageImpl.prototype.append):
+        (WebInspector.ConsoleMessageImpl.prototype._formatWithSubstitutionString):
+
+2012-11-10  Mike West  <mkwst@chromium.org>
+
         Including <CoreText/CoreText.h> breaks the chromium/mac build.
         https://bugs.webkit.org/show_bug.cgi?id=101851
 

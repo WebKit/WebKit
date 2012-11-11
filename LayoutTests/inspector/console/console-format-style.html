@@ -6,7 +6,7 @@
             function onload()
             {
                 console.log('%cBlue!.', 'color: blue;');
-                console.log('%cRed!%c.', 'color: blue;', 'color: red;');
+                console.log('%cBlue! %cRed!', 'color: blue;', 'color: red;');
                 runTest();
             }
 
@@ -20,8 +20,6 @@
     </head>
 
     <body onload="onload()">
-      <p>Tests that console logging dumps properly styled messages, and that
-      the whole message gets the same style, regardless of multiple %c
-      settings.</p>
+      <p>Tests that console logging dumps properly styled messages.</p>
     </body>
 </html>
