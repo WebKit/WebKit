@@ -24,6 +24,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QBasicTimer>
 
 #include "FormData.h"
 #include "QtMIMETypeSniffer.h"
@@ -147,12 +148,15 @@ private:
     QNetworkReply* sendNetworkRequest(QNetworkAccessManager*, const ResourceRequest&);
     FormDataIODevice* getIODevice(const ResourceRequest&);
     void clearContentHeaders();
+    virtual void timerEvent(QTimerEvent*) OVERRIDE;
+    void timeout();
 
     OwnPtr<QNetworkReplyWrapper> m_replyWrapper;
     ResourceHandle* m_resourceHandle;
     LoadType m_loadType;
     QNetworkAccessManager::Operation m_method;
     QNetworkRequest m_request;
+    QBasicTimer m_timeoutTimer;
 
     // defer state holding
     int m_redirectionTries;

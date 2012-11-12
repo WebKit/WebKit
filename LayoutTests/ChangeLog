@@ -1,3 +1,14 @@
+2012-11-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Support ResourceRequest's setTimeoutInterval
+        https://bugs.webkit.org/show_bug.cgi?id=101731
+
+        Reviewed by Simon Hausmann.
+
+        Unskip now passing XHR timeout tests.
+
+        * platform/qt/TestExpectations:
+
 2012-11-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Layout Test inspector/debugger/dynamic-scripts.html is flaky
