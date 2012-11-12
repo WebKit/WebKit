@@ -68,14 +68,14 @@ public:
     // Looks in local cache for permission. If not found, returns DefaultDenied.
     WebCore::NotificationClient::Permission policyForOrigin(WebCore::SecurityOrigin*) const;
 
+    void didUpdateNotificationDecision(const String& originString, bool allowed);
+
 private:
     // Implemented in generated WebNotificationManagerMessageReceiver.cpp
-    void didReceiveWebNotificationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    
+    void didReceiveWebNotificationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);    
     void didShowNotification(uint64_t notificationID);
     void didClickNotification(uint64_t notificationID);
     void didCloseNotifications(const Vector<uint64_t>& notificationIDs);
-    void didUpdateNotificationDecision(const String& originString, bool allowed);
     void didRemoveNotificationDecisions(const Vector<String>& originStrings);
     
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
