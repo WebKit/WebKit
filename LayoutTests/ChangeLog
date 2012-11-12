@@ -1,3 +1,9 @@
+2012-11-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip a new crashing test.
+
+        * platform/qt/TestExpectations:
+
 2012-11-12  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: fix test expectations

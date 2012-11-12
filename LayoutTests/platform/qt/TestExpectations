@@ -2409,3 +2409,6 @@ webkit.org/b/101397 svg/css/arrow-with-shadow.svg
 
 # Fails after test refactoring, maybe rebaseline needed
 webkit.org/b/98523 fast/images/repaint-subrect-grid.html
+
+# [Qt] New css3/filters/effect-reference-ordering-hw.html crashes
+webkit.org/b/101925 css3/filters/effect-reference-ordering-hw.html
