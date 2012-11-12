@@ -1,3 +1,21 @@
+2012-11-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG register allocation should be greedy rather than round-robin
+        https://bugs.webkit.org/show_bug.cgi?id=101870
+
+        Reviewed by Geoffrey Garen.
+
+        This simplifies the code, reduces some code duplication, and shows some slight
+        performance improvements in a few places, likely due to the fact that lower-numered
+        registers also typically have smaller encodings.
+
+        * dfg/DFGRegisterBank.h:
+        (JSC::DFG::RegisterBank::RegisterBank):
+        (JSC::DFG::RegisterBank::tryAllocate):
+        (JSC::DFG::RegisterBank::allocate):
+        (JSC::DFG::RegisterBank::allocateInternal):
+        (RegisterBank):
+
 2012-11-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         WTFString::utf8() should have a mode of conversion to use replacement character

@@ -75,7 +75,6 @@ class RegisterBank {
 
 public:
     RegisterBank()
-        : m_lastAllocated(NUM_REGS - 1)
     {
     }
 
@@ -86,12 +85,7 @@ public:
     {
         VirtualRegister ignored;
         
-        for (uint32_t i = m_lastAllocated + 1; i < NUM_REGS; ++i) {
-            if (!m_data[i].lockCount && m_data[i].name == InvalidVirtualRegister)
-                return allocateInternal(i, ignored);
-        }
-        // Loop over the remaining entries.
-        for (uint32_t i = 0; i <= m_lastAllocated; ++i) {
+        for (uint32_t i = 0; i < NUM_REGS; ++i) {
             if (!m_data[i].lockCount && m_data[i].name == InvalidVirtualRegister)
                 return allocateInternal(i, ignored);
         }
@@ -115,9 +109,6 @@ public:
         uint32_t currentLowest = NUM_REGS;
         SpillHint currentSpillOrder = SpillHintInvalid;
 
-        // Scan through all register, starting at the last allocated & looping around.
-        ASSERT(m_lastAllocated < NUM_REGS);
-
         // This loop is broken into two halves, looping from the last allocated
         // register (the register returned last time this method was called) to
         // the maximum register value, then from 0 to the last allocated.
@@ -125,7 +116,7 @@ public:
         // thrash, and minimize time spent scanning locked registers in allocation.
         // If a unlocked and unnamed register is found return it immediately.
         // Otherwise, find the first unlocked register with the lowest spillOrder.
-        for (uint32_t i = m_lastAllocated + 1; i < NUM_REGS; ++i) {
+        for (uint32_t i = 0 ; i < NUM_REGS; ++i) {
             // (1) If the current register is locked, it is not a candidate.
             if (m_data[i].lockCount)
                 continue;
@@ -135,18 +126,6 @@ public:
                 return allocateInternal(i, spillMe);
             // If this register is better (has a lower spill order value) than any prior
             // candidate, then record it.
-            if (spillOrder < currentSpillOrder) {
-                currentSpillOrder = spillOrder;
-                currentLowest = i;
-            }
-        }
-        // Loop over the remaining entries.
-        for (uint32_t i = 0; i <= m_lastAllocated; ++i) {
-            if (m_data[i].lockCount)
-                continue;
-            SpillHint spillOrder = m_data[i].spillOrder;
-            if (spillOrder == SpillHintInvalid)
-                return allocateInternal(i, spillMe);
             if (spillOrder < currentSpillOrder) {
                 currentSpillOrder = spillOrder;
                 currentLowest = i;
@@ -354,7 +333,6 @@ private:
         // Mark the register as locked (with a lock count of 1).
         m_data[i].lockCount = 1;
 
-        m_lastAllocated = i;
         return BankInfo::toRegister(i);
     }
 
@@ -378,8 +356,6 @@ private:
 
     // Holds the current status of all registers.
     MapEntry m_data[NUM_REGS];
-    // Used to to implement a simple round-robin like allocation scheme.
-    uint32_t m_lastAllocated;
 };
 
 } } // namespace JSC::DFG
