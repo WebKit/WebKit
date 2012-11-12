@@ -1,3 +1,18 @@
+2012-11-12  Tommy Widenflycht  <tommyw@google.com>
+
+        Remove the V8 custom code for WebSockets constructor
+        https://bugs.webkit.org/show_bug.cgi?id=100801
+
+        Reviewed by Kentaro Hara.
+
+        Added test for null argument to WebSocket(url).
+
+        * http/tests/websocket/tests/hybi/url-parsing-expected.txt:
+        * http/tests/websocket/tests/hybi/url-parsing.html:
+        * platform/chromium-win/websocket/tests/url-parsing-expected.txt:
+        * platform/chromium/http/tests/websocket/tests/hixie76/url-parsing-expected.txt:
+        * platform/chromium/http/tests/websocket/tests/hybi/url-parsing-expected.txt:
+
 2012-11-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Pixel tests need rebaseline

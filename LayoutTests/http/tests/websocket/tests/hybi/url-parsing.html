@@ -12,6 +12,9 @@ description("Test WebSocket URL parsing.");
 // Not enough arguments.
 shouldThrow('new WebSocket()');
 
+// Null URL
+shouldThrow('new WebSocket(null)');
+
 // Invalid url will fail to be parsed.
 shouldThrow('new WebSocket("ws://javascript:a")');
 

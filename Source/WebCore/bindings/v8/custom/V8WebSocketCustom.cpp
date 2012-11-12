@@ -51,64 +51,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.WebSocket.Constructor");
-
-    if (!args.IsConstructCall())
-        return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
-
-    if (args.Length() == 0)
-        return throwNotEnoughArgumentsError(args.GetIsolate());
-
-    v8::TryCatch tryCatch;
-    v8::Handle<v8::String> urlstring = args[0]->ToString();
-    if (tryCatch.HasCaught())
-        return throwError(tryCatch.Exception(), args.GetIsolate());
-    if (urlstring.IsEmpty())
-        return throwError(SyntaxError, "Empty URL", args.GetIsolate());
-
-    ScriptExecutionContext* context = getScriptExecutionContext();
-    const KURL& url = context->completeURL(toWebCoreString(urlstring));
-
-    RefPtr<WebSocket> webSocket = WebSocket::create(context);
-    ExceptionCode ec = 0;
-
-    if (args.Length() < 2)
-        webSocket->connect(url, ec);
-    else {
-        v8::Local<v8::Value> protocolsValue = args[1];
-        if (protocolsValue->IsArray()) {
-            Vector<String> protocols;
-            v8::Local<v8::Array> protocolsArray = v8::Local<v8::Array>::Cast(protocolsValue);
-            for (uint32_t i = 0; i < protocolsArray->Length(); ++i) {
-                v8::TryCatch tryCatchProtocol;
-                v8::Handle<v8::String> protocol = protocolsArray->Get(v8::Int32::New(i))->ToString();
-                if (tryCatchProtocol.HasCaught())
-                    return throwError(tryCatchProtocol.Exception(), args.GetIsolate());
-                protocols.append(toWebCoreString(protocol));
-            }
-            webSocket->connect(url, protocols, ec);
-        } else {
-            v8::TryCatch tryCatchProtocol;
-            v8::Handle<v8::String> protocol = protocolsValue->ToString();
-            if (tryCatchProtocol.HasCaught())
-                return throwError(tryCatchProtocol.Exception(), args.GetIsolate());
-            webSocket->connect(url, toWebCoreString(protocol), ec);
-        }
-    }
-    if (ec)
-        return setDOMException(ec, args.GetIsolate());
-
-    v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::setDOMWrapper(wrapper, &info, webSocket.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(webSocket.release(), wrapper);
-    return wrapper;
-}
-
 v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.WebSocket.send()");

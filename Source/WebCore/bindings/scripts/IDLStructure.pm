@@ -40,7 +40,7 @@ struct( domClass => {
     functions => '@',    # List of 'domFunction'
     attributes => '@',    # List of 'domAttribute'    
     extendedAttributes => '$', # Extended attributes
-    constructor => '$', # Constructor
+    constructors => '@', # Constructor
     isException => '$', # Used for exception interfaces
 });
 

@@ -494,6 +494,17 @@ END
     push(@headerContent, <<END);
 private:
     static v8::Handle<v8::Object> wrapSlow(${wrapSlowArgumentType}, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+END
+
+    if (IsConstructable($dataNode) && @{$dataNode->constructors} > 1) {
+        for (my $i = 1; $i <= @{$dataNode->constructors}; $i++) {
+           push(@headerContent, <<END);
+    static v8::Handle<v8::Value> constructor${i}Callback(const v8::Arguments&);
+END
+        }
+    }
+
+    push(@headerContent, <<END);
 };
 
 END
@@ -1852,11 +1863,51 @@ sub GenerateParametersCheck
     return ($parameterCheckString, $paramIndex, %replacements);
 }
 
-sub GenerateConstructorCallback
+sub GenerateOverloadedConstructorCallback
 {
-    my $function = shift;
     my $dataNode = shift;
     my $implClassName = shift;
+    
+    push(@implContent, <<END);
+v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.${implClassName}.Constructor");
+    if (!args.IsConstructCall())
+        return throwTypeError("DOM object constructor cannot be called as a function.");
+
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
+END
+
+    my $leastNumMandatoryParams = 255;
+    foreach my $constructor (@{$dataNode->constructors}) {
+        my $name = "constructor" . $constructor->{overloadedIndex} . "Callback";
+        my ($numMandatoryParams, $parametersCheck) = GenerateFunctionParametersCheck($constructor);
+        $leastNumMandatoryParams = $numMandatoryParams if ($numMandatoryParams < $leastNumMandatoryParams);
+        push(@implContent, "    if ($parametersCheck)\n");
+        push(@implContent, "        return $name(args);\n");
+    }
+    if ($leastNumMandatoryParams >= 1) {
+        push(@implContent, "    if (args.Length() < $leastNumMandatoryParams)\n");
+        push(@implContent, "        return throwNotEnoughArgumentsError(args.GetIsolate());\n");
+    }
+    push(@implContent, <<END);
+    return throwTypeError(0, args.GetIsolate());
+END
+    push(@implContent, "}\n\n");
+}
+
+sub GenerateSingleConstructorCallback
+{
+    my $dataNode = shift;
+    my $implClassName = shift;
+    my $function = shift;
+
+    my $overloadedIndexString = "";
+    if ($function->{overloadedIndex} > 0) {
+        $overloadedIndexString .= $function->{overloadedIndex};
+    }
 
     my $raisesExceptions = @{$function->raisesExceptions};
     if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
@@ -1875,18 +1926,22 @@ sub GenerateConstructorCallback
     my @beforeArgumentList;
     my @afterArgumentList;
     push(@implContent, <<END);
-v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8${implClassName}::constructor${overloadedIndexString}Callback(const v8::Arguments& args)
 {
-    INC_STATS("DOM.${implClassName}.Constructor");
+    INC_STATS("DOM.${implClassName}.Constructor${overloadedIndexString}");
     ${maybeObserveFeature}
+END
+
+    if ($function->{overloadedIndex} == 0) {
+       push(@implContent, <<END);
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 END
-
-    push(@implContent, GenerateArgumentsCountCheck($function, $dataNode));
+        push(@implContent, GenerateArgumentsCountCheck($function, $dataNode));
+    }
 
     if ($raisesExceptions) {
         AddToImplIncludes("ExceptionCode.h");
@@ -1947,6 +2002,21 @@ END
 
     push(@implContent, "}\n");
     push(@implContent, "\n");
+}
+
+sub GenerateConstructorCallback
+{
+    my $dataNode = shift;
+    my $implClassName = shift;
+
+    if (@{$dataNode->constructors} == 1) {
+        GenerateSingleConstructorCallback($dataNode, $implClassName, @{$dataNode->constructors}[0]);
+    } else {
+        foreach my $constructor (@{$dataNode->constructors}) {
+            GenerateSingleConstructorCallback($dataNode, $implClassName, $constructor);
+        }
+        GenerateOverloadedConstructorCallback($dataNode, $implClassName);
+    }
 }
 
 sub GenerateEventConstructorCallback
@@ -2822,9 +2892,9 @@ END
     push(@implContentDecls, "} // namespace ${interfaceName}V8Internal\n\n");
 
     if ($dataNode->extendedAttributes->{"NamedConstructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
-        GenerateNamedConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
+        GenerateNamedConstructorCallback(@{$dataNode->constructors}[0], $dataNode, $interfaceName);
     } elsif ($dataNode->extendedAttributes->{"Constructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
-        GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
+        GenerateConstructorCallback($dataNode, $interfaceName);
     } elsif ($codeGenerator->IsConstructorTemplate($dataNode, "Event")) {
         GenerateEventConstructorCallback($dataNode, $interfaceName);
     } elsif ($codeGenerator->IsConstructorTemplate($dataNode, "TypedArray")) {

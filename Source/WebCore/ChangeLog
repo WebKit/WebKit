@@ -1,3 +1,143 @@
+2012-11-12  Tommy Widenflycht  <tommyw@google.com>
+
+        Remove the V8 custom code for WebSockets constructor
+        https://bugs.webkit.org/show_bug.cgi?id=100801
+
+        Reviewed by Kentaro Hara.
+
+        This patch does the following:
+
+        1) Modifies the V8 code generator to support overloaded constructors,
+           the JS generator is fixed to work as before. Proper support for JS will come later.
+
+        2) Modifies WebSocket.h/.cpp for the new constructors.
+
+        Tested by running WebSockets layout tests.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::create):
+        (WebCore):
+        * Modules/websockets/WebSocket.h:
+        (WebSocket):
+        * Modules/websockets/WebSocket.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorDefinition):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateOverloadedConstructorCallback):
+        (GenerateSingleConstructorCallback):
+        (GenerateConstructorCallback):
+        (GenerateImplementation):
+        * bindings/scripts/IDLParser.pm:
+        (copyAttributes):
+        (parseExtendedAttributeList):
+        (parseExtendedAttributes):
+        (applyExtendedAttributeList):
+        * bindings/scripts/IDLStructure.pm:
+        * bindings/scripts/test/CPP/WebDOMTestOverloadedConstructors.cpp: Added.
+        (WebDOMTestOverloadedConstructors::WebDOMTestOverloadedConstructorsPrivate::WebDOMTestOverloadedConstructorsPrivate):
+        (WebDOMTestOverloadedConstructors::WebDOMTestOverloadedConstructorsPrivate):
+        (WebDOMTestOverloadedConstructors::WebDOMTestOverloadedConstructors):
+        (WebDOMTestOverloadedConstructors::operator=):
+        (WebDOMTestOverloadedConstructors::impl):
+        (WebDOMTestOverloadedConstructors::~WebDOMTestOverloadedConstructors):
+        (toWebCore):
+        (toWebKit):
+        * bindings/scripts/test/CPP/WebDOMTestOverloadedConstructors.h: Added.
+        (WebCore):
+        (WebDOMTestOverloadedConstructors):
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.cpp: Added.
+        (WebKit):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestOverloadedConstructors):
+        (webkit_dom_test_overloaded_constructors_finalize):
+        (webkit_dom_test_overloaded_constructors_set_property):
+        (webkit_dom_test_overloaded_constructors_get_property):
+        (webkit_dom_test_overloaded_constructors_constructed):
+        (webkit_dom_test_overloaded_constructors_class_init):
+        (webkit_dom_test_overloaded_constructors_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.h: Added.
+        (_WebKitDOMTestOverloadedConstructors):
+        (_WebKitDOMTestOverloadedConstructorsClass):
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructorsPrivate.h: Added.
+        (WebKit):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp: Added.
+        (WebCore):
+        (WebCore::JSTestOverloadedConstructorsConstructor::JSTestOverloadedConstructorsConstructor):
+        (WebCore::JSTestOverloadedConstructorsConstructor::finishCreation):
+        (WebCore::JSTestOverloadedConstructorsConstructor::getOwnPropertySlot):
+        (WebCore::JSTestOverloadedConstructorsConstructor::getOwnPropertyDescriptor):
+        (WebCore::JSTestOverloadedConstructorsConstructor::constructJSTestOverloadedConstructors):
+        (WebCore::JSTestOverloadedConstructorsConstructor::getConstructData):
+        (WebCore::JSTestOverloadedConstructorsPrototype::self):
+        (WebCore::JSTestOverloadedConstructors::JSTestOverloadedConstructors):
+        (WebCore::JSTestOverloadedConstructors::finishCreation):
+        (WebCore::JSTestOverloadedConstructors::createPrototype):
+        (WebCore::JSTestOverloadedConstructors::destroy):
+        (WebCore::JSTestOverloadedConstructors::~JSTestOverloadedConstructors):
+        (WebCore::JSTestOverloadedConstructors::getOwnPropertySlot):
+        (WebCore::JSTestOverloadedConstructors::getOwnPropertyDescriptor):
+        (WebCore::jsTestOverloadedConstructorsConstructor):
+        (WebCore::JSTestOverloadedConstructors::getConstructor):
+        (WebCore::isObservable):
+        (WebCore::JSTestOverloadedConstructorsOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSTestOverloadedConstructorsOwner::finalize):
+        (WebCore::toJS):
+        (WebCore::toTestOverloadedConstructors):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h: Added.
+        (WebCore):
+        (JSTestOverloadedConstructors):
+        (WebCore::JSTestOverloadedConstructors::create):
+        (WebCore::JSTestOverloadedConstructors::createStructure):
+        (WebCore::JSTestOverloadedConstructors::impl):
+        (WebCore::JSTestOverloadedConstructors::releaseImpl):
+        (WebCore::JSTestOverloadedConstructors::releaseImplIfNotNull):
+        (JSTestOverloadedConstructorsOwner):
+        (WebCore::wrapperOwner):
+        (WebCore::wrapperContext):
+        (JSTestOverloadedConstructorsPrototype):
+        (WebCore::JSTestOverloadedConstructorsPrototype::create):
+        (WebCore::JSTestOverloadedConstructorsPrototype::createStructure):
+        (WebCore::JSTestOverloadedConstructorsPrototype::JSTestOverloadedConstructorsPrototype):
+        (JSTestOverloadedConstructorsConstructor):
+        (WebCore::JSTestOverloadedConstructorsConstructor::create):
+        (WebCore::JSTestOverloadedConstructorsConstructor::createStructure):
+        * bindings/scripts/test/ObjC/DOMTestOverloadedConstructors.h: Added.
+        * bindings/scripts/test/ObjC/DOMTestOverloadedConstructors.mm: Added.
+        (-[DOMTestOverloadedConstructors dealloc]):
+        (-[DOMTestOverloadedConstructors finalize]):
+        (core):
+        (kit):
+        * bindings/scripts/test/ObjC/DOMTestOverloadedConstructorsInternal.h: Added.
+        (WebCore):
+        * bindings/scripts/test/TestOverloadedConstructors.idl: Copied from Source/WebCore/bindings/scripts/test/TestSerializedScriptValueInterface.idl.
+        * bindings/scripts/test/TestSerializedScriptValueInterface.idl:
+        * bindings/scripts/test/V8/V8TestOverloadedConstructors.cpp: Added.
+        (WebCore):
+        (TestOverloadedConstructorsV8Internal):
+        (WebCore::TestOverloadedConstructorsV8Internal::V8_USE):
+        (WebCore::V8TestOverloadedConstructors::constructor1Callback):
+        (WebCore::V8TestOverloadedConstructors::constructor2Callback):
+        (WebCore::V8TestOverloadedConstructors::constructor3Callback):
+        (WebCore::V8TestOverloadedConstructors::constructor4Callback):
+        (WebCore::V8TestOverloadedConstructors::constructorCallback):
+        (WebCore::ConfigureV8TestOverloadedConstructorsTemplate):
+        (WebCore::V8TestOverloadedConstructors::GetRawTemplate):
+        (WebCore::V8TestOverloadedConstructors::GetTemplate):
+        (WebCore::V8TestOverloadedConstructors::HasInstance):
+        (WebCore::V8TestOverloadedConstructors::wrapSlow):
+        (WebCore::V8TestOverloadedConstructors::derefObject):
+        * bindings/scripts/test/V8/V8TestOverloadedConstructors.h: Added.
+        (WebCore):
+        (V8TestOverloadedConstructors):
+        (WebCore::V8TestOverloadedConstructors::toNative):
+        (WebCore::V8TestOverloadedConstructors::installPerContextProperties):
+        (WebCore::V8TestOverloadedConstructors::installPerContextPrototypeProperties):
+        (WebCore::V8TestOverloadedConstructors::wrap):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+
 2012-11-12  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Refactoring] Create SelectRuleFeatureSet for collecting RuleFeatureSet for select attribute

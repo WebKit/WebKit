@@ -1323,6 +1323,25 @@ sub parseExtendedAttributeListAllowEmpty
     return {};
 }
 
+sub copyExtendedAttributes
+{
+    my $extendedAttributeList = shift;
+    my $attr = shift;
+
+    for my $key (keys %{$attr}) {
+        if ($key eq "Constructor") {
+            push(@{$extendedAttributeList->{"Constructors"}}, $attr->{$key});
+        } elsif ($key eq "Constructors") {
+            my @constructors = @{$attr->{$key}};
+            foreach my $constructor (@constructors) {
+                push(@{$extendedAttributeList->{"Constructors"}}, $constructor);
+            }
+        } else {
+            $extendedAttributeList->{$key} = $attr->{$key};
+        }
+    }
+}
+
 sub parseExtendedAttributeList
 {
     my $self = shift;
@@ -1331,13 +1350,9 @@ sub parseExtendedAttributeList
         $self->assertTokenValue($self->getToken(), "[", __LINE__);
         my $extendedAttributeList = {};
         my $attr = $self->parseExtendedAttribute();
-        for my $key (keys %{$attr}) {
-            $extendedAttributeList->{$key} = $attr->{$key};
-        }
+        copyExtendedAttributes($extendedAttributeList, $attr);
         $attr = $self->parseExtendedAttributes();
-        for my $key (keys %{$attr}) {
-            $extendedAttributeList->{$key} = $attr->{$key};
-        }
+        copyExtendedAttributes($extendedAttributeList, $attr);
         $self->assertTokenValue($self->getToken(), "]", __LINE__);
         return $extendedAttributeList;
     }
@@ -1354,9 +1369,7 @@ sub parseExtendedAttributes
         if ($next->value() eq ",") {
             $self->assertTokenValue($self->getToken(), ",", __LINE__);
             my $attr = $self->parseExtendedAttribute2();
-            for my $key (keys %{$attr}) {
-                $extendedAttributeList->{$key} = $attr->{$key};
-            }
+            copyExtendedAttributes($extendedAttributeList, $attr);
         } else {
             last;
         }
@@ -2381,14 +2394,20 @@ sub applyExtendedAttributeList
     my $dataNode = shift;
     my $extendedAttributeList = shift;
 
-    if (defined $extendedAttributeList->{"Constructor"}) {
-        my $newDataNode = new domFunction();
-        $newDataNode->signature(new domSignature());
-        $newDataNode->signature->name("Constructor");
-        $newDataNode->signature->extendedAttributes($extendedAttributeList);
-        push(@{$newDataNode->parameters}, @{$extendedAttributeList->{"Constructor"}});
+    if (defined $extendedAttributeList->{"Constructors"}) {
+        my @constructorParams = @{$extendedAttributeList->{"Constructors"}};
+        my $index = (@constructorParams == 1) ? 0 : 1;
+        foreach my $param (@constructorParams) {
+            my $constructor = new domFunction();
+            $constructor->signature(new domSignature());
+            $constructor->signature->name("Constructor");
+            $constructor->signature->extendedAttributes($extendedAttributeList);
+            $constructor->parameters($param);
+            $constructor->{overloadedIndex} = $index++;
+            push(@{$dataNode->constructors}, $constructor);
+        }
+        delete $extendedAttributeList->{"Constructors"};
         $extendedAttributeList->{"Constructor"} = "VALUE_IS_MISSING";
-        $dataNode->constructor($newDataNode);
     } elsif (defined $extendedAttributeList->{"NamedConstructor"}) {
         my $newDataNode = new domFunction();
         $newDataNode->signature(new domSignature());
@@ -2399,7 +2418,7 @@ sub applyExtendedAttributeList
         my $constructorName = $attributeKeys[0];
         push(@{$newDataNode->parameters}, @{$attributes{$constructorName}});
         $extendedAttributeList->{"NamedConstructor"} = $constructorName;
-        $dataNode->constructor($newDataNode);
+        push(@{$dataNode->constructors}, $newDataNode);
     }
     $dataNode->extendedAttributes($extendedAttributeList);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary formstrArg, with or without
  * modification, are permitted provided that the following conditions
@@ -10,9 +10,12 @@
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
+ * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+ *     its contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * EXPRESS OR IMPLIED WARRANTIEstrArg, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
@@ -22,18 +25,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-// This IDL file is for testing the bindings code generator and for tracking
-// changes in its ouput.
 [
-    Conditional=Condition1|Condition2,
-    Constructor(in DOMString hello, in [TransferList=transferList] SerializedScriptValue data, in [Optional=DefaultIsUndefined] Array transferList),
-] interface TestSerializedScriptValueInterface {
-    attribute SerializedScriptValue value;
-    readonly attribute SerializedScriptValue readonlyValue;
-    [CachedAttribute] attribute SerializedScriptValue cachedValue;
-    readonly attribute MessagePortArray ports;
-    [CachedAttribute] readonly attribute SerializedScriptValue cachedReadonlyValue;
-    void acceptTransferList(in [TransferList=transferList] SerializedScriptValue data, in [Optional] Array transferList);
-    void multiTransferList(in [Optional, TransferList=tx] SerializedScriptValue first, in [Optional] Array tx, in [Optional, TransferList=txx] SerializedScriptValue second, in [Optional] Array txx);
+    Constructor(in ArrayBuffer arrayBuffer),
+    Constructor(in ArrayBufferView arrayBufferView),
+    Constructor(in Blob blob),
+    Constructor(in DOMString string),
+] interface TestOverloadedConstructors {
 };

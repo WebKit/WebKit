@@ -3717,13 +3717,17 @@ sub GenerateConstructorDefinition
     my $dataNode = shift;
     my $generatingNamedConstructor = shift;
 
+    # FIXME: Add support for overloaded constructors to JS as well.
+    # For now mimic the old behaviour by only generating code for the last "Constructor" attribute.
+    my $function = @{$dataNode->constructors}[-1];
+
     my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
     my $numberOfConstructorParameters = $dataNode->extendedAttributes->{"ConstructorParameters"};
     if (!defined $numberOfConstructorParameters) {
         if ($codeGenerator->IsConstructorTemplate($dataNode, "Event")) {
             $numberOfConstructorParameters = 2;
         } elsif ($dataNode->extendedAttributes->{"Constructor"}) {
-            $numberOfConstructorParameters = @{$dataNode->constructor->parameters};
+            $numberOfConstructorParameters = @{$function->parameters};
         }
     }
 
@@ -3885,7 +3889,6 @@ END
 
             push(@$outputArray, "    ${constructorClassName}* castedThis = jsCast<${constructorClassName}*>(exec->callee());\n");
 
-            my $function = $dataNode->constructor;
             my @constructorArgList;
 
             $implIncludes{"<runtime/Error.h>"} = 1;
