@@ -182,3 +182,18 @@ TEST_F(EWK2UnitTestBase, ewk_settings_preferred_minimum_contents_width)
     ASSERT_TRUE(ewk_settings_preferred_minimum_contents_width_set(settings, 0));
     ASSERT_EQ(0, ewk_settings_preferred_minimum_contents_width_get(settings));
 }
+
+TEST_F(EWK2UnitTestBase, ewk_settings_offline_web_application_cache_enabled)
+{
+    Ewk_Settings* settings = ewk_view_settings_get(webView());
+
+    // The offline web application cache is enabled by default.
+    ASSERT_TRUE(ewk_settings_offline_web_application_cache_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_offline_web_application_cache_enabled_set(settings, true));
+    ASSERT_TRUE(ewk_settings_offline_web_application_cache_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_offline_web_application_cache_enabled_set(settings, false));
+    ASSERT_FALSE(ewk_settings_offline_web_application_cache_enabled_get(settings));
+}
+

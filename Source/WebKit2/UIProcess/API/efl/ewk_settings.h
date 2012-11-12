@@ -345,6 +345,29 @@ EAPI Eina_Bool ewk_settings_preferred_minimum_contents_width_set(Ewk_Settings *s
  */
 EAPI unsigned ewk_settings_preferred_minimum_contents_width_get(const Ewk_Settings *settings);
 
+/**
+ * Enables/disables the offline application cache.
+ *
+ * By default, the offline application cache is enabled.
+ *
+ * @param settings settings object to set the offline application cache state
+ * @param enable @c EINA_TRUE to enable the offline application cache,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_settings_offline_web_application_cache_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Returns whether the offline application cache is enabled or not.
+ *
+ * @param settings settings object to query whether offline application cache is enabled
+ *
+ * @return @c EINA_TRUE if the offline application cache is enabled
+ *         @c EINA_FALSE if disabled or on failure
+ */
+EAPI Eina_Bool ewk_settings_offline_web_application_cache_enabled_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif

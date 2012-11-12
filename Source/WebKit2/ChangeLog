@@ -1,3 +1,23 @@
+2012-11-12  Jiyeon Kim  <jiyeon0402.kim@samsung.com>
+
+        [EFL][WK2] Add ewk_settings_offline_web_application_cache_enabled set/get APIs
+        https://bugs.webkit.org/show_bug.cgi?id=101688
+
+        Reviewed by Gyuyoung Kim.
+
+        Add ewk_settings_offline_web_application_cache_get API to be used for enabling disabling the web application cache.
+        Add ewk_settings_offline_web_application_cache_set API to be used for getting the web application cache status.
+        In addition, offline web application cache is enabled by default.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_offline_web_application_cache_enabled_set):
+        (ewk_settings_offline_web_application_cache_enabled_get):
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+
 2012-11-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] ElementShadow should have RuleFeatureSet for select attribute selectors.

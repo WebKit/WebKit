@@ -149,6 +149,8 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, Pass
     m_pageProxy->pageGroup()->preferences()->setFullScreenEnabled(true);
 #endif
 
+    m_pageProxy->pageGroup()->preferences()->setOfflineWebApplicationCacheEnabled(true);
+
     // Enable mouse events by default
     setMouseEventsEnabled(true);
 
