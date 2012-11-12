@@ -62,8 +62,6 @@ MediaControlRootElement::MediaControlRootElement(Document* document)
     , m_seekBackButton(0)
     , m_seekForwardButton(0)
     , m_toggleClosedCaptionsButton(0)
-    , m_closedCaptionsTrackList(0)
-    , m_closedCaptionsContainer(0)
     , m_panelMuteButton(0)
     , m_volumeSlider(0)
     , m_volumeSliderMuteButton(0)
@@ -164,23 +162,9 @@ PassRefPtr<MediaControlRootElement> MediaControlRootElement::create(Document* do
         return 0;
 
     if (document->page()->theme()->supportsClosedCaptioning()) {
-
-        RefPtr<MediaControlClosedCaptionsContainerElement> closedCaptionsContainer = MediaControlClosedCaptionsContainerElement::create(document);
-
-        RefPtr<MediaControlClosedCaptionsTrackListElement> closedCaptionsTrackList = MediaControlClosedCaptionsTrackListElement::create(document);
-        controls->m_closedCaptionsTrackList = closedCaptionsTrackList.get();
-        closedCaptionsContainer->appendChild(closedCaptionsTrackList.release(), ec, true);
-        if (ec)
-            return 0;
-
-        RefPtr<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(document, controls.get());
+        RefPtr<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(document);
         controls->m_toggleClosedCaptionsButton = toggleClosedCaptionsButton.get();
         panel->appendChild(toggleClosedCaptionsButton.release(), ec, true);
-        if (ec)
-            return 0;
-
-        controls->m_closedCaptionsContainer = closedCaptionsContainer.get();
-        panel->appendChild(closedCaptionsContainer.release(), ec, true);
         if (ec)
             return 0;
     }
@@ -282,10 +266,6 @@ void MediaControlRootElement::setMediaController(MediaControllerInterface* contr
         m_seekForwardButton->setMediaController(controller);
     if (m_toggleClosedCaptionsButton)
         m_toggleClosedCaptionsButton->setMediaController(controller);
-    if (m_closedCaptionsTrackList)
-        m_closedCaptionsTrackList->setMediaController(controller);
-    if (m_closedCaptionsContainer)
-        m_closedCaptionsContainer->setMediaController(controller);
     if (m_panelMuteButton)
         m_panelMuteButton->setMediaController(controller);
     if (m_volumeSlider)
@@ -322,7 +302,6 @@ void MediaControlRootElement::hide()
     m_panel->setIsDisplayed(false);
     m_panel->hide();
     m_volumeSliderContainer->hide();
-    m_closedCaptionsContainer->hide();
 }
 
 void MediaControlRootElement::makeOpaque()
@@ -334,7 +313,6 @@ void MediaControlRootElement::makeTransparent()
 {
     m_panel->makeTransparent();
     m_volumeSliderContainer->hide();
-    m_closedCaptionsContainer->hide();
 }
 
 void MediaControlRootElement::reset()
@@ -368,10 +346,9 @@ void MediaControlRootElement::reset()
         m_volumeSlider->setVolume(m_mediaController->volume());
 
     if (m_toggleClosedCaptionsButton) {
-        if (m_mediaController->hasClosedCaptions()) {
+        if (m_mediaController->hasClosedCaptions())
             m_toggleClosedCaptionsButton->show();
-            m_closedCaptionsTrackList->updateDisplay();
-        } else
+        else
             m_toggleClosedCaptionsButton->hide();
     }
 
@@ -470,8 +447,6 @@ void MediaControlRootElement::reportedError()
         m_volumeSliderContainer->hide();
     if (m_toggleClosedCaptionsButton && !page->theme()->hasOwnDisabledStateHandlingFor(MediaToggleClosedCaptionsButtonPart))
         m_toggleClosedCaptionsButton->hide();
-    if (m_closedCaptionsContainer)
-        m_closedCaptionsContainer->hide();
 }
 
 void MediaControlRootElement::updateStatusDisplay()
@@ -565,19 +540,6 @@ void MediaControlRootElement::showVolumeSlider()
 
     if (m_volumeSliderContainer)
         m_volumeSliderContainer->show();
-}
-
-void MediaControlRootElement::toggleClosedCaptionTrackList()
-{
-    if (!m_mediaController->hasClosedCaptions())
-        return;
-
-    if (m_closedCaptionsContainer) {
-        if (m_closedCaptionsContainer->isShowing())
-            m_closedCaptionsContainer->hide();
-        else
-            m_closedCaptionsContainer->show();
-    }
 }
 
 bool MediaControlRootElement::shouldHideControls()
