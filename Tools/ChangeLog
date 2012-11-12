@@ -1,3 +1,18 @@
+2012-11-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Add --device-pixel-ratio command line option to EFL MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=101930
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added --device-pixel-ratio command line option to EFL MiniBrowser which sets
+        the ratio between the CSS units and device pixels when the content is unscaled.
+        Option is applied for all the views created by mini browser.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+        (elm_main):
+
 2012-11-12  Dirk Pranke  <dpranke@chromium.org>
 
         remove the chromium-mac-mountainlion TestExpectations file

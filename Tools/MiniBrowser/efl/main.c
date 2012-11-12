@@ -43,6 +43,9 @@ static Eina_Bool encoding_detector_enabled = EINA_FALSE;
 static Eina_Bool frame_flattening_enabled = EINA_FALSE;
 static int window_width = 800;
 static int window_height = 600;
+/* Default value of device_pixel_ratio is '0' so that we don't set custom device
+ * scale factor unless it's required by the User. */
+static double device_pixel_ratio = 0;
 
 static Ewk_View_Smart_Class* miniBrowserViewSmartClass()
 {
@@ -70,6 +73,8 @@ static const Ecore_Getopt options = {
             ('e', "engine", "ecore-evas engine to use."),
         ECORE_GETOPT_STORE_STR
             ('s', "window-size", "window size in following format (width)x(height)."),
+        ECORE_GETOPT_STORE_DOUBLE
+            ('r', "device-pixel-ratio", "Ratio between the CSS units and device pixels."),
         ECORE_GETOPT_CALLBACK_NOARGS
             ('E', "list-engines", "list ecore-evas engines.",
              ecore_getopt_callback_ecore_evas_list_engines, NULL),
@@ -1030,6 +1035,8 @@ static Browser_Window *window_create(const char *url)
     Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
     app_data->webview = ewk_view_smart_add(evas, smart, ewk_context_default_get());
     ewk_view_theme_set(app_data->webview, THEME_DIR "/default.edj");
+    if (device_pixel_ratio)
+        ewk_view_device_pixel_ratio_set(app_data->webview, (float)device_pixel_ratio);
 
     Ewk_Settings *settings = ewk_view_settings_get(app_data->webview);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);
@@ -1109,6 +1116,7 @@ elm_main(int argc, char *argv[])
     Ecore_Getopt_Value values[] = {
         ECORE_GETOPT_VALUE_STR(evas_engine_name),
         ECORE_GETOPT_VALUE_STR(window_size_string),
+        ECORE_GETOPT_VALUE_DOUBLE(device_pixel_ratio),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(encoding_detector_enabled),
         ECORE_GETOPT_VALUE_BOOL(frame_flattening_enabled),
