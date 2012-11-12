@@ -1528,7 +1528,7 @@ bool InputHandler::deleteSelection()
         return false;
 
     ASSERT(frame->editor());
-    return frame->editor()->command("DeleteBackward").execute();
+    return handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyDown, 0), false /* changeIsPartOfComposition */);
 }
 
 void InputHandler::insertText(const WTF::String& string)
@@ -1843,7 +1843,12 @@ bool InputHandler::deleteTextRelativeToCursor(int leftOffset, int rightOffset)
     int caretOffset = caretPosition();
     int start = relativeLeftOffset(caretOffset, leftOffset);
     int end = relativeRightOffset(caretOffset, elementText().length(), rightOffset);
-    if (!deleteText(start, end))
+
+    // If we have backspace in a single character, send this to webkit as a KeyboardEvent. Otherwise, call deleteText.
+    if (leftOffset == 1 && !rightOffset) {
+        if (!handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyDown, 0), true /* changeIsPartOfComposition */))
+            return false;
+    } else if (!deleteText(start, end))
         return false;
 
     // Scroll the field if necessary. The automatic update is suppressed
@@ -1859,6 +1864,9 @@ bool InputHandler::deleteText(int start, int end)
         return false;
 
     ProcessingChangeGuard guard(this);
+
+    if (end - start == 1)
+        return handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyDown, 0), true /* changeIsPartOfComposition */);
 
     if (!setSelection(start, end, true /*changeIsPartOfComposition*/))
         return false;
@@ -2132,7 +2140,7 @@ bool InputHandler::setText(spannable_string_t* spannableString)
 
         if (composingTextLength - textLength == 1) {
             InputLog(LogLevelInfo, "InputHandler::setText No spans have changed. New text is one character shorter than the old. Treating as 'delete'.");
-            return editor->command("DeleteBackward").execute();
+            return handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyDown, 0), true /* changeIsPartOfComposition */);
         }
     }
 
@@ -2142,7 +2150,7 @@ bool InputHandler::setText(spannable_string_t* spannableString)
     // If there is no text to add just delete.
     if (!textLength) {
         if (selectionActive())
-            return editor->command("DeleteBackward").execute();
+            return handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyChar, 0), true /* changeIsPartOfComposition */);
 
         // Nothing to do.
         return true;

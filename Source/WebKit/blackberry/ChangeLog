@@ -1,3 +1,26 @@
+2012-11-12  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Use keyevents instead of editor commands for backspace
+        https://bugs.webkit.org/show_bug.cgi?id=101663
+
+        Reviewed by Rob Buis.
+
+        PR229395
+        Sending keyEvents for backspace and switching from KeyChar
+        to KeyDown since we are still receiving an unadultered KeyUp
+        from the input service. This was causing us to get two keyUps
+        for regular keys and no key downs for backspace since it was
+        triggering an editor command and bypassing JS listeners.
+
+        Reviewed internally by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::handleKeyboardInput):
+        (BlackBerry::WebKit::relativeRightOffset):
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::deleteTextRelativeToCursor):
+        (BlackBerry::WebKit::InputHandler::setText):
+
 2012-11-12  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Crash in InRegionScrollerPrivate.
