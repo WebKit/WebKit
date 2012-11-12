@@ -1,3 +1,23 @@
+2012-11-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: migrate text editor to mutation observers
+        https://bugs.webkit.org/show_bug.cgi?id=101841
+
+        Reviewed by Vsevolod Vlasov.
+
+        Otherwise, we miss notifications on the removed lines.
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype.beginDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype.endDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._handleMutations):
+        (WebInspector.TextEditorMainPanel.prototype._handleMutation):
+        * inspector/front-end/externs.js:
+        (WebKitMutation):
+        (WebKitMutationObserver.prototype.observe):
+        (WebKitMutationObserver.prototype.disconnect):
+
 2012-11-12  Allan Sandfeld Jensen  <sandfeld@kde.org>
 
         [Qt] Flash-plugin starts with wrong width

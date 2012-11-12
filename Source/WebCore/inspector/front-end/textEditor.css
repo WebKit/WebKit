@@ -179,3 +179,19 @@
     from {background-color: rgb(255, 255, 120); }
     to { background-color: white; }
 }
+
+.debug-fadeout {
+    -webkit-animation: "debug-fadeout" 1s 0s;
+    border: 1px solid white;
+}
+
+@-webkit-keyframes debug-fadeout {
+    from {
+        border-color: black;
+        background-color: rgb(255, 255, 120);
+    }
+    to {
+        background-color: white;
+        border-color: white
+    }
+}

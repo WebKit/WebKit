@@ -877,7 +877,7 @@ WebInspector.TextEditorChunkedPanel.prototype = {
     {
         delete this._repaintAllTimer;
 
-        if (this._paintCoalescingLevel || this._dirtyLines)
+        if (this._paintCoalescingLevel)
             return;
 
         var visibleFrom = this.element.scrollTop;
@@ -1266,13 +1266,9 @@ WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScroll
     this.element.addEventListener("scroll", this._scroll.bind(this), false);
     this.element.addEventListener("focus", this._handleElementFocus.bind(this), false);
 
-    // OPTIMIZATION. It is very expensive to listen to the DOM mutation events, thus we remove the
-    // listeners whenever we do any internal DOM manipulations (such as expand/collapse line rows)
-    // and set the listeners back when we are finished.
-    this._handleDOMUpdatesCallback = this._handleDOMUpdates.bind(this);
-    this._container.addEventListener("DOMCharacterDataModified", this._handleDOMUpdatesCallback, false);
-    this._container.addEventListener("DOMNodeInserted", this._handleDOMUpdatesCallback, false);
-    this._container.addEventListener("DOMSubtreeModified", this._handleDOMUpdatesCallback, false);
+    this._mutationObserver = new WebKitMutationObserver(this._handleMutations.bind(this));
+    this._mutationObserver.options = { subtree: true, childList: true, characterData: true };
+    this._mutationObserver.observe(this._container, this._mutationObserver.options);
 
     this._freeCachedElements();
     this._buildChunks();
@@ -1403,16 +1399,13 @@ WebInspector.TextEditorMainPanel.prototype = {
             var markedLine = this._rangeToMark.startLine;
             delete this._rangeToMark;
             // Remove the marked region immediately.
-            if (!this._dirtyLines) {
-                this.beginDomUpdates();
-                var chunk = this.chunkForLine(markedLine);
-                var wasExpanded = chunk.expanded;
-                chunk.expanded = false;
-                chunk.updateCollapsedLineRow();
-                chunk.expanded = wasExpanded;
-                this.endDomUpdates();
-            } else
-                this._paintLines(markedLine, markedLine + 1);
+            this.beginDomUpdates();
+            var chunk = this.chunkForLine(markedLine);
+            var wasExpanded = chunk.expanded;
+            chunk.expanded = false;
+            chunk.updateCollapsedLineRow();
+            chunk.expanded = wasExpanded;
+            this.endDomUpdates();
         }
 
         if (range) {
@@ -1464,9 +1457,6 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (this.readOnly())
             return false;
 
-        if (this._dirtyLines)
-            return false;
-
         this.beginUpdates();
 
         function before()
@@ -1496,9 +1486,6 @@ WebInspector.TextEditorMainPanel.prototype = {
     handleTabKeyPress: function(shiftKey)
     {
         if (this.readOnly())
-            return false;
-
-        if (this._dirtyLines)
             return false;
 
         var selection = this._getSelection();
@@ -1606,9 +1593,6 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (this.readOnly())
             return false;
 
-        if (this._dirtyLines)
-            return false;
-
         var range = this._getSelection();
         if (!range)
             return false;
@@ -1668,22 +1652,16 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     beginDomUpdates: function()
     {
+        if (!this._domUpdateCoalescingLevel)
+            this._mutationObserver.disconnect();
         WebInspector.TextEditorChunkedPanel.prototype.beginDomUpdates.call(this);
-        if (this._domUpdateCoalescingLevel === 1) {
-            this._container.removeEventListener("DOMCharacterDataModified", this._handleDOMUpdatesCallback, false);
-            this._container.removeEventListener("DOMNodeInserted", this._handleDOMUpdatesCallback, false);
-            this._container.removeEventListener("DOMSubtreeModified", this._handleDOMUpdatesCallback, false);
-        }
     },
 
     endDomUpdates: function()
     {
         WebInspector.TextEditorChunkedPanel.prototype.endDomUpdates.call(this);
-        if (this._domUpdateCoalescingLevel === 0) {
-            this._container.addEventListener("DOMCharacterDataModified", this._handleDOMUpdatesCallback, false);
-            this._container.addEventListener("DOMNodeInserted", this._handleDOMUpdatesCallback, false);
-            this._container.addEventListener("DOMSubtreeModified", this._handleDOMUpdatesCallback, false);
-        }
+        if (!this._domUpdateCoalescingLevel)
+            this._mutationObserver.observe(this._container, this._mutationObserver.options);
     },
 
     _buildChunks: function()
@@ -1779,7 +1757,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             return;
 
         // Reschedule the timer if we can not paint the lines yet, or the user is scrolling.
-        if (this._dirtyLines || this._repaintAllTimer) {
+        if (this._repaintAllTimer) {
             this._paintScheduledLinesTimer = setTimeout(this._paintScheduledLines.bind(this), 50);
             return;
         }
@@ -1838,7 +1816,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         var invisibleLineRows = [];
         for (var i = 0; i < lineChunks.length; ++i) {
             var lineChunk = lineChunks[i];
-            if (this._dirtyLines || this._scheduledPaintLines) {
+            if (this._scheduledPaintLines) {
                 this._schedulePaintLines(lineChunk.startLine, lineChunk.endLine);
                 continue;
             }
@@ -1878,10 +1856,6 @@ WebInspector.TextEditorMainPanel.prototype = {
     _paintLine: function(lineRow)
     {
         var lineNumber = lineRow.lineNumber;
-        if (this._dirtyLines) {
-            this._schedulePaintLines(lineNumber, lineNumber + 1);
-            return;
-        }
 
         this.beginDomUpdates();
         try {
@@ -2103,6 +2077,8 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         var span = this._cachedSpans.pop() || document.createElement("span");
         span.className = "webkit-" + className;
+        if (false) // For paint debugging.
+            span.addStyleClass("debug-fadeout");
         span.textContent = content;
         element.insertBefore(span, oldChild);
         if (!("spans" in element))
@@ -2150,29 +2126,88 @@ WebInspector.TextEditorMainPanel.prototype = {
         return span;
     },
 
-    _handleDOMUpdates: function(e)
+    /**
+     * @param {Array.<WebKitMutation>} mutations
+     */
+    _handleMutations: function(mutations)
     {
         if (this._domUpdateCoalescingLevel)
             return;
 
-        var target = e.target;
-        if (target === this._container)
+        if (this._readOnly)
             return;
 
+        // Annihilate noop BR addition + removal that takes place upon line removal.
+        var filteredMutations = mutations.slice();
+        var addedBRs = new Map();
+        for (var i = 0; i < mutations.length; ++i) {
+            var mutation = mutations[i];
+            if (mutation.type !== "childList")
+                continue;
+            if (mutation.addedNodes.length === 1 && mutation.addedNodes[0].nodeName === "BR")
+                addedBRs.put(mutation.addedNodes[0], mutation);
+            else if (mutation.removedNodes.length === 1 && mutation.removedNodes[0].nodeName === "BR") {
+                var noopMutation = addedBRs.get(mutation.removedNodes[0]);
+                if (noopMutation) {
+                    filteredMutations.remove(mutation);
+                    filteredMutations.remove(noopMutation);
+                }
+            }
+        }
+
+        var dirtyLines;
+        for (var i = 0; i < filteredMutations.length; ++i) {
+            var mutation = filteredMutations[i];
+            var changedNodes = [];
+            if (mutation.type === "childList" && mutation.addedNodes.length)
+                changedNodes = Array.prototype.slice.call(mutation.addedNodes);
+            else if (mutation.type === "childList" && mutation.removedNodes.length)
+                changedNodes = Array.prototype.slice.call(mutation.removedNodes);
+            changedNodes.push(mutation.target);
+
+            for (var j = 0; j < changedNodes.length; ++j) {
+                var lines = this._collectDirtyLines(mutation, changedNodes[j]);
+                if (!lines)
+                    continue;
+                if (!dirtyLines) {
+                    dirtyLines = lines;
+                    continue;
+                }
+                dirtyLines.start = Math.min(dirtyLines.start, lines.start);
+                dirtyLines.end = Math.max(dirtyLines.end, lines.end);
+            }
+        }
+
+        if (dirtyLines) {
+            delete this._rangeToMark;
+            this._applyDomUpdates(dirtyLines);
+        }
+
+        // Debug check for validating whether text model matches the DOM representation.
+        // console.assert(this.element.innerText === this._textModel.text() + "\n", "DOM does not match model.");
+    },
+
+    /**
+     * @param {WebKitMutation} mutation
+     * @param {Node} target
+     * @return {?Object}
+     */
+    _collectDirtyLines: function(mutation, target)
+    {
         var lineRow = this._enclosingLineRowOrSelf(target);
         if (!lineRow)
-            return;
+            return null;
 
         if (lineRow.decorationsElement && lineRow.decorationsElement.isSelfOrAncestor(target)) {
             if (this._syncDecorationsForLineListener)
                 this._syncDecorationsForLineListener(lineRow.lineNumber);
-            return;
+            return null;
         }
 
         if (this._readOnly)
-            return;
+            return null;
 
-        if (target === lineRow && e.type === "DOMNodeInserted") {
+        if (target === lineRow && mutation.type === "childList" && mutation.addedNodes.length) {
             // Ensure that the newly inserted line row has no lineNumber.
             delete lineRow.lineNumber;
         }
@@ -2192,31 +2227,14 @@ WebInspector.TextEditorMainPanel.prototype = {
                 break;
             }
         }
-
-        if (this._dirtyLines) {
-            this._dirtyLines.start = Math.min(this._dirtyLines.start, startLine);
-            this._dirtyLines.end = Math.max(this._dirtyLines.end, endLine);
-        } else {
-            this._dirtyLines = { start: startLine, end: endLine };
-            setTimeout(this._applyDomUpdates.bind(this), 0);
-            // Remove marked ranges, if any.
-            this.markAndRevealRange(null);
-        }
+        return { start: startLine, end: endLine };
     },
 
-    _applyDomUpdates: function()
+    /**
+     * @param {Object} dirtyLines
+     */
+    _applyDomUpdates: function(dirtyLines)
     {
-        if (!this._dirtyLines)
-            return;
-
-        // Check if the editor had been set readOnly by the moment when this async callback got executed.
-        if (this._readOnly) {
-            delete this._dirtyLines;
-            return;
-        }
-
-        var dirtyLines = this._dirtyLines;
-
         var firstChunkNumber = this._chunkNumberForLine(dirtyLines.start);
         var startLine = this._textChunks[firstChunkNumber].startLine;
         var endLine = this._textModel.linesCount;
@@ -2285,7 +2303,6 @@ WebInspector.TextEditorMainPanel.prototype = {
         }
 
         var selection = this._getSelection();
-
         if (lines.length === 0 && endLine < this._textModel.linesCount)
             var oldRange = new WebInspector.TextRange(startLine, 0, endLine, 0);
         else if (lines.length === 0 && startLine > 0)
@@ -2294,18 +2311,14 @@ WebInspector.TextEditorMainPanel.prototype = {
             var oldRange = new WebInspector.TextRange(startLine, startColumn, endLine - 1, endColumn);
 
         var newContent = lines.join("\n");
-        if (this._textModel.copyRange(oldRange) === newContent) {
-            delete this._dirtyLines;
+        if (this._textModel.copyRange(oldRange) === newContent)
             return; // Noop
-        }
 
         if (lines.length === 1 && lines[0] === "}" && oldRange.isEmpty() && selection.isEmpty() && !this._textModel.line(oldRange.endLine).trim())
             this._unindentAfterBlock(oldRange, selection);
-        
+
         // This is a "foreign" call outside of this class. Should be before we delete the dirty lines flag.
         this._enterTextChangeMode();
-
-        delete this._dirtyLines;
 
         var newRange = this._editRange(oldRange, newContent);
 

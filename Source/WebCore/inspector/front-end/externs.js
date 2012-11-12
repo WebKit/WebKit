@@ -63,6 +63,29 @@ window.getComputedStyle = function(element) {}
 function postMessage(message) {}
 
 /**
+ * @constructor
+ */
+function WebKitMutation(callback)
+{
+    this.type = "";
+    /** @type {Node} */ this.target = null;
+    /** @type {Array.<Node>} */ this.addedNodes = [];
+    /** @type {Array.<Node>} */ this.removedNodes = [];
+}
+
+/**
+ * @constructor
+ * @param {function(Array.<WebKitMutation>)} callback
+ */
+function WebKitMutationObserver(callback) {}
+/** 
+ * @param {Node} container
+ * @param {Object} options
+ */
+WebKitMutationObserver.prototype.observe = function(container, options) {}
+WebKitMutationObserver.prototype.disconnect = function() {}
+
+/**
  * @param {string} eventName
  * @param {Function} listener
  * @param {boolean=} capturing
