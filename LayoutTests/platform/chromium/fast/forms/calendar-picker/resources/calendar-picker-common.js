@@ -23,3 +23,10 @@ function selectedDates() {
         return element.dataset.submitValue;
     }).sort();
 }
+
+function selectedMonth() {
+    var selected = popupWindow.document.querySelectorAll(".day.day-selected");
+    if (selected.length === 0)
+        return null;
+    return selected[0].dataset.monthValue;
+}

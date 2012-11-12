@@ -1,0 +1,55 @@
+Tests if month picker key bindings work as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Check that page popup doesn't exist at first.
+PASS document.getElementById("mock-page-popup") is null
+Check that page popup exists.
+PASS popupWindow.pagePopupController.toString() is "[object PagePopupController]"
+PASS selectedMonth() is "2000-01"
+PASS currentMonth() is "2000-01"
+Check that arrow keys work properly.
+PASS selectedMonth() is "1999-12"
+PASS currentMonth() is "1999-12"
+PASS selectedMonth() is "2000-01"
+PASS currentMonth() is "2000-01"
+PASS selectedMonth() is "2000-02"
+PASS currentMonth() is "2000-02"
+PASS selectedMonth() is "2000-01"
+PASS currentMonth() is "2000-01"
+PASS selectedMonth() is "2000-02"
+PASS currentMonth() is "2000-02"
+press m
+PASS selectedMonth() is "2000-03"
+PASS currentMonth() is "2000-03"
+press shift + m
+PASS selectedMonth() is "2000-02"
+PASS currentMonth() is "2000-02"
+press y
+PASS selectedMonth() is "2001-02"
+PASS currentMonth() is "2001-02"
+press shift + y
+PASS selectedMonth() is "2000-02"
+PASS currentMonth() is "2000-02"
+press d
+PASS selectedMonth() is "2010-02"
+PASS currentMonth() is "2010-02"
+press shift + d
+PASS selectedMonth() is "2000-02"
+PASS currentMonth() is "2000-02"
+PASS document.getElementById("mock-page-popup") is null
+PASS document.getElementById("month").value is "2000-02"
+PASS testToday() || testToday() is true
+Check if tabbing works.
+PASS focusedElement() is ".days-area-container"
+PASS focusedElement() is ".today-button[value=<<ThisMonthLabel>>]"
+PASS focusedElement() is ".clear-button[value=<<CalendarClear>>]"
+PASS focusedElement() is ".year-month-button[value=<<]"
+PASS focusedElement() is ".clear-button[value=<<CalendarClear>>]"
+PASS document.getElementById("mock-page-popup") is null
+PASS document.getElementById("month").value is "2000-02"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

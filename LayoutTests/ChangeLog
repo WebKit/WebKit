@@ -1,3 +1,29 @@
+2012-11-12  Keishi Hattori  <keishi@webkit.org>
+
+        Add tests for month picker
+        https://bugs.webkit.org/show_bug.cgi?id=101556
+
+        Reviewed by Kent Tamura.
+
+        Adding tests for month picker.
+
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/month-picker-key-operations-expected.txt: Added.
+        * platform/chromium/TestExpectations: Marking appearance tests as needs rebaseline.
+        * platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.txt: Added.
+        * platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.txt: Added.
+        * platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step.html: Added.
+        * platform/chromium/fast/forms/calendar-picker/month-picker-appearance.html: Added.
+        * platform/chromium/fast/forms/calendar-picker/month-picker-key-operations-expected.txt: Added.
+        * platform/chromium/fast/forms/calendar-picker/month-picker-key-operations.html: Added.
+        * platform/chromium/fast/forms/calendar-picker/month-picker-mouse-operations-expected.txt: Added.
+        * platform/chromium/fast/forms/calendar-picker/month-picker-mouse-operations.html: Added.
+        * platform/chromium/fast/forms/calendar-picker/month-picker-with-step-expected.txt: Added.
+        * platform/chromium/fast/forms/calendar-picker/month-picker-with-step.html: Added.
+        * platform/chromium/fast/forms/calendar-picker/resources/calendar-picker-common.js:
+        (selectedMonth): Returns ISO string for selected month.
+
 2012-11-12  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Schedule the RTCDataChannel events to be triggered at idle state

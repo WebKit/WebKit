@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/calendar-picker-common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<input type=month id=month value="2011-04" step="9" min="2011-04">
+
+<script>
+description('Test if step limits available dates in month picker.');
+
+openPicker(document.getElementById('month'), test1);
+
+function test1() {
+    debug("Step without min.");
+    shouldBeEqualToString('availableDatesInCurrentMonth()[0]', '2011-04-01');
+    shouldBeEqualToString('availableDatesInCurrentMonth()[29]', '2011-04-30');
+
+    // Close popup
+    eventSender.keyDown('\x1B');
+
+    document.getElementById('month').min = "2011-05";
+    document.getElementById('month').value = "2012-02";
+
+    waitUntilClosing(test1AfterClosing);
+}
+
+function test1AfterClosing() {
+    // Reopen popup
+    openPicker(document.getElementById('month'), test2);
+}
+
+function test2() {
+    debug("Step when min is set.");
+    shouldBeEqualToString('availableDatesInCurrentMonth()[0]', '2012-02-01');
+    shouldBeEqualToString('availableDatesInCurrentMonth()[28]', '2012-02-29');
+    finishJSTest();
+}
+
+function availableDatesInCurrentMonth() {
+    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".day.available:not(.not-this-month)"), function(element) {
+        return element.dataset.submitValue;
+    }).sort();
+}
+
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

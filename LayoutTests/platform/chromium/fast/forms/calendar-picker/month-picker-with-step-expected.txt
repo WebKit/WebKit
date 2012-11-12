@@ -1,0 +1,15 @@
+Test if step limits available dates in month picker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Step without min.
+PASS availableDatesInCurrentMonth()[0] is "2011-04-01"
+PASS availableDatesInCurrentMonth()[29] is "2011-04-30"
+Step when min is set.
+PASS availableDatesInCurrentMonth()[0] is "2012-02-01"
+PASS availableDatesInCurrentMonth()[28] is "2012-02-29"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 
