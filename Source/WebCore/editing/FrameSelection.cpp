@@ -295,8 +295,14 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
     if (!s.isNone() && !(options & DoNotSetFocus))
         setFocusedNodeIfNeeded();
 
-    if (!(options & DoNotUpdateAppearance))
+    if (!(options & DoNotUpdateAppearance)) {
+#if ENABLE(TEXT_CARET)
+        m_frame->document()->updateLayoutIgnorePendingStylesheets();
+#else
+        m_frame->document()->updateStyleIfNeeded();
+#endif
         updateAppearance();
+    }
 
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
@@ -1341,7 +1347,6 @@ bool FrameSelection::recomputeCaretRect()
     FrameView* v = m_frame->document()->view();
     if (!v)
         return false;
-    ASSERT(!v->needsLayout());
 
     LayoutRect oldRect = localCaretRectWithoutUpdate();
     LayoutRect newRect = localCaretRect();
@@ -1743,7 +1748,6 @@ inline static bool shouldStopBlinkingDueToTypingCommand(Frame* frame)
 void FrameSelection::updateAppearance()
 {
 #if ENABLE(TEXT_CARET)
-    m_frame->document()->updateLayout();
     bool caretRectChangedOrCleared = recomputeCaretRect();
 
     bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
@@ -1765,9 +1769,6 @@ void FrameSelection::updateAppearance()
             invalidateCaretRect();
         }
     }
-#else
-    // We need to update style in case the node containing the selection is made display:none.
-    m_frame->document()->updateStyleIfNeeded();
 #endif
 
     RenderView* view = m_frame->contentRenderer();
@@ -1817,6 +1818,8 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility)
         invalidateCaretRect();
     }
     CaretBase::setCaretVisibility(visibility);
+#else
+    m_frame->document()->updateStyleIfNeeded();
 #endif
 
     updateAppearance();

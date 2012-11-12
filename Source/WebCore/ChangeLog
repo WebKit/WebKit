@@ -1,3 +1,16 @@
+2012-11-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r134191. Turns out that FrameView::performPostLayoutTasks calls FrameSelection::updateAppearance
+        in the middle of a layout. So we can't have assertions in recomputeCaretRect and updateAppearance.
+
+        Furthermore, we can't update layout in updateAppearance. So do that in its call sites.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::recomputeCaretRect):
+        (WebCore::FrameSelection::updateAppearance):
+        (WebCore::FrameSelection::setCaretVisibility):
+
 2012-11-12  Shinya Kawanaka  <shinyak@chromium.org>
 
         Don't update style when attaching in HTMLMeterElement
