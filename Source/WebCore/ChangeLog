@@ -1,3 +1,20 @@
+2012-11-12  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update BB10 form theme.
+        https://bugs.webkit.org/show_bug.cgi?id=100760
+
+        Reviewed by Rob Buis.
+
+        RIM PR 236993
+        Internally Reviewed by Jeff Rogers.
+        Enable GL slider.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::drawThreeSlice):
+        (WebCore):
+        (WebCore::RenderThemeBlackBerry::paintSliderTrackRect):
+        (WebCore::RenderThemeBlackBerry::paintSliderThumb):
+
 2012-11-12  Kentaro Hara  <haraken@chromium.org>
 
         [V8][JSC] HTMLElement::itemValue() needs not to be custom

@@ -182,6 +182,24 @@ static void drawControl(GraphicsContext* gc, const FloatRect& rect, Image* img)
     gc->drawImage(img, ColorSpaceDeviceRGB, rect, srcRect);
 }
 
+static void drawThreeSlice(GraphicsContext* gc, const IntRect& rect, Image* img, int slice)
+{
+    if (!img)
+        return;
+    FloatSize dstSlice(rect.height() / 2, rect.height());
+    FloatRect srcRect(0, 0, slice, img->height());
+    FloatRect dstRect(rect.location(), dstSlice);
+
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+    srcRect.move(img->width() - srcRect.width(), 0);
+    dstRect.move(rect.width() - dstRect.width(), 0);
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+
+    srcRect = FloatRect(slice, 0, img->width() - 2 * slice, img->height());
+    dstRect = FloatRect(rect.x() + dstSlice.width(), rect.y(), rect.width() - 2 * dstSlice.width(), dstSlice.height());
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+}
+
 static void drawNineSlice(GraphicsContext* gc, const IntRect& rect, double scale, Image* img, int slice)
 {
     if (!img)
@@ -711,71 +729,67 @@ bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const Pai
 bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect,
         RGBA32 strokeColorStart, RGBA32 strokeColorEnd, RGBA32 fillColorStart, RGBA32 fillColorEnd)
 {
-    FloatSize smallCorner(smallRadius, smallRadius);
-
+    ASSERT(info.context);
     info.context->save();
-    info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeThickness(lineWidth);
+    GraphicsContext* context = info.context;
 
-    info.context->setStrokeGradient(createLinearGradient(strokeColorStart, strokeColorEnd, rect.maxXMinYCorner(), rect. maxXMaxYCorner()));
-    info.context->setFillGradient(createLinearGradient(fillColorStart, fillColorEnd, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+    static RefPtr<Image> disabled, inactive;
+    if (!disabled) {
+        disabled = loadImage("core_slider_fill_disabled");
+        inactive = loadImage("core_slider_bg");
+    }
 
-    Path path;
-    path.addRoundedRect(rect, smallCorner);
-    info.context->fillPath(path);
+    if (isEnabled(object))
+        drawThreeSlice(context, rect, inactive.get(), mediumSlice);
+    else
+        drawThreeSlice(context, rect, disabled.get(), (smallSlice - 1));
 
-    info.context->restore();
+    context->restore();
     return false;
 }
 
 bool RenderThemeBlackBerry::paintSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    FloatSize largeCorner(largeRadius, largeRadius);
+    ASSERT(info.context);
     info.context->save();
-    info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeThickness(lineWidth);
-    if (isPressed(object) || isHovered(object)) {
-        info.context->setStrokeGradient(createLinearGradient(hoverTopOutline, hoverBottomOutline, rect.maxXMinYCorner(), rect. maxXMaxYCorner()));
-        info.context->setFillGradient(createLinearGradient(hoverTop, hoverBottom, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+    GraphicsContext* context = info.context;
+
+    static RefPtr<Image> disabled, inactive, pressed, aura;
+    if (!disabled) {
+        disabled = loadImage("core_slider_handle_disabled");
+        inactive = loadImage("core_slider_handle");
+        pressed = loadImage("core_slider_handle_pressed");
+        aura = loadImage("core_slider_aura");
+    }
+
+    FloatRect tmpRect(rect);
+    float length = std::max(tmpRect.width(), tmpRect.height());
+    if (tmpRect.width() > tmpRect.height()) {
+        tmpRect.setY(tmpRect.y() - (length - tmpRect.height()) / 2);
+        tmpRect.setHeight(length);
     } else {
-        info.context->setStrokeGradient(createLinearGradient(regularTopOutline, regularBottomOutline, rect.maxXMinYCorner(), rect. maxXMaxYCorner()));
-        info.context->setFillGradient(createLinearGradient(regularTop, regularBottom, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
+        tmpRect.setX(tmpRect.x() - (length - tmpRect.width()) / 2);
+        tmpRect.setWidth(length);
     }
-    Path path;
-    path.addRoundedRect(rect, largeCorner);
-    info.context->fillPath(path);
-    bool isVertical = rect.width() > rect.height();
-    IntPoint startPoint(rect.x() + (isVertical ? 5 : 2), rect.y() + (isVertical ? 2 : 5));
-    IntPoint endPoint(rect.x() + (isVertical ? 20 : 2), rect.y() + (isVertical ? 2 : 20));
-    const int lineOffset = 2;
-    const int shadowOffset = 1;
-    for (int i = 0; i < 3; i++) {
-        if (isVertical) {
-            startPoint.setY(startPoint.y() + lineOffset);
-            endPoint.setY(endPoint.y() + lineOffset);
+
+    float auraHeight = length * auraRatio;
+    float auraWidth = auraHeight;
+    float auraX = tmpRect.x() - (auraWidth - tmpRect.width()) / 2;
+    float auraY = tmpRect.y() - (auraHeight - tmpRect.height()) / 2;
+    FloatRect auraRect(auraX, auraY, auraWidth, auraHeight);
+
+    if (!isEnabled(object))
+        drawControl(context, tmpRect, disabled.get());
+    else {
+        if (isPressed(object) || isHovered(object) || isFocused(object)) {
+            drawControl(context, tmpRect, pressed.get());
+            drawControl(context, auraRect, aura.get());
         } else {
-            startPoint.setX(startPoint.x() + lineOffset);
-            endPoint.setX(endPoint.x() + lineOffset);
+            drawControl(context, tmpRect, inactive.get());
         }
-        if (isPressed(object) || isHovered(object))
-            info.context->setStrokeColor(dragRollLight, ColorSpaceDeviceRGB);
-        else
-            info.context->setStrokeColor(dragRegularLight, ColorSpaceDeviceRGB);
-        info.context->drawLine(startPoint, endPoint);
-        if (isVertical) {
-            startPoint.setY(startPoint.y() + shadowOffset);
-            endPoint.setY(endPoint.y() + shadowOffset);
-        } else {
-            startPoint.setX(startPoint.x() + shadowOffset);
-            endPoint.setX(endPoint.x() + shadowOffset);
-        }
-        if (isPressed(object) || isHovered(object))
-            info.context->setStrokeColor(dragRollDark, ColorSpaceDeviceRGB);
-        else
-            info.context->setStrokeColor(dragRegularDark, ColorSpaceDeviceRGB);
-        info.context->drawLine(startPoint, endPoint);
     }
-    info.context->restore();
+
+    context->restore();
     return false;
 }
 
