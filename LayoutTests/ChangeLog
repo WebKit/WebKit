@@ -1,5 +1,17 @@
 2012-11-12  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, update chromium-mac-mountainlion baselines.
+
+        * platform/chromium-mac/fast/repaint/delete-into-nested-block-expected.png:
+        * platform/chromium-mac/fast/repaint/inline-outline-repaint-expected.png:
+        * platform/chromium-mac/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.png:
+        * platform/chromium-mac/fast/repaint/selection-after-delete-expected.png:
+        * platform/chromium-mac/svg/custom/foreignObject-crash-on-hover-expected.png:
+        * platform/chromium-mac/svg/custom/hit-test-unclosed-subpaths-expected.png:
+        * platform/chromium-mac/svg/custom/hit-test-with-br-expected.png:
+
+2012-11-12  Dirk Pranke  <dpranke@chromium.org>
+
         remove the chromium-mac-mountainlion TestExpectations file
         https://bugs.webkit.org/show_bug.cgi?id=101789
 
