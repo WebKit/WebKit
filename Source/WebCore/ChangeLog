@@ -1,3 +1,20 @@
+2012-11-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Fix memory leak in createSurfaceForBackingStore()
+        https://bugs.webkit.org/show_bug.cgi?id=101941
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix memory leak in createSurfaceForBackingStore(),
+        the RefPtr<cairo_surface_t> should be released
+        when returned since we pass ownership to the
+        caller.
+
+        No new tests, no behavior change for layout tests.
+
+        * platform/graphics/efl/CairoUtilitiesEfl.cpp:
+        (WebCore::createSurfaceForBackingStore):
+
 2012-11-12  Joe Mason  <jmason@rim.com>
 
         [BlackBerry] Update to new proxyInfo API

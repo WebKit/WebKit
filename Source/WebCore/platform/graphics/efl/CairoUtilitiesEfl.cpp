@@ -103,7 +103,7 @@ PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(Ecore_Evas* ee)
         return 0;
     }
 
-    return surface;
+    return surface.release();
 }
 
 PassRefPtr<cairo_surface_t> createSurfaceForImage(Evas_Object* image)
