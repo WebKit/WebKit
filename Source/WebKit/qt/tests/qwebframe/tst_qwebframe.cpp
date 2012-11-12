@@ -209,6 +209,7 @@ public:
     {
         setOperation(QNetworkAccessManager::GetOperation);
         setRequest(request);
+        setUrl(request.url());
         if (request.url() == QUrl("qrc:/test1.html")) {
             setHeader(QNetworkRequest::LocationHeader, QString("qrc:/test2.html"));
             setAttribute(QNetworkRequest::RedirectionTargetAttribute, QUrl("qrc:/test2.html"));
@@ -1225,7 +1226,6 @@ void tst_QWebFrame::setUrlToInvalid()
 
     const QUrl invalidUrl("http:/example.com");
     QVERIFY(!invalidUrl.isEmpty());
-    QVERIFY(!invalidUrl.isValid());
     QVERIFY(invalidUrl != QUrl());
 
     // QWebFrame will do its best to accept the URL, possible converting it to a valid equivalent URL.
@@ -1240,11 +1240,11 @@ void tst_QWebFrame::setUrlToInvalid()
     const QUrl anotherInvalidUrl("1http://bugs.webkit.org");
     QVERIFY(!anotherInvalidUrl.isEmpty()); // and they are not necessarily empty.
     QVERIFY(!anotherInvalidUrl.isValid());
-    QCOMPARE(anotherInvalidUrl, QUrl());
+    QCOMPARE(anotherInvalidUrl.toEncoded(), QUrl().toEncoded());
 
     frame->setUrl(anotherInvalidUrl);
     QCOMPARE(frame->url(), aboutBlank);
-    QCOMPARE(frame->requestedUrl(), anotherInvalidUrl);
+    QCOMPARE(frame->requestedUrl().toEncoded(), anotherInvalidUrl.toEncoded());
     QCOMPARE(frame->baseUrl(), aboutBlank);
 }
 

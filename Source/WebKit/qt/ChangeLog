@@ -1,3 +1,22 @@
+2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix URL issues in tst_qwebframe
+        https://bugs.webkit.org/show_bug.cgi?id=101741
+
+        Reviewed by Simon Hausmann.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (FakeReply::FakeReply):
+        Properly forward the request URL to our custom reply.
+        This would cause redirections not to occur. The requestedUrl and setUrlSameUrl tests
+        would fail because of this.
+
+        (tst_QWebFrame::setUrlToInvalid):
+        - http:/example.com is a valid URL, but not a valid HTTP URL, so remove this check.
+        - QCOMPARE uses testlib's toString on the QUrls to compare them and it now
+        also output the error description. Since we want to compare the resulting
+        URL instead, compare their toEncoded() value.
+
 2012-11-08  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix a crash in tst_QWebInspector::attachAndDestroy
