@@ -29,6 +29,7 @@
 #ifndef Crypto_h
 #define Crypto_h
 
+#include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -37,7 +38,7 @@ namespace WebCore {
 
 typedef int ExceptionCode;
 
-class Crypto : public RefCounted<Crypto> {
+class Crypto : public ScriptWrappable, public RefCounted<Crypto> {
 public:
     static PassRefPtr<Crypto> create() { return adoptRef(new Crypto()); }
 

@@ -31,6 +31,7 @@
 
 #include "DOMStringList.h"
 #include "DOMWindowProperty.h"
+#include "ScriptWrappable.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -43,7 +44,7 @@ class KURL;
 
 typedef int ExceptionCode;
 
-class Location : public RefCounted<Location>, public DOMWindowProperty {
+class Location : public ScriptWrappable, public RefCounted<Location>, public DOMWindowProperty {
 public:
     static PassRefPtr<Location> create(Frame* frame) { return adoptRef(new Location(frame)); }
 

@@ -34,6 +34,7 @@
 #include "ScriptCallStack.h"
 #include "ScriptProfile.h"
 #include "ScriptState.h"
+#include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -50,7 +51,7 @@ class ScriptCallStack;
 typedef Vector<RefPtr<ScriptProfile> > ProfilesArray;
 #endif
 
-class Console : public RefCounted<Console>, public DOMWindowProperty {
+class Console : public ScriptWrappable, public RefCounted<Console>, public DOMWindowProperty {
 public:
     static PassRefPtr<Console> create(Frame* frame) { return adoptRef(new Console(frame)); }
     virtual ~Console();

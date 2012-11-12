@@ -40,6 +40,7 @@
 #include "PerformanceEntryList.h"
 #include "PerformanceNavigation.h"
 #include "PerformanceTiming.h"
+#include "ScriptWrappable.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -54,7 +55,7 @@ class ResourceRequest;
 class ResourceResponse;
 class UserTiming;
 
-class Performance : public RefCounted<Performance>, public DOMWindowProperty, public EventTarget {
+class Performance : public ScriptWrappable, public RefCounted<Performance>, public DOMWindowProperty, public EventTarget {
 public:
     static PassRefPtr<Performance> create(Frame* frame) { return adoptRef(new Performance(frame)); }
     ~Performance();

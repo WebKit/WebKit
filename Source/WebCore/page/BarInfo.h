@@ -30,6 +30,7 @@
 #define BarInfo_h
 
 #include "DOMWindowProperty.h"
+#include "ScriptWrappable.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -37,7 +38,7 @@ namespace WebCore {
 
     class Frame;
 
-    class BarInfo : public RefCounted<BarInfo>, public DOMWindowProperty {
+    class BarInfo : public ScriptWrappable, public RefCounted<BarInfo>, public DOMWindowProperty {
     public:
         enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
 

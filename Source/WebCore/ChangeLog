@@ -1,3 +1,21 @@
+2012-11-11  Adam Barth  <abarth@webkit.org>
+
+        Many DOMWindowProperties would benefit from being ScriptWrappable
+        https://bugs.webkit.org/show_bug.cgi?id=101887
+
+        Reviewed by Kentaro Hara.
+
+        These object are only ever created at the behest of script, which means
+        making them ScriptWrappable is a win.
+
+        * page/BarInfo.h:
+        * page/Console.h:
+        * page/Crypto.h:
+        * page/History.h:
+        * page/Location.h:
+        * page/Navigator.h:
+        * page/Performance.h:
+
 2012-11-11  Kentaro Hara  <haraken@chromium.org>
 
         [V8] HTMLDocument::all() needs not to be custom
