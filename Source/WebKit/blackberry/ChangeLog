@@ -1,3 +1,15 @@
+2012-11-12  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Crash in InRegionScrollerPrivate.
+        https://bugs.webkit.org/show_bug.cgi?id=101399
+
+        Reviewed by Yong Li.
+
+        Fix warning caused by the previous patch for this bug (r133679).
+
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+
 2012-11-11  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] The QNX extension method should not be enabled by default

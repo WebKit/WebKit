@@ -52,8 +52,8 @@ InRegionScrollableArea::~InRegionScrollableArea()
 InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLayer* layer)
     : m_webPage(webPage)
     , m_layer(layer)
-    , m_hasWindowVisibleRectCalculated(false)
     , m_document(0)
+    , m_hasWindowVisibleRectCalculated(false)
 {
     ASSERT(webPage);
     ASSERT(layer);
