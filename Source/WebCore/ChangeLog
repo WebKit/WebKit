@@ -1,3 +1,24 @@
+2012-11-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: wasShown is called twice when show() is called from within wasShown
+        https://bugs.webkit.org/show_bug.cgi?id=101858
+
+        Reviewed by Vsevolod Vlasov.
+
+        When we attach views lazily from within wasShown, the views were getting wasShown notification twice.
+        We now mute one of them.
+
+        * inspector/front-end/View.js:
+        (WebInspector.View):
+        (WebInspector.View.prototype._inNotification):
+        (WebInspector.View.prototype._parentIsShowing):
+        (WebInspector.View.prototype._callOnVisibleChildren):
+        (WebInspector.View.prototype._processWasShown):
+        (WebInspector.View.prototype._processWillHide):
+        (WebInspector.View.prototype._processOnResize):
+        (WebInspector.View.prototype._notify):
+        (WebInspector.View.prototype.show):
+
 2012-11-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r134191. Turns out that FrameView::performPostLayoutTasks calls FrameSelection::updateAppearance

@@ -1,3 +1,13 @@
+2012-11-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: wasShown is called twice when show() is called from within wasShown
+        https://bugs.webkit.org/show_bug.cgi?id=101858
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/view-events-expected.txt:
+        * inspector/view-events.html:
+
 2012-11-12  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] region-style-inline-background-color.html failing on MountainLion/Chromium

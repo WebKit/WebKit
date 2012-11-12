@@ -35,11 +35,19 @@ function test()
         wasShown: function()
         {
             InspectorTest.addResult("  " + this._viewName + ".wasShown()");
+            if (this.showOnWasShown)
+                this.showOnWasShown.show(this.element);
+            if (this.detachOnWasShown)
+                this.detachOnWasShown.detach();
         },
 
         willHide: function()
         {
             InspectorTest.addResult("  " + this._viewName + ".willHide()");
+            if (this.showOnWillHide)
+                this.showOnWillHide.show(this.element);
+            if (this.detachOnWillHide)
+                this.detachOnWillHide.detach();
         },
 
         onResize: function()
@@ -236,6 +244,48 @@ function test()
             } catch (e) {
                 InspectorTest.addResult(e);
             }
+            next();
+        },
+
+        function testShowOnWasShown(next)
+        {
+            var parentView = new TestView("Parent");
+            parentView.showOnWasShown = new TestView("Child");
+            parentView.show(WebInspector.inspectorView.element);
+            parentView.detach();
+            next();
+        },
+
+        function testDetachOnWasShown(next)
+        {
+            var parentView = new TestView("Parent");
+            var childView = new TestView("Child");
+            childView.show(parentView.element);
+            parentView.detachOnWasShown = childView;
+            parentView.show(WebInspector.inspectorView.element);
+            parentView.detach();
+            next();
+        },
+
+        function testShowOnWillHide(next)
+        {
+            var parentView = new TestView("Parent");
+            var childView = new TestView("Child");
+            parentView.show(WebInspector.inspectorView.element);
+            childView.show(parentView.element);
+            parentView.showOnWillHide = childView;
+            parentView.detach();
+            next();
+        },
+
+        function testDetachOnWillHide(next)
+        {
+            var parentView = new TestView("Parent");
+            var childView = new TestView("Child");
+            parentView.show(WebInspector.inspectorView.element);
+            childView.show(parentView.element);
+            parentView.detachOnWillHide = childView;
+            parentView.detach();
             next();
         }
     ]);

@@ -38,6 +38,7 @@ WebInspector.View = function()
     this._children = [];
     this._hideOnDetach = false;
     this._cssFiles = [];
+    this._notificationDepth = 0;
 }
 
 WebInspector.View._cssFileToVisibleViewCount = {};
@@ -59,16 +60,31 @@ WebInspector.View.prototype = {
         this._hideOnDetach = true;
     },
 
-    _parentIsShowing: function()
+    /**
+     * @return {boolean} 
+     */
+    _inNotification: function()
     {
-        return this._isRoot || (this._parentView && this._parentView.isShowing());
+        return !!this._notificationDepth || (this._parentView && this._parentView._inNotification());
     },
 
+    _parentIsShowing: function()
+    {
+        if (this._isRoot)
+            return true;
+        return this._parentView && this._parentView.isShowing();
+    },
+
+    /**
+     * @param {function(this:WebInspector.View)} method
+     */
     _callOnVisibleChildren: function(method)
     {
-        for (var i = 0; i < this._children.length; ++i)
-            if (this._children[i]._visible)
-                method.call(this._children[i]);
+        var copy = this._children.slice();
+        for (var i = 0; i < copy.length; ++i) {
+            if (copy[i]._parentView === this && copy[i]._visible)
+                method.call(copy[i]);
+        }
     },
 
     _processWillShow: function()
@@ -79,22 +95,23 @@ WebInspector.View.prototype = {
 
     _processWasShown: function()
     {
+        if (this._inNotification())
+            return;
         this._isShowing = true;
         this.restoreScrollPositions();
-
-        this.wasShown();
-        this.onResize();
-
+        this._notify(this.wasShown);
+        this._notify(this.onResize);
         this._callOnVisibleChildren(this._processWasShown);
     },
 
     _processWillHide: function()
     {
+        if (this._inNotification())
+            return;
         this.storeScrollPositions();
 
         this._callOnVisibleChildren(this._processWillHide);
-
-        this.willHide();
+        this._notify(this.willHide);
         this._isShowing = false;
     },
 
@@ -106,11 +123,25 @@ WebInspector.View.prototype = {
 
     _processOnResize: function()
     {
+        if (this._inNotification())
+            return;
         if (!this.isShowing())
             return;
-
-        this.onResize();
+        this._notify(this.onResize);
         this._callOnVisibleChildren(this._processOnResize);
+    },
+
+    /**
+     * @param {function(this:WebInspector.View)} notification
+     */
+    _notify: function(notification)
+    {
+        ++this._notificationDepth;
+        try {
+            notification.call(this);
+        } finally {
+            --this._notificationDepth;
+        }
     },
 
     wasShown: function()
@@ -149,6 +180,7 @@ WebInspector.View.prototype = {
             return;
 
         this._visible = true;
+
         if (this._parentIsShowing())
             this._processWillShow();
 
