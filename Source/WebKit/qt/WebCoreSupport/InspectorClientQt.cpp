@@ -399,9 +399,9 @@ void InspectorFrontendClientQt::destroyInspectorView(bool notifyInspectorControl
     m_destroyingInspectorView = true;
 
     // Inspected page may have already been destroyed.
-    if (m_inspectedWebPage) {
+    if (m_inspectedWebPage && m_inspectedWebPage->d->inspector) {
         // Clear reference from QWebInspector to the frontend view.
-        m_inspectedWebPage->d->getOrCreateInspector()->d->setFrontend(0);
+        m_inspectedWebPage->d->inspector->d->setFrontend(0);
     }
 
 #if ENABLE(INSPECTOR)

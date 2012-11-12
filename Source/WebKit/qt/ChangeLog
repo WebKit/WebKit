@@ -1,5 +1,23 @@
 2012-11-08  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Fix a crash in tst_QWebInspector::attachAndDestroy
+        https://bugs.webkit.org/show_bug.cgi?id=101575
+
+        Reviewed by Simon Hausmann.
+
+        It can now happen that destroyInspectorView is called when the Page
+        is destroyed. This would call getOrCreateInspector and re-create a
+        QWebInspector.
+
+        Since the new instance is created after our setInspector(0) cleanup
+        in ~QWebPagePrivate, this runs into the same crash that this line was
+        protecting us against.
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorFrontendClientQt::destroyInspectorView):
+
+2012-11-08  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Fix tst_QWebPage::inputMethods on Qt5
         https://bugs.webkit.org/show_bug.cgi?id=101571
 
