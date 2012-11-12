@@ -59,7 +59,6 @@ inline bool compile(CompileMode compileMode, JSGlobalData& globalData, CodeBlock
     if (compileMode == CompileFunction)
         dfg.predictArgumentTypes();
 
-    performRedundantPhiElimination(dfg);
     performPredictionPropagation(dfg);
     performFixup(dfg);
     performCSE(dfg);
