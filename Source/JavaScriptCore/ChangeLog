@@ -1,5 +1,37 @@
 2012-11-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge fix for <rdar://problem/12486142>.
+
+    2012-08-13  Filip Pizlo  <fpizlo@apple.com>
+
+            Value recovery for arguments should always just indicate that the argument is in the register file, and
+            not attempt to claim anything about the tag.
+            <rdar://problem/12046032>
+
+            The code previously attempted to base the value recovery on the VariableAccessData prediction. This is
+            wrong for two reasons: first, SetLocals speculate on the argument-aware prediction, which is different
+            from the prediction, if the argument was used to store different types; and second, even if the
+            argument-aware prediction indicates some unboxed type (int, bool, or cell) then it must be the case
+            that the tag that was stored by the caller would be identical to the tag implied by the prediction -
+            so OSR can just assume that the argument already holds a fully decorated JSValue. Of special note are
+            double predictions: the DFG has never stored unboxed doubles into arguments, so those don't need
+            special treatment here.
+
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+
+    2012-07-24  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG method checks should keep the receiver of the property access alive until all checks complete.
+            <rdar://problem/11781190>
+
+            Reviewed by Gavin Barraclough.
+
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::parseBlock):
+
+2012-11-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r129440
 
     2012-09-24  Filip Pizlo  <fpizlo@apple.com>
