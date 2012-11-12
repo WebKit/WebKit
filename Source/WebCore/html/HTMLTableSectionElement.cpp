@@ -47,7 +47,7 @@ PassRefPtr<HTMLTableSectionElement> HTMLTableSectionElement::create(const Qualif
     return adoptRef(new HTMLTableSectionElement(tagName, document));
 }
 
-const StylePropertySet* HTMLTableSectionElement::additionalAttributeStyle()
+const StylePropertySet* HTMLTableSectionElement::additionalPresentationAttributeStyle()
 {
     if (HTMLTableElement* table = findParentTable())
         return table->additionalGroupStyle(true);

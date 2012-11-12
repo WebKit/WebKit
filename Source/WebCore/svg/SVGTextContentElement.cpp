@@ -236,17 +236,17 @@ bool SVGTextContentElement::isPresentationAttribute(const QualifiedName& name) c
     return SVGStyledElement::isPresentationAttribute(name);
 }
 
-void SVGTextContentElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void SVGTextContentElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (!isSupportedAttribute(attribute.name()))
-        SVGStyledElement::collectStyleForAttribute(attribute, style);
+        SVGStyledElement::collectStyleForPresentationAttribute(attribute, style);
     else if (attribute.name().matches(XMLNames::spaceAttr)) {
         DEFINE_STATIC_LOCAL(const AtomicString, preserveString, ("preserve", AtomicString::ConstructFromLiteral));
 
         if (attribute.value() == preserveString)
-            addPropertyToAttributeStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
         else
-            addPropertyToAttributeStyle(style, CSSPropertyWhiteSpace, CSSValueNowrap);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValueNowrap);
     }
 }
 

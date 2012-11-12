@@ -49,12 +49,12 @@ bool HTMLPreElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLPreElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLPreElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == wrapAttr)
         style->setProperty(CSSPropertyWhiteSpace, CSSValuePreWrap);
     else
-        HTMLElement::collectStyleForAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 }

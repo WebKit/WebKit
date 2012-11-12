@@ -304,7 +304,7 @@ static bool getBordersFromFrameAttributeValue(const AtomicString& value, bool& b
     return true;
 }
 
-void HTMLTableElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLTableElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
@@ -312,7 +312,7 @@ void HTMLTableElement::collectStyleForAttribute(const Attribute& attribute, Styl
         addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
     else if (attribute.name() == borderAttr) {
         int borderWidth = attribute.isEmpty() ? 1 : attribute.value().toInt();
-        addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, borderWidth, CSSPrimitiveValue::CSS_PX);
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, borderWidth, CSSPrimitiveValue::CSS_PX);
     } else if (attribute.name() == bordercolorAttr) {
         if (!attribute.isEmpty())
             addHTMLColorToStyle(style, CSSPropertyBorderColor, attribute.value());
@@ -324,7 +324,7 @@ void HTMLTableElement::collectStyleForAttribute(const Attribute& attribute, Styl
             style->setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document()->completeURL(url).string())));
     } else if (attribute.name() == valignAttr) {
         if (!attribute.isEmpty())
-            addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attribute.value());
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, attribute.value());
     } else if (attribute.name() == cellspacingAttr) {
         if (!attribute.isEmpty())
             addHTMLLengthToStyle(style, CSSPropertyBorderSpacing, attribute.value());
@@ -337,29 +337,29 @@ void HTMLTableElement::collectStyleForAttribute(const Attribute& attribute, Styl
     } else if (attribute.name() == alignAttr) {
         if (!attribute.value().isEmpty()) {
             if (equalIgnoringCase(attribute.value(), "center")) {
-                addPropertyToAttributeStyle(style, CSSPropertyWebkitMarginStart, CSSValueAuto);
-                addPropertyToAttributeStyle(style, CSSPropertyWebkitMarginEnd, CSSValueAuto);
+                addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarginStart, CSSValueAuto);
+                addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarginEnd, CSSValueAuto);
             } else
-                addPropertyToAttributeStyle(style, CSSPropertyFloat, attribute.value());
+                addPropertyToPresentationAttributeStyle(style, CSSPropertyFloat, attribute.value());
         }
     } else if (attribute.name() == rulesAttr) {
         // The presence of a valid rules attribute causes border collapsing to be enabled.
         if (m_rulesAttr != UnsetRules)
-            addPropertyToAttributeStyle(style, CSSPropertyBorderCollapse, CSSValueCollapse);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderCollapse, CSSValueCollapse);
     } else if (attribute.name() == frameAttr) {
         bool borderTop;
         bool borderRight;
         bool borderBottom;
         bool borderLeft;
         if (getBordersFromFrameAttributeValue(attribute.value(), borderTop, borderRight, borderBottom, borderLeft)) {
-            addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, CSSValueThin);
-            addPropertyToAttributeStyle(style, CSSPropertyBorderTopStyle, borderTop ? CSSValueSolid : CSSValueHidden);
-            addPropertyToAttributeStyle(style, CSSPropertyBorderBottomStyle, borderBottom ? CSSValueSolid : CSSValueHidden);
-            addPropertyToAttributeStyle(style, CSSPropertyBorderLeftStyle, borderLeft ? CSSValueSolid : CSSValueHidden);
-            addPropertyToAttributeStyle(style, CSSPropertyBorderRightStyle, borderRight ? CSSValueSolid : CSSValueHidden);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, CSSValueThin);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderTopStyle, borderTop ? CSSValueSolid : CSSValueHidden);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderBottomStyle, borderBottom ? CSSValueSolid : CSSValueHidden);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderLeftStyle, borderLeft ? CSSValueSolid : CSSValueHidden);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderRightStyle, borderRight ? CSSValueSolid : CSSValueHidden);
         }
     } else
-        HTMLElement::collectStyleForAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 bool HTMLTableElement::isPresentationAttribute(const QualifiedName& name) const
@@ -432,7 +432,7 @@ static StylePropertySet* leakBorderStyle(int value)
     return style.release().leakRef();
 }
 
-const StylePropertySet* HTMLTableElement::additionalAttributeStyle()
+const StylePropertySet* HTMLTableElement::additionalPresentationAttributeStyle()
 {
     if (m_frameAttr)
         return 0;

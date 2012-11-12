@@ -71,12 +71,12 @@ bool HTMLFrameSetElement::isPresentationAttribute(const QualifiedName& name) con
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLFrameSetElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLFrameSetElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == bordercolorAttr)
         addHTMLColorToStyle(style, CSSPropertyBorderColor, attribute.value());
     else
-        HTMLElement::collectStyleForAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 void HTMLFrameSetElement::parseAttribute(const Attribute& attribute)

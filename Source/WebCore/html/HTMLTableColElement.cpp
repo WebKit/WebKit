@@ -54,12 +54,12 @@ bool HTMLTableColElement::isPresentationAttribute(const QualifiedName& name) con
     return HTMLTablePartElement::isPresentationAttribute(name);
 }
 
-void HTMLTableColElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLTableColElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
     else
-        HTMLTablePartElement::collectStyleForAttribute(attribute, style);
+        HTMLTablePartElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 void HTMLTableColElement::parseAttribute(const Attribute& attribute)
@@ -81,7 +81,7 @@ void HTMLTableColElement::parseAttribute(const Attribute& attribute)
         HTMLTablePartElement::parseAttribute(attribute);
 }
 
-const StylePropertySet* HTMLTableColElement::additionalAttributeStyle()
+const StylePropertySet* HTMLTableColElement::additionalPresentationAttributeStyle()
 {
     if (!hasLocalName(colgroupTag))
         return 0;

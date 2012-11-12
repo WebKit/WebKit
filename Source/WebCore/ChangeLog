@@ -1,3 +1,174 @@
+2012-11-12  Andreas Kling  <kling@webkit.org>
+
+        Rename AttributeStyle => PresentationAttributeStyle across WebCore.
+        <http://webkit.org/b/101975>
+
+        Rubber-stamped by Antti Koivisto.
+
+        The completely separate concepts of "attribute style" and "style attribute" were a bit too
+        easy to confuse in variable and method names. Reconfigure our terminology to call it
+        "presentation attribute style" instead of "attribute style".
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::sweepMatchedPropertiesCache):
+        (WebCore::StyleResolver::matchAllRules):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        * dom/Attr.cpp:
+        (WebCore::Attr::style):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::MutableElementAttributeData::MutableElementAttributeData):
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::presentationAttributeStyle):
+        (WebCore::ElementAttributeData::setPresentationAttributeStyle):
+        (ElementAttributeData):
+        * dom/Node.h:
+        (WebCore::Node::attributeStyleDirty):
+        (WebCore::Node::setPresentationAttributeStyleDirty):
+        (WebCore::Node::clearPresentationAttributeStyleDirty):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+        (WebCore::StyledElement::addPropertyToPresentationAttributeStyle):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::additionalPresentationAttributeStyle):
+        (StyledElement):
+        (WebCore::StyledElement::collectStyleForPresentationAttribute):
+        (WebCore::StyledElement::presentationAttributeStyle):
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::collectStyleForPresentationAttribute):
+        * html/HTMLBRElement.h:
+        (HTMLBRElement):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::collectStyleForPresentationAttribute):
+        * html/HTMLBodyElement.h:
+        (HTMLBodyElement):
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::collectStyleForPresentationAttribute):
+        * html/HTMLDivElement.h:
+        (HTMLDivElement):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::applyBorderAttributeToStyle):
+        (WebCore::HTMLElement::mapLanguageAttributeToLocale):
+        (WebCore::HTMLElement::collectStyleForPresentationAttribute):
+        (WebCore::HTMLElement::applyAlignmentAttributeToStyle):
+        (WebCore::HTMLElement::addHTMLLengthToStyle):
+        * html/HTMLElement.h:
+        (HTMLElement):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::collectStyleForPresentationAttribute):
+        * html/HTMLEmbedElement.h:
+        (HTMLEmbedElement):
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::collectStyleForPresentationAttribute):
+        * html/HTMLFontElement.h:
+        (HTMLFontElement):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::collectStyleForPresentationAttribute):
+        * html/HTMLFrameSetElement.h:
+        (HTMLFrameSetElement):
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::collectStyleForPresentationAttribute):
+        * html/HTMLHRElement.h:
+        (HTMLHRElement):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::collectStyleForPresentationAttribute):
+        * html/HTMLIFrameElement.h:
+        (HTMLIFrameElement):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::collectStyleForPresentationAttribute):
+        * html/HTMLImageElement.h:
+        (HTMLImageElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::collectStyleForPresentationAttribute):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::collectStyleForPresentationAttribute):
+        * html/HTMLLIElement.h:
+        (HTMLLIElement):
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::collectStyleForPresentationAttribute):
+        * html/HTMLMarqueeElement.h:
+        (HTMLMarqueeElement):
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::collectStyleForPresentationAttribute):
+        * html/HTMLOListElement.h:
+        (HTMLOListElement):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::collectStyleForPresentationAttribute):
+        * html/HTMLObjectElement.h:
+        (HTMLObjectElement):
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::collectStyleForPresentationAttribute):
+        * html/HTMLParagraphElement.h:
+        (HTMLParagraphElement):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::collectStyleForPresentationAttribute):
+        * html/HTMLPlugInElement.h:
+        (HTMLPlugInElement):
+        * html/HTMLPreElement.cpp:
+        (WebCore::HTMLPreElement::collectStyleForPresentationAttribute):
+        * html/HTMLPreElement.h:
+        (HTMLPreElement):
+        * html/HTMLTableCaptionElement.cpp:
+        (WebCore::HTMLTableCaptionElement::collectStyleForPresentationAttribute):
+        * html/HTMLTableCaptionElement.h:
+        (HTMLTableCaptionElement):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::collectStyleForPresentationAttribute):
+        (WebCore::HTMLTableCellElement::additionalPresentationAttributeStyle):
+        * html/HTMLTableCellElement.h:
+        (HTMLTableCellElement):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::collectStyleForPresentationAttribute):
+        (WebCore::HTMLTableColElement::additionalPresentationAttributeStyle):
+        * html/HTMLTableColElement.h:
+        (HTMLTableColElement):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectStyleForPresentationAttribute):
+        (WebCore::HTMLTableElement::additionalPresentationAttributeStyle):
+        * html/HTMLTableElement.h:
+        (HTMLTableElement):
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::collectStyleForPresentationAttribute):
+        * html/HTMLTablePartElement.h:
+        (HTMLTablePartElement):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::additionalPresentationAttributeStyle):
+        * html/HTMLTableSectionElement.h:
+        (HTMLTableSectionElement):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::collectStyleForPresentationAttribute):
+        * html/HTMLTextAreaElement.h:
+        (HTMLTextAreaElement):
+        * html/HTMLUListElement.cpp:
+        (WebCore::HTMLUListElement::collectStyleForPresentationAttribute):
+        * html/HTMLUListElement.h:
+        (HTMLUListElement):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::collectStyleForPresentationAttribute):
+        * html/HTMLVideoElement.h:
+        (HTMLVideoElement):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::collectStyleForPresentationAttribute):
+        * mathml/MathMLElement.h:
+        (MathMLElement):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::collectStyleForPresentationAttribute):
+        * svg/SVGImageElement.h:
+        (SVGImageElement):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::collectStyleForPresentationAttribute):
+        * svg/SVGStyledElement.h:
+        (SVGStyledElement):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::collectStyleForPresentationAttribute):
+        * svg/SVGTextContentElement.h:
+        (SVGTextContentElement):
+
 2012-11-12  Adam Barth  <abarth@webkit.org>
 
         [V8] Many things crash when switching to V8's new aligned pointer API

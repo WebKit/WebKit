@@ -55,9 +55,9 @@ private:
 
     virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
+    virtual void collectStyleForPresentationAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
 
-    virtual const StylePropertySet* additionalAttributeStyle() OVERRIDE;
+    virtual const StylePropertySet* additionalPresentationAttributeStyle() OVERRIDE;
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 

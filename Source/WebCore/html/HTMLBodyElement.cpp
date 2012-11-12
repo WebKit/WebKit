@@ -68,7 +68,7 @@ bool HTMLBodyElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLBodyElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLBodyElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == backgroundAttr) {
         String url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
@@ -86,9 +86,9 @@ void HTMLBodyElement::collectStyleForAttribute(const Attribute& attribute, Style
         addHTMLColorToStyle(style, CSSPropertyColor, attribute.value());
     } else if (attribute.name() == bgpropertiesAttr) {
         if (equalIgnoringCase(attribute.value(), "fixed"))
-           addPropertyToAttributeStyle(style, CSSPropertyBackgroundAttachment, CSSValueFixed);
+           addPropertyToPresentationAttributeStyle(style, CSSPropertyBackgroundAttachment, CSSValueFixed);
     } else
-        HTMLElement::collectStyleForAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 void HTMLBodyElement::parseAttribute(const Attribute& attribute)

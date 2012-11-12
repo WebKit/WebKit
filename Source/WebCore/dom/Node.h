@@ -319,7 +319,7 @@ public:
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool /* error loading subresource */) { }
     virtual void startLoadingDynamicSheet() { ASSERT_NOT_REACHED(); }
 
-    bool attributeStyleDirty() const { return getFlag(AttributeStyleDirtyFlag); }
+    bool attributeStyleDirty() const { return getFlag(PresentationAttributeStyleDirtyFlag); }
     bool hasName() const { return getFlag(HasNameFlag); }
     bool hasID() const;
     bool hasClass() const;
@@ -335,8 +335,8 @@ public:
     bool childNeedsStyleRecalc() const { return getFlag(ChildNeedsStyleRecalcFlag); }
     bool isLink() const { return getFlag(IsLinkFlag); }
 
-    void setAttributeStyleDirty() { setFlag(AttributeStyleDirtyFlag); }
-    void clearAttributeStyleDirty() { clearFlag(AttributeStyleDirtyFlag); }
+    void setPresentationAttributeStyleDirty() { setFlag(PresentationAttributeStyleDirtyFlag); }
+    void clearPresentationAttributeStyleDirty() { clearFlag(PresentationAttributeStyleDirtyFlag); }
 
     void setHasName(bool f) { setFlag(f, HasNameFlag); }
     void setChildNeedsStyleRecalc() { setFlag(ChildNeedsStyleRecalcFlag); }
@@ -723,7 +723,7 @@ private:
 
         HasNameFlag = 1 << 23,
 
-        AttributeStyleDirtyFlag = 1 << 24,
+        PresentationAttributeStyleDirtyFlag = 1 << 24,
 
 #if ENABLE(SVG)
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag,

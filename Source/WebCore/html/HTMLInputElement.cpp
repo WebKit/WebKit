@@ -621,7 +621,7 @@ bool HTMLInputElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLTextFormControlElement::isPresentationAttribute(name);
 }
 
-void HTMLInputElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLInputElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == vspaceAttr) {
         addHTMLLengthToStyle(style, CSSPropertyMarginTop, attribute.value());
@@ -641,7 +641,7 @@ void HTMLInputElement::collectStyleForAttribute(const Attribute& attribute, Styl
     } else if (attribute.name() == borderAttr && isImageButton())
         applyBorderAttributeToStyle(attribute, style);
     else
-        HTMLTextFormControlElement::collectStyleForAttribute(attribute, style);
+        HTMLTextFormControlElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 void HTMLInputElement::parseAttribute(const Attribute& attribute)

@@ -98,14 +98,14 @@ bool SVGImageElement::isPresentationAttribute(const QualifiedName& name) const
     return SVGStyledTransformableElement::isPresentationAttribute(name);
 }
 
-void SVGImageElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void SVGImageElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (!isSupportedAttribute(attribute.name()))
-        SVGStyledTransformableElement::collectStyleForAttribute(attribute, style);
+        SVGStyledTransformableElement::collectStyleForPresentationAttribute(attribute, style);
     else if (attribute.name() == SVGNames::widthAttr)
-        addPropertyToAttributeStyle(style, CSSPropertyWidth, attribute.value());
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyWidth, attribute.value());
     else if (attribute.name() == SVGNames::heightAttr)
-        addPropertyToAttributeStyle(style, CSSPropertyHeight, attribute.value());
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyHeight, attribute.value());
 }
 
 void SVGImageElement::parseAttribute(const Attribute& attribute)

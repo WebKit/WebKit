@@ -478,8 +478,8 @@ StyleResolver::~StyleResolver()
 void StyleResolver::sweepMatchedPropertiesCache(Timer<StyleResolver>*)
 {
     // Look for cache entries containing a style declaration with a single ref and remove them.
-    // This may happen when an element attribute mutation causes it to generate a new attributeStyle(),
-    // potentially leaving this cache with the last ref on the old one.
+    // This may happen when an element attribute mutation causes it to generate a new inlineStyle()
+    // or presentationAttributeStyle(), potentially leaving this cache with the last ref on the old one.
     Vector<unsigned, 16> toRemove;
     MatchedPropertiesCache::iterator it = m_matchedPropertiesCache.begin();
     MatchedPropertiesCache::iterator end = m_matchedPropertiesCache.end();
@@ -927,12 +927,12 @@ void StyleResolver::matchAllRules(MatchResult& result, bool includeSMILPropertie
         
     // Now check author rules, beginning first with presentational attributes mapped from HTML.
     if (m_styledElement) {
-        addElementStyleProperties(result, m_styledElement->attributeStyle());
+        addElementStyleProperties(result, m_styledElement->presentationAttributeStyle());
 
         // Now we check additional mapped declarations.
         // Tables and table cells share an additional mapped rule that must be applied
         // after all attributes, since their mapped style depends on the values of multiple attributes.
-        addElementStyleProperties(result, m_styledElement->additionalAttributeStyle());
+        addElementStyleProperties(result, m_styledElement->additionalPresentationAttributeStyle());
 
         if (m_styledElement->isHTMLElement()) {
             bool isAuto;
@@ -1179,11 +1179,11 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element->isSVGElement() && static_cast<SVGElement*>(element)->animatedSMILStyleProperties())
         return false;
 #endif
-    if (!!element->attributeStyle() != !!m_styledElement->attributeStyle())
+    if (!!element->presentationAttributeStyle() != !!m_styledElement->presentationAttributeStyle())
         return false;
-    const StylePropertySet* additionalAttributeStyleA = element->additionalAttributeStyle();
-    const StylePropertySet* additionalAttributeStyleB = m_styledElement->additionalAttributeStyle();
-    if (!additionalAttributeStyleA != !additionalAttributeStyleB)
+    const StylePropertySet* additionalPresentationAttributeStyleA = element->additionalPresentationAttributeStyle();
+    const StylePropertySet* additionalPresentationAttributeStyleB = m_styledElement->additionalPresentationAttributeStyle();
+    if (!additionalPresentationAttributeStyleA != !additionalPresentationAttributeStyleB)
         return false;
     if (element->isLink() != m_element->isLink())
         return false;
@@ -1266,10 +1266,10 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
             return false;
     }
 
-    if (element->attributeStyle() && !attributeStylesEqual(element->attributeStyle(), m_styledElement->attributeStyle()))
+    if (element->presentationAttributeStyle() && !attributeStylesEqual(element->presentationAttributeStyle(), m_styledElement->presentationAttributeStyle()))
         return false;
 
-    if (additionalAttributeStyleA && !attributeStylesEqual(additionalAttributeStyleA, additionalAttributeStyleB))
+    if (additionalPresentationAttributeStyleA && !attributeStylesEqual(additionalPresentationAttributeStyleA, additionalPresentationAttributeStyleB))
         return false;
 
     if (element->isLink() && m_elementLinkState != style->insideLink())

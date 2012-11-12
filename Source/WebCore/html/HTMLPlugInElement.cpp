@@ -169,7 +169,7 @@ bool HTMLPlugInElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLFrameOwnerElement::isPresentationAttribute(name);
 }
 
-void HTMLPlugInElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLPlugInElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
@@ -184,7 +184,7 @@ void HTMLPlugInElement::collectStyleForAttribute(const Attribute& attribute, Sty
     } else if (attribute.name() == alignAttr)
         applyAlignmentAttributeToStyle(attribute, style);
     else
-        HTMLFrameOwnerElement::collectStyleForAttribute(attribute, style);
+        HTMLFrameOwnerElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 void HTMLPlugInElement::defaultEventHandler(Event* event)

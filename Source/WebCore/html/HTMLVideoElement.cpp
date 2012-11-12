@@ -87,14 +87,14 @@ void HTMLVideoElement::attach()
 #endif
 }
 
-void HTMLVideoElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLVideoElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
     else if (attribute.name() == heightAttr)
         addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
     else
-        HTMLMediaElement::collectStyleForAttribute(attribute, style);
+        HTMLMediaElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 bool HTMLVideoElement::isPresentationAttribute(const QualifiedName& name) const

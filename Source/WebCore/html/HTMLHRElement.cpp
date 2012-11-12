@@ -56,32 +56,32 @@ bool HTMLHRElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLHRElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLHRElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == alignAttr) {
         if (equalIgnoringCase(attribute.value(), "left")) {
-            addPropertyToAttributeStyle(style, CSSPropertyMarginLeft, 0, CSSPrimitiveValue::CSS_PX);
-            addPropertyToAttributeStyle(style, CSSPropertyMarginRight, CSSValueAuto);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyMarginLeft, 0, CSSPrimitiveValue::CSS_PX);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyMarginRight, CSSValueAuto);
         } else if (equalIgnoringCase(attribute.value(), "right")) {
-            addPropertyToAttributeStyle(style, CSSPropertyMarginLeft, CSSValueAuto);
-            addPropertyToAttributeStyle(style, CSSPropertyMarginRight, 0, CSSPrimitiveValue::CSS_PX);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyMarginLeft, CSSValueAuto);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyMarginRight, 0, CSSPrimitiveValue::CSS_PX);
         } else {
-            addPropertyToAttributeStyle(style, CSSPropertyMarginLeft, CSSValueAuto);
-            addPropertyToAttributeStyle(style, CSSPropertyMarginRight, CSSValueAuto);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyMarginLeft, CSSValueAuto);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyMarginRight, CSSValueAuto);
         }
     } else if (attribute.name() == widthAttr) {
         bool ok;
         int v = attribute.value().toInt(&ok);
         if (ok && !v)
-            addPropertyToAttributeStyle(style, CSSPropertyWidth, 1, CSSPrimitiveValue::CSS_PX);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWidth, 1, CSSPrimitiveValue::CSS_PX);
         else
             addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
     } else if (attribute.name() == colorAttr) {
-        addPropertyToAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
         addHTMLColorToStyle(style, CSSPropertyBorderColor, attribute.value());
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attribute.value());
     } else if (attribute.name() == noshadeAttr) {
-        addPropertyToAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 
         RefPtr<CSSPrimitiveValue> darkGrayValue = cssValuePool().createColorValue(Color::darkGray);
         style->setProperty(CSSPropertyBorderColor, darkGrayValue);
@@ -90,11 +90,11 @@ void HTMLHRElement::collectStyleForAttribute(const Attribute& attribute, StylePr
         StringImpl* si = attribute.value().impl();
         int size = si->toInt();
         if (size <= 1)
-            addPropertyToAttributeStyle(style, CSSPropertyBorderBottomWidth, 0, CSSPrimitiveValue::CSS_PX);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderBottomWidth, 0, CSSPrimitiveValue::CSS_PX);
         else
-            addPropertyToAttributeStyle(style, CSSPropertyHeight, size - 2, CSSPrimitiveValue::CSS_PX);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyHeight, size - 2, CSSPrimitiveValue::CSS_PX);
     } else
-        HTMLElement::collectStyleForAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 }

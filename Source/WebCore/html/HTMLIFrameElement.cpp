@@ -56,7 +56,7 @@ bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLFrameElementBase::isPresentationAttribute(name);
 }
 
-void HTMLIFrameElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLIFrameElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
@@ -69,10 +69,10 @@ void HTMLIFrameElement::collectStyleForAttribute(const Attribute& attribute, Sty
         // a presentational hint that the border should be off if set to zero.
         if (!attribute.isNull() && !attribute.value().toInt()) {
             // Add a rule that nulls out our border width.
-            addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, 0, CSSPrimitiveValue::CSS_PX);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, 0, CSSPrimitiveValue::CSS_PX);
         }
     } else
-        HTMLFrameElementBase::collectStyleForAttribute(attribute, style);
+        HTMLFrameElementBase::collectStyleForPresentationAttribute(attribute, style);
 }
 
 void HTMLIFrameElement::parseAttribute(const Attribute& attribute)

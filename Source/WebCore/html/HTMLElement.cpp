@@ -142,8 +142,8 @@ static unsigned parseBorderWidthAttribute(const Attribute& attribute)
 
 void HTMLElement::applyBorderAttributeToStyle(const Attribute& attribute, StylePropertySet* style)
 {
-    addPropertyToAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(attribute), CSSPrimitiveValue::CSS_PX);
-    addPropertyToAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
+    addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(attribute), CSSPrimitiveValue::CSS_PX);
+    addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 }
 
 void HTMLElement::mapLanguageAttributeToLocale(const Attribute& attribute, StylePropertySet* style)
@@ -151,10 +151,10 @@ void HTMLElement::mapLanguageAttributeToLocale(const Attribute& attribute, Style
     ASSERT((attribute.name() == langAttr || attribute.name().matches(XMLNames::langAttr)));
     if (!attribute.isEmpty()) {
         // Have to quote so the locale id is treated as a string instead of as a CSS keyword.
-        addPropertyToAttributeStyle(style, CSSPropertyWebkitLocale, quoteCSSString(attribute.value()));
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLocale, quoteCSSString(attribute.value()));
     } else {
         // The empty string means the language is explicitly unknown.
-        addPropertyToAttributeStyle(style, CSSPropertyWebkitLocale, CSSValueAuto);
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLocale, CSSValueAuto);
     }
 }
 
@@ -165,41 +165,41 @@ bool HTMLElement::isPresentationAttribute(const QualifiedName& name) const
     return StyledElement::isPresentationAttribute(name);
 }
 
-void HTMLElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == alignAttr) {
         if (equalIgnoringCase(attribute.value(), "middle"))
-            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, CSSValueCenter);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueCenter);
         else
-            addPropertyToAttributeStyle(style, CSSPropertyTextAlign, attribute.value());
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, attribute.value());
     } else if (attribute.name() == contenteditableAttr) {
         if (attribute.isEmpty() || equalIgnoringCase(attribute.value(), "true")) {
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadWrite);
-            addPropertyToAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadWrite);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
         } else if (equalIgnoringCase(attribute.value(), "plaintext-only")) {
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadWritePlaintextOnly);
-            addPropertyToAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadWritePlaintextOnly);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
         } else if (equalIgnoringCase(attribute.value(), "false"))
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadOnly);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadOnly);
     } else if (attribute.name() == hiddenAttr) {
-        addPropertyToAttributeStyle(style, CSSPropertyDisplay, CSSValueNone);
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyDisplay, CSSValueNone);
     } else if (attribute.name() == draggableAttr) {
         if (equalIgnoringCase(attribute.value(), "true")) {
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
         } else if (equalIgnoringCase(attribute.value(), "false"))
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
     } else if (attribute.name() == dirAttr) {
         if (equalIgnoringCase(attribute.value(), "auto"))
-            addPropertyToAttributeStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(this));
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(this));
         else {
-            addPropertyToAttributeStyle(style, CSSPropertyDirection, attribute.value());
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyDirection, attribute.value());
             if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
-                addPropertyToAttributeStyle(style, CSSPropertyUnicodeBidi, CSSValueEmbed);
+                addPropertyToPresentationAttributeStyle(style, CSSPropertyUnicodeBidi, CSSValueEmbed);
         }
     } else if (attribute.name().matches(XMLNames::langAttr)) {
         mapLanguageAttributeToLocale(attribute, style);
@@ -208,7 +208,7 @@ void HTMLElement::collectStyleForAttribute(const Attribute& attribute, StyleProp
         if (!fastHasAttribute(XMLNames::langAttr))
             mapLanguageAttributeToLocale(attribute, style);
     } else
-        StyledElement::collectStyleForAttribute(attribute, style);
+        StyledElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 void HTMLElement::parseAttribute(const Attribute& attribute)
@@ -621,10 +621,10 @@ void HTMLElement::applyAlignmentAttributeToStyle(const Attribute& attribute, Sty
         verticalAlignValue = CSSValueTextTop;
 
     if (floatValue != CSSValueInvalid)
-        addPropertyToAttributeStyle(style, CSSPropertyFloat, floatValue);
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyFloat, floatValue);
 
     if (verticalAlignValue != CSSValueInvalid)
-        addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, verticalAlignValue);
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, verticalAlignValue);
 }
 
 bool HTMLElement::hasCustomFocusLogic() const
@@ -1067,12 +1067,12 @@ void HTMLElement::addHTMLLengthToStyle(StylePropertySet* style, CSSPropertyID pr
         }
 
         if (l != v->length()) {
-            addPropertyToAttributeStyle(style, propertyID, v->substring(0, l));
+            addPropertyToPresentationAttributeStyle(style, propertyID, v->substring(0, l));
             return;
         }
     }
 
-    addPropertyToAttributeStyle(style, propertyID, value);
+    addPropertyToPresentationAttributeStyle(style, propertyID, value);
 }
 
 static RGBA32 parseColorStringWithCrazyLegacyRules(const String& colorString)

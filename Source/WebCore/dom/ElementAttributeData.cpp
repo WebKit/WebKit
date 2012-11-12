@@ -63,7 +63,7 @@ MutableElementAttributeData::MutableElementAttributeData(const ImmutableElementA
     const ElementAttributeData& baseOther = static_cast<const ElementAttributeData&>(other);
 
     m_inlineStyleDecl = baseOther.m_inlineStyleDecl;
-    m_attributeStyle = baseOther.m_attributeStyle;
+    m_presentationAttributeStyle = baseOther.m_presentationAttributeStyle;
     m_classNames = baseOther.m_classNames;
     m_idForStyleResolution = baseOther.m_idForStyleResolution;
 
@@ -168,7 +168,7 @@ void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     size_t actualSize = m_isMutable ? sizeof(ElementAttributeData) : sizeForImmutableElementAttributeDataWithAttributeCount(m_arraySize);
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM, actualSize);
     info.addMember(m_inlineStyleDecl);
-    info.addMember(m_attributeStyle);
+    info.addMember(m_presentationAttributeStyle);
     info.addMember(m_classNames);
     info.addMember(m_idForStyleResolution);
     if (m_isMutable)

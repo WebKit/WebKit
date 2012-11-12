@@ -291,11 +291,11 @@ bool SVGStyledElement::isPresentationAttribute(const QualifiedName& name) const
     return SVGElement::isPresentationAttribute(name);
 }
 
-void SVGStyledElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void SVGStyledElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     CSSPropertyID propertyID = SVGStyledElement::cssPropertyIdForSVGAttributeName(attribute.name());
     if (propertyID > 0)
-        addPropertyToAttributeStyle(style, propertyID, attribute.value());
+        addPropertyToPresentationAttributeStyle(style, propertyID, attribute.value());
 }
 
 void SVGStyledElement::parseAttribute(const Attribute& attribute)

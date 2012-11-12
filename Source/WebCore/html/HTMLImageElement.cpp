@@ -137,7 +137,7 @@ bool HTMLImageElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLImageElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLImageElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
@@ -154,9 +154,9 @@ void HTMLImageElement::collectStyleForAttribute(const Attribute& attribute, Styl
     } else if (attribute.name() == alignAttr)
         applyAlignmentAttributeToStyle(attribute, style);
     else if (attribute.name() == valignAttr)
-        addPropertyToAttributeStyle(style, CSSPropertyVerticalAlign, attribute.value());
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, attribute.value());
     else
-        HTMLElement::collectStyleForAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 void HTMLImageElement::parseAttribute(const Attribute& attribute)

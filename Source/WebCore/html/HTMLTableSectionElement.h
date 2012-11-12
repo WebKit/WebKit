@@ -56,7 +56,7 @@ public:
 private:
     HTMLTableSectionElement(const QualifiedName& tagName, Document*);
 
-    virtual const StylePropertySet* additionalAttributeStyle() OVERRIDE;
+    virtual const StylePropertySet* additionalPresentationAttributeStyle() OVERRIDE;
 };
 
 } //namespace

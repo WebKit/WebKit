@@ -151,7 +151,7 @@ CSSStyleDeclaration* StyledElement::style()
 void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue)
 {
     if (isPresentationAttribute(name)) {
-        setAttributeStyleDirty();
+        setPresentationAttributeStyleDirty();
         setNeedsStyleRecalc(InlineStyleChange);
     }
 
@@ -281,7 +281,7 @@ static unsigned computePresentationAttributeCacheHash(const PresentationAttribut
     return WTF::pairIntHash(key.tagName->existingHash(), attributeHash);
 }
 
-void StyledElement::updateAttributeStyle()
+void StyledElement::rebuildPresentationAttributeStyle()
 {
     PresentationAttributeCacheKey cacheKey;
     makePresentationAttributeCacheKey(cacheKey);
@@ -305,12 +305,12 @@ void StyledElement::updateAttributeStyle()
         unsigned size = attributeCount();
         for (unsigned i = 0; i < size; ++i) {
             const Attribute* attribute = attributeItem(i);
-            collectStyleForAttribute(*attribute, style.get());
+            collectStyleForPresentationAttribute(*attribute, style.get());
         }
     }
-    clearAttributeStyleDirty();
+    clearPresentationAttributeStyleDirty();
 
-    attributeData()->setAttributeStyle(style->isEmpty() ? 0 : style);
+    attributeData()->setPresentationAttributeStyle(style->isEmpty() ? 0 : style);
 
     if (!cacheHash || cacheIterator->value)
         return;
@@ -328,17 +328,17 @@ void StyledElement::updateAttributeStyle()
         cacheIterator->value = newEntry.release();
 }
 
-void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, int identifier)
+void StyledElement::addPropertyToPresentationAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, int identifier)
 {
     style->setProperty(propertyID, cssValuePool().createIdentifierValue(identifier));
 }
 
-void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, double value, CSSPrimitiveValue::UnitTypes unit)
+void StyledElement::addPropertyToPresentationAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, double value, CSSPrimitiveValue::UnitTypes unit)
 {
     style->setProperty(propertyID, cssValuePool().createValue(value, unit));
 }
     
-void StyledElement::addPropertyToAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, const String& value)
+void StyledElement::addPropertyToPresentationAttributeStyle(StylePropertySet* style, CSSPropertyID propertyID, const String& value)
 {
     style->setProperty(propertyID, value, false, document()->elementSheet()->contents());
 }

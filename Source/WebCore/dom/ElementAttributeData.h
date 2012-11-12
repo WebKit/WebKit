@@ -62,8 +62,8 @@ public:
     void destroyInlineStyle(StyledElement*);
     void detachCSSOMWrapperIfNeeded(StyledElement*);
 
-    const StylePropertySet* attributeStyle() const { return m_attributeStyle.get(); }
-    void setAttributeStyle(PassRefPtr<StylePropertySet> style) const { m_attributeStyle = style; }
+    const StylePropertySet* presentationAttributeStyle() const { return m_presentationAttributeStyle.get(); }
+    void setPresentationAttributeStyle(PassRefPtr<StylePropertySet> style) const { m_presentationAttributeStyle = style; }
 
     size_t length() const;
     bool isEmpty() const { return !length(); }
@@ -105,7 +105,7 @@ protected:
     unsigned m_arraySize : 31;
 
     mutable RefPtr<StylePropertySet> m_inlineStyleDecl;
-    mutable RefPtr<StylePropertySet> m_attributeStyle;
+    mutable RefPtr<StylePropertySet> m_presentationAttributeStyle;
     mutable SpaceSplitString m_classNames;
     mutable AtomicString m_idForStyleResolution;
 

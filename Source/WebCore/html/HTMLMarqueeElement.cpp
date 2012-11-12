@@ -65,7 +65,7 @@ bool HTMLMarqueeElement::isPresentationAttribute(const QualifiedName& name) cons
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLMarqueeElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLMarqueeElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == widthAttr) {
         if (!attribute.isEmpty())
@@ -95,18 +95,18 @@ void HTMLMarqueeElement::collectStyleForAttribute(const Attribute& attribute, St
     } else if (attribute.name() == loopAttr) {
         if (!attribute.isEmpty()) {
             if (attribute.value() == "-1" || equalIgnoringCase(attribute.value(), "infinite"))
-                addPropertyToAttributeStyle(style, CSSPropertyWebkitMarqueeRepetition, CSSValueInfinite);
+                addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarqueeRepetition, CSSValueInfinite);
             else
                 addHTMLLengthToStyle(style, CSSPropertyWebkitMarqueeRepetition, attribute.value());
         }
     } else if (attribute.name() == behaviorAttr) {
         if (!attribute.isEmpty())
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitMarqueeStyle, attribute.value());
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarqueeStyle, attribute.value());
     } else if (attribute.name() == directionAttr) {
         if (!attribute.isEmpty())
-            addPropertyToAttributeStyle(style, CSSPropertyWebkitMarqueeDirection, attribute.value());
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarqueeDirection, attribute.value());
     } else
-        HTMLElement::collectStyleForAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
 void HTMLMarqueeElement::start()
