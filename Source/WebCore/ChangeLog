@@ -1,3 +1,17 @@
+2012-11-12  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Make sure that MediaConstraints only has optional and mandatory at the top level
+        https://bugs.webkit.org/show_bug.cgi?id=101733
+
+        Reviewed by Jochen Eisinger.
+
+        This patch adds better verification to MediaConstraintsImpl.
+
+        Existing tests expanded to cover this change.
+
+        * Modules/mediastream/MediaConstraintsImpl.cpp:
+        (WebCore::MediaConstraintsImpl::initialize):
+
 2012-11-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134223.

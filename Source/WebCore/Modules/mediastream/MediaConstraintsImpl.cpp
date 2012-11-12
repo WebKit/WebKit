@@ -65,6 +65,13 @@ bool MediaConstraintsImpl::initialize(const Dictionary& constraints)
     constraints.getOwnPropertyNames(names);
 
     String mandatory = ASCIILiteral("mandatory");
+    String optional = ASCIILiteral("optional");
+
+    for (Vector<String>::iterator it = names.begin(); it != names.end(); ++it) {
+        if (*it != mandatory && *it != optional)
+            return false;
+    }
+
     if (names.contains(mandatory)) {
         Dictionary mandatoryConstraints;
         bool ok = constraints.get(mandatory, mandatoryConstraints);
@@ -76,7 +83,6 @@ bool MediaConstraintsImpl::initialize(const Dictionary& constraints)
             return false;
     }
 
-    String optional = ASCIILiteral("optional");
     if (names.contains(optional)) {
         ArrayValue optionalConstraints;
         bool ok = constraints.get(optional, optionalConstraints);
