@@ -1,5 +1,28 @@
 2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Appending "!important" to the property value of QWebElement::setStyleProperty isn't working
+        https://bugs.webkit.org/show_bug.cgi?id=101763
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        In the pastWebCore have been considering the important token of a CSS
+        property value if it was followed by !important as well as the
+        important parameter of setInlineStyleProperty, but not anymore.
+
+        Since we need to keep the behavior compatible, do the parsing of the
+        value and extract the token if present. Ideally this would be passed
+        as a parameter to the function but I think it's not worth deprecating
+        the old mechanism.
+        The parsing is pretty dumb, so this will break applications that
+        passed a value with spaces between the "!" and "important".
+
+        This fixes part of tst_QWebElement::style
+
+        * Api/qwebelement.cpp:
+        (QWebElement::setStyleProperty):
+
+2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Fix URL issues in tst_qwebframe
         https://bugs.webkit.org/show_bug.cgi?id=101741
 

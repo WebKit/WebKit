@@ -869,8 +869,18 @@ void QWebElement::setStyleProperty(const QString &name, const QString &value)
     if (!m_element || !m_element->isStyledElement())
         return;
 
+    // Do the parsing of the token manually since WebCore isn't doing this for us anymore.
+    const QLatin1String importantToken("!important");
+    QString adjustedValue(value);
+    bool important = false;
+    if (adjustedValue.contains(importantToken)) {
+        important = true;
+        adjustedValue.remove(importantToken);
+        adjustedValue = adjustedValue.trimmed();
+    }
+
     CSSPropertyID propID = cssPropertyID(name);
-    static_cast<StyledElement*>(m_element)->setInlineStyleProperty(propID, value);
+    static_cast<StyledElement*>(m_element)->setInlineStyleProperty(propID, adjustedValue, important);
 }
 
 /*!
