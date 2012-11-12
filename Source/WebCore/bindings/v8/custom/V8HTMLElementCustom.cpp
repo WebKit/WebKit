@@ -47,21 +47,4 @@ v8::Handle<v8::Value> toV8(HTMLElement* impl, v8::Handle<v8::Object> creationCon
     return createV8HTMLWrapper(impl, creationContext, isolate);
 }
 
-#if ENABLE(MICRODATA)
-v8::Handle<v8::Value> V8HTMLElement::itemValueAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    HTMLElement* impl = V8HTMLElement::toNative(info.Holder());
-    return toV8(impl->itemValue().get(), info.Holder(), info.GetIsolate());
-}
-
-void V8HTMLElement::itemValueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    HTMLElement* impl = V8HTMLElement::toNative(info.Holder());
-    ExceptionCode ec = 0;
-    impl->setItemValue(toWebCoreString(value), ec);
-    if (ec)
-        setDOMException(ec, info.GetIsolate());
-}
-#endif
-
 } // namespace WebCore

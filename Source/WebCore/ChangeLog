@@ -1,3 +1,18 @@
+2012-11-12  Kentaro Hara  <haraken@chromium.org>
+
+        [V8][JSC] HTMLElement::itemValue() needs not to be custom
+        https://bugs.webkit.org/show_bug.cgi?id=101882
+
+        Reviewed by Adam Barth.
+
+        We can remove a [Custom] IDL attribute.
+
+        No tests. No change in behavior.
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        * bindings/v8/custom/V8HTMLElementCustom.cpp:
+        * html/HTMLElement.idl:
+
 2012-11-12  Andreas Kling  <kling@webkit.org>
 
         RenderStyle: Pack Color members tighter in substructures.

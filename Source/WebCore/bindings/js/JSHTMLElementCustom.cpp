@@ -53,20 +53,4 @@ JSScope* JSHTMLElement::pushEventHandlerScope(ExecState* exec, JSScope* scope) c
     return JSWithScope::create(exec, asObject(toJS(exec, globalObject(), element)), scope);
 }
 
-#if ENABLE(MICRODATA)
-JSValue JSHTMLElement::itemValue(ExecState* exec) const
-{
-    HTMLElement* element = impl();
-    return toJS(exec, globalObject(), WTF::getPtr(element->itemValue()));
-}
-
-void JSHTMLElement::setItemValue(ExecState* exec, JSValue value)
-{
-    HTMLElement* imp = impl();
-    ExceptionCode ec = 0;
-    imp->setItemValue(valueToStringWithNullCheck(exec, value), ec);
-    setDOMException(exec, ec);
-}
-#endif
-
 } // namespace WebCore
