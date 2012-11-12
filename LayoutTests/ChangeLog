@@ -1,3 +1,19 @@
+2012-11-12  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: fix test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=101737
+
+        Reviewed by Yury Semikhatsky.
+
+        The expected order of timeline records of specific types
+        have been changed: https://bugs.webkit.org/show_bug.cgi?id=101544
+
+        This change fixes test expectations.
+        Also removed expectation that test can fail.
+
+        * inspector/timeline/timeline-receive-response-event-expected.txt:
+        * platform/chromium/TestExpectations: Removed "fail" expectation.
+
 2012-11-12  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening after 134099 and 134100. Skipped two tests because layoutTestController

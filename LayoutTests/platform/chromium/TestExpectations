@@ -3561,7 +3561,7 @@ webkit.org/b/90207 [ Win Release ] fast/forms/select/select-state-restore.html [
 webkit.org/b/90207 [ Mac Debug ] fast/forms/select/select-state-restore.html [ Pass Timeout ]
 
 # Flaky
-webkit.org/b/90430 inspector/timeline/timeline-receive-response-event.html [ Failure Pass Timeout ]
+webkit.org/b/90430 inspector/timeline/timeline-receive-response-event.html [ Pass Timeout ]
 
 crbug.com/135709 platform/chromium/compositing/scrollbars/custom-composited-different-track-parts.html [ ImageOnlyFailure Pass ]
 
