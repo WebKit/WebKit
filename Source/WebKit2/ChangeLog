@@ -1,5 +1,22 @@
 2012-11-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r131018
+
+    2012-10-10  Jer Noble  <jer.noble@apple.com>
+
+            Disallow full screen mode keyboard access by default.
+            https://bugs.webkit.org/show_bug.cgi?id=98971
+            <rdar://problem/12474226>
+
+            Reviewed by Sam Weinig.
+
+            Only support full screen if keyboard access is not requested.
+
+            * UIProcess/WebFullScreenManagerProxy.cpp:
+            (WebKit::WebFullScreenManagerProxy::supportsFullScreen):
+
+2012-11-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r126903
 
     2012-08-28  Jon Lee  <jonlee@apple.com>
@@ -47823,6 +47840,7 @@
         socketpair().
 
 == Rolled over to ChangeLog-2011-06-04 ==
+.
 .
 .
 .
