@@ -1,5 +1,19 @@
 2012-11-12  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Performance::memory getter needs not to be [Custom]
+        https://bugs.webkit.org/show_bug.cgi?id=101890
+
+        Reviewed by Adam Barth.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/custom/V8PerformanceCustom.cpp: Removed.
+        * page/Performance.idl:
+
+2012-11-12  Kentaro Hara  <haraken@chromium.org>
+
         [V8][JSC] HTMLOptionsCollection::length needs not to be [Custom]
         https://bugs.webkit.org/show_bug.cgi?id=101888
 
