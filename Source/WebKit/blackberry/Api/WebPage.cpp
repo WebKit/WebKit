@@ -72,6 +72,7 @@
 #include "HTTPParsers.h"
 #include "HistoryItem.h"
 #include "IconDatabaseClientBlackBerry.h"
+#include "ImageDocument.h"
 #include "InPageSearchManager.h"
 #include "InRegionScrollableArea.h"
 #include "InRegionScroller_p.h"
@@ -222,6 +223,7 @@ const IntSize minimumLayoutSize(10, 10); // Needs to be a small size, greater th
 const double minimumExpandingRatio = 0.15;
 
 const double minimumZoomToFitScale = 0.25;
+const double maximumImageDocumentZoomToFitScale = 2;
 
 // Helper function to parse a URL and fill in missing parts.
 static KURL parseUrl(const String& url)
@@ -1662,12 +1664,24 @@ void WebPagePrivate::zoomToInitialScaleOnLoad()
 double WebPagePrivate::zoomToFitScale() const
 {
     int contentWidth = contentsSize().width();
-    int contentHeight = contentsSize().height();
+
+    // For image document, zoom to fit the screen based on the actual image width
+    // instead of the contents width within a maximum scale .
+    Document* doc = m_page->mainFrame()->document();
+    bool isImageDocument = doc && doc->isImageDocument();
+    if (isImageDocument)
+        contentWidth = static_cast<ImageDocument*>(doc)->imageSize().width();
+
     double zoomToFitScale = contentWidth > 0.0 ? static_cast<double>(m_actualVisibleWidth) / contentWidth : 1.0;
+    int contentHeight = contentsSize().height();
     if (contentHeight * zoomToFitScale < static_cast<double>(m_defaultLayoutSize.height()))
         zoomToFitScale = contentHeight > 0 ? static_cast<double>(m_defaultLayoutSize.height()) / contentHeight : 1.0;
+    zoomToFitScale = std::max(zoomToFitScale, minimumZoomToFitScale);
 
-    return std::max(zoomToFitScale, minimumZoomToFitScale);
+    if (!isImageDocument)
+        return zoomToFitScale;
+
+    return std::min(zoomToFitScale, maximumImageDocumentZoomToFitScale);
 }
 
 double WebPagePrivate::initialScale() const

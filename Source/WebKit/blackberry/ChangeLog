@@ -1,3 +1,22 @@
+2012-11-12  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] When opening an image it does not scale to fit our window
+        https://bugs.webkit.org/show_bug.cgi?id=101778
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Konrad Piascik.
+
+        PR: 230935
+        For image document, the actual image size can be different with the
+        contents size. Zoom the document based on the image width so that
+        images can fit the screen horizontally. Set 2.0 as the maximum zoom to
+        fit scale for image document so that very small images won't get
+        ridiculous large scales during the initial load.
+
+        * Api/WebPage.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::zoomToFitScale):
+
 2012-11-12  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Use keyevents instead of editor commands for backspace
