@@ -1,3 +1,14 @@
+2012-11-13  Keishi Hattori  <keishi@webkit.org>
+
+        Build fix for Chromium Android (caused by r134216)
+
+        Unreviewed.
+
+        No new tests.
+
+        * platform/text/PlatformLocale.cpp:
+        (WebCore::Locale::formatDateTime):
+
 2012-11-12  Keishi Hattori  <keishi@webkit.org>
 
         Add support for week/month to Locale::formatDateTime()
