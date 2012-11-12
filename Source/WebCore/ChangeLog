@@ -1,3 +1,36 @@
+2012-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reduce the crazy number of parameters to RenderLayer painting member functions
+        https://bugs.webkit.org/show_bug.cgi?id=101895
+
+        Reviewed by Beth Dakin.
+
+        The various RenderLayer::paintLayer* functions took a lot of arguments, most
+        of which were passed down directly to descendants.
+        
+        Gather these arguments into a LayerPaintingInfo struct.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paint): Create a LayerPaintingInfo struct to pass
+        to descendant paint calls.
+        (WebCore::RenderLayer::paintOverlayScrollbars): Ditto.
+        (WebCore::RenderLayer::paintLayer): When painting transformed layers, we
+        make a new LayerPaintingInfo because the root layer is shifted.
+        (WebCore::RenderLayer::paintLayerContentsAndReflection):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintList):
+        (WebCore::RenderLayer::paintPaginatedChildLayer):
+        (WebCore::RenderLayer::paintChildLayerIntoColumns): Create a new LayerPaintingInfo
+        struct for column painting.
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::LayerPaintingInfo::LayerPaintingInfo):
+        (LayerPaintingInfo):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer): Build a LayerPaintingInfo
+        to enter layer painting.
+        * rendering/RenderReplica.cpp:
+        (WebCore::RenderReplica::paint): Ditto.
+
 2012-11-12  Brady Eidson  <beidson@apple.com>
 
         NetworkProcess: Use an accurate shouldContentSniff value when creating ResourceHandles
