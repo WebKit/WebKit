@@ -1,5 +1,11 @@
 2012-11-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Updated expectations for calendar-picker.
+
+        * platform/chromium/TestExpectations: Updated expectations.
+
+2012-11-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Marked transforms/3d/point-mapping tests as flakey.
         https://bugs.webkit.org/show_bug.cgi?id=101988
 
