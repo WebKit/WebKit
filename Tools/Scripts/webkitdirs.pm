@@ -1514,7 +1514,7 @@ sub launcherName()
     } elsif (isAppleWebKit()) {
         return "Safari";
     } elsif (isEfl()) {
-        return "EWebLauncher";
+        return "EWebLauncher/MiniBrowser";
     } elsif (isWinCE()) {
         return "WinCELauncher";
     }

@@ -1,3 +1,22 @@
+2012-11-11  Kangil Han  <kangil.han@samsung.com>
+
+        Change build congratulation message in EFL
+        https://bugs.webkit.org/show_bug.cgi?id=101833
+
+        Reviewed by Gyuyoung Kim.
+
+        EFL port is currently supporting both WK1 and WK2.
+        But, build congratulation message still shows WK1(EWebLauncher) only.
+        Therefore, this patch adopts WK2 reference execution(MiniBrowser) in its message.
+
+        From 'To run EWebLauncher with this newly-built code, use the'
+        to 'To run EWebLauncher/MiniBrowser with this newly-built code, use the'.
+
+        * Scripts/build-webkit:
+        (writeCongrats):
+        * Scripts/webkitdirs.pm:
+        (launcherName):
+
 2012-11-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         People with dichromacy can't tell crashes and passes on flakiness dashboard

@@ -450,11 +450,11 @@ sub writeCongrats()
     my $buildTime = formatBuildTime($endTime - $startTime);
 
     print "\n";
-    print "===========================================================\n";
+    print "====================================================================\n";
     print " WebKit is now built ($buildTime). \n";
     if (!isChromium()) {
         print " To run $launcherName with this newly-built code, use the\n";
         print " \"$launcherPath\" script.\n";
     }
-    print "===========================================================\n";
+    print "====================================================================\n";
 }
