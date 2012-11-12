@@ -26,7 +26,14 @@
 #include "config.h"
 #include "RemoteLayerTreeTransaction.h"
 
+#include "RemoteGraphicsLayer.h"
+
 namespace WebKit {
+
+RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
+    : changedProperties(NoChange)
+{
+}
 
 RemoteLayerTreeTransaction::RemoteLayerTreeTransaction()
 {
@@ -36,9 +43,14 @@ RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction()
 {
 }
 
-void RemoteLayerTreeTransaction::layerPropertiesChanged(const RemoteGraphicsLayer*, unsigned layerChanges)
+void RemoteLayerTreeTransaction::layerPropertiesChanged(const RemoteGraphicsLayer* graphicsLayer, unsigned changedProperties)
 {
-    // FIXME: Implement this.
+    LayerProperties& layerProperties = m_changedLayerProperties.add(graphicsLayer->layerID(), LayerProperties()).iterator->value;
+
+    layerProperties.changedProperties |= changedProperties;
+
+    if (changedProperties & NameChanged)
+        layerProperties.name = graphicsLayer->name();
 }
 
 } // namespace WebKit

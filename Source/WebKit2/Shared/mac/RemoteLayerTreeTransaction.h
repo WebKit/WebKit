@@ -26,6 +26,9 @@
 #ifndef RemoteLayerTreeTransaction_h
 #define RemoteLayerTreeTransaction_h
 
+#include <wtf/HashMap.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebKit {
 
 class RemoteGraphicsLayer;
@@ -37,10 +40,21 @@ public:
         NameChanged = 1 << 1,
     };
 
+    struct LayerProperties {
+        LayerProperties();
+
+        unsigned changedProperties;
+
+        String name;
+    };
+
     RemoteLayerTreeTransaction();
     ~RemoteLayerTreeTransaction();
 
-    void layerPropertiesChanged(const RemoteGraphicsLayer*, unsigned layerChanges);
+    void layerPropertiesChanged(const RemoteGraphicsLayer*, unsigned changedProperties);
+
+private:
+    HashMap<uint64_t, LayerProperties> m_changedLayerProperties;
 };
 
 } // namespace WebKit

@@ -1,3 +1,28 @@
+2012-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Store name changes in the layer transaction
+        https://bugs.webkit.org/show_bug.cgi?id=101981
+
+        Reviewed by Andreas Kling.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (LayerProperties):
+        Add new LayerProperties class.
+
+        (RemoteLayerTreeTransaction):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::layerPropertiesChanged):
+        Find the changed layer properties for the given layer and apply the changed properties.
+
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.h:
+        (WebKit::RemoteGraphicsLayer::layerID):
+        Add new getter.
+
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.mm:
+        (WebKit::generateLayerID):
+        (WebKit::RemoteGraphicsLayer::RemoteGraphicsLayer):
+        Give each remote graphics layer a unique ID.
+
 2012-11-12  Brady Eidson  <beidson@apple.com>
 
         NetworkProcess: Use an accurate shouldContentSniff value when creating ResourceHandles

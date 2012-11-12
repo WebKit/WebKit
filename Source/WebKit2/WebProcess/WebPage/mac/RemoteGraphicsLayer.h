@@ -37,6 +37,8 @@ public:
     static PassOwnPtr<WebCore::GraphicsLayer> create(WebCore::GraphicsLayerClient*, RemoteLayerTreeController*);
     virtual ~RemoteGraphicsLayer();
 
+    uint64_t layerID() const { return m_layerID; }
+
 private:
     RemoteGraphicsLayer(WebCore::GraphicsLayerClient*, RemoteLayerTreeController*);
 
@@ -50,8 +52,8 @@ private:
     void noteLayerPropertiesChanged(unsigned layerChanges);
     void recursiveCommitChanges();
 
+    uint64_t m_layerID;
     RemoteLayerTreeController* m_controller;
-
     unsigned m_uncommittedLayerChanges;
 };
 

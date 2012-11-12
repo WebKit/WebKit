@@ -35,6 +35,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static uint64_t generateLayerID()
+{
+    static uint64_t layerID;
+    return ++layerID;
+}
+
 PassOwnPtr<GraphicsLayer> RemoteGraphicsLayer::create(GraphicsLayerClient* client, RemoteLayerTreeController* controller)
 {
     return adoptPtr(new RemoteGraphicsLayer(client, controller));
@@ -42,6 +48,7 @@ PassOwnPtr<GraphicsLayer> RemoteGraphicsLayer::create(GraphicsLayerClient* clien
 
 RemoteGraphicsLayer::RemoteGraphicsLayer(GraphicsLayerClient* client, RemoteLayerTreeController* controller)
     : GraphicsLayer(client)
+    , m_layerID(generateLayerID())
     , m_controller(controller)
     , m_uncommittedLayerChanges(RemoteLayerTreeTransaction::NoChange)
 {
