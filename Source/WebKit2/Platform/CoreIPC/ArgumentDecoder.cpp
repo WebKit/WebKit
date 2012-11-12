@@ -46,7 +46,7 @@ ArgumentDecoder::ArgumentDecoder(const uint8_t* buffer, size_t bufferSize, Deque
 ArgumentDecoder::~ArgumentDecoder()
 {
     ASSERT(m_allocatedBase);
-    fastFree(m_allocatedBase);
+    free(m_allocatedBase);
 #if !USE(UNIX_DOMAIN_SOCKETS)
     // FIXME: We need to dispose of the mach ports in cases of failure.
 #else
@@ -69,7 +69,7 @@ void ArgumentDecoder::initialize(const uint8_t* buffer, size_t bufferSize)
 {
     // This is the largest primitive type we expect to unpack from the message.
     const size_t expectedAlignment = sizeof(uint64_t);
-    m_allocatedBase = static_cast<uint8_t*>(fastMalloc(bufferSize + expectedAlignment));
+    m_allocatedBase = static_cast<uint8_t*>(malloc(bufferSize + expectedAlignment));
     m_buffer = roundUpToAlignment(m_allocatedBase, expectedAlignment);
     ASSERT(!(reinterpret_cast<uintptr_t>(m_buffer) % expectedAlignment));
 

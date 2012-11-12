@@ -1,5 +1,25 @@
 2012-11-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r133379
+
+    2012-11-02  Anders Carlsson  <andersca@apple.com>
+
+            Very speculative ArgumentDecoder crash fix
+            https://bugs.webkit.org/show_bug.cgi?id=101130
+            <rdar://problem/11917046>
+
+            Reviewed by Sam Weinig.
+
+            Switch from fastMalloc/fastFree to system malloc/free in the hopes that it'll give more information about
+            a crash inside TCMalloc when freeing the argument data. (It seems unlikely that this is a bug in TCMalloc, but
+            switching to the system malloc could potentially give better error reporting).
+
+            * Platform/CoreIPC/ArgumentDecoder.cpp:
+            (CoreIPC::ArgumentDecoder::~ArgumentDecoder):
+            (CoreIPC::ArgumentDecoder::initialize):
+
+2012-11-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r131018
 
     2012-10-10  Jer Noble  <jer.noble@apple.com>
@@ -47840,6 +47860,7 @@
         socketpair().
 
 == Rolled over to ChangeLog-2011-06-04 ==
+.
 .
 .
 .
