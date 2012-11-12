@@ -37,6 +37,7 @@
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceLoader.h>
+#include <WebCore/Settings.h>
 #include <WebCore/SubresourceLoader.h>
 #include <wtf/text/CString.h>
 
@@ -95,7 +96,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
         request.setURL(dataURL);
     }
 
-    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::ScheduleNetworkRequest(request, priority), Messages::NetworkConnectionToWebProcess::ScheduleNetworkRequest::Reply(identifier), 0)) {
+    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::ScheduleNetworkRequest(request, priority, resourceLoader->shouldSniffContent()), Messages::NetworkConnectionToWebProcess::ScheduleNetworkRequest::Reply(identifier), 0)) {
         // FIXME (NetworkProcess): What should we do if this fails?
         ASSERT_NOT_REACHED();
     }

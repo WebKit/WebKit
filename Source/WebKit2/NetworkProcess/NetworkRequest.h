@@ -30,6 +30,7 @@
 
 #include "NetworkConnectionToWebProcess.h"
 #include <WebCore/ResourceHandleClient.h>
+#include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 
 namespace WebCore {
@@ -44,9 +45,9 @@ typedef uint64_t ResourceLoadIdentifier;
 
 class NetworkRequest : public RefCounted<NetworkRequest>, public NetworkConnectionToWebProcessObserver, public WebCore::ResourceHandleClient {
 public:
-    static RefPtr<NetworkRequest> create(const WebCore::ResourceRequest& request, ResourceLoadIdentifier identifier, NetworkConnectionToWebProcess* connection)
+    static RefPtr<NetworkRequest> create(const WebCore::ResourceRequest& request, ResourceLoadIdentifier identifier, WebCore::ContentSniffingPolicy contentSniffingPolicy, NetworkConnectionToWebProcess* connection)
     {
-        return adoptRef(new NetworkRequest(request, identifier, connection));
+        return adoptRef(new NetworkRequest(request, identifier, contentSniffingPolicy, connection));
     }
     
     ~NetworkRequest();
@@ -98,7 +99,7 @@ public:
 #endif
 
 private:
-    NetworkRequest(const WebCore::ResourceRequest&, ResourceLoadIdentifier, NetworkConnectionToWebProcess*);
+    NetworkRequest(const WebCore::ResourceRequest&, ResourceLoadIdentifier, WebCore::ContentSniffingPolicy, NetworkConnectionToWebProcess*);
 
     void scheduleStopOnMainThread();
     static void performStops(void*);
@@ -110,7 +111,7 @@ private:
 
     RefPtr<RemoteNetworkingContext> m_networkingContext;
     RefPtr<WebCore::ResourceHandle> m_handle;
-
+    WebCore::ContentSniffingPolicy m_contentSniffingPolicy;
     RefPtr<NetworkConnectionToWebProcess> m_connection;
 
     // FIXME (NetworkProcess): Response data lifetime should be managed outside NetworkRequest.

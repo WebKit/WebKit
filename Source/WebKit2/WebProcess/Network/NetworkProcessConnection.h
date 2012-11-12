@@ -63,6 +63,7 @@ private:
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
     void didReceiveNetworkProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void didReceiveSyncNetworkProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 
     void willSendRequest(uint64_t requestID, ResourceLoadIdentifier, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void didReceiveResponse(ResourceLoadIdentifier, const WebCore::ResourceResponse&);

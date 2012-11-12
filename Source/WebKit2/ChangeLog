@@ -1,3 +1,31 @@
+2012-11-12  Brady Eidson  <beidson@apple.com>
+
+        NetworkProcess: Use an accurate shouldContentSniff value when creating ResourceHandles
+        https://bugs.webkit.org/show_bug.cgi?id=101872
+
+        Reviewed by Alexey Proskuryakov.
+
+        The WebProcess now passes "shouldContentSniff" over to the NetworkProcess with the requests so it can be respected.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::scheduleNetworkRequest): Update to pass through "shouldContentSniff"
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+
+        * NetworkProcess/NetworkRequest.cpp:
+        (WebKit::NetworkRequest::NetworkRequest):
+        (WebKit::NetworkRequest::start):
+        * NetworkProcess/NetworkRequest.h:
+        (WebKit::NetworkRequest::create):
+
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::scheduleNetworkRequest): Update to pass through "shouldContentSniff"
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+        * WebProcess/Network/NetworkProcessConnection.h:
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad): Update to pass through "shouldContentSniff"
+
 2012-11-12  Anders Carlsson  <andersca@apple.com>
 
         More work towards packaging layer changes up into a transaction object

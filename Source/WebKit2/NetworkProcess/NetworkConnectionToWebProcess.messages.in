@@ -28,7 +28,7 @@ messages -> NetworkConnectionToWebProcess {
     // that we synchronously get an identifier for new ResourceLoaders as they are created.
     // There's possible ResourceLoader identifier refactoring that can remove that requirement.
     // We might also have the NetworkProcess divvy up identifiers in blocks to each WebProcess beforehand.
-    ScheduleNetworkRequest(WebCore::ResourceRequest request, uint32_t resourceLoadPriority) -> (uint64_t resourceLoadIdentifier)
+    ScheduleNetworkRequest(WebCore::ResourceRequest request, uint32_t resourceLoadPriority, bool shouldContentSniff) -> (uint64_t resourceLoadIdentifier)
     AddLoadInProgress(WebCore::KURL url) -> (uint64_t resourceLoadIdentifier)
     RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
 

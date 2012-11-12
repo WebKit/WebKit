@@ -26,6 +26,7 @@
 #ifndef NetworkResourceLoadScheduler_h
 #define NetworkResourceLoadScheduler_h
 
+#include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Timer.h>
 #include <wtf/HashSet.h>
@@ -45,7 +46,7 @@ public:
     NetworkResourceLoadScheduler();
     
     // Adds the request to the queue for its host and create a unique identifier for it.
-    ResourceLoadIdentifier scheduleNetworkRequest(const WebCore::ResourceRequest&, WebCore::ResourceLoadPriority, NetworkConnectionToWebProcess*);
+    ResourceLoadIdentifier scheduleNetworkRequest(const WebCore::ResourceRequest&, WebCore::ResourceLoadPriority, WebCore::ContentSniffingPolicy, NetworkConnectionToWebProcess*);
     
     // Creates a unique identifier for an already-in-progress load.
     ResourceLoadIdentifier addLoadInProgress(const WebCore::KURL&);

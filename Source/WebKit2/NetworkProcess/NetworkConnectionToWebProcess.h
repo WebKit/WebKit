@@ -74,7 +74,7 @@ private:
     void didReceiveNetworkConnectionToWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void didReceiveSyncNetworkConnectionToWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
     
-    void scheduleNetworkRequest(const WebCore::ResourceRequest&, uint32_t resourceLoadPriority, ResourceLoadIdentifier&);
+    void scheduleNetworkRequest(const WebCore::ResourceRequest&, uint32_t resourceLoadPriority, bool shouldContentSniff, ResourceLoadIdentifier&);
     void addLoadInProgress(const WebCore::KURL&, ResourceLoadIdentifier&);
     void removeLoadIdentifier(ResourceLoadIdentifier);
     void crossOriginRedirectReceived(ResourceLoadIdentifier, const WebCore::KURL& redirectURL);

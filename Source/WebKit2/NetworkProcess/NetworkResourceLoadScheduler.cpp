@@ -38,7 +38,7 @@ void NetworkResourceLoadScheduler::requestTimerFired(WebCore::Timer<NetworkResou
     servePendingRequests();
 }
 
-ResourceLoadIdentifier NetworkResourceLoadScheduler::scheduleNetworkRequest(const ResourceRequest& request, ResourceLoadPriority priority, NetworkConnectionToWebProcess* connection)
+ResourceLoadIdentifier NetworkResourceLoadScheduler::scheduleNetworkRequest(const ResourceRequest& request, ResourceLoadPriority priority, ContentSniffingPolicy contentSniffingPolicy, NetworkConnectionToWebProcess* connection)
 {    
     ResourceLoadIdentifier identifier = ++s_currentResourceLoadIdentifier;
 
@@ -46,7 +46,7 @@ ResourceLoadIdentifier NetworkResourceLoadScheduler::scheduleNetworkRequest(cons
 
     HostRecord* host = hostForURL(request.url(), CreateIfNotFound);
     bool hadRequests = host->hasRequests();
-    host->schedule(NetworkRequest::create(request, identifier, connection), priority);
+    host->schedule(NetworkRequest::create(request, identifier, contentSniffingPolicy, connection), priority);
     m_identifiers.add(identifier, host);
 
     if (priority > ResourceLoadPriorityLow || !request.url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriorityLow && !hadRequests)) {
