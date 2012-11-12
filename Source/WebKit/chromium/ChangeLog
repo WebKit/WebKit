@@ -1,3 +1,16 @@
+2012-11-12  Keishi Hattori  <keishi@webkit.org>
+
+        Add support for week/month to Locale::formatDateTime()
+        https://bugs.webkit.org/show_bug.cgi?id=101878
+
+        Reviewed by Kent Tamura.
+
+        * tests/LocaleMacTest.cpp:
+        (LocaleMacTest::formatWeek): Takes ISO string and returns localized string.
+        (LocaleMacTest):
+        (LocaleMacTest::formatMonth): Ditto.
+        (TEST_F):
+
 2012-11-11  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Expose CustomEvent through WebDOMCustomEvent.

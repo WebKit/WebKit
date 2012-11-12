@@ -1,3 +1,18 @@
+2012-11-12  Keishi Hattori  <keishi@webkit.org>
+
+        Add support for week/month to Locale::formatDateTime()
+        https://bugs.webkit.org/show_bug.cgi?id=101878
+
+        Reviewed by Kent Tamura.
+
+        Adding support for week/month to Locale::formatDateTime() in preparation for datalist support for <input type=week/month>.
+
+        Added Chromium tests LocaleMacTest.formatWeek and LocaleMacTest.formatMonth.
+
+        * platform/text/PlatformLocale.cpp:
+        (WebCore::DateTimeStringBuilder::visitField):
+        (WebCore::Locale::formatDateTime): Support week and month types.
+
 2012-11-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Can not load MHTML documents
