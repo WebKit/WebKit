@@ -1,3 +1,13 @@
+2012-11-12  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WK2] Indentation nit on WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=101928
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setViewportSize):
+
 2012-11-12  Jiyeon Kim  <jiyeon0402.kim@samsung.com>
 
         [EFL][WK2] Add ewk_settings_offline_web_application_cache_enabled set/get APIs

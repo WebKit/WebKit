@@ -1034,7 +1034,7 @@ void WebPage::setViewportSize(const IntSize& size)
     if (m_viewportSize == size)
         return;
 
-     m_viewportSize = size;
+    m_viewportSize = size;
 
     sendViewportAttributesChanged();
 }
