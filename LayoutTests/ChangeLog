@@ -1,3 +1,60 @@
+2012-11-11  Keishi Hattori  <keishi@webkit.org>
+
+        Rebaseline month/week appearance tests
+        https://bugs.webkit.org/show_bug.cgi?id=101561
+
+        Unreviewed.
+
+        Rebaselining month/week appearance tests.
+
+        * platform/chromium-linux/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/month/month-appearance-l10n-expected.png:
+        * platform/chromium-linux/fast/forms/month/month-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/month/month-appearance-pseudo-elements-expected.png:
+        * platform/chromium-linux/fast/forms/month/month-appearance-style-expected.png:
+        * platform/chromium-linux/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/week/week-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/week/week-appearance-pseudo-elements-expected.png:
+        * platform/chromium-linux/fast/forms/week/week-appearance-style-expected.png:
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-l10n-expected.png:
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-style-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-style-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-l10n-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-style-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-style-expected.png:
+        * platform/chromium-mac/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/month/month-appearance-l10n-expected.png:
+        * platform/chromium-mac/fast/forms/month/month-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/month/month-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/month/month-appearance-style-expected.png:
+        * platform/chromium-mac/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/week/week-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/week/week-appearance-pseudo-elements-expected.png:
+        * platform/chromium-mac/fast/forms/week/week-appearance-style-expected.png:
+        * platform/chromium-win-xp/fast/forms/month/month-appearance-l10n-expected.png:
+        * platform/chromium-win/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/month/month-appearance-l10n-expected.png:
+        * platform/chromium-win/fast/forms/month/month-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/month/month-appearance-pseudo-elements-expected.png:
+        * platform/chromium-win/fast/forms/month/month-appearance-style-expected.png:
+        * platform/chromium-win/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/week/week-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/week/week-appearance-pseudo-elements-expected.png:
+        * platform/chromium-win/fast/forms/week/week-appearance-style-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-11-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] ElementShadow should have RuleFeatureSet for select attribute selectors.
