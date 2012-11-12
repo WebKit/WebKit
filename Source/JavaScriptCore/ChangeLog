@@ -4,6 +4,20 @@
 
     2012-08-13  Filip Pizlo  <fpizlo@apple.com>
 
+            Value recovery for arguments should be based on the argument-aware prediction.
+            <rdar://problem/12046032>
+
+            Reviewed by Gavin Barraclough.
+        
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::compile):
+
+2012-11-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge fix for <rdar://problem/12486142>.
+
+    2012-08-13  Filip Pizlo  <fpizlo@apple.com>
+
             Value recovery for arguments should always just indicate that the argument is in the register file, and
             not attempt to claim anything about the tag.
             <rdar://problem/12046032>
