@@ -77,6 +77,9 @@ void SVGElementInstance::detach()
     // Clear all pointers. When the node is detached from the shadow DOM it should be removed but,
     // due to ref counting, it may not be. So clear everything to avoid dangling pointers.
 
+    for (SVGElementInstance* node = firstChild(); node; node = node->nextSibling())
+        node->detach();
+
     // Deregister as instance for passed element, if we haven't already.
     if (m_element->instancesForElement().contains(this))
         m_element->removeInstanceMapping(this);
