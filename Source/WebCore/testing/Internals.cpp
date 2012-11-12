@@ -68,6 +68,7 @@
 #include "RenderTreeAsText.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
+#include "SelectRuleFeatureSet.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SpellChecker.h"
@@ -314,7 +315,7 @@ bool Internals::hasSelectorForIdInShadow(Element* host, const String& idValue, E
     }
 
     host->shadow()->ensureSelectFeatureSetCollected();
-    return host->shadow()->hasSelectorForId(idValue);
+    return host->shadow()->selectRuleFeatureSet().hasSelectorForId(idValue);
 }
 
 bool Internals::hasSelectorForClassInShadow(Element* host, const String& className, ExceptionCode& ec)
@@ -325,7 +326,7 @@ bool Internals::hasSelectorForClassInShadow(Element* host, const String& classNa
     }
 
     host->shadow()->ensureSelectFeatureSetCollected();
-    return host->shadow()->hasSelectorForClass(className);
+    return host->shadow()->selectRuleFeatureSet().hasSelectorForClass(className);
 }
 
 bool Internals::hasSelectorForAttributeInShadow(Element* host, const String& attributeName, ExceptionCode& ec)
@@ -336,7 +337,7 @@ bool Internals::hasSelectorForAttributeInShadow(Element* host, const String& att
     }
 
     host->shadow()->ensureSelectFeatureSetCollected();
-    return host->shadow()->hasSelectorForAttribute(attributeName);
+    return host->shadow()->selectRuleFeatureSet().hasSelectorForAttribute(attributeName);
 }
 
 bool Internals::hasShadowInsertionPoint(const Node* root, ExceptionCode& ec) const

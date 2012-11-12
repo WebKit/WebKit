@@ -4424,6 +4424,8 @@
             'html/shadow/MeterShadowElement.h',
             'html/shadow/ProgressShadowElement.cpp',
             'html/shadow/ProgressShadowElement.h',
+            'html/shadow/SelectRuleFeatureSet.cpp',
+            'html/shadow/SelectRuleFeatureSet.h',
             'html/shadow/SliderThumbElement.cpp',
             'html/shadow/SliderThumbElement.h',
             'html/shadow/SpinButtonElement.cpp',

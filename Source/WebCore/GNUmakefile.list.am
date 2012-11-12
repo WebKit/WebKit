@@ -3554,6 +3554,8 @@ webcore_sources += \
 	Source/WebCore/html/shadow/MeterShadowElement.h \
 	Source/WebCore/html/shadow/ProgressShadowElement.cpp \
 	Source/WebCore/html/shadow/ProgressShadowElement.h \
+	Source/WebCore/html/shadow/SelectRuleFeatureSet.cpp \
+	Source/WebCore/html/shadow/SelectRuleFeatureSet.h \
 	Source/WebCore/html/shadow/SliderThumbElement.cpp \
 	Source/WebCore/html/shadow/SliderThumbElement.h \
 	Source/WebCore/html/shadow/SpinButtonElement.cpp \

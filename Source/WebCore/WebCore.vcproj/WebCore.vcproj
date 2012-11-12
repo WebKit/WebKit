@@ -64334,6 +64334,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\shadow\SelectRuleFeatureSet.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\SelectRuleFeatureSet.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\shadow\SliderThumbElement.cpp"
 					>
 				</File>

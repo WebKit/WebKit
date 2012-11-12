@@ -1663,6 +1663,8 @@
 		53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		570B78BF1650CE81001DBE1B /* SelectRuleFeatureSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 570B78BD1650CE81001DBE1B /* SelectRuleFeatureSet.cpp */; };
+		570B78C01650CE81001DBE1B /* SelectRuleFeatureSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 570B78BE1650CE81001DBE1B /* SelectRuleFeatureSet.h */; };
 		5728BD9E1625369600C40B56 /* SiblingTraversalStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5728BD9D1625369600C40B56 /* SiblingTraversalStrategies.h */; };
 		573D134714CE39FF0057ABCA /* InspectorTypeBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 573D134514CE39FF0057ABCA /* InspectorTypeBuilder.cpp */; };
 		5759898715AAC0B100353C31 /* ImageInnerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 572145CC15A51DA700AD119C /* ImageInnerElement.h */; };
@@ -8891,6 +8893,8 @@
 		53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlexibleBox.h; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		570B78BD1650CE81001DBE1B /* SelectRuleFeatureSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectRuleFeatureSet.cpp; sourceTree = "<group>"; };
+		570B78BE1650CE81001DBE1B /* SelectRuleFeatureSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectRuleFeatureSet.h; sourceTree = "<group>"; };
 		572145CB15A51DA700AD119C /* ImageInnerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageInnerElement.cpp; sourceTree = "<group>"; };
 		572145CC15A51DA700AD119C /* ImageInnerElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageInnerElement.h; sourceTree = "<group>"; };
 		5728BD9D1625369600C40B56 /* SiblingTraversalStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SiblingTraversalStrategies.h; sourceTree = "<group>"; };
@@ -15108,6 +15112,8 @@
 				A78E526E1346BD1700AD9C31 /* MeterShadowElement.h */,
 				A715E650134BBBEC00D8E713 /* ProgressShadowElement.cpp */,
 				A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */,
+				570B78BD1650CE81001DBE1B /* SelectRuleFeatureSet.cpp */,
+				570B78BE1650CE81001DBE1B /* SelectRuleFeatureSet.h */,
 				4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */,
 				4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */,
 				4512502015DCE37D002F84E2 /* SpinButtonElement.cpp */,
@@ -25692,6 +25698,7 @@
 				E1424C8A164B3B4E00F32D40 /* PlatformCookieJar.h in Headers */,
 				E1424C94164B52C800F32D40 /* CookieJar.h in Headers */,
 				1411DCB1164C39A800D49BC1 /* WidthCache.h in Headers */,
+				570B78C01650CE81001DBE1B /* SelectRuleFeatureSet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28779,6 +28786,7 @@
 				4FC8534C1644272300D1C275 /* CachedMetadata.cpp in Sources */,
 				E1424C90164B460B00F32D40 /* CookieJarMac.mm in Sources */,
 				E1424C93164B52C800F32D40 /* CookieJar.cpp in Sources */,
+				570B78BF1650CE81001DBE1B /* SelectRuleFeatureSet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,44 @@
+2012-11-12  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Refactoring] Create SelectRuleFeatureSet for collecting RuleFeatureSet for select attribute
+        https://bugs.webkit.org/show_bug.cgi?id=101891
+
+        Reviewed by Hajime Morita.
+
+        We would like to have another class for RuleFeatureSet to collect 'select' attribute features,
+        since it will have more features than the original RuleFeatureSet has.
+
+        Also, some methods of ElementShadow are removed and we provide a method to get SelectRuleFeatureSet itself.
+
+        No new tests, no change in behavior.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ElementShadow.h:
+        (ElementShadow):
+        (WebCore::ElementShadow::selectRuleFeatureSet):
+        (WebCore):
+        * html/shadow/SelectRuleFeatureSet.cpp: Added.
+        (WebCore):
+        (WebCore::SelectRuleFeatureSet::SelectRuleFeatureSet):
+        (WebCore::SelectRuleFeatureSet::add):
+        (WebCore::SelectRuleFeatureSet::clear):
+        (WebCore::SelectRuleFeatureSet::collectFeaturesFromSelector):
+        * html/shadow/SelectRuleFeatureSet.h: Added.
+        (WebCore):
+        (SelectRuleFeatureSet):
+        (WebCore::SelectRuleFeatureSet::hasSelectorForId):
+        (WebCore::SelectRuleFeatureSet::hasSelectorForClass):
+        (WebCore::SelectRuleFeatureSet::hasSelectorForAttribute):
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasSelectorForIdInShadow):
+        (WebCore::Internals::hasSelectorForClassInShadow):
+        (WebCore::Internals::hasSelectorForAttributeInShadow):
+
 2012-11-13  Keishi Hattori  <keishi@webkit.org>
 
         Build fix for Chromium Android (caused by r134216)
