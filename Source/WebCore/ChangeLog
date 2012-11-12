@@ -1,3 +1,17 @@
+2012-11-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        hitTestResultAtPoint does two hit-tests if called on non main frame
+        https://bugs.webkit.org/show_bug.cgi?id=101915
+
+        Reviewed by Antonio Gomes.
+
+        Always redirect hitTestResultAtPoint to the main-frame. This used to being
+        done on every result that hit anything, which caused running the expensive 
+        hit-tests multiple times in almost all cases.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+
 2012-11-12  Kentaro Hara  <haraken@chromium.org>
 
         [V8][JSC] ScriptProfileNode::callUID needs not to be [Custom]

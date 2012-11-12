@@ -1114,9 +1114,23 @@ DragSourceAction EventHandler::updateDragSourceActionsAllowed() const
     return page->dragController()->delegateDragSourceAction(view->contentsToRootView(m_mouseDownPos));
 }
 #endif // ENABLE(DRAG_SUPPORT)
-    
+
 HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, bool allowShadowContent, bool ignoreClipping, HitTestScrollbars testScrollbars, HitTestRequest::HitTestRequestType hitType, const LayoutSize& padding)
 {
+    // We always send hitTestResultAtPoint to the main frame if we have one,
+    // otherwise we might hit areas that are obscured by higher frames.
+    if (Page* page = m_frame->page()) {
+        Frame* mainFrame = page->mainFrame();
+        if (m_frame != mainFrame) {
+            FrameView* frameView = m_frame->view();
+            FrameView* mainView = mainFrame->view();
+            if (frameView && mainView) {
+                IntPoint mainFramePoint = mainView->rootViewToContents(frameView->contentsToRootView(roundedIntPoint(point)));
+                return mainFrame->eventHandler()->hitTestResultAtPoint(mainFramePoint, allowShadowContent, ignoreClipping, testScrollbars, hitType, padding);
+            }
+        }
+    }
+
     HitTestResult result(point, padding.height(), padding.width(), padding.height(), padding.width());
 
     if (!m_frame->contentRenderer())
@@ -1149,21 +1163,6 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, bool 
             Scrollbar* eventScrollbar = view->scrollbarAtPoint(roundedIntPoint(point));
             if (eventScrollbar)
                 result.setScrollbar(eventScrollbar);
-        }
-    }
-    
-    // If our HitTestResult is not visible, then we started hit testing too far down the frame chain. 
-    // Another hit test at the main frame level should get us the correct visible result.
-    Frame* resultFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : 0;
-    if (Page* page = m_frame->page()) {
-        Frame* mainFrame = page->mainFrame();
-        if (m_frame != mainFrame && resultFrame && resultFrame != mainFrame) {
-            FrameView* resultView = resultFrame->view();
-            FrameView* mainView = mainFrame->view();
-            if (resultView && mainView) {
-                IntPoint mainFramePoint = mainView->rootViewToContents(resultView->contentsToRootView(roundedIntPoint(result.point())));
-                result = mainFrame->eventHandler()->hitTestResultAtPoint(mainFramePoint, allowShadowContent, ignoreClipping, testScrollbars, hitType, padding);
-            }
         }
     }
 
