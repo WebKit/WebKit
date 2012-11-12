@@ -27,14 +27,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import sys
 
-from webkitpy.thirdparty.autoinstalled.pylint import lint
+from webkitpy.style.checkers.python import Pylinter
 
-script_dir = os.path.abspath(os.path.dirname(__file__))
-if not script_dir in sys.path:
-    sys.path.append(script_dir)
-
-pylintrc = os.path.join(script_dir, 'webkitpy', 'pylintrc')
-lint.Run(['--rcfile', pylintrc, '-f', 'parseable' ] + sys.argv[1:])
+sys.stdout.write(Pylinter().run(sys.argv[1:]).getvalue())

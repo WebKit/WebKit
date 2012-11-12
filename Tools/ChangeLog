@@ -1,5 +1,37 @@
 2012-11-12  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: integrate pylint into check-webkit-style, part I
+        https://bugs.webkit.org/show_bug.cgi?id=101285
+
+        Reviewed by Ojan Vafai.
+
+        This patch re-works lint-webkitpy so that the logic is pushed
+        into check-webkit-style (mostly); we don't yet control which
+        messages are displayed using the rules in webkitpy/style/checker.py
+        (we're still using the pylintrc to suppress messages instead),
+        but otherwise things work. For now we will only report pylint
+        "errors", not warnings.
+
+        * Scripts/lint-webkitpy:
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checkers/python.py:
+        (PythonChecker):
+        (PythonChecker.check):
+        (PythonChecker._check_pep8):
+        (PythonChecker._check_pylint):
+        (Pylinter):
+        (Pylinter.__init__):
+        (Pylinter.run):
+        (_FilteredStringIO):
+        (_FilteredStringIO.__init__):
+        (_FilteredStringIO.write):
+        (_FilteredStringIO._filter):
+        * Scripts/webkitpy/style/checkers/python_unittest.py:
+        (PythonCheckerTest.test_check):
+        * Scripts/webkitpy/style/checkers/python_unittest_input.py:
+
+2012-11-12  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: remove a bunch of broken chromium-specific flags
         https://bugs.webkit.org/show_bug.cgi?id=101979
 

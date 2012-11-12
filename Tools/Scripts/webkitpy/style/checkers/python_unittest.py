@@ -57,6 +57,7 @@ class PythonCheckerTest(unittest.TestCase):
         checker = PythonChecker(file_path, _mock_handle_style_error)
         checker.check(lines=[])
 
-        self.assertEquals(len(errors), 1)
-        self.assertEquals(errors[0],
-                          (2, "pep8/W291", 5, "trailing whitespace"))
+        self.assertEquals(errors, [
+            (4, "pep8/W291", 5, "trailing whitespace"),
+            (4, "pylint/E0602", 5, "Undefined variable 'error'"),
+            ])

@@ -22,23 +22,32 @@
 
 """Supports checking WebKit style in Python files."""
 
+import os
+import re
+import sys
+from StringIO import StringIO
+
 from webkitpy.thirdparty.autoinstalled import pep8
+from webkitpy.thirdparty.autoinstalled.pylint import lint
+from webkitpy.thirdparty.autoinstalled.pylint.reporters.text import ParseableTextReporter
 
 
 class PythonChecker(object):
-
     """Processes text lines for checking style."""
-
     def __init__(self, file_path, handle_style_error):
         self._file_path = file_path
         self._handle_style_error = handle_style_error
 
     def check(self, lines):
+        self._check_pep8(lines)
+        self._check_pylint(lines)
+
+    def _check_pep8(self, lines):
         # Initialize pep8.options, which is necessary for
         # Checker.check_all() to execute.
         pep8.process_options(arglist=[self._file_path])
 
-        checker = pep8.Checker(self._file_path)
+        pep8_checker = pep8.Checker(self._file_path)
 
         def _pep8_handle_error(line_number, offset, text, check):
             # FIXME: Incorporate the character offset into the error output.
@@ -51,6 +60,69 @@ class PythonChecker(object):
 
             self._handle_style_error(line_number, category, 5, pep8_message)
 
-        checker.report_error = _pep8_handle_error
+        pep8_checker.report_error = _pep8_handle_error
+        pep8_errors = pep8_checker.check_all()
 
-        errors = checker.check_all()
+    def _check_pylint(self, lines):
+        pylinter = Pylinter()
+
+        # FIXME: for now, we only report pylint errors, but we should be catching and
+        # filtering warnings using the rules in style/checker.py instead.
+        output = pylinter.run(['-E', self._file_path])
+
+        lint_regex = re.compile('([^:]+):([^:]+): \[([^]]+)\] (.*)')
+        for error in output.getvalue().splitlines():
+            match_obj = lint_regex.match(error)
+            assert(match_obj)
+            line_number = int(match_obj.group(2))
+            category_and_method = match_obj.group(3).split(', ')
+            category = 'pylint/' + (category_and_method[0])
+            if len(category_and_method) > 1:
+                message = '[%s] %s' % (category_and_method[1], match_obj.group(4))
+            else:
+                message = match_obj.group(4)
+            self._handle_style_error(line_number, category, 5, message)
+
+
+class Pylinter(object):
+    # We filter out these messages because they are bugs in pylint that produce false positives.
+    # FIXME: Does it make sense to combine these rules with the rules in style/checker.py somehow?
+    FALSE_POSITIVES = [
+        # possibly http://www.logilab.org/ticket/98613 ?
+        "Instance of 'Popen' has no 'returncode' member",
+        "Instance of 'Popen' has no 'stdin' member",
+        "Instance of 'Popen' has no 'stdout' member",
+        "Instance of 'Popen' has no 'stderr' member",
+        "Instance of 'Popen' has no 'wait' member",
+    ]
+
+    def __init__(self):
+        self._script_dir = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
+        self._pylintrc = os.path.join(self._script_dir, 'webkitpy', 'pylintrc')
+
+    def run(self, argv):
+        output = _FilteredStringIO(self.FALSE_POSITIVES)
+        lint.Run(['--rcfile', self._pylintrc] + argv, reporter=ParseableTextReporter(output=output), exit=False)
+        return output
+
+
+class _FilteredStringIO(StringIO):
+    def __init__(self, bad_messages):
+        StringIO.__init__(self)
+        self.dropped_last_msg = False
+        self.bad_messages = bad_messages
+
+    def write(self, msg=''):
+        if not self._filter(msg):
+            StringIO.write(self, msg)
+
+    def _filter(self, msg):
+        if any(bad_message in msg for bad_message in self.bad_messages):
+            self.dropped_last_msg = True
+            return True
+        if self.dropped_last_msg:
+            # We drop the newline after a dropped message as well.
+            self.dropped_last_msg = False
+            if msg == '\n':
+                return True
+        return False
