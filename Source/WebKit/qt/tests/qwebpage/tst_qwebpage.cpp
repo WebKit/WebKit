@@ -2958,12 +2958,10 @@ void tst_QWebPage::findText()
     QVERIFY(m_page->selectedText().isEmpty());
     QVERIFY(m_page->selectedHtml().isEmpty());
     QStringList words = (QStringList() << "foo" << "bar");
-    QRegExp regExp(" style=\".*\"");
-    regExp.setMinimal(true);
     foreach (QString subString, words) {
         m_page->findText(subString, QWebPage::FindWrapsAroundDocument);
         QCOMPARE(m_page->selectedText(), subString);
-        QCOMPARE(m_page->selectedHtml().trimmed().replace(regExp, ""), subString);
+        QVERIFY(m_page->selectedHtml().contains(subString));
         m_page->findText("");
         QVERIFY(m_page->selectedText().isEmpty());
         QVERIFY(m_page->selectedHtml().isEmpty());

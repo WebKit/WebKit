@@ -1,5 +1,24 @@
 2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Fix tst_QWebPage::findText
+
+        Reviewed by Simon Hausmann.
+
+        Details of the failure:
+        FAIL!  : tst_QWebPage::findText() Compared values are not the same
+           Actual   (m_page->selectedHtml().trimmed().replace(regExp, "")): <span>foo</span>
+           Expected (subString): foo
+           Loc: [/home/joce/dev/webkit/Source/WebKit/qt/tests/qwebpage/tst_qwebpage.cpp(2964)]
+
+        The format returned by selectedHtml changed.
+        Make the test a bit more robust by just checking that the HTML
+        contains our search value.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::findText):
+
+2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Fix tst_QWebPage::testLocalStorageVisibility
 
         Reviewed by Simon Hausmann.
