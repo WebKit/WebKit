@@ -1,3 +1,15 @@
+2012-11-11  Michael Pruett  <michael@68k.org>
+
+        Fix assertion failure in JSObject::tryGetIndexQuickly()
+        https://bugs.webkit.org/show_bug.cgi?id=101869
+
+        Reviewed by Filip Pizlo.
+
+        Add test case for an assertion failure triggered when constructing
+        a Blob with a sparse array.
+
+        * fast/constructors/blob-sparse-array-assertion-failure.html: Added.
+
 2012-11-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Multiple Layout Tests (e.g. fast/repaint/japanese-rl-selection-clear.html) is failing after r133840.
