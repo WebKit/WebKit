@@ -2884,9 +2884,9 @@ webkit.org/b/70887 [ Debug ] jquery/css.html [ Pass Timeout ]
 
 webkit.org/b/65009 [ Mac ] scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 
-#webkit.org/b/65124 [ Android Linux Win ] fast/repaint/japanese-rl-selection-clear.html [ Failure ]
-#webkit.org/b/65124 [ Win ] fast/repaint/japanese-rl-selection-repaint.html [ Failure ]
-#webkit.org/b/65124 [ Android Linux Win ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ]
+webkit.org/b/65124 [ Android Linux Win ] fast/repaint/japanese-rl-selection-clear.html [ Failure ]
+webkit.org/b/65124 [ Win ] fast/repaint/japanese-rl-selection-repaint.html [ Failure ]
+webkit.org/b/65124 [ Android Linux Win ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ]
 webkit.org/b/65124 [ Android Linux Win ] fast/repaint/line-flow-with-floats-in-regions.html [ Failure ]
 
 webkit.org/b/65199 [ Android Linux SnowLeopard Win ] fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
@@ -4189,30 +4189,3 @@ webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker
 webkit.org/b/101539 [ Linux Win ] editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
 webkit.org/b/101618 [ Win7 Debug ] http/tests/inspector/indexeddb/database-data.html [ Crash ]
-
-# Failures following r133840:
-webkit.org/b/101547 fast/repaint/4774354.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/caret-outside-block.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/delete-into-nested-block.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/inline-outline-repaint.html [ ImageOnlyFailure ]
-# The following test has prior expectations which were disabled. Re-enable when removing this:
-webkit.org/b/101547 fast/repaint/japanese-rl-selection-clear.html [ ImageOnlyFailure Failure ]
-# The following test has prior expectations which were disabled. Re-enable when removing this:
-webkit.org/b/101547 fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure Failure ]
-# The following test has prior expectations which were disabled. Re-enable when removing this:
-webkit.org/b/101547 fast/repaint/japanese-rl-selection-repaint.html [ ImageOnlyFailure Failure ]
-webkit.org/b/101547 fast/repaint/no-caret-repaint-in-non-content-editable-element.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/repaint-across-writing-mode-boundary.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/selection-after-delete.html [ ImageOnlyFailure ]
-webkit.org/b/101547 fast/repaint/selection-rl.html [ ImageOnlyFailure ]
-# The following test has prior expectations which were disabled. Re-enable when removing this:
-webkit.org/b/101547 svg/custom/foreignObject-crash-on-hover.xml [ ImageOnlyFailure ]
-# The following test has prior expectations which were disabled. Re-enable when removing this:
-webkit.org/b/101547 svg/custom/hit-test-unclosed-subpaths.svg [ ImageOnlyFailure ]
-# The following test has prior expectations which were disabled. Re-enable when removing this:
-webkit.org/b/101547 svg/custom/hit-test-with-br.xhtml [ ImageOnlyFailure ]
-
-webkit.org/b/101794 fast/canvas/canvas-as-image-hidpi.html [ ImageOnlyFailure ]
-webkit.org/b/101794 platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-hidpi.html [ ImageOnlyFailure ]
-webkit.org/b/101794 fast/canvas/canvas-resize-reset-pixelRatio.html [ Failure ]
-webkit.org/b/101794 platform/chromium/virtual/gpu/fast/canvas/canvas-resize-reset-pixelRatio.html [ Failure ]

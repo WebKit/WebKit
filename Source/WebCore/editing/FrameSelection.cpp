@@ -294,8 +294,9 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
     
     if (!s.isNone() && !(options & DoNotSetFocus))
         setFocusedNodeIfNeeded();
-    
-    updateAppearance();
+
+    if (!(options & DoNotUpdateAppearance))
+        updateAppearance();
 
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
@@ -1151,6 +1152,21 @@ void FrameSelection::clear()
     setSelection(VisibleSelection());
 }
 
+void FrameSelection::prepareForDestruction()
+{
+    m_granularity = CharacterGranularity;
+
+#if ENABLE(TEXT_CARET)
+    m_caretBlinkTimer.stop();
+#endif
+
+    RenderView* view = m_frame->contentRenderer();
+    if (view)
+        view->clearSelection();
+
+    setSelection(VisibleSelection(), CloseTyping | ClearTypingStyle | DoNotUpdateAppearance);
+}
+
 void FrameSelection::setStart(const VisiblePosition &pos, EUserTriggered trigger)
 {
     if (m_selection.isBaseFirst())
@@ -1727,12 +1743,8 @@ inline static bool shouldStopBlinkingDueToTypingCommand(Frame* frame)
 void FrameSelection::updateAppearance()
 {
 #if ENABLE(TEXT_CARET)
-    bool caretRectChangedOrCleared = false;
-    if (isNonOrphanedCaret(m_selection)) {
-        m_frame->document()->updateLayout();
-        caretRectChangedOrCleared = recomputeCaretRect();
-    } else
-        caretRectChangedOrCleared = true;
+    m_frame->document()->updateLayout();
+    bool caretRectChangedOrCleared = recomputeCaretRect();
 
     bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
     bool shouldBlink = caretIsVisible() && isCaret() && (isContentEditable() || caretBrowsing);
@@ -1753,10 +1765,10 @@ void FrameSelection::updateAppearance()
             invalidateCaretRect();
         }
     }
-#endif
-
+#else
     // We need to update style in case the node containing the selection is made display:none.
     m_frame->document()->updateStyleIfNeeded();
+#endif
 
     RenderView* view = m_frame->contentRenderer();
     if (!view)

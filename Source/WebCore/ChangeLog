@@ -1,3 +1,28 @@
+2012-11-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Multiple Layout Tests (e.g. fast/repaint/japanese-rl-selection-clear.html) is failing after r133840.
+        https://bugs.webkit.org/show_bug.cgi?id=101547
+
+        Reviewed by Simon Fraser.
+
+        I overlooked the fact when the selection is null, we still have to invalidate the caret rect that
+        previously existed. Revert the optimization added in r133840 to skip caret invalidation when new
+        selection is null, and add a special method to be called by FrameLoader prior to destruction instead.
+        This will let us avoid doing an extra layout upon destruction and not regress repaint tests.
+
+        Covered by existing tests.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelection): Added DoNotUpdateAppearance option.
+        (WebCore::FrameSelection::prepareForDestruction): Added.
+        (WebCore::FrameSelection::updateAppearance): Reverted the flawed optimization added in r133840.
+        Also, don't update style before updating selection unless text caret is disabled since we always
+        update the layout (including style) when text caret is enabled.
+        * editing/FrameSelection.h:
+        (FrameSelection):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear): Call prepareForDestruction instead of clear to avoid a layout.
+
 2012-11-11  Dongwoo Joshua Im  <dw.im@samsung.com>
 
         [CSS3] Parsing the property, text-align-last.
