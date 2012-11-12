@@ -73,11 +73,31 @@ void RemoteGraphicsLayer::setNeedsDisplayInRect(const FloatRect&)
     // FIXME: Implement this.
 }
 
+void RemoteGraphicsLayer::flushCompositingState(const FloatRect&)
+{
+    recursiveCommitChanges();
+}
+
+void RemoteGraphicsLayer::flushCompositingStateForThisLayerOnly()
+{
+    // FIXME: Flush the changed properties.
+}
+
 void RemoteGraphicsLayer::noteLayerPropertiesChanged(unsigned layerChanges)
 {
     if (!m_uncommittedLayerChanges && m_client)
         m_client->notifyFlushRequired(this);
     m_uncommittedLayerChanges |= layerChanges;
+}
+
+void RemoteGraphicsLayer::recursiveCommitChanges()
+{
+    flushCompositingStateForThisLayerOnly();
+
+    for (size_t i = 0; i < children().size(); ++i) {
+        RemoteGraphicsLayer* graphicsLayer = static_cast<RemoteGraphicsLayer*>(children()[i]);
+        graphicsLayer->recursiveCommitChanges();
+    }
 }
 
 } // namespace WebKit

@@ -31,21 +31,26 @@
 
 namespace WebKit {
 
+class WebPage;
+
 class RemoteLayerTreeController : public WebCore::GraphicsLayerFactory {
 public:
-    static PassOwnPtr<RemoteLayerTreeController> create();
+    static PassOwnPtr<RemoteLayerTreeController> create(WebPage*);
     ~RemoteLayerTreeController();
 
+    void setRootLayer(WebCore::GraphicsLayer*);
     void scheduleLayerFlush();
 
 private:
-    RemoteLayerTreeController();
+    explicit RemoteLayerTreeController(WebPage*);
 
     // WebCore::GraphicsLayerFactory
     virtual PassOwnPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;
 
     void layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeController>*);
+    void flushLayers();
 
+    WebPage* m_webPage;
     WebCore::Timer<RemoteLayerTreeController> m_layerFlushTimer;
 };
 

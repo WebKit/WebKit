@@ -44,8 +44,11 @@ private:
     virtual void setName(const String&) OVERRIDE;
     virtual void setNeedsDisplay() OVERRIDE;
     virtual void setNeedsDisplayInRect(const WebCore::FloatRect&) OVERRIDE;
+    virtual void flushCompositingState(const WebCore::FloatRect&) OVERRIDE;
+    virtual void flushCompositingStateForThisLayerOnly() OVERRIDE;
 
     void noteLayerPropertiesChanged(unsigned layerChanges);
+    void recursiveCommitChanges();
 
     RemoteLayerTreeController* m_controller;
 

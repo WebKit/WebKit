@@ -27,23 +27,32 @@
 #import "RemoteLayerTreeController.h"
 
 #import "RemoteGraphicsLayer.h"
+#import "WebPage.h"
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/Page.h>
 #import <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<RemoteLayerTreeController> RemoteLayerTreeController::create()
+PassOwnPtr<RemoteLayerTreeController> RemoteLayerTreeController::create(WebPage* webPage)
 {
-    return adoptPtr(new RemoteLayerTreeController);
+    return adoptPtr(new RemoteLayerTreeController(webPage));
 }
 
-RemoteLayerTreeController::RemoteLayerTreeController()
-    : m_layerFlushTimer(this, &RemoteLayerTreeController::layerFlushTimerFired)
+RemoteLayerTreeController::RemoteLayerTreeController(WebPage* webPage)
+    : m_webPage(webPage)
+    , m_layerFlushTimer(this, &RemoteLayerTreeController::layerFlushTimerFired)
 {
 }
 
 RemoteLayerTreeController::~RemoteLayerTreeController()
+{
+}
+
+void RemoteLayerTreeController::setRootLayer(GraphicsLayer* rootLayer)
 {
 }
 
@@ -62,6 +71,14 @@ PassOwnPtr<GraphicsLayer> RemoteLayerTreeController::createGraphicsLayer(Graphic
 
 void RemoteLayerTreeController::layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeController>*)
 {
+    flushLayers();
+}
+
+void RemoteLayerTreeController::flushLayers()
+{
+    m_webPage->layoutIfNeeded();
+    m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
+
     // FIXME: Package up the transaction and send it to the UI process.
 }
 

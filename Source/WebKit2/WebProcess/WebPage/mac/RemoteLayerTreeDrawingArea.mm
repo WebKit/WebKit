@@ -39,7 +39,7 @@ PassOwnPtr<RemoteLayerTreeDrawingArea> RemoteLayerTreeDrawingArea::create(WebPag
 
 RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea(WebPage* webPage, const WebPageCreationParameters&)
     : DrawingArea(DrawingAreaTypeRemoteLayerTree, webPage)
-    , m_remoteLayerTreeController(RemoteLayerTreeController::create())
+    , m_remoteLayerTreeController(RemoteLayerTreeController::create(webPage))
 {
 }
 
@@ -60,8 +60,9 @@ GraphicsLayerFactory* RemoteLayerTreeDrawingArea::graphicsLayerFactory()
     return m_remoteLayerTreeController.get();
 }
 
-void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer*)
+void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLayer)
 {
+    m_remoteLayerTreeController->setRootLayer(rootLayer);
 }
 
 void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()

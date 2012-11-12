@@ -1,5 +1,45 @@
 2012-11-12  Anders Carlsson  <andersca@apple.com>
 
+        More work on remote layer flushing
+        https://bugs.webkit.org/show_bug.cgi?id=101960
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.h:
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.mm:
+        (WebKit::RemoteGraphicsLayer::flushCompositingState):
+        Call recursiveCommitChanges.
+
+        (WebKit::RemoteGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        Add stub function for now.
+
+        (WebKit::RemoteGraphicsLayer::recursiveCommitChanges):
+        Call flushCompositingStateForThisLayerOnly and then call recursiveCommitChanges recursively on all the child layers.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeController.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeController.mm:
+        (WebKit::RemoteLayerTreeController::create):
+        (WebKit::RemoteLayerTreeController::RemoteLayerTreeController):
+        This now takes a web page.
+
+        (WebKit::RemoteLayerTreeController::setRootLayer):
+        Add empty function.
+
+        (WebKit::RemoteLayerTreeController::layerFlushTimerFired):
+        Call flushLayers explicitly.
+
+        (WebKit::RemoteLayerTreeController::flushLayers):
+        Force a layout and then sync all the compositing layers.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+        RemoteLayerTreeController::create now takes a web page.
+
+        (WebKit::RemoteLayerTreeDrawingArea::setRootCompositingLayer):
+        Call the remote layer tree controller.
+
+2012-11-12  Anders Carlsson  <andersca@apple.com>
+
         Layer property changes should schedule a remote layer flush
         https://bugs.webkit.org/show_bug.cgi?id=101951
 
