@@ -27,14 +27,14 @@
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ShadowData.h"
+#include "StyleImage.h"
 #include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 
 struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareInheritedData> {
-    Color firstColor;
     float firstFloat;
-    Color colors[5];
+    RGBA32 colors[6];
     void* ownPtrs[1];
     AtomicString atomicStrings[5];
     void* refPtrs[2];
@@ -50,7 +50,7 @@ struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareI
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    Color touchColors;
+    RGBA32 touchColors;
 #endif
 
 #if ENABLE(CSS_VARIABLES)
@@ -66,6 +66,12 @@ StyleRareInheritedData::StyleRareInheritedData()
     , m_effectiveZoom(RenderStyle::initialZoom())
     , widows(RenderStyle::initialWidows())
     , orphans(RenderStyle::initialOrphans())
+    , m_hasTextStrokeColor(false)
+    , m_hasTextFillColor(false)
+    , m_hasTextEmphasisColor(false)
+    , m_hasVisitedLinkTextStrokeColor(false)
+    , m_hasVisitedLinkTextFillColor(false)
+    , m_hasVisitedLinkTextEmphasisColor(false)
     , textSecurity(RenderStyle::initialTextSecurity())
     , userModify(READ_ONLY)
     , wordBreak(RenderStyle::initialWordBreak())
@@ -107,8 +113,14 @@ StyleRareInheritedData::StyleRareInheritedData()
     , m_imageResolution(RenderStyle::initialImageResolution())
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    , tapHighlightColor(RenderStyle::initialTapHighlightColor())
-#endif    
+    , tapHighlightColor(RenderStyle::initialTapHighlightColor().rgb())
+#endif
+    , m_textStrokeColor(Color::transparent)
+    , m_textFillColor(Color::transparent)
+    , m_textEmphasisColor(Color::transparent)
+    , m_visitedLinkTextStrokeColor(Color::transparent)
+    , m_visitedLinkTextFillColor(Color::transparent)
+    , m_visitedLinkTextEmphasisColor(Color::transparent)
 {
 #if ENABLE(CSS_VARIABLES)
     m_variables.init();
@@ -117,13 +129,7 @@ StyleRareInheritedData::StyleRareInheritedData()
 
 StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     : RefCounted<StyleRareInheritedData>()
-    , textStrokeColor(o.textStrokeColor)
     , textStrokeWidth(o.textStrokeWidth)
-    , textFillColor(o.textFillColor)
-    , textEmphasisColor(o.textEmphasisColor)
-    , visitedLinkTextStrokeColor(o.visitedLinkTextStrokeColor)
-    , visitedLinkTextFillColor(o.visitedLinkTextFillColor)
-    , visitedLinkTextEmphasisColor(o.visitedLinkTextEmphasisColor)
     , textShadow(o.textShadow ? adoptPtr(new ShadowData(*o.textShadow)) : nullptr)
     , highlight(o.highlight)
     , cursorData(o.cursorData)
@@ -131,6 +137,12 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , m_effectiveZoom(o.m_effectiveZoom)
     , widows(o.widows)
     , orphans(o.orphans)
+    , m_hasTextStrokeColor(o.m_hasTextStrokeColor)
+    , m_hasTextFillColor(o.m_hasTextFillColor)
+    , m_hasTextEmphasisColor(o.m_hasTextEmphasisColor)
+    , m_hasVisitedLinkTextStrokeColor(o.m_hasVisitedLinkTextStrokeColor)
+    , m_hasVisitedLinkTextFillColor(o.m_hasVisitedLinkTextFillColor)
+    , m_hasVisitedLinkTextEmphasisColor(o.m_hasVisitedLinkTextEmphasisColor)
     , textSecurity(o.textSecurity)
     , userModify(o.userModify)
     , wordBreak(o.wordBreak)
@@ -180,6 +192,12 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
 #if ENABLE(CSS_VARIABLES)
     , m_variables(o.m_variables)
 #endif
+    , m_textStrokeColor(o.m_textStrokeColor)
+    , m_textFillColor(o.m_textFillColor)
+    , m_textEmphasisColor(o.m_textEmphasisColor)
+    , m_visitedLinkTextStrokeColor(o.m_visitedLinkTextStrokeColor)
+    , m_visitedLinkTextFillColor(o.m_visitedLinkTextFillColor)
+    , m_visitedLinkTextEmphasisColor(o.m_visitedLinkTextEmphasisColor)
 {
 }
 
@@ -198,13 +216,13 @@ static bool cursorDataEquivalent(const CursorList* c1, const CursorList* c2)
 
 bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 {
-    return textStrokeColor == o.textStrokeColor
+    return textStrokeColor() == o.textStrokeColor()
         && textStrokeWidth == o.textStrokeWidth
-        && textFillColor == o.textFillColor
-        && textEmphasisColor == o.textEmphasisColor
-        && visitedLinkTextStrokeColor == o.visitedLinkTextStrokeColor
-        && visitedLinkTextFillColor == o.visitedLinkTextFillColor
-        && visitedLinkTextEmphasisColor == o.visitedLinkTextEmphasisColor
+        && textFillColor() == o.textFillColor()
+        && textEmphasisColor() == o.textEmphasisColor()
+        && visitedLinkTextStrokeColor() == o.visitedLinkTextStrokeColor()
+        && visitedLinkTextFillColor() == o.visitedLinkTextFillColor()
+        && visitedLinkTextEmphasisColor() == o.visitedLinkTextEmphasisColor()
 #if ENABLE(TOUCH_EVENTS)
         && tapHighlightColor == o.tapHighlightColor
 #endif
@@ -269,6 +287,42 @@ bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& 
     if (textShadow && o.textShadow && (*textShadow != *o.textShadow))
         return false;
     return true;
+}
+
+void StyleRareInheritedData::setTextStrokeColor(const Color& color)
+{
+    m_hasTextStrokeColor = color.isValid();
+    m_textStrokeColor = color.rgb();
+}
+
+void StyleRareInheritedData::setTextFillColor(const Color& color)
+{
+    m_hasTextFillColor = color.isValid();
+    m_textFillColor = color.rgb();
+}
+
+void StyleRareInheritedData::setTextEmphasisColor(const Color& color)
+{
+    m_hasTextEmphasisColor = color.isValid();
+    m_textEmphasisColor = color.rgb();
+}
+
+void StyleRareInheritedData::setVisitedLinkTextStrokeColor(const Color& color)
+{
+    m_hasVisitedLinkTextStrokeColor = color.isValid();
+    m_visitedLinkTextStrokeColor = color.rgb();
+}
+
+void StyleRareInheritedData::setVisitedLinkTextFillColor(const Color& color)
+{
+    m_hasVisitedLinkTextFillColor = color.isValid();
+    m_visitedLinkTextFillColor = color.rgb();
+}
+
+void StyleRareInheritedData::setVisitedLinkTextEmphasisColor(const Color& color)
+{
+    m_hasVisitedLinkTextEmphasisColor = color.isValid();
+    m_visitedLinkTextEmphasisColor = color.rgb();
 }
 
 void StyleRareInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

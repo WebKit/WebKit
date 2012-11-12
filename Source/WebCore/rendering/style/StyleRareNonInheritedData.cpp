@@ -54,7 +54,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_wrapMargin(RenderStyle::initialWrapMargin())
     , m_wrapPadding(RenderStyle::initialWrapPadding())
     , m_clipPath(RenderStyle::initialClipPath())
-    , m_visitedLinkBackgroundColor(RenderStyle::initialBackgroundColor())
     , m_order(RenderStyle::initialOrder())
     , m_flowThread(RenderStyle::initialFlowThread())
     , m_regionThread(RenderStyle::initialRegionThread())
@@ -88,6 +87,19 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #if ENABLE(CSS_COMPOSITING)
     , m_effectiveBlendMode(RenderStyle::initialBlendMode())
 #endif
+    , m_hasVisitedLinkBackgroundColor(RenderStyle::initialBackgroundColor().isValid())
+    , m_hasVisitedLinkOutlineColor(false)
+    , m_hasVisitedLinkBorderLeftColor(false)
+    , m_hasVisitedLinkBorderRightColor(false)
+    , m_hasVisitedLinkBorderTopColor(false)
+    , m_hasVisitedLinkBorderBottomColor(false)
+    , m_visitedLinkBackgroundColor(RenderStyle::initialBackgroundColor().rgb())
+    , m_visitedLinkOutlineColor(Color::transparent)
+    , m_visitedLinkBorderLeftColor(Color::transparent)
+    , m_visitedLinkBorderRightColor(Color::transparent)
+    , m_visitedLinkBorderTopColor(Color::transparent)
+    , m_visitedLinkBorderBottomColor(Color::transparent)
+
 {
     m_maskBoxImage.setMaskDefaults();
 }
@@ -128,12 +140,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_wrapMargin(o.m_wrapMargin)
     , m_wrapPadding(o.m_wrapPadding)
     , m_clipPath(o.m_clipPath)
-    , m_visitedLinkBackgroundColor(o.m_visitedLinkBackgroundColor)
-    , m_visitedLinkOutlineColor(o.m_visitedLinkOutlineColor)
-    , m_visitedLinkBorderLeftColor(o.m_visitedLinkBorderLeftColor)
-    , m_visitedLinkBorderRightColor(o.m_visitedLinkBorderRightColor)
-    , m_visitedLinkBorderTopColor(o.m_visitedLinkBorderTopColor)
-    , m_visitedLinkBorderBottomColor(o.m_visitedLinkBorderBottomColor)
     , m_order(o.m_order)
     , m_flowThread(o.m_flowThread)
     , m_regionThread(o.m_regionThread)
@@ -167,6 +173,18 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
 #if ENABLE(CSS_COMPOSITING)
     , m_effectiveBlendMode(o.m_effectiveBlendMode)
 #endif
+    , m_hasVisitedLinkBackgroundColor(o.m_hasVisitedLinkBackgroundColor)
+    , m_hasVisitedLinkOutlineColor(o.m_hasVisitedLinkOutlineColor)
+    , m_hasVisitedLinkBorderLeftColor(o.m_hasVisitedLinkBorderLeftColor)
+    , m_hasVisitedLinkBorderRightColor(o.m_hasVisitedLinkBorderRightColor)
+    , m_hasVisitedLinkBorderTopColor(o.m_hasVisitedLinkBorderTopColor)
+    , m_hasVisitedLinkBorderBottomColor(o.m_hasVisitedLinkBorderBottomColor)
+    , m_visitedLinkBackgroundColor(o.m_visitedLinkBackgroundColor)
+    , m_visitedLinkOutlineColor(o.m_visitedLinkOutlineColor)
+    , m_visitedLinkBorderLeftColor(o.m_visitedLinkBorderLeftColor)
+    , m_visitedLinkBorderRightColor(o.m_visitedLinkBorderRightColor)
+    , m_visitedLinkBorderTopColor(o.m_visitedLinkBorderTopColor)
+    , m_visitedLinkBorderBottomColor(o.m_visitedLinkBorderBottomColor)
 {
 }
 
@@ -213,12 +231,12 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_wrapMargin == o.m_wrapMargin
         && m_wrapPadding == o.m_wrapPadding
         && m_clipPath == o.m_clipPath
-        && m_visitedLinkBackgroundColor == o.m_visitedLinkBackgroundColor
-        && m_visitedLinkOutlineColor == o.m_visitedLinkOutlineColor
-        && m_visitedLinkBorderLeftColor == o.m_visitedLinkBorderLeftColor
-        && m_visitedLinkBorderRightColor == o.m_visitedLinkBorderRightColor
-        && m_visitedLinkBorderTopColor == o.m_visitedLinkBorderTopColor
-        && m_visitedLinkBorderBottomColor == o.m_visitedLinkBorderBottomColor
+        && visitedLinkBackgroundColor() == o.visitedLinkBackgroundColor()
+        && visitedLinkOutlineColor() == o.visitedLinkOutlineColor()
+        && visitedLinkBorderLeftColor() == o.visitedLinkBorderLeftColor()
+        && visitedLinkBorderRightColor() == o.visitedLinkBorderRightColor()
+        && visitedLinkBorderTopColor() == o.visitedLinkBorderTopColor()
+        && visitedLinkBorderBottomColor() == o.visitedLinkBorderBottomColor()
         && m_order == o.m_order
         && m_flowThread == o.m_flowThread
         && m_regionThread == o.m_regionThread
@@ -313,6 +331,42 @@ bool StyleRareNonInheritedData::transitionDataEquivalent(const StyleRareNonInher
     if (m_transitions && o.m_transitions && (*m_transitions != *o.m_transitions))
         return false;
     return true;
+}
+
+void StyleRareNonInheritedData::setVisitedLinkBorderLeftColor(const Color& color)
+{
+    m_hasVisitedLinkBorderLeftColor = color.isValid();
+    m_visitedLinkBorderLeftColor = color.rgb();
+}
+
+void StyleRareNonInheritedData::setVisitedLinkBorderRightColor(const Color& color)
+{
+    m_hasVisitedLinkBorderRightColor = color.isValid();
+    m_visitedLinkBorderRightColor = color.rgb();
+}
+
+void StyleRareNonInheritedData::setVisitedLinkBorderTopColor(const Color& color)
+{
+    m_hasVisitedLinkBorderTopColor = color.isValid();
+    m_visitedLinkBorderTopColor = color.rgb();
+}
+
+void StyleRareNonInheritedData::setVisitedLinkBorderBottomColor(const Color& color)
+{
+    m_hasVisitedLinkBorderBottomColor = color.isValid();
+    m_visitedLinkBorderBottomColor = color.rgb();
+}
+
+void StyleRareNonInheritedData::setVisitedLinkOutlineColor(const Color& color)
+{
+    m_hasVisitedLinkOutlineColor = color.isValid();
+    m_visitedLinkOutlineColor = color.rgb();
+}
+
+void StyleRareNonInheritedData::setVisitedLinkBackgroundColor(const Color& color)
+{
+    m_hasVisitedLinkBackgroundColor = color.isValid();
+    m_visitedLinkBackgroundColor = color.rgb();
 }
 
 void StyleRareNonInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

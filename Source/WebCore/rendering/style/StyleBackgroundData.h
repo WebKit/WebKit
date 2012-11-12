@@ -46,7 +46,7 @@ public:
     }
 
     const FillLayer& background() const { return m_background; }
-    const Color& color() const { return m_color; }
+    const Color color() const { return m_color; }
     const OutlineValue& outline() const { return m_outline; }
 
 private:
@@ -55,8 +55,8 @@ private:
     StyleBackgroundData();
     StyleBackgroundData(const StyleBackgroundData&); 
 
+    RGBA32 m_color;
     FillLayer m_background;
-    Color m_color;
     OutlineValue m_outline;
 };
 

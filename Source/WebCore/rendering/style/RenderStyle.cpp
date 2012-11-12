@@ -667,9 +667,9 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
 #if ENABLE(CSS3_TEXT)
         || rareNonInheritedData->m_textDecorationStyle != other->rareNonInheritedData->m_textDecorationStyle
 #endif // CSS3_TEXT
-        || rareInheritedData->textFillColor != other->rareInheritedData->textFillColor
-        || rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor
-        || rareInheritedData->textEmphasisColor != other->rareInheritedData->textEmphasisColor
+        || rareInheritedData->textFillColor() != other->rareInheritedData->textFillColor()
+        || rareInheritedData->textStrokeColor() != other->rareInheritedData->textStrokeColor()
+        || rareInheritedData->textEmphasisColor() != other->rareInheritedData->textEmphasisColor()
         || rareInheritedData->textEmphasisFill != other->rareInheritedData->textEmphasisFill
         || rareInheritedData->m_imageRendering != other->rareInheritedData->m_imageRendering)
         return StyleDifferenceRepaint;
@@ -974,8 +974,24 @@ void RenderStyle::setListStyleImage(PassRefPtr<StyleImage> v)
 
 Color RenderStyle::color() const { return inherited->color; }
 Color RenderStyle::visitedLinkColor() const { return inherited->visitedLinkColor; }
-void RenderStyle::setColor(const Color& v) { SET_VAR(inherited, color, v) };
-void RenderStyle::setVisitedLinkColor(const Color& v) { SET_VAR(inherited, visitedLinkColor, v) }
+
+void RenderStyle::setColor(const Color& v)
+{
+    ASSERT(v.isValid());
+    SET_VAR(inherited, color, v.rgb());
+}
+
+void RenderStyle::setVisitedLinkColor(const Color& v)
+{
+    ASSERT(v.isValid());
+    SET_VAR(inherited, visitedLinkColor, v.rgb());
+}
+
+void RenderStyle::setBackgroundColor(const Color& v)
+{
+    ASSERT(v.isValid());
+    SET_VAR(m_background, m_color, v.rgb());
+}
 
 short RenderStyle::horizontalBorderSpacing() const { return inherited->horizontal_border_spacing; }
 short RenderStyle::verticalBorderSpacing() const { return inherited->vertical_border_spacing; }
@@ -1564,6 +1580,12 @@ TextEmphasisMark RenderStyle::textEmphasisMark() const
         return TextEmphasisMarkDot;
 
     return TextEmphasisMarkSesame;
+}
+
+void RenderStyle::setVisitedLinkColumnRuleColor(const Color& color)
+{
+    if (rareNonInheritedData->m_multiCol->visitedLinkColumnRuleColor() != color)
+        rareNonInheritedData.access()->m_multiCol.access()->setVisitedLinkColumnRuleColor(color);
 }
 
 #if ENABLE(TOUCH_EVENTS)

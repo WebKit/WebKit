@@ -41,6 +41,7 @@ namespace WebCore {
 class CursorList;
 class QuotesData;
 class ShadowData;
+class StyleImage;
 
 // This struct is for rarely used inherited CSS3, CSS2, and WebKit-specific properties.
 // By grouping them together, we save space, and only allocate this object when someone
@@ -60,18 +61,25 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
-    Color textStrokeColor;
     float textStrokeWidth;
-    Color textFillColor;
-    Color textEmphasisColor;
-    
-    Color visitedLinkTextStrokeColor;
-    Color visitedLinkTextFillColor;
-    Color visitedLinkTextEmphasisColor;    
+
+    Color textStrokeColor() const { return m_hasTextStrokeColor ? Color(m_textStrokeColor) : Color(); }
+    Color textFillColor() const { return m_hasTextFillColor ? Color(m_textFillColor) : Color(); }
+    Color textEmphasisColor() const { return m_hasTextEmphasisColor ? Color(m_textEmphasisColor) : Color(); }
+    Color visitedLinkTextStrokeColor() const { return m_hasVisitedLinkTextStrokeColor ? Color(m_visitedLinkTextStrokeColor) : Color(); }
+    Color visitedLinkTextFillColor() const { return m_hasVisitedLinkTextFillColor ? Color(m_visitedLinkTextFillColor) : Color(); }
+    Color visitedLinkTextEmphasisColor() const { return m_hasVisitedLinkTextEmphasisColor ? Color(m_visitedLinkTextEmphasisColor) : Color(); }
+
+    void setTextStrokeColor(const Color&);
+    void setTextFillColor(const Color&);
+    void setTextEmphasisColor(const Color&);
+    void setVisitedLinkTextStrokeColor(const Color&);
+    void setVisitedLinkTextFillColor(const Color&);
+    void setVisitedLinkTextEmphasisColor(const Color&);
 
     OwnPtr<ShadowData> textShadow; // Our text shadow information for shadowed text drawing.
     AtomicString highlight; // Apple-specific extension for custom highlight rendering.
-    
+
     RefPtr<CursorList> cursorData;
     Length indent;
     float m_effectiveZoom;
@@ -79,7 +87,13 @@ public:
     // Paged media properties.
     short widows;
     short orphans;
-    
+
+    unsigned m_hasTextStrokeColor : 1;
+    unsigned m_hasTextFillColor : 1;
+    unsigned m_hasTextEmphasisColor : 1;
+    unsigned m_hasVisitedLinkTextStrokeColor : 1;
+    unsigned m_hasVisitedLinkTextFillColor : 1;
+    unsigned m_hasVisitedLinkTextEmphasisColor : 1;
     unsigned textSecurity : 2; // ETextSecurity
     unsigned userModify : 2; // EUserModify (editing)
     unsigned wordBreak : 2; // EWordBreak
@@ -132,7 +146,7 @@ public:
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    Color tapHighlightColor;
+    RGBA32 tapHighlightColor;
 #endif
 
 #if ENABLE(CSS_VARIABLES)
@@ -140,6 +154,14 @@ public:
 #endif
 
 private:
+    RGBA32 m_textStrokeColor;
+    RGBA32 m_textFillColor;
+    RGBA32 m_textEmphasisColor;
+
+    RGBA32 m_visitedLinkTextStrokeColor;
+    RGBA32 m_visitedLinkTextFillColor;
+    RGBA32 m_visitedLinkTextEmphasisColor;
+
     StyleRareInheritedData();
     StyleRareInheritedData(const StyleRareInheritedData&);
 };

@@ -144,12 +144,19 @@ public:
 
     RefPtr<ClipPathOperation> m_clipPath;
 
-    Color m_visitedLinkBackgroundColor;
-    Color m_visitedLinkOutlineColor;
-    Color m_visitedLinkBorderLeftColor;
-    Color m_visitedLinkBorderRightColor;
-    Color m_visitedLinkBorderTopColor;
-    Color m_visitedLinkBorderBottomColor;
+    Color visitedLinkBackgroundColor() const { return m_hasVisitedLinkBackgroundColor ? Color(m_visitedLinkBackgroundColor) : Color(); }
+    Color visitedLinkOutlineColor() const { return m_hasVisitedLinkOutlineColor ? Color(m_visitedLinkOutlineColor) : Color(); }
+    Color visitedLinkBorderLeftColor() const { return m_hasVisitedLinkBorderLeftColor ? Color(m_visitedLinkBorderLeftColor) : Color(); }
+    Color visitedLinkBorderRightColor() const { return m_hasVisitedLinkBorderRightColor ? Color(m_visitedLinkBorderRightColor) : Color(); }
+    Color visitedLinkBorderTopColor() const { return m_hasVisitedLinkBorderTopColor ? Color(m_visitedLinkBorderTopColor) : Color(); }
+    Color visitedLinkBorderBottomColor() const { return m_hasVisitedLinkBorderBottomColor ? Color(m_visitedLinkBorderBottomColor) : Color(); }
+
+    void setVisitedLinkBackgroundColor(const Color&);
+    void setVisitedLinkOutlineColor(const Color&);
+    void setVisitedLinkBorderLeftColor(const Color&);
+    void setVisitedLinkBorderRightColor(const Color&);
+    void setVisitedLinkBorderTopColor(const Color&);
+    void setVisitedLinkBorderBottomColor(const Color&);
 
     int m_order;
 
@@ -194,7 +201,21 @@ public:
     unsigned m_effectiveBlendMode: 5; // EBlendMode
 #endif
 
+    unsigned m_hasVisitedLinkBackgroundColor : 1;
+    unsigned m_hasVisitedLinkOutlineColor : 1;
+    unsigned m_hasVisitedLinkBorderLeftColor : 1;
+    unsigned m_hasVisitedLinkBorderRightColor : 1;
+    unsigned m_hasVisitedLinkBorderTopColor : 1;
+    unsigned m_hasVisitedLinkBorderBottomColor : 1;
+
 private:
+    RGBA32 m_visitedLinkBackgroundColor;
+    RGBA32 m_visitedLinkOutlineColor;
+    RGBA32 m_visitedLinkBorderLeftColor;
+    RGBA32 m_visitedLinkBorderRightColor;
+    RGBA32 m_visitedLinkBorderTopColor;
+    RGBA32 m_visitedLinkBorderBottomColor;
+
     StyleRareNonInheritedData();
     StyleRareNonInheritedData(const StyleRareNonInheritedData&);
 };

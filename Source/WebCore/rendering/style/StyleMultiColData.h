@@ -57,7 +57,9 @@ public:
     unsigned short m_count;
     float m_gap;
     BorderValue m_rule;
-    Color m_visitedLinkColumnRuleColor;
+
+    Color visitedLinkColumnRuleColor() const { return m_hasVisitedLinkColumnRuleColor ? Color(m_visitedLinkColumnRuleColor) : Color(); }
+    void setVisitedLinkColumnRuleColor(const Color&);
 
     bool m_autoWidth : 1;
     bool m_autoCount : 1;
@@ -70,6 +72,9 @@ public:
     unsigned m_progression : 2; // ColumnProgression
 
 private:
+    bool m_hasVisitedLinkColumnRuleColor : 1;
+    RGBA32 m_visitedLinkColumnRuleColor;
+
     StyleMultiColData();
     StyleMultiColData(const StyleMultiColData&);
 };

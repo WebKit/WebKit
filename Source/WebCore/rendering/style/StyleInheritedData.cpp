@@ -32,8 +32,8 @@ StyleInheritedData::StyleInheritedData()
     , vertical_border_spacing(RenderStyle::initialVerticalBorderSpacing())
     , line_height(RenderStyle::initialLineHeight())
     , list_style_image(RenderStyle::initialListStyleImage())
-    , color(RenderStyle::initialColor())
-    , visitedLinkColor(RenderStyle::initialColor())
+    , color(RenderStyle::initialColor().rgb())
+    , visitedLinkColor(RenderStyle::initialColor().rgb())
 {
 }
 
@@ -47,9 +47,9 @@ StyleInheritedData::StyleInheritedData(const StyleInheritedData& o)
     , vertical_border_spacing(o.vertical_border_spacing)
     , line_height(o.line_height)
     , list_style_image(o.list_style_image)
-    , font(o.font)
     , color(o.color)
     , visitedLinkColor(o.visitedLinkColor)
+    , font(o.font)
 {
 }
 

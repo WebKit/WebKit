@@ -57,9 +57,10 @@ public:
 
     RefPtr<StyleImage> list_style_image;
 
+    RGBA32 color;
+    RGBA32 visitedLinkColor;
+
     Font font;
-    Color color;
-    Color visitedLinkColor;
 
 private:
     StyleInheritedData();

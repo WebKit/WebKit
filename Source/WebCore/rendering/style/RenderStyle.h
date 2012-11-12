@@ -96,6 +96,10 @@ template<typename T, typename U> inline bool compareEqual(const T& t, const U& u
     if (!compareEqual(group->variable.color(), value)) \
         group.access()->variable.setColor(value);
 
+#define SET_ACCESSOR_VAR(group, getter, setter, value) \
+    if (!compareEqual(group->getter(), value)) \
+        group.access()->setter(value);
+
 namespace WebCore {
 
 using std::max;
@@ -1059,7 +1063,7 @@ public:
     void resetBorderBottomLeftRadius() { SET_VAR(surround, border.m_bottomLeft, initialBorderRadius()) }
     void resetBorderBottomRightRadius() { SET_VAR(surround, border.m_bottomRight, initialBorderRadius()) }
 
-    void setBackgroundColor(const Color& v) { SET_VAR(m_background, m_color, v) }
+    void setBackgroundColor(const Color&);
 
     void setBackgroundXPosition(Length l) { SET_VAR(m_background, m_background.m_xPosition, l) }
     void setBackgroundYPosition(Length l) { SET_VAR(m_background, m_background.m_yPosition, l) }
@@ -1263,9 +1267,9 @@ public:
     // CSS3 Setters
     void setOutlineOffset(int v) { SET_VAR(m_background, m_outline.m_offset, v) }
     void setTextShadow(PassOwnPtr<ShadowData>, bool add = false);
-    void setTextStrokeColor(const Color& c) { SET_VAR(rareInheritedData, textStrokeColor, c) }
+    void setTextStrokeColor(const Color& c) { SET_ACCESSOR_VAR(rareInheritedData, textStrokeColor, setTextStrokeColor, c) }
     void setTextStrokeWidth(float w) { SET_VAR(rareInheritedData, textStrokeWidth, w) }
-    void setTextFillColor(const Color& c) { SET_VAR(rareInheritedData, textFillColor, c) }
+    void setTextFillColor(const Color& c) { SET_ACCESSOR_VAR(rareInheritedData, textFillColor, setTextFillColor, c) }
     void setColorSpace(ColorSpace space) { SET_VAR(rareInheritedData, colorSpace, space) }
     void setOpacity(float f) { float v = clampTo<float>(f, 0, 1); SET_VAR(rareNonInheritedData, opacity, v); }
     void setAppearance(ControlPart a) { SET_VAR(rareNonInheritedData, m_appearance, a); }
@@ -1350,7 +1354,7 @@ public:
     void setTransformOriginZ(float f) { SET_VAR(rareNonInheritedData.access()->m_transform, m_z, f); }
     void setSpeak(ESpeak s) { SET_VAR(rareInheritedData, speak, s); }
     void setTextCombine(TextCombine v) { SET_VAR(rareNonInheritedData, m_textCombine, v); }
-    void setTextEmphasisColor(const Color& c) { SET_VAR(rareInheritedData, textEmphasisColor, c) }
+    void setTextEmphasisColor(const Color& c) { SET_ACCESSOR_VAR(rareInheritedData, textEmphasisColor, setTextEmphasisColor, c) }
     void setTextEmphasisFill(TextEmphasisFill fill) { SET_VAR(rareInheritedData, textEmphasisFill, fill); }
     void setTextEmphasisMark(TextEmphasisMark mark) { SET_VAR(rareInheritedData, textEmphasisMark, mark); }
     void setTextEmphasisCustomMark(const AtomicString& mark) { SET_VAR(rareInheritedData, textEmphasisCustomMark, mark); }
@@ -1409,7 +1413,7 @@ public:
     void setLineBoxContain(LineBoxContain c) { SET_VAR(rareInheritedData, m_lineBoxContain, c); }
     void setLineClamp(LineClampValue c) { SET_VAR(rareNonInheritedData, lineClamp, c); }
 #if ENABLE(TOUCH_EVENTS)
-    void setTapHighlightColor(const Color& c) { SET_VAR(rareInheritedData, tapHighlightColor, c); }
+    void setTapHighlightColor(const Color& c) { SET_VAR(rareInheritedData, tapHighlightColor, c.rgb()); }
 #endif
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     void setUseTouchOverflowScrolling(bool v) { SET_VAR(rareInheritedData, useTouchOverflowScrolling, v); }
@@ -1683,7 +1687,7 @@ public:
     static Length initialPerspectiveOriginX() { return Length(50.0, Percent); }
     static Length initialPerspectiveOriginY() { return Length(50.0, Percent); }
     static Color initialBackgroundColor() { return Color::transparent; }
-    static Color initialTextEmphasisColor() { return TextEmphasisFillFilled; }
+    static Color initialTextEmphasisColor() { return Color::transparent; }
     static TextEmphasisFill initialTextEmphasisFill() { return TextEmphasisFillFilled; }
     static TextEmphasisMark initialTextEmphasisMark() { return TextEmphasisMarkNone; }
     static const AtomicString& initialTextEmphasisCustomMark() { return nullAtom; }
@@ -1749,16 +1753,17 @@ public:
 #endif
 private:
     void setVisitedLinkColor(const Color&);
-    void setVisitedLinkBackgroundColor(const Color& v) { SET_VAR(rareNonInheritedData, m_visitedLinkBackgroundColor, v) }
-    void setVisitedLinkBorderLeftColor(const Color& v) { SET_VAR(rareNonInheritedData, m_visitedLinkBorderLeftColor, v) }
-    void setVisitedLinkBorderRightColor(const Color& v) { SET_VAR(rareNonInheritedData, m_visitedLinkBorderRightColor, v) }
-    void setVisitedLinkBorderBottomColor(const Color& v) { SET_VAR(rareNonInheritedData, m_visitedLinkBorderBottomColor, v) }
-    void setVisitedLinkBorderTopColor(const Color& v) { SET_VAR(rareNonInheritedData, m_visitedLinkBorderTopColor, v) }
-    void setVisitedLinkOutlineColor(const Color& v) { SET_VAR(rareNonInheritedData, m_visitedLinkOutlineColor, v) }
-    void setVisitedLinkColumnRuleColor(const Color& v) { SET_VAR(rareNonInheritedData.access()->m_multiCol, m_visitedLinkColumnRuleColor, v) }
-    void setVisitedLinkTextEmphasisColor(const Color& v) { SET_VAR(rareInheritedData, visitedLinkTextEmphasisColor, v) }
-    void setVisitedLinkTextFillColor(const Color& v) { SET_VAR(rareInheritedData, visitedLinkTextFillColor, v) }
-    void setVisitedLinkTextStrokeColor(const Color& v) { SET_VAR(rareInheritedData, visitedLinkTextStrokeColor, v) }
+
+    void setVisitedLinkBackgroundColor(const Color& v) { SET_ACCESSOR_VAR(rareNonInheritedData, visitedLinkBackgroundColor, setVisitedLinkBackgroundColor, v) }
+    void setVisitedLinkBorderLeftColor(const Color& v) { SET_ACCESSOR_VAR(rareNonInheritedData, visitedLinkBorderLeftColor, setVisitedLinkBorderLeftColor, v) }
+    void setVisitedLinkBorderRightColor(const Color& v) { SET_ACCESSOR_VAR(rareNonInheritedData, visitedLinkBorderRightColor, setVisitedLinkBorderRightColor, v) }
+    void setVisitedLinkBorderBottomColor(const Color& v) { SET_ACCESSOR_VAR(rareNonInheritedData, visitedLinkBorderBottomColor, setVisitedLinkBorderBottomColor, v) }
+    void setVisitedLinkBorderTopColor(const Color& v) { SET_ACCESSOR_VAR(rareNonInheritedData, visitedLinkBorderTopColor, setVisitedLinkBorderTopColor, v) }
+    void setVisitedLinkOutlineColor(const Color& v) { SET_ACCESSOR_VAR(rareNonInheritedData, visitedLinkOutlineColor, setVisitedLinkOutlineColor, v) }
+    void setVisitedLinkColumnRuleColor(const Color&);
+    void setVisitedLinkTextEmphasisColor(const Color& v) { SET_ACCESSOR_VAR(rareInheritedData, visitedLinkTextEmphasisColor, setVisitedLinkTextEmphasisColor, v) }
+    void setVisitedLinkTextFillColor(const Color& v) { SET_ACCESSOR_VAR(rareInheritedData, visitedLinkTextFillColor, setVisitedLinkTextFillColor, v) }
+    void setVisitedLinkTextStrokeColor(const Color& v) { SET_ACCESSOR_VAR(rareInheritedData, visitedLinkTextStrokeColor, setVisitedLinkTextStrokeColor, v) }
 
     void inheritUnicodeBidiFrom(const RenderStyle* parent) { noninherited_flags._unicodeBidi = parent->noninherited_flags._unicodeBidi; }
     void getShadowExtent(const ShadowData*, LayoutUnit& top, LayoutUnit& right, LayoutUnit& bottom, LayoutUnit& left) const;
@@ -1795,20 +1800,20 @@ private:
     Color color() const;
     Color columnRuleColor() const { return rareNonInheritedData->m_multiCol->m_rule.color(); }
     Color outlineColor() const { return m_background->outline().color(); }
-    Color textEmphasisColor() const { return rareInheritedData->textEmphasisColor; }
-    Color textFillColor() const { return rareInheritedData->textFillColor; }
-    Color textStrokeColor() const { return rareInheritedData->textStrokeColor; }
+    Color textEmphasisColor() const { return rareInheritedData->textEmphasisColor(); }
+    Color textFillColor() const { return rareInheritedData->textFillColor(); }
+    Color textStrokeColor() const { return rareInheritedData->textStrokeColor(); }
     Color visitedLinkColor() const;
-    Color visitedLinkBackgroundColor() const { return rareNonInheritedData->m_visitedLinkBackgroundColor; }
-    Color visitedLinkBorderLeftColor() const { return rareNonInheritedData->m_visitedLinkBorderLeftColor; }
-    Color visitedLinkBorderRightColor() const { return rareNonInheritedData->m_visitedLinkBorderRightColor; }
-    Color visitedLinkBorderBottomColor() const { return rareNonInheritedData->m_visitedLinkBorderBottomColor; }
-    Color visitedLinkBorderTopColor() const { return rareNonInheritedData->m_visitedLinkBorderTopColor; }
-    Color visitedLinkOutlineColor() const { return rareNonInheritedData->m_visitedLinkOutlineColor; }
-    Color visitedLinkColumnRuleColor() const { return rareNonInheritedData->m_multiCol->m_visitedLinkColumnRuleColor; }
-    Color visitedLinkTextEmphasisColor() const { return rareInheritedData->visitedLinkTextEmphasisColor; }
-    Color visitedLinkTextFillColor() const { return rareInheritedData->visitedLinkTextFillColor; }
-    Color visitedLinkTextStrokeColor() const { return rareInheritedData->visitedLinkTextStrokeColor; }
+    Color visitedLinkBackgroundColor() const { return rareNonInheritedData->visitedLinkBackgroundColor(); }
+    Color visitedLinkBorderLeftColor() const { return rareNonInheritedData->visitedLinkBorderLeftColor(); }
+    Color visitedLinkBorderRightColor() const { return rareNonInheritedData->visitedLinkBorderRightColor(); }
+    Color visitedLinkBorderBottomColor() const { return rareNonInheritedData->visitedLinkBorderBottomColor(); }
+    Color visitedLinkBorderTopColor() const { return rareNonInheritedData->visitedLinkBorderTopColor(); }
+    Color visitedLinkOutlineColor() const { return rareNonInheritedData->visitedLinkOutlineColor(); }
+    Color visitedLinkColumnRuleColor() const { return rareNonInheritedData->m_multiCol->visitedLinkColumnRuleColor(); }
+    Color visitedLinkTextEmphasisColor() const { return rareInheritedData->visitedLinkTextEmphasisColor(); }
+    Color visitedLinkTextFillColor() const { return rareInheritedData->visitedLinkTextFillColor(); }
+    Color visitedLinkTextStrokeColor() const { return rareInheritedData->visitedLinkTextStrokeColor(); }
 
     Color colorIncludingFallback(int colorProperty, bool visitedLink) const;
 

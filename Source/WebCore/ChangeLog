@@ -1,3 +1,81 @@
+2012-11-12  Andreas Kling  <kling@webkit.org>
+
+        RenderStyle: Pack Color members tighter in substructures.
+        <http://webkit.org/b/101860>
+
+        Reviewed by Antti Koivisto.
+
+        For RenderStyle substructures (StyleInheritedData, et al.), unfold all WebCore::Color
+        members into RGBA32/bool variables OR just an RGBA32 if the color can never be invalid.
+
+        Memory saved per instance:
+
+            - StyleMultiColData:          4 bytes
+            - StyleBackgroundData:        8 bytes
+            - StyleInheritedData:         8 bytes
+            - StyleRareInheritedData:    24 bytes
+            - StyleRareNonInheritedData: 24 bytes
+
+        323kB progression on Membuster3.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::setColor):
+        (WebCore::RenderStyle::setVisitedLinkColor):
+        (WebCore::RenderStyle::setVisitedLinkColumnRuleColor):
+        (WebCore::RenderStyle::setBackgroundColor):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleBackgroundData.cpp:
+        (WebCore::StyleBackgroundData::StyleBackgroundData):
+        * rendering/style/StyleBackgroundData.h:
+        (WebCore::StyleBackgroundData::color):
+        (StyleBackgroundData):
+        * rendering/style/StyleInheritedData.cpp:
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        * rendering/style/StyleInheritedData.h:
+        (StyleInheritedData):
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleMultiColData::setVisitedLinkColumnRuleColor):
+        * rendering/style/StyleMultiColData.h:
+        (StyleMultiColData):
+        (WebCore::StyleMultiColData::visitedLinkColumnRuleColor):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (SameSizeAsStyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        (WebCore::StyleRareInheritedData::setTextStrokeColor):
+        (WebCore::StyleRareInheritedData::setTextFillColor):
+        (WebCore::StyleRareInheritedData::setTextEmphasisColor):
+        (WebCore::StyleRareInheritedData::setVisitedLinkTextStrokeColor):
+        (WebCore::StyleRareInheritedData::setVisitedLinkTextFillColor):
+        (WebCore::StyleRareInheritedData::setVisitedLinkTextEmphasisColor):
+        * rendering/style/StyleRareInheritedData.h:
+        (StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::textStrokeColor):
+        (WebCore::StyleRareInheritedData::textFillColor):
+        (WebCore::StyleRareInheritedData::textEmphasisColor):
+        (WebCore::StyleRareInheritedData::visitedLinkTextStrokeColor):
+        (WebCore::StyleRareInheritedData::visitedLinkTextFillColor):
+        (WebCore::StyleRareInheritedData::visitedLinkTextEmphasisColor):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        (WebCore::StyleRareNonInheritedData::setVisitedLinkBorderLeftColor):
+        (WebCore::StyleRareNonInheritedData::setVisitedLinkBorderRightColor):
+        (WebCore::StyleRareNonInheritedData::setVisitedLinkBorderTopColor):
+        (WebCore::StyleRareNonInheritedData::setVisitedLinkBorderBottomColor):
+        (WebCore::StyleRareNonInheritedData::setVisitedLinkOutlineColor):
+        (WebCore::StyleRareNonInheritedData::setVisitedLinkBackgroundColor):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (WebCore::StyleRareNonInheritedData::visitedLinkBackgroundColor):
+        (WebCore::StyleRareNonInheritedData::visitedLinkOutlineColor):
+        (WebCore::StyleRareNonInheritedData::visitedLinkBorderLeftColor):
+        (WebCore::StyleRareNonInheritedData::visitedLinkBorderRightColor):
+        (WebCore::StyleRareNonInheritedData::visitedLinkBorderTopColor):
+        (WebCore::StyleRareNonInheritedData::visitedLinkBorderBottomColor):
+        (StyleRareNonInheritedData):
+
 2012-11-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: migrate text editor to mutation observers
