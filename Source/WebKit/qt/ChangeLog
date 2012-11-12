@@ -1,5 +1,18 @@
 2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] tst_QWebElement::style() fails because QWebElement::InlineStyle now works as expected
+        https://bugs.webkit.org/show_bug.cgi?id=60372
+
+        Reviewed by Simon Hausmann.
+
+        Update the expected value to follow this comment in StylePropertySet::addParsedProperty:
+        "Only add properties that have no !important counterpart present"
+
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::style):
+
+2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] tst_QWebElement::style() fails because QWebElement::CascadedStyle doesn't work as expected
         https://bugs.webkit.org/show_bug.cgi?id=65244
 
