@@ -1,3 +1,22 @@
+2012-11-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134225.
+        http://trac.webkit.org/changeset/134225
+        https://bugs.webkit.org/show_bug.cgi?id=101948
+
+        Appears to have broken the EFL and GTK builds (Requested by
+        abarth on #webkit).
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore):
+        (WebCore::JSHTMLElement::itemValue):
+        (WebCore::JSHTMLElement::setItemValue):
+        * bindings/v8/custom/V8HTMLElementCustom.cpp:
+        (WebCore):
+        (WebCore::V8HTMLElement::itemValueAccessorGetter):
+        (WebCore::V8HTMLElement::itemValueAccessorSetter):
+        * html/HTMLElement.idl:
+
 2012-11-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         hitTestResultAtPoint does two hit-tests if called on non main frame

@@ -78,9 +78,11 @@
 #endif
 #endif
 
-#if defined(LANGUAGE_JAVASCRIPT) || LANGUAGE_JAVASCRIPT
-    [Conditional=MICRODATA] attribute DOMObject itemValue
-        setter raises(DOMException);
+#if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
+#if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
+             [Conditional=MICRODATA, Custom] attribute DOMObject itemValue
+                 setter raises(DOMException);
+#endif
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
