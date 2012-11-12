@@ -56,6 +56,9 @@
 - (CGFloat)tileScaleFactor;
 - (void)setTileScaleFactor:(CGFloat)scaleFactor;
 
+- (CGFloat)deviceScaleFactor;
+- (void)setDeviceScaleFactor:(CGFloat)scaleFactor;
+
 - (CGSize)contentSize;
 - (CGSize)contentSizeRespectingZoom;
 

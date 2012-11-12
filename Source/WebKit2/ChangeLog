@@ -1,3 +1,22 @@
+2012-11-12  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin should support non-1 device scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=101923
+
+        Reviewed by Alexey Proskuryakov.
+
+        Do the appropriate plumbing to ensure that PDFPlugin handles device scale factor > 1
+        (it's called contentsScaleFactor in plugins), both for normal drawing and for snapshotting.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h: Add deviceScaleFactor setter/getter to PDFLayerController.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (PDFPlugin): Override contentsScaleFactorChanged.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pdfDocumentDidLoad): Plumb device scale factor through to PDFLayerController.
+        (WebKit::PDFPlugin::contentsScaleFactorChanged): Plumb device scale factor through to PDFLayerController
+        when we're notified that it has changed.
+        (WebKit::PDFPlugin::snapshot): Create snapshots with the device scale factor applied.
+
 2012-11-12  Anders Carlsson  <andersca@apple.com>
 
         Rename RemoteLayerTreeController to RemoteLayerTreeContext

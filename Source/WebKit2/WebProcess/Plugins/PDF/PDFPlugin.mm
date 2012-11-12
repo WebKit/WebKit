@@ -292,6 +292,8 @@ void PDFPlugin::pdfDocumentDidLoad()
 
     [m_pdfLayerController.get() setFrameSize:size()];
     m_pdfLayerController.get().document = document.get();
+
+    [m_pdfLayerController.get() setDeviceScaleFactor:controller()->contentsScaleFactor()];
     
     if (handlesPageScaleFactor())
         pluginView()->setPageScaleFactor([m_pdfLayerController.get() tileScaleFactor], IntPoint());
@@ -301,9 +303,12 @@ void PDFPlugin::pdfDocumentDidLoad()
     calculateSizes();
     updateScrollbars();
 
-    controller()->invalidate(IntRect(IntPoint(), size()));
-    
     runScriptsInPDFDocument();
+}
+
+void PDFPlugin::contentsScaleFactorChanged(float contentsScaleFactor)
+{
+    [m_pdfLayerController.get() setDeviceScaleFactor:contentsScaleFactor];
 }
 
 void PDFPlugin::calculateSizes()
@@ -369,14 +374,15 @@ PassRefPtr<ShareableBitmap> PDFPlugin::snapshot()
 {
     if (size().isEmpty())
         return 0;
-    
-    // FIXME: Support non-1 page/deviceScaleFactor.
+
+    float contentsScaleFactor = controller()->contentsScaleFactor();
     IntSize backingStoreSize = size();
+    backingStoreSize.scale(contentsScaleFactor);
 
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
     OwnPtr<GraphicsContext> context = bitmap->createGraphicsContext();
 
-    context->scale(FloatSize(1, -1));
+    context->scale(FloatSize(contentsScaleFactor, -contentsScaleFactor));
     context->translate(0, -size().height());
 
     [m_pdfLayerController.get() snapshotInContext:context->platformContext()];

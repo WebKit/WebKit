@@ -80,6 +80,7 @@ private:
     virtual PassRefPtr<ShareableBitmap> snapshot() OVERRIDE;
     virtual PlatformLayer* pluginLayer() OVERRIDE;
     virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) OVERRIDE;
+    virtual void contentsScaleFactorChanged(float) OVERRIDE;
     virtual bool handleMouseEvent(const WebMouseEvent&) OVERRIDE;
     virtual bool handleKeyboardEvent(const WebKeyboardEvent&) OVERRIDE;
     virtual bool handleEditingCommand(const String& commandName, const String& argument) OVERRIDE;
