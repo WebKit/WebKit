@@ -36,6 +36,8 @@
 #include <vector>
 #include <wtf/Vector.h>
 
+namespace WebTestRunner {
+
 class AccessibilityUIElement : public CppBoundClass {
 public:
     class Factory {
@@ -165,5 +167,7 @@ private:
     typedef Vector<AccessibilityUIElement*> ElementList;
     ElementList m_elements;
 };
+
+}
 
 #endif // AccessibilityUIElementChromium_h

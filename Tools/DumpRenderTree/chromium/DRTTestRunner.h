@@ -63,7 +63,10 @@ class ScopedTempDirectory;
 
 class TestShell;
 
-class DRTTestRunner : public TestRunner {
+using WebTestRunner::CppArgumentList;
+using WebTestRunner::CppVariant;
+
+class DRTTestRunner : public WebTestRunner::TestRunner {
 public:
     // Builds the property and method lists needed to bind this class to a JS
     // object.

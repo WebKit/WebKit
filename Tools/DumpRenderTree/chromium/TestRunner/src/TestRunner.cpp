@@ -32,6 +32,10 @@
 #include "config.h"
 #include "TestRunner.h"
 
+namespace WebTestRunner {
+
 TestRunner::TestRunner()
 {
+}
+
 }

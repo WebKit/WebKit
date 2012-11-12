@@ -44,6 +44,8 @@
 
 using namespace WebKit;
 
+namespace WebTestRunner {
+
 TextInputController::TextInputController()
 {
     bindMethod("attributedSubstringFromRange", &TextInputController::attributedSubstringFromRange);
@@ -230,4 +232,6 @@ void TextInputController::setComposition(const CppArgumentList& arguments, CppVa
     WebVector<WebCompositionUnderline> underlines;
     WebString text(WebString::fromUTF8(arguments[0].toString()));
     m_webView->setComposition(text, underlines, 0, text.length());
+}
+
 }

@@ -55,6 +55,8 @@ class WebFrame;
 class WebString;
 }
 
+namespace WebTestRunner {
+
 typedef Vector<CppVariant> CppArgumentList;
 
 // CppBoundClass lets you map Javascript method calls and property accesses
@@ -241,5 +243,7 @@ private:
     // be unregistered with V8 when we delete it.
     bool m_boundToFrame;
 };
+
+}
 
 #endif // CppBoundClass_h

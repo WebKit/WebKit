@@ -39,10 +39,9 @@ class WebView;
 }
 
 namespace WebTestRunner {
+
 class AccessibilityController;
 class EventSender;
-}
-
 class GamepadController;
 class TestDelegate;
 class TextInputController;
@@ -57,14 +56,16 @@ public:
     void bindTo(WebKit::WebFrame*);
     void resetAll();
 
-    WebTestRunner::AccessibilityController* accessibilityController();
-    WebTestRunner::EventSender* eventSender();
+    AccessibilityController* accessibilityController();
+    EventSender* eventSender();
 
 private:
-    OwnPtr<WebTestRunner::AccessibilityController> m_accessibilityController;
-    OwnPtr<WebTestRunner::EventSender> m_eventSender;
+    OwnPtr<AccessibilityController> m_accessibilityController;
+    OwnPtr<EventSender> m_eventSender;
     OwnPtr<GamepadController> m_gamepadController;
     OwnPtr<TextInputController> m_textInputController;
 };
+
+}
 
 #endif // TestInterfaces_h

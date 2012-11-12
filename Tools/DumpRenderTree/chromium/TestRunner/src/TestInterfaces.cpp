@@ -37,11 +37,11 @@
 #include "TextInputController.h"
 #include "platform/WebString.h"
 
-using WebTestRunner::AccessibilityController;
-using WebTestRunner::EventSender;
 using WebKit::WebFrame;
 using WebKit::WebString;
 using WebKit::WebView;
+
+namespace WebTestRunner {
 
 TestInterfaces::TestInterfaces()
 {
@@ -104,4 +104,6 @@ AccessibilityController* TestInterfaces::accessibilityController()
 EventSender* TestInterfaces::eventSender()
 {
     return m_eventSender.get();
+}
+
 }

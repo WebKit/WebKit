@@ -34,6 +34,8 @@
 
 using namespace WebKit;
 
+namespace WebTestRunner {
+
 GamepadController::GamepadController()
 {
     bindMethod("connect", &GamepadController::connect);
@@ -192,4 +194,6 @@ void GamepadController::fallbackCallback(const CppArgumentList&, CppVariant* res
 {
     m_delegate->printMessage("CONSOLE MESSAGE: JavaScript ERROR: unknown method called on GamepadController\n");
     result->setNull();
+}
+
 }

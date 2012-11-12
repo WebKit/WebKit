@@ -51,6 +51,10 @@
 using namespace WebKit;
 using namespace std;
 
+namespace WebTestRunner {
+
+namespace {
+
 class CppVariantPropertyCallback : public CppBoundClass::PropertyCallback {
 public:
     CppVariantPropertyCallback(CppVariant* value) : m_value(value) { }
@@ -89,6 +93,8 @@ public:
 private:
     OwnPtr<CppBoundClass::GetterCallback> m_callback;
 };
+
+}
 
 // Our special NPObject type. We extend an NPObject with a pointer to a
 // CppBoundClass, which is just a C++ interface that we forward all NPObject
@@ -349,4 +355,6 @@ void CppBoundClass::bindToJavascript(WebFrame* frame, const WebString& classname
     // so we must remember this so we can unregister it when we're destroyed.
     frame->bindToWindowObject(classname, NPVARIANT_TO_OBJECT(*getAsCppVariant()));
     m_boundToFrame = true;
+}
+
 }

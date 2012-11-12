@@ -40,9 +40,9 @@ class WebFrame;
 class WebView;
 }
 
-class TestDelegate;
-
 namespace WebTestRunner {
+
+class TestDelegate;
 
 class AccessibilityController : public CppBoundClass {
 public:

@@ -34,12 +34,14 @@
 #include "CppBoundClass.h"
 #include "platform/WebGamepads.h"
 
-class TestDelegate;
-
 namespace WebKit {
 class WebGamepads;
 class WebFrame;
 }
+
+namespace WebTestRunner {
+
+class TestDelegate;
 
 class GamepadController : public CppBoundClass {
 public:
@@ -64,5 +66,7 @@ private:
 
     TestDelegate* m_delegate;
 };
+
+}
 
 #endif // GamepadController_h

@@ -39,6 +39,8 @@
 using namespace WebKit;
 using namespace std;
 
+namespace WebTestRunner {
+
 CppVariant::CppVariant()
 {
     type = NPVariantType_Null;
@@ -318,4 +320,6 @@ bool CppVariant::invokeDefault(const CppVariant* arguments, uint32_t argumentCou
     bool status = WebBindings::invokeDefault(0, npObject, arguments, argumentCount, &r);
     result.set(r);
     return status;
+}
+
 }

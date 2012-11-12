@@ -41,6 +41,8 @@ namespace WebKit {
 class WebView;
 }
 
+namespace WebTestRunner {
+
 class TextInputController : public CppBoundClass {
 public:
     TextInputController();
@@ -66,5 +68,7 @@ public:
 private:
     WebKit::WebView* m_webView;
 };
+
+}
 
 #endif // TextInputController_h

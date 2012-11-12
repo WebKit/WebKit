@@ -46,6 +46,8 @@
 #include <string>
 #include <wtf/Vector.h>
 
+namespace WebTestRunner {
+
 class CppVariant : public NPVariant {
 public:
     CppVariant();
@@ -136,5 +138,7 @@ public:
     bool invokeDefault(const CppVariant* arguments,
                        uint32_t argumentCount, CppVariant& result) const;
 };
+
+}
 
 #endif // CppVariant_h

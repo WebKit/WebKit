@@ -34,9 +34,13 @@
 
 #include "CppBoundClass.h"
 
+namespace WebTestRunner {
+
 class TestRunner : public CppBoundClass {
 public:
     TestRunner();
 };
+
+}
 
 #endif // TestRunner_h

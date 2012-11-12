@@ -42,9 +42,13 @@
 using namespace WebKit;
 using namespace std;
 
+namespace WebTestRunner {
+
+namespace {
+
 // Map role value to string, matching Safari/Mac platform implementation to
 // avoid rebaselining layout tests.
-static string roleToString(WebAccessibilityRole role)
+string roleToString(WebAccessibilityRole role)
 {
     string result = "AXRole: AX";
     switch (role) {
@@ -346,6 +350,8 @@ public:
 private:
     string m_attributes;
 };
+
+}
 
 AccessibilityUIElement::AccessibilityUIElement(const WebAccessibilityObject& object, Factory* factory)
     : m_accessibilityObject(object)
@@ -971,4 +977,6 @@ AccessibilityUIElement* AccessibilityUIElementList::createRoot(const WebAccessib
     AccessibilityUIElement* element = new RootAccessibilityUIElement(object, this);
     m_elements.append(element);
     return element;
+}
+
 }

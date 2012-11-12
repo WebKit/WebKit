@@ -48,9 +48,9 @@ class WebDragData;
 class WebView;
 }
 
-class TestDelegate;
-
 namespace WebTestRunner {
+
+class TestDelegate;
 
 class EventSender : public CppBoundClass {
 public:
