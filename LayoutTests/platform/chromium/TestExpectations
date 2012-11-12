@@ -4104,7 +4104,6 @@ webkit.org/b/99749 [ MountainLion ] fast/regions/autowidth-normalflow-minmaxwidt
 webkit.org/b/99749 [ MountainLion ] fast/regions/autowidth-normalflow-minwidth.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] fast/regions/autowidth-normalflow-vertrl.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] fast/regions/region-style-image-background-color.html [ ImageOnlyFailure ]
-webkit.org/b/99749 [ MountainLion ] fast/regions/region-style-inline-background-color.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] fast/regions/render-region-custom-style-mark.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] fast/repaint/background-scaling.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] fast/repaint/positioned-document-element.html [ ImageOnlyFailure ]
@@ -4147,6 +4146,8 @@ webkit.org/b/99749 [ MountainLion ] svg/hixie/perf/007.xml [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] tables/mozilla/bugs/bug11026.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] tables/mozilla/collapsing_borders/bug41262-3.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] tables/mozilla/core/bloomberg.html [ ImageOnlyFailure ]
+
+webkit.org/b/101897 fast/regions/region-style-inline-background-color.html [ ImageOnlyFailure ]
 
 webkit.org/b/79446 svg/repaint/image-with-clip-path.svg [ Pass ImageOnlyFailure ]
 

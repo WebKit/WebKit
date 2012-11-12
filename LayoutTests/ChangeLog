@@ -1,3 +1,13 @@
+2012-11-12  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] region-style-inline-background-color.html failing on MountainLion/Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=101897
+
+        Unreviewed, disable the test on Mac/Chromium until we figure out the cause of failure.
+
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-11-12  Shinya Kawanaka  <shinyak@chromium.org>
 
         Don't update style when attaching in HTMLMeterElement
