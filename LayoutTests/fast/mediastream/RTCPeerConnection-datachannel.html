@@ -42,7 +42,7 @@ function dc_onmessage_arraybuffer(e) {
     array[0] = 11;
     array[1] = 13;
     dc.onmessage = dc_onmessage_arraybufferview;
-    dc.send(array);
+    shouldNotThrow("dc.send(array);");
 }
 
 function dc_onmessage_string(e) {
@@ -51,12 +51,12 @@ function dc_onmessage_string(e) {
     shouldBe("data", "'xyzzy'");
 
     dc.binaryType = "arraybuffer";
-    var buffer = new ArrayBuffer(2);
+    buffer = new ArrayBuffer(2);
     var array = new Int8Array(buffer);
     array[0] = 17;
     array[1] = 19;
     dc.onmessage = dc_onmessage_arraybuffer;
-    dc.send(buffer);
+    shouldNotThrow("dc.send(buffer);");
 }
 
 function dc_onopen() {
@@ -65,7 +65,7 @@ function dc_onopen() {
     shouldBe("dc.label", "'label'");
 
     dc.onmessage = dc_onmessage_string;
-    dc.send("xyzzy");
+    shouldNotThrow("dc.send('xyzzy');");
 }
 
 function pc_onopen() {

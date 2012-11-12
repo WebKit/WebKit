@@ -1,3 +1,30 @@
+2012-11-12  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Schedule the RTCDataChannel events to be triggered at idle state
+        https://bugs.webkit.org/show_bug.cgi?id=101751
+
+        Reviewed by Adam Barth.
+
+        This patch queues the events until the JS interpreter is in an idle state.
+
+        Existing tests cover this patch.
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::RTCDataChannel):
+        (WebCore::RTCDataChannel::readyStateChanged):
+        (WebCore::RTCDataChannel::dataArrived):
+        (WebCore::RTCDataChannel::error):
+        (WebCore::RTCDataChannel::scheduleDispatchEvent):
+        (WebCore):
+        (WebCore::RTCDataChannel::scheduledEventTimerFired):
+        * Modules/mediastream/RTCDataChannel.h:
+        (RTCDataChannel):
+        * platform/chromium/support/WebRTCDataChannel.cpp:
+        (WebKit::WebRTCDataChannel::setBufferedAmount):
+        (WebKit::WebRTCDataChannel::readyStateChanged):
+        (WebKit::WebRTCDataChannel::dataArrived):
+        (WebKit::WebRTCDataChannel::error):
+
 2012-11-12  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Remove HTMLInputElement dependency from PickerIndicatorElement

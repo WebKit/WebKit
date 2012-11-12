@@ -1,3 +1,17 @@
+2012-11-12  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Schedule the RTCDataChannel events to be triggered at idle state
+        https://bugs.webkit.org/show_bug.cgi?id=101751
+
+        Reviewed by Adam Barth.
+
+        Makes the data channel mocks to be synchronous instead of asynchronous to be able to
+        properly test RTCDataChannel event handling.
+
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (MockWebRTCPeerConnectionHandler::sendStringData):
+        (MockWebRTCPeerConnectionHandler::sendRawData):
+
 2012-11-12  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move TestRunner implementation into WebTestRunner namespace

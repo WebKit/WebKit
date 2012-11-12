@@ -63,6 +63,7 @@ RTCDataChannel::RTCDataChannel(ScriptExecutionContext* context, RTCPeerConnectio
     , m_descriptor(descriptor)
     , m_binaryType(BinaryTypeArrayBuffer)
     , m_handler(handler)
+    , m_scheduledEventTimer(this, &RTCDataChannel::scheduledEventTimerFired)
 {
     m_descriptor->setClient(this);
 }
@@ -186,10 +187,10 @@ void RTCDataChannel::readyStateChanged()
 
     switch (m_descriptor->readyState()) {
     case RTCDataChannelDescriptor::ReadyStateOpen:
-        dispatchEvent(Event::create(eventNames().openEvent, false, false));
+        scheduleDispatchEvent(Event::create(eventNames().openEvent, false, false));
         break;
     case RTCDataChannelDescriptor::ReadyStateClosed:
-        dispatchEvent(Event::create(eventNames().closeEvent, false, false));
+        scheduleDispatchEvent(Event::create(eventNames().closeEvent, false, false));
         break;
     default:
         break;
@@ -201,7 +202,7 @@ void RTCDataChannel::dataArrived(const String& text)
     if (m_stopped)
         return;
 
-    dispatchEvent(MessageEvent::create(text));
+    scheduleDispatchEvent(MessageEvent::create(text));
 }
 
 void RTCDataChannel::dataArrived(const char* data, size_t dataLength)
@@ -215,7 +216,7 @@ void RTCDataChannel::dataArrived(const char* data, size_t dataLength)
     }
     if (m_binaryType == BinaryTypeArrayBuffer) {
         RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(data, dataLength);
-        dispatchEvent(MessageEvent::create(buffer.release()));
+        scheduleDispatchEvent(MessageEvent::create(buffer.release()));
         return;
     }
     ASSERT_NOT_REACHED();
@@ -226,7 +227,7 @@ void RTCDataChannel::error()
     if (m_stopped)
         return;
 
-    dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+    scheduleDispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
 RTCDataChannelDescriptor* RTCDataChannel::descriptor()
@@ -260,6 +261,29 @@ EventTargetData* RTCDataChannel::eventTargetData()
 EventTargetData* RTCDataChannel::ensureEventTargetData()
 {
     return &m_eventTargetData;
+}
+
+void RTCDataChannel::scheduleDispatchEvent(PassRefPtr<Event> event)
+{
+    m_scheduledEvents.append(event);
+
+    if (!m_scheduledEventTimer.isActive())
+        m_scheduledEventTimer.startOneShot(0);
+}
+
+void RTCDataChannel::scheduledEventTimerFired(Timer<RTCDataChannel>*)
+{
+    if (m_stopped)
+        return;
+
+    Vector<RefPtr<Event> > events;
+    events.swap(m_scheduledEvents);
+
+    Vector<RefPtr<Event> >::iterator it = events.begin();
+    for (; it != events.end(); ++it)
+        dispatchEvent((*it).release());
+
+    events.clear();
 }
 
 } // namespace WebCore

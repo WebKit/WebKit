@@ -106,31 +106,31 @@ bool WebRTCDataChannel::reliable() const
     return m_private->reliable();
 }
 
-void WebRTCDataChannel::setBufferedAmount(unsigned long bufferedAmount)
+void WebRTCDataChannel::setBufferedAmount(unsigned long bufferedAmount) const
 {
     ASSERT(!isNull());
     m_private->setBufferedAmount(bufferedAmount);
 }
 
-void WebRTCDataChannel::readyStateChanged(ReadyState state)
+void WebRTCDataChannel::readyStateChanged(ReadyState state) const
 {
     ASSERT(!isNull());
     m_private->readyStateChanged(static_cast<RTCDataChannelDescriptor::ReadyState>(state));
 }
 
-void WebRTCDataChannel::dataArrived(const WebString& data)
+void WebRTCDataChannel::dataArrived(const WebString& data) const
 {
     ASSERT(!isNull());
     m_private->dataArrived(data);
 }
 
-void WebRTCDataChannel::dataArrived(const char* data, size_t dataLength)
+void WebRTCDataChannel::dataArrived(const char* data, size_t dataLength) const
 {
     ASSERT(!isNull());
     m_private->dataArrived(data, dataLength);
 }
 
-void WebRTCDataChannel::error()
+void WebRTCDataChannel::error() const
 {
     ASSERT(!isNull());
     m_private->error();

@@ -12,12 +12,15 @@ PASS dc.reliable is false
 PASS dc_onopen was called
 PASS dc.readyState is 'open'
 PASS dc.label is 'label'
+PASS dc.send('xyzzy'); did not throw exception.
 PASS dc_onmessage_string was called
 PASS data is 'xyzzy'
+PASS dc.send(buffer); did not throw exception.
 PASS dc_onmessage_arraybuffer was called
 PASS data.byteLength is 2
 PASS array[0] is 17
 PASS array[1] is 19
+PASS dc.send(array); did not throw exception.
 PASS dc_onmessage_arraybufferview was called
 PASS data.byteLength is 2
 PASS array[0] is 11

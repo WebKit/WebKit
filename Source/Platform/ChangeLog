@@ -1,3 +1,15 @@
+2012-11-12  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Schedule the RTCDataChannel events to be triggered at idle state
+        https://bugs.webkit.org/show_bug.cgi?id=101751
+
+        Reviewed by Adam Barth.
+
+        Making some WebRTCDataChannel methods const.
+
+        * chromium/public/WebRTCDataChannel.h:
+        (WebRTCDataChannel):
+
 2012-11-09  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Deleting all files relating to the deprecated PeerConnection00

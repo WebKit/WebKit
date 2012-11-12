@@ -69,11 +69,11 @@ public:
     WEBKIT_EXPORT WebString label() const;
     WEBKIT_EXPORT bool reliable() const;
 
-    WEBKIT_EXPORT void setBufferedAmount(unsigned long);
-    WEBKIT_EXPORT void readyStateChanged(ReadyState);
-    WEBKIT_EXPORT void dataArrived(const WebString&);
-    WEBKIT_EXPORT void dataArrived(const char*, size_t);
-    WEBKIT_EXPORT void error();
+    WEBKIT_EXPORT void setBufferedAmount(unsigned long) const;
+    WEBKIT_EXPORT void readyStateChanged(ReadyState) const;
+    WEBKIT_EXPORT void dataArrived(const WebString&) const;
+    WEBKIT_EXPORT void dataArrived(const char*, size_t) const;
+    WEBKIT_EXPORT void error() const;
 
     // Extra data associated with this WebRTCDataChannel.
     // If non-null, the extra data pointer will be deleted when the object is destroyed.

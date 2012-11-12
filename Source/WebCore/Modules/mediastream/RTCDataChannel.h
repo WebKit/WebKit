@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "RTCDataChannelDescriptor.h"
+#include "Timer.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -78,6 +79,9 @@ public:
 private:
     RTCDataChannel(ScriptExecutionContext*, RTCPeerConnectionHandler*, PassRefPtr<RTCDataChannelDescriptor>);
 
+    void scheduleDispatchEvent(PassRefPtr<Event>);
+    void scheduledEventTimerFired(Timer<RTCDataChannel>*);
+
     // EventTarget
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
@@ -103,6 +107,9 @@ private:
 
     // Not owned by this class.
     RTCPeerConnectionHandler* m_handler;
+
+    Timer<RTCDataChannel> m_scheduledEventTimer;
+    Vector<RefPtr<Event> > m_scheduledEvents;
 };
 
 } // namespace WebCore

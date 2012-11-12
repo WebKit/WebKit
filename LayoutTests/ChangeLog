@@ -1,3 +1,15 @@
+2012-11-12  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Schedule the RTCDataChannel events to be triggered at idle state
+        https://bugs.webkit.org/show_bug.cgi?id=101751
+
+        Reviewed by Adam Barth.
+
+        Adding shouldNotTrow to the send() calls.
+
+        * fast/mediastream/RTCPeerConnection-datachannel-expected.txt:
+        * fast/mediastream/RTCPeerConnection-datachannel.html:
+
 2012-11-12  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Add support for text-shadow in region styling
