@@ -88,11 +88,4 @@ v8::Handle<v8::Value> V8Console::profileEndCallback(const v8::Arguments& args)
 }
 #endif
 
-v8::Handle<v8::Value> V8Console::memoryAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    INC_STATS("DOM.Console.memoryAccessorGetter");
-    Console* imp = V8Console::toNative(info.Holder());
-    return toV8(imp->memory(), info.Holder(), info.GetIsolate());
-}
-
 } // namespace WebCore

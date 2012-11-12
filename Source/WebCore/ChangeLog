@@ -1,3 +1,16 @@
+2012-11-11  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] V8Console::memoryAttrGetter() needs not to be custom
+        https://bugs.webkit.org/show_bug.cgi?id=101873
+
+        Reviewed by Adam Barth.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        (WebCore):
+        * page/Console.idl:
+
 2012-11-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] ElementShadow should have RuleFeatureSet for select attribute selectors.

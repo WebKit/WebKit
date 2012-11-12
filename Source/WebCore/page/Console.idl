@@ -60,6 +60,6 @@
     void groupEnd();
     [CallWith=ScriptArguments|CallStack] void clear();
 
-    [V8CustomGetter] readonly attribute MemoryInfo memory;
+    readonly attribute MemoryInfo memory;
 };
 
