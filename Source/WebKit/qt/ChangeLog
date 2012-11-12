@@ -1,3 +1,21 @@
+2012-11-08  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix tst_QWebPage::inputMethods
+
+        Reviewed by Simon Hausmann.
+
+        Details of the failure:
+        FAIL!  : tst_QWebPage::inputMethods(QWebView) Compared values are not the same
+           Actual (page->settings()->fontFamily(QWebSettings::SerifFont)): FooSerifFont
+           Expected (font.family()): Helvetica
+           Loc: [Source/WebKit/qt/tests/qwebpage/tst_qwebpage.cpp(1691)]
+
+        The issue was that WebCore wouldn't find FooSerifFont and would have
+        RenderStyle::font() return the fallback font it used instead.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods):
+
 2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix tst_QWebPage::showModalDialog() API test

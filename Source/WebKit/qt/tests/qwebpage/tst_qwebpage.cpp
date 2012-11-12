@@ -1656,7 +1656,7 @@ void tst_QWebPage::inputMethods()
     } else
         QVERIFY2(false, "Unknown view type");
 
-    page->settings()->setFontFamily(QWebSettings::SerifFont, "FooSerifFont");
+    page->settings()->setFontFamily(QWebSettings::SerifFont, page->settings()->fontFamily(QWebSettings::FixedFont));
     page->mainFrame()->setHtml("<html><body>" \
                                             "<input type='text' id='input1' style='font-family: serif' value='' maxlength='20'/><br>" \
                                             "<input type='password'/>" \
@@ -1700,10 +1700,11 @@ void tst_QWebPage::inputMethods()
     QVariant variant = page->inputMethodQuery(Qt::ImMicroFocus);
     QVERIFY(inputs.at(0).geometry().contains(variant.toRect().topLeft()));
 
-    //ImFont
+    // We assigned the serif font famility to be the same as the fixef font family.
+    // Then test ImFont on a serif styled element, we should get our fixef font family.
     variant = page->inputMethodQuery(Qt::ImFont);
     QFont font = variant.value<QFont>();
-    QCOMPARE(page->settings()->fontFamily(QWebSettings::SerifFont), font.family());
+    QCOMPARE(page->settings()->fontFamily(QWebSettings::FixedFont), font.family());
 
     QList<QInputMethodEvent::Attribute> inputAttributes;
 
