@@ -1,3 +1,22 @@
+2012-11-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r126157.
+        http://trac.webkit.org/changeset/126157
+        https://bugs.webkit.org/show_bug.cgi?id=101954
+
+        This patch caused (untestable) regression of the volume
+        property on Mac, Win, and Blackberry ports. (Requested by
+        jernoble on #webkit).
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::loadWithNextMediaEngine):
+        (WebCore::MediaPlayer::setVolume):
+        (WebCore::MediaPlayer::setMuted):
+        (WebCore::MediaPlayer::setPreservesPitch):
+        (WebCore::MediaPlayer::setSize):
+        (WebCore::MediaPlayer::setVisible):
+        (WebCore::MediaPlayer::setPreload):
+
 2012-11-12  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Specified width CSS tables should not include border and padding as part of that width.
