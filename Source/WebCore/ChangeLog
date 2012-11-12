@@ -1,3 +1,16 @@
+2012-11-12  Andreas Kling  <akling@apple.com>
+
+        Tighten vector in ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray().
+        <http://webkit.org/b/101850>
+
+        Reviewed by Antti Koivisto.
+
+        Reserve the exact amount of space needed for m_responseContentDispositionEncodingFallbackArray.
+        222kB progression on Membuster3.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray):
+
 2012-11-12  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Schedule the RTCDataChannel events to be triggered at idle state
