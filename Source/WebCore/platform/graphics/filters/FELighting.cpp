@@ -257,19 +257,20 @@ inline void FELighting::platformApplyGeneric(LightingData& data, LightSource::Pa
         // Fill the parameter array
         int job = parallelJobs.numberOfJobs();
         if (job > 1) {
+            // Split the job into "yStep"-sized jobs but there a few jobs that need to be slightly larger since
+            // yStep * jobs < total size. These extras are handled by the remainder "jobsWithExtra".
+            const int yStep = (data.heightDecreasedByOne - 1) / job;
+            const int jobsWithExtra = (data.heightDecreasedByOne - 1) % job;
+
             int yStart = 1;
-            int yStep = (data.heightDecreasedByOne - 1) / job;
             for (--job; job >= 0; --job) {
                 PlatformApplyGenericParameters& params = parallelJobs.parameter(job);
                 params.filter = this;
                 params.data = data;
                 params.paintingData = paintingData;
                 params.yStart = yStart;
-                if (job > 0) {
-                    params.yEnd = yStart + yStep;
-                    yStart += yStep;
-                } else
-                    params.yEnd = data.heightDecreasedByOne;
+                yStart += job < jobsWithExtra ? yStep + 1 : yStep;
+                params.yEnd = yStart;
             }
             parallelJobs.execute();
             return;

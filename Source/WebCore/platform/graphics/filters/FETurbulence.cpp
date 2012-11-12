@@ -376,19 +376,20 @@ void FETurbulence::platformApplySoftware()
         // Fill the parameter array
         int i = parallelJobs.numberOfJobs();
         if (i > 1) {
+            // Split the job into "stepY"-sized jobs but there a few jobs that need to be slightly larger since
+            // stepY * jobs < total size. These extras are handled by the remainder "jobsWithExtra".
+            const int stepY = absolutePaintRect().height() / i;
+            const int jobsWithExtra = absolutePaintRect().height() % i;
+
             int startY = 0;
-            int stepY = absolutePaintRect().height() / i;
             for (; i > 0; --i) {
                 FillRegionParameters& params = parallelJobs.parameter(i-1);
                 params.filter = this;
                 params.pixelArray = pixelArray;
                 params.paintingData = &paintingData;
                 params.startY = startY;
-                if (i != 1) {
-                    params.endY = startY + stepY;
-                    startY = startY + stepY;
-                } else
-                    params.endY = absolutePaintRect().height();
+                startY += i < jobsWithExtra ? stepY + 1 : stepY;
+                params.endY = startY;
             }
 
             // Execute parallel jobs

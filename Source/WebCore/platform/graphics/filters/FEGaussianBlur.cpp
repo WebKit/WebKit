@@ -162,29 +162,25 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray* srcPixelArray, Uint
 
         int jobs = parallelJobs.numberOfJobs();
         if (jobs > 1) {
-            int blockHeight = paintSize.height() / jobs;
-            --jobs;
-            for (int job = jobs; job >= 0; --job) {
+            // Split the job into "blockHeight"-sized jobs but there a few jobs that need to be slightly larger since
+            // blockHeight * jobs < total size. These extras are handled by the remainder "jobsWithExtra".
+            const int blockHeight = paintSize.height() / jobs;
+            const int jobsWithExtra = paintSize.height() % jobs;
+
+            int currentY = 0;
+            for (int job = 0; job < jobs; job++) {
                 PlatformApplyParameters& params = parallelJobs.parameter(job);
                 params.filter = this;
 
-                int startY;
-                int endY;
+                int startY = !job ? 0 : currentY - extraHeight;
+                currentY += job < jobsWithExtra ? blockHeight + 1 : blockHeight;
+                int endY = job == jobs - 1 ? currentY : currentY + extraHeight;
+
+                int blockSize = (endY - startY) * scanline;
                 if (!job) {
-                    startY = 0;
-                    endY = blockHeight + extraHeight;
                     params.srcPixelArray = srcPixelArray;
                     params.dstPixelArray = tmpPixelArray;
                 } else {
-                    if (job == jobs) {
-                        startY = job * blockHeight - extraHeight;
-                        endY = paintSize.height();
-                    } else {
-                        startY = job * blockHeight - extraHeight;
-                        endY = (job + 1) * blockHeight + extraHeight;
-                    }
-
-                    int blockSize = (endY - startY) * scanline;
                     params.srcPixelArray = Uint8ClampedArray::createUninitialized(blockSize);
                     params.dstPixelArray = Uint8ClampedArray::createUninitialized(blockSize);
                     memcpy(params.srcPixelArray->data(), srcPixelArray->data() + startY * scanline, blockSize);
@@ -199,20 +195,19 @@ inline void FEGaussianBlur::platformApply(Uint8ClampedArray* srcPixelArray, Uint
             parallelJobs.execute();
 
             // Copy together the parts of the image.
-            for (int job = jobs; job >= 1; --job) {
+            currentY = 0;
+            for (int job = 1; job < jobs; job++) {
                 PlatformApplyParameters& params = parallelJobs.parameter(job);
                 int sourceOffset;
                 int destinationOffset;
                 int size;
-                if (job == jobs) {
-                    sourceOffset = extraHeight * scanline;
-                    destinationOffset = job * blockHeight * scanline;
-                    size = (paintSize.height() - job * blockHeight) * scanline;
-                } else {
-                    sourceOffset = extraHeight * scanline;
-                    destinationOffset = job * blockHeight * scanline;
-                    size = blockHeight * scanline;
-                }
+                int adjustedBlockHeight = job < jobsWithExtra ? blockHeight + 1 : blockHeight;
+
+                currentY += adjustedBlockHeight;
+                sourceOffset = extraHeight * scanline;
+                destinationOffset = currentY * scanline;
+                size = adjustedBlockHeight * scanline;
+
                 memcpy(srcPixelArray->data() + destinationOffset, params.srcPixelArray->data() + sourceOffset, size);
             }
             return;

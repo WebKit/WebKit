@@ -1,3 +1,20 @@
+2012-11-12  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r129796
+
+    2012-09-27  Philip Rogers  <pdr@google.com>
+
+            Rewrite multithreaded filter job dispatching
+            https://bugs.webkit.org/show_bug.cgi?id=97500
+
+            Reviewed by Dean Jackson.
+
+            Add test that shows the morphology filter no longer crashes.
+            Note: this is only reliably reproducable when run with libgmalloc.
+
+            * svg/filters/feMorphology-crash-expected.txt: Added.
+            * svg/filters/feMorphology-crash.html: Added.
+
 2012-11-09  Lucas Forschler  <lforschler@apple.com>
 
         Merge r132427
@@ -11268,6 +11285,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .
