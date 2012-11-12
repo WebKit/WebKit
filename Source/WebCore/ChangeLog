@@ -1,3 +1,22 @@
+2012-11-12  Joe Mason  <jmason@rim.com>
+
+        [BlackBerry] Update to new proxyInfo API
+        https://bugs.webkit.org/show_bug.cgi?id=101945
+
+        Reviewed by George Staikos.
+
+        Internal PR: 234680
+        Reviewed internally by: Leo Yang
+
+        The proxyAddress, proxyUsername and proxyPassword methods in BlackBerry::Platform::Settings
+        have been replaced with a single, more efficient proxyInfo method.
+
+        No new tests because this is an API update with no behaviour change.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+        (WebCore::NetworkJob::storeCredentials):
+
 2012-11-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r126157.

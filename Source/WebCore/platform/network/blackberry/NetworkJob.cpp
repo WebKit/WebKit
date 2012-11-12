@@ -747,22 +747,31 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
 
     String host;
     int port;
+    BlackBerry::Platform::ProxyInfo proxyInfo;
     if (type == ProtectionSpaceProxyHTTP || type == ProtectionSpaceProxyHTTPS) {
-        // proxyAddress returns host:port, without a protocol. KURL can't parse this, so stick http
-        // on the front.
-        // (We could split into host and port by hand, but that gets hard to parse with IPv6 urls,
-        // so better to reuse KURL's parsing.)
-        StringBuilder proxyAddress;
+        proxyInfo = BlackBerry::Platform::Settings::instance()->proxyInfo(newURL.string());
+        ASSERT(!proxyInfo.address.empty());
+        if (proxyInfo.address.empty()) {
+            // Fall back to the response url if there's no proxy
+            // FIXME: is this the best way to handle this?
+            host = m_response.url().host();
+            port = m_response.url().port();
+        } else {
+            // proxyInfo returns host:port, without a protocol. KURL can't parse this, so stick http
+            // on the front.
+            // (We could split into host and port by hand, but that gets hard to parse with IPv6 urls,
+            // so better to reuse KURL's parsing.)
+            StringBuilder proxyAddress;
+            if (type == ProtectionSpaceProxyHTTP)
+                proxyAddress.append("http://");
+            else
+                proxyAddress.append("https://");
+            proxyAddress.append(proxyInfo.address);
 
-        if (type == ProtectionSpaceProxyHTTP)
-            proxyAddress.append("http://");
-        else
-            proxyAddress.append("https://");
-
-        proxyAddress.append(BlackBerry::Platform::Settings::instance()->proxyAddress(newURL.string()));
-        KURL proxyURL(KURL(), proxyAddress.toString());
-        host = proxyURL.host();
-        port = proxyURL.port();
+            KURL proxyURL(KURL(), proxyAddress.toString());
+            host = proxyURL.host();
+            port = proxyURL.port();
+        }
     } else {
         host = m_response.url().host();
         port = m_response.url().port();
@@ -797,9 +806,9 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         String username;
         String password;
 
-        if (type == ProtectionSpaceProxyHTTP || type == ProtectionSpaceProxyHTTPS) {
-            username = String(BlackBerry::Platform::Settings::instance()->proxyUsername());
-            password = String(BlackBerry::Platform::Settings::instance()->proxyPassword());
+        if (!proxyInfo.address.empty()) {
+            username = proxyInfo.username;
+            password = proxyInfo.password;
         } else {
             username = m_handle->getInternal()->m_user;
             password = m_handle->getInternal()->m_pass;
@@ -808,10 +817,12 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         // Before asking the user for credentials, we check if the URL contains that.
         if (!username.isEmpty() || !password.isEmpty()) {
             // Prevent them from been used again if they are wrong.
-            // If they are correct, they will the put into CredentialStorage.
-            if (type == ProtectionSpaceProxyHTTP || type == ProtectionSpaceProxyHTTPS)
-                BlackBerry::Platform::Settings::instance()->setProxyCredential("", "");
-            else {
+            // If they are correct, they will be put into CredentialStorage.
+            if (!proxyInfo.address.empty()) {
+                proxyInfo.username.clear();
+                proxyInfo.password.clear();
+                BlackBerry::Platform::Settings::instance()->storeProxyCredentials(proxyInfo);
+            } else {
                 m_handle->getInternal()->m_user = "";
                 m_handle->getInternal()->m_pass = "";
             }
@@ -857,8 +868,17 @@ void NetworkJob::storeCredentials()
     challenge.setStored(true);
 
     if (challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTP || challenge.protectionSpace().serverType() == ProtectionSpaceProxyHTTPS) {
-        BlackBerry::Platform::Settings::instance()->setProxyCredential(challenge.proposedCredential().user().utf8().data(),
-                                                                challenge.proposedCredential().password().utf8().data());
+        StringBuilder proxyAddress;
+        proxyAddress.append(challenge.protectionSpace().host());
+        proxyAddress.append(":");
+        proxyAddress.appendNumber(challenge.protectionSpace().port());
+
+        BlackBerry::Platform::ProxyInfo proxyInfo;
+        proxyInfo.address = proxyAddress.toString();
+        proxyInfo.username = challenge.proposedCredential().user();
+        proxyInfo.password = challenge.proposedCredential().password();
+
+        BlackBerry::Platform::Settings::instance()->storeProxyCredentials(proxyInfo);
         if (m_frame && m_frame->page())
             m_frame->page()->chrome()->client()->platformPageClient()->syncProxyCredential(challenge.proposedCredential());
     }
