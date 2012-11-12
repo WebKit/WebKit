@@ -1,5 +1,22 @@
 2012-11-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r126718
+
+    2012-08-26  Filip Pizlo  <fpizlo@apple.com>
+
+            Finally inlining should correctly track the catch context
+            https://bugs.webkit.org/show_bug.cgi?id=94986
+            <rdar://problem/11753784>
+
+            Reviewed by Sam Weinig.
+
+            * fast/js/jsc-test-list:
+            * fast/js/script-tests/throw-from-finally.js: Added.
+            * fast/js/throw-from-finally.html: Added.
+            * fast/js/throw-from-finally-expected.txt: Added.
+
+2012-11-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r131077
 
     2012-10-11  Dan Bernstein  <mitz@apple.com>
@@ -11299,6 +11316,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .

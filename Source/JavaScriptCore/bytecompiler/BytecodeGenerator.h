@@ -74,6 +74,7 @@ namespace JSC {
         unsigned scopeContextStackSize;
         unsigned switchContextStackSize;
         unsigned forInContextStackSize;
+        unsigned tryContextStackSize;
         unsigned labelScopesSize;
         int finallyDepth;
         int dynamicScopeDepth;
@@ -89,6 +90,22 @@ namespace JSC {
         RefPtr<RegisterID> iterRegister;
         RefPtr<RegisterID> indexRegister;
         RefPtr<RegisterID> propertyRegister;
+    };
+    
+    struct TryData { 
+        RefPtr<Label> target; 
+        unsigned targetScopeDepth; 
+     }; 
+     
+     struct TryContext { 
+        RefPtr<Label> start; 
+        TryData* tryData; 
+     }; 
+     
+     struct TryRange { 
+        RefPtr<Label> start; 
+        RefPtr<Label> end; 
+        TryData* tryData;
     };
 
     class BytecodeGenerator {
@@ -362,7 +379,11 @@ namespace JSC {
         RegisterID* emitGetPropertyNames(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, Label* breakTarget);
         RegisterID* emitNextPropertyName(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, RegisterID* iter, Label* target);
 
-        RegisterID* emitCatch(RegisterID*, Label* start, Label* end);
+        // Start a try block. 'start' must have been emitted. 
+         TryData* pushTry(Label* start); 
+         // End a try block. 'end' must have been emitted. 
+         RegisterID* popTryAndEmitCatch(TryData*, RegisterID* targetRegister, Label* end); 
+
         void emitThrow(RegisterID* exc)
         { 
             m_usesExceptions = true;
@@ -490,8 +511,9 @@ namespace JSC {
         }
 
         RegisterID* emitInitLazyRegister(RegisterID*);
-
+    public:
         Vector<Instruction>& instructions() { return m_instructions; }
+        
         SymbolTable& symbolTable() { return *m_symbolTable; }
 
         bool shouldOptimizeLocals()
@@ -557,6 +579,10 @@ namespace JSC {
         Vector<ControlFlowContext> m_scopeContextStack;
         Vector<SwitchInfo> m_switchContextStack;
         Vector<ForInContext> m_forInContextStack;
+        Vector<TryContext> m_tryContextStack; 
+
+        Vector<TryRange> m_tryRanges; 
+        SegmentedVector<TryData, 8> m_tryData;
 
         int m_firstConstantIndex;
         int m_nextConstantOffset;
