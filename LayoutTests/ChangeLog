@@ -1,5 +1,23 @@
 2012-11-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r129440
+
+    2012-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+            Nested try/finally should not confuse the finally unpopper in BytecodeGenerator::emitComplexJumpScopes
+            https://bugs.webkit.org/show_bug.cgi?id=97508
+            <rdar://problem/12361132>
+
+            Reviewed by Sam Weinig.
+
+            * fast/js/jsc-test-list:
+            * fast/js/script-tests/try-try-return-finally-finally.js: Added.
+            (foo):
+            * fast/js/try-try-return-finally-finally-expected.txt: Added.
+            * fast/js/try-try-return-finally-finally.html: Added.
+
+2012-11-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r126718
 
     2012-08-26  Filip Pizlo  <fpizlo@apple.com>
@@ -11316,6 +11334,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .

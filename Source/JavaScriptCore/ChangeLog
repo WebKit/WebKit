@@ -1,5 +1,25 @@
 2012-11-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r129440
+
+    2012-09-24  Filip Pizlo  <fpizlo@apple.com>
+
+            Nested try/finally should not confuse the finally unpopper in BytecodeGenerator::emitComplexJumpScopes
+            https://bugs.webkit.org/show_bug.cgi?id=97508
+            <rdar://problem/12361132>
+
+            Reviewed by Sam Weinig.
+
+            We're reusing some vector for multiple iterations of a loop, but we were forgetting to clear its
+            contents from one iteration to the next. Hence if you did multiple iterations of finally unpopping
+            (like in a nested try/finally and a jump out of both of them) then you'd get a corrupted try
+            context stack afterwards.
+
+            * bytecompiler/BytecodeGenerator.cpp:
+            (JSC::BytecodeGenerator::emitComplexJumpScopes):
+
+2012-11-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r126718
 
     2012-08-24  Filip Pizlo  <fpizlo@apple.com>
@@ -69293,6 +69313,7 @@
         global object's register storage, and initializing new registers.
 
 == Rolled over to ChangeLog-2011-02-16 ==
+.
 .
 .
 .
