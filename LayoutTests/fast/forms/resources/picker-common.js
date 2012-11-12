@@ -25,6 +25,10 @@ function popupOpenCallbackWrapper() {
     popupOpenCallback();
 }
 
+function waitUntilClosing(callback) {
+    setTimeout(callback, 1);
+}
+
 function sendKey(input, keyName, ctrlKey, altKey) {
     var event = document.createEvent('KeyboardEvent');
     event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName, 0, ctrlKey, altKey);

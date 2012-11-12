@@ -1,3 +1,45 @@
+2012-11-11  Kent Tamura  <tkent@chromium.org>
+
+        Internals: MockPagePopup should not update DOM structure during detach()
+        https://bugs.webkit.org/show_bug.cgi?id=101710
+
+        Reviewed by Hajime Morita.
+
+        PickerIndicatorElement::detach calls
+        MockPagePopupDriver::closePagePopup, MockPagePopup::~MockPagePopup,
+        which remove the mock iframe from the tree. But updating the tree during
+        detach() is dangerous.
+
+        MockPagePopupDriver::closePagePopup calls MockpagePopup::closeLater, it
+        requests to call 'close' asynchronously, and 'close' removes the mock
+        iframe. We need to change MockPagePopup so that it is ref-couted and has
+        a timer.
+
+        No new tests. This is a change for the test harness.
+
+        * testing/MockPagePopupDriver.cpp:
+        (MockPagePopup): Make this ref-counted, add closeLater, add close, and
+        add m_closeTimer.
+        (WebCore::MockPagePopup::MockPagePopup): Initialize the timer.
+        (WebCore::MockPagePopup::create): PassOwnPtr -> PassRefPtr
+        (WebCore::MockPagePopup::closeLater):
+        - Add one reference to avoid destruction by m_mockPagePopup.clear() in
+          closePagePopup.
+        - Notify didClosePopup here because the client expects didClosePopup is
+          called synchronously.
+        - Invoke the timer to call 'close'
+        (WebCore::MockPagePopup::close):
+        Just remove one reference. This means calling the desructor.
+        (WebCore::MockPagePopup::~MockPagePopup):
+        Move didClosePopup call to caloseLater.
+        (WebCore::MockPagePopupDriver::closePagePopup):
+        Request to close PagePopup.
+        Clear PagePopupClient in m_pagePopupController because this object is
+        necessary until MockPagePopup is closed, but it should not have a
+        reference to the PagePopupClient.
+        * testing/MockPagePopupDriver.h:
+        (MockPagePopupDriver): Make MockPagePopup ref-counted.
+
 2012-11-11  Adam Barth  <abarth@webkit.org>
 
         axObjectCache code is more complicated than necessary

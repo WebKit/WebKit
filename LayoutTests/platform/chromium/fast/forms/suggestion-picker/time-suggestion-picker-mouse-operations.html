@@ -60,6 +60,10 @@ function test1() {
 
     debug('Check that mouse click closes the popup and sets the value.');
     clickElement(popupWindow.document.querySelector(".suggestion-list-entry:nth-child(3)"));
+    waitUntilClosing(test1AfterClosing);
+}
+
+function test1AfterClosing() {
     shouldBeNull('document.getElementById("mock-page-popup")');
     shouldBe('document.getElementById("time").value', '"01:03"');
 
@@ -86,6 +90,10 @@ function test2() {
 
     popupWindow.focus();
     eventSender.keyDown('\x1B');
+    waitUntilClosing(test2AfterClosing);
+}
+
+function test2AfterClosing() {
     shouldBeNull('$("mock-page-popup")');
 
     openPicker($('time'), test3);

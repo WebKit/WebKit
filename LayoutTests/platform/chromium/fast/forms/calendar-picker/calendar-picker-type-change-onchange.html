@@ -16,7 +16,7 @@ function selectToday() {
 function changeType(input) {
     input.type = 'text';
     testPassed('unless crash');
-    finishJSTest();
+    waitUntilClosing(finishJSTest);
 }
 </script>
 <script src="../../../../../fast/js/resources/js-test-post.js"></script>

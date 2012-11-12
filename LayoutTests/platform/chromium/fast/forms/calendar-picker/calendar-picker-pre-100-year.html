@@ -20,7 +20,7 @@ function finishTest() {
     sendKey(daysContainer, 'Right');
     sendKey(daysContainer, 'Enter');
     shouldBe('document.getElementById("date").value', '"0002-02-03"');
-    finishJSTest();
+    waitUntilClosing(finishJSTest);
 }
 </script>
 <script src="../../../../../fast/js/resources/js-test-post.js"></script>

@@ -128,6 +128,10 @@ function test1() {
     eventSender.keyDown('upArrow');
     shouldBe('highlightedEntry()', '"02:07"');
     eventSender.keyDown("\n");
+    waitUntilClosing(test1AfterClosing);
+}
+
+function test1AfterClosing() {
     shouldBeNull('document.getElementById("mock-page-popup")');
     shouldBe('document.getElementById("time").value', '"02:07"');
 
@@ -143,6 +147,10 @@ function test2() {
 
     debug('Check that escape key closes the popup.');
     eventSender.keyDown('\x1B');
+    waitUntilClosing(test2AfterClosing);
+}
+
+function test2AfterClosing() {
     shouldBeNull('document.getElementById("mock-page-popup")');
     shouldBe('document.getElementById("time").value', '"02:07"');
 

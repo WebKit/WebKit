@@ -52,7 +52,7 @@ private:
     virtual PagePopup* openPagePopup(PagePopupClient*, const IntRect& originBoundsInRootView) OVERRIDE;
     virtual void closePagePopup(PagePopup*) OVERRIDE;
 
-    OwnPtr<MockPagePopup> m_mockPagePopup;
+    RefPtr<MockPagePopup> m_mockPagePopup;
     Frame* m_mainFrame;
     RefPtr<PagePopupController> m_pagePopupController;
 };

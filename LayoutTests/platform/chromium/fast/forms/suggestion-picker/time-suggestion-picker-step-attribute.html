@@ -38,7 +38,10 @@ function test1() {
     shouldBeEqualToString('entryValues()[1]', '02:00');
 
     eventSender.keyDown('\x1B'); // Close picker.
+    waitUntilClosing(test1AfterClosing);
+}
 
+function test1AfterClosing() {
     timeElement.step = 60;
     openPicker(timeElement, test2);
 }
@@ -53,7 +56,10 @@ function test2() {
     shouldBeEqualToString('entryValues()[3]', '02:01');
 
     eventSender.keyDown('\x1B'); // Close picker.
+    waitUntilClosing(test2AfterClosing);
+}
 
+function test2AfterClosing() {
     timeElement.step = 1;
     openPicker(timeElement, test3);
 }
@@ -69,7 +75,10 @@ function test3() {
     shouldBeEqualToString('entryValues()[4]', '02:01');
 
     eventSender.keyDown('\x1B'); // Close picker.
+    waitUntilClosing(test3AfterClosing);
+}
 
+function test3AfterClosing() {
     timeElement.step = 0.001;
     openPicker(timeElement, test4);
 }

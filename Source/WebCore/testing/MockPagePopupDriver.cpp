@@ -36,24 +36,29 @@
 #include "PagePopup.h"
 #include "PagePopupClient.h"
 #include "PagePopupController.h"
+#include "Timer.h"
 #include "WebCoreTestSupport.h"
 
 namespace WebCore {
 
-class MockPagePopup : public PagePopup {
+class MockPagePopup : public PagePopup, public RefCounted<MockPagePopup> {
 public:
-    static PassOwnPtr<MockPagePopup> create(PagePopupClient*, const IntRect& originBoundsInRootView, Frame*);
+    static PassRefPtr<MockPagePopup> create(PagePopupClient*, const IntRect& originBoundsInRootView, Frame*);
     virtual ~MockPagePopup();
+    void closeLater();
 
 private:
     MockPagePopup(PagePopupClient*, const IntRect& originBoundsInRootView, Frame*);
+    void close(Timer<MockPagePopup>*);
 
     PagePopupClient* m_popupClient;
     RefPtr<HTMLIFrameElement> m_iframe;
+    Timer<MockPagePopup> m_closeTimer;
 };
 
 inline MockPagePopup::MockPagePopup(PagePopupClient* client, const IntRect& originBoundsInRootView, Frame* mainFrame)
     : m_popupClient(client)
+    , m_closeTimer(this, &MockPagePopup::close)
 {
     Document* document = mainFrame->document();
     m_iframe = HTMLIFrameElement::create(HTMLNames::iframeTag, document);
@@ -75,16 +80,30 @@ inline MockPagePopup::MockPagePopup(PagePopupClient* client, const IntRect& orig
     writer->end();
 }
 
-PassOwnPtr<MockPagePopup> MockPagePopup::create(PagePopupClient* client, const IntRect& originBoundsInRootView, Frame* mainFrame)
+PassRefPtr<MockPagePopup> MockPagePopup::create(PagePopupClient* client, const IntRect& originBoundsInRootView, Frame* mainFrame)
 {
-    return adoptPtr(new MockPagePopup(client, originBoundsInRootView, mainFrame));
+    return adoptRef(new MockPagePopup(client, originBoundsInRootView, mainFrame));
+}
+
+void MockPagePopup::closeLater()
+{
+    ref();
+    m_popupClient->didClosePopup();
+    m_popupClient = 0;
+    // This can be called in detach(), and we should not change DOM structure
+    // during detach().
+    m_closeTimer.startOneShot(0);
+}
+
+void MockPagePopup::close(Timer<MockPagePopup>*)
+{
+    deref();
 }
 
 MockPagePopup::~MockPagePopup()
 {
     if (m_iframe && m_iframe->parentNode())
         m_iframe->parentNode()->removeChild(m_iframe.get());
-    m_popupClient->didClosePopup();
 }
 
 inline MockPagePopupDriver::MockPagePopupDriver(Frame* mainFrame)
@@ -117,7 +136,9 @@ void MockPagePopupDriver::closePagePopup(PagePopup* popup)
 {
     if (!popup || popup != m_mockPagePopup.get())
         return;
+    m_mockPagePopup->closeLater();
     m_mockPagePopup.clear();
+    m_pagePopupController->clearPagePopupClient();
     m_pagePopupController.clear();
 }
 

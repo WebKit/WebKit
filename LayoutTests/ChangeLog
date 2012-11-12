@@ -1,3 +1,27 @@
+2012-11-11  Kent Tamura  <tkent@chromium.org>
+
+        Internals: MockPagePopup should not update DOM structure during detach()
+        https://bugs.webkit.org/show_bug.cgi?id=101710
+
+        Reviewed by Hajime Morita.
+
+        Update tests because page popup closing becomes asynchronous.
+
+        * fast/forms/resources/picker-common.js:
+        (waitUntilClosing): Added. Helper to wait until a page popup closing.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-mouse-operations.html:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-pre-100-year.html:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-type-change-onchange.html:
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-with-step.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-key-operations.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-reset-value-after-reload.html:
+        * platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-step-attribute.html:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-key-operations.html:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-mouse-operations.html:
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-step-attribute.html:
+
 2012-11-11  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [WK2] Mark fast/repaint/body-background-image.html as flaky.

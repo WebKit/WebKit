@@ -22,6 +22,10 @@ function runOnOpenPopup1() {
     eventSender.keyDown('downArrow');
     shouldBe('highlightedEntry()', '"2012-01-01"');
     eventSender.keyDown("\n");
+    waitUntilClosing(runOnOpenPopup1AfterClosing);
+}
+
+function runOnOpenPopup1AfterClosing() {
     shouldBeNull('document.getElementById("mock-page-popup")');
     shouldBe('iframe.contentDocument.getElementById("test1").value', '"2012-01-01"');
 
@@ -35,6 +39,10 @@ function runOnOpenPopup2() {
     eventSender.keyDown('downArrow');
     shouldBe('highlightedEntry()', '"2012-01-01"');
     eventSender.keyDown("\n");
+    waitUntilClosing(runOnOpenPopup2AfterClosing);
+}
+
+function runOnOpenPopup2AfterClosing() {
     shouldBeNull('document.getElementById("mock-page-popup")');
     shouldBe('iframe.contentDocument.getElementById("test2").value', '"2012-01-01"');
 
@@ -49,7 +57,7 @@ function runOnIFrameLoad()
     shouldBeEqualToString('testInput1.value', '');
     shouldBeEqualToString('testInput2.value', '2002-02-02');
     iframe.parentNode.removeChild(iframe);
-    finishJSTest();
+    waitUntilClosing(finishJSTest);
 }
 </script>
 <iframe id=iframe onload="openPicker(event.target.contentDocument.getElementById('test1'), runOnOpenPopup1);" srcdoc="<input type=date id=test1 list=suggestions><input type=date id=test2 value=2002-02-02 list=suggestions><datalist id=suggestions><option>2012-01-01</option></datalist>"></iframe>

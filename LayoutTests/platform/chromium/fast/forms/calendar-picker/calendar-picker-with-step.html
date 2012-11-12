@@ -22,7 +22,10 @@ function test1() {
 
     // Close popup
     eventSender.keyDown('\x1B');
+    waitUntilClosing(test1AfterClose);
+}
 
+function test1AfterClose() {
     document.getElementById('date').min = "2011-05-01";
     
     // Reopen popup
