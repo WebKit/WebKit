@@ -2475,6 +2475,7 @@ webcore_sources += \
 	Source/WebCore/config.h \
 	Source/WebCore/css/BasicShapeFunctions.cpp \
 	Source/WebCore/css/BasicShapeFunctions.h \
+	Source/WebCore/css/CachedSVGDocumentReference.h \
 	Source/WebCore/css/Counter.h \
 	Source/WebCore/css/CSSAspectRatioValue.cpp \
 	Source/WebCore/css/CSSAspectRatioValue.h \
@@ -4087,6 +4088,8 @@ webcore_sources += \
 	Source/WebCore/page/scrolling/ScrollingCoordinator.h \
 	Source/WebCore/page/scrolling/ScrollingStateNode.cpp \
 	Source/WebCore/page/scrolling/ScrollingStateNode.h \
+	Source/WebCore/page/scrolling/ScrollingStateFixedNode.cpp \
+	Source/WebCore/page/scrolling/ScrollingStateFixedNode.h \
 	Source/WebCore/page/scrolling/ScrollingStateScrollingNode.cpp \
 	Source/WebCore/page/scrolling/ScrollingStateScrollingNode.h \
 	Source/WebCore/page/scrolling/ScrollingStateTree.cpp \
@@ -5774,6 +5777,7 @@ webcore_sources += \
 	Source/WebCore/workers/SharedWorker.cpp \
 	Source/WebCore/workers/SharedWorker.h \
 	Source/WebCore/workers/SharedWorkerRepository.h \
+	Source/WebCore/workers/SharedWorkerStrategy.h \
 	Source/WebCore/workers/SharedWorkerThread.cpp \
 	Source/WebCore/workers/SharedWorkerThread.h \
 	Source/WebCore/workers/WorkerContext.cpp \

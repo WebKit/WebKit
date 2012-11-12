@@ -1,3 +1,11 @@
+2012-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Remove editing from IDL_PATH since it doesn't
+        contain idl files anymore.
+        * GNUmakefile.list.am: Add missing header files.
+
 2012-11-12  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Make sure that MediaConstraints only has optional and mandatory at the top level
