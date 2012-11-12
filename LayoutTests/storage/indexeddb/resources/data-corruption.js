@@ -5,33 +5,14 @@ if (this.importScripts) {
 
 description("Test that data inserted into IndexedDB does not get corrupted on disk.");
 
-function test()
+indexedDBTest(prepareDatabase, addData);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('data-corruption')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    self.db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = setVersionSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersionSuccess()
-{
+    db = event.target.result;
     debug("setVersionSuccess():");
-    self.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.transaction");
     shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = addData;
-
-    deleteAllObjectStores(db);
 
     evalAndLog("db.createObjectStore('storeName')");
 }
@@ -61,5 +42,3 @@ function doCheck()
     shouldBe("event.target.result.x.toString()", "testDate.toString()");
     finishJSTest();
 }
-
-test();

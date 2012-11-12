@@ -11,21 +11,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB: iterating through index cursors with keys and key ranges");
 
-function test()
+indexedDBTest(prepareDatabase, setVersionComplete);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    db = evalAndLog("db = event.target.result");
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     objectStoreName = "People";
 
     objectStoreData = [
@@ -70,16 +60,6 @@ function openSuccess()
         { key: "237-23-7734", value: { name: "Ron", height: 73, weight: 180 } }
     ];
 
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = createAndPopulateObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function createAndPopulateObjectStore()
-{
-    deleteAllObjectStores(db);
-    trans = event.target.result;
-
     objectStore = evalAndLog("objectStore = db.createObjectStore(objectStoreName);");
 
     debug("First, add all our data to the object store.");
@@ -102,7 +82,6 @@ function createIndexes()
       evalAndLog("objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);");
     }
     shouldBe("objectStore.indexNames.length", "indexData.length");
-    trans.oncomplete = setVersionComplete;
 }
 
 function setVersionComplete()
@@ -1006,5 +985,3 @@ function testGroup30()
         }
     }
 }
-
-test();

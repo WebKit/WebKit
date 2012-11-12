@@ -11,28 +11,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB behavior adding the same property twice");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo');");
     key = evalAndLog("key = 10");
@@ -54,5 +37,3 @@ function addSecondExpectedError()
     shouldBe("event.target.errorCode", "IDBDatabaseException.CONSTRAINT_ERR");
     finishJSTest();
 }
-
-test();

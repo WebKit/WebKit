@@ -5,36 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's IDBObjectStore.get(IDBKeyRange) method.");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    openDatabase();
-}
-
-function openDatabase()
-{
-    result = evalAndLog("indexedDB.open('cursor-continue')");
-    result.onsuccess = setVersion;
-    result.onerror = unexpectedErrorCallback;
-}
-
-function setVersion()
-{
-    self.db = evalAndLog("db = event.target.result");
-
-    result = evalAndLog("db.setVersion('new version')");
-    result.onsuccess = deleteExisting;
-    result.onerror = unexpectedErrorCallback;
-}
-
-function deleteExisting()
-{
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     self.testLength = 10;
     self.objectStore = evalAndLog("db.createObjectStore('someObjectStore')");
     self.index = evalAndLog("objectStore.createIndex('someIndex', 'x')");
@@ -178,5 +153,3 @@ function getNullTest(store, method, resultPath, finish)
     evalAndExpectException(store + "." + method + "(null)", "IDBDatabaseException.DATA_ERR", "'DataError'");
     evalAndLog(finish);
 }
-
-test();

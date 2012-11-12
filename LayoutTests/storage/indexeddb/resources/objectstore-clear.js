@@ -5,29 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's webkitIDBObjectStore.clear().");
 
-function test()
+indexedDBTest(prepareDatabase, setVersionComplete);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('objectstore-clear')");
-    request.onsuccess = startSetVersion;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function startSetVersion()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = deleteExisting;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function deleteExisting()
-{
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     store = evalAndLog("store = db.createObjectStore('storeName', null)");
 
@@ -78,7 +60,6 @@ function openKeyCursorSuccess()
 {
     debug("openKeyCursorSuccess():");
     shouldBeNull("event.target.result");
-    trans.oncomplete = setVersionComplete;
 }
 
 function setVersionComplete()
@@ -98,5 +79,3 @@ function getSuccess()
 
     finishJSTest();
 }
-
-test();

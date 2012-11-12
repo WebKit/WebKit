@@ -5,37 +5,12 @@ if (this.importScripts) {
 
 description("Test IndexedDB IDBDatabase internal delete pending flag");
 
-function test()
+indexedDBTest(prepareDatabase, testDatabaseDelete, 5);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    evalAndLog("dbname = self.location.pathname");
-    request = evalAndLog("indexedDB.deleteDatabase(dbname)");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = openConnection;
-}
-
-function openConnection()
-{
-    debug("");
-    debug("Open a connection and set a sentinel version:");
-    evalAndLog("version = '10'");
-    evalAndLog("request = indexedDB.open(dbname)");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-        evalAndLog("connection = request.result");
-        evalAndLog("request = connection.setVersion(version)");
-        request.onerror = unexpectedErrorCallback;
-        request.onblocked = unexpectedBlockedCallback;
-        request.onsuccess = function() {
-            trans = request.result;
-            trans.onabort = unexpectedAbortCallback;
-            shouldBe("connection.version", "version");
-            evalAndLog("connection.createObjectStore('store')");
-            shouldBe("connection.objectStoreNames.length", "1");
-            trans.oncomplete = testDatabaseDelete;
-        };
-    };
+    connection = event.target.result;
+    evalAndLog("connection.createObjectStore('store')");
+    shouldBe("connection.objectStoreNames.length", "1");
 }
 
 function testDatabaseDelete()
@@ -86,5 +61,3 @@ function testDatabaseDelete()
         finishJSTest();
     };
 }
-
-test();

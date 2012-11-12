@@ -5,28 +5,12 @@ if (this.importScripts) {
 
 description("Test IndexedDB transaction does not crash on abort.");
 
-function test()
+indexedDBTest(prepareDatabase, setVersionComplete);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    request = evalAndLog("indexedDB.open('transaction-crash-on-abort')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    db = evalAndLog("db = event.target.result");
-    request = evalAndLog("db.setVersion('1.0')");
-    request.onsuccess = setVersionSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersionSuccess()
-{
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     evalAndLog("db.createObjectStore('foo')");
-    event.target.result.oncomplete = setVersionComplete;
 }
 
 function setVersionComplete()
@@ -35,5 +19,3 @@ function setVersionComplete()
     evalAndLog("self.gc()");
     finishJSTest();
 }
-
-test();

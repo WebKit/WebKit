@@ -5,30 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB key types");
 
-function test()
+indexedDBTest(prepareDatabase, testValidArrayKeys);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    openreq = evalAndLog("indexedDB.open(name)");
-    openreq.onsuccess = openSuccess;
-    openreq.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    evalAndLog("db = openreq.result");
-    setverreq = evalAndLog("request = db.setVersion('1')");
-    setverreq.onsuccess = setVersionSuccess;
-    setverreq.onerror = unexpectedErrorCallback;
-}
-
-function setVersionSuccess()
-{
-    debug("preparing database");
-    trans = setverreq.result;
-    trans.oncomplete = testValidArrayKeys;
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("db.createObjectStore('store');");
     debug("");
 }
@@ -186,5 +167,3 @@ function testDepthLimits()
 
     finishJSTest();
 }
-
-test();

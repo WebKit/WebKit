@@ -5,25 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's cursor value property.");
 
-removeVendorPrefixes();
-openDatabase();
-
-function openDatabase()
+indexedDBTest(prepareDatabase, testCursor);
+function prepareDatabase()
 {
-    evalAndLog("request = indexedDB.open('cursor-value')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-        evalAndLog("db = request.result");
-        evalAndLog("request = db.setVersion('new version')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function() {
-            evalAndLog("transaction = request.result");
-            transaction.onabort = unexpectedAbortCallback;
-            deleteAllObjectStores(db);
-            evalAndLog("db.createObjectStore('store')");
-            transaction.oncomplete = testCursor;
-        };
-    };
+    db = event.target.result;
+    evalAndLog("db.createObjectStore('store')");
 }
 
 function testCursor()

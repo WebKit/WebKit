@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 [Worker] Checks that garbage collection doesn't reclaim objects with pending activity
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -8,13 +7,10 @@ Starting worker: resources/pending-activity.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 [Worker] 
 [Worker] dbname = "pending-activity.js"
-[Worker] 
-[Worker] prepareDatabase():
 [Worker] indexedDB.deleteDatabase(dbname)
 [Worker] indexedDB.open(dbname)
-[Worker] db = request.result
-PASS [Worker] db.version is 1
-[Worker] db.setVersion('1')
+[Worker] 
+[Worker] prepareDatabase():
 [Worker] store = db.createObjectStore('store')
 [Worker] store.put(0, 0)
 [Worker] 

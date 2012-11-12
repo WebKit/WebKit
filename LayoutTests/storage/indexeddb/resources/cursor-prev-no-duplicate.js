@@ -5,31 +5,12 @@ if (this.importScripts) {
 
 description("Test IndexedDB behavior when iterating backwards with and without NO_DUPLICATE");
 
-function test()
-{
-    removeVendorPrefixes();
-
-    prepareDatabase();
-}
-
+indexedDBTest(prepareDatabase, populateStore);
 function prepareDatabase()
 {
-    debug("");
-    evalAndLog("openreq = indexedDB.open('cursor-prev-no-duplicate')");
-    openreq.onerror = unexpectedErrorCallback;
-    openreq.onsuccess = function()
-    {
-        evalAndLog("db = openreq.result");
-        evalAndLog("verreq = db.setVersion('1')");
-        verreq.onerror = unexpectedErrorCallback;
-        verreq.onsuccess = function()
-        {
-            deleteAllObjectStores(db);
-            store = evalAndLog("store = db.createObjectStore('store')");
-            evalAndLog("store.createIndex('index', 'sorted')");
-            verreq.result.oncomplete = populateStore;
-        };
-    };
+    db = event.target.result;
+    store = evalAndLog("store = db.createObjectStore('store')");
+    evalAndLog("store.createIndex('index', 'sorted')");
 }
 
 function populateStore()
@@ -232,5 +213,3 @@ function runTest(openCursor, exp)
 
     return result;
 }
-
-test();

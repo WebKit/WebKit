@@ -5,32 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB transaction rollback.");
 
-function test()
+indexedDBTest(prepareDatabase, setVersionComplete);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    request = evalAndLog("indexedDB.open('transaction-rollback')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    self.db = evalAndLog("db = event.target.result");
-    request = evalAndLog("request = db.setVersion('version 1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    debug("cleanDatabase():");
-    self.transaction = evalAndLog("transaction = event.target.result");
-    transaction.onabort = unexpectedErrorCallback;
-    transaction.oncomplete = setVersionComplete;
-
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     evalAndLog("db.createObjectStore('myObjectStore')");
     shouldBe("db.objectStoreNames.length", "1");
 }
@@ -87,5 +66,3 @@ function getSuccess()
     shouldBeEqualToString("cursor.value", "rollbackValue");
     finishJSTest();
 }
-
-test();

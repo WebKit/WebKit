@@ -5,32 +5,15 @@ if (this.importScripts) {
 
 description("Test IndexedDB's transaction and objectStore calls");
 
-function test()
+indexedDBTest(prepareDatabase, created);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    request = evalAndLog("indexedDB.open('transaction-and-objectstore-calls')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    self.db = evalAndLog("db = event.target.result");
-    request = evalAndLog("result = db.setVersion('version 1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    trans = evalAndLog("trans = event.target.result");
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     evalAndLog("db.createObjectStore('a')");
     evalAndLog("db.createObjectStore('b')");
     evalAndLog("db.createObjectStore('store').createIndex('index', 'some_path')");
-    evalAndLog("trans.addEventListener('complete', created, true)");
     debug("");
 }
 
@@ -120,5 +103,3 @@ function afterComplete()
 
     finishJSTest();
 }
-
-test();

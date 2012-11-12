@@ -5,29 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's IDBObjectStore.delete(IDBKeyRange) method.");
 
-function test()
+indexedDBTest(prepareDatabase, runTests);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    evalAndLog("request = indexedDB.deleteDatabase('delete-range')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function () {
-        evalAndLog("request = indexedDB.open('delete-range')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function () {
-            evalAndLog("db = request.result");
-            evalAndLog("request = db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function () {
-                evalAndLog("trans = request.result");
-                trans.onabort = unexpectedAbortCallback;
-
-                evalAndLog("db.createObjectStore('store')");
-
-                trans.oncomplete = runTests;
-            };
-        };
-    }
+    db = event.target.result;
+    evalAndLog("db.createObjectStore('store')");
 }
 
 function checkKeys(expected, callback)
@@ -86,5 +68,3 @@ function runTests()
     }
     nextTest();
 }
-
-test();

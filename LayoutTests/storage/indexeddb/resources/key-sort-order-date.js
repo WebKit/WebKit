@@ -5,29 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB key comparison");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = addKey1;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function addKey1()
-{
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("db.createObjectStore('foo');");
     date1 = evalAndLog("date1 = new Date(1000);");
     request = evalAndLog("request = objectStore.add([], date1);");
@@ -77,5 +59,3 @@ function openACursor()
         }
     }
 }
-
-test();

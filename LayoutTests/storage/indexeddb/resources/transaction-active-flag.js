@@ -5,27 +5,13 @@ if (this.importScripts) {
 
 description("Test IndexedDB transaction internal active flag.");
 
-function test()
+indexedDBTest(prepareDatabase, runTransaction);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.deleteDatabase('transaction-active-flag')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-        request = evalAndLog("indexedDB.open('transaction-active-flag')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function() {
-            db = request.result;
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function() {
-                transaction = request.result;
-                transaction.onabort = unexpectedAbortCallback;
-                evalAndLog("store = db.createObjectStore('store')");
-                evalAndLog("store.createIndex('index', 'keypath')");
-                transaction.oncomplete = runTransaction;
-            };
-        };
-    };
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
+    evalAndLog("store = db.createObjectStore('store')");
+    evalAndLog("store.createIndex('index', 'keypath')");
 }
 
 function runTransaction()
@@ -134,5 +120,3 @@ function transactionComplete()
     evalAndExpectException("store = transaction.objectStore('store')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     finishJSTest();
 }
-
-test();

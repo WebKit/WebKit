@@ -11,33 +11,14 @@ if (this.importScripts) {
 
 description("Test IndexedDB's clearing an object store");
 
-function test()
+indexedDBTest(prepareDatabase, clear);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo', { autoIncrement: true });");
     request = evalAndLog("request = objectStore.add({});");
     request.onerror = unexpectedErrorCallback;
-    event.target.result.oncomplete = clear;
 }
 
 function clear()
@@ -55,5 +36,3 @@ function areWeClearYet()
     shouldBe("cursor", "null");
     finishJSTest();
 }
-
-test();

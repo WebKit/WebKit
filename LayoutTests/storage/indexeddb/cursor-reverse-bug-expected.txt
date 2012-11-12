@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB keys ordering and readback from cursors.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,11 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-
-openreq = indexedDB.open('cursor-reverse-bug')
-db = openreq.result
-verreq = db.setVersion('1')
-Deleted all object stores.
+dbname = "cursor-reverse-bug.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 store = db.createObjectStore('store')
 store.createIndex('index', '')
 

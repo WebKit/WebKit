@@ -9,36 +9,12 @@ description("Test for crbug.com/108071");
 // post-abort outstanding continue.
 var names = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo'];
 
-function test()
+indexedDBTest(prepareDatabase, iterateAndDeleteFirstElement);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    DBNAME = 'prefetch-bugfix-108071';
-    request = evalAndLog("indexedDB.deleteDatabase(DBNAME)");
-    request.onerror = unexpectedErrorCallback;
-    request.onblocked = unexpectedBlockedCallback;
-    request.onsuccess = function (e) {
-        request = evalAndLog("indexedDB.open(DBNAME)");
-        request.onsuccess = openSuccess;
-        request.onerror = unexpectedErrorCallback;
-    };
-}
-
-function openSuccess()
-{
-    var db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = setVersionSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersionSuccess()
-{
-    debug("setVersionSuccess():");
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = iterateAndDeleteFirstElement;
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
+    trans = event.target.transaction;
 
     var objectStore = evalAndLog("objectStore = db.createObjectStore('store', {keyPath: 'id'})");
     resetObjectStore();
@@ -114,5 +90,3 @@ function transactionAborted()
     testPassed("Transaction aborted as expected");
     finishJSTest();
 }
-
-test();

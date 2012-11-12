@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB's transaction and objectStore calls
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,15 +5,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('transaction-and-objectstore-calls')
-db = event.target.result
-result = db.setVersion('version 1')
-trans = event.target.result
-Deleted all object stores.
+dbname = "transaction-and-objectstore-calls.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 db.createObjectStore('a')
 db.createObjectStore('b')
 db.createObjectStore('store').createIndex('index', 'some_path')
-trans.addEventListener('complete', created, true)
 
 trans = db.transaction(['a'])
 trans.objectStore('a')

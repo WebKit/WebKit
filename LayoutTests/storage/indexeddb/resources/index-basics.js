@@ -5,34 +5,12 @@ if (this.importScripts) {
 
 description("Test the basics of IndexedDB's webkitIDBIndex.");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase(evt)
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('index-basics')");
-    request.onsuccess = setVersion;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersion(evt)
-{
-    event = evt;
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = deleteExisting;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function deleteExisting(evt)
-{
-    event = evt;
-    debug("setVersionSuccess():");
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-
-    deleteAllObjectStores(db);
-
+    preamble(evt);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     self.store = evalAndLog("db.createObjectStore('storeName', null)");
     self.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
     self.indexObject2 = evalAndLog("store.createIndex('indexName2', 'y', {unique: false})");
@@ -344,6 +322,3 @@ function index3Count(evt)
 
     finishJSTest();
 }
-
-var jsTestIsAsync = true;
-test();

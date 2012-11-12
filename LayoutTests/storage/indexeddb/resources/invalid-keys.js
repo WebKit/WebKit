@@ -5,29 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB invalid keys");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = testGroup1;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function testGroup1()
-{
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("db.createObjectStore('foo');");
     testInvalidKeys();
 }
@@ -59,5 +41,3 @@ function testInvalidKeys()
 
     finishJSTest();
 }
-
-test();

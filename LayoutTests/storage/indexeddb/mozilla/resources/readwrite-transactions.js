@@ -11,32 +11,14 @@ if (this.importScripts) {
 
 description("Test IndexedDB's read/write transactions");
 
-function test()
+indexedDBTest(prepareDatabase, setVersionComplete);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     osName = "test store";
     objectStore = evalAndLog("objectStore = db.createObjectStore(osName, { autoIncrement: true });");
-    event.target.result.oncomplete = setVersionComplete;
 }
 
 function setVersionComplete()
@@ -109,5 +91,3 @@ function postDelete2()
     shouldBe("event.target.transaction.mode", "'readwrite'");
     finishJSTest();
 }
-
-test();

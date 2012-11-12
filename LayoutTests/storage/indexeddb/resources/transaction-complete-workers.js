@@ -5,24 +5,13 @@ if (this.importScripts) {
 
 description("Test IndexedDB workers, recursion, and transaction termination.");
 
-function test()
+indexedDBTest(prepareDatabase, createTransaction);
+function prepareDatabase(evt)
 {
-    removeVendorPrefixes();
-
-    evalAndLog("request = indexedDB.open('transaction-complete-worker')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function () {
-        evalAndLog("db = request.result");
-        evalAndLog("request = db.setVersion('1')");
-        request.onerror = unexpectedErrorCallback;
-        request.onblocked = unexpectedBlockedCallback;
-        request.onsuccess = function () {
-            deleteAllObjectStores(db);
-            evalAndLog("trans = request.result");
-            evalAndLog("db.createObjectStore('store')");
-            trans.oncomplete = createTransaction;
-        };
-    };
+    preamble(evt);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
+    evalAndLog("db.createObjectStore('store')");
 }
 
 function createTransaction()
@@ -124,5 +113,3 @@ function errorTransactionCompleted()
     evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
     finishJSTest();
 }
-
-test();

@@ -11,31 +11,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's cursor mutation during object store cursor iteration");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = setupObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setupObjectStore()
-{
-    debug("setupObjectStore():");
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo', { keyPath: 'ss' });");
     objectStoreData = evalAndLog("objectStoreData = [\n" + 
 "        { ss: '237-23-7732', name: 'Bob' },\n" + 
@@ -136,5 +116,3 @@ function checkMutatingCursorResults()
     shouldBe("sawRemoved", "true");
     finishJSTest();
 }
-
-test();

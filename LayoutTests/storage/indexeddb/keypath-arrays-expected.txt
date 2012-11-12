@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB Array-type keyPaths
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,12 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.deleteDatabase('keypath-arrays')
-indexedDB.open('keypath-arrays')
-
-openSuccess():
-db = event.target.result
-request = db.setVersion('1')
+dbname = "keypath-arrays.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 store = db.createObjectStore('store', {keyPath: ['a', 'b']})
 store.createIndex('index', ['c', 'd'])
 Expecting exception from db.createObjectStore('store-with-generator', {keyPath: ['a', 'b'], autoIncrement: true})

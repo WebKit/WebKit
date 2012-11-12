@@ -5,31 +5,11 @@ if (this.importScripts) {
 
 description("Verify that queuing up several commands works (and they all fire).");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('queued-commands')");
-    request.onsuccess = setVersion;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersion()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = deleteExisting;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function deleteExisting()
-{
-    debug("setVersionSuccess():");
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     self.store = evalAndLog("db.createObjectStore('storeName')");
     self.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
@@ -58,5 +38,3 @@ function verifyAdd(expected)
     if (addCount > 3)
         testFailed("Unexpected call to verifyAdd!");
 }
-
-test();

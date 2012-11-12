@@ -5,28 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB odd value datatypes");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = addKey1;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function addKey1()
-{
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     objectStore = evalAndLog("db.createObjectStore('foo', {autoIncrement: true});");
 
@@ -73,5 +56,3 @@ function openACursor()
         }
     }
 }
-
-test();

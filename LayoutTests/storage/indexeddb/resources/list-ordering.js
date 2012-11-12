@@ -32,53 +32,29 @@ for (i = 0; i < permuted_order.length - 2; i += 2) {
     permuted_order[i + 1] = tmp;
 }
 
-function test()
+indexedDBTest(prepareDatabase, finishJSTest);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     debug("check that the expected order is the canonical JS sort order:");
     evalAndLog("sorted_order = expected_order.slice(); sorted_order.sort()");
     shouldBeTrue("areArraysEqual(sorted_order, expected_order)");
-    testStoresAndIndexes();
-}
 
-function testStoresAndIndexes()
-{
     debug("");
-    debug("testStoresAndIndexes():");
-    request = evalAndLog("indexedDB.deleteDatabase('list-ordering')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function(e) {
-        request = evalAndLog("indexedDB.open('list-ordering')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function(e) {
-            evalAndLog("db = request.result");
-            shouldBe("db.version", "1");
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function(e) {
-                trans = request.result;
+    debug("Object stores:");
+    permuted_order.forEach(function (name) {
+        evalAndLog("db.createObjectStore(" + JSON.stringify(name) +")");
+    });
 
-                debug("");
-                debug("Object stores:");
-                permuted_order.forEach(function (name) {
-                    evalAndLog("db.createObjectStore(" + JSON.stringify(name) +")");
-                });
+    shouldBeTrue("areArraysEqual(db.objectStoreNames, expected_order)");
 
-                shouldBeTrue("areArraysEqual(db.objectStoreNames, expected_order)");
+    debug("");
+    debug("Indexes:");
+    store = evalAndLog("store = db.createObjectStore('store')");
+    permuted_order.forEach(function (name) {
+        evalAndLog("store.createIndex(" + JSON.stringify(name) +", 'keyPath')");
+    });
 
-                debug("");
-                debug("Indexes:");
-                store = evalAndLog("store = db.createObjectStore('store')");
-                permuted_order.forEach(function (name) {
-                    evalAndLog("store.createIndex(" + JSON.stringify(name) +", 'keyPath')");
-                });
-
-                shouldBeTrue("areArraysEqual(store.indexNames, expected_order)");
-
-                trans.oncomplete = finishJSTest;
-            };
-        };
-    };
+    shouldBeTrue("areArraysEqual(store.indexNames, expected_order)");
 }
-
-test();

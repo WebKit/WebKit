@@ -172,3 +172,23 @@ if (!self.DOMException) {
         DATA_CLONE_ERR: 25
     };
 }
+
+function indexedDBTest(upgradeCallback, optionalOpenCallback, optionalVersion) {
+    removeVendorPrefixes();
+    setDBNameFromPath();
+    var deleteRequest = evalAndLog("indexedDB.deleteDatabase(dbname)");
+    deleteRequest.onerror = unexpectedErrorCallback;
+    deleteRequest.onblocked = unexpectedBlockedCallback;
+    deleteRequest.onsuccess = function() {
+        var openRequest;
+        if (optionalVersion)
+          openRequest = evalAndLog("indexedDB.open(dbname, " + optionalVersion + ")");
+        else
+          openRequest = evalAndLog("indexedDB.open(dbname)");
+        openRequest.onerror = unexpectedErrorCallback;
+        openRequest.onupgradeneeded = upgradeCallback;
+        openRequest.onblocked = unexpectedBlockedCallback;
+        if (optionalOpenCallback)
+            openRequest.onsuccess = optionalOpenCallback;
+    };
+}

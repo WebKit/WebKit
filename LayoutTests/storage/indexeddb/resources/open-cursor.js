@@ -86,36 +86,13 @@ function openCursor()
     request.onerror = unexpectedErrorCallback;
 }
 
-function setVersionSuccess()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    debug("setVersionSuccess():");
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     var objectStore = evalAndLog("objectStore = db.createObjectStore('test')");
     request = evalAndLog("objectStore.add('myValue', 'myKey')");
     request.onsuccess = openCursor;
     request.onerror = unexpectedErrorCallback;
 }
-
-function openSuccess()
-{
-    var db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = setVersionSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function test()
-{
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('open-cursor')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-test();

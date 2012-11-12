@@ -11,28 +11,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's index cursors");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     autoIncrement = evalAndLog("autoIncrement = false;");
     objectStore = evalAndLog("objectStore = db.createObjectStore('a', { keyPath: 'id', autoIncrement: autoIncrement });");
     indexes = [
@@ -81,5 +64,3 @@ function setupAutoIncrement()
     request.onsuccess = postAdd;
     request.onerror = unexpectedErrorCallback;
 }
-
-test();

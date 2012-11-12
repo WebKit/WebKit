@@ -5,42 +5,21 @@ if (this.importScripts) {
 
 description("Test IndexedDB Array-type keyPaths");
 
-function test()
+indexedDBTest(prepareDatabase, testKeyPaths);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
+    evalAndLog("store = db.createObjectStore('store', {keyPath: ['a', 'b']})");
+    evalAndLog("store.createIndex('index', ['c', 'd'])");
 
-    request = evalAndLog("indexedDB.deleteDatabase('keypath-arrays')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function () {
-        request = evalAndLog("indexedDB.open('keypath-arrays')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = openSuccess;
-    };
-}
+    evalAndExpectException("db.createObjectStore('store-with-generator', {keyPath: ['a', 'b'], autoIncrement: true})", "DOMException.INVALID_ACCESS_ERR");
+    evalAndExpectException("store.createIndex('index-multientry', ['e', 'f'], {multiEntry: true})", "DOMException.INVALID_ACCESS_ERR");
 
-function openSuccess()
-{
     debug("");
-    debug("openSuccess():");
-    db = evalAndLog("db = event.target.result");
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function () {
-        transaction = request.result;
-        transaction.onabort = unexpectedAbortCallback;
-        evalAndLog("store = db.createObjectStore('store', {keyPath: ['a', 'b']})");
-        evalAndLog("store.createIndex('index', ['c', 'd'])");
-
-        evalAndExpectException("db.createObjectStore('store-with-generator', {keyPath: ['a', 'b'], autoIncrement: true})", "DOMException.INVALID_ACCESS_ERR");
-        evalAndExpectException("store.createIndex('index-multientry', ['e', 'f'], {multiEntry: true})", "DOMException.INVALID_ACCESS_ERR");
-
-        debug("");
-        debug("Empty arrays are not valid key paths:");
-        evalAndExpectException("db.createObjectStore('store-keypath-empty-array', {keyPath: []})", "DOMException.SYNTAX_ERR");
-        evalAndExpectException("store.createIndex('index-keypath-empty-array', [])", "DOMException.SYNTAX_ERR");
-
-        transaction.oncomplete = testKeyPaths;
-    };
+    debug("Empty arrays are not valid key paths:");
+    evalAndExpectException("db.createObjectStore('store-keypath-empty-array', {keyPath: []})", "DOMException.SYNTAX_ERR");
+    evalAndExpectException("store.createIndex('index-keypath-empty-array', [])", "DOMException.SYNTAX_ERR");
 }
 
 function testKeyPaths()
@@ -82,5 +61,3 @@ function testKeyPaths()
 
     transaction.oncomplete = finishJSTest;
 }
-
-test();

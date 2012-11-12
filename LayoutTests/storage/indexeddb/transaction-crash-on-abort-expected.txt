@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB transaction does not crash on abort.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,10 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('transaction-crash-on-abort')
-openSuccess():
-db = event.target.result
-db.setVersion('1.0')
+dbname = "transaction-crash-on-abort.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 db.createObjectStore('foo')
 db.transaction('foo')
 self.gc()

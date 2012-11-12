@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test event propogation on IDBTransaction.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,13 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('transaction-event-propagation')
-db = event.target.result
-db.setVersion('new version')
-trans = event.target.result
-PASS trans is non-null.
-trans.oncomplete = startTest
-Deleted all object stores.
+dbname = "transaction-event-propagation.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 store = db.createObjectStore('storeName', null)
 store.add({x: 'value', y: 'zzz'}, 'key')
 Verifing abort

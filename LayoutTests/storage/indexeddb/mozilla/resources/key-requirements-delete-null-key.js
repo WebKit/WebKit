@@ -11,31 +11,12 @@ if (this.importScripts) {
 
 description("Test IndexedDB's behavior deleting entry with no key");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('version 1')");
-    request.onsuccess = cleanDatabaseAndCreateObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabaseAndCreateObjectStore()
-{
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("objectStore = db.createObjectStore('bar');");
     evalAndExpectException("objectStore.delete(null);", "IDBDatabaseException.DATA_ERR");
     finishJSTest();
 }
-
-test();

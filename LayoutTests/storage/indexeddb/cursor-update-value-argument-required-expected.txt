@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB cursor.update required arguments
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,10 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open(name)
-db = event.target.result
-request = db.setVersion('1')
-Deleted all object stores.
+dbname = "cursor-update-value-argument-required.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 db.createObjectStore('autoIncrement', { autoIncrement: true });
 request = objectStore.openCursor();
 keys = [1, -1, 0, 10, 2000, 'q', 'z', 'two', 'b', 'a'];

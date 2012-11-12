@@ -5,33 +5,13 @@ if (this.importScripts) {
 
 description("Test IndexedDB keyPath edge cases");
 
-function test()
+indexedDBTest(prepareDatabase, testKeyPaths);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    request = evalAndLog("indexedDB.deleteDatabase('keypath-edges')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function () {
-        request = evalAndLog("indexedDB.open('keypath-edges')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = openSuccess;
-    };
-}
-
-function openSuccess()
-{
-    debug("");
-    debug("openSuccess():");
-    db = evalAndLog("db = event.target.result");
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function () {
-        transaction = request.result;
-        transaction.onabort = unexpectedAbortCallback;
-        evalAndLog("db.createObjectStore('store-with-path', {keyPath: 'foo'})");
-        evalAndLog("db.createObjectStore('store-with-path-and-generator', {keyPath: 'foo', autoIncrement: true})");
-        transaction.oncomplete = testKeyPaths;
-    };
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
+    evalAndLog("db.createObjectStore('store-with-path', {keyPath: 'foo'})");
+    evalAndLog("db.createObjectStore('store-with-path-and-generator', {keyPath: 'foo', autoIncrement: true})");
 }
 
 function testKeyPaths()
@@ -106,5 +86,3 @@ function testKeyPathsAndGenerator()
     transaction.onabort = unexpectedAbortCallback;
     transaction.oncomplete = finishJSTest;
 }
-
-test();

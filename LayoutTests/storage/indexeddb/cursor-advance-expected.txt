@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB cursor.advance().
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,12 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open(name)
-openSuccess():
-db = event.target.result
-request = db.setVersion('1')
-Deleted all object stores.
-trans = request.result
+dbname = "cursor-advance.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 objectStore = db.createObjectStore(objectStoreName);
 Now create the indexes.
 objectStore.createIndex(indexData[i].name, indexData[i].keyPath, indexData[i].options);

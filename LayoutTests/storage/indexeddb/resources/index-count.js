@@ -5,28 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's IDBIndex.count().");
 
-function test()
-{
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('index-count')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-        db = evalAndLog("db = event.target.result");
-        request = evalAndLog("db.setVersion('new version')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = prepareDatabase;
-    };
-}
-
+indexedDBTest(prepareDatabase, verifyCount);
 function prepareDatabase()
 {
-    debug("");
-    debug("preparing database");
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     store = evalAndLog("store = db.createObjectStore('storeName', null)");
 
     self.index = evalAndLog("store.createIndex('indexName', '')");
@@ -37,7 +20,6 @@ function prepareDatabase()
         request = store.add(i, i);
         request.onerror = unexpectedErrorCallback;
     }
-    trans.oncomplete = verifyCount;
 }
 
 function verifyCount()
@@ -150,5 +132,3 @@ function verifyCountWithKey()
 
     nextTest();
 }
-
-test();

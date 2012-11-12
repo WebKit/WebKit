@@ -5,29 +5,10 @@ if (this.importScripts) {
 
 description("Test IndexedDB cursor.update required arguments");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = testGroup1;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function testGroup1()
-{
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
     objectStore = evalAndLog("db.createObjectStore('autoIncrement', { autoIncrement: true });");
 
     request = evalAndLog("request = objectStore.openCursor();");
@@ -68,5 +49,3 @@ function testGroup3()
         finishJSTest();
     }
 }
-
-test();

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB's IDBObjectStore auto-increment feature.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,14 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('objectstore-autoincrement')
-openSuccess():
-db = event.target.result
-db.setVersion('new version')
-setVersionSuccess():
-trans = event.target.result
-PASS trans is non-null.
-Deleted all object stores.
+dbname = "objectstore-autoincrement.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 createObjectStore():
 store = db.createObjectStore('StoreWithKeyPath', {keyPath: 'id', autoIncrement: true})
 db.createObjectStore('StoreWithAutoIncrement', {autoIncrement: true})

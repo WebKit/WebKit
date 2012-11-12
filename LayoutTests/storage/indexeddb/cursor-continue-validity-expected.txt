@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB's IDBCursor.continue() behavior when called beyond normal scope.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,12 +5,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('cursor-continue')
-db = event.target.result
-db.setVersion('new version')
-trans = event.target.result
+dbname = "cursor-continue-validity.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+trans = event.target.transaction
 PASS trans is non-null.
-Deleted all object stores.
 db.createObjectStore('someObjectStore')
 objectStore.createIndex('someIndex', 'x')
 objectStore.add({'x': 0 }, 0)

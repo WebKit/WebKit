@@ -5,32 +5,12 @@ if (this.importScripts) {
 
 description("Test IndexedDB primary key ordering and readback from cursors.");
 
-function test()
-{
-    removeVendorPrefixes();
-
-    prepareDatabase();
-}
-
+indexedDBTest(prepareDatabase, populateStore);
 function prepareDatabase()
 {
-    debug("");
-    deleteRequest = evalAndLog("indexedDB.deleteDatabase('cursor-primary-key-order')");
-    deleteRequest.onerror = unexpectedErrorCallback;
-    deleteRequest.onsuccess = function () {
-        evalAndLog("openRequest = indexedDB.open('cursor-primary-key-order')");
-        openRequest.onerror = unexpectedErrorCallback;
-        openRequest.onsuccess = function() {
-            evalAndLog("db = openRequest.result");
-            evalAndLog("versionChangeRequest = db.setVersion('1')");
-            versionChangeRequest.onerror = unexpectedErrorCallback;
-            versionChangeRequest.onsuccess = function() {
-                evalAndLog("store = db.createObjectStore('store')");
-                evalAndLog("index = store.createIndex('index', 'indexKey')");
-                versionChangeRequest.result.oncomplete = populateStore;
-            };
-        };
-    };
+    db = event.target.result;
+    evalAndLog("store = db.createObjectStore('store')");
+    evalAndLog("index = store.createIndex('index', 'indexKey')");
 }
 
 self.keys = [
@@ -97,5 +77,3 @@ function checkStore()
         }
     };
 }
-
-test();

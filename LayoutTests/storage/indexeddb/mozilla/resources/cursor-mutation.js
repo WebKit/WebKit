@@ -11,32 +11,13 @@ if (this.importScripts) {
 
 description("Test IndexedDB's cursor mutation");
 
-function test()
+indexedDBTest(prepareDatabase, checkCursorResults);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    debug("");
-    name = 'cursor-mutation';
-    request = evalAndLog("indexedDB.deleteDatabase(name)");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function () {
-        request = evalAndLog("indexedDB.open(name)");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function () {
-            evalAndLog("db = event.target.result");
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = setupObjectStoreAndCreateIndex;          
-        };
-    };
-}
-
-function setupObjectStoreAndCreateIndex()
-{
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     debug("");
     debug("setupObjectStoreAndCreateIndex():");
-
-    trans = evalAndLog("trans = request.result");
 
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo', { keyPath: 'ss' })");
     index = evalAndLog("index = objectStore.createIndex('name', 'name', { unique: true })");
@@ -58,7 +39,6 @@ function setupObjectStoreAndCreateIndex()
         evalAndLog("objectStore.add(objectStoreData[" + i + "])");
     }
 
-    evalAndLog("trans.oncomplete = checkCursorResults");
     setupCursor();
 }
 
@@ -177,5 +157,3 @@ function checkMutatingCursorResults()
     shouldBe("sawRemoved", "false");
     finishJSTest();
 }
-
-test();

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB's cursor value property.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,11 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-request = indexedDB.open('cursor-value')
-db = request.result
-request = db.setVersion('new version')
-transaction = request.result
-Deleted all object stores.
+dbname = "cursor-value.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 db.createObjectStore('store')
 
 testCursor():

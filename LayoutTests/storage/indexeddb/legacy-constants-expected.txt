@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
 CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
 CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
@@ -19,11 +18,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-
-openreq = indexedDB.open('legacy-constants')
-db = openreq.result
-verreq = db.setVersion('1')
-Deleted all object stores.
+dbname = "legacy-constants.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 store = db.createObjectStore('store')
 store.createIndex('index', 'value')
 

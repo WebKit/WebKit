@@ -5,30 +5,11 @@ if (this.importScripts) {
 
 description("Test for valid and invalid keypaths");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = testValidKeyPaths;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function testValidKeyPaths()
-{
-    debug("");
-    debug("testValidKeyPaths():");
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     evalAndLog("store = db.createObjectStore('name')");
     shouldBeNull("store.keyPath");
     deleteAllObjectStores(db);
@@ -168,5 +149,3 @@ function testInvalidKeyPaths()
 
     finishJSTest();
 }
-
-test();

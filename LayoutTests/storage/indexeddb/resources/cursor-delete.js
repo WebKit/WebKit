@@ -5,34 +5,14 @@ if (this.importScripts) {
 
 description("Test IndexedDB's openCursor.");
 
-test();
-
-function test()
+indexedDBTest(prepareDatabase, openCursor);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('cursor-delete')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    var db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = setVersionSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersionSuccess()
-{
+    db = event.target.result;
     debug("setVersionSuccess():");
     self.trans = evalAndLog("trans = event.target.result");
     shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = openCursor;
-
-    deleteAllObjectStores(db);
 
     var objectStore = evalAndLog("objectStore = db.createObjectStore('test')");
     evalAndLog("objectStore.add('myValue1', 'myKey1')");

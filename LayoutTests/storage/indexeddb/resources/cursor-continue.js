@@ -29,35 +29,11 @@ self.testData = [
     "the BIGGEST string"
 ];
 
-function test()
+indexedDBTest(prepareDatabase, onTransactionComplete);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    openDatabase();
-}
-
-function openDatabase()
-{
-    result = evalAndLog("indexedDB.open('cursor-continue')");
-    result.onsuccess = setVersion;
-    result.onerror = unexpectedErrorCallback;
-}
-
-function setVersion()
-{
-    self.db = evalAndLog("db = event.target.result");
-
-    result = evalAndLog("db.setVersion('new version')");
-    result.onsuccess = deleteExisting;
-    result.onerror = unexpectedErrorCallback;
-}
-
-function deleteExisting()
-{
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     self.objectStore = evalAndLog("db.createObjectStore('someObjectStore')");
     self.indexObject = evalAndLog("objectStore.createIndex('someIndex', 'x')");
@@ -252,7 +228,6 @@ function descendingErrorTestEqual()
             shouldBe("event.target.result.primaryKey", "15");
             evalAndLog("cursor = event.target.result");
             evalAndExpectException("event.target.result.continue('A bit2')", "IDBDatabaseException.DATA_ERR", "'DataError'");
-            self.trans.oncomplete = onTransactionComplete;
             return;
         } else {
            testFailed("Illegal stage.");
@@ -266,5 +241,3 @@ function onTransactionComplete()
     evalAndExpectException("cursor.continue()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
     finishJSTest();
 }
-
-test();

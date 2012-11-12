@@ -11,27 +11,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's putting and getting values in an object store");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     testString = evalAndLog("testString = { key: 0, value: 'testString' };");
     testInt = evalAndLog("testInt = { key: 1, value: 1002 };");
@@ -103,5 +87,3 @@ function postGetIntAutoIncrement()
     shouldBe("event.target.result", "testInt.value");
     finishJSTest();
 }
-
-test();

@@ -5,30 +5,13 @@ if (this.importScripts) {
 
 description("Test that legacy direction/mode constants work");
 
-function test()
-{
-    removeVendorPrefixes();
-    prepareDatabase();
-}
-
+indexedDBTest(prepareDatabase, populateStore);
 function prepareDatabase()
 {
-    debug("");
-    evalAndLog("openreq = indexedDB.open('legacy-constants')");
-    openreq.onerror = unexpectedErrorCallback;
-    openreq.onsuccess = function()
-    {
-        evalAndLog("db = openreq.result");
-        evalAndLog("verreq = db.setVersion('1')");
-        verreq.onerror = unexpectedErrorCallback;
-        verreq.onsuccess = function()
-        {
-            deleteAllObjectStores(db);
-            nstore = evalAndLog("store = db.createObjectStore('store')");
-            evalAndLog("store.createIndex('index', 'value')");
-            verreq.result.oncomplete = populateStore;
-        };
-    };
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
+    nstore = evalAndLog("store = db.createObjectStore('store')");
+    evalAndLog("store.createIndex('index', 'value')");
 }
 function populateStore()
 {
@@ -131,5 +114,3 @@ function testObsoleteConstants()
 
     finishJSTest();
 }
-
-test();

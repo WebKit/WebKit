@@ -18,29 +18,11 @@ self.testData = [
     "the BIGEST string"
 ];
 
-function openDatabase()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    result = evalAndLog("indexedDB.open('index-cursor')");
-    result.onsuccess = setVersion;
-    result.onerror = unexpectedErrorCallback;
-}
-
-function setVersion()
-{
-    self.db = evalAndLog("db = event.target.result");
-
-    result = evalAndLog("db.setVersion('new version')");
-    result.onsuccess = deleteExisting;
-    result.onerror = unexpectedErrorCallback;
-}
-
-function deleteExisting()
-{
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     self.objectStore = evalAndLog("db.createObjectStore('someObjectStore')");
     self.indexObject = evalAndLog("objectStore.createIndex('someIndex', 'x')");
@@ -245,6 +227,3 @@ function testNullKeyRange()
     request.onsuccess = cursorIteration;
     request.onerror = unexpectedErrorCallback;
 }
-
-removeVendorPrefixes();
-openDatabase(); // The first step.

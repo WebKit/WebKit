@@ -11,35 +11,18 @@ if (this.importScripts) {
 
 description("Test IndexedDB: object identity");
 
-function test()
+indexedDBTest(prepareDatabase, testIdentitySomeMore);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = createObjectStoreAndIndex;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function createObjectStoreAndIndex()
-{
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     transaction = evalAndLog("transaction = event.target.transaction;");
-    deleteAllObjectStores(db);
     objectStore1 = evalAndLog("objectStore1 = db.createObjectStore('foo');");
     objectStore2 = evalAndLog("objectStore2 = transaction.objectStore('foo');");
     shouldBeTrue("objectStore1 === objectStore2");
     index1 = evalAndLog("index1 = objectStore1.createIndex('bar', 'key');");
     index2 = evalAndLog("index2 = objectStore2.index('bar');");
     shouldBeTrue("index1 === index2");
-    evalAndLog("transaction.oncomplete = testIdentitySomeMore;");
 }
 
 function testIdentitySomeMore()
@@ -61,5 +44,3 @@ function testIdentitySomeMore()
 
     finishJSTest();
 }
-
-test();

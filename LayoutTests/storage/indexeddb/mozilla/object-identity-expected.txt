@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB: object identity
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,18 +5,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open(name)
-db = event.target.result
-request = db.setVersion('1')
+dbname = "object-identity.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 transaction = event.target.transaction;
-Deleted all object stores.
 objectStore1 = db.createObjectStore('foo');
 objectStore2 = transaction.objectStore('foo');
 PASS objectStore1 === objectStore2 is true
 index1 = objectStore1.createIndex('bar', 'key');
 index2 = objectStore2.index('bar');
 PASS index1 === index2 is true
-transaction.oncomplete = testIdentitySomeMore;
 transaction = db.transaction('foo');
 objectStore3 = transaction.objectStore('foo');
 objectStore4 = transaction.objectStore('foo');

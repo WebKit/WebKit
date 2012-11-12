@@ -5,29 +5,12 @@ if (this.importScripts) {
 
 description("Test IndexedDB keys ordering and readback from cursors.");
 
-function test()
-{
-    removeVendorPrefixes();
-
-    prepareDatabase();
-}
-
+indexedDBTest(prepareDatabase, populateStore);
 function prepareDatabase()
 {
-    debug("");
-    evalAndLog("openreq = indexedDB.open('cursor-reverse-bug')");
-    openreq.onerror = unexpectedErrorCallback;
-    openreq.onsuccess = function() {
-        evalAndLog("db = openreq.result");
-        evalAndLog("verreq = db.setVersion('1')");
-        verreq.onerror = unexpectedErrorCallback;
-        verreq.onsuccess = function() {
-            deleteAllObjectStores(db);
-            store = evalAndLog("store = db.createObjectStore('store')");
-            evalAndLog("store.createIndex('index', '')");
-            verreq.result.oncomplete = populateStore;
-        };
-    };
+    db = event.target.result;
+    store = evalAndLog("store = db.createObjectStore('store')");
+    evalAndLog("store.createIndex('index', '')");
 }
 
 function populateStore()
@@ -97,5 +80,3 @@ function testCursor()
     indexKeyReq = evalAndLog("indexKeyReq = index.openKeyCursor(IDBKeyRange.upperBound(test.upperBound, test.open), 'prev')");
     indexKeyReq.onsuccess = testFunction;
 }
-
-test();

@@ -5,34 +5,14 @@ if (this.importScripts) {
 
 description("Checks that garbage collection doesn't reclaim objects with pending activity");
 
-function test()
+indexedDBTest(prepareDatabase, testTransaction);
+function prepareDatabase(evt)
 {
-    removeVendorPrefixes();
-    setDBNameFromPath();
-    prepareDatabase();
-}
-
-function prepareDatabase()
-{
-    preamble();
-    request = evalAndLog("indexedDB.deleteDatabase(dbname)");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function(e) {
-        request = evalAndLog("indexedDB.open(dbname)");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function(e) {
-            evalAndLog("db = request.result");
-            shouldBe("db.version", "1");
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function(e) {
-                trans = request.result;
-                evalAndLog("store = db.createObjectStore('store')");
-                evalAndLog("store.put(0, 0)");
-                trans.oncomplete = testTransaction;
-            };
-        };
-    };
+    preamble(evt);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
+    evalAndLog("store = db.createObjectStore('store')");
+    evalAndLog("store.put(0, 0)");
 }
 
 function testTransaction()
@@ -93,5 +73,3 @@ function cursorRequestOnSecondSuccess()
     debug("");
     finishJSTest();
 }
-
-test();

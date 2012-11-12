@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test consistency of IndexedDB's cursor objects.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,13 +5,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('cursor-inconsistency')
-db = event.target.result
-db.setVersion('new version')
+dbname = "cursor-inconsistency.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 setVersionSuccess():
-trans = event.target.result
+trans = event.target.transaction
 PASS trans is non-null.
-Deleted all object stores.
 objectStore = db.createObjectStore('basicStore')
 objectStore.add('someValue1', 'someKey1').onerror = unexpectedErrorCallback
 objectStore.add('someValue2', 'someKey2').onerror = unexpectedErrorCallback

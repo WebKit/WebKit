@@ -11,33 +11,12 @@ if (this.importScripts) {
 
 description("Test IndexedDB's behavior adding inline and passed key simultaneously");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('version 1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    debug("cleanDatabase():");
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("objectStore = db.createObjectStore('baz', { keyPath: 'id' });");
     evalAndExpectException("objectStore.add({id: 5}, 5);", "IDBDatabaseException.DATA_ERR");
     finishJSTest();
 }
-
-test();

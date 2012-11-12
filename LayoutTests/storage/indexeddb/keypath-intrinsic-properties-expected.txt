@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB keyPath with intrinsic properties
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,12 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.deleteDatabase('keypath-intrinsic-properties')
-indexedDB.open('keypath-intrinsic-properties')
-
-openSuccess():
-db = event.target.result
-request = db.setVersion('1')
+dbname = "keypath-intrinsic-properties.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 store = db.createObjectStore('store', {keyPath: 'id'})
 store.createIndex('string length', 'string.length')
 store.createIndex('array length', 'array.length')

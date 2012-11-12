@@ -5,35 +5,11 @@ if (this.importScripts) {
 
 description("Regression test for IDBRequest issue calling continue on a cursor then aborting.");
 
-function test()
+indexedDBTest(prepareDatabase, testCursor);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    evalAndLog('dbname = self.location.pathname');
-    request = evalAndLog("indexedDB.deleteDatabase('dbname')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-        request = evalAndLog("request = indexedDB.open('dbname')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function() {
-            evalAndLog("db = request.result");
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onblocked = unexpectedBlockedCallback;
-            request.onsuccess = function() {
-                var transaction = request.result;
-                transaction.onabort = unexpectedAbortCallback;
-                onUpgrade();
-                transaction.oncomplete = testCursor;
-            };
-        };
-    };
-}
-
-function onUpgrade()
-{
-    debug("");
-    debug("onUpgrade:");
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     evalAndLog("db.createObjectStore('store')");
 }
 
@@ -73,5 +49,3 @@ function testCursor()
         finishJSTest();
     };
 }
-
-test();

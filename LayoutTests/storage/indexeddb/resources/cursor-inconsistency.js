@@ -5,41 +5,20 @@ if (this.importScripts) {
 
 description("Test consistency of IndexedDB's cursor objects.");
 
-test();
-
-function test()
+indexedDBTest(prepareDatabase, openBasicCursor);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('cursor-inconsistency')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    var db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = setVersionSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersionSuccess()
-{
+    db = event.target.result;
     debug("setVersionSuccess():");
-    self.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.transaction");
     shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = openBasicCursor;
-
-    deleteAllObjectStores(db);
 
     var objectStore = evalAndLog("objectStore = db.createObjectStore('basicStore')");
     evalAndLog("objectStore.add('someValue1', 'someKey1').onerror = unexpectedErrorCallback");
     evalAndLog("objectStore.add('someValue2', 'someKey2').onerror = unexpectedErrorCallback");
     evalAndLog("objectStore.add('someValue3', 'someKey3').onerror = unexpectedErrorCallback");
     evalAndLog("objectStore.add('someValue4', 'someKey4').onerror = unexpectedErrorCallback");
-
 }
 
 function openBasicCursor()

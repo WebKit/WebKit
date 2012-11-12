@@ -5,32 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB createObjectStore null handling");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = createAndPopulateObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function createAndPopulateObjectStore()
-{
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
     objectStore = evalAndLog("db.createObjectStore(null);");
     shouldBeEqualToString("objectStore.name", "null");
     finishJSTest();
 }
-
-test();

@@ -5,51 +5,38 @@ if (this.importScripts) {
 
 description("Test IndexedDB keyPaths");
 
-function test()
+testData = [{ name: "simple identifier",
+              value: {id:10},
+              keyPath: "id",
+              key: 10 },
+            { name: "simple identifiers",
+              value: {id1:10, id2:20},
+              keyPath: "id1",
+              key: 10 },
+            { name: "nested identifiers",
+              value: {outer:{inner:10}},
+              keyPath: "outer.inner",
+              key: 10 },
+            { name: "nested identifiers with distractions",
+              value: {outer:{inner:10}, inner:{outer:20}},
+              keyPath: "outer.inner",
+              key: 10 },
+];
+nextToOpen = 0;
+
+indexedDBTest(prepareDatabase);
+var db = null;
+var trans = null;
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-
-    testData = [{ name: "simple identifier",
-                  value: {id:10},
-                  keyPath: "id",
-                  key: 10 },
-                { name: "simple identifiers",
-                  value: {id1:10, id2:20},
-                  keyPath: "id1",
-                  key: 10 },
-                { name: "nested identifiers",
-                  value: {outer:{inner:10}},
-                  keyPath: "outer.inner",
-                  key: 10 },
-                { name: "nested identifiers with distractions",
-                  value: {outer:{inner:10}, inner:{outer:20}},
-                  keyPath: "outer.inner",
-                  key: 10 },
-    ];
-    nextToOpen = 0;
-    request.onsuccess = createAndPopulateObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function createAndPopulateObjectStore()
-{
+    db = db || event.target.result;
+    if (!trans) {
+        trans = event.target.transaction;
+        trans.onabort = unexpectedAbortCallback;
+    }
     debug("");
     debug("testing " + testData[nextToOpen].name);
-
     deleteAllObjectStores(db);
-
     objectStore = evalAndLog("objectStore = db.createObjectStore(testData[nextToOpen].name, {keyPath: testData[nextToOpen].keyPath});");
     result = evalAndLog("result = objectStore.add(testData[nextToOpen].value);");
     result.onerror = unexpectedErrorCallback;
@@ -72,10 +59,8 @@ function checkCursor()
         testFailed("cursor is null");
     }
     if (++nextToOpen < testData.length) {
-        createAndPopulateObjectStore();
+        prepareDatabase();
     } else {
         finishJSTest();
     }
 }
-
-test();

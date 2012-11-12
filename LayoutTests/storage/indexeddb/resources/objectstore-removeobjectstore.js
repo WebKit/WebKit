@@ -5,30 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's webkitIDBObjectStore.deleteObjectStore().");
 
-function test()
+indexedDBTest(prepareDatabase, getValue);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('objectstore-removeobjectstore')");
-    request.onsuccess = startSetVersion;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function startSetVersion()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = deleteExisting;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function deleteExisting()
-{
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     store = evalAndLog("store = db.createObjectStore('storeName', null)");
 
     self.index = evalAndLog("store.createIndex('indexName', '')");
@@ -36,7 +17,6 @@ function deleteExisting()
 
     request = evalAndLog("store.add('value', 'key')");
     request.onerror = unexpectedErrorCallback;
-    trans.oncomplete = getValue;
 }
 
 function getValue()
@@ -93,5 +73,3 @@ function verifyNotFound()
 
     finishJSTest();
 }
-
-test();

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 [Worker] Test the basics of IndexedDB's webkitIDBIndex.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -7,13 +6,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Starting worker: resources/index-basics.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 [Worker] 
-[Worker] indexedDB.open('index-basics')
-[Worker] db = event.target.result
-[Worker] db.setVersion('new version')
-[Worker] setVersionSuccess():
-[Worker] trans = event.target.result
-PASS [Worker] trans is non-null.
-[Worker] Deleted all object stores.
+[Worker] dbname = "index-basics.js"
+[Worker] indexedDB.deleteDatabase(dbname)
+[Worker] indexedDB.open(dbname)
+[Worker] 
+[Worker] prepareDatabase():
 [Worker] db.createObjectStore('storeName', null)
 [Worker] store.createIndex('indexName', 'x')
 [Worker] store.createIndex('indexName2', 'y', {unique: false})

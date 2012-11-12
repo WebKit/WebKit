@@ -10,34 +10,14 @@ var names = ['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo', 'Foxtrot', 'Golf',
              'Oscar', 'Papa', 'Quebec', 'Romeo', 'Sierra', 'Tango', 'Uniform',
              'Victor', 'Whiskey', 'X-ray', 'Yankee', 'Zulu'];
 
-test();
-
-function test()
+indexedDBTest(prepareDatabase, basicCursorTest);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('cursor-skip-deleted')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    var db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = setVersionSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersionSuccess()
-{
+    db = event.target.result;
     debug("setVersionSuccess():");
-    self.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.transaction");
     shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = basicCursorTest;
-
-    deleteAllObjectStores(db);
 
     var objectStore = evalAndLog("objectStore = db.createObjectStore('store', {keyPath: 'id'})");
     evalAndLog("objectStore.createIndex('nameIndex', 'name')");

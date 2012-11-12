@@ -1,3 +1,23 @@
+2012-11-12  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: convert tests from setVersion to upgradeneeded
+        https://bugs.webkit.org/show_bug.cgi?id=101676
+
+        Reviewed by Tony Chang.
+
+        A la bug 92037, add a function to shared.js that sets up the database
+        for tests where opening and versioning isn't the focus.
+
+        * storage/indexeddb/create-object-store-options-expected.txt:
+        * storage/indexeddb/createObjectStore-name-argument-required-expected.txt:
+        * storage/indexeddb/createObjectStore-null-name-expected.txt:
+          ...many tests and expected files...
+
+        * storage/indexeddb/resources/shared.js:
+          The new utility function indexedDBTest lives here.
+
+        * storage/indexeddb/values-odd-types-expected.txt:
+
 2012-11-12  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Make sure that MediaConstraints only has optional and mandatory at the top level

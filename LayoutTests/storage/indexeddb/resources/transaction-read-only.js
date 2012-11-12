@@ -5,30 +5,11 @@ if (this.importScripts) {
 
 description("Test read-only transactions in IndexedDB.");
 
-function test()
+indexedDBTest(prepareDatabase, setVersionDone);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    request = evalAndLog("indexedDB.open('transaction-read-only')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    self.db = evalAndLog("db = event.target.result");
-    request = evalAndLog("result = db.setVersion('version 1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    deleteAllObjectStores(db);
-
-    event.target.result.oncomplete = setVersionDone;
-    event.target.result.onabort = unexpectedAbortCallback;
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     store = evalAndLog("store = db.createObjectStore('store')");
     evalAndLog("store.put('x', 'y')");
 }
@@ -54,5 +35,3 @@ function gotCursor()
 
     finishJSTest();
 }
-
-test();

@@ -5,34 +5,14 @@ if (this.importScripts) {
 
 description("Test that continue() calls against cursors are validated by direction.");
 
-function test()
+indexedDBTest(prepareDatabase, testCursors);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    evalAndLog("dbname = self.location.pathname");
-    request = evalAndLog("indexedDB.deleteDatabase(dbname)");
-    request.onerror = unexpectedErrorCallback;
-    request.onblocked = unexpectedBlockedCallback;
-    request.onsuccess = function() {
-        evalAndLog("request = indexedDB.open(dbname)");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function() {
-            evalAndLog("db = request.result");
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onblocked = unexpectedBlockedCallback;
-            request.onsuccess = function() {
-                trans = request.result;
-                trans.onabort = unexpectedAbortCallback;
-
-                evalAndLog("store = db.createObjectStore('store')");
-                for (i = 1; i <= 10; ++i) {
-                    evalAndLog("store.put(" + i + "," + i + ")");
-                }
-
-                trans.oncomplete = testCursors;
-            };
-        };
-    };
+    db = event.target.result;
+    evalAndLog("store = db.createObjectStore('store')");
+    for (i = 1; i <= 10; ++i) {
+        evalAndLog("store.put(" + i + "," + i + ")");
+    }
 }
 
 function testCursors()
@@ -71,5 +51,3 @@ function testReverseCursor()
         finishJSTest();
     };
 }
-
-test();

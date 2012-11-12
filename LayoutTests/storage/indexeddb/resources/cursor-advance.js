@@ -27,38 +27,20 @@ var indexData = [
     { name: "weight", keyPath: "weight", options: { unique: false } }
 ];
 
-function test()
+indexedDBTest(prepareDatabase, onOpen);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    name = window.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    db = evalAndLog("db = event.target.result");
-
+    db = event.target.result;
     objectStoreName = "People";
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = createObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function createObjectStore(request)
-{
-    deleteAllObjectStores(db);
-    trans = evalAndLog("trans = request.result");
     objectStore = evalAndLog("objectStore = db.createObjectStore(objectStoreName);");
     createIndexes();
-    trans.oncomplete = function() {
-        evalAndLog("trans = db.transaction(objectStoreName, 'readwrite')");
-        evalAndLog("objectStore = trans.objectStore(objectStoreName)");
-        populateObjectStore();
-    };
+}
+
+function onOpen()
+{
+    evalAndLog("trans = db.transaction(objectStoreName, 'readwrite')");
+    evalAndLog("objectStore = trans.objectStore(objectStoreName)");
+    populateObjectStore();
 }
 
 function populateObjectStore()
@@ -402,5 +384,3 @@ function testDelete()
     request.onsuccess = deleteSecond;
     request.onerror = unexpectedErrorCallback;
 }
-
-test();

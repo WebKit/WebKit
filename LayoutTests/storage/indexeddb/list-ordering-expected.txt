@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test string list ordering in IndexedDB.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,16 +5,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
+dbname = "list-ordering.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 check that the expected order is the canonical JS sort order:
 sorted_order = expected_order.slice(); sorted_order.sort()
 PASS areArraysEqual(sorted_order, expected_order) is true
-
-testStoresAndIndexes():
-indexedDB.deleteDatabase('list-ordering')
-indexedDB.open('list-ordering')
-db = request.result
-PASS db.version is 1
-db.setVersion('1')
 
 Object stores:
 db.createObjectStore("𝄞")

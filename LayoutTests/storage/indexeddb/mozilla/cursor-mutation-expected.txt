@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB's cursor mutation
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,14 +5,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-
-indexedDB.deleteDatabase(name)
-indexedDB.open(name)
-db = event.target.result
-db.setVersion('1')
+dbname = "cursor-mutation.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 
 setupObjectStoreAndCreateIndex():
-trans = request.result
 objectStore = db.createObjectStore('foo', { keyPath: 'ss' })
 index = objectStore.createIndex('name', 'name', { unique: true })
 objectStoreData = [
@@ -29,7 +25,6 @@ objectStore.add(objectStoreData[1])
 objectStore.add(objectStoreData[2])
 objectStore.add(objectStoreData[3])
 objectStore.add(objectStoreData[4])
-trans.oncomplete = checkCursorResults
 
 setupCursor():
 count = 0

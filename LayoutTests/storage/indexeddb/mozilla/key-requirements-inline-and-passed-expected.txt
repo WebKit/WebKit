@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB's behavior adding inline and passed key simultaneously
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,12 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open(name)
-openSuccess():
-db = event.target.result
-request = db.setVersion('version 1')
-cleanDatabase():
-Deleted all object stores.
+dbname = "key-requirements-inline-and-passed.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 objectStore = db.createObjectStore('baz', { keyPath: 'id' });
 Expecting exception from objectStore.add({id: 5}, 5);
 PASS Exception was thrown.

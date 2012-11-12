@@ -5,33 +5,14 @@ if (this.importScripts) {
 
 description("Verify that a transaction with an error aborts unless preventDefault() is called.");
 
-function test()
+indexedDBTest(prepareDatabase, addData);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('error-causes-abort-by-default')");
-    request.onsuccess = setVersion;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersion()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = deleteExisting;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function deleteExisting()
-{
+    db = event.target.result;
     debug("setVersionSuccess():");
-    self.trans = evalAndLog("trans = event.target.result");
+    self.trans = evalAndLog("trans = event.target.transaction");
     shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
-    evalAndLog("trans.oncomplete = addData");
-
-    deleteAllObjectStores(db);
-
     evalAndLog("db.createObjectStore('storeName', null)");
 }
 
@@ -97,5 +78,3 @@ function transactionAborted2()
     testPassed("Transaction aborted");
     finishJSTest();
 }
-
-test();

@@ -5,31 +5,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB keys ordering and readback from cursors.");
 
-function test()
-{
-    removeVendorPrefixes();
-
-    prepareDatabase();
-}
-
+indexedDBTest(prepareDatabase, populateStore);
 function prepareDatabase()
 {
-    debug("");
-    deleteRequest = evalAndLog("indexedDB.deleteDatabase('cursor-key-order')");
-    deleteRequest.onerror = unexpectedErrorCallback;
-    deleteRequest.onsuccess = function () {
-        evalAndLog("openreq = indexedDB.open('cursor-key-order')");
-        openreq.onerror = unexpectedErrorCallback;
-        openreq.onsuccess = function() {
-            evalAndLog("db = openreq.result");
-            evalAndLog("verreq = db.setVersion('1')");
-            verreq.onerror = unexpectedErrorCallback;
-            verreq.onsuccess = function() {
-                evalAndLog("db.createObjectStore('store')");
-                verreq.result.oncomplete = populateStore;
-            };
-        };
-    };
+    db = event.target.result;
+    evalAndLog("db.createObjectStore('store')");
 }
 
 self.keys = [
@@ -225,5 +205,3 @@ function testKeyCompare()
         }
     }
 }
-
-test();

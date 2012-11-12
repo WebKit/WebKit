@@ -11,27 +11,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB: result property after deleting existing and non-existing record");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = createObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function createObjectStore()
-{
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo', { keyPath: 'id', autoIncrement: true });");
     request = evalAndLog("request = objectStore.add({});");
     request.onsuccess = deleteRecord1;
@@ -59,5 +43,3 @@ function finalCheck()
     shouldBe("event.target.result", "undefined");
     finishJSTest();
 }
-
-test();

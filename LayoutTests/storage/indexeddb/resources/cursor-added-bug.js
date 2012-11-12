@@ -5,33 +5,13 @@ if (this.importScripts) {
 
 description("Test IndexedDB cursor iterates correctly over values added during iteration.");
 
-test();
-
-function test()
+indexedDBTest(prepareDatabase, openCursor);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('cursor-delete')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    var db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = setVersionSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersionSuccess()
-{
-    trans = evalAndLog("trans = event.target.result");
+    db = event.target.result;
+    trans = evalAndLog("trans = event.target.transaction");
     shouldBeNonNull("trans");
     trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = openCursor;
-
-    deleteAllObjectStores(db);
 
     var objectStore = evalAndLog("objectStore = db.createObjectStore('test')");
     evalAndLog("objectStore.add(1, 1)");

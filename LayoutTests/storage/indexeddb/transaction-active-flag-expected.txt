@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB transaction internal active flag.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,9 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.deleteDatabase('transaction-active-flag')
-indexedDB.open('transaction-active-flag')
-db.setVersion('1')
+dbname = "transaction-active-flag.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 store = db.createObjectStore('store')
 store.createIndex('index', 'keypath')
 

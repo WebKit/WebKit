@@ -5,37 +5,14 @@ if (this.importScripts) {
 
 description("Test features of IndexedDB's unique indices.");
 
-function test()
+indexedDBTest(prepareDatabase, setVersionCompleted);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('index-unique')");
-    request.onsuccess = setVersion;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersion()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = deleteExisting;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function deleteExisting()
-{
-    debug("deleteExisting():");
-    var trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = setVersionCompleted;
-
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     self.store = evalAndLog("db.createObjectStore('store')");
     self.indexObject = evalAndLog("store.createIndex('index', 'x', {unique: true})");
-
-    // Let setVersion transaction complete.
 }
 
 function setVersionCompleted()
@@ -133,5 +110,3 @@ function finalAddSuccess() {
     request.onerror = unexpectedErrorCallback;
     request.onsuccess = finishJSTest;
 }
-
-test();

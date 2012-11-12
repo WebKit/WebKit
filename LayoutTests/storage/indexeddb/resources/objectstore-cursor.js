@@ -17,29 +17,11 @@ self.testData = [
     "a low string"
 ];
 
-function openDatabase()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    request = evalAndLog("indexedDB.open('objectstore-cursor')");
-    request.onsuccess = setVersion;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersion()
-{
-    self.db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = deleteExisting;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function deleteExisting()
-{
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     evalAndLog("objectStore = db.createObjectStore('someObjectStore')");
 
@@ -227,6 +209,3 @@ function testNullKeyRange()
     request.onsuccess = cursorIteration;
     request.onerror = unexpectedErrorCallback;
 }
-
-removeVendorPrefixes();
-openDatabase(); // The first step.

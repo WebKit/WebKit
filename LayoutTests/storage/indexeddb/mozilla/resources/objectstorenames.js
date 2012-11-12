@@ -11,28 +11,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's objectStoreNames array");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
 
     objectStoreName = "a";
     objectStore = evalAndLog("objectStore = db.createObjectStore(objectStoreName, { keyPath: 'id', autoIncrement: true });");
@@ -42,5 +25,3 @@ function cleanDatabase()
     shouldBe("db.objectStoreNames.item(0)", "objectStoreName");
     finishJSTest();
 }
-
-test();

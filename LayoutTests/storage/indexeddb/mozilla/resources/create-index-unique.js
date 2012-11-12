@@ -11,29 +11,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's creating unique index and updating indexNames");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = createAndVerifyIndex;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function createAndVerifyIndex()
-{
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("objectStore = db.createObjectStore('a', { keyPath: 'id', autoIncrement: true });");
 
     indexName = "1";
@@ -55,5 +37,3 @@ function createAndVerifyIndex()
     shouldBe("event.target.transaction.mode", "'versionchange'");
     finishJSTest();
 }
-
-test();
