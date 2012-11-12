@@ -1,3 +1,26 @@
+2012-11-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134223.
+        http://trac.webkit.org/changeset/134223
+        https://bugs.webkit.org/show_bug.cgi?id=101939
+
+        Breaks inspector tests (Requested by pfeldman on #webkit).
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.TextEditorChunkedPanel.prototype._repaintAll):
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype.markAndRevealRange):
+        (WebInspector.TextEditorMainPanel.prototype.beginDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype.endDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._paintScheduledLines):
+        (WebInspector.TextEditorMainPanel.prototype._paintLineChunks):
+        (WebInspector.TextEditorMainPanel.prototype._paintLine):
+        (WebInspector.TextEditorMainPanel.prototype._insertSpanBefore):
+        (WebInspector.TextEditorMainPanel.prototype._handleDOMUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        * inspector/front-end/externs.js:
+        * inspector/front-end/textEditor.css:
+
 2012-11-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Support ResourceRequest's setTimeoutInterval
