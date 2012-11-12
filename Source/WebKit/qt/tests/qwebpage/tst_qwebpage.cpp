@@ -32,11 +32,13 @@
 #include <QStyle>
 #include <QtTest/QtTest>
 #include <QTextCharFormat>
+#include <private/qinputmethod_p.h>
 #include <qgraphicsscene.h>
 #include <qgraphicsview.h>
 #include <qgraphicswebview.h>
 #include <qnetworkcookiejar.h>
 #include <qnetworkrequest.h>
+#include <qpa/qplatforminputcontext.h>
 #include <qwebdatabase.h>
 #include <qwebelement.h>
 #include <qwebframe.h>
@@ -58,20 +60,36 @@ static void removeRecursive(const QString& dirname)
     QDir().rmdir(dirname);
 }
 
-class EventSpy : public QObject, public QList<QEvent::Type>
+class TestInputContext : public QPlatformInputContext
 {
-    Q_OBJECT
 public:
-    EventSpy(QObject* objectToSpy)
+    TestInputContext()
+    : m_visible(false)
     {
-        objectToSpy->installEventFilter(this);
+        QInputMethodPrivate* inputMethodPrivate = QInputMethodPrivate::get(qApp->inputMethod());
+        inputMethodPrivate->testContext = this;
     }
 
-    virtual bool eventFilter(QObject* receiver, QEvent* event)
+    ~TestInputContext()
     {
-        append(event->type());
-        return false;
+        QInputMethodPrivate* inputMethodPrivate = QInputMethodPrivate::get(qApp->inputMethod());
+        inputMethodPrivate->testContext = 0;
     }
+
+    virtual void showInputPanel()
+    {
+        m_visible = true;
+    }
+    virtual void hideInputPanel()
+    {
+        m_visible = false;
+    }
+    virtual bool isInputPanelVisible() const
+    {
+        return m_visible;
+    }
+
+    bool m_visible;
 };
 
 class tst_QWebPage : public QObject
@@ -1645,7 +1663,7 @@ void tst_QWebPage::inputMethods()
                                             "</body></html>");
     page->mainFrame()->setFocus();
 
-    EventSpy viewEventSpy(container);
+    TestInputContext testContext;
 
     QWebElementCollection inputs = page->mainFrame()->documentElement().findAll("input");
     QPoint textInputCenter = inputs.at(0).geometry().center();
@@ -1670,13 +1688,13 @@ void tst_QWebPage::inputMethods()
     // and the RequestSoftwareInputPanel event is called. For these two situations
     // this part of the test can verified as the checks below.
     if (inputPanel)
-        QVERIFY(viewEventSpy.contains(QEvent::RequestSoftwareInputPanel));
+        QVERIFY(testContext.isInputPanelVisible());
     else
-        QVERIFY(!viewEventSpy.contains(QEvent::RequestSoftwareInputPanel));
-    viewEventSpy.clear();
+        QVERIFY(!testContext.isInputPanelVisible());
+    testContext.hideInputPanel();
 
     clickOnPage(page, textInputCenter);
-    QVERIFY(viewEventSpy.contains(QEvent::RequestSoftwareInputPanel));
+    QVERIFY(testContext.isInputPanelVisible());
 
     //ImMicroFocus
     QVariant variant = page->inputMethodQuery(Qt::ImMicroFocus);
@@ -1881,12 +1899,12 @@ void tst_QWebPage::inputMethods()
     QVERIFY(!(inputMethodHints(view) & Qt::ImhHiddenText));
 
     page->mainFrame()->setHtml("<html><body><p>nothing to input here");
-    viewEventSpy.clear();
+    testContext.hideInputPanel();
 
     QWebElement para = page->mainFrame()->findFirstElement("p");
     clickOnPage(page, para.geometry().center());
 
-    QVERIFY(!viewEventSpy.contains(QEvent::RequestSoftwareInputPanel));
+    QVERIFY(!testContext.isInputPanelVisible());
 
     //START - Test for sending empty QInputMethodEvent
     page->mainFrame()->setHtml("<html><body>" \
@@ -2218,7 +2236,7 @@ void tst_QWebPage::inputMethods()
     QWebElement inputElement = page->mainFrame()->findFirstElement("div");
     clickOnPage(page, inputElement.geometry().center());
 
-    QVERIFY(!viewEventSpy.contains(QEvent::RequestSoftwareInputPanel));
+    QVERIFY(!testContext.isInputPanelVisible());
 
     // START - Newline test for textarea
     qApp->processEvents();

@@ -1,3 +1,23 @@
+2012-11-08  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix tst_QWebPage::inputMethods on Qt5
+        https://bugs.webkit.org/show_bug.cgi?id=101571
+
+        Reviewed by Simon Hausmann.
+
+        QEvent::RequestSoftwareInputPanel isn't passed through event filters anymore.
+        Use QInputMethodPrivate::testContext instead to capture input method events,
+        the same way as qtbase tests like tst_QTextEdit are doing.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (TestInputContext::TestInputContext):
+        (TestInputContext::~TestInputContext):
+        (TestInputContext):
+        (TestInputContext::showInputPanel):
+        (TestInputContext::hideInputPanel):
+        (TestInputContext::isInputPanelVisible):
+        (tst_QWebPage::inputMethods):
+
 2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Unmark now passing tests
