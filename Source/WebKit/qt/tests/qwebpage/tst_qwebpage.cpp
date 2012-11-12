@@ -2488,7 +2488,7 @@ void tst_QWebPage::testLocalStorageVisibility()
     webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("file:///"));
 
     QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
-    QCOMPARE(checkLocalStorageVisibility(webPage, true), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), true);
 
     webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("http://www.example.com"));
 

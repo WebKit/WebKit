@@ -1,3 +1,15 @@
+2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix tst_QWebPage::testLocalStorageVisibility
+
+        Reviewed by Simon Hausmann.
+
+        window.localStorage is expected to work for file URLs.
+        I'm not sure why it did work when this test was written,
+        but I believe that it had the wrong expected value.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+
 2012-11-08  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix tst_QObjectBridge::callQtInvokable
