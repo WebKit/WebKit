@@ -1,5 +1,18 @@
 2012-11-08  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Fix tst_QObjectBridge::callQtInvokable
+
+        Reviewed by Simon Hausmann.
+
+        Q_DECLARE_METATYPE now calls qRegisterMetaType so just prevent
+        the value from being wrapped by QVariant since this code shouldn't
+        be reached anyway.
+
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (MyQObject::myInvokableWithBrushStyleArg):
+
+2012-11-08  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Fix tst_QWebPage::inputMethods
 
         Reviewed by Simon Hausmann.

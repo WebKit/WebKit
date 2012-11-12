@@ -33,7 +33,6 @@ Q_DECLARE_METATYPE(CustomType)
 Q_DECLARE_METATYPE(QBrush*)
 Q_DECLARE_METATYPE(QObjectList)
 Q_DECLARE_METATYPE(QList<int>)
-Q_DECLARE_METATYPE(Qt::BrushStyle)
 Q_DECLARE_METATYPE(QVariantList)
 Q_DECLARE_METATYPE(QVariantMap)
 
@@ -377,7 +376,8 @@ public:
     Q_INVOKABLE void myInvokableWithBrushStyleArg(Qt::BrushStyle style)
     {
         m_qtFunctionInvoked = 43;
-        m_actuals << QVariant::fromValue(style);
+        // Qt::BrushStyle isn't registered and this shouldn't be reached.
+        QVERIFY(false);
     }
     Q_INVOKABLE void myInvokableWithVoidStarArg(void* arg)
     {
