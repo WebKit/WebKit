@@ -1539,7 +1539,7 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
     }
     return pointerCursor();
 }
-
+    
 static LayoutPoint documentPointForWindowPoint(Frame* frame, const IntPoint& windowPoint)
 {
     FrameView* view = frame->view();
@@ -1875,8 +1875,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         if (FrameView* view = m_frame->view()) {
             OptionalCursor optionalCursor = selectCursor(mev, scrollbar);
             if (optionalCursor.isCursorChange())
-                m_currentMouseCursor = optionalCursor.cursor();
-                view->setCursor(m_currentMouseCursor);
+                view->setCursor(optionalCursor.cursor());
         }
     }
     

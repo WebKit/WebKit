@@ -1,3 +1,22 @@
+2012-11-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134144.
+        http://trac.webkit.org/changeset/134144
+        https://bugs.webkit.org/show_bug.cgi?id=101876
+
+        seems to break win 7 chromium browser test (Requested by
+        hayato on #webkit).
+
+        * WebCore.exp.in:
+        * page/EventHandler.cpp:
+        (WebCore):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * page/EventHandler.h:
+        (EventHandler):
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2012-11-11  Kent Tamura  <tkent@chromium.org>
 
         Internals: MockPagePopup should not update DOM structure during detach()
