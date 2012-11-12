@@ -422,7 +422,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_fullscreenVideoNode(0)
     , m_hasInRegionScrollableAreas(false)
     , m_updateDelegatedOverlaysDispatched(false)
-    , m_enableQnxJavaScriptObject(true)
+    , m_enableQnxJavaScriptObject(false)
     , m_deferredTasksTimer(this, &WebPagePrivate::deferredTasksTimerFired)
     , m_selectPopup(0)
     , m_autofillManager(AutofillManager::create(this))
