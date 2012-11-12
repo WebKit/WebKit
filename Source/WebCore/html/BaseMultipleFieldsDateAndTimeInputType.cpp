@@ -299,10 +299,8 @@ void BaseMultipleFieldsDateAndTimeInputType::restoreFormControlState(const FormC
 {
     if (!m_dateTimeEditElement)
         return;
-    DateComponents date;
-    setMillisecondToDateComponents(createStepRange(AnyIsDefaultStep).minimum().toDouble(), &date);
     DateTimeFieldsState dateTimeFieldsState = DateTimeFieldsState::restoreFormControlState(state);
-    m_dateTimeEditElement->setValueAsDateTimeFieldsState(dateTimeFieldsState, date);
+    m_dateTimeEditElement->setValueAsDateTimeFieldsState(dateTimeFieldsState);
     element()->setValueInternal(sanitizeValue(m_dateTimeEditElement->value()), DispatchNoEvent);
 }
 

@@ -61,12 +61,12 @@ void DateTimeAMPMFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.hour() >= 12 ? 1 : 0);
 }
 
-void DateTimeAMPMFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+void DateTimeAMPMFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
 {
     if (dateTimeFieldsState.hasAMPM())
         setValueAsInteger(dateTimeFieldsState.ampm());
     else
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
 }
 
 // ----------------------------
@@ -94,10 +94,10 @@ void DateTimeDayFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.monthDay());
 }
 
-void DateTimeDayFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+void DateTimeDayFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
 {
     if (!dateTimeFieldsState.hasDayOfMonth()) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
@@ -107,7 +107,7 @@ void DateTimeDayFieldElement::setValueAsDateTimeFieldsState(const DateTimeFields
         return;
     }
 
-    setEmptyValue(dateForReadOnlyField);
+    setEmptyValue();
 }
 
 // ----------------------------
@@ -166,17 +166,17 @@ void DateTimeHourFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.hour());
 }
 
-void DateTimeHourFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+void DateTimeHourFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
 {
     if (!dateTimeFieldsState.hasHour()) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
     const int hour12 = dateTimeFieldsState.hour();
 
     if (hour12 < 1 || hour12 > 12) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
@@ -240,16 +240,16 @@ void DateTimeMillisecondFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.millisecond());
 }
 
-void DateTimeMillisecondFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+void DateTimeMillisecondFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
 {
     if (!dateTimeFieldsState.hasMillisecond()) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
     const unsigned value = dateTimeFieldsState.millisecond();
     if (value > static_cast<unsigned>(maximum())) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
@@ -281,16 +281,16 @@ void DateTimeMinuteFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.minute());
 }
 
-void DateTimeMinuteFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+void DateTimeMinuteFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
 {
     if (!dateTimeFieldsState.hasMinute()) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
     const unsigned value = dateTimeFieldsState.minute();
     if (value > static_cast<unsigned>(maximum())) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
@@ -322,10 +322,10 @@ void DateTimeMonthFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.month() + 1);
 }
 
-void DateTimeMonthFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+void DateTimeMonthFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
 {
     if (!dateTimeFieldsState.hasMonth()) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
@@ -335,7 +335,7 @@ void DateTimeMonthFieldElement::setValueAsDateTimeFieldsState(const DateTimeFiel
         return;
     }
 
-    setEmptyValue(dateForReadOnlyField);
+    setEmptyValue();
 }
 
 // ----------------------------
@@ -363,16 +363,16 @@ void DateTimeSecondFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.second());
 }
 
-void DateTimeSecondFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+void DateTimeSecondFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
 {
     if (!dateTimeFieldsState.hasSecond()) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
     const unsigned value = dateTimeFieldsState.second();
     if (value > static_cast<unsigned>(maximum())) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
@@ -407,16 +407,16 @@ void DateTimeSymbolicMonthFieldElement::setValueAsDate(const DateComponents& dat
     setValueAsInteger(date.month());
 }
 
-void DateTimeSymbolicMonthFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+void DateTimeSymbolicMonthFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
 {
     if (!dateTimeFieldsState.hasMonth()) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
     const unsigned value = dateTimeFieldsState.month() - 1;
     if (value >= symbolsSize()) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
@@ -448,10 +448,10 @@ void DateTimeWeekFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.week());
 }
 
-void DateTimeWeekFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+void DateTimeWeekFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
 {
     if (!dateTimeFieldsState.hasWeekOfYear()) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
@@ -461,7 +461,7 @@ void DateTimeWeekFieldElement::setValueAsDateTimeFieldsState(const DateTimeField
         return;
     }
 
-    setEmptyValue(dateForReadOnlyField);
+    setEmptyValue();
 }
 
 // ----------------------------
@@ -521,10 +521,10 @@ void DateTimeYearFieldElement::setValueAsDate(const DateComponents& date)
     setValueAsInteger(date.fullYear());
 }
 
-void DateTimeYearFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+void DateTimeYearFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
 {
     if (!dateTimeFieldsState.hasYear()) {
-        setEmptyValue(dateForReadOnlyField);
+        setEmptyValue();
         return;
     }
 
@@ -534,7 +534,7 @@ void DateTimeYearFieldElement::setValueAsDateTimeFieldsState(const DateTimeField
         return;
     }
 
-    setEmptyValue(dateForReadOnlyField);
+    setEmptyValue();
 }
 
 } // namespace WebCore

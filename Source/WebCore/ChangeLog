@@ -1,3 +1,60 @@
+2012-11-12  Kent Tamura  <tkent@chromium.org>
+
+        Refactoring: set read-only values on layout in DateTimeEditElement
+        https://bugs.webkit.org/show_bug.cgi?id=101916
+
+        Reviewed by Kentaro Hara.
+
+        We have always updated read-only values when we set an empty value or
+        DateTimeFieldsState. It has wasted CPU time because such read-only
+        values are never updated after layout() essentially. So, we set
+        read-only values in DateTimeEditBuilder used by layout(), and remove
+        dateForReadOnlyField arguments of setEmptyValue and
+        setValueAsDateTimeFieldsState.
+
+        No new tests. This should not make behavior changes.
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::restoreFormControlState):
+        We removed dateForReadOnlyField argument because read-only values are
+        already set in DateTimeFieldElement::layout().
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitField):
+        Set a value to a read-only minute/second/millisecond field while
+        building UI elements.
+        Also, changed variable types for millisecond and second fields to
+        RefPtr<DateTimeNumericFieldElement> because we'd like to call
+        setValueAsDate, which is private in DateTimeMillisecondFieldElement and
+        DateTimeSecondFieldElement
+        (WebCore::DateTimeEditElement::setValueAsDateTimeFieldsState):
+        We removed dateForReadOnlyField argument because read-only values are
+        already set in DateTimeFieldElement::layout().
+        (WebCore::DateTimeEditElement::setEmptyValue): Ditto.
+        * html/shadow/DateTimeEditElement.h:
+        (DateTimeEditElement):
+        Removed dateForReadOnlyField argument for setValueAsDateTimeFieldsState.
+
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::defaultKeyboardEventHandler):
+        We removed dateForReadOnlyField argument because read-only values are
+        already set in DateTimeFieldElement::layout().
+        * html/shadow/DateTimeFieldElement.h:
+        (DateTimeFieldElement): Ditto.
+
+        * html/shadow/DateTimeFieldElements.cpp: Ditto.
+        * html/shadow/DateTimeFieldElements.h: Ditto.
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::setEmptyValue):
+        It should do nothing if it is read-only because a read-only value was
+        already set just after construction.
+        * html/shadow/DateTimeNumericFieldElement.h:
+        (DateTimeNumericFieldElement):
+        Removed dateForReadOnlyField argument of setEmptyValue.
+        * html/shadow/DateTimeSymbolicFieldElement.cpp:
+        (WebCore::DateTimeSymbolicFieldElement::setEmptyValue): Ditto.
+        * html/shadow/DateTimeSymbolicFieldElement.h:
+        (DateTimeSymbolicFieldElement): Ditto.
+
 2012-11-12  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update BB10 form theme.

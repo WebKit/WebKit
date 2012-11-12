@@ -44,7 +44,7 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
-    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
 class DateTimeDayFieldElement : public DateTimeNumericFieldElement {
@@ -59,7 +59,7 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
-    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
 // DateTimeHourFieldElement is used for hour field of date time format
@@ -80,7 +80,7 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
-    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
     virtual int valueAsInteger() const OVERRIDE FINAL;
 
@@ -99,7 +99,7 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
-    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
 class DateTimeMinuteFieldElement : public DateTimeNumericFieldElement {
@@ -114,7 +114,7 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
-    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
 class DateTimeMonthFieldElement : public DateTimeNumericFieldElement {
@@ -129,7 +129,7 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
-    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
 class DateTimeSecondFieldElement : public DateTimeNumericFieldElement {
@@ -144,7 +144,7 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
-    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
 class DateTimeSymbolicMonthFieldElement : public DateTimeSymbolicFieldElement {
@@ -159,7 +159,7 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
-    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
 class DateTimeWeekFieldElement : public DateTimeNumericFieldElement {
@@ -174,7 +174,7 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
-    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 };
 
 class DateTimeYearFieldElement : public DateTimeNumericFieldElement {
@@ -205,7 +205,7 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
-    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&, const DateComponents& dateForReadOnlyField) OVERRIDE FINAL;
+    virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 
     // DateTimeNumericFieldElement functions.
     virtual int clampValueForHardLimits(int) const OVERRIDE FINAL;

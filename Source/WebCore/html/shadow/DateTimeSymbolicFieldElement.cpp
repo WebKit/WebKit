@@ -105,7 +105,7 @@ int DateTimeSymbolicFieldElement::minimum() const
     return 1;
 }
 
-void DateTimeSymbolicFieldElement::setEmptyValue(const DateComponents&, EventBehavior eventBehavior)
+void DateTimeSymbolicFieldElement::setEmptyValue(EventBehavior eventBehavior)
 {
     m_selectedIndex = invalidIndex;
     updateVisibleValue(eventBehavior);

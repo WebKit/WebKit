@@ -121,8 +121,10 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     case DateTimeFormat::FieldTypeMinute: {
         RefPtr<DateTimeNumericFieldElement> field = DateTimeMinuteFieldElement::create(document, m_editElement);
         m_editElement.addField(field);
-        if (shouldMinuteFieldReadOnly())
+        if (shouldMinuteFieldReadOnly()) {
+            field->setValueAsDate(m_dateValue);
             field->setReadOnly();
+        }
         return;
     }
 
@@ -161,10 +163,12 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
         return;
 
     case DateTimeFormat::FieldTypeSecond: {
-        RefPtr<DateTimeSecondFieldElement> field = DateTimeSecondFieldElement::create(document, m_editElement);
+        RefPtr<DateTimeNumericFieldElement> field = DateTimeSecondFieldElement::create(document, m_editElement);
         m_editElement.addField(field);
-        if (shouldSecondFieldReadOnly())
+        if (shouldSecondFieldReadOnly()) {
+            field->setValueAsDate(m_dateValue);
             field->setReadOnly();
+        }
 
         if (needMillisecondField()) {
             visitLiteral(m_parameters.locale.localizedDecimalSeparator());
@@ -174,10 +178,12 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     }
 
     case DateTimeFormat::FieldTypeFractionalSecond: {
-        RefPtr<DateTimeMillisecondFieldElement> field = DateTimeMillisecondFieldElement::create(document, m_editElement);
+        RefPtr<DateTimeNumericFieldElement> field = DateTimeMillisecondFieldElement::create(document, m_editElement);
         m_editElement.addField(field);
-        if (shouldMillisecondFieldReadOnly())
+        if (shouldMillisecondFieldReadOnly()) {
+            field->setValueAsDate(m_dateValue);
             field->setReadOnly();
+        }
         return;
     }
 
@@ -462,17 +468,17 @@ void DateTimeEditElement::setValueAsDate(const LayoutParameters& layoutParameter
         m_fields[fieldIndex]->setValueAsDate(date);
 }
 
-void DateTimeEditElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState, const DateComponents& dateForReadOnlyField)
+void DateTimeEditElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
 {
     for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex)
-        m_fields[fieldIndex]->setValueAsDateTimeFieldsState(dateTimeFieldsState, dateForReadOnlyField);
+        m_fields[fieldIndex]->setValueAsDateTimeFieldsState(dateTimeFieldsState);
 }
 
 void DateTimeEditElement::setEmptyValue(const LayoutParameters& layoutParameters, const DateComponents& dateForReadOnlyField)
 {
     layout(layoutParameters, dateForReadOnlyField);
     for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex)
-        m_fields[fieldIndex]->setEmptyValue(dateForReadOnlyField, DateTimeFieldElement::DispatchNoEvent);
+        m_fields[fieldIndex]->setEmptyValue(DateTimeFieldElement::DispatchNoEvent);
 }
 
 bool DateTimeEditElement::hasFocusedField()

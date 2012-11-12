@@ -160,14 +160,12 @@ int DateTimeNumericFieldElement::minimum() const
     return m_range.minimum;
 }
 
-void DateTimeNumericFieldElement::setEmptyValue(const DateComponents& dateForReadOnlyField, EventBehavior eventBehavior)
+void DateTimeNumericFieldElement::setEmptyValue(EventBehavior eventBehavior)
 {
     m_lastDigitCharTime = 0;
 
-    if (isReadOnly()) {
-        setValueAsDate(dateForReadOnlyField);
+    if (isReadOnly())
         return;
-    }
 
     m_hasValue = false;
     m_value = 0;
