@@ -29,18 +29,18 @@ var logicalWidthsCombinations = [
     {"min-width": "500px", "width": "600px", "computed-width": {"css": "600px", "html": "570px"}},
     {"min-width": "500px", "width": "400px", "computed-width": {"css": "500px", "html": "470px"}},
     /* fixed min-width, percent width */
-    {"min-width": "500px", "width": "60%", "computed-width": {"css": "570px", "html": "570px"}},
+    {"min-width": "500px", "width": "60%", "computed-width": {"css": "600px", "html": "570px"}},
     {"min-width": "500px", "width": "40%", "computed-width": {"css": "500px", "html": "470px"}},
     /* percent min-width, auto width */
-    {"min-width": "50%", "width": null, "computed-width": {"css": "470px", "html": "470px"}},
+    {"min-width": "50%", "width": null, "computed-width": {"css": "500px", "html": "470px"}},
     {"min-width": "15%", "width": null, "computed-width": {"css": "250px", "html": "250px"}},
     {"min-width": "5%", "width": null, "computed-width": {"css": "250px", "html": "250px"}},
     /* percent min-width, fixed width */
     {"min-width": "50%", "width": "600px", "computed-width": {"css": "600px", "html": "570px"}},
-    {"min-width": "50%", "width": "400px", "computed-width": {"css": "470px", "html": "470px"}},
+    {"min-width": "50%", "width": "400px", "computed-width": {"css": "500px", "html": "470px"}},
      /* percent min-width, percent width */
-    {"min-width": "50%", "width": "60%", "computed-width": {"css": "570px", "html": "570px"}},
-    {"min-width": "50%", "width": "40%", "computed-width": {"css": "470px", "html": "470px"}},
+    {"min-width": "50%", "width": "60%", "computed-width": {"css": "600px", "html": "570px"}},
+    {"min-width": "50%", "width": "40%", "computed-width": {"css": "500px", "html": "470px"}},
      /* auto min-width (shouldn't affect anything), auto width */
     {"min-width": "auto", "width": null, "computed-width": {"css": "250px", "html": "250px"}},
 ];

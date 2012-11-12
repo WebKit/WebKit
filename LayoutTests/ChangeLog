@@ -1,3 +1,37 @@
+2012-11-12  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Specified width CSS tables should not include border and padding as part of that width. 
+        https://bugs.webkit.org/show_bug.cgi?id=77028
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/table/css-table-width-with-border-padding-expected.html: Added.
+        * fast/table/css-table-width-with-border-padding.html: Added.
+        Test added for verifying that for specified width css tables, border
+        and padding are not considered as part of the specified table width.
+
+        The test also verifies the width values for the different box-sizing
+        properties viz, content-box, border-box and padding-box.
+
+        Out of these padding-box is currently not supported even though
+        the test verifies against this property as well. 
+        The expected width values added for padding-box are thus incorrect
+        and should be lesser by 100px (padding value).
+
+        * fast/table/min-width-css-block-table-expected.txt:
+        * fast/table/min-width-css-inline-table-expected.txt:
+        * fast/table/script-tests/min-width-helpers.js:
+        Existing test values changed for CSS tables that have percent width
+        specified since for both these tests, border and padding has been
+        specified for all the tables.
+
+        As a result of this fix, the specified table width shall no longer
+        include the border and padding values thereby increasing our table
+        width size by exactly 30px (the value of border and padding in these
+        tests).
+        The new values for percent width css tables now match those for FF
+        and Opera.
+
 2012-11-12  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: convert tests from setVersion to upgradeneeded

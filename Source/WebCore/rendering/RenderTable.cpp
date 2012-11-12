@@ -318,7 +318,7 @@ LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& st
     // HTML tables' width styles already include borders and paddings, but CSS tables' width styles do not.
     LayoutUnit borders = 0;
     bool isCSSTable = !node() || !node()->hasTagName(tableTag);
-    if (isCSSTable && styleLogicalWidth.isFixed() && styleLogicalWidth.isPositive()) {
+    if (isCSSTable && styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive()) {
         recalcBordersInRowDirection();
         if (style()->boxSizing() == CONTENT_BOX)
             borders = borderStart() + borderEnd() + (collapseBorders() ? LayoutUnit() : paddingStart() + paddingEnd());

@@ -1,3 +1,25 @@
+2012-11-12  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Specified width CSS tables should not include border and padding as part of that width.
+        https://bugs.webkit.org/show_bug.cgi?id=77028
+
+        Reviewed by Julien Chaffraix.
+
+        CSS table width should not include border and padding even though HTML
+        tables size as though their width includes border/padding.
+
+        This is applicable for all CSS tables with specified widths.
+
+        The change would also make our rendering of CSS tables with specified
+        width similar to that of Opera, IE and FF.
+
+        Test: fast/table/css-table-width-with-border-padding.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::convertStyleLogicalWidthToComputedWidth):
+        Added check for all (positive) specified widths for CSS tables to
+        consider border and padding outside of the specified width.
+
 2012-11-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Move resolving blob references to FormData.
