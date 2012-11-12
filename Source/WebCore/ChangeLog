@@ -1,5 +1,23 @@
 2012-11-11  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] HTMLDocument::all() needs not to be custom
+        https://bugs.webkit.org/show_bug.cgi?id=101875
+
+        Reviewed by Adam Barth.
+
+        We can easily remove the custom getter from V8 because the
+        custom setter sets .all by ForceSet(). On the other hand,
+        it is non-trivial to remove the custom getter from JSC
+        because the custom setter sets .all by putDirect()
+        and the custom getter wants to get it by getDirect().
+
+        No tests. No change in behavior.
+
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        * html/HTMLDocument.idl:
+
+2012-11-11  Kentaro Hara  <haraken@chromium.org>
+
         [V8] V8Console::memoryAttrGetter() needs not to be custom
         https://bugs.webkit.org/show_bug.cgi?id=101873
 
