@@ -1,3 +1,16 @@
+2012-11-12  Dirk Pranke  <dpranke@chromium.org>
+
+        remove the chromium-mac-mountainlion TestExpectations file
+        https://bugs.webkit.org/show_bug.cgi?id=101789
+
+        Reviewed by Ojan Vafai.
+
+        Nearly all of the tests have been updated for 10.8 and the remaining
+        failures have been merged into the main TestExpectations file. We
+        don't need this hook any more.
+
+        * platform/chromium-mac-mountainlion/TestExpectations: Removed.
+
 2012-11-12  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Specified width CSS tables should not include border and padding as part of that width. 
