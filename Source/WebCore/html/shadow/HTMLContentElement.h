@@ -86,6 +86,12 @@ inline bool isHTMLContentElement(const Node* node)
     return node->hasTagName(HTMLContentElement::contentTagName(node->document()));
 }
 
+inline HTMLContentElement* toHTMLContentElement(Node* node)
+{
+    ASSERT(!node || isHTMLContentElement(node));
+    return static_cast<HTMLContentElement*>(node);
+}
+
 }
 
 #endif

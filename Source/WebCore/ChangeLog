@@ -1,3 +1,55 @@
+2012-11-11  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] ElementShadow should have RuleFeatureSet for select attribute selectors.
+        https://bugs.webkit.org/show_bug.cgi?id=101180
+
+        Reviewed by Dimitri Glazkov.
+
+        This is a preparation patch for Bug 100451.
+
+        We preserve RuleFeatureSet collected from select attributes in ShadowDOM.
+        When an element attribute is changed, we might have to invalidate content distribution,
+        however it's high cost operation. So we would like to check RuleFeatureSet used in
+        select attributes to determine we really need to invalidate distribution.
+
+        Like StyleResolver, ElementShadow has several rule features. When nested ShadowDOM is used,
+        first we collect features in nested ShadowDOM, and merge it to the parent ShadowDOM.
+        For the performance reason, we have a flag to check whether we need to collect features again.
+
+        Test: fast/dom/shadow/shadow-select-attribute-featureset.html
+
+        * WebCore.exp.in:
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::ElementShadow):
+        (WebCore::ElementShadow::setShouldCollectSelectFeatureSet): Enable a flag to collect feature set of descendant
+        nodes (and their ShadowDOM).
+        (WebCore):
+        (WebCore::ElementShadow::ensureSelectFeatureSetCollected):
+        (WebCore::ElementShadow::collectSelectFeatureSetFrom): Collect RuleFeatureSet from all descendant Nodes and their
+        ShadowDOM. We need to collect id, class, and attribute names.
+        * dom/ElementShadow.h:
+        (WebCore::ElementShadow::shouldCollectSelectFeatureSet):
+        (ElementShadow):
+        (WebCore::ElementShadow::hasSelectorForId):
+        (WebCore):
+        (WebCore::ElementShadow::hasSelectorForClass):
+        (WebCore::ElementShadow::hasSelectorForAttribute):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::parseAttribute): When select attribute is changed, enable a flag to recollect features.
+        (WebCore::HTMLContentElement::insertedInto): We have to recollect features when HTMLContentElement is moved.
+        (WebCore::HTMLContentElement::removedFrom): ditto.
+        * html/shadow/HTMLContentElement.h:
+        (WebCore::toHTMLContentElement):
+        (WebCore):
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasSelectorForIdInShadow):
+        (WebCore):
+        (WebCore::Internals::hasSelectorForClassInShadow):
+        (WebCore::Internals::hasSelectorForAttributeInShadow):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-11-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134144.

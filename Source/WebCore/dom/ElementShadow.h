@@ -29,6 +29,7 @@
 
 #include "ContentDistributor.h"
 #include "ExceptionCode.h"
+#include "RuleFeature.h"
 #include "ShadowRoot.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Noncopyable.h>
@@ -69,13 +70,25 @@ public:
     ContentDistributor& distributor();
     const ContentDistributor& distributor() const;
 
+    bool shouldCollectSelectFeatureSet() const { return m_shouldCollectSelectFeatureSet; }
+    void setShouldCollectSelectFeatureSet();
+    void ensureSelectFeatureSetCollected();
+
+    bool hasSelectorForId(const AtomicString&) const;
+    bool hasSelectorForClass(const AtomicString&) const;
+    bool hasSelectorForAttribute(const AtomicString&) const;
+
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     void invalidateDistribution(Element* host);
 
+    void collectSelectFeatureSetFrom(ShadowRoot*);
+
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
     ContentDistributor m_distributor;
+    RuleFeatureSet m_selectFeatures;
+    bool m_shouldCollectSelectFeatureSet : 1;
 };
 
 inline ShadowRoot* ElementShadow::youngestShadowRoot() const
@@ -111,6 +124,27 @@ inline ShadowRoot* Node::youngestShadowRoot() const
     if (ElementShadow* shadow = toElement(this)->shadow())
         return shadow->youngestShadowRoot();
     return 0;
+}
+
+inline bool ElementShadow::hasSelectorForId(const AtomicString& idValue) const
+{
+    ASSERT(!idValue.isEmpty());
+    ASSERT(!m_shouldCollectSelectFeatureSet);
+    return m_selectFeatures.idsInRules.contains(idValue.impl());
+}
+
+inline bool ElementShadow::hasSelectorForClass(const AtomicString& classValue) const
+{
+    ASSERT(!classValue.isEmpty());
+    ASSERT(!m_shouldCollectSelectFeatureSet);
+    return m_selectFeatures.classesInRules.contains(classValue.impl());
+}
+
+inline bool ElementShadow::hasSelectorForAttribute(const AtomicString& attributeName) const
+{
+    ASSERT(!attributeName.isEmpty());
+    ASSERT(!m_shouldCollectSelectFeatureSet);
+    return m_selectFeatures.attrsInRules.contains(attributeName.impl());
 }
 
 class ShadowRootVector : public Vector<RefPtr<ShadowRoot> > {

@@ -168,6 +168,7 @@ EXPORTS
         ?create@ShadowRoot@WebCore@@SA?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@PAVElement@2@AAH@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@@WTF@@XZ
+        ?ensureSelectFeatureSetCollected@ElementShadow@WebCore@@QAEXXZ
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
         ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z

@@ -101,8 +101,10 @@ void HTMLContentElement::ensureSelectParsed()
 void HTMLContentElement::parseAttribute(const Attribute& attribute)
 {
     if (attribute.name() == selectAttr) {
-        if (ShadowRoot* root = shadowRoot())
+        if (ShadowRoot* root = shadowRoot()) {
+            root->owner()->setShouldCollectSelectFeatureSet();
             root->owner()->invalidateDistribution();
+        }
         m_shouldParseSelectorList = true;
     } else
         InsertionPoint::parseAttribute(attribute);
@@ -113,7 +115,9 @@ Node::InsertionNotificationRequest HTMLContentElement::insertedInto(ContainerNod
     InsertionPoint::insertedInto(insertionPoint);
 
     if (insertionPoint->inDocument() && isActive()) {
-        shadowRoot()->registerContentElement();
+        ShadowRoot* root = shadowRoot();
+        root->registerContentElement();
+        root->owner()->setShouldCollectSelectFeatureSet();
         m_registeredWithShadowRoot = true;
     }
 
@@ -129,6 +133,9 @@ void HTMLContentElement::removedFrom(ContainerNode* insertionPoint)
         if (root)
             root->unregisterContentElement();
         m_registeredWithShadowRoot = false;
+
+        if (ElementShadow* elementShadow = root ? root->owner() : 0)
+            elementShadow->setShouldCollectSelectFeatureSet();
     }
     InsertionPoint::removedFrom(insertionPoint);
 }

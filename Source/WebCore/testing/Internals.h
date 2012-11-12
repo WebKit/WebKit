@@ -96,6 +96,9 @@ public:
     bool isValidContentSelect(Element* insertionPoint, ExceptionCode&);
     Node* treeScopeRootNode(Node*, ExceptionCode&);
     Node* parentTreeScope(Node*, ExceptionCode&);
+    bool hasSelectorForIdInShadow(Element* host, const String& idValue, ExceptionCode&);
+    bool hasSelectorForClassInShadow(Element* host, const String& className, ExceptionCode&);
+    bool hasSelectorForAttributeInShadow(Element* host, const String& attributeName, ExceptionCode&);
 
     bool attached(Node*, ExceptionCode&);
 

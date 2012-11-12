@@ -1,3 +1,13 @@
+2012-11-11  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] ElementShadow should have RuleFeatureSet for select attribute selectors.
+        https://bugs.webkit.org/show_bug.cgi?id=101180
+
+        Reviewed by Dimitri Glazkov.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-11-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134144.

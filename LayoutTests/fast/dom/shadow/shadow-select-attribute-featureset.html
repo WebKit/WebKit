@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/polyfill.js"></script>
+<script src="resources/shadow-dom.js"></script>
+</head>
+<body>
+
+<div id="container"></div>
+<pre id="console"></pre>
+
+<script>
+function testCase(f)
+{
+    container.innerHTML = '';
+    container.appendChild(createDOM('div', {'id': 'host'},
+                                    createShadowRoot()));
+    shadowRoot = internals.shadowRoot(host);
+
+    f();
+    debug('');
+}
+
+testCase(function()
+{
+    debug('Id should be collected');
+
+    shadowRoot.innerHTML = '<content select="#foo"></content>';
+    shouldBe('internals.hasSelectorForIdInShadow(host, "foo")', 'true');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "bar")', 'false');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "host")', 'false');
+});
+
+testCase(function()
+{
+    debug('Class should be collected');
+
+    shadowRoot.innerHTML = '<content select=".foo"></content>';
+    shouldBe('internals.hasSelectorForClassInShadow(host, "foo")', 'true');
+    shouldBe('internals.hasSelectorForClassInShadow(host, "host")', 'false');
+});
+
+testCase(function()
+{
+    debug('Attribute should be collected');
+
+    shadowRoot.innerHTML = '<content select="div[foo]"></content>';
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "foo")', 'true');
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "host")', 'false');
+});
+
+testCase(function()
+{
+    debug('Select attribute might have several selectors');
+
+    shadowRoot.innerHTML = '<content select="#foo,.bar,div[baz]"></content>';
+    shouldBe('internals.hasSelectorForIdInShadow(host, "foo")', 'true');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "bar")', 'false');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "baz")', 'false');
+
+    shouldBe('internals.hasSelectorForClassInShadow(host, "foo")', 'false');
+    shouldBe('internals.hasSelectorForClassInShadow(host, "bar")', 'true');
+    shouldBe('internals.hasSelectorForClassInShadow(host, "baz")', 'false');
+
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "foo")', 'false');
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "bar")', 'false');
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "baz")', 'true');
+});
+
+testCase(function()
+{
+    debug('Don\'t count shadow element');
+
+    shadowRoot.innerHTML = '<shadow select="#foo,.bar,div[baz]"></shadow>';
+    shouldBe('internals.hasSelectorForIdInShadow(host, "foo")', 'false');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "bar")', 'false');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "baz")', 'false');
+
+    shouldBe('internals.hasSelectorForClassInShadow(host, "foo")', 'false');
+    shouldBe('internals.hasSelectorForClassInShadow(host, "bar")', 'false');
+    shouldBe('internals.hasSelectorForClassInShadow(host, "baz")', 'false');
+
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "foo")', 'false');
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "bar")', 'false');
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "baz")', 'false');
+});
+
+testCase(function()
+{
+    debug('Complex case for single ShadowRoot');
+
+    shadowRoot.innerHTML = '<div><div></div><content select="*"></content><div><content select="div[foo=piyo]"></content></div>';
+    shouldBe('internals.hasSelectorForIdInShadow(host, "foo")', 'false');
+    shouldBe('internals.hasSelectorForClassInShadow(host, "foo")', 'false');
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "foo")', 'true');
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "piyo")', 'false');
+});
+
+testCase(function()
+{
+    debug('Another complex case for single ShadowRoot');
+
+    shadowRoot.innerHTML = '<content select="#foo,.foo,div[foo]"></content>';
+    shouldBe('internals.hasSelectorForIdInShadow(host, "foo")', 'true');
+    shouldBe('internals.hasSelectorForClassInShadow(host, "foo")', 'true');
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "foo")', 'true');
+});
+
+testCase(function()
+{
+    debug('Multiple ShadowRoot case');
+
+    var anotherShadowRoot = new WebKitShadowRoot(host);
+
+    shadowRoot.innerHTML = '<content select="#foo"></content>';
+    anotherShadowRoot.innerHTML = '<content select="#bar"></content><content select="div[baz],.bar"></content>';
+
+    shouldBe('internals.hasSelectorForIdInShadow(host, "foo")', 'true');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "bar")', 'true');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "baz")', 'false');
+
+    shouldBe('internals.hasSelectorForClassInShadow(host, "foo")', 'false');
+    shouldBe('internals.hasSelectorForClassInShadow(host, "bar")', 'true');
+    shouldBe('internals.hasSelectorForClassInShadow(host, "baz")', 'false');
+
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "foo")', 'false');
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "bar")', 'false');
+    shouldBe('internals.hasSelectorForAttributeInShadow(host, "baz")', 'true');
+});
+
+testCase(function()
+{
+    debug('Dynamic select attribute update');
+
+    shadowRoot.innerHTML = '<content select="#foo"></content>';
+
+    shouldBe('internals.hasSelectorForIdInShadow(host, "foo")', 'true');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "bar")', 'false');
+
+    var content = shadowRoot.querySelector('content');
+    content.select = '#bar';
+
+    shouldBe('internals.hasSelectorForIdInShadow(host, "foo")', 'false');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "bar")', 'true');
+});
+
+testCase(function()
+{
+    debug('Nested ShadowDOM case');
+
+    shadowRoot.innerHTML = '<content select="#foo"></content>';
+
+    var div = document.createElement('div');
+    var nestedShadowRoot = new WebKitShadowRoot(div);
+    nestedShadowRoot.innerHTML = '<content select="#bar"></content>';
+    shadowRoot.appendChild(div);
+
+    shouldBe('internals.hasSelectorForIdInShadow(host, "foo")', 'true');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "bar")', 'true');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "baz")', 'false');
+
+    var content = nestedShadowRoot.querySelector('content');
+    content.select = '#baz';
+
+    shouldBe('internals.hasSelectorForIdInShadow(host, "foo")', 'true');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "bar")', 'false');
+    shouldBe('internals.hasSelectorForIdInShadow(host, "baz")', 'true');
+});
+
+finishJSTest();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -306,6 +306,39 @@ Node* Internals::parentTreeScope(Node* node, ExceptionCode& ec)
     return parentTreeScope ? parentTreeScope->rootNode() : 0;
 }
 
+bool Internals::hasSelectorForIdInShadow(Element* host, const String& idValue, ExceptionCode& ec)
+{
+    if (!host || !host->shadow()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    host->shadow()->ensureSelectFeatureSetCollected();
+    return host->shadow()->hasSelectorForId(idValue);
+}
+
+bool Internals::hasSelectorForClassInShadow(Element* host, const String& className, ExceptionCode& ec)
+{
+    if (!host || !host->shadow()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    host->shadow()->ensureSelectFeatureSetCollected();
+    return host->shadow()->hasSelectorForClass(className);
+}
+
+bool Internals::hasSelectorForAttributeInShadow(Element* host, const String& attributeName, ExceptionCode& ec)
+{
+    if (!host || !host->shadow()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    host->shadow()->ensureSelectFeatureSetCollected();
+    return host->shadow()->hasSelectorForAttribute(attributeName);
+}
+
 bool Internals::hasShadowInsertionPoint(const Node* root, ExceptionCode& ec) const
 {
     if (root && root->isShadowRoot())
