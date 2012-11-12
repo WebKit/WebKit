@@ -1,3 +1,20 @@
+2012-11-12  Adam Barth  <abarth@webkit.org>
+
+        [V8] Many things crash when switching to V8's new aligned pointer API
+        https://bugs.webkit.org/show_bug.cgi?id=101994
+
+        Reviewed by Eric Seidel.
+
+        When using the aligned pointer API, we need to make sure to initialize
+        every internal field that we later read because the new API has better
+        error checks than the old API. This patch explicitly initializes the
+        enteredIsolatedWorldIndex internal field to zero for main worlds,
+        fixing the LayoutTest crashes from our previous attempt to move the
+        aligned pointer API.
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initializeIfNeeded):
+
 2012-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reduce the crazy number of parameters to RenderLayer painting member functions

@@ -338,8 +338,9 @@ bool V8DOMWindowShell::initializeIfNeeded()
         }
     }
 
-    // Flag context as isolated.
-    if (!isMainWorld) {
+    if (isMainWorld)
+        setIsolatedWorldField(0, context);
+    else {
         V8DOMWindowShell* mainWindow = m_frame->script()->existingWindowShell(mainThreadNormalWorld());
         if (mainWindow && !mainWindow->context().IsEmpty())
             setInjectedScriptContextDebugId(m_context.get(), m_frame->script()->contextDebugId(mainWindow->context()));
