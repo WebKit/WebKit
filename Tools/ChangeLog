@@ -1,3 +1,19 @@
+2012-11-12  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] MiniBrowser should not strongly depend on QtTestSupport.
+        https://bugs.webkit.org/show_bug.cgi?id=101775
+
+        Introducing HAVE(QTTESTSUPPORT) to allow building
+        MiniBrowser without QtTestSupport.
+        This is necessary when using a production build.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::handleUserOptions):
+        * qmake/mkspecs/features/configure.prf:
+        * qmake/mkspecs/features/features.prf:
+
 2012-11-11  Kangil Han  <kangil.han@samsung.com>
 
         Change build congratulation message in EFL

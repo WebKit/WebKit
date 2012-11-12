@@ -4079,7 +4079,7 @@ use?(GRAPHICS_SURFACE) {
     }
 }
 
-if(build?(drt)|build?(wtr)) {
+build?(qttestsupport) {
     HEADERS += platform/qt/QtTestSupport.h
     SOURCES += platform/qt/QtTestSupport.cpp
 }

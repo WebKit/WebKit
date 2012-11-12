@@ -26,10 +26,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+
 #include "MiniBrowserApplication.h"
 
 #include "BrowserWindow.h"
+#if HAVE(QTTESTSUPPORT)
 #include "QtTestSupport.h"
+#endif
 #include "private/qquickwebview_p.h"
 #include "utils.h"
 #include <QRegExp>
@@ -334,8 +338,10 @@ void MiniBrowserApplication::handleUserOptions()
             m_windowOptions.setRequestedWindowSize(QSize(list.at(0).toInt(), list.at(1).toInt()));
     }
 
+#if HAVE(QTTESTSUPPORT)
     if (takeOptionFlag(&args, QStringLiteral("--use-test-fonts")))
         WebKit::QtTestSupport::initializeTestFonts();
+#endif
 
     if (args.contains("-r")) {
         QString listFile = takeOptionValue(&args, "-r");

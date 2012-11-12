@@ -134,6 +134,10 @@ defineTest(detectFeatures) {
     # Slider Touch is sensible to use when compiling WebKit2
     enable?(touch_events): WEBKIT_CONFIG += touch_slider
 
+
+    # Minibrowser must be able to query for QtTestSupport
+    build?(qttestsupport): WEBKIT_CONFIG += have_qttestsupport
+
     # ---------------- Sanitize features -------------------
 
     export(WEBKIT_CONFIG)

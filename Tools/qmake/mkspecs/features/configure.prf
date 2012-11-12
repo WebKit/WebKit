@@ -17,7 +17,8 @@ WEBKIT_TOOLS_CONFIG = \
     build_imagediff \
     build_test_npapi \
     build_testbrowser \
-    build_minibrowser
+    build_minibrowser \
+    build_qttestsupport
 
 defineTest(runConfigure) {
     !webkit_configured:!print_defaults {
