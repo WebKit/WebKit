@@ -1,3 +1,21 @@
+2012-11-12  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Don't update style when attaching in HTMLMeterElement
+        https://bugs.webkit.org/show_bug.cgi?id=101714
+
+        Reviewed by Hajime Morita.
+
+        HTMLMeterElement was updating style when it's being attached. However, updating style when attaching
+        can cause style-update prevention. The similar thing has already happened in Bug 100507.
+
+        Since we have already set the default value in creating ShadowDOM subtree, we don't need to update style actually.
+
+        Test: fast/dom/HTMLMeterElement/meter-bar-set-value.html
+
+        * html/HTMLMeterElement.cpp:
+        * html/HTMLMeterElement.h:
+        (HTMLMeterElement): Removed attach(). We don't need it.
+
 2012-11-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Multiple Layout Tests (e.g. fast/repaint/japanese-rl-selection-clear.html) is failing after r133840.

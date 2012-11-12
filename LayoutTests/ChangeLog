@@ -1,3 +1,13 @@
+2012-11-12  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Don't update style when attaching in HTMLMeterElement
+        https://bugs.webkit.org/show_bug.cgi?id=101714
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/HTMLMeterElement/meter-bar-set-value-expected.html: Added.
+        * fast/dom/HTMLMeterElement/meter-bar-set-value.html: Added.
+
 2012-11-11  Michael Pruett  <michael@68k.org>
 
         Fix assertion failure in JSObject::tryGetIndexQuickly()

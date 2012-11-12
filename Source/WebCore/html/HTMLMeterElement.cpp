@@ -85,12 +85,6 @@ void HTMLMeterElement::parseAttribute(const Attribute& attribute)
         LabelableElement::parseAttribute(attribute);
 }
 
-void HTMLMeterElement::attach()
-{
-    m_value->setWidthPercentage(valueRatio()*100);
-    LabelableElement::attach();
-}
-
 double HTMLMeterElement::min() const
 {
     return parseToDoubleForNumberType(getAttribute(minAttr), 0);

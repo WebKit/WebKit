@@ -81,8 +81,6 @@ private:
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;
     virtual void parseAttribute(const Attribute&) OVERRIDE;
 
-    virtual void attach() OVERRIDE;
-
     void didElementStateChange();
     void createShadowSubtree();
 
