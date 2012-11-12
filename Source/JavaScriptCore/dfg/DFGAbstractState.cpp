@@ -1572,11 +1572,22 @@ bool AbstractState::execute(unsigned indexInBlock)
         forNode(node.child1()).filter(SpecCell);
         break;
             
-    case CheckFunction:
+    case CheckFunction: {
+        JSValue value = forNode(node.child1()).value();
+        if (value == node.function()) {
+            m_foundConstants = true;
+            ASSERT(value);
+            node.setCanExit(false);
+            break;
+        }
+        
         node.setCanExit(true); // Lies! We can do better.
-        forNode(node.child1()).filter(SpecFunction);
-        // FIXME: Should be able to propagate the fact that we know what the function is.
+        if (!forNode(node.child1()).filterByValue(node.function())) {
+            m_isValid = false;
+            break;
+        }
         break;
+    }
         
     case PutById:
     case PutByIdDirect:

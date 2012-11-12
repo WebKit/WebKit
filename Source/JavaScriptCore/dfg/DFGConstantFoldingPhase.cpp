@@ -124,6 +124,14 @@ private:
                 break;
             }
                 
+            case CheckFunction: {
+                if (m_state.forNode(node.child1()).value() != node.function())
+                    break;
+                node.setOpAndDefaultFlags(Phantom);
+                eliminated = true;
+                break;
+            }
+                
             default:
                 break;
             }

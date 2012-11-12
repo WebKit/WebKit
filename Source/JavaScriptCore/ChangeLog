@@ -1,3 +1,18 @@
+2012-11-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not emit function checks if we've already proved that the operand is that exact function
+        https://bugs.webkit.org/show_bug.cgi?id=101885
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::filterByValue):
+        (AbstractValue):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
 2012-11-12  Kentaro Hara  <haraken@chromium.org>
 
         [V8][JSC] ScriptProfileNode::callUID needs not to be [Custom]
