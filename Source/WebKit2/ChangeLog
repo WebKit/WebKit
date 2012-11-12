@@ -1,5 +1,18 @@
 2012-11-12  Anders Carlsson  <andersca@apple.com>
 
+        Add debug only code to dump the contents of a transaction
+        https://bugs.webkit.org/show_bug.cgi?id=101991
+
+        Reviewed by Andreas Kling.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::writeIndent):
+        (WebKit::dumpChangedLayers):
+        (WebKit::RemoteLayerTreeTransaction::dump):
+
+2012-11-12  Anders Carlsson  <andersca@apple.com>
+
         Store name changes in the layer transaction
         https://bugs.webkit.org/show_bug.cgi?id=101981
 

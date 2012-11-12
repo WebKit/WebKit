@@ -53,6 +53,10 @@ public:
 
     void layerPropertiesChanged(const RemoteGraphicsLayer*, unsigned changedProperties);
 
+#ifndef NDEBUG
+    void dump() const;
+#endif
+
 private:
     HashMap<uint64_t, LayerProperties> m_changedLayerProperties;
 };

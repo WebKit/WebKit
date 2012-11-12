@@ -27,6 +27,8 @@
 #include "RemoteLayerTreeTransaction.h"
 
 #include "RemoteGraphicsLayer.h"
+#include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebKit {
 
@@ -52,5 +54,58 @@ void RemoteLayerTreeTransaction::layerPropertiesChanged(const RemoteGraphicsLaye
     if (changedProperties & NameChanged)
         layerProperties.name = graphicsLayer->name();
 }
+
+#ifndef NDEBUG
+
+static void writeIndent(StringBuilder& builder, int indent)
+{
+    for (int i = 0; i < indent; ++i)
+        builder.append(' ');
+}
+
+static void dumpChangedLayers(StringBuilder& builder, const HashMap<uint64_t, RemoteLayerTreeTransaction::LayerProperties>& changedLayerProperties)
+{
+    if (changedLayerProperties.isEmpty())
+        return;
+
+    writeIndent(builder, 1);
+    builder.append("(changed-layers\n");
+
+    // Dump the layer properties sorted by layer ID.
+    Vector<uint64_t> layerIDs;
+    copyKeysToVector(changedLayerProperties, layerIDs);
+    std::sort(layerIDs.begin(), layerIDs.end());
+
+    for (uint64_t layerID: layerIDs) {
+        const RemoteLayerTreeTransaction::LayerProperties& layerProperties = changedLayerProperties.get(layerID);
+
+        writeIndent(builder, 2);
+        builder.append("(layer ");
+        builder.appendNumber(layerID);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::NameChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(name \"");
+            builder.append(layerProperties.name);
+            builder.append("\")");
+        }
+
+        builder.append(")\n");
+    }
+}
+
+void RemoteLayerTreeTransaction::dump() const
+{
+    StringBuilder builder;
+
+    builder.append("(\n");
+    dumpChangedLayers(builder, m_changedLayerProperties);
+    builder.append(")\n");
+
+    fprintf(stderr, "%s", builder.toString().utf8().data());
+}
+
+#endif // NDEBUG
 
 } // namespace WebKit
