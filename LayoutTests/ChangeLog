@@ -1,5 +1,19 @@
 2012-11-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r131077
+
+    2012-10-11  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/12477191> Combined text reverts to full-width font after a style change
+            https://bugs.webkit.org/show_bug.cgi?id=99009
+
+            Reviewed by John Sullivan.
+
+            * fast/text/text-combine-width-after-style-change-expected.html: Added.
+            * fast/text/text-combine-width-after-style-change.html: Added.
+
+2012-11-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r129796
 
     2012-09-27  Philip Rogers  <pdr@google.com>
@@ -11285,6 +11299,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .
