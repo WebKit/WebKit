@@ -29,8 +29,11 @@
 #include "DrawingAreaProxyImpl.h"
 #include "EwkViewImpl.h"
 #include "InputMethodContextEfl.h"
+#include "LayerTreeCoordinatorProxy.h"
+#include "LayerTreeRenderer.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NotImplemented.h"
+#include "TextureMapper.h"
 #include "WebContext.h"
 #include "WebContextMenuProxy.h"
 #include "WebPageGroup.h"
@@ -66,7 +69,12 @@ EwkViewImpl* PageClientBase::viewImpl() const
 // PageClient
 PassOwnPtr<DrawingAreaProxy> PageClientBase::createDrawingAreaProxy()
 {
-    return DrawingAreaProxyImpl::create(m_viewImpl->page());
+    OwnPtr<DrawingAreaProxy> drawingArea = DrawingAreaProxyImpl::create(m_viewImpl->page());
+#if USE(ACCELERATED_COMPOSITING)
+    if (!m_viewImpl->isHardwareAccelerated())
+        drawingArea->layerTreeCoordinatorProxy()->layerTreeRenderer()->setAccelerationMode(TextureMapper::SoftwareMode);
+#endif
+    return drawingArea.release();
 }
 
 void PageClientBase::setViewNeedsDisplay(const WebCore::IntRect& rect)

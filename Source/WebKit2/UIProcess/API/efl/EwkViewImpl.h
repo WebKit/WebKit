@@ -199,6 +199,8 @@ public:
     // FIXME: needs refactoring (split callback invoke)
     void informURLChange();
 
+    bool isHardwareAccelerated() const { return m_isHardwareAccelerated; }
+
 private:
     inline Ewk_View_Smart_Data* smartData() const;
     void displayTimerFired(WebCore::Timer<EwkViewImpl>*);
@@ -255,6 +257,7 @@ private:
     OwnPtr<Ewk_Popup_Menu> m_popupMenu;
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
     OwnPtr<Ewk_Color_Picker> m_colorPicker;
+    bool m_isHardwareAccelerated;
 };
 
 #endif // EwkViewImpl_h

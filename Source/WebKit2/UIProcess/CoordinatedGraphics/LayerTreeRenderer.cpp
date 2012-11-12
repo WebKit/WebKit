@@ -92,6 +92,7 @@ LayerTreeRenderer::LayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordin
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     , m_animationFrameRequested(false)
 #endif
+    , m_accelerationMode(TextureMapper::OpenGLMode)
 {
 }
 
@@ -456,7 +457,7 @@ void LayerTreeRenderer::ensureRootLayer()
     if (m_rootLayer)
         return;
     if (!m_textureMapper) {
-        m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
+        m_textureMapper = TextureMapper::create(m_accelerationMode);
         static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
     }
 

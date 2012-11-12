@@ -99,6 +99,12 @@ public:
     void animationFrameReady();
 #endif
 
+    void setAccelerationMode(WebCore::TextureMapper::AccelerationMode mode)
+    {
+        // The acceleration mode is set only before TextureMapper was created.
+        ASSERT(!m_textureMapper);
+        m_accelerationMode = mode;
+    }
 private:
     PassOwnPtr<WebCore::GraphicsLayer> createLayer(WebLayerID);
 
@@ -153,6 +159,7 @@ private:
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     bool m_animationFrameRequested;
 #endif
+    WebCore::TextureMapper::AccelerationMode m_accelerationMode;
 };
 
 };

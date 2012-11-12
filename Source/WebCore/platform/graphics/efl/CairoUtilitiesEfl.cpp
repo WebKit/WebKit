@@ -106,4 +106,25 @@ PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(Ecore_Evas* ee)
     return surface;
 }
 
+PassRefPtr<cairo_surface_t> createSurfaceForImage(Evas_Object* image)
+{
+    ASSERT(image);
+
+    Evas_Coord width;
+    Evas_Coord height;
+    evas_object_image_size_get(image, &width, &height);
+    ASSERT(width > 0 && height > 0);
+
+    unsigned char* buffer = static_cast<unsigned char*>(const_cast<void*>(evas_object_image_data_get(image, true)));
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(buffer, CAIRO_FORMAT_ARGB32, width, height, width * 4));
+
+    cairo_status_t status = cairo_surface_status(surface.get());
+    if (status != CAIRO_STATUS_SUCCESS) {
+        EINA_LOG_ERR("Could not create cairo surface: %s", cairo_status_to_string(status));
+        return 0;
+    }
+
+    return surface.release();
+}
+
 }

@@ -1,3 +1,20 @@
+2012-11-12  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] Black screen when applications use software backend.
+        https://bugs.webkit.org/show_bug.cgi?id=101659
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add a utility method to create a cairo_surface_t from a given Evas_Object_Image.
+
+        No new tests. Will be covered when running existing tests without enabling openGL.
+
+        * platform/graphics/efl/CairoUtilitiesEfl.cpp:
+        (WebCore::createSurfaceForImage):
+        (WebCore):
+        * platform/graphics/efl/CairoUtilitiesEfl.h:
+        (WebCore):
+
 2012-11-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

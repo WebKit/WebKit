@@ -31,6 +31,7 @@ namespace WebCore {
 
 PassRefPtr<Evas_Object> evasObjectFromCairoImageSurface(Evas* canvas, cairo_surface_t*);
 PassRefPtr<cairo_surface_t> createSurfaceForBackingStore(Ecore_Evas* ee);
+PassRefPtr<cairo_surface_t> createSurfaceForImage(Evas_Object* image);
 
 }
 

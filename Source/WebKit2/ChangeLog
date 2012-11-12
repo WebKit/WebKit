@@ -1,3 +1,29 @@
+2012-11-12  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2][AC] Black screen when applications use software backend.
+        https://bugs.webkit.org/show_bug.cgi?id=101659
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        If creating openGL context fails, automatically fallback to software rendering.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::displayTimerFired):
+        (EwkViewImpl::createGLSurface):
+        (EwkViewImpl::enterAcceleratedCompositingMode):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl::hardwareAccelerationEnabled):
+        (EwkViewImpl):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::ensureRootLayer):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (WebKit::LayerTreeRenderer::setAccelerationMode):
+        (LayerTreeRenderer):
+        * UIProcess/efl/PageClientBase.cpp:
+        (WebKit::PageClientBase::createDrawingAreaProxy):
+
 2012-11-12  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [WK2] Indentation nit on WebPage
