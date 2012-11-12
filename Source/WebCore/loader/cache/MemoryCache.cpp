@@ -305,23 +305,30 @@ void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
         
         // First flush all the decoded data in this queue.
         while (current) {
-            CachedResource* prev = current->m_prevInAllResourcesList;
+            // Protect 'previous' so it can't get deleted during destroyDecodedData().
+            CachedResourceHandle<CachedResource> previous = current->m_prevInAllResourcesList;
+            ASSERT(!previous || previous->inCache());
             if (!current->hasClients() && !current->isPreloaded() && current->isLoaded()) {
                 // Destroy our decoded data. This will remove us from 
                 // m_liveDecodedResources, and possibly move us to a different 
                 // LRU list in m_allResources.
                 current->destroyDecodedData();
-                
+
                 if (targetSize && m_deadSize <= targetSize)
                     return;
             }
-            current = prev;
+            // Decoded data may reference other resources. Stop iterating if 'previous' somehow got
+            // kicked out of cache during destroyDecodedData().
+            if (previous && !previous->inCache())
+                break;
+            current = previous.get();
         }
 
         // Now evict objects from this queue.
         current = m_allResources[i].m_tail;
         while (current) {
-            CachedResource* prev = current->m_prevInAllResourcesList;
+            CachedResourceHandle<CachedResource> previous = current->m_prevInAllResourcesList;
+            ASSERT(!previous || previous->inCache());
             if (!current->hasClients() && !current->isPreloaded() && !current->isCacheValidator()) {
                 if (!makeResourcePurgeable(current))
                     evict(current);
@@ -329,7 +336,9 @@ void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
                 if (targetSize && m_deadSize <= targetSize)
                     return;
             }
-            current = prev;
+            if (previous && !previous->inCache())
+                break;
+            current = previous.get();
         }
             
         // Shrink the vector back down so we don't waste time inspecting
