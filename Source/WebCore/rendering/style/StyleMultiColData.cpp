@@ -39,8 +39,6 @@ StyleMultiColData::StyleMultiColData()
     , m_breakInside(RenderStyle::initialPageBreak())
     , m_axis(RenderStyle::initialColumnAxis())
     , m_progression(RenderStyle::initialColumnProgression())
-    , m_hasVisitedLinkColumnRuleColor(false)
-    , m_visitedLinkColumnRuleColor(Color::transparent)
 {
 }
 
@@ -50,6 +48,7 @@ StyleMultiColData::StyleMultiColData(const StyleMultiColData& o)
     , m_count(o.m_count)
     , m_gap(o.m_gap)
     , m_rule(o.m_rule)
+    , m_visitedLinkColumnRuleColor(o.m_visitedLinkColumnRuleColor)
     , m_autoWidth(o.m_autoWidth)
     , m_autoCount(o.m_autoCount)
     , m_normalGap(o.m_normalGap)
@@ -59,8 +58,6 @@ StyleMultiColData::StyleMultiColData(const StyleMultiColData& o)
     , m_breakInside(o.m_breakInside)
     , m_axis(o.m_axis)
     , m_progression(o.m_progression)
-    , m_hasVisitedLinkColumnRuleColor(o.m_hasVisitedLinkColumnRuleColor)
-    , m_visitedLinkColumnRuleColor(o.m_visitedLinkColumnRuleColor)
 {
 }
 
@@ -71,12 +68,6 @@ bool StyleMultiColData::operator==(const StyleMultiColData& o) const
            && m_autoWidth == o.m_autoWidth && m_autoCount == o.m_autoCount && m_normalGap == o.m_normalGap
            && m_columnSpan == o.m_columnSpan && m_breakAfter == o.m_breakAfter && m_breakInside == o.m_breakInside && m_axis == o.m_axis
            && m_progression == o.m_progression;
-}
-
-void StyleMultiColData::setVisitedLinkColumnRuleColor(const Color& color)
-{
-    m_hasVisitedLinkColumnRuleColor = color.isValid();
-    m_visitedLinkColumnRuleColor = color.rgb();
 }
 
 } // namespace WebCore

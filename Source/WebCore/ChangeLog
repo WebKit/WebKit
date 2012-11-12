@@ -1,3 +1,42 @@
+2012-11-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134224.
+        http://trac.webkit.org/changeset/134224
+        https://bugs.webkit.org/show_bug.cgi?id=101937
+
+        asserting on bawts (Requested by kling on #webkit).
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::setColor):
+        (WebCore::RenderStyle::setVisitedLinkColor):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleBackgroundData.cpp:
+        (WebCore::StyleBackgroundData::StyleBackgroundData):
+        * rendering/style/StyleBackgroundData.h:
+        (WebCore::StyleBackgroundData::color):
+        (StyleBackgroundData):
+        * rendering/style/StyleInheritedData.cpp:
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        * rendering/style/StyleInheritedData.h:
+        (StyleInheritedData):
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        * rendering/style/StyleMultiColData.h:
+        (StyleMultiColData):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (SameSizeAsStyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        (WebCore):
+        (StyleRareInheritedData):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (StyleRareNonInheritedData):
+
 2012-11-12  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update BB10 form theme.
