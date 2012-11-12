@@ -37,6 +37,6 @@
     readonly attribute unsigned long numberOfCalls;
     sequence<ScriptProfileNode> children();
     readonly attribute boolean visible;
-    [CustomGetter] readonly attribute unsigned long callUID;
+    readonly attribute unsigned long callUID;
 };
 

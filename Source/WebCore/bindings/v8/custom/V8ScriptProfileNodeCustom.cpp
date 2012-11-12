@@ -39,13 +39,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8ScriptProfileNode::callUIDAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    INC_STATS("DOM.ScriptProfileNode.callUIDAccessorGetter");
-    ScriptProfileNode* imp = V8ScriptProfileNode::toNative(info.Holder());
-    return v8::Number::New(imp->callUID());
-}
-
 v8::Handle<v8::Value> toV8(ScriptProfileNode* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!impl)

@@ -2109,7 +2109,6 @@
             'bindings/js/JSSVGElementInstanceCustom.cpp',
             'bindings/js/JSSVGLengthCustom.cpp',
             'bindings/js/JSSVGPathSegCustom.cpp',
-            'bindings/js/JSScriptProfileNodeCustom.cpp',
             'bindings/js/JSSharedWorkerCustom.cpp',
             'bindings/js/JSStorageCustom.cpp',
             'bindings/js/JSStorageCustom.h',

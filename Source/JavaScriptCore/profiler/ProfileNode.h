@@ -64,6 +64,7 @@ namespace JSC {
         // CallIdentifier members
         ExecState* callerCallFrame() const { return m_callerCallFrame; }
         const CallIdentifier& callIdentifier() const { return m_callIdentifier; }
+        unsigned long callUID() const { return m_callIdentifier.hash(); };
         const String& functionName() const { return m_callIdentifier.m_name; }
         const String& url() const { return m_callIdentifier.m_url; }
         unsigned lineNumber() const { return m_callIdentifier.m_lineNumber; }

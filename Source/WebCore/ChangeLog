@@ -1,5 +1,27 @@
 2012-11-12  Kentaro Hara  <haraken@chromium.org>
 
+        [V8][JSC] ScriptProfileNode::callUID needs not to be [Custom]
+        https://bugs.webkit.org/show_bug.cgi?id=101892
+
+        Reviewed by Adam Barth.
+
+        We can remove [Custom] from callUID in ScriptProfileNode.idl.
+
+        No tests. No change in behavior.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSScriptProfileNodeCustom.cpp: Removed.
+        * bindings/v8/custom/V8ScriptProfileNodeCustom.cpp:
+        * inspector/ScriptProfileNode.idl:
+
+2012-11-12  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Performance::memory getter needs not to be [Custom]
         https://bugs.webkit.org/show_bug.cgi?id=101890
 
