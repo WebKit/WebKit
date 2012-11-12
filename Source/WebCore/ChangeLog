@@ -1,3 +1,15 @@
+2012-11-12  Allan Sandfeld Jensen  <sandfeld@kde.org>
+
+        [Qt] Flash-plugin starts with wrong width
+        https://bugs.webkit.org/show_bug.cgi?id=101836
+
+        Reviewed by Simon Hausmann.
+
+        Defer the setWindow call, so that the one time it is called it will have its final size.
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::determineQuirks):
+
 2012-11-12  Tommy Widenflycht  <tommyw@google.com>
 
         Remove the V8 custom code for WebSockets constructor

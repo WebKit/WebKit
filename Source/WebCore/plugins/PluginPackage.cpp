@@ -205,7 +205,9 @@ void PluginPackage::determineQuirks(const String& mimeType)
         }
 
 #if PLATFORM(QT)
-        // Flash will crash on repeated calls to SetWindow in windowed mode
+        // Flash will crash on repeated calls to SetWindow in windowed mode.
+        // Defer the setWindow, so we don't set it to the wrong size too early.
+        m_quirks.add(PluginQuirkDeferFirstSetWindowCall);
         m_quirks.add(PluginQuirkDontCallSetWindowMoreThanOnce);
 #endif
 
