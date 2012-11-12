@@ -1,3 +1,40 @@
+2012-11-12  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Remove HTMLInputElement dependency from PickerIndicatorElement
+        https://bugs.webkit.org/show_bug.cgi?id=101913
+
+        Reviewed by Kent Tamura.
+
+        Introduced PickerIndicatorOwner interface that replaces the role of hostInput() in
+        PickerIndicatorElement. It makes easier to add interactions between picker indicator
+        and its owner without having to add functions to HTMLInputElement.
+
+        No new tests. This is just a refactor.
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::isPickerIndicatorOwnerDisabledOrReadOnly): Added.
+        (WebCore):
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::pickerIndicatorChooseValue): Added.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::setupDateTimeChooserParameters): Added.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::~BaseMultipleFieldsDateAndTimeInputType):
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree):
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::destroyShadowSubtree):
+        * html/BaseMultipleFieldsDateAndTimeInputType.h:
+        (WebCore):
+        (BaseMultipleFieldsDateAndTimeInputType): Implements PickerIndicatorOwner.
+        * html/shadow/PickerIndicatorElement.cpp: Replaced all the use of hostInput() by using PickerIndicatorOwner.
+        (WebCore::PickerIndicatorElement::PickerIndicatorElement):
+        (WebCore::PickerIndicatorElement::create):
+        (WebCore::PickerIndicatorElement::defaultEventHandler):
+        (WebCore::PickerIndicatorElement::willRespondToMouseClickEvents):
+        (WebCore::PickerIndicatorElement::didChooseValue):
+        (WebCore::PickerIndicatorElement::openPopup):
+        * html/shadow/PickerIndicatorElement.h:
+        (PickerIndicatorElement): Added a PickerIndicatorOwner member.
+        (PickerIndicatorOwner): An interface class for communicating picker indicator and its owner.
+        (WebCore::PickerIndicatorElement::PickerIndicatorOwner::~PickerIndicatorOwner):
+        (WebCore::PickerIndicatorElement::removePickerIndicatorOwner):
+
 2012-11-12  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Add support for text-shadow in region styling

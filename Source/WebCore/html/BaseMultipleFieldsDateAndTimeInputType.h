@@ -35,13 +35,14 @@
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeEditElement.h"
+#include "PickerIndicatorElement.h"
 #include "SpinButtonElement.h"
 
 namespace WebCore {
 
-class PickerIndicatorElement;
+struct DateTimeChooserParameters;
 
-class BaseMultipleFieldsDateAndTimeInputType : public BaseDateAndTimeInputType, protected DateTimeEditElement::EditControlOwner {
+class BaseMultipleFieldsDateAndTimeInputType : public BaseDateAndTimeInputType, protected DateTimeEditElement::EditControlOwner, protected PickerIndicatorElement::PickerIndicatorOwner {
 protected:
     BaseMultipleFieldsDateAndTimeInputType(HTMLInputElement*);
     virtual ~BaseMultipleFieldsDateAndTimeInputType();
@@ -65,6 +66,11 @@ private:
     virtual bool shouldSpinButtonRespondToWheelEvents() OVERRIDE;
     virtual void spinButtonStepDown() OVERRIDE;
     virtual void spinButtonStepUp() OVERRIDE;
+
+    // PickerIndicatorElement::PickerIndicatorOwner functions
+    virtual bool isPickerIndicatorOwnerDisabledOrReadOnly() const OVERRIDE FINAL;
+    virtual void pickerIndicatorChooseValue(const String&) OVERRIDE FINAL;
+    virtual bool setupDateTimeChooserParameters(DateTimeChooserParameters&) OVERRIDE FINAL;
 
     // InputType functions
     virtual void blur() OVERRIDE FINAL;

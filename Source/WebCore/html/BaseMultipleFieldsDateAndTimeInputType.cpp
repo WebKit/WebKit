@@ -123,6 +123,21 @@ void BaseMultipleFieldsDateAndTimeInputType::spinButtonStepUp()
         m_dateTimeEditElement->stepUp();
 }
 
+bool BaseMultipleFieldsDateAndTimeInputType::isPickerIndicatorOwnerDisabledOrReadOnly() const
+{
+    return element()->disabled() || element()->readOnly();
+}
+
+void BaseMultipleFieldsDateAndTimeInputType::pickerIndicatorChooseValue(const String& value)
+{
+    element()->setValue(value, DispatchChangeEvent);
+}
+
+bool BaseMultipleFieldsDateAndTimeInputType::setupDateTimeChooserParameters(DateTimeChooserParameters& parameters)
+{
+    return element()->setupDateTimeChooserParameters(parameters);
+}
+
 BaseMultipleFieldsDateAndTimeInputType::BaseMultipleFieldsDateAndTimeInputType(HTMLInputElement* element)
     : BaseDateAndTimeInputType(element)
     , m_dateTimeEditElement(0)
@@ -139,6 +154,8 @@ BaseMultipleFieldsDateAndTimeInputType::~BaseMultipleFieldsDateAndTimeInputType(
         m_spinButtonElement->removeSpinButtonOwner();
     if (m_dateTimeEditElement)
         m_dateTimeEditElement->removeEditControlOwner();
+    if (m_pickerIndicatorElement)
+        m_pickerIndicatorElement->removePickerIndicatorOwner();
 }
 
 void BaseMultipleFieldsDateAndTimeInputType::blur()
@@ -183,7 +200,7 @@ void BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree()
         m_pickerIndicatorIsAlwaysVisible = true;
     }
     if (shouldAddPickerIndicator) {
-        RefPtr<PickerIndicatorElement> pickerElement = PickerIndicatorElement::create(document);
+        RefPtr<PickerIndicatorElement> pickerElement = PickerIndicatorElement::create(document, *this);
         m_pickerIndicatorElement = pickerElement.get();
         container->appendChild(m_pickerIndicatorElement);
         m_pickerIndicatorIsVisible = true;
@@ -200,6 +217,10 @@ void BaseMultipleFieldsDateAndTimeInputType::destroyShadowSubtree()
     if (m_dateTimeEditElement) {
         m_dateTimeEditElement->removeEditControlOwner();
         m_dateTimeEditElement = 0;
+    }
+    if (m_pickerIndicatorElement) {
+        m_pickerIndicatorElement->removePickerIndicatorOwner();
+        m_pickerIndicatorElement = 0;
     }
     BaseDateAndTimeInputType::destroyShadowSubtree();
 }
