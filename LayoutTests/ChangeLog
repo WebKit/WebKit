@@ -1,3 +1,15 @@
+2012-11-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, update chromium-mac-lion baselines after r134279.
+
+        * platform/chromium-mac-lion/fast/repaint/delete-into-nested-block-expected.png: Added.
+        * platform/chromium-mac-lion/fast/repaint/inline-outline-repaint-expected.png: Added.
+        * platform/chromium-mac-lion/fast/repaint/no-caret-repaint-in-non-content-editable-element-expected.png: Added.
+        * platform/chromium-mac-lion/fast/repaint/selection-after-delete-expected.png: Added.
+        * platform/chromium-mac-lion/svg/custom/foreignObject-crash-on-hover-expected.png: Added.
+        * platform/chromium-mac-lion/svg/custom/hit-test-unclosed-subpaths-expected.png: Added.
+        * platform/chromium-mac-lion/svg/custom/hit-test-with-br-expected.png: Added.
+
 2012-11-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Update expectations for calendar-picker tests..
