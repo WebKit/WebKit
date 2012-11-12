@@ -1,5 +1,14 @@
 2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Fix tst_QWebPage::showModalDialog() API test
+        https://bugs.webkit.org/show_bug.cgi?id=63244
+
+        Reviewed by Simon Hausmann.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+
+2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] tst_QWebElement::style() fails because QWebElement::InlineStyle now works as expected
         https://bugs.webkit.org/show_bug.cgi?id=60372
 

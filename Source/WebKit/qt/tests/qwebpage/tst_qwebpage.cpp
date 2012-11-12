@@ -2914,9 +2914,9 @@ public:
 void tst_QWebPage::showModalDialog()
 {
     TestModalPage page;
+    page.settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, true);
     page.mainFrame()->setHtml(QString("<html></html>"));
     QString res = page.mainFrame()->evaluateJavaScript("window.showModalDialog('javascript:window.returnValue=dialogArguments; window.close();', 'This is a test');").toString();
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=63244", Continue);
     QCOMPARE(res, QString("This is a test"));
 }
 
