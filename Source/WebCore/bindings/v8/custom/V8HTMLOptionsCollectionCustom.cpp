@@ -82,14 +82,6 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::addCallback(const v8::Arguments& 
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8HTMLOptionsCollection::lengthAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    INC_STATS("DOM.HTMLOptionsCollection.length._get");
-    HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(info.Holder());
-    int v = imp->length();
-    return v8Integer(v, info.GetIsolate());
-}
-
 void V8HTMLOptionsCollection::lengthAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLOptionsCollection.length._set");

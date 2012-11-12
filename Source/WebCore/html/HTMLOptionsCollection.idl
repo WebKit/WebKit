@@ -23,7 +23,7 @@
     CustomIndexedSetter
 ] interface HTMLOptionsCollection : HTMLCollection {
              attribute long selectedIndex;
-             [Custom] attribute unsigned long length
+             [CustomSetter] attribute unsigned long length
                     setter raises (DOMException);
 
     [Custom] void add(in [Optional=DefaultIsUndefined] HTMLOptionElement option, 
