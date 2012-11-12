@@ -42,7 +42,7 @@ MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
 
     # Enable errors on warning
     IF (OPTION_ENABLE_WERROR)
-        SET(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -Werror -Wno-error=unused-parameter -Wno-error=sign-compare -Wno-error=switch")
+        SET(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -Werror -Wno-error=unused-parameter -Wno-error=sign-compare")
     ENDIF ()
 
     # Disable C++0x compat warnings for GCC >= 4.6.0 until we build

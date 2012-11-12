@@ -1,3 +1,14 @@
+2012-11-12  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Turn on error on warnings for "switch"
+        https://bugs.webkit.org/show_bug.cgi?id=101760
+
+        Reviewed by Gyuyoung Kim.
+
+        Turn on error on warning for "switch" by removing "-Wno-error=switch" 
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2012-11-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] ElementShadow should have RuleFeatureSet for select attribute selectors.
