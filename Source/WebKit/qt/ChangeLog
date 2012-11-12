@@ -1,5 +1,20 @@
 2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] tst_QWebElement::style() fails because QWebElement::CascadedStyle doesn't work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=65244
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        StyleResolver::styleRulesForElement now takes flags as parameter instead of a bool to specify
+        that we want to exclude UI and user style sheets.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::style):
+
+2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt] Appending "!important" to the property value of QWebElement::setStyleProperty isn't working
         https://bugs.webkit.org/show_bug.cgi?id=101763
 
