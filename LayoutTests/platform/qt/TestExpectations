@@ -2383,6 +2383,10 @@ webkit.org/b/99306 css3/filters/effect-blur-hw.html [ ImageOnlyFailure ] # Blur 
 webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 webkit.org/b/100117 editing/style/iframe-onload-crash-mac.html
 
+# REGRESSION(r134205): It made 2 fast/regions tests fail
+webkit.org/b/101933 fast/regions/region-style-inline-background-color.html
+webkit.org/b/101933 fast/regions/webkit-flow-inlines-dynamic.html
+
 # [Qt] New http/tests/inspector/network/image-as-text-loading-data-url.html fails
 webkit.org/b/100196 http/tests/inspector/network/image-as-text-loading-data-url.html
 

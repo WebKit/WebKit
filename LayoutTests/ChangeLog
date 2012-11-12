@@ -1,3 +1,12 @@
+2012-11-12  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] REGRESSION(r134205): gardening. Skipped 2 failing reftests.
+        https://bugs.webkit.org/show_bug.cgi?id=101933
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/TestExpectations:
+
 2012-11-12  Tommy Widenflycht  <tommyw@google.com>
 
         Remove the V8 custom code for WebSockets constructor
