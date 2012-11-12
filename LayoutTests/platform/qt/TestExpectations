@@ -1084,6 +1084,8 @@ editing/spelling/grammar-markers-hidpi.html
 editing/spelling/inline-spelling-markers-hidpi.html
 fast/canvas/2d.backingStorePixelRatio.html
 fast/canvas/2d.imageDataHD.html
+fast/canvas/canvas-as-image-hidpi.html
+fast/canvas/canvas-resize-reset-pixelRatio.html
 svg/as-image/svg-as-image-canvas.html
 
 # This requires didClearWindowObjectForFrameInIsolatedWorld foo in FrameLoaderClient
