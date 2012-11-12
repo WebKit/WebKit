@@ -171,12 +171,12 @@ static void checkDocumentWrapper(v8::Handle<v8::Object> wrapper, Document* docum
 
 static void setIsolatedWorldField(V8DOMWindowShell* shell, v8::Local<v8::Context> context)
 {
-    toInnerGlobalObject(context)->SetPointerInInternalField(V8DOMWindow::enteredIsolatedWorldIndex, shell);
+    toInnerGlobalObject(context)->SetAlignedPointerInInternalField(V8DOMWindow::enteredIsolatedWorldIndex, shell);
 }
 
 V8DOMWindowShell* V8DOMWindowShell::enteredIsolatedWorldContext()
 {
-    return static_cast<V8DOMWindowShell*>(toInnerGlobalObject(v8::Context::GetEntered())->GetPointerFromInternalField(V8DOMWindow::enteredIsolatedWorldIndex));
+    return static_cast<V8DOMWindowShell*>(toInnerGlobalObject(v8::Context::GetEntered())->GetAlignedPointerFromInternalField(V8DOMWindow::enteredIsolatedWorldIndex));
 }
 
 static void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext, int debugId)

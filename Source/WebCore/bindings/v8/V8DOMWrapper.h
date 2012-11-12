@@ -69,16 +69,16 @@ namespace WebCore {
         static void setDOMWrapper(v8::Handle<v8::Object> object, WrapperTypeInfo* type, void* cptr)
         {
             ASSERT(object->InternalFieldCount() >= 2);
-            object->SetPointerInInternalField(v8DOMWrapperObjectIndex, cptr);
-            object->SetPointerInInternalField(v8DOMWrapperTypeIndex, type);
+            object->SetAlignedPointerInInternalField(v8DOMWrapperObjectIndex, cptr);
+            object->SetAlignedPointerInInternalField(v8DOMWrapperTypeIndex, type);
         }
 
         static void clearDOMWrapper(v8::Handle<v8::Object> object, WrapperTypeInfo* type)
         {
             ASSERT(object->InternalFieldCount() >= 2);
             ASSERT(type);
-            object->SetPointerInInternalField(v8DOMWrapperTypeIndex, type);
-            object->SetPointerInInternalField(v8DOMWrapperObjectIndex, 0);
+            object->SetAlignedPointerInInternalField(v8DOMWrapperTypeIndex, type);
+            object->SetAlignedPointerInInternalField(v8DOMWrapperObjectIndex, 0);
         }
 
         static v8::Handle<v8::Object> lookupDOMWrapper(v8::Handle<v8::FunctionTemplate> functionTemplate, v8::Handle<v8::Object> object)

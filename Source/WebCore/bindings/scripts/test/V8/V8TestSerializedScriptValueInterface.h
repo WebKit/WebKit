@@ -41,7 +41,7 @@ public:
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
     static TestSerializedScriptValueInterface* toNative(v8::Handle<v8::Object> object)
     {
-        return reinterpret_cast<TestSerializedScriptValueInterface*>(object->GetPointerFromInternalField(v8DOMWrapperObjectIndex));
+        return reinterpret_cast<TestSerializedScriptValueInterface*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
     inline static v8::Handle<v8::Object> wrap(TestSerializedScriptValueInterface*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
     static void derefObject(void*);

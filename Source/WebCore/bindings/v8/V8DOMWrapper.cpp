@@ -157,7 +157,7 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
     v8::Handle<v8::Value> wrapper = object->GetInternalField(v8DOMWrapperObjectIndex);
     ASSERT_UNUSED(wrapper, wrapper->IsNumber() || wrapper->IsExternal());
 
-    WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetPointerFromInternalField(v8DOMWrapperTypeIndex));
+    WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
     return typeInfo == type;
 }
 
