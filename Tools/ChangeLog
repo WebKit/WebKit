@@ -1,3 +1,24 @@
+2012-11-12  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: remove a bunch of broken chromium-specific flags
+        https://bugs.webkit.org/show_bug.cgi?id=101979
+
+        Reviewed by Tony Chang.
+
+        There were a bunch of chromium-specific flags that used to be
+        supported by NRWT (and handled and passed on to DRT) but have
+        probably been broken for a long time and are currently ignored.
+
+        This patch removes all of those flags; the rule of thumb going forward
+        is that we should only add flags that affect how the python code functions.
+        If a flag is just passed verbatim to DRT, the user can use --additional-drt-flag
+        for that.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.setUp):
+
 2012-11-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Add --device-pixel-ratio command line option to EFL MiniBrowser

@@ -287,16 +287,6 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # properly on cygwin (bug 63846).
         self.should_test_processes = not self._platform.is_win()
 
-    def test_accelerated_compositing(self):
-        # This just tests that we recognize the command line args
-        self.assertTrue(passing_run(['--accelerated-video']))
-        self.assertTrue(passing_run(['--no-accelerated-video']))
-
-    def test_accelerated_2d_canvas(self):
-        # This just tests that we recognize the command line args
-        self.assertTrue(passing_run(['--accelerated-2d-canvas']))
-        self.assertTrue(passing_run(['--no-accelerated-2d-canvas']))
-
     def test_all(self):
         res, out, err, user = logging_run([], tests_included=True)
         self.assertEquals(res, unexpected_tests_count)
