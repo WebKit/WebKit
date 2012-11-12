@@ -1,5 +1,12 @@
 2012-11-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Added expectations for platform/chromium/compositing/force-compositing-mode/overflow-iframe-layer.html
+        https://bugs.webkit.org/show_bug.cgi?id=101986
+
+        * platform/chromium/TestExpectations: Added expectations.
+
+2012-11-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] WonFixed hi-DPI related tests.
         https://bugs.webkit.org/show_bug.cgi?id=90022
 
