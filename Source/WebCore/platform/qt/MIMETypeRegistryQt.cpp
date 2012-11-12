@@ -53,6 +53,8 @@ static const ExtensionMap extensionMap[] = {
     { "mp4", "video/mp4" },
     { "m4v", "video/mp4" },
     { "m4a", "audio/x-m4a" },
+    { "mht", "multipart/related" },
+    { "mhtml", "multipart/related" },
     { "mp3", "audio/mp3" },
     { "ogv", "video/ogg" },
     { "oga", "audio/ogg" },

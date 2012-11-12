@@ -1,3 +1,17 @@
+2012-11-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Can not load MHTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=101765
+
+        Reviewed by Simon Hausmann.
+
+        Recognize common MHTML extensions so that we can recognize MHTML tests on the file-system.
+
+        Tested by existing mhtml/ tests.
+
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore):
+
 2012-11-12  Andreas Kling  <akling@apple.com>
 
         Tighten vector in ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray().

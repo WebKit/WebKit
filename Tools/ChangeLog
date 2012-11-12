@@ -1,3 +1,14 @@
+2012-11-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Can not load MHTML documents
+        https://bugs.webkit.org/show_bug.cgi?id=101765
+
+        Reviewed by Simon Hausmann.
+
+        Enable MHTML feature.
+
+        * qmake/mkspecs/features/features.pri:
+
 2012-11-12  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Schedule the RTCDataChannel events to be triggered at idle state
