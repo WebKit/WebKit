@@ -42,6 +42,10 @@ This test checks that repaint testing works with composited layers.
           var parent = document.getElementById('parent');
           var child = document.getElementById('child');
 
+          // Ensure that we've recalculated style before starting repaint
+          // tracking (we don't want our lists of invalidated rects to be
+          // polluted).
+          document.body.offsetTop;
           window.internals.startTrackingRepaints(document);
 
           child.style.background = 'blue';
@@ -51,7 +55,7 @@ This test checks that repaint testing works with composited layers.
           text.innerHTML = 'This text will be replaced with the layer tree';
 
           // Force a style recalc.
-          var dummy = child.offsetTop;
+          document.body.offsetTop;
 
           var layerTreeText = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
 
