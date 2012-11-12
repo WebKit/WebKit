@@ -21,7 +21,7 @@
 #include "config.h"
 #include "QNetworkReplyHandler.h"
 
-#include "BlobRegistryImpl.h"
+#include "BlobData.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "ResourceHandle.h"
@@ -61,68 +61,19 @@ FormDataIODevice::~FormDataIODevice()
     delete m_currentFile;
 }
 
-#if ENABLE(BLOB)
-static void appendBlobResolved(FormData* formData, const KURL& url)
-{
-    RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, url));
-    if (blobData) {
-        BlobDataItemList::const_iterator it = blobData->items().begin();
-        const BlobDataItemList::const_iterator itend = blobData->items().end();
-        for (; it != itend; ++it) {
-            const BlobDataItem& blobItem = *it;
-            if (blobItem.type == BlobDataItem::Data)
-                formData->appendData(blobItem.data->data() + static_cast<int>(blobItem.offset), static_cast<int>(blobItem.length));
-            else if (blobItem.type == BlobDataItem::File)
-                formData->appendFileRange(blobItem.path, blobItem.offset, blobItem.length, blobItem.expectedModificationTime);
-            else if (blobItem.type == BlobDataItem::Blob)
-                appendBlobResolved(formData, blobItem.url);
-            else
-                ASSERT_NOT_REACHED();
-        }
-    }
-}
-#endif
-
 void FormDataIODevice::prepareFormElements(FormData* formData)
 {
     if (!formData)
         return;
 
-#if ENABLE(BLOB)
-    bool hasBlob = false;
-    Vector<FormDataElement>::const_iterator it = formData->elements().begin();
-    const Vector<FormDataElement>::const_iterator itend = formData->elements().end();
-    for (; it != itend; ++it) {
-        if (it->m_type == FormDataElement::encodedBlob) {
-            hasBlob = true;
-            break;
-        }
-    }
+    RefPtr<FormData> formDataRef(formData);
 
-    // Resolve all blobs so we only have file and data.
-    if (hasBlob) {
-        RefPtr<FormData> newFormData = FormData::create();
-        newFormData->setAlwaysStream(formData->alwaysStream());
-        newFormData->setIdentifier(formData->identifier());
-        it = formData->elements().begin();
-        for (; it != itend; ++it) {
-            const FormDataElement& element = *it;
-            if (element.m_type == FormDataElement::data)
-                newFormData->appendData(element.m_data.data(), element.m_data.size());
-            else if (element.m_type == FormDataElement::encodedFile)
-                newFormData->appendFileRange(element.m_filename, element.m_fileStart, element.m_fileLength, element.m_expectedFileModificationTime, element.m_shouldGenerateFile);
-            else if (element.m_type == FormDataElement::encodedBlob)
-                appendBlobResolved(newFormData.get(), element.m_url);
-            else
-                ASSERT_NOT_REACHED();
-        }
-        m_formElements = newFormData->elements();
-        return;
-    }
+#if ENABLE(BLOB)
+    formDataRef = formDataRef->resolveBlobReferences();
 #endif
 
     // Take a deep copy of the FormDataElements
-    m_formElements = formData->elements();
+    m_formElements = formDataRef->elements();
 }
 
 

@@ -395,46 +395,8 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> prpFormDat
     }
 
 #if ENABLE(BLOB)
-    // Check if there is a blob in the form data.
-    bool hasBlob = false;
-    for (size_t i = 0; i < count; ++i) {
-        const FormDataElement& element = formData->elements()[i];
-        if (element.m_type == FormDataElement::encodedBlob) {
-            hasBlob = true;
-            break;
-        }
-    }
-
-    // If yes, we have to resolve all the blob references and regenerate the form data with only data and file types.
-    if (hasBlob) {
-        RefPtr<FormData> newFormData = FormData::create();
-        newFormData->setAlwaysStream(formData->alwaysStream());
-        newFormData->setIdentifier(formData->identifier());
-        for (size_t i = 0; i < count; ++i) {
-            const FormDataElement& element = formData->elements()[i];
-            if (element.m_type == FormDataElement::data)
-                newFormData->appendData(element.m_data.data(), element.m_data.size());
-            else if (element.m_type == FormDataElement::encodedFile)
-                newFormData->appendFile(element.m_filename, element.m_shouldGenerateFile);
-            else {
-                ASSERT(element.m_type == FormDataElement::encodedBlob);
-                RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, element.m_url));
-                if (blobData) {
-                    for (size_t j = 0; j < blobData->items().size(); ++j) {
-                        const BlobDataItem& blobItem = blobData->items()[j];
-                        if (blobItem.type == BlobDataItem::Data)
-                            newFormData->appendData(blobItem.data->data() + static_cast<int>(blobItem.offset), static_cast<int>(blobItem.length));
-                        else {
-                            ASSERT(blobItem.type == BlobDataItem::File);
-                            newFormData->appendFileRange(blobItem.path, blobItem.offset, blobItem.length, blobItem.expectedModificationTime);
-                        }
-                    }
-                }
-            }
-        }
-        formData = newFormData.release();
-        count = formData->elements().size();
-    }
+    formData = formData->resolveBlobReferences();
+    count = formData->elements().size();
 #endif
 
     // Precompute the content length so NSURLConnection doesn't use chunked mode.
