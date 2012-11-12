@@ -65,6 +65,20 @@ void PageClientDefaultImpl::updateViewportSize(const WebCore::IntSize& size)
 #endif
 }
 
+FloatRect PageClientDefaultImpl::convertToDeviceSpace(const FloatRect& userRect)
+{
+    FloatRect result = userRect;
+    result.scale(m_viewImpl->page()->deviceScaleFactor());
+    return result;
+}
+
+FloatRect PageClientDefaultImpl::convertToUserSpace(const FloatRect& deviceRect)
+{
+    FloatRect result = deviceRect;
+    result.scale(1 / m_viewImpl->page()->deviceScaleFactor());
+    return result;
+}
+
 void PageClientDefaultImpl::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)
 {
 #if USE(TILED_BACKING_STORE)

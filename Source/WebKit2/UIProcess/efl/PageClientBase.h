@@ -73,8 +73,8 @@ protected:
     virtual void clearAllEditCommands();
     virtual bool canUndoRedo(WebPageProxy::UndoOrRedo);
     virtual void executeUndoRedo(WebPageProxy::UndoOrRedo);
-    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
-    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
+    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) = 0;
+    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) = 0;
     virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&);
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&);
 

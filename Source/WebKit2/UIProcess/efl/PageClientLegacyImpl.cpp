@@ -29,6 +29,7 @@
 
 #include "EwkViewImpl.h"
 #include "LayerTreeCoordinatorProxy.h"
+#include "NotImplemented.h"
 
 using namespace WebCore;
 using namespace EwkViewCallbacks;
@@ -52,6 +53,18 @@ void PageClientLegacyImpl::updateViewportSize(const WebCore::IntSize& size)
 #else
     UNUSED_PARAM(size);
 #endif
+}
+
+FloatRect PageClientLegacyImpl::convertToDeviceSpace(const FloatRect& viewRect)
+{
+    notImplemented();
+    return viewRect;
+}
+
+FloatRect PageClientLegacyImpl::convertToUserSpace(const FloatRect& viewRect)
+{
+    notImplemented();
+    return viewRect;
 }
 
 void PageClientLegacyImpl::didChangeViewportProperties(const WebCore::ViewportAttributes&)

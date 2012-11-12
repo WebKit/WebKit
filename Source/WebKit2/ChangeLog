@@ -1,3 +1,31 @@
+2012-11-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL] Add implementations of device - user conversion methods
+        https://bugs.webkit.org/show_bug.cgi?id=101938
+
+        Reviewed by Laszlo Gombos.
+
+        Consider the deviceScaleFactor when convertion to/from user
+        and device units.
+
+        This affects DOM API's such as window.moveTo, resizeTo etc.
+
+        * UIProcess/efl/PageClientBase.cpp:
+        * UIProcess/efl/PageClientBase.h:
+        (PageClientBase):
+        * UIProcess/efl/PageClientDefaultImpl.cpp:
+        (WebKit::PageClientDefaultImpl::convertToDeviceSpace):
+        (WebKit):
+        (WebKit::PageClientDefaultImpl::convertToUserSpace):
+        * UIProcess/efl/PageClientDefaultImpl.h:
+        (PageClientDefaultImpl):
+        * UIProcess/efl/PageClientLegacyImpl.cpp:
+        (WebKit::PageClientLegacyImpl::convertToDeviceSpace):
+        (WebKit):
+        (WebKit::PageClientLegacyImpl::convertToUserSpace):
+        * UIProcess/efl/PageClientLegacyImpl.h:
+        (PageClientLegacyImpl):
+
 2012-11-12  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2][AC] Black screen when applications use software backend.

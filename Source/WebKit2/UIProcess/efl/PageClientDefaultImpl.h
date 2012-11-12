@@ -46,6 +46,9 @@ public:
     virtual void didCommitLoad();
     virtual void updateViewportSize(const WebCore::IntSize&);
 
+    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
+    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
+
 private:
     explicit PageClientDefaultImpl(EwkViewImpl*);
 

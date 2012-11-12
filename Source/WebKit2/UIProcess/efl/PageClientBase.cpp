@@ -190,18 +190,6 @@ void PageClientBase::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
     m_undoController.executeUndoRedo(undoOrRedo);
 }
 
-FloatRect PageClientBase::convertToDeviceSpace(const FloatRect& viewRect)
-{
-    notImplemented();
-    return viewRect;
-}
-
-FloatRect PageClientBase::convertToUserSpace(const FloatRect& viewRect)
-{
-    notImplemented();
-    return viewRect;
-}
-
 IntPoint PageClientBase::screenToWindow(const IntPoint& point)
 {
     notImplemented();
