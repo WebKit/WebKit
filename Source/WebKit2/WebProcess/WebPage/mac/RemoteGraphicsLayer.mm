@@ -26,6 +26,10 @@
 #include "config.h"
 #include "RemoteGraphicsLayer.h"
 
+#include "RemoteLayerTreeTransaction.h"
+
+#include <wtf/text/CString.h>
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -38,6 +42,7 @@ PassOwnPtr<GraphicsLayer> RemoteGraphicsLayer::create(GraphicsLayerClient* clien
 RemoteGraphicsLayer::RemoteGraphicsLayer(GraphicsLayerClient* client, RemoteLayerTreeController* controller)
     : GraphicsLayer(client)
     , m_controller(controller)
+    , m_uncommittedLayerChanges(RemoteLayerTreeTransaction::NoChange)
 {
     // FIXME: This is in place to silence a compiler warning. Remove this
     // once we actually start using m_controller.
@@ -46,6 +51,14 @@ RemoteGraphicsLayer::RemoteGraphicsLayer(GraphicsLayerClient* client, RemoteLaye
 
 RemoteGraphicsLayer::~RemoteGraphicsLayer()
 {
+}
+
+void RemoteGraphicsLayer::setName(const String& name)
+{
+    String longName = String::format("RemoteGraphicsLayer(%p) ", this) + name;
+    GraphicsLayer::setName(longName);
+
+    noteLayerPropertiesChanged(RemoteLayerTreeTransaction::NameChanged);
 }
 
 void RemoteGraphicsLayer::setNeedsDisplay()
@@ -58,6 +71,13 @@ void RemoteGraphicsLayer::setNeedsDisplay()
 void RemoteGraphicsLayer::setNeedsDisplayInRect(const FloatRect&)
 {
     // FIXME: Implement this.
+}
+
+void RemoteGraphicsLayer::noteLayerPropertiesChanged(unsigned layerChanges)
+{
+    if (!m_uncommittedLayerChanges && m_client)
+        m_client->notifyFlushRequired(this);
+    m_uncommittedLayerChanges |= layerChanges;
 }
 
 } // namespace WebKit

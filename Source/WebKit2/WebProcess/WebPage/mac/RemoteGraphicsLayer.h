@@ -41,10 +41,15 @@ private:
     RemoteGraphicsLayer(WebCore::GraphicsLayerClient*, RemoteLayerTreeController*);
 
     // WebCore::GraphicsLayer
+    virtual void setName(const String&) OVERRIDE;
     virtual void setNeedsDisplay() OVERRIDE;
     virtual void setNeedsDisplayInRect(const WebCore::FloatRect&) OVERRIDE;
 
+    void noteLayerPropertiesChanged(unsigned layerChanges);
+
     RemoteLayerTreeController* m_controller;
+
+    unsigned m_uncommittedLayerChanges;
 };
 
 } // namespace WebKit

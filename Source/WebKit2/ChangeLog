@@ -1,3 +1,45 @@
+2012-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Layer property changes should schedule a remote layer flush
+        https://bugs.webkit.org/show_bug.cgi?id=101951
+
+        Reviewed by Andreas Kling.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        New class. For now this just contains the changed layer properties flags but this will be extended
+        to cover changed layers as well.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.mm:
+        (WebKit::RemoteGraphicsLayer::RemoteGraphicsLayer):
+        Initialize m_uncommittedLayerChanges.
+
+        (WebKit::RemoteGraphicsLayer::setName):
+        Set the name and call noteLayerPropertiesChanged.
+
+        (WebKit::RemoteGraphicsLayer::noteLayerPropertiesChanged):
+        Notify that a flush is required (if required).
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeController.h:
+        Add a layer flush timer.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeController.mm:
+        (WebKit::RemoteLayerTreeController::RemoteLayerTreeController):
+        Initialize the layer flush timer.
+
+        (WebKit::RemoteLayerTreeController::scheduleLayerFlush):
+        Schedule the layer flush timer if needed.
+
+        (WebKit::RemoteLayerTreeController::layerFlushTimerFired):
+        Empty stub for now.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush):
+        Call the remote layer tree controller.
+
 2012-11-12  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL] Add implementations of device - user conversion methods

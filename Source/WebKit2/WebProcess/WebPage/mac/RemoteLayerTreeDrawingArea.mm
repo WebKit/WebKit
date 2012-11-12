@@ -66,6 +66,7 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer*)
 
 void RemoteLayerTreeDrawingArea::scheduleCompositingLayerFlush()
 {
+    m_remoteLayerTreeController->scheduleLayerFlush();
 }
 
 } // namespace WebKit

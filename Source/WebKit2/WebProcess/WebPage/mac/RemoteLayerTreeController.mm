@@ -39,6 +39,7 @@ PassOwnPtr<RemoteLayerTreeController> RemoteLayerTreeController::create()
 }
 
 RemoteLayerTreeController::RemoteLayerTreeController()
+    : m_layerFlushTimer(this, &RemoteLayerTreeController::layerFlushTimerFired)
 {
 }
 
@@ -46,9 +47,22 @@ RemoteLayerTreeController::~RemoteLayerTreeController()
 {
 }
 
+void RemoteLayerTreeController::scheduleLayerFlush()
+{
+    if (m_layerFlushTimer.isActive())
+        return;
+
+    m_layerFlushTimer.startOneShot(0);
+}
+
 PassOwnPtr<GraphicsLayer> RemoteLayerTreeController::createGraphicsLayer(GraphicsLayerClient* client)
 {
     return RemoteGraphicsLayer::create(client, this);
+}
+
+void RemoteLayerTreeController::layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeController>*)
+{
+    // FIXME: Package up the transaction and send it to the UI process.
 }
 
 } // namespace WebKit
