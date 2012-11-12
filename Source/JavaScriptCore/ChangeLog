@@ -1,5 +1,40 @@
 2012-11-11  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG ArithMul overflow check elimination is too aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=101871
+
+        Reviewed by Oliver Hunt.
+
+        The code was ignoring the fact that ((a * b) | 0) == (((a | 0) * (b | 0)) | 0)
+        only holds if a * b < 2^53. So, I changed it to only enable the optimization
+        when a < 2^22 and b is an int32 (and vice versa), using a super trivial peephole
+        analysis to prove the inequality. I considered writing an epic forward flow
+        formulation that tracks the ranges of integer values but then I thought better
+        of it.
+        
+        This also rewires the ArithMul integer speculation logic. Previously, we would
+        assume that an ArithMul was only UsedAsNumber if it escaped, and separately we
+        would decide whether to speculate integer based on a proof of the <2^22
+        inequality. Now, we treat the double rounding behavior of ArithMul as if the
+        result was UsedAsNumber even if it did not escape. Then we try to prove that
+        double rounding cannot happen by attemping to prove that a < 2^22. This then
+        feeds back into the decision of whether or not to speculate integer (if we fail
+        to prove a < 2^22 then we're UsedAsNumber, and if we're also MayOverflow then
+        that forces double speculation).
+        
+        No performance impact. It just fixes a bug.
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::mulShouldSpeculateInteger):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (PredictionPropagationPhase):
+        (JSC::DFG::PredictionPropagationPhase::isWithinPowerOfTwoForConstant):
+        (JSC::DFG::PredictionPropagationPhase::isWithinPowerOfTwoNonRecursive):
+        (JSC::DFG::PredictionPropagationPhase::isWithinPowerOfTwo):
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+
+2012-11-11  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should not emit function checks if we've already proved that the operand is that exact function
         https://bugs.webkit.org/show_bug.cgi?id=101885
 

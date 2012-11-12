@@ -230,12 +230,7 @@ public:
         Node& left = at(mul.child1());
         Node& right = at(mul.child2());
         
-        if (left.hasConstant())
-            return mulImmediateShouldSpeculateInteger(mul, right, left);
-        if (right.hasConstant())
-            return mulImmediateShouldSpeculateInteger(mul, left, right);
-        
-        return Node::shouldSpeculateIntegerForArithmetic(left, right) && mul.canSpeculateInteger() && !nodeMayOverflow(mul.arithNodeFlags());
+        return Node::shouldSpeculateIntegerForArithmetic(left, right) && mul.canSpeculateInteger();
     }
     
     bool negateShouldSpeculateInteger(Node& negate)

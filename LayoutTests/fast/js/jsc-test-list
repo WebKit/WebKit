@@ -143,6 +143,10 @@ fast/js/dfg-intrinsic-unused-this
 fast/js/dfg-min-max
 fast/js/dfg-multi-basic-block-structure-clobber
 fast/js/dfg-multiply
+fast/js/dfg-mul-big-integers-with-small-integer-and-bitor
+fast/js/dfg-mul-big-integers-with-small-integer-and-detect-overflow
+fast/js/dfg-mul-big-integers-with-small-integer
+fast/js/dfg-mul-big-integers
 fast/js/dfg-negative-array-index
 fast/js/dfg-obvious-constant-cfa
 fast/js/dfg-osr-entry-hoisted-clobbered-structure-check

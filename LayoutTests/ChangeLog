@@ -1,3 +1,28 @@
+2012-11-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG ArithMul overflow check elimination is too aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=101871
+
+        Reviewed by Oliver Hunt.
+
+        * fast/js/dfg-mul-big-integer-with-small-integer-and-bitor-expected.txt: Added.
+        * fast/js/dfg-mul-big-integer-with-small-integer-and-bitor.html: Added.
+        * fast/js/dfg-mul-big-integer-with-small-integer-and-detect-overflow-expected.txt: Added.
+        * fast/js/dfg-mul-big-integer-with-small-integer-and-detect-overflow.html: Added.
+        * fast/js/dfg-mul-big-integer-with-small-integer-expected.txt: Added.
+        * fast/js/dfg-mul-big-integer-with-small-integer.html: Added.
+        * fast/js/dfg-mul-big-integers-expected.txt: Added.
+        * fast/js/dfg-mul-big-integers.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-mul-big-integer-with-small-integer-and-bitor.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-mul-big-integer-with-small-integer-and-detect-overflow.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-mul-big-integer-with-small-integer.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-mul-big-integers.js: Added.
+        (foo):
+
 2012-11-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Updated expectations for calendar-picker.

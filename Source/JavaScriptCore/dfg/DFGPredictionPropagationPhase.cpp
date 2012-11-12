@@ -116,6 +116,52 @@ private:
             return false;
         return !!m_graph.valueOfNumberConstant(nodeIndex);
     }
+    
+    bool isWithinPowerOfTwoForConstant(Node& node, int power)
+    {
+        JSValue immediateValue = node.valueOfJSConstant(codeBlock());
+        if (!immediateValue.isInt32())
+            return false;
+        int32_t intImmediate = immediateValue.asInt32();
+        return intImmediate > -(1 << power) && intImmediate < (1 << power);
+    }
+    
+    bool isWithinPowerOfTwoNonRecursive(NodeIndex nodeIndex, int power)
+    {
+        Node& node = m_graph[nodeIndex];
+        if (node.op() != JSConstant)
+            return false;
+        return isWithinPowerOfTwoForConstant(node, power);
+    }
+    
+    bool isWithinPowerOfTwo(NodeIndex nodeIndex, int power)
+    {
+        Node& node = m_graph[nodeIndex];
+        switch (node.op()) {
+        case JSConstant: {
+            return isWithinPowerOfTwoForConstant(node, power);
+        }
+            
+        case BitAnd: {
+            return isWithinPowerOfTwoNonRecursive(node.child1().index(), power)
+                || isWithinPowerOfTwoNonRecursive(node.child2().index(), power);
+        }
+            
+        case BitRShift:
+        case BitURShift: {
+            Node& shiftAmount = m_graph[node.child2()];
+            if (shiftAmount.op() != JSConstant)
+                return false;
+            JSValue immediateValue = shiftAmount.valueOfJSConstant(codeBlock());
+            if (!immediateValue.isInt32())
+                return false;
+            return immediateValue > 32 - power;
+        }
+            
+        default:
+            return false;
+        }
+    }
 
     SpeculatedType speculatedDoubleTypeForPrediction(SpeculatedType value)
     {
@@ -349,8 +395,16 @@ private:
 
             // As soon as a multiply happens, we can easily end up in the part
             // of the double domain where the point at which you do truncation
-            // can change the outcome. So, ArithMul always checks for overflow
-            // no matter what, and always forces its inputs to check as well.
+            // can change the outcome. So, ArithMul always forces its inputs to
+            // check for overflow. Additionally, it will have to check for overflow
+            // itself unless we can prove that there is no way for the values
+            // produced to cause double rounding.
+            
+            if (!isWithinPowerOfTwo(node.child1().index(), 22)
+                && !isWithinPowerOfTwo(node.child2().index(), 22))
+                flags |= NodeUsedAsNumber;
+            
+            changed |= node.mergeFlags(flags);
             
             flags |= NodeUsedAsNumber | NodeNeedsNegZero;
             flags &= ~NodeUsedAsOther;
