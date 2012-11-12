@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "RemoteLayerTreeController.h"
+#import "RemoteLayerTreeContext.h"
 
 #import "RemoteGraphicsLayer.h"
 #import "RemoteLayerTreeTransaction.h"
@@ -39,27 +39,27 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<RemoteLayerTreeController> RemoteLayerTreeController::create(WebPage* webPage)
+PassOwnPtr<RemoteLayerTreeContext> RemoteLayerTreeContext::create(WebPage* webPage)
 {
-    return adoptPtr(new RemoteLayerTreeController(webPage));
+    return adoptPtr(new RemoteLayerTreeContext(webPage));
 }
 
-RemoteLayerTreeController::RemoteLayerTreeController(WebPage* webPage)
+RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage* webPage)
     : m_webPage(webPage)
-    , m_layerFlushTimer(this, &RemoteLayerTreeController::layerFlushTimerFired)
+    , m_layerFlushTimer(this, &RemoteLayerTreeContext::layerFlushTimerFired)
     , m_currentTransaction(0)
 {
 }
 
-RemoteLayerTreeController::~RemoteLayerTreeController()
+RemoteLayerTreeContext::~RemoteLayerTreeContext()
 {
 }
 
-void RemoteLayerTreeController::setRootLayer(GraphicsLayer* rootLayer)
+void RemoteLayerTreeContext::setRootLayer(GraphicsLayer* rootLayer)
 {
 }
 
-void RemoteLayerTreeController::scheduleLayerFlush()
+void RemoteLayerTreeContext::scheduleLayerFlush()
 {
     if (m_layerFlushTimer.isActive())
         return;
@@ -67,24 +67,24 @@ void RemoteLayerTreeController::scheduleLayerFlush()
     m_layerFlushTimer.startOneShot(0);
 }
 
-RemoteLayerTreeTransaction& RemoteLayerTreeController::currentTransaction()
+RemoteLayerTreeTransaction& RemoteLayerTreeContext::currentTransaction()
 {
     ASSERT(m_currentTransaction);
 
     return *m_currentTransaction;
 }
 
-PassOwnPtr<GraphicsLayer> RemoteLayerTreeController::createGraphicsLayer(GraphicsLayerClient* client)
+PassOwnPtr<GraphicsLayer> RemoteLayerTreeContext::createGraphicsLayer(GraphicsLayerClient* client)
 {
     return RemoteGraphicsLayer::create(client, this);
 }
 
-void RemoteLayerTreeController::layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeController>*)
+void RemoteLayerTreeContext::layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeContext>*)
 {
     flushLayers();
 }
 
-void RemoteLayerTreeController::flushLayers()
+void RemoteLayerTreeContext::flushLayers()
 {
     ASSERT(!m_currentTransaction);
 

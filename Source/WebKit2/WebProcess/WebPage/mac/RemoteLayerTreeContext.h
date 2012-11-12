@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerTree_h
-#define RemoteLayerTree_h
+#ifndef RemoteLayerTreeContext_h
+#define RemoteLayerTreeContext_h
 
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/Timer.h>
@@ -34,10 +34,10 @@ namespace WebKit {
 class RemoteLayerTreeTransaction;
 class WebPage;
 
-class RemoteLayerTreeController : public WebCore::GraphicsLayerFactory {
+class RemoteLayerTreeContext : public WebCore::GraphicsLayerFactory {
 public:
-    static PassOwnPtr<RemoteLayerTreeController> create(WebPage*);
-    ~RemoteLayerTreeController();
+    static PassOwnPtr<RemoteLayerTreeContext> create(WebPage*);
+    ~RemoteLayerTreeContext();
 
     void setRootLayer(WebCore::GraphicsLayer*);
     void scheduleLayerFlush();
@@ -45,19 +45,19 @@ public:
     RemoteLayerTreeTransaction& currentTransaction();
 
 private:
-    explicit RemoteLayerTreeController(WebPage*);
+    explicit RemoteLayerTreeContext(WebPage*);
 
     // WebCore::GraphicsLayerFactory
     virtual PassOwnPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;
 
-    void layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeController>*);
+    void layerFlushTimerFired(WebCore::Timer<RemoteLayerTreeContext>*);
     void flushLayers();
 
     WebPage* m_webPage;
-    WebCore::Timer<RemoteLayerTreeController> m_layerFlushTimer;
+    WebCore::Timer<RemoteLayerTreeContext> m_layerFlushTimer;
     RemoteLayerTreeTransaction* m_currentTransaction;
 };
 
 } // namespace WebKit
 
-#endif // RemoteLayerTree_h
+#endif // RemoteLayerTreeContext_h

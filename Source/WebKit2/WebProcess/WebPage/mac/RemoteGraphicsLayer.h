@@ -30,17 +30,17 @@
 
 namespace WebKit {
 
-class RemoteLayerTreeController;
+class RemoteLayerTreeContext;
 
 class RemoteGraphicsLayer : public WebCore::GraphicsLayer {
 public:
-    static PassOwnPtr<WebCore::GraphicsLayer> create(WebCore::GraphicsLayerClient*, RemoteLayerTreeController*);
+    static PassOwnPtr<WebCore::GraphicsLayer> create(WebCore::GraphicsLayerClient*, RemoteLayerTreeContext*);
     virtual ~RemoteGraphicsLayer();
 
     uint64_t layerID() const { return m_layerID; }
 
 private:
-    RemoteGraphicsLayer(WebCore::GraphicsLayerClient*, RemoteLayerTreeController*);
+    RemoteGraphicsLayer(WebCore::GraphicsLayerClient*, RemoteLayerTreeContext*);
 
     // WebCore::GraphicsLayer
     virtual void setName(const String&) OVERRIDE;
@@ -53,7 +53,7 @@ private:
     void recursiveCommitChanges();
 
     uint64_t m_layerID;
-    RemoteLayerTreeController* m_controller;
+    RemoteLayerTreeContext* m_context;
     unsigned m_uncommittedLayerChanges;
 };
 

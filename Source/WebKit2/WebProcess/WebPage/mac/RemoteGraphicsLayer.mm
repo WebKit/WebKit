@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteGraphicsLayer.h"
 
-#include "RemoteLayerTreeController.h"
+#include "RemoteLayerTreeContext.h"
 #include "RemoteLayerTreeTransaction.h"
 
 #include <wtf/text/CString.h>
@@ -41,20 +41,17 @@ static uint64_t generateLayerID()
     return ++layerID;
 }
 
-PassOwnPtr<GraphicsLayer> RemoteGraphicsLayer::create(GraphicsLayerClient* client, RemoteLayerTreeController* controller)
+PassOwnPtr<GraphicsLayer> RemoteGraphicsLayer::create(GraphicsLayerClient* client, RemoteLayerTreeContext* context)
 {
-    return adoptPtr(new RemoteGraphicsLayer(client, controller));
+    return adoptPtr(new RemoteGraphicsLayer(client, context));
 }
 
-RemoteGraphicsLayer::RemoteGraphicsLayer(GraphicsLayerClient* client, RemoteLayerTreeController* controller)
+RemoteGraphicsLayer::RemoteGraphicsLayer(GraphicsLayerClient* client, RemoteLayerTreeContext* context)
     : GraphicsLayer(client)
     , m_layerID(generateLayerID())
-    , m_controller(controller)
+    , m_context(context)
     , m_uncommittedLayerChanges(RemoteLayerTreeTransaction::NoChange)
 {
-    // FIXME: This is in place to silence a compiler warning. Remove this
-    // once we actually start using m_controller.
-    (void)m_controller;
 }
 
 RemoteGraphicsLayer::~RemoteGraphicsLayer()
@@ -91,7 +88,7 @@ void RemoteGraphicsLayer::flushCompositingStateForThisLayerOnly()
     if (!m_uncommittedLayerChanges)
         return;
 
-    m_controller->currentTransaction().layerPropertiesChanged(this, m_uncommittedLayerChanges);
+    m_context->currentTransaction().layerPropertiesChanged(this, m_uncommittedLayerChanges);
 
     m_uncommittedLayerChanges = RemoteLayerTreeTransaction::NoChange;
 }

@@ -31,7 +31,7 @@
 
 namespace WebKit {
 
-class RemoteLayerTreeController;
+class RemoteLayerTreeContext;
 
 class RemoteLayerTreeDrawingArea : public DrawingArea {
 public:
@@ -49,7 +49,7 @@ private:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void scheduleCompositingLayerFlush() OVERRIDE;
 
-    OwnPtr<RemoteLayerTreeController> m_remoteLayerTreeController;
+    OwnPtr<RemoteLayerTreeContext> m_RemoteLayerTreeContext;
 };
 
 } // namespace WebKit
