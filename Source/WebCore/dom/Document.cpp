@@ -526,8 +526,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     if ((frame && frame->ownerElement()) || !url.isEmpty())
         setURL(url);
 
-    m_axObjectCache = 0;
-
     m_markers = adoptPtr(new DocumentMarkerController);
 
     if (m_frame)
@@ -2201,69 +2199,27 @@ void Document::resumeActiveDOMObjects()
 
 void Document::clearAXObjectCache()
 {
-    // clear cache in top document
-    if (m_axObjectCache) {
-        // Clear the cache member variable before calling delete because attempts
-        // are made to access it during destruction.
-        AXObjectCache* axObjectCache = m_axObjectCache;
-        m_axObjectCache = 0;
-        delete axObjectCache;
-        return;
-    }
-    
-    // ask the top-level document to clear its cache
-    Document* doc = topDocument();
-    if (doc != this)
-        doc->clearAXObjectCache();
+    // Clear the cache member variable before calling delete because attempts
+    // are made to access it during destruction.
+    topDocument()->m_axObjectCache.release();
 }
 
 bool Document::axObjectCacheExists() const
 {
-    if (m_axObjectCache)
-        return true;
-    
-    Document* doc = topDocument();
-    if (doc != this)
-        return doc->axObjectCacheExists();
-    
-    return false;
+    return topDocument()->m_axObjectCache;
 }
-    
+
 AXObjectCache* Document::axObjectCache() const
 {
     // The only document that actually has a AXObjectCache is the top-level
     // document.  This is because we need to be able to get from any WebCoreAXObject
     // to any other WebCoreAXObject on the same page.  Using a single cache allows
     // lookups across nested webareas (i.e. multiple documents).
-    
-    if (m_axObjectCache) {
-        // return already known top-level cache
-        if (!ownerElement())
-            return m_axObjectCache;
-        
-        // In some pages with frames, the cache is created before the sub-webarea is
-        // inserted into the tree.  Here, we catch that case and just toss the old
-        // cache and start over.
-        // NOTE: This recovery may no longer be needed. I have been unable to trigger
-        // it again. See rdar://5794454
-        // FIXME: Can this be fixed when inserting the subframe instead of now?
-        // FIXME: If this function was called to get the cache in order to remove
-        // an AXObject, we are now deleting the cache as a whole and returning a
-        // new empty cache that does not contain the AXObject! That should actually
-        // be OK. I am concerned about other cases like this where accessing the
-        // cache blows away the AXObject being operated on.
-        delete m_axObjectCache;
-        m_axObjectCache = 0;
-    }
-
-    // ask the top-level document for its cache
-    Document* doc = topDocument();
-    if (doc != this)
-        return doc->axObjectCache();
-    
-    // this is the top-level document, so install a new cache
-    m_axObjectCache = new AXObjectCache(this);
-    return m_axObjectCache;
+    Document* document = topDocument();
+    ASSERT(document == this || !m_axObjectCache);
+    if (!document->m_axObjectCache)
+        document->m_axObjectCache = adoptPtr(new AXObjectCache(this));
+    return document->m_axObjectCache.get();
 }
 
 void Document::setVisuallyOrdered()

@@ -1,3 +1,23 @@
+2012-11-11  Adam Barth  <abarth@webkit.org>
+
+        axObjectCache code is more complicated than necessary
+        https://bugs.webkit.org/show_bug.cgi?id=101820
+
+        Reviewed by Darin Adler.
+
+        This code should use OwnPtr rather than manually calling new/delete.
+        Also, instead of using a "double check" pattern, we can just access the
+        private fields on the top document directly.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::clearAXObjectCache):
+        (WebCore::Document::axObjectCacheExists):
+        (WebCore):
+        (WebCore::Document::axObjectCache):
+        * dom/Document.h:
+        (Document):
+
 2012-11-10  Simon Fraser  <simon.fraser@apple.com>
 
         Save one call to containerForRepaint() when updating layer positions

@@ -1362,7 +1362,7 @@ private:
 
     OwnPtr<RenderArena> m_renderArena;
 
-    mutable AXObjectCache* m_axObjectCache;
+    OwnPtr<AXObjectCache> m_axObjectCache;
     OwnPtr<DocumentMarkerController> m_markers;
     
     Timer<Document> m_updateFocusAppearanceTimer;
