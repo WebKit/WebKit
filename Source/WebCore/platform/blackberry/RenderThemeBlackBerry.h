@@ -107,8 +107,9 @@ private:
 
     bool paintTextFieldOrTextAreaOrSearchField(RenderObject*, const PaintInfo&, const IntRect&);
     bool paintSliderTrackRect(RenderObject*, const PaintInfo&, const IntRect&);
-    bool paintSliderTrackRect(RenderObject*, const PaintInfo&, const IntRect&, RGBA32 strokeColorStart,
-                RGBA32 strokeColorEnd, RGBA32 fillColorStart, RGBA32 fillColorEnd);
+
+    bool paintSliderTrackRect(RenderObject*, const PaintInfo&, const IntRect&, Image*);
+    IntRect convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, LayoutRect partRect, const IntRect& localOffset) const;
 
 };
 

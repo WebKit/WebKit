@@ -1,3 +1,25 @@
+2012-11-12  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update BB10 form theme.
+        https://bugs.webkit.org/show_bug.cgi?id=100760
+
+        Reviewed by Rob Buis.
+
+        RIM PR 236993
+        Internally Reviewed by Jeff Rogers.
+        Use slide and paint method on slider range and media controls.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore):
+        (WebCore::drawThreeSliceHorizontal):
+        (WebCore::drawThreeSliceVertical):
+        (WebCore::RenderThemeBlackBerry::paintSliderTrackRect):
+        (WebCore::RenderThemeBlackBerry::paintMediaSliderTrack):
+        (WebCore::RenderThemeBlackBerry::paintMediaSliderThumb):
+        (WebCore::RenderThemeBlackBerry::paintMediaVolumeSliderTrack):
+        * platform/blackberry/RenderThemeBlackBerry.h:
+        (RenderThemeBlackBerry):
+
 2012-11-12  Kent Tamura  <tkent@chromium.org>
 
         Refactoring: set read-only values on layout in DateTimeEditElement

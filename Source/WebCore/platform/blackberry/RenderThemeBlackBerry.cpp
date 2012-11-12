@@ -121,8 +121,6 @@ const RGBA32 dragRegularDark = 0xffbababa;
 const RGBA32 dragRollLight = 0xfff2f2f2;
 const RGBA32 dragRollDark = 0xff69a8ff;
 
-const RGBA32 selection = 0xff2b8fff;
-
 const RGBA32 blackPen = Color::black;
 const RGBA32 focusRingPen = 0xffa3c8fe;
 const RGBA32 activeTextColor = 0xfffafafa;
@@ -182,10 +180,11 @@ static void drawControl(GraphicsContext* gc, const FloatRect& rect, Image* img)
     gc->drawImage(img, ColorSpaceDeviceRGB, rect, srcRect);
 }
 
-static void drawThreeSlice(GraphicsContext* gc, const IntRect& rect, Image* img, int slice)
+static void drawThreeSliceHorizontal(GraphicsContext* gc, const IntRect& rect, Image* img, int slice)
 {
     if (!img)
         return;
+
     FloatSize dstSlice(rect.height() / 2, rect.height());
     FloatRect srcRect(0, 0, slice, img->height());
     FloatRect dstRect(rect.location(), dstSlice);
@@ -197,6 +196,25 @@ static void drawThreeSlice(GraphicsContext* gc, const IntRect& rect, Image* img,
 
     srcRect = FloatRect(slice, 0, img->width() - 2 * slice, img->height());
     dstRect = FloatRect(rect.x() + dstSlice.width(), rect.y(), rect.width() - 2 * dstSlice.width(), dstSlice.height());
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+}
+
+static void drawThreeSliceVertical(GraphicsContext* gc, const IntRect& rect, Image* img, int slice)
+{
+    if (!img)
+        return;
+
+    FloatSize dstSlice(rect.width(), rect.width() / 2);
+    FloatRect srcRect(0, 0, img->width(), slice);
+    FloatRect dstRect(rect.location(), dstSlice);
+
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+    srcRect.move(0, img->height() - srcRect.height());
+    dstRect.move(0, rect.height() - dstRect.height());
+    gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
+
+    srcRect = FloatRect(0, slice, img->width(), img->height() - 2 * slice);
+    dstRect = FloatRect(rect.x(), rect.y() + dstSlice.height(), dstSlice.width(), rect.height() - 2 * dstSlice.height());
     gc->drawImage(img, ColorSpaceDeviceRGB, dstRect, srcRect);
 }
 
@@ -722,27 +740,33 @@ bool RenderThemeBlackBerry::paintSliderTrack(RenderObject* object, const PaintIn
 
 bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintSliderTrackRect(object, info, rect, rangeSliderRegularTopOutline, rangeSliderRegularBottomOutline,
-                rangeSliderRegularTop, rangeSliderRegularBottom);
+    static RefPtr<Image> background;
+    if (!background)
+        background = loadImage("core_slider_bg");
+    return paintSliderTrackRect(object, info, rect, background.get());
 }
 
-bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect,
-        RGBA32 strokeColorStart, RGBA32 strokeColorEnd, RGBA32 fillColorStart, RGBA32 fillColorEnd)
+bool RenderThemeBlackBerry::paintSliderTrackRect(RenderObject* object, const PaintInfo& info, const IntRect& rect, Image* inactive)
 {
     ASSERT(info.context);
     info.context->save();
     GraphicsContext* context = info.context;
 
-    static RefPtr<Image> disabled, inactive;
-    if (!disabled) {
+    static RefPtr<Image> disabled;
+    if (!disabled)
         disabled = loadImage("core_slider_fill_disabled");
-        inactive = loadImage("core_slider_bg");
-    }
 
-    if (isEnabled(object))
-        drawThreeSlice(context, rect, inactive.get(), mediumSlice);
-    else
-        drawThreeSlice(context, rect, disabled.get(), (smallSlice - 1));
+    if (rect.width() > rect.height()) {
+        if (isEnabled(object))
+            drawThreeSliceHorizontal(context, rect, inactive, mediumSlice);
+        else
+            drawThreeSliceHorizontal(context, rect, disabled.get(), (smallSlice - 1));
+    } else {
+        if (isEnabled(object))
+            drawThreeSliceVertical(context, rect, inactive, mediumSlice);
+        else
+            drawThreeSliceVertical(context, rect, disabled.get(), (smallSlice - 1));
+    }
 
     context->restore();
     return false;
@@ -970,14 +994,22 @@ bool RenderThemeBlackBerry::paintMediaSliderTrack(RenderObject* object, const Pa
     IntRect buffered(x, y, wLoaded, h);
 
     // This is to paint main slider bar.
-    bool result = paintSliderTrackRect(object, paintInfo, rect2);
+    static RefPtr<Image> trackImage;
+    if (!trackImage)
+        trackImage = loadImage("core_slider_media_bg");
+    bool result = paintSliderTrackRect(object, paintInfo, rect2, trackImage.get());
 
     if (loaded > 0 || position > 0) {
         // This is to paint buffered bar.
-        paintSliderTrackRect(object, paintInfo, buffered, Color::darkGray, Color::darkGray, Color::darkGray, Color::darkGray);
+        static RefPtr<Image> bufferedImage, playedImage;
+        if (!bufferedImage) {
+            bufferedImage = loadImage("core_slider_buffered_bg");
+            playedImage = loadImage("core_slider_played_bg");
+        }
+        paintSliderTrackRect(object, paintInfo, buffered, bufferedImage.get());
 
         // This is to paint played part of bar (left of slider thumb) using selection color.
-        paintSliderTrackRect(object, paintInfo, played, selection, selection, selection, selection);
+        paintSliderTrackRect(object, paintInfo, played, playedImage.get());
     }
     return result;
 
@@ -996,24 +1028,9 @@ bool RenderThemeBlackBerry::paintMediaSliderThumb(RenderObject* object, const Pa
     if (!slider)
         return false;
 
-    float fullScreenMultiplier = determineFullScreenMultiplier(toElement(slider->node()));
+    static Image* mediaVolumeThumb = Image::loadPlatformResource("volume_thumb").leakRef();
 
-    paintInfo.context->save();
-    Path mediaThumbRoundedRectangle;
-    mediaThumbRoundedRectangle.addRoundedRect(rect, FloatSize(mediaSliderThumbRadius * fullScreenMultiplier, mediaSliderThumbRadius * fullScreenMultiplier));
-    paintInfo.context->setStrokeStyle(SolidStroke);
-    paintInfo.context->setStrokeThickness(0.5);
-    paintInfo.context->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
-
-    if (isPressed(object) || isHovered(object) || slider->inDragMode()) {
-        paintInfo.context->setFillGradient(createLinearGradient(selection, Color(selection).dark().rgb(),
-                rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    } else {
-        paintInfo.context->setFillGradient(createLinearGradient(Color::white, Color(Color::white).dark().rgb(),
-                rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    }
-    paintInfo.context->fillPath(mediaThumbRoundedRectangle);
-    paintInfo.context->restore();
+    drawControl(paintInfo.context, rect, mediaVolumeThumb);
 
     return true;
 #else
@@ -1035,7 +1052,11 @@ bool RenderThemeBlackBerry::paintMediaVolumeSliderTrack(RenderObject* object, co
 
     IntRect rect2(x, y, width, height);
 
-    return paintSliderTrackRect(object, paintInfo, rect2);
+    static RefPtr<Image> trackImage;
+    if (!trackImage)
+        trackImage = loadImage("core_slider_media_bg");
+
+    return paintSliderTrackRect(object, paintInfo, rect2, trackImage.get());
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
