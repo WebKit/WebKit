@@ -522,7 +522,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 var toAppend = WebInspector.linkifyStringAsFragment(b.toString());
                 if (currentStyle) {
                     var wrapper = document.createElement('span');
-                    for (key in currentStyle)
+                    for (var key in currentStyle)
                         wrapper.style[key] = currentStyle[key];
                     wrapper.appendChild(toAppend);
                     toAppend = wrapper;
