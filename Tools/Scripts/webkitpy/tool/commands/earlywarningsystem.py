@@ -139,7 +139,6 @@ class GtkEWS(AbstractEarlyWarningSystem):
     name = "gtk-ews"
     port_name = "gtk"
     watchers = AbstractEarlyWarningSystem.watchers + [
-        "gns@gnome.org",
         "xan.lopez@gmail.com",
     ]
 

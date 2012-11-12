@@ -1,3 +1,12 @@
+2012-11-12  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Removing myself from the list of address to CC on EWS
+        build failure; the CC turned out to just be too noisy so I'm
+        tracking those in a different way.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (GtkEWS):
+
 2012-11-12  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Can not load MHTML documents
