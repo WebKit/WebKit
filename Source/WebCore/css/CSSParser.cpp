@@ -1865,6 +1865,14 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         }
         break;
 
+#if ENABLE(CSS3_TEXT)
+    case CSSPropertyWebkitTextAlignLast:
+        // auto | start | end | left | right | center | justify
+        if ((id >= CSSValueLeft && id <= CSSValueJustify) || id == CSSValueStart || id == CSSValueEnd || id == CSSValueAuto)
+            validPrimitive = true;
+        break;
+#endif // CSS3_TEXT
+
     case CSSPropertyCursor: {
         // [<uri>,]*  [ auto | crosshair | default | pointer | progress | move | e-resize | ne-resize |
         // nw-resize | n-resize | se-resize | sw-resize | s-resize | w-resize | ew-resize |

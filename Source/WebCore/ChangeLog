@@ -1,3 +1,43 @@
+2012-11-11  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        [CSS3] Parsing the property, text-align-last.
+        https://bugs.webkit.org/show_bug.cgi?id=99439
+
+        Reviewed by Julien Chaffraix.
+
+        This patch implements the parsing side of the "text-align-last" property specified
+        in CSS3 working draft, with "-webkit-" prefix, under ENABLE_CSS3_TEXT flag.
+        Specification link : http://www.w3.org/TR/css3-text/#text-align-last
+
+        Tests: fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html
+               fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Get the value of the text-align-last property.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Parse the value, and check whether it is a proper value which text-align-last can have.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore):
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ETextAlignLast):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in: Add '-webkit-text-align-last' property.
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StylePropertySet.cpp:
+        (WebCore):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        (StyleRareInheritedData): Add m_textAlignLast.
+
 2012-11-11  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Refactoring] Remove shadowPseudoId() and use setPseudo() in HTMLKeygenElement

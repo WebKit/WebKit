@@ -974,6 +974,9 @@ static const CSSPropertyID blockProperties[] = {
     CSSPropertyWebkitRegionBreakInside,
 #endif
     CSSPropertyTextAlign,
+#if ENABLE(CSS3_TEXT)
+    CSSPropertyWebkitTextAlignLast,
+#endif // CSS3_TEXT
     CSSPropertyTextIndent,
     CSSPropertyWidows
 };

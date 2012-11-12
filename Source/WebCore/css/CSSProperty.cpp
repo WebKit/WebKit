@@ -327,6 +327,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitTextCombine:
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextDecorationLine:
+    case CSSPropertyWebkitTextAlignLast:
 #endif // CSS3_TEXT
     case CSSPropertyWebkitTextDecorationsInEffect:
     case CSSPropertyWebkitTextEmphasis:

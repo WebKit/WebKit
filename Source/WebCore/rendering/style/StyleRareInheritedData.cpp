@@ -95,6 +95,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , m_imageResolutionSource(RenderStyle::initialImageResolutionSource())
     , m_imageResolutionSnap(RenderStyle::initialImageResolutionSnap())
 #endif
+#if ENABLE(CSS3_TEXT)
+    , m_textAlignLast(RenderStyle::initialTextAlignLast())
+#endif // CSS3_TEXT
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
@@ -157,6 +160,9 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , m_imageResolutionSource(o.m_imageResolutionSource)
     , m_imageResolutionSnap(o.m_imageResolutionSnap)
 #endif
+#if ENABLE(CSS3_TEXT)
+    , m_textAlignLast(o.m_textAlignLast)
+#endif // CSS3_TEXT
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
@@ -246,6 +252,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && m_imageResolutionSnap == o.m_imageResolutionSnap
         && m_imageResolution == o.m_imageResolution
 #endif
+#if ENABLE(CSS3_TEXT)
+        && m_textAlignLast == o.m_textAlignLast
+#endif // CSS3_TEXT
         && m_lineSnap == o.m_lineSnap
 #if ENABLE(CSS_VARIABLES)
         && m_variables == o.m_variables

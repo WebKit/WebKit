@@ -1,3 +1,29 @@
+2012-11-11  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        [CSS3] Parsing the property, text-align-last.
+        https://bugs.webkit.org/show_bug.cgi?id=99439
+
+        Reviewed by Julien Chaffraix.
+
+        This patch implements the parsing side of the "text-align-last" property specified
+        in CSS3 working draft, with "-webkit-" prefix, under ENABLE_CSS3_TEXT flag.
+        Specification link : http://www.w3.org/TR/css3-text/#text-align-last
+
+        * fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html: Added.
+        * fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html: Added.
+        * fast/css3-text/css3-text-align-last/getComputedStyle/script-tests/getComputedStyle-text-align-last-inherited.js: Added.
+        (testComputedStyle):
+        * fast/css3-text/css3-text-align-last/getComputedStyle/script-tests/getComputedStyle-text-align-last.js: Added.
+        (testElementStyle):
+        (testComputedStyle):
+        * platform/chromium/TestExpectations:
+        * fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-expected.txt: Added.
+        * fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited-expected.txt: Added.
+        * platform/mac/TestExpectations:
+        * platform/qt-4.8/TestExpectations:
+        * platform/qt-mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-11-11  Keishi Hattori  <keishi@webkit.org>
 
         Rebaseline month/week appearance tests

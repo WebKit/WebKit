@@ -110,6 +110,9 @@ public:
     unsigned m_imageResolutionSource : 1; // ImageResolutionSource
     unsigned m_imageResolutionSnap : 1; // ImageResolutionSnap
 #endif
+#if ENABLE(CSS3_TEXT)
+    unsigned m_textAlignLast : 3; // ETextAlignLast
+#endif // CSS3_TEXT
 
     AtomicString hyphenationString;
     short hyphenationLimitBefore;

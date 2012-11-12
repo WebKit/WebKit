@@ -1919,6 +1919,7 @@ StyleBuilder::StyleBuilder()
 #if ENABLE(CSS3_TEXT)
     setPropertyHandler(CSSPropertyWebkitTextDecorationLine, ApplyPropertyTextDecoration::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextDecorationStyle, ApplyPropertyDefault<TextDecorationStyle, &RenderStyle::textDecorationStyle, TextDecorationStyle, &RenderStyle::setTextDecorationStyle, TextDecorationStyle, &RenderStyle::initialTextDecorationStyle>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitTextAlignLast, ApplyPropertyDefault<ETextAlignLast, &RenderStyle::textAlignLast, ETextAlignLast, &RenderStyle::setTextAlignLast, ETextAlignLast, &RenderStyle::initialTextAlignLast>::createHandler());
 #endif // CSS3_TEXT
     setPropertyHandler(CSSPropertyTextIndent, ApplyPropertyLength<&RenderStyle::textIndent, &RenderStyle::setTextIndent, &RenderStyle::initialTextIndent>::createHandler());
     setPropertyHandler(CSSPropertyTextOverflow, ApplyPropertyDefault<TextOverflow, &RenderStyle::textOverflow, TextOverflow, &RenderStyle::setTextOverflow, TextOverflow, &RenderStyle::initialTextOverflow>::createHandler());

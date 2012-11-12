@@ -183,6 +183,7 @@ static const CSSPropertyID computedProperties[] = {
 #if ENABLE(CSS3_TEXT)
     CSSPropertyWebkitTextDecorationLine,
     CSSPropertyWebkitTextDecorationStyle,
+    CSSPropertyWebkitTextAlignLast,
 #endif // CSS3_TEXT
     CSSPropertyTextIndent,
     CSSPropertyTextRendering,
@@ -2036,6 +2037,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return renderTextDecorationFlagsToCSSValue(style->textDecoration());
         case CSSPropertyWebkitTextDecorationStyle:
             return renderTextDecorationStyleFlagsToCSSValue(style->textDecorationStyle());
+        case CSSPropertyWebkitTextAlignLast:
+            return cssValuePool().createValue(style->textAlignLast());
 #endif // CSS3_TEXT
         case CSSPropertyWebkitTextDecorationsInEffect:
             return renderTextDecorationFlagsToCSSValue(style->textDecorationsInEffect());

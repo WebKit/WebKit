@@ -2199,6 +2199,60 @@ template<> inline CSSPrimitiveValue::operator ETextAlign() const
     }
 }
 
+#if ENABLE(CSS3_TEXT)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextAlignLast e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (e) {
+    case TextAlignLastStart:
+        m_value.ident = CSSValueStart;
+        break;
+    case TextAlignLastEnd:
+        m_value.ident = CSSValueEnd;
+        break;
+    case TextAlignLastLeft:
+        m_value.ident = CSSValueLeft;
+        break;
+    case TextAlignLastRight:
+        m_value.ident = CSSValueRight;
+        break;
+    case TextAlignLastCenter:
+        m_value.ident = CSSValueCenter;
+        break;
+    case TextAlignLastJustify:
+        m_value.ident = CSSValueJustify;
+        break;
+    case TextAlignLastAuto:
+        m_value.ident = CSSValueAuto;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ETextAlignLast() const
+{
+    switch (m_value.ident) {
+    case CSSValueAuto:
+        return TextAlignLastAuto;
+    case CSSValueStart:
+        return TextAlignLastStart;
+    case CSSValueEnd:
+        return TextAlignLastEnd;
+    case CSSValueLeft:
+        return TextAlignLastLeft;
+    case CSSValueRight:
+        return TextAlignLastRight;
+    case CSSValueCenter:
+        return TextAlignLastCenter;
+    case CSSValueJustify:
+        return TextAlignLastJustify;
+    }
+
+    ASSERT_NOT_REACHED();
+    return TextAlignLastAuto;
+}
+#endif // CSS3_TEXT
+
 template<> inline CSSPrimitiveValue::operator ETextDecoration() const
 {
     switch (m_value.ident) {

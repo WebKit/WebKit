@@ -357,6 +357,7 @@ z-index
 #if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT
 -webkit-text-decoration-line
 -webkit-text-decoration-style
+-webkit-text-align-last
 #endif
 -webkit-text-decorations-in-effect
 -webkit-text-emphasis

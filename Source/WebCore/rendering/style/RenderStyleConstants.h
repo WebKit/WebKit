@@ -346,6 +346,12 @@ enum TextDecorationStyle {
 #endif // CSS3_TEXT
 };
 
+#if ENABLE(CSS3_TEXT)
+enum ETextAlignLast {
+    TextAlignLastAuto, TextAlignLastStart, TextAlignLastEnd, TextAlignLastLeft, TextAlignLastRight, TextAlignLastCenter, TextAlignLastJustify
+};
+#endif // CSS3_TEXT
+
 enum EPageBreak {
     PBAUTO, PBALWAYS, PBAVOID
 };
