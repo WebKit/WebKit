@@ -1,3 +1,10 @@
+2012-11-12  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] WonFixed hi-DPI related tests.
+        https://bugs.webkit.org/show_bug.cgi?id=90022
+
+        * platform/chromium/TestExpectations: Added expectations.
+
 2012-11-12  Ian Vollick  <vollick@chromium.org>
 
         Unreviewed, update chromium-mac baselines.
