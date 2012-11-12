@@ -25,3 +25,20 @@
 
 #include "config.h"
 #include "RemoteLayerTreeTransaction.h"
+
+namespace WebKit {
+
+RemoteLayerTreeTransaction::RemoteLayerTreeTransaction()
+{
+}
+
+RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction()
+{
+}
+
+void RemoteLayerTreeTransaction::layerPropertiesChanged(const RemoteGraphicsLayer*, unsigned layerChanges)
+{
+    // FIXME: Implement this.
+}
+
+} // namespace WebKit

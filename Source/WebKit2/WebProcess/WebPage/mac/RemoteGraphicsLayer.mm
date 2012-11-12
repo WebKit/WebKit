@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RemoteGraphicsLayer.h"
 
+#include "RemoteLayerTreeController.h"
 #include "RemoteLayerTreeTransaction.h"
 
 #include <wtf/text/CString.h>
@@ -80,7 +81,12 @@ void RemoteGraphicsLayer::flushCompositingState(const FloatRect&)
 
 void RemoteGraphicsLayer::flushCompositingStateForThisLayerOnly()
 {
-    // FIXME: Flush the changed properties.
+    if (!m_uncommittedLayerChanges)
+        return;
+
+    m_controller->currentTransaction().layerPropertiesChanged(this, m_uncommittedLayerChanges);
+
+    m_uncommittedLayerChanges = RemoteLayerTreeTransaction::NoChange;
 }
 
 void RemoteGraphicsLayer::noteLayerPropertiesChanged(unsigned layerChanges)

@@ -27,11 +27,13 @@
 #import "RemoteLayerTreeController.h"
 
 #import "RemoteGraphicsLayer.h"
+#import "RemoteLayerTreeTransaction.h"
 #import "WebPage.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/Page.h>
 #import <wtf/PassOwnPtr.h>
+#import <wtf/TemporaryChange.h>
 
 using namespace WebCore;
 
@@ -45,6 +47,7 @@ PassOwnPtr<RemoteLayerTreeController> RemoteLayerTreeController::create(WebPage*
 RemoteLayerTreeController::RemoteLayerTreeController(WebPage* webPage)
     : m_webPage(webPage)
     , m_layerFlushTimer(this, &RemoteLayerTreeController::layerFlushTimerFired)
+    , m_currentTransaction(0)
 {
 }
 
@@ -64,6 +67,13 @@ void RemoteLayerTreeController::scheduleLayerFlush()
     m_layerFlushTimer.startOneShot(0);
 }
 
+RemoteLayerTreeTransaction& RemoteLayerTreeController::currentTransaction()
+{
+    ASSERT(m_currentTransaction);
+
+    return *m_currentTransaction;
+}
+
 PassOwnPtr<GraphicsLayer> RemoteLayerTreeController::createGraphicsLayer(GraphicsLayerClient* client)
 {
     return RemoteGraphicsLayer::create(client, this);
@@ -76,6 +86,11 @@ void RemoteLayerTreeController::layerFlushTimerFired(WebCore::Timer<RemoteLayerT
 
 void RemoteLayerTreeController::flushLayers()
 {
+    ASSERT(!m_currentTransaction);
+
+    RemoteLayerTreeTransaction transaction;
+    TemporaryChange<RemoteLayerTreeTransaction*> transactionChange(m_currentTransaction, &transaction);
+
     m_webPage->layoutIfNeeded();
     m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 

@@ -28,12 +28,19 @@
 
 namespace WebKit {
 
+class RemoteGraphicsLayer;
+
 class RemoteLayerTreeTransaction {
 public:
     enum LayerChange {
         NoChange = 0,
         NameChanged = 1 << 1,
     };
+
+    RemoteLayerTreeTransaction();
+    ~RemoteLayerTreeTransaction();
+
+    void layerPropertiesChanged(const RemoteGraphicsLayer*, unsigned layerChanges);
 };
 
 } // namespace WebKit

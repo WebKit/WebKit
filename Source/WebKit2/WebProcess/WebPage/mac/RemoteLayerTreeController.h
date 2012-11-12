@@ -31,6 +31,7 @@
 
 namespace WebKit {
 
+class RemoteLayerTreeTransaction;
 class WebPage;
 
 class RemoteLayerTreeController : public WebCore::GraphicsLayerFactory {
@@ -40,6 +41,8 @@ public:
 
     void setRootLayer(WebCore::GraphicsLayer*);
     void scheduleLayerFlush();
+
+    RemoteLayerTreeTransaction& currentTransaction();
 
 private:
     explicit RemoteLayerTreeController(WebPage*);
@@ -52,6 +55,7 @@ private:
 
     WebPage* m_webPage;
     WebCore::Timer<RemoteLayerTreeController> m_layerFlushTimer;
+    RemoteLayerTreeTransaction* m_currentTransaction;
 };
 
 } // namespace WebKit
