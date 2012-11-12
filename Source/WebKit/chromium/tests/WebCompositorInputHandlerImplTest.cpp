@@ -32,7 +32,6 @@
 #include "WebInputEvent.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <public/WebCompositor.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebInputHandler.h>
 #include <public/WebInputHandlerClient.h>
@@ -536,4 +535,3 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResets)
 }
 
 }
-

@@ -1,3 +1,16 @@
+2012-11-12  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Delete WebCompositor.h
+        https://bugs.webkit.org/show_bug.cgi?id=101137
+
+        Reviewed by James Robinson.
+
+        The implementation of this class is getting deleted and all
+        WebKit-side users are already going via WebCompositorSupport instead.
+
+        * Platform.gypi:
+        * chromium/public/WebCompositor.h: Removed.
+
 2012-11-12  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Schedule the RTCDataChannel events to be triggered at idle state

@@ -1,3 +1,15 @@
+2012-11-12  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Delete WebCompositor.h
+        https://bugs.webkit.org/show_bug.cgi?id=101137
+
+        Reviewed by James Robinson.
+
+        The implementation of this class is getting deleted and all
+        WebKit-side users are already going via WebCompositorSupport instead.
+
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+
 2012-11-12  Dirk Pranke  <dpranke@chromium.org>
 
         Fix Chromium DEPS version after accidentally checking in HEAD a couple days ago.
