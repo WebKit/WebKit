@@ -1,3 +1,7 @@
+2012-11-12  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed. Roll Chromium DEPS.
+
 2012-11-12  Stephen Chenney  <schenney@chromium.org>
 
         [chromium] Supressing a Skia change to prevent layout test breakage.
