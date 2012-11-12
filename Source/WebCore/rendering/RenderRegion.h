@@ -138,6 +138,8 @@ public:
     
     virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const;
 
+    RenderStyle* ensureRegionStyleForObject(const RenderObject*);
+
 protected:
     void setRegionObjectsRegionStyle();
     void restoreRegionObjectsOriginalStyle();
@@ -161,9 +163,8 @@ private:
     virtual void installFlowThread();
 
     PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
-    void computeChildrenStyleInRegion(const RenderObject*);
-    void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
-    void printRegionObjectsStyles();
+    void setChildrenStyleInRegion(const RenderObject*);
+    void setObjectStyleInRegion(RenderObject*);
 
     void checkRegionStyle();
     void updateRegionHasAutoLogicalHeightFlag();
@@ -192,8 +193,13 @@ private:
         // region paintings, so that the style in region is computed only
         // when necessary.
         RefPtr<RenderStyle> style;
-        // True if the computed style in region is cached.
-        bool cached;
+
+        // True if the computed style in region can be cached.
+        bool canBeCached : 1;
+
+        // True if style keeps the original object style, false if style keeps
+        // the object style in region.
+        bool originalStyle : 1;
     };
     typedef HashMap<const RenderObject*, ObjectRegionStyleInfo > RenderObjectRegionStyleMap;
     RenderObjectRegionStyleMap m_renderObjectRegionStyle;

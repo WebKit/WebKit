@@ -123,7 +123,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
 
     if (descendantsHaveSameLineHeightAndBaseline() && !child->renderer()->isOutOfFlowPositioned()) {
         RenderStyle* parentStyle = renderer()->style(isFirstLineStyle());
-        RenderStyle* childStyle = child->renderer()->style(isFirstLineStyle());
+        RenderStyle* childStyle = child->styleInRegion(child->regionDuringLayout());
         bool shouldClearDescendantsHaveSameLineHeightAndBaseline = false;
         if (child->renderer()->isReplaced())
             shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
@@ -821,7 +821,7 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, Glyp
     if (textBox->knownToHaveNoOverflow())
         return;
 
-    RenderStyle* style = textBox->renderer()->style(isFirstLineStyle());
+    RenderStyle* style = textBox->styleInRegion(textBox->regionDuringLayout());
     
     GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(textBox);
     GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->value.second;

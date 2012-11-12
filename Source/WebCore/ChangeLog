@@ -1,3 +1,51 @@
+2012-11-12  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Add support for text-shadow in region styling
+        https://bugs.webkit.org/show_bug.cgi?id=94472
+
+        Reviewed by David Hyatt.
+
+        Original patch by Andrei Onea.
+        Add support for text-shadow in region styling (@-webkit-region rule).
+        In addition to the previously supported region styling properties (background-color and color),
+        text-shadow requires the computation of an element style in region at layout time.
+
+        This patch adds a new method on RenderRegion - ensureRegionStyleForObject - that
+        can be used to retrieve the object style in region (if already cached) or to compute it
+        on the spot. When computing the object style in region, we need to compute the style in region
+        also for the object ancestor, up to the content nodes.
+
+        This patch also refactors the way styles in region are computed and stored, because
+        we can compute the style in region not only at paint time, but also at layout time.
+
+        Test: fast/regions/region-style-text-shadow.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::isValidRegionStyleProperty):
+        Allow text-shadow to be used in region styling.
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::styleInRegion):
+        Retrieve the region style for an InlineBox's renderer, given its RenderRegion.
+        Compute the style in region if not computed yet.
+        (WebCore::InlineBox::regionDuringLayout):
+        Retrieve the region in which an InlineBox is being flowed.
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp: Take region styling into account.
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::setRegionObjectsRegionStyle):
+        (WebCore::canCacheObjectStyleInRegion):
+        Test if we can cache the computed style in region.
+        (WebCore::RenderRegion::restoreRegionObjectsOriginalStyle):
+        (WebCore::RenderRegion::computeStyleInRegion):
+        (WebCore::RenderRegion::setChildrenStyleInRegion):
+        (WebCore::setObjectHasBoxDecorationsFlag):
+        (WebCore::RenderRegion::setObjectStyleInRegion):
+        (WebCore::RenderRegion::clearObjectStyleInRegion):
+        (WebCore::RenderRegion::ensureRegionStyleForObject):
+        * rendering/RenderRegion.h:
+
 2012-11-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134154.

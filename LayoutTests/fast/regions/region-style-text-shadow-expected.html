@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+ <!--
+ Test for https://bugs.webkit.org/show_bug.cgi?id=94472 ([CSSRegions]Add support for text-shadow in region styling).
+ You should not see any red text below.
+ -->
+    <head>
+        <style>
+            body { font-family: monospace; }
+            .divSize { width: 340px; height: 40px; }
+            .shadowGreen { text-shadow: 340px 100px #008000; }
+            .shadowBlue { text-shadow: 340px 100px #0000ff; }
+            .multipleShadow { text-shadow: 340px 100px #0000ff, 0px 100px #0000ff, 340px 0px #0000ff; }
+            #p1 { position: absolute; top: 10px; }
+            #span2 { position: absolute; top: 50px; }
+            #article3 { position: absolute; top: 90px; }
+            #div4 { position: absolute; top: 140px; }
+            #div51 { position: absolute; top: 190px; }
+            #div6 { position: absolute; top: 240px; }
+            #div7 { position: absolute; top: 290px; }
+        </style>
+    </head>
+<body>
+    <p id="p1" class="shadowGreen">P shadow styled in region: #008000.</p>
+
+    <span id="span2" class="shadowGreen">Span shadow styled in region: #008000.</span>
+
+    <div id="article3" class="shadowBlue">
+        Text shadow styled in region: #0000ff.
+        <div id="div3" class="shadowGreen">Div shadow styled in region: #008000.</div>
+        Text shadow styled in region: #0000ff.
+    </div>
+
+    <div id="div4" class="divSize">
+        Text without shadow.
+        <p id="p4" class="shadowBlue">P shadow styled in region: #0000ff.</p>
+    </div>
+
+    <div id="div51" class="divSize">
+        Text without shadow.
+        <div id="div52" class="shadowBlue">Div shadow styled in region: #0000ff.</div>
+    </div>
+
+    <div id="div6" class="divSize">
+        Text with removed shadow due to region styling.
+    </div>
+
+    <div id="div7" class="multipleShadow divSize">
+        Text with multiple shadows.
+    </div>
+ </body>
+</html>

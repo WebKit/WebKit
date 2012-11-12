@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+ <!--
+ Test for https://bugs.webkit.org/show_bug.cgi?id=94472 ([CSSRegions]Add support for text-shadow in region styling).
+ You should not see any red shadows below.
+ -->
+    <head>
+        <style>
+            body { font-family: monospace; }
+            .regionBox { width: 340px; height: 24px; }
+            .regionBox2 { width: 340px; height: 40px; }
+
+            #article1 { -webkit-flow-into: flow1; }
+            #region1 { -webkit-flow-from: flow1; position: absolute; top: 10px; }
+            #p1 { text-shadow: 340px 100px #ff0000; }
+            @-webkit-region #region1 { #p1 { text-shadow: 340px 100px #008000; } }
+
+            #article2 { -webkit-flow-into: flow2; }
+            #region2 { -webkit-flow-from: flow2; position: absolute; top: 50px; }
+            #span2 { text-shadow: 340px 100px #ff0000; }
+            @-webkit-region #region2 { #span2 { text-shadow: 340px 100px #008000; } }
+
+            #article3 { -webkit-flow-into: flow3; }
+            #region3 { -webkit-flow-from: flow3; position: absolute; top: 90px; }
+            #article3 { text-shadow: 340px 100px #ff0000; }
+            @-webkit-region #region3 {
+                #article3 { text-shadow: 340px 100px #0000ff; }
+                #div3 { text-shadow: 340px 100px #008000; }
+            }
+
+            #article4 { -webkit-flow-into: flow4; }
+            #p4 { text-shadow: 340px 100px #ff0000; }
+            #region4 { -webkit-flow-from: flow4; position: absolute; top: 140px; }
+            @-webkit-region #region4 { #p4 { text-shadow: 340px 100px #0000ff; } }
+
+            #article5 { -webkit-flow-into: flow5; }
+            #div5 { text-shadow: 340px 100px #ff0000; }
+            #region5 { -webkit-flow-from: flow5; position: absolute; top: 190px; }
+            @-webkit-region #region5 { #div5 { text-shadow: 340px 100px #0000ff; } }
+
+            #article6 { -webkit-flow-into: flow6; }
+            #div6 { text-shadow: 340px 100px #ff0000; }
+            #region6 { -webkit-flow-from: flow6; position: absolute; top: 240px; }
+            @-webkit-region #region6 { #div6 { text-shadow: none; } }
+
+            #article7 { -webkit-flow-into: flow7; }
+            #div7 { text-shadow: 340px 100px #ff0000; }
+            #region7 { -webkit-flow-from: flow7; position: absolute; top: 290px; }
+            @-webkit-region #region7 { #div7 { text-shadow: 340px 100px #0000ff, 0px 100px #0000ff, 340px 0px #0000ff; } }
+        </style>
+    </head>
+    <body>
+        <div id="article1">
+            <p id="p1">P shadow styled in region: #008000.</p>
+        </div>
+        <div id="region1" class="regionBox"></div>
+
+        <div id="article2">
+            <span id="span2">Span shadow styled in region: #008000.</span>
+        </div>
+        <div id="region2" class="regionBox"></div>
+
+        <div id="article3">
+            Text shadow styled in region: #0000ff.
+            <div id="div3">Div shadow styled in region: #008000.</div>
+            Text shadow styled in region: #0000ff.
+        </div>
+        <div id="region3" class="regionBox2"></div>
+
+        <div id="article4">
+            Text without shadow.
+            <p id="p4">P shadow styled in region: #0000ff.</p>
+        </div>
+        <div id="region4" class="regionBox2"></div>
+
+        <div id="article5">
+            Text without shadow.
+            <div id="div5">Div shadow styled in region: #0000ff.</div>
+        </div>
+        <div id="region5" class="regionBox2"></div>
+
+        <div id="article6">
+            <div id="div6">
+                Text with removed shadow due to region styling.
+            </div>
+        </div>
+        <div id="region6" class="regionBox"></div>
+
+        <div id="article7">
+            <div id="div7">
+                Text with multiple shadows.
+            </div>
+        </div>
+        <div id="region7" class="regionBox"></div>
+    </body>
+</html>

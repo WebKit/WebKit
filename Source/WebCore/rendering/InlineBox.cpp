@@ -28,6 +28,10 @@
 #include "PaintInfo.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "RenderFlowThread.h"
+#include "RenderRegion.h"
+#include "RenderStyle.h"
+#include "RenderView.h"
 #include "RootInlineBox.h"
 
 #ifndef NDEBUG
@@ -241,6 +245,38 @@ void InlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, Layo
         info.phase = PaintPhaseOutline;
         renderer()->paint(info, childPoint);
     }
+}
+
+RenderStyle* InlineBox::styleInRegion(RenderRegion* region) const
+{
+    if (!region || !renderer()->inRenderFlowThread())
+        return renderer()->style(isFirstLineStyle());
+
+    // Find the first parent element.
+    RenderObject* elementRenderer = renderer();
+    while (elementRenderer && (elementRenderer->isAnonymous() || !elementRenderer->node() || !elementRenderer->node()->isElementNode()))
+        elementRenderer = elementRenderer->parent();
+
+    if (!elementRenderer)
+        return renderer()->style(isFirstLineStyle());
+
+    // FIXME: We should be taking into account isFirstLine
+    return region->ensureRegionStyleForObject(elementRenderer);
+}
+
+RenderRegion* InlineBox::regionDuringLayout() const
+{
+    // This assumes that the box has not been positioned yet
+    // so it uses the containing block's current logical height to get the region.
+    ASSERT(renderer() && renderer()->view() && renderer()->view()->layoutState());
+    if (!renderer()->inRenderFlowThread())
+        return 0;
+
+    RenderFlowThread* flowThread = renderer()->enclosingRenderFlowThread();
+    ASSERT(flowThread);
+
+    RenderBlock* containingBlock = renderer()->containingBlock();
+    return flowThread->regionAtBlockOffset(containingBlock->offsetFromLogicalTopOfFirstPage() + containingBlock->logicalHeight());
 }
 
 bool InlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/)

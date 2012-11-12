@@ -1,3 +1,16 @@
+2012-11-12  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Add support for text-shadow in region styling
+        https://bugs.webkit.org/show_bug.cgi?id=94472
+
+        Reviewed by David Hyatt.
+
+        Original patch by Andrei Onea.
+        Added tests for region styling using the text-shadow property.
+
+        * fast/regions/region-style-text-shadow-expected.html: Added.
+        * fast/regions/region-style-text-shadow.html: Added.
+
 2012-11-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: wasShown is called twice when show() is called from within wasShown

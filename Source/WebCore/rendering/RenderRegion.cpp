@@ -403,23 +403,23 @@ void RenderRegion::setRegionObjectsRegionStyle()
         if (!flowThread()->objectInFlowRegion(object, this))
             continue;
 
-        // If the object has style in region, use that instead of computing a new one.
-        RenderObjectRegionStyleMap::iterator it = m_renderObjectRegionStyle.find(object);
-        RefPtr<RenderStyle> objectStyleInRegion;
-        bool objectRegionStyleCached = false;
-        if (it != m_renderObjectRegionStyle.end()) {
-            objectStyleInRegion = it->value.style;
-            ASSERT(it->value.cached);
-            objectRegionStyleCached = true;
-        } else
-            objectStyleInRegion = computeStyleInRegion(object);
-
-        setObjectStyleInRegion(object, objectStyleInRegion, objectRegionStyleCached);
-
-        computeChildrenStyleInRegion(object);
+        setObjectStyleInRegion(object);
+        setChildrenStyleInRegion(object);
     }
 }
 
+static bool canCacheObjectStyleInRegion(const RenderStyle* styleInRegion, const RenderStyle* originalStyle)
+{
+    ASSERT(styleInRegion);
+    ASSERT(originalStyle);
+
+    unsigned changedContextSensitiveProperties = ContextSensitivePropertyNone;
+    StyleDifference styleDiff = originalStyle->diff(styleInRegion, changedContextSensitiveProperties);
+    return styleDiff < StyleDifferenceLayoutPositionedMovementOnly;
+}
+
+// Restore the objects original style and cache the style in region for the objects
+// for which it is safe to cache that style.
 void RenderRegion::restoreRegionObjectsOriginalStyle()
 {
     if (!hasCustomRegionStyle())
@@ -432,18 +432,11 @@ void RenderRegion::restoreRegionObjectsOriginalStyle()
         RefPtr<RenderStyle> objectOriginalStyle = iter->value.style;
         object->setStyleInternal(objectOriginalStyle);
 
-        bool shouldCacheRegionStyle = iter->value.cached;
-        if (!shouldCacheRegionStyle) {
-            // Check whether we should cache the computed style in region.
-            unsigned changedContextSensitiveProperties = ContextSensitivePropertyNone;
-            StyleDifference styleDiff = objectOriginalStyle->diff(objectRegionStyle.get(), changedContextSensitiveProperties);
-            if (styleDiff < StyleDifferenceLayoutPositionedMovementOnly)
-                shouldCacheRegionStyle = true;
-        }
-        if (shouldCacheRegionStyle) {
+        if (iter->value.canBeCached || canCacheObjectStyleInRegion(objectRegionStyle.get(), objectOriginalStyle.get())) {
             ObjectRegionStyleInfo styleInfo;
             styleInfo.style = objectRegionStyle;
-            styleInfo.cached = true;
+            styleInfo.canBeCached = true;
+            styleInfo.originalStyle = false;
             temp.set(object, styleInfo);
         }
     }
@@ -465,79 +458,110 @@ void RenderRegion::willBeRemovedFromTree()
     detachRegion();
 }
 
+// We also need to compute parent's region style to inherit styling information.
+// The computation of styles in region should not exceed content nodes boundaries.
 PassRefPtr<RenderStyle> RenderRegion::computeStyleInRegion(const RenderObject* object)
 {
     ASSERT(object);
     ASSERT(object->view());
     ASSERT(object->view()->document());
-    ASSERT(!object->isAnonymous());
-    ASSERT(object->node() && object->node()->isElementNode());
+
+    if (object->isAnonymous())
+        return RenderStyle::createAnonymousStyleWithDisplay(ensureRegionStyleForObject(object->parent()), object->style()->display());
+
+    if (object->isText())
+        return RenderStyle::clone(ensureRegionStyleForObject(object->parent()));
 
     // FIXME: Region styling fails for pseudo-elements because the renderers don't have a node.
+    ASSERT(object->node() && object->node()->isElementNode());
     Element* element = toElement(object->node());
-    RefPtr<RenderStyle> renderObjectRegionStyle = object->view()->document()->styleResolver()->styleForElement(element, 0, DisallowStyleSharing, MatchAllRules, this);
+    RefPtr<RenderStyle> renderObjectRegionStyle = object->view()->document()->styleResolver()->styleForElement(element,
+        element->inNamedFlow() ? 0 : ensureRegionStyleForObject(object->parent()) /*parent style in region*/, DisallowStyleSharing, MatchAllRules, this);
 
     return renderObjectRegionStyle.release();
 }
 
-void RenderRegion::computeChildrenStyleInRegion(const RenderObject* object)
+void RenderRegion::setChildrenStyleInRegion(const RenderObject* object)
 {
     for (RenderObject* child = object->firstChild(); child; child = child->nextSibling()) {
-
-        RenderObjectRegionStyleMap::iterator it = m_renderObjectRegionStyle.find(child);
-
-        RefPtr<RenderStyle> childStyleInRegion;
-        bool objectRegionStyleCached = false;
-        if (it != m_renderObjectRegionStyle.end()) {
-            childStyleInRegion = it->value.style;
-            objectRegionStyleCached = true;
-        } else {
-            if (child->isAnonymous())
-                childStyleInRegion = RenderStyle::createAnonymousStyleWithDisplay(object->style(), child->style()->display());
-            else if (child->isText())
-                childStyleInRegion = RenderStyle::clone(object->style());
-            else
-                childStyleInRegion = computeStyleInRegion(child);
-        }
-
-        setObjectStyleInRegion(child, childStyleInRegion, objectRegionStyleCached);
-
-        computeChildrenStyleInRegion(child);
+        setObjectStyleInRegion(child);
+        setChildrenStyleInRegion(child);
     }
 }
 
-void RenderRegion::setObjectStyleInRegion(RenderObject* object, PassRefPtr<RenderStyle> styleInRegion, bool objectRegionStyleCached)
+static void setObjectHasBoxDecorationsFlag(RenderObject* object)
 {
+    ASSERT(object);
     ASSERT(object->inRenderFlowThread());
-    if (!object->inRenderFlowThread())
+
+    if (!object->isBoxModelObject() || object->hasBoxDecorations())
         return;
 
-    RefPtr<RenderStyle> objectOriginalStyle = object->style();
-    object->setStyleInternal(styleInRegion);
-
-    if (object->isBoxModelObject() && !object->hasBoxDecorations()) {
-        bool hasBoxDecorations = object->isTableCell()
+    bool hasBoxDecorations = object->isTableCell()
         || object->style()->hasBackground()
         || object->style()->hasBorder()
         || object->style()->hasAppearance()
         || object->style()->boxShadow();
-        object->setHasBoxDecorations(hasBoxDecorations);
-    }
-
-    ObjectRegionStyleInfo styleInfo;
-    styleInfo.style = objectOriginalStyle;
-    styleInfo.cached = objectRegionStyleCached;
-    m_renderObjectRegionStyle.set(object, styleInfo);
+    object->setHasBoxDecorations(hasBoxDecorations);
 }
 
+// Set the current style for the object to be the style in region.
+// If the style in region is not computed yet, compute it before replacing the original style.
+// The original object style is stored so that it can be restored later.
+void RenderRegion::setObjectStyleInRegion(RenderObject* object)
+{
+    ASSERT(object->inRenderFlowThread());
+    ASSERT(!object->isRenderFlowThread());
+
+    RefPtr<RenderStyle> objectOriginalStyle = object->style();
+    RenderObjectRegionStyleMap::iterator it = m_renderObjectRegionStyle.find(object);
+
+    if (it == m_renderObjectRegionStyle.end()) {
+        ensureRegionStyleForObject(object);
+        it = m_renderObjectRegionStyle.find(object);
+    }
+
+    object->setStyleInternal(it->value.style);
+    setObjectHasBoxDecorationsFlag(object);
+
+    it->value.style = objectOriginalStyle;
+    it->value.originalStyle = true;
+}
+
+// Clear the style for the children of this object.
 void RenderRegion::clearObjectStyleInRegion(const RenderObject* object)
 {
     ASSERT(object);
     m_renderObjectRegionStyle.remove(object);
 
-    // Clear the style for the children of this object.
     for (RenderObject* child = object->firstChild(); child; child = child->nextSibling())
         clearObjectStyleInRegion(child);
+}
+
+RenderStyle* RenderRegion::ensureRegionStyleForObject(const RenderObject* object)
+{
+    ASSERT(object);
+    ASSERT(object->inRenderFlowThread());
+
+    if (object->isRenderFlowThread())
+        return object->style();
+
+    RenderObjectRegionStyleMap::iterator it = m_renderObjectRegionStyle.find(object);
+    if (it != m_renderObjectRegionStyle.end()) {
+        // If the current value stored is the original style, it means that we already
+        // switched styles and the style in region can be retrived using style().
+        return it->value.originalStyle ? object->style() : it->value.style.get();
+    }
+
+    RefPtr<RenderStyle> objectStyleInRegion = computeStyleInRegion(object);
+
+    ObjectRegionStyleInfo styleInfo;
+    styleInfo.style = objectStyleInRegion;
+    styleInfo.originalStyle = false;
+    styleInfo.canBeCached = canCacheObjectStyleInRegion(objectStyleInRegion.get(), object->style());
+    m_renderObjectRegionStyle.add(object, styleInfo);
+
+    return objectStyleInRegion.get();
 }
 
 // FIXME: when RenderRegion will inherit from RenderBlock instead of RenderReplaced,
