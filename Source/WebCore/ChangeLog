@@ -1,3 +1,19 @@
+2012-11-11  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Refactoring] Remove shadowPseudoId() and use setPseudo() in HTMLKeygenElement
+        https://bugs.webkit.org/show_bug.cgi?id=101881
+
+        Reviewed by Kent Tamura.
+
+        We're migrating shadowPseudoId() to pseudo(). We remove shadowPseudoId() from HTMLKeygenElement and use
+        setPseudo()/pseudo() instead.
+
+        No new tests, simple refacotring.
+
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::KeygenSelectElement::KeygenSelectElement):
+        (KeygenSelectElement):
+
 2012-11-11  Adam Barth  <abarth@webkit.org>
 
         Many DOMWindowProperties would benefit from being ScriptWrappable

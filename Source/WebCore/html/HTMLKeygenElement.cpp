@@ -50,16 +50,12 @@ public:
         return adoptRef(new KeygenSelectElement(document));
     }
 
-    virtual const AtomicString& shadowPseudoId() const
-    {
-        DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-keygen-select", AtomicString::ConstructFromLiteral));
-        return pseudoId;
-    }
-
 protected:
     KeygenSelectElement(Document* document)
         : HTMLSelectElement(selectTag, document, 0)
     {
+        DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-keygen-select", AtomicString::ConstructFromLiteral));
+        setPseudo(pseudoId);
     }
 
 private:
