@@ -1,3 +1,39 @@
+2012-11-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: migrate text editor to mutation observers
+        https://bugs.webkit.org/show_bug.cgi?id=101841
+
+        Reviewed by Vsevolod Vlasov.
+
+        Otherwise, we miss notifications on the removed lines.
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype.wasShown):
+        (WebInspector.DefaultTextEditor.prototype.willHide):
+        (WebInspector.TextEditorChunkedPanel.prototype._repaintAll):
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype._wasShown):
+        (WebInspector.TextEditorMainPanel.prototype._willHide):
+        (WebInspector.TextEditorMainPanel.prototype.markAndRevealRange):
+        (WebInspector.TextEditorMainPanel.prototype.beginDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype.endDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._paintScheduledLines):
+        (WebInspector.TextEditorMainPanel.prototype._paintLineChunks):
+        (WebInspector.TextEditorMainPanel.prototype._paintLine):
+        (WebInspector.TextEditorMainPanel.prototype._insertSpanBefore):
+        (WebInspector.TextEditorMainPanel.prototype._handleMutations.else.get if):
+        (WebInspector.TextEditorMainPanel.prototype._handleMutations):
+        (WebInspector.TextEditorMainPanel.prototype._collectDirtyLines):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        * inspector/front-end/externs.js:
+        (WebKitMutation):
+        (WebKitMutationObserver.prototype.observe):
+        (WebKitMutationObserver.prototype.disconnect):
+        * inspector/front-end/textEditor.css:
+        (.debug-fadeout):
+        (@-webkit-keyframes debug-fadeout):
+        (to):
+
 2012-11-13  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Optimize RGBA4444ToRGBA8 packing/unpacking functions with NEON intrinsics in GraphicsContext3D
