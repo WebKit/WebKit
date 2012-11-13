@@ -1,3 +1,39 @@
+2012-11-13  Andreas Kling  <kling@webkit.org>
+
+        Exploit ElementAttributeData sharing in Node.cloneNode.
+        <http://webkit.org/b/101374>
+
+        Reviewed by Anders Carlsson.
+
+        Instead of blindly creating a new ElementAttributeData for Node.cloneNode, let's be clever!
+        If the source data is immutable, simply ref it from the new node at virtually no cost.
+
+        If the source data is mutable, convert it to immutable data so it can be shared between both nodes.
+        Since the typical use-case for Node.cloneNode is to create-once/clone-many, this saves both time
+        and memory in the long run.
+
+        ~8% speed-up on PerformanceTests/DOM/CloneNodes on my MBP.
+
+        * dom/Element.cpp:
+        (WebCore::Element::cloneAttributesFromElement):
+
+            Move attribute data cloning logic from ElementAttributeData to Element.
+
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ImmutableElementAttributeData::~ImmutableElementAttributeData):
+        (WebCore::ImmutableElementAttributeData::ImmutableElementAttributeData):
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        (WebCore::MutableElementAttributeData::MutableElementAttributeData):
+        (WebCore::ElementAttributeData::makeMutableCopy):
+        (WebCore::ElementAttributeData::makeImmutableCopy):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        (ImmutableElementAttributeData):
+        (MutableElementAttributeData):
+
+            Add facilities for converting a mutable ElementAttributeData to an immutable one.
+            Share some code in the common base class constructor.
+
 2012-11-13  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Build fix of V8 bindings.

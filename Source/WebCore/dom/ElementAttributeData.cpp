@@ -58,33 +58,65 @@ ImmutableElementAttributeData::ImmutableElementAttributeData(const Vector<Attrib
         new (&reinterpret_cast<Attribute*>(&m_attributeArray)[i]) Attribute(attributes[i]);
 }
 
-MutableElementAttributeData::MutableElementAttributeData(const ImmutableElementAttributeData& other)
-{
-    const ElementAttributeData& baseOther = static_cast<const ElementAttributeData&>(other);
-
-    m_inlineStyleDecl = baseOther.m_inlineStyleDecl;
-    m_presentationAttributeStyle = baseOther.m_presentationAttributeStyle;
-    m_classNames = baseOther.m_classNames;
-    m_idForStyleResolution = baseOther.m_idForStyleResolution;
-
-    // An ImmutableElementAttributeData should never have a mutable inline StylePropertySet attached.
-    ASSERT(!baseOther.m_inlineStyleDecl || !baseOther.m_inlineStyleDecl->isMutable());
-
-    m_attributeVector.reserveCapacity(baseOther.m_arraySize);
-    for (unsigned i = 0; i < baseOther.m_arraySize; ++i)
-        m_attributeVector.uncheckedAppend(other.immutableAttributeArray()[i]);
-}
-
 ImmutableElementAttributeData::~ImmutableElementAttributeData()
 {
     for (unsigned i = 0; i < m_arraySize; ++i)
         (reinterpret_cast<Attribute*>(&m_attributeArray)[i]).~Attribute();
 }
 
+ImmutableElementAttributeData::ImmutableElementAttributeData(const MutableElementAttributeData& other)
+    : ElementAttributeData(other, false)
+{
+    if (other.m_inlineStyleDecl) {
+        ASSERT(!other.m_inlineStyleDecl->isMutable());
+        m_inlineStyleDecl = other.m_inlineStyleDecl->immutableCopyIfNeeded();
+    }
+
+    for (unsigned i = 0; i < m_arraySize; ++i)
+        new (&reinterpret_cast<Attribute*>(&m_attributeArray)[i]) Attribute(*other.attributeItem(i));
+}
+
+ElementAttributeData::ElementAttributeData(const ElementAttributeData& other, bool isMutable)
+    : m_isMutable(isMutable)
+    , m_arraySize(isMutable ? 0 : other.length())
+    , m_presentationAttributeStyle(other.m_presentationAttributeStyle)
+    , m_classNames(other.m_classNames)
+    , m_idForStyleResolution(other.m_idForStyleResolution)
+{
+    // NOTE: The inline style is copied by the subclass copy constructor since we don't know what to do with it here.
+}
+
+MutableElementAttributeData::MutableElementAttributeData(const MutableElementAttributeData& other)
+    : ElementAttributeData(other, true)
+    , m_attributeVector(other.m_attributeVector)
+{
+    m_inlineStyleDecl = other.m_inlineStyleDecl ? other.m_inlineStyleDecl->copy() : 0;
+}
+
+MutableElementAttributeData::MutableElementAttributeData(const ImmutableElementAttributeData& other)
+    : ElementAttributeData(other, true)
+{
+    // An ImmutableElementAttributeData should never have a mutable inline StylePropertySet attached.
+    ASSERT(!other.m_inlineStyleDecl || !other.m_inlineStyleDecl->isMutable());
+    m_inlineStyleDecl = other.m_inlineStyleDecl;
+
+    m_attributeVector.reserveCapacity(other.length());
+    for (unsigned i = 0; i < other.length(); ++i)
+        m_attributeVector.uncheckedAppend(other.immutableAttributeArray()[i]);
+}
+
 PassRefPtr<ElementAttributeData> ElementAttributeData::makeMutableCopy() const
 {
-    ASSERT(!isMutable());
+    if (isMutable())
+        return adoptRef(new MutableElementAttributeData(static_cast<const MutableElementAttributeData&>(*this)));
     return adoptRef(new MutableElementAttributeData(static_cast<const ImmutableElementAttributeData&>(*this)));
+}
+
+PassRefPtr<ElementAttributeData> ElementAttributeData::makeImmutableCopy() const
+{
+    ASSERT(isMutable());
+    void* slot = WTF::fastMalloc(sizeForImmutableElementAttributeDataWithAttributeCount(mutableAttributeVector().size()));
+    return adoptRef(new (slot) ImmutableElementAttributeData(static_cast<const MutableElementAttributeData&>(*this)));
 }
 
 StylePropertySet* ElementAttributeData::ensureInlineStyle(StyledElement* element)
@@ -194,55 +226,6 @@ size_t ElementAttributeData::getAttributeItemIndexSlowCase(const AtomicString& n
         }
     }
     return notFound;
-}
-
-void ElementAttributeData::cloneDataFrom(const ElementAttributeData& sourceData, const Element& sourceElement, Element& targetElement)
-{
-    // FIXME: Cloned elements could start out with immutable attribute data.
-    ASSERT(isMutable());
-
-    const AtomicString& oldID = targetElement.getIdAttribute();
-    const AtomicString& newID = sourceElement.getIdAttribute();
-
-    if (!oldID.isNull() || !newID.isNull())
-        targetElement.updateId(oldID, newID);
-
-    const AtomicString& oldName = targetElement.getNameAttribute();
-    const AtomicString& newName = sourceElement.getNameAttribute();
-
-    if (!oldName.isNull() || !newName.isNull())
-        targetElement.updateName(oldName, newName);
-
-    clearAttributes();
-
-    if (sourceData.isMutable())
-        mutableAttributeVector() = sourceData.mutableAttributeVector();
-    else {
-        mutableAttributeVector().reserveInitialCapacity(sourceData.m_arraySize);
-        for (unsigned i = 0; i < sourceData.m_arraySize; ++i)
-            mutableAttributeVector().uncheckedAppend(sourceData.immutableAttributeArray()[i]);
-    }
-
-    for (unsigned i = 0; i < length(); ++i) {
-        const Attribute& attribute = mutableAttributeVector().at(i);
-        if (targetElement.isStyledElement() && attribute.name() == HTMLNames::styleAttr) {
-            static_cast<StyledElement&>(targetElement).styleAttributeChanged(attribute.value(), StyledElement::DoNotReparseStyleAttribute);
-            continue;
-        }
-        targetElement.attributeChanged(attribute.name(), attribute.value());
-    }
-
-    if (targetElement.isStyledElement() && sourceData.m_inlineStyleDecl) {
-        m_inlineStyleDecl = sourceData.m_inlineStyleDecl->immutableCopyIfNeeded();
-        targetElement.setIsStyleAttributeValid(sourceElement.isStyleAttributeValid());
-    }
-}
-
-void ElementAttributeData::clearAttributes()
-{
-    ASSERT(isMutable());
-    clearClass();
-    mutableAttributeVector().clear();
 }
 
 }

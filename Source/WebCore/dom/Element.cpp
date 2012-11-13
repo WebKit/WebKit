@@ -4,7 +4,7 @@
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
  *           (C) 2007 Eric Seidel (eric@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -2509,11 +2509,44 @@ void Element::cloneAttributesFromElement(const Element& other)
     if (hasSyntheticAttrChildNodes())
         detachAllAttrNodesFromElement();
 
-    if (const ElementAttributeData* attributeData = other.updatedAttributeData())
-        mutableAttributeData()->cloneDataFrom(*attributeData, other, *this);
-    else if (m_attributeData) {
-        m_attributeData->clearAttributes();
+    setIsStyleAttributeValid(other.isStyleAttributeValid());
+
+    other.updateInvalidAttributes();
+    if (!other.m_attributeData) {
         m_attributeData.clear();
+        return;
+    }
+
+    const AtomicString& oldID = getIdAttribute();
+    const AtomicString& newID = other.getIdAttribute();
+
+    if (!oldID.isNull() || !newID.isNull())
+        updateId(oldID, newID);
+
+    const AtomicString& oldName = getNameAttribute();
+    const AtomicString& newName = other.getNameAttribute();
+
+    if (!oldName.isNull() || !newName.isNull())
+        updateName(oldName, newName);
+
+    // If 'other' has a mutable ElementAttributeData, convert it to an immutable one so we can share it between both elements.
+    // We can only do this if there is no CSSOM wrapper for other's inline style (the isMutable() check.)
+    if (other.m_attributeData->isMutable() && (!other.m_attributeData->inlineStyle() || !other.m_attributeData->inlineStyle()->isMutable()))
+        const_cast<Element&>(other).m_attributeData = other.m_attributeData->makeImmutableCopy();
+
+    if (!other.m_attributeData->isMutable())
+        m_attributeData = other.m_attributeData;
+    else
+        m_attributeData = other.m_attributeData->makeMutableCopy();
+
+    for (unsigned i = 0; i < m_attributeData->length(); ++i) {
+        const Attribute* attribute = const_cast<const ElementAttributeData*>(m_attributeData.get())->attributeItem(i);
+        // This optimization isn't very nicely factored, but a huge win for cloning elements with inline style.
+        if (isStyledElement() && attribute->name() == HTMLNames::styleAttr) {
+            static_cast<StyledElement*>(this)->styleAttributeChanged(attribute->value(), StyledElement::DoNotReparseStyleAttribute);
+            continue;
+        }
+        attributeChanged(attribute->name(), attribute->value());
     }
 }
 
