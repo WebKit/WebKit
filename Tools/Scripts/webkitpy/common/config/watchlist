@@ -17,7 +17,11 @@
         },
         "ChromiumPublicApi": {
             "filename": r"Source/WebKit/chromium/public/"
-                        r"|Source/Platform/chromium/public/",
+                        r"|Source/Platform/chromium/public/"
+                        r"|Tools/DumpRenderTree/chromium/TestRunner/public",
+        },
+        "ChromiumTestRunner": {
+            "filename": r"Tools/DumpRenderTree/chromium/TestRunner",
         },
         "AppleMacPublicApi": {
             "filename": r"Source/WebCore/bindings/objc/PublicDOMInterfaces.h"
@@ -295,6 +299,7 @@
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "cmarcelo@webkit.org"],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@chromium.org" ],
         "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent+wkapi@chromium.org" ],
+        "ChromiumTestRunner": [ "jochen@chromium.org" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],
         "EFL": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],
         "EFLWebKit2PlatformSpecific": [ "gyuyoung.kim@samsung.com", "rakuco@webkit.org" ],

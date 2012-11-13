@@ -1,3 +1,14 @@
+2012-11-12  Jochen Eisinger  <jochen@chromium.org>
+
+        Add the TestRunner public API to the ChromiumPublicApi watchlist, and introduce an entry for ChromiumTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=101957
+
+        Reviewed by Adam Barth.
+
+        Chromium now also depends on the TestRunner public API, and as such, similar rules as for the Chromium WebKit API should apply.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-11-13  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move tracking of damaged regions from WebViewHost to WebTestProxy
