@@ -44,6 +44,11 @@ struct CLSIDHash {
 struct CLSIDHashTraits : WTF::GenericHashTraits<CLSID> {
     static void constructDeletedValue(CLSID& slot) { slot = CLSID_NULL; }
     static bool isDeletedValue(const CLSID& value) { return value == CLSID_NULL; }
+    // FIXME: This is a work around for the regression introducing in r130643 when running DRT in debug mode on Windows.
+    // Expanding the size of the hash table causes an assertion failure ASSERT(!isDeletedBucket) when reinserting items into the new table,
+    // presumably due to the collision issues described in r132302.
+    // This work around avoids the issue entirely simply by making sure that the table will not have to resize in running DRT. 
+    static const int minimumTableSize = 64;
 };
 
 static COMPtr<IClassFactory> classFactory(const CLSID& clsid)

@@ -1,5 +1,18 @@
 2012-11-12  Roger Fong  <roger_fong@apple.com>
 
+        REGRESSION(r130643): Assertion failure when running DRT in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=101791
+
+        Reviewed by Darin Adler.
+
+        When running DRT in debug mode, we hit an assertion failure in initializing the WebKit instance.
+        This failure started occuring in r130643 and this work around follows the work around in r132302.
+
+        * WebKitCOMAPI.cpp:
+        (CLSIDHashTraits):
+
+2012-11-12  Roger Fong  <roger_fong@apple.com>
+
         Web Inspector: Fix docking behaviour on Windows.
         https://bugs.webkit.org/show_bug.cgi?id=101978
 
