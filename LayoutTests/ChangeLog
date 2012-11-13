@@ -2,6 +2,15 @@
 
         Unreviewed Qt gardening.
 
+        Amend my last commit, Ossy suggested we should not forget about
+        past failures because of needed rebaseline.
+
+        * platform/qt/TestExpectations:
+
+2012-11-13  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed Qt gardening.
+
         Cleanup TestExpectations to pass --lint-test-files.
         Removed some duplicated entries.
 
