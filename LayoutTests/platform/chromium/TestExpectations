@@ -3974,7 +3974,7 @@ webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-horizontal.html [ Failure ]
 
 # Require rebaselining after webkig.org/b/88871
-webkit.org/b/88871 media/video-empty-source.html [ Failure ]
+webkit.org/b/88871 [ Mac Win Linux ] media/video-empty-source.html [ Failure ]
 
 webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]
 

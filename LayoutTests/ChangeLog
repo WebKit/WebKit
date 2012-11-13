@@ -1,3 +1,9 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Fix media/video-empty-source.html lint error.
+
+        * platform/chromium/TestExpectations: Fixed.
+
 2012-11-13  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Clean up the inheritance tree under the MediaControls Class.
