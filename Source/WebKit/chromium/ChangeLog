@@ -1,3 +1,23 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134391.
+        http://trac.webkit.org/changeset/134391
+        https://bugs.webkit.org/show_bug.cgi?id=99660
+
+        Speculative rollout, trying to fix browser_tests failure.
+
+        * public/WebView.h:
+        (WebView):
+        * src/InspectorClientImpl.cpp:
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-11-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed: temporary disable failing test.

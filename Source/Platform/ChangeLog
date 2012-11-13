@@ -1,3 +1,14 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134391.
+        http://trac.webkit.org/changeset/134391
+        https://bugs.webkit.org/show_bug.cgi?id=99660
+
+        Speculative rollout, trying to fix browser_tests failure.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+
 2012-11-13  Eberhard Graether  <egraether@google.com>
 
         checkbox to toggle FPS counter in the inspector's settings

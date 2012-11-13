@@ -471,8 +471,6 @@ public:
 
     virtual bool isSelectionEditable() const = 0;
 
-    virtual void setShowFPSCounter(bool) = 0;
-
     // Benchmarking support -------------------------------------------------
 
     virtual WebViewBenchmarkSupport* benchmarkSupport() { return 0; }

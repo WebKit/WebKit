@@ -1,3 +1,25 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134391.
+        http://trac.webkit.org/changeset/134391
+        https://bugs.webkit.org/show_bug.cgi?id=99660
+
+        Speculative rollout, trying to fix browser_tests failure.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorClient.h:
+        * inspector/InspectorPageAgent.cpp:
+        (PageAgentState):
+        (WebCore::InspectorPageAgent::enable):
+        (WebCore::InspectorPageAgent::disable):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.GenericSettingsTab):
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone):
+
 2012-11-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134205.

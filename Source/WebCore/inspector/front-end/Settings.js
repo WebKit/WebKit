@@ -58,7 +58,6 @@ var Capabilities = {
     timelineCanMonitorMainThread: false,
     canOverrideGeolocation: false,
     canOverrideDeviceOrientation: false,
-    canShowFPSCounter: false
 }
 
 /**
@@ -97,7 +96,6 @@ WebInspector.Settings = function()
     this.showScriptFolders = this.createSetting("showScriptFolders", true);
     this.emulateTouchEvents = this.createSetting("emulateTouchEvents", false);
     this.showPaintRects = this.createSetting("showPaintRects", false);
-    this.showFPSCounter = this.createSetting("showFPSCounter", false);
     this.showShadowDOM = this.createSetting("showShadowDOM", false);
     this.zoomLevel = this.createSetting("zoomLevel", 0);
     this.savedURLs = this.createSetting("savedURLs", {});

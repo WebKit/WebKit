@@ -345,22 +345,6 @@
                 "hidden": true
             },
             {
-                "name": "canShowFPSCounter",
-                "description": "Tells if backend supports a FPS counter display",
-                "returns": [
-                    { "name": "show", "type": "boolean", "description": "True if the FPS count can be shown" }
-                ],
-                "hidden": true
-            },
-            {
-                "name": "setShowFPSCounter",
-                "description": "Requests that backend shows the FPS counter",
-                "parameters": [
-                    { "name": "show", "type": "boolean", "description": "True for showing the FPS counter" }
-                ],
-                "hidden": true
-            },
-            {
                 "name": "getScriptExecutionStatus",
                 "description": "Determines if scripts can be executed in the page.",
                 "returns": [
