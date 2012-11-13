@@ -1,3 +1,20 @@
+2012-11-13  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] DRT - platform/blackberry/editing/text-iterator/findString-markers.html failed
+        https://bugs.webkit.org/show_bug.cgi?id=102056
+
+        Reviewed by Rob Buis.
+
+        RIM PR 235836
+
+        TestRunner::findString() was changed to call Page::findString() instead
+        of WebPage::findNextString(). Page::findString() doesn't update
+        TextMatch markers.
+        Work-around by calling both Page::findString() and WebPage::findNextString().
+
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp:
+        (TestRunner::findString):
+
 2012-11-12  Jochen Eisinger  <jochen@chromium.org>
 
         Add the TestRunner public API to the ChromiumPublicApi watchlist, and introduce an entry for ChromiumTestRunner

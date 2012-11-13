@@ -402,7 +402,7 @@ unsigned TestRunner::numberOfActiveAnimations() const
     return animationController->numberOfActiveAnimations(mainFrame->document());
 }
 
-unsigned int TestRunner::workerThreadCount() const
+unsigned TestRunner::workerThreadCount() const
 {
 #if ENABLE_WORKERS
     return WebCore::WorkerThread::workerThreadCount();
@@ -538,17 +538,17 @@ void TestRunner::setSpatialNavigationEnabled(bool enable)
 void TestRunner::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
 {
     WebCore::SecurityPolicy::addOriginAccessWhitelistEntry(*WebCore::SecurityOrigin::createFromString(jsStringRefToWebCoreString(sourceOrigin)),
-                                                  jsStringRefToWebCoreString(destinationProtocol),
-                                                  jsStringRefToWebCoreString(destinationHost),
-                                                  allowDestinationSubdomains);
+        jsStringRefToWebCoreString(destinationProtocol),
+        jsStringRefToWebCoreString(destinationHost),
+        allowDestinationSubdomains);
 }
 
 void TestRunner::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
 {
     WebCore::SecurityPolicy::removeOriginAccessWhitelistEntry(*WebCore::SecurityOrigin::createFromString(jsStringRefToWebCoreString(sourceOrigin)),
-                                                     jsStringRefToWebCoreString(destinationProtocol),
-                                                     jsStringRefToWebCoreString(destinationHost),
-                                                     allowDestinationSubdomains);
+        jsStringRefToWebCoreString(destinationProtocol),
+        jsStringRefToWebCoreString(destinationHost),
+        allowDestinationSubdomains);
 }
 
 void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
@@ -751,6 +751,13 @@ bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRe
         else if (JSStringIsEqualToUTF8CString(optionName.get(), "StartInSelection"))
             options |= WebCore::StartInSelection;
     }
+
+    // FIXME: we don't need to call WebPage::findNextString(), this is a workaround
+    // so that test platform/blackberry/editing/text-iterator/findString-markers.html can pass.
+
+    // Our layout tests assume find will wrap and highlight all matches.
+    BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->findNextString(nameStr.utf8().data(),
+        !(options & WebCore::Backwards), !(options & WebCore::CaseInsensitive), true /* wrap */, true /* highlightAllMatches */);
 
     return mainFrame->page()->findString(nameStr, options);
 }
