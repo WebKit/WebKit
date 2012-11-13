@@ -1244,7 +1244,7 @@ END
     print F <<END
     }
     Create$parameters{namespace}ElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());
-    if (createWrapperFunction) {
+    if (createWrapperFunction)
 END
 ;
     if ($wrapperFactoryType eq "JS") {
@@ -1254,6 +1254,10 @@ END
 END
 ;
     } elsif ($wrapperFactoryType eq "V8") {
+        print F <<END
+    {
+END
+;
         if ($parameters{namespace} eq "HTML") {
             print F <<END
         if (createWrapperFunction == createHTMLElementWrapper)

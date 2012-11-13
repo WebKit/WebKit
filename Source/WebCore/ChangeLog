@@ -1,3 +1,12 @@
+2012-11-13  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Speculative build fix for Qt.
+
+        * dom/make_names.pl:
+        (printWrapperFactoryCppFile):
+
 2012-11-13  Sami Kyostila  <skyostil@chromium.org>
 
         Allow painting outside overflow clip in accelerated scrolling layers
