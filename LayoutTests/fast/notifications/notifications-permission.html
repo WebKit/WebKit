@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="../js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script type="text/javascript">
+description("Check for existence of Notification.permission");
+
+shouldBeDefined("window.Notification");
+shouldBeDefined("window.Notification.permission");
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
