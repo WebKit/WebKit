@@ -1452,11 +1452,6 @@ void CSSParser::clearProperties()
     m_hasFontFaceOnlyValues = false;
 }
 
-void CSSParser::setStyleSheet(StyleSheetContents* styleSheet)
-{
-    m_styleSheet = styleSheet;
-}
-
 KURL CSSParser::completeURL(const CSSParserContext& context, const String& url)
 {
     if (url.isNull())

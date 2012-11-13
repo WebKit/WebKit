@@ -1,3 +1,16 @@
+2012-11-13  Benjamin Poulain  <benjamin@webkit.org>
+
+        CSSParser::setStyleSheet() should be inline
+        https://bugs.webkit.org/show_bug.cgi?id=101829
+
+        Reviewed by Andreas Kling.
+
+        * css/CSSParser.cpp:
+        * css/CSSParser.h:
+        (WebCore::CSSParser::setStyleSheet):
+        CSSParser::setStyleSheet() just assign a pointer, it does not even
+        change a ref-count. The function should probably be in the header.
+
 2012-11-13  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Add Region info for RootLineBoxes and pack the pagination data

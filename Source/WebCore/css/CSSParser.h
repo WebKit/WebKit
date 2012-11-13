@@ -451,7 +451,7 @@ private:
     template <typename CharacterType>
     inline void setRuleHeaderEnd(const CharacterType*);
 
-    void setStyleSheet(StyleSheetContents*);
+    void setStyleSheet(StyleSheetContents* styleSheet) { m_styleSheet = styleSheet; }
 
     inline bool inStrictMode() const { return m_context.mode == CSSStrictMode || m_context.mode == SVGAttributeMode; }
     inline bool inQuirksMode() const { return m_context.mode == CSSQuirksMode; }
