@@ -1,3 +1,15 @@
+2012-11-13  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [cmake] Do not use GLOB to add WTR IDL files to buildsystem.
+        https://bugs.webkit.org/show_bug.cgi?id=101785
+
+        Reviewed by Caio Marcelo de Oliveira Filho.
+
+        Using *.idl makes impossible to add IDL files depending on compiler flags,
+        like a possible GamepadController.idl file found on Chromium.
+
+        * WebKitTestRunner/CMakeLists.txt:
+
 2012-11-13  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] TestRunner should depend on webkit_wtf_support instead of compiling the files itself
