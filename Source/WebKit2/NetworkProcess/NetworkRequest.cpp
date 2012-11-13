@@ -206,6 +206,9 @@ void didReceiveWillSendRequestHandled(uint64_t requestID, const ResourceRequest&
 
 void NetworkRequest::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
+    // We only expect to get the willSendRequest callback from ResourceHandle as the result of a redirect
+    ASSERT(!redirectResponse.isNull());
+
     uint64_t requestID = generateWillSendRequestID();
 
     if (!connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::WillSendRequest(requestID, m_identifier, request, redirectResponse), 0)) {
@@ -215,6 +218,8 @@ void NetworkRequest::willSendRequest(ResourceHandle*, ResourceRequest& request, 
     
     OwnPtr<ResourceRequest> newRequest = responseMap().waitForResponse(requestID);
     request = *newRequest;
+
+    NetworkProcess::shared().networkResourceLoadScheduler().receivedRedirect(m_identifier, request.url());
 }
 
 void NetworkRequest::didSendData(WebCore::ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/)

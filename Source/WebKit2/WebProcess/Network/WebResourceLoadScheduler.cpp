@@ -148,17 +148,10 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     m_activeResourceLoaders.remove(identifier);
 }
 
-void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader* resourceLoader, const KURL& redirectURL)
+void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader*, const KURL&)
 {
-    LOG(NetworkScheduling, "(WebProcess) WebResourceLoadScheduler::crossOriginRedirectReceived. From '%s' to '%s'", resourceLoader->url().string().utf8().data(), redirectURL.string().utf8().data());
-
-    ASSERT(resourceLoader);
-    ASSERT(resourceLoader->identifier());
-
-    if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::crossOriginRedirectReceived(resourceLoader->identifier(), redirectURL), Messages::NetworkConnectionToWebProcess::crossOriginRedirectReceived::Reply(), 0)) {
-        // FIXME (NetworkProcess): What should we do if this fails?
-        ASSERT_NOT_REACHED();
-    }
+    // We handle cross origin redirects entirely within the NetworkProcess.
+    // We override this call in the WebProcess to make it a no-op.
 }
 
 void WebResourceLoadScheduler::servePendingRequests(ResourceLoadPriority minimumPriority)

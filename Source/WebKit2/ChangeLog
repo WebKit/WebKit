@@ -1,3 +1,29 @@
+2012-11-12  Brady Eidson  <beidson@apple.com>
+
+        Get rid of the CrossOriginRedirectReceived message to the NetworkProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=102010
+
+        Reviewed by Alexey Proskuryakov.
+
+        This message was a stop-gap measure for when the NetworkProcess did scheduling but not loading.
+        Now that the NetworkProcess does loading it doesn't need to be told when redirect is received.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in: Get rid of the message to the NetworkProcess.
+
+        * NetworkProcess/NetworkRequest.cpp:
+        (WebKit::NetworkRequest::willSendRequest): After willSendRequest is dispatched to the WebProcess, directly call
+          "receivedRedirect" on the NetworkResourceLoadScheduler.
+
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::receivedRedirect): Renamed from crossOriginRedirectReceived, as the
+          function already checks to see if the redirect was actually cross-origin.
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::crossOriginRedirectReceived): A no-op so the WebProcess doesn't
+          do any host record accounting of its own.
+
 2012-11-12  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin should use PDFKit's context menu instead of the default WebKit one

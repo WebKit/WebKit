@@ -57,7 +57,7 @@ public:
     // Called within the NetworkProcess on a background thread when a resource load has finished.
     void scheduleRemoveLoadIdentifier(ResourceLoadIdentifier);
 
-    void crossOriginRedirectReceived(ResourceLoadIdentifier, const WebCore::KURL& redirectURL);
+    void receivedRedirect(ResourceLoadIdentifier, const WebCore::KURL& redirectURL);
     void servePendingRequests(WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriorityVeryLow);
     void suspendPendingRequests();
     void resumePendingRequests();

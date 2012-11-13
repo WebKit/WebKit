@@ -125,11 +125,6 @@ void NetworkConnectionToWebProcess::removeLoadIdentifier(ResourceLoadIdentifier 
     NetworkProcess::shared().networkResourceLoadScheduler().removeLoadIdentifier(identifier);
 }
 
-void NetworkConnectionToWebProcess::crossOriginRedirectReceived(ResourceLoadIdentifier identifier, const KURL& redirectURL)
-{
-    NetworkProcess::shared().networkResourceLoadScheduler().crossOriginRedirectReceived(identifier, redirectURL);
-}
-
 void NetworkConnectionToWebProcess::servePendingRequests(uint32_t resourceLoadPriority)
 {
     NetworkProcess::shared().networkResourceLoadScheduler().servePendingRequests(static_cast<ResourceLoadPriority>(resourceLoadPriority));

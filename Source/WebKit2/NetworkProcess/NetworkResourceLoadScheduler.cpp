@@ -107,10 +107,10 @@ void NetworkResourceLoadScheduler::removeLoadIdentifier(ResourceLoadIdentifier i
     scheduleServePendingRequests();
 }
 
-void NetworkResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoadIdentifier identifier, const WebCore::KURL& redirectURL)
+void NetworkResourceLoadScheduler::receivedRedirect(ResourceLoadIdentifier identifier, const WebCore::KURL& redirectURL)
 {
     ASSERT(isMainThread());
-    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::crossOriginRedirectReceived resource %llu redirected to '%s'", identifier, redirectURL.string().utf8().data());
+    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::receivedRedirect resource %llu redirected to '%s'", identifier, redirectURL.string().utf8().data());
 
     HostRecord* oldHost = m_identifiers.get(identifier);
     HostRecord* newHost = hostForURL(redirectURL, CreateIfNotFound);
