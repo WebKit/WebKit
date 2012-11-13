@@ -69,14 +69,14 @@ PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Diction
     ArrayValue iceServers;
     bool ok = configuration.get("iceServers", iceServers);
     if (!ok || iceServers.isUndefinedOrNull()) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return 0;
     }
 
     size_t numberOfServers;
     ok = iceServers.length(numberOfServers);
     if (!ok) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return 0;
     }
 
@@ -86,19 +86,19 @@ PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Diction
         Dictionary iceServer;
         ok = iceServers.get(i, iceServer);
         if (!ok) {
-            ec = NATIVE_TYPE_ERR;
+            ec = TYPE_MISMATCH_ERR;
             return 0;
         }
 
         String urlString, credential;
         ok = iceServer.get("url", urlString);
         if (!ok) {
-            ec = NATIVE_TYPE_ERR;
+            ec = TYPE_MISMATCH_ERR;
             return 0;
         }
         KURL url(KURL(), urlString);
         if (!url.isValid() || !(url.protocolIs("turn") || url.protocolIs("stun"))) {
-            ec = NATIVE_TYPE_ERR;
+            ec = TYPE_MISMATCH_ERR;
             return 0;
         }
 
@@ -170,7 +170,7 @@ void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> su
     }
 
     if (!successCallback) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 
@@ -190,7 +190,7 @@ void RTCPeerConnection::createAnswer(PassRefPtr<RTCSessionDescriptionCallback> s
     }
 
     if (!successCallback) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 
@@ -211,7 +211,7 @@ void RTCPeerConnection::setLocalDescription(PassRefPtr<RTCSessionDescription> pr
 
     RefPtr<RTCSessionDescription> sessionDescription = prpSessionDescription;
     if (!sessionDescription) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 
@@ -243,7 +243,7 @@ void RTCPeerConnection::setRemoteDescription(PassRefPtr<RTCSessionDescription> p
 
     RefPtr<RTCSessionDescription> sessionDescription = prpSessionDescription;
     if (!sessionDescription) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 
@@ -294,7 +294,7 @@ void RTCPeerConnection::addIceCandidate(RTCIceCandidate* iceCandidate, Exception
     }
 
     if (!iceCandidate) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 
@@ -356,7 +356,7 @@ void RTCPeerConnection::addStream(PassRefPtr<MediaStream> prpStream, const Dicti
 
     RefPtr<MediaStream> stream = prpStream;
     if (!stream) {
-        ec =  NATIVE_TYPE_ERR;
+        ec =  TYPE_MISMATCH_ERR;
         return;
     }
 
@@ -382,7 +382,7 @@ void RTCPeerConnection::removeStream(MediaStream* stream, ExceptionCode& ec)
     }
 
     if (!stream) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 

@@ -211,15 +211,6 @@ function testException(testString, exceptionString)
     }
 }
 
-function testError(testString, errorName)
-{
-    try {
-        eval(testString);
-    } catch (ex) {
-        logResult(ex.name == eval(errorName), "TEST(" + testString + ") THROWS("+errorName+")");
-    }
-}
-
 var testEnded = false;
 
 function endTest()

@@ -65,7 +65,6 @@
     // Introduced in DOM Level 3:
     const unsigned short      VALIDATION_ERR                 = 16;
     // Introduced in DOM Level 3:
-    // Deprecated in DOM Living Standard
     const unsigned short      TYPE_MISMATCH_ERR              = 17;
     // Introduced as an XHR extension:
     const unsigned short      SECURITY_ERR                   = 18;

@@ -80,7 +80,7 @@ void MediaStreamTrackList::add(PassRefPtr<MediaStreamTrack> prpTrack, ExceptionC
 
     RefPtr<MediaStreamTrack> track = prpTrack;
     if (!track) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 
@@ -105,7 +105,7 @@ void MediaStreamTrackList::remove(PassRefPtr<MediaStreamTrack> prpTrack, Excepti
 
     RefPtr<MediaStreamTrack> track = prpTrack;
     if (!track) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 

@@ -74,7 +74,7 @@ JSValue JSHTMLOptionsCollection::add(ExecState* exec)
         if (exec->hadException())
             return jsUndefined();
         if (!ok)
-            ec = NATIVE_TYPE_ERR;
+            ec = TYPE_MISMATCH_ERR;
         else
             imp->add(option, index, ec);
     }

@@ -3576,7 +3576,7 @@ sub GenerateFunctionCallString()
         } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($parameter->type) and not $implClassName =~ /List$/) {
             push @arguments, "$paramName->propertyReference()";
             $result .= $indent . "if (!$paramName)\n";
-            $result .= $indent . "    return setDOMException(WebCore::NATIVE_TYPE_ERR, args.GetIsolate());\n";
+            $result .= $indent . "    return setDOMException(WebCore::TYPE_MISMATCH_ERR, args.GetIsolate());\n";
         } elsif ($parameter->type eq "SVGMatrix" and $implClassName eq "SVGTransformList") {
             push @arguments, "$paramName.get()";
         } else {

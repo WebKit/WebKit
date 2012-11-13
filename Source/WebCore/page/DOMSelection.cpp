@@ -336,7 +336,7 @@ void DOMSelection::extend(Node* node, int offset, ExceptionCode& ec)
         return;
 
     if (!node) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 

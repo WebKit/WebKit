@@ -11,8 +11,8 @@ PASS transform.createSVGTransformFromMatrix(svgElement) threw exception TypeErro
 PASS transform.createSVGTransformFromMatrix('aString') threw exception TypeError: Type error.
 PASS transform.createSVGTransformFromMatrix(1) threw exception TypeError: Type error.
 PASS transform.createSVGTransformFromMatrix(true) threw exception TypeError: Type error.
-PASS transform.createSVGTransformFromMatrix(undefined) threw exception TypeError: Type error.
-PASS transform.createSVGTransformFromMatrix(null) threw exception TypeError: Type error.
+PASS transform.createSVGTransformFromMatrix(undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS transform.createSVGTransformFromMatrix(null) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS successfullyParsed is true
 
 TEST COMPLETE

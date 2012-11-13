@@ -1306,7 +1306,7 @@ static inline FloatRect normalizeRect(const FloatRect& rect)
 void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float y, ExceptionCode& ec)
 {
     if (!image) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
     LayoutSize s = size(image);
@@ -1317,7 +1317,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
     float x, float y, float width, float height, ExceptionCode& ec)
 {
     if (!image) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
     LayoutSize s = size(image);
@@ -1339,7 +1339,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, ExceptionCode& ec)
 {
     if (!image) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 
@@ -1416,7 +1416,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
     const FloatRect& dstRect, ExceptionCode& ec)
 {
     if (!sourceCanvas) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 
@@ -1481,7 +1481,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
 void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, float x, float y, ExceptionCode& ec)
 {
     if (!video) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
     IntSize s = size(video);
@@ -1492,7 +1492,7 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video,
                                          float x, float y, float width, float height, ExceptionCode& ec)
 {
     if (!video) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
     IntSize s = size(video);
@@ -1510,7 +1510,7 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
                                          ExceptionCode& ec)
 {
     if (!video) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 
@@ -1754,7 +1754,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageEleme
     const String& repetitionType, ExceptionCode& ec)
 {
     if (!image) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return 0;
     }
     bool repeatX, repeatY;
@@ -1778,7 +1778,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
     const String& repetitionType, ExceptionCode& ec)
 {
     if (!canvas) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return 0;
     }
     if (!canvas->width() || !canvas->height()) {
@@ -1955,7 +1955,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::Coordi
 void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy, ExceptionCode& ec)
 {
     if (!data) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
     putImageData(data, dx, dy, 0, 0, data->width(), data->height(), ec);
@@ -1964,7 +1964,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy,
 void CanvasRenderingContext2D::webkitPutImageDataHD(ImageData* data, float dx, float dy, ExceptionCode& ec)
 {
     if (!data) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
     webkitPutImageDataHD(data, dx, dy, 0, 0, data->width(), data->height(), ec);
@@ -1985,7 +1985,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, ImageBuffer::Coordi
                                             float dirtyWidth, float dirtyHeight, ExceptionCode& ec)
 {
     if (!data) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
     if (!isfinite(dx) || !isfinite(dy) || !isfinite(dirtyX) || !isfinite(dirtyY) || !isfinite(dirtyWidth) || !isfinite(dirtyHeight)) {

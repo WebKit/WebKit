@@ -1,3 +1,88 @@
+2012-11-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134345.
+        http://trac.webkit.org/changeset/134345
+        https://bugs.webkit.org/show_bug.cgi?id=102106
+
+        Incomplete support for NATIVE_TYPE_ERR in objc and other
+        bindings (Requested by jsbell on #webkit).
+
+        * Modules/mediastream/MediaConstraintsImpl.cpp:
+        (WebCore::MediaConstraintsImpl::create):
+        * Modules/mediastream/MediaStreamTrackList.cpp:
+        (WebCore::MediaStreamTrackList::add):
+        (WebCore::MediaStreamTrackList::remove):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::setBinaryType):
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        (WebCore::RTCIceCandidate::create):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::parseConfiguration):
+        (WebCore::RTCPeerConnection::createOffer):
+        (WebCore::RTCPeerConnection::createAnswer):
+        (WebCore::RTCPeerConnection::setLocalDescription):
+        (WebCore::RTCPeerConnection::setRemoteDescription):
+        (WebCore::RTCPeerConnection::addIceCandidate):
+        (WebCore::RTCPeerConnection::addStream):
+        (WebCore::RTCPeerConnection::removeStream):
+        * Modules/mediastream/RTCSessionDescription.cpp:
+        (WebCore::RTCSessionDescription::create):
+        (WebCore::RTCSessionDescription::setType):
+        * bindings/js/CallbackFunction.cpp:
+        (WebCore::checkFunctionOnlyCallback):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::create):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::add):
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::selectIndexSetter):
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::JSMutationObserverConstructor::constructJSMutationObserver):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item):
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        (WebCore::JSSQLTransaction::executeSql):
+        * bindings/js/JSSQLTransactionSyncCustom.cpp:
+        (WebCore::JSSQLTransactionSync::executeSql):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateFunctionCallString):
+        * bindings/v8/V8Callback.h:
+        (WebCore::createFunctionOnlyCallback):
+        * bindings/v8/V8Collection.cpp:
+        (WebCore::toOptionsCollectionSetter):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::V8Document::evaluateCallback):
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::V8HTMLOptionsCollection::addCallback):
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+        (WebCore::V8MutationObserver::constructorCallback):
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        (WebCore::V8SQLTransaction::executeSqlCallback):
+        * bindings/v8/custom/V8SQLTransactionSyncCustom.cpp:
+        (WebCore::V8SQLTransactionSync::executeSqlCallback):
+        * dom/DOMCoreException.idl:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::insertAdjacentElement):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::webkitAddKey):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::add):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        (WebCore::CanvasRenderingContext2D::putImageData):
+        (WebCore::CanvasRenderingContext2D::webkitPutImageDataHD):
+        * page/Crypto.cpp:
+        (WebCore::Crypto::getRandomValues):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::extend):
+        * svg/properties/SVGTransformListPropertyTearOff.h:
+        (WebCore::SVGTransformListPropertyTearOff::createSVGTransformFromMatrix):
+
 2012-11-13  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: HierarchyRequestError

@@ -13,9 +13,9 @@ function shouldNotThrow(expression)
 function test(expression, expressionShouldThrow, expectedException) {
     if (expressionShouldThrow) {
         if (expectedException)
-            shouldThrow(expression, '"' + expectedException + '"');
+            shouldThrow(expression, '(function() { return "' + expectedException + '"; })();');
         else
-            shouldThrow(expression, '"TypeError: Type error"');
+            shouldThrow(expression, '(function() { return "Error: TYPE_MISMATCH_ERR: DOM Exception 17"; })();');
     } else {
         shouldNotThrow(expression);
     }

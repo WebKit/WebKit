@@ -124,7 +124,7 @@ void RTCDataChannel::setBinaryType(const String& binaryType, ExceptionCode& ec)
     else if (binaryType == "arraybuffer")
         m_binaryType = BinaryTypeArrayBuffer;
     else
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
 }
 
 void RTCDataChannel::send(const String& data, ExceptionCode& ec)

@@ -46,7 +46,7 @@ PassRefPtr<RTCIceCandidate> RTCIceCandidate::create(const Dictionary& dictionary
     String candidate;
     bool ok = dictionary.get("candidate", candidate);
     if (!ok || !candidate.length()) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return 0;
     }
 

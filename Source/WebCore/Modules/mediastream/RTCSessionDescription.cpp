@@ -50,14 +50,14 @@ PassRefPtr<RTCSessionDescription> RTCSessionDescription::create(const Dictionary
     String type;
     bool ok = dictionary.get("type", type);
     if (!ok || !verifyType(type)) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return 0;
     }
 
     String sdp;
     ok = dictionary.get("sdp", sdp);
     if (!ok || sdp.isEmpty()) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return 0;
     }
 
@@ -89,7 +89,7 @@ void RTCSessionDescription::setType(const String& type, ExceptionCode& ec)
     if (verifyType(type))
         m_descriptor->setType(type);
     else
-        ec = NATIVE_TYPE_ERR;
+        ec = TYPE_MISMATCH_ERR;
 }
 
 const String& RTCSessionDescription::sdp() const

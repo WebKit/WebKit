@@ -46,9 +46,9 @@ v8::Handle<v8::Value> toOptionsCollectionSetter(uint32_t index, v8::Handle<v8::V
 
     ExceptionCode ec = 0;
 
-    // Check that the value is an HTMLOptionElement. If not, throw a TypeError.
+    // Check that the value is an HTMLOptionElement.  If not, throw a TYPE_MISMATCH_ERR DOMException.
     if (!V8HTMLOptionElement::HasInstance(value)) {
-        setDOMException(NATIVE_TYPE_ERR, isolate);
+        setDOMException(TYPE_MISMATCH_ERR, isolate);
         return value;
     }
 

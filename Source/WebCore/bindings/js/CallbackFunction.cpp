@@ -41,7 +41,7 @@ bool checkFunctionOnlyCallback(JSC::ExecState* exec, JSC::JSValue value, Callbac
 
     JSC::CallData callData;
     if (getCallData(value, callData) == JSC::CallTypeNone) {
-        setDOMException(exec, NATIVE_TYPE_ERR);
+        setDOMException(exec, TYPE_MISMATCH_ERR);
         return false;
     }
 

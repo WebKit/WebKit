@@ -49,7 +49,7 @@ EncodedJSValue JSC_HOST_CALL JSMutationObserverConstructor::constructJSMutationO
 
     JSObject* object = exec->argument(0).getObject();
     if (!object) {
-        setDOMException(exec, NATIVE_TYPE_ERR);
+        setDOMException(exec, TYPE_MISMATCH_ERR);
         return JSValue::encode(jsUndefined());
     }
 

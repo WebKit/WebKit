@@ -546,8 +546,8 @@ Node* HTMLElement::insertAdjacent(const String& where, Node* newChild, Exception
 Element* HTMLElement::insertAdjacentElement(const String& where, Element* newChild, ExceptionCode& ec)
 {
     if (!newChild) {
-        // IE throws an Error with the message "Invalid argument.".
-        ec = NATIVE_TYPE_ERR;
+        // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative.
+        ec = TYPE_MISMATCH_ERR;
         return 0;
     }
 

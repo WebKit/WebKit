@@ -53,7 +53,7 @@ void selectIndexSetter(HTMLSelectElement* select, JSC::ExecState* exec, unsigned
         ExceptionCode ec = 0;
         HTMLOptionElement* option = toHTMLOptionElement(value);
         if (!option)
-            ec = NATIVE_TYPE_ERR;
+            ec = TYPE_MISMATCH_ERR;
         else
             select->setOption(index, option, ec);
         setDOMException(exec, ec);

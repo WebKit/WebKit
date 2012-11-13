@@ -58,7 +58,7 @@ v8::Handle<v8::Value> V8MutationObserver::constructorCallback(const v8::Argument
 
     v8::Local<v8::Value> arg = args[0];
     if (!arg->IsObject())
-        return setDOMException(NATIVE_TYPE_ERR, args.GetIsolate());
+        return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
 
     ScriptExecutionContext* context = getScriptExecutionContext();
 
