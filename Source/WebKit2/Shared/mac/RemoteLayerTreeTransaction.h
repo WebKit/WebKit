@@ -58,19 +58,21 @@ public:
         Vector<uint64_t> children;
     };
 
-    RemoteLayerTreeTransaction();
+    explicit RemoteLayerTreeTransaction();
     ~RemoteLayerTreeTransaction();
 
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, RemoteLayerTreeTransaction&);
 
     void layerPropertiesChanged(const RemoteGraphicsLayer*, unsigned changedProperties);
+    void setRootLayerID(uint64_t rootLayerID);
 
 #ifndef NDEBUG
     void dump() const;
 #endif
 
 private:
+    uint64_t m_rootLayerID;
     HashMap<uint64_t, LayerProperties> m_changedLayerProperties;
 };
 

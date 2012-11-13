@@ -86,15 +86,28 @@ RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction()
 
 void RemoteLayerTreeTransaction::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
+    encoder << m_rootLayerID;
     encoder << m_changedLayerProperties;
 }
 
 bool RemoteLayerTreeTransaction::decode(CoreIPC::ArgumentDecoder* decoder, RemoteLayerTreeTransaction& result)
 {
+    if (!decoder->decode(result.m_rootLayerID))
+        return false;
+    if (!result.m_rootLayerID)
+        return false;
+
     if (!decoder->decode(result.m_changedLayerProperties))
         return false;
 
     return true;
+}
+
+void RemoteLayerTreeTransaction::setRootLayerID(uint64_t rootLayerID)
+{
+    ASSERT_ARG(rootLayerID, rootLayerID);
+
+    m_rootLayerID = rootLayerID;
 }
 
 void RemoteLayerTreeTransaction::layerPropertiesChanged(const RemoteGraphicsLayer* graphicsLayer, unsigned changedProperties)
@@ -176,7 +189,14 @@ void RemoteLayerTreeTransaction::dump() const
     StringBuilder builder;
 
     builder.append("(\n");
+
+    writeIndent(builder, 1);
+    builder.append("(root-layer ");
+    builder.appendNumber(m_rootLayerID);
+    builder.append(")\n");
+
     dumpChangedLayers(builder, m_changedLayerProperties);
+
     builder.append(")\n");
 
     fprintf(stderr, "%s", builder.toString().utf8().data());

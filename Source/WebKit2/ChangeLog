@@ -1,3 +1,27 @@
+2012-11-13  Anders Carlsson  <andersca@apple.com>
+
+        The layer tree transaction should include the root layer
+        https://bugs.webkit.org/show_bug.cgi?id=102109
+
+        Reviewed by Andreas Kling.
+
+        Keep the root layer ID in the layer tree transaction and encode/decode and dump it.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (RemoteLayerTreeTransaction):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::setRootLayerID):
+        (WebKit):
+        (WebKit::RemoteLayerTreeTransaction::dump):
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        (RemoteLayerTreeContext):
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::RemoteLayerTreeContext):
+        (WebKit::RemoteLayerTreeContext::setRootLayer):
+        (WebKit::RemoteLayerTreeContext::flushLayers):
+
 2012-11-13  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] TiledBackingStore: WebChromeClient::pageRect() should consider viewport size

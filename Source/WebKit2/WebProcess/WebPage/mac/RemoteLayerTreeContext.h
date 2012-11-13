@@ -55,6 +55,8 @@ private:
 
     WebPage* m_webPage;
     WebCore::Timer<RemoteLayerTreeContext> m_layerFlushTimer;
+
+    uint64_t m_rootLayerID;
     RemoteLayerTreeTransaction* m_currentTransaction;
 };
 
