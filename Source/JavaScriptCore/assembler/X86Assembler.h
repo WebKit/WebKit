@@ -1883,6 +1883,44 @@ public:
         return 5;
     }
     
+#if CPU(X86_64)
+    static void revertJumpTo_movq_i64r(void* instructionStart, int64_t imm, RegisterID dst)
+    {
+        const int rexBytes = 1;
+        const int opcodeBytes = 1;
+        ASSERT(rexBytes + opcodeBytes <= maxJumpReplacementSize());
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
+        ptr[0] = PRE_REX | (1 << 3) | (dst >> 3);
+        ptr[1] = OP_MOV_EAXIv | (dst & 7);
+        
+        union {
+            uint64_t asWord;
+            uint8_t asBytes[8];
+        } u;
+        u.asWord = imm;
+        for (unsigned i = rexBytes + opcodeBytes; i < static_cast<unsigned>(maxJumpReplacementSize()); ++i)
+            ptr[i] = u.asBytes[i - rexBytes - opcodeBytes];
+    }
+#endif
+    
+    static void revertJumpTo_cmpl_im_force32(void* instructionStart, int32_t imm, int offset, RegisterID dst)
+    {
+        ASSERT_UNUSED(offset, !offset);
+        const int opcodeBytes = 1;
+        const int modRMBytes = 1;
+        ASSERT(opcodeBytes + modRMBytes <= maxJumpReplacementSize());
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
+        ptr[0] = OP_GROUP1_EvIz;
+        ptr[1] = (X86InstructionFormatter::ModRmMemoryNoDisp << 6) | (GROUP1_OP_CMP << 3) | dst;
+        union {
+            uint32_t asWord;
+            uint8_t asBytes[4];
+        } u;
+        u.asWord = imm;
+        for (unsigned i = opcodeBytes + modRMBytes; i < static_cast<unsigned>(maxJumpReplacementSize()); ++i)
+            ptr[i] = u.asBytes[i - opcodeBytes - modRMBytes];
+    }
+    
     static void replaceWithLoad(void* instructionStart)
     {
         uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
@@ -1981,6 +2019,13 @@ private:
         static const int maxInstructionSize = 16;
 
     public:
+
+        enum ModRmMode {
+            ModRmMemoryNoDisp,
+            ModRmMemoryDisp8,
+            ModRmMemoryDisp32,
+            ModRmRegister,
+        };
 
         // Legacy prefix bytes:
         //
@@ -2351,13 +2396,6 @@ private:
         inline void emitRexIf(bool, int, int, int) {}
         inline void emitRexIfNeeded(int, int, int) {}
 #endif
-
-        enum ModRmMode {
-            ModRmMemoryNoDisp,
-            ModRmMemoryDisp8,
-            ModRmMemoryDisp32,
-            ModRmRegister,
-        };
 
         void putModRm(ModRmMode mode, int reg, RegisterID rm)
         {

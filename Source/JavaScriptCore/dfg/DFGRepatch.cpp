@@ -114,6 +114,23 @@ static void addStructureTransitionCheck(
         failureCases, scratchGPR);
 }
 
+static void replaceWithJump(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo, const MacroAssemblerCodePtr target)
+{
+    if (MacroAssembler::canJumpReplacePatchableBranchPtrWithPatch()) {
+        repatchBuffer.replaceWithJump(
+            RepatchBuffer::startOfPatchableBranchPtrWithPatch(
+                stubInfo.callReturnLocation.dataLabelPtrAtOffset(
+                    -(intptr_t)stubInfo.patch.dfg.deltaCheckImmToCall)),
+            CodeLocationLabel(target));
+        return;
+    }
+    
+    repatchBuffer.relink(
+        stubInfo.callReturnLocation.jumpAtOffset(
+            stubInfo.patch.dfg.deltaCallToStructCheck),
+        CodeLocationLabel(target));
+}
+
 static void emitRestoreScratch(MacroAssembler& stubJit, bool needToRestoreScratch, GPRReg scratchGPR, MacroAssembler::Jump& success, MacroAssembler::Jump& fail, MacroAssembler::JumpList failureCases)
 {
     if (needToRestoreScratch) {
@@ -284,7 +301,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
                  stubInfo.patch.dfg.deltaCallToDone).executableAddress()));
         
         RepatchBuffer repatchBuffer(codeBlock);
-        repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine->code().code()));
+        replaceWithJump(repatchBuffer, stubInfo, stubInfo.stubRoutine->code().code());
         repatchBuffer.relink(stubInfo.callReturnLocation, operationGetById);
         
         return true;
@@ -334,7 +351,7 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
     generateProtoChainAccessStub(exec, stubInfo, prototypeChain, count, offset, structure, stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToDone), stubInfo.callReturnLocation.labelAtOffset(stubInfo.patch.dfg.deltaCallToSlowCase), stubInfo.stubRoutine);
     
     RepatchBuffer repatchBuffer(codeBlock);
-    repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine->code().code()));
+    replaceWithJump(repatchBuffer, stubInfo, stubInfo.stubRoutine->code().code());
     repatchBuffer.relink(stubInfo.callReturnLocation, operationGetByIdProtoBuildList);
     
     stubInfo.initGetByIdChain(*globalData, codeBlock->ownerExecutable(), structure, prototypeChain, count, true);
@@ -518,9 +535,11 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
         
         polymorphicStructureList->list[listIndex].set(*globalData, codeBlock->ownerExecutable(), stubRoutine, structure, isDirect);
         
-        CodeLocationJump jumpLocation = stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck);
         RepatchBuffer repatchBuffer(codeBlock);
-        repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine->code().code()));
+        repatchBuffer.relink(
+            stubInfo.callReturnLocation.jumpAtOffset(
+                stubInfo.patch.dfg.deltaCallToStructCheck),
+            CodeLocationLabel(stubRoutine->code().code()));
         
         if (listIndex < (POLYMORPHIC_LIST_CACHE_SIZE - 1))
             return true;
@@ -584,9 +603,8 @@ static bool tryBuildGetByIDProtoList(ExecState* exec, JSValue baseValue, const I
         
         polymorphicStructureList->list[listIndex].set(*globalData, codeBlock->ownerExecutable(), stubRoutine, structure, true);
         
-        CodeLocationJump jumpLocation = stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck);
         RepatchBuffer repatchBuffer(codeBlock);
-        repatchBuffer.relink(jumpLocation, CodeLocationLabel(stubRoutine->code().code()));
+        replaceWithJump(repatchBuffer, stubInfo, stubRoutine->code().code());
         
         if (listIndex < (POLYMORPHIC_LIST_CACHE_SIZE - 1))
             return true;
@@ -976,7 +994,10 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
                 stubInfo.stubRoutine);
             
             RepatchBuffer repatchBuffer(codeBlock);
-            repatchBuffer.relink(stubInfo.callReturnLocation.jumpAtOffset(stubInfo.patch.dfg.deltaCallToStructCheck), CodeLocationLabel(stubInfo.stubRoutine->code().code()));
+            repatchBuffer.relink(
+                stubInfo.callReturnLocation.jumpAtOffset(
+                    stubInfo.patch.dfg.deltaCallToStructCheck),
+                CodeLocationLabel(stubInfo.stubRoutine->code().code()));
             repatchBuffer.relink(stubInfo.callReturnLocation, appropriateListBuildingPutByIdFunction(slot, putKind));
             
             stubInfo.initPutByIdTransition(*globalData, codeBlock->ownerExecutable(), oldStructure, structure, prototypeChain, putKind == Direct);
@@ -1118,7 +1139,16 @@ void dfgLinkFor(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* calleeCo
 void dfgResetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
 {
     repatchBuffer.relink(stubInfo.callReturnLocation, operationGetByIdOptimize);
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.dfg.deltaCheckImmToCall), reinterpret_cast<void*>(-1));
+    CodeLocationDataLabelPtr structureLabel = stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.dfg.deltaCheckImmToCall);
+    if (MacroAssembler::canJumpReplacePatchableBranchPtrWithPatch()) {
+        repatchBuffer.revertJumpReplacementToPatchableBranchPtrWithPatch(
+            RepatchBuffer::startOfPatchableBranchPtrWithPatch(structureLabel),
+            MacroAssembler::Address(
+                static_cast<MacroAssembler::RegisterID>(stubInfo.patch.dfg.baseGPR),
+                JSCell::structureOffset()),
+            reinterpret_cast<void*>(-1));
+    }
+    repatchBuffer.repatch(structureLabel, reinterpret_cast<void*>(-1));
 #if USE(JSVALUE64)
     repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelCompactAtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), 0);
 #else
@@ -1143,7 +1173,16 @@ void dfgResetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
         optimizedFunction = operationPutByIdDirectNonStrictOptimize;
     }
     repatchBuffer.relink(stubInfo.callReturnLocation, optimizedFunction);
-    repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.dfg.deltaCheckImmToCall), reinterpret_cast<void*>(-1));
+    CodeLocationDataLabelPtr structureLabel = stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.dfg.deltaCheckImmToCall);
+    if (MacroAssembler::canJumpReplacePatchableBranchPtrWithPatch()) {
+        repatchBuffer.revertJumpReplacementToPatchableBranchPtrWithPatch(
+            RepatchBuffer::startOfPatchableBranchPtrWithPatch(structureLabel),
+            MacroAssembler::Address(
+                static_cast<MacroAssembler::RegisterID>(stubInfo.patch.dfg.baseGPR),
+                JSCell::structureOffset()),
+            reinterpret_cast<void*>(-1));
+    }
+    repatchBuffer.repatch(structureLabel, reinterpret_cast<void*>(-1));
 #if USE(JSVALUE64)
     repatchBuffer.repatch(stubInfo.callReturnLocation.dataLabel32AtOffset(stubInfo.patch.dfg.deltaCallToLoadOrStore), 0);
 #else

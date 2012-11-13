@@ -585,6 +585,23 @@ public:
 
     static RegisterID scratchRegisterForBlinding() { return scratchRegister; }
 
+    static bool canJumpReplacePatchableBranchPtrWithPatch() { return true; }
+    
+    static CodeLocationLabel startOfPatchableBranchPtrWithPatch(CodeLocationDataLabelPtr label)
+    {
+        const int rexBytes = 1;
+        const int opcodeBytes = 1;
+        const int immediateBytes = 8;
+        const int totalBytes = rexBytes + opcodeBytes + immediateBytes;
+        ASSERT(totalBytes >= maxJumpReplacementSize());
+        return label.labelAtOffset(-totalBytes);
+    }
+    
+    static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel instructionStart, Address, void* initialValue)
+    {
+        X86Assembler::revertJumpTo_movq_i64r(instructionStart.executableAddress(), reinterpret_cast<intptr_t>(initialValue), scratchRegister);
+    }
+
 private:
     friend class LinkBuffer;
     friend class RepatchBuffer;

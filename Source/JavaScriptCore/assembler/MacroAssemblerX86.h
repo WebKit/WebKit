@@ -253,6 +253,25 @@ public:
         return FunctionPtr(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(call.dataLocation()) + offset));
     }
 
+    static bool canJumpReplacePatchableBranchPtrWithPatch() { return true; }
+    
+    static CodeLocationLabel startOfPatchableBranchPtrWithPatch(CodeLocationDataLabelPtr label)
+    {
+        const int opcodeBytes = 1;
+        const int modRMBytes = 1;
+        const int offsetBytes = 0;
+        const int immediateBytes = 4;
+        const int totalBytes = opcodeBytes + modRMBytes + offsetBytes + immediateBytes;
+        ASSERT(totalBytes >= maxJumpReplacementSize());
+        return label.labelAtOffset(-totalBytes);
+    }
+    
+    static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel instructionStart, Address address, void* initialValue)
+    {
+        ASSERT(!address.offset);
+        X86Assembler::revertJumpTo_cmpl_im_force32(instructionStart.executableAddress(), reinterpret_cast<intptr_t>(initialValue), 0, address.base);
+    }
+
 private:
     friend class LinkBuffer;
     friend class RepatchBuffer;
