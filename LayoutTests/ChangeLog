@@ -1,3 +1,10 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Marked fast/workers/worker-exception-during-navigation.html as a flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=102131
+
+        * platform/chromium/TestExpectations: Added a flaky crash expectation.
+
 2012-11-13  Chris Fleizach  <cfleizach@apple.com>
 
         WebKit exposes ARIA rowheader role as AXUnknown when not contained in table/grid
