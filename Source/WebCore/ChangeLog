@@ -1,3 +1,37 @@
+2012-11-12  Beth Dakin  <bdakin@apple.com>
+
+        Zoomed-in scrolling is very slow when deviceScaleFactor > 1
+        https://bugs.webkit.org/show_bug.cgi?id=101787
+
+        Reviewed by Simon Fraser.
+
+        This patch adds a new member to the GraphicsContextState that tracks 
+        whether or not fonts should be subpixel-quantized. We want to default 
+        to sibpixel-quantizing, but we'll turn it off if we're scrolling 
+        content that cannot be scrolled on the scrolling thread.
+
+        State has a new bool shouldSubpixelQuantizeFonts. It defaults to true 
+        since normally we do want to quantize.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setShouldSubpixelQuantizeFonts):
+        (WebCore::GraphicsContext::shouldSubpixelQuantizeFonts):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (GraphicsContextState):
+        (GraphicsContext):
+
+        wkSetCGFontRenderingMode now takes a BOOL parameter which indicates 
+        whether or not it should try to subpixel-quantize the fonts.
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
+        Disable subpixel-quantization for overflow areas, subframes, and 
+        content that is scrolling on the main thread.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+
 2012-11-12  Timothy Hatcher  <timothy@apple.com>
 
         Expose InspectorFrontendClientLocal::setAttachedWindow as public.

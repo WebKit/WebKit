@@ -140,7 +140,7 @@ void WKCallDrawingNotification(CGrafPtr port, Rect *bounds);
 BOOL WKGetGlyphTransformedAdvances(CGFontRef, NSFont*, CGAffineTransform *m, ATSGlyphRef *glyph, CGSize *advance);
 NSFont *WKGetFontInLanguageForRange(NSFont *font, NSString *string, NSRange range);
 NSFont *WKGetFontInLanguageForCharacter(NSFont *font, UniChar ch);
-void WKSetCGFontRenderingMode(CGContextRef cgContext, NSFont *font);
+void WKSetCGFontRenderingMode(CGContextRef cgContext, NSFont *font, BOOL shouldSubpixelQuantize);
 BOOL WKCGContextGetShouldSmoothFonts(CGContextRef cgContext);
 
 

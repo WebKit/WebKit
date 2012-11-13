@@ -1,3 +1,15 @@
+2012-11-12  Beth Dakin  <bdakin@apple.com>
+
+        Zoomed-in scrolling is very slow when deviceScaleFactor > 1
+        https://bugs.webkit.org/show_bug.cgi?id=101787
+
+        Reviewed by Simon Fraser.
+
+        wkSetCGFontRenderingMode now takes a BOOL parameter.
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2012-11-08  Anders Carlsson  <andersca@apple.com>
 
         Roll WebKitSystemInterface DEPS.
