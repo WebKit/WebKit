@@ -1,3 +1,39 @@
+2012-11-12  Timothy Hatcher  <timothy@apple.com>
+
+        Add a dock button to the top right corner of the Web Inspector window (similar to the full screen button).
+
+        https://bugs.webkit.org/show_bug.cgi?id=102023
+
+        Reviewed by Anders Carlsson.
+
+        * Resources/Dock.pdf: Added.
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::attach): Set the SetAttachedWindow message.
+        (WebKit::WebInspectorProxy::detach): Ditto.
+        (WebKit::WebInspectorProxy::attachAvailabilityChanged): Added. Call platformAttachAvailabilityChanged.
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in: Added AttachAvailabilityChanged message.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter attach:]): Added. Call WebInspectorProxy::attach.
+        (-[WKWebInspectorWindow _cursorForResizeDirection:]): Added.
+        (WebKit::WebInspectorProxy::createInspectorWindow): Create the dock button and add it.
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged): Added. Update hidden state of the dock button.
+        * WebKit2.xcodeproj/project.pbxproj: Added Dock.pdf.
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::setAttachedWindow): Added. Call through to the frontend client.
+        (WebKit::WebInspector::updateDockingAvailability): Send AttachAvailabilityChanged message.
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.messages.in: Added SetAttachedWindow message.
+
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged): Added stub.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged): Ditto.
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged): Ditto.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged): Ditto.
+
 2012-11-12  Anders Carlsson  <andersca@apple.com>
 
         Include child layers in the remote layer tree transaction

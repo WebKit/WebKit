@@ -98,9 +98,10 @@ public:
     
     void showResources();
 
+    void setAttachedWindow(bool);
+
 protected:
     virtual void setAttachedWindowHeight(unsigned) = 0;
-    void setAttachedWindow(bool);
     void restoreAttachedWindowHeight();
 
 private:

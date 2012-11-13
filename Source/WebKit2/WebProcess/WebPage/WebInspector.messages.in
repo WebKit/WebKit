@@ -25,6 +25,7 @@
 messages -> WebInspector {
     Show()
     Close()
+    SetAttachedWindow(bool attached)
     ShowConsole()
     ShowResources()
     ShowMainResourceForFrame(uint64_t frameID)

@@ -274,6 +274,7 @@
 		1CA8B945127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CA8B943127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp */; };
 		1CA8B946127C882A00576C2B /* WebInspectorProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */; };
 		1CA8B954127C891500576C2B /* WebInspectorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C8E2DAD1278C5B200BC7BD0 /* WebInspectorMac.mm */; };
+		1CBC945E16515ED200D68AAE /* Dock.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 1CBC945D16515ED200D68AAE /* Dock.pdf */; };
 		293EBEAB1627D9C9005F89F1 /* WKDOMText.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EBEA91627D9C9005F89F1 /* WKDOMText.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		293EBEAC1627D9C9005F89F1 /* WKDOMText.mm in Sources */ = {isa = PBXBuildFile; fileRef = 293EBEAA1627D9C9005F89F1 /* WKDOMText.mm */; };
 		29501724162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 29501723162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1470,6 +1471,7 @@
 		1CA8B935127C774E00576C2B /* WebInspectorProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorProxyMac.mm; sourceTree = "<group>"; };
 		1CA8B943127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorProxyMessages.h; sourceTree = "<group>"; };
+		1CBC945D16515ED200D68AAE /* Dock.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Dock.pdf; path = Resources/Dock.pdf; sourceTree = "<group>"; };
 		293EBEA91627D9C9005F89F1 /* WKDOMText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMText.h; sourceTree = "<group>"; };
 		293EBEAA1627D9C9005F89F1 /* WKDOMText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDOMText.mm; sourceTree = "<group>"; };
 		29501723162A4504004A9D71 /* WKWebProcessPlugInBrowserContextControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInBrowserContextControllerPrivate.h; sourceTree = "<group>"; };
@@ -2453,6 +2455,7 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1CBC945D16515ED200D68AAE /* Dock.pdf */,
 				510CC84A1613C8AB00D03ED3 /* NetworkProcess */,
 				BC122FA51327085D00F7EAC1 /* PluginProcess */,
 				E1EDFD9716287AEC0039ECDA /* SharedWorkerProcess */,
@@ -5135,6 +5138,7 @@
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
 				BC9FA522160D4A0C0054DF9A /* com.apple.WebKit.PluginProcess.sb in Resources */,
 				BC9FA523160D4A0F0054DF9A /* com.apple.WebProcess.sb in Resources */,
+				1CBC945E16515ED200D68AAE /* Dock.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

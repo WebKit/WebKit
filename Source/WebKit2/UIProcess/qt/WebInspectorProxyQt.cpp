@@ -81,6 +81,11 @@ void WebInspectorProxy::platformDetach()
     notImplemented();
 }
 
+void WebInspectorProxy::platformAttachAvailabilityChanged(bool)
+{
+    notImplemented();
+}
+
 void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned)
 {
     notImplemented();

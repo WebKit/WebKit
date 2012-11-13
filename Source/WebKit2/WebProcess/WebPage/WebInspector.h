@@ -59,6 +59,8 @@ public:
     void show();
     void close();
 
+    void setAttachedWindow(bool);
+
     void evaluateScriptForTest(long callID, const String& script);
 
     void setJavaScriptProfilingEnabled(bool);

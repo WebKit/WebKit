@@ -247,6 +247,11 @@ bool WebInspectorProxy::platformIsFront()
     return false;
 }
 
+void WebInspectorProxy::platformAttachAvailabilityChanged(bool)
+{
+    notImplemented();
+}
+
 void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
 {
     // FIXME: this should be made localizable once WebKit2 supports it. <rdar://problem/8728860>

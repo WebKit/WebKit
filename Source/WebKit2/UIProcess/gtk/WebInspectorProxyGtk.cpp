@@ -34,6 +34,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/GtkUtilities.h>
+#include <WebCore/NotImplemented.h>
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -219,6 +220,11 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
 
     m_client.didChangeAttachedHeight(this, height);
     webkitWebViewBaseSetInspectorViewHeight(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), height);
+}
+
+void WebInspectorProxy::platformAttachAvailabilityChanged(bool)
+{
+    notImplemented();
 }
 
 } // namespace WebKit
