@@ -1,3 +1,11 @@
+2012-11-12  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed, gardening.
+
+        Rebase after r134287.
+
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/repaint/invalidations-on-composited-layers-expected.txt:
+
 2012-11-12  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Convert some non-simple tests from setVersion to upgradeneeded
