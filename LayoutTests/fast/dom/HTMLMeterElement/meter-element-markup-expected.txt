@@ -7,10 +7,13 @@ Both meter elements should have a nested shadow box with a width specified:
 |   value="70"
 |   <shadow:root>
 |     <div>
+|       pseudo="-webkit-meter-inner-element"
 |       shadow:pseudoId="-webkit-meter-inner-element"
 |       <div>
+|         pseudo="-webkit-meter-bar"
 |         shadow:pseudoId="-webkit-meter-bar"
 |         <div>
+|           pseudo="-webkit-meter-optimum-value"
 |           style="width: 70%;"
 |           shadow:pseudoId="-webkit-meter-optimum-value"
 | "
@@ -24,10 +27,13 @@ Both meter elements should have a nested shadow box with a width specified:
 |   value="10"
 |   <shadow:root>
 |     <div>
+|       pseudo="-webkit-meter-inner-element"
 |       shadow:pseudoId="-webkit-meter-inner-element"
 |       <div>
+|         pseudo="-webkit-meter-bar"
 |         shadow:pseudoId="-webkit-meter-bar"
 |         <div>
+|           pseudo="-webkit-meter-suboptimum-value"
 |           style="width: 100%;"
 |           shadow:pseudoId="-webkit-meter-suboptimum-value"
 | "
@@ -41,10 +47,13 @@ Both meter elements should have a nested shadow box with a width specified:
 |   value="10"
 |   <shadow:root>
 |     <div>
+|       pseudo="-webkit-meter-inner-element"
 |       shadow:pseudoId="-webkit-meter-inner-element"
 |       <div>
+|         pseudo="-webkit-meter-bar"
 |         shadow:pseudoId="-webkit-meter-bar"
 |         <div>
+|           pseudo="-webkit-meter-even-less-good-value"
 |           style="width: 100%;"
 |           shadow:pseudoId="-webkit-meter-even-less-good-value"
 | "

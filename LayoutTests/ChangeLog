@@ -1,3 +1,12 @@
+2012-11-13  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Refactoring] Remove shadowPseudoId() and use setPseudo() in <meter> ElementShadow.
+        https://bugs.webkit.org/show_bug.cgi?id=101906
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/HTMLMeterElement/meter-element-markup-expected.txt:
+
 2012-11-13  Stephen Chenney  <schenney@chromium.org>
 
         Expectations update for fast/regions/webkit-flow-inlines-dynamic.html

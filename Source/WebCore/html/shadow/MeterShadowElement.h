@@ -57,7 +57,6 @@ public:
 private:
     virtual bool rendererIsNeeded(const NodeRenderingContext&) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
-    virtual const AtomicString& shadowPseudoId() const OVERRIDE;
 };
 
 inline PassRefPtr<MeterInnerElement> MeterInnerElement::create(Document* document)
@@ -70,10 +69,11 @@ public:
     MeterBarElement(Document* document) 
         : MeterShadowElement(document)
     {
+        DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-meter-bar", AtomicString::ConstructFromLiteral));
+        setPseudo(pseudoId);
     }
 
     static PassRefPtr<MeterBarElement> create(Document*);
-    virtual const AtomicString& shadowPseudoId() const;
 };
 
 inline PassRefPtr<MeterBarElement> MeterBarElement::create(Document* document)
@@ -86,11 +86,15 @@ public:
     MeterValueElement(Document* document) 
         : MeterShadowElement(document)
     {
+        updatePseudo();
     }
 
-    virtual const AtomicString& shadowPseudoId() const;
     static PassRefPtr<MeterValueElement> create(Document*);
     void setWidthPercentage(double);
+    void updatePseudo() { setPseudo(valuePseudoId()); }
+
+private:
+    const AtomicString& valuePseudoId() const;
 };
 
 inline PassRefPtr<MeterValueElement> MeterValueElement::create(Document* document)

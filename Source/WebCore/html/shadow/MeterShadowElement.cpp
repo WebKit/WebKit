@@ -63,6 +63,8 @@ bool MeterShadowElement::rendererIsNeeded(const NodeRenderingContext& context)
 MeterInnerElement::MeterInnerElement(Document* document)
     : MeterShadowElement(document)
 {
+    DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-meter-inner-element", AtomicString::ConstructFromLiteral));
+    setPseudo(pseudoId);
 }
 
 bool MeterInnerElement::rendererIsNeeded(const NodeRenderingContext& context)
@@ -79,38 +81,26 @@ RenderObject* MeterInnerElement::createRenderer(RenderArena* arena, RenderStyle*
     return new (arena) RenderMeter(this);
 }
 
-const AtomicString& MeterInnerElement::shadowPseudoId() const
+const AtomicString& MeterValueElement::valuePseudoId() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-meter-inner-element", AtomicString::ConstructFromLiteral));
-    return pseudId;
-}
-
-const AtomicString& MeterBarElement::shadowPseudoId() const
-{
-    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-meter-bar", AtomicString::ConstructFromLiteral));
-    return pseudId;
-}
-
-const AtomicString& MeterValueElement::shadowPseudoId() const
-{
-    DEFINE_STATIC_LOCAL(AtomicString, optimumPseudId, ("-webkit-meter-optimum-value", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, suboptimumPseudId, ("-webkit-meter-suboptimum-value", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, evenLessGoodPseudId, ("-webkit-meter-even-less-good-value", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, optimumPseudoId, ("-webkit-meter-optimum-value", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, suboptimumPseudoId, ("-webkit-meter-suboptimum-value", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, evenLessGoodPseudoId, ("-webkit-meter-even-less-good-value", AtomicString::ConstructFromLiteral));
 
     HTMLMeterElement* meter = meterElement();
     if (!meter)
-        return optimumPseudId;
+        return optimumPseudoId;
 
     switch (meter->gaugeRegion()) {
     case HTMLMeterElement::GaugeRegionOptimum:
-        return optimumPseudId;
+        return optimumPseudoId;
     case HTMLMeterElement::GaugeRegionSuboptimal:
-        return suboptimumPseudId;
+        return suboptimumPseudoId;
     case HTMLMeterElement::GaugeRegionEvenLessGood:
-        return evenLessGoodPseudId;
+        return evenLessGoodPseudoId;
     default:
         ASSERT_NOT_REACHED();
-        return optimumPseudId;
+        return optimumPseudoId;
     }
 }
 
@@ -118,7 +108,6 @@ void MeterValueElement::setWidthPercentage(double width)
 {
     setInlineStyleProperty(CSSPropertyWidth, width, CSSPrimitiveValue::CSS_PERCENTAGE);
 }
-
 
 }
 

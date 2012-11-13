@@ -1,5 +1,32 @@
 2012-11-13  Shinya Kawanaka  <shinyak@chromium.org>
 
+        [Refactoring] Remove shadowPseudoId() and use setPseudo() in <meter> ElementShadow.
+        https://bugs.webkit.org/show_bug.cgi?id=101906
+
+        Reviewed by Dimitri Glazkov.
+
+        We're migrating shadowPseudoId() to pseudo(). We remove shadowPseudoId() from HTMLKeygenElement and use
+        setPseudo()/pseudo() instead.
+
+        No new tests, covered by existing tests.
+
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::didElementStateChange): Since shadowPseudoId() was returning pseudo id without setting
+        it anywhere, we have to set it into pseudo attribute here.
+        (WebCore::HTMLMeterElement::createShadowSubtree): ditto.
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterInnerElement::MeterInnerElement):
+        (WebCore::MeterValueElement::valuePseudoId):
+        * html/shadow/MeterShadowElement.h:
+        (MeterInnerElement):
+        (WebCore::MeterBarElement::MeterBarElement):
+        (MeterBarElement):
+        (WebCore::MeterValueElement::MeterValueElement):
+        (WebCore::MeterValueElement::updatePseudo):
+        (MeterValueElement):
+
+2012-11-13  Shinya Kawanaka  <shinyak@chromium.org>
+
         Changing pseudoClass (:indeterminate) should cause distribution
         https://bugs.webkit.org/show_bug.cgi?id=101903
 
