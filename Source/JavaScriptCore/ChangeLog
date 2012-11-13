@@ -1,3 +1,27 @@
+2012-11-13  Filip Pizlo  <fpizlo@apple.com>
+
+        JSFunction and its descendants should be destructible
+        https://bugs.webkit.org/show_bug.cgi?id=102062
+
+        Reviewed by Mark Hahnenberg.
+
+        This will make it easy to place an InlineWatchpointSet inside JSFunction. In the
+        future, we could make JSFunction non-destructible again by making a version of
+        WatchpointSet that is entirely GC'd, but this seems like overkill for now.
+        
+        This is performance-neutral.
+
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::destroy):
+        (JSC):
+        * runtime/JSBoundFunction.h:
+        (JSBoundFunction):
+        * runtime/JSFunction.cpp:
+        (JSC):
+        (JSC::JSFunction::destroy):
+        * runtime/JSFunction.h:
+        (JSFunction):
+
 2012-11-13  Cosmin Truta  <ctruta@rim.com>
 
         Uninitialized fields in class JSLock

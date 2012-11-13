@@ -48,8 +48,6 @@ EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState* exec)
     return throwVMError(exec, createNotAConstructorError(exec, exec->callee()));
 }
 
-ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSFunction);
-
 const ClassInfo JSFunction::s_info = { "Function", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSFunction) };
 
 bool JSFunction::isHostFunctionNonInline() const
@@ -74,6 +72,11 @@ JSFunction* JSFunction::create(ExecState* exec, JSGlobalObject* globalObject, in
     // Can't do this during initialization because getHostFunction might do a GC allocation.
     function->finishCreation(exec, executable, length, name);
     return function;
+}
+
+void JSFunction::destroy(JSCell* cell)
+{
+    static_cast<JSFunction*>(cell)->JSFunction::~JSFunction();
 }
 
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)

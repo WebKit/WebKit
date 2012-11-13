@@ -25,6 +25,7 @@
 #define JSFunction_h
 
 #include "InternalFunction.h"
+#include "JSDestructibleObject.h"
 #include "JSScope.h"
 
 namespace JSC {
@@ -46,14 +47,14 @@ namespace JSC {
 
     JS_EXPORT_PRIVATE String getCalculatedDisplayName(CallFrame*, JSObject*);
     
-    class JSFunction : public JSNonFinalObject {
+    class JSFunction : public JSDestructibleObject {
         friend class JIT;
         friend class DFG::SpeculativeJIT;
         friend class DFG::JITCompiler;
         friend class JSGlobalData;
 
     public:
-        typedef JSNonFinalObject Base;
+        typedef JSDestructibleObject Base;
 
         JS_EXPORT_PRIVATE static JSFunction* create(ExecState*, JSGlobalObject*, int length, const String& name, NativeFunction, Intrinsic = NoIntrinsic, NativeFunction nativeConstructor = callHostFunctionAsConstructor);
 
@@ -65,6 +66,8 @@ namespace JSC {
             function->finishCreation(globalData);
             return function;
         }
+        
+        static void destroy(JSCell*);
         
         JS_EXPORT_PRIVATE String name(ExecState*);
         JS_EXPORT_PRIVATE String displayName(ExecState*);

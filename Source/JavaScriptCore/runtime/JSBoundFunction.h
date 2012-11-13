@@ -38,6 +38,8 @@ public:
     typedef JSFunction Base;
 
     static JSBoundFunction* create(ExecState*, JSGlobalObject*, JSObject* targetFunction, JSValue boundThis, JSValue boundArgs, int, const String&);
+    
+    static void destroy(JSCell*);
 
     static bool customHasInstance(JSObject*, ExecState*, JSValue);
 

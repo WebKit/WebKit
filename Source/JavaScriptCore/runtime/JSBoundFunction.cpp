@@ -88,6 +88,11 @@ JSBoundFunction* JSBoundFunction::create(ExecState* exec, JSGlobalObject* global
     return function;
 }
 
+void JSBoundFunction::destroy(JSCell* cell)
+{
+    static_cast<JSBoundFunction*>(cell)->JSBoundFunction::~JSBoundFunction();
+}
+
 bool JSBoundFunction::customHasInstance(JSObject* object, ExecState* exec, JSValue value)
 {
     return jsCast<JSBoundFunction*>(object)->m_targetFunction->hasInstance(exec, value);
