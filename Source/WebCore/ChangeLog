@@ -1,3 +1,54 @@
+2012-11-12  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing id, className, or attribute should invalidate distribution
+        https://bugs.webkit.org/show_bug.cgi?id=100738
+
+        Reviewed by Dimitri Glazkov.
+
+        When id, className, or attribute is changed, we might have to invalidate distribution.
+        However, we don't want to do useless invalidation. So we consult with the RuleFeatureSet of ElementShadow,
+        and invalidate distribution only if necessary.
+
+        When className is changed, we can share a lot of code between invalidating distribution and invalidating style.
+        So we made checkNeedsStyleInvalidationForClassChange a template method, and share it.
+
+        Also we've measured how this patch makes changing attribute slow. By converting checkNeedsStyleInvalidationForClassChange
+        to template, actually this improves the performance of changing attribute code. I've measured each code 3 times.
+
+        DOM/ModifyAttribute.html
+        Before this patch:
+                median  stdev  min      max    [ms]
+          1st   115.62   0.67  114.75   117.00
+          2nd   115.08   1.13  113.25   117.58
+          3rd   114.75   1.16  113.42   117.83
+
+        After this patch:
+                median  stdev  min      max    [ms]
+          1st   102.55   0.95  101.25   104.50
+          2nd   103.10   0.86  102.20   100.95
+          3rd   103.30   1.05  102.10   106.65
+
+        Tests: fast/dom/shadow/distribution-attribute-modified.html
+               fast/dom/shadow/distribution-className-modified.html
+               fast/dom/shadow/distribution-id-modified.html
+               fast/dom/shadow/reprojection-attribute-modified.html
+               fast/dom/shadow/reprojection-className-modified.html
+               fast/dom/shadow/reprojection-id-modified.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore::HasSelectorForClassStyleFunctor::HasSelectorForClassStyleFunctor):
+        (HasSelectorForClassStyleFunctor):
+        (WebCore::HasSelectorForClassStyleFunctor::operator()): Returns true if StyleResolver::hasSelectorForClass returns true.
+        (WebCore):
+        (WebCore::HasSelectorForClassDistributionFunctor::HasSelectorForClassDistributionFunctor):
+        (HasSelectorForClassDistributionFunctor):
+        (WebCore::HasSelectorForClassDistributionFunctor::operator()): Returns true if ElementShadow::hasSelectorForClass returns true.
+        (WebCore::checkFunctorForClassChange):
+        (WebCore::checkNeedsStyleInvalidationForClassChange): Extacted the implementation to checkFunctorForClassChange.
+        (WebCore::checkNeedsDistributionInvalidationForClassChange):
+        (WebCore::Element::classAttributeChanged):
+
 2012-11-12  Joe Mason  <jmason@rim.com>
 
         [BlackBerry] NetworkJob should not check if data is received with HEAD
