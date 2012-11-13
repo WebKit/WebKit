@@ -1,3 +1,14 @@
+2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] More unreviewed gardening.
+
+        Update some pixel expectations and skip one test.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/media/view-mode-media-feature-expected.png: Added property svn:mime-type.
+        * platform/efl/fast/overflow/overflow_hidden-expected.png: Modified property svn:mime-type.
+        * platform/efl/svg/text/text-rescale-expected.png: Added.
+
 2012-11-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134345.

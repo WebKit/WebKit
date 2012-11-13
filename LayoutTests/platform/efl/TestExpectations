@@ -1682,3 +1682,5 @@ webkit.org/b/102091 media/video-colorspace-yuv422.html [ Skip ]
 webkit.org/b/102097 fast/hidpi [ Skip ]
 webkit.org/b/102097 svg/as-image/animated-svg-repaints-completely-in-hidpi.html [ Skip ]
 webkit.org/b/102097 svg/as-image/image-respects-deviceScaleFactor.html [ Skip ]
+
+webkit.org/b/102100 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure ]
