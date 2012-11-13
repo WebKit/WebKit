@@ -36,22 +36,27 @@
 namespace WebCore {
 
 SelectRuleFeatureSet::SelectRuleFeatureSet()
+    : m_usesIndeterminate(false)
 {
 }
 
 void SelectRuleFeatureSet::add(const SelectRuleFeatureSet& featureSet)
 {
     m_cssRuleFeatureSet.add(featureSet.m_cssRuleFeatureSet);
+    m_usesIndeterminate |= featureSet.m_usesIndeterminate;
 }
 
 void SelectRuleFeatureSet::clear()
 {
     m_cssRuleFeatureSet.clear();
+    m_usesIndeterminate = false;
 }
 
 void SelectRuleFeatureSet::collectFeaturesFromSelector(const CSSSelector* selector)
 {
     m_cssRuleFeatureSet.collectFeaturesFromSelector(selector);
+    if (selector->pseudoType() == CSSSelector::PseudoIndeterminate)
+        m_usesIndeterminate = true;
 }
 
 }

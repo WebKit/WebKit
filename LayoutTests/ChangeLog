@@ -1,3 +1,15 @@
+2012-11-13  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing pseudoClass (:indeterminate) should cause distribution
+        https://bugs.webkit.org/show_bug.cgi?id=101903
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/pseudoclass-update-indeterminate-input-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-indeterminate-input.html: Added.
+        * fast/dom/shadow/pseudoclass-update-indeterminate-progress-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-indeterminate-progress.html: Added.
+
 2012-11-13  Stephen Chenney  <schenney@chromium.org>
 
         Reverting expectations update because it breaks lint

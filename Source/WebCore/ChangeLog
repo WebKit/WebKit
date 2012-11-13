@@ -1,3 +1,40 @@
+2012-11-13  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing pseudoClass (:indeterminate) should cause distribution
+        https://bugs.webkit.org/show_bug.cgi?id=101903
+
+        Reviewed by Dimitri Glazkov.
+
+        <progress> and <input type="checkbox"> have 'indeterminate' state. When their state is changed, we have to
+        invalidate distribution if necessary. To check it, we collect a feature that :invalidate is used in select attributes.
+
+        For <input>, we also have to see 'type' is changed. According to the spec, :indeterminate should match only
+        progress element or <input type="checkbox">. So changing 'type' might also change :indeterminate state.
+
+        Tests: fast/dom/shadow/pseudoclass-update-indeterminate-input.html
+               fast/dom/shadow/pseudoclass-update-indeterminate-progress.html
+
+        * dom/ElementShadow.cpp:
+        (WebCore::invalidateParentDistributionIfNecessary): Since we will add a lot of pseudoClass check later, we would like to
+        have this kind of helper method. We will add various pseudoClass check (see Bug 101697), we reuse CSSSelector::PseudoType
+        here.
+        (WebCore):
+        * dom/ElementShadow.h:
+        (WebCore):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType): Invalidate parent distribution anyway, since it changes various internal states.
+        (WebCore::HTMLInputElement::setIndeterminate): Invalidate parent distribution if necessary.
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::didElementStateChange):
+        * html/shadow/SelectRuleFeatureSet.cpp:
+        (WebCore::SelectRuleFeatureSet::SelectRuleFeatureSet): Adds m_usesIndeterminate feature.
+        (WebCore::SelectRuleFeatureSet::add):
+        (WebCore::SelectRuleFeatureSet::clear):
+        (WebCore::SelectRuleFeatureSet::collectFeaturesFromSelector):
+        * html/shadow/SelectRuleFeatureSet.h:
+        (WebCore::SelectRuleFeatureSet::hasSelectorForIndeterminate):
+        (SelectRuleFeatureSet):
+
 2012-11-13  Andreas Kling  <kling@webkit.org>
 
         Exploit ElementAttributeData sharing in Node.cloneNode.

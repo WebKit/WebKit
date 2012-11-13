@@ -47,8 +47,11 @@ public:
     bool hasSelectorForClass(const AtomicString&) const;
     bool hasSelectorForAttribute(const AtomicString&) const;
 
+    bool hasSelectorForIndeterminate() const { return m_usesIndeterminate; }
+
 private:
     RuleFeatureSet m_cssRuleFeatureSet;
+    bool m_usesIndeterminate;
 };
 
 inline bool SelectRuleFeatureSet::hasSelectorForId(const AtomicString& idValue) const

@@ -265,4 +265,21 @@ void ElementShadow::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_distributor);
 }
 
+void invalidateParentDistributionIfNecessary(Element* element, CSSSelector::PseudoType updatedPseudoType)
+{
+    ElementShadow* elementShadow = shadowOfParentForDistribution(element);
+    if (!elementShadow)
+        return;
+
+    elementShadow->ensureSelectFeatureSetCollected();
+    switch (updatedPseudoType) {
+    case CSSSelector::PseudoIndeterminate:
+        if (elementShadow->selectRuleFeatureSet().hasSelectorForIndeterminate())
+            elementShadow->invalidateDistribution();
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
 } // namespace
