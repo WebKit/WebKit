@@ -129,6 +129,8 @@ public:
     ExclusionShapeInsideInfo* m_exclusionShapeInsideInfo;
 #endif
 
+    // FIXME: Distinguish between the layout clip rect and the paint clip rect which may be larger,
+    // e.g., because of composited scrolling.
     LayoutRect m_clipRect;
     
     // x/y offset from container. Includes relative positioning and scroll offsets.

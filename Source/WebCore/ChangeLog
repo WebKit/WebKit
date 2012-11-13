@@ -1,3 +1,24 @@
+2012-11-13  Sami Kyostila  <skyostil@chromium.org>
+
+        Allow painting outside overflow clip in accelerated scrolling layers
+        https://bugs.webkit.org/show_bug.cgi?id=100524
+
+        Reviewed by Simon Fraser.
+
+        In preparation for avoiding repaints when scrolling child layers, make it
+        possible to paint outside the overflow clip.
+
+        Test: compositing/overflow/updating-scrolling-content.html
+
+        * rendering/LayoutState.h:
+        (LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::applyCachedClipAndScrollOffsetForRepaint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::repaintBlockSelectionGaps):
+
 2012-11-13  Patrick Gansterer  <paroga@webkit.org>
 
         Port SimpleFontDataWin.cpp to WinCE
