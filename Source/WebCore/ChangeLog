@@ -1,5 +1,30 @@
 2012-11-12  Simon Fraser  <simon.fraser@apple.com>
 
+        Avoid calling calculateLayerBounds() and convertToLayerCoords() more than once per layer paint
+        https://bugs.webkit.org/show_bug.cgi?id=102031
+
+        Reviewed by Beth Dakin.
+
+        RenderLayer::paintLayerContents() and callees could end up calling convertToLayerCoords()
+        and calculateLayerBounds() multiple times for painting a single layer.
+        
+        Keep track of whether we've computed the root-relative bounds and do it on demand.
+        Compute the offset relative to rootLayer once, and pass it around as an optional parameter
+        to functions that need it.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::intersectsDamageRect):
+        (WebCore::RenderLayer::boundingBox):
+        (WebCore::RenderLayer::calculateLayerBounds):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+
+2012-11-12  Simon Fraser  <simon.fraser@apple.com>
+
         Change calculateLayerBounds() from a static function to a member function
         https://bugs.webkit.org/show_bug.cgi?id=102022
 
