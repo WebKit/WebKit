@@ -5053,7 +5053,7 @@ PassRefPtr<StyleImage> StyleResolver::loadPendingImage(StylePendingImage* pendin
 
     if (pendingImage->cssImageValue()) {
         CSSImageValue* imageValue = pendingImage->cssImageValue();
-        return imageValue->cachedImage(cachedResourceLoader, m_element);
+        return imageValue->cachedImage(cachedResourceLoader);
     }
 
     if (pendingImage->cssImageGeneratorValue()) {

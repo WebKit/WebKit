@@ -26,10 +26,9 @@
 #ifndef CachedResourceLoader_h
 #define CachedResourceLoader_h
 
-#include "CachePolicy.h"
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
-#include "CachedResourceRequest.h"
+#include "CachePolicy.h"
 #include "ResourceLoadPriority.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
@@ -45,6 +44,7 @@ class CachedSVGDocument;
 class CachedFont;
 class CachedImage;
 class CachedRawResource;
+class CachedResourceRequest;
 class CachedScript;
 class CachedShader;
 class CachedTextTrack;
@@ -69,6 +69,7 @@ friend class ImageLoader;
 friend class ResourceCacheValidationSuppressor;
 
 public:
+    enum DeferOption { NoDefer, DeferredByClient };
     static PassRefPtr<CachedResourceLoader> create(DocumentLoader* documentLoader) { return adoptRef(new CachedResourceLoader(documentLoader)); }
     ~CachedResourceLoader();
 
@@ -130,7 +131,7 @@ public:
     bool isPreloaded(const String& urlString) const;
     void clearPreloads();
     void clearPendingPreloads();
-    void preload(CachedResource::Type, CachedResourceRequest&, const String& charset, bool referencedFromBody);
+    void preload(CachedResource::Type, ResourceRequest&, const String& charset, bool referencedFromBody);
     void checkForPendingPreloads();
     void printPreloadStats();
     bool canRequest(CachedResource::Type, const KURL&, bool forPreload = false);
@@ -148,7 +149,7 @@ private:
     void requestPreload(CachedResource::Type, ResourceRequest&, const String& charset);
 
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
-    RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, ResourceRequest&, bool forPreload, CachedResource* existingResource, CachedResourceRequest::DeferOption) const;
+    RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, ResourceRequest&, bool forPreload, CachedResource* existingResource, DeferOption) const;
     
     void notifyLoadedFromMemoryCache(CachedResource*);
     bool checkInsecureContent(CachedResource::Type, const KURL&) const;

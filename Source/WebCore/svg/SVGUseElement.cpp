@@ -256,7 +256,6 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
             KURL url = document()->completeURL(href());
             if (url.hasFragmentIdentifier()) {
                 CachedResourceRequest request(ResourceRequest(url.string()));
-                request.setInitiator(this);
                 m_cachedDocument = document()->cachedResourceLoader()->requestSVGDocument(request);
                 if (m_cachedDocument)
                     m_cachedDocument->addClient(this);

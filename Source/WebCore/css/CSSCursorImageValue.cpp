@@ -135,7 +135,7 @@ StyleCachedImage* CSSCursorImageValue::cachedImage(CachedResourceLoader* loader)
     if (isSVGCursorIdentifier(url()) && loader && loader->document()) {
         // FIXME: This will fail if the <cursor> element is in a shadow DOM (bug 59827)
         if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url(), loader->document()))
-            return CSSImageValue::cachedImage(loader, cursorElement->href(), cursorElement);
+            return CSSImageValue::cachedImage(loader, cursorElement->href());
     }
 #endif
 

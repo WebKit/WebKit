@@ -37,7 +37,7 @@ class HTMLToken;
 class CSSPreloadScanner {
     WTF_MAKE_NONCOPYABLE(CSSPreloadScanner);
 public:
-    explicit CSSPreloadScanner(Document*);
+    CSSPreloadScanner(Document*);
 
     void reset();
     void scan(const HTMLToken&, bool scanningBody);
