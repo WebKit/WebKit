@@ -217,11 +217,7 @@ bool RuntimeEnabledFeatures::isInputTypeDateTimeLocalEnabled = true;
 #endif
 
 #if ENABLE(INPUT_TYPE_MONTH)
-#if PLATFORM(CHROMIUM) && !OS(ANDROID)
-bool RuntimeEnabledFeatures::isInputTypeMonthEnabled = false;
-#else
 bool RuntimeEnabledFeatures::isInputTypeMonthEnabled = true;
-#endif
 #endif
 
 #if ENABLE(INPUT_TYPE_TIME)
@@ -229,11 +225,7 @@ bool RuntimeEnabledFeatures::isInputTypeTimeEnabled = true;
 #endif
 
 #if ENABLE(INPUT_TYPE_WEEK)
-#if PLATFORM(CHROMIUM) && !OS(ANDROID)
-bool RuntimeEnabledFeatures::isInputTypeWeekEnabled = false;
-#else
 bool RuntimeEnabledFeatures::isInputTypeWeekEnabled = true;
-#endif
 #endif
 
 #if ENABLE(DIALOG_ELEMENT)
