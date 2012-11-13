@@ -1855,6 +1855,8 @@ bool ewk_tiled_backing_store_pre_render_region(Evas_Object* ewkBackingStore, Eva
     zoom = ROUNDED_ZOOM(priv->view.tile.width, zoom);
 
     Eina_Tile_Grid_Slicer slicer;
+    memset(&slicer, 0, sizeof(Eina_Tile_Grid_Slicer));
+
     if (!eina_tile_grid_slicer_setup(&slicer, x, y, width, height, tileWidth, tileHeight)) {
         ERR("could not setup grid slicer for %d,%d+%dx%d tile=%dx%d",
             x, y, width, height, tileWidth, tileHeight);

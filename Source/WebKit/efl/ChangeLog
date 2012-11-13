@@ -1,3 +1,16 @@
+2012-11-12  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] In ewk_tiled_backing_store_pre_render_region, the 'slicer' may be uninitialized
+        https://bugs.webkit.org/show_bug.cgi?id=102038
+
+        Reviewed by Gyuyoung Kim.
+
+        To fix build warning -Wuninitialized,
+        initialize the 'slicer' in ewk_tiled_backing_store_pre_render_region.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        (ewk_tiled_backing_store_pre_render_region):
+
 2012-11-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][DRT] Force a repaint before tracking repaint rects.
