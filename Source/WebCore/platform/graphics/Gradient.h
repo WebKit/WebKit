@@ -39,15 +39,8 @@
 
 typedef struct CGContext* CGContextRef;
 
-#define USE_CG_SHADING (PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050)
-
-#if USE_CG_SHADING
-typedef struct CGShading* CGShadingRef;
-typedef CGShadingRef PlatformGradient;
-#else
 typedef struct CGGradient* CGGradientRef;
 typedef CGGradientRef PlatformGradient;
-#endif
 
 #elif PLATFORM(QT)
 QT_BEGIN_NAMESPACE

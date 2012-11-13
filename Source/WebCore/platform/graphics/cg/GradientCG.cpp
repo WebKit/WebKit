@@ -35,45 +35,10 @@ namespace WebCore {
 
 void Gradient::platformDestroy()
 {
-#if USE_CG_SHADING
-    CGShadingRelease(m_gradient);
-#else
     CGGradientRelease(m_gradient);
-#endif
     m_gradient = 0;
 }
 
-#if USE_CG_SHADING
-static void gradientCallback(void* info, const CGFloat* in, CGFloat* out)
-{
-    float r, g, b, a;
-    static_cast<const Gradient*>(info)->getColor(*in, &r, &g, &b, &a);
-    out[0] = r;
-    out[1] = g;
-    out[2] = b;
-    out[3] = a;
-}
-
-CGShadingRef Gradient::platformGradient()
-{
-    if (m_gradient)
-        return m_gradient;
-
-    const CGFloat intervalRanges[2] = { 0, 1 };
-    const CGFloat colorComponentRanges[4 * 2] = { 0, 1, 0, 1, 0, 1, 0, 1 };
-    const CGFunctionCallbacks gradientCallbacks = { 0, gradientCallback, 0 };
-    RetainPtr<CGFunctionRef> colorFunction(AdoptCF, CGFunctionCreate(this, 1, intervalRanges, 4, colorComponentRanges, &gradientCallbacks));
-
-    CGColorSpaceRef colorSpace = deviceRGBColorSpaceRef();
-
-    if (m_radial)
-        m_gradient = CGShadingCreateRadial(colorSpace, m_p0, m_r0, m_p1, m_r1, colorFunction.get(), true, true);
-    else
-        m_gradient = CGShadingCreateAxial(colorSpace, m_p0, m_p1, colorFunction.get(), true, true);
-
-    return m_gradient;
-}
-#else
 CGGradientRef Gradient::platformGradient()
 {
     if (m_gradient)
@@ -101,7 +66,6 @@ CGGradientRef Gradient::platformGradient()
 
     return m_gradient;
 }
-#endif
 
 void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
 {
@@ -117,29 +81,27 @@ void Gradient::paint(GraphicsContext* context)
 
 void Gradient::paint(CGContextRef context)
 {
-#if USE_CG_SHADING
-    CGContextDrawShading(context, platformGradient());
-#else
     CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;
-    if (m_radial) {
-        bool needScaling = aspectRatio() != 1;
-        if (needScaling) {
-            CGContextSaveGState(context);
-            // Scale from the center of the gradient. We only ever scale non-deprecated gradients,
-            // for which m_p0 == m_p1.
-            ASSERT(m_p0 == m_p1);
-            CGContextTranslateCTM(context, m_p0.x(), m_p0.y());
-            CGContextScaleCTM(context, 1, 1 / aspectRatio());
-            CGContextTranslateCTM(context, -m_p0.x(), -m_p0.y());
-        }
-
-        CGContextDrawRadialGradient(context, platformGradient(), m_p0, m_r0, m_p1, m_r1, extendOptions);
-
-        if (needScaling)
-            CGContextRestoreGState(context);
-    } else
+    if (!m_radial) {
         CGContextDrawLinearGradient(context, platformGradient(), m_p0, m_p1, extendOptions);
-#endif
+        return;
+    }
+
+    bool needScaling = aspectRatio() != 1;
+    if (needScaling) {
+        CGContextSaveGState(context);
+        // Scale from the center of the gradient. We only ever scale non-deprecated gradients,
+        // for which m_p0 == m_p1.
+        ASSERT(m_p0 == m_p1);
+        CGContextTranslateCTM(context, m_p0.x(), m_p0.y());
+        CGContextScaleCTM(context, 1, 1 / aspectRatio());
+        CGContextTranslateCTM(context, -m_p0.x(), -m_p0.y());
+    }
+
+    CGContextDrawRadialGradient(context, platformGradient(), m_p0, m_r0, m_p1, m_r1, extendOptions);
+
+    if (needScaling)
+        CGContextRestoreGState(context);
 }
 
 } //namespace

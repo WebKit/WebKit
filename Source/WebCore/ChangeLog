@@ -1,3 +1,18 @@
+2012-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Remove Leopard only gradient code
+        https://bugs.webkit.org/show_bug.cgi?id=102033
+
+        Reviewed by Dan Bernstein.
+
+        USE_CG_SHADING was only ever true on Leopard, so we can remove it now.
+
+        * platform/graphics/Gradient.h:
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::platformDestroy):
+        (WebCore::Gradient::platformGradient):
+        (WebCore::Gradient::paint):
+
 2012-11-12  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update BB10 form theme.
