@@ -1256,7 +1256,6 @@ typedef TCMalloc_Central_FreeListPadded_Template<sizeof(TCMalloc_Central_FreeLis
 
 #if OS(DARWIN)
 struct Span;
-class TCMalloc_Central_FreeListPadded;
 class TCMalloc_PageHeap;
 class TCMalloc_ThreadCache;
 template <typename T> class PageHeapAllocator;

@@ -1,3 +1,9 @@
+2012-11-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r134490.
+
+        * wtf/FastMalloc.cpp:
+
 2012-11-13  Brent Fulgham  <bfulgham@webkit.org> and Alex Christensen <alex.christensen@flexsim.com>
 
         Fix FastMalloc.cpp compile error for MSVC in 64-bit.
