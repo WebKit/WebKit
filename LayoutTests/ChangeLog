@@ -1,3 +1,17 @@
+2012-11-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Memory instrumentation: MemoryBlock name should not include full path to the block
+        https://bugs.webkit.org/show_bug.cgi?id=102055
+
+        Reviewed by Pavel Feldman.
+
+        Use Image instead of Page.Image as block identifier.
+
+        * inspector/profiler/memory-instrumentation-cached-images-expected.txt:
+        * inspector/profiler/memory-instrumentation-cached-images.html:
+        * inspector/profiler/memory-instrumentation-canvas-expected.txt:
+        * inspector/profiler/memory-instrumentation-canvas.html:
+
 2012-11-13  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         [Qt] Unreviewed Qt gardening.

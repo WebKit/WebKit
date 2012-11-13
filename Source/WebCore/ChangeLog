@@ -1,3 +1,13 @@
+2012-11-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Memory instrumentation: MemoryBlock name should not include full path to the block
+        https://bugs.webkit.org/show_bug.cgi?id=102055
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorMemoryAgent.cpp: pass only last path component as MemoryBlock name
+        intead of fully qualified name.
+
 2012-11-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: get rid of enter/exitTextChangeMode in the editor
