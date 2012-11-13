@@ -99,7 +99,7 @@ public:
             return 0;
         if (!v8::Context::InContext())
             return 0;
-        return enteredIsolatedWorldContext();
+        return static_cast<V8DOMWindowShell*>(v8::Context::GetEntered()->GetAlignedPointerFromEmbedderData(v8ContextIsolatedWindowShell));
     }
 
     void destroyIsolatedShell();

@@ -1,3 +1,28 @@
+2012-11-12  Adam Barth  <abarth@webkit.org>
+
+        [V8] We should be able to recover the V8DOMWindowShell more quickly
+        https://bugs.webkit.org/show_bug.cgi?id=102020
+
+        Reviewed by Kentaro Hara.
+
+        For isolated worlds, we used to store the V8DOMWindowShell as an
+        internal field of the inner DOM window. This patch moves the pointer to
+        an internal field of the v8::Context, which saves us the work of
+        looking up the inner DOM window.
+
+        Unfortunately, we cannot store the V8DOMWindowShell in V8PerContextData
+        because the V8DOMWindowShell outlives the V8PerContextData. (We destroy
+        the V8PerContextData when we detach the V8DOMWindowShell from the
+        frame.)
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GetInternalFields):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initializeIfNeeded):
+        * bindings/v8/V8DOMWindowShell.h:
+        (WebCore::V8DOMWindowShell::getEntered):
+        * bindings/v8/V8PerContextData.h:
+
 2012-11-12  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Add ASSERT() to guarantee that we don't store NULL pointers to V8 internal fields

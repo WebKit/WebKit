@@ -169,16 +169,6 @@ static void checkDocumentWrapper(v8::Handle<v8::Object> wrapper, Document* docum
     ASSERT(!document->isHTMLDocument() || (V8Document::toNative(v8::Handle<v8::Object>::Cast(wrapper->GetPrototype())) == document));
 }
 
-static void setIsolatedWorldField(V8DOMWindowShell* shell, v8::Local<v8::Context> context)
-{
-    toInnerGlobalObject(context)->SetAlignedPointerInInternalField(V8DOMWindow::enteredIsolatedWorldIndex, shell);
-}
-
-V8DOMWindowShell* V8DOMWindowShell::enteredIsolatedWorldContext()
-{
-    return static_cast<V8DOMWindowShell*>(toInnerGlobalObject(v8::Context::GetEntered())->GetAlignedPointerFromInternalField(V8DOMWindow::enteredIsolatedWorldIndex));
-}
-
 static void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext, int debugId)
 {
     char buffer[32];
@@ -339,12 +329,12 @@ bool V8DOMWindowShell::initializeIfNeeded()
     }
 
     if (isMainWorld)
-        setIsolatedWorldField(0, context);
+        context->SetAlignedPointerInEmbedderData(v8ContextIsolatedWindowShell, 0);
     else {
         V8DOMWindowShell* mainWindow = m_frame->script()->existingWindowShell(mainThreadNormalWorld());
         if (mainWindow && !mainWindow->context().IsEmpty())
             setInjectedScriptContextDebugId(m_context.get(), m_frame->script()->contextDebugId(mainWindow->context()));
-        setIsolatedWorldField(this, context);
+        context->SetAlignedPointerInEmbedderData(v8ContextIsolatedWindowShell, this);
     }
 
     m_perContextData = V8PerContextData::create(m_context.get());

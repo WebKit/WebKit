@@ -611,9 +611,6 @@ sub GetInternalFields
         push(@customInternalFields, "eventListenerCacheIndex");
     }
 
-    if ($name eq "DOMWindow") {
-        push(@customInternalFields, "enteredIsolatedWorldIndex");
-    }
     return @customInternalFields;
 }
 
