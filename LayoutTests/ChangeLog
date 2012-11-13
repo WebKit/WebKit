@@ -1,3 +1,25 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134367.
+        http://trac.webkit.org/changeset/134367
+        https://bugs.webkit.org/show_bug.cgi?id=100738
+
+        Speculative rollout, could have cause Dromaeo setAttribute
+        perf regression.
+
+        * fast/dom/shadow/distribution-attribute-modified-expected.html: Removed.
+        * fast/dom/shadow/distribution-attribute-modified.html: Removed.
+        * fast/dom/shadow/distribution-className-modified-expected.html: Removed.
+        * fast/dom/shadow/distribution-className-modified.html: Removed.
+        * fast/dom/shadow/distribution-id-modified-expected.html: Removed.
+        * fast/dom/shadow/distribution-id-modified.html: Removed.
+        * fast/dom/shadow/reprojection-attribute-modified-expected.html: Removed.
+        * fast/dom/shadow/reprojection-attribute-modified.html: Removed.
+        * fast/dom/shadow/reprojection-className-modified-expected.html: Removed.
+        * fast/dom/shadow/reprojection-className-modified.html: Removed.
+        * fast/dom/shadow/reprojection-id-modified-expected.html: Removed.
+        * fast/dom/shadow/reprojection-id-modified.html: Removed.
+
 2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] More unreviewed gardening.

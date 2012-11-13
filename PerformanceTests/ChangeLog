@@ -1,3 +1,15 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134367.
+        http://trac.webkit.org/changeset/134367
+        https://bugs.webkit.org/show_bug.cgi?id=100738
+
+        Speculative rollout, could have cause Dromaeo setAttribute
+        perf regression.
+
+        * DOM/ModifyAttribute.html: Removed.
+        * DOM/resources/dom-perf/modify-attribute.js: Removed.
+
 2012-11-12  Shinya Kawanaka  <shinyak@chromium.org>
 
         Changing id, className, or attribute should invalidate distribution
