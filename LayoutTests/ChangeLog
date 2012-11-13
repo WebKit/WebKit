@@ -1,3 +1,16 @@
+2012-11-13  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: storage/indexeddb/mozilla/add-twice-failure.html is flaky following r134252
+        https://bugs.webkit.org/show_bug.cgi?id=101996
+
+        Reviewed by Dimitri Glazkov.
+
+        Error being tested may cause transaction to abort, which could happen before or after
+        test output is captured. Prevent default behavior of the error so this doesn't happen.
+
+        * storage/indexeddb/mozilla/resources/add-twice-failure.js:
+        (addSecondExpectedError):
+
 2012-11-13  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: HierarchyRequestError
