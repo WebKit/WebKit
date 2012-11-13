@@ -1,3 +1,60 @@
+2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Skip a few tests, update expectations when some colors varied
+        slightly from the existing expectation and add a few new ones.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/fast/forms/input-placeholder-visibility-3-expected.png:
+        * platform/efl/fast/forms/menulist-no-overflow-expected.png:
+        * platform/efl/fast/forms/menulist-separator-painting-expected.png:
+        * platform/efl/fast/forms/select-background-none-expected.png:
+        * platform/efl/fast/forms/select-listbox-multiple-no-focusring-expected.png:
+        * platform/efl/fast/forms/select-selected-expected.png:
+        * platform/efl/fast/forms/select-visual-hebrew-expected.png:
+        * platform/efl/fast/forms/selectlist-minsize-expected.png:
+        * platform/efl/fast/forms/stuff-on-my-optgroup-expected.png:
+        * platform/efl/fast/html/keygen-expected.png:
+        * platform/efl/fast/images/png-suite/test-expected.png:
+        * platform/efl/fast/replaced/image-sizing-expected.png:
+        * platform/efl/fast/replaced/three-selects-break-expected.png:
+        * platform/efl/fast/replaced/width100percent-menulist-expected.png:
+        * platform/efl/fast/ruby/overhang-horizontal-expected.png: Added.
+        * platform/efl/fast/runin/runin-generated-before-content-expected.png: Added.
+        * platform/efl/fast/text/updateNewFont-expected.png:
+        * platform/efl/fast/writing-mode/box-shadow-horizontal-bt-expected.png:
+        * platform/efl/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/efl/fast/writing-mode/english-lr-text-expected.png:
+        * platform/efl/fast/writing-mode/horizontal-bt-replaced-selection-expected.png:
+        * platform/efl/fast/writing-mode/vertical-lr-replaced-selection-expected.png:
+        * platform/efl/fast/writing-mode/vertical-rl-replaced-selection-expected.png:
+        * platform/efl/svg/filters/feColorMatrix-offset-expected.png: Added.
+        * platform/efl/svg/filters/feDropShadow-subregion-expected.png: Added.
+        * platform/efl/svg/filters/feGaussianBlur-subregion-expected.png: Added.
+        * platform/efl/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox-expected.png:
+        * platform/efl/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse-expected.png:
+        * platform/efl/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox-expected.png:
+        * platform/efl/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse-expected.png:
+        * platform/efl/svg/filters/feImage-preserveAspectratio-expected.png:
+        * platform/efl/svg/filters/feImage-subregions-expected.png:
+        * platform/efl/svg/filters/feImage-subregions-preseveAspectRatio-none-expected.png:
+        * platform/efl/svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox-expected.png:
+        * platform/efl/svg/filters/feLighting-crash-expected.png:
+        * platform/efl/svg/filters/feOffset-expected.png:
+        * platform/efl/svg/filters/feTile-expected.png:
+        * platform/efl/svg/filters/filter-on-tspan-expected.png:
+        * platform/efl/svg/filters/filter-placement-issue-expected.png:
+        * platform/efl/svg/filters/filter-rounding-issues-expected.png:
+        * platform/efl/svg/filters/filter-source-position-expected.png: Added.
+        * platform/efl/svg/filters/filteredImage-expected.png: Added.
+        * platform/efl/svg/filters/parent-children-with-same-filter-expected.png:
+        * platform/efl/svg/filters/shadow-on-filter-expected.png:
+        * platform/efl/svg/filters/subRegion-one-effect-expected.png:
+        * platform/efl/svg/filters/subRegion-two-effects-expected.png:
+        * platform/efl/svg/foreignObject/filter-expected.png: Added.
+        * platform/efl/svg/text/selection-doubleclick-expected.png:
+
 2012-11-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: file upload input text value is not exposed through accessibility
