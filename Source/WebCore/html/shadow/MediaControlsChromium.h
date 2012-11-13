@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +24,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaControlRootElementChromiumAndroid_h
-#define MediaControlRootElementChromiumAndroid_h
+#ifndef MediaControlsChromium_h
+#define MediaControlsChromium_h
 
 #if ENABLE(VIDEO)
 
-#include "MediaControlRootElementChromium.h"
+#include "MediaControls.h"
 
 namespace WebCore {
 
-class MediaControlOverlayPlayButtonElement;
-
-class MediaControlOverlayEnclosureElement : public MediaControlChromiumEnclosureElement {
-public:
-    static PassRefPtr<MediaControlOverlayEnclosureElement> create(Document*);
+class MediaControlChromiumEnclosureElement : public MediaControlElement {
+protected:
+    explicit MediaControlChromiumEnclosureElement(Document*);
 
 private:
-    explicit MediaControlOverlayEnclosureElement(Document*);
+    virtual MediaControlElementType displayType() const;
+};
+
+class MediaControlPanelEnclosureElement : public MediaControlChromiumEnclosureElement {
+public:
+    static PassRefPtr<MediaControlPanelEnclosureElement> create(Document*);
+
+private:
+    explicit MediaControlPanelEnclosureElement(Document*);
     virtual const AtomicString& shadowPseudoId() const;
 };
 
-class MediaControlRootElementChromiumAndroid : public MediaControlRootElementChromium {
+class MediaControlsChromium : public MediaControls {
 public:
-    static PassRefPtr<MediaControlRootElementChromiumAndroid> create(Document*);
+    // Called from port-specific parent create function to create custom controls.
+    static PassRefPtr<MediaControlsChromium> createControls(Document*);
 
-    virtual void setMediaController(MediaControllerInterface*);
-    virtual void playbackStarted();
-    virtual void playbackStopped();
+    virtual void setMediaController(MediaControllerInterface*) OVERRIDE;
+
+    virtual void reset() OVERRIDE;
+
+    virtual void playbackStarted() OVERRIDE;
+
+    void changedMute() OVERRIDE;
+
+    virtual void updateCurrentTimeDisplay() OVERRIDE;
+
+#if ENABLE(VIDEO_TRACK)
+    void createTextTrackDisplay() OVERRIDE;
+#endif
+
+protected:
+    explicit MediaControlsChromium(Document*);
+
+    bool initializeControls(Document*);
 
 private:
-    explicit MediaControlRootElementChromiumAndroid(Document*);
-
-    MediaControlOverlayPlayButtonElement* m_overlayPlayButton;
-    MediaControlOverlayEnclosureElement* m_overlayEnclosure;
+    MediaControlTimeRemainingDisplayElement* m_durationDisplay;
+    MediaControlPanelEnclosureElement* m_enclosure;
 };
 
 }

@@ -26,9 +26,7 @@
 #include "config.h"
 
 #if ENABLE(VIDEO)
-#include "MediaControlRootElementChromiumAndroid.h"
-
-#include "MediaControlElements.h"
+#include "MediaControlsChromiumAndroid.h"
 
 namespace WebCore {
 
@@ -48,8 +46,8 @@ const AtomicString& MediaControlOverlayEnclosureElement::shadowPseudoId() const
     return id;
 }
 
-MediaControlRootElementChromiumAndroid::MediaControlRootElementChromiumAndroid(Document* document)
-    : MediaControlRootElementChromium(document)
+MediaControlsChromiumAndroid::MediaControlsChromiumAndroid(Document* document)
+    : MediaControlsChromium(document)
     , m_overlayPlayButton(0)
     , m_overlayEnclosure(0)
 {
@@ -57,15 +55,15 @@ MediaControlRootElementChromiumAndroid::MediaControlRootElementChromiumAndroid(D
 
 PassRefPtr<MediaControls> MediaControls::create(Document* document)
 {
-    return MediaControlRootElementChromiumAndroid::create(document);
+    return MediaControlsChromiumAndroid::create(document);
 }
 
-PassRefPtr<MediaControlRootElementChromiumAndroid> MediaControlRootElementChromiumAndroid::create(Document* document)
+PassRefPtr<MediaControlsChromiumAndroid> MediaControlsChromiumAndroid::createControls(Document* document)
 {
     if (!document->page())
         return 0;
 
-    RefPtr<MediaControlRootElementChromiumAndroid> controls = adoptRef(new MediaControlRootElementChromiumAndroid(document));
+    RefPtr<MediaControlsChromiumAndroid> controls = adoptRef(new MediaControlsChromiumAndroid(document));
 
     ExceptionCode ec;
 
@@ -87,25 +85,25 @@ PassRefPtr<MediaControlRootElementChromiumAndroid> MediaControlRootElementChromi
     return 0;
 }
 
-void MediaControlRootElementChromiumAndroid::setMediaController(MediaControllerInterface* controller)
+void MediaControlsChromiumAndroid::setMediaController(MediaControllerInterface* controller)
 {
     if (m_overlayPlayButton)
         m_overlayPlayButton->setMediaController(controller);
     if (m_overlayEnclosure)
         m_overlayEnclosure->setMediaController(controller);
-    MediaControlRootElementChromium::setMediaController(controller);
+    MediaControlsChromium::setMediaController(controller);
 }
 
-void MediaControlRootElementChromiumAndroid::playbackStarted()
+void MediaControlsChromiumAndroid::playbackStarted()
 {
     m_overlayPlayButton->updateDisplayType();
-    MediaControlRootElementChromium::playbackStarted();
+    MediaControlsChromium::playbackStarted();
 }
 
-void MediaControlRootElementChromiumAndroid::playbackStopped()
+void MediaControlsChromiumAndroid::playbackStopped()
 {
     m_overlayPlayButton->updateDisplayType();
-    MediaControlRootElementChromium::playbackStopped();
+    MediaControlsChromium::playbackStopped();
 }
 
 }

@@ -212,7 +212,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
         if (mediaElement->hasVideo())
             data.mediaFlags |= WebContextMenuData::MediaHasVideo;
         if (mediaElement->controls())
-            data.mediaFlags |= WebContextMenuData::MediaControlRootElement;
+            data.mediaFlags |= WebContextMenuData::MediaControls;
     } else if (r.innerNonSharedNode()->hasTagName(HTMLNames::objectTag)
                || r.innerNonSharedNode()->hasTagName(HTMLNames::embedTag)) {
         RenderObject* object = r.innerNonSharedNode()->renderer();

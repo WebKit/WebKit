@@ -100,7 +100,9 @@ struct WebContextMenuData {
         MediaCanSave = 0x10,
         MediaHasAudio = 0x20,
         MediaHasVideo = 0x40,
+        // FIXME: Remove MediaControlRootElement after patch lands for webkit.org/b/88871.
         MediaControlRootElement = 0x80,
+        MediaControls = 0x80,
         MediaCanPrint = 0x100,
         MediaCanRotate = 0x200,
     };

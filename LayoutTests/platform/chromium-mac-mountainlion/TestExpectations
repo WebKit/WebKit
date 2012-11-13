@@ -1,0 +1,8 @@
+# NOTE: This file is temporary and should only be modified by
+# dpranke@chromium.org or others working on getting the Chromium port
+# passing cleanly on Mountain Lion.
+#
+# All normal test suppressions should go in LayoutTests/platform/chromium/TestExpectations instead
+#
+
+

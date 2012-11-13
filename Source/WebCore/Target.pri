@@ -731,7 +731,7 @@ SOURCES += \
     html/shadow/InsertionPoint.cpp \
     html/shadow/ImageInnerElement.cpp \
     html/shadow/MediaControls.cpp \
-    html/shadow/MediaControlRootElement.cpp \
+    html/shadow/MediaControlsApple.cpp \
     html/shadow/MeterShadowElement.cpp \
     html/shadow/ProgressShadowElement.cpp \
     html/shadow/SelectRuleFeatureSet.cpp \

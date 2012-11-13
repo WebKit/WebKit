@@ -1,3 +1,105 @@
+2012-11-13  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Clean up the inheritance tree under the MediaControls Class.
+        https://bugs.webkit.org/show_bug.cgi?id=88871
+
+        Reviewed by Eric Carlson.
+
+        This patch removes code duplication between the Chromium and Safari
+        media controls shadow DOMs.
+        This is achieved by pulling common functions that are identical (or
+        almost identical) between the different platforms into the base class.
+        The derived classes are renamed based on their platform:
+        - MediaControlRootElement                to MediaControlsApple.
+        - MediaControlRootElementChromium        to MediaControlsChromium.
+        - MediaControlRootElementChromiumAndroid to MediaControlsChromiumAndroid.
+        MediaControls is now no longer an abstract base class, but its "create"
+        function is only implemented in the port-specific header file, so it's
+        on purpose incomplete in the MediaControls.cpp file.
+
+        No new tests because this is refactoring work only.
+
+        * CMakeLists.txt:
+          Rename MediaControlRootElement.cpp to MediaControlsApple.cpp .
+        * GNUmakefile.list.am:
+          Rename MediaControlRootElement.[cpp,h] to MediaControlsApple.[cpp,h] .
+        * Target.pri:
+          Rename MediaControlRootElement.cpp to MediaControlsApple.cpp .
+        * WebCore.gypi:
+          Rename MediaControlRootElement[Chromium[Android]].[cpp,h] to MediaControls[Apple,Chromium[Android]].[cpp,h] .
+        * WebCore.order:
+          Rename MediaControlRootElement symbols to MediaControlsApple symbols.
+        * WebCore.vcproj/WebCore.vcproj:
+          Rename MediaControlRootElement.[cpp,h] to MediaControlsApple.[cpp,h] .
+        * WebCore.xcodeproj/project.pbxproj:
+          Rename MediaControlRootElement.[cpp,h] to MediaControlsApple.[cpp,h] .
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::defaultEventHandler):
+          Remove dependency on MediaControlRootElement.h (base class MediaControls.h is still there).
+          Rename updateTimeDisplay() to updateCurrentTimeDisplay().
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::MediaControls):
+          Added initialization for media elements that all platform controls share.
+        (WebCore):
+          Removed include files that are already included in header file.
+        (WebCore::MediaControls::setMediaController):
+          Added controller assignment for media elements that all platform controls share.
+        (WebCore::MediaControls::reset):
+          Added resets for media elements that all platform controls share.
+        (WebCore::MediaControls::reportedError):
+          Added error handling for media elements that all platform controls share.
+        (WebCore::MediaControls::loadedMetadata):
+          Added default action for loadedMetadata event.
+        (WebCore::MediaControls::show):
+        (WebCore::MediaControls::hide):
+        (WebCore::MediaControls::makeOpaque):
+        (WebCore::MediaControls::makeTransparent):
+        (WebCore::MediaControls::shouldHideControls):
+        (WebCore::MediaControls::bufferingProgressed):
+        (WebCore::MediaControls::playbackStarted):
+        (WebCore::MediaControls::playbackProgressed):
+        (WebCore::MediaControls::playbackStopped):
+        (WebCore::MediaControls::updateCurrentTimeDisplay):
+        (WebCore::MediaControls::showVolumeSlider):
+        (WebCore::MediaControls::changedMute):
+        (WebCore::MediaControls::changedVolume):
+        (WebCore::MediaControls::changedClosedCaptionsVisibility):
+        (WebCore::MediaControls::enteredFullscreen):
+        (WebCore::MediaControls::exitedFullscreen):
+        (WebCore::MediaControls::defaultEventHandler):
+        (WebCore::MediaControls::hideFullscreenControlsTimerFired):
+        (WebCore::MediaControls::startHideFullscreenControlsTimer):
+        (WebCore::MediaControls::stopHideFullscreenControlsTimer):
+        (WebCore::MediaControls::shadowPseudoId):
+        (WebCore::MediaControls::containsRelatedTarget):
+        (WebCore::MediaControls::createTextTrackDisplay):
+        (WebCore::MediaControls::showTextTrackDisplay):
+        (WebCore::MediaControls::hideTextTrackDisplay):
+        (WebCore::MediaControls::updateTextTrackDisplay):
+          Added default actions for all these media controls member functions.
+        * html/shadow/MediaControls.h:
+        (WebCore):
+          Added include files and forward class declarations that all media controls share.
+        (MediaControls):
+          Make all pure virtual functions that have default implementations just virtual.
+        (WebCore::MediaControls::updateStatusDisplay):
+          Add an empty virtual updateStatusDisplay function which is used by media elements.
+        * html/shadow/MediaControlsApple.cpp: Renamed from Source/WebCore/html/shadow/MediaControlRootElement.cpp.
+          Reduced Apple-specific media control functions by relying on default implementations in the base class.
+        * html/shadow/MediaControlsApple.h: Renamed from Source/WebCore/html/shadow/MediaControlRootElement.h.
+          Reduced Apple-specific media control elements by relying on some elements in the base class.
+        * html/shadow/MediaControlsChromium.cpp: Renamed from Source/WebCore/html/shadow/MediaControlRootElementChromium.cpp.
+          Reduced Chromium-specific media control functions by relying on default implementations in the base class.
+        * html/shadow/MediaControlsChromium.h: Renamed from Source/WebCore/html/shadow/MediaControlRootElementChromium.h.
+          Reduced Chromium-specific media control functions by relying on default implementations in the base class.
+        * html/shadow/MediaControlsChromiumAndroid.cpp: Renamed from Source/WebCore/html/shadow/MediaControlRootElementChromiumAndroid.cpp.
+          Renamed class name and base class name.
+        * html/shadow/MediaControlsChromiumAndroid.h: Renamed from Source/WebCore/html/shadow/MediaControlRootElementChromiumAndroid.h.
+          Renamed class name and base class name.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::timeWithoutMouseMovementBeforeHidingControls):
+          Moved timeWithoutMouseMovementBeforeHidingControls variable from all classes to a theme-specific function.
+
 2012-11-13  Benjamin Poulain  <benjamin@webkit.org>
 
         CSSParser::setStyleSheet() should be inline

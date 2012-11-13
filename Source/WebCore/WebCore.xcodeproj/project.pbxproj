@@ -1050,8 +1050,8 @@
 		414B867413AD074E00B4B373 /* FileIconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 414B867213AD074E00B4B373 /* FileIconLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */; };
 		4150F9F212B6E0E70008C860 /* SliderThumbElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */; };
-		4157AF8012F1FB0400A8C6F5 /* MediaControlRootElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4157AF7E12F1FB0400A8C6F5 /* MediaControlRootElement.h */; };
-		4157AF8112F1FB0400A8C6F5 /* MediaControlRootElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4157AF7F12F1FB0400A8C6F5 /* MediaControlRootElement.cpp */; };
+		4157AF8012F1FB0400A8C6F5 /* MediaControlsApple.h in Headers */ = {isa = PBXBuildFile; fileRef = 4157AF7E12F1FB0400A8C6F5 /* MediaControlsApple.h */; };
+		4157AF8112F1FB0400A8C6F5 /* MediaControlsApple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4157AF7F12F1FB0400A8C6F5 /* MediaControlsApple.cpp */; };
 		4162A450101145AE00DFF3ED /* DedicatedWorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4162A44D101145AE00DFF3ED /* DedicatedWorkerContext.cpp */; };
 		4162A451101145AE00DFF3ED /* DedicatedWorkerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4162A44E101145AE00DFF3ED /* DedicatedWorkerContext.h */; };
 		4162A454101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4162A453101145E300DFF3ED /* JSDedicatedWorkerContextCustom.cpp */; };
@@ -8205,8 +8205,8 @@
 		414B867213AD074E00B4B373 /* FileIconLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileIconLoader.h; sourceTree = "<group>"; };
 		4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderThumbElement.h; sourceTree = "<group>"; };
 		4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderThumbElement.cpp; sourceTree = "<group>"; };
-		4157AF7E12F1FB0400A8C6F5 /* MediaControlRootElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlRootElement.h; sourceTree = "<group>"; };
-		4157AF7F12F1FB0400A8C6F5 /* MediaControlRootElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlRootElement.cpp; sourceTree = "<group>"; };
+		4157AF7E12F1FB0400A8C6F5 /* MediaControlsApple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlsApple.h; sourceTree = "<group>"; };
+		4157AF7F12F1FB0400A8C6F5 /* MediaControlsApple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlsApple.cpp; sourceTree = "<group>"; };
 		4162A44D101145AE00DFF3ED /* DedicatedWorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DedicatedWorkerContext.cpp; path = workers/DedicatedWorkerContext.cpp; sourceTree = "<group>"; };
 		4162A44E101145AE00DFF3ED /* DedicatedWorkerContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DedicatedWorkerContext.h; path = workers/DedicatedWorkerContext.h; sourceTree = "<group>"; };
 		4162A44F101145AE00DFF3ED /* DedicatedWorkerContext.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DedicatedWorkerContext.idl; path = workers/DedicatedWorkerContext.idl; sourceTree = "<group>"; };
@@ -15103,8 +15103,8 @@
 				57CF497314EE36D700ECFF14 /* InsertionPoint.h */,
 				417253A81354BBBC00360F2A /* MediaControlElements.cpp */,
 				417253A91354BBBC00360F2A /* MediaControlElements.h */,
-				4157AF7F12F1FB0400A8C6F5 /* MediaControlRootElement.cpp */,
-				4157AF7E12F1FB0400A8C6F5 /* MediaControlRootElement.h */,
+				4157AF7F12F1FB0400A8C6F5 /* MediaControlsApple.cpp */,
+				4157AF7E12F1FB0400A8C6F5 /* MediaControlsApple.h */,
 				1F3C3BE8135CAF3C00B8C1AC /* MediaControls.cpp */,
 				1F3C3BE9135CAF3C00B8C1AC /* MediaControls.h */,
 				A78E526D1346BD1700AD9C31 /* MeterShadowElement.cpp */,
@@ -24560,7 +24560,7 @@
 				417253AB1354BBBC00360F2A /* MediaControlElements.h in Headers */,
 				CDF65CC8145B1E7500C4C7AA /* MediaController.h in Headers */,
 				CDF65CCA145B448800C4C7AA /* MediaControllerInterface.h in Headers */,
-				4157AF8012F1FB0400A8C6F5 /* MediaControlRootElement.h in Headers */,
+				4157AF8012F1FB0400A8C6F5 /* MediaControlsApple.h in Headers */,
 				1F3C3BEB135CAF3C00B8C1AC /* MediaControls.h in Headers */,
 				97205AB81239291000B17380 /* MediaDocument.h in Headers */,
 				FD6F252D13F5EF0E0065165F /* MediaElementAudioSourceNode.h in Headers */,
@@ -27858,7 +27858,7 @@
 				49E911C60EF86D47009D0CAF /* MatrixTransformOperation.cpp in Sources */,
 				417253AA1354BBBC00360F2A /* MediaControlElements.cpp in Sources */,
 				CD27F6E7145770D30078207D /* MediaController.cpp in Sources */,
-				4157AF8112F1FB0400A8C6F5 /* MediaControlRootElement.cpp in Sources */,
+				4157AF8112F1FB0400A8C6F5 /* MediaControlsApple.cpp in Sources */,
 				1F3C3BEA135CAF3C00B8C1AC /* MediaControls.cpp in Sources */,
 				97205AB71239291000B17380 /* MediaDocument.cpp in Sources */,
 				FD6F252C13F5EF0E0065165F /* MediaElementAudioSourceNode.cpp in Sources */,

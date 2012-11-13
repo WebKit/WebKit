@@ -27,7 +27,7 @@
 #include "config.h"
 
 #if ENABLE(VIDEO)
-#include "MediaControlRootElement.h"
+#include "MediaControlsApple.h"
 
 #include "Chrome.h"
 #include "HTMLMediaElement.h"
@@ -46,51 +46,34 @@ using namespace std;
 
 namespace WebCore {
 
-static const double timeWithoutMouseMovementBeforeHidingControls = 3;
-
-MediaControlRootElement::MediaControlRootElement(Document* document)
+MediaControlsApple::MediaControlsApple(Document* document)
     : MediaControls(document)
-    , m_mediaController(0)
     , m_rewindButton(0)
-    , m_playButton(0)
     , m_returnToRealTimeButton(0)
     , m_statusDisplay(0)
-    , m_currentTimeDisplay(0)
-    , m_timeline(0)
     , m_timeRemainingDisplay(0)
     , m_timelineContainer(0)
     , m_seekBackButton(0)
     , m_seekForwardButton(0)
-    , m_toggleClosedCaptionsButton(0)
-    , m_panelMuteButton(0)
-    , m_volumeSlider(0)
     , m_volumeSliderMuteButton(0)
     , m_volumeSliderContainer(0)
-    , m_fullScreenButton(0)
     , m_fullScreenMinVolumeButton(0)
     , m_fullScreenVolumeSlider(0)
     , m_fullScreenMaxVolumeButton(0)
-    , m_panel(0)
-#if ENABLE(VIDEO_TRACK)
-    , m_textDisplayContainer(0)
-#endif
-    , m_hideFullscreenControlsTimer(this, &MediaControlRootElement::hideFullscreenControlsTimerFired)
-    , m_isMouseOverControls(false)
-    , m_isFullscreen(false)
 {
 }
 
 PassRefPtr<MediaControls> MediaControls::create(Document* document)
 {
-    return MediaControlRootElement::create(document);
+    return MediaControlsApple::createControls(document);
 }
 
-PassRefPtr<MediaControlRootElement> MediaControlRootElement::create(Document* document)
+PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document* document)
 {
     if (!document->page())
         return 0;
 
-    RefPtr<MediaControlRootElement> controls = adoptRef(new MediaControlRootElement(document));
+    RefPtr<MediaControlsApple> controls = adoptRef(new MediaControlsApple(document));
 
     RefPtr<MediaControlPanelElement> panel = MediaControlPanelElement::create(document);
 
@@ -238,24 +221,19 @@ PassRefPtr<MediaControlRootElement> MediaControlRootElement::create(Document* do
     return controls.release();
 }
 
-void MediaControlRootElement::setMediaController(MediaControllerInterface* controller)
+void MediaControlsApple::setMediaController(MediaControllerInterface* controller)
 {
     if (m_mediaController == controller)
         return;
-    m_mediaController = controller;
+
+    MediaControls::setMediaController(controller);
 
     if (m_rewindButton)
         m_rewindButton->setMediaController(controller);
-    if (m_playButton)
-        m_playButton->setMediaController(controller);
     if (m_returnToRealTimeButton)
         m_returnToRealTimeButton->setMediaController(controller);
     if (m_statusDisplay)
         m_statusDisplay->setMediaController(controller);
-    if (m_currentTimeDisplay)
-        m_currentTimeDisplay->setMediaController(controller);
-    if (m_timeline)
-        m_timeline->setMediaController(controller);
     if (m_timeRemainingDisplay)
         m_timeRemainingDisplay->setMediaController(controller);
     if (m_timelineContainer)
@@ -264,58 +242,31 @@ void MediaControlRootElement::setMediaController(MediaControllerInterface* contr
         m_seekBackButton->setMediaController(controller);
     if (m_seekForwardButton)
         m_seekForwardButton->setMediaController(controller);
-    if (m_toggleClosedCaptionsButton)
-        m_toggleClosedCaptionsButton->setMediaController(controller);
-    if (m_panelMuteButton)
-        m_panelMuteButton->setMediaController(controller);
-    if (m_volumeSlider)
-        m_volumeSlider->setMediaController(controller);
     if (m_volumeSliderMuteButton)
         m_volumeSliderMuteButton->setMediaController(controller);
     if (m_volumeSliderContainer)
         m_volumeSliderContainer->setMediaController(controller);
-    if (m_fullScreenButton)
-        m_fullScreenButton->setMediaController(controller);
     if (m_fullScreenMinVolumeButton)
         m_fullScreenMinVolumeButton->setMediaController(controller);
     if (m_fullScreenVolumeSlider)
         m_fullScreenVolumeSlider->setMediaController(controller);
     if (m_fullScreenMaxVolumeButton)
         m_fullScreenMaxVolumeButton->setMediaController(controller);
-    if (m_panel)
-        m_panel->setMediaController(controller);
-#if ENABLE(VIDEO_TRACK)
-    if (m_textDisplayContainer)
-        m_textDisplayContainer->setMediaController(controller);
-#endif
-    reset();
 }
 
-void MediaControlRootElement::show()
+void MediaControlsApple::hide()
 {
-    m_panel->setIsDisplayed(true);
-    m_panel->show();
-}
-
-void MediaControlRootElement::hide()
-{
-    m_panel->setIsDisplayed(false);
-    m_panel->hide();
+    MediaControls::hide();
     m_volumeSliderContainer->hide();
 }
 
-void MediaControlRootElement::makeOpaque()
+void MediaControlsApple::makeTransparent()
 {
-    m_panel->makeOpaque();
-}
-
-void MediaControlRootElement::makeTransparent()
-{
-    m_panel->makeTransparent();
+    MediaControls::makeTransparent();
     m_volumeSliderContainer->hide();
 }
 
-void MediaControlRootElement::reset()
+void MediaControlsApple::reset()
 {
     Page* page = document()->page();
     if (!page)
@@ -333,7 +284,7 @@ void MediaControlRootElement::reset()
         m_timeline->setDuration(duration);
         m_timelineContainer->show();
         m_timeline->setPosition(m_mediaController->currentTime());
-        updateTimeDisplay();
+        updateCurrentTimeDisplay();
     } else
         m_timelineContainer->hide();
 
@@ -352,7 +303,8 @@ void MediaControlRootElement::reset()
             m_toggleClosedCaptionsButton->hide();
     }
 
-    m_playButton->updateDisplayType();
+    if (m_playButton)
+        m_playButton->updateDisplayType();
 
 #if ENABLE(FULLSCREEN_API)
     if (m_fullScreenVolumeSlider)
@@ -383,36 +335,7 @@ void MediaControlRootElement::reset()
     makeOpaque();
 }
 
-void MediaControlRootElement::playbackStarted()
-{
-    m_playButton->updateDisplayType();
-    m_timeline->setPosition(m_mediaController->currentTime());
-    updateTimeDisplay();
-
-    if (m_isFullscreen)
-        startHideFullscreenControlsTimer();
-}
-
-void MediaControlRootElement::playbackProgressed()
-{
-    m_timeline->setPosition(m_mediaController->currentTime());
-    updateTimeDisplay();
-    
-    if (!m_isMouseOverControls && m_mediaController->hasVideo())
-        makeTransparent();
-}
-
-void MediaControlRootElement::playbackStopped()
-{
-    m_playButton->updateDisplayType();
-    m_timeline->setPosition(m_mediaController->currentTime());
-    updateTimeDisplay();
-    makeOpaque();
-    
-    stopHideFullscreenControlsTimer();
-}
-
-void MediaControlRootElement::updateTimeDisplay()
+void MediaControlsApple::updateCurrentTimeDisplay()
 {
     float now = m_mediaController->currentTime();
     float duration = m_mediaController->duration();
@@ -429,7 +352,7 @@ void MediaControlRootElement::updateTimeDisplay()
     m_timeRemainingDisplay->setCurrentValue(now - duration);
 }
 
-void MediaControlRootElement::reportedError()
+void MediaControlsApple::reportedError()
 {
     Page* page = document()->page();
     if (!page)
@@ -441,7 +364,7 @@ void MediaControlRootElement::reportedError()
     if (!page->theme()->hasOwnDisabledStateHandlingFor(MediaMuteButtonPart))
         m_panelMuteButton->hide();
 
-     m_fullScreenButton->hide();
+    m_fullScreenButton->hide();
 
     if (m_volumeSliderContainer)
         m_volumeSliderContainer->hide();
@@ -449,45 +372,40 @@ void MediaControlRootElement::reportedError()
         m_toggleClosedCaptionsButton->hide();
 }
 
-void MediaControlRootElement::updateStatusDisplay()
+void MediaControlsApple::updateStatusDisplay()
 {
     if (m_statusDisplay)
         m_statusDisplay->update();
 }
 
-void MediaControlRootElement::loadedMetadata()
+void MediaControlsApple::loadedMetadata()
 {
     if (m_statusDisplay && m_mediaController->isLiveStream())
         m_statusDisplay->hide();
 
-    reset();
+    MediaControls::loadedMetadata();
 }
 
-void MediaControlRootElement::changedClosedCaptionsVisibility()
+void MediaControlsApple::changedMute()
 {
-    if (m_toggleClosedCaptionsButton)
-        m_toggleClosedCaptionsButton->updateDisplayType();
-}
+    MediaControls::changedMute();
 
-void MediaControlRootElement::changedMute()
-{
-    m_panelMuteButton->changedMute();
     if (m_volumeSliderMuteButton)
         m_volumeSliderMuteButton->changedMute();
 }
 
-void MediaControlRootElement::changedVolume()
+void MediaControlsApple::changedVolume()
 {
-    if (m_volumeSlider)
-        m_volumeSlider->setVolume(m_mediaController->volume());
+    MediaControls::changedVolume();
 
     if (m_fullScreenVolumeSlider)
         m_fullScreenVolumeSlider->setVolume(m_mediaController->volume());
 }
 
-void MediaControlRootElement::enteredFullscreen()
+void MediaControlsApple::enteredFullscreen()
 {
-    m_isFullscreen = true;
+    MediaControls::enteredFullscreen();
+    m_panel->setCanBeDragged(true);
 
     if (m_mediaController->isLiveStream()) {
         m_seekBackButton->hide();
@@ -500,172 +418,32 @@ void MediaControlRootElement::enteredFullscreen()
         m_rewindButton->hide();
         m_returnToRealTimeButton->hide();
     }
-
-    m_panel->setCanBeDragged(true);
-    m_fullScreenButton->setIsFullscreen(true);
-
-    if (Page* page = document()->page())
-        page->chrome()->setCursorHiddenUntilMouseMoves(true);
-
-    startHideFullscreenControlsTimer();
 }
 
-void MediaControlRootElement::exitedFullscreen()
+void MediaControlsApple::exitedFullscreen()
 {
-    m_isFullscreen = false;
-
-    // "show" actually means removal of display:none style, so we are just clearing styles
-    // when exiting fullscreen.
-    // FIXME: Clarify naming of show/hide <http://webkit.org/b/58157>
     m_rewindButton->show();
     m_seekBackButton->show();
     m_seekForwardButton->show();
     m_returnToRealTimeButton->show();
 
     m_panel->setCanBeDragged(false);
-    m_fullScreenButton->setIsFullscreen(false);
 
     // We will keep using the panel, but we want it to go back to the standard position.
     // This will matter right away because we use the panel even when not fullscreen.
     // And if we reenter fullscreen we also want the panel in the standard position.
     m_panel->resetPosition();
 
-    stopHideFullscreenControlsTimer();    
+    MediaControls::exitedFullscreen();
 }
 
-void MediaControlRootElement::showVolumeSlider()
+void MediaControlsApple::showVolumeSlider()
 {
     if (!m_mediaController->hasAudio())
         return;
 
     if (m_volumeSliderContainer)
         m_volumeSliderContainer->show();
-}
-
-bool MediaControlRootElement::shouldHideControls()
-{
-    return !m_panel->hovered();
-}
-
-bool MediaControlRootElement::containsRelatedTarget(Event* event)
-{
-    if (!event->isMouseEvent())
-        return false;
-    EventTarget* relatedTarget = static_cast<MouseEvent*>(event)->relatedTarget();
-    if (!relatedTarget)
-        return false;
-    return contains(relatedTarget->toNode());
-}
-
-void MediaControlRootElement::defaultEventHandler(Event* event)
-{
-    MediaControls::defaultEventHandler(event);
-
-    if (event->type() == eventNames().mouseoverEvent) {
-        if (!containsRelatedTarget(event)) {
-            m_isMouseOverControls = true;
-            if (!m_mediaController->canPlay()) {
-                makeOpaque();
-                if (shouldHideControls())
-                    startHideFullscreenControlsTimer();
-            }
-        }
-    } else if (event->type() == eventNames().mouseoutEvent) {
-        if (!containsRelatedTarget(event)) {
-            m_isMouseOverControls = false;
-            stopHideFullscreenControlsTimer();
-        }
-    } else if (event->type() == eventNames().mousemoveEvent) {
-        if (m_isFullscreen) {
-            // When we get a mouse move in fullscreen mode, show the media controls, and start a timer
-            // that will hide the media controls after a 3 seconds without a mouse move.
-            makeOpaque();
-            if (shouldHideControls())
-                startHideFullscreenControlsTimer();
-        }
-    }
-}
-
-void MediaControlRootElement::startHideFullscreenControlsTimer()
-{
-    if (!m_isFullscreen)
-        return;
-    
-    m_hideFullscreenControlsTimer.startOneShot(timeWithoutMouseMovementBeforeHidingControls);
-}
-
-void MediaControlRootElement::hideFullscreenControlsTimerFired(Timer<MediaControlRootElement>*)
-{
-    if (m_mediaController->paused())
-        return;
-    
-    if (!m_isFullscreen)
-        return;
-    
-    if (!shouldHideControls())
-        return;
-
-    if (Page* page = document()->page())
-        page->chrome()->setCursorHiddenUntilMouseMoves(true);
-
-    makeTransparent();
-}
-
-void MediaControlRootElement::stopHideFullscreenControlsTimer()
-{
-    m_hideFullscreenControlsTimer.stop();
-}
-
-#if ENABLE(VIDEO_TRACK)
-void MediaControlRootElement::createTextTrackDisplay()
-{
-    if (m_textDisplayContainer)
-        return;
-
-    RefPtr<MediaControlTextTrackContainerElement> textDisplayContainer = MediaControlTextTrackContainerElement::create(document());
-    m_textDisplayContainer = textDisplayContainer.get();
-
-    // Insert it before the first controller element so it always displays behind the controls.
-    ExceptionCode ec;
-    insertBefore(textDisplayContainer.release(), m_panel, ec, true);
-}
-
-void MediaControlRootElement::showTextTrackDisplay()
-{
-    if (!m_textDisplayContainer)
-        createTextTrackDisplay();
-    m_textDisplayContainer->show();
-}
-
-void MediaControlRootElement::hideTextTrackDisplay()
-{
-    if (!m_textDisplayContainer)
-        createTextTrackDisplay();
-    m_textDisplayContainer->hide();
-}
-
-void MediaControlRootElement::updateTextTrackDisplay()
-{
-    if (!m_textDisplayContainer)
-        createTextTrackDisplay();
-
-    m_textDisplayContainer->updateDisplay();
-
-}
-#endif
-
-const AtomicString& MediaControlRootElement::shadowPseudoId() const
-{
-    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls", AtomicString::ConstructFromLiteral));
-    return id;
-}
-
-void MediaControlRootElement::bufferingProgressed()
-{
-    // We only need to update buffering progress when paused, during normal
-    // playback playbackProgressed() will take care of it.
-    if (m_mediaController->paused())
-        m_timeline->setPosition(m_mediaController->currentTime());
 }
 
 }

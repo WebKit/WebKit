@@ -1,3 +1,23 @@
+2012-11-13  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Clean up the inheritance tree under the MediaControls Class.
+        https://bugs.webkit.org/show_bug.cgi?id=88871
+
+        Reviewed by Eric Carlson.
+
+        This patch removes code duplication between the Chromium and Safari
+        media controls shadow DOMs.
+        The derived classes are renamed based on their platform:
+        - MediaControlRootElement                to MediaControlsApple.
+        - MediaControlRootElementChromium        to MediaControlsChromium.
+        - MediaControlRootElementChromiumAndroid to MediaControlsChromiumAndroid.
+
+        * public/WebContextMenuData.h:
+          Move MediaControlRootElement to MediaControls.
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+          Move MediaControlRootElement to MediaControls.
+
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r134446.

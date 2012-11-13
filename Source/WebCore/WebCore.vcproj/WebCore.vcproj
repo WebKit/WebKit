@@ -64298,11 +64298,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\html\shadow\MediaControlRootElement.cpp"
+					RelativePath="..\html\shadow\MediaControlsApple.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\html\shadow\MediaControlRootElement.h"
+					RelativePath="..\html\shadow\MediaControlsApple.h"
 					>
 				</File>
 				<File

@@ -3548,8 +3548,8 @@ webcore_sources += \
 	Source/WebCore/html/shadow/MediaControls.h \
 	Source/WebCore/html/shadow/MediaControlElements.cpp \
 	Source/WebCore/html/shadow/MediaControlElements.h \
-	Source/WebCore/html/shadow/MediaControlRootElement.cpp \
-	Source/WebCore/html/shadow/MediaControlRootElement.h \
+	Source/WebCore/html/shadow/MediaControlsApple.cpp \
+	Source/WebCore/html/shadow/MediaControlsApple.h \
 	Source/WebCore/html/shadow/MeterShadowElement.cpp \
 	Source/WebCore/html/shadow/MeterShadowElement.h \
 	Source/WebCore/html/shadow/ProgressShadowElement.cpp \

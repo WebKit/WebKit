@@ -45,7 +45,6 @@
 #include "HTMLVideoElement.h"
 #include "LayoutRepainter.h"
 #include "LocalizedStrings.h"
-#include "MediaControlRootElement.h"
 #include "MediaControls.h"
 #include "MouseEvent.h"
 #include "Page.h"
@@ -935,7 +934,7 @@ void MediaControlTimelineElement::defaultEventHandler(Event* event)
 
     RenderSlider* slider = toRenderSlider(renderer());
     if (slider && slider->inDragMode())
-        m_controls->updateTimeDisplay();
+        m_controls->updateCurrentTimeDisplay();
 }
 
 bool MediaControlTimelineElement::willRespondToMouseClickEvents()

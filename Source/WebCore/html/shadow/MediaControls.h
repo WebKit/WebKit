@@ -29,64 +29,116 @@
 
 #if ENABLE(VIDEO)
 
+#include "Chrome.h"
 #include "HTMLDivElement.h"
+#include "HTMLMediaElement.h"
+#include "HTMLNames.h"
+#include "MediaControlElements.h"
+#include "MouseEvent.h"
+#include "Page.h"
+#include "RenderTheme.h"
+#include "Text.h"
+#include <wtf/RefPtr.h>
+
+#if ENABLE(VIDEO_TRACK)
+#include "TextTrackCue.h"
+#endif
 
 namespace WebCore {
 
-class MediaControllerInterface;
+class Document;
+class Event;
+class Page;
+class MediaPlayer;
 
+class RenderBox;
+class RenderMedia;
+
+// An abstract class with the media control elements that all ports support.
 class MediaControls : public HTMLDivElement {
   public:
     virtual ~MediaControls() {}
 
     // This function is to be implemented in your port-specific media
-    // controls implementation.
+    // controls implementation since it will return a child instance.
     static PassRefPtr<MediaControls> create(Document*);
 
-    virtual void setMediaController(MediaControllerInterface*) = 0;
+    virtual void setMediaController(MediaControllerInterface*);
 
-    virtual void show() = 0;
-    virtual void hide() = 0;
-    virtual void makeOpaque() = 0;
-    virtual void makeTransparent() = 0;
+    virtual void reset();
+    virtual void reportedError();
+    virtual void loadedMetadata();
 
-    virtual void reset() = 0;
+    virtual void show();
+    virtual void hide();
+    virtual void makeOpaque();
+    virtual void makeTransparent();
+    virtual bool shouldHideControls();
 
-    virtual void playbackProgressed() = 0;
-    virtual void playbackStarted() = 0;
-    virtual void playbackStopped() = 0;
+    virtual void bufferingProgressed();
+    virtual void playbackStarted();
+    virtual void playbackProgressed();
+    virtual void playbackStopped();
 
-    virtual void changedMute() = 0;
-    virtual void changedVolume() = 0;
+    virtual void updateStatusDisplay() { };
+    virtual void updateCurrentTimeDisplay();
+    virtual void showVolumeSlider();
 
-    virtual void enteredFullscreen() = 0;
-    virtual void exitedFullscreen() = 0;
+    virtual void changedMute();
+    virtual void changedVolume();
 
-    virtual void reportedError() = 0;
-    virtual void loadedMetadata() = 0;
-    virtual void changedClosedCaptionsVisibility() = 0;
+    virtual void changedClosedCaptionsVisibility();
 
-    virtual void showVolumeSlider() = 0;
-    virtual void updateTimeDisplay() = 0;
-    virtual void updateStatusDisplay() = 0;
+    virtual void enteredFullscreen();
+    virtual void exitedFullscreen();
 
-    virtual bool shouldHideControls() = 0;
+    virtual bool willRespondToMouseMoveEvents() OVERRIDE { return true; }
+
+    virtual void hideFullscreenControlsTimerFired(Timer<MediaControls>*);
+    virtual void startHideFullscreenControlsTimer();
+    virtual void stopHideFullscreenControlsTimer();
 
 #if ENABLE(VIDEO_TRACK)
-    virtual void showTextTrackDisplay() = 0;
-    virtual void hideTextTrackDisplay() = 0;
-    virtual void updateTextTrackDisplay() = 0;
+    virtual void createTextTrackDisplay();
+    virtual void showTextTrackDisplay();
+    virtual void hideTextTrackDisplay();
+    virtual void updateTextTrackDisplay();
 #endif
 
-    virtual void bufferingProgressed() = 0;
-
 protected:
-    MediaControls(Document*);
+    explicit MediaControls(Document*);
+
+    virtual void defaultEventHandler(Event*);
+
+    virtual bool containsRelatedTarget(Event*);
+
+    MediaControllerInterface* m_mediaController;
+
+    // Container for the media control elements.
+    MediaControlPanelElement* m_panel;
+
+    // Container for the text track cues.
+#if ENABLE(VIDEO_TRACK)
+    MediaControlTextTrackContainerElement* m_textDisplayContainer;
+#endif
+
+    // Media control elements.
+    MediaControlPlayButtonElement* m_playButton;
+    MediaControlCurrentTimeDisplayElement* m_currentTimeDisplay;
+    MediaControlTimelineElement* m_timeline;
+    MediaControlPanelMuteButtonElement* m_panelMuteButton;
+    MediaControlVolumeSliderElement* m_volumeSlider;
+    MediaControlToggleClosedCaptionsButtonElement* m_toggleClosedCaptionsButton;
+    MediaControlFullscreenButtonElement* m_fullScreenButton;
+
+    Timer<MediaControls> m_hideFullscreenControlsTimer;
+    bool m_isFullscreen;
+    bool m_isMouseOverControls;
 
 private:
-    MediaControls();
-
     virtual bool isMediaControls() const { return true; }
+
+    virtual const AtomicString& shadowPseudoId() const;
 };
 
 inline MediaControls* toMediaControls(Node* node)
