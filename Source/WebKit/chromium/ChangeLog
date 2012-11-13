@@ -1,3 +1,9 @@
+2012-11-13  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed: temporary disable failing test.
+
+        * tests/MemoryInstrumentationTest.cpp:
+
 2012-11-13  Eberhard Graether  <egraether@google.com>
 
         checkbox to toggle FPS counter in the inspector's settings

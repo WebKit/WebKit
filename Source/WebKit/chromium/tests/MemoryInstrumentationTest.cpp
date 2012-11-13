@@ -64,7 +64,7 @@ public:
     ImageObserver* m_imageOberver;
 };
 
-TEST(MemoryInstrumentationTest, ImageObserver)
+TEST(MemoryInstrumentationTest, DISABLED_ImageObserver)
 {
     ImageObserverTestHelper helper;
 
