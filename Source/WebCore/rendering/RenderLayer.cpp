@@ -3176,7 +3176,6 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     LayoutRect layerBounds;
     ClipRect damageRect, clipRectToApply, outlineRect;
     LayoutPoint paintOffset;
-    LayoutRect paintDirtyRect = paintingInfo.paintDirtyRect;
     
     bool useClipRect = true;
     GraphicsContext* transparencyLayerContext = context;
@@ -3207,6 +3206,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
 #endif
     }
 
+    LayerPaintingInfo localPaintingInfo(paintingInfo);
 #if ENABLE(CSS_FILTERS)
     FilterEffectRendererHelper filterPainter(filterRenderer() && paintsWithFilters());
     if (filterPainter.haveFilterEffect() && !context->paintingDisabled()) {
@@ -3228,7 +3228,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
 
             // Check that we didn't fail to allocate the graphics context for the offscreen buffer.
             if (filterPainter.hasStartedFilterEffect()) {
-                paintDirtyRect = filterPainter.repaintRect();
+                localPaintingInfo.paintDirtyRect = filterPainter.repaintRect();
                 // If the filter needs the full source image, we need to avoid using the clip rectangles.
                 // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
                 // Note that we will still apply the clipping on the final rendering of the filter.
@@ -3239,55 +3239,55 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
 #endif
     
     if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
-        calculateRects(paintingInfo.rootLayer, paintingInfo.region, (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect,
+        calculateRects(localPaintingInfo.rootLayer, localPaintingInfo.region, (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, localPaintingInfo.paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect,
             IgnoreOverlayScrollbarSize, localPaintFlags & PaintLayerPaintingOverflowContents ? IgnoreOverflowClip : RespectOverflowClip);
-        paintOffset = toPoint(layerBounds.location() - renderBoxLocation() + paintingInfo.subPixelAccumulation);
-        if (this == paintingInfo.rootLayer)
+        paintOffset = toPoint(layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation);
+        if (this == localPaintingInfo.rootLayer)
             paintOffset = roundedIntPoint(paintOffset);
     }
 
-    bool forceBlackText = paintingInfo.paintBehavior & PaintBehaviorForceBlackText;
-    bool selectionOnly  = paintingInfo.paintBehavior & PaintBehaviorSelectionOnly;
+    bool forceBlackText = localPaintingInfo.paintBehavior & PaintBehaviorForceBlackText;
+    bool selectionOnly  = localPaintingInfo.paintBehavior & PaintBehaviorSelectionOnly;
     
     // If this layer's renderer is a child of the paintingRoot, we render unconditionally, which
     // is done by passing a nil paintingRoot down to our renderer (as if no paintingRoot was ever set).
     // Else, our renderer tree may or may not contain the painting root, so we pass that root along
     // so it will be tested against as we descend through the renderers.
     RenderObject* paintingRootForRenderer = 0;
-    if (paintingInfo.paintingRoot && !renderer()->isDescendantOf(paintingInfo.paintingRoot))
-        paintingRootForRenderer = paintingInfo.paintingRoot;
+    if (localPaintingInfo.paintingRoot && !renderer()->isDescendantOf(localPaintingInfo.paintingRoot))
+        paintingRootForRenderer = localPaintingInfo.paintingRoot;
 
-    if (paintingInfo.overlapTestRequests && isSelfPaintingLayer)
-        performOverlapTests(*paintingInfo.overlapTestRequests, paintingInfo.rootLayer, this);
+    if (localPaintingInfo.overlapTestRequests && isSelfPaintingLayer)
+        performOverlapTests(*localPaintingInfo.overlapTestRequests, localPaintingInfo.rootLayer, this);
 
     // We want to paint our layer, but only if we intersect the damage rect.
-    if (this != paintingInfo.rootLayer || !(localPaintFlags & PaintLayerPaintingOverflowContents))
-        shouldPaintContent &= intersectsDamageRect(layerBounds, damageRect.rect(), paintingInfo.rootLayer);
+    if (this != localPaintingInfo.rootLayer || !(localPaintFlags & PaintLayerPaintingOverflowContents))
+        shouldPaintContent &= intersectsDamageRect(layerBounds, damageRect.rect(), localPaintingInfo.rootLayer);
     
     if (localPaintFlags & PaintLayerPaintingCompositingBackgroundPhase) {
         if (shouldPaintContent && !selectionOnly) {
             // Begin transparency layers lazily now that we know we have to paint something.
             if (haveTransparency)
-                beginTransparencyLayers(transparencyLayerContext, paintingInfo.rootLayer, paintingInfo.paintDirtyRect, paintingInfo.paintBehavior);
+                beginTransparencyLayers(transparencyLayerContext, localPaintingInfo.rootLayer, localPaintingInfo.paintDirtyRect, localPaintingInfo.paintBehavior);
         
             if (useClipRect) {
                 // Paint our background first, before painting any child layers.
                 // Establish the clip used to paint our background.
-                clipToRect(paintingInfo.rootLayer, context, paintingInfo.paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Background painting will handle clipping to self.
+                clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Background painting will handle clipping to self.
             }
             
             // Paint the background.
-            PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseBlockBackground, false, paintingRootForRenderer, paintingInfo.region, 0);
+            PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseBlockBackground, false, paintingRootForRenderer, localPaintingInfo.region, 0);
             renderer()->paint(paintInfo, paintOffset);
 
             if (useClipRect) {
                 // Restore the clip.
-                restoreClip(context, paintingInfo.paintDirtyRect, damageRect);
+                restoreClip(context, localPaintingInfo.paintDirtyRect, damageRect);
             }
         }
 
         // Now walk the sorted list of children with negative z-indices.
-        paintList(negZOrderList(), context, paintingInfo, localPaintFlags);
+        paintList(negZOrderList(), context, localPaintingInfo, localPaintFlags);
     }
     
     if (localPaintFlags & PaintLayerPaintingCompositingForegroundPhase) {
@@ -3295,22 +3295,22 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         if (shouldPaintContent && !clipRectToApply.isEmpty()) {
             // Begin transparency layers lazily now that we know we have to paint something.
             if (haveTransparency)
-                beginTransparencyLayers(transparencyLayerContext, paintingInfo.rootLayer, paintingInfo.paintDirtyRect, paintingInfo.paintBehavior);
+                beginTransparencyLayers(transparencyLayerContext, localPaintingInfo.rootLayer, localPaintingInfo.paintDirtyRect, localPaintingInfo.paintBehavior);
 
             if (useClipRect) {
                 // Set up the clip used when painting our children.
-                clipToRect(paintingInfo.rootLayer, context, paintingInfo.paintDirtyRect, clipRectToApply);
+                clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, clipRectToApply);
             }
             
             PaintInfo paintInfo(context, pixelSnappedIntRect(clipRectToApply.rect()),
                                 selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
-                                forceBlackText, paintingRootForRenderer, paintingInfo.region, 0);
+                                forceBlackText, paintingRootForRenderer, localPaintingInfo.region, 0);
             renderer()->paint(paintInfo, paintOffset);
             if (!selectionOnly) {
                 paintInfo.phase = PaintPhaseFloat;
                 renderer()->paint(paintInfo, paintOffset);
                 paintInfo.phase = PaintPhaseForeground;
-                paintInfo.overlapTestRequests = paintingInfo.overlapTestRequests;
+                paintInfo.overlapTestRequests = localPaintingInfo.overlapTestRequests;
                 renderer()->paint(paintInfo, paintOffset);
                 paintInfo.phase = PaintPhaseChildOutlines;
                 renderer()->paint(paintInfo, paintOffset);
@@ -3318,37 +3318,37 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
 
             if (useClipRect) {
                 // Now restore our clip.
-                restoreClip(context, paintingInfo.paintDirtyRect, clipRectToApply);
+                restoreClip(context, localPaintingInfo.paintDirtyRect, clipRectToApply);
             }
         }
 
         if (shouldPaintOutline && !outlineRect.isEmpty()) {
             // Paint our own outline
-            PaintInfo paintInfo(context, pixelSnappedIntRect(outlineRect.rect()), PaintPhaseSelfOutline, false, paintingRootForRenderer, paintingInfo.region, 0);
-            clipToRect(paintingInfo.rootLayer, context, paintingInfo.paintDirtyRect, outlineRect, DoNotIncludeSelfForBorderRadius);
+            PaintInfo paintInfo(context, pixelSnappedIntRect(outlineRect.rect()), PaintPhaseSelfOutline, false, paintingRootForRenderer, localPaintingInfo.region, 0);
+            clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, outlineRect, DoNotIncludeSelfForBorderRadius);
             renderer()->paint(paintInfo, paintOffset);
-            restoreClip(context, paintingInfo.paintDirtyRect, outlineRect);
+            restoreClip(context, localPaintingInfo.paintDirtyRect, outlineRect);
         }
     
         // Paint any child layers that have overflow.
-        paintList(m_normalFlowList, context, paintingInfo, localPaintFlags);
+        paintList(m_normalFlowList, context, localPaintingInfo, localPaintFlags);
     
         // Now walk the sorted list of children with positive z-indices.
-        paintList(posZOrderList(), context, paintingInfo, localPaintFlags);
+        paintList(posZOrderList(), context, localPaintingInfo, localPaintFlags);
     }
 
     if (isPaintingOverlayScrollbars) {
-        clipToRect(paintingInfo.rootLayer, context, paintDirtyRect, damageRect);
+        clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, damageRect);
         paintOverflowControls(context, roundedIntPoint(paintOffset), pixelSnappedIntRect(damageRect.rect()), true);
-        restoreClip(context, paintingInfo.paintDirtyRect, damageRect);
+        restoreClip(context, localPaintingInfo.paintDirtyRect, damageRect);
     }
 
 #if ENABLE(CSS_FILTERS)
     if (filterPainter.hasStartedFilterEffect()) {
         // Apply the correct clipping (ie. overflow: hidden).
-        clipToRect(paintingInfo.rootLayer, transparencyLayerContext, paintingInfo.paintDirtyRect, damageRect);
+        clipToRect(localPaintingInfo.rootLayer, transparencyLayerContext, localPaintingInfo.paintDirtyRect, damageRect);
         context = filterPainter.applyFilterEffect();
-        restoreClip(transparencyLayerContext, paintingInfo.paintDirtyRect, damageRect);
+        restoreClip(transparencyLayerContext, localPaintingInfo.paintDirtyRect, damageRect);
     }
 #endif
 
@@ -3357,15 +3357,15 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
 
     if ((localPaintFlags & PaintLayerPaintingCompositingMaskPhase) && shouldPaintContent && renderer()->hasMask() && !selectionOnly) {
         if (useClipRect)
-            clipToRect(paintingInfo.rootLayer, context, paintingInfo.paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
+            clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
         
         // Paint the mask.
-        PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseMask, false, paintingRootForRenderer, paintingInfo.region, 0);
+        PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseMask, false, paintingRootForRenderer, localPaintingInfo.region, 0);
         renderer()->paint(paintInfo, paintOffset);
         
         if (useClipRect) {
             // Restore the clip.
-            restoreClip(context, paintingInfo.paintDirtyRect, damageRect);
+            restoreClip(context, localPaintingInfo.paintDirtyRect, damageRect);
         }
     }
 
