@@ -1,3 +1,9 @@
+2012-11-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip failing tests.
+
+        * platform/qt/TestExpectations:
+
 2012-11-13  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Incorrect computed height for content with region-break-before
