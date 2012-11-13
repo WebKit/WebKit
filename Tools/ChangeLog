@@ -1,3 +1,18 @@
+2012-11-12  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] DRT - Update Pixel Dump Support for OpenGL renderer
+        https://bugs.webkit.org/show_bug.cgi?id=101894
+
+        Reviewed by Rob Buis.
+
+        RIM PR 241686
+        Also remove an un-needed pixel lock, and fix a klocwork error in SKIA
+        code path.
+
+        * DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.cpp:
+        (readPixelsUserInterfaceThread):
+        (createBitmapContextFromWebView):
+
 2012-11-12  Daniel Bates  <dbates@webkit.org>
 
         Perl errors from Tools/Scripts/copy-webkitlibraries-to-product-directory

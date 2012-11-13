@@ -20,6 +20,11 @@
 #include "PixelDumpSupportBlackBerry.h"
 
 #include "BackingStore.h"
+#include "BlackBerryPlatformExecutableMessage.h"
+#include "BlackBerryPlatformGraphics.h"
+#include "BlackBerryPlatformGraphicsContext.h"
+#include "BlackBerryPlatformGraphicsImpl.h"
+#include "BlackBerryPlatformMessageClient.h"
 #include "DumpRenderTreeBlackBerry.h"
 #include "PNGImageEncoder.h"
 #include "PixelDumpSupport.h"
@@ -36,6 +41,11 @@
 using namespace BlackBerry::WebKit;
 using namespace BlackBerry;
 using namespace WTF;
+
+void readPixelsUserInterfaceThread(BlackBerry::Platform::Graphics::PlatformGraphicsContext* context, const BlackBerry::Platform::IntRect& srcRect, unsigned char* pixels)
+{
+    context->readPixels(srcRect, pixels, false, false);
+}
 
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool /*onscreen*/, bool /*incrementalRepaint*/, bool /*sweepHorizontally*/, bool /*drawSelectionRect*/)
 {
@@ -71,14 +81,21 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool /*onscreen*/, bool
 
     const unsigned char* windowPixels = 0;
     if (!contentsBitmap.empty()) {
-        SkAutoLockPixels lock(contentsBitmap);
         windowPixels = static_cast<const unsigned char*>(contentsBitmap.getPixels());
+        if (windowPixels)
+            memcpy(data, windowPixels, windowSize.width() * windowSize.height() * 4);
     }
 #else
-    const unsigned char* windowPixels = lockBufferBackingImage(window->buffer(), Platform::Graphics::ReadAccess);
+    BlackBerry::Platform::Graphics::Buffer* buffer = BlackBerry::Platform::Graphics::createBuffer(windowSize, BlackBerry::Platform::Graphics::TemporaryBuffer);
+    BlackBerry::Platform::Graphics::Drawable* drawable = BlackBerry::Platform::Graphics::lockBufferDrawable(buffer);
+    if (drawable) {
+        backingStore->drawContents(drawable, windowRect, windowSize);
+        BlackBerry::Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
+            BlackBerry::Platform::createFunctionCallMessage(&readPixelsUserInterfaceThread, drawable, windowRect, data));
+        BlackBerry::Platform::Graphics::releaseBufferDrawable(buffer);
+    }
+    BlackBerry::Platform::Graphics::destroyBuffer(buffer);
 #endif
-    memcpy(data, windowPixels, windowSize.width() * windowSize.height() * 4);
-    Platform::Graphics::releaseBufferBackingImage(window->buffer());
     return BitmapContext::createByAdoptingData(data, windowSize.width(), windowSize.height());
 }
 
