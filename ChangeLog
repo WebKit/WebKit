@@ -1,3 +1,12 @@
+2012-11-13  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        FindGLIB.cmake fails do find glib gmodule module.
+        https://bugs.webkit.org/show_bug.cgi?id=101784
+
+        Reviewed by Caio Marcelo de Oliveira Filho.
+
+        * Source/cmake/FindGLIB.cmake:
+
 2012-11-13  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Directly composited animated GIFs only render the first image.
