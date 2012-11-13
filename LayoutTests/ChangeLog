@@ -1,3 +1,9 @@
+2012-11-13  Dana Jansens  <danakj@chromium.org>
+
+        Unreviewed test expectations for animation tests.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Pacify linter and tweak expectations to avoid conflicts.
