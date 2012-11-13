@@ -1,3 +1,22 @@
+2012-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Change calculateLayerBounds() from a static function to a member function
+        https://bugs.webkit.org/show_bug.cgi?id=102022
+
+        Reviewed by Beth Dakin.
+
+        calculateLayerBounds() has grown into a substantial function after
+        starting live as a little utility function, so make it a member function
+        of RenderLayer, and adjust callers accordingly.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setFilterBackendNeedsRepaintingInRect):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::calculateLayerBounds):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+
 2012-11-12  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Add an option to switch display of "Other" memory on/off in NMI
