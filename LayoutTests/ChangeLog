@@ -1,3 +1,16 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134418.
+        http://trac.webkit.org/changeset/134418
+        https://bugs.webkit.org/show_bug.cgi?id=101903
+
+        The newly added test is crashing on cr-win.
+
+        * fast/dom/shadow/pseudoclass-update-indeterminate-input-expected.html: Removed.
+        * fast/dom/shadow/pseudoclass-update-indeterminate-input.html: Removed.
+        * fast/dom/shadow/pseudoclass-update-indeterminate-progress-expected.html: Removed.
+        * fast/dom/shadow/pseudoclass-update-indeterminate-progress.html: Removed.
+
 2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Properly skip all HiDPI tests which are currently failing.

@@ -31,7 +31,6 @@
 #include "HTMLParserIdioms.h"
 #include "ProgressShadowElement.h"
 #include "RenderProgress.h"
-#include "SelectRuleFeatureSet.h"
 #include "ShadowRoot.h"
 #include <wtf/StdLibExtras.h>
 
@@ -159,10 +158,8 @@ void HTMLProgressElement::didElementStateChange()
     if (RenderProgress* render = renderProgress()) {
         bool wasDeterminate = render->isDeterminate();
         render->updateFromElement();
-        if (wasDeterminate != isDeterminate()) {
+        if (wasDeterminate != isDeterminate())
             setNeedsStyleRecalc();
-            invalidateParentDistributionIfNecessary(this, CSSSelector::PseudoIndeterminate);
-        }
     }
 }
 

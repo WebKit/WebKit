@@ -1,5 +1,27 @@
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, rolling out r134418.
+        http://trac.webkit.org/changeset/134418
+        https://bugs.webkit.org/show_bug.cgi?id=101903
+
+        The newly added test is crashing on cr-win.
+
+        * dom/ElementShadow.cpp:
+        * dom/ElementShadow.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::setIndeterminate):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::didElementStateChange):
+        * html/shadow/SelectRuleFeatureSet.cpp:
+        (WebCore::SelectRuleFeatureSet::add):
+        (WebCore::SelectRuleFeatureSet::clear):
+        (WebCore::SelectRuleFeatureSet::collectFeaturesFromSelector):
+        * html/shadow/SelectRuleFeatureSet.h:
+        (SelectRuleFeatureSet):
+
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, rolling out r134391.
         http://trac.webkit.org/changeset/134391
         https://bugs.webkit.org/show_bug.cgi?id=99660

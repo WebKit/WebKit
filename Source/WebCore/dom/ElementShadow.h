@@ -27,7 +27,6 @@
 #ifndef ElementShadow_h
 #define ElementShadow_h
 
-#include "CSSSelector.h"
 #include "ContentDistributor.h"
 #include "ExceptionCode.h"
 #include "SelectRuleFeatureSet.h"
@@ -89,8 +88,6 @@ private:
     SelectRuleFeatureSet m_selectFeatures;
     bool m_shouldCollectSelectFeatureSet : 1;
 };
-
-void invalidateParentDistributionIfNecessary(Element*, CSSSelector::PseudoType updatedPseudoType);
 
 inline ShadowRoot* ElementShadow::youngestShadowRoot() const
 {
