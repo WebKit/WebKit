@@ -56,7 +56,7 @@ RemoteGraphicsLayer::RemoteGraphicsLayer(GraphicsLayerClient* client, RemoteLaye
 
 RemoteGraphicsLayer::~RemoteGraphicsLayer()
 {
-    m_context->layerWillBeDestroyed(this);
+    willBeDestroyed();
 }
 
 void RemoteGraphicsLayer::setName(const String& name)
@@ -161,6 +161,12 @@ void RemoteGraphicsLayer::flushCompositingStateForThisLayerOnly()
     m_context->currentTransaction().layerPropertiesChanged(this, m_uncommittedLayerChanges);
 
     m_uncommittedLayerChanges = RemoteLayerTreeTransaction::NoChange;
+}
+
+void RemoteGraphicsLayer::willBeDestroyed()
+{
+    m_context->layerWillBeDestroyed(this);
+    GraphicsLayer::willBeDestroyed();
 }
 
 void RemoteGraphicsLayer::noteLayerPropertiesChanged(unsigned layerChanges)

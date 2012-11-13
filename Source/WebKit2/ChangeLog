@@ -1,3 +1,21 @@
+2012-11-13  Anders Carlsson  <andersca@apple.com>
+
+        RemoteGraphicsLayer destructor should call GraphicsLayer::willBeDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=102135
+
+        Reviewed by Andreas Kling.
+
+        Call GraphicsLayer::willBeDestroyed from the RemoteGraphicsLayer destructor and move
+        the call to RemoteLayerTreeContext::layerWillBeDestroyed to the overridden
+        willBeDestroyed member function.
+
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.h:
+        (RemoteGraphicsLayer):
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.mm:
+        (WebKit::RemoteGraphicsLayer::~RemoteGraphicsLayer):
+        (WebKit::RemoteGraphicsLayer::willBeDestroyed):
+        (WebKit):
+
 2012-11-13  Brady Eidson  <beidson@apple.com>
 
         Split NetworkRequest up into a request class and a loading class.

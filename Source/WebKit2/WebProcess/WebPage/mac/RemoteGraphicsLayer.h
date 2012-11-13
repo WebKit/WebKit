@@ -62,6 +62,8 @@ private:
     virtual void flushCompositingState(const WebCore::FloatRect&) OVERRIDE;
     virtual void flushCompositingStateForThisLayerOnly() OVERRIDE;
 
+    virtual void willBeDestroyed() OVERRIDE;
+
     void noteLayerPropertiesChanged(unsigned layerChanges);
     void noteSublayersChanged();
 
