@@ -141,6 +141,7 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_processingTransactionId(-1)
     , m_focusZoomScale(0.0)
     , m_receivedBackspaceKeyDown(false)
+    , m_expectedKeyUpChar(0)
 {
 }
 
@@ -1473,9 +1474,23 @@ bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEv
     // Enable input mode if we are processing a key event.
     setInputModeEnabled();
 
+    Platform::KeyboardEvent::Type type = keyboardEvent.type();
+    /*
+     * IMF sends us an unadultered KeyUp for all key presses. This key event should be allowed to be processed at all times.
+     * We bypass the check because the state of composition has no implication on this key event.
+     * In order to ensure we allow the correct key event through, we keep track of key down events with m_expectedKeyUpChar.
+    */
+    if (type == Platform::KeyboardEvent::KeyUp) {
+        // When IMF auto-capitalizes a KeyDown, say the first letter of a new sentence, our KeyUp will still be in lowercase.
+        if (m_expectedKeyUpChar == keyboardEvent.character() || (isASCIIUpper(m_expectedKeyUpChar) && m_expectedKeyUpChar == toASCIIUpper(keyboardEvent.character()))) {
+            m_expectedKeyUpChar = 0;
+            changeIsPartOfComposition = true;
+        }
+    }
+
     // If we aren't specifically part of a composition, fail, IMF should never send key input
     // while composing text. If IMF has failed, we should have already finished the
-    // composition manually.
+    // composition manually. There is a caveat for KeyUp which is explained above.
     if (!changeIsPartOfComposition && compositionActive())
         return false;
 
@@ -1488,16 +1503,18 @@ bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEv
     ASSERT(m_webPage->m_page->focusController());
     bool keyboardEventHandled = false;
     if (Frame* focusedFrame = m_webPage->m_page->focusController()->focusedFrame()) {
-        bool isKeyChar = keyboardEvent.type() == Platform::KeyboardEvent::KeyChar;
-        Platform::KeyboardEvent::Type type = keyboardEvent.type();
+        bool isKeyChar = type == Platform::KeyboardEvent::KeyChar;
 
         // If this is a KeyChar type then we handle it as a keydown followed by a key up.
         if (isKeyChar)
             type = Platform::KeyboardEvent::KeyDown;
+        else if (type == Platform::KeyboardEvent::KeyDown) {
+            m_expectedKeyUpChar = keyboardEvent.character();
 
-        // If we receive the KeyDown of a Backspace, set this flag to prevent sending unnecessary selection and caret changes to IMF.
-        if (keyboardEvent.character() == KEYCODE_BACKSPACE && type == Platform::KeyboardEvent::KeyDown)
-            m_receivedBackspaceKeyDown = true;
+            // If we receive the KeyDown of a Backspace, set this flag to prevent sending unnecessary selection and caret changes to IMF.
+            if (keyboardEvent.character() == KEYCODE_BACKSPACE)
+                m_receivedBackspaceKeyDown = true;
+        }
 
         Platform::KeyboardEvent adjustedKeyboardEvent(keyboardEvent.character(), type, adjustedModifiers);
         keyboardEventHandled = focusedFrame->eventHandler()->keyEvent(PlatformKeyboardEvent(adjustedKeyboardEvent));
@@ -1538,7 +1555,6 @@ void InputHandler::insertText(const WTF::String& string)
 
     ASSERT(m_currentFocusElement->document() && m_currentFocusElement->document()->frame() && m_currentFocusElement->document()->frame()->editor());
     Editor* editor = m_currentFocusElement->document()->frame()->editor();
-
     editor->command("InsertText").execute(string);
 }
 
@@ -2127,7 +2143,7 @@ bool InputHandler::setText(spannable_string_t* spannableString)
             return editor->command("InsertText").execute(textToInsert.right(1));
         }
         InputLog(LogLevelInfo, "InputHandler::setText Single trailing character detected.");
-        return handleKeyboardInput(Platform::KeyboardEvent(textToInsert[textLength - 1], Platform::KeyboardEvent::KeyChar, 0), false /* changeIsPartOfComposition */);
+        return handleKeyboardInput(Platform::KeyboardEvent(textToInsert[textLength - 1], Platform::KeyboardEvent::KeyDown, 0), false /* changeIsPartOfComposition */);
     }
 
     // If no spans have changed, treat it as a delete operation.
@@ -2150,7 +2166,7 @@ bool InputHandler::setText(spannable_string_t* spannableString)
     // If there is no text to add just delete.
     if (!textLength) {
         if (selectionActive())
-            return handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyChar, 0), true /* changeIsPartOfComposition */);
+            return handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_BACKSPACE, Platform::KeyboardEvent::KeyDown, 0), true /* changeIsPartOfComposition */);
 
         // Nothing to do.
         return true;
@@ -2173,7 +2189,7 @@ bool InputHandler::setText(spannable_string_t* spannableString)
         // Handle single key non-attributed entry as key press rather than insert to allow
         // triggering of javascript events.
         InputLog(LogLevelInfo, "InputHandler::setText Single character entry treated as key-press in the absense of spans.");
-        return handleKeyboardInput(Platform::KeyboardEvent(textToInsert[0], Platform::KeyboardEvent::KeyChar, 0), true /* changeIsPartOfComposition */);
+        return handleKeyboardInput(Platform::KeyboardEvent(textToInsert[0], Platform::KeyboardEvent::KeyDown, 0), true /* changeIsPartOfComposition */);
     }
 
     // Perform the text change as a single command if there is one.
@@ -2183,7 +2199,7 @@ bool InputHandler::setText(spannable_string_t* spannableString)
     }
 
     if (requiresSpaceKeyPress)
-        handleKeyboardInput(Platform::KeyboardEvent(32 /* space */, Platform::KeyboardEvent::KeyChar, 0), true /* changeIsPartOfComposition */);
+        handleKeyboardInput(Platform::KeyboardEvent(32 /* space */, Platform::KeyboardEvent::KeyDown, 0), true /* changeIsPartOfComposition */);
 
     InputLog(LogLevelInfo, "InputHandler::setText Request being processed. Text after processing '%s'", elementText().latin1().data());
 

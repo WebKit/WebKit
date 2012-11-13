@@ -1,3 +1,24 @@
+2012-11-12  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Ensure we only receive one KeyUp per key event
+        https://bugs.webkit.org/show_bug.cgi?id=101967
+
+        Reviewed by Rob Buis.
+
+        We are creating synthetic KeyUps too often, and get into trouble since IMF will send up a KeyUp on all key events.
+        Furthermore, these KeyUps can arrive both when we are composing and not. To bypass this check, we are storing the KeyDown
+        character and comparing against it on KeyUp.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::handleKeyboardInput):
+        (BlackBerry::WebKit::InputHandler::insertText):
+        (BlackBerry::WebKit::InputHandler::setText):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2012-11-12  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] When opening an image it does not scale to fit our window

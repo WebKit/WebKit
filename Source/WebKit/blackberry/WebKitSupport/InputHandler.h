@@ -227,6 +227,7 @@ private:
     WebCore::FloatPoint m_focusZoomLocation;
 
     bool m_receivedBackspaceKeyDown;
+    unsigned short m_expectedKeyUpChar;
 };
 
 }
