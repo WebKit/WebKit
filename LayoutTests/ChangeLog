@@ -1,3 +1,13 @@
+2012-11-13  Chris Fleizach  <cfleizach@apple.com>
+
+        WebKit exposes ARIA rowheader role as AXUnknown when not contained in table/grid
+        https://bugs.webkit.org/show_bug.cgi?id=101616
+
+        Reviewed by Beth Dakin.
+
+        * platform/mac/accessibility/rowheader-outside-table-role-expected.txt: Added.
+        * platform/mac/accessibility/rowheader-outside-table-role.html: Added.
+
 2012-11-13  Dirk Pranke  <dpranke@chromium.org>
 
         Remove a few old no-longer-failing tests and update one baseline.

@@ -1560,6 +1560,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { CellRole, NSAccessibilityGroupRole },
 #endif
         { TableHeaderContainerRole, NSAccessibilityGroupRole },
+        { RowHeaderRole, NSAccessibilityGroupRole },
         { DefinitionListDefinitionRole, NSAccessibilityGroupRole },
         { DefinitionListTermRole, NSAccessibilityGroupRole },
         { SliderThumbRole, NSAccessibilityValueIndicatorRole },

@@ -1,3 +1,18 @@
+2012-11-13  Chris Fleizach  <cfleizach@apple.com>
+
+        WebKit exposes ARIA rowheader role as AXUnknown when not contained in table/grid
+        https://bugs.webkit.org/show_bug.cgi?id=101616
+
+        Reviewed by Beth Dakin.
+
+        If the rowheader role is exposed because the element is not within a table, the mac platform
+        should map that to a generic group.
+
+        Test: platform/mac/accessibility/rowheader-outside-table-role.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (createAccessibilityRoleMap):
+
 2012-11-13  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Fix SkImageFilter DAG path to pass all css3/filters tests

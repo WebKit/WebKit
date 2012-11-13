@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div role="rowheader" id="test">Placeholder content</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if a rowheader is used outside of a table, it won't have an unknown role.");
+
+    if (window.accessibilityController) {
+
+        var rowheader = accessibilityController.accessibleElementById("test");
+        shouldBe("rowheader.role", "'AXRole: AXGroup'");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
