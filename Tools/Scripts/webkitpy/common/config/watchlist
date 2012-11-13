@@ -118,8 +118,12 @@
         },
         "QtGraphics": {
             "filename": r"Source/WebCore/platform/graphics/qt/"
-                        r"|Source/WebKit2/WebProcess/WebPage/CoordinatedGraphics/"
-                        r"|Source/WebKit2/UIProcess/CoordinatedGraphics",
+        },
+        "CoordinatedGraphics": {
+            "filename": r"Source/WebKit2/WebProcess/WebPage/CoordinatedGraphics/"
+                        r"|Source/WebKit2/UIProcess/CoordinatedGraphics/"
+                        r"|Source/WebKit2/Shared/CoordinatedGraphics/"
+                        r"|Source/WebCore/platform/graphics/surfaces/",
         },
         "TextureMapper": {
             "filename": r"Source/WebCore/platform/graphics/texmap/",
@@ -296,6 +300,7 @@
         "BlackBerry": [ "mifenton@rim.com", "rwlbuis@gmail.com", "tonikitoo@webkit.org" ],
         "Cairo": [ "dominik.rottsches@intel.com" ],
         "CMake": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],
+        "CoordinatedGraphics" : [ "noam.rosenthal@nokia.com", "zeno@webkit.org" ],
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "cmarcelo@webkit.org"],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@chromium.org" ],
         "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent+wkapi@chromium.org" ],
