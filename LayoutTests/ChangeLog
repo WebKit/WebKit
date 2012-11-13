@@ -1,5 +1,18 @@
 2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] More video-colorspace-yuv* gardening.
+
+        These tests are also failing on WK2, so skip them in both ports.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk1/media/video-colorspace-yuv420-expected.png: Removed.
+        * platform/efl-wk1/media/video-colorspace-yuv422-expected.png: Removed.
+        * platform/efl/TestExpectations:
+        * platform/efl/media/video-colorspace-yuv420-expected.txt: Removed.
+        * platform/efl/media/video-colorspace-yuv422-expected.txt: Removed.
+
+2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         Unreviewed, update expectations after r134345.
 
         * platform/efl/fast/dynamic/insertAdjacentElement-expected.txt:

@@ -76,9 +76,6 @@ webkit.org/b/96977 [ Release ] perf/nested-combined-selectors.html [ Failure Pas
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/102091 media/video-colorspace-yuv422.html [ ImageOnlyFailure ]
-webkit.org/b/102091 media/video-colorspace-yuv422.html [ ImageOnlyFailure ]
-
 webkit.org/b/102006 fast/repaint/block-selection-gap-stale-cache.html [ ImageOnlyFailure ]
 webkit.org/b/102006 fast/repaint/block-selection-gap-stale-cache-2.html [ ImageOnlyFailure ]
 
