@@ -1,3 +1,11 @@
+2012-11-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: [Chromium] move spectrum.css into the standalone css files group.
+
+        Not reviewed: moved css file in gypi.
+
+        * WebCore.gypi:
+
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r134434.
