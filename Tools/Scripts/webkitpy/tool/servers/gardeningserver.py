@@ -83,18 +83,6 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
     allow_cross_origin_requests = True
     debug_output = ''
 
-    def rollout(self):
-        revision = self.query['revision'][0]
-        reason = self.query['reason'][0]
-        self._run_webkit_patch([
-            'rollout',
-            '--force-clean',
-            '--non-interactive',
-            revision,
-            reason,
-        ])
-        self._serve_text('success')
-
     def ping(self):
         self._serve_text('pong')
 
@@ -139,4 +127,4 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
                 self._serve_file(fullpath, headers_only=(self.command == 'HEAD'))
                 return
 
-        self._send_response(403)
+        self.send_response(403)

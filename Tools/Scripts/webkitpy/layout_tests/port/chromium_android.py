@@ -489,10 +489,6 @@ class ChromiumAndroidDriver(driver.Driver):
             self._run_adb_command(['shell', 'echo', original_content, '>', file])
         self._original_governors = {}
 
-    def _command_wrapper(cls, wrapper_option):
-        # Ignore command wrapper which is not applicable on Android.
-        return []
-
     def _get_crash_log(self, stdout, stderr, newer_than):
         if not stdout:
             stdout = ''

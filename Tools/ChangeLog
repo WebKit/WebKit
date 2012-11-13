@@ -1,5 +1,53 @@
 2012-11-12  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: clean up lint errors, part 1
+        https://bugs.webkit.org/show_bug.cgi?id=102024
+
+        Reviewed by Adam Barth.
+
+        This patch cleans up a lot of miscellaneous minor lint errors that
+        apparently aren't caught by unit tests, and suppresses a few
+        false positives.
+
+        Also, this patch removes the garden-o-matic "rollout" entry point
+        since it's no longer being used by the frontend (rather than
+        fix it to not generate lint errors).
+
+        * Scripts/webkitpy/common/system/executive_mock.py:
+        (MockExecutive2.run_command):
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.copyfile):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._http_tests):
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.reference_files):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver._teardown_performance):
+        * Scripts/webkitpy/layout_tests/port/chromium_port_testcase.py:
+        (ChromiumPortTestCase.TestAndroidPort.__init__):
+        (ChromiumPortTestCase.test_default_configuration):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase):
+        (PortTestCase.test_driver_cmd_line):
+        (PortTestCase.test_expectations_ordering):
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase._check_that_all_ports_are_available):
+        * Scripts/webkitpy/style/checkers/python.py:
+        (Pylinter):
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        (GardenOMatic.__init__):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (CommitQueue):
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler):
+        (GardeningHTTPRequestHandler.localresult):
+
+2012-11-12  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: clean up lint errors, part 2
         https://bugs.webkit.org/show_bug.cgi?id=102029
 

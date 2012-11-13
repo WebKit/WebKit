@@ -300,9 +300,6 @@ class Manager(object):
     def _http_tests(self):
         return set(test for test in self._test_names if self._is_http_test(test))
 
-    def _websocket_tests(self):
-        return set(test for test in self._test_files if self._is_websocket(test))
-
     def _is_perf_test(self, test):
         return self.PERF_SUBDIR == test or (self.PERF_SUBDIR + self._port.TEST_PATH_SEPARATOR) in test
 

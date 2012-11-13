@@ -81,6 +81,7 @@ class PortTestCase(unittest.TestCase):
     os_name = None
     os_version = None
     port_maker = TestWebKitPort
+    port_name = None
 
     def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, config=None, **kwargs):
         host = host or MockSystemHost(os_name=(os_name or self.os_name), os_version=(os_version or self.os_version))
@@ -113,9 +114,6 @@ class PortTestCase(unittest.TestCase):
         cmd_line = port.driver_cmd_line()
         self.assertTrue('--foo=bar' in cmd_line)
         self.assertTrue('--foo=baz' in cmd_line)
-
-    def test_expectations_files(self):
-        self.assertNotEquals(self.make_port().expectations_files(), [])
 
     def test_uses_apache(self):
         self.assertTrue(self.make_port()._uses_apache())
@@ -435,7 +433,7 @@ class PortTestCase(unittest.TestCase):
         port._filesystem.write_text_file('/tmp/foo', 'foo')
         port._filesystem.write_text_file('/tmp/bar', 'bar')
         ordered_dict = port.expectations_dict()
-        self.assertEquals(ordered_dict.keys()[-2:], options.additional_expectations)
+        self.assertEquals(ordered_dict.keys()[-2:], options.additional_expectations)  # pylint: disable-msg=E1101
         self.assertEquals(ordered_dict.values()[-2:], ['foo', 'bar'])
 
     def test_path_to_test_expectations_file(self):

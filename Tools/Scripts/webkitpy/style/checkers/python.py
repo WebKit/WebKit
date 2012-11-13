@@ -89,6 +89,7 @@ class Pylinter(object):
     # FIXME: Does it make sense to combine these rules with the rules in style/checker.py somehow?
     FALSE_POSITIVES = [
         # possibly http://www.logilab.org/ticket/98613 ?
+        "Instance of 'Popen' has no 'poll' member",
         "Instance of 'Popen' has no 'returncode' member",
         "Instance of 'Popen' has no 'stdin' member",
         "Instance of 'Popen' has no 'stdout' member",

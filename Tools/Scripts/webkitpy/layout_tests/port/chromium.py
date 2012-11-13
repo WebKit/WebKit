@@ -77,6 +77,9 @@ class ChromiumPort(Port):
 
     DEFAULT_BUILD_DIRECTORIES = ('out',)
 
+    # overridden in subclasses.
+    FALLBACK_PATHS = {}
+
     @classmethod
     def _static_build_path(cls, filesystem, build_directory, chromium_base, webkit_base, configuration, comps):
         if build_directory:

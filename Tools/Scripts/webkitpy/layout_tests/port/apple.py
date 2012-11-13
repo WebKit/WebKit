@@ -49,6 +49,10 @@ class ApplePort(Port):
     # It's possible that Apple would want to fix this code to work better with those results.
     FUTURE_VERSION = 'future'  # FIXME: This whole 'future' thing feels like a hack.
 
+    # overridden in subclasses
+    VERSION_FALLBACK_ORDER = []
+    ARCHITECTURES = []
+
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         # If the port_name matches the (badly named) cls.port_name, that

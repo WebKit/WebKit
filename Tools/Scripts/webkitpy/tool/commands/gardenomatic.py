@@ -32,7 +32,7 @@ class GardenOMatic(AbstractRebaseliningCommand):
     help_text = "Command for gardening the WebKit tree."
 
     def __init__(self):
-        return super(AbstractRebaseliningCommand, self).__init__(options=(self.platform_options + [
+        super(GardenOMatic, self).__init__(options=(self.platform_options + [
             self.move_overwritten_baselines_option,
             self.results_directory_option,
             self.no_optimize_option,

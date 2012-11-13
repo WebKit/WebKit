@@ -108,9 +108,9 @@ class MockFileSystem(object):
         if not self.exists(source):
             self._raise_not_found(source)
         if self.isdir(source):
-            raise IOError(errno.EISDIR, source, os.strerror(errno.ISDIR))
+            raise IOError(errno.EISDIR, source, os.strerror(errno.EISDIR))
         if self.isdir(destination):
-            raise IOError(errno.EISDIR, destination, os.strerror(errno.ISDIR))
+            raise IOError(errno.EISDIR, destination, os.strerror(errno.EISDIR))
         if not self.exists(self.dirname(destination)):
             raise IOError(errno.ENOENT, destination, os.strerror(errno.ENOENT))
 

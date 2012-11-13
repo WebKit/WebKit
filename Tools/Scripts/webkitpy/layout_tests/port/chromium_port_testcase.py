@@ -103,7 +103,7 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
     class TestAndroidPort(chromium_android.ChromiumAndroidPort):
         def __init__(self, options=None):
             options = options or MockOptions()
-            chromium_win.ChromiumAndroidPort.__init__(self, MockSystemHost(os_name='android', os_version='icecreamsandwich'), 'chromium-android', options=options)
+            chromium_android.ChromiumAndroidPort.__init__(self, MockSystemHost(os_name='android', os_version='icecreamsandwich'), 'chromium-android', options=options)
 
         def default_configuration(self):
             self.default_configuration_called = True
@@ -130,12 +130,12 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
     def test_default_configuration(self):
         mock_options = MockOptions()
         port = ChromiumPortTestCase.TestLinuxPort(options=mock_options)
-        self.assertEquals(mock_options.configuration, 'default')
+        self.assertEquals(mock_options.configuration, 'default')  # pylint: disable-msg=E1101
         self.assertTrue(port.default_configuration_called)
 
         mock_options = MockOptions(configuration=None)
         port = ChromiumPortTestCase.TestLinuxPort(mock_options)
-        self.assertEquals(mock_options.configuration, 'default')
+        self.assertEquals(mock_options.configuration, 'default')  # pylint: disable-msg=E1101
         self.assertTrue(port.default_configuration_called)
 
     def test_diff_image(self):
