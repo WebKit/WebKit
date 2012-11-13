@@ -1,3 +1,12 @@
+2012-11-12  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] WebKit1 gardening.
+
+        Mark fast/repaint/block-selection-gap-stale-cache.html and
+        fast/repaint/block-selection-gap-stale-cache-2.html as image failures.
+
+        * platform/efl-wk1/TestExpectations:
+
 2012-11-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Added more Hi-DPI wont-fixes.
