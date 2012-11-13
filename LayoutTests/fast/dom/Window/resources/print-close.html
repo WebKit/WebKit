@@ -1,0 +1,9 @@
+<body onload="loaded()">
+<script>
+function loaded() {
+    var msg = { "width": window.outerWidth, "height": window.outerHeight };
+    window.opener.postMessage(msg, '*');
+    window.close();
+}
+</script>
+</body

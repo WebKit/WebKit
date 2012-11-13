@@ -3321,21 +3321,25 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
     page->chrome()->setResizable(features.resizable);
 
     // 'x' and 'y' specify the location of the window, while 'width' and 'height'
-    // specify the size of the page. We can only resize the window, so
-    // adjust for the difference between the window size and the page size.
+    // specify the size of the viewport. We can only resize the window, so adjust
+    // for the difference between the window size and the viewport size.
 
     FloatRect windowRect = page->chrome()->windowRect();
-    FloatSize pageSize = page->chrome()->pageRect().size();
+    FloatSize viewportSize = page->chrome()->pageRect().size();
+
     if (features.xSet)
         windowRect.setX(features.x);
     if (features.ySet)
         windowRect.setY(features.y);
     if (features.widthSet)
-        windowRect.setWidth(features.width + (windowRect.width() - pageSize.width()));
+        windowRect.setWidth(features.width + (windowRect.width() - viewportSize.width()));
     if (features.heightSet)
-        windowRect.setHeight(features.height + (windowRect.height() - pageSize.height()));
-    page->chrome()->setWindowRect(windowRect);
+        windowRect.setHeight(features.height + (windowRect.height() - viewportSize.height()));
 
+    // Ensure non-NaN values, minimum size as well as being within valid screen area.
+    FloatRect newWindowRect = DOMWindow::adjustWindowRect(page, windowRect);
+
+    page->chrome()->setWindowRect(newWindowRect);
     page->chrome()->show();
 
     created = true;

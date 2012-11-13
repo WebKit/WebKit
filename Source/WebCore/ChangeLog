@@ -1,3 +1,44 @@
+2012-11-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Clean up use of adjustWindowRect
+        https://bugs.webkit.org/show_bug.cgi?id=102072
+
+        Reviewed by Alexis Menard.
+
+        Tested by fast/dom/Window/open-window-min-size.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::createWindow):
+
+            Validate the window size here so that it is not just done for
+            .open, but also for .showModalDialog. This is compatible with
+            other browsers such as IE and Firefox (though IE > 6, enforces
+            a minimum width of 250 instead of 100 as Firefox and us.)
+
+        * page/DOMWindow.cpp:
+        (WebCore):
+        (WebCore::DOMWindow::adjustWindowRect):
+
+            Make it a static method which only takes page. It was never
+            called from anywhere without a valid page, so the page check
+            has been turned into an assert, and two of the arguments have
+            been removed as they can be accessed via the page.
+
+        (WebCore::DOMWindow::moveBy):
+        (WebCore::DOMWindow::moveTo):
+        (WebCore::DOMWindow::resizeBy):
+        (WebCore::DOMWindow::resizeTo):
+
+            Update use of adjustWindowRect.
+
+        (WebCore::DOMWindow::open):
+
+            Avoid modifying the WindowFeatures as the WebCore::createWindow
+            validates and adjusts the arguments.
+
+        * page/DOMWindow.h:
+        (DOMWindow):
+
 2012-11-13  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Exclusions] Update wrap-margin/padding to shape-margin/padding

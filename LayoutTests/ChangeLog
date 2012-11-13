@@ -1,3 +1,16 @@
+2012-11-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Clean up use of adjustWindowRect
+        https://bugs.webkit.org/show_bug.cgi?id=102072
+
+        Reviewed by Alexis Menard.
+
+        Test that minimum sizes are honored.
+
+        * fast/dom/Window/open-window-min-size.html: Added.
+        * fast/dom/Window/open-window-min-size-expected.txt: Added.
+        * fast/dom/Window/resources/print-close.html: Added.
+
 2012-11-13  Bem Jones-Bey  <bjonesbe@adobe.com>
 
         [CSS Exclusions] Update wrap-margin/padding to shape-margin/padding
