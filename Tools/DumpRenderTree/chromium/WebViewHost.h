@@ -41,6 +41,7 @@
 #include "WebSpellCheckClient.h"
 #include "WebTask.h"
 #include "WebTestDelegate.h"
+#include "WebTestProxy.h"
 #include "WebViewClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -86,6 +87,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     void setWebWidget(WebKit::WebWidget*);
     WebKit::WebView* webView() const;
     WebKit::WebWidget* webWidget() const;
+    WebTestRunner::WebTestProxyBase* proxy() const;
+    void setProxy(WebTestRunner::WebTestProxyBase*);
     void reset();
     void setSelectTrailingWhitespaceEnabled(bool);
     void setSmartInsertDeleteEnabled(bool);
@@ -99,7 +102,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     void setDeviceScaleFactor(float);
 
     void paintRect(const WebKit::WebRect&);
-    void updatePaintRect(const WebKit::WebRect&);
     void paintInvalidatedRegion();
     void paintPagesWithBoundaries();
     SkCanvas* canvas();
@@ -205,14 +207,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void printPage(WebKit::WebFrame*);
 
     // WebKit::WebWidgetClient
-    virtual void didInvalidateRect(const WebKit::WebRect&);
-    virtual void didScrollRect(int dx, int dy, const WebKit::WebRect&);
     virtual void didAutoResize(const WebKit::WebSize& newSize);
-    virtual void scheduleComposite();
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    virtual void serviceAnimation();
     virtual void scheduleAnimation();
-#endif
     virtual void didFocus();
     virtual void didBlur();
     virtual void didChangeCursor(const WebKit::WebCursorInfo&);
@@ -368,6 +364,9 @@ private:
 
     // Non-owning pointer. The WebViewHost instance is owned by this TestShell instance.
     TestShell* m_shell;
+
+    // Non-owning pointer. This class needs to be wrapped in a WebTestProxy. This is the pointer to the WebTestProxyBase.
+    WebTestRunner::WebTestProxyBase* m_proxy;
 
     // This delegate works for the following widget.
     WebKit::WebWidget* m_webWidget;

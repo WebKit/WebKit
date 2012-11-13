@@ -1,3 +1,51 @@
+2012-11-13  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move tracking of damaged regions from WebViewHost to WebTestProxy
+        https://bugs.webkit.org/show_bug.cgi?id=101927
+
+        Reviewed by Adam Barth.
+
+        This will allow for sharing the code with content_shell
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::display):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestProxyBase):
+        (WebTestRunner::WebTestProxy::didInvalidateRect):
+        (WebTestRunner::WebTestProxy::didScrollRect):
+        (WebTestRunner::WebTestProxy::scheduleComposite):
+        (WebTestRunner::WebTestProxy::scheduleAnimation):
+        (WebTestRunner::WebTestProxy::setWindowRect):
+        (WebTestRunner::WebTestProxy::show):
+        (WebTestRunner::WebTestProxy::didAutoResize):
+        (WebTestRunner::WebTestProxy::postAccessibilityNotification):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::setPaintRect):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::paintRect):
+        (WebTestRunner::WebTestProxyBase::didInvalidateRect):
+        (WebTestRunner::WebTestProxyBase::didScrollRect):
+        (WebTestRunner::WebTestProxyBase::scheduleComposite):
+        (WebTestRunner::WebTestProxyBase::scheduleAnimation):
+        (WebTestRunner::WebTestProxyBase::show):
+        (WebTestRunner::WebTestProxyBase::setWindowRect):
+        (WebTestRunner::WebTestProxyBase::didAutoResize):
+        (WebTestRunner::WebTestProxyBase::postAccessibilityNotification):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::createNewWindow):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::scheduleAnimation):
+        (WebViewHost::show):
+        (WebViewHost::setWindowRect):
+        (WebViewHost::WebViewHost):
+        (WebViewHost::proxy):
+        (WebViewHost::setProxy):
+        (WebViewHost::reset):
+        (WebViewHost::paintInvalidatedRegion):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-11-12  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: clean up lint errors, part 1

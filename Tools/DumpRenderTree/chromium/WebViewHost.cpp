@@ -703,18 +703,6 @@ WebUserMediaClientMock* WebViewHost::userMediaClientMock()
 
 // WebWidgetClient -----------------------------------------------------------
 
-void WebViewHost::didInvalidateRect(const WebRect& rect)
-{
-    updatePaintRect(rect);
-}
-
-void WebViewHost::didScrollRect(int, int, const WebRect& clipRect)
-{
-    // This is used for optimizing painting when the renderer is scrolled. We're
-    // currently not doing any optimizations so just invalidate the region.
-    didInvalidateRect(clipRect);
-}
-
 void WebViewHost::didAutoResize(const WebSize& newSize)
 {
     // Purposely don't include the virtualWindowBorder in this case so that
@@ -722,26 +710,11 @@ void WebViewHost::didAutoResize(const WebSize& newSize)
     setWindowRect(WebRect(0, 0, newSize.width, newSize.height));
 }
 
-void WebViewHost::scheduleComposite()
-{
-    WebSize widgetSize = webWidget()->size();
-    WebRect clientRect(0, 0, widgetSize.width, widgetSize.height);
-    didInvalidateRect(clientRect);
-}
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-void WebViewHost::serviceAnimation()
+void WebViewHost::scheduleAnimation()
 {
     if (webView()->settings()->scrollAnimatorEnabled())
         webView()->animate(0.0);
-    scheduleComposite();
 }
-
-void WebViewHost::scheduleAnimation()
-{
-    postDelayedTask(new HostMethodTask(this, &WebViewHost::serviceAnimation), 0);
-}
-#endif
 
 void WebViewHost::didFocus()
 {
@@ -828,8 +801,6 @@ void WebViewHost::didLosePointerLock()
 void WebViewHost::show(WebNavigationPolicy)
 {
     m_hasWindow = true;
-    WebSize size = webWidget()->size();
-    updatePaintRect(WebRect(0, 0, size.width, size.height));
 }
 
 
@@ -870,7 +841,6 @@ void WebViewHost::setWindowRect(const WebRect& rect)
     int height = m_windowRect.height - border2;
     discardBackingStore();
     webWidget()->resize(WebSize(width, height));
-    updatePaintRect(WebRect(0, 0, width, height));
 }
 
 WebRect WebViewHost::rootWindowRect()
@@ -1430,6 +1400,7 @@ WebKit::WebString WebViewHost::getAbsoluteWebStringFromUTF8Path(const std::strin
 
 WebViewHost::WebViewHost(TestShell* shell)
     : m_shell(shell)
+    , m_proxy(0)
     , m_webWidget(0)
     , m_lastRequestedTextCheckingCompletion(0)
 {
@@ -1476,6 +1447,19 @@ WebWidget* WebViewHost::webWidget() const
     return m_webWidget;
 }
 
+WebTestProxyBase* WebViewHost::proxy() const
+{
+    ASSERT(m_proxy);
+    return m_proxy;
+}
+
+void WebViewHost::setProxy(WebTestProxyBase* proxy)
+{
+    ASSERT(!m_proxy);
+    ASSERT(proxy);
+    m_proxy = proxy;
+}
+
 void WebViewHost::reset()
 {
     m_policyDelegateEnabled = false;
@@ -1520,7 +1504,9 @@ void WebViewHost::reset()
 
     m_currentCursor = WebCursorInfo();
     m_windowRect = WebRect();
-    m_paintRect = WebRect();
+    // m_proxy is not set when reset() is invoked from the constructor.
+    if (m_proxy)
+        proxy()->setPaintRect(WebRect());
 
     if (m_webWidget) {
         webView()->mainFrame()->setName(WebString());
@@ -1784,22 +1770,6 @@ webkit_support::TestMediaStreamClient* WebViewHost::testMediaStreamClient()
 
 // Painting functions ---------------------------------------------------------
 
-void WebViewHost::updatePaintRect(const WebRect& rect)
-{
-    // m_paintRect = m_paintRect U rect
-    if (rect.isEmpty())
-        return;
-    if (m_paintRect.isEmpty()) {
-        m_paintRect = rect;
-        return;
-    }
-    int left = min(m_paintRect.x, rect.x);
-    int top = min(m_paintRect.y, rect.y);
-    int right = max(m_paintRect.x + m_paintRect.width, rect.x + rect.width);
-    int bottom = max(m_paintRect.y + m_paintRect.height, rect.y + rect.height);
-    m_paintRect = WebRect(left, top, right - left, bottom - top);
-}
-
 void WebViewHost::paintRect(const WebRect& rect)
 {
     ASSERT(!m_isPainting);
@@ -1830,23 +1800,22 @@ void WebViewHost::paintInvalidatedRegion()
     // Store the total area painted in total_paint. Then tell the gdk window
     // to update that area after we're done painting it.
     for (int i = 0; i < 3; ++i) {
-        // m_paintRect = intersect(m_paintRect , clientRect)
-        int left = max(m_paintRect.x, clientRect.x);
-        int top = max(m_paintRect.y, clientRect.y);
-        int right = min(m_paintRect.x + m_paintRect.width, clientRect.x + clientRect.width);
-        int bottom = min(m_paintRect.y + m_paintRect.height, clientRect.y + clientRect.height);
-        if (left >= right || top >= bottom)
-            m_paintRect = WebRect();
-        else
-            m_paintRect = WebRect(left, top, right - left, bottom - top);
+        // rect = intersect(proxy()->paintRect() , clientRect)
+        WebRect damageRect = proxy()->paintRect();
+        int left = max(damageRect.x, clientRect.x);
+        int top = max(damageRect.y, clientRect.y);
+        int right = min(damageRect.x + damageRect.width, clientRect.x + clientRect.width);
+        int bottom = min(damageRect.y + damageRect.height, clientRect.y + clientRect.height);
+        WebRect rect;
+        if (left < right && top < bottom)
+            rect = WebRect(left, top, right - left, bottom - top);
 
-        if (m_paintRect.isEmpty())
+        proxy()->setPaintRect(WebRect());
+        if (rect.isEmpty())
             continue;
-        WebRect rect(m_paintRect);
-        m_paintRect = WebRect();
         paintRect(rect);
     }
-    ASSERT(m_paintRect.isEmpty());
+    ASSERT(proxy()->paintRect().isEmpty());
 }
 
 void WebViewHost::paintPagesWithBoundaries()

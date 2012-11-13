@@ -757,6 +757,7 @@ WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url, DRTDevToolsAg
         host->setDelegate(m_webViewHost.get());
     else
         host->setDelegate(host);
+    host->setProxy(host);
     WebView* view = WebView::create(host);
     view->setPermissionClient(webPermissions());
     view->setDevToolsAgentClient(devToolsAgent);

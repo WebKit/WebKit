@@ -1266,7 +1266,7 @@ void DRTTestRunner::display(const CppArgumentList& arguments, CppVariant* result
     WebViewHost* host = m_shell->webViewHost();
     const WebKit::WebSize& size = m_shell->webView()->size();
     WebRect rect(0, 0, size.width, size.height);
-    host->updatePaintRect(rect);
+    host->proxy()->setPaintRect(rect);
     host->paintInvalidatedRegion();
     host->displayRepaintMask();
     result->setNull();
