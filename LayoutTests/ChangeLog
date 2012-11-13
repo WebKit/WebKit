@@ -1,3 +1,16 @@
+2012-11-13  Slavomir Kaslev  <skaslev@google.com>
+
+        [Chromium] Rebaselined platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas.html
+        https://bugs.webkit.org/show_bug.cgi?id=101997
+
+        Reviewed by James Robinson.
+
+        Since we disabled hardware accelerated canvas when in software compositing mode,
+        this layout test doesn't create any layers which is the correct behaviour.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium/platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas-expected.txt: Added.
+
 2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Revert the changes from r134388 and r134426 as r134345 was rolled out.

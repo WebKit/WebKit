@@ -3928,9 +3928,6 @@ crbug.com/152007 platform/chromium/virtual/softwarecompositing/reflections/load-
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/self-painting-layers.html [ ImageOnlyFailure ]
 crbug.com/152007 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-video-layer.html [ ImageOnlyFailure ]
 
-# Text-only failures in software compositor.
-crbug.com/160305 platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
-
 # Filters not yet supported by the software compositor.
 crbug.com/160302 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-alpha-large.html [ ImageOnlyFailure ]
 crbug.com/160302 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-alpha.html [ ImageOnlyFailure ]
