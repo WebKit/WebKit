@@ -101,7 +101,7 @@ static void* lookupOpenGLFunctionAddress(const char* functionName, bool* success
 
 // With Angle only EGL/GLES2 extensions are available through eglGetProcAddress, not the regular standardized functions.
 #define ASSIGN_FUNCTION_TABLE_ENTRY(FunctionName, success) \
-    openGLFunctionTable()->FunctionName = ::FunctionName
+    openGLFunctionTable()->FunctionName = reinterpret_cast<FunctionName##Type>(::FunctionName)
 
 #else
 
