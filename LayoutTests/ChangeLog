@@ -1,3 +1,14 @@
+2012-11-13  Stephen Chenney  <schenney@chromium.org>
+
+        Reverting expectations update because it breaks lint
+        https://bugs.webkit.org/show_bug.cgi?id=101982
+
+        Unreviewed expectations fix.
+
+        With the new-ish wekbit_skia.gyp file we do not need to change expections like this.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-13  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL] Rebaseline after bug 98666 (input[type=range] thumb rendering)
