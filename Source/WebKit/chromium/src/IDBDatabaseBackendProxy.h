@@ -45,7 +45,6 @@ public:
     virtual WebCore::IDBDatabaseMetadata metadata() const;
 
     virtual PassRefPtr<WebCore::IDBObjectStoreBackendInterface> createObjectStore(int64_t, const String& name, const WebCore::IDBKeyPath&, bool autoIncrement, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
-    virtual void deleteObjectStore(const String& name, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void deleteObjectStore(int64_t, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void setVersion(const String& version, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::IDBDatabaseCallbacks>, WebCore::ExceptionCode&);
     virtual PassRefPtr<WebCore::IDBTransactionBackendInterface> transaction(const Vector<int64_t>&, unsigned short mode);

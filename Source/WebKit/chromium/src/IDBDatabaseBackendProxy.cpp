@@ -77,14 +77,6 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendProxy::createObject
     return IDBObjectStoreBackendProxy::create(objectStore.release());
 }
 
-void IDBDatabaseBackendProxy::deleteObjectStore(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
-{
-    // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
-    // all implementations of IDB interfaces are proxy objects.
-    IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    m_webIDBDatabase->deleteObjectStore(name, *transactionProxy->getWebIDBTransaction(), ec);
-}
-
 void IDBDatabaseBackendProxy::deleteObjectStore(int64_t objectStoreId, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,

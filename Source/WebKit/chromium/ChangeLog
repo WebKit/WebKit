@@ -1,3 +1,26 @@
+2012-11-13  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: remove legacy string-based backend methods
+        https://bugs.webkit.org/show_bug.cgi?id=102004
+
+        Reviewed by Adam Barth.
+
+        This is the final stage in a refactor, preceded by
+        https://bugs.webkit.org/show_bug.cgi?id=100426
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::createObjectStore):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::createIndex):
+        (WebKit::WebIDBObjectStore::index):
+        * public/WebIDBTransaction.h:
+        * src/IDBDatabaseBackendProxy.cpp:
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/IDBTransactionBackendProxy.cpp:
+        * src/IDBTransactionBackendProxy.h:
+        (IDBTransactionBackendProxy):
+
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r134391.
