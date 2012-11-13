@@ -1078,7 +1078,7 @@ def check_posix_threading(clean_lines, line_number, error):
     line = clean_lines.elided[line_number]
     for single_thread_function, multithread_safe_function in _THREADING_LIST:
         index = line.find(single_thread_function)
-        # Comparisons made explicit for clarity -- pylint: disable-msg=C6403
+        # Comparisons made explicit for clarity
         if index >= 0 and (index == 0 or (not line[index - 1].isalnum()
                                           and line[index - 1] not in ('_', '.', '>'))):
             error(line_number, 'runtime/threadsafe_fn', 2,
@@ -1793,7 +1793,7 @@ def check_spacing(file_extension, clean_lines, line_number, error):
     comment_position = line.find('//')
     if comment_position != -1:
         # Check if the // may be in quotes.  If so, ignore it
-        # Comparisons made explicit for clarity -- pylint: disable-msg=C6403
+        # Comparisons made explicit for clarity
         if (line.count('"', 0, comment_position) - line.count('\\"', 0, comment_position)) % 2 == 0:   # not in quotes
             # Allow one space before end of line comment.
             if (not match(r'^\s*$', line[:comment_position])

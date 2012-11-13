@@ -1,5 +1,47 @@
 2012-11-12  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: clean up lint errors, part 2
+        https://bugs.webkit.org/show_bug.cgi?id=102029
+
+        Reviewed by Adam Barth.
+
+        This cleans up the remaining lint errors in webkitpy with four exceptions:
+        1) we don't lint thirdparty/ autoinstalled code, obviously
+        2) there's an intentional error in the unit tests for pylint itself
+        3) the implementation of webkit-patch optimize-expectations has
+        an error but I think we can and should just remove that command as well.
+        4) I have not yet linted the test code
+
+        * Scripts/webkitpy/common/newstringio.py:
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.find_checkout_root):
+        (SCM.will.remote_merge_base):
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVNRepository.has_authorization_for_realm):
+        (SVN.__init__):
+        * Scripts/webkitpy/common/config/contributionareas.py:
+        (ContributionAreas.names):
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort):
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (Builder.force_build):
+        * Scripts/webkitpy/common/net/buildbot/buildbot_mock.py:
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_posix_threading):
+        (check_spacing):
+        * Scripts/webkitpy/style/optparser.py:
+        (ArgumentParser._create_option_parser):
+        * Scripts/webkitpy/tool/commands/abstractlocalservercommand.py:
+        (AbstractLocalServerCommand.execute):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (AbstractPatchProcessingCommand):
+        (AbstractPatchProcessingCommand._process_patch):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem):
+
+2012-11-12  Dirk Pranke  <dpranke@chromium.org>
+
         remove 'webkit-patch optimize-expectations'
         https://bugs.webkit.org/show_bug.cgi?id=102032
 

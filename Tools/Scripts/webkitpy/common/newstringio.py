@@ -29,10 +29,10 @@
 
 """'with'-compliant StringIO implementation."""
 
-import StringIO
+import StringIO as OldStringIO
 
 
-class StringIO(StringIO.StringIO):
+class StringIO(OldStringIO.StringIO):
     def __enter__(self):
         return self
 

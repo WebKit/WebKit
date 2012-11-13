@@ -137,7 +137,7 @@ class SCM:
     def in_working_directory(cls, path, executive=None):
         SCM._subclass_must_implement()
 
-    def find_checkout_root(path):
+    def find_checkout_root(self, path):
         SCM._subclass_must_implement()
 
     @staticmethod
@@ -234,7 +234,7 @@ class SCM:
     def supports_local_commits():
         SCM._subclass_must_implement()
 
-    def remote_merge_base():
+    def remote_merge_base(self):
         SCM._subclass_must_implement()
 
     def commit_locally_with_message(self, message):

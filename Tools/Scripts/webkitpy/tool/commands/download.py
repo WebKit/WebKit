@@ -4,7 +4,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -146,8 +146,10 @@ class AbstractPatchProcessingCommand(AbstractDeclarativeCommand):
     # Subclasses must implement the methods below.  We don't declare them here
     # because we want to be able to implement them with mix-ins.
     #
+    # pylint: disable-msg=E1101
     # def _fetch_list_of_patches_to_process(self, options, args, tool):
     # def _prepare_to_process(self, options, args, tool):
+    # def _process_patch(self, options, args, tool):
 
     @staticmethod
     def _collect_patches_by_bug(patches):

@@ -45,6 +45,9 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
     # FIXME: Switch _default_run_tests from opt-in to opt-out once more bots are ready to run tests.
     _default_run_tests = False
 
+    # Subclasses must override.
+    port_name = None
+
     def __init__(self):
         options = [make_option("--run-tests", action="store_true", dest="run_tests", default=self._default_run_tests, help="Run the Layout tests for each patch")]
         AbstractReviewQueue.__init__(self, options=options)

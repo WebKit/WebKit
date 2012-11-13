@@ -345,7 +345,7 @@ class ArgumentParser(object):
         # Override OptionParser's print_help() method so that help output
         # does not render to the screen while running unit tests.
         print_help = parser.print_help
-        parser.print_help = lambda: print_help(file=stderr)
+        parser.print_help = lambda file=stderr: print_help(file=file)
 
         return parser
 

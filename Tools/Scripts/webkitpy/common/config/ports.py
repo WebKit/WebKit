@@ -38,6 +38,9 @@ from webkitpy.common.system.executive import Executive
 class DeprecatedPort(object):
     results_directory = "/tmp/layout-test-results"
 
+    # Subclasses must override
+    port_flag_name = None
+
     # FIXME: This is only used by BotInfo.
     def name(self):
         return self.__class__

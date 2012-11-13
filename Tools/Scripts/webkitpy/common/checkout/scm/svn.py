@@ -32,6 +32,7 @@ import os
 import re
 import shutil
 import sys
+import tempfile
 
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.deprecated_logging import log
@@ -46,6 +47,7 @@ _log = logging.getLogger(__name__)
 # A mixin class that represents common functionality for SVN and Git-SVN.
 class SVNRepository:
     def has_authorization_for_realm(self, realm, home_directory=os.getenv("HOME")):
+        # ignore false positives for methods implemented in the mixee class. pylint: disable-msg=E1101
         # Assumes find and grep are installed.
         if not os.path.isdir(os.path.join(home_directory, ".subversion")):
             return False
@@ -75,8 +77,7 @@ class SVN(SCM, SVNRepository):
         SCM.__init__(self, cwd, **kwargs)
         self._bogus_dir = None
         if patch_directories == []:
-            # FIXME: ScriptError is for Executive, this should probably be a normal Exception.
-            raise ScriptError(script_args=svn_info_args, message='Empty list of patch directories passed to SCM.__init__')
+            raise Exception(message='Empty list of patch directories passed to SCM.__init__')
         elif patch_directories == None:
             self._patch_directories = [self._filesystem.relpath(cwd, self.checkout_root)]
         else:
