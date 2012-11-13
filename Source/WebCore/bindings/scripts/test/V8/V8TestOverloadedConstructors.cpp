@@ -176,9 +176,6 @@ bool V8TestOverloadedConstructors::HasInstance(v8::Handle<v8::Value> value)
 v8::Handle<v8::Object> V8TestOverloadedConstructors::wrapSlow(PassRefPtr<TestOverloadedConstructors> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
-    // Please don't add any more uses of this variable.
-    Document* deprecatedDocument = 0;
-    UNUSED_PARAM(deprecatedDocument);
 
     v8::Handle<v8::Context> context;
     if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
@@ -189,7 +186,7 @@ v8::Handle<v8::Object> V8TestOverloadedConstructors::wrapSlow(PassRefPtr<TestOve
         context->Enter();
     }
 
-    wrapper = V8DOMWrapper::instantiateV8Object(deprecatedDocument, &info, impl.get());
+    wrapper = V8DOMWrapper::instantiateV8Object(&info, impl.get());
 
     if (!context.IsEmpty())
         context->Exit();

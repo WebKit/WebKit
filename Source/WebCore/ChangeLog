@@ -1,3 +1,53 @@
+2012-11-12  Adam Barth  <abarth@webkit.org>
+
+        [V8] V8DOMWrapper::instantiateV8Object shouldn't use deprecatedDocument
+        https://bugs.webkit.org/show_bug.cgi?id=102015
+
+        Reviewed by Kentaro Hara.
+
+        Previously, Nodes had a special path through
+        V8DOMWrapper::instantiateV8Object using deprecatedDocument so that we
+        could find the V8PerContextData quickly. Now that we can get the
+        V8PerContextData from the v8::Context quickly, we can move Nodes to the
+        general case. The net consequence is that creation of all DOM objects
+        should be as fast as Nodes are.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateToV8Converters):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore::V8Float64Array::wrapSlow):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore::V8TestActiveDOMObject::wrapSlow):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore::V8TestCustomNamedGetter::wrapSlow):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore::V8TestEventConstructor::wrapSlow):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore::V8TestEventTarget::wrapSlow):
+        * bindings/scripts/test/V8/V8TestException.cpp:
+        (WebCore::V8TestException::wrapSlow):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::V8TestInterface::wrapSlow):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::V8TestMediaQueryListListener::wrapSlow):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore::V8TestNamedConstructor::wrapSlow):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore::V8TestNode::wrapSlow):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::V8TestObj::wrapSlow):
+        * bindings/scripts/test/V8/V8TestOverloadedConstructors.cpp:
+        (WebCore::V8TestOverloadedConstructors::wrapSlow):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::wrapSlow):
+        * bindings/v8/V8Binding.cpp:
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        * bindings/v8/V8DOMWrapper.h:
+        (V8DOMWrapper):
+
 2012-11-12  KyungTae Kim  <ktf.kim@samsung.com>
 
         Some CSS properties are not handled on StyleResolver::applyProperty

@@ -150,9 +150,6 @@ v8::Handle<v8::Object> V8Float64Array::wrapSlow(PassRefPtr<Float64Array> impl, v
 {
     v8::Handle<v8::Object> wrapper;
     ASSERT(static_cast<void*>(static_cast<ArrayBufferView*>(impl.get())) == static_cast<void*>(impl.get()));
-    // Please don't add any more uses of this variable.
-    Document* deprecatedDocument = 0;
-    UNUSED_PARAM(deprecatedDocument);
 
     v8::Handle<v8::Context> context;
     if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
@@ -163,7 +160,7 @@ v8::Handle<v8::Object> V8Float64Array::wrapSlow(PassRefPtr<Float64Array> impl, v
         context->Enter();
     }
 
-    wrapper = V8DOMWrapper::instantiateV8Object(deprecatedDocument, &info, impl.get());
+    wrapper = V8DOMWrapper::instantiateV8Object(&info, impl.get());
 
     if (!context.IsEmpty())
         context->Exit();

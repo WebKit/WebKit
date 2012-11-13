@@ -379,9 +379,6 @@ namespace WebCore {
     // a context, if the window is currently being displayed in the Frame.
     Frame* toFrameIfNotDetached(v8::Handle<v8::Context>);
 
-    // Returns the PerContextData associated with a frame for the current isolated world.
-    V8PerContextData* perContextDataForCurrentWorld(Frame*);
-
     // If the current context causes out of memory, JavaScript setting
     // is disabled and it returns true.
     bool handleOutOfMemory();

@@ -3485,18 +3485,6 @@ END
     }
 
     push(@implContent, <<END);
-    // Please don't add any more uses of this variable.
-    Document* deprecatedDocument = 0;
-    UNUSED_PARAM(deprecatedDocument);
-END
-
-    if (IsNodeSubType($dataNode)) {
-        push(@implContent, <<END);
-    deprecatedDocument = impl->document(); 
-END
-    }
-
-    push(@implContent, <<END);
 
     v8::Handle<v8::Context> context;
     if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
@@ -3507,7 +3495,7 @@ END
         context->Enter();
     }
 
-    wrapper = V8DOMWrapper::instantiateV8Object(deprecatedDocument, &info, impl.get());
+    wrapper = V8DOMWrapper::instantiateV8Object(&info, impl.get());
 
     if (!context.IsEmpty())
         context->Exit();

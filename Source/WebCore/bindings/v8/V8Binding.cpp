@@ -318,15 +318,6 @@ v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldC
     return v8::Local<v8::Context>();
 }
 
-V8PerContextData* perContextDataForCurrentWorld(Frame* frame)
-{
-    V8DOMWindowShell* isolatedShell;
-    if (UNLIKELY(!!(isolatedShell = V8DOMWindowShell::getEntered())))
-        return isolatedShell->perContextData();
-    V8DOMWindowShell* mainShell = frame->script()->existingWindowShell(mainThreadNormalWorld());
-    return mainShell ? mainShell->perContextData() : 0;
-}
-
 bool handleOutOfMemory()
 {
     v8::Local<v8::Context> context = v8::Context::GetCurrent();
