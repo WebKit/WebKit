@@ -1,3 +1,18 @@
+2012-11-12  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update BB10 form theme.
+        https://bugs.webkit.org/show_bug.cgi?id=100760
+
+        Reviewed by Rob Buis.
+
+        RIM PR 237003
+        Internally Reviewed by Eli Fidler.
+        Since we nolonger use small font for form controls, adjust paddingDivisor
+        ratio to decrease the padding value.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore):
+
 2012-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Fix filter dirty rect regression from r134311

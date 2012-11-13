@@ -64,7 +64,7 @@ const float checkboxStrokeThickness = 6.5;
 const float radioButtonCheckStateScaler = 7 / 30.0;
 
 // Multipliers
-const unsigned paddingDivisor = 5;
+const unsigned paddingDivisor = 10;
 const unsigned fullScreenEnlargementFactor = 2;
 const float scaleFactorThreshold = 2.0;
 
