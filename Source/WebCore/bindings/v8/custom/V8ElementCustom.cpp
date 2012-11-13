@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,43 +29,25 @@
  */
 
 #include "config.h"
-#include "V8CSSValue.h"
+#include "Element.h"
 
-#include "V8CSSPrimitiveValue.h"
-#include "V8CSSValueList.h"
-#include "V8WebKitCSSTransformValue.h"
-
-#if ENABLE(CSS_FILTERS)
-#include "V8WebKitCSSFilterValue.h"
-#endif
-
-#if ENABLE(SVG)
-#include "V8SVGColor.h"
-#include "V8SVGPaint.h"
-#endif
+#include "V8Element.h"
+#include "V8HTMLElement.h"
+#include "V8SVGElement.h"
 
 namespace WebCore {
 
-v8::Handle<v8::Object> V8CSSValue::dispatchWrapCustom(CSSValue* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+// This code is duplicated in V8Node::dispatchWrapCustom for performance. It must be kept in sync.
+v8::Handle<v8::Object> V8Element::dispatchWrapCustom(Element* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
-    if (impl->isWebKitCSSTransformValue())
-        return dispatchWrap(static_cast<WebKitCSSTransformValue*>(impl), creationContext, isolate);
-#if ENABLE(CSS_FILTERS)
-    if (impl->isWebKitCSSFilterValue())
-        return dispatchWrap(static_cast<WebKitCSSFilterValue*>(impl), creationContext, isolate);
-#endif
-    if (impl->isValueList())
-        return dispatchWrap(static_cast<CSSValueList*>(impl), creationContext, isolate);
-    if (impl->isPrimitiveValue())
-        return dispatchWrap(static_cast<CSSPrimitiveValue*>(impl), creationContext, isolate);
+    if (impl->isHTMLElement())
+        return dispatchWrap(toHTMLElement(impl), creationContext, isolate);
 #if ENABLE(SVG)
-    if (impl->isSVGPaint())
-        return dispatchWrap(static_cast<SVGPaint*>(impl), creationContext, isolate);
-    if (impl->isSVGColor())
-        return dispatchWrap(static_cast<SVGColor*>(impl), creationContext, isolate);
+    if (impl->isSVGElement())
+        return dispatchWrap(static_cast<SVGElement*>(impl), creationContext, isolate);
 #endif
-    return V8CSSValue::wrapSlow(impl, creationContext, isolate);
+    return V8Element::wrapSlow(static_cast<Element*>(impl), creationContext, isolate);
 }
 
-} // namespace WebCore
+}

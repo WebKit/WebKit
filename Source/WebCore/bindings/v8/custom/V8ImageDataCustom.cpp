@@ -35,11 +35,10 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(ImageData* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8ImageData::dispatchWrapCustom(ImageData* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
-    if (!impl)
-        return v8NullWithCheck(isolate);
-    v8::Handle<v8::Object> wrapper = V8ImageData::wrap(impl, creationContext, isolate);
+    ASSERT(impl);
+    v8::Handle<v8::Object> wrapper = V8ImageData::wrapSlow(impl, creationContext, isolate);
     if (!wrapper.IsEmpty()) {
         // Create a V8 Uint8ClampedArray object.
         v8::Handle<v8::Value> pixelArray = toV8(impl->data(), creationContext, isolate);

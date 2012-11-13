@@ -56,11 +56,11 @@ v8::Handle<v8::Value> V8DataView::constructorCallback(const v8::Arguments& args)
     return constructWebGLArrayWithArrayBufferArgument<DataView, char>(args, &info, v8::kExternalByteArray, false);
 }
 
-v8::Handle<v8::Value> toV8(DataView* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+// FIXME: Don't need this override.
+v8::Handle<v8::Object> V8DataView::dispatchWrapCustom(DataView* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
-    if (!impl)
-        return v8NullWithCheck(isolate);
-    return V8DataView::wrap(impl, creationContext, isolate);
+    ASSERT(impl);
+    return V8DataView::wrapSlow(impl, creationContext, isolate);
 }
 
 v8::Handle<v8::Value> V8DataView::getInt8Callback(const v8::Arguments& args)

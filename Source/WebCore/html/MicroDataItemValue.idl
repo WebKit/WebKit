@@ -31,6 +31,7 @@
 [
     Conditional=MICRODATA,
     CustomToJSObject,
-    OmitConstructor
+    OmitConstructor,
+    V8NoWrapperCache
 ] interface MicroDataItemValue {
 };

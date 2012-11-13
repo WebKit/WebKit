@@ -39,6 +39,7 @@
     ReplaceableConstructor,
     JSLegacyParent=JSDOMWindowBase,
     V8CustomToJSObject,
+    V8NoWrapperCache,
     InterfaceName=Window
 ] interface DOMWindow {
     // DOM Level 0

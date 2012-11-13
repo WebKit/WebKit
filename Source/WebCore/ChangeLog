@@ -1,3 +1,85 @@
+2012-11-13  Dan Carney  <dcarney@google.com>
+
+        [V8] More efficient wrapper dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=102082
+
+        Reviewed by Adam Barth.
+
+        Dispatching a call to V8Whatever::wrap involved a chain
+        of calls, each of which checked its wrapper cache.
+        This refactor gives calls only 2 choices of functions to call:
+        toV8 and toV8Object instead of wrap. wrap has been renamed to
+        dispatchWrap and no longer contains cache checks.
+        Additionally, classes which require a custom toV8 function
+        have had all wrapping and caching calls removed, as they could
+        not have been accessed.
+
+        No new tests. Sufficiently covered.
+
+        * Modules/indexeddb/IDBAny.idl:
+        * Modules/indexeddb/IDBKey.idl:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateNormalAttrGetter):
+        (GenerateImplementation):
+        (GenerateToV8Converters):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/v8/SerializedScriptValue.cpp:
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::dispatchWrapCustom):
+        * bindings/v8/custom/V8CSSRuleCustom.cpp:
+        (WebCore::V8CSSRule::dispatchWrapCustom):
+        * bindings/v8/custom/V8CSSValueCustom.cpp:
+        (WebCore::V8CSSValue::dispatchWrapCustom):
+        * bindings/v8/custom/V8CanvasRenderingContextCustom.cpp:
+        (WebCore::V8CanvasRenderingContext::dispatchWrapCustom):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore):
+        (WebCore::V8DataView::dispatchWrapCustom):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::V8Document::dispatchWrapCustom):
+        * bindings/v8/custom/V8ElementCustom.cpp: Copied from Source/WebCore/bindings/v8/custom/V8PerformanceEntryCustom.cpp.
+        (WebCore):
+        (WebCore::V8Element::dispatchWrapCustom):
+        * bindings/v8/custom/V8EntryCustom.cpp:
+        (WebCore::V8Entry::dispatchWrapCustom):
+        * bindings/v8/custom/V8EntrySyncCustom.cpp:
+        (WebCore::V8EntrySync::dispatchWrapCustom):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore):
+        (WebCore::V8Event::dispatchWrapCustom):
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        (WebCore::V8HTMLCollection::dispatchWrapCustom):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::dispatchWrapCustom):
+        * bindings/v8/custom/V8HTMLElementCustom.cpp:
+        (WebCore::V8HTMLElement::dispatchWrapCustom):
+        * bindings/v8/custom/V8ImageDataCustom.cpp:
+        (WebCore::V8ImageData::dispatchWrapCustom):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::V8Node::dispatchWrapCustom):
+        * bindings/v8/custom/V8PerformanceEntryCustom.cpp:
+        (WebCore::V8PerformanceEntry::dispatchWrapCustom):
+        * bindings/v8/custom/V8SVGDocumentCustom.cpp:
+        (WebCore::V8SVGDocument::dispatchWrapCustom):
+        * bindings/v8/custom/V8SVGElementCustom.cpp:
+        (WebCore::V8SVGElement::dispatchWrapCustom):
+        * bindings/v8/custom/V8SVGPathSegCustom.cpp:
+        (WebCore::V8SVGPathSeg::dispatchWrapCustom):
+        * bindings/v8/custom/V8StyleSheetCustom.cpp:
+        (WebCore::V8StyleSheet::dispatchWrapCustom):
+        * dom/Element.idl:
+        * dom/make_names.pl:
+        (printWrapperFunctions):
+        (printWrapperFactoryCppFile):
+        (printWrapperFactoryHeaderFile):
+        * html/MicroDataItemValue.idl:
+        * inspector/ScriptProfile.idl:
+        * inspector/ScriptProfileNode.idl:
+        * page/DOMWindow.idl:
+        * workers/WorkerContext.idl:
+
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r134367.

@@ -64,22 +64,21 @@ v8::Handle<v8::Value> V8Event::clipboardDataAccessorGetter(v8::Local<v8::String>
 
 #define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
     if (eventNames().interfaceFor##interfaceName == desiredInterface) \
-        return toV8(static_cast<interfaceName*>(event), creationContext, isolate);
+        return dispatchWrap(static_cast<interfaceName*>(event), creationContext, isolate);
 
-v8::Handle<v8::Value> toV8(Event* event, v8::Handle<v8::Object> creationContext, v8::Isolate *isolate)
+v8::Handle<v8::Object> V8Event::dispatchWrapCustom(Event* event, v8::Handle<v8::Object> creationContext, v8::Isolate *isolate)
 {
-    if (!event)
-        return v8NullWithCheck(isolate);
+    ASSERT(event);
 
     String desiredInterface = event->interfaceName();
 
     // We need to check Event first to avoid infinite recursion.
     if (eventNames().interfaceForEvent == desiredInterface)
-        return V8Event::wrap(event, creationContext, isolate);
+        return V8Event::wrapSlow(event, creationContext, isolate);
 
     DOM_EVENT_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
 
-    return V8Event::wrap(event, creationContext, isolate);
+    return V8Event::wrapSlow(event, creationContext, isolate);
 }
 
 } // namespace WebCore

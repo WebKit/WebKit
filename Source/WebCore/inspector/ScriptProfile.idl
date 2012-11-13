@@ -27,7 +27,8 @@
 [
     Conditional=JAVASCRIPT_DEBUGGER,
     OmitConstructor,
-    V8CustomToJSObject
+    V8CustomToJSObject,
+    V8NoWrapperCache
 ] interface ScriptProfile {
     readonly attribute DOMString title;
     readonly attribute unsigned long uid;

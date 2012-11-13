@@ -43,15 +43,12 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(Blob* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8Blob::dispatchWrapCustom(Blob* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
-    if (!impl)
-        return v8NullWithCheck(isolate);
-
+    ASSERT(impl);
     if (impl->isFile())
-        return toV8(toFile(impl), creationContext, isolate);
-
-    return V8Blob::wrap(impl, creationContext, isolate);
+        return dispatchWrap(toFile(impl), creationContext, isolate);
+    return V8Blob::wrapSlow(impl, creationContext, isolate);
 }
 
 v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)

@@ -638,11 +638,11 @@ public:
         ASSERT(!tryCatch.HasCaught());
         if (messagePorts) {
             for (size_t i = 0; i < messagePorts->size(); i++)
-                m_transferredMessagePorts.set(V8MessagePort::wrap(messagePorts->at(i).get(), v8::Handle<v8::Object>(), m_writer.getIsolate()), i);
+                m_transferredMessagePorts.set(toV8Object(messagePorts->at(i).get(), v8::Handle<v8::Object>(), m_writer.getIsolate()), i);
         }
         if (arrayBuffers) {
             for (size_t i = 0; i < arrayBuffers->size(); i++)  {
-                v8::Handle<v8::Object> v8ArrayBuffer = V8ArrayBuffer::wrap(arrayBuffers->at(i).get(), v8::Handle<v8::Object>(), m_writer.getIsolate());
+                v8::Handle<v8::Object> v8ArrayBuffer = toV8Object(arrayBuffers->at(i).get(), v8::Handle<v8::Object>(), m_writer.getIsolate());
                 // Coalesce multiple occurences of the same buffer to the first index.
                 if (!m_transferredArrayBuffers.contains(v8ArrayBuffer))
                     m_transferredArrayBuffers.set(v8ArrayBuffer, i);
@@ -2022,7 +2022,7 @@ public:
             return false;
         if (index >= m_transferredMessagePorts->size())
             return false;
-        *object = V8MessagePort::wrap(m_transferredMessagePorts->at(index).get(), v8::Handle<v8::Object>(), m_reader.getIsolate());
+        *object = toV8(m_transferredMessagePorts->at(index).get(), v8::Handle<v8::Object>(), m_reader.getIsolate());
         return true;
     }
 
@@ -2034,7 +2034,7 @@ public:
             return false;
         v8::Handle<v8::Object> result = m_arrayBuffers.at(index);
         if (result.IsEmpty()) {
-            result = V8ArrayBuffer::wrap(ArrayBuffer::create(m_arrayBufferContents->at(index)).get(), v8::Handle<v8::Object>(), m_reader.getIsolate());
+            result = toV8Object(ArrayBuffer::create(m_arrayBufferContents->at(index)).get(), v8::Handle<v8::Object>(), m_reader.getIsolate());
             m_arrayBuffers[index] = result;
         }
         *object = result;

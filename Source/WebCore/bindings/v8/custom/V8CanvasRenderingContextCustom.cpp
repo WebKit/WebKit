@@ -39,18 +39,17 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(CanvasRenderingContext* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8CanvasRenderingContext::dispatchWrapCustom(CanvasRenderingContext* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
-    if (!impl)
-        return v8NullWithCheck(isolate);
+    ASSERT(impl);
     if (impl->is2d())
-        return toV8(static_cast<CanvasRenderingContext2D*>(impl), creationContext, isolate);
+        return dispatchWrap(static_cast<CanvasRenderingContext2D*>(impl), creationContext, isolate);
 #if ENABLE(WEBGL)
     if (impl->is3d())
-        return toV8(static_cast<WebGLRenderingContext*>(impl), creationContext, isolate);
+        return dispatchWrap(static_cast<WebGLRenderingContext*>(impl), creationContext, isolate);
 #endif
     ASSERT_NOT_REACHED();
-    return v8NullWithCheck(isolate);
+    return v8::Handle<v8::Object>();
 }
 
 } // namespace WebCore

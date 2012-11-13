@@ -61,7 +61,7 @@ void WebBlob::assign(const WebBlob& other)
 #if WEBKIT_USING_V8
 v8::Handle<v8::Value>  WebBlob::toV8Value()
 {
-    return V8Blob::wrap(m_private.get());
+    return toV8Object(m_private.get());
 }
 #endif
 

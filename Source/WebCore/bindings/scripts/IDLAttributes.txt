@@ -119,6 +119,7 @@ V8DoNotCheckSignature
 V8EnabledAtRuntime=*
 V8EnabledPerContext=*
 V8GenerateIsReachable=ImplDocument|ImplElementRoot|ImplOwnerRoot|ImplOwnerNodeRoot|ImplBaseRoot
+V8NoWrapperCache=*
 V8MeasureAs=*
 V8ReadOnly
 V8Unforgeable

@@ -40,10 +40,9 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> toV8(HTMLElement* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8HTMLElement::dispatchWrapCustom(HTMLElement* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
-    if (!impl)
-        return v8NullWithCheck(isolate);
+    ASSERT(impl);
     return createV8HTMLWrapper(impl, creationContext, isolate);
 }
 

@@ -72,7 +72,7 @@ unsigned WebArrayBuffer::byteLength() const
 #if WEBKIT_USING_V8
 v8::Handle<v8::Value> WebArrayBuffer::toV8Value()
 {
-    return V8ArrayBuffer::wrap(m_private.get());
+    return toV8Object(m_private.get());
 }
 
 WebArrayBuffer* WebArrayBuffer::createFromV8Value(v8::Handle<v8::Value> value)
