@@ -1210,9 +1210,17 @@ void JIT::emit_op_convert_this(Instruction* currentInstruction)
     addSlowCase(branchPtr(Equal, Address(regT1, JSCell::structureOffset()), TrustedImmPtr(m_globalData->stringStructure.get())));
 }
 
+void JIT::emit_op_get_callee(Instruction* currentInstruction)
+{
+    unsigned result = currentInstruction[1].u.operand;
+    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
+    emitPutVirtualRegister(result);
+}
+
 void JIT::emit_op_create_this(Instruction* currentInstruction)
 {
-    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
+    int callee = currentInstruction[2].u.operand;
+    emitGetVirtualRegister(callee, regT0);
     loadPtr(Address(regT0, JSFunction::offsetOfCachedInheritorID()), regT2);
     addSlowCase(branchTestPtr(Zero, regT2));
     

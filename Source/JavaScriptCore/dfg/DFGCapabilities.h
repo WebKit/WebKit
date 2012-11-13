@@ -116,6 +116,7 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_enter:
     case op_convert_this:
     case op_create_this:
+    case op_get_callee:
     case op_bitand:
     case op_bitor:
     case op_bitxor:

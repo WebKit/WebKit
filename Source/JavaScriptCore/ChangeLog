@@ -1,5 +1,46 @@
 2012-11-12  Filip Pizlo  <fpizlo@apple.com>
 
+        The act of getting the callee during 'this' construction should be explicit in bytecode
+        https://bugs.webkit.org/show_bug.cgi?id=102016
+
+        Reviewed by Michael Saboff.
+
+        This is mostly a rollout of http://trac.webkit.org/changeset/116673, but also includes
+        changes to have create_this use the result of get_callee.
+        
+        No performance or behavioral impact. This is just meant to allow us to profile
+        get_callee in the future.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_callee):
+        (JSC):
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_callee):
+        (JSC):
+        (JSC::JIT::emit_op_create_this):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
+2012-11-12  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix ARMv7 build.
 
         * assembler/MacroAssemblerARMv7.h:

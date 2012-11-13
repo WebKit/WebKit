@@ -1467,9 +1467,17 @@ void JIT::emit_op_init_lazy_reg(Instruction* currentInstruction)
     emitStore(dst, JSValue());
 }
 
+void JIT::emit_op_get_callee(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
+    emitStoreCell(dst, regT0);
+}
+
 void JIT::emit_op_create_this(Instruction* currentInstruction)
 {
-    emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
+    int callee = currentInstruction[2].u.operand;
+    emitLoadPayload(callee, regT0);
     loadPtr(Address(regT0, JSFunction::offsetOfCachedInheritorID()), regT2);
     addSlowCase(branchTestPtr(Zero, regT2));
     

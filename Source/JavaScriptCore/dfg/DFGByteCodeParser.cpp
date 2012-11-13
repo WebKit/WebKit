@@ -218,7 +218,7 @@ private:
 
         if (operand == JSStack::Callee)
             return getCallee();
-
+        
         // Is this an argument?
         if (operandIsArgument(operand))
             return getArgument(operand);
@@ -2124,7 +2124,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_create_this: {
-            set(currentInstruction[1].u.operand, addToGraph(CreateThis, get(JSStack::Callee)));
+            int calleeOperand = currentInstruction[2].u.operand;
+            set(currentInstruction[1].u.operand, addToGraph(CreateThis, get(calleeOperand)));
             NEXT_OPCODE(op_create_this);
         }
             
@@ -2177,6 +2178,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_new_regexp);
         }
             
+        case op_get_callee: {
+            set(currentInstruction[1].u.operand, get(JSStack::Callee));
+            NEXT_OPCODE(op_get_callee);
+        }
+
         // === Bitwise operations ===
 
         case op_bitand: {

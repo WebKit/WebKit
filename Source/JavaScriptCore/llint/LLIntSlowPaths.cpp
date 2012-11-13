@@ -478,7 +478,7 @@ LLINT_SLOW_PATH_DECL(slow_path_create_arguments)
 LLINT_SLOW_PATH_DECL(slow_path_create_this)
 {
     LLINT_BEGIN();
-    JSFunction* constructor = jsCast<JSFunction*>(exec->callee());
+    JSFunction* constructor = jsCast<JSFunction*>(LLINT_OP(2).jsValue().asCell());
     
 #if !ASSERT_DISABLED
     ConstructData constructData;

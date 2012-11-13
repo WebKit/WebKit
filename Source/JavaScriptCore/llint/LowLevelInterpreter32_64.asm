@@ -349,17 +349,27 @@ _llint_op_create_arguments:
 
 _llint_op_create_this:
     traceExecution()
-    loadp Callee[cfr], t0
+    loadi 8[PC], t0
+    loadp PayloadOffset[cfr, t0, 8], t0
     loadp JSFunction::m_cachedInheritorID[t0], t2
     btpz t2, .opCreateThisSlow
     allocateBasicJSObject(JSFinalObjectSizeClassIndex, t2, t0, t1, t3, .opCreateThisSlow)
     loadi 4[PC], t1
     storei CellTag, TagOffset[cfr, t1, 8]
     storei t0, PayloadOffset[cfr, t1, 8]
-    dispatch(2)
+    dispatch(3)
 
 .opCreateThisSlow:
     callSlowPath(_llint_slow_path_create_this)
+    dispatch(3)
+
+
+_llint_op_get_callee:
+    traceExecution()
+    loadi 4[PC], t0
+    loadp PayloadOffset + Callee[cfr], t1
+    storei CellTag, TagOffset[cfr, t0, 8]
+    storei t1, PayloadOffset[cfr, t0, 8]
     dispatch(2)
 
 
