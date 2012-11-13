@@ -1,3 +1,19 @@
+2012-11-13  Brent Fulgham  <bfulgham@webkit.org> and Alex Christensen <alex.christensen@flexsim.com>
+
+        Fix FastMalloc.cpp compile error for MSVC in 64-bit.
+        https://bugs.webkit.org/show_bug.cgi?id=88344
+
+        Reviewed by Ryosuke Niwa.
+
+        MSVC will not compile array declarations of zero size. The existing
+        padding math for TCMalloc_Central_FreeListPadded would evaluate
+        to zero on 64-bit machines, preventing the compile from finishing.
+
+        * wtf/FastMalloc.cpp:
+        (TCMalloc_Central_FreeListPadded_Template): Add new template (and
+        zero-size specialization) to provide proper behavior under 64-bit
+        Windows build.
+
 2012-11-13  Brent Fulgham <bfulgham@webkit.org> and Alex Christensen  <alex.christensen@flexsim.com>
 
         FastMalloc.cpp needs to be reordered before padding bug can be fixed

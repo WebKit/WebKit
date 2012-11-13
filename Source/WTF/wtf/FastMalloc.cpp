@@ -1237,10 +1237,18 @@ class TCMalloc_Central_FreeList {
 #endif
 
 // Pad each CentralCache object to multiple of 64 bytes
-class TCMalloc_Central_FreeListPadded : public TCMalloc_Central_FreeList {
- private:
-  char pad_[(64 - (sizeof(TCMalloc_Central_FreeList) % 64)) % 64];
+template <size_t SizeToPad>
+class TCMalloc_Central_FreeListPadded_Template : public TCMalloc_Central_FreeList {
+private:
+    char pad[64 - SizeToPad];
 };
+
+// Zero-size specialization to avoid compiler error when TCMalloc_Central_FreeList happens
+// to be exactly 64 bytes.
+template <> class TCMalloc_Central_FreeListPadded_Template<0> : public TCMalloc_Central_FreeList {
+};
+
+typedef TCMalloc_Central_FreeListPadded_Template<sizeof(TCMalloc_Central_FreeList) % 64> TCMalloc_Central_FreeListPadded;
 
 #if COMPILER(CLANG) && defined(__has_warning)
 #pragma clang diagnostic pop
