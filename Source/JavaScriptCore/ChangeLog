@@ -1,3 +1,18 @@
+2012-11-13  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Fix the ARM traditional build after r134332
+        https://bugs.webkit.org/show_bug.cgi?id=102044
+
+        Reviewed by Zoltan Herczeg.
+
+        Added missing methods for the MacroAssemblerARM, based on the MacroAssemblerARMv7.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::canJumpReplacePatchableBranchPtrWithPatch):
+        (MacroAssemblerARM):
+        (JSC::MacroAssemblerARM::startOfPatchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerARM::revertJumpReplacementToPatchableBranchPtrWithPatch):
+
 2012-11-12  Filip Pizlo  <fpizlo@apple.com>
 
         op_get_callee should have value profiling
