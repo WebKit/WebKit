@@ -253,6 +253,9 @@ void WebInspectorFrontendClient::frontendLoaded()
 {
     InspectorFrontendClientLocal::frontendLoaded();
 
+    if (m_attached)
+        restoreAttachedWindowHeight();
+
     setAttachedWindow(m_attached);
 }
 
@@ -289,6 +292,13 @@ void WebInspectorFrontendClient::attachWindow()
     m_inspectorClient->setInspectorStartsAttached(true);
 
     closeWindowWithoutNotifications();
+    // We need to set the attached window's height before we actually attach the window.
+    // Make sure that m_attached is true so that calling setAttachedWindowHeight from restoreAttachedWindowHeight doesn't return early. 
+    m_attached = true;
+    // Immediately after calling showWindowWithoutNotifications(), the parent frameview's visibleHeight incorrectly returns 0 always (Windows only).
+    // We are expecting this value to be just the height of the parent window when we call restoreAttachedWindowHeight, which it is before
+    // calling showWindowWithoutNotifications().
+    restoreAttachedWindowHeight();
     showWindowWithoutNotifications();
 }
 
