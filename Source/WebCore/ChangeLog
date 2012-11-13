@@ -1,3 +1,101 @@
+2012-11-13  Marja Hölttä  <marja@chromium.org>
+
+        Add initiator to CachedResourceRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=101935
+
+        Reviewed by Adam Barth.
+
+        Motivation: Chromium needs to know which elements request a
+        resource (such as an image or a script) (bug 92761). In addition,
+        for exposing resource timing information (bug 84883) we need to
+        store the initiator, and this is the first step towards it.
+
+        No new tests: No visible change in behavior.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::cachedImageForCSSValue):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::cachedImage):
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::cachedFont):
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::cachedImageSet):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * css/CSSImageValue.h:
+        (WebCore):
+        (CSSImageValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingImage):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * css/WebKitCSSSVGDocumentValue.cpp:
+        (WebCore::WebKitCSSSVGDocumentValue::load):
+        * css/WebKitCSSShaderValue.cpp:
+        (WebCore::WebKitCSSShaderValue::cachedShader):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::emitRule):
+        * html/parser/CSSPreloadScanner.h:
+        (CSSPreloadScanner):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::PreloadTask::preload):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        (WebCore):
+        (WebCore::CachedResourceLoader::preload):
+        * loader/cache/CachedResourceLoader.h:
+        (WebCore):
+        (CachedResourceLoader):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::CachedResourceRequest):
+        (WebCore):
+        (WebCore::CachedResourceRequest::~CachedResourceRequest):
+        (WebCore::CachedResourceRequest::setInitiator):
+        (WebCore::CachedResourceRequest::initiatorName):
+        (WebCore::CachedResourceRequest::initiatorDocument):
+        (WebCore::CachedResourceRequest::initiatorElement):
+        * loader/cache/CachedResourceRequest.h:
+        (WebCore):
+        (WebCore::CachedResourceRequest::setOptions):
+        (WebCore::CachedResourceRequest::defer):
+        (WebCore::CachedResourceRequest::setDefer):
+        (CachedResourceRequest):
+        * loader/cache/CachedResourceRequestInitiators.cpp: Copied from Source/WebCore/loader/cache/CachedResourceRequest.cpp.
+        (WebCore):
+        (WebCore::CachedResourceRequestInitiators::CachedResourceRequestInitiators):
+        * loader/cache/CachedResourceRequestInitiators.h: Copied from Source/WebCore/loader/cache/CachedResourceRequest.cpp.
+        (WebCore):
+        (CachedResourceRequestInitiators):
+        (WebCore::cachedResourceRequestInitiators):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::ThreadGlobalData):
+        * platform/ThreadGlobalData.h:
+        (WebCore):
+        (WebCore::ThreadGlobalData::cachedResourceRequestInitiators):
+        (ThreadGlobalData):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::requestImageResource):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::loadFont):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+
 2012-11-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134345.

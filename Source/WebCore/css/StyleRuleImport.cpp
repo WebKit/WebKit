@@ -26,6 +26,7 @@
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
+#include "CachedResourceRequestInitiators.h"
 #include "Document.h"
 #include "SecurityOrigin.h"
 #include "StyleSheetContents.h"
@@ -117,6 +118,7 @@ void StyleRuleImport::requestStyleSheet()
     }
 
     CachedResourceRequest request(ResourceRequest(absURL), m_parentStyleSheet->charset());
+    request.setInitiator(cachedResourceRequestInitiators().css, document);
     if (m_parentStyleSheet->isUserStyleSheet())
         m_cachedSheet = cachedResourceLoader->requestUserCSSStyleSheet(request);
     else

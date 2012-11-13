@@ -127,7 +127,8 @@ public:
             return;
 
         CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
-        ResourceRequest request = document->completeURL(m_urlToLoad, baseURL);
+        CachedResourceRequest request(ResourceRequest(document->completeURL(m_urlToLoad, baseURL)));
+        request.setInitiator(tagName(), document);
         if (m_tagName == scriptTag)
             cachedResourceLoader->preload(CachedResource::Script, request, m_charset, scanningBody);
         else if (m_tagName == imgTag || (m_tagName == inputTag && m_inputIsImage))

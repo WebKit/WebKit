@@ -27,7 +27,9 @@
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
+#include "CachedResourceRequestInitiators.h"
 #include "Document.h"
+#include "Element.h"
 #include "MemoryCache.h"
 #include "StyleCachedImage.h"
 #include "StylePendingImage.h"
@@ -69,14 +71,14 @@ StyleImage* CSSImageValue::cachedOrPendingImage()
     return m_image.get();
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
+StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, Element* initiatorElement)
 {
     if (isCursorImageValue())
         return static_cast<CSSCursorImageValue*>(this)->cachedImage(loader);
-    return cachedImage(loader, m_url);
+    return cachedImage(loader, m_url, initiatorElement);
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const String& url)
+StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const String& url, Element* initiatorElement)
 {
     ASSERT(loader);
 
@@ -84,6 +86,10 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
         m_accessedImage = true;
 
         CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(url)));
+        if (initiatorElement)
+            request.setInitiator(initiatorElement);
+        else
+            request.setInitiator(cachedResourceRequestInitiators().css, loader->document());
         if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request))
             m_image = StyleCachedImage::create(cachedImage.get());
     }

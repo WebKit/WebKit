@@ -30,6 +30,8 @@
 
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
+#include "CachedResourceRequest.h"
+#include "CachedResourceRequestInitiators.h"
 #include "Document.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLToken.h"
@@ -196,7 +198,8 @@ void CSSPreloadScanner::emitRule()
     if (equalIgnoringCase("import", m_rule.characters(), m_rule.length())) {
         String value = parseCSSStringOrURL(m_ruleValue.characters(), m_ruleValue.length());
         if (!value.isEmpty()) {
-            ResourceRequest request(m_document->completeURL(value));
+            CachedResourceRequest request(ResourceRequest(m_document->completeURL(value)));
+            request.setInitiator(cachedResourceRequestInitiators().css, m_document);
             m_document->cachedResourceLoader()->preload(CachedResource::CSSStyleSheet, request, String(), m_scanningBody);
         }
         m_state = Initial;

@@ -29,6 +29,7 @@
 #include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
+#include "CachedResourceRequestInitiators.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -66,6 +67,7 @@ void IconLoader::startLoading()
     request.mutableResourceRequest().setTargetType(ResourceRequest::TargetIsFavicon);
 #endif
     request.mutableResourceRequest().setPriority(ResourceLoadPriorityLow);
+    request.setInitiator(cachedResourceRequestInitiators().icon, m_frame->document());
 
     m_resource = m_frame->document()->cachedResourceLoader()->requestRawResource(request);
     if (m_resource)
