@@ -1,3 +1,10 @@
+2012-11-13  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Unreviewed, adding my new email address to committers.py and watchlist.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [CMake] Incorrect dependency calculation when generating forwarding headers

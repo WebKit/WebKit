@@ -523,7 +523,7 @@ reviewers_list = [
     Reviewer("Mihai Parparita", "mihaip@chromium.org", "mihaip"),
     Reviewer("Nate Chapin", "japhet@chromium.org", ["japhet", "natechapin"]),
     Reviewer("Nikolas Zimmermann", ["zimmermann@kde.org", "zimmermann@physik.rwth-aachen.de", "zimmermann@webkit.org", "nzimmermann@rim.com"], "wildfox"),
-    Reviewer("Noam Rosenthal", "noam.rosenthal@nokia.com", "noamr"),
+    Reviewer("Noam Rosenthal", ["noam@webkit.org", "noam.rosenthal@nokia.com"], "noamr"),
     Reviewer("Ojan Vafai", "ojan@chromium.org", "ojan"),
     Reviewer("Oliver Hunt", "oliver@apple.com", "olliej"),
     Reviewer("Pavel Feldman", ["pfeldman@chromium.org", "pfeldman@google.com"], "pfeldman"),
