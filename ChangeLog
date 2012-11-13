@@ -1,3 +1,14 @@
+2012-11-12  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Turn on errors on warnings for WebKit1 and WebKit2 libraries
+        https://bugs.webkit.org/show_bug.cgi?id=101762
+
+        Reviewed by Gyuyoung Kim.
+
+        In case of EFL, add ENABLE_WERROR to EXTRA_COMPILER_FLAGS for WEBKIT and WEBKIT2
+
+        * Source/CMakeLists.txt:
+
 2012-11-12  Joe Mason  <jmason@rim.com>
 
         [BlackBerry] NetworkJob should not check if data is received with HEAD
