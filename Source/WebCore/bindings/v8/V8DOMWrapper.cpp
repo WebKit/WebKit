@@ -68,6 +68,38 @@
 
 namespace WebCore {
 
+class V8WrapperInstantiationScope {
+public:
+    explicit V8WrapperInstantiationScope(v8::Handle<v8::Object> creationContext)
+        : m_didEnterContext(false)
+        , m_context(v8::Context::GetCurrent())
+    {
+        if (creationContext.IsEmpty())
+            return;
+        v8::Handle<v8::Context> contextForWrapper = creationContext->CreationContext();
+        // For performance, we enter the context only if the currently running context
+        // is different from the context that we are about to enter.
+        if (contextForWrapper == m_context)
+            return;
+        m_context = v8::Local<v8::Context>::New(contextForWrapper);
+        m_didEnterContext = true;
+        m_context->Enter();
+    }
+
+    ~V8WrapperInstantiationScope()
+    {
+        if (!m_didEnterContext)
+            return;
+        m_context->Exit();
+    }
+
+    v8::Handle<v8::Context> context() const { return m_context; }
+
+private:
+    bool m_didEnterContext;
+    v8::Handle<v8::Context> m_context;
+};
+
 void V8DOMWrapper::setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child)
 {
     ASSERT(name);
@@ -93,9 +125,11 @@ PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> 
     return NodeFilter::create(V8NodeFilterCondition::create(filter));
 }
 
-v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(WrapperTypeInfo* type, void* impl)
+v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(v8::Handle<v8::Object> creationContext, WrapperTypeInfo* type, void* impl)
 {
-    V8PerContextData* perContextData = V8PerContextData::from(v8::Context::GetCurrent());
+    V8WrapperInstantiationScope scope(creationContext);
+
+    V8PerContextData* perContextData = V8PerContextData::from(scope.context());
     v8::Local<v8::Object> instance = perContextData ? perContextData->createWrapperFromCache(type) : V8ObjectConstructor::newInstance(type->getTemplate()->GetFunction());
 
     // Avoid setting the DOM wrapper for failed allocations.

@@ -3498,7 +3498,6 @@ v8::Handle<v8::Object> ${className}::wrapSlow(${wrapSlowArgumentType} impl, v8::
 {
     ASSERT(impl.get());
     ASSERT($getCachedWrapper.IsEmpty());
-    v8::Handle<v8::Object> wrapper;
 END
     if ($baseType ne $interfaceName) {
         push(@implContent, <<END);
@@ -3523,20 +3522,7 @@ END
 
     push(@implContent, <<END);
 
-    v8::Handle<v8::Context> context;
-    if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
-        // For performance, we enter the context only if the currently running context
-        // is different from the context that we are about to enter.
-        context = v8::Local<v8::Context>::New(creationContext->CreationContext());
-        ASSERT(!context.IsEmpty());
-        context->Enter();
-    }
-
-    wrapper = V8DOMWrapper::instantiateV8Object(&info, impl.get());
-
-    if (!context.IsEmpty())
-        context->Exit();
-
+    v8::Handle<v8::Object> wrapper = V8DOMWrapper::instantiateV8Object(creationContext, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 

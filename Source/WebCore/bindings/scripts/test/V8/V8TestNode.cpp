@@ -112,23 +112,9 @@ v8::Handle<v8::Object> V8TestNode::wrapSlow(PassRefPtr<TestNode> impl, v8::Handl
 {
     ASSERT(impl.get());
     ASSERT(V8DOMWrapper::getCachedWrapper(impl.get()).IsEmpty());
-    v8::Handle<v8::Object> wrapper;
     ASSERT(static_cast<void*>(static_cast<Node*>(impl.get())) == static_cast<void*>(impl.get()));
 
-    v8::Handle<v8::Context> context;
-    if (!creationContext.IsEmpty() && creationContext->CreationContext() != v8::Context::GetCurrent()) {
-        // For performance, we enter the context only if the currently running context
-        // is different from the context that we are about to enter.
-        context = v8::Local<v8::Context>::New(creationContext->CreationContext());
-        ASSERT(!context.IsEmpty());
-        context->Enter();
-    }
-
-    wrapper = V8DOMWrapper::instantiateV8Object(&info, impl.get());
-
-    if (!context.IsEmpty())
-        context->Exit();
-
+    v8::Handle<v8::Object> wrapper = V8DOMWrapper::instantiateV8Object(creationContext, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 
