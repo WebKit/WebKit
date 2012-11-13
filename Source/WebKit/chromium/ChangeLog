@@ -1,3 +1,19 @@
+2012-11-12  Min Qin  <qinmin@chromium.org>
+
+        Fix windowRect calculation for webplugin due to page scale factors
+        https://bugs.webkit.org/show_bug.cgi?id=100182
+
+        Reviewed by Adam Barth.
+
+        The current calculaton of windowRect in WebPluginContainerImpl is wrong. Even after some of our latest changes.
+        The problem is caused by page scale factor.
+        For example, windowToContents(IntPoint) will return an unscaled offset for an iframe, but will return a scaled offset for the main frame. So in order to obtain the correct window coordinate, we need to use contentsToWindow().
+        Since webview_plugin.cc is expecting window coordinates, we need to use contentsToWindow(IntRect) to calculate the windowRect so that the rect size can get correctly scaled.
+        It is difficult to write a test for this because it's pixel-based, and plugin placeholder is managed on the Chromium side (webview_plugin.cc).
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::paint):
+
 2012-11-12  Adam Barth  <abarth@webkit.org>
 
         Unreviewed. Roll Chromium DEPS.

@@ -133,13 +133,12 @@ void WebPluginContainerImpl::paint(GraphicsContext* gc, const IntRect& damageRec
 
     // The plugin is positioned in window coordinates, so it needs to be painted
     // in window coordinates.
-    IntPoint origin = view->windowToContents(IntPoint(0, 0));
-    gc->translate(static_cast<float>(origin.x()), static_cast<float>(origin.y()));
+    IntPoint origin = view->contentsToWindow(IntPoint(0, 0));
+    gc->translate(static_cast<float>(-origin.x()), static_cast<float>(-origin.y()));
 
     WebCanvas* canvas = gc->platformContext()->canvas();
 
-    IntRect windowRect =
-        IntRect(view->contentsToWindow(enclosingIntRect(scaledDamageRect).location()), enclosingIntRect(scaledDamageRect).size());
+    IntRect windowRect = view->contentsToWindow(enclosingIntRect(scaledDamageRect));
     m_webPlugin->paint(canvas, windowRect);
 
     gc->restore();
@@ -818,8 +817,7 @@ void WebPluginContainerImpl::calculateGeometry(const IntRect& frameRect,
                                                IntRect& clipRect,
                                                Vector<IntRect>& cutOutRects)
 {
-    windowRect = IntRect(
-        parent()->contentsToWindow(frameRect.location()), frameRect.size());
+    windowRect = parent()->contentsToWindow(frameRect);
 
     // Calculate a clip-rect so that we don't overlap the scrollbars, etc.
     clipRect = windowClipRect();
