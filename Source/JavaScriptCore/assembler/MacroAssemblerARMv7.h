@@ -1761,12 +1761,13 @@ public:
     
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
     
-    static CodeLocationLabel startOfPatchableBranchPtrWithPatch(CodeLocationDataLabelPtr label)
+    static CodeLocationLabel startOfPatchableBranchPtrWithPatch(CodeLocationDataLabelPtr)
     {
         UNREACHABLE_FOR_PLATFORM();
+        return CodeLocationLabel();
     }
     
-    static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel instructionStart, Address, void* initialValue)
+    static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel, Address, void*)
     {
         UNREACHABLE_FOR_PLATFORM();
     }
