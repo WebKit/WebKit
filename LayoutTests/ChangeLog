@@ -1,3 +1,11 @@
+2012-11-13  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Unreviewed Qt gardening.
+
+        Update TestExpectations after r134345.
+
+        * platform/qt/fast/dynamic/insertAdjacentElement-expected.txt:
+
 2012-11-13  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed Qt gardening.
