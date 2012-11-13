@@ -431,11 +431,6 @@ void WebSettingsImpl::setEditingBehavior(EditingBehavior behavior)
     m_settings->setEditingBehaviorType(static_cast<WebCore::EditingBehaviorType>(behavior));
 }
 
-void WebSettingsImpl::setAcceleratedAnimationEnabled(bool enabled)
-{
-    m_acceleratedAnimationEnabled = enabled;
-}
-
 void WebSettingsImpl::setAcceleratedCompositingEnabled(bool enabled)
 {
     m_settings->setAcceleratedCompositingEnabled(enabled);
@@ -589,11 +584,6 @@ void WebSettingsImpl::setPasswordEchoEnabled(bool flag)
 void WebSettingsImpl::setPasswordEchoDurationInSeconds(double durationInSeconds)
 {
     m_settings->setPasswordEchoDurationInSeconds(durationInSeconds);
-}
-
-void WebSettingsImpl::setPerTilePaintingEnabled(bool enabled)
-{
-    m_perTilePaintingEnabled = enabled;
 }
 
 void WebSettingsImpl::setShouldPrintBackgrounds(bool enabled)

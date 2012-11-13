@@ -1,5 +1,16 @@
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, rolling out r134446.
+        http://trac.webkit.org/changeset/134446
+        https://bugs.webkit.org/show_bug.cgi?id=101968
+
+        Need to try a different strategy for landing a two-sided patch
+        (3/3).
+
+        * platform/chromium/TestExpectations:
+
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, rolling out r134458.
         http://trac.webkit.org/changeset/134458
 

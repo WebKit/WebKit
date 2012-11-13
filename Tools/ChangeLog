@@ -1,5 +1,26 @@
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, rolling out r134446.
+        http://trac.webkit.org/changeset/134446
+        https://bugs.webkit.org/show_bug.cgi?id=101968
+
+        Need to try a different strategy for landing a two-sided patch
+        (3/3).
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetWebSettings):
+        (TestShell::setPerTilePaintingEnabled):
+        (TestShell::setAcceleratedAnimationEnabled):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+        (WebPreferences):
+
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, rolling out r134449.
         http://trac.webkit.org/changeset/134449
         https://bugs.webkit.org/show_bug.cgi?id=102076

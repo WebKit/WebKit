@@ -52,10 +52,6 @@ public:
             , showPlatformLayerTree(false)
             , showPaintRects(false)
             , renderVSyncEnabled(true)
-            , perTilePaintingEnabled(false)
-            , partialSwapEnabled(false)
-            , acceleratedAnimationEnabled(false)
-            , pageScalePinchZoomEnabled(false)
             , refreshRate(0)
             , defaultTileSize(WebSize(256, 256))
             , maxUntiledLayerSize(WebSize(512, 512))
@@ -67,10 +63,6 @@ public:
         bool showPlatformLayerTree;
         bool showPaintRects;
         bool renderVSyncEnabled;
-        bool perTilePaintingEnabled;
-        bool partialSwapEnabled;
-        bool acceleratedAnimationEnabled;
-        bool pageScalePinchZoomEnabled;
         double refreshRate;
         WebSize defaultTileSize;
         WebSize maxUntiledLayerSize;
