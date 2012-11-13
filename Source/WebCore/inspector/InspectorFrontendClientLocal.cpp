@@ -140,8 +140,11 @@ void InspectorFrontendClientLocal::windowObjectCleared()
 
 void InspectorFrontendClientLocal::frontendLoaded()
 {
-    bringToFront();
+    // Call setDockingUnavailable before bringToFront. If we display the inspector window via bringToFront first it causes the call to canAttachWindow to return the wrong result on Windows.
+    // Calling bringToFront first causes the visibleHeight of the inspected page to always return 0 immediately after. 
+    // Thus if we call canAttachWindow first we can avoid this problem. This change does not cause any regressions on Mac.
     setDockingUnavailable(!canAttachWindow());
+    bringToFront();
     m_frontendLoaded = true;
     for (Vector<String>::iterator it = m_evaluateOnLoad.begin(); it != m_evaluateOnLoad.end(); ++it)
         evaluateOnLoad(*it);

@@ -1,3 +1,19 @@
+2012-11-12  Roger Fong  <roger_fong@apple.com>
+
+        Web Inspector: Fix docking behaviour on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=101978
+
+        Reviewed by Brian Weinstein.
+
+        There are a number of problems with docking behaviour on Windows.
+        For starters, it does not ever constrain the inspector's size properly while docked.
+        It also does not properly set the whether or not the inspector can be docked/undocked.
+        This patch fixes both issues.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::frontendLoaded):
+        Switch order of calling bringToFront and setDockingUnavailable.
+
 2012-11-12  Adam Barth  <abarth@webkit.org>
 
         [V8] Update callers to use the aligned pointer API rather than the deprecated unaligned pointer API
