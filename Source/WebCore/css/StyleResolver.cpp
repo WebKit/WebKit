@@ -2680,7 +2680,6 @@ inline bool StyleResolver::isValidRegionStyleProperty(CSSPropertyID id)
     switch (id) {
     case CSSPropertyBackgroundColor:
     case CSSPropertyColor:
-    case CSSPropertyTextShadow:
         return true;
     default:
         break;

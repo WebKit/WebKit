@@ -1,3 +1,32 @@
+2012-11-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134205.
+        http://trac.webkit.org/changeset/134205
+        https://bugs.webkit.org/show_bug.cgi?id=102093
+
+        Broke webkit-flow-inlines-dynamic.html on several ports
+        (Requested by mihnea on #webkit).
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::isValidRegionStyleProperty):
+        * rendering/InlineBox.cpp:
+        * rendering/InlineBox.h:
+        (WebCore):
+        (InlineBox):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::setRegionObjectsRegionStyle):
+        (WebCore::RenderRegion::restoreRegionObjectsOriginalStyle):
+        (WebCore::RenderRegion::computeStyleInRegion):
+        (WebCore::RenderRegion::computeChildrenStyleInRegion):
+        (WebCore::RenderRegion::setObjectStyleInRegion):
+        (WebCore::RenderRegion::clearObjectStyleInRegion):
+        * rendering/RenderRegion.h:
+        (RenderRegion):
+        (ObjectRegionStyleInfo):
+
 2012-11-13  Andreas Kling  <kling@webkit.org>
 
         Remove the non-const overload of ElementAttributeData::inlineStyle().
