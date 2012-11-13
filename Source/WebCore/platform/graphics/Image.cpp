@@ -202,7 +202,7 @@ void Image::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);
     info.addMember(m_data);
-    info.addMember(m_imageObserver);
+    info.addWeakPointer(m_imageObserver);
 }
 
 }

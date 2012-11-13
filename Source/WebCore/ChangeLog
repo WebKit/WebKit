@@ -1,3 +1,20 @@
+2012-11-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Memory instrumentation: remove reportMemoryUsage method from ImageObserver
+        https://bugs.webkit.org/show_bug.cgi?id=102058
+
+        Reviewed by Pavel Feldman.
+
+        * bindings/v8/V8PerIsolateData.cpp:
+        (WebCore::V8PerIsolateData::reportMemoryUsage): drive-by fix, no need to report
+        each element of the vector as generic vector instrumentation will take care of it.
+        * platform/graphics/Image.cpp: the client is reported as weak pointer to make sure
+        we don't count its by the pointer to the base class which may differ from the actual
+        object address.
+        (WebCore::Image::reportMemoryUsage):
+        * platform/graphics/ImageObserver.h: removed reportMemoryUsage method from the interface.
+        (ImageObserver):
+
 2012-11-13  Eberhard Graether  <egraether@google.com>
 
         checkbox to toggle FPS counter in the inspector's settings
