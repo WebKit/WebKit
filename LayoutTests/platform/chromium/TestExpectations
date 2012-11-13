@@ -4108,6 +4108,10 @@ webkit.org/b/99749 [ MountainLion ] fast/text/emphasis-combined-text.html [ Fail
 webkit.org/b/99749 [ MountainLion ] fast/text/emphasis.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] fast/text/fallback-traits-fixup.html [ Failure ]
 webkit.org/b/99749 [ MountainLion ] fast/text/international/text-combine-image-test.html [ Failure ]
+#
+# This test is probably either Failure or ImageOnlyFailure depending on which fonts are installed.
+webkit.org/b/99749 [ MountainLion ] fast/text/midword-break-before-surrogate-pair.html [ Failure ImageOnlyFailure ]
+
 webkit.org/b/99749 [ MountainLion ] fast/writing-mode/border-radius-clipping-vertical-lr.html [ ImageOnlyFailure ]
 webkit.org/b/99749 [ MountainLion ] fast/writing-mode/border-vertical-lr.html [ Failure ]
 webkit.org/b/99749 [ MountainLion ] fast/writing-mode/box-shadow-horizontal-bt.html [ ImageOnlyFailure ]
@@ -4146,14 +4150,6 @@ webkit.org/b/79446 svg/repaint/image-with-clip-path.svg [ Pass ImageOnlyFailure 
 
 webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure ]
 webkit.org/b/100142 css3/filters/effect-reference-ordering-hw.html [ Failure ImageOnlyFailure Missing ]
-
-# This test is probably either Failure or ImageOnlyFailure depending on which fonts are installed.
-webkit.org/b/99749 [ MountainLion ] fast/text/midword-break-before-surrogate-pair.html [ Failure ImageOnlyFailure ]
-
-Bug(dpranke) [ Linux ] fast/text/zero-font-size-2.html [ ImageOnlyFailure ]
-Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html [ Failure ]
-Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html [ Failure ]
-Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html [ Failure ]
 
 webkit.org/b/100023 [ Mac ] fast/sub-pixel/file-upload-control-at-fractional-offset.html [ Failure ImageOnlyFailure ]
 

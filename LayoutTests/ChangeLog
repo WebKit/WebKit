@@ -1,3 +1,12 @@
+2012-11-13  Dirk Pranke  <dpranke@chromium.org>
+
+        Remove a few old no-longer-failing tests and update one baseline.
+
+        Unreviewed, gardening.
+
+        * platform/chromium-linux/fast/text/zero-font-size-2-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Unreviewed gardening.
