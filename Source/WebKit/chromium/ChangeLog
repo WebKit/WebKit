@@ -1,3 +1,14 @@
+2012-11-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: MathML types need to be semantically identified in AX tree
+        https://bugs.webkit.org/show_bug.cgi?id=101263
+
+        Reviewed by Beth Dakin.
+
+        * public/WebAccessibilityRole.h:
+        * src/AssertMatchingEnums.cpp:
+            Add new accessibility role.
+
 2012-11-13  Silvia Pfeiffer  <silviapf@chromium.org>
 
         Clean up the inheritance tree under the MediaControls Class.

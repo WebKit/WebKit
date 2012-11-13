@@ -43,6 +43,7 @@ RenderMathMLOperator::RenderMathMLOperator(Element* element)
     : RenderMathMLBlock(element)
     , m_stretchHeight(0)
     , m_operator(0)
+    , m_operatorType(Default)
 {
 }
 
@@ -50,6 +51,7 @@ RenderMathMLOperator::RenderMathMLOperator(Node* node, UChar operatorChar)
     : RenderMathMLBlock(node)
     , m_stretchHeight(0)
     , m_operator(convertHyphenMinusToMinusSign(operatorChar))
+    , m_operatorType(Default)
 {
 }
 
@@ -201,6 +203,8 @@ void RenderMathMLOperator::updateFromElement()
     if (stretchDisabled || !shouldStack) {
         m_isStacked = false;
         RenderBlock* container = new (renderArena()) RenderMathMLBlock(node());
+        // This container doesn't offer any useful information to accessibility.
+        toRenderMathMLBlock(container)->setIgnoreInAccessibilityTree(true);
         
         RefPtr<RenderStyle> newStyle = RenderStyle::create();
         newStyle->inheritFrom(style());
@@ -293,6 +297,7 @@ PassRefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int maxHeight
 RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int maxHeightForRenderer, int charRelative)
 {
     RenderBlock* container = new (renderArena()) RenderMathMLBlock(node());
+    toRenderMathMLBlock(container)->setIgnoreInAccessibilityTree(true);
     container->setStyle(createStackableStyle(maxHeightForRenderer));
     addChild(container);
     RenderBlock* parent = container;

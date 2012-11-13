@@ -46,7 +46,11 @@ public:
     void stretchToHeight(int pixelHeight);
     
     virtual int firstLineBoxBaseline() const OVERRIDE;
-        
+    
+    enum OperatorType { Default, Separator, Fence };
+    void setOperatorType(OperatorType type) { m_operatorType = type; }
+    OperatorType operatorType() const { return m_operatorType; }
+    
 protected:
     virtual void computePreferredLogicalWidths() OVERRIDE;
     PassRefPtr<RenderStyle> createStackableStyle(int maxHeightForRenderer);
@@ -62,6 +66,7 @@ private:
     int m_stretchHeight;
     bool m_isStacked;
     UChar m_operator;
+    OperatorType m_operatorType;
 };
 
 inline RenderMathMLOperator* toRenderMathMLOperator(RenderMathMLBlock* block)

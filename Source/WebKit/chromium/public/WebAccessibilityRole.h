@@ -96,6 +96,7 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleListBoxOption,
     WebAccessibilityRoleListItem,
     WebAccessibilityRoleListMarker,
+    WebAccessibilityRoleMathElement,
     WebAccessibilityRoleMatte,
     WebAccessibilityRoleMenu,
     WebAccessibilityRoleMenuBar,

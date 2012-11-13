@@ -1,0 +1,124 @@
+a
+2
+
+a
+2
+
+a
+
+3
+a
+
+2
+a
+e
+
+2
+sub
+
+2
+sup
+
+2
+sub
+sup
+
+3
+under
+
+3
+over
+
+3
+under
+over
+
+3
+2
+1
+This tests ensures that Mac specific attributes and roles for MathML elements work as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS row.role is 'AXRole: AXGroup'
+PASS row.subrole is 'AXSubrole: AXMathRow'
+PASS row.childAtIndex(0).subrole is 'AXSubrole: AXMathIdentifier'
+PASS row.childAtIndex(0).childAtIndex(0).stringValue is 'AXValue: a'
+PASS row.childAtIndex(1).subrole is 'AXSubrole: AXMathNumber'
+PASS row.childAtIndex(1).childAtIndex(0).stringValue is 'AXValue: 2'
+PASS fraction.subrole is 'AXSubrole: AXMathFraction'
+PASS fractionDenominator.subrole is 'AXSubrole: AXMathNumber'
+PASS fractionDenominator.childAtIndex(0).stringValue is 'AXValue: 2'
+PASS fractionDenominator.isEqual(accessibilityController.accessibleElementById('fractionDenominator')) is true
+PASS fractionNumerator.subrole is 'AXSubrole: AXMathIdentifier'
+PASS fractionNumerator.childAtIndex(0).stringValue is 'AXValue: a'
+PASS fractionNumerator.isEqual(accessibilityController.accessibleElementById('fractionNumerator')) is true
+PASS sqrt.role is 'AXRole: AXGroup'
+PASS sqrt.subrole is 'AXSubrole: AXMathSquareRoot'
+PASS sqrtRadicand.subrole is 'AXSubrole: AXMathIdentifier'
+PASS sqrtRadicand.childAtIndex(0).stringValue is 'AXValue: a'
+PASS sqrtRadicand.isEqual(accessibilityController.accessibleElementById('sqrtRadicand')) is true
+PASS root.role is 'AXRole: AXGroup'
+PASS root.subrole is 'AXSubrole: AXMathRoot'
+PASS rootIndex.isEqual(accessibilityController.accessibleElementById('rootIndex')) is true
+PASS rootRadicand.isEqual(accessibilityController.accessibleElementById('rootRadicand')) is true
+PASS fenced.role is 'AXRole: AXGroup'
+PASS fenced.subrole is 'AXSubrole: AXMathFenced'
+PASS fenced.stringAttributeValue('AXMathFencedOpen') is '{'
+PASS fenced.stringAttributeValue('AXMathFencedClose') is '}'
+PASS child.childAtIndex(0).stringValue is 'AXValue: {'
+PASS child.childAtIndex(0).stringValue is 'AXValue: 2'
+PASS child.childAtIndex(0).stringValue is 'AXValue: ,'
+PASS child.childAtIndex(0).stringValue is 'AXValue: a'
+PASS child.childAtIndex(0).stringValue is 'AXValue: ,'
+PASS child.childAtIndex(0).stringValue is 'AXValue: e'
+PASS child.childAtIndex(0).stringValue is 'AXValue: }'
+PASS sub.role is 'AXRole: AXGroup'
+PASS sub.subrole is 'AXSubrole: AXMathSubscriptSuperscript'
+PASS subBase.subrole is 'AXSubrole: AXMathIdentifier'
+PASS subSub.subrole is 'AXSubrole: AXMathText'
+PASS subBase.isEqual(accessibilityController.accessibleElementById('subBase')) is true
+PASS subSub.isEqual(accessibilityController.accessibleElementById('subSub')) is true
+PASS sup.role is 'AXRole: AXGroup'
+PASS sup.subrole is 'AXSubrole: AXMathSubscriptSuperscript'
+PASS supBase.subrole is 'AXSubrole: AXMathIdentifier'
+PASS supSup.subrole is 'AXSubrole: AXMathText'
+PASS supBase.isEqual(accessibilityController.accessibleElementById('supBase')) is true
+PASS supSup.isEqual(accessibilityController.accessibleElementById('supSup')) is true
+PASS subsup.role is 'AXRole: AXGroup'
+PASS subsup.subrole is 'AXSubrole: AXMathSubscriptSuperscript'
+PASS subsupBase.subrole is 'AXSubrole: AXMathIdentifier'
+PASS subsupSup.subrole is 'AXSubrole: AXMathText'
+PASS subsupSub.subrole is 'AXSubrole: AXMathText'
+PASS subsupBase.isEqual(accessibilityController.accessibleElementById('subsupBase')) is true
+PASS subsupSub.isEqual(accessibilityController.accessibleElementById('subsupSub')) is true
+PASS subsupSup.isEqual(accessibilityController.accessibleElementById('subsupSup')) is true
+PASS under.role is 'AXRole: AXGroup'
+PASS under.subrole is 'AXSubrole: AXMathUnderOver'
+PASS underBase.subrole is 'AXSubrole: AXMathIdentifier'
+PASS underUnder.subrole is 'AXSubrole: AXMathText'
+PASS underUnder.isEqual(accessibilityController.accessibleElementById('underUnder')) is true
+PASS over.role is 'AXRole: AXGroup'
+PASS over.subrole is 'AXSubrole: AXMathUnderOver'
+PASS overBase.subrole is 'AXSubrole: AXMathIdentifier'
+PASS overOver.subrole is 'AXSubrole: AXMathText'
+PASS overBase.isEqual(accessibilityController.accessibleElementById('overBase')) is true
+PASS overOver.isEqual(accessibilityController.accessibleElementById('overOver')) is true
+PASS underover.role is 'AXRole: AXGroup'
+PASS underover.subrole is 'AXSubrole: AXMathUnderOver'
+PASS underOverBase.subrole is 'AXSubrole: AXMathIdentifier'
+PASS underOverUnder.subrole is 'AXSubrole: AXMathText'
+PASS underOverOver.subrole is 'AXSubrole: AXMathText'
+PASS underOverBase.isEqual(accessibilityController.accessibleElementById('underOverBase')) is true
+PASS underOverUnder.isEqual(accessibilityController.accessibleElementById('underOverUnder')) is true
+PASS underOverOver.isEqual(accessibilityController.accessibleElementById('underOverOver')) is true
+PASS table.role is 'AXRole: AXGroup'
+PASS table.subrole is 'AXSubrole: AXMathTable'
+PASS row.subrole is 'AXSubrole: AXMathTableRow'
+PASS cell.subrole is 'AXSubrole: AXMathTableCell'
+PASS cell.childAtIndex(0).subrole is 'AXSubrole: AXMathIdentifier'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

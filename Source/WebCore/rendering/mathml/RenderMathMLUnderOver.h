@@ -41,6 +41,7 @@ public:
     virtual int firstLineBoxBaseline() const OVERRIDE;
     
 private:
+    virtual bool isRenderMathMLUnderOver() const { return true; }
     virtual const char* renderName() const { return "RenderMathMLUnderOver"; }
 
     enum UnderOverType { Under, Over, UnderOver };

@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+
+<math id="row">
+<mrow><mi>a</mi><mn>2</mn></mrow>
+</math><br>
+
+<math id="fraction">
+<mfrac><mi id="fractionNumerator">a</mi><mn id="fractionDenominator">2</mn></mfrac>
+</math><br>
+
+<math id="sqrt">
+<msqrt><mi id="sqrtRadicand">a</mi></msqrt>
+</math><br>
+
+<math id="root">
+<mroot><mn id="rootRadicand">3</mn><mi id="rootIndex">a</mi></mroot>
+</math><br>
+
+<math id="fenced">
+<mfenced open="{" close="}" separators=",,"><mi>2</mi><mi>a</mi><mi>e</mi></mroot>
+</math><br>
+
+<math id="sub">
+<msub><mi id="subBase">2</mi><mtext id="subSub">sub</mtext></msub>
+</math><br>
+
+<math id="sup">
+<msup><mi id="supBase">2</mi><mtext id="supSup">sup</mtext></msup>
+</math><br>
+
+<math id="subsup">
+<msubsup><mi id="subsupBase">2</mi><mtext id="subsupSub">sub</mtext><mtext id="subsupSup">sup</mtext></msubsup>
+</math><br>
+	
+<math id="under">
+<munder><mi id="underBase">3</mi><mtext id="underUnder">under</mtext></munder>
+</math><br>
+
+<math id="over">
+<mover><mi id="overBase">3</mi><mtext id="overOver">over</mtext></mover>
+</math><br>
+
+<math id="underover">
+<munderover><mi id="underOverBase">3</mi><mtext id="underOverUnder">under</mtext><mtext id="underOverOver">over</mtext></munderover>
+</math><br>
+
+<math id="table">
+<mtable>
+<mtr><mtd><mi>3</mi></mtd></mtr>
+<mtr><mtd><mi>2</mi></mtd></mtr>
+<mtr><mtd><mi>1</mi></mtd></mtr>
+</mtable>
+</math>
+
+
+<div id="console"></div>
+<script>
+
+description("This tests ensures that Mac specific attributes and roles for MathML elements work as expected.")
+
+if (window.testRunner && window.accessibilityController) {
+
+   // Row
+   var row = accessibilityController.accessibleElementById("row").childAtIndex(0);
+   shouldBe("row.role", "'AXRole: AXGroup'");
+   shouldBe("row.subrole", "'AXSubrole: AXMathRow'");
+   shouldBe("row.childAtIndex(0).subrole", "'AXSubrole: AXMathIdentifier'");
+   shouldBe("row.childAtIndex(0).childAtIndex(0).stringValue", "'AXValue: a'");
+   shouldBe("row.childAtIndex(1).subrole", "'AXSubrole: AXMathNumber'");
+   shouldBe("row.childAtIndex(1).childAtIndex(0).stringValue", "'AXValue: 2'");
+
+   // Fraction
+   var fraction = accessibilityController.accessibleElementById("fraction").childAtIndex(0);
+   shouldBe("fraction.subrole", "'AXSubrole: AXMathFraction'");
+   var fractionDenominator = fraction.uiElementAttributeValue("AXMathFractionDenominator");
+   var fractionNumerator = fraction.uiElementAttributeValue("AXMathFractionNumerator");
+   shouldBe("fractionDenominator.subrole", "'AXSubrole: AXMathNumber'");
+   shouldBe("fractionDenominator.childAtIndex(0).stringValue", "'AXValue: 2'");
+   shouldBeTrue("fractionDenominator.isEqual(accessibilityController.accessibleElementById('fractionDenominator'))");
+   shouldBe("fractionNumerator.subrole", "'AXSubrole: AXMathIdentifier'");
+   shouldBe("fractionNumerator.childAtIndex(0).stringValue", "'AXValue: a'");
+   shouldBeTrue("fractionNumerator.isEqual(accessibilityController.accessibleElementById('fractionNumerator'))");
+
+   // Square root
+   var sqrt = accessibilityController.accessibleElementById("sqrt").childAtIndex(0);
+   shouldBe("sqrt.role", "'AXRole: AXGroup'");
+   shouldBe("sqrt.subrole", "'AXSubrole: AXMathSquareRoot'");
+   var sqrtRadicand = sqrt.uiElementAttributeValue("AXMathRootRadicand");
+   shouldBe("sqrtRadicand.subrole", "'AXSubrole: AXMathIdentifier'");
+   shouldBe("sqrtRadicand.childAtIndex(0).stringValue", "'AXValue: a'");
+   shouldBeTrue("sqrtRadicand.isEqual(accessibilityController.accessibleElementById('sqrtRadicand'))");
+
+   // Generic root
+   var root = accessibilityController.accessibleElementById("root").childAtIndex(0);
+   shouldBe("root.role", "'AXRole: AXGroup'");
+   shouldBe("root.subrole", "'AXSubrole: AXMathRoot'");
+   var rootIndex = root.uiElementAttributeValue("AXMathRootIndex");
+   var rootRadicand = root.uiElementAttributeValue("AXMathRootRadicand");
+   shouldBeTrue("rootIndex.isEqual(accessibilityController.accessibleElementById('rootIndex'))");
+   shouldBeTrue("rootRadicand.isEqual(accessibilityController.accessibleElementById('rootRadicand'))");
+
+   // Fenced
+   var fenced = accessibilityController.accessibleElementById("fenced").childAtIndex(0);
+   shouldBe("fenced.role", "'AXRole: AXGroup'");
+   shouldBe("fenced.subrole", "'AXSubrole: AXMathFenced'");
+   shouldBe("fenced.stringAttributeValue('AXMathFencedOpen')", "'{'");
+   shouldBe("fenced.stringAttributeValue('AXMathFencedClose')", "'}'");
+   var fenceValues = new Array("{", "2", ",", "a", ",", "e", "}");
+   for (var k = 0; k < fenceValues.length; k++) {
+      var child = fenced.childAtIndex(k);
+      shouldBe("child.childAtIndex(0).stringValue", "'AXValue: " + fenceValues[k] + "'");
+   }
+
+   // Subscript
+   var sub = accessibilityController.accessibleElementById("sub").childAtIndex(0);
+   shouldBe("sub.role", "'AXRole: AXGroup'");
+   shouldBe("sub.subrole", "'AXSubrole: AXMathSubscriptSuperscript'");
+   var subBase = sub.uiElementAttributeValue("AXMathBase");
+   shouldBe("subBase.subrole", "'AXSubrole: AXMathIdentifier'");
+   var subSub = sub.uiElementAttributeValue("AXMathSubscript");
+   shouldBe("subSub.subrole", "'AXSubrole: AXMathText'");
+   shouldBeTrue("subBase.isEqual(accessibilityController.accessibleElementById('subBase'))");
+   shouldBeTrue("subSub.isEqual(accessibilityController.accessibleElementById('subSub'))");
+
+   // Superscript
+   var sup = accessibilityController.accessibleElementById("sup").childAtIndex(0);
+   shouldBe("sup.role", "'AXRole: AXGroup'");
+   shouldBe("sup.subrole", "'AXSubrole: AXMathSubscriptSuperscript'");
+   var supBase = sup.uiElementAttributeValue("AXMathBase");
+   shouldBe("supBase.subrole", "'AXSubrole: AXMathIdentifier'");
+   var supSup = sup.uiElementAttributeValue("AXMathSuperscript");
+   shouldBe("supSup.subrole", "'AXSubrole: AXMathText'");
+   shouldBeTrue("supBase.isEqual(accessibilityController.accessibleElementById('supBase'))");
+   shouldBeTrue("supSup.isEqual(accessibilityController.accessibleElementById('supSup'))");
+
+   // Subsuperscript
+   var subsup = accessibilityController.accessibleElementById("subsup").childAtIndex(0);
+   shouldBe("subsup.role", "'AXRole: AXGroup'");
+   shouldBe("subsup.subrole", "'AXSubrole: AXMathSubscriptSuperscript'");
+   var subsupBase = subsup.uiElementAttributeValue("AXMathBase");
+   shouldBe("subsupBase.subrole", "'AXSubrole: AXMathIdentifier'");
+   var subsupSup = subsup.uiElementAttributeValue("AXMathSuperscript");
+   shouldBe("subsupSup.subrole", "'AXSubrole: AXMathText'");
+   var subsupSub = subsup.uiElementAttributeValue("AXMathSubscript");
+   shouldBe("subsupSub.subrole", "'AXSubrole: AXMathText'");
+   shouldBeTrue("subsupBase.isEqual(accessibilityController.accessibleElementById('subsupBase'))");
+   shouldBeTrue("subsupSub.isEqual(accessibilityController.accessibleElementById('subsupSub'))");
+   shouldBeTrue("subsupSup.isEqual(accessibilityController.accessibleElementById('subsupSup'))");
+
+   // Under
+   var under = accessibilityController.accessibleElementById("under").childAtIndex(0);
+   shouldBe("under.role", "'AXRole: AXGroup'");
+   shouldBe("under.subrole", "'AXSubrole: AXMathUnderOver'");
+   var underBase = under.uiElementAttributeValue("AXMathBase");
+   shouldBe("underBase.subrole", "'AXSubrole: AXMathIdentifier'");
+   var underUnder = under.uiElementAttributeValue("AXMathUnder");
+   shouldBe("underUnder.subrole", "'AXSubrole: AXMathText'");
+   shouldBeTrue("underUnder.isEqual(accessibilityController.accessibleElementById('underUnder'))");
+
+   // Over
+   var over = accessibilityController.accessibleElementById("over").childAtIndex(0);
+   shouldBe("over.role", "'AXRole: AXGroup'");
+   shouldBe("over.subrole", "'AXSubrole: AXMathUnderOver'");
+   var overBase = over.uiElementAttributeValue("AXMathBase");
+   shouldBe("overBase.subrole", "'AXSubrole: AXMathIdentifier'");
+   var overOver = over.uiElementAttributeValue("AXMathOver");
+   shouldBe("overOver.subrole", "'AXSubrole: AXMathText'");
+   shouldBeTrue("overBase.isEqual(accessibilityController.accessibleElementById('overBase'))");
+   shouldBeTrue("overOver.isEqual(accessibilityController.accessibleElementById('overOver'))");
+
+   // UnderOver
+   var underover = accessibilityController.accessibleElementById("underover").childAtIndex(0);
+   shouldBe("underover.role", "'AXRole: AXGroup'");
+   shouldBe("underover.subrole", "'AXSubrole: AXMathUnderOver'");
+   var underOverBase = underover.uiElementAttributeValue("AXMathBase");
+   shouldBe("underOverBase.subrole", "'AXSubrole: AXMathIdentifier'");
+   var underOverUnder = underover.uiElementAttributeValue("AXMathUnder");
+   shouldBe("underOverUnder.subrole", "'AXSubrole: AXMathText'");
+   var underOverOver = underover.uiElementAttributeValue("AXMathOver");
+   shouldBe("underOverOver.subrole", "'AXSubrole: AXMathText'");
+   shouldBeTrue("underOverBase.isEqual(accessibilityController.accessibleElementById('underOverBase'))");
+   shouldBeTrue("underOverUnder.isEqual(accessibilityController.accessibleElementById('underOverUnder'))");
+   shouldBeTrue("underOverOver.isEqual(accessibilityController.accessibleElementById('underOverOver'))");
+
+   // Table
+   var table = accessibilityController.accessibleElementById("table").childAtIndex(0);
+   shouldBe("table.role", "'AXRole: AXGroup'");
+   shouldBe("table.subrole", "'AXSubrole: AXMathTable'");
+   var row = table.childAtIndex(0);
+   shouldBe("row.subrole", "'AXSubrole: AXMathTableRow'");
+   var cell = row.childAtIndex(0);
+   shouldBe("cell.subrole", "'AXSubrole: AXMathTableCell'");
+   shouldBe("cell.childAtIndex(0).subrole", "'AXSubrole: AXMathIdentifier'");
+}
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

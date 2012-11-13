@@ -82,22 +82,23 @@ void RenderMathMLFenced::updateFromElement()
         makeFences();
 }
 
-RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar, OperatorType operatorType)
+RenderMathMLOperator* RenderMathMLFenced::createMathMLOperator(UChar uChar, RenderMathMLOperator::OperatorType operatorType)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), FLEX);
     newStyle->setFlexDirection(FlowColumn);
-    newStyle->setMarginEnd(Length((operatorType == Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style()->fontSize(), Fixed));
-    if (operatorType == Fence)
+    newStyle->setMarginEnd(Length((operatorType == RenderMathMLOperator::Fence ? gFenceMarginEms : gSeparatorMarginEndEms) * style()->fontSize(), Fixed));
+    if (operatorType == RenderMathMLOperator::Fence)
         newStyle->setMarginStart(Length(gFenceMarginEms * style()->fontSize(), Fixed));
     RenderMathMLOperator* newOperator = new (renderArena()) RenderMathMLOperator(node() /* "almost anonymous" */, uChar);
+    newOperator->setOperatorType(operatorType);
     newOperator->setStyle(newStyle.release());
     return newOperator;
 }
 
 void RenderMathMLFenced::makeFences()
 {
-    RenderMathMLRow::addChild(createMathMLOperator(m_open, Fence), firstChild());
-    m_closeFenceRenderer = createMathMLOperator(m_close, Fence);
+    RenderMathMLRow::addChild(createMathMLOperator(m_open, RenderMathMLOperator::Fence), firstChild());
+    m_closeFenceRenderer = createMathMLOperator(m_close, RenderMathMLOperator::Fence);
     RenderMathMLRow::addChild(m_closeFenceRenderer);
 }
 
@@ -132,7 +133,7 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
             else
                 separator = (*m_separators.get())[count - 1];
                 
-            separatorRenderer = createMathMLOperator(separator, Separator);
+            separatorRenderer = createMathMLOperator(separator, RenderMathMLOperator::Separator);
         }
     }
     

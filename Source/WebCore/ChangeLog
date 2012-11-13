@@ -1,3 +1,131 @@
+2012-11-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: MathML types need to be semantically identified in AX tree
+        https://bugs.webkit.org/show_bug.cgi?id=101263
+
+        Reviewed by Beth Dakin.
+
+        Semantically identify various MathML elements within the AX tree. This will allow
+        screen readers to identify math types so that equations can be output more accurately.
+
+        Test: platform/mac/accessibility/mathml-elements.html
+
+        * accessibility/AccessibilityObject.h:
+        (AccessibilityObject):
+        (WebCore::AccessibilityObject::isMathElement):
+        (WebCore::AccessibilityObject::isMathFraction):
+        (WebCore::AccessibilityObject::isMathFenced):
+        (WebCore::AccessibilityObject::isMathSubscriptSuperscript):
+        (WebCore::AccessibilityObject::isMathRow):
+        (WebCore::AccessibilityObject::isMathUnderOver):
+        (WebCore::AccessibilityObject::isMathRoot):
+        (WebCore::AccessibilityObject::isMathSquareRoot):
+        (WebCore::AccessibilityObject::isMathText):
+        (WebCore::AccessibilityObject::isMathNumber):
+        (WebCore::AccessibilityObject::isMathOperator):
+        (WebCore::AccessibilityObject::isMathFenceOperator):
+        (WebCore::AccessibilityObject::isMathSeparatorOperator):
+        (WebCore::AccessibilityObject::isMathIdentifier):
+        (WebCore::AccessibilityObject::isMathTable):
+        (WebCore::AccessibilityObject::isMathTableRow):
+        (WebCore::AccessibilityObject::isMathTableCell):
+        (WebCore::AccessibilityObject::mathRadicandObject):
+        (WebCore::AccessibilityObject::mathRootIndexObject):
+        (WebCore::AccessibilityObject::mathUnderObject):
+        (WebCore::AccessibilityObject::mathOverObject):
+        (WebCore::AccessibilityObject::mathNumeratorObject):
+        (WebCore::AccessibilityObject::mathDenominatorObject):
+        (WebCore::AccessibilityObject::mathBaseObject):
+        (WebCore::AccessibilityObject::mathSubscriptObject):
+        (WebCore::AccessibilityObject::mathSuperscriptObject):
+        (WebCore::AccessibilityObject::mathFencedOpenString):
+        (WebCore::AccessibilityObject::mathFencedCloseString):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::startOfContinuations):
+            Handle a case where a MathML render element is created with the node of their parent (which could lead to an assert).
+        (WebCore::AccessibilityRenderObject::textUnderElement):
+            Handle the cases for RenderMathMLOperators which use the node of their parent, which confuses the normal textUnderElement() routine.
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+            Handle ignored cases for math elements
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::isMathElement):
+        (WebCore::AccessibilityRenderObject::isMathFraction):
+        (WebCore::AccessibilityRenderObject::isMathFenced):
+        (WebCore::AccessibilityRenderObject::isMathSubscriptSuperscript):
+        (WebCore::AccessibilityRenderObject::isMathRow):
+        (WebCore::AccessibilityRenderObject::isMathUnderOver):
+        (WebCore::AccessibilityRenderObject::isMathSquareRoot):
+        (WebCore::AccessibilityRenderObject::isMathRoot):
+        (WebCore::AccessibilityRenderObject::isMathOperator):
+        (WebCore::AccessibilityRenderObject::isMathFenceOperator):
+        (WebCore::AccessibilityRenderObject::isMathSeparatorOperator):
+        (WebCore::AccessibilityRenderObject::isMathText):
+        (WebCore::AccessibilityRenderObject::isMathNumber):
+        (WebCore::AccessibilityRenderObject::isMathIdentifier):
+        (WebCore::AccessibilityRenderObject::isMathTable):
+        (WebCore::AccessibilityRenderObject::isMathTableRow):
+        (WebCore::AccessibilityRenderObject::isMathTableCell):
+        (WebCore::AccessibilityRenderObject::isIgnoredElementWithinMathTree):
+            Make sure anonymouse blocks are ignored within math tree; make sure non-element type objects are ignored (like <mstyle>).
+        (WebCore::AccessibilityRenderObject::mathRadicandObject):
+        (WebCore::AccessibilityRenderObject::mathRootIndexObject):
+        (WebCore::AccessibilityRenderObject::mathNumeratorObject):
+        (WebCore::AccessibilityRenderObject::mathDenominatorObject):
+        (WebCore::AccessibilityRenderObject::mathUnderObject):
+        (WebCore::AccessibilityRenderObject::mathOverObject):
+        (WebCore::AccessibilityRenderObject::mathBaseObject):
+        (WebCore::AccessibilityRenderObject::mathSubscriptObject):
+        (WebCore::AccessibilityRenderObject::mathSuperscriptObject):
+        (WebCore::AccessibilityRenderObject::mathFencedOpenString):
+        (WebCore::AccessibilityRenderObject::mathFencedCloseString):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::RenderMathMLBlock):
+        * rendering/mathml/RenderMathMLBlock.h:
+        (WebCore::RenderMathMLBlock::isRenderMathMLFenced):
+        (WebCore::RenderMathMLBlock::isRenderMathMLFraction):
+        (WebCore::RenderMathMLBlock::isRenderMathMLRoot):
+        (WebCore::RenderMathMLBlock::isRenderMathMLSquareRoot):
+        (WebCore::RenderMathMLBlock::isRenderMathMLSubSup):
+        (WebCore::RenderMathMLBlock::isRenderMathMLUnderOver):
+        (WebCore::RenderMathMLBlock::setIgnoreInAccessibilityTree):
+        (WebCore::RenderMathMLBlock::ignoreInAccessibilityTree):
+            Add ability to identify anonymous render blocks as items that AX should ignore.
+        (RenderMathMLBlock):
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::createMathMLOperator):
+            Identify which kind of math operator is being created on the fly (Fence or Separator)
+        (WebCore::RenderMathMLFenced::makeFences):
+        (WebCore::RenderMathMLFenced::addChild):
+        * rendering/mathml/RenderMathMLFenced.h:
+        (WebCore::RenderMathMLFenced::isRenderMathMLFenced):
+        (RenderMathMLFenced):
+        * rendering/mathml/RenderMathMLFraction.h:
+        (WebCore::RenderMathMLFraction::isRenderMathMLFraction):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::RenderMathMLOperator):
+        (WebCore::RenderMathMLOperator::updateFromElement):
+        (WebCore::RenderMathMLOperator::createGlyph):
+             Mark anonymous render blocks as AX ignored.
+        * rendering/mathml/RenderMathMLOperator.h:
+        (WebCore::RenderMathMLOperator::setOperatorType):
+        (WebCore::RenderMathMLOperator::operatorType):
+        (RenderMathMLOperator):
+        * rendering/mathml/RenderMathMLRoot.h:
+        (WebCore::RenderMathMLRoot::isRenderMathMLRoot):
+        * rendering/mathml/RenderMathMLSquareRoot.h:
+        (WebCore::RenderMathMLSquareRoot::isRenderMathMLSquareRoot):
+        * rendering/mathml/RenderMathMLSubSup.h:
+        (WebCore::RenderMathMLSubSup::isRenderMathMLSubSup):
+        * rendering/mathml/RenderMathMLUnderOver.h:
+        (WebCore::RenderMathMLUnderOver::isRenderMathMLUnderOver):
+        
 2012-11-13  Mark Lam  <mark.lam@apple.com>
 
         JSEventListener should not access m_jsFunction when its wrapper is gone.

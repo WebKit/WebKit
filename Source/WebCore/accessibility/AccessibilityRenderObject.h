@@ -277,6 +277,52 @@ private:
     virtual bool ariaLiveRegionBusy() const;    
     
     bool inheritsPresentationalRole() const;
+    
+#if ENABLE(MATHML)
+    // All math elements return true for isMathElement().
+    virtual bool isMathElement() const;
+    virtual bool isMathFraction() const;
+    virtual bool isMathFenced() const;
+    virtual bool isMathSubscriptSuperscript() const;
+    virtual bool isMathRow() const;
+    virtual bool isMathUnderOver() const;
+    virtual bool isMathRoot() const;
+    virtual bool isMathSquareRoot() const;
+    virtual bool isMathText() const;
+    virtual bool isMathNumber() const;
+    virtual bool isMathOperator() const;
+    virtual bool isMathFenceOperator() const;
+    virtual bool isMathSeparatorOperator() const;
+    virtual bool isMathIdentifier() const;
+    virtual bool isMathTable() const;
+    virtual bool isMathTableRow() const;
+    virtual bool isMathTableCell() const;
+    
+    // Generic components.
+    virtual AccessibilityObject* mathBaseObject();
+    
+    // Root components.
+    virtual AccessibilityObject* mathRadicandObject();
+    virtual AccessibilityObject* mathRootIndexObject();
+    
+    // Fraction components.
+    virtual AccessibilityObject* mathNumeratorObject();
+    virtual AccessibilityObject* mathDenominatorObject();
+
+    // Under over components.
+    virtual AccessibilityObject* mathUnderObject();
+    virtual AccessibilityObject* mathOverObject();
+    
+    // Subscript/superscript components.
+    virtual AccessibilityObject* mathSubscriptObject();
+    virtual AccessibilityObject* mathSuperscriptObject();
+    
+    // Fenced components.
+    virtual String mathFencedOpenString() const;
+    virtual String mathFencedCloseString() const;
+
+    bool isIgnoredElementWithinMathTree() const;
+#endif
 };
 
 inline AccessibilityRenderObject* toAccessibilityRenderObject(AccessibilityObject* object)

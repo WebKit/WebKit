@@ -48,6 +48,12 @@ public:
     virtual bool isRenderMathMLOperator() const { return false; }
     virtual bool isRenderMathMLRow() const { return false; }
     virtual bool isRenderMathMLMath() const { return false; }
+    virtual bool isRenderMathMLFenced() const { return false; }
+    virtual bool isRenderMathMLFraction() const { return false; }
+    virtual bool isRenderMathMLRoot() const { return false; }
+    virtual bool isRenderMathMLSquareRoot() const { return false; }
+    virtual bool isRenderMathMLSubSup() const { return false; }
+    virtual bool isRenderMathMLUnderOver() const { return false; }
     
     // MathML defines an "embellished operator" as roughly an <mo> that may have subscripts,
     // superscripts, underscripts, overscripts, or a denominator (as in d/dx, where "d" is some
@@ -87,8 +93,12 @@ public:
     // Create a new RenderMathMLBlock, with a new style inheriting from this->style().
     RenderMathMLBlock* createAnonymousMathMLBlock(EDisplay = FLEX);
     
+    void setIgnoreInAccessibilityTree(bool flag) { m_ignoreInAccessibilityTree = flag; }
+    bool ignoreInAccessibilityTree() const { return m_ignoreInAccessibilityTree; }
+    
 private:
     virtual const char* renderName() const OVERRIDE;
+    bool m_ignoreInAccessibilityTree;
     
 protected:
     // Set our logical width to a large value, and compute our children's preferred logical heights.

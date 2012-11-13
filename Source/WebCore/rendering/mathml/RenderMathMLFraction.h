@@ -47,6 +47,7 @@ protected:
     virtual void layout();
     
 private:
+    virtual bool isRenderMathMLFraction() const { return true; }
     void fixChildStyle(RenderObject* child);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle) OVERRIDE;
 

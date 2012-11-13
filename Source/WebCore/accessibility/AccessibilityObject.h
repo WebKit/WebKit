@@ -151,6 +151,7 @@ enum AccessibilityRole {
     ListBoxOptionRole,
     ListItemRole,
     ListMarkerRole,
+    MathElementRole,
     MatteRole,
     MenuRole,
     MenuBarRole,
@@ -736,6 +737,46 @@ public:
     // Fires a children changed notification on the parent if the isIgnored value changed.
     void notifyIfIgnoredValueChanged();
 
+    // All math elements return true for isMathElement().
+    virtual bool isMathElement() const { return false; }
+    virtual bool isMathFraction() const { return false; }
+    virtual bool isMathFenced() const { return false; }
+    virtual bool isMathSubscriptSuperscript() const { return false; }
+    virtual bool isMathRow() const { return false; }
+    virtual bool isMathUnderOver() const { return false; }
+    virtual bool isMathRoot() const { return false; }
+    virtual bool isMathSquareRoot() const { return false; }
+    virtual bool isMathText() const { return false; }
+    virtual bool isMathNumber() const { return false; }
+    virtual bool isMathOperator() const { return false; }
+    virtual bool isMathFenceOperator() const { return false; }
+    virtual bool isMathSeparatorOperator() const { return false; }
+    virtual bool isMathIdentifier() const { return false; }
+    virtual bool isMathTable() const { return false; }
+    virtual bool isMathTableRow() const { return false; }
+    virtual bool isMathTableCell() const { return false; }
+    
+    // Root components.
+    virtual AccessibilityObject* mathRadicandObject() { return 0; }
+    virtual AccessibilityObject* mathRootIndexObject() { return 0; }
+    
+    // Under over components.
+    virtual AccessibilityObject* mathUnderObject() { return 0; }
+    virtual AccessibilityObject* mathOverObject() { return 0; }
+
+    // Fraction components.
+    virtual AccessibilityObject* mathNumeratorObject() { return 0; }
+    virtual AccessibilityObject* mathDenominatorObject() { return 0; }
+
+    // Subscript/superscript components.
+    virtual AccessibilityObject* mathBaseObject() { return 0; }
+    virtual AccessibilityObject* mathSubscriptObject() { return 0; }
+    virtual AccessibilityObject* mathSuperscriptObject() { return 0; }
+    
+    // Fenced components.
+    virtual String mathFencedOpenString() const { return String(); }
+    virtual String mathFencedCloseString() const { return String(); }
+    
 #if HAVE(ACCESSIBILITY)
 #if PLATFORM(GTK)
     AccessibilityObjectWrapper* wrapper() const;

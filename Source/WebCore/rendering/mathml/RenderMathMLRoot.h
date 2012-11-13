@@ -45,6 +45,7 @@ protected:
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
 private:
+    virtual bool isRenderMathMLRoot() const { return true; }
     virtual const char* renderName() const { return "RenderMathMLRoot"; }
     
     virtual void computePreferredLogicalWidths() OVERRIDE;

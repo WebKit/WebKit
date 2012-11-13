@@ -338,6 +338,19 @@ using namespace std;
 #define NSAccessibilityIndexForTextMarkerParameterizedAttribute @"AXIndexForTextMarker"
 #define NSAccessibilityTextMarkerForIndexParameterizedAttribute @"AXTextMarkerForIndex"
 
+// Math attributes
+#define NSAccessibilityMathRootRadicandAttribute @"AXMathRootRadicand"
+#define NSAccessibilityMathRootIndexAttribute @"AXMathRootIndex"
+#define NSAccessibilityMathFractionDenominatorAttribute @"AXMathFractionDenominator"
+#define NSAccessibilityMathFractionNumeratorAttribute @"AXMathFractionNumerator"
+#define NSAccessibilityMathBaseAttribute @"AXMathBase"
+#define NSAccessibilityMathSubscriptAttribute @"AXMathSubscript"
+#define NSAccessibilityMathSuperscriptAttribute @"AXMathSuperscript"
+#define NSAccessibilityMathUnderAttribute @"AXMathUnder"
+#define NSAccessibilityMathOverAttribute @"AXMathOver"
+#define NSAccessibilityMathFencedOpenAttribute @"AXMathFencedOpen"
+#define NSAccessibilityMathFencedCloseAttribute @"AXMathFencedClose"
+
 @interface NSObject (WebKitAccessibilityArrayCategory)
 
 - (NSUInteger)accessibilityIndexOfChild:(id)child;
@@ -997,6 +1010,27 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     if (m_object->ariaHasPopup())
         [additional addObject:NSAccessibilityHasPopupAttribute];
     
+    if (m_object->isMathRoot()) {
+        // The index of a square root is always known, so there's no object associated with it.
+        if (!m_object->isMathSquareRoot())
+            [additional addObject:NSAccessibilityMathRootIndexAttribute];
+        [additional addObject:NSAccessibilityMathRootRadicandAttribute];
+    } else if (m_object->isMathFraction()) {
+        [additional addObject:NSAccessibilityMathFractionNumeratorAttribute];
+        [additional addObject:NSAccessibilityMathFractionDenominatorAttribute];
+    } else if (m_object->isMathSubscriptSuperscript()) {
+        [additional addObject:NSAccessibilityMathBaseAttribute];
+        [additional addObject:NSAccessibilityMathSubscriptAttribute];
+        [additional addObject:NSAccessibilityMathSuperscriptAttribute];
+    } else if (m_object->isMathUnderOver()) {
+        [additional addObject:NSAccessibilityMathBaseAttribute];
+        [additional addObject:NSAccessibilityMathUnderAttribute];
+        [additional addObject:NSAccessibilityMathOverAttribute];
+    } else if (m_object->isMathFenced()) {
+        [additional addObject:NSAccessibilityMathFencedOpenAttribute];
+        [additional addObject:NSAccessibilityMathFencedCloseAttribute];
+    }
+
     return additional;
 }
 
@@ -1599,7 +1633,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { ToggleButtonRole, NSAccessibilityButtonRole },
         { CanvasRole, NSAccessibilityImageRole },
         { SVGRootRole, NSAccessibilityGroupRole },
-        { LegendRole, NSAccessibilityGroupRole }
+        { LegendRole, NSAccessibilityGroupRole },
+        { MathElementRole, NSAccessibilityGroupRole }
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -1717,6 +1752,41 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         // Default doesn't return anything, so roles defined below can be chosen.
         default:
             break;
+    }
+    
+    if (m_object->roleValue() == MathElementRole) {
+        if (m_object->isMathFraction())
+            return @"AXMathFraction";
+        if (m_object->isMathFenced())
+            return @"AXMathFenced";
+        if (m_object->isMathSubscriptSuperscript())
+            return @"AXMathSubscriptSuperscript";
+        if (m_object->isMathRow())
+            return @"AXMathRow";
+        if (m_object->isMathUnderOver())
+            return @"AXMathUnderOver";
+        if (m_object->isMathSquareRoot())
+            return @"AXMathSquareRoot";
+        if (m_object->isMathRoot())
+            return @"AXMathRoot";
+        if (m_object->isMathText())
+            return @"AXMathText";
+        if (m_object->isMathNumber())
+            return @"AXMathNumber";
+        if (m_object->isMathIdentifier())
+            return @"AXMathIdentifier";
+        if (m_object->isMathTable())
+            return @"AXMathTable";
+        if (m_object->isMathTableRow())
+            return @"AXMathTableRow";
+        if (m_object->isMathTableCell())
+            return @"AXMathTableCell";
+        if (m_object->isMathFenceOperator())
+            return @"AXMathFenceOperator";
+        if (m_object->isMathSeparatorOperator())
+            return @"AXMathSeparatorOperator";
+        if (m_object->isMathOperator())
+            return @"AXMathOperator";
     }
     
     if (m_object->isMediaTimeline())
@@ -2539,6 +2609,32 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSNumber numberWithBool:m_object->ariaLiveRegionAtomic()];
     if ([attributeName isEqualToString:NSAccessibilityARIABusyAttribute])
         return [NSNumber numberWithBool:m_object->ariaLiveRegionBusy()];
+
+    // MathML Attributes.
+    if (m_object->isMathElement()) {
+        if ([attributeName isEqualToString:NSAccessibilityMathRootIndexAttribute])
+            return (m_object->mathRootIndexObject()) ? m_object->mathRootIndexObject()->wrapper() : 0;
+        if ([attributeName isEqualToString:NSAccessibilityMathRootRadicandAttribute])
+            return (m_object->mathRadicandObject()) ? m_object->mathRadicandObject()->wrapper() : 0;
+        if ([attributeName isEqualToString:NSAccessibilityMathFractionNumeratorAttribute])
+            return (m_object->mathNumeratorObject()) ? m_object->mathNumeratorObject()->wrapper() : 0;
+        if ([attributeName isEqualToString:NSAccessibilityMathFractionDenominatorAttribute])
+            return (m_object->mathDenominatorObject()) ? m_object->mathDenominatorObject()->wrapper() : 0;
+        if ([attributeName isEqualToString:NSAccessibilityMathBaseAttribute])
+            return (m_object->mathBaseObject()) ? m_object->mathBaseObject()->wrapper() : 0;
+        if ([attributeName isEqualToString:NSAccessibilityMathSubscriptAttribute])
+            return (m_object->mathSubscriptObject()) ? m_object->mathSubscriptObject()->wrapper() : 0;
+        if ([attributeName isEqualToString:NSAccessibilityMathSuperscriptAttribute])
+            return (m_object->mathSuperscriptObject()) ? m_object->mathSuperscriptObject()->wrapper() : 0;
+        if ([attributeName isEqualToString:NSAccessibilityMathUnderAttribute])
+            return (m_object->mathUnderObject()) ? m_object->mathUnderObject()->wrapper() : 0;
+        if ([attributeName isEqualToString:NSAccessibilityMathOverAttribute])
+            return (m_object->mathOverObject()) ? m_object->mathOverObject()->wrapper() : 0;
+        if ([attributeName isEqualToString:NSAccessibilityMathFencedOpenAttribute])
+            return m_object->mathFencedOpenString();
+        if ([attributeName isEqualToString:NSAccessibilityMathFencedCloseAttribute])
+            return m_object->mathFencedCloseString();
+    }
     
     // this is used only by DumpRenderTree for testing
     if ([attributeName isEqualToString:@"AXClickPoint"])

@@ -44,6 +44,7 @@ using namespace MathMLNames;
     
 RenderMathMLBlock::RenderMathMLBlock(Node* container) 
     : RenderFlexibleBox(container)
+    , m_ignoreInAccessibilityTree(false)
     , m_intrinsicPaddingBefore(0)
     , m_intrinsicPaddingAfter(0)
     , m_intrinsicPaddingStart(0)
