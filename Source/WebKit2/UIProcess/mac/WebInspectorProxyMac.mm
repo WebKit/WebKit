@@ -127,6 +127,7 @@ static const CGFloat dockButtonMargin = 3;
 
 @interface NSWindow (AppKitDetails)
 - (NSCursor *)_cursorForResizeDirection:(NSInteger)direction;
+- (NSRect)_customTitleFrame;
 @end
 
 @interface WKWebInspectorWindow : NSWindow {
@@ -144,6 +145,16 @@ static const CGFloat dockButtonMargin = 3;
     if (direction == 1 && ![_dockButton isHidden])
         return nil;
     return [super _cursorForResizeDirection:direction];
+}
+
+- (NSRect)_customTitleFrame
+{
+    // Adjust the title frame if needed to prevent it from intersecting the dock button.
+    NSRect titleFrame = [super _customTitleFrame];
+    NSRect dockButtonFrame = _dockButton.get().frame;
+    if (NSMaxX(titleFrame) > NSMinX(dockButtonFrame) - dockButtonMargin)
+        titleFrame.size.width -= (NSMaxX(titleFrame) - NSMinX(dockButtonFrame)) + dockButtonMargin;
+    return titleFrame;
 }
 
 @end

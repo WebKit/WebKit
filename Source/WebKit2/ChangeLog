@@ -1,3 +1,14 @@
+2012-11-13  Timothy Hatcher  <timothy@apple.com>
+
+        Adjust the Web Inspector window title frame if needed to prevent it from intersecting the dock button.
+
+        https://bugs.webkit.org/show_bug.cgi?id=102073
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorWindow _customTitleFrame]): Added. Adjust the title frame.
+
 2012-11-13  Anders Carlsson  <andersca@apple.com>
 
         Store layer positions and sizes in the transaction
