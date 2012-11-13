@@ -5,7 +5,7 @@ if (this.importScripts) {
 
 description("Test IndexedDB IDBDatabase internal delete pending flag");
 
-indexedDBTest(prepareDatabase, testDatabaseDelete, 5);
+indexedDBTest(prepareDatabase, testDatabaseDelete, {"version": 5});
 function prepareDatabase()
 {
     connection = event.target.result;

@@ -130,8 +130,11 @@ function deleteAllObjectStores(db)
     debug("Deleted all object stores.");
 }
 
-function setDBNameFromPath() {
-    evalAndLog('dbname = "' + self.location.pathname.substring(1 + self.location.pathname.lastIndexOf("/")) + '"');
+function setDBNameFromPath(suffix) {
+    var name = self.location.pathname.substring(1 + self.location.pathname.lastIndexOf("/"));
+    if (suffix)
+        name += suffix;
+    evalAndLog('dbname = "' + name + '"');
 }
 
 function preamble(evt)
@@ -173,18 +176,22 @@ if (!self.DOMException) {
     };
 }
 
-function indexedDBTest(upgradeCallback, optionalOpenCallback, optionalVersion) {
+function indexedDBTest(upgradeCallback, optionalOpenCallback, optionalParameters) {
     removeVendorPrefixes();
-    setDBNameFromPath();
+    if (optionalParameters && 'suffix' in optionalParameters) {
+        setDBNameFromPath(optionalParameters['suffix']);
+    } else {
+        setDBNameFromPath();
+    }
     var deleteRequest = evalAndLog("indexedDB.deleteDatabase(dbname)");
     deleteRequest.onerror = unexpectedErrorCallback;
     deleteRequest.onblocked = unexpectedBlockedCallback;
     deleteRequest.onsuccess = function() {
         var openRequest;
-        if (optionalVersion)
-          openRequest = evalAndLog("indexedDB.open(dbname, " + optionalVersion + ")");
+        if (optionalParameters && 'version' in optionalParameters)
+            openRequest = evalAndLog("indexedDB.open(dbname, " + optionalParameters['version'] + ")");
         else
-          openRequest = evalAndLog("indexedDB.open(dbname)");
+            openRequest = evalAndLog("indexedDB.open(dbname)");
         openRequest.onerror = unexpectedErrorCallback;
         openRequest.onupgradeneeded = upgradeCallback;
         openRequest.onblocked = unexpectedBlockedCallback;

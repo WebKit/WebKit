@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB's create and removeObjectStore
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,31 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('create-and-remove-object-store')
-openSuccess():
-db = event.target.result
-Trying create
-Expecting exception from db.createObjectStore("some os")
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
-Trying remove
-Expecting exception from db.deleteObjectStore("some os")
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
-result = db.setVersion('version 1')
-Trying create
-Expecting exception from db.createObjectStore("some os")
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
-Trying remove
-Expecting exception from db.deleteObjectStore("some os")
-PASS Exception was thrown.
-PASS code is DOMException.INVALID_STATE_ERR
-PASS ename is 'InvalidStateError'
-Deleted all object stores.
+dbname = "create-and-remove-object-store.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 db.createObjectStore('tmp')
 Expecting exception from db.createObjectStore('tmp')
 PASS Exception was thrown.

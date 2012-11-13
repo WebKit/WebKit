@@ -1,3 +1,37 @@
+2012-11-12  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Convert some non-simple tests from setVersion to upgradeneeded
+        https://bugs.webkit.org/show_bug.cgi?id=101959
+
+        Reviewed by Tony Chang.
+
+        Ongoing work to remove calls to setVersion from our tests before
+        removing it from the IndexedDB API.
+
+        * storage/indexeddb/create-and-remove-object-store-expected.txt:
+        * storage/indexeddb/deletedatabase-delayed-by-open-and-versionchange-expected.txt:
+        * storage/indexeddb/duplicates-expected.txt:
+        * storage/indexeddb/resources/create-and-remove-object-store.js:
+          Create and delete were running between open and setVersion, which no
+          longer makes sense.
+
+        * storage/indexeddb/resources/database-deletepending-flag.js:
+          Use optional object parameter instead of optional version parameter.
+
+        * storage/indexeddb/resources/deletedatabase-delayed-by-open-and-versionchange.js:
+          This used to call delete just after issuing setVersion but before
+          receiving the corresponding success event.  Now it calls delete while
+          in the upgradeneeded transaction, still causing the delete to be
+          delayed by an in flight versionchange transaction.
+
+        * storage/indexeddb/resources/duplicates.js:
+          Call indexedDBTest twice to rerun the tests with a different
+          database.
+
+        * storage/indexeddb/resources/shared.js:
+          Added a suffix option to support duplicates.js, switched to an
+          optional object parameter.
+
 2012-11-12  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] WebKit1 gardening.

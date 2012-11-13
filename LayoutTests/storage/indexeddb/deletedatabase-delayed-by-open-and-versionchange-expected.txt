@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test that deleteDatabase is delayed if a VERSION_CHANGE transaction is running
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -7,22 +6,17 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
 dbname = "deletedatabase-delayed-by-open-and-versionchange.html"
-ver = 1
-versionChangeComplete = false
-indexedDB.open(dbname)
-
-openOnSuccess():
-h = event.target.result
-h.setVersion(String(ver++))
 indexedDB.deleteDatabase(dbname)
-
-setVersionOnSuccess():
+indexedDB.open(dbname)
+versionChangeComplete = false
+h = event.target.result
+indexedDB.deleteDatabase(dbname)
 
 transactionOnComplete():
 versionChangeComplete = true
 
 onVersionChange():
-old = "1"
+old = 1
 new = ""
 
 deleteDatabaseOnBlocked():

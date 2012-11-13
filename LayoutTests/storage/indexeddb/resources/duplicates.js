@@ -6,33 +6,17 @@ if (this.importScripts) {
 description("Verify that you can put the same data in 2 different databases without uniqueness constraints firing.");
 
 testCount = 0;
+test();
 function test()
 {
     if (testCount++ == 0)
-        request = evalAndLog("indexedDB.open('duplicates-1')");
+        indexedDBTest(prepareDatabase, test, {'suffix': '-1'});
     else
-        request = evalAndLog("indexedDB.open('duplicates-2')");
-    request.onsuccess = setVersion;
-    request.onerror = unexpectedErrorCallback;
+        indexedDBTest(prepareDatabase, finishJSTest, {'suffix': '-2'});
 }
-
-function setVersion()
+function prepareDatabase()
 {
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = deleteExisting;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function deleteExisting()
-{
-    debug("setVersionSuccess():");
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-
-    deleteAllObjectStores(db);
+    db = event.target.result;
 
     self.store = evalAndLog("db.createObjectStore('storeName', null)");
     self.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
@@ -156,11 +140,4 @@ function last()
 {
     shouldBeNull("event.target.result");
 
-    if (testCount == 1)
-        test();
-    else
-        finishJSTest();
 }
-
-removeVendorPrefixes();
-test();

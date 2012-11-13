@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Verify that you can put the same data in 2 different databases without uniqueness constraints firing.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -7,13 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('duplicates-1')
-db = event.target.result
-db.setVersion('new version')
-setVersionSuccess():
-trans = event.target.result
-PASS trans is non-null.
-Deleted all object stores.
+dbname = "duplicates.html-1"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 db.createObjectStore('storeName', null)
 store.createIndex('indexName', 'x')
 store.add({x: 'value', y: 'zzz'}, 'key')
@@ -49,13 +43,11 @@ PASS event.target.result.value.x is "value2"
 PASS event.target.result.value.y is "zzz2"
 event.target.result.continue()
 PASS event.target.result is null
-indexedDB.open('duplicates-2')
-db = event.target.result
-db.setVersion('new version')
-setVersionSuccess():
-trans = event.target.result
-PASS trans is non-null.
-Deleted all object stores.
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "duplicates.html-2"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 db.createObjectStore('storeName', null)
 store.createIndex('indexName', 'x')
 store.add({x: 'value', y: 'zzz'}, 'key')

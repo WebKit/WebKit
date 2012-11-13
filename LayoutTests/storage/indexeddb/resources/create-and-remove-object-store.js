@@ -5,55 +5,31 @@ if (this.importScripts) {
 
 description("Test IndexedDB's create and removeObjectStore");
 
-function test()
+indexedDBTest(prepareDatabase, setVersionComplete);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('create-and-remove-object-store')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    self.db = evalAndLog("db = event.target.result");
-    testCreateAndRemove();
-    request = evalAndLog("result = db.setVersion('version 1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-    testCreateAndRemove();
-}
-
-function testCreateAndRemove()
-{
-    debug("Trying create");
-    evalAndExpectException('db.createObjectStore("some os")', "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-    debug("Trying remove");
-    evalAndExpectException('db.deleteObjectStore("some os")', "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-}
-
-function cleanDatabase()
-{
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
     os = evalAndLog("db.createObjectStore('tmp')");
     evalAndExpectException("db.createObjectStore('tmp')", "IDBDatabaseException.CONSTRAINT_ERR", "'ConstraintError'");
-    event.target.result.oncomplete = setVersionComplete;
 }
 
 function setVersionComplete()
 {
     trans = evalAndLog("trans = db.transaction(['tmp'])");
     request = evalAndLog("trans.objectStore('tmp').get(0)");
-    request.onsuccess = tryOnceMore;
+    request.onsuccess = tryToCreateAndDelete;
     request.onerror = unexpectedErrorCallback;
 }
 
-function tryOnceMore()
+function tryToCreateAndDelete()
 {
     shouldBeUndefined("event.target.result");
 
-    testCreateAndRemove();
+    debug("Trying create");
+    evalAndExpectException('db.createObjectStore("some os")', "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+    debug("Trying remove");
+    evalAndExpectException('db.deleteObjectStore("some os")', "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
 
     debug("Trying create with store that already exists");
     evalAndExpectException("db.createObjectStore('tmp')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
@@ -62,5 +38,3 @@ function tryOnceMore()
 
     finishJSTest();
 }
-
-test();
