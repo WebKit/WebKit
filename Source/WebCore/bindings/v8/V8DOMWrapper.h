@@ -66,10 +66,12 @@ namespace WebCore {
         static bool maybeDOMWrapper(v8::Handle<v8::Value>);
 #endif
 
-        static void setDOMWrapper(v8::Handle<v8::Object> object, WrapperTypeInfo* type, void* cptr)
+        static void setDOMWrapper(v8::Handle<v8::Object> object, WrapperTypeInfo* type, void* impl)
         {
             ASSERT(object->InternalFieldCount() >= 2);
-            object->SetAlignedPointerInInternalField(v8DOMWrapperObjectIndex, cptr);
+            ASSERT(impl);
+            ASSERT(type);
+            object->SetAlignedPointerInInternalField(v8DOMWrapperObjectIndex, impl);
             object->SetAlignedPointerInInternalField(v8DOMWrapperTypeIndex, type);
         }
 
