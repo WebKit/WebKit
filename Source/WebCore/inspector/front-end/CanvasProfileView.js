@@ -40,11 +40,24 @@ WebInspector.CanvasProfileView = function(profile)
     this._traceLogId = profile.traceLogId();
     this.element.addStyleClass("canvas-profile-view");
 
+    this._linkifier = new WebInspector.Linkifier();
     this._splitView = new WebInspector.SplitView(false, "canvasProfileViewSplitLocation", 300);
 
-    this._linkifier = new WebInspector.Linkifier();
-    this._logGrid = new WebInspector.CanvasLogGrid(profile.traceLogId(), this._linkifier);
+    var columns = { 0: {}, 1: {}, 2: {} };
+    columns[0].title = "#";
+    columns[0].sortable = true;
+    columns[0].width = "5%";
+    columns[1].title = WebInspector.UIString("Call");
+    columns[1].sortable = true;
+    columns[1].width = "75%";
+    columns[2].title = WebInspector.UIString("Location");
+    columns[2].sortable = true;
+    columns[2].width = "20%";
+
+    this._logGrid = new WebInspector.DataGrid(columns);
+    this._logGrid.element.addStyleClass("fill");
     this._logGrid.show(this._splitView.secondElement());
+    this._logGrid.addEventListener(WebInspector.DataGrid.Events.SelectedNode, this._replayTraceLog.bind(this));
 
     var replayImageContainer = this._splitView.firstElement();
     replayImageContainer.id = "canvas-replay-image-container";
@@ -57,14 +70,16 @@ WebInspector.CanvasProfileView = function(profile)
     replayImageContainer.appendChild(this._debugInfoElement);
 
     this._splitView.show(this.element);
-    this._logGrid.addEventListener(WebInspector.DataGrid.Events.SelectedNode, this._onSelectTraceLog.bind(this));
+
+    this._enableWaitIcon(true);
+    CanvasAgent.getTraceLog(this._traceLogId, this._didReceiveTraceLog.bind(this));
 }
 
 WebInspector.CanvasProfileView.prototype = {
     dispose: function()
     {
         this._linkifier.reset();
-        CanvasAgent.dropTraceLog(this._profile.traceLogId());
+        CanvasAgent.dropTraceLog(this._traceLogId);
     },
 
     get statusBarItems()
@@ -78,27 +93,83 @@ WebInspector.CanvasProfileView.prototype = {
     },
 
     /**
-     * @param {WebInspector.Event} e
+     * @override
+     * @return {Array.<Element>}
      */
-    _onSelectTraceLog: function(e)
+    elementsToRestoreScrollPositionsFor: function()
     {
-        this._replayTraceLog(this._logGrid.selectedNode);
+        return [this._logGrid.scrollContainer];
     },
 
-    _replayTraceLog: function(callNode)
+    /**
+     * @param {boolean} enable
+     */
+    _enableWaitIcon: function(enable)
     {
+        this._replayImageElement.className = enable ? "wait" : "";
+    },
+
+    _replayTraceLog: function()
+    {
+        var callNode = this._logGrid.selectedNode;
         if (!callNode)
             return;
-
         var time = Date.now();
         function didReplayTraceLog(error, dataURL)
         {
+            this._enableWaitIcon(false);
             if (error)
                 return;
             this._debugInfoElement.textContent = "Replay time: " + (Date.now() - time) + "ms";
             this._replayImageElement.src = dataURL;
         }
+        this._enableWaitIcon(true);
         CanvasAgent.replayTraceLog(this._traceLogId, callNode.index, didReplayTraceLog.bind(this));
+    },
+
+    _didReceiveTraceLog: function(error, traceLog)
+    {
+        this._enableWaitIcon(false);
+        this._logGrid.rootNode().removeChildren();
+        if (error || !traceLog)
+            return;
+        var calls = traceLog.calls;
+        for (var i = 0, n = calls.length; i < n; ++i)
+            this._logGrid.rootNode().appendChild(this._createCallNode(i, calls[i]));
+        var lastNode = this._logGrid.rootNode().children[calls.length - 1];
+        if (lastNode) {
+            lastNode.reveal();
+            lastNode.select();
+        }
+    },
+
+    _createCallNode: function(index, call)
+    {
+        var traceLogItem = document.createElement("div");
+        var data = {};
+        data[0] = index + 1;
+        data[1] = call.functionName || "context." + call.property;
+        data[2] = "";
+        if (call.sourceURL) {
+            // FIXME(62725): stack trace line/column numbers are one-based.
+            var lineNumber = Math.max(0, call.lineNumber - 1) || 0;
+            var columnNumber = Math.max(0, call.columnNumber - 1) || 0;
+            data[2] = this._linkifier.linkifyLocation(call.sourceURL, lineNumber, columnNumber);
+        }
+
+        if (call.arguments)
+            data[1] += "(" + call.arguments.join(", ") + ")";
+        else
+            data[1] += " = " + call.value;
+
+        if (typeof call.result !== "undefined")
+            data[1] += " => " + call.result;
+
+        var node = new WebInspector.DataGridNode(data);
+        node.call = call;
+        node.index = index;
+        node.selectable = true;
+        return node;
     },
 
     __proto__: WebInspector.View.prototype
@@ -230,81 +301,4 @@ WebInspector.CanvasProfileHeader.prototype = {
     },
 
     __proto__: WebInspector.ProfileHeader.prototype
-}
-
-/**
- * @constructor
- * @extends {WebInspector.DataGrid}
- * @param {string} traceLogId
- * @param {WebInspector.Linkifier} linkifier
- */
-WebInspector.CanvasLogGrid = function(traceLogId, linkifier)
-{
-    this._linkifier = linkifier;
-    var columns = { 0: {}, 1: {}, 2: {} };
-    columns[0].title = "#";
-    columns[0].sortable = true;
-    columns[0].width = "3%";
-    columns[1].title = WebInspector.UIString("Call");
-    columns[1].sortable = true;
-    columns[1].width = "77%";
-    columns[2].title = WebInspector.UIString("Location");
-    columns[2].sortable = true;
-    columns[2].width = "20%";
-
-    WebInspector.DataGrid.call(this, columns);
-    this.element.addStyleClass("fill");
-
-    this._traceLogId = traceLogId;
-    CanvasAgent.getTraceLog(traceLogId, this._didReceiveTraceLog.bind(this));
-}
-
-WebInspector.CanvasLogGrid.prototype = {
-
-    _didReceiveTraceLog: function(error, traceLog)
-    {
-        this.rootNode().removeChildren();
-        if (error || !traceLog)
-            return;
-
-        var calls = traceLog.calls;
-        for (var i = 0, n = calls.length; i < n; ++i)
-            this.rootNode().appendChild(this._createCallNode(i, calls[i]));
-        var lastNode = this.rootNode().children[calls.length - 1];
-        if (lastNode) {
-            lastNode.reveal();
-            lastNode.select();
-        }
-    },
-
-    _createCallNode: function(index, call)
-    {
-        var traceLogItem = document.createElement("div");
-        var data = {};
-        data[0] = index + 1;
-        data[1] = call.functionName || "context." + call.property;
-        data[2] = "";
-        if (call.sourceURL) {
-            // FIXME(62725): stack trace line/column numbers are one-based.
-            var lineNumber = Math.max(0, call.lineNumber - 1) || 0;
-            var columnNumber = Math.max(0, call.columnNumber - 1) || 0;
-            data[2] = this._linkifier.linkifyLocation(call.sourceURL, lineNumber, columnNumber);
-        }
-
-        if (call.arguments)
-            data[1] += "(" + call.arguments.join(", ") + ")";
-        else
-            data[1] += " = " + call.value;
-  
-        if (typeof call.result !== "undefined")
-            data[1] += " => " + call.result;
-
-        var node = new WebInspector.DataGridNode(data);
-        node.call = call;
-        node.index = index;
-        node.selectable = true;
-        return node;
-    },
-
-    __proto__: WebInspector.DataGrid.prototype
 }

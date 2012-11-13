@@ -54,3 +54,12 @@
     margin: auto;
     display: block;
 }
+
+#canvas-replay-image.wait {
+    content: url(Images/spinnerActiveSelected.gif);
+    zoom: inherit;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -16px 0 0 -16px;
+}
