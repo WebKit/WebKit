@@ -1,3 +1,13 @@
+2012-11-13  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed Qt gardening.
+
+        Cleanup TestExpectations to pass --lint-test-files.
+        Removed some duplicated entries.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-11-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: move indentation logic into TextEditorModel
