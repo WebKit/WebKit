@@ -122,6 +122,9 @@ WebInspector.KeyboardShortcut.eventHasCtrlOrMeta = function(event)
     return WebInspector.isMac() ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey;
 }
 
+/** @typedef {{key: number, name: string}} */
+ WebInspector.KeyboardShortcut.Descriptor;
+
 /**
  * @param {number=} modifiers
  */

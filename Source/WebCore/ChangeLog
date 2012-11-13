@@ -1,3 +1,47 @@
+2012-11-13  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Settings screen: some panel shortcuts are missing
+        https://bugs.webkit.org/show_bug.cgi?id=101026
+
+        Reviewed by Pavel Feldman.
+
+        Panels, that have not been loaded by the time shortcuts view was
+        initialized, had no chance to register shortcuts.
+
+        Solution: move shortcut registration (for shortcuts screen) to panel
+        descriptors.
+
+        More changes: add JsDoc annotations to ShortcutScreen and change "key"
+        parameter type for raw string to key descriptor object.
+
+        * WebCore.gypi: Added TimelinePanelDescriptor.js file.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * inspector/compile-front-end.py: Ditto.
+        * inspector/front-end/WebKit.qrc: Ditto.
+        * inspector/front-end/inspector.html: Ditto.
+        * inspector/front-end/AdvancedSearchController.js: Add JsDoc annotation.
+        * inspector/front-end/GoToLineDialog.js: Ditto.
+        * inspector/front-end/CallStackSidebarPane.js: Removed shortcut-screen
+        shortcuts registration.
+        * inspector/front-end/ElementsPanel.js: Ditto.
+        * inspector/front-end/ScriptsPanel.js: Ditto.
+        * inspector/front-end/StylesSidebarPane.js: Ditto.
+        * inspector/front-end/TimelinePanel.js: Ditto.
+        * inspector/front-end/ConsoleView.js: Changes order of lines to increase
+        readability.
+        * inspector/front-end/ElementsPanelDescriptor.js: Add shortcut-screen
+        shortcuts registration and key descriptor constants.
+        * inspector/front-end/ScriptsPanelDescriptor.js: Ditto.
+        * inspector/front-end/TimelinePanelDescriptor.js: Ditto.
+        * inspector/front-end/Panel.js: Removed unused "uregisterShortcut"; made
+        "registerShortcuts" method accept array of key descriptors.
+        (WebInspector.PanelDescriptor.prototype.registerShortcuts): Added.
+        * inspector/front-end/ShortcutsScreen.js: Added JsDoc; changed parameter
+        type from string to key descriptor.
+        * inspector/front-end/inspector.js: Register shortcuts using
+        panel descriptors.
+        (WebInspector._panelDescriptors): Removed duplicate line.
+
 2012-11-13  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Optimize RGB565 and RGBA5551 packing/unpacking functions with NEON intrinsics

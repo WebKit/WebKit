@@ -271,6 +271,7 @@ modules = [
             "TimelineModel.js",
             "TimelineOverviewPane.js",
             "TimelinePanel.js",
+            "TimelinePanelDescriptor.js",
             "TimelinePresentationModel.js",
             "TimelineFrameController.js"
         ]

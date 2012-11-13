@@ -239,14 +239,14 @@ WebInspector.Panel.prototype = {
         }
     },
 
-    registerShortcut: function(key, handler)
+    /**
+     * @param {!Array.<!WebInspector.KeyboardShortcut.Descriptor>} keys
+     * @param {function(KeyboardEvent)} handler
+     */
+    registerShortcuts: function(keys, handler)
     {
-        this._shortcuts[key] = handler;
-    },
-
-    unregisterShortcut: function(key)
-    {
-        delete this._shortcuts[key];
+        for (var i = 0; i < keys.length; ++i)
+            this._shortcuts[keys[i].key] = handler;
     },
 
     __proto__: WebInspector.View.prototype
@@ -313,5 +313,7 @@ WebInspector.PanelDescriptor.prototype = {
             importScript(this._scriptName);
         this._panel = new WebInspector[this._className];
         return this._panel;
-    }
+    },
+
+    registerShortcuts: function() {}
 }

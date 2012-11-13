@@ -693,42 +693,6 @@ WebInspector.StylesSidebarPane.prototype = {
         }
     },
 
-    registerShortcuts: function()
-    {
-        var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Styles Pane"));
-        var shortcut = WebInspector.KeyboardShortcut;
-        var keys = [
-            shortcut.shortcutToString(shortcut.Keys.Tab),
-            shortcut.shortcutToString(shortcut.Keys.Tab, shortcut.Modifiers.Shift)
-        ];
-        section.addRelatedKeys(keys, WebInspector.UIString("Next/previous property"));
-        keys = [
-            shortcut.shortcutToString(shortcut.Keys.Up),
-            shortcut.shortcutToString(shortcut.Keys.Down)
-        ];
-        section.addRelatedKeys(keys, WebInspector.UIString("Increment/decrement value"));
-        keys = [
-            shortcut.shortcutToString(shortcut.Keys.Up, shortcut.Modifiers.Shift),
-            shortcut.shortcutToString(shortcut.Keys.Down, shortcut.Modifiers.Shift)
-        ];
-        section.addRelatedKeys(keys, WebInspector.UIString("Increment/decrement by %f", 10));
-        keys = [
-            shortcut.shortcutToString(shortcut.Keys.PageUp),
-            shortcut.shortcutToString(shortcut.Keys.PageDown)
-        ];
-        section.addRelatedKeys(keys, WebInspector.UIString("Increment/decrement by %f", 10));
-        keys = [
-            shortcut.shortcutToString(shortcut.Keys.PageUp, shortcut.Modifiers.Shift),
-            shortcut.shortcutToString(shortcut.Keys.PageDown, shortcut.Modifiers.Shift)
-        ];
-        section.addRelatedKeys(keys, WebInspector.UIString("Increment/decrement by %f", 100));
-        keys = [
-            shortcut.shortcutToString(shortcut.Keys.PageUp, shortcut.Modifiers.Alt),
-            shortcut.shortcutToString(shortcut.Keys.PageDown, shortcut.Modifiers.Alt)
-        ];
-        section.addRelatedKeys(keys, WebInspector.UIString("Increment/decrement by %f", 0.1));
-    },
-
     _toggleElementStatePane: function(event)
     {
         event.consume();

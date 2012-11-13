@@ -115,17 +115,13 @@ WebInspector.CallStackSidebarPane.prototype = {
         InspectorFrontendHost.copyText(text);
     },
 
-    registerShortcuts: function(section, registerShortcutDelegate)
+    /**
+     * @param {function(!Array.<!WebInspector.KeyboardShortcut.Descriptor>, function(KeyboardEvent))} registerShortcutDelegate
+     */
+    registerShortcuts: function(registerShortcutDelegate)
     {
-        var nextCallFrame = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Period,
-            WebInspector.KeyboardShortcut.Modifiers.Ctrl);
-        registerShortcutDelegate(nextCallFrame.key, this._selectNextCallFrameOnStack.bind(this));
-
-        var prevCallFrame = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Comma,
-            WebInspector.KeyboardShortcut.Modifiers.Ctrl);
-        registerShortcutDelegate(prevCallFrame.key, this._selectPreviousCallFrameOnStack.bind(this));
-
-        section.addRelatedKeys([ nextCallFrame.name, prevCallFrame.name ], WebInspector.UIString("Next/previous call frame"));
+        registerShortcutDelegate(WebInspector.ScriptsPanelDescriptor.ShortcutKeys.NextCallFrame, this._selectNextCallFrameOnStack.bind(this));
+        registerShortcutDelegate(WebInspector.ScriptsPanelDescriptor.ShortcutKeys.PrevCallFrame, this._selectPreviousCallFrameOnStack.bind(this));
     },
 
     setStatus: function(status)

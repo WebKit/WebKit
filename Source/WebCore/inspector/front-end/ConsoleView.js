@@ -476,37 +476,41 @@ WebInspector.ConsoleView.prototype = {
         this._shortcuts = {};
 
         var shortcut = WebInspector.KeyboardShortcut;
-
-        if (WebInspector.isMac()) {
-            var shortcutK = shortcut.makeDescriptor("k", WebInspector.KeyboardShortcut.Modifiers.Meta);
-            this._shortcuts[shortcutK.key] = this._requestClearMessages.bind(this);
-        }
+        var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Console"));
 
         var shortcutL = shortcut.makeDescriptor("l", WebInspector.KeyboardShortcut.Modifiers.Ctrl);
         this._shortcuts[shortcutL.key] = this._requestClearMessages.bind(this);
-
-        var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Console"));
-        var keys = WebInspector.isMac() ? [ shortcutK.name, shortcutL.name ] : [ shortcutL.name ];
+        var keys = [shortcutL];
+        if (WebInspector.isMac()) {
+            var shortcutK = shortcut.makeDescriptor("k", WebInspector.KeyboardShortcut.Modifiers.Meta);
+            this._shortcuts[shortcutK.key] = this._requestClearMessages.bind(this);
+            keys.unshift(shortcutK);
+        }
         section.addAlternateKeys(keys, WebInspector.UIString("Clear console"));
 
         keys = [
-            shortcut.shortcutToString(shortcut.Keys.Tab),
-            shortcut.shortcutToString(shortcut.Keys.Tab, shortcut.Modifiers.Shift)
+            shortcut.makeDescriptor(shortcut.Keys.Tab),
+            shortcut.makeDescriptor(shortcut.Keys.Tab, shortcut.Modifiers.Shift)
         ];
         section.addRelatedKeys(keys, WebInspector.UIString("Next/previous suggestion"));
-        section.addKey(shortcut.shortcutToString(shortcut.Keys.Right), WebInspector.UIString("Accept suggestion"));
+
+        section.addKey(shortcut.makeDescriptor(shortcut.Keys.Right), WebInspector.UIString("Accept suggestion"));
+
         keys = [
-            shortcut.shortcutToString(shortcut.Keys.Down),
-            shortcut.shortcutToString(shortcut.Keys.Up)
+            shortcut.makeDescriptor(shortcut.Keys.Down),
+            shortcut.makeDescriptor(shortcut.Keys.Up)
         ];
         section.addRelatedKeys(keys, WebInspector.UIString("Next/previous line"));
-        keys = [
-            shortcut.shortcutToString("N", shortcut.Modifiers.Alt),
-            shortcut.shortcutToString("P", shortcut.Modifiers.Alt)
-        ];
-        if (WebInspector.isMac())
+
+        if (WebInspector.isMac()) {
+            keys = [
+                shortcut.makeDescriptor("N", shortcut.Modifiers.Alt),
+                shortcut.makeDescriptor("P", shortcut.Modifiers.Alt)
+            ];
             section.addRelatedKeys(keys, WebInspector.UIString("Next/previous command"));
-        section.addKey(shortcut.shortcutToString(shortcut.Keys.Enter), WebInspector.UIString("Execute command"));
+        }
+
+        section.addKey(shortcut.makeDescriptor(shortcut.Keys.Enter), WebInspector.UIString("Execute command"));
     },
 
     _requestClearMessages: function()
