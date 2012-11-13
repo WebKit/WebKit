@@ -49,11 +49,38 @@
 
 SOFT_LINK_STAGED_FRAMEWORK_OPTIONAL(WebInspector, PrivateFrameworks, A)
 
+// The margin from the top and right of the dock button (same as the full screen button).
+static const CGFloat dockButtonMargin = 3;
+
 using namespace WebCore;
+
+@interface NSWindow (AppKitDetails)
+- (NSCursor *)_cursorForResizeDirection:(NSInteger)direction;
+@end
+
+@interface WebInspectorWindow : NSWindow {
+@public
+    RetainPtr<NSButton> _dockButton;
+}
+@end
+
+@implementation WebInspectorWindow
+
+- (NSCursor *)_cursorForResizeDirection:(NSInteger)direction
+{
+    // Don't show a resize cursor for the northeast (top right) direction if the dock button is visible.
+    // This matches what happens when the full screen button is visible.
+    if (direction == 1 && ![_dockButton isHidden])
+        return nil;
+    return [super _cursorForResizeDirection:direction];
+}
+
+@end
 
 @interface WebInspectorWindowController : NSWindowController <NSWindowDelegate> {
 @private
     RetainPtr<WebView> _inspectedWebView;
+    RetainPtr<NSButton> _dockButton;
     WebView *_webView;
     WebInspectorFrontendClient* _frontendClient;
     WebInspectorClient* _inspectorClient;
@@ -72,6 +99,7 @@ using namespace WebCore;
 - (void)setInspectorClient:(WebInspectorClient*)inspectorClient;
 - (WebInspectorClient*)inspectorClient;
 - (void)setAttachedWindowHeight:(unsigned)height;
+- (void)setDockingUnavailable:(BOOL)unavailable;
 - (void)destroyInspectorView:(bool)notifyInspectorController;
 @end
 
@@ -120,7 +148,7 @@ void WebInspectorClient::bringFrontendToFront()
 void WebInspectorClient::didResizeMainFrame(Frame*)
 {
     if (m_frontendClient)
-        m_frontendClient->setDockingUnavailable(!m_frontendClient->canAttachWindow());
+        m_frontendClient->attachAvailabilityChanged(m_frontendClient->canAttachWindow());
 }
 
 void WebInspectorClient::highlight()
@@ -145,6 +173,12 @@ WebInspectorFrontendClient::WebInspectorFrontendClient(WebView* inspectedWebView
     , m_windowController(windowController)
 {
     [windowController setFrontendClient:this];
+}
+
+void WebInspectorFrontendClient::attachAvailabilityChanged(bool available)
+{
+    setDockingUnavailable(!available);
+    [m_windowController.get() setDockingUnavailable:!available];
 }
 
 void WebInspectorFrontendClient::frontendLoaded()
@@ -332,17 +366,56 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 
 - (NSWindow *)window
 {
-    NSWindow *window = [super window];
+    WebInspectorWindow *window = (WebInspectorWindow *)[super window];
     if (window)
         return window;
 
     NSUInteger styleMask = (NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask);
-    window = [[NSWindow alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 750.0, 650.0) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
+    window = [[WebInspectorWindow alloc] initWithContentRect:NSMakeRect(60.0, 200.0, 750.0, 650.0) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
     [window setDelegate:self];
     [window setMinSize:NSMakeSize(400.0, 400.0)];
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
     [window setContentBorderThickness:55. forEdge:NSMaxYEdge];
     WKNSWindowMakeBottomCornersSquare(window);
+
+    // Create a full screen button so we can turn it into a dock button.
+    _dockButton = [NSWindow standardWindowButton:NSWindowFullScreenButton forStyleMask:styleMask];
+    _dockButton.get().target = self;
+    _dockButton.get().action = @selector(attachWindow:);
+
+    // Store the dock button on the window too so it can check its visibility.
+    window->_dockButton = _dockButton;
+
+    // Get the dock image and make it a template so the button cell effects will apply.
+    NSImage *dockImage = [[NSBundle bundleForClass:[self class]] imageForResource:@"Dock"];
+    [dockImage setTemplate:YES];
+
+    // Set the dock image on the button cell.
+    NSCell *dockButtonCell = _dockButton.get().cell;
+    dockButtonCell.image = dockImage;
+
+    // Get the frame view, the superview of the content view, and its frame.
+    // This will be the superview of the dock button too.
+    NSView *contentView = window.contentView;
+    NSView *frameView = contentView.superview;
+    NSRect frameViewBounds = frameView.bounds;
+    NSSize dockButtonSize = _dockButton.get().frame.size;
+
+    ASSERT(!frameView.flipped);
+
+    // Position the dock button in the corner to match where the full screen button is normally.
+    NSPoint dockButtonOrigin;
+    dockButtonOrigin.x = NSMaxX(frameViewBounds) - dockButtonSize.width - dockButtonMargin;
+    dockButtonOrigin.y = NSMaxY(frameViewBounds) - dockButtonSize.height - dockButtonMargin;
+    _dockButton.get().frameOrigin = dockButtonOrigin;
+
+    // Set the autoresizing mask to keep the dock button pinned to the top right corner.
+    _dockButton.get().autoresizingMask = NSViewMinXMargin | NSViewMinYMargin;
+
+    [frameView addSubview:_dockButton.get()];
+
+    // Hide the dock button if we can't attach.
+    _dockButton.get().hidden = !_frontendClient->canAttachWindow();
 
     [self setWindow:window];
     [window release];
@@ -386,6 +459,11 @@ void WebInspectorFrontendClient::updateWindowTitle() const
         [_inspectedWebView.get() displayIfNeeded];
     } else
         [super close];
+}
+
+- (IBAction)attachWindow:(id)sender
+{
+    _frontendClient->attachWindow();
 }
 
 - (IBAction)showWindow:(id)sender
@@ -435,6 +513,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
         return;
 
     _inspectorClient->setInspectorStartsAttached(true);
+    _frontendClient->setAttachedWindow(true);
 
     [self close];
     [self showWindow:nil];
@@ -446,6 +525,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
         return;
 
     _inspectorClient->setInspectorStartsAttached(false);
+    _frontendClient->setAttachedWindow(false);
 
     [self close];
     [self showWindow:nil];
@@ -487,6 +567,11 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 
     [_webView setFrame:NSMakeRect(0.0, 0.0, NSWidth(frameViewRect), height)];
     [frameView setFrame:frameViewRect];
+}
+
+- (void)setDockingUnavailable:(BOOL)unavailable
+{
+    _dockButton.get().hidden = unavailable;
 }
 
 - (void)destroyInspectorView:(bool)notifyInspectorController

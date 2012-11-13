@@ -90,6 +90,8 @@ class WebInspectorFrontendClient : public WebCore::InspectorFrontendClientLocal 
 public:
     WebInspectorFrontendClient(WebView*, WebInspectorWindowController*, WebCore::InspectorController*, WebCore::Page*, PassOwnPtr<Settings>);
 
+    void attachAvailabilityChanged(bool);
+
     virtual void frontendLoaded();
 
     virtual String localizedStringsURL();

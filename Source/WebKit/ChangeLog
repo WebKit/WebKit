@@ -1,3 +1,13 @@
+2012-11-12  Timothy Hatcher  <timothy@apple.com>
+
+        Add a dock button to the top right corner of the Web Inspector window (similar to the full screen button).
+
+        https://bugs.webkit.org/show_bug.cgi?id=102025
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebKit.xcodeproj/project.pbxproj: Added Dock.pdf.
+
 2012-11-08  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Remove non-variable options from the build system

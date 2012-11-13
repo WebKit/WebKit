@@ -1,3 +1,23 @@
+2012-11-12  Timothy Hatcher  <timothy@apple.com>
+
+        Add a dock button to the top right corner of the Web Inspector window (similar to the full screen button).
+
+        https://bugs.webkit.org/show_bug.cgi?id=102025
+
+        Reviewed by Joseph Pecoraro.
+
+        * Resources/Dock.pdf: Added.
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindow _cursorForResizeDirection:]): Added.
+        (WebInspectorClient::didResizeMainFrame): Call attachAvailabilityChanged instead.
+        (WebInspectorFrontendClient::attachAvailabilityChanged): Added.
+        (-[WebInspectorWindowController window]): Create the dock button and add it.
+        (-[WebInspectorWindowController attachWindow:]): Added.
+        (-[WebInspectorWindowController attach]): Call setAttachedWindow.
+        (-[WebInspectorWindowController detach]): Ditto.
+        (-[WebInspectorWindowController setDockingUnavailable:]): Added. Update hidden state of the dock button.
+
 2012-11-08  Timothy Hatcher  <timothy@apple.com>
 
         Always use a textured window for the Web Inspector.
