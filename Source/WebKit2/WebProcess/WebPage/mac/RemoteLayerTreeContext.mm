@@ -28,6 +28,7 @@
 
 #import "RemoteGraphicsLayer.h"
 #import "RemoteLayerTreeTransaction.h"
+#import "RemoteLayerTreeHostMessages.h"
 #import "WebPage.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
@@ -95,6 +96,7 @@ void RemoteLayerTreeContext::flushLayers()
     m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 
     // FIXME: Package up the transaction and send it to the UI process.
+    m_webPage->send(Messages::RemoteLayerTreeHost::Commit());
 }
 
 } // namespace WebKit

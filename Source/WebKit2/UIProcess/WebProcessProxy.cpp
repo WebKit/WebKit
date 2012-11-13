@@ -182,6 +182,16 @@ void WebProcessProxy::terminate()
         m_processLauncher->terminateProcess();
 }
 
+void WebProcessProxy::addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver* messageReceiver)
+{
+    m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
+}
+
+void WebProcessProxy::removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID)
+{
+    m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
+}
+
 WebPageProxy* WebProcessProxy::webPage(uint64_t pageID) const
 {
     return m_pageMap.get(pageID);
@@ -415,6 +425,9 @@ void WebProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProces
 
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
 {
+    if (m_messageReceiverMap.dispatchMessage(connection, messageID, decoder))
+        return;
+
     if (m_context->dispatchMessage(connection, messageID, decoder))
         return;
 
@@ -436,6 +449,9 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
 
 void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
+    if (m_messageReceiverMap.dispatchSyncMessage(connection, messageID, decoder, replyEncoder))
+        return;
+
     if (m_context->dispatchSyncMessage(connection, messageID, decoder, replyEncoder))
         return;
 

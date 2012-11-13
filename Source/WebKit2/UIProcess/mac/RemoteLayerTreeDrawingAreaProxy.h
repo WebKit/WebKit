@@ -27,6 +27,7 @@
 #define RemoteLayerTreeDrawingAreaProxy_h
 
 #include "DrawingAreaProxy.h"
+#include "RemoteLayerTreeHost.h"
 
 namespace WebKit {
 
@@ -40,6 +41,8 @@ private:
 
     virtual void sizeDidChange() OVERRIDE;
     virtual void deviceScaleFactorDidChange() OVERRIDE;
+
+    RemoteLayerTreeHost m_remoteLayerTreeHost;
 };
 
 } // namespace WebKit

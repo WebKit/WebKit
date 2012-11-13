@@ -49,6 +49,7 @@ VPATH = \
     $(WebKit2)/UIProcess/Notifications \
     $(WebKit2)/UIProcess/Plugins \
     $(WebKit2)/UIProcess/SharedWorkers \
+    $(WebKit2)/UIProcess/mac \
 #
 
 MESSAGE_RECEIVERS = \
@@ -74,6 +75,7 @@ MESSAGE_RECEIVERS = \
     WebCookieManagerProxy \
     WebConnection \
     NetworkConnectionToWebProcess \
+    RemoteLayerTreeHost \
     WebContext \
     WebDatabaseManager \
     WebDatabaseManagerProxy \

@@ -23,32 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RemoteLayerTreeDrawingAreaProxy.h"
+#ifndef RemoteLayerTreeHost_h
+#define RemoteLayerTreeHost_h
+
+#include "MessageReceiver.h"
 
 namespace WebKit {
 
-PassOwnPtr<RemoteLayerTreeDrawingAreaProxy> RemoteLayerTreeDrawingAreaProxy::create(WebPageProxy* webPageProxy)
-{
-    return adoptPtr(new RemoteLayerTreeDrawingAreaProxy(webPageProxy));
-}
+class WebPageProxy;
 
-RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* webPageProxy)
-    : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
-    , m_remoteLayerTreeHost(webPageProxy)
-{
-}
+class RemoteLayerTreeHost : CoreIPC::MessageReceiver {
+public:
+    explicit RemoteLayerTreeHost(WebPageProxy*);
+    ~RemoteLayerTreeHost();
 
-RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
-{
-}
+private:
+    // CoreIPC::MessageReceiver.
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
 
-void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
-{
-}
+    // Implemented in generated RemoteLayerTreeHostMessageReceiver.cpp
+    void didReceiveRemoteLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
-void RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange()
-{
-}
+    // Message handlers.
+    void commit();
+
+    WebPageProxy* m_webPageProxy;
+};
 
 } // namespace WebKit
+
+#endif // RemoteLayerTreeHost_h

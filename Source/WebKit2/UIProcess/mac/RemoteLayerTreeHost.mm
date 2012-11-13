@@ -24,30 +24,31 @@
  */
 
 #include "config.h"
-#include "RemoteLayerTreeDrawingAreaProxy.h"
+#include "RemoteLayerTreeHost.h"
+
+#include "RemoteLayerTreeHostMessages.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
 
-PassOwnPtr<RemoteLayerTreeDrawingAreaProxy> RemoteLayerTreeDrawingAreaProxy::create(WebPageProxy* webPageProxy)
+RemoteLayerTreeHost::RemoteLayerTreeHost(WebPageProxy* webPageProxy)
+    : m_webPageProxy(webPageProxy)
 {
-    return adoptPtr(new RemoteLayerTreeDrawingAreaProxy(webPageProxy));
+    m_webPageProxy->process()->addMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID(), this);
 }
 
-RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy* webPageProxy)
-    : DrawingAreaProxy(DrawingAreaTypeRemoteLayerTree, webPageProxy)
-    , m_remoteLayerTreeHost(webPageProxy)
+RemoteLayerTreeHost::~RemoteLayerTreeHost()
 {
+    m_webPageProxy->process()->removeMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID());
 }
 
-RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
+void RemoteLayerTreeHost::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder&decoder)
 {
+    didReceiveRemoteLayerTreeHostMessage(connection, messageID, decoder);
 }
 
-void RemoteLayerTreeDrawingAreaProxy::sizeDidChange()
-{
-}
-
-void RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange()
+void RemoteLayerTreeHost::commit()
 {
 }
 

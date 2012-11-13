@@ -1,3 +1,56 @@
+2012-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Add a RemoteLayerTreeHost object in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=101999
+
+        Reviewed by Tim Horton.
+
+        Add a (mostly empty) RemoteLayerTreeHost class that will live in the UI process and host the layer tree.
+
+        * DerivedSources.make:
+        Add RemoteLayerTreeHost.messages.in.
+
+        * Platform/CoreIPC/MessageID.h:
+        Add a RemoteLayerTreeHost message class.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addMessageReceiver):
+        (WebKit::WebProcessProxy::removeMessageReceiver):
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        * UIProcess/WebProcessProxy.h:
+        Add a message receiver map to the web process proxy.
+
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h:
+        * UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm:
+        Add a RemoteLayerTreeHost member variable.
+
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        Add new class.
+
+        * UIProcess/mac/RemoteLayerTreeHost.messages.in:
+        Add new messages file with a single Commit message.
+        
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::RemoteLayerTreeHost):
+        Add the layer tree host as a message receiver.
+
+        (WebKit::RemoteLayerTreeHost::~RemoteLayerTreeHost):
+        Remote the layer tree host as a message receiver.
+
+        (WebKit::RemoteLayerTreeHost::didReceiveMessage):
+        Call the generated member function.
+
+        (WebKit::RemoteLayerTreeHost::commit):
+        Add an empty stub for now.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::flushLayers):
+        Send a commit message to the remote layer tree host.
+
 2012-11-12  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin should support non-1 device scale factor

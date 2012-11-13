@@ -26,6 +26,7 @@
 #ifndef WebProcessProxy_h
 #define WebProcessProxy_h
 
+#include "MessageReceiverMap.h"
 #include "PlatformProcessIdentifier.h"
 #include "PluginInfoStore.h"
 #include "ProcessLauncher.h"
@@ -76,6 +77,10 @@ public:
         
         return m_connection->connection(); 
     }
+
+    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver*);
+    void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
+
     WebConnection* webConnection() const { return m_connection.get(); }
 
     WebContext* context() const { return m_context.get(); }
@@ -201,6 +206,7 @@ private:
     // This is not a CoreIPC::Connection so that we can wrap the CoreIPC::Connection in
     // an API object.
     RefPtr<WebConnectionToWebProcess> m_connection;
+    CoreIPC::MessageReceiverMap m_messageReceiverMap;
 
     Vector<std::pair<CoreIPC::Connection::OutgoingMessage, unsigned> > m_pendingMessages;
     RefPtr<ProcessLauncher> m_processLauncher;

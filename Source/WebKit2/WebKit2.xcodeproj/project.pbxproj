@@ -197,6 +197,10 @@
 		1A9FBA8D13FF04E600DEED67 /* PluginComplexTextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBA8C13FF04E600DEED67 /* PluginComplexTextInputState.h */; };
 		1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */; };
 		1AA2E51E12E4C05E00BC4966 /* CGUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */; };
+		1AA3D75B1651B44F008713D0 /* RemoteLayerTreeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA3D7591651B44F008713D0 /* RemoteLayerTreeHost.mm */; };
+		1AA3D75C1651B44F008713D0 /* RemoteLayerTreeHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA3D75A1651B44F008713D0 /* RemoteLayerTreeHost.h */; };
+		1AA3D7611651B7D3008713D0 /* RemoteLayerTreeHostMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA3D75F1651B7D3008713D0 /* RemoteLayerTreeHostMessageReceiver.cpp */; };
+		1AA3D7621651B7D3008713D0 /* RemoteLayerTreeHostMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA3D7601651B7D3008713D0 /* RemoteLayerTreeHostMessages.h */; };
 		1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA417C912C00CCA002BE67B /* TextChecker.h */; };
 		1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */; };
 		1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA41AB412C02EC4002BE67B /* EditorState.h */; };
@@ -1381,6 +1385,11 @@
 		1AA1CD06100FA1BA0078DEBC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGUtilities.h; sourceTree = "<group>"; };
 		1AA2E51C12E4C05E00BC4966 /* CGUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CGUtilities.cpp; sourceTree = "<group>"; };
+		1AA3D7591651B44F008713D0 /* RemoteLayerTreeHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeHost.mm; sourceTree = "<group>"; };
+		1AA3D75A1651B44F008713D0 /* RemoteLayerTreeHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeHost.h; sourceTree = "<group>"; };
+		1AA3D75D1651B5C5008713D0 /* RemoteLayerTreeHost.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteLayerTreeHost.messages.in; sourceTree = "<group>"; };
+		1AA3D75F1651B7D3008713D0 /* RemoteLayerTreeHostMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteLayerTreeHostMessageReceiver.cpp; path = RemoteLayerTreeHostMessageReceiver.cpp; sourceTree = "<group>"; };
+		1AA3D7601651B7D3008713D0 /* RemoteLayerTreeHostMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteLayerTreeHostMessages.h; path = RemoteLayerTreeHostMessages.h; sourceTree = "<group>"; };
 		1AA417C912C00CCA002BE67B /* TextChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextChecker.h; sourceTree = "<group>"; };
 		1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextCheckerMac.mm; sourceTree = "<group>"; };
 		1AA41AB412C02EC4002BE67B /* EditorState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditorState.h; sourceTree = "<group>"; };
@@ -4010,6 +4019,9 @@
 				B878B614133428DC006888E9 /* CorrectionPanel.mm */,
 				1AB16AE01648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h */,
 				1AB16ADF1648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.mm */,
+				1AA3D75A1651B44F008713D0 /* RemoteLayerTreeHost.h */,
+				1AA3D75D1651B5C5008713D0 /* RemoteLayerTreeHost.messages.in */,
+				1AA3D7591651B44F008713D0 /* RemoteLayerTreeHost.mm */,
 				1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */,
 				1AF05D8514688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h */,
 				1AF05D8414688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm */,
@@ -4178,6 +4190,8 @@
 				1A043B5C124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h */,
 				1A8EFA6E1252B84100F7067F /* PluginProxyMessageReceiver.cpp */,
 				1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */,
+				1AA3D75F1651B7D3008713D0 /* RemoteLayerTreeHostMessageReceiver.cpp */,
+				1AA3D7601651B7D3008713D0 /* RemoteLayerTreeHostMessages.h */,
 				E1EDFDB11628AD730039ECDA /* SharedWorkerProcessMessageReceiver.cpp */,
 				E1EDFDB21628AD730039ECDA /* SharedWorkerProcessMessages.h */,
 				E1EDFDB31628AD730039ECDA /* SharedWorkerProcessProxyMessageReceiver.cpp */,
@@ -4882,6 +4896,8 @@
 				51217461164C20E30037A5C1 /* ShareableResource.h in Headers */,
 				51217465164C21370037A5C1 /* WebResourceBuffer.h in Headers */,
 				1AF1AC6C1651759E00C17D7F /* RemoteLayerTreeTransaction.h in Headers */,
+				1AA3D75C1651B44F008713D0 /* RemoteLayerTreeHost.h in Headers */,
+				1AA3D7621651B7D3008713D0 /* RemoteLayerTreeHostMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5824,6 +5840,8 @@
 				51217460164C20E30037A5C1 /* ShareableResource.cpp in Sources */,
 				51217464164C21370037A5C1 /* WebResourceBuffer.cpp in Sources */,
 				1AF1AC6B1651759E00C17D7F /* RemoteLayerTreeTransaction.mm in Sources */,
+				1AA3D75B1651B44F008713D0 /* RemoteLayerTreeHost.mm in Sources */,
+				1AA3D7611651B7D3008713D0 /* RemoteLayerTreeHostMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

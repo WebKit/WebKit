@@ -85,6 +85,7 @@ enum MessageClass {
     MessageClassWebSoupRequestManagerProxy,
 #endif
     MessageClassWebVibrationProxy,
+    MessageClassRemoteLayerTreeHost,
 
     // Messages sent to a WebConnection
     MessageClassWebConnectionLegacy,
