@@ -1,3 +1,23 @@
+2012-11-12  Adam Barth  <abarth@webkit.org>
+
+        [V8] We should be able to get V8PerContextData from a v8::Context more quickly
+        https://bugs.webkit.org/show_bug.cgi?id=102008
+
+        Reviewed by Ojan Vafai.
+
+        This patch uses the new v8::Context::GetAlignedPointerFromEmbedderData
+        API to get the V8PerContextData associated with a v8::Context much more
+        quickly. We no longer need to use a hidden property on the inner global
+        object. This patch will enable future optimizations.
+
+        * bindings/v8/V8HiddenPropertyName.h:
+        (WebCore):
+        * bindings/v8/V8PerContextData.cpp:
+        (WebCore::V8PerContextData::dispose):
+        (WebCore::V8PerContextData::init):
+        * bindings/v8/V8PerContextData.h:
+        (WebCore::V8PerContextData::from):
+
 2012-11-12  Elliott Sprehn  <esprehn@chromium.org>
 
         Make Frames and HTMLFrameOwnerElement less friendly

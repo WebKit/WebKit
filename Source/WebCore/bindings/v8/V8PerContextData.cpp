@@ -32,23 +32,14 @@
 #include "V8PerContextData.h"
 
 #include "V8Binding.h"
-#include "V8HiddenPropertyName.h"
 #include "V8ObjectConstructor.h"
 
 namespace WebCore {
 
-V8PerContextData* V8PerContextData::from(v8::Handle<v8::Context> context)
-{
-    v8::Handle<v8::Value> wrappedPerContextData = toInnerGlobalObject(context)->GetHiddenValue(V8HiddenPropertyName::perContextData());
-    if (wrappedPerContextData.IsEmpty())
-        return 0;
-    return static_cast<V8PerContextData*>(v8::External::Unwrap(wrappedPerContextData));
-}
-
 void V8PerContextData::dispose()
 {
     v8::HandleScope handleScope;
-    toInnerGlobalObject(m_context)->DeleteHiddenValue(V8HiddenPropertyName::perContextData());
+    m_context->SetAlignedPointerInEmbedderData(v8ContextPerContextDataIndex, 0);
 
     {
         WrapperBoilerplateMap::iterator it = m_wrapperBoilerplates.begin();
@@ -88,7 +79,7 @@ void V8PerContextData::dispose()
 
 bool V8PerContextData::init()
 {
-    toInnerGlobalObject(m_context)->SetHiddenValue(V8HiddenPropertyName::perContextData(), v8::External::Wrap(this));
+    m_context->SetAlignedPointerInEmbedderData(v8ContextPerContextDataIndex, this);
 
     v8::Handle<v8::String> prototypeString = v8::String::NewSymbol("prototype");
     if (prototypeString.IsEmpty())

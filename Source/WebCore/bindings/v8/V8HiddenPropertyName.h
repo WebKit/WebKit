@@ -44,7 +44,6 @@ namespace WebCore {
     V(event) \
     V(listener) \
     V(ownerNode) \
-    V(perContextData) \
     V(scriptState) \
     V(sleepFunction) \
     V(state) \

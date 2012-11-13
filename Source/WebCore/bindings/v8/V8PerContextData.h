@@ -44,6 +44,13 @@ struct V8NPObject;
 typedef WTF::Vector<V8NPObject*> V8NPObjectVector;
 typedef WTF::HashMap<int, V8NPObjectVector> V8NPObjectMap;
 
+enum V8ContextEmbedderDataField {
+    v8ContextDebugIdIndex,
+    v8ContextPerContextDataIndex
+    // Rather than adding more embedder data fields to v8::Context,
+    // consider adding the data to V8PerContextData instead.
+};
+
 class V8PerContextData {
 public:
     static PassOwnPtr<V8PerContextData> create(v8::Persistent<v8::Context> context)
@@ -58,7 +65,10 @@ public:
 
     bool init();
 
-    static V8PerContextData* from(v8::Handle<v8::Context>);
+    static V8PerContextData* from(v8::Handle<v8::Context> context)
+    {
+        return static_cast<V8PerContextData*>(context->GetAlignedPointerFromEmbedderData(v8ContextPerContextDataIndex));
+    }
 
     // To create JS Wrapper objects, we create a cache of a 'boiler plate'
     // object, and then simply Clone that object each time we need a new one.
