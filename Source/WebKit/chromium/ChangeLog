@@ -1,3 +1,28 @@
+2012-11-12  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove the WebCompositorSupport methods for changing settings, plumb everything through WebLayerTreeSettings
+        https://bugs.webkit.org/show_bug.cgi?id=101968
+
+        Reviewed by James Robinson.
+
+        This adds perTilePainting and acceleratedAniamtions to the WebSettings
+        classes, so that DRT can turn these on via WebLayerTreeSettings.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setAcceleratedAnimationEnabled):
+        (WebKit):
+        (WebKit::WebSettingsImpl::setPerTilePaintingEnabled):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        (WebKit::WebSettingsImpl::gestureTapHighlightEnabled):
+        (WebKit::WebSettingsImpl::doubleTapToZoomEnabled):
+        (WebKit::WebSettingsImpl::perTilePaintingEnabled):
+        (WebKit::WebSettingsImpl::acceleratedAnimationEnabled):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit):
+
 2012-11-13  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: remove legacy string-based backend methods

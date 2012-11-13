@@ -231,6 +231,8 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setAccelerated2dCanvasEnabled(accelerated2dCanvasEnabled);
     settings->setDeferred2dCanvasEnabled(deferred2dCanvasEnabled);
     settings->setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);
+    settings->setPerTilePaintingEnabled(perTilePaintingEnabled);
+    settings->setAcceleratedAnimationEnabled(acceleratedAnimationEnabled);
     settings->setDeferredImageDecodingEnabled(deferredImageDecodingEnabled);
     settings->setMediaPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture);
     settings->setMockScrollbarsEnabled(mockScrollbarsEnabled);
