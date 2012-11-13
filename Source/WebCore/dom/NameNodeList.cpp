@@ -39,7 +39,7 @@ NameNodeList::NameNodeList(PassRefPtr<Node> rootNode, const String& name)
 
 NameNodeList::~NameNodeList()
 {
-    ownerNode()->removeCachedNameNodeList(this, m_nodeName);
+    rootNode()->removeCachedNameNodeList(this, m_nodeName);
 } 
 
 bool NameNodeList::nodeMatches(Element* testNode) const

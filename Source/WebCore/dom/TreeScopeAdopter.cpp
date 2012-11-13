@@ -53,8 +53,12 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
 
     for (Node* node = root; node; node = node->traverseNextNode(root)) {
         NodeRareData* rareData = node->setTreeScope(newDocument == m_newScope ? 0 : m_newScope);
-        if (rareData && rareData->nodeLists())
-            rareData->nodeLists()->adoptTreeScope(m_oldScope, m_newScope, oldDocument, newDocument);
+        if (rareData && rareData->nodeLists()) {
+            rareData->nodeLists()->invalidateCaches();
+            if (m_oldScope)
+                m_oldScope->removeNodeListCache();
+            m_newScope->addNodeListCache();
+        }
 
         if (willMoveToNewDocument)
             moveNodeToNewDocument(node, oldDocument, newDocument);

@@ -32,22 +32,21 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-LabelsNodeList::LabelsNodeList(Node* forNode)
-    : DynamicSubtreeNodeList(forNode, RootedAtDocument)
-    , m_forNode(forNode)
+LabelsNodeList::LabelsNodeList(Node* forNode )
+    : DynamicSubtreeNodeList(forNode->document()) , m_forNode(forNode)
 {
     m_forNode->document()->registerDynamicSubtreeNodeList(this);
 }
 
 LabelsNodeList::~LabelsNodeList()
 {
-    ownerNode()->removeCachedLabelsNodeList(this);
-    ownerNode()->document()->unregisterDynamicSubtreeNodeList(this);
+    m_forNode->removeCachedLabelsNodeList(this);
+    m_forNode->document()->unregisterDynamicSubtreeNodeList(this);
 } 
     
 bool LabelsNodeList::nodeMatches(Element* testNode) const
 {
-    return testNode->hasTagName(labelTag) && static_cast<HTMLLabelElement*>(testNode)->control() == ownerNode();
+    return testNode->hasTagName(labelTag) && static_cast<HTMLLabelElement*>(testNode)->control() == m_forNode;
 }
 
 } // namespace WebCore

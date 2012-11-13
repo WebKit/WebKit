@@ -40,9 +40,9 @@ TagNodeList::TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespac
 TagNodeList::~TagNodeList()
 {
     if (m_namespaceURI == starAtom)
-        ownerNode()->removeCachedTagNodeList(this, m_localName);
+        rootNode()->removeCachedTagNodeList(this, m_localName);
     else
-        ownerNode()->removeCachedTagNodeList(this, QualifiedName(nullAtom, m_localName, m_namespaceURI));
+        rootNode()->removeCachedTagNodeList(this, QualifiedName(nullAtom, m_localName, m_namespaceURI));
 }
 
 bool TagNodeList::nodeMatches(Element* testNode) const

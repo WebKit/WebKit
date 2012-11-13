@@ -24,7 +24,6 @@
 #ifndef DynamicNodeList_h
 #define DynamicNodeList_h
 
-#include "Document.h"
 #include "NodeList.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -36,14 +35,8 @@ class Node;
 
 class DynamicNodeList : public NodeList {
 public:
-    enum RootType {
-        RootedAtNode,
-        RootedAtDocument,
-    };
-
-    DynamicNodeList(PassRefPtr<Node> ownerNode, RootType rootType = RootedAtNode)
-        : m_ownerNode(ownerNode)
-        , m_caches(rootType)
+    DynamicNodeList(PassRefPtr<Node> node)
+        : m_node(node)
     { }
     virtual ~DynamicNodeList() { }
 
@@ -53,28 +46,15 @@ public:
     virtual Node* itemWithName(const AtomicString&) const;
 
     // Other methods (not part of DOM)
-    Node* ownerNode() const { return m_ownerNode.get(); }
-    bool isRootedAtDocument() const { return m_caches.rootedAtDocument; }
+    Node* node() const { return m_node.get(); }
 
     void invalidateCache() { m_caches.reset(); }
 
 protected:
-    Node* rootNode() const
-    {
-        if (m_caches.rootedAtDocument && m_ownerNode->inDocument())
-            return m_ownerNode->document();
-        return m_ownerNode.get();
-    }
-    Document* document() const { return m_ownerNode->document(); }
     virtual bool nodeMatches(Element*) const = 0;
 
     struct Caches {
-        Caches(RootType rootType)
-            : rootedAtDocument(rootType == RootedAtDocument)
-        {
-            reset();
-        }
-
+        Caches() { reset(); }
         void reset()
         {
             lastItem = 0;
@@ -84,14 +64,13 @@ protected:
 
         Node* lastItem;
         unsigned cachedLength;
-        unsigned lastItemOffset : 29; // Borrow 3-bits for bit fields
-        unsigned isLengthCacheValid : 1;
-        unsigned isItemCacheValid : 1;
-        unsigned rootedAtDocument : 1;
+        unsigned lastItemOffset;
+        bool isLengthCacheValid : 1;
+        bool isItemCacheValid : 1;
     };
 
-    RefPtr<Node> m_ownerNode;
     mutable Caches m_caches;
+    RefPtr<Node> m_node;
 
 private:
     virtual bool isDynamicNodeList() const OVERRIDE { return true; }
@@ -102,9 +81,10 @@ public:
     virtual ~DynamicSubtreeNodeList();
     virtual unsigned length() const OVERRIDE;
     virtual Node* item(unsigned index) const OVERRIDE;
+    Node* rootNode() const { return node(); }
 
 protected:
-    DynamicSubtreeNodeList(PassRefPtr<Node>, RootType = RootedAtNode);
+    DynamicSubtreeNodeList(PassRefPtr<Node> rootNode);
 
 private:
     using DynamicNodeList::invalidateCache;

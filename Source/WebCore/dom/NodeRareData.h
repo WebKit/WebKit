@@ -26,7 +26,6 @@
 #include "ClassNodeList.h"
 #include "DOMSettableTokenList.h"
 #include "DynamicNodeList.h"
-#include "LabelsNodeList.h"
 #include "MutationObserverRegistration.h"
 #include "NameNodeList.h"
 #include "QualifiedName.h"
@@ -79,24 +78,9 @@ public:
     }
 
     void invalidateCaches();
-    void invalidateCachesForDocument();
     void invalidateCachesThatDependOnAttributes();
 
     bool isEmpty() const;
-
-    void adoptTreeScope(TreeScope* oldTreeScope, TreeScope* newTreeScope, Document* oldDocument, Document* newDocument)
-    {
-        invalidateCaches();
-
-        if (oldDocument != newDocument) {
-            oldDocument->unregisterDynamicSubtreeNodeList(m_labelsNodeListCache);
-            newDocument->registerDynamicSubtreeNodeList(m_labelsNodeListCache);
-        }
-
-        if (oldTreeScope)
-            oldTreeScope->removeNodeListCache();
-        newTreeScope->addNodeListCache();
-    }
 
 private:
     NodeListsNodeData() : m_labelsNodeListCache(0) {}

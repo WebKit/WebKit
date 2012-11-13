@@ -34,7 +34,7 @@ ChildNodeList::ChildNodeList(PassRefPtr<Node> node)
 
 ChildNodeList::~ChildNodeList()
 {
-    ownerNode()->removeCachedChildNodeList();
+    node()->removeCachedChildNodeList();
 }
 
 unsigned ChildNodeList::length() const
@@ -43,7 +43,7 @@ unsigned ChildNodeList::length() const
         return m_caches.cachedLength;
 
     unsigned len = 0;
-    for (Node* n = rootNode()->firstChild(); n; n = n->nextSibling())
+    for (Node* n = node()->firstChild(); n; n = n->nextSibling())
         len++;
 
     m_caches.cachedLength = len;
@@ -55,7 +55,7 @@ unsigned ChildNodeList::length() const
 Node* ChildNodeList::item(unsigned index) const
 {
     unsigned int pos = 0;
-    Node* n = rootNode()->firstChild();
+    Node* n = node()->firstChild();
 
     if (m_caches.isItemCacheValid) {
         if (index == m_caches.lastItemOffset)
@@ -76,7 +76,7 @@ Node* ChildNodeList::item(unsigned index) const
         int diff = index - pos;
         unsigned dist = abs(diff);
         if (dist > m_caches.cachedLength - 1 - index) {
-            n = rootNode()->lastChild();
+            n = node()->lastChild();
             pos = m_caches.cachedLength - 1;
         }
     }
@@ -108,7 +108,7 @@ bool ChildNodeList::nodeMatches(Element* testNode) const
     // Note: Due to the overrides of the length and item functions above,
     // this function will be called only by DynamicNodeList::itemWithName,
     // for an element that was located with getElementById.
-    return testNode->parentNode() == rootNode();
+    return testNode->parentNode() == node();
 }
 
 } // namespace WebCore

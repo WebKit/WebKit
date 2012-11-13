@@ -37,14 +37,14 @@ namespace WebCore {
 
 ClassNodeList::ClassNodeList(PassRefPtr<Node> rootNode, const String& classNames)
     : DynamicSubtreeNodeList(rootNode)
-    , m_classNames(classNames, document()->inQuirksMode())
+    , m_classNames(classNames, node()->document()->inQuirksMode())
     , m_originalClassNames(classNames)
 {
 }
 
 ClassNodeList::~ClassNodeList()
 {
-    ownerNode()->removeCachedClassNodeList(this, m_originalClassNames);
+    rootNode()->removeCachedClassNodeList(this, m_originalClassNames);
 } 
 
 bool ClassNodeList::nodeMatches(Element* testNode) const
