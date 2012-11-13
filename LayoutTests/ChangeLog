@@ -1,3 +1,12 @@
+2012-11-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Enable Mutation observer
+        https://bugs.webkit.org/show_bug.cgi?id=102066
+
+        Reviewed by Pavel Feldman.
+
+        * platform/qt/TestExpectations: Unskip now passing tests.
+
 2012-11-12  Mike Reed  <reed@google.com>
 
         update expectations in advance of skia change for blurred rects

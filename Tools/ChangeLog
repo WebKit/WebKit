@@ -1,3 +1,12 @@
+2012-11-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Enable Mutation observer
+        https://bugs.webkit.org/show_bug.cgi?id=102066
+
+        Reviewed by Pavel Feldman.
+
+        * qmake/mkspecs/features/features.pri:
+
 2012-11-13  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] DRT - platform/blackberry/editing/text-iterator/findString-markers.html failed

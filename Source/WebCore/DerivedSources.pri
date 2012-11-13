@@ -247,7 +247,10 @@ IDL_BINDINGS += \
     $$PWD/dom/MessageChannel.idl \
     $$PWD/dom/MessageEvent.idl \
     $$PWD/dom/MessagePort.idl \
+    $$PWD/dom/MutationCallback.idl \
     $$PWD/dom/MutationEvent.idl \
+    $$PWD/dom/MutationObserver.idl \
+    $$PWD/dom/MutationRecord.idl \
     $$PWD/dom/NamedNodeMap.idl \
     $$PWD/dom/Node.idl \
     $$PWD/dom/NodeFilter.idl \

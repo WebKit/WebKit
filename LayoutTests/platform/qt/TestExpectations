@@ -279,81 +279,6 @@ inspector/styles/svg-style.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=68610
 fast/dom/MicroData
 
-# ENABLE(MUTATION_OBSERVERS) is disabled
-fast/dom/HTMLElement/class-list-quirks.html
-fast/dom/HTMLElement/class-list.html
-fast/mutation/added-out-of-order.html
-fast/mutation/callback-arguments.html
-fast/mutation/clear-transient-without-delivery.html
-fast/mutation/create-during-delivery.html
-fast/mutation/cross-document.html
-fast/mutation/database-callback-delivery.html
-fast/mutation/delivery-order.html
-fast/mutation/disconnect-cancel-pending.html
-fast/mutation/document-fragment-insertion.html
-fast/mutation/inline-event-listener.html
-fast/mutation/mutate-during-delivery.html
-fast/mutation/mutation-observer-constructor.html
-fast/mutation/mutation-callback-non-element-crash.html
-fast/mutation/mutation-record-nullity.html
-fast/mutation/observe-attributes.html
-fast/mutation/observe-characterdata.html
-fast/mutation/observe-childList.html
-fast/mutation/observe-exceptions.html
-fast/mutation/observe-subtree.html
-fast/mutation/removed-out-of-order.html
-fast/mutation/shadow-dom.html
-fast/mutation/takeRecords.html
-fast/mutation/transient-gc-crash.html
-
-# ENABLE(MUTATION_OBSERVERS) is disabled (fails after r134379)
-http/tests/inspector/network/network-sidebar-width.html
-http/tests/inspector/resource-tree/resource-tree-reload.html
-http/tests/inspector/search/search-in-concatenated-script.html
-http/tests/inspector/search/search-in-script.html
-inspector/console/console-api-on-call-frame.html
-inspector/debugger/callstack-placards-discarded.html
-inspector/debugger/copy-stack-trace.html
-inspector/debugger/debugger-activation-crash2.html
-inspector/debugger/debugger-breakpoints-not-activated-on-reload.html
-inspector/debugger/debugger-completions-on-call-frame.html
-inspector/debugger/debugger-eval-on-call-frame.html
-inspector/debugger/debugger-eval-while-paused.html
-inspector/debugger/debugger-expand-scope.html
-inspector/debugger/debugger-no-nested-pause.html
-inspector/debugger/debugger-pause-in-eval-script.html
-inspector/debugger/debugger-pause-in-internal.html
-inspector/debugger/debugger-pause-on-blocked-event-handler.html
-inspector/debugger/debugger-pause-on-blocked-script-injection.html
-inspector/debugger/debugger-pause-on-blocked-script-url.html
-inspector/debugger/debugger-pause-on-debugger-statement.html
-inspector/debugger/debugger-pause-on-exception.html
-inspector/debugger/debugger-pause-on-failed-assertion.html
-inspector/debugger/debugger-proto-property.html
-inspector/debugger/debugger-reload-on-pause.html
-inspector/debugger/debugger-set-breakpoint-regex.html
-inspector/debugger/debugger-step-in.html
-inspector/debugger/debugger-step-out.html
-inspector/debugger/debugger-step-over.html
-inspector/debugger/debugger-suspend-active-dom-objects.html
-inspector/debugger/eval-on-pause-blocked.html
-inspector/debugger/open-close-open.html
-inspector/debugger/pause-in-internal-script.html
-inspector/debugger/reveal-execution-line.html
-inspector/debugger/script-formatter-breakpoints.html
-inspector/debugger/script-formatter-console.html
-inspector/debugger/script-formatter-search.html
-inspector/debugger/script-formatter.html
-inspector/debugger/scripts-panel.html
-inspector/debugger/set-breakpoint.html
-inspector/debugger/source-frame-count.html
-inspector/debugger/source-frame.html
-inspector/debugger/source-url-comment.html
-inspector/debugger/watch-expressions-panel-switch.html
-inspector/extensions/extensions-resources.html
-inspector/styles/css-live-edit.html
-inspector/styles/edit-inspector-stylesheet.html
-
 # Disable private names by default in WebCore
 # https://bugs.webkit.org/show_bug.cgi?id=87088
 fast/js/names.html
@@ -523,6 +448,9 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing
 
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing
+
+# Missing eventSender.scheduleAsynchronousKeyDown() implementation
+fast/mutation/inline-event-listener.html
 
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
