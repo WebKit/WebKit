@@ -139,8 +139,8 @@ public:
 
     RefPtr<BasicShape> m_shapeInside;
     RefPtr<BasicShape> m_shapeOutside;
-    Length m_wrapMargin;
-    Length m_wrapPadding;
+    Length m_shapeMargin;
+    Length m_shapePadding;
 
     RefPtr<ClipPathOperation> m_clipPath;
 

@@ -1,3 +1,41 @@
+2012-11-13  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Exclusions] Update wrap-margin/padding to shape-margin/padding
+        https://bugs.webkit.org/show_bug.cgi?id=97736
+
+        Reviewed by Andreas Kling.
+
+        Rename properties to match updated spec.
+
+        Tests: fast/exclusions/shape-margin-parsing.html
+               fast/exclusions/shape-padding-parsing.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::asText):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitWrapShorthand):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (StyleRareNonInheritedData):
+
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r134418.

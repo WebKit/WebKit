@@ -3877,8 +3877,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 #if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitWrap:
     case CSSPropertyWebkitWrapFlow:
-    case CSSPropertyWebkitWrapMargin:
-    case CSSPropertyWebkitWrapPadding:
+    case CSSPropertyWebkitShapeMargin:
+    case CSSPropertyWebkitShapePadding:
     case CSSPropertyWebkitWrapThrough:
     case CSSPropertyWebkitShapeInside:
     case CSSPropertyWebkitShapeOutside:

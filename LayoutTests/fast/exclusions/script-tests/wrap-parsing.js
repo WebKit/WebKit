@@ -14,10 +14,10 @@ function testComputedStyle(value) {
     document.body.appendChild(div);
     div.style.setProperty("-webkit-wrap", value);
     var webkitWrapFlowComputedValue = getComputedStyle(div).getPropertyValue("-webkit-wrap-flow");
-    var webkitWrapMarginComputedValue = getComputedStyle(div).getPropertyValue("-webkit-wrap-margin");
-    var webkitWrapPaddingComputedValue = getComputedStyle(div).getPropertyValue("-webkit-wrap-padding");
+    var webkitShapeMarginComputedValue = getComputedStyle(div).getPropertyValue("-webkit-shape-margin");
+    var webkitShapePaddingComputedValue = getComputedStyle(div).getPropertyValue("-webkit-shape-padding");
     document.body.removeChild(div);
-    return webkitWrapFlowComputedValue + " " + webkitWrapMarginComputedValue + " " + webkitWrapPaddingComputedValue;
+    return webkitWrapFlowComputedValue + " " + webkitShapeMarginComputedValue + " " + webkitShapePaddingComputedValue;
 }
 
 shouldBeEqualToString('test("-webkit-wrap: auto")', "auto");

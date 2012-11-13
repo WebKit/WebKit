@@ -1,3 +1,33 @@
+2012-11-13  Bem Jones-Bey  <bjonesbe@adobe.com>
+
+        [CSS Exclusions] Update wrap-margin/padding to shape-margin/padding
+        https://bugs.webkit.org/show_bug.cgi?id=97736
+
+        Reviewed by Andreas Kling.
+
+        Rename properties to match updated spec.
+
+        * fast/exclusions/css-exclusions-disabled-expected.txt:
+        * fast/exclusions/css-exclusions-disabled.html:
+        * fast/exclusions/script-tests/shape-margin-parsing.js: Added.
+        (test):
+        (testComputedStyle):
+        (testNotInherited):
+        * fast/exclusions/script-tests/shape-padding-parsing.js: Added.
+        (test):
+        (testComputedStyle):
+        (testNotInherited):
+        * fast/exclusions/script-tests/wrap-margin-parsing.js: Removed.
+        * fast/exclusions/script-tests/wrap-padding-parsing.js: Removed.
+        * fast/exclusions/script-tests/wrap-parsing.js:
+        (testComputedStyle):
+        * fast/exclusions/shape-margin-parsing-expected.txt: Added.
+        * fast/exclusions/shape-margin-parsing.html: Renamed from LayoutTests/fast/exclusions/wrap-padding-parsing.html.
+        * fast/exclusions/shape-padding-parsing-expected.txt: Added.
+        * fast/exclusions/shape-padding-parsing.html: Renamed from LayoutTests/fast/exclusions/wrap-margin-parsing.html.
+        * fast/exclusions/wrap-margin-parsing-expected.txt: Removed.
+        * fast/exclusions/wrap-padding-parsing-expected.txt: Removed.
+
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r134418.

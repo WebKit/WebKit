@@ -1,0 +1,31 @@
+Test parsing of the CSS shape-padding property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS test("-webkit-shape-padding: 0") is "0px"
+PASS test("-webkit-shape-padding: 1.5ex") is "1.5ex"
+PASS test("-webkit-shape-padding: 2em") is "2em"
+PASS test("-webkit-shape-padding: 2.5in") is "2.5in"
+PASS test("-webkit-shape-padding: 3cm") is "3cm"
+PASS test("-webkit-shape-padding: 3.5mm") is "3.5mm"
+PASS test("-webkit-shape-padding: 4pt") is "4pt"
+PASS test("-webkit-shape-padding: 4.5pc") is "4.5pc"
+PASS test("-webkit-shape-padding: 5px") is "5px"
+PASS test("-webkit-shape-padding: -5px") is ""
+PASS test("-webkit-shape-padding: auto") is ""
+PASS test("-webkit-shape-padding: 'string'") is ""
+PASS test("-webkit-shape-padding: 120%") is ""
+PASS testComputedStyle("0") is "0px"
+PASS testComputedStyle("1px") is "1px"
+PASS testComputedStyle("-5em") is "0px"
+PASS testComputedStyle("identifier") is "0px"
+PASS testComputedStyle("'string'") is "0px"
+PASS testNotInherited("0", "0") is "0px"
+PASS testNotInherited("0", "1px") is "1px"
+PASS testNotInherited("1px", "-1em") is "0px"
+PASS testNotInherited("2px", "1px") is "1px"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

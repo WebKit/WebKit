@@ -505,8 +505,8 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
         acceptsNegativeNumbers = false;
         return true;
 #if ENABLE(CSS_EXCLUSIONS)
-    case CSSPropertyWebkitWrapMargin:
-    case CSSPropertyWebkitWrapPadding:
+    case CSSPropertyWebkitShapeMargin:
+    case CSSPropertyWebkitShapePadding:
         acceptsNegativeNumbers = false;
         return RuntimeEnabledFeatures::cssExclusionsEnabled();
 #endif
@@ -2740,8 +2740,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         else if (value->unit == CSSParserValue::Function)
             return parseBasicShape(propId, important);
         break;
-    case CSSPropertyWebkitWrapMargin:
-    case CSSPropertyWebkitWrapPadding:
+    case CSSPropertyWebkitShapeMargin:
+    case CSSPropertyWebkitShapePadding:
         validPrimitive = (RuntimeEnabledFeatures::cssExclusionsEnabled() && !id && validUnit(value, FLength | FNonNeg));
         break;
     case CSSPropertyWebkitWrap:

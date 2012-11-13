@@ -441,8 +441,8 @@ const StylePropertyShorthand& webkitWrapShorthand()
 {
     static const CSSPropertyID webkitWrapProperties[] = {
         CSSPropertyWebkitWrapFlow,
-        CSSPropertyWebkitWrapMargin,
-        CSSPropertyWebkitWrapPadding
+        CSSPropertyWebkitShapeMargin,
+        CSSPropertyWebkitShapePadding
     };
     DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitWrapLonghands, (webkitWrapProperties, WTF_ARRAY_LENGTH(webkitWrapProperties)));
     return webkitWrapLonghands;

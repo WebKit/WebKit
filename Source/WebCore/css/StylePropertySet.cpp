@@ -813,8 +813,8 @@ String StylePropertySet::asText() const
             break;
 #if ENABLE(CSS_EXCLUSIONS)
         case CSSPropertyWebkitWrapFlow:
-        case CSSPropertyWebkitWrapMargin:
-        case CSSPropertyWebkitWrapPadding:
+        case CSSPropertyWebkitShapeMargin:
+        case CSSPropertyWebkitShapePadding:
             shorthandPropertyID = CSSPropertyWebkitWrap;
             break;
 #endif

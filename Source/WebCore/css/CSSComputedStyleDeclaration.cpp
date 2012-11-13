@@ -356,8 +356,8 @@ static const CSSPropertyID computedProperties[] = {
 #endif
 #if ENABLE(CSS_EXCLUSIONS)
     CSSPropertyWebkitWrapFlow,
-    CSSPropertyWebkitWrapMargin,
-    CSSPropertyWebkitWrapPadding,
+    CSSPropertyWebkitShapeMargin,
+    CSSPropertyWebkitShapePadding,
     CSSPropertyWebkitWrapThrough,
 #endif
 #if ENABLE(SVG)
@@ -2498,10 +2498,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
 #if ENABLE(CSS_EXCLUSIONS)
         case CSSPropertyWebkitWrapFlow:
             return cssValuePool().createValue(style->wrapFlow());
-        case CSSPropertyWebkitWrapMargin:
-            return cssValuePool().createValue(style->wrapMargin());
-        case CSSPropertyWebkitWrapPadding:
-            return cssValuePool().createValue(style->wrapPadding());
+        case CSSPropertyWebkitShapeMargin:
+            return cssValuePool().createValue(style->shapeMargin());
+        case CSSPropertyWebkitShapePadding:
+            return cssValuePool().createValue(style->shapePadding());
         case CSSPropertyWebkitShapeInside:
             if (!style->shapeInside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);

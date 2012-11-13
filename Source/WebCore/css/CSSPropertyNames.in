@@ -397,8 +397,8 @@ z-index
 #if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS
 -webkit-shape-inside
 -webkit-shape-outside
--webkit-wrap-margin
--webkit-wrap-padding
+-webkit-shape-margin
+-webkit-shape-padding
 -webkit-wrap-flow
 -webkit-wrap-through
 -webkit-wrap

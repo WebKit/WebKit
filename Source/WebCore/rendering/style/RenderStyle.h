@@ -1481,13 +1481,13 @@ public:
 
     static ClipPathOperation* initialClipPath() { return 0; }
 
-    Length wrapPadding() const { return rareNonInheritedData->m_wrapPadding; }
-    void setWrapPadding(Length wrapPadding) { SET_VAR(rareNonInheritedData, m_wrapPadding, wrapPadding); }
-    static Length initialWrapPadding() { return Length(0, Fixed); }
+    Length shapePadding() const { return rareNonInheritedData->m_shapePadding; }
+    void setShapePadding(Length shapePadding) { SET_VAR(rareNonInheritedData, m_shapePadding, shapePadding); }
+    static Length initialShapePadding() { return Length(0, Fixed); }
 
-    Length wrapMargin() const { return rareNonInheritedData->m_wrapMargin; }
-    void setWrapMargin(Length wrapMargin) { SET_VAR(rareNonInheritedData, m_wrapMargin, wrapMargin); }
-    static Length initialWrapMargin() { return Length(0, Fixed); }
+    Length shapeMargin() const { return rareNonInheritedData->m_shapeMargin; }
+    void setShapeMargin(Length shapeMargin) { SET_VAR(rareNonInheritedData, m_shapeMargin, shapeMargin); }
+    static Length initialShapeMargin() { return Length(0, Fixed); }
 
     bool hasContent() const { return contentData(); }
     const ContentData* contentData() const { return rareNonInheritedData->m_content.get(); }
