@@ -55,7 +55,6 @@ public:
     void setIdForStyleResolution(const AtomicString& newId) const { m_idForStyleResolution = newId; }
 
     const StylePropertySet* inlineStyle() const { return m_inlineStyleDecl.get(); }
-    StylePropertySet* inlineStyle() { return m_inlineStyleDecl.get(); }
     StylePropertySet* ensureInlineStyle(StyledElement*);
     StylePropertySet* ensureMutableInlineStyle(StyledElement*);
     void updateInlineStyleAvoidingMutation(StyledElement*, const String& text) const;
