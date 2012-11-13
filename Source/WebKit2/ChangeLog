@@ -1,3 +1,45 @@
+2012-11-12  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin should use PDFKit's context menu instead of the default WebKit one
+        https://bugs.webkit.org/show_bug.cgi?id=101896
+        <rdar://problem/12555173>
+
+        Reviewed by Anders Carlsson.
+
+        Show the context menu that PDFKit vends us instead of the default WebKit one
+        when PDFPlugin is told to show a context menu.
+
+        Also, react to the didChangeContentScaleFactor callback, so that when the context
+        menu (or HUD) is used to change the scale factor, we can inform PluginView.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h:
+        Add pdfLayerController:didChangeContentScaleFactor: delegate callback.
+        Rename tileScaleFactor to contentScaleFactor.
+        Add rightMouseDown: and menuForEvent: on PDFLayerController.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (PDFPlugin):
+        Add notifyContentScaleFactorChanged, handleContextMenuEvent, and nsEventForWebMouseEvent.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFLayerControllerDelegate pdfLayerController:didChangeContentScaleFactor:]): Forward content scale factor changes to PDFPlugin.
+        (WebKit::PDFPlugin::pdfDocumentDidLoad): Rename tileScaleFactor to contentScaleFactor.
+        (WebKit::PDFPlugin::geometryDidChange): Rename tileScaleFactor to contentScaleFactor.
+        (WebKit::eventTypeFromWebEvent): It turns out we can infer whether the mouse is being dragged during a MouseMove event
+        by whether it has a mouse button associated with it or not, so we don't need to track this state manually.
+        (WebKit::PDFPlugin::nsEventForWebMouseEvent): Factor the part of handleMouseEvent that creates NSEvents* out into its own function.
+        (WebKit::PDFPlugin::handleMouseEvent):
+        Don't track mouseButtonIsDown manually, make use of the new nsEventForWebMouseEvent.
+        Hand rightMouseDown: to PDFLayerController instead of mouseDown: if necessary.
+        (WebKit::PDFPlugin::handleContextMenuEvent): Grab the relevant NSMenu from PDFKit and display it.
+        (WebKit::PDFPlugin::handleKeyboardEvent): Don't pass a bogus mouseButtonIsDown to eventTypeFromWebEvent.
+        (WebKit::PDFPlugin::notifyContentScaleFactorChanged): Update PluginView and co.'s notion of page scale when
+        PDFKit changes it (generally from the context menu/HUD). Also update page size and scrollbar size/position.
+        (WebKit::PDFPlugin::setScrollOffset): Don't call SimplePDFPlugin's implementation, as PDFKit handles invalidation itself.
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::updateGeometry): Rename tileScaleFactor to contentScaleFactor.
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::updateGeometry): Rename tileScaleFactor to contentScaleFactor.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h: Make m_scrollOffset protected.
+
 2012-11-12  Anders Carlsson  <andersca@apple.com>
 
         Add a RemoteLayerTreeHost object in the UI process

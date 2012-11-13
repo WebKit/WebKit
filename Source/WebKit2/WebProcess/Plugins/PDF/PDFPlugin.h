@@ -63,6 +63,7 @@ public:
     void setActiveAnnotation(PDFAnnotation *);
     
     using ScrollableArea::notifyScrollPositionChanged;
+    void notifyContentScaleFactorChanged(CGFloat scaleFactor);
 
     void clickedLink(NSURL *);
 
@@ -82,6 +83,7 @@ private:
     virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::IntRect& clipRect, const WebCore::AffineTransform& pluginToRootViewTransform) OVERRIDE;
     virtual void contentsScaleFactorChanged(float) OVERRIDE;
     virtual bool handleMouseEvent(const WebMouseEvent&) OVERRIDE;
+    virtual bool handleContextMenuEvent(const WebMouseEvent&) OVERRIDE;
     virtual bool handleKeyboardEvent(const WebKeyboardEvent&) OVERRIDE;
     virtual bool handleEditingCommand(const String& commandName, const String& argument) OVERRIDE;
     virtual bool isEditingCommandEnabled(const String&) OVERRIDE;
@@ -91,7 +93,9 @@ private:
     virtual void setScrollOffset(const WebCore::IntPoint&) OVERRIDE;
     virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&) OVERRIDE;
     virtual void invalidateScrollCornerRect(const WebCore::IntRect&) OVERRIDE;
-
+    
+    NSEvent *nsEventForWebMouseEvent(const WebMouseEvent&);
+    
     bool supportsForms();
 
     RetainPtr<CALayer> m_containerLayer;
