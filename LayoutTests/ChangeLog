@@ -1,5 +1,11 @@
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Remove the test that is now passing.
+
+        * platform/chromium/TestExpectations: Removed expectation of failure.
+
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, rolling out r134434.
         http://trac.webkit.org/changeset/134434
         https://bugs.webkit.org/show_bug.cgi?id=102072
