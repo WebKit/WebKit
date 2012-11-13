@@ -1,3 +1,41 @@
+2012-11-13  Mark Lam  <mark.lam@apple.com>
+
+        JSEventListener should not access m_jsFunction when its wrapper is gone.
+        https://bugs.webkit.org/show_bug.cgi?id=101985.
+
+        Reviewed by Geoffrey Garen.
+
+        Added a few null checks for m_wrapper before we do anything with m_jsFunction.
+
+        No new tests.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::initializeJSFunction):
+        - Removed a now invalid assertion. m_wrapper is expected to have a
+          valid non-zero value when jsFunction is valid. However, in the case
+          of JSLazyEventListener (which extends JSEventListener), m_wrapper is
+          initially 0 when m_jsFunction has not been realized yet. When
+          JSLazyEventListener::initializeJSFunction() realizes m_jsFunction,
+          it will set m_wrapper to an appropriate wrapper object.
+
+          For this reason, JSEventListener::jsFunction() cannot do the null
+          check on m_wrapper until after the call to initializeJSFunction.
+
+          This, in turns, means that in the case of the non-lazy
+          JSEventListener, initializeJSFunction() will also be called, and
+          if the GC has collected the m_wrapper but the JSEventListener has
+          not been removed yet, it is possible to see a null m_wrapper while
+          m_jsFunction contains a non-zero stale value.
+
+          Hence, this assertion of (m_wrapper || !m_jsFunction) in
+          JSEventListener::initializeJSFunction() is not always true and
+          should be removed.
+
+        (WebCore::JSEventListener::visitJSFunction):
+        (WebCore::JSEventListener::operator==):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::jsFunction):
+
 2012-11-13  Adam Barth  <abarth@webkit.org>
 
         [V8] instantiateV8Object should encapulate the tricky creationContext logic
