@@ -1,5 +1,15 @@
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, rolling out r134458.
+        http://trac.webkit.org/changeset/134458
+
+        Need to try a different strategy for landing a two-sided patch
+        (2/3).
+
+        * platform/chromium/TestExpectations:
+
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, rolling out r134461.
         http://trac.webkit.org/changeset/134461
 
