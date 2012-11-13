@@ -164,6 +164,7 @@ private:
     bool m_needsRetryAsFTPDirectory;
     bool m_isOverrideContentType;
     bool m_newJobWithCredentialsStarted;
+    bool m_isHeadMethod;
 
     // If an HTTP status code is received, m_extendedStatusCode and m_response.httpStatusCode will both be set to it.
     // If a platform error code is received, m_extendedStatusCode will be set to it and m_response.httpStatusCode will be set to 404.

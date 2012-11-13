@@ -1,0 +1,27 @@
+<html>
+<head>
+<script>
+var xhr = new XMLHttpRequest();
+xhr.open("HEAD", "nothing.txt", true);
+xhr.onreadystatechange = function() {
+    if (xhr.readyState != 4) {
+        return;
+    }
+    if (xhr.status == 404) {
+        alert("PASSED: onreadystatechange fired with status 404");
+    } else {
+        alert("FAILED: onreadystatechange fired with status " + xhr.status);
+    }
+
+}
+xhr.onerror = function() {
+    alert("FAILED: onerror fired");
+}
+xhr.send();
+</script>
+</head>
+<body>
+<p>This test must be hosted on a web server, not run from a file url, because XMLHttpRequest from file url causes a security error.</p>
+<p>You should see an alert box saying whether the test was passed or failed. If there is no alert box, the test was FAILED.</p>
+</body>
+</html>

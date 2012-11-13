@@ -1,3 +1,24 @@
+2012-11-12  Joe Mason  <jmason@rim.com>
+
+        [BlackBerry] NetworkJob should not check if data is received with HEAD
+        https://bugs.webkit.org/show_bug.cgi?id=102034
+
+        Reviewed by George Staikos.
+
+        Internal PR: 241391
+
+        Make HEAD requests call didFinish instead of didFail on a 404 response, even though they
+        have no data.
+
+        Tests: ManualTests/blackberry/head-xhr-nonexistant-file.html
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::NetworkJob):
+        (WebCore::NetworkJob::initialize):
+        (WebCore::NetworkJob::shouldNotifyClientFailed):
+        * platform/network/blackberry/NetworkJob.h:
+        (NetworkJob):
+
 2012-11-12  Adam Barth  <abarth@webkit.org>
 
         [V8] V8DOMWrapper::instantiateV8Object shouldn't use deprecatedDocument

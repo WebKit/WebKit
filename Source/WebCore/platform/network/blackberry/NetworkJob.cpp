@@ -81,6 +81,7 @@ NetworkJob::NetworkJob()
     , m_needsRetryAsFTPDirectory(false)
     , m_isOverrideContentType(false)
     , m_newJobWithCredentialsStarted(false)
+    , m_isHeadMethod(false)
     , m_extendedStatusCode(0)
     , m_redirectCount(0)
     , m_deferredData(*this)
@@ -106,6 +107,8 @@ bool NetworkJob::initialize(int playerId,
                             int deferLoadingCount,
                             int redirectCount)
 {
+    BLACKBERRY_ASSERT(handle);
+
     m_playerId = playerId;
     m_pageGroupName = pageGroupName;
 
@@ -127,6 +130,8 @@ bool NetworkJob::initialize(int playerId,
 
     m_redirectCount = redirectCount;
     m_deferLoadingCount = deferLoadingCount;
+
+    m_isHeadMethod = m_handle->firstRequest().httpMethod().upper() == "HEAD";
 
     // We don't need to explicitly call notifyHeaderReceived, as the Content-Type
     // will ultimately get parsed when sendResponseIfNeeded gets called.
@@ -539,7 +544,7 @@ bool NetworkJob::shouldReleaseClientResource()
 
 bool NetworkJob::shouldNotifyClientFailed() const
 {
-    return m_extendedStatusCode < 0 || (isError(m_extendedStatusCode) && !m_dataReceived);
+    return m_extendedStatusCode < 0 || (isError(m_extendedStatusCode) && !m_dataReceived && !m_isHeadMethod);
 }
 
 bool NetworkJob::retryAsFTPDirectory()
