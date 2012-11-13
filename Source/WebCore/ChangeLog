@@ -1,3 +1,25 @@
+2012-11-13  Takashi Sakamoto  <tasak@google.com>
+
+        Crash when replacing parts of text inputs with content: url(...)
+        https://bugs.webkit.org/show_bug.cgi?id=101133
+
+        Reviewed by Kent Tamura.
+
+        Disable directly setting content of elements in an input element's
+        shadow dom tree, because the setting breaks input element's behavior.
+
+        Tests: fast/forms/number/number-content-url-crash.html
+               fast/forms/search/search-content-url-crash.html
+
+        * css/html.css:
+        (input::-webkit-textfield-decoration-container):
+        Use important to disable overriding an input element's content
+        property.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::attach):
+        Added ASSERTION. No content should be applied to
+        input::-webkit-textfield-decoration-container.
+
 2012-11-12  Huang Dongsung  <luxtella@company100.net>
 
         [Qt] REGRESSION(134142): overscaled tiles in pixel test results and MiniBrowser
