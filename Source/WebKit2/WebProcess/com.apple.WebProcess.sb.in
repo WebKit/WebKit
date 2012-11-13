@@ -117,6 +117,7 @@
        (iokit-user-client-class "IOFramebufferSharedUserClient")
        (iokit-user-client-class "AppleGraphicsControlClient")
        (iokit-user-client-class "AppleSNBFBUserClient")
+       (iokit-user-client-class "AppleUpstreamUserClient")
        (iokit-user-client-class "AGPMClient")
        (iokit-user-client-class "IOHIDParamUserClient")
        (iokit-user-client-class "RootDomainUserClient")
