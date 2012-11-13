@@ -1,3 +1,13 @@
+2012-11-13  James Robinson  <jamesr@chromium.org>
+
+        Rebaselines for filtering changes due to chromium r167479
+
+        * platform/chromium-linux/compositing/checkerboard-expected.png: Added.
+        * platform/chromium-mac/compositing/checkerboard-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/compositing/filters/background-filter-blur-off-axis-expected.png: Added.
+        * platform/chromium-win/compositing/checkerboard-expected.png: Added.
+        * platform/chromium-win/platform/chromium/compositing/filters/background-filter-blur-off-axis-expected.png:
+
 2012-11-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: MathML types need to be semantically identified in AX tree
