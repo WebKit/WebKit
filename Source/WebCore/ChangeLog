@@ -1,3 +1,25 @@
+2012-11-13  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Incorrect computed height for content with region-break-before
+        https://bugs.webkit.org/show_bug.cgi?id=101862
+
+        Reviewed by Julien Chaffraix.
+
+        When processing the region breaks for auto-height regions, we skipped the case
+        when the region-break-before occurred in the first region in the chain which was
+        an auto-height region. Because of that, the region computed height was not 0
+        as it was supposed to be, but rather LayoutUnit::max() / 2.
+
+        Test: fast/regions/autoheight-breakbefore-wrongheight.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::addForcedRegionBreak):
+        Make sure we process also the case when the region-break occurs at offset 0 in the flow thread
+        and the first region in chain is an auto-height region.
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::updateLogicalHeight):
+        Add an assert to make sure that the computed height for auto-height regions is always less than LayoutUnit::max() / 2.
+
 2012-11-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: remove reportMemoryUsage method from ImageObserver

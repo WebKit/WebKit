@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .flowContentSize  { width: 50px; height: 50px; }
+            #article { -webkit-flow-into: flow; background-color: green; }
+
+            .region { -webkit-flow-from: flow; position: absolute; background-color: red; }
+            .regionSize { width: 50px; max-height: 50px; top: 200px; }
+            .regionSize2 { width: 50px; height: 50px; top: 200px; left: 100px; }
+
+            #article { -webkit-region-break-before: always; }
+        </style>
+    </head>
+    <script src="../../resources/check-layout.js"></script>
+    <body onload="checkLayout('#regionZeroHeight')">
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=101862"> [CSSRegions] Incorrect computed height for content with region-break-before</a>.</p>
+        <p>The flow has two regions, the first region has height auto. The region-break before the content should set the height for the auto height region to 0.</p>
+        <div id="article" class="flowContentSize"></div>
+        <div id="regionZeroHeight" class="region regionSize" data-expected-height=0></div>
+        <div class="region regionSize2"></div>
+    </body>
+</html>

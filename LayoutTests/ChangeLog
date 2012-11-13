@@ -1,3 +1,17 @@
+2012-11-13  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions] Incorrect computed height for content with region-break-before
+        https://bugs.webkit.org/show_bug.cgi?id=101862
+
+        Reviewed by Julien Chaffraix.
+
+        Add a test showing that when content having -webkit-region-break-before:always is flowed
+        into a region chain with the first region being an auto-height region, the auto-height region
+        has a computed height of 0 and the content is flowed into the second region in the chain.
+
+        * fast/regions/autoheight-breakbefore-wrongheight-expected.txt: Added.
+        * fast/regions/autoheight-breakbefore-wrongheight.html: Added.
+
 2012-11-12  Kent Tamura  <tkent@chromium.org>
 
         Unable to set valid time value to input[type=time] with user interaction in some cases

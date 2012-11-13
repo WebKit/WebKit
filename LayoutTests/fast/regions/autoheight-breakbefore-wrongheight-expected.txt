@@ -1,0 +1,6 @@
+Test for [CSSRegions] Incorrect computed height for content with region-break-before.
+
+The flow has two regions, the first region has height auto. The region-break before the content should set the height for the auto height region to 0.
+
+PASS
+

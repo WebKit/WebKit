@@ -631,6 +631,7 @@ void RenderRegion::updateLogicalHeight()
         return;
 
     LayoutUnit newLogicalHeight = overrideLogicalContentHeight() + borderAndPaddingLogicalHeight();
+    ASSERT(newLogicalHeight < LayoutUnit::max() / 2);
     if (newLogicalHeight > logicalHeight())
         setLogicalHeight(newLogicalHeight);
 }
