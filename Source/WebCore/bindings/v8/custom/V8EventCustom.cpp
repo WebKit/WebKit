@@ -42,12 +42,6 @@
 
 namespace WebCore {
 
-void V8Event::valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    Event* event = V8Event::toNative(info.Holder());
-    event->setDefaultPrevented(!value->BooleanValue());
-}
-
 v8::Handle<v8::Value> V8Event::dataTransferAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     Event* event = V8Event::toNative(info.Holder());

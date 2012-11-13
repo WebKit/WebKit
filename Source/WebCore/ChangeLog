@@ -1,3 +1,14 @@
+2012-11-12  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] V8Event::valueAccessorGetter() in custom binding is not used
+        https://bugs.webkit.org/show_bug.cgi?id=101893
+
+        Reviewed by Adam Barth.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/custom/V8EventCustom.cpp:
+
 2012-11-12  Roger Fong  <roger_fong@apple.com>
 
         Web Inspector: Fix docking behaviour on Windows.
