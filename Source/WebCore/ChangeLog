@@ -1,3 +1,25 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134434.
+        http://trac.webkit.org/changeset/134434
+        https://bugs.webkit.org/show_bug.cgi?id=102072
+
+        The test that was added asserts in loader.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::createWindow):
+        * page/DOMWindow.cpp:
+        (WebCore):
+        (WebCore::DOMWindow::adjustWindowRect):
+        (WebCore::DOMWindow::moveBy):
+        (WebCore::DOMWindow::moveTo):
+        (WebCore::DOMWindow::resizeBy):
+        (WebCore::DOMWindow::resizeTo):
+        (WebCore::DOMWindow::open):
+        (WebCore::DOMWindow::showModalDialog):
+        * page/DOMWindow.h:
+        (DOMWindow):
+
 2012-11-13  Dan Carney  <dcarney@google.com>
 
         [V8] More efficient wrapper dispatch

@@ -1,3 +1,15 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134434.
+        http://trac.webkit.org/changeset/134434
+        https://bugs.webkit.org/show_bug.cgi?id=102072
+
+        The test that was added asserts in loader.
+
+        * fast/dom/Window/open-window-min-size-expected.txt: Removed.
+        * fast/dom/Window/open-window-min-size.html: Removed.
+        * fast/dom/Window/resources/print-close.html: Removed.
+
 2012-11-13  Slavomir Kaslev  <skaslev@google.com>
 
         [Chromium] Rebaselined platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas.html
