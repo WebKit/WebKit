@@ -1,3 +1,24 @@
+2012-11-12  Elliott Sprehn  <esprehn@chromium.org>
+
+        Make Frames and HTMLFrameOwnerElement less friendly
+        https://bugs.webkit.org/show_bug.cgi?id=102003
+
+        Reviewed by Ojan Vafai.
+
+        Frame used to assign HTMLFrameOwnerElement's m_contentFrame directly
+        this patch makes it go through a method to allow future hooks when frames
+        are associated with owners.
+
+        No new tests, this is just a refactor.
+
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::setContentFrame):
+        * html/HTMLFrameOwnerElement.h:
+        (HTMLFrameOwnerElement):
+        (WebCore::HTMLFrameOwnerElement::clearContentFrame):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame): Use new methods.
+
 2012-11-12  Beth Dakin  <bdakin@apple.com>
 
         Zoomed-in scrolling is very slow when deviceScaleFactor > 1

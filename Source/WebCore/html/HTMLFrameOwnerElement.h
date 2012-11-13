@@ -42,6 +42,11 @@ public:
     DOMWindow* contentWindow() const;
     Document* contentDocument() const;
 
+    void setContentFrame(Frame*);
+    void clearContentFrame() { m_contentFrame = 0; }
+
+    void disconnectContentFrame();
+
     // Most subclasses use RenderPart (either RenderEmbeddedObject or RenderIFrame)
     // except for HTMLObjectElement and HTMLEmbedElement which may return any
     // RenderObject when using fallback content.
@@ -54,15 +59,12 @@ public:
     virtual ScrollbarMode scrollingMode() const { return ScrollbarAuto; }
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
-    void disconnectContentFrame();
 
 protected:
     HTMLFrameOwnerElement(const QualifiedName& tagName, Document*);
     void setSandboxFlags(SandboxFlags);
 
 private:
-    friend class Frame;
-
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isFrameOwnerElement() const OVERRIDE { return true; }
 

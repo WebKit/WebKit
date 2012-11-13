@@ -49,6 +49,16 @@ RenderPart* HTMLFrameOwnerElement::renderPart() const
     return toRenderPart(renderer());
 }
 
+void HTMLFrameOwnerElement::setContentFrame(Frame* frame)
+{
+    // Make sure we will not end up with two frames referencing the same owner element.
+    ASSERT(!m_contentFrame || m_contentFrame->ownerElement() != this);
+    ASSERT(frame);
+    // Disconnected frames should not be allowed to load.
+    ASSERT(inDocument());
+    m_contentFrame = frame;
+}
+
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
     ASSERT(hasCustomCallbacks());
