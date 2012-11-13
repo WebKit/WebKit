@@ -992,7 +992,6 @@ static void feedMouseEvent(MouseEventInfo* eventInfo)
     unsigned timeStamp = 0;
     Evas_Object* mainFrame = browser->mainFrame();
     Evas* evas = evas_object_evas_get(mainFrame);
-    DumpRenderTreeSupportEfl::layoutFrame(mainFrame);
     EvasMouseEvent event = eventInfo->event;
 
     setEvasModifiers(evas, eventInfo->modifiers);

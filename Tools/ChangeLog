@@ -1,3 +1,16 @@
+2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][DRT] Remove extra layoutFrame() call when preparing to send an event via EventSender.
+        https://bugs.webkit.org/show_bug.cgi?id=102074
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * DumpRenderTree/efl/EventSender.cpp:
+        (feedMouseEvent): Do not call DumpRenderTreeSupportEfl::layoutFrame()
+        when sending an event, as it causes additional repaints that create
+        wrong pixel results for tests such as
+        fast/repaint/overflow-auto-in-overflow-auto-scrolled.html.
+
 2012-11-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable Mutation observer
