@@ -1649,6 +1649,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return NSAccessibilityDecrementArrowSubrole;
     }
     
+    if (m_object->isFileUploadButton())
+        return @"AXFileUploadButton";
+    
     if (m_object->isTreeItem())
         return NSAccessibilityOutlineRowSubrole;
     
@@ -1802,6 +1805,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([axRole isEqualToString:@"AXHeading"])
         return AXHeadingText();
 
+    if (m_object->isFileUploadButton())
+        return AXFileUploadButtonText();
+    
     // AppKit also returns AXTab for the role description for a tab item.
     if (m_object->isTabItem())
         return NSAccessibilityRoleDescription(@"AXTab", nil);
@@ -1852,6 +1858,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->roleValue() == StaticTextRole)
         return [NSString string];
 
+    // A file upload button presents a challenge because it has button text and a value, but the
+    // API doesn't support this paradigm.
+    // The compromise is to return the button type in the role description and the value of the file path in the title
+    if (m_object->isFileUploadButton())
+        return m_object->stringValue();
+    
     Vector<AccessibilityText> textOrder;
     m_object->accessibilityText(textOrder);
     

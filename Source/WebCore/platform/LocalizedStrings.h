@@ -155,6 +155,7 @@ namespace WebCore {
     String AXDefinitionListTermText();
     String AXDefinitionListDefinitionText();
     String AXFooterRoleDescriptionText();
+    String AXFileUploadButtonText();
 #if PLATFORM(MAC)
     String AXARIAContentGroupText(const String& ariaType);
 #endif

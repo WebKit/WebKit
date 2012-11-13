@@ -571,6 +571,11 @@ String AXFooterRoleDescriptionText()
 {
     return WEB_UI_STRING("footer", "accessibility role description for a footer");
 }
+    
+String AXFileUploadButtonText()
+{
+    return WEB_UI_STRING("file upload", "accessibility role description for a file upload button");
+}
 
 #if PLATFORM(MAC)
 String AXARIAContentGroupText(const String& ariaType)

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="file" id="fileupload">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a file upload button will have a specific subrole and a title that matches the files selected.");
+
+    if (window.accessibilityController) {
+
+          var uploadButton = accessibilityController.accessibleElementById("fileupload");
+          shouldBe("uploadButton.subrole", "'AXSubrole: AXFileUploadButton'");
+          shouldBe("uploadButton.roleDescription", "'AXRoleDescription: file upload button'");
+          shouldBe("uploadButton.title", "'AXTitle: no file selected'");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

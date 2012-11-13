@@ -1,3 +1,27 @@
+2012-11-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: file upload input text value is not exposed through accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=100583
+
+        Reviewed by Beth Dakin.
+
+        This is a hard problem to solve on the Mac because there are three pieces of information
+             1) The type of button 2) The text on the button 3) The text for the value.
+        I think the best compromise is to label this as a file upload button type in the role description, 
+        and then expose the file path text as the AXTitle. 
+        This will give the more relevant information and should be clear what is happening.
+
+        Test: platform/mac/accessibility/file-upload-button-subrole.html
+
+        * English.lproj/Localizable.strings:
+        * accessibility/mac/WebAccessibilityObjectWrapper.mm:
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+        (-[WebAccessibilityObjectWrapper accessibilityTitle]):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXFileUploadButtonText):
+        * platform/LocalizedStrings.h:
+
 2012-11-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133944.
