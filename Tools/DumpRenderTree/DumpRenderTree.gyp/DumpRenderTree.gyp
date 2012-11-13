@@ -83,6 +83,7 @@
             'dependencies': [
                 'TestRunner_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
+                '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit_wtf_support',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit_test_support',
                 '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
@@ -114,12 +115,6 @@
                     ],
                     'include_dirs': [
                         '<(source_dir)/WebKit/chromium/public/gtk',
-                    ],
-                }],
-                ['inside_chromium_build==1 and component=="shared_library"', {
-                    'sources': [
-                        '<(source_dir)/WebKit/chromium/src/ChromiumCurrentTime.cpp',
-                        '<(source_dir)/WebKit/chromium/src/ChromiumThreading.cpp',
                     ],
                 }],
             ],

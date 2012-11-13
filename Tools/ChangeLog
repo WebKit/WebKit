@@ -1,3 +1,12 @@
+2012-11-13  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] TestRunner should depend on webkit_wtf_support instead of compiling the files itself
+        https://bugs.webkit.org/show_bug.cgi?id=102075
+
+        Reviewed by Pavel Feldman.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][DRT] Remove extra layoutFrame() call when preparing to send an event via EventSender.
