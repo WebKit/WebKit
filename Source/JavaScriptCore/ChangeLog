@@ -1,5 +1,29 @@
 2012-11-12  Filip Pizlo  <fpizlo@apple.com>
 
+        op_get_callee should have value profiling
+        https://bugs.webkit.org/show_bug.cgi?id=102047
+
+        Reviewed by Sam Weinig.
+
+        This will allow us to detect if the callee is always the same, which is probably
+        the common case for a lot of constructors.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_callee):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_callee):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
+2012-11-12  Filip Pizlo  <fpizlo@apple.com>
+
         The act of getting the callee during 'this' construction should be explicit in bytecode
         https://bugs.webkit.org/show_bug.cgi?id=102016
 

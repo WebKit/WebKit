@@ -1214,6 +1214,7 @@ void JIT::emit_op_get_callee(Instruction* currentInstruction)
 {
     unsigned result = currentInstruction[1].u.operand;
     emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
+    emitValueProfilingSite();
     emitPutVirtualRegister(result);
 }
 

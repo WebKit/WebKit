@@ -1471,7 +1471,9 @@ void JIT::emit_op_get_callee(Instruction* currentInstruction)
 {
     int dst = currentInstruction[1].u.operand;
     emitGetFromCallFrameHeaderPtr(JSStack::Callee, regT0);
-    emitStoreCell(dst, regT0);
+    move(TrustedImm32(JSValue::CellTag), regT1);
+    emitValueProfilingSite();
+    emitStore(dst, regT1, regT0);
 }
 
 void JIT::emit_op_create_this(Instruction* currentInstruction)

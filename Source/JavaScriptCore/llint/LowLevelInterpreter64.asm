@@ -257,10 +257,12 @@ _llint_op_create_this:
 
 _llint_op_get_callee:
     traceExecution()
-    loadis 8[PB, PC, 8], t0
+    loadisFromInstruction(1, t0)
+    loadpFromInstruction(2, t2)
     loadp Callee[cfr], t1
+    valueProfile(t1, t2)
     storep t1, [cfr, t0, 8]
-    dispatch(2)
+    dispatch(3)
 
 
 _llint_op_convert_this:

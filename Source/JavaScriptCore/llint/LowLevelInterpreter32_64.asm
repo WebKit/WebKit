@@ -368,9 +368,11 @@ _llint_op_get_callee:
     traceExecution()
     loadi 4[PC], t0
     loadp PayloadOffset + Callee[cfr], t1
+    loadp 8[PC], t2
+    valueProfile(CellTag, t1, t2)
     storei CellTag, TagOffset[cfr, t0, 8]
     storei t1, PayloadOffset[cfr, t0, 8]
-    dispatch(2)
+    dispatch(3)
 
 
 _llint_op_convert_this:

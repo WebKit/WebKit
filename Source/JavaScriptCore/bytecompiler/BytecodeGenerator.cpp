@@ -460,8 +460,9 @@ BytecodeGenerator::BytecodeGenerator(JSGlobalData& globalData, FunctionBodyNode*
 
         RefPtr<RegisterID> func = newTemporary(); 
 
-        emitOpcode(op_get_callee); 
+        UnlinkedValueProfile profile = emitProfiledOpcode(op_get_callee);
         instructions().append(func->index());
+        instructions().append(profile);
 
         emitOpcode(op_create_this); 
         instructions().append(m_thisRegister.index()); 
