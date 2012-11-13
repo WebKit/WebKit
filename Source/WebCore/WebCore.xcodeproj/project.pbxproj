@@ -10473,6 +10473,7 @@
 		93309E9F099EB78C0056E581 /* SharedTimerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedTimerMac.mm; sourceTree = "<group>"; };
 		93309EA0099EB78C0056E581 /* SharedTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedTimer.h; sourceTree = "<group>"; };
 		93309EA1099EB78C0056E581 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
+		9332AB3D16515D7700D827EC /* GraphicsContext3DNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3DNEON.h; sourceTree = "<group>"; };
 		93354A3B0B24F8C9003F6DEA /* UIEventWithKeyState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIEventWithKeyState.cpp; sourceTree = "<group>"; };
 		933A142B0B7D188600A53FFD /* TextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEvent.cpp; sourceTree = "<group>"; };
 		933A142C0B7D188600A53FFD /* TextEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextEvent.idl; sourceTree = "<group>"; };
@@ -17365,6 +17366,22 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		9332AB3B16515D7700D827EC /* cpu */ = {
+			isa = PBXGroup;
+			children = (
+				9332AB3C16515D7700D827EC /* arm */,
+			);
+			path = cpu;
+			sourceTree = "<group>";
+		};
+		9332AB3C16515D7700D827EC /* arm */ = {
+			isa = PBXGroup;
+			children = (
+				9332AB3D16515D7700D827EC /* GraphicsContext3DNEON.h */,
+			);
+			path = arm;
+			sourceTree = "<group>";
+		};
 		9363B6290F8E8FE000803810 /* cf */ = {
 			isa = PBXGroup;
 			children = (
@@ -19931,6 +19948,7 @@
 		B2A015910AF6CD53006BCE0E /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				9332AB3B16515D7700D827EC /* cpu */,
 				076F0D0812B8192700C26AA4 /* avfoundation */,
 				499B3EC0128CCC1800E726C2 /* ca */,
 				B27535290B053814002CE64F /* cg */,

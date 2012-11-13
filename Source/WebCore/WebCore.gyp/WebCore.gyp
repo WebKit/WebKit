@@ -111,6 +111,7 @@
       '../platform/graphics',
       '../platform/graphics/chromium',
       '../platform/graphics/chromium/cc',
+      '../platform/graphics/cpu/arm',
       '../platform/graphics/filters',
       '../platform/graphics/filters/arm',
       '../platform/graphics/filters/skia',

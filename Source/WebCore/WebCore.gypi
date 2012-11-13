@@ -414,6 +414,7 @@
             'platform/graphics/TextRenderingMode.h',
             'platform/graphics/TextRun.h',
             'platform/graphics/TypesettingFeatures.h',
+            'platform/graphics/cpu/arm/GraphicsContext3DNEON.h',
             'platform/graphics/cg/ImageBufferDataCG.h',
             'platform/graphics/mac/ColorMac.h',
             'platform/graphics/mac/MediaPlayerProxy.h',

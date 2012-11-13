@@ -3956,6 +3956,7 @@ enable?(WEBGL) {
 
 use?(3D_GRAPHICS) {
     HEADERS += \
+        platform/graphics/cpu/arm/GraphicsContext3DNEON.h \
         platform/graphics/ANGLEWebKitBridge.h \
         platform/graphics/Extensions3D.h \
         platform/graphics/GraphicsContext3D.h \

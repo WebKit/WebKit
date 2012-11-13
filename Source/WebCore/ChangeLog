@@ -1,3 +1,30 @@
+2012-11-13  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Optimize RGBA4444ToRGBA8 packing/unpacking functions with NEON intrinsics in GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=101473
+
+        Reviewed by Zoltan Herczeg.
+
+        With NEON intrinsics the packing/unpacking functions can be optimized well.
+        This particular function is about 3 times faster with ARM NEON. On top level tests
+        the speed up was 1.18x.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore):
+        * platform/graphics/cpu/arm/GraphicsContext3DNEON.h: Added.
+        (WebCore):
+        (ARM):
+        (WebCore::ARM::unpackOneRowOfRGBA4444ToRGBA8NEON):
+        (WebCore::ARM::packOneRowOfRGBA8ToUnsignedShort4444NEON):
+
 2012-11-13  Takashi Sakamoto  <tasak@google.com>
 
         Crash when replacing parts of text inputs with content: url(...)
