@@ -2359,6 +2359,27 @@ webkit.org/b/91432 platform/chromium/virtual/gpu/fast/canvas/webgl/read-pixels-t
 webkit.org/b/91432 fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html [ Timeout ]
 webkit.org/b/91432 platform/chromium/virtual/gpu/fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html [ Timeout ]
 
+# These are from a speedup in blurred rectangles, rebaseline when SK_IGNORE_FAST_BLURRECT
+# is no longer defined in skia.gyp
+#
+crbug.com/160323  compositing/shadows/shadow-drawing.html [ ImageOnlyFailure ]
+crbug.com/160323  fast/box-shadow/basic-shadows.html [ ImageOnlyFailure ]
+crbug.com/160323  fast/box-shadow/box-shadow-clipped-slices.html [ ImageOnlyFailure ]
+crbug.com/160323  fast/box-shadow/box-shadow-radius.html [ ImageOnlyFailure ]
+crbug.com/160323  fast/box-shadow/box-shadow-transformed.html [ ImageOnlyFailure ]
+crbug.com/160323  fast/box-shadow/scaled-box-shadow.html [ ImageOnlyFailure ]
+crbug.com/160323  fast/box-shadow/single-pixel-shadow.html [ ImageOnlyFailure ]
+crbug.com/160323  fast/canvas/canvas-incremental-repaint.html [ ImageOnlyFailure ]
+crbug.com/160323  fast/repaint/box-shadow-h.html [ ImageOnlyFailure ]
+crbug.com/160323  fast/repaint/box-shadow-v.html [ ImageOnlyFailure ]
+crbug.com/160323  fast/repaint/shadow-multiple-vertical.html [ ImageOnlyFailure ]
+crbug.com/160323  fast/transforms/shadows.html [ ImageOnlyFailure ]
+crbug.com/160323  platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing.html [ ImageOnlyFailure ]
+crbug.com/160323  svg/css/group-with-shadow.svg [ ImageOnlyFailure ]
+crbug.com/160323  svg/filters/shadow-on-rect-with-filter.svg [ ImageOnlyFailure ]
+crbug.com/160323  canvas/philip/tests/2d.shadow.enable.blur.html [ Failure ]
+crbug.com/160323  fast/canvas/canvas-shadow.html [ Failure ]
+
 # These three failures are due to Mesa bugs
 webkit.org/b/91431 fast/canvas/webgl/framebuffer-object-attachment.html [ Failure ]
 webkit.org/b/91431 fast/canvas/webgl/gl-uniform-arrays.html [ Failure ]

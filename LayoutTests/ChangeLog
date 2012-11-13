@@ -1,3 +1,14 @@
+2012-11-12  Mike Reed  <reed@google.com>
+
+        update expectations in advance of skia change for blurred rects
+        https://bugs.webkit.org/show_bug.cgi?id=101982
+
+        Reviewed by NOBODY.
+
+        Unreviewed. Expectations change only
+
+        * platform/chromium/TestExpectations:
+
 2012-11-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip failing tests.
