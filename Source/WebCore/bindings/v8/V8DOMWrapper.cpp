@@ -109,14 +109,17 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(WrapperTypeInfo* type, v
     return instance;
 }
 
-#ifndef NDEBUG
-bool V8DOMWrapper::maybeDOMWrapper(v8::Handle<v8::Value> value)
+static bool hasInternalField(v8::Handle<v8::Value> value)
 {
     if (value.IsEmpty() || !value->IsObject())
         return false;
+    return v8::Handle<v8::Object>::Cast(value)->InternalFieldCount();
+}
 
-    v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);
-    if (!object->InternalFieldCount())
+#ifndef NDEBUG
+bool V8DOMWrapper::maybeDOMWrapper(v8::Handle<v8::Value> value)
+{
+    if (!hasInternalField(value))
         return false;
 
     ASSERT(object->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount);
@@ -129,16 +132,9 @@ bool V8DOMWrapper::maybeDOMWrapper(v8::Handle<v8::Value> value)
 }
 #endif
 
-bool V8DOMWrapper::isValidDOMObject(v8::Handle<v8::Value> value)
-{
-    if (value.IsEmpty() || !value->IsObject())
-        return false;
-    return v8::Handle<v8::Object>::Cast(value)->InternalFieldCount();
-}
-
 bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo* type)
 {
-    if (!isValidDOMObject(value))
+    if (!hasInternalField(value))
         return false;
 
     v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);

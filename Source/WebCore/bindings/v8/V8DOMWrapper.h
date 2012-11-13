@@ -105,8 +105,6 @@ namespace WebCore {
         template<typename T>
         static v8::Persistent<v8::Object> setJSWrapperForDOMObject(PassRefPtr<T>, v8::Handle<v8::Object>, v8::Isolate* = 0);
 
-        static bool isValidDOMObject(v8::Handle<v8::Value>);
-
         // Check whether a V8 value is a wrapper of type |classType|.
         static bool isWrapperOfType(v8::Handle<v8::Value>, WrapperTypeInfo*);
 

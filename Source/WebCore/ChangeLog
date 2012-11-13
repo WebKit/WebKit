@@ -1,3 +1,21 @@
+2012-11-13  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Make isValidDOMObject() static
+        https://bugs.webkit.org/show_bug.cgi?id=101914
+
+        Reviewed by Adam Barth.
+
+        isValidDOMObject() is used by DOMWrapper.cpp only.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::isValidDOMObject):
+        (WebCore):
+        (WebCore::V8DOMWrapper::maybeDOMWrapper):
+        * bindings/v8/V8DOMWrapper.h:
+        (V8DOMWrapper):
+
 2012-11-13  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions] Incorrect computed height for content with region-break-before
