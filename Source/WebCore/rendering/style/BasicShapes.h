@@ -54,6 +54,7 @@ public:
 
     virtual void path(Path&, const FloatRect&) = 0;
     virtual WindRule windRule() const { return RULE_NONZERO; }
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const = 0;
 
     virtual Type type() const = 0;
 protected:
@@ -78,7 +79,8 @@ public:
     void setCornerRadiusX(Length radiusX) { m_cornerRadiusX = radiusX; }
     void setCornerRadiusY(Length radiusY) { m_cornerRadiusY = radiusY; }
 
-    virtual void path(Path&, const FloatRect&);
+    virtual void path(Path&, const FloatRect&) OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
     virtual Type type() const { return BASIC_SHAPE_RECTANGLE; }
 private:
@@ -107,7 +109,8 @@ public:
     void setCenterY(Length centerY) { m_centerY = centerY; }
     void setRadius(Length radius) { m_radius = radius; }
 
-    virtual void path(Path&, const FloatRect&);
+    virtual void path(Path&, const FloatRect&) OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
     virtual Type type() const { return BASIC_SHAPE_CIRCLE; }
 private:
@@ -132,7 +135,8 @@ public:
     void setRadiusX(Length radiusX) { m_radiusX = radiusX; }
     void setRadiusY(Length radiusY) { m_radiusY = radiusY; }
 
-    virtual void path(Path&, const FloatRect&);
+    virtual void path(Path&, const FloatRect&) OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
 
     virtual Type type() const { return BASIC_SHAPE_ELLIPSE; } 
 private:
@@ -155,7 +159,9 @@ public:
     void setWindRule(WindRule windRule) { m_windRule = windRule; }
     void appendPoint(Length x, Length y) { m_values.append(x); m_values.append(y); }
 
-    virtual void path(Path&, const FloatRect&);
+    virtual void path(Path&, const FloatRect&) OVERRIDE;
+    virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const OVERRIDE;
+
     virtual WindRule windRule() const { return m_windRule; }
 
     virtual Type type() const { return BASIC_SHAPE_POLYGON; }

@@ -1,0 +1,5 @@
+  
+PASS - "webkitClipPath" property for "rectangle-box" element at 1s saw something close to: rectangle(10%, 10%, 80%, 80%)
+PASS - "webkitClipPath" property for "circle-box" element at 1s saw something close to: circle(35%, 35%, 35%)
+PASS - "webkitClipPath" property for "ellipse-box" element at 1s saw something close to: ellipse(35%, 35%, 35%, 30%)
+

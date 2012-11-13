@@ -32,6 +32,7 @@
 #include "BasicShapes.h"
 #include "FloatRect.h"
 #include "LengthFunctions.h"
+#include "NotImplemented.h"
 #include "Path.h"
 
 namespace WebCore {
@@ -47,6 +48,23 @@ void BasicShapeRectangle::path(Path& path, const FloatRect& boundingBox)
                                   m_cornerRadiusY.isUndefined() ? 0 : floatValueForLength(m_cornerRadiusY, boundingBox.height())));
 }
 
+PassRefPtr<BasicShape> BasicShapeRectangle::blend(const BasicShape* other, double progress) const
+{
+    ASSERT(type() == other->type());
+
+    const BasicShapeRectangle* o = static_cast<const BasicShapeRectangle*>(other);
+    RefPtr<BasicShapeRectangle> result =  BasicShapeRectangle::create();
+    result->setX(m_x.blend(o->x(), progress));
+    result->setY(m_y.blend(o->y(), progress));
+    result->setWidth(m_width.blend(o->width(), progress));
+    result->setHeight(m_height.blend(o->height(), progress));
+    if (!m_cornerRadiusX.isUndefined() && !o->cornerRadiusX().isUndefined())
+        result->setCornerRadiusX(m_cornerRadiusX.blend(o->cornerRadiusX(), progress));
+    if (!m_cornerRadiusY.isUndefined() && !o->cornerRadiusY().isUndefined())
+        result->setCornerRadiusY(m_cornerRadiusY.blend(o->cornerRadiusY(), progress));
+    return result.release();
+}
+
 void BasicShapeCircle::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
@@ -60,6 +78,18 @@ void BasicShapeCircle::path(Path& path, const FloatRect& boundingBox)
                               radius * 2));
 }
 
+PassRefPtr<BasicShape> BasicShapeCircle::blend(const BasicShape* other, double progress) const
+{
+    ASSERT(type() == other->type());
+
+    const BasicShapeCircle* o = static_cast<const BasicShapeCircle*>(other);
+    RefPtr<BasicShapeCircle> result =  BasicShapeCircle::create();
+    result->setCenterX(m_centerX.blend(o->centerX(), progress));
+    result->setCenterY(m_centerY.blend(o->centerY(), progress));
+    result->setRadius(m_radius.blend(o->radius(), progress));
+    return result.release();
+}
+
 void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());
@@ -71,6 +101,19 @@ void BasicShapeEllipse::path(Path& path, const FloatRect& boundingBox)
                               centerY - radiusY + boundingBox.y(),
                               radiusX * 2,
                               radiusY * 2));
+}
+
+PassRefPtr<BasicShape> BasicShapeEllipse::blend(const BasicShape* other, double progress) const
+{
+    ASSERT(type() == other->type());
+
+    const BasicShapeEllipse* o = static_cast<const BasicShapeEllipse*>(other);
+    RefPtr<BasicShapeEllipse> result =  BasicShapeEllipse::create();
+    result->setCenterX(m_centerX.blend(o->centerX(), progress));
+    result->setCenterY(m_centerY.blend(o->centerY(), progress));
+    result->setRadiusX(m_radiusX.blend(o->radiusX(), progress));
+    result->setRadiusY(m_radiusY.blend(o->radiusY(), progress));
+    return result.release();
 }
 
 void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
@@ -89,5 +132,11 @@ void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
             floatValueForLength(m_values.at(i + 1), boundingBox.height()) + boundingBox.y()));
     }
     path.closeSubpath();
+}
+
+PassRefPtr<BasicShape> BasicShapePolygon::blend(const BasicShape*, double) const
+{
+    notImplemented();
+    return BasicShapePolygon::create();
 }
 }

@@ -1,3 +1,41 @@
+2012-11-10  Dirk Schulze  <krit@webkit.org>
+
+        BasicShapes 'circle', 'rectangle', 'ellipse' should be animatable with themselves
+        https://bugs.webkit.org/show_bug.cgi?id=101854
+
+        Reviewed by Andreas Kling.
+
+        The basic shapes BasicShapeCircle, BasicShapeEllipse and BasicShapeRectangle should
+        blend with themselves. This patch introduces simple interpolation of BasicShapes for
+        the -webkit-clip-path property.
+
+        Test: css3/masking/clip-path-animation.html
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): Added a new function that blends between two BasicShape objects.
+            It skips blending on <clipPath> references, polygons and if the shapes are not of
+            the same type.
+        (WebCore):
+        (PropertyWrapperClipPath): Added new wrapper for ClipPathShapes.
+        (WebCore::PropertyWrapperClipPath::PropertyWrapperClipPath): Ditto.
+        (WebCore::CSSPropertyAnimation::ensurePropertyMap): Add -webkit-clip-path to animatable
+            properties.
+        * rendering/style/BasicShapes.cpp:
+            The blending is done by each shape itself. This is similar to FilterOperations or
+            TransformOperations.
+        (WebCore::BasicShapeRectangle::blend):
+        (WebCore):
+        (WebCore::BasicShapeCircle::blend):
+        (WebCore::BasicShapeEllipse::blend):
+        (WebCore::BasicShapePolygon::blend):
+        * rendering/style/BasicShapes.h:
+            Added new blending functions to header.
+        (BasicShape):
+        (BasicShapeRectangle):
+        (BasicShapeCircle):
+        (BasicShapeEllipse):
+        (BasicShapePolygon):
+
 2012-11-12  Adam Barth  <abarth@webkit.org>
 
         [V8] We should be able to get V8PerContextData from a v8::Context more quickly

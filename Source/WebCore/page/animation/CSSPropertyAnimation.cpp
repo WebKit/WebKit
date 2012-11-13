@@ -35,6 +35,7 @@
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
+#include "ClipPathOperation.h"
 #include "FloatConversion.h"
 #include "IdentityTransformOperation.h"
 #include "Matrix3DTransformOperation.h"
@@ -123,6 +124,26 @@ static inline TransformOperations blendFunc(const AnimationBase* anim, const Tra
     if (anim->isTransformFunctionListValid())
         return to.blendByMatchingOperations(from, progress);
     return to.blendByUsingMatrixInterpolation(from, progress, anim->renderer()->isBox() ? toRenderBox(anim->renderer())->borderBoxRect().size() : LayoutSize());
+}
+
+static inline PassRefPtr<ClipPathOperation> blendFunc(const AnimationBase*, ClipPathOperation* from, ClipPathOperation* to, double progress)
+{
+    // Other clip-path operations than BasicShapes can not be animated.
+    if (from->getOperationType() != ClipPathOperation::SHAPE || to->getOperationType() != ClipPathOperation::SHAPE)
+        return to;
+
+    const BasicShape* fromShape = static_cast<ShapeClipPathOperation*>(from)->basicShape();
+    const BasicShape* toShape = static_cast<ShapeClipPathOperation*>(to)->basicShape();
+
+    // FIXME: Support animations between different shapes in the future.
+    if (fromShape->type() != toShape->type())
+        return to;
+
+    // FIXME: Support animations between polygons in the future.
+    if (fromShape->type() == BasicShape::BASIC_SHAPE_POLYGON)
+        return to;
+
+    return ShapeClipPathOperation::create(toShape->blend(fromShape, progress));
 }
 
 #if ENABLE(CSS_FILTERS)
@@ -367,6 +388,14 @@ protected:
     void (RenderStyle::*m_setter)(PassRefPtr<T>);
 };
 
+
+class PropertyWrapperClipPath : public RefCountedPropertyWrapper<ClipPathOperation> {
+public:
+    PropertyWrapperClipPath(CSSPropertyID prop, ClipPathOperation* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<ClipPathOperation>))
+        : RefCountedPropertyWrapper<ClipPathOperation>(prop, getter, setter)
+    {
+    }
+};
 
 class StyleImagePropertyWrapper : public RefCountedPropertyWrapper<StyleImage> {
 public:
@@ -1113,6 +1142,8 @@ void CSSPropertyAnimation::ensurePropertyMap()
     gPropertyWrappers->append(new PropertyWrapper<const FilterOperations&>(CSSPropertyWebkitFilter, &RenderStyle::filter, &RenderStyle::setFilter));
 #endif
 #endif
+
+    gPropertyWrappers->append(new PropertyWrapperClipPath(CSSPropertyWebkitClipPath, &RenderStyle::clipPath, &RenderStyle::setClipPath));
 
     gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyWebkitColumnRuleColor, MaybeInvalidColor, &RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::visitedLinkColumnRuleColor, &RenderStyle::setVisitedLinkColumnRuleColor));
     gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyWebkitTextStrokeColor, MaybeInvalidColor, &RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::visitedLinkTextStrokeColor, &RenderStyle::setVisitedLinkTextStrokeColor));

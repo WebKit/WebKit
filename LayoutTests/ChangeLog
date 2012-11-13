@@ -1,3 +1,20 @@
+2012-11-10  Dirk Schulze  <krit@webkit.org>
+
+        BasicShapes 'circle', 'rectangle', 'ellipse' should be animatable with themselves
+        https://bugs.webkit.org/show_bug.cgi?id=101854
+
+        Reviewed by Andreas Kling.
+
+        Added an animtation test for -webkit-clip-path and tested the basic shapes.
+
+        * animations/resources/animation-test-helpers.js:
+        (parseBasicShape):
+        (basicShapeParametersMatch):
+        (getPropertyValue):
+        (comparePropertyValue):
+        * css3/masking/clip-path-animation-expected.txt: Added.
+        * css3/masking/clip-path-animation.html: Added.
+
 2012-11-12  Erik Arvidsson  <arv@chromium.org>
 
         Replace DOMException TYPE_MISMATCH_ERR with TypeError

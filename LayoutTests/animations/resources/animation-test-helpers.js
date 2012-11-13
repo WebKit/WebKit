@@ -59,6 +59,58 @@ function parseCrossFade(s)
     return {"from": matches[1], "to": matches[2], "percent": parseFloat(matches[3])}
 }
 
+function parseBasicShape(s)
+{
+    var shapeFunction = s.match(/(\w+)\((.+)\)/);
+    if (!shapeFunction)
+        return null;
+
+    var matches;
+    switch (shapeFunction[1]) {
+    case "rectangle":
+        matches = s.match("rectangle\\((.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\,\\s*(.*)\\)");
+        break;
+    case "circle":
+        matches = s.match("circle\\((.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\)");
+        break;
+    case "ellipse":
+        matches = s.match("ellipse\\((.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\,\\s*(.*)\\)");
+        break;
+    default:
+        return null;
+    }
+
+    if (!matches)
+        return null;
+
+    matches.shift();
+
+    // Normalize percentage values.
+    for (var i = 0; i < matches.length; ++i) {
+        var param = matches[i];
+        matches[i] = parseFloat(matches[i]);
+        if (param.indexOf('%') != -1)
+            matches[i] = matches[i] / 100;
+    }
+
+    return {"shape": shapeFunction[1], "params": matches};
+}
+
+function basicShapeParametersMatch(paramList1, paramList2, tolerance)
+{
+    if (paramList1.shape != paramList2.shape
+        || paramList1.params.length != paramList2.params.length)
+        return false;
+    for (var i = 0; i < paramList1.params.length; ++i) {
+        var param1 = paramList1.params[i], 
+            param2 = paramList2.params[i];
+        var match = isCloseEnough(param1, param2, tolerance);
+        if (!match)
+            return false;
+    }
+    return true;
+}
+
 // Return an array of numeric filter params in 0-1.
 function getFilterParameters(s)
 {
@@ -243,6 +295,7 @@ function getPropertyValue(property, elementId, iframeId)
                || property == "webkitMaskImage"
                || property == "webkitMaskBoxImage"
                || property == "webkitFilter"
+               || property == "webkitClipPath"
                || !property.indexOf("webkitTransform")) {
         computedValue = window.getComputedStyle(element)[property.split(".")[0]];
     } else {
@@ -275,6 +328,12 @@ function comparePropertyValue(property, computedValue, expectedValue, tolerance)
         var filterParameters = getFilterParameters(computedValue);
         var filter2Parameters = getFilterParameters(expectedValue);
         result = filterParametersMatch(filterParameters, filter2Parameters, tolerance);
+    } else if (property == "webkitClipPath") {
+        var clipPathParameters = parseBasicShape(computedValue);
+        var clipPathParameters2 = parseBasicShape(expectedValue);
+        if (!clipPathParameters || !clipPathParameters2)
+            result = false;
+        result = basicShapeParametersMatch(clipPathParameters, clipPathParameters2, tolerance);
     } else if (property == "backgroundImage"
                || property == "borderImageSource"
                || property == "listStyleImage"

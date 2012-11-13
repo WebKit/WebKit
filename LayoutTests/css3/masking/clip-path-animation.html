@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <style>
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        background-color: blue;
+        display: inline-block;
+    }
+
+    #rectangle-box {
+      -webkit-animation: rectangle-anim 2s linear
+    }
+
+    #circle-box {
+      -webkit-animation: circle-anim 2s linear
+    }
+
+    #ellipse-box {
+      -webkit-animation: ellipse-anim 2s linear
+    }
+
+
+    @-webkit-keyframes rectangle-anim {
+        from { -webkit-clip-path: rectangle(0%, 0%, 100%, 100%); }
+        to   { -webkit-clip-path: rectangle(20%, 20%, 60%, 60%); }
+    }
+
+    @-webkit-keyframes circle-anim {
+        from { -webkit-clip-path: circle(50%, 50%, 50%); }
+        to   { -webkit-clip-path: circle(20%, 20%, 20%); }
+    }
+
+    @-webkit-keyframes ellipse-anim {
+        from { -webkit-clip-path: ellipse(50%, 50%, 50%, 40%); }
+        to   { -webkit-clip-path: ellipse(20%, 20%, 20%, 20%); }
+    }
+
+  </style>
+  <script src="../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["rectangle-anim",  1, "rectangle-box", "webkitClipPath", 'rectangle(10%, 10%, 80%, 80%)', 0.05],
+      ["circle-anim",  1, "circle-box", "webkitClipPath", 'circle(35%, 35%, 35%)', 0.05],
+      ["ellipse-anim",  1, "ellipse-box", "webkitClipPath", 'ellipse(35%, 35%, 35%, 30%)', 0.05],
+    ];
+    
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<div class="box" id="rectangle-box"></div>
+<div class="box" id="circle-box"></div>
+<div class="box" id="ellipse-box"></div>
+
+<div id="result">
+</div>
+</body>
+</html>
