@@ -1,3 +1,20 @@
+2012-11-13  Patrick Gansterer  <paroga@webkit.org>
+
+        Port SimpleFontDataWin.cpp to WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=97889
+
+        Reviewed by Brent Fulgham.
+
+        Add #if !OS(WINCE) around some parts of the code, so it can be used by the WinCE port too in a next step.
+        Also cleaned up the include headers.
+
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::initGDIFont):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::boundsForGDIGlyph):
+        (WebCore):
+        (WebCore::SimpleFontData::widthForGDIGlyph):
+
 2012-11-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: [Chromium] move spectrum.css into the standalone css files group.
