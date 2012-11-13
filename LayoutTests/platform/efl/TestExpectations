@@ -232,10 +232,6 @@ http/tests/navigation/document-location-mouseover.html
 # Tests for features under development
 # ------------------------------------
 
-# HiDPI tests require test infrastructure enhancements
-fast/hidpi
-svg/as-image/image-respects-deviceScaleFactor.html
-
 # Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
 http/tests/websocket/tests/hybi/
 
@@ -1681,3 +1677,8 @@ webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [
 # Wrong video colors.
 webkit.org/b/102091 media/video-colorspace-yuv420.html [ Skip ]
 webkit.org/b/102091 media/video-colorspace-yuv422.html [ Skip ]
+
+# HiDPI tests are failing to render correctly.
+webkit.org/b/102097 fast/hidpi [ Skip ]
+webkit.org/b/102097 svg/as-image/animated-svg-repaints-completely-in-hidpi.html [ Skip ]
+webkit.org/b/102097 svg/as-image/image-respects-deviceScaleFactor.html [ Skip ]

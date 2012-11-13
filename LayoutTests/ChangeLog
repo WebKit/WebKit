@@ -1,5 +1,15 @@
 2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Properly skip all HiDPI tests which are currently failing.
+
+        Skip an additional test and add a bug to each entry.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/svg/as-image/animated-svg-repaints-completely-in-hidpi-expected.png: Removed.
+        * platform/efl/svg/as-image/animated-svg-repaints-completely-in-hidpi-expected.txt: Removed.
+
+2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] Update pixel expectation for fast/repaint/table-hover-on-link.html
 
         * platform/efl/fast/repaint/table-hover-on-link-expected.png:
