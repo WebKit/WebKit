@@ -110,6 +110,24 @@ bool RemoteGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* n
     return false;
 }
 
+void RemoteGraphicsLayer::setPosition(const FloatPoint& position)
+{
+    if (position == m_position)
+        return;
+
+    GraphicsLayer::setPosition(position);
+    noteLayerPropertiesChanged(RemoteLayerTreeTransaction::PositionChanged);
+}
+
+void RemoteGraphicsLayer::setSize(const FloatSize& size)
+{
+    if (size == m_size)
+        return;
+
+    GraphicsLayer::setSize(size);
+    noteLayerPropertiesChanged(RemoteLayerTreeTransaction::SizeChanged);
+}
+
 void RemoteGraphicsLayer::setNeedsDisplay()
 {
     FloatRect hugeRect(-std::numeric_limits<float>::max() / 2, -std::numeric_limits<float>::max() / 2,

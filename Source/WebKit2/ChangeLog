@@ -1,5 +1,25 @@
 2012-11-13  Anders Carlsson  <andersca@apple.com>
 
+        Store layer positions and sizes in the transaction
+        https://bugs.webkit.org/show_bug.cgi?id=102115
+
+        Reviewed by Andreas Kling.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (LayerProperties):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::layerPropertiesChanged):
+        (WebKit::dumpChangedLayers):
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.h:
+        (RemoteGraphicsLayer):
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.mm:
+        (WebKit::RemoteGraphicsLayer::setPosition):
+        (WebKit::RemoteGraphicsLayer::setSize):
+
+2012-11-13  Anders Carlsson  <andersca@apple.com>
+
         The layer tree transaction should include the root layer
         https://bugs.webkit.org/show_bug.cgi?id=102109
 

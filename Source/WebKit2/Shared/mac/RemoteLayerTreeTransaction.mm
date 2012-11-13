@@ -30,6 +30,7 @@
 #include "MessageDecoder.h"
 #include "MessageEncoder.h"
 #include "RemoteGraphicsLayer.h"
+#include "WebCoreArgumentCoders.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -51,6 +52,12 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncode
 
     if (changedProperties & ChildrenChanged)
         encoder << children;
+
+    if (changedProperties & PositionChanged)
+        encoder << position;
+
+    if (changedProperties & SizeChanged)
+        encoder << size;
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder* decoder, LayerProperties& result)
@@ -73,6 +80,15 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecode
         }
     }
 
+    if (result.changedProperties & PositionChanged) {
+        if (!decoder->decode(result.position))
+            return false;
+    }
+
+    if (result.changedProperties & SizeChanged) {
+        if (!decoder->decode(result.size))
+            return false;
+    }
     return true;
 }
 
@@ -129,6 +145,12 @@ void RemoteLayerTreeTransaction::layerPropertiesChanged(const RemoteGraphicsLaye
             layerProperties.children.uncheckedAppend(childLayer->layerID());
         }
     }
+
+    if (changedProperties & PositionChanged)
+        layerProperties.position = graphicsLayer->position();
+
+    if (changedProperties & SizeChanged)
+        layerProperties.size = graphicsLayer->size();
 }
 
 #ifndef NDEBUG
@@ -178,6 +200,26 @@ static void dumpChangedLayers(StringBuilder& builder, const HashMap<uint64_t, Re
             }
 
             builder.append(")");
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::PositionChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(position ");
+            builder.append(String::number(layerProperties.position.x()));
+            builder.append(" ");
+            builder.append(String::number(layerProperties.position.y()));
+            builder.append(')');
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SizeChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(size ");
+            builder.append(String::number(layerProperties.size.width()));
+            builder.append(" ");
+            builder.append(String::number(layerProperties.size.height()));
+            builder.append(')');
         }
 
         builder.append(")\n");

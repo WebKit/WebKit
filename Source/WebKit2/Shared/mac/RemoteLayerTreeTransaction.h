@@ -26,6 +26,8 @@
 #ifndef RemoteLayerTreeTransaction_h
 #define RemoteLayerTreeTransaction_h
 
+#include <WebCore/FloatPoint.h>
+#include <WebCore/FloatSize.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,6 +46,8 @@ public:
         NoChange = 0,
         NameChanged = 1 << 1,
         ChildrenChanged = 1 << 2,
+        PositionChanged = 1 << 3,
+        SizeChanged = 1 << 4,
     };
 
     struct LayerProperties {
@@ -56,6 +60,8 @@ public:
 
         String name;
         Vector<uint64_t> children;
+        WebCore::FloatPoint position;
+        WebCore::FloatSize size;
     };
 
     explicit RemoteLayerTreeTransaction();
