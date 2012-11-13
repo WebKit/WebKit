@@ -105,7 +105,9 @@ class AutoinstallImportHook(object):
     def _install_pylint(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()
         did_install_something = False
-        if not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "pylint")):
+        if (not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "pylint")) or
+            not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "logilab/astng")) or
+            not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "logilab/common"))):
             installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
             did_install_something = installer.install("http://pypi.python.org/packages/source/l/logilab-common/logilab-common-0.58.1.tar.gz#md5=77298ab2d8bb8b4af9219791e7cee8ce", url_subpath="logilab-common-0.58.1", target_name="logilab/common")
             did_install_something |= installer.install("http://pypi.python.org/packages/source/l/logilab-astng/logilab-astng-0.24.1.tar.gz#md5=ddaf66e4d85714d9c47a46d4bed406de", url_subpath="logilab-astng-0.24.1", target_name="logilab/astng")
