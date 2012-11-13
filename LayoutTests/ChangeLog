@@ -1,5 +1,11 @@
 2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
+        [EFL] Update pixel expectation for fast/repaint/table-hover-on-link.html
+
+        * platform/efl/fast/repaint/table-hover-on-link-expected.png:
+
+2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
         [EFL] More video-colorspace-yuv* gardening.
 
         These tests are also failing on WK2, so skip them in both ports.
