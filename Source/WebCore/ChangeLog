@@ -1,3 +1,49 @@
+2012-11-13  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Add Region info for RootLineBoxes and pack the pagination data
+        https://bugs.webkit.org/show_bug.cgi?id=101332
+
+        Reviewed by David Hyatt.
+
+        Currently the pagination information for lines is spread between the RootInlineBox and InlineFlowBox classes, consuming memory even though
+        the boxes were not the result of an pagination layout. To overcome this, a new struct (LineFragmentationData) is created that wraps all the data,
+        including a new member, the containing Region for the line.
+        The containing Region is used to detect if a line changed the Region where it resides. This will be helpful especially when implementing region
+        styling for layout properties (e.g. the font-size property https://bugs.webkit.org/show_bug.cgi?id=95559 ).
+        A line can change the region when it is shifted inside the containing block or if the entire block moves. This means it's better to delegate
+        the task of updating the containing Region to the block.
+
+        Tests: No new tests because there is no functional change.
+
+        * rendering/InlineFlowBox.cpp:
+        (SameSizeAsInlineFlowBox):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (InlineFlowBox):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lineWidthForPaginatedLineChanged):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::determineStartPosition):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::setContainingRegion):
+        (WebCore):
+        * rendering/RootInlineBox.h:
+        (WebCore):
+        (WebCore::RootInlineBox::paginationStrut):
+        (WebCore::RootInlineBox::setPaginationStrut):
+        (WebCore::RootInlineBox::isFirstAfterPageBreak):
+        (WebCore::RootInlineBox::setIsFirstAfterPageBreak):
+        (WebCore::RootInlineBox::paginatedLineWidth):
+        (WebCore::RootInlineBox::setPaginatedLineWidth):
+        (RootInlineBox):
+        (WebCore::RootInlineBox::containingRegion):
+        (WebCore::RootInlineBox::ensureLineFragmentationData):
+        (LineFragmentationData):
+        (WebCore::RootInlineBox::LineFragmentationData::LineFragmentationData):
+
 2012-11-13  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] QNX build fails due to signature change in gl2.h header (glShaderSource)

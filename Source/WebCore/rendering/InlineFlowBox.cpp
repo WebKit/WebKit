@@ -48,7 +48,7 @@ namespace WebCore {
 
 struct SameSizeAsInlineFlowBox : public InlineBox {
     void* pointers[5];
-    uint32_t bitfields : 24;
+    uint32_t bitfields : 23;
 };
 
 COMPILE_ASSERT(sizeof(InlineFlowBox) == sizeof(SameSizeAsInlineFlowBox), InlineFlowBox_should_stay_small);
