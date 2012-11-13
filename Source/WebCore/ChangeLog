@@ -1,3 +1,12 @@
+2012-11-13  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed attempt to fix the chromium mac-build after r134348.
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2012-11-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: migrate text editor to mutation observers

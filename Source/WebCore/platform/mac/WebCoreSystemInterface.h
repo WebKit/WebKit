@@ -192,7 +192,11 @@ extern void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
 extern NSArray *(*wkQTGetSitesInMediaDownloadCache)();
 extern void (*wkQTClearMediaDownloadCacheForSite)(NSString *site);
 extern void (*wkQTClearMediaDownloadCache)();
+#if PLATFORM(MAC)
 extern void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*, BOOL);
+#else
+extern void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
+#endif
 extern void (*wkSetDragImage)(NSImage*, NSPoint offset);
 extern void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 extern void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);

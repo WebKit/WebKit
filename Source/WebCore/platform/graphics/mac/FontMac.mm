@@ -211,7 +211,11 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         matrix = CGAffineTransformConcat(matrix, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
     CGContextSetTextMatrix(cgContext, matrix);
 
+#if PLATFORM(MAC)
     wkSetCGFontRenderingMode(cgContext, drawFont, context->shouldSubpixelQuantizeFonts());
+#else
+    wkSetCGFontRenderingMode(cgContext, drawFont);
+#endif
     if (drawFont)
         CGContextSetFontSize(cgContext, 1.0f);
     else

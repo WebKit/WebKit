@@ -85,7 +85,11 @@ NSArray *(*wkQTGetSitesInMediaDownloadCache)();
 void (*wkQTClearMediaDownloadCacheForSite)(NSString *site);
 void (*wkQTClearMediaDownloadCache)();
 
+#if PLATFORM(MAC)
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*, BOOL);
+#else
+void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
+#endif
 void (*wkSetDragImage)(NSImage*, NSPoint offset);
 void (*wkSetBaseCTM)(CGContextRef, CGAffineTransform);
 void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);
