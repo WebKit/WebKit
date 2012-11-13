@@ -1,3 +1,14 @@
+2012-11-13  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Missing NodeRenderStyle.h include in WebCore/html/TextFieldInputType.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=102108
+
+        Reviewed by Adam Barth.
+
+        No new tests. Fix clang build break.
+
+        * html/TextFieldInputType.cpp: Added #include "NodeRenderStyle.h"
+
 2012-11-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: MathML types need to be semantically identified in AX tree
