@@ -1,3 +1,19 @@
+2012-11-12  Josh Rickmar  <jrick@devio.us>
+
+        Add WebCore::Setting to block displaying and/or running insecure content on secure pages
+        https://bugs.webkit.org/show_bug.cgi?id=58378
+
+        Reviewed by Martin Robinson.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        (webkit_web_settings_copy):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+
 2012-11-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix layer borders to cleaning appear and disappear on switching

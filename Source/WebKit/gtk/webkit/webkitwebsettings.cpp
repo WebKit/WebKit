@@ -120,7 +120,9 @@ enum {
     PROP_ENABLE_SMOOTH_SCROLLING,
     PROP_MEDIA_PLAYBACK_REQUIRES_USER_GESTURE,
     PROP_MEDIA_PLAYBACK_ALLOWS_INLINE,
-    PROP_ENABLE_CSS_SHADERS
+    PROP_ENABLE_CSS_SHADERS,
+    PROP_ENABLE_RUNNING_OF_INSECURE_CONTENT,
+    PROP_ENABLE_DISPLAY_OF_INSECURE_CONTENT
 };
 
 static void webkit_web_settings_finalize(GObject* object);
@@ -981,6 +983,37 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          FALSE,
                                                          flags));
 
+    /**
+    * WebKitWebSettings:enable-display-of-insecure-content
+    *
+    * Whether pages loaded via HTTPS should load subresources such as
+    * images and frames from non-HTTPS URLs. 
+    *
+    * Since: 2.0
+    */
+    g_object_class_install_property(gobject_class,
+        PROP_ENABLE_DISPLAY_OF_INSECURE_CONTENT,
+        g_param_spec_boolean("enable-display-of-insecure-content",
+            _("Enable display of insecure content"),
+            _("Whether non-HTTPS resources can display on HTTPS pages."),
+            TRUE,
+            flags));
+
+    /**
+    * WebKitWebSettings:enable-running-of-insecure-content
+    *
+    * Whether pages loaded via HTTPS should run subresources such as
+    * CSS, scripts, and plugins from non-HTTPS URLs. 
+    *
+    * Since: 2.0
+    */
+    g_object_class_install_property(gobject_class,
+        PROP_ENABLE_RUNNING_OF_INSECURE_CONTENT,
+        g_param_spec_boolean("enable-running-of-insecure-content",
+            _("Enable running of insecure content"),
+            _("Whether non-HTTPS resources can run on HTTPS pages."),
+            TRUE,
+            flags));
 }
 
 static void webkit_web_settings_init(WebKitWebSettings* web_settings)
@@ -1171,6 +1204,12 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_MEDIA_PLAYBACK_ALLOWS_INLINE:
         priv->mediaPlaybackAllowsInline = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_DISPLAY_OF_INSECURE_CONTENT:
+        priv->enableDisplayOfInsecureContent = g_value_get_boolean(value);
+        break;
+    case PROP_ENABLE_RUNNING_OF_INSECURE_CONTENT:
+        priv->enableRunningOfInsecureContent = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1350,6 +1389,12 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_MEDIA_PLAYBACK_ALLOWS_INLINE:
         g_value_set_boolean(value, priv->mediaPlaybackAllowsInline);
+        break;
+    case PROP_ENABLE_DISPLAY_OF_INSECURE_CONTENT:
+        g_value_set_boolean(value, priv->enableDisplayOfInsecureContent);
+        break;
+    case PROP_ENABLE_RUNNING_OF_INSECURE_CONTENT:
+        g_value_set_boolean(value, priv->enableRunningOfInsecureContent);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);

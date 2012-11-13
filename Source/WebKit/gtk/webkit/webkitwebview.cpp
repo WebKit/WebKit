@@ -3401,6 +3401,8 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings->setDNSPrefetchingEnabled(settingsPrivate->enableDNSPrefetching);
     coreSettings->setMediaPlaybackRequiresUserGesture(settingsPrivate->mediaPlaybackRequiresUserGesture);
     coreSettings->setMediaPlaybackAllowsInline(settingsPrivate->mediaPlaybackAllowsInline);
+    coreSettings->setAllowDisplayOfInsecureContent(settingsPrivate->enableDisplayOfInsecureContent);
+    coreSettings->setAllowRunningOfInsecureContent(settingsPrivate->enableRunningOfInsecureContent);
 
 #if ENABLE(SQL_DATABASE)
     AbstractDatabase::setIsAvailable(settingsPrivate->enableHTML5Database);
