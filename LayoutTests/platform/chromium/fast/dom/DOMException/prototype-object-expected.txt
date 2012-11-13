@@ -3,7 +3,7 @@ This tests the prototype chain of DOMException objects.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS e.toString() is "Error: HIERARCHY_REQUEST_ERR: DOM Exception 3"
+PASS e.toString() is "Error: HierarchyRequestError: DOM Exception 3"
 PASS Object.prototype.toString.call(e) is "[object DOMException]"
 FAIL Object.prototype.toString.call(e.__proto__) should be [object DOMExceptionPrototype]. Was [object Object].
 PASS Object.prototype.toString.call(e.__proto__.__proto__) is "[object Error]"
@@ -14,8 +14,8 @@ PASS e.constructor is window.DOMException
 PASS e.HIERARCHY_REQUEST_ERR is e.constructor.HIERARCHY_REQUEST_ERR
 PASS e.HIERARCHY_REQUEST_ERR is 3
 PASS e.code is 3
-PASS e.name is "HIERARCHY_REQUEST_ERR"
-PASS e.message is "HIERARCHY_REQUEST_ERR: DOM Exception 3"
+PASS e.name is "HierarchyRequestError"
+PASS e.message is "HierarchyRequestError: DOM Exception 3"
 PASS successfullyParsed is true
 
 TEST COMPLETE

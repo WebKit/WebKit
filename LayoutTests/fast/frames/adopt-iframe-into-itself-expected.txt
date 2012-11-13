@@ -1,2 +1,2 @@
-ALERT: Error: HIERARCHY_REQUEST_ERR: DOM Exception 3
+ALERT: Error: HierarchyRequestError: DOM Exception 3
 

@@ -27,4 +27,4 @@ shouldThrow("r.surroundContents(document.createElement('a'))", '"Error: BAD_BOUN
 // But not when we don't try to split the comment.
 r.setStart(c1, 0);
 r.setEnd(c1, 5);
-shouldThrow("r.surroundContents(document.createElement('a'))", '"Error: HIERARCHY_REQUEST_ERR: DOM Exception 3"');
+shouldThrow("r.surroundContents(document.createElement('a'))", '"Error: HierarchyRequestError: DOM Exception 3"');

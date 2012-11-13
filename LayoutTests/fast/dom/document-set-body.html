@@ -11,10 +11,10 @@ iframe1 = document.createElement('iframe');
 document.body.appendChild(iframe1);
 document1 = iframe1.contentDocument.implementation.createHTMLDocument("document");
 
-shouldThrow("document1.body = iframe1", "'Error: HIERARCHY_REQUEST_ERR: DOM Exception 3'");
+shouldThrow("document1.body = iframe1", "'Error: HierarchyRequestError: DOM Exception 3'");
 shouldBe("iframe1.parentNode", "document.body");
 
-shouldThrow("document1.body = document1.createElement('iframe')", "'Error: HIERARCHY_REQUEST_ERR: DOM Exception 3'");
+shouldThrow("document1.body = document1.createElement('iframe')", "'Error: HierarchyRequestError: DOM Exception 3'");
 
 document1.body = document.body;
 shouldBeTrue("document1.body != document.body");

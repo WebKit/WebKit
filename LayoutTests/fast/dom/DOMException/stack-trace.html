@@ -35,8 +35,8 @@ shouldBeTrue('e.stack.contains("innerFunction")');
 shouldBeTrue('e.stack.contains("outerFunction")');
 
 shouldBeEqualToString('Object.prototype.toString.call(e)', '[object DOMException]');
-shouldBeEqualToString('e.name', 'HIERARCHY_REQUEST_ERR');
-shouldBeEqualToString('e.message', 'HIERARCHY_REQUEST_ERR: DOM Exception 3');
+shouldBeEqualToString('e.name', 'HierarchyRequestError');
+shouldBeEqualToString('e.message', 'HierarchyRequestError: DOM Exception 3');
 shouldBe('e.code', '3');
 
 e.stack = 42;

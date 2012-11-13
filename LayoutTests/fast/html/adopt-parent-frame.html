@@ -34,13 +34,13 @@ function testChild(id, action) {
     try {
         action();
     } catch(error) {
-        if (error.name == 'HIERARCHY_REQUEST_ERR')
+        if (error.name == 'HierarchyRequestError')
             log(id, 'PASS');
         else
-            log(id, 'FAIL: got ' + error.name + ' but expected HIERARCHY_REQUEST_ERR');
+            log(id, 'FAIL: got ' + error.name + ' but expected HierarchyRequestError');
         return;
     }
-    log(id, 'FAIL: no exceptions thrown but expected HIERARCHY_REQUEST_ERR');
+    log(id, 'FAIL: no exceptions thrown but expected HierarchyRequestError');
 }
 
 function adopt() {

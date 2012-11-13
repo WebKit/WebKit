@@ -37,7 +37,7 @@ static struct CoreException {
 } coreExceptions[] = {
     { "INDEX_SIZE_ERR", "Index or size was negative, or greater than the allowed value." },
     { "DOMSTRING_SIZE_ERR", "The specified range of text did not fit into a DOMString." },
-    { "HIERARCHY_REQUEST_ERR", "A Node was inserted somewhere it doesn't belong." },
+    { "HierarchyRequestError", "A Node was inserted somewhere it doesn't belong." },
     { "WRONG_DOCUMENT_ERR", "A Node was used in a different document than the one that created it (that doesn't support it)." },
     { "INVALID_CHARACTER_ERR", "An invalid or illegal character was specified, such as in an XML name." },
     { "NO_DATA_ALLOWED_ERR", "Data was specified for a Node which does not support data." },

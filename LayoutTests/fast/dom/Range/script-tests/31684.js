@@ -7,4 +7,4 @@ var text = document.createTextNode('hello');
 var element = document.createElement("div");
 range.selectNodeContents(text);
 
-shouldThrow("range.surroundContents(element)", '"Error: HIERARCHY_REQUEST_ERR: DOM Exception 3"');
+shouldThrow("range.surroundContents(element)", '"Error: HierarchyRequestError: DOM Exception 3"');

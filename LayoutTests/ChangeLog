@@ -1,3 +1,46 @@
+2012-11-13  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: HierarchyRequestError
+        https://bugs.webkit.org/show_bug.cgi?id=102092
+
+        Reviewed by Ojan Vafai.
+
+        Updated tests and expectations.
+
+        * fast/dom/DOMException/prototype-object-expected.txt:
+        * fast/dom/DOMException/prototype-object.html:
+        * fast/dom/DOMException/stack-trace-expected.txt:
+        * fast/dom/DOMException/stack-trace.html:
+        * fast/dom/Document/replace-child-expected.txt:
+        * fast/dom/Range/31684-expected.txt:
+        * fast/dom/Range/range-exceptions-expected.txt:
+        * fast/dom/Range/script-tests/31684.js:
+        * fast/dom/Range/script-tests/range-exceptions.js:
+        * fast/dom/Range/surroundContents-1.html:
+        * fast/dom/css-mediarule-functions-expected.txt:
+        * fast/dom/css-mediarule-functions.html:
+        * fast/dom/document-set-body-expected.txt:
+        * fast/dom/document-set-body.html:
+        * fast/dom/move-nodes-across-documents.html:
+        * fast/dom/processing-instruction-appendChild-exceptions-expected.txt:
+        * fast/dom/processing-instruction-appendChild-exceptions.xhtml:
+        * fast/dom/setter-type-enforcement-expected.txt:
+        * fast/dom/shadow/adopt-node-with-shadow-root-expected.txt:
+        * fast/dom/shadow/shadow-disable-expected.txt:
+        * fast/dom/shadow/shadow-root-js-api-expected.txt:
+        * fast/events/mutation-during-replace-child-2-expected.txt:
+        * fast/events/mutation-during-replace-child-2.html:
+        * fast/events/mutation-during-replace-child-expected.txt:
+        * fast/events/mutation-during-replace-child.html:
+        * fast/frames/adopt-iframe-into-itself-expected.txt:
+        * fast/frames/adopt-object-into-itself-expected.txt:
+        * fast/html/adopt-parent-frame.html:
+        * fast/inspector-support/uncaught-dom3-exception-expected.txt:
+        * platform/chromium/dom/xhtml/level3/core/documentnormalizedocument10-expected.txt:
+        * platform/chromium/fast/dom/DOMException/prototype-object-expected.txt:
+        * platform/chromium/fast/dom/DOMException/stack-trace-expected.txt:
+        * platform/chromium/fast/inspector-support/uncaught-dom3-exception-expected.txt:
+
 2012-11-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Clean up use of adjustWindowRect
