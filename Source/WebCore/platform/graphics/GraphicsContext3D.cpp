@@ -526,6 +526,16 @@ void unpackOneRowOfBGRA16BigToRGBA8(const uint16_t* source, uint8_t* destination
 
 void unpackOneRowOfRGBA5551ToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
+#if HAVE(ARM_NEON_INTRINSICS)
+    unsigned tailPixels = pixelsPerRow % 8;
+    unsigned pixelSize = pixelsPerRow - tailPixels;
+
+    ARM::unpackOneRowOfRGBA5551ToRGBA8NEON(source, destination, pixelSize);
+
+    source += pixelSize;
+    destination += pixelSize * 4;
+    pixelsPerRow = tailPixels;
+#endif
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
         uint16_t packedValue = source[0];
         uint8_t r = packedValue >> 11;
@@ -569,6 +579,16 @@ void unpackOneRowOfRGBA4444ToRGBA8(const uint16_t* source, uint8_t* destination,
 
 void unpackOneRowOfRGB565ToRGBA8(const uint16_t* source, uint8_t* destination, unsigned int pixelsPerRow)
 {
+#if HAVE(ARM_NEON_INTRINSICS)
+    unsigned tailPixels = pixelsPerRow % 8;
+    unsigned pixelSize = pixelsPerRow - tailPixels;
+
+    ARM::unpackOneRowOfRGB565ToRGBA8NEON(source, destination, pixelSize);
+
+    source += pixelSize;
+    destination += pixelSize * 4;
+    pixelsPerRow = tailPixels;
+#endif
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
         uint16_t packedValue = source[0];
         uint8_t r = packedValue >> 11;
@@ -1014,6 +1034,17 @@ void packOneRowOfRGBA8ToUnsignedShort4444Unmultiply(const uint8_t* source, uint1
 
 void packOneRowOfRGBA8ToUnsignedShort5551(const uint8_t* source, uint16_t* destination, unsigned int pixelsPerRow)
 {
+#if HAVE(ARM_NEON_INTRINSICS)
+    unsigned componentsPerRow = pixelsPerRow * 4;
+    unsigned tailComponents = componentsPerRow % 32;
+    unsigned componentsSize = componentsPerRow - tailComponents;
+
+    ARM::packOneRowOfRGBA8ToUnsignedShort5551NEON(source, destination, componentsSize);
+
+    source += componentsSize;
+    destination += componentsSize / 4;
+    pixelsPerRow = tailComponents / 4;
+#endif
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
         *destination = (((source[0] & 0xF8) << 8)
                         | ((source[1] & 0xF8) << 3)
@@ -1059,6 +1090,17 @@ void packOneRowOfRGBA8ToUnsignedShort5551Unmultiply(const uint8_t* source, uint1
 
 void packOneRowOfRGBA8ToUnsignedShort565(const uint8_t* source, uint16_t* destination, unsigned int pixelsPerRow)
 {
+#if HAVE(ARM_NEON_INTRINSICS)
+    unsigned componentsPerRow = pixelsPerRow * 4;
+    unsigned tailComponents = componentsPerRow % 32;
+    unsigned componentsSize = componentsPerRow - tailComponents;
+
+    ARM::packOneRowOfRGBA8ToUnsignedShort565NEON(source, destination, componentsSize);
+
+    source += componentsSize;
+    destination += componentsSize / 4;
+    pixelsPerRow = tailComponents / 4;
+#endif
     for (unsigned int i = 0; i < pixelsPerRow; ++i) {
         *destination = (((source[0] & 0xF8) << 8)
                         | ((source[1] & 0xFC) << 3)

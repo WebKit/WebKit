@@ -1,3 +1,22 @@
+2012-11-13  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Optimize RGB565 and RGBA5551 packing/unpacking functions with NEON intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=102060
+
+        Reviewed by Zoltan Herczeg.
+
+        Adding more NEONized packing functions to GraphicsContext3DNEON.h.
+        These functions are three times faster with this intrinsics optimizations.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore):
+        * platform/graphics/cpu/arm/GraphicsContext3DNEON.h:
+        (WebCore::ARM::unpackOneRowOfRGBA5551ToRGBA8NEON):
+        (ARM):
+        (WebCore::ARM::packOneRowOfRGBA8ToUnsignedShort5551NEON):
+        (WebCore::ARM::unpackOneRowOfRGB565ToRGBA8NEON):
+        (WebCore::ARM::packOneRowOfRGBA8ToUnsignedShort565NEON):
+
 2012-11-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable Mutation observer
