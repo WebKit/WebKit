@@ -1,3 +1,16 @@
+2012-11-12  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Some CSS properties are not handled on StyleResolver::applyProperty
+        https://bugs.webkit.org/show_bug.cgi?id=102027
+
+        Reviewed by Gyuyoung Kim.
+
+        The CSSPropertyMaxZoom, CSSPropertyMinZoom, CSSPropertyOrientation and CSSPropertyUserZoom
+        need to be handled on StyleResolver::applyProperty.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+
 2012-11-12  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid calling calculateLayerBounds() and convertToLayerCoords() more than once per layer paint
