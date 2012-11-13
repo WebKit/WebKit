@@ -1,3 +1,17 @@
+2012-11-13  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] TiledBackingStore: WebChromeClient::pageRect() should consider viewport size
+        https://bugs.webkit.org/show_bug.cgi?id=101946
+
+        Reviewed by Noam Rosenthal.
+
+        WebChromeClient::pageRect() should consider viewport size when TILED_BACKING_STORE enabled.
+
+        Based on patch by Kenneth Rohde Christiansen.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::pageRect):
+
 2012-11-13  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Directly composited animated GIFs only render the first image.

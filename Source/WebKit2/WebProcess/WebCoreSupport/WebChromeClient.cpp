@@ -118,7 +118,11 @@ FloatRect WebChromeClient::windowRect()
 
 FloatRect WebChromeClient::pageRect()
 {
+#if USE(TILED_BACKING_STORE)
+    return FloatRect(FloatPoint(), m_page->viewportSize());
+#else
     return FloatRect(FloatPoint(), m_page->size());
+#endif
 }
 
 void WebChromeClient::focus()
