@@ -1,3 +1,15 @@
+2012-11-13  Cosmin Truta  <ctruta@rim.com>
+
+        Uninitialized fields in class JSLock
+        https://bugs.webkit.org/show_bug.cgi?id=101695
+
+        Reviewed by Mark Hahnenberg.
+
+        Initialize JSLock::m_ownerThread and JSLock::m_lockDropDepth.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::JSLock):
+
 2012-11-13  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         Fix the ARM traditional build after r134332

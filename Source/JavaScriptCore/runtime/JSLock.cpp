@@ -74,7 +74,9 @@ JSLockHolder::~JSLockHolder()
 }
 
 JSLock::JSLock()
-    : m_lockCount(0)
+    : m_ownerThread(0)
+    , m_lockCount(0)
+    , m_lockDropDepth(0)
 {
     m_spinLock.Init();
 }
