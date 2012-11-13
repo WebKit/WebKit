@@ -34,8 +34,6 @@ $productDir = $ENV{BUILT_PRODUCTS_DIR} if !$productDir;
 chdirWebKit();
 
 my @librariesToCopy = (
-    "libWebKitSystemInterfaceLeopard.a",
-    "libWebKitSystemInterfaceSnowLeopard.a",
     "libWebKitSystemInterfaceLion.a",
     "libWebKitSystemInterfaceMountainLion.a",
     "libWebCoreSQLite3.a",

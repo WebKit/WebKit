@@ -1,3 +1,16 @@
+2012-11-12  Daniel Bates  <dbates@webkit.org>
+
+        Perl errors from Tools/Scripts/copy-webkitlibraries-to-product-directory
+        https://bugs.webkit.org/show_bug.cgi?id=101980
+
+        Reviewed by Mark Rowe.
+
+        Remove library libWebKitSystemInterfaceLeopard.a and libWebKitSystemInterfaceSnowLeopard.a
+        from the list of libraries to copy to the specified built products directory
+        as these libraries were removed from the repository in <http://trac.webkit.org/changeset/133670>.
+
+        * Scripts/copy-webkitlibraries-to-product-directory:
+
 2012-11-12  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: integrate pylint into check-webkit-style, part I
