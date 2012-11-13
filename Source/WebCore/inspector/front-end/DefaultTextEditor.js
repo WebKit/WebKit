@@ -321,7 +321,6 @@ WebInspector.DefaultTextEditor.prototype = {
     editRange: function(range, text)
     {
         this._enterInternalTextChangeMode();
-        this._textModel.markUndoableState();
         var newRange = this._textModel.editRange(range, text);
         this._exitInternalTextChangeMode(range, newRange);
         return newRange;
@@ -369,7 +368,7 @@ WebInspector.DefaultTextEditor.prototype = {
             return;
 
         var mainChunk = this._mainPanel.chunkForLine(lineNumber);
-        if (mainChunk.linesCount === 1 && mainChunk.decorated) {
+        if (mainChunk.linesCount === 1 && mainChunk.isDecorated()) {
             var gutterChunk = this._gutterPanel.makeLineAChunk(lineNumber);
             var height = mainChunk.height;
             if (height)
@@ -731,7 +730,6 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         // Prefix chunk.
         if (lineNumber > oldChunk.startLine) {
             var prefixChunk = this._createNewChunk(oldChunk.startLine, lineNumber);
-            prefixChunk.readOnly = oldChunk.readOnly;
             this._textChunks.splice(insertIndex++, 0, prefixChunk);
             this._container.insertBefore(prefixChunk.element, oldChunk.element);
         }
@@ -739,14 +737,12 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         // Line chunk.
         var endLine = createSuffixChunk ? lineNumber + 1 : oldChunk.startLine + oldChunk.linesCount;
         var lineChunk = this._createNewChunk(lineNumber, endLine);
-        lineChunk.readOnly = oldChunk.readOnly;
         this._textChunks.splice(insertIndex++, 0, lineChunk);
         this._container.insertBefore(lineChunk.element, oldChunk.element);
 
         // Suffix chunk.
         if (oldChunk.startLine + oldChunk.linesCount > endLine) {
             var suffixChunk = this._createNewChunk(endLine, oldChunk.startLine + oldChunk.linesCount);
-            suffixChunk.readOnly = oldChunk.readOnly;
             this._textChunks.splice(insertIndex, 0, suffixChunk);
             this._container.insertBefore(suffixChunk.element, oldChunk.element);
         }
@@ -1364,47 +1360,6 @@ WebInspector.TextEditorMainPanel.prototype = {
     },
 
     /**
-     * @param {number} startLine
-     * @param {number} endLine
-     */
-    setEditableRange: function(startLine, endLine)
-    {
-        this.beginDomUpdates();
-
-        var firstChunkNumber = this._chunkNumberForLine(startLine);
-        var firstChunk = this._textChunks[firstChunkNumber];
-        if (firstChunk.startLine !== startLine) {
-            this._splitChunkOnALine(startLine, firstChunkNumber);
-            firstChunkNumber += 1;
-        }
-
-        var lastChunkNumber = this._textChunks.length;
-        if (endLine !== this._textModel.linesCount) {
-            lastChunkNumber = this._chunkNumberForLine(endLine);
-            var lastChunk = this._textChunks[lastChunkNumber];
-            if (lastChunk && lastChunk.startLine !== endLine) {
-                this._splitChunkOnALine(endLine, lastChunkNumber);
-                lastChunkNumber += 1;
-            }
-        }
-
-        for (var chunkNumber = 0; chunkNumber < firstChunkNumber; ++chunkNumber)
-            this._textChunks[chunkNumber].readOnly = true;
-        for (var chunkNumber = firstChunkNumber; chunkNumber < lastChunkNumber; ++chunkNumber)
-            this._textChunks[chunkNumber].readOnly = false;
-        for (var chunkNumber = lastChunkNumber; chunkNumber < this._textChunks.length; ++chunkNumber)
-            this._textChunks[chunkNumber].readOnly = true;
-
-        this.endDomUpdates();
-    },
-
-    clearEditableRange: function()
-    {
-        for (var chunkNumber = 0; chunkNumber < this._textChunks.length; ++chunkNumber)
-            this._textChunks[chunkNumber].readOnly = false;
-    },
-
-    /**
      * @param {WebInspector.TextRange} range
      */
     markAndRevealRange: function(range)
@@ -1514,12 +1469,12 @@ WebInspector.TextEditorMainPanel.prototype = {
         var newRange;
         var rangeWasEmpty = range.isEmpty();
         if (shiftKey)
-            newRange = this._unindentLines(range);
+            newRange = this._textModel.unindentLines(range);
         else {
             if (rangeWasEmpty)
-                newRange = this._editRange(range, WebInspector.settings.textEditorIndent.get());
+                newRange = this._textModel.editRange(range, WebInspector.settings.textEditorIndent.get());
             else
-                newRange = this._indentLines(range);
+                newRange = this._textModel.indentLines(range);
         }
 
         this._exitTextChangeMode(range, newRange);
@@ -1528,78 +1483,6 @@ WebInspector.TextEditorMainPanel.prototype = {
             newRange.startColumn = newRange.endColumn;
         this._restoreSelection(newRange, true);
         return true;
-    },
-
-    /**
-     * @param {WebInspector.TextRange} range
-     */
-    _indentLines: function(range)
-    {
-        var indent = WebInspector.settings.textEditorIndent.get();
-
-        if (this._lastEditedRange)
-            this._textModel.markUndoableState();
-
-        var newRange = range.clone();
-
-        // Do not change a selection start position when it is at the beginning of a line
-        if (range.startColumn)
-            newRange.startColumn += indent.length;
-
-        var indentEndLine = range.endLine;
-        if (range.endColumn)
-            newRange.endColumn += indent.length;
-        else
-            indentEndLine--;
-
-        for (var lineNumber = range.startLine; lineNumber <= indentEndLine; lineNumber++)
-            this._textModel.editRange(WebInspector.TextRange.createFromLocation(lineNumber, 0), indent);
-
-        this._lastEditedRange = newRange;
-
-        return newRange;
-    },
-
-    /**
-     * @param {WebInspector.TextRange} range
-     */
-    _unindentLines: function(range)
-    {
-        if (this._lastEditedRange)
-            this._textModel.markUndoableState();
-
-        var indent = WebInspector.settings.textEditorIndent.get();
-        var indentLength = indent === WebInspector.TextEditorModel.Indent.TabCharacter ? 4 : indent.length;
-        var lineIndentRegex = new RegExp("^ {1," + indentLength + "}");
-        var newRange = range.clone();
-
-        var indentEndLine = range.endLine;
-        if (!range.endColumn)
-            indentEndLine--;
-
-        for (var lineNumber = range.startLine; lineNumber <= indentEndLine; lineNumber++) {
-            var line = this._textModel.line(lineNumber);
-            var firstCharacter = line.charAt(0);
-            var lineIndentLength;
-
-            if (firstCharacter === " ")
-                lineIndentLength = line.match(lineIndentRegex)[0].length;
-            else if (firstCharacter === "\t")
-                lineIndentLength = 1;
-            else
-                continue;
-
-            this._textModel.editRange(new WebInspector.TextRange(lineNumber, 0, lineNumber, lineIndentLength), "");
-
-            if (lineNumber === range.startLine)
-                newRange.startColumn = Math.max(0, newRange.startColumn - lineIndentLength);
-            if (lineNumber === range.endLine)
-                newRange.endColumn = Math.max(0, newRange.endColumn - lineIndentLength);
-        }
-
-        this._lastEditedRange = newRange;
-
-        return newRange;
     },
 
     handleEnterKey: function()
@@ -1638,11 +1521,11 @@ WebInspector.TextEditorMainPanel.prototype = {
             // {
             //     |
             // }
-            newRange = this._editRange(range, lineBreak + indent + lineBreak + currentIndent);
+            newRange = this._textModel.editRange(range, lineBreak + indent + lineBreak + currentIndent);
             newRange.endLine--;
             newRange.endColumn += textEditorIndent.length;
         } else
-            newRange = this._editRange(range, lineBreak + indent);
+            newRange = this._textModel.editRange(range, lineBreak + indent);
 
         this._exitTextChangeMode(range, newRange);
         this.endUpdates();
@@ -2334,7 +2217,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         // This is a "foreign" call outside of this class. Should be before we delete the dirty lines flag.
         this._enterTextChangeMode();
 
-        var newRange = this._editRange(oldRange, newContent);
+        var newRange = this._textModel.editRange(oldRange, newContent);
 
         this._paintScheduledLines(true);
         this._restoreSelection(selection);
@@ -2385,21 +2268,6 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._updateChunksForRanges(oldRange, newRange);
         this._updateHighlightsForRange(newRange);
         this.endDomUpdates();
-    },
-
-    /**
-     * @param {WebInspector.TextRange} range
-     * @param {string} text
-     */
-    _editRange: function(range, text)
-    {
-        if (this._lastEditedRange && (!text || text.indexOf("\n") !== -1 || this._lastEditedRange.endLine !== range.startLine || this._lastEditedRange.endColumn !== range.startColumn))
-            this._textModel.markUndoableState();
-
-        var newRange = this._textModel.editRange(range, text);
-        this._lastEditedRange = newRange;
-
-        return newRange;
     },
 
     /**
@@ -2475,7 +2343,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         // Maybe merge with the next chunk, so that we should not create 1-sized chunks when appending new lines one by one.
         var chunk = this._textChunks[lastChunkNumber + 1];
         var linesInLastChunk = linesCount % this._defaultChunkSize;
-        if (chunk && !chunk.decorated && linesInLastChunk > 0 && linesInLastChunk + chunk.linesCount <= this._defaultChunkSize) {
+        if (chunk && !chunk.isDecorated() && linesInLastChunk > 0 && linesInLastChunk + chunk.linesCount <= this._defaultChunkSize) {
             ++lastChunkNumber;
             linesCount += chunk.linesCount;
         }
@@ -2577,7 +2445,7 @@ WebInspector.TextEditorMainPanel.prototype = {
  * @param {WebInspector.TextEditorChunkedPanel} chunkedPanel
  * @param {number} startLine
  * @param {number} endLine
-*/
+ */
 WebInspector.TextEditorMainChunk = function(chunkedPanel, startLine, endLine)
 {
     this._chunkedPanel = chunkedPanel;
@@ -2592,7 +2460,6 @@ WebInspector.TextEditorMainChunk = function(chunkedPanel, startLine, endLine)
     this.linesCount = endLine - startLine;
 
     this._expanded = false;
-    this._readOnly = false;
 
     this.updateCollapsedLineRow();
 }
@@ -2641,7 +2508,7 @@ WebInspector.TextEditorMainChunk.prototype = {
     /**
      * @return {boolean}
      */
-    get decorated()
+    isDecorated: function()
     {
         return this.element.className !== "webkit-line-content" || !!(this.element.decorationsElement && this.element.decorationsElement.firstChild);
     },
@@ -2692,7 +2559,6 @@ WebInspector.TextEditorMainChunk.prototype = {
             var parentElement = this.element.parentElement;
             for (var i = this.startLine; i < this.startLine + this.linesCount; ++i) {
                 var lineRow = this._createRow(i);
-                this._updateElementReadOnlyState(lineRow);
                 parentElement.insertBefore(lineRow, this.element);
                 this._expandedLineRows.push(lineRow);
             }
@@ -2716,35 +2582,6 @@ WebInspector.TextEditorMainChunk.prototype = {
         }
 
         this._chunkedPanel.endDomUpdates();
-    },
-
-    set readOnly(readOnly)
-    {
-        if (this._readOnly === readOnly)
-            return;
-
-        this._readOnly = readOnly;
-        this._updateElementReadOnlyState(this.element);
-        if (this._expandedLineRows) {
-            for (var i = 0; i < this._expandedLineRows.length; ++i)
-                this._updateElementReadOnlyState(this._expandedLineRows[i]);
-        }
-    },
-
-    /**
-     * @return {boolean}
-     */
-    get readOnly()
-    {
-        return this._readOnly;
-    },
-
-    _updateElementReadOnlyState: function(element)
-    {
-        if (this._readOnly)
-            element.addStyleClass("text-editor-read-only");
-        else
-            element.removeStyleClass("text-editor-read-only");
     },
 
     /**

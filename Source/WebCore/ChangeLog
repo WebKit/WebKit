@@ -1,3 +1,28 @@
+2012-11-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: move indentation logic into TextEditorModel
+        https://bugs.webkit.org/show_bug.cgi?id=101842
+
+        Reviewed by Vsevolod Vlasov.
+
+        I'd like to move as much headless logic into the TextEditorModel as possible.
+        Drive by: removed some dead code, converted getter into function and moved undo
+        mark state into the model as well.
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype.editRange):
+        (WebInspector.DefaultTextEditor.prototype._syncDecorationsForLine):
+        (WebInspector.TextEditorChunkedPanel.prototype._splitChunkOnALine):
+        (WebInspector.TextEditorMainPanel.prototype.handleEnterKey.get var):
+        (WebInspector.TextEditorMainPanel.prototype.handleEnterKey):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._updateChunksForRanges):
+        (WebInspector.TextEditorMainChunk):
+        (WebInspector.TextEditorMainChunk.prototype.isDecorated):
+        (WebInspector.TextEditorMainChunk.prototype.set expanded):
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextEditorModel.endsWithBracketRegex.):
+
 2012-11-13  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed attempt to fix the chromium mac-build after r134348.
