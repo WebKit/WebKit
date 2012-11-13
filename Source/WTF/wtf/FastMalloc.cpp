@@ -496,103 +496,6 @@ namespace WTF {
 #define MESSAGE LOG_ERROR
 #define CHECK_CONDITION ASSERT
 
-#if OS(DARWIN)
-struct Span;
-class TCMalloc_Central_FreeListPadded;
-class TCMalloc_PageHeap;
-class TCMalloc_ThreadCache;
-template <typename T> class PageHeapAllocator;
-
-class FastMallocZone {
-public:
-    static void init();
-
-    static kern_return_t enumerate(task_t, void*, unsigned typeMmask, vm_address_t zoneAddress, memory_reader_t, vm_range_recorder_t);
-    static size_t goodSize(malloc_zone_t*, size_t size) { return size; }
-    static boolean_t check(malloc_zone_t*) { return true; }
-    static void  print(malloc_zone_t*, boolean_t) { }
-    static void log(malloc_zone_t*, void*) { }
-    static void forceLock(malloc_zone_t*) { }
-    static void forceUnlock(malloc_zone_t*) { }
-    static void statistics(malloc_zone_t*, malloc_statistics_t* stats) { memset(stats, 0, sizeof(malloc_statistics_t)); }
-
-private:
-    FastMallocZone(TCMalloc_PageHeap*, TCMalloc_ThreadCache**, TCMalloc_Central_FreeListPadded*, PageHeapAllocator<Span>*, PageHeapAllocator<TCMalloc_ThreadCache>*);
-    static size_t size(malloc_zone_t*, const void*);
-    static void* zoneMalloc(malloc_zone_t*, size_t);
-    static void* zoneCalloc(malloc_zone_t*, size_t numItems, size_t size);
-    static void zoneFree(malloc_zone_t*, void*);
-    static void* zoneRealloc(malloc_zone_t*, void*, size_t);
-    static void* zoneValloc(malloc_zone_t*, size_t) { LOG_ERROR("valloc is not supported"); return 0; }
-    static void zoneDestroy(malloc_zone_t*) { }
-
-    malloc_zone_t m_zone;
-    TCMalloc_PageHeap* m_pageHeap;
-    TCMalloc_ThreadCache** m_threadHeaps;
-    TCMalloc_Central_FreeListPadded* m_centralCaches;
-    PageHeapAllocator<Span>* m_spanAllocator;
-    PageHeapAllocator<TCMalloc_ThreadCache>* m_pageHeapAllocator;
-};
-
-#endif
-
-#endif
-
-#ifndef WTF_CHANGES
-// This #ifdef should almost never be set.  Set NO_TCMALLOC_SAMPLES if
-// you're porting to a system where you really can't get a stacktrace.
-#ifdef NO_TCMALLOC_SAMPLES
-// We use #define so code compiles even if you #include stacktrace.h somehow.
-# define GetStackTrace(stack, depth, skip)  (0)
-#else
-# include <google/stacktrace.h>
-#endif
-#endif
-
-// Even if we have support for thread-local storage in the compiler
-// and linker, the OS may not support it.  We need to check that at
-// runtime.  Right now, we have to keep a manual set of "bad" OSes.
-#if defined(HAVE_TLS)
-  static bool kernel_supports_tls = false;      // be conservative
-  static inline bool KernelSupportsTLS() {
-    return kernel_supports_tls;
-  }
-# if !HAVE_DECL_UNAME   // if too old for uname, probably too old for TLS
-    static void CheckIfKernelSupportsTLS() {
-      kernel_supports_tls = false;
-    }
-# else
-#   include <sys/utsname.h>    // DECL_UNAME checked for <sys/utsname.h> too
-    static void CheckIfKernelSupportsTLS() {
-      struct utsname buf;
-      if (uname(&buf) != 0) {   // should be impossible
-        MESSAGE("uname failed assuming no TLS support (errno=%d)\n", errno);
-        kernel_supports_tls = false;
-      } else if (strcasecmp(buf.sysname, "linux") == 0) {
-        // The linux case: the first kernel to support TLS was 2.6.0
-        if (buf.release[0] < '2' && buf.release[1] == '.')    // 0.x or 1.x
-          kernel_supports_tls = false;
-        else if (buf.release[0] == '2' && buf.release[1] == '.' &&
-                 buf.release[2] >= '0' && buf.release[2] < '6' &&
-                 buf.release[3] == '.')                       // 2.0 - 2.5
-          kernel_supports_tls = false;
-        else
-          kernel_supports_tls = true;
-      } else {        // some other kernel, we'll be optimisitic
-        kernel_supports_tls = true;
-      }
-      // TODO(csilvers): VLOG(1) the tls status once we support RAW_VLOG
-    }
-#  endif  // HAVE_DECL_UNAME
-#endif    // HAVE_TLS
-
-// __THROW is defined in glibc systems.  It means, counter-intuitively,
-// "This function will never throw an exception."  It's an optional
-// optimization tool, but we may need to use it to match glibc prototypes.
-#ifndef __THROW    // I guess we're not on a glibc system
-# define __THROW   // __THROW is just an optimization, so ok to make it ""
-#endif
-
 //-------------------------------------------------------------------
 // Configuration
 //-------------------------------------------------------------------
@@ -1203,6 +1106,242 @@ static inline void DLL_Prepend(Span* list, Span* span) {
   list->next->prev = span;
   list->next = span;
 }
+
+//-------------------------------------------------------------------
+// Data kept per size-class in central cache
+//-------------------------------------------------------------------
+
+class TCMalloc_Central_FreeList {
+ public:
+  void Init(size_t cl);
+
+  // These methods all do internal locking.
+
+  // Insert the specified range into the central freelist.  N is the number of
+  // elements in the range.
+  void InsertRange(void *start, void *end, int N);
+
+  // Returns the actual number of fetched elements into N.
+  void RemoveRange(void **start, void **end, int *N);
+
+  // Returns the number of free objects in cache.
+  size_t length() {
+    SpinLockHolder h(&lock_);
+    return counter_;
+  }
+
+  // Returns the number of free objects in the transfer cache.
+  int tc_length() {
+    SpinLockHolder h(&lock_);
+    return used_slots_ * num_objects_to_move[size_class_];
+  }
+
+#ifdef WTF_CHANGES
+  template <class Finder, class Reader>
+  void enumerateFreeObjects(Finder& finder, const Reader& reader, TCMalloc_Central_FreeList* remoteCentralFreeList)
+  {
+    for (Span* span = &empty_; span && span != &empty_; span = (span->next ? reader(span->next) : 0))
+      ASSERT(!span->objects);
+
+    ASSERT(!nonempty_.objects);
+    static const ptrdiff_t nonemptyOffset = reinterpret_cast<const char*>(&nonempty_) - reinterpret_cast<const char*>(this);
+
+    Span* remoteNonempty = reinterpret_cast<Span*>(reinterpret_cast<char*>(remoteCentralFreeList) + nonemptyOffset);
+    Span* remoteSpan = nonempty_.next;
+
+    for (Span* span = reader(remoteSpan); span && remoteSpan != remoteNonempty; remoteSpan = span->next, span = (span->next ? reader(span->next) : 0)) {
+      for (void* nextObject = span->objects; nextObject; nextObject = reader.nextEntryInLinkedList(reinterpret_cast<void**>(nextObject)))
+        finder.visit(nextObject);
+    }
+  }
+#endif
+
+ private:
+  // REQUIRES: lock_ is held
+  // Remove object from cache and return.
+  // Return NULL if no free entries in cache.
+  void* FetchFromSpans();
+
+  // REQUIRES: lock_ is held
+  // Remove object from cache and return.  Fetches
+  // from pageheap if cache is empty.  Only returns
+  // NULL on allocation failure.
+  void* FetchFromSpansSafe();
+
+  // REQUIRES: lock_ is held
+  // Release a linked list of objects to spans.
+  // May temporarily release lock_.
+  void ReleaseListToSpans(void *start);
+
+  // REQUIRES: lock_ is held
+  // Release an object to spans.
+  // May temporarily release lock_.
+  ALWAYS_INLINE void ReleaseToSpans(void* object);
+
+  // REQUIRES: lock_ is held
+  // Populate cache by fetching from the page heap.
+  // May temporarily release lock_.
+  ALWAYS_INLINE void Populate();
+
+  // REQUIRES: lock is held.
+  // Tries to make room for a TCEntry.  If the cache is full it will try to
+  // expand it at the cost of some other cache size.  Return false if there is
+  // no space.
+  bool MakeCacheSpace();
+
+  // REQUIRES: lock_ for locked_size_class is held.
+  // Picks a "random" size class to steal TCEntry slot from.  In reality it
+  // just iterates over the sizeclasses but does so without taking a lock.
+  // Returns true on success.
+  // May temporarily lock a "random" size class.
+  static ALWAYS_INLINE bool EvictRandomSizeClass(size_t locked_size_class, bool force);
+
+  // REQUIRES: lock_ is *not* held.
+  // Tries to shrink the Cache.  If force is true it will relase objects to
+  // spans if it allows it to shrink the cache.  Return false if it failed to
+  // shrink the cache.  Decrements cache_size_ on succeess.
+  // May temporarily take lock_.  If it takes lock_, the locked_size_class
+  // lock is released to the thread from holding two size class locks
+  // concurrently which could lead to a deadlock.
+  bool ShrinkCache(int locked_size_class, bool force);
+
+  // This lock protects all the data members.  cached_entries and cache_size_
+  // may be looked at without holding the lock.
+  SpinLock lock_;
+
+  // We keep linked lists of empty and non-empty spans.
+  size_t   size_class_;     // My size class
+  Span     empty_;          // Dummy header for list of empty spans
+  Span     nonempty_;       // Dummy header for list of non-empty spans
+  size_t   counter_;        // Number of free objects in cache entry
+
+  // Here we reserve space for TCEntry cache slots.  Since one size class can
+  // end up getting all the TCEntries quota in the system we just preallocate
+  // sufficient number of entries here.
+  TCEntry tc_slots_[kNumTransferEntries];
+
+  // Number of currently used cached entries in tc_slots_.  This variable is
+  // updated under a lock but can be read without one.
+  int32_t used_slots_;
+  // The current number of slots for this size class.  This is an
+  // adaptive value that is increased if there is lots of traffic
+  // on a given size class.
+  int32_t cache_size_;
+};
+
+#if COMPILER(CLANG) && defined(__has_warning)
+#pragma clang diagnostic push
+#if __has_warning("-Wunused-private-field")
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#endif
+#endif
+
+// Pad each CentralCache object to multiple of 64 bytes
+class TCMalloc_Central_FreeListPadded : public TCMalloc_Central_FreeList {
+ private:
+  char pad_[(64 - (sizeof(TCMalloc_Central_FreeList) % 64)) % 64];
+};
+
+#if COMPILER(CLANG) && defined(__has_warning)
+#pragma clang diagnostic pop
+#endif
+
+#if OS(DARWIN)
+struct Span;
+class TCMalloc_Central_FreeListPadded;
+class TCMalloc_PageHeap;
+class TCMalloc_ThreadCache;
+template <typename T> class PageHeapAllocator;
+
+class FastMallocZone {
+public:
+    static void init();
+
+    static kern_return_t enumerate(task_t, void*, unsigned typeMmask, vm_address_t zoneAddress, memory_reader_t, vm_range_recorder_t);
+    static size_t goodSize(malloc_zone_t*, size_t size) { return size; }
+    static boolean_t check(malloc_zone_t*) { return true; }
+    static void  print(malloc_zone_t*, boolean_t) { }
+    static void log(malloc_zone_t*, void*) { }
+    static void forceLock(malloc_zone_t*) { }
+    static void forceUnlock(malloc_zone_t*) { }
+    static void statistics(malloc_zone_t*, malloc_statistics_t* stats) { memset(stats, 0, sizeof(malloc_statistics_t)); }
+
+private:
+    FastMallocZone(TCMalloc_PageHeap*, TCMalloc_ThreadCache**, TCMalloc_Central_FreeListPadded*, PageHeapAllocator<Span>*, PageHeapAllocator<TCMalloc_ThreadCache>*);
+    static size_t size(malloc_zone_t*, const void*);
+    static void* zoneMalloc(malloc_zone_t*, size_t);
+    static void* zoneCalloc(malloc_zone_t*, size_t numItems, size_t size);
+    static void zoneFree(malloc_zone_t*, void*);
+    static void* zoneRealloc(malloc_zone_t*, void*, size_t);
+    static void* zoneValloc(malloc_zone_t*, size_t) { LOG_ERROR("valloc is not supported"); return 0; }
+    static void zoneDestroy(malloc_zone_t*) { }
+
+    malloc_zone_t m_zone;
+    TCMalloc_PageHeap* m_pageHeap;
+    TCMalloc_ThreadCache** m_threadHeaps;
+    TCMalloc_Central_FreeListPadded* m_centralCaches;
+    PageHeapAllocator<Span>* m_spanAllocator;
+    PageHeapAllocator<TCMalloc_ThreadCache>* m_pageHeapAllocator;
+};
+
+#endif
+
+#endif
+
+#ifndef WTF_CHANGES
+// This #ifdef should almost never be set.  Set NO_TCMALLOC_SAMPLES if
+// you're porting to a system where you really can't get a stacktrace.
+#ifdef NO_TCMALLOC_SAMPLES
+// We use #define so code compiles even if you #include stacktrace.h somehow.
+# define GetStackTrace(stack, depth, skip)  (0)
+#else
+# include <google/stacktrace.h>
+#endif
+#endif
+
+// Even if we have support for thread-local storage in the compiler
+// and linker, the OS may not support it.  We need to check that at
+// runtime.  Right now, we have to keep a manual set of "bad" OSes.
+#if defined(HAVE_TLS)
+  static bool kernel_supports_tls = false;      // be conservative
+  static inline bool KernelSupportsTLS() {
+    return kernel_supports_tls;
+  }
+# if !HAVE_DECL_UNAME   // if too old for uname, probably too old for TLS
+    static void CheckIfKernelSupportsTLS() {
+      kernel_supports_tls = false;
+    }
+# else
+#   include <sys/utsname.h>    // DECL_UNAME checked for <sys/utsname.h> too
+    static void CheckIfKernelSupportsTLS() {
+      struct utsname buf;
+      if (uname(&buf) != 0) {   // should be impossible
+        MESSAGE("uname failed assuming no TLS support (errno=%d)\n", errno);
+        kernel_supports_tls = false;
+      } else if (strcasecmp(buf.sysname, "linux") == 0) {
+        // The linux case: the first kernel to support TLS was 2.6.0
+        if (buf.release[0] < '2' && buf.release[1] == '.')    // 0.x or 1.x
+          kernel_supports_tls = false;
+        else if (buf.release[0] == '2' && buf.release[1] == '.' &&
+                 buf.release[2] >= '0' && buf.release[2] < '6' &&
+                 buf.release[3] == '.')                       // 2.0 - 2.5
+          kernel_supports_tls = false;
+        else
+          kernel_supports_tls = true;
+      } else {        // some other kernel, we'll be optimisitic
+        kernel_supports_tls = true;
+      }
+      // TODO(csilvers): VLOG(1) the tls status once we support RAW_VLOG
+    }
+#  endif  // HAVE_DECL_UNAME
+#endif    // HAVE_TLS
+
+// __THROW is defined in glibc systems.  It means, counter-intuitively,
+// "This function will never throw an exception."  It's an optional
+// optimization tool, but we may need to use it to match glibc prototypes.
+#ifndef __THROW    // I guess we're not on a glibc system
+# define __THROW   // __THROW is just an optimization, so ok to make it ""
+#endif
 
 // -------------------------------------------------------------------------
 // Stack traces kept for sampled allocations
@@ -2351,145 +2490,6 @@ class TCMalloc_ThreadCache {
   }
 #endif
 };
-
-//-------------------------------------------------------------------
-// Data kept per size-class in central cache
-//-------------------------------------------------------------------
-
-class TCMalloc_Central_FreeList {
- public:
-  void Init(size_t cl);
-
-  // These methods all do internal locking.
-
-  // Insert the specified range into the central freelist.  N is the number of
-  // elements in the range.
-  void InsertRange(void *start, void *end, int N);
-
-  // Returns the actual number of fetched elements into N.
-  void RemoveRange(void **start, void **end, int *N);
-
-  // Returns the number of free objects in cache.
-  size_t length() {
-    SpinLockHolder h(&lock_);
-    return counter_;
-  }
-
-  // Returns the number of free objects in the transfer cache.
-  int tc_length() {
-    SpinLockHolder h(&lock_);
-    return used_slots_ * num_objects_to_move[size_class_];
-  }
-
-#ifdef WTF_CHANGES
-  template <class Finder, class Reader>
-  void enumerateFreeObjects(Finder& finder, const Reader& reader, TCMalloc_Central_FreeList* remoteCentralFreeList)
-  {
-    for (Span* span = &empty_; span && span != &empty_; span = (span->next ? reader(span->next) : 0))
-      ASSERT(!span->objects);
-
-    ASSERT(!nonempty_.objects);
-    static const ptrdiff_t nonemptyOffset = reinterpret_cast<const char*>(&nonempty_) - reinterpret_cast<const char*>(this);
-
-    Span* remoteNonempty = reinterpret_cast<Span*>(reinterpret_cast<char*>(remoteCentralFreeList) + nonemptyOffset);
-    Span* remoteSpan = nonempty_.next;
-
-    for (Span* span = reader(remoteSpan); span && remoteSpan != remoteNonempty; remoteSpan = span->next, span = (span->next ? reader(span->next) : 0)) {
-      for (void* nextObject = span->objects; nextObject; nextObject = reader.nextEntryInLinkedList(reinterpret_cast<void**>(nextObject)))
-        finder.visit(nextObject);
-    }
-  }
-#endif
-
- private:
-  // REQUIRES: lock_ is held
-  // Remove object from cache and return.
-  // Return NULL if no free entries in cache.
-  void* FetchFromSpans();
-
-  // REQUIRES: lock_ is held
-  // Remove object from cache and return.  Fetches
-  // from pageheap if cache is empty.  Only returns
-  // NULL on allocation failure.
-  void* FetchFromSpansSafe();
-
-  // REQUIRES: lock_ is held
-  // Release a linked list of objects to spans.
-  // May temporarily release lock_.
-  void ReleaseListToSpans(void *start);
-
-  // REQUIRES: lock_ is held
-  // Release an object to spans.
-  // May temporarily release lock_.
-  ALWAYS_INLINE void ReleaseToSpans(void* object);
-
-  // REQUIRES: lock_ is held
-  // Populate cache by fetching from the page heap.
-  // May temporarily release lock_.
-  ALWAYS_INLINE void Populate();
-
-  // REQUIRES: lock is held.
-  // Tries to make room for a TCEntry.  If the cache is full it will try to
-  // expand it at the cost of some other cache size.  Return false if there is
-  // no space.
-  bool MakeCacheSpace();
-
-  // REQUIRES: lock_ for locked_size_class is held.
-  // Picks a "random" size class to steal TCEntry slot from.  In reality it
-  // just iterates over the sizeclasses but does so without taking a lock.
-  // Returns true on success.
-  // May temporarily lock a "random" size class.
-  static ALWAYS_INLINE bool EvictRandomSizeClass(size_t locked_size_class, bool force);
-
-  // REQUIRES: lock_ is *not* held.
-  // Tries to shrink the Cache.  If force is true it will relase objects to
-  // spans if it allows it to shrink the cache.  Return false if it failed to
-  // shrink the cache.  Decrements cache_size_ on succeess.
-  // May temporarily take lock_.  If it takes lock_, the locked_size_class
-  // lock is released to the thread from holding two size class locks
-  // concurrently which could lead to a deadlock.
-  bool ShrinkCache(int locked_size_class, bool force);
-
-  // This lock protects all the data members.  cached_entries and cache_size_
-  // may be looked at without holding the lock.
-  SpinLock lock_;
-
-  // We keep linked lists of empty and non-empty spans.
-  size_t   size_class_;     // My size class
-  Span     empty_;          // Dummy header for list of empty spans
-  Span     nonempty_;       // Dummy header for list of non-empty spans
-  size_t   counter_;        // Number of free objects in cache entry
-
-  // Here we reserve space for TCEntry cache slots.  Since one size class can
-  // end up getting all the TCEntries quota in the system we just preallocate
-  // sufficient number of entries here.
-  TCEntry tc_slots_[kNumTransferEntries];
-
-  // Number of currently used cached entries in tc_slots_.  This variable is
-  // updated under a lock but can be read without one.
-  int32_t used_slots_;
-  // The current number of slots for this size class.  This is an
-  // adaptive value that is increased if there is lots of traffic
-  // on a given size class.
-  int32_t cache_size_;
-};
-
-#if COMPILER(CLANG) && defined(__has_warning)
-#pragma clang diagnostic push
-#if __has_warning("-Wunused-private-field")
-#pragma clang diagnostic ignored "-Wunused-private-field"
-#endif
-#endif
-
-// Pad each CentralCache object to multiple of 64 bytes
-class TCMalloc_Central_FreeListPadded : public TCMalloc_Central_FreeList {
- private:
-  char pad_[(64 - (sizeof(TCMalloc_Central_FreeList) % 64)) % 64];
-};
-
-#if COMPILER(CLANG) && defined(__has_warning)
-#pragma clang diagnostic pop
-#endif
 
 //-------------------------------------------------------------------
 // Global variables

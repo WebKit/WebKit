@@ -1,3 +1,36 @@
+2012-11-13  Brent Fulgham <bfulgham@webkit.org> and Alex Christensen  <alex.christensen@flexsim.com>
+
+        FastMalloc.cpp needs to be reordered before padding bug can be fixed
+        https://bugs.webkit.org/show_bug.cgi?id=89366
+
+        Note: This file violates Style rules.  This change only moves
+        the TCMalloc_Central_FreeList class declaration and the various
+        FastMallocZone methods earlier in the file.
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/FastMalloc.cpp:
+        Reordered definitions to prepare for adding specialized template
+        (WTF):
+        (TCMalloc_Central_FreeList):
+        (WTF::TCMalloc_Central_FreeList::length):
+        (WTF::TCMalloc_Central_FreeList::tc_length):
+        (WTF::TCMalloc_Central_FreeList::enumerateFreeObjects):
+        (TCMalloc_Central_FreeListPadded):
+        (FastMallocZone):
+        (WTF::FastMallocZone::goodSize):
+        (WTF::FastMallocZone::check):
+        (WTF::FastMallocZone::print):
+        (WTF::FastMallocZone::log):
+        (WTF::FastMallocZone::forceLock):
+        (WTF::FastMallocZone::forceUnlock):
+        (WTF::FastMallocZone::statistics):
+        (WTF::FastMallocZone::zoneValloc):
+        (WTF::FastMallocZone::zoneDestroy):
+        (WTF::KernelSupportsTLS):
+        (WTF::CheckIfKernelSupportsTLS):
+        (TCMalloc_ThreadCache):
+
 2012-11-11  Kenichi Ishibashi  <bashi@chromium.org>
 
         WTFString::utf8() should have a mode of conversion to use replacement character
