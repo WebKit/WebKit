@@ -102,6 +102,8 @@ bool V8TestException::HasInstance(v8::Handle<v8::Value> value)
 
 v8::Handle<v8::Object> V8TestException::wrapSlow(PassRefPtr<TestException> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
+    ASSERT(impl.get());
+    ASSERT(DOMDataStore::current(isolate)->get(impl.get()).IsEmpty());
     v8::Handle<v8::Object> wrapper;
 
     v8::Handle<v8::Context> context;

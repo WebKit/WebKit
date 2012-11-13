@@ -2,6 +2,132 @@
 
         Unreviewed.
 
+        Update run-bindings-tests results.
+
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore::V8Float64Array::dispatchWrapCustom):
+        (WebCore::V8Float64Array::wrapSlow):
+        * bindings/scripts/test/V8/V8Float64Array.h:
+        (WebCore::V8Float64Array::toNative):
+        (V8Float64Array):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore::V8TestActiveDOMObject::wrapSlow):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.h:
+        (WebCore::V8TestActiveDOMObject::toNative):
+        (V8TestActiveDOMObject):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore::V8TestCustomNamedGetter::wrapSlow):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.h:
+        (WebCore::V8TestCustomNamedGetter::toNative):
+        (V8TestCustomNamedGetter):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore::V8TestEventConstructor::wrapSlow):
+        * bindings/scripts/test/V8/V8TestEventConstructor.h:
+        (WebCore::V8TestEventConstructor::toNative):
+        (V8TestEventConstructor):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore::V8TestEventTarget::wrapSlow):
+        * bindings/scripts/test/V8/V8TestEventTarget.h:
+        (WebCore::V8TestEventTarget::toNative):
+        (V8TestEventTarget):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestException.cpp:
+        (WebCore::V8TestException::wrapSlow):
+        * bindings/scripts/test/V8/V8TestException.h:
+        (WebCore::V8TestException::toNative):
+        (V8TestException):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::V8TestInterface::wrapSlow):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        (WebCore::V8TestInterface::toNative):
+        (V8TestInterface):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::V8TestMediaQueryListListener::wrapSlow):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        (WebCore::V8TestMediaQueryListListener::toNative):
+        (V8TestMediaQueryListListener):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore::V8TestNamedConstructor::wrapSlow):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.h:
+        (WebCore::V8TestNamedConstructor::toNative):
+        (V8TestNamedConstructor):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore::V8TestNode::wrapSlow):
+        * bindings/scripts/test/V8/V8TestNode.h:
+        (WebCore::V8TestNode::toNative):
+        (V8TestNode):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        (WebCore::toV8Fast):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::V8TestObj::wrapSlow):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        (WebCore::V8TestObj::toNative):
+        (V8TestObj):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestOverloadedConstructors.cpp:
+        (WebCore::V8TestOverloadedConstructors::wrapSlow):
+        * bindings/scripts/test/V8/V8TestOverloadedConstructors.h:
+        (WebCore::V8TestOverloadedConstructors::toNative):
+        (V8TestOverloadedConstructors):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::wrapSlow):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+        (WebCore::V8TestSerializedScriptValueInterface::toNative):
+        (V8TestSerializedScriptValueInterface):
+        (WebCore):
+        (WebCore::dispatchWrap):
+        (WebCore::toV8Object):
+        (WebCore::toV8):
+
+2012-11-13  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
         Speculative build fix for Qt.
 
         * dom/make_names.pl:

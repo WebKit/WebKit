@@ -41,30 +41,45 @@ public:
     {
         return reinterpret_cast<TestException*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
-    inline static v8::Handle<v8::Object> wrap(TestException*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
     static void derefObject(void*);
     static WrapperTypeInfo info;
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
     static void installPerContextProperties(v8::Handle<v8::Object>, TestException*) { }
     static void installPerContextPrototypeProperties(v8::Handle<v8::Object>) { }
 private:
+    friend v8::Handle<v8::Object> dispatchWrap(TestException*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    static v8::Handle<v8::Object> dispatchWrapCustom(TestException*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
     static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestException>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
-v8::Handle<v8::Object> V8TestException::wrap(TestException* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+
+inline v8::Handle<v8::Object> dispatchWrap(TestException* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
-        v8::Handle<v8::Object> wrapper = DOMDataStore::current(isolate)->get(impl);
-        if (!wrapper.IsEmpty())
-            return wrapper;
+    ASSERT(impl);
+    ASSERT(DOMDataStore::current(isolate)->get(impl).IsEmpty());
     return V8TestException::wrapSlow(impl, creationContext, isolate);
+}
+
+inline v8::Handle<v8::Object> toV8Object(TestException* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
+{
+    if (UNLIKELY(!impl))
+        return v8::Handle<v8::Object>();
+    v8::Handle<v8::Object> wrapper = DOMDataStore::current(isolate)->get(impl);
+    if (!wrapper.IsEmpty())
+        return wrapper;
+    return dispatchWrap(impl, creationContext, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8(TestException* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
-    if (!impl)
+    if (UNLIKELY(!impl))
         return v8NullWithCheck(isolate);
-    return V8TestException::wrap(impl, creationContext, isolate);
+    v8::Handle<v8::Value> wrapper = DOMDataStore::current(isolate)->get(impl);
+    if (!wrapper.IsEmpty())
+        return wrapper;
+    return dispatchWrap(impl, creationContext, isolate);
 }
+
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestException > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     return toV8(impl.get(), creationContext, isolate);

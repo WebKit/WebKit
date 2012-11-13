@@ -110,6 +110,8 @@ bool V8TestNode::HasInstance(v8::Handle<v8::Value> value)
 
 v8::Handle<v8::Object> V8TestNode::wrapSlow(PassRefPtr<TestNode> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
+    ASSERT(impl.get());
+    ASSERT(V8DOMWrapper::getCachedWrapper(impl.get()).IsEmpty());
     v8::Handle<v8::Object> wrapper;
     ASSERT(static_cast<void*>(static_cast<Node*>(impl.get())) == static_cast<void*>(impl.get()));
 
