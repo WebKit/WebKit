@@ -2877,7 +2877,6 @@ crbug.com/88936 fast/js/date-toisostring.html [ Failure ]
 webkit.org/b/70630 [ SnowLeopard ] fast/js/call-base-resolution.html [ Failure Pass ]
 crbug.com/89474 [ Android Linux Win ] fast/js/call-base-resolution.html [ Failure Pass ]
 
-webkit.org/b/70888 [ Mac Debug ] animations/dynamic-stylesheet-loading.html [ Failure Pass ]
 webkit.org/b/70887 [ Debug ] jquery/css.html [ Pass Timeout ]
 
 webkit.org/b/65009 [ Mac ] scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
@@ -3020,7 +3019,6 @@ webkit.org/b/66953 [ Debug ] animations/play-state.html [ Failure Pass ]
 webkit.org/b/66953 [ Debug ] animations/play-state-paused.html [ Failure Pass ]
 webkit.org/b/66953 [ Debug ] animations/play-state-suspend.html [ Failure Pass ]
 webkit.org/b/66953 [ Debug ] animations/suspend-resume-animation.html [ Failure Pass ]
-webkit.org/b/66953 [ Mac Debug ] animations/animation-direction-reverse.html [ Failure Pass ]
 
 webkit.org/b/72761 accessibility/anonymous-render-block-in-continuation-causes-crash.html [ Pass Timeout ]
 
@@ -4178,16 +4176,16 @@ webkit.org/b/100806 [ Win ] svg/custom/font-face-simple.svg [ Failure ]
 # This test is consistently leaking state into the next test (object-src-url-allowed.html) after r133069.
 webkit.org/b/100955 http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Skip ]
 
-webkit.org/b/101968 compositing/reflections/animation-inside-reflection.html [ Timeout ]
+webkit.org/b/101968 [ Win Mac Linux ] compositing/reflections/animation-inside-reflection.html [ Timeout ]
 webkit.org/b/101968 animations/animation-direction-reverse.html [ Timeout ]
 webkit.org/b/101968 animations/3d/matrix-transform-type-animation.html [ Timeout ]
 webkit.org/b/101968 animations/change-transform-style-during-animation.html [ Timeout ]
 webkit.org/b/101968 animations/3d/state-at-end-event-transform.html [ Timeout ]
 webkit.org/b/101968 animations/big-rotation.html [ Timeout ]
-webkit.org/b/101968 animations/additive-transform-animations.html [ Timeout ]
+webkit.org/b/101968 [ Win Mac Linux ] animations/additive-transform-animations.html [ Timeout ]
 webkit.org/b/101968 animations/3d/replace-filling-transform.html [ Timeout ]
 webkit.org/b/101968 animations/fill-mode-transform.html [ Timeout ]
-webkit.org/b/101968 compositing/animation/state-at-end-event-transform-layer.html [ Timeout ]
+webkit.org/b/101968 [ Win Mac Linux ] compositing/animation/state-at-end-event-transform-layer.html [ Timeout ]
 webkit.org/b/101968 animations/animation-start-event-destroy-renderer.html [ Timeout ]
 webkit.org/b/101968 compositing/animation/animation-compositing.html [ Timeout ]
 webkit.org/b/101968 compositing/layer-creation/overlap-animation.html [ Timeout ]
@@ -4207,7 +4205,7 @@ webkit.org/b/101968 animations/animation-iteration-event-destroy-renderer.html [
 webkit.org/b/101968 animations/animation-direction-reverse-fill-mode-hardware.html [ Timeout ]
 webkit.org/b/101968 animations/dynamic-stylesheet-loading.html [ Timeout ]
 webkit.org/b/101968 animations/animation-direction-reverse-timing-functions-hardware.html [ Timeout ]
-webkit.org/b/101968 compositing/reflections/nested-reflection-animated.html [ Timeout ]
+webkit.org/b/101968 [ Win Mac Linux ] compositing/reflections/nested-reflection-animated.html [ Timeout ]
 
 webkit.org/b/101377 [ Linux Debug ] platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html [ Failure ImageOnlyFailure Pass ]
 

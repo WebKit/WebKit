@@ -1,3 +1,9 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Pacify linter and tweak expectations to avoid conflicts.
+
+        * platform/chromium/TestExpectations: Tweaked.
+
 2012-11-13  Sami Kyostila  <skyostil@chromium.org>
 
         Allow painting outside overflow clip in accelerated scrolling layers
