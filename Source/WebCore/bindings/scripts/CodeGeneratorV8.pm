@@ -1616,7 +1616,7 @@ END
     my $raisesExceptions = @{$function->raisesExceptions};
     if (!$raisesExceptions) {
         foreach my $parameter (@{$function->parameters}) {
-            if ($parameter->extendedAttributes->{"IsIndex"}) {
+            if ((!$parameter->extendedAttributes->{"Callback"} and TypeCanFailConversion($parameter)) or $parameter->extendedAttributes->{"IsIndex"}) {
                 $raisesExceptions = 1;
             }
         }
@@ -1830,6 +1830,13 @@ sub GenerateParametersCheck
             }
             $parameterCheckString .= "    if (${parameterName}DidThrow)\n";
             $parameterCheckString .= "        return v8Undefined();\n";
+        } elsif (TypeCanFailConversion($parameter)) {
+            $parameterCheckString .= "    $nativeType $parameterName = " .
+                 JSValueToNative($parameter, "args[$paramIndex]", "args.GetIsolate()") . ";\n";
+            $parameterCheckString .= "    if (UNLIKELY(!$parameterName)) {\n";
+            $parameterCheckString .= "        ec = TYPE_MISMATCH_ERR;\n";
+            $parameterCheckString .= "        goto fail;\n";
+            $parameterCheckString .= "    }\n";
         } elsif ($parameter->isVariadic) {
             my $nativeElementType = GetNativeType($parameter->type);
             if ($nativeElementType =~ />$/) {
@@ -1937,7 +1944,7 @@ sub GenerateSingleConstructorCallback
     }
     if (!$raisesExceptions) {
         foreach my $parameter (@{$function->parameters}) {
-            if ($parameter->extendedAttributes->{"IsIndex"}) {
+            if ((!$parameter->extendedAttributes->{"Callback"} and TypeCanFailConversion($parameter)) or $parameter->extendedAttributes->{"IsIndex"}) {
                 $raisesExceptions = 1;
             }
         }
@@ -2134,7 +2141,7 @@ sub GenerateNamedConstructorCallback
     }
     if (!$raisesExceptions) {
         foreach my $parameter (@{$function->parameters}) {
-            if ($parameter->extendedAttributes->{"IsIndex"}) {
+            if ((!$parameter->extendedAttributes->{"Callback"} and TypeCanFailConversion($parameter)) or $parameter->extendedAttributes->{"IsIndex"}) {
                 $raisesExceptions = 1;
             }
         }
@@ -3810,6 +3817,17 @@ sub TranslateParameter
     if ($signature->type eq "TimeoutHandler") {
       $signature->type("DOMString");
     }
+}
+
+sub TypeCanFailConversion
+{
+    my $signature = shift;
+
+    my $type = GetTypeFromSignature($signature);
+
+    AddToImplIncludes("ExceptionCode.h") if $type eq "Attr";
+    return 1 if $type eq "Attr";
+    return 0;
 }
 
 sub JSValueToNative
