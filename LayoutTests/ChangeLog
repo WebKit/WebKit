@@ -1,3 +1,20 @@
+2012-11-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: storage/indexeddb/cursor-prev-no-duplicate.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=101990
+
+        Reviewed by Tony Chang.
+
+        Race condition in test leads to flaky behavior. Refactor test to remove flake
+        and clean up output.
+
+        * storage/indexeddb/cursor-prev-no-duplicate-expected.txt:
+        * storage/indexeddb/resources/cursor-prev-no-duplicate.js:
+        (testFarRangeCursor_closed):
+        (.trans.oncomplete):
+        (.storeReq.onsuccess):
+        (runTest):
+
 2012-11-12  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed, gardening.
