@@ -1,5 +1,12 @@
 2012-11-12  Beth Dakin  <bdakin@apple.com>
 
+        Build fix. Forgot these bits last time.
+
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
+2012-11-12  Beth Dakin  <bdakin@apple.com>
+
         Zoomed-in scrolling is very slow when deviceScaleFactor > 1
         https://bugs.webkit.org/show_bug.cgi?id=101787
 
