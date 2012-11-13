@@ -5032,6 +5032,8 @@
             'platform/graphics/filters/skia/FELightingSkia.cpp',
             'platform/graphics/filters/skia/SkiaImageFilterBuilder.cpp',
             'platform/graphics/filters/skia/SkiaImageFilterBuilder.h',
+            'platform/graphics/filters/skia/DropShadowImageFilter.cpp',
+            'platform/graphics/filters/skia/DropShadowImageFilter.h',
             'platform/graphics/freetype/FontCacheFreeType.cpp',
             'platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp',
             'platform/graphics/freetype/FontPlatformData.h',

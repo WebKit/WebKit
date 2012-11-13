@@ -1,3 +1,28 @@
+2012-11-13  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Fix SkImageFilter DAG path to pass all css3/filters tests
+        https://bugs.webkit.org/show_bug.cgi?id=101952
+
+        Reviewed by James Robinson.
+
+        With these changes, all of the css3/filters tests pass when the
+        if-test in GraphicsLayerChromium::setFilters() is forced true (for
+        now, it remains true only if there's a reference filter in the chain).
+
+        Covered by the css3/filters tests (when the switch is thrown in
+        GraphicsLayerChromium::setFilters()).
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        Drop to software rendering if there's a custom filter in the chain.
+        This is the same as the WebFilterOperations path is doing.
+        * platform/graphics/filters/skia/DropShadowImageFilter.cpp: Added.
+        * platform/graphics/filters/skia/DropShadowImageFilter.h: Added.
+        New implementation of drop-shadow filter; equivalent to
+        the path in cc/render_surface_filters.cc.
+        * platform/graphics/filters/skia/SkiaImageFilterBuilder.cpp:
+        Fix the sepia and grayscale filters (value was inverted).
+
 2012-11-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134442.

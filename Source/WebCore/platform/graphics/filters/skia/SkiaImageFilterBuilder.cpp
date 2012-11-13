@@ -26,6 +26,7 @@
 
 #include "SkiaImageFilterBuilder.h"
 
+#include "DropShadowImageFilter.h"
 #include "FilterEffect.h"
 #include "FilterOperations.h"
 #include "SkBlurImageFilter.h"
@@ -193,13 +194,13 @@ SkImageFilter* SkiaImageFilterBuilder::build(const FilterOperations& operations)
         }
         case FilterOperation::GRAYSCALE: {
             float amount = static_cast<const BasicColorMatrixFilterOperation*>(&op)->amount();
-            getGrayscaleMatrix(amount, matrix);
+            getGrayscaleMatrix(1 - amount, matrix);
             filter = createMatrixImageFilter(matrix, filter);
             break;
         }
         case FilterOperation::SEPIA: {
             float amount = static_cast<const BasicColorMatrixFilterOperation*>(&op)->amount();
-            getSepiaMatrix(amount, matrix);
+            getSepiaMatrix(1 - amount, matrix);
             filter = createMatrixImageFilter(matrix, filter);
             break;
         }
@@ -245,8 +246,8 @@ SkImageFilter* SkiaImageFilterBuilder::build(const FilterOperations& operations)
             break;
         }
         case FilterOperation::DROP_SHADOW: {
-//            const DropShadowFilterOperation& dropShadowOp = *static_cast<const DropShadowFilterOperation*>(&op);
-            // FIXME: do offset and blur
+            const DropShadowFilterOperation* drop = static_cast<const DropShadowFilterOperation*>(&op);
+            filter = new DropShadowImageFilter(SkIntToScalar(drop->x()), SkIntToScalar(drop->y()), SkIntToScalar(drop->stdDeviation()), drop->color().rgb(), filter);
             break;
         }
 #if ENABLE(CSS_SHADERS)
