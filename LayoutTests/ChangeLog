@@ -1,3 +1,12 @@
+2012-11-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Revert the changes from r134388 and r134426 as r134345 was rolled out.
+
+        * platform/efl/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/gtk/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/mac/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/qt/fast/dynamic/insertAdjacentElement-expected.txt:
+
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r134367.
