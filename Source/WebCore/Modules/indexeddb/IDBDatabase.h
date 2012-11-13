@@ -64,7 +64,8 @@ public:
     PassRefPtr<DOMStringList> objectStoreNames() const;
 
     PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const Dictionary&, ExceptionCode&);
-    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, PassRefPtr<DOMStringList>, const String& mode, ExceptionCode&);
+    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> scope, const String& mode, ExceptionCode& ec) { return transaction(context, *scope, mode, ec); }
+    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCode&);
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCode&);
     void deleteObjectStore(const String& name, ExceptionCode&);
     PassRefPtr<IDBVersionChangeRequest> setVersion(ScriptExecutionContext*, const String& version, ExceptionCode&);

@@ -1,3 +1,27 @@
+2012-11-12  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Use sequence<> instead of DOMString[] in IDL
+        https://bugs.webkit.org/show_bug.cgi?id=100539
+
+        Reviewed by Adam Barth.
+
+        In the binding layer, DOMString[] is implemented as an alias for DOMStringList.
+        WebIDL usage is tending towards sequence<DOMString> anyway for inputs, so switch
+        to that. Note webkit.org/b/100537 which requires sequence<String> instead.
+
+        Covered by storage/indexeddb/transaction-basics.html and objectstore-basics.html
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::transaction): DOMStringList -> Vector<String>
+        * Modules/indexeddb/IDBDatabase.h:
+        (WebCore::IDBDatabase::transaction):
+        (IDBDatabase):
+        * Modules/indexeddb/IDBDatabase.idl: DOMString[] -> sequence<String>
+        * Modules/indexeddb/IDBObjectStore.cpp: Move trivial impls to header.
+        * Modules/indexeddb/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::createIndex):
+        * Modules/indexeddb/IDBObjectStore.idl: DOMString[] -> sequence<String>
+
 2012-11-12  Anders Carlsson  <andersca@apple.com>
 
         Remove Leopard only gradient code

@@ -226,11 +226,9 @@ PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionConte
     return request;
 }
 
-PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> prpStoreNames, const String& modeString, ExceptionCode& ec)
+PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, const Vector<String>& scope, const String& modeString, ExceptionCode& ec)
 {
-    RefPtr<DOMStringList> storeNames = prpStoreNames;
-    ASSERT(storeNames.get());
-    if (storeNames->isEmpty()) {
+    if (!scope.size()) {
         ec = IDBDatabaseException::IDB_INVALID_ACCESS_ERR;
         return 0;
     }
@@ -245,8 +243,8 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
     }
 
     Vector<int64_t> objectStoreIds;
-    for (size_t i = 0; i < storeNames->length(); ++i) {
-        int64_t objectStoreId = findObjectStoreId(storeNames->item(i));
+    for (size_t i = 0; i < scope.size(); ++i) {
+        int64_t objectStoreId = findObjectStoreId(scope[i]);
         if (objectStoreId == IDBObjectStoreMetadata::InvalidId) {
             ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
             return 0;
@@ -263,7 +261,7 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
         ASSERT(ec);
         return 0;
     }
-    RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionBackend, *storeNames, mode, this);
+    RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionBackend, scope, mode, this);
     transactionBackend->setCallbacks(transaction.get());
     return transaction.release();
 }
