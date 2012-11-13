@@ -122,6 +122,7 @@ bool V8DOMWrapper::maybeDOMWrapper(v8::Handle<v8::Value> value)
     if (!hasInternalField(value))
         return false;
 
+    v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);
     ASSERT(object->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount);
 
     v8::HandleScope scope;

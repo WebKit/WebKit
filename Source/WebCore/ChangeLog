@@ -1,3 +1,10 @@
+2012-11-13  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Build fix of V8 bindings.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::maybeDOMWrapper):
+
 2012-11-13  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [Canvas] UI: make the Grid save scrolling position, show wait spinner icon
