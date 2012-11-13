@@ -1,3 +1,16 @@
+2012-11-13  Eberhard Graether  <egraether@google.com>
+
+        checkbox to toggle FPS counter in the inspector's settings
+        https://bugs.webkit.org/show_bug.cgi?id=99660
+
+        Reviewed by Pavel Feldman.
+
+        Added a checkbox to the inspector's settings to toggle a FPS counter. The checkbox appears when InspectorClient::canShowFPSCounter() returns true.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+        (WebKit::WebLayerTreeView::setShowFPSCounter):
+
 2012-11-12  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Delete WebCompositor.h

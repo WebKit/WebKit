@@ -309,6 +309,7 @@ public:
 #endif
     virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&);
     virtual WebViewBenchmarkSupport* benchmarkSupport();
+    virtual void setShowFPSCounter(bool);
 
     // WebLayerTreeViewClient
     virtual void willBeginFrame();
@@ -650,6 +651,7 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING)
     void setIsAcceleratedCompositingActive(bool);
+    void loadFontAtlasIfNecessary();
     void doComposite();
     void doPixelReadbackToCanvas(WebCanvas*, const WebCore::IntRect&);
     void reallocateRenderer();
@@ -846,6 +848,7 @@ private:
     bool m_compositorSurfaceReady;
     float m_deviceScaleInCompositor;
     int m_inputHandlerIdentifier;
+    bool m_isFontAtlasLoaded;
 #endif
     static const WebInputEvent* m_currentInputEvent;
 
