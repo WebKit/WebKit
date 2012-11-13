@@ -104,6 +104,7 @@ void RemoteLayerTreeTransaction::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder << m_rootLayerID;
     encoder << m_changedLayerProperties;
+    encoder << m_destroyedLayerIDs;
 }
 
 bool RemoteLayerTreeTransaction::decode(CoreIPC::ArgumentDecoder* decoder, RemoteLayerTreeTransaction& result)
@@ -115,6 +116,13 @@ bool RemoteLayerTreeTransaction::decode(CoreIPC::ArgumentDecoder* decoder, Remot
 
     if (!decoder->decode(result.m_changedLayerProperties))
         return false;
+
+    if (!decoder->decode(result.m_destroyedLayerIDs))
+        return false;
+    for (uint64_t layerID: result.m_destroyedLayerIDs) {
+        if (!layerID)
+            return false;
+    }
 
     return true;
 }
@@ -151,6 +159,11 @@ void RemoteLayerTreeTransaction::layerPropertiesChanged(const RemoteGraphicsLaye
 
     if (changedProperties & SizeChanged)
         layerProperties.size = graphicsLayer->size();
+}
+
+void RemoteLayerTreeTransaction::setDestroyedLayerIDs(Vector<uint64_t> destroyedLayerIDs)
+{
+    m_destroyedLayerIDs = std::move(destroyedLayerIDs);
 }
 
 #ifndef NDEBUG
@@ -194,7 +207,7 @@ static void dumpChangedLayers(StringBuilder& builder, const HashMap<uint64_t, Re
             writeIndent(builder, 3);
             builder.append("(children (");
             for (size_t i = 0; i < layerProperties.children.size(); ++i) {
-                if (i != 0)
+                if (i)
                     builder.append(' ');
                 builder.appendNumber(layerProperties.children[i]);
             }
@@ -239,6 +252,16 @@ void RemoteLayerTreeTransaction::dump() const
 
     dumpChangedLayers(builder, m_changedLayerProperties);
 
+    if (!m_destroyedLayerIDs.isEmpty()) {
+        writeIndent(builder, 1);
+        builder.append("(destroyed-layers ");
+        for (size_t i = 0; i < m_destroyedLayerIDs.size(); ++i) {
+            if (i)
+                builder.append(' ');
+            builder.appendNumber(m_destroyedLayerIDs[i]);
+        }
+        builder.append(")\n");
+    }
     builder.append(")\n");
 
     fprintf(stderr, "%s", builder.toString().utf8().data());

@@ -64,6 +64,13 @@ void RemoteLayerTreeContext::setRootLayer(GraphicsLayer* rootLayer)
     m_rootLayerID = static_cast<RemoteGraphicsLayer*>(rootLayer)->layerID();
 }
 
+void RemoteLayerTreeContext::layerWillBeDestroyed(RemoteGraphicsLayer* graphicsLayer)
+{
+    ASSERT(!m_destroyedLayers.contains(graphicsLayer->layerID()));
+
+    m_destroyedLayers.append(graphicsLayer->layerID());
+}
+
 void RemoteLayerTreeContext::scheduleLayerFlush()
 {
     if (m_layerFlushTimer.isActive())
@@ -95,6 +102,7 @@ void RemoteLayerTreeContext::flushLayers()
 
     RemoteLayerTreeTransaction transaction;
     transaction.setRootLayerID(m_rootLayerID);
+    transaction.setDestroyedLayerIDs(std::move(m_destroyedLayers));
 
     TemporaryChange<RemoteLayerTreeTransaction*> transactionChange(m_currentTransaction, &transaction);
 

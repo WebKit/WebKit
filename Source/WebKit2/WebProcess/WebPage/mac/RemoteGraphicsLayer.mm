@@ -56,6 +56,7 @@ RemoteGraphicsLayer::RemoteGraphicsLayer(GraphicsLayerClient* client, RemoteLaye
 
 RemoteGraphicsLayer::~RemoteGraphicsLayer()
 {
+    m_context->layerWillBeDestroyed(this);
 }
 
 void RemoteGraphicsLayer::setName(const String& name)
@@ -108,6 +109,13 @@ bool RemoteGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* n
     }
 
     return false;
+}
+
+void RemoteGraphicsLayer::removeFromParent()
+{
+    if (m_parent)
+        static_cast<RemoteGraphicsLayer*>(m_parent)->noteSublayersChanged();
+    GraphicsLayer::removeFromParent();
 }
 
 void RemoteGraphicsLayer::setPosition(const FloatPoint& position)

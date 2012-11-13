@@ -28,9 +28,11 @@
 
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/Timer.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
+class RemoteGraphicsLayer;
 class RemoteLayerTreeTransaction;
 class WebPage;
 
@@ -40,6 +42,8 @@ public:
     ~RemoteLayerTreeContext();
 
     void setRootLayer(WebCore::GraphicsLayer*);
+    void layerWillBeDestroyed(RemoteGraphicsLayer*);
+
     void scheduleLayerFlush();
 
     RemoteLayerTreeTransaction& currentTransaction();
@@ -57,6 +61,7 @@ private:
     WebCore::Timer<RemoteLayerTreeContext> m_layerFlushTimer;
 
     uint64_t m_rootLayerID;
+    Vector<uint64_t> m_destroyedLayers;
     RemoteLayerTreeTransaction* m_currentTransaction;
 };
 

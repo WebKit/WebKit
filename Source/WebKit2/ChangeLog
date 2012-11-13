@@ -1,3 +1,29 @@
+2012-11-13  Anders Carlsson  <andersca@apple.com>
+
+        Store destroyed layers in the remote layer tree transaction
+        https://bugs.webkit.org/show_bug.cgi?id=102127
+
+        Reviewed by Andreas Kling.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (RemoteLayerTreeTransaction):
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        (WebKit::RemoteLayerTreeTransaction::setDestroyedLayerIDs):
+        (WebKit):
+        (WebKit::RemoteLayerTreeTransaction::dump):
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.h:
+        (RemoteGraphicsLayer):
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.mm:
+        (WebKit::RemoteGraphicsLayer::~RemoteGraphicsLayer):
+        (WebKit::RemoteGraphicsLayer::removeFromParent):
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.h:
+        (RemoteLayerTreeContext):
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::layerWillBeDestroyed):
+        (WebKit::RemoteLayerTreeContext::flushLayers):
+
 2012-11-13  Timothy Hatcher  <timothy@apple.com>
 
         Adjust the Web Inspector window title frame if needed to prevent it from intersecting the dock button.
