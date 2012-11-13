@@ -44,12 +44,22 @@ private:
 
     // WebCore::GraphicsLayer
     virtual void setName(const String&) OVERRIDE;
+
+    virtual bool setChildren(const Vector<WebCore::GraphicsLayer*>&);
+    virtual void addChild(WebCore::GraphicsLayer*);
+    virtual void addChildAtIndex(WebCore::GraphicsLayer*, int index);
+    virtual void addChildAbove(WebCore::GraphicsLayer* childLayer, WebCore::GraphicsLayer* sibling);
+    virtual void addChildBelow(WebCore::GraphicsLayer* childLayer, WebCore::GraphicsLayer* sibling);
+    virtual bool replaceChild(WebCore::GraphicsLayer* oldChild, WebCore::GraphicsLayer* newChild);
+
     virtual void setNeedsDisplay() OVERRIDE;
     virtual void setNeedsDisplayInRect(const WebCore::FloatRect&) OVERRIDE;
     virtual void flushCompositingState(const WebCore::FloatRect&) OVERRIDE;
     virtual void flushCompositingStateForThisLayerOnly() OVERRIDE;
 
     void noteLayerPropertiesChanged(unsigned layerChanges);
+    void noteSublayersChanged();
+
     void recursiveCommitChanges();
 
     uint64_t m_layerID;

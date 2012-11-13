@@ -43,6 +43,7 @@ public:
     enum LayerChange {
         NoChange = 0,
         NameChanged = 1 << 1,
+        ChildrenChanged = 1 << 2,
     };
 
     struct LayerProperties {
@@ -54,6 +55,7 @@ public:
         unsigned changedProperties;
 
         String name;
+        Vector<uint64_t> children;
     };
 
     RemoteLayerTreeTransaction();

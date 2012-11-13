@@ -51,8 +51,10 @@ void RemoteLayerTreeHost::didReceiveMessage(CoreIPC::Connection* connection, Cor
 
 void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 {
+#ifndef NDEBUG
     // FIXME: Apply the transaction instead of dumping it to stderr.
     transaction.dump();
+#endif
 }
 
 } // namespace WebKit

@@ -33,6 +33,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
 RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
@@ -46,6 +48,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncode
 
     if (changedProperties & NameChanged)
         encoder << name;
+
+    if (changedProperties & ChildrenChanged)
+        encoder << children;
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder* decoder, LayerProperties& result)
@@ -56,6 +61,16 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecode
     if (result.changedProperties & NameChanged) {
         if (!decoder->decode(result.name))
             return false;
+    }
+
+    if (result.changedProperties & ChildrenChanged) {
+        if (!decoder->decode(result.children))
+            return false;
+
+        for (auto layerID: result.children) {
+            if (!layerID)
+                return false;
+        }
     }
 
     return true;
@@ -90,6 +105,17 @@ void RemoteLayerTreeTransaction::layerPropertiesChanged(const RemoteGraphicsLaye
 
     if (changedProperties & NameChanged)
         layerProperties.name = graphicsLayer->name();
+
+    if (changedProperties & ChildrenChanged) {
+        const Vector<GraphicsLayer*>& children = graphicsLayer->children();
+
+        ASSERT(layerProperties.children.isEmpty());
+        layerProperties.children.reserveCapacity(children.size());
+        for (size_t i = 0; i < children.size(); ++i) {
+            RemoteGraphicsLayer* childLayer = static_cast<RemoteGraphicsLayer*>(children[i]);
+            layerProperties.children.uncheckedAppend(childLayer->layerID());
+        }
+    }
 }
 
 #ifndef NDEBUG
@@ -126,6 +152,19 @@ static void dumpChangedLayers(StringBuilder& builder, const HashMap<uint64_t, Re
             builder.append("(name \"");
             builder.append(layerProperties.name);
             builder.append("\")");
+        }
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::ChildrenChanged) {
+            builder.append('\n');
+            writeIndent(builder, 3);
+            builder.append("(children (");
+            for (size_t i = 0; i < layerProperties.children.size(); ++i) {
+                if (i != 0)
+                    builder.append(' ');
+                builder.appendNumber(layerProperties.children[i]);
+            }
+
+            builder.append(")");
         }
 
         builder.append(")\n");

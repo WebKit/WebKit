@@ -66,6 +66,50 @@ void RemoteGraphicsLayer::setName(const String& name)
     noteLayerPropertiesChanged(RemoteLayerTreeTransaction::NameChanged);
 }
 
+bool RemoteGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)
+{
+    if (GraphicsLayer::setChildren(children)) {
+        noteSublayersChanged();
+        return true;
+    }
+
+    return false;
+}
+
+void RemoteGraphicsLayer::addChild(GraphicsLayer* childLayer)
+{
+    GraphicsLayer::addChild(childLayer);
+    noteSublayersChanged();
+}
+
+void RemoteGraphicsLayer::addChildAtIndex(GraphicsLayer* childLayer, int index)
+{
+    GraphicsLayer::addChildAtIndex(childLayer, index);
+    noteSublayersChanged();
+}
+
+void RemoteGraphicsLayer::addChildAbove(GraphicsLayer* childLayer, GraphicsLayer* sibling)
+{
+    GraphicsLayer::addChildAbove(childLayer, sibling);
+    noteSublayersChanged();
+}
+
+void RemoteGraphicsLayer::addChildBelow(GraphicsLayer* childLayer, GraphicsLayer* sibling)
+{
+    GraphicsLayer::addChildBelow(childLayer, sibling);
+    noteSublayersChanged();
+}
+
+bool RemoteGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
+{
+    if (GraphicsLayer::replaceChild(oldChild, newChild)) {
+        noteSublayersChanged();
+        return true;
+    }
+
+    return false;
+}
+
 void RemoteGraphicsLayer::setNeedsDisplay()
 {
     FloatRect hugeRect(-std::numeric_limits<float>::max() / 2, -std::numeric_limits<float>::max() / 2,
@@ -98,6 +142,13 @@ void RemoteGraphicsLayer::noteLayerPropertiesChanged(unsigned layerChanges)
     if (!m_uncommittedLayerChanges && m_client)
         m_client->notifyFlushRequired(this);
     m_uncommittedLayerChanges |= layerChanges;
+}
+
+void RemoteGraphicsLayer::noteSublayersChanged()
+{
+    noteLayerPropertiesChanged(RemoteLayerTreeTransaction::ChildrenChanged);
+
+    // FIXME: Handle replica layers.
 }
 
 void RemoteGraphicsLayer::recursiveCommitChanges()

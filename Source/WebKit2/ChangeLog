@@ -1,5 +1,37 @@
 2012-11-12  Anders Carlsson  <andersca@apple.com>
 
+        Include child layers in the remote layer tree transaction
+        https://bugs.webkit.org/show_bug.cgi?id=102026
+
+        Reviewed by Andreas Kling.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        Encode and decode child layer IDs.
+
+        (WebKit::RemoteLayerTreeTransaction::layerPropertiesChanged):
+        Grab all child layer IDs and stick them in a vector.
+
+        (WebKit::dumpChangedLayers):
+        Dump child layer IDs as well.
+
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.h:
+        * WebProcess/WebPage/mac/RemoteGraphicsLayer.mm:
+        (WebKit::RemoteGraphicsLayer::setChildren):
+        (WebKit::RemoteGraphicsLayer::addChild):
+        (WebKit::RemoteGraphicsLayer::addChildAtIndex):
+        (WebKit::RemoteGraphicsLayer::addChildAbove):
+        (WebKit::RemoteGraphicsLayer::addChildBelow):
+        (WebKit::RemoteGraphicsLayer::replaceChild):
+        Call noteSublayersChanged.
+
+        (WebKit::RemoteGraphicsLayer::noteSublayersChanged):
+        Note that the Children property changed.
+
+2012-11-12  Anders Carlsson  <andersca@apple.com>
+
         Send along the current remote layer tree transaction with the commit message
         https://bugs.webkit.org/show_bug.cgi?id=102014
 
