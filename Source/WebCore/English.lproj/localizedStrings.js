@@ -621,6 +621,7 @@ localizedStrings["Web Inspector - %s"] = "Web Inspector - %s";
 localizedStrings["Open using %s"] = "Open using %s";
 localizedStrings["Open Using %s"] = "Open Using %s";
 localizedStrings["Show objects' hidden properties"] = "Show objects' hidden properties";
+localizedStrings["Show uninstrumented native memory"] = "Show uninstrumented native memory";
 localizedStrings["Remove All Breakpoints"] = "Remove All Breakpoints";
 localizedStrings["Remove all breakpoints"] = "Remove all breakpoints";
 localizedStrings["Remove All DOM Breakpoints"] = "Remove All DOM Breakpoints";

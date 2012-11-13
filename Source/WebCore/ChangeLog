@@ -1,3 +1,16 @@
+2012-11-12  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Add an option to switch display of "Other" memory on/off in NMI
+        https://bugs.webkit.org/show_bug.cgi?id=101601
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.GenericSettingsTab):
+
 2012-11-10  Dirk Schulze  <krit@webkit.org>
 
         BasicShapes 'circle', 'rectangle', 'ellipse' should be animatable with themselves
