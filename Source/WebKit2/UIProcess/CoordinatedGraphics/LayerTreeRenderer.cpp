@@ -355,9 +355,9 @@ void LayerTreeRenderer::setRootLayerID(WebLayerID layerID)
     m_rootLayer->addChild(layer);
 }
 
-PassRefPtr<CoordinatedBackingStore> LayerTreeRenderer::getBackingStore(WebLayerID id)
+PassRefPtr<CoordinatedBackingStore> LayerTreeRenderer::getBackingStore(GraphicsLayer* graphicsLayer)
 {
-    TextureMapperLayer* layer = toTextureMapperLayer(layerByID(id));
+    TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer);
     ASSERT(layer);
     RefPtr<CoordinatedBackingStore> backingStore = static_cast<CoordinatedBackingStore*>(layer->backingStore().get());
     if (!backingStore) {
@@ -368,9 +368,9 @@ PassRefPtr<CoordinatedBackingStore> LayerTreeRenderer::getBackingStore(WebLayerI
     return backingStore;
 }
 
-void LayerTreeRenderer::removeBackingStoreIfNeeded(WebLayerID layerID, int /*tileID*/)
+void LayerTreeRenderer::removeBackingStoreIfNeeded(GraphicsLayer* graphicsLayer)
 {
-    TextureMapperLayer* layer = toTextureMapperLayer(layerByID(layerID));
+    TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer);
     ASSERT(layer);
     RefPtr<CoordinatedBackingStore> backingStore = static_cast<CoordinatedBackingStore*>(layer->backingStore().get());
     ASSERT(backingStore);
@@ -378,23 +378,41 @@ void LayerTreeRenderer::removeBackingStoreIfNeeded(WebLayerID layerID, int /*til
         layer->setBackingStore(0);
 }
 
-void LayerTreeRenderer::createTile(WebLayerID layerID, int tileID, float scale, const WebCore::IntSize& backingSize)
+void LayerTreeRenderer::resetBackingStoreSizeToLayerSize(GraphicsLayer* graphicsLayer)
 {
-    RefPtr<CoordinatedBackingStore> backingStore = getBackingStore(layerID);
+    TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer);
+    ASSERT(layer);
+    RefPtr<CoordinatedBackingStore> backingStore = static_cast<CoordinatedBackingStore*>(layer->backingStore().get());
+    ASSERT(backingStore);
+    backingStore->setSize(graphicsLayer->size());
+}
+
+void LayerTreeRenderer::createTile(WebLayerID layerID, int tileID, float scale)
+{
+    GraphicsLayer* layer = layerByID(layerID);
+    ASSERT(layer);
+    RefPtr<CoordinatedBackingStore> backingStore = getBackingStore(layer);
     backingStore->createTile(tileID, scale);
-    backingStore->setSize(backingSize);
+    resetBackingStoreSizeToLayerSize(layer);
 }
 
 void LayerTreeRenderer::removeTile(WebLayerID layerID, int tileID)
 {
-    getBackingStore(layerID)->removeTile(tileID);
-    removeBackingStoreIfNeeded(layerID, tileID);
+    GraphicsLayer* layer = layerByID(layerID);
+    ASSERT(layer);
+    RefPtr<CoordinatedBackingStore> backingStore = getBackingStore(layer);
+    backingStore->removeTile(tileID);
+    resetBackingStoreSizeToLayerSize(layer);
+    removeBackingStoreIfNeeded(layer);
 }
 
 void LayerTreeRenderer::updateTile(WebLayerID layerID, int tileID, const TileUpdate& update)
 {
-    RefPtr<CoordinatedBackingStore> backingStore = getBackingStore(layerID);
+    GraphicsLayer* layer = layerByID(layerID);
+    ASSERT(layer);
+    RefPtr<CoordinatedBackingStore> backingStore = getBackingStore(layer);
     backingStore->updateTile(tileID, update.sourceRect, update.tileRect, update.surface, update.offset);
+    resetBackingStoreSizeToLayerSize(layer);
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 

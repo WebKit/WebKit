@@ -64,7 +64,7 @@ public:
     static PassRefPtr<CoordinatedBackingStore> create() { return adoptRef(new CoordinatedBackingStore); }
     void commitTileOperations(WebCore::TextureMapper*);
     PassRefPtr<WebCore::BitmapTexture> texture() const;
-    void setSize(const WebCore::IntSize&);
+    void setSize(const WebCore::FloatSize&);
     virtual void paintToTextureMapper(WebCore::TextureMapper*, const WebCore::FloatRect&, const WebCore::TransformationMatrix&, float, WebCore::BitmapTexture*);
 
 private:
@@ -75,7 +75,7 @@ private:
 
     HashMap<int, CoordinatedBackingStoreTile> m_tiles;
     HashSet<int> m_tilesToRemove;
-    WebCore::IntSize m_size;
+    WebCore::FloatSize m_size;
     float m_scale;
 };
 

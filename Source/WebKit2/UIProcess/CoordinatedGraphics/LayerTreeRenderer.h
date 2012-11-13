@@ -85,7 +85,7 @@ public:
     void setLayerFilters(WebLayerID, const WebCore::FilterOperations&);
 #endif
 
-    void createTile(WebLayerID, int, float scale, const WebCore::IntSize&);
+    void createTile(WebLayerID, int, float scale);
     void removeTile(WebLayerID, int);
     void updateTile(WebLayerID, int, const TileUpdate&);
     void flushLayerChanges();
@@ -126,8 +126,9 @@ private:
     void renderNextFrame();
     void purgeBackingStores();
 
-    PassRefPtr<CoordinatedBackingStore> getBackingStore(WebLayerID);
-    void removeBackingStoreIfNeeded(WebLayerID, int tileID);
+    PassRefPtr<CoordinatedBackingStore> getBackingStore(WebCore::GraphicsLayer*);
+    void removeBackingStoreIfNeeded(WebCore::GraphicsLayer*);
+    void resetBackingStoreSizeToLayerSize(WebCore::GraphicsLayer*);
 
     typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerMap;
     WebCore::FloatSize m_contentsSize;

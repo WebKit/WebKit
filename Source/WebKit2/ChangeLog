@@ -1,3 +1,53 @@
+2012-11-12  Huang Dongsung  <luxtella@company100.net>
+
+        [Qt] REGRESSION(134142): overscaled tiles in pixel test results and MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=101918
+
+        Reviewed by Noam Rosenthal.
+
+        Currently, CoordinatedBackingStore can keep out-dated contents size, because the
+        size of CoordinatedBackingStore is set by only LayerTreeRenderer::createTile().
+        Although the size of GraphicsLayer is changed, LayerTreeRenderer::createTile()
+        is not called. However, LayerTreeRenderer::createTile() is always called, when
+        the contents scale of GraphicsLayer is changed.
+
+        This patch makes sure that we reset the backing store's size to the
+        layer size when UpdateTile or RemoveTile are called.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStore::setSize):
+        (WebKit::CoordinatedBackingStore::paintToTextureMapper):
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.h:
+        (CoordinatedBackingStore):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::createTileForLayer):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::getBackingStore):
+        (WebKit::LayerTreeRenderer::removeBackingStoreIfNeeded):
+        (WebKit::LayerTreeRenderer::resetBackingStoreSizeToLayerSize):
+        (WebKit):
+        (WebKit::LayerTreeRenderer::createTile):
+        (WebKit::LayerTreeRenderer::removeTile):
+        (WebKit::LayerTreeRenderer::updateTile):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::createTile):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        (CoordinatedGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp:
+        (WebKit::CoordinatedTile::updateBackBuffer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.h:
+        (CoordinatedTileClient):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::createTile):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-11-12  Sam Weinig  <sam@webkit.org>
 
         <rdar://problem/12445176>

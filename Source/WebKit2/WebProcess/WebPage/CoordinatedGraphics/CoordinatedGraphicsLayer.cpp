@@ -655,9 +655,9 @@ PassOwnPtr<WebCore::GraphicsContext> CoordinatedGraphicsLayer::beginContentUpdat
     return m_CoordinatedGraphicsLayerClient->beginContentUpdate(size, contentsOpaque() ? 0 : ShareableBitmap::SupportsAlpha, atlas, offset);
 }
 
-void CoordinatedGraphicsLayer::createTile(int tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect, const WebCore::IntSize& backingSize)
+void CoordinatedGraphicsLayer::createTile(int tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
 {
-    m_CoordinatedGraphicsLayerClient->createTile(id(), tileID, updateInfo, tileRect, backingSize);
+    m_CoordinatedGraphicsLayerClient->createTile(id(), tileID, updateInfo, tileRect);
 }
 
 void CoordinatedGraphicsLayer::updateTile(int tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& tileRect)
