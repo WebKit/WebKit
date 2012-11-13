@@ -30,6 +30,7 @@
 
 namespace WebKit {
 
+class RemoteLayerTreeTransaction;
 class WebPageProxy;
 
 class RemoteLayerTreeHost : CoreIPC::MessageReceiver {
@@ -45,7 +46,7 @@ private:
     void didReceiveRemoteLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
     // Message handlers.
-    void commit();
+    void commit(const RemoteLayerTreeTransaction&);
 
     WebPageProxy* m_webPageProxy;
 };

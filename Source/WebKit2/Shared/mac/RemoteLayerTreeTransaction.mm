@@ -26,6 +26,9 @@
 #include "config.h"
 #include "RemoteLayerTreeTransaction.h"
 
+#include "ArgumentCoders.h"
+#include "MessageDecoder.h"
+#include "MessageEncoder.h"
 #include "RemoteGraphicsLayer.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -37,12 +40,46 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
 {
 }
 
+void RemoteLayerTreeTransaction::LayerProperties::encode(CoreIPC::ArgumentEncoder& encoder) const
+{
+    encoder << changedProperties;
+
+    if (changedProperties & NameChanged)
+        encoder << name;
+}
+
+bool RemoteLayerTreeTransaction::LayerProperties::decode(CoreIPC::ArgumentDecoder* decoder, LayerProperties& result)
+{
+    if (!decoder->decode(result.changedProperties))
+        return false;
+
+    if (result.changedProperties & NameChanged) {
+        if (!decoder->decode(result.name))
+            return false;
+    }
+
+    return true;
+}
+
 RemoteLayerTreeTransaction::RemoteLayerTreeTransaction()
 {
 }
 
 RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction()
 {
+}
+
+void RemoteLayerTreeTransaction::encode(CoreIPC::ArgumentEncoder& encoder) const
+{
+    encoder << m_changedLayerProperties;
+}
+
+bool RemoteLayerTreeTransaction::decode(CoreIPC::ArgumentDecoder* decoder, RemoteLayerTreeTransaction& result)
+{
+    if (!decoder->decode(result.m_changedLayerProperties))
+        return false;
+
+    return true;
 }
 
 void RemoteLayerTreeTransaction::layerPropertiesChanged(const RemoteGraphicsLayer* graphicsLayer, unsigned changedProperties)

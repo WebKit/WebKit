@@ -95,8 +95,7 @@ void RemoteLayerTreeContext::flushLayers()
     m_webPage->layoutIfNeeded();
     m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 
-    // FIXME: Package up the transaction and send it to the UI process.
-    m_webPage->send(Messages::RemoteLayerTreeHost::Commit());
+    m_webPage->send(Messages::RemoteLayerTreeHost::Commit(transaction));
 }
 
 } // namespace WebKit

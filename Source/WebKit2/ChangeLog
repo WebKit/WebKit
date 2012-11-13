@@ -1,3 +1,25 @@
+2012-11-12  Anders Carlsson  <andersca@apple.com>
+
+        Send along the current remote layer tree transaction with the commit message
+        https://bugs.webkit.org/show_bug.cgi?id=102014
+
+        Reviewed by Tim Horton.
+
+        Add encode and decode member functions to RemoteLayerTreeTransaction and RemoteLayerTreeTransaction::LayerProperties.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::encode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        * UIProcess/mac/RemoteLayerTreeHost.messages.in:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit):
+        * WebProcess/WebPage/mac/RemoteLayerTreeContext.mm:
+        (WebKit::RemoteLayerTreeContext::flushLayers):
+
 2012-11-12  Brady Eidson  <beidson@apple.com>
 
         Get rid of the CrossOriginRedirectReceived message to the NetworkProcess.

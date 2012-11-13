@@ -27,6 +27,7 @@
 #include "RemoteLayerTreeHost.h"
 
 #include "RemoteLayerTreeHostMessages.h"
+#include "RemoteLayerTreeTransaction.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
@@ -48,8 +49,10 @@ void RemoteLayerTreeHost::didReceiveMessage(CoreIPC::Connection* connection, Cor
     didReceiveRemoteLayerTreeHostMessage(connection, messageID, decoder);
 }
 
-void RemoteLayerTreeHost::commit()
+void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 {
+    // FIXME: Apply the transaction instead of dumping it to stderr.
+    transaction.dump();
 }
 
 } // namespace WebKit

@@ -29,6 +29,11 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
+namespace CoreIPC {
+class ArgumentDecoder;
+class ArgumentEncoder;
+}
+
 namespace WebKit {
 
 class RemoteGraphicsLayer;
@@ -43,6 +48,9 @@ public:
     struct LayerProperties {
         LayerProperties();
 
+        void encode(CoreIPC::ArgumentEncoder&) const;
+        static bool decode(CoreIPC::ArgumentDecoder*, LayerProperties&);
+
         unsigned changedProperties;
 
         String name;
@@ -50,6 +58,9 @@ public:
 
     RemoteLayerTreeTransaction();
     ~RemoteLayerTreeTransaction();
+
+    void encode(CoreIPC::ArgumentEncoder&) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, RemoteLayerTreeTransaction&);
 
     void layerPropertiesChanged(const RemoteGraphicsLayer*, unsigned changedProperties);
 
