@@ -59,7 +59,7 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec)
     if (!exec->argument(1).isUndefinedOrNull()) {
         JSObject* object = exec->argument(1).getObject();
         if (!object) {
-            setDOMException(exec, TYPE_MISMATCH_ERR);
+            setDOMException(exec, NATIVE_TYPE_ERR);
             return jsUndefined();
         }
 
@@ -92,7 +92,7 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec)
     if (!exec->argument(2).isUndefinedOrNull()) {
         JSObject* object = exec->argument(2).getObject();
         if (!object) {
-            setDOMException(exec, TYPE_MISMATCH_ERR);
+            setDOMException(exec, NATIVE_TYPE_ERR);
             return jsUndefined();
         }
 
@@ -103,7 +103,7 @@ JSValue JSSQLTransaction::executeSql(ExecState* exec)
     if (!exec->argument(3).isUndefinedOrNull()) {
         JSObject* object = exec->argument(3).getObject();
         if (!object) {
-            setDOMException(exec, TYPE_MISMATCH_ERR);
+            setDOMException(exec, NATIVE_TYPE_ERR);
             return jsUndefined();
         }
 

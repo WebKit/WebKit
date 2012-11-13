@@ -2784,7 +2784,7 @@ sub GenerateParametersCheck
 
             if ($codeGenerator->IsSVGTypeNeedingTearOff($argType) and not $implClassName =~ /List$/) {
                 push(@$outputArray, "    if (!$name) {\n");
-                push(@$outputArray, "        setDOMException(exec, TYPE_MISMATCH_ERR);\n");
+                push(@$outputArray, "        setDOMException(exec, NATIVE_TYPE_ERR);\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
                 push(@$outputArray, "    }\n");
             }

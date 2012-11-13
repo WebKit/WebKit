@@ -2466,7 +2466,7 @@ void HTMLMediaElement::webkitAddKey(const String& keySystem, PassRefPtr<Uint8Arr
     }
 
     if (!key->length()) {
-        ec = TYPE_MISMATCH_ERR;
+        ec = NATIVE_TYPE_ERR;
         return;
     }
 

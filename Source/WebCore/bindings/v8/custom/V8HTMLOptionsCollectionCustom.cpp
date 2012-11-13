@@ -55,7 +55,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::addCallback(const v8::Arguments& 
 {
     INC_STATS("DOM.HTMLOptionsCollection.add()");
     if (!V8HTMLOptionElement::HasInstance(args[0]))
-        return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
+        return setDOMException(NATIVE_TYPE_ERR, args.GetIsolate());
     HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(args.Holder());
     HTMLOptionElement* option = V8HTMLOptionElement::toNative(v8::Handle<v8::Object>(v8::Handle<v8::Object>::Cast(args[0])));
 
@@ -71,7 +71,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::addCallback(const v8::Arguments& 
             return v8::Undefined();
 
         if (!ok)
-            ec = TYPE_MISMATCH_ERR;
+            ec = NATIVE_TYPE_ERR;
         else
             imp->add(option, index, ec);
     }

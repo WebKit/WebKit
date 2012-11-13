@@ -59,7 +59,7 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
 
     if (args.Length() > 1 && !isUndefinedOrNull(args[1])) {
         if (!args[1]->IsObject())
-            return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
+            return setDOMException(NATIVE_TYPE_ERR, args.GetIsolate());
 
         uint32_t sqlArgsLength = 0;
         v8::Local<v8::Object> sqlArgsObject = args[1]->ToObject();
@@ -93,14 +93,14 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
     RefPtr<SQLStatementCallback> callback;
     if (args.Length() > 2 && !isUndefinedOrNull(args[2])) {
         if (!args[2]->IsObject())
-            return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
+            return setDOMException(NATIVE_TYPE_ERR, args.GetIsolate());
         callback = V8SQLStatementCallback::create(args[2], scriptExecutionContext);
     }
 
     RefPtr<SQLStatementErrorCallback> errorCallback;
     if (args.Length() > 3 && !isUndefinedOrNull(args[3])) {
         if (!args[3]->IsObject())
-            return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
+            return setDOMException(NATIVE_TYPE_ERR, args.GetIsolate());
         errorCallback = V8SQLStatementErrorCallback::create(args[3], scriptExecutionContext);
     }
 

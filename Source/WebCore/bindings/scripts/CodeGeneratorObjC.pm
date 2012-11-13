@@ -1591,7 +1591,7 @@ sub GenerateImplementation
                 $implIncludes{"ExceptionCode.h"} = 1;
                 push(@functionContent, "    $idlTypeWithNamespace* ${paramName}Core = $implGetter;\n");
                 push(@functionContent, "    if (!${paramName}Core) {\n");
-                push(@functionContent, "        WebCore::ExceptionCode ec = WebCore::TYPE_MISMATCH_ERR;\n");
+                push(@functionContent, "        WebCore::ExceptionCode ec = WebCore::NATIVE_TYPE_ERR;\n");
                 push(@functionContent, "        $exceptionRaiseOnError\n");
                 if ($returnType eq "void") { 
                     push(@functionContent, "        return;\n");

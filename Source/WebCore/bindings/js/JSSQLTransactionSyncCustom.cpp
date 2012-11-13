@@ -58,7 +58,7 @@ JSValue JSSQLTransactionSync::executeSql(ExecState* exec)
     if (!exec->argument(1).isUndefinedOrNull()) {
         JSObject* object = exec->argument(1).getObject();
         if (!object) {
-            setDOMException(exec, TYPE_MISMATCH_ERR);
+            setDOMException(exec, NATIVE_TYPE_ERR);
             return jsUndefined();
         }
 

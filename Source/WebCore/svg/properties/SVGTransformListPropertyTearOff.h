@@ -42,7 +42,7 @@ public:
     {
         ASSERT(m_values);
         if (!matrix) {
-            ec = TYPE_MISMATCH_ERR;
+            ec = NATIVE_TYPE_ERR;
             return 0;
         }
         return SVGPropertyTearOff<SVGTransform>::create(m_values->createSVGTransformFromMatrix(matrix->propertyReference()));

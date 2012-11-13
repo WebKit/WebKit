@@ -59,7 +59,7 @@ v8::Handle<v8::Value> V8SQLTransactionSync::executeSqlCallback(const v8::Argumen
 
     if (args.Length() > 1 && !isUndefinedOrNull(args[1])) {
         if (!args[1]->IsObject())
-            return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
+            return setDOMException(NATIVE_TYPE_ERR, args.GetIsolate());
 
         uint32_t sqlArgsLength = 0;
         v8::Local<v8::Object> sqlArgsObject = args[1]->ToObject();

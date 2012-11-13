@@ -1,3 +1,52 @@
+2012-11-12  Erik Arvidsson  <arv@chromium.org>
+
+        Replace DOMException TYPE_MISMATCH_ERR with TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=101604
+
+        Reviewed by Adam Barth.
+
+        DOMException.TYPE_MISMATCH_ERR is deprecated in favor of using TypeError.
+
+        We have historically used TYPE_MISMATCH_ERR as a blanket DOMException code when
+        the spec mandates TypeError being thrown.
+
+        Updated existing tests.
+
+        * Modules/mediastream/MediaConstraintsImpl.cpp:
+        * Modules/mediastream/MediaStreamTrackList.cpp:
+        * Modules/mediastream/PeerConnection00.cpp:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        * Modules/mediastream/RTCSessionDescription.cpp:
+        * Modules/mediastream/SessionDescription.cpp:
+        * bindings/js/CallbackFunction.cpp:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        * bindings/js/JSMutationObserverCustom.cpp:
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        * bindings/js/JSSQLTransactionCustom.cpp:
+        * bindings/js/JSSQLTransactionSyncCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8Callback.h:
+        * bindings/v8/V8Collection.cpp:
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        * bindings/v8/custom/V8SQLTransactionSyncCustom.cpp:
+        * dom/DOMCoreException.idl:
+        * html/HTMLElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLOptionsCollection.cpp:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * page/Crypto.cpp:
+        * page/DOMSelection.cpp:
+        * svg/properties/SVGTransformListPropertyTearOff.h:
+
 2012-11-12  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Use sequence<> instead of DOMString[] in IDL

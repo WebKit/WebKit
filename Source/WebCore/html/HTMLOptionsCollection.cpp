@@ -48,7 +48,7 @@ void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, int index
     HTMLOptionElement* newOption = element.get();
 
     if (!newOption) {
-        ec = TYPE_MISMATCH_ERR;
+        ec = NATIVE_TYPE_ERR;
         return;
     }
 

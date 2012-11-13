@@ -61,7 +61,7 @@
             testException("video.webkitAddKey('webkit-org.w3.clearkey', undefined)", "DOMException.SYNTAX_ERR");
 
             consoleWrite("<br>0-length key is caught before load state is checked.");
-            testException("video.webkitAddKey('webkit-org.w3.clearkey', new Uint8Array())", "DOMException.TYPE_MISMATCH_ERR");
+            testError("video.webkitAddKey('webkit-org.w3.clearkey', new Uint8Array())", "'TypeError'");
 
             consoleWrite("<br>Key system validity is not checked before loading.");
             testException("video.webkitGenerateKeyRequest('com.example.invalid')", "DOMException.INVALID_STATE_ERR");

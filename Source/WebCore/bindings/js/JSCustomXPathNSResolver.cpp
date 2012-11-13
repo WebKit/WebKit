@@ -46,7 +46,7 @@ PassRefPtr<JSCustomXPathNSResolver> JSCustomXPathNSResolver::create(ExecState* e
 
     JSObject* resolverObject = value.getObject();
     if (!resolverObject) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
+        setDOMException(exec, NATIVE_TYPE_ERR);
         return 0;
     }
 

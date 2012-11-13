@@ -45,7 +45,7 @@ JSValue JSSQLResultSetRowList::item(ExecState* exec)
     bool indexOk;
     int index = finiteInt32Value(exec->argument(0), exec, indexOk);
     if (!indexOk) {
-        setDOMException(exec, TYPE_MISMATCH_ERR);
+        setDOMException(exec, NATIVE_TYPE_ERR);
         return jsUndefined();
     }
     if (index < 0 || (unsigned)index >= m_impl->length()) {
