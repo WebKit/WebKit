@@ -56,6 +56,7 @@ public:
 
 private:
     bool needMillisecondField() const;
+    bool shouldHourFieldReadOnly() const;
     bool shouldMillisecondFieldReadOnly() const;
     bool shouldMinuteFieldReadOnly() const;
     bool shouldSecondFieldReadOnly() const;
@@ -102,21 +103,45 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
         m_editElement.addField(DateTimeDayFieldElement::create(document, m_editElement, m_parameters.placeholderForDay));
         return;
 
-    case DateTimeFormat::FieldTypeHour11:
-        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 0, 11));
+    case DateTimeFormat::FieldTypeHour11: {
+        RefPtr<DateTimeFieldElement> field = DateTimeHourFieldElement::create(document, m_editElement, 0, 11);
+        m_editElement.addField(field);
+        if (shouldHourFieldReadOnly()) {
+            field->setValueAsDate(m_dateValue);
+            field->setReadOnly();
+        }
         return;
+    }
 
-    case DateTimeFormat::FieldTypeHour12:
-        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 1, 12));
+    case DateTimeFormat::FieldTypeHour12: {
+        RefPtr<DateTimeFieldElement> field = DateTimeHourFieldElement::create(document, m_editElement, 1, 12);
+        m_editElement.addField(field);
+        if (shouldHourFieldReadOnly()) {
+            field->setValueAsDate(m_dateValue);
+            field->setReadOnly();
+        }
         return;
+    }
 
-    case DateTimeFormat::FieldTypeHour23:
-        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 0, 23));
+    case DateTimeFormat::FieldTypeHour23: {
+        RefPtr<DateTimeFieldElement> field = DateTimeHourFieldElement::create(document, m_editElement, 0, 23);
+        m_editElement.addField(field);
+        if (shouldHourFieldReadOnly()) {
+            field->setValueAsDate(m_dateValue);
+            field->setReadOnly();
+        }
         return;
+    }
 
-    case DateTimeFormat::FieldTypeHour24:
-        m_editElement.addField(DateTimeHourFieldElement::create(document, m_editElement, 1, 24));
+    case DateTimeFormat::FieldTypeHour24: {
+        RefPtr<DateTimeFieldElement> field = DateTimeHourFieldElement::create(document, m_editElement, 1, 24);
+        m_editElement.addField(field);
+        if (shouldHourFieldReadOnly()) {
+            field->setValueAsDate(m_dateValue);
+            field->setReadOnly();
+        }
         return;
+    }
 
     case DateTimeFormat::FieldTypeMinute: {
         RefPtr<DateTimeNumericFieldElement> field = DateTimeMinuteFieldElement::create(document, m_editElement);
@@ -158,9 +183,15 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
         }
         return;
 
-    case DateTimeFormat::FieldTypePeriod:
-        m_editElement.addField(DateTimeAMPMFieldElement::create(document, m_editElement, m_parameters.locale.timeAMPMLabels()));
+    case DateTimeFormat::FieldTypePeriod: {
+        RefPtr<DateTimeFieldElement> field = DateTimeAMPMFieldElement::create(document, m_editElement, m_parameters.locale.timeAMPMLabels());
+        m_editElement.addField(field);
+        if (shouldHourFieldReadOnly()) {
+            field->setValueAsDate(m_dateValue);
+            field->setReadOnly();
+        }
         return;
+    }
 
     case DateTimeFormat::FieldTypeSecond: {
         RefPtr<DateTimeNumericFieldElement> field = DateTimeSecondFieldElement::create(document, m_editElement);
@@ -221,19 +252,31 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     }
 }
 
+bool DateTimeEditBuilder::shouldHourFieldReadOnly() const
+{
+    const Decimal decimalMsPerDay(static_cast<int>(msPerDay));
+    Decimal hourPartOfMinimum = (stepRange().minimum().abs().remainder(decimalMsPerDay) / static_cast<int>(msPerHour)).floor();
+    return hourPartOfMinimum == m_dateValue.hour() && stepRange().step().remainder(decimalMsPerDay).isZero();
+}
+
 bool DateTimeEditBuilder::shouldMillisecondFieldReadOnly() const
 {
-    return !m_dateValue.millisecond() && stepRange().step().remainder(static_cast<int>(msPerSecond)).isZero();
+    const Decimal decimalMsPerSecond(static_cast<int>(msPerSecond));
+    return stepRange().minimum().abs().remainder(decimalMsPerSecond) == m_dateValue.millisecond() && stepRange().step().remainder(decimalMsPerSecond).isZero();
 }
 
 bool DateTimeEditBuilder::shouldMinuteFieldReadOnly() const
 {
-    return !m_dateValue.minute() && stepRange().step().remainder(static_cast<int>(msPerHour)).isZero();
+    const Decimal decimalMsPerHour(static_cast<int>(msPerHour));
+    Decimal minutePartOfMinimum = (stepRange().minimum().abs().remainder(decimalMsPerHour) / static_cast<int>(msPerMinute)).floor();
+    return minutePartOfMinimum == m_dateValue.minute() && stepRange().step().remainder(decimalMsPerHour).isZero();
 }
 
 bool DateTimeEditBuilder::shouldSecondFieldReadOnly() const
 {
-    return !m_dateValue.second() && stepRange().step().remainder(static_cast<int>(msPerMinute)).isZero();
+    const Decimal decimalMsPerMinute(static_cast<int>(msPerMinute));
+    Decimal secondPartOfMinimum = (stepRange().minimum().abs().remainder(decimalMsPerMinute) / static_cast<int>(msPerSecond)).floor();
+    return secondPartOfMinimum == m_dateValue.second() && stepRange().step().remainder(decimalMsPerMinute).isZero();
 }
 
 void DateTimeEditBuilder::visitLiteral(const String& text)

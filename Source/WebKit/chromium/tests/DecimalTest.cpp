@@ -897,13 +897,17 @@ TEST_F(DecimalTest, RealWorldExampleRangeStepUpStepDown)
 
 TEST_F(DecimalTest, Remainder)
 {
-    EXPECT_EQ(encode(9, -1, Negative), encode(21, -1, Positive).remainder(3));
+    EXPECT_EQ(encode(21, -1, Positive), encode(21, -1, Positive).remainder(3));
     EXPECT_EQ(Decimal(1), Decimal(10).remainder(3));
+    EXPECT_EQ(Decimal(1), Decimal(10).remainder(-3));
     EXPECT_EQ(encode(1, 0, Negative), Decimal(-10).remainder(3));
+    EXPECT_EQ(Decimal(-1), Decimal(-10).remainder(-3));
     EXPECT_EQ(encode(2, -1, Positive), encode(102, -1, Positive).remainder(1));
     EXPECT_EQ(encode(1, -1, Positive), Decimal(10).remainder(encode(3, -1, Positive)));
-    EXPECT_EQ(encode(3, -1, Negative), encode(36, -1, Positive).remainder(encode(13, -1, Positive)));
+    EXPECT_EQ(Decimal(1), encode(36, -1, Positive).remainder(encode(13, -1, Positive)));
     EXPECT_EQ(encode(1, 87, Positive), (encode(1234, 100, Positive).remainder(Decimal(3))));
+    EXPECT_EQ(Decimal(500), (Decimal(500).remainder(1000)));
+    EXPECT_EQ(Decimal(-500), (Decimal(-500).remainder(1000)));
 }
 
 TEST_F(DecimalTest, RemainderBigExponent)

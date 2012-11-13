@@ -1,3 +1,47 @@
+2012-11-12  Kent Tamura  <tkent@chromium.org>
+
+        Unable to set valid time value to input[type=time] with user interaction in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=102048
+
+        Reviewed by Kentaro Hara.
+
+        The implementations of shouldMillisecondFieldReadOnly,
+        shouldMinuteFieldReadOnly, and shouldSecondFieldReadOnly were
+        incorrect. We need to check if a part of the minimum value matches to
+        the corresponding part of the current value.
+
+        Also, we had better check hour field editability.
+
+        Test: fast/forms/time-multiple-fields/time-multiple-fields-readonly-subfield.html
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::shouldHaveSecondField):
+        Fix a problem that hh:mm:00.sss didn't create a seconds field.
+        * html/shadow/DateTimeEditElement.cpp:
+        (DateTimeEditBuilder): Add shouldHourFieldReadOnly declaration.
+        (WebCore::DateTimeEditBuilder::visitField):
+        Add shouldHourFieldReadOnly check to Hour11/Hour12/Hour23/Hour24/Period fields.
+        (WebCore::DateTimeEditBuilder::shouldHourFieldReadOnly):
+        Added. An hour field should be read-only if the step value is a multiple
+        of a day and the hour part of the minimum value matches to the hour part
+        of the value.
+        (WebCore::DateTimeEditBuilder::shouldMillisecondFieldReadOnly):
+        A millisecond field should be read-only if the step value is a multiple
+        of one second and the millisecond part of the minimum value matches to
+        the millisecond part of the value.
+        (WebCore::DateTimeEditBuilder::shouldMinuteFieldReadOnly):
+        A minute field should be read-only if the step value is a multiple of
+        one hour and the minute part of the minimum value matches to the minute
+        part of the value.
+        (WebCore::DateTimeEditBuilder::shouldSecondFieldReadOnly):
+        A second field should be read-only if the step value is a multiple of
+        one minute and the second part of the minimum value matches to the second
+        part of the value.
+        * platform/Decimal.cpp:
+        (WebCore::Decimal::remainder):
+        Fix a bug in case that the fractional part of quotient is >= 0.5. Also
+        make this matches to C99, C++11, ECMAScript behavior.
+
 2012-11-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: MemoryBlock name should not include full path to the block

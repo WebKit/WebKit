@@ -902,8 +902,8 @@ Decimal Decimal::nan()
 
 Decimal Decimal::remainder(const Decimal& rhs) const
 {
-    const Decimal quotient = (*this / rhs).round();
-    return quotient.isSpecial() ? quotient : *this - quotient * rhs;
+    const Decimal quotient = *this / rhs;
+    return quotient.isSpecial() ? quotient : *this - (quotient.isNegative() ? quotient.ceiling() : quotient.floor()) * rhs;
 }
 
 Decimal Decimal::round() const
