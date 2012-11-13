@@ -401,7 +401,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     NSRect frameViewBounds = frameView.bounds;
     NSSize dockButtonSize = _dockButton.get().frame.size;
 
-    ASSERT(!frameView.flipped);
+    ASSERT(!frameView.isFlipped);
 
     // Position the dock button in the corner to match where the full screen button is normally.
     NSPoint dockButtonOrigin;
