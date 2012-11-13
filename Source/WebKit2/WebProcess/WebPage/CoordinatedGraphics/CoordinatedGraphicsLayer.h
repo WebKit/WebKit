@@ -169,6 +169,7 @@ private:
 #if ENABLE(CSS_FILTERS)
     void didChangeFilters();
 #endif
+    void didChangeImageBacking();
 
     void syncLayerState();
     void syncAnimations();
@@ -176,12 +177,14 @@ private:
 #if ENABLE(CSS_FILTERS)
     void syncFilters();
 #endif
+    void syncImageBacking();
     void syncCanvas();
     void ensureImageBackingStore();
     void computeTransformedVisibleRect();
     void updateContentBuffers();
 
     void createBackingStore();
+    void releaseImageBackingIfNeeded();
 
     bool selfOrAncestorHaveNonAffineTransforms();
     bool shouldUseTiledBackingStore();
@@ -194,7 +197,6 @@ private:
 
     WebKit::WebLayerID m_id;
     WebKit::WebLayerInfo m_layerInfo;
-    RefPtr<Image> m_image;
     GraphicsLayer* m_maskTarget;
     FloatRect m_needsDisplayRect;
     GraphicsLayerTransform m_layerTransform;
@@ -203,6 +205,7 @@ private:
     bool m_shouldSyncLayerState: 1;
     bool m_shouldSyncChildren: 1;
     bool m_shouldSyncFilters: 1;
+    bool m_shouldSyncImageBacking: 1;
     bool m_shouldSyncAnimations: 1;
     bool m_fixedToViewport : 1;
     bool m_canvasNeedsDisplay : 1;
@@ -214,6 +217,10 @@ private:
     OwnPtr<TiledBackingStore> m_mainBackingStore;
     OwnPtr<TiledBackingStore> m_previousBackingStore;
     float m_contentsScale;
+
+    RefPtr<Image> m_compositedImage;
+    NativeImagePtr m_compositedNativeImagePtr;
+
     PlatformLayer* m_canvasPlatformLayer;
     Timer<CoordinatedGraphicsLayer> m_animationStartedTimer;
     GraphicsLayerAnimations m_animations;

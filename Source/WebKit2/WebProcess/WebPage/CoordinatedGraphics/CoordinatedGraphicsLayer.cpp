@@ -82,6 +82,13 @@ void CoordinatedGraphicsLayer::didChangeFilters()
 }
 #endif
 
+void CoordinatedGraphicsLayer::didChangeImageBacking()
+{
+    m_shouldSyncImageBacking = true;
+    if (client())
+        client()->notifyFlushRequired(this);
+}
+
 void CoordinatedGraphicsLayer::setShouldUpdateVisibleRect()
 {
     m_shouldUpdateVisibleRect = true;
@@ -105,11 +112,13 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient* client)
     , m_shouldSyncLayerState(true)
     , m_shouldSyncChildren(true)
     , m_shouldSyncFilters(true)
+    , m_shouldSyncImageBacking(true)
     , m_shouldSyncAnimations(true)
     , m_fixedToViewport(false)
     , m_canvasNeedsDisplay(false)
     , m_CoordinatedGraphicsLayerClient(0)
     , m_contentsScale(1)
+    , m_compositedNativeImagePtr(0)
     , m_canvasPlatformLayer(0)
     , m_animationStartedTimer(this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
 {
@@ -318,9 +327,6 @@ void CoordinatedGraphicsLayer::setContentsRect(const IntRect& r)
 
 void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 {
-    RefPtr<Image> image = m_image;
-    setContentsToImage(0);
-    setContentsToImage(image.get());
     m_canvasNeedsDisplay = true;
     if (client())
         client()->notifyFlushRequired(this);
@@ -347,25 +353,25 @@ bool CoordinatedGraphicsLayer::setFilters(const FilterOperations& newFilters)
 
 void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
 {
-    if (image == m_image)
-        return;
-    int64_t newID = 0;
-    if (m_CoordinatedGraphicsLayerClient) {
-        // We adopt first, in case this is the same frame - that way we avoid destroying and recreating the image.
-        newID = m_CoordinatedGraphicsLayerClient->adoptImageBackingStore(image);
-        m_CoordinatedGraphicsLayerClient->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
-        didChangeLayerState();
-        if (m_layerInfo.imageBackingStoreID && newID == m_layerInfo.imageBackingStoreID)
+    if (image) {
+        // This code makes the assumption that pointer equality on a NativeImagePtr is a valid way to tell if the image is changed.
+        // This assumption is true in Qt, GTK and EFL.
+        NativeImagePtr newNativeImagePtr = image->nativeImageForCurrentFrame();
+        if (!newNativeImagePtr)
             return;
+
+        if (newNativeImagePtr == m_compositedNativeImagePtr)
+            return;
+
+        m_compositedImage = image;
+        m_compositedNativeImagePtr = newNativeImagePtr;
     } else {
-        // If m_CoordinatedGraphicsLayerClient is not set yet there should be no backing store ID.
-        ASSERT(!m_layerInfo.imageBackingStoreID);
-        didChangeLayerState();
+        m_compositedImage = 0;
+        m_compositedNativeImagePtr = 0;
     }
 
-    m_layerInfo.imageBackingStoreID = newID;
-    m_image = image;
     GraphicsLayer::setContentsToImage(image);
+    didChangeImageBacking();
 }
 
 void CoordinatedGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
@@ -397,8 +403,6 @@ bool CoordinatedGraphicsLayer::shouldDirectlyCompositeImage(Image* image) const
         return false;
 
     return true;
-
-    // TODO: don't directly composite images with more than one frame.
 }
 
 void CoordinatedGraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
@@ -473,6 +477,25 @@ void CoordinatedGraphicsLayer::syncFilters()
 }
 #endif
 
+void CoordinatedGraphicsLayer::syncImageBacking()
+{
+    if (!m_shouldSyncImageBacking)
+        return;
+    m_shouldSyncImageBacking = false;
+
+    releaseImageBackingIfNeeded();
+
+    if (m_compositedNativeImagePtr) {
+        ASSERT(!m_mainBackingStore);
+        ASSERT(m_compositedImage);
+
+        m_layerInfo.imageBackingStoreID = m_CoordinatedGraphicsLayerClient->adoptImageBackingStore(m_compositedImage.get());
+    }
+
+    // This method changes m_layerInfo.imageBackingStoreID.
+    didChangeLayerState();
+}
+
 void CoordinatedGraphicsLayer::syncLayerState()
 {
     if (!m_shouldSyncLayerState)
@@ -525,18 +548,9 @@ void CoordinatedGraphicsLayer::syncCanvas()
     m_canvasNeedsDisplay = false;
 }
 
-void CoordinatedGraphicsLayer::ensureImageBackingStore()
-{
-    if (!m_image)
-        return;
-    if (!m_layerInfo.imageBackingStoreID)
-        m_layerInfo.imageBackingStoreID = m_CoordinatedGraphicsLayerClient->adoptImageBackingStore(m_image.get());
-}
-
 void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 {
-    // The remote image might have been released by purgeBackingStores.
-    ensureImageBackingStore();
+    syncImageBacking();
     syncLayerState();
     syncAnimations();
     computeTransformedVisibleRect();
@@ -546,6 +560,16 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 #endif
     updateContentBuffers();
     syncCanvas();
+}
+
+void CoordinatedGraphicsLayer::releaseImageBackingIfNeeded()
+{
+    if (!m_layerInfo.imageBackingStoreID)
+        return;
+
+    ASSERT(m_CoordinatedGraphicsLayerClient);
+    m_CoordinatedGraphicsLayerClient->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
+    m_layerInfo.imageBackingStoreID = 0;
 }
 
 void CoordinatedGraphicsLayer::tiledBackingStorePaintBegin()
@@ -698,10 +722,7 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
     m_mainBackingStore.clear();
     m_previousBackingStore.clear();
 
-    if (m_layerInfo.imageBackingStoreID) {
-        m_CoordinatedGraphicsLayerClient->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
-        m_layerInfo.imageBackingStoreID = 0;
-    }
+    releaseImageBackingIfNeeded();
 
     didChangeLayerState();
     didChangeChildren();
@@ -747,7 +768,7 @@ bool CoordinatedGraphicsLayer::hasPendingVisibleChanges()
             return true;
     }
 
-    if (!m_shouldSyncLayerState && !m_shouldSyncChildren && !m_shouldSyncFilters && !m_shouldSyncAnimations && !m_canvasNeedsDisplay)
+    if (!m_shouldSyncLayerState && !m_shouldSyncChildren && !m_shouldSyncFilters && !m_shouldSyncImageBacking && !m_shouldSyncAnimations && !m_canvasNeedsDisplay)
         return false;
 
     return selfOrAncestorHaveNonAffineTransforms() || !tiledBackingStoreVisibleRect().isEmpty();

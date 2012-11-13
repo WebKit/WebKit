@@ -1,3 +1,33 @@
+2012-11-13  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Directly composited animated GIFs only render the first image.
+        https://bugs.webkit.org/show_bug.cgi?id=102043
+
+        Reviewed by Noam Rosenthal.
+
+        CoordinatedGraphicsLayer::setContentsToImage() checks the pointer to the image,
+        not nativeImagePtr, so Coordinated Graphics currently draws only the first frame
+        of gif animations. This patch makes Coordinated Graphics draw gif animations.
+
+        In addition, this patch modifies the style of direct image compositing
+        code to match other parts of CoordinatedGraphicsLayer.
+
+        Test: ManualTests/animated-gif-on-compositing-layer.html
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::didChangeImageBacking):
+        (WebCore):
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setContentsNeedsDisplay):
+        (WebCore::CoordinatedGraphicsLayer::setContentsToImage):
+        (WebCore::CoordinatedGraphicsLayer::syncImageBacking):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        (WebCore::CoordinatedGraphicsLayer::releaseImageBackingIfNeeded):
+        (WebCore::CoordinatedGraphicsLayer::purgeBackingStores):
+        (WebCore::CoordinatedGraphicsLayer::hasPendingVisibleChanges):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayer):
+
 2012-11-12  Huang Dongsung  <luxtella@company100.net>
 
         [Qt] REGRESSION(134142): overscaled tiles in pixel test results and MiniBrowser
