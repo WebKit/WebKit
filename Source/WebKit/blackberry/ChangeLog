@@ -1,3 +1,22 @@
+2012-11-13  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Fully restore both zoom and scroll when leaving an input field.
+        https://bugs.webkit.org/show_bug.cgi?id=102094
+
+        Reviewed by Rob Buis.
+
+        PR 234187.
+
+        Cache both the zoom and scroll position prior to adjusting
+        for input focus so that state can be reset fully.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2012-11-12  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Ensure we only receive one KeyUp per key event

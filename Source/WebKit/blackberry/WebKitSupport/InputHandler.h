@@ -224,7 +224,7 @@ private:
     int32_t m_processingTransactionId;
 
     double m_focusZoomScale;
-    WebCore::FloatPoint m_focusZoomLocation;
+    WebCore::IntPoint m_focusScrollLocation;
 
     bool m_receivedBackspaceKeyDown;
     unsigned short m_expectedKeyUpChar;
