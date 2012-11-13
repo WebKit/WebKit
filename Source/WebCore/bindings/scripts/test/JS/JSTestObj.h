@@ -219,6 +219,9 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionStrictFunction(JSC::
 JSC::JSValue jsTestObjReadOnlyIntAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestObjReadOnlyStringAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 JSC::JSValue jsTestObjReadOnlyTestObjAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
+JSC::JSValue jsTestObjConstructorStaticReadOnlyIntAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+JSC::JSValue jsTestObjConstructorStaticStringAttr(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);
+void setJSTestObjConstructorStaticStringAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjShortAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);
 void setJSTestObjShortAttr(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);
 JSC::JSValue jsTestObjUnsignedShortAttr(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);

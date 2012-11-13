@@ -333,11 +333,12 @@ sub ParseInterface
             if ($line =~ /\Wattribute\W/) {
                 $line =~ /$IDLStructure::interfaceAttributeSelector/;
 
-                my $attributeType = (defined($1) ? $1 : die("Parsing error!\nSource:\n$line\n)"));
-                my $attributeExtendedAttributes = (defined($2) ? $2 : " "); chop($attributeExtendedAttributes);
+                my $isStatic = defined($1);
+                my $attributeType = (defined($2) ? $2 : die("Parsing error!\nSource:\n$line\n)"));
+                my $attributeExtendedAttributes = (defined($3) ? $3 : " "); chop($attributeExtendedAttributes);
 
-                my $attributeDataType = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
-                my $attributeDataName = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
+                my $attributeDataType = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
+                my $attributeDataName = (defined($5) ? $5 : die("Parsing error!\nSource:\n$line\n)"));
   
                 ('' =~ /^/); # Reset variables needed for regexp matching
 
@@ -349,6 +350,7 @@ sub ParseInterface
 
                 my $newDataNode = new domAttribute();
                 $newDataNode->type($attributeType);
+                $newDataNode->isStatic($isStatic);
                 $newDataNode->signature(new domSignature());
 
                 $newDataNode->signature->name($attributeDataName);
@@ -358,7 +360,7 @@ sub ParseInterface
                 my $arrayRef = $dataNode->attributes;
                 push(@$arrayRef, $newDataNode);
 
-                print "  |  |>  Attribute; TYPE \"$attributeType\" DATA NAME \"$attributeDataName\" DATA TYPE \"$attributeDataType\" GET EXCEPTION? \"$getterException\" SET EXCEPTION? \"$setterException\"" .
+                print "  |  |>  Attribute; STATIC? \"$isStatic\" TYPE \"$attributeType\" DATA NAME \"$attributeDataName\" DATA TYPE \"$attributeDataType\" GET EXCEPTION? \"$getterException\" SET EXCEPTION? \"$setterException\"" .
                     dumpExtendedAttributes("\n  |                 ", $newDataNode->signature->extendedAttributes) . "\n" unless $beQuiet;
 
                 $getterException =~ s/\s+//g;
@@ -387,7 +389,7 @@ sub ParseInterface
                 $newDataNode->signature->type($methodType);
                 $newDataNode->signature->extendedAttributes(parseExtendedAttributes($methodExtendedAttributes));
 
-                print "  |  |-  Method; TYPE \"$methodType\" NAME \"$methodName\" EXCEPTION? \"$methodException\"" .
+                print "  |  |-  Method; STATIC? \"$isStatic\" TYPE \"$methodType\" NAME \"$methodName\" EXCEPTION? \"$methodException\"" .
                     dumpExtendedAttributes("\n  |              ", $newDataNode->signature->extendedAttributes) . "\n" unless $beQuiet;
 
                 $methodException =~ s/\s+//g;

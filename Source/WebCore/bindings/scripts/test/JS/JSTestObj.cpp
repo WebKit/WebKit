@@ -179,6 +179,8 @@ static const HashTableValue JSTestObjConstructorTableValues[] =
     { "CONST_VALUE_13", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_13), (intptr_t)0, NoIntrinsic },
     { "CONST_VALUE_14", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_VALUE_14), (intptr_t)0, NoIntrinsic },
     { "CONST_JAVASCRIPT", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCONST_JAVASCRIPT), (intptr_t)0, NoIntrinsic },
+    { "staticReadOnlyIntAttr", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructorStaticReadOnlyIntAttr), (intptr_t)0, NoIntrinsic },
+    { "staticStringAttr", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructorStaticStringAttr), (intptr_t)setJSTestObjConstructorStaticStringAttr, NoIntrinsic },
     { "classMethod", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionClassMethod), (intptr_t)0, NoIntrinsic },
     { "classMethodWithOptional", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionClassMethodWithOptional), (intptr_t)1, NoIntrinsic },
     { "classMethod2", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjConstructorFunctionClassMethod2), (intptr_t)1, NoIntrinsic },
@@ -419,6 +421,26 @@ JSValue jsTestObjReadOnlyTestObjAttr(ExecState* exec, JSValue slotBase, const Id
     UNUSED_PARAM(exec);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->readOnlyTestObjAttr()));
+    return result;
+}
+
+
+JSValue jsTestObjConstructorStaticReadOnlyIntAttr(ExecState* exec, JSValue, PropertyName)
+{
+    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    if (!scriptContext)
+        return jsUndefined();
+    JSC::JSValue result = jsNumber(TestObj::staticReadOnlyIntAttr(scriptContext));
+    return result;
+}
+
+
+JSValue jsTestObjConstructorStaticStringAttr(ExecState* exec, JSValue, PropertyName)
+{
+    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    if (!scriptContext)
+        return jsUndefined();
+    JSC::JSValue result = jsString(exec, TestObj::staticStringAttr(scriptContext));
     return result;
 }
 
@@ -1064,6 +1086,14 @@ void JSTestObj::put(JSCell* cell, ExecState* exec, const Identifier& propertyNam
     JSTestObj* thisObject = jsCast<JSTestObj*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     lookupPut<JSTestObj, Base>(exec, propertyName, value, &JSTestObjTable, thisObject, slot);
+}
+
+void setJSTestObjConstructorStaticStringAttr(ExecState* exec, JSObject*, JSValue value)
+{
+    ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
+    if (!scriptContext)
+        return;
+    TestObj::setStaticStringAttr(scriptContext, ustringToString(value.isEmpty() ? UString() : value.toString(exec)->value(exec)));
 }
 
 void setJSTestObjShortAttr(ExecState* exec, JSObject* thisObject, JSValue value)

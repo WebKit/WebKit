@@ -38,6 +38,10 @@ module test {
         readonly attribute long            readOnlyIntAttr;
         readonly attribute DOMString       readOnlyStringAttr;
         readonly attribute TestObj         readOnlyTestObjAttr;
+#if defined(TESTING_JS)
+        static readonly attribute long     staticReadOnlyIntAttr;
+        static attribute DOMString         staticStringAttr;
+#endif
         attribute short                    shortAttr;
         attribute unsigned short           unsignedShortAttr;
         attribute long                     intAttr;

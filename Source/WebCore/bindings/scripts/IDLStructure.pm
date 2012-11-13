@@ -55,6 +55,7 @@ struct( domFunction => {
 # Used to represent domClass contents (name of attribute, signature)
 struct( domAttribute => {
     type => '$',              # Attribute type (including namespace)
+    isStatic => '$',
     signature => '$',         # Attribute signature
     getterExceptions => '@',  # Possibly raised exceptions.
     setterExceptions => '@',  # Possibly raised exceptions.
@@ -108,6 +109,6 @@ our $interfaceSelector = '(interface|exception)\s*((?:' . $extendedAttributeSynt
 our $interfaceMethodSelector = '\s*((?:' . $extendedAttributeSyntax . ' )?)(static\s+)?' . $supportedTypes . '\s*(' . $idlIdNs . '*)\s*\(\s*([a-zA-Z0-9:\s,=\[\]<>]*)';
 our $interfaceParameterSelector = '(in|out)\s*((?:' . $extendedAttributeSyntax . ' )?)' . $supportedTypes . '\s*(' . $idlIdNs . '*)';
 
-our $interfaceAttributeSelector = '\s*(readonly attribute|attribute)\s*(' . $extendedAttributeSyntax . ' )?' . $supportedTypes . '\s*(' . $idlType . '*)';
+our $interfaceAttributeSelector = '\s*(static\s+)?(readonly attribute|attribute)\s*(' . $extendedAttributeSyntax . ' )?' . $supportedTypes . '\s*(' . $idlType . '*)';
 
 1;
