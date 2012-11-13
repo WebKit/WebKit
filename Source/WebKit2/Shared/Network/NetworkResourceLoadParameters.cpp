@@ -23,48 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HostRecord_h
-#define HostRecord_h
+#include "config.h"
+#include "NetworkResourceLoadParameters.h"
+
+#include "ArgumentCoders.h"
+#include "WebCoreArgumentCoders.h"
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include <WebCore/ResourceRequest.h>
-#include <wtf/Deque.h>
-#include <wtf/HashSet.h>
-#include <wtf/text/WTFString.h>
+using namespace WebCore;
 
 namespace WebKit {
+NetworkResourceLoadParameters::NetworkResourceLoadParameters()
+    : m_priority(ResourceLoadPriorityVeryLow)
+    , m_contentSniffingPolicy(SniffContent)
+{
+}
 
-class NetworkResourceLoader;
-typedef uint64_t ResourceLoadIdentifier;
+NetworkResourceLoadParameters::NetworkResourceLoadParameters(const ResourceRequest& request, ResourceLoadPriority priority, ContentSniffingPolicy contentSniffingPolicy)
+    : m_request(request)
+    , m_priority(priority)
+    , m_contentSniffingPolicy(contentSniffingPolicy)
+{
+}
 
-class HostRecord {
-    WTF_MAKE_NONCOPYABLE(HostRecord); WTF_MAKE_FAST_ALLOCATED;
-public:
-    HostRecord(const String& name, int maxRequestsInFlight);
-    ~HostRecord();
+void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
+{
+    encoder.encode(m_request);
+    encoder.encodeEnum(m_priority);
+    encoder.encodeEnum(m_contentSniffingPolicy);
+}
+
+bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder* decoder, NetworkResourceLoadParameters& result)
+{
+    if (!decoder->decode(result.m_request))
+        return false;
+    if (!decoder->decodeEnum(result.m_priority))
+        return false;
+    if (!decoder->decodeEnum(result.m_contentSniffingPolicy))
+        return false;
+
+    return true;
+}
     
-    const String& name() const { return m_name; }
-    void schedule(PassRefPtr<NetworkResourceLoader>);
-    void addLoadInProgress(ResourceLoadIdentifier);
-    void remove(ResourceLoadIdentifier);
-    bool hasRequests() const;
-    bool limitRequests(WebCore::ResourceLoadPriority, bool serialLoadingEnabled) const;
-
-    typedef Deque<RefPtr<NetworkResourceLoader> > LoaderQueue;
-    LoaderQueue& loadersPending(WebCore::ResourceLoadPriority priority) { return m_loadersPending[priority]; }
-
-private:                    
-    LoaderQueue m_loadersPending[WebCore::ResourceLoadPriorityHighest + 1];
-    typedef HashSet<ResourceLoadIdentifier> ResourceLoadIdentifierSet;
-    ResourceLoadIdentifierSet m_resourceIdentifiersLoading;
-
-    const String m_name;
-    int m_maxRequestsInFlight;
-};
-
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)
-
-#endif // #ifndef HostRecord_h

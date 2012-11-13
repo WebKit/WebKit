@@ -1,3 +1,90 @@
+2012-11-13  Brady Eidson  <beidson@apple.com>
+
+        Split NetworkRequest up into a request class and a loading class.
+        https://bugs.webkit.org/show_bug.cgi?id=102049
+
+        Reviewed by Alexey Proskuryakov.
+
+        NetworkRequest unintentionally grew into a class that managed actual loading.
+
+        This patch splits it into "NetworkResourceLoadParameters" for all request-related data
+        and "NetworkResourceLoader" for handling the actual load itself.
+
+        Change HostRecord to manage NetworkResourceLoaders instead of NetworkRequests:
+        * NetworkProcess/HostRecord.cpp:
+        (WebKit::HostRecord::~HostRecord):
+        (WebKit::HostRecord::schedule):
+        (WebKit::HostRecord::addLoadInProgress):
+        (WebKit::HostRecord::remove):
+        (WebKit::HostRecord::hasRequests):
+        (WebKit::HostRecord::limitRequests):
+        * NetworkProcess/HostRecord.h:
+        (WebKit::HostRecord::loadersPending):
+
+        A new class to be a container for all the data required to start a network load:
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        (WebKit::NetworkResourceLoadParameters::request):
+        (WebKit::NetworkResourceLoadParameters::priority):
+        (WebKit::NetworkResourceLoadParameters::contentSniffingPolicy):
+
+        Pass a single NetworkResourceLoadParameters around instead of multiple bits of data:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::scheduleResourceLoad):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::scheduleResourceLoad):
+        (WebKit::NetworkResourceLoadScheduler::servePendingRequestsForHost):
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+
+        The actual ResourceHandleClient that does the actual loading:
+        * NetworkProcess/NetworkResourceLoader.cpp: Renamed from Source/WebKit2/NetworkProcess/NetworkRequest.cpp.
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::~NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::priority):
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::requestsToStopMutex):
+        (WebKit::requestsToStop):
+        (WebKit::NetworkResourceLoader::scheduleStopOnMainThread):
+        (WebKit::NetworkResourceLoader::performStops):
+        (WebKit::NetworkResourceLoader::stop):
+        (WebKit::NetworkResourceLoader::connectionToWebProcessDidClose):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didReceiveData):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFail):
+        (WebKit::responseMap):
+        (WebKit::generateWillSendRequestID):
+        (WebKit::didReceiveWillSendRequestHandled):
+        (WebKit::NetworkResourceLoader::willSendRequest):
+        (WebKit::NetworkResourceLoader::didSendData):
+        (WebKit::NetworkResourceLoader::didReceiveCachedMetadata):
+        (WebKit::NetworkResourceLoader::wasBlocked):
+        (WebKit::NetworkResourceLoader::cannotShowURL):
+        (WebKit::NetworkResourceLoader::willCacheResponse):
+        (WebKit::NetworkResourceLoader::shouldUseCredentialStorage):
+        (WebKit::NetworkResourceLoader::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkResourceLoader::didCancelAuthenticationChallenge):
+        (WebKit::NetworkResourceLoader::receivedCancellation):
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkResourceLoader::supportsDataArray):
+        (WebKit::NetworkResourceLoader::didReceiveDataArray):
+        (WebKit::NetworkResourceLoader::willStopBufferingData):
+        (WebKit::NetworkResourceLoader::createAsyncFileStream):
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::create):
+        (WebKit::NetworkResourceLoader::identifier):
+        (WebKit::NetworkResourceLoader::connectionToWebProcess):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
 2012-11-13  Anders Carlsson  <andersca@apple.com>
 
         Store destroyed layers in the remote layer tree transaction

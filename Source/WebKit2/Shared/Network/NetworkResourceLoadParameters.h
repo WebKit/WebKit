@@ -23,48 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HostRecord_h
-#define HostRecord_h
+#ifndef NetworkResourceLoadParameters_h
+#define NetworkResourceLoadParameters_h
+
+#include <WebCore/ResourceLoaderOptions.h>
+#include <WebCore/ResourceRequest.h>
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include <WebCore/ResourceRequest.h>
-#include <wtf/Deque.h>
-#include <wtf/HashSet.h>
-#include <wtf/text/WTFString.h>
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-class NetworkResourceLoader;
 typedef uint64_t ResourceLoadIdentifier;
 
-class HostRecord {
-    WTF_MAKE_NONCOPYABLE(HostRecord); WTF_MAKE_FAST_ALLOCATED;
+class NetworkResourceLoadParameters {
 public:
-    HostRecord(const String& name, int maxRequestsInFlight);
-    ~HostRecord();
-    
-    const String& name() const { return m_name; }
-    void schedule(PassRefPtr<NetworkResourceLoader>);
-    void addLoadInProgress(ResourceLoadIdentifier);
-    void remove(ResourceLoadIdentifier);
-    bool hasRequests() const;
-    bool limitRequests(WebCore::ResourceLoadPriority, bool serialLoadingEnabled) const;
+    NetworkResourceLoadParameters();
+    NetworkResourceLoadParameters(const WebCore::ResourceRequest&, WebCore::ResourceLoadPriority, WebCore::ContentSniffingPolicy);
 
-    typedef Deque<RefPtr<NetworkResourceLoader> > LoaderQueue;
-    LoaderQueue& loadersPending(WebCore::ResourceLoadPriority priority) { return m_loadersPending[priority]; }
+    void encode(CoreIPC::ArgumentEncoder&) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, NetworkResourceLoadParameters&);
 
-private:                    
-    LoaderQueue m_loadersPending[WebCore::ResourceLoadPriorityHighest + 1];
-    typedef HashSet<ResourceLoadIdentifier> ResourceLoadIdentifierSet;
-    ResourceLoadIdentifierSet m_resourceIdentifiersLoading;
+    const WebCore::ResourceRequest& request() const { return m_request; }
+    WebCore::ResourceLoadPriority priority() const { return m_priority; }
+    WebCore::ContentSniffingPolicy contentSniffingPolicy() const { return m_contentSniffingPolicy; }
 
-    const String m_name;
-    int m_maxRequestsInFlight;
+private:
+    WebCore::ResourceRequest m_request;
+    WebCore::ResourceLoadPriority m_priority;
+    WebCore::ContentSniffingPolicy m_contentSniffingPolicy;
 };
 
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)
 
-#endif // #ifndef HostRecord_h
+#endif // NetworkResourceLoadParameters_h

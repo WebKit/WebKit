@@ -5,7 +5,8 @@
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcessconnectionMessages.h"
-#include "NetworkRequest.h"
+#include "NetworkResourceLoadParameters.h"
+#include "NetworkResourceLoader.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
@@ -38,18 +39,22 @@ void NetworkResourceLoadScheduler::requestTimerFired(WebCore::Timer<NetworkResou
     servePendingRequests();
 }
 
-ResourceLoadIdentifier NetworkResourceLoadScheduler::scheduleNetworkRequest(const ResourceRequest& request, ResourceLoadPriority priority, ContentSniffingPolicy contentSniffingPolicy, NetworkConnectionToWebProcess* connection)
-{    
+ResourceLoadIdentifier NetworkResourceLoadScheduler::scheduleResourceLoad(const NetworkResourceLoadParameters& loadParameters, NetworkConnectionToWebProcess* connection)
+{
+    ResourceLoadPriority priority = loadParameters.priority();
+    const ResourceRequest& resourceRequest = loadParameters.request();
+    
     ResourceLoadIdentifier identifier = ++s_currentResourceLoadIdentifier;
+    RefPtr<NetworkResourceLoader> loader = NetworkResourceLoader::create(loadParameters, identifier, connection);
 
-    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::scheduleNetworkRequest resource %llu '%s'", identifier, request.url().string().utf8().data());
+    LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::scheduleNetworkResourceRequest resource %llu '%s'", identifier, resourceRequest.url().string().utf8().data());
 
-    HostRecord* host = hostForURL(request.url(), CreateIfNotFound);
+    HostRecord* host = hostForURL(resourceRequest.url(), CreateIfNotFound);
     bool hadRequests = host->hasRequests();
-    host->schedule(NetworkRequest::create(request, identifier, contentSniffingPolicy, connection), priority);
+    host->schedule(loader);
     m_identifiers.add(identifier, host);
 
-    if (priority > ResourceLoadPriorityLow || !request.url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriorityLow && !hadRequests)) {
+    if (priority > ResourceLoadPriorityLow || !resourceRequest.url().protocolIsInHTTPFamily() || (priority == ResourceLoadPriorityLow && !hadRequests)) {
         // Try to request important resources immediately.
         servePendingRequestsForHost(host, priority);
         return identifier;
@@ -155,15 +160,15 @@ void NetworkResourceLoadScheduler::servePendingRequestsForHost(HostRecord* host,
     LOG(NetworkScheduling, "NetworkResourceLoadScheduler::servePendingRequests Host name='%s'", host->name().utf8().data());
 
     for (int priority = ResourceLoadPriorityHighest; priority >= minimumPriority; --priority) {
-        HostRecord::RequestQueue& requestsPending = host->requestsPending(ResourceLoadPriority(priority));
+        HostRecord::LoaderQueue& loadersPending = host->loadersPending(ResourceLoadPriority(priority));
 
-        while (!requestsPending.isEmpty()) {
-            RefPtr<NetworkRequest> request = requestsPending.first();
+        while (!loadersPending.isEmpty()) {
+            RefPtr<NetworkResourceLoader> loader = loadersPending.first();
             
             // This request might be from WebProcess we've lost our connection to.
             // If so we should just skip it.
-            if (!request->connectionToWebProcess()) {
-                requestsPending.removeFirst();
+            if (!loader->connectionToWebProcess()) {
+                loadersPending.removeFirst();
                 continue;
             }
 
@@ -179,13 +184,13 @@ void NetworkResourceLoadScheduler::servePendingRequestsForHost(HostRecord* host,
             // still important and somehow account for it.
 
             bool shouldLimitRequests = !host->name().isNull();
-            if (shouldLimitRequests && host->limitRequests(ResourceLoadPriority(priority), request->connectionToWebProcess()->isSerialLoadingEnabled()))
+            if (shouldLimitRequests && host->limitRequests(ResourceLoadPriority(priority), loader->connectionToWebProcess()->isSerialLoadingEnabled()))
                 return;
 
-            requestsPending.removeFirst();
-            host->addLoadInProgress(request->identifier());
+            loadersPending.removeFirst();
+            host->addLoadInProgress(loader->identifier());
 
-            request->start();
+            loader->start();
         }
     }
 }

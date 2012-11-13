@@ -29,8 +29,9 @@
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
-#include "NetworkRequest.h"
+#include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoadScheduler.h"
+#include "NetworkResourceLoader.h"
 
 #if ENABLE(NETWORK_PROCESS)
 
@@ -47,20 +48,20 @@ HostRecord::HostRecord(const String& name, int maxRequestsInFlight)
 HostRecord::~HostRecord()
 {
 #ifndef NDEBUG
-    ASSERT(m_requestsLoading.isEmpty());
+    ASSERT(m_resourceIdentifiersLoading.isEmpty());
     for (unsigned p = 0; p <= ResourceLoadPriorityHighest; p++)
-        ASSERT(m_requestsPending[p].isEmpty());
+        ASSERT(m_loadersPending[p].isEmpty());
 #endif
 }
 
-void HostRecord::schedule(PassRefPtr<NetworkRequest> record,  ResourceLoadPriority priority)
+void HostRecord::schedule(PassRefPtr<NetworkResourceLoader> loader)
 {
-    m_requestsPending[priority].append(record);
+    m_loadersPending[loader->priority()].append(loader);
 }
 
 void HostRecord::addLoadInProgress(ResourceLoadIdentifier identifier)
 {
-    m_requestsLoading.add(identifier);
+    m_resourceIdentifiersLoading.add(identifier);
 }
 
 void HostRecord::remove(ResourceLoadIdentifier identifier)
@@ -68,16 +69,16 @@ void HostRecord::remove(ResourceLoadIdentifier identifier)
     // FIXME (NetworkProcess): Due to IPC race conditions, it's possible this HostRecord will be asked to remove the same identifer twice.
     // It would be nice to know the identifier has already been removed and treat it as a no-op.
 
-    if (m_requestsLoading.contains(identifier)) {
-        m_requestsLoading.remove(identifier);
+    if (m_resourceIdentifiersLoading.contains(identifier)) {
+        m_resourceIdentifiersLoading.remove(identifier);
         return;
     }
     
     for (int priority = ResourceLoadPriorityHighest; priority >= ResourceLoadPriorityLowest; --priority) {  
-        RequestQueue::iterator end = m_requestsPending[priority].end();
-        for (RequestQueue::iterator it = m_requestsPending[priority].begin(); it != end; ++it) {
+        LoaderQueue::iterator end = m_loadersPending[priority].end();
+        for (LoaderQueue::iterator it = m_loadersPending[priority].begin(); it != end; ++it) {
             if (it->get()->identifier() == identifier) {
-                m_requestsPending[priority].remove(it);
+                m_loadersPending[priority].remove(it);
                 return;
             }
         }
@@ -86,11 +87,11 @@ void HostRecord::remove(ResourceLoadIdentifier identifier)
 
 bool HostRecord::hasRequests() const
 {
-    if (!m_requestsLoading.isEmpty())
+    if (!m_resourceIdentifiersLoading.isEmpty())
         return true;
 
     for (unsigned p = 0; p <= ResourceLoadPriorityHighest; p++) {
-        if (!m_requestsPending[p].isEmpty())
+        if (!m_loadersPending[p].isEmpty())
             return true;
     }
 
@@ -99,10 +100,10 @@ bool HostRecord::hasRequests() const
 
 bool HostRecord::limitRequests(ResourceLoadPriority priority, bool serialLoadingEnabled) const
 {
-    if (priority == ResourceLoadPriorityVeryLow && !m_requestsLoading.isEmpty())
+    if (priority == ResourceLoadPriorityVeryLow && !m_resourceIdentifiersLoading.isEmpty())
         return true;
 
-    return m_requestsLoading.size() >= (serialLoadingEnabled ? 1 : m_maxRequestsInFlight);
+    return m_resourceIdentifiersLoading.size() >= (serialLoadingEnabled ? 1 : m_maxRequestsInFlight);
 }
 
 } // namespace WebKit

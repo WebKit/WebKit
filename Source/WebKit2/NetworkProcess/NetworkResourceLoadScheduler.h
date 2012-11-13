@@ -36,6 +36,7 @@
 namespace WebKit {
 
 class HostRecord;
+class NetworkResourceLoadParameters;
 class NetworkConnectionToWebProcess;
 typedef uint64_t ResourceLoadIdentifier;
 
@@ -46,7 +47,7 @@ public:
     NetworkResourceLoadScheduler();
     
     // Adds the request to the queue for its host and create a unique identifier for it.
-    ResourceLoadIdentifier scheduleNetworkRequest(const WebCore::ResourceRequest&, WebCore::ResourceLoadPriority, WebCore::ContentSniffingPolicy, NetworkConnectionToWebProcess*);
+    ResourceLoadIdentifier scheduleResourceLoad(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*);
     
     // Creates a unique identifier for an already-in-progress load.
     ResourceLoadIdentifier addLoadInProgress(const WebCore::KURL&);
