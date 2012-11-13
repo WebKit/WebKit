@@ -56,14 +56,11 @@ WebInspector.DefaultTextEditor = function(url, delegate)
 
     this._textModel = new WebInspector.TextEditorModel();
     this._textModel.addEventListener(WebInspector.TextEditorModel.Events.TextChanged, this._textChanged, this);
-    this._textModel.resetUndoStack();
 
-    var enterTextChangeMode = this._enterInternalTextChangeMode.bind(this);
-    var exitTextChangeMode = this._exitInternalTextChangeMode.bind(this);
     var syncScrollListener = this._syncScroll.bind(this);
     var syncDecorationsForLineListener = this._syncDecorationsForLine.bind(this);
     var syncLineHeightListener = this._syncLineHeight.bind(this);
-    this._mainPanel = new WebInspector.TextEditorMainPanel(this._delegate, this._textModel, url, syncScrollListener, syncDecorationsForLineListener, enterTextChangeMode, exitTextChangeMode);
+    this._mainPanel = new WebInspector.TextEditorMainPanel(this._delegate, this._textModel, url, syncScrollListener, syncDecorationsForLineListener);
     this._gutterPanel = new WebInspector.TextEditorGutterPanel(this._textModel, syncDecorationsForLineListener, syncLineHeightListener);
 
     this._mainPanel.element.addEventListener("scroll", this._handleScrollChanged.bind(this), false);
@@ -127,14 +124,6 @@ WebInspector.DefaultTextEditor.prototype = {
     readOnly: function()
     {
         return this._mainPanel.readOnly();
-    },
-
-    /**
-     * @return {WebInspector.TextEditorModel}
-     */
-    get textModel()
-    {
-        return this._textModel;
     },
 
     /**
@@ -306,11 +295,11 @@ WebInspector.DefaultTextEditor.prototype = {
 
     _textChanged: function(event)
     {
-        if (!this._internalTextChangeMode)
-            this._textModel.resetUndoStack();
         this._mainPanel.textChanged(event.data.oldRange, event.data.newRange);
         this._gutterPanel.textChanged(event.data.oldRange, event.data.newRange);
         this._updatePanelOffsets();
+        if (event.data.editRange)
+            this._delegate.onTextChanged(event.data.oldRange, event.data.newRange);
     },
 
     /**
@@ -320,25 +309,7 @@ WebInspector.DefaultTextEditor.prototype = {
      */
     editRange: function(range, text)
     {
-        this._enterInternalTextChangeMode();
-        var newRange = this._textModel.editRange(range, text);
-        this._exitInternalTextChangeMode(range, newRange);
-        return newRange;
-    },
-
-    _enterInternalTextChangeMode: function()
-    {
-        this._internalTextChangeMode = true;
-    },
-
-    /**
-     * @param {WebInspector.TextRange} oldRange
-     * @param {WebInspector.TextRange} newRange
-     */
-    _exitInternalTextChangeMode: function(oldRange, newRange)
-    {
-        this._internalTextChangeMode = false;
-        this._delegate.onTextChanged(oldRange, newRange);
+        return this._textModel.editRange(range, text);
     },
 
     _updatePanelOffsets: function()
@@ -617,14 +588,6 @@ WebInspector.TextEditorChunkedPanel = function(textModel)
 }
 
 WebInspector.TextEditorChunkedPanel.prototype = {
-    /**
-     * @return {WebInspector.TextEditorModel}
-     */
-    get textModel()
-    {
-        return this._textModel;
-    },
-
     /**
      * @param {number} lineNumber
      */
@@ -1238,15 +1201,13 @@ WebInspector.TextEditorGutterChunk.prototype = {
  * @param {WebInspector.TextEditorModel} textModel
  * @param {?string} url
  */
-WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScrollListener, syncDecorationsForLineListener, enterTextChangeMode, exitTextChangeMode)
+WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScrollListener, syncDecorationsForLineListener)
 {
     WebInspector.TextEditorChunkedPanel.call(this, textModel);
 
     this._delegate = delegate;
     this._syncScrollListener = syncScrollListener;
     this._syncDecorationsForLineListener = syncDecorationsForLineListener;
-    this._enterTextChangeMode = enterTextChangeMode;
-    this._exitTextChangeMode = exitTextChangeMode;
 
     this._url = url;
     this._highlighter = new WebInspector.TextEditorHighlighter(textModel, this._highlightDataReady.bind(this));
@@ -1428,17 +1389,7 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         this.beginUpdates();
 
-        function before()
-        {
-            this._enterTextChangeMode();
-        }
-
-        function after(oldRange, newRange)
-        {
-            this._exitTextChangeMode(oldRange, newRange);
-        }
-
-        var range = redo ? this._textModel.redo(before.bind(this), after.bind(this)) : this._textModel.undo(before.bind(this), after.bind(this));
+        var range = redo ? this._textModel.redo() : this._textModel.undo();
 
         this.endUpdates();
 
@@ -1464,7 +1415,6 @@ WebInspector.TextEditorMainPanel.prototype = {
         var range = selection.normalize();
 
         this.beginUpdates();
-        this._enterTextChangeMode();
 
         var newRange;
         var rangeWasEmpty = range.isEmpty();
@@ -1477,7 +1427,6 @@ WebInspector.TextEditorMainPanel.prototype = {
                 newRange = this._textModel.indentLines(range);
         }
 
-        this._exitTextChangeMode(range, newRange);
         this.endUpdates();
         if (rangeWasEmpty)
             newRange.startColumn = newRange.endColumn;
@@ -1511,7 +1460,6 @@ WebInspector.TextEditorMainPanel.prototype = {
             return false;
 
         this.beginUpdates();
-        this._enterTextChangeMode();
 
         var lineBreak = this._textModel.lineBreak;
         var newRange;
@@ -1527,7 +1475,6 @@ WebInspector.TextEditorMainPanel.prototype = {
         } else
             newRange = this._textModel.editRange(range, lineBreak + indent);
 
-        this._exitTextChangeMode(range, newRange);
         this.endUpdates();
         this._restoreSelection(newRange.collapseToEnd(), true);
 
@@ -2214,15 +2161,10 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (lines.length === 1 && lines[0] === "}" && oldRange.isEmpty() && selection.isEmpty() && !this._textModel.line(oldRange.endLine).trim())
             this._unindentAfterBlock(oldRange, selection);
 
-        // This is a "foreign" call outside of this class. Should be before we delete the dirty lines flag.
-        this._enterTextChangeMode();
-
-        var newRange = this._textModel.editRange(oldRange, newContent);
-
+        this._textModel.editRange(oldRange, newContent);
         this._paintScheduledLines(true);
         this._restoreSelection(selection);
 
-        this._exitTextChangeMode(oldRange, newRange);
     },
 
     /**

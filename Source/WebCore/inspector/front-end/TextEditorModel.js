@@ -225,6 +225,7 @@ WebInspector.TextEditorModel.prototype = {
      */
     setText: function(text)
     {
+        this._resetUndoStack();
         text = text || "";
         var range = this.range();
         this._lineBreak = /\r\n/.test(text) ? "\r\n" : "\n";
@@ -258,7 +259,7 @@ WebInspector.TextEditorModel.prototype = {
         var newRange = this._innerSetText(range, text);
         this._lastEditedRange = newRange;
         this._pushUndoableCommand(newRange, originalText);
-        this.dispatchEventToListeners(WebInspector.TextEditorModel.Events.TextChanged, { oldRange: range, newRange: newRange });
+        this.dispatchEventToListeners(WebInspector.TextEditorModel.Events.TextChanged, { oldRange: range, newRange: newRange, editRange: true });
         return newRange;
     },
 
@@ -463,11 +464,9 @@ WebInspector.TextEditorModel.prototype = {
     },
 
     /**
-     * @param {function()=} beforeCallback
-     * @param {function(WebInspector.TextRange, WebInspector.TextRange)=} afterCallback
      * @return {?WebInspector.TextRange}
      */
-    undo: function(beforeCallback, afterCallback)
+    undo: function()
     {
         if (!this._undoStack.length)
             return null;
@@ -475,25 +474,23 @@ WebInspector.TextEditorModel.prototype = {
         this._markRedoableState();
 
         this._inUndo = true;
-        var range = this._doUndo(this._undoStack, beforeCallback, afterCallback);
+        var range = this._doUndo(this._undoStack);
         delete this._inUndo;
 
         return range;
     },
 
     /**
-     * @param {function()=} beforeCallback
-     * @param {function(WebInspector.TextRange, WebInspector.TextRange)=} afterCallback
      * @return {WebInspector.TextRange}
      */
-    redo: function(beforeCallback, afterCallback)
+    redo: function()
     {
         if (!this._redoStack || !this._redoStack.length)
             return null;
         this._markUndoableState();
 
         this._inRedo = true;
-        var range = this._doUndo(this._redoStack, beforeCallback, afterCallback);
+        var range = this._doUndo(this._redoStack);
         delete this._inRedo;
 
         return range;
@@ -501,25 +498,15 @@ WebInspector.TextEditorModel.prototype = {
 
     /**
      * @param {Array.<WebInspector.TextEditorCommand>} stack
-     * @param {function()=} beforeCallback
-     * @param {function(WebInspector.TextRange, WebInspector.TextRange)=} afterCallback
      * @return {WebInspector.TextRange}
      */
-    _doUndo: function(stack, beforeCallback, afterCallback)
+    _doUndo: function(stack)
     {
         var range = null;
         for (var i = stack.length - 1; i >= 0; --i) {
             var command = stack[i];
             stack.length = i;
-
-            if (beforeCallback)
-                beforeCallback();
-
             range = this._innerEditRange(command.newRange, command.originalText);
-
-            if (afterCallback)
-                afterCallback(command.newRange, range);
-
             if (i > 0 && stack[i - 1].explicit)
                 return range;
         }
@@ -538,7 +525,7 @@ WebInspector.TextEditorModel.prototype = {
             this._redoStack[this._redoStack.length - 1].explicit = true;
     },
 
-    resetUndoStack: function()
+    _resetUndoStack: function()
     {
         this._undoStack = [];
     },

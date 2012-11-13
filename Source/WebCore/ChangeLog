@@ -1,3 +1,23 @@
+2012-11-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: get rid of enter/exitTextChangeMode in the editor
+        https://bugs.webkit.org/show_bug.cgi?id=101845
+
+        Reviewed by Vsevolod Vlasov.
+
+        They seem to do nothing.
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype._textChanged):
+        (WebInspector.DefaultTextEditor.prototype.editRange):
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype.handleUndoRedo):
+        (WebInspector.TextEditorMainPanel.prototype.handleEnterKey.get var):
+        (WebInspector.TextEditorMainPanel.prototype.handleEnterKey):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextEditorModel.endsWithBracketRegex.):
+
 2012-11-13  Tommy Widenflycht  <tommyw@google.com>
 
         Remove the custom WebSocket::send for both V8 and JSC
