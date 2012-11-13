@@ -91,34 +91,6 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
     return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), WebSocket, webSocket.get()));
 }
 
-JSValue JSWebSocket::send(ExecState* exec)
-{
-    if (!exec->argumentCount())
-        return throwError(exec, createNotEnoughArgumentsError(exec));
-
-    JSValue message = exec->argument(0);
-    ExceptionCode ec = 0;
-    bool result;
-    if (message.inherits(&JSArrayBuffer::s_info))
-        result = impl()->send(toArrayBuffer(message), ec);
-    else if (message.inherits(&JSArrayBufferView::s_info))
-        result = impl()->send(toArrayBufferView(message), ec);
-    else if (message.inherits(&JSBlob::s_info))
-        result = impl()->send(toBlob(message), ec);
-    else {
-        String stringMessage = message.toString(exec)->value(exec);
-        if (exec->hadException())
-            return jsUndefined();
-        result = impl()->send(stringMessage, ec);
-    }
-    if (ec) {
-        setDOMException(exec, ec);
-        return jsUndefined();
-    }
-
-    return jsBoolean(result);
-}
-
 } // namespace WebCore
 
 #endif

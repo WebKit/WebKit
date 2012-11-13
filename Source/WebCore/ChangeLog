@@ -1,3 +1,20 @@
+2012-11-13  Tommy Widenflycht  <tommyw@google.com>
+
+        Remove the custom WebSocket::send for both V8 and JSC
+        https://bugs.webkit.org/show_bug.cgi?id=101936
+
+        Reviewed by Kentaro Hara.
+
+        This patch removes the custom WebSocket::send since it isn't needed anymore.
+
+        Patch covered by existing tests.
+
+        * Modules/websockets/WebSocket.idl:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/js/JSWebSocketCustom.cpp:
+        * bindings/v8/custom/V8WebSocketCustom.cpp: Removed.
+
 2012-11-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: move indentation logic into TextEditorModel
