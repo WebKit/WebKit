@@ -1,3 +1,17 @@
+2012-11-12  Dirk Pranke  <dpranke@chromium.org>
+
+        remove 'webkit-patch optimize-expectations'
+        https://bugs.webkit.org/show_bug.cgi?id=102032
+
+        Reviewed by Adam Barth.
+
+        Removing this command because it is totally broken (probably
+        broke when I added support for multiple files in a cascade)
+        and doesn't seem to do anything much useful. It certainly
+        didn't actually optimize things.
+
+        * Scripts/webkitpy/tool/commands/expectations.py: Removed.
+
 2012-11-12  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] DRT - Update Pixel Dump Support for OpenGL renderer

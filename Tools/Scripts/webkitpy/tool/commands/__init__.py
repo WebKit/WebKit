@@ -8,7 +8,6 @@ from webkitpy.tool.commands.bugsearch import BugSearch
 from webkitpy.tool.commands.chromechannels import ChromeChannels
 from webkitpy.tool.commands.download import *
 from webkitpy.tool.commands.earlywarningsystem import *
-from webkitpy.tool.commands.expectations import OptimizeExpectations
 from webkitpy.tool.commands.findusers import FindUsers
 from webkitpy.tool.commands.gardenomatic import GardenOMatic
 from webkitpy.tool.commands.openbugs import OpenBugs
