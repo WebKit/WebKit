@@ -759,6 +759,11 @@ webkit.org/b/99306 fast/repaint/fixed-child-of-fixed-move-after-scroll.html [ Im
 webkit.org/b/99306 fast/replaced/border-radius-clip.html [ ImageOnlyFailure ]
 webkit.org/b/99306 transitions/opacity-transition-zindex.html [ ImageOnlyFailure ]
 webkit.org/b/99306 transitions/suspend-transform-transition.html [ ImageOnlyFailure ]
+webkit.org/b/99306 fast/backgrounds/background-clip-text-on-body.html [ ImageOnlyFailure ]
+webkit.org/b/99306 fast/regions/region-style-text-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/99306 svg/filters/feImage-reference-svg-primitive.svg [ ImageOnlyFailure ] # Reni said this is actually a know svg issue with feImage.
+webkit.org/b/99306 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure ]
+webkit.org/b/99306 svg/custom/use-instanceRoot-event-bubbling.xhtml [ ImageOnlyFailure ]
 
 # missing "PASS: mousewheel event is fired."
 fast/dom/shadow/wheel-event-in-shadow-dom.html

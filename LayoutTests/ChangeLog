@@ -48,6 +48,20 @@
 
         Unreviewed Qt gardening.
 
+        Skip and rebase some tests, remove png's for reftests.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/css2.1/20110323/margin-collapse-clear-016-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/filters/custom/custom-filter-composite-source-atop-expected.png: Added.
+        * platform/qt-5.0-wk2/css3/filters/custom/missing-custom-filter-shader-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/animations/animateMotion-additive-2c-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/repaint/inner-svg-change-viewBox-expected.png: Added.
+        * platform/qt/svg/animations/animateMotion-additive-2d-expected.png: Removed.
+
+2012-11-13  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed Qt gardening.
+
         Amend my last commit, Ossy suggested we should not forget about
         past failures because of needed rebaseline.
 
