@@ -33,12 +33,14 @@ body.compact .help-window-main {
     border-bottom: solid 1px rgb(153, 153, 153);
     margin: 0 8px;
     padding: 0 2px;
-    line-height: 36px;
+    line-height: 28px;
 }
 
 .help-window-title {
     font-size: 16px;
     margin: 0;
+    padding-top: 1px;
+    margin-bottom: -1px;
 }
 
 .help-content {
@@ -105,6 +107,10 @@ body.platform-mac .help-close-button {
 
 body.platform-mac .help-window-main .tabbed-pane-header-contents {
     margin-left: 27px;
+}
+
+body.platform-mac .help-window-main .help-window-title {
+    margin-left: 18px;
 }
 
 .help-container {

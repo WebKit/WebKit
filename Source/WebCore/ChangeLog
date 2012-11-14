@@ -1,3 +1,17 @@
+2012-11-14  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Settings screen: close button overlays view title on mac.
+        https://bugs.webkit.org/show_bug.cgi?id=102198
+
+        Reviewed by Pavel Feldman.
+
+        Added margin-left for mac. Adjusted title height and vertical positioning.
+
+        * inspector/front-end/helpScreen.css:
+        (.help-window-caption): Adjusted title height.
+        (.help-window-title): Adjusted title vertical positioning. 
+        (body.platform-mac .help-window-main .help-window-title): Fixed margin.
+
 2012-11-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: use last selection as complementary signal when applying DOM changes to the text model.
