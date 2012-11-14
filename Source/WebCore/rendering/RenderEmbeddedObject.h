@@ -68,6 +68,9 @@ protected:
     RenderObjectChildList* children() { return &m_children; }
 #endif
 
+protected:
+    virtual void layout() OVERRIDE;
+
 private:
     virtual const char* renderName() const { return "RenderEmbeddedObject"; }
     virtual bool isEmbeddedObject() const { return true; }
@@ -76,7 +79,6 @@ private:
     virtual bool requiresLayer() const;
 #endif
 
-    virtual void layout();
     virtual void viewCleared();
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;

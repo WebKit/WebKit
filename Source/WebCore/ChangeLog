@@ -1,3 +1,19 @@
+2012-11-13  Jon Lee  <jonlee@apple.com>
+
+        Automatically run small plugins
+        https://bugs.webkit.org/show_bug.cgi?id=102148
+        <rdar://problem/12695560>
+
+        Reviewed by Darin Adler.
+
+        * rendering/RenderEmbeddedObject.h: Promote layout() to protected.
+        * rendering/RenderSnapshottedPlugIn.cpp: Add constants for threshold size for plugins that will auto-start.
+        (WebCore::RenderSnapshottedPlugIn::layout): After layout, obtain the width and height of the element.
+        If either dimension is 0, or the overall size of the plugin is smaller that the threshold size, move the
+        display state to Playing. Assuming we will always layout before first paint, changing the state here
+        should be safe.
+        * rendering/RenderSnapshottedPlugIn.h:
+
 2012-11-13  Kenneth Russell  <kbr@google.com>
 
         Notify embedder of lost contexts and allow overriding of WebGL support

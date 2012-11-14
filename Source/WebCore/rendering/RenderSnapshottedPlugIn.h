@@ -54,6 +54,8 @@ private:
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) OVERRIDE;
     void paintReplacedSnapshot(PaintInfo&, const LayoutPoint&);
 
+    virtual void layout() OVERRIDE;
+
     OwnPtr<RenderImageResource> m_snapshotResource;
 };
 

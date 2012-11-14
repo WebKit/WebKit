@@ -37,6 +37,9 @@
 
 namespace WebCore {
 
+static const int autoStartPlugInSizeThresholdWidth = 1;
+static const int autoStartPlugInSizeThresholdHeight = 1;
+
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element)
     : RenderEmbeddedObject(element)
     , m_snapshotResource(RenderImageResource::create())
@@ -140,6 +143,18 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
             repaint();
         }
         event->setDefaultHandled();
+    }
+}
+
+void RenderSnapshottedPlugIn::layout()
+{
+    RenderEmbeddedObject::layout();
+    if (plugInImageElement()->displayState() < HTMLPlugInElement::Playing) {
+        LayoutRect rect = contentBoxRect();
+        int width = rect.width();
+        int height = rect.height();
+        if (!width || !height || (width <= autoStartPlugInSizeThresholdWidth && height <= autoStartPlugInSizeThresholdHeight))
+            plugInImageElement()->setDisplayState(HTMLPlugInElement::Playing);
     }
 }
 
