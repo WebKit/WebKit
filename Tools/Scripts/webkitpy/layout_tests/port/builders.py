@@ -82,8 +82,9 @@ _exact_matches = {
     # FIXME: Remove rebaseline_override_dir once there are Qt bots for all the platform/qt-* directories.
     "Qt Linux Release": {"port_name": "qt-linux", "specifiers": set(["win", "linux", "mac"]), "rebaseline_override_dir": "qt"},
 
-    "EFL Linux 64-bit Debug": {"port_name": "efl", "specifiers": set(["efl", "debug"])},
     "EFL Linux 64-bit Release": {"port_name": "efl", "specifiers": set(["efl", "release"])},
+    "EFL Linux 64-bit Release WK2": {"port_name": "efl", "specifiers": set(["efl", "wk2", "release"])},
+    "EFL Linux 64-bit Debug WK2": {"port_name": "efl", "specifiers": set(["efl", "wk2", "debug"])},
 }
 
 
