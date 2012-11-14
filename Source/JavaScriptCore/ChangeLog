@@ -1,3 +1,15 @@
+2012-11-14  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Fix the [-Wreturn-type] warning in JavaScriptCore/assembler/MacroAssemblerARM.h
+        https://bugs.webkit.org/show_bug.cgi?id=102206
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add a return value for the function to suppress the warning.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::startOfPatchableBranchPtrWithPatch):
+
 2012-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134599.

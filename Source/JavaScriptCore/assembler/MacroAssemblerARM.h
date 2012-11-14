@@ -1271,6 +1271,7 @@ public:
     static CodeLocationLabel startOfPatchableBranchPtrWithPatch(CodeLocationDataLabelPtr label)
     {
         UNREACHABLE_FOR_PLATFORM();
+        return CodeLocationLabel();
     }
 
     static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel instructionStart, Address, void* initialValue)
