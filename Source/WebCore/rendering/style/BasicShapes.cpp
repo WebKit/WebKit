@@ -37,6 +37,19 @@
 
 namespace WebCore {
 
+bool BasicShape::canBlend(const BasicShape* other) const
+{
+    // FIXME: Support animations between different shapes in the future.
+    if (type() != other->type())
+        return false;
+
+    // FIXME: Support animations between polygons in the future.
+    if (type() == BasicShape::BASIC_SHAPE_POLYGON)
+        return false;
+
+    return true;
+}
+
 void BasicShapeRectangle::path(Path& path, const FloatRect& boundingBox)
 {
     ASSERT(path.isEmpty());

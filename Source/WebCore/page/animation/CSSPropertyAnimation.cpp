@@ -135,12 +135,7 @@ static inline PassRefPtr<ClipPathOperation> blendFunc(const AnimationBase*, Clip
     const BasicShape* fromShape = static_cast<ShapeClipPathOperation*>(from)->basicShape();
     const BasicShape* toShape = static_cast<ShapeClipPathOperation*>(to)->basicShape();
 
-    // FIXME: Support animations between different shapes in the future.
-    if (fromShape->type() != toShape->type())
-        return to;
-
-    // FIXME: Support animations between polygons in the future.
-    if (fromShape->type() == BasicShape::BASIC_SHAPE_POLYGON)
+    if (!fromShape->canBlend(toShape))
         return to;
 
     return ShapeClipPathOperation::create(toShape->blend(fromShape, progress));
@@ -149,12 +144,7 @@ static inline PassRefPtr<ClipPathOperation> blendFunc(const AnimationBase*, Clip
 #if ENABLE(CSS_EXCLUSIONS)
 static inline PassRefPtr<BasicShape> blendFunc(const AnimationBase*, BasicShape* from, BasicShape* to, double progress)
 {
-    // FIXME: Support animations between different shapes in the future.
-    if (from->type() != to->type())
-        return to;
-
-    // FIXME: Support animations between polygons in the future.
-    if (from->type() == BasicShape::BASIC_SHAPE_POLYGON)
+    if (!from->canBlend(to))
         return to;
 
     return to->blend(from, progress);

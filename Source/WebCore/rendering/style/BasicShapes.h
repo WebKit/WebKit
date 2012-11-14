@@ -52,6 +52,8 @@ public:
         BASIC_SHAPE_POLYGON = 4
     };
 
+    bool canBlend(const BasicShape*) const;
+
     virtual void path(Path&, const FloatRect&) = 0;
     virtual WindRule windRule() const { return RULE_NONZERO; }
     virtual PassRefPtr<BasicShape> blend(const BasicShape*, double) const = 0;

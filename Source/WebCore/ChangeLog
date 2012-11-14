@@ -1,5 +1,25 @@
 2012-11-14  Dirk Schulze  <krit@webkit.org>
 
+        Cleanup BasicShape blending check
+        https://bugs.webkit.org/show_bug.cgi?id=102289
+
+        Reviewed by Daniel Bates.
+
+        CSSPropertyAnimation had the same code for varifying that two BasicShape objects can be blended 
+        twice. Refactor the code and add a canBlend method in BasicShape that combines both checks. This
+        is a preparation for follow-up patches.
+
+        Pure refactoring without behavior change, no new tests.
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): Call new canBlend method for blending verification.
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend): Check if two BasicShape objects can be blended.
+        (WebCore):
+        * rendering/style/BasicShapes.h:
+
+2012-11-14  Dirk Schulze  <krit@webkit.org>
+
         [CSS Exclusions] Basic shapes on 'shape-inside' should be animatable
         https://bugs.webkit.org/show_bug.cgi?id=102123
 
