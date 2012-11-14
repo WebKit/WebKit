@@ -215,26 +215,26 @@ bool EWK2UnitTestBase::waitUntilURLChangedTo(const char* expectedURL, double tim
     return !data.didTimeOut();
 }
 
-void EWK2UnitTestBase::mouseClick(int x, int y)
+void EWK2UnitTestBase::mouseClick(int x, int y, int button)
 {
     Evas* evas = evas_object_evas_get(m_webView);
     evas_event_feed_mouse_move(evas, x, y, 0, 0);
-    evas_event_feed_mouse_down(evas, /* Left */ 1, EVAS_BUTTON_NONE, 0, 0);
-    evas_event_feed_mouse_up(evas, /* Left */ 1, EVAS_BUTTON_NONE, 0, 0);
+    evas_event_feed_mouse_down(evas, button, EVAS_BUTTON_NONE, 0, 0);
+    evas_event_feed_mouse_up(evas, button, EVAS_BUTTON_NONE, 0, 0);
 }
 
-void EWK2UnitTestBase::mouseDown(int x, int y)
+void EWK2UnitTestBase::mouseDown(int x, int y, int button)
 {
     Evas* evas = evas_object_evas_get(m_webView);
     evas_event_feed_mouse_move(evas, x, y, 0, 0);
-    evas_event_feed_mouse_down(evas, /* Left */ 1, EVAS_BUTTON_NONE, 0, 0);
+    evas_event_feed_mouse_down(evas, button, EVAS_BUTTON_NONE, 0, 0);
 }
 
-void EWK2UnitTestBase::mouseUp(int x, int y)
+void EWK2UnitTestBase::mouseUp(int x, int y, int button)
 {
     Evas* evas = evas_object_evas_get(m_webView);
     evas_event_feed_mouse_move(evas, x, y, 0, 0);
-    evas_event_feed_mouse_up(evas, /* Left */ 1, EVAS_BUTTON_NONE, 0, 0);
+    evas_event_feed_mouse_up(evas, button, EVAS_BUTTON_NONE, 0, 0);
 }
 
 void EWK2UnitTestBase::mouseMove(int x, int y)

@@ -1,3 +1,21 @@
+2012-11-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Add a button parameter to mouseClick, mouseDown, mouseUp functions
+        https://bugs.webkit.org/show_bug.cgi?id=102065
+
+        Reviewed by Laszlo Gombos.
+
+        mouseClick(), mouseDown() and mouseUp() test functions are only able to test a left button of mouse now.
+        However, EFL API test framwork needs to test various mouse buttons. For example, context menu test needs
+        to simulate a right mouse button. So, button type parameter needs to be added for it.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::mouseClick):
+        (EWK2UnitTest::EWK2UnitTestBase::mouseDown):
+        (EWK2UnitTest::EWK2UnitTestBase::mouseUp):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTestBase):
+
 2012-11-13  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2] New window size should consult the window attributes
