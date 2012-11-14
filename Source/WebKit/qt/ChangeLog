@@ -1,3 +1,22 @@
+2012-11-14  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] QStyleFacadeImp should use a QPointer to store the application style
+        https://bugs.webkit.org/show_bug.cgi?id=102084
+
+        Reviewed by Simon Hausmann.
+
+        QStyleFacadeImp implicitly creates a default style during the first
+        call to QApplication::style() in QStyleFacadeImp::style() but this
+        style is deleted when a custom style is set, thus the stored m_style
+        raw pointer in QStyleFacadeImp becomes dangling.
+        Use a QPointer to cache the style instead of a raw pointer.
+
+        This fixes the start-up crash in the anomaly example.
+        (https://bugreports.qt-project.org/browse/QTBUG-27924)
+
+        * WebCoreSupport/QStyleFacadeImp.h:
+        (QStyleFacadeImp):
+
 2012-11-13  Andreas Kling  <kling@webkit.org>
 
         Move inline style logic from ElementAttributeData to StyledElement.

@@ -23,6 +23,7 @@
 #ifndef QStyleFacadeImp_h
 #define QStyleFacadeImp_h
 
+#include <QPointer>
 #include <QStyleFacade.h>
 
 QT_BEGIN_NAMESPACE
@@ -87,7 +88,7 @@ private:
     QStyle* style() const;
 
     WebCore::Page* m_page;
-    mutable QStyle* m_style;
+    mutable QPointer<QStyle> m_style;
     QStyle* m_fallbackStyle;
     bool m_ownFallbackStyle;
     mutable QScopedPointer<QLineEdit> m_lineEdit;
