@@ -61,6 +61,7 @@ public:
         UNUSED_PARAM(modelViewMatrix);
     };
     virtual void drawTexture(const BitmapTexture&, const FloatRect& targetRect, const TransformationMatrix&, float opacity, const BitmapTexture* maskTexture, unsigned exposedEdges) OVERRIDE;
+    virtual void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&) OVERRIDE;
     virtual void beginClip(const TransformationMatrix&, const FloatRect&) OVERRIDE;
     virtual void bindSurface(BitmapTexture* surface) OVERRIDE { m_currentSurface = surface;}
     virtual void endClip() OVERRIDE { graphicsContext()->restore(); }

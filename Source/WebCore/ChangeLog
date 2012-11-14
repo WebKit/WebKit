@@ -1,3 +1,25 @@
+2012-11-14  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        [EFL][WK2] White flicker when scrolling big pages with dark background on slower hardware.
+        https://bugs.webkit.org/show_bug.cgi?id=102000
+
+        Reviewed by Noam Rosenthal.
+
+        Add helper functions to clear viewport before painting. Those functions
+        used by EFL Webkit2 port to set view background to match page background
+        in order to reduce visibility of flicker during scrolling/scaling/repainting
+        where page tiles are not ready.
+
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawSolidColor):
+        (WebCore):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore::TextureMapperImageBuffer::drawSolidColor):
+        (WebCore):
+        * platform/graphics/texmap/TextureMapperImageBuffer.h:
+
 2012-11-14  Mark Lam  <mark.lam@apple.com>
 
         Fixed regressions due to adding JSEventListener::m_wrapper null checks.

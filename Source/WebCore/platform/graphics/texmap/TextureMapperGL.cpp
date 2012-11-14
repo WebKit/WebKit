@@ -419,6 +419,18 @@ void TextureMapperGL::drawTexture(uint32_t texture, Flags flags, const IntSize& 
     drawTexturedQuadWithProgram(program.get(), texture, flags, targetRect, modelViewMatrix, opacity, maskTexture);
 }
 
+void TextureMapperGL::drawSolidColor(const FloatRect& rect, const TransformationMatrix& matrix, const Color& color)
+{
+    RefPtr<TextureMapperShaderProgram> program = data().sharedGLData().textureMapperShaderManager.getShaderProgram(TextureMapperShaderManager::SolidColor);
+    m_context3D->useProgram(program->programID());
+
+    float r, g, b, a;
+    color.getRGBA(r, g, b, a);
+    m_context3D->uniform4f(program->colorLocation(), r, g, b, a);
+
+    drawQuad(rect, matrix, program.get(), GraphicsContext3D::TRIANGLE_FAN, false);
+}
+
 static TransformationMatrix viewportMatrix(GraphicsContext3D* context3D)
 {
     GC3Dint viewport[4];
