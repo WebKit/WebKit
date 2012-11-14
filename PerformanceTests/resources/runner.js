@@ -11,13 +11,13 @@ if (window.testRunner) {
 
 (function () {
     var logLines = null;
-    var completedRuns = -1;
+    var completedIterations = -1;
     var callsPerIteration = 1;
     var currentTest = null;
     var results = [];
     var jsHeapResults = [];
     var mallocHeapResults = [];
-    var runCount = undefined;
+    var iterationCount = undefined;
 
     var PerfTestRunner = {};
 
@@ -167,9 +167,9 @@ if (window.testRunner) {
             return;
         }
         currentTest = test;
-        runCount = test.runCount || 20;
+        iterationCount = test.iterationCount || 20;
         logLines = window.testRunner ? [] : null;
-        PerfTestRunner.log("Running " + runCount + " times");
+        PerfTestRunner.log("Running " + iterationCount + " times");
         if (runner)
             scheduleNextRun(runner);
     }
@@ -184,7 +184,7 @@ if (window.testRunner) {
                 return;
             }
 
-            completedRuns++;
+            completedIterations++;
 
             try {
                 ignoreWarmUpAndLog(measuredValue);
@@ -193,7 +193,7 @@ if (window.testRunner) {
                 return;
             }
 
-            if (completedRuns < runCount)
+            if (completedIterations < iterationCount)
                 scheduleNextRun(runner);
             else
                 finish();
@@ -202,7 +202,7 @@ if (window.testRunner) {
 
     function ignoreWarmUpAndLog(measuredValue) {
         var labeledResult = measuredValue + " " + PerfTestRunner.unit;
-        if (completedRuns <= 0)
+        if (completedIterations <= 0)
             PerfTestRunner.log("Ignoring warm-up run (" + labeledResult + ")");
         else {
             results.push(measuredValue);
@@ -241,7 +241,7 @@ if (window.testRunner) {
     }
 
     PerfTestRunner.measureValueAync = function (measuredValue) {
-        completedRuns++;
+        completedIterations++;
 
         try {
             ignoreWarmUpAndLog(measuredValue);
@@ -250,7 +250,7 @@ if (window.testRunner) {
             return;
         }
 
-        if (completedRuns >= runCount)
+        if (completedIterations >= iterationCount)
             finish();
     }
 
@@ -289,7 +289,7 @@ if (window.testRunner) {
         while (totalTime < timeToRun) {
             totalTime += callRunAndMeasureTime(callsPerIteration);
             numberOfRuns += callsPerIteration;
-            if (completedRuns < 0 && totalTime < 100)
+            if (completedIterations < 0 && totalTime < 100)
                 callsPerIteration = Math.max(10, 2 * callsPerIteration);
         }
 
