@@ -16,7 +16,7 @@ PASS circle1.transform.baseVal.initialize(circle1) threw exception TypeError: Ty
 PASS circle1.transform.baseVal.initialize(null) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 
 Test uncommon arguments for getItem()
-PASS circle1.transform.baseVal.getItem(30) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS circle1.transform.baseVal.getItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS circle1.transform.baseVal.getItem('aString') is circle1.transform.baseVal.getItem(0)
 PASS circle1.transform.baseVal.getItem(circle1) is circle1.transform.baseVal.getItem(0)
 PASS circle1.transform.baseVal.getItem(null) is circle1.transform.baseVal.getItem(0)
@@ -84,7 +84,7 @@ PASS circle1.transform.baseVal.replaceItem(circle1.transform.baseVal.getItem(0),
 PASS circle1.transform.baseVal.numberOfItems is 1
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_ROTATE matrix=[0.0 1.0 -1.0 0.0 0.0 0.0]"
 PASS circle1.getAttribute('transform') is "rotate(90)"
-PASS circle1.transform.baseVal.replaceItem(circle1.transform.baseVal.getItem(0), null) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS circle1.transform.baseVal.replaceItem(circle1.transform.baseVal.getItem(0), null) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS circle1.transform.baseVal.numberOfItems is 0
 PASS circle1.getAttribute('transform') is ""
 
@@ -92,7 +92,7 @@ Set transform='rotate(90) scale(2 2) translate(10 10) skewX(45)' for circle1
 PASS circle1.setAttribute('transform', 'rotate(90) scale(2 2) translate(10 10) skewX(45)') is undefined.
 
 Test uncommon arguments for removeItem()
-PASS circle1.transform.baseVal.removeItem(30) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS circle1.transform.baseVal.removeItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS dumpTransform(circle1.transform.baseVal.removeItem(0)) is "type=SVG_TRANSFORM_ROTATE matrix=[0.0 1.0 -1.0 0.0 0.0 0.0]"
 PASS circle1.transform.baseVal.numberOfItems is 3
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"

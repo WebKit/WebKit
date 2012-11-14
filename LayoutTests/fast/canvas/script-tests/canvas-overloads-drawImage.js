@@ -28,6 +28,6 @@ shouldBe("ctx.drawImage(canvasElement, 0, 0, 0, 0)", "undefined");
 shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0)", "TypeError");
-shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0)", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
+shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0)", "'Error: IndexSizeError: DOM Exception 1'");
 shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "TypeError");
 shouldThrow("ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", "TypeError");

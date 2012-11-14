@@ -35,7 +35,7 @@ static struct CoreException {
     const char* const name;
     const char* const description;
 } coreExceptions[] = {
-    { "INDEX_SIZE_ERR", "Index or size was negative, or greater than the allowed value." },
+    { "IndexSizeError", "Index or size was negative, or greater than the allowed value." },
     { "DOMSTRING_SIZE_ERR", "The specified range of text did not fit into a DOMString." },
     { "HierarchyRequestError", "A Node was inserted somewhere it doesn't belong." },
     { "WRONG_DOCUMENT_ERR", "A Node was used in a different document than the one that created it (that doesn't support it)." },

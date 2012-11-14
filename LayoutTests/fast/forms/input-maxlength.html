@@ -47,7 +47,7 @@
     debug('Some tests for .maxLength property.');
     input = document.createElement("input");
     shouldBe("input.maxLength", "implicitMaxLength");
-    shouldThrow("input.maxLength = -1", "'Error: INDEX_SIZE_ERR: DOM Exception 1'");
+    shouldThrow("input.maxLength = -1", "'Error: IndexSizeError: DOM Exception 1'");
     input.maxLength = 100;
     shouldBe("input.getAttribute('maxlength')", "'100'");
 </script>

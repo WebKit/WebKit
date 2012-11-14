@@ -23,7 +23,7 @@ PASS ctx.drawImage(canvasElement, 0, 0, 0, 0) is undefined
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
-PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS successfullyParsed is true

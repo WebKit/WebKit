@@ -15,8 +15,8 @@ PASS ctx.getImageData(undefined, 10, 10, 10) threw exception Error: NOT_SUPPORTE
 PASS ctx.getImageData(10, undefined, 10, 10) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS ctx.getImageData(10, 10, undefined, 10) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS ctx.getImageData(10, 10, 10, undefined) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
-PASS ctx.getImageData(10, 10, 0, 10) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS ctx.getImageData(10, 10, 10, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS ctx.getImageData(10, 10, 0, 10) threw exception Error: IndexSizeError: DOM Exception 1.
+PASS ctx.getImageData(10, 10, 10, 0) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS successfullyParsed is true
 
 TEST COMPLETE

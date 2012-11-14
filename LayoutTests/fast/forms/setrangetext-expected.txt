@@ -120,7 +120,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
 
 Running tests on input with attributes: {"type":"tel"}
 
@@ -238,7 +238,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
 
 Running tests on input with attributes: {"type":"text"}
 
@@ -356,7 +356,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
 
 Running tests on input with attributes: {"type":"text","dir":"rtl"}
 
@@ -474,7 +474,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
 
 Running tests on input with attributes: {"type":"url"}
 
@@ -592,7 +592,7 @@ PASS element.value is "01234567A"
 PASS element.selectionStart is 8
 PASS element.selectionEnd is 9
 element.value = '0123456789'
-PASS element.setRangeText('A', 7, 3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS element.setRangeText('A', 7, 3) threw exception Error: IndexSizeError: DOM Exception 1.
 
 Check that setRangeText() on disconnected elements doesn't crash and has proper values.
 element.value = '0123456789'

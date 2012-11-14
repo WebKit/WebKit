@@ -15,7 +15,7 @@ PASS text1.rotate.baseVal.initialize(text1) threw exception TypeError: Type erro
 PASS text1.rotate.baseVal.initialize(null) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 
 Test uncommon arguments for getItem()
-PASS text1.rotate.baseVal.getItem(30) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS text1.rotate.baseVal.getItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS text1.rotate.baseVal.getItem('aString') is text1.rotate.baseVal.getItem(0)
 PASS text1.rotate.baseVal.getItem(text1) is text1.rotate.baseVal.getItem(0)
 PASS text1.rotate.baseVal.getItem(null) is text1.rotate.baseVal.getItem(0)
@@ -86,7 +86,7 @@ PASS text1.getAttribute('rotate') is "1 4"
 PASS text1.rotate.baseVal.replaceItem(text1.rotate.baseVal.getItem(0), text1) is text1.rotate.baseVal.getItem(0)
 PASS text1.rotate.baseVal.numberOfItems is 1
 PASS text1.getAttribute('rotate') is "1"
-PASS text1.rotate.baseVal.replaceItem(text1.rotate.baseVal.getItem(0), null) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS text1.rotate.baseVal.replaceItem(text1.rotate.baseVal.getItem(0), null) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS text1.rotate.baseVal.numberOfItems is 0
 PASS text1.getAttribute('rotate') is ""
 
@@ -94,7 +94,7 @@ Set rotate='1 2 3 4' for text1
 PASS text1.setAttribute('rotate', '1 2 3 4') is undefined.
 
 Test uncommon arguents for removeItem()
-PASS text1.rotate.baseVal.removeItem(30) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS text1.rotate.baseVal.removeItem(30) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS text1.rotate.baseVal.removeItem('aString').value is 1
 PASS text1.rotate.baseVal.numberOfItems is 3
 PASS text1.rotate.baseVal.getItem(0).value is 2

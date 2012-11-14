@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 16: Uncaught Error: INDEX_SIZE_ERR: DOM Exception 1
+CONSOLE MESSAGE: line 16: Uncaught Error: IndexSizeError: DOM Exception 1
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

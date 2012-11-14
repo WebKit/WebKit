@@ -1,3 +1,64 @@
+2012-11-14  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: IndexSizeError
+        https://bugs.webkit.org/show_bug.cgi?id=102087
+
+        Reviewed by Ojan Vafai.
+
+        Updated tests and expectations.
+
+        * editing/selection/extend-expected.txt:
+        * fast/canvas/canvas-getImageData-invalid-expected.txt:
+        * fast/canvas/canvas-overloads-drawImage-expected.txt:
+        * fast/canvas/script-tests/canvas-getImageData-invalid.js:
+        * fast/canvas/script-tests/canvas-overloads-drawImage.js:
+        * fast/canvas/webgl/data-view-test-expected.txt:
+        * fast/dom/HTMLInputElement/input-size-attribute-expected.txt:
+        * fast/dom/HTMLInputElement/input-size-attribute.html:
+        * fast/dom/HTMLSelectElement/select-selectedIndex-expected.txt:
+        * fast/dom/HTMLSelectElement/select-selectedIndex-multiple-expected.txt:
+        * fast/dom/css-mediarule-functions-expected.txt:
+        * fast/dom/css-mediarule-functions.html:
+        * fast/forms/input-maxlength-expected.txt:
+        * fast/forms/input-maxlength.html:
+        * fast/forms/number/number-size-expected.txt:
+        * fast/forms/number/number-size.html:
+        * fast/forms/search/search-setrangetext-expected.txt:
+        * fast/forms/setrangetext-expected.txt:
+        * fast/forms/textarea-maxlength-expected.txt:
+        * fast/forms/textarea-maxlength.html:
+        * fast/forms/textarea/textarea-setrangetext-expected.txt:
+        * fast/html/marquee-element-expected.txt:
+        * fast/inspector-support/uncaught-dom1-exception-expected.txt:
+        * fast/js/select-options-add-expected.txt:
+        * fast/speech/scripted/speechgrammar-basics-expected.txt:
+        * inspector/styles/set-property-boundaries-expected.txt:
+        * platform/chromium-mac/fast/dynamic/015-expected.txt:
+        * platform/chromium-win/fast/dynamic/015-expected.txt:
+        * platform/chromium/canvas/philip/tests/2d.missingargs-expected.txt:
+        * platform/chromium/fast/inspector-support/uncaught-dom1-exception-expected.txt:
+        * platform/efl/fast/dynamic/015-expected.txt:
+        * platform/gtk/fast/dynamic/015-expected.txt:
+        * platform/mac/canvas/philip/tests/2d.missingargs-expected.txt:
+        * platform/mac/fast/dynamic/015-expected.txt:
+        * platform/qt/fast/dynamic/015-expected.txt:
+        * svg/custom/acid3-test-77-expected.txt:
+        * svg/custom/getSubStringLength-expected.txt:
+        * svg/custom/selectSubString-expected.txt:
+        * svg/dom/SVGLengthList-appendItem-expected.txt:
+        * svg/dom/SVGLengthList-basics-expected.txt:
+        * svg/dom/SVGLengthList-getItem-expected.txt:
+        * svg/dom/SVGLengthList-initialize-expected.txt:
+        * svg/dom/SVGLengthList-insertItemBefore-expected.txt:
+        * svg/dom/SVGLengthList-removeItem-expected.txt:
+        * svg/dom/SVGLengthList-replaceItem-expected.txt:
+        * svg/dom/SVGNumberList-basics-expected.txt:
+        * svg/dom/SVGPathSegList-clear-and-initialize-expected.txt:
+        * svg/dom/SVGPointList-basics-expected.txt:
+        * svg/dom/SVGStringList-basics-expected.txt:
+        * svg/dom/SVGTransformList-basics-expected.txt:
+        * svg/dom/svglist-exception-on-out-bounds-error-expected.txt:
+
 2012-11-14  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Add some missing pixel expectations.

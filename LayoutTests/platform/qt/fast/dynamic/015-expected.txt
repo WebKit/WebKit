@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 16: INDEX_SIZE_ERR: DOM Exception 1: Index or size was negative, or greater than the allowed value.
+CONSOLE MESSAGE: line 16: IndexSizeError: DOM Exception 1: Index or size was negative, or greater than the allowed value.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

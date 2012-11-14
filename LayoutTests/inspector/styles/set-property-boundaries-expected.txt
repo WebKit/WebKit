@@ -1,5 +1,5 @@
 Tests that setting CSS property text out of boundaries does not crash.
 
 color: red;
-INDEX_SIZE_ERR
+IndexSizeError
 

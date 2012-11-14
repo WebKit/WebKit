@@ -31,7 +31,7 @@ shouldBe('textArea.maxLength', '256');
 textArea.maxLength = 13;
 shouldBe('textArea.getAttribute("maxlength")', '"13"');
 
-shouldThrow('textArea.maxLength = -1', '"Error: INDEX_SIZE_ERR: DOM Exception 1"');
+shouldThrow('textArea.maxLength = -1', '"Error: IndexSizeError: DOM Exception 1"');
 shouldBe('textArea.getAttribute("maxlength")', '"13"');  // Not changed
 
 textArea.maxLength = null;

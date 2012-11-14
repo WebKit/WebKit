@@ -1,3 +1,20 @@
+2012-11-14  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: IndexSizeError
+        https://bugs.webkit.org/show_bug.cgi?id=102087
+
+        Reviewed by Ojan Vafai.
+
+        This is the first in a series of updates to DOMException name to match
+        the spec and Firefox.
+
+        Patch 1 of 25
+
+        Updated existing tests.
+
+        * dom/DOMCoreException.cpp:
+        (WebCore):
+
 2012-11-14  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Fix [-Wmissing-braces] warnings in graphics/cpu/arm/GraphicsContext3DNEON.h

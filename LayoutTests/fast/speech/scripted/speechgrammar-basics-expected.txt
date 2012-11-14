@@ -24,13 +24,13 @@ PASS gs == null is false
 PASS gs.length is 0
 PASS gs.item(0) == null is true
 PASS gs[0] == undefined is true
-PASS gs.item(-1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS gs.item(-1) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS gs[-1] == undefined is true
 gs.addFromUri('grammar', 2)
 PASS gs.length is 1
 PASS gs.item(1) == null is true
 PASS gs[1] == undefined is true
-PASS gs.item(-1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS gs.item(-1) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS gs[-1] == undefined is true
 PASS gs[0] is gs.item(0)
 PASS gs.item(0).src is base + 'grammar'

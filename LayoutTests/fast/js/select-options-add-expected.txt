@@ -158,7 +158,7 @@ PASS select2.options[6].value is '5'
 PASS select2.options[6].textContent is 'E'
 
 2.8 Add an Option at index -2
-PASS select2.options.add(option2, -2) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS select2.options.add(option2, -2) threw exception Error: IndexSizeError: DOM Exception 1.
 PASS select2.options.length is 7
 PASS select2.selectedIndex is 1
 
