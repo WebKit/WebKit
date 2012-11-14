@@ -1,3 +1,16 @@
+2012-11-14  George Tsoumalis  <tsumalis96@gmail.com>
+
+        Implementation for mehods in WebMutableURLRequest.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=83671
+
+        Reviewed by Brent Fulgham..
+
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::addValue):
+        (WebMutableURLRequest::setMainDocumentURL):
+        (WebMutableURLRequest::setHTTPShouldHandleCookies):
+
+
 2012-11-12  Roger Fong  <roger_fong@apple.com>
 
         REGRESSION(r130643): Assertion failure when running DRT in debug mode

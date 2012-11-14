@@ -186,10 +186,12 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::HTTPMethod(
 }
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::HTTPShouldHandleCookies( 
-    /* [retval][out] */ BOOL* /*result*/)
+    /* [retval][out] */ BOOL* result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    bool shouldHandleCookies = m_request.allowCookies();
+
+    *result = shouldHandleCookies ? TRUE : FALSE;
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::initWithURL( 
@@ -264,11 +266,11 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::isEqual(
 // IWebMutableURLRequest --------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::addValue( 
-    /* [in] */ BSTR /*value*/,
-    /* [in] */ BSTR /*field*/)
+    /* [in] */ BSTR value,
+    /* [in] */ BSTR field)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    m_request.addHTTPHeaderField(WTF::AtomicString(value, SysStringLen(value)), String(field, SysStringLen(field)));
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setAllHTTPHeaderFields( 
@@ -314,10 +316,10 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setHTTPShouldHandleCookies(
 }
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setMainDocumentURL( 
-    /* [in] */ BSTR /*theURL*/)
+    /* [in] */ BSTR theURL)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    m_request.setFirstPartyForCookies(MarshallingHelpers::BSTRToKURL(theURL));
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setTimeoutInterval( 
