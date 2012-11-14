@@ -33,7 +33,10 @@
 
 #include "V8Element.h"
 #include "V8HTMLElement.h"
+
+#if ENABLE(SVG)
 #include "V8SVGElement.h"
+#endif
 
 namespace WebCore {
 
