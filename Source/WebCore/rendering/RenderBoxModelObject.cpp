@@ -647,7 +647,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingEnd() const
 }
 
 RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& borderRect, InlineFlowBox* box, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
-    bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
+    bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     RenderView* renderView = view();
     RoundedRect border = style()->getRoundedBorderFor(borderRect, renderView, includeLogicalLeftEdge, includeLogicalRightEdge);
@@ -691,17 +691,31 @@ void RenderBoxModelObject::clipRoundedInnerRect(GraphicsContext * context, const
     }
 }
 
-static LayoutRect backgroundRectAdjustedForBleedAvoidance(GraphicsContext* context, const LayoutRect& borderRect, BackgroundBleedAvoidance bleedAvoidance)
+static LayoutRect shrinkRectByOnePixel(GraphicsContext* context, const LayoutRect& rect)
 {
-    if (bleedAvoidance != BackgroundBleedShrinkBackground)
-        return borderRect;
-
-    // We shrink the rectangle by one pixel on each side because the bleed is one pixel maximum.
+    LayoutRect shrunkRect = rect;
     AffineTransform transform = context->getCTM();
-    LayoutRect adjustedRect = borderRect;
-    adjustedRect.inflateX(-static_cast<LayoutUnit>(ceil(1 / transform.xScale())));
-    adjustedRect.inflateY(-static_cast<LayoutUnit>(ceil(1 / transform.yScale())));
-    return adjustedRect;
+    shrunkRect.inflateX(-static_cast<LayoutUnit>(ceil(1 / transform.xScale())));
+    shrunkRect.inflateY(-static_cast<LayoutUnit>(ceil(1 / transform.yScale())));
+    return shrunkRect;
+}
+
+LayoutRect RenderBoxModelObject::borderInnerRectAdjustedForBleedAvoidance(GraphicsContext* context, const LayoutRect& rect, BackgroundBleedAvoidance bleedAvoidance) const
+{
+    // We shrink the rectangle by one pixel on each side to make it fully overlap the anti-aliased background border
+    return (bleedAvoidance == BackgroundBleedBackgroundOverBorder) ? shrinkRectByOnePixel(context, rect) : rect;
+}
+
+RoundedRect RenderBoxModelObject::backgroundRoundedRectAdjustedForBleedAvoidance(GraphicsContext* context, const LayoutRect& borderRect, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+{
+    if (bleedAvoidance == BackgroundBleedShrinkBackground) {
+        // We shrink the rectangle by one pixel on each side because the bleed is one pixel maximum.
+        return getBackgroundRoundedRect(shrinkRectByOnePixel(context, borderRect), box, boxSize.width(), boxSize.height(), includeLogicalLeftEdge, includeLogicalRightEdge);
+    }
+    if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
+        return style()->getRoundedInnerBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
+
+    return getBackgroundRoundedRect(borderRect, box, boxSize.width(), boxSize.height(), includeLogicalLeftEdge, includeLogicalRightEdge);
 }
 
 static void applyBoxShadowForBackground(GraphicsContext* context, RenderStyle* style)
@@ -773,7 +787,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             applyBoxShadowForBackground(context, style());
 
         if (hasRoundedBorder && bleedAvoidance != BackgroundBleedUseTransparencyLayer) {
-            RoundedRect border = getBackgroundRoundedRect(backgroundRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance), box, boxSize.width(), boxSize.height(), includeLeftEdge, includeRightEdge);
+            RoundedRect border = backgroundRoundedRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance, box, boxSize, includeLeftEdge, includeRightEdge);
             context->fillRoundedRect(border, bgColor, style()->colorSpace());
         } else
             context->fillRect(pixelSnappedIntRect(rect), bgColor, style()->colorSpace());
@@ -785,8 +799,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     bool clipToBorderRadius = hasRoundedBorder && !(isBorderFill && bleedAvoidance == BackgroundBleedUseTransparencyLayer);
     GraphicsContextStateSaver clipToBorderStateSaver(*context, clipToBorderRadius);
     if (clipToBorderRadius) {
-        LayoutRect adjustedRect = isBorderFill ? backgroundRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance) : rect;
-        RoundedRect border = getBackgroundRoundedRect(adjustedRect, box, boxSize.width(), boxSize.height(), includeLeftEdge, includeRightEdge);
+        RoundedRect border = isBorderFill ? backgroundRoundedRectAdjustedForBleedAvoidance(context, rect, bleedAvoidance, box, boxSize, includeLeftEdge, includeRightEdge) : getBackgroundRoundedRect(rect, box, boxSize.width(), boxSize.height(), includeLeftEdge, includeRightEdge);
 
         // Clip to the padding or content boxes as necessary.
         if (bgLayer->clip() == ContentFillBox) {
@@ -1729,8 +1742,8 @@ static IntRect calculateSideRect(const RoundedRect& outerBorder, const BorderEdg
 }
 
 void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, const RenderStyle* style, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
-                                            const BorderEdge edges[], BorderEdgeFlags edgeSet, BackgroundBleedAvoidance bleedAvoidance,
-                                            bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor)
+    const IntPoint& innerBorderAdjustment, const BorderEdge edges[], BorderEdgeFlags edgeSet, BackgroundBleedAvoidance bleedAvoidance,
+    bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor)
 {
     bool renderRadii = outerBorder.isRounded();
 
@@ -1738,9 +1751,14 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
     if (renderRadii)
         roundedPath.addRoundedRect(outerBorder);
     
+    // The inner border adjustment for bleed avoidance mode BackgroundBleedBackgroundOverBorder
+    // is only applied to sideRect, which is okay since BackgroundBleedBackgroundOverBorder
+    // is only to be used for solid borders and the shape of the border painted by drawBoxSideFromPath
+    // only depends on sideRect when painting solid borders.
+
     if (edges[BSTop].shouldRender() && includesEdge(edgeSet, BSTop)) {
         IntRect sideRect = outerBorder.rect();
-        sideRect.setHeight(edges[BSTop].width);
+        sideRect.setHeight(edges[BSTop].width + innerBorderAdjustment.y());
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSTop].style) || borderWillArcInnerEdge(innerBorder.radii().topLeft(), innerBorder.radii().topRight()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSTop, BSLeft, BSRight, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
@@ -1748,7 +1766,7 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
 
     if (edges[BSBottom].shouldRender() && includesEdge(edgeSet, BSBottom)) {
         IntRect sideRect = outerBorder.rect();
-        sideRect.shiftYEdgeTo(sideRect.maxY() - edges[BSBottom].width);
+        sideRect.shiftYEdgeTo(sideRect.maxY() - edges[BSBottom].width - innerBorderAdjustment.y());
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSBottom].style) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().bottomRight()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSBottom, BSLeft, BSRight, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
@@ -1756,7 +1774,7 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
 
     if (edges[BSLeft].shouldRender() && includesEdge(edgeSet, BSLeft)) {
         IntRect sideRect = outerBorder.rect();
-        sideRect.setWidth(edges[BSLeft].width);
+        sideRect.setWidth(edges[BSLeft].width + innerBorderAdjustment.x());
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSLeft].style) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().topLeft()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSLeft, BSTop, BSBottom, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
@@ -1764,14 +1782,14 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
 
     if (edges[BSRight].shouldRender() && includesEdge(edgeSet, BSRight)) {
         IntRect sideRect = outerBorder.rect();
-        sideRect.shiftXEdgeTo(sideRect.maxX() - edges[BSRight].width);
+        sideRect.shiftXEdgeTo(sideRect.maxX() - edges[BSRight].width - innerBorderAdjustment.x());
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSRight].style) || borderWillArcInnerEdge(innerBorder.radii().bottomRight(), innerBorder.radii().topRight()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSRight, BSTop, BSBottom, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
     }
 }
 
-void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext* graphicsContext, const RenderStyle* style, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
+void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext* graphicsContext, const RenderStyle* style, const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment,
                                                        const BorderEdge edges[], BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias)
 {
     BorderEdgeFlags edgesToDraw = AllBorderEdges;
@@ -1802,7 +1820,7 @@ void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext* graphics
             commonColor = Color(commonColor.red(), commonColor.green(), commonColor.blue());
         }
 
-        paintBorderSides(graphicsContext, style, outerBorder, innerBorder, edges, commonColorEdgeSet, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, &commonColor);
+        paintBorderSides(graphicsContext, style, outerBorder, innerBorder, innerBorderAdjustment, edges, commonColorEdgeSet, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, &commonColor);
             
         if (useTransparencyLayer)
             graphicsContext->endTransparencyLayer();
@@ -1825,7 +1843,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
     BorderEdge edges[4];
     getBorderEdgeInfo(edges, style, includeLogicalLeftEdge, includeLogicalRightEdge);
     RoundedRect outerBorder = style->getRoundedBorderFor(rect, view(), includeLogicalLeftEdge, includeLogicalRightEdge);
-    RoundedRect innerBorder = style->getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge);
+    RoundedRect innerBorder = style->getRoundedInnerBorderFor(borderInnerRectAdjustedForBleedAvoidance(graphicsContext, rect, bleedAvoidance), includeLogicalLeftEdge, includeLogicalRightEdge);
 
     bool haveAlphaColor = false;
     bool haveAllSolidEdges = true;
@@ -1961,10 +1979,12 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& 
 
     // If only one edge visible antialiasing doesn't create seams
     bool antialias = shouldAntialiasLines(graphicsContext) || numEdgesVisible == 1;
+    RoundedRect unadjustedInnerBorder = (bleedAvoidance == BackgroundBleedBackgroundOverBorder) ? style->getRoundedInnerBorderFor(rect, includeLogicalLeftEdge, includeLogicalRightEdge) : innerBorder;
+    IntPoint innerBorderAdjustment(innerBorder.rect().x() - unadjustedInnerBorder.rect().x(), innerBorder.rect().y() - unadjustedInnerBorder.rect().y());
     if (haveAlphaColor)
-        paintTranslucentBorderSides(graphicsContext, style, outerBorder, innerBorder, edges, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias);
+        paintTranslucentBorderSides(graphicsContext, style, outerBorder, unadjustedInnerBorder, innerBorderAdjustment, edges, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias);
     else
-        paintBorderSides(graphicsContext, style, outerBorder, innerBorder, edges, AllBorderEdges, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias);
+        paintBorderSides(graphicsContext, style, outerBorder, unadjustedInnerBorder, innerBorderAdjustment, edges, AllBorderEdges, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias);
 }
 
 void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext, const LayoutRect& borderRect, const Path& borderPath, const BorderEdge edges[],

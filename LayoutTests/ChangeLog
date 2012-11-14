@@ -1,3 +1,20 @@
+2012-11-14  Justin Novosad  <junov@google.com>
+
+        Boxes with rounded corners and thin borders are too slow to draw
+        https://bugs.webkit.org/show_bug.cgi?id=101974
+
+        Reviewed by Simon Fraser.
+
+        New test that purposely triggers the BackgroundOverBorder painting path
+        in WebCore::RenderBox, to test it with thick borders, off-diagonal
+        mitring, an anti-aliased rounded border wedge, and a border of width 0.
+
+        * fast/borders/border-radius-wide-border-05.html: Added.
+        * fast/borders/border-radius-wide-border-05-expected.txt: Added.
+        * LayoutTests/platform/chromium-win/fast/borders/border-radius-wide-border-05-expected.png: Added.
+        * LayoutTests/platform/chromium/TestExpectations: Added Expectations.
+        Added expectations for tests pixels results that require rebaselining
+
 2012-11-14  Sami Kyostila  <skyostil@chromium.org>
 
         Optimize painting of composited scrolling layers

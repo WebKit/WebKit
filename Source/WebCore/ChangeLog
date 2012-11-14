@@ -1,3 +1,65 @@
+2012-11-14  Justin Novosad  <junov@google.com>
+
+        Boxes with rounded corners and thin borders are too slow to draw
+        https://bugs.webkit.org/show_bug.cgi?id=101974
+
+        Reviewed by Simon Fraser.
+
+        With the current implementation RenderBox::
+        determineBackgroundBleedAvoidance() uses the slow path
+        BackgroundBleedUseTransparencyLayer for some very common use cases,
+        notably for drawing rectangles with rounded corners that have thin
+        borders. This is because the BackgroundBleedShrinkBackground
+        strategy requires a border at least two pixels wide on all sides. This
+        patch introduce drawing strategy BackgroundBleedBackgroundOverBorder.
+        This approach consists in drawing the border first, with an inset inner
+        edge (for anti-aliased compositing to work well).  This approach only
+        works with opaque solid edges and opaque single-layer backgrounds.
+        By using this approach rather than BackgroundBleedUseTransparencyLayer,
+        we save two clipPath, one save and one saveLayer on the
+        GraphicsContext. This patch gets good coverage from existing layout
+        tests. One additional test was added to exercise mitring, thick edges
+        and anti-aliasing edge cases under the new painting algorithm.
+
+        Test: fast/borders/border-radius-wide-border-05.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::determineBackgroundBleedAvoidance):
+        Added selection criteria for BackgroundOverBorder
+        (WebCore::RenderBox::paintBoxDecorations):
+        Added a preliminary paintBorder pass for BackgroundOverBorder
+        (WebCore::RenderBox::paintBackground):
+        Insetting the background to to innerBorder when bleedAvoidance is
+        BackgroundOverBorder.  This why BackgroundOverBorder only works for
+        Opaque solid edges.
+        (WebCore):
+        (WebCore::RenderBox::backgroundIsSingleOpaqueLayer):
+        Utility method use by determineBackgroundBleedAvoidance to test the
+        background's eligibility for BackgroundOverBorder bleed avoidance
+        strategy.  The reason the background must be a single layer is to avoid
+        color bleeding from layer compositing along anti-aliased edges
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::getBackgroundRoundedRect):
+        (WebCore::RenderBoxModelObject::borderInnerRectAdjustedForBleedAvoidance):
+        Added support for BackgroundOverBorder by applying a one pixel inset.
+        (WebCore::RenderBoxModelObject::backgroundRoundedRectAdjustedForBleedAvoidance):
+        Set the background rect to the inner border for BackgroundOverBorder
+        (WebCore):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        Added support for BackgroundOverBorder by using 
+        backgroundRoundedRectAdjustedForBleedAvoidance
+        (WebCore::RenderBoxModelObject::paintBorderSides):
+        Added support for BackgroundOverBorder by applying per-side inset
+        adjustments.
+        (WebCore::RenderBoxModelObject::paintTranslucentBorderSides):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        Added support for BackgroundOverBorder by using an adjusted inner
+        border, but not if sides are painted individually.
+        * rendering/RenderBoxModelObject.h:
+        (RenderBoxModelObject):
+
 2012-11-14  Hideki Yoshida  <yoshida-hxa@necst.nec.co.jp>
 
         [WinCairo] Fix cairo_t* memory leak in GraphicsContext::platformInit

@@ -830,11 +830,8 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
     FloatSize contextScaling(static_cast<float>(ctm.xScale()), static_cast<float>(ctm.yScale()));
     if (borderObscuresBackgroundEdge(contextScaling))
         return BackgroundBleedShrinkBackground;
-    
-    // FIXME: there is one more strategy possible, for opaque backgrounds and
-    // translucent borders. In that case we could avoid using a transparency layer,
-    // and paint the border first, and then paint the background clipped to the
-    // inside of the border.
+    if (!style->hasAppearance() && borderObscuresBackground() && backgroundIsSingleOpaqueLayer())
+        return BackgroundBleedBackgroundOverBorder;
 
     return BackgroundBleedUseTransparencyLayer;
 }
@@ -868,12 +865,15 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         paintInfo.context->addRoundedRectClip(border);
         paintInfo.context->beginTransparencyLayer(1);
     }
-    
+
     // If we have a native theme appearance, paint that before painting our background.
     // The theme will tell us whether or not we should also paint the CSS background.
     IntRect snappedPaintRect(pixelSnappedIntRect(paintRect));
     bool themePainted = style()->hasAppearance() && !theme()->paint(this, paintInfo, snappedPaintRect);
     if (!themePainted) {
+        if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
+            paintBorder(paintInfo, paintRect, style(), bleedAvoidance);
+
         paintBackground(paintInfo, paintRect, bleedAvoidance);
 
         if (style()->hasAppearance())
@@ -882,7 +882,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     paintBoxShadow(paintInfo, paintRect, style(), Inset);
 
     // The theme will tell us whether or not we should also paint the CSS border.
-    if ((!style()->hasAppearance() || (!themePainted && theme()->paintBorderOnly(this, paintInfo, snappedPaintRect))) && style()->hasBorder())
+    if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style()->hasAppearance() || (!themePainted && theme()->paintBorderOnly(this, paintInfo, snappedPaintRect))) && style()->hasBorder())
         paintBorder(paintInfo, paintRect, style(), bleedAvoidance);
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
@@ -901,6 +901,25 @@ void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& pa
         if (!backgroundIsObscured())
             paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect, bleedAvoidance);
     }
+}
+
+bool RenderBox::backgroundIsSingleOpaqueLayer() const
+{
+    const FillLayer* fillLayer = style()->backgroundLayers();
+    if (!fillLayer || fillLayer->next() || fillLayer->clip() != BorderFillBox || fillLayer->composite() != CompositeSourceOver)
+        return false;
+
+    // Clipped with local scrolling
+    if (hasOverflowClip() && fillLayer->attachment() == LocalBackgroundAttachment)
+        return false;
+
+    Color bgColor = style()->visitedDependentColor(CSSPropertyBackgroundColor);
+    if (bgColor.isValid() && bgColor.alpha() == 255)
+        return true;
+    
+    // FIXME: return true if a background image is present and is opaque
+
+    return false;
 }
 
 void RenderBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

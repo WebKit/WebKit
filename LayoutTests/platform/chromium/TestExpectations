@@ -3086,6 +3086,13 @@ webkit.org/b/76572 http/tests/download [ Failure ]
 
 webkit.org/b/77314 [ Mac Win ] fast/events/touch/send-oncancel-event.html [ Failure Pass ]
 
+# Needs rebaselining after fix for bug 101974
+webkit.org/b/101974 [ Mac Linux ] fast/borders/border-radius-wide-border-05.html [ ImageOnlyFailure Pass ]
+webkit.org/b/101974 fast/forms/validation-message-appearance.html [ ImageOnlyFailure Pass ]
+webkit.org/b/101974 svg/custom/svg-fonts-in-html.html [ ImageOnlyFailure Pass ]
+webkit.org/b/101974 fast/borders/border-radius-wide-border-01.html [ ImageOnlyFailure Pass ]
+webkit.org/b/101974 fast/borders/borderRadiusInset01.html [ ImageOnlyFailure Pass ]
+
 # Skipped until setTouchPointRadius get implemented
 webkit.org/b/91012 touchadjustment/focusout-on-touch.html [ Skip ]
 
