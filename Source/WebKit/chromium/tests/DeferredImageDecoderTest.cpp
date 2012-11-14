@@ -39,6 +39,12 @@ using namespace WebCore;
 
 namespace {
 
+static SkCanvas* createRasterCanvas(int width, int height)
+{
+    SkAutoTUnref<SkDevice> device(new SkDevice(SkBitmap::kARGB_8888_Config, width, height));
+    return new SkCanvas(device);
+}
+
 class DeferredImageDecoderTest : public ::testing::Test {
 public:
     virtual void SetUp()
@@ -47,7 +53,7 @@ public:
         m_actualDecoder = new MockImageDecoder();
         m_actualDecoder->setSize(600, 613);
         m_lazyDecoder = DeferredImageDecoder::createForTesting(adoptPtr(m_actualDecoder));
-        m_canvas.setDevice(new SkDevice(SkBitmap::kARGB_8888_Config, 100, 100))->unref();
+        m_canvas.reset(createRasterCanvas(100, 100));
     }
 
     virtual void TearDown()
@@ -60,7 +66,7 @@ protected:
     MockImageDecoder* m_actualDecoder;
     OwnPtr<DeferredImageDecoder> m_lazyDecoder;
     SkPicture m_picture;
-    SkCanvas m_canvas;
+    SkAutoTUnref<SkCanvas> m_canvas;
 };
 
 TEST_F(DeferredImageDecoderTest, drawIntoSkPicture)
@@ -76,7 +82,7 @@ TEST_F(DeferredImageDecoderTest, drawIntoSkPicture)
     m_picture.endRecording();
     EXPECT_EQ(0, m_actualDecoder->frameBufferRequestCount());
 
-    m_canvas.drawPicture(m_picture);
+    m_canvas->drawPicture(m_picture);
     EXPECT_EQ(1, m_actualDecoder->frameBufferRequestCount());
 }
 
@@ -95,7 +101,7 @@ TEST_F(DeferredImageDecoderTest, drawScaledIntoSkPicture)
     m_picture.endRecording();
     EXPECT_EQ(0, m_actualDecoder->frameBufferRequestCount());
 
-    m_canvas.drawPicture(m_picture);
+    m_canvas->drawPicture(m_picture);
     EXPECT_EQ(1, m_actualDecoder->frameBufferRequestCount());
 }
 
