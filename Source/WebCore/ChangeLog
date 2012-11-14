@@ -1,3 +1,45 @@
+2012-11-13  Scott Violet  <sky@chromium.org>
+
+        [Chromium] Refactor theme font lookup into a factory
+        https://bugs.webkit.org/show_bug.cgi?id=101949
+
+        Reviewed by Tony Chang.
+
+        This will ultimately allow us to use what is currently in RenderThemeChromiumLinux on windows.
+
+        No new tests. Refactoring only.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * rendering/RenderThemeChromiumFontProvider.cpp: Added.
+        (WebCore):
+        (WebCore::RenderThemeChromiumFontProvider::defaultGUIFont): Moved into RenderThemeFontProvider.
+        * rendering/RenderThemeChromiumFontProvider.h: Added.
+        (WTF):
+        (WebCore):
+        (RenderThemeChromiumFontProvider): This is the font related methods.
+        * rendering/RenderThemeChromiumFontProviderLinux.cpp: Added.
+        (WebCore):
+        (WebCore::RenderThemeChromiumFontProvider::setDefaultFontSize): What was in RenderThemeChromiumSkia::setDefaultFontSize.
+        (WebCore::RenderThemeChromiumFontProvider::systemFont): What was in RenderThemeChromiumSkia::systemFont.
+        * rendering/RenderThemeChromiumFontProviderWin.cpp: Added.
+        (WebCore):
+        (WebCore::pointsToPixels): Moved from RenderThemeChromiumWin.
+        (WebCore::getNonClientMetrics): Moved from RenderThemeChromiumWin.
+        (WebCore::systemFontSize): Moved from RenderThemeChromiumWin.
+        (WebCore::RenderThemeChromiumFontProvider::systemFont): Moved from RenderThemeChromiumWin.
+        (WebCore::RenderThemeChromiumFontProvider::setDefaultFontSize): Moved from RenderThemeChromiumWin.
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::RenderThemeChromiumSkia): Moved into RenderThemeFontProvider.
+        (WebCore::RenderThemeChromiumSkia::systemFont): Calls to RenderThemeChromiumFontProvider.
+        (WebCore::RenderThemeChromiumSkia::setDefaultFontSize): Calls to RenderThemeChromiumFontProvider.
+        * rendering/RenderThemeChromiumSkia.h:
+        (RenderThemeChromiumSkia): Moves defaultFontSize into RenderThemeChromiumFontProvider.
+        * rendering/RenderThemeChromiumWin.cpp: Moves font code into RenderThemeFontProviderWin.
+        (WebCore):
+        * rendering/RenderThemeChromiumWin.h: Removed overriden methods now handled by RenderThemeChromiumSkia.
+        (RenderThemeChromiumWin):
+
 2012-11-13  Alec Flett  <alecflett@chromium.org>
 
         Add DOMRequestState to maintain world/ScriptExecutionContext state

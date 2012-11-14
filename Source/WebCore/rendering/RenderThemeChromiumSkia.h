@@ -145,13 +145,6 @@ class RenderThemeChromiumSkia : public RenderTheme {
         static void setDefaultFontSize(int);
 
     protected:
-        static const String& defaultGUIFont();
-
-        // The default variable-width font size.  We use this as the default font
-        // size for the "system font", and as a base size (which we then shrink) for
-        // form control fonts.
-        static float defaultFontSize;
-
         virtual double caretBlinkIntervalInternal() const;
 
         virtual int menuListArrowPadding() const;

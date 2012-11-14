@@ -1965,7 +1965,8 @@
         # FIXME: Figure out how to store these patterns in a variable.
         ['exclude', '(cairo|ca|cf|cg|curl|efl|freetype|gstreamer|gtk|linux|mac|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
         ['exclude', '(?<!Chromium)(Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
-
+        # Previous rule excludes things like ChromiumFooWin, include those.
+        ['include', 'rendering/.*Chromium.*\\.(cpp|mm?)$'],
         ['exclude', 'AllInOne\\.cpp$'],
       ],
       'conditions': [
@@ -1983,6 +1984,9 @@
             # RenderThemeChromiumSkia is not used on mac since RenderThemeChromiumMac
             # does not reference the Skia code that is used by Windows, Linux and Android.
             ['exclude', 'rendering/RenderThemeChromiumSkia\\.cpp$'],
+            # RenderThemeChromiumFontProvider is used by RenderThemeChromiumSkia.
+            ['exclude', 'rendering/RenderThemeChromiumFontProvider\\.cpp'],
+            ['exclude', 'rendering/RenderThemeChromiumFontProvider\\.h'],
           ],
         },{ # OS!="mac"
           'sources/': [['exclude', 'Mac\\.(cpp|mm?)$']]
@@ -2008,6 +2012,7 @@
         }],
         ['OS=="android"', {
           'sources/': [
+            ['include', 'rendering/RenderThemeChromiumFontProviderLinux\\.cpp$'],
             ['include', 'rendering/RenderThemeChromiumLinux\\.cpp$'],
           ],
         },{ # OS!="android"
