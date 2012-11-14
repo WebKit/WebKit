@@ -1,3 +1,51 @@
+2012-11-13  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Coordinated Graphics: Rename m_CoordinatedGraphicsLayerClient to m_coordinator
+        https://bugs.webkit.org/show_bug.cgi?id=102133
+
+        Renamed m_CoordinatedGraphicsLayerClient to m_coordinator.
+        Also, there is no need for calling setCoordinator every time the tree changes,
+        since we can call it once when the layer is created, now that LayerTreeCoordinator
+        is the GraphicsLayerFactory.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No change in functionality.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setChildren):
+        (WebCore::CoordinatedGraphicsLayer::addChild):
+        (WebCore::CoordinatedGraphicsLayer::addChildAtIndex):
+        (WebCore::CoordinatedGraphicsLayer::addChildAbove):
+        (WebCore::CoordinatedGraphicsLayer::addChildBelow):
+        (WebCore::CoordinatedGraphicsLayer::replaceChild):
+        (WebCore::CoordinatedGraphicsLayer::setContentsToImage):
+        (WebCore::CoordinatedGraphicsLayer::setMaskLayer):
+        (WebCore::CoordinatedGraphicsLayer::setReplicatedByLayer):
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingState):
+        (WebCore::CoordinatedGraphicsLayer::syncChildren):
+        (WebCore::CoordinatedGraphicsLayer::syncFilters):
+        (WebCore::CoordinatedGraphicsLayer::syncLayerState):
+        (WebCore::CoordinatedGraphicsLayer::syncAnimations):
+        (WebCore::CoordinatedGraphicsLayer::syncCanvas):
+        (WebCore::CoordinatedGraphicsLayer::ensureImageBackingStore):
+        (WebCore::CoordinatedGraphicsLayer::tiledBackingStoreUpdatesAllowed):
+        (WebCore::CoordinatedGraphicsLayer::tiledBackingStoreVisibleRect):
+        (WebCore::CoordinatedGraphicsLayer::beginContentUpdate):
+        (WebCore::CoordinatedGraphicsLayer::createTile):
+        (WebCore::CoordinatedGraphicsLayer::updateTile):
+        (WebCore::CoordinatedGraphicsLayer::removeTile):
+        (WebCore::CoordinatedGraphicsLayer::purgeBackingStores):
+        (WebCore::CoordinatedGraphicsLayer::setCoordinator):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::~LayerTreeCoordinator):
+        (WebKit::LayerTreeCoordinator::LayerTreeCoordinator):
+        (WebKit::LayerTreeCoordinator::paintContents):
+
 2012-11-13  Brady Eidson  <beidson@apple.com>
 
         REGRESSION(r134328) - ASSERT(isMainThread()) when subresources redirect in the NetworkProcessPass through
