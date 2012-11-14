@@ -57,6 +57,8 @@ WK_EXPORT bool WKBundleFrameCallShouldCloseOnWebView(WKBundleFrameRef frame);
 
 WK_EXPORT WKBundleHitTestResultRef WKBundleFrameCreateHitTestResult(WKBundleFrameRef frame, WKPoint point);
 
+WK_EXPORT bool WKBundleFrameHandlesPageScaleGesture(WKBundleFrameRef frame);
+
 #ifdef __cplusplus
 }
 #endif

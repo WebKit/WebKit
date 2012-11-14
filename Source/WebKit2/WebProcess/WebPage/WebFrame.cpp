@@ -31,6 +31,7 @@
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
 #include "InjectedBundleScriptWorld.h"
+#include "PluginView.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebChromeClient.h"
@@ -54,6 +55,7 @@
 #include <WebCore/JSElement.h>
 #include <WebCore/JSRange.h>
 #include <WebCore/Page.h>
+#include <WebCore/PluginDocument.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/SecurityOrigin.h>
@@ -542,6 +544,17 @@ JSGlobalContextRef WebFrame::jsContext()
 JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
 {
     return toGlobalRef(m_coreFrame->script()->globalObject(world->coreWorld())->globalExec());
+}
+
+bool WebFrame::handlesPageScaleGesture() const
+{
+    if (!m_coreFrame->document()->isPluginDocument())
+        return 0;
+
+    PluginDocument* pluginDocument = static_cast<PluginDocument*>(m_coreFrame->document());
+    PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
+
+    return pluginView->handlesPageScaleFactor();
 }
 
 IntRect WebFrame::contentBounds() const

@@ -199,6 +199,11 @@ bool WKBundleFrameAllowsFollowingLink(WKBundleFrameRef frameRef, WKURLRef urlRef
     return toImpl(frameRef)->allowsFollowingLink(WebCore::KURL(WebCore::KURL(), toWTFString(urlRef)));
 }
 
+bool WKBundleFrameHandlesPageScaleGesture(WKBundleFrameRef frameRef)
+{
+    return toAPI(toImpl(frameRef)->handlesPageScaleGesture());
+}
+
 WKRect WKBundleFrameGetContentBounds(WKBundleFrameRef frameRef)
 {
     return toAPI(toImpl(frameRef)->contentBounds());

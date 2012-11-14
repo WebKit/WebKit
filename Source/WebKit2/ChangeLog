@@ -1,5 +1,30 @@
 2012-11-14  Tim Horton  <timothy_horton@apple.com>
 
+        PDFPlugin should make use of PDFKit's fluid zooming
+        https://bugs.webkit.org/show_bug.cgi?id=101962
+        <rdar://problem/12555229>
+
+        Reviewed by Anders Carlsson.
+
+        Expose the notion of a frame that handles page scale gestures via WebFrame and to the bundle via WKBundleFrame.
+        The only frames that will purport to handle page scale gestures are those which contain PluginDocuments
+        backed by PDFPlugin, for now. Also, allow PDFKit to do its own fluid zooming animation.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameHandlesPageScaleGesture): Provide WKBundleFrameHandlesPageScaleGesture to
+        inform the injected bundle whether or not the frame handles scaling itself.
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h: Add WKBundleFrameHandlesPageScaleGesture.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::geometryDidChange): Allow PDFKit to use its fluid zooming instead of changing
+        the scale factor immediately.
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::handlesPageScaleGesture): For now, the only frames that handle page scale
+        gestures themselves are plugins that purport to handle page scale changes themselves (i.e. only PDFPlugin).
+        * WebProcess/WebPage/WebFrame.h:
+        (WebFrame):
+
+2012-11-14  Tim Horton  <timothy_horton@apple.com>
+
         PDFPlugin should support downloading PDFs
         https://bugs.webkit.org/show_bug.cgi?id=102152
         <rdar://problem/12555313>

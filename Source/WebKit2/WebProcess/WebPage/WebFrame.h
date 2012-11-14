@@ -117,6 +117,7 @@ public:
     bool getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha);
     bool containsAnyFormElements() const;
     void stopLoading();
+    bool handlesPageScaleGesture() const;
 
     static WebFrame* frameForContext(JSContextRef);
 

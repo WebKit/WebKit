@@ -424,7 +424,7 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, con
 
         // FIXME: Instead of m_lastMousePoint, we should use the zoom origin from PluginView::setPageScaleFactor.
         if (magnification)
-            [m_pdfLayerController.get() magnifyWithMagnification:magnification atPoint:m_lastMousePoint immediately:YES];
+            [m_pdfLayerController.get() magnifyWithMagnification:magnification atPoint:m_lastMousePoint immediately:NO];
     }
 
     calculateSizes();
