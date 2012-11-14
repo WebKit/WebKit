@@ -42,6 +42,9 @@
 #include "IDBTracing.h"
 #include "IDBTransaction.h"
 #include "ScriptExecutionContext.h"
+#if USE(V8)
+#include "V8Binding.h"
+#endif
 
 namespace WebCore {
 
@@ -76,7 +79,9 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_pendingCursor(0)
     , m_didFireUpgradeNeededEvent(false)
     , m_preventPropagation(false)
-    , m_requestState(context)
+#if USE(V8)
+    , m_worldContextHandle(UseCurrentWorld)
+#endif
 {
     if (m_transaction) {
         m_transaction->registerRequest(this);
@@ -285,8 +290,15 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend, PassRe
     if (!shouldEnqueueEvent())
         return;
 
-    DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(&m_requestState, serializedValue);
+#if USE(V8)
+    v8::HandleScope handleScope;
+    v8::Local<v8::Context> context = toV8Context(scriptExecutionContext(), m_worldContextHandle);
+    if (context.IsEmpty())
+        CRASH();
+    v8::Context::Scope contextScope(context);
+#endif
+
+    ScriptValue value = deserializeIDBValue(scriptExecutionContext(), serializedValue);
     ASSERT(m_cursorType != IDBCursorBackendInterface::InvalidCursorType);
     RefPtr<IDBCursor> cursor;
     if (m_cursorType == IDBCursorBackendInterface::IndexKeyCursor)
@@ -342,8 +354,15 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptVal
     if (!shouldEnqueueEvent())
         return;
 
-    DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(&m_requestState, serializedScriptValue);
+#if USE(V8)
+    v8::HandleScope handleScope;
+    v8::Local<v8::Context> context = toV8Context(scriptExecutionContext(), m_worldContextHandle);
+    if (context.IsEmpty())
+        CRASH();
+    v8::Context::Scope contextScope(context);
+#endif
+
+    ScriptValue value = deserializeIDBValue(scriptExecutionContext(), serializedScriptValue);
     onSuccessInternal(value);
 }
 
@@ -366,11 +385,18 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScript
     if (!shouldEnqueueEvent())
         return;
 
+#if USE(V8)
+    v8::HandleScope handleScope;
+    v8::Local<v8::Context> context = toV8Context(scriptExecutionContext(), m_worldContextHandle);
+    if (context.IsEmpty())
+        CRASH();
+    v8::Context::Scope contextScope(context);
+#endif
+
 #ifndef NDEBUG
     ASSERT(keyPath == effectiveObjectStore(m_source)->keyPath());
 #endif
-    DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(&m_requestState, prpSerializedScriptValue);
+    ScriptValue value = deserializeIDBValue(scriptExecutionContext(), prpSerializedScriptValue);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
 #ifndef NDEBUG
@@ -408,8 +434,15 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey
     if (!shouldEnqueueEvent())
         return;
 
-    DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(&m_requestState, serializedValue);
+#if USE(V8)
+    v8::HandleScope handleScope;
+    v8::Local<v8::Context> context = toV8Context(scriptExecutionContext(), m_worldContextHandle);
+    if (context.IsEmpty())
+        CRASH();
+    v8::Context::Scope contextScope(context);
+#endif
+
+    ScriptValue value = deserializeIDBValue(scriptExecutionContext(), serializedValue);
     ASSERT(m_pendingCursor);
     setResultCursor(m_pendingCursor.release(), key, primaryKey, value);
     enqueueEvent(createSuccessEvent());
@@ -430,7 +463,6 @@ void IDBRequest::stop()
         return;
 
     m_contextStopped = true;
-    m_requestState.clear();
     if (m_readyState == PENDING)
         markEarlyDeath();
 }
@@ -456,7 +488,13 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     ASSERT(event->target() == this);
     ASSERT_WITH_MESSAGE(m_readyState < DONE, "When dispatching event %s, m_readyState < DONE(%d), was %d", event->type().string().utf8().data(), DONE, m_readyState);
 
-    DOMRequestState::Scope scope(m_requestState);
+#if USE(V8)
+    v8::HandleScope handleScope;
+    v8::Local<v8::Context> context = toV8Context(scriptExecutionContext(), m_worldContextHandle);
+    if (context.IsEmpty())
+        CRASH();
+    v8::Context::Scope contextScope(context);
+#endif
 
     if (event->type() != eventNames().blockedEvent)
         m_readyState = DONE;
@@ -482,7 +520,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     if (event->type() == eventNames().successEvent) {
         cursorToNotify = getResultCursor();
         if (cursorToNotify) {
-            cursorToNotify->setValueReady(&m_requestState, m_cursorKey.release(), m_cursorPrimaryKey.release(), m_cursorValue);
+            cursorToNotify->setValueReady(scriptExecutionContext(), m_cursorKey.release(), m_cursorPrimaryKey.release(), m_cursorValue);
             m_cursorValue.clear();
         }
     }

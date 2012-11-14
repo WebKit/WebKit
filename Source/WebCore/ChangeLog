@@ -1,3 +1,32 @@
+2012-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134523.
+        http://trac.webkit.org/changeset/134523
+        https://bugs.webkit.org/show_bug.cgi?id=102218
+
+        brake chrome windows build, as it references a non existing
+        header js/DOMRequestState.h (Requested by jochen__ on
+        #webkit).
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::setValueReady):
+        * Modules/indexeddb/IDBCursor.h:
+        (IDBCursor):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::stop):
+        (WebCore::IDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBRequest.h:
+        (IDBRequest):
+        * WebCore.gypi:
+        * bindings/v8/DOMRequestState.h: Removed.
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::deserializeIDBValue):
+        (WebCore::idbKeyToScriptValue):
+        * bindings/v8/IDBBindingUtilities.h:
+        (WebCore):
+
 2012-11-14  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         Add platform implementation of remote web inspector server for GTK port.

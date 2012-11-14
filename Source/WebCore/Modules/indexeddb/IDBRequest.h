@@ -33,7 +33,6 @@
 
 #include "ActiveDOMObject.h"
 #include "DOMError.h"
-#include "DOMRequestState.h"
 #include "DOMStringList.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -160,7 +159,9 @@ private:
     bool m_preventPropagation;
 
     EventTargetData m_eventTargetData;
-    DOMRequestState m_requestState;
+#if USE(V8)
+    WorldContextHandle m_worldContextHandle;
+#endif
 };
 
 } // namespace WebCore

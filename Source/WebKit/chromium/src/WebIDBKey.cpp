@@ -30,6 +30,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBBindingUtilities.h"
 #include "IDBKey.h"
 
 using namespace WebCore;
