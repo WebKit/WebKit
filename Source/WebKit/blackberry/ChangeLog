@@ -1,3 +1,20 @@
+2012-11-14  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Do not clear the ProcessingChangeGuard state on DeleteBackward
+        https://bugs.webkit.org/show_bug.cgi?id=102284
+
+        Reviewed by Rob Buis.
+
+        PR237497
+        When holding backspace, clearing the state forces a keyboard
+        update which resets the state of the keyboard. Handling this
+        specific corner case separate from all other editor commands.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::handleKeyboardEvent):
+
 2012-11-14  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Improve debug functionality in FatFingers

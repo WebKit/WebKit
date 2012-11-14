@@ -466,7 +466,9 @@ void EditorClientBlackBerry::handleKeyboardEvent(KeyboardEvent* event)
 
     if (!commandName.isEmpty()) {
         // Hot key handling. Cancel processing mode.
-        m_webPagePrivate->m_inputHandler->setProcessingChange(false);
+        if (commandName != "DeleteBackward")
+            m_webPagePrivate->m_inputHandler->setProcessingChange(false);
+
         if (frame->editor()->command(commandName).execute())
             event->setDefaultHandled();
         return;
