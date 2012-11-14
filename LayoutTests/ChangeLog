@@ -1,3 +1,16 @@
+2012-11-14  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        After r134205 was rolled out in http://trac.webkit.org/changeset/134425,
+        we have to re-enable the skipped tests that were failing because of r134205.
+        https://bugs.webkit.org/show_bug.cgi?id=102090
+
+        Reviewed by Adam Barth.
+
+        The initial rollout for r134205 and the related r134226, r134419 failed.
+
+        * platform/chromium/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-11-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
