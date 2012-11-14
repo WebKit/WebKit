@@ -1,5 +1,36 @@
 2012-11-14  Michael Pruett  <michael@68k.org>
 
+        IndexedDB: Add JSNoStaticTables to IndexedDB interfaces
+        https://bugs.webkit.org/show_bug.cgi?id=102268
+
+        Reviewed by Geoffrey Garen.
+
+        Add JSNoStaticTables attribute to IndexedDB interface
+        definitions. This attribute must be specified in interfaces
+        which can be accessed from workers.
+
+        Tests: storage/indexeddb/*
+
+        * Modules/indexeddb/IDBAny.idl:
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBCursorWithValue.idl:
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBDatabaseException.idl:
+        * Modules/indexeddb/IDBFactory.idl:
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBKey.idl:
+        * Modules/indexeddb/IDBKeyRange.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/indexeddb/IDBOpenDBRequest.idl:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/indexeddb/IDBUpgradeNeededEvent.idl:
+        * Modules/indexeddb/IDBVersionChangeEvent.idl:
+        * Modules/indexeddb/IDBVersionChangeRequest.idl:
+        * dom/DOMStringList.idl:
+
+2012-11-14  Michael Pruett  <michael@68k.org>
+
         IndexedDB: Replace int64 with int64_t
         https://bugs.webkit.org/show_bug.cgi?id=102270
 

@@ -30,7 +30,8 @@
 [
     Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
-    EventTarget
+    EventTarget,
+    JSNoStaticTables
 ] interface IDBRequest {
     readonly attribute IDBAny result
         getter raises (IDBDatabaseException);

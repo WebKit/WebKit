@@ -25,7 +25,8 @@
 
 [
     Conditional=INDEXED_DATABASE,
-    DoNotCheckConstants
+    DoNotCheckConstants,
+    JSNoStaticTables
 ] exception IDBDatabaseException {
 
     readonly attribute unsigned short   code;

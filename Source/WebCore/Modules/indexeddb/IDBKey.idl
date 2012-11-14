@@ -26,7 +26,8 @@
 [
     Conditional=INDEXED_DATABASE,
     CustomToJSObject,
-    V8NoWrapperCache
+    V8NoWrapperCache,
+    JSNoStaticTables
 ] interface IDBKey {
     // This space is intentionally left blank.
 };

@@ -27,7 +27,8 @@
 [
     Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
-    EventTarget
+    EventTarget,
+    JSNoStaticTables
 ] interface IDBDatabase {
     readonly attribute DOMString name;
     readonly attribute IDBAny version;
