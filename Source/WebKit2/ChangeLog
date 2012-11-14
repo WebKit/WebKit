@@ -1,5 +1,43 @@
 2012-11-14  Brady Eidson  <beidson@apple.com>
 
+        Part of "Move loading responsibility out of WebResourceLoadScheduler into a new WebResourceLoader"
+        https://bugs.webkit.org/show_bug.cgi?id=102259
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebResourceLoadScheduler has taken on too many responsibilities that shouldn't belong to it.
+
+        We should create a WebResourceLoader that will eventually act as an intermediary between
+        WebCore::ResourceLoader and NetworkResourceLoader.
+
+        This patch is prep-work: It adds a new skeleton class to the WebProcess.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        Add the new WebResourceLoader class which is a very thin skeleton for now:
+        * WebProcess/Network/WebResourceLoader.cpp: Added.
+        (WebKit::WebResourceLoader::create):
+        (WebKit::WebResourceLoader::WebResourceLoader):
+        (WebKit::WebResourceLoader::~WebResourceLoader):
+        * WebProcess/Network/WebResourceLoader.h: Added.
+        (WebKit::WebResourceLoader::coreLoader):
+
+        Adapt WebResourceLoadScheduler to use this new class where appropriate:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+        (WebKit::WebResourceLoadScheduler::addMainResourceLoad):
+        (WebKit::WebResourceLoadScheduler::remove):
+        (WebKit::WebResourceLoadScheduler::willSendRequest):
+        (WebKit::WebResourceLoadScheduler::didReceiveResponse):
+        (WebKit::WebResourceLoadScheduler::didReceiveData):
+        (WebKit::WebResourceLoadScheduler::didFinishResourceLoad):
+        (WebKit::WebResourceLoadScheduler::didReceiveResource):
+        (WebKit::WebResourceLoadScheduler::didFailResourceLoad):
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+
+
+2012-11-14  Brady Eidson  <beidson@apple.com>
+
         Deliver data from NetworkProcess to resources progressively.
         https://bugs.webkit.org/show_bug.cgi?id=102171
 

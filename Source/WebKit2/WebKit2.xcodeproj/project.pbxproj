@@ -370,6 +370,8 @@
 		51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */; };
 		5105B0DD162F7E9D00E27709 /* NetworkProcessManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5105B0DB162F7E9D00E27709 /* NetworkProcessManager.cpp */; };
 		5105B0DE162F7E9D00E27709 /* NetworkProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5105B0DC162F7E9D00E27709 /* NetworkProcessManager.h */; };
+		510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510AFFB716542048001BA05E /* WebResourceLoader.cpp */; };
+		510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 510AFFB816542048001BA05E /* WebResourceLoader.h */; };
 		510CC8491613C85C00D03ED3 /* NetworkProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = 510CC80E1613C79900D03ED3 /* NetworkProcess.app */; };
 		510CC84F1613C92C00D03ED3 /* MainMacProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FA31011E3921E00DB1371 /* MainMacProcess.cpp */; };
 		510FBB9A1288C95E00AFFDF4 /* WebContextMenuItemData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510FBB981288C95E00AFFDF4 /* WebContextMenuItemData.cpp */; };
@@ -1587,6 +1589,8 @@
 		5105B0DB162F7E9D00E27709 /* NetworkProcessManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessManager.cpp; sourceTree = "<group>"; };
 		5105B0DC162F7E9D00E27709 /* NetworkProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessManager.h; sourceTree = "<group>"; };
 		5105B0F31630872E00E27709 /* NetworkProcessProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkProcessProxy.messages.in; sourceTree = "<group>"; };
+		510AFFB716542048001BA05E /* WebResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebResourceLoader.cpp; path = Network/WebResourceLoader.cpp; sourceTree = "<group>"; };
+		510AFFB816542048001BA05E /* WebResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourceLoader.h; path = Network/WebResourceLoader.h; sourceTree = "<group>"; };
 		510CC7DD16138E2900D03ED3 /* NetworkProcessMainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessMainMac.mm; sourceTree = "<group>"; };
 		510CC7DF16138E2900D03ED3 /* NetworkProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcess.cpp; path = NetworkProcess/NetworkProcess.cpp; sourceTree = "<group>"; };
 		510CC7E016138E2900D03ED3 /* NetworkProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcess.h; path = NetworkProcess/NetworkProcess.h; sourceTree = "<group>"; };
@@ -3052,6 +3056,8 @@
 				51FB0902163A3B1C00EC324A /* NetworkProcessConnection.messages.in */,
 				51ABF65616392F1500132A7A /* WebResourceLoadScheduler.cpp */,
 				51ABF65716392F1500132A7A /* WebResourceLoadScheduler.h */,
+				510AFFB716542048001BA05E /* WebResourceLoader.cpp */,
+				510AFFB816542048001BA05E /* WebResourceLoader.h */,
 			);
 			name = Network;
 			sourceTree = "<group>";
@@ -4908,6 +4914,7 @@
 				1AA3D7621651B7D3008713D0 /* RemoteLayerTreeHostMessages.h in Headers */,
 				51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */,
 				51CBBA10165219B6005BE8FD /* NetworkResourceLoadParameters.h in Headers */,
+				510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5854,6 +5861,7 @@
 				1AA3D7611651B7D3008713D0 /* RemoteLayerTreeHostMessageReceiver.cpp in Sources */,
 				51FD18B51651FBAD00DBE1CE /* NetworkResourceLoader.cpp in Sources */,
 				51CBBA0F165219B6005BE8FD /* NetworkResourceLoadParameters.cpp in Sources */,
+				510AFFB916542048001BA05E /* WebResourceLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

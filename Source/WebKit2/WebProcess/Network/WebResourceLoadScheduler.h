@@ -35,6 +35,7 @@
 namespace WebKit {
 
 class NetworkProcessConnection;
+class WebResourceLoader;
 typedef uint64_t ResourceLoadIdentifier;
 
 class WebResourceLoadScheduler : public WebCore::ResourceLoadScheduler {
@@ -69,9 +70,8 @@ public:
 private:
     void scheduleLoad(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority);
     
-    typedef HashMap<unsigned long, RefPtr<WebCore::ResourceLoader> > ResourceLoaderMap;
-    ResourceLoaderMap m_pendingResourceLoaders;
-    ResourceLoaderMap m_activeResourceLoaders;
+    HashMap<unsigned long, RefPtr<WebCore::ResourceLoader> > m_coreResourceLoaders;
+    HashMap<unsigned long, RefPtr<WebResourceLoader> > m_webResourceLoaders;
     
     unsigned m_suspendPendingRequestsCount;
 

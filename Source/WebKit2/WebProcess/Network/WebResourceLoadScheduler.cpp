@@ -32,6 +32,7 @@
 #include "NetworkResourceLoadParameters.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include "WebResourceLoader.h"
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
@@ -103,7 +104,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     }
     
     resourceLoader->setIdentifier(identifier);
-    m_pendingResourceLoaders.set(identifier, resourceLoader);
+    m_webResourceLoaders.set(identifier, WebResourceLoader::create(identifier, resourceLoader));
     
     notifyDidScheduleResourceRequest(resourceLoader);
 }
@@ -121,7 +122,7 @@ void WebResourceLoadScheduler::addMainResourceLoad(ResourceLoader* resourceLoade
 
     resourceLoader->setIdentifier(identifier);
     
-    m_activeResourceLoaders.set(identifier, resourceLoader);
+    m_coreResourceLoaders.set(identifier, resourceLoader);
 }
 
 void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
@@ -144,9 +145,9 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     // If a resource load was actually started within the NetworkProcess then the NetworkProcess handles clearing out the identifier.
     WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(identifier), 0);
     
-    ASSERT(m_pendingResourceLoaders.contains(identifier) || m_activeResourceLoaders.contains(identifier));
-    m_pendingResourceLoaders.remove(identifier);
-    m_activeResourceLoaders.remove(identifier);
+    ASSERT(m_webResourceLoaders.contains(identifier) || m_coreResourceLoaders.contains(identifier));
+    m_webResourceLoaders.remove(identifier);
+    m_coreResourceLoaders.remove(identifier);
 }
 
 void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader*, const KURL&)
@@ -189,7 +190,7 @@ void WebResourceLoadScheduler::setSerialLoadingEnabled(bool enabled)
 
 void WebResourceLoadScheduler::willSendRequest(ResourceLoadIdentifier identifier, WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
 {
-    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
+    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
     ASSERT(loader);
 
     LOG(Network, "(WebProcess) WebResourceLoadScheduler::willSendRequest to '%s'", request.url().string().utf8().data());
@@ -198,7 +199,7 @@ void WebResourceLoadScheduler::willSendRequest(ResourceLoadIdentifier identifier
 
 void WebResourceLoadScheduler::didReceiveResponse(ResourceLoadIdentifier identifier, const WebCore::ResourceResponse& response)
 {
-    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
+    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
     ASSERT(loader);
 
     LOG(Network, "(WebProcess) WebResourceLoadScheduler::didReceiveResponse for '%s'", loader->url().string().utf8().data());
@@ -207,7 +208,7 @@ void WebResourceLoadScheduler::didReceiveResponse(ResourceLoadIdentifier identif
 
 void WebResourceLoadScheduler::didReceiveData(ResourceLoadIdentifier identifier, const char* data, int size, int64_t encodedDataLength, bool allAtOnce)
 {
-    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
+    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
     ASSERT(loader);
 
     LOG(Network, "(WebProcess) WebResourceLoadScheduler::didReceiveData of size %i for '%s'", size, loader->url().string().utf8().data());
@@ -216,7 +217,7 @@ void WebResourceLoadScheduler::didReceiveData(ResourceLoadIdentifier identifier,
 
 void WebResourceLoadScheduler::didFinishResourceLoad(ResourceLoadIdentifier identifier, double finishTime)
 {
-    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
+    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
     ASSERT(loader);
 
     LOG(Network, "(WebProcess) WebResourceLoadScheduler::didFinishResourceLoad for '%s'", loader->url().string().utf8().data());
@@ -225,7 +226,7 @@ void WebResourceLoadScheduler::didFinishResourceLoad(ResourceLoadIdentifier iden
 
 void WebResourceLoadScheduler::didReceiveResource(ResourceLoadIdentifier identifier, const ResourceBuffer& buffer, double finishTime)
 {    
-    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
+    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
     ASSERT(loader);
 
     LOG(Network, "(WebProcess) WebResourceLoadScheduler::didReceiveResource for '%s'", loader->url().string().utf8().data());
@@ -242,7 +243,7 @@ void WebResourceLoadScheduler::didReceiveResource(ResourceLoadIdentifier identif
 
 void WebResourceLoadScheduler::didFailResourceLoad(ResourceLoadIdentifier identifier, const WebCore::ResourceError& error)
 {
-    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
+    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
     ASSERT(loader);
 
     LOG(Network, "(WebProcess) WebResourceLoadScheduler::didFailResourceLoad for '%s'", loader->url().string().utf8().data());
