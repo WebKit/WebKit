@@ -1662,4 +1662,21 @@ void FrameLoaderClientImpl::didRequestAutocomplete(PassRefPtr<FormState> formSta
 }
 #endif
 
+#if ENABLE(WEBGL)
+bool FrameLoaderClientImpl::allowWebGL(bool enabledPerSettings)
+{
+    WebViewImpl* webview = m_webFrame->viewImpl();
+    if (webview && webview->permissionClient())
+        return webview->permissionClient()->allowWebGL(m_webFrame, enabledPerSettings);
+
+    return enabledPerSettings;
+}
+
+void FrameLoaderClientImpl::didLoseWebGLContext(int arbRobustnessContextLostReason)
+{
+    if (m_webFrame->client())
+        m_webFrame->client()->didLoseWebGLContext(m_webFrame, arbRobustnessContextLostReason);
+}
+#endif
+
 } // namespace WebKit

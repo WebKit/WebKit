@@ -420,6 +420,13 @@ public:
     // Platform::current()->userAgent() will be called to provide one.
     virtual WebString userAgentOverride(WebFrame*, const WebURL& url) { return WebString(); }
 
+    // WebGL ------------------------------------------------------
+
+    // Notifies the client that a WebGL context was lost on this page with the
+    // given reason (one of the GL_ARB_robustness status codes; see
+    // Extensions3D.h in WebCore/platform/graphics).
+    virtual void didLoseWebGLContext(WebFrame*, int) { }
+
 protected:
     ~WebFrameClient() { }
 };

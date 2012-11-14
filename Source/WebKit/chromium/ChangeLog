@@ -1,3 +1,27 @@
+2012-11-13  Kenneth Russell  <kbr@google.com>
+
+        Notify embedder of lost contexts and allow overriding of WebGL support
+        https://bugs.webkit.org/show_bug.cgi?id=101826
+
+        Reviewed by Adam Barth.
+
+        Expose new FrameLoaderClient hooks through Chromium's
+        WebPermissionClient and WebFrameClient. Downstream browser tests
+        will exercise this new functionality.
+
+        * public/WebFrameClient.h:
+        (WebFrameClient):
+        (WebKit::WebFrameClient::didLoseWebGLContext):
+        * public/WebPermissionClient.h:
+        (WebPermissionClient):
+        (WebKit::WebPermissionClient::allowWebGL):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit):
+        (WebKit::FrameLoaderClientImpl::allowWebGL):
+        (WebKit::FrameLoaderClientImpl::didLoseWebGLContext):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+
 2012-11-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: MathML types need to be semantically identified in AX tree
