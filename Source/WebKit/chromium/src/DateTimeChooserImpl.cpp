@@ -60,7 +60,7 @@ DateTimeChooserImpl::DateTimeChooserImpl(ChromeClientImpl* chromeClient, WebCore
     , m_client(client)
     , m_popup(0)
     , m_parameters(parameters)
-    , m_locale(WebCore::Locale::createDefault())
+    , m_locale(WebCore::Locale::create(parameters.locale))
 {
     ASSERT(m_chromeClient);
     ASSERT(m_client);
@@ -144,7 +144,7 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     addProperty("stepBase", stepBaseString, writer);
     addProperty("required", m_parameters.required, writer);
     addProperty("currentValue", m_parameters.currentValue, writer);
-    addProperty("locale", WebCore::defaultLanguage(), writer);
+    addProperty("locale", m_parameters.locale.string(), writer);
     addProperty("todayLabel", todayLabelString, writer);
     addProperty("clearLabel", Platform::current()->queryLocalizedString(WebLocalizedString::CalendarClear), writer);
     addProperty("weekLabel", Platform::current()->queryLocalizedString(WebLocalizedString::WeekNumberLabel), writer);
