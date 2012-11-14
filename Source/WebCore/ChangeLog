@@ -1,3 +1,16 @@
+2012-11-14  Nate Chapin  <japhet@chromium.org>
+
+        Fix chromium asserts from r134649.
+
+        Rubber-stamped by Adam Barth.
+
+        MainResourceLoader was calling releaseResources() twice when cancelled
+        within MainResourceLoader::load(), so check reachedTerminalState() before
+        calling releaseResources() there.
+
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::load):
+
 2012-11-14  Andreas Kling  <kling@webkit.org>
 
         Only resolve presentation attribute style once per shared ElementAttributeData.

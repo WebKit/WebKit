@@ -632,7 +632,8 @@ void MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
     // <rdar://problem/4801066>
     // willSendRequest() is liable to make the call to frameLoader() return null, so we need to check that here
     if (!frameLoader() || request.isNull()) {
-        releaseResources();
+        if (!reachedTerminalState())
+            releaseResources();
         return;
     }
 
