@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "MessageSender.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkResourceLoadParameters.h"
 #include <WebCore/ResourceHandleClient.h>
@@ -44,7 +45,7 @@ namespace WebKit {
 class RemoteNetworkingContext;
 typedef uint64_t ResourceLoadIdentifier;
 
-class NetworkResourceLoader : public RefCounted<NetworkResourceLoader>, public NetworkConnectionToWebProcessObserver, public WebCore::ResourceHandleClient {
+class NetworkResourceLoader : public RefCounted<NetworkResourceLoader>, public NetworkConnectionToWebProcessObserver, public WebCore::ResourceHandleClient, public CoreIPC::MessageSender<NetworkResourceLoader> {
 public:
     static RefPtr<NetworkResourceLoader> create(const NetworkResourceLoadParameters& parameters, ResourceLoadIdentifier identifier, NetworkConnectionToWebProcess* connection)
     {
@@ -53,6 +54,10 @@ public:
     
     ~NetworkResourceLoader();
 
+    // Used by MessageSender.
+    CoreIPC::Connection* connection() const;
+    uint64_t destinationID() const { return identifier(); }
+    
     void start();
 
     virtual void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*) OVERRIDE;

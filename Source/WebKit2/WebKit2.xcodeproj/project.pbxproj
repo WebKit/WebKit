@@ -523,6 +523,8 @@
 		51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */; };
 		51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */; };
 		51EFC1CF1524E62500C9A938 /* WKBundleDOMWindowExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */; };
+		51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */; };
 		51FA2D7415212DF100C1BA0B /* InjectedBundleDOMWindowExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FA2D5C15211A5000C1BA0B /* InjectedBundleDOMWindowExtension.cpp */; };
 		51FA2D7715212E2600C1BA0B /* WKBundleDOMWindowExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FA2D7515212E1E00C1BA0B /* WKBundleDOMWindowExtension.cpp */; };
 		51FB08FF1639DE1A00EC324A /* WebResourceLoadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ABF65616392F1500132A7A /* WebResourceLoadScheduler.cpp */; };
@@ -1609,6 +1611,7 @@
 		5105B0F31630872E00E27709 /* NetworkProcessProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkProcessProxy.messages.in; sourceTree = "<group>"; };
 		510AFFB716542048001BA05E /* WebResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebResourceLoader.cpp; path = Network/WebResourceLoader.cpp; sourceTree = "<group>"; };
 		510AFFB816542048001BA05E /* WebResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourceLoader.h; path = Network/WebResourceLoader.h; sourceTree = "<group>"; };
+		510AFFCE16542CBD001BA05E /* WebResourceLoader.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = WebResourceLoader.messages.in; path = Network/WebResourceLoader.messages.in; sourceTree = "<group>"; };
 		510CC7DD16138E2900D03ED3 /* NetworkProcessMainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessMainMac.mm; sourceTree = "<group>"; };
 		510CC7DF16138E2900D03ED3 /* NetworkProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcess.cpp; path = NetworkProcess/NetworkProcess.cpp; sourceTree = "<group>"; };
 		510CC7E016138E2900D03ED3 /* NetworkProcess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcess.h; path = NetworkProcess/NetworkProcess.h; sourceTree = "<group>"; };
@@ -1761,6 +1764,8 @@
 		51D130571382F10500351EDD /* WebProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessProxyMac.mm; sourceTree = "<group>"; };
 		51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkConnectionToWebProcessMessageReceiver.cpp; sourceTree = "<group>"; };
 		51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkConnectionToWebProcessMessages.h; sourceTree = "<group>"; };
+		51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoaderMessageReceiver.cpp; sourceTree = "<group>"; };
+		51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebResourceLoaderMessages.h; sourceTree = "<group>"; };
 		51FA2D541521118600C1BA0B /* WKBundleDOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleDOMWindowExtension.h; sourceTree = "<group>"; };
 		51FA2D5A15211A1E00C1BA0B /* InjectedBundleDOMWindowExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleDOMWindowExtension.h; sourceTree = "<group>"; };
 		51FA2D5C15211A5000C1BA0B /* InjectedBundleDOMWindowExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleDOMWindowExtension.cpp; sourceTree = "<group>"; };
@@ -3113,6 +3118,7 @@
 				51ABF65716392F1500132A7A /* WebResourceLoadScheduler.h */,
 				510AFFB716542048001BA05E /* WebResourceLoader.cpp */,
 				510AFFB816542048001BA05E /* WebResourceLoader.h */,
+				510AFFCE16542CBD001BA05E /* WebResourceLoader.messages.in */,
 			);
 			name = Network;
 			sourceTree = "<group>";
@@ -4331,6 +4337,8 @@
 				33367652130C9ECA006C9DE2 /* WebResourceCacheManagerMessages.h */,
 				33367653130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessageReceiver.cpp */,
 				33367654130C9ECA006C9DE2 /* WebResourceCacheManagerProxyMessages.h */,
+				51F060DD1654317500F3281B /* WebResourceLoaderMessageReceiver.cpp */,
+				51F060DE1654317500F3281B /* WebResourceLoaderMessages.h */,
 			);
 			name = "Derived Sources";
 			path = DerivedSources/WebKit2;
@@ -4979,6 +4987,7 @@
 				2984F57D164B915F004BC0C6 /* CustomProtocolManagerProxyMessages.h in Headers */,
 				2984F581164B9BBD004BC0C6 /* CustomProtocolManager.h in Headers */,
 				2984F589164BA095004BC0C6 /* CustomProtocolManagerMessages.h in Headers */,
+				51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5930,6 +5939,7 @@
 				2984F57C164B915F004BC0C6 /* CustomProtocolManagerProxyMessageReceiver.cpp in Sources */,
 				2984F583164B9BD9004BC0C6 /* CustomProtocolManagerMac.mm in Sources */,
 				2984F588164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp in Sources */,
+				51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

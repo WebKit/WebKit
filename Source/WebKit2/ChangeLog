@@ -1,3 +1,54 @@
+2012-11-14  Brady Eidson  <beidson@apple.com>
+
+        Move loading responsibility out of WebResourceLoadScheduler into a new WebResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=102259
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a new WebResourceLoader message class which allows NetworkResourceLoader to message
+        WebResourceLoaders directly.
+
+        Consolidate the NetworkProcessConnection and WebResourceLoadScheduler messaging responsibilities
+        directly into WebResourceLoader.
+
+        Build-system infrastructure stuff:
+        * DerivedSources.make:
+        * Platform/CoreIPC/MessageID.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        Message directly to WebResourceLoader instead of NetworkProcessConnection:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::connection):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didReceiveData):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFail):
+        (WebKit::NetworkResourceLoader::willSendRequest):
+        * NetworkProcess/NetworkResourceLoader.h:
+        (WebKit::NetworkResourceLoader::destinationID):
+
+        For now handle the only relevant message class which is the WebResourceLoader class:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+
+        Allow access to WebResourceLoaders by identifier:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+        (WebKit::WebResourceLoadScheduler::webResourceLoaderForIdentifier):
+
+        Directly handle resource loading messages instead of having WebResourceLoadScheduler do it:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        (WebKit::WebResourceLoader::didReceiveData):
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        (WebKit::WebResourceLoader::didFailResourceLoad):
+        (WebKit::WebResourceLoader::didReceiveResource):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+
 2012-11-14  Andy Estes  <aestes@apple.com>
 
         Fix the Lion build after r134681.

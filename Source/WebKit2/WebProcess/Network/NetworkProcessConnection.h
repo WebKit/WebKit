@@ -27,7 +27,6 @@
 #define NetworkProcessConnection_h
 
 #include "Connection.h"
-#include "ShareableResource.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -65,17 +64,6 @@ private:
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
     virtual void didClose(CoreIPC::Connection*);
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
-
-    void didReceiveNetworkProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    void didReceiveSyncNetworkProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
-
-    void willSendRequest(uint64_t requestID, ResourceLoadIdentifier, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
-    void didReceiveResponse(ResourceLoadIdentifier, const WebCore::ResourceResponse&);
-    void didReceiveData(ResourceLoadIdentifier, const CoreIPC::DataReference&, int64_t encodedDataLength, bool allAtOnce);
-    void didFinishResourceLoad(ResourceLoadIdentifier, double finishTime);
-    void didFailResourceLoad(ResourceLoadIdentifier, const WebCore::ResourceError&);
-
-    void didReceiveResource(ResourceLoadIdentifier, const ShareableResource::Handle&, double finishTime);
 
     // The connection from the web process to the network process.
     RefPtr<CoreIPC::Connection> m_connection;

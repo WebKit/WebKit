@@ -20,10 +20,15 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(NETWORK_PROCESS)
+messages -> WebResourceLoader {
 
-messages -> NetworkProcessConnection {
+    // FIXME (NetworkProcess): We'll need much more granularity for response messages.
+    WillSendRequest(uint64_t requestID, WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse)
+    DidReceiveResponse(WebCore::ResourceResponse response)
+    DidReceiveData(CoreIPC::DataReference data, int64_t encodedDataLength, bool allAtOnce)
+    DidFinishResourceLoad(double finishTime)
+    DidFailResourceLoad(WebCore::ResourceError error)
 
+    // DidReceiveResource is for when we have the entire resource data available at once, such as when the resource is cached in memory
+    DidReceiveResource(WebKit::ShareableResource::Handle resource, double finishTime)
 }
-
-#endif // ENABLE(NETWORK_PROCESS)

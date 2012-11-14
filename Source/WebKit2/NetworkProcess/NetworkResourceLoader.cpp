@@ -33,11 +33,11 @@
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
-#include "NetworkProcessConnectionMessages.h"
 #include "NetworkResourceLoadParameters.h"
 #include "RemoteNetworkingContext.h"
 #include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebResourceLoaderMessages.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceHandle.h>
@@ -62,6 +62,11 @@ NetworkResourceLoader::~NetworkResourceLoader()
 
     if (m_connection)
         m_connection->unregisterObserver(this);
+}
+
+CoreIPC::Connection* NetworkResourceLoader::connection() const
+{
+    return m_connection->connection();
 }
 
 ResourceLoadPriority NetworkResourceLoader::priority() const
@@ -146,7 +151,7 @@ void NetworkResourceLoader::connectionToWebProcessDidClose(NetworkConnectionToWe
 void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
     // FIXME (NetworkProcess): Cache the response.
-    connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::DidReceiveResponse(m_identifier, response), 0);
+    send(Messages::WebResourceLoader::DidReceiveResponse(response));
 }
 
 void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
@@ -155,14 +160,14 @@ void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, in
     // Such buffering will need to be thread safe, as this callback is happening on a background thread.
     
     CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(data), length);
-    connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::DidReceiveData(m_identifier, dataReference, encodedDataLength, false), 0);
+    send(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength, false));
 }
 
 void NetworkResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
 {
     // FIXME (NetworkProcess): For the memory cache we'll need to update the finished status of the cached resource here.
     // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
-    connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::DidFinishResourceLoad(m_identifier, finishTime), 0);
+    send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
     scheduleStopOnMainThread();
 }
 
@@ -170,7 +175,7 @@ void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
     // FIXME (NetworkProcess): For the memory cache we'll need to update the finished status of the cached resource here.
     // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
-    connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::DidFailResourceLoad(m_identifier, error), 0);
+    send(Messages::WebResourceLoader::DidFailResourceLoad(error));
     scheduleStopOnMainThread();
 }
 
@@ -198,10 +203,7 @@ void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& re
 
     uint64_t requestID = generateWillSendRequestID();
 
-    if (!connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::WillSendRequest(requestID, m_identifier, request, redirectResponse), 0)) {
-        // FIXME (NetworkProcess): What should we do if we can't send the message?
-        return;
-    }
+    send(Messages::WebResourceLoader::WillSendRequest(requestID, request, redirectResponse));
     
     OwnPtr<ResourceRequest> newRequest = responseMap().waitForResponse(requestID);
     request = *newRequest;

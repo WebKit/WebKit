@@ -118,6 +118,7 @@ enum MessageClass {
 
     // Messages sent by the network process to a web process.
     MessageClassNetworkProcessConnection,
+    MessageClassWebResourceLoader,
     
 #if ENABLE(SHARED_WORKER_PROCESS)
     // Messages sent by the UI process to the shared worker process.

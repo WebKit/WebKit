@@ -105,6 +105,7 @@ MESSAGE_RECEIVERS = \
     WebProcessProxy \
     WebResourceCacheManager \
     WebResourceCacheManagerProxy \
+    WebResourceLoader \
 #
 
 SCRIPTS = \

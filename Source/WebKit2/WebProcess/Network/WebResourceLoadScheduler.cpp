@@ -104,7 +104,7 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
     }
     
     resourceLoader->setIdentifier(identifier);
-    m_webResourceLoaders.set(identifier, WebResourceLoader::create(identifier, resourceLoader));
+    m_webResourceLoaders.set(identifier, WebResourceLoader::create(resourceLoader));
     
     notifyDidScheduleResourceRequest(resourceLoader);
 }
@@ -186,69 +186,6 @@ void WebResourceLoadScheduler::resumePendingRequests()
 void WebResourceLoadScheduler::setSerialLoadingEnabled(bool enabled)
 {
     WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::SetSerialLoadingEnabled(enabled), Messages::NetworkConnectionToWebProcess::SetSerialLoadingEnabled::Reply(), 0);
-}
-
-void WebResourceLoadScheduler::willSendRequest(ResourceLoadIdentifier identifier, WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
-{
-    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
-    ASSERT(loader);
-
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::willSendRequest to '%s'", request.url().string().utf8().data());
-    loader->willSendRequest(request, redirectResponse);
-}
-
-void WebResourceLoadScheduler::didReceiveResponse(ResourceLoadIdentifier identifier, const WebCore::ResourceResponse& response)
-{
-    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
-    ASSERT(loader);
-
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::didReceiveResponse for '%s'", loader->url().string().utf8().data());
-    loader->didReceiveResponse(response);
-}
-
-void WebResourceLoadScheduler::didReceiveData(ResourceLoadIdentifier identifier, const char* data, int size, int64_t encodedDataLength, bool allAtOnce)
-{
-    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
-    ASSERT(loader);
-
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::didReceiveData of size %i for '%s'", size, loader->url().string().utf8().data());
-    loader->didReceiveData(data, size, encodedDataLength, allAtOnce);
-}
-
-void WebResourceLoadScheduler::didFinishResourceLoad(ResourceLoadIdentifier identifier, double finishTime)
-{
-    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
-    ASSERT(loader);
-
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::didFinishResourceLoad for '%s'", loader->url().string().utf8().data());
-    loader->didFinishLoading(finishTime);
-}
-
-void WebResourceLoadScheduler::didReceiveResource(ResourceLoadIdentifier identifier, const ResourceBuffer& buffer, double finishTime)
-{    
-    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
-    ASSERT(loader);
-
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::didReceiveResource for '%s'", loader->url().string().utf8().data());
-    
-    // Only send data to the didReceiveData callback if it exists.
-    if (!buffer.isEmpty()) {
-        // FIXME (NetworkProcess): Give ResourceLoader the ability to take ResourceBuffer arguments.
-        // That will allow us to pass it along to CachedResources and allow them to hang on to the shared memory behind the scenes.
-        loader->didReceiveData(reinterpret_cast<const char*>(buffer.data()), buffer.size(), -1 /* encodedDataLength */, true);
-    }
-
-    loader->didFinishLoading(finishTime);
-}
-
-void WebResourceLoadScheduler::didFailResourceLoad(ResourceLoadIdentifier identifier, const WebCore::ResourceError& error)
-{
-    RefPtr<ResourceLoader> loader = m_webResourceLoaders.get(identifier)->coreLoader();
-    ASSERT(loader);
-
-    LOG(Network, "(WebProcess) WebResourceLoadScheduler::didFailResourceLoad for '%s'", loader->url().string().utf8().data());
-    
-    loader->didFail(error);
 }
 
 } // namespace WebKit

@@ -28,12 +28,22 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "Connection.h"
+#include "ShareableResource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+namespace CoreIPC {
+class DataReference;
+}
+
 namespace WebCore {
+class ResourceBuffer;
+class ResourceError;
 class ResourceLoader;
+class ResourceRequest;
+class ResourceResponse;
 }
 
 namespace WebKit {
@@ -42,17 +52,22 @@ typedef uint64_t ResourceLoadIdentifier;
 
 class WebResourceLoader : public RefCounted<WebResourceLoader> {
 public:
-    static PassRefPtr<WebResourceLoader> create(ResourceLoadIdentifier, PassRefPtr<WebCore::ResourceLoader>);
+    static PassRefPtr<WebResourceLoader> create(PassRefPtr<WebCore::ResourceLoader>);
 
     ~WebResourceLoader();
 
-    WebCore::ResourceLoader* coreLoader() const { return m_coreLoader.get(); }
-    ResourceLoadIdentifier resourceLoadIdentifier() const { return m_resourceLoadIdentifier; }
+    void didReceiveWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
 private:
-    WebResourceLoader(ResourceLoadIdentifier, PassRefPtr<WebCore::ResourceLoader>);
+    WebResourceLoader(PassRefPtr<WebCore::ResourceLoader>);
 
-    ResourceLoadIdentifier m_resourceLoadIdentifier;
+    void willSendRequest(uint64_t requestID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
+    void didReceiveResponse(const WebCore::ResourceResponse&);
+    void didReceiveData(const CoreIPC::DataReference&, int64_t encodedDataLength, bool allAtOnce);
+    void didFinishResourceLoad(double finishTime);
+    void didFailResourceLoad(const WebCore::ResourceError&);
+    void didReceiveResource(const ShareableResource::Handle&, double finishTime);
+
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
 };
 

@@ -26,6 +26,7 @@
 #ifndef WebResourceLoadScheduler_h
 #define WebResourceLoadScheduler_h
 
+#include "WebResourceLoader.h"
 #include <WebCore/ResourceLoadPriority.h>
 #include <WebCore/ResourceLoadScheduler.h>
 #include <WebCore/ResourceLoader.h>
@@ -35,7 +36,6 @@
 namespace WebKit {
 
 class NetworkProcessConnection;
-class WebResourceLoader;
 typedef uint64_t ResourceLoadIdentifier;
 
 class WebResourceLoadScheduler : public WebCore::ResourceLoadScheduler {
@@ -58,14 +58,7 @@ public:
 
     virtual void setSerialLoadingEnabled(bool) OVERRIDE;
 
-    // FIXME (NetworkProcess): Get the ResourceLoadScheduler out of the business of vending this data directly to ResourceLoaders.
-    // The Messages should be sent to an object that proxies the ResourceLoader directly.
-    void willSendRequest(ResourceLoadIdentifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
-    void didReceiveResponse(ResourceLoadIdentifier, const WebCore::ResourceResponse&);
-    void didReceiveData(ResourceLoadIdentifier, const char*, int, int64_t encodedDataLength, bool allAtOnce);
-    void didFinishResourceLoad(ResourceLoadIdentifier, double finishTime);
-    void didFailResourceLoad(ResourceLoadIdentifier, const WebCore::ResourceError&);
-    void didReceiveResource(ResourceLoadIdentifier, const WebCore::ResourceBuffer&, double finishTime);
+    WebResourceLoader* webResourceLoaderForIdentifier(ResourceLoadIdentifier identifier) const { return m_webResourceLoaders.get(identifier).get(); }
 
 private:
     void scheduleLoad(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority);
