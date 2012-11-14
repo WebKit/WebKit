@@ -1,3 +1,15 @@
+2012-11-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Remove MemoryInstrumentationTest.ImageObserver
+        https://bugs.webkit.org/show_bug.cgi?id=102185
+
+        Reviewed by Pavel Feldman.
+
+        Removed obsolete memory instrumenation unit test.
+
+        * WebKit.gypi:
+        * tests/MemoryInstrumentationTest.cpp: Removed.
+
 2012-11-14  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Add API to expose WebCore::DateTimeChooser
