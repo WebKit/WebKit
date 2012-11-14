@@ -1,5 +1,14 @@
 2012-11-13  Dirk Pranke  <dpranke@chromium.org>
 
+        Revert r134474; turns out these tests were failing.
+
+        I need to figure out what's going on here ...
+
+        * platform/chromium-linux/fast/text/zero-font-size-2-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+
+2012-11-13  Dirk Pranke  <dpranke@chromium.org>
+
         Update chromium-mac-lion baselines after r134516. Unreviewed.
 
         * platform/chromium-mac-lion/compositing/color-matching/image-color-matching-expected.png:

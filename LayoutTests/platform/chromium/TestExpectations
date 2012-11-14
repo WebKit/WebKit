@@ -4130,6 +4130,14 @@ webkit.org/b/79446 svg/repaint/image-with-clip-path.svg [ Pass ImageOnlyFailure 
 webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure ]
 webkit.org/b/100142 css3/filters/effect-reference-ordering-hw.html [ Failure ImageOnlyFailure Missing ]
 
+# This test is probably either Failure or ImageOnlyFailure depending on which fonts are installed.
+webkit.org/b/99749 [ MountainLion ] fast/text/midword-break-before-surrogate-pair.html [ Failure ImageOnlyFailure ]
+
+Bug(dpranke) [ Linux ] fast/text/zero-font-size-2.html [ ImageOnlyFailure ]
+Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-70kbps-44khz.html [ Failure ]
+Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-96kbps-44khz.html [ Failure ]
+Bug(dpranke) [ Win ] webaudio/codec-tests/vorbis/vbr-128kbps-44khz.html [ Failure ]
+
 webkit.org/b/100023 [ Mac ] fast/sub-pixel/file-upload-control-at-fractional-offset.html [ Failure ImageOnlyFailure ]
 
 webkit.org/b/100478  [ Mac ] css3/filters/custom/effect-custom.html [ Pass ImageOnlyFailure ]
