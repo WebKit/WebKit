@@ -30,13 +30,16 @@ namespace WebCore {
     // an exception of any type can be expressed with a single integer.
     typedef int ExceptionCode;
 
+
+    // Some of these are considered historical since they have been
+    // changed or removed from the specifications.
     enum {
         INDEX_SIZE_ERR = 1,
         DOMSTRING_SIZE_ERR = 2,
         HIERARCHY_REQUEST_ERR = 3,
         WRONG_DOCUMENT_ERR = 4,
         INVALID_CHARACTER_ERR = 5,
-        NO_DATA_ALLOWED_ERR = 6,
+        NO_DATA_ALLOWED_ERR = 6, // Historical
         NO_MODIFICATION_ALLOWED_ERR = 7,
         NOT_FOUND_ERR = 8,
         NOT_SUPPORTED_ERR = 9,
