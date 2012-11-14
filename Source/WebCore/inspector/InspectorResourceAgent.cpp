@@ -245,42 +245,39 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
 {
     String requestId = IdentifiersFactory::requestId(identifier);
     RefPtr<TypeBuilder::Network::Response> resourceResponse = buildObjectForResourceResponse(response, loader);
-    InspectorPageAgent::ResourceType type = InspectorPageAgent::OtherResource;
-    long cachedResourceSize = 0;
 
     bool isNotModified = response.httpStatusCode() == 304;
-    if (loader) {
-        CachedResource* cachedResource = 0;
-        if (resourceLoader && resourceLoader->isSubresourceLoader() && !isNotModified)
-            cachedResource = static_cast<SubresourceLoader*>(resourceLoader)->cachedResource();
-        if (!cachedResource)
-            cachedResource = InspectorPageAgent::cachedResource(loader->frame(), response.url());
-        if (cachedResource) {
-            type = InspectorPageAgent::cachedResourceType(*cachedResource);
-            cachedResourceSize = cachedResource->encodedSize();
-            // Use mime type from cached resource in case the one in response is empty.
-            if (resourceResponse && response.mimeType().isEmpty())
-                resourceResponse->setString(TypeBuilder::Network::Response::MimeType, cachedResource->response().mimeType());
 
-            m_resourcesData->addCachedResource(requestId, cachedResource);
-        }
-        if (m_loadingXHRSynchronously || m_resourcesData->resourceType(requestId) == InspectorPageAgent::XHRResource)
-            type = InspectorPageAgent::XHRResource;
-        else if (m_resourcesData->resourceType(requestId) == InspectorPageAgent::ScriptResource)
-            type = InspectorPageAgent::ScriptResource;
-        else if (equalIgnoringFragmentIdentifier(response.url(), loader->frameLoader()->icon()->url()))
-            type = InspectorPageAgent::ImageResource;
-        else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && !loader->isCommitted())
-            type = InspectorPageAgent::DocumentResource;
+    CachedResource* cachedResource = 0;
+    if (resourceLoader && resourceLoader->isSubresourceLoader() && !isNotModified)
+        cachedResource = static_cast<SubresourceLoader*>(resourceLoader)->cachedResource();
+    if (!cachedResource)
+        cachedResource = InspectorPageAgent::cachedResource(loader->frame(), response.url());
 
-        m_resourcesData->responseReceived(requestId, m_pageAgent->frameId(loader->frame()), response);
+    if (cachedResource) {
+        // Use mime type from cached resource in case the one in response is empty.
+        if (resourceResponse && response.mimeType().isEmpty())
+            resourceResponse->setString(TypeBuilder::Network::Response::MimeType, cachedResource->response().mimeType());
+        m_resourcesData->addCachedResource(requestId, cachedResource);
     }
+
+    InspectorPageAgent::ResourceType type = cachedResource ? InspectorPageAgent::cachedResourceType(*cachedResource) : InspectorPageAgent::OtherResource;
+    if (m_loadingXHRSynchronously || m_resourcesData->resourceType(requestId) == InspectorPageAgent::XHRResource)
+        type = InspectorPageAgent::XHRResource;
+    else if (m_resourcesData->resourceType(requestId) == InspectorPageAgent::ScriptResource)
+        type = InspectorPageAgent::ScriptResource;
+    else if (equalIgnoringFragmentIdentifier(response.url(), loader->frameLoader()->icon()->url()))
+        type = InspectorPageAgent::ImageResource;
+    else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && !loader->isCommitted())
+        type = InspectorPageAgent::DocumentResource;
+
+    m_resourcesData->responseReceived(requestId, m_pageAgent->frameId(loader->frame()), response);
     m_resourcesData->setResourceType(requestId, type);
     m_frontend->responseReceived(requestId, m_pageAgent->frameId(loader->frame()), m_pageAgent->loaderId(loader), currentTime(), InspectorPageAgent::resourceTypeJson(type), resourceResponse);
     // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
     // as there will be no calls to didReceiveData from the network stack.
-    if (cachedResourceSize && isNotModified)
-        didReceiveData(identifier, 0, cachedResourceSize, 0);
+    if (isNotModified && cachedResource && cachedResource->encodedSize())
+        didReceiveData(identifier, 0, cachedResource->encodedSize(), 0);
 }
 
 static bool isErrorStatusCode(int statusCode)
@@ -294,7 +291,7 @@ void InspectorResourceAgent::didReceiveData(unsigned long identifier, const char
 
     if (data) {
         NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
-        if (m_resourcesData->resourceType(requestId) == InspectorPageAgent::OtherResource || (resourceData && isErrorStatusCode(resourceData->httpStatusCode()) && resourceData->cachedResource()))
+        if (resourceData && !m_loadingXHRSynchronously && (!resourceData->cachedResource() || !resourceData->cachedResource()->shouldBufferData() || isErrorStatusCode(resourceData->httpStatusCode())))
             m_resourcesData->maybeAddResourceData(requestId, data, dataLength);
     }
 

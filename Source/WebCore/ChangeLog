@@ -1,3 +1,22 @@
+2012-11-08  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: No content available for requests made from flash
+        https://bugs.webkit.org/show_bug.cgi?id=101560
+
+        Reviewed by Pavel Feldman.
+
+        Network request data is now saved to inspector cache in following cases:
+         - Error status code;
+         - No cached resource available;
+         - Cached resource has ShouldNotBufferData option set.
+        Drive-by: refactored didReceiveResponse logic to be clearer.
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didReceiveData):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::shouldBufferData):
+
 2012-11-14  Shinya Kawanaka  <shinyak@chromium.org>
 
         Changing pseudoClass (:target) should cause distribution
