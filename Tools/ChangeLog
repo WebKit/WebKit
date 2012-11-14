@@ -1,5 +1,15 @@
 2012-11-13  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed, rolling out r134503.
+        http://trac.webkit.org/changeset/134503
+
+        Roll out a patch that was landed just to investigate svn
+        trouble
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2012-11-13  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed. Investigating svn trouble. Test commit.
 
         * Scripts/webkitpy/common/config/committers.py:

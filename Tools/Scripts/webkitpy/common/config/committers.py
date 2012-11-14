@@ -508,7 +508,6 @@ reviewers_list = [
     Reviewer("Kenneth Russell", ["kbr@google.com", "kbr@chromium.org"], ["kbr_google", "kbrgg"]),
     Reviewer("Kent Tamura", ["tkent@chromium.org", "tkent@google.com"], "tkent"),
     Reviewer("Kentaro Hara", ["haraken@chromium.org"], "haraken"),
-
     Reviewer("Kevin Decker", "kdecker@apple.com", "superkevin"),
     Reviewer("Kevin McCullough", "kmccullough@apple.com", "maculloch"),
     Reviewer("Kevin Ollivier", ["kevino@theolliviers.com", "kevino@webkit.org"], "kollivier"),
