@@ -83,6 +83,16 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure*
     : Base(exec->globalData(), structure)
     , m_executable()
     , m_scope(exec->globalData(), this, globalObject)
+    // We initialize blind so that changes to the prototype after function creation but before
+    // the optimizer kicks in don't disable optimizations. Once the optimizer kicks in, the
+    // watchpoint will start watching and any changes will both force deoptimization and disable
+    // future attempts to optimize. This is necessary because we are guaranteed that the
+    // inheritorID is changed exactly once prior to optimizations kicking in. We could be
+    // smarter and count the number of times the prototype is clobbered and only optimize if it
+    // was clobbered exactly once, but that seems like overkill. In almost all cases it will be
+    // clobbered once, and if it's clobbered more than once, that will probably only occur
+    // before we started optimizing, anyway.
+    , m_inheritorIDWatchpoint(InitializedBlind)
 {
 }
 
@@ -343,6 +353,7 @@ void JSFunction::put(JSCell* cell, ExecState* exec, PropertyName propertyName, J
         PropertySlot slot;
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_cachedInheritorID.clear();
+        thisObject->m_inheritorIDWatchpoint.notifyWrite();
         // Don't allow this to be cached, since a [[Put]] must clear m_cachedInheritorID.
         PutPropertySlot dontCache;
         Base::put(thisObject, exec, propertyName, value, dontCache);
@@ -389,6 +400,7 @@ bool JSFunction::defineOwnProperty(JSObject* object, ExecState* exec, PropertyNa
         PropertySlot slot;
         thisObject->methodTable()->getOwnPropertySlot(thisObject, exec, propertyName, slot);
         thisObject->m_cachedInheritorID.clear();
+        thisObject->m_inheritorIDWatchpoint.notifyWrite();
         return Base::defineOwnProperty(object, exec, propertyName, descriptor, throwException);
     }
 

@@ -372,7 +372,7 @@ private:
         return NoNode;
     }
 
-    bool checkFunctionElimination(JSFunction* function, NodeIndex child1)
+    bool checkFunctionElimination(JSCell* function, NodeIndex child1)
     {
         for (unsigned i = endIndexForPureCSE(); i--;) {
             NodeIndex index = m_currentBlock->at(i);

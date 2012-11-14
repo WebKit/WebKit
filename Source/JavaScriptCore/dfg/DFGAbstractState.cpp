@@ -1278,10 +1278,14 @@ bool AbstractState::execute(unsigned indexInBlock)
         destination.set(SpecFinalObject);
         break;
     }
+        
+    case InheritorIDWatchpoint:
+        node.setCanExit(true);
+        break;
 
     case NewObject:
         node.setCanExit(false);
-        forNode(nodeIndex).set(m_codeBlock->globalObjectFor(node.codeOrigin)->emptyObjectStructure());
+        forNode(nodeIndex).set(node.structure());
         m_haveStructures = true;
         break;
         

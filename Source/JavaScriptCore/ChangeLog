@@ -1,5 +1,57 @@
 2012-11-13  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG CreateThis should be able to statically account for the structure of the object it creates, if profiling indicates that this structure is always the same
+        https://bugs.webkit.org/show_bug.cgi?id=102017
+
+        Reviewed by Geoffrey Garen.
+
+        This adds a watchpoint in JSFunction on the cached inheritor ID. It also changes
+        NewObject to take a structure as an operand (previously it implicitly used the owning
+        global object's empty object structure). Any GetCallee where the callee is predictable
+        is turned into a CheckFunction + WeakJSConstant, and any CreateThis on a WeakJSConstant
+        where the inheritor ID watchpoint is still valid is turned into an InheritorIDWatchpoint
+        followed by a NewObject. NewObject already accounts for the structure it uses for object
+        creation in the CFA.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::checkFunctionElimination):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasFunction):
+        (JSC::DFG::Node::function):
+        (JSC::DFG::Node::hasStructure):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/Executable.h:
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSBoundFunction.cpp:
+        (JSC):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::put):
+        (JSC::JSFunction::defineOwnProperty):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::tryGetKnownInheritorID):
+        (JSFunction):
+        (JSC::JSFunction::addInheritorIDWatchpoint):
+
+2012-11-13  Filip Pizlo  <fpizlo@apple.com>
+
         JSFunction and its descendants should be destructible
         https://bugs.webkit.org/show_bug.cgi?id=102062
 

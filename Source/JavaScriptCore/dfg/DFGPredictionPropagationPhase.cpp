@@ -760,6 +760,7 @@ private:
         case CheckArgumentsNotCreated:
         case GlobalVarWatchpoint:
         case GarbageValue:
+        case InheritorIDWatchpoint:
             changed |= mergeDefaultFlags(node);
             break;
             

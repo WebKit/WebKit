@@ -27,6 +27,7 @@
 #include "InternalFunction.h"
 #include "JSDestructibleObject.h"
 #include "JSScope.h"
+#include "Watchpoint.h"
 
 namespace JSC {
 
@@ -132,6 +133,21 @@ namespace JSC {
             return m_cachedInheritorID.get();
         }
 
+        Structure* tryGetKnownInheritorID()
+        {
+            if (!m_cachedInheritorID)
+                return 0;
+            if (m_inheritorIDWatchpoint.hasBeenInvalidated())
+                return 0;
+            return m_cachedInheritorID.get();
+        }
+        
+        void addInheritorIDWatchpoint(Watchpoint* watchpoint)
+        {
+            ASSERT(tryGetKnownInheritorID());
+            m_inheritorIDWatchpoint.add(watchpoint);
+        }
+
         static size_t offsetOfCachedInheritorID()
         {
             return OBJECT_OFFSETOF(JSFunction, m_cachedInheritorID);
@@ -172,6 +188,7 @@ namespace JSC {
         WriteBarrier<ExecutableBase> m_executable;
         WriteBarrier<JSScope> m_scope;
         WriteBarrier<Structure> m_cachedInheritorID;
+        InlineWatchpointSet m_inheritorIDWatchpoint;
     };
 
     inline bool JSValue::isFunction() const

@@ -258,6 +258,10 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
         dataLog("%sstruct(%p -> %p)", hasPrinted ? ", " : "", node.structureTransitionData().previousStructure, node.structureTransitionData().newStructure);
         hasPrinted = true;
     }
+    if (node.hasFunction()) {
+        dataLog("%s%p", hasPrinted ? ", " : "", node.function());
+        hasPrinted = true;
+    }
     if (node.hasStorageAccessData()) {
         StorageAccessData& storageAccessData = m_storageAccessData[node.storageAccessDataIndex()];
         dataLog("%sid%u{%s}", hasPrinted ? ", " : "", storageAccessData.identifierNumber, m_codeBlock->identifier(storageAccessData.identifierNumber).string().utf8().data());
