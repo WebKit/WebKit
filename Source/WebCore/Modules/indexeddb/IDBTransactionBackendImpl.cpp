@@ -262,7 +262,7 @@ void IDBTransactionBackendImpl::taskEventTimerFired(Timer<IDBTransactionBackendI
     IDB_TRACE("IDBTransactionBackendImpl::taskEventTimerFired");
     ASSERT(m_state == Running);
 
-    if (!m_pendingEvents && isTaskQueueEmpty()) {
+    if (!m_pendingEvents && !m_pendingPreemptiveEvents && isTaskQueueEmpty()) {
         // The last task event has completed and the task
         // queue is empty. Commit the transaction.
         commit();
