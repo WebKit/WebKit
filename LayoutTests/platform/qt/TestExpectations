@@ -2375,3 +2375,7 @@ webkit.org/b/98523 fast/images/repaint-subrect-grid.html
 
 # [Qt] New css3/filters/effect-reference-ordering-hw.html crashes
 webkit.org/b/101925 css3/filters/effect-reference-ordering-hw.html
+
+# REGRESSION(r134495): It made svg/custom/use-instanceRoot-event-listeners.xhtml fail and fast/events/attribute-listener-deletion-crash.html timeout
+webkit.org/b/102183 svg/custom/use-instanceRoot-event-listeners.xhtml
+webkit.org/b/102183 fast/events/attribute-listener-deletion-crash.html
