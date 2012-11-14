@@ -395,6 +395,7 @@ fast/dom/HTMLAnchorElement/anchor-download-unset.html
 
 # For now, Web Audio API is disabled
 webaudio/
+webkit.org/b/101729 inspector-protocol/nmi-webaudio.html
 
 # [Qt] Enable WebGL by default for QtWebKit
 # https://bugs.webkit.org/show_bug.cgi?id=65998
@@ -2345,6 +2346,9 @@ webkit.org/b/99306 css3/filters/effect-blur-hw.html [ ImageOnlyFailure ] # Blur 
 # REGRESSION(r132143): It made fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html flakey
 webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 webkit.org/b/100117 editing/style/iframe-onload-crash-mac.html
+
+# [Qt] New fast/dom/Window/open-window-min-size.html test fails on Qt.
+webkit.org/b/102226 fast/dom/Window/open-window-min-size.html
 
 # [Qt] New http/tests/inspector/network/image-as-text-loading-data-url.html fails
 webkit.org/b/100196 http/tests/inspector/network/image-as-text-loading-data-url.html

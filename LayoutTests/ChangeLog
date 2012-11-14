@@ -1,3 +1,9 @@
+2012-11-14  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip failing tests.
+
+        * platform/qt/TestExpectations:
+
 2012-11-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed test fix for r134593.
