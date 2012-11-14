@@ -1,3 +1,17 @@
+2012-11-13  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Fix compile warning [-Wsign-compare]
+        https://bugs.webkit.org/show_bug.cgi?id=101458
+
+        Reviewed by Alexey Proskuryakov.
+
+        Currently, lossy check has been done by comparing file size(posix signed integral value) with conversioned(standard c++ unsigned integral value).
+        However, it leads -Wsign-compare compile warning.
+        Therefore, this patch assigns the file size to the biggest possible unsigned variable, then does the lossy check.
+
+        * platform/posix/SharedBufferPOSIX.cpp:
+        (WebCore::SharedBuffer::createWithContentsOfFile):
+
 2012-11-13  Keishi Hattori  <keishi@webkit.org>
 
         Enable datalist UI for input types week and month
