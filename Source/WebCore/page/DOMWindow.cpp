@@ -308,16 +308,18 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
 }
 
 // This function:
-// 1) Validates the pending changes are not changing to NaN
-// 2) Constrains the window rect to the minimum window size and no bigger than
-//    the the float rect's dimensions.
-// 3) Constrain window rect to within the top and left boundaries of the screen rect
-// 4) Constraint the window rect to within the bottom and right boundaries of the
-//    screen rect.
-// 5) Translate the window rect coordinates to be within the coordinate space of
-//    the screen rect.
-void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, const FloatRect& pendingChanges) const
+// 1) Validates the pending changes are not changing any value to NaN; in that case keep original value.
+// 2) Constrains the window rect to the minimum window size and no bigger than the float rect's dimensions.
+// 3) Constrains the window rect to within the top and left boundaries of the available screen rect.
+// 4) Constrains the window rect to within the bottom and right boundaries of the available screen rect.
+// 5) Translate the window rect coordinates to be within the coordinate space of the screen.
+FloatRect DOMWindow::adjustWindowRect(Page* page, const FloatRect& pendingChanges)
 {
+    ASSERT(page);
+
+    FloatRect screen = screenAvailableRect(page->mainFrame()->view());
+    FloatRect window = page->chrome()->windowRect();
+
     // Make sure we're in a valid state before adjusting dimensions.
     ASSERT(isfinite(screen.x()));
     ASSERT(isfinite(screen.y()));
@@ -327,7 +329,7 @@ void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, con
     ASSERT(isfinite(window.y()));
     ASSERT(isfinite(window.width()));
     ASSERT(isfinite(window.height()));
-    
+
     // Update window values if new requested values are not NaN.
     if (!isnan(pendingChanges.x()))
         window.setX(pendingChanges.x());
@@ -338,15 +340,15 @@ void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, con
     if (!isnan(pendingChanges.height()))
         window.setHeight(pendingChanges.height());
 
-    ASSERT(m_frame);
-    Page* page = m_frame->page();
-    FloatSize minimumSize = page ? m_frame->page()->chrome()->client()->minimumWindowSize() : FloatSize(100, 100);
+    FloatSize minimumSize = page->chrome()->client()->minimumWindowSize();
     window.setWidth(min(max(minimumSize.width(), window.width()), screen.width()));
     window.setHeight(min(max(minimumSize.height(), window.height()), screen.height()));
 
-    // Constrain the window position to the screen.
+    // Constrain the window position within the valid screen area.
     window.setX(max(screen.x(), min(window.x(), screen.maxX() - window.width())));
     window.setY(max(screen.y(), min(window.y(), screen.maxY() - window.height())));
+
+    return window;
 }
 
 // FIXME: We can remove this function once V8 showModalDialog is changed to use DOMWindow.
@@ -1450,8 +1452,7 @@ void DOMWindow::moveBy(float x, float y) const
     FloatRect update = fr;
     update.move(x, y);
     // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-    adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), fr, update);
-    page->chrome()->setWindowRect(fr);
+    page->chrome()->setWindowRect(adjustWindowRect(page, update));
 }
 
 void DOMWindow::moveTo(float x, float y) const
@@ -1470,10 +1471,9 @@ void DOMWindow::moveTo(float x, float y) const
     FloatRect sr = screenAvailableRect(page->mainFrame()->view());
     fr.setLocation(sr.location());
     FloatRect update = fr;
-    update.move(x, y);     
+    update.move(x, y);
     // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-    adjustWindowRect(sr, fr, update);
-    page->chrome()->setWindowRect(fr);
+    page->chrome()->setWindowRect(adjustWindowRect(page, update));
 }
 
 void DOMWindow::resizeBy(float x, float y) const
@@ -1491,8 +1491,7 @@ void DOMWindow::resizeBy(float x, float y) const
     FloatRect fr = page->chrome()->windowRect();
     FloatSize dest = fr.size() + FloatSize(x, y);
     FloatRect update(fr.location(), dest);
-    adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), fr, update);
-    page->chrome()->setWindowRect(fr);
+    page->chrome()->setWindowRect(adjustWindowRect(page, update));
 }
 
 void DOMWindow::resizeTo(float width, float height) const
@@ -1510,8 +1509,7 @@ void DOMWindow::resizeTo(float width, float height) const
     FloatRect fr = page->chrome()->windowRect();
     FloatSize dest = FloatSize(width, height);
     FloatRect update(fr.location(), dest);
-    adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), fr, update);
-    page->chrome()->setWindowRect(fr);
+    page->chrome()->setWindowRect(adjustWindowRect(page, update));
 }
 
 int DOMWindow::setTimeout(PassOwnPtr<ScheduledAction> action, int timeout, ExceptionCode& ec)
@@ -1930,15 +1928,6 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
     }
 
     WindowFeatures windowFeatures(windowFeaturesString);
-    FloatRect windowRect(windowFeatures.xSet ? windowFeatures.x : 0, windowFeatures.ySet ? windowFeatures.y : 0,
-        windowFeatures.widthSet ? windowFeatures.width : 0, windowFeatures.heightSet ? windowFeatures.height : 0);
-    Page* page = m_frame->page();
-    DOMWindow::adjustWindowRect(screenAvailableRect(page ? page->mainFrame()->view() : 0), windowRect, windowRect);
-    windowFeatures.x = windowRect.x();
-    windowFeatures.y = windowRect.y();
-    windowFeatures.height = windowRect.height();
-    windowFeatures.width = windowRect.width();
-
     Frame* result = createWindow(urlString, frameName, windowFeatures, activeWindow, firstFrame, m_frame);
     return result ? result->document()->domWindow() : 0;
 }
@@ -1958,7 +1947,8 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
     if (!canShowModalDialogNow(m_frame) || !firstWindow->allowPopUp())
         return;
 
-    Frame* dialogFrame = createWindow(urlString, emptyAtom, WindowFeatures(dialogFeaturesString, screenAvailableRect(m_frame->view())),
+    WindowFeatures windowFeatures(dialogFeaturesString, screenAvailableRect(m_frame->view()));
+    Frame* dialogFrame = createWindow(urlString, emptyAtom, windowFeatures,
         activeWindow, firstFrame, m_frame, function, functionContext);
     if (!dialogFrame)
         return;

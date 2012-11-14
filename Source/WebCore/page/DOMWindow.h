@@ -120,7 +120,7 @@ namespace WebCore {
         static bool dispatchAllPendingBeforeUnloadEvents();
         static void dispatchAllPendingUnloadEvents();
 
-        void adjustWindowRect(const FloatRect& screen, FloatRect& window, const FloatRect& pendingChanges) const;
+        static FloatRect adjustWindowRect(Page*, const FloatRect& pendingChanges);
 
         // FIXME: We can remove this function once V8 showModalDialog is changed to use DOMWindow.
         static void parseModalDialogFeatures(const String&, HashMap<String, String>&);

@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+function validate(msg) {
+    shouldBeGreaterThanOrEqual(msg["width"].toString(), "100");
+    shouldBeGreaterThanOrEqual(msg["height"].toString(), "100");
+}
+
+function test() {
+    var data = window.showModalDialog("resources/report-size-and-close.html", "", "dialogWidth:10; dialogHeight:10");
+    validate(data);
+
+    window.addEventListener('message', function(e) {
+        validate(e.data);
+        e.source.close();
+        testRunner.notifyDone();
+    }, false);
+    window.open("resources/report-size-and-close.html", "non-empty-argument", "width=10, height=10");
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows();
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+}
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</head>
+<body onload="test()">
+</body>
+</html>

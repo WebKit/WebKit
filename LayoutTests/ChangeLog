@@ -1,3 +1,17 @@
+2012-11-14  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Clean up use of adjustWindowRect
+        https://bugs.webkit.org/show_bug.cgi?id=102072
+
+        Reviewed by Gyuyoung Kim.
+
+        Test that minimum sizes are honored.
+
+        * fast/dom/Window/open-window-min-size.html: Added.
+        * fast/dom/Window/open-window-min-size-expected.txt: Added.
+        * fast/dom/Window/resources/report-size-and-close.html: Added.
+        * platform/mac/TestExpectations: Skipped as it times out.
+
 2012-11-14  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Fixed lint error.
