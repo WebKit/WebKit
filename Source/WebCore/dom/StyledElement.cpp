@@ -163,7 +163,9 @@ StylePropertySet* StyledElement::ensureMutableInlineStyle()
 void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue)
 {
     if (isPresentationAttribute(name)) {
-        setPresentationAttributeStyleDirty();
+        // Avoid dirtying the presentation attribute style if we're using shared attribute data with already generated style.
+        if (attributeData()->isMutable() || !attributeData()->m_presentationAttributeStyle)
+            attributeData()->m_presentationAttributeStyleIsDirty = true;
         setNeedsStyleRecalc(InlineStyleChange);
     }
 
@@ -338,8 +340,8 @@ void StyledElement::rebuildPresentationAttributeStyle()
             collectStyleForPresentationAttribute(*attribute, style.get());
         }
     }
-    clearPresentationAttributeStyleDirty();
 
+    attributeData()->m_presentationAttributeStyleIsDirty = false;
     attributeData()->setPresentationAttributeStyle(style->isEmpty() ? 0 : style);
 
     if (!cacheHash || cacheIterator->value)

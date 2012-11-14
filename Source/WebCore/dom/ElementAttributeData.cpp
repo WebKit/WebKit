@@ -31,6 +31,13 @@
 
 namespace WebCore {
 
+struct SameSizeAsElementAttributeData : public RefCounted<SameSizeAsElementAttributeData> {
+    unsigned bitfield;
+    void* refPtrs[4];
+};
+
+COMPILE_ASSERT(sizeof(ElementAttributeData) == sizeof(ElementAttributeData), element_attribute_data_should_stay_small);
+
 static size_t sizeForImmutableElementAttributeDataWithAttributeCount(unsigned count)
 {
     return sizeof(ImmutableElementAttributeData) - sizeof(void*) + sizeof(Attribute) * count;
@@ -75,6 +82,7 @@ ImmutableElementAttributeData::ImmutableElementAttributeData(const MutableElemen
 ElementAttributeData::ElementAttributeData(const ElementAttributeData& other, bool isMutable)
     : m_isMutable(isMutable)
     , m_arraySize(isMutable ? 0 : other.length())
+    , m_presentationAttributeStyleIsDirty(other.m_presentationAttributeStyleIsDirty)
     , m_presentationAttributeStyle(other.m_presentationAttributeStyle)
     , m_classNames(other.m_classNames)
     , m_idForStyleResolution(other.m_idForStyleResolution)

@@ -88,17 +88,20 @@ protected:
     ElementAttributeData()
         : m_isMutable(true)
         , m_arraySize(0)
+        , m_presentationAttributeStyleIsDirty(false)
     { }
 
     ElementAttributeData(unsigned arraySize)
         : m_isMutable(false)
         , m_arraySize(arraySize)
+        , m_presentationAttributeStyleIsDirty(false)
     { }
 
     ElementAttributeData(const ElementAttributeData&, bool isMutable);
 
     unsigned m_isMutable : 1;
-    unsigned m_arraySize : 31;
+    unsigned m_arraySize : 30;
+    mutable unsigned m_presentationAttributeStyleIsDirty : 1;
 
     mutable RefPtr<StylePropertySet> m_inlineStyle;
     mutable RefPtr<StylePropertySet> m_presentationAttributeStyle;

@@ -90,9 +90,11 @@ inline void StyledElement::invalidateStyleAttribute()
 
 inline const StylePropertySet* StyledElement::presentationAttributeStyle()
 {
-    if (attributeStyleDirty())
+    if (!attributeData())
+        return 0;
+    if (attributeData()->m_presentationAttributeStyleIsDirty)
         rebuildPresentationAttributeStyle();
-    return attributeData() ? attributeData()->presentationAttributeStyle() : 0;
+    return attributeData()->presentationAttributeStyle();
 }
 
 } //namespace

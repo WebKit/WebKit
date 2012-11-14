@@ -319,7 +319,6 @@ public:
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool /* error loading subresource */) { }
     virtual void startLoadingDynamicSheet() { ASSERT_NOT_REACHED(); }
 
-    bool attributeStyleDirty() const { return getFlag(PresentationAttributeStyleDirtyFlag); }
     bool hasName() const { return getFlag(HasNameFlag); }
     bool hasID() const;
     bool hasClass() const;
@@ -334,9 +333,6 @@ public:
     StyleChangeType styleChangeType() const { return static_cast<StyleChangeType>(m_nodeFlags & StyleChangeMask); }
     bool childNeedsStyleRecalc() const { return getFlag(ChildNeedsStyleRecalcFlag); }
     bool isLink() const { return getFlag(IsLinkFlag); }
-
-    void setPresentationAttributeStyleDirty() { setFlag(PresentationAttributeStyleDirtyFlag); }
-    void clearPresentationAttributeStyleDirty() { clearFlag(PresentationAttributeStyleDirtyFlag); }
 
     void setHasName(bool f) { setFlag(f, HasNameFlag); }
     void setChildNeedsStyleRecalc() { setFlag(ChildNeedsStyleRecalcFlag); }
@@ -726,22 +722,21 @@ private:
 
         HasNameFlag = 1 << 23,
 
-        PresentationAttributeStyleDirtyFlag = 1 << 24,
+        InNamedFlowFlag = 1 << 24,
+        HasSyntheticAttrChildNodesFlag = 1 << 25,
+        HasCustomCallbacksFlag = 1 << 26,
+        HasScopedHTMLStyleChildFlag = 1 << 27,
+        HasEventTargetDataFlag = 1 << 28,
+        InEdenFlag = 1 << 29,
 
 #if ENABLE(SVG)
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag,
 #else
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag,
 #endif
-        InNamedFlowFlag = 1 << 26,
-        HasSyntheticAttrChildNodesFlag = 1 << 27,
-        HasCustomCallbacksFlag = 1 << 28,
-        HasScopedHTMLStyleChildFlag = 1 << 29,
-        HasEventTargetDataFlag = 1 << 30,
-        InEdenFlag = 1 << 31
     };
 
-    // 1 bit remaining
+    // 2 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 

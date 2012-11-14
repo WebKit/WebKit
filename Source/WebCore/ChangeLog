@@ -1,3 +1,42 @@
+2012-11-14  Andreas Kling  <kling@webkit.org>
+
+        Only resolve presentation attribute style once per shared ElementAttributeData.
+        <http://webkit.org/b/100990>
+
+        Reviewed by Antti Koivisto.
+
+        Track the "presentation attribute style dirty" state on ElementAttributeData instead of in a Node flag.
+        This allows us to avoid duplicate work for ElementAttributeData that are shared between multiple elements,
+        since the state is no longer per-Element.
+
+        I've left the presentation attribute cache in there for now, since it still covers the case where
+        two elements have the same presentation attributes but different non-presentation attributes.
+        It's likely that we're not gaining much from it anymore, but that's a topic for another patch.
+
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::presentationAttributeStyle):
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        (ElementAttributeData):
+        * dom/Node.h:
+
+            Move presentation attribute style dirty flag from Node to ElementAttributeData.
+
+        * dom/ElementAttributeData.cpp:
+        (SameSizeAsElementAttributeData):
+
+            Add a compile-time object size assertion for ElementAttributeData.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+
+            Don't mark the presentation attribute style dirty if the element is using an immutable (implies
+            shared) ElementAttributeData and another element has already generated the StylePropertySet.
+            The element itself is still marked for style recalc like before, this just avoids the process
+            of converting the attributes to CSS properties.
+
 2012-11-14  Scott Violet  <sky@chromium.org>
 
         [Chromium] Refactor theme font lookup into a factory
