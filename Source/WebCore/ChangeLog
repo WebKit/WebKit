@@ -1,3 +1,21 @@
+2012-11-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: keep track of mutation observers and disconnect them upon upload
+        https://bugs.webkit.org/show_bug.cgi?id=102239
+
+        Reviewed by Vsevolod Vlasov.
+
+        Otherwise we hit memory leaks.
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype.wasShown):
+        (WebInspector.DefaultTextEditor.prototype.willHide):
+        (WebInspector.TextEditorMainPanel.prototype._wasShown):
+        (WebInspector.TextEditorMainPanel.prototype._willHide):
+        (WebInspector.TextEditorMainPanel.prototype._attachMutationObserver):
+        (WebInspector.TextEditorMainPanel.prototype._detachMutationObserver):
+        * inspector/front-end/utilities.js:
+
 2012-11-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [Qt] Use a node image if there is no drag image set for Drag&Drop

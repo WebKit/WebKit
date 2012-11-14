@@ -866,3 +866,46 @@ function importScript(scriptName)
     xhr.send(null);
     window.eval(xhr.responseText + "\n//@ sourceURL=" + scriptName);
 }
+
+
+/**
+ * Mutation observers leak memory. Keep track of them and disconnect
+ * on unload.
+ * @constructor
+ * @param {function(Array.<WebKitMutation>)} handler
+ */
+function NonLeakingMutationObserver(handler)
+{
+    this._observer = new WebKitMutationObserver(handler);
+    NonLeakingMutationObserver._instances.push(this);
+}
+
+NonLeakingMutationObserver._instances = [];
+
+NonLeakingMutationObserver.prototype = {
+    /**
+     * @param {Element} element
+     * @param {Object} config
+     */
+    observe: function(element, config)
+    {
+        if (this._observer)
+            this._observer.observe(element, config);
+    },
+
+    disconnect: function()
+    {
+        if (this._observer)
+            this._observer.disconnect();
+        NonLeakingMutationObserver._instances.remove(this);
+        delete this._observer;
+    }
+}
+
+if (!window.testRunner) {
+    window.addEventListener("unload", function() {
+        while (NonLeakingMutationObserver._instances.length)
+            NonLeakingMutationObserver._instances[NonLeakingMutationObserver._instances.length - 1].disconnect();
+    }, false);
+}
+

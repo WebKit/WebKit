@@ -560,7 +560,7 @@ WebInspector.DefaultTextEditor.prototype = {
 
         this._boundSelectionChangeListener = this._mainPanel._handleSelectionChange.bind(this._mainPanel);
         document.addEventListener("selectionchange", this._boundSelectionChangeListener, false);
-        this._mainPanel._attachMutationObserver();
+        this._mainPanel._wasShown();
     },
 
     _handleFocused: function()
@@ -571,7 +571,7 @@ WebInspector.DefaultTextEditor.prototype = {
 
     willHide: function()
     {
-        this._mainPanel._detachMutationObserver();
+        this._mainPanel._willHide();
         document.removeEventListener("selectionchange", this._boundSelectionChangeListener, false);
         delete this._boundSelectionChangeListener;
 
@@ -1239,16 +1239,34 @@ WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScroll
 }
 
 WebInspector.TextEditorMainPanel.prototype = {
+    _wasShown: function()
+    {
+        this._isShowing = true;
+        this._attachMutationObserver();
+    },
+
+    _willHide: function()
+    {
+        this._detachMutationObserver();
+        this._isShowing = false;
+    },
+
     _attachMutationObserver: function()
     {
+        if (!this._isShowing)
+            return;
+
         if (this._mutationObserver)
             this._mutationObserver.disconnect();
-        this._mutationObserver = new WebKitMutationObserver(this._handleMutations.bind(this));
+        this._mutationObserver = new NonLeakingMutationObserver(this._handleMutations.bind(this));
         this._mutationObserver.observe(this._container, { subtree: true, childList: true, characterData: true });
     },
 
     _detachMutationObserver: function()
     {
+        if (!this._isShowing)
+            return;
+
         if (this._mutationObserver) {
             this._mutationObserver.disconnect();
             delete this._mutationObserver;
