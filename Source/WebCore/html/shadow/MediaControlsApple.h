@@ -58,6 +58,8 @@ public:
     virtual void updateCurrentTimeDisplay() OVERRIDE;
     virtual void updateStatusDisplay() OVERRIDE;
 
+    void toggleClosedCaptionTrackList();
+
 private:
     MediaControlsApple(Document*);
 
@@ -69,6 +71,8 @@ private:
     MediaControlTimelineContainerElement* m_timelineContainer;
     MediaControlSeekBackButtonElement* m_seekBackButton;
     MediaControlSeekForwardButtonElement* m_seekForwardButton;
+    MediaControlClosedCaptionsTrackListElement* m_closedCaptionsTrackList;
+    MediaControlClosedCaptionsContainerElement* m_closedCaptionsContainer;
     MediaControlVolumeSliderMuteButtonElement* m_volumeSliderMuteButton;
     MediaControlVolumeSliderContainerElement* m_volumeSliderContainer;
     MediaControlFullscreenVolumeMinButtonElement* m_fullScreenMinVolumeButton;

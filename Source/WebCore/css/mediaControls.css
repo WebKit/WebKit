@@ -187,6 +187,14 @@ audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-medi
     color: inherit;
 }
 
+audio::-webkit-media-controls-closed-captions-container, video::-webkit-media-controls-closed-captions-container {
+    display: none;
+}
+
+audio::-webkit-media-controls-closed-captions-track-list, video::-webkit-media-controls-closed-captions-track-list {
+    display: none;
+}
+
 audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button {
     -webkit-appearance: media-volume-slider-mute-button;
     display: none;

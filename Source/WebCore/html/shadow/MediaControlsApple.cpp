@@ -55,6 +55,8 @@ MediaControlsApple::MediaControlsApple(Document* document)
     , m_timelineContainer(0)
     , m_seekBackButton(0)
     , m_seekForwardButton(0)
+    , m_closedCaptionsTrackList(0)
+    , m_closedCaptionsContainer(0)
     , m_volumeSliderMuteButton(0)
     , m_volumeSliderContainer(0)
     , m_fullScreenMinVolumeButton(0)
@@ -145,9 +147,22 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document* docu
         return 0;
 
     if (document->page()->theme()->supportsClosedCaptioning()) {
-        RefPtr<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(document);
+        RefPtr<MediaControlClosedCaptionsContainerElement> closedCaptionsContainer = MediaControlClosedCaptionsContainerElement::create(document);
+
+        RefPtr<MediaControlClosedCaptionsTrackListElement> closedCaptionsTrackList = MediaControlClosedCaptionsTrackListElement::create(document);
+        controls->m_closedCaptionsTrackList = closedCaptionsTrackList.get();
+        closedCaptionsContainer->appendChild(closedCaptionsTrackList.release(), ec, true);
+        if (ec)
+            return 0;
+
+        RefPtr<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(document, controls.get());
         controls->m_toggleClosedCaptionsButton = toggleClosedCaptionsButton.get();
         panel->appendChild(toggleClosedCaptionsButton.release(), ec, true);
+        if (ec)
+            return 0;
+
+        controls->m_closedCaptionsContainer = closedCaptionsContainer.get();
+        panel->appendChild(closedCaptionsContainer.release(), ec, true);
         if (ec)
             return 0;
     }
@@ -252,18 +267,26 @@ void MediaControlsApple::setMediaController(MediaControllerInterface* controller
         m_fullScreenVolumeSlider->setMediaController(controller);
     if (m_fullScreenMaxVolumeButton)
         m_fullScreenMaxVolumeButton->setMediaController(controller);
+    if (m_closedCaptionsTrackList)
+        m_closedCaptionsTrackList->setMediaController(controller);
+    if (m_closedCaptionsContainer)
+        m_closedCaptionsContainer->setMediaController(controller);
 }
 
 void MediaControlsApple::hide()
 {
     MediaControls::hide();
     m_volumeSliderContainer->hide();
+    if (m_closedCaptionsContainer)
+        m_closedCaptionsContainer->hide();
 }
 
 void MediaControlsApple::makeTransparent()
 {
     MediaControls::makeTransparent();
     m_volumeSliderContainer->hide();
+    if (m_closedCaptionsContainer)
+        m_closedCaptionsContainer->hide();
 }
 
 void MediaControlsApple::reset()
@@ -297,9 +320,11 @@ void MediaControlsApple::reset()
         m_volumeSlider->setVolume(m_mediaController->volume());
 
     if (m_toggleClosedCaptionsButton) {
-        if (m_mediaController->hasClosedCaptions())
+        if (m_mediaController->hasClosedCaptions()) {
             m_toggleClosedCaptionsButton->show();
-        else
+            if (m_closedCaptionsTrackList)
+                m_closedCaptionsTrackList->updateDisplay();
+        } else
             m_toggleClosedCaptionsButton->hide();
     }
 
@@ -370,6 +395,8 @@ void MediaControlsApple::reportedError()
         m_volumeSliderContainer->hide();
     if (m_toggleClosedCaptionsButton && !page->theme()->hasOwnDisabledStateHandlingFor(MediaToggleClosedCaptionsButtonPart))
         m_toggleClosedCaptionsButton->hide();
+    if (m_closedCaptionsContainer)
+        m_closedCaptionsContainer->hide();
 }
 
 void MediaControlsApple::updateStatusDisplay()
@@ -444,6 +471,19 @@ void MediaControlsApple::showVolumeSlider()
 
     if (m_volumeSliderContainer)
         m_volumeSliderContainer->show();
+}
+
+void MediaControlsApple::toggleClosedCaptionTrackList()
+{
+    if (!m_mediaController->hasClosedCaptions())
+        return;
+
+    if (m_closedCaptionsContainer) {
+        if (m_closedCaptionsContainer->isShowing())
+            m_closedCaptionsContainer->hide();
+        else
+            m_closedCaptionsContainer->show();
+    }
 }
 
 }
