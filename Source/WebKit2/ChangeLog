@@ -1,3 +1,13 @@
+2012-11-13  Jon Lee  <jonlee@apple.com>
+
+        Reduce snapshot waiting time
+        https://bugs.webkit.org/show_bug.cgi?id=102147
+        <rdar://problem/12695539>
+
+        Reviewed by Brian Weinstein.
+
+        * WebProcess/Plugins/PluginView.cpp: Reduce to 1 second. Improves impressions of responsiveness.
+
 2012-11-13  Anders Carlsson  <andersca@apple.com>
 
         Factor the code to enter accelerated compositing given a layer out into a separate method

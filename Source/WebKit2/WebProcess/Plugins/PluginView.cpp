@@ -68,7 +68,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const double pluginSnapshotTimerDelay = 3;
+static const double pluginSnapshotTimerDelay = 1;
 
 class PluginView::URLRequest : public RefCounted<URLRequest> {
 public:
