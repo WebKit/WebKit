@@ -1684,3 +1684,6 @@ webkit.org/b/102097 svg/as-image/animated-svg-repaints-completely-in-hidpi.html 
 webkit.org/b/102097 svg/as-image/image-respects-deviceScaleFactor.html [ Skip ]
 
 webkit.org/b/102100 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure ]
+
+webkit.org/b/102190 compositing/overflow/updating-scrolling-content.html [ Failure ]
+webkit.org/b/102190 fast/events/overflow-scroll-fake-mouse-move.html [ Failure ]
