@@ -1,3 +1,17 @@
+2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134377.
+        http://trac.webkit.org/changeset/134377
+        https://bugs.webkit.org/show_bug.cgi?id=101133
+
+        Caused a mysterious Android Clang build failure, needs
+        investigation before landing again.
+
+        * fast/forms/number/number-content-url-crash-expected.txt: Removed.
+        * fast/forms/number/number-content-url-crash.html: Removed.
+        * fast/forms/search/search-content-url-crash-expected.txt: Removed.
+        * fast/forms/search/search-content-url-crash.html: Removed.
+
 2012-11-13  James Robinson  <jamesr@chromium.org>
 
         Rebaselines for filtering changes due to chromium r167479

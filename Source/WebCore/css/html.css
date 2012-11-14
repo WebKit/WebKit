@@ -436,7 +436,6 @@ input::-webkit-textfield-decoration-container {
     display: -webkit-box;
     -webkit-box-align: center;
     -webkit-user-modify: read-only !important;
-    content: none !important;
 }
 
 input[type="search"]::-webkit-textfield-decoration-container {
