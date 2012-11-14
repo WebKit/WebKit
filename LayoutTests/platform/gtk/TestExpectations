@@ -394,6 +394,8 @@ webkit.org/b/100137 fast/media/mq-resolution-dpi-dpcm-warning.html [ Failure ]
 # CSS Device Adaptation is not enabled.
 webkit.org/b/95959 css3/device-adapt [ Skip ]
 
+webkit.org/b/102180 fast/canvas/canvas-resize-reset-pixelRatio.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -652,6 +654,8 @@ webkit.org/b/101428 media/media-continues-playing-after-replace-source.html [ Ti
 
 Bug(GTK) media/progress-events-generated-correctly.html [ Timeout ]
 
+webkit.org/b/102183 fast/events/attribute-listener-deletion-crash.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -893,7 +897,7 @@ webkit.org/b/43332 inspector/debugger/dom-breakpoints.html [ Failure ]
 webkit.org/b/43332 inspector/debugger/event-listener-breakpoints.html [ Failure ]
 webkit.org/b/43332 inspector/debugger/step-through-event-listeners.html [ Failure ]
 webkit.org/b/43332 inspector/debugger/xhr-breakpoints.html [ Failure Timeout ]
-webkit.org/b/40300 inspector/debugger/live-edit.html [ Timeout ]
+webkit.org/b/40300 inspector/debugger/live-edit.html [ Timeout Failure ]
 webkit.org/b/40300 inspector/debugger/live-edit-breakpoints.html [ Failure ]
 webkit.org/b/89652 inspector/debugger/debugger-compile-and-run.html [ Failure ]
 webkit.org/b/85709 inspector/extensions/extensions-eval-content-script.html [ Failure ]
@@ -1372,6 +1376,8 @@ webkit.org/b/95299 fast/images/exif-orientation-image-document.html [ Failure ]
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
+
+webkit.org/b/102183 svg/custom/use-instanceRoot-event-listeners.xhtml [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

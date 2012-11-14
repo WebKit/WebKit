@@ -1,3 +1,13 @@
+2012-11-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Expanding failure expectations for the inspector/debugger/live-edit.html test.
+        Adding failure and timeout expectations for two tests that regressed after r134495.
+        Adding failure expectation for a test added in r134099.
+
+        * platform/gtk/TestExpectations:
+
 2012-11-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, skip new failing tests.
