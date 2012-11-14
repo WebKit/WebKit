@@ -1,3 +1,13 @@
+2012-11-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Updating the platform-specific baseline for fast/js/global-constructors.html
+        and removing the failure expectation for said test.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
 2012-11-14  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: 'undefined' javascript filenames.
