@@ -1,3 +1,15 @@
+2012-11-14  James Robinson  <jamesr@chromium.org>
+
+        webgl-background-color.html started failing
+        https://bugs.webkit.org/show_bug.cgi?id=102247
+
+        Reviewed by Adrienne Walker.
+
+        The compositor thread should outlive the WebView.
+
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+
 2012-11-14  Nate Chapin  <japhet@chromium.org>
 
         Move empty loading to DocumentLoader, simplify FrameLoader::init()

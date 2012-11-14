@@ -218,8 +218,9 @@ private:
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     OwnPtr<NotificationPresenter> m_notificationPresenter;
 #endif
-    OwnPtr<WebViewHost> m_webViewHost;
+    // It's important that this thread is destroyed after the WebViewHost.
     OwnPtr<WebKit::WebThread> m_webCompositorThread;
+    OwnPtr<WebViewHost> m_webViewHost;
 #if ENABLE(LINK_PRERENDER)
     OwnPtr<MockWebPrerenderingSupport> m_prerenderingSupport;
 #endif
