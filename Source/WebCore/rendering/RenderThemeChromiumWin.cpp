@@ -35,6 +35,7 @@
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "HWndDC.h"
 #include "LayoutTestSupport.h"
 #include "MediaControlElements.h"
 #include "PaintInfo.h"
@@ -42,7 +43,6 @@
 #include "RenderBox.h"
 #include "RenderProgress.h"
 #include "RenderSlider.h"
-#include "RenderThemeChromiumCommon.h"
 #include "ScrollbarTheme.h"
 #include "SystemInfo.h"
 #include "TransparencyWin.h"
@@ -51,6 +51,12 @@
 
 // FIXME: This dependency should eventually be removed.
 #include <skia/ext/skia_utils_win.h>
+
+#define SIZEOF_STRUCT_WITH_SPECIFIED_LAST_MEMBER(structName, member) \
+    offsetof(structName, member) + \
+    (sizeof static_cast<structName*>(0)->member)
+#define NONCLIENTMETRICS_SIZE_PRE_VISTA \
+    SIZEOF_STRUCT_WITH_SPECIFIED_LAST_MEMBER(NONCLIENTMETRICS, lfMessageFont)
 
 namespace WebCore {
 
@@ -129,6 +135,19 @@ bool ThemePainter::s_hasInstance = false;
 
 } // namespace
 
+static void getNonClientMetrics(NONCLIENTMETRICS* metrics)
+{
+    static UINT size = (windowsVersion() >= WindowsVista) ?
+        sizeof(NONCLIENTMETRICS) : NONCLIENTMETRICS_SIZE_PRE_VISTA;
+    metrics->cbSize = size;
+    bool success = !!SystemParametersInfo(SPI_GETNONCLIENTMETRICS, size, metrics, 0);
+    ASSERT(success);
+}
+
+static FontDescription smallSystemFont;
+static FontDescription menuFont;
+static FontDescription labelFont;
+
 // Internal static helper functions.  We don't put them in an anonymous
 // namespace so they have easier access to the WebCore namespace.
 
@@ -145,6 +164,55 @@ static bool supportsFocus(ControlPart appearance)
         return true;
     }
     return false;
+}
+
+// Return the height of system font |font| in pixels.  We use this size by
+// default for some non-form-control elements.
+static float systemFontSize(const LOGFONT& font)
+{
+    float size = -font.lfHeight;
+    if (size < 0) {
+        HFONT hFont = CreateFontIndirect(&font);
+        if (hFont) {
+            HWndDC hdc(0); // What about printing? Is this the right DC?
+            if (hdc) {
+                HGDIOBJ hObject = SelectObject(hdc, hFont);
+                TEXTMETRIC tm;
+                GetTextMetrics(hdc, &tm);
+                SelectObject(hdc, hObject);
+                size = tm.tmAscent;
+            }
+            DeleteObject(hFont);
+        }
+    }
+
+    // The "codepage 936" bit here is from Gecko; apparently this helps make
+    // fonts more legible in Simplified Chinese where the default font size is
+    // too small.
+    //
+    // FIXME: http://b/1119883 Since this is only used for "small caption",
+    // "menu", and "status bar" objects, I'm not sure how much this even
+    // matters.  Plus the Gecko patch went in back in 2002, and maybe this
+    // isn't even relevant anymore.  We should investigate whether this should
+    // be removed, or perhaps broadened to be "any CJK locale".
+    //
+    return ((size < 12.0f) && (GetACP() == 936)) ? 12.0f : size;
+}
+
+// Converts |points| to pixels.  One point is 1/72 of an inch.
+static float pointsToPixels(float points)
+{
+    static float pixelsPerInch = 0.0f;
+    if (!pixelsPerInch) {
+        HWndDC hdc(0); // What about printing? Is this the right DC?
+        if (hdc) // Can this ever actually be NULL?
+            pixelsPerInch = GetDeviceCaps(hdc, LOGPIXELSY);
+        else
+            pixelsPerInch = 96.0f;
+    }
+
+    static const float pointsPerInch = 72.0f;
+    return points / pointsPerInch * pixelsPerInch;
 }
 
 static double querySystemBlinkInterval(double defaultInterval)
@@ -215,6 +283,67 @@ Color RenderThemeChromiumWin::platformActiveTextSearchHighlightColor() const
 Color RenderThemeChromiumWin::platformInactiveTextSearchHighlightColor() const
 {
     return Color(0xff, 0xff, 0x96); // Yellow.
+}
+
+void RenderThemeChromiumWin::systemFont(int propId, FontDescription& fontDescription) const
+{
+    // This logic owes much to RenderThemeSafari.cpp.
+    FontDescription* cachedDesc = 0;
+    AtomicString faceName;
+    float fontSize = 0;
+    switch (propId) {
+    case CSSValueSmallCaption:
+        cachedDesc = &smallSystemFont;
+        if (!smallSystemFont.isAbsoluteSize()) {
+            NONCLIENTMETRICS metrics;
+            getNonClientMetrics(&metrics);
+            faceName = AtomicString(metrics.lfSmCaptionFont.lfFaceName, wcslen(metrics.lfSmCaptionFont.lfFaceName));
+            fontSize = systemFontSize(metrics.lfSmCaptionFont);
+        }
+        break;
+    case CSSValueMenu:
+        cachedDesc = &menuFont;
+        if (!menuFont.isAbsoluteSize()) {
+            NONCLIENTMETRICS metrics;
+            getNonClientMetrics(&metrics);
+            faceName = AtomicString(metrics.lfMenuFont.lfFaceName, wcslen(metrics.lfMenuFont.lfFaceName));
+            fontSize = systemFontSize(metrics.lfMenuFont);
+        }
+        break;
+    case CSSValueStatusBar:
+        cachedDesc = &labelFont;
+        if (!labelFont.isAbsoluteSize()) {
+            NONCLIENTMETRICS metrics;
+            getNonClientMetrics(&metrics);
+            faceName = metrics.lfStatusFont.lfFaceName;
+            fontSize = systemFontSize(metrics.lfStatusFont);
+        }
+        break;
+    case CSSValueWebkitMiniControl:
+    case CSSValueWebkitSmallControl:
+    case CSSValueWebkitControl:
+        faceName = defaultGUIFont();
+        // Why 2 points smaller?  Because that's what Gecko does.
+        fontSize = defaultFontSize - pointsToPixels(2);
+        break;
+    default:
+        faceName = defaultGUIFont();
+        fontSize = defaultFontSize;
+        break;
+    }
+
+    if (!cachedDesc)
+        cachedDesc = &fontDescription;
+
+    if (fontSize) {
+        cachedDesc->firstFamily().setFamily(faceName);
+        cachedDesc->setIsAbsoluteSize(true);
+        cachedDesc->setGenericFamily(FontDescription::NoFamily);
+        cachedDesc->setSpecifiedSize(fontSize);
+        cachedDesc->setWeight(FontWeightNormal);
+        cachedDesc->setItalic(false);
+    }
+    fontDescription = *cachedDesc;
 }
 
 // Map a CSSValue* system color to an index understood by GetSysColor().
@@ -405,6 +534,15 @@ bool RenderThemeChromiumWin::paintMenuList(RenderObject* o, const PaintInfo& i, 
                                    determineClassicState(o),
                                    painter.drawRect());
     return false;
+}
+
+// static
+void RenderThemeChromiumWin::setDefaultFontSize(int fontSize)
+{
+    RenderThemeChromiumSkia::setDefaultFontSize(fontSize);
+
+    // Reset cached fonts.
+    smallSystemFont = menuFont = labelFont = FontDescription();
 }
 
 double RenderThemeChromiumWin::caretBlinkIntervalInternal() const

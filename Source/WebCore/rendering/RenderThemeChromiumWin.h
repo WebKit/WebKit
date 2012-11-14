@@ -57,6 +57,8 @@ namespace WebCore {
         virtual Color platformActiveTextSearchHighlightColor() const;
         virtual Color platformInactiveTextSearchHighlightColor() const;
 
+        // System fonts.
+        virtual void systemFont(int propId, FontDescription&) const;
         virtual Color systemColor(int cssValueId) const;
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -83,6 +85,10 @@ namespace WebCore {
         // codepath. We never go down both. And in both cases, they render the
         // entire menulist.
         virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
+
+        // Override RenderThemeChromiumSkia's setDefaultFontSize method to also reset the local font property caches.
+        // See comment in RenderThemeChromiumSkia::setDefaultFontSize() regarding ugliness of this hack.
+        static void setDefaultFontSize(int);
 
         virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
         virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);

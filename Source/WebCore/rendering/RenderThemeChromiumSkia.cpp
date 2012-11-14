@@ -39,7 +39,6 @@
 #include "RenderObject.h"
 #include "RenderProgress.h"
 #include "RenderSlider.h"
-#include "RenderThemeChromiumFontProvider.h"
 #include "ScrollbarTheme.h"
 #include "TimeRanges.h"
 #include "TransformationMatrix.h"
@@ -70,6 +69,23 @@ static const float defaultSearchFieldResultsDecorationSize = 13;
 static const float minSearchFieldResultsDecorationSize = 9;
 static const float maxSearchFieldResultsDecorationSize = 30;
 static const float defaultSearchFieldResultsButtonWidth = 18;
+
+// We aim to match IE here.
+// -IE uses a font based on the encoding as the default font for form controls.
+// -Gecko uses MS Shell Dlg (actually calls GetStockObject(DEFAULT_GUI_FONT),
+// which returns MS Shell Dlg)
+// -Safari uses Lucida Grande.
+//
+// FIXME: The only case where we know we don't match IE is for ANSI encodings.
+// IE uses MS Shell Dlg there, which we render incorrectly at certain pixel
+// sizes (e.g. 15px). So, for now we just use Arial.
+const String& RenderThemeChromiumSkia::defaultGUIFont()
+{
+    DEFINE_STATIC_LOCAL(String, fontFace, (ASCIILiteral("Arial")));
+    return fontFace;
+}
+
+float RenderThemeChromiumSkia::defaultFontSize = 16.0;
 
 RenderThemeChromiumSkia::RenderThemeChromiumSkia()
 {
@@ -167,7 +183,27 @@ double RenderThemeChromiumSkia::caretBlinkInterval() const
 
 void RenderThemeChromiumSkia::systemFont(int propId, FontDescription& fontDescription) const
 {
-    RenderThemeChromiumFontProvider::systemFont(propId, fontDescription);
+    float fontSize = defaultFontSize;
+
+    switch (propId) {
+    case CSSValueWebkitMiniControl:
+    case CSSValueWebkitSmallControl:
+    case CSSValueWebkitControl:
+        // Why 2 points smaller? Because that's what Gecko does. Note that we
+        // are assuming a 96dpi screen, which is the default that we use on
+        // Windows.
+        static const float pointsPerInch = 72.0f;
+        static const float pixelsPerInch = 96.0f;
+        fontSize -= (2.0f / pointsPerInch) * pixelsPerInch;
+        break;
+    }
+
+    fontDescription.firstFamily().setFamily(defaultGUIFont());
+    fontDescription.setSpecifiedSize(fontSize);
+    fontDescription.setIsAbsoluteSize(true);
+    fontDescription.setGenericFamily(FontDescription::NoFamily);
+    fontDescription.setWeight(FontWeightNormal);
+    fontDescription.setItalic(false);
 }
 
 int RenderThemeChromiumSkia::minimumMenuListSize(RenderStyle* style) const
@@ -537,7 +573,7 @@ int RenderThemeChromiumSkia::popupInternalPaddingBottom(RenderStyle* style) cons
 // static
 void RenderThemeChromiumSkia::setDefaultFontSize(int fontSize)
 {
-    RenderThemeChromiumFontProvider::setDefaultFontSize(fontSize);
+    defaultFontSize = static_cast<float>(fontSize);
 }
 
 double RenderThemeChromiumSkia::caretBlinkIntervalInternal() const

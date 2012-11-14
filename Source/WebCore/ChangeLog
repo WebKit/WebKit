@@ -1,3 +1,33 @@
+2012-11-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134524.
+        http://trac.webkit.org/changeset/134524
+        https://bugs.webkit.org/show_bug.cgi?id=102177
+
+        "Chromiium build broken" (Requested by haraken on #webkit).
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * rendering/RenderThemeChromiumFontProvider.cpp: Removed.
+        * rendering/RenderThemeChromiumFontProvider.h: Removed.
+        * rendering/RenderThemeChromiumFontProviderLinux.cpp: Removed.
+        * rendering/RenderThemeChromiumFontProviderWin.cpp: Removed.
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::defaultGUIFont):
+        (WebCore::RenderThemeChromiumSkia::systemFont):
+        (WebCore::RenderThemeChromiumSkia::setDefaultFontSize):
+        * rendering/RenderThemeChromiumSkia.h:
+        (RenderThemeChromiumSkia):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore):
+        (WebCore::getNonClientMetrics):
+        (WebCore::systemFontSize):
+        (WebCore::pointsToPixels):
+        (WebCore::RenderThemeChromiumWin::systemFont):
+        (WebCore::RenderThemeChromiumWin::setDefaultFontSize):
+        * rendering/RenderThemeChromiumWin.h:
+        (RenderThemeChromiumWin):
+
 2012-11-13  KyungTae Kim  <ktf.kim@samsung.com>
 
         Fix compile warning [-Wsign-compare]
