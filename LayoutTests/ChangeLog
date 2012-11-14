@@ -1,3 +1,10 @@
+2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Mark files that need rebaselines as failing.
+        https://bugs.webkit.org/show_bug.cgi?id=102087
+
+        * platform/chromium/TestExpectations: Added expectations.
+
 2012-11-14  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: IndexSizeError

@@ -4180,3 +4180,13 @@ webkit.org/b/101988 [ Linux Mac Win ] transforms/3d/point-mapping/3d-point-mappi
 webkit.org/b/101988 [ Linux Mac Win ] transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html [ Pass Image ]
 webkit.org/b/101988 [ Linux Mac Win ] transforms/3d/point-mapping/3d-point-mapping.html [ Pass Image ]
 webkit.org/b/102131 [ Win ] fast/workers/worker-exception-during-navigation.html [ Pass Crash ]
+
+webkit.org/b/102087 svg/dom/SVGLengthList-appendItem.xhtml [ ImageOnlyFailure ]
+webkit.org/b/102087 svg/dom/SVGLengthList-basics.xhtml [ ImageOnlyFailure ]
+webkit.org/b/102087 svg/dom/SVGLengthList-getItem.xhtml [ ImageOnlyFailure ]
+webkit.org/b/102087 svg/dom/SVGLengthList-initialize.xhtml [ ImageOnlyFailure ]
+webkit.org/b/102087 svg/dom/SVGLengthList-insertItemBefore.xhtml [ ImageOnlyFailure ]
+webkit.org/b/102087 svg/dom/SVGLengthList-removeItem.xhtml [ ImageOnlyFailure ]
+webkit.org/b/102087 svg/dom/SVGLengthList-replaceItem.xhtml [ ImageOnlyFailure ]
+webkit.org/b/102087 svg/dom/SVGNumberList-basics.xhtml [ ImageOnlyFailure ]
+webkit.org/b/102087 svg/dom/SVGTransformList-basics.xhtml [ ImageOnlyFailure ]
