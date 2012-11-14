@@ -1,5 +1,9 @@
 2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Rebaseline fast/media/mq-js-media-except-01.html after r134618.
+
+2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Mark webgl-background-color.html as failing.
         http://webkit.org/b/102247
 

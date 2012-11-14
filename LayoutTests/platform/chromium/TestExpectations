@@ -3902,7 +3902,6 @@ webkit.org/b/98086 [ Win Mac Linux ] platform/chromium/virtual/threaded/composit
 webkit.org/b/98086 platform/chromium/virtual/threaded/compositing/webgl/webgl-nonpremultiplied-blend.html [ Crash Pass ]
 webkit.org/b/98086 platform/chromium/virtual/threaded/compositing/webgl/webgl-no-alpha.html [ Crash Pass ]
 webkit.org/b/98086 platform/chromium/virtual/threaded/compositing/webgl/webgl-reflection.html [ Crash Pass ]
-webkit.org/b/98086 platform/chromium/virtual/threaded/compositing/webgl/webgl-background-color.html [ Crash Pass ]
 webkit.org/b/98086 platform/chromium/virtual/threaded/compositing/webgl/webgl-repaint.html [ Crash Pass ]
 webkit.org/b/98086 platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-webgl-layer.html [ ImageOnlyFailure Crash Pass ]
 webkit.org/b/98086 platform/chromium/virtual/threaded/compositing/visibility/visibility-simple-canvas2d-layer.html [ ImageOnlyFailure Crash Pass ]
