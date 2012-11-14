@@ -935,6 +935,15 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebTextCheckerClient.h \
 	Source/WebKit2/UIProcess/WebUIClient.cpp \
 	Source/WebKit2/UIProcess/WebUIClient.h \
+	Source/WebKit2/UIProcess/InspectorServer/WebInspectorServer.cpp \
+	Source/WebKit2/UIProcess/InspectorServer/WebInspectorServer.h \
+	Source/WebKit2/UIProcess/InspectorServer/WebSocketServer.cpp \
+	Source/WebKit2/UIProcess/InspectorServer/WebSocketServer.h \
+	Source/WebKit2/UIProcess/InspectorServer/WebSocketServerClient.h \
+	Source/WebKit2/UIProcess/InspectorServer/WebSocketServerConnection.cpp \
+	Source/WebKit2/UIProcess/InspectorServer/WebSocketServerConnection.h \
+	Source/WebKit2/UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp \
+	Source/WebKit2/UIProcess/InspectorServer/gtk/WebSocketServerGtk.cpp \
 	Source/WebKit2/UIProcess/WebVibrationProvider.cpp \
 	Source/WebKit2/UIProcess/WebVibrationProvider.h \
 	Source/WebKit2/UIProcess/WebVibrationProxy.cpp \

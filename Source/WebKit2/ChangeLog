@@ -1,3 +1,78 @@
+2012-11-14  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        Add platform implementation of remote web inspector server for GTK port.
+        https://bugs.webkit.org/show_bug.cgi?id=88094 
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The platform implementation is based on GSocket API (WebInspectorServerGtk.cpp and WebSocketServerGtk.cpp).
+        The server listens on port 2999 by default. IP address of the server can be set
+        in WEBKIT_INSPECTOR_SERVER (for example export WEBKIT_INSPECTOR_SERVER="192.168.124.130:2999").
+        The server is started during WebKit context initialization.
+        Once a page is loaded insector server can be accessed via other WebKit based browser.
+        New WebKit API gtk tests have beed added.
+        inspectorPageIndex.html has been moved to new location to share the file between GTK and Qt ports.
+
+        Test: test-page-list, test-remote-debugging-message, test-open-debugging-session
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Platform/Logging.cpp:
+        (WebKit):
+        (WebKit::getChannelFromName):
+        (WebKit::initializeLogChannelsIfNecessary):
+        * Platform/Logging.h:
+        (WebKit):
+        * UIProcess/API/gtk/tests/GNUmakefile.am:
+        * UIProcess/API/gtk/tests/InspectorTestServer.cpp: Added.
+        (loadChangedCallback):
+        (main):
+        * UIProcess/API/gtk/tests/TestInspectorServer.cpp: Added.
+        (stopTestServer):
+        (sigAbortHandler):
+        (testServerMonitorThreadFunc):
+        (startTestServerMonitor):
+        (startTestServer):
+        (testInspectorServerPageList):
+        (testRemoteDebuggingMessage):
+        (openRemoteDebuggingSession):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+        (WebInspectorServer):
+        * UIProcess/InspectorServer/WebSocketServer.h:
+        (WebSocketServer):
+        * UIProcess/InspectorServer/WebSocketServerConnection.cpp:
+        (WebKit::WebSocketServerConnection::WebSocketServerConnection):
+        (WebKit::WebSocketServerConnection::shutdownNow):
+        (WebKit::WebSocketServerConnection::shutdownAfterSendOrNow):
+        (WebKit::WebSocketServerConnection::didCloseSocketStream):
+        (WebKit::WebSocketServerConnection::didReceiveSocketStreamData):
+        (WebKit):
+        (WebKit::WebSocketServerConnection::didUpdateBufferedAmount):
+        * UIProcess/InspectorServer/WebSocketServerConnection.h:
+        (WebSocketServerConnection):
+        * UIProcess/InspectorServer/front-end: Added.
+        * UIProcess/InspectorServer/front-end/inspectorPageIndex.html: Added.
+        * UIProcess/InspectorServer/gtk: Added.
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp: Added.
+        (WebKit):
+        (WebKit::WebInspectorServer::platformResourceForPath):
+        (WebKit::WebInspectorServer::buildPageList):
+        * UIProcess/InspectorServer/gtk/WebSocketServerGtk.cpp: Added.
+        (WebKit):
+        (WebKit::connectionCallback):
+        (WebKit::WebSocketServer::platformInitialize):
+        (WebKit::WebSocketServer::platformListen):
+        (WebKit::WebSocketServer::platformClose):
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::initInspectorServer):
+        (WebKit):
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * WebKit2.qrc:
+        * config.h:
+        * qt/Resources/inspectorPageIndex.html: Removed.
+
 2012-11-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2][AC] Print out warning if we fallback back to software mode

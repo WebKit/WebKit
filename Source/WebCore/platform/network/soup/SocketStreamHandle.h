@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics Ltd. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -46,6 +47,7 @@ namespace WebCore {
     class SocketStreamHandle : public RefCounted<SocketStreamHandle>, public SocketStreamHandleBase {
     public:
         static PassRefPtr<SocketStreamHandle> create(const KURL& url, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(url, client)); }
+        static PassRefPtr<SocketStreamHandle> create(GSocketConnection* socketConnection, SocketStreamHandleClient* client) { return adoptRef(new SocketStreamHandle(socketConnection, client)); }
 
         virtual ~SocketStreamHandle();
         void connected(GSocketConnection*, GError*);
@@ -66,6 +68,7 @@ namespace WebCore {
         void* m_id;
 
         SocketStreamHandle(const KURL&, SocketStreamHandleClient*);
+        SocketStreamHandle(GSocketConnection*, SocketStreamHandleClient*);
 
         // No authentication for streams per se, but proxy may ask for credentials.
         void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);

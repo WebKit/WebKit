@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009, 2011 Google Inc.  All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics Ltd. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -95,6 +96,15 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), m_id);
 }
 
+SocketStreamHandle::SocketStreamHandle(GSocketConnection* socketConnection, SocketStreamHandleClient* client)
+    : SocketStreamHandleBase(KURL(), client)
+    , m_readBuffer(0)
+{
+    LOG(Network, "SocketStreamHandle %p new client %p", this, m_client);
+    m_id = activateHandle(this);
+    connected(socketConnection, 0);
+}
+
 SocketStreamHandle::~SocketStreamHandle()
 {
     LOG(Network, "SocketStreamHandle %p delete", this);
@@ -110,7 +120,7 @@ void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* 
         return;
     }
 
-    m_socketConnection = adoptGRef(socketConnection);
+    m_socketConnection = socketConnection;
     m_outputStream = G_POLLABLE_OUTPUT_STREAM(g_io_stream_get_output_stream(G_IO_STREAM(m_socketConnection.get())));
     m_inputStream = g_io_stream_get_input_stream(G_IO_STREAM(m_socketConnection.get()));
 
@@ -156,6 +166,9 @@ void SocketStreamHandle::writeReady()
 int SocketStreamHandle::platformSend(const char* data, int length)
 {
     LOG(Network, "SocketStreamHandle %p platformSend", this);
+    if (!m_outputStream || !data)
+        return 0;
+
     GOwnPtr<GError> error;
     gssize written = g_pollable_output_stream_write_nonblocking(m_outputStream.get(), data, length, 0, &error.outPtr());
     if (error) {
@@ -192,6 +205,7 @@ void SocketStreamHandle::platformClose()
     m_outputStream = 0;
     m_inputStream = 0;
     delete m_readBuffer;
+    m_readBuffer = 0;
 
     m_client->didCloseSocketStream(this);
 }

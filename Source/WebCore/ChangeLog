@@ -1,3 +1,24 @@
+2012-11-14  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        Add platform implementation of remote web inspector server for GTK port.
+        https://bugs.webkit.org/show_bug.cgi?id=88094 
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Extra SocketStreamHandle constructor is added to accept existing GSocketConnection.
+        Needed to pass remote inspector server socket connection. The change is tested with 
+        inspector server API tests.
+
+        * platform/network/soup/SocketStreamHandle.h:
+        (WebCore::SocketStreamHandle::create):
+        (SocketStreamHandle):
+        * platform/network/soup/SocketStreamHandleSoup.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+        (WebCore):
+        (WebCore::SocketStreamHandle::connected):
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+
 2012-11-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: context menu on ObjectPropertyTreeElement's values is masked by the section.

@@ -29,8 +29,14 @@
 
 #if ENABLE(INSPECTOR_SERVER)
 
+#if PLATFORM(GTK)
+#include <gio/gio.h>
+#endif
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
+#if PLATFORM(GTK)
+#include <wtf/gobject/GRefPtr.h>
+#endif
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(QT)
@@ -78,6 +84,8 @@ private:
     unsigned short m_port;
 #if PLATFORM(QT)
     OwnPtr<QtTcpServerHandler> m_tcpServerHandler;
+#elif PLATFORM(GTK)
+    GRefPtr<GSocketService> m_socketService;
 #endif
     friend class WebSocketServerConnection;
 };

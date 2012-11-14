@@ -1,5 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/webkit/resources">
-    <file alias="inspectorPageIndex.html">qt/Resources/inspectorPageIndex.html</file>
+    <file alias="inspectorPageIndex.html">UIProcess/InspectorServer/front-end/inspectorPageIndex.html</file>
 </qresource>
 </RCC>

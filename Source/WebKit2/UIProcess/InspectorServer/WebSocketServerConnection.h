@@ -68,6 +68,7 @@ public:
     // SocketStreamHandleClient implementation.
     virtual void didCloseSocketStream(WebCore::SocketStreamHandle*);
     virtual void didReceiveSocketStreamData(WebCore::SocketStreamHandle*, const char* data, int length);
+    virtual void didUpdateBufferedAmount(WebCore::SocketStreamHandle*, size_t bufferedAmount);
     virtual void didFailSocketStream(WebCore::SocketStreamHandle*, const WebCore::SocketStreamError&);
 
 private:
@@ -86,6 +87,7 @@ protected:
     RefPtr<WebCore::SocketStreamHandle> m_socket;
     WebSocketServer* m_server;
     WebSocketServerClient* m_client;
+    bool m_shutdownAfterSend;
 };
 
 }

@@ -50,6 +50,7 @@ WebSocketServerConnection::WebSocketServerConnection(WebSocketServerClient* clie
     , m_mode(HTTP)
     , m_server(server)
     , m_client(client)
+    , m_shutdownAfterSend(false)
 {
 }
 
@@ -70,16 +71,15 @@ void WebSocketServerConnection::shutdownNow()
         return;
     RefPtr<SocketStreamHandle> socket = m_socket.release();
     socket->close();
+    m_shutdownAfterSend = false;
 }
 
 void WebSocketServerConnection::shutdownAfterSendOrNow()
 {
-    // If this ASSERT happens on any platform then their SocketStreamHandle::send
-    // followed by a SocketStreamHandle::close is not guarenteed to have sent all
-    // data. If this happens, we need to slightly change the design to include a
-    // SocketStreamHandleClient::didSend, handle it here, and add an m_shutdownAfterSend
-    // state on this WebSocketServerConnection.
-    ASSERT(!m_socket->bufferedAmount());
+    if (m_socket->bufferedAmount()) {
+        m_shutdownAfterSend = true;
+        return;
+    }
 
     shutdownNow();
 }
@@ -124,6 +124,9 @@ void WebSocketServerConnection::sendRawData(const char* data, size_t length)
 
 void WebSocketServerConnection::didCloseSocketStream(SocketStreamHandle*)
 {
+    // Destroy the SocketStreamHandle now to prevent closing an already closed socket later.
+    m_socket.clear();
+
     // Web Socket Mode.
     if (m_mode == WebSocket)
         m_client->didCloseWebSocketConnection(this);
@@ -149,6 +152,12 @@ void WebSocketServerConnection::didReceiveSocketStreamData(SocketStreamHandle*, 
         // For any new modes added in the future.
         ASSERT_NOT_REACHED();
     }
+}
+
+void WebSocketServerConnection::didUpdateBufferedAmount(WebCore::SocketStreamHandle*, size_t)
+{
+    if (m_shutdownAfterSend && !m_socket->bufferedAmount())
+        shutdownNow();
 }
 
 void WebSocketServerConnection::didFailSocketStream(SocketStreamHandle*, const SocketStreamError&)

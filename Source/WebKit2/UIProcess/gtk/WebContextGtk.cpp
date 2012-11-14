@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics Ltd. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +27,52 @@
 
 #include "config.h"
 #include "WebContext.h"
+
+#include "Logging.h"
+#include "WebInspectorServer.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/gobject/GOwnPtr.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
+
+static void initInspectorServer()
+{
+#if ENABLE(INSPECTOR_SERVER)
+    static bool initialized = false;
+    if (initialized)
+        return;
+
+    initialized = true;
+    String serverAddress(g_getenv("WEBKIT_INSPECTOR_SERVER"));
+
+    if (!serverAddress.isNull()) {
+        String bindAddress = "127.0.0.1";
+        unsigned short port = 2999;
+
+        Vector<String> result;
+        serverAddress.split(":", result);
+
+        if (result.size() == 2) {
+            bindAddress = result[0];
+            bool ok = false;
+            port = result[1].toInt(&ok);
+            if (!ok) {
+                port = 2999;
+                LOG_ERROR("Couldn't parse the port. Use 2999 instead.");
+            }
+        } else
+            LOG_ERROR("Couldn't parse %s, wrong format? Use 127.0.0.1:2999 instead.", serverAddress.utf8().data());
+
+        if (!WebInspectorServer::shared().listen(bindAddress, port))
+            LOG_ERROR("Couldn't start listening on: IP address=%s, port=%d.", bindAddress.utf8().data(), port);
+        return;
+    }
+
+    LOG(InspectorServer, "To start inspector server set WEBKIT_INSPECTOR_SERVER to 127.0.0.1:2999 for example.");
+#endif
+}
 
 WTF::String WebContext::applicationCacheDirectory()
 {
@@ -40,6 +82,7 @@ WTF::String WebContext::applicationCacheDirectory()
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters&)
 {
+    initInspectorServer();
 }
 
 void WebContext::platformInvalidateContext()

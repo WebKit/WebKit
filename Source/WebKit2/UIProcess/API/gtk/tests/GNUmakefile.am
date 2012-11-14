@@ -1,11 +1,13 @@
 if ENABLE_WEBKIT2
 
 TEST_PROGS += \
+	Programs/WebKit2APITests/InspectorTestServer \
 	Programs/WebKit2APITests/TestBackForwardList \
 	Programs/WebKit2APITests/TestContextMenu \
 	Programs/WebKit2APITests/TestCookieManager \
 	Programs/WebKit2APITests/TestDownloads \
 	Programs/WebKit2APITests/TestInspector \
+	Programs/WebKit2APITests/TestInspectorServer \
 	Programs/WebKit2APITests/TestLoaderClient \
 	Programs/WebKit2APITests/TestPrinting \
 	Programs/WebKit2APITests/TestResources \
@@ -106,6 +108,12 @@ Programs_WebKit2APITests_TestWebKitSettings_CPPFLAGS = $(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestWebKitSettings_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestWebKitSettings_LDFLAGS = $(webkit2_tests_ldflags)
 
+Programs_WebKit2APITests_InspectorTestServer_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/InspectorTestServer.cpp
+Programs_WebKit2APITests_InspectorTestServer_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_InspectorTestServer_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_InspectorTestServer_LDFLAGS = $(webkit2_tests_ldflags)
+
 Programs_WebKit2APITests_TestBackForwardList_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestBackForwardList.cpp
 Programs_WebKit2APITests_TestBackForwardList_CPPFLAGS = $(webkit2_tests_cppflags)
@@ -181,6 +189,12 @@ Programs_WebKit2APITests_TestInspector_CPPFLAGS = \
 	$(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestInspector_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestInspector_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestInspectorServer_SOURCES = \
+	Source/WebKit2/UIProcess/API/gtk/tests/TestInspectorServer.cpp
+Programs_WebKit2APITests_TestInspectorServer_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestInspectorServer_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestInspectorServer_LDFLAGS = $(webkit2_tests_ldflags)
 
 Programs_WebKit2APITests_TestWebKitVersion_SOURCES = \
         Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitVersion.cpp
