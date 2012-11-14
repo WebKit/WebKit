@@ -151,7 +151,7 @@ public:
     virtual void removeTile(int tileID) OVERRIDE;
     virtual PassOwnPtr<GraphicsContext> beginContentUpdate(const IntSize&, int& atlasID, IntPoint&) OVERRIDE;
 
-    void setCoordinator(WebKit::CoordinatedGraphicsLayerClient*);
+    void setCoordinatedGraphicsLayerClient(WebKit::CoordinatedGraphicsLayerClient*);
 
     void adjustVisibleRect();
     void purgeBackingStores();
@@ -213,7 +213,7 @@ private:
     float m_effectiveOpacity;
     TransformationMatrix m_effectiveTransform;
 
-    WebKit::CoordinatedGraphicsLayerClient* m_coordinator;
+    WebKit::CoordinatedGraphicsLayerClient* m_CoordinatedGraphicsLayerClient;
     OwnPtr<TiledBackingStore> m_mainBackingStore;
     OwnPtr<TiledBackingStore> m_previousBackingStore;
     float m_contentsScale;

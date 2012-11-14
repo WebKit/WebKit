@@ -66,7 +66,7 @@ LayerTreeCoordinator::~LayerTreeCoordinator()
 
     HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator end = registeredLayers.end();
     for (HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator it = registeredLayers.begin(); it != end; ++it)
-        (*it)->setCoordinator(0);
+        (*it)->setCoordinatedGraphicsLayerClient(0);
 }
 
 LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
@@ -98,6 +98,7 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
     m_layerTreeContext.webLayerID = toCoordinatedGraphicsLayer(webRootLayer)->id();
 
     m_nonCompositedContentLayer = GraphicsLayer::create(this, this);
+    toCoordinatedGraphicsLayer(m_rootLayer.get())->setCoordinatedGraphicsLayerClient(this);
 #ifndef NDEBUG
     m_nonCompositedContentLayer->setName("LayerTreeCoordinator non-composited content");
 #endif
@@ -584,8 +585,7 @@ void LayerTreeCoordinator::paintContents(const WebCore::GraphicsLayer* graphicsL
 PassOwnPtr<GraphicsLayer> LayerTreeCoordinator::createGraphicsLayer(GraphicsLayerClient* client)
 {
     CoordinatedGraphicsLayer* newLayer = new CoordinatedGraphicsLayer(client);
-    newLayer->setCoordinator(this);
-    attachLayer(newLayer);
+    newLayer->setCoordinatedGraphicsLayerClient(this);
     return adoptPtr(newLayer);
 }
 
