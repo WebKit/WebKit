@@ -1,3 +1,16 @@
+2012-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134599.
+        http://trac.webkit.org/changeset/134599
+        https://bugs.webkit.org/show_bug.cgi?id=102225
+
+        It broke the 32 bit EFL build (Requested by Ossy on #webkit).
+
+        * jit/JITPropertyAccess.cpp:
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+
 2012-11-14  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         [Qt][ARM]REGRESSION(r133985): It broke the build

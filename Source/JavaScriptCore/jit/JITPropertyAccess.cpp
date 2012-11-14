@@ -1244,65 +1244,6 @@ void JIT::resetPatchPutById(RepatchBuffer& repatchBuffer, StructureStubInfo* stu
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(stubInfo->patch.baseline.u.put.displacementLabel), 0);
 }
 
-#else
-
-template<IndexingType indexingShape>
-JIT::JumpList JIT::emitGenericContiguousPutByVal(Instruction* currentInstruction, PatchableJump& badType)
-{
-    unsigned value = currentInstruction[3].u.operand;
-    ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
-
-    JumpList slowCases;
-
-    badType = patchableBranch32(NotEqual, regT1, TrustedImm32(ContiguousShape));
-
-    loadPtr(Address(regT0, JSObject::butterflyOffset()), regT3);
-    Jump outOfBounds = branch32(AboveOrEqual, regT2, Address(regT3, Butterfly::offsetOfPublicLength()));
-
-    Label storeResult = label();
-    emitLoad(value, regT1, regT0);
-    switch (indexingShape) {
-    case Int32Shape:
-        slowCases.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag)));
-        // Fall through.
-    case ContiguousShape:
-        store32(regT0, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
-        store32(regT1, BaseIndex(regT3, regT2, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
-        break;
-    case DoubleShape: {
-        Jump notInt = branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag));
-        convertInt32ToDouble(regT0, fpRegT0);
-        Jump ready = jump();
-        notInt.link(this);
-        moveIntsToDouble(regT0, regT1, fpRegT0, fpRegT1);
-        slowCases.append(branchDouble(DoubleNotEqualOrUnordered, fpRegT0, fpRegT0));
-        ready.link(this);
-        storeDouble(fpRegT0, BaseIndex(regT3, regT2, TimesEight));
-        break;
-    }
-    default:
-        CRASH();
-        break;
-    }
-
-    Jump done = jump();
-
-    outOfBounds.link(this);
-    slowCases.append(branch32(AboveOrEqual, regT2, Address(regT3, Butterfly::offsetOfVectorLength())));
-
-    emitArrayProfileStoreToHoleSpecialCase(profile);
-
-    add32(TrustedImm32(1), regT2, regT1);
-    store32(regT1, Address(regT3, Butterfly::offsetOfPublicLength()));
-    jump().linkTo(storeResult, this);
-
-    done.link(this);
-
-    emitWriteBarrier(regT0, regT1, regT1, regT3, UnconditionalWriteBarrier, WriteBarrierForPropertyAccess);
-
-    return slowCases;
-}
-
 #endif // USE(JSVALUE64)
 
 void JIT::emitWriteBarrier(RegisterID owner, RegisterID value, RegisterID scratch, RegisterID scratch2, WriteBarrierMode mode, WriteBarrierUseKind useKind)
