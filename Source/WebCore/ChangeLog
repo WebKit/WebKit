@@ -1,3 +1,22 @@
+2012-11-14  Lynn Neir  <lynn.neir@skype.net>
+
+        [WinCairo] Incorrect line-height for styled menulist (select tag)
+        in windows theme.
+        https://bugs.webkit.org/show_bug.cgi?id=79435
+
+        Reviewed by Brent Fulgham
+
+        Applied same fix as in RenderThemeSafari::adjustMenuListButtonStyle
+        to Windows theme to fix issue.
+
+        Tests: fast/forms/menulist-restrict-line-height.html
+               fast/forms/control-restrict-line-height.html
+               fast/forms/basic-selects.html
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::adjustMenuListButtonStyle): Set line
+        height to the correct initial height.
+
 2012-11-14  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: WrongDocumentError

@@ -785,6 +785,8 @@ void RenderThemeWin::adjustMenuListButtonStyle(StyleResolver* styleResolver, Ren
     minHeight = max(minHeight, dropDownBoxMinHeight);
 
     style->setMinHeight(Length(minHeight, Fixed));
+
+    style->setLineHeight(RenderStyle::initialLineHeight());
     
     // White-space is locked to pre
     style->setWhiteSpace(PRE);
