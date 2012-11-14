@@ -137,9 +137,7 @@ String WebSocketChannel::extensions()
 ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const String& message)
 {
     LOG(Network, "WebSocketChannel %p send %s", this, message.utf8().data());
-    CString utf8 = message.utf8(String::StrictConversion);
-    if (utf8.isNull() && message.length())
-        return InvalidMessage;
+    CString utf8 = message.utf8(String::StrictConversionReplacingUnpairedSurrogatesWithFFFD);
     enqueueTextFrame(utf8);
     // According to WebSocket API specification, WebSocket.send() should return void instead
     // of boolean. However, our implementation still returns boolean due to compatibility

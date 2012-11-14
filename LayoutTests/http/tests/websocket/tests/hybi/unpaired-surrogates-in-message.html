@@ -7,31 +7,23 @@
 <div id="description"></div>
 <div id="console"></div>
 <script type="text/javascript">
-description("Checks whether SYNTAX_ERR is thrown when attemping to send unpaired surrogates.");
+description("Checks whether unpaired surrogates are replaced with U+FFFD.");
 
 window.jsTestIsAsync = true;
 
 var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/echo");
+var message;
 
 ws.onopen = function()
 {
     debug("Connected.");
-    try {
-        ws.send('\uD807');
-        testFailed('SYNTAX_ERR should be thrown.');
-    } catch(e) {
-        if (e.name == 'SYNTAX_ERR')
-            testPassed('SYNTAX_ERR was thrown.');
-        else
-            testFailed('Unexpected exception: ' + e);
-    }
-    ws.close();
+    ws.send("\uD807");
 };
 
 ws.onmessage = function (event)
 {
-    var message = event.data;
-    testFailed("onmessage() was called. (message = \"" + message + "\")");
+    message = event.data;
+    shouldBe("message", "'\uFFFD'");
     ws.close();
 };
 
