@@ -1,3 +1,9 @@
+2012-11-14  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Fixed lint error.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-14  Takashi Sakamoto  <tasak@google.com>
 
         Crash when replacing parts of text inputs with content: url(...)
