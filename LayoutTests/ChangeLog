@@ -1,3 +1,15 @@
+2012-11-14  Takashi Sakamoto  <tasak@google.com>
+
+        Crash when replacing parts of text inputs with content: url(...)
+        https://bugs.webkit.org/show_bug.cgi?id=101133
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/number/number-content-url-crash-expected.txt: Added.
+        * fast/forms/number/number-content-url-crash.html: Added.
+        * fast/forms/search/search-content-url-crash-expected.txt: Added.
+        * fast/forms/search/search-content-url-crash.html: Added.
+
 2012-11-14  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.
