@@ -30,20 +30,19 @@ function runTest() {
     var bufferSource = context.createBufferSource();
     bufferSource.buffer = toneBuffer;
 
-    // The delay node clips the maximum delay.  Create a node with a delay larger than the maximum
-    // allowed delay.
-    var delay = context.createDelayNode(1000);
-    
-    window.delay = delay;
-    shouldBeTrue("delay.delayTime.maxValue === 300");
-    shouldBeTrue("delay.delayTime.value === 0.0");
+    window.context = context;
+    shouldThrow("context.createDelay(180)");
+    shouldThrow("context.createDelay(0)");
+    shouldThrow("context.createDelay(-1)");
 
+    var delay = context.createDelay(179);
     delay.delayTime.value = delayTimeSeconds;
+    window.delay = delay;
     shouldBeTrue("delay.delayTime.value === 0.5");
 
     bufferSource.connect(delay);
     delay.connect(context.destination);
-    bufferSource.noteOn(0);
+    bufferSource.start(0);
     
     context.oncomplete = checkDelayedResult(toneBuffer);
     context.startRendering();

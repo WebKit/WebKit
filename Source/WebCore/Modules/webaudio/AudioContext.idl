@@ -70,7 +70,7 @@
 
     // Processing nodes
     GainNode createGain();
-    DelayNode createDelay(in [Optional] double maxDelayTime);
+    DelayNode createDelay(in [Optional] double maxDelayTime) raises(DOMException);
     BiquadFilterNode createBiquadFilter();
     WaveShaperNode createWaveShaper();
     PannerNode createPanner();
@@ -96,7 +96,8 @@
 
 #if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
     [V8MeasureAs=LegacyWebAudio, ImplementedAs=createGain] GainNode createGainNode();
-    [V8MeasureAs=LegacyWebAudio, ImplementedAs=createDelay] DelayNode createDelayNode(in [Optional] double maxDelayTime);
+    [V8MeasureAs=LegacyWebAudio, ImplementedAs=createDelay] DelayNode createDelayNode(in [Optional] double maxDelayTime) 
+        raises(DOMException);
 
     [V8MeasureAs=LegacyWebAudio, ImplementedAs=createScriptProcessor] ScriptProcessorNode createJavaScriptNode(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
         raises(DOMException);

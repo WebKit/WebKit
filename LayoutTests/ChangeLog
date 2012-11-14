@@ -1,3 +1,17 @@
+2012-11-14  Li Yin  <li.yin@intel.com>
+
+        createDelay should raise exception when the maxDelayTime parameter is incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=102173
+
+        Reviewed by Chris Rogers.
+
+        Spec: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+        The specified value must be greater than zero and less than three minutes or a
+        NOT_SUPPORTED_ERR exception will be thrown.
+
+        * webaudio/delaynode-maxdelaylimit-expected.txt:
+        * webaudio/delaynode-maxdelaylimit.html:
+
 2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] css3/filters/custom/custom-filter-property-computed-style.html is a flaky timeout in debug.

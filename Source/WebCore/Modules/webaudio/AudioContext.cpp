@@ -499,17 +499,20 @@ PassRefPtr<GainNode> AudioContext::createGain()
     return GainNode::create(this, m_destinationNode->sampleRate());
 }
 
-PassRefPtr<DelayNode> AudioContext::createDelay()
+PassRefPtr<DelayNode> AudioContext::createDelay(ExceptionCode& ec)
 {
     const double defaultMaxDelayTime = 1;
-    return createDelay(defaultMaxDelayTime);
+    return createDelay(defaultMaxDelayTime, ec);
 }
 
-PassRefPtr<DelayNode> AudioContext::createDelay(double maxDelayTime)
+PassRefPtr<DelayNode> AudioContext::createDelay(double maxDelayTime, ExceptionCode& ec)
 {
     ASSERT(isMainThread());
     lazyInitialize();
-    return DelayNode::create(this, m_destinationNode->sampleRate(), maxDelayTime);
+    RefPtr<DelayNode> node = DelayNode::create(this, m_destinationNode->sampleRate(), maxDelayTime, ec);
+    if (ec)
+        return 0;
+    return node;
 }
 
 PassRefPtr<ChannelSplitterNode> AudioContext::createChannelSplitter(ExceptionCode& ec)

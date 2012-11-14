@@ -1,3 +1,28 @@
+2012-11-14  Li Yin  <li.yin@intel.com>
+
+        createDelay should raise exception when the maxDelayTime parameter is incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=102173
+
+        Reviewed by Chris Rogers.
+
+        Spec: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+        The specified value must be greater than zero and less than three minutes or a
+        NOT_SUPPORTED_ERR exception will be thrown.
+
+        Tests: webaudio/delaynode-maxdelaylimit.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createDelay):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+        * Modules/webaudio/AudioContext.idl: Add raising exception for createDelay.
+        * Modules/webaudio/DelayNode.cpp:
+        (WebCore):
+        (WebCore::DelayNode::DelayNode):
+        * Modules/webaudio/DelayNode.h:
+        (WebCore::DelayNode::create):
+        (DelayNode):
+
 2012-11-14  Simon Fraser  <simon.fraser@apple.com>
 
         Don't pass a paintingRoot when painting from RenderLayerBacking
