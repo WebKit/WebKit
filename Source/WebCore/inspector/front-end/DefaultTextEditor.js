@@ -93,9 +93,21 @@ WebInspector.DefaultTextEditor = function(url, delegate)
     this._gutterPanel.element.addEventListener("mousewheel", forwardWheelEvent.bind(this), false);
 
     this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
+    this.element.addEventListener("textInput", this._handleTextInput.bind(this), false);
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
 
     this._registerShortcuts();
+}
+
+/**
+ * @constructor
+ * @param {WebInspector.TextRange} range
+ * @param {string} text
+ */
+WebInspector.DefaultTextEditor.EditInfo = function(range, text)
+{
+    this.range = range;
+    this.text = text;
 }
 
 WebInspector.DefaultTextEditor.prototype = {
@@ -397,13 +409,21 @@ WebInspector.DefaultTextEditor.prototype = {
         return true;
     },
 
+    _handleTextInput: function(e)
+    {
+        this._mainPanel._textInputData = e.data;
+    },
+
     _handleKeyDown: function(e)
     {
         var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(e);
 
         var handler = this._shortcuts[shortcutKey];
-        if (handler && handler())
+        if (handler && handler()) {
             e.consume(true);
+            return;
+        }
+        this._mainPanel._keyDownCode = e.keyCode;
     },
 
     _contextMenu: function(event)
@@ -437,17 +457,6 @@ WebInspector.DefaultTextEditor.prototype = {
         this._mainPanel.scrollToLine(lineNumber);
     },
 
-    _handleSelectionChange: function(event)
-    {
-        var textRange = this._mainPanel._getSelection();
-        if (textRange) {
-            // We do not restore selection after focus lost to avoid selection blinking. We restore only cursor position instead.
-            // FIXME: consider adding selection decoration to blurred editor.
-            this._lastSelection = WebInspector.TextRange.createFromLocation(textRange.endLine, textRange.endColumn);
-        }
-        this._delegate.selectionChanged(textRange);
-    },
-
     /**
      * @return {WebInspector.TextRange}
      */
@@ -461,7 +470,7 @@ WebInspector.DefaultTextEditor.prototype = {
      */
     lastSelection: function()
     {
-        return this._lastSelection;
+        return this._mainPanel._lastSelection;
     },
 
     /**
@@ -469,7 +478,7 @@ WebInspector.DefaultTextEditor.prototype = {
      */
     setSelection: function(textRange)
     {
-        this._lastSelection = textRange;
+        this._mainPanel._lastSelection = textRange;
         if (this.element.isAncestor(document.activeElement))
             this._mainPanel._restoreSelection(textRange);
     },
@@ -549,15 +558,15 @@ WebInspector.DefaultTextEditor.prototype = {
         if (!this.readOnly())
             WebInspector.markBeingEdited(this.element, true);
 
-        this._boundSelectionChangeListener = this._handleSelectionChange.bind(this);
+        this._boundSelectionChangeListener = this._mainPanel._handleSelectionChange.bind(this._mainPanel);
         document.addEventListener("selectionchange", this._boundSelectionChangeListener, false);
         this._mainPanel._attachMutationObserver();
     },
 
     _handleFocused: function()
     {
-        if (this._lastSelection)
-            this.setSelection(this._lastSelection);
+        if (this._mainPanel._lastSelection)
+            this.setSelection(this._mainPanel._lastSelection);
     },
 
     willHide: function()
@@ -1820,6 +1829,7 @@ WebInspector.TextEditorMainPanel.prototype = {
                 }
             }
         }
+        this._lastSelection = range;
     },
 
     /**
@@ -2103,7 +2113,84 @@ WebInspector.TextEditorMainPanel.prototype = {
             this._collectLinesFromDiv(lines, lineRow);
         }
 
-        // Try to decrease the range being replaced, if possible.
+        var editInfo = this._guessEditRangeBasedOnSelection(dirtyLines, startLine, endLine, lines);
+        if (!editInfo)
+            editInfo = this._guessEditRangeBasedOnDiff(dirtyLines, startLine, endLine, lines);
+
+        if (this._textModel.copyRange(editInfo.range) === editInfo.text)
+            return; // Noop
+
+        var selection = this._getSelection();
+
+        // Unindent after block
+        if (editInfo.text === "}" && editInfo.range.isEmpty() && selection.isEmpty() && !this._textModel.line(editInfo.range.endLine).trim()) {
+            var offset = this._closingBlockOffset(editInfo.range, selection);
+            if (offset >= 0) {
+                editInfo.range.startColumn = offset;
+                selection.startColumn = offset + 1;
+                selection.endColumn = offset + 1;
+            }
+        }
+
+        this._textModel.editRange(editInfo.range, editInfo.text);
+        this._paintScheduledLines(true);
+        this._restoreSelection(selection);
+    },
+
+    /**
+     * @param {Object} dirtyLines
+     * @param {number} startLine
+     * @param {number} endLine
+     * @param {Array.<string>} lines
+     * @return {?WebInspector.DefaultTextEditor.EditInfo}
+     */
+    _guessEditRangeBasedOnSelection: function(dirtyLines, startLine, endLine, lines)
+    {
+        // Check whether replacing last selection with textInput data results in present DOM.
+        // If that is so, we have precise input for the editRange call.
+        var textInputData = this._textInputData;
+        delete this._textInputData;
+        var isBackspace = this._keyDownCode === WebInspector.KeyboardShortcut.Keys.Backspace.code;
+        var isDelete = this._keyDownCode === WebInspector.KeyboardShortcut.Keys.Delete.code;
+        delete this._keyDownCode;
+
+        if (!textInputData && (isDelete || isBackspace))
+            textInputData = "";
+
+        if (typeof textInputData === "undefined" || !this._lastSelection)
+            return null;
+        if (dirtyLines.start > this._lastSelection.startLine || dirtyLines.end < this._lastSelection.endLine)
+            return null;
+
+        textInputData = textInputData || "";
+        var range = this._lastSelection.normalize();
+        if (isBackspace && range.isEmpty())
+            range = this._textModel.growRangeLeft(range);
+        else if (isDelete && range.isEmpty())
+            range = this._textModel.growRangeRight(range);
+
+        // We will clone text model and replace last selection with text input data there.
+        var domModel = this._textModel.slice(startLine, endLine);
+        domModel.editRange(range.shift(-startLine), textInputData);
+
+        // Then we'll test if this new model matches the DOM lines.
+        for (var i = 0;  i < domModel.linesCount; ++i) {
+            if (domModel.line(i) !== lines[i])
+                return null;
+        }
+        return new WebInspector.DefaultTextEditor.EditInfo(range, textInputData);
+    },
+
+    /**
+     * @param {Object} dirtyLines
+     * @param {number} startLine
+     * @param {number} endLine
+     * @param {Array.<string>} lines
+     * @return {WebInspector.DefaultTextEditor.EditInfo}
+     */
+    _guessEditRangeBasedOnDiff: function(dirtyLines, startLine, endLine, lines)
+    {
+        // Try to decrease the range being replaced by lines, if possible.
         var startOffset = 0;
         while (startLine < dirtyLines.start && startOffset < lines.length) {
             if (this._textModel.line(startLine) !== lines[startOffset])
@@ -2146,32 +2233,22 @@ WebInspector.TextEditorMainPanel.prototype = {
             }
         }
 
-        var selection = this._getSelection();
+        var range;
         if (lines.length === 0 && endLine < this._textModel.linesCount)
-            var oldRange = new WebInspector.TextRange(startLine, 0, endLine, 0);
+            range = new WebInspector.TextRange(startLine, 0, endLine, 0);
         else if (lines.length === 0 && startLine > 0)
-            var oldRange = new WebInspector.TextRange(startLine - 1, this._textModel.lineLength(startLine - 1), endLine - 1, this._textModel.lineLength(endLine - 1));
+            range = new WebInspector.TextRange(startLine - 1, this._textModel.lineLength(startLine - 1), endLine - 1, this._textModel.lineLength(endLine - 1));
         else
-            var oldRange = new WebInspector.TextRange(startLine, startColumn, endLine - 1, endColumn);
-
-        var newContent = lines.join("\n");
-        if (this._textModel.copyRange(oldRange) === newContent)
-            return; // Noop
-
-        if (lines.length === 1 && lines[0] === "}" && oldRange.isEmpty() && selection.isEmpty() && !this._textModel.line(oldRange.endLine).trim())
-            this._unindentAfterBlock(oldRange, selection);
-
-        this._textModel.editRange(oldRange, newContent);
-        this._paintScheduledLines(true);
-        this._restoreSelection(selection);
-
+            range = new WebInspector.TextRange(startLine, startColumn, endLine - 1, endColumn);
+        return new WebInspector.DefaultTextEditor.EditInfo(range, lines.join("\n"));
     },
 
     /**
      * @param {WebInspector.TextRange} oldRange
      * @param {WebInspector.TextRange} selection
+     * @return {number}
      */
-    _unindentAfterBlock: function(oldRange, selection)
+    _closingBlockOffset: function(oldRange, selection)
     {
         var nestingLevel = 1;
         for (var i = oldRange.endLine; i >= 0; --i) {
@@ -2184,19 +2261,14 @@ WebInspector.TextEditorMainPanel.prototype = {
                 if (attribute[column].tokenType === "block-start") {
                     if (!(--nestingLevel)) {
                         var lineContent = this._textModel.line(i);
-                        var blockOffset = lineContent.length - lineContent.trimLeft().length;
-                        if (blockOffset < oldRange.startColumn) {
-                            oldRange.startColumn = blockOffset;
-                            selection.startColumn = blockOffset + 1;
-                            selection.endColumn = blockOffset + 1;
-                        }
-                        return;
+                        return lineContent.length - lineContent.trimLeft().length;
                     }
                 }
                 if (attribute[column].tokenType === "block-end")
                     ++nestingLevel;
             }
         }
+        return -1;
     },
 
     /**
@@ -2377,6 +2449,14 @@ WebInspector.TextEditorMainPanel.prototype = {
         textContents = textContent.split("\n");
         for (var i = 0; i < textContents.length; ++i)
             lines.push(textContents[i]);
+    },
+
+    _handleSelectionChange: function(event)
+    {
+        var textRange = this._getSelection();
+        if (textRange)
+            this._lastSelection = textRange;
+        this._delegate.selectionChanged(textRange);
     },
 
     __proto__: WebInspector.TextEditorChunkedPanel.prototype

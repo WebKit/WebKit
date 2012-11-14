@@ -87,7 +87,7 @@ WebInspector.TextRange.prototype = {
         if (this.startLine > this.endLine || (this.startLine === this.endLine && this.startColumn > this.endColumn))
             return new WebInspector.TextRange(this.endLine, this.endColumn, this.startLine, this.startColumn);
         else
-            return this;
+            return this.clone();
     },
 
     /**
@@ -126,6 +126,15 @@ WebInspector.TextRange.prototype = {
         if (this.startColumn < other.startColumn)
             return -1;
         return 0;
+    },
+
+    /**
+     * @param {number} lineOffset
+     * @return {WebInspector.TextRange}
+     */
+    shift: function(lineOffset)
+    {
+        return new WebInspector.TextRange(this.startLine + lineOffset, this.startColumn, this.endLine + lineOffset, this.endColumn);
     }
 }
 
@@ -594,6 +603,49 @@ WebInspector.TextEditorModel.prototype = {
         }
 
         return newRange;
+    },
+
+    /**
+     * @param {number=} from
+     * @param {number=} to
+     * @return {WebInspector.TextEditorModel}
+     */
+    slice: function(from, to)
+    {
+        var textModel = new WebInspector.TextEditorModel();
+        textModel._lines = this._lines.slice(from, to);
+        textModel._lineBreak = this._lineBreak;
+        return textModel;
+    },
+
+    /**
+     * @param {WebInspector.TextRange} range
+     * @return {WebInspector.TextRange}
+     */
+    growRangeLeft: function(range)
+    {
+        var result = range.clone();
+        if (result.startColumn)
+            --result.startColumn;
+        else if (result.startLine)
+            result.startColumn = this.lineLength(--result.startLine);
+        return result;
+    },
+
+    /**
+     * @param {WebInspector.TextRange} range
+     * @return {WebInspector.TextRange}
+     */
+    growRangeRight: function(range)
+    {
+        var result = range.clone();
+        if (result.endColumn < this.lineLength(result.endLine))
+            ++result.endColumn;
+        else if (result.endLine < this.linesCount) {
+            result.endColumn = 0;
+            ++result.endLine;
+        }
+        return result;
     },
 
     __proto__: WebInspector.Object.prototype

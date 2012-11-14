@@ -1,3 +1,31 @@
+2012-11-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: use last selection as complementary signal when applying DOM changes to the text model.
+        https://bugs.webkit.org/show_bug.cgi?id=101905
+
+        Reviewed by Vsevolod Vlasov.
+
+        Currently we use heuristics for detecting damaged model range upon DOM mutation.
+        This change adds signals from the last selection and keyboard events in order to
+        further improve the heuristics quality.
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor):
+        (WebInspector.DefaultTextEditor.EditInfo):
+        (WebInspector.DefaultTextEditor.prototype._handleTextInput):
+        (WebInspector.DefaultTextEditor.prototype._handleKeyDown):
+        (WebInspector.DefaultTextEditor.prototype.lastSelection):
+        (WebInspector.DefaultTextEditor.prototype.wasShown):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._guessEditRangeBasedOnSelection):
+        (WebInspector.TextEditorMainPanel.prototype._guessEditRangeBasedOnDiff):
+        (WebInspector.TextEditorMainPanel.prototype._closingBlockOffset):
+        (WebInspector.TextEditorMainPanel.prototype._handleSelectionChange):
+        * inspector/front-end/TextEditorModel.js:
+        (WebInspector.TextRange.prototype.compareTo):
+        (WebInspector.TextRange.prototype.shift):
+        (WebInspector.TextEditorModel.endsWithBracketRegex.):
+
 2012-11-14  Dan Carney  <dcarney@google.com>
 
         [V8] use toV8Fast in all relevant Node getters
