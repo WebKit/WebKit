@@ -5,31 +5,10 @@ if (this.importScripts) {
 
 description("Test features of IndexedDB's multiEntry indices.");
 
-function test()
-{
-    removeVendorPrefixes();
-
-    request = evalAndLog("indexedDB.open('index-multiEntry')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-        db = evalAndLog("db = event.target.result");
-
-        request = evalAndLog("db.setVersion('1')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = prepareDatabase;
-    };
-}
-
+indexedDBTest(prepareDatabase, addData);
 function prepareDatabase()
 {
-    debug("");
-    debug("Creating empty stores and indexes");
-    var trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-    trans.oncomplete = addData;
-
-    deleteAllObjectStores(db);
+    db = event.target.result;
 
     store = evalAndLog("store = db.createObjectStore('store')");
     evalAndLog("store.createIndex('index', 'x', {multiEntry: true})");
@@ -129,13 +108,13 @@ function createIndexOnStoreWithData()
 {
     debug("");
     debug("Create an index on a populated store");
+    evalAndLog("db.close()");
 
-    request = evalAndLog("db.setVersion('2')");
+    request = evalAndLog("indexedDB.open(dbname, 2)");
     request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-
-        var trans = evalAndLog("trans = event.target.result");
-        shouldBeNonNull("trans");
+    request.onupgradeneeded = function() {
+        evalAndLog("db = event.target.result");
+        evalAndLog("trans = event.target.transaction");
         trans.onabort = unexpectedAbortCallback;
         trans.oncomplete = function() { verifyIndexes('index-new', finishJSTest); };
 
@@ -143,5 +122,3 @@ function createIndexOnStoreWithData()
         evalAndLog("store.createIndex('index-new', 'x', {multiEntry: true})");
     };
 }
-
-test();

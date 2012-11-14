@@ -37,16 +37,18 @@ function storeCollidedStoreIndexData() {
 
 function testCollideAutoIncrementSetup()
 {
-    request = evalAndLog("db.setVersion('2')");
-    request.onsuccess = testCollideAutoIncrement;
+    evalAndLog("db.close()");
+    evalAndLog("request = indexedDB.open(dbname, 2)");
+    request.onupgradeneeded = testCollideAutoIncrement;
     request.onerror = unexpectedErrorCallback;
     request.onblocked = unexpectedBlockedCallback;
 }
 
 function testCollideAutoIncrement()
 {
+    db = event.target.result;
+    var trans = request.transaction;
     deleteAllObjectStores(db);
-    var trans = request.result;
     evalAndLog("store = db.createObjectStore('collideWithAutoIncrement', {keyPath: 'foo', autoIncrement: true})");
     evalAndLog("index = store.createIndex('foo', 'foo')");
 

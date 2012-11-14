@@ -2,83 +2,68 @@ if (this.importScripts) {
     importScripts('../../../fast/js/resources/js-test-pre.js');
     importScripts('shared.js');
 }
+
 description("Test that expected exceptions are thrown per IndexedDB spec.");
 
-function test()
+indexedDBTest(prepareDatabase, testDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.deleteDatabase('exceptions')");
-    request.onerror = unexpectedErrorCallback;
-    request.onblocked = unexpectedBlockedCallback;
-    request.onsuccess = function() {
-        evalAndLog("request = indexedDB.open('exceptions')");
-        shouldBeEqualToString("request.readyState", "pending");
+    db = event.target.result;
 
-        debug("");
-        debug("3.2.1 The IDBRequest Interface");
+    evalAndLog("store = db.createObjectStore('store')");
+    evalAndLog("index = store.createIndex('index', 'id')");
+    evalAndLog("store.put({id: 'a'}, 1)");
+    evalAndLog("store.put({id: 'b'}, 2)");
+    evalAndLog("store.put({id: 'c'}, 3)");
+    evalAndLog("store.put({id: 'd'}, 4)");
+    evalAndLog("store.put({id: 'e'}, 5)");
+    evalAndLog("store.put({id: 'f'}, 6)");
+    evalAndLog("store.put({id: 'g'}, 7)");
+    evalAndLog("store.put({id: 'h'}, 8)");
+    evalAndLog("store.put({id: 'i'}, 9)");
+    evalAndLog("store.put({id: 'j'}, 10)");
+    evalAndLog("otherStore = db.createObjectStore('otherStore')");
+    evalAndLog("inlineKeyStore = db.createObjectStore('inlineKeyStore', {keyPath: 'id'})");
 
-        debug("");
-        debug("IDBRequest.error");
-        debug("When the done flag is false, getting this property must throw a DOMException of type InvalidStateError.");
-        evalAndExpectException("request.error", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+    evalAndLog("request = inlineKeyStore.put({id: 0})");
+    shouldBeEqualToString("request.readyState", "pending");
 
-        debug("");
-        debug("IDBRequest.result");
-        debug("When the done flag is false, getting this property must throw a DOMException of type InvalidStateError.");
-        evalAndExpectException("request.result", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+    debug("");
+    debug("3.2.1 The IDBRequest Interface");
 
-        debug("");
-        debug("3.2.3 Opening a database");
+    debug("");
+    debug("IDBRequest.error");
+    debug("When the done flag is false, getting this property must throw a DOMException of type InvalidStateError.");
+    evalAndExpectException("request.error", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
 
-        debug("");
-        debug("IDBFactory.cmp()");
-        debug("One of the supplied keys was not a valid key.");
-        evalAndExpectException("indexedDB.cmp(null, 0)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    debug("");
+    debug("IDBRequest.result");
+    debug("When the done flag is false, getting this property must throw a DOMException of type InvalidStateError.");
+    evalAndExpectException("request.result", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
 
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function() {
-            debug("");
-            evalAndLog("db = request.result");
+    debug("");
+    debug("3.2.3 Opening a database");
 
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onblocked = unexpectedBlockedCallback;
-            request.onsuccess = function() {
-                var trans = request.result;
-                trans.onabort = unexpectedAbortCallback;
-
-                evalAndLog("store = db.createObjectStore('store')");
-                evalAndLog("index = store.createIndex('index', 'id')");
-                evalAndLog("store.put({id: 'a'}, 1)");
-                evalAndLog("store.put({id: 'b'}, 2)");
-                evalAndLog("store.put({id: 'c'}, 3)");
-                evalAndLog("store.put({id: 'd'}, 4)");
-                evalAndLog("store.put({id: 'e'}, 5)");
-                evalAndLog("store.put({id: 'f'}, 6)");
-                evalAndLog("store.put({id: 'g'}, 7)");
-                evalAndLog("store.put({id: 'h'}, 8)");
-                evalAndLog("store.put({id: 'i'}, 9)");
-                evalAndLog("store.put({id: 'j'}, 10)");
-                evalAndLog("otherStore = db.createObjectStore('otherStore')");
-                evalAndLog("inlineKeyStore = db.createObjectStore('inlineKeyStore', {keyPath: 'id'})");
-                evalAndLog("inlineKeyStore.put({id: 0})");
-
-                trans.oncomplete = testDatabase;
-            };
-        };
-    };
+    debug("");
+    debug("IDBFactory.cmp()");
+    debug("One of the supplied keys was not a valid key.");
+    evalAndExpectException("indexedDB.cmp(null, 0)", "IDBDatabaseException.DATA_ERR", "'DataError'");
 }
 
 function testDatabase()
 {
+    evalAndLog("db.close()");
+
     debug("");
     debug("3.2.4 Database");
 
-    request = evalAndLog("db.setVersion('2')");
+    request = evalAndLog("indexedDB.open(dbname, 2)");
     request.onerror = unexpectedErrorCallback;
     request.onblocked = unexpectedBlockedCallback;
-    request.onsuccess = function() {
-        var trans = request.result;
+    request.onsuccess = checkTransactionAndObjectStoreExceptions;
+    request.onupgradeneeded = function() {
+        db = request.result;
+        var trans = request.transaction;
         trans.onabort = unexpectedAbortCallback;
 
         debug("");
@@ -100,28 +85,29 @@ function testDatabase()
         debug("IDBDatabase.transaction()");
         debug('If this method is called on IDBDatabase object for which a "versionchange" transaction is still running, a InvalidStateError exception must be thrown.');
         evalAndExpectException("db.transaction('store')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-
-        trans.oncomplete = function() {
-            debug("One of the names provided in the storeNames argument doesn't exist in this database.");
-            evalAndExpectException("db.transaction('no-such-store')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
-            debug("The value for the mode parameter is invalid.");
-            evalAndExpectExceptionClass("db.transaction('store', 'invalid-mode')", "TypeError");
-            debug("The function was called with an empty list of store names");
-            evalAndExpectException("db.transaction([])", "DOMException.INVALID_ACCESS_ERR", "'InvalidAccessError'");
-
-            debug("");
-            debug("One more IDBDatabase.createObjectStore() test:");
-            debug('If this function is called from outside a "versionchange" transaction callback ... the implementation must throw a DOMException of type InvalidStateError.');
-            evalAndExpectException("db.createObjectStore('fail')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-
-            debug("");
-            debug("One more IDBDatabase.deleteObjectStore() test:");
-            debug('If this function is called from outside a "versionchange" transaction callback ... the implementation must throw a DOMException of type InvalidStateError.');
-            evalAndExpectException("db.deleteObjectStore('fail')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-
-            prepareStoreAndIndex();
-        };
     };
+}
+
+function checkTransactionAndObjectStoreExceptions()
+{
+    debug("One of the names provided in the storeNames argument doesn't exist in this database.");
+    evalAndExpectException("db.transaction('no-such-store')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
+    debug("The value for the mode parameter is invalid.");
+    evalAndExpectExceptionClass("db.transaction('store', 'invalid-mode')", "TypeError");
+    debug("The function was called with an empty list of store names");
+    evalAndExpectException("db.transaction([])", "DOMException.INVALID_ACCESS_ERR", "'InvalidAccessError'");
+
+    debug("");
+    debug("One more IDBDatabase.createObjectStore() test:");
+    debug('If this function is called from outside a "versionchange" transaction callback ... the implementation must throw a DOMException of type InvalidStateError.');
+    evalAndExpectException("db.createObjectStore('fail')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+
+    debug("");
+    debug("One more IDBDatabase.deleteObjectStore() test:");
+    debug('If this function is called from outside a "versionchange" transaction callback ... the implementation must throw a DOMException of type InvalidStateError.');
+    evalAndExpectException("db.deleteObjectStore('fail')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+
+    prepareStoreAndIndex();
 }
 
 function prepareStoreAndIndex()
@@ -144,13 +130,13 @@ function testObjectStore()
 {
     debug("");
     debug("3.2.5 Object Store");
-    evalAndLog("storeFromReadOnlyTransaction = db.transaction('store', 'readonly').objectStore('store')");
-    evalAndLog("store = db.transaction('store', 'readwrite').objectStore('store')");
+    evalAndLog("ro_transaction = db.transaction('store', 'readonly')");
+    evalAndLog("storeFromReadOnlyTransaction = ro_transaction.objectStore('store')");
+    evalAndLog("rw_transaction = db.transaction('store', 'readwrite')");
+    evalAndLog("store = rw_transaction.objectStore('store')");
 
     debug("");
     debug("IDBObjectStore.add()");
-    debug("storeFromReadOnlyTransaction = db.transaction('store', 'readonly').objectStore('store')");
-    debug("store = db.transaction('store', 'readwrite').objectStore('store')");
     debug('This method throws a DOMException of type ReadOnlyError if the transaction which this IDBObjectStore belongs to is has its mode set to "readonly".');
     evalAndExpectException("storeFromReadOnlyTransaction.add(0, 0)", "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
     // "If any of the following conditions are true, this method throws a DOMException of type DataError:" - covered in objectstore-basics.html
@@ -223,43 +209,61 @@ function testObjectStore()
     debug("The data being stored could not be cloned by the internal structured cloning algorithm.");
     evalAndExpectException("store.put(self, 0)", "DOMException.DATA_CLONE_ERR"); // FIXME: Test 'DataCloneError' name when DOM4 exceptions are used in binding.
 
-    request = evalAndLog("db.setVersion('3')");
+    evalAndLog("db.close()");
+    evalAndLog("ro_transaction.oncomplete = transactionComplete");
+    evalAndLog("rw_transaction.oncomplete = transactionComplete");
+}
+
+var numCompleted = 0;
+function transactionComplete(evt)
+{
+    preamble(evt);
+    numCompleted++;
+    if (numCompleted == 1) {
+        debug("First transaction completed");
+        return;
+    }
+    evalAndLog("request = indexedDB.open(dbname, 3)");
     request.onerror = unexpectedErrorCallback;
     request.onblocked = unexpectedBlockedCallback;
-    request.onsuccess = function() {
-        var trans = request.result;
-        trans.onabort = unexpectedAbortCallback;
-        store = trans.objectStore('store');
+    evalAndLog("request.onupgradeneeded = onUpgradeNeeded3");
+}
 
-        debug("");
-        debug("IDBObjectStore.createIndex()");
-        debug("If an index with the same name already exists, the implementation must throw a DOMException of type ConstraintError. ");
-        evalAndExpectException("store.createIndex('index', 'keyPath')", "IDBDatabaseException.CONSTRAINT_ERR", "'ConstraintError'");
-        debug("If keyPath is not a valid key path then a DOMException of type SyntaxError must be thrown.");
-        evalAndExpectException("store.createIndex('fail', '-invalid-')", "DOMException.SYNTAX_ERR", "'SyntaxError'");
-        debug("If keyPath is an Array and the multiEntry property in the optionalParameters is true, then a DOMException of type InvalidAccessError must be thrown.");
-        evalAndExpectException("store.createIndex('fail', ['a'], {multiEntry: true})", "DOMException.INVALID_ACCESS_ERR", "'InvalidAccessError'");
-        // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
+function onUpgradeNeeded3()
+{
+    db = request.result;
+    var trans = request.transaction;
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = testOutsideVersionChangeTransaction;
+    store = trans.objectStore('store');
 
-        debug("");
-        debug("IDBObjectStore.deleteIndex()");
-        debug("There is no index with the given name, compared in a case-sensitive manner, in the connected database.");
-        evalAndExpectException("store.deleteIndex('no-such-index')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
-        // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
+    debug("");
+    debug("IDBObjectStore.createIndex()");
+    debug("If an index with the same name already exists, the implementation must throw a DOMException of type ConstraintError. ");
+    evalAndExpectException("store.createIndex('index', 'keyPath')", "IDBDatabaseException.CONSTRAINT_ERR", "'ConstraintError'");
+    debug("If keyPath is not a valid key path then a DOMException of type SyntaxError must be thrown.");
+    evalAndExpectException("store.createIndex('fail', '-invalid-')", "DOMException.SYNTAX_ERR", "'SyntaxError'");
+    debug("If keyPath is an Array and the multiEntry property in the optionalParameters is true, then a DOMException of type InvalidAccessError must be thrown.");
+    evalAndExpectException("store.createIndex('fail', ['a'], {multiEntry: true})", "DOMException.INVALID_ACCESS_ERR", "'InvalidAccessError'");
+    // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
 
-        trans.oncomplete = function() {
-            debug("");
-            debug("One more IDBObjectStore.createIndex() test:");
-            debug('If this function is called from outside a "versionchange" transaction callback ... the implementation must throw a DOMException of type InvalidStateError.');
-            evalAndExpectException("db.transaction('store').objectStore('store').createIndex('fail', 'keyPath')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+    debug("");
+    debug("IDBObjectStore.deleteIndex()");
+    debug("There is no index with the given name, compared in a case-sensitive manner, in the connected database.");
+    evalAndExpectException("store.deleteIndex('no-such-index')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
+}
 
-            debug("");
-            debug("One more IDBObjectStore.deleteIndex() test:");
-            debug('If this function is called from outside a "versionchange" transaction callback ... the implementation must throw a DOMException of type InvalidStateError.');
-            evalAndExpectException("db.transaction('store').objectStore('store').deleteIndex('fail', 'keyPath')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-            testIndex();
-        };
-    };
+function testOutsideVersionChangeTransaction() {
+    debug("");
+    debug("One more IDBObjectStore.createIndex() test:");
+    debug('If this function is called from outside a "versionchange" transaction callback ... the implementation must throw a DOMException of type InvalidStateError.');
+    evalAndExpectException("db.transaction('store').objectStore('store').createIndex('fail', 'keyPath')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+
+    debug("");
+    debug("One more IDBObjectStore.deleteIndex() test:");
+    debug('If this function is called from outside a "versionchange" transaction callback ... the implementation must throw a DOMException of type InvalidStateError.');
+    evalAndExpectException("db.transaction('store').objectStore('store').deleteIndex('fail', 'keyPath')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
+    testIndex();
 }
 
 function testIndex()
@@ -461,5 +465,3 @@ function testTransaction()
 
     finishJSTest();
 }
-
-test();

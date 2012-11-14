@@ -41,7 +41,7 @@ function testSetVersionAbort()
     evalAndLog("request = indexedDB.open(dbname, 2)");
     request.onupgradeneeded = createAnotherObjectStore;
     request.onblocked = unexpectedBlockedCallback;
-    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = unexpectedSuccessCallback;
 }
 
 function createAnotherObjectStore()

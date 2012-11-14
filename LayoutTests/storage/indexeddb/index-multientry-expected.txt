@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test features of IndexedDB's multiEntry indices.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,14 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('index-multiEntry')
-db = event.target.result
-db.setVersion('1')
-
-Creating empty stores and indexes
-trans = event.target.result
-PASS trans is non-null.
-Deleted all object stores.
+dbname = "index-multientry.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 store = db.createObjectStore('store')
 store.createIndex('index', 'x', {multiEntry: true})
 store2 = db.createObjectStore('store-unique')
@@ -102,9 +96,10 @@ Request failed, as expected (ConstraintError)
 Transaction aborted as expected
 
 Create an index on a populated store
-db.setVersion('2')
-trans = event.target.result
-PASS trans is non-null.
+db.close()
+indexedDB.open(dbname, 2)
+db = event.target.result
+trans = event.target.transaction
 store = trans.objectStore('store')
 store.createIndex('index-new', 'x', {multiEntry: true})
 

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test that expected exceptions are thrown per IndexedDB spec.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,8 +5,24 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.deleteDatabase('exceptions')
-request = indexedDB.open('exceptions')
+dbname = "exceptions.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+store = db.createObjectStore('store')
+index = store.createIndex('index', 'id')
+store.put({id: 'a'}, 1)
+store.put({id: 'b'}, 2)
+store.put({id: 'c'}, 3)
+store.put({id: 'd'}, 4)
+store.put({id: 'e'}, 5)
+store.put({id: 'f'}, 6)
+store.put({id: 'g'}, 7)
+store.put({id: 'h'}, 8)
+store.put({id: 'i'}, 9)
+store.put({id: 'j'}, 10)
+otherStore = db.createObjectStore('otherStore')
+inlineKeyStore = db.createObjectStore('inlineKeyStore', {keyPath: 'id'})
+request = inlineKeyStore.put({id: 0})
 PASS request.readyState is "pending"
 
 3.2.1 The IDBRequest Interface
@@ -34,27 +49,10 @@ Expecting exception from indexedDB.cmp(null, 0)
 PASS Exception was thrown.
 PASS code is IDBDatabaseException.DATA_ERR
 PASS ename is 'DataError'
-
-db = request.result
-db.setVersion('1')
-store = db.createObjectStore('store')
-index = store.createIndex('index', 'id')
-store.put({id: 'a'}, 1)
-store.put({id: 'b'}, 2)
-store.put({id: 'c'}, 3)
-store.put({id: 'd'}, 4)
-store.put({id: 'e'}, 5)
-store.put({id: 'f'}, 6)
-store.put({id: 'g'}, 7)
-store.put({id: 'h'}, 8)
-store.put({id: 'i'}, 9)
-store.put({id: 'j'}, 10)
-otherStore = db.createObjectStore('otherStore')
-inlineKeyStore = db.createObjectStore('inlineKeyStore', {keyPath: 'id'})
-inlineKeyStore.put({id: 0})
+db.close()
 
 3.2.4 Database
-db.setVersion('2')
+indexedDB.open(dbname, 2)
 
 IDBDatabase.createObjectStore()
 If an objectStore with the same name already exists, the implementation must throw a DOMException of type ConstraintError.
@@ -127,12 +125,12 @@ request = storeFromInactiveTransaction.openCursor()
 cursorFromInactiveTransaction = request.result
 
 3.2.5 Object Store
-storeFromReadOnlyTransaction = db.transaction('store', 'readonly').objectStore('store')
-store = db.transaction('store', 'readwrite').objectStore('store')
+ro_transaction = db.transaction('store', 'readonly')
+storeFromReadOnlyTransaction = ro_transaction.objectStore('store')
+rw_transaction = db.transaction('store', 'readwrite')
+store = rw_transaction.objectStore('store')
 
 IDBObjectStore.add()
-storeFromReadOnlyTransaction = db.transaction('store', 'readonly').objectStore('store')
-store = db.transaction('store', 'readwrite').objectStore('store')
 This method throws a DOMException of type ReadOnlyError if the transaction which this IDBObjectStore belongs to is has its mode set to "readonly".
 Expecting exception from storeFromReadOnlyTransaction.add(0, 0)
 PASS Exception was thrown.
@@ -244,7 +242,16 @@ The data being stored could not be cloned by the internal structured cloning alg
 Expecting exception from store.put(self, 0)
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
-db.setVersion('3')
+db.close()
+ro_transaction.oncomplete = transactionComplete
+rw_transaction.oncomplete = transactionComplete
+
+transactionComplete():
+First transaction completed
+
+transactionComplete():
+request = indexedDB.open(dbname, 3)
+request.onupgradeneeded = onUpgradeNeeded3
 
 IDBObjectStore.createIndex()
 If an index with the same name already exists, the implementation must throw a DOMException of type ConstraintError. 

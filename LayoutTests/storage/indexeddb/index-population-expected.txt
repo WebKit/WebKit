@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB index population.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,15 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.deleteDatabase('index-population')
-indexedDB.open('index-population')
-
-doSetVersion1():
-db = event.target.result
-request = db.setVersion('version 1')
-
-setVersion1():
-transaction = request.result
+dbname = "index-population.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+transaction = event.target.transaction
 store = db.createObjectStore('store1')
 store.put({data: 'a', indexKey: 10}, 1)
 store.put({data: 'b', indexKey: 20}, 2)
@@ -27,10 +21,11 @@ request = index.count(IDBKeyRange.bound(-Infinity, Infinity))
 PASS request.result is 4
 
 doSetVersion2():
-request = db.setVersion('version 2')
+db.close()
+request = indexedDB.open(dbname, 2)
 
 setVersion2():
-transaction = request.result
+transaction = request.transaction
 store = db.createObjectStore('store2')
 store.put({data: 'a', indexKey: 10}, 1)
 store.put({data: 'b', indexKey: 20}, 2)

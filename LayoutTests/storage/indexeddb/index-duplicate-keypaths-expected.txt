@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test the use of identical keypaths between objectstores and indexes
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -16,7 +15,8 @@ objectStore.get(10)
 index.get(10)
 PASS JSON.stringify(result) is "{\"foo\":10}"
 PASS JSON.stringify(result) is "{\"foo\":10}"
-db.setVersion('2')
+db.close()
+request = indexedDB.open(dbname, 2)
 Deleted all object stores.
 store = db.createObjectStore('collideWithAutoIncrement', {keyPath: 'foo', autoIncrement: true})
 index = store.createIndex('foo', 'foo')

@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB's webkitIndexedDB.deleteDatabase().
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -7,11 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('database-to-delete')
-db = event.target.result
-db.setVersion('new version')
-trans = event.target.result
-PASS trans is non-null.
+dbname = "factory-deletedatabase.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 store = db.createObjectStore('storeName', null)
 store.createIndex('indexName', '')
 PASS store.indexNames.contains('indexName') is true
@@ -20,12 +16,14 @@ db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.get('key')
 PASS event.target.result is "value"
-db.setVersion('new version')
-request = indexedDB.deleteDatabase('database-to-delete')
-PASS request.result is undefined.
-indexedDB.open('database-to-delete')
+db.close()
+indexedDB.open(dbname, 2)
 db = event.target.result
-db.setVersion('new version')
+request = indexedDB.deleteDatabase(dbname)
+db.close()
+PASS request.result is undefined.
+indexedDB.open(dbname, 3)
+db = event.target.result
 PASS db.objectStoreNames.length is 0
 PASS successfullyParsed is true
 

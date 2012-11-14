@@ -1,3 +1,66 @@
+2012-11-14  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: test conversion batch 3
+        https://bugs.webkit.org/show_bug.cgi?id=102168
+
+        Reviewed by Tony Chang.
+
+        These were all pretty straightforward. metadata.html could include
+        some additional tests that check the metadata after a versionchange
+        transaction aborts, but I think that's tested in one of the intversion
+        tests.
+
+        * storage/indexeddb/exceptions-expected.txt:
+        * storage/indexeddb/factory-deletedatabase-expected.txt:
+        * storage/indexeddb/index-duplicate-keypaths-expected.txt:
+        * storage/indexeddb/index-multientry-expected.txt:
+        * storage/indexeddb/index-population-expected.txt:
+        * storage/indexeddb/metadata-expected.txt:
+        * storage/indexeddb/resources/database-basics.js:
+          Fix failure when run as a chromium browser test.
+
+        * storage/indexeddb/resources/exceptions.js:
+          Moved some asserts from running before the database is opened to
+          afterward but they appear to be testing the same thing.
+        (transactionComplete):
+          close can't proceed until the transactions are complete, something
+          setVersion didn't have to deal with.
+
+        * storage/indexeddb/resources/factory-deletedatabase.js:
+          The conditions under which deleteDatabase is called in this test is
+          _slightly_ different. Previously, deleteDatabase was called from
+          inside a versionchange transaction, causing the original connection
+          to receive a versionchange event. With upgradeneeded we have to close
+          the original connection before entering a versionchange transaction,
+          so the second connection is now what closes in response to the
+          deleteDatabase's versionchange event.
+
+        * storage/indexeddb/resources/index-duplicate-keypaths.js:
+        (testCollideAutoIncrementSetup):
+        (testCollideAutoIncrement):
+        * storage/indexeddb/resources/index-multientry.js:
+        (prepareDatabase):
+        (createIndexOnStoreWithData):
+        * storage/indexeddb/resources/index-population.js:
+        (prepareDatabase.request.onsuccess):
+        (prepareDatabase):
+        (doSetVersion2):
+        (setVersion2):
+        (setVersion2Abort):
+        * storage/indexeddb/resources/metadata.js:
+        (prepareDatabase):
+        (snapshotConnection1):
+        (secondOpen.request.onupgradeneeded):
+        (secondOpen.request.onsuccess):
+        (secondOpen):
+        (thirdOpen.request.onupgradeneeded):
+        (thirdOpen.request.onerror):
+        (thirdOpen):
+        (fourthOpen.request.onupgradeneeded):
+        (fourthOpen.request.onsuccess):
+        (fourthOpen):
+        (checkState):
+
 2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Updating baselines after r134631.
