@@ -1,5 +1,20 @@
 2012-11-14  Peter Gal  <galpeter@inf.u-szeged.hu>
 
+        Fix the MIPS build after r134332
+        https://bugs.webkit.org/show_bug.cgi?id=102227
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added missing methods for the MacroAssemblerMIPS, based on the MacroAssemblerARMv7.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::canJumpReplacePatchableBranchPtrWithPatch):
+        (MacroAssemblerMIPS):
+        (JSC::MacroAssemblerMIPS::startOfPatchableBranchPtrWithPatch):
+        (JSC::MacroAssemblerMIPS::revertJumpReplacementToPatchableBranchPtrWithPatch):
+
+2012-11-14  Peter Gal  <galpeter@inf.u-szeged.hu>
+
         Fix the [-Wreturn-type] warning in JavaScriptCore/assembler/MacroAssemblerARM.h
         https://bugs.webkit.org/show_bug.cgi?id=102206
 

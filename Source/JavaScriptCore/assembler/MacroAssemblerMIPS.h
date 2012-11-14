@@ -2242,6 +2242,20 @@ public:
         return 0;
     }
 
+    static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
+
+    static CodeLocationLabel startOfPatchableBranchPtrWithPatch(CodeLocationDataLabelPtr label)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+        return CodeLocationLabel();
+    }
+
+    static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel instructionStart, Address, void* initialValue)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+
 private:
     // If m_fixedWidth is true, we will generate a fixed number of instructions.
     // Otherwise, we can emit any number of instructions.
