@@ -1,3 +1,72 @@
+2012-11-13  Dirk Pranke  <dpranke@chromium.org>
+
+        More chromium-mac-mountainlion rebaselining and bug triaging.
+        https://bugs.webkit.org/show_bug.cgi?id=99749
+
+        Unreviewed.
+
+        * platform/chromium-mac-lion/compositing/color-matching/image-color-matching-expected.png: Added.
+        * platform/chromium-mac-lion/compositing/direct-image-compositing-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/direct-image-compositing-expected.png.
+        * platform/chromium-mac-lion/compositing/geometry/clipping-foreground-expected.png: Copied from LayoutTests/platform/chromium-mac/compositing/geometry/clipping-foreground-expected.png.
+        * platform/chromium-mac-lion/fast/dynamic/text-combine-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/dynamic/text-combine-expected.png.
+        * platform/chromium-mac-lion/fast/dynamic/text-combine-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/ruby/base-shorter-than-text-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.png.
+        * platform/chromium-mac-lion/fast/ruby/base-shorter-than-text-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.txt.
+        * platform/chromium-mac-lion/fast/text/emphasis-combined-text-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/text/emphasis-combined-text-expected.png.
+        * platform/chromium-mac-lion/fast/text/emphasis-combined-text-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/text/emphasis-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/text/emphasis-expected.png.
+        * platform/chromium-mac-lion/fast/text/international/text-combine-image-test-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/text/international/text-combine-image-test-expected.png.
+        * platform/chromium-mac-lion/fast/text/international/text-combine-image-test-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/text/international/text-combine-image-test-expected.txt.
+        * platform/chromium-mac-lion/fast/writing-mode/border-radius-clipping-vertical-lr-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/writing-mode/border-radius-clipping-vertical-lr-expected.png.
+        * platform/chromium-mac-lion/fast/writing-mode/border-vertical-lr-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/writing-mode/border-vertical-lr-expected.png.
+        * platform/chromium-mac-lion/fast/writing-mode/border-vertical-lr-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/writing-mode/box-shadow-horizontal-bt-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/writing-mode/box-shadow-horizontal-bt-expected.png.
+        * platform/chromium-mac-lion/fast/writing-mode/box-shadow-vertical-lr-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/writing-mode/box-shadow-vertical-lr-expected.png.
+        * platform/chromium-mac-lion/fast/writing-mode/box-shadow-vertical-rl-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/writing-mode/box-shadow-vertical-rl-expected.png.
+        * platform/chromium-mac-lion/fast/writing-mode/broken-ideographic-font-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/writing-mode/broken-ideographic-font-expected.png.
+        * platform/chromium-mac-lion/fast/writing-mode/broken-ideographic-font-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/writing-mode/broken-ideographic-font-expected.txt.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png.
+        * platform/chromium-mac-lion/platform/chromium/fast/text/text-stroke-with-border-expected.png: Copied from LayoutTests/platform/chromium-mac/platform/chromium/fast/text/text-stroke-with-border-expected.png.
+        * platform/chromium-mac-lion/svg/custom/foreign-object-skew-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/custom/foreign-object-skew-expected.png.
+        * platform/chromium-mac-lion/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png.
+        * platform/chromium-mac-lion/svg/hixie/perf/007-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/hixie/perf/007-expected.png.
+        * platform/chromium-mac-lion/tables/mozilla/bugs/bug11026-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug11026-expected.png.
+        * platform/chromium-mac/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-mac/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-mac/compositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-mac/fast/dynamic/text-combine-expected.png:
+        * platform/chromium-mac/fast/dynamic/text-combine-expected.txt: Added.
+        * platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.png:
+        * platform/chromium-mac/fast/ruby/base-shorter-than-text-expected.txt:
+        * platform/chromium-mac/fast/text/emphasis-combined-text-expected.png:
+        * platform/chromium-mac/fast/text/emphasis-combined-text-expected.txt: Added.
+        * platform/chromium-mac/fast/text/emphasis-expected.png:
+        * platform/chromium-mac/fast/text/international/text-combine-image-test-expected.png:
+        * platform/chromium-mac/fast/text/international/text-combine-image-test-expected.txt:
+        * platform/chromium-mac/fast/writing-mode/border-radius-clipping-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/writing-mode/border-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/writing-mode/border-vertical-lr-expected.txt: Added.
+        * platform/chromium-mac/fast/writing-mode/box-shadow-horizontal-bt-expected.png:
+        * platform/chromium-mac/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/writing-mode/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-mac/fast/writing-mode/broken-ideographic-font-expected.png:
+        * platform/chromium-mac/fast/writing-mode/broken-ideographic-font-expected.txt:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/text/text-stroke-with-border-expected.png:
+        * platform/chromium-mac/svg/custom/foreign-object-skew-expected.png:
+        * platform/chromium-mac/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png:
+        * platform/chromium-mac/svg/hixie/perf/007-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug11026-expected.png:
+        * platform/chromium-mac/tables/mozilla/collapsing_borders/bug41262-3-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/bloomberg-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-11-13  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] send() and close() should not throw an exception for an unpaired surrogate but use the replacement character
