@@ -50,11 +50,8 @@ webkit.org/b/92726 fast/dom/unregister-protocol-handler.html [ Crash ]
 # Crashes on plugin test.
 webkit.org/b/98747 plugins/document-open.html [ Crash ]
 
-# WebKitTestRunner needs an implementation for download attribute feature
-# The implementation for DumpRenderTree is on https://bugs.webkit.org/show_bug.cgi?id=96462
-# anchor-download-unset.html and anchor-nodownload.html are currently passed, but need to be checked along with below test cases
-Bug(EFL) fast/dom/HTMLAnchorElement/anchor-download.html [ Crash ]
-Bug(EFL) fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash ]
+webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
+webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
 
 #Crash after r132386
 webkit.org/b/100342 fast/dom/nested-script-exceptions.html [ Crash ]
@@ -65,6 +62,9 @@ webkit.org/b/100342 networkinformation/add-listener-from-callback.html [ Crash ]
 webkit.org/b/100342 networkinformation/basic-operation.html [ Crash ]
 
 webkit.org/b/101428 media/media-continues-playing-after-replace-source.html [ Crash ]
+
+webkit.org/b/102203 fast/events/attribute-listener-deletion-crash.html [ Crash ]
+webkit.org/b/102204 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
@@ -294,3 +294,6 @@ webkit.org/b/86881 fast/events/right-click-focus.html [ Failure ]
 webkit.org/b/86881 fast/events/selectstart-prevent-selection-on-right-click.html [ Failure ]
 webkit.org/b/86881 media/context-menu-actions.html [ Failure ]
 webkit.org/b/86881 media/controls-right-click-on-timebar.html [ Failure ]
+
+webkit.org/b/102201 fast/dom/Window/window-resize.html [ Failure ]
+webkit.org/b/102202 inspector/timeline/timeline-timer-fired-from-eval-call-site.html [ Failure ]
