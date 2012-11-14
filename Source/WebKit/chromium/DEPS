@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '167263'
+  'chromium_rev': '167602'
 }
 
 deps = {
@@ -137,6 +137,8 @@ deps = {
     From('chromium_deps', 'src/third_party/libjpeg_turbo'),
   'third_party/leveldatabase/src':
     From('chromium_deps', 'src/third_party/leveldatabase/src'),
+  'third_party/smhasher/src':
+    From('chromium_deps', 'src/third_party/smhasher/src'),
   'third_party/snappy/src':
     From('chromium_deps', 'src/third_party/snappy/src'),
   'third_party/sfntly/cpp/src':
