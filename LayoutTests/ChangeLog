@@ -1,3 +1,39 @@
+2012-11-14  Erik Arvidsson  <arv@chromium.org>
+
+        Unreviewed. Rebaselined test results.
+
+        * fast/media/mq-js-media-except-01-expected.txt: Renamed from LayoutTests/platform/mac/fast/media/mq-js-media-except-01-expected.txt.
+        * platform/chromium-linux-x86/svg/dom/SVGTransformList-basics-expected.png: Removed.
+        * platform/chromium-mac-lion/svg/dom/SVGLengthList-appendItem-expected.png:
+        * platform/chromium-mac-lion/svg/dom/SVGLengthList-basics-expected.png:
+        * platform/chromium-mac-lion/svg/dom/SVGLengthList-getItem-expected.png:
+        * platform/chromium-mac-lion/svg/dom/SVGLengthList-initialize-expected.png:
+        * platform/chromium-mac-lion/svg/dom/SVGLengthList-insertItemBefore-expected.png:
+        * platform/chromium-mac-lion/svg/dom/SVGLengthList-removeItem-expected.png:
+        * platform/chromium-mac-lion/svg/dom/SVGLengthList-replaceItem-expected.png:
+        * platform/chromium-mac-lion/svg/dom/SVGNumberList-basics-expected.png:
+        * platform/chromium-mac-lion/svg/dom/SVGTransformList-basics-expected.png:
+        * platform/chromium-win/fast/media/mq-js-media-except-01-expected.png:
+        * platform/chromium-win/svg/dom/SVGLengthList-appendItem-expected.png:
+        * platform/chromium-win/svg/dom/SVGLengthList-basics-expected.png:
+        * platform/chromium-win/svg/dom/SVGLengthList-getItem-expected.png:
+        * platform/chromium-win/svg/dom/SVGLengthList-initialize-expected.png:
+        * platform/chromium-win/svg/dom/SVGLengthList-insertItemBefore-expected.png:
+        * platform/chromium-win/svg/dom/SVGLengthList-removeItem-expected.png:
+        * platform/chromium-win/svg/dom/SVGLengthList-replaceItem-expected.png:
+        * platform/chromium-win/svg/dom/SVGNumberList-basics-expected.png:
+        * platform/chromium-win/svg/dom/SVGTransformList-basics-expected.png:
+        * platform/chromium/fast/media/mq-js-media-except-01-expected.txt: Removed.
+        * platform/efl-wk1/fast/media/mq-js-media-except-01-expected.txt: Renamed from LayoutTests/platform/efl/fast/media/mq-js-media-except-01-expected.txt.
+        * platform/efl-wk1/svg/dom/SVGLengthList-appendItem-expected.png: Renamed from LayoutTests/platform/efl/svg/dom/SVGLengthList-appendItem-expected.png.
+        * platform/efl-wk1/svg/dom/SVGLengthList-basics-expected.png: Renamed from LayoutTests/platform/efl/svg/dom/SVGLengthList-basics-expected.png.
+        * platform/efl-wk1/svg/dom/SVGLengthList-initialize-expected.png: Renamed from LayoutTests/platform/efl/svg/dom/SVGLengthList-initialize-expected.png.
+        * platform/efl-wk1/svg/dom/SVGLengthList-insertItemBefore-expected.png: Renamed from LayoutTests/platform/efl/svg/dom/SVGLengthList-insertItemBefore-expected.png.
+        * platform/efl-wk1/svg/dom/SVGLengthList-replaceItem-expected.png: Renamed from LayoutTests/platform/efl/svg/dom/SVGLengthList-replaceItem-expected.png.
+        * platform/efl-wk1/svg/dom/SVGNumberList-basics-expected.png: Renamed from LayoutTests/platform/efl/svg/dom/SVGNumberList-basics-expected.png.
+        * platform/qt/fast/files/workers/worker-read-blob-sync-expected.txt: Added.
+        * platform/qt/fast/media/mq-js-media-except-01-expected.txt:
+
 2012-11-14  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
