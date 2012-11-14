@@ -1,5 +1,9 @@
 2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Updating baselines after r134631.
+
+2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Marked fake-mouse-move tests as failing.
         https://bugs.webkit.org/show_bug.cgi?id=102277
 
