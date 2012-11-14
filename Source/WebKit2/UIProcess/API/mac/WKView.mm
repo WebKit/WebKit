@@ -2564,8 +2564,15 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_enterAcceleratedCompositingMode:(const LayerTreeContext&)layerTreeContext
 {
-    ASSERT(!_data->_layerHostingView);
     ASSERT(!layerTreeContext.isEmpty());
+
+    CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
+    [self _enterAcceleratedCompositingModeWithRootLayer:renderLayer];
+}
+
+- (void)_enterAcceleratedCompositingModeWithRootLayer:(CALayer *)layer
+{
+    ASSERT(!_data->_layerHostingView);
 
     // Create an NSView that will host our layer tree.
     _data->_layerHostingView.adoptNS([[WKFlippedView alloc] initWithFrame:[self bounds]]);
@@ -2582,8 +2589,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     [rootLayer.get() setName:@"Hosting root layer"];
 #endif
 
-    CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
-    [rootLayer.get() addSublayer:renderLayer];
+    [rootLayer.get() addSublayer:layer];
 
     [_data->_layerHostingView.get() setLayer:rootLayer.get()];
     [_data->_layerHostingView.get() setWantsLayer:YES];
