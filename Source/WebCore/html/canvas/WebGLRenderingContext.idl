@@ -531,7 +531,7 @@
     [StrictTypeChecking] unsigned long getError();
 
     // object getExtension(in DOMString name);
-    [StrictTypeChecking, Custom] void getExtension(in DOMString name);
+    [StrictTypeChecking, Custom] any getExtension(in DOMString name);
 
     // any getFramebufferAttachmentParameter(in unsigned long target, in unsigned long attachment, in unsigned long pname) raises(DOMException);
     [StrictTypeChecking, Custom] void getFramebufferAttachmentParameter();
@@ -551,8 +551,7 @@
 
     [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString    getShaderSource(in WebGLShader shader) raises(DOMException);
 
-    // DOMString[] getSupportedExtensions()
-    [StrictTypeChecking, Custom] void getSupportedExtensions();
+    [StrictTypeChecking, Custom] sequence<DOMString> getSupportedExtensions();
 
     // any getTexParameter(in unsigned long target, in unsigned long pname) raises(DOMException);
     [StrictTypeChecking, Custom] void getTexParameter();

@@ -1,3 +1,14 @@
+2012-11-14  Anton Muhin  <antonm@chromium.org>
+
+        Provide return types for custom WebGLRenderingContext methods
+        https://bugs.webkit.org/show_bug.cgi?id=100777
+
+        Reviewed by Kenneth Russell.
+
+        No new tests as doesn't change generated code.
+
+        * html/canvas/WebGLRenderingContext.idl:
+
 2012-11-14  Kent Tamura  <tkent@chromium.org>
 
         Support for localization tests of calendar picker
