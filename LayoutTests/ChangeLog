@@ -1,3 +1,10 @@
+2012-11-13  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Marked platform/chromium/virtual/gpu/fast/hidpi/image-set-without-specified-width.html
+        as Slow.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, update expected files after r134435.
