@@ -1,3 +1,30 @@
+2012-11-14  Helder Correia  <helder.correia@nokia.com>
+
+        [TexMap][Cairo] Accelerated compositing debug visuals
+        https://bugs.webkit.org/show_bug.cgi?id=101883
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No new tests, just introducing a debug feature.
+
+        Add a Cairo implementation to complement the patch from bug 90116
+        (http://trac.webkit.org/changeset/122275).
+
+        For this feature to be enabled, the environment variable
+        WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS must be set to 1. Once enabled,
+        both repaint counters and tile borders will be painted.
+
+        A Cairo-specific drawRepaintCounter() implementation was added to
+        TextureMapperGL. A cairo_surface_t is used as scratch buffer to paint
+        the counters. It is then uploaded to a BitmapTexture acquired
+        from the pool and finally draw by TextureMapper. The actual compositing
+        happens inside LayerBackingStore::paintToTextureMapper(). Each
+        LayerBackingStoreTile has a repaint counter which gets incremented in
+        LayerBackingStore::updateTile().
+
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::shouldShowTileDebugVisuals):
+
 2012-11-14  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Coordinated Graphics: Rename m_CoordinatedGraphicsLayerClient to m_coordinator

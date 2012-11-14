@@ -110,6 +110,8 @@ static bool shouldShowTileDebugVisuals()
 {
 #if PLATFORM(QT)
     return (qgetenv("QT_WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS") == "1");
+#elif USE(CAIRO)
+    return (String(getenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS")) == "1");
 #endif
     return false;
 }
