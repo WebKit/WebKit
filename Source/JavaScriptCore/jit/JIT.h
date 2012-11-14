@@ -487,18 +487,17 @@ namespace JSC {
         // returns the slow cases.
         JumpList emitInt32PutByVal(Instruction* currentInstruction, PatchableJump& badType)
         {
-            return emitGenericContiguousPutByVal<Int32Shape>(currentInstruction, badType);
+            return emitGenericContiguousPutByVal(currentInstruction, badType, Int32Shape);
         }
         JumpList emitDoublePutByVal(Instruction* currentInstruction, PatchableJump& badType)
         {
-            return emitGenericContiguousPutByVal<DoubleShape>(currentInstruction, badType);
+            return emitGenericContiguousPutByVal(currentInstruction, badType, DoubleShape);
         }
         JumpList emitContiguousPutByVal(Instruction* currentInstruction, PatchableJump& badType)
         {
-            return emitGenericContiguousPutByVal<ContiguousShape>(currentInstruction, badType);
+            return emitGenericContiguousPutByVal(currentInstruction, badType);
         }
-        template<IndexingType indexingShape>
-        JumpList emitGenericContiguousPutByVal(Instruction*, PatchableJump& badType);
+        JumpList emitGenericContiguousPutByVal(Instruction*, PatchableJump& badType, IndexingType indexingShape = ContiguousShape);
         JumpList emitArrayStoragePutByVal(Instruction*, PatchableJump& badType);
         JumpList emitIntTypedArrayPutByVal(Instruction*, PatchableJump& badType, const TypedArrayDescriptor&, size_t elementSize, TypedArraySignedness, TypedArrayRounding);
         JumpList emitFloatTypedArrayPutByVal(Instruction*, PatchableJump& badType, const TypedArrayDescriptor&, size_t elementSize);

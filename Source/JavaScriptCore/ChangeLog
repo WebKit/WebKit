@@ -1,5 +1,25 @@
 2012-11-14  Peter Gal  <galpeter@inf.u-szeged.hu>
 
+        [Qt][ARM]REGRESSION(r133985): It broke the build
+        https://bugs.webkit.org/show_bug.cgi?id=101740
+
+        Reviewed by Csaba Osztrogonác.
+
+        Changed the emitGenericContiguousPutByVal to accept the additional IndexingType argument.
+        This information was passed as a template parameter.        
+
+        * jit/JIT.h:
+        (JSC::JIT::emitInt32PutByVal):
+        (JSC::JIT::emitDoublePutByVal):
+        (JSC::JIT::emitContiguousPutByVal):
+        (JIT):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGenericContiguousPutByVal):
+
+2012-11-14  Peter Gal  <galpeter@inf.u-szeged.hu>
+
         Fix the MIPS build after r134332
         https://bugs.webkit.org/show_bug.cgi?id=102227
 
