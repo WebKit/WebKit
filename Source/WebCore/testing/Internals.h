@@ -99,6 +99,7 @@ public:
     bool hasSelectorForIdInShadow(Element* host, const String& idValue, ExceptionCode&);
     bool hasSelectorForClassInShadow(Element* host, const String& className, ExceptionCode&);
     bool hasSelectorForAttributeInShadow(Element* host, const String& attributeName, ExceptionCode&);
+    bool hasSelectorForPseudoClassInShadow(Element* host, const String& pseudoClass, ExceptionCode&);
 
     bool attached(Node*, ExceptionCode&);
 

@@ -62,6 +62,7 @@
     boolean hasSelectorForIdInShadow(in Element host, in DOMString id) raises (DOMException);
     boolean hasSelectorForClassInShadow(in Element host, in DOMString className) raises (DOMException);
     boolean hasSelectorForAttributeInShadow(in Element host, in DOMString attributeName) raises (DOMException);
+    boolean hasSelectorForPseudoClassInShadow(in Element host, in DOMString pseudoClass) raises (DOMException);
 
     Node nextSiblingByWalker(in Node node) raises(DOMException);
     Node firstChildByWalker(in Node node) raises(DOMException);

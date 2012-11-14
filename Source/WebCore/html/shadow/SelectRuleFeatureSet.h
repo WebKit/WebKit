@@ -47,8 +47,30 @@ public:
     bool hasSelectorForClass(const AtomicString&) const;
     bool hasSelectorForAttribute(const AtomicString&) const;
 
+    bool hasSelectorForChecked() const { return hasSelectorFor(RuleFeatureChecked); }
+    bool hasSelectorForEnabled() const { return hasSelectorFor(RuleFeatureEnabled); }
+    bool hasSelectorForDisabled() const { return hasSelectorFor(RuleFeatureDisabled); }
+    bool hasSelectorForIndeterminate() const { return hasSelectorFor(RuleFeatureIndeterminate); }
+    bool hasSelectorForLink() const { return hasSelectorFor(RuleFeatureLink); }
+    bool hasSelectorForTarget() const { return hasSelectorFor(RuleFeatureTarget); }
+    bool hasSelectorForVisited() const { return hasSelectorFor(RuleFeatureVisited); }
+
+    enum SelectRuleFeature {
+        RuleFeatureChecked = 1,
+        RuleFeatureEnabled = 1 << 1,
+        RuleFeatureDisabled = 1 << 2,
+        RuleFeatureIndeterminate = 1 << 3,
+        RuleFeatureLink = 1 << 4,
+        RuleFeatureTarget = 1 << 5,
+        RuleFeatureVisited = 1 << 6
+    };
+
 private:
+    void setSelectRuleFeature(SelectRuleFeature feature) { m_featureFlags |= feature; }
+    bool hasSelectorFor(SelectRuleFeature feature) const { return m_featureFlags & feature; }
+
     RuleFeatureSet m_cssRuleFeatureSet;
+    int m_featureFlags;
 };
 
 inline bool SelectRuleFeatureSet::hasSelectorForId(const AtomicString& idValue) const

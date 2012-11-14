@@ -1,3 +1,41 @@
+2012-11-13  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Collect necessary features for SelectRuleFeatureSet
+        https://bugs.webkit.org/show_bug.cgi?id=102160
+
+        Reviewed by Dimitri Glazkov.
+
+        When pseudo class is changed, we might have to invalidate distribution. To determine whether we should invalidate
+        distribution, we would like to collect RuleFeature from select attributes.
+
+        According to ShadowDOM spec, we have to collect the following pseudo classes: checked, enabled, disabled,
+        indeterminate, link, target, and visited. We collect them in this patch.
+
+        Test: fast/dom/shadow/shadow-select-attribute-featureset.html
+
+        * html/shadow/SelectRuleFeatureSet.cpp:
+        (WebCore::SelectRuleFeatureSet::SelectRuleFeatureSet): Uses int as bitset so that we can use bit operator.
+        (WebCore::SelectRuleFeatureSet::add):
+        (WebCore::SelectRuleFeatureSet::clear):
+        (WebCore::SelectRuleFeatureSet::collectFeaturesFromSelector): Collects necessary features from CSSSelector.
+        * html/shadow/SelectRuleFeatureSet.h:
+        (WebCore::SelectRuleFeatureSet::hasSelectorForChecked):
+        (WebCore::SelectRuleFeatureSet::hasSelectorForEnabled):
+        (WebCore::SelectRuleFeatureSet::hasSelectorForDisabled):
+        (WebCore::SelectRuleFeatureSet::hasSelectorForIndeterminate):
+        (WebCore::SelectRuleFeatureSet::hasSelectorForLink):
+        (WebCore::SelectRuleFeatureSet::hasSelectorForTarget):
+        (WebCore::SelectRuleFeatureSet::hasSelectorForVisited):
+        (SelectRuleFeatureSet):
+        (WebCore::SelectRuleFeatureSet::setSelectRuleFeature):
+        (WebCore::SelectRuleFeatureSet::hasSelectorFor):
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasSelectorForPseudoClassInShadow):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-11-13  Andreas Kling  <kling@webkit.org>
 
         Move inline style logic from ElementAttributeData to StyledElement.

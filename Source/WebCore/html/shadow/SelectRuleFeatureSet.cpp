@@ -36,22 +36,51 @@
 namespace WebCore {
 
 SelectRuleFeatureSet::SelectRuleFeatureSet()
+    : m_featureFlags(0)
 {
 }
 
 void SelectRuleFeatureSet::add(const SelectRuleFeatureSet& featureSet)
 {
     m_cssRuleFeatureSet.add(featureSet.m_cssRuleFeatureSet);
+    m_featureFlags |= featureSet.m_featureFlags;
 }
 
 void SelectRuleFeatureSet::clear()
 {
     m_cssRuleFeatureSet.clear();
+    m_featureFlags = 0;
 }
 
 void SelectRuleFeatureSet::collectFeaturesFromSelector(const CSSSelector* selector)
 {
     m_cssRuleFeatureSet.collectFeaturesFromSelector(selector);
+
+    switch (selector->pseudoType()) {
+    case CSSSelector::PseudoChecked:
+        setSelectRuleFeature(RuleFeatureChecked);
+        break;
+    case CSSSelector::PseudoEnabled:
+        setSelectRuleFeature(RuleFeatureEnabled);
+        break;
+    case CSSSelector::PseudoDisabled:
+        setSelectRuleFeature(RuleFeatureDisabled);
+        break;
+    case CSSSelector::PseudoIndeterminate:
+        setSelectRuleFeature(RuleFeatureIndeterminate);
+        break;
+    case CSSSelector::PseudoLink:
+        setSelectRuleFeature(RuleFeatureLink);
+        break;
+    case CSSSelector::PseudoTarget:
+        setSelectRuleFeature(RuleFeatureTarget);
+        break;
+    case CSSSelector::PseudoVisited:
+        setSelectRuleFeature(RuleFeatureVisited);
+        break;
+    default:
+        break;
+    }
 }
 
 }

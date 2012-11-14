@@ -340,6 +340,34 @@ bool Internals::hasSelectorForAttributeInShadow(Element* host, const String& att
     return host->shadow()->selectRuleFeatureSet().hasSelectorForAttribute(attributeName);
 }
 
+bool Internals::hasSelectorForPseudoClassInShadow(Element* host, const String& pseudoClass, ExceptionCode& ec)
+{
+    if (!host || !host->shadow()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    host->shadow()->ensureSelectFeatureSetCollected();
+    const SelectRuleFeatureSet& featureSet = host->shadow()->selectRuleFeatureSet();
+    if (pseudoClass == "checked")
+        return featureSet.hasSelectorForChecked();
+    if (pseudoClass == "enabled")
+        return featureSet.hasSelectorForEnabled();
+    if (pseudoClass == "disabled")
+        return featureSet.hasSelectorForDisabled();
+    if (pseudoClass == "indeterminate")
+        return featureSet.hasSelectorForIndeterminate();
+    if (pseudoClass == "link")
+        return featureSet.hasSelectorForLink();
+    if (pseudoClass == "target")
+        return featureSet.hasSelectorForTarget();
+    if (pseudoClass == "visited")
+        return featureSet.hasSelectorForVisited();
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 bool Internals::hasShadowInsertionPoint(const Node* root, ExceptionCode& ec) const
 {
     if (root && root->isShadowRoot())

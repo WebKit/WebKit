@@ -168,6 +168,104 @@ testCase(function()
     shouldBe('internals.hasSelectorForIdInShadow(host, "baz")', 'true');
 });
 
+testCase(function()
+{
+    debug('PseudoClass case: :checked');
+    shadowRoot.innerHTML = '<content select="input:checked"></content>';
+
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "checked")', 'true');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "enabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "disabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "indeterminate")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "link")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "target")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "visited")', 'false');
+});
+
+testCase(function()
+{
+    debug('PseudoClass case: :enabled');
+    shadowRoot.innerHTML = '<content select="input:enabled"></content>';
+
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "checked")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "enabled")', 'true');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "disabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "indeterminate")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "link")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "target")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "visited")', 'false');
+});
+
+testCase(function()
+{
+    debug('PseudoClass case: :disabled');
+    shadowRoot.innerHTML = '<content select="input:disabled"></content>';
+
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "checked")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "enabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "disabled")', 'true');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "indeterminate")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "link")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "target")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "visited")', 'false');
+});
+
+testCase(function()
+{
+    debug('PseudoClass case: :indeterminate');
+    shadowRoot.innerHTML = '<content select="input:indeterminate"></content>';
+
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "checked")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "enabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "disabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "indeterminate")', 'true');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "link")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "target")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "visited")', 'false');
+});
+
+testCase(function()
+{
+    debug('PseudoClass case: :link');
+    shadowRoot.innerHTML = '<content select="input:link"></content>';
+
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "checked")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "enabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "disabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "indeterminate")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "link")', 'true');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "target")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "visited")', 'false');
+});
+
+testCase(function()
+{
+    debug('PseudoClass case: :target');
+    shadowRoot.innerHTML = '<content select="input:target"></content>';
+
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "checked")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "enabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "disabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "indeterminate")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "link")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "target")', 'true');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "visited")', 'false');
+});
+
+testCase(function()
+{
+    debug('PseudoClass case: :visited');
+    shadowRoot.innerHTML = '<content select="input:visited"></content>';
+
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "checked")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "enabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "disabled")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "indeterminate")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "link")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "target")', 'false');
+    shouldBe('internals.hasSelectorForPseudoClassInShadow(host, "visited")', 'true');
+});
+
 finishJSTest();
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
