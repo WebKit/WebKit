@@ -1,3 +1,23 @@
+2012-11-13  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Run multiple tasks per transaction tick
+        https://bugs.webkit.org/show_bug.cgi?id=97738
+
+        Reviewed by Tony Chang.
+
+        Process multiple tasks from the pending queue(s) when the timer fires. The
+        task may initiate new tasks that change which queue is active (e.g. indexing
+        operations) so the loop must re-check each tick which queue to use.
+
+        In DumpRenderTree, time to make 20k puts/20k gets dropped from 3.2s to 2.0s (-37%);
+        in Chromium's content_shell, the time dropped from 8.1s to 4.6s (-42%).
+
+        No new tests - just perf improvements, covered by (nearly) all existing IDB tests.
+
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::abort): Use takeFirst() to clean up code.
+        (WebCore::IDBTransactionBackendImpl::taskTimerFired): Process as many tasks as are available.
+
 2012-11-13  Elliott Sprehn  <esprehn@chromium.org>
 
         Disable frame loading instead of throwing exceptions on subtree modifications in ChildFrameDisconnector
