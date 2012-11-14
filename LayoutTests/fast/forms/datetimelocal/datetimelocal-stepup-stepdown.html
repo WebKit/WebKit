@@ -10,7 +10,7 @@
 description('Check stepUp() and stepDown() bahevior for type=datetime-local.');
 
 var input = document.createElement('input');
-var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
+var invalidStateErr = '"Error: InvalidStateError: DOM Exception 11"';
 
 function setInputAttributes(min, max, step, value) {
     input.min = min;

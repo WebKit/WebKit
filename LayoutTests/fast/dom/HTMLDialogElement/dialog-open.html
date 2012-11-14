@@ -24,7 +24,7 @@ dialog.close();
 computedStyle = window.getComputedStyle(dialog, null);
 
 shouldBe("computedStyle.getPropertyValue('display')", "'none'");
-shouldThrow('dialog.close();', "'Error: INVALID_STATE_ERR: DOM Exception 11'");
+shouldThrow('dialog.close();', "'Error: InvalidStateError: DOM Exception 11'");
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

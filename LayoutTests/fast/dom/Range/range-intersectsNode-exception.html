@@ -15,7 +15,7 @@ description("Test for Bug: 75799 - Calling intersectsNode on a detached range sh
 var range = document.createRange();
 range.selectNode(document.getElementById("a1"));
 range.detach();
-shouldThrow("range.intersectsNode(document.getElementById('b1'))", '"Error: INVALID_STATE_ERR: DOM Exception 11"');
+shouldThrow("range.intersectsNode(document.getElementById('b1'))", '"Error: InvalidStateError: DOM Exception 11"');
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

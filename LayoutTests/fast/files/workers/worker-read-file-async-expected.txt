@@ -174,10 +174,10 @@ result: data:text/plain;base64,SGVsbG8=
 Received loadend event
 Test calling multiple concurrent read methods
 readyState: 0
-Received exception 11: INVALID_STATE_ERR
-Received exception 11: INVALID_STATE_ERR
-Received exception 11: INVALID_STATE_ERR
-Received exception 11: INVALID_STATE_ERR
+Received exception 11: InvalidStateError
+Received exception 11: InvalidStateError
+Received exception 11: InvalidStateError
+Received exception 11: InvalidStateError
 Received loadstart event
 readyState: 1
 Received load event

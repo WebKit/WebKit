@@ -602,37 +602,37 @@ FAIL element.value should be ABC0123456789. Was 0123456789.
 Running tests on input with attributes: {"type":"button"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS element.value is "0123456789XYZ"
 
 Running tests on input with attributes: {"type":"checkbox"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS element.value is "0123456789XYZ"
 
 Running tests on input with attributes: {"type":"email"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS element.value is "0123456789XYZ"
 
 Running tests on input with attributes: {"type":"radio"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS element.value is "0123456789XYZ"
 
 Running tests on input with attributes: {"type":"reset"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS element.value is "0123456789XYZ"
 
 Running tests on input with attributes: {"type":"submit"}
 
 element.value = '0123456789XYZ'
-PASS element.setRangeText('ABC', 0, 0) threw exception Error: INVALID_STATE_ERR: DOM Exception 11.
+PASS element.setRangeText('ABC', 0, 0) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS element.value is "0123456789XYZ"
 PASS successfullyParsed is true
 

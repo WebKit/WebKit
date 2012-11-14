@@ -1,7 +1,7 @@
 Tests webkitSourceAddId() & webkitSourceRemoveId() methods
 
 Test adding an ID while closed.
-Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
+Got expected exception Error: InvalidStateError: DOM Exception 11
 
 running testAddBufferFailureCases
 EVENT(webkitsourceopen)
@@ -13,7 +13,7 @@ Test a supported type with an unsupported codec.
 Got expected exception Error: NOT_SUPPORTED_ERR: DOM Exception 9
 Test reaching sourceID limit.
 Test that SourceBuffers can't be added while in the ended state.
-Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
+Got expected exception Error: InvalidStateError: DOM Exception 11
 
 running testRemoveNullBuffer
 EVENT(webkitsourceopen)
@@ -23,7 +23,7 @@ Got expected exception Error: INVALID_ACCESS_ERR: DOM Exception 15
 running testRemoveAgain
 EVENT(webkitsourceopen)
 Test removing a buffer that was already removed.
-Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
+Got expected exception Error: InvalidStateError: DOM Exception 11
 
 running testRemoveBufferAfterEnded
 EVENT(webkitsourceopen)
@@ -39,8 +39,8 @@ Test a successful append.
 Test append with a null buffer.
 Got expected exception Error: INVALID_ACCESS_ERR: DOM Exception 15
 Test append after ended.
-Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
+Got expected exception Error: InvalidStateError: DOM Exception 11
 Test append after buffer has been removed.
-Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
+Got expected exception Error: InvalidStateError: DOM Exception 11
 END OF TEST
 

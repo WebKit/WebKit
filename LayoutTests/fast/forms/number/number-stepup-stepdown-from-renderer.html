@@ -8,7 +8,7 @@
 description('Check stepping-up and -down for number input from renderer.');
 
 var input = document.createElement('input');
-var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
+var invalidStateErr = '"Error: InvalidStateError: DOM Exception 11"';
 
 function sendKey(keyName) {
     var event = document.createEvent('KeyboardEvent');

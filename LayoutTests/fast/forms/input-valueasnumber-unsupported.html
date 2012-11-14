@@ -18,7 +18,7 @@ function checkValueAsNumber(type) {
     input.value = '0';
     input.type = type;
     shouldBe('input.valueAsNumber', 'Number.NaN');
-    shouldThrow('input.valueAsNumber = 0', '"Error: INVALID_STATE_ERR: DOM Exception 11"');
+    shouldThrow('input.valueAsNumber = 0', '"Error: InvalidStateError: DOM Exception 11"');
 }
 
 checkValueAsNumber('button');

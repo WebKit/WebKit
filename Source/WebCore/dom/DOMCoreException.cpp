@@ -45,7 +45,7 @@ static struct CoreException {
     { "NotFoundError", "An attempt was made to reference a Node in a context where it does not exist." },
     { "NOT_SUPPORTED_ERR", "The implementation did not support the requested type of object or operation." },
     { "INUSE_ATTRIBUTE_ERR", "An attempt was made to add an attribute that is already in use elsewhere." },
-    { "INVALID_STATE_ERR", "An attempt was made to use an object that is not, or is no longer, usable." },
+    { "InvalidStateError", "An attempt was made to use an object that is not, or is no longer, usable." },
     { "SYNTAX_ERR", "An invalid or illegal string was specified." },
     { "INVALID_MODIFICATION_ERR", "An attempt was made to modify the type of the underlying object." },
     { "NAMESPACE_ERR", "An attempt was made to create or change an object in a way which is incorrect with regard to namespaces." },

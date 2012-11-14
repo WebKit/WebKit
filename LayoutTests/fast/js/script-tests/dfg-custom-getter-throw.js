@@ -18,7 +18,7 @@ function bar(doOpen) {
 }
 
 for (var i = 0; i < 200; ++i) {
-    shouldBe("bar(i >= 100)", i >= 100 ? "\"Threw exception: Error: INVALID_STATE_ERR: DOM Exception 11\"" : "\"Returned result: 0\"");
+    shouldBe("bar(i >= 100)", i >= 100 ? "\"Threw exception: Error: InvalidStateError: DOM Exception 11\"" : "\"Returned result: 0\"");
 }
 
 

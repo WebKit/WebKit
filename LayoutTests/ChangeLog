@@ -1,3 +1,93 @@
+2012-11-14  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: InvalidStateError
+        https://bugs.webkit.org/show_bug.cgi?id=102241
+
+        Reviewed by Ojan Vafai.
+
+        Updated tests and expectations.
+
+        * fast/dom/HTMLDialogElement/dialog-open-expected.txt:
+        * fast/dom/HTMLDialogElement/dialog-open.html:
+        * fast/dom/HTMLDialogElement/dialog-show-modal-expected.txt:
+        * fast/dom/HTMLDialogElement/dialog-show-modal.html:
+        * fast/dom/Range/range-intersectsNode-exception-expected.txt:
+        * fast/dom/Range/range-intersectsNode-exception.html:
+        * fast/dom/Range/range-intersectsNode-expected.txt:
+        * fast/dom/Range/resources/intersectsNode.js:
+        * fast/dom/Selection/collapseToX-empty-selection-expected.txt:
+        * fast/dom/Selection/script-tests/collapseToX-empty-selection.js:
+        * fast/events/message-port-clone-expected.txt:
+        * fast/events/message-port-multi-expected.txt:
+        * fast/files/read-file-async-expected.txt:
+        * fast/files/workers/worker-read-file-async-expected.txt:
+        * fast/forms/color/color-setrangetext-expected.txt:
+        * fast/forms/date/date-setrangetext-expected.txt:
+        * fast/forms/date/date-stepup-stepdown-expected.txt:
+        * fast/forms/date/date-stepup-stepdown.html:
+        * fast/forms/datetime/datetime-setrangetext-expected.txt:
+        * fast/forms/datetime/datetime-stepup-stepdown-expected.txt:
+        * fast/forms/datetime/datetime-stepup-stepdown.html:
+        * fast/forms/datetimelocal/datetimelocal-setrangetext-expected.txt:
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown-expected.txt:
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown.html:
+        * fast/forms/file/file-setrangetext-expected.txt:
+        * fast/forms/file/input-file-value-expected.txt:
+        * fast/forms/hidden/hidden-setrangetext-expected.txt:
+        * fast/forms/image/image-setrangetext-expected.txt:
+        * fast/forms/input-stepup-stepdown-expected.txt:
+        * fast/forms/input-stepup-stepdown.html:
+        * fast/forms/input-valueasnumber-unsupported-expected.txt:
+        * fast/forms/input-valueasnumber-unsupported.html:
+        * fast/forms/month/input-valueasdate-expected.txt:
+        * fast/forms/month/input-valueasdate.html:
+        * fast/forms/month/month-setrangetext-expected.txt:
+        * fast/forms/month/month-stepup-stepdown-expected.txt:
+        * fast/forms/month/month-stepup-stepdown.html:
+        * fast/forms/number/number-setrangetext-expected.txt:
+        * fast/forms/number/number-stepup-stepdown-expected.txt:
+        * fast/forms/number/number-stepup-stepdown-from-renderer.html:
+        * fast/forms/number/number-stepup-stepdown.html:
+        * fast/forms/number/number-valueasnumber-expected.txt:
+        * fast/forms/number/number-valueasnumber.html:
+        * fast/forms/range/range-setrangetext-expected.txt:
+        * fast/forms/range/range-stepup-stepdown-expected.txt:
+        * fast/forms/range/range-stepup-stepdown-from-renderer.html:
+        * fast/forms/range/range-stepup-stepdown.html:
+        * fast/forms/setrangetext-expected.txt:
+        * fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html:
+        * fast/forms/time/time-setrangetext-expected.txt:
+        * fast/forms/time/time-stepup-stepdown-expected.txt:
+        * fast/forms/time/time-stepup-stepdown.html:
+        * fast/forms/week/week-setrangetext-expected.txt:
+        * fast/forms/week/week-stepup-stepdown-expected.txt:
+        * fast/forms/week/week-stepup-stepdown.html:
+        * fast/js/dfg-custom-getter-throw-expected.txt:
+        * fast/js/dfg-custom-getter-throw-inlined-expected.txt:
+        * fast/js/script-tests/dfg-custom-getter-throw-inlined.js:
+        * fast/js/script-tests/dfg-custom-getter-throw.js:
+        * fast/mediastream/MediaStreamTrackList-expected.txt:
+        * fast/notifications/notifications-document-close-crash-expected.txt:
+        * fast/speech/scripted/start-exception-expected.txt:
+        * fast/speech/scripted/start-exception.html:
+        * fast/workers/worker-context-multi-port-expected.txt:
+        * fast/workers/worker-multi-port-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-responseXML-xml-text-responsetype-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-arraybuffer-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-document-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-set-at-headers-received-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-text-expected.txt:
+        * fast/xpath/detached-subtree-invalidate-iterator-expected.txt:
+        * http/tests/media/media-source/video-media-source-add-and-remove-buffers-expected.txt:
+        * http/tests/media/media-source/video-media-source-duration-changed-expected.txt:
+        * http/tests/media/media-source/video-media-source-objects-expected.txt:
+        * http/tests/xmlhttprequest/exceptions-expected.txt:
+        * http/tests/xmlhttprequest/zero-length-response-expected.txt:
+        * platform/chromium-mac/fast/notifications/notifications-document-close-crash-expected.txt:
+        * platform/qt/editing/pasteboard/data-transfer-items-expected.txt:
+        * platform/qt/fast/notifications/notifications-document-close-crash-expected.txt:
+        * storage/websql/open-database-set-empty-version-expected.txt:
+
 2012-11-14  Li Yin  <li.yin@intel.com>
 
         createDelay should raise exception when the maxDelayTime parameter is incorrect.

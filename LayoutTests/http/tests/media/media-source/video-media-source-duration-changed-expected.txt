@@ -1,7 +1,7 @@
 Tests duration attribute on MediaSource object
 
 Test setting the duration when closed.
-Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
+Got expected exception Error: InvalidStateError: DOM Exception 11
 Test getting the duration when closed.
 
 running testExpectExceptionOnNegativeDuration

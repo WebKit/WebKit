@@ -34,14 +34,14 @@ function doubleStart() {
                         finishJSTest();
                     }
                 } else {
-                    shouldThrow("r.start()", '"Error: INVALID_STATE_ERR: DOM Exception 11"');
+                    shouldThrow("r.start()", '"Error: InvalidStateError: DOM Exception 11"');
                 }
             }
         }
     }
 
     shouldNotThrow("r.start()");
-    shouldThrow("r.start()", '"Error: INVALID_STATE_ERR: DOM Exception 11"');
+    shouldThrow("r.start()", '"Error: InvalidStateError: DOM Exception 11"');
 }
 
 window.onload = run;
