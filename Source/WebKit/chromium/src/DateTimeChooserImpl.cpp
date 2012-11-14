@@ -110,12 +110,17 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     IntRect rootViewRectInScreen = m_chromeClient->rootViewToScreen(rootViewVisibleContentRect);
     rootViewRectInScreen.move(-view->scrollX(), -view->scrollY());
     String todayLabelString;
-    if (m_parameters.type == WebCore::InputTypeNames::month())
+    String otherDateLabelString;
+    if (m_parameters.type == WebCore::InputTypeNames::month()) {
         todayLabelString = Platform::current()->queryLocalizedString(WebLocalizedString::ThisMonthButtonLabel);
-    else if (m_parameters.type == WebCore::InputTypeNames::week())
+        otherDateLabelString = Platform::current()->queryLocalizedString(WebLocalizedString::OtherMonthLabel);
+    } else if (m_parameters.type == WebCore::InputTypeNames::week()) {
         todayLabelString = Platform::current()->queryLocalizedString(WebLocalizedString::ThisWeekButtonLabel);
-    else
+        otherDateLabelString = Platform::current()->queryLocalizedString(WebLocalizedString::OtherWeekLabel);
+    } else {
         todayLabelString = Platform::current()->queryLocalizedString(WebLocalizedString::CalendarToday);
+        otherDateLabelString = Platform::current()->queryLocalizedString(WebLocalizedString::OtherDateLabel);
+    }
 
     addString("<!DOCTYPE html><head><meta charset='UTF-8'><style>\n", writer);
     writer.addData(WebCore::pickerCommonCss, sizeof(WebCore::pickerCommonCss));
@@ -154,8 +159,8 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
         addProperty("suggestionValues", m_parameters.suggestionValues, writer);
         addProperty("localizedSuggestionValues", m_parameters.localizedSuggestionValues, writer);
         addProperty("suggestionLabels", m_parameters.suggestionLabels, writer);
-        addProperty("showOtherDateEntry", m_parameters.type == WebCore::InputTypeNames::date(), writer);
-        addProperty("otherDateLabel", Platform::current()->queryLocalizedString(WebLocalizedString::OtherDateLabel), writer);
+        addProperty("showOtherDateEntry", WebCore::RenderTheme::defaultTheme()->supportsCalendarPicker(m_parameters.type), writer);
+        addProperty("otherDateLabel", otherDateLabelString, writer);
         addProperty("suggestionHighlightColor", WebCore::RenderTheme::defaultTheme()->activeListBoxSelectionBackgroundColor().serialized(), writer);
         addProperty("suggestionHighlightTextColor", WebCore::RenderTheme::defaultTheme()->activeListBoxSelectionForegroundColor().serialized(), writer);
     }

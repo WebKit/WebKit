@@ -14,8 +14,8 @@ PASS document.getElementById("telephone").list is document.getElementById("dl1")
 PASS document.getElementById("email").list is document.getElementById("dl1")
 FAIL document.getElementById("datetime").list should be [object HTMLDataListElement]. Was null.
 PASS document.getElementById("date").list is document.getElementById("dl1")
-FAIL document.getElementById("month").list should be [object HTMLDataListElement]. Was null.
-FAIL document.getElementById("week").list should be [object HTMLDataListElement]. Was null.
+PASS document.getElementById("month").list is document.getElementById("dl1")
+PASS document.getElementById("week").list is document.getElementById("dl1")
 PASS document.getElementById("time").list is document.getElementById("dl1")
 FAIL document.getElementById("datetime-local").list should be [object HTMLDataListElement]. Was null.
 PASS document.getElementById("number").list is document.getElementById("dl1")

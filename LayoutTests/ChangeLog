@@ -1,3 +1,12 @@
+2012-11-13  Keishi Hattori  <keishi@webkit.org>
+
+        Enable datalist UI for input types week and month
+        https://bugs.webkit.org/show_bug.cgi?id=102041
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium/fast/forms/datalist/input-list-expected.txt:
+
 2012-11-13  Shinya Kawanaka  <shinyak@chromium.org>
 
         Collect necessary features for SelectRuleFeatureSet
