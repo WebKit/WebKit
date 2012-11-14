@@ -669,6 +669,10 @@ Bug(GTK) media/progress-events-generated-correctly.html [ Timeout ]
 
 webkit.org/b/102183 fast/events/attribute-listener-deletion-crash.html [ Timeout ]
 
+webkit.org/b/102257 fast/dom/Window/open-window-min-size.html [ Timeout ]
+
+webkit.org/b/102258 inspector-protocol/nmi-webaudio.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
