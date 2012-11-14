@@ -90,7 +90,7 @@ namespace WebCore {
         // world and can have zombie m_jsFunctions.
         ASSERT(!m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction);
 
-        // If m_wrapper is 0, then jsFunction is zombied, and should never be accessed.
+        // If m_wrapper is 0, then m_jsFunction is zombied, and should never be accessed.
         if (!m_wrapper)
             return 0;
 

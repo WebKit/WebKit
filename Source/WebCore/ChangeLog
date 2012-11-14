@@ -1,3 +1,22 @@
+2012-11-14  Mark Lam  <mark.lam@apple.com>
+
+        Fixed regressions due to adding JSEventListener::m_wrapper null checks.
+        https://bugs.webkit.org/show_bug.cgi?id=102183.
+
+        Reviewed by Geoffrey Garen.
+
+        Fixed JSEventListener::operator==() to work within the contract that
+        when m_wrapper is 0, m_jsFunction is also expected to be 0. Also fixed
+        some typos in comments.
+
+        No new tests.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::visitJSFunction):
+        (WebCore::JSEventListener::operator==):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::jsFunction):
+
 2012-11-14  Nate Chapin  <japhet@chromium.org>
 
         Fix chromium asserts from r134649.
