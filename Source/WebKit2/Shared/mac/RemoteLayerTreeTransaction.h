@@ -70,6 +70,7 @@ public:
     void encode(CoreIPC::ArgumentEncoder&) const;
     static bool decode(CoreIPC::ArgumentDecoder*, RemoteLayerTreeTransaction&);
 
+    uint64_t rootLayerID() const { return m_rootLayerID; }
     void setRootLayerID(uint64_t rootLayerID);
     void layerPropertiesChanged(const RemoteGraphicsLayer*, unsigned changedProperties);
     void setDestroyedLayerIDs(Vector<uint64_t>);

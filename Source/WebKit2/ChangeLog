@@ -1,3 +1,33 @@
+2012-11-14  Anders Carlsson  <andersca@apple.com>
+
+        More steps towards actually hosting layers in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=102275
+
+        Reviewed by Andreas Kling.
+
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        (WebKit::RemoteLayerTreeTransaction::rootLayerID):
+        Add a getter for the root layer ID.
+
+        * UIProcess/mac/RemoteLayerTreeHost.h:
+        (RemoteLayerTreeHost):
+        Add root layer member variable. Make the RemoteLayerTreeHost class a GraphicsLayerClient.
+
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::RemoteLayerTreeHost):
+        Initialize the root layer to null.
+
+        (WebKit::RemoteLayerTreeHost::notifyAnimationStarted):
+        (WebKit::RemoteLayerTreeHost::notifyFlushRequired):
+        (WebKit::RemoteLayerTreeHost::paintContents):
+        Add empty stubs.
+
+        (WebKit::RemoteLayerTreeHost::commit):
+        Try to get the root layer.
+
+        (WebKit::RemoteLayerTreeHost::getOrCreateLayer):
+        Look up the layer with the given ID in the m_layers hash table and create it if it doesn't exist.
+
 2012-11-14  Brady Eidson  <beidson@apple.com>
 
         Fix the Production build after r134640 broke it.

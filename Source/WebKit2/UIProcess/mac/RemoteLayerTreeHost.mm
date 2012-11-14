@@ -30,11 +30,15 @@
 #include "RemoteLayerTreeTransaction.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/GraphicsLayer.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
 RemoteLayerTreeHost::RemoteLayerTreeHost(WebPageProxy* webPageProxy)
     : m_webPageProxy(webPageProxy)
+    , m_rootLayer(nullptr)
 {
     m_webPageProxy->process()->addMessageReceiver(Messages::RemoteLayerTreeHost::messageReceiverName(), m_webPageProxy->pageID(), this);
 }
@@ -49,12 +53,38 @@ void RemoteLayerTreeHost::didReceiveMessage(CoreIPC::Connection* connection, Cor
     didReceiveRemoteLayerTreeHostMessage(connection, messageID, decoder);
 }
 
+void RemoteLayerTreeHost::notifyAnimationStarted(const GraphicsLayer*, double time)
+{
+}
+
+void RemoteLayerTreeHost::notifyFlushRequired(const GraphicsLayer*)
+{
+}
+
+void RemoteLayerTreeHost::paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&)
+{
+}
+
 void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 {
+    GraphicsLayer* rootLayer = getOrCreateLayer(transaction.rootLayerID());
+    if (m_rootLayer != rootLayer) {
+        // FIXME: Update the root layer.
+    }
+
 #ifndef NDEBUG
     // FIXME: Apply the transaction instead of dumping it to stderr.
     transaction.dump();
 #endif
+}
+
+GraphicsLayer* RemoteLayerTreeHost::getOrCreateLayer(uint64_t layerID)
+{
+    auto addResult = m_layers.add(layerID, nullptr);
+    if (addResult.isNewEntry)
+        addResult.iterator->value = GraphicsLayer::create(this);
+
+    return addResult.iterator->value.get();
 }
 
 } // namespace WebKit
