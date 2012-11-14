@@ -1,3 +1,11 @@
+2012-11-13  Dirk Pranke  <dpranke@chromium.org>
+
+        Update chromium-mac-lion baselines after r134516. Unreviewed.
+
+        * platform/chromium-mac-lion/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-mac-lion/tables/mozilla/collapsing_borders/bug41262-3-expected.png: Added.
+        * platform/chromium-mac-lion/tables/mozilla/core/bloomberg-expected.png: Added.
+
 2012-11-13  Tab Atkins  <jackalmage@gmail.com>
 
         CSS @charset parsing is too loose, doesn't match other browsers
