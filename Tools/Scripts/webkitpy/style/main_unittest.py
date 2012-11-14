@@ -43,9 +43,9 @@ class ChangeDirectoryTest(unittest.TestCase):
 
     def _assert_result(self, actual_return_value, expected_return_value,
                        expected_log_messages, expected_current_directory):
-        self.assertEquals(actual_return_value, expected_return_value)
+        self.assertEqual(actual_return_value, expected_return_value)
         self._log.assertMessages(expected_log_messages)
-        self.assertEquals(self.filesystem.getcwd(), expected_current_directory)
+        self.assertEqual(self.filesystem.getcwd(), expected_current_directory)
 
     def test_paths_none(self):
         paths = self._change_directory(checkout_root=self._checkout_root, paths=None)

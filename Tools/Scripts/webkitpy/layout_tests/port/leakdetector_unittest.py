@@ -51,7 +51,7 @@ class LeakDetectorTest(unittest.TestCase):
         detector._callstacks_to_exclude_from_leaks = lambda: ['foo bar', 'BAZ']
         detector._types_to_exlude_from_leaks = lambda: ['abcdefg', 'hi jklmno']
         expected_args = ['--exclude-callstack=foo bar', '--exclude-callstack=BAZ', '--exclude-type=abcdefg', '--exclude-type=hi jklmno', 1234]
-        self.assertEquals(detector._leaks_args(1234), expected_args)
+        self.assertEqual(detector._leaks_args(1234), expected_args)
 
     example_leaks_output = """Process 5122: 663744 nodes malloced for 78683 KB
 Process 5122: 337301 leaks for 6525216 total leaked bytes.
@@ -110,18 +110,18 @@ Binary Images:
 """
 
     def test_parse_leaks_output(self):
-        self.assertEquals(self._make_detector()._parse_leaks_output(self.example_leaks_output), (337301, 0, 6525216))
-        self.assertEquals(self._make_detector()._parse_leaks_output(self.example_leaks_output_with_exclusions), (282, 17, 21920))
+        self.assertEqual(self._make_detector()._parse_leaks_output(self.example_leaks_output), (337301, 0, 6525216))
+        self.assertEqual(self._make_detector()._parse_leaks_output(self.example_leaks_output_with_exclusions), (282, 17, 21920))
 
     def test_leaks_files_in_directory(self):
         detector = self._make_detector()
-        self.assertEquals(detector.leaks_files_in_directory('/bogus-directory'), [])
+        self.assertEqual(detector.leaks_files_in_directory('/bogus-directory'), [])
         detector._filesystem = MockFileSystem({
             '/mock-results/DumpRenderTree-1234-leaks.txt': '',
             '/mock-results/DumpRenderTree-23423-leaks.txt': '',
             '/mock-results/DumpRenderTree-823-leaks.txt': '',
         })
-        self.assertEquals(len(detector.leaks_files_in_directory('/mock-results')), 3)
+        self.assertEqual(len(detector.leaks_files_in_directory('/mock-results')), 3)
 
     def test_count_total_bytes_and_unique_leaks(self):
         detector = self._make_detector()
@@ -138,7 +138,7 @@ total: 5,888 bytes (0 bytes excluded)."""
         leak_files = ['/mock-results/DumpRenderTree-1234-leaks.txt', '/mock-results/DumpRenderTree-1235-leaks.txt']
         expected_stdout = "MOCK _run_script: parse-malloc-history ['--merge-depth', 5, '/mock-results/DumpRenderTree-1234-leaks.txt', '/mock-results/DumpRenderTree-1235-leaks.txt']\n"
         results_tuple = OutputCapture().assert_outputs(self, detector.count_total_bytes_and_unique_leaks, [leak_files], expected_stdout=expected_stdout)
-        self.assertEquals(results_tuple, ("5,888 bytes", 2))
+        self.assertEqual(results_tuple, ("5,888 bytes", 2))
 
     def test_count_total_leaks(self):
         detector = self._make_detector()
@@ -149,4 +149,4 @@ total: 5,888 bytes (0 bytes excluded)."""
             '/mock-results/DumpRenderTree-823-leaks.txt': 'Process 12356: 23412 leaks for 18 total leaked bytes.\n',
         })
         leak_file_paths = ['/mock-results/DumpRenderTree-1234-leaks.txt', '/mock-results/DumpRenderTree-23423-leaks.txt', '/mock-results/DumpRenderTree-823-leaks.txt']
-        self.assertEquals(detector.count_total_leaks(leak_file_paths), 35765)
+        self.assertEqual(detector.count_total_leaks(leak_file_paths), 35765)

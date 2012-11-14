@@ -90,7 +90,7 @@ class BuildCoverageExtrapolatorTest(unittest.TestCase):
         port = host.port_factory.get('chromium-win-win7', None)
         converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
         extrapolator = BuildCoverageExtrapolator(converter)
-        self.assertEquals(extrapolator.extrapolate_test_configurations("WebKit XP"), set([TestConfiguration(version='xp', architecture='x86', build_type='release')]))
+        self.assertEqual(extrapolator.extrapolate_test_configurations("WebKit XP"), set([TestConfiguration(version='xp', architecture='x86', build_type='release')]))
         self.assertRaises(KeyError, extrapolator.extrapolate_test_configurations, "Potato")
 
 

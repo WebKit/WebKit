@@ -85,16 +85,16 @@ class BugzillaTest(unittest.TestCase):
     def test_url_creation(self):
         # FIXME: These would be all better as doctests
         bugs = Bugzilla()
-        self.assertEquals(None, bugs.bug_url_for_bug_id(None))
-        self.assertEquals(None, bugs.short_bug_url_for_bug_id(None))
-        self.assertEquals(None, bugs.attachment_url_for_id(None))
+        self.assertEqual(None, bugs.bug_url_for_bug_id(None))
+        self.assertEqual(None, bugs.short_bug_url_for_bug_id(None))
+        self.assertEqual(None, bugs.attachment_url_for_id(None))
 
     def test_parse_bug_id(self):
         # Test that we can parse the urls we produce.
         bugs = Bugzilla()
-        self.assertEquals(12345, urls.parse_bug_id(bugs.short_bug_url_for_bug_id(12345)))
-        self.assertEquals(12345, urls.parse_bug_id(bugs.bug_url_for_bug_id(12345)))
-        self.assertEquals(12345, urls.parse_bug_id(bugs.bug_url_for_bug_id(12345, xml=True)))
+        self.assertEqual(12345, urls.parse_bug_id(bugs.short_bug_url_for_bug_id(12345)))
+        self.assertEqual(12345, urls.parse_bug_id(bugs.bug_url_for_bug_id(12345)))
+        self.assertEqual(12345, urls.parse_bug_id(bugs.bug_url_for_bug_id(12345, xml=True)))
 
     _bug_xml = """
     <bug>
@@ -198,10 +198,10 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
     # FIXME: This should move to a central location and be shared by more unit tests.
     def _assert_dictionaries_equal(self, actual, expected):
         # Make sure we aren't parsing more or less than we expect
-        self.assertEquals(sorted(actual.keys()), sorted(expected.keys()))
+        self.assertEqual(sorted(actual.keys()), sorted(expected.keys()))
 
         for key, expected_value in expected.items():
-            self.assertEquals(actual[key], expected_value, ("Failure for key: %s: Actual='%s' Expected='%s'" % (key, actual[key], expected_value)))
+            self.assertEqual(actual[key], expected_value, ("Failure for key: %s: Actual='%s' Expected='%s'" % (key, actual[key], expected_value)))
 
     def test_parse_bug_dictionary_from_xml(self):
         bug = Bugzilla()._parse_bug_dictionary_from_xml(self._single_bug_xml)
@@ -217,10 +217,10 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
     def test_parse_bugs_from_xml(self):
         bugzilla = Bugzilla()
         bugs = bugzilla._parse_bugs_from_xml(self._sample_multi_bug_xml)
-        self.assertEquals(len(bugs), 2)
-        self.assertEquals(bugs[0].id(), self._expected_example_bug_parsing['id'])
+        self.assertEqual(len(bugs), 2)
+        self.assertEqual(bugs[0].id(), self._expected_example_bug_parsing['id'])
         bugs = bugzilla._parse_bugs_from_xml("")
-        self.assertEquals(len(bugs), 0)
+        self.assertEqual(len(bugs), 0)
 
     # This could be combined into test_bug_parsing later if desired.
     def test_attachment_parsing(self):
@@ -244,7 +244,7 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
 
     def test_attachment_detail_bug_parsing(self):
         bugzilla = Bugzilla()
-        self.assertEquals(27314, bugzilla._parse_bug_id_from_attachment_page(self._sample_attachment_detail_page))
+        self.assertEqual(27314, bugzilla._parse_bug_id_from_attachment_page(self._sample_attachment_detail_page))
 
     def test_add_cc_to_bug(self):
         bugzilla = Bugzilla()
@@ -408,7 +408,7 @@ class BugzillaQueriesTest(unittest.TestCase):
 """
 
     def _assert_result_count(self, queries, html, count):
-        self.assertEquals(queries._parse_result_count(html), count)
+        self.assertEqual(queries._parse_result_count(html), count)
 
     def test_parse_result_count(self):
         queries = BugzillaQueries(None)
@@ -420,12 +420,12 @@ class BugzillaQueriesTest(unittest.TestCase):
 
     def test_request_page_parsing(self):
         queries = BugzillaQueries(None)
-        self.assertEquals([40511, 40722, 40723], queries._parse_attachment_ids_request_query(self._sample_request_page))
+        self.assertEqual([40511, 40722, 40723], queries._parse_attachment_ids_request_query(self._sample_request_page))
 
     def test_quip_page_parsing(self):
         queries = BugzillaQueries(None)
         expected_quips = ["Everything should be made as simple as possible, but not simpler. - Albert Einstein", "Good artists copy. Great artists steal. - Pablo Picasso", u"\u00e7gua mole em pedra dura, tanto bate at\u008e que fura."]
-        self.assertEquals(expected_quips, queries._parse_quips(self._sample_quip_page))
+        self.assertEqual(expected_quips, queries._parse_quips(self._sample_quip_page))
 
     def test_load_query(self):
         queries = BugzillaQueries(Mock())
@@ -482,7 +482,7 @@ class EditUsersParserTest(unittest.TestCase):
     def _assert_login_userid_pairs(self, results_page, expected_logins):
         parser = EditUsersParser()
         logins = parser.login_userid_pairs_from_edit_user_results(results_page)
-        self.assertEquals(logins, expected_logins)
+        self.assertEqual(logins, expected_logins)
 
     def test_logins_from_editusers_results(self):
         self._assert_login_userid_pairs(self._example_user_results, [("abarth@webkit.org", 1234)])

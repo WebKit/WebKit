@@ -58,7 +58,7 @@ class FinderTest(unittest.TestCase):
             handler.level = self.log_levels.pop(0)
 
     def test_additional_system_paths(self):
-        self.assertEquals(self.finder.additional_paths(['/usr']),
+        self.assertEqual(self.finder.additional_paths(['/usr']),
                           ['/foo', '/foo2'])
 
     def test_is_module(self):
@@ -70,9 +70,9 @@ class FinderTest(unittest.TestCase):
         self.assertFalse(self.finder.is_module('baz'))
 
     def test_to_module(self):
-        self.assertEquals(self.finder.to_module('/foo/test.py'), 'test')
-        self.assertEquals(self.finder.to_module('/foo/bar/test.py'), 'bar.test')
-        self.assertEquals(self.finder.to_module('/foo/bar/pytest.py'), 'bar.pytest')
+        self.assertEqual(self.finder.to_module('/foo/test.py'), 'test')
+        self.assertEqual(self.finder.to_module('/foo/bar/test.py'), 'bar.test')
+        self.assertEqual(self.finder.to_module('/foo/bar/pytest.py'), 'bar.pytest')
 
     def test_clean(self):
         self.assertTrue(self.fs.exists('/foo2/bar2/missing.pyc'))
@@ -80,7 +80,7 @@ class FinderTest(unittest.TestCase):
         self.assertFalse(self.fs.exists('/foo2/bar2/missing.pyc'))
 
     def check_names(self, names, expected_names, find_all=True):
-        self.assertEquals(self.finder.find_names(names, find_all), expected_names)
+        self.assertEqual(self.finder.find_names(names, find_all), expected_names)
 
     def test_default_names(self):
         self.check_names([], ['bar.baz_unittest', 'bar2.baz2_integrationtest'], find_all=True)

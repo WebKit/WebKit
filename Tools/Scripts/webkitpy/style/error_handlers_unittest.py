@@ -70,8 +70,8 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
 
     def _check_initialized(self):
         """Check that count and error messages are initialized."""
-        self.assertEquals(0, self._error_count)
-        self.assertEquals(0, len(self._error_messages))
+        self.assertEqual(0, self._error_count)
+        self.assertEqual(0, len(self._error_messages))
 
     def _call_error_handler(self, handle_error, confidence, line_number=100):
         """Call the given error handler with a test error."""
@@ -131,8 +131,8 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
         error_handler = self._error_handler(configuration)
         self._call_error_handler(error_handler, confidence)
 
-        self.assertEquals(0, self._error_count)
-        self.assertEquals([], self._error_messages)
+        self.assertEqual(0, self._error_count)
+        self.assertEqual([], self._error_messages)
 
     # Also serves as a reportable error test.
     def test_max_reports_per_category(self):
@@ -145,27 +145,27 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
 
         # First call: usual reporting.
         self._call_error_handler(error_handler, confidence)
-        self.assertEquals(1, self._error_count)
-        self.assertEquals(1, len(self._error_messages))
-        self.assertEquals(self._error_messages,
+        self.assertEqual(1, self._error_count)
+        self.assertEqual(1, len(self._error_messages))
+        self.assertEqual(self._error_messages,
                           ["foo.h(100):  message  [whitespace/tab] [5]\n"])
 
         # Second call: suppression message reported.
         self._call_error_handler(error_handler, confidence)
         # The "Suppressing further..." message counts as an additional
         # message (but not as an addition to the error count).
-        self.assertEquals(2, self._error_count)
-        self.assertEquals(3, len(self._error_messages))
-        self.assertEquals(self._error_messages[-2],
+        self.assertEqual(2, self._error_count)
+        self.assertEqual(3, len(self._error_messages))
+        self.assertEqual(self._error_messages[-2],
                           "foo.h(100):  message  [whitespace/tab] [5]\n")
-        self.assertEquals(self._error_messages[-1],
+        self.assertEqual(self._error_messages[-1],
                           "Suppressing further [whitespace/tab] reports "
                           "for this file.\n")
 
         # Third call: no report.
         self._call_error_handler(error_handler, confidence)
-        self.assertEquals(3, self._error_count)
-        self.assertEquals(3, len(self._error_messages))
+        self.assertEqual(3, self._error_count)
+        self.assertEqual(3, len(self._error_messages))
 
     def test_line_numbers(self):
         """Test the line_numbers parameter."""
@@ -177,20 +177,20 @@ class DefaultStyleErrorHandlerTest(unittest.TestCase):
 
         # Error on non-modified line: no error.
         self._call_error_handler(error_handler, confidence, line_number=60)
-        self.assertEquals(0, self._error_count)
-        self.assertEquals([], self._error_messages)
+        self.assertEqual(0, self._error_count)
+        self.assertEqual([], self._error_messages)
 
         # Error on modified line: error.
         self._call_error_handler(error_handler, confidence, line_number=50)
-        self.assertEquals(1, self._error_count)
-        self.assertEquals(self._error_messages,
+        self.assertEqual(1, self._error_count)
+        self.assertEqual(self._error_messages,
                           ["foo.h(50):  message  [whitespace/tab] [5]\n"])
 
         # Error on non-modified line after turning off line filtering: error.
         error_handler.turn_off_line_filtering()
         self._call_error_handler(error_handler, confidence, line_number=60)
-        self.assertEquals(2, self._error_count)
-        self.assertEquals(self._error_messages,
+        self.assertEqual(2, self._error_count)
+        self.assertEqual(self._error_messages,
                           ['foo.h(50):  message  [whitespace/tab] [5]\n',
                            'foo.h(60):  message  [whitespace/tab] [5]\n',
                            'Suppressing further [whitespace/tab] reports for this file.\n'])

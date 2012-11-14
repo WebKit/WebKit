@@ -72,7 +72,7 @@ class TestFeederQueue(FeederQueue):
 
 class AbstractQueueTest(CommandsTest):
     def test_log_directory(self):
-        self.assertEquals(TestQueue()._log_directory(), os.path.join("..", "test-queue-logs"))
+        self.assertEqual(TestQueue()._log_directory(), os.path.join("..", "test-queue-logs"))
 
     def _assert_run_webkit_patch(self, run_args, port=None):
         queue = TestQueue()
@@ -157,15 +157,15 @@ class AbstractPatchQueueTest(CommandsTest):
         queue.bind_to_tool(tool)
         queue._options = Mock()
         queue._options.port = None
-        self.assertEquals(queue._next_patch(), None)
+        self.assertEqual(queue._next_patch(), None)
         tool.status_server = MockStatusServer(work_items=[2, 10000, 10001])
         expected_stdout = "MOCK: fetch_attachment: 2 is not a known attachment id\n"  # A mock-only message to prevent us from making mistakes.
         expected_stderr = "MOCK: release_work_item: None 2\n"
         patch = OutputCapture().assert_outputs(self, queue._next_patch, expected_stdout=expected_stdout, expected_stderr=expected_stderr)
         # The patch.id() == 2 is ignored because it doesn't exist.
-        self.assertEquals(patch.id(), 10000)
-        self.assertEquals(queue._next_patch().id(), 10001)
-        self.assertEquals(queue._next_patch(), None)    # When the queue is empty
+        self.assertEqual(patch.id(), 10000)
+        self.assertEqual(queue._next_patch().id(), 10001)
+        self.assertEqual(queue._next_patch(), None)    # When the queue is empty
 
     def test_upload_results_archive_for_patch(self):
         queue = AbstractPatchQueue()
@@ -377,9 +377,9 @@ MOCK: release_work_item: commit-queue 10005
         state = {'patch': None}
         OutputCapture().assert_outputs(self, sequence.run_and_handle_errors, [tool, options, state], expected_exception=TryAgain, expected_stderr=expected_stderr)
 
-        self.assertEquals(options.update, True)
-        self.assertEquals(options.build, False)
-        self.assertEquals(options.test, False)
+        self.assertEqual(options.update, True)
+        self.assertEqual(options.build, False)
+        self.assertEqual(options.test, False)
 
     def test_manual_reject_during_processing(self):
         queue = SecondThoughtsCommitQueue(MockTool())

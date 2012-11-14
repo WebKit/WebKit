@@ -52,7 +52,7 @@ class MockFileSystemTest(unittest.TestCase, filesystem_unittest.GenericFileSyste
             else:
                 expected = good_fn(test)
                 actual = test_fn(test)
-            self.assertEquals(expected, actual, 'given %s, expected %s, got %s' % (repr(test), repr(expected), repr(actual)))
+            self.assertEqual(expected, actual, 'given %s, expected %s, got %s' % (repr(test), repr(expected), repr(actual)))
 
     def test_join(self):
         self.quick_check(self.fs.join,

@@ -67,8 +67,8 @@ class JSONCheckerTest(unittest.TestCase):
     def assert_error(self, expected_line_number, expected_category, json_data):
         def handle_style_error(mock_error_handler, line_number, category, confidence, message):
             mock_error_handler.had_error = True
-            self.assertEquals(expected_line_number, line_number)
-            self.assertEquals(expected_category, category)
+            self.assertEqual(expected_line_number, line_number)
+            self.assertEqual(expected_category, category)
             self.assertTrue(category in jsonchecker.JSONChecker.categories)
 
         error_handler = MockErrorHandler(handle_style_error)
@@ -91,7 +91,7 @@ class JSONCheckerTest(unittest.TestCase):
     def test_init(self):
         error_handler = MockErrorHandler(self.mock_handle_style_error)
         checker = jsonchecker.JSONChecker('foo.json', error_handler)
-        self.assertEquals(checker._handle_style_error, error_handler)
+        self.assertEqual(checker._handle_style_error, error_handler)
 
     def test_no_error(self):
         self.assert_no_error("""{

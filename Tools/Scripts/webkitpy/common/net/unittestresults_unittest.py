@@ -34,10 +34,10 @@ from unittestresults import UnitTestResults
 class UnitTestResultsTest(unittest.TestCase):
 
     def test_nostring(self):
-        self.assertEquals(None, UnitTestResults.results_from_string(None))
+        self.assertEqual(None, UnitTestResults.results_from_string(None))
 
     def test_emptystring(self):
-        self.assertEquals(None, UnitTestResults.results_from_string(""))
+        self.assertEqual(None, UnitTestResults.results_from_string(""))
 
     def test_nofailures(self):
         no_failures_xml = """<?xml version="1.0" encoding="UTF-8"?>
@@ -48,7 +48,7 @@ class UnitTestResultsTest(unittest.TestCase):
     <testcase name="CrashIfSettingUnsetRowIndex" status="run" time="0.123" classname="RenderTableCellDeathTest" />
   </testsuite>
 </testsuites>"""
-        self.assertEquals([], UnitTestResults.results_from_string(no_failures_xml))
+        self.assertEqual([], UnitTestResults.results_from_string(no_failures_xml))
 
     def test_onefailure(self):
         one_failure_xml = """<?xml version="1.0" encoding="UTF-8"?>
@@ -66,7 +66,7 @@ Expected: 1]]></failure>
   </testsuite>
 </testsuites>"""
         expected = ["WebFrameTest.FAILS_DivAutoZoomParamsTest"]
-        self.assertEquals(expected, UnitTestResults.results_from_string(one_failure_xml))
+        self.assertEqual(expected, UnitTestResults.results_from_string(one_failure_xml))
 
     def test_multiple_failures_per_test(self):
         multiple_failures_per_test_xml = """<?xml version="1.0" encoding="UTF-8"?>
@@ -91,7 +91,7 @@ Expected: 6.28]]></failure>
   </testsuite>
 </testsuites>"""
         expected = ["ClassOne.TestOne", "ClassTwo.TestTwo"]
-        self.assertEquals(expected, UnitTestResults.results_from_string(multiple_failures_per_test_xml))
+        self.assertEqual(expected, UnitTestResults.results_from_string(multiple_failures_per_test_xml))
 
 
 if __name__ == '__main__':

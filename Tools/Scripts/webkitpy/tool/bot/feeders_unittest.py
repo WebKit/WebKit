@@ -77,4 +77,4 @@ Feeding commit-queue items [10005, 10000]
 
         feeder = CommitQueueFeeder(MockTool())
         patches = [MockPatch(1, None), MockPatch(2, '-'), MockPatch(3, "+")]
-        self.assertEquals([patch.id for patch in feeder._patches_with_acceptable_review_flag(patches)], [1, 3])
+        self.assertEqual([patch.id for patch in feeder._patches_with_acceptable_review_flag(patches)], [1, 3])

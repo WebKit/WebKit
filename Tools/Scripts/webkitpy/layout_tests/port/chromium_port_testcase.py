@@ -51,16 +51,16 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
     def test_default_max_locked_shards(self):
         port = self.make_port()
         port.default_child_processes = lambda: 16
-        self.assertEquals(port.default_max_locked_shards(), 4)
+        self.assertEqual(port.default_max_locked_shards(), 4)
         port.default_child_processes = lambda: 2
-        self.assertEquals(port.default_max_locked_shards(), 1)
+        self.assertEqual(port.default_max_locked_shards(), 1)
 
     def test_default_timeout_ms(self):
-        self.assertEquals(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 6000)
-        self.assertEquals(self.make_port(options=MockOptions(configuration='Debug')).default_timeout_ms(), 12000)
+        self.assertEqual(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 6000)
+        self.assertEqual(self.make_port(options=MockOptions(configuration='Debug')).default_timeout_ms(), 12000)
 
     def test_default_pixel_tests(self):
-        self.assertEquals(self.make_port().default_pixel_tests(), True)
+        self.assertEqual(self.make_port().default_pixel_tests(), True)
 
     def test_missing_symbol_to_skipped_tests(self):
         # Test that we get the chromium skips and not the webkit default skips
@@ -72,7 +72,7 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
     def test_all_test_configurations(self):
         """Validate the complete set of configurations this port knows about."""
         port = self.make_port()
-        self.assertEquals(set(port.all_test_configurations()), set([
+        self.assertEqual(set(port.all_test_configurations()), set([
             TestConfiguration('icecreamsandwich', 'x86', 'debug'),
             TestConfiguration('icecreamsandwich', 'x86', 'release'),
             TestConfiguration('snowleopard', 'x86', 'debug'),
@@ -130,12 +130,12 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
     def test_default_configuration(self):
         mock_options = MockOptions()
         port = ChromiumPortTestCase.TestLinuxPort(options=mock_options)
-        self.assertEquals(mock_options.configuration, 'default')  # pylint: disable-msg=E1101
+        self.assertEqual(mock_options.configuration, 'default')  # pylint: disable-msg=E1101
         self.assertTrue(port.default_configuration_called)
 
         mock_options = MockOptions(configuration=None)
         port = ChromiumPortTestCase.TestLinuxPort(mock_options)
-        self.assertEquals(mock_options.configuration, 'default')  # pylint: disable-msg=E1101
+        self.assertEqual(mock_options.configuration, 'default')  # pylint: disable-msg=E1101
         self.assertTrue(port.default_configuration_called)
 
     def test_diff_image(self):
@@ -152,11 +152,11 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
 
         # Images are different.
         port._executive = MockExecutive2(run_command_fn=mock_run_command)
-        self.assertEquals(mock_image_diff, port.diff_image("EXPECTED", "ACTUAL")[0])
+        self.assertEqual(mock_image_diff, port.diff_image("EXPECTED", "ACTUAL")[0])
 
         # Images are the same.
         port._executive = MockExecutive2(exit_code=0)
-        self.assertEquals(None, port.diff_image("EXPECTED", "ACTUAL")[0])
+        self.assertEqual(None, port.diff_image("EXPECTED", "ACTUAL")[0])
 
         # There was some error running image_diff.
         port._executive = MockExecutive2(exit_code=2)
@@ -170,7 +170,7 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
     def test_diff_image_crashed(self):
         port = ChromiumPortTestCase.TestLinuxPort()
         port._executive = MockExecutive2(exit_code=2)
-        self.assertEquals(port.diff_image("EXPECTED", "ACTUAL"), (None, 0, 'image diff returned an exit code of 2'))
+        self.assertEqual(port.diff_image("EXPECTED", "ACTUAL"), (None, 0, 'image diff returned an exit code of 2'))
 
     def test_expectations_files(self):
         port = self.make_port()
@@ -185,15 +185,15 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
         port._filesystem.write_text_file(skia_overrides_path, 'dummay text')
 
         port._options.builder_name = 'DUMMY_BUILDER_NAME'
-        self.assertEquals(port.expectations_files(), [expectations_path, skia_overrides_path, chromium_overrides_path])
+        self.assertEqual(port.expectations_files(), [expectations_path, skia_overrides_path, chromium_overrides_path])
 
         port._options.builder_name = 'builder (deps)'
-        self.assertEquals(port.expectations_files(), [expectations_path, skia_overrides_path, chromium_overrides_path])
+        self.assertEqual(port.expectations_files(), [expectations_path, skia_overrides_path, chromium_overrides_path])
 
         # A builder which does NOT observe the Chromium test_expectations,
         # but still observes the Skia test_expectations...
         port._options.builder_name = 'builder'
-        self.assertEquals(port.expectations_files(), [expectations_path, skia_overrides_path])
+        self.assertEqual(port.expectations_files(), [expectations_path, skia_overrides_path])
 
     def test_expectations_ordering(self):
         # since we don't implement self.port_name in ChromiumPort.

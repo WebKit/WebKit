@@ -120,12 +120,12 @@ class UserTest(unittest.TestCase):
             expected, inputs = test_case
 
             def mock_raw_input(message):
-                self.assertEquals(expected[0], message)
+                self.assertEqual(expected[0], message)
                 return inputs[1]
 
             result = User().confirm(default=inputs[0],
                                     raw_input=mock_raw_input)
-            self.assertEquals(expected[1], result)
+            self.assertEqual(expected[1], result)
 
     def test_warn_if_application_is_xcode(self):
         output = OutputCapture()

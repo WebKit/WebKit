@@ -30,7 +30,7 @@ from filter import FilterConfiguration
 
 # On Testing __eq__() and __ne__():
 #
-# In the tests below, we deliberately do not use assertEquals() or
+# In the tests below, we deliberately do not use assertEqual() or
 # assertNotEquals() to test __eq__() or __ne__().  We do this to be
 # very explicit about what we are testing, especially in the case
 # of assertNotEquals().
@@ -88,17 +88,17 @@ class CategoryFilterTest(unittest.TestCase):
         """Test __init__ method."""
         # Test that the attributes are getting set correctly.
         filter = CategoryFilter(["+"])
-        self.assertEquals(["+"], filter._filter_rules)
+        self.assertEqual(["+"], filter._filter_rules)
 
     def test_init_default_arguments(self):
         """Test __init__ method default arguments."""
         filter = CategoryFilter()
-        self.assertEquals([], filter._filter_rules)
+        self.assertEqual([], filter._filter_rules)
 
     def test_str(self):
         """Test __str__ "to string" operator."""
         filter = CategoryFilter(["+a", "-b"])
-        self.assertEquals(str(filter), "+a,-b")
+        self.assertEqual(str(filter), "+a,-b")
 
     def test_eq(self):
         """Test __eq__ equality function."""
@@ -162,17 +162,17 @@ class FilterConfigurationTest(unittest.TestCase):
 
         config = self._config(base_rules, path_specific, user_rules)
 
-        self.assertEquals(base_rules, config._base_rules)
-        self.assertEquals(path_specific, config._path_specific)
-        self.assertEquals(user_rules, config._user_rules)
+        self.assertEqual(base_rules, config._base_rules)
+        self.assertEqual(path_specific, config._path_specific)
+        self.assertEqual(user_rules, config._user_rules)
 
     def test_default_arguments(self):
         # Test that the attributes are getting set correctly to the defaults.
         config = FilterConfiguration()
 
-        self.assertEquals([], config._base_rules)
-        self.assertEquals([], config._path_specific)
-        self.assertEquals([], config._user_rules)
+        self.assertEqual([], config._base_rules)
+        self.assertEqual([], config._path_specific)
+        self.assertEqual([], config._user_rules)
 
     def test_eq(self):
         """Test __eq__ method."""

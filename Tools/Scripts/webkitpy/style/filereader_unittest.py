@@ -74,14 +74,14 @@ class TextFileReaderTest(LoggingTestCase):
 
     def _assert_file_reader(self, passed_to_processor, file_count):
         """Assert the state of the file reader."""
-        self.assertEquals(passed_to_processor, self._passed_to_processor())
-        self.assertEquals(file_count, self._file_reader.file_count)
+        self.assertEqual(passed_to_processor, self._passed_to_processor())
+        self.assertEqual(file_count, self._file_reader.file_count)
 
     def test_process_file__does_not_exist(self):
         try:
             self._file_reader.process_file('does_not_exist.txt')
         except SystemExit, err:
-            self.assertEquals(str(err), '1')
+            self.assertEqual(str(err), '1')
         else:
             self.fail('No Exception raised.')
         self._assert_file_reader([], 1)
@@ -152,4 +152,4 @@ class TextFileReaderTest(LoggingTestCase):
     def test_count_delete_only_file(self):
         self._file_reader.count_delete_only_file()
         delete_only_file_count = self._file_reader.delete_only_file_count
-        self.assertEquals(delete_only_file_count, 1)
+        self.assertEqual(delete_only_file_count, 1)

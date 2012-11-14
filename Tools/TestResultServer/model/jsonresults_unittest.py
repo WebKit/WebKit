@@ -127,7 +127,7 @@ class JsonResultsTest(unittest.TestCase):
 
         if expected_data:
             expected_results = self._make_test_json(expected_data)
-            self.assertEquals(merged_results, expected_results)
+            self.assertEqual(merged_results, expected_results)
         else:
             self.assertFalse(merged_results)
 
@@ -135,7 +135,7 @@ class JsonResultsTest(unittest.TestCase):
         input_results = self._make_test_json(input_data)
         expected_results = JSON_RESULTS_TEST_LIST_TEMPLATE.replace("{[TESTDATA_TESTS]}", simplejson.dumps(expected_data, separators=(',', ':')))
         actual_results = JsonResults.get_test_list(self._builder, input_results)
-        self.assertEquals(actual_results, expected_results)
+        self.assertEqual(actual_results, expected_results)
 
     def test_merge_null_incremental_results(self):
         # Empty incremental results json.

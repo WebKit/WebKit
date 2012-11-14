@@ -72,7 +72,7 @@ class TestLogStream(object):
         messages: A list of log message strings.
 
         """
-        self._test_case.assertEquals(messages, self.messages)
+        self._test_case.assertEqual(messages, self.messages)
 
 
 class LogTesting(object):

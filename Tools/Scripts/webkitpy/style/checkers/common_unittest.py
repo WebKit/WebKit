@@ -59,12 +59,12 @@ class CarriageReturnCheckerTest(unittest.TestCase):
         output_lines = checker.check(input_lines)
 
         # Check both the return value and error messages.
-        self.assertEquals(output_lines, expected_lines)
+        self.assertEqual(output_lines, expected_lines)
 
         expected_errors = [(line_number, self._category, self._confidence,
                             self._expected_message)
                            for line_number in error_lines]
-        self.assertEquals(self._style_errors, expected_errors)
+        self.assertEqual(self._style_errors, expected_errors)
 
     def test_ends_with_carriage(self):
         self.assert_carriage_return(["carriage return\r"],
@@ -110,7 +110,7 @@ class TabCheckerTest(unittest.TestCase):
 
         checker = TabChecker('', style_error_handler)
         checker.check(input_lines)
-        self.assertEquals(self._error_lines, error_lines)
+        self.assertEqual(self._error_lines, error_lines)
 
     def test_notab(self):
         self.assert_tab([''], [])

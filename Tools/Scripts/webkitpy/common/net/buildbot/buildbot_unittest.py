@@ -232,10 +232,10 @@ class BuildBotTest(unittest.TestCase):
             builder = buildbot._parse_builder_status_from_row(status_row)
 
             # Make sure we aren't parsing more or less than we expect
-            self.assertEquals(builder.keys(), expected_parsing.keys())
+            self.assertEqual(builder.keys(), expected_parsing.keys())
 
             for key, expected_value in expected_parsing.items():
-                self.assertEquals(builder[key], expected_value, ("Builder %d parse failure for key: %s: Actual='%s' Expected='%s'" % (x, key, builder[key], expected_value)))
+                self.assertEqual(builder[key], expected_value, ("Builder %d parse failure for key: %s: Actual='%s' Expected='%s'" % (x, key, builder[key], expected_value)))
 
     def test_builder_with_name(self):
         buildbot = BuildBot()
@@ -464,7 +464,7 @@ class BuildBotTest(unittest.TestCase):
         b = Builder('builder', BuildBot())
         b._fetch_build = self._fetch_build
         b._fetch_revision_to_build_map = self._fetch_revision_to_build_map
-        self.assertEquals("correct build", b.latest_cached_build())
+        self.assertEqual("correct build", b.latest_cached_build())
 
     def results_url(self):
         return "some-url"
@@ -472,7 +472,7 @@ class BuildBotTest(unittest.TestCase):
     def test_results_zip_url(self):
         b = Build(None, 123, 123, False)
         b.results_url = self.results_url
-        self.assertEquals("some-url.zip", b.results_zip_url())
+        self.assertEqual("some-url.zip", b.results_zip_url())
 
 
 if __name__ == '__main__':

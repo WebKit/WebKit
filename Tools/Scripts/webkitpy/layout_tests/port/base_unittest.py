@@ -268,7 +268,7 @@ class PortTest(unittest.TestCase):
         port = self.make_port(port_name='foo')
         port.expectations_files = lambda: ['/mock-checkout/LayoutTests/platform/exists/TestExpectations', '/mock-checkout/LayoutTests/platform/nonexistant/TestExpectations']
         port._filesystem.write_text_file('/mock-checkout/LayoutTests/platform/exists/TestExpectations', '')
-        self.assertEquals('\n'.join(port.expectations_dict().keys()), '/mock-checkout/LayoutTests/platform/exists/TestExpectations')
+        self.assertEqual('\n'.join(port.expectations_dict().keys()), '/mock-checkout/LayoutTests/platform/exists/TestExpectations')
 
     def test_additional_expectations(self):
         port = self.make_port(port_name='foo')
@@ -279,19 +279,19 @@ class PortTest(unittest.TestCase):
         port._filesystem.write_text_file(
             '/tmp/additional-expectations-2.txt', 'content2\n')
 
-        self.assertEquals('\n'.join(port.expectations_dict().values()), '')
+        self.assertEqual('\n'.join(port.expectations_dict().values()), '')
 
         port._options.additional_expectations = [
             '/tmp/additional-expectations-1.txt']
-        self.assertEquals('\n'.join(port.expectations_dict().values()), '\ncontent1\n')
+        self.assertEqual('\n'.join(port.expectations_dict().values()), '\ncontent1\n')
 
         port._options.additional_expectations = [
             '/tmp/nonexistent-file', '/tmp/additional-expectations-1.txt']
-        self.assertEquals('\n'.join(port.expectations_dict().values()), '\ncontent1\n')
+        self.assertEqual('\n'.join(port.expectations_dict().values()), '\ncontent1\n')
 
         port._options.additional_expectations = [
             '/tmp/additional-expectations-1.txt', '/tmp/additional-expectations-2.txt']
-        self.assertEquals('\n'.join(port.expectations_dict().values()), '\ncontent1\n\ncontent2\n')
+        self.assertEqual('\n'.join(port.expectations_dict().values()), '\ncontent1\n\ncontent2\n')
 
     def test_additional_env_var(self):
         port = self.make_port(options=optparse.Values({'additional_env_var': ['FOO=BAR', 'BAR=FOO']}))

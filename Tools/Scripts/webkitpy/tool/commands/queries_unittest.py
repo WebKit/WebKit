@@ -150,12 +150,12 @@ class FailureReasonTest(unittest.TestCase):
         command = FailureReason()
         command.bind_to_tool(tool)
         # This is an artificial example, mostly to test the CommitInfo lookup failure case.
-        self.assertEquals(command._blame_line_for_revision(0), "FAILED to fetch CommitInfo for r0, likely missing ChangeLog")
+        self.assertEqual(command._blame_line_for_revision(0), "FAILED to fetch CommitInfo for r0, likely missing ChangeLog")
 
         def raising_mock(self):
             raise Exception("MESSAGE")
         tool.checkout().commit_info_for_revision = raising_mock
-        self.assertEquals(command._blame_line_for_revision(0), "FAILED to fetch CommitInfo for r0, exception: MESSAGE")
+        self.assertEqual(command._blame_line_for_revision(0), "FAILED to fetch CommitInfo for r0, exception: MESSAGE")
 
 
 class PrintExpectationsTest(unittest.TestCase):
@@ -173,7 +173,7 @@ class PrintExpectationsTest(unittest.TestCase):
             command.execute(options, tests, tool)
         finally:
             stdout, _, _ = oc.restore_output()
-        self.assertEquals(stdout, expected_stdout)
+        self.assertEqual(stdout, expected_stdout)
 
     def test_basic(self):
         self.run_test(['failures/expected/text.html', 'failures/expected/image.html'],
@@ -249,7 +249,7 @@ class PrintBaselinesTest(unittest.TestCase):
         self.capture_output()
         command.execute(MockOptions(all=False, include_virtual_tests=False, csv=False, platform=None), ['passes/text.html'], self.tool)
         stdout, _, _ = self.restore_output()
-        self.assertEquals(stdout,
+        self.assertEqual(stdout,
                           ('// For test-win-xp\n'
                            'passes/text-expected.png\n'
                            'passes/text-expected.txt\n'))
@@ -260,7 +260,7 @@ class PrintBaselinesTest(unittest.TestCase):
         self.capture_output()
         command.execute(MockOptions(all=False, include_virtual_tests=False, csv=False, platform='test-win-*'), ['passes/text.html'], self.tool)
         stdout, _, _ = self.restore_output()
-        self.assertEquals(stdout,
+        self.assertEqual(stdout,
                           ('// For test-win-vista\n'
                            'passes/text-expected.png\n'
                            'passes/text-expected.txt\n'
@@ -279,6 +279,6 @@ class PrintBaselinesTest(unittest.TestCase):
         self.capture_output()
         command.execute(MockOptions(all=False, platform='*xp', csv=True, include_virtual_tests=False), ['passes/text.html'], self.tool)
         stdout, _, _ = self.restore_output()
-        self.assertEquals(stdout,
+        self.assertEqual(stdout,
                           ('test-win-xp,passes/text.html,None,png,passes/text-expected.png,None\n'
                            'test-win-xp,passes/text.html,None,txt,passes/text-expected.txt,None\n'))

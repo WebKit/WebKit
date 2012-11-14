@@ -36,44 +36,44 @@ class DiffParserTest(unittest.TestCase):
     def test_diff_parser(self, parser = None):
         if not parser:
             parser = diff_parser.DiffParser(DIFF_TEST_DATA.splitlines())
-        self.assertEquals(3, len(parser.files))
+        self.assertEqual(3, len(parser.files))
 
         self.assertTrue('WebCore/rendering/style/StyleFlexibleBoxData.h' in parser.files)
         diff = parser.files['WebCore/rendering/style/StyleFlexibleBoxData.h']
-        self.assertEquals(7, len(diff.lines))
+        self.assertEqual(7, len(diff.lines))
         # The first two unchaged lines.
-        self.assertEquals((47, 47), diff.lines[0][0:2])
-        self.assertEquals('', diff.lines[0][2])
-        self.assertEquals((48, 48), diff.lines[1][0:2])
-        self.assertEquals('    unsigned align : 3; // EBoxAlignment', diff.lines[1][2])
+        self.assertEqual((47, 47), diff.lines[0][0:2])
+        self.assertEqual('', diff.lines[0][2])
+        self.assertEqual((48, 48), diff.lines[1][0:2])
+        self.assertEqual('    unsigned align : 3; // EBoxAlignment', diff.lines[1][2])
         # The deleted line
-        self.assertEquals((50, 0), diff.lines[3][0:2])
-        self.assertEquals('    unsigned orient: 1; // EBoxOrient', diff.lines[3][2])
+        self.assertEqual((50, 0), diff.lines[3][0:2])
+        self.assertEqual('    unsigned orient: 1; // EBoxOrient', diff.lines[3][2])
 
         # The first file looks OK. Let's check the next, more complicated file.
         self.assertTrue('WebCore/rendering/style/StyleRareInheritedData.cpp' in parser.files)
         diff = parser.files['WebCore/rendering/style/StyleRareInheritedData.cpp']
         # There are 3 chunks.
-        self.assertEquals(7 + 7 + 9, len(diff.lines))
+        self.assertEqual(7 + 7 + 9, len(diff.lines))
         # Around an added line.
-        self.assertEquals((60, 61), diff.lines[9][0:2])
-        self.assertEquals((0, 62), diff.lines[10][0:2])
-        self.assertEquals((61, 63), diff.lines[11][0:2])
+        self.assertEqual((60, 61), diff.lines[9][0:2])
+        self.assertEqual((0, 62), diff.lines[10][0:2])
+        self.assertEqual((61, 63), diff.lines[11][0:2])
         # Look through the last chunk, which contains both add's and delete's.
-        self.assertEquals((81, 83), diff.lines[14][0:2])
-        self.assertEquals((82, 84), diff.lines[15][0:2])
-        self.assertEquals((83, 85), diff.lines[16][0:2])
-        self.assertEquals((84, 0), diff.lines[17][0:2])
-        self.assertEquals((0, 86), diff.lines[18][0:2])
-        self.assertEquals((0, 87), diff.lines[19][0:2])
-        self.assertEquals((85, 88), diff.lines[20][0:2])
-        self.assertEquals((86, 89), diff.lines[21][0:2])
-        self.assertEquals((87, 90), diff.lines[22][0:2])
+        self.assertEqual((81, 83), diff.lines[14][0:2])
+        self.assertEqual((82, 84), diff.lines[15][0:2])
+        self.assertEqual((83, 85), diff.lines[16][0:2])
+        self.assertEqual((84, 0), diff.lines[17][0:2])
+        self.assertEqual((0, 86), diff.lines[18][0:2])
+        self.assertEqual((0, 87), diff.lines[19][0:2])
+        self.assertEqual((85, 88), diff.lines[20][0:2])
+        self.assertEqual((86, 89), diff.lines[21][0:2])
+        self.assertEqual((87, 90), diff.lines[22][0:2])
 
         # Check if a newly added file is correctly handled.
         diff = parser.files['LayoutTests/platform/mac/fast/flexbox/box-orient-button-expected.checksum']
-        self.assertEquals(1, len(diff.lines))
-        self.assertEquals((0, 1), diff.lines[0][0:2])
+        self.assertEqual(1, len(diff.lines))
+        self.assertEqual((0, 1), diff.lines[0][0:2])
 
     def test_git_mnemonicprefix(self):
         p = re.compile(r' ([a|b])/')

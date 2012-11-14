@@ -169,7 +169,7 @@ class GlobalVariablesTest(unittest.TestCase):
         # Also do some additional checks.
         for rule in base_filter_rules:
             # Check no leading or trailing white space.
-            self.assertEquals(rule, rule.strip())
+            self.assertEqual(rule, rule.strip())
             # All categories are on by default, so defaults should
             # begin with -.
             self.assertTrue(rule.startswith('-'))
@@ -335,8 +335,8 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
                                             handle_style_error=None,
                                             min_confidence=3)
         message = 'while checking: %s' % path
-        self.assertEquals(checker is None, is_checker_none, message)
-        self.assertEquals(self._dispatcher.should_skip_without_warning(path),
+        self.assertEqual(checker is None, is_checker_none, message)
+        self.assertEqual(self._dispatcher.should_skip_without_warning(path),
                           expected, message)
 
     def test_should_skip_without_warning__true(self):
@@ -378,7 +378,7 @@ class CheckerDispatcherCarriageReturnTest(unittest.TestCase):
 
         dispatcher = CheckerDispatcher()
         for file_path, expected_result in files.items():
-            self.assertEquals(dispatcher.should_check_and_strip_carriage_returns(file_path), expected_result, 'Checking: %s' % file_path)
+            self.assertEqual(dispatcher.should_check_and_strip_carriage_returns(file_path), expected_result, 'Checking: %s' % file_path)
 
 
 class CheckerDispatcherDispatchTest(unittest.TestCase):
@@ -403,7 +403,7 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         """Assert the type of the dispatched checker."""
         checker = self.dispatch(file_path)
         got_class = checker.__class__
-        self.assertEquals(got_class, expected_class,
+        self.assertEqual(got_class, expected_class,
                           'For path "%(file_path)s" got %(got_class)s when '
                           "expecting %(expected_class)s."
                           % {"file_path": file_path,
@@ -449,8 +449,8 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         file_path = "ChangeLog"
         self.assert_checker_changelog(file_path)
         checker = self.dispatch(file_path)
-        self.assertEquals(checker.file_path, file_path)
-        self.assertEquals(checker.handle_style_error,
+        self.assertEqual(checker.file_path, file_path)
+        self.assertEqual(checker.handle_style_error,
                           self.mock_handle_style_error)
 
     def test_cpp_paths(self):
@@ -471,18 +471,18 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         file_path = file_base + "." + file_extension
         self.assert_checker_cpp(file_path)
         checker = self.dispatch(file_path)
-        self.assertEquals(checker.file_extension, file_extension)
-        self.assertEquals(checker.file_path, file_path)
-        self.assertEquals(checker.handle_style_error, self.mock_handle_style_error)
-        self.assertEquals(checker.min_confidence, 3)
+        self.assertEqual(checker.file_extension, file_extension)
+        self.assertEqual(checker.file_path, file_path)
+        self.assertEqual(checker.handle_style_error, self.mock_handle_style_error)
+        self.assertEqual(checker.min_confidence, 3)
         # Check "-" for good measure.
         file_base = "-"
         file_extension = ""
         file_path = file_base
         self.assert_checker_cpp(file_path)
         checker = self.dispatch(file_path)
-        self.assertEquals(checker.file_extension, file_extension)
-        self.assertEquals(checker.file_path, file_path)
+        self.assertEqual(checker.file_extension, file_extension)
+        self.assertEqual(checker.file_path, file_path)
 
     def test_json_paths(self):
         """Test paths that should be checked as JSON."""
@@ -500,7 +500,7 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         file_path = file_base + "." + file_extension
         self.assert_checker_json(file_path)
         checker = self.dispatch(file_path)
-        self.assertEquals(checker._handle_style_error,
+        self.assertEqual(checker._handle_style_error,
                           self.mock_handle_style_error)
 
     def test_python_paths(self):
@@ -519,8 +519,8 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         file_path = file_base + "." + file_extension
         self.assert_checker_text(file_path)
         checker = self.dispatch(file_path)
-        self.assertEquals(checker.file_path, file_path)
-        self.assertEquals(checker.handle_style_error,
+        self.assertEqual(checker.file_path, file_path)
+        self.assertEqual(checker.handle_style_error,
                           self.mock_handle_style_error)
 
     def test_text_paths(self):
@@ -563,8 +563,8 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         file_path = file_base + "." + file_extension
         self.assert_checker_text(file_path)
         checker = self.dispatch(file_path)
-        self.assertEquals(checker.file_path, file_path)
-        self.assertEquals(checker.handle_style_error, self.mock_handle_style_error)
+        self.assertEqual(checker.file_path, file_path)
+        self.assertEqual(checker.handle_style_error, self.mock_handle_style_error)
 
     def test_xml_paths(self):
         """Test paths that should be checked as XML."""
@@ -582,7 +582,7 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
         file_path = file_base + "." + file_extension
         self.assert_checker_xml(file_path)
         checker = self.dispatch(file_path)
-        self.assertEquals(checker._handle_style_error,
+        self.assertEqual(checker._handle_style_error,
                           self.mock_handle_style_error)
 
     def test_none_paths(self):
@@ -625,10 +625,10 @@ class StyleProcessorConfigurationTest(unittest.TestCase):
         configuration = self._style_checker_configuration()
 
         # Check that __init__ sets the "public" data attributes correctly.
-        self.assertEquals(configuration.max_reports_per_category,
+        self.assertEqual(configuration.max_reports_per_category,
                           {"whitespace/newline": 1})
-        self.assertEquals(configuration.stderr_write, self._mock_stderr_write)
-        self.assertEquals(configuration.min_confidence, 3)
+        self.assertEqual(configuration.stderr_write, self._mock_stderr_write)
+        self.assertEqual(configuration.min_confidence, 3)
 
     def test_is_reportable(self):
         """Test the is_reportable() method."""
@@ -653,13 +653,13 @@ class StyleProcessorConfigurationTest(unittest.TestCase):
     def test_write_style_error_emacs(self):
         """Test the write_style_error() method."""
         self._call_write_style_error("emacs")
-        self.assertEquals(self._error_messages,
+        self.assertEqual(self._error_messages,
                           ["foo.h:100:  message  [whitespace/tab] [5]\n"])
 
     def test_write_style_error_vs7(self):
         """Test the write_style_error() method."""
         self._call_write_style_error("vs7")
-        self.assertEquals(self._error_messages,
+        self.assertEqual(self._error_messages,
                           ["foo.h(100):  message  [whitespace/tab] [5]\n"])
 
 
@@ -685,8 +685,8 @@ class StyleProcessor_EndToEndTest(LoggingTestCase):
                             stderr_write=self._mock_stderr_write)
         processor = StyleProcessor(configuration)
 
-        self.assertEquals(processor.error_count, 0)
-        self.assertEquals(self._messages, [])
+        self.assertEqual(processor.error_count, 0)
+        self.assertEqual(self._messages, [])
 
     def test_process(self):
         configuration = StyleProcessorConfiguration(
@@ -699,10 +699,10 @@ class StyleProcessor_EndToEndTest(LoggingTestCase):
 
         processor.process(lines=['line1', 'Line with tab:\t'],
                           file_path='foo.txt')
-        self.assertEquals(processor.error_count, 1)
+        self.assertEqual(processor.error_count, 1)
         expected_messages = ['foo.txt(2):  Line contains tab character.  '
                              '[whitespace/tab] [5]\n']
-        self.assertEquals(self._messages, expected_messages)
+        self.assertEqual(self._messages, expected_messages)
 
 
 class StyleProcessor_CodeCoverageTest(LoggingTestCase):
@@ -861,18 +861,18 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
         # Check that the carriage-return checker was instantiated correctly
         # and was passed lines correctly.
         carriage_checker = self.carriage_checker
-        self.assertEquals(carriage_checker.style_error_handler,
+        self.assertEqual(carriage_checker.style_error_handler,
                           expected_error_handler)
-        self.assertEquals(carriage_checker.lines, ['line1', 'line2'])
+        self.assertEqual(carriage_checker.lines, ['line1', 'line2'])
 
         # Check that the style checker was dispatched correctly and was
         # passed lines correctly.
         checker = self._mock_dispatcher.dispatched_checker
-        self.assertEquals(checker.file_path, 'foo.txt')
-        self.assertEquals(checker.min_confidence, 3)
-        self.assertEquals(checker.style_error_handler, expected_error_handler)
+        self.assertEqual(checker.file_path, 'foo.txt')
+        self.assertEqual(checker.min_confidence, 3)
+        self.assertEqual(checker.style_error_handler, expected_error_handler)
 
-        self.assertEquals(checker.lines, ['line1', 'line2'])
+        self.assertEqual(checker.lines, ['line1', 'line2'])
 
     def test_process__no_checker_dispatched(self):
         """Test the process() method for a path with no dispatched checker."""

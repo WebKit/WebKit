@@ -71,7 +71,7 @@ class TestExpectationsTestCase(unittest.TestCase):
         if port:
             self.assertTrue(port.name().startswith(expected_port_implementation))
         else:
-            self.assertEquals(None, expected_port_implementation)
+            self.assertEqual(None, expected_port_implementation)
 
     def test_determine_port_from_expectations_path(self):
         self._expect_port_for_expectations_path(None, '/')
@@ -95,7 +95,7 @@ class TestExpectationsTestCase(unittest.TestCase):
                                           self._error_collector, host=host)
 
         # We should have failed to find a valid port object for that path.
-        self.assertEquals(checker._port_obj, None)
+        self.assertEqual(checker._port_obj, None)
 
         # Now use a test port so we can check the lines.
         checker._port_obj = host.port_factory.get('test-mac-leopard')
@@ -105,7 +105,7 @@ class TestExpectationsTestCase(unittest.TestCase):
         if should_pass:
             self.assertEqual('', self._error_collector.get_errors())
         elif expected_output:
-            self.assertEquals(expected_output, self._error_collector.get_errors())
+            self.assertEqual(expected_output, self._error_collector.get_errors())
         else:
             self.assertNotEquals('', self._error_collector.get_errors())
         self.assertTrue(self._error_collector.turned_off_filtering)

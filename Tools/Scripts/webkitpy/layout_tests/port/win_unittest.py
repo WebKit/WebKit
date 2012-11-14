@@ -60,7 +60,7 @@ class WinPortTest(port_testcase.PortTestCase):
     def _assert_search_path(self, expected_search_paths, version, use_webkit2=False):
         port = self.make_port(port_name='win', os_version=version, options=MockOptions(webkit_test_runner=use_webkit2))
         absolute_search_paths = map(port._webkit_baseline_path, expected_search_paths)
-        self.assertEquals(port.baseline_search_path(), absolute_search_paths)
+        self.assertEqual(port.baseline_search_path(), absolute_search_paths)
 
     def test_baseline_search_path(self):
         self._assert_search_path(['win-xp', 'win-vista', 'win-7sp0', 'win', 'mac-lion', 'mac'], 'xp')
@@ -74,7 +74,7 @@ class WinPortTest(port_testcase.PortTestCase):
     def _assert_version(self, port_name, expected_version):
         host = MockSystemHost(os_name='win', os_version=expected_version)
         port = WinPort(host, port_name=port_name)
-        self.assertEquals(port.version(), expected_version)
+        self.assertEqual(port.version(), expected_version)
 
     def test_versions(self):
         self._assert_version('win-xp', 'xp')
@@ -100,10 +100,10 @@ class WinPortTest(port_testcase.PortTestCase):
         port = self.make_port()
         port._executive.run_command = lambda command, cwd=None, error_handler=None: "Nonsense"
         # runtime_features_list returns None when its results are meaningless (it couldn't run DRT or parse the output, etc.)
-        self.assertEquals(port._runtime_feature_list(), None)
+        self.assertEqual(port._runtime_feature_list(), None)
         port._executive.run_command = lambda command, cwd=None, error_handler=None: "SupportedFeatures:foo bar"
-        self.assertEquals(port._runtime_feature_list(), ['foo', 'bar'])
+        self.assertEqual(port._runtime_feature_list(), ['foo', 'bar'])
 
     def test_expectations_files(self):
-        self.assertEquals(len(self.make_port().expectations_files()), 2)
-        self.assertEquals(len(self.make_port(options=MockOptions(webkit_test_runner=True)).expectations_files()), 4)
+        self.assertEqual(len(self.make_port().expectations_files()), 2)
+        self.assertEqual(len(self.make_port(options=MockOptions(webkit_test_runner=True)).expectations_files()), 4)

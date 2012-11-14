@@ -115,11 +115,11 @@ class UpdateChangeLogsForRevertTest(unittest.TestCase):
         changelog.update_with_unreviewed_message(PrepareChangeLogForRevert._message_for_revert(*args))
         actual_entry = changelog.latest_entry()
         os.remove(changelog_path)
-        self.assertEquals(actual_entry.contents(), expected_entry)
-        self.assertEquals(actual_entry.reviewer_text(), None)
+        self.assertEqual(actual_entry.contents(), expected_entry)
+        self.assertEqual(actual_entry.reviewer_text(), None)
         # These checks could be removed to allow this to work on other entries:
-        self.assertEquals(actual_entry.author_name(), "Eric Seidel")
-        self.assertEquals(actual_entry.author_email(), "eric@webkit.org")
+        self.assertEqual(actual_entry.author_name(), "Eric Seidel")
+        self.assertEqual(actual_entry.author_email(), "eric@webkit.org")
 
     def test_message_for_revert(self):
         self._assert_message_for_revert_output([[12345], "Reason"], self._revert_entry_without_bug_url)

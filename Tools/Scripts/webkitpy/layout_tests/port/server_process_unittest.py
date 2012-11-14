@@ -104,23 +104,23 @@ class TestServerProcess(unittest.TestCase):
         proc = server_process.ServerProcess(port, 'python', cmd)
         proc.write('')
 
-        self.assertEquals(proc.poll(), None)
+        self.assertEqual(proc.poll(), None)
         self.assertFalse(proc.has_crashed())
 
         # check that doing a read after an expired deadline returns
         # nothing immediately.
         line = proc.read_stdout_line(now - 1)
-        self.assertEquals(line, None)
+        self.assertEqual(line, None)
 
         # FIXME: This part appears to be flaky. line should always be non-None.
         # FIXME: https://bugs.webkit.org/show_bug.cgi?id=88280
         line = proc.read_stdout_line(now + 1.0)
         if line:
-            self.assertEquals(line.strip(), "stdout")
+            self.assertEqual(line.strip(), "stdout")
 
         line = proc.read_stderr_line(now + 1.0)
         if line:
-            self.assertEquals(line.strip(), "stderr")
+            self.assertEqual(line.strip(), "stderr")
 
         proc.stop(0)
 
@@ -141,12 +141,12 @@ class TestServerProcess(unittest.TestCase):
         server_process.write("should break")
         self.assertTrue(server_process.has_crashed())
         self.assertNotEquals(server_process.pid(), None)
-        self.assertEquals(server_process._proc, None)
-        self.assertEquals(server_process.broken_pipes, [server_process.stdin])
+        self.assertEqual(server_process._proc, None)
+        self.assertEqual(server_process.broken_pipes, [server_process.stdin])
 
         port_obj.host.platform.os_name = 'mac'
         server_process = FakeServerProcess(port_obj=port_obj, name="test", cmd=["test"])
         server_process.write("should break")
         self.assertTrue(server_process.has_crashed())
-        self.assertEquals(server_process._proc, None)
-        self.assertEquals(server_process.broken_pipes, [server_process.stdin])
+        self.assertEqual(server_process._proc, None)
+        self.assertEqual(server_process.broken_pipes, [server_process.stdin])

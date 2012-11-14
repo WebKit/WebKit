@@ -115,7 +115,7 @@ class OutputCaptureTestCaseBase(unittest.TestCase):
         unittest.TestCase.tearDown(self)
 
     def assertStdout(self, expected_stdout):
-        self.assertEquals(expected_stdout, self.__captured_stdout.getvalue())
+        self.assertEqual(expected_stdout, self.__captured_stdout.getvalue())
 
     def assertStderr(self, expected_stderr):
-        self.assertEquals(expected_stderr, self.__captured_stderr.getvalue())
+        self.assertEqual(expected_stderr, self.__captured_stderr.getvalue())

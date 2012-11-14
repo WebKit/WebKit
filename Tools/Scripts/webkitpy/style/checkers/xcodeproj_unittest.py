@@ -62,7 +62,7 @@ class XcodeProjectFileCheckerTest(unittest.TestCase):
         error_handler = TestErrorHandler(handler)
         checker = xcodeproj.XcodeProjectFileChecker('', error_handler)
         checker.check(lines)
-        self.assert_(self.had_error, '%s should have error: %s.' % (lines, expected_message))
+        self.assertTrue(self.had_error, '%s should have error: %s.' % (lines, expected_message))
 
     def test_detect_development_region(self):
         self.assert_no_error(['developmentRegion = English;'])

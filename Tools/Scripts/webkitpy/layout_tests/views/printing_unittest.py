@@ -67,7 +67,7 @@ class  Testprinter(unittest.TestCase):
         self.assertTrue(stream.getvalue())
 
     def assertWritten(self, stream, contents):
-        self.assertEquals(stream.buflist, contents)
+        self.assertEqual(stream.buflist, contents)
 
     def reset(self, stream):
         stream.buflist = []
@@ -259,27 +259,27 @@ BUGX : failures/expected/timeout.html = TIMEOUT
         printer, _, _ = self.get_printer()
         printer._meter.number_of_columns = lambda: 80
         actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed')
-        self.assertEquals(80, len(actual))
-        self.assertEquals(actual, '[0/0] fast/dom/HTMLFormElement/associa...after-index-assertion-fail1.html passed')
+        self.assertEqual(80, len(actual))
+        self.assertEqual(actual, '[0/0] fast/dom/HTMLFormElement/associa...after-index-assertion-fail1.html passed')
 
         printer._meter.number_of_columns = lambda: 89
         actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed')
-        self.assertEquals(89, len(actual))
-        self.assertEquals(actual, '[0/0] fast/dom/HTMLFormElement/associated-...ents-after-index-assertion-fail1.html passed')
+        self.assertEqual(89, len(actual))
+        self.assertEqual(actual, '[0/0] fast/dom/HTMLFormElement/associated-...ents-after-index-assertion-fail1.html passed')
 
         printer._meter.number_of_columns = lambda: sys.maxint
         actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed')
-        self.assertEquals(90, len(actual))
-        self.assertEquals(actual, '[0/0] fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html passed')
+        self.assertEqual(90, len(actual))
+        self.assertEqual(actual, '[0/0] fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html passed')
 
         printer._meter.number_of_columns = lambda: 18
         actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed')
-        self.assertEquals(18, len(actual))
-        self.assertEquals(actual, '[0/0] f...l passed')
+        self.assertEqual(18, len(actual))
+        self.assertEqual(actual, '[0/0] f...l passed')
 
         printer._meter.number_of_columns = lambda: 10
         actual = printer._test_status_line('fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html', ' passed')
-        self.assertEquals(actual, '[0/0] associated-elements-after-index-assertion-fail1.html passed')
+        self.assertEqual(actual, '[0/0] associated-elements-after-index-assertion-fail1.html passed')
 
     def test_details(self):
         printer, err, _ = self.get_printer(['--details'])

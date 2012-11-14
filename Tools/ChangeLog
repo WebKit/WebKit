@@ -1,3 +1,544 @@
+2012-11-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        Remove uses of deprecated unittest.TestCase aliases
+        https://bugs.webkit.org/show_bug.cgi?id=102253
+
+        Reviewed by Dirk Pranke.
+
+        Replace the deprecated unittest.TestCase methods with the corresponding methods
+        everywhere inside the Tools directory. The following replacements are done:
+        - assertEquals -> assertEqual
+        - assert_ -> assertTrue
+        - failUnlessRaises -> assertRaises
+
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py:
+        (SVNMirrorTest.test_CheckOutSource):
+        * QueueStatusServer/model/queuepropertymixin_unittest.py:
+        (QueuePropertyMixinTest.test_queue_property):
+        * QueueStatusServer/model/queues_unittest.py:
+        (QueueTest._assert_short_name):
+        (QueueTest._assert_display_name):
+        (QueueTest._assert_name_with_underscores):
+        * QueueStatusServer/model/workitems_unittest.py:
+        (WorkItemsTest.test_display_position_for_attachment):
+        * Scripts/webkitpy/common/checkout/changelog_unittest.py:
+        (test_parse_log_entries_from_changelog):
+        (test_parse_log_entries_from_annotated_file):
+        (_assert_parse_reviewer_text_and_list):
+        (_assert_parse_reviewer_text_list):
+        (_assert_fuzzy_reviewer_match):
+        (_assert_parse_authors):
+        (test_latest_entry_parse):
+        (test_latest_entry_parse_single_entry):
+        (test_set_reviewer):
+        (test_set_short_description_and_bug_url):
+        * Scripts/webkitpy/common/checkout/diff_parser_unittest.py:
+        (DiffParserTest.test_diff_parser):
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (GitSVNTest.test_revisions_changing_files_with_local_commit):
+        (GitSVNTest.test_upstream_branch):
+        (GitSVNTest.test_create_patch_with_rm_and_changed_files):
+        (GitTestWithMock.test_push_local_commits_to_server_with_username_and_password):
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest.test_mac_port):
+        (DeprecatedPortTest.test_gtk_port):
+        (DeprecatedPortTest.test_efl_port):
+        (DeprecatedPortTest.test_qt_port):
+        (DeprecatedPortTest.test_chromium_port):
+        (DeprecatedPortTest.test_chromium_android_port):
+        (DeprecatedPortTest.test_chromium_xvfb_port):
+        * Scripts/webkitpy/common/config/urls_unittest.py:
+        (URLsTest.test_parse_bug_id):
+        (URLsTest.test_parse_attachment_id):
+        * Scripts/webkitpy/common/find_files_unittest.py:
+        (TestWinNormalize.assert_filesystem_normalizes):
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        (test_url_creation):
+        (test_parse_bug_id):
+        (_assert_dictionaries_equal):
+        (test_parse_bugs_from_xml):
+        (test_attachment_detail_bug_parsing):
+        (_assert_result_count):
+        (test_request_page_parsing):
+        (test_quip_page_parsing):
+        (EditUsersParserTest._assert_login_userid_pairs):
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (test_status_parsing):
+        (test_latest_cached_build):
+        (test_results_zip_url):
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+        (test_credentials_from_environment):
+        * Scripts/webkitpy/common/net/failuremap_unittest.py:
+        (FailureMapTest.test_failing_revisions):
+        (FailureMapTest.test_new_failures):
+        (FailureMapTest.test_new_failures_with_old_revisions):
+        (FailureMapTest.test_new_failures_with_more_old_revisions):
+        (FailureMapTest.test_tests_failing_for):
+        (FailureMapTest.test_failing_tests):
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        (LayoutTestResultsTest.test_set_failure_limit_count):
+        * Scripts/webkitpy/common/net/unittestresults_unittest.py:
+        (UnitTestResultsTest.test_nostring):
+        (UnitTestResultsTest.test_emptystring):
+        * Scripts/webkitpy/common/read_checksum_from_png_unittest.py:
+        (ReadChecksumFromPngTest.test_read_checksum):
+        * Scripts/webkitpy/common/system/deprecated_logging_unittest.py:
+        (LoggingTest.assert_log_equals):
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ScriptErrorTest.test_string_from_args):
+        (ScriptErrorTest.test_message_with_output):
+        (ExecutiveTest.test_run_command_with_bad_command):
+        (ExecutiveTest.test_run_command_with_unicode):
+        (ExecutiveTest.serial_test_run_in_parallel):
+        * Scripts/webkitpy/common/system/filesystem_mock_unittest.py:
+        (MockFileSystemTest.quick_check):
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+        (GenericFileSystemTests.test_glob__trailing_asterisk):
+        (GenericFileSystemTests.test_glob__leading_asterisk):
+        (GenericFileSystemTests.test_glob__middle_asterisk):
+        (GenericFileSystemTests.test_glob__period_is_escaped):
+        (RealFileSystemTest.test_chdir):
+        (RealFileSystemTest.test_remove_file_with_retry):
+        (RealFileSystemTest.test_sep):
+        * Scripts/webkitpy/common/system/logtesting.py:
+        (TestLogStream.assertMessages):
+        * Scripts/webkitpy/common/system/logutils_unittest.py:
+        (GetLoggerTest.test_get_logger_in_webkitpy):
+        (GetLoggerTest.test_get_logger_not_in_webkitpy):
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        (OutputCaptureTestCaseBase.assertStdout):
+        (OutputCaptureTestCaseBase.assertStderr):
+        * Scripts/webkitpy/common/system/path_unittest.py:
+        (AbspathTest.test_abspath_to_uri_cygwin):
+        (AbspathTest.test_abspath_to_uri_unixy):
+        (AbspathTest.test_abspath_to_uri_win):
+        (AbspathTest.test_abspath_to_uri_escaping_unixy):
+        (AbspathTest.test_abspath_to_uri_escaping_cygwin):
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (TestPlatformInfo.test_real_code):
+        (TestPlatformInfo.test_os_name_and_wrappers):
+        (TestPlatformInfo.test_os_version):
+        (TestPlatformInfo.test_total_bytes_memory):
+        * Scripts/webkitpy/common/system/user_unittest.py:
+        (UserTest.test_confirm.mock_raw_input):
+        (UserTest.test_confirm):
+        * Scripts/webkitpy/common/system/zipfileset_unittest.py:
+        (ZipFileSetTest.test_open):
+        (ZipFileSetTest.test_read):
+        * Scripts/webkitpy/common/watchlist/watchlist_unittest.py:
+        (WatchListTest.test_filename_definition_no_matches):
+        (WatchListTest.test_filename_definition):
+        (WatchListTest.test_cc_rules_simple):
+        (WatchListTest.test_cc_rules_complex):
+        (WatchListTest.test_cc_and_message_rules_complex):
+        (WatchListTest.test_cc_and_message_rules_no_matches):
+        (WatchListTest.test_added_match):
+        (WatchListTest.test_deleted_match):
+        (WatchListTest.test_more_and_less_match):
+        (WatchListTest.test_complex_match):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (LockCheckingRunner.handle_finished_list):
+        (LayoutTestRunnerTests.test_interrupt_if_at_failure_limits):
+        (LayoutTestRunnerTests.test_update_summary_with_result):
+        (LayoutTestRunnerTests.test_servers_started):
+        (SharderTests.assert_shards):
+        (SharderTests.test_shard_in_two_has_no_locked_shards):
+        (SharderTests.test_shard_in_two_has_no_unlocked_shards):
+        (NaturalCompareTest.assert_cmp):
+        (KeyCompareTest.assert_cmp):
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py:
+        (TestConfigurationTest.test_items):
+        (TestConfigurationTest.test_keys):
+        (TestConfigurationTest.test_str):
+        (TestConfigurationTest.test_repr):
+        (TestConfigurationTest.test_hash):
+        (TestConfigurationTest.test_eq):
+        (TestConfigurationTest.test_values):
+        (SpecifierSorterTest.test_init):
+        (SpecifierSorterTest.test_add_specifier):
+        (SpecifierSorterTest.test_add_macros):
+        (SpecifierSorterTest.test_category_priority):
+        (SpecifierSorterTest.test_specifier_priority):
+        (SpecifierSorterTest.test_sort_specifiers):
+        (TestConfigurationConverterTest.test_symmetric_difference):
+        (TestConfigurationConverterTest.test_to_config_set):
+        (TestConfigurationConverterTest.test_macro_expansion):
+        (TestConfigurationConverterTest.test_to_specifier_lists):
+        (TestConfigurationConverterTest.test_macro_collapsing):
+        (TestConfigurationConverterTest.test_converter_macro_collapsing):
+        (TestConfigurationConverterTest.test_specifier_converter_access):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (assert_exp):
+        (MiscTests.test_result_was_expected):
+        (MiscTests.test_remove_pixel_failures):
+        (MiscTests.test_suffixes_for_expectations):
+        (MiscTests.test_get_expectations_string):
+        (SkippedTests.check):
+        (ExpectationSyntaxTests.assert_tokenize_exp):
+        (SemanticTests.test_bad_bugid):
+        (SemanticTests.test_missing_bugid):
+        (TestExpectationSerializationTests.test_reconstitute_only_these):
+        * Scripts/webkitpy/layout_tests/models/test_failures_unittest.py:
+        (TestFailuresTest.test_crashes):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_nonexistant_expectations):
+        (PortTest.test_additional_expectations):
+        * Scripts/webkitpy/layout_tests/port/builders_unittest.py:
+        (BuildersTest.test_path_from_name):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidPortTest.test_attributes):
+        (ChromiumAndroidPortTest.test_default_timeout_ms):
+        (ChromiumAndroidPortTest.test_get_devices_one_device):
+        (ChromiumAndroidPortTest.test_get_devices_two_devices):
+        (ChromiumAndroidPortTest.test_get_device_serial_one_device):
+        (ChromiumAndroidPortTest.test_get_device_serial_two_devices):
+        (ChromiumAndroidPortTest.test_must_require_http_server):
+        (ChromiumAndroidDriverTest.test_get_last_stacktrace):
+        (ChromiumAndroidDriverTest.test_get_crash_log):
+        (ChromiumAndroidDriverTest.test_cmd_line):
+        (ChromiumAndroidDriverTest.test_read_prompt):
+        (ChromiumAndroidDriverTest.test_command_from_driver_input):
+        (ChromiumAndroidDriverTwoDriversTest.test_two_drivers):
+        (ChromiumAndroidTwoPortsTest.test_options_with_two_ports):
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+        (ChromiumLinuxPortTest.assert_architecture):
+        (ChromiumLinuxPortTest.test_determine_architecture_fails):
+        (ChromiumLinuxPortTest.test_path_to_image_diff):
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        (ChromiumMacPortTest.assert_name):
+        (ChromiumMacPortTest.test_baseline_path):
+        (ChromiumMacPortTest.test_path_to_image_diff):
+        * Scripts/webkitpy/layout_tests/port/chromium_port_testcase.py:
+        (ChromiumPortTestCase.test_default_max_locked_shards):
+        (ChromiumPortTestCase.test_default_timeout_ms):
+        (ChromiumPortTestCase.test_default_pixel_tests):
+        (ChromiumPortTestCase.test_all_test_configurations):
+        (ChromiumPortTestCase.test_default_configuration):
+        (ChromiumPortTestCase.test_diff_image):
+        (ChromiumPortTestCase.test_diff_image_crashed):
+        (ChromiumPortTestCase.test_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinTest.test_setup_environ_for_server_cygpath):
+        (ChromiumWinTest.assert_name):
+        (ChromiumWinTest.test_baseline_path):
+        (ChromiumWinTest.test_path_to_image_diff):
+        * Scripts/webkitpy/layout_tests/port/driver_unittest.py:
+        (DriverTest.test_read_block):
+        (DriverTest.test_read_binary_block):
+        (DriverTest.test_read_base64_block):
+        (DriverTest.test_no_timeout):
+        (DriverTest.test_check_for_driver_crash.assert_crash):
+        (DriverTest.test_creating_a_port_does_not_write_to_the_filesystem):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.test_get_from_builder_name):
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        (GtkPortTest.test_default_timeout_ms):
+        * Scripts/webkitpy/layout_tests/port/http_lock_unittest.py:
+        (HttpLockTest.test_current_lock_pid):
+        * Scripts/webkitpy/layout_tests/port/image_diff_unittest.py:
+        (TestImageDiffer.test_diff_image_failed):
+        (TestImageDiffer.test_diff_image_passed):
+        * Scripts/webkitpy/layout_tests/port/leakdetector_unittest.py:
+        (LeakDetectorTest.test_leaks_args):
+        (test_parse_leaks_output):
+        (test_leaks_files_in_directory):
+        (test_count_total_leaks):
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (MacTest.test_default_timeout_ms):
+        (assert_name):
+        (test_setup_environ_for_server):
+        (_assert_search_path):
+        (test_32bit):
+        (test_64bit):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockTestShellTest.test_pixeltest__fails):
+        (MockTestShellTest.test_test_shell_parse_options):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_default_max_locked_shards):
+        (PortTestCase.test_default_timeout_ms):
+        (PortTestCase.test_default_pixel_tests):
+        (PortTestCase.test_diff_image):
+        (PortTestCase.test_diff_image_crashed):
+        (PortTestCase.test_get_crash_log):
+        (PortTestCase.assert_build_path):
+        (PortTestCase.test_expectations_ordering):
+        (_assert_config_file_for_platform):
+        (test_path_to_apache_config_file):
+        (test_additional_platform_directory):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest._assert_search_path):
+        (QtPortTest._assert_expectations_files):
+        (QtPortTest.test_setup_environ_for_server):
+        * Scripts/webkitpy/layout_tests/port/server_process_unittest.py:
+        (TestServerProcess.test_basic):
+        (TestServerProcess.test_broken_pipe):
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (WinPortTest._assert_search_path):
+        (WinPortTest._assert_version):
+        (WinPortTest.test_runtime_feature_list):
+        (WinPortTest.test_expectations_files):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (LintTest.test_all_configurations):
+        (MainTest.test_all):
+        (MainTest.test_repeat_each):
+        (MainTest.test_skipped_flag):
+        (MainTest.test_iterations):
+        (MainTest.test_run_chunk):
+        (MainTest.test_run_part):
+        (MainTest.test_run_singly):
+        (MainTest.test_run_singly_actually_runs_tests):
+        (MainTest.test_single_file):
+        (MainTest.test_single_file_with_prefix):
+        (MainTest.test_single_skipped_file):
+        (MainTest.test_stderr_is_saved):
+        (MainTest.test_test_list):
+        (MainTest.test_test_list_with_prefix):
+        (MainTest.test_missing_and_unexpected_results):
+        (MainTest.test_pixel_test_directories):
+        (MainTest.test_missing_and_unexpected_results_with_custom_exit_code):
+        (MainTest.test_crash_log):
+        (MainTest.test_web_process_crash_log):
+        (MainTest.test_exit_after_n_failures_upload):
+        (MainTest.test_exit_after_n_failures):
+        (MainTest.test_exit_after_n_crashes):
+        (MainTest.test_retrying_and_flaky_tests):
+        (MainTest.test_run_order__inline):
+        (MainTest.test_reftest_run):
+        (MainTest.test_reftest_run_reftests_if_pixel_tests_are_disabled):
+        (MainTest.test_reftest_skip_reftests_if_no_ref_tests):
+        (MainTest.test_reftest_expected_html_should_be_ignored):
+        (MainTest.test_reftest_driver_should_run_expected_html):
+        (MainTest.test_reftest_driver_should_run_expected_mismatch_html):
+        (MainTest.test_output_diffs):
+        (MainTest.test_unsupported_platform):
+        (EndToEndTest.test_end_to_end):
+        (RebaselineTest.test_reset_results):
+        (RebaselineTest.test_missing_results):
+        (RebaselineTest.test_new_baseline):
+        * Scripts/webkitpy/layout_tests/servers/http_server_integrationtest.py:
+        (BaseTest.integration_test_server__normal):
+        (BaseTest.integration_test_server__fails):
+        (BaseTest.integration_test_port_and_root):
+        * Scripts/webkitpy/layout_tests/servers/http_server_unittest.py:
+        (TestHttpServer.test_start_cmd):
+        * Scripts/webkitpy/layout_tests/views/metered_stream_unittest.py:
+        (RegularTest.test_logging_not_included):
+        (RegularTest._basic):
+        (RegularTest.test_basic):
+        (RegularTest.test_log_after_update):
+        (RegularTest.test_log_args):
+        (TtyTest.test_basic):
+        (TtyTest.test_log_after_update):
+        (VerboseTest.test_basic):
+        (VerboseTest.test_log_after_update):
+        (VerboseTest.test_log_args):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.assertWritten):
+        (test_test_status_line):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.assertWritten):
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (GlobalVariablesTest.test_webkit_base_filter_rules):
+        (CheckerDispatcherSkipTest._assert_should_skip_without_warning):
+        (CheckerDispatcherCarriageReturnTest.test_should_check_and_strip_carriage_returns):
+        (CheckerDispatcherDispatchTest.assert_checker):
+        (CheckerDispatcherDispatchTest.test_changelog_paths):
+        (CheckerDispatcherDispatchTest.test_cpp_paths):
+        (CheckerDispatcherDispatchTest.test_json_paths):
+        (CheckerDispatcherDispatchTest.test_python_paths):
+        (CheckerDispatcherDispatchTest.test_text_paths):
+        (CheckerDispatcherDispatchTest.test_xml_paths):
+        (StyleProcessorConfigurationTest.test_init):
+        (StyleProcessorConfigurationTest.test_write_style_error_emacs):
+        (StyleProcessorConfigurationTest.test_write_style_error_vs7):
+        (StyleProcessor_EndToEndTest.test_init):
+        (StyleProcessor_EndToEndTest.test_process):
+        (StyleProcessor_CodeCoverageTest.test_process__checker_dispatched):
+        * Scripts/webkitpy/style/checkers/changelog_unittest.py:
+        (ChangeLogCheckerTest.assert_error.handle_style_error):
+        (ChangeLogCheckerTest.test_init):
+        * Scripts/webkitpy/style/checkers/common_unittest.py:
+        (CarriageReturnCheckerTest.assert_carriage_return):
+        (TabCheckerTest.assert_tab):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppFunctionsTest.test_convert_to_lower_with_underscores):
+        (CppFunctionsTest.test_create_acronym):
+        (CppFunctionsTest.test_parameter):
+        (CppFunctionsTest.test_single_line_view):
+        (CppFunctionsTest.test_create_skeleton_parameters):
+        (CppFunctionsTest.test_find_parameter_name_index):
+        (CppFunctionsTest.test_parameter_list):
+        (CppFunctionsTest.test_check_parameter_against_text):
+        (CppStyleTestBase.perform_lint):
+        (CppStyleTestBase.assert_lint):
+        (CppStyleTestBase.assert_lint_one_of_many_errors_re):
+        (CppStyleTestBase.assert_multi_line_lint):
+        (CppStyleTestBase.assert_language_rules_check):
+        (CppStyleTestBase.assert_include_what_you_use):
+        (CppStyleTestBase.assert_blank_lines_check):
+        (CppStyleTestBase.assert_positions_equal):
+        (FunctionDetectionTest.perform_function_detection):
+        (CppStyleTest.test_get_line_width):
+        (CppStyleTest.test_find_next_multi_line_comment_start):
+        (CppStyleTest.test_find_next_multi_line_comment_end):
+        (CppStyleTest.test_remove_multi_line_comments_from_range):
+        (CppStyleTest.test_position):
+        (CppStyleTest.test_rfind_in_lines):
+        (CppStyleTest.test_close_expression):
+        (CppStyleTest.test_include_what_you_use_no_implementation_files):
+        (CppStyleTest.test_include_what_you_use):
+        (CppStyleTest.test_files_belong_to_same_module):
+        (CppStyleTest.test_cleanse_line):
+        (CppStyleTest.test_multiline_strings):
+        (CppStyleTest.test_newline_at_eof.do_test):
+        (CppStyleTest.test_invalid_utf8.do_test):
+        (CppStyleTest.test_is_blank_line):
+        (CppStyleTest.test_allow_blank_line_before_closing_namespace):
+        (CppStyleTest.test_allow_blank_line_before_if_else_chain):
+        (CppStyleTest.test_else_on_same_line_as_closing_braces):
+        (CppStyleTest.test_build_header_guard):
+        (CppStyleTest.test_legal_copyright):
+        (CleansedLinesTest.test_init):
+        (CleansedLinesTest.test_init_empty):
+        (CleansedLinesTest.test_collapse_strings):
+        (CheckForFunctionLengthsTest.assert_function_lengths_check):
+        (PassPtrTest.assert_pass_ptr_check):
+        (LeakyPatternTest.assert_leaky_pattern_check):
+        (WebKitStyleTest.test_parameter_names):
+        (WebKitStyleTest.test_webkit_export_check):
+        (CppCheckerTest.test_init):
+        * Scripts/webkitpy/style/checkers/jsonchecker_unittest.py:
+        (JSONCheckerTest.assert_error.handle_style_error):
+        (JSONCheckerTest.test_init):
+        * Scripts/webkitpy/style/checkers/png_unittest.py:
+        (PNGCheckerTest.test_init):
+        (PNGCheckerTest.test_check):
+        * Scripts/webkitpy/style/checkers/python_unittest.py:
+        (PythonCheckerTest.test_init):
+        (PythonCheckerTest.test_check):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase._expect_port_for_expectations_path):
+        (TestExpectationsTestCase.assert_lines_lint):
+        * Scripts/webkitpy/style/checkers/text_unittest.py:
+        (TextStyleTestCase.assertNoError):
+        (TextStyleTestCase.assertError.error_for_test):
+        (TextStyleTestCase.assertError):
+        (TextCheckerTest.test_init):
+        * Scripts/webkitpy/style/checkers/watchlist_unittest.py:
+        (WatchListTest.test_basic_error_message.handle_style_error):
+        (WatchListTest):
+        * Scripts/webkitpy/style/checkers/xcodeproj_unittest.py:
+        (XcodeProjectFileCheckerTest.assert_error):
+        * Scripts/webkitpy/style/checkers/xml_unittest.py:
+        (XMLCheckerTest.assert_error.handle_style_error):
+        (XMLCheckerTest.test_init):
+        * Scripts/webkitpy/style/error_handlers_unittest.py:
+        (DefaultStyleErrorHandlerTest._check_initialized):
+        (DefaultStyleErrorHandlerTest.test_non_reportable_error):
+        (DefaultStyleErrorHandlerTest.test_max_reports_per_category):
+        (DefaultStyleErrorHandlerTest.test_line_numbers):
+        * Scripts/webkitpy/style/filereader_unittest.py:
+        (TextFileReaderTest._assert_file_reader):
+        (TextFileReaderTest.test_process_file__does_not_exist):
+        (TextFileReaderTest.test_count_delete_only_file):
+        * Scripts/webkitpy/style/filter_unittest.py:
+        (CategoryFilterTest.test_init):
+        (CategoryFilterTest.test_init_default_arguments):
+        (CategoryFilterTest.test_str):
+        (FilterConfigurationTest.test_init):
+        (FilterConfigurationTest.test_default_arguments):
+        * Scripts/webkitpy/style/main_unittest.py:
+        (ChangeDirectoryTest._assert_result):
+        * Scripts/webkitpy/style/optparser_unittest.py:
+        (ArgumentPrinterTest.test_to_flag_string):
+        (ArgumentParserTest.test_parse_default_arguments):
+        (ArgumentParserTest.test_parse_explicit_arguments):
+        (ArgumentParserTest.test_parse_files):
+        (CommandOptionValuesTest.test_init):
+        * Scripts/webkitpy/style/patchreader_unittest.py:
+        (PatchReaderTest._assert_checked):
+        * Scripts/webkitpy/test/finder_unittest.py:
+        (FinderTest.test_additional_system_paths):
+        (FinderTest.test_to_module):
+        (FinderTest.check_names):
+        * Scripts/webkitpy/test/main_unittest.py:
+        (TesterTest.test_individual_names_are_not_run_twice):
+        (TesterTest.test_integration_tests_are_not_found_by_default):
+        (TesterTest.test_integration_tests_are_found):
+        (TesterTest.integration_test_coverage_works):
+        * Scripts/webkitpy/test/runner_unittest.py:
+        (RunnerTest.test_run):
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (_expect_validate):
+        * Scripts/webkitpy/tool/bot/expectedfailures_unittest.py:
+        (ExpectedFailuresTest._assert_can_trust):
+        (ExpectedFailuresTest.test_unexpected_failures_observed):
+        (ExpectedFailuresTest.test_unexpected_failures_observed_when_tree_is_hosed):
+        * Scripts/webkitpy/tool/bot/feeders_unittest.py:
+        (test_patches_with_acceptable_review_flag):
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_whois):
+        (IRCCommandTest.test_create_bug):
+        (IRCCommandTest.test_roll_chromium_deps):
+        (IRCCommandTest.test_rollout):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        (LayoutTestResultsReaderTest.test_missing_layout_test_results):
+        (test_missing_unit_test_results_path):
+        (test_layout_test_results):
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+        (LoggingDelegate.process_work_item):
+        (LoggingDelegate.handle_unexpected_error):
+        (QueueEngineTest.test_trivial):
+        (QueueEngineTest.test_unexpected_error):
+        (QueueEngineTest.test_handled_error):
+        (QueueEngineTest._test_terminating_queue):
+        * Scripts/webkitpy/tool/commands/openbugs_unittest.py:
+        (OpenBugsTest.test_find_bugs_in_string):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (FailureReasonTest.test_blame_line_for_revision):
+        (PrintExpectationsTest.run_test):
+        (PrintBaselinesTest.test_basic):
+        (PrintBaselinesTest.test_multiple):
+        (PrintBaselinesTest.test_csv):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (AbstractQueueTest.test_log_directory):
+        (AbstractPatchQueueTest.test_next_patch):
+        (test_auto_retry):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (test_rebaseline_updates_expectations_file):
+        (test_rebaseline_does_not_include_overrides):
+        (test_rebaseline_test):
+        (test_rebaseline_test_with_results_directory):
+        (test_rebaseline_test_and_print_scm_changes):
+        (test_rebaseline_and_copy_test):
+        (test_rebaseline_and_copy_test_no_existing_result):
+        (test_rebaseline_and_copy_test_with_lion_result):
+        (test_rebaseline_and_copy_no_overwrite_test):
+        (test_rebaseline_test_internal_with_move_overwritten_baselines_to):
+        (TestRebaselineJson.test_rebaseline_all):
+        (TestRebaselineJson.test_rebaseline_debug):
+        (TestRebaselineJson.test_move_overwritten):
+        (TestRebaselineJson.test_no_optimize):
+        (TestRebaselineJson.test_results_directory):
+        (TestRebaseline.test_rebaseline):
+        (TestRebaselineExpectations.test_rebaseline_expectations_noop):
+        (TestRebaselineExpectations.disabled_test_overrides_are_included_correctly):
+        (TestAnalyzeBaselines.test_default):
+        (TestAnalyzeBaselines.test_missing_baselines):
+        * Scripts/webkitpy/tool/commands/roll_unittest.py:
+        (PostRollCommandsTest.test_prepare_state):
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+        (BuildCoverageExtrapolatorTest.test_extrapolate):
+        * Scripts/webkitpy/tool/steps/addsvnmimetypeforpng_unittest.py:
+        (AddSvnMimetypeForPngTest.test_run):
+        * Scripts/webkitpy/tool/steps/preparechangelog_unittest.py:
+        (PrepareChangeLogTest.test_ensure_bug_url):
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert_unittest.py:
+        (_assert_message_for_revert_output):
+        * TestResultServer/model/jsonresults_unittest.py:
+        (JsonResultsTest._test_merge):
+        (JsonResultsTest._test_get_test_list):
+
 2012-11-14  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt][ARM] Fix 'nullptr' is a keyword in C++11 [-Wc++0x-compat] warning

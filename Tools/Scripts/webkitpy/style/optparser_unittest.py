@@ -49,14 +49,14 @@ class ArgumentPrinterTest(unittest.TestCase):
 
     def test_to_flag_string(self):
         options = self._create_options('vs7', 5, ['+foo', '-bar'], 'git')
-        self.assertEquals('--filter=+foo,-bar --git-commit=git '
+        self.assertEqual('--filter=+foo,-bar --git-commit=git '
                           '--min-confidence=5 --output=vs7',
                           self._printer.to_flag_string(options))
 
         # This is to check that --filter and --git-commit do not
         # show up when not user-specified.
         options = self._create_options()
-        self.assertEquals('--min-confidence=3 --output=emacs',
+        self.assertEqual('--min-confidence=3 --output=emacs',
                           self._printer.to_flag_string(options))
 
 
@@ -142,53 +142,53 @@ class ArgumentParserTest(LoggingTestCase):
 
         (files, options) = parse([])
 
-        self.assertEquals(files, [])
+        self.assertEqual(files, [])
 
-        self.assertEquals(options.filter_rules, [])
-        self.assertEquals(options.git_commit, None)
-        self.assertEquals(options.diff_files, False)
-        self.assertEquals(options.is_verbose, False)
-        self.assertEquals(options.min_confidence, 3)
-        self.assertEquals(options.output_format, 'vs7')
+        self.assertEqual(options.filter_rules, [])
+        self.assertEqual(options.git_commit, None)
+        self.assertEqual(options.diff_files, False)
+        self.assertEqual(options.is_verbose, False)
+        self.assertEqual(options.min_confidence, 3)
+        self.assertEqual(options.output_format, 'vs7')
 
     def test_parse_explicit_arguments(self):
         parse = self._parse
 
         # Pass non-default explicit values.
         (files, options) = parse(['--min-confidence=4'])
-        self.assertEquals(options.min_confidence, 4)
+        self.assertEqual(options.min_confidence, 4)
         (files, options) = parse(['--output=emacs'])
-        self.assertEquals(options.output_format, 'emacs')
+        self.assertEqual(options.output_format, 'emacs')
         (files, options) = parse(['-g', 'commit'])
-        self.assertEquals(options.git_commit, 'commit')
+        self.assertEqual(options.git_commit, 'commit')
         (files, options) = parse(['--git-commit=commit'])
-        self.assertEquals(options.git_commit, 'commit')
+        self.assertEqual(options.git_commit, 'commit')
         (files, options) = parse(['--git-diff=commit'])
-        self.assertEquals(options.git_commit, 'commit')
+        self.assertEqual(options.git_commit, 'commit')
         (files, options) = parse(['--verbose'])
-        self.assertEquals(options.is_verbose, True)
+        self.assertEqual(options.is_verbose, True)
         (files, options) = parse(['--diff-files', 'file.txt'])
-        self.assertEquals(options.diff_files, True)
+        self.assertEqual(options.diff_files, True)
 
         # Pass user_rules.
         (files, options) = parse(['--filter=+build,-whitespace'])
-        self.assertEquals(options.filter_rules,
+        self.assertEqual(options.filter_rules,
                           ["+build", "-whitespace"])
 
         # Pass spurious white space in user rules.
         (files, options) = parse(['--filter=+build, -whitespace'])
-        self.assertEquals(options.filter_rules,
+        self.assertEqual(options.filter_rules,
                           ["+build", "-whitespace"])
 
     def test_parse_files(self):
         parse = self._parse
 
         (files, options) = parse(['foo.cpp'])
-        self.assertEquals(files, ['foo.cpp'])
+        self.assertEqual(files, ['foo.cpp'])
 
         # Pass multiple files.
         (files, options) = parse(['--output=emacs', 'foo.cpp', 'bar.cpp'])
-        self.assertEquals(files, ['foo.cpp', 'bar.cpp'])
+        self.assertEqual(files, ['foo.cpp', 'bar.cpp'])
 
 
 class CommandOptionValuesTest(unittest.TestCase):
@@ -199,11 +199,11 @@ class CommandOptionValuesTest(unittest.TestCase):
         """Test __init__ constructor."""
         # Check default parameters.
         options = ProcessorOptions()
-        self.assertEquals(options.filter_rules, [])
-        self.assertEquals(options.git_commit, None)
-        self.assertEquals(options.is_verbose, False)
-        self.assertEquals(options.min_confidence, 1)
-        self.assertEquals(options.output_format, "emacs")
+        self.assertEqual(options.filter_rules, [])
+        self.assertEqual(options.git_commit, None)
+        self.assertEqual(options.is_verbose, False)
+        self.assertEqual(options.min_confidence, 1)
+        self.assertEqual(options.output_format, "emacs")
 
         # Check argument validation.
         self.assertRaises(ValueError, ProcessorOptions, output_format="bad")
@@ -220,11 +220,11 @@ class CommandOptionValuesTest(unittest.TestCase):
                                    is_verbose=True,
                                    min_confidence=3,
                                    output_format="vs7")
-        self.assertEquals(options.filter_rules, ["+"])
-        self.assertEquals(options.git_commit, "commit")
-        self.assertEquals(options.is_verbose, True)
-        self.assertEquals(options.min_confidence, 3)
-        self.assertEquals(options.output_format, "vs7")
+        self.assertEqual(options.filter_rules, ["+"])
+        self.assertEqual(options.git_commit, "commit")
+        self.assertEqual(options.is_verbose, True)
+        self.assertEqual(options.min_confidence, 3)
+        self.assertEqual(options.output_format, "vs7")
 
     def test_eq(self):
         """Test __eq__ equality function."""

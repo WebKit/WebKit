@@ -47,7 +47,7 @@ class MacTest(port_testcase.PortTestCase):
 
     def test_default_timeout_ms(self):
         super(MacTest, self).test_default_timeout_ms()
-        self.assertEquals(self.make_port(options=MockOptions(guard_malloc=True)).default_timeout_ms(), 350000)
+        self.assertEqual(self.make_port(options=MockOptions(guard_malloc=True)).default_timeout_ms(), 350000)
 
 
     example_skipped_file = u"""
@@ -77,7 +77,7 @@ java/
     def assert_name(self, port_name, os_version_string, expected):
         host = MockSystemHost(os_name='mac', os_version=os_version_string)
         port = self.make_port(host=host, port_name=port_name)
-        self.assertEquals(expected, port.name())
+        self.assertEqual(expected, port.name())
 
     def test_tests_for_other_platforms(self):
         platforms = ['mac', 'chromium-linux', 'mac-snowleopard']
@@ -115,14 +115,14 @@ java/
     def test_setup_environ_for_server(self):
         port = self.make_port(options=MockOptions(leaks=True, guard_malloc=True))
         env = port.setup_environ_for_server(port.driver_name())
-        self.assertEquals(env['MallocStackLogging'], '1')
-        self.assertEquals(env['DYLD_INSERT_LIBRARIES'], '/usr/lib/libgmalloc.dylib')
+        self.assertEqual(env['MallocStackLogging'], '1')
+        self.assertEqual(env['DYLD_INSERT_LIBRARIES'], '/usr/lib/libgmalloc.dylib')
 
     def _assert_search_path(self, port_name, baseline_path, search_paths, use_webkit2=False):
         port = self.make_port(port_name=port_name, options=MockOptions(webkit_test_runner=use_webkit2))
         absolute_search_paths = map(port._webkit_baseline_path, search_paths)
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path(baseline_path))
-        self.assertEquals(port.baseline_search_path(), absolute_search_paths)
+        self.assertEqual(port.baseline_path(), port._webkit_baseline_path(baseline_path))
+        self.assertEqual(port.baseline_search_path(), absolute_search_paths)
 
     def test_baseline_search_path(self):
         # Note that we don't need total coverage here, just path coverage, since this is all data driven.
@@ -240,18 +240,18 @@ java/
             self.args = args
 
         port._run_script = run_script
-        self.assertEquals(port.architecture(), 'x86')
+        self.assertEqual(port.architecture(), 'x86')
         port._build_driver()
-        self.assertEquals(self.args, ['ARCHS=i386'])
+        self.assertEqual(self.args, ['ARCHS=i386'])
 
     def test_64bit(self):
         # Apple Mac port is 64-bit by default
         port = self.make_port()
-        self.assertEquals(port.architecture(), 'x86_64')
+        self.assertEqual(port.architecture(), 'x86_64')
 
         def run_script(script, args=None, env=None):
             self.args = args
 
         port._run_script = run_script
         port._build_driver()
-        self.assertEquals(self.args, [])
+        self.assertEqual(self.args, [])

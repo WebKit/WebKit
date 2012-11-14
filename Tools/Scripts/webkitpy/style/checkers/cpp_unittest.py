@@ -116,17 +116,17 @@ class CppFunctionsTest(unittest.TestCase):
     """Supports testing functions that do not need CppStyleTestBase."""
 
     def test_convert_to_lower_with_underscores(self):
-        self.assertEquals(cpp_style._convert_to_lower_with_underscores('ABC'), 'abc')
-        self.assertEquals(cpp_style._convert_to_lower_with_underscores('aB'), 'a_b')
-        self.assertEquals(cpp_style._convert_to_lower_with_underscores('isAName'), 'is_a_name')
-        self.assertEquals(cpp_style._convert_to_lower_with_underscores('AnotherTest'), 'another_test')
-        self.assertEquals(cpp_style._convert_to_lower_with_underscores('PassRefPtr<MyClass>'), 'pass_ref_ptr<my_class>')
-        self.assertEquals(cpp_style._convert_to_lower_with_underscores('_ABC'), '_abc')
+        self.assertEqual(cpp_style._convert_to_lower_with_underscores('ABC'), 'abc')
+        self.assertEqual(cpp_style._convert_to_lower_with_underscores('aB'), 'a_b')
+        self.assertEqual(cpp_style._convert_to_lower_with_underscores('isAName'), 'is_a_name')
+        self.assertEqual(cpp_style._convert_to_lower_with_underscores('AnotherTest'), 'another_test')
+        self.assertEqual(cpp_style._convert_to_lower_with_underscores('PassRefPtr<MyClass>'), 'pass_ref_ptr<my_class>')
+        self.assertEqual(cpp_style._convert_to_lower_with_underscores('_ABC'), '_abc')
 
     def test_create_acronym(self):
-        self.assertEquals(cpp_style._create_acronym('ABC'), 'ABC')
-        self.assertEquals(cpp_style._create_acronym('IsAName'), 'IAN')
-        self.assertEquals(cpp_style._create_acronym('PassRefPtr<MyClass>'), 'PRP<MC>')
+        self.assertEqual(cpp_style._create_acronym('ABC'), 'ABC')
+        self.assertEqual(cpp_style._create_acronym('IsAName'), 'IAN')
+        self.assertEqual(cpp_style._create_acronym('PassRefPtr<MyClass>'), 'PRP<MC>')
 
     def test_is_c_or_objective_c(self):
         clean_lines = cpp_style.CleansedLines([''])
@@ -141,68 +141,68 @@ class CppFunctionsTest(unittest.TestCase):
     def test_parameter(self):
         # Test type.
         parameter = cpp_style.Parameter('ExceptionCode', 13, 1)
-        self.assertEquals(parameter.type, 'ExceptionCode')
-        self.assertEquals(parameter.name, '')
-        self.assertEquals(parameter.row, 1)
+        self.assertEqual(parameter.type, 'ExceptionCode')
+        self.assertEqual(parameter.name, '')
+        self.assertEqual(parameter.row, 1)
 
         # Test type and name.
         parameter = cpp_style.Parameter('PassRefPtr<MyClass> parent', 19, 1)
-        self.assertEquals(parameter.type, 'PassRefPtr<MyClass>')
-        self.assertEquals(parameter.name, 'parent')
-        self.assertEquals(parameter.row, 1)
+        self.assertEqual(parameter.type, 'PassRefPtr<MyClass>')
+        self.assertEqual(parameter.name, 'parent')
+        self.assertEqual(parameter.row, 1)
 
         # Test type, no name, with default value.
         parameter = cpp_style.Parameter('MyClass = 0', 7, 0)
-        self.assertEquals(parameter.type, 'MyClass')
-        self.assertEquals(parameter.name, '')
-        self.assertEquals(parameter.row, 0)
+        self.assertEqual(parameter.type, 'MyClass')
+        self.assertEqual(parameter.name, '')
+        self.assertEqual(parameter.row, 0)
 
         # Test type, name, and default value.
         parameter = cpp_style.Parameter('MyClass a = 0', 7, 0)
-        self.assertEquals(parameter.type, 'MyClass')
-        self.assertEquals(parameter.name, 'a')
-        self.assertEquals(parameter.row, 0)
+        self.assertEqual(parameter.type, 'MyClass')
+        self.assertEqual(parameter.name, 'a')
+        self.assertEqual(parameter.row, 0)
 
     def test_single_line_view(self):
         start_position = cpp_style.Position(row=1, column=1)
         end_position = cpp_style.Position(row=3, column=1)
         single_line_view = cpp_style.SingleLineView(['0', 'abcde', 'fgh', 'i'], start_position, end_position)
-        self.assertEquals(single_line_view.single_line, 'bcde fgh i')
-        self.assertEquals(single_line_view.convert_column_to_row(0), 1)
-        self.assertEquals(single_line_view.convert_column_to_row(4), 1)
-        self.assertEquals(single_line_view.convert_column_to_row(5), 2)
-        self.assertEquals(single_line_view.convert_column_to_row(8), 2)
-        self.assertEquals(single_line_view.convert_column_to_row(9), 3)
-        self.assertEquals(single_line_view.convert_column_to_row(100), 3)
+        self.assertEqual(single_line_view.single_line, 'bcde fgh i')
+        self.assertEqual(single_line_view.convert_column_to_row(0), 1)
+        self.assertEqual(single_line_view.convert_column_to_row(4), 1)
+        self.assertEqual(single_line_view.convert_column_to_row(5), 2)
+        self.assertEqual(single_line_view.convert_column_to_row(8), 2)
+        self.assertEqual(single_line_view.convert_column_to_row(9), 3)
+        self.assertEqual(single_line_view.convert_column_to_row(100), 3)
 
         start_position = cpp_style.Position(row=0, column=3)
         end_position = cpp_style.Position(row=0, column=4)
         single_line_view = cpp_style.SingleLineView(['abcdef'], start_position, end_position)
-        self.assertEquals(single_line_view.single_line, 'd')
+        self.assertEqual(single_line_view.single_line, 'd')
 
     def test_create_skeleton_parameters(self):
-        self.assertEquals(cpp_style.create_skeleton_parameters(''), '')
-        self.assertEquals(cpp_style.create_skeleton_parameters(' '), ' ')
-        self.assertEquals(cpp_style.create_skeleton_parameters('long'), 'long,')
-        self.assertEquals(cpp_style.create_skeleton_parameters('const unsigned long int'), '                    int,')
-        self.assertEquals(cpp_style.create_skeleton_parameters('long int*'), '     int ,')
-        self.assertEquals(cpp_style.create_skeleton_parameters('PassRefPtr<Foo> a'), 'PassRefPtr      a,')
-        self.assertEquals(cpp_style.create_skeleton_parameters(
+        self.assertEqual(cpp_style.create_skeleton_parameters(''), '')
+        self.assertEqual(cpp_style.create_skeleton_parameters(' '), ' ')
+        self.assertEqual(cpp_style.create_skeleton_parameters('long'), 'long,')
+        self.assertEqual(cpp_style.create_skeleton_parameters('const unsigned long int'), '                    int,')
+        self.assertEqual(cpp_style.create_skeleton_parameters('long int*'), '     int ,')
+        self.assertEqual(cpp_style.create_skeleton_parameters('PassRefPtr<Foo> a'), 'PassRefPtr      a,')
+        self.assertEqual(cpp_style.create_skeleton_parameters(
                 'ComplexTemplate<NestedTemplate1<MyClass1, MyClass2>, NestedTemplate1<MyClass1, MyClass2> > param, int second'),
                           'ComplexTemplate                                                                            param, int second,')
-        self.assertEquals(cpp_style.create_skeleton_parameters('int = 0, Namespace::Type& a'), 'int    ,            Type  a,')
+        self.assertEqual(cpp_style.create_skeleton_parameters('int = 0, Namespace::Type& a'), 'int    ,            Type  a,')
         # Create skeleton parameters is a bit too aggressive with function variables, but
         # it allows for parsing other parameters and declarations like this are rare.
-        self.assertEquals(cpp_style.create_skeleton_parameters('void (*fn)(int a, int b), Namespace::Type& a'),
+        self.assertEqual(cpp_style.create_skeleton_parameters('void (*fn)(int a, int b), Namespace::Type& a'),
                           'void                    ,            Type  a,')
 
         # This doesn't look like functions declarations but the simplifications help to eliminate false positives.
-        self.assertEquals(cpp_style.create_skeleton_parameters('b{d}'), 'b   ,')
+        self.assertEqual(cpp_style.create_skeleton_parameters('b{d}'), 'b   ,')
 
     def test_find_parameter_name_index(self):
-        self.assertEquals(cpp_style.find_parameter_name_index(' int a '), 5)
-        self.assertEquals(cpp_style.find_parameter_name_index(' PassRefPtr     '), 16)
-        self.assertEquals(cpp_style.find_parameter_name_index('double'), 6)
+        self.assertEqual(cpp_style.find_parameter_name_index(' int a '), 5)
+        self.assertEqual(cpp_style.find_parameter_name_index(' PassRefPtr     '), 16)
+        self.assertEqual(cpp_style.find_parameter_name_index('double'), 6)
 
     def test_parameter_list(self):
         elided_lines = ['int blah(PassRefPtr<MyClass> paramName,',
@@ -219,17 +219,17 @@ class CppFunctionsTest(unittest.TestCase):
         index = 0
         for parameter in cpp_style.parameter_list(elided_lines, start_position, end_position):
             expected_parameter = expected_parameters[index]
-            self.assertEquals(parameter.type, expected_parameter['type'])
-            self.assertEquals(parameter.name, expected_parameter['name'])
-            self.assertEquals(parameter.row, expected_parameter['row'])
+            self.assertEqual(parameter.type, expected_parameter['type'])
+            self.assertEqual(parameter.name, expected_parameter['name'])
+            self.assertEqual(parameter.row, expected_parameter['row'])
             index += 1
-        self.assertEquals(index, len(expected_parameters))
+        self.assertEqual(index, len(expected_parameters))
 
     def test_check_parameter_against_text(self):
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         parameter = cpp_style.Parameter('FooF ooF', 4, 1)
         self.assertFalse(cpp_style._check_parameter_name_against_text(parameter, 'FooF', error_collector))
-        self.assertEquals(error_collector.results(),
+        self.assertEqual(error_collector.results(),
                           'The parameter name "ooF" adds no information, so it should be removed.  [readability/parameter_name] [5]')
 
 class CppStyleTestBase(unittest.TestCase):
@@ -253,7 +253,7 @@ class CppStyleTestBase(unittest.TestCase):
                                            error, self.min_confidence, unit_test_config)
 
     def perform_lint(self, code, filename, basic_error_rules, unit_test_config={}, lines_to_check=None):
-        error_collector = ErrorCollector(self.assert_, FilterConfiguration(basic_error_rules), lines_to_check)
+        error_collector = ErrorCollector(self.assertTrue, FilterConfiguration(basic_error_rules), lines_to_check)
         lines = code.split('\n')
         extension = filename.split('.')[1]
         self.process_file_data(filename, extension, lines, error_collector, unit_test_config)
@@ -313,7 +313,7 @@ class CppStyleTestBase(unittest.TestCase):
 
     # Perform lint and compare the error message with "expected_message".
     def assert_lint(self, code, expected_message, file_name='foo.cpp'):
-        self.assertEquals(expected_message, self.perform_single_line_lint(code, file_name))
+        self.assertEqual(expected_message, self.perform_single_line_lint(code, file_name))
 
     def assert_lint_one_of_many_errors_re(self, code, expected_message_re, file_name='foo.cpp'):
         messages = self.perform_single_line_lint(code, file_name)
@@ -321,11 +321,11 @@ class CppStyleTestBase(unittest.TestCase):
             if re.search(expected_message_re, message):
                 return
 
-        self.assertEquals(expected_message_re, messages)
+        self.assertEqual(expected_message_re, messages)
 
     def assert_multi_line_lint(self, code, expected_message, file_name='foo.h'):
         file_extension = file_name[file_name.rfind('.') + 1:]
-        self.assertEquals(expected_message, self.perform_multi_line_lint(code, file_extension))
+        self.assertEqual(expected_message, self.perform_multi_line_lint(code, file_extension))
 
     def assert_multi_line_lint_re(self, code, expected_message_re, file_name='foo.h'):
         file_extension = file_name[file_name.rfind('.') + 1:]
@@ -334,22 +334,22 @@ class CppStyleTestBase(unittest.TestCase):
             self.fail('Message was:\n' + message + 'Expected match to "' + expected_message_re + '"')
 
     def assert_language_rules_check(self, file_name, code, expected_message, lines_to_check=None):
-        self.assertEquals(expected_message,
+        self.assertEqual(expected_message,
                           self.perform_language_rules_check(file_name, code, lines_to_check))
 
     def assert_include_what_you_use(self, code, expected_message):
-        self.assertEquals(expected_message,
+        self.assertEqual(expected_message,
                           self.perform_include_what_you_use(code))
 
     def assert_blank_lines_check(self, lines, start_errors, end_errors):
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data('foo.cpp', 'cpp', lines, error_collector)
-        self.assertEquals(
+        self.assertEqual(
             start_errors,
             error_collector.results().count(
                 'Blank line at the start of a code block.  Is this needed?'
                 '  [whitespace/blank_line] [2]'))
-        self.assertEquals(
+        self.assertEqual(
             end_errors,
             error_collector.results().count(
                 'Blank line at the end of a code block.  Is this needed?'
@@ -360,7 +360,7 @@ class CppStyleTestBase(unittest.TestCase):
 
         position: a cpp_style.Position object.
         tuple_position: a tuple (row, column) to compare against."""
-        self.assertEquals(position, cpp_style.Position(tuple_position[0], tuple_position[1]),
+        self.assertEqual(position, cpp_style.Position(tuple_position[0], tuple_position[1]),
                           'position %s, tuple_position %s' % (position, tuple_position))
 
 
@@ -368,16 +368,16 @@ class FunctionDetectionTest(CppStyleTestBase):
     def perform_function_detection(self, lines, function_information, detection_line=0):
         clean_lines = cpp_style.CleansedLines(lines)
         function_state = cpp_style._FunctionState(5)
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         cpp_style.detect_functions(clean_lines, detection_line, function_state, error_collector)
         if not function_information:
-            self.assertEquals(function_state.in_a_function, False)
+            self.assertEqual(function_state.in_a_function, False)
             return
-        self.assertEquals(function_state.in_a_function, True)
-        self.assertEquals(function_state.current_function, function_information['name'] + '()')
-        self.assertEquals(function_state.modifiers_and_return_type(), function_information['modifiers_and_return_type'])
-        self.assertEquals(function_state.is_pure, function_information['is_pure'])
-        self.assertEquals(function_state.is_declaration, function_information['is_declaration'])
+        self.assertEqual(function_state.in_a_function, True)
+        self.assertEqual(function_state.current_function, function_information['name'] + '()')
+        self.assertEqual(function_state.modifiers_and_return_type(), function_information['modifiers_and_return_type'])
+        self.assertEqual(function_state.is_pure, function_information['is_pure'])
+        self.assertEqual(function_state.is_declaration, function_information['is_declaration'])
         self.assert_positions_equal(function_state.function_name_start_position, function_information['function_name_start_position'])
         self.assert_positions_equal(function_state.parameter_start_position, function_information['parameter_start_position'])
         self.assert_positions_equal(function_state.parameter_end_position, function_information['parameter_end_position'])
@@ -386,13 +386,13 @@ class FunctionDetectionTest(CppStyleTestBase):
         expected_parameters = function_information.get('parameter_list')
         if expected_parameters:
             actual_parameters = function_state.parameter_list()
-            self.assertEquals(len(actual_parameters), len(expected_parameters))
+            self.assertEqual(len(actual_parameters), len(expected_parameters))
             for index in range(len(expected_parameters)):
                 actual_parameter = actual_parameters[index]
                 expected_parameter = expected_parameters[index]
-                self.assertEquals(actual_parameter.type, expected_parameter['type'])
-                self.assertEquals(actual_parameter.name, expected_parameter['name'])
-                self.assertEquals(actual_parameter.row, expected_parameter['row'])
+                self.assertEqual(actual_parameter.type, expected_parameter['type'])
+                self.assertEqual(actual_parameter.name, expected_parameter['name'])
+                self.assertEqual(actual_parameter.row, expected_parameter['row'])
 
     def test_basic_function_detection(self):
         self.perform_function_detection(
@@ -634,54 +634,54 @@ class CppStyleTest(CppStyleTestBase):
 
     # Test get line width.
     def test_get_line_width(self):
-        self.assertEquals(0, cpp_style.get_line_width(''))
-        self.assertEquals(10, cpp_style.get_line_width(u'x' * 10))
-        self.assertEquals(16, cpp_style.get_line_width(u'都|道|府|県|支庁'))
+        self.assertEqual(0, cpp_style.get_line_width(''))
+        self.assertEqual(10, cpp_style.get_line_width(u'x' * 10))
+        self.assertEqual(16, cpp_style.get_line_width(u'都|道|府|県|支庁'))
 
     def test_find_next_multi_line_comment_start(self):
-        self.assertEquals(1, cpp_style.find_next_multi_line_comment_start([''], 0))
+        self.assertEqual(1, cpp_style.find_next_multi_line_comment_start([''], 0))
 
         lines = ['a', 'b', '/* c']
-        self.assertEquals(2, cpp_style.find_next_multi_line_comment_start(lines, 0))
+        self.assertEqual(2, cpp_style.find_next_multi_line_comment_start(lines, 0))
 
         lines = ['char a[] = "/*";']  # not recognized as comment.
-        self.assertEquals(1, cpp_style.find_next_multi_line_comment_start(lines, 0))
+        self.assertEqual(1, cpp_style.find_next_multi_line_comment_start(lines, 0))
 
     def test_find_next_multi_line_comment_end(self):
-        self.assertEquals(1, cpp_style.find_next_multi_line_comment_end([''], 0))
+        self.assertEqual(1, cpp_style.find_next_multi_line_comment_end([''], 0))
         lines = ['a', 'b', ' c */']
-        self.assertEquals(2, cpp_style.find_next_multi_line_comment_end(lines, 0))
+        self.assertEqual(2, cpp_style.find_next_multi_line_comment_end(lines, 0))
 
     def test_remove_multi_line_comments_from_range(self):
         lines = ['a', '  /* comment ', ' * still comment', ' comment */   ', 'b']
         cpp_style.remove_multi_line_comments_from_range(lines, 1, 4)
-        self.assertEquals(['a', '// dummy', '// dummy', '// dummy', 'b'], lines)
+        self.assertEqual(['a', '// dummy', '// dummy', '// dummy', 'b'], lines)
 
     def test_position(self):
         position = cpp_style.Position(3, 4)
         self.assert_positions_equal(position, (3, 4))
-        self.assertEquals(position.row, 3)
+        self.assertEqual(position.row, 3)
         self.assertTrue(position > cpp_style.Position(position.row - 1, position.column + 1))
         self.assertTrue(position > cpp_style.Position(position.row, position.column - 1))
         self.assertTrue(position < cpp_style.Position(position.row, position.column + 1))
         self.assertTrue(position < cpp_style.Position(position.row + 1, position.column - 1))
-        self.assertEquals(position.__str__(), '(3, 4)')
+        self.assertEqual(position.__str__(), '(3, 4)')
 
     def test_rfind_in_lines(self):
         not_found_position = cpp_style.Position(10, 11)
         start_position = cpp_style.Position(2, 2)
         lines = ['ab', 'ace', 'test']
-        self.assertEquals(not_found_position, cpp_style._rfind_in_lines('st', lines, start_position, not_found_position))
+        self.assertEqual(not_found_position, cpp_style._rfind_in_lines('st', lines, start_position, not_found_position))
         self.assertTrue(cpp_style.Position(1, 1) == cpp_style._rfind_in_lines('a', lines, start_position, not_found_position))
-        self.assertEquals(cpp_style.Position(2, 2), cpp_style._rfind_in_lines('(te|a)', lines, start_position, not_found_position))
+        self.assertEqual(cpp_style.Position(2, 2), cpp_style._rfind_in_lines('(te|a)', lines, start_position, not_found_position))
 
     def test_close_expression(self):
-        self.assertEquals(cpp_style.Position(1, -1), cpp_style.close_expression([')('], cpp_style.Position(0, 1)))
-        self.assertEquals(cpp_style.Position(1, -1), cpp_style.close_expression([') ()'], cpp_style.Position(0, 1)))
-        self.assertEquals(cpp_style.Position(0, 4), cpp_style.close_expression([')[)]'], cpp_style.Position(0, 1)))
-        self.assertEquals(cpp_style.Position(0, 5), cpp_style.close_expression(['}{}{}'], cpp_style.Position(0, 3)))
-        self.assertEquals(cpp_style.Position(1, 1), cpp_style.close_expression(['}{}{', '}'], cpp_style.Position(0, 3)))
-        self.assertEquals(cpp_style.Position(2, -1), cpp_style.close_expression(['][][', ' '], cpp_style.Position(0, 3)))
+        self.assertEqual(cpp_style.Position(1, -1), cpp_style.close_expression([')('], cpp_style.Position(0, 1)))
+        self.assertEqual(cpp_style.Position(1, -1), cpp_style.close_expression([') ()'], cpp_style.Position(0, 1)))
+        self.assertEqual(cpp_style.Position(0, 4), cpp_style.close_expression([')[)]'], cpp_style.Position(0, 1)))
+        self.assertEqual(cpp_style.Position(0, 5), cpp_style.close_expression(['}{}{}'], cpp_style.Position(0, 3)))
+        self.assertEqual(cpp_style.Position(1, 1), cpp_style.close_expression(['}{}{', '}'], cpp_style.Position(0, 3)))
+        self.assertEqual(cpp_style.Position(2, -1), cpp_style.close_expression(['][][', ' '], cpp_style.Position(0, 3)))
 
     def test_spaces_at_end_of_line(self):
         self.assert_lint(
@@ -864,10 +864,10 @@ class CppStyleTest(CppStyleTestBase):
 
     def test_include_what_you_use_no_implementation_files(self):
         code = 'std::vector<int> foo;'
-        self.assertEquals('Add #include <vector> for vector<>'
+        self.assertEqual('Add #include <vector> for vector<>'
                           '  [build/include_what_you_use] [4]',
                           self.perform_include_what_you_use(code, 'foo.h'))
-        self.assertEquals('',
+        self.assertEqual('',
                           self.perform_include_what_you_use(code, 'foo.cpp'))
 
     def test_include_what_you_use(self):
@@ -1003,7 +1003,7 @@ class CppStyleTest(CppStyleTestBase):
             '#include "blah/a.h"\n',
             filename='blah/a.cpp',
             io=MockIo(mock_header_contents))
-        self.assertEquals(message, '')
+        self.assertEqual(message, '')
 
         mock_header_contents = ['#include <set>']
         message = self.perform_include_what_you_use(
@@ -1013,7 +1013,7 @@ class CppStyleTest(CppStyleTestBase):
                std::set<int> foo;''',
             filename='blah/a.cpp',
             io=MockIo(mock_header_contents))
-        self.assertEquals(message, '')
+        self.assertEqual(message, '')
 
         # If there's just a .cpp and the header can't be found then it's ok.
         message = self.perform_include_what_you_use(
@@ -1022,7 +1022,7 @@ class CppStyleTest(CppStyleTestBase):
 
                std::set<int> foo;''',
             filename='blah/a.cpp')
-        self.assertEquals(message, '')
+        self.assertEqual(message, '')
 
         # Make sure we find the headers with relative paths.
         mock_header_contents = ['']
@@ -1033,40 +1033,40 @@ class CppStyleTest(CppStyleTestBase):
                std::set<int> foo;''' % (os.path.basename(os.getcwd()), os.path.sep),
             filename='a.cpp',
             io=MockIo(mock_header_contents))
-        self.assertEquals(message, 'Add #include <set> for set<>  '
+        self.assertEqual(message, 'Add #include <set> for set<>  '
                                    '[build/include_what_you_use] [4]')
 
     def test_files_belong_to_same_module(self):
         f = cpp_style.files_belong_to_same_module
-        self.assertEquals((True, ''), f('a.cpp', 'a.h'))
-        self.assertEquals((True, ''), f('base/google.cpp', 'base/google.h'))
-        self.assertEquals((True, ''), f('base/google_test.cpp', 'base/google.h'))
-        self.assertEquals((True, ''),
+        self.assertEqual((True, ''), f('a.cpp', 'a.h'))
+        self.assertEqual((True, ''), f('base/google.cpp', 'base/google.h'))
+        self.assertEqual((True, ''), f('base/google_test.cpp', 'base/google.h'))
+        self.assertEqual((True, ''),
                           f('base/google_unittest.cpp', 'base/google.h'))
-        self.assertEquals((True, ''),
+        self.assertEqual((True, ''),
                           f('base/internal/google_unittest.cpp',
                             'base/public/google.h'))
-        self.assertEquals((True, 'xxx/yyy/'),
+        self.assertEqual((True, 'xxx/yyy/'),
                           f('xxx/yyy/base/internal/google_unittest.cpp',
                             'base/public/google.h'))
-        self.assertEquals((True, 'xxx/yyy/'),
+        self.assertEqual((True, 'xxx/yyy/'),
                           f('xxx/yyy/base/google_unittest.cpp',
                             'base/public/google.h'))
-        self.assertEquals((True, ''),
+        self.assertEqual((True, ''),
                           f('base/google_unittest.cpp', 'base/google-inl.h'))
-        self.assertEquals((True, '/home/build/google3/'),
+        self.assertEqual((True, '/home/build/google3/'),
                           f('/home/build/google3/base/google.cpp', 'base/google.h'))
 
-        self.assertEquals((False, ''),
+        self.assertEqual((False, ''),
                           f('/home/build/google3/base/google.cpp', 'basu/google.h'))
-        self.assertEquals((False, ''), f('a.cpp', 'b.h'))
+        self.assertEqual((False, ''), f('a.cpp', 'b.h'))
 
     def test_cleanse_line(self):
-        self.assertEquals('int foo = 0;  ',
+        self.assertEqual('int foo = 0;  ',
                           cpp_style.cleanse_comments('int foo = 0;  // danger!'))
-        self.assertEquals('int o = 0;',
+        self.assertEqual('int o = 0;',
                           cpp_style.cleanse_comments('int /* foo */ o = 0;'))
-        self.assertEquals('foo(int a, int b);',
+        self.assertEqual('foo(int a, int b);',
                           cpp_style.cleanse_comments('foo(int a /* abc */, int b);'))
         self.assertEqual('f(a, b);',
                          cpp_style.cleanse_comments('f(a, /* name */ b);'))
@@ -1113,12 +1113,12 @@ class CppStyleTest(CppStyleTestBase):
 
         file_path = 'mydir/foo.cpp'
 
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data(file_path, 'cpp',
                                ['const char* str = "This is a\\',
                                 ' multiline string.";'],
                                error_collector)
-        self.assertEquals(
+        self.assertEqual(
             2,  # One per line.
             error_collector.result_list().count(multiline_string_error_message))
 
@@ -1902,11 +1902,11 @@ class CppStyleTest(CppStyleTestBase):
 
     def test_newline_at_eof(self):
         def do_test(self, data, is_missing_eof):
-            error_collector = ErrorCollector(self.assert_)
+            error_collector = ErrorCollector(self.assertTrue)
             self.process_file_data('foo.cpp', 'cpp', data.split('\n'),
                                    error_collector)
             # The warning appears only once.
-            self.assertEquals(
+            self.assertEqual(
                 int(is_missing_eof),
                 error_collector.results().count(
                     'Could not find a newline character at the end of the file.'
@@ -1917,12 +1917,12 @@ class CppStyleTest(CppStyleTestBase):
 
     def test_invalid_utf8(self):
         def do_test(self, raw_bytes, has_invalid_utf8):
-            error_collector = ErrorCollector(self.assert_)
+            error_collector = ErrorCollector(self.assertTrue)
             self.process_file_data('foo.cpp', 'cpp',
                                    unicode(raw_bytes, 'utf8', 'replace').split('\n'),
                                    error_collector)
             # The warning appears only once.
-            self.assertEquals(
+            self.assertEqual(
                 int(has_invalid_utf8),
                 error_collector.results().count(
                     'Line contains invalid UTF-8'
@@ -1937,11 +1937,11 @@ class CppStyleTest(CppStyleTestBase):
         do_test(self, '\xef\xbf\xbd\n', True)
 
     def test_is_blank_line(self):
-        self.assert_(cpp_style.is_blank_line(''))
-        self.assert_(cpp_style.is_blank_line(' '))
-        self.assert_(cpp_style.is_blank_line(' \t\r\n'))
-        self.assert_(not cpp_style.is_blank_line('int a;'))
-        self.assert_(not cpp_style.is_blank_line('{'))
+        self.assertTrue(cpp_style.is_blank_line(''))
+        self.assertTrue(cpp_style.is_blank_line(' '))
+        self.assertTrue(cpp_style.is_blank_line(' \t\r\n'))
+        self.assertTrue(not cpp_style.is_blank_line('int a;'))
+        self.assertTrue(not cpp_style.is_blank_line('{'))
 
     def test_blank_lines_check(self):
         self.assert_blank_lines_check(['{\n', '\n', '\n', '}\n'], 1, 1)
@@ -1952,16 +1952,16 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_blank_lines_check(['\n', '  if (foo) { return 0; }\n', '\n'], 0, 0)
 
     def test_allow_blank_line_before_closing_namespace(self):
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data('foo.cpp', 'cpp',
                                ['namespace {', '', '}  // namespace'],
                                error_collector)
-        self.assertEquals(0, error_collector.results().count(
+        self.assertEqual(0, error_collector.results().count(
             'Blank line at the end of a code block.  Is this needed?'
             '  [whitespace/blank_line] [3]'))
 
     def test_allow_blank_line_before_if_else_chain(self):
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data('foo.cpp', 'cpp',
                                ['if (hoge) {',
                                 '',  # No warning
@@ -1973,12 +1973,12 @@ class CppStyleTest(CppStyleTestBase):
                                 '',  # Warning on this line
                                 '}'],
                                error_collector)
-        self.assertEquals(1, error_collector.results().count(
+        self.assertEqual(1, error_collector.results().count(
             'Blank line at the end of a code block.  Is this needed?'
             '  [whitespace/blank_line] [3]'))
 
     def test_else_on_same_line_as_closing_braces(self):
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data('foo.cpp', 'cpp',
                                ['if (hoge) {',
                                 '',
@@ -1987,7 +1987,7 @@ class CppStyleTest(CppStyleTestBase):
                                 '',
                                 '}'],
                                error_collector)
-        self.assertEquals(1, error_collector.results().count(
+        self.assertEqual(1, error_collector.results().count(
             'An else should appear on the same line as the preceding }'
             '  [whitespace/newline] [4]'))
 
@@ -2144,7 +2144,7 @@ class CppStyleTest(CppStyleTestBase):
         # side of things, so just parse out the suggested header guard. This
         # doesn't allow us to test the suggested header guard, but it does let us
         # test all the other header tests.
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data(file_path, 'h', [], error_collector)
         expected_guard = ''
         matcher = re.compile(
@@ -2159,10 +2159,10 @@ class CppStyleTest(CppStyleTestBase):
         self.assertNotEqual(expected_guard, '')
 
         # Wrong guard
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data(file_path, 'h',
                                ['#ifndef FOO_H', '#define FOO_H'], error_collector)
-        self.assertEquals(
+        self.assertEqual(
             1,
             error_collector.result_list().count(
                 '#ifndef header guard has wrong style, please use: %s'
@@ -2170,10 +2170,10 @@ class CppStyleTest(CppStyleTestBase):
             error_collector.result_list())
 
         # No define
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data(file_path, 'h',
                                ['#ifndef %s' % expected_guard], error_collector)
-        self.assertEquals(
+        self.assertEqual(
             1,
             error_collector.result_list().count(
                 'No #ifndef header guard found, suggested CPP variable is: %s'
@@ -2181,12 +2181,12 @@ class CppStyleTest(CppStyleTestBase):
             error_collector.result_list())
 
         # Mismatched define
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data(file_path, 'h',
                                ['#ifndef %s' % expected_guard,
                                 '#define FOO_H'],
                                error_collector)
-        self.assertEquals(
+        self.assertEqual(
             1,
             error_collector.result_list().count(
                 'No #ifndef header guard found, suggested CPP variable is: %s'
@@ -2194,7 +2194,7 @@ class CppStyleTest(CppStyleTestBase):
             error_collector.result_list())
 
         # No header guard errors
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data(file_path, 'h',
                                ['#ifndef %s' % expected_guard,
                                 '#define %s' % expected_guard,
@@ -2205,13 +2205,13 @@ class CppStyleTest(CppStyleTestBase):
                 self.fail('Unexpected error: %s' % line)
 
         # Completely incorrect header guard
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data(file_path, 'h',
                                ['#ifndef FOO',
                                 '#define FOO',
                                 '#endif  // FOO'],
                                error_collector)
-        self.assertEquals(
+        self.assertEqual(
             1,
             error_collector.result_list().count(
                 '#ifndef header guard has wrong style, please use: %s'
@@ -2219,7 +2219,7 @@ class CppStyleTest(CppStyleTestBase):
             error_collector.result_list())
 
         # Special case for flymake
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data('mydir/Foo_flymake.h', 'h',
                                ['#ifndef %s' % expected_guard,
                                 '#define %s' % expected_guard,
@@ -2229,9 +2229,9 @@ class CppStyleTest(CppStyleTestBase):
             if line.find('build/header_guard') != -1:
                 self.fail('Unexpected error: %s' % line)
 
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data('mydir/Foo_flymake.h', 'h', [], error_collector)
-        self.assertEquals(
+        self.assertEqual(
             1,
             error_collector.result_list().count(
                 'No #ifndef header guard found, suggested CPP variable is: %s'
@@ -2243,27 +2243,27 @@ class CppStyleTest(CppStyleTestBase):
 
         # Allow the WTF_ prefix for files in that directory.
         header_guard_filter = FilterConfiguration(('-', '+build/header_guard'))
-        error_collector = ErrorCollector(self.assert_, header_guard_filter)
+        error_collector = ErrorCollector(self.assertTrue, header_guard_filter)
         self.process_file_data('Source/JavaScriptCore/wtf/TestName.h', 'h',
                                ['#ifndef WTF_TestName_h', '#define WTF_TestName_h'],
                                error_collector)
-        self.assertEquals(0, len(error_collector.result_list()),
+        self.assertEqual(0, len(error_collector.result_list()),
                           error_collector.result_list())
 
         # Also allow the non WTF_ prefix for files in that directory.
-        error_collector = ErrorCollector(self.assert_, header_guard_filter)
+        error_collector = ErrorCollector(self.assertTrue, header_guard_filter)
         self.process_file_data('Source/JavaScriptCore/wtf/TestName.h', 'h',
                                ['#ifndef TestName_h', '#define TestName_h'],
                                error_collector)
-        self.assertEquals(0, len(error_collector.result_list()),
+        self.assertEqual(0, len(error_collector.result_list()),
                           error_collector.result_list())
 
         # Verify that we suggest the WTF prefix version.
-        error_collector = ErrorCollector(self.assert_, header_guard_filter)
+        error_collector = ErrorCollector(self.assertTrue, header_guard_filter)
         self.process_file_data('Source/JavaScriptCore/wtf/TestName.h', 'h',
                                ['#ifndef BAD_TestName_h', '#define BAD_TestName_h'],
                                error_collector)
-        self.assertEquals(
+        self.assertEqual(
             1,
             error_collector.result_list().count(
                 '#ifndef header guard has wrong style, please use: WTF_TestName_h'
@@ -2403,29 +2403,29 @@ class CppStyleTest(CppStyleTestBase):
         file_path = 'mydir/googleclient/foo.cpp'
 
         # There should be a copyright message in the first 10 lines
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data(file_path, 'cpp', [], error_collector)
-        self.assertEquals(
+        self.assertEqual(
             1,
             error_collector.result_list().count(legal_copyright_message))
 
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data(
             file_path, 'cpp',
             ['' for unused_i in range(10)] + [copyright_line],
             error_collector)
-        self.assertEquals(
+        self.assertEqual(
             1,
             error_collector.result_list().count(legal_copyright_message))
 
         # Test that warning isn't issued if Copyright line appears early enough.
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data(file_path, 'cpp', [copyright_line], error_collector)
         for message in error_collector.result_list():
             if message.find('legal/copyright') != -1:
                 self.fail('Unexpected error: %s' % message)
 
-        error_collector = ErrorCollector(self.assert_)
+        error_collector = ErrorCollector(self.assertTrue)
         self.process_file_data(
             file_path, 'cpp',
             ['' for unused_i in range(9)] + [copyright_line],
@@ -2457,16 +2457,16 @@ class CleansedLinesTest(unittest.TestCase):
                  'Line 4 "foo"']
 
         clean_lines = cpp_style.CleansedLines(lines)
-        self.assertEquals(lines, clean_lines.raw_lines)
-        self.assertEquals(4, clean_lines.num_lines())
+        self.assertEqual(lines, clean_lines.raw_lines)
+        self.assertEqual(4, clean_lines.num_lines())
 
-        self.assertEquals(['Line 1',
+        self.assertEqual(['Line 1',
                            'Line 2',
                            'Line 3 ',
                            'Line 4 "foo"'],
                           clean_lines.lines)
 
-        self.assertEquals(['Line 1',
+        self.assertEqual(['Line 1',
                            'Line 2',
                            'Line 3 ',
                            'Line 4 ""'],
@@ -2474,33 +2474,33 @@ class CleansedLinesTest(unittest.TestCase):
 
     def test_init_empty(self):
         clean_lines = cpp_style.CleansedLines([])
-        self.assertEquals([], clean_lines.raw_lines)
-        self.assertEquals(0, clean_lines.num_lines())
+        self.assertEqual([], clean_lines.raw_lines)
+        self.assertEqual(0, clean_lines.num_lines())
 
     def test_collapse_strings(self):
         collapse = cpp_style.CleansedLines.collapse_strings
-        self.assertEquals('""', collapse('""'))             # ""     (empty)
-        self.assertEquals('"""', collapse('"""'))           # """    (bad)
-        self.assertEquals('""', collapse('"xyz"'))          # "xyz"  (string)
-        self.assertEquals('""', collapse('"\\\""'))         # "\""   (string)
-        self.assertEquals('""', collapse('"\'"'))           # "'"    (string)
-        self.assertEquals('"\"', collapse('"\"'))           # "\"    (bad)
-        self.assertEquals('""', collapse('"\\\\"'))         # "\\"   (string)
-        self.assertEquals('"', collapse('"\\\\\\"'))        # "\\\"  (bad)
-        self.assertEquals('""', collapse('"\\\\\\\\"'))     # "\\\\" (string)
+        self.assertEqual('""', collapse('""'))             # ""     (empty)
+        self.assertEqual('"""', collapse('"""'))           # """    (bad)
+        self.assertEqual('""', collapse('"xyz"'))          # "xyz"  (string)
+        self.assertEqual('""', collapse('"\\\""'))         # "\""   (string)
+        self.assertEqual('""', collapse('"\'"'))           # "'"    (string)
+        self.assertEqual('"\"', collapse('"\"'))           # "\"    (bad)
+        self.assertEqual('""', collapse('"\\\\"'))         # "\\"   (string)
+        self.assertEqual('"', collapse('"\\\\\\"'))        # "\\\"  (bad)
+        self.assertEqual('""', collapse('"\\\\\\\\"'))     # "\\\\" (string)
 
-        self.assertEquals('\'\'', collapse('\'\''))         # ''     (empty)
-        self.assertEquals('\'\'', collapse('\'a\''))        # 'a'    (char)
-        self.assertEquals('\'\'', collapse('\'\\\'\''))     # '\''   (char)
-        self.assertEquals('\'', collapse('\'\\\''))         # '\'    (bad)
-        self.assertEquals('', collapse('\\012'))            # '\012' (char)
-        self.assertEquals('', collapse('\\xfF0'))           # '\xfF0' (char)
-        self.assertEquals('', collapse('\\n'))              # '\n' (char)
-        self.assertEquals('\#', collapse('\\#'))            # '\#' (bad)
+        self.assertEqual('\'\'', collapse('\'\''))         # ''     (empty)
+        self.assertEqual('\'\'', collapse('\'a\''))        # 'a'    (char)
+        self.assertEqual('\'\'', collapse('\'\\\'\''))     # '\''   (char)
+        self.assertEqual('\'', collapse('\'\\\''))         # '\'    (bad)
+        self.assertEqual('', collapse('\\012'))            # '\012' (char)
+        self.assertEqual('', collapse('\\xfF0'))           # '\xfF0' (char)
+        self.assertEqual('', collapse('\\n'))              # '\n' (char)
+        self.assertEqual('\#', collapse('\\#'))            # '\#' (bad)
 
-        self.assertEquals('StringReplace(body, "", "");',
+        self.assertEqual('StringReplace(body, "", "");',
                           collapse('StringReplace(body, "\\\\", "\\\\\\\\");'))
-        self.assertEquals('\'\' ""',
+        self.assertEqual('\'\' ""',
                           collapse('\'"\' "foo"'))
 
 
@@ -2890,7 +2890,7 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
           code: C++ source code expected to generate a warning message.
           expected_message: Message expected to be generated by the C++ code.
         """
-        self.assertEquals(expected_message,
+        self.assertEqual(expected_message,
                           self.perform_function_lengths_check(code))
 
     def trigger_lines(self, error_level):
@@ -3346,7 +3346,7 @@ class PassPtrTest(CppStyleTestBase):
           code: C++ source code expected to generate a warning message.
           expected_message: Message expected to be generated by the C++ code.
         """
-        self.assertEquals(expected_message,
+        self.assertEqual(expected_message,
                           self.perform_pass_ptr_check(code))
 
     def test_pass_ref_ptr_in_function(self):
@@ -3461,7 +3461,7 @@ class LeakyPatternTest(CppStyleTestBase):
           code: C++ source code expected to generate a warning message.
           expected_message: Message expected to be generated by the C++ code.
         """
-        self.assertEquals(expected_message,
+        self.assertEqual(expected_message,
                           self.perform_leaky_pattern_check(code))
 
     def test_get_dc(self):
@@ -4688,45 +4688,45 @@ class WebKitStyleTest(CppStyleTestBase):
         parameter_error_rules = ('-',
                                  '+readability/parameter_name')
         # No variable name, so no error.
-        self.assertEquals('',
+        self.assertEqual('',
                           self.perform_lint('void func(int);', 'test.cpp', parameter_error_rules))
 
         # Verify that copying the name of the set function causes the error (with some odd casing).
-        self.assertEquals(meaningless_variable_name_error_message % 'itemCount',
+        self.assertEqual(meaningless_variable_name_error_message % 'itemCount',
                           self.perform_lint('void setItemCount(size_t itemCount);', 'test.cpp', parameter_error_rules))
-        self.assertEquals(meaningless_variable_name_error_message % 'abcCount',
+        self.assertEqual(meaningless_variable_name_error_message % 'abcCount',
                           self.perform_lint('void setABCCount(size_t abcCount);', 'test.cpp', parameter_error_rules))
 
         # Verify that copying a type name will trigger the warning (even if the type is a template parameter).
-        self.assertEquals(meaningless_variable_name_error_message % 'context',
+        self.assertEqual(meaningless_variable_name_error_message % 'context',
                           self.perform_lint('void funct(PassRefPtr<ScriptExecutionContext> context);', 'test.cpp', parameter_error_rules))
 
         # Verify that acronyms as variable names trigger the error (for both set functions and type names).
-        self.assertEquals(meaningless_variable_name_error_message % 'ec',
+        self.assertEqual(meaningless_variable_name_error_message % 'ec',
                           self.perform_lint('void setExceptionCode(int ec);', 'test.cpp', parameter_error_rules))
-        self.assertEquals(meaningless_variable_name_error_message % 'ec',
+        self.assertEqual(meaningless_variable_name_error_message % 'ec',
                           self.perform_lint('void funct(ExceptionCode ec);', 'test.cpp', parameter_error_rules))
 
         # 'object' alone, appended, or as part of an acronym is meaningless.
-        self.assertEquals(meaningless_variable_name_error_message % 'object',
+        self.assertEqual(meaningless_variable_name_error_message % 'object',
                           self.perform_lint('void funct(RenderView object);', 'test.cpp', parameter_error_rules))
-        self.assertEquals(meaningless_variable_name_error_message % 'viewObject',
+        self.assertEqual(meaningless_variable_name_error_message % 'viewObject',
                           self.perform_lint('void funct(RenderView viewObject);', 'test.cpp', parameter_error_rules))
-        self.assertEquals(meaningless_variable_name_error_message % 'rvo',
+        self.assertEqual(meaningless_variable_name_error_message % 'rvo',
                           self.perform_lint('void funct(RenderView rvo);', 'test.cpp', parameter_error_rules))
 
         # Check that r, g, b, and a are allowed.
-        self.assertEquals('',
+        self.assertEqual('',
                           self.perform_lint('void setRGBAValues(int r, int g, int b, int a);', 'test.cpp', parameter_error_rules))
 
         # Verify that a simple substring match isn't done which would cause false positives.
-        self.assertEquals('',
+        self.assertEqual('',
                           self.perform_lint('void setNateLateCount(size_t elate);', 'test.cpp', parameter_error_rules))
-        self.assertEquals('',
+        self.assertEqual('',
                           self.perform_lint('void funct(NateLate elate);', 'test.cpp', parameter_error_rules))
 
         # Don't have generate warnings for functions (only declarations).
-        self.assertEquals('',
+        self.assertEqual('',
                           self.perform_lint('void funct(PassRefPtr<ScriptExecutionContext> context)\n'
                                             '{\n'
                                             '}\n', 'test.cpp', parameter_error_rules))
@@ -4743,33 +4743,33 @@ class WebKitStyleTest(CppStyleTestBase):
     def test_webkit_export_check(self):
         webkit_export_error_rules = ('-',
                                   '+readability/webkit_export')
-        self.assertEquals('',
+        self.assertEqual('',
                           self.perform_lint('WEBKIT_EXPORT int foo();\n',
                                             'WebKit/chromium/public/test.h',
                                             webkit_export_error_rules))
-        self.assertEquals('',
+        self.assertEqual('',
                           self.perform_lint('WEBKIT_EXPORT int foo();\n',
                                             'WebKit/chromium/tests/test.h',
                                             webkit_export_error_rules))
-        self.assertEquals('WEBKIT_EXPORT should only be used in header files.  [readability/webkit_export] [5]',
+        self.assertEqual('WEBKIT_EXPORT should only be used in header files.  [readability/webkit_export] [5]',
                           self.perform_lint('WEBKIT_EXPORT int foo();\n',
                                             'WebKit/chromium/public/test.cpp',
                                             webkit_export_error_rules))
-        self.assertEquals('WEBKIT_EXPORT should only appear in the chromium public (or tests) directory.  [readability/webkit_export] [5]',
+        self.assertEqual('WEBKIT_EXPORT should only appear in the chromium public (or tests) directory.  [readability/webkit_export] [5]',
                           self.perform_lint('WEBKIT_EXPORT int foo();\n',
                                             'WebKit/chromium/src/test.h',
                                             webkit_export_error_rules))
-        self.assertEquals('WEBKIT_EXPORT should not be used on a function with a body.  [readability/webkit_export] [5]',
+        self.assertEqual('WEBKIT_EXPORT should not be used on a function with a body.  [readability/webkit_export] [5]',
                           self.perform_lint('WEBKIT_EXPORT int foo() { }\n',
                                             'WebKit/chromium/public/test.h',
                                             webkit_export_error_rules))
-        self.assertEquals('WEBKIT_EXPORT should not be used on a function with a body.  [readability/webkit_export] [5]',
+        self.assertEqual('WEBKIT_EXPORT should not be used on a function with a body.  [readability/webkit_export] [5]',
                           self.perform_lint('WEBKIT_EXPORT inline int foo()\n'
                                             '{\n'
                                             '}\n',
                                             'WebKit/chromium/public/test.h',
                                             webkit_export_error_rules))
-        self.assertEquals('WEBKIT_EXPORT should not be used with a pure virtual function.  [readability/webkit_export] [5]',
+        self.assertEqual('WEBKIT_EXPORT should not be used with a pure virtual function.  [readability/webkit_export] [5]',
                           self.perform_lint('{}\n'
                                             'WEBKIT_EXPORT\n'
                                             'virtual\n'
@@ -4777,7 +4777,7 @@ class WebKitStyleTest(CppStyleTestBase):
                                             'foo() = 0;\n',
                                             'WebKit/chromium/public/test.h',
                                             webkit_export_error_rules))
-        self.assertEquals('',
+        self.assertEqual('',
                           self.perform_lint('{}\n'
                                             'WEBKIT_EXPORT\n'
                                             'virtual\n'
@@ -4804,10 +4804,10 @@ class CppCheckerTest(unittest.TestCase):
     def test_init(self):
         """Test __init__ constructor."""
         checker = self._checker()
-        self.assertEquals(checker.file_extension, "h")
-        self.assertEquals(checker.file_path, "foo")
-        self.assertEquals(checker.handle_style_error, self.mock_handle_style_error)
-        self.assertEquals(checker.min_confidence, 3)
+        self.assertEqual(checker.file_extension, "h")
+        self.assertEqual(checker.file_path, "foo")
+        self.assertEqual(checker.handle_style_error, self.mock_handle_style_error)
+        self.assertEqual(checker.min_confidence, 3)
 
     def test_eq(self):
         """Test __eq__ equality function."""

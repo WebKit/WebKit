@@ -38,8 +38,8 @@ class PythonCheckerTest(unittest.TestCase):
             pass
 
         checker = PythonChecker("foo.txt", _mock_handle_style_error)
-        self.assertEquals(checker._file_path, "foo.txt")
-        self.assertEquals(checker._handle_style_error,
+        self.assertEqual(checker._file_path, "foo.txt")
+        self.assertEqual(checker._handle_style_error,
                           _mock_handle_style_error)
 
     def test_check(self):
@@ -57,7 +57,7 @@ class PythonCheckerTest(unittest.TestCase):
         checker = PythonChecker(file_path, _mock_handle_style_error)
         checker.check(lines=[])
 
-        self.assertEquals(errors, [
+        self.assertEqual(errors, [
             (4, "pep8/W291", 5, "trailing whitespace"),
             (4, "pylint/E0602", 5, "Undefined variable 'error'"),
             ])

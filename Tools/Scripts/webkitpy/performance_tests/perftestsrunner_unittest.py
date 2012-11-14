@@ -47,7 +47,7 @@ from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
 
 class MainTest(unittest.TestCase):
     def assertWritten(self, stream, contents):
-        self.assertEquals(stream.buflist, contents)
+        self.assertEqual(stream.buflist, contents)
 
     def normalizeFinishedTime(self, log):
         return re.sub(r'Finished: [0-9\.]+ s', 'Finished: 0.1 s', log)

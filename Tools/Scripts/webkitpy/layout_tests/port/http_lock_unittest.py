@@ -88,7 +88,7 @@ class HttpLockTest(unittest.TestCase):
         # FIXME: Once Executive wraps getpid, we can mock this and not use a real pid.
         current_pid = os.getpid()
         self.http_lock._filesystem.write_text_file(self.lock_file_name, str(current_pid))
-        self.assertEquals(self.http_lock._current_lock_pid(), current_pid)
+        self.assertEqual(self.http_lock._current_lock_pid(), current_pid)
 
     def test_extract_lock_number(self):
         lock_file_list = (

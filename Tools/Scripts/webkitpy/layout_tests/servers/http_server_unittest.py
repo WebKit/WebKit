@@ -56,7 +56,7 @@ class TestHttpServer(unittest.TestCase):
         self.assertRaises(ServerError, server.start)
 
         config_file = host.filesystem.read_text_file("/mock/output_dir/lighttpd.conf")
-        self.assertEquals(re.findall(r"alias.url.+", config_file), [
+        self.assertEqual(re.findall(r"alias.url.+", config_file), [
             'alias.url = ( "/js-test-resources" => "/test.checkout/LayoutTests/fast/js/resources" )',
             'alias.url += ( "/mock/one-additional-dir" => "/mock-checkout/one-additional-dir" )',
             'alias.url += ( "/mock/another-additional-dir" => "/mock-checkout/one-additional-dir" )',

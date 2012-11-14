@@ -45,7 +45,7 @@ class MockResults(object):
 
 class ExpectedFailuresTest(unittest.TestCase):
     def _assert_can_trust(self, results, can_trust):
-        self.assertEquals(ExpectedFailures._should_trust(results), can_trust)
+        self.assertEqual(ExpectedFailures._should_trust(results), can_trust)
 
     def test_can_trust_results(self):
         self._assert_can_trust(None, False)
@@ -77,19 +77,19 @@ class ExpectedFailuresTest(unittest.TestCase):
     def test_unexpected_failures_observed(self):
         failures = ExpectedFailures()
         failures.update(MockResults(['foo.html']))
-        self.assertEquals(failures.unexpected_failures_observed(MockResults(['foo.html', 'bar.html'])), set(['bar.html']))
-        self.assertEquals(failures.unexpected_failures_observed(MockResults(['baz.html'])), set(['baz.html']))
+        self.assertEqual(failures.unexpected_failures_observed(MockResults(['foo.html', 'bar.html'])), set(['bar.html']))
+        self.assertEqual(failures.unexpected_failures_observed(MockResults(['baz.html'])), set(['baz.html']))
         unbounded_results = MockResults(['baz.html', 'qux.html', 'taco.html'], failure_limit=3)
-        self.assertEquals(failures.unexpected_failures_observed(unbounded_results), set(['baz.html', 'qux.html', 'taco.html']))
+        self.assertEqual(failures.unexpected_failures_observed(unbounded_results), set(['baz.html', 'qux.html', 'taco.html']))
         unbounded_results_with_existing_failure = MockResults(['foo.html', 'baz.html', 'qux.html', 'taco.html'], failure_limit=4)
-        self.assertEquals(failures.unexpected_failures_observed(unbounded_results_with_existing_failure), set(['baz.html', 'qux.html', 'taco.html']))
+        self.assertEqual(failures.unexpected_failures_observed(unbounded_results_with_existing_failure), set(['baz.html', 'qux.html', 'taco.html']))
 
     def test_unexpected_failures_observed_when_tree_is_hosed(self):
         failures = ExpectedFailures()
         failures.update(MockResults(['foo.html', 'banana.html'], failure_limit=2))
-        self.assertEquals(failures.unexpected_failures_observed(MockResults(['foo.html', 'bar.html'])), None)
-        self.assertEquals(failures.unexpected_failures_observed(MockResults(['baz.html'])), None)
+        self.assertEqual(failures.unexpected_failures_observed(MockResults(['foo.html', 'bar.html'])), None)
+        self.assertEqual(failures.unexpected_failures_observed(MockResults(['baz.html'])), None)
         unbounded_results = MockResults(['baz.html', 'qux.html', 'taco.html'], failure_limit=3)
-        self.assertEquals(failures.unexpected_failures_observed(unbounded_results), None)
+        self.assertEqual(failures.unexpected_failures_observed(unbounded_results), None)
         unbounded_results_with_existing_failure = MockResults(['foo.html', 'baz.html', 'qux.html', 'taco.html'], failure_limit=4)
-        self.assertEquals(failures.unexpected_failures_observed(unbounded_results_with_existing_failure), None)
+        self.assertEqual(failures.unexpected_failures_observed(unbounded_results_with_existing_failure), None)

@@ -42,10 +42,10 @@ class QueuePropertyMixinTest(unittest.TestCase):
         test_object = ObjectWithQueueName()
         mac_ews = Queue("mac-ews")
         test_object.queue = mac_ews
-        self.assertEquals(test_object.queue.name(), "mac-ews")
-        self.assertEquals(test_object.queue_name, "mac-ews")
+        self.assertEqual(test_object.queue.name(), "mac-ews")
+        self.assertEqual(test_object.queue_name, "mac-ews")
         test_object.queue = None
-        self.assertEquals(test_object.queue_name, None)
+        self.assertEqual(test_object.queue_name, None)
 
 
 if __name__ == '__main__':

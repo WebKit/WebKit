@@ -46,7 +46,7 @@ class TextStyleTestCase(unittest.TestCase):
             self.had_error = True
 
         text_style.process_file_data('', lines, error_for_test)
-        self.assert_(not self.had_error, '%s should not have any errors.' % lines)
+        self.assertTrue(not self.had_error, '%s should not have any errors.' % lines)
 
     def assertError(self, lines, expected_line_number):
         """Asserts that the specified lines has an error."""
@@ -54,12 +54,12 @@ class TextStyleTestCase(unittest.TestCase):
 
         def error_for_test(line_number, category, confidence, message):
             """Checks if the expected error occurs."""
-            self.assertEquals(expected_line_number, line_number)
-            self.assertEquals('whitespace/tab', category)
+            self.assertEqual(expected_line_number, line_number)
+            self.assertEqual('whitespace/tab', category)
             self.had_error = True
 
         text_style.process_file_data('', lines, error_for_test)
-        self.assert_(self.had_error, '%s should have an error [whitespace/tab].' % lines)
+        self.assertTrue(self.had_error, '%s should have an error [whitespace/tab].' % lines)
 
 
     def test_no_error(self):
@@ -86,8 +86,8 @@ class TextCheckerTest(unittest.TestCase):
     def test_init(self):
         """Test __init__ constructor."""
         checker = TextChecker("foo.txt", self.mock_handle_style_error)
-        self.assertEquals(checker.file_path, "foo.txt")
-        self.assertEquals(checker.handle_style_error, self.mock_handle_style_error)
+        self.assertEqual(checker.file_path, "foo.txt")
+        self.assertEqual(checker.handle_style_error, self.mock_handle_style_error)
 
 
 if __name__ == '__main__':

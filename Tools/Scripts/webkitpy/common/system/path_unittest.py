@@ -41,28 +41,28 @@ class AbspathTest(unittest.TestCase):
     def test_abspath_to_uri_cygwin(self):
         if sys.platform != 'cygwin':
             return
-        self.assertEquals(path.abspath_to_uri(self.platforminfo(), '/cygdrive/c/foo/bar.html'),
+        self.assertEqual(path.abspath_to_uri(self.platforminfo(), '/cygdrive/c/foo/bar.html'),
                           'file:///C:/foo/bar.html')
 
     def test_abspath_to_uri_unixy(self):
-        self.assertEquals(path.abspath_to_uri(MockPlatformInfo(), "/foo/bar.html"),
+        self.assertEqual(path.abspath_to_uri(MockPlatformInfo(), "/foo/bar.html"),
                           'file:///foo/bar.html')
 
     def test_abspath_to_uri_win(self):
         if sys.platform != 'win32':
             return
-        self.assertEquals(path.abspath_to_uri(self.platforminfo(), 'c:\\foo\\bar.html'),
+        self.assertEqual(path.abspath_to_uri(self.platforminfo(), 'c:\\foo\\bar.html'),
                          'file:///c:/foo/bar.html')
 
     def test_abspath_to_uri_escaping_unixy(self):
-        self.assertEquals(path.abspath_to_uri(MockPlatformInfo(), '/foo/bar + baz%?.html'),
+        self.assertEqual(path.abspath_to_uri(MockPlatformInfo(), '/foo/bar + baz%?.html'),
                          'file:///foo/bar%20+%20baz%25%3F.html')
 
         # Note that you can't have '?' in a filename on windows.
     def test_abspath_to_uri_escaping_cygwin(self):
         if sys.platform != 'cygwin':
             return
-        self.assertEquals(path.abspath_to_uri(self.platforminfo(), '/cygdrive/c/foo/bar + baz%.html'),
+        self.assertEqual(path.abspath_to_uri(self.platforminfo(), '/cygdrive/c/foo/bar + baz%.html'),
                           'file:///C:/foo/bar%20+%20baz%25.html')
 
     def test_stop_cygpath_subprocess(self):

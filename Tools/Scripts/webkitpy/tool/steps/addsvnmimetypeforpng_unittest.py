@@ -55,4 +55,4 @@ class AddSvnMimetypeForPngTest(unittest.TestCase):
         try:
             capture.assert_outputs(self, step.run, [state])
         except SystemExit, e:
-            self.assertEquals(e.code, 1)
+            self.assertEqual(e.code, 1)

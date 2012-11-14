@@ -135,8 +135,8 @@ password: "SECRETSAUCE"
         os.environ['WEBKIT_BUGZILLA_USERNAME'] = "foo"
         os.environ['WEBKIT_BUGZILLA_PASSWORD'] = "bar"
         username, password = credentials._credentials_from_environment()
-        self.assertEquals(username, "foo")
-        self.assertEquals(password, "bar")
+        self.assertEqual(username, "foo")
+        self.assertEqual(password, "bar")
         os.environ = saved_environ
 
     def test_read_credentials_without_git_repo(self):

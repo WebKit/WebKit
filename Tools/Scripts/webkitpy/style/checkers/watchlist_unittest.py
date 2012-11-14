@@ -56,8 +56,8 @@ class WatchListTest(unittest.TestCase):
     def test_basic_error_message(self):
         def handle_style_error(mock_error_handler, line_number, category, confidence, message):
             mock_error_handler.had_error = True
-            self.assertEquals(0, line_number)
-            self.assertEquals('watchlist/general', category)
+            self.assertEqual(0, line_number)
+            self.assertEqual('watchlist/general', category)
 
         error_handler = MockErrorHandler(handle_style_error)
         error_handler.had_error = False

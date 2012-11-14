@@ -83,12 +83,12 @@ class LoggingDelegate(QueueEngineDelegate):
 
     def process_work_item(self, work_item):
         self.record("process_work_item")
-        self._test.assertEquals(work_item, "work_item")
+        self._test.assertEqual(work_item, "work_item")
         return True
 
     def handle_unexpected_error(self, work_item, message):
         self.record("handle_unexpected_error")
-        self._test.assertEquals(work_item, "work_item")
+        self._test.assertEqual(work_item, "work_item")
 
     def stop_work_queue(self, message):
         self.record("stop_work_queue")
@@ -120,8 +120,8 @@ class QueueEngineTest(unittest.TestCase):
     def test_trivial(self):
         delegate = LoggingDelegate(self)
         self._run_engine(delegate)
-        self.assertEquals(delegate.stop_message, "Delegate terminated queue.")
-        self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
+        self.assertEqual(delegate.stop_message, "Delegate terminated queue.")
+        self.assertEqual(delegate._callbacks, LoggingDelegate.expected_callbacks)
         self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "queue_log_path")))
         self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "work_log_path", "work_item.log")))
 
@@ -133,12 +133,12 @@ class QueueEngineTest(unittest.TestCase):
         # The unexpected error should be handled right after process_work_item starts
         # but before any other callback.  Otherwise callbacks should be normal.
         expected_callbacks.insert(work_item_index + 1, 'handle_unexpected_error')
-        self.assertEquals(delegate._callbacks, expected_callbacks)
+        self.assertEqual(delegate._callbacks, expected_callbacks)
 
     def test_handled_error(self):
         delegate = RaisingDelegate(self, ScriptError(exit_code=QueueEngine.handled_error_code))
         self._run_engine(delegate)
-        self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
+        self.assertEqual(delegate._callbacks, LoggingDelegate.expected_callbacks)
 
     def _run_engine(self, delegate, engine=None, termination_message=None):
         if not engine:
@@ -158,8 +158,8 @@ class QueueEngineTest(unittest.TestCase):
         delegate = RaisingDelegate(self, exception)
         self._run_engine(delegate, termination_message=termination_message)
 
-        self.assertEquals(delegate._callbacks, expected_callbacks)
-        self.assertEquals(delegate.stop_message, termination_message)
+        self.assertEqual(delegate._callbacks, expected_callbacks)
+        self.assertEqual(delegate.stop_message, termination_message)
 
     def test_terminating_error(self):
         self._test_terminating_queue(KeyboardInterrupt(), "User terminated queue.")

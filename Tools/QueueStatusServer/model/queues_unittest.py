@@ -43,7 +43,7 @@ class QueueTest(unittest.TestCase):
         self.assertRaises(AssertionError, Queue, ("bogus"))
 
     def _assert_short_name(self, queue_name, short_name):
-        self.assertEquals(Queue(queue_name).short_name(), short_name)
+        self.assertEqual(Queue(queue_name).short_name(), short_name)
 
     def test_short_name(self):
         self._assert_short_name("mac-ews", "Mac")
@@ -52,7 +52,7 @@ class QueueTest(unittest.TestCase):
         self._assert_short_name("style-queue", "Style")
 
     def _assert_display_name(self, queue_name, short_name):
-        self.assertEquals(Queue(queue_name).display_name(), short_name)
+        self.assertEqual(Queue(queue_name).display_name(), short_name)
 
     def test_display_name(self):
         self._assert_display_name("mac-ews", "Mac EWS")
@@ -61,7 +61,7 @@ class QueueTest(unittest.TestCase):
         self._assert_display_name("style-queue", "Style Queue")
 
     def _assert_name_with_underscores(self, queue_name, short_name):
-        self.assertEquals(Queue(queue_name).name_with_underscores(), short_name)
+        self.assertEqual(Queue(queue_name).name_with_underscores(), short_name)
 
     def test_name_with_underscores(self):
         self._assert_name_with_underscores("mac-ews", "mac_ews")

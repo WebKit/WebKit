@@ -615,12 +615,12 @@ class SVNTest(SCMTest):
         self._setup_webkittools_scripts_symlink(self.scm)
         self.checkout.apply_patch(self._create_patch(one_line_overlap_patch))
         expected_changelog_contents = "%s\n%s" % (self._set_date_and_reviewer(one_line_overlap_entry), changelog_contents)
-        self.assertEquals(read_from_path('ChangeLog'), expected_changelog_contents)
+        self.assertEqual(read_from_path('ChangeLog'), expected_changelog_contents)
 
         self.scm.revert_files(['ChangeLog'])
         self.checkout.apply_patch(self._create_patch(two_line_overlap_patch))
         expected_changelog_contents = "%s\n%s" % (self._set_date_and_reviewer(two_line_overlap_entry), changelog_contents)
-        self.assertEquals(read_from_path('ChangeLog'), expected_changelog_contents)
+        self.assertEqual(read_from_path('ChangeLog'), expected_changelog_contents)
 
     def setUp(self):
         SVNTestRepository.setup(self)
@@ -1192,7 +1192,7 @@ class GitSVNTest(SCMTest):
 
     def test_revisions_changing_files_with_local_commit(self):
         self._one_local_commit()
-        self.assertEquals(self.scm.revisions_changing_file('test_file_commit1'), [])
+        self.assertEqual(self.scm.revisions_changing_file('test_file_commit1'), [])
 
     def test_commit_with_message(self):
         self._one_local_commit_plus_working_copy_changes()
@@ -1302,7 +1302,7 @@ class GitSVNTest(SCMTest):
     def test_upstream_branch(self):
         run_command(['git', 'checkout', '-t', '-b', 'my-branch'])
         run_command(['git', 'checkout', '-t', '-b', 'my-second-branch'])
-        self.assertEquals(self.scm._upstream_branch(), 'my-branch')
+        self.assertEqual(self.scm._upstream_branch(), 'my-branch')
 
     def test_remote_branch_ref(self):
         self.assertEqual(self.scm.remote_branch_ref(), 'refs/remotes/trunk')
@@ -1353,7 +1353,7 @@ class GitSVNTest(SCMTest):
         os.remove('test_file_commit1')
         patch = scm.create_patch()
         patch_with_changed_files = scm.create_patch(changed_files=['test_file_commit1', 'test_file_commit2'])
-        self.assertEquals(patch, patch_with_changed_files)
+        self.assertEqual(patch, patch_with_changed_files)
 
     def test_create_patch_git_commit(self):
         self._two_local_commits()
@@ -1597,7 +1597,7 @@ class GitTestWithMock(unittest.TestCase):
         OutputCapture().assert_outputs(self, scm.create_patch, expected_stderr=expected_stderr)
 
     def test_push_local_commits_to_server_with_username_and_password(self):
-        self.assertEquals(self.make_scm().push_local_commits_to_server(username='dbates@webkit.org', password='blah'), "MOCK output of child process")
+        self.assertEqual(self.make_scm().push_local_commits_to_server(username='dbates@webkit.org', password='blah'), "MOCK output of child process")
 
     def test_push_local_commits_to_server_without_username_and_password(self):
         self.assertRaises(AuthenticationError, self.make_scm().push_local_commits_to_server)

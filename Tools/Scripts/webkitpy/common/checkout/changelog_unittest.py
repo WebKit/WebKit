@@ -181,7 +181,7 @@ class ChangeLogTest(unittest.TestCase):
 
         '''
 
-        self.assertEquals(56988, parse_bug_id_from_changelog(commit_text))
+        self.assertEqual(56988, parse_bug_id_from_changelog(commit_text))
 
         commit_text = '''
 2011-03-23  Ojan Vafai  <ojan@chromium.org>
@@ -194,7 +194,7 @@ class ChangeLogTest(unittest.TestCase):
 
         '''
 
-        self.assertEquals(12345, parse_bug_id_from_changelog(commit_text))
+        self.assertEqual(12345, parse_bug_id_from_changelog(commit_text))
 
         commit_text = '''
 2011-03-31  Adam Roben  <aroben@apple.com>
@@ -213,7 +213,7 @@ class ChangeLogTest(unittest.TestCase):
 
         '''
 
-        self.assertEquals(57569, parse_bug_id_from_changelog(commit_text))
+        self.assertEqual(57569, parse_bug_id_from_changelog(commit_text))
 
         commit_text = '''
 2011-03-29  Timothy Hatcher  <timothy@apple.com>
@@ -230,24 +230,24 @@ class ChangeLogTest(unittest.TestCase):
         extract-localizable-strings does not complain about unbalanced single quotes.
         '''
 
-        self.assertEquals(57354, parse_bug_id_from_changelog(commit_text))
+        self.assertEqual(57354, parse_bug_id_from_changelog(commit_text))
 
     def test_parse_log_entries_from_changelog(self):
         changelog_file = StringIO(self._example_changelog)
         parsed_entries = list(ChangeLog.parse_entries_from_file(changelog_file))
-        self.assertEquals(len(parsed_entries), 9)
-        self.assertEquals(parsed_entries[0].reviewer_text(), "David Levin")
-        self.assertEquals(parsed_entries[1].author_email(), "ddkilzer@apple.com")
-        self.assertEquals(parsed_entries[2].reviewer_text(), "Mark Rowe")
-        self.assertEquals(parsed_entries[2].touched_files(), ["DumpRenderTree/mac/DumpRenderTreeWindow.mm"])
-        self.assertEquals(parsed_entries[3].author_name(), "Benjamin Poulain")
-        self.assertEquals(parsed_entries[3].touched_files(), ["platform/cf/KURLCFNet.cpp", "platform/mac/KURLMac.mm",
+        self.assertEqual(len(parsed_entries), 9)
+        self.assertEqual(parsed_entries[0].reviewer_text(), "David Levin")
+        self.assertEqual(parsed_entries[1].author_email(), "ddkilzer@apple.com")
+        self.assertEqual(parsed_entries[2].reviewer_text(), "Mark Rowe")
+        self.assertEqual(parsed_entries[2].touched_files(), ["DumpRenderTree/mac/DumpRenderTreeWindow.mm"])
+        self.assertEqual(parsed_entries[3].author_name(), "Benjamin Poulain")
+        self.assertEqual(parsed_entries[3].touched_files(), ["platform/cf/KURLCFNet.cpp", "platform/mac/KURLMac.mm",
             "WebCoreSupport/ChromeClientEfl.cpp", "ewk/ewk_private.h", "ewk/ewk_view.cpp"])
-        self.assertEquals(parsed_entries[4].reviewer_text(), "David Hyatt")
-        self.assertEquals(parsed_entries[5].reviewer_text(), "Adam Roben")
-        self.assertEquals(parsed_entries[6].reviewer_text(), "Tony Chang")
-        self.assertEquals(parsed_entries[7].reviewer_text(), None)
-        self.assertEquals(parsed_entries[8].reviewer_text(), 'Darin Adler')
+        self.assertEqual(parsed_entries[4].reviewer_text(), "David Hyatt")
+        self.assertEqual(parsed_entries[5].reviewer_text(), "Adam Roben")
+        self.assertEqual(parsed_entries[6].reviewer_text(), "Tony Chang")
+        self.assertEqual(parsed_entries[7].reviewer_text(), None)
+        self.assertEqual(parsed_entries[8].reviewer_text(), 'Darin Adler')
 
     def test_parse_log_entries_from_annotated_file(self):
         # Note that there are trailing spaces on some of the lines intentionally.
@@ -285,28 +285,28 @@ class ChangeLogTest(unittest.TestCase):
             u"99187 andreas.kling@nokia.com \n")
 
         parsed_entries = list(ChangeLog.parse_entries_from_file(changelog_file))
-        self.assertEquals(parsed_entries[0].revision(), 100000)
-        self.assertEquals(parsed_entries[0].reviewer_text(), "Zoltan Herczeg")
-        self.assertEquals(parsed_entries[0].author_name(), u"Csaba Osztrogon\u00e1c")
-        self.assertEquals(parsed_entries[0].author_email(), "ossy@webkit.org")
-        self.assertEquals(parsed_entries[1].revision(), 93798)
-        self.assertEquals(parsed_entries[1].author_name(), "Alexey Proskuryakov")
-        self.assertEquals(parsed_entries[2].revision(), 99190)
-        self.assertEquals(parsed_entries[2].author_name(), "Andreas Kling")
-        self.assertEquals(parsed_entries[3].revision(), 99187)
-        self.assertEquals(parsed_entries[3].author_name(), "Andreas Kling")
+        self.assertEqual(parsed_entries[0].revision(), 100000)
+        self.assertEqual(parsed_entries[0].reviewer_text(), "Zoltan Herczeg")
+        self.assertEqual(parsed_entries[0].author_name(), u"Csaba Osztrogon\u00e1c")
+        self.assertEqual(parsed_entries[0].author_email(), "ossy@webkit.org")
+        self.assertEqual(parsed_entries[1].revision(), 93798)
+        self.assertEqual(parsed_entries[1].author_name(), "Alexey Proskuryakov")
+        self.assertEqual(parsed_entries[2].revision(), 99190)
+        self.assertEqual(parsed_entries[2].author_name(), "Andreas Kling")
+        self.assertEqual(parsed_entries[3].revision(), 99187)
+        self.assertEqual(parsed_entries[3].author_name(), "Andreas Kling")
 
     def _assert_parse_reviewer_text_and_list(self, text, expected_reviewer_text, expected_reviewer_text_list=None):
         reviewer_text, reviewer_text_list = ChangeLogEntry._parse_reviewer_text(text)
-        self.assertEquals(reviewer_text, expected_reviewer_text)
+        self.assertEqual(reviewer_text, expected_reviewer_text)
         if expected_reviewer_text_list:
-            self.assertEquals(reviewer_text_list, expected_reviewer_text_list)
+            self.assertEqual(reviewer_text_list, expected_reviewer_text_list)
         else:
-            self.assertEquals(reviewer_text_list, [expected_reviewer_text])
+            self.assertEqual(reviewer_text_list, [expected_reviewer_text])
 
     def _assert_parse_reviewer_text_list(self, text, expected_reviewer_text_list):
         reviewer_text, reviewer_text_list = ChangeLogEntry._parse_reviewer_text(text)
-        self.assertEquals(reviewer_text_list, expected_reviewer_text_list)
+        self.assertEqual(reviewer_text_list, expected_reviewer_text_list)
 
     def test_parse_reviewer_text(self):
         self._assert_parse_reviewer_text_and_list('  reviewed  by Ryosuke Niwa,   Oliver Hunt, and  Dimitri Glazkov',
@@ -388,8 +388,8 @@ class ChangeLogTest(unittest.TestCase):
 
     def _assert_fuzzy_reviewer_match(self, reviewer_text, expected_text_list, expected_contributors):
         unused, reviewer_text_list = ChangeLogEntry._parse_reviewer_text(reviewer_text)
-        self.assertEquals(reviewer_text_list, expected_text_list)
-        self.assertEquals(self._entry_with_reviewer(reviewer_text).reviewers(), self._contributors(expected_contributors))
+        self.assertEqual(reviewer_text_list, expected_text_list)
+        self.assertEqual(self._entry_with_reviewer(reviewer_text).reviewers(), self._contributors(expected_contributors))
 
     def test_fuzzy_reviewer_match__none(self):
         self._assert_fuzzy_reviewer_match('Reviewed by BUILD FIX', ['BUILD FIX'], [])
@@ -427,7 +427,7 @@ class ChangeLogTest(unittest.TestCase):
 
     def _assert_parse_authors(self, author_text, expected_contributors):
         parsed_authors = [(author['name'], author['email']) for author in self._entry_with_author(author_text).authors()]
-        self.assertEquals(parsed_authors, expected_contributors)
+        self.assertEqual(parsed_authors, expected_contributors)
 
     def test_parse_authors(self):
         self._assert_parse_authors(u'Aaron Colwell  <acolwell@chromium.org>', [(u'Aaron Colwell', u'acolwell@chromium.org')])
@@ -458,11 +458,11 @@ class ChangeLogTest(unittest.TestCase):
         changelog_contents = u"%s\n%s" % (self._example_entry, self._example_changelog)
         changelog_file = StringIO(changelog_contents)
         latest_entry = ChangeLog.parse_latest_entry_from_file(changelog_file)
-        self.assertEquals(latest_entry.contents(), self._example_entry)
-        self.assertEquals(latest_entry.author_name(), "Peter Kasting")
-        self.assertEquals(latest_entry.author_email(), "pkasting@google.com")
-        self.assertEquals(latest_entry.reviewer_text(), u"Tor Arne Vestb\xf8")
-        self.assertEquals(latest_entry.touched_files(), ["DumpRenderTree/win/DumpRenderTree.vcproj", "DumpRenderTree/win/ImageDiff.vcproj", "DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj"])
+        self.assertEqual(latest_entry.contents(), self._example_entry)
+        self.assertEqual(latest_entry.author_name(), "Peter Kasting")
+        self.assertEqual(latest_entry.author_email(), "pkasting@google.com")
+        self.assertEqual(latest_entry.reviewer_text(), u"Tor Arne Vestb\xf8")
+        self.assertEqual(latest_entry.touched_files(), ["DumpRenderTree/win/DumpRenderTree.vcproj", "DumpRenderTree/win/ImageDiff.vcproj", "DumpRenderTree/win/TestNetscapePlugin/TestNetscapePlugin.vcproj"])
 
         self.assertTrue(latest_entry.reviewer())  # Make sure that our UTF8-based lookup of Tor works.
 
@@ -470,8 +470,8 @@ class ChangeLogTest(unittest.TestCase):
         changelog_contents = u"%s\n%s" % (self._example_entry, self._rolled_over_footer)
         changelog_file = StringIO(changelog_contents)
         latest_entry = ChangeLog.parse_latest_entry_from_file(changelog_file)
-        self.assertEquals(latest_entry.contents(), self._example_entry)
-        self.assertEquals(latest_entry.author_name(), "Peter Kasting")
+        self.assertEqual(latest_entry.contents(), self._example_entry)
+        self.assertEqual(latest_entry.author_name(), "Peter Kasting")
 
     @staticmethod
     def _write_tmp_file_with_contents(byte_array):
@@ -543,14 +543,14 @@ class ChangeLogTest(unittest.TestCase):
         actual_contents = self._read_file_contents(changelog_path, "utf-8")
         expected_contents = changelog_contents.replace('NOBODY (OOPS!)', reviewer_name)
         os.remove(changelog_path)
-        self.assertEquals(actual_contents.splitlines(), expected_contents.splitlines())
+        self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
         changelog_contents_without_reviewer_line = u"%s\n%s" % (self._new_entry_boilerplate_without_reviewer_line, self._example_changelog)
         changelog_path = self._write_tmp_file_with_contents(changelog_contents_without_reviewer_line.encode("utf-8"))
         ChangeLog(changelog_path).set_reviewer(reviewer_name)
         actual_contents = self._read_file_contents(changelog_path, "utf-8")
         os.remove(changelog_path)
-        self.assertEquals(actual_contents.splitlines(), expected_contents.splitlines())
+        self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
         changelog_contents_without_reviewer_line = u"%s\n%s" % (self._new_entry_boilerplate_without_reviewer_multiple_bugurl, self._example_changelog)
         changelog_path = self._write_tmp_file_with_contents(changelog_contents_without_reviewer_line.encode("utf-8"))
@@ -559,7 +559,7 @@ class ChangeLogTest(unittest.TestCase):
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate_with_multiple_bugurl, self._example_changelog)
         expected_contents = changelog_contents.replace('NOBODY (OOPS!)', reviewer_name)
         os.remove(changelog_path)
-        self.assertEquals(actual_contents.splitlines(), expected_contents.splitlines())
+        self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
     def test_set_short_description_and_bug_url(self):
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate_with_bugurl, self._example_changelog)
@@ -571,7 +571,7 @@ class ChangeLogTest(unittest.TestCase):
         expected_message = "%s\n        %s" % (short_description, bug_url)
         expected_contents = changelog_contents.replace("Need a short description (OOPS!).", expected_message)
         os.remove(changelog_path)
-        self.assertEquals(actual_contents.splitlines(), expected_contents.splitlines())
+        self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())
 
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
         changelog_path = self._write_tmp_file_with_contents(changelog_contents.encode("utf-8"))
@@ -582,4 +582,4 @@ class ChangeLogTest(unittest.TestCase):
         expected_message = "%s\n        %s" % (short_description, bug_url)
         expected_contents = changelog_contents.replace("Need a short description (OOPS!).\n        Need the bug URL (OOPS!).", expected_message)
         os.remove(changelog_path)
-        self.assertEquals(actual_contents.splitlines(), expected_contents.splitlines())
+        self.assertEqual(actual_contents.splitlines(), expected_contents.splitlines())

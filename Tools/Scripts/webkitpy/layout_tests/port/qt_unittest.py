@@ -69,7 +69,7 @@ class QtPortTest(port_testcase.PortTestCase):
         port = self.make_port(host=host, qt_version=qt_version, port_name=port_name,
                               options=MockOptions(webkit_test_runner=use_webkit2, platform='qt'))
         absolute_search_paths = map(port._webkit_baseline_path, search_paths)
-        self.assertEquals(port.baseline_search_path(), absolute_search_paths)
+        self.assertEqual(port.baseline_search_path(), absolute_search_paths)
 
     def _assert_expectations_files(self, search_paths, os_name, use_webkit2=False, qt_version='4.8'):
         # FIXME: Port constructors should not "parse" the port name, but
@@ -80,7 +80,7 @@ class QtPortTest(port_testcase.PortTestCase):
         port_name = 'qt-' + os_name
         port = self.make_port(host=host, qt_version=qt_version, port_name=port_name,
                               options=MockOptions(webkit_test_runner=use_webkit2, platform='qt'))
-        self.assertEquals(port.expectations_files(), search_paths)
+        self.assertEqual(port.expectations_files(), search_paths)
 
     def _qt_version(self, qt_version):
         if qt_version in '4.8':
@@ -110,7 +110,7 @@ class QtPortTest(port_testcase.PortTestCase):
     def test_setup_environ_for_server(self):
         port = self.make_port()
         env = port.setup_environ_for_server(port.driver_name())
-        self.assertEquals(env['QTWEBKIT_PLUGIN_PATH'], '/mock-build/lib/plugins')
+        self.assertEqual(env['QTWEBKIT_PLUGIN_PATH'], '/mock-build/lib/plugins')
 
     def test_operating_system(self):
         self.assertEqual('linux', self.make_port(port_name='qt-linux', os_name='linux').operating_system())

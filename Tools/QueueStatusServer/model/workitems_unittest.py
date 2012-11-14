@@ -36,9 +36,9 @@ class WorkItemsTest(unittest.TestCase):
     def test_display_position_for_attachment(self):
         items = WorkItems()
         items.item_ids = [0, 1, 2]
-        self.assertEquals(items.display_position_for_attachment(0), 1)
-        self.assertEquals(items.display_position_for_attachment(1), 2)
-        self.assertEquals(items.display_position_for_attachment(3), None)
+        self.assertEqual(items.display_position_for_attachment(0), 1)
+        self.assertEqual(items.display_position_for_attachment(1), 2)
+        self.assertEqual(items.display_position_for_attachment(3), None)
 
 
 if __name__ == '__main__':

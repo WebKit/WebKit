@@ -61,7 +61,7 @@ class MasterCfgTest(unittest.TestCase):
             '1 unique leaks found!',
         ]
         run_webkit_tests._parseNewRunWebKitTestsOutput(log_text)
-        self.assertEquals(run_webkit_tests.incorrectLayoutLines, expected_incorrect_lines)
+        self.assertEqual(run_webkit_tests.incorrectLayoutLines, expected_incorrect_lines)
 
 
 class StubStdio(object):
@@ -354,7 +354,7 @@ class SVNMirrorTest(unittest.TestCase):
             for buildStepFactory, kwargs in builder['factory'].steps:
                 if str(buildStepFactory).split('.')[-1] == 'CheckOutSource':
                         CheckOutSourceInstance = buildStepFactory(**kwargs)
-                        self.assertEquals(CheckOutSourceInstance.baseURL, self.get_SVNMirrorFromConfig(builder['name']))
+                        self.assertEqual(CheckOutSourceInstance.baseURL, self.get_SVNMirrorFromConfig(builder['name']))
 
 
 class BuildStepsConstructorTest(unittest.TestCase):

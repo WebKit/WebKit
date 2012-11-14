@@ -41,7 +41,7 @@ class ChromiumMacPortTest(chromium_port_testcase.ChromiumPortTestCase):
 
     def assert_name(self, port_name, os_version_string, expected):
         port = self.make_port(os_version=os_version_string, port_name=port_name)
-        self.assertEquals(expected, port.name())
+        self.assertEqual(expected, port.name())
 
     def test_versions(self):
         self.assertTrue(self.make_port().name() in ('chromium-mac-snowleopard', 'chromium-mac-lion', 'chromium-mac-mountainlion', 'chromium-mac-future'))
@@ -64,16 +64,16 @@ class ChromiumMacPortTest(chromium_port_testcase.ChromiumPortTestCase):
 
     def test_baseline_path(self):
         port = self.make_port(port_name='chromium-mac-snowleopard')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac-snowleopard'))
+        self.assertEqual(port.baseline_path(), port._webkit_baseline_path('chromium-mac-snowleopard'))
 
         port = self.make_port(port_name='chromium-mac-lion')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac-lion'))
+        self.assertEqual(port.baseline_path(), port._webkit_baseline_path('chromium-mac-lion'))
 
         port = self.make_port(port_name='chromium-mac-mountainlion')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac'))
+        self.assertEqual(port.baseline_path(), port._webkit_baseline_path('chromium-mac'))
 
         port = self.make_port(port_name='chromium-mac-future')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-mac'))
+        self.assertEqual(port.baseline_path(), port._webkit_baseline_path('chromium-mac'))
 
     def test_operating_system(self):
         self.assertEqual('mac', self.make_port().operating_system())
@@ -100,7 +100,7 @@ class ChromiumMacPortTest(chromium_port_testcase.ChromiumPortTestCase):
         self.assertTrue(self.make_port(options=MockOptions(driver_name='OtherDriver'))._path_to_driver().endswith('OtherDriver'))
 
     def test_path_to_image_diff(self):
-        self.assertEquals(self.make_port()._path_to_image_diff(), '/mock-checkout/out/Release/ImageDiff')
+        self.assertEqual(self.make_port()._path_to_image_diff(), '/mock-checkout/out/Release/ImageDiff')
 
 
 if __name__ == '__main__':

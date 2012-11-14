@@ -48,19 +48,19 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 class ScriptErrorTest(unittest.TestCase):
     def test_string_from_args(self):
         error = ScriptError()
-        self.assertEquals(error._string_from_args(None), 'None')
-        self.assertEquals(error._string_from_args([]), '[]')
-        self.assertEquals(error._string_from_args(map(str, range(30))), "['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17'...")
+        self.assertEqual(error._string_from_args(None), 'None')
+        self.assertEqual(error._string_from_args([]), '[]')
+        self.assertEqual(error._string_from_args(map(str, range(30))), "['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17'...")
 
     def test_message_with_output(self):
         error = ScriptError('My custom message!', '', -1)
-        self.assertEquals(error.message_with_output(), 'My custom message!')
+        self.assertEqual(error.message_with_output(), 'My custom message!')
         error = ScriptError('My custom message!', '', -1, 'My output.')
-        self.assertEquals(error.message_with_output(), 'My custom message!\n\nMy output.')
+        self.assertEqual(error.message_with_output(), 'My custom message!\n\nMy output.')
         error = ScriptError('', 'my_command!', -1, 'My output.', '/Users/username/blah')
-        self.assertEquals(error.message_with_output(), 'Failed to run "my_command!" exit_code: -1 cwd: /Users/username/blah\n\nMy output.')
+        self.assertEqual(error.message_with_output(), 'Failed to run "my_command!" exit_code: -1 cwd: /Users/username/blah\n\nMy output.')
         error = ScriptError('', 'my_command!', -1, 'ab' + '1' * 499)
-        self.assertEquals(error.message_with_output(), 'Failed to run "my_command!" exit_code: -1\n\nLast 500 characters of output:\nb' + '1' * 499)
+        self.assertEqual(error.message_with_output(), 'Failed to run "my_command!" exit_code: -1\n\nLast 500 characters of output:\nb' + '1' * 499)
 
 def never_ending_command():
     """Arguments for a command that will never end (useful for testing process
@@ -104,7 +104,7 @@ class ExecutiveTest(unittest.TestCase):
     def test_run_command_with_bad_command(self):
         def run_bad_command():
             Executive().run_command(["foo_bar_command_blah"], error_handler=Executive.ignore_error, return_exit_code=True)
-        self.failUnlessRaises(OSError, run_bad_command)
+        self.assertRaises(OSError, run_bad_command)
 
     def test_run_command_args_type(self):
         executive = Executive()
@@ -133,24 +133,24 @@ class ExecutiveTest(unittest.TestCase):
         executive = Executive()
 
         output = executive.run_command(command_line('cat'), input=unicode_tor_input)
-        self.assertEquals(output, unicode_tor_output)
+        self.assertEqual(output, unicode_tor_output)
 
         output = executive.run_command(command_line('echo', unicode_tor_input))
-        self.assertEquals(output, unicode_tor_output)
+        self.assertEqual(output, unicode_tor_output)
 
         output = executive.run_command(command_line('echo', unicode_tor_input), decode_output=False)
-        self.assertEquals(output, encoded_tor)
+        self.assertEqual(output, encoded_tor)
 
         # Make sure that str() input also works.
         output = executive.run_command(command_line('cat'), input=encoded_tor, decode_output=False)
-        self.assertEquals(output, encoded_tor)
+        self.assertEqual(output, encoded_tor)
 
         # FIXME: We should only have one run* method to test
         output = executive.run_and_throw_if_fail(command_line('echo', unicode_tor_input), quiet=True)
-        self.assertEquals(output, unicode_tor_output)
+        self.assertEqual(output, unicode_tor_output)
 
         output = executive.run_and_throw_if_fail(command_line('echo', unicode_tor_input), quiet=True, decode_output=False)
-        self.assertEquals(output, encoded_tor)
+        self.assertEqual(output, encoded_tor)
 
     def serial_test_kill_process(self):
         executive = Executive()
@@ -236,8 +236,8 @@ class ExecutiveTest(unittest.TestCase):
         command_outputs = Executive().run_in_parallel(commands, processes=NUM_PROCESSES)
         done = time.time()
         self.assertTrue(done - start < NUM_PROCESSES * DELAY_SECS)
-        self.assertEquals([output[1] for output in command_outputs], ["hello\n"] * NUM_PROCESSES)
-        self.assertEquals([],  multiprocessing.active_children())
+        self.assertEqual([output[1] for output in command_outputs], ["hello\n"] * NUM_PROCESSES)
+        self.assertEqual([],  multiprocessing.active_children())
 
     def test_run_in_parallel_assert_nonempty(self):
         self.assertRaises(AssertionError, Executive().run_in_parallel, [])

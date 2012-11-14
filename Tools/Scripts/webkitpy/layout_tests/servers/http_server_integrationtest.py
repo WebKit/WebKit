@@ -80,9 +80,9 @@ class BaseTest(unittest.TestCase):
             return
 
         self.assert_servers_are_down()
-        self.assertEquals(self.run_script(['--server', 'start']), 0)
+        self.assertEqual(self.run_script(['--server', 'start']), 0)
         self.assert_servers_are_up()
-        self.assertEquals(self.run_script(['--server', 'stop']), 0)
+        self.assertEqual(self.run_script(['--server', 'stop']), 0)
         self.assert_servers_are_down()
 
     def integration_test_server__fails(self):
@@ -99,13 +99,13 @@ class BaseTest(unittest.TestCase):
                     if e.errno in (errno.EADDRINUSE, errno.EALREADY):
                         self.fail('could not bind to port %d: %s' % (port_number, str(e)))
                     raise
-                self.assertEquals(self.run_script(['--server', 'start']), 1)
+                self.assertEqual(self.run_script(['--server', 'start']), 1)
             finally:
                 self.run_script(['--server', 'stop'])
                 test_socket.close()
 
         # Test that calling stop() twice is harmless.
-        self.assertEquals(self.run_script(['--server', 'stop']), 0)
+        self.assertEqual(self.run_script(['--server', 'stop']), 0)
 
     def maybe_make_dir(self, *comps):
         try:
@@ -124,9 +124,9 @@ class BaseTest(unittest.TestCase):
         self.maybe_make_dir(tmpdir, 'media')
 
         self.assert_servers_are_down([18000])
-        self.assertEquals(self.run_script(['--server', 'start', '--port=18000', '--root', tmpdir]), 0)
+        self.assertEqual(self.run_script(['--server', 'start', '--port=18000', '--root', tmpdir]), 0)
         self.assert_servers_are_up([18000])
-        self.assertEquals(self.run_script(['--server', 'stop']), 0)
+        self.assertEqual(self.run_script(['--server', 'stop']), 0)
         self.assert_servers_are_down([18000])
 
 

@@ -59,7 +59,7 @@ class ChromiumWinTest(chromium_port_testcase.ChromiumPortTestCase):
     def test_setup_environ_for_server_cygpath(self):
         port = self.make_port()
         env = port.setup_environ_for_server(port.driver_name())
-        self.assertEquals(env['CYGWIN_PATH'], '/mock-checkout/Source/WebKit/chromium/third_party/cygwin/bin')
+        self.assertEqual(env['CYGWIN_PATH'], '/mock-checkout/Source/WebKit/chromium/third_party/cygwin/bin')
 
     def test_setup_environ_for_server_register_cygwin(self):
         port = self.make_port(options=MockOptions(register_cygwin=True, results_directory='/'))
@@ -70,7 +70,7 @@ class ChromiumWinTest(chromium_port_testcase.ChromiumPortTestCase):
 
     def assert_name(self, port_name, os_version_string, expected):
         port = self.make_port(port_name=port_name, os_version=os_version_string)
-        self.assertEquals(expected, port.name())
+        self.assertEqual(expected, port.name())
 
     def test_versions(self):
         port = self.make_port()
@@ -92,10 +92,10 @@ class ChromiumWinTest(chromium_port_testcase.ChromiumPortTestCase):
 
     def test_baseline_path(self):
         port = self.make_port(port_name='chromium-win-xp')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-win-xp'))
+        self.assertEqual(port.baseline_path(), port._webkit_baseline_path('chromium-win-xp'))
 
         port = self.make_port(port_name='chromium-win-win7')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-win'))
+        self.assertEqual(port.baseline_path(), port._webkit_baseline_path('chromium-win'))
 
     def test_build_path(self):
         # Test that optional paths are used regardless of whether they exist.
@@ -122,4 +122,4 @@ class ChromiumWinTest(chromium_port_testcase.ChromiumPortTestCase):
         self.assertTrue(self.make_port(options=MockOptions(driver_name='OtherDriver'))._path_to_driver().endswith('OtherDriver.exe'))
 
     def test_path_to_image_diff(self):
-        self.assertEquals(self.make_port()._path_to_image_diff(), '/mock-checkout/out/Release/ImageDiff.exe')
+        self.assertEqual(self.make_port()._path_to_image_diff(), '/mock-checkout/out/Release/ImageDiff.exe')

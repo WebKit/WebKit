@@ -47,7 +47,7 @@ class ChromiumLinuxPortTest(chromium_port_testcase.ChromiumPortTestCase):
             host.executive = executive_mock.MockExecutive2(file_output)
 
         port = self.make_port(host, port_name=port_name)
-        self.assertEquals(port.architecture(), expected_architecture)
+        self.assertEqual(port.architecture(), expected_architecture)
         if expected_architecture == 'x86':
             self.assertTrue(port.baseline_path().endswith('chromium-linux-x86'))
             self.assertTrue(port.baseline_search_path()[0].endswith('chromium-linux-x86'))
@@ -74,14 +74,14 @@ class ChromiumLinuxPortTest(chromium_port_testcase.ChromiumPortTestCase):
     def test_determine_architecture_fails(self):
         # Test that we default to 'x86' if the driver doesn't exist.
         port = self.make_port()
-        self.assertEquals(port.architecture(), 'x86_64')
+        self.assertEqual(port.architecture(), 'x86_64')
 
         # Test that we default to 'x86' on an unknown architecture.
         host = MockSystemHost()
         host.filesystem.exists = lambda x: True
         host.executive = executive_mock.MockExecutive2('win32')
         port = self.make_port(host=host)
-        self.assertEquals(port.architecture(), 'x86_64')
+        self.assertEqual(port.architecture(), 'x86_64')
 
         # Test that we raise errors if something weird happens.
         host.executive = executive_mock.MockExecutive2(exception=AssertionError)
@@ -112,7 +112,7 @@ class ChromiumLinuxPortTest(chromium_port_testcase.ChromiumPortTestCase):
         self.assertTrue(self.make_port(options=MockOptions(driver_name='OtherDriver'))._path_to_driver().endswith('OtherDriver'))
 
     def test_path_to_image_diff(self):
-        self.assertEquals(self.make_port()._path_to_image_diff(), '/mock-checkout/out/Release/ImageDiff')
+        self.assertEqual(self.make_port()._path_to_image_diff(), '/mock-checkout/out/Release/ImageDiff')
 
 if __name__ == '__main__':
     port_testcase.main()

@@ -37,7 +37,7 @@ class GetLoggerTest(unittest.TestCase):
 
     def test_get_logger_in_webkitpy(self):
         logger = logutils.get_logger(__file__)
-        self.assertEquals(logger.name, "webkitpy.common.system.logutils_unittest")
+        self.assertEqual(logger.name, "webkitpy.common.system.logutils_unittest")
 
     def test_get_logger_not_in_webkitpy(self):
         # Temporarily change the working directory so that we
@@ -47,10 +47,10 @@ class GetLoggerTest(unittest.TestCase):
         os.chdir(root_dir)
 
         logger = logutils.get_logger("/Tools/Scripts/test-webkitpy")
-        self.assertEquals(logger.name, "test-webkitpy")
+        self.assertEqual(logger.name, "test-webkitpy")
 
         logger = logutils.get_logger("/Tools/Scripts/test-webkitpy.py")
-        self.assertEquals(logger.name, "test-webkitpy")
+        self.assertEqual(logger.name, "test-webkitpy")
 
         os.chdir(working_directory)
 

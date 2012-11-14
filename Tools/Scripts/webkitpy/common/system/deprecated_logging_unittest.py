@@ -47,7 +47,7 @@ class LoggingTest(unittest.TestCase):
         finally:
             sys.stderr = original_stderr
 
-        self.assertEquals(actual_output, expected_output, "log(\"%s\") expected: %s actual: %s" % (log_input, expected_output, actual_output))
+        self.assertEqual(actual_output, expected_output, "log(\"%s\") expected: %s actual: %s" % (log_input, expected_output, actual_output))
 
     def test_log(self):
         self.assert_log_equals("test", "test\n")

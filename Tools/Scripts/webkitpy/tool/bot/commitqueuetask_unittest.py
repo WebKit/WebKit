@@ -564,7 +564,7 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
                 return ExpectedFailures()
 
         task = CommitQueueTask(MockDelegate(), patch)
-        self.assertEquals(task.validate(), is_valid)
+        self.assertEqual(task.validate(), is_valid)
 
     def _mock_patch(self, attachment_dict={}, bug_dict={'bug_status': 'NEW'}, committer="fake"):
         bug = bugzilla.Bug(bug_dict, None)

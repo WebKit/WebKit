@@ -130,9 +130,9 @@ class LayoutTestResultsTest(unittest.TestCase):
 
     def test_set_failure_limit_count(self):
         results = LayoutTestResults([])
-        self.assertEquals(results.failure_limit_count(), None)
+        self.assertEqual(results.failure_limit_count(), None)
         results.set_failure_limit_count(10)
-        self.assertEquals(results.failure_limit_count(), 10)
+        self.assertEqual(results.failure_limit_count(), 10)
 
     def test_results_from_string(self):
         self.assertEqual(LayoutTestResults.results_from_string(None), None)

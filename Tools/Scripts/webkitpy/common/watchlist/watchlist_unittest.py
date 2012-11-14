@@ -52,7 +52,7 @@ class WatchListTest(unittest.TestCase):
             '        ],'
            '    },'
             '}')
-        self.assertEquals(set([]), watch_list.find_matching_definitions(DIFF_TEST_DATA))
+        self.assertEqual(set([]), watch_list.find_matching_definitions(DIFF_TEST_DATA))
 
     def test_filename_definition(self):
         watch_list = self._watch_list_parser.parse(
@@ -68,7 +68,7 @@ class WatchListTest(unittest.TestCase):
             '        ],'
            '    },'
             '}')
-        self.assertEquals(set(['WatchList1']), watch_list.find_matching_definitions(DIFF_TEST_DATA))
+        self.assertEqual(set(['WatchList1']), watch_list.find_matching_definitions(DIFF_TEST_DATA))
 
     def test_cc_rules_simple(self):
         watch_list = self._watch_list_parser.parse(
@@ -85,7 +85,7 @@ class WatchListTest(unittest.TestCase):
            '    },'
             '}')
         cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
-        self.assertEquals({
+        self.assertEqual({
                 'cc_list': ['levin@chromium.org'],
                 'messages': [],
                 }, cc_and_messages)
@@ -109,7 +109,7 @@ class WatchListTest(unittest.TestCase):
             '    },'
             '}')
         cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
-        self.assertEquals({
+        self.assertEqual({
                 'cc_list': ['levin@chromium.org'],
                 'messages': [],
                 }, cc_and_messages)
@@ -136,7 +136,7 @@ class WatchListTest(unittest.TestCase):
             '    },'
             '}')
         cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
-        self.assertEquals({
+        self.assertEqual({
                 'cc_list': ['levin@chromium.org'],
                 'messages': ['msg1', 'msg2'],
                 }, cc_and_messages)
@@ -163,7 +163,7 @@ class WatchListTest(unittest.TestCase):
             '    },'
             '}')
         cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
-        self.assertEquals({
+        self.assertEqual({
                 'cc_list': [],
                 'messages': [],
                 }, cc_and_messages)
@@ -185,7 +185,7 @@ class WatchListTest(unittest.TestCase):
             '    },'
             '}')
         cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
-        self.assertEquals({
+        self.assertEqual({
                 'cc_list': ['eric@webkit.org'],
                 'messages': [],
                 }, cc_and_messages)
@@ -207,7 +207,7 @@ class WatchListTest(unittest.TestCase):
             '    },'
             '}')
         cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
-        self.assertEquals({
+        self.assertEqual({
                 'cc_list': ['abarth@webkit.org'],
                 'messages': [],
                 }, cc_and_messages)
@@ -236,7 +236,7 @@ class WatchListTest(unittest.TestCase):
             '    },'
             '}')
         cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
-        self.assertEquals({
+        self.assertEqual({
                 'cc_list': ['levin@chromium.org'],
                 'messages': ["Test message."],
                 }, cc_and_messages)
@@ -271,7 +271,7 @@ class WatchListTest(unittest.TestCase):
             '    },'
             '}')
         cc_and_messages = watch_list.determine_cc_and_messages(DIFF_TEST_DATA)
-        self.assertEquals({
+        self.assertEqual({
                 'cc_list': ['eric@webkit.org'],
                 'messages': ["This is a test message."],
                 }, cc_and_messages)

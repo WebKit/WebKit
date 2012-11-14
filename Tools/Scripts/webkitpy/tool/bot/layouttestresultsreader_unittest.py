@@ -47,7 +47,7 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         self.assertRaises(IOError, tool.filesystem.read_text_file, layout_tests_results_path)
         self.assertRaises(IOError, tool.filesystem.read_text_file, unit_tests_results_path)
         # layout_test_results shouldn't raise even if the results.html file is missing.
-        self.assertEquals(reader.results(), None)
+        self.assertEqual(reader.results(), None)
 
     def test_create_unit_test_results(self):
         tool = MockTool()
@@ -62,7 +62,7 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
   </testsuite>
 </testsuites>"""
         tool.filesystem = MockFileSystem({unit_tests_results_path: no_failures_xml})
-        self.assertEquals(reader._create_unit_test_results(), [])
+        self.assertEqual(reader._create_unit_test_results(), [])
 
     def test_missing_unit_test_results_path(self):
         tool = MockTool()
@@ -71,19 +71,19 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         reader._create_layout_test_results = lambda: LayoutTestResults([])
         # layout_test_results shouldn't raise even if the unit tests xml file is missing.
         self.assertNotEquals(reader.results(), None)
-        self.assertEquals(reader.results().failing_tests(), [])
+        self.assertEqual(reader.results().failing_tests(), [])
 
 
     def test_layout_test_results(self):
         reader = LayoutTestResultsReader(MockTool(), "/var/logs")
         reader._read_file_contents = lambda path: None
-        self.assertEquals(reader.results(), None)
+        self.assertEqual(reader.results(), None)
         reader._read_file_contents = lambda path: ""
-        self.assertEquals(reader.results(), None)
+        self.assertEqual(reader.results(), None)
         reader._create_layout_test_results = lambda: LayoutTestResults([])
         results = reader.results()
         self.assertNotEquals(results, None)
-        self.assertEquals(results.failure_limit_count(), 30)  # This value matches RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT
+        self.assertEqual(results.failure_limit_count(), 30)  # This value matches RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT
 
     def test_archive_last_layout_test_results(self):
         tool = MockTool()

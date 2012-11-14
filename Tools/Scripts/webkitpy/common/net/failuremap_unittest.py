@@ -54,27 +54,27 @@ class FailureMapTest(unittest.TestCase):
 
     def test_failing_revisions(self):
         failure_map = self._make_failure_map()
-        self.assertEquals(failure_map.failing_revisions(), [1234, 1235])
+        self.assertEqual(failure_map.failing_revisions(), [1234, 1235])
 
     def test_new_failures(self):
         failure_map = self._make_failure_map()
         failure_map.filter_out_old_failures(lambda revision: False)
-        self.assertEquals(failure_map.failing_revisions(), [1234, 1235])
+        self.assertEqual(failure_map.failing_revisions(), [1234, 1235])
 
     def test_new_failures_with_old_revisions(self):
         failure_map = self._make_failure_map()
         failure_map.filter_out_old_failures(lambda revision: revision == 1234)
-        self.assertEquals(failure_map.failing_revisions(), [])
+        self.assertEqual(failure_map.failing_revisions(), [])
 
     def test_new_failures_with_more_old_revisions(self):
         failure_map = self._make_failure_map()
         failure_map.filter_out_old_failures(lambda revision: revision == 1235)
-        self.assertEquals(failure_map.failing_revisions(), [1234])
+        self.assertEqual(failure_map.failing_revisions(), [1234])
 
     def test_tests_failing_for(self):
         failure_map = self._make_failure_map()
-        self.assertEquals(failure_map.tests_failing_for(1234), [u'test1'])
+        self.assertEqual(failure_map.tests_failing_for(1234), [u'test1'])
 
     def test_failing_tests(self):
         failure_map = self._make_failure_map()
-        self.assertEquals(failure_map.failing_tests(), set([u'test1']))
+        self.assertEqual(failure_map.failing_tests(), set([u'test1']))
