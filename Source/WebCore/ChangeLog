@@ -1,3 +1,29 @@
+2012-11-14  Tony Chang  <tony@chromium.org>
+
+        Crash in flexbox when removing absolutely positioned children
+        https://bugs.webkit.org/show_bug.cgi?id=100465
+
+        Reviewed by Ojan Vafai.
+
+        We use m_numberOfChildrenOnFirstLine when computing baseline alignment.
+        This value gets set during flexbox layout. When we remove an absolutely
+        positioned child, we don't relayout and this value would get stale.
+
+        Change m_numberOfChildrenOnFirstLine to m_numberOfInFlowChildrenOnFirstLine
+        so the value doesn't get stale when we remove absolutely positioned children.
+        Also change the loop in firstLineBoxBaseline to bail if we run off the end of
+        the iterator.
+
+        Test: css3/flexbox/crash-removing-out-of-flow-child.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::RenderFlexibleBox):
+        (WebCore::RenderFlexibleBox::firstLineBoxBaseline):
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::repositionLogicalHeightDependentFlexItems):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        * rendering/RenderFlexibleBox.h:
+
 2012-11-14  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Remove magic numbers in record comparator, handle missing case

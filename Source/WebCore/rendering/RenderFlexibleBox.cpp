@@ -132,7 +132,7 @@ struct RenderFlexibleBox::Violation {
 
 RenderFlexibleBox::RenderFlexibleBox(Node* node)
     : RenderBlock(node)
-    , m_numberOfChildrenOnFirstLine(0)
+    , m_numberOfInFlowChildrenOnFirstLine(-1)
 {
     setChildrenInline(false); // All of our children must be block-level.
 }
@@ -254,11 +254,11 @@ int RenderFlexibleBox::firstLineBoxBaseline() const
 {
     ASSERT(m_orderIterator);
 
-    if (isWritingModeRoot() || !m_numberOfChildrenOnFirstLine)
+    if (isWritingModeRoot() || m_numberOfInFlowChildrenOnFirstLine <= 0)
         return -1;
     RenderBox* baselineChild = 0;
-    RenderBox* child = m_orderIterator->first();
-    for (size_t childNumber = 0; childNumber < m_numberOfChildrenOnFirstLine; ++childNumber, child = m_orderIterator->next()) {
+    int childNumber = 0;
+    for (RenderBox* child = m_orderIterator->first(); child; child = m_orderIterator->next()) {
         if (child->isOutOfFlowPositioned())
             continue;
         if (alignmentForChild(child) == AlignBaseline && !hasAutoMarginsInCrossAxis(child)) {
@@ -267,6 +267,10 @@ int RenderFlexibleBox::firstLineBoxBaseline() const
         }
         if (!baselineChild)
             baselineChild = child;
+
+        ++childNumber;
+        if (childNumber == m_numberOfInFlowChildrenOnFirstLine)
+            break;
     }
 
     if (!baselineChild)
@@ -320,6 +324,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     setLogicalHeight(0);
     updateLogicalWidth();
 
+    m_numberOfInFlowChildrenOnFirstLine = -1;
     m_overflow.clear();
 
     RenderBlock::startDelayUpdateScrollInfo();
@@ -385,8 +390,6 @@ void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(OrderIterator&
             oldClientAfterEdge = clientLogicalBottom();
         flipForWrapReverse(iterator, lineContexts, crossAxisStartEdge);
     }
-
-    m_numberOfChildrenOnFirstLine = lineContexts.isEmpty() ? 0 : lineContexts[0].numberOfChildren;
 
     // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
     flipForRightToLeftColumn(iterator);
@@ -1132,6 +1135,8 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         layoutColumnReverse(children, crossAxisOffset, availableFreeSpace);
     }
 
+    if (m_numberOfInFlowChildrenOnFirstLine == -1)
+        m_numberOfInFlowChildrenOnFirstLine = seenInFlowPositionedChildren;
     lineContexts.append(LineContext(crossAxisOffset, maxChildCrossAxisExtent, children.size(), maxAscent));
     crossAxisOffset += maxChildCrossAxisExtent;
 }

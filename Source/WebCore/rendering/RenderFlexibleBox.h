@@ -146,7 +146,7 @@ private:
     void flipForWrapReverse(OrderIterator&, const WTF::Vector<LineContext>&, LayoutUnit crossAxisStartEdge);
 
     OwnPtr<OrderIterator> m_orderIterator;
-    size_t m_numberOfChildrenOnFirstLine;
+    int m_numberOfInFlowChildrenOnFirstLine;
 };
 
 } // namespace WebCore
