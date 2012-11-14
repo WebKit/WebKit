@@ -1,3 +1,16 @@
+2012-11-14  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] WK1 gardening.
+
+        Skip fast/dom/Window/open-window-min-size.html and add some
+        WK1-specific pixel results which do not look wrong per se.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk1/fast/repaint/japanese-rl-selection-clear-expected.png: Added.
+        * platform/efl-wk1/fast/repaint/selection-after-delete-expected.png: Added.
+        * platform/efl-wk1/fast/repaint/selection-after-remove-expected.png: Added.
+        * platform/efl-wk1/fast/repaint/selection-gap-overflow-scroll-2-expected.png: Added.
+
 2012-11-14  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip failing tests.

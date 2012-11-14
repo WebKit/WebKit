@@ -137,6 +137,7 @@ webkit.org/b/86498 http/tests/appcache/origins-with-appcache.html [ Failure ]
 
 # Missing showModalDialog implementation
 webkit.org/b/84589 fast/animation/request-animation-frame-during-modal.html [ Failure ]
+webkit.org/b/84589 fast/dom/Window/open-window-min-size.html [ Failure ]
 webkit.org/b/84589 http/tests/security/cross-frame-access-call.html [ Failure ]
 
 # Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
