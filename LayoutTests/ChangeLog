@@ -1,3 +1,30 @@
+2012-11-13  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: non-trivial test conversion batch 2
+        https://bugs.webkit.org/show_bug.cgi?id=101998
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/cursor-overloads-expected.txt:
+        * storage/indexeddb/cursor-overloads.html:
+          Trivial conversion that I missed last time around.
+
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/database-close-expected.txt:
+        * storage/indexeddb/database-closepending-flag-expected.txt:
+        * storage/indexeddb/delete-closed-database-object-expected.txt:
+        * storage/indexeddb/resources/database-basics.js:
+          Removed test that shows calling setVersion inside a version change
+          transaction is an error. Replaced with test showing same error for a
+          generic transaction.
+
+        * storage/indexeddb/resources/database-close.js:
+          Formerly used both unblocked setVersion and deleteDatabase to signal
+          that a connection was closed, now just used deleteDatabase.
+
+        * storage/indexeddb/resources/database-closepending-flag.js:
+          Straightforward, it just has multiple opens.
+
 2012-11-13  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: InvalidCharacterError

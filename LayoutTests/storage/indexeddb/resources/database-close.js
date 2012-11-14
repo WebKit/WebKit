@@ -5,47 +5,13 @@ if (this.importScripts) {
 
 description("Test IndexedDB 'steps for closing a database connection'");
 
-function test()
+indexedDBTest(prepareDatabase, testClose);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    evalAndLog("dbname = self.location.pathname");
-    request = evalAndLog("indexedDB.deleteDatabase(dbname)");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = openConnection;
-}
-
-function openConnection()
-{
-    debug("");
-    debug("openConnection():");
-    evalAndLog("request = indexedDB.open(dbname)");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-        evalAndLog("connection = request.result");
-        evalAndLog("request = connection.setVersion('1')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function() {
-            trans = request.result;
-            evalAndLog("store = connection.createObjectStore('store')");
-            evalAndLog("store.put('value1', 'key1')");
-            evalAndLog("store.put('value2', 'key2')");
-            trans.onabort = unexpectedAbortCallback;
-            trans.oncomplete = openVersionChangeConnection;
-        };
-    };
-}
-
-function openVersionChangeConnection()
-{
-    debug("");
-    debug("openVersionChangeConnection():");
-    evalAndLog("request = indexedDB.open(dbname)");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-        evalAndLog("version_change_connection = request.result");
-        testClose();
-    };
+    connection = event.target.result;
+    evalAndLog("store = connection.createObjectStore('store')");
+    evalAndLog("store.put('value1', 'key1')");
+    evalAndLog("store.put('value2', 'key2')");
 }
 
 function testClose()
@@ -73,7 +39,7 @@ function testClose()
 
         if (awaiting_transaction_count == 0) {
             debug("");
-            debug("All transactions completed - version changes / database deletes should now be unblocked.");
+            debug("All transactions completed - database deletes should now be unblocked.");
         }
     }
     request = evalAndLog("trans1.objectStore('store').get('key1')");
@@ -102,18 +68,8 @@ function testClose()
     evalAndExpectException("trans3 = connection.transaction('store')", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
 
     debug("");
-    debug("NOTE: Once the connection is closed, this can unblock the steps for running a \"versionchange\" transaction, and the steps for deleting a database, which both wait for connections to a given database to be closed before continuing.");
+    debug("NOTE: Once the connection is closed, this can unblock the steps for deleting a database, which waits for connections to a given database to be closed before continuing.");
     debug("");
-
-    request = evalAndLog("version_change_connection.setVersion('2')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-        debug("");
-        debug("version change transaction unblocked");
-        shouldBe("awaiting_transaction_count", "0");
-        shouldBeEqualToString("version_change_connection.version", "2");
-        evalAndLog("version_change_connection.close()");
-    };
 
     request = evalAndLog("indexedDB.deleteDatabase(dbname)");
     request.onerror = unexpectedErrorCallback;
@@ -124,5 +80,3 @@ function testClose()
         finishJSTest();
     };
 }
-
-test();

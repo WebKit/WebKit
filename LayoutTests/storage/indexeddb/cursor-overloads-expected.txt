@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
 CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
 CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
@@ -30,12 +29,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = 'cursor-overloads'
+dbname = "cursor-overloads.html"
 indexedDB.deleteDatabase(dbname)
 indexedDB.open(dbname)
-db = request.result
-PASS db.version is 1
-db.setVersion('1')
 store = db.createObjectStore('store')
 index = store.createIndex('index', 'value')
 store.put({value: 0}, 0)

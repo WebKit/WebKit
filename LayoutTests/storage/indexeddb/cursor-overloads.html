@@ -4,35 +4,14 @@
 <script>
 description("Validate the overloads of IDBObjectStore.openCursor(), IDBIndex.openCursor() and IDBIndex.openKeyCursor().");
 
-function test()
-{
-    removeVendorPrefixes();
-    prepareDatabase();
-}
-
+indexedDBTest(prepareDatabase, verifyOverloads);
 function prepareDatabase()
 {
-    evalAndLog("dbname = 'cursor-overloads'");
-    request = evalAndLog("indexedDB.deleteDatabase(dbname)");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function(e) {
-        request = evalAndLog("indexedDB.open(dbname)");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function(e) {
-            evalAndLog("db = request.result");
-            shouldBe("db.version", '1');
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function(e) {
-                trans = request.result;
-                evalAndLog("store = db.createObjectStore('store')");
-                evalAndLog("index = store.createIndex('index', 'value')");
-                evalAndLog("store.put({value: 0}, 0)");
-                trans.oncomplete = verifyOverloads;
-
-            };
-        };
-    };
+    db = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
+    evalAndLog("store = db.createObjectStore('store')");
+    evalAndLog("index = store.createIndex('index', 'value')");
+    evalAndLog("store.put({value: 0}, 0)");
 }
 
 function verifyOverloads()
@@ -122,8 +101,6 @@ function checkCursorDirection(statement, direction)
         shouldBeEqualToString("event.target.result.direction", direction);
     };
 }
-
-test();
 
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

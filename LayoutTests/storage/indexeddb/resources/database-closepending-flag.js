@@ -5,33 +5,12 @@ if (this.importScripts) {
 
 description("Test IndexedDB IDBDatabase internal closePending flag");
 
-function test()
+indexedDBTest(prepareDatabase, testDatabaseClosingSteps);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    evalAndLog("dbname = self.location.pathname");
-    request = evalAndLog("indexedDB.deleteDatabase(dbname)");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = openConnection;
-}
-
-function openConnection()
-{
-    debug("");
-    debug("openConnection():");
-    evalAndLog("request = indexedDB.open(dbname)");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-        evalAndLog("connection = request.result");
-        evalAndLog("request = connection.setVersion('1')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function() {
-            trans = request.result;
-            evalAndLog("store = connection.createObjectStore('store')");
-            trans.onabort = unexpectedAbortCallback;
-            trans.oncomplete = testDatabaseClosingSteps;
-        };
-    };
+    connection = event.target.result;
+    event.target.transaction.onabort = unexpectedAbortCallback;
+    evalAndLog("store = connection.createObjectStore('store')");
 }
 
 function testDatabaseClosingSteps()
@@ -66,25 +45,22 @@ function testIDBDatabaseObjectStoreNames()
     debug("IDBDatabase.objectStoreNames:");
     debug("\"Once the closePending flag is set on the connection, this function must return a snapshot of the list of names of the object stores taken at the time when the close method was called.\"");
 
-    evalAndLog("request = indexedDB.open(dbname)");
+    evalAndLog("request = indexedDB.open(dbname, 2)");
+    request.onblocked = unexpectedBlockedCallback;
     request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
+    request.onupgradeneeded = function () {
         evalAndLog("version_change_connection = request.result");
-        request = evalAndLog("version_change_connection.setVersion('2')");
-        // FIXME: Should verify 'blocked' not fired. http://webkit.org/b/71130
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function () {
-            var transaction = request.result;
-            evalAndLog("version_change_connection.createObjectStore('new_store')");
-            transaction.oncomplete = function () {
-                shouldBeTrue("version_change_connection.objectStoreNames.contains('new_store')");
-                shouldBeFalse("connection.objectStoreNames.contains('new_store')");
-                evalAndLog("version_change_connection.close()");
-
-                testIDBDatabaseTransaction();
-            };
+        var transaction = request.transaction;
+        evalAndLog("version_change_connection.createObjectStore('new_store')");
+        transaction.oncomplete = function () {
+            shouldBeTrue("version_change_connection.objectStoreNames.contains('new_store')");
+            shouldBeFalse("connection.objectStoreNames.contains('new_store')");
         };
     };
+    request.onsuccess = function() {
+        evalAndLog("version_change_connection.close()");
+        testIDBDatabaseTransaction();
+    }
 }
 
 function testIDBDatabaseTransaction()
@@ -120,25 +96,20 @@ function testVersionChangeTransactionSteps()
         }
         busy();
 
-        evalAndLog("request = indexedDB.open(dbname)");
+        evalAndLog("request = indexedDB.open(dbname, 3)");
         request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function() {
+        request.onblocked = function () {
+            debug("'blocked' event fired, letting transaction complete and connection close");
+            keepTransactionBusy = false;
+        };
+        request.onupgradeneeded = function() {
             evalAndLog("version_change_connection = request.result");
-            request = evalAndLog("version_change_connection.setVersion('3')");
-            request.onblocked = function () {
-                debug("'blocked' event fired, letting transaction complete and connection close");
-                keepTransactionBusy = false;
-            };
+            shouldBeFalse("versionChangeWasFired");
             request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function () {
-                shouldBeFalse("versionChangeWasFired");
-                var transaction = request.result;
-                transaction.oncomplete = function () {
-                    request = evalAndLog("version_change_connection.close()");
-
-                    testDatabaseDeletion();
-                };
-            };
+        };
+        request.onsuccess = function () {
+            evalAndLog("version_change_connection.close()");
+            testDatabaseDeletion();
         };
     };
 }
@@ -178,5 +149,3 @@ function testDatabaseDeletion()
         };
     };
 }
-
-test();

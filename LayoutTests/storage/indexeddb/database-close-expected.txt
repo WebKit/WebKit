@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB 'steps for closing a database connection'
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -7,20 +5,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = self.location.pathname
+dbname = "database-close.html"
 indexedDB.deleteDatabase(dbname)
-
-openConnection():
-request = indexedDB.open(dbname)
-connection = request.result
-request = connection.setVersion('1')
+indexedDB.open(dbname)
 store = connection.createObjectStore('store')
 store.put('value1', 'key1')
 store.put('value2', 'key2')
-
-openVersionChangeConnection():
-request = indexedDB.open(dbname)
-version_change_connection = request.result
 
 testClose():
 Create transactions using connection:
@@ -43,9 +33,8 @@ PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
 
-NOTE: Once the connection is closed, this can unblock the steps for running a "versionchange" transaction, and the steps for deleting a database, which both wait for connections to a given database to be closed before continuing.
+NOTE: Once the connection is closed, this can unblock the steps for deleting a database, which waits for connections to a given database to be closed before continuing.
 
-version_change_connection.setVersion('2')
 indexedDB.deleteDatabase(dbname)
 
 transaction #1 request successful
@@ -56,12 +45,7 @@ transaction #2 request successful
 PASS event.target.result is "value2"
 awaiting_transaction_count -= 1
 
-All transactions completed - version changes / database deletes should now be unblocked.
-
-version change transaction unblocked
-PASS awaiting_transaction_count is 0
-PASS version_change_connection.version is "2"
-version_change_connection.close()
+All transactions completed - database deletes should now be unblocked.
 
 delete database unblocked
 PASS awaiting_transaction_count is 0

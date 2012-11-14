@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB IDBDatabase internal closePending flag
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -8,13 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-dbname = self.location.pathname
+dbname = "database-closepending-flag.html"
 indexedDB.deleteDatabase(dbname)
-
-openConnection():
-request = indexedDB.open(dbname)
-connection = request.result
-request = connection.setVersion('1')
+indexedDB.open(dbname)
 store = connection.createObjectStore('store')
 
 First, verify that the database connection is not closed:
@@ -36,9 +29,8 @@ PASS connection.name is dbname
 
 IDBDatabase.objectStoreNames:
 "Once the closePending flag is set on the connection, this function must return a snapshot of the list of names of the object stores taken at the time when the close method was called."
-request = indexedDB.open(dbname)
+request = indexedDB.open(dbname, 2)
 version_change_connection = request.result
-version_change_connection.setVersion('2')
 version_change_connection.createObjectStore('new_store')
 PASS version_change_connection.objectStoreNames.contains('new_store') is true
 PASS connection.objectStoreNames.contains('new_store') is false
@@ -60,10 +52,9 @@ connection.onversionchange = function () { versionChangeWasFired = true; }
 transaction = connection.transaction('store')
 connection.close()
 closePending is set, but active transaction will keep connection from closing
-request = indexedDB.open(dbname)
-version_change_connection = request.result
-version_change_connection.setVersion('3')
+request = indexedDB.open(dbname, 3)
 'blocked' event fired, letting transaction complete and connection close
+version_change_connection = request.result
 PASS versionChangeWasFired is false
 version_change_connection.close()
 

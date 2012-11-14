@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test the basics of IndexedDB's IDBDatabase.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,20 +5,16 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('database-basics')
-db = event.target.result
-db.setVersion('new version')
-Deleted all object stores.
-setVersionSuccess():
-Testing setVersion.
-request = db.setVersion("version a")
-Expecting exception from db.setVersion("version b")
+dbname = "database-basics.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+Test that you can't open a transaction while in a versionchange transaction
+Expecting exception from db.transaction("doesntExist")
 PASS Exception was thrown.
 PASS code is DOMException.INVALID_STATE_ERR
 PASS ename is 'InvalidStateError'
-db.setVersion("version b")
-PASS db.version is "version b"
-PASS db.name is "database-basics"
+PASS db.version is 1
+PASS db.name is "database-basics.html"
 PASS db.objectStoreNames is []
 PASS db.objectStoreNames.length is 0
 PASS db.objectStoreNames.contains('') is false
@@ -31,18 +26,21 @@ PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.contains('') is false
 PASS db.objectStoreNames.contains('test456') is false
 PASS db.objectStoreNames.contains('test123') is true
-db.setVersion("version c")
-PASS db.version is "version c"
-PASS db.name is "database-basics"
+db.close()
+request = indexedDB.open(dbname, 2)
+db = event.target.result
+PASS db.version is 2
+PASS db.name is "database-basics.html"
 PASS db.objectStoreNames is ['test123']
 PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.contains('') is false
 PASS db.objectStoreNames.contains('test456') is false
 PASS db.objectStoreNames.contains('test123') is true
 db.createObjectStore("test456")
-setVersionTrans = event.target.result
+setVersionTrans = event.target.transaction
 PASS setVersionTrans is non-null.
-PASS db.version is "version b"
+setVersionTrans.abort()
+PASS db.version is 1
 PASS db.objectStoreNames is ['test123']
 PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.contains('') is false
