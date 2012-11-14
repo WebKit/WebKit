@@ -1,3 +1,15 @@
+2012-11-14  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: 'undefined' javascript filenames.
+        https://bugs.webkit.org/show_bug.cgi?id=101334
+
+        Reviewed by Yury Semikhatsky.
+
+        Test that callSite for TimerFired is resolved even for evaled scripts.
+
+        * inspector/timeline/timeline-timer-fired-from-eval-call-site-expected.txt: Added.
+        * inspector/timeline/timeline-timer-fired-from-eval-call-site.html: Added.
+
 2012-11-14  Shinya Kawanaka  <shinyak@chromium.org>
 
         Changing pseudoClass (:target) should cause distribution

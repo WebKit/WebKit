@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    var content = "" + 
+        "var fn2 = function() {console.markTimeline(\"Script evaluated\");};\\n" +
+        "var fn1 = function() {window.setTimeout(fn2, 1);};\\n" +
+        "window.setTimeout(fn1, 1);\\n"
+    content = "eval('" + content + "//@ sourceURL=fromEval.js" + "');";
+    var scriptElement = document.createElement('script');
+    var contentNode = document.createTextNode(content);
+    scriptElement.appendChild(contentNode);
+    document.body.appendChild(scriptElement);
+    document.body.removeChild(scriptElement);
+}
+
+function test()
+{
+    InspectorTest.startTimeline(start);
+    InspectorTest.waitForRecordType("TimeStamp", finish);
+
+    function start()
+    {
+        InspectorTest.evaluateInPage("performActions()");
+    }
+
+    function finish()
+    {
+        function formatter(record)
+        {
+            if (record.type === "TimerFire") {
+                var fnCallSite = record.children[0].data;
+                InspectorTest.addResult(record.type + " " + fnCallSite.scriptName + ":" + fnCallSite.scriptLine);
+            }
+        }
+        InspectorTest.printTimelineRecords(null, formatter);
+        InspectorTest.completeTest();
+    }
+}
+
+if (!window.testRunner)
+    setTimeout(performActions, 3000);
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API instrumentation of a TimerFired events inside evaluated scripts.
+</p>
+
+</body>
+</html>
