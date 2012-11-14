@@ -161,7 +161,7 @@ class FailureReasonTest(unittest.TestCase):
 class PrintExpectationsTest(unittest.TestCase):
     def run_test(self, tests, expected_stdout, platform='test-win-xp', **args):
         options = MockOptions(all=False, csv=False, full=False, platform=platform,
-                              include_keyword=[], exclude_keyword=[]).update(**args)
+                              include_keyword=[], exclude_keyword=[], paths=False).update(**args)
         tool = MockTool()
         tool.port_factory.all_port_names = lambda: TestPort.ALL_BASELINE_VARIANTS
         command = PrintExpectations()
@@ -220,6 +220,12 @@ class PrintExpectationsTest(unittest.TestCase):
                       ('test-win-xp,failures/expected/image.html,BUGTEST,IMAGE\n'
                        'test-win-xp,failures/expected/text.html,BUGTEST,FAIL\n'),
                       csv=True)
+
+    def test_paths(self):
+        self.run_test([],
+                      ('LayoutTests/platform/test/TestExpectations\n'
+                       'LayoutTests/platform/test-win-xp/TestExpectations\n'),
+                      paths=True)
 
 
 class PrintBaselinesTest(unittest.TestCase):

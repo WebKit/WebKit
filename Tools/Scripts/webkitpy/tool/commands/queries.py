@@ -440,13 +440,15 @@ class PrintExpectations(AbstractDeclarativeCommand):
                         help='Print a CSV-style report that includes the port name, modifiers, tests, and expectations'),
             make_option('-f', '--full', action='store_true', default=False,
                         help='Print a full TestExpectations-style line for every match'),
+            make_option('--paths', action='store_true', default=False,
+                        help='display the paths for all applicable expectation files'),
         ] + platform_options(use_globs=True)
 
         AbstractDeclarativeCommand.__init__(self, options=options)
         self._expectation_models = {}
 
     def execute(self, options, args, tool):
-        if not args and not options.all:
+        if not options.paths and not args and not options.all:
             print "You must either specify one or more test paths or --all."
             return
 
@@ -464,6 +466,15 @@ class PrintExpectations(AbstractDeclarativeCommand):
         else:
             default_port = tool.port_factory.get(options=options)
             port_names = [default_port.name()]
+
+        if options.paths:
+            files = default_port.expectations_files()
+            layout_tests_dir = default_port.layout_tests_dir()
+            for file in files:
+                if file.startswith(layout_tests_dir):
+                    file = file.replace(layout_tests_dir, 'LayoutTests')
+                print file
+            return
 
         tests = default_port.tests(args)
         for port_name in port_names:

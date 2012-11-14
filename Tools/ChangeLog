@@ -1,3 +1,20 @@
+2012-11-14  Glenn Adams  <glenn@skynav.com>
+
+        webkitpy: print-expectations - add --paths option to print only paths of test expectation files
+        https://bugs.webkit.org/show_bug.cgi?id=102269
+
+        Reviewed by Dirk Pranke.
+
+        Add --paths option to print-expectations command in order to obtain list of applicable
+        test expectation file paths.
+
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations.__init__):
+        (PrintExpectations.execute):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (PrintExpectationsTest.run_test):
+        (PrintExpectationsTest.test_paths):
+
 2012-11-14  James Robinson  <jamesr@chromium.org>
 
         webgl-background-color.html started failing
