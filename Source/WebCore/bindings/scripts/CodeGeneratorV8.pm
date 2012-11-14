@@ -294,6 +294,9 @@ sub GenerateHeader
     $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@allParents, 1);
     $codeGenerator->LinkOverloadedFunctions($dataNode);
 
+    # Ensure the IsDOMNodeType function is in sync.
+    die("IsDOMNodeType is out of date with respect to $interfaceName") if IsDOMNodeType($interfaceName) != IsNodeSubType($dataNode);
+
     my $hasDependentLifetime = $dataNode->extendedAttributes->{"V8DependentLifetime"} || $dataNode->extendedAttributes->{"ActiveDOMObject"}
          || GetGenerateIsReachable($dataNode) || $className =~ /SVG/;
     if (!$hasDependentLifetime) {
@@ -542,6 +545,11 @@ END
         push(@headerContent, <<END);
 class ${nativeType};
 v8::Handle<v8::Value> toV8(${nativeType}*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
+
+inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const v8::AccessorInfo& info, Node*)
+{
+    return toV8(impl, info.Holder(), info.GetIsolate());
+}
 END
     } else {
 
@@ -590,6 +598,10 @@ inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const v8::AccessorInf
     v8::Handle<v8::Object> holderWrapper = info.Holder();
     if (holder->wrapper() == holderWrapper) {
         v8::Handle<v8::Object> wrapper = impl->wrapper();
+        if (!wrapper.IsEmpty())
+            return wrapper;
+    } else {
+        v8::Handle<v8::Object> wrapper = V8DOMWrapper::getCachedWrapper(impl);
         if (!wrapper.IsEmpty())
             return wrapper;
     }
@@ -1144,8 +1156,8 @@ END
     info.Holder()->SetHiddenValue(propertyName, value);
     return value;
 END
-    } elsif (IsDOMNodeType(GetTypeFromSignature($attribute->signature)) && $implClassName eq "Node") {
-        # FIXME: We would like to use toV8Fast in more situations.
+    } elsif (IsDOMNodeType($interfaceName) && IsDOMNodeType($attrType)) {
+        AddToImplIncludes($attrType.".h");
         push(@implContentDecls, "    return toV8Fast($result, info, imp);\n");
     } else {
         push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "info.Holder()", "info.GetIsolate()").";\n");
@@ -4058,26 +4070,26 @@ sub IsDOMNodeType
 
     return 1 if $type eq 'Attr';
     return 1 if $type eq 'CDATASection';
+    return 1 if $type eq 'CharacterData';
     return 1 if $type eq 'Comment';
     return 1 if $type eq 'Document';
     return 1 if $type eq 'DocumentFragment';
     return 1 if $type eq 'DocumentType';
     return 1 if $type eq 'Element';
+    return 1 if $type eq 'Entity';
     return 1 if $type eq 'EntityReference';
-    return 1 if $type eq 'HTMLCanvasElement';
     return 1 if $type eq 'HTMLDocument';
-    return 1 if $type eq 'HTMLElement';
-    return 1 if $type eq 'HTMLUnknownElement';
-    return 1 if $type eq 'HTMLFormElement';
-    return 1 if $type eq 'HTMLTableCaptionElement';
-    return 1 if $type eq 'HTMLTableSectionElement';
     return 1 if $type eq 'Node';
+    return 1 if $type eq 'Notation';
     return 1 if $type eq 'ProcessingInstruction';
-    return 1 if $type eq 'SVGElement';
+    return 1 if $type eq 'ShadowRoot';
     return 1 if $type eq 'SVGDocument';
-    return 1 if $type eq 'SVGSVGElement';
-    return 1 if $type eq 'SVGUseElement';
     return 1 if $type eq 'Text';
+
+    return 1 if $type =~ /^HTML.*Element$/;
+    return 1 if $type =~ /^SVG.*Element$/;
+
+    return 1 if $type eq 'TestNode';
 
     return 0;
 }

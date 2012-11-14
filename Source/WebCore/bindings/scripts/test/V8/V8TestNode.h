@@ -94,6 +94,10 @@ inline v8::Handle<v8::Value> toV8Fast(TestNode* impl, const v8::AccessorInfo& in
         v8::Handle<v8::Object> wrapper = impl->wrapper();
         if (!wrapper.IsEmpty())
             return wrapper;
+    } else {
+        v8::Handle<v8::Object> wrapper = V8DOMWrapper::getCachedWrapper(impl);
+        if (!wrapper.IsEmpty())
+            return wrapper;
     }
     return dispatchWrap(impl, holderWrapper, info.GetIsolate());
 }
