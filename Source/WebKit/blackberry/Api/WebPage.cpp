@@ -2640,16 +2640,18 @@ PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
     if (isTouching && lastFatFingersResult.isTextInput())
         return lastFatFingersResult.node(FatFingersResult::ShadowContentNotAllowed);
 
+    if (strategy == RectBased) {
+        FatFingersResult result = FatFingers(this, lastFatFingersResult.adjustedPosition(), FatFingers::Text).findBestPoint();
+        return result.node(FatFingersResult::ShadowContentNotAllowed);
+    }
+    if (strategy == FocusBased)
+        return m_inputHandler->currentFocusElement();
+
     IntPoint contentPos;
     if (isTouching)
         contentPos = lastFatFingersResult.adjustedPosition();
     else
         contentPos = mapFromViewportToContents(m_lastMouseEvent.position());
-
-    if (strategy == RectBased) {
-        FatFingersResult result = FatFingers(this, lastFatFingersResult.adjustedPosition(), FatFingers::Text).findBestPoint();
-        return result.node(FatFingersResult::ShadowContentNotAllowed);
-    }
 
     HitTestResult result = eventHandler->hitTestResultAtPoint(contentPos, false /*allowShadowContent*/);
     return result.innerNode();

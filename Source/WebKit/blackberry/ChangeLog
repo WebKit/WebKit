@@ -1,3 +1,23 @@
+2012-11-14  Andy Chen  <andchen@rim.com>
+
+        [BlackBerry] Add FocusBased context node detection strategy
+        https://bugs.webkit.org/show_bug.cgi?id=102238
+
+        Reviewed by Rob Buis.
+
+        If last fat finger result is invalid, we need to return current
+        focus element as context node, because when user tap on selection
+        overlay, there is not touch event sent to webkit.
+        PR 241382
+
+        Internally reviewed by Genevieve Mak and Mike Fenton.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::contextNode):
+        * Api/WebPage.h:
+        * WebKitSupport/InputHandler.h:
+        (BlackBerry::WebKit::InputHandler::currentFocusElement):
+
 2012-11-14  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Use mispelled-marker offsets relative to the element

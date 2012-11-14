@@ -101,6 +101,7 @@ public:
 
     bool isInputMode() const { return isActiveTextEdit(); }
     bool isMultilineInputMode() const { return isActiveTextEdit() && elementType(m_currentFocusElement.get()) == BlackBerry::Platform::InputTypeTextArea; }
+    PassRefPtr<WebCore::Element> currentFocusElement() const { return m_currentFocusElement; }
 
     void ensureFocusElementVisible(bool centerFieldInDisplay = true);
     void handleInputLocaleChanged(bool isRTL);

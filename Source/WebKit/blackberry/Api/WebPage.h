@@ -82,7 +82,7 @@ enum JavaScriptDataType { JSUndefined = 0, JSNull, JSBoolean, JSNumber, JSString
 
 enum ActivationStateType { ActivationActive, ActivationInactive, ActivationStandby };
 
-enum TargetDetectionStrategy {PointBased, RectBased};
+enum TargetDetectionStrategy {PointBased, RectBased, FocusBased};
 
 class BLACKBERRY_EXPORT WebPage : public Platform::GuardedPointerBase {
 public:
