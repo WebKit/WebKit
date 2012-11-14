@@ -42,6 +42,7 @@ private:
 
     virtual void accessKeyAction(bool sendMouseEvents);
     virtual void focus(bool restorePreviousSelection = true);
+    virtual HTMLFormElement* virtualForm() const OVERRIDE;
 };
 
 } //namespace

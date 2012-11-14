@@ -1,3 +1,17 @@
+2012-11-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Make HTMLLegendElement.form behave according to specification
+        https://bugs.webkit.org/show_bug.cgi?id=101044
+
+        Reviewed by Kent Tamura.
+
+        A new fast/forms/legend/legend-form.html test to check that
+        the legend element's form attribute behaves according to
+        specification.
+
+        * fast/forms/legend/legend-form-expected.txt: Added.
+        * fast/forms/legend/legend-form.html: Added.
+
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r134377.

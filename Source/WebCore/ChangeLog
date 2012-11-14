@@ -1,3 +1,27 @@
+2012-11-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Make HTMLLegendElement.form behave according to specification
+        https://bugs.webkit.org/show_bug.cgi?id=101044
+
+        Reviewed by Kent Tamura.
+
+        According to the HTML5 specification (http://dev.w3.org/html5/spec/single-page.html#dom-legend-form),
+        The form IDL attribute's behavior depends on whether the legend element is in a fieldset element or
+        not. If the legend has a fieldset element as its parent, then the form IDL attribute must return the
+        same value as the form IDL attribute on that fieldset element. Otherwise, it must return null.
+
+        This patch makes WebKit behaves according to specification (and Firefox). Previously, legend.form was
+        not returning null if the element was not inside a fieldset. Also, legend.form did not necessarily
+        return the same value as the parent fieldset's form attribute.
+
+        Test: fast/forms/legend/legend-form.html
+
+        * html/HTMLLegendElement.cpp:
+        (WebCore):
+        (WebCore::HTMLLegendElement::virtualForm):
+        * html/HTMLLegendElement.h:
+        (HTMLLegendElement):
+
 2012-11-13  Mark Lam  <mark.lam@apple.com>
 
         Make an assertion in JSEventListener::jsFunction() more useful.

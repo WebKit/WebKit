@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLLegendElement.h"
 
+#include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include <wtf/StdLibExtras.h>
@@ -82,6 +83,18 @@ void HTMLLegendElement::accessKeyAction(bool sendMouseEvents)
 {
     if (HTMLFormControlElement* control = associatedControl())
         control->accessKeyAction(sendMouseEvents);
+}
+
+HTMLFormElement* HTMLLegendElement::virtualForm() const
+{
+    // According to the specification, If the legend has a fieldset element as
+    // its parent, then the form attribute must return the same value as the
+    // form attribute on that fieldset element. Otherwise, it must return null.
+    ContainerNode* fieldset = parentNode();
+    if (!fieldset || !fieldset->hasTagName(fieldsetTag))
+        return 0;
+
+    return static_cast<HTMLFieldSetElement*>(fieldset)->form();
 }
     
 } // namespace
