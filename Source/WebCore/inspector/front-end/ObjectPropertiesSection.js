@@ -53,7 +53,7 @@ WebInspector.ObjectPropertiesSection._arrayLoadThreshold = 100;
 WebInspector.ObjectPropertiesSection.prototype = {
     enableContextMenu: function()
     {
-        this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
+        this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), false);
     },
 
     _contextMenuEventFired: function(event)

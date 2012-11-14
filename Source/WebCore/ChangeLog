@@ -1,3 +1,13 @@
+2012-11-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: context menu on ObjectPropertyTreeElement's values is masked by the section.
+        https://bugs.webkit.org/show_bug.cgi?id=102212
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection.prototype.enableContextMenu):
+
 2012-11-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI add instrumentation for WebAudo related stuff.
