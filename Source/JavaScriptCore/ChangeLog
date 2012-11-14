@@ -1,3 +1,13 @@
+2012-11-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't access Node& after adding nodes to the graph.
+        https://bugs.webkit.org/show_bug.cgi?id=102005
+
+        Reviewed by Oliver Hunt.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2012-11-14  Valery Ignatyev  <valery.ignatyev@ispras.ru>
 
         Replace (typeof(x) != <"object", "undefined", ...>) with
