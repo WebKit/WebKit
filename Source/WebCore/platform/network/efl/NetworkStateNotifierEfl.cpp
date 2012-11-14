@@ -107,7 +107,7 @@ static Eina_Bool readSocketCallback(void* userData, Ecore_Fd_Handler* handler)
     ssize_t len;
     nlmsghdr* nlh = reinterpret_cast<nlmsghdr*>(buffer);
     while ((len = recv(sock, nlh, bufferSize, MSG_DONTWAIT)) > 0) {
-        while ((NLMSG_OK(nlh, len)) && (nlh->nlmsg_type != NLMSG_DONE)) {
+        while ((NLMSG_OK(nlh, static_cast<unsigned>(len))) && (nlh->nlmsg_type != NLMSG_DONE)) {
             if (nlh->nlmsg_type == NLMSG_ERROR) {
                 LOG_ERROR("Error while reading socket, stop monitoring onLine state.");
                 return ECORE_CALLBACK_CANCEL;

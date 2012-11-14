@@ -1,3 +1,15 @@
+2012-11-13  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Fix build warning in NetworkStateNotifierEfl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=102061
+
+        Reviewed by Gyuyoung Kim.
+
+        The second argument for NLMSG_OK needs to be unsigned to avoid the -Wsign-compare warning.
+
+        * platform/network/efl/NetworkStateNotifierEfl.cpp:
+        (WebCore::readSocketCallback):
+
 2012-11-13  Sami Kyostila  <skyostil@chromium.org>
 
         Don't mark scrolling contents as dirty if RenderLayerBacking is going away
