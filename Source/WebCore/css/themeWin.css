@@ -38,14 +38,6 @@ input[type="email"],
 input[type="number"],
 input[type="password"],
 input[type="tel"],
-#if !defined(ENABLE_INPUT_MULTIPLE_FIELDS_UI) || !ENABLE_INPUT_MULTIPLE_FIELDS_UI
-input[type="date"],
-input[type="datetime"],
-input[type="datetime-local"],
-input[type="month"],
-input[type="time"],
-input[type="week"],
-#endif
 input[type="url"],
 input[type="text"] {
     padding:1px 0;

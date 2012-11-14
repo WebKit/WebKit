@@ -39,7 +39,3 @@ select[size][multiple] {
     border-radius: 5px;
     white-space: pre;
 }
-
-input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="time"], input[type="month"] {
-    -webkit-appearance: menulist-button;
-}

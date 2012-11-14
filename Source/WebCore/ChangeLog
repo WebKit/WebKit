@@ -1,3 +1,32 @@
+2012-11-13  Kent Tamura  <tkent@chromium.org>
+
+        Use menulist-button instead of menulist for date/time input types
+        https://bugs.webkit.org/show_bug.cgi?id=101886
+
+        Reviewed by Hajime Morita.
+
+        Both of Chromium-Android and iOS use -webkit-appearance:menulist-button,
+        not menulist. We had better apply common one by default.
+
+        No new tests. Covered by fast/forms/*/*-appearance-*.html.
+
+        * css/html.css:
+        (input[type="date"]): Switch menulist-button from menulist.
+        (input[type="datetime"]): Ditto.
+        (input[type="datetime-local"]): Ditto.
+        (input[type="month"]): Ditto.
+        (input[type="time"]): Ditto.
+        (input[type="week"]): Ditto.
+        (input::-webkit-date-and-time-value):
+        Add top, right, bottom margins. The right margin is important when
+        dir=rtl is specified.
+        whitespace:pre is needed to align baseline in a case of empty values.
+        * css/themeChromiumAndroid.css:
+        Remove redundant style declaration.
+        * css/themeWin.css:
+        Remove padding adjustment for date/time input types. It is for
+        textfields.
+
 2012-11-13  Vincent Scheib  <scheib@chromium.org>
 
         Remove RuntimeEnabledFeatures::isPointerLockEnabled.
