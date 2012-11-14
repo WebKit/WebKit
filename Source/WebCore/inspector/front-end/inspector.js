@@ -652,6 +652,9 @@ WebInspector._registerShortcuts = function()
     section.addKey(goToShortcut, WebInspector.UIString("Go to line"));
 }
 
+/**
+ * @param {KeyboardEvent} event
+ */
 WebInspector.documentKeyDown = function(event)
 {
     const helpKey = WebInspector.isMac() ? "U+003F" : "U+00BF"; // "?" for both platforms

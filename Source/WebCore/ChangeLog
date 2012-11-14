@@ -1,5 +1,19 @@
 2012-11-13  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
+        Web Inspector: JsDoc-annotate KeyboardShortcuts
+        https://bugs.webkit.org/show_bug.cgi?id=101301
+
+        Reviewed by Pavel Feldman.
+
+        JsDoc-annotate KeyboardShortcuts to improve readability.
+
+        * inspector/front-end/AdvancedSearchController.js: Fix parameter type.
+        * inspector/front-end/KeyboardShortcut.js: Add annotations.
+        * inspector/front-end/Panel.js: Make event parameter typed.
+        * inspector/front-end/inspector.js: Ditto.
+
+2012-11-13  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
         Web Inspector: Extract common interface for StatusBarButton and StatusBarCombo
         https://bugs.webkit.org/show_bug.cgi?id=101907
 

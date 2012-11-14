@@ -229,6 +229,9 @@ WebInspector.Panel.prototype = {
         return [];
     },
 
+    /**
+     * @param {KeyboardEvent} event
+     */
     handleShortcut: function(event)
     {
         var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);

@@ -52,7 +52,7 @@ WebInspector.AdvancedSearchController.createShortcut = function()
 
 WebInspector.AdvancedSearchController.prototype = {
     /**
-     * @param {Event} event
+     * @param {KeyboardEvent} event
      * @return {boolean}
      */
     handleShortcut: function(event)
