@@ -1,3 +1,9 @@
+2012-11-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: proper baselines for inspector's timeline-timer-fired-from-eval-call-site.
+
+        * inspector/timeline/timeline-timer-fired-from-eval-call-site-expected.txt:
+
 2012-11-14  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Clean up use of adjustWindowRect
