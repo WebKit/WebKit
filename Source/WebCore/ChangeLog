@@ -1,3 +1,17 @@
+2012-11-14  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Fix [-Wmissing-braces] warnings in graphics/cpu/arm/GraphicsContext3DNEON.h
+        https://bugs.webkit.org/show_bug.cgi?id=102205
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fixing some warnings in GraphicsContext3DNEON.h which have been caused by missing braces.
+
+        * platform/graphics/cpu/arm/GraphicsContext3DNEON.h:
+        (WebCore::ARM::unpackOneRowOfRGBA4444ToRGBA8NEON):
+        (WebCore::ARM::unpackOneRowOfRGBA5551ToRGBA8NEON):
+        (WebCore::ARM::unpackOneRowOfRGB565ToRGBA8NEON):
+
 2012-11-14  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: NoDataAllowedError

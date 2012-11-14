@@ -50,7 +50,7 @@ ALWAYS_INLINE void unpackOneRowOfRGBA4444ToRGBA8NEON(const uint16_t* source, uin
         componentB = vorr_u8(vshl_n_u8(componentB, 4), componentB);
         componentA = vorr_u8(vshl_n_u8(componentA, 4), componentA);
 
-        uint8x8x4_t destComponents = {componentR, componentG, componentB, componentA};
+        uint8x8x4_t destComponents = {{componentR, componentG, componentB, componentA}};
         vst4_u8(destination, destComponents);
         destination += 32;
     }
@@ -96,7 +96,7 @@ ALWAYS_INLINE void unpackOneRowOfRGBA5551ToRGBA8NEON(const uint16_t* source, uin
         componentB = vorr_u8(vshl_n_u8(componentB, 3), vand_u8(componentB, immediate0x7));
         componentA = vmul_u8(componentA, immediate0xff);
 
-        uint8x8x4_t destComponents = {componentR, componentG, componentB, componentA};
+        uint8x8x4_t destComponents = {{componentR, componentG, componentB, componentA}};
         vst4_u8(destination, destComponents);
         destination += 32;
     }
@@ -146,7 +146,7 @@ ALWAYS_INLINE void unpackOneRowOfRGB565ToRGBA8NEON(const uint16_t* source, uint8
         componentG = vorr_u8(vshl_n_u8(componentG, 2), vand_u8(componentG, immediate0x3));
         componentB = vorr_u8(vshl_n_u8(componentB, 3), vand_u8(componentB, immediate0x7));
 
-        uint8x8x4_t destComponents = {componentR, componentG, componentB, componentA};
+        uint8x8x4_t destComponents = {{componentR, componentG, componentB, componentA}};
         vst4_u8(destination, destComponents);
         destination += 32;
     }
