@@ -1,3 +1,15 @@
+2012-11-14  Kent Tamura  <tkent@chromium.org>
+
+        Support for localization tests of calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=102181
+
+        Reviewed by Kentaro Hara.
+
+        * src/DateTimeChooserImpl.cpp:
+        Use DateTimeChooserParameters::locale.
+        (WebKit::DateTimeChooserImpl::DateTimeChooserImpl):
+        (WebKit::DateTimeChooserImpl::writeDocument):
+
 2012-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134566.
