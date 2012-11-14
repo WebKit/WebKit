@@ -1,3 +1,29 @@
+2012-11-14  Alec Flett  <alecflett@chromium.org>
+
+        Add DOMRequestState to maintain world/ScriptExecutionContext state
+        https://bugs.webkit.org/show_bug.cgi?id=102102
+
+        Reviewed by Adam Barth.
+
+        Introduce DOMRequestState, and convert IndexedDB over.
+
+        No new tests, this is an abstraction layer for existing code.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBRequest.h:
+        (IDBRequest):
+        * WebCore.gypi:
+        * bindings/v8/DOMRequestState.h: Added.
+        (WebCore):
+        (DOMRequestState):
+        (WebCore::DOMRequestState::DOMRequestState):
+        (Scope):
+        (WebCore::DOMRequestState::Scope::Scope):
+        (WebCore::DOMRequestState::scope):
+
 2012-11-14  Justin Novosad  <junov@google.com>
 
         Boxes with rounded corners and thin borders are too slow to draw

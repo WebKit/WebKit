@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,50 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBBindingUtilities_h
-#define IDBBindingUtilities_h
+#ifndef DOMRequestState_h
+#define DOMRequestState_h
 
-#if ENABLE(INDEXED_DATABASE)
-
-#include "ScriptValue.h"
-#include <v8.h>
-#include <wtf/Forward.h>
+#include "V8Binding.h"
+#include "WorldContextHandle.h"
+#include "v8.h"
 
 namespace WebCore {
 
-class DOMRequestState;
-class IDBKey;
-class IDBKeyPath;
-class SerializedScriptValue;
+class ScriptExecutionContext;
 
-PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value>);
+class DOMRequestState {
+public:
+    explicit DOMRequestState(ScriptExecutionContext* scriptExecutionContext)
+        : m_worldContextHandle(UseCurrentWorld)
+        , m_scriptExecutionContext(scriptExecutionContext)
+    {
+    }
 
-bool injectIDBKeyIntoScriptValue(PassRefPtr<IDBKey>, ScriptValue&, const IDBKeyPath&);
-PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(const ScriptValue&, const IDBKeyPath&);
-bool canInjectIDBKeyIntoScriptValue(const ScriptValue&, const IDBKeyPath&);
-ScriptValue deserializeIDBValue(DOMRequestState*, PassRefPtr<SerializedScriptValue>);
-ScriptValue idbKeyToScriptValue(DOMRequestState*, PassRefPtr<IDBKey>);
+    void clear()
+    {
+        m_scriptExecutionContext = 0;
+    }
+
+    class Scope {
+    public:
+        explicit Scope(DOMRequestState& state)
+            : m_contextScope(state.context())
+        {
+        }
+    private:
+        v8::HandleScope m_handleScope;
+        v8::Context::Scope m_contextScope;
+    };
+
+    v8::Local<v8::Context> context()
+    {
+        return toV8Context(m_scriptExecutionContext, m_worldContextHandle);
+    }
+
+private:
+    WorldContextHandle m_worldContextHandle;
+    ScriptExecutionContext* m_scriptExecutionContext;
+};
 
 }
-
-#endif // ENABLE(INDEXED_DATABASE)
-
-#endif // IDBBindingUtilities_h
+#endif

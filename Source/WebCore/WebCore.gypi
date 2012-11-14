@@ -2200,6 +2200,7 @@
             'bindings/v8/BindingState.h',
             'bindings/v8/DOMDataStore.cpp',
             'bindings/v8/DOMDataStore.h',
+            'bindings/v8/DOMRequestState.h',
             'bindings/v8/DOMWrapperMap.h',
             'bindings/v8/DOMWrapperWorld.cpp',
             'bindings/v8/DOMWrapperWorld.h',
