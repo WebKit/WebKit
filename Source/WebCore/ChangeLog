@@ -1,3 +1,17 @@
+2012-11-13  Li Yin  <li.yin@intel.com>
+
+        fast/forms/file/input-file-write-files.html should cover correct setting value
+        https://bugs.webkit.org/show_bug.cgi?id=100085
+
+        Reviewed by Kentaro Hara.
+
+        Fix the GObject and Objective C bindings comparibility issue. Preserving existing
+        behavior for those may be important in idl.
+
+        No new tests, because fast/forms/file/input-file-value.html has covered it.
+
+        * html/HTMLInputElement.idl:
+
 2012-11-13  KyungTae Kim  <ktf.kim@samsung.com>
 
         [EFL] Fix build warning in NetworkStateNotifierEfl.cpp
