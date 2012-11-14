@@ -168,13 +168,13 @@ function run()
     });
     runTest(function() {
         iframeDoc.implementation.createDocument('', 'html', document.doctype); 
-    }, 'WRONG_DOCUMENT_ERR');
+    }, 'WrongDocumentError');
     runTest(function() {
         rangeInIframe().compareBoundaryPoints(Range.END_TO_END, rangeInCurrentDocument());
-    }, 'WRONG_DOCUMENT_ERR');
+    }, 'WrongDocumentError');
     runTest(function() {
         rangeInIframe().comparePoint(elementInCurrentDocument('comparePoint'), 0);
-    }, 'WRONG_DOCUMENT_ERR');
+    }, 'WrongDocumentError');
 
     runTest(function() {
         iframeDoc.appendChild(document.doctype);

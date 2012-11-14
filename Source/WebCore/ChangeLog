@@ -1,3 +1,16 @@
+2012-11-14  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: WrongDocumentError
+        https://bugs.webkit.org/show_bug.cgi?id=102096
+
+        Reviewed by Ojan Vafai.
+
+        Patch 4 of 25 to update DOMException name to match the spec and Firefox.
+
+        Updated existing tests.
+
+        * dom/DOMCoreException.cpp:
+
 2012-11-14  Nate Chapin  <japhet@chromium.org>
 
         Move empty loading to DocumentLoader, simplify FrameLoader::init()

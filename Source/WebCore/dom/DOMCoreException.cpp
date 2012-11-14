@@ -38,7 +38,7 @@ static struct CoreException {
     { "IndexSizeError", "Index or size was negative, or greater than the allowed value." },
     { "DOMSTRING_SIZE_ERR", "The specified range of text did not fit into a DOMString." },
     { "HierarchyRequestError", "A Node was inserted somewhere it doesn't belong." },
-    { "WRONG_DOCUMENT_ERR", "A Node was used in a different document than the one that created it (that doesn't support it)." },
+    { "WrongDocumentError", "A Node was used in a different document than the one that created it (that doesn't support it)." },
     { "InvalidCharacterError", "An invalid or illegal character was specified, such as in an XML name." },
     { "NoDataAllowedError", "Data was specified for a Node which does not support data." },
     { "NO_MODIFICATION_ALLOWED_ERR", "An attempt was made to modify an object where modifications are not allowed." },
