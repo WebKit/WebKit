@@ -1,3 +1,16 @@
+2012-11-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: "Reveal in Element Panel" doesn't work if Elements panel hasn't been opened
+        https://bugs.webkit.org/show_bug.cgi?id=102219
+
+        Reviewed by Alexander Pavlov.
+
+        Force elements module load upon context menu invocation.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype._contextMenuEventFired.focusElement):
+        (WebInspector.ElementsTreeOutline.prototype._contextMenuEventFired):
+
 2012-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134523.

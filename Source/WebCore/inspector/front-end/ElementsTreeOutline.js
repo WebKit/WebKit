@@ -487,6 +487,8 @@ WebInspector.ElementsTreeOutline.prototype = {
 
         function focusElement()
         {
+            // Force elements module load.
+            WebInspector.showPanel("elements");
             WebInspector.domAgent.inspectElement(treeElement.representedObject.id);
         }
         var contextMenu = new WebInspector.ContextMenu(event);
