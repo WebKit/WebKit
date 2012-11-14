@@ -1,3 +1,10 @@
+2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Mark webgl-background-color.html as failing.
+        http://webkit.org/b/102247
+
+        * platform/chromium/TestExpectations: Marked as failing.
+
 2012-11-14  Erik Arvidsson  <arv@chromium.org>
 
         Unreviewed gardening.
