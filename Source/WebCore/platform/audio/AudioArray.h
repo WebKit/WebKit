@@ -142,6 +142,13 @@ public:
         memcpy(this->data() + start, sourceData, sizeof(T) * (end - start));
     }
 
+    template<typename MemoryObjectInfo>
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        typename MemoryObjectInfo::ClassInfo info(memoryObjectInfo, this);
+        info.addRawBuffer(m_allocation, m_size * sizeof(T));
+    }
+
 private:
     static T* alignedAddress(T* address, intptr_t alignment)
     {

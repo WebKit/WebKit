@@ -37,8 +37,10 @@
 #include "Biquad.h"
 #include "FFTFrame.h"
 #include "HRTFPanner.h"
+#include "PlatformMemoryInstrumentation.h"
 #include <algorithm>
 #include <math.h>
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/OwnPtr.h>
 
 using namespace std;
@@ -335,6 +337,13 @@ void HRTFElevation::getKernelsFromAzimuth(double azimuthBlend, unsigned azimuthI
     // Linearly interpolate delays.
     frameDelayL = (1.0 - azimuthBlend) * frameDelayL + azimuthBlend * frameDelay2L;
     frameDelayR = (1.0 - azimuthBlend) * frameDelayR + azimuthBlend * frameDelay2R;
+}
+
+void HRTFElevation::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::AudioSharedData);
+    info.addMember(m_kernelListL);
+    info.addMember(m_kernelListR);
 }
 
 } // namespace WebCore

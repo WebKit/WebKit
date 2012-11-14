@@ -245,7 +245,9 @@ public:
     void fireCompletionEvent();
     
     static unsigned s_hardwareContextCount;
-    
+
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 private:
     explicit AudioContext(Document*);
     AudioContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);

@@ -1,3 +1,81 @@
+2012-11-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI add instrumentation for WebAudo related stuff.
+        They use about 16Mb for shared data on pages with webaudio.
+        As example Angry Birds app.
+        https://bugs.webkit.org/show_bug.cgi?id=101729
+
+        Reviewed by Yury Semikhatsky.
+
+        Plain vanilla instrumentation for audio and webaudio classes.
+        AudioContext is a kind of ActiveDOMObject. I found that these objects
+        are accessible through ScriptExecutuionContext and ScriptExecutionContext
+        is an ancestor of Document. Document class was instrumented earler.
+        I instrumented ActiveDOMObject, ScriptExecutionContext and other ancestors
+        and now AudioContext and other ActiveDOMObjects are reacheable from Document.
+
+        Test: inspector-protocol/nmi-webaudio.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::reportMemoryUsage):
+        (WebCore):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::reportMemoryUsage):
+        (WebCore):
+        * Modules/webaudio/AudioNode.h:
+        (AudioNode):
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObject::reportMemoryUsage):
+        (WebCore):
+        * dom/ActiveDOMObject.h:
+        (ActiveDOMObject):
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::reportMemoryUsage):
+        (WebCore):
+        * dom/ScriptExecutionContext.h:
+        (ScriptExecutionContext):
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::reportMemoryUsage):
+        (WebCore):
+        * dom/SecurityContext.h:
+        (SecurityContext):
+        * dom/WebCoreMemoryInstrumentation.cpp:
+        (WebCore):
+        * dom/WebCoreMemoryInstrumentation.h:
+        (WebCoreMemoryTypes):
+        * platform/audio/AudioArray.h:
+        (AudioArray):
+        (WebCore::AudioArray::reportMemoryUsage):
+        * platform/audio/FFTFrame.cpp:
+        (WebCore::FFTFrame::reportMemoryUsage):
+        (WebCore):
+        * platform/audio/FFTFrame.h:
+        (FFTFrame):
+        * platform/audio/HRTFDatabase.cpp:
+        (WebCore::HRTFDatabase::reportMemoryUsage):
+        (WebCore):
+        * platform/audio/HRTFDatabase.h:
+        (HRTFDatabase):
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore::HRTFDatabaseLoader::reportMemoryUsage):
+        (WebCore):
+        * platform/audio/HRTFDatabaseLoader.h:
+        (HRTFDatabaseLoader):
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::HRTFElevation::reportMemoryUsage):
+        (WebCore):
+        * platform/audio/HRTFElevation.h:
+        (HRTFElevation):
+        * platform/audio/HRTFKernel.cpp:
+        (WebCore::HRTFKernel::reportMemoryUsage):
+        (WebCore):
+        * platform/audio/HRTFKernel.h:
+        (HRTFKernel):
+
 2012-11-14  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Settings screen: close button overlays view title on mac.

@@ -57,6 +57,9 @@
 #include "ScriptProcessorNode.h"
 #include "WaveShaperNode.h"
 #include "WaveTable.h"
+#include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryInstrumentationHashSet.h>
+#include <wtf/MemoryInstrumentationVector.h>
 
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"
@@ -960,6 +963,31 @@ void AudioContext::incrementActiveSourceCount()
 void AudioContext::decrementActiveSourceCount()
 {
     atomicDecrement(&m_activeSourceCount);
+}
+
+void AudioContext::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    AutoLocker locker(const_cast<AudioContext*>(this));
+
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Audio);
+    ActiveDOMObject::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_document);
+    info.addMember(m_destinationNode);
+    info.addMember(m_listener);
+    info.addMember(m_finishedNodes);
+    info.addMember(m_referencedNodes);
+    info.addMember(m_nodesMarkedForDeletion);
+    info.addMember(m_nodesToDelete);
+    info.addMember(m_dirtySummingJunctions);
+    info.addMember(m_dirtyAudioNodeOutputs);
+    info.addMember(m_automaticPullNodes);
+    info.addMember(m_renderingAutomaticPullNodes);
+    info.addMember(m_contextGraphMutex);
+    info.addMember(m_deferredFinishDerefList);
+    info.addMember(m_hrtfDatabaseLoader);
+    info.addMember(m_eventTargetData);
+    info.addMember(m_renderTarget);
+    info.addMember(m_audioDecoder);
 }
 
 } // namespace WebCore

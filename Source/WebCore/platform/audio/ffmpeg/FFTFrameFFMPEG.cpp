@@ -34,6 +34,7 @@
 
 #include "FFTFrame.h"
 
+#include "PlatformMemoryInstrumentation.h"
 #include "VectorMath.h"
 
 extern "C" {
@@ -41,6 +42,56 @@ extern "C" {
 }
 
 #include <wtf/MathExtras.h>
+
+namespace {
+
+struct FFTComplexProxy {
+    int16_t re;
+    int16_t im;
+};
+
+struct FFTContextProxy {
+    int nbits;
+    int inverse;
+    uint16_t* revtab;
+    FFTComplexProxy* tmpBuf;
+    int mdctSize;
+    int mdctBits;
+    void* tcos;
+    void* tsin;
+    void (*fftPermute)();
+    void (*fftCalc)();
+    void (*imdctCalc)();
+    void (*imdctHalf)();
+    void (*mdctCalc)();
+    void (*mdctCalcw)();
+    int fftPermutation;
+    int mdctPermutation;
+};
+
+struct RDFTContextProxy {
+    int nbits;
+    int inverse;
+    int signConvention;
+    const void* tcos;
+    const void* tsin;
+    FFTContextProxy fft;
+    void (*rdft_calc)();
+};
+
+}
+
+void reportMemoryUsage(const struct RDFTContext* const& object, WTF::MemoryObjectInfo* memoryObjectInfo)
+{
+    const RDFTContextProxy* proxyObject = reinterpret_cast<const RDFTContextProxy*>(object);
+
+    WTF::MemoryClassInfo info(memoryObjectInfo, proxyObject, 0, sizeof(RDFTContextProxy));
+
+    // The size of buffers is counted the same way as it is counted in ff_rdft_init && ff_fft_init.
+    size_t count = 1 << (proxyObject->nbits - 1);
+    info.addRawBuffer(proxyObject->fft.revtab, count * sizeof(uint16_t));
+    info.addRawBuffer(proxyObject->fft.tmpBuf, count * sizeof(FFTComplex));
+}
 
 namespace WebCore {
 

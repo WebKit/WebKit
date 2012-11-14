@@ -161,6 +161,8 @@ public:
 
     virtual EventQueue* eventQueue() const = 0;
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 protected:
     class AddConsoleMessageTask : public Task {
     public:

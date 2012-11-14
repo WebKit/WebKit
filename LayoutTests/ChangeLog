@@ -1,3 +1,22 @@
+2012-11-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI add instrumentation for WebAudo related stuff.
+        They use about 16Mb for shared data on pages with webaudio.
+        As example Angry Birds app.
+        https://bugs.webkit.org/show_bug.cgi?id=101729
+
+        Reviewed by Yury Semikhatsky.
+
+        Plain vanilla instrumentation for audio and webaudio classes.
+        AudioContext is a kind of ActiveDOMObject. I found that these objects
+        are accessible through ScriptExecutuionContext and ScriptExecutionContext
+        is an ancestor of Document. Document class was instrumented earler.
+        I instrumented ActiveDOMObject, ScriptExecutionContext and other ancestors
+        and now AudioContext and other ActiveDOMObjects are reacheable from Document.
+
+        * inspector-protocol/nmi-webaudio-expected.txt: Added.
+        * inspector-protocol/nmi-webaudio.html: Added.
+
 2012-11-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: proper baselines for inspector's timeline-timer-fired-from-eval-call-site.

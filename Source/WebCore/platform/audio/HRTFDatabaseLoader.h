@@ -70,6 +70,8 @@ public:
     // is still alive.  Otherwise this will return 0.
     static HRTFDatabase* defaultHRTFDatabase();
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     // Both constructor and destructor must be called from the main thread.
     explicit HRTFDatabaseLoader(float sampleRate);

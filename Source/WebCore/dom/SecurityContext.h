@@ -73,6 +73,8 @@ public:
 
     static SandboxFlags parseSandboxPolicy(const String& policy);
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
+
 protected:
     SecurityContext();
     virtual ~SecurityContext();

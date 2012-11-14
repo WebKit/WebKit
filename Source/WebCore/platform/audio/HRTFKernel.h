@@ -75,6 +75,8 @@ public:
     // Converts back into impulse-response form.
     PassOwnPtr<AudioChannel> createImpulseResponse();
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     // Note: this is destructive on the passed in AudioChannel.
     HRTFKernel(AudioChannel*, size_t fftSize, float sampleRate, bool bassBoost);

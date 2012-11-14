@@ -43,6 +43,9 @@ class PlatformMemoryTypes {
 public:
     static MemoryObjectType Image;
     static MemoryObjectType Loader;
+
+    static MemoryObjectType Audio;
+    static MemoryObjectType AudioSharedData;
 };
 
 } // namespace WebCore

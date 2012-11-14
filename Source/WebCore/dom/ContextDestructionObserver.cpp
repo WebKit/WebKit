@@ -28,6 +28,7 @@
 #include "ContextDestructionObserver.h"
 
 #include "ScriptExecutionContext.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 

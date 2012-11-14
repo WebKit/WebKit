@@ -25,6 +25,7 @@
 #ifndef AudioNode_h
 #define AudioNode_h
 
+#include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -156,6 +157,9 @@ public:
 
     void enableOutputsIfNecessary();
     void disableOutputsIfNecessary();
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.
     void addInput(PassOwnPtr<AudioNodeInput>);

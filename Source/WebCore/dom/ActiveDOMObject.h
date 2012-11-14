@@ -29,6 +29,7 @@
 
 #include "ContextDestructionObserver.h"
 #include <wtf/Assertions.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -75,6 +76,8 @@ public:
         --m_pendingActivityCount;
         thisObject->deref();
     }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
     virtual ~ActiveDOMObject();

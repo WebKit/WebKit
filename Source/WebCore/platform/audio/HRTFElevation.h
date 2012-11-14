@@ -91,6 +91,9 @@ public:
     // Returns true on success.
     static bool calculateSymmetricKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, const String& subjectName,
                                                              RefPtr<HRTFKernel>& kernelL, RefPtr<HRTFKernel>& kernelR);
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     HRTFElevation(PassOwnPtr<HRTFKernelList> kernelListL, PassOwnPtr<HRTFKernelList> kernelListR, int elevation, float sampleRate)
         : m_kernelListL(kernelListL)

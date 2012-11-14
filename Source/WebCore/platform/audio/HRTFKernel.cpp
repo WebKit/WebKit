@@ -36,6 +36,7 @@
 #include "Biquad.h"
 #include "FFTFrame.h"
 #include "FloatConversion.h"
+#include "PlatformMemoryInstrumentation.h"
 #include <wtf/MathExtras.h>
 
 using namespace std;
@@ -139,6 +140,12 @@ PassRefPtr<HRTFKernel> HRTFKernel::createInterpolatedKernel(HRTFKernel* kernel1,
     
     OwnPtr<FFTFrame> interpolatedFrame = FFTFrame::createInterpolatedFrame(*kernel1->fftFrame(), *kernel2->fftFrame(), x);
     return HRTFKernel::create(interpolatedFrame.release(), frameDelay, sampleRate1);
+}
+
+void HRTFKernel::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::AudioSharedData);
+    info.addMember(m_fftFrame);
 }
 
 } // namespace WebCore
