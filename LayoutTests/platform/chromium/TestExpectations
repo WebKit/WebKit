@@ -3602,7 +3602,7 @@ webkit.org/b/90003 [ Win Debug ] fast/js/repeat-cached-vm-reentry.html [ Pass Ti
 webkit.org/b/90207 [ Win Debug ] fast/forms/select/select-state-restore.html [ Failure Pass Slow ]
 webkit.org/b/90207 [ Linux Debug ] fast/forms/select/select-state-restore.html [ Failure Pass Slow ]
 webkit.org/b/90207 [ Android ] fast/forms/select/select-state-restore.html [ Failure Pass Timeout ]
-webkit.org/b/90207 [ Win Release ] fast/forms/select/select-state-restore.html [ Pass Timeout ]
+webkit.org/b/90207 [ Win Release ] fast/forms/select/select-state-restore.html [ Failure Pass Timeout ]
 webkit.org/b/90207 [ Mac Debug ] fast/forms/select/select-state-restore.html [ Pass Timeout ]
 
 # Flaky
