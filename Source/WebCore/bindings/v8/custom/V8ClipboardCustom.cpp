@@ -72,7 +72,7 @@ v8::Handle<v8::Value> V8Clipboard::clearDataCallback(const v8::Arguments& args)
     }
 
     if (args.Length() != 1)
-        return throwError(SyntaxError, "clearData: Invalid number of arguments", args.GetIsolate());
+        return throwError(v8SyntaxError, "clearData: Invalid number of arguments", args.GetIsolate());
 
     String type = toWebCoreString(args[0]);
     clipboard->clearData(type);
@@ -88,7 +88,7 @@ v8::Handle<v8::Value> V8Clipboard::setDragImageCallback(const v8::Arguments& arg
         return v8::Undefined();
 
     if (args.Length() != 3)
-        return throwError(SyntaxError, "setDragImage: Invalid number of arguments", args.GetIsolate());
+        return throwError(v8SyntaxError, "setDragImage: Invalid number of arguments", args.GetIsolate());
 
     int x = toInt32(args[1]);
     int y = toInt32(args[2]);

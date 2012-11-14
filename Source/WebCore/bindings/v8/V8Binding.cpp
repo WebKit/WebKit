@@ -76,7 +76,7 @@ v8::Handle<v8::Value> setDOMException(int exceptionCode, v8::Isolate* isolate)
     return V8ThrowException::setDOMException(exceptionCode, isolate);
 }
 
-v8::Handle<v8::Value> throwError(ErrorType errorType, const char* message, v8::Isolate* isolate)
+v8::Handle<v8::Value> throwError(V8ErrorType errorType, const char* message, v8::Isolate* isolate)
 {
     return V8ThrowException::throwError(errorType, message, isolate);
 }
@@ -344,7 +344,7 @@ bool handleOutOfMemory()
 
 v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
 {
-    throwError(RangeError, "Maximum call stack size exceeded.");
+    throwError(v8RangeError, "Maximum call stack size exceeded.");
     return v8::Local<v8::Value>();
 }
 

@@ -118,7 +118,7 @@ v8::Handle<v8::Value> DateExtension::Setup(const v8::Arguments& args)
 
 v8::Handle<v8::Value> DateExtension::OnSleepDetected(const v8::Arguments& args)
 {
-    return throwError(GeneralError, "Too much time spent in unload handler.", args.GetIsolate());
+    return throwError(v8GeneralError, "Too much time spent in unload handler.", args.GetIsolate());
 }
 
 }  // namespace WebCore

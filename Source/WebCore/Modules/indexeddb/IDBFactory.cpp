@@ -110,7 +110,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, c
     // FIXME: This should only need to check for 0 once webkit.org/b/96798 lands.
     const int64_t maxECMAScriptInteger = 0x20000000000000LL - 1;
     if (version < 1 || version > maxECMAScriptInteger) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TypeError;
         return 0;
     }
     return openInternal(context, name, version, ec);
@@ -120,7 +120,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* co
 {
     ASSERT(version >= 1 || version == IDBDatabaseMetadata::NoIntVersion);
     if (name.isNull()) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TypeError;
         return 0;
     }
     if (!isContextValid(context))
@@ -140,7 +140,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, c
 PassRefPtr<IDBVersionChangeRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
     if (name.isNull()) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TypeError;
         return 0;
     }
     if (!isContextValid(context))

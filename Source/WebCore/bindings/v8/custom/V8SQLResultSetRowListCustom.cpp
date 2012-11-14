@@ -43,7 +43,7 @@ v8::Handle<v8::Value> V8SQLResultSetRowList::itemCallback(const v8::Arguments& a
     INC_STATS("DOM.SQLResultSetRowList.item()");
 
     if (!args.Length())
-        return throwError(SyntaxError, "Item index is required.", args.GetIsolate());
+        return throwError(v8SyntaxError, "Item index is required.", args.GetIsolate());
 
     if (!args[0]->IsNumber())
         return throwTypeError("Item index must be a number.", args.GetIsolate());
@@ -52,7 +52,7 @@ v8::Handle<v8::Value> V8SQLResultSetRowList::itemCallback(const v8::Arguments& a
 
     unsigned long index = args[0]->IntegerValue();
     if (index >= rowList->length())
-        return throwError(RangeError, "Item index is out of range.", args.GetIsolate());
+        return throwError(v8RangeError, "Item index is out of range.", args.GetIsolate());
 
     v8::Local<v8::Object> item = v8::Object::New();
     unsigned numColumns = rowList->columnNames().size();

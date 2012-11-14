@@ -60,7 +60,7 @@ namespace WebCore {
     v8::Handle<v8::Value> setDOMException(int, v8::Isolate*);
 
     // Schedule a JavaScript error to be thrown.
-    v8::Handle<v8::Value> throwError(ErrorType, const char*, v8::Isolate* = 0);
+    v8::Handle<v8::Value> throwError(V8ErrorType, const char*, v8::Isolate* = 0);
 
     // Schedule a JavaScript error to be thrown.
     v8::Handle<v8::Value> throwError(v8::Local<v8::Value>, v8::Isolate* = 0);

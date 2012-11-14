@@ -82,16 +82,16 @@ v8::Handle<v8::Value> constructWebGLArrayWithArrayBufferArgument(const v8::Argum
             return throwTypeError("Could not convert argument 2 to a number", args.GetIsolate());
     } else {
         if ((buf->byteLength() - offset) % sizeof(ElementType))
-            return throwError(RangeError, "ArrayBuffer length minus the byteOffset is not a multiple of the element size.", args.GetIsolate());
+            return throwError(v8RangeError, "ArrayBuffer length minus the byteOffset is not a multiple of the element size.", args.GetIsolate());
         length = (buf->byteLength() - offset) / sizeof(ElementType);
     }
 
     if (static_cast<int32_t>(length) < 0)
-        return throwError(RangeError, tooLargeSize, args.GetIsolate());
+        return throwError(v8RangeError, tooLargeSize, args.GetIsolate());
 
     RefPtr<ArrayClass> array = ArrayClass::create(buf, offset, length);
     if (!array)
-        return throwError(RangeError, tooLargeSize, args.GetIsolate());
+        return throwError(v8RangeError, tooLargeSize, args.GetIsolate());
 
     return wrapArrayBufferView(args, type, array, arrayType, hasIndexer);
 }
@@ -149,11 +149,11 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
         uint32_t length = source->length();
 
         if (static_cast<int32_t>(length) < 0)
-            return throwError(RangeError, tooLargeSize, args.GetIsolate());
+            return throwError(v8RangeError, tooLargeSize, args.GetIsolate());
 
         RefPtr<ArrayClass> array = ArrayClass::createUninitialized(length);
         if (!array.get())
-            return throwError(RangeError, tooLargeSize, args.GetIsolate());
+            return throwError(v8RangeError, tooLargeSize, args.GetIsolate());
 
         array->buffer()->setDeallocationObserver(V8ArrayBufferDeallocationObserver::instance());
         v8::V8::AdjustAmountOfExternalAllocatedMemory(array->byteLength());
@@ -183,7 +183,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     }
 
     if (static_cast<int32_t>(len) < 0)
-        return throwError(RangeError, tooLargeSize, args.GetIsolate());
+        return throwError(v8RangeError, tooLargeSize, args.GetIsolate());
 
     RefPtr<ArrayClass> array;
     if (doInstantiation) {
@@ -194,7 +194,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     }
 
     if (!array.get())
-        return throwError(RangeError, tooLargeSize, args.GetIsolate());
+        return throwError(v8RangeError, tooLargeSize, args.GetIsolate());
 
     if (doInstantiation) {
         array->buffer()->setDeallocationObserver(V8ArrayBufferDeallocationObserver::instance());
@@ -234,7 +234,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
         if (args.Length() == 2)
             offset = toUInt32(args[1]);
         if (!impl->set(src, offset))
-            return throwError(RangeError, outOfRangeLengthAndOffset, args.GetIsolate());
+            return throwError(v8RangeError, outOfRangeLengthAndOffset, args.GetIsolate());
         return v8::Undefined();
     }
 
@@ -246,7 +246,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
             offset = toUInt32(args[1]);
         uint32_t length = toUInt32(array->Get(v8::String::New("length")));
         if (!impl->checkInboundData(offset, length))
-            return throwError(RangeError, outOfRangeLengthAndOffset, args.GetIsolate());
+            return throwError(v8RangeError, outOfRangeLengthAndOffset, args.GetIsolate());
         bool copied = copyElements(args.Holder(), array, length, offset, args.GetIsolate());
         if (!copied) {
             for (uint32_t i = 0; i < length; i++)

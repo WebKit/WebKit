@@ -79,7 +79,7 @@ v8::Handle<v8::Value> V8ArrayBuffer::constructorCallback(const v8::Arguments& ar
     if (length >= 0)
         buffer = ArrayBuffer::create(static_cast<unsigned>(length), 1);
     if (!buffer.get())
-        return throwError(RangeError, "ArrayBuffer size is not a small enough positive integer.", args.GetIsolate());
+        return throwError(v8RangeError, "ArrayBuffer size is not a small enough positive integer.", args.GetIsolate());
     buffer->setDeallocationObserver(V8ArrayBufferDeallocationObserver::instance());
     v8::V8::AdjustAmountOfExternalAllocatedMemory(buffer->byteLength());
     // Transform the holder into a wrapper object for the array.

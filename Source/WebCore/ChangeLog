@@ -1,3 +1,74 @@
+2012-11-14  Joshua Bell  <jsbell@chromium.org>
+
+        Rename NATIVE_TYPE_ERR to TypeError
+        https://bugs.webkit.org/show_bug.cgi?id=102114
+
+        Reviewed by Kentaro Hara.
+
+        Defines names (mostly) matching WebIDL exception types for use by dom (etc) code.
+        V8 binding code had colliding enum members, which required prefixing.
+
+        No new tests - just internal renames.
+
+        * Modules/indexeddb/IDBCursor.cpp: s/NATIVE_TYPE_ERR/TypeError/g
+        (WebCore::IDBCursor::advance):
+        (WebCore::IDBCursor::stringToDirection):
+        (WebCore::IDBCursor::directionToString):
+        * Modules/indexeddb/IDBDatabase.cpp: Ditto.
+        (WebCore::IDBDatabase::setVersion):
+        * Modules/indexeddb/IDBFactory.cpp: Ditto.
+        (WebCore::IDBFactory::open):
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/IDBObjectStore.cpp: Ditto.
+        (WebCore::IDBObjectStore::createIndex):
+        * Modules/indexeddb/IDBTransaction.cpp: Ditto.
+        (WebCore::IDBTransaction::stringToMode):
+        (WebCore::IDBTransaction::modeToString):
+        * bindings/js/JSDOMBinding.cpp: Ditto.
+        (WebCore::setDOMException):
+        * bindings/v8/DateExtension.cpp: Prefix ErrorType enum/members w/ V8/v8.
+        (WebCore::DateExtension::OnSleepDetected):
+        * bindings/v8/NPV8Object.cpp: Ditto.
+        (_NPN_SetException):
+        * bindings/v8/V8Binding.cpp: Ditto.
+        (WebCore::throwError):
+        (WebCore::handleMaxRecursionDepthExceeded):
+        * bindings/v8/V8Binding.h: Ditto.
+        (WebCore):
+        * bindings/v8/V8NPObject.cpp: Ditto.
+        (WebCore::npObjectInvokeImpl):
+        (WebCore::npObjectGetProperty):
+        (WebCore::npObjectSetProperty):
+        (WebCore::npObjectPropertyEnumerator):
+        * bindings/v8/V8ThrowException.cpp: Rename ALL the errors!
+        (WebCore::V8ThrowException::setDOMException):
+        (WebCore::V8ThrowException::throwError):
+        (WebCore::V8ThrowException::throwTypeError):
+        (WebCore::V8ThrowException::throwNotEnoughArgumentsError):
+        * bindings/v8/V8ThrowException.h:
+        (V8ThrowException):
+        * bindings/v8/WorkerContextExecutionProxy.cpp: Prefixing (continued)
+        (WebCore::WorkerContextExecutionProxy::evaluate):
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp: Ditto.
+        (WebCore::V8ArrayBuffer::constructorCallback):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h: Ditto.
+        (WebCore::constructWebGLArrayWithArrayBufferArgument):
+        (WebCore::constructWebGLArray):
+        (WebCore::setWebGLArrayHelper):
+        * bindings/v8/custom/V8AudioContextCustom.cpp: Ditto.
+        (WebCore::V8AudioContext::constructorCallback):
+        * bindings/v8/custom/V8BlobCustom.cpp: Ditto.
+        (WebCore::V8Blob::constructorCallback):
+        * bindings/v8/custom/V8ClipboardCustom.cpp: Ditto.
+        (WebCore::V8Clipboard::clearDataCallback):
+        (WebCore::V8Clipboard::setDragImageCallback):
+        * bindings/v8/custom/V8DOMFormDataCustom.cpp: Ditto.
+        (WebCore::V8DOMFormData::appendCallback):
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp: Ditto.
+        (WebCore::V8SQLResultSetRowList::itemCallback):
+        * dom/ExceptionCode.h: Add WebIDL exception types.
+
 2012-11-14  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Style BB10 time input field font.

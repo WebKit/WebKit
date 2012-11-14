@@ -214,7 +214,7 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
         state->lineNumber = message->GetLineNumber();
         state->sourceURL = toWebCoreString(message->GetScriptResourceName());
         if (m_workerContext->sanitizeScriptError(state->errorMessage, state->lineNumber, state->sourceURL))
-            state->exception = throwError(GeneralError, state->errorMessage.utf8().data());
+            state->exception = throwError(v8GeneralError, state->errorMessage.utf8().data());
         else
             state->exception = ScriptValue(exceptionCatcher.Exception());
 

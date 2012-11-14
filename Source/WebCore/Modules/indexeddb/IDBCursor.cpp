@@ -170,7 +170,7 @@ void IDBCursor::advance(long long count, ExceptionCode& ec)
 
     // FIXME: This should only need to check for 0 once webkit.org/b/96798 lands.
     if (count < 1 || count > UINT_MAX) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TypeError;
         return;
     }
 
@@ -310,7 +310,7 @@ IDBCursor::Direction IDBCursor::stringToDirection(const String& directionString,
         return static_cast<IDBCursor::Direction>(IDBCursor::NEXT + (directionString[0] - '0'));
     }
 
-    ec = NATIVE_TYPE_ERR;
+    ec = TypeError;
     return IDBCursor::NEXT;
 }
 
@@ -330,7 +330,7 @@ const AtomicString& IDBCursor::directionToString(unsigned short direction, Excep
         return IDBCursor::directionPrevUnique();
 
     default:
-        ec = NATIVE_TYPE_ERR;
+        ec = TypeError;
         return IDBCursor::directionNext();
     }
 }

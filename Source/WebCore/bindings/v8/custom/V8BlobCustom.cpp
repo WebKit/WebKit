@@ -96,7 +96,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
         if (tryCatchType.HasCaught())
             return throwError(tryCatchType.Exception(), args.GetIsolate());
         if (!type.containsOnlyASCII())
-            return throwError(SyntaxError, "type must consist of ASCII characters", args.GetIsolate());
+            return throwError(v8SyntaxError, "type must consist of ASCII characters", args.GetIsolate());
         type.makeLower();
     }
 

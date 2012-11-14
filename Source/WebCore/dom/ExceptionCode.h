@@ -68,8 +68,9 @@ namespace WebCore {
         INVALID_NODE_TYPE_ERR = 24,
         DATA_CLONE_ERR = 25,
 
-        // Converted to a native TypeError by the script binding layer:
-        NATIVE_TYPE_ERR = 99
+        // WebIDL exception types, handled by the binding layer.
+        // FIXME: Add GeneralError, EvalError, etc. when implemented in the bindings.
+        TypeError = 105,
     };
 
 } // namespace WebCore

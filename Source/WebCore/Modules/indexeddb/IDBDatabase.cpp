@@ -211,7 +211,7 @@ PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionConte
     }
 
     if (version.isNull()) {
-        ec = NATIVE_TYPE_ERR;
+        ec = TypeError;
         return 0;
     }
 

@@ -186,7 +186,8 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     if (!ec || exec->hadException())
         return;
 
-    if (ec == NATIVE_TYPE_ERR) {
+    // FIXME: Handle other WebIDL exception types.
+    if (ec == TypeError) {
         throwTypeError(exec);
         return;
     }

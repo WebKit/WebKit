@@ -53,7 +53,8 @@ v8::Handle<v8::Value> V8ThrowException::setDOMException(int ec, v8::Isolate* iso
     if (ec <= 0 || v8::V8::IsExecutionTerminating())
         return v8Undefined();
 
-    if (ec == NATIVE_TYPE_ERR)
+    // FIXME: Handle other WebIDL exception types.
+    if (ec == TypeError)
         return V8ThrowException::throwTypeError(0, isolate);
 
     ExceptionCodeDescription description(ec);
@@ -77,18 +78,18 @@ v8::Handle<v8::Value> V8ThrowException::setDOMException(int ec, v8::Isolate* iso
 
 #undef TRY_TO_CREATE_EXCEPTION
 
-v8::Handle<v8::Value> V8ThrowException::throwError(ErrorType type, const char* message, v8::Isolate* isolate)
+v8::Handle<v8::Value> V8ThrowException::throwError(V8ErrorType type, const char* message, v8::Isolate* isolate)
 {
     switch (type) {
-    case RangeError:
+    case v8RangeError:
         return v8::ThrowException(v8::Exception::RangeError(v8String(message, isolate)));
-    case ReferenceError:
+    case v8ReferenceError:
         return v8::ThrowException(v8::Exception::ReferenceError(v8String(message, isolate)));
-    case SyntaxError:
+    case v8SyntaxError:
         return v8::ThrowException(v8::Exception::SyntaxError(v8String(message, isolate)));
-    case TypeError:
+    case v8TypeError:
         return v8::ThrowException(v8::Exception::TypeError(v8String(message, isolate)));
-    case GeneralError:
+    case v8GeneralError:
         return v8::ThrowException(v8::Exception::Error(v8String(message, isolate)));
     default:
         ASSERT_NOT_REACHED();
@@ -98,12 +99,12 @@ v8::Handle<v8::Value> V8ThrowException::throwError(ErrorType type, const char* m
 
 v8::Handle<v8::Value> V8ThrowException::throwTypeError(const char* message, v8::Isolate* isolate)
 {
-    return V8ThrowException::throwError(TypeError, (message ? message : "Type error"), isolate);
+    return V8ThrowException::throwError(v8TypeError, (message ? message : "Type error"), isolate);
 }
 
 v8::Handle<v8::Value> V8ThrowException::throwNotEnoughArgumentsError(v8::Isolate* isolate)
 {
-    return V8ThrowException::throwError(TypeError, "Not enough arguments", isolate);
+    return V8ThrowException::throwError(v8TypeError, "Not enough arguments", isolate);
 }
 
 v8::Handle<v8::Value> V8ThrowException::throwError(v8::Local<v8::Value> exception, v8::Isolate* isolate)

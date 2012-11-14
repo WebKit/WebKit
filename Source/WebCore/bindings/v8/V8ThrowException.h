@@ -29,19 +29,19 @@
 
 namespace WebCore {
 
-enum ErrorType {
-    RangeError,
-    ReferenceError,
-    SyntaxError,
-    TypeError,
-    GeneralError
+enum V8ErrorType {
+    v8RangeError,
+    v8ReferenceError,
+    v8SyntaxError,
+    v8TypeError,
+    v8GeneralError
 };
 
 class V8ThrowException {
 public:
     static v8::Handle<v8::Value> setDOMException(int, v8::Isolate*);
 
-    static v8::Handle<v8::Value> throwError(ErrorType, const char*, v8::Isolate* = 0);
+    static v8::Handle<v8::Value> throwError(V8ErrorType, const char*, v8::Isolate* = 0);
     static v8::Handle<v8::Value> throwError(v8::Local<v8::Value>, v8::Isolate* = 0);
 
     static v8::Handle<v8::Value> throwTypeError(const char* = 0, v8::Isolate* = 0);

@@ -354,7 +354,7 @@ IDBTransaction::Mode IDBTransaction::stringToMode(const String& modeString, Scri
         return static_cast<IDBTransaction::Mode>(IDBTransaction::READ_ONLY + (modeString[0] - '0'));
     }
 
-    ec = NATIVE_TYPE_ERR;
+    ec = TypeError;
     return IDBTransaction::READ_ONLY;
 }
 
@@ -374,7 +374,7 @@ const AtomicString& IDBTransaction::modeToString(IDBTransaction::Mode mode, Exce
         break;
 
     default:
-        ec = NATIVE_TYPE_ERR;
+        ec = TypeError;
         return IDBTransaction::modeReadOnly();
     }
 }
