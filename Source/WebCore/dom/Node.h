@@ -362,6 +362,9 @@ public:
     bool hasEventTargetData() const { return getFlag(HasEventTargetDataFlag); }
     void setHasEventTargetData(bool flag) { setFlag(flag, HasEventTargetDataFlag); }
 
+    bool inEden() const { return getFlag(InEdenFlag); }
+    void setEden(bool flag) { setFlag(flag, InEdenFlag); }
+
     enum ShouldSetAttached {
         SetAttached,
         DoNotSetAttached
@@ -735,9 +738,10 @@ private:
         HasCustomCallbacksFlag = 1 << 28,
         HasScopedHTMLStyleChildFlag = 1 << 29,
         HasEventTargetDataFlag = 1 << 30,
+        InEdenFlag = 1 << 31
     };
 
-    // 2 bits remaining
+    // 1 bit remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 

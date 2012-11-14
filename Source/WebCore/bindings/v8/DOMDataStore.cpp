@@ -83,6 +83,9 @@ void DOMDataStore::weakCallback(v8::Persistent<v8::Value> value, void* context)
     key->clearWrapper();
     value.Dispose();
     value.Clear();
+    // FIXME: I noticed that 50%~ of minor GC cycle times can be consumed
+    // inside key->deref(), which causes Node destructions. We should
+    // make Node destructions incremental.
     info->derefObject(object);
 }
 

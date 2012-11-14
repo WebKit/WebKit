@@ -33,6 +33,7 @@
 
 #include "DOMWrapperMap.h"
 #include "Node.h"
+#include "V8GCController.h"
 #include <v8.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
@@ -101,6 +102,16 @@ private:
         ASSERT(object->wrapper().IsEmpty());
         object->setWrapper(wrapper);
         wrapper.MakeWeak(object, weakCallback);
+        return true;
+    }
+    bool setWrapperInObject(Node* object, v8::Persistent<v8::Object> wrapper)
+    {
+        if (m_type != MainWorld)
+            return false;
+        ASSERT(object->wrapper().IsEmpty());
+        object->setWrapper(wrapper);
+        V8GCController::didCreateWrapperForNode(object);
+        wrapper.MakeWeak(static_cast<ScriptWrappable*>(object), weakCallback);
         return true;
     }
 

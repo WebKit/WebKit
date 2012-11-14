@@ -32,6 +32,7 @@
 #define V8GCController_h
 
 #include <v8.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -51,6 +52,10 @@ public:
     static void collectGarbage();
 
     static void* opaqueRootForGC(Node*);
+    static void didCreateWrapperForNode(Node*);
+
+private:
+    static Vector<Node*>* m_edenNodes;
 };
 
 }

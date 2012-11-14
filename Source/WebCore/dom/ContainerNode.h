@@ -314,7 +314,11 @@ inline Node* ContainerNode::traverseNextNode(const Node* stayWithin) const
     return traverseNextSibling(stayWithin);
 }
 
-typedef Vector<RefPtr<Node>, 11> NodeVector;
+// This constant controls how much buffer is initially allocated
+// for a Node Vector that is used to store child Nodes of a given Node.
+// FIXME: Optimize the value.
+const int initialNodeVectorSize = 11;
+typedef Vector<RefPtr<Node>, initialNodeVectorSize> NodeVector;
 
 inline void getChildNodes(Node* node, NodeVector& nodes)
 {
