@@ -165,6 +165,7 @@ namespace WebCore {
             , compositeOperator(CompositeSourceOver)
             , shouldAntialias(true)
             , shouldSmoothFonts(true)
+            , shouldSubpixelQuantizeFonts(true) 
             , paintingDisabled(false)
             , shadowsIgnoreTransforms(false)
 #if USE(CG)
@@ -203,6 +204,7 @@ namespace WebCore {
 
         bool shouldAntialias : 1;
         bool shouldSmoothFonts : 1;
+        bool shouldSubpixelQuantizeFonts : 1;
         bool paintingDisabled : 1;
         bool shadowsIgnoreTransforms : 1;
 #if USE(CG)
@@ -254,6 +256,11 @@ namespace WebCore {
 
         void setShouldSmoothFonts(bool);
         bool shouldSmoothFonts() const;
+
+        // Normally CG enables subpixel-quantization because it improves the performance of aligning glyphs.
+        // In some cases we have to disable to to ensure a high-quality output of the glyphs.
+        void setShouldSubpixelQuantizeFonts(bool);
+        bool shouldSubpixelQuantizeFonts() const; 
 
         const GraphicsContextState& state() const;
 

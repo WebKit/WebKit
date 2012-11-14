@@ -256,6 +256,16 @@ bool GraphicsContext::shouldSmoothFonts() const
     return m_state.shouldSmoothFonts;
 }
 
+void GraphicsContext::setShouldSubpixelQuantizeFonts(bool b)
+{ 
+    m_state.shouldSubpixelQuantizeFonts = b;
+}
+
+bool GraphicsContext::shouldSubpixelQuantizeFonts() const
+{
+    return m_state.shouldSubpixelQuantizeFonts;
+} 
+
 const GraphicsContextState& GraphicsContext::state() const
 {
     return m_state;
