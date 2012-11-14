@@ -4096,6 +4096,16 @@ void WebPageProxy::saveDataToFileInDownloadsFolder(const String& suggestedFilena
     m_uiClient.saveDataToFileInDownloadsFolder(this, suggestedFilename, mimeType, originatingURLString, data);
 }
 
+void WebPageProxy::savePDFToFileInDownloadsFolder(const String& suggestedFilename, const String& originatingURLString, const CoreIPC::DataReference& data)
+{
+    if (!suggestedFilename.endsWith(".pdf", false))
+        return;
+
+    RefPtr<WebData> webData = WebData::create(data.data(), data.size());
+
+    saveDataToFileInDownloadsFolder(suggestedFilename, "application/pdf", originatingURLString, webData.get());
+}
+
 void WebPageProxy::linkClicked(const String& url, const WebMouseEvent& event)
 {
     m_process->send(Messages::WebPage::LinkClicked(url, event), m_pageID, 0);

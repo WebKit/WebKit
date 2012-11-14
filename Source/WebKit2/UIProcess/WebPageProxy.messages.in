@@ -335,4 +335,6 @@ messages -> WebPageProxy {
     # Soup custom URI request messages
     DidReceiveURIRequest(WTF::String uriString, uint64_t requestID);
 #endif
+
+    SavePDFToFileInDownloadsFolder(WTF::String suggestedFilename, WTF::String originatingURLString, CoreIPC::DataReference data)
 }

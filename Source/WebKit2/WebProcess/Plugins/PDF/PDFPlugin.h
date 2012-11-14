@@ -66,6 +66,7 @@ public:
     void notifyContentScaleFactorChanged(CGFloat scaleFactor);
 
     void clickedLink(NSURL *);
+    void saveToPDF();
 
 private:
     explicit PDFPlugin(WebFrame*);

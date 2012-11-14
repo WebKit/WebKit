@@ -176,7 +176,7 @@ PluginInfo SimplePDFPlugin::pluginInfo()
     info.name = builtInPDFPluginName();
 
     MimeClassInfo mimeClassInfo;
-    mimeClassInfo.type ="application/pdf";
+    mimeClassInfo.type = "application/pdf";
     mimeClassInfo.desc = pdfDocumentTypeDescription();
     mimeClassInfo.extensions.append("pdf");
 

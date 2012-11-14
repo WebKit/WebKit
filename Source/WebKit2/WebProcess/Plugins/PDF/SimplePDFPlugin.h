@@ -66,6 +66,8 @@ protected:
 
     WebCore::IntSize pdfDocumentSize() const { return m_pdfDocumentSize; }
     void setPDFDocumentSize(WebCore::IntSize size) { m_pdfDocumentSize = size; }
+
+    const String& suggestedFilename() { return m_suggestedFilename; }
     
     RetainPtr<CFMutableDataRef> data() const { return m_data; }
 

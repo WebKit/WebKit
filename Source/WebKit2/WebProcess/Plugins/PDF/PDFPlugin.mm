@@ -28,6 +28,8 @@
 #import "config.h"
 #import "PDFPlugin.h"
 
+#import "ArgumentCoders.h"
+#import "DataReference.h"
 #import "PDFKitImports.h"
 #import "PDFLayerControllerDetails.h"
 #import "PDFPluginAnnotation.h"
@@ -35,6 +37,8 @@
 #import "ShareableBitmap.h"
 #import "WebEvent.h"
 #import "WebEventConversion.h"
+#import "WebPage.h"
+#import "WebPageProxyMessages.h"
 #import <PDFKit/PDFKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/ArchiveResource.h>
@@ -177,7 +181,7 @@ static const char* annotationStyle =
 
 - (void)saveToPDF
 {
-    // FIXME: Implement.
+    _pdfPlugin->saveToPDF();
 }
 
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController clickedLinkWithURL:(NSURL *)url
@@ -687,6 +691,15 @@ void PDFPlugin::notifyContentScaleFactorChanged(CGFloat scaleFactor)
 
     calculateSizes();
     updateScrollbars();
+}
+
+void PDFPlugin::saveToPDF()
+{
+    RetainPtr<CFMutableDataRef> cfData = data();
+
+    CoreIPC::DataReference dataReference(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
+
+    webFrame()->page()->send(Messages::WebPageProxy::SavePDFToFileInDownloadsFolder(suggestedFilename(), webFrame()->url(), dataReference));
 }
 
 } // namespace WebKit

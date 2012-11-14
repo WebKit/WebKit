@@ -1,3 +1,33 @@
+2012-11-14  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin should support downloading PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=102152
+        <rdar://problem/12555313>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Clicking on the "Download PDF" HUD button should download the current
+        PDF to the Downloads folder.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::savePDFToFileInDownloadsFolder): Added. Save the
+        PDF data to disk, in the Downloads folder. This will only save files with
+        the .pdf extension, and of MIME type "application/pdf".
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): Add savePDFToFileInDownloadsFolder.
+        * UIProcess/WebPageProxy.messages.in: Add savePDFToFileInDownloadsFolder.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (PDFPlugin): Add saveToPDF().
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFLayerControllerDelegate saveToPDF]): Forward saveToPDF delegate callback to PDFPlugin.
+        (WebKit::PDFPlugin::saveToPDF): Hand WebPageProxy the raw data for the
+        current PDF, which it will save to the Downloads folder. We receive
+        the suggested filename during loading.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h:
+        (WebKit::SimplePDFPlugin::suggestedFilename): Expose a getter for suggestedFilename.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.mm:
+        (WebKit::SimplePDFPlugin::pluginInfo): Add a missing space after an operator.
+
 2012-11-14  Brady Eidson  <beidson@apple.com>
 
         Part of "Move loading responsibility out of WebResourceLoadScheduler into a new WebResourceLoader"
