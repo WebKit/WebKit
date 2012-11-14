@@ -1,3 +1,38 @@
+2012-11-13  Tab Atkins  <jackalmage@gmail.com>
+
+        CSS @charset parsing is too loose, doesn't match other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=101527
+
+        Reviewed by Alexey Proskuryakov.
+
+        Removed the old css-charset-evil.html test,
+        which tested for our loose parsing of @charset.
+        Now that we're tightening our parsing to match the spec and IE's and FF's new behavior,
+        I added a more comprehensive test of incorrect @charset rules,
+        to ensure that we correctly reject them.
+
+        * fast/encoding/css-charset-evil-expected.txt: Removed.
+        * fast/encoding/css-charset-evil.css: Removed.
+        * fast/encoding/css-charset-evil.html: Removed.
+        * fast/encoding/css-charset-evil/css-charset-evil-a1.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-a2.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-a3.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-a4.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-b1.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-b2.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-b3.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-b4.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-b5.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-b6.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-b7.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-b8.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-c1.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-c2.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-c3.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-d1.css: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil-expected.txt: Added.
+        * fast/encoding/css-charset-evil/css-charset-evil.html: Added.
+
 2012-11-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Add new baselines after r134435

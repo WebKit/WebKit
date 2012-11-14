@@ -64,6 +64,11 @@ static inline bool bytesEqual(const char* p, char b0, char b1, char b2, char b3,
     return p[0] == b0 && p[1] == b1 && p[2] == b2 && p[3] == b3 && p[4] == b4 && p[5] == b5 && p[6] == b6 && p[7] == b7;
 }
 
+static inline bool bytesEqual(const char* p, char b0, char b1, char b2, char b3, char b4, char b5, char b6, char b7, char b8, char b9)
+{
+    return p[0] == b0 && p[1] == b1 && p[2] == b2 && p[3] == b3 && p[4] == b4 && p[5] == b5 && p[6] == b6 && p[7] == b7 && p[8] == b8 && p[9] == b9;
+}
+
 // You might think we should put these find functions elsewhere, perhaps with the
 // similar functions that operate on UChar, but arguably only the decoder has
 // a reason to process strings of char rather than UChar.
@@ -465,37 +470,27 @@ bool TextResourceDecoder::checkForCSSCharset(const char* data, size_t len, bool&
 
     movedDataToBuffer = true;
 
-    if (m_buffer.size() <= 8) // strlen("@charset") == 8
+    if (m_buffer.size() <= 13) // strlen('@charset "x";') == 13
         return false;
 
     const char* dataStart = m_buffer.data();
     const char* dataEnd = dataStart + m_buffer.size();
 
-    if (bytesEqual(dataStart, '@', 'c', 'h', 'a', 'r', 's', 'e', 't')) {
-        dataStart += 8;
+    if (bytesEqual(dataStart, '@', 'c', 'h', 'a', 'r', 's', 'e', 't', ' ', '"')) {
+        dataStart += 10;
         const char* pos = dataStart;
-        if (!skipWhitespace(pos, dataEnd))
+
+        while (pos < dataEnd && *pos != '"')
+            ++pos;
+        if (pos == dataEnd)
             return false;
 
-        if (*pos == '"' || *pos == '\'') {
-            char quotationMark = *pos;
-            ++pos;
-            dataStart = pos;
+        int encodingNameLength = pos - dataStart;
         
-            while (pos < dataEnd && *pos != quotationMark)
-                ++pos;
-            if (pos == dataEnd)
-                return false;
+        ++pos;
 
-            int encodingNameLength = pos - dataStart;
-            
-            ++pos;
-            if (!skipWhitespace(pos, dataEnd))
-                return false;
-
-            if (*pos == ';')
-                setEncoding(findTextEncoding(dataStart, encodingNameLength), EncodingFromCSSCharset);
-        }
+        if (*pos == ';')
+            setEncoding(findTextEncoding(dataStart, encodingNameLength), EncodingFromCSSCharset);
     }
 
     m_checkedForCSSCharset = true;

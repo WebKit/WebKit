@@ -1,3 +1,22 @@
+2012-11-13  Tab Atkins  <jackalmage@gmail.com>
+
+        CSS @charset parsing is too loose, doesn't match other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=101527
+
+        Reviewed by Alexey Proskuryakov.
+
+        Per <https://www.w3.org/Bugs/Public/show_bug.cgi?id=19882#attach_1244>,
+        IE and FF have changed to be strict about @charset parsing,
+        as the CSS 2.1 spec requires.
+        Since @charset use is very uncommon anyway,
+        we should match the new behavior and the spec for platform consistency.
+
+        Test: fast/encoding/css-charset-evil/css-charset-evil.html
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::bytesEqual):
+        (WebCore::TextResourceDecoder::checkForCSSCharset):
+
 2012-11-13  Kenichi Ishibashi  <bashi@chromium.org>
 
         [WebSocket] send() and close() should not throw an exception for an unpaired surrogate but use the replacement character
