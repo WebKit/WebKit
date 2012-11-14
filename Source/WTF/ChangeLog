@@ -1,3 +1,43 @@
+2012-11-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Use prefix form of increment / decrement operators in WTF String classes when possible
+        https://bugs.webkit.org/show_bug.cgi?id=101859
+
+        Reviewed by Benjamin Poulain.
+
+        Use prefix form of increment / decrement operators whenever possible in
+        WTF String classes as this seems to be the convention in WebKit.
+
+        * wtf/text/ASCIIFastPath.h:
+        (WTF::copyLCharsFromUCharSource):
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::add):
+        * wtf/text/Base64.cpp:
+        (WTF::base64Encode):
+        (WTF::base64DecodeInternal):
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::allocateBufferUpConvert):
+        * wtf/text/StringConcatenate.h:
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::getData16SlowCase):
+        (WTF::StringImpl::upconvertCharacters):
+        (WTF::StringImpl::containsOnlyWhitespace):
+        (WTF::StringImpl::lower):
+        (WTF::StringImpl::upper):
+        (WTF::StringImpl::foldCase):
+        (WTF::StringImpl::stripMatchedCharacters):
+        (WTF::StringImpl::removeCharacters):
+        (WTF::StringImpl::simplifyMatchedCharactersToSpace):
+        (WTF::reverseFindInner):
+        (WTF::reverseFindIgnoringCaseInner):
+        (WTF::StringImpl::replace):
+        (WTF::StringImpl::createWithTerminatingNullCharacter):
+        * wtf/text/StringImpl.h:
+        (WTF::codePointCompare):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::String):
+        (WTF::toIntegralType):
+
 2012-11-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r134490.

@@ -1068,9 +1068,9 @@ static inline int codePointCompare(unsigned l1, unsigned l2, const CharacterType
     const unsigned lmin = l1 < l2 ? l1 : l2;
     unsigned pos = 0;
     while (pos < lmin && *c1 == *c2) {
-        c1++;
-        c2++;
-        pos++;
+        ++c1;
+        ++c2;
+        ++pos;
     }
 
     if (pos < lmin)

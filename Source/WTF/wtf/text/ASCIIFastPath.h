@@ -117,7 +117,7 @@ inline void copyLCharsFromUCharSource(LChar* destination, const UChar* source, s
         const unsigned endLength = length - ucharsPerLoop + 1;
         for (; i < endLength; i += ucharsPerLoop) {
 #ifndef NDEBUG
-            for (unsigned checkIndex = 0; checkIndex < ucharsPerLoop; checkIndex++)
+            for (unsigned checkIndex = 0; checkIndex < ucharsPerLoop; ++checkIndex)
                 ASSERT(!(source[i+checkIndex] & 0xff00));
 #endif
             __m128i first8UChars = _mm_load_si128(reinterpret_cast<const __m128i*>(&source[i]));

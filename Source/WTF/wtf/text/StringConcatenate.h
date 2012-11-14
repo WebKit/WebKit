@@ -181,7 +181,7 @@ public:
     {
         size_t len = 0;
         while (m_buffer[len] != UChar(0))
-            len++;
+            ++len;
 
         if (len > std::numeric_limits<unsigned>::max())
             CRASH();

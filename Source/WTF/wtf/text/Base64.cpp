@@ -124,7 +124,7 @@ void base64Encode(const char* data, unsigned len, Vector<char>& out, Base64Encod
     // Add padding
     while (didx < out.size()) {
         out[didx] = '=';
-        didx++;
+        ++didx;
     }
 }
 
@@ -150,7 +150,7 @@ static inline bool base64DecodeInternal(const T* data, unsigned len, Vector<char
 
     bool sawEqualsSign = false;
     unsigned outLength = 0;
-    for (unsigned idx = 0; idx < len; idx++) {
+    for (unsigned idx = 0; idx < len; ++idx) {
         unsigned ch = data[idx];
         if (ch == '=')
             sawEqualsSign = true;
@@ -158,7 +158,7 @@ static inline bool base64DecodeInternal(const T* data, unsigned len, Vector<char
             if (sawEqualsSign)
                 return false;
             out[outLength] = base64DecMap[ch];
-            outLength++;
+            ++outLength;
         } else if (policy == Base64FailOnInvalidCharacter || (policy == Base64IgnoreWhitespace && !isSpaceOrNewline(ch)))
             return false;
     }

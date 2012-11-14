@@ -57,7 +57,7 @@ String::String(const UChar* str)
         
     size_t len = 0;
     while (str[len] != UChar(0))
-        len++;
+        ++len;
 
     if (len > numeric_limits<unsigned>::max())
         CRASH();
@@ -936,24 +936,24 @@ static inline IntegralType toIntegralType(const CharType* data, size_t length, b
 
     // skip leading whitespace
     while (length && isSpaceOrNewline(*data)) {
-        length--;
-        data++;
+        --length;
+        ++data;
     }
 
     if (isSigned && length && *data == '-') {
-        length--;
-        data++;
+        --length;
+        ++data;
         isNegative = true;
     } else if (length && *data == '+') {
-        length--;
-        data++;
+        --length;
+        ++data;
     }
 
     if (!length || !isCharacterAllowedInBase(*data, base))
         goto bye;
 
     while (length && isCharacterAllowedInBase(*data, base)) {
-        length--;
+        --length;
         IntegralType digitValue;
         CharType c = *data;
         if (isASCIIDigit(c))
@@ -967,7 +967,7 @@ static inline IntegralType toIntegralType(const CharType* data, size_t length, b
             goto bye;
 
         value = base * value + digitValue;
-        data++;
+        ++data;
     }
 
 #if COMPILER(MSVC)
@@ -984,8 +984,8 @@ static inline IntegralType toIntegralType(const CharType* data, size_t length, b
 
     // skip trailing space
     while (length && isSpaceOrNewline(*data)) {
-        length--;
-        data++;
+        --length;
+        ++data;
     }
 
     if (!length)

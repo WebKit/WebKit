@@ -267,7 +267,7 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s)
 
     unsigned length = 0;
     while (s[length] != UChar(0))
-        length++;
+        ++length;
 
     if (!length)
         return StringImpl::empty();

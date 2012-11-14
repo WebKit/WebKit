@@ -124,7 +124,7 @@ void StringBuilder::allocateBufferUpConvert(const LChar* currentCharacters, unsi
     ASSERT(m_is8Bit);
     // Copy the existing data into a new buffer, set result to point to the end of the existing data.
     RefPtr<StringImpl> buffer = StringImpl::createUninitialized(requiredLength, m_bufferCharacters16);
-    for (unsigned i = 0; i < m_length; i++)
+    for (unsigned i = 0; i < m_length; ++i)
         m_bufferCharacters16[i] = currentCharacters[i];
     
     m_is8Bit = false;
