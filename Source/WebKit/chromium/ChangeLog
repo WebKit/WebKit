@@ -1,3 +1,66 @@
+2012-11-14  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Add API to expose WebCore::DateTimeChooser
+        https://bugs.webkit.org/show_bug.cgi?id=101196
+
+        Reviewed by Hajime Morita.
+
+        Add ability to open date/time choosers to WebViewClient.
+
+        - ExternalDateTimeChooser forwards DateTimeChooser requests from WebCore
+          to WebViewClient, and waits for WebDateTimeChooerCompletion notifications.
+        - WebDateTimeChooserParams contains various information to create
+          chooser UI.
+        - WebDateTimeChooserCompletion informs value selection by users to
+          ExternalDateTimeChooser.
+
+        The design is very similar to existing WebFileChooserParams and
+        WebFileChooserCompletion.
+
+        These interfaces are used only if ENABLE_INPUT_MULTIPLE_FIELDS_UI is not
+        enabled, that is to say, in Chromium-Android port. Non-Android Chromium
+        ports use DateTimeChooserImpl and WebKit-internal choosers.
+
+        * WebKit.gyp: Add WebDateTimeChooserCompletion.h,
+        WebDateTimeChooserParams.h, ExternalDateTimeChooser.cpp, and
+        ExternalDateTimeChooser.h.
+        * public/WebDateTimeChooserCompletion.h: Added.
+        (WebDateTimeChooserCompletion):
+        (WebKit::WebDateTimeChooserCompletion::~WebDateTimeChooserCompletion):
+        * public/WebDateTimeChooserParams.h: Added.
+        (WebDateTimeChooserParams):
+        (WebKit::WebDateTimeChooserParams::WebDateTimeChooserParams):
+        * public/WebViewClient.h:
+        (WebKit): Add some forward declarations.
+        (WebKit::WebViewClient::openDateTimeChooser): Added.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::openDateTimeChooser):
+        Creates ExternalDateTimeChooser if !ENABLE(INPUT_MULTIPLE_FIELDS_UI).
+        * src/ExternalDateTimeChooser.cpp: Added.
+        (WebDateTimeChooserCompletionImpl): An implementation of
+        WebDateTimeChooserCompletion. When didChooseValue or didCancelChooser is
+        called, it notifies to an ExternalDateTimeChooser and kill itself.
+        (WebKit::ExternalDateTimeChooser::~ExternalDateTimeChooser): Added.
+        (WebKit::ExternalDateTimeChooser::ExternalDateTimeChooser): Added.
+        (WebKit::ExternalDateTimeChooser::create):
+        Cretes an object, then asks the WebViewClient to open date/time chooser.
+        If an open request fails, an empty PassRefPtr<> is returned.
+        We don't ask to open in the constructor because open requests might fail
+        and it's hard for the constructor to tell the failure.
+        (WebKit::ExternalDateTimeChooser::openDateTimeChooser): Prepares a
+        WebDateTimeChooserParams and a WebDateTimeChooserCompletion, calls
+        WebViewClient::openDateTimeChooser, and kill the
+        WebDateTimeChooserCompletion if openDateTimeChooser fails.
+        (WebKit::ExternalDateTimeChooser::didChooseValue):
+        Called by WebDateTimeChooserCompletion.
+        We need to check m_client because the requester is already dead.
+        (WebKit::ExternalDateTimeChooser::didCancelChooser): Ditto.
+        (WebKit::ExternalDateTimeChooser::endChooser):
+        Called by the requester when it wants to close the chooser.
+        We don't close the chooser here, and just disconnect the association of
+        the client and this object.
+        * src/ExternalDateTimeChooser.h: Added.
+
 2012-11-13  Vincent Scheib  <scheib@chromium.org>
 
         Remove RuntimeEnabledFeatures::isPointerLockEnabled.

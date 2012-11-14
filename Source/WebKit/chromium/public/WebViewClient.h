@@ -53,6 +53,7 @@ class WebBatteryStatusClient;
 class WebColorChooser;
 class WebColorChooserClient;
 class WebCompositorOutputSurface;
+class WebDateTimeChooserCompletion;
 class WebDeviceOrientationClient;
 class WebDragData;
 class WebElement;
@@ -83,6 +84,7 @@ class WebView;
 class WebWidget;
 struct WebConsoleMessage;
 struct WebContextMenuData;
+struct WebDateTimeChooserParams;
 struct WebPoint;
 struct WebPopupMenuInfo;
 struct WebRect;
@@ -221,6 +223,13 @@ public:
     // WebFileChooseCompletion will never be called.
     virtual bool runFileChooser(const WebFileChooserParams&,
                                 WebFileChooserCompletion*) { return false; }
+
+    // Ask users to choose date/time for the specified parameters. When a user
+    // chooses a value, an implemenattion of this function should call
+    // WebDateTimeChooserCompletion::didChooseValue or didCancelChooser. If the
+    // implementation opened date/time chooser UI successfully, it should return
+    // true. This function is used only if ExternalDateTimeChooser is used.
+    virtual bool openDateTimeChooser(const WebDateTimeChooserParams&, WebDateTimeChooserCompletion*) { return false; }
 
     // Displays a modal alert dialog containing the given message.  Returns
     // once the user dismisses the dialog.

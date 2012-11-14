@@ -46,6 +46,7 @@
 #include "DateTimeChooserImpl.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "ExternalDateTimeChooser.h"
 #include "ExternalPopupMenu.h"
 #include "FileChooser.h"
 #include "FileIconLoader.h"
@@ -692,8 +693,7 @@ PassRefPtr<DateTimeChooser> ChromeClientImpl::openDateTimeChooser(DateTimeChoose
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
     return DateTimeChooserImpl::create(this, pickerClient, parameters);
 #else
-    notImplemented();
-    return PassRefPtr<DateTimeChooser>();
+    return ExternalDateTimeChooser::create(this, m_webView->client(), pickerClient, parameters);
 #endif
 }
 #endif
