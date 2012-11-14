@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <script>
+      if (window.internals)
+          window.internals.settings.setCSSExclusionsEnabled(true);
+  </script>
+  <style>
+    .box {
+        height: 100px;
+        width: 100px;
+        margin: 10px;
+        display: inline-block;
+    }
+
+    #rectangle-box {
+      -webkit-animation: rectangle-anim 2s linear
+    }
+
+    #circle-box {
+      -webkit-animation: circle-anim 2s linear
+    }
+
+    #ellipse-box {
+      -webkit-animation: ellipse-anim 2s linear
+    }
+
+
+    @-webkit-keyframes rectangle-anim {
+        from { -webkit-shape-inside: rectangle(0%, 0%, 100%, 100%); }
+        to   { -webkit-shape-inside: rectangle(20%, 20%, 60%, 60%); }
+    }
+
+    @-webkit-keyframes circle-anim {
+        from { -webkit-shape-inside: circle(50%, 50%, 50%); }
+        to   { -webkit-shape-inside: circle(20%, 20%, 20%); }
+    }
+
+    @-webkit-keyframes ellipse-anim {
+        from { -webkit-shape-inside: ellipse(50%, 50%, 50%, 40%); }
+        to   { -webkit-shape-inside: ellipse(20%, 20%, 20%, 20%); }
+    }
+
+  </style>
+  <script src="../../../animations/resources/animation-test-helpers.js"></script>
+  <script type="text/javascript">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["rectangle-anim",  1, "rectangle-box", "webkitShapeInside", 'rectangle(10%, 10%, 80%, 80%)', 0.05],
+      ["circle-anim",  1, "circle-box", "webkitShapeInside", 'circle(35%, 35%, 35%)', 0.05],
+      ["ellipse-anim",  1, "ellipse-box", "webkitShapeInside", 'ellipse(35%, 35%, 35%, 30%)', 0.05],
+    ];
+    
+    runAnimationTest(expectedValues);
+  </script>
+</head>
+<body>
+
+<div class="box" id="rectangle-box">Moving Text</div>
+<div class="box" id="circle-box">Moving Text</div>
+<div class="box" id="ellipse-box">Moving Text</div>
+
+<div id="result">
+</div>
+</body>
+</html>

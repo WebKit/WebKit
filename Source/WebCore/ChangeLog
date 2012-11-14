@@ -1,3 +1,25 @@
+2012-11-14  Dirk Schulze  <krit@webkit.org>
+
+        [CSS Exclusions] Basic shapes on 'shape-inside' should be animatable
+        https://bugs.webkit.org/show_bug.cgi?id=102123
+
+        Reviewed by Antti Koivisto.
+
+        The '-webkit-shape-inside' propery takes a BasicShape as input like
+        '-webkit-clip-path'. Follow up on http://trac.webkit.org/changeset/134352 and
+        make '-webkit-shape-inside' animatable as well.
+
+        Test: fast/exclusions/shape-inside/shape-inside-animation.html
+
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc): Blend fuction for exclusion shapes. The property takes another
+            input then '-webkit-clip-path'.
+        (WebCore):
+        (PropertyWrapperBasicShape): Add wrapper for BasicShape object. Can be reused by
+            '-webkit-shape-ourside' as well.
+        (WebCore::PropertyWrapperBasicShape::PropertyWrapperBasicShape):
+        (WebCore::CSSPropertyAnimation::ensurePropertyMap):
+
 2012-11-14  Helder Correia  <helder.correia@nokia.com>
 
         [TexMap][Cairo] Accelerated compositing debug visuals

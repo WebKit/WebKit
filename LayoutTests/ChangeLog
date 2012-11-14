@@ -1,3 +1,18 @@
+2012-11-14  Dirk Schulze  <krit@webkit.org>
+
+        [CSS Exclusions] Basic shapes on 'shape-inside' should be animatable
+        https://bugs.webkit.org/show_bug.cgi?id=102123
+
+        Reviewed by Antti Koivisto.
+
+        Add new animation test for 'shape-inside', similar to 'clip-path' test.
+
+        * animations/resources/animation-test-helpers.js:
+        (getPropertyValue):
+        (comparePropertyValue):
+        * fast/exclusions/shape-inside/shape-inside-animation-expected.txt: Added.
+        * fast/exclusions/shape-inside/shape-inside-animation.html: Added.
+
 2012-11-14  Justin Novosad  <junov@google.com>
 
         Updating baselines after r134631

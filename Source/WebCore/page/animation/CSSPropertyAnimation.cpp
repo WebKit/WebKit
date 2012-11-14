@@ -146,6 +146,21 @@ static inline PassRefPtr<ClipPathOperation> blendFunc(const AnimationBase*, Clip
     return ShapeClipPathOperation::create(toShape->blend(fromShape, progress));
 }
 
+#if ENABLE(CSS_EXCLUSIONS)
+static inline PassRefPtr<BasicShape> blendFunc(const AnimationBase*, BasicShape* from, BasicShape* to, double progress)
+{
+    // FIXME: Support animations between different shapes in the future.
+    if (from->type() != to->type())
+        return to;
+
+    // FIXME: Support animations between polygons in the future.
+    if (from->type() == BasicShape::BASIC_SHAPE_POLYGON)
+        return to;
+
+    return to->blend(from, progress);
+}
+#endif
+
 #if ENABLE(CSS_FILTERS)
 static inline PassRefPtr<FilterOperation> blendFunc(const AnimationBase* anim, FilterOperation* fromOp, FilterOperation* toOp, double progress, bool blendToPassthrough = false)
 {
@@ -396,6 +411,16 @@ public:
     {
     }
 };
+
+#if ENABLE(CSS_EXCLUSIONS)
+class PropertyWrapperBasicShape : public RefCountedPropertyWrapper<BasicShape> {
+public:
+    PropertyWrapperBasicShape(CSSPropertyID prop, BasicShape* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(PassRefPtr<BasicShape>))
+        : RefCountedPropertyWrapper<BasicShape>(prop, getter, setter)
+    {
+    }
+};
+#endif
 
 class StyleImagePropertyWrapper : public RefCountedPropertyWrapper<StyleImage> {
 public:
@@ -1144,6 +1169,10 @@ void CSSPropertyAnimation::ensurePropertyMap()
 #endif
 
     gPropertyWrappers->append(new PropertyWrapperClipPath(CSSPropertyWebkitClipPath, &RenderStyle::clipPath, &RenderStyle::setClipPath));
+
+#if ENABLE(CSS_EXCLUSIONS)
+    gPropertyWrappers->append(new PropertyWrapperBasicShape(CSSPropertyWebkitShapeInside, &RenderStyle::shapeInside, &RenderStyle::setShapeInside));
+#endif
 
     gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyWebkitColumnRuleColor, MaybeInvalidColor, &RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor, &RenderStyle::visitedLinkColumnRuleColor, &RenderStyle::setVisitedLinkColumnRuleColor));
     gPropertyWrappers->append(new PropertyWrapperVisitedAffectedColor(CSSPropertyWebkitTextStrokeColor, MaybeInvalidColor, &RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor, &RenderStyle::visitedLinkTextStrokeColor, &RenderStyle::setVisitedLinkTextStrokeColor));
