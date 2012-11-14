@@ -36,6 +36,7 @@
 #import "WKURLCF.h"
 #import "WKURLRequest.h"
 #import "WKURLRequestNS.h"
+#import "WebContext.h"
 #import <wtf/RetainPtr.h>
 
 #import "WKBrowsingContextLoadDelegate.h"
@@ -102,6 +103,20 @@ static inline NSURL *autoreleased(WKURLRef url)
 }
 
 #pragma mark Loading
+
++ (void)registerSchemeForCustomProtocol:(NSString *)scheme
+{
+    NSString *lowercaseScheme = [scheme lowercaseString];
+    [[WKBrowsingContextController customSchemes] addObject:lowercaseScheme];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebKit::SchemeForCustomProtocolRegisteredNotificationName object:lowercaseScheme];
+}
+
++ (void)unregisterSchemeForCustomProtocol:(NSString *)scheme
+{
+    NSString *lowercaseScheme = [scheme lowercaseString];
+    [[WKBrowsingContextController customSchemes] removeObject:lowercaseScheme];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebKit::SchemeForCustomProtocolUnregisteredNotificationName object:lowercaseScheme];
+}
 
 - (void)loadRequest:(NSURLRequest *)request
 {
@@ -403,4 +418,10 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
     return self;
 }
 
++ (NSMutableSet *)customSchemes
+{
+    static NSMutableSet *customSchemes = [[NSMutableSet alloc] init];
+    return customSchemes;
+}
+ 
 @end

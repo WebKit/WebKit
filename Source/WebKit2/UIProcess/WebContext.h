@@ -74,6 +74,11 @@ struct WebProcessCreationParameters;
     
 typedef GenericCallback<WKDictionaryRef> DictionaryCallback;
 
+#if PLATFORM(MAC)
+extern NSString *SchemeForCustomProtocolRegisteredNotificationName;
+extern NSString *SchemeForCustomProtocolUnregisteredNotificationName;
+#endif
+
 class WebContext : public APIObject, private CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeContext;
@@ -381,6 +386,8 @@ private:
 
 #if PLATFORM(MAC)
     RetainPtr<CFTypeRef> m_enhancedAccessibilityObserver;
+    RetainPtr<CFTypeRef> m_customSchemeRegisteredObserver;
+    RetainPtr<CFTypeRef> m_customSchemeUnregisteredObserver;
 #endif
 
     String m_overrideDatabaseDirectory;

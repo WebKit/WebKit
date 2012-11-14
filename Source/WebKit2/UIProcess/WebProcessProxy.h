@@ -40,6 +40,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+#if ENABLE(CUSTOM_PROTOCOLS)
+#include "CustomProtocolManagerProxy.h"
+#endif
+
 namespace WebCore {
     class KURL;
 };
@@ -219,6 +223,10 @@ private:
     HashMap<uint64_t, WebPageProxy*> m_pageMap;
     WebFrameProxyMap m_frameMap;
     WebBackForwardListItemMap m_backForwardListItemMap;
+    
+#if ENABLE(CUSTOM_PROTOCOLS)
+    CustomProtocolManagerProxy m_customProtocolManagerProxy;
+#endif
 };
 
 template<typename T>

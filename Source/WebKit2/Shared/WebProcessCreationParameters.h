@@ -72,6 +72,9 @@ struct WebProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsNoAccess;
     Vector<String> urlSchemesRegisteredAsDisplayIsolated;
     Vector<String> urlSchemesRegisteredAsCORSEnabled;
+#if ENABLE(CUSTOM_PROTOCOLS)
+    Vector<String> urlSchemesRegisteredForCustomProtocols;
+#endif
 
     CacheModel cacheModel;
     bool shouldTrackVisitedLinks;

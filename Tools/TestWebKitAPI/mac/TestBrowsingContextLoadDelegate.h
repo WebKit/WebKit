@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKBrowsingContextController.h>
+#import <WebKit2/WebKit2.h>
 
-@interface WKBrowsingContextController (Internal)
+typedef void (^OnLoadBlock)(WKBrowsingContextController *);
 
-/* This should only be called from associate view. */
-- (id)_initWithPageRef:(WKPageRef)pageRef;
-+ (NSMutableSet *)customSchemes;
+@interface TestBrowsingContextLoadDelegate : NSObject <WKBrowsingContextLoadDelegate> {
+}
+
+@property(nonatomic, copy) OnLoadBlock onLoadBlock;
+
+- (id)initWithBlockToRunOnLoad:(OnLoadBlock)block;
 
 @end

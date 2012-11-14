@@ -29,6 +29,7 @@
 #import "NetworkProcessManager.h"
 #import "PluginProcessManager.h"
 #import "SharedWorkerProcessManager.h"
+#import "WKBrowsingContextControllerInternal.h"
 #import "WebKitSystemInterface.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessMessages.h"
@@ -55,6 +56,9 @@ static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNot
 NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
 
 namespace WebKit {
+
+NSString *SchemeForCustomProtocolRegisteredNotificationName = @"WebKitSchemeForCustomProtocolRegisteredNotification";
+NSString *SchemeForCustomProtocolUnregisteredNotificationName = @"WebKitSchemeForCustomProtocolUnregisteredNotification";
 
 bool WebContext::s_applicationIsOccluded = false;
 
@@ -123,6 +127,22 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     SandboxExtension::createHandle(parameters.uiProcessBundleResourcePath, SandboxExtension::ReadOnly, parameters.uiProcessBundleResourcePathExtensionHandle);
 
     parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
+    
+    NSArray *schemes = [[WKBrowsingContextController customSchemes] allObjects];
+    for (size_t i = 0; i < [schemes count]; ++i)
+        parameters.urlSchemesRegisteredForCustomProtocols.append([schemes objectAtIndex:i]);
+    
+    m_customSchemeRegisteredObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKit::SchemeForCustomProtocolRegisteredNotificationName object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        NSString *scheme = [notification object];
+        ASSERT([scheme isKindOfClass:[NSString class]]);
+        sendToAllProcesses(Messages::WebProcess::RegisterSchemeForCustomProtocol(scheme));
+    }];
+    
+    m_customSchemeUnregisteredObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKit::SchemeForCustomProtocolUnregisteredNotificationName object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
+        NSString *scheme = [notification object];
+        ASSERT([scheme isKindOfClass:[NSString class]]);
+        sendToAllProcesses(Messages::WebProcess::UnregisterSchemeForCustomProtocol(scheme));
+    }];
     
     // Listen for enhanced accessibility changes and propagate them to the WebProcess.
     m_enhancedAccessibilityObserver = [[NSNotificationCenter defaultCenter] addObserverForName:WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *note) {

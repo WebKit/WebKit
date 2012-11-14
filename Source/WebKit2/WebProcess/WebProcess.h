@@ -304,6 +304,11 @@ private:
     void didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const Vector<WebCore::PluginInfo>&);
 #endif
 
+#if ENABLE(CUSTOM_PROTOCOLS)
+    void registerSchemeForCustomProtocol(const WTF::String&);
+    void unregisterSchemeForCustomProtocol(const WTF::String&);
+#endif
+
     RefPtr<WebConnectionToUIProcess> m_connection;
     CoreIPC::MessageReceiverMap m_messageReceiverMap;
 

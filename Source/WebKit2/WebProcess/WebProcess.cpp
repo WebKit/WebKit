@@ -98,6 +98,10 @@
 #include "NetscapePluginModule.h"
 #endif
 
+#if ENABLE(CUSTOM_PROTOCOLS)
+#include "CustomProtocolManager.h"
+#endif
+
 using namespace JSC;
 using namespace WebCore;
 
@@ -707,6 +711,13 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         return;
     }
     
+#if ENABLE(CUSTOM_PROTOCOLS)
+    if (messageID.is<CoreIPC::MessageClassCustomProtocolManager>()) {
+        CustomProtocolManager::shared().didReceiveMessage(connection, messageID, decoder);
+        return;
+    }
+#endif
+
     if (messageID.is<CoreIPC::MessageClassWebPageGroupProxy>()) {
         uint64_t pageGroupID = decoder.destinationID();
         if (!pageGroupID)
@@ -1138,5 +1149,17 @@ void WebProcess::didGetPlugins(CoreIPC::Connection*, uint64_t requestID, const V
 #endif
 }
 #endif // ENABLE(PLUGIN_PROCESS)
+
+#if ENABLE(CUSTOM_PROTOCOLS)
+void WebProcess::registerSchemeForCustomProtocol(const WTF::String& scheme)
+{
+    CustomProtocolManager::shared().registerScheme(scheme);
+}
+
+void WebProcess::unregisterSchemeForCustomProtocol(const WTF::String& scheme)
+{
+    CustomProtocolManager::shared().unregisterScheme(scheme);
+}
+#endif
 
 } // namespace WebKit

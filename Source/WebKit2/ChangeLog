@@ -1,3 +1,114 @@
+2012-11-08  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Need API in UIProcess to enable loading of custom protocols
+        https://bugs.webkit.org/show_bug.cgi?id=101674
+
+        Reviewed by Brady Eidson.
+
+        Enable clients of WebKit2 to implement NSURLProtocol subclasses to
+        control the loading of resources with schemes that WebKit2 cannot
+        handle natively. Since loading happens in a different process, we
+        accomplish this by registering a global NSURLProtocol in the web
+        process and proxying NSURLProtocol and NSURLProtocolClient calls to
+        the client's NSURLProtocol in the UI process.
+
+        * DerivedSources.make: Addded new .messages.in files.
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/WebProcessCreationParameters.cpp: Added the list of supported schemes.
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/mac/WKBrowsingContextController.h:
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (+[WKBrowsingContextController registerSchemeForCustomProtocol:]):
+        Added a class method where a client can register a scheme that it supports.
+        (+[WKBrowsingContextController unregisterSchemeForCustomProtocol:]):
+        Added a class method where a client can unregister a scheme that it no longer supports.
+        (+[WKBrowsingContextController customSchemes]):
+        * UIProcess/API/mac/WKBrowsingContextControllerInternal.h:
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.h: Added.
+        * UIProcess/Network/CustomProtocols/CustomProtocolManagerProxy.messages.in: Added.
+        * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm: Added.
+
+        Implemented an NSURLConnectionDelegate that proxies messages to the
+        equivalent NSURLProtocolClient in the web process:
+        (-[WKCustomProtocolLoader initWithCustomProtocolManagerProxy:customProtocolID:request:connection:]):
+        (-[WKCustomProtocolLoader dealloc]):
+        (-[WKCustomProtocolLoader connection:didFailWithError:]):
+        (-[WKCustomProtocolLoader connection:willCacheResponse:]):
+        (-[WKCustomProtocolLoader connection:didReceiveResponse:]):
+        (-[WKCustomProtocolLoader connection:didReceiveData:]):
+        (-[WKCustomProtocolLoader connection:willSendRequest:redirectResponse:]):
+        (-[WKCustomProtocolLoader connectionDidFinishLoading:]):
+
+        Implemented a proxy that recieves -startLoading and -stopLoading
+        messages from the NSURLProtocol in the web process and starts an
+        NSURLConnection in the UI process, which will instantiate the client's NSURLProtocol:
+        (WebKit::CustomProtocolManagerProxy::CustomProtocolManagerProxy):
+        (WebKit::CustomProtocolManagerProxy::didReceiveMessage):
+        (WebKit::CustomProtocolManagerProxy::startLoading):
+        (WebKit::CustomProtocolManagerProxy::stopLoading):
+
+        * UIProcess/WebContext.h: Declared strings that store names of
+        NSNotifications used for scheme registration in the UI process.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::didReceiveMessage): Forwarded messages to the
+        CustomProtocolManagerProxy.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess): Added the currently
+        registered schemes to the WebProcessCreationParameters and register
+        NSNotification observers for new scheme registration that forwards to
+        the context's web processes.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebKit2Prefix.h: Enabled the CUSTOM_PROTOCOLS macro for the Mac.
+        * WebProcess/Network/CustomProtocols/CustomProtocolManager.h: Added.
+        * WebProcess/Network/CustomProtocols/CustomProtocolManager.messages.in: Added.
+        * WebProcess/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm: Added.
+        (generateCustomProtocolID): Generate a per-WebProcess unique ID.
+
+        Implemented a global NSURLProtocol that claims to support all schemes
+        registered in the UI process. When NSURLConnection calls -startLoading
+        and -stopLoading, we forward these messages to the client's NSURLProtocol
+        in the UI process:
+        (+[WKCustomProtocol canInitWithRequest:]):
+        (+[WKCustomProtocol canonicalRequestForRequest:]):
+        (+[WKCustomProtocol requestIsCacheEquivalent:toRequest:]):
+        (-[WKCustomProtocol initWithRequest:cachedResponse:client:]):
+        (-[WKCustomProtocol startLoading]):
+        (-[WKCustomProtocol stopLoading]):
+
+        Implemented a manager that receives NSURLConnectionDelegate messages
+        forwarded from the UI process and passes them to the global NSURLProtocol's NSURLProtocolClient:
+        (WebKit::CustomProtocolManager::shared):
+        (WebKit::CustomProtocolManager::registerCustomProtocolClass):
+        (WebKit::CustomProtocolManager::addCustomProtocol):
+        (WebKit::CustomProtocolManager::removeCustomProtocol):
+        (WebKit::CustomProtocolManager::registerScheme):
+        (WebKit::CustomProtocolManager::unregisterScheme):
+        (WebKit::CustomProtocolManager::supportsScheme):
+        (WebKit::CustomProtocolManager::didReceiveMessage):
+        (WebKit::CustomProtocolManager::didFailWithError):
+        (WebKit::CustomProtocolManager::didLoadData):
+        (WebKit::CustomProtocolManager::didReceiveResponse):
+        (WebKit::CustomProtocolManager::didFinishLoading):
+        (WebKit::CustomProtocolManager::protocolForID):
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessage): Forwarded messages to the
+        shared CustomProtocolManager.
+        (WebKit::WebProcess::registerSchemeForCustomProtocol): Register a
+        scheme received from the UI process.
+        (WebKit::WebProcess::unregisterSchemeForCustomProtocol): Unregister a
+        scheme received from the UI process.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in: Declared messages for passing
+        supported schemes from the UI process the web process.
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Register the
+        schemes contained in the WebProcessCreationParameters.
+
 2012-11-14  Helder Correia  <helder.correia@nokia.com>
 
         [TexMap][Cairo] Accelerated compositing debug visuals

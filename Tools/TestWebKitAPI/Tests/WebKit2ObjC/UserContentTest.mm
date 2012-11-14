@@ -27,6 +27,7 @@
 #import "Test.h"
 
 #import "PlatformUtilities.h"
+#import "TestBrowsingContextLoadDelegate.h"
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <WebKit2/WKSerializedScriptValue.h>
@@ -41,40 +42,6 @@ static const char* backgroundColorScript = "window.getComputedStyle(document.bod
 static const char* greenInRGB = "rgb(0, 128, 0)";
 static const char* redInRGB = "rgb(255, 0, 0)";
 static const char* userScriptTestProperty = "window._userScriptInstalled";
-
-typedef void (^OnLoadBlock)(WKBrowsingContextController *);
-
-@interface UserContentTestLoadDelegate : NSObject <WKBrowsingContextLoadDelegate>
-{
-    OnLoadBlock _onLoadBlock;
-}
-
-@property (nonatomic, copy) OnLoadBlock onLoadBlock;
-
-- (id)initWithBlockToRunOnLoad:(OnLoadBlock)block;
-
-@end
-
-@implementation UserContentTestLoadDelegate
-
-@synthesize onLoadBlock = _onLoadBlock;
-
-- (id)initWithBlockToRunOnLoad:(OnLoadBlock)block
-{
-    if (!(self = [super init]))
-        return nil;
-    
-    self.onLoadBlock = block;
-    return self;
-}
-
-- (void)browsingContextControllerDidFinishLoad:(WKBrowsingContextController *)sender
-{
-    if (_onLoadBlock)
-        _onLoadBlock(sender);
-}
-
-@end
 
 namespace {
     class WebKit2UserContentTest : public ::testing::Test {
@@ -143,7 +110,7 @@ TEST_F(WebKit2UserContentTest, AddUserStyleSheetBeforeCreatingView)
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef backgroundColorQuery = WKStringCreateWithUTF8CString(backgroundColorScript);
-    wkView.browsingContextController.loadDelegate = [[UserContentTestLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+    wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
         WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsString(serializedScriptValue, greenInRGB);
             testFinished = true;
@@ -162,7 +129,7 @@ TEST_F(WebKit2UserContentTest, AddUserStyleSheetAfterCreatingView)
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef backgroundColorQuery = WKStringCreateWithUTF8CString(backgroundColorScript);
-    wkView.browsingContextController.loadDelegate = [[UserContentTestLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+    wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
         WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsString(serializedScriptValue, greenInRGB);
             testFinished = true;
@@ -184,7 +151,7 @@ TEST_F(WebKit2UserContentTest, RemoveAllUserStyleSheets)
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef backgroundColorQuery = WKStringCreateWithUTF8CString(backgroundColorScript);
-    wkView.browsingContextController.loadDelegate = [[UserContentTestLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+    wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
         WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, backgroundColorQuery, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsString(serializedScriptValue, redInRGB);
             testFinished = true;
@@ -206,7 +173,7 @@ TEST_F(WebKit2UserContentTest, AddUserScriptBeforeCreatingView)
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef userScriptTestPropertyString = WKStringCreateWithUTF8CString(userScriptTestProperty);
-    wkView.browsingContextController.loadDelegate = [[UserContentTestLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+    wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
         WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, userScriptTestPropertyString, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsBoolean(serializedScriptValue, true);
             testFinished = true;
@@ -225,7 +192,7 @@ TEST_F(WebKit2UserContentTest, AddUserScriptAfterCreatingView)
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef userScriptTestPropertyString = WKStringCreateWithUTF8CString(userScriptTestProperty);
-    wkView.browsingContextController.loadDelegate = [[UserContentTestLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+    wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
         WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, userScriptTestPropertyString, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsBoolean(serializedScriptValue, true);
             testFinished = true;
@@ -247,7 +214,7 @@ TEST_F(WebKit2UserContentTest, RemoveAllUserScripts)
     
     WKView *wkView = [[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup browsingContextGroup:browsingContextGroup];
     WKStringRef userScriptTestPropertyString = WKStringCreateWithUTF8CString(userScriptTestProperty);
-    wkView.browsingContextController.loadDelegate = [[UserContentTestLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+    wkView.browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
         WKPageRunJavaScriptInMainFrame_b(wkView.pageRef, userScriptTestPropertyString, ^(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error) {
             expectScriptValueIsUndefined(serializedScriptValue);
             testFinished = true;

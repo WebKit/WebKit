@@ -1,3 +1,27 @@
+2012-11-08  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Need API in UIProcess to enable loading of custom protocols
+        https://bugs.webkit.org/show_bug.cgi?id=101674
+
+        Reviewed by Brady Eidson.
+
+        Add an API test that implements a custom protocol and attempts to load
+        a resource requiring that protocol in a WKView. The test passes only if
+        didFinishLoadForFrame: fires.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsTest.mm: Added.
+        (+[TestProtocol canInitWithRequest:]):
+        (+[TestProtocol canonicalRequestForRequest:]):
+        (+[TestProtocol requestIsCacheEquivalent:toRequest:]):
+        (-[TestProtocol startLoading]):
+        (-[TestProtocol stopLoading]):
+        * TestWebKitAPI/Tests/WebKit2ObjC/UserContentTest.mm:
+        * TestWebKitAPI/mac/TestBrowsingContextLoadDelegate.h: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextControllerInternal.h.
+        * TestWebKitAPI/mac/TestBrowsingContextLoadDelegate.mm: Copied from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextControllerInternal.h.
+        (-[TestBrowsingContextLoadDelegate initWithBlockToRunOnLoad:]):
+        (-[TestBrowsingContextLoadDelegate browsingContextControllerDidFinishLoad:]):
+
 2012-11-14  Ojan Vafai  <ojan@chromium.org>
 
         Fix some defuct flakiness dashboard unittests.

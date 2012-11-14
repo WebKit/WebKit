@@ -42,6 +42,9 @@ WK_EXPORT
 
 #pragma mark Loading
 
++ (void)registerSchemeForCustomProtocol:(NSString *)scheme;
++ (void)unregisterSchemeForCustomProtocol:(NSString *)scheme;
+
 /* Load a request. This is only valid for requests of non-file: URLs. Passing a
    file: URL will throw an exception. */
 - (void)loadRequest:(NSURLRequest *)request;

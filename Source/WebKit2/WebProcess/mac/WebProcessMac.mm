@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebProcess.h"
 
+#import "CustomProtocolManager.h"
 #import "SandboxExtension.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import "WebInspector.h"
@@ -291,6 +292,11 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     // no window in WK2, NSApplication needs to use the focused page's focused element.
     Method methodToPatch = class_getInstanceMethod([NSApplication class], @selector(accessibilityFocusedUIElement));
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
+    
+    for (size_t i = 0; i < parameters.urlSchemesRegisteredForCustomProtocols.size(); ++i)
+        CustomProtocolManager::shared().registerScheme(parameters.urlSchemesRegisteredForCustomProtocols[i]);
+    
+    CustomProtocolManager::registerCustomProtocolClass();
 }
 
 void WebProcess::initializeShim()

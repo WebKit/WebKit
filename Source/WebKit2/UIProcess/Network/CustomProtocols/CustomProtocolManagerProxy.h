@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKBrowsingContextController.h>
+#ifndef CustomProtocolManagerProxy_h
+#define CustomProtocolManagerProxy_h
 
-@interface WKBrowsingContextController (Internal)
+#if ENABLE(CUSTOM_PROTOCOLS)
 
-/* This should only be called from associate view. */
-- (id)_initWithPageRef:(WKPageRef)pageRef;
-+ (NSMutableSet *)customSchemes;
+#include "MessageID.h"
 
-@end
+#if PLATFORM(MAC)
+#include <wtf/HashMap.h>
+#include <wtf/RetainPtr.h>
+OBJC_CLASS WKCustomProtocolLoader;
+#endif
+
+namespace CoreIPC {
+class Connection;
+class MessageDecoder;
+} // namespace CoreIPC
+
+namespace WebCore {
+class ResourceRequest;
+} // namespace WebCore
+
+namespace WebKit {
+
+class WebProcessProxy;
+
+class CustomProtocolManagerProxy {
+public:
+    explicit CustomProtocolManagerProxy(WebProcessProxy*);
+
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+    void startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest&);
+    void stopLoading(uint64_t customProtocolID);
+
+private:
+    void didReceiveCustomProtocolManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+
+    WebProcessProxy* m_webProcessProxy;
+
+#if PLATFORM(MAC)
+    typedef HashMap<uint64_t, RetainPtr<WKCustomProtocolLoader> > LoaderMap;
+    LoaderMap m_loaderMap;
+#endif
+};
+
+} // namespace WebKit
+
+#endif // ENABLE(CUSTOM_PROTOCOLS)
+
+#endif // CustomProtocolManagerProxy_h

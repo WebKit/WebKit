@@ -93,6 +93,9 @@ WebProcessProxy::WebProcessProxy(PassRefPtr<WebContext> context)
     : m_responsivenessTimer(this)
     , m_context(context)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
+#if ENABLE(CUSTOM_PROTOCOLS)
+    , m_customProtocolManagerProxy(this)
+#endif
 {
     connect();
 }
@@ -435,6 +438,13 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         didReceiveWebProcessProxyMessage(connection, messageID, decoder);
         return;
     }
+
+#if ENABLE(CUSTOM_PROTOCOLS)
+    if (messageID.is<CoreIPC::MessageClassCustomProtocolManagerProxy>()) {
+        m_customProtocolManagerProxy.didReceiveMessage(connection, messageID, decoder);
+        return;
+    }
+#endif
 
     uint64_t pageID = decoder.destinationID();
     if (!pageID)

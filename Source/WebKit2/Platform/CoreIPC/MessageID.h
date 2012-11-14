@@ -126,6 +126,14 @@ enum MessageClass {
 
     // Messages sent by the shared worker process to the UI process.
     MessageClassSharedWorkerProcessProxy,
+    
+#if ENABLE(CUSTOM_PROTOCOLS)
+    // Messages sent by the UI process to a web process (soon the network process).
+    MessageClassCustomProtocolManager,
+
+    // Messages sent by a web process (soon the network process) to the UI process.
+    MessageClassCustomProtocolManagerProxy,
+#endif
 };
 
 template<typename> struct MessageKindTraits { };
