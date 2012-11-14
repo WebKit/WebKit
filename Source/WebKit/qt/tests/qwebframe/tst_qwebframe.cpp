@@ -84,7 +84,7 @@ private Q_SLOTS:
     void setContent_data();
     void setContent();
     void setCacheLoadControlAttribute();
-    //void setUrlWithPendingLoads();
+    void setUrlWithPendingLoads();
     void setUrlWithFragment_data();
     void setUrlWithFragment();
     void setUrlToEmpty();
@@ -1117,16 +1117,12 @@ void tst_QWebFrame::setCacheLoadControlAttribute()
     QCOMPARE(manager->lastCacheLoad(), QNetworkRequest::PreferNetwork);
 }
 
-// [Qt] Fix tst_QWebFrame::setUrlWithPendingLoads() API test
-// https://bugs.webkit.org/show_bug.cgi?id=63237
-/*
 void tst_QWebFrame::setUrlWithPendingLoads()
 {
     QWebPage page;
     page.mainFrame()->setHtml("<img src='dummy:'/>");
     page.mainFrame()->setUrl(QUrl("about:blank"));
 }
-*/
 
 void tst_QWebFrame::setUrlWithFragment_data()
 {
