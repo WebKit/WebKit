@@ -1,3 +1,19 @@
+2012-11-14  Michael Pruett  <michael@68k.org>
+
+        IndexedDB: Replace int64 with int64_t
+        https://bugs.webkit.org/show_bug.cgi?id=102270
+
+        Reviewed by Tony Chang.
+
+        Cleaning up coding inconsistencies, no change in behavior.
+
+        Tests: storage/indexeddb/*
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::deleteObjectStore):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+
 2012-11-14  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         [EFL][WK2] White flicker when scrolling big pages with dark background on slower hardware.

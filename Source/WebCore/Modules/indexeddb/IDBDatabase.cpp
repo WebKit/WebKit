@@ -189,7 +189,7 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
         return;
     }
 
-    int64 objectStoreId = findObjectStoreId(name);
+    int64_t objectStoreId = findObjectStoreId(name);
     if (objectStoreId == IDBObjectStoreMetadata::InvalidId) {
         ec = IDBDatabaseException::IDB_NOT_FOUND_ERR;
         return;
