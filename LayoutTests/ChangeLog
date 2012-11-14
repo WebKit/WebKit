@@ -1,3 +1,41 @@
+2012-11-14  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: NotFoundError
+        https://bugs.webkit.org/show_bug.cgi?id=102137
+
+        Reviewed by Ojan Vafai.
+
+        Updated tests and expectations.
+
+        * fast/dom/Document/replaceChild-null-oldChild-expected.txt:
+        * fast/dom/Document/script-tests/replaceChild-null-oldChild.js:
+        * fast/dom/NamedNodeMap-setNamedItem-crash-expected.txt:
+        * fast/dom/Range/range-intersectsNode-expected.txt:
+        * fast/dom/incompatible-operations-expected.txt:
+        * fast/dom/incompatible-operations.html:
+        * fast/dom/setter-type-enforcement-expected.txt:
+        * fast/dom/timer-clear-interval-in-handler-and-generate-error-expected.txt:
+        * fast/events/remove-target-with-shadow-in-drag-expected.txt:
+        * fast/files/workers/worker-read-blob-sync-expected.txt:
+        * fast/files/workers/worker-read-file-sync-expected.txt:
+        * fast/inspector-support/uncaught-dom8-exception-expected.txt:
+        * fast/js/dot-node-base-exception-expected.txt:
+        * fast/js/script-tests/dot-node-base-exception.js:
+        * fast/mutation/observe-exceptions-expected.txt:
+        * platform/chromium-linux/fast/media/mq-js-media-except-01-expected.png:
+        * platform/chromium-win/fast/media/mq-js-media-except-01-expected.txt:
+        * platform/chromium/fast/dom/NamedNodeMap-setNamedItem-crash-expected.txt:
+        * platform/chromium/fast/dom/timer-clear-interval-in-handler-and-generate-error-expected.txt:
+        * platform/chromium/fast/events/remove-target-with-shadow-in-drag-expected.txt:
+        * platform/chromium/fast/files/workers/worker-read-blob-sync-expected.txt:
+        * platform/chromium/fast/inspector-support/uncaught-dom8-exception-expected.txt:
+        * platform/chromium/fast/media/mq-js-media-except-01-expected.txt:
+        * platform/efl/fast/media/mq-js-media-except-01-expected.txt:
+        * platform/gtk/fast/events/remove-target-with-shadow-in-drag-expected.txt:
+        * platform/gtk/fast/media/mq-js-media-except-01-expected.txt:
+        * platform/mac/fast/media/mq-js-media-except-01-expected.txt:
+        * platform/qt/fast/media/mq-js-media-except-01-expected.txt:
+
 2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Mark files that need rebaselines as failing.

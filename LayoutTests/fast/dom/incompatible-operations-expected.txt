@@ -3,9 +3,9 @@ This test checks the behavior of DOM operations when called on non-DOM or incomp
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS aNode.appendChild(aDOMImplementation) threw exception Error: NOT_FOUND_ERR: DOM Exception 8.
-PASS aNode.appendChild('knort') threw exception Error: NOT_FOUND_ERR: DOM Exception 8.
-PASS aNode.appendChild(void 0) threw exception Error: NOT_FOUND_ERR: DOM Exception 8.
+PASS aNode.appendChild(aDOMImplementation) threw exception Error: NotFoundError: DOM Exception 8.
+PASS aNode.appendChild('knort') threw exception Error: NotFoundError: DOM Exception 8.
+PASS aNode.appendChild(void 0) threw exception Error: NotFoundError: DOM Exception 8.
 PASS aNode.isSameNode(aDOMImplementation) is false
 PASS aNode.isSameNode('foo') is false
 PASS aNode.isSameNode(void 0) is false

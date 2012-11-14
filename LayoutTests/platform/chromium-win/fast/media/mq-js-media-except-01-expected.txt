@@ -10,5 +10,5 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Success."
       RenderBlock {P} at (0,72) size 784x20
-        RenderText {#text} at (0,0) size 491x19
-          text run at (0,0) width 491: "Following exception was caught: Error: NOT_FOUND_ERR: DOM Exception 8"
+        RenderText {#text} at (0,0) size 453x19
+          text run at (0,0) width 453: "Following exception was caught: Error: NotFoundError: DOM Exception 8"

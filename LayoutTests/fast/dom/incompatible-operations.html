@@ -28,11 +28,11 @@ var aNode = document.createElement("div");
 var aSecondNode = document.createElement("div");
 aNode.appendChild(aSecondNode);
 
-shouldThrow("aNode.appendChild(aDOMImplementation)", "'Error: NOT_FOUND_ERR: DOM Exception 8'");
+shouldThrow("aNode.appendChild(aDOMImplementation)", "'Error: NotFoundError: DOM Exception 8'");
 
-shouldThrow("aNode.appendChild('knort')", "'Error: NOT_FOUND_ERR: DOM Exception 8'");
+shouldThrow("aNode.appendChild('knort')", "'Error: NotFoundError: DOM Exception 8'");
 
-shouldThrow("aNode.appendChild(void 0)", "'Error: NOT_FOUND_ERR: DOM Exception 8'");
+shouldThrow("aNode.appendChild(void 0)", "'Error: NotFoundError: DOM Exception 8'");
 
 shouldBeFalse("aNode.isSameNode(aDOMImplementation)");
 shouldBeFalse("aNode.isSameNode('foo')");

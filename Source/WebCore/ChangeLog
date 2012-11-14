@@ -1,3 +1,16 @@
+2012-11-14  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: NotFoundError
+        https://bugs.webkit.org/show_bug.cgi?id=102137
+
+        Reviewed by Ojan Vafai.
+
+        Patch 8 of 25 to update DOMException name to match the spec and Firefox.
+
+        Updated existing tests.
+
+        * dom/DOMCoreException.cpp:
+
 2012-11-14  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Updating BB Cookie database to use WAL

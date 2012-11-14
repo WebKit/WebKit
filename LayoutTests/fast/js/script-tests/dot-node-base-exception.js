@@ -3,4 +3,4 @@ description(
 );
 
 // Should be a DOM exception, not just some "TypeError: Null value".
-shouldThrow('(document.appendChild()).foobar()', '"Error: NOT_FOUND_ERR: DOM Exception 8"');
+shouldThrow('(document.appendChild()).foobar()', '"Error: NotFoundError: DOM Exception 8"');
