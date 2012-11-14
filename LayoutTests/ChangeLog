@@ -1,3 +1,10 @@
+2012-11-13  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined test results.
+
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/checkerboard-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/checkerboard-expected.png: Added.
+
 2012-11-13  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: non-trivial test conversion batch 2
