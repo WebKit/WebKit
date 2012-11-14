@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class DOMRequestState;
 class IDBAny;
 class IDBCallbacks;
 class IDBCursorBackendInterface;
@@ -84,7 +85,7 @@ public:
 
     void postSuccessHandlerCallback();
     void close();
-    void setValueReady(ScriptExecutionContext*, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, ScriptValue&);
+    void setValueReady(DOMRequestState*, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, ScriptValue&);
     PassRefPtr<IDBKey> idbPrimaryKey() { return m_currentPrimaryKey; }
 
 protected:

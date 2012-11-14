@@ -35,7 +35,6 @@
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8IDBKey.h"
-#include "WorldContextHandle.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 
@@ -213,7 +212,7 @@ PassRefPtr<IDBKey> createIDBKeyFromScriptValueAndKeyPath(const ScriptValue& valu
     return createIDBKeyFromScriptValueAndKeyPath(value, keyPath.string());
 }
 
-ScriptValue deserializeIDBValue(ScriptExecutionContext* scriptContext, PassRefPtr<SerializedScriptValue> prpValue)
+ScriptValue deserializeIDBValue(DOMRequestState* state, PassRefPtr<SerializedScriptValue> prpValue)
 {
     ASSERT(v8::Context::InContext());
     v8::HandleScope handleScope;
@@ -265,7 +264,7 @@ bool canInjectIDBKeyIntoScriptValue(const ScriptValue& scriptValue, const IDBKey
     return canInjectNthValueOnKeyPath(v8Value, keyPathElements, keyPathElements.size() - 1);
 }
 
-ScriptValue idbKeyToScriptValue(ScriptExecutionContext* scriptContext, PassRefPtr<IDBKey> key)
+ScriptValue idbKeyToScriptValue(DOMRequestState* state, PassRefPtr<IDBKey> key)
 {
     ASSERT(v8::Context::InContext());
     v8::HandleScope handleScope;

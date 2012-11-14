@@ -257,13 +257,13 @@ void IDBCursor::close()
     }
 }
 
-void IDBCursor::setValueReady(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, ScriptValue& value)
+void IDBCursor::setValueReady(DOMRequestState* state, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, ScriptValue& value)
 {
     m_currentKey = key;
-    m_currentKeyValue = idbKeyToScriptValue(context, m_currentKey);
+    m_currentKeyValue = idbKeyToScriptValue(state, m_currentKey);
 
     m_currentPrimaryKey = primaryKey;
-    m_currentPrimaryKeyValue = idbKeyToScriptValue(context, m_currentPrimaryKey);
+    m_currentPrimaryKeyValue = idbKeyToScriptValue(state, m_currentPrimaryKey);
 
     if (!isKeyCursor()) {
         RefPtr<IDBObjectStore> objectStore = effectiveObjectStore();
