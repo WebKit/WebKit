@@ -61,6 +61,7 @@
 //     <database id, 0, 0, 1> => utf16 database name [DatabaseMetaDataKey]
 //     <database id, 0, 0, 2> => utf16 user version data [DatabaseMetaDataKey]
 //     <database id, 0, 0, 3> => maximum object store id ever allocated [DatabaseMetaDataKey]
+//     <database id, 0, 0, 4> => user integer version (var int) [DatabaseMetaDataKey]
 //
 //
 // Object store meta-data:
@@ -153,6 +154,7 @@ static const unsigned char ExistsEntryIndexId = 2;
 
 static const unsigned char SchemaVersionTypeByte = 0;
 static const unsigned char MaxDatabaseIdTypeByte = 1;
+static const unsigned char MaxSimpleGlobalMetaDataTypeByte = 2; // Insert before this and increment.
 static const unsigned char DatabaseFreeListTypeByte = 100;
 static const unsigned char DatabaseNameTypeByte = 201;
 
@@ -857,9 +859,9 @@ int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool indexKeys)
 
         if (int x = typeByteA - typeByteB)
             return x;
-
-        if (typeByteA <= 1)
+        if (typeByteA < MaxSimpleGlobalMetaDataTypeByte)
             return 0;
+
         if (typeByteA == DatabaseFreeListTypeByte)
             return compare<DatabaseFreeListKey>(a, b);
         if (typeByteA == DatabaseNameTypeByte)
@@ -875,9 +877,7 @@ int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool indexKeys)
 
         if (int x = typeByteA - typeByteB)
             return x;
-
-        // FIXME: Replace this magic number. Should it account for UserIntVersion?
-        if (typeByteA <= 3)
+        if (typeByteA < DatabaseMetaDataKey::MaxSimpleMetaDataType)
             return 0;
 
         if (typeByteA == ObjectStoreMetaDataTypeByte)
@@ -892,9 +892,6 @@ int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool indexKeys)
             return compare<ObjectStoreNamesKey>(a, b);
         if (typeByteA == IndexNamesKeyTypeByte)
             return compare<IndexNamesKey>(a, b);
-
-        // FIXME: Assert not reached here?
-        return 0;
     }
 
     if (prefixA.type() == KeyPrefix::ObjectStoreData) {

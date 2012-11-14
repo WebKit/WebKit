@@ -1,3 +1,21 @@
+2012-11-14  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove magic numbers in record comparator, handle missing case
+        https://bugs.webkit.org/show_bug.cgi?id=102255
+
+        Reviewed by Tony Chang.
+
+        For some ranges of metadata entries, a simple type byte comparison is sufficient
+        for the backing store comparator. In two places those ranges used magic numbers,
+        one of which was incorrect - which could lead to failed reads/writes.
+
+        Test: webkit_unit_tests --gtest_filter='IDBLevelDBCodingTest.ComparisonTest'
+
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        (IDBLevelDBCoding):
+        (WebCore::IDBLevelDBCoding::compare):
+        * Modules/indexeddb/IDBLevelDBCoding.h:
+
 2012-11-14  Dirk Schulze  <krit@webkit.org>
 
         Cleanup BasicShape blending check

@@ -1,3 +1,15 @@
+2012-11-14  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove magic numbers in record comparator, handle missing case
+        https://bugs.webkit.org/show_bug.cgi?id=102255
+
+        Reviewed by Tony Chang.
+
+        Add test keys for various metadata types.
+
+        * tests/IDBLevelDBCodingTest.cpp:
+        (IDBLevelDBCoding::TEST):
+
 2012-11-14  Eric Uhrhane  <ericu@chromium.org>
 
         [chromium] Don't let shift-click turn popup into tab.
