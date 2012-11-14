@@ -88,11 +88,6 @@ public:
     static bool webkitRequestFullscreenEnabled() { return isFullScreenAPIEnabled; }
 #endif
 
-#if ENABLE(POINTER_LOCK)
-    static bool pointerLockEnabled() { return isPointerLockEnabled; }
-    static void setPointerLockEnabled(bool isEnabled) { isPointerLockEnabled = isEnabled; }
-#endif
-
 #if ENABLE(VIDEO)
     static bool audioEnabled();
     static bool htmlMediaElementEnabled();
@@ -306,10 +301,6 @@ private:
 
 #if ENABLE(FULLSCREEN_API)
     static bool isFullScreenAPIEnabled;
-#endif
-
-#if ENABLE(POINTER_LOCK)
-    static bool isPointerLockEnabled;
 #endif
 
 #if ENABLE(MEDIA_SOURCE)

@@ -147,7 +147,7 @@
     [V8EnabledAtRuntime] void webkitRequestFullscreen();
 #endif
 
-    [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] void webkitRequestPointerLock();
+    [Conditional=POINTER_LOCK] void webkitRequestPointerLock();
 
     // CSS Regions API
     [Conditional=CSS_REGIONS] readonly attribute DOMString webkitRegionOverset;

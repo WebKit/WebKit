@@ -1,3 +1,20 @@
+2012-11-13  Vincent Scheib  <scheib@chromium.org>
+
+        Remove RuntimeEnabledFeatures::isPointerLockEnabled.
+        https://bugs.webkit.org/show_bug.cgi?id=102107
+
+        Reviewed by Adam Barth.
+
+        The runtime flag is always true now that the feature is enabled by default in Chromium.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (RuntimeEnabledFeatures):
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/MouseEvent.idl:
+
 2012-11-13  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: JsDoc-annotate KeyboardShortcuts

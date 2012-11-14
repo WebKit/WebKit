@@ -166,10 +166,6 @@ bool RuntimeEnabledFeatures::isQuotaEnabled = false;
 bool RuntimeEnabledFeatures::isFullScreenAPIEnabled = true;
 #endif
 
-#if ENABLE(POINTER_LOCK)
-bool RuntimeEnabledFeatures::isPointerLockEnabled = false;
-#endif
-
 #if ENABLE(MEDIA_SOURCE)
 bool RuntimeEnabledFeatures::isMediaSourceEnabled = false;
 #endif
