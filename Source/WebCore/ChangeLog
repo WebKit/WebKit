@@ -1,3 +1,16 @@
+2012-11-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [Qt] Use a node image if there is no drag image set for Drag&Drop
+        https://bugs.webkit.org/show_bug.cgi?id=102124
+
+        Reviewed by Simon Hausmann.
+
+        Use the nodeImage provided by the frame if there is no dragImage in
+        the clipboard for the current drag&drop operation.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::createDragImage):
+
 2012-11-14  Max Vujovic  <mvujovic@adobe.com>
 
         Call to enclosingFilterLayer() in RenderObject::containerForRepaint() is expensive

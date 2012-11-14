@@ -240,10 +240,14 @@ void ClipboardQt::setDragImage(CachedImage* image, Node *node, const IntPoint &l
 
 DragImageRef ClipboardQt::createDragImage(IntPoint& dragLoc) const
 {
-    if (!m_dragImage)
-        return 0;
     dragLoc = m_dragLoc;
-    return m_dragImage->image()->nativeImageForCurrentFrame();
+
+    if (m_dragImage)
+        return m_dragImage->image()->nativeImageForCurrentFrame();
+    if (m_dragImageElement && m_frame)
+        return m_frame->nodeImage(m_dragImageElement.get());
+
+    return 0;
 }
 
 
