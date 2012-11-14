@@ -296,7 +296,7 @@ void GraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
     m_replicaLayer = layer;
 }
 
-void GraphicsLayer::setOffsetFromRenderer(const IntSize& offset)
+void GraphicsLayer::setOffsetFromRenderer(const IntSize& offset, ShouldSetNeedsDisplay shouldSetNeedsDisplay)
 {
     if (offset == m_offsetFromRenderer)
         return;
@@ -304,7 +304,8 @@ void GraphicsLayer::setOffsetFromRenderer(const IntSize& offset)
     m_offsetFromRenderer = offset;
 
     // If the compositing layer offset changes, we need to repaint.
-    setNeedsDisplay();
+    if (shouldSetNeedsDisplay == SetNeedsDisplay)
+        setNeedsDisplay();
 }
 
 void GraphicsLayer::setBackgroundColor(const Color& color)

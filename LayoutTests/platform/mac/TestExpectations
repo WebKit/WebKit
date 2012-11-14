@@ -856,6 +856,7 @@ compositing/overflow/overflow-overlay-with-touch.html
 compositing/overflow/scrolling-content-clip-to-viewport.html
 compositing/overflow/textarea-scroll-touch.html
 compositing/overflow/updating-scrolling-content.html
+compositing/overflow/scrolling-without-painting.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=95027
 fast/block/float/016.html

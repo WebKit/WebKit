@@ -1,3 +1,22 @@
+2012-11-14  Sami Kyostila  <skyostil@chromium.org>
+
+        Optimize painting of composited scrolling layers
+        https://bugs.webkit.org/show_bug.cgi?id=96087
+
+        Reviewed by Simon Fraser.
+
+        Don't completely repaint accelerated scrolling layers when the scroll offset
+        changes.
+
+        Test: compositing/overflow/scrolling-without-painting.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setOffsetFromRenderer):
+        * platform/graphics/GraphicsLayer.h:
+        (GraphicsLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
 2012-11-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: keep track of mutation observers and disconnect them upon upload

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<!--
+This test checks that accelerated scrolling layers can be scrolled without
+repainting their contents. See https://bugs.webkit.org/show_bug.cgi?id=96087.
+-->
+
+<html>
+<head>
+  <style type="text/css">
+    #scroller {
+        overflow: scroll;
+        -webkit-overflow-scrolling: touch;
+        width: 200px;
+        height: 200px;
+        border: solid thin blue;
+    }
+
+    #content {
+        height: 1000px;
+        margin-top: 25px;
+    }
+  </style>
+  <script type="text/javascript">
+      window.addEventListener('load', function() {
+          if (!window.testRunner || !window.internals) {
+              alert('This test requires testRunner to run!');
+              return;
+          }
+          testRunner.dumpAsText(false);
+
+          // First paint the entire view including the scrolling element.
+          var scroller = document.getElementById('scroller');
+          scroller.offsetTop;
+
+          // Scroll down. This should not cause any more repaints to the
+          // scrolling contents.
+          window.internals.startTrackingRepaints(document);
+          scroller.scrollTop = 25;
+
+          var layerTree = document.getElementById('layerTree');
+          layerTree.innerText =
+              window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+          window.internals.stopTrackingRepaints(document);
+      });
+  </script>
+</head>
+<body>
+  <div id="scroller">
+    <div id="content"></div>
+  </div>
+  <pre id="layerTree">This text will be replaced with the layer tree.</pre>
+</body>
+</html>
