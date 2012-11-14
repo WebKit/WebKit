@@ -1841,10 +1841,14 @@ bool InputHandler::setBatchEditingActive(bool active)
     ASSERT(backingStoreClient);
 
     // Enable / Disable the backingstore to prevent visual updates.
-    if (!active)
-        backingStoreClient->backingStore()->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
-    else
-        backingStoreClient->backingStore()->suspendScreenAndBackingStoreUpdates();
+    // FIXME: Do we really need to suspend/resume both backingstore and screen here?
+    if (!active) {
+        backingStoreClient->backingStore()->resumeBackingStoreUpdates();
+        backingStoreClient->backingStore()->resumeScreenUpdates(BackingStore::RenderAndBlit);
+    } else {
+        backingStoreClient->backingStore()->suspendBackingStoreUpdates();
+        backingStoreClient->backingStore()->suspendScreenUpdates();
+    }
 
     return true;
 }

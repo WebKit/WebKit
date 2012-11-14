@@ -53,8 +53,11 @@ public:
 
     void createSurface();
 
-    void suspendScreenAndBackingStoreUpdates();
-    void resumeScreenAndBackingStoreUpdates(ResumeUpdateOperation);
+    void suspendBackingStoreUpdates();
+    void resumeBackingStoreUpdates();
+
+    void suspendScreenUpdates();
+    void resumeScreenUpdates(BackingStore::ResumeUpdateOperation);
 
     bool isScrollingOrZooming() const;
     void setScrollingOrZooming(bool);

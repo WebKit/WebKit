@@ -1,3 +1,47 @@
+2012-11-14  Adam Treat  <atreat@rim.com>
+
+        [BlackBerry] Break suspend/resume of the backingstore and screen into separate methods
+        https://bugs.webkit.org/show_bug.cgi?id=102126
+
+        Reviewed by George Staikos.
+        PR 219976
+
+        Modify the suspend/resume methods so that they can be called from the UI thread
+        itself and split up the suspend/resume methods so that we can suspend/resume
+        the screen or backingstore separately.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::suspendBackingStoreUpdates):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::suspendScreenUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::createSurfaces):
+        (BlackBerry::WebKit::BackingStore::suspendBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStore::resumeBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStore::suspendScreenUpdates):
+        (BlackBerry::WebKit::BackingStore::resumeScreenUpdates):
+        (BlackBerry::WebKit::BackingStore::createBackingStoreMemory):
+        (BlackBerry::WebKit::BackingStore::releaseBackingStoreMemory):
+        * Api/BackingStore.h:
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::zoomAboutPoint):
+        (BlackBerry::WebKit::WebPagePrivate::zoomBlock):
+        (BlackBerry::WebKit::WebPage::destroy):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        (BlackBerry::WebKit::WebPagePrivate::setCompositor):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullScreenForElement):
+        (BlackBerry::WebKit::WebPagePrivate::restoreHistoryViewState):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::transitionToCommittedForNewPage):
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setBatchEditingActive):
+
 2012-11-14  Andy Chen  <andchen@rim.com>
 
         [BlackBerry] Add FocusBased context node detection strategy

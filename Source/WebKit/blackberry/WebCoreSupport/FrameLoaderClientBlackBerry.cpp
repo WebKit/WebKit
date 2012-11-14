@@ -435,8 +435,11 @@ void FrameLoaderClientBlackBerry::transitionToCommittedForNewPage()
     // in the backing store from another thread (see BackingStorePrivate::blitVisibleContents method),
     // so we suspend and resume screen update to make sure we do not get a invalid FrameView
     // state.
-    if (isMainFrame() && m_webPagePrivate->backingStoreClient())
-        m_webPagePrivate->backingStoreClient()->backingStore()->d->suspendScreenAndBackingStoreUpdates();
+    if (isMainFrame() && m_webPagePrivate->backingStoreClient()) {
+        // FIXME: Do we really need to suspend/resume both backingstore and screen here?
+        m_webPagePrivate->backingStoreClient()->backingStore()->d->suspendBackingStoreUpdates();
+        m_webPagePrivate->backingStoreClient()->backingStore()->d->suspendScreenUpdates();
+    }
 
     // We are navigating away from this document, so clean up any footprint we might have.
     if (m_frame->document())
@@ -456,8 +459,11 @@ void FrameLoaderClientBlackBerry::transitionToCommittedForNewPage()
                         ScrollbarAlwaysOff,                    /* ver mode */
                         true);                                 /* lock the mode */
 
-    if (isMainFrame() && m_webPagePrivate->backingStoreClient())
-        m_webPagePrivate->backingStoreClient()->backingStore()->d->resumeScreenAndBackingStoreUpdates(BackingStore::None);
+    if (isMainFrame() && m_webPagePrivate->backingStoreClient()) {
+        // FIXME: Do we really need to suspend/resume both backingstore and screen here?
+        m_webPagePrivate->backingStoreClient()->backingStore()->d->resumeBackingStoreUpdates();
+        m_webPagePrivate->backingStoreClient()->backingStore()->d->resumeScreenUpdates(BackingStore::None);
+    }
 
     m_frame->view()->updateCanHaveScrollbars();
 
@@ -1122,7 +1128,9 @@ void FrameLoaderClientBlackBerry::restoreViewState()
 
     // Don't flash checkerboard before WebPagePrivate::restoreHistoryViewState() finished.
     // This call will be balanced by BackingStorePrivate::resumeScreenAndBackingStoreUpdates() in WebPagePrivate::restoreHistoryViewState().
-    m_webPagePrivate->m_backingStore->d->suspendScreenAndBackingStoreUpdates();
+    // FIXME: Do we really need to suspend/resume both backingstore and screen here?
+    m_webPagePrivate->m_backingStore->d->suspendBackingStoreUpdates();
+    m_webPagePrivate->m_backingStore->d->suspendScreenUpdates();
 
     // It is not safe to render the page at this point. So we post a message instead. Messages have higher priority than timers.
     BlackBerry::Platform::webKitThreadMessageClient()->dispatchMessage(BlackBerry::Platform::createMethodCallMessage(

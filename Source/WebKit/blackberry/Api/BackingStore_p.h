@@ -127,11 +127,17 @@ public:
 
     bool isSuspended() const { return m_suspendBackingStoreUpdates; }
 
+    // Suspends all backingstore updates so that rendering to the backingstore is disabled.
+    void suspendBackingStoreUpdates();
+
+    // Resumes all backingstore updates so that rendering to the backingstore is enabled.
+    void resumeBackingStoreUpdates();
+
     // Suspends all screen updates so that 'blitVisibleContents' is disabled.
-    void suspendScreenAndBackingStoreUpdates();
+    void suspendScreenUpdates();
 
     // Resumes all screen updates so that 'blitVisibleContents' is enabled.
-    void resumeScreenAndBackingStoreUpdates(BackingStore::ResumeUpdateOperation);
+    void resumeScreenUpdates(BackingStore::ResumeUpdateOperation);
 
     // The functions repaint(), slowScroll(), scroll(), scrollingStartedHelper() are
     // called from outside WebKit and within WebKit via ChromeClientBlackBerry.
