@@ -25,11 +25,11 @@
 #define RenderThemeChromiumMac_h
 
 #import "RenderThemeChromiumCommon.h"
-#import "RenderThemeMac.h"
+#import "RenderThemeMacShared.h"
 
 namespace WebCore {
 
-class RenderThemeChromiumMac : public RenderThemeMac {
+class RenderThemeChromiumMac : public RenderThemeMacShared {
 public:
     static PassRefPtr<RenderTheme> create();
 

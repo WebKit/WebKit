@@ -1,3 +1,154 @@
+2012-11-13  Robert Sesek  <rsesek@chromium.org>
+
+        Sever Chromium's dependence on WebKitSystemInterface media control drawing functions in RenderThemeMac
+        https://bugs.webkit.org/show_bug.cgi?id=101634
+
+        Reviewed by Adam Barth.
+
+        This splits out the common methods between RenderThemeMac and RenderThemeChromiumMac
+        into RenderThemeMacShared.
+
+        No new tests, just refactoring.
+
+        * WebCore.gyp/WebCore.gyp: Remove RenderThemeMac.mm from platform/ sources list, since it's part of rendering/
+        * WebCore.gypi: Add RenderThemeMacShared.{h,mm}
+        * WebCore.xcodeproj/project.pbxproj: Add RenderThemeMacShared.{h,mm}
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::popupInternalPaddingLeft):
+        (WebCore::RenderThemeChromiumMac::popupInternalPaddingRight):
+        (WebCore::RenderThemeChromiumMac::extraDefaultStyleSheet):
+        * rendering/RenderThemeMac.h:
+        (RenderThemeMac):
+        * rendering/RenderThemeMac.mm:
+        (WebCore):
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::RenderThemeMac::create):
+        (WebCore::RenderThemeMac::RenderThemeMac):
+        (WebCore::RenderThemeMac::~RenderThemeMac):
+        (WebCore::RenderThemeMac::documentViewFor):
+        (WebCore::mediaControllerTheme):
+        (WebCore::RenderThemeMac::paintMediaSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaRewindButton):
+        (WebCore::RenderThemeMac::paintMediaReturnToRealtimeButton):
+        (WebCore::RenderThemeMac::paintMediaFullScreenVolumeSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaFullScreenVolumeSliderThumb):
+        (WebCore::RenderThemeMac::extraMediaControlsStyleSheet):
+        (WebCore::RenderThemeMac::extraFullScreenStyleSheet):
+        * rendering/RenderThemeMacShared.h: Copied from Source/WebCore/rendering/RenderThemeMac.h.
+        (WebCore):
+        (RenderThemeMacShared):
+        (WebCore::RenderThemeMacShared::supportsControlTints):
+        (WebCore::RenderThemeMacShared::scrollbarControlSizeForPart):
+        (WebCore::RenderThemeMacShared::supportsSelectionForegroundColors):
+        (WebCore::RenderThemeMacShared::supportsClosedCaptioning):
+        (WebCore::RenderThemeMacShared::updateActiveState):
+        * rendering/RenderThemeMacShared.mm: Copied from Source/WebCore/rendering/RenderThemeMac.mm.
+        (-[WebCoreRenderThemeNotificationObserver initWithTheme:WebCore::]):
+        (-[WebCoreRenderThemeNotificationObserver systemColorsDidChange:]):
+        (-[WebCoreTextFieldCell _coreUIDrawOptionsWithFrame:inView:includeFocus:]):
+        (WebCore):
+        (WebCore::RenderThemeMacShared::RenderThemeMacShared):
+        (WebCore::RenderThemeMacShared::~RenderThemeMacShared):
+        (WebCore::RenderThemeMacShared::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeMacShared::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeMacShared::platformActiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeMacShared::platformActiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeMacShared::platformInactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeMacShared::platformFocusRingColor):
+        (WebCore::RenderThemeMacShared::platformInactiveListBoxSelectionBackgroundColor):
+        (WebCore::toFontWeight):
+        (WebCore::RenderThemeMacShared::systemFont):
+        (WebCore::convertNSColorToColor):
+        (WebCore::menuBackgroundColor):
+        (WebCore::RenderThemeMacShared::platformColorsDidChange):
+        (WebCore::RenderThemeMacShared::systemColor):
+        (WebCore::RenderThemeMacShared::usesTestModeFocusRingColor):
+        (WebCore::RenderThemeMacShared::isControlStyled):
+        (WebCore::RenderThemeMacShared::adjustRepaintRect):
+        (WebCore::RenderThemeMacShared::inflateRect):
+        (WebCore::RenderThemeMacShared::convertToPaintingRect):
+        (WebCore::RenderThemeMacShared::updateCheckedState):
+        (WebCore::RenderThemeMacShared::updateEnabledState):
+        (WebCore::RenderThemeMacShared::updateFocusedState):
+        (WebCore::RenderThemeMacShared::updatePressedState):
+        (WebCore::RenderThemeMacShared::controlSupportsTints):
+        (WebCore::RenderThemeMacShared::controlSizeForFont):
+        (WebCore::RenderThemeMacShared::setControlSize):
+        (WebCore::RenderThemeMacShared::sizeForFont):
+        (WebCore::RenderThemeMacShared::sizeForSystemFont):
+        (WebCore::RenderThemeMacShared::setSizeFromFont):
+        (WebCore::RenderThemeMacShared::setFontFromControlSize):
+        (WebCore::RenderThemeMacShared::controlSizeForSystemFont):
+        (WebCore::RenderThemeMacShared::paintTextField):
+        (WebCore::RenderThemeMacShared::adjustTextFieldStyle):
+        (WebCore::RenderThemeMacShared::paintCapsLockIndicator):
+        (WebCore::RenderThemeMacShared::paintTextArea):
+        (WebCore::RenderThemeMacShared::adjustTextAreaStyle):
+        (WebCore::RenderThemeMacShared::popupButtonMargins):
+        (WebCore::RenderThemeMacShared::popupButtonSizes):
+        (WebCore::RenderThemeMacShared::popupButtonPadding):
+        (WebCore::RenderThemeMacShared::paintMenuList):
+        (WebCore::RenderThemeMacShared::meterSizeForBounds):
+        (WebCore::RenderThemeMacShared::paintMeter):
+        (WebCore::RenderThemeMacShared::supportsMeter):
+        (WebCore::RenderThemeMacShared::levelIndicatorStyleFor):
+        (WebCore::RenderThemeMacShared::levelIndicatorFor):
+        (WebCore::RenderThemeMacShared::progressBarSizes):
+        (WebCore::RenderThemeMacShared::progressBarMargins):
+        (WebCore::RenderThemeMacShared::minimumProgressBarHeight):
+        (WebCore::RenderThemeMacShared::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderThemeMacShared::animationDurationForProgressBar):
+        (WebCore::RenderThemeMacShared::adjustProgressBarStyle):
+        (WebCore::RenderThemeMacShared::paintProgressBar):
+        (WebCore::TopGradientInterpolate):
+        (WebCore::BottomGradientInterpolate):
+        (WebCore::MainGradientInterpolate):
+        (WebCore::TrackGradientInterpolate):
+        (WebCore::RenderThemeMacShared::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMacShared::paintMenuListButton):
+        (WebCore::menuListButtonSizes):
+        (WebCore::RenderThemeMacShared::adjustMenuListStyle):
+        (WebCore::RenderThemeMacShared::popupInternalPaddingLeft):
+        (WebCore::RenderThemeMacShared::popupInternalPaddingRight):
+        (WebCore::RenderThemeMacShared::popupInternalPaddingTop):
+        (WebCore::RenderThemeMacShared::popupInternalPaddingBottom):
+        (WebCore::RenderThemeMacShared::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeMacShared::setPopupButtonCellState):
+        (WebCore::RenderThemeMacShared::menuListSizes):
+        (WebCore::RenderThemeMacShared::minimumMenuListSize):
+        (WebCore::RenderThemeMacShared::adjustSliderTrackStyle):
+        (WebCore::RenderThemeMacShared::paintSliderTrack):
+        (WebCore::RenderThemeMacShared::adjustSliderThumbStyle):
+        (WebCore::RenderThemeMacShared::paintSliderThumb):
+        (WebCore::RenderThemeMacShared::paintSearchField):
+        (WebCore::RenderThemeMacShared::setSearchCellState):
+        (WebCore::RenderThemeMacShared::searchFieldSizes):
+        (WebCore::RenderThemeMacShared::setSearchFieldSize):
+        (WebCore::RenderThemeMacShared::adjustSearchFieldStyle):
+        (WebCore::RenderThemeMacShared::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMacShared::cancelButtonSizes):
+        (WebCore::RenderThemeMacShared::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeMacShared::resultsButtonSizes):
+        (WebCore::RenderThemeMacShared::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeMacShared::paintSearchFieldDecoration):
+        (WebCore::RenderThemeMacShared::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeMacShared::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeMacShared::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeMacShared::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeMacShared::sliderTickSize):
+        (WebCore::RenderThemeMacShared::sliderTickOffsetFromTrackCenter):
+        (WebCore::RenderThemeMacShared::adjustSliderThumbSize):
+        (WebCore::RenderThemeMacShared::shouldShowPlaceholderWhenFocused):
+        (WebCore::RenderThemeMacShared::popupButton):
+        (WebCore::RenderThemeMacShared::search):
+        (WebCore::RenderThemeMacShared::searchMenuTemplate):
+        (WebCore::RenderThemeMacShared::sliderThumbHorizontal):
+        (WebCore::RenderThemeMacShared::sliderThumbVertical):
+        (WebCore::RenderThemeMacShared::textField):
+        (WebCore::RenderThemeMacShared::fileListNameForWidth):
+        (WebCore::RenderThemeMacShared::paintPlugInSnapshotOverlay):
+
 2012-11-13  Tab Atkins  <jackalmage@gmail.com>
 
         CSS @charset parsing is too loose, doesn't match other browsers

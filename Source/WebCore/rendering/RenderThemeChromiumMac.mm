@@ -99,7 +99,7 @@ int RenderThemeChromiumMac::popupInternalPaddingLeft(RenderStyle* style) const
     if (style->appearance() == TextFieldPart)
         return autofillPopupHorizontalPadding;
 
-    return RenderThemeMac::popupInternalPaddingLeft(style);
+    return RenderThemeMacShared::popupInternalPaddingLeft(style);
 }
 
 int RenderThemeChromiumMac::popupInternalPaddingRight(RenderStyle* style) const
@@ -107,7 +107,7 @@ int RenderThemeChromiumMac::popupInternalPaddingRight(RenderStyle* style) const
     if (style->appearance() == TextFieldPart)
         return autofillPopupHorizontalPadding;
 
-    return RenderThemeMac::popupInternalPaddingRight(style);
+    return RenderThemeMacShared::popupInternalPaddingRight(style);
 }
 
 // Updates the control tint (a.k.a. active state) of |cell| (from |o|).
@@ -171,7 +171,7 @@ String RenderThemeChromiumMac::extraFullScreenStyleSheet()
 
 String RenderThemeChromiumMac::extraDefaultStyleSheet()
 {
-    return RenderThemeMac::extraDefaultStyleSheet() +
+    return RenderThemeMacShared::extraDefaultStyleSheet() +
            String(themeChromiumUserAgentStyleSheet, sizeof(themeChromiumUserAgentStyleSheet));
 }
 

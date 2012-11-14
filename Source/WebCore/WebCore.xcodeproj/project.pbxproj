@@ -677,6 +677,8 @@
 		1CF6BE140E9BB4670025E1CD /* ObjCNodeFilterCondition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF6BE120E9BB4670025E1CD /* ObjCNodeFilterCondition.mm */; };
 		1CF6BE150E9BB4670025E1CD /* ObjCNodeFilterCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CF6BE130E9BB4670025E1CD /* ObjCNodeFilterCondition.h */; };
 		1CFAE3230A6D6A3F0032593D /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CFAE3220A6D6A3F0032593D /* libobjc.dylib */; };
+		1E50084716516AD800B7E098 /* RenderThemeMacShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E50084516516AD800B7E098 /* RenderThemeMacShared.h */; };
+		1E50084816516AD800B7E098 /* RenderThemeMacShared.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1E50084616516AD800B7E098 /* RenderThemeMacShared.mm */; };
 		1F3C3BEA135CAF3C00B8C1AC /* MediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F3C3BE8135CAF3C00B8C1AC /* MediaControls.cpp */; };
 		1F3C3BEB135CAF3C00B8C1AC /* MediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3C3BE9135CAF3C00B8C1AC /* MediaControls.h */; };
 		1F3F19531499CA7600A5AEA7 /* PODFreeListArena.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3F19521499CA7600A5AEA7 /* PODFreeListArena.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7796,6 +7798,8 @@
 		1CF6BE120E9BB4670025E1CD /* ObjCNodeFilterCondition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCNodeFilterCondition.mm; sourceTree = "<group>"; };
 		1CF6BE130E9BB4670025E1CD /* ObjCNodeFilterCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCNodeFilterCondition.h; sourceTree = "<group>"; };
 		1CFAE3220A6D6A3F0032593D /* libobjc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libobjc.dylib; path = /usr/lib/libobjc.dylib; sourceTree = "<absolute>"; };
+		1E50084516516AD800B7E098 /* RenderThemeMacShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderThemeMacShared.h; sourceTree = "<group>"; };
+		1E50084616516AD800B7E098 /* RenderThemeMacShared.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderThemeMacShared.mm; sourceTree = "<group>"; };
 		1F3C3BE8135CAF3C00B8C1AC /* MediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControls.cpp; sourceTree = "<group>"; };
 		1F3C3BE9135CAF3C00B8C1AC /* MediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControls.h; sourceTree = "<group>"; };
 		1F3F19521499CA7600A5AEA7 /* PODFreeListArena.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODFreeListArena.h; sourceTree = "<group>"; };
@@ -21666,6 +21670,8 @@
 				BCEA484B097D93020094C9E4 /* RenderTheme.h */,
 				BCEA4848097D93020094C9E4 /* RenderThemeMac.h */,
 				BCEA4849097D93020094C9E4 /* RenderThemeMac.mm */,
+				1E50084516516AD800B7E098 /* RenderThemeMacShared.h */,
+				1E50084616516AD800B7E098 /* RenderThemeMacShared.mm */,
 				93955A4203D72932008635CE /* RenderTreeAsText.cpp */,
 				93955A4103D72932008635CE /* RenderTreeAsText.h */,
 				E4B41E330CBFB60900AF2ECE /* RenderVideo.cpp */,
@@ -25714,6 +25720,7 @@
 				E1424C94164B52C800F32D40 /* CookieJar.h in Headers */,
 				1411DCB1164C39A800D49BC1 /* WidthCache.h in Headers */,
 				570B78C01650CE81001DBE1B /* SelectRuleFeatureSet.h in Headers */,
+				1E50084716516AD800B7E098 /* RenderThemeMacShared.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28801,6 +28808,7 @@
 				E1424C90164B460B00F32D40 /* CookieJarMac.mm in Sources */,
 				E1424C93164B52C800F32D40 /* CookieJar.cpp in Sources */,
 				570B78BF1650CE81001DBE1B /* SelectRuleFeatureSet.cpp in Sources */,
+				1E50084816516AD800B7E098 /* RenderThemeMacShared.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

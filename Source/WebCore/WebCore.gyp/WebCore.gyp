@@ -1746,7 +1746,6 @@
           ],
           'sources': [
             '../editing/SmartReplaceCF.cpp',
-            '../rendering/RenderThemeMac.mm',
             '../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
           ],
           'sources/': [
@@ -1767,7 +1766,6 @@
             # Cherry-pick some files that can't be included by broader regexps.
             # Some of these are used instead of Chromium platform files, see
             # the specific exclusions in the "exclude" list below.
-            ['include', 'rendering/RenderThemeMac\\.mm$'],
             ['include', 'platform/graphics/mac/ColorMac\\.mm$'],
             ['include', 'platform/graphics/mac/ComplexTextControllerCoreText\\.mm$'],
             ['include', 'platform/graphics/mac/FloatPointMac\\.mm$'],
