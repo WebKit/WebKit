@@ -1,3 +1,14 @@
+2012-11-14  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Turn on error on warnings for "sign-compare"
+        https://bugs.webkit.org/show_bug.cgi?id=101761
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove "-Wno-error=sign-compare" to turn on error on warnings for "sign-compare"
+
+        * Source/cmake/WebKitHelpers.cmake:
+
 2012-11-13  Hugo Parente Lima  <hugo.lima@openbossa.org>
 
         FindGLIB.cmake fails do find glib gmodule module.
