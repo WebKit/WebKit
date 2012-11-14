@@ -1,3 +1,9 @@
+2012-11-13  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Investigating svn trouble. Test commit.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-11-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r134446.
