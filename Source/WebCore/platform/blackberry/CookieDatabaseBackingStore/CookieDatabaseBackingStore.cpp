@@ -112,7 +112,7 @@ void CookieDatabaseBackingStore::invokeOpen(const String& cookieJar)
     }
 
     m_db.executeCommand("PRAGMA locking_mode=EXCLUSIVE;");
-    m_db.executeCommand("PRAGMA journal_mode=TRUNCATE;");
+    m_db.executeCommand("PRAGMA journal_mode=WAL;");
 
     const String primaryKeyFields("PRIMARY KEY (protocol, host, path, name)");
     const String databaseFields("name TEXT, value TEXT, host TEXT, path TEXT, expiry DOUBLE, lastAccessed DOUBLE, isSecure INTEGER, isHttpOnly INTEGER, creationTime DOUBLE, protocol TEXT");

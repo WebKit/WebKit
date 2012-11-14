@@ -1,3 +1,23 @@
+2012-11-14  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Updating BB Cookie database to use WAL
+        https://bugs.webkit.org/show_bug.cgi?id=102237
+
+        Reviewed by Rob Buis.
+
+        The cookie database is accessed by one process only and should be updated to
+        use the WAL journal mode for better I/O performance.
+
+        PR 236553
+
+        cookieCollection.db-wal is created after the conversion to WAL.
+        Tested cookie persistence by logging on to random sites and restarting the browser and
+        check if it automatically logs in.
+        Also tested using Opera's cookie persistence test.
+
+        * platform/blackberry/CookieDatabaseBackingStore/CookieDatabaseBackingStore.cpp:
+        (WebCore::CookieDatabaseBackingStore::invokeOpen):
+
 2012-11-14  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: IndexSizeError
