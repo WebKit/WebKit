@@ -163,6 +163,16 @@ void InspectorClientImpl::autoZoomPageToFitWidth()
         agent->autoZoomPageToFitWidth();
 }
 
+bool InspectorClientImpl::canShowFPSCounter()
+{
+    return true;
+}
+
+void InspectorClientImpl::setShowFPSCounter(bool show)
+{
+    m_inspectedWebView->setShowFPSCounter(show);
+}
+
 bool InspectorClientImpl::supportsFrameInstrumentation()
 {
     return true;

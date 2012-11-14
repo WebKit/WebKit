@@ -1,3 +1,29 @@
+2012-11-13  Eberhard Graether  <egraether@google.com>
+
+        checkbox to toggle FPS counter in the inspector's settings
+        https://bugs.webkit.org/show_bug.cgi?id=99660
+
+        Reviewed by Pavel Feldman.
+
+        Added a checkbox to the inspector's settings to toggle a FPS counter. The checkbox appears when InspectorClient::canShowFPSCounter() returns true.
+
+        * public/WebView.h:
+        (WebView):
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::canShowFPSCounter):
+        (WebKit):
+        (WebKit::InspectorClientImpl::setShowFPSCounter):
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setShowFPSCounter):
+        (WebKit):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::loadFontAtlasIfNecessary):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-11-13  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Plumb WebCompositorSupport settings through WebLayerTreeSettings as well, in preparation for removing the settings from WebCompositorSupport

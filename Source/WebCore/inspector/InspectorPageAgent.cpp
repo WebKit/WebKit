@@ -92,6 +92,7 @@ static const char pageAgentScreenWidthOverride[] = "pageAgentScreenWidthOverride
 static const char pageAgentScreenHeightOverride[] = "pageAgentScreenHeightOverride";
 static const char pageAgentFontScaleFactorOverride[] = "pageAgentFontScaleFactorOverride";
 static const char pageAgentFitWindow[] = "pageAgentFitWindow";
+static const char pageAgentShowFPSCounter[] = "pageAgentShowFPSCounter";
 static const char showPaintRects[] = "showPaintRects";
 #if ENABLE(TOUCH_EVENTS)
 static const char touchEventEmulationEnabled[] = "touchEventEmulationEnabled";
@@ -366,6 +367,8 @@ void InspectorPageAgent::enable(ErrorString*)
     m_state->setBoolean(PageAgentState::pageAgentEnabled, true);
     bool scriptExecutionDisabled = m_state->getBoolean(PageAgentState::pageAgentScriptExecutionDisabled);
     setScriptExecutionDisabled(0, scriptExecutionDisabled);
+    bool showFPSCounter = m_state->getBoolean(PageAgentState::pageAgentShowFPSCounter);
+    setShowFPSCounter(0, showFPSCounter);
     m_instrumentingAgents->setInspectorPageAgent(this);
 }
 
@@ -375,6 +378,7 @@ void InspectorPageAgent::disable(ErrorString*)
     m_instrumentingAgents->setInspectorPageAgent(0);
 
     setScriptExecutionDisabled(0, false);
+    setShowFPSCounter(0, false);
 
     // When disabling the agent, reset the override values.
     m_state->setLong(PageAgentState::pageAgentScreenWidthOverride, 0);
@@ -709,6 +713,20 @@ void InspectorPageAgent::setShowPaintRects(ErrorString*, bool show)
     m_state->setBoolean(PageAgentState::showPaintRects, show);
     if (!show)
         m_page->mainFrame()->view()->invalidate();
+}
+
+void InspectorPageAgent::canShowFPSCounter(ErrorString*, bool* outParam)
+{
+    *outParam = m_client->canShowFPSCounter();
+}
+
+void InspectorPageAgent::setShowFPSCounter(ErrorString*, bool show)
+{
+    m_state->setBoolean(PageAgentState::pageAgentShowFPSCounter, show);
+    m_client->setShowFPSCounter(show);
+
+    if (mainFrame() && mainFrame()->view())
+        mainFrame()->view()->invalidate();
 }
 
 void InspectorPageAgent::getScriptExecutionStatus(ErrorString*, PageCommandHandler::Result::Enum* status)

@@ -649,6 +649,7 @@ localizedStrings["Hide navigator"] = "Hide navigator";
 localizedStrings["IndexedDB"] = "IndexedDB";
 localizedStrings["Animation"] = "Animation";
 localizedStrings["Show paint rectangles"] = "Show paint rectangles";
+localizedStrings["Show FPS meter"] = "Show FPS meter";
 localizedStrings["Security origin"] = "Security origin";
 localizedStrings["Version"] = "Version";
 localizedStrings["Primary key"] = "Primary key";
