@@ -37,6 +37,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
+#include "WKGeometry.h"
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSButton;
@@ -99,6 +100,9 @@ public:
     void createInspectorWindow();
     void updateInspectorWindowTitle() const;
     void inspectedViewFrameDidChange();
+
+    void setInspectorWindowFrame(WKRect&);
+    WKRect inspectorWindowFrame();
 #endif
 
 #if PLATFORM(GTK)

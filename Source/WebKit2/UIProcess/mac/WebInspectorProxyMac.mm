@@ -177,6 +177,38 @@ static bool inspectorReallyUsesWebKitUserInterface(WebPreferences* preferences)
     return preferences->inspectorUsesWebKitUserInterface();
 }
 
+static WKRect getWindowFrame(WKPageRef, const void* clientInfo)
+{
+    WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
+    ASSERT(webInspectorProxy);
+
+    return webInspectorProxy->inspectorWindowFrame();
+}
+
+static void setWindowFrame(WKPageRef, WKRect frame, const void* clientInfo)
+{
+    WebInspectorProxy* webInspectorProxy = static_cast<WebInspectorProxy*>(const_cast<void*>(clientInfo));
+    ASSERT(webInspectorProxy);
+
+    webInspectorProxy->setInspectorWindowFrame(frame);
+}
+
+void WebInspectorProxy::setInspectorWindowFrame(WKRect& frame)
+{
+    if (m_isAttached)
+        return;
+    [m_inspectorWindow setFrame:NSMakeRect(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height) display:YES];
+}
+
+WKRect WebInspectorProxy::inspectorWindowFrame()
+{
+    if (m_isAttached)
+        return WKRectMake(0, 0, 0, 0);
+
+    NSRect frame = m_inspectorWindow.get().frame;
+    return WKRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height);
+}
+
 void WebInspectorProxy::createInspectorWindow()
 {
     ASSERT(!m_inspectorWindow);
@@ -270,7 +302,61 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     else
         createInspectorWindow();
 
-    return toImpl(m_inspectorView.get().pageRef);
+    WebPageProxy* inspectorPage = toImpl(m_inspectorView.get().pageRef);
+
+    WKPageUIClient uiClient = {
+        kWKPageUIClientCurrentVersion,
+        this,   /* clientInfo */
+        0, // createNewPage_deprecatedForUseWithV0
+        0, // showPage
+        0, // closePage
+        0, // takeFocus
+        0, // focus
+        0, // unfocus
+        0, // runJavaScriptAlert
+        0, // runJavaScriptConfirm
+        0, // runJavaScriptPrompt
+        0, // setStatusText
+        0, // mouseDidMoveOverElement_deprecatedForUseWithV0
+        0, // missingPluginButtonClicked_deprecatedForUseWithV0
+        0, // didNotHandleKeyEvent
+        0, // didNotHandleWheelEvent
+        0, // areToolbarsVisible
+        0, // setToolbarsVisible
+        0, // isMenuBarVisible
+        0, // setMenuBarVisible
+        0, // isStatusBarVisible
+        0, // setStatusBarVisible
+        0, // isResizable
+        0, // setResizable
+        getWindowFrame,
+        setWindowFrame,
+        0, // runBeforeUnloadConfirmPanel
+        0, // didDraw
+        0, // pageDidScroll
+        0, // exceededDatabaseQuota
+        0, // runOpenPanel
+        0, // decidePolicyForGeolocationPermissionRequest
+        0, // headerHeight
+        0, // footerHeight
+        0, // drawHeader
+        0, // drawFooter
+        0, // printFrame
+        0, // runModal
+        0, // unused
+        0, // saveDataToFileInDownloadsFolder
+        0, // shouldInterruptJavaScript
+        0, // createPage
+        0, // mouseDidMoveOverElement
+        0, // decidePolicyForNotificationPermissionRequest
+        0, // unavailablePluginButtonClicked
+        0, // showColorPicker
+        0, // hideColorPicker
+    };
+
+    inspectorPage->initializeUIClient(&uiClient);
+
+    return inspectorPage;
 }
 
 void WebInspectorProxy::platformOpen()

@@ -1,3 +1,20 @@
+2012-11-13  Timothy Hatcher  <timothy@apple.com>
+
+        Make InspectorFrontendHost.moveWindowBy work in WebKit2 for Mac.
+
+        https://bugs.webkit.org/show_bug.cgi?id=102154
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::getWindowFrame): Added. Call setInspectorWindowFrame.
+        (WebKit::setWindowFrame): Added. Call inspectorWindowFrame.
+        (WebKit::WebInspectorProxy::setInspectorWindowFrame): Added.
+        (WebKit::WebInspectorProxy::inspectorWindowFrame): Added.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Create and set the WKPageUIClient
+        with getWindowFrame and setWindowFrame.
+
 2012-11-13  Jon Lee  <jonlee@apple.com>
 
         Reduce snapshot waiting time
