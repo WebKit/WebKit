@@ -1,3 +1,17 @@
+2012-11-14  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        [Qt][ARM]REGRESSION(r133985): It broke the build
+        https://bugs.webkit.org/show_bug.cgi?id=101740
+
+        Reviewed by Csaba Osztrogonác.
+
+        Template function body moved to fix VALUE_PROFILER disabled case.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+
 2012-11-13  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CreateThis should be able to statically account for the structure of the object it creates, if profiling indicates that this structure is always the same
