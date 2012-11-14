@@ -282,7 +282,13 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
     // FIXME: This should ASSERT isFinishedParsingChildren() instead.
     if (!isFinishedParsingChildren())
         return;
-    
+
+    // FIXME: I'm not sure it's ever possible to get into updateWidget during a
+    // removal, but just in case we should avoid loading the frame to prevent
+    // security bugs.
+    if (!SubframeLoadingDisabler::canLoadFrame(this))
+        return;
+
     String url = this->url();
     String serviceType = this->serviceType();
 

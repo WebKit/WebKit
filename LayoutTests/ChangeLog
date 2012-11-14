@@ -1,3 +1,21 @@
+2012-11-13  Elliott Sprehn  <esprehn@chromium.org>
+
+        Disable frame loading instead of throwing exceptions on subtree modifications in ChildFrameDisconnector
+        https://bugs.webkit.org/show_bug.cgi?id=102012
+
+        Reviewed by Ojan Vafai.
+
+        Remove console log output from the exception we no longer throw. Since we no
+        longer throw an exception we don't need a platform specific output file either.
+
+        Also add a test that we don't throw an exception during modifications to subtrees
+        during unload.
+
+        * fast/frames/modifications-in-subtree-unload-expected.html: Added.
+        * fast/frames/modifications-in-subtree-unload.html: Added.
+        * fast/frames/out-of-document-iframe-has-child-frame-expected.txt:
+        * platform/chromium/fast/frames/out-of-document-iframe-has-child-frame-expected.txt: Removed.
+
 2012-11-13  Dirk Pranke  <dpranke@chromium.org>
 
         Revert r134474; turns out these tests were failing.

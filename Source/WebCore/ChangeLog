@@ -1,3 +1,52 @@
+2012-11-13  Elliott Sprehn  <esprehn@chromium.org>
+
+        Disable frame loading instead of throwing exceptions on subtree modifications in ChildFrameDisconnector
+        https://bugs.webkit.org/show_bug.cgi?id=102012
+
+        Reviewed by Ojan Vafai.
+
+        Previously if you modified the subtree that was being removed from a
+        removeChild from inside an unload handler on an <iframe> inside the
+        subtree you'd get an exception which is wrong. Instead we just need to
+        disable all frame loading there.
+
+        This works because either the subtree will be removed and the frame never
+        loading doesn't matter, or some section of the subtree that contains the
+        frame will be moved to another part of the document which will cause the
+        frame to load when it's inserted there.
+
+        I also added a check for <object> elements. It doesn't seem this is actually
+        reachable in the existing code, but I'm not entirely sure since the frame
+        loading and object/plugin handling is very confusing.
+
+        A better fix could be to repeatedly walk the subtree until all frames
+        were disconnected or some iteration limit was hit and then force all leftover
+        subframes to disconnect without firing unload handlers but this is such an
+        edge case I don't think the complexity is necessary.
+
+        Test: fast/frames/modifications-in-subtree-unload.html
+
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildFrameDisconnector::ChildFrameDisconnector):
+        (WebCore::ChildFrameDisconnector::~ChildFrameDisconnector):
+        (ChildFrameDisconnector):
+        (WebCore::ChildFrameDisconnector::disconnect):
+        * dom/Node.cpp:
+        (WebCore::checkAcceptChild): Removed exception.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::didNotifySubtreeInsertions): Check canLoadFrame().
+        * html/HTMLFrameOwnerElement.h:
+        (SubframeLoadingDisabler):
+        (WebCore::SubframeLoadingDisabler::SubframeLoadingDisabler):
+        (WebCore::SubframeLoadingDisabler::~SubframeLoadingDisabler):
+        (WebCore::SubframeLoadingDisabler::canLoadFrame):
+          Returns true if frames can be loaded in the subtree.
+        (WebCore::SubframeLoadingDisabler::disabledSubtreeRoots):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+          Check canLoadFrame(). I think this case is impossible, but it's better
+          to be safe than sorry later.
+
 2012-11-13  Joshua Bell  <jsbell@chromium.org>
 
         [V8] Add missing ENABLE(SVG) test in header

@@ -170,6 +170,9 @@ void HTMLFrameElementBase::didNotifySubtreeInsertions(ContainerNode*)
     if (!document()->frame())
         return;
 
+    if (!SubframeLoadingDisabler::canLoadFrame(this))
+        return;
+
     // JavaScript in src=javascript: and beforeonload can access the renderer
     // during attribute parsing *before* the normal parser machinery would
     // attach the element. To support this, we lazyAttach here, but only

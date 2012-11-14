@@ -1195,11 +1195,6 @@ static void checkAcceptChild(Node* newParent, Node* newChild, ExceptionCode& ec)
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
-
-    if (newParent->inDocument() && ChildFrameDisconnector::nodeHasDisconnector(newParent)) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
-    }
 }
 
 void Node::checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode& ec)

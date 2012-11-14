@@ -78,6 +78,38 @@ inline HTMLFrameOwnerElement* toFrameOwnerElement(Node* node)
     return static_cast<HTMLFrameOwnerElement*>(node);
 }
 
+class SubframeLoadingDisabler {
+public:
+    explicit SubframeLoadingDisabler(Node* root)
+        : m_root(root)
+    {
+        disabledSubtreeRoots().add(m_root);
+    }
+
+    ~SubframeLoadingDisabler()
+    {
+        disabledSubtreeRoots().remove(m_root);
+    }
+
+    static bool canLoadFrame(HTMLFrameOwnerElement* owner)
+    {
+        for (Node* node = owner; node; node = node->parentNode()) {
+            if (disabledSubtreeRoots().contains(node))
+                return false;
+        }
+        return true;
+    }
+
+private:
+    static HashSet<Node*>& disabledSubtreeRoots()
+    {
+        DEFINE_STATIC_LOCAL(HashSet<Node*>, nodes, ());
+        return nodes;
+    }
+
+    Node* m_root;
+};
+
 } // namespace WebCore
 
 #endif // HTMLFrameOwnerElement_h
