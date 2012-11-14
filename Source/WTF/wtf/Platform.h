@@ -934,8 +934,8 @@
 #if (CPU(X86) || CPU(X86_64)) && (PLATFORM(MAC) || OS(LINUX))
 #define ENABLE_DFG_JIT 1
 #endif
-/* Enable the DFG JIT on ARMv7.  Only tested on iOS. */
-#if CPU(ARM_THUMB2) && (PLATFORM(IOS) || PLATFORM(BLACKBERRY))
+/* Enable the DFG JIT on ARMv7.  Only tested on iOS and Qt Linux. */
+#if CPU(ARM_THUMB2) && (PLATFORM(IOS) || PLATFORM(BLACKBERRY) || PLATFORM(QT))
 #define ENABLE_DFG_JIT 1
 #endif
 /* Enable the DFG JIT on ARM. */
