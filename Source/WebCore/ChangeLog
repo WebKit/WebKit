@@ -1,3 +1,16 @@
+2012-11-13  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Console: update tab/shift-tab shortcut description.
+        https://bugs.webkit.org/show_bug.cgi?id=102175
+
+        Reviewed by Pavel Feldman.
+
+        For "Tab / Shift-Tab" it said "Next/previous suggestion".
+        Actually, shift-tab to do nothing, and tab auto-completes common prefix.
+
+        * English.lproj/localizedStrings.js: Replaced string.
+        * inspector/front-end/ConsoleView.js: Updated shortcut registration.
+
 2012-11-13  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Pass showDebugBorders directly to WebLayerTreeSettings, don't use the GraphicsLayer border width setting.

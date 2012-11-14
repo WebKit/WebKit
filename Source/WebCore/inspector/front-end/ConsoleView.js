@@ -488,12 +488,7 @@ WebInspector.ConsoleView.prototype = {
         }
         section.addAlternateKeys(keys, WebInspector.UIString("Clear console"));
 
-        keys = [
-            shortcut.makeDescriptor(shortcut.Keys.Tab),
-            shortcut.makeDescriptor(shortcut.Keys.Tab, shortcut.Modifiers.Shift)
-        ];
-        section.addRelatedKeys(keys, WebInspector.UIString("Next/previous suggestion"));
-
+        section.addKey(shortcut.makeDescriptor(shortcut.Keys.Tab), WebInspector.UIString("Autocomplete common prefix"));
         section.addKey(shortcut.makeDescriptor(shortcut.Keys.Right), WebInspector.UIString("Accept suggestion"));
 
         keys = [
