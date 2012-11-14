@@ -265,6 +265,8 @@ namespace WebCore {
         void clearArchiveResources();
 #endif
 
+        bool maybeLoadEmpty();
+
         bool isMultipartReplacingLoad() const;
 
         void deliverSubstituteResourcesAfterDelay();
@@ -307,6 +309,7 @@ namespace WebCore {
         bool m_isStopping;
         bool m_gotFirstByte;
         bool m_isClientRedirect;
+        bool m_loadingEmptyDocument;
 
         // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadHandled are roughly the same
         // and should be merged.
