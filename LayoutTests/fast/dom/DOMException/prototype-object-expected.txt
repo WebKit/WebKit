@@ -14,7 +14,7 @@ PASS e.constructor is window.DOMException
 PASS e.HIERARCHY_REQUEST_ERR is e.constructor.HIERARCHY_REQUEST_ERR
 PASS e.HIERARCHY_REQUEST_ERR is 3
 PASS e.code is 3
-PASS e.name is "HIERARCHY_REQUEST_ERR"
+PASS e.name is "HierarchyRequestError"
 PASS e.message is "HierarchyRequestError: DOM Exception 3"
 PASS successfullyParsed is true
 

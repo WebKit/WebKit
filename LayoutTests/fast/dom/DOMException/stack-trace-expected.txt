@@ -3,7 +3,7 @@ PASS typeof e.stack is "string"
 PASS e.stack.contains("innerFunction") is true
 PASS e.stack.contains("outerFunction") is true
 PASS Object.prototype.toString.call(e) is "[object DOMException]"
-PASS e.name is "HIERARCHY_REQUEST_ERR"
+PASS e.name is "HierarchyRequestError"
 PASS e.message is "HierarchyRequestError: DOM Exception 3"
 PASS e.code is 3
 FAIL e.stack === 42 should be true. Was false.

@@ -1,3 +1,11 @@
+2012-11-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening, update expected files after r134435.
+
+        * dom/xhtml/level3/core/documentnormalizedocument10-expected.txt:
+        * fast/dom/DOMException/prototype-object-expected.txt:
+        * fast/dom/DOMException/stack-trace-expected.txt:
+
 2012-11-13  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Enable calendar picker for input types datetime/datetime-local
