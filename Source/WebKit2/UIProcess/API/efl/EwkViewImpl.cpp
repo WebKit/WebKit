@@ -34,6 +34,9 @@
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
 #include "ResourceLoadClientEfl.h"
+#include "WKDictionary.h"
+#include "WKGeometry.h"
+#include "WKNumber.h"
 #include "WKString.h"
 #include "WebContext.h"
 #include "WebPageGroup.h"
@@ -826,12 +829,26 @@ void EwkViewImpl::informURLChange()
     informIconChange();
 }
 
-WKPageRef EwkViewImpl::createNewPage()
+WKPageRef EwkViewImpl::createNewPage(WKDictionaryRef windowFeatures)
 {
-    Evas_Object* newEwkView = 0;
-    smartCallback<CreateWindow>().call(&newEwkView);
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
 
-    if (!newEwkView)
+    Evas_Object* newEwkView = 0;
+
+    // Extract the width and height from the window attributes and pass them along to the embedder.
+    WKRetainPtr<WKStringRef> widthStr(AdoptWK, WKStringCreateWithUTF8CString("width"));
+    WKRetainPtr<WKStringRef> heightStr(AdoptWK, WKStringCreateWithUTF8CString("height"));
+
+    WKTypeRef ref = WKDictionaryGetItemForKey(windowFeatures, widthStr.get());
+    unsigned width = ref ? WKDoubleGetValue(static_cast<WKDoubleRef>(ref)) : 0;
+    ref = WKDictionaryGetItemForKey(windowFeatures, heightStr.get());
+    unsigned height = ref ? WKDoubleGetValue(static_cast<WKDoubleRef>(ref)) : 0;
+
+    if (!sd->api->window_create_new)
+        return 0;
+
+    if (!(newEwkView = sd->api->window_create_new(sd, width, height)))
         return 0;
 
     EwkViewImpl* newViewImpl = EwkViewImpl::fromEvasObject(newEwkView);

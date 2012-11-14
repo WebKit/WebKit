@@ -92,7 +92,7 @@ static const Ecore_Getopt options = {
     }
 };
 
-static Browser_Window *window_create(const char *url);
+static Browser_Window *window_create(const char *url, int width, int height);
 
 static Browser_Window *browser_window_find(Evas_Object *window)
 {
@@ -184,7 +184,8 @@ on_key_down(void *user_data, Evas *e, Evas_Object *webview, void *event_info)
             info("Change Pagination Mode (F7) was pressed, but NOT changed!");
     } else if (!strcmp(ev->key, "n") && ctrlPressed) {
         info("Create new window (Ctrl+n) was pressed.\n");
-        Browser_Window *window = window_create(DEFAULT_URL);
+        Browser_Window *window = window_create(DEFAULT_URL, 0, 0);
+        // 0 equals default width and height.
         windows = eina_list_append(windows, window);
     } else if (!strcmp(ev->key, "i") && ctrlPressed) {
         info("Show Inspector (Ctrl+i) was pressed.\n");
@@ -270,13 +271,12 @@ on_back_forward_list_changed(void *user_data, Evas_Object *webview, void *event_
     elm_object_disabled_set(window->forward_button, !ewk_view_forward_possible(webview));
 }
 
-static void
-on_new_window(void *user_data, Evas_Object *webview, void *event_info)
+static Evas_Object*
+on_new_window(Ewk_View_Smart_Data *sd, Evas_Coord width, Evas_Coord height)
 {
-    Evas_Object **new_view = (Evas_Object **)event_info;
-    Browser_Window *window = window_create(NULL);
-    *new_view = window->webview;
+    Browser_Window *window = window_create(NULL, width, height);
     windows = eina_list_append(windows, window);
+    return window->webview;
 }
 
 static void
@@ -938,7 +938,7 @@ create_toolbar_button(Evas_Object *window, const char *icon_name)
     return button;
 }
 
-static Browser_Window *window_create(const char *url)
+static Browser_Window *window_create(const char *url, int width, int height)
 {
     Browser_Window *app_data = malloc(sizeof(Browser_Window));
     if (!app_data) {
@@ -1030,6 +1030,7 @@ static Browser_Window *window_create(const char *url)
     ewkViewClass->window_geometry_set = on_window_geometry_set;
     ewkViewClass->fullscreen_enter = on_fullscreen_enter;
     ewkViewClass->fullscreen_exit = on_fullscreen_exit;
+    ewkViewClass->window_create_new = on_new_window;
 
     Evas *evas = evas_object_evas_get(app_data->window);
     Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
@@ -1047,7 +1048,6 @@ static Browser_Window *window_create(const char *url)
 
     evas_object_smart_callback_add(app_data->webview, "authentication,request", on_authentication_request, app_data);
     evas_object_smart_callback_add(app_data->webview, "close,window", on_close_window, app_data);
-    evas_object_smart_callback_add(app_data->webview, "create,window", on_new_window, app_data);
     evas_object_smart_callback_add(app_data->webview, "download,failed", on_download_failed, app_data);
     evas_object_smart_callback_add(app_data->webview, "download,finished", on_download_finished, app_data);
     evas_object_smart_callback_add(app_data->webview, "download,request", on_download_request, app_data);
@@ -1072,7 +1072,7 @@ static Browser_Window *window_create(const char *url)
     if (url)
         ewk_view_url_set(app_data->webview, url);
 
-    evas_object_resize(app_data->window, window_width, window_height);
+    evas_object_resize(app_data->window, width ? width : window_width, height ? height : window_height);
     evas_object_show(app_data->window);
 
     view_focus_set(app_data, EINA_TRUE);
@@ -1158,10 +1158,10 @@ elm_main(int argc, char *argv[])
 
     if (args < argc) {
         char *url = url_from_user_input(argv[args]);
-        window = window_create(url);
+        window = window_create(url, 0, 0);
         free(url);
     } else
-        window = window_create(DEFAULT_URL);
+        window = window_create(DEFAULT_URL, 0, 0);
 
     if (!window)
         return quit(EINA_FALSE, "ERROR: could not create browser window.\n");

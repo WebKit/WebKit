@@ -156,7 +156,7 @@ public:
     void dismissColorPicker();
 #endif
 
-    WKPageRef createNewPage();
+    WKPageRef createNewPage(WKDictionaryRef windowFeatures);
     void closePage();
 
     void requestPopupMenu(WebKit::WebPopupMenuProxyEfl*, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);

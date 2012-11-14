@@ -1,3 +1,20 @@
+2012-11-13  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2] New window size should consult the window attributes
+        https://bugs.webkit.org/show_bug.cgi?id=102122
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Pass the size that was specified in window.open to the embedder.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::createNewPage):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::createNewPage):
+
 2012-11-13  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Coordinated Graphics: Rename m_CoordinatedGraphicsLayerClient to m_coordinator

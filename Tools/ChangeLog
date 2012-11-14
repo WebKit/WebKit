@@ -1,3 +1,19 @@
+2012-11-13  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2] New window size should consult the window attributes
+        https://bugs.webkit.org/show_bug.cgi?id=102122
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Take into account the size that was specified in window.open
+        when creating a new window. This avoids ugly flashing on the screen.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+        (on_new_window):
+        (window_create):
+        (elm_main):
+
 2012-11-13  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Plumb WebCompositorSupport settings through WebLayerTreeSettings as well, in preparation for removing the settings from WebCompositorSupport
