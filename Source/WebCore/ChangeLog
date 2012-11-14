@@ -1,3 +1,18 @@
+2012-11-14  Hideki Yoshida  <yoshida-hxa@necst.nec.co.jp>
+
+        [WinCairo] Fix cairo_t* memory leak in GraphicsContext::platformInit
+        https://bugs.webkit.org/show_bug.cgi?id=76219
+
+        Reviewed by Brent Fulgham.
+
+        This patch is to fix a memory leak problem which occurs
+        in every rendering process on Wincairo port.
+        By applying this patch, the memory allocated in cairo 
+        library will be released by calling cairo_destroy.
+
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::platformInit):
+
 2012-11-14  Sami Kyostila  <skyostil@chromium.org>
 
         Optimize painting of composited scrolling layers

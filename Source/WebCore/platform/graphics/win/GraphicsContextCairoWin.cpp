@@ -88,6 +88,8 @@ void GraphicsContext::platformInit(HDC dc, bool hasAlpha)
         setPlatformFillColor(fillColor(), fillColorSpace());
         setPlatformStrokeColor(strokeColor(), strokeColorSpace());
     }
+    if (cr)
+        cairo_destroy(cr);
 }
 #endif
 
