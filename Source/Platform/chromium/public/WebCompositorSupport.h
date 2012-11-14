@@ -68,6 +68,7 @@ public:
     virtual void shutdown() { }
 
     // These may only be called before initialize.
+    // FIXME: Remove these.
     virtual void setPerTilePaintingEnabled(bool) { }
     virtual void setPartialSwapEnabled(bool) { }
     virtual void setAcceleratedAnimationEnabled(bool) { }

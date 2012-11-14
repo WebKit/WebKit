@@ -237,6 +237,7 @@ private:
     bool m_deferred2dCanvasEnabled;
     bool m_acceleratedPaintingEnabled;
     bool m_perTilePaintingEnabled;
+    bool m_acceleratedAnimationEnabled;
     bool m_deferredImageDecodingEnabled;
     WebPreferences m_prefs;
     bool m_stressOpt;
