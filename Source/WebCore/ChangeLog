@@ -1,3 +1,20 @@
+2012-11-14  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: InUseAttributeError
+        https://bugs.webkit.org/show_bug.cgi?id=102141
+
+        Reviewed by Ojan Vafai.
+
+        Patch 10 of 25 to update DOMException name to match the spec and Firefox.
+
+        The name for this is not in the spec but the case was selected to match
+        Firefox. http://mxr.mozilla.org/mozilla-central/source/dom/base/domerr.msg#18
+
+        INUSE_ATTRIBUTE_ERR is historical and not used in any spec or any of our tests.
+
+        * dom/DOMCoreException.cpp:
+        * dom/ExceptionCode.h:
+
 2012-11-14  Lynn Neir  <lynn.neir@skype.net>
 
         [WinCairo] Incorrect line-height for styled menulist (select tag)

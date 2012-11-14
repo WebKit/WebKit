@@ -43,7 +43,7 @@ namespace WebCore {
         NO_MODIFICATION_ALLOWED_ERR = 7,
         NOT_FOUND_ERR = 8,
         NOT_SUPPORTED_ERR = 9,
-        INUSE_ATTRIBUTE_ERR = 10,
+        INUSE_ATTRIBUTE_ERR = 10, // Historical
 
         // Introduced in DOM Level 2:
         INVALID_STATE_ERR = 11,

@@ -156,7 +156,7 @@ function run()
         var attribute = document.createAttribute('asdf');
         document.body.attributes.setNamedItem(attribute);
         iframeDoc.body.attributes.setNamedItem(attribute);
-    }, 'INUSE_ATTRIBUTE_ERR');
+    }, 'InUseAttributeError');
 
     runTest(function() {
         var doctype = document.implementation.createDocumentType(

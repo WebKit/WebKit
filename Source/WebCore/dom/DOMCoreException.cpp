@@ -44,7 +44,7 @@ static struct CoreException {
     { "NO_MODIFICATION_ALLOWED_ERR", "An attempt was made to modify an object where modifications are not allowed." },
     { "NotFoundError", "An attempt was made to reference a Node in a context where it does not exist." },
     { "NOT_SUPPORTED_ERR", "The implementation did not support the requested type of object or operation." },
-    { "INUSE_ATTRIBUTE_ERR", "An attempt was made to add an attribute that is already in use elsewhere." },
+    { "InUseAttributeError", "An attempt was made to add an attribute that is already in use elsewhere." },
     { "InvalidStateError", "An attempt was made to use an object that is not, or is no longer, usable." },
     { "SYNTAX_ERR", "An invalid or illegal string was specified." },
     { "INVALID_MODIFICATION_ERR", "An attempt was made to modify the type of the underlying object." },
