@@ -1,3 +1,14 @@
+2012-11-14  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Show total memory in the NMI snapshot header
+        https://bugs.webkit.org/show_bug.cgi?id=101922
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked.didReceiveMemorySnapshot):
+        (WebInspector.NativeMemoryProfileType.prototype.buttonClicked):
+
 2012-11-14  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: CodeMirrorTextEditor fails to scroll breakpoint into view after the first time

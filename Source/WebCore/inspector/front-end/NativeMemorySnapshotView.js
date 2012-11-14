@@ -211,6 +211,7 @@ WebInspector.NativeMemoryProfileType.prototype = {
             }
             profileHeader._memoryBlock = memoryBlock;
             profileHeader.isTemporary = false;
+            profileHeader.sidebarElement.subtitle = Number.bytesToString(memoryBlock.size);
         }
         MemoryAgent.getProcessMemoryDistribution(didReceiveMemorySnapshot.bind(this));
         return false;
