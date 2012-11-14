@@ -1,3 +1,17 @@
+2012-11-13  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Enable calendar picker for input types datetime/datetime-local
+        https://bugs.webkit.org/show_bug.cgi?id=101889
+
+        Reviewed by Kent Tamura.
+
+        Added tests for calendar picker for inpt type=datetime/datetime-local.
+
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-datetime-expected.txt: Added.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-datetime.html: Added.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-datetimelocal-expected.txt: Added.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-datetimelocal.html: Added.
+
 2012-11-13  Keishi Hattori  <keishi@webkit.org>
 
         Enable datalist UI for input types week and month

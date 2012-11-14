@@ -529,6 +529,21 @@ bool DateTimeEditElement::hasFocusedField()
     return focusedFieldIndex() != invalidFieldIndex;
 }
 
+void DateTimeEditElement::setOnlyYearMonthDay(const DateComponents& date)
+{
+    ASSERT(date.type() == DateComponents::Date);
+
+    if (!m_editControlOwner)
+        return;
+
+    DateTimeFieldsState dateTimeFieldsState = valueAsDateTimeFieldsState();
+    dateTimeFieldsState.setYear(date.fullYear());
+    dateTimeFieldsState.setMonth(date.month() + 1);
+    dateTimeFieldsState.setDayOfMonth(date.monthDay());
+    setValueAsDateTimeFieldsState(dateTimeFieldsState);
+    m_editControlOwner->editControlValueChanged();
+}
+
 void DateTimeEditElement::stepDown()
 {
     if (DateTimeFieldElement* const field = focusedField())

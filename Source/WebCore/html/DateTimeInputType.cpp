@@ -117,7 +117,7 @@ String DateTimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& d
     if (dateTimeFieldsState.hasMillisecond() && dateTimeFieldsState.millisecond()) {
         return String::format("%04u-%02u-%02uT%02u:%02u:%02u.%03uZ",
             dateTimeFieldsState.year(),
-            dateTimeFieldsState.month() + 1,
+            dateTimeFieldsState.month(),
             dateTimeFieldsState.dayOfMonth(),
             dateTimeFieldsState.hour23(),
             dateTimeFieldsState.minute(),
@@ -128,7 +128,7 @@ String DateTimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& d
     if (dateTimeFieldsState.hasSecond() && dateTimeFieldsState.second()) {
         return String::format("%04u-%02u-%02uT%02u:%02u:%02uZ",
             dateTimeFieldsState.year(),
-            dateTimeFieldsState.month() + 1,
+            dateTimeFieldsState.month(),
             dateTimeFieldsState.dayOfMonth(),
             dateTimeFieldsState.hour23(),
             dateTimeFieldsState.minute(),
@@ -137,7 +137,7 @@ String DateTimeInputType::formatDateTimeFieldsState(const DateTimeFieldsState& d
 
     return String::format("%04u-%02u-%02uT%02u:%02uZ",
         dateTimeFieldsState.year(),
-        dateTimeFieldsState.month() + 1,
+        dateTimeFieldsState.month(),
         dateTimeFieldsState.dayOfMonth(),
         dateTimeFieldsState.hour23(),
         dateTimeFieldsState.minute());

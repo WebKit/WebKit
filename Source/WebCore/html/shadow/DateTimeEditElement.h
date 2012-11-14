@@ -98,6 +98,7 @@ public:
     void setEmptyValue(const LayoutParameters&, const DateComponents& dateForReadOnlyField);
     void setValueAsDate(const LayoutParameters&, const DateComponents&);
     void setValueAsDateTimeFieldsState(const DateTimeFieldsState&);
+    void setOnlyYearMonthDay(const DateComponents&);
     void stepDown();
     void stepUp();
     String value() const;

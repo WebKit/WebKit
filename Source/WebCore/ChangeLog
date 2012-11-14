@@ -1,3 +1,33 @@
+2012-11-13  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Enable calendar picker for input types datetime/datetime-local
+        https://bugs.webkit.org/show_bug.cgi?id=101889
+
+        Reviewed by Kent Tamura.
+
+        This adds calendar picker to <input type=datetime> and <input type=datetime-local>.
+        When a user choose a date from calendar picker, year/month/day fields of the input
+        element are updated and hour/minute/second fields are unchanged.
+
+        Tests: platform/chromium/fast/forms/calendar-picker/calendar-picker-datetime-local.html
+               platform/chromium/fast/forms/calendar-picker/calendar-picker-datetime.html
+
+        * Resources/pagepopups/calendarPicker.js: Day.parse accepts datetime string (just drops time part).
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::pickerIndicatorChooseValue):
+        If the given value is not valid for the element, try to parse it as a date string.
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::formatDateTimeFieldsState): DateTimeFieldsState::month() returns 1-12, not 0-11.
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::formatDateTimeFieldsState): Ditto.
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::setOnlyYearMonthDay): Added.
+        (WebCore):
+        * html/shadow/DateTimeEditElement.h:
+        (DateTimeEditElement):
+        * rendering/RenderThemeChromiumCommon.cpp:
+        (WebCore::RenderThemeChromiumCommon::supportsCalendarPicker): Return true for datetime and datetimelocal too.
+
 2012-11-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134524.

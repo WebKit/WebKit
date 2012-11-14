@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/calendar-picker-common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<input type=datetime-local id=datetimelocal value="2011-12-31T12:53:45"> 
+<script>
+description("Tests if calendar picker works for datetime-local as expected.");
+
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+openPicker(document.getElementById('datetimelocal'), test);
+
+function test() {
+    shouldBeEqualToString('selectedDate()', '2011-12-31');
+
+    eventSender.keyDown('rightArrow');
+    shouldBeEqualToString('selectedDate()', '2012-01-01');
+
+    eventSender.keyDown('\n');
+    waitUntilClosing(testAfterClosing);
+}
+
+function testAfterClosing() {
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBeEqualToString('document.getElementById("datetimelocal").value', '2012-01-01T12:53:45');
+
+    finishJSTest();
+}
+
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

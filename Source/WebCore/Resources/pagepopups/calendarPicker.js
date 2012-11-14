@@ -220,7 +220,7 @@ function Day(valueOrDayOrYear, month, date) {
     this.date = dateObject.getUTCDate();
 };
 
-Day.ISOStringRegExp = /^(\d+)-(\d+)-(\d+)$/;
+Day.ISOStringRegExp = /^(\d+)-(\d+)-(\d+)/;
 
 /**
  * @param {!string} str
