@@ -65,9 +65,10 @@ public:
         RuleFeatureVisited = 1 << 6
     };
 
+    bool hasSelectorFor(SelectRuleFeature feature) const { return m_featureFlags & feature; }
+
 private:
     void setSelectRuleFeature(SelectRuleFeature feature) { m_featureFlags |= feature; }
-    bool hasSelectorFor(SelectRuleFeature feature) const { return m_featureFlags & feature; }
 
     RuleFeatureSet m_cssRuleFeatureSet;
     int m_featureFlags;

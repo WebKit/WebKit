@@ -1,3 +1,13 @@
+2012-11-14  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing pseudoClass (:target) should cause distribution
+        https://bugs.webkit.org/show_bug.cgi?id=101699
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/pseudoclass-update-target-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-target.html: Added.
+
 2012-11-14  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Unreviewed gardening.

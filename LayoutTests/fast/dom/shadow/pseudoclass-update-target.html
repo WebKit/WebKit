@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+</head>
+
+<body>
+
+<p>When :target is changed, we have to invalidate distribution.</p>
+
+<div id="host">
+    <div id="target1">target 1</div>
+    <div id="target2">target 2</div>
+    <div id="target3">target 3</div>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+location.hash = '#target1';
+
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = '<content select="div:target"></content>';
+
+setTimeout(function() {
+    location.hash = '#target2';
+    testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>
+

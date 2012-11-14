@@ -89,6 +89,8 @@ private:
     bool m_shouldCollectSelectFeatureSet : 1;
 };
 
+void invalidateParentDistributionIfNecessary(Element*, SelectRuleFeatureSet::SelectRuleFeature updatedFeature);
+
 inline ShadowRoot* ElementShadow::youngestShadowRoot() const
 {
     return m_shadowRoots.head();

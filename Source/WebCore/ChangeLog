@@ -1,3 +1,28 @@
+2012-11-14  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing pseudoClass (:target) should cause distribution
+        https://bugs.webkit.org/show_bug.cgi?id=101699
+
+        Reviewed by Hajime Morita.
+
+        When cssTarget element is changed, we might have to invalidate distribution. We check its necessity
+        by consulting with SelectRuleFeatureSet.
+
+        We also implement invalidateParentDistributionIfNecessary for all collected features in this patch.
+
+        Test: fast/dom/shadow/pseudoclass-update-target.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setCSSTarget):
+        * dom/ElementShadow.cpp:
+        (WebCore::invalidateParentDistributionIfNecessary):
+        (WebCore):
+        * dom/ElementShadow.h:
+        (WebCore):
+        * html/shadow/SelectRuleFeatureSet.h:
+        (WebCore::SelectRuleFeatureSet::hasSelectorFor):
+        (SelectRuleFeatureSet):
+
 2012-11-14  Kentaro Hara  <haraken@chromium.org>
 
         [V8] DOM wrapper objects should be collected in minor GC cycles

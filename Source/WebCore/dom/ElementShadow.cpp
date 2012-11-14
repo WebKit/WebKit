@@ -265,4 +265,15 @@ void ElementShadow::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_distributor);
 }
 
+void invalidateParentDistributionIfNecessary(Element* element, SelectRuleFeatureSet::SelectRuleFeature updatedFeature)
+{
+    ElementShadow* elementShadow = shadowOfParentForDistribution(element);
+    if (!elementShadow)
+        return;
+
+    elementShadow->ensureSelectFeatureSetCollected();
+    if (elementShadow->selectRuleFeatureSet().hasSelectorFor(updatedFeature))
+        elementShadow->invalidateDistribution();
+}
+
 } // namespace
