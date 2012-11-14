@@ -54,6 +54,7 @@ select[size="1"] {
 }
 
 input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="time"], input[type="month"] {
+    font-family: "Slate Pro";
     -webkit-appearance: button;
     text-align: center;
 }

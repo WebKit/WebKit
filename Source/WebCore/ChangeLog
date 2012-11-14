@@ -1,3 +1,16 @@
+2012-11-14  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Style BB10 time input field font.
+        https://bugs.webkit.org/show_bug.cgi?id=102260.
+
+        Reviewed by Rob Buis.
+
+        RIM PR 243355
+        Adjust time input field font using BB10 system default font.
+
+        * css/themeBlackBerry.css:
+        (input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="time"], input[type="month"]):
+
 2012-11-14  Li Yin  <li.yin@intel.com>
 
         createDelay should raise exception when the maxDelayTime parameter is incorrect.
