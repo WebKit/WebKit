@@ -3968,16 +3968,6 @@ webkit.org/b/96961 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-vertex-ar
 # These tests appear to be making the EWS bots flaky. See bug for details.
 webkit.org/b/96951 platform/chromium-linux/compositing/gestures [ Skip ]
 
-# Video filtering differences in software compositor. Those need to be rebaselined.
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/self-painting-layers.html [ ImageOnlyFailure ]
-crbug.com/152007 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-video-layer.html [ ImageOnlyFailure ]
-
 # Filters not yet supported by the software compositor.
 crbug.com/160302 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-alpha-large.html [ ImageOnlyFailure ]
 crbug.com/160302 platform/chromium/virtual/softwarecompositing/culling/filter-occlusion-alpha.html [ ImageOnlyFailure ]

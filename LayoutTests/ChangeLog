@@ -1,3 +1,52 @@
+2012-11-12  Slavomir Kaslev  <skaslev@google.com>
+
+        [Chromium] Rebaselined video LayoutTests for software compositor
+        https://bugs.webkit.org/show_bug.cgi?id=101973
+
+        Reviewed by Adrienne Walker.
+
+        Rebaselined failing video LayouTests caused by different filtering
+        result between Skia and Mesa for the software compositor.
+
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/self-painting-layers-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/self-painting-layers-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/self-painting-layers-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/self-painting-layers-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-video-layer-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/self-painting-layers-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-video-layer-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-11-14  Justin Novosad  <junov@google.com>
 
         Boxes with rounded corners and thin borders are too slow to draw
