@@ -54,12 +54,7 @@ public:
     const AtomicString& idForStyleResolution() const { return m_idForStyleResolution; }
     void setIdForStyleResolution(const AtomicString& newId) const { m_idForStyleResolution = newId; }
 
-    const StylePropertySet* inlineStyle() const { return m_inlineStyleDecl.get(); }
-    StylePropertySet* ensureInlineStyle(StyledElement*);
-    StylePropertySet* ensureMutableInlineStyle(StyledElement*);
-    void updateInlineStyleAvoidingMutation(StyledElement*, const String& text) const;
-    void destroyInlineStyle(StyledElement*);
-    void detachCSSOMWrapperIfNeeded(StyledElement*);
+    const StylePropertySet* inlineStyle() const { return m_inlineStyle.get(); }
 
     const StylePropertySet* presentationAttributeStyle() const { return m_presentationAttributeStyle.get(); }
     void setPresentationAttributeStyle(PassRefPtr<StylePropertySet> style) const { m_presentationAttributeStyle = style; }
@@ -105,13 +100,14 @@ protected:
     unsigned m_isMutable : 1;
     unsigned m_arraySize : 31;
 
-    mutable RefPtr<StylePropertySet> m_inlineStyleDecl;
+    mutable RefPtr<StylePropertySet> m_inlineStyle;
     mutable RefPtr<StylePropertySet> m_presentationAttributeStyle;
     mutable SpaceSplitString m_classNames;
     mutable AtomicString m_idForStyleResolution;
 
 private:
     friend class Element;
+    friend class StyledElement;
     friend class HTMLConstructionSite;
     friend class ImmutableElementAttributeData;
     friend class MutableElementAttributeData;

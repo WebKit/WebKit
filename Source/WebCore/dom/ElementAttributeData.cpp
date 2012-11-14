@@ -26,10 +26,6 @@
 #include "config.h"
 #include "ElementAttributeData.h"
 
-#include "Attr.h"
-#include "CSSParser.h"
-#include "CSSStyleSheet.h"
-#include "StyledElement.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MemoryInstrumentationVector.h>
 
@@ -67,9 +63,9 @@ ImmutableElementAttributeData::~ImmutableElementAttributeData()
 ImmutableElementAttributeData::ImmutableElementAttributeData(const MutableElementAttributeData& other)
     : ElementAttributeData(other, false)
 {
-    if (other.m_inlineStyleDecl) {
-        ASSERT(!other.m_inlineStyleDecl->isMutable());
-        m_inlineStyleDecl = other.m_inlineStyleDecl->immutableCopyIfNeeded();
+    if (other.m_inlineStyle) {
+        ASSERT(!other.m_inlineStyle->isMutable());
+        m_inlineStyle = other.m_inlineStyle->immutableCopyIfNeeded();
     }
 
     for (unsigned i = 0; i < m_arraySize; ++i)
@@ -90,15 +86,15 @@ MutableElementAttributeData::MutableElementAttributeData(const MutableElementAtt
     : ElementAttributeData(other, true)
     , m_attributeVector(other.m_attributeVector)
 {
-    m_inlineStyleDecl = other.m_inlineStyleDecl ? other.m_inlineStyleDecl->copy() : 0;
+    m_inlineStyle = other.m_inlineStyle ? other.m_inlineStyle->copy() : 0;
 }
 
 MutableElementAttributeData::MutableElementAttributeData(const ImmutableElementAttributeData& other)
     : ElementAttributeData(other, true)
 {
     // An ImmutableElementAttributeData should never have a mutable inline StylePropertySet attached.
-    ASSERT(!other.m_inlineStyleDecl || !other.m_inlineStyleDecl->isMutable());
-    m_inlineStyleDecl = other.m_inlineStyleDecl;
+    ASSERT(!other.m_inlineStyle || !other.m_inlineStyle->isMutable());
+    m_inlineStyle = other.m_inlineStyle;
 
     m_attributeVector.reserveCapacity(other.length());
     for (unsigned i = 0; i < other.length(); ++i)
@@ -117,50 +113,6 @@ PassRefPtr<ElementAttributeData> ElementAttributeData::makeImmutableCopy() const
     ASSERT(isMutable());
     void* slot = WTF::fastMalloc(sizeForImmutableElementAttributeDataWithAttributeCount(mutableAttributeVector().size()));
     return adoptRef(new (slot) ImmutableElementAttributeData(static_cast<const MutableElementAttributeData&>(*this)));
-}
-
-StylePropertySet* ElementAttributeData::ensureInlineStyle(StyledElement* element)
-{
-    ASSERT(isMutable());
-    if (!m_inlineStyleDecl) {
-        ASSERT(element->isStyledElement());
-        m_inlineStyleDecl = StylePropertySet::create(strictToCSSParserMode(element->isHTMLElement() && !element->document()->inQuirksMode()));
-    }
-    return m_inlineStyleDecl.get();
-}
-
-StylePropertySet* ElementAttributeData::ensureMutableInlineStyle(StyledElement* element)
-{
-    ASSERT(isMutable());
-    if (m_inlineStyleDecl && !m_inlineStyleDecl->isMutable()) {
-        m_inlineStyleDecl = m_inlineStyleDecl->copy();
-        return m_inlineStyleDecl.get();
-    }
-    return ensureInlineStyle(element);
-}
-    
-void ElementAttributeData::updateInlineStyleAvoidingMutation(StyledElement* element, const String& text) const
-{
-    // We reconstruct the property set instead of mutating if there is no CSSOM wrapper.
-    // This makes wrapperless property sets immutable and so cacheable.
-    if (m_inlineStyleDecl && !m_inlineStyleDecl->isMutable())
-        m_inlineStyleDecl.clear();
-    if (!m_inlineStyleDecl)
-        m_inlineStyleDecl = CSSParser::parseInlineStyleDeclaration(text, element);
-    else
-        m_inlineStyleDecl->parseDeclaration(text, element->document()->elementSheet()->contents());
-}
-
-void ElementAttributeData::detachCSSOMWrapperIfNeeded(StyledElement* element)
-{
-    if (m_inlineStyleDecl)
-        m_inlineStyleDecl->clearParentElement(element);
-}
-
-void ElementAttributeData::destroyInlineStyle(StyledElement* element)
-{
-    detachCSSOMWrapperIfNeeded(element);
-    m_inlineStyleDecl = 0;
 }
 
 void ElementAttributeData::addAttribute(const Attribute& attribute)
@@ -199,7 +151,7 @@ void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
 {
     size_t actualSize = m_isMutable ? sizeof(ElementAttributeData) : sizeForImmutableElementAttributeDataWithAttributeCount(m_arraySize);
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM, actualSize);
-    info.addMember(m_inlineStyleDecl);
+    info.addMember(m_inlineStyle);
     info.addMember(m_presentationAttributeStyle);
     info.addMember(m_classNames);
     info.addMember(m_idForStyleResolution);

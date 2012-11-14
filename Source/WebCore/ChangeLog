@@ -1,3 +1,67 @@
+2012-11-13  Andreas Kling  <kling@webkit.org>
+
+        Move inline style logic from ElementAttributeData to StyledElement.
+        <http://webkit.org/b/102120>
+
+        Reviewed by Antti Koivisto.
+
+        Move all the logic dealing with element inline style from ElementAttributeData to StyledElement.
+        No difference in behavior, just making ElementAttributeData dumber.
+
+        * css/StylePropertySet.cpp:
+        * css/StylePropertySet.h:
+        (WebCore::StylePropertySet::hasCSSOMWrapper):
+        (WebCore::StylePropertySet::cssStyleDeclaration):
+
+            Added as complements to ensureCSSStyleDeclaration() for the case where we don't want
+            to instantiate a CSSOM wrapper unnecessarily.
+
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::inlineStyle):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ImmutableElementAttributeData::ImmutableElementAttributeData):
+        (WebCore::MutableElementAttributeData::MutableElementAttributeData):
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::inlineStyle):
+        (ElementAttributeData):
+
+            Renamed m_inlineStyleDecl to m_inlineStyle. Finally.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::~StyledElement):
+
+            Detach the CSSOM wrapper from the inline style if there is one.
+
+        (WebCore::StyledElement::ensureMutableInlineStyle):
+        (WebCore::StyledElement::style):
+
+            Renamed ensureInlineStyle() to ensureMutableInlineStyle() since that's what it
+            actually does. Update call sites accordingly.
+
+        (WebCore::StyledElement::inlineStyleCSSOMWrapper):
+
+            Added helper to get the CSSOM wrapper for the element's inline style if there is one.
+
+        (WebCore::StyledElement::styleAttributeChanged):
+
+            Do the work to parse/update/replace the inline style attribute here instead of
+            in an ElementAttributeData method.
+
+        (WebCore::StyledElement::setInlineStyleProperty):
+        (WebCore::StyledElement::removeInlineStyleProperty):
+        (WebCore::StyledElement::removeAllInlineStyleProperties):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::currentColor):
+
+            s/ensureInlineStyle/ensureMutableInlineStyle/
+
 2012-11-13  Li Yin  <li.yin@intel.com>
 
         fast/forms/file/input-file-write-files.html should cover correct setting value

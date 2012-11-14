@@ -807,7 +807,7 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
     if (!propID)
         return QString();
 
-    const StylePropertySet* style = static_cast<StyledElement*>(m_element)->ensureInlineStyle();
+    const StylePropertySet* style = static_cast<StyledElement*>(m_element)->ensureMutableInlineStyle();
 
     if (strategy == InlineStyle)
         return style->getPropertyValue(propID);

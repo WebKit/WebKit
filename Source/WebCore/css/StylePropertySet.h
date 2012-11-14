@@ -143,13 +143,13 @@ public:
     PassRefPtr<StylePropertySet> copyPropertiesInSet(const CSSPropertyID* set, unsigned length) const;
     
     String asText() const;
-    
-    void clearParentElement(StyledElement*);
 
+    PropertySetCSSStyleDeclaration* cssStyleDeclaration();
     CSSStyleDeclaration* ensureCSSStyleDeclaration();
     CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(const StyledElement* parentElement);
 
     bool isMutable() const { return m_isMutable; }
+    bool hasCSSOMWrapper() const { return m_ownsCSSOMWrapper; }
 
     bool hasFailedOrCanceledSubresources() const;
 

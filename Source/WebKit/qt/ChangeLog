@@ -1,3 +1,13 @@
+2012-11-13  Andreas Kling  <kling@webkit.org>
+
+        Move inline style logic from ElementAttributeData to StyledElement.
+        <http://webkit.org/b/102120>
+
+        Reviewed by Antti Koivisto.
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+
 2012-11-09  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix tst_QWebPage::findText

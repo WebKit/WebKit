@@ -69,7 +69,7 @@ RGBA32 currentColor(HTMLCanvasElement* canvas)
     if (!canvas || !canvas->inDocument())
         return Color::black;
     RGBA32 rgba = Color::black;
-    CSSParser::parseColor(rgba, canvas->ensureInlineStyle()->getPropertyValue(CSSPropertyColor));
+    CSSParser::parseColor(rgba, canvas->ensureMutableInlineStyle()->getPropertyValue(CSSPropertyColor));
     return rgba;
 }
 

@@ -40,8 +40,8 @@ public:
     virtual const StylePropertySet* additionalPresentationAttributeStyle() { return 0; }
     void invalidateStyleAttribute();
 
-    const StylePropertySet* inlineStyle() const { return attributeData() ? attributeData()->inlineStyle() : 0; }
-    StylePropertySet* ensureInlineStyle() { return mutableAttributeData()->ensureMutableInlineStyle(this); }
+    const StylePropertySet* inlineStyle() const { return attributeData() ? attributeData()->m_inlineStyle.get() : 0; }
+    StylePropertySet* ensureMutableInlineStyle();
     
     // Unlike StylePropertySet setters, these implement invalidation.
     bool setInlineStyleProperty(CSSPropertyID, int identifier, bool important = false);
@@ -77,6 +77,7 @@ protected:
 private:
     virtual void updateStyleAttribute() const;
     void inlineStyleChanged();
+    PropertySetCSSStyleDeclaration* inlineStyleCSSOMWrapper();
 
     void makePresentationAttributeCacheKey(PresentationAttributeCacheKey&) const;
     void rebuildPresentationAttributeStyle();
