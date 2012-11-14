@@ -28,7 +28,6 @@ namespace WebCore {
 
 class EllipsisBox;
 class HitTestResult;
-class RenderRegion;
 
 struct BidiStatus;
 struct GapRects;
@@ -54,17 +53,14 @@ public:
     LayoutUnit lineTopWithLeading() const { return m_lineTopWithLeading; }
     LayoutUnit lineBottomWithLeading() const { return m_lineBottomWithLeading; }
     
-    LayoutUnit paginationStrut() const { return m_fragmentationData ? m_fragmentationData->m_paginationStrut : LayoutUnit(0); }
-    void setPaginationStrut(LayoutUnit strut) { ensureLineFragmentationData()->m_paginationStrut = strut; }
+    LayoutUnit paginationStrut() const { return m_paginationStrut; }
+    void setPaginationStrut(LayoutUnit s) { m_paginationStrut = s; }
 
-    bool isFirstAfterPageBreak() const { return m_fragmentationData ? m_fragmentationData->m_isFirstAfterPageBreak : false; }
-    void setIsFirstAfterPageBreak(bool isFirstAfterPageBreak) { ensureLineFragmentationData()->m_isFirstAfterPageBreak = isFirstAfterPageBreak; }
+    bool isFirstAfterPageBreak() const { return m_isFirstAfterPageBreak; }
+    void setIsFirstAfterPageBreak(bool isFirstAfterPageBreak) { m_isFirstAfterPageBreak = isFirstAfterPageBreak; }
 
-    LayoutUnit paginatedLineWidth() const { return m_fragmentationData ? m_fragmentationData->m_paginatedLineWidth : LayoutUnit(0); }
-    void setPaginatedLineWidth(LayoutUnit width) { ensureLineFragmentationData()->m_paginatedLineWidth = width; }
-
-    RenderRegion* containingRegion() const { return m_fragmentationData ? m_fragmentationData->m_containingRegion : 0; }
-    void setContainingRegion(RenderRegion*);
+    LayoutUnit paginatedLineWidth() const { return m_paginatedLineWidth; }
+    void setPaginatedLineWidth(LayoutUnit width) { m_paginatedLineWidth = width; }
 
     LayoutUnit selectionTop() const;
     LayoutUnit selectionBottom() const;
@@ -197,15 +193,6 @@ private:
 
     LayoutUnit beforeAnnotationsAdjustment() const;
 
-    struct LineFragmentationData;
-    LineFragmentationData* ensureLineFragmentationData()
-    {
-        if (!m_fragmentationData)
-            m_fragmentationData = adoptPtr(new LineFragmentationData());
-
-        return m_fragmentationData.get();
-    }
-
     // This folds into the padding at the end of InlineFlowBox on 64-bit.
     unsigned m_lineBreakPos;
 
@@ -220,25 +207,8 @@ private:
     LayoutUnit m_lineTopWithLeading;
     LayoutUnit m_lineBottomWithLeading;
 
-    struct LineFragmentationData {
-        WTF_MAKE_NONCOPYABLE(LineFragmentationData); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        LineFragmentationData()
-            : m_containingRegion(0)
-            , m_paginationStrut(0)
-            , m_paginatedLineWidth(0)
-            , m_isFirstAfterPageBreak(false)
-        {
-
-        }
-
-        RenderRegion* m_containingRegion;
-        LayoutUnit m_paginationStrut;
-        LayoutUnit m_paginatedLineWidth;
-        bool m_isFirstAfterPageBreak;
-    };
-
-    OwnPtr<LineFragmentationData> m_fragmentationData;
+    LayoutUnit m_paginationStrut;
+    LayoutUnit m_paginatedLineWidth;
 
     // Floats hanging off the line are pushed into this vector during layout. It is only
     // good for as long as the line has not been marked dirty.

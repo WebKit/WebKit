@@ -1,3 +1,36 @@
+2012-11-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134482.
+        http://trac.webkit.org/changeset/134482
+        https://bugs.webkit.org/show_bug.cgi?id=102140
+
+        The patch causes fast/regions/moved-content-node-crash.html to
+        crash in Debug mode due to ASSERTION. (Requested by abucur on
+        #webkit).
+
+        * rendering/InlineFlowBox.cpp:
+        (SameSizeAsInlineFlowBox):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (InlineFlowBox):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lineWidthForPaginatedLineChanged):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::determineStartPosition):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        * rendering/RootInlineBox.h:
+        (WebCore):
+        (WebCore::RootInlineBox::paginationStrut):
+        (WebCore::RootInlineBox::setPaginationStrut):
+        (WebCore::RootInlineBox::isFirstAfterPageBreak):
+        (WebCore::RootInlineBox::setIsFirstAfterPageBreak):
+        (WebCore::RootInlineBox::paginatedLineWidth):
+        (WebCore::RootInlineBox::setPaginatedLineWidth):
+        (RootInlineBox):
+
 2012-11-13  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Missing NodeRenderStyle.h include in WebCore/html/TextFieldInputType.cpp
