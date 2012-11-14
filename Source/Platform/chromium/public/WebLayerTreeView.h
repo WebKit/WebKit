@@ -55,7 +55,7 @@ public:
             , renderVSyncEnabled(true)
             , perTilePaintingEnabled(false)
             , partialSwapEnabled(false)
-            , acceleratedAnimationEnabled(false)
+            , acceleratedAnimationEnabled(true)
             , pageScalePinchZoomEnabled(false)
             , refreshRate(0)
             , defaultTileSize(WebSize(256, 256))

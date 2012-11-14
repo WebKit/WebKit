@@ -1,3 +1,15 @@
+2012-11-14  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Match the LayerTreeSetting default for acceleratedAnimationEnabled in the WebLayerTreeSetting
+        https://bugs.webkit.org/show_bug.cgi?id=102285
+
+        Reviewed by James Robinson.
+
+        Accelerated animations default to on.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+
 2012-11-13  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Pass showDebugBorders directly to WebLayerTreeSettings, don't use the GraphicsLayer border width setting.
