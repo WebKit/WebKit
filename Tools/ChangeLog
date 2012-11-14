@@ -1,3 +1,8 @@
+2012-11-14  Ojan Vafai  <ojan@chromium.org>
+
+        Fix some defuct flakiness dashboard unittests.
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+
 2012-11-14  Glenn Adams  <glenn@skynav.com>
 
         webkitpy: print-expectations - add --paths option to print only paths of test expectation files
