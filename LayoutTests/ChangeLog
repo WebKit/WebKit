@@ -1,3 +1,12 @@
+2012-11-14  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        anchor-*download.html wander between crashing and failing.
+        Marking winsize test as failure and added to bug.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI add instrumentation for WebAudo related stuff.

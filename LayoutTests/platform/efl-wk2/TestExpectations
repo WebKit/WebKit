@@ -50,8 +50,8 @@ webkit.org/b/92726 fast/dom/unregister-protocol-handler.html [ Crash ]
 # Crashes on plugin test.
 webkit.org/b/98747 plugins/document-open.html [ Crash ]
 
-webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
-webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
+webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Crash Failure ]
+webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash Failure ]
 
 #Crash after r132386
 webkit.org/b/100342 fast/dom/nested-script-exceptions.html [ Crash ]
@@ -65,6 +65,8 @@ webkit.org/b/101428 media/media-continues-playing-after-replace-source.html [ Cr
 
 webkit.org/b/102203 fast/events/attribute-listener-deletion-crash.html [ Crash ]
 webkit.org/b/102204 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Crash ]
+
+webkit.org/b/102217 media/audio-concurrent-supported.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
@@ -296,4 +298,7 @@ webkit.org/b/86881 media/context-menu-actions.html [ Failure ]
 webkit.org/b/86881 media/controls-right-click-on-timebar.html [ Failure ]
 
 webkit.org/b/102201 fast/dom/Window/window-resize.html [ Failure ]
+webkit.org/b/102201 fast/dom/Window/open-window-min-size.html [ Failure ]
 webkit.org/b/102202 inspector/timeline/timeline-timer-fired-from-eval-call-site.html [ Failure ]
+
+webkit.org/b/102216 inspector-protocol/nmi-webaudio.html [ Failure ]
