@@ -1,3 +1,9 @@
+2012-11-14  Andy Estes  <aestes@apple.com>
+
+        Fix the Lion build after r134681.
+
+        * WebProcess/Network/CustomProtocols/mac/CustomProtocolManagerMac.mm:
+
 2012-11-08  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Need API in UIProcess to enable loading of custom protocols

@@ -43,6 +43,8 @@ static uint64_t generateCustomProtocolID()
 }
 
 @interface WKCustomProtocol : NSURLProtocol {
+@private
+    uint64_t _customProtocolID;
 }
 @property (nonatomic, readonly) uint64_t customProtocolID;
 @end
