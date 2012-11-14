@@ -1,3 +1,19 @@
+2012-11-14  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Improve debug functionality in FatFingers
+        https://bugs.webkit.org/show_bug.cgi?id=102263
+
+        Reviewed by Antonio Gomes.
+
+        - use logAlways to log even in release.
+        - dump shadow tree info if available.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::isElementClickable):
+        (BlackBerry::WebKit::FatFingers::checkFingerIntersection):
+        (BlackBerry::WebKit::FatFingers::findIntersectingRegions):
+        (BlackBerry::WebKit::FatFingers::checkForText):
+
 2012-11-14  Adam Treat  <atreat@rim.com>
 
         [BlackBerry] Break suspend/resume of the backingstore and screen into separate methods
