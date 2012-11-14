@@ -262,7 +262,8 @@ RenderLayer::~RenderLayer()
 #if USE(ACCELERATED_COMPOSITING)
 RenderLayerCompositor* RenderLayer::compositor() const
 {
-    ASSERT(renderer()->view());
+    if (!renderer()->view())
+        return 0;
     return renderer()->view()->compositor();
 }
 

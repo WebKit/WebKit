@@ -1,3 +1,28 @@
+2012-11-13  Sami Kyostila  <skyostil@chromium.org>
+
+        Don't mark scrolling contents as dirty if RenderLayerBacking is going away
+        https://bugs.webkit.org/show_bug.cgi?id=101947
+
+        Reviewed by Simon Fraser.
+
+        When a scrolling contents graphics layer is created or destroyed, the
+        associated graphics layer is marked as needing display because some of
+        the painted content may have migrated between the primary graphics layer
+        and the scrolling layer.
+
+        This causes a problem when the RenderLayerBacking is being destroyed,
+        because setNeedsDisplay() needs to check from the compositor whether to
+        track repaints or not. If the RenderLayerBacking is being destroyed, the
+        value returned by compositor() is garbage and this causes a crash.
+
+        This patch fixes the problem by making RenderLayer::compositor() return a null
+        pointer when the renderer no longer has a view.
+
+        Covered by existing layout tests in compositing/overflow/.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::compositor):
+
 2012-11-13  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: InvalidCharacterError
