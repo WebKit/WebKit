@@ -141,6 +141,7 @@ public:
     void didPaint(GraphicsContext*, const LayoutRect&);
     void didLayout();
     void didScroll();
+    void didRecalculateStyle();
 
     // Inspector Controller API
     virtual void setFrontend(InspectorFrontend*);
@@ -180,7 +181,8 @@ private:
     HashMap<Frame*, String> m_frameToIdentifier;
     HashMap<String, Frame*> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
-    bool m_didLoadEventFire;
+    bool m_enabled;
+    bool m_isFirstLayoutAfterOnLoad;
     bool m_geolocationOverridden;
     RefPtr<GeolocationPosition> m_geolocationPosition;
     RefPtr<GeolocationPosition> m_platformGeolocationPosition;

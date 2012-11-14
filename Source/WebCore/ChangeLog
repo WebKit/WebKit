@@ -1,3 +1,27 @@
+2012-11-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: highlight is not updating as one edits CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=102191
+
+        Reviewed by Alexander Pavlov.
+
+        We should update highlight upon layout / style recalculation.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didRecalculateStyleImpl):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        (WebCore::InspectorPageAgent::enable):
+        (WebCore::InspectorPageAgent::disable):
+        (WebCore::InspectorPageAgent::domContentEventFired):
+        (WebCore::InspectorPageAgent::didPaint):
+        (WebCore::InspectorPageAgent::didLayout):
+        (WebCore::InspectorPageAgent::didScroll):
+        (WebCore):
+        (WebCore::InspectorPageAgent::didRecalculateStyle):
+        * inspector/InspectorPageAgent.h:
+
 2012-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134566.
