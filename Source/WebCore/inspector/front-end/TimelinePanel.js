@@ -303,8 +303,8 @@ WebInspector.TimelinePanel.prototype = {
     {
         this._operationInProgress = !!indicator;
         for (var i = 0; i < this._statusBarButtons.length; ++i)
-            this._statusBarButtons[i].disabled = this._operationInProgress;
-        this._glueParentButton.disabled = this._operationInProgress || !!this._frameController;
+            this._statusBarButtons[i].setEnabled(!this._operationInProgress);
+        this._glueParentButton.setEnabled(!this._operationInProgress && !this._frameController);
         this._miscStatusBarItems.removeChildren();
         this._miscStatusBarItems.appendChild(indicator ? indicator.element : this._statusBarFilters);
     },
@@ -498,7 +498,7 @@ WebInspector.TimelinePanel.prototype = {
         this._overviewModeSetting.set(mode);
         if (frameMode !== this._frameMode) {
             this._frameMode = frameMode;
-            this._glueParentButton.disabled = frameMode;
+            this._glueParentButton.setEnabled(!frameMode);
             this._presentationModel.setGlueRecords(this._glueParentButton.toggled && !frameMode);
             this._repopulateRecords();
 

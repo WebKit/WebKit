@@ -305,7 +305,7 @@ WebInspector.ScriptsPanel.prototype = {
         }
 
         this._showDebuggerSidebar();
-        this._toggleDebuggerSidebarButton.disabled = true;
+        this._toggleDebuggerSidebarButton.setEnabled(false);
         window.focus();
         InspectorFrontendHost.bringToFront();
     },
@@ -317,7 +317,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._stepping = false;
 
         this._clearInterface();
-        this._toggleDebuggerSidebarButton.disabled = false;
+        this._toggleDebuggerSidebarButton.setEnabled(true);
     },
 
     _debuggerWasEnabled: function()

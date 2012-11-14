@@ -65,7 +65,7 @@ var WebInspector = {
 
     _panelSelected: function()
     {
-        this._toggleConsoleButton.disabled = WebInspector.inspectorView.currentPanel().name === "console";
+        this._toggleConsoleButton.setEnabled(WebInspector.inspectorView.currentPanel().name !== "console");
     },
 
     _createGlobalStatusBarItems: function()
@@ -91,7 +91,7 @@ var WebInspector = {
 
     _toggleConsoleButtonClicked: function()
     {
-        if (this._toggleConsoleButton.disabled)
+        if (!this._toggleConsoleButton.enabled())
             return;
 
         this._toggleConsoleButton.toggled = !this._toggleConsoleButton.toggled;

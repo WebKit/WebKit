@@ -71,11 +71,11 @@ WebInspector.CPUProfileView = function(profile)
     this.percentButton.addEventListener("click", this._percentClicked, this);
 
     this.focusButton = new WebInspector.StatusBarButton(WebInspector.UIString("Focus selected function."), "focus-profile-node-status-bar-item");
-    this.focusButton.disabled = true;
+    this.focusButton.setEnabled(false);
     this.focusButton.addEventListener("click", this._focusClicked, this);
 
     this.excludeButton = new WebInspector.StatusBarButton(WebInspector.UIString("Exclude selected function."), "exclude-profile-node-status-bar-item");
-    this.excludeButton.disabled = true;
+    this.excludeButton.setEnabled(false);
     this.excludeButton.addEventListener("click", this._excludeClicked, this);
 
     this.resetButton = new WebInspector.StatusBarButton(WebInspector.UIString("Restore all functions."), "reset-profile-status-bar-item");
@@ -465,14 +465,14 @@ WebInspector.CPUProfileView.prototype = {
 
     _dataGridNodeSelected: function(node)
     {
-        this.focusButton.disabled = false;
-        this.excludeButton.disabled = false;
+        this.focusButton.setEnabled(true);
+        this.excludeButton.setEnabled(true);
     },
 
     _dataGridNodeDeselected: function(node)
     {
-        this.focusButton.disabled = true;
-        this.excludeButton.disabled = true;
+        this.focusButton.setEnabled(false);
+        this.excludeButton.setEnabled(false);
     },
 
     _sortProfile: function()

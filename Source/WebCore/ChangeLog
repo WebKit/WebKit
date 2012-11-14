@@ -1,5 +1,30 @@
 2012-11-13  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
+        Web Inspector: Extract common interface for StatusBarButton and StatusBarCombo
+        https://bugs.webkit.org/show_bug.cgi?id=101907
+
+        Reviewed by Pavel Feldman.
+
+        Status bar control element should have common interface for
+        easier management.
+        In this patch getter/setter for StatusBarButton "disabled" are replaced
+        with regular functions "enabled"/"setEnabled"; added "setEnabled"
+        to StatusBarCombo; added new base class StatusBarItem with
+        method "setEnabled" and member "element".
+
+        * inspector/front-end/CPUProfileView.js: Adopted refactoring.
+        * inspector/front-end/DockController.js: Ditto.
+        * inspector/front-end/ScriptsPanel.js: Ditto.
+        * inspector/front-end/TimelinePanel.js: Ditto.
+        * inspector/front-end/inspector.js: Ditto.
+        * inspector/front-end/StatusBarButton.js:
+        (WebInspector.StatusBarItem): Added.
+        (WebInspector.StatusBarButton): Replaced getter/setter with
+        regular functions.
+        (WebInspector.StatusBarComboBox.prototype.setEnabled): Added.
+
+2012-11-13  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
         Web Inspector: Console: update tab/shift-tab shortcut description.
         https://bugs.webkit.org/show_bug.cgi?id=102175
 
