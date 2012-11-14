@@ -592,6 +592,7 @@ bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
         Evas* evas = evas_object_evas_get(m_view);
         m_evasGL = adoptPtr(evas_gl_new(evas));
         if (!m_evasGL) {
+            WARN("Failed to create Evas_GL, falling back to software mode.");
             m_isHardwareAccelerated = false;
             page()->drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer()->setAccelerationMode(TextureMapper::SoftwareMode);
 #if ENABLE(WEBGL)
