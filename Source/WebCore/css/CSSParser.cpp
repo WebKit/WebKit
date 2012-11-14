@@ -84,6 +84,7 @@
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringImpl.h>
 
 #if ENABLE(CSS_IMAGE_SET)
 #include "CSSImageSetValue.h"
@@ -144,29 +145,26 @@ namespace WebCore {
 static const unsigned INVALID_NUM_PARSED_PROPERTIES = UINT_MAX;
 static const double MAX_SCALE = 1000000;
 
-static bool equal(const CSSParserString& a, const char* b)
+template <unsigned N>
+static bool equal(const CSSParserString& a, const char (&b)[N])
 {
-    for (int i = 0; i < a.length; ++i) {
-        if (!b[i])
-            return false;
-        if (a.characters[i] != b[i])
-            return false;
-    }
-    return !b[a.length];
+    const int length = N - 1; // Ignore the trailing null character
+    if (a.length != length)
+        return false;
+
+    return WTF::equal(a.characters, reinterpret_cast<const LChar*>(b), length);
 }
 
-static bool equalIgnoringCase(const CSSParserString& a, const char* b)
+template <unsigned N>
+static bool equalIgnoringCase(const CSSParserString& a, const char (&b)[N])
 {
-    for (int i = 0; i < a.length; ++i) {
-        if (!b[i])
-            return false;
-        ASSERT(!isASCIIUpper(b[i]));
-        if (toASCIILower(a.characters[i]) != b[i])
-            return false;
-    }
-    return !b[a.length];
-}
+    const int length = N - 1; // Ignore the trailing null character
+    if (a.length != length)
+        return false;
 
+    return WTF::equalIgnoringCase(b, a.characters, length);
+}
+     
 static bool hasPrefix(const char* string, unsigned length, const char* prefix)
 {
     for (unsigned i = 0; i < length; ++i) {

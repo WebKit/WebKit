@@ -1,5 +1,21 @@
 2012-11-13  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r127508
+
+    2012-09-04  Michael Saboff  <msaboff@apple.com>
+
+            equal() in CSSParser.cpp should check the length of characters
+            https://bugs.webkit.org/show_bug.cgi?id=95706
+
+            Added test from duplicate defect https://bugs.webkit.org/show_bug.cgi?id=95634.
+
+            Reviewed by Abhishek Arya.
+
+            * fast/css/crash-comparing-equal-expected.txt: Added.
+            * fast/css/crash-comparing-equal.html: Added.
+
+2012-11-13  Lucas Forschler  <lforschler@apple.com>
+
         Merge r125280
 
     2012-08-10  Jon Lee  <jonlee@apple.com>
@@ -11372,6 +11388,7 @@
 
         * ChangeLog-2012-04-23: Copied from LayoutTests/ChangeLog.
 
+.
 .
 .
 .
