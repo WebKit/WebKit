@@ -103,6 +103,16 @@ void String::append(const String& str)
     // call to fastMalloc every single time.
     if (str.m_impl) {
         if (m_impl) {
+            if (m_impl->is8Bit() && str.m_impl->is8Bit()) {
+                LChar* data;
+                if (str.length() > numeric_limits<unsigned>::max() - m_impl->length())
+                    CRASH();
+                RefPtr<StringImpl> newImpl = StringImpl::createUninitialized(m_impl->length() + str.length(), data);
+                memcpy(data, m_impl->characters8(), m_impl->length() * sizeof(LChar));
+                memcpy(data + m_impl->length(), str.characters8(), str.length() * sizeof(LChar));
+                m_impl = newImpl.release();
+                return;
+            }
             UChar* data;
             if (str.length() > numeric_limits<unsigned>::max() - m_impl->length())
                 CRASH();

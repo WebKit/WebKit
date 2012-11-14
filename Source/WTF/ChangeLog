@@ -1,3 +1,17 @@
+2012-11-14  Michael Saboff  <msaboff@apple.com>
+
+        String::append() should handle two 8 bit strings without converting both to 16 bits
+        https://bugs.webkit.org/show_bug.cgi?id=102286
+
+        Reviewed by Oliver Hunt.
+
+        If both strings are 8 bit, then allocate and copy to a new 8 bit string.  Since most strings are
+        8 bit, this will save up to 3x the resulting string length in bytes.  2x is due to the possible
+        surviving 16 bit source string upconversion and 1x for the 16 bit result now being 8 bit.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::append):
+
 2012-11-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][ARM] Enable the DFG JIT on ARMv7(Thumb2)
