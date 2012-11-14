@@ -84,8 +84,7 @@ v8::Handle<v8::Value> V8ArrayBuffer::constructorCallback(const v8::Arguments& ar
     v8::V8::AdjustAmountOfExternalAllocatedMemory(buffer->byteLength());
     // Transform the holder into a wrapper object for the array.
     v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::setDOMWrapper(wrapper, &info, buffer.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(buffer.release(), wrapper);
+    V8DOMWrapper::createDOMWrapper(buffer.release(), &info, wrapper);
     return wrapper;
 }
 

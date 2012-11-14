@@ -61,8 +61,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::constructorCallback(const v8::Arguments&
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context, securityOrigin);
 
     v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::setDOMWrapper(wrapper, &info, xmlHttpRequest.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(xmlHttpRequest.release(), wrapper);
+    V8DOMWrapper::createDOMWrapper(xmlHttpRequest.release(), &info, wrapper);
     return wrapper;
 }
 

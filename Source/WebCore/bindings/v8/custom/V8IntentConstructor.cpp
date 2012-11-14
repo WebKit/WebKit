@@ -62,8 +62,7 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
             return setDOMException(ec, args.GetIsolate());
 
         v8::Handle<v8::Object> wrapper = args.Holder();
-        V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
-        V8DOMWrapper::setJSWrapperForDOMObject(impl.release(), wrapper);
+        V8DOMWrapper::createDOMWrapper(impl.release(), &info, wrapper);
         return wrapper;
     }
 
@@ -86,8 +85,7 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
         return setDOMException(ec, args.GetIsolate());
 
     v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(impl.release(), wrapper);
+    V8DOMWrapper::createDOMWrapper(impl.release(), &info, wrapper);
     return wrapper;
 }
 

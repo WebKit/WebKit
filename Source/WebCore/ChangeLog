@@ -1,3 +1,54 @@
+2012-11-14  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Replace setDOMWrapper() + setJSWrapperForDOMObject() with createDOMWrapper()
+        https://bugs.webkit.org/show_bug.cgi?id=101917
+
+        Reviewed by Adam Barth.
+
+        setJSWrapperForDOMObject() is always coupled with setDOMWrapper().
+        We can replace setDOMWrapper() + setJSWrapperForDOMObject() with
+        createDOMWrapper(). (c.f. CREATE_DOM_WRAPPER() in JSC)
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateConstructorCallback):
+        (GenerateEventConstructorCallback):
+        (GenerateNamedConstructorCallback):
+        (GenerateToV8Converters):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::installDOMWindow):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        * bindings/v8/V8DOMWrapper.h:
+        (V8DOMWrapper):
+        (WebCore::V8DOMWrapper::createDOMWrapper):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initializeIfNeeded):
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp:
+        (WebCore::V8ArrayBuffer::constructorCallback):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::wrapArrayBufferView):
+        (WebCore::constructWebGLArray):
+        * bindings/v8/custom/V8DOMFormDataCustom.cpp:
+        (WebCore::V8DOMFormData::constructorCallback):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::constructorCallback):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+        * bindings/v8/custom/V8IntentConstructor.cpp:
+        (WebCore::V8Intent::constructorCallback):
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        (WebCore::V8MessageChannel::constructorCallback):
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+        (WebCore::V8MutationObserver::constructorCallback):
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp:
+        (WebCore::V8WebKitPoint::constructorCallback):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::V8WebSocket::constructorCallback):
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        (WebCore::V8XMLHttpRequest::constructorCallback):
+
 2012-11-14  Kent Tamura  <tkent@chromium.org>
 
         Support for localization tests of calendar picker

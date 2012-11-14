@@ -2019,8 +2019,7 @@ END
 
     push(@implContent, <<END);
 
-    V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(impl.release(), wrapper, args.GetIsolate());
+    V8DOMWrapper::createDOMWrapper(impl.release(), &info, wrapper, args.GetIsolate());
     return wrapper;
 END
 
@@ -2079,8 +2078,7 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     RefPtr<${implClassName}> event = ${implClassName}::create(type, eventInit);
 
     v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::setDOMWrapper(wrapper, &info, event.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(event.release(), wrapper, args.GetIsolate());
+    V8DOMWrapper::createDOMWrapper(event.release(), &info, wrapper, args.GetIsolate());
     return wrapper;
 }
 
@@ -2220,8 +2218,7 @@ END
 
     push(@implContent, <<END);
 
-    V8DOMWrapper::setDOMWrapper(wrapper, &V8${implClassName}Constructor::info, impl.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(impl.release(), wrapper, args.GetIsolate());
+    V8DOMWrapper::createDOMWrapper(impl.release(), &V8${implClassName}Constructor::info, wrapper, args.GetIsolate());
     return wrapper;
 END
 
@@ -3527,7 +3524,7 @@ END
         return wrapper;
 
     installPerContextProperties(wrapper, impl.get());
-    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapper, isolate);
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::createDOMWrapper(impl, &info, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
     return wrapper;

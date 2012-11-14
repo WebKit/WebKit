@@ -51,12 +51,11 @@ template<class ArrayClass>
 v8::Handle<v8::Value> wrapArrayBufferView(const v8::Arguments& args, WrapperTypeInfo* type, ArrayClass array, v8::ExternalArrayType arrayType, bool hasIndexer)
 {
     // Transform the holder into a wrapper object for the array.
-    V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
     ASSERT(!hasIndexer || static_cast<int32_t>(array.get()->length()) >= 0);
     if (hasIndexer)
         args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
     v8::Handle<v8::Object> wrapper = args.Holder();
-    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::createDOMWrapper(array.release(), type, wrapper);
     wrapperHandle.MarkIndependent();
     return wrapper;
 }
@@ -204,7 +203,6 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
 
 
     // Transform the holder into a wrapper object for the array.
-    V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
     args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
 
     if (!srcArray.IsEmpty()) {
@@ -216,7 +214,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     }
 
     v8::Handle<v8::Object> wrapper = args.Holder();
-    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::createDOMWrapper(array.release(), type, wrapper);
     wrapperHandle.MarkIndependent();
     return wrapper;
 }

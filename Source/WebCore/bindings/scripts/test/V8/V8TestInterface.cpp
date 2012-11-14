@@ -262,8 +262,7 @@ v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& 
     if (ec)
         goto fail;
 
-    V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(impl.release(), wrapper, args.GetIsolate());
+    V8DOMWrapper::createDOMWrapper(impl.release(), &info, wrapper, args.GetIsolate());
     return wrapper;
   fail:
     return setDOMException(ec, args.GetIsolate());
@@ -349,7 +348,7 @@ v8::Handle<v8::Object> V8TestInterface::wrapSlow(PassRefPtr<TestInterface> impl,
         return wrapper;
 
     installPerContextProperties(wrapper, impl.get());
-    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapper, isolate);
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::createDOMWrapper(impl, &info, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
     return wrapper;

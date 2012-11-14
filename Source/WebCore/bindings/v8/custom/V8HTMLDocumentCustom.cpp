@@ -75,8 +75,8 @@ v8::Local<v8::Object> V8HTMLDocument::wrapInShadowObject(v8::Local<v8::Object> w
     }
     if (shadow.IsEmpty())
         return v8::Local<v8::Object>();
-    V8DOMWrapper::setDOMWrapper(shadow, &V8HTMLDocument::info, impl);
     shadow->SetPrototype(wrapper);
+    V8DOMWrapper::setDOMWrapper(wrapper, &V8HTMLDocument::info, impl);
     return shadow;
 }
 

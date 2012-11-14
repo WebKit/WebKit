@@ -65,8 +65,7 @@ v8::Handle<v8::Value> V8WebKitPoint::constructorCallback(const v8::Arguments& ar
     }
     RefPtr<WebKitPoint> point = WebKitPoint::create(x, y);
     v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::setDOMWrapper(wrapper, &info, point.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(point.release(), wrapper);
+    V8DOMWrapper::createDOMWrapper(point.release(), &info, wrapper);
     return wrapper;
 }
 

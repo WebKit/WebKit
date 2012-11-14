@@ -103,7 +103,7 @@ namespace WebCore {
         static PassRefPtr<NodeFilter> wrapNativeNodeFilter(v8::Handle<v8::Value>);
 
         template<typename T>
-        static v8::Persistent<v8::Object> setJSWrapperForDOMObject(PassRefPtr<T>, v8::Handle<v8::Object>, v8::Isolate* = 0);
+        static v8::Persistent<v8::Object> createDOMWrapper(PassRefPtr<T>, WrapperTypeInfo*, v8::Handle<v8::Object>, v8::Isolate* = 0);
 
         // Check whether a V8 value is a wrapper of type |classType|.
         static bool isWrapperOfType(v8::Handle<v8::Value>, WrapperTypeInfo*);
@@ -138,8 +138,9 @@ namespace WebCore {
     };
 
     template<typename T>
-    v8::Persistent<v8::Object> V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<T> object, v8::Handle<v8::Object> wrapper, v8::Isolate* isolate)
+    v8::Persistent<v8::Object> V8DOMWrapper::createDOMWrapper(PassRefPtr<T> object, WrapperTypeInfo* type, v8::Handle<v8::Object> wrapper, v8::Isolate* isolate)
     {
+        setDOMWrapper(wrapper, type, object.get());
         v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
         ASSERT(maybeDOMWrapper(wrapperHandle));
         setWrapperClass(object.get(), wrapperHandle);

@@ -136,10 +136,8 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(v8::Handle<v8::Object> c
     if (instance.IsEmpty())
         return instance;
 
-    setDOMWrapper(instance, type, impl);
     if (type == &V8HTMLDocument::info)
         instance = V8HTMLDocument::wrapInShadowObject(instance, static_cast<Node*>(impl));
-
     return instance;
 }
 

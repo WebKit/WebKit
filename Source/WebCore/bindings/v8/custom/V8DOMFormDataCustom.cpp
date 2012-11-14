@@ -55,8 +55,7 @@ v8::Handle<v8::Value> V8DOMFormData::constructorCallback(const v8::Arguments& ar
     RefPtr<DOMFormData> domFormData = DOMFormData::create(form);
 
     v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::setDOMWrapper(wrapper, &info, domFormData.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(domFormData.release(), wrapper);
+    V8DOMWrapper::createDOMWrapper(domFormData.release(), &info, wrapper);
     return wrapper;
 }
 
