@@ -1,3 +1,18 @@
+2012-11-14  Eric Uhrhane  <ericu@chromium.org>
+
+        [chromium] Don't let shift-click turn popup into tab.
+        https://bugs.webkit.org/show_bug.cgi?id=102254
+
+        Reviewed by Adam Barth.
+
+        Change http://trac.webkit.org/changeset/132399 broke shift-click on
+        compose in GMail.  We didn't want to change behavior that people were
+        depending on, and this quick fix seems a good compromise between user
+        intent and developer intent.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::updatePolicyForEvent):
+
 2012-11-14  Mike Reed  <reed@google.com>
 
         Dynamically create canvas in Setup() to avoid calling DEPRECATED function setDevice().

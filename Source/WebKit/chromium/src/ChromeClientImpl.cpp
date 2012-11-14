@@ -293,7 +293,12 @@ static inline void updatePolicyForEvent(const WebInputEvent* inputEvent, WebNavi
     bool alt = mouseEvent->modifiers & WebMouseEvent::AltKey;
     bool meta = mouseEvent->modifiers & WebMouseEvent::MetaKey;
 
-    WebViewImpl::navigationPolicyFromMouseEvent(buttonNumber, ctrl, shift, alt, meta, policy);
+    WebNavigationPolicy userPolicy = *policy;
+    WebViewImpl::navigationPolicyFromMouseEvent(buttonNumber, ctrl, shift, alt, meta, &userPolicy);
+    // User and app agree that we want a new window; let the app override the decorations.
+    if (userPolicy == WebNavigationPolicyNewWindow && *policy == WebNavigationPolicyNewPopup)
+        return;
+    *policy = userPolicy;
 }
 
 WebNavigationPolicy ChromeClientImpl::getNavigationPolicy()
