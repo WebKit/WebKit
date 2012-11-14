@@ -47,6 +47,7 @@ public:
     ~WebResourceLoader();
 
     WebCore::ResourceLoader* coreLoader() const { return m_coreLoader.get(); }
+    ResourceLoadIdentifier resourceLoadIdentifier() const { return m_resourceLoadIdentifier; }
 
 private:
     WebResourceLoader(ResourceLoadIdentifier, PassRefPtr<WebCore::ResourceLoader>);

@@ -1,3 +1,10 @@
+2012-11-14  Brady Eidson  <beidson@apple.com>
+
+        Fix the Production build after r134640 broke it.
+
+        * WebProcess/Network/WebResourceLoader.h:
+        (WebKit::WebResourceLoader::resourceLoadIdentifier): Use the un-used.
+
 2012-11-14  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin should make use of PDFKit's fluid zooming
