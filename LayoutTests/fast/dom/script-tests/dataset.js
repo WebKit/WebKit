@@ -53,8 +53,8 @@ shouldBeTrue("testSet('\xE0', 'data-\xE0')");
 debug("");
 
 shouldThrow("testSet('-foo', 'dummy')", "'Error: SYNTAX_ERR: DOM Exception 12'");
-shouldThrow("testSet('foo\x20', 'dummy')", "'Error: INVALID_CHARACTER_ERR: DOM Exception 5'");
-shouldThrow("testSet('foo\uF900', 'dummy')", "'Error: INVALID_CHARACTER_ERR: DOM Exception 5'");
+shouldThrow("testSet('foo\x20', 'dummy')", "'Error: InvalidCharacterError: DOM Exception 5'");
+shouldThrow("testSet('foo\uF900', 'dummy')", "'Error: InvalidCharacterError: DOM Exception 5'");
 debug("");
 
 function testDelete(attr, prop)

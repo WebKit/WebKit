@@ -1,3 +1,21 @@
+2012-11-13  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: InvalidCharacterError
+        https://bugs.webkit.org/show_bug.cgi?id=102128
+
+        Reviewed by Darin Adler.
+
+        Updated tests and expectations.
+
+        * fast/dom/Document/createElement-invalid-names-expected.txt:
+        * fast/dom/Document/createElement-invalid-names.html:
+        * fast/dom/Element/prefix-setter-exception-expected.txt:
+        * fast/dom/Window/atob-btoa-expected.txt:
+        * fast/dom/dataset-expected.txt:
+        * fast/dom/dataset-xhtml-expected.txt:
+        * fast/dom/script-tests/dataset-xhtml.js:
+        * fast/dom/script-tests/dataset.js:
+
 2012-11-13  Elliott Sprehn  <esprehn@chromium.org>
 
         Disable frame loading instead of throwing exceptions on subtree modifications in ChildFrameDisconnector

@@ -1,3 +1,16 @@
+2012-11-13  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: InvalidCharacterError
+        https://bugs.webkit.org/show_bug.cgi?id=102128
+
+        Reviewed by Darin Adler.
+
+        Patch 5 of 25 to update DOMException name to match the spec and Firefox.
+
+        Updated existing tests.
+
+        * dom/DOMCoreException.cpp:
+
 2012-11-13  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Run multiple tasks per transaction tick
