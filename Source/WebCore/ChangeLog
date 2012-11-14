@@ -1,3 +1,28 @@
+2012-11-14  Max Vujovic  <mvujovic@adobe.com>
+
+        Call to enclosingFilterLayer() in RenderObject::containerForRepaint() is expensive
+        https://bugs.webkit.org/show_bug.cgi?id=101846
+
+        Reviewed by Simon Fraser.
+
+        If software-rendered CSS Filters have not been used in the document, avoid doing the second
+        tree walk in RenderObject::containerForRepaint, which determines the RenderObject's
+        enclosing filter layer.
+
+        No new tests. We now avoid a filters related code path for a performance improvement when
+        we're not using filters.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        * page/FrameView.h:
+        (FrameView):
+        (WebCore::FrameView::setHasSoftwareFilters):
+        (WebCore::FrameView::hasSoftwareFilters):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateOrRemoveFilterEffectRenderer):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint):
+
 2012-11-14  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: NotFoundError

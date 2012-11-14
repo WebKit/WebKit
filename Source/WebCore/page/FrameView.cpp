@@ -192,6 +192,9 @@ FrameView::FrameView(Frame* frame)
     , m_shouldAutoSize(false)
     , m_inAutoSize(false)
     , m_didRunAutosize(false)
+#if ENABLE(CSS_FILTERS)
+    , m_hasSoftwareFilters(false)
+#endif
 {
     init();
 

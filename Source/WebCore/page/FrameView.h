@@ -369,6 +369,11 @@ public:
     bool inProgrammaticScroll() const { return m_inProgrammaticScroll; }
     void setInProgrammaticScroll(bool programmaticScroll) { m_inProgrammaticScroll = programmaticScroll; }
 
+#if ENABLE(CSS_FILTERS)
+    void setHasSoftwareFilters(bool hasSoftwareFilters) { m_hasSoftwareFilters = hasSoftwareFilters; }
+    bool hasSoftwareFilters() const { return m_hasSoftwareFilters; }
+#endif
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
@@ -564,6 +569,10 @@ private:
     static double s_initialDeferredRepaintDelayDuringLoading;
     static double s_maxDeferredRepaintDelayDuringLoading;
     static double s_deferredRepaintDelayIncrementDuringLoading;
+
+#if ENABLE(CSS_FILTERS)
+    bool m_hasSoftwareFilters;
+#endif
 };
 
 inline void FrameView::incrementVisuallyNonEmptyCharacterCount(unsigned count)

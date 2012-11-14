@@ -5262,6 +5262,9 @@ void RenderLayer::updateOrRemoveFilterEffectRenderer()
         RenderingMode renderingMode = renderer()->frame()->page()->settings()->acceleratedFiltersEnabled() ? Accelerated : Unaccelerated;
         filterRenderer->setRenderingMode(renderingMode);
         filterInfo->setRenderer(filterRenderer.release());
+        
+        // We can optimize away code paths in other places if we know that there are no software filters.
+        renderer()->document()->view()->setHasSoftwareFilters(true);
     }
 
     // If the filter fails to build, remove it from the layer. It will still attempt to
