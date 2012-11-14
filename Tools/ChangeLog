@@ -1,3 +1,16 @@
+2012-11-14  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt][ARM] Fix 'nullptr' is a keyword in C++11 [-Wc++0x-compat] warning
+        https://bugs.webkit.org/show_bug.cgi?id=102083
+
+        Reviewed by Csaba Osztrogonác.
+
+        Modified compiler name regex in condition that tests if -std=c++0x, c++11,
+        gnu++0x or gnu++11 are enabled in order to match linux-arm-gnueabi-g++ too,
+        thus enabling -Wno-c++0x-compat also on ARM compiler.
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2012-11-14  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         REGRESSION(r133757): Causing webkitpy unit tests to fail
