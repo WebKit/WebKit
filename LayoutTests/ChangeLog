@@ -2,6 +2,15 @@
 
         Unreviewed GTK gardening.
 
+        Adding back and updating baselines that were removed by accident in r133908.
+
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.png:
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.txt: Added.
+
+2012-11-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
         Adding or updating baselines for changes in r134618.
         Adding timeout expectations for
         - fast/dom/Window/open-window-min-size.html, added in r134586 and
