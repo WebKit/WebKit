@@ -1,3 +1,8 @@
+2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Marked fake-mouse-move tests as failing.
+        https://bugs.webkit.org/show_bug.cgi?id=102277
+
 2012-11-14  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: WrongDocumentError
