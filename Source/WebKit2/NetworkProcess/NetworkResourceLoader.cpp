@@ -224,7 +224,7 @@ void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& re
     OwnPtr<ResourceRequest> newRequest = responseMap().waitForResponse(requestID);
     request = *newRequest;
 
-    NetworkProcess::shared().networkResourceLoadScheduler().receivedRedirect(m_identifier, request.url());
+    RunLoop::main()->dispatch(WTF::bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), m_identifier, request.url()));
 }
 
 void NetworkResourceLoader::didSendData(WebCore::ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/)

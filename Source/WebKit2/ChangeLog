@@ -1,3 +1,17 @@
+2012-11-13  Brady Eidson  <beidson@apple.com>
+
+        REGRESSION(r134328) - ASSERT(isMainThread()) when subresources redirect in the NetworkProcessPass through
+        https://bugs.webkit.org/show_bug.cgi?id=102167
+
+        Reviewed by Simon Fraser.
+
+        willSendRequest comes in on a background thread but we need to do HostRecord accounting on the main thread.
+
+        So we'll just dispatch the receivedRedirect call to the main thread RunLoop.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRequest):
+
 2012-11-13  Timothy Hatcher  <timothy@apple.com>
 
         Make InspectorFrontendHost.moveWindowBy work in WebKit2 for Mac.
