@@ -1,3 +1,82 @@
+2012-11-14  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][WK2] Rename variables, structures and functions of the MiniBrowser.
+        https://bugs.webkit.org/show_bug.cgi?id=101517
+
+        Reviewed by Gyuyoung Kim.
+
+        Rename variables, structures and functions of the MiniBrowser
+        for the naming consistency.
+
+        1) Browser_Window* {app_data|browser_window|window} -> window
+
+        2) Browser_Window::webview -> Browser_Window::ewk_view
+             The webkit API functions are ewk_view_xxx not webview_xxx.
+             So using ewk_view will be better than webview.
+
+        3) Browser_Window::window -> Browser_Window::elm_window
+             The name is changed to be distinguished with 'Browser_Window *window'
+
+        4) browser_{window|view}_find() -> window_find_with_{elm_window|ewk_view}()
+             This is changed because the name of the function can be confused.
+             Currently, browser_window_find() returns Browser_Window*. And
+             browser_view_find() also returns Browser_Window*.
+
+        5) FileSelectorData -> File_Selector_Data / AuthData -> Auth_Data
+             The type definition is moved to the top of the source file
+             and the name is changed to follow EFL style.
+
+        * MiniBrowser/efl/main.c:
+        (miniBrowserViewSmartClass):
+        (_Browser_Window):
+        (_File_Selector_Data):
+        (_Auth_Data):
+        (window_find_with_ewk_view):
+        (window_free):
+        (on_key_down):
+        (view_focus_set):
+        (on_mouse_down):
+        (title_set):
+        (on_title_changed):
+        (on_url_changed):
+        (on_back_forward_list_changed):
+        (on_new_window):
+        (on_close_window):
+        (on_progress):
+        (on_error):
+        (on_download_request):
+        (close_file_picker):
+        (on_filepicker_parent_deletion):
+        (on_filepicker_deletion):
+        (on_fileselector_done):
+        (on_file_chooser_request):
+        (on_download_finished):
+        (on_download_failed):
+        (on_favicon_received):
+        (on_view_icon_changed):
+        (on_url_bar_activated):
+        (on_url_bar_clicked):
+        (on_back_button_clicked):
+        (on_forward_button_clicked):
+        (on_refresh_button_clicked):
+        (on_javascript_alert):
+        (on_javascript_confirm):
+        (on_javascript_prompt):
+        (on_window_geometry_get):
+        (on_window_geometry_set):
+        (on_fullscreen_deny):
+        (on_fullscreen_enter):
+        (on_fullscreen_exit):
+        (auth_popup_close):
+        (on_auth_cancel):
+        (on_auth_ok):
+        (on_authentication_request):
+        (on_tooltip_text_set):
+        (on_tooltip_text_unset):
+        (on_home_button_clicked):
+        (on_window_deletion):
+        (window_create):
+
 2012-11-14  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         webkitpy: Update the EFL list of bots
