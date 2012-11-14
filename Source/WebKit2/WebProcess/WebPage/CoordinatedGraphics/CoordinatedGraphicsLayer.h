@@ -69,7 +69,6 @@ public:
 
     virtual void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&) = 0;
 
-    virtual void attachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
     virtual void syncFixedLayers() = 0;
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, int& atlasID, WebCore::IntPoint&) = 0;
@@ -151,7 +150,7 @@ public:
     virtual void removeTile(int tileID) OVERRIDE;
     virtual PassOwnPtr<GraphicsContext> beginContentUpdate(const IntSize&, int& atlasID, IntPoint&) OVERRIDE;
 
-    void setCoordinatedGraphicsLayerClient(WebKit::CoordinatedGraphicsLayerClient*);
+    void setCoordinator(WebKit::CoordinatedGraphicsLayerClient*);
 
     void adjustVisibleRect();
     void purgeBackingStores();
@@ -213,7 +212,7 @@ private:
     float m_effectiveOpacity;
     TransformationMatrix m_effectiveTransform;
 
-    WebKit::CoordinatedGraphicsLayerClient* m_CoordinatedGraphicsLayerClient;
+    WebKit::CoordinatedGraphicsLayerClient* m_coordinator;
     OwnPtr<TiledBackingStore> m_mainBackingStore;
     OwnPtr<TiledBackingStore> m_previousBackingStore;
     float m_contentsScale;

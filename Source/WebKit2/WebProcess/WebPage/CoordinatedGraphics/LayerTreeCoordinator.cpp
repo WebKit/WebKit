@@ -66,7 +66,7 @@ LayerTreeCoordinator::~LayerTreeCoordinator()
 
     HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator end = registeredLayers.end();
     for (HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator it = registeredLayers.begin(); it != end; ++it)
-        (*it)->setCoordinatedGraphicsLayerClient(0);
+        (*it)->setCoordinator(0);
 }
 
 LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
@@ -98,7 +98,6 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
     m_layerTreeContext.webLayerID = toCoordinatedGraphicsLayer(webRootLayer)->id();
 
     m_nonCompositedContentLayer = GraphicsLayer::create(this, this);
-    toCoordinatedGraphicsLayer(m_rootLayer.get())->setCoordinatedGraphicsLayerClient(this);
 #ifndef NDEBUG
     m_nonCompositedContentLayer->setName("LayerTreeCoordinator non-composited content");
 #endif
@@ -327,15 +326,6 @@ void LayerTreeCoordinator::syncLayerFilters(WebLayerID id, const FilterOperation
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetCompositingLayerFilters(id, filters));
 }
 #endif
-
-void LayerTreeCoordinator::attachLayer(CoordinatedGraphicsLayer* layer)
-{
-    ASSERT(!m_registeredLayers.contains(layer));
-    m_registeredLayers.add(layer);
-
-    layer->setContentsScale(m_contentsScale);
-    layer->adjustVisibleRect();
-}
 
 void LayerTreeCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
 {
@@ -584,9 +574,12 @@ void LayerTreeCoordinator::paintContents(const WebCore::GraphicsLayer* graphicsL
 
 PassOwnPtr<GraphicsLayer> LayerTreeCoordinator::createGraphicsLayer(GraphicsLayerClient* client)
 {
-    CoordinatedGraphicsLayer* newLayer = new CoordinatedGraphicsLayer(client);
-    newLayer->setCoordinatedGraphicsLayerClient(this);
-    return adoptPtr(newLayer);
+    CoordinatedGraphicsLayer* layer = new CoordinatedGraphicsLayer(client);
+    layer->setCoordinator(this);
+    m_registeredLayers.add(layer);
+    layer->setContentsScale(m_contentsScale);
+    layer->adjustVisibleRect();
+    return adoptPtr(layer);
 }
 
 bool LayerTreeHost::supportsAcceleratedCompositing()
