@@ -750,6 +750,24 @@ void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOp
     const WebCore::IntPoint scrollPosition = m_webPage->mainFrame()->view()->scrollPosition();
     caretRect.move(scrollPosition.x(), scrollPosition.y());
 
+    // Calculate the offset for contentEditable since the marker offsets are relative to the node.
+    // Get caret position. Though the spelling markers might no longer exist, if this method is called we can assume the caret was placed on top of a marker earlier.
+    VisiblePosition caretPosition = m_currentFocusElement->document()->frame()->selection()->selection().visibleStart();
+
+    // Create a range from the start to end of word.
+    RefPtr<Range> rangeSelection = VisibleSelection(startOfWord(caretPosition), endOfWord(caretPosition)).toNormalizedRange();
+    if (!rangeSelection)
+        return;
+
+    unsigned location = 0;
+    unsigned length = 0;
+    TextIterator::getLocationAndLengthFromRange(m_currentFocusElement.get(), rangeSelection.get(), location, length);
+
+    if (location != notFound && length) {
+        spellCheckingOptionRequest.startTextPosition = location;
+        spellCheckingOptionRequest.endTextPosition = location + length;
+    }
+
     InputLog(LogLevelInfo, "InputHandler::requestSpellingCheckingOptions caretRect topLeft=(%d,%d), bottomRight=(%d,%d), startTextPosition=%d, endTextPosition=%d"
                             , caretRect.minXMinYCorner().x(), caretRect.minXMinYCorner().y(), caretRect.maxXMaxYCorner().x(), caretRect.maxXMaxYCorner().y()
                             , spellCheckingOptionRequest.startTextPosition, spellCheckingOptionRequest.endTextPosition);

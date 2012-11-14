@@ -1,3 +1,20 @@
+2012-11-14  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Use mispelled-marker offsets relative to the element
+        https://bugs.webkit.org/show_bug.cgi?id=102236
+
+        Reviewed by Rob Buis.
+
+        DocumentMarker offsets are calculated relative to a node. This is causing
+        problems for contenteditable which can have numerous nodes. Creating a Range around a word
+        and calculating its location and length gives us the correct override in this case for starting
+        and ending points to pass to IMF.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestSpellingCheckingOptions):
+
 2012-11-13  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Fully restore both zoom and scroll when leaving an input field.
