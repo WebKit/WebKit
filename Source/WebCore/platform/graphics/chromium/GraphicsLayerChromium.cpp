@@ -108,7 +108,6 @@ GraphicsLayerChromium::GraphicsLayerChromium(GraphicsLayerClient* client)
     m_layer->layer()->setDrawsContent(m_drawsContent && m_contentsVisible);
     m_layer->layer()->setScrollClient(this);
     m_layer->setAutomaticallyComputeRasterScale(true);
-    updateDebugIndicators();
 }
 
 GraphicsLayerChromium::~GraphicsLayerChromium()
@@ -651,25 +650,6 @@ PlatformLayer* GraphicsLayerChromium::platformLayer() const
     return m_transformLayer ? m_transformLayer.get() : m_layer->layer();
 }
 
-void GraphicsLayerChromium::setDebugBackgroundColor(const Color& color)
-{
-    if (color.isValid())
-        m_layer->layer()->setBackgroundColor(color.rgb());
-    else
-        m_layer->layer()->setBackgroundColor(static_cast<RGBA32>(0));
-}
-
-void GraphicsLayerChromium::setDebugBorder(const Color& color, float borderWidth)
-{
-    if (color.isValid()) {
-        m_layer->layer()->setDebugBorderColor(color.rgb());
-        m_layer->layer()->setDebugBorderWidth(borderWidth);
-    } else {
-        m_layer->layer()->setDebugBorderColor(static_cast<RGBA32>(0));
-        m_layer->layer()->setDebugBorderWidth(0);
-    }
-}
-
 void GraphicsLayerChromium::updateChildList()
 {
     WebLayer* childHost = m_transformLayer ? m_transformLayer.get() : m_layer->layer();
@@ -743,7 +723,6 @@ void GraphicsLayerChromium::updateChildrenTransform()
 void GraphicsLayerChromium::updateMasksToBounds()
 {
     m_layer->layer()->setMasksToBounds(m_masksToBounds);
-    updateDebugIndicators();
 }
 
 void GraphicsLayerChromium::updateLayerPreserves3D()
@@ -818,8 +797,6 @@ void GraphicsLayerChromium::updateLayerIsDrawable()
         if (m_linkHighlight)
             m_linkHighlight->invalidate();
     }
-
-    updateDebugIndicators();
 }
 
 void GraphicsLayerChromium::updateLayerBackgroundColor()
@@ -866,13 +843,7 @@ void GraphicsLayerChromium::setupContentsLayer(WebLayer* contentsLayer)
         // Insert the content layer first. Video elements require this, because they have
         // shadow content that must display in front of the video.
         m_layer->layer()->insertChild(m_contentsLayer, 0);
-
-        if (isShowingDebugBorder()) {
-            m_contentsLayer->setDebugBorderColor(Color(0, 0, 128, 180).rgb());
-            m_contentsLayer->setDebugBorderWidth(1);
-        }
     }
-    updateDebugIndicators();
     updateNames();
 }
 

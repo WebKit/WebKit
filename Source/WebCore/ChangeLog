@@ -1,3 +1,28 @@
+2012-11-13  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Pass showDebugBorders directly to WebLayerTreeSettings, don't use the GraphicsLayer border width setting.
+        https://bugs.webkit.org/show_bug.cgi?id=102130
+
+        Reviewed by James Robinson.
+
+        The current method of setting debug borders on GraphicsLayers requires
+        every GraphicsLayerClient to set the value on the layer(s) it
+        represents. This skips the NonCompositedContentHost as well as any
+        other clients other than RenderLayerBacking - including layers from the
+        inspector.
+
+        Instead, pass the debug border setting directly to the
+        WebLayerTreeSettings where the compositor can use the flag to enable
+        borders on all layers globally.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::GraphicsLayerChromium):
+        (WebCore::GraphicsLayerChromium::updateMasksToBounds):
+        (WebCore::GraphicsLayerChromium::updateLayerIsDrawable):
+        (WebCore::GraphicsLayerChromium::setupContentsLayer):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        (GraphicsLayerChromium):
+
 2012-11-13  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Enable calendar picker for input types datetime/datetime-local

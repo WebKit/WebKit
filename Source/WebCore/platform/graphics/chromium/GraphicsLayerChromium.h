@@ -131,9 +131,6 @@ public:
 
     virtual WebKit::WebLayer* platformLayer() const;
 
-    virtual void setDebugBackgroundColor(const Color&);
-    virtual void setDebugBorder(const Color&, float borderWidth);
-
     virtual void setAppliesPageScale(bool appliesScale) OVERRIDE;
     virtual bool appliesPageScale() const OVERRIDE;
 

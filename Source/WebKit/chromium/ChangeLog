@@ -1,3 +1,14 @@
+2012-11-13  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Pass showDebugBorders directly to WebLayerTreeSettings, don't use the GraphicsLayer border width setting.
+        https://bugs.webkit.org/show_bug.cgi?id=102130
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit):
+
 2012-11-13  Keishi Hattori  <keishi@webkit.org>
 
         Enable datalist UI for input types week and month

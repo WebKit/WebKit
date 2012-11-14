@@ -48,6 +48,7 @@ public:
     struct Settings {
         Settings()
             : acceleratePainting(false)
+            , showDebugBorders(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
             , showPaintRects(false)
@@ -63,6 +64,7 @@ public:
         }
 
         bool acceleratePainting;
+        bool showDebugBorders;
         bool showFPSCounter;
         bool showPlatformLayerTree;
         bool showPaintRects;
