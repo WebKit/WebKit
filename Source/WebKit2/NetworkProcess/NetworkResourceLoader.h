@@ -114,9 +114,6 @@ private:
     RefPtr<RemoteNetworkingContext> m_networkingContext;
     RefPtr<WebCore::ResourceHandle> m_handle;    
     RefPtr<NetworkConnectionToWebProcess> m_connection;
-
-    // FIXME (NetworkProcess): Response data lifetime should be managed outside NetworkRequest.
-    RefPtr<WebCore::ResourceBuffer> m_buffer;
 };
 
 void didReceiveWillSendRequestHandled(uint64_t requestID, const WebCore::ResourceRequest&);

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkProcessConnection.h"
 
+#include "DataReference.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
@@ -85,6 +86,21 @@ void NetworkProcessConnection::didReceiveResponse(ResourceLoadIdentifier resourc
     WebProcess::shared().webResourceLoadScheduler().didReceiveResponse(resourceLoadIdentifier, response);
 }
 
+void NetworkProcessConnection::didReceiveData(ResourceLoadIdentifier resourceLoadIdentifier, const CoreIPC::DataReference& data, int64_t encodedDataLength, bool allAtOnce)
+{
+    WebProcess::shared().webResourceLoadScheduler().didReceiveData(resourceLoadIdentifier, reinterpret_cast<const char*>(data.data()), data.size(), encodedDataLength, allAtOnce);
+}
+
+void NetworkProcessConnection::didFinishResourceLoad(ResourceLoadIdentifier resourceLoadIdentifier, double finishTime)
+{
+    WebProcess::shared().webResourceLoadScheduler().didFinishResourceLoad(resourceLoadIdentifier, finishTime);
+}
+
+void NetworkProcessConnection::didFailResourceLoad(ResourceLoadIdentifier resourceLoadIdentifier, const ResourceError& error)
+{
+    WebProcess::shared().webResourceLoadScheduler().didFailResourceLoad(resourceLoadIdentifier, error);
+}
+
 void NetworkProcessConnection::didReceiveResource(ResourceLoadIdentifier resourceLoadIdentifier, const ShareableResource::Handle& handle, double finishTime)
 {
     RefPtr<ResourceBuffer> resourceBuffer;
@@ -96,11 +112,6 @@ void NetworkProcessConnection::didReceiveResource(ResourceLoadIdentifier resourc
         resourceBuffer = ResourceBuffer::create();
     
     WebProcess::shared().webResourceLoadScheduler().didReceiveResource(resourceLoadIdentifier, *resourceBuffer, finishTime);
-}
-
-void NetworkProcessConnection::didFailResourceLoad(ResourceLoadIdentifier resourceLoadIdentifier, const ResourceError& error)
-{
-    WebProcess::shared().webResourceLoadScheduler().didFailResourceLoad(resourceLoadIdentifier, error);
 }
 
 } // namespace WebKit

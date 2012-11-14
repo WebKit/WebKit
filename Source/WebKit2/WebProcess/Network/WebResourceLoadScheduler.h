@@ -57,10 +57,14 @@ public:
 
     virtual void setSerialLoadingEnabled(bool) OVERRIDE;
 
+    // FIXME (NetworkProcess): Get the ResourceLoadScheduler out of the business of vending this data directly to ResourceLoaders.
+    // The Messages should be sent to an object that proxies the ResourceLoader directly.
     void willSendRequest(ResourceLoadIdentifier, WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
     void didReceiveResponse(ResourceLoadIdentifier, const WebCore::ResourceResponse&);
-    void didReceiveResource(ResourceLoadIdentifier, const WebCore::ResourceBuffer&, double finishTime);
+    void didReceiveData(ResourceLoadIdentifier, const char*, int, int64_t encodedDataLength, bool allAtOnce);
+    void didFinishResourceLoad(ResourceLoadIdentifier, double finishTime);
     void didFailResourceLoad(ResourceLoadIdentifier, const WebCore::ResourceError&);
+    void didReceiveResource(ResourceLoadIdentifier, const WebCore::ResourceBuffer&, double finishTime);
 
 private:
     void scheduleLoad(WebCore::ResourceLoader*, WebCore::ResourceLoadPriority);

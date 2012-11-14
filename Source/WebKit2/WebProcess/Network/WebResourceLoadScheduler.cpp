@@ -205,6 +205,24 @@ void WebResourceLoadScheduler::didReceiveResponse(ResourceLoadIdentifier identif
     loader->didReceiveResponse(response);
 }
 
+void WebResourceLoadScheduler::didReceiveData(ResourceLoadIdentifier identifier, const char* data, int size, int64_t encodedDataLength, bool allAtOnce)
+{
+    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
+    ASSERT(loader);
+
+    LOG(Network, "(WebProcess) WebResourceLoadScheduler::didReceiveData of size %i for '%s'", size, loader->url().string().utf8().data());
+    loader->didReceiveData(data, size, encodedDataLength, allAtOnce);
+}
+
+void WebResourceLoadScheduler::didFinishResourceLoad(ResourceLoadIdentifier identifier, double finishTime)
+{
+    RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);
+    ASSERT(loader);
+
+    LOG(Network, "(WebProcess) WebResourceLoadScheduler::didFinishResourceLoad for '%s'", loader->url().string().utf8().data());
+    loader->didFinishLoading(finishTime);
+}
+
 void WebResourceLoadScheduler::didReceiveResource(ResourceLoadIdentifier identifier, const ResourceBuffer& buffer, double finishTime)
 {    
     RefPtr<ResourceLoader> loader = m_pendingResourceLoaders.get(identifier);

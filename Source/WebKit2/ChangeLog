@@ -1,3 +1,36 @@
+2012-11-14  Brady Eidson  <beidson@apple.com>
+
+        Deliver data from NetworkProcess to resources progressively.
+        https://bugs.webkit.org/show_bug.cgi?id=102171
+
+        Reviewed by Alexey Proskuryakov.
+
+        Instead of buffering up the data for an entire resource and delivering it in one chunk, we need
+        to deliver data progressively.
+
+        This allows progressive parsing of textual resources and progressive rendering of images,
+        as well as allows endless multipart resources (e.g., multipart jpegs) to work at all.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveData): Don't buffer data locally (for now) but rather
+          pass it straight through to the WebProcess.
+        (WebKit::NetworkResourceLoader::didFinishLoading): Only notify didFinishLoading instead of
+          delivering a chunk of buffered data.
+        (WebKit::NetworkResourceLoader::didFail):
+        * NetworkProcess/NetworkResourceLoader.h:
+
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveData): Pass through towards ResourceLoader.
+        (WebKit::NetworkProcessConnection::didFinishResourceLoad):
+        (WebKit::NetworkProcessConnection::didFailResourceLoad):
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::didReceiveData): Hand this chunk of data to the ResourceLoader directly.
+        (WebKit::WebResourceLoadScheduler::didFinishResourceLoad):
+        * WebProcess/Network/WebResourceLoadScheduler.h:
+
 2012-11-14  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         Add platform implementation of remote web inspector server for GTK port.

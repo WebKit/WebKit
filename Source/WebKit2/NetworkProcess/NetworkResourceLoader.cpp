@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #include "BlockingResponseMap.h"
+#include "DataReference.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
@@ -148,49 +149,30 @@ void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceRe
     connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::DidReceiveResponse(m_identifier, response), 0);
 }
 
-void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int /*encodedDataLength*/)
+void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
 {
-    // FIXME (NetworkProcess): We have to progressively notify the WebProcess as data is received.
-    if (!m_buffer)
-        m_buffer = ResourceBuffer::create();
-    m_buffer->append(data, length);
+    // FIXME (NetworkProcess): For the memory cache we'll also need to cache the response data here.
+    // Such buffering will need to be thread safe, as this callback is happening on a background thread.
+    
+    CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(data), length);
+    connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::DidReceiveData(m_identifier, dataReference, encodedDataLength, false), 0);
 }
 
 void NetworkResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
 {
-    // FIXME (NetworkProcess): Currently this callback can come in on a non-main thread.
-    // This is okay for now since resource buffers are per-NetworkResourceLoader.
-    // Once we manage memory in an actual memory cache that also includes SharedMemory blocks this will get complicated.
-    // Maybe we should marshall it to the main thread?
-
-    ShareableResource::Handle handle;
-
-    if (m_buffer && m_buffer->size()) {
-        // FIXME (NetworkProcess): We shouldn't be creating this SharedMemory on demand here.
-        // SharedMemory blocks need to be managed as part of the cache backing store.
-        RefPtr<SharedMemory> sharedBuffer = SharedMemory::create(m_buffer->size());
-        memcpy(sharedBuffer->data(), m_buffer->data(), m_buffer->size());
-
-        RefPtr<ShareableResource> shareableResource = ShareableResource::create(sharedBuffer.release(), 0, m_buffer->size());
-
-        // FIXME (NetworkProcess): Handle errors from createHandle();
-        if (!shareableResource->createHandle(handle))
-            LOG_ERROR("Failed to create handle to shareable resource memory\n");
-    }
-
-    connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::DidReceiveResource(m_identifier, handle, finishTime), 0);
+    // FIXME (NetworkProcess): For the memory cache we'll need to update the finished status of the cached resource here.
+    // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
+    connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::DidFinishResourceLoad(m_identifier, finishTime), 0);
     scheduleStopOnMainThread();
 }
 
 void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
+    // FIXME (NetworkProcess): For the memory cache we'll need to update the finished status of the cached resource here.
+    // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
     connectionToWebProcess()->connection()->send(Messages::NetworkProcessConnection::DidFailResourceLoad(m_identifier, error), 0);
     scheduleStopOnMainThread();
 }
-
-// FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
-// Once we know what they are they can be removed.
-
 
 static BlockingResponseMap<ResourceRequest*>& responseMap()
 {
@@ -226,6 +208,9 @@ void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& re
 
     RunLoop::main()->dispatch(WTF::bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), m_identifier, request.url()));
 }
+
+// FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
+// Once we know what they are they can be removed.
 
 void NetworkResourceLoader::didSendData(WebCore::ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/)
 {

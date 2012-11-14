@@ -33,6 +33,10 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+namespace CoreIPC {
+class DataReference;
+}
+
 namespace WebCore {
 class ResourceError;
 class ResourceRequest;
@@ -67,8 +71,11 @@ private:
 
     void willSendRequest(uint64_t requestID, ResourceLoadIdentifier, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void didReceiveResponse(ResourceLoadIdentifier, const WebCore::ResourceResponse&);
-    void didReceiveResource(ResourceLoadIdentifier, const ShareableResource::Handle&, double finishTime);
+    void didReceiveData(ResourceLoadIdentifier, const CoreIPC::DataReference&, int64_t encodedDataLength, bool allAtOnce);
+    void didFinishResourceLoad(ResourceLoadIdentifier, double finishTime);
     void didFailResourceLoad(ResourceLoadIdentifier, const WebCore::ResourceError&);
+
+    void didReceiveResource(ResourceLoadIdentifier, const ShareableResource::Handle&, double finishTime);
 
     // The connection from the web process to the network process.
     RefPtr<CoreIPC::Connection> m_connection;
