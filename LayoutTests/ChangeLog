@@ -1,3 +1,12 @@
+2012-11-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Moving some expectations into a more proper section while
+        merging the others.
+
+        * platform/gtk/TestExpectations:
+
 2012-11-14  Mihnea Ovidenie  <mihnea@adobe.com>
 
         After r134205 was rolled out in http://trac.webkit.org/changeset/134425,
