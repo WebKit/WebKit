@@ -139,7 +139,7 @@ public:
     }
 
     ClipRects()
-        : m_refCnt(0)
+        : m_refCnt(1)
         , m_fixed(false)
     {
     }
@@ -193,7 +193,7 @@ private:
         : m_overflowClipRect(r)
         , m_fixedClipRect(r)
         , m_posClipRect(r)
-        , m_refCnt(0)
+        , m_refCnt(1)
         , m_fixed(false)
     {
     }
@@ -202,7 +202,7 @@ private:
         : m_overflowClipRect(other.overflowClipRect())
         , m_fixedClipRect(other.fixedClipRect())
         , m_posClipRect(other.posClipRect())
-        , m_refCnt(0)
+        , m_refCnt(1)
         , m_fixed(other.fixed())
     {
     }
