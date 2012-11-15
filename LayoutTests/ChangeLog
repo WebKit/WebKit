@@ -1,3 +1,9 @@
+2012-11-15  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. WebGL not supported on Windows. Skipping fast/images/webgl-teximage2d.html.
+
+        * platform/win/TestExpectations:
+
 2012-11-15  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Update chromium test expectations.
