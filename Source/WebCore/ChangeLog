@@ -1,3 +1,15 @@
+2012-11-14  Adam Barth  <abarth@webkit.org>
+
+        document variable in Document::axObjectCache is actually the topDocument
+        https://bugs.webkit.org/show_bug.cgi?id=101966
+
+        Reviewed by Chris Fleizach.
+
+        Name change requested by Darin Adler.
+
+        * dom/Document.cpp:
+        (WebCore::Document::axObjectCache):
+
 2012-11-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         [CF]: XMLHttpRequest "timeout" events firing as "error" events
