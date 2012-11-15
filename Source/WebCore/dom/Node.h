@@ -311,9 +311,6 @@ public:
     virtual void finishParsingChildren() { }
     virtual void beginParsingChildren() { }
 
-    // Called on the focused node right before dispatching an unload event.
-    virtual void aboutToUnload() { }
-
     // For <link> and <style> elements.
     virtual bool sheetLoaded() { return true; }
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool /* error loading subresource */) { }

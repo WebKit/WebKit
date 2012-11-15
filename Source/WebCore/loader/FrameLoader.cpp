@@ -68,6 +68,7 @@
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
@@ -399,8 +400,8 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
         if (m_frame->document()) {
             if (m_didCallImplicitClose && !m_wasUnloadEventEmitted) {
                 Node* currentFocusedNode = m_frame->document()->focusedNode();
-                if (currentFocusedNode)
-                    currentFocusedNode->aboutToUnload();
+                if (currentFocusedNode && currentFocusedNode->toInputElement())
+                    currentFocusedNode->toInputElement()->endEditing();
                 if (m_pageDismissalEventBeingDispatched == NoDismissal) {
                     if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide) {
                         m_pageDismissalEventBeingDispatched = PageHideDismissal;

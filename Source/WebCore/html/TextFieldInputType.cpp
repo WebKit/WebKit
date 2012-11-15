@@ -193,8 +193,7 @@ void TextFieldInputType::forwardEvent(Event* event)
 void TextFieldInputType::handleBlurEvent()
 {
     InputType::handleBlurEvent();
-    if (Frame* frame = element()->document()->frame())
-        frame->editor()->textFieldDidEndEditing(element());
+    element()->endEditing();
 }
 
 bool TextFieldInputType::shouldSubmitImplicitly(Event* event)

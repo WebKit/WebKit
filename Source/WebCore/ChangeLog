@@ -1,3 +1,31 @@
+2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
+
+        Remove Node::aboutToUnload and be more explicit about what it was for
+        https://bugs.webkit.org/show_bug.cgi?id=102357
+
+        Reviewed by Ryosuke Niwa.
+
+        Node::aboutToUnload was confusingly named because it was only called on
+        the focused node, and it really only existed to support notifying the
+        embedder that inputs should stop being editable on unload. Instead add
+        a new method to HTMLInputElement that ends editing and call that
+        explicitly in the FrameLoader so it's clear what this is about.
+
+        No new tests, this is just a refactoring.
+
+        * dom/Node.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::endEditing):
+            New method that handles finishing editing.
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleBlurEvent):
+            Use the new method to reduce code duplication.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+            Be explicit about what this check was for.
+
 2012-11-15  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Add missing WebRTCPeerConnectionHandlerClient::didAddRemoteDataChannel

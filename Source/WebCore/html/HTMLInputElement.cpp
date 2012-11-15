@@ -415,16 +415,13 @@ void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
         HTMLTextFormControlElement::updateFocusAppearance(restorePreviousSelection);
 }
 
-void HTMLInputElement::aboutToUnload()
+void HTMLInputElement::endEditing()
 {
-    if (!isTextField() || !focused())
+    if (!isTextField())
         return;
 
-    Frame* frame = document()->frame();
-    if (!frame)
-        return;
-
-    frame->editor()->textFieldDidEndEditing(this);
+    if (Frame* frame = document()->frame())
+        frame->editor()->textFieldDidEndEditing(this);
 }
 
 bool HTMLInputElement::shouldUseInputMethod()

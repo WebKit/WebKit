@@ -287,6 +287,8 @@ public:
 
     virtual const AtomicString& name() const OVERRIDE;
 
+    void endEditing();
+
     static Vector<FileChooserFileInfo> filesFromFileInputFormControlState(const FormControlState&);
 
     virtual void setRangeText(const String& replacement, ExceptionCode&) OVERRIDE;
@@ -320,7 +322,6 @@ private:
     virtual bool isEnumeratable() const;
     virtual bool supportLabels() const OVERRIDE;
     virtual void updateFocusAppearance(bool restorePreviousSelection);
-    virtual void aboutToUnload();
     virtual bool shouldUseInputMethod();
 
     virtual bool isTextFormControl() const { return isTextField(); }
