@@ -1,3 +1,14 @@
+2012-11-15  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update RTCPeerConnection states to match the latest editors draft
+        https://bugs.webkit.org/show_bug.cgi?id=102382
+
+        Reviewed by Adam Barth.
+
+        Updating readyState & iceState, and adding iceGatheringState.
+
+        * src/AssertMatchingEnums.cpp:
+
 2012-11-15  Tien-Ren Chen  <trchen@chromium.org>
 
         Use correct unscaled document size when calculating scale limits

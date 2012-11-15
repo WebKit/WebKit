@@ -39,21 +39,36 @@ class WebRTCPeerConnectionHandlerClient {
 public:
     enum ReadyState {
         ReadyStateNew = 1,
-        ReadyStateOpening = 2,
-        ReadyStateActive = 3,
-        ReadyStateClosing = 4,
-        ReadyStateClosed = 5
+        ReadyStateHaveLocalOffer = 2,
+        ReadyStateHaveLocalPrAnswer = 3,
+        ReadyStateHaveRemotePrAnswer = 4,
+        ReadyStateActive = 5,
+        ReadyStateClosed = 6,
+
+        // DEPRECATED
+        ReadyStateClosing = 7,
+        ReadyStateOpening = 8
     };
 
     enum ICEState {
-        ICEStateNew = 1,
-        ICEStateGathering = 2,
-        ICEStateWaiting = 3,
-        ICEStateChecking = 4,
-        ICEStateConnected = 5,
-        ICEStateCompleted = 6,
-        ICEStateFailed = 7,
-        ICEStateClosed = 8
+        ICEStateStarting = 1,
+        ICEStateChecking = 2,
+        ICEStateConnected = 3,
+        ICEStateCompleted = 4,
+        ICEStateFailed = 5,
+        ICEStateDisconnected = 6,
+        ICEStateClosed = 7,
+
+        // DEPRECATED
+        ICEStateNew = 8,
+        ICEStateGathering = 9,
+        ICEStateWaiting = 10
+    };
+
+    enum ICEGatheringState {
+        ICEGatheringStateNew = 1,
+        ICEGatheringStateGathering = 2,
+        ICEGatheringStateComplete = 3
     };
 
     virtual ~WebRTCPeerConnectionHandlerClient() { }
@@ -61,6 +76,7 @@ public:
     virtual void negotiationNeeded() = 0;
     virtual void didGenerateICECandidate(const WebRTCICECandidate&) = 0;
     virtual void didChangeReadyState(ReadyState) = 0;
+    virtual void didChangeICEGatheringState(ICEGatheringState) = 0;
     virtual void didChangeICEState(ICEState) = 0;
     virtual void didAddRemoteStream(const WebMediaStreamDescriptor&) = 0;
     virtual void didRemoveRemoteStream(const WebMediaStreamDescriptor&) = 0;
