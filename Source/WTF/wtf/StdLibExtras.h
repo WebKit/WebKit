@@ -182,7 +182,7 @@ enum BinarySearchMode {
 };
 
 // Binary search algorithm, calls extractKey on pre-sorted elements in array,
-// compares result with key (KeyTypes should be comparable with '--', '<', '>').
+// compares result with key (KeyTypes should be comparable with '==', and '<').
 template<typename ArrayElementType, typename KeyType, KeyType(*extractKey)(ArrayElementType*)>
 inline ArrayElementType* binarySearch(ArrayElementType* array, size_t size, KeyType key, BinarySearchMode mode = KeyMustBePresentInArray)
 {
