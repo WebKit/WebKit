@@ -1,3 +1,24 @@
+2012-11-15  Erik Arvidsson  <arv@chromium.org>
+
+        Unreviewed gardening.
+
+        Rebaselining pixel tests after r102427
+
+        * platform/chromium-mac-lion/svg/custom/baseval-animval-equality-expected.png:
+        * platform/chromium-mac-lion/svg/custom/baseval-animval-equality-expected.txt: Copied from LayoutTests/platform/gtk/svg/custom/baseval-animval-equality-expected.txt.
+        * platform/chromium-mac-lion/svg/dom/SVGLengthList-basics-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/baseval-animval-equality-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/baseval-animval-equality-expected.txt: Copied from LayoutTests/platform/gtk/svg/custom/baseval-animval-equality-expected.txt.
+        * platform/chromium-mac-snowleopard/svg/dom/SVGLengthList-basics-expected.png:
+        * platform/chromium-mac/svg/dom/SVGLengthList-basics-expected.png:
+        * platform/chromium-win-xp/svg/custom/baseval-animval-equality-expected.png: Added.
+        * platform/chromium-win-xp/svg/dom/SVGLengthList-basics-expected.png: Added.
+        * platform/efl-wk1/svg/dom/SVGLengthList-basics-expected.png: Renamed from LayoutTests/platform/efl/svg/dom/SVGLengthList-basics-expected.png.
+        * platform/gtk/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/mac-lion/svg/custom/baseval-animval-equality-expected.txt: Copied from LayoutTests/platform/gtk/svg/custom/baseval-animval-equality-expected.txt.
+        * platform/mac-wk2/svg/custom/baseval-animval-equality-expected.txt: Copied from LayoutTests/platform/gtk/svg/custom/baseval-animval-equality-expected.txt.
+        * platform/qt/svg/custom/baseval-animval-equality-expected.txt:
+
 2012-11-15  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Indexing tests are flaky-crashing
