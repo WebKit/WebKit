@@ -1,0 +1,39 @@
+<script src="../js/resources/js-test-pre.js"></script>
+<script src="../canvas/webgl/resources/webgl-test.js"></script>
+<canvas id="canvas" width="0" height="0"> </canvas>
+<img src="resources/green.jpg" width="0" height="0" id="image"></img>
+<script>
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var gl = create3DContext(document.getElementById("canvas"));
+if (!gl) {
+    testFailed("context does not exist");
+} else {
+    testPassed("context exists");
+}
+
+var enums = new Array();
+for (var name in gl) {
+    if (typeof gl[name] == 'number')
+        enums[gl[name]] = name;
+}
+
+var img = document.getElementById("image");
+img.onload = function() {
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    try {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        var err = gl.getError();
+        if (err != gl.NO_ERROR)
+            throw "WebGL error: " + enums[err];
+        testPassed("OK");
+    } catch (e) {
+        testFailed(e.toString());
+    }
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>

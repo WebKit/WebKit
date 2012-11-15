@@ -1,3 +1,15 @@
+2012-11-15  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] WebGL texImage2D fails with deferred image decoding
+        https://bugs.webkit.org/show_bug.cgi?id=102310
+
+        Reviewed by Kenneth Russell.
+
+        Added a test to exercise texImage2D with an Image object.
+
+        * fast/images/webgl-teximage2d-expected.txt: Added.
+        * fast/images/webgl-teximage2d.html: Added.
+
 2012-11-15  Stephen Chenney  <schenney@chromium.org>
 
         Test rebaselines after SK_IGNORE_FAST_BLURRECT has been removed

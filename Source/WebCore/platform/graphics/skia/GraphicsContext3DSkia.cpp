@@ -32,7 +32,7 @@
 
 #include "BitmapImage.h"
 #include "Image.h"
-#include "ImageSource.h"
+#include "ImageDecoder.h"
 #include "NativeImageSkia.h"
 #include "SkColorPriv.h"
 #include <wtf/OwnPtr.h>
@@ -56,14 +56,20 @@ bool GraphicsContext3D::getImageData(Image* image,
     AlphaOp neededAlphaOp = AlphaDoNothing;
     bool hasAlpha = skiaImage ? !skiaImage->bitmap().isOpaque() : true;
     if ((!skiaImage || ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && image->data()) {
-        ImageSource decoder(ImageSource::AlphaNotPremultiplied,
-                            ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
-        // Attempt to get raw unpremultiplied image data 
-        decoder.setData(image->data(), true);
-        if (!decoder.frameCount() || !decoder.frameIsCompleteAtIndex(0))
+        // Attempt to get raw unpremultiplied image data.
+        OwnPtr<ImageDecoder> decoder(adoptPtr(ImageDecoder::create(
+            *(image->data()), ImageSource::AlphaNotPremultiplied,
+            ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied)));
+        if (!decoder)
             return false;
-        hasAlpha = decoder.frameHasAlphaAtIndex(0);
-        pixels = adoptPtr(decoder.createFrameAtIndex(0));
+        decoder->setData(image->data(), true);
+        if (!decoder->frameCount())
+            return false;
+        ImageFrame* frame = decoder->frameBufferAtIndex(0);
+        if (!frame || frame->status() != ImageFrame::FrameComplete)
+            return false;
+        hasAlpha = frame->hasAlpha();
+        pixels = adoptPtr(frame->asNewNativeImage());
         if (!pixels.get() || !pixels->isDataComplete() || !pixels->bitmap().width() || !pixels->bitmap().height())
             return false;
         SkBitmap::Config skiaConfig = pixels->bitmap().config();
