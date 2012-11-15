@@ -1,5 +1,10 @@
 2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Marked more virtual/deferred/fast/images as failing.
+        https://bugs.webkit.org/show_bug.cgi?id=102294
+
+2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Marked platform/chromium/virtual/deferred/fast/images/exif-orientation.html as failing.
         https://bugs.webkit.org/show_bug.cgi?id=102294
 
