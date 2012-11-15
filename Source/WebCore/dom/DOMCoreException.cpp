@@ -47,7 +47,7 @@ static struct CoreException {
     { "InUseAttributeError", "An attempt was made to add an attribute that is already in use elsewhere." },
     { "InvalidStateError", "An attempt was made to use an object that is not, or is no longer, usable." },
     { "SYNTAX_ERR", "An invalid or illegal string was specified." },
-    { "INVALID_MODIFICATION_ERR", "An attempt was made to modify the type of the underlying object." },
+    { "InvalidModificationError", "An attempt was made to modify the type of the underlying object." },
     { "NAMESPACE_ERR", "An attempt was made to create or change an object in a way which is incorrect with regard to namespaces." },
     { "INVALID_ACCESS_ERR", "A parameter or an operation was not supported by the underlying object." },
     { "VALIDATION_ERR", "A call to a method such as insertBefore or removeChild would make the Node invalid with respect to \"partial validity\", this exception would be raised and the operation would not be done." },

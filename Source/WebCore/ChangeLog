@@ -1,3 +1,16 @@
+2012-11-14  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: InvalidModificationError
+        https://bugs.webkit.org/show_bug.cgi?id=102281
+
+        Reviewed by Kentaro Hara.
+
+        Patch 13 of 25 to update DOMException name to match the spec and Firefox.
+
+        DOMExcecption INVALID_MODIFICATION_ERR is not used in our code.
+
+        * dom/DOMCoreException.cpp:
+
 2012-11-14  Adam Barth  <abarth@webkit.org>
 
         document variable in Document::axObjectCache is actually the topDocument
