@@ -1,3 +1,23 @@
+2012-11-15  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Indexing tests are flaky-crashing
+        https://bugs.webkit.org/show_bug.cgi?id=102283
+
+        Reviewed by Tony Chang.
+
+        Processing the final task can cause IDBTransactionBackendImpl references to be released
+        by all holders. Prior to looping over the tasks (or, in an even earlier implementation,
+        swapping queues) control would fall off the end of the function. The loop termination
+        check introduced in http://wkrev.com/134529 requires that |this| be kept alive until
+        the method completes.
+
+        Test: storage/indexeddb/transaction-crash-in-tasks.html
+
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::abort): Rename self => protect.
+        (WebCore::IDBTransactionBackendImpl::commit): Rename self => protect.
+        (WebCore::IDBTransactionBackendImpl::taskTimerFired): New self-ref.
+
 2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
 
         MutationObserver wrapper should not be collected while still observing

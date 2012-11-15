@@ -111,7 +111,7 @@ void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
     // The last reference to this object may be released while performing the
     // abort steps below. We therefore take a self reference to keep ourselves
     // alive while executing this method.
-    RefPtr<IDBTransactionBackendImpl> self(this);
+    RefPtr<IDBTransactionBackendImpl> protect(this);
 
     m_state = Finished;
     m_taskTimer.stop();
@@ -203,7 +203,7 @@ void IDBTransactionBackendImpl::commit()
     // The last reference to this object may be released while performing the
     // commit steps below. We therefore take a self reference to keep ourselves
     // alive while executing this method.
-    RefPtr<IDBTransactionBackendImpl> self(this);
+    RefPtr<IDBTransactionBackendImpl> protect(this);
     ASSERT(m_state == Unused || m_state == Running);
     ASSERT(isTaskQueueEmpty());
 
@@ -244,6 +244,11 @@ void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*
         m_transaction.begin();
         m_state = Running;
     }
+
+    // The last reference to this object may be released while performing the
+    // tasks. Take take a self reference to keep this object alive so that
+    // the loop termination conditions can be checked.
+    RefPtr<IDBTransactionBackendImpl> protect(this);
 
     TaskQueue* taskQueue = m_pendingPreemptiveEvents ? &m_preemptiveTaskQueue : &m_taskQueue;
     while (!taskQueue->isEmpty() && m_state != Finished) {
