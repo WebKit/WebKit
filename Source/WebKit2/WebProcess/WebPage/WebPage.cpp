@@ -1021,6 +1021,7 @@ void WebPage::sendViewportAttributesChanged()
     int deviceHeight = (settings->deviceHeight() > 0) ? settings->deviceHeight() : m_viewportSize.height();
 
     ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, deviceWidth, deviceHeight, m_page->deviceScaleFactor(), m_viewportSize);
+    attr.initialScale = m_page->viewportArguments().zoom; // Resets auto (-1) if no value was set by user.
 
     // This also takes care of the relayout.
     setFixedLayoutSize(IntSize(static_cast<int>(attr.layoutSize.width()), static_cast<int>(attr.layoutSize.height())));

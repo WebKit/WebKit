@@ -1,3 +1,21 @@
+2012-11-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Remove initiallyFitToViewport attribute
+        https://bugs.webkit.org/show_bug.cgi?id=102392
+
+        Reviewed by Noam Rosenthal.
+
+        Remove the initiallyFitToViewport which shouldn't have been
+        added in the first place. We now reset userScalable to auto (-1)
+        in case it was not explicitly set by the web author.
+
+        Same behavior, covered by existing tests.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::ViewportArguments::resolve):
+        * dom/ViewportArguments.h:
+        (ViewportAttributes):
+
 2012-11-15  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update RTCPeerConnection states to match the latest editors draft

@@ -1,3 +1,22 @@
+2012-11-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Remove initiallyFitToViewport attribute
+        https://bugs.webkit.org/show_bug.cgi?id=102392
+
+        Reviewed by Noam Rosenthal.
+
+        Remove the initiallyFitToViewport which shouldn't have been
+        added in the first place. We now reset userScalable to auto (-1)
+        in case it was not explicitly set by the web author.
+
+        Same behavior, covered by existing tests.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::pageTransitionViewportReady):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+
 2012-11-15  Balazs Kelemen  <kbalazs@webkit.org>
 
         Coordinated Graphics: support the "freeze animations" API

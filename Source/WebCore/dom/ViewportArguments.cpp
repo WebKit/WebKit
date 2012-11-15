@@ -74,8 +74,6 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     float resultMaxZoom = maxZoom;
     float resultUserZoom = userZoom;
 
-    bool resultAutoFit = resultZoom == ViewportArguments::ValueAuto;
-
     switch (int(resultWidth)) {
     case ViewportArguments::ValueDeviceWidth:
         resultWidth = deviceSize.width();
@@ -102,7 +100,6 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     resultMaxZoom = clampScaleValue(resultMaxZoom);
 
     ViewportAttributes result;
-    result.initiallyFitToViewport = resultAutoFit;
 
     // Resolve minimum-scale and maximum-scale values according to spec.
     if (resultMinZoom == ViewportArguments::ValueAuto)
@@ -152,7 +149,7 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     result.layoutSize.setWidth(resultWidth);
     result.layoutSize.setHeight(resultHeight);
 
-    // FIXME: Remove initiallyFitToViewport and use the below.
+    // FIXME: This might affect some ports, but is the right thing to do.
     // Only set initialScale to a value if it was explicitly set.
     // if (resultZoom == ViewportArguments::ValueAuto)
     //    result.initialScale = ViewportArguments::ValueAuto;
