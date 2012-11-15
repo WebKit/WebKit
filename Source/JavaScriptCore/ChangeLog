@@ -1,5 +1,17 @@
 2012-11-15  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
+        [CMake] Do not regenerate LLIntAssembly.h on every incremental build
+        https://bugs.webkit.org/show_bug.cgi?id=102248
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update LLIntAssembly.h's mtime after running asm.rb to make the build
+        system dependency tracking consistent.
+
+        * CMakeLists.txt:
+
+2012-11-15  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
         Fix compiler warnings about signed/unsigned comparison on i386
         https://bugs.webkit.org/show_bug.cgi?id=102249
 
