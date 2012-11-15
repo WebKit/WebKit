@@ -29,7 +29,6 @@
 #include "ContextDestructionObserver.h"
 #include "ExceptionCodePlaceholder.h"
 #include "NodeList.h"
-#include <wtf/ArrayBuffer.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -54,7 +53,6 @@ class ScriptExecutionContext;
 class ShadowRoot;
 class WebKitPoint;
 class MallocStatistics;
-class SerializedScriptValue;
 
 typedef int ExceptionCode;
 
@@ -247,9 +245,6 @@ public:
 
     void startTrackingRepaints(Document*, ExceptionCode&);
     void stopTrackingRepaints(Document*, ExceptionCode&);
-
-    PassRefPtr<ArrayBuffer> serializeObject(PassRefPtr<SerializedScriptValue>) const;
-    PassRefPtr<SerializedScriptValue> deserializeBuffer(PassRefPtr<ArrayBuffer>) const;
 
 private:
     explicit Internals(Document*);

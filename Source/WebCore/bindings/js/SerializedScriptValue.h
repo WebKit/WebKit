@@ -73,7 +73,6 @@ public:
     static PassRefPtr<SerializedScriptValue> create(JSContextRef, JSValueRef, JSValueRef* exception);
 
     static PassRefPtr<SerializedScriptValue> create(const String&);
-    static PassRefPtr<SerializedScriptValue> createFromWire(const String& value) { return create(value); }
     static PassRefPtr<SerializedScriptValue> adopt(Vector<uint8_t>& buffer)
     {
         return adoptRef(new SerializedScriptValue(buffer));
@@ -85,7 +84,6 @@ public:
     static PassRefPtr<SerializedScriptValue> booleanValue(bool value);
 
     String toString();
-    String toWireString() { return toString(); }
     
     JSC::JSValue deserialize(JSC::ExecState*, JSC::JSGlobalObject*, MessagePortArray*, SerializationErrorMode = Throwing);
     JSValueRef deserialize(JSContextRef, JSValueRef* exception, MessagePortArray*);

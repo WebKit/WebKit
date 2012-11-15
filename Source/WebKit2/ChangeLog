@@ -1,5 +1,22 @@
 2012-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r134691, r134703, r134715, r134716,
+        and r134733.
+        http://trac.webkit.org/changeset/134691
+        http://trac.webkit.org/changeset/134703
+        http://trac.webkit.org/changeset/134715
+        http://trac.webkit.org/changeset/134716
+        http://trac.webkit.org/changeset/134733
+        https://bugs.webkit.org/show_bug.cgi?id=102342
+
+        "Broke the Apple Windows Debug and GTK builds." (Requested by
+        dydx on #webkit).
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
+2012-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r134741.
         http://trac.webkit.org/changeset/134741
         https://bugs.webkit.org/show_bug.cgi?id=102337
