@@ -1,3 +1,16 @@
+2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
+
+        Prevent creation of detached frames in ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=102333
+
+        Reviewed by Dimitri Glazkov.
+
+        Test that you cannot create a detached frame using a ShadowRoot
+        and iframe unload handlers.
+
+        * fast/frames/detached-shadow-frame-expected.txt: Added.
+        * fast/frames/detached-shadow-frame.html: Added.
+
 2012-11-15  Shinya Kawanaka  <shinyak@chromium.org>
 
         Changing pseudoClass (:visited) should cause distribution.

@@ -1,3 +1,19 @@
+2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
+
+        Prevent creation of detached frames in ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=102333
+
+        Reviewed by Dimitri Glazkov.
+
+        Similar to Bug 94717 you can create a loaded iframe in a detached
+        subtree using ShadowRoot. To fix this we just need to make
+        SubframeLoadingDisabler traverse through shadow boundaries.
+
+        Test: fast/frames/detached-shadow-frame.html
+
+        * html/HTMLFrameOwnerElement.h:
+        (WebCore::SubframeLoadingDisabler::canLoadFrame):
+
 2012-11-15  Shinya Kawanaka  <shinyak@chromium.org>
 
         Changing pseudoClass (:visited) should cause distribution.
