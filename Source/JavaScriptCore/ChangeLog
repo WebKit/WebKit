@@ -1,3 +1,16 @@
+2012-11-15  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Fix compiler warnings about signed/unsigned comparison on i386
+        https://bugs.webkit.org/show_bug.cgi?id=102249
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add casting to unsigned to shut up gcc warnings. Build was broken on
+        JSVALUE32_64 ports compiling with -Werror.
+
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+
 2012-11-14  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows, WinCairo] Unreviewed build fix.
