@@ -1,3 +1,9 @@
+2012-11-14  Andy Estes  <aestes@apple.com>
+
+        Fix the build.
+
+        * TestWebKitAPI/mac/TestBrowsingContextLoadDelegate.h:
+
 2012-11-14  Dirk Pranke  <dpranke@chromium.org>
 
         webkitpy: consolidate webkit-base-finding code
