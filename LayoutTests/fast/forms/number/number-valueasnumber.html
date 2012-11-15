@@ -68,12 +68,12 @@ shouldThrow('setValueAsNumberAndGetValue("3.40282348e+38")', '"Error: InvalidSta
 
 debug('Tests to set invalid values to valueAsNumber:');
 shouldBe('setValueAsNumberAndGetValue(null)', '"0"');
-shouldThrow('setValueAsNumberAndGetValue("foo")', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
-shouldThrow('setValueAsNumberAndGetValue(NaN)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
-shouldThrow('setValueAsNumberAndGetValue(Number.NaN)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
-shouldThrow('setValueAsNumberAndGetValue(Infinity)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
-shouldThrow('setValueAsNumberAndGetValue(Number.POSITIVE_INFINITY)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
-shouldThrow('setValueAsNumberAndGetValue(Number.NEGATIVE_INFINITY)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue("foo")', '"Error: NotSupportedError: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue(NaN)', '"Error: NotSupportedError: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue(Number.NaN)', '"Error: NotSupportedError: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue(Infinity)', '"Error: NotSupportedError: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue(Number.POSITIVE_INFINITY)', '"Error: NotSupportedError: DOM Exception 9"');
+shouldThrow('setValueAsNumberAndGetValue(Number.NEGATIVE_INFINITY)', '"Error: NotSupportedError: DOM Exception 9"');
 </script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>

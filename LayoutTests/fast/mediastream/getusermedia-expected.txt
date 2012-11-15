@@ -3,7 +3,7 @@ Tests webkitGetUserMedia.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS navigator.webkitGetUserMedia({audio:false, video:false}, error, error); threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS navigator.webkitGetUserMedia({audio:false, video:false}, error, error); threw exception Error: NotSupportedError: DOM Exception 9.
 PASS navigator.webkitGetUserMedia({audio:true}, gotStream1, error); did not throw exception.
 PASS Stream generated.
 PASS stream.audioTracks.length is 1

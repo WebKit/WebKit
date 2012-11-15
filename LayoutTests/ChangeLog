@@ -1,3 +1,68 @@
+2012-11-15  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: NotSupportedError
+        https://bugs.webkit.org/show_bug.cgi?id=102139
+
+        Reviewed by Ojan Vafai.
+
+        Updated tests and expectations.
+
+        * editing/pasteboard/data-transfer-items-expected.txt:
+        * fast/canvas/canvas-2d-imageData-create-nonfinite-expected.txt:
+        * fast/canvas/canvas-createImageData-expected.txt:
+        * fast/canvas/canvas-getImageData-invalid-expected.txt:
+        * fast/canvas/canvas-putImageData-expected.txt:
+        * fast/canvas/canvas-putImageData.js:
+        * fast/canvas/linearGradient-infinite-values-expected.txt:
+        * fast/canvas/radialGradient-infinite-values-expected.txt:
+        * fast/canvas/resources/canvas-2d-imageData-create-nonfinite.js:
+        * fast/canvas/script-tests/canvas-createImageData.js:
+        * fast/canvas/script-tests/canvas-getImageData-invalid.js:
+        * fast/canvas/script-tests/linearGradient-infinite-values.js:
+        * fast/canvas/script-tests/radialGradient-infinite-values.js:
+        * fast/dom/HTMLMeterElement/script-tests/set-meter-properties.js:
+        * fast/dom/HTMLMeterElement/set-meter-properties-expected.txt:
+        * fast/dom/HTMLProgressElement/script-tests/set-progress-properties.js:
+        * fast/dom/HTMLProgressElement/set-progress-properties-expected.txt:
+        * fast/dom/Node/initial-values-expected.txt:
+        * fast/dom/importNode-null-expected.txt:
+        * fast/dynamic/insertAdjacentText-expected.txt:
+        * fast/forms/date/input-valueasnumber-date-expected.txt:
+        * fast/forms/date/input-valueasnumber-date.html:
+        * fast/forms/datetime/input-valueasnumber-datetime-expected.txt:
+        * fast/forms/datetime/input-valueasnumber-datetime.html:
+        * fast/forms/datetimelocal/input-valueasnumber-datetimelocal-expected.txt:
+        * fast/forms/datetimelocal/input-valueasnumber-datetimelocal.html:
+        * fast/forms/month/input-valueasnumber-month-expected.txt:
+        * fast/forms/month/input-valueasnumber-month.html:
+        * fast/forms/number/number-valueasnumber-expected.txt:
+        * fast/forms/number/number-valueasnumber.html:
+        * fast/forms/range/input-valueasnumber-range-expected.txt:
+        * fast/forms/range/input-valueasnumber-range.html:
+        * fast/forms/time/time-valueasnumber-expected.txt:
+        * fast/forms/time/time-valueasnumber.html:
+        * fast/forms/week/input-valueasnumber-week-expected.txt:
+        * fast/forms/week/input-valueasnumber-week.html:
+        * fast/mediastream/RTCPeerConnection-expected.txt:
+        * fast/mediastream/argument-types-expected.txt:
+        * fast/mediastream/getusermedia-expected.txt:
+        * fast/mediastream/script-tests/argument-types.js:
+        * http/tests/media/media-source/video-media-source-add-and-remove-buffers-expected.txt:
+        * platform/chromium/canvas/philip/tests/2d.missingargs-expected.txt:
+        * platform/chromium/dom/xhtml/level3/core/documentsetxmlversion03-expected.txt:
+        * platform/chromium/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/efl/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/gtk/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/mac/canvas/philip/tests/2d.missingargs-expected.txt:
+        * platform/mac/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/qt/fast/dynamic/insertAdjacentElement-expected.txt:
+        * svg/dom/SVGAngle-expected.txt:
+        * svg/dom/SVGLength-expected.txt:
+        * svg/dom/SVGLength-px-expected.txt:
+        * svg/dom/SVGPreserveAspectRatio-expected.txt:
+        * transforms/cssmatrix-2d-interface-expected.txt:
+        * transforms/cssmatrix-3d-interface-expected.txt:
+
 2012-11-15  Mike West  <mkwst@chromium.org>
 
         Unreviewed: Skipping http/tests/security/sandboxed-iframe-form-top.html

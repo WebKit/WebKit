@@ -11,7 +11,7 @@ function test(expression, expressionShouldThrow, expectedException) {
     }
 }
 
-var notSupportedError = new Error('NOT_SUPPORTED_ERR: DOM Exception 9');
+var notSupportedError = new Error('NotSupportedError: DOM Exception 9');
 var typeError = new TypeError('Type error');
 var typeNotAnObjectError = new TypeError('Not an object.');
 

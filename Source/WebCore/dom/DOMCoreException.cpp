@@ -43,7 +43,7 @@ static struct CoreException {
     { "NoDataAllowedError", "Data was specified for a Node which does not support data." },
     { "NoModificationAllowedError", "An attempt was made to modify an object where modifications are not allowed." },
     { "NotFoundError", "An attempt was made to reference a Node in a context where it does not exist." },
-    { "NOT_SUPPORTED_ERR", "The implementation did not support the requested type of object or operation." },
+    { "NotSupportedError", "The implementation did not support the requested type of object or operation." },
     { "InUseAttributeError", "An attempt was made to add an attribute that is already in use elsewhere." },
     { "InvalidStateError", "An attempt was made to use an object that is not, or is no longer, usable." },
     { "SYNTAX_ERR", "An invalid or illegal string was specified." },

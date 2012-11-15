@@ -2,7 +2,7 @@ description("Test canvas createImageData()");
 
 ctx = document.createElement('canvas').getContext('2d');
 
-shouldThrow("ctx.createImageData(null)", '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
+shouldThrow("ctx.createImageData(null)", '"Error: NotSupportedError: DOM Exception 9"');
 
 // create a 100x50 imagedata and fill it with white pixels
 

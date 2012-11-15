@@ -208,7 +208,7 @@ PASS parseFloat(m.e) is 10
 PASS parseFloat(m.f) is 20
 
 Test throwing exception from inverse
-PASS m.inverse() threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+PASS m.inverse() threw exception Error: NotSupportedError: DOM Exception 9.
 
 PASS successfullyParsed is true
 

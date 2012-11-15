@@ -8,9 +8,9 @@ EVENT(webkitsourceopen)
 Test empty type.
 Got expected exception Error: INVALID_ACCESS_ERR: DOM Exception 15
 Test an unsupported type.
-Got expected exception Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Got expected exception Error: NotSupportedError: DOM Exception 9
 Test a supported type with an unsupported codec.
-Got expected exception Error: NOT_SUPPORTED_ERR: DOM Exception 9
+Got expected exception Error: NotSupportedError: DOM Exception 9
 Test reaching sourceID limit.
 Test that SourceBuffers can't be added while in the ended state.
 Got expected exception Error: InvalidStateError: DOM Exception 11
