@@ -59,7 +59,7 @@ public:
     MOCK_METHOD0(scheduleAnimation, void());
 
     MOCK_METHOD2(scrollBegin, ScrollStatus(WebPoint, WebInputHandlerClient::ScrollInputType));
-    MOCK_METHOD2(scrollBy, void(WebPoint, WebSize));
+    MOCK_METHOD2(scrollByIfPossible, bool(WebPoint, WebSize));
     MOCK_METHOD0(scrollEnd, void());
 
 private:
@@ -155,11 +155,24 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureScrollStarted)
     gesture.type = WebInputEvent::GestureScrollBegin;
     m_inputHandler->handleInputEvent(gesture);
 
+    // The event should not be marked as handled if scrolling is not possible.
+    m_expectedDisposition = DropEvent;
     VERIFY_AND_RESET_MOCKS();
 
     gesture.type = WebInputEvent::GestureScrollUpdate;
     gesture.data.scrollUpdate.deltaY = -40; // -Y means scroll down - i.e. in the +Y direction.
-    EXPECT_CALL(m_mockInputHandlerClient, scrollBy(testing::_, testing::Field(&WebSize::height, testing::Gt(0))));
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::height, testing::Gt(0))))
+        .WillOnce(testing::Return(false));
+    m_inputHandler->handleInputEvent(gesture);
+
+    // Mark the event as handled if scroll happens.
+    m_expectedDisposition = DidHandle;
+    VERIFY_AND_RESET_MOCKS();
+
+    gesture.type = WebInputEvent::GestureScrollUpdate;
+    gesture.data.scrollUpdate.deltaY = -40; // -Y means scroll down - i.e. in the +Y direction.
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::height, testing::Gt(0))))
+        .WillOnce(testing::Return(true));
     m_inputHandler->handleInputEvent(gesture);
 
     VERIFY_AND_RESET_MOCKS();
@@ -346,7 +359,8 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingAnimates)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusStarted));
-    EXPECT_CALL(m_mockInputHandlerClient, scrollBy(testing::_, testing::Field(&WebSize::width, testing::Lt(0))));
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::width, testing::Lt(0))))
+        .WillOnce(testing::Return(true));
     EXPECT_CALL(m_mockInputHandlerClient, scrollEnd());
     m_inputHandler->animate(10.1);
 
@@ -358,7 +372,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingAnimates)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusOnMainThread));
-    EXPECT_CALL(m_mockInputHandlerClient, scrollBy(testing::_, testing::_)).Times(0);
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::_)).Times(0);
     EXPECT_CALL(m_mockInputHandlerClient, scrollEnd()).Times(0);
 
     // Expected wheel fling animation parameters:
@@ -429,7 +443,8 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResets)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusStarted));
-    EXPECT_CALL(m_mockInputHandlerClient, scrollBy(testing::_, testing::Field(&WebSize::width, testing::Lt(0))));
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::width, testing::Lt(0))))
+        .WillOnce(testing::Return(true));
     EXPECT_CALL(m_mockInputHandlerClient, scrollEnd());
     m_inputHandler->animate(10.1);
 
@@ -441,7 +456,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResets)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusOnMainThread));
-    EXPECT_CALL(m_mockInputHandlerClient, scrollBy(testing::_, testing::_)).Times(0);
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::_)).Times(0);
     EXPECT_CALL(m_mockInputHandlerClient, scrollEnd()).Times(0);
 
     // Expected wheel fling animation parameters:
@@ -509,7 +524,8 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResets)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusStarted));
-    EXPECT_CALL(m_mockInputHandlerClient, scrollBy(testing::_, testing::Field(&WebSize::height, testing::Gt(0))));
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::height, testing::Gt(0))))
+        .WillOnce(testing::Return(true));
     EXPECT_CALL(m_mockInputHandlerClient, scrollEnd());
     m_inputHandler->animate(30.1);
 
@@ -519,7 +535,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResets)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusOnMainThread));
-    EXPECT_CALL(m_mockInputHandlerClient, scrollBy(testing::_, testing::_)).Times(0);
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::_)).Times(0);
     EXPECT_CALL(m_mockInputHandlerClient, scrollEnd()).Times(0);
 
     // We should get parameters from the second fling, nothing from the first fling should "leak".

@@ -51,9 +51,10 @@ public:
 
     // Scroll the selected layer starting at the given window coordinate. If
     // there is no room to move the layer in the requested direction, its first
-    // ancestor layer that can be scrolled will be moved instead. Should only be
-    // called if scrollBegin() returned ScrollStarted.
-    virtual void scrollBy(WebPoint, WebSize) = 0;
+    // ancestor layer that can be scrolled will be moved instead. If there is no
+    // such layer to be moved, this returns false. Returns true otherwise.
+    // Should only be called if scrollBegin() returned ScrollStarted.
+    virtual bool scrollByIfPossible(WebPoint, WebSize) = 0;
 
     // Stop scrolling the selected layer. Should only be called if scrollBegin()
     // returned ScrollStarted.

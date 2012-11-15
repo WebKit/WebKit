@@ -119,9 +119,9 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         switch (scrollStatus) {
         case WebInputHandlerClient::ScrollStatusStarted: {
             TRACE_EVENT_INSTANT2("cc", "WebCompositorInputHandlerImpl::handleInput wheel scroll", "deltaX", -wheelEvent.deltaX, "deltaY", -wheelEvent.deltaY);
-            m_inputHandlerClient->scrollBy(WebPoint(wheelEvent.x, wheelEvent.y), IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
+            bool didScroll = m_inputHandlerClient->scrollByIfPossible(WebPoint(wheelEvent.x, wheelEvent.y), IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
             m_inputHandlerClient->scrollEnd();
-            return DidHandle;
+            return didScroll ? DidHandle : DropEvent;
         }
         case WebInputHandlerClient::ScrollStatusIgnored:
             // FIXME: This should be DropEvent, but in cases where we fail to properly sync scrollability it's safer to send the
@@ -154,9 +154,9 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
             return DidNotHandle;
 
         const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
-        m_inputHandlerClient->scrollBy(WebPoint(gestureEvent.x, gestureEvent.y),
+        bool didScroll = m_inputHandlerClient->scrollByIfPossible(WebPoint(gestureEvent.x, gestureEvent.y),
             IntSize(-gestureEvent.data.scrollUpdate.deltaX, -gestureEvent.data.scrollUpdate.deltaY));
-        return DidHandle;
+        return didScroll ? DidHandle : DropEvent;
     } else if (event.type == WebInputEvent::GestureScrollEnd) {
         ASSERT(m_expectScrollUpdateEnd);
 #ifndef NDEBUG
