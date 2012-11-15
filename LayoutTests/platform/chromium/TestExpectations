@@ -2043,7 +2043,7 @@ crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-untagged-images.
 # Timeout on Debug.
 webkit.org/b/82954 [ SnowLeopard Lion Win Linux ] svg/hixie/perf/007.xml [ Pass Slow ]
 
-crbug.com/22700 [ Android Linux Win ] fast/canvas/canvas-shadow.html [ Failure ]
+crbug.com/22700 [ Android ] fast/canvas/canvas-shadow.html [ Failure ]
 
 # Failures from merge 50972:51042
 # The test requires DRT/Test Shell to support error page handling.
@@ -2260,7 +2260,7 @@ webkit.org/b/45991 [ Android Linux Win ] canvas/philip/tests/2d.path.arcTo.shape
 webkit.org/b/45991 [ Android Linux Win ] canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html [ Failure ]
 webkit.org/b/45991 [ Android Linux Win ] canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html [ Failure ]
 webkit.org/b/45991 [ Android Linux Win ] canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html [ Failure ]
-webkit.org/b/45991 [ Android Linux Win ] canvas/philip/tests/2d.shadow.enable.blur.html [ Failure ]
+webkit.org/b/45991 [ Android ] canvas/philip/tests/2d.shadow.enable.blur.html [ Failure ]
 webkit.org/b/45991 [ Linux Win ] platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.outside3.html [ Failure ]
 webkit.org/b/45991 [ Linux Win ] platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.3.html [ Failure ]
 webkit.org/b/45991 [ Linux Win ] platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.5.html [ Failure ]

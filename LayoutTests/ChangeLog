@@ -1,5 +1,27 @@
 2012-11-15  Stephen Chenney  <schenney@chromium.org>
 
+        [Chromium] Disable SK_IGNORE_FAST_BLURRECT
+
+        Unreviewed test expectations update
+
+        * platform/chromium-linux/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-linux/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-linux/fast/box-shadow/box-shadow-clipped-slices-expected.png:
+        * platform/chromium-linux/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-linux/fast/box-shadow/single-pixel-shadow-expected.png:
+        * platform/chromium-linux/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-linux/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-linux/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-linux/fast/transforms/shadows-expected.png:
+        * platform/chromium-linux/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-linux/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-win/fast/box-shadow/box-shadow-radius-expected.png:
+        * platform/chromium-win/fast/box-shadow/scaled-box-shadow-expected.png:
+        * platform/chromium/TestExpectations:
+
+2012-11-15  Stephen Chenney  <schenney@chromium.org>
+
         Rebaseline after r134736
 
         Unreviewed expectations update.

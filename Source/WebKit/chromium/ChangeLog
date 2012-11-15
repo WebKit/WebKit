@@ -1,3 +1,14 @@
+2012-11-15  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Disable SK_IGNORE_FAST_BLURRECT
+
+        Unreviewed test update.
+
+        This flag is enabled purely to simplify rebaselining. I am now
+        removing it and doing the rebaslining.
+
+        * skia_webkit.gyp: Remove the line for SK_IGNORE_FAST_BLURRECT
+
 2012-11-15  Kent Tamura  <tkent@chromium.org>
 
         Support stand-alone month names in calendar picker
