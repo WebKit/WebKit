@@ -81,7 +81,7 @@ public:
 
     void setSize(const IntSize& newSize)
     { 
-        if (newSize == size())
+        if (newSize == size() && targetDeviceScaleFactor() == m_deviceScaleFactor)
             return;
         m_ignoreReset = true; 
         setWidth(newSize.width());
@@ -144,6 +144,8 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     void reset();
+
+    float targetDeviceScaleFactor() const;
 
     void createImageBuffer() const;
     void clearImageBuffer() const;
