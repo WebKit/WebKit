@@ -26,6 +26,7 @@
 
 #include "Attribute.h"
 #include "DNS.h"
+#include "ElementShadow.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
@@ -218,8 +219,10 @@ void HTMLAnchorElement::parseAttribute(const Attribute& attribute)
     if (attribute.name() == hrefAttr) {
         bool wasLink = isLink();
         setIsLink(!attribute.isNull());
-        if (wasLink != isLink())
+        if (wasLink != isLink()) {
             setNeedsStyleRecalc();
+            invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureLink);
+        }
         if (isLink()) {
             String parsedURL = stripLeadingAndTrailingHTMLSpaces(attribute.value());
             if (document()->isDNSPrefetchEnabled()) {

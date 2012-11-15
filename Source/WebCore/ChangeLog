@@ -1,3 +1,21 @@
+2012-11-14  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing pseudoClass (:link) should cause distribution
+        https://bugs.webkit.org/show_bug.cgi?id=101698
+
+        Reviewed by Hajime Morita.
+
+        CSSSelector :link matches anchor element with href attribute. When href attribute of an anchor element is changed,
+        we have to invalidate distribution.
+
+        According to the HTML spec, :link matches a link element having href attribute, currently we have not implemented it yet.
+
+        Tests: fast/dom/shadow/pseudoclass-update-link-anchor.html
+               fast/dom/shadow/pseudoclass-update-link-area.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+
 2012-11-14  Kentaro Hara  <haraken@chromium.org>
 
         Remove unused functions from CodeGenerator.pm
