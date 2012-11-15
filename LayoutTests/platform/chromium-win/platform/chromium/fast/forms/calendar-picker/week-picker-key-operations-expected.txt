@@ -1,0 +1,60 @@
+Tests if month picker key bindings work as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Check that page popup doesn't exist at first.
+PASS document.getElementById("mock-page-popup") is null
+Check that page popup exists.
+PASS popupWindow.pagePopupController.toString() is "[object PagePopupController]"
+PASS selectedWeek() is "2000-W01"
+PASS currentMonth() is "2000-01"
+Check that arrow keys work properly.
+PASS selectedWeek() is "1999-W52"
+PASS currentMonth() is "2000-01"
+PASS selectedWeek() is "1999-W51"
+PASS currentMonth() is "1999-12"
+PASS selectedWeek() is "1999-W52"
+PASS currentMonth() is "1999-12"
+PASS selectedWeek() is "2000-W01"
+PASS currentMonth() is "2000-01"
+PASS selectedWeek() is "2000-W02"
+PASS currentMonth() is "2000-01"
+PASS selectedWeek() is "2000-W01"
+PASS currentMonth() is "2000-01"
+PASS selectedWeek() is "2000-W02"
+PASS currentMonth() is "2000-01"
+press m
+PASS selectedWeek() is "2000-W07"
+PASS currentMonth() is "2000-02"
+press shift + m
+PASS selectedWeek() is "2000-W02"
+PASS currentMonth() is "2000-01"
+press y
+PASS selectedWeek() is "2001-W03"
+PASS currentMonth() is "2001-01"
+press shift + y
+PASS selectedWeek() is "2000-W02"
+PASS currentMonth() is "2000-01"
+press d
+PASS selectedWeek() is "2010-W02"
+PASS currentMonth() is "2010-01"
+press shift + d
+PASS selectedWeek() is "2000-W02"
+PASS currentMonth() is "2000-01"
+PASS document.getElementById("mock-page-popup") is null
+PASS document.getElementById("week").value is "2000-W02"
+PASS testToday() || testToday() is true
+Check if tabbing works.
+PASS focusedElement() is ".days-area-container"
+PASS focusedElement() is ".today-button[value=<<ThisWeekLabel>>]"
+PASS focusedElement() is ".clear-button[value=<<CalendarClear>>]"
+PASS focusedElement() is ".year-month-button[value=<<]"
+PASS focusedElement() is ".clear-button[value=<<CalendarClear>>]"
+PASS document.getElementById("mock-page-popup") is null
+PASS document.getElementById("week").value is "2000-W02"
+PASS F4 opened picker.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

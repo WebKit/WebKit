@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/common.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/calendar-picker-common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<input type=week id=week value="2000-W01">
+<script>
+description("Tests if week picker mouse operations work as expected.");
+
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+openPicker(document.getElementById('week'), test);
+
+function test() {
+    shouldBeEqualToString('selectedWeek()', '2000-W01');
+    shouldBeEqualToString('currentMonth()', '2000-01');
+
+    debug('Check that hovering over an entry highlights it.');
+    hoverOverElement(popupWindow.document.querySelectorAll(".day:not(.week-column)")[0]);
+    shouldBeEqualToString('selectedWeek()', '1999-W51');
+    shouldBeEqualToString('currentMonth()', '2000-01');
+
+    hoverOverElement(popupWindow.document.querySelectorAll(".day:not(.week-column)")[6]);
+    shouldBeEqualToString('selectedWeek()', '1999-W52');
+    shouldBeEqualToString('currentMonth()', '2000-01');
+
+    hoverOverElement(popupWindow.document.querySelectorAll(".day:not(.week-column)")[8]);
+    shouldBeEqualToString('selectedWeek()', '2000-W01');
+    shouldBeEqualToString('currentMonth()', '2000-01');
+
+    hoverOverElement(popupWindow.document.querySelectorAll(".day:not(.week-column)")[41]);
+    shouldBeEqualToString('selectedWeek()', '2000-W05');
+    shouldBeEqualToString('currentMonth()', '2000-01');
+
+    debug('Check that moving the mouse outside the popup de-highlights entries.');
+    hoverOverElement(document.getElementById('description'));
+    shouldBeNull('selectedWeek()');
+
+    debug('Check that mouse click closes the popup and sets the value.');
+    clickElement(popupWindow.document.querySelectorAll(".day:not(.week-column)")[6]);
+    waitUntilClosing(testAfterClosing);
+}
+
+function testAfterClosing() {
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBeEqualToString('document.getElementById("week").value', '1999-W52');
+
+    finishJSTest();
+}
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

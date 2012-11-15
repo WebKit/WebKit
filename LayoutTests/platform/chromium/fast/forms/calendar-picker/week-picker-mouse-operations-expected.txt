@@ -1,0 +1,27 @@
+Tests if week picker mouse operations work as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Check that page popup doesn't exist at first.
+PASS document.getElementById("mock-page-popup") is null
+PASS selectedWeek() is "2000-W01"
+PASS currentMonth() is "2000-01"
+Check that hovering over an entry highlights it.
+PASS selectedWeek() is "1999-W51"
+PASS currentMonth() is "2000-01"
+PASS selectedWeek() is "1999-W52"
+PASS currentMonth() is "2000-01"
+PASS selectedWeek() is "2000-W01"
+PASS currentMonth() is "2000-01"
+PASS selectedWeek() is "2000-W05"
+PASS currentMonth() is "2000-01"
+Check that moving the mouse outside the popup de-highlights entries.
+PASS selectedWeek() is null
+Check that mouse click closes the popup and sets the value.
+PASS document.getElementById("mock-page-popup") is null
+PASS document.getElementById("week").value is "1999-W52"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
