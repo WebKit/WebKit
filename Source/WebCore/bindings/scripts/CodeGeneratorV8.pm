@@ -3915,19 +3915,8 @@ sub JSValueToNative
 
     AddIncludesForType($type);
 
-    if (IsDOMNodeType($type)) {
-        AddToImplIncludes("V8${type}.h");
-
-        # Perform type checks on the parameter, if it is expected Node type,
-        # return NULL.
-        return "V8${type}::HasInstance($value) ? V8${type}::toNative(v8::Handle<v8::Object>::Cast($value)) : 0";
-    } else {
-        AddToImplIncludes("V8$type.h");
-
-        # Perform type checks on the parameter, if it is expected Node type,
-        # return NULL.
-        return "V8${type}::HasInstance($value) ? V8${type}::toNative(v8::Handle<v8::Object>::Cast($value)) : 0";
-    }
+    AddToImplIncludes("V8${type}.h");
+    return "V8${type}::HasInstance($value) ? V8${type}::toNative(v8::Handle<v8::Object>::Cast($value)) : 0";
 }
 
 sub GetV8HeaderName
