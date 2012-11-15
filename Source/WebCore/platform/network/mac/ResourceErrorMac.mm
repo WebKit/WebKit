@@ -60,6 +60,8 @@ ResourceError::ResourceError(NSError *error)
     , m_platformError(reinterpret_cast<CFErrorRef>(error))
 {
     m_isNull = !error;
+    if (!m_isNull)
+        m_isTimeout = [error code] == NSURLErrorTimedOut;
 }
 
 NSError *ResourceError::nsError() const

@@ -1,3 +1,21 @@
+2012-11-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [CF]: XMLHttpRequest "timeout" events firing as "error" events
+        https://bugs.webkit.org/show_bug.cgi?id=102271
+
+        Reviewed by David Kilzer.
+
+        Initialize the tiemout flag if the error results from a timeout
+        in the USE(CFNETWORK) cases.
+
+        No new tests. This is covered by http/tests/xmlhttprequest/timeout
+        tests on ports that USE(CFNETWORK).
+
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/mac/ResourceErrorMac.mm:
+        (WebCore::ResourceError::ResourceError):
+
 2012-11-14  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Fix drawing of buttons, checkboxes, radio boxes, and steppers when the page is scaled
