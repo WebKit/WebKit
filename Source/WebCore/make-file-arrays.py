@@ -90,6 +90,7 @@ def main():
 
     if options.flag:
         options.flag = options.flag.replace(" AND ", " && ")
+        options.flag = options.flag.replace(" OR ", " || ")
 
     header_file = open(options.out_header, "w")
     if options.flag:

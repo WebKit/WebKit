@@ -1,3 +1,22 @@
+2012-11-15  Miguel Garcia  <miguelg@chromium.org>
+
+        Remove unnecesary dependencies INPUT_TYPE_COLOR
+        https://bugs.webkit.org/show_bug.cgi?id=102379
+
+        Reviewed by Darin Adler.
+
+        Platforms should be able to enable INPUT_TYPE_COLOR without enabling
+        CALENDAR_PICKER and DATALIST_ELEMENT. Before this patch however there would be
+        compile errors in such configuration.
+
+        No new tests since this is not adding any extra functionality.
+
+        * WebCore.gyp/WebCore.gyp:
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::shouldShowSuggestions):
+        * make-file-arrays.py:
+        (main):
+
 2012-11-15  Eric Carlson  <eric.carlson@apple.com>
 
         Update computed line position algorithm

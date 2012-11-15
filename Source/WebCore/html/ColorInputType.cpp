@@ -221,6 +221,8 @@ bool ColorInputType::shouldShowSuggestions() const
 {
 #if ENABLE(DATALIST_ELEMENT)
     return element()->fastHasAttribute(listAttr);
+#else
+    return false;
 #endif
 }
 
