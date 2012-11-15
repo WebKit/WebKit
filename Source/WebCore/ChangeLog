@@ -1,3 +1,11 @@
+2012-11-14  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Fix code generator warnings.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateFunctionCallback):
+        (GenerateImplementation):
+
 2012-11-14  Shinya Kawanaka  <shinyak@chromium.org>
 
         Changing pseudoClass (:checked) should cause distribution.

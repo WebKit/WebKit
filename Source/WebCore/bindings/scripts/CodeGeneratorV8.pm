@@ -1551,7 +1551,6 @@ sub GenerateFunctionCallback
     my $dataNode = shift;
     my $interfaceName = shift;
 
-    my $interfaceName = $dataNode->name;
     my $name = $function->signature->name;
 
     if (@{$function->{overloads}} > 1) {
@@ -2669,7 +2668,6 @@ sub GenerateImplementation
     my $interfaceName = $dataNode->name;
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($dataNode);
     my $className = "V8$interfaceName";
-    my $interfaceName = $interfaceName;
     my $nativeType = GetNativeTypeForConversions($dataNode, $interfaceName);
 
     # - Add default header template
