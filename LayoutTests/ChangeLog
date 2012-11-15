@@ -1,5 +1,12 @@
 2012-11-14  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviwed. Rebaselined images.
+
+        * platform/chromium-mac/fast/forms/select-empty-option-height-expected.png:
+        * platform/efl-wk1/fast/forms/select-empty-option-height-expected.png: Renamed from LayoutTests/platform/efl/fast/forms/select-empty-option-height-expected.png.
+
+2012-11-14  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed. Rebaselined images.
 
         * platform/chromium-linux/fast/forms/zoomed-controls-expected.png: Added.
