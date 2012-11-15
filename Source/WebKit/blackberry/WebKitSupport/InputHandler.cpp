@@ -139,7 +139,6 @@ InputHandler::InputHandler(WebPagePrivate* page)
     , m_delayKeyboardVisibilityChange(false)
     , m_request(0)
     , m_processingTransactionId(-1)
-    , m_focusZoomScale(0.0)
     , m_receivedBackspaceKeyDown(false)
     , m_expectedKeyUpChar(0)
 {
@@ -1116,17 +1115,6 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
         break;
     }
     case VisibleSelection::NoSelection:
-        if (m_focusZoomScale) {
-            m_webPage->zoomAboutPoint(m_focusZoomScale, selectionFocusRect.location());
-            InputLog(LogLevelInfo, "InputHandler::ensureFocusTextElementVisible resetting zoom to %f", m_focusZoomScale);
-            m_focusZoomScale = 0.0;
-        }
-
-        if (m_focusScrollLocation != WebCore::IntPoint(-1, -1)) {
-            mainFrameView->setScrollPosition(m_focusScrollLocation);
-            InputLog(LogLevelInfo, "InputHandler::ensureFocusTextElementVisible resetting scroll to %d, %d", m_focusScrollLocation.x(), m_focusScrollLocation.y());
-            m_focusScrollLocation = WebCore::IntPoint(-1, -1);
-        }
         return;
     }
 
@@ -1134,17 +1122,11 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
 
     m_webPage->suspendBackingStore();
 
-    WebCore::IntPoint sourceScrollPosition = mainFrameView->scrollPosition();
-
     // If the text is too small, zoom in to make it a minimum size.
     // The minimum size being defined as 3 mm is a good value based on my observations.
     static const int s_minimumTextHeightInPixels = Graphics::Screen::primaryScreen()->heightInMMToPixels(3);
 
     if (m_webPage->isUserScalable() && fontHeight && fontHeight * m_webPage->currentScale() < s_minimumTextHeightInPixels && !isRunningDrt()) {
-        if (!m_focusZoomScale) {
-            m_focusZoomScale = m_webPage->currentScale();
-            m_focusScrollLocation = sourceScrollPosition;
-        }
         double zoomScaleRequired = static_cast<double>(s_minimumTextHeightInPixels) / fontHeight;
         m_webPage->zoomAboutPoint(zoomScaleRequired, selectionFocusRect.location());
         InputLog(LogLevelInfo, "InputHandler::ensureFocusTextElementVisible zooming in to %f at point %d, %d", zoomScaleRequired, selectionFocusRect.location().x(), selectionFocusRect.location().y());
@@ -1216,8 +1198,6 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
             WebCore::IntPoint maximumScrollPosition = WebCore::IntPoint(mainFrameView->contentsWidth() - actualScreenRect.width(), mainFrameView->contentsHeight() - actualScreenRect.height());
             scrollLocation = scrollLocation.shrunkTo(maximumScrollPosition);
             if (scrollLocation != mainFrameView->scrollPosition()) {
-                if (m_focusScrollLocation == WebCore::IntPoint(-1, -1))
-                    m_focusScrollLocation = sourceScrollPosition;
                 mainFrameView->setScrollPosition(scrollLocation);
                 mainFrameView->setConstrainsScrollingToContentEdge(true);
                 InputLog(LogLevelInfo, "InputHandler::ensureFocusTextElementVisible scrolling to point %d, %d", scrollLocation.x(), scrollLocation.y());

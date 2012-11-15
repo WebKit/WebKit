@@ -224,9 +224,6 @@ private:
     RefPtr<WebCore::TextCheckingRequest> m_request;
     int32_t m_processingTransactionId;
 
-    double m_focusZoomScale;
-    WebCore::IntPoint m_focusScrollLocation;
-
     bool m_receivedBackspaceKeyDown;
     unsigned short m_expectedKeyUpChar;
 };

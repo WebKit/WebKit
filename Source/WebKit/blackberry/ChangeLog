@@ -1,3 +1,20 @@
+2012-11-15  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Don't restore zoom and scroll when leaving an input field.
+        https://bugs.webkit.org/show_bug.cgi?id=102376
+
+        Reviewed by Yong Li.
+
+        Restoring the zoom causes undesirable behavior when switching between fields.
+
+        Reviewed Internally by Andrew Lo.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2012-11-15  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Fix suspend/resume assertion in setCompositor().
