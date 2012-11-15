@@ -2074,6 +2074,11 @@ HEADERS += \
     platform/mock/ScrollbarThemeMock.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \
+    platform/graphics/cpu/arm/filters/NEONHelpers.h \
+    platform/graphics/cpu/arm/filters/FEBlendNEON.h \
+    platform/graphics/cpu/arm/filters/FECompositeArithmeticNEON.h \
+    platform/graphics/cpu/arm/filters/FEGaussianBlurNEON.h \
+    platform/graphics/cpu/arm/filters/FELightingNEON.h \
     platform/graphics/CrossfadeGeneratedImage.h \
     platform/graphics/filters/CustomFilterArrayParameter.h \
     platform/graphics/filters/CustomFilterConstants.h \
@@ -2115,11 +2120,6 @@ HEADERS += \
     platform/graphics/filters/LightSource.h \
     platform/graphics/filters/SourceAlpha.h \
     platform/graphics/filters/SourceGraphic.h \
-    platform/graphics/filters/arm/NEONHelpers.h \
-    platform/graphics/filters/arm/FEBlendNEON.h \
-    platform/graphics/filters/arm/FECompositeArithmeticNEON.h \
-    platform/graphics/filters/arm/FEGaussianBlurNEON.h \
-    platform/graphics/filters/arm/FELightingNEON.h \
     platform/graphics/FloatPoint3D.h \
     platform/graphics/FloatPoint.h \
     platform/graphics/FloatQuad.h \
@@ -3501,6 +3501,7 @@ enable?(XSLT) {
 
 enable?(FILTERS) {
     SOURCES += \
+        platform/graphics/cpu/arm/filters/FELightingNEON.cpp \
         platform/graphics/filters/CustomFilterGlobalContext.cpp \
         platform/graphics/filters/CustomFilterOperation.cpp \
         platform/graphics/filters/CustomFilterParameterList.cpp \
@@ -3539,7 +3540,6 @@ enable?(FILTERS) {
         platform/graphics/filters/SpotLightSource.cpp \
         platform/graphics/filters/SourceAlpha.cpp \
         platform/graphics/filters/SourceGraphic.cpp \
-        platform/graphics/filters/arm/FELightingNEON.cpp \
 }
 
 enable?(MATHML) {

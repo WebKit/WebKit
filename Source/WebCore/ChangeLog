@@ -1,3 +1,54 @@
+2012-11-15  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Relocate the ARM NEON SVG filter optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=102214
+
+        Reviewed by Zoltan Herczeg.
+
+        Relocate the ARM filter optimizations into platform/graphics/cpu/arm
+        to keep them together with the others.
+        From now all graphics optimization for ARM NEON should go here.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cpu/arm/filters/FEBlendNEON.h: Renamed from Source/WebCore/platform/graphics/filters/arm/FEBlendNEON.h.
+        (WebCore):
+        (FEBlendUtilitiesNEON):
+        (WebCore::FEBlendUtilitiesNEON::div255):
+        (WebCore::FEBlendUtilitiesNEON::normal):
+        (WebCore::FEBlendUtilitiesNEON::multiply):
+        (WebCore::FEBlendUtilitiesNEON::screen):
+        (WebCore::FEBlendUtilitiesNEON::darken):
+        (WebCore::FEBlendUtilitiesNEON::lighten):
+        (WebCore::FEBlend::platformApplyNEON):
+        * platform/graphics/cpu/arm/filters/FECompositeArithmeticNEON.h: Renamed from Source/WebCore/platform/graphics/filters/arm/FECompositeArithmeticNEON.h.
+        (WebCore):
+        (WebCore::FEComposite::computeArithmeticPixelsNeon):
+        (WebCore::FEComposite::platformArithmeticNeon):
+        * platform/graphics/cpu/arm/filters/FEGaussianBlurNEON.h: Renamed from Source/WebCore/platform/graphics/filters/arm/FEGaussianBlurNEON.h.
+        (WebCore):
+        (WebCore::boxBlurNEON):
+        * platform/graphics/cpu/arm/filters/FELightingNEON.cpp: Renamed from Source/WebCore/platform/graphics/filters/arm/FELightingNEON.cpp.
+        (WebCore):
+        (WebCore::feLightingConstantsForNeon):
+        (WebCore::FELighting::platformApplyNeonWorker):
+        (WebCore::FELighting::getPowerCoefficients):
+        * platform/graphics/cpu/arm/filters/FELightingNEON.h: Renamed from Source/WebCore/platform/graphics/filters/arm/FELightingNEON.h.
+        (WebCore):
+        (FELightingFloatArgumentsForNeon):
+        (FELightingPaintingDataForNeon):
+        (WebCore::FELighting::platformApplyNeon):
+        * platform/graphics/cpu/arm/filters/NEONHelpers.h: Renamed from Source/WebCore/platform/graphics/filters/arm/NEONHelpers.h.
+        (WebCore):
+        (WebCore::loadRGBA8AsFloat):
+        (WebCore::storeFloatAsRGBA8):
+
 2012-11-15  Mike West  <mkwst@chromium.org>
 
         We should trigger a console warning when we encounter invalid sandbox flags.

@@ -112,8 +112,8 @@
       '../platform/graphics/chromium',
       '../platform/graphics/chromium/cc',
       '../platform/graphics/cpu/arm',
+      '../platform/graphics/cpu/arm/filters',
       '../platform/graphics/filters',
-      '../platform/graphics/filters/arm',
       '../platform/graphics/filters/skia',
       '../platform/graphics/gpu',
       '../platform/graphics/opentype',
@@ -1664,7 +1664,7 @@
         ['exclude', 'platform/Theme\\.cpp$'],
         # *NEON.cpp files need special compile options.
         # They are moved to the webcore_arm_neon target.
-        ['exclude', 'platform/graphics/filters/arm/.*NEON\\.(cpp|h)'],
+        ['exclude', 'platform/graphics/cpu/arm/filters/.*NEON\\.(cpp|h)'],
         ['exclude', 'platform/image-encoders/JPEGImageEncoder\\.(cpp|h)$'],
         ['exclude', 'platform/image-encoders/PNGImageEncoder\\.(cpp|h)$'],
         ['exclude', 'platform/network/ResourceHandle\\.cpp$'],
@@ -1935,7 +1935,7 @@
           ],
           'sources/': [
             ['exclude', '.*'],
-            ['include', 'platform/graphics/filters/arm/.*NEON\\.(cpp|h)'],
+            ['include', 'platform/graphics/cpu/arm/filters/.*NEON\\.(cpp|h)'],
           ],
           'cflags': ['-marm'],
           'conditions': [

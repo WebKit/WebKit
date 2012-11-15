@@ -1377,10 +1377,6 @@
 		49E912AC0EFAC906009D0CAF /* AnimationList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49E912A70EFAC906009D0CAF /* AnimationList.cpp */; };
 		49E912AD0EFAC906009D0CAF /* AnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E912A80EFAC906009D0CAF /* AnimationList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 49E912A90EFAC906009D0CAF /* TimingFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		49ECEB681499790D00CDD3A4 /* FECompositeArithmeticNEON.h in Headers */ = {isa = PBXBuildFile; fileRef = 49ECEB5E1499790D00CDD3A4 /* FECompositeArithmeticNEON.h */; };
-		49ECEB6A1499790D00CDD3A4 /* FEGaussianBlurNEON.h in Headers */ = {isa = PBXBuildFile; fileRef = 49ECEB601499790D00CDD3A4 /* FEGaussianBlurNEON.h */; };
-		49ECEB6B1499790D00CDD3A4 /* FELightingNEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49ECEB611499790D00CDD3A4 /* FELightingNEON.cpp */; };
-		49ECEB6C1499790D00CDD3A4 /* FELightingNEON.h in Headers */ = {isa = PBXBuildFile; fileRef = 49ECEB621499790D00CDD3A4 /* FELightingNEON.h */; };
 		49ECEB6D1499790D00CDD3A4 /* FilterOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49ECEB631499790D00CDD3A4 /* FilterOperation.cpp */; };
 		49ECEB6E1499790D00CDD3A4 /* FilterOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49ECEB641499790D00CDD3A4 /* FilterOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49ECEB6F1499790D00CDD3A4 /* FilterOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49ECEB651499790D00CDD3A4 /* FilterOperations.cpp */; };
@@ -8583,10 +8579,6 @@
 		49E912A70EFAC906009D0CAF /* AnimationList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationList.cpp; path = animation/AnimationList.cpp; sourceTree = "<group>"; };
 		49E912A80EFAC906009D0CAF /* AnimationList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationList.h; path = animation/AnimationList.h; sourceTree = "<group>"; };
 		49E912A90EFAC906009D0CAF /* TimingFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimingFunction.h; path = animation/TimingFunction.h; sourceTree = "<group>"; };
-		49ECEB5E1499790D00CDD3A4 /* FECompositeArithmeticNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FECompositeArithmeticNEON.h; sourceTree = "<group>"; };
-		49ECEB601499790D00CDD3A4 /* FEGaussianBlurNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FEGaussianBlurNEON.h; sourceTree = "<group>"; };
-		49ECEB611499790D00CDD3A4 /* FELightingNEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FELightingNEON.cpp; sourceTree = "<group>"; };
-		49ECEB621499790D00CDD3A4 /* FELightingNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FELightingNEON.h; sourceTree = "<group>"; };
 		49ECEB631499790D00CDD3A4 /* FilterOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterOperation.cpp; path = filters/FilterOperation.cpp; sourceTree = "<group>"; };
 		49ECEB641499790D00CDD3A4 /* FilterOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterOperation.h; path = filters/FilterOperation.h; sourceTree = "<group>"; };
 		49ECEB651499790D00CDD3A4 /* FilterOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterOperations.cpp; path = filters/FilterOperations.cpp; sourceTree = "<group>"; };
@@ -10374,7 +10366,6 @@
 		91089D2F14C335CD005AFC49 /* JSUint8ClampedArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUint8ClampedArray.cpp; sourceTree = "<group>"; };
 		91089D3014C335CD005AFC49 /* JSUint8ClampedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSUint8ClampedArray.h; sourceTree = "<group>"; };
 		91A3905814C0F4B900F67901 /* Uint8ClampedArray.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = Uint8ClampedArray.idl; path = canvas/Uint8ClampedArray.idl; sourceTree = "<group>"; };
-		930062D7159B45B600ACD48A /* NEONHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEONHelpers.h; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
@@ -10478,6 +10469,12 @@
 		93309EA0099EB78C0056E581 /* SharedTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedTimer.h; sourceTree = "<group>"; };
 		93309EA1099EB78C0056E581 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
 		9332AB3D16515D7700D827EC /* GraphicsContext3DNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3DNEON.h; sourceTree = "<group>"; };
+		9332AB871653A97900D827EC /* FEBlendNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FEBlendNEON.h; sourceTree = "<group>"; };
+		9332AB881653A97900D827EC /* FECompositeArithmeticNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FECompositeArithmeticNEON.h; sourceTree = "<group>"; };
+		9332AB891653A97900D827EC /* FEGaussianBlurNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FEGaussianBlurNEON.h; sourceTree = "<group>"; };
+		9332AB8A1653A97900D827EC /* FELightingNEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FELightingNEON.cpp; sourceTree = "<group>"; };
+		9332AB8B1653A97900D827EC /* FELightingNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FELightingNEON.h; sourceTree = "<group>"; };
+		9332AB8C1653A97900D827EC /* NEONHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEONHelpers.h; sourceTree = "<group>"; };
 		93354A3B0B24F8C9003F6DEA /* UIEventWithKeyState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIEventWithKeyState.cpp; sourceTree = "<group>"; };
 		933A142B0B7D188600A53FFD /* TextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextEvent.cpp; sourceTree = "<group>"; };
 		933A142C0B7D188600A53FFD /* TextEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TextEvent.idl; sourceTree = "<group>"; };
@@ -10532,7 +10529,6 @@
 		938192040F87E1EC00D5352A /* BinaryPropertyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinaryPropertyList.h; sourceTree = "<group>"; };
 		9382AAB10D8C386100F357A6 /* NodeWithIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeWithIndex.h; sourceTree = "<group>"; };
 		9382DF5710A8D5C900925652 /* ColorSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorSpace.h; sourceTree = "<group>"; };
-		938C496815AD67E300FCB2E1 /* FEBlendNEON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FEBlendNEON.h; sourceTree = "<group>"; };
 		938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLElementWrapperFactory.h; sourceTree = "<group>"; };
 		938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElementWrapperFactory.cpp; sourceTree = "<group>"; };
 		938E662509F09956008A48EC /* HTMLCanvasElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLCanvasElement.idl; sourceTree = "<group>"; };
@@ -15421,20 +15417,6 @@
 			name = animation;
 			sourceTree = "<group>";
 		};
-		49ECEB5C1499790D00CDD3A4 /* arm */ = {
-			isa = PBXGroup;
-			children = (
-				938C496815AD67E300FCB2E1 /* FEBlendNEON.h */,
-				49ECEB5E1499790D00CDD3A4 /* FECompositeArithmeticNEON.h */,
-				49ECEB601499790D00CDD3A4 /* FEGaussianBlurNEON.h */,
-				49ECEB611499790D00CDD3A4 /* FELightingNEON.cpp */,
-				49ECEB621499790D00CDD3A4 /* FELightingNEON.h */,
-				930062D7159B45B600ACD48A /* NEONHelpers.h */,
-			);
-			name = arm;
-			path = filters/arm;
-			sourceTree = "<group>";
-		};
 		5126E6B60A2E3AEF005C29FA /* icon */ = {
 			isa = PBXGroup;
 			children = (
@@ -17381,9 +17363,23 @@
 		9332AB3C16515D7700D827EC /* arm */ = {
 			isa = PBXGroup;
 			children = (
+				9332AB861653A97900D827EC /* filters */,
 				9332AB3D16515D7700D827EC /* GraphicsContext3DNEON.h */,
 			);
 			path = arm;
+			sourceTree = "<group>";
+		};
+		9332AB861653A97900D827EC /* filters */ = {
+			isa = PBXGroup;
+			children = (
+				9332AB871653A97900D827EC /* FEBlendNEON.h */,
+				9332AB881653A97900D827EC /* FECompositeArithmeticNEON.h */,
+				9332AB891653A97900D827EC /* FEGaussianBlurNEON.h */,
+				9332AB8A1653A97900D827EC /* FELightingNEON.cpp */,
+				9332AB8B1653A97900D827EC /* FELightingNEON.h */,
+				9332AB8C1653A97900D827EC /* NEONHelpers.h */,
+			);
+			path = filters;
 			sourceTree = "<group>";
 		};
 		9363B6290F8E8FE000803810 /* cf */ = {
@@ -18279,7 +18275,6 @@
 				5093334E163B0E4300099A60 /* CustomFilterParameterList.h */,
 				50D32855163B313F0016111E /* ValidatedCustomFilterOperation.cpp */,
 				50D32856163B313F0016111E /* ValidatedCustomFilterOperation.h */,
-				49ECEB5C1499790D00CDD3A4 /* arm */,
 				15B3FC1715FB217800A81BCB /* CustomFilterArrayParameter.h */,
 				50D4060F147D49DE00D30BB5 /* CustomFilterCompiledProgram.cpp */,
 				50D40610147D49DE00D30BB5 /* CustomFilterCompiledProgram.h */,
@@ -23538,7 +23533,6 @@
 				A75E8B8B0E1DE2D6007F2481 /* FEColorMatrix.h in Headers */,
 				A75E8B8D0E1DE2D6007F2481 /* FEComponentTransfer.h in Headers */,
 				A75E8B8F0E1DE2D6007F2481 /* FEComposite.h in Headers */,
-				49ECEB681499790D00CDD3A4 /* FECompositeArithmeticNEON.h in Headers */,
 				84730D791248F0B300D3A9C9 /* FEConvolveMatrix.h in Headers */,
 				50D403C814768C9400D30BB5 /* FECustomFilter.h in Headers */,
 				84730D7B1248F0B300D3A9C9 /* FEDiffuseLighting.h in Headers */,
@@ -23546,9 +23540,7 @@
 				4358E8811360A31700E4748C /* FEDropShadow.h in Headers */,
 				84730D7F1248F0B300D3A9C9 /* FEFlood.h in Headers */,
 				84801955108BAFB300CB2B1F /* FEGaussianBlur.h in Headers */,
-				49ECEB6A1499790D00CDD3A4 /* FEGaussianBlurNEON.h in Headers */,
 				84730D811248F0B300D3A9C9 /* FELighting.h in Headers */,
-				49ECEB6C1499790D00CDD3A4 /* FELightingNEON.h in Headers */,
 				84730D831248F0B300D3A9C9 /* FEMerge.h in Headers */,
 				84730D851248F0B300D3A9C9 /* FEMorphology.h in Headers */,
 				84730D871248F0B300D3A9C9 /* FEOffset.h in Headers */,
@@ -26784,7 +26776,6 @@
 				84730D7E1248F0B300D3A9C9 /* FEFlood.cpp in Sources */,
 				84801954108BAFB300CB2B1F /* FEGaussianBlur.cpp in Sources */,
 				84730D801248F0B300D3A9C9 /* FELighting.cpp in Sources */,
-				49ECEB6B1499790D00CDD3A4 /* FELightingNEON.cpp in Sources */,
 				84730D821248F0B300D3A9C9 /* FEMerge.cpp in Sources */,
 				84730D841248F0B300D3A9C9 /* FEMorphology.cpp in Sources */,
 				84730D861248F0B300D3A9C9 /* FEOffset.cpp in Sources */,

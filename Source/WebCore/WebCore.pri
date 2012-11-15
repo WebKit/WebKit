@@ -54,8 +54,8 @@ INCLUDEPATH += \
     $$SOURCE_DIR/platform/audio \
     $$SOURCE_DIR/platform/graphics \
     $$SOURCE_DIR/platform/graphics/cpu/arm \
+    $$SOURCE_DIR/platform/graphics/cpu/arm/filters \
     $$SOURCE_DIR/platform/graphics/filters \
-    $$SOURCE_DIR/platform/graphics/filters/arm \
     $$SOURCE_DIR/platform/graphics/opengl \
     $$SOURCE_DIR/platform/graphics/opentype \
     $$SOURCE_DIR/platform/graphics/qt \

@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FELightingNeon_h
-#define FELightingNeon_h
+#ifndef FELightingNEON_h
+#define FELightingNEON_h
 
 #if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC)
 
@@ -198,4 +198,4 @@ inline void FELighting::platformApplyNeon(LightingData& data, LightSource::Paint
 
 #endif // CPU(ARM_NEON) && COMPILER(GCC)
 
-#endif // FELightingNeon_h
+#endif // FELightingNEON_h
