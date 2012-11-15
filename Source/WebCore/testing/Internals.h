@@ -246,6 +246,8 @@ public:
     void startTrackingRepaints(Document*, ExceptionCode&);
     void stopTrackingRepaints(Document*, ExceptionCode&);
 
+    String getCurrentCursorInfo(Document*, ExceptionCode&);
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

@@ -156,7 +156,7 @@ public:
     OptionalCursor(const Cursor& cursor) : m_isCursorChange(true), m_cursor(cursor) { }
 
     bool isCursorChange() const { return m_isCursorChange; }
-    const Cursor& cursor() const { return m_cursor; }
+    const Cursor& cursor() const { ASSERT(m_isCursorChange); return m_cursor; }
 
 private:
     bool m_isCursorChange;
@@ -1538,7 +1538,7 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
     }
     return pointerCursor();
 }
-    
+
 static LayoutPoint documentPointForWindowPoint(Frame* frame, const IntPoint& windowPoint)
 {
     FrameView* view = frame->view();
@@ -1873,8 +1873,10 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
             scrollbar->mouseMoved(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         if (FrameView* view = m_frame->view()) {
             OptionalCursor optionalCursor = selectCursor(mev, scrollbar);
-            if (optionalCursor.isCursorChange())
-                view->setCursor(optionalCursor.cursor());
+            if (optionalCursor.isCursorChange()) {
+                m_currentMouseCursor = optionalCursor.cursor();
+                view->setCursor(m_currentMouseCursor);
+            }
         }
     }
     

@@ -31,6 +31,7 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "ComposedShadowTreeWalker.h"
+#include "Cursor.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -38,6 +39,7 @@
 #include "DocumentMarkerController.h"
 #include "Element.h"
 #include "ElementShadow.h"
+#include "EventHandler.h"
 #include "ExceptionCode.h"
 #include "FormController.h"
 #include "Frame.h"
@@ -75,6 +77,8 @@
 #include "TextIterator.h"
 #include "TreeScope.h"
 #include "ViewportArguments.h"
+#include <wtf/text/StringBuffer.h>
+
 
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
@@ -94,7 +98,6 @@
 #endif
 
 #if ENABLE(TOUCH_ADJUSTMENT)
-#include "EventHandler.h"
 #include "WebKitPoint.h"
 #endif
 
@@ -1537,6 +1540,91 @@ void Internals::stopTrackingRepaints(Document* document, ExceptionCode& ec)
 
     FrameView* frameView = document->view();
     frameView->setTracksRepaints(false);
+}
+
+#if USE(LAZY_NATIVE_CURSOR)
+static const char* cursorTypeToString(Cursor::Type cursorType)
+{
+    switch (cursorType) {
+    case Cursor::Pointer: return "Pointer";
+    case Cursor::Cross: return "Cross";
+    case Cursor::Hand: return "Hand";
+    case Cursor::IBeam: return "IBeam";
+    case Cursor::Wait: return "Wait";
+    case Cursor::Help: return "Help";
+    case Cursor::EastResize: return "EastResize";
+    case Cursor::NorthResize: return "NorthResize";
+    case Cursor::NorthEastResize: return "NorthEastResize";
+    case Cursor::NorthWestResize: return "NorthWestResize";
+    case Cursor::SouthResize: return "SouthResize";
+    case Cursor::SouthEastResize: return "SouthEastResize";
+    case Cursor::SouthWestResize: return "SouthWestResize";
+    case Cursor::WestResize: return "WestResize";
+    case Cursor::NorthSouthResize: return "NorthSouthResize";
+    case Cursor::EastWestResize: return "EastWestResize";
+    case Cursor::NorthEastSouthWestResize: return "NorthEastSouthWestResize";
+    case Cursor::NorthWestSouthEastResize: return "NorthWestSouthEastResize";
+    case Cursor::ColumnResize: return "ColumnResize";
+    case Cursor::RowResize: return "RowResize";
+    case Cursor::MiddlePanning: return "MiddlePanning";
+    case Cursor::EastPanning: return "EastPanning";
+    case Cursor::NorthPanning: return "NorthPanning";
+    case Cursor::NorthEastPanning: return "NorthEastPanning";
+    case Cursor::NorthWestPanning: return "NorthWestPanning";
+    case Cursor::SouthPanning: return "SouthPanning";
+    case Cursor::SouthEastPanning: return "SouthEastPanning";
+    case Cursor::SouthWestPanning: return "SouthWestPanning";
+    case Cursor::WestPanning: return "WestPanning";
+    case Cursor::Move: return "Move";
+    case Cursor::VerticalText: return "VerticalText";
+    case Cursor::Cell: return "Cell";
+    case Cursor::ContextMenu: return "ContextMenu";
+    case Cursor::Alias: return "Alias";
+    case Cursor::Progress: return "Progress";
+    case Cursor::NoDrop: return "NoDrop";
+    case Cursor::Copy: return "Copy";
+    case Cursor::None: return "None";
+    case Cursor::NotAllowed: return "NotAllowed";
+    case Cursor::ZoomIn: return "ZoomIn";
+    case Cursor::ZoomOut: return "ZoomOut";
+    case Cursor::Grab: return "Grab";
+    case Cursor::Grabbing: return "Grabbing";
+    case Cursor::Custom: return "Custom";
+    }
+
+    ASSERT_NOT_REACHED();
+    return "UNKNOWN";
+}
+#endif
+
+String Internals::getCurrentCursorInfo(Document* document, ExceptionCode& ec)
+{
+    if (!document || !document->frame()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    Cursor cursor = document->frame()->eventHandler()->currentMouseCursor();
+
+#if USE(LAZY_NATIVE_CURSOR)
+    StringBuilder result;
+    result.append("type=");
+    result.append(cursorTypeToString(cursor.type()));
+    result.append(" hotSpot=");
+    result.appendNumber(cursor.hotSpot().x());
+    result.append(",");
+    result.appendNumber(cursor.hotSpot().y());
+    if (cursor.image()) {
+        IntSize size = cursor.image()->size();
+        result.append(" image=");
+        result.appendNumber(size.width());
+        result.append("x");
+        result.appendNumber(size.height());
+    }
+    return result.toString();
+#else
+    return "FAIL: Cursor details not available on this platform.";
+#endif
 }
 
 }

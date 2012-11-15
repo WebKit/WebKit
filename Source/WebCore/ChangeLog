@@ -1,3 +1,33 @@
+2012-11-15  Rick Byers  <rbyers@chromium.org>
+
+        No tests for changing mouse cursors
+        https://bugs.webkit.org/show_bug.cgi?id=100550
+
+        Reviewed by Brent Fulgham.
+
+        Add infrastructure to keep track of the last set mouse cursor,
+        and then to query it from DumpRenderTree.  Also adds ASSERTs to help ensure
+        we can reliably detect when an uninitialized Cursor object is used (such as
+        the one that can be returned from OptionalCursor in the NoCursorChange scenario).
+
+        Test: fast/events/mouse-cursor.html
+
+        * WebCore.exp.in: Add Cursor copy ctor export
+        * page/EventHandler.cpp:
+        (WebCore::OptionalCursor::cursor):
+        (WebCore::EventHandler::handleMouseMoveEvent): Keep track of last set mouse cursor
+        * page/EventHandler.h:
+        (WebCore::EventHandler::currentMouseCursor): New getter for last set mouse cursor
+        * platform/Cursor.h:
+        (WebCore::Cursor::Cursor): Mark uninitialized cursor types as invalid.
+        (WebCore::Cursor::type): Assert cursor type is valid.
+        * testing/Internals.cpp:
+        (WebCore::cursorTypeToString): Helper to convert cursor type to enum
+        (WebCore):
+        (WebCore::Internals::getCurrentCursorInfo): New function to return a string describing the last set mouse cursor
+        * testing/Internals.h: Declare getCurrentCursorInfo
+        * testing/Internals.idl: Declare getCurrentCursorInfo
+
 2012-11-13  Jer Noble  <jer.noble@apple.com>
 
         Support loading of blob URLs in AVFoundation.

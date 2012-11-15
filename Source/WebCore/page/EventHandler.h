@@ -26,6 +26,7 @@
 #ifndef EventHandler_h
 #define EventHandler_h
 
+#include "Cursor.h"
 #include "DragActions.h"
 #include "DragState.h"
 #include "FocusDirection.h"
@@ -141,6 +142,7 @@ public:
     void resizeLayerDestroyed();
 
     IntPoint currentMousePosition() const;
+    Cursor currentMouseCursor() const { return m_currentMouseCursor; }
 
     static Frame* subframeForTargetNode(Node*);
     static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
@@ -420,6 +422,7 @@ private:
     RefPtr<Node> m_lastNodeUnderMouse;
     RefPtr<Frame> m_lastMouseMoveEventSubframe;
     RefPtr<Scrollbar> m_lastScrollbarUnderMouse;
+    Cursor m_currentMouseCursor;
 
     int m_clickCount;
     RefPtr<Node> m_clickNode;
