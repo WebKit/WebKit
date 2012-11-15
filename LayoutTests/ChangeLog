@@ -1,3 +1,129 @@
+2012-11-15  Stephen Chenney  <schenney@chromium.org>
+
+        Test rebaselines after SK_IGNORE_FAST_BLURRECT has been removed
+
+        Unreviewed test expectations update.
+
+        * fast/box-shadow/single-pixel-shadow-expected.png: Added.
+        * platform/chromium-linux-x86/fast/box-shadow: Removed.
+        * platform/chromium-linux-x86/fast/box-shadow/single-pixel-shadow-expected.png: Removed.
+        * platform/chromium-linux-x86/fast/repaint/transform-replaced-shadows-expected.png: Added.
+        * platform/chromium-linux-x86/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-linux/fast/box-shadow/single-pixel-shadow-expected.png: Removed.
+        * platform/chromium-linux/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-linux/fast/repaint/transform-replaced-shadows-expected.png: Added.
+        * platform/chromium-mac-lion/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-lion/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac-lion/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-mac-lion/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-horizontal-expected.png: Added.
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Added.
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-strict-vertical-expected.png: Added.
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/transform-replaced-shadows-expected.png: Added.
+        * platform/chromium-mac-lion/fast/transforms/shadows-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-lion/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-mac-lion/svg/filters/shadow-on-rect-with-filter-expected.png: Added.
+        * platform/chromium-mac-snowleopard/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-snowleopard/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac-snowleopard/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-mac-snowleopard/fast/box-shadow/single-pixel-shadow-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/transform-replaced-shadows-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-snowleopard/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac/fast/box-shadow/box-shadow-clipped-slices-expected.png:
+        * platform/chromium-mac/fast/box-shadow/box-shadow-radius-expected.png:
+        * platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-mac/fast/box-shadow/scaled-box-shadow-expected.png:
+        * platform/chromium-mac/fast/box-shadow/single-pixel-shadow-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-shadow-expected.txt: Removed.
+        * platform/chromium-mac/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-mac/fast/repaint/transform-replaced-shadows-expected.png: Added.
+        * platform/chromium-mac/fast/transforms/shadows-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-mac/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-win-xp/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win-xp/fast/box-shadow: Removed.
+        * platform/chromium-win-xp/fast/box-shadow/single-pixel-shadow-expected.png: Removed.
+        * platform/chromium-win-xp/fast/repaint/box-shadow-h-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint/box-shadow-v-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint/shadow-multiple-horizontal-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint/shadow-multiple-strict-vertical-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint/shadow-multiple-vertical-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint/transform-replaced-shadows-expected.png: Added.
+        * platform/chromium-win-xp/fast/transforms/shadows-expected.png: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/softwarecompositing/shadows: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/chromium-win-xp/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-win-xp/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-win/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-win/fast/box-shadow/box-shadow-clipped-slices-expected.png:
+        * platform/chromium-win/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-win/fast/box-shadow/single-pixel-shadow-expected.png:
+        * platform/chromium-win/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-win/fast/canvas/canvas-shadow-expected.txt: Added.
+        * platform/chromium-win/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-win/fast/repaint/transform-replaced-shadows-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/repaint/shadow-multiple-horizontal-expected.png: Removed.
+        * platform/chromium/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Removed.
+        * platform/chromium/fast/repaint/shadow-multiple-strict-vertical-expected.png: Removed.
+        * platform/efl-wk1/compositing/shadows: Added.
+        * platform/efl-wk1/compositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/efl-wk1/fast/box-shadow: Added.
+        * platform/efl-wk1/fast/box-shadow/basic-shadows-expected.png: Added.
+        * platform/efl-wk1/fast/box-shadow/box-shadow-clipped-slices-expected.png: Added.
+        * platform/efl-wk1/fast/box-shadow/box-shadow-transformed-expected.png: Added.
+        * platform/efl-wk1/fast/box-shadow/scaled-box-shadow-expected.png: Added.
+        * platform/efl-wk1/fast/canvas: Added.
+        * platform/efl-wk1/fast/canvas/canvas-incremental-repaint-expected.png: Added.
+        * platform/efl-wk1/fast/repaint/shadow-multiple-horizontal-expected.png: Added.
+        * platform/efl-wk1/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Added.
+        * platform/efl-wk1/fast/repaint/shadow-multiple-strict-vertical-expected.png: Added.
+        * platform/efl-wk1/fast/repaint/shadow-multiple-vertical-expected.png: Added.
+        * platform/efl-wk1/fast/transforms: Added.
+        * platform/efl-wk1/fast/transforms/shadows-expected.png: Added.
+        * platform/efl-wk1/svg/css: Added.
+        * platform/efl-wk1/svg/css/group-with-shadow-expected.png: Added.
+        * platform/efl/compositing/shadows/shadow-drawing-expected.png: Removed.
+        * platform/efl/fast/box-shadow/basic-shadows-expected.png: Removed.
+        * platform/efl/fast/box-shadow/box-shadow-clipped-slices-expected.png: Removed.
+        * platform/efl/fast/box-shadow/box-shadow-transformed-expected.png: Removed.
+        * platform/efl/fast/box-shadow/scaled-box-shadow-expected.png: Removed.
+        * platform/efl/fast/box-shadow/single-pixel-shadow-expected.png: Removed.
+        * platform/efl/fast/canvas/canvas-incremental-repaint-expected.png: Removed.
+        * platform/efl/fast/repaint/shadow-multiple-horizontal-expected.png: Removed.
+        * platform/efl/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Removed.
+        * platform/efl/fast/repaint/shadow-multiple-strict-vertical-expected.png: Removed.
+        * platform/efl/fast/repaint/shadow-multiple-vertical-expected.png: Removed.
+        * platform/efl/fast/transforms/shadows-expected.png: Removed.
+        * platform/efl/svg/css/group-with-shadow-expected.png: Removed.
+        * platform/gtk/fast/box-shadow/single-pixel-shadow-expected.png: Removed.
+
 2012-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134800 and r134805.

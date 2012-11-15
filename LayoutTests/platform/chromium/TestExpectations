@@ -1583,7 +1583,6 @@ crbug.com/23473 [ Mac ] fast/repaint/selection-clear.html [ ImageOnlyFailure ]
 crbug.com/23473 [ Mac ] fast/repaint/table-cell-overflow.html [ ImageOnlyFailure ]
 crbug.com/23473 [ Mac ] fast/repaint/table-extra-bottom-grow.html [ ImageOnlyFailure ]
 # Win/Linux also failed after r83514.
-crbug.com/23473 [ Mac ] fast/repaint/transform-replaced-shadows.html [ ImageOnlyFailure ]
 
 # -----------------------------------------------------------------
 # END MAC PORT TESTS
@@ -2675,7 +2674,7 @@ crbug.com/77494 [ Android Linux Win ] fast/repaint/layout-state-scrolloffset.htm
 crbug.com/77494 [ Android Linux Win ] fast/repaint/layout-state-scrolloffset2.html [ Failure ]
 crbug.com/77494 [ Android Linux Win ] fast/repaint/layout-state-scrolloffset3.html [ Failure ]
 # Not included in tests modified by 81992, but started failing at same time:
-crbug.com/77494 [ Android Linux Win ] fast/repaint/transform-replaced-shadows.html [ ImageOnlyFailure ]
+crbug.com/77494 [ Android ] fast/repaint/transform-replaced-shadows.html [ ImageOnlyFailure ]
 
 # Regression since r82001.
 crbug.com/77619 [ SnowLeopard ] plugins/plugin-javascript-access.html [ Failure ]
