@@ -121,6 +121,8 @@ public:
     virtual bool addAnimation(const KeyframeValueList&, const IntSize&, const Animation*, const String&, double) OVERRIDE;
     virtual void pauseAnimation(const String&, double) OVERRIDE;
     virtual void removeAnimation(const String&) OVERRIDE;
+    virtual void suspendAnimations(double time) OVERRIDE;
+    virtual void resumeAnimations() OVERRIDE;
     
     void setContentsScale(float);
     void setVisibleContentRectTrajectoryVector(const FloatPoint&);

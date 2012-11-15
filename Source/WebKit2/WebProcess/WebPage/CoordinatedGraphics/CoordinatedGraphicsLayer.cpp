@@ -824,6 +824,18 @@ void CoordinatedGraphicsLayer::removeAnimation(const String& animationName)
     didChangeAnimations();
 }
 
+void CoordinatedGraphicsLayer::suspendAnimations(double time)
+{
+    m_animations.suspend(time);
+    didChangeAnimations();
+}
+
+void CoordinatedGraphicsLayer::resumeAnimations()
+{
+    m_animations.resume();
+    didChangeAnimations();
+}
+
 void CoordinatedGraphicsLayer::animationStartedTimerFired(Timer<CoordinatedGraphicsLayer>*)
 {
     client()->notifyAnimationStarted(this, m_lastAnimationStartTime);

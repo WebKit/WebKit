@@ -1,3 +1,30 @@
+2012-11-15  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Coordinated Graphics: support the "freeze animations" API
+        https://bugs.webkit.org/show_bug.cgi?id=100703
+
+        Reviewed by Noam Rosenthal.
+
+        Make animations resumable in Coordinated Graphics.
+        Pausing was already implemented.
+
+        Tested with animations and transitions tests. No tests to be
+        unskipped because these tests has been working without this API
+        as well (although this is the preferred way).
+
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        (WebCore::GraphicsLayerAnimation::apply):
+        (WebCore::GraphicsLayerAnimation::computeTotalRunningTime):
+        Do not consider the time while we was suspended as part of
+        the total running time.
+        (WebCore):
+        (WebCore::GraphicsLayerAnimation::resume):
+        (WebCore::GraphicsLayerAnimations::suspend):
+        (WebCore::GraphicsLayerAnimations::resume):
+        * platform/graphics/GraphicsLayerAnimation.h:
+        (GraphicsLayerAnimation):
+        (GraphicsLayerAnimations):
+
 2012-11-15  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Relocate the ARM NEON SVG filter optimizations

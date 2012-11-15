@@ -276,7 +276,7 @@ void GraphicsLayerAnimation::apply(Client* client)
     if (!isActive())
         return;
 
-    double totalRunningTime = m_state == PausedState ? m_pauseTime : WTF::currentTime() - m_startTime;
+    double totalRunningTime = computeTotalRunningTime();
     double normalizedValue = normalizedAnimationValue(totalRunningTime, m_animation->duration(), m_animation->direction(), m_animation->iterationCount());
 
     if (m_animation->iterationCount() != Animation::IterationCountInfinite && totalRunningTime >= m_animation->duration() * m_animation->iterationCount()) {
@@ -315,10 +315,28 @@ void GraphicsLayerAnimation::apply(Client* client)
     }
 }
 
+double GraphicsLayerAnimation::computeTotalRunningTime()
+{
+    if (state() == PausedState)
+        return m_pauseTime;
+
+    double oldLastRefreshedTime = m_lastRefreshedTime;
+    m_lastRefreshedTime = WTF::currentTime();
+    m_totalRunningTime += m_lastRefreshedTime - oldLastRefreshedTime;
+    return m_totalRunningTime;
+}
+
 void GraphicsLayerAnimation::pause(double time)
 {
     setState(PausedState);
     m_pauseTime = time;
+}
+
+void GraphicsLayerAnimation::resume()
+{
+    setState(PlayingState);
+    m_totalRunningTime = m_pauseTime;
+    m_lastRefreshedTime = WTF::currentTime();
 }
 
 void GraphicsLayerAnimations::add(const GraphicsLayerAnimation& animation)
@@ -332,6 +350,18 @@ void GraphicsLayerAnimations::pause(const String& name, double offset)
         if (m_animations[i].name() == name)
             m_animations[i].pause(offset);
     }
+}
+
+void GraphicsLayerAnimations::suspend(double offset)
+{
+    for (size_t i = 0; i < m_animations.size(); ++i)
+        m_animations[i].pause(offset);
+}
+
+void GraphicsLayerAnimations::resume()
+{
+    for (size_t i = 0; i < m_animations.size(); ++i)
+        m_animations[i].resume();
 }
 
 void GraphicsLayerAnimations::remove(const String& name)

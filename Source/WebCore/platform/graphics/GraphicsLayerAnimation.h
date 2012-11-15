@@ -47,6 +47,8 @@ public:
     GraphicsLayerAnimation(const String&, const KeyframeValueList&, const IntSize&, const Animation*, double, bool);
     void apply(Client*);
     void pause(double);
+    void resume();
+    double computeTotalRunningTime();
     AnimationState state() const { return m_state; }
     void setState(AnimationState s, double pauseTime = 0)
     {
@@ -72,6 +74,8 @@ private:
     bool m_listsMatch;
     double m_startTime;
     double m_pauseTime;
+    double m_totalRunningTime;
+    double m_lastRefreshedTime;
     AnimationState m_state;
 };
 
@@ -82,6 +86,8 @@ public:
     void add(const GraphicsLayerAnimation&);
     void remove(const String& name);
     void pause(const String&, double);
+    void suspend(double);
+    void resume();
     void apply(GraphicsLayerAnimation::Client*);
     bool isEmpty() const { return m_animations.isEmpty(); }
     size_t size() const { return m_animations.size(); }
