@@ -1,3 +1,14 @@
+2012-11-14  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Correct build failure.
+        https://bugs.webkit.org/show_bug.cgi?id=102302
+
+        WebCore symbols were mistakenly added to the JavaScriptCore
+        library definition file.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Remove
+        WebCore symbols that were incorrectly added to the export file.
+
 2012-11-14  Mark Lam  <mark.lam@apple.com>
 
         Change JSEventListener::m_jsFunction to be a weak ref.
