@@ -345,10 +345,6 @@ void RenderBoxModelObject::destroyLayer()
 
 void RenderBoxModelObject::willBeDestroyed()
 {
-    // This must be done before we destroy the RenderObject.
-    if (m_layer)
-        m_layer->clearClipRects();
-
     // A continuation of this RenderObject should be destroyed at subclasses.
     ASSERT(!continuation());
 
