@@ -1,3 +1,19 @@
+2012-11-15  Kentaro Hara  <haraken@chromium.org>
+
+        Correct syntax of old-style IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=102335
+
+        Reviewed by Adam Barth.
+
+        Recently tasak@ corrected an IDL syntax of almost all IDL files.
+        We should correct the rest of them.
+
+        No tests. No change in behavior.
+
+        * html/canvas/OESElementIndexUint.idl:
+        * page/PerformanceMark.idl:
+        * page/PerformanceMeasure.idl:
+
 2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
 
         Remove isHTMLInputElement since it's unused and toInputElement exists 

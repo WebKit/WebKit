@@ -23,11 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
-
-    interface [
-        Conditional=USER_TIMING,
-        OmitConstructor
-    ] PerformanceMeasure : PerformanceEntry {
-    };
-}
+[
+    Conditional=USER_TIMING,
+    OmitConstructor
+] interface PerformanceMeasure : PerformanceEntry {
+};
