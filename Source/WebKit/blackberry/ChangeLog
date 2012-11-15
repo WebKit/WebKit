@@ -1,5 +1,29 @@
 2012-11-15  Jakob Petsovits  <jpetsovits@rim.com>
 
+        [BlackBerry] Fix suspend/resume assertion in setCompositor().
+        https://bugs.webkit.org/show_bug.cgi?id=102397
+        RIM PR 244701
+
+        Reviewed by Adam Treat.
+
+        If a compositor is used but no surface pool is ever
+        allocated (which is a perfectly valid use case), initial
+        suspension of the backingstore is skipped because of an
+        early return. This will cause an assertion to be triggered
+        and a bug. Fix this by suspending it before the return.
+
+        With Adam Treat's recent change to split suspension of
+        screen and backingstore into two different functions,
+        this can now be reduced to a mere screen (blitting)
+        suspension. That was the original intention of this code.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::createSurfaces):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setCompositor):
+
+2012-11-15  Jakob Petsovits  <jpetsovits@rim.com>
+
         [BlackBerry] Leave surface resizing to the client.
         https://bugs.webkit.org/show_bug.cgi?id=102280
         RIM PR 235034

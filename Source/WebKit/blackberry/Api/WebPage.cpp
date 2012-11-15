@@ -5279,21 +5279,15 @@ void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> composit
     // That seems extremely likely to be the case, but let's assert just to make sure.
     ASSERT(webKitThreadMessageClient()->isCurrentThread());
 
-    if (m_compositor || m_client->window()) {
-        // FIXME: Do we really need to suspend/resume both backingstore and screen here?
-        m_backingStore->d->suspendBackingStoreUpdates();
+    if (m_compositor || m_client->window())
         m_backingStore->d->suspendScreenUpdates();
-    }
 
     // The m_compositor member has to be modified during a sync call for thread
     // safe access to m_compositor and its refcount.
     userInterfaceThreadMessageClient()->dispatchSyncMessage(createMethodCallMessage(&WebPagePrivate::setCompositorHelper, this, compositor));
 
-    if (m_compositor || m_client->window()) { // the new compositor, if one was set
-        // FIXME: Do we really need to suspend/resume both backingstore and screen here?
-        m_backingStore->d->resumeBackingStoreUpdates();
+    if (m_compositor || m_client->window()) // the new compositor, if one was set
         m_backingStore->d->resumeScreenUpdates(BackingStore::RenderAndBlit);
-    }
 }
 
 void WebPagePrivate::setCompositorHelper(PassRefPtr<WebPageCompositorPrivate> compositor)

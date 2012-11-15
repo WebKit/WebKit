@@ -2069,6 +2069,10 @@ void BackingStorePrivate::createSurfaces()
         return;
     }
 
+    // Don't try to blit to screen unless we have a buffer.
+    if (!buffer())
+        suspendScreenUpdates();
+
     SurfacePool* surfacePool = SurfacePool::globalSurfacePool();
     surfacePool->initialize(tileSize());
 
@@ -2101,13 +2105,6 @@ void BackingStorePrivate::createSurfaces()
     swapState();
 
     createVisibleTileBufferForWebPage(m_webPage->d);
-
-    // Don't try to blit to screen unless we have a buffer.
-    if (!buffer()) {
-        // FIXME: Do we really need to suspend/resume both backingstore and screen here?
-        suspendBackingStoreUpdates();
-        suspendScreenUpdates();
-    }
 }
 
 void BackingStorePrivate::createVisibleTileBuffer()
