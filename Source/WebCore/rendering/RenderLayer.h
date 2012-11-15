@@ -645,7 +645,7 @@ private:
 
     bool isDirtyStackingContext() const { return m_zOrderListsDirty && isStackingContext(); }
 
-    void computeRepaintRects(LayoutPoint* offsetFromRoot = 0);
+    void computeRepaintRects(const RenderBoxModelObject* repaintContainer, LayoutPoint* offsetFromRoot = 0);
     void computeRepaintRectsIncludingDescendants();
     void clearRepaintRects();
 

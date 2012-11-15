@@ -380,7 +380,8 @@ void RenderLayer::updateLayerPositions(LayoutPoint* offsetFromRoot, UpdateLayerP
         RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
         LayoutRect oldRepaintRect = m_repaintRect;
         LayoutRect oldOutlineBox = m_outlineBox;
-        computeRepaintRects(offsetFromRoot);
+        computeRepaintRects(repaintContainer, offsetFromRoot);
+
         // FIXME: Should ASSERT that value calculated for m_outlineBox using the cached offset is the same
         // as the value not using the cached offset, but we can't due to https://bugs.webkit.org/show_bug.cgi?id=37048
         if (flags & CheckForRepaint) {
@@ -441,13 +442,12 @@ LayoutRect RenderLayer::repaintRectIncludingNonCompositingDescendants() const
     return repaintRect;
 }
 
-void RenderLayer::computeRepaintRects(LayoutPoint* offsetFromRoot)
+void RenderLayer::computeRepaintRects(const RenderBoxModelObject* repaintContainer, LayoutPoint* offsetFromRoot)
 {
     ASSERT(!m_visibleContentStatusDirty);
 
-    RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
-    m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
-    m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer, offsetFromRoot);
+    m_repaintRect = renderer()->clippedOverflowRectForRepaint(const_cast<RenderBoxModelObject*>(repaintContainer));
+    m_outlineBox = renderer()->outlineBoundsForRepaint(const_cast<RenderBoxModelObject*>(repaintContainer), offsetFromRoot);
 }
 
 
@@ -455,7 +455,8 @@ void RenderLayer::computeRepaintRectsIncludingDescendants()
 {
     // FIXME: computeRepaintRects() has to walk up the parent chain for every layer to compute the rects.
     // We should make this more efficient.
-    computeRepaintRects();
+    // FIXME: it's wrong to call this when layout is not up-to-date, which we do.
+    computeRepaintRects(renderer()->containerForRepaint());
 
     for (RenderLayer* layer = firstChild(); layer; layer = layer->nextSibling())
         layer->computeRepaintRectsIncludingDescendants();
@@ -486,12 +487,12 @@ void RenderLayer::updateLayerPositionsAfterScroll(UpdateLayerPositionsAfterScrol
 
     if ((flags & HasSeenFixedPositionedAncestor) || renderer()->style()->position() == FixedPosition) {
         // FIXME: Is it worth passing the offsetFromRoot around like in updateLayerPositions?
-        computeRepaintRects();
+        computeRepaintRects(renderer()->containerForRepaint());
         flags |= HasSeenFixedPositionedAncestor;
     } else if ((flags & HasSeenAncestorWithOverflowClip) && !m_canSkipRepaintRectsUpdateOnScroll) {
         // If we have seen an overflow clip, we should update our repaint rects as clippedOverflowRectForRepaint
         // intersects it with our ancestor overflow clip that may have moved.
-        computeRepaintRects();
+        computeRepaintRects(renderer()->containerForRepaint());
     }
 
     if (renderer()->hasOverflowClip())
@@ -623,7 +624,7 @@ void RenderLayer::setHasVisibleContent(bool b)
     m_visibleContentStatusDirty = false; 
     m_hasVisibleContent = b;
     if (m_hasVisibleContent) {
-        computeRepaintRects();
+        computeRepaintRects(renderer()->containerForRepaint());
         if (!isNormalFlowOnly()) {
             for (RenderLayer* sc = stackingContext(); sc; sc = sc->stackingContext()) {
                 sc->dirtyZOrderLists();
