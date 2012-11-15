@@ -33,7 +33,7 @@ PerfTestRunner.measureRunsPerSecond({
             callsInIterations[i] = 0;
         callsInIterations[i]++;
     },
-    runCount: 1,
+    iterationCount: 1,
     done: function () {
         debug("Returning times: [" + originalTimesInIterations.join(", ") + "]");
         shouldEvaluateTo("callsInIterations[0]", 1);

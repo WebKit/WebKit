@@ -1,3 +1,11 @@
+2012-11-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix tests after r134637.
+
+        * fast/harness/perftests/runs-per-second-iterations.html:
+        * fast/harness/perftests/runs-per-second-log.html:
+        * platform/qt/TestExpectations:
+
 2012-11-15  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Rebase fast/media/mq-js-media-except-01.html after r134618
