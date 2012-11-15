@@ -34,14 +34,15 @@ from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests.port import Port
-from webkitpy.layout_tests.port.config_mock import MockConfig
 from webkitpy.layout_tests.port.server_process_mock import MockServerProcess
 from webkitpy.layout_tests.port.xvfbdriver import XvfbDriver
+from webkitpy.tool.mocktool import MockOptions
 
 
 class XvfbDriverTest(unittest.TestCase):
     def make_driver(self, worker_number=0, xorg_running=False, executive=None):
-        port = Port(host=MockSystemHost(log_executive=True, executive=executive), config=MockConfig())
+        port = Port(host=MockSystemHost(log_executive=True, executive=executive), options=MockOptions(configuration='Release'))
+        port._config.build_directory = lambda configuration: "/mock-build"
         port._server_process_constructor = MockServerProcess
         if xorg_running:
             port._executive._running_pids['Xorg'] = 108
@@ -115,7 +116,7 @@ class XvfbDriverTest(unittest.TestCase):
 
     def test_stop(self):
         filesystem = MockFileSystem(files={'/tmp/.X42-lock': '1234\n'})
-        port = Port(host=MockSystemHost(log_executive=True, filesystem=filesystem), config=MockConfig())
+        port = Port(host=MockSystemHost(log_executive=True, filesystem=filesystem), options=MockOptions(configuration='Release'))
         port._executive.kill_process = lambda x: log("MOCK kill_process pid: " + str(x))
         driver = XvfbDriver(port, worker_number=0, pixel_tests=True)
 

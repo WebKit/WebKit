@@ -29,14 +29,14 @@
 
 """Wrapper objects for WebKit-specific utility routines."""
 
-# FIXME: This file needs to be unified with common/checkout/scm.py and
-# common/config/ports.py .
+# FIXME: This file needs to be unified with common/config/ports.py .
 
-from webkitpy.common.system import logutils
-from webkitpy.common.system import executive
+import logging
+
+from webkitpy.common import webkit_finder
 
 
-_log = logutils.get_logger(__file__)
+_log = logging.getLogger(__name__)
 
 #
 # FIXME: This is used to record if we've already hit the filesystem to look
@@ -64,7 +64,7 @@ class Config(object):
     def __init__(self, executive, filesystem, port_implementation=None):
         self._executive = executive
         self._filesystem = filesystem
-        self._webkit_base_dir = None
+        self._webkit_finder = webkit_finder.WebKitFinder(self._filesystem)
         self._default_configuration = None
         self._build_directories = {}
         self._port_implementation = port_implementation
@@ -81,8 +81,8 @@ class Config(object):
             flags.append('--' + self._port_implementation)
 
         if not self._build_directories.get(configuration):
-            args = ["perl", self.script_path("webkit-build-directory")] + flags
-            output = self._executive.run_command(args, cwd=self.webkit_base_dir(), return_stderr=False).rstrip()
+            args = ["perl", self._webkit_finder.path_to_script("webkit-build-directory")] + flags
+            output = self._executive.run_command(args, cwd=self._webkit_finder.webkit_base(), return_stderr=False).rstrip()
             parts = output.split("\n")
             self._build_directories[configuration] = parts[0]
 
@@ -111,32 +111,6 @@ class Config(object):
             _log.warn("Scripts may fail.  See 'set-webkit-configuration --help'.")
         return self._default_configuration
 
-    def path_from_webkit_base(self, *comps):
-        return self._filesystem.join(self.webkit_base_dir(), *comps)
-
-    # FIXME: We should only have one implementation of this logic,
-    # if scm.find_checkout_root() is broken for Chromium, we should fix (or at least wrap) it!
-    def webkit_base_dir(self):
-        """Returns the absolute path to the top of the WebKit tree.
-
-        Raises an AssertionError if the top dir can't be determined."""
-        # Note: this code somewhat duplicates the code in
-        # scm.find_checkout_root(). However, that code only works if the top
-        # of the SCM repository also matches the top of the WebKit tree. The
-        # Chromium ports, for example, only check out subdirectories like
-        # Tools/Scripts, and so we still have to do additional work
-        # to find the top of the tree.
-        #
-        # This code will also work if there is no SCM system at all.
-        if not self._webkit_base_dir:
-            config_module_path = self._filesystem.path_to_module(self.__module__)
-            self._webkit_base_dir = config_module_path[0:config_module_path.find('Tools') - 1]
-        return self._webkit_base_dir
-
-    def script_path(self, script_name):
-        # This is intentionally relative. Callers should pass the checkout_root/webkit_base_dir to run_command as the cwd.
-        return self._filesystem.join("Tools", "Scripts", script_name)
-
     def _determine_configuration(self):
         # This mirrors the logic in webkitdirs.pm:determineConfiguration().
         #
@@ -162,7 +136,7 @@ class Config(object):
             configuration_path = self._filesystem.join(self.build_directory(None), "Configuration")
             if not self._filesystem.exists(configuration_path):
                 return None
-        except (OSError, executive.ScriptError):
+        except:
             return None
 
         return self._filesystem.read_text_file(configuration_path).rstrip()

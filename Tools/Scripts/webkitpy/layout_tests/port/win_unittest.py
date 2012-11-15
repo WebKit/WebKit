@@ -106,4 +106,4 @@ class WinPortTest(port_testcase.PortTestCase):
 
     def test_expectations_files(self):
         self.assertEqual(len(self.make_port().expectations_files()), 2)
-        self.assertEqual(len(self.make_port(options=MockOptions(webkit_test_runner=True)).expectations_files()), 4)
+        self.assertEqual(len(self.make_port(options=MockOptions(webkit_test_runner=True, configuration='Release')).expectations_files()), 4)

@@ -36,6 +36,8 @@ from webkitpy.layout_tests.port.server_process_mock import MockServerProcess
 # FIXME: remove the dependency on TestWebKitPort
 from webkitpy.layout_tests.port.port_testcase import TestWebKitPort
 
+from webkitpy.tool.mocktool import MockOptions
+
 
 class DriverOutputTest(unittest.TestCase):
     def test_strip_metrics(self):
@@ -80,7 +82,9 @@ class DriverOutputTest(unittest.TestCase):
 
 class DriverTest(unittest.TestCase):
     def make_port(self):
-        return Port(MockSystemHost())
+        port = Port(MockSystemHost(), MockOptions(configuration='Release'))
+        port._config.build_directory = lambda configuration: '/mock-build'
+        return port
 
     def _assert_wrapper(self, wrapper_string, expected_wrapper):
         wrapper = Driver(self.make_port(), None, pixel_tests=False)._command_wrapper(wrapper_string)
@@ -162,6 +166,7 @@ class DriverTest(unittest.TestCase):
 
     def test_no_timeout(self):
         port = TestWebKitPort()
+        port._config.build_directory = lambda configuration: '/mock-build'
         driver = Driver(port, 0, pixel_tests=True, no_timeout=True)
         self.assertEqual(driver.cmd_line(True, []), ['/mock-build/DumpRenderTree', '--no-timeout', '-'])
 

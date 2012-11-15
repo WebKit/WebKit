@@ -71,9 +71,7 @@ class GtkPort(Port, PulseAudioSanitizer):
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('Libraries', 'libTestRunnerInjectedBundle.la')
         environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('TestNetscapePlugin', '.libs')
         environment['WEBKIT_INSPECTOR_PATH'] = self._build_path('Programs', 'resources', 'inspector')
-        environment['AUDIO_RESOURCES_PATH'] = self._filesystem.join(self._config.webkit_base_dir(),
-                                                                    'Source', 'WebCore', 'platform',
-                                                                    'audio', 'resources')
+        environment['AUDIO_RESOURCES_PATH'] = self.path_from_webkit_base('Source', 'WebCore', 'platform', 'audio', 'resources')
         self._copy_value_from_environ_if_set(environment, 'WEBKITOUTPUTDIR')
         return environment
 

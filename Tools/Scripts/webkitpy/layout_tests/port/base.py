@@ -54,6 +54,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.system import path
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost
+from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port import config as port_config
 from webkitpy.layout_tests.port import driver
@@ -90,7 +91,7 @@ class Port(object):
         # Subclasses will usually override this.
         return cls.port_name
 
-    def __init__(self, host, port_name=None, options=None, config=None, **kwargs):
+    def __init__(self, host, port_name=None, options=None, **kwargs):
 
         # This value may be different from cls.port_name by having version modifiers
         # and other fields appended to it (for example, 'qt-arm' or 'mac-wk2').
@@ -110,7 +111,8 @@ class Port(object):
         self.host = host
         self._executive = host.executive
         self._filesystem = host.filesystem
-        self._config = config or port_config.Config(self._executive, self._filesystem, self.port_name)
+        self._webkit_finder = WebKitFinder(host.filesystem)
+        self._config = port_config.Config(self._executive, self._filesystem, self.port_name)
 
         self._helper = None
         self._http_server = None
@@ -683,17 +685,21 @@ class Port(object):
         """
         self._filesystem.write_binary_file(baseline_path, data)
 
-    @memoized
+    # FIXME: update callers to create a finder and call it instead of these next five routines (which should be protected).
+    def webkit_base(self):
+        return self._webkit_finder.webkit_base()
+
+    def path_from_webkit_base(self, *comps):
+        return self._webkit_finder.path_from_webkit_base(*comps)
+
+    def path_to_script(self, script_name):
+        return self._webkit_finder.path_to_script(script_name)
+
     def layout_tests_dir(self):
-        """Return the absolute path to the top of the LayoutTests directory."""
-        return self._filesystem.normpath(self.path_from_webkit_base('LayoutTests'))
+        return self._webkit_finder.layout_tests_dir()
 
     def perf_tests_dir(self):
-        """Return the absolute path to the top of the PerformanceTests directory."""
-        return self.path_from_webkit_base('PerformanceTests')
-
-    def webkit_base(self):
-        return self._filesystem.abspath(self.path_from_webkit_base('.'))
+        return self._webkit_finder.perf_tests_dir()
 
     def skipped_layout_tests(self, test_list):
         """Returns tests skipped outside of the TestExpectations files."""
@@ -763,11 +769,6 @@ class Port(object):
 
     def set_option_default(self, name, default_value):
         return self._options.ensure_value(name, default_value)
-
-    def path_from_webkit_base(self, *comps):
-        """Returns the full path to path made by joining the top of the
-        WebKit source tree and the list of path components in |*comps|."""
-        return self._config.path_from_webkit_base(*comps)
 
     @memoized
     def path_to_test_expectations_file(self):
@@ -1373,12 +1374,12 @@ class Port(object):
         return config_args
 
     def _run_script(self, script_name, args=None, include_configuration_arguments=True, decode_output=True, env=None):
-        run_script_command = [self._config.script_path(script_name)]
+        run_script_command = [self.path_to_script(script_name)]
         if include_configuration_arguments:
             run_script_command.extend(self._arguments_for_configuration())
         if args:
             run_script_command.extend(args)
-        output = self._executive.run_command(run_script_command, cwd=self._config.webkit_base_dir(), decode_output=decode_output, env=env)
+        output = self._executive.run_command(run_script_command, cwd=self.webkit_base(), decode_output=decode_output, env=env)
         _log.debug('Output of %s:\n%s' % (run_script_command, output))
         return output
 

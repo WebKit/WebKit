@@ -33,7 +33,6 @@ import unittest
 from webkitpy.common.system import logtesting
 from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.systemhost_mock import MockSystemHost
-from webkitpy.layout_tests.port.config_mock import MockConfig
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 

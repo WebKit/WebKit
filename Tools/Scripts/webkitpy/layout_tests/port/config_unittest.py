@@ -31,10 +31,11 @@ import sys
 import unittest
 
 from webkitpy.common.system.executive import Executive, ScriptError
-from webkitpy.common.system.executive_mock import MockExecutive, MockExecutive2
+from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.common.webkit_finder import WebKitFinder
 
 import config
 
@@ -131,12 +132,11 @@ class ConfigTest(unittest.TestCase):
         e = Executive()
         fs = FileSystem()
         c = config.Config(e, fs)
-        script = c.path_from_webkit_base('Tools', 'Scripts', 'webkitpy', 'layout_tests', 'port', 'config_standalone.py')
+        script = WebKitFinder(fs).path_from_webkit_base('Tools', 'Scripts', 'webkitpy', 'layout_tests', 'port', 'config_standalone.py')
 
         # Note: don't use 'Release' here, since that's the normal default.
         expected = 'Debug'
 
-        # FIXME: Why are we running a python subprocess here??
         args = [sys.executable, script, '--mock', expected]
         actual = e.run_command(args).rstrip()
         self.assertEqual(actual, expected)
@@ -156,32 +156,6 @@ class ConfigTest(unittest.TestCase):
         c = self.make_config(exception=ScriptError())
         actual = c.default_configuration()
         self.assertEqual(actual, 'Release')
-
-    def test_path_from_webkit_base(self):
-        c = config.Config(MockExecutive(), MockFileSystem())
-        self.assertTrue(c.path_from_webkit_base('foo'))
-
-    def test_webkit_base_dir(self):
-        # FIXME: We use a real filesystem here. Should this move to a mocked one?
-        executive = Executive()
-        filesystem = FileSystem()
-        c = config.Config(executive, filesystem)
-        base_dir = c.webkit_base_dir()
-        self.assertTrue(base_dir)
-        self.assertNotEqual(base_dir[-1], '/')
-
-        # FIXME: Once we use a MockFileSystem for this test we don't need to save the orig_cwd.
-        orig_cwd = filesystem.getcwd()
-        if sys.platform == 'win32':
-            filesystem.chdir(os.environ['USERPROFILE'])
-        else:
-            filesystem.chdir(os.environ['HOME'])
-        c = config.Config(executive, filesystem)
-        try:
-            base_dir_2 = c.webkit_base_dir()
-            self.assertEqual(base_dir, base_dir_2)
-        finally:
-            filesystem.chdir(orig_cwd)
 
 
 if __name__ == '__main__':

@@ -41,7 +41,6 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests.port.base import Port
-from webkitpy.layout_tests.port.config_mock import MockConfig
 from webkitpy.layout_tests.port.server_process_mock import MockServerProcess
 from webkitpy.layout_tests.servers import http_server_base
 from webkitpy.tool.mocktool import MockOptions
@@ -56,8 +55,7 @@ class TestWebKitPort(Port):
                  **kwargs):
         self.symbols_string = symbols_string  # Passing "" disables all staticly-detectable features.
         host = host or MockSystemHost()
-        config = config or MockConfig()
-        super(TestWebKitPort, self).__init__(host=host, config=config, **kwargs)
+        super(TestWebKitPort, self).__init__(host=host, **kwargs)
 
     def all_test_configurations(self):
         return [self.test_configuration()]
@@ -83,13 +81,14 @@ class PortTestCase(unittest.TestCase):
     port_maker = TestWebKitPort
     port_name = None
 
-    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, config=None, **kwargs):
+    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, **kwargs):
         host = host or MockSystemHost(os_name=(os_name or self.os_name), os_version=(os_version or self.os_version))
         options = options or MockOptions(configuration='Release')
-        config = config or MockConfig(filesystem=host.filesystem, default_configuration='Release')
         port_name = port_name or self.port_name
         port_name = self.port_maker.determine_full_port_name(host, options, port_name)
-        return self.port_maker(host, port_name, options=options, config=config, **kwargs)
+        port = self.port_maker(host, port_name, options=options, **kwargs)
+        port._config.build_directory = lambda configuration: '/mock-build'
+        return port
 
     def test_default_max_locked_shards(self):
         port = self.make_port()

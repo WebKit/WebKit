@@ -29,6 +29,7 @@
 
 import logging
 
+from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.port import chromium
 from webkitpy.layout_tests.port import config
 
@@ -61,7 +62,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     def _determine_driver_path_statically(cls, host, options):
         config_object = config.Config(host.executive, host.filesystem)
         build_directory = getattr(options, 'build_directory', None)
-        webkit_base = config_object.path_from_webkit_base()
+        webkit_base = WebKitFinder(host.filesystem).webkit_base()
         chromium_base = cls._chromium_base_dir(host.filesystem)
         if hasattr(options, 'configuration') and options.configuration:
             configuration = options.configuration

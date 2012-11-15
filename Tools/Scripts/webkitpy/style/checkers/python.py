@@ -22,11 +22,11 @@
 
 """Supports checking WebKit style in Python files."""
 
-import os
 import re
-import sys
 from StringIO import StringIO
 
+from webkitpy.common.system.filesystem import FileSystem
+from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.thirdparty.autoinstalled import pep8
 from webkitpy.thirdparty.autoinstalled.pylint import lint
 from webkitpy.thirdparty.autoinstalled.pylint.reporters.text import ParseableTextReporter
@@ -98,8 +98,7 @@ class Pylinter(object):
     ]
 
     def __init__(self):
-        self._script_dir = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
-        self._pylintrc = os.path.join(self._script_dir, 'webkitpy', 'pylintrc')
+        self._pylintrc = WebKitFinder(FileSystem()).path_from_webkit_base('Tools', 'Scripts', 'webkitpy', 'pylintrc')
 
     def run(self, argv):
         output = _FilteredStringIO(self.FALSE_POSITIVES)

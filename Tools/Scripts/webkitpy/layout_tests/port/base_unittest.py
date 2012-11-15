@@ -45,9 +45,6 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.port.test import add_unit_tests_to_mock_filesystem, TestPort
 
-import config
-import config_mock
-
 class PortTest(unittest.TestCase):
     def make_port(self, executive=None, with_tests=False, **kwargs):
         host = MockSystemHost()
@@ -188,11 +185,6 @@ class PortTest(unittest.TestCase):
         self.assertTrue('exp.txt' in diff)
         self.assertTrue('act.txt' in diff)
         self.assertFalse('nosuchthing' in diff)
-
-    def test_default_configuration_notfound(self):
-        # Test that we delegate to the config object properly.
-        port = self.make_port(config=config_mock.MockConfig(default_configuration='default'))
-        self.assertEqual(port.default_configuration(), 'default')
 
     def test_setup_test_run(self):
         port = self.make_port()
