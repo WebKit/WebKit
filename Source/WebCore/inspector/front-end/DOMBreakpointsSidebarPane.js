@@ -327,3 +327,8 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
 
     __proto__: WebInspector.NativeBreakpointsSidebarPane.prototype
 }
+
+/**
+ * @type {?WebInspector.DOMBreakpointsSidebarPane}
+ */
+WebInspector.domBreakpointsSidebarPane = null;

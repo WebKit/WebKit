@@ -137,7 +137,7 @@ WebInspector.Script.prototype = {
         /**
          * @this {WebInspector.Script}
          * @param {?Protocol.Error} error
-         * @param {Array.<DebuggerAgent.CallFrame>|undefined} callFrames
+         * @param {Array.<DebuggerAgent.CallFrame>=} callFrames
          * @param {Object=} debugData
          */
         function didEditScriptSource(error, callFrames, debugData)

@@ -1,3 +1,17 @@
+2012-11-15  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Fix new JS compiler warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=102341
+
+        Reviewed by Yury Semikhatsky.
+
+        New version of compiler finds new inconsistencies.
+
+        * inspector/front-end/DOMAgent.js: Replaced 2 simiar cases with loop.
+        * inspector/front-end/DOMBreakpointsSidebarPane.js:
+        Declared instance property on WebInspector.
+        * inspector/front-end/Script.js: Normalized parameter notation.
+
 2012-11-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Unreviewed build fix.
