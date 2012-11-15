@@ -39,6 +39,7 @@
 #include "Structure.h"
 #include "JSGlobalData.h"
 #include "JSString.h"
+#include "SlotVisitorInlines.h"
 #include "SparseArrayValueMap.h"
 #include <wtf/StdLibExtras.h>
 

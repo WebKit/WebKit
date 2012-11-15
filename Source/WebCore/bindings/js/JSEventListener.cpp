@@ -41,9 +41,10 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
     , m_isAttribute(isAttribute)
     , m_isolatedWorld(isolatedWorld)
 {
-    if (wrapper)
-        m_jsFunction.setMayBeNull(*m_isolatedWorld->globalData(), wrapper, function);
-    else
+    if (wrapper) {
+        JSC::Heap::writeBarrier(wrapper, function);
+        m_jsFunction = JSC::PassWeak<JSC::JSObject>(function);
+    } else
         ASSERT(!function);
 #if ENABLE(INSPECTOR)
     ThreadLocalInspectorCounters::current().incrementCounter(ThreadLocalInspectorCounters::JSEventListenerCounter);
@@ -68,8 +69,7 @@ void JSEventListener::visitJSFunction(SlotVisitor& visitor)
     if (!m_wrapper)
         return;
 
-    if (m_jsFunction)
-        visitor.append(&m_jsFunction);
+    visitor.appendUnbarrieredWeak(&m_jsFunction);
 }
 
 void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
@@ -163,14 +163,8 @@ bool JSEventListener::virtualisAttribute() const
 
 bool JSEventListener::operator==(const EventListener& listener)
 {
-    if (const JSEventListener* jsEventListener = JSEventListener::cast(&listener)) {
-        // If m_wrapper is 0, then m_jsFunction is zombied, and should never be
-        // accessed. m_jsFunction should effectively be 0 in that case.
-        JSC::JSObject* jsFunction = m_wrapper ? m_jsFunction.get() : 0;
-        JSC::JSObject* otherJSFunction = jsEventListener->m_wrapper ?
-            jsEventListener->m_jsFunction.get() : 0;
-        return jsFunction == otherJSFunction && m_isAttribute == jsEventListener->m_isAttribute;
-    }
+    if (const JSEventListener* jsEventListener = JSEventListener::cast(&listener))
+        return m_jsFunction == jsEventListener->m_jsFunction && m_isAttribute == jsEventListener->m_isAttribute;
     return false;
 }
 

@@ -1,3 +1,22 @@
+2012-11-14  Mark Lam  <mark.lam@apple.com>
+
+        Change JSEventListener::m_jsFunction to be a weak ref.
+        https://bugs.webkit.org/show_bug.cgi?id=101989.
+
+        Reviewed by Geoffrey Garen.
+
+        Added infrastructure for scanning weak ref slots.
+
+        * heap/SlotVisitor.cpp: Added #include "SlotVisitorInlines.h".
+        * heap/SlotVisitor.h:
+        (SlotVisitor): Added SlotVisitor::appendUnbarrieredWeak().
+        * heap/SlotVisitorInlines.h: Added #include "Weak.h".
+        (JSC::SlotVisitor::appendUnbarrieredWeak): Added.
+        * heap/Weak.h:
+        (JSC::operator==): Added operator==() for Weak.
+        * runtime/JSCell.h: Removed #include "SlotVisitorInlines.h".
+        * runtime/JSObject.h: Added #include "SlotVisitorInlines.h".
+
 2012-11-14  Filip Pizlo  <fpizlo@apple.com>
 
         Read-only properties created with putDirect() should tell the structure that there are read-only properties

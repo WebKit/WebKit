@@ -1,5 +1,6 @@
 #include "config.h"
 #include "SlotVisitor.h"
+#include "SlotVisitorInlines.h"
 
 #include "ConservativeRoots.h"
 #include "CopiedSpace.h"

@@ -29,6 +29,7 @@
 #include "CopiedSpaceInlines.h"
 #include "Options.h"
 #include "SlotVisitor.h"
+#include "Weak.h"
 
 namespace JSC {
 
@@ -64,6 +65,14 @@ ALWAYS_INLINE void SlotVisitor::append(JSCell** slot)
 {
     ASSERT(slot);
     internalAppend(*slot);
+}
+
+template<typename T>
+ALWAYS_INLINE void SlotVisitor::appendUnbarrieredWeak(Weak<T>* weak)
+{
+    ASSERT(weak);
+    if (weak->get())
+        internalAppend(weak->get());
 }
 
 ALWAYS_INLINE void SlotVisitor::internalAppend(JSValue value)

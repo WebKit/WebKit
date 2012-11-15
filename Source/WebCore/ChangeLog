@@ -1,3 +1,27 @@
+2012-11-14  Mark Lam  <mark.lam@apple.com>
+
+        Change JSEventListener::m_jsFunction to be a weak ref.
+        https://bugs.webkit.org/show_bug.cgi?id=101989.
+
+        Reviewed by Geoffrey Garen.
+
+        No new tests.
+
+        * ForwardingHeaders/heap/SlotVisitor.h: Added.
+        * bindings/js/JSDOMBinding.h: Added #include <heap/SlotVisitor.h>
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::visitJSFunction):
+        (WebCore::JSEventListener::operator==):
+         - Removed the m_wrapper checks in operator==() because they are not
+           needed. There is no longer any threat of m_jsFunction pointing to
+           recycled memory. The use of weak refs will ensure that m_jsFunction
+           is either still holding on to its old memory exclusively, or is 0'ed
+           out when the GC collects it.
+        * bindings/js/JSEventListener.h:
+        (JSEventListener):
+        (WebCore::JSEventListener::jsFunction):
+
 2012-11-14  Dan Carney  <dcarney@google.com>
 
         [V8] Rename dispatchWrap

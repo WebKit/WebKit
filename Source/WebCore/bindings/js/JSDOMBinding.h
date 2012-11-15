@@ -35,6 +35,7 @@
 #include "ScriptWrappable.h"
 #include "StylePropertySet.h"
 #include "StyledElement.h"
+#include <heap/SlotVisitor.h>
 #include <heap/Weak.h>
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>

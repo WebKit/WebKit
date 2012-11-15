@@ -36,6 +36,7 @@ namespace JSC {
 class ConservativeRoots;
 class GCThreadSharedData;
 class Heap;
+template<typename T> class Weak;
 template<typename T> class WriteBarrierBase;
 template<typename T> class JITWriteBarrier;
 
@@ -56,6 +57,8 @@ public:
     template<typename T>
     void appendUnbarrieredPointer(T**);
     void appendUnbarrieredValue(JSValue*);
+    template<typename T>
+    void appendUnbarrieredWeak(Weak<T>*);
     
     void addOpaqueRoot(void*);
     bool containsOpaqueRoot(void*);

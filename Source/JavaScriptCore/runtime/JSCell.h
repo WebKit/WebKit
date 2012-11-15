@@ -30,7 +30,6 @@
 #include "JSLock.h"
 #include "JSValueInlines.h"
 #include "SlotVisitor.h"
-#include "SlotVisitorInlines.h"
 #include "TypedArrayDescriptor.h"
 #include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
