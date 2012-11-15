@@ -878,6 +878,13 @@ function NonLeakingMutationObserver(handler)
 {
     this._observer = new WebKitMutationObserver(handler);
     NonLeakingMutationObserver._instances.push(this);
+    if (!window.testRunner && !WebInspector.isUnderTest && !NonLeakingMutationObserver._unloadListener) {
+        NonLeakingMutationObserver._unloadListener = function() {
+            while (NonLeakingMutationObserver._instances.length)
+                NonLeakingMutationObserver._instances[NonLeakingMutationObserver._instances.length - 1].disconnect();
+        };
+        window.addEventListener("unload", NonLeakingMutationObserver._unloadListener, false);
+    }
 }
 
 NonLeakingMutationObserver._instances = [];
@@ -900,12 +907,5 @@ NonLeakingMutationObserver.prototype = {
         NonLeakingMutationObserver._instances.remove(this);
         delete this._observer;
     }
-}
-
-if (!window.testRunner) {
-    window.addEventListener("unload", function() {
-        while (NonLeakingMutationObserver._instances.length)
-            NonLeakingMutationObserver._instances[NonLeakingMutationObserver._instances.length - 1].disconnect();
-    }, false);
 }
 

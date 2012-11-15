@@ -1,3 +1,11 @@
+2012-11-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: fixing inspector tests under Qt.
+
+        * inspector/front-end/TestController.js:
+        * inspector/front-end/utilities.js:
+        (.):
+
 2012-11-14  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests.
