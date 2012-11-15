@@ -140,14 +140,14 @@ void WebCoreAVFResourceLoader::fulfillRequestWithResource(CachedResource* resour
     ASSERT([dataRequest currentOffset] >= [dataRequest requestedOffset]);
     ASSERT([dataRequest requestedLength] >= ([dataRequest currentOffset] - [dataRequest requestedOffset]));
 
-    NSUInteger remainingLength = [dataRequest requestedLength] - ([dataRequest currentOffset] - [dataRequest requestedOffset]);
+    NSUInteger remainingLength = [dataRequest requestedLength] - static_cast<NSUInteger>([dataRequest currentOffset] - [dataRequest requestedOffset]);
     do {
         // Check to see if there is any data available in the buffer to fulfill the data request.
         if (data->size() <= [dataRequest currentOffset])
             return;
 
         const char* someData;
-        NSUInteger receivedLength = data->getSomeData(someData, [dataRequest currentOffset]);
+        NSUInteger receivedLength = data->getSomeData(someData, static_cast<unsigned>([dataRequest currentOffset]));
 
         // Create an NSData with only as much of the received data as necessary to fulfill the request.
         NSUInteger length = MIN(receivedLength, remainingLength);

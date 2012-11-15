@@ -1,5 +1,12 @@
 2012-11-15  Jer Noble  <jer.noble@apple.com>
 
+        Further unreviewed build fix. Add explicit static_casts to avoid implicit precision warnings.
+
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::fulfillRequestWithResource):
+
+2012-11-15  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed build fix. Avoid implicit precision and unused parameter warnings.
 
         * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
