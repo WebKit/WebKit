@@ -1,3 +1,16 @@
+2012-11-14  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] WebPreferences reset() should set perTilePainting and acceleratedAnimation settings to false.
+        https://bugs.webkit.org/show_bug.cgi?id=102296
+
+        Reviewed by James Robinson.
+
+        These settings are always set by TestShell anyhow, but we should be
+        setting them to false here along with everything else.
+
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+
 2012-11-08  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Need API in UIProcess to enable loading of custom protocols

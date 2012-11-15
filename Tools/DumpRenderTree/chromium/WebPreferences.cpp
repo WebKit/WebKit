@@ -118,6 +118,8 @@ void WebPreferences::reset()
     deferred2dCanvasEnabled = false;
     acceleratedPaintingEnabled = false;
     forceCompositingMode = false;
+    perTilePaintingEnabled = false;
+    acceleratedAnimationEnabled = false;
     deferredImageDecodingEnabled = false;
     mediaPlaybackRequiresUserGesture = false;
     mockScrollbarsEnabled = false;
