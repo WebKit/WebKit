@@ -373,7 +373,7 @@ static void willRemoveChildren(ContainerNode* container)
         dispatchChildRemovalEvents(child);
     }
 
-    ChildFrameDisconnector(container, ChildFrameDisconnector::DoNotIncludeRoot).disconnect();
+    ChildFrameDisconnector(container).disconnect(ChildFrameDisconnector::DescendantsOnly);
 }
 
 void ContainerNode::disconnectDescendantFrames()

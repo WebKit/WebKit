@@ -1,3 +1,47 @@
+2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
+
+        Track subframe count to avoid traversing the tree when there's no subframes
+        https://bugs.webkit.org/show_bug.cgi?id=101821
+
+        Reviewed by Ojan Vafai.
+
+        Bug 101619 showed a 9-14% improvement from not walking the children during
+        removeChild looking for frames when there's known to be no frames. The fix
+        in that bug only avoids this walk when the whole document has no frames, this
+        patch extends it to skip traversing subtrees that have no iframes by hooking
+        the frame assignment to walk up the tree and keep track of the count of frames
+        in the subtree on contentFrame assignment and then decrement it on disconnect.
+
+        No new tests, this is just a perf refactor.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::willRemoveChildren):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::ChildFrameDisconnector::collectFrameOwners):
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildFrameDisconnector::ChildFrameDisconnector):
+        (ChildFrameDisconnector):
+        (WebCore::ChildFrameDisconnector::collectFrameOwners):
+          Renamed from collectDescendant() to better reflect what it really does.
+        (WebCore::ChildFrameDisconnector::disconnectCollectedFrameOwners):
+          Renamed from disconnect() to better reflect what it really does.
+        (WebCore::ChildFrameDisconnector::disconnect):
+          New method that does the collection of frame owners on either the root
+          or only it's descendants.
+        * dom/Node.cpp:
+        (WebCore::Node::connectedSubframeCount):
+        (WebCore::Node::incrementConnectedSubframeCount):
+        (WebCore::Node::decrementConnectedSubframeCount):
+        * dom/Node.h:
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        (WebCore::NodeRareData::connectedSubframeCount):
+        (WebCore::NodeRareData::incrementConnectedSubframeCount):
+        (WebCore::NodeRareData::decrementConnectedSubframeCount):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::setContentFrame):
+        (WebCore::HTMLFrameOwnerElement::disconnectContentFrame):
+
 2012-11-15  Alpha Lam  <hclam@chromium.org>
 
         [chromium] WebGL texImage2D fails with deferred image decoding
