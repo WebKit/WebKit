@@ -67,8 +67,6 @@ var TypeUtils = {
     /**
      * @param {*} obj
      * @return {*}
-     * FIXME: suppress checkTypes due to outdated builtin externs for CanvasRenderingContext2D and ImageData
-     * @suppress {checkTypes}
      */
     clone: function(obj)
     {
@@ -89,8 +87,20 @@ var TypeUtils = {
         if (typedArrayClass)
             return new typedArrayClass(/** @type {ArrayBufferView} */ (obj));
 
-        if (obj instanceof HTMLImageElement)
-            return obj.cloneNode(true);
+        if (obj instanceof HTMLImageElement) {
+            var img = /** @type {HTMLImageElement} */ (obj);
+            // Special case for Images with Blob URIs: cloneNode will fail if the Blob URI has already been revoked.
+            // FIXME: Maybe this is a bug in WebKit core?
+            if (/^blob:/.test(img.src)) {
+                var canvas = inspectedWindow.document.createElement("canvas");
+                var context = Resource.wrappedObject(canvas.getContext("2d"));
+                canvas.width = img.width;
+                canvas.height = img.height;
+                context.drawImage(img, 0, 0);
+                return canvas;
+            }
+            return img.cloneNode(true);
+        }
 
         if (obj instanceof HTMLCanvasElement) {
             var result = obj.cloneNode(true);
@@ -107,7 +117,8 @@ var TypeUtils = {
 
         if (obj instanceof ImageData) {
             var context = TypeUtils._dummyCanvas2dContext();
-            var result = context.createImageData(obj);
+            // FIXME: suppress type checks due to outdated builtin externs for createImageData.
+            var result = (/** @type {?} */ (context)).createImageData(obj);
             for (var i = 0, n = obj.data.length; i < n; ++i)
               result.data[i] = obj.data[i];
             return result;
