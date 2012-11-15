@@ -1,3 +1,13 @@
+2012-11-15  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r134408): Heap-use-after-free in WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement().
+        <http://webkit.org/b/102304>
+
+        Reviewed by Anders Carlsson.
+
+        * fast/dom/cloneNode-below-body-attribute-merging-expected.txt: Added.
+        * fast/dom/cloneNode-below-body-attribute-merging.html: Added.
+
 2012-11-15  Justin Novosad  <junov@google.com>
 
         Cleanup test expectations after rebaseline r134668

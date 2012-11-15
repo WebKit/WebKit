@@ -1,3 +1,23 @@
+2012-11-15  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r134408): Heap-use-after-free in WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement().
+        <http://webkit.org/b/102304>
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/dom/cloneNode-below-body-attribute-merging.html
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement):
+
+            Use Element::fastHasAttribute() to determine if a given attribute is already present on the element
+            we're merging attributes into.
+
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+
+            Remove a now-unnecessary friend declaration.
+
 2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
 
         Prevent creation of detached frames in ShadowRoot

@@ -111,7 +111,6 @@ protected:
 private:
     friend class Element;
     friend class StyledElement;
-    friend class HTMLConstructionSite;
     friend class ImmutableElementAttributeData;
     friend class MutableElementAttributeData;
 

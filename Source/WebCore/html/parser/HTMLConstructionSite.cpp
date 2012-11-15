@@ -197,11 +197,9 @@ void HTMLConstructionSite::mergeAttributesFromTokenIntoElement(AtomicHTMLToken* 
     if (token->attributes().isEmpty())
         return;
 
-    ElementAttributeData* elementAttributeData = element->mutableAttributeData();
-
     for (unsigned i = 0; i < token->attributes().size(); ++i) {
         const Attribute& tokenAttribute = token->attributes().at(i);
-        if (!elementAttributeData->getAttributeItem(tokenAttribute.name()))
+        if (!element->fastHasAttribute(tokenAttribute.name()))
             element->setAttribute(tokenAttribute.name(), tokenAttribute.value());
     }
 }
