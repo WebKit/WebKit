@@ -1,3 +1,25 @@
+2012-11-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't use temporary clip rects when hit testing
+        https://bugs.webkit.org/show_bug.cgi?id=102329
+
+        Reviewed by Beth Dakin.
+
+        We now cache clip rects separately for painting, hit testing etc. Hit testing
+        clip rects are always shrunk to exclude scrollbars (so that hit testing on
+        the scrollbars works), so we no longer every need to use temporary clip rects
+        during hit testing.
+
+        Added an assertion that the scrollbar relevancy when we computed the clip rects
+        is the same as that when using them.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::updateClipRects):
+        * rendering/RenderLayer.h:
+        (WebCore::ClipRectsCache::ClipRectsCache):
+        (ClipRectsCache):
+
 2012-11-14  Dirk Schulze  <krit@webkit.org>
 
         Support animation of basic shape 'polygon'
