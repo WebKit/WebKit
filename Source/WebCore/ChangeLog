@@ -1,3 +1,11 @@
+2012-11-15  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix. Avoid implicit precision and unused parameter warnings.
+
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::responseReceived):
+        (WebCore::WebCoreAVFResourceLoader::fulfillRequestWithResource):
+
 2012-11-15  Adam Barth  <abarth@webkit.org>
 
         [V8] We shouldn't call deprecated V8 APIs

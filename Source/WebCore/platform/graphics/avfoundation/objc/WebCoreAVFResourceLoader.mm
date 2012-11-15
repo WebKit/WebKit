@@ -93,6 +93,7 @@ void WebCoreAVFResourceLoader::stopLoading()
 void WebCoreAVFResourceLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
 {
     ASSERT(resource == m_resource);
+    UNUSED_PARAM(resource);
 
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {
@@ -139,17 +140,17 @@ void WebCoreAVFResourceLoader::fulfillRequestWithResource(CachedResource* resour
     ASSERT([dataRequest currentOffset] >= [dataRequest requestedOffset]);
     ASSERT([dataRequest requestedLength] >= ([dataRequest currentOffset] - [dataRequest requestedOffset]));
 
-    unsigned remainingLength = [dataRequest requestedLength] - ([dataRequest currentOffset] - [dataRequest requestedOffset]);
+    NSUInteger remainingLength = [dataRequest requestedLength] - ([dataRequest currentOffset] - [dataRequest requestedOffset]);
     do {
         // Check to see if there is any data available in the buffer to fulfill the data request.
         if (data->size() <= [dataRequest currentOffset])
             return;
 
         const char* someData;
-        unsigned receivedLength = data->getSomeData(someData, [dataRequest currentOffset]);
+        NSUInteger receivedLength = data->getSomeData(someData, [dataRequest currentOffset]);
 
         // Create an NSData with only as much of the received data as necessary to fulfill the request.
-        unsigned length = MIN(receivedLength, remainingLength);
+        NSUInteger length = MIN(receivedLength, remainingLength);
         RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:someData length:length]);
 
         [dataRequest respondWithData:nsData.get()];
