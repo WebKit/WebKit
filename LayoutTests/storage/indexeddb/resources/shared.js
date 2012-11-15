@@ -123,6 +123,8 @@ function evalAndLogCallback(cmd) {
   return callback;
 }
 
+// If this function is deleted, a standalone layout test exercising its
+// functionality should be added.
 function deleteAllObjectStores(db)
 {
     while (db.objectStoreNames.length)

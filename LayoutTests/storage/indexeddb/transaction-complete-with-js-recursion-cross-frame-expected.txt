@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test that pending transactions are not completed during recursive JS calls until all JS (in all frames) is finished.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,10 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.deleteDatabase('transaction-complete-with-js-recursion-cross-frame')
-indexedDB.open('transaction-complete-with-js-recursion-cross-frame')
-db = event.target.result
-db.setVersion('new version')
+dbname = "transaction-complete-with-js-recursion-cross-frame.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 pendingTransaction = db.transaction(['objectStore'], 'readwrite')
 Start re-entrant JS
 transaction = db.transaction(['objectStore'], 'readwrite')

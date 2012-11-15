@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Regression test for WK82678 - don't commit after a blocked event
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -7,13 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-Prepare Database
-request = indexedDB.deleteDatabase('dont-commit-on-blocked')
-request = indexedDB.open('dont-commit-on-blocked')
-db = request.result
+dbname = "dont-commit-on-blocked.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 db.onversionchange = onVersionChange
-PASS db.version is 1
-db.setVersion('1')
 store = db.createObjectStore('store1')
 
 holdConnection():
@@ -23,12 +18,10 @@ Starting worker: resources/dont-commit-on-blocked-worker.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 [Worker] 
 [Worker] opening database connection
-[Worker] request = indexedDB.open('dont-commit-on-blocked')
-[Worker] db = request.result
+[Worker] request = indexedDB.open('dont-commit-on-blocked.html', 2)
 [Worker] state = 'setversion'
-[Worker] request = db.setVersion(2)
 [Worker] request.onblocked = onSetVersionBlocked
-[Worker] request.onsuccess = onSetVersionSuccess
+[Worker] request.onupgradeneeded = onSetVersionSuccess
 [Worker] spinning for 100ms to let events be queued but prevent dispatch
 [Worker] done spinning
 [Worker] 
@@ -37,12 +30,11 @@ PASS [Worker] state is "setversion"
 [Worker] state = 'blocked'
 [Worker] 
 [Worker] onSetVersionSuccess():
+[Worker] db = event.target.result
 PASS [Worker] state is "blocked"
 [Worker] state = 'success'
 [Worker] creating object store - will fail if transaction commited after blocked event
 [Worker] db.createObjectStore('store2')
-[Worker] transaction = request.result
-[Worker] transaction.oncomplete = onTransactionComplete
 [Worker] 
 [Worker] onTransactionComplete
 PASS [Worker] state is "success"

@@ -1,3 +1,41 @@
+2012-11-14  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Test conversions batch 4
+        https://bugs.webkit.org/show_bug.cgi?id=102267
+
+        Reviewed by Tony Chang.
+
+        These are tests that don't have the js file in resources. The only
+        interesting bit is that lazy-index-population uncovered a potential bug.
+
+        I think tutorial.html has outlived its usefulness now that there are
+        more tutorials on the web. It was very outdated. It is deleted in
+        this patch.
+
+        * storage/indexeddb/deletedatabase-transaction-expected.txt:
+        * storage/indexeddb/deletedatabase-transaction.html:
+        * storage/indexeddb/dont-commit-on-blocked-expected.txt:
+        * storage/indexeddb/dont-commit-on-blocked.html:
+        * storage/indexeddb/lazy-index-population-expected.txt:
+        * storage/indexeddb/lazy-index-population.html:
+        * storage/indexeddb/mozilla/index-prev-no-duplicate-expected.txt:
+        * storage/indexeddb/mozilla/index-prev-no-duplicate.html:
+        * storage/indexeddb/mozilla/resources/object-identity.js:
+          Test added here to replace test covered in tutorial.html
+
+        * storage/indexeddb/noblobs-expected.txt:
+        * storage/indexeddb/noblobs.html:
+        * storage/indexeddb/resources/dont-commit-on-blocked-worker.js:
+        (onSetVersionSuccess):
+        * storage/indexeddb/structured-clone-expected.txt:
+        * storage/indexeddb/structured-clone.html:
+        * storage/indexeddb/transaction-complete-with-js-recursion-cross-frame-expected.txt:
+        * storage/indexeddb/transaction-complete-with-js-recursion-cross-frame.html:
+        * storage/indexeddb/transaction-complete-with-js-recursion-expected.txt:
+        * storage/indexeddb/transaction-complete-with-js-recursion.html:
+        * storage/indexeddb/tutorial-expected.txt: Removed.
+        * storage/indexeddb/tutorial.html: Removed.
+
 2012-11-14  Filip Pizlo  <fpizlo@apple.com>
 
         Read-only properties created with putDirect() should tell the structure that there are read-only properties

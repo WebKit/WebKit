@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Verify edge cases that lazy index population in an IndexedDB implementation might reveal.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,14 +5,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('lazy-index-population')
-connection = request.result
-
-Verify that uniqueness constraints are enforced with a pre-existing index:
-connection.setVersion('1')
+dbname = "lazy-index-population.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 Deleted all object stores.
 store = connection.createObjectStore('store')
 store.createIndex('index1', 'name', {unique: true})
+Verify that uniqueness constraints are enforced with a pre-existing index:
 trans = connection.transaction('store', 'readwrite')
 store = trans.objectStore('store')
 request1 = store.put({name: 'bob'}, 1)
@@ -28,7 +26,8 @@ PASS ++state is 3
 PASS trans.error.name is 'ConstraintError'
 
 Verify that uniqueness constraints are enforced when index is created before puts:
-connection.setVersion('2')
+connection.close()
+indexedDB.open(dbname, 2)
 deleteAllObjectStores(connection)
 Deleted all object stores.
 store = connection.createObjectStore('store')
@@ -45,7 +44,9 @@ PASS ++state is 3
 PASS trans.error.name is 'ConstraintError'
 
 Verify that uniqueness constraints are enforced when index is created after puts:
-connection.setVersion('3')
+FIXME: Script shouldn't have to explicitly close connection after it failed to open. http://wkbug.com/102298
+connection.close()
+indexedDB.open(dbname, 3)
 deleteAllObjectStores(connection)
 Deleted all object stores.
 store = connection.createObjectStore('store')
@@ -62,7 +63,9 @@ PASS ++state is 3
 PASS trans.error.name is 'ConstraintError'
 
 Verify that uniqueness constraints are enforced when index is created between puts:
-connection.setVersion('4')
+FIXME: Script shouldn't have to explicitly close connection after it failed to open. http://wkbug.com/102298
+connection.close()
+indexedDB.open(dbname, 4)
 deleteAllObjectStores(connection)
 Deleted all object stores.
 store = connection.createObjectStore('store')

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Confirm Blob/File/FileList limitations of WebKit's IndexedDB implementation.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,13 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-
-Prepare Database
-indexedDB.deleteDatabase('noblobs')
-indexedDB.open('noblobs')
-db = request.result
-PASS db.version is 1
-db.setVersion('1')
+dbname = "noblobs.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 store = db.createObjectStore('storeName')
 store.put('value', 'key')
 

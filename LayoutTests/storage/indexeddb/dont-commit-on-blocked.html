@@ -8,36 +8,12 @@
 
 description("Regression test for WK82678 - don't commit after a blocked event");
 
-function test()
-{
-    removeVendorPrefixes();
-    prepareDatabase();
-}
-
+indexedDBTest(prepareDatabase, holdConnection);
 function prepareDatabase()
 {
-    debug("Prepare Database");
-    evalAndLog("request = indexedDB.deleteDatabase('dont-commit-on-blocked')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function(e) {
-        evalAndLog("request = indexedDB.open('dont-commit-on-blocked')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function(e) {
-            evalAndLog("db = request.result");
-            db.onerror = unexpectedErrorCallback;
-            evalAndLog("db.onversionchange = onVersionChange");
-            shouldBe("db.version", "1");
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function(e) {
-                var trans = request.result;
-                evalAndLog("store = db.createObjectStore('store1')");
-                trans.onerror = unexpectedErrorCallback;
-                trans.onabort = unexpectedAbortCallback;
-                trans.oncomplete = holdConnection;
-            };
-        };
-    };
+    db = event.target.result;
+    evalAndLog("db.onversionchange = onVersionChange");
+    evalAndLog("store = db.createObjectStore('store1')");
 }
 
 function holdConnection()
@@ -54,8 +30,6 @@ function onVersionChange(e)
     // Timing of logging from worker vs. this event is racy, so do not log here.
     db.close();
 }
-
-test();
 
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

@@ -19,37 +19,13 @@ if (self.eventSender) {
     eventSender.mouseUp();
 }
 
-function test()
-{
-    removeVendorPrefixes();
-    prepareDatabase();
-}
-
+indexedDBTest(prepareDatabase, startTests);
 function prepareDatabase()
 {
-    debug("");
-    debug("Prepare Database");
-    request = evalAndLog("indexedDB.deleteDatabase('structured-clone')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function(e) {
-        request = evalAndLog("indexedDB.open('structured-clone')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function(e) {
-            evalAndLog("db = request.result");
-            shouldBe("db.version", "1");
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function(e) {
-                evalAndLog("store = db.createObjectStore('storeName')");
-                debug("This index is not used, but evaluating key path on each put() call will exercise (de)serialization:");
-                evalAndLog("store.createIndex('indexName', 'dummyKeyPath')");
-                var trans = request.result;
-                trans.onerror = unexpectedErrorCallback;
-                trans.onabort = unexpectedAbortCallback;
-                trans.oncomplete = startTests;
-            };
-        };
-    };
+    db = event.target.result;
+    evalAndLog("store = db.createObjectStore('storeName')");
+    debug("This index is not used, but evaluating key path on each put() call will exercise (de)serialization:");
+    evalAndLog("store.createIndex('indexName', 'dummyKeyPath')");
 }
 
 function startTests()
@@ -564,8 +540,6 @@ function testBadTypes()
     evalAndExpectException("store.put(document, 'key')", "DOMException.DATA_CLONE_ERR");
     evalAndExpectException("store.put(document.body, 'key')", "DOMException.DATA_CLONE_ERR");
 }
-
-test();
 
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

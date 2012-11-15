@@ -17,27 +17,11 @@ var body = document.getElementsByTagName("iframe")[0].contentDocument.body;
 
 description("Test that pending transactions are not completed during recursive JS calls until all JS (in all frames) is finished.");
 
-function setup() {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.deleteDatabase('transaction-complete-with-js-recursion-cross-frame')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function () {
-        request = evalAndLog("indexedDB.open('transaction-complete-with-js-recursion-cross-frame')");
-        request.onsuccess = setVersion;
-        request.onerror = unexpectedErrorCallback;
-    };
-}
-
-function setVersion() {
-    db = evalAndLog("db = event.target.result");
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = setVersionSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersionSuccess() {
+indexedDBTest(prepareDatabase, click);
+function prepareDatabase()
+{
+    db = event.target.result;
     store = db.createObjectStore('objectStore', null);
-    event.target.result.oncomplete = click;
 }
 
 function click() {
@@ -67,8 +51,6 @@ function completeCallback()
     debug("Pending transaction completed");
     finishJSTest();
 }
-
-setup();
 
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>

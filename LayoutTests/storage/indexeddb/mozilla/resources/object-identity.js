@@ -29,8 +29,10 @@ function testIdentitySomeMore()
 {
     transaction = evalAndLog("transaction = db.transaction('foo');");
     objectStore3 = evalAndLog("objectStore3 = transaction.objectStore('foo');");
+    evalAndLog("objectStore3.someProperty = 'xyz'");
     objectStore4 = evalAndLog("objectStore4 = transaction.objectStore('foo');");
     shouldBeTrue("objectStore3 === objectStore4");
+    shouldBeEqualToString("objectStore4.someProperty", "xyz");
 
     shouldBeFalse("objectStore3 === objectStore1");
     shouldBeFalse("objectStore4 === objectStore2");

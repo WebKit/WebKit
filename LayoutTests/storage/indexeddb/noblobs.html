@@ -21,36 +21,14 @@ if (window.eventSender) {
     eventSender.mouseUp();
 }
 
-function test()
-{
-    removeVendorPrefixes();
-    prepareDatabase();
-}
-
 function prepareDatabase()
 {
-    debug("");
-    debug("Prepare Database");
-    request = evalAndLog("indexedDB.deleteDatabase('noblobs')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function(e) {
-        request = evalAndLog("indexedDB.open('noblobs')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function(e) {
-            evalAndLog("db = request.result");
-            shouldBe("db.version", "1");
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function(e) {
-                evalAndLog("store = db.createObjectStore('storeName')");
-                evalAndLog("store.put('value', 'key')");
-                var trans = request.result;
-                trans.onerror = unexpectedErrorCallback;
-                trans.onabort = unexpectedAbortCallback;
-                trans.oncomplete = testBlob;
-            };
-        };
-    };
+    db = event.target.result;
+    var trans = event.target.transaction;
+    evalAndLog("store = db.createObjectStore('storeName')");
+    evalAndLog("store.put('value', 'key')");
+    trans.onerror = unexpectedErrorCallback;
+    trans.onabort = unexpectedAbortCallback;
 }
 
 function testBlob()
@@ -97,10 +75,10 @@ function validateExceptions(variable, onComplete)
 }
 
 if (window.eventSender) {
-    test();
+    indexedDBTest(prepareDatabase, testBlob);
 } else {
     alert("Select file(s) using the input control above to initiate the test");
-    document.getElementById("fileInput").onchange = test;
+    document.getElementById("fileInput").onchange = function() { indexedDBTest(prepareDatabase, testBlob); };
 }
 
 </script>
