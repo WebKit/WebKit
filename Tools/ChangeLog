@@ -1,3 +1,16 @@
+2012-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134649 and r134665.
+        http://trac.webkit.org/changeset/134649
+        http://trac.webkit.org/changeset/134665
+        https://bugs.webkit.org/show_bug.cgi?id=102413
+
+        Broke a ton of downstream chromium tests (Requested by japhet
+        on #webkit).
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::updateForCommittedLoad):
+
 2012-11-15  Andreas Kling  <akling@apple.com>
 
         Update my e-mail address.

@@ -81,8 +81,9 @@ private:
     virtual void willCancel(const ResourceError&) OVERRIDE;
     virtual void didCancel(const ResourceError&) OVERRIDE;
 
-    void loadNow(ResourceRequest&);
+    bool loadNow(ResourceRequest&);
 
+    void handleEmptyLoad(const KURL&, bool forURLScheme);
     void handleSubstituteDataLoadSoon(const ResourceRequest&);
     void handleSubstituteDataLoadNow(MainResourceLoaderTimer*);
 
