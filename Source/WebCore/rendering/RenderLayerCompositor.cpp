@@ -582,7 +582,7 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
 {
     if (!canBeComposited(layer))
         return IntRect();
-    return pixelSnappedIntRect(RenderLayer::calculateLayerBounds(layer, ancestorLayer));
+    return layer->calculateLayerBounds(ancestorLayer);
 }
 
 void RenderLayerCompositor::layerWasAdded(RenderLayer* /*parent*/, RenderLayer* /*child*/)

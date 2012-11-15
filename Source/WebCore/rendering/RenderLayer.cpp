@@ -1010,7 +1010,7 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, 
         // If we have at least one custom shader, we need to update the whole bounding box of the layer, because the
         // shader can address any ouput pixel.
         // Note: This is only for output rect, so there's no need to expand the dirty source rect.
-        rectForRepaint.unite(calculateLayerBounds(this, this));
+        rectForRepaint.unite(calculateLayerBounds(this));
     }
 #endif
     
@@ -3014,7 +3014,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         ASSERT(filterInfo);
         LayoutRect filterRepaintRect = filterInfo->dirtySourceRect();
         filterRepaintRect.move(rootLayerOffset.x(), rootLayerOffset.y());
-        if (filterPainter.prepareFilterEffect(this, calculateLayerBounds(this, paintingInfo.rootLayer, 0), paintingInfo.paintDirtyRect, filterRepaintRect)) {
+        if (filterPainter.prepareFilterEffect(this, calculateLayerBounds(paintingInfo.rootLayer, 0), paintingInfo.paintDirtyRect, filterRepaintRect)) {
             // Now we know for sure, that the source image will be updated, so we can revert our tracking repaint rect back to zero.
             filterInfo->resetDirtySourceRect();
 
@@ -4138,22 +4138,23 @@ IntRect RenderLayer::absoluteBoundingBox() const
     return pixelSnappedIntRect(boundingBox(root()));
 }
 
-IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer, CalculateLayerBoundsFlags flags)
+IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, CalculateLayerBoundsFlags flags) const
 {
-    if (!layer->isSelfPaintingLayer())
+    if (!isSelfPaintingLayer())
         return IntRect();
 
-    LayoutRect boundingBoxRect = layer->localBoundingBox();
-    if (layer->renderer()->isBox())
-        layer->renderBox()->flipForWritingMode(boundingBoxRect);
+    RenderBoxModelObject* renderer = this->renderer();
+    LayoutRect boundingBoxRect = localBoundingBox();
+    if (renderer->isBox())
+        toRenderBox(renderer)->flipForWritingMode(boundingBoxRect);
     else
-        layer->renderer()->containingBlock()->flipForWritingMode(boundingBoxRect);
+        renderer->containingBlock()->flipForWritingMode(boundingBoxRect);
 
-    if (layer->renderer()->isRoot()) {
+    if (renderer->isRoot()) {
         // If the root layer becomes composited (e.g. because some descendant with negative z-index is composited),
         // then it has to be big enough to cover the viewport in order to display the background. This is akin
         // to the code in RenderBox::paintRootBoxFillLayers().
-        if (FrameView* frameView = layer->renderer()->view()->frameView()) {
+        if (FrameView* frameView = renderer->view()->frameView()) {
             LayoutUnit contentsWidth = frameView->contentsWidth();
             LayoutUnit contentsHeight = frameView->contentsHeight();
         
@@ -4165,61 +4166,61 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
     LayoutRect unionBounds = boundingBoxRect;
 
     if (flags & UseLocalClipRectIfPossible) {
-        LayoutRect localClipRect = layer->localClipRect();
+        LayoutRect localClipRect = this->localClipRect();
         if (localClipRect != PaintInfo::infiniteRect()) {
-            if ((flags & IncludeSelfTransform) && layer->paintsWithTransform(PaintBehaviorNormal))
-                localClipRect = layer->transform()->mapRect(localClipRect);
+            if ((flags & IncludeSelfTransform) && paintsWithTransform(PaintBehaviorNormal))
+                localClipRect = transform()->mapRect(localClipRect);
 
             LayoutPoint ancestorRelOffset;
-            layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
+            convertToLayerCoords(ancestorLayer, ancestorRelOffset);
             localClipRect.moveBy(ancestorRelOffset);
             return pixelSnappedIntRect(localClipRect);
         }
     }
 
-    const_cast<RenderLayer*>(layer)->updateLayerListsIfNeeded();
+    const_cast<RenderLayer*>(this)->updateLayerListsIfNeeded();
 
-    if (RenderLayer* reflection = layer->reflectionLayer()) {
+    if (RenderLayer* reflection = reflectionLayer()) {
         if (!reflection->isComposited()) {
-            IntRect childUnionBounds = calculateLayerBounds(reflection, layer);
+            IntRect childUnionBounds = reflection->calculateLayerBounds(this);
             unionBounds.unite(childUnionBounds);
         }
     }
     
-    ASSERT(layer->isStackingContext() || (!layer->posZOrderList() || !layer->posZOrderList()->size()));
+    ASSERT(isStackingContext() || (!posZOrderList() || !posZOrderList()->size()));
 
 #if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(layer));
+    LayerListMutationDetector mutationChecker(const_cast<RenderLayer*>(this));
 #endif
 
-    if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
+    if (Vector<RenderLayer*>* negZOrderList = this->negZOrderList()) {
         size_t listSize = negZOrderList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = negZOrderList->at(i);
             if (!curLayer->isComposited()) {
-                IntRect childUnionBounds = calculateLayerBounds(curLayer, layer);
+                IntRect childUnionBounds = curLayer->calculateLayerBounds(this);
                 unionBounds.unite(childUnionBounds);
             }
         }
     }
 
-    if (Vector<RenderLayer*>* posZOrderList = layer->posZOrderList()) {
+    if (Vector<RenderLayer*>* posZOrderList = this->posZOrderList()) {
         size_t listSize = posZOrderList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = posZOrderList->at(i);
             if (!curLayer->isComposited()) {
-                IntRect childUnionBounds = calculateLayerBounds(curLayer, layer);
+                IntRect childUnionBounds = curLayer->calculateLayerBounds(this);
                 unionBounds.unite(childUnionBounds);
             }
         }
     }
 
-    if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
+    if (Vector<RenderLayer*>* normalFlowList = this->normalFlowList()) {
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
             if (!curLayer->isComposited()) {
-                IntRect curAbsBounds = calculateLayerBounds(curLayer, layer);
+                IntRect curAbsBounds = curLayer->calculateLayerBounds(this);
                 unionBounds.unite(curAbsBounds);
             }
         }
@@ -4229,25 +4230,25 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
     // FIXME: We can optimize the size of the composited layers, by not enlarging
     // filtered areas with the outsets if we know that the filter is going to render in hardware.
     // https://bugs.webkit.org/show_bug.cgi?id=81239
-    if ((flags & IncludeLayerFilterOutsets) && layer->renderer()->style()->hasFilterOutsets()) {
+    if ((flags & IncludeLayerFilterOutsets) && renderer->style()->hasFilterOutsets()) {
         int topOutset;
         int rightOutset;
         int bottomOutset;
         int leftOutset;
-        layer->renderer()->style()->getFilterOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
+        renderer->style()->getFilterOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
         unionBounds.move(-leftOutset, -topOutset);
         unionBounds.expand(leftOutset + rightOutset, topOutset + bottomOutset);
     }
 #endif
 
-    if ((flags & IncludeSelfTransform) && layer->paintsWithTransform(PaintBehaviorNormal)) {
-        TransformationMatrix* affineTrans = layer->transform();
+    if ((flags & IncludeSelfTransform) && paintsWithTransform(PaintBehaviorNormal)) {
+        TransformationMatrix* affineTrans = transform();
         boundingBoxRect = affineTrans->mapRect(boundingBoxRect);
         unionBounds = affineTrans->mapRect(unionBounds);
     }
 
     LayoutPoint ancestorRelOffset;
-    layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
+    convertToLayerCoords(ancestorLayer, ancestorRelOffset);
     unionBounds.moveBy(ancestorRelOffset);
     
     return pixelSnappedIntRect(unionBounds);
