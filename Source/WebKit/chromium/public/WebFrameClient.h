@@ -422,6 +422,12 @@ public:
 
     // WebGL ------------------------------------------------------
 
+    // Asks the embedder whether WebGL is allowed for the given WebFrame.
+    // This call is placed here instead of WebPermissionClient because this
+    // class is implemented in content/, and putting it here avoids adding
+    // more public content/ APIs.
+    virtual bool allowWebGL(WebFrame*, bool defaultValue) { return defaultValue; }
+
     // Notifies the client that a WebGL context was lost on this page with the
     // given reason (one of the GL_ARB_robustness status codes; see
     // Extensions3D.h in WebCore/platform/graphics).

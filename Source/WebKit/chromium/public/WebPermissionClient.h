@@ -93,9 +93,6 @@ public:
     // Controls whether enabling Web Components API for this frame.
     virtual bool allowWebComponents(const WebDocument&, bool defaultValue) { return defaultValue; }
 
-    // Controls whether enabling WebGL for this frame.
-    virtual bool allowWebGL(WebFrame*, bool defaultValue) { return defaultValue; }
-
     // Controls whether enabling HTML notifications for this frame.
     virtual bool allowHTMLNotifications(const WebDocument&) { return true; }
 

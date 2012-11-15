@@ -1665,9 +1665,8 @@ void FrameLoaderClientImpl::didRequestAutocomplete(PassRefPtr<FormState> formSta
 #if ENABLE(WEBGL)
 bool FrameLoaderClientImpl::allowWebGL(bool enabledPerSettings)
 {
-    WebViewImpl* webview = m_webFrame->viewImpl();
-    if (webview && webview->permissionClient())
-        return webview->permissionClient()->allowWebGL(m_webFrame, enabledPerSettings);
+    if (m_webFrame->client())
+        return m_webFrame->client()->allowWebGL(m_webFrame, enabledPerSettings);
 
     return enabledPerSettings;
 }

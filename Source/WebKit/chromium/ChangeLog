@@ -1,3 +1,20 @@
+2012-11-15  Kenneth Russell  <kbr@google.com>
+
+        [chromium] Move allowWebGL query to WebFrameClient
+        https://bugs.webkit.org/show_bug.cgi?id=102319
+
+        Reviewed by Adam Barth.
+
+        Moved allowWebGL query to WebFrameClient to avoid polluting
+        content/ API.
+
+        * public/WebFrameClient.h:
+        (WebFrameClient):
+        (WebKit::WebFrameClient::allowWebGL):
+        * public/WebPermissionClient.h:
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::allowWebGL):
+
 2012-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
