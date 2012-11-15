@@ -1,0 +1,30 @@
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+	var foo = document.getElementById("TestElement").someMadeUpBar;
+
+	testPassed("Did not crash trying to access the plug-in script object.");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+
+</head>
+<body onload="runTest();">
+<embed id="TestElement" type="application/x-webkit-test-netscape" test="npp-new-fails"></embed>
+<p id="description"></p>
+<div id="console"></div>
+</body>
+
+<script>
+description("http://webkit.org/b/95026 - Tests that access to the plug-in script object after the plug-in fails to initialize doesn't crash");
+</script>
