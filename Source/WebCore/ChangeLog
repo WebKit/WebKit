@@ -1,3 +1,22 @@
+2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
+
+        Remove isHTMLInputElement since it's unused and toInputElement exists 
+        https://bugs.webkit.org/show_bug.cgi?id=102358
+
+        Reviewed by Ojan Vafai.
+
+        Remove isHTMLInputElement as no one uses it. Everyone just uses
+        Node::toInputElement and checks for a 0 return value instead.
+
+        toInputElement is also more reliable as there's no requirement that
+        subclasses of HTMLInputElement have the tag name of inputTag so using
+        this method in a check could potentially miss future subclasses with
+        different tag names, though none exist right now.
+
+        No new tests, this just deletes dead code.
+
+        * html/HTMLInputElement.h:
+
 2012-11-15  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: NoModificationAllowedError

@@ -431,11 +431,5 @@ private:
 #endif
 };
 
-inline bool isHTMLInputElement(Node* node)
-{
-    ASSERT(node);
-    return node->hasTagName(HTMLNames::inputTag);
-}
-
 } //namespace
 #endif
