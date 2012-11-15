@@ -1,3 +1,14 @@
+2012-11-15  Scott Violet  <sky@chromium.org>
+
+        [chromium] Create default directory so that cq can apply patch
+        https://bugs.webkit.org/show_bug.cgi?id=102421
+
+        Reviewed by Tony Chang.
+
+        Done in hopes of patch that copies files to this directory working.
+
+        * chromium/public/default: Added.
+
 2012-11-15  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove unused debug border setters from the WebLayer API
