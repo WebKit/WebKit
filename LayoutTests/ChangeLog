@@ -1,3 +1,17 @@
+2012-11-13  Jer Noble  <jer.noble@apple.com>
+
+        Support loading of blob URLs in AVFoundation.
+        https://bugs.webkit.org/show_bug.cgi?id=102182
+
+        Reviewed by Eric Carlson.
+
+        Add a new test which verifies blob url support in video elements.
+
+        * media/video-src-blob-expected.txt: Added.
+        * media/video-src-blob.html: Added.
+        * platform/mac/TestExpectations: Add expected failure results for OSX releases where 
+            custom media loading is not supported.
+
 2012-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134649 and r134665.

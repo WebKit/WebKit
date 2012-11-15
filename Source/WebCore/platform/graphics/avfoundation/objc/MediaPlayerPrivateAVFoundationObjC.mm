@@ -41,6 +41,7 @@
 #import "SoftLinking.h"
 #import "TimeRanges.h"
 #import "UUID.h"
+#import "WebCoreAVFResourceLoader.h"
 #import "WebCoreSystemInterface.h"
 #import <objc/objc-runtime.h>
 #import <wtf/UnusedParam.h>
@@ -117,23 +118,13 @@ enum MediaPlayerAVFoundationObservationContext {
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context;
 @end
 
-#if ENABLE(ENCRYPTED_MEDIA)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 @interface WebCoreAVFLoaderDelegate : NSObject<AVAssetResourceLoaderDelegate> {
     MediaPlayerPrivateAVFoundationObjC* m_callback;
 }
 - (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest;
 @end
-
-static dispatch_queue_t globalLoaderDelegateQueue()
-{
-    static dispatch_queue_t globalQueue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        globalQueue = dispatch_queue_create("WebCoreAVFLoaderDelegate queue", DISPATCH_QUEUE_SERIAL);
-    });
-    return globalQueue;
-}
 #endif
 
 namespace WebCore {
@@ -335,8 +326,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     NSURL *cocoaURL = KURL(ParsedURLString, url);
     m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options.get()]);
 
-#if ENABLE(ENCRYPTED_MEDIA)
-    [[m_avAsset.get() resourceLoader] setDelegate:m_loaderDelegate.get() queue:globalLoaderDelegateQueue()];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [[m_avAsset.get() resourceLoader] setDelegate:m_loaderDelegate.get() queue:dispatch_get_main_queue()];
 #endif
 
     m_haveCheckedPlayability = false;
@@ -792,24 +783,41 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::extendedSupportsTy
 
 bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest* avRequest)
 {
+    String scheme = [[[avRequest request] URL] scheme];
     String keyURI = [[[avRequest request] URL] absoluteString];
 
-    // Create an initData with the following layout:
-    // [4 bytes: keyURI size], [keyURI size bytes: keyURI]
-    unsigned keyURISize = keyURI.length() * sizeof(UChar);
-    RefPtr<ArrayBuffer> initDataBuffer = ArrayBuffer::create(4 + keyURISize, 1);
-    RefPtr<DataView> initDataView = DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());
-    ExceptionCode ec = 0;
-    initDataView->setUint32(0, keyURISize, true, ec);
+#if ENABLE(ENCRYPTED_MEDIA)
+    if (scheme == "skd") {
+        // Create an initData with the following layout:
+        // [4 bytes: keyURI size], [keyURI size bytes: keyURI]
+        unsigned keyURISize = keyURI.length() * sizeof(UChar);
+        RefPtr<ArrayBuffer> initDataBuffer = ArrayBuffer::create(4 + keyURISize, 1);
+        RefPtr<DataView> initDataView = DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());
+        ExceptionCode ec = 0;
+        initDataView->setUint32(0, keyURISize, true, ec);
 
-    RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer, 4, keyURI.length());
-    keyURIArray->setRange(keyURI.characters(), keyURI.length() / sizeof(unsigned char), 0);
+        RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer, 4, keyURI.length());
+        keyURIArray->setRange(keyURI.characters(), keyURI.length() / sizeof(unsigned char), 0);
 
-    if (!player()->keyNeeded("com.apple.lskd", emptyString(), static_cast<const unsigned char*>(initDataBuffer->data()), initDataBuffer->byteLength()))
-        return false;
+        if (!player()->keyNeeded("com.apple.lskd", emptyString(), static_cast<const unsigned char*>(initDataBuffer->data()), initDataBuffer->byteLength()))
+            return false;
 
-    m_keyURIToRequestMap.set(keyURI, avRequest);
+        m_keyURIToRequestMap.set(keyURI, avRequest);
+        return true;
+    }
+#endif
+
+    m_resourceLoader = WebCoreAVFResourceLoader::create(this, avRequest);
+    m_resourceLoader->startLoading();
     return true;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResourceLoadingRequest* avRequest)
+{
+    String scheme = [[[avRequest request] URL] scheme];
+
+    if (m_resourceLoader)
+        m_resourceLoader->stopLoading();
 }
 #endif
 
@@ -1089,10 +1097,8 @@ MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::addKey(const 
 
     RetainPtr<AVAssetResourceLoadingRequest> avRequest = m_sessionIDToRequestMap.get(sessionID);
     RetainPtr<NSData> keyData = adoptNS([[NSData alloc] initWithBytes:keyPtr length:keyLength]);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [avRequest.get() finishLoadingWithResponse:nil data:keyData.get() redirect:nil];
-#pragma clang diagnostic pop
+    [[avRequest.get() dataRequest] respondWithData:keyData.get()];
+    [avRequest.get() finishLoading];
     m_sessionIDToRequestMap.remove(sessionID);
 
     player()->keyAdded(keySystem, sessionID);
@@ -1242,7 +1248,7 @@ NSArray* itemKVOProperties()
 
 @end
 
-#if ENABLE(ENCRYPTED_MEDIA)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 @implementation WebCoreAVFLoaderDelegate
 
 - (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
@@ -1254,13 +1260,14 @@ NSArray* itemKVOProperties()
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
 {
     UNUSED_PARAM(resourceLoader);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_callback->shouldWaitForLoadingOfResource(loadingRequest))
-            [loadingRequest finishLoadingWithError:nil];
-    });
-    return TRUE;
+    return m_callback->shouldWaitForLoadingOfResource(loadingRequest);
 }
 
+- (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest
+{
+    UNUSED_PARAM(resourceLoader);
+    return m_callback->didCancelLoadingRequest(loadingRequest);
+}
 @end
 #endif
 

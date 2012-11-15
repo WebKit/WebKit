@@ -441,6 +441,7 @@ private:
     virtual bool mediaPlayerIsLooping() const OVERRIDE;
     virtual HostWindow* mediaPlayerHostWindow() OVERRIDE;
     virtual IntRect mediaPlayerWindowClipRect() OVERRIDE;
+    virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() OVERRIDE;
 
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
     virtual GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter(const MediaPlayer*) const OVERRIDE;

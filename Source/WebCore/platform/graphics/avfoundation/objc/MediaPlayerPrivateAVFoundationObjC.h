@@ -28,6 +28,7 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
+#include "CachedResourceClient.h"
 #include "MediaPlayerPrivateAVFoundation.h"
 #include <wtf/HashMap.h>
 
@@ -39,7 +40,7 @@ OBJC_CLASS AVPlayerLayer;
 OBJC_CLASS AVAssetImageGenerator;
 OBJC_CLASS WebCoreAVFMovieObserver;
 
-#if ENABLE(ENCRYPTED_MEDIA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 OBJC_CLASS WebCoreAVFLoaderDelegate;
 OBJC_CLASS AVAssetResourceLoadingRequest;
 #endif
@@ -53,6 +54,8 @@ typedef struct __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 
+class WebCoreAVFResourceLoader;
+
 class MediaPlayerPrivateAVFoundationObjC : public MediaPlayerPrivateAVFoundation {
 public:
     ~MediaPlayerPrivateAVFoundationObjC();
@@ -62,8 +65,9 @@ public:
     void setAsset(id);
     virtual void tracksChanged();
 
-#if ENABLE(ENCRYPTED_MEDIA) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     bool shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest*);
+    void didCancelLoadingRequest(AVAssetResourceLoadingRequest*);
 #endif
 
 private:
@@ -164,6 +168,11 @@ private:
     RetainPtr<WebCoreAVFLoaderDelegate> m_loaderDelegate;
     HashMap<String, RetainPtr<AVAssetResourceLoadingRequest> > m_keyURIToRequestMap;
     HashMap<String, RetainPtr<AVAssetResourceLoadingRequest> > m_sessionIDToRequestMap;
+#endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    friend class WebCoreAVFResourceLoader;
+    OwnPtr<WebCoreAVFResourceLoader> m_resourceLoader;
 #endif
 };
 

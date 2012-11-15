@@ -30,6 +30,7 @@
 
 namespace WebCore {
 RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef uti);
+RetainPtr<CFStringRef> UTIFromMIMEType(CFStringRef mime);
 }
 
 #endif // UTIUtilities_h

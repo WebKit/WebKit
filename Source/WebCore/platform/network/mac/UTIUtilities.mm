@@ -79,4 +79,10 @@ RetainPtr<CFStringRef> mimeTypeFromUTITree(CFStringRef uti)
     return nil;
 }
 
+RetainPtr<CFStringRef> UTIFromMIMEType(CFStringRef mime)
+{
+    RetainPtr<CFStringRef> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mime, 0));
+    return uti;
+}
+
 }

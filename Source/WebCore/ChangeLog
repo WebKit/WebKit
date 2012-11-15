@@ -1,3 +1,63 @@
+2012-11-13  Jer Noble  <jer.noble@apple.com>
+
+        Support loading of blob URLs in AVFoundation.
+        https://bugs.webkit.org/show_bug.cgi?id=102182
+
+        Reviewed by Eric Carlson.
+
+        Add support for BLOB (and other non-natively supported schemed) URLs through the AVAssetResourceLoader API.
+
+        Test: media/video-src-blob.html
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource): Only go down the encrypted
+            media path if the key scheme is skp://.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest): Added.  Cancel resource loading if
+            the media engine requests it.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::addKey): Use the new, non-deprecated API.
+        
+        Use the dispatch_main_queue() as the AVAssetResourceLoadDelegate queue now that <rdar://problem/12362461> is fixed.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:shouldWaitForLoadingOfRequestedResource:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:didCancelLoadingRequest:]):
+
+        Add a new helper class to manage loading the CachedRawResource and feed the incoming
+        data to the AVAssetResourceLoader.
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.h: Added.
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm: Added.
+        (WebCore::WebCoreAVFResourceLoader::create): Simple factory.
+        (WebCore::WebCoreAVFResourceLoader::WebCoreAVFResourceLoader): Simple constructor.
+        (WebCore::WebCoreAVFResourceLoader::~WebCoreAVFResourceLoader): Simple destructor.
+        (WebCore::WebCoreAVFResourceLoader::startLoading): Tell the cachedResourceLoader to schedule loading.
+        (WebCore::WebCoreAVFResourceLoader::stopLoading): Remove this as a client of the resource.
+        (WebCore::WebCoreAVFResourceLoader::responseReceived): Fill in the contentInformation field of the 
+            AVAssetResourceLoadingRequest.
+        (WebCore::WebCoreAVFResourceLoader::dataReceived): Call fulfillRequestWithResource.
+        (WebCore::WebCoreAVFResourceLoader::notifyFinished): Tell the AVAssetResourceLoadingRequest that loading
+            has completed.
+        (WebCore::WebCoreAVFResourceLoader::fulfillRequestWithResource): Fill in (if possible) the dataRequest
+            field of the AVAssetResourceLoadingRequest.
+
+        Add a MediaPlayerClient method allowing MediaPlayerPrivate subclasses to access the HTMLMediaElement's
+        document's cachedResourceLoader.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerCachedResourceLoader):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::cachedResourceLoader):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerCachedResourceLoader):
+
+        Add a convenience method to convert from MIME type -> UTI.
+        * platform/network/mac/UTIUtilities.h:
+        * platform/network/mac/UTIUtilities.mm:
+        (WebCore::UTIFromMIMEType):
+
+        Add new files to project.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-11-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Remove initiallyFitToViewport attribute

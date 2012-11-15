@@ -4599,6 +4599,11 @@ IntRect HTMLMediaElement::mediaPlayerWindowClipRect()
     return mediaPlayerOwningDocument()->view()->windowClipRect();
 }
 
+CachedResourceLoader* HTMLMediaElement::mediaPlayerCachedResourceLoader()
+{
+    return mediaPlayerOwningDocument()->cachedResourceLoader();
+}
+
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 {
     m_restrictions = NoRestrictions;

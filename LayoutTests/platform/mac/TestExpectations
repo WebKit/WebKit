@@ -1182,3 +1182,6 @@ webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while
 webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Fail ]
 webkit.org/b/100142 css3/filters/effect-reference-ordering-hw.html [ Fail ]
 webkit.org/b/100142 css3/filters/effect-reference.html [ Fail ]
+
+# Mountain Lion and prior do not support custom media data loading
+Bug(jernoble) [ MountainLion Lion SnowLeopard ] media/video-src-blob.html

@@ -1101,6 +1101,14 @@ GraphicsDeviceAdapter* MediaPlayer::graphicsDeviceAdapter() const
 }
 #endif
 
+CachedResourceLoader* MediaPlayer::cachedResourceLoader()
+{
+    if (!m_mediaPlayerClient)
+        return 0;
+
+    return m_mediaPlayerClient->mediaPlayerCachedResourceLoader();
+}
+
 }
 
 #endif
