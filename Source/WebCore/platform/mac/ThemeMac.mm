@@ -269,8 +269,6 @@ static void paintCheckbox(ControlStates states, GraphicsContext* context, const 
 
     // Determine the width and height needed for the control and prepare the cell for painting.
     NSButtonCell *checkboxCell = checkbox(states, zoomedRect, zoomFactor);
-    LocalCurrentGraphicsContext localContext(context);
-
     GraphicsContextStateSaver stateSaver(*context);
 
     NSControlSize controlSize = [checkboxCell controlSize];
@@ -287,6 +285,7 @@ static void paintCheckbox(ControlStates states, GraphicsContext* context, const 
         context->translate(-inflatedRect.x(), -inflatedRect.y());
     }
 
+    LocalCurrentGraphicsContext localContext(context);
     NSView *view = ThemeMac::ensuredView(scrollView);
     [checkboxCell drawWithFrame:NSRect(inflatedRect) inView:view];
 #if !BUTTON_CELL_DRAW_WITH_FRAME_DRAWS_FOCUS_RING
@@ -350,8 +349,6 @@ static void paintRadio(ControlStates states, GraphicsContext* context, const Int
 {
     // Determine the width and height needed for the control and prepare the cell for painting.
     NSButtonCell *radioCell = radio(states, zoomedRect, zoomFactor);
-    LocalCurrentGraphicsContext localContext(context);
-
     GraphicsContextStateSaver stateSaver(*context);
 
     NSControlSize controlSize = [radioCell controlSize];
@@ -368,6 +365,7 @@ static void paintRadio(ControlStates states, GraphicsContext* context, const Int
         context->translate(-inflatedRect.x(), -inflatedRect.y());
     }
 
+    LocalCurrentGraphicsContext localContext(context);
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     NSView *view = ThemeMac::ensuredView(scrollView);
     [radioCell drawWithFrame:NSRect(inflatedRect) inView:view];
@@ -448,7 +446,7 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
     
     // Determine the width and height needed for the control and prepare the cell for painting.
     NSButtonCell *buttonCell = button(part, states, zoomedRect, zoomFactor);
-    LocalCurrentGraphicsContext localContext(context);
+    GraphicsContextStateSaver stateSaver(*context);
 
     NSControlSize controlSize = [buttonCell controlSize];
     IntSize zoomedSize = buttonSizes()[controlSize];
@@ -474,6 +472,7 @@ static void paintButton(ControlPart part, ControlStates states, GraphicsContext*
         }
     } 
 
+    LocalCurrentGraphicsContext localContext(context);
     NSView *view = ThemeMac::ensuredView(scrollView);
     NSWindow *window = [view window];
     NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];

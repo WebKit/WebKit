@@ -4087,6 +4087,9 @@ webkit.org/b/101229 inspector-protocol/debugger-pause-dedicated-worker.html [ Fa
 # Started failing with r133224-133226 (probably 133224)
 webkit.org/b/101255 fast/repaint/block-selection-gap-in-table-cell.html [ ImageOnlyFailure ]
 
+# Needs baselines
+Bug(thakis) [ Release ] fast/forms/zoomed-controls.html [ ImageOnlyFailure ]
+
 # Flaky on win7 since at least r162410
 webkit.org/b/99886 [ Win7 ] fast/dom/shadow/input-with-validation.html [ ImageOnlyFailure Pass ]
 
