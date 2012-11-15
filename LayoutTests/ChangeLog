@@ -1,3 +1,25 @@
+2012-11-14  Shinya Kawanaka  <shinyak@chromium.org> 
+
+        Changing pseudoClass (:disabled) should cause distribution.
+        https://bugs.webkit.org/show_bug.cgi?id=101901
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/pseudoclass-update-disabled-button-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-button.html: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-fieldset-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-fieldset.html: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-input-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-input.html: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-optgroup-expected.txt: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-optgroup.html: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-option-expected.txt: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-option.html: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-select-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-select.html: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-textarea-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-disabled-textarea.html: Added.
+
 2012-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134691, r134703, r134715, r134716,

@@ -82,6 +82,9 @@ void HTMLOptGroupElement::parseAttribute(const Attribute& attribute)
 {
     HTMLElement::parseAttribute(attribute);
     recalcSelectOptions();
+
+    if (attribute.name() == disabledAttr)
+        invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureDisabled);
 }
 
 void HTMLOptGroupElement::recalcSelectOptions()

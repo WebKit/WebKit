@@ -151,6 +151,7 @@ void HTMLFormControlElement::disabledAttributeChanged()
 {
     setNeedsWillValidateCheck();
     setNeedsStyleRecalc();
+    invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureDisabled);
     if (renderer() && renderer()->style()->hasAppearance())
         renderer()->theme()->stateChanged(renderer(), EnabledState);
 }

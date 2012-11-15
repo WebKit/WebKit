@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+
+<p>When an optgroup element became 'disabled' or not-'disabled', distribution should happen.</p>
+<p>Since an optgroup element does not create a renderer, we cannot check this using reftest.</p>
+
+<div id="container">
+    <div id="host1">
+        <optgroup id="optgroup1">optgroup 1</optgroup>
+        <optgroup id="optgroup2">optgroup 2</optgroup>
+    </div>
+
+    <div id="host2">
+        <optgroup id="optgroup3" disabled>optgroup 3</optgroup>
+        <optgroup id="optgroup4" disabled>optgroup 4</optgroup>
+    </div>
+</div>
+
+<pre id="console"></pre>
+
+<script>
+jsTestIsAsync = true;
+
+var shadowRoot1 = new WebKitShadowRoot(host1);
+var shadowRoot2 = new WebKitShadowRoot(host2);
+
+shadowRoot1.innerHTML = '<content select=":disabled">';
+shadowRoot2.innerHTML = '<content select=":disabled">';
+
+var content1 = shadowRoot1.querySelector('content');
+var content2 = shadowRoot2.querySelector('content');
+
+setTimeout(function() {
+    optgroup2.setAttribute('disabled', true);
+    optgroup4.removeAttribute('disabled');
+
+    nodes1 = content1.getDistributedNodes();
+    shouldBe('nodes1.length', '1');
+    shouldBe('nodes1.item(0).innerHTML', '"optgroup 2"');
+
+    nodes2 = content2.getDistributedNodes();
+    shouldBe('nodes2.length', '1');
+    shouldBe('nodes2.item(0).innerHTML', '"optgroup 3"');
+
+    container.innerHTML = "";
+    finishJSTest();
+}, 0);
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

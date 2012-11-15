@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+</head>
+
+<body>
+
+<p>When the 'disabled' state of a textarea tag is changed, we have to invalidate distribution.</p>
+
+<div id="host1">
+    <textarea id="textarea1">Textarea 1</textarea>
+    <textarea id="textarea2">Textarea 2</textarea>
+</div>
+
+<div id="host2">
+    <textarea id="textarea3" disabled>Textarea 3</textarea>
+    <textarea id="textarea4" disabled>Textarea 4</textarea>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+new WebKitShadowRoot(host1).innerHTML = '<content select=":disabled"></content>';
+new WebKitShadowRoot(host2).innerHTML = '<content select=":disabled"></content>';
+
+setTimeout(function() {
+    textarea2.setAttribute('disabled', true);
+    textarea4.removeAttribute('disabled');
+    testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>
+
