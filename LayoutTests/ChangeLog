@@ -1,5 +1,37 @@
 2012-11-15  David Grogan  <dgrogan@chromium.org>
 
+        IndexedDB: setVersion test conversion batch 6
+        https://bugs.webkit.org/show_bug.cgi?id=102318
+
+        Reviewed by Tony Chang.
+
+        Salvaged the useful parts of intversion-and-setversion as
+        intversion-upgrades.
+
+        * storage/indexeddb/intversion-and-setversion-expected.txt: Removed.
+        * storage/indexeddb/intversion-upgrades-expected.txt: Added.
+        * storage/indexeddb/intversion-upgrades.html: Renamed from LayoutTests/storage/indexeddb/intversion-and-setversion.html.
+        * storage/indexeddb/resources/intversion-and-setversion.js: Removed.
+        * storage/indexeddb/resources/intversion-upgrades.js: Added.
+        (test):
+        (deleteSuccess):
+        (initialUpgradeNeeded):
+        (openSuccess):
+        (connection1VersionChangeCallback):
+        (connection2BlockedCallback):
+        (connection2UpgradeNeeded):
+        (transactionCompleted):
+        (connection2Success):
+        (connection3Success):
+        (errorWhenTryingLowVersion):
+        (connection4UpgradeNeeded):
+        (connection4Success):
+        (connection5Success):
+        * storage/indexeddb/resources/shared.js:
+        (unexpectedVersionChangeCallback):
+
+2012-11-15  David Grogan  <dgrogan@chromium.org>
+
         IndexedDB test conversions batch 5
         https://bugs.webkit.org/show_bug.cgi?id=102308
 

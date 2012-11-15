@@ -76,9 +76,9 @@ function unexpectedUpgradeNeededCallback()
     finishJSTest();
 }
 
-function unexpectedVersionChangeCallback()
+function unexpectedVersionChangeCallback(e)
 {
-    testFailed("onversionchange called unexpectedly");
+    testFailed("onversionchange called unexpectedly. oldVersion = " + e.oldVersion + ". newVersion = " + e.newVersion);
     finishJSTest();
 }
 
