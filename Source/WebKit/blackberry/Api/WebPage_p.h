@@ -367,7 +367,6 @@ public:
     // Scroll and/or zoom so that the WebPage fits the new actual
     // visible size.
     void setViewportSize(const WebCore::IntSize& transformedActualVisibleSize, bool ensureFocusElementVisible);
-    void resizeSurfaceIfNeeded(); // Helper method for setViewportSize().
 
     void scheduleDeferrableTimer(WebCore::Timer<WebPagePrivate>*, double timeOut);
     void unscheduleAllDeferrableTimers();
@@ -568,7 +567,6 @@ public:
     bool m_suspendRootLayerCommit;
 #endif
 
-    bool m_hasPendingSurfaceSizeChange;
     int m_pendingOrientation;
 
     RefPtr<WebCore::Node> m_fullscreenVideoNode;

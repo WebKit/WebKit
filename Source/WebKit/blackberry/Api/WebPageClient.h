@@ -141,7 +141,6 @@ public:
     virtual Platform::Graphics::Window* window() const = 0;
 
     virtual void notifyPixelContentRendered(const Platform::IntRect&) = 0;
-    virtual void resizeSurfaceIfNeeded() = 0;
 
     virtual void inputFocusGained(int64_t inputStyle, Platform::VirtualKeyboardType, Platform::VirtualKeyboardEnterKeyType) = 0;
     virtual void inputFocusLost() = 0;

@@ -1,3 +1,35 @@
+2012-11-15  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Leave surface resizing to the client.
+        https://bugs.webkit.org/show_bug.cgi?id=102280
+        RIM PR 235034
+        RIM PR 160619
+
+        Reviewed by Adam Treat.
+
+        Now that we always blit on the user interface thread and
+        use the client's userInterfaceViewportAccessor() to determine
+        the destination rectangle for blitting, changing the viewport
+        size does not affect the window or target surface directly.
+        The only way that blitted output is affected is through
+        layout, scroll position or scale changes. None of these
+        require us to synchronize with the UI thread to resize its
+        target surface.
+
+        This commit simplifies setViewportSize() and removes a
+        blocking message dispatch by simply offloading all surface
+        resizing responsibilities to the client. This is safer,
+        cleaner and easier.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPage::setScreenOrientation):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-11-14  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Do not clear the ProcessingChangeGuard state on DeleteBackward

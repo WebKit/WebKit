@@ -135,7 +135,6 @@ public:
     bool isVisible() const;
 
     void setScreenOrientation(int);
-    void setHasPendingSurfaceSizeChange();
     void applyPendingOrientationIfNeeded();
 
     Platform::ViewportAccessor* webkitThreadViewportAccessor() const;
