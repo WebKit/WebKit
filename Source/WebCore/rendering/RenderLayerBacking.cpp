@@ -221,11 +221,22 @@ void RenderLayerBacking::updateDebugIndicators(bool showBorder, bool showRepaint
         m_maskLayer->setShowRepaintCounter(showRepaintCounter);
     }
 
+    if (m_layerForHorizontalScrollbar)
+        m_layerForHorizontalScrollbar->setShowDebugBorder(showBorder);
+
+    if (m_layerForVerticalScrollbar)
+        m_layerForVerticalScrollbar->setShowDebugBorder(showBorder);
+
+    if (m_layerForScrollCorner)
+        m_layerForScrollCorner->setShowDebugBorder(showBorder);
+
     if (m_scrollingLayer)
         m_scrollingLayer->setShowDebugBorder(showBorder);
 
-    if (m_scrollingContentsLayer)
+    if (m_scrollingContentsLayer) {
         m_scrollingContentsLayer->setShowDebugBorder(showBorder);
+        m_scrollingContentsLayer->setShowRepaintCounter(showRepaintCounter);
+    }
 }
 
 void RenderLayerBacking::createPrimaryGraphicsLayer()

@@ -259,11 +259,23 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
     if (hasAcceleratedCompositing != m_hasAcceleratedCompositing || showDebugBorders != m_showDebugBorders || showRepaintCounter != m_showRepaintCounter || forceCompositingMode != m_forceCompositingMode)
         setCompositingLayersNeedRebuild();
 
+    bool debugBordersChanged = m_showDebugBorders != showDebugBorders;
     m_hasAcceleratedCompositing = hasAcceleratedCompositing;
     m_showDebugBorders = showDebugBorders;
     m_showRepaintCounter = showRepaintCounter;
     m_forceCompositingMode = forceCompositingMode;
     m_acceleratedDrawingEnabled = acceleratedDrawingEnabled;
+    
+    if (debugBordersChanged) {
+        if (m_layerForHorizontalScrollbar)
+            m_layerForHorizontalScrollbar->setShowDebugBorder(m_showDebugBorders);
+
+        if (m_layerForVerticalScrollbar)
+            m_layerForVerticalScrollbar->setShowDebugBorder(m_showDebugBorders);
+
+        if (m_layerForScrollCorner)
+            m_layerForScrollCorner->setShowDebugBorder(m_showDebugBorders);
+    }
 }
 
 bool RenderLayerCompositor::canRender3DTransforms() const
@@ -2213,6 +2225,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresHorizontalScrollbarLayer()) {
         if (!m_layerForHorizontalScrollbar) {
             m_layerForHorizontalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), this);
+            m_layerForHorizontalScrollbar->setShowDebugBorder(m_showDebugBorders);
 #ifndef NDEBUG
             m_layerForHorizontalScrollbar->setName("horizontal scrollbar");
 #endif
@@ -2235,6 +2248,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresVerticalScrollbarLayer()) {
         if (!m_layerForVerticalScrollbar) {
             m_layerForVerticalScrollbar = GraphicsLayer::create(graphicsLayerFactory(), this);
+            m_layerForVerticalScrollbar->setShowDebugBorder(m_showDebugBorders);
 #ifndef NDEBUG
             m_layerForVerticalScrollbar->setName("vertical scrollbar");
 #endif
@@ -2257,6 +2271,7 @@ void RenderLayerCompositor::updateOverflowControlsLayers()
     if (requiresScrollCornerLayer()) {
         if (!m_layerForScrollCorner) {
             m_layerForScrollCorner = GraphicsLayer::create(graphicsLayerFactory(), this);
+            m_layerForScrollCorner->setShowDebugBorder(m_showDebugBorders);
 #ifndef NDEBUG
             m_layerForScrollCorner->setName("scroll corner");
 #endif

@@ -1,3 +1,21 @@
+2012-11-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Ensure that scrollbar layers show debug borders
+        https://bugs.webkit.org/show_bug.cgi?id=102429
+
+        Reviewed by Anders Carlsson.
+
+        After r133517, scrollbar layers no longer showed debug borders, which
+        was very confusing. Fix this by explicitly calling setShowDebugBorder()
+        on the scrollbar-related layers owned by RenderLayerCompositor
+        and RenderLayerBacking.
+        
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateDebugIndicators):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+
 2012-11-15  Andreas Kling  <akling@apple.com>
 
         ASSERTION FAILED: fastAttributeLookupAllowed(name) for 7 layout tests
