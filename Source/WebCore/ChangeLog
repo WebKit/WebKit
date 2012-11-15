@@ -1,3 +1,16 @@
+2012-11-15  Andreas Kling  <akling@apple.com>
+
+        ASSERTION FAILED: fastAttributeLookupAllowed(name) for 7 layout tests
+        <http://webkit.org/b/102423>
+
+        Reviewed by Anders Carlsson.
+
+        Use Element::getAttributeItem() to find out if the element has a given attribute
+        instead of fastHasAttribute() since that causes assertions for the "style" attribute.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement):
+
 2012-11-15  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: DOMStringSizeError
