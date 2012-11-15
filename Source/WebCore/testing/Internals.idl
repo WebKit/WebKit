@@ -214,4 +214,7 @@
     //  startTrackingRepaints, repaintRectsAsText, stopTrackingRepaints.
     void startTrackingRepaints(in Document document) raises (DOMException);
     void stopTrackingRepaints(in Document document) raises (DOMException);
+
+    SerializedScriptValue deserializeBuffer(in ArrayBuffer buffer);
+    ArrayBuffer serializeObject(in SerializedScriptValue obj);
 };

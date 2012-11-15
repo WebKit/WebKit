@@ -1,3 +1,21 @@
+2012-11-14  Alec Flett  <alecflett@chromium.org>
+
+        Add tests for explicit serialization values
+        https://bugs.webkit.org/show_bug.cgi?id=96818
+
+        Reviewed by Adam Barth.
+
+        Expose direct access to the serialization/deserialization mechanisms
+        of SerializedScriptValue to DumpRenderTree.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::serializeObject):
+        (WebCore):
+        (WebCore::Internals::deserializeBuffer):
+        * testing/Internals.h:
+        (WebCore):
+        * testing/Internals.idl:
+
 2012-11-14  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Add clear() method to JSC ScriptValue

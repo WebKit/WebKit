@@ -1,3 +1,14 @@
+2012-11-14  Alec Flett  <alecflett@chromium.org>
+
+        Add tests for explicit serialization values
+        https://bugs.webkit.org/show_bug.cgi?id=96818
+
+        Reviewed by Adam Barth.
+
+        Make sure SerializedScriptValues are backward compatible with future changes.
+
+        * platform/chromium/fast/storage/serialized-script-value.html: Added.
+
 2012-11-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Marked more virtual/deferred/fast/images as failing.

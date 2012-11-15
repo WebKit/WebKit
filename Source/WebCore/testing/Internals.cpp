@@ -69,6 +69,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "SelectRuleFeatureSet.h"
+#include "SerializedScriptValue.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SpellChecker.h"
@@ -1537,6 +1538,18 @@ void Internals::stopTrackingRepaints(Document* document, ExceptionCode& ec)
 
     FrameView* frameView = document->view();
     frameView->setTracksRepaints(false);
+}
+
+PassRefPtr<ArrayBuffer> Internals::serializeObject(PassRefPtr<SerializedScriptValue> value) const
+{
+    String stringValue = value->toWireString();
+    return ArrayBuffer::create(static_cast<const void*>(stringValue.impl()->characters()), stringValue.sizeInBytes());
+}
+
+PassRefPtr<SerializedScriptValue> Internals::deserializeBuffer(PassRefPtr<ArrayBuffer> buffer) const
+{
+    String value(static_cast<const UChar*>(buffer->data()), buffer->byteLength() / sizeof(UChar));
+    return SerializedScriptValue::createFromWire(value);
 }
 
 }
