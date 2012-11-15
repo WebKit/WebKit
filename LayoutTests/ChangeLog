@@ -1,3 +1,42 @@
+2012-11-15  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: NoModificationAllowedError
+        https://bugs.webkit.org/show_bug.cgi?id=102134
+
+        Reviewed by Ojan Vafai.
+
+        Updated tests and expectations.
+
+        * dom/xhtml/level1/core/hc_nodevalue03-expected.txt:
+        * fast/dom/EntityReference/readonly-exceptions-expected.txt:
+        * fast/dom/HTMLElement/insertAdjacentHTML-errors-expected.txt:
+        * fast/dom/HTMLElement/script-tests/insertAdjacentHTML-errors.js:
+        * fast/dom/computed-style-set-property-expected.txt:
+        * fast/dom/insertAdjacentHTML-DocumentFragment-crash-expected.txt:
+        * fast/dom/outerText-no-element-expected.txt:
+        * fast/dom/setPrimitiveValue-exceptions-expected.txt:
+        * fast/dom/setPrimitiveValue-expected.txt:
+        * fast/dynamic/outerHTML-no-element-expected.txt:
+        * fast/frames/out-of-document-iframe-has-child-frame-expected.txt:
+        * platform/chromium-mac/fast/dom/setPrimitiveValue-exceptions-expected.txt:
+        * platform/chromium-win/fast/dom/setPrimitiveValue-exceptions-expected.txt:
+        * platform/chromium-win/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/chromium/fast/dom/insertAdjacentHTML-DocumentFragment-crash-expected.txt:
+        * platform/chromium/fast/frames/out-of-document-iframe-has-child-frame-expected.txt:
+        * platform/chromium/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/gtk/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/mac/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/qt/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/qt/svg/dom/altGlyph-dom-expected.txt:
+        * svg/animations/animate-gradient-transform-expected.txt:
+        * svg/dom/SVGColor-expected.txt:
+        * svg/dom/SVGLengthList-basics-expected.txt:
+        * svg/dom/SVGNumberList-basics-expected.txt:
+        * svg/dom/SVGPaint-expected.txt:
+        * svg/dom/SVGTransformList-basics-expected.txt:
+        * svg/dom/SVGViewSpec-defaults-expected.txt:
+        * svg/dom/altGlyph-dom-expected.txt:
+
 2012-11-15  Eric Carlson  <eric.carlson@apple.com>
 
         Update computed line position algorithm

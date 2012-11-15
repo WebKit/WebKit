@@ -1,2 +1,2 @@
 Test CSSPrimitiveValue setters.
-setFloatValue NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7
+setFloatValue NoModificationAllowedError: DOM Exception 7

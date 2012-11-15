@@ -6,11 +6,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 10
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_DIMENSION) is 10
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
-PASS left.setFloatValue(CSSPrimitiveValue.CSS_NUMBER, 25) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS left.setFloatValue(CSSPrimitiveValue.CSS_DIMENSION, 25) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS left.setFloatValue(CSSPrimitiveValue.CSS_PX, 25) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS left.setFloatValue(CSSPrimitiveValue.CSS_UNKNOWN, 25) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS left.setFloatValue(CSSPrimitiveValue.CSS_STRING, 25) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS left.setFloatValue(CSSPrimitiveValue.CSS_NUMBER, 25) threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS left.setFloatValue(CSSPrimitiveValue.CSS_DIMENSION, 25) threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS left.setFloatValue(CSSPrimitiveValue.CSS_PX, 25) threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS left.setFloatValue(CSSPrimitiveValue.CSS_UNKNOWN, 25) threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS left.setFloatValue(CSSPrimitiveValue.CSS_STRING, 25) threw exception Error: NoModificationAllowedError: DOM Exception 7.
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_UNKNOWN) threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_STRING) threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
 PASS left.getStringValue() threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
@@ -21,11 +21,11 @@ PASS left.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 10
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_DIMENSION) is 10
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
 PASS fontFamily.getStringValue() is "Times"
-PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_STRING, 'Hi there!') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_ATTR, "G'day!") threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_UNKNOWN, 'Hi there!') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_DIMENSION, "G'day!") threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_COUNTER, 'Hello, world!') threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_STRING, 'Hi there!') threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_ATTR, "G'day!") threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_UNKNOWN, 'Hi there!') threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_DIMENSION, "G'day!") threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS fontFamily.setStringValue(CSSPrimitiveValue.CSS_COUNTER, 'Hello, world!') threw exception Error: NoModificationAllowedError: DOM Exception 7.
 PASS fontFamily.getFloatValue() threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
 PASS fontFamily.getCounterValue() threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
 PASS fontFamily.getRectValue() threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
@@ -34,11 +34,11 @@ PASS fontFamily.getStringValue() is "Times"
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 10
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_DIMENSION) is 10
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_PX) is 10
-PASS left.setFloatValue(CSSPrimitiveValue.CSS_NUMBER, 25) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS left.setFloatValue(CSSPrimitiveValue.CSS_DIMENSION, 25) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS left.setFloatValue(CSSPrimitiveValue.CSS_PX, 25) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS left.setFloatValue(CSSPrimitiveValue.CSS_UNKNOWN, 25) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
-PASS left.setFloatValue(CSSPrimitiveValue.CSS_STRING, 25) threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS left.setFloatValue(CSSPrimitiveValue.CSS_NUMBER, 25) threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS left.setFloatValue(CSSPrimitiveValue.CSS_DIMENSION, 25) threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS left.setFloatValue(CSSPrimitiveValue.CSS_PX, 25) threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS left.setFloatValue(CSSPrimitiveValue.CSS_UNKNOWN, 25) threw exception Error: NoModificationAllowedError: DOM Exception 7.
+PASS left.setFloatValue(CSSPrimitiveValue.CSS_STRING, 25) threw exception Error: NoModificationAllowedError: DOM Exception 7.
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_UNKNOWN) threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
 PASS left.getFloatValue(CSSPrimitiveValue.CSS_STRING) threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.
 PASS left.getStringValue() threw exception Error: INVALID_ACCESS_ERR: DOM Exception 15.

@@ -31,7 +31,7 @@ layer at (0,0) size 600x400
               text run at (0,0) width 186: "setting svg.x.animVal.value = 5"
           RenderBlock {div} at (0,152) size 600x19
             RenderText {#text} at (0,0) size 497x19
-              text run at (0,0) width 497: "caught exception: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7"
+              text run at (0,0) width 497: "caught exception: NoModificationAllowedError: DOM Exception 7"
           RenderBlock {div} at (0,171) size 600x19
             RenderText {#text} at (0,0) size 152x19
               text run at (0,0) width 152: "svg.x.baseVal.value = 10"

@@ -41,7 +41,7 @@ static struct CoreException {
     { "WrongDocumentError", "A Node was used in a different document than the one that created it (that doesn't support it)." },
     { "InvalidCharacterError", "An invalid or illegal character was specified, such as in an XML name." },
     { "NoDataAllowedError", "Data was specified for a Node which does not support data." },
-    { "NO_MODIFICATION_ALLOWED_ERR", "An attempt was made to modify an object where modifications are not allowed." },
+    { "NoModificationAllowedError", "An attempt was made to modify an object where modifications are not allowed." },
     { "NotFoundError", "An attempt was made to reference a Node in a context where it does not exist." },
     { "NOT_SUPPORTED_ERR", "The implementation did not support the requested type of object or operation." },
     { "InUseAttributeError", "An attempt was made to add an attribute that is already in use elsewhere." },
