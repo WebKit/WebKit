@@ -1,3 +1,10 @@
+2012-11-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix build break when using --no-tiled-backing-store option.
+
+        * ewk/ewk_frame_private.h:
+        (WebCore):
+
 2012-11-14  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] Port tiled backing store
