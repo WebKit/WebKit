@@ -1,14 +1,8 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB: mutating records with a r/w cursor updates indexes on those records
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
-
-indexedDB.open(name)
-openSuccess():
-db = event.target.result
 firstValue = 'hi';
 secondValue = 'bye';
 objectStoreInfo = [
@@ -22,15 +16,21 @@ objectStoreInfo = [
           entry: { data: firstValue } },
     ];
 i = 0;
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "cursor-update-updates-indexes.html"
+indexedDB.deleteDatabase(dbname)
 info = objectStoreInfo[i];
-request = db.setVersion('1')
+indexedDB.open(dbname)
 setupObjectStoreAndCreateIndex():
-Deleted all object stores.
+db = event.target.result
 objectStore = db.createObjectStore(info.name, info.options);
 index = objectStore.createIndex('data_index', 'data', { unique: false });
 uniqueIndex = objectStore.createIndex('unique_data_index', 'data', { unique: true });
 request = objectStore.add(info.entry, info.key);
 trans = db.transaction(info.name, 'readwrite')
+trans.oncomplete = test
 objectStore = trans.objectStore(info.name)
 index = objectStore.index('data_index')
 uniqueIndex = objectStore.index('unique_data_index')
@@ -44,15 +44,21 @@ PASS value.data is event.target.result.data
 request = uniqueIndex.get(secondValue);
 PASS value.data is event.target.result.data
 i++;
+db.close()
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "cursor-update-updates-indexes.html"
+indexedDB.deleteDatabase(dbname)
 info = objectStoreInfo[i];
-request = db.setVersion('1')
+indexedDB.open(dbname)
 setupObjectStoreAndCreateIndex():
-Deleted all object stores.
+db = event.target.result
 objectStore = db.createObjectStore(info.name, info.options);
 index = objectStore.createIndex('data_index', 'data', { unique: false });
 uniqueIndex = objectStore.createIndex('unique_data_index', 'data', { unique: true });
 request = objectStore.add(info.entry);
 trans = db.transaction(info.name, 'readwrite')
+trans.oncomplete = test
 objectStore = trans.objectStore(info.name)
 index = objectStore.index('data_index')
 uniqueIndex = objectStore.index('unique_data_index')
@@ -66,15 +72,21 @@ PASS value.data is event.target.result.data
 request = uniqueIndex.get(secondValue);
 PASS value.data is event.target.result.data
 i++;
+db.close()
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "cursor-update-updates-indexes.html"
+indexedDB.deleteDatabase(dbname)
 info = objectStoreInfo[i];
-request = db.setVersion('1')
+indexedDB.open(dbname)
 setupObjectStoreAndCreateIndex():
-Deleted all object stores.
+db = event.target.result
 objectStore = db.createObjectStore(info.name, info.options);
 index = objectStore.createIndex('data_index', 'data', { unique: false });
 uniqueIndex = objectStore.createIndex('unique_data_index', 'data', { unique: true });
 request = objectStore.add(info.entry);
 trans = db.transaction(info.name, 'readwrite')
+trans.oncomplete = test
 objectStore = trans.objectStore(info.name)
 index = objectStore.index('data_index')
 uniqueIndex = objectStore.index('unique_data_index')
@@ -88,15 +100,21 @@ PASS value.data is event.target.result.data
 request = uniqueIndex.get(secondValue);
 PASS value.data is event.target.result.data
 i++;
+db.close()
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "cursor-update-updates-indexes.html"
+indexedDB.deleteDatabase(dbname)
 info = objectStoreInfo[i];
-request = db.setVersion('1')
+indexedDB.open(dbname)
 setupObjectStoreAndCreateIndex():
-Deleted all object stores.
+db = event.target.result
 objectStore = db.createObjectStore(info.name, info.options);
 index = objectStore.createIndex('data_index', 'data', { unique: false });
 uniqueIndex = objectStore.createIndex('unique_data_index', 'data', { unique: true });
 request = objectStore.add(info.entry);
 trans = db.transaction(info.name, 'readwrite')
+trans.oncomplete = test
 objectStore = trans.objectStore(info.name)
 index = objectStore.index('data_index')
 uniqueIndex = objectStore.index('unique_data_index')
@@ -110,6 +128,7 @@ PASS value.data is event.target.result.data
 request = uniqueIndex.get(secondValue);
 PASS value.data is event.target.result.data
 i++;
+db.close()
 PASS successfullyParsed is true
 
 TEST COMPLETE

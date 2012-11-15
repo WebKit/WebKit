@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB's webkitIDBObjectStore.deleteObjectStore().
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -17,9 +16,8 @@ db.transaction(['storeName'])
 store = transaction.objectStore('storeName')
 store.get('key')
 PASS event.target.result is "value"
-db.setVersion('new version')
-trans = event.target.result
-PASS trans is non-null.
+db.close()
+indexedDB.open(dbname, 2)
 db.deleteObjectStore('storeName')
 db.createObjectStore('storeName', null)
 db.transaction(['storeName'])

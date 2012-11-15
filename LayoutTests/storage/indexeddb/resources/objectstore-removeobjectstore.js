@@ -23,26 +23,34 @@ function getValue()
 {
     transaction = evalAndLog("db.transaction(['storeName'])");
     transaction.onabort = unexpectedErrorCallback;
+    transaction.oncomplete = addIndex;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
     request = evalAndLog("store.get('key')");
-    request.onsuccess = addIndex;
+    request.onsuccess = checkResult;
     request.onerror = unexpectedErrorCallback;
+}
+
+function checkResult()
+{
+    shouldBeEqualToString("event.target.result", "value");
 }
 
 function addIndex()
 {
-    shouldBeEqualToString("event.target.result", "value");
+    evalAndLog("db.close()");
 
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = deleteObjectStore;
+    request = evalAndLog("indexedDB.open(dbname, 2)");
+    request.onupgradeneeded = deleteObjectStore;
     request.onerror = unexpectedErrorCallback;
+    request.onsuccess = getValueAgain;
+    request.onblocked = unexpectedBlockedCallback;
 }
 
 function deleteObjectStore()
 {
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
+    trans = request.transaction;
+    db = request.result;
     trans.onabort = unexpectedAbortCallback;
 
     evalAndLog("db.deleteObjectStore('storeName')");
@@ -52,7 +60,6 @@ function deleteObjectStore()
 function createObjectStoreAgain()
 {
     evalAndLog("db.createObjectStore('storeName', null)");
-    trans.oncomplete = getValueAgain;
 }
 
 function getValueAgain()

@@ -11,34 +11,16 @@ if (this.importScripts) {
 
 description("Test IndexedDB's opening DB more than once");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db1 = evalAndLog("db1 = event.target.result");
-
-    request = evalAndLog("request = db1.setVersion('1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    deleteAllObjectStores(db1);
+    db1 = event.target.result;
 
     objectStoreName = "Objects";
     objectStoreOptions = { keyPath: 'id', autoIncrement: true };
     evalAndLog("db1.createObjectStore(objectStoreName, objectStoreOptions);");
 
-    request = evalAndLog("indexedDB.open(name);");
+    request = evalAndLog("indexedDB.open(dbname);");
     request.onsuccess = open2Success;
     request.onerror = unexpectedErrorCallback;
 }
@@ -64,5 +46,3 @@ function open2Success()
 
     finishJSTest();
 }
-
-test();

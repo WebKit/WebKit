@@ -11,33 +11,12 @@ if (this.importScripts) {
 
 description("Test IndexedDB's event.target.source in success callbacks");
 
-function test()
+indexedDBTest(prepareDatabase, finishJSTest);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
+    db = event.target.result;
     source = evalAndLog("source = event.target.source;");
     shouldBeNull("source");
-
-    db = evalAndLog("db = event.target.result");
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    source = evalAndLog("source = event.target.source;");
-    shouldBe("source", "db");
-
-    deleteAllObjectStores(db);
 
     objectStoreName = "Objects";
     objectStore = evalAndLog("objectStore = db.createObjectStore(objectStoreName, { autoIncrement: true });");
@@ -50,7 +29,4 @@ function areWeDoneYet()
 {
     source = evalAndLog("source = event.target.source;");
     shouldBe("source", "objectStore");
-    finishJSTest();
 }
-
-test();

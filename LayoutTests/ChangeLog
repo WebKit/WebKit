@@ -1,3 +1,52 @@
+2012-11-15  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB test conversions batch 5
+        https://bugs.webkit.org/show_bug.cgi?id=102308
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/mozilla/cursor-update-updates-indexes-expected.txt:
+        * storage/indexeddb/mozilla/event-source-expected.txt:
+        * storage/indexeddb/mozilla/global-data-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-put-null-key-expected.txt:
+        * storage/indexeddb/mozilla/odd-result-order-expected.txt:
+        * storage/indexeddb/mozilla/remove-objectstore-expected.txt:
+        * storage/indexeddb/mozilla/resources/cursor-update-updates-indexes.js:
+          Calls indexedDBTest a bunch of times, which seems awkward, but is
+          really convenient.
+
+        * storage/indexeddb/mozilla/resources/event-source.js:
+          Now that setVersion is gone, it appears that no request should have
+          a database as a source so the dropped test is ok.
+
+        * storage/indexeddb/mozilla/resources/global-data.js:
+        (prepareDatabase):
+        (open2Success):
+        * storage/indexeddb/mozilla/resources/key-requirements-put-null-key.js:
+        (prepareDatabase):
+        * storage/indexeddb/mozilla/resources/odd-result-order.js:
+          The tests had to be run in slightly different order but they are all
+          preserved.
+
+        (prepareDatabase):
+        (openSuccess):
+        (deleteSuccess):
+        * storage/indexeddb/mozilla/resources/remove-objectstore.js:
+        (prepareDatabase):
+        (checkObjectStore):
+        (inSetVersion2.request.onsuccess):
+        (inSetVersion2):
+        (setVersion3):
+        (inSetVersion3):
+        (deleteThirdObjectStore):
+        * storage/indexeddb/objectstore-removeobjectstore-expected.txt:
+        * storage/indexeddb/resources/objectstore-removeobjectstore.js:
+        (getValue):
+        (checkResult):
+        (addIndex):
+        (deleteObjectStore):
+        (createObjectStoreAgain):
+
 2012-11-15  Alpha Lam  <hclam@chromium.org>
 
         [chromium] WebGL texImage2D fails with deferred image decoding

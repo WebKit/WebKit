@@ -11,31 +11,11 @@ if (this.importScripts) {
 
 description("Test IndexedDB's behavior put()ing with null key");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    deleteAllObjectStores(db);
+    db = event.target.result;
     objectStore = evalAndLog("objectStore = db.createObjectStore('bar');");
     evalAndExpectException("objectStore.put({}, null);", "IDBDatabaseException.DATA_ERR");
     finishJSTest();
 }
-
-test();

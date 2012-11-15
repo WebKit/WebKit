@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB deleting an object store
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,11 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open(name)
-db = event.target.result
+dbname = "remove-objectstore.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 PASS db.objectStoreNames.length is 0
-request = db.setVersion('1')
-Deleted all object stores.
 objectStoreName = 'Objects';
 objectStore = db.createObjectStore(objectStoreName, { keyPath: 'foo' });
 request = objectStore.add({foo: i});
@@ -115,6 +113,8 @@ request = objectStore.add({foo: i});
 request = objectStore.add({foo: i});
 PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.item(0) is objectStoreName
+db.close()
+request = indexedDB.open(dbname, 2)
 db.deleteObjectStore(objectStore.name);
 PASS db.objectStoreNames.length is 0
 objectStore = db.createObjectStore(objectStoreName, { keyPath: 'foo' });
@@ -124,7 +124,8 @@ request = objectStore.openCursor();
 PASS event.target.result is null
 db.deleteObjectStore(objectStore.name);
 PASS db.objectStoreNames.length is 0
-request = db.setVersion('3');
+db.close()
+request = indexedDB.open(dbname, 3)
 objectStore = db.createObjectStore(objectStoreName, { keyPath: 'foo' });
 request = objectStore.add({foo:'bar'});
 db.deleteObjectStore(objectStoreName);

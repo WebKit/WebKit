@@ -11,14 +11,13 @@ if (this.importScripts) {
 
 description("Test IndexedDB: request result persists in setTimeout callback");
 
-function test()
+indexedDBTest(prepareDatabase, openSuccess);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
+    request = event.target;
+    db = event.target.result;
+    objectStore = evalAndLog("objectStore = db.createObjectStore('foo', { keyPath: 'key', autoIncrement: true });");
+    index = evalAndLog("index = objectStore.createIndex('foo', 'index');");
 }
 
 function openSuccess()
@@ -28,6 +27,7 @@ function openSuccess()
     setTimeout(function() {
         db = evalAndLog("db = request.result;");
         checkDatabaseType();
+        addRecord();
     }, 0);
 }
 
@@ -36,18 +36,6 @@ function checkDatabaseType()
     debug("checkDatabaseType():");
     shouldBeTrue("db instanceof IDBDatabase");
     db.onerror = unexpectedErrorCallback;
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = setupObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setupObjectStore()
-{
-    debug("setupObjectStore():");
-    deleteAllObjectStores(db);
-    objectStore = evalAndLog("objectStore = db.createObjectStore('foo', { keyPath: 'key', autoIncrement: true });");
-    index = evalAndLog("index = objectStore.createIndex('foo', 'index');");
-    evalAndLog("event.target.transaction.oncomplete = addRecord;");
 }
 
 function addRecord()
@@ -112,5 +100,3 @@ function deleteSuccess()
     debug("deleteSuccess():");
     finishJSTest();
 }
-
-test();

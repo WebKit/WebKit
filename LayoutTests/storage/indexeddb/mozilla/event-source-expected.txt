@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB's event.target.source in success callbacks
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,14 +5,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open(name)
+dbname = "event-source.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 source = event.target.source;
 PASS source is null
-db = event.target.result
-request = db.setVersion('1')
-source = event.target.source;
-PASS source is db
-Deleted all object stores.
 objectStore = db.createObjectStore(objectStoreName, { autoIncrement: true });
 request = objectStore.add({});
 source = event.target.source;

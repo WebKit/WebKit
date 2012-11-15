@@ -11,23 +11,9 @@ if (this.importScripts) {
 
 description("Test IndexedDB: mutating records with a r/w cursor updates indexes on those records");
 
-function test()
-{
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    db = evalAndLog("db = event.target.result");
-    firstValue = evalAndLog("firstValue = 'hi';");
-    secondValue = evalAndLog("secondValue = 'bye';");
-    objectStoreInfo = evalAndLog("objectStoreInfo = [\n" +
+firstValue = evalAndLog("firstValue = 'hi';");
+secondValue = evalAndLog("secondValue = 'bye';");
+objectStoreInfo = evalAndLog("objectStoreInfo = [\n" +
 "        { name: '1', options: {}, key: 1,\n" +
 "          entry: { data: firstValue } },\n" +
 "        { name: '2', options: { keyPath: 'foo' },\n" +
@@ -37,17 +23,16 @@ function openSuccess()
 "        { name: '4', options: { keyPath: 'foo', autoIncrement: true },\n" +
 "          entry: { data: firstValue } },\n" +
 "    ];");
-    i = evalAndLog("i = 0;");
-    setVersion();
-}
+i = evalAndLog("i = 0;");
+debug("");
 
-function setVersion()
+test();
+
+function test()
 {
     if (i < objectStoreInfo.length) {
+        indexedDBTest(setupObjectStoreAndCreateIndexAndAdd, openCursor);
         info = evalAndLog("info = objectStoreInfo[i];");
-        request = evalAndLog("request = db.setVersion('1')");
-        request.onsuccess = setupObjectStoreAndCreateIndexAndAdd;
-        request.onerror = unexpectedErrorCallback;
     } else {
         finishJSTest();
     }
@@ -55,9 +40,8 @@ function setVersion()
 
 function setupObjectStoreAndCreateIndexAndAdd()
 {
-    var transaction = event.target.result;
     debug("setupObjectStoreAndCreateIndex():");
-    deleteAllObjectStores(db);
+    evalAndLog("db = event.target.result");
 
     objectStore = evalAndLog("objectStore = db.createObjectStore(info.name, info.options);");
 
@@ -69,18 +53,16 @@ function setupObjectStoreAndCreateIndexAndAdd()
         request = evalAndLog("request = objectStore.add(info.entry);");
     }
     request.onerror = unexpectedErrorCallback;
-
-    transaction.oncomplete = function () {
-        evalAndLog("trans = db.transaction(info.name, 'readwrite')");
-        evalAndLog("objectStore = trans.objectStore(info.name)");
-        evalAndLog("index = objectStore.index('data_index')");
-        evalAndLog("uniqueIndex = objectStore.index('unique_data_index')");
-        openCursor();
-    };
 }
 
 function openCursor()
 {
+    evalAndLog("trans = db.transaction(info.name, 'readwrite')");
+    evalAndLog("trans.oncomplete = test");
+    trans.onabort = unexpectedAbortCallback;
+    evalAndLog("objectStore = trans.objectStore(info.name)");
+    evalAndLog("index = objectStore.index('data_index')");
+    evalAndLog("uniqueIndex = objectStore.index('unique_data_index')");
     request = evalAndLog("request = objectStore.openCursor();");
     request.onsuccess = updateCursor;
     request.onerror = unexpectedErrorCallback;
@@ -115,7 +97,5 @@ function checkIndex2()
 {
     shouldBe("value.data", "event.target.result.data");
     evalAndLog("i++;");
-    setVersion();
+    evalAndLog("db.close()");
 }
-
-test();
