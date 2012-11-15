@@ -804,12 +804,13 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     WebCore::LayoutMilestones layoutMilestones = WebCore::DidFirstLayout | WebCore::DidFirstVisuallyNonEmptyLayout;
     priv->page->addLayoutMilestones(layoutMilestones);
 
+    // FIXME: Noone is supposed to do this manually.
     priv->viewportArguments.width = WebCore::ViewportArguments::ValueAuto;
     priv->viewportArguments.height = WebCore::ViewportArguments::ValueAuto;
-    priv->viewportArguments.initialScale = WebCore::ViewportArguments::ValueAuto;
-    priv->viewportArguments.minimumScale = WebCore::ViewportArguments::ValueAuto;
-    priv->viewportArguments.maximumScale = WebCore::ViewportArguments::ValueAuto;
-    priv->viewportArguments.userScalable = true;
+    priv->viewportArguments.zoom = WebCore::ViewportArguments::ValueAuto;
+    priv->viewportArguments.minZoom = WebCore::ViewportArguments::ValueAuto;
+    priv->viewportArguments.maxZoom = WebCore::ViewportArguments::ValueAuto;
+    priv->viewportArguments.userZoom = true;
 
     priv->pageSettings->setLoadsImagesAutomatically(true);
     priv->pageSettings->setDefaultTextEncodingName("iso-8859-1");

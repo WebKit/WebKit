@@ -1,3 +1,20 @@
+2012-11-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rename member vars in ViewportArgument to match css-device-adapt
+        https://bugs.webkit.org/show_bug.cgi?id=102355
+
+        Reviewed by Gyuyoung Kim.
+
+        No behavior change, thus no new tests.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::ViewportArguments::resolve):
+        (WebCore::setViewportFeature):
+        * dom/ViewportArguments.h:
+        (WebCore::ViewportArguments::ViewportArguments):
+        (ViewportArguments):
+        (WebCore::ViewportArguments::operator==):
+
 2012-11-15  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [WebGL] cloneNode for images with revoked Blob URIs fails

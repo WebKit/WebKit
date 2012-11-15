@@ -1,3 +1,13 @@
+2012-11-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Rename member vars in ViewportArgument to match css-device-adapt
+        https://bugs.webkit.org/show_bug.cgi?id=102355
+
+        Reviewed by Gyuyoung Kim.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new): Update to reflect name change.
+
 2012-11-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix build break when using --no-tiled-backing-store option.

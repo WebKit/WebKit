@@ -69,10 +69,10 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
 {
     float resultWidth = width;
     float resultHeight = height;
-    float resultZoom = initialScale;
-    float resultMinZoom = minimumScale;
-    float resultMaxZoom = maximumScale;
-    float resultUserZoom = userScalable;
+    float resultZoom = zoom;
+    float resultMinZoom = minZoom;
+    float resultMaxZoom = maxZoom;
+    float resultUserZoom = userZoom;
 
     bool resultAutoFit = resultZoom == ViewportArguments::ValueAuto;
 
@@ -299,13 +299,13 @@ void setViewportFeature(const String& keyString, const String& valueString, Docu
     else if (keyString == "height")
         arguments->height = findSizeValue(keyString, valueString, document);
     else if (keyString == "initial-scale")
-        arguments->initialScale = findScaleValue(keyString, valueString, document);
+        arguments->zoom = findScaleValue(keyString, valueString, document);
     else if (keyString == "minimum-scale")
-        arguments->minimumScale = findScaleValue(keyString, valueString, document);
+        arguments->minZoom = findScaleValue(keyString, valueString, document);
     else if (keyString == "maximum-scale")
-        arguments->maximumScale = findScaleValue(keyString, valueString, document);
+        arguments->maxZoom = findScaleValue(keyString, valueString, document);
     else if (keyString == "user-scalable")
-        arguments->userScalable = findUserScalableValue(keyString, valueString, document);
+        arguments->userZoom = findUserScalableValue(keyString, valueString, document);
     else if (keyString == "target-densitydpi")
         reportViewportWarning(document, TargetDensityDpiUnsupported, String(), String());
     else
