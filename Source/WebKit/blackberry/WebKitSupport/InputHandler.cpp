@@ -1126,11 +1126,17 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
     // The minimum size being defined as 3 mm is a good value based on my observations.
     static const int s_minimumTextHeightInPixels = Graphics::Screen::primaryScreen()->heightInMMToPixels(3);
 
-    if (m_webPage->isUserScalable() && fontHeight && fontHeight * m_webPage->currentScale() < s_minimumTextHeightInPixels && !isRunningDrt()) {
-        double zoomScaleRequired = static_cast<double>(s_minimumTextHeightInPixels) / fontHeight;
-        m_webPage->zoomAboutPoint(zoomScaleRequired, selectionFocusRect.location());
-        InputLog(LogLevelInfo, "InputHandler::ensureFocusTextElementVisible zooming in to %f at point %d, %d", zoomScaleRequired, selectionFocusRect.location().x(), selectionFocusRect.location().y());
-    }
+    double zoomScaleRequired;
+    if (m_webPage->isUserScalable() && fontHeight && fontHeight * m_webPage->currentScale() < s_minimumTextHeightInPixels && !isRunningDrt())
+        zoomScaleRequired = static_cast<double>(s_minimumTextHeightInPixels) / fontHeight;
+    else
+        zoomScaleRequired = m_webPage->currentScale(); // Don't scale.
+
+    // The scroll location we should go to given the zoom required, could be adjusted later.
+    WebCore::FloatPoint offset(selectionFocusRect.location().y() - m_webPage->scrollPosition().x(), selectionFocusRect.location().y() - m_webPage->scrollPosition().y());
+    double inverseScale = zoomScaleRequired / m_webPage->currentScale();
+    WebCore::IntPoint destinationScrollLocation = WebCore::IntPoint(max(0, static_cast<int>(roundf(selectionFocusRect.location().x() - offset.x() / inverseScale))),
+                                                                    max(0, static_cast<int>(roundf(selectionFocusRect.location().y() - offset.y() / inverseScale))));
 
     if (elementFrame != mainFrame) { // Element is in a subframe.
         // Remove any scroll offset within the subframe to get the point relative to the main frame.
@@ -1146,7 +1152,9 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
     Position start = elementFrame->selection()->start();
     if (start.anchorNode() && start.anchorNode()->renderer()) {
         if (RenderLayer* layer = start.anchorNode()->renderer()->enclosingLayer()) {
-            WebCore::IntRect actualScreenRect = WebCore::IntRect(mainFrameView->scrollPosition(), m_webPage->actualVisibleSize());
+            // Screen rect after the required zoom.
+            WebCore::IntRect actualScreenRect = WebCore::IntRect(destinationScrollLocation.x(), destinationScrollLocation.y(), m_webPage->actualVisibleSize().width() / inverseScale, m_webPage->actualVisibleSize().height() / inverseScale);
+
             ScrollAlignment horizontalScrollAlignment = ScrollAlignment::alignToEdgeIfNeeded;
             ScrollAlignment verticalScrollAlignment = ScrollAlignment::alignToEdgeIfNeeded;
 
@@ -1193,16 +1201,25 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
             // In order to adjust the scroll position to ensure the focused input field is visible,
             // we allow overscrolling. However this overscroll has to be strictly allowed towards the
             // bottom of the page on the y axis only, where the virtual keyboard pops up from.
-            WebCore::IntPoint scrollLocation = revealRect.location();
-            scrollLocation.clampNegativeToZero();
+            destinationScrollLocation = revealRect.location();
+            destinationScrollLocation.clampNegativeToZero();
             WebCore::IntPoint maximumScrollPosition = WebCore::IntPoint(mainFrameView->contentsWidth() - actualScreenRect.width(), mainFrameView->contentsHeight() - actualScreenRect.height());
-            scrollLocation = scrollLocation.shrunkTo(maximumScrollPosition);
-            if (scrollLocation != mainFrameView->scrollPosition()) {
-                mainFrameView->setScrollPosition(scrollLocation);
-                mainFrameView->setConstrainsScrollingToContentEdge(true);
-                InputLog(LogLevelInfo, "InputHandler::ensureFocusTextElementVisible scrolling to point %d, %d", scrollLocation.x(), scrollLocation.y());
-            }
+            destinationScrollLocation = destinationScrollLocation.shrunkTo(maximumScrollPosition);
         }
+    }
+
+    if (destinationScrollLocation != mainFrameView->scrollPosition() || zoomScaleRequired != m_webPage->currentScale()) {
+        mainFrameView->setConstrainsScrollingToContentEdge(true);
+
+        InputLog(LogLevelInfo, "InputHandler::ensureFocusTextElementVisible zooming in to %f and scrolling to point %d, %d", zoomScaleRequired, destinationScrollLocation.x(), destinationScrollLocation.y());
+
+        // Animate to given scroll position & zoom level
+        m_webPage->m_finalBlockPoint = WebCore::FloatPoint(destinationScrollLocation);
+        m_webPage->m_blockZoomFinalScale = zoomScaleRequired;
+        m_webPage->m_shouldReflowBlock = false;
+        m_webPage->m_userPerformedManualZoom = true;
+        m_webPage->m_userPerformedManualScroll = true;
+        m_webPage->client()->animateBlockZoom(zoomScaleRequired, m_webPage->m_finalBlockPoint);
     }
     m_webPage->resumeBackingStore();
 }

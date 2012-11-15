@@ -1,3 +1,19 @@
+2012-11-15  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Animate changes to viewport due to input focus changes.
+        https://bugs.webkit.org/show_bug.cgi?id=102410
+
+        Reviewed by Rob Buis.
+
+        When changing scroll position or zoom level for input field focus,
+        animate the change.
+        Internal PR 231937
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-11-15  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Don't restore zoom and scroll when leaving an input field.
