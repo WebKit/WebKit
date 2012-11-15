@@ -1,3 +1,68 @@
+2012-11-15  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Gardening.
+
+        Move some expectations from efl-wk1/ to efl/ since they should
+        work for both ports (and were originally there).
+
+        Skip an additional HiDPI test.
+
+        * platform/efl-wk1/fast/borders: Removed.
+        * platform/efl-wk1/fast/borders/border-radius-wide-border-01-expected.png: Removed.
+        * platform/efl-wk1/fast/borders/borderRadiusInset01-expected.png: Removed.
+        * platform/efl-wk1/fast/css: Removed.
+        * platform/efl-wk1/fast/css/text-overflow-ellipsis-bidi-expected.png: Removed.
+        * platform/efl-wk1/fast/css/text-overflow-ellipsis-expected.png: Removed.
+        * platform/efl-wk1/fast/css/text-overflow-ellipsis-strict-expected.png: Removed.
+        * platform/efl-wk1/fast/css/text-overflow-ellipsis-text-align-center-expected.png: Removed.
+        * platform/efl-wk1/fast/css/text-overflow-input-expected.png: Removed.
+        * platform/efl-wk1/fast/css/text-overflow-input-expected.txt: Removed.
+        * platform/efl-wk1/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Removed.
+        * platform/efl-wk1/fast/forms/menulist-clip-expected.png: Removed.
+        * platform/efl-wk1/fast/forms/menulist-option-wrap-expected.png: Removed.
+        * platform/efl-wk1/fast/forms/select-empty-option-height-expected.png: Removed.
+        * platform/efl-wk1/fast/media: Removed.
+        * platform/efl-wk1/fast/media/mq-js-media-except-01-expected.png: Removed.
+        * platform/efl-wk1/fast/media/mq-js-media-except-01-expected.txt: Removed.
+        * platform/efl-wk1/fast/repaint/control-clip-expected.png: Removed.
+        * platform/efl-wk1/svg/dom: Removed.
+        * platform/efl-wk1/svg/dom/SVGLengthList-appendItem-expected.png: Removed.
+        * platform/efl-wk1/svg/dom/SVGLengthList-basics-expected.png: Removed.
+        * platform/efl-wk1/svg/dom/SVGLengthList-getItem-expected.png: Removed.
+        * platform/efl-wk1/svg/dom/SVGLengthList-initialize-expected.png: Removed.
+        * platform/efl-wk1/svg/dom/SVGLengthList-insertItemBefore-expected.png: Removed.
+        * platform/efl-wk1/svg/dom/SVGLengthList-removeItem-expected.png: Removed.
+        * platform/efl-wk1/svg/dom/SVGLengthList-replaceItem-expected.png: Removed.
+        * platform/efl-wk1/svg/dom/SVGNumberList-basics-expected.png: Removed.
+        * platform/efl-wk1/svg/dom/SVGTransformList-basics-expected.png: Removed.
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/borders/border-radius-wide-border-01-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/borders/border-radius-wide-border-01-expected.png.
+        * platform/efl/fast/borders/border-radius-wide-border-05-expected.png: Added.
+        * platform/efl/fast/borders/borderRadiusInset01-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/borders/borderRadiusInset01-expected.png.
+        * platform/efl/fast/css/text-overflow-ellipsis-bidi-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/css/text-overflow-ellipsis-bidi-expected.png.
+        * platform/efl/fast/css/text-overflow-ellipsis-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/css/text-overflow-ellipsis-expected.png.
+        * platform/efl/fast/css/text-overflow-ellipsis-strict-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/css/text-overflow-ellipsis-strict-expected.png.
+        * platform/efl/fast/css/text-overflow-ellipsis-text-align-center-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/css/text-overflow-ellipsis-text-align-center-expected.png.
+        * platform/efl/fast/css/text-overflow-input-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/css/text-overflow-input-expected.png.
+        * platform/efl/fast/css/text-overflow-input-expected.txt: Copied from LayoutTests/platform/efl-wk1/fast/css/text-overflow-input-expected.txt.
+        * platform/efl/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png.
+        * platform/efl/fast/forms/menulist-clip-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/forms/menulist-clip-expected.png.
+        * platform/efl/fast/forms/menulist-option-wrap-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/forms/menulist-option-wrap-expected.png.
+        * platform/efl/fast/forms/select-empty-option-height-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/forms/select-empty-option-height-expected.png.
+        * platform/efl/fast/forms/zoomed-controls-expected.png: Added.
+        * platform/efl/fast/media/mq-js-media-except-01-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/media/mq-js-media-except-01-expected.png.
+        * platform/efl/fast/media/mq-js-media-except-01-expected.txt: Copied from LayoutTests/platform/efl-wk1/fast/media/mq-js-media-except-01-expected.txt.
+        * platform/efl/fast/repaint/control-clip-expected.png: Copied from LayoutTests/platform/efl-wk1/fast/repaint/control-clip-expected.png.
+        * platform/efl/svg/dom/SVGLengthList-appendItem-expected.png: Copied from LayoutTests/platform/efl-wk1/svg/dom/SVGLengthList-appendItem-expected.png.
+        * platform/efl/svg/dom/SVGLengthList-basics-expected.png: Copied from LayoutTests/platform/efl-wk1/svg/dom/SVGLengthList-basics-expected.png.
+        * platform/efl/svg/dom/SVGLengthList-getItem-expected.png: Copied from LayoutTests/platform/efl-wk1/svg/dom/SVGLengthList-getItem-expected.png.
+        * platform/efl/svg/dom/SVGLengthList-initialize-expected.png: Copied from LayoutTests/platform/efl-wk1/svg/dom/SVGLengthList-initialize-expected.png.
+        * platform/efl/svg/dom/SVGLengthList-insertItemBefore-expected.png: Copied from LayoutTests/platform/efl-wk1/svg/dom/SVGLengthList-insertItemBefore-expected.png.
+        * platform/efl/svg/dom/SVGLengthList-removeItem-expected.png: Copied from LayoutTests/platform/efl-wk1/svg/dom/SVGLengthList-removeItem-expected.png.
+        * platform/efl/svg/dom/SVGLengthList-replaceItem-expected.png: Copied from LayoutTests/platform/efl-wk1/svg/dom/SVGLengthList-replaceItem-expected.png.
+        * platform/efl/svg/dom/SVGNumberList-basics-expected.png: Copied from LayoutTests/platform/efl-wk1/svg/dom/SVGNumberList-basics-expected.png.
+        * platform/efl/svg/dom/SVGTransformList-basics-expected.png: Copied from LayoutTests/platform/efl-wk1/svg/dom/SVGTransformList-basics-expected.png.
+
 2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
 
         Prevent creation of detached frames in ShadowRoot
