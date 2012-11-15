@@ -1,3 +1,10 @@
+2012-11-14  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Build correction after r134703.
+
+        * win/WebKit2CFLite.def: Add exports to CFLite version of
+        Windows build to match Alec's last update.
+
 2012-11-14  Alec Flett  <alecflett@chromium.org>
 
         Fix Windows exports for TestWebKit
