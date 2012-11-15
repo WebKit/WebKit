@@ -70,7 +70,7 @@ namespace WebCore {
             v8::Local<v8::Value> listener = object->GetHiddenValue(wrapperProperty);
             if (listener.IsEmpty())
                 return 0;
-            return static_cast<V8EventListener*>(v8::External::Unwrap(listener));
+            return static_cast<V8EventListener*>(v8::External::Cast(*listener)->Value());
         }
 
         static inline v8::Handle<v8::String> getHiddenProperty(bool isAttribute)
@@ -95,7 +95,7 @@ namespace WebCore {
 
         PassRefPtr<V8EventListener> wrapperPtr = WrapperType::create(object, isAttribute, WorldContextHandle(UseCurrentWorld));
         if (wrapperPtr)
-            object->SetHiddenValue(wrapperProperty, v8::External::Wrap(wrapperPtr.get()));
+            object->SetHiddenValue(wrapperProperty, v8::External::New(wrapperPtr.get()));
 
         return wrapperPtr;
     }

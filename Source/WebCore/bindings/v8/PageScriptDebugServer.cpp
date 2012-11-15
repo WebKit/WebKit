@@ -97,7 +97,7 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
         return;
     v8::Handle<v8::Context> context = shell->context();
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getScripts")));
-    v8::Handle<v8::Value> argv[] = { context->GetData() };
+    v8::Handle<v8::Value> argv[] = { context->GetEmbedderData(0) };
     v8::Handle<v8::Value> value;
     {
         V8RecursionScope::MicrotaskSuppression scope;

@@ -158,8 +158,7 @@ bool V8DOMWrapper::maybeDOMWrapper(v8::Handle<v8::Value> value)
     ASSERT(object->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount);
 
     v8::HandleScope scope;
-    v8::Handle<v8::Value> wrapper = object->GetInternalField(v8DOMWrapperObjectIndex);
-    ASSERT(wrapper->IsNumber() || wrapper->IsExternal());
+    ASSERT(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
 
     return true;
 }
@@ -172,9 +171,7 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
 
     v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);
     ASSERT(object->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount);
-
-    v8::Handle<v8::Value> wrapper = object->GetInternalField(v8DOMWrapperObjectIndex);
-    ASSERT_UNUSED(wrapper, wrapper->IsNumber() || wrapper->IsExternal());
+    ASSERT(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
 
     WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
     return typeInfo == type;

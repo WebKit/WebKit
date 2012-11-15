@@ -63,7 +63,7 @@ namespace WebCore {
 
         static WrapperTypeInfo* unwrap(v8::Handle<v8::Value> typeInfoWrapper)
         {
-            return reinterpret_cast<WrapperTypeInfo*>(v8::External::Unwrap(typeInfoWrapper));
+            return reinterpret_cast<WrapperTypeInfo*>(v8::External::Cast(*typeInfoWrapper)->Value());
         }
         
         

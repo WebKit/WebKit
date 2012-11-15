@@ -884,7 +884,7 @@ static v8::Handle<v8::Value> ${interfaceName}ConstructorGetter(v8::Local<v8::Str
 {
     INC_STATS(\"DOM.$interfaceName.constructors._get\");
     v8::Handle<v8::Value> data = info.Data();
-    ASSERT(data->IsExternal() || data->IsNumber());
+    ASSERT(data->IsExternal());
     V8PerContextData* perContextData = V8PerContextData::from(info.Holder()->CreationContext());
     if (!perContextData)
         return v8Undefined();
@@ -2937,7 +2937,7 @@ END
 
     my $access_check = "";
     if ($dataNode->extendedAttributes->{"CheckSecurity"} && !($interfaceName eq "DOMWindow")) {
-        $access_check = "instance->SetAccessCheckCallbacks(V8${interfaceName}::namedSecurityCheck, V8${interfaceName}::indexedSecurityCheck, v8::External::Wrap(&V8${interfaceName}::info));";
+        $access_check = "instance->SetAccessCheckCallbacks(V8${interfaceName}::namedSecurityCheck, V8${interfaceName}::indexedSecurityCheck, v8::External::New(&V8${interfaceName}::info));";
     }
 
     # For the DOMWindow interface, generate the shadow object template
@@ -2949,7 +2949,7 @@ static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Pers
     V8DOMConfiguration::batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadowAttrs, WTF_ARRAY_LENGTH(shadowAttrs));
 
     // Install a security handler with V8.
-    templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info));
+    templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::New(&V8DOMWindow::info));
     templ->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
     return templ;
 }
@@ -3088,7 +3088,7 @@ END
     // Set access check callbacks, but turned off initially.
     // When a context is detached from a frame, turn on the access check.
     // Turning on checks also invalidates inline caches of the object.
-    instance->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info), false);
+    instance->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::New(&V8DOMWindow::info), false);
 END
     }
     if ($interfaceName eq "HTMLDocument") {

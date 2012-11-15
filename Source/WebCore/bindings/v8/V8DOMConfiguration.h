@@ -66,7 +66,7 @@ public:
         (attribute.onPrototype ? prototype : instance)->SetAccessor(v8::String::NewSymbol(attribute.name),
                                                                     attribute.getter,
                                                                     attribute.setter,
-                                                                    v8::External::Wrap(attribute.data),
+                                                                    v8::External::New(attribute.data),
                                                                     attribute.settings,
                                                                     attribute.attribute);
     }

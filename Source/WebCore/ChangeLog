@@ -1,3 +1,42 @@
+2012-11-15  Adam Barth  <abarth@webkit.org>
+
+        [V8] We shouldn't call deprecated V8 APIs
+        https://bugs.webkit.org/show_bug.cgi?id=102407
+
+        Reviewed by Eric Seidel.
+
+        This patch was written by Sven Panne on the V8 team. He would prefer
+        that we not call deprecated V8 APIs. This patch updates these call
+        sites to more modern idioms.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateConstructorGetter):
+        (GenerateImplementation):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::TestObjConstructorGetter):
+        * bindings/v8/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::addListener):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::setContextDebugId):
+        (WebCore::ScriptController::contextDebugId):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::objectByHeapObjectId):
+            - This code doesn't seem to do anything anymore.
+        * bindings/v8/V8DOMConfiguration.h:
+        (WebCore::V8DOMConfiguration::configureAttribute):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::setInjectedScriptContextDebugId):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::maybeDOMWrapper):
+        (WebCore::V8DOMWrapper::isWrapperOfType):
+        * bindings/v8/V8EventListenerList.h:
+        (WebCore::V8EventListenerList::doFindWrapper):
+        (WebCore::V8EventListenerList::findOrCreateWrapper):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initializeIfNeeded):
+        * bindings/v8/WrapperTypeInfo.h:
+        (WebCore::WrapperTypeInfo::unwrap):
+
 2012-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134800 and r134805.

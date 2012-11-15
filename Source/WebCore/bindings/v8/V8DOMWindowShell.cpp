@@ -176,7 +176,7 @@ static void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContex
         snprintf(buffer, sizeof(buffer), "injected");
     else
         snprintf(buffer, sizeof(buffer), "injected,%d", debugId);
-    targetContext->SetData(v8::String::New(buffer));
+    targetContext->SetEmbedderData(0, v8::String::New(buffer));
 }
 
 PassOwnPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame, PassRefPtr<DOMWrapperWorld> world)
