@@ -317,3 +317,18 @@ Eina_Bool ewk_settings_offline_web_application_cache_enabled_get(const Ewk_Setti
 
     return settings->preferences()->offlineWebApplicationCacheEnabled();
 }
+
+Eina_Bool ewk_settings_scripts_can_open_windows_set(Ewk_Settings* settings, Eina_Bool enable)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+    settings->preferences()->setJavaScriptCanOpenWindowsAutomatically(enable);
+
+    return true;
+}
+
+Eina_Bool ewk_settings_scripts_can_open_windows_get(const Ewk_Settings* settings)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    return settings->preferences()->javaScriptCanOpenWindowsAutomatically();
+}

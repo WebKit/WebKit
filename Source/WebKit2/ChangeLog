@@ -1,3 +1,19 @@
+2012-11-15  Yuni Jeong  <yhnet.jung@samsung.com>
+
+        [EFL][WK2] Add APIs to get/set whether scripts can open new windows.
+        https://bugs.webkit.org/show_bug.cgi?id=102054
+
+        Reviewed by Gyuyoung Kim.
+
+        Added setting APIs make it possible to allow or prevent scripts from opening new windows automatically.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_scripts_can_open_windows_set):
+        (ewk_settings_scripts_can_open_windows_get):
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F):
+
 2012-11-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134691, r134703, r134715, r134716,
