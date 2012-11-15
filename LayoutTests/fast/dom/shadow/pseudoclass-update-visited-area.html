@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+</head>
+
+<body>
+
+<style>
+area {
+    display: inline;
+}
+</style>
+
+<p>When an anchor tag catch 'href' attribute or release 'href' attribute, distribution should happen.</p>
+
+<div id="host1"></div>
+<div id="host2"></div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function createArea(href, textContent)
+{
+    var area = document.createElement('area');
+    if (href)
+        area.setAttribute('href', href);
+    area.appendChild(document.createTextNode(textContent));
+
+    return area;
+}
+
+var area1 = createArea('http://www.example.com/', 'Anchor 1');
+var area2 = createArea('http://www.example.com/', 'Anchor 2');
+var area3 = createArea(null, 'Anchor 3');
+var area4 = createArea(null, 'Anchor 4');
+
+host1.appendChild(area1);
+host1.appendChild(area2);
+host2.appendChild(area3);
+host2.appendChild(area4);
+
+new WebKitShadowRoot(host1).innerHTML = '<content select="area:visited"></content>';
+new WebKitShadowRoot(host2).innerHTML = '<content select="area:visited"></content>';
+
+setTimeout(function() {
+    area2.removeAttribute('href');
+    area4.setAttribute('href', 'http://www.example.com/');
+    if (testRunner)
+        testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>
+

@@ -64,8 +64,9 @@ public:
         RuleFeatureTarget = 1 << 5,
         RuleFeatureVisited = 1 << 6
     };
+    typedef int SelectRuleFeatureMask;
 
-    bool hasSelectorFor(SelectRuleFeature feature) const { return m_featureFlags & feature; }
+    bool hasSelectorFor(SelectRuleFeatureMask features) const { return m_featureFlags & features; }
 
 private:
     void setSelectRuleFeature(SelectRuleFeature feature) { m_featureFlags |= feature; }

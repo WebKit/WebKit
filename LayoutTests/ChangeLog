@@ -1,3 +1,15 @@
+2012-11-15  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing pseudoClass (:visited) should cause distribution.
+        https://bugs.webkit.org/show_bug.cgi?id=101700
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/pseudoclass-update-visited-anchor-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-visited-anchor.html: Added.
+        * fast/dom/shadow/pseudoclass-update-visited-area-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-visited-area.html: Added.
+
 2012-11-15  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Disable SK_IGNORE_FAST_BLURRECT
