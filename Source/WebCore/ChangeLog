@@ -1,3 +1,20 @@
+2012-11-14  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Update BB10 form theme.
+        https://bugs.webkit.org/show_bug.cgi?id=100760
+
+        Reviewed by Rob Buis.
+
+        RIM PR 225755
+        Internally Reviewed by Eli Fidler.
+        Update checkbox, radio and menulist button style. Adjust border width
+        and line height.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::RenderThemeBlackBerry::adjustMenuListButtonStyle):
+        * platform/blackberry/RenderThemeBlackBerry.h:
+        (RenderThemeBlackBerry):
+
 2012-11-14  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: InvalidModificationError

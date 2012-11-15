@@ -71,8 +71,6 @@ public:
     virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual void adjustCheckboxStyle(StyleResolver*, RenderStyle*, Element*) const;
-    virtual void adjustRadioStyle(StyleResolver*, RenderStyle*, Element*) const;
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustMediaControlStyle(StyleResolver*, RenderStyle*, Element*) const;

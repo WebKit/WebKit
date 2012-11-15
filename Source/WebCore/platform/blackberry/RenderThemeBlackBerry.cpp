@@ -461,7 +461,8 @@ void RenderThemeBlackBerry::adjustMenuListButtonStyle(StyleResolver*, RenderStyl
     const int minHeight = style->fontSize() * 2;
 
     style->resetPadding();
-    style->setHeight(Length(Auto));
+    style->setMinHeight(Length(minHeight, Fixed));
+    style->setLineHeight(RenderStyle::initialLineHeight());
 
     style->setPaddingRight(Length(minHeight + paddingRight, Fixed));
     style->setPaddingLeft(Length(paddingLeft, Fixed));
@@ -627,26 +628,6 @@ bool RenderThemeBlackBerry::paintButton(RenderObject* object, const PaintInfo& i
 void RenderThemeBlackBerry::adjustMenuListStyle(StyleResolver* css, RenderStyle* style, Element* element) const
 {
     adjustMenuListButtonStyle(css, style, element);
-}
-
-void RenderThemeBlackBerry::adjustCheckboxStyle(StyleResolver*, RenderStyle* style, Element*) const
-{
-    setCheckboxSize(style);
-    style->setBoxShadow(nullptr);
-    Length margin(marginSize, Fixed);
-    style->setMarginBottom(margin);
-    style->setMarginRight(margin);
-    style->setCursor(CURSOR_WEBKIT_GRAB);
-}
-
-void RenderThemeBlackBerry::adjustRadioStyle(StyleResolver*, RenderStyle* style, Element*) const
-{
-    setRadioSize(style);
-    style->setBoxShadow(nullptr);
-    Length margin(marginSize, Fixed);
-    style->setMarginBottom(margin);
-    style->setMarginRight(margin);
-    style->setCursor(CURSOR_WEBKIT_GRAB);
 }
 
 static IntRect computeMenuListArrowButtonRect(const IntRect& rect)
