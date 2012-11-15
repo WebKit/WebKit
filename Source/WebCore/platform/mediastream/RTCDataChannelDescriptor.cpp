@@ -36,8 +36,7 @@ PassRefPtr<RTCDataChannelDescriptor> RTCDataChannelDescriptor::create(const Stri
 }
 
 RTCDataChannelDescriptor::RTCDataChannelDescriptor(const String& label, bool reliable)
-    : m_client(0)
-    , m_label(label)
+    : m_label(label)
     , m_reliable(reliable)
     , m_readyState(ReadyStateConnecting)
     , m_bufferedAmount(0)
@@ -51,10 +50,9 @@ RTCDataChannelDescriptor::~RTCDataChannelDescriptor()
 void RTCDataChannelDescriptor::readyStateChanged(ReadyState readyState)
 {
     ASSERT(m_readyState != ReadyStateClosed);
-    if (m_readyState != readyState) {
+    if (m_readyState != readyState && m_client) {
         m_readyState = readyState;
-        if (m_client)
-            m_client->readyStateChanged();
+        m_client->readyStateChanged();
     }
 }
 

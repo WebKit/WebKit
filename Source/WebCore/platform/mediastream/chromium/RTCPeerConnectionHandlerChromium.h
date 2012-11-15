@@ -42,7 +42,6 @@
 
 namespace WebKit {
 class WebMediaStreamDescriptor;
-class WebRTCDataChannel;
 class WebRTCICECandidate;
 }
 
@@ -79,11 +78,9 @@ public:
     virtual void negotiationNeeded() OVERRIDE;
     virtual void didGenerateICECandidate(const WebKit::WebRTCICECandidate&) OVERRIDE;
     virtual void didChangeReadyState(WebKit::WebRTCPeerConnectionHandlerClient::ReadyState) OVERRIDE;
-    virtual void didChangeICEGatheringState(WebKit::WebRTCPeerConnectionHandlerClient::ICEGatheringState) OVERRIDE;
     virtual void didChangeICEState(WebKit::WebRTCPeerConnectionHandlerClient::ICEState) OVERRIDE;
     virtual void didAddRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
     virtual void didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
-    virtual void didAddRemoteDataChannel(const WebKit::WebRTCDataChannel&) OVERRIDE;
 
     static WebKit::WebRTCPeerConnectionHandler* toWebRTCPeerConnectionHandler(RTCPeerConnectionHandler*);
 
