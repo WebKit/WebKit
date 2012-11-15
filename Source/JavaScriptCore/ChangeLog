@@ -1,3 +1,23 @@
+2012-11-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Structure should be able to easily tell if the prototype chain might intercept a store
+        https://bugs.webkit.org/show_bug.cgi?id=102326
+
+        Reviewed by Geoffrey Garen.
+
+        This improves our ability to reason about the correctness of the more optimized
+        prototype chain walk in JSObject::put(), while also making it straight forward to
+        check if the prototype chain will do strange things to a property store by just
+        looking at the structure.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        * runtime/Structure.cpp:
+        (JSC::Structure::prototypeChainMayInterceptStoreTo):
+        (JSC):
+        * runtime/Structure.h:
+        (Structure):
+
 2012-11-15  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [CMake] Do not regenerate LLIntAssembly.h on every incremental build

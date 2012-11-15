@@ -168,7 +168,10 @@ namespace JSC {
         JSValue prototypeForLookup(CodeBlock*) const;
         StructureChain* prototypeChain(ExecState*) const;
         static void visitChildren(JSCell*, SlotVisitor&);
-
+        
+        // Will just the prototype chain intercept this property access?
+        bool prototypeChainMayInterceptStoreTo(JSGlobalData&, PropertyName);
+        
         Structure* previousID() const
         {
             ASSERT(structure()->classInfo() == &s_info);

@@ -862,6 +862,32 @@ void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_objectToStringValue);
 }
 
+bool Structure::prototypeChainMayInterceptStoreTo(JSGlobalData& globalData, PropertyName propertyName)
+{
+    unsigned i = propertyName.asIndex();
+    if (i != PropertyName::NotAnIndex)
+        return anyObjectInChainMayInterceptIndexedAccesses();
+    
+    for (Structure* current = this; ;) {
+        JSValue prototype = current->storedPrototype();
+        if (prototype.isNull())
+            return false;
+        
+        current = prototype.asCell()->structure();
+        
+        unsigned attributes;
+        JSCell* specificValue;
+        PropertyOffset offset = current->get(globalData, propertyName, attributes, specificValue);
+        if (!JSC::isValidOffset(offset))
+            continue;
+        
+        if (attributes & (ReadOnly | Accessor))
+            return true;
+        
+        return false;
+    }
+}
+
 #if DO_PROPERTYMAP_CONSTENCY_CHECK
 
 void PropertyTable::checkConsistency()
