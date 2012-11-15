@@ -2999,6 +2999,14 @@ void WebViewImpl::setIgnoreViewportTagMaximumScale(bool flag)
     m_page->chrome()->client()->dispatchViewportPropertiesDidChange(page()->mainFrame()->document()->viewportArguments());
 }
 
+static IntSize unscaledContentsSize(Frame* frame)
+{
+    RenderView* root = frame->contentRenderer();
+    if (!root)
+        return IntSize();
+    return root->unscaledDocumentRect().size();
+}
+
 bool WebViewImpl::computePageScaleFactorLimits()
 {
     if (m_pageDefinedMinimumPageScaleFactor == -1 || m_pageDefinedMaximumPageScaleFactor == -1)
@@ -3011,11 +3019,10 @@ bool WebViewImpl::computePageScaleFactorLimits()
     m_maximumPageScaleFactor = max(min(m_pageDefinedMaximumPageScaleFactor, maxPageScaleFactor), minPageScaleFactor) * (deviceScaleFactor() / m_deviceScaleInCompositor);
 
     int viewWidthNotIncludingScrollbars = page()->mainFrame()->view()->visibleContentRect(false).width();
-    int contentsWidth = mainFrame()->contentsSize().width;
-    if (viewWidthNotIncludingScrollbars && contentsWidth) {
+    int unscaledContentsWidth = unscaledContentsSize(page()->mainFrame()).width();
+    if (viewWidthNotIncludingScrollbars && unscaledContentsWidth) {
         // Limit page scaling down to the document width.
-        int unscaledContentWidth = contentsWidth / pageScaleFactor();
-        m_minimumPageScaleFactor = max(m_minimumPageScaleFactor, static_cast<float>(viewWidthNotIncludingScrollbars) / unscaledContentWidth);
+        m_minimumPageScaleFactor = max(m_minimumPageScaleFactor, static_cast<float>(viewWidthNotIncludingScrollbars) / unscaledContentsWidth);
         m_maximumPageScaleFactor = max(m_minimumPageScaleFactor, m_maximumPageScaleFactor);
     }
     ASSERT(m_minimumPageScaleFactor <= m_maximumPageScaleFactor);

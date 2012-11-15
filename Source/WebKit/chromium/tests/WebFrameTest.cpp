@@ -291,6 +291,24 @@ TEST_F(WebFrameTest, FixedLayoutInitializeAtMinimumPageScale)
     webViewImpl->resize(WebSize(viewportWidth, viewportHeight + 100));
     EXPECT_EQ(userPinchPageScaleFactor, webViewImpl->pageScaleFactor());
 }
+
+TEST_F(WebFrameTest, ScaleFactorShouldNotOscillate)
+{
+    registerMockedHttpURLLoad("scale_oscillate.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.horizontalDPI = 212;
+    int viewportWidth = 800;
+    int viewportHeight = 1057;
+    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "scale_oscillate.html", true, 0, &client));
+    webViewImpl->enableFixedLayoutMode(true);
+    webViewImpl->settings()->setViewportEnabled(true);
+    webViewImpl->resize(WebSize(viewportWidth, viewportHeight));
+    webViewImpl->layout();
+}
+
 #endif
 
 TEST_F(WebFrameTest, CanOverrideMaximumScaleFactor)

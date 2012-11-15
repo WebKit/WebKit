@@ -1,3 +1,21 @@
+2012-11-15  Tien-Ren Chen  <trchen@chromium.org>
+
+        Use correct unscaled document size when calculating scale limits
+        https://bugs.webkit.org/show_bug.cgi?id=102028
+
+        Reviewed by Adam Barth.
+
+        Fixes bug http://crbug.com/160581
+        Using contentsSize / pageScaleFactor as unscaled contents size results
+        in rounding errors. This can cause scale factor to oscillate indefinitely.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::unscaledContentsSize):
+        (WebKit):
+        (WebKit::WebViewImpl::computePageScaleFactorLimits):
+        * tests/WebFrameTest.cpp:
+        * tests/data/scale_oscillate.html: Added.
+
 2012-11-15  Kenneth Russell  <kbr@google.com>
 
         [chromium] Move allowWebGL query to WebFrameClient
