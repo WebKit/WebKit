@@ -1,3 +1,15 @@
+2012-11-14  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Port tiled backing store
+        https://bugs.webkit.org/show_bug.cgi?id=71352
+
+        Reviewed by Gyuyoung Kim.
+
+        * EWebLauncher/main.c: Added option to test the WebCore's tiled backing store.
+        (_User_Arguments):
+        (windowCreate):
+        (parseUserArguments):
+
 2012-11-14  Andy Estes  <aestes@apple.com>
 
         Fix the build.

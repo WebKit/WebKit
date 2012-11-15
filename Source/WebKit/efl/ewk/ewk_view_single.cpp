@@ -21,7 +21,8 @@
 #include "config.h"
 #include "ewk_view.h"
 
-#include "ewk_frame.h"
+#include "TiledBackingStore.h"
+#include "ewk_frame_private.h"
 #include "ewk_private.h"
 #include "ewk_view_private.h"
 
@@ -261,6 +262,12 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data* sm
         eina_tiler_free(tiler);
         return false;
     }
+
+#if USE(TILED_BACKING_STORE)
+    WebCore::Frame* mainFrame = EWKPrivate::coreFrame(smartData->main_frame);
+    if (mainFrame && mainFrame->tiledBackingStore())
+        mainFrame->tiledBackingStore()->coverWithTilesIfNeeded();
+#endif
 
     Ewk_Paint_Context* context = ewk_paint_context_from_image_new(smartData->backing_store);
     ewk_paint_context_save(context);

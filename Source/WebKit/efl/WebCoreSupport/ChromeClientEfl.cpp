@@ -515,9 +515,14 @@ void ChromeClientEfl::invalidateContents(const IntRect& /*updateRect*/, bool /*i
     notImplemented();
 }
 
-void ChromeClientEfl::invalidateRootView(const IntRect& /*updateRect*/, bool /*immediate*/)
+void ChromeClientEfl::invalidateRootView(const IntRect& updateRect, bool /*immediate*/)
 {
+#if USE(TILED_BACKING_STORE)
+    ewk_view_tiled_backing_store_invalidate(m_view, updateRect);
+#else
+    UNUSED_PARAM(updateRect);
     notImplemented();
+#endif
 }
 
 void ChromeClientEfl::invalidateContentsAndRootView(const IntRect& updateRect, bool /*immediate*/)
@@ -652,6 +657,16 @@ void ChromeClientEfl::exitFullScreenForElement(WebCore::Element*)
 void ChromeClientEfl::delegatedScrollRequested(const IntPoint&)
 {
     notImplemented();
+}
+
+IntRect ChromeClientEfl::visibleRectForTiledBackingStore() const
+{
+    WebCore::FloatRect rect = ewk_view_page_rect_get(m_view);
+    const Evas_Object* frame = ewk_view_frame_main_get(m_view);
+
+    int x, y;
+    ewk_frame_scroll_pos_get(frame, &x, &y);
+    return IntRect(x, y, rect.width(), rect.height());
 }
 #endif
 

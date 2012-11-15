@@ -28,8 +28,11 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-class Widget;
+class HistoryItem;
+class HTMLPlugInElement;
+class KURL;
 class Frame;
+class Widget;
 }
 
 Evas_Object* ewk_frame_add(Evas* canvas);

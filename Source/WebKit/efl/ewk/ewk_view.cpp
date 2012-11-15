@@ -36,6 +36,7 @@
 #include "EflScreenUtilities.h"
 #include "EventHandler.h"
 #include "FocusController.h"
+#include "Frame.h"
 #include "FrameLoaderClientEfl.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -57,6 +58,7 @@
 #include "RenderThemeEfl.h"
 #include "ResourceHandle.h"
 #include "Settings.h"
+#include "TiledBackingStore.h"
 #include "c_instance.h"
 #include "ewk_contextmenu_private.h"
 #include "ewk_frame.h"
@@ -4753,6 +4755,55 @@ Ewk_Context_Menu* ewk_view_context_menu_get(const Evas_Object* ewkView)
 
     return priv->contextMenu;
 }
+
+Eina_Bool ewk_view_setting_tiled_backing_store_enabled_set(Evas_Object* ewkView, Eina_Bool enable)
+{
+#if USE(TILED_BACKING_STORE)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    priv->pageSettings->setTiledBackingStoreEnabled(enable);
+
+    return true;
+#else
+    UNUSED_PARAM(ewkView);
+    UNUSED_PARAM(enable);
+    return false;
+#endif
+}
+
+Eina_Bool ewk_view_setting_tiled_backing_store_enabled_get(Evas_Object* ewkView)
+{
+#if USE(TILED_BACKING_STORE)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    return priv->pageSettings->tiledBackingStoreEnabled();
+#else
+    UNUSED_PARAM(ewkView);
+    return false;
+#endif
+}
+
+#if USE(TILED_BACKING_STORE)
+/**
+ * @internal
+ * Invalidate given area to repaint. The backing store will mark tiles that are
+ * in the area as dirty.
+ *
+ * @param ewkView View.
+ * @param area Area to invalidate
+ */
+void ewk_view_tiled_backing_store_invalidate(Evas_Object* ewkView, const WebCore::IntRect& area)
+{
+    EINA_SAFETY_ON_NULL_RETURN(ewkView);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    if (priv->mainFrame->tiledBackingStore())
+        priv->mainFrame->tiledBackingStore()->invalidate(area);
+}
+#endif
 
 namespace EWKPrivate {
 

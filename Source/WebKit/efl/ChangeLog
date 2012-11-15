@@ -1,5 +1,40 @@
 2012-11-14  Ryuan Choi  <ryuan.choi@gmail.com>
 
+        [EFL] Port tiled backing store
+        https://bugs.webkit.org/show_bug.cgi?id=71352
+
+        Reviewed by Gyuyoung Kim.
+
+        Added ewk_view_setting_tiled_backing_store_enabled_{get|set} to give possibility
+        to use WebCore's tiled backing store in WebKit/Efl port. This makes WebKit/Efl
+        compliant with WebKit's generic solution of tiled backing store.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::invalidateRootView):
+        (WebCore):
+        (WebCore::ChromeClientEfl::visibleRectForTiledBackingStore):
+        * WebCoreSupport/ChromeClientEfl.h:
+        (ChromeClientEfl):
+        * ewk/ewk_frame_private.h:
+        Declared missing classes which used in this file.
+        * ewk/ewk_paint_context.cpp:
+        (ewk_paint_context_paint): Implemented to paint tiled backing store
+        * ewk/ewk_view.cpp:
+        (ewk_view_setting_tiled_backing_store_enabled_set):
+        Added API to enable/disable the WebCore's tiled backing store.
+        (ewk_view_setting_tiled_backing_store_enabled_get):
+        Added API to query if the WebCore's tiled backing store is enabled.
+        (ewk_view_tiled_backing_store_invalidate):
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_private.h:
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_single_smart_repaints_process):
+        Implemented to update visible area of tiled backing store.
+        * tests/test_ewk_view.cpp: Added test case of ewk_view_setting_tiled_backing_store.
+        (TEST_F):
+
+2012-11-14  Ryuan Choi  <ryuan.choi@gmail.com>
+
         [EFL] Refactor theme to choose whether to support foreground color of selection
         https://bugs.webkit.org/show_bug.cgi?id=102037
 

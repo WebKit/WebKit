@@ -20,6 +20,7 @@
 
 #include "config.h"
 
+#include "TiledBackingStore.h"
 #include "ewk_paint_context_private.h"
 #include "ewk_private.h"
 
@@ -157,6 +158,20 @@ void ewk_paint_context_paint(Ewk_Paint_Context* context, WebCore::FrameView* vie
     EINA_SAFETY_ON_NULL_RETURN(area);
 
     WebCore::IntRect paintArea(*area);
+
+#if USE(TILED_BACKING_STORE)
+    if (view->frame()->tiledBackingStore()) {
+        int scrollX = view->scrollX();
+        int scrollY = view->scrollY();
+
+        context->graphicContext->translate(-scrollX, -scrollY);
+
+        paintArea.move(scrollX, scrollY);
+
+        view->frame()->tiledBackingStore()->paint(context->graphicContext.get(), paintArea);
+        return;
+    }
+#endif
 
     if (view->isTransparent())
         context->graphicContext->clearRect(paintArea);

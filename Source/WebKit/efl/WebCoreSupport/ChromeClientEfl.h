@@ -182,6 +182,7 @@ public:
 
 #if USE(TILED_BACKING_STORE)
     virtual void delegatedScrollRequested(const IntPoint& scrollPoint);
+    virtual IntRect visibleRectForTiledBackingStore() const;
 #endif
 
     Evas_Object* m_view;

@@ -72,6 +72,29 @@ TEST_F(EWKTestBase, ewk_view_setting_enable_fullscreen)
 }
 
 /**
+* @brief Checking whether function properly get/set fullscreen setting value.
+*/
+TEST_F(EWKTestBase, ewk_view_setting_tiled_backing_store)
+{
+    loadUrl();
+    ASSERT_FALSE(ewk_view_setting_tiled_backing_store_enabled_get(webView()));
+
+#if USE(TILED_BACKING_STORE)
+    ASSERT_TRUE(ewk_view_setting_tiled_backing_store_enabled_set(webView(), true));
+    ASSERT_TRUE(ewk_view_setting_tiled_backing_store_enabled_get(webView()));
+
+    ASSERT_TRUE(ewk_view_setting_tiled_backing_store_enabled_set(webView(), false));
+    ASSERT_FALSE(ewk_view_setting_tiled_backing_store_enabled_get(webView()));
+#else
+    ASSERT_FALSE(ewk_view_setting_tiled_backing_store_enabled_set(webView(), true));
+    ASSERT_FALSE(ewk_view_setting_tiled_backing_store_enabled_get(webView()));
+
+    ASSERT_FALSE(ewk_view_setting_tiled_backing_store_enabled_set(webView(), false));
+    ASSERT_FALSE(ewk_view_setting_tiled_backing_store_enabled_get(webView()));
+#endif
+}
+
+/**
  * @brief Checking whether function returns proper context menu structure.
  *
  * This test creates a context menu and checks if context menu structure
