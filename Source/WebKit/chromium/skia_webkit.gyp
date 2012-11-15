@@ -47,6 +47,9 @@
 
           # Temporarily ignore fix to antialias coverage, until we can rebaseline
           'SK_USE_LEGACY_AA_COVERAGE',
+
+          # When enabled yields a 10x speedup on some devices.
+          'SK_DISABLE_FAST_AA_STROKE_RECT',
         ],
       },
     },

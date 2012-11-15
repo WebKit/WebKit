@@ -1,5 +1,13 @@
 2012-11-15  Stephen Chenney  <schenney@chromium.org>
 
+        [Chromium] Move SK_DISABLE_FAST_AA_STROKE_RECT to skia_webkit.gyp
+
+        Unreviewed non-funtional, behavior-neutral change
+
+        * skia_webkit.gyp: Add SK_DISABLE_FAST_AA_STROKE_RECT=1 so that it can be removed from Chromium's skia.gyp
+
+2012-11-15  Stephen Chenney  <schenney@chromium.org>
+
         [Chromium] Disable SK_IGNORE_FAST_BLURRECT
 
         Unreviewed test update.
