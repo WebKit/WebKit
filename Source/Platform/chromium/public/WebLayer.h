@@ -139,8 +139,6 @@ public:
     // (opacity, transforms), it may conflict and hide the background filters.
     virtual void setBackgroundFilters(const WebFilterOperations&) = 0;
 
-    virtual void setDebugBorderColor(const WebColor&) = 0;
-    virtual void setDebugBorderWidth(float) = 0;
     virtual void setDebugName(WebString) = 0;
 
     // An animation delegate is notified when animations are started and
