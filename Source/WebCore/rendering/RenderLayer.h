@@ -227,14 +227,17 @@ struct ClipRectsCache {
     ClipRectsCache()
     {
 #ifndef NDEBUG
-        for (int i = 0; i < NumCachedClipRectsTypes; ++i)
+        for (int i = 0; i < NumCachedClipRectsTypes; ++i) {
             m_clipRectsRoot[i] = 0;
+            m_scrollbarRelevancy[i] = IgnoreOverlayScrollbarSize;
+        }
 #endif
     }
 
     RefPtr<ClipRects> m_clipRects[NumCachedClipRectsTypes];
 #ifndef NDEBUG
     const RenderLayer* m_clipRectsRoot[NumCachedClipRectsTypes];
+    OverlayScrollbarSizeRelevancy m_scrollbarRelevancy[NumCachedClipRectsTypes];
 #endif
 };
 
