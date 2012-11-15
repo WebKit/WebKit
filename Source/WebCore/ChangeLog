@@ -1,3 +1,30 @@
+2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
+
+        MutationObserver wrapper should not be collected while still observing
+        https://bugs.webkit.org/show_bug.cgi?id=102328
+
+        Reviewed by Adam Barth.
+
+        Make MutationObserver an ActiveDOMObject so that the wrapper is not
+        collected while it is still observing the DOM. This is needed because
+        the wrapper is passed into the callback and expandos on the wrapper
+        should be preserved.
+
+        Test: fast/mutation/observer-wrapper-dropoff.html
+
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::JSMutationObserverConstructor::constructJSMutationObserver):
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+        (WebCore::V8MutationObserver::constructorCallback):
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::create):
+        (WebCore::MutationObserver::MutationObserver):
+        (WebCore::MutationObserver::observationStarted):
+        (WebCore::MutationObserver::observationEnded):
+        * dom/MutationObserver.h:
+        (WebCore):
+        * dom/MutationObserver.idl:
+
 2012-11-15  Tony Chang  <tony@chromium.org>
 
         Generate Settings from a .in file
