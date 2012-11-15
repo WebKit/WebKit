@@ -1,3 +1,13 @@
+2012-11-14  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined images.
+
+        * platform/chromium-linux/fast/forms/zoomed-controls-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/zoomed-controls-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/zoomed-controls-expected.png: Added.
+        * platform/chromium-mac/fast/forms/zoomed-controls-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-11-14  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Test conversions batch 4
