@@ -391,6 +391,11 @@ void RenderSVGRoot::mapLocalToContainer(RenderBoxModelObject* repaintContainer, 
     RenderReplaced::mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, ApplyContainerFlip, wasFixed);
 }
 
+const RenderObject* RenderSVGRoot::pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
+{
+    return RenderReplaced::pushMappingToContainer(ancestorToStopAt, geometryMap);
+}
+
 void RenderSVGRoot::updateCachedBoundaries()
 {
     m_objectBoundingBox = FloatRect();

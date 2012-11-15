@@ -64,6 +64,7 @@ public:
     static LayoutRect clippedOverflowRectForRepaint(const RenderObject*, RenderBoxModelObject* repaintContainer);
     static void computeFloatRectForRepaint(const RenderObject*, RenderBoxModelObject* repaintContainer, FloatRect&, bool fixed);
     static void mapLocalToContainer(const RenderObject*, RenderBoxModelObject* repaintContainer, TransformState&, bool* wasFixed = 0);
+    static const RenderObject* pushMappingToContainer(const RenderObject*, const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap&);
 
     // Shared between SVG renderers and resources.
     static void applyStrokeStyleToContext(GraphicsContext*, const RenderStyle*, const RenderObject*);
