@@ -1,3 +1,10 @@
+2012-11-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Unreviewed build fix.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::convertToUserSpace): Add static
+
 2012-11-14  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Refactor ViewportArguments to only use CSS units

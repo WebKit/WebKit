@@ -162,7 +162,7 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     return result;
 }
 
-FloatSize convertToUserSpace(const FloatSize& deviceSize, float devicePixelRatio)
+static FloatSize convertToUserSpace(const FloatSize& deviceSize, float devicePixelRatio)
 {
     FloatSize result = deviceSize;
     if (devicePixelRatio != 1)
