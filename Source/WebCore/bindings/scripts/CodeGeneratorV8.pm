@@ -502,8 +502,8 @@ END
 END
     } elsif ($interfaceName eq "Element") {
         push(@headerContent, <<END);
-    // This is a performance optimization hack. See V8Element::dispatchWrapCustom.
-    friend class V8Node;
+    // This is a performance optimization hack. See V8Element::wrap.
+    friend v8::Handle<v8::Object> wrap(Node*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 END
     }
 
@@ -519,26 +519,24 @@ END
         }
     }
 
-    my $wrapSlowArgumentType = GetPassRefPtrType($nativeType);
-    my $noWrap = $dataNode->extendedAttributes->{"V8NoWrapperCache"};
-    if ($noWrap) {
+    my $noToV8 = $dataNode->extendedAttributes->{"SuppressToJSObject"};
+    my $noWrap = $dataNode->extendedAttributes->{"V8NoWrapperCache"} || $noToV8;
+    my $createWrapperArgumentType = GetPassRefPtrType($nativeType);
+    if (!$noWrap) {
+        my $createWrapperArgumentType = GetPassRefPtrType($nativeType);
         push(@headerContent, <<END);
-};
-
-END
-    } else {
-        my $wrapSlowArgumentType = GetPassRefPtrType($nativeType);
-        push(@headerContent, <<END);
-    friend v8::Handle<v8::Object> dispatchWrap(${nativeType}*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
-    static v8::Handle<v8::Object> dispatchWrapCustom(${nativeType}*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
-    static v8::Handle<v8::Object> wrapSlow(${wrapSlowArgumentType}, v8::Handle<v8::Object> creationContext, v8::Isolate*);
-};
-
+    friend v8::Handle<v8::Object> wrap(${nativeType}*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    static v8::Handle<v8::Object> createWrapper(${createWrapperArgumentType}, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 END
     }
 
+    push(@headerContent, <<END);
+};
+
+END
+
     my $customWrap = !!($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"V8CustomToJSObject"});
-    if ($dataNode->extendedAttributes->{"SuppressToJSObject"}) {
+    if ($noToV8) {
         die "Can't suppress toV8 for subclass\n" if @allParents;
     } elsif ($noWrap) {
         die "Must have custom toV8\n" if !$customWrap;
@@ -554,15 +552,26 @@ END
     } else {
 
         my $getCachedWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getCachedWrapper(impl)" : "DOMDataStore::current(isolate)->get(impl)";
-        my $wrapSlowCall = $customWrap ? "${className}::dispatchWrapCustom" : "${className}::wrapSlow";
-        push(@headerContent, <<END);
+        my $createWrapperCall = $customWrap ? "${className}::wrap" : "${className}::createWrapper";
 
-inline v8::Handle<v8::Object> dispatchWrap(${nativeType}* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
+        if ($customWrap) {
+            push(@headerContent, <<END);
+
+v8::Handle<v8::Object> wrap(${nativeType}* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* = 0);
+END
+        } else {
+            push(@headerContent, <<END);
+
+inline v8::Handle<v8::Object> wrap(${nativeType}* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     ASSERT(impl);
     ASSERT($getCachedWrapper.IsEmpty());
-    return $wrapSlowCall(impl, creationContext, isolate);
+    return $createWrapperCall(impl, creationContext, isolate);
 }
+END
+        }
+
+        push(@headerContent, <<END);
 
 inline v8::Handle<v8::Object> toV8Object(${nativeType}* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
@@ -571,7 +580,7 @@ inline v8::Handle<v8::Object> toV8Object(${nativeType}* impl, v8::Handle<v8::Obj
     v8::Handle<v8::Object> wrapper = $getCachedWrapper;
     if (!wrapper.IsEmpty())
         return wrapper;
-    return dispatchWrap(impl, creationContext, isolate);
+    return wrap(impl, creationContext, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
@@ -581,7 +590,7 @@ inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Handle<v8::Object> cr
     v8::Handle<v8::Value> wrapper = $getCachedWrapper;
     if (!wrapper.IsEmpty())
         return wrapper;
-    return dispatchWrap(impl, creationContext, isolate);
+    return wrap(impl, creationContext, isolate);
 }
 END
         if (IsNodeSubType($dataNode)) {
@@ -605,7 +614,7 @@ inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const v8::AccessorInf
         if (!wrapper.IsEmpty())
             return wrapper;
     }
-    return dispatchWrap(impl, holderWrapper, info.GetIsolate());
+    return wrap(impl, holderWrapper, info.GetIsolate());
 }
 END
         }
@@ -1083,7 +1092,7 @@ END
         push(@implContentDecls, "    RefPtr<$returnType> result = ${getterString};\n");
         push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? v8::Handle<v8::Value>(DOMDataStore::current(info.GetIsolate())->get(result.get())) : v8Undefined();\n");
         push(@implContentDecls, "    if (wrapper.IsEmpty()) {\n");
-        push(@implContentDecls, "        wrapper = toV8(result.get(), info.Holder(), info.GetIsolate());\n"); # FIXME: Could use dispatchWrap here since the wrapper is empty.
+        push(@implContentDecls, "        wrapper = toV8(result.get(), info.Holder(), info.GetIsolate());\n"); # FIXME: Could use wrap here since the wrapper is empty.
         push(@implContentDecls, "        if (!wrapper.IsEmpty())\n");
         push(@implContentDecls, "            V8DOMWrapper::setNamedHiddenReference(info.Holder(), \"${attrName}\", wrapper);\n");
         push(@implContentDecls, "    }\n");
@@ -2770,10 +2779,10 @@ sub GenerateImplementation
     if ($dataNode->extendedAttributes->{"TypedArray"}) {
         my $viewType = GetTypeNameOfExternalTypedArray($dataNode);
         push(@implContent, <<END);
-v8::Handle<v8::Object> V8${implClassName}::dispatchWrapCustom($implClassName* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> wrap($implClassName* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
-    v8::Handle<v8::Object> wrapper = V8${implClassName}::wrapSlow(impl, creationContext, isolate);
+    v8::Handle<v8::Object> wrapper = V8${implClassName}::createWrapper(impl, creationContext, isolate);
     if (!wrapper.IsEmpty())
         wrapper->SetIndexedPropertiesToExternalArrayData(impl->baseAddress(), $viewType, impl->length());
     return wrapper;
@@ -3493,17 +3502,17 @@ sub GenerateToV8Converters
     my $className = shift;
     my $nativeType = shift;
 
-    if ($dataNode->extendedAttributes->{"V8NoWrapperCache"}) {
+    if ($dataNode->extendedAttributes->{"V8NoWrapperCache"} || $dataNode->extendedAttributes->{"SuppressToJSObject"}) {
         return;
     }
 
-    my $wrapSlowArgumentType = GetPassRefPtrType($nativeType);
+    my $createWrapperArgumentType = GetPassRefPtrType($nativeType);
     my $baseType = BaseInterfaceName($dataNode);
     my $getCachedWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getCachedWrapper(impl.get())" : "DOMDataStore::current(isolate)->get(impl.get())";
 
     push(@implContent, <<END);
 
-v8::Handle<v8::Object> ${className}::wrapSlow(${wrapSlowArgumentType} impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> ${className}::createWrapper(${createWrapperArgumentType} impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl.get());
     ASSERT($getCachedWrapper.IsEmpty());

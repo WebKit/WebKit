@@ -50,17 +50,16 @@ public:
     static void installPerContextProperties(v8::Handle<v8::Object>, TestEventTarget*) { }
     static void installPerContextPrototypeProperties(v8::Handle<v8::Object>) { }
 private:
-    friend v8::Handle<v8::Object> dispatchWrap(TestEventTarget*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
-    static v8::Handle<v8::Object> dispatchWrapCustom(TestEventTarget*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestEventTarget>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    friend v8::Handle<v8::Object> wrap(TestEventTarget*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestEventTarget>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
 
-inline v8::Handle<v8::Object> dispatchWrap(TestEventTarget* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Object> wrap(TestEventTarget* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     ASSERT(impl);
     ASSERT(DOMDataStore::current(isolate)->get(impl).IsEmpty());
-    return V8TestEventTarget::wrapSlow(impl, creationContext, isolate);
+    return V8TestEventTarget::createWrapper(impl, creationContext, isolate);
 }
 
 inline v8::Handle<v8::Object> toV8Object(TestEventTarget* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
@@ -70,7 +69,7 @@ inline v8::Handle<v8::Object> toV8Object(TestEventTarget* impl, v8::Handle<v8::O
     v8::Handle<v8::Object> wrapper = DOMDataStore::current(isolate)->get(impl);
     if (!wrapper.IsEmpty())
         return wrapper;
-    return dispatchWrap(impl, creationContext, isolate);
+    return wrap(impl, creationContext, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8(TestEventTarget* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
@@ -80,7 +79,7 @@ inline v8::Handle<v8::Value> toV8(TestEventTarget* impl, v8::Handle<v8::Object> 
     v8::Handle<v8::Value> wrapper = DOMDataStore::current(isolate)->get(impl);
     if (!wrapper.IsEmpty())
         return wrapper;
-    return dispatchWrap(impl, creationContext, isolate);
+    return wrap(impl, creationContext, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestEventTarget > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)

@@ -38,10 +38,10 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Object> V8SVGDocument::dispatchWrapCustom(SVGDocument* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> wrap(SVGDocument* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
-    v8::Handle<v8::Object> wrapper = V8SVGDocument::wrapSlow(impl, creationContext, isolate);
+    v8::Handle<v8::Object> wrapper = V8SVGDocument::createWrapper(impl, creationContext, isolate);
     if (wrapper.IsEmpty())
         return wrapper;
     if (!V8DOMWindowShell::getEntered()) {

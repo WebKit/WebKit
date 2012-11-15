@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Object> V8CSSRule::dispatchWrapCustom(CSSRule* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> wrap(CSSRule* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
     switch (impl->type()) {
@@ -51,27 +51,27 @@ v8::Handle<v8::Object> V8CSSRule::dispatchWrapCustom(CSSRule* impl, v8::Handle<v
         // CSSUnknownRule.idl is explicitly excluded as it doesn't add anything
         // over CSSRule.idl (see WebCore.gyp/WebCore.gyp: 'bindings_idl_files').
         // -> Use the base class wrapper here.
-        return V8CSSRule::wrapSlow(impl, creationContext, isolate);
+        return V8CSSRule::createWrapper(impl, creationContext, isolate);
     case CSSRule::STYLE_RULE:
-        return dispatchWrap(static_cast<CSSStyleRule*>(impl), creationContext, isolate);
+        return wrap(static_cast<CSSStyleRule*>(impl), creationContext, isolate);
     case CSSRule::CHARSET_RULE:
-        return dispatchWrap(static_cast<CSSCharsetRule*>(impl), creationContext, isolate);
+        return wrap(static_cast<CSSCharsetRule*>(impl), creationContext, isolate);
     case CSSRule::IMPORT_RULE:
-        return dispatchWrap(static_cast<CSSImportRule*>(impl), creationContext, isolate);
+        return wrap(static_cast<CSSImportRule*>(impl), creationContext, isolate);
     case CSSRule::MEDIA_RULE:
-        return dispatchWrap(static_cast<CSSMediaRule*>(impl), creationContext, isolate);
+        return wrap(static_cast<CSSMediaRule*>(impl), creationContext, isolate);
     case CSSRule::FONT_FACE_RULE:
-        return dispatchWrap(static_cast<CSSFontFaceRule*>(impl), creationContext, isolate);
+        return wrap(static_cast<CSSFontFaceRule*>(impl), creationContext, isolate);
     case CSSRule::PAGE_RULE:
-        return dispatchWrap(static_cast<CSSPageRule*>(impl), creationContext, isolate);
+        return wrap(static_cast<CSSPageRule*>(impl), creationContext, isolate);
     case CSSRule::WEBKIT_KEYFRAME_RULE:
-        return dispatchWrap(static_cast<WebKitCSSKeyframeRule*>(impl), creationContext, isolate);
+        return wrap(static_cast<WebKitCSSKeyframeRule*>(impl), creationContext, isolate);
     case CSSRule::WEBKIT_KEYFRAMES_RULE:
-        return dispatchWrap(static_cast<WebKitCSSKeyframesRule*>(impl), creationContext, isolate);
+        return wrap(static_cast<WebKitCSSKeyframesRule*>(impl), creationContext, isolate);
     case CSSRule::WEBKIT_REGION_RULE:
-        return dispatchWrap(static_cast<WebKitCSSRegionRule*>(impl), creationContext, isolate);
+        return wrap(static_cast<WebKitCSSRegionRule*>(impl), creationContext, isolate);
     }
-    return V8CSSRule::wrapSlow(impl, creationContext, isolate);
+    return V8CSSRule::createWrapper(impl, creationContext, isolate);
 }
 
 } // namespace WebCore

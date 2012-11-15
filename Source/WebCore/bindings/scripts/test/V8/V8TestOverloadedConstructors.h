@@ -52,17 +52,16 @@ private:
     static v8::Handle<v8::Value> constructor2Callback(const v8::Arguments&);
     static v8::Handle<v8::Value> constructor3Callback(const v8::Arguments&);
     static v8::Handle<v8::Value> constructor4Callback(const v8::Arguments&);
-    friend v8::Handle<v8::Object> dispatchWrap(TestOverloadedConstructors*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
-    static v8::Handle<v8::Object> dispatchWrapCustom(TestOverloadedConstructors*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestOverloadedConstructors>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    friend v8::Handle<v8::Object> wrap(TestOverloadedConstructors*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestOverloadedConstructors>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
 
-inline v8::Handle<v8::Object> dispatchWrap(TestOverloadedConstructors* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Object> wrap(TestOverloadedConstructors* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     ASSERT(impl);
     ASSERT(DOMDataStore::current(isolate)->get(impl).IsEmpty());
-    return V8TestOverloadedConstructors::wrapSlow(impl, creationContext, isolate);
+    return V8TestOverloadedConstructors::createWrapper(impl, creationContext, isolate);
 }
 
 inline v8::Handle<v8::Object> toV8Object(TestOverloadedConstructors* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
@@ -72,7 +71,7 @@ inline v8::Handle<v8::Object> toV8Object(TestOverloadedConstructors* impl, v8::H
     v8::Handle<v8::Object> wrapper = DOMDataStore::current(isolate)->get(impl);
     if (!wrapper.IsEmpty())
         return wrapper;
-    return dispatchWrap(impl, creationContext, isolate);
+    return wrap(impl, creationContext, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8(TestOverloadedConstructors* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
@@ -82,7 +81,7 @@ inline v8::Handle<v8::Value> toV8(TestOverloadedConstructors* impl, v8::Handle<v
     v8::Handle<v8::Value> wrapper = DOMDataStore::current(isolate)->get(impl);
     if (!wrapper.IsEmpty())
         return wrapper;
-    return dispatchWrap(impl, creationContext, isolate);
+    return wrap(impl, creationContext, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestOverloadedConstructors > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)

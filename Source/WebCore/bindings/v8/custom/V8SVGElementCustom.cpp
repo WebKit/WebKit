@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Object> V8SVGElement::dispatchWrapCustom(SVGElement* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> wrap(SVGElement* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
     return createV8SVGWrapper(impl, creationContext, isolate);

@@ -43,14 +43,14 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Object> V8PerformanceEntry::dispatchWrapCustom(PerformanceEntry* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> wrap(PerformanceEntry* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
 #if ENABLE(RESOURCE_TIMING)
     if (impl->isResource())
-        return dispatchWrap(static_cast<PerformanceResourceTiming*>(impl), creationContext, isolate);
+        return wrap(static_cast<PerformanceResourceTiming*>(impl), creationContext, isolate);
 #endif
-    return V8PerformanceEntry::wrapSlow(impl, creationContext, isolate);
+    return V8PerformanceEntry::createWrapper(impl, creationContext, isolate);
 }
 
 } // namespace WebCore

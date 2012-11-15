@@ -37,12 +37,12 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Object> V8StyleSheet::dispatchWrapCustom(StyleSheet* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> wrap(StyleSheet* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
     if (impl->isCSSStyleSheet())
-        return dispatchWrap(static_cast<CSSStyleSheet*>(impl), creationContext, isolate);
-    return V8StyleSheet::wrapSlow(impl, creationContext, isolate);
+        return wrap(static_cast<CSSStyleSheet*>(impl), creationContext, isolate);
+    return V8StyleSheet::createWrapper(impl, creationContext, isolate);
 }
 
 } // namespace WebCore

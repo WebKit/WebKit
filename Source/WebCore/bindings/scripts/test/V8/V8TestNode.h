@@ -48,17 +48,16 @@ public:
     static void installPerContextProperties(v8::Handle<v8::Object>, TestNode*) { }
     static void installPerContextPrototypeProperties(v8::Handle<v8::Object>) { }
 private:
-    friend v8::Handle<v8::Object> dispatchWrap(TestNode*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
-    static v8::Handle<v8::Object> dispatchWrapCustom(TestNode*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
-    static v8::Handle<v8::Object> wrapSlow(PassRefPtr<TestNode>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    friend v8::Handle<v8::Object> wrap(TestNode*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestNode>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
 
-inline v8::Handle<v8::Object> dispatchWrap(TestNode* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
+inline v8::Handle<v8::Object> wrap(TestNode* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     ASSERT(impl);
     ASSERT(V8DOMWrapper::getCachedWrapper(impl).IsEmpty());
-    return V8TestNode::wrapSlow(impl, creationContext, isolate);
+    return V8TestNode::createWrapper(impl, creationContext, isolate);
 }
 
 inline v8::Handle<v8::Object> toV8Object(TestNode* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
@@ -68,7 +67,7 @@ inline v8::Handle<v8::Object> toV8Object(TestNode* impl, v8::Handle<v8::Object> 
     v8::Handle<v8::Object> wrapper = V8DOMWrapper::getCachedWrapper(impl);
     if (!wrapper.IsEmpty())
         return wrapper;
-    return dispatchWrap(impl, creationContext, isolate);
+    return wrap(impl, creationContext, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8(TestNode* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
@@ -78,7 +77,7 @@ inline v8::Handle<v8::Value> toV8(TestNode* impl, v8::Handle<v8::Object> creatio
     v8::Handle<v8::Value> wrapper = V8DOMWrapper::getCachedWrapper(impl);
     if (!wrapper.IsEmpty())
         return wrapper;
-    return dispatchWrap(impl, creationContext, isolate);
+    return wrap(impl, creationContext, isolate);
 }
 
 inline v8::Handle<v8::Value> toV8Fast(TestNode* impl, const v8::AccessorInfo& info, Node* holder)
@@ -99,7 +98,7 @@ inline v8::Handle<v8::Value> toV8Fast(TestNode* impl, const v8::AccessorInfo& in
         if (!wrapper.IsEmpty())
             return wrapper;
     }
-    return dispatchWrap(impl, holderWrapper, info.GetIsolate());
+    return wrap(impl, holderWrapper, info.GetIsolate());
 }
 
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestNode > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)

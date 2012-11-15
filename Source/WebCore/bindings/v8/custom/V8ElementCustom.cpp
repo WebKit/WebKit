@@ -40,17 +40,17 @@
 
 namespace WebCore {
 
-// This code is duplicated in V8Node::dispatchWrapCustom for performance. It must be kept in sync.
-v8::Handle<v8::Object> V8Element::dispatchWrapCustom(Element* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+// This code is duplicated in V8Node::wrap for performance. It must be kept in sync.
+v8::Handle<v8::Object> wrap(Element* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
     if (impl->isHTMLElement())
-        return dispatchWrap(toHTMLElement(impl), creationContext, isolate);
+        return wrap(toHTMLElement(impl), creationContext, isolate);
 #if ENABLE(SVG)
     if (impl->isSVGElement())
-        return dispatchWrap(static_cast<SVGElement*>(impl), creationContext, isolate);
+        return wrap(static_cast<SVGElement*>(impl), creationContext, isolate);
 #endif
-    return V8Element::wrapSlow(static_cast<Element*>(impl), creationContext, isolate);
+    return V8Element::createWrapper(static_cast<Element*>(impl), creationContext, isolate);
 }
 
 }

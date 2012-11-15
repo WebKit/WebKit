@@ -1070,8 +1070,8 @@ static v8::Handle<v8::Object> create${JSInterfaceName}Wrapper($parameters{namesp
 {
     Settings* settings = element->document()->settings();
     if (!MediaPlayer::isAvailable() || (settings && !settings->isMediaEnabled()))
-        return dispatchWrap(element, creationContext, isolate);
-    return dispatchWrap(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
+        return wrap(element, creationContext, isolate);
+    return wrap(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
 }
 
 END
@@ -1082,8 +1082,8 @@ END
 static v8::Handle<v8::Object> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!ContextFeatures::${contextConditional}Enabled(element->document()))
-        return dispatchWrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
-    return dispatchWrap(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
+        return wrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
+    return wrap(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
 }
 END
 ;
@@ -1093,8 +1093,8 @@ END
 static v8::Handle<v8::Object> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled())
-        return dispatchWrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
-    return dispatchWrap(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
+        return wrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
+    return wrap(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
 }
 END
 ;
@@ -1112,7 +1112,7 @@ END
             print F <<END
 static v8::Handle<v8::Object> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
-    return dispatchWrap(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
+    return wrap(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
 }
 
 
@@ -1261,7 +1261,7 @@ END
         if ($parameters{namespace} eq "HTML") {
             print F <<END
         if (createWrapperFunction == createHTMLElementWrapper)
-           return V8HTMLElement::wrapSlow(element, creationContext, isolate);
+           return V8HTMLElement::createWrapper(element, creationContext, isolate);
 END
         }
         print F <<END
@@ -1271,12 +1271,12 @@ END
 ;
         if ($parameters{namespace} eq "SVG") {
             print F <<END
-    return V8SVGElement::wrapSlow(element, creationContext, isolate);
+    return V8SVGElement::createWrapper(element, creationContext, isolate);
 END
 ;
         } else {
             print F <<END
-    return dispatchWrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
+    return wrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
 END
 ;
         }

@@ -125,44 +125,44 @@ v8::Handle<v8::Value> V8Node::appendChildCallback(const v8::Arguments& args)
     return v8::Null(args.GetIsolate());
 }
 
-v8::Handle<v8::Object> V8Node::dispatchWrapCustom(Node* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> wrap(Node* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
     switch (impl->nodeType()) {
     case Node::ELEMENT_NODE:
-        // For performance reasons, this is inlined from V8Element::dispatchWrapCustom and must remain in sync.
+        // For performance reasons, this is inlined from V8Element::wrap and must remain in sync.
         if (impl->isHTMLElement())
-            return dispatchWrap(toHTMLElement(impl), creationContext, isolate);
+            return wrap(toHTMLElement(impl), creationContext, isolate);
 #if ENABLE(SVG)
         if (impl->isSVGElement())
-            return dispatchWrap(static_cast<SVGElement*>(impl), creationContext, isolate);
+            return wrap(static_cast<SVGElement*>(impl), creationContext, isolate);
 #endif
-        return V8Element::wrapSlow(static_cast<Element*>(impl), creationContext, isolate);
+        return V8Element::createWrapper(static_cast<Element*>(impl), creationContext, isolate);
     case Node::ATTRIBUTE_NODE:
-        return dispatchWrap(static_cast<Attr*>(impl), creationContext, isolate);
+        return wrap(static_cast<Attr*>(impl), creationContext, isolate);
     case Node::TEXT_NODE:
-        return dispatchWrap(toText(impl), creationContext, isolate);
+        return wrap(toText(impl), creationContext, isolate);
     case Node::CDATA_SECTION_NODE:
-        return dispatchWrap(static_cast<CDATASection*>(impl), creationContext, isolate);
+        return wrap(static_cast<CDATASection*>(impl), creationContext, isolate);
     case Node::ENTITY_REFERENCE_NODE:
-        return dispatchWrap(static_cast<EntityReference*>(impl), creationContext, isolate);
+        return wrap(static_cast<EntityReference*>(impl), creationContext, isolate);
     case Node::ENTITY_NODE:
-        return dispatchWrap(static_cast<Entity*>(impl), creationContext, isolate);
+        return wrap(static_cast<Entity*>(impl), creationContext, isolate);
     case Node::PROCESSING_INSTRUCTION_NODE:
-        return dispatchWrap(static_cast<ProcessingInstruction*>(impl), creationContext, isolate);
+        return wrap(static_cast<ProcessingInstruction*>(impl), creationContext, isolate);
     case Node::COMMENT_NODE:
-        return dispatchWrap(static_cast<Comment*>(impl), creationContext, isolate);
+        return wrap(static_cast<Comment*>(impl), creationContext, isolate);
     case Node::DOCUMENT_NODE:
-        return dispatchWrap(static_cast<Document*>(impl), creationContext, isolate);
+        return wrap(static_cast<Document*>(impl), creationContext, isolate);
     case Node::DOCUMENT_TYPE_NODE:
-        return dispatchWrap(static_cast<DocumentType*>(impl), creationContext, isolate);
+        return wrap(static_cast<DocumentType*>(impl), creationContext, isolate);
     case Node::DOCUMENT_FRAGMENT_NODE:
-        return dispatchWrap(static_cast<DocumentFragment*>(impl), creationContext, isolate);
+        return wrap(static_cast<DocumentFragment*>(impl), creationContext, isolate);
     case Node::NOTATION_NODE:
-        return dispatchWrap(static_cast<Notation*>(impl), creationContext, isolate);
+        return wrap(static_cast<Notation*>(impl), creationContext, isolate);
     default:
         break; // XPATH_NAMESPACE_NODE
     }
-    return V8Node::wrapSlow(impl, creationContext, isolate);
+    return V8Node::createWrapper(impl, creationContext, isolate);
 }
 } // namespace WebCore

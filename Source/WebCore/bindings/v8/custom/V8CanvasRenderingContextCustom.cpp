@@ -39,14 +39,14 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Object> V8CanvasRenderingContext::dispatchWrapCustom(CanvasRenderingContext* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> wrap(CanvasRenderingContext* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
     if (impl->is2d())
-        return dispatchWrap(static_cast<CanvasRenderingContext2D*>(impl), creationContext, isolate);
+        return wrap(static_cast<CanvasRenderingContext2D*>(impl), creationContext, isolate);
 #if ENABLE(WEBGL)
     if (impl->is3d())
-        return dispatchWrap(static_cast<WebGLRenderingContext*>(impl), creationContext, isolate);
+        return wrap(static_cast<WebGLRenderingContext*>(impl), creationContext, isolate);
 #endif
     ASSERT_NOT_REACHED();
     return v8::Handle<v8::Object>();

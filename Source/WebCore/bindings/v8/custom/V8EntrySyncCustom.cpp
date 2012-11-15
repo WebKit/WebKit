@@ -43,14 +43,14 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Object> V8EntrySync::dispatchWrapCustom(EntrySync* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> wrap(EntrySync* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
     if (impl->isFile())
-        return dispatchWrap(static_cast<FileEntrySync*>(impl), creationContext, isolate);
+        return wrap(static_cast<FileEntrySync*>(impl), creationContext, isolate);
 
     ASSERT(impl->isDirectory());
-    return dispatchWrap(static_cast<DirectoryEntrySync*>(impl), creationContext, isolate);
+    return wrap(static_cast<DirectoryEntrySync*>(impl), creationContext, isolate);
 }
 
 } // namespace WebCore
