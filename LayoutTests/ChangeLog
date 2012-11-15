@@ -1,3 +1,10 @@
+2012-11-15  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined images.
+
+        * platform/chromium-win/fast/forms/zoomed-controls-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-11-14  Shinya Kawanaka  <shinyak@chromium.org> 
 
         Changing pseudoClass (:disabled) should cause distribution.
