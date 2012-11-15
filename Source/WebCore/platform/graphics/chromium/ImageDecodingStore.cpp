@@ -28,7 +28,6 @@
 
 #include "ImageDecoder.h"
 #include "ImageFrameGenerator.h"
-#include "LazyDecodingPixelRef.h"
 #include "ScaledImageFragment.h"
 #include "SkRect.h"
 #include "SkSize.h"
@@ -36,14 +35,10 @@
 #include "skia/ext/image_operations.h"
 
 #include <wtf/MainThread.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 namespace {
-
-// URI label for a lazily decoded SkPixelRef.
-const char labelLazyDecoded[] = "lazy";
 
 ImageDecodingStore* s_instanceOnMainThread = 0;
 
@@ -78,68 +73,6 @@ void ImageDecodingStore::shutdown()
 {
     ASSERT(isMainThread());
     setInstanceOnMainThread(0);
-}
-
-bool ImageDecodingStore::isLazyDecoded(const SkBitmap& bitmap)
-{
-    return bitmap.pixelRef()
-        && bitmap.pixelRef()->getURI()
-        && !memcmp(bitmap.pixelRef()->getURI(), labelLazyDecoded, sizeof(labelLazyDecoded));
-}
-
-SkBitmap ImageDecodingStore::createLazyDecodedSkBitmap(PassOwnPtr<ImageDecoder> decoder)
-{
-    ASSERT(calledOnValidThread());
-
-    SkISize fullSize = SkISize::Make(decoder->size().width(), decoder->size().height());
-    ASSERT(!fullSize.isEmpty());
-
-    SkIRect fullRect = SkIRect::MakeSize(fullSize);
-
-    // Creates a lazily decoded SkPixelRef that references the entire image without scaling.
-    SkBitmap bitmap;
-    bitmap.setConfig(SkBitmap::kARGB_8888_Config, fullSize.width(), fullSize.height());
-    bitmap.setPixelRef(new LazyDecodingPixelRef(ImageFrameGenerator::create(decoder), fullSize, fullRect))->unref();
-
-    // Use URI to identify this is a lazily decoded SkPixelRef of type LazyDecodingPixelRef.
-    // FIXME: Give the actual URI is more useful.
-    bitmap.pixelRef()->setURI(labelLazyDecoded);
-
-    // Inform the bitmap that we will never change the pixels. This is a performance hint
-    // subsystems that may try to cache this bitmap (e.g. pictures, pipes, gpu, pdf, etc.)
-    bitmap.setImmutable();
-
-    // FIXME: Setting bitmap.setIsOpaque() is big performance gain if possible. We can
-    // do so safely if the image is fully loaded and it is a JPEG image, or image was
-    // decoded before.
-
-    return bitmap;
-}
-
-SkBitmap ImageDecodingStore::resizeLazyDecodedSkBitmap(const SkBitmap& bitmap, const SkISize& scaledSize, const SkIRect& scaledSubset)
-{
-    ASSERT(calledOnValidThread());
-
-    LazyDecodingPixelRef* pixelRef = static_cast<LazyDecodingPixelRef*>(bitmap.pixelRef());
-    ASSERT(!pixelRef->isScaled(pixelRef->frameGenerator()->fullSize()) && !pixelRef->isClipped());
-
-    int rowBytes = 0;
-    rowBytes = SkBitmap::ComputeRowBytes(SkBitmap::kARGB_8888_Config, scaledSize.width());
-
-    SkBitmap resizedBitmap;
-    resizedBitmap.setConfig(SkBitmap::kARGB_8888_Config, scaledSubset.width(), scaledSubset.height(), rowBytes);
-    resizedBitmap.setPixelRef(new LazyDecodingPixelRef(pixelRef->frameGenerator(), scaledSize, scaledSubset))->unref();
-
-    // See comments in createLazyDecodedSkBitmap().
-    resizedBitmap.setImmutable();
-    return resizedBitmap;
-}
-
-void ImageDecodingStore::setData(const SkBitmap& bitmap, PassRefPtr<SharedBuffer> data, bool allDataReceived)
-{
-    ASSERT(calledOnValidThread());
-    if (isLazyDecoded(bitmap))
-        static_cast<LazyDecodingPixelRef*>(bitmap.pixelRef())->frameGenerator()->setData(data, allDataReceived);
 }
 
 void* ImageDecodingStore::lockPixels(PassRefPtr<ImageFrameGenerator> frameGenerator, const SkISize& scaledSize, const SkIRect& scaledSubset)

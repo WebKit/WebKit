@@ -30,6 +30,7 @@
 #include "SkSize.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -40,12 +41,12 @@ class SharedBuffer;
 
 class ImageFrameGenerator : public RefCounted<ImageFrameGenerator> {
 public:
-    static PassRefPtr<ImageFrameGenerator> create(PassOwnPtr<ImageDecoder> decoder)
+    static PassRefPtr<ImageFrameGenerator> create(PassOwnPtr<ImageDecoder> decoder, PassRefPtr<SharedBuffer> data, bool allDataReceived)
     {
-        return adoptRef(new ImageFrameGenerator(decoder));
+        return adoptRef(new ImageFrameGenerator(decoder, data, allDataReceived));
     }
 
-    explicit ImageFrameGenerator(PassOwnPtr<ImageDecoder>);
+    ImageFrameGenerator(PassOwnPtr<ImageDecoder>, PassRefPtr<SharedBuffer>, bool allDataReceived);
     ~ImageFrameGenerator();
 
     // Creates the image decoder if needed.

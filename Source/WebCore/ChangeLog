@@ -1,3 +1,46 @@
+2012-11-15  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Refactoring to move logic of creating lazy decoded SkBitmap into DeferredImageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=102019
+
+        Reviewed by Stephen White.
+
+        Goal of this change is to keep ImageDecodingStore clean and only do
+        image caching. Logic of creating lazily decoded SkBitmaps is moved into
+        DeferredImageDecoder.
+
+        In particular these two methods are moved:
+        - ImageDecodingStore::createLazyDecodedSkBitmap
+        - ImageDecodingStore::resizeLazyDecodedSkBitmap
+
+        No new tests. There is no new code (really). It is just moved from
+        ImageDecodingStore to DeferredImageDecoder.
+
+        No change in behavior. Code is tested with:
+        Unit tests: webkit_unit_tests
+        Layout test: platform/chromium/virtual/deferred
+
+        * platform/graphics/chromium/DeferredImageDecoder.cpp:
+        (WebCore::DeferredImageDecoder::isLazyDecoded):
+        (WebCore):
+        (WebCore::DeferredImageDecoder::resizeLazyDecodedSkBitmap):
+        (WebCore::DeferredImageDecoder::frameBufferAtIndex):
+        (WebCore::DeferredImageDecoder::setData):
+        (WebCore::DeferredImageDecoder::createLazyDecodedSkBitmap):
+        * platform/graphics/chromium/DeferredImageDecoder.h:
+        (WebCore):
+        (DeferredImageDecoder):
+        * platform/graphics/chromium/ImageDecodingStore.cpp:
+        * platform/graphics/chromium/ImageDecodingStore.h:
+        (ImageDecodingStore):
+        * platform/graphics/chromium/ImageFrameGenerator.cpp:
+        (WebCore::ImageFrameGenerator::ImageFrameGenerator):
+        * platform/graphics/chromium/ImageFrameGenerator.h:
+        (WebCore::ImageFrameGenerator::create):
+        (ImageFrameGenerator):
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::resizedBitmap):
+
 2012-11-15  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Build fix for Windows after r134767.

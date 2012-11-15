@@ -56,12 +56,6 @@ public:
     static ImageDecodingStore* instanceOnMainThread();
     static void initializeOnMainThread();
     static void shutdown();
-    static bool isLazyDecoded(const SkBitmap&);
-
-    SkBitmap createLazyDecodedSkBitmap(PassOwnPtr<ImageDecoder>);
-    SkBitmap resizeLazyDecodedSkBitmap(const SkBitmap&, const SkISize& scaledSize, const SkIRect& scaledSubset);
-
-    void setData(const SkBitmap&, PassRefPtr<SharedBuffer>, bool allDataReceived);
 
     // You may only lock one set of pixels at a time; overlapping lock calls are not allowed.
     void* lockPixels(PassRefPtr<ImageFrameGenerator>, const SkISize& scaledSize, const SkIRect& scaledSubset);

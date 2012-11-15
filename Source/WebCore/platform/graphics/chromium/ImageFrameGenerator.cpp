@@ -40,11 +40,13 @@ int s_nextImageId = 0;
 
 namespace WebCore {
 
-ImageFrameGenerator::ImageFrameGenerator(PassOwnPtr<ImageDecoder> decoder)
+ImageFrameGenerator::ImageFrameGenerator(PassOwnPtr<ImageDecoder> decoder, PassRefPtr<SharedBuffer> data, bool allDataReceived)
     : m_decoder(decoder)
 {
     m_fullSize = SkISize::Make(m_decoder->size().width(), m_decoder->size().height());
     m_imageId = s_nextImageId++;
+
+    setData(data, allDataReceived);
 }
 
 ImageFrameGenerator::~ImageFrameGenerator()

@@ -41,7 +41,7 @@
 #include "SkiaUtils.h"
 
 #if PLATFORM(CHROMIUM)
-#include "ImageDecodingStore.h"
+#include "DeferredImageDecoder.h"
 #include "TraceEvent.h"
 #endif
 
@@ -79,8 +79,8 @@ bool NativeImageSkia::hasResizedBitmap(const SkISize& scaledImageSize, const SkI
 SkBitmap NativeImageSkia::resizedBitmap(const SkISize& scaledImageSize, const SkIRect& scaledImageSubset) const
 {
 #if PLATFORM(CHROMIUM)
-    if (ImageDecodingStore::isLazyDecoded(m_image))
-        return ImageDecodingStore::instanceOnMainThread()->resizeLazyDecodedSkBitmap(m_image, scaledImageSize, scaledImageSubset);
+    if (DeferredImageDecoder::isLazyDecoded(m_image))
+        return DeferredImageDecoder::createResizedLazyDecodingBitmap(m_image, scaledImageSize, scaledImageSubset);
 #endif
 
     if (!hasResizedBitmap(scaledImageSize, scaledImageSubset)) {
