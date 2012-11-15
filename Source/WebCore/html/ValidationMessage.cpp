@@ -139,7 +139,7 @@ void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
             m_messageHeading->setInnerText(lines[i], ASSERT_NO_EXCEPTION);
     }
 
-    int magnification = doc->page() ? doc->page()->settings()->validationMessageTimerMaginification() : -1;
+    int magnification = doc->page() ? doc->page()->settings()->validationMessageTimerMagnification() : -1;
     if (magnification <= 0)
         m_timer.clear();
     else {

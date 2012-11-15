@@ -32,6 +32,7 @@
 #include "IntSize.h"
 #include "KURL.h"
 #include "SecurityOrigin.h"
+#include "SettingsMacros.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/AtomicString.h>
@@ -133,11 +134,6 @@ namespace WebCore {
         void setLoadsImagesAutomatically(bool);
         bool loadsImagesAutomatically() const { return m_loadsImagesAutomatically; }
 
-        // This setting only affects site icon image loading if loadsImagesAutomatically setting is false and this setting is true.
-        // All other permutations still heed loadsImagesAutomatically setting.
-        void setLoadsSiteIconsIgnoringImageLoadingSetting(bool);
-        bool loadsSiteIconsIgnoringImageLoadingSetting() const { return m_loadsSiteIconsIgnoringImageLoadingSetting; }
-
         void setScriptEnabled(bool);
         // Instead of calling isScriptEnabled directly, please consider calling
         // ScriptController::canExecuteScripts, which takes things like the
@@ -147,20 +143,7 @@ namespace WebCore {
         void setWebSecurityEnabled(bool);
         bool isWebSecurityEnabled() const { return m_isWebSecurityEnabled; }
 
-        void setAllowUniversalAccessFromFileURLs(bool);
-        bool allowUniversalAccessFromFileURLs() const { return m_allowUniversalAccessFromFileURLs; }
-
-        void setAllowFileAccessFromFileURLs(bool);
-        bool allowFileAccessFromFileURLs() const { return m_allowFileAccessFromFileURLs; }
-
-        void setJavaScriptCanOpenWindowsAutomatically(bool);
-        bool javaScriptCanOpenWindowsAutomatically() const { return m_javaScriptCanOpenWindowsAutomatically; }
-
-        void setSupportsMultipleWindows(bool);
-        bool supportsMultipleWindows() const { return m_supportsMultipleWindows; }
-
-        void setJavaScriptCanAccessClipboard(bool);
-        bool javaScriptCanAccessClipboard() const { return m_javaScriptCanAccessClipboard; }
+        SETTINGS_GETTERS_AND_SETTERS
 
         void setSpatialNavigationEnabled(bool);
         bool isSpatialNavigationEnabled() const { return m_isSpatialNavigationEnabled; }
@@ -181,15 +164,6 @@ namespace WebCore {
         void setPluginsEnabled(bool);
         bool arePluginsEnabled() const { return m_arePluginsEnabled; }
 
-        void setLocalStorageEnabled(bool);
-        bool localStorageEnabled() const { return m_localStorageEnabled; }
-
-        // Allow clients concerned with memory consumption to set a quota on session storage
-        // since the memory used won't be released until the Page is destroyed.
-        // Default is noQuota.
-        void setSessionStorageQuota(unsigned);
-        unsigned sessionStorageQuota() const { return m_sessionStorageQuota; }
-
         // When this option is set, WebCore will avoid storing any record of browsing activity
         // that may persist on disk or remain displayed when the option is reset.
         // This option does not affect the storage of such information in RAM.
@@ -206,52 +180,17 @@ namespace WebCore {
         void setPrivateBrowsingEnabled(bool);
         bool privateBrowsingEnabled() const { return m_privateBrowsingEnabled; }
 
-        void setCaretBrowsingEnabled(bool);
-        bool caretBrowsingEnabled() const { return m_caretBrowsingEnabled; }
-
-        void setDefaultTextEncodingName(const String&);
-        const String& defaultTextEncodingName() const { return m_defaultTextEncodingName; }
-        
-        void setUsesEncodingDetector(bool);
-        bool usesEncodingDetector() const { return m_usesEncodingDetector; }
-
         void setDNSPrefetchingEnabled(bool);
         bool dnsPrefetchingEnabled() const { return m_dnsPrefetchingEnabled; }
 
         void setUserStyleSheetLocation(const KURL&);
         const KURL& userStyleSheetLocation() const { return m_userStyleSheetLocation; }
 
-        void setFixedElementsLayoutRelativeToFrame(bool);
-        bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
-
-        void setShouldPrintBackgrounds(bool);
-        bool shouldPrintBackgrounds() const { return m_shouldPrintBackgrounds; }
-
         void setTextAreasAreResizable(bool);
         bool textAreasAreResizable() const { return m_textAreasAreResizable; }
 
-        void setEditableLinkBehavior(EditableLinkBehavior);
-        EditableLinkBehavior editableLinkBehavior() const { return m_editableLinkBehavior; }
-
-        void setTextDirectionSubmenuInclusionBehavior(TextDirectionSubmenuInclusionBehavior);
-        TextDirectionSubmenuInclusionBehavior textDirectionSubmenuInclusionBehavior() const { return m_textDirectionSubmenuInclusionBehavior; }
-
-#if ENABLE(DASHBOARD_SUPPORT)
-        void setUsesDashboardBackwardCompatibilityMode(bool);
-        bool usesDashboardBackwardCompatibilityMode() const { return m_usesDashboardBackwardCompatibilityMode; }
-#endif
-        
         void setNeedsAdobeFrameReloadingQuirk(bool);
         bool needsAcrobatFrameReloadingQuirk() const { return m_needsAdobeFrameReloadingQuirk; }
-
-        void setNeedsKeyboardEventDisambiguationQuirks(bool);
-        bool needsKeyboardEventDisambiguationQuirks() const { return m_needsKeyboardEventDisambiguationQuirks; }
-
-        void setTreatsAnyTextCSSLinkAsStylesheet(bool);
-        bool treatsAnyTextCSSLinkAsStylesheet() const { return m_treatsAnyTextCSSLinkAsStylesheet; }
-
-        void setNeedsLeopardMailQuirks(bool);
-        bool needsLeopardMailQuirks() const { return m_needsLeopardMailQuirks; }
 
         void setDOMPasteAllowed(bool);
         bool isDOMPasteAllowed() const { return m_isDOMPasteAllowed; }
@@ -271,85 +210,14 @@ namespace WebCore {
         void setUsesPageCache(bool);
         bool usesPageCache() const { return m_usesPageCache; }
         
-        void setPageCacheSupportsPlugins(bool pageCacheSupportsPlugins) { m_pageCacheSupportsPlugins = pageCacheSupportsPlugins; }
-        bool pageCacheSupportsPlugins() const { return m_pageCacheSupportsPlugins; }
-
-        void setShrinksStandaloneImagesToFit(bool);
-        bool shrinksStandaloneImagesToFit() const { return m_shrinksStandaloneImagesToFit; }
-
-        void setShowsURLsInToolTips(bool);
-        bool showsURLsInToolTips() const { return m_showsURLsInToolTips; }
-
-        void setShowsToolTipOverTruncatedText(bool);
-        bool showsToolTipOverTruncatedText() const { return m_showsToolTipOverTruncatedText; }
-
-        void setFTPDirectoryTemplatePath(const String&);
-        const String& ftpDirectoryTemplatePath() const { return m_ftpDirectoryTemplatePath; }
-        
-        void setForceFTPDirectoryListings(bool);
-        bool forceFTPDirectoryListings() const { return m_forceFTPDirectoryListings; }
-        
-        void setDeveloperExtrasEnabled(bool);
-        bool developerExtrasEnabled() const { return m_developerExtrasEnabled; }
-        
-        void setJavaScriptExperimentsEnabled(bool);
-        bool javaScriptExperimentsEnabled() const { return m_javaScriptExperimentsEnabled; }
-
-        void setFrameFlatteningEnabled(bool);
-        bool frameFlatteningEnabled() const { return m_frameFlatteningEnabled; }
-
         void setAuthorAndUserStylesEnabled(bool);
         bool authorAndUserStylesEnabled() const { return m_authorAndUserStylesEnabled; }
         
         void setFontRenderingMode(FontRenderingMode mode);
         FontRenderingMode fontRenderingMode() const;
 
-        void setNeedsSiteSpecificQuirks(bool);
-        bool needsSiteSpecificQuirks() const { return m_needsSiteSpecificQuirks; }
-
-#if ENABLE(WEB_ARCHIVE)
-        void setWebArchiveDebugModeEnabled(bool);
-        bool webArchiveDebugModeEnabled() const { return m_webArchiveDebugModeEnabled; }
-#endif
-
-        void setLocalFileContentSniffingEnabled(bool);
-        bool localFileContentSniffingEnabled() const { return m_localFileContentSniffingEnabled; }
-
-        void setLocalStorageDatabasePath(const String&);
-        const String& localStorageDatabasePath() const { return m_localStorageDatabasePath; }
-
         void setApplicationChromeMode(bool);
         bool inApplicationChromeMode() const { return m_inApplicationChromeMode; }
-
-        void setOfflineWebApplicationCacheEnabled(bool);
-        bool offlineWebApplicationCacheEnabled() const { return m_offlineWebApplicationCacheEnabled; }
-        
-        void setEnforceCSSMIMETypeInNoQuirksMode(bool);
-        bool enforceCSSMIMETypeInNoQuirksMode() { return m_enforceCSSMIMETypeInNoQuirksMode; }
-
-        void setMaximumDecodedImageSize(size_t size) { m_maximumDecodedImageSize = size; }
-        size_t maximumDecodedImageSize() const { return m_maximumDecodedImageSize; }
-
-        void setAllowScriptsToCloseWindows(bool);
-        bool allowScriptsToCloseWindows() const { return m_allowScriptsToCloseWindows; }
-
-        void setEditingBehaviorType(EditingBehaviorType behavior) { m_editingBehaviorType = behavior; }
-        EditingBehaviorType editingBehaviorType() const { return static_cast<EditingBehaviorType>(m_editingBehaviorType); }
-
-        void setDownloadableBinaryFontsEnabled(bool);
-        bool downloadableBinaryFontsEnabled() const { return m_downloadableBinaryFontsEnabled; }
-
-        void setXSSAuditorEnabled(bool);
-        bool xssAuditorEnabled() const { return m_xssAuditorEnabled; }
-
-        void setCanvasUsesAcceleratedDrawing(bool);
-        bool canvasUsesAcceleratedDrawing() const { return m_canvasUsesAcceleratedDrawing; }
-
-        void setAcceleratedDrawingEnabled(bool enabled) { m_acceleratedDrawingEnabled = enabled; }
-        bool acceleratedDrawingEnabled() const { return m_acceleratedDrawingEnabled; }
-
-        void setAcceleratedFiltersEnabled(bool enabled) { m_acceleratedFiltersEnabled = enabled; }
-        bool acceleratedFiltersEnabled() const { return m_acceleratedFiltersEnabled; }
 
         void setCSSCustomFilterEnabled(bool enabled) { m_isCSSCustomFilterEnabled = enabled; }
         bool isCSSCustomFilterEnabled() const { return m_isCSSCustomFilterEnabled; }
@@ -378,38 +246,8 @@ namespace WebCore {
         bool cssVariablesEnabled() const { return false; }
 #endif
 
-        void setRegionBasedColumnsEnabled(bool enabled) { m_regionBasedColumnsEnabled = enabled; }
-        bool regionBasedColumnsEnabled() const { return m_regionBasedColumnsEnabled; }
-
-        void setCSSGridLayoutEnabled(bool enabled) { m_cssGridLayoutEnabled = enabled; }
-        bool cssGridLayoutEnabled() const { return m_cssGridLayoutEnabled; }
-
         void setAcceleratedCompositingEnabled(bool);
         bool acceleratedCompositingEnabled() const { return m_acceleratedCompositingEnabled; }
-
-        void setAcceleratedCompositingFor3DTransformsEnabled(bool);
-        bool acceleratedCompositingFor3DTransformsEnabled() const { return m_acceleratedCompositingFor3DTransformsEnabled; }
-
-        void setAcceleratedCompositingForVideoEnabled(bool);
-        bool acceleratedCompositingForVideoEnabled() const { return m_acceleratedCompositingForVideoEnabled; }
-
-        void setAcceleratedCompositingForPluginsEnabled(bool);
-        bool acceleratedCompositingForPluginsEnabled() const { return m_acceleratedCompositingForPluginsEnabled; }
-
-        void setAcceleratedCompositingForCanvasEnabled(bool);
-        bool acceleratedCompositingForCanvasEnabled() const { return m_acceleratedCompositingForCanvasEnabled; }
-
-        void setAcceleratedCompositingForAnimationEnabled(bool);
-        bool acceleratedCompositingForAnimationEnabled() const { return m_acceleratedCompositingForAnimationEnabled; }
-
-        void setAcceleratedCompositingForFixedPositionEnabled(bool enabled) { m_acceleratedCompositingForFixedPositionEnabled = enabled; }
-        bool acceleratedCompositingForFixedPositionEnabled() const { return m_acceleratedCompositingForFixedPositionEnabled; }
-
-        void setAcceleratedCompositingForScrollableFramesEnabled(bool enabled) { m_acceleratedCompositingForScrollableFramesEnabled = enabled; }
-        bool acceleratedCompositingForScrollableFramesEnabled() const { return m_acceleratedCompositingForScrollableFramesEnabled; }
-
-        void setAcceleratedCompositingForOverflowScrollEnabled(bool enabled) { m_acceleratedCompositingForOverflowScrollEnabled = enabled; }
-        bool acceleratedCompositingForOverflowScrollEnabled() const { return m_acceleratedCompositingForOverflowScrollEnabled; };
 
         void setShowDebugBorders(bool);
         bool showDebugBorders() const { return m_showDebugBorders; }
@@ -417,144 +255,28 @@ namespace WebCore {
         void setShowRepaintCounter(bool);
         bool showRepaintCounter() const { return m_showRepaintCounter; }
 
-        void setExperimentalNotificationsEnabled(bool);
-        bool experimentalNotificationsEnabled() const { return m_experimentalNotificationsEnabled; }
-
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
         static void setShouldUseHighResolutionTimers(bool);
         static bool shouldUseHighResolutionTimers() { return gShouldUseHighResolutionTimers; }
 #endif
 
-        void setWebAudioEnabled(bool);
-        bool webAudioEnabled() const { return m_webAudioEnabled; }
-
-        void setWebGLEnabled(bool);
-        bool webGLEnabled() const { return m_webGLEnabled; }
-
-        void setWebGLErrorsToConsoleEnabled(bool);
-        bool webGLErrorsToConsoleEnabled() const { return m_webGLErrorsToConsoleEnabled; }
-
-        void setOpenGLMultisamplingEnabled(bool);
-        bool openGLMultisamplingEnabled() const { return m_openGLMultisamplingEnabled; }
-
-        void setPrivilegedWebGLExtensionsEnabled(bool);
-        bool privilegedWebGLExtensionsEnabled() const { return m_privilegedWebGLExtensionsEnabled; }
-
-        void setAccelerated2dCanvasEnabled(bool);
-        bool accelerated2dCanvasEnabled() const { return m_acceleratedCanvas2dEnabled; }
-
-        void setDeferred2dCanvasEnabled(bool);
-        bool deferred2dCanvasEnabled() const { return m_deferredCanvas2dEnabled; }
-
-        // Number of pixels below which 2D canvas is rendered in software
-        // even if hardware acceleration is enabled.
-        // Hardware acceleration is useful for large canvases where it can avoid the
-        // pixel bandwidth between the CPU and GPU. But GPU acceleration comes at
-        // a price - extra back-buffer and texture copy. Small canvases are also
-        // widely used for stylized fonts. Anti-aliasing text in hardware at that
-        // scale is generally slower. So below a certain size it is better to
-        // draw canvas in software.
-        void setMinimumAccelerated2dCanvasSize(int);
-        int minimumAccelerated2dCanvasSize() const { return m_minimumAccelerated2dCanvasSize; }
-
-        void setLoadDeferringEnabled(bool);
-        bool loadDeferringEnabled() const { return m_loadDeferringEnabled; }
-        
         void setTiledBackingStoreEnabled(bool);
         bool tiledBackingStoreEnabled() const { return m_tiledBackingStoreEnabled; }
-
-        void setPaginateDuringLayoutEnabled(bool flag) { m_paginateDuringLayoutEnabled = flag; }
-        bool paginateDuringLayoutEnabled() const { return m_paginateDuringLayoutEnabled; }
-
-#if ENABLE(FULLSCREEN_API)
-        void setFullScreenEnabled(bool flag) { m_fullScreenAPIEnabled = flag; }
-        bool fullScreenEnabled() const  { return m_fullScreenAPIEnabled; }
-#endif
 
 #if USE(AVFOUNDATION)
         static void setAVFoundationEnabled(bool flag) { gAVFoundationEnabled = flag; }
         static bool isAVFoundationEnabled() { return gAVFoundationEnabled; }
 #endif
 
-        void setAsynchronousSpellCheckingEnabled(bool flag) { m_asynchronousSpellCheckingEnabled = flag; }
-        bool asynchronousSpellCheckingEnabled() const  { return m_asynchronousSpellCheckingEnabled; }
-
         void setUnifiedTextCheckerEnabled(bool flag) { m_unifiedTextCheckerEnabled = flag; }
         bool unifiedTextCheckerEnabled() const { return m_unifiedTextCheckerEnabled; }
 
-        void setMemoryInfoEnabled(bool flag) { m_memoryInfoEnabled = flag; }
-        bool memoryInfoEnabled() const { return m_memoryInfoEnabled; }
-
-        void setQuantizedMemoryInfoEnabled(bool flag) { m_quantizedMemoryInfoEnabled = flag; }
-        bool quantizedMemoryInfoEnabled() const { return m_quantizedMemoryInfoEnabled; }
-
-        // This feature requires an implementation of ValidationMessageClient.
-        void setInteractiveFormValidationEnabled(bool flag) { m_interactiveFormValidation = flag; }
-        bool interactiveFormValidationEnabled() const { return m_interactiveFormValidation; }
-
-        // Sets the maginication value for validation message timer.
-        // If the maginication value is N, a validation message disappears
-        // automatically after <message length> * N / 1000 seconds. If N is
-        // equal to or less than 0, a validation message doesn't disappears
-        // automaticaly. The default value is 50.
-        void setValidationMessageTimerMagnification(int newValue) { m_validationMessageTimerMagnification = newValue; }
-        int validationMessageTimerMaginification() const { return m_validationMessageTimerMagnification; }
-        
-        void setUsePreHTML5ParserQuirks(bool flag) { m_usePreHTML5ParserQuirks = flag; }
-        bool usePreHTML5ParserQuirks() const { return m_usePreHTML5ParserQuirks; }
-
         static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
-        void setMaximumHTMLParserDOMTreeDepth(unsigned maximumHTMLParserDOMTreeDepth) { m_maximumHTMLParserDOMTreeDepth = maximumHTMLParserDOMTreeDepth; }
-        unsigned maximumHTMLParserDOMTreeDepth() const { return m_maximumHTMLParserDOMTreeDepth; }
-
-        void setHyperlinkAuditingEnabled(bool flag) { m_hyperlinkAuditingEnabled = flag; }
-        bool hyperlinkAuditingEnabled() const { return m_hyperlinkAuditingEnabled; }
-
-        void setCrossOriginCheckInGetMatchedCSSRulesDisabled(bool flag) { m_crossOriginCheckInGetMatchedCSSRulesDisabled = flag; }
-        bool crossOriginCheckInGetMatchedCSSRulesDisabled() const { return m_crossOriginCheckInGetMatchedCSSRulesDisabled; }
-        
-        void setLayoutFallbackWidth(int width) { m_layoutFallbackWidth = width; }
-        int layoutFallbackWidth() const { return m_layoutFallbackWidth; }
-
-        void setDeviceWidth(int width) { m_deviceWidth = width; }
-        int deviceWidth() const { return m_deviceWidth; }
-
-        void setDeviceHeight(int height) { m_deviceHeight = height; }
-        int deviceHeight() const { return m_deviceHeight; }
-
-        void setForceCompositingMode(bool flag) { m_forceCompositingMode = flag; }
-        bool forceCompositingMode() { return m_forceCompositingMode; }
-
-        void setShouldInjectUserScriptsInInitialEmptyDocument(bool flag) { m_shouldInjectUserScriptsInInitialEmptyDocument = flag; }
-        bool shouldInjectUserScriptsInInitialEmptyDocument() { return m_shouldInjectUserScriptsInInitialEmptyDocument; }
-
-        void setAllowDisplayOfInsecureContent(bool flag) { m_allowDisplayOfInsecureContent = flag; }
-        bool allowDisplayOfInsecureContent() const { return m_allowDisplayOfInsecureContent; }
-        void setAllowRunningOfInsecureContent(bool flag) { m_allowRunningOfInsecureContent = flag; }
-        bool allowRunningOfInsecureContent() const { return m_allowRunningOfInsecureContent; }
 
 #if ENABLE(SMOOTH_SCROLLING)
         void setEnableScrollAnimator(bool flag) { m_scrollAnimatorEnabled = flag; }
         bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
 #endif
-
-        void setMediaPlaybackRequiresUserGesture(bool flag) { m_mediaPlaybackRequiresUserGesture = flag; };
-        bool mediaPlaybackRequiresUserGesture() const { return m_mediaPlaybackRequiresUserGesture; }
-
-        void setMediaPlaybackAllowsInline(bool flag) { m_mediaPlaybackAllowsInline = flag; };
-        bool mediaPlaybackAllowsInline() const { return m_mediaPlaybackAllowsInline; }
-
-        void setPasswordEchoEnabled(bool flag) { m_passwordEchoEnabled = flag; }
-        bool passwordEchoEnabled() const { return m_passwordEchoEnabled; }
-
-        void setSuppressesIncrementalRendering(bool flag) { m_suppressesIncrementalRendering = flag; }
-        bool suppressesIncrementalRendering() const { return m_suppressesIncrementalRendering; }
-        
-        void setBackspaceKeyNavigationEnabled(bool flag) { m_backspaceKeyNavigationEnabled = flag; }
-        bool backspaceKeyNavigationEnabled() const { return m_backspaceKeyNavigationEnabled; }
-        
-        void setPasswordEchoDurationInSeconds(double durationInSeconds) { m_passwordEchoDurationInSeconds = durationInSeconds; }
-        double passwordEchoDurationInSeconds() const { return m_passwordEchoDurationInSeconds; }
 
 #if USE(SAFARI_THEME)
         // Windows debugging pref (global) for switching between the Aqua look and a native windows look.
@@ -568,67 +290,10 @@ namespace WebCore {
         static void setUsesOverlayScrollbars(bool flag);
         static bool usesOverlayScrollbars();
 
-        void setVisualWordMovementEnabled(bool enabled) { m_visualWordMovementEnabled = enabled; }
-        bool visualWordMovementEnabled() const { return m_visualWordMovementEnabled; }
-
-#if ENABLE(VIDEO_TRACK)
-        void setShouldDisplaySubtitles(bool flag) { m_shouldDisplaySubtitles = flag; }
-        bool shouldDisplaySubtitles() const { return m_shouldDisplaySubtitles; }
-
-        void setShouldDisplayCaptions(bool flag) { m_shouldDisplayCaptions = flag; }
-        bool shouldDisplayCaptions() const { return m_shouldDisplayCaptions; }
-
-        void setShouldDisplayTextDescriptions(bool flag) { m_shouldDisplayTextDescriptions = flag; }
-        bool shouldDisplayTextDescriptions() const { return m_shouldDisplayTextDescriptions; }
-#endif
-
-        void setScrollingCoordinatorEnabled(bool enabled) { m_scrollingCoordinatorEnabled = enabled; }
-        bool scrollingCoordinatorEnabled() const { return m_scrollingCoordinatorEnabled; }
-
-        void setNotificationsEnabled(bool enabled) { m_notificationsEnabled = enabled; }
-        bool notificationsEnabled() const { return m_notificationsEnabled; }
-
-        // Some apps needs isLoadingInAPISense to account for active subresource loaders.
-        void setNeedsIsLoadingInAPISenseQuirk(bool enabled) { m_needsIsLoadingInAPISenseQuirk = enabled; }
-        bool needsIsLoadingInAPISenseQuirk() const { return m_needsIsLoadingInAPISenseQuirk; }
-
 #if ENABLE(TOUCH_EVENTS)
         void setTouchEventEmulationEnabled(bool enabled) { m_touchEventEmulationEnabled = enabled; }
         bool isTouchEventEmulationEnabled() const { return m_touchEventEmulationEnabled; }
 #endif
-
-        void setShouldRespectImageOrientation(bool enabled) { m_shouldRespectImageOrientation = enabled; }
-        bool shouldRespectImageOrientation() const { return m_shouldRespectImageOrientation; }
-
-        void setWantsBalancedSetDefersLoadingBehavior(bool flag) { m_wantsBalancedSetDefersLoadingBehavior = flag; }
-        bool wantsBalancedSetDefersLoadingBehavior() const { return m_wantsBalancedSetDefersLoadingBehavior; }
-
-        void setIncrementalRenderingSuppressionTimeoutInSeconds(double timeout) { m_incrementalRenderingSuppressionTimeoutInSeconds = timeout; }
-        double incrementalRenderingSuppressionTimeoutInSeconds() const { return m_incrementalRenderingSuppressionTimeoutInSeconds; }
-
-        void setRequestAnimationFrameEnabled(bool enabled) { m_requestAnimationFrameEnabled = enabled; }
-        bool requestAnimationFrameEnabled() const { return m_requestAnimationFrameEnabled; }
-
-        void setDeviceSupportsTouch(bool enabled) { m_deviceSupportsTouch = enabled; }
-        bool deviceSupportsTouch() const { return m_deviceSupportsTouch; }
-
-        void setDeviceSupportsMouse(bool enabled) { m_deviceSupportsMouse = enabled; }
-        bool deviceSupportsMouse() const { return m_deviceSupportsMouse; }
-
-        void setNeedsDidFinishLoadOrderQuirk(bool needsQuirk) { m_needsDidFinishLoadOrderQuirk = needsQuirk; }
-        bool needsDidFinishLoadOrderQuirk() const { return m_needsDidFinishLoadOrderQuirk; }
-
-        void setFixedPositionCreatesStackingContext(bool creates) { m_fixedPositionCreatesStackingContext = creates; }
-        bool fixedPositionCreatesStackingContext() const { return m_fixedPositionCreatesStackingContext; }
-
-        void setSyncXHRInDocumentsEnabled(bool enabled) { m_syncXHRInDocumentsEnabled = enabled; }
-        bool syncXHRInDocumentsEnabled() const { return m_syncXHRInDocumentsEnabled; }
-
-        // When enabled, window.blur() does not change focus, and
-        // window.focus() only changes focus when invoked from the context that
-        // created the window.
-        void setWindowFocusRestricted(bool restricted) { m_windowFocusRestricted = restricted; }
-        bool windowFocusRestricted() const { return m_windowFocusRestricted; }
 
         void setStorageBlockingPolicy(SecurityOrigin::StorageBlockingPolicy);
         SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy() const { return m_storageBlockingPolicy; }
@@ -641,18 +306,6 @@ namespace WebCore {
         static bool shouldRespectPriorityInCSSAttributeSetters();
 #endif
 
-        void setCookieEnabled(bool enabled) { m_cookieEnabled = enabled; }
-        bool cookieEnabled() const { return m_cookieEnabled; }
-
-        void setDiagnosticLoggingEnabled(bool enabled) { m_diagnosticLoggingEnabled = enabled; }
-        bool diagnosticLoggingEnabled() const { return m_diagnosticLoggingEnabled; }
-
-        void setApplyPageScaleFactorInCompositor(bool enabled) { m_applyPageScaleFactorInCompositor = enabled; }
-        bool applyPageScaleFactorInCompositor() const { return m_applyPageScaleFactorInCompositor; }
-
-        void setPlugInSnapshottingEnabled(bool enabled) { m_plugInSnapshottingEnabled = enabled; }
-        bool plugInSnapshottingEnabled() const { return m_plugInSnapshottingEnabled; }
-
     private:
         explicit Settings(Page*);
 
@@ -660,9 +313,6 @@ namespace WebCore {
 
         Page* m_page;
 
-        String m_defaultTextEncodingName;
-        String m_ftpDirectoryTemplatePath;
-        String m_localStorageDatabasePath;
         String m_mediaTypeOverride;
         KURL m_userStyleSheetLocation;
         ScriptFontFamilyMap m_standardFontFamilyMap;
@@ -672,23 +322,11 @@ namespace WebCore {
         ScriptFontFamilyMap m_cursiveFontFamilyMap;
         ScriptFontFamilyMap m_fantasyFontFamilyMap;
         ScriptFontFamilyMap m_pictographFontFamilyMap;
-        EditableLinkBehavior m_editableLinkBehavior;
-        TextDirectionSubmenuInclusionBehavior m_textDirectionSubmenuInclusionBehavior;
-        double m_passwordEchoDurationInSeconds;
         int m_minimumFontSize;
         int m_minimumLogicalFontSize;
         int m_defaultFontSize;
         int m_defaultFixedFontSize;
         bool m_screenFontSubstitutionEnabled;
-        int m_validationMessageTimerMagnification;
-        int m_minimumAccelerated2dCanvasSize;
-        int m_layoutFallbackWidth;
-        size_t m_maximumDecodedImageSize;
-        int m_deviceWidth;
-        int m_deviceHeight;
-        unsigned m_sessionStorageQuota;
-        unsigned m_editingBehaviorType;
-        unsigned m_maximumHTMLParserDOMTreeDepth;
         SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
 #if ENABLE(TEXT_AUTOSIZING)
         float m_textAutosizingFontScaleFactor;
@@ -696,58 +334,26 @@ namespace WebCore {
         bool m_textAutosizingEnabled : 1;
 #endif
         IntSize m_resolutionDensityPerInchOverride;
+
+        SETTINGS_MEMBER_VARIABLES
+
         bool m_isSpatialNavigationEnabled : 1;
         bool m_isJavaEnabled : 1;
         bool m_isJavaEnabledForLocalFiles : 1;
         bool m_loadsImagesAutomatically : 1;
-        bool m_loadsSiteIconsIgnoringImageLoadingSetting : 1;
         bool m_privateBrowsingEnabled : 1;
-        bool m_caretBrowsingEnabled : 1;
         bool m_areImagesEnabled : 1;
         bool m_isMediaEnabled : 1;
         bool m_arePluginsEnabled : 1;
-        bool m_localStorageEnabled : 1;
         bool m_isScriptEnabled : 1;
         bool m_isWebSecurityEnabled : 1;
-        bool m_allowUniversalAccessFromFileURLs: 1;
-        bool m_allowFileAccessFromFileURLs: 1;
-        bool m_javaScriptCanOpenWindowsAutomatically : 1;
-        bool m_supportsMultipleWindows : 1;
-        bool m_javaScriptCanAccessClipboard : 1;
-        bool m_shouldPrintBackgrounds : 1;
         bool m_textAreasAreResizable : 1;
-#if ENABLE(DASHBOARD_SUPPORT)
-        bool m_usesDashboardBackwardCompatibilityMode : 1;
-#endif
         bool m_needsAdobeFrameReloadingQuirk : 1;
-        bool m_needsKeyboardEventDisambiguationQuirks : 1;
-        bool m_treatsAnyTextCSSLinkAsStylesheet : 1;
-        bool m_needsLeopardMailQuirks : 1;
         bool m_isDOMPasteAllowed : 1;
-        bool m_shrinksStandaloneImagesToFit : 1;
         bool m_usesPageCache : 1;
-        bool m_pageCacheSupportsPlugins : 1;
-        bool m_showsURLsInToolTips : 1;
-        bool m_showsToolTipOverTruncatedText : 1;
-        bool m_forceFTPDirectoryListings : 1;
-        bool m_developerExtrasEnabled : 1;
-        bool m_javaScriptExperimentsEnabled : 1;
         bool m_authorAndUserStylesEnabled : 1;
-        bool m_needsSiteSpecificQuirks : 1;
         unsigned m_fontRenderingMode : 1;
-        bool m_frameFlatteningEnabled : 1;
-#if ENABLE(WEB_ARCHIVE)
-        bool m_webArchiveDebugModeEnabled : 1;
-#endif
-        bool m_localFileContentSniffingEnabled : 1;
         bool m_inApplicationChromeMode : 1;
-        bool m_offlineWebApplicationCacheEnabled : 1;
-        bool m_enforceCSSMIMETypeInNoQuirksMode : 1;
-        bool m_usesEncodingDetector : 1;
-        bool m_allowScriptsToCloseWindows : 1;
-        bool m_canvasUsesAcceleratedDrawing : 1;
-        bool m_acceleratedDrawingEnabled : 1;
-        bool m_acceleratedFiltersEnabled : 1;
         bool m_isCSSCustomFilterEnabled : 1;
 #if ENABLE(CSS_STICKY_POSITION)
         bool m_cssStickyPositionEnabled : 1;
@@ -758,96 +364,23 @@ namespace WebCore {
 #if ENABLE(CSS_VARIABLES)
         bool m_cssVariablesEnabled : 1;
 #endif
-        bool m_regionBasedColumnsEnabled : 1;
-        bool m_cssGridLayoutEnabled : 1;
-        bool m_downloadableBinaryFontsEnabled : 1;
-        bool m_xssAuditorEnabled : 1;
         bool m_acceleratedCompositingEnabled : 1;
-        bool m_acceleratedCompositingForOverflowScrollEnabled : 1;
-        bool m_acceleratedCompositingFor3DTransformsEnabled : 1;
-        bool m_acceleratedCompositingForVideoEnabled : 1;
-        bool m_acceleratedCompositingForPluginsEnabled : 1;
-        bool m_acceleratedCompositingForCanvasEnabled : 1;
-        bool m_acceleratedCompositingForAnimationEnabled : 1;
-        bool m_acceleratedCompositingForFixedPositionEnabled : 1;
-        bool m_acceleratedCompositingForScrollableFramesEnabled : 1; // Works only in conjunction with forceCompositingMode
         bool m_showDebugBorders : 1;
         bool m_showRepaintCounter : 1;
-        bool m_experimentalNotificationsEnabled : 1;
-        bool m_webGLEnabled : 1;
-        bool m_webGLErrorsToConsoleEnabled : 1;
-        bool m_openGLMultisamplingEnabled : 1;
-        bool m_privilegedWebGLExtensionsEnabled : 1;
-        bool m_webAudioEnabled : 1;
-        bool m_acceleratedCanvas2dEnabled : 1;
-        bool m_deferredCanvas2dEnabled : 1;
-        bool m_loadDeferringEnabled : 1;
         bool m_tiledBackingStoreEnabled : 1;
-        bool m_paginateDuringLayoutEnabled : 1;
         bool m_dnsPrefetchingEnabled : 1;
-#if ENABLE(FULLSCREEN_API)
-        bool m_fullScreenAPIEnabled : 1;
-#endif
-        bool m_asynchronousSpellCheckingEnabled : 1;
         bool m_unifiedTextCheckerEnabled : 1;
-        bool m_memoryInfoEnabled : 1;
-        bool m_quantizedMemoryInfoEnabled : 1;
-        bool m_interactiveFormValidation : 1;
-        bool m_usePreHTML5ParserQuirks : 1;
-        bool m_hyperlinkAuditingEnabled : 1;
-        bool m_crossOriginCheckInGetMatchedCSSRulesDisabled : 1;
-        bool m_forceCompositingMode : 1;
-        bool m_shouldInjectUserScriptsInInitialEmptyDocument : 1;
-        bool m_fixedElementsLayoutRelativeToFrame : 1;
-        bool m_allowDisplayOfInsecureContent : 1;
-        bool m_allowRunningOfInsecureContent : 1;
 #if ENABLE(SMOOTH_SCROLLING)
         bool m_scrollAnimatorEnabled : 1;
 #endif
-        bool m_mediaPlaybackRequiresUserGesture : 1;
-        bool m_mediaPlaybackAllowsInline : 1;
-        bool m_passwordEchoEnabled : 1;
-        bool m_suppressesIncrementalRendering : 1;
-        bool m_backspaceKeyNavigationEnabled : 1;
-        bool m_visualWordMovementEnabled : 1;
-
-#if ENABLE(VIDEO_TRACK)
-        bool m_shouldDisplaySubtitles : 1;
-        bool m_shouldDisplayCaptions : 1;
-        bool m_shouldDisplayTextDescriptions : 1;
-#endif
-        bool m_scrollingCoordinatorEnabled : 1;
-
-        bool m_notificationsEnabled : 1;
-        bool m_needsIsLoadingInAPISenseQuirk : 1;
 
 #if ENABLE(TOUCH_EVENTS)
         bool m_touchEventEmulationEnabled : 1;
 #endif
-        bool m_shouldRespectImageOrientation : 1;
-        bool m_wantsBalancedSetDefersLoadingBehavior : 1;
-        bool m_requestAnimationFrameEnabled : 1;
-        bool m_deviceSupportsTouch : 1;
-        bool m_deviceSupportsMouse : 1;
-        bool m_needsDidFinishLoadOrderQuirk : 1;
-
-        bool m_fixedPositionCreatesStackingContext : 1;
-        bool m_syncXHRInDocumentsEnabled : 1;
-        bool m_cookieEnabled : 1;
-
-        bool m_windowFocusRestricted : 1;
-
-        bool m_diagnosticLoggingEnabled : 1;
-
         bool m_scrollingPerformanceLoggingEnabled : 1;
-
-        bool m_applyPageScaleFactorInCompositor : 1;
-        bool m_plugInSnapshottingEnabled : 1;
 
         Timer<Settings> m_setImageLoadingSettingsTimer;
         void imageLoadingSettingsTimerFired(Timer<Settings>*);
-
-        double m_incrementalRenderingSuppressionTimeoutInSeconds;
 
         static double gDefaultMinDOMTimerInterval;
         static double gDefaultDOMTimerAlignmentInterval;

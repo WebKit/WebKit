@@ -879,6 +879,23 @@
           ],
         },
         {
+          'action_name': 'Settings',
+          'inputs': [
+            '../page/make_settings.pl',
+            '../page/Settings.in',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/SettingsMacros.h',
+          ],
+          'action': [
+            'python',
+            'scripts/action_makenames.py',
+            '<@(_outputs)',
+            '--',
+            '<@(_inputs)',
+          ],
+        },
+        {
           'action_name': 'UserAgentStyleSheets',
           'variables': {
             'scripts': [

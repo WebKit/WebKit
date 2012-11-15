@@ -47,6 +47,8 @@ EVENT_TARGET_FACTORY = $$PWD/dom/EventTargetFactory.in
 
 DOM_EXCEPTIONS = $$PWD/dom/DOMExceptions.in
 
+SETTINGS_MACROS = $$PWD/page/Settings.in
+
 COLORDATA_GPERF = $$PWD/platform/ColorData.gperf
 
 WALDOCSSPROPS = $$PWD/css/CSSPropertyNames.in
@@ -866,6 +868,14 @@ exceptioncodedescription.script = $$PWD/dom/make_dom_exceptions.pl
 exceptioncodedescription.commands = perl -I$$PWD/bindings/scripts $$exceptioncodedescription.script --input $$DOM_EXCEPTIONS --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
 exceptioncodedescription.depends = $$PWD/dom/make_dom_exceptions.pl $$DOM_EXCEPTIONS
 GENERATORS += exceptioncodedescription
+
+# GENERATOR 5-H:
+settingsmacros.output = SettingsMacros.h
+settingsmacros.input = SETTINGS_MACROS
+settingsmacros.script = $$PWD/page/make_settings.pl
+settingsmacros.commands = perl -I$$PWD/bindings/scripts $$settingsmacros.script --input $$SETTINGS_MACROS --outputDir ${QMAKE_FUNC_FILE_OUT_PATH}
+settingsmacros.depends = $$PWD/page/make_settings.pl $$SETTINGS_MACROS
+GENERATORS += settingsmacros
 
 # GENERATOR 8-A:
 entities.output = HTMLEntityTable.cpp

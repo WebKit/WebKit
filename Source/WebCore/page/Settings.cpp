@@ -129,23 +129,11 @@ static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;
 Settings::Settings(Page* page)
     : m_page(0)
     , m_mediaTypeOverride("screen")
-    , m_editableLinkBehavior(EditableLinkDefaultBehavior)
-    , m_textDirectionSubmenuInclusionBehavior(TextDirectionSubmenuAutomaticallyIncluded)
-    , m_passwordEchoDurationInSeconds(1)
     , m_minimumFontSize(0)
     , m_minimumLogicalFontSize(0)
     , m_defaultFontSize(0)
     , m_defaultFixedFontSize(0)
     , m_screenFontSubstitutionEnabled(true)
-    , m_validationMessageTimerMagnification(50)
-    , m_minimumAccelerated2dCanvasSize(257 * 256)
-    , m_layoutFallbackWidth(980)
-    , m_maximumDecodedImageSize(numeric_limits<size_t>::max())
-    , m_deviceWidth(0)
-    , m_deviceHeight(0)
-    , m_sessionStorageQuota(StorageMap::noQuota)
-    , m_editingBehaviorType(editingBehaviorTypeForPlatform())
-    , m_maximumHTMLParserDOMTreeDepth(defaultMaximumHTMLParserDOMTreeDepth)
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_textAutosizingFontScaleFactor(1)
@@ -156,58 +144,24 @@ Settings::Settings(Page* page)
     , m_textAutosizingEnabled(false)
 #endif
 #endif
+    SETTINGS_INITIALIZER_LIST
     , m_isSpatialNavigationEnabled(false)
     , m_isJavaEnabled(false)
     , m_isJavaEnabledForLocalFiles(true)
     , m_loadsImagesAutomatically(false)
-    , m_loadsSiteIconsIgnoringImageLoadingSetting(false)
     , m_privateBrowsingEnabled(false)
-    , m_caretBrowsingEnabled(false)
     , m_areImagesEnabled(true)
     , m_isMediaEnabled(true)
     , m_arePluginsEnabled(false)
-    , m_localStorageEnabled(false)
     , m_isScriptEnabled(false)
     , m_isWebSecurityEnabled(true)
-    , m_allowUniversalAccessFromFileURLs(true)
-    , m_allowFileAccessFromFileURLs(true)
-    , m_javaScriptCanOpenWindowsAutomatically(false)
-    , m_supportsMultipleWindows(true)
-    , m_javaScriptCanAccessClipboard(false)
-    , m_shouldPrintBackgrounds(false)
     , m_textAreasAreResizable(false)
-#if ENABLE(DASHBOARD_SUPPORT)
-    , m_usesDashboardBackwardCompatibilityMode(false)
-#endif
     , m_needsAdobeFrameReloadingQuirk(false)
-    , m_needsKeyboardEventDisambiguationQuirks(false)
-    , m_treatsAnyTextCSSLinkAsStylesheet(false)
-    , m_needsLeopardMailQuirks(false)
     , m_isDOMPasteAllowed(false)
-    , m_shrinksStandaloneImagesToFit(true)
     , m_usesPageCache(false)
-    , m_pageCacheSupportsPlugins(false)
-    , m_showsURLsInToolTips(false)
-    , m_showsToolTipOverTruncatedText(false)
-    , m_forceFTPDirectoryListings(false)
-    , m_developerExtrasEnabled(false)
-    , m_javaScriptExperimentsEnabled(false)
     , m_authorAndUserStylesEnabled(true)
-    , m_needsSiteSpecificQuirks(false)
     , m_fontRenderingMode(0)
-    , m_frameFlatteningEnabled(false)
-#if ENABLE(WEB_ARCHIVE)
-    , m_webArchiveDebugModeEnabled(false)
-#endif
-    , m_localFileContentSniffingEnabled(false)
     , m_inApplicationChromeMode(false)
-    , m_offlineWebApplicationCacheEnabled(false)
-    , m_enforceCSSMIMETypeInNoQuirksMode(true)
-    , m_usesEncodingDetector(false)
-    , m_allowScriptsToCloseWindows(false)
-    , m_canvasUsesAcceleratedDrawing(false)
-    , m_acceleratedDrawingEnabled(false)
-    , m_acceleratedFiltersEnabled(false)
     , m_isCSSCustomFilterEnabled(false)
 #if ENABLE(CSS_STICKY_POSITION)
     , m_cssStickyPositionEnabled(true)
@@ -218,90 +172,24 @@ Settings::Settings(Page* page)
 #if ENABLE(CSS_VARIABLES)
     , m_cssVariablesEnabled(false)
 #endif
-    , m_regionBasedColumnsEnabled(false)
-    , m_cssGridLayoutEnabled(false)
-    // FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
-    // they can't use by. Leaving enabled for now to not change existing behavior.
-    , m_downloadableBinaryFontsEnabled(true)
-    , m_xssAuditorEnabled(false)
     , m_acceleratedCompositingEnabled(true)
-    , m_acceleratedCompositingFor3DTransformsEnabled(true)
-    , m_acceleratedCompositingForVideoEnabled(true)
-    , m_acceleratedCompositingForPluginsEnabled(true)
-    , m_acceleratedCompositingForCanvasEnabled(true)
-    , m_acceleratedCompositingForAnimationEnabled(true)
-    , m_acceleratedCompositingForFixedPositionEnabled(false)
-    , m_acceleratedCompositingForScrollableFramesEnabled(false)
     , m_showDebugBorders(false)
     , m_showRepaintCounter(false)
-    , m_experimentalNotificationsEnabled(false)
-    , m_webGLEnabled(false)
-    , m_webGLErrorsToConsoleEnabled(false)
-    , m_openGLMultisamplingEnabled(true)
-    , m_privilegedWebGLExtensionsEnabled(false)
-    , m_webAudioEnabled(false)
-    , m_acceleratedCanvas2dEnabled(false)
-    , m_deferredCanvas2dEnabled(false)
-    , m_loadDeferringEnabled(true)
     , m_tiledBackingStoreEnabled(false)
-    , m_paginateDuringLayoutEnabled(false)
     , m_dnsPrefetchingEnabled(false)
-#if ENABLE(FULLSCREEN_API)
-    , m_fullScreenAPIEnabled(false)
-#endif
-    , m_asynchronousSpellCheckingEnabled(false)
 #if USE(UNIFIED_TEXT_CHECKING)
     , m_unifiedTextCheckerEnabled(true)
 #else
     , m_unifiedTextCheckerEnabled(false)
 #endif
-    , m_memoryInfoEnabled(false)
-    , m_quantizedMemoryInfoEnabled(false)
-    , m_interactiveFormValidation(false)
-    , m_usePreHTML5ParserQuirks(false)
-    , m_hyperlinkAuditingEnabled(false)
-    , m_crossOriginCheckInGetMatchedCSSRulesDisabled(false)
-    , m_forceCompositingMode(false)
-    , m_shouldInjectUserScriptsInInitialEmptyDocument(false)
-    , m_fixedElementsLayoutRelativeToFrame(false)
-    , m_allowDisplayOfInsecureContent(true)
-    , m_allowRunningOfInsecureContent(true)
 #if ENABLE(SMOOTH_SCROLLING)
     , m_scrollAnimatorEnabled(true)
 #endif
-    , m_mediaPlaybackRequiresUserGesture(false)
-    , m_mediaPlaybackAllowsInline(true)
-    , m_passwordEchoEnabled(false)
-    , m_suppressesIncrementalRendering(false)
-    , m_backspaceKeyNavigationEnabled(true)
-    , m_visualWordMovementEnabled(false)
-#if ENABLE(VIDEO_TRACK)
-    , m_shouldDisplaySubtitles(false)
-    , m_shouldDisplayCaptions(false)
-    , m_shouldDisplayTextDescriptions(false)
-#endif
-    , m_scrollingCoordinatorEnabled(false)
-    , m_notificationsEnabled(true)
-    , m_needsIsLoadingInAPISenseQuirk(false)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchEventEmulationEnabled(false)
 #endif
-    , m_shouldRespectImageOrientation(false)
-    , m_wantsBalancedSetDefersLoadingBehavior(false)
-    , m_requestAnimationFrameEnabled(true)
-    , m_deviceSupportsTouch(false)
-    , m_deviceSupportsMouse(true)
-    , m_needsDidFinishLoadOrderQuirk(false)
-    , m_fixedPositionCreatesStackingContext(false)
-    , m_syncXHRInDocumentsEnabled(true)
-    , m_cookieEnabled(true)
-    , m_windowFocusRestricted(true)
-    , m_diagnosticLoggingEnabled(false)
     , m_scrollingPerformanceLoggingEnabled(false)
-    , m_applyPageScaleFactorInCompositor(false)
-    , m_plugInSnapshottingEnabled(false)
     , m_setImageLoadingSettingsTimer(this, &Settings::imageLoadingSettingsTimerFired)
-    , m_incrementalRenderingSuppressionTimeoutInSeconds(defaultIncrementalRenderingSuppressionTimeoutInSeconds)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString
     // hash before trying to use it.
@@ -508,11 +396,6 @@ void Settings::imageLoadingSettingsTimerFired(Timer<Settings>*)
     setImageLoadingSettings(m_page);
 }
 
-void Settings::setLoadsSiteIconsIgnoringImageLoadingSetting(bool loadsSiteIcons)
-{
-    m_loadsSiteIconsIgnoringImageLoadingSetting = loadsSiteIcons;
-}
-
 void Settings::setScriptEnabled(bool isScriptEnabled)
 {
     m_isScriptEnabled = isScriptEnabled;
@@ -521,16 +404,6 @@ void Settings::setScriptEnabled(bool isScriptEnabled)
 void Settings::setWebSecurityEnabled(bool isWebSecurityEnabled)
 {
     m_isWebSecurityEnabled = isWebSecurityEnabled;
-}
-
-void Settings::setAllowUniversalAccessFromFileURLs(bool allowUniversalAccessFromFileURLs)
-{
-    m_allowUniversalAccessFromFileURLs = allowUniversalAccessFromFileURLs;
-}
-
-void Settings::setAllowFileAccessFromFileURLs(bool allowFileAccessFromFileURLs)
-{
-    m_allowFileAccessFromFileURLs = allowFileAccessFromFileURLs;
 }
 
 void Settings::setSpatialNavigationEnabled(bool isSpatialNavigationEnabled)
@@ -566,16 +439,6 @@ void Settings::setPluginsEnabled(bool arePluginsEnabled)
     m_arePluginsEnabled = arePluginsEnabled;
 }
 
-void Settings::setLocalStorageEnabled(bool localStorageEnabled)
-{
-    m_localStorageEnabled = localStorageEnabled;
-}
-
-void Settings::setSessionStorageQuota(unsigned sessionStorageQuota)
-{
-    m_sessionStorageQuota = sessionStorageQuota;
-}
-
 void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
     // FIXME http://webkit.org/b/67870: The private browsing storage session and cookie private
@@ -601,26 +464,6 @@ void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
     m_page->privateBrowsingStateChanged();
 }
 
-void Settings::setJavaScriptCanOpenWindowsAutomatically(bool javaScriptCanOpenWindowsAutomatically)
-{
-    m_javaScriptCanOpenWindowsAutomatically = javaScriptCanOpenWindowsAutomatically;
-}
-
-void Settings::setSupportsMultipleWindows(bool supportsMultipleWindows)
-{
-    m_supportsMultipleWindows = supportsMultipleWindows;
-}
-
-void Settings::setJavaScriptCanAccessClipboard(bool javaScriptCanAccessClipboard)
-{
-    m_javaScriptCanAccessClipboard = javaScriptCanAccessClipboard;
-}
-
-void Settings::setDefaultTextEncodingName(const String& defaultTextEncodingName)
-{
-    m_defaultTextEncodingName = defaultTextEncodingName;
-}
-
 void Settings::setUserStyleSheetLocation(const KURL& userStyleSheetLocation)
 {
     if (m_userStyleSheetLocation == userStyleSheetLocation)
@@ -629,16 +472,6 @@ void Settings::setUserStyleSheetLocation(const KURL& userStyleSheetLocation)
     m_userStyleSheetLocation = userStyleSheetLocation;
 
     m_page->userStyleSheetLocationChanged();
-}
-
-void Settings::setFixedElementsLayoutRelativeToFrame(bool fixedElementsLayoutRelativeToFrame)
-{
-    m_fixedElementsLayoutRelativeToFrame = fixedElementsLayoutRelativeToFrame;
-}
-
-void Settings::setShouldPrintBackgrounds(bool shouldPrintBackgrounds)
-{
-    m_shouldPrintBackgrounds = shouldPrintBackgrounds;
 }
 
 void Settings::setTextAreasAreResizable(bool textAreasAreResizable)
@@ -650,46 +483,11 @@ void Settings::setTextAreasAreResizable(bool textAreasAreResizable)
     m_page->setNeedsRecalcStyleInAllFrames();
 }
 
-void Settings::setEditableLinkBehavior(EditableLinkBehavior editableLinkBehavior)
-{
-    m_editableLinkBehavior = editableLinkBehavior;
-}
-
-void Settings::setTextDirectionSubmenuInclusionBehavior(TextDirectionSubmenuInclusionBehavior behavior)
-{
-    m_textDirectionSubmenuInclusionBehavior = behavior;
-}
-
-#if ENABLE(DASHBOARD_SUPPORT)
-void Settings::setUsesDashboardBackwardCompatibilityMode(bool usesDashboardBackwardCompatibilityMode)
-{
-    m_usesDashboardBackwardCompatibilityMode = usesDashboardBackwardCompatibilityMode;
-}
-#endif
-
 // FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need to phase it out once Adobe
 // can fix the bug from their end.
 void Settings::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUnchangedSRC)
 {
     m_needsAdobeFrameReloadingQuirk = shouldNotReloadIFramesForUnchangedSRC;
-}
-
-// This is a quirk we are pro-actively applying to old applications. It changes keyboard event dispatching,
-// making keyIdentifier available on keypress events, making charCode available on keydown/keyup events,
-// and getting keypress dispatched in more cases.
-void Settings::setNeedsKeyboardEventDisambiguationQuirks(bool needsQuirks)
-{
-    m_needsKeyboardEventDisambiguationQuirks = needsQuirks;
-}
-
-void Settings::setTreatsAnyTextCSSLinkAsStylesheet(bool treatsAnyTextCSSLinkAsStylesheet)
-{
-    m_treatsAnyTextCSSLinkAsStylesheet = treatsAnyTextCSSLinkAsStylesheet;
-}
-
-void Settings::setNeedsLeopardMailQuirks(bool needsQuirks)
-{
-    m_needsLeopardMailQuirks = needsQuirks;
 }
 
 void Settings::setDOMPasteAllowed(bool DOMPasteAllowed)
@@ -752,41 +550,6 @@ void Settings::setUsesPageCache(bool usesPageCache)
     }
 }
 
-void Settings::setShrinksStandaloneImagesToFit(bool shrinksStandaloneImagesToFit)
-{
-    m_shrinksStandaloneImagesToFit = shrinksStandaloneImagesToFit;
-}
-
-void Settings::setShowsURLsInToolTips(bool showsURLsInToolTips)
-{
-    m_showsURLsInToolTips = showsURLsInToolTips;
-}
-
-void Settings::setShowsToolTipOverTruncatedText(bool showsToolTipForTruncatedText)
-{
-    m_showsToolTipOverTruncatedText = showsToolTipForTruncatedText;
-}
-
-void Settings::setFTPDirectoryTemplatePath(const String& path)
-{
-    m_ftpDirectoryTemplatePath = path;
-}
-
-void Settings::setForceFTPDirectoryListings(bool force)
-{
-    m_forceFTPDirectoryListings = force;
-}
-
-void Settings::setDeveloperExtrasEnabled(bool developerExtrasEnabled)
-{
-    m_developerExtrasEnabled = developerExtrasEnabled;
-}
-
-void Settings::setJavaScriptExperimentsEnabled(bool javaScriptExperimentsEnabled)
-{
-    m_javaScriptExperimentsEnabled = javaScriptExperimentsEnabled;
-}
-
 void Settings::setAuthorAndUserStylesEnabled(bool authorAndUserStylesEnabled)
 {
     if (m_authorAndUserStylesEnabled == authorAndUserStylesEnabled)
@@ -809,46 +572,9 @@ FontRenderingMode Settings::fontRenderingMode() const
     return static_cast<FontRenderingMode>(m_fontRenderingMode);
 }
 
-void Settings::setNeedsSiteSpecificQuirks(bool needsQuirks)
-{
-    m_needsSiteSpecificQuirks = needsQuirks;
-}
-
-void Settings::setFrameFlatteningEnabled(bool frameFlatteningEnabled)
-{
-    m_frameFlatteningEnabled = frameFlatteningEnabled;
-}
-
-#if ENABLE(WEB_ARCHIVE)
-void Settings::setWebArchiveDebugModeEnabled(bool enabled)
-{
-    m_webArchiveDebugModeEnabled = enabled;
-}
-#endif
-
-void Settings::setLocalFileContentSniffingEnabled(bool enabled)
-{
-    m_localFileContentSniffingEnabled = enabled;
-}
-
-void Settings::setLocalStorageDatabasePath(const String& path)
-{
-    m_localStorageDatabasePath = path;
-}
-
 void Settings::setApplicationChromeMode(bool mode)
 {
     m_inApplicationChromeMode = mode;
-}
-
-void Settings::setOfflineWebApplicationCacheEnabled(bool enabled)
-{
-    m_offlineWebApplicationCacheEnabled = enabled;
-}
-
-void Settings::setEnforceCSSMIMETypeInNoQuirksMode(bool enforceCSSMIMETypeInNoQuirksMode)
-{
-    m_enforceCSSMIMETypeInNoQuirksMode = enforceCSSMIMETypeInNoQuirksMode;
 }
 
 #if USE(SAFARI_THEME)
@@ -857,11 +583,6 @@ void Settings::setShouldPaintNativeControls(bool shouldPaintNativeControls)
     gShouldPaintNativeControls = shouldPaintNativeControls;
 }
 #endif
-
-void Settings::setUsesEncodingDetector(bool usesEncodingDetector)
-{
-    m_usesEncodingDetector = usesEncodingDetector;
-}
 
 void Settings::setDNSPrefetchingEnabled(bool dnsPrefetchingEnabled)
 {
@@ -872,26 +593,6 @@ void Settings::setDNSPrefetchingEnabled(bool dnsPrefetchingEnabled)
     m_page->dnsPrefetchingStateChanged();
 }
 
-void Settings::setAllowScriptsToCloseWindows(bool allowScriptsToCloseWindows)
-{
-    m_allowScriptsToCloseWindows = allowScriptsToCloseWindows;
-}
-
-void Settings::setCaretBrowsingEnabled(bool caretBrowsingEnabled)
-{
-    m_caretBrowsingEnabled = caretBrowsingEnabled;
-}
-
-void Settings::setDownloadableBinaryFontsEnabled(bool downloadableBinaryFontsEnabled)
-{
-    m_downloadableBinaryFontsEnabled = downloadableBinaryFontsEnabled;
-}
-
-void Settings::setXSSAuditorEnabled(bool xssAuditorEnabled)
-{
-    m_xssAuditorEnabled = xssAuditorEnabled;
-}
-
 void Settings::setAcceleratedCompositingEnabled(bool enabled)
 {
     if (m_acceleratedCompositingEnabled == enabled)
@@ -899,36 +600,6 @@ void Settings::setAcceleratedCompositingEnabled(bool enabled)
         
     m_acceleratedCompositingEnabled = enabled;
     m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void Settings::setCanvasUsesAcceleratedDrawing(bool enabled)
-{
-    m_canvasUsesAcceleratedDrawing = enabled;
-}
-
-void Settings::setAcceleratedCompositingFor3DTransformsEnabled(bool enabled)
-{
-    m_acceleratedCompositingFor3DTransformsEnabled = enabled;
-}
-
-void Settings::setAcceleratedCompositingForVideoEnabled(bool enabled)
-{
-    m_acceleratedCompositingForVideoEnabled = enabled;
-}
-
-void Settings::setAcceleratedCompositingForPluginsEnabled(bool enabled)
-{
-    m_acceleratedCompositingForPluginsEnabled = enabled;
-}
-
-void Settings::setAcceleratedCompositingForCanvasEnabled(bool enabled)
-{
-    m_acceleratedCompositingForCanvasEnabled = enabled;
-}
-
-void Settings::setAcceleratedCompositingForAnimationEnabled(bool enabled)
-{
-    m_acceleratedCompositingForAnimationEnabled = enabled;
 }
 
 void Settings::setShowDebugBorders(bool enabled)
@@ -949,62 +620,12 @@ void Settings::setShowRepaintCounter(bool enabled)
     m_page->setNeedsRecalcStyleInAllFrames();
 }
 
-void Settings::setExperimentalNotificationsEnabled(bool enabled)
-{
-    m_experimentalNotificationsEnabled = enabled;
-}
-
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
 void Settings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)
 {
     gShouldUseHighResolutionTimers = shouldUseHighResolutionTimers;
 }
 #endif
-
-void Settings::setWebAudioEnabled(bool enabled)
-{
-    m_webAudioEnabled = enabled;
-}
-
-void Settings::setWebGLEnabled(bool enabled)
-{
-    m_webGLEnabled = enabled;
-}
-
-void Settings::setWebGLErrorsToConsoleEnabled(bool enabled)
-{
-    m_webGLErrorsToConsoleEnabled = enabled;
-}
-
-void Settings::setOpenGLMultisamplingEnabled(bool enabled)
-{
-    m_openGLMultisamplingEnabled = enabled;
-}
-
-void Settings::setPrivilegedWebGLExtensionsEnabled(bool enabled)
-{
-    m_privilegedWebGLExtensionsEnabled = enabled;
-}
-
-void Settings::setAccelerated2dCanvasEnabled(bool enabled)
-{
-    m_acceleratedCanvas2dEnabled = enabled;
-}
-
-void Settings::setDeferred2dCanvasEnabled(bool enabled)
-{
-    m_deferredCanvas2dEnabled = enabled;
-}
-
-void Settings::setMinimumAccelerated2dCanvasSize(int numPixels)
-{
-    m_minimumAccelerated2dCanvasSize = numPixels;
-}
-
-void Settings::setLoadDeferringEnabled(bool enabled)
-{
-    m_loadDeferringEnabled = enabled;
-}
 
 void Settings::setStorageBlockingPolicy(SecurityOrigin::StorageBlockingPolicy enabled)
 {

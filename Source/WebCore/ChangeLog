@@ -1,3 +1,49 @@
+2012-11-15  Tony Chang  <tony@chromium.org>
+
+        Generate Settings from a .in file
+        https://bugs.webkit.org/show_bug.cgi?id=100393
+
+        Reviewed by Adam Barth.
+
+        Generate most settings from an .in file to reduce human mistakes and
+        to make it easier to add/remove new settings.
+
+        I only moved settings that are easy to move at this point.  There are many more that
+        have some minor naming inconsistencies that we can also move to Settings.in, but I'll
+        do that in a follow up patch.
+
+        This doesn't generate SettingInternals.* yet-- we can do that in a follow up patch.
+
+        No new tests, this is a refactor.
+
+        * CMakeLists.txt:
+        * DerivedSources.make: Run make_settings.pl.
+        * DerivedSources.pri: Run make_settings.pl.
+        * GNUmakefile.am: Run make_settings.pl.
+        * GNUmakefile.list.am:
+        * WebCore.exp.in: Remove functions that are now inline in the header.
+        * WebCore.gyp/WebCore.gyp: Run action_makenames.py, which will run make_settings.pl.
+        * WebCore.gyp/scripts/action_makenames.py:
+        (main): Allow make_settings.pl.
+        * WebCore.order: Remove functions that are now inline in the header.
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::setMessageDOMAndStartTimer): Fix a typo in "magnification".
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Replace generated settings with SETTINGS_INITIALIZER_LIST.
+        * page/Settings.h:
+        (Settings): Replace generated settings with SETTINGS_GETTERS_AND_SETTERS and SETTINGS_MEMBER_VARIABLES.
+        * page/Settings.in: Added.
+        * page/make_settings.pl: Added.
+        (defaultItemFactory):
+        (generateCode):
+        (generateHeader): Use a similar model as make_names.pl.
+        (printConditionalMacros):
+        (printGettersAndSetters):
+        (printMemberVariables):
+        (printGetterAndSetter):
+        (printInitializerList):
+        (printInitializer):
+
 2012-11-15  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Refactoring to move logic of creating lazy decoded SkBitmap into DeferredImageDecoder

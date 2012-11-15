@@ -504,6 +504,9 @@ DerivedSources/WebCore/EventTargetHeaders.h DerivedSources/WebCore/EventTargetIn
 DerivedSources/WebCore/ExceptionCodeDescription.cpp DerivedSources/WebCore/ExceptionCodeDescription.h DerivedSources/WebCore/ExceptionHeaders.h DerivedSources/WebCore/ExceptionInterfaces.h: $(WebCore)/dom/make_dom_exceptions.pl $(WebCore)/dom/DOMExceptions.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --input $(WebCore)/dom/DOMExceptions.in --outputDir "$(GENSOURCES_WEBCORE)"
 
+DerivedSources/WebCore/SettingsMacros.h: $(WebCore)/page/make_settings.pl $(WebCore)/page/Settings.in
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --input $(WebCore)/page/Settings.in --outputDir "$(GENSOURCES_WEBCORE)"
+
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.py
 DerivedSources/WebCore/InspectorProtocolVersion.h : $(WebCore)/inspector/Inspector.json $(WebCore)/inspector/generate-inspector-protocol-version
 	$(AM_V_GEN)$(PYTHON) $(WebCore)/inspector/generate-inspector-protocol-version -o $(GENSOURCES_WEBCORE)/InspectorProtocolVersion.h $(WebCore)/inspector/Inspector.json
@@ -807,6 +810,8 @@ EXTRA_DIST += \
 	Source/WebCore/make-hash-tools.pl \
 	Source/WebCore/mathml/mathattrs.in \
 	Source/WebCore/mathml/mathtags.in \
+	Source/WebCore/page/make_settings.pl \
+	Source/WebCore/page/Settings.in \
 	Source/WebCore/platform/ColorData.gperf \
 	Source/WebCore/platform/text/mac/make-charset-table.pl \
 	Source/WebCore/svg/svgattrs.in \

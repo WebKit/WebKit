@@ -925,6 +925,13 @@ MathMLElementFactory.cpp MathMLNames.cpp : dom/make_names.pl mathml/mathtags.in 
 
 # --------
 
+all : SettingsMacros.h
+
+SettingsMacros.h : page/make_settings.pl page/Settings.in
+	perl -I $(WebCore)/bindings/scripts $< --input $(WebCore)/page/Settings.in
+
+# --------
+
 # Common generator things
 
 GENERATE_SCRIPTS = \
