@@ -1,3 +1,31 @@
+2012-11-15  Anders Carlsson  <andersca@apple.com>
+
+        Consolidate four accelerated compositing WKView methods into a single method
+        https://bugs.webkit.org/show_bug.cgi?id=102419
+
+        Reviewed by Andreas Kling.
+
+        Add a single -[WKView _setAcceleratedCompositingModeRootLayer:] method and have
+        the existing PageClientImpl member functions call it. Also, add a new
+        PageClient member function, setAcceleratedCompositingRootLayer.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::exitAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::updateAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::setAcceleratedCompositingRootLayer):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _processDidCrash]):
+        (-[WKView _setAcceleratedCompositingModeRootLayer:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::commit):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setAcceleratedCompositingRootLayer):
+
 2012-11-15  Rick Byers  <rbyers@chromium.org>
 
         No tests for changing mouse cursors

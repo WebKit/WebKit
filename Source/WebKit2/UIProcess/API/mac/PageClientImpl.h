@@ -62,6 +62,7 @@ private:
     virtual bool isViewInWindow();
     virtual LayerHostingMode viewLayerHostingMode() OVERRIDE;
     virtual ColorSpaceData colorSpace() OVERRIDE;
+    virtual void setAcceleratedCompositingRootLayer(CALayer *) OVERRIDE;
 
     virtual void processDidCrash();
     virtual void pageClosed();

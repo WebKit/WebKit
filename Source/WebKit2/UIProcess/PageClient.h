@@ -37,6 +37,8 @@
 #if PLATFORM(MAC)
 #include "PluginComplexTextInputState.h"
 
+OBJC_CLASS CALayer;
+
 #if USE(APPKIT)
 OBJC_CLASS WKView;
 OBJC_CLASS NSTextAlternatives;
@@ -218,6 +220,7 @@ public:
     virtual void recommendedScrollbarStyleDidChange(int32_t newStyle) = 0;
 
     virtual ColorSpaceData colorSpace() = 0;
+    virtual void setAcceleratedCompositingRootLayer(CALayer *) = 0;
 
 #if USE(APPKIT)
     virtual WKView* wkView() const = 0;

@@ -65,10 +65,7 @@ namespace WebKit {
 - (NSRect)_convertToUserSpace:(NSRect)rect;
 - (void)_setFindIndicator:(PassRefPtr<WebKit::FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut animate:(BOOL)animate;
 
-- (void)_enterAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext;
-- (void)_enterAcceleratedCompositingModeWithRootLayer:(CALayer *)rootLayer;
-- (void)_exitAcceleratedCompositingMode;
-- (void)_updateAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext;
+- (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer;
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;
 

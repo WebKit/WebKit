@@ -69,7 +69,8 @@ void RemoteLayerTreeHost::commit(const RemoteLayerTreeTransaction& transaction)
 {
     GraphicsLayer* rootLayer = getOrCreateLayer(transaction.rootLayerID());
     if (m_rootLayer != rootLayer) {
-        // FIXME: Update the root layer.
+        m_rootLayer = rootLayer;
+        m_webPageProxy->setAcceleratedCompositingRootLayer(m_rootLayer);
     }
 
 #ifndef NDEBUG

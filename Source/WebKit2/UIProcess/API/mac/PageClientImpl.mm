@@ -384,22 +384,31 @@ void PageClientImpl::accessibilityWebProcessTokenReceived(const CoreIPC::DataRef
     [m_wkView _setAccessibilityWebProcessToken:remoteToken];
 }
     
-#if USE(ACCELERATED_COMPOSITING)
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-    [m_wkView _enterAcceleratedCompositingMode:layerTreeContext];
+    ASSERT(!layerTreeContext.isEmpty());
+
+    CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
+    [m_wkView _setAcceleratedCompositingModeRootLayer:renderLayer];
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
-    [m_wkView _exitAcceleratedCompositingMode];
+    [m_wkView _setAcceleratedCompositingModeRootLayer:nil];
 }
 
 void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& layerTreeContext)
 {
-    [m_wkView _updateAcceleratedCompositingMode:layerTreeContext];
+    ASSERT(!layerTreeContext.isEmpty());
+
+    CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
+    [m_wkView _setAcceleratedCompositingModeRootLayer:renderLayer];
 }
-#endif // USE(ACCELERATED_COMPOSITING)
+
+void PageClientImpl::setAcceleratedCompositingRootLayer(CALayer *rootLayer)
+{
+    [m_wkView _setAcceleratedCompositingModeRootLayer:rootLayer];
+}
 
 void PageClientImpl::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
 {

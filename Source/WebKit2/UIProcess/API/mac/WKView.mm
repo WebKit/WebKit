@@ -2316,7 +2316,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (void)_processDidCrash
 {
     if (_data->_layerHostingView)
-        [self _exitAcceleratedCompositingMode];
+        [self _setAcceleratedCompositingModeRootLayer:nil];
 
     [self _updateRemoteAccessibilityRegistration:NO];
 }
@@ -2562,68 +2562,43 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_findIndicatorWindow->setFindIndicator(findIndicator, fadeOut, animate);
 }
 
-- (void)_enterAcceleratedCompositingMode:(const LayerTreeContext&)layerTreeContext
+
+- (void)_setAcceleratedCompositingModeRootLayer:(CALayer *)rootLayer
 {
-    ASSERT(!layerTreeContext.isEmpty());
-
-    CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
-    [self _enterAcceleratedCompositingModeWithRootLayer:renderLayer];
-}
-
-- (void)_enterAcceleratedCompositingModeWithRootLayer:(CALayer *)layer
-{
-    ASSERT(!_data->_layerHostingView);
-
-    // Create an NSView that will host our layer tree.
-    _data->_layerHostingView.adoptNS([[WKFlippedView alloc] initWithFrame:[self bounds]]);
-    [_data->_layerHostingView.get() setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    [self addSubview:_data->_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
+    if (rootLayer) {
+        if (!_data->_layerHostingView) {
+            // Create an NSView that will host our layer tree.
+            _data->_layerHostingView.adoptNS([[WKFlippedView alloc] initWithFrame:[self bounds]]);
+            [_data->_layerHostingView.get() setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
-    // Create a root layer that will back the NSView.
-    RetainPtr<CALayer> rootLayer(AdoptNS, [[CALayer alloc] init]);
+
+            [self addSubview:_data->_layerHostingView.get() positioned:NSWindowBelow relativeTo:nil];
+
+            // Create a root layer that will back the NSView.
+            RetainPtr<CALayer> layer = adoptNS([[CALayer alloc] init]);
 #ifndef NDEBUG
-    [rootLayer.get() setName:@"Hosting root layer"];
+            [layer setName:@"Hosting root layer"];
 #endif
 
-    [rootLayer.get() addSublayer:layer];
+            [_data->_layerHostingView setLayer:layer.get()];
+            [_data->_layerHostingView setWantsLayer:YES];
+        }
 
-    [_data->_layerHostingView.get() setLayer:rootLayer.get()];
-    [_data->_layerHostingView.get() setWantsLayer:YES];
+        [_data->_layerHostingView layer].sublayers = [NSArray arrayWithObject:rootLayer];
+    } else {
+        if (_data->_layerHostingView) {
+            [_data->_layerHostingView removeFromSuperview];
+            [_data->_layerHostingView setLayer:nil];
+            [_data->_layerHostingView setWantsLayer:NO];
+
+            _data->_layerHostingView = nullptr;
+        }
+    }
 
     [CATransaction commit];
-}
-
-- (void)_exitAcceleratedCompositingMode
-{
-    ASSERT(_data->_layerHostingView);
-
-    [_data->_layerHostingView.get() removeFromSuperview];
-    [_data->_layerHostingView.get() setLayer:nil];
-    [_data->_layerHostingView.get() setWantsLayer:NO];
-    
-    _data->_layerHostingView = nullptr;
-}
-
-- (void)_updateAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext
-{
-    if (_data->_layerHostingView) {
-        // Wrap the call to setSublayers: in a CATransaction with actions disabled to
-        // keep CA from cross-fading between the two sublayer arrays.
-        [CATransaction begin];
-        [CATransaction setDisableActions:YES];
-
-        CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
-        [[_data->_layerHostingView.get() layer] setSublayers:[NSArray arrayWithObject:renderLayer]];
-
-        [CATransaction commit];
-    } else {
-        [self _exitAcceleratedCompositingMode];
-        [self _enterAcceleratedCompositingMode:layerTreeContext];
-    }
 }
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data

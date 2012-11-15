@@ -40,6 +40,7 @@
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import <WebCore/DictationAlternative.h>
+#import <WebCore/GraphicsLayer.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebKitSystemInterface.h>
@@ -471,6 +472,11 @@ bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEven
 WKView* WebPageProxy::wkView() const
 {
     return m_pageClient->wkView();
+}
+
+void WebPageProxy::setAcceleratedCompositingRootLayer(const GraphicsLayer* rootLayer)
+{
+    m_pageClient->setAcceleratedCompositingRootLayer(rootLayer->platformLayer());
 }
 
 } // namespace WebKit

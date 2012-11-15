@@ -404,7 +404,9 @@ public:
     CGContextRef containingWindowGraphicsContext();
     bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
-    
+
+    void setAcceleratedCompositingRootLayer(const WebCore::GraphicsLayer*);
+
 #if USE(APPKIT)
     WKView* wkView() const;
 #endif
