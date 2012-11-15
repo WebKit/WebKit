@@ -109,7 +109,7 @@ public:
     const StylePropertySet* properties() const { return m_properties.get(); }
     StylePropertySet* mutableProperties();
     
-    void parserAdoptSelectorVector(CSSSelectorVector& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
     void setProperties(PassRefPtr<StylePropertySet>);
 
@@ -158,7 +158,7 @@ public:
     const StylePropertySet* properties() const { return m_properties.get(); }
     StylePropertySet* mutableProperties();
 
-    void parserAdoptSelectorVector(CSSSelectorVector& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void parserAdoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void wrapperAdoptSelectorList(CSSSelectorList& selectors) { m_selectorList.adopt(selectors); }
     void setProperties(PassRefPtr<StylePropertySet>);
 
@@ -213,7 +213,7 @@ private:
 
 class StyleRuleRegion : public StyleRuleBlock {
 public:
-    static PassRefPtr<StyleRuleRegion> create(CSSSelectorVector* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+    static PassRefPtr<StyleRuleRegion> create(Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
     {
         return adoptRef(new StyleRuleRegion(selectors, adoptRules));
     }
@@ -225,7 +225,7 @@ public:
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
-    StyleRuleRegion(CSSSelectorVector*, Vector<RefPtr<StyleRuleBase> >& adoptRules);
+    StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >*, Vector<RefPtr<StyleRuleBase> >& adoptRules);
     StyleRuleRegion(const StyleRuleRegion&);
     
     CSSSelectorList m_selectorList;

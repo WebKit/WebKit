@@ -26,7 +26,6 @@
 #ifndef CSSSelectorList_h
 #define CSSSelectorList_h
 
-#include "CSSParserValues.h"
 #include "CSSSelector.h"
 
 namespace WebCore {
@@ -42,7 +41,7 @@ public:
     ~CSSSelectorList();
 
     void adopt(CSSSelectorList& list);
-    void adoptSelectorVector(CSSSelectorVector&);
+    void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector);
 
     CSSSelector* first() const { return m_selectorArray ? m_selectorArray : 0; }
     static CSSSelector* next(CSSSelector*);

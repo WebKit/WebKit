@@ -58,7 +58,7 @@ void CSSSelectorList::adopt(CSSSelectorList& list)
     list.m_selectorArray = 0;
 }
 
-void CSSSelectorList::adoptSelectorVector(CSSSelectorVector& selectorVector)
+void CSSSelectorList::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector)
 {
     deleteSelectors();
     const size_t vectorSize = selectorVector.size();

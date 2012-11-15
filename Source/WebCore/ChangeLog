@@ -1,3 +1,61 @@
+2012-11-14  Tony Chang  <tony@chromium.org>
+
+        Convert m_selectorVector back to a stack allocated m_reusableSelectorVector
+        https://bugs.webkit.org/show_bug.cgi?id=102295
+
+        Reviewed by Andreas Kling.
+
+        Revert r125252 because we're not going to go forward with implementing CSS hierarchies at this time.
+
+        No new tests because there should be no change in behavior.
+
+        * css/CSSGrammar.y.in:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore):
+        (WebCore::filterProperties):
+        (WebCore::CSSParser::createStylePropertySet):
+        (WebCore::CSSParser::addProperty):
+        (WebCore::CSSParser::rollbackLastProperties):
+        (WebCore::CSSParser::clearProperties):
+        (WebCore::CSSParser::parse4Values):
+        (WebCore::CSSParser::parseFlowThread):
+        (WebCore::CSSParser::addTextDecorationProperty):
+        (WebCore::CSSParser::createFloatingSelectorVector):
+        (WebCore::CSSParser::sinkFloatingSelectorVector):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::createPageRule):
+        (WebCore::CSSParser::setReusableRegionSelectorVector):
+        (WebCore::CSSParser::startDeclarationsForMarginBox):
+        (WebCore::CSSParser::endDeclarationsForMarginBox):
+        (WebCore::CSSParser::deleteFontFaceOnlyValues):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::hasProperties):
+        (WebCore::CSSParser::reusableSelectorVector):
+        (CSSParser):
+        (WebCore::CSSParser::reusableRegionSelectorVector):
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::adoptSelectorVector):
+        * css/CSSParserValues.h:
+        (CSSParserSelector):
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+        * css/CSSSelectorList.h:
+        (CSSSelectorList):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleRegion::StyleRuleRegion):
+        * css/StyleRule.h:
+        (WebCore::StyleRule::parserAdoptSelectorVector):
+        (WebCore::StyleRulePage::parserAdoptSelectorVector):
+        (WebCore::StyleRuleRegion::create):
+        (StyleRuleRegion):
+
 2012-11-14  Alec Flett  <alecflett@chromium.org>
 
         Add tests for explicit serialization values

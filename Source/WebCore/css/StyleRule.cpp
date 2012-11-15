@@ -392,7 +392,7 @@ void StyleRuleMedia::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectI
     info.addMember(m_mediaQueries);
 }
 
-StyleRuleRegion::StyleRuleRegion(CSSSelectorVector* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
+StyleRuleRegion::StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >* selectors, Vector<RefPtr<StyleRuleBase> >& adoptRules)
     : StyleRuleBlock(Region, adoptRules)
 {
     m_selectorList.adoptSelectorVector(*selectors);
