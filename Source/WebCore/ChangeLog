@@ -1,3 +1,15 @@
+2012-11-14  Kentaro Hara  <haraken@chromium.org>
+
+        Remove unused functions from CodeGenerator.pm
+        https://bugs.webkit.org/show_bug.cgi?id=102316
+
+        Reviewed by Adam Barth.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GenerateCompileTimeCheckForEnumsIfNeeded):
+
 2012-11-14  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Update BB10 form theme.

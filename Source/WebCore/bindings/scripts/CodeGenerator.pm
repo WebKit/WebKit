@@ -253,31 +253,6 @@ sub AddMethodsConstantsAndAttributesFromParentClasses
     });
 }
 
-sub GetMethodsAndAttributesFromParentClasses
-{
-    # For the passed interface, recursively parse all parent
-    # IDLs in order to find out all inherited properties/methods.
-
-    my $object = shift;
-    my $dataNode = shift;
-
-    my @parentList = ();
-
-    $object->ForAllParents($dataNode, undef, sub {
-        my $interface = shift;
-
-        my $hash = {
-            "name" => $interface->name,
-            "functions" => $interface->functions,
-            "attributes" => $interface->attributes
-        };
-
-        unshift(@parentList, $hash);
-    });
-
-    return @parentList;
-}
-
 sub FindSuperMethod
 {
     my ($object, $dataNode, $functionName) = @_;
@@ -371,15 +346,6 @@ sub IsConstructorTemplate
     my $template = shift;
 
     return $dataNode->extendedAttributes->{"ConstructorTemplate"} && $dataNode->extendedAttributes->{"ConstructorTemplate"} eq $template;
-}
-
-sub IsNumericType
-{
-    my $object = shift;
-    my $type = shift;
-
-    return 1 if $numericTypeHash{$type};
-    return 0;
 }
 
 sub IsPrimitiveType
@@ -648,12 +614,6 @@ sub SetterExpression
     return ($functionName, $contentAttributeName);
 }
 
-sub ShouldCheckEnums
-{
-    my $dataNode = shift;
-    return not $dataNode->extendedAttributes->{"DoNotCheckConstants"};
-}
-
 sub GenerateConditionalString
 {
     my $generator = shift;
@@ -689,7 +649,7 @@ sub GenerateCompileTimeCheckForEnumsIfNeeded
     my $interfaceName = $dataNode->name;
     my @checks = ();
     # If necessary, check that all constants are available as enums with the same value.
-    if (ShouldCheckEnums($dataNode) && @{$dataNode->constants}) {
+    if (!$dataNode->extendedAttributes->{"DoNotCheckConstants"} && @{$dataNode->constants}) {
         push(@checks, "\n");
         foreach my $constant (@{$dataNode->constants}) {
             my $reflect = $constant->extendedAttributes->{"Reflect"};
