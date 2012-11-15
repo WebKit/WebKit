@@ -1,3 +1,24 @@
+2012-11-14  Dirk Schulze  <krit@webkit.org>
+
+        Support animation of basic shape 'polygon'
+        https://bugs.webkit.org/show_bug.cgi?id=102080
+
+        Reviewed by Daniel Bates.
+
+        The basic shapes 'circle', 'rectangle' and 'ellipse' are animatable with the committed
+        patch http://trac.webkit.org/changeset/134352.
+        This is a follow-up patch to make 'polygon' animatable as well, as long as the number
+        of vertices between start and end polygon is the same.
+
+        Added polygon animation test to existing test:
+            fast/exclusions/shape-inside/shape-inside-animation.html
+            css3/masking/clip-path-animation.html
+
+        * page/animation/CSSPropertyAnimation.cpp: Forgot to add copyright with last commits.
+        * rendering/style/BasicShapes.cpp:
+        (WebCore::BasicShape::canBlend): Polygons are allowed now.
+        (WebCore::BasicShapePolygon::blend): Interpolate polygon shapes.
+
 2012-11-14  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Fix code generator warnings.

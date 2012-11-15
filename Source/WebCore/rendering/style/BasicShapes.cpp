@@ -32,7 +32,6 @@
 #include "BasicShapes.h"
 #include "FloatRect.h"
 #include "LengthFunctions.h"
-#include "NotImplemented.h"
 #include "Path.h"
 
 namespace WebCore {
@@ -43,8 +42,9 @@ bool BasicShape::canBlend(const BasicShape* other) const
     if (type() != other->type())
         return false;
 
-    // FIXME: Support animations between polygons in the future.
-    if (type() == BasicShape::BASIC_SHAPE_POLYGON)
+    // Just polygons with same number of vertices can be animated.
+    if (type() == BasicShape::BASIC_SHAPE_POLYGON
+        && static_cast<const BasicShapePolygon*>(this)->values().size() != static_cast<const BasicShapePolygon*>(other)->values().size())
         return false;
 
     return true;
@@ -147,9 +147,26 @@ void BasicShapePolygon::path(Path& path, const FloatRect& boundingBox)
     path.closeSubpath();
 }
 
-PassRefPtr<BasicShape> BasicShapePolygon::blend(const BasicShape*, double) const
+PassRefPtr<BasicShape> BasicShapePolygon::blend(const BasicShape* other, double progress) const
 {
-    notImplemented();
-    return BasicShapePolygon::create();
+    ASSERT(type() == other->type());
+
+    const BasicShapePolygon* o = static_cast<const BasicShapePolygon*>(other);
+    ASSERT(m_values.size() == o->values().size());
+    ASSERT(!(m_values.size() % 2));
+
+    size_t length = m_values.size();
+    RefPtr<BasicShapePolygon> result = BasicShapePolygon::create();
+    if (!length)
+        return result.release();
+
+    result->setWindRule(o->windRule());
+
+    for (size_t i = 0; i < length; i = i + 2) {
+        result->appendPoint(m_values.at(i).blend(o->values().at(i), progress),
+            m_values.at(i + 1).blend(o->values().at(i + 1), progress));
+    }
+
+    return result.release();
 }
 }

@@ -76,6 +76,9 @@ function parseBasicShape(s)
     case "ellipse":
         matches = s.match("ellipse\\((.*)\\s*,\\s*(.*)\\s*,\\s*(.*)\\,\\s*(.*)\\)");
         break;
+    case "polygon":
+        matches = s.match("polygon\\(nonzero, (.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\s*,\\s*(.*)\\s+(.*)\\)");
+        break;
     default:
         return null;
     }

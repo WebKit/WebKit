@@ -1,3 +1,21 @@
+2012-11-14  Dirk Schulze  <krit@webkit.org>
+
+        Support animation of basic shape 'polygon'
+        https://bugs.webkit.org/show_bug.cgi?id=102080
+
+        Reviewed by Daniel Bates.
+
+        Added animation test for basic shape 'polygon' to existing test
+        css3/masking/clip-path-animation.html and
+        fast/exclusions/shape-inside/shape-inside-animation.html.
+
+        * animations/resources/animation-test-helpers.js:
+        (parseBasicShape):
+        * css3/masking/clip-path-animation-expected.txt:
+        * css3/masking/clip-path-animation.html:
+        * fast/exclusions/shape-inside/shape-inside-animation-expected.txt:
+        * fast/exclusions/shape-inside/shape-inside-animation.html:
+
 2012-11-14  Shinya Kawanaka  <shinyak@chromium.org>
 
         Changing pseudoClass (:checked) should cause distribution.
