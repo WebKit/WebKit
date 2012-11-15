@@ -172,6 +172,7 @@ EXPORTS
         ?create@ShadowRoot@WebCore@@SA?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@PAVElement@2@AAH@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?deserialize@SerializedScriptValue@WebCore@@QAE?AVJSValue@JSC@@PAVExecState@4@PAVJSGlobalObject@4@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@WTF@@W4SerializationErrorMode@2@@Z
+        ?deserializeBuffer@Internals@WebCore@@QBE?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@V?$PassRefPtr@VArrayBuffer@WTF@@@4@@Z
         ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@@WTF@@XZ
         ?ensureSelectFeatureSetCollected@ElementShadow@WebCore@@QAEXXZ
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
@@ -223,6 +224,7 @@ EXPORTS
         ?scriptNameToCode@WebCore@@YA?AW4UScriptCode@@ABVString@WTF@@@Z
         ?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z
         ?scrollingStateTreeAsText@Page@WebCore@@QAE?AVString@WTF@@XZ
+        ?serializeObject@Internals@WebCore@@QBE?AV?$PassRefPtr@VArrayBuffer@WTF@@@WTF@@V?$PassRefPtr@VSerializedScriptValue@WebCore@@@4@@Z
         ?setCanStartMedia@Page@WebCore@@QAEX_N@Z
         ?setCursiveFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setDeviceScaleFactor@Page@WebCore@@QAEXM@Z

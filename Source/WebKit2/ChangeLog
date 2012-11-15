@@ -1,3 +1,15 @@
+2012-11-14  Daniel Bates  <dbates@webkit.org>
+
+        Attempt to fix the Apple Windows Debug and GTK builds after <http://trac.webkit.org/changeset/134691>
+        (https://bugs.webkit.org/show_bug.cgi?id=96818)
+
+        Export symbols of the form:
+        ?deserializeBuffer@Internals@WebCore[...]
+        ?serializeObject@Internals@WebCore[...]
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-11-14  Alec Flett  <alecflett@chromium.org>
 
         Fix windows build exports (again)
