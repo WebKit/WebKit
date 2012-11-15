@@ -71,7 +71,7 @@ public:
     //       that already contains content.
     void setSecurityOrigin(PassRefPtr<SecurityOrigin>);
 
-    static SandboxFlags parseSandboxPolicy(const String& policy);
+    static SandboxFlags parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage);
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 

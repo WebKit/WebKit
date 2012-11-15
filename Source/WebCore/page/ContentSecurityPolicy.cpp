@@ -1280,7 +1280,10 @@ void CSPDirectiveList::applySandboxPolicy(const String& name, const String& sand
         return;
     }
     m_haveSandboxPolicy = true;
-    m_policy->enforceSandboxFlags(SecurityContext::parseSandboxPolicy(sandboxPolicy));
+    String invalidTokens;
+    m_policy->enforceSandboxFlags(SecurityContext::parseSandboxPolicy(sandboxPolicy, invalidTokens));
+    if (!invalidTokens.isNull())
+        m_policy->reportInvalidSandboxFlags(invalidTokens);
 }
 
 void CSPDirectiveList::addDirective(const String& name, const String& value)
@@ -1652,6 +1655,11 @@ void ContentSecurityPolicy::reportInvalidPluginTypes(const String& pluginType) c
     else
         message = makeString("Invalid plugin type in 'plugin-types' Content Security Policy directive: '", pluginType, "'.\n");
     logToConsole(message);
+}
+
+void ContentSecurityPolicy::reportInvalidSandboxFlags(const String& invalidFlags) const
+{
+    logToConsole("Error while parsing the 'sandbox' Content Security Policy directive: " + invalidFlags);
 }
 
 void ContentSecurityPolicy::reportInvalidDirectiveValueCharacter(const String& directiveName, const String& value) const

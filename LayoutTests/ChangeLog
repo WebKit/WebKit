@@ -1,3 +1,15 @@
+2012-11-15  Mike West  <mkwst@chromium.org>
+
+        We should trigger a console warning when we encounter invalid sandbox flags.
+        https://bugs.webkit.org/show_bug.cgi?id=101956
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/sandbox-invalid-header-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/sandbox-invalid-header.html: Added.
+        * http/tests/security/sandboxed-iframe-invalid-expected.txt: Added.
+        * http/tests/security/sandboxed-iframe-invalid.html: Added.
+
 2012-11-15  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Add tests for month suggestion picker

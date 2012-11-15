@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: Error while parsing the 'sandbox' Content Security Policy directive: 'allowScript' is an invalid sandbox flag.
+

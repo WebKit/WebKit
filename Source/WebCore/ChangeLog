@@ -1,3 +1,42 @@
+2012-11-15  Mike West  <mkwst@chromium.org>
+
+        We should trigger a console warning when we encounter invalid sandbox flags.
+        https://bugs.webkit.org/show_bug.cgi?id=101956
+
+        Reviewed by Adam Barth.
+
+        A developer who writes '<iframe sandbox="allowScripts">' probably has
+        something in mind other than what the browser interprets. In these
+        situations, we should log a console warning that notes 'allowScripts'
+        is an invalid sandbox flag ('allow-scripts' is probably what she
+        meant).
+
+        This patch does the simplest thing possible: it throws a warning that
+        lists the invalid flags encountered for sandbox attributes on iframes,
+        and for sandbox Content Security Policy directives.
+
+        Tests: http/tests/security/contentSecurityPolicy/sandbox-invalid-header.html
+               http/tests/security/sandboxed-iframe-invalid.html
+
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::parseSandboxPolicy):
+        * dom/SecurityContext.h:
+        (SecurityContext):
+            Accept a new out parameter, invalidTokensErrorMessage. If invalid
+            tokens are encountered, build an error message string, and pass it
+            back to the caller through this parameter.
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseAttribute):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::applySandboxPolicy):
+            When applying a sandbox policy, pass a string into
+            SecurityContext::parseSandboxPolicy to grab any errors that might
+            be encountered, and log a warning in that event.
+        (WebCore::ContentSecurityPolicy::reportInvalidSandboxFlags):
+        (WebCore):
+        * page/ContentSecurityPolicy.h:
+            Adding a new method to report invalid sandbox flags.
+
 2012-11-15  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Rename member vars in ViewportArgument to match css-device-adapt

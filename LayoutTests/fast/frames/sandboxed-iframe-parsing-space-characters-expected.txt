@@ -1,6 +1,8 @@
 ALERT: PASS: Form feed is a delimiter.
+CONSOLE MESSAGE: line 41: Error while parsing the 'sandbox' attribute: 'allow-scriptsallow-forms' is an invalid sandbox flag.
 ALERT: PASS: Newline is a delimiter.
 ALERT: PASS: Return is a delimiter.
+CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-scriptsxallow-forms' is an invalid sandbox flag.
 ALERT: PASS: Tab is a delimiter.
 ALERT: PASS: Space is a delimiter character.
 This tests whether we correct parse various space characters in the sandbox attribute.

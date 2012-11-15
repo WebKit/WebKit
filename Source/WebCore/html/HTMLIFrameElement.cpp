@@ -32,6 +32,8 @@
 #include "HTMLNames.h"
 #include "NodeRenderingContext.h"
 #include "RenderIFrame.h"
+#include "ScriptableDocumentParser.h"
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -85,9 +87,14 @@ void HTMLIFrameElement::parseAttribute(const Attribute& attribute)
             document->addExtraNamedItem(newName);
         }
         m_name = newName;
-    } else if (attribute.name() == sandboxAttr)
-        setSandboxFlags(attribute.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(attribute.value()));
-    else if (attribute.name() == seamlessAttr) {
+    } else if (attribute.name() == sandboxAttr) {
+        String invalidTokens;
+        setSandboxFlags(attribute.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(attribute.value(), invalidTokens));
+        if (!invalidTokens.isNull()) {
+            int line = document()->scriptableDocumentParser() ? document()->scriptableDocumentParser()->lineNumber().oneBasedInt() : 0;
+            document()->addConsoleMessage(HTMLMessageSource, LogMessageType, ErrorMessageLevel, "Error while parsing the 'sandbox' attribute: " + invalidTokens, document()->url().string(), line);
+        }
+    } else if (attribute.name() == seamlessAttr) {
         // If we're adding or removing the seamless attribute, we need to force the content document to recalculate its StyleResolver.
         if (contentDocument())
             contentDocument()->styleResolverChanged(DeferRecalcStyle);
