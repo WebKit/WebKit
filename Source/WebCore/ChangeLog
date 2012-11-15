@@ -1,3 +1,17 @@
+2012-11-15  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: DOMStringSizeError
+        https://bugs.webkit.org/show_bug.cgi?id=102089
+
+        Reviewed by Ojan Vafai.
+
+        Patch 2 of 25 to update DOMException name to match the spec and Firefox.
+
+        DOMSTRING_SIZE_ERR is historical and not used in any spec or in our code.
+
+        * dom/DOMCoreException.cpp:
+        * dom/ExceptionCode.h:
+
 2012-11-15  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Indexing tests are flaky-crashing
