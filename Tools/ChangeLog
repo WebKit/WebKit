@@ -1,3 +1,13 @@
+2012-11-15  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Implement WTR --no-timeout-at-all option
+        https://bugs.webkit.org/show_bug.cgi?id=102251
+
+        Reviewed by Eric Carlson.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm: (WTR::TestController::platformRunUntil):
+        Just do it, and convert to Objective C on the way for simplicity.
+
 2012-11-14  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] Port tiled backing store
