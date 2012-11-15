@@ -2822,6 +2822,9 @@ webkit.org/b/98906 platform/chromium/fast/forms/suggestion-picker/date-suggestio
 
 # Need rebaseline
 webkit.org/b/102181 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru.html [ Pass ImageOnlyFailure Missing ]
+webkit.org/b/102181 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance.html [ Pass ImageOnlyFailure Missing ]
+webkit.org/b/102181 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure Missing ]
+webkit.org/b/102181 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure Missing ]
 
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
