@@ -1672,8 +1672,8 @@ static RenderLayer* layerForNode(Node* node)
 
 bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
 {
-    MaximumDurationTracker maxDurationTracker(&m_maxMouseMovedDuration);
     RefPtr<FrameView> protector(m_frame->view());
+    MaximumDurationTracker maxDurationTracker(&m_maxMouseMovedDuration);
 
 
 #if ENABLE(TOUCH_EVENTS)
