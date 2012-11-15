@@ -1,3 +1,9 @@
+2012-11-15  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Update chromium test expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
 
         MutationObserver wrapper should not be collected while still observing
