@@ -1687,3 +1687,5 @@ webkit.org/b/102100 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure 
 
 webkit.org/b/102190 compositing/overflow/updating-scrolling-content.html [ Failure ]
 webkit.org/b/102190 fast/events/overflow-scroll-fake-mouse-move.html [ Failure ]
+
+webkit.org/b/102364 compositing/overflow/scrolling-without-painting.html [ Failure ]

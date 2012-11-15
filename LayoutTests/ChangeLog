@@ -1,3 +1,15 @@
+2012-11-15  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r134628
+        https://bugs.webkit.org/show_bug.cgi?id=102368
+
+        Unreviewed gardening.
+
+        Skip test compositing/overflow/scrolling-without-painting.html added at r134628
+        and which does not pass on EFL.
+
+        * platform/efl/TestExpectations:
+
 2012-11-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix tests after r134637.
