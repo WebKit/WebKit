@@ -51,7 +51,8 @@ public:
     ~TextTrackList();
 
     unsigned length() const;
-    unsigned getTrackIndex(TextTrack*);
+    int getTrackIndex(TextTrack*);
+    int getTrackIndexRelativeToRenderedTracks(TextTrack*);
 
     TextTrack* item(unsigned index);
     void append(PassRefPtr<TextTrack>);

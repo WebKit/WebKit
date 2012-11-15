@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <script>
+
+        var cueDisplayElement;
+
+        function testPosition()
+        {
+            if (!window.internals) {
+                consoleWrite("<br><b>** This test only works in DRT! **<" + "/b>");
+                return;
+            }
+
+            consoleWrite("");
+            cueDisplayElement = textTrackDisplayElement(video, 'display', 0);
+            testExpected("cueDisplayElement.offsetTop > (video.videoHeight * .75)", true);
+            endTest();
+        }
+
+        function loaded()
+        {
+            consoleWrite("The top of the text track container should be in the bottom 25% of the video element.");
+
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+            waitForEvent('canplaythrough', testPosition);
+        }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls>
+            <track src="captions-webvtt/captions-snap-to-lines-not-set.vtt" kind="captions" >
+            <track src="captions-webvtt/simple-captions.vtt" kind="captions" >
+            <track src="captions-webvtt/sorted-dispatch.vtt" kind="captions" >
+            <track src="captions-webvtt/captions-fast.vtt" kind="captions" >
+            <track src="captions-webvtt/captions-html.vtt" kind="captions" >
+            <track src="captions-webvtt/captions.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

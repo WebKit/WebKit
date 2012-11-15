@@ -1,3 +1,30 @@
+2012-11-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Update computed line position algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=93779
+
+        Reviewed by Philippe Normand.
+
+        Compute the position of a text track relative to rendered tracks. This is needed to position
+        cues correctly when there is more than one text track.
+
+        Test: media/track/track-cue-container-rendering-position.html
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::invalidateTrackIndex): Invalidate both cached track indices.
+        (WebCore::TextTrack::trackIndexRelativeToRenderedTracks): Return the index of the track relative
+            to other rendered tracks.
+        * html/track/TextTrack.h:
+
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::calculateComputedLinePosition): Use trackIndexRelativeToRenderedTracks()
+            instead of trackIndex() so cues are positioned correctly.
+
+        * html/track/TextTrackList.cpp:
+        (TextTrackList::getTrackIndex): Change return type from unsigned to int.
+        (TextTrackList::getTrackIndexRelativeToRenderedTracks): New.
+        * html/track/TextTrackList.h:
+
 2012-11-15  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL] Bump Harfbuzz to allow fixing bug 101009 on EFL

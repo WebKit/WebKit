@@ -554,11 +554,7 @@ int TextTrackCue::calculateComputedLinePosition()
     // Let n be the number of text tracks whose text track mode is showing or
     // showing by default and that are in the media element's list of text
     // tracks before track.
-
-    // FIXME: Add a method to cache the track index considering only
-    // rendered tracks (that have showing or showing by default mode set).
-    // http://wkb.ug/93779
-    int n = track()->trackIndex();
+    int n = track()->trackIndexRelativeToRenderedTracks();
 
     // Increment n by one.
     n++;

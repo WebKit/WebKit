@@ -56,7 +56,7 @@ unsigned TextTrackList::length() const
     return m_addTrackTracks.size() + m_elementTracks.size();
 }
 
-unsigned TextTrackList::getTrackIndex(TextTrack *textTrack)
+int TextTrackList::getTrackIndex(TextTrack *textTrack)
 {
     if (textTrack->trackType() == TextTrack::TrackElement)
         return static_cast<LoadableTextTrack*>(textTrack)->trackElementIndex();
@@ -66,6 +66,34 @@ unsigned TextTrackList::getTrackIndex(TextTrack *textTrack)
 
     ASSERT_NOT_REACHED();
 
+    return -1;
+}
+
+int TextTrackList::getTrackIndexRelativeToRenderedTracks(TextTrack *textTrack)
+{
+    // Calculate the "Let n be the number of text tracks whose text track mode is showing and that are in the media element's list of text tracks before track."
+    int trackIndex = 0;
+
+    for (size_t i = 0; i < m_elementTracks.size(); ++i) {
+        if (!m_elementTracks[i]->isRendered())
+            continue;
+        
+        if (m_elementTracks[i] == textTrack)
+            return trackIndex;
+        ++trackIndex;
+    }
+    
+    for (size_t i = 0; i < m_addTrackTracks.size(); ++i) {
+        if (!m_addTrackTracks[i]->isRendered())
+            continue;
+        
+        if (m_addTrackTracks[i] == textTrack)
+            return trackIndex;
+        ++trackIndex;
+    }
+    
+    ASSERT_NOT_REACHED();
+    
     return -1;
 }
 

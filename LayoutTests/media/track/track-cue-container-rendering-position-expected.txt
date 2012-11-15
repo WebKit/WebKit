@@ -1,0 +1,6 @@
+The top of the text track container should be in the bottom 25% of the video element.
+EVENT(canplaythrough)
+
+EXPECTED (cueDisplayElement.offsetTop > (video.videoHeight * .75) == 'true') OK
+END OF TEST
+

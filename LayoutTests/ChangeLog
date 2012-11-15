@@ -1,3 +1,16 @@
+2012-11-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Update computed line position algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=93779
+
+        Reviewed by Philippe Normand.
+
+        Compute the position of a text track relative to rendered tracks. This is needed to position
+        cues correctly when there is more than one text track.
+
+        * media/track/track-cue-container-rendering-position-expected.txt: Added.
+        * media/track/track-cue-container-rendering-position.html: Added.
+
 2012-11-15  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r134408): Heap-use-after-free in WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement().

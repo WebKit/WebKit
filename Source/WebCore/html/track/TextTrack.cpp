@@ -104,8 +104,9 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
     , m_client(client)
     , m_trackType(type)
     , m_readinessState(NotLoaded)
-    , m_showingByDefault(false)
     , m_trackIndex(invalidTrackIndex)
+    , m_renderedTrackIndex(invalidTrackIndex)
+    , m_showingByDefault(false)
 {
     setKind(kind);
 }
@@ -313,6 +314,7 @@ int TextTrack::trackIndex()
 void TextTrack::invalidateTrackIndex()
 {
     m_trackIndex = invalidTrackIndex;
+    m_renderedTrackIndex = invalidTrackIndex;
 }
 
 bool TextTrack::isRendered()
@@ -332,6 +334,16 @@ TextTrackCueList* TextTrack::ensureTextTrackCueList()
         m_cues = TextTrackCueList::create();
 
     return m_cues.get();
+}
+
+int TextTrack::trackIndexRelativeToRenderedTracks()
+{
+    ASSERT(m_mediaElement);
+    
+    if (m_renderedTrackIndex == invalidTrackIndex)
+        m_renderedTrackIndex = m_mediaElement->textTracks()->getTrackIndexRelativeToRenderedTracks(this);
+    
+    return m_renderedTrackIndex;
 }
 
 } // namespace WebCore

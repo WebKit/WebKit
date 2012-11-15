@@ -114,6 +114,7 @@ public:
     void invalidateTrackIndex();
 
     bool isRendered();
+    int trackIndexRelativeToRenderedTracks();
 
 protected:
     TextTrack(ScriptExecutionContext*, TextTrackClient*, const AtomicString& kind, const AtomicString& label, const AtomicString& language, TextTrackType);
@@ -130,8 +131,9 @@ private:
     TextTrackClient* m_client;
     TextTrackType m_trackType;
     ReadinessState m_readinessState;
-    bool m_showingByDefault;
     int m_trackIndex;
+    int m_renderedTrackIndex;
+    bool m_showingByDefault;
 };
 
 } // namespace WebCore
