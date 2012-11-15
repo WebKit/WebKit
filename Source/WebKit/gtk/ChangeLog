@@ -1,3 +1,10 @@
+2012-11-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed build fix attempt after r134765.
+
+        * webkit/webkitviewportattributes.cpp:
+        (webkitViewportAttributesRecompute):
+
 2012-11-12  Josh Rickmar  <jrick@devio.us>
 
         Add WebCore::Setting to block displaying and/or running insecure content on secure pages

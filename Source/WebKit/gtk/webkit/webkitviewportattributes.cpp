@@ -545,7 +545,7 @@ void webkitViewportAttributesRecompute(WebKitViewportAttributes* viewportAttribu
     priv->minimumScaleFactor = attributes.minimumScale;
     priv->maximumScaleFactor = attributes.maximumScale;
     priv->devicePixelRatio = devicePixelRatio;
-    priv->userScalable = static_cast<bool>(arguments.userScalable);
+    priv->userScalable = static_cast<bool>(arguments.userZoom);
 
     if (!priv->isValid) {
         priv->isValid = TRUE;
