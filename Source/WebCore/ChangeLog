@@ -1,3 +1,12 @@
+2012-11-15  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Build fix for Windows after r134767.
+
+        Update vsprops and vcproj files to reflect changes to file locations in r134767.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+
 2012-11-15  Elliott Sprehn  <esprehn@chromium.org>
 
         Track subframe count to avoid traversing the tree when there's no subframes
