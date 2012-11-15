@@ -1,3 +1,15 @@
+2012-11-15  Kent Tamura  <tkent@chromium.org>
+
+        Support stand-alone month names in calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=102196
+
+        Reviewed by Kentaro Hara.
+
+        Update a pixel result for Russian calendar picker. Now it contains
+        a stand-alone month name.
+
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+
 2012-11-15  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined images.

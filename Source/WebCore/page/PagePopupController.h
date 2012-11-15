@@ -45,6 +45,9 @@ public:
     static PassRefPtr<PagePopupController> create(PagePopupClient*);
     void setValueAndClosePopup(int numValue, const String& stringValue);
     String localizeNumberString(const String&);
+#if ENABLE(CALENDAR_PICKER)
+    String formatMonth(int year, int zeroBaseMonth);
+#endif
     void clearPagePopupClient();
 
 private:

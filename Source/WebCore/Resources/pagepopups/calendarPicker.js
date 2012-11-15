@@ -149,34 +149,9 @@ function formatJapaneseImperialEra(year, month) {
 Month.prototype.toLocaleString = function() {
     if (isNaN(this.year) || isNaN(this.year))
         return "Invalid Month";
-    var yearString = localizeNumber(this.year);
-    var monthString = global.params.monthLabels[this.month];
-    switch (getLanguage()) {
-    case "eu":
-    case "fil":
-    case "lt":
-    case "ml":
-    case "mt":
-    case "tl":
-    case "ur":
-        return yearString + " " + monthString;
-    case "hu":
-        return yearString + ". " + monthString;
-    case "ja":
-        return yearString + "年" + formatJapaneseImperialEra(this.year, this.month) + " " + monthString;
-    case "zh":
-        return yearString + "年" + monthString;
-    case "ko":
-        return yearString + "년 " + monthString;
-    case "lv":
-        return yearString + ". g. " + monthString;
-    case "pt":
-        return monthString + " de " + yearString;
-    case "sr":
-        return monthString + ". " + yearString;
-    default:
-        return monthString + " " + yearString;
-    }
+    if (getLanguage() == "ja")
+        return "" + this.year + "年" + formatJapaneseImperialEra(this.year, this.month) + " " + (this.month + 1) + "月";
+    return window.pagePopupController.formatMonth(this.year, this.month);
 };
 
 function createUTCDate(year, month, date) {
@@ -605,8 +580,6 @@ function handleArgumentsTimeout() {
     if (global.argumentsReceived)
         return;
     var args = {
-        monthLabels : ["m1", "m2", "m3", "m4", "m5", "m6",
-                       "m7", "m8", "m9", "m10", "m11", "m12"],
         dayLabels : ["d1", "d2", "d3", "d4", "d5", "d6", "d7"],
         todayLabel : "Today",
         clearLabel : "Clear",
@@ -624,10 +597,6 @@ function handleArgumentsTimeout() {
  * @return {?string} An error message, or null if the argument has no errors.
  */
 CalendarPicker.validateConfig = function(config) {
-    if (!config.monthLabels)
-        return "No monthLabels.";
-    if (config.monthLabels.length != 12)
-        return "monthLabels is not an array with 12 elements.";
     if (!config.dayLabels)
         return "No dayLabels.";
     if (config.dayLabels.length != 7)

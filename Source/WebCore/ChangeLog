@@ -1,3 +1,31 @@
+2012-11-15  Kent Tamura  <tkent@chromium.org>
+
+        Support stand-alone month names in calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=102196
+
+        Reviewed by Kentaro Hara.
+
+        We have showed non stand-alone month names in any locales. However
+        we should show stand-alone month names in some locales such as
+        Russian.
+
+        This patch introduce PagePopupController::formatMonth. It is
+        exposed to page-popups, and format year-month pairs in the same
+        way as input[type=month].
+
+        No new tests. Affects platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru.html.
+
+        * Resources/pagepopups/calendarPicker.js:
+        (Month.prototype.toLocaleString):
+        Calls pagePopupController.formatMonth except Japanese locale.
+        (handleArgumentsTimeout):
+        Remove unnecessary default monthLabels.
+        * page/PagePopupController.cpp:
+        (WebCore::PagePopupController::formatMonth): Added.
+        * page/PagePopupController.h:
+        (PagePopupController): Declare formatMonth.
+        * page/PagePopupController.idl: Add formatMonth.
+
 2012-11-15  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Fix new JS compiler warnings.
