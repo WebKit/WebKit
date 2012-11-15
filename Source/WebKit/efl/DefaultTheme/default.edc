@@ -21,14 +21,14 @@
 
 color_classes {
    color_class {
-      name: "webkit/selection/active";
-      color: 255 255 255 255; /* foreground */
-      color2: 86 86 209 255; /* background */
+      name: "webkit/selection/foreground";
+      color: 255 255 255 255; /* active */
+      color2: 255 255 255 255; /* inactive */
    }
    color_class {
-      name: "webkit/selection/inactive";
-      color: 255 255 255 255; /* foreground */
-      color2: 0 0 128 128; /* background */
+      name: "webkit/selection/background";
+      color: 86 86 209 255; /* active */
+      color2: 0 0 128 128; /* inactive */
    }
    color_class {
       name: "webkit/focus_ring";
