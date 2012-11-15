@@ -1,3 +1,9 @@
+2012-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-11-15  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Move SK_DISABLE_FAST_AA_STROKE_RECT to skia_webkit.gyp
