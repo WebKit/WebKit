@@ -1,3 +1,21 @@
+2012-11-15  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Bump Harfbuzz to allow fixing bug 101009 on EFL
+        https://bugs.webkit.org/show_bug.cgi?id=101323
+
+        Reviewed by Martin Robinson.
+
+        Removing ifdef since we bumped Harfbuzz dependency. This is the
+        real fix replacing the previous workaround of having a Chromium
+        specific ifdef here, since Chromium uses a newer HarfBuzz version
+        already.
+
+        No new tests, covered by css3/flexbox/inline-flex-crash.html
+        which will not crash anymore even with the ifdef removed.
+
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::shapeHarfBuzzRuns):
+
 2012-11-15  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r134408): Heap-use-after-free in WebCore::HTMLConstructionSite::mergeAttributesFromTokenIntoElement().

@@ -1,0 +1,36 @@
+diff --git a/configure.ac b/configure.ac
+index b1948f1..9ae69dd 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -184,6 +184,31 @@ fi
+ AM_CONDITIONAL(HAVE_ICU_LE, $have_icu_le)
+ 
+ dnl ==========================================================================
++dnl Fallback to icu-config if ICU pkg-config files could not be found
++dnl ==========================================================================
++
++if test "$have_icu" != "true"; then
++    AC_PATH_PROG(icu_config, icu-config, no)
++    AC_MSG_CHECKING([for ICU by using icu-config fallback])
++    if test "$icu_config" != "no"; then
++        # We don't use --cflags as this gives us a lot of things that we don't
++        # necessarily want, like debugging and optimization flags
++        # See man (1) icu-config for more info.
++        ICU_CFLAGS=`$icu_config --cppflags`
++        ICU_LIBS=`$icu_config --ldflags-libsonly --ldflags-layout`
++        AC_SUBST(ICU_CFLAGS)
++        AC_SUBST(ICU_LIBS)
++        AC_DEFINE(HAVE_ICU_LE, 1, [Have ICU Layout Engine library])
++        AC_DEFINE(HAVE_ICU, 1, [Have ICU library])
++        AM_CONDITIONAL(HAVE_ICU, true)
++        AM_CONDITIONAL(HAVE_ICU_LE, true)
++        AC_MSG_RESULT([yes])
++    else
++        AC_MSG_RESULT([no])
++    fi
++fi
++
++dnl ==========================================================================
+ 
+ PKG_CHECK_MODULES(GRAPHITE2, graphite2, have_graphite=true, have_graphite=false)
+ if $have_graphite; then

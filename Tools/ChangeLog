@@ -1,3 +1,22 @@
+2012-11-15  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL] Bump Harfbuzz to allow fixing bug 101009 on EFL
+        https://bugs.webkit.org/show_bug.cgi?id=101323
+
+        Reviewed by Martin Robinson.
+
+        Bumping Harfbuzz to newer version so that we can remove the
+        ifdef round the fix for bug 101009 for EFL, too.
+        We're using the zip snapshot since jhbuild can fallback to the previously
+        downloaded blob in case of network failures which leads to better
+        buildbot robustness. This zip snapshot currently needs to be locally
+        patched to fix ICU detection on systems that don't have icu pkg-config files.
+        The patch is suggested for merging into HarfBuzz. We can remove it locally
+        once it's accepted into HarfBuzz upstream.
+
+        * efl/patches/harfbuzz-icu-detection-fix.patch: Applied after retrieving source to fix harfbuzz detection on systems that don't have pkg-config files for it.
+        * efl/jhbuild.modules: Bumping harfbuzz version.
+
 2012-11-15  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Implement WTR --no-timeout-at-all option

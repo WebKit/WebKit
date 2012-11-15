@@ -328,13 +328,10 @@ bool HarfBuzzShaper::shapeHarfBuzzRuns(bool shouldSetDirection)
         if (shouldSetDirection)
             hb_buffer_set_direction(harfbuzzBuffer.get(), currentRun->rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
 
-        // This #if should be removed after all ports update harfbuzz-ng.
-#if PLATFORM(CHROMIUM)
         // Add a space as pre-context to the buffer. This prevents showing dotted-circle
         // for combining marks at the beginning of runs.
         static const uint16_t preContext = ' ';
         hb_buffer_add_utf16(harfbuzzBuffer.get(), &preContext, 1, 1, 0);
-#endif
 
         if (m_font->isSmallCaps() && u_islower(m_normalizedBuffer[currentRun->startIndex()])) {
             String upperText = String(m_normalizedBuffer.get() + currentRun->startIndex(), currentRun->numCharacters());
