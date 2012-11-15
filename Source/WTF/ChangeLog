@@ -1,3 +1,30 @@
+2012-11-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Windows Fibers can corrupt the cached StackBounds
+        https://bugs.webkit.org/show_bug.cgi?id=102411
+
+        Reviewed by Geoffrey Garen.
+
+        Windows has support for something called fibers, which are like lightweight versions of 
+        threads. Multiple fibers can run within the context of a single thread and they have access 
+        to the same thread local storage but have different stacks. If we create a new JSGlobalContext 
+        on one fiber, then switch to another fiber and create a JSGlobalContext there, we will call 
+        initializeThreading() once for each new JSGlobalContext created. However, since these fibers 
+        are technically running inside the same thread, they will clobber each other's wtfThreadData(), 
+        which is stored using thread local storage. This can lead to corruption of the WTFThreadData 
+        structure for the fibers other than the last one to create a new JSGlobalContext, including 
+        the StackBounds data structure which is used during conservative scanning, among other things. 
+        This can lead to crashes during garbage collection on Windows if fibers are used.
+
+        A quick fix would be to always get a fresh StackBounds data structure when asking for it 
+        instead of using the cached version from the thread local storage. There is a larger problem 
+        in that these fibers can corrupt other WebKit data that uses thread local storage. We'll leave 
+        those theoretical fixes for future theoretical bugs.
+
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::stack): We now refresh the m_stackBounds field whenever somebody asks for 
+        the StackBounds.
+
 2012-11-15  Maciej Stachowiak  <mjs@apple.com>
 
         Fix an erroneous comment about the operators required by binarySearch

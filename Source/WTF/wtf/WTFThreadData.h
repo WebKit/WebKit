@@ -105,8 +105,13 @@ public:
         m_currentIdentifierTable = m_defaultIdentifierTable;
     }
 
-    const StackBounds& stack() const
+    const StackBounds& stack()
     {
+        // We need to always get a fresh StackBounds from the OS due to how fibers work.
+        // See https://bugs.webkit.org/show_bug.cgi?id=102411
+#if OS(WINDOWS)
+        m_stackBounds = StackBounds::currentThreadStackBounds();
+#endif
         return m_stackBounds;
     }
 
