@@ -1,3 +1,14 @@
+2012-11-15  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Rebase fast/media/mq-js-media-except-01.html after r134618
+        https://bugs.webkit.org/show_bug.cgi?id=102362
+
+        Unreviewed rebaseline.
+
+        Rebased fast/media/mq-js-media-except-01.html after r134618.
+
+        * platform/efl-wk2/fast/media/mq-js-media-except-01-expected.txt: Added.
+
 2012-11-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new failing tests.
