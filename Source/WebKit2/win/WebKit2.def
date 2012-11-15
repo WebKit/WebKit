@@ -155,6 +155,7 @@ EXPORTS
         ??1ClientRectList@WebCore@@QAE@XZ
         ??0String@WTF@@QAE@PBD@Z
         ??0String@WTF@@QAE@PB_W@Z
+        ??1SerializedScriptValue@WebCore@@QAE@XZ
         ?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z
         ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ
         ?description@DocumentMarker@WebCore@@QBEABVString@WTF@@XZ
@@ -165,8 +166,11 @@ EXPORTS
         ?childItemWithTarget@HistoryItem@WebCore@@QBEPAV12@ABVString@WTF@@@Z
         ?create@HTMLContentElement@WebCore@@SA?AV?$PassRefPtr@VHTMLContentElement@WebCore@@@WTF@@PAVDocument@2@@Z
         ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@V?$PassRefPtr@VDocument@WebCore@@@4@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z
+        ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z
+        ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@6@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@4@PAV?$Vector@V?$RefPtr@VArrayBuffer@WTF@@@WTF@@$00@4@W4SerializationErrorMode@2@@Z
         ?create@ShadowRoot@WebCore@@SA?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@PAVElement@2@AAH@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
+        ?deserialize@SerializedScriptValue@WebCore@@QAE?AVJSValue@JSC@@PAVExecState@4@PAVJSGlobalObject@4@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@WTF@@W4SerializationErrorMode@2@@Z
         ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@@WTF@@XZ
         ?ensureSelectFeatureSetCollected@ElementShadow@WebCore@@QAEXXZ
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
@@ -254,15 +258,18 @@ EXPORTS
         ?target@HistoryItem@WebCore@@QBEABVString@WTF@@XZ
         ?text@Range@WebCore@@QBE?AVString@WTF@@XZ
         ?textContent@Node@WebCore@@QBE?AVString@WTF@@_N@Z
-        ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
+        ?toArrayBuffer@WebCore@@YAPAVArrayBuffer@WTF@@VJSValue@JSC@@@Z
         ?toDOMStringList@WebCore@@YA?AV?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@5@@Z
+        ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z
+        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVArrayBuffer@WTF@@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRectList@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
-        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVRange@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNodeList@1@@Z
+        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVRange@1@@Z
         ?toRange@WebCore@@YAPAVRange@1@VJSValue@JSC@@@Z
+        ?toString@SerializedScriptValue@WebCore@@QAE?AVString@WTF@@XZ
         ?treeScope@Node@WebCore@@QBEPAVTreeScope@2@XZ
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ
