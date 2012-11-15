@@ -1,3 +1,15 @@
+2012-11-14  Alec Flett  <alecflett@chromium.org>
+
+        Fix windows build exports (again)
+        https://bugs.webkit.org/show_bug.cgi?id=102324
+
+        Unreviewed windows-only build fix.
+
+        Add one more export that was causing unit tests to fail to link.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-11-14  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Build correction after r134703.

@@ -155,6 +155,7 @@ EXPORTS
         ??1ClientRectList@WebCore@@QAE@XZ
         ??0String@WTF@@QAE@PBD@Z
         ??0String@WTF@@QAE@PB_W@Z
+        ??0String@WTF@@QAE@PB_WI@Z
         ??1SerializedScriptValue@WebCore@@QAE@XZ
         ?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z
         ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ
