@@ -80,6 +80,7 @@ public:
     virtual void didChangeICEState(ICEState) = 0;
     virtual void didAddRemoteStream(const WebMediaStreamDescriptor&) = 0;
     virtual void didRemoveRemoteStream(const WebMediaStreamDescriptor&) = 0;
+    virtual void didAddRemoteDataChannel(const WebRTCDataChannel&) = 0;
 };
 
 } // namespace WebKit

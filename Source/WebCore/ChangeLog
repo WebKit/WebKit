@@ -1,3 +1,22 @@
+2012-11-15  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Add missing WebRTCPeerConnectionHandlerClient::didAddRemoteDataChannel
+        https://bugs.webkit.org/show_bug.cgi?id=102386
+
+        Reviewed by Adam Barth.
+
+        Existing tests expanded to cover patch.
+
+        * platform/mediastream/RTCDataChannelDescriptor.cpp:
+        (WebCore::RTCDataChannelDescriptor::RTCDataChannelDescriptor):
+        (WebCore::RTCDataChannelDescriptor::readyStateChanged):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.cpp:
+        (WebCore::RTCPeerConnectionHandlerChromium::didAddRemoteDataChannel):
+        (WebCore):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.h:
+        (WebKit):
+        (RTCPeerConnectionHandlerChromium):
+
 2012-11-15  Rick Byers  <rbyers@chromium.org>
 
         No tests for changing mouse cursors

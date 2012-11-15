@@ -208,6 +208,11 @@ void RTCPeerConnectionHandlerChromium::didRemoveRemoteStream(const WebKit::WebMe
     m_client->didRemoveRemoteStream(webMediaStreamDescriptor);
 }
 
+void RTCPeerConnectionHandlerChromium::didAddRemoteDataChannel(const WebKit::WebRTCDataChannel& dataChannel)
+{
+    m_client->didAddRemoteDataChannel(dataChannel);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
