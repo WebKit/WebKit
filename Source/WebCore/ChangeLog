@@ -1,3 +1,21 @@
+2012-11-14  Adam Barth  <abarth@webkit.org>
+
+        [V8] We can shave one instruction off toV8Fast
+        https://bugs.webkit.org/show_bug.cgi?id=102297
+
+        Reviewed by Kentaro Hara.
+
+        There's no reason to store info.Holder in a local variable. Calling
+        Holder() is essentially free because it's inlined to an offset read.
+
+        I doubt this patch moves the performance needle in any measurable way,
+        but it makes the code slightly prettier.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        * bindings/scripts/test/V8/V8TestNode.h:
+        (WebCore::toV8Fast):
+
 2012-11-14  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Get rid of a redundant branch in JSValueToNative()
