@@ -3,9 +3,9 @@
 <script src="media-file.js"></script>
         
 <script>
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
     }
 
     function onLoad()
@@ -15,8 +15,8 @@
         container.innerHTML = "PASS. WebKit didn't crash.";
 
         setTimeout(function() {
-            if (window.testRunner)
-                testRunner.notifyDone();
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
         }, 10);
     }
 </script>

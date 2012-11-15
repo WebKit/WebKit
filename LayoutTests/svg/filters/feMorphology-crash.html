@@ -2,12 +2,12 @@
 <html>
 <!-- Test for WK97500 - this test passes if it does not crash. -->
 <script>
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
         setTimeout(function() {
             document.write("PASS - This test passes if it did not crash.");
-            testRunner.dumpAsText();
-            testRunner.notifyDone();
+            layoutTestController.dumpAsText();
+            layoutTestController.notifyDone();
         }, 1);
     }
 </script>

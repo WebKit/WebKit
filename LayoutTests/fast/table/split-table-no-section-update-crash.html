@@ -7,8 +7,8 @@
     :before { display: table-column; content: "Bar"; }
 </style>
 <script type="text/javascript"> 
-if (window.testRunner)
-    testRunner.dumpAsText();
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 
 function crash(event) {
     newContent = document.createTextNode("Lorem Ipsum");

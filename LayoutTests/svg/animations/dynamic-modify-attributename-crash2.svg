@@ -3,9 +3,9 @@
     <set id="set"></set>
     <text id="status" x="100" y="100">FAIL</text>
     <script>
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.waitUntilDone();
         }
 
         if (location.hash != "#done") {
@@ -16,11 +16,11 @@
                 window.location.reload();
             }, 0);
         } else {
-            if (window.testRunner)
+            if (window.layoutTestController)
                 gc();
             document.getElementById("status").textContent = "PASS";
-            if (window.testRunner)
-                testRunner.notifyDone();
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
         }
     </script>
 </svg>

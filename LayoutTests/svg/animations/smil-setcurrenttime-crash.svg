@@ -7,8 +7,8 @@
   <text>PASS: not crashing.</text>
 
   <script>
-    if (window.testRunner)
-      testRunner.dumpAsText();
+    if (window.layoutTestController)
+      layoutTestController.dumpAsText();
 
     document.documentElement.setCurrentTime(5);
   </script>

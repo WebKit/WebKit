@@ -17,15 +17,15 @@ function createTestPlugin(testName)
 
 function runTest() 
 {
-    if (!window.testRunner) {
+    if (!window.layoutTestController) {
         debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
         return;
     }
 
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabled", "1");
-    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabledForAllPlugins", "1");
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKit2AsynchronousPluginInitializationEnabled", "1");
+    layoutTestController.overridePreference("WebKit2AsynchronousPluginInitializationEnabledForAllPlugins", "1");
 
     // Grab the time before we create and append 20 slow plug-ins.
     sessionStorage.beforeDate = (new Date).valueOf();

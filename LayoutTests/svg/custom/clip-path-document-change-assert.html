@@ -18,9 +18,9 @@
      </svg>
    </body>
    <script>
-     if (window.testRunner) {
-       testRunner.waitUntilDone();
-       testRunner.dumpAsText();
+     if (window.layoutTestController) {
+       layoutTestController.waitUntilDone();
+       layoutTestController.dumpAsText();
      }
 
      document.addEventListener("DOMContentLoaded", initCrash, false);
@@ -31,8 +31,8 @@
        try { bodyRoot.textContent = "" } catch(e) {}
        document.documentElement.innerHTML = "PASS";
 
-       if (window.testRunner)
-         testRunner.notifyDone();
+       if (window.layoutTestController)
+         layoutTestController.notifyDone();
      }
    </script>
 </html>

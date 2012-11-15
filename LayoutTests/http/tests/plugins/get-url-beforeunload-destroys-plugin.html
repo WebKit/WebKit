@@ -17,9 +17,9 @@ This tests that NPN_GetURL causing the beforeunload event handler to destroy the
         }
     }
     
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
     }
 
     plg.getURL("resources/notify-done.html", "_self");

@@ -11,7 +11,7 @@ The other 19 should never have been instantiated at all.<br>
 <script>
 
 function loaded() {
-    if (!window.testRunner) {
+    if (!window.layoutTestController) {
         alert("Can only be run using WebKitTestRunner");
         return;
     }
@@ -25,7 +25,7 @@ function loaded() {
     else
         testPassed("Appending plug-in elements then navigating away took between 550ms and 1100ms suggesting a single plug-in was created and then destroyed.");
 
-    testRunner.notifyDone();
+    layoutTestController.notifyDone();
 }
 
 </script>

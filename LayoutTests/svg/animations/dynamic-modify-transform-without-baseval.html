@@ -6,9 +6,9 @@
         <animateTransform attributeName="transform" dur="2s"/>
     </rect>
 <script>
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
     }
 
     var rect = document.getElementById('rect');
@@ -18,8 +18,8 @@
         rect.setAttribute("transform", "scale(1)");
         document.getElementById("root").setCurrentTime(1);
         document.write("This test passes if no assert is hit and PASS is printed: PASS.");
-        if (window.testRunner)
-            testRunner.notifyDone();
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
 </script>
 </svg>

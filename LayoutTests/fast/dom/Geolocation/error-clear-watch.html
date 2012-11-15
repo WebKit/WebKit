@@ -10,9 +10,9 @@ description("This tests removing the watcher from an error callback does not cau
 var mockCode = 2;
 var mockMessage = "debug";
 
-if (window.testRunner) {
-    testRunner.setGeolocationPermission(true);
-    testRunner.setMockGeolocationError(mockCode, mockMessage);
+if (window.layoutTestController) {
+    layoutTestController.setGeolocationPermission(true);
+    layoutTestController.setMockGeolocationError(mockCode, mockMessage);
 } else
     debug('This test can not be run without the LayoutTestController');
 

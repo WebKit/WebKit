@@ -4,17 +4,17 @@
 
 var startTime = new Date;
 
-if (window.testRunner) {
-    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabled", "1");
-    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabledForAllPlugins", "1");
+if (window.layoutTestController) {
+    layoutTestController.overridePreference("WebKit2AsynchronousPluginInitializationEnabled", "1");
+    layoutTestController.overridePreference("WebKit2AsynchronousPluginInitializationEnabledForAllPlugins", "1");
     window.internals.settings.setCanStartMedia(false);
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
 function runTest() 
 {
-    if (!window.testRunner) {
+    if (!window.layoutTestController) {
         debug("This test can only run from within DumpRenderTree because it requires test runner internals.\n");
         return;
     }
@@ -28,7 +28,7 @@ function runTest()
 	if (endTime - startTime > 549)
 		testFailed("This test took over 549ms meaning the plug-in with a 550ms startup delay was actually initialized.  It never should've been initialized.");
 
-    testRunner.notifyDone();
+    layoutTestController.notifyDone();
 }
 </script>
 

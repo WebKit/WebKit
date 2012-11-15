@@ -1,8 +1,8 @@
 <script></script>
 <!-- This test covers Bug 93641 -->
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 setTimeout(function() { var child = document.documentElement; child.parentNode.removeChild(child); }, 36);
 </script>
 <script></script>

@@ -1,3 +1,52 @@
+2012-11-14  Beth Dakin  <bdakin@apple.com>
+
+        testRunner is called layoutTestController on the branch. 
+
+        Reviewed by Simon Fraser.
+
+        * compositing/video/video-controls-layer-creation.html:
+        * editing/pasteboard/resources/paste-noscript-content.html:
+        * fast/block/layer-not-removed-from-parent-crash.html:
+        * fast/block/positioning/relayout-nested-positioned-elements-crash-2.html:
+        * fast/css/crash-comparing-equal.html:
+        * fast/css/variables/deferred-image-load-from-variable.html:
+        * fast/css/xml-stylesheet-removed.xhtml:
+        * fast/dom/Geolocation/error-clear-watch.html:
+        * fast/dom/Geolocation/success-clear-watch.html:
+        * fast/dom/beforeload/clear-video-poster-in-beforeload-listener.html:
+        * fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html:
+        * fast/dom/clone-node-load-event-crash.html:
+        * fast/events/display-none-on-focus-crash.html:
+        * fast/events/dom-character-data-modified-textarea-crash.html:
+        * fast/files/file-reader-done-reading-abort.html:
+        * fast/files/file-reader-immediate-abort.html:
+        * fast/runin/input-text-runin.html:
+        * fast/runin/textarea-runin.html:
+        * fast/table/crash-split-table-section-no-cell-recalc.html:
+        * fast/table/split-anonymous-boxes-around-table-repaint-crash.html:
+        * fast/table/split-table-no-section-update-crash.html:
+        * fast/text/text-combine-first-line-crash.html:
+        * fast/xpath/xpath-detached-nodes.html:
+        * http/tests/loading/remove-child-triggers-parser.html:
+        * http/tests/plugins/get-url-beforeunload-destroys-plugin.html:
+        * http/tests/plugins/resources/notify-done.html:
+        * media/event-queue-crash.html:
+        * platform/mac-wk2/plugins/asychronous-deadlock-with-timer-and-evaluate.html:
+        * platform/mac-wk2/plugins/asynchronous-destroy-before-initialization.html:
+        * platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple.html:
+        * platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization.html:
+        * platform/mac-wk2/plugins/slow/resources/asynchronous-plugin-initialization-multiple-finish.html:
+        * svg/animations/dynamic-modify-attributename-crash2.svg:
+        * svg/animations/dynamic-modify-transform-without-baseval.html:
+        * svg/animations/smil-setcurrenttime-crash.svg:
+        * svg/custom/animate-reference-crash.html:
+        * svg/custom/clip-path-document-change-assert.html:
+        * svg/custom/system-language-crash.html:
+        * svg/custom/tref-nested-events-crash.svg:
+        * svg/custom/tref-stale-listener-crash.html:
+        * svg/filters/feMorphology-crash.html:
+        * webaudio/delaynode-maxdelaylimit.html:
+
 2012-11-13  Simon Fraser  <simon.fraser@apple.com>
 
         <rdar://problem/12705261> Cache absolute clip rects on RenderLayer for compositing overlap testing (87212)

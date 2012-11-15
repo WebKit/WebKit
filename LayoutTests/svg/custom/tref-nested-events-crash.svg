@@ -15,9 +15,9 @@
 
   <text>PASS: did not crash.</text>
   <script>
-    if (window.testRunner) {
-        testRunner.waitUntilDone();
-        testRunner.dumpAsText();
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+        layoutTestController.dumpAsText();
     }
 
     var test_body_content = document.getElementById("test-body-content");
@@ -27,12 +27,12 @@
         test_body_content.addEventListener("DOMCharacterDataModified", function () { 
             try { test_body_content.parentNode.removeChild(test_body_content); } catch (e) {}
 
-            if (window.testRunner)
-                setTimeout('testRunner.notifyDone()', 0);
+            if (window.layoutTestController)
+                setTimeout('layoutTestController.notifyDone()', 0);
         }, false); 
         document.adoptNode(tspan); 
-        if (window.testRunner)
-            setTimeout('testRunner.notifyDone()', 10);
+        if (window.layoutTestController)
+            setTimeout('layoutTestController.notifyDone()', 10);
     }
   </script>
 </svg>

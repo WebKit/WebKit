@@ -17,15 +17,15 @@ function createTestPlugin(testName)
 
 function runTest() 
 {
-    if (!window.testRunner) {
+    if (!window.layoutTestController) {
         debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
         return;
     }
 
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabled", "1");
-    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabledForAllPlugins", "1");
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.overridePreference("WebKit2AsynchronousPluginInitializationEnabled", "1");
+    layoutTestController.overridePreference("WebKit2AsynchronousPluginInitializationEnabledForAllPlugins", "1");
 
     var beforeDate = new Date;
     
@@ -41,7 +41,7 @@ function runTest()
     else
         testPassed("Appending plug-in element took under 500ms, plug-in initializing asynchronously.");
     
-    testRunner.notifyDone();
+    layoutTestController.notifyDone();
 }
 
 description("Test that loading a slow loading plug-in (550ms second sleep in NPP_new) doesn't block the WebProcess");

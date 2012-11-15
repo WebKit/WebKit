@@ -52,13 +52,13 @@ function runTest()
 function finishTest()
 {
     log("DONE");
-    if (testRunner.notifyDone)
-        testRunner.notifyDone();
+    if (layoutTestController.notifyDone)
+        layoutTestController.notifyDone();
 }
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
 window.onload = runTest;

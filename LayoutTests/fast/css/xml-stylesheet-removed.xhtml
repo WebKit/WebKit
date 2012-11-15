@@ -2,17 +2,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <div id="result">FAIL</div>
 <script type="text/javascript">
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 onload = function() {
     document.documentElement.appendChild(document.styleSheets[0].ownerNode);
     // Note: xml stylesheet is only valid when its parent is the document
     if (document.styleSheets.length == 0)
         document.getElementById('result').innerText = 'PASS';
-    if (window.testRunner)
-        testRunner.notifyDone();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 };
 </script>
 </html>

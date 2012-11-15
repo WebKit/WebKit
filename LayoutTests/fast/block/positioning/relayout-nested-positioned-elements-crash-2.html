@@ -7,9 +7,9 @@
 .floatLastChild:last-child { display: inline-block; float: left;}
 </style>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
 }
 var tableElement, liElement, formElement, buttonElement, fieldsetElement, labelElement, insElement;
 function crash() {
@@ -43,8 +43,8 @@ function crash() {
 function removeContent() {
     document.body.innerHTML = "Tests that lists in the rendering tree that track positioned objects are kept properly up-to-date through re-layout. <br />\
                                PASS. WebKit didn't crash.";
-    if (window.testRunner)
-        testRunner.notifyDone()
+    if (window.layoutTestController)
+        layoutTestController.notifyDone()
 }
 
 window.addEventListener('load', removeContent, false);
