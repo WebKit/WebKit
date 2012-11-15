@@ -1,3 +1,17 @@
+2012-11-15  Stephen Chenney  <schenney@chromium.org>
+
+        Rebaseline after r134736
+
+        Unreviewed expectations update.
+
+        Very minor changes, not entirely clear why but not a problem at all.
+        Probably due to animation cauising an initial valeue to differ
+        slightly.
+
+        * platform/chromium-linux/compositing/checkerboard-expected.png:
+        * platform/chromium-mac/compositing/checkerboard-expected.png:
+        * platform/chromium-win/compositing/checkerboard-expected.png:
+
 2012-11-15  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Update pixel test expectation for datalist tests
