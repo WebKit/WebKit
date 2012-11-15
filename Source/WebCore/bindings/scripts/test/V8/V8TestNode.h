@@ -88,17 +88,10 @@ inline v8::Handle<v8::Value> toV8Fast(TestNode* impl, const v8::AccessorInfo& in
     // in an isolated world. The fastest way we know how to do that is to check
     // whether the holder's inline wrapper is the same wrapper we see in the
     // v8::AccessorInfo.
-    v8::Handle<v8::Object> holderWrapper = info.Holder();
-    if (holder->wrapper() == holderWrapper) {
-        v8::Handle<v8::Object> wrapper = impl->wrapper();
-        if (!wrapper.IsEmpty())
-            return wrapper;
-    } else {
-        v8::Handle<v8::Object> wrapper = V8DOMWrapper::getCachedWrapper(impl);
-        if (!wrapper.IsEmpty())
-            return wrapper;
-    }
-    return wrap(impl, holderWrapper, info.GetIsolate());
+    v8::Handle<v8::Object> wrapper = (holder->wrapper() == info.Holder()) ? impl->wrapper() : V8DOMWrapper::getCachedWrapper(impl);
+    if (!wrapper.IsEmpty())
+        return wrapper;
+    return wrap(impl, info.Holder(), info.GetIsolate());
 }
 
 inline v8::Handle<v8::Value> toV8(PassRefPtr< TestNode > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)

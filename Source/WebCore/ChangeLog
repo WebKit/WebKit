@@ -1,3 +1,10 @@
+2012-11-14  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests.
+
+        * bindings/scripts/test/V8/V8TestNode.h:
+        (WebCore::toV8Fast):
+
 2012-11-14  Simon Fraser  <simon.fraser@apple.com>
 
         Don't use temporary clip rects when hit testing
