@@ -1,3 +1,23 @@
+2012-11-14  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing pseudoClass (:checked) should cause distribution.
+        https://bugs.webkit.org/show_bug.cgi?id=101902
+
+        Reviewed by Dimitri Glazkov.
+
+        When the 'checked' state is changed, we have to invalidate distribution.
+
+        According to the HTML5 spec, :checked should match a checked input[type="checkbox"],
+        a checked input[type="radio"], a selected option, and commands. However, we don't have a command element yet.
+
+        Tests: fast/dom/shadow/pseudoclass-update-checked-input.html
+               fast/dom/shadow/pseudoclass-update-checked-option.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setSelectedState):
+
 2012-11-14  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Kill $implClassName from CodeGeneratorV8.pm

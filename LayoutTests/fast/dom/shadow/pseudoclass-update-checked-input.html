@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+</head>
+
+<body>
+
+<p>When an input element became 'checked' or not-'checked', distribution should happen.</p>
+
+<p>Case 1: input[type=checkbox] becomes checked</p>
+<div id="host1">
+    <input id="input1" type="checkbox">
+</div>
+
+<p>Case 2: input[type=checkbox] becomes non-checked</p>
+<div id="host2">
+    <input id="input2" type="checkbox" checked>
+</div>
+
+<p>Case 3: input[type=radio] becomes checked</p>
+<div id="host3">
+    <input id="input3" name="radio3" type="radio">
+</div>
+
+<p>Case 4: input[type=radio] becomes non-checked</p>
+<div id="host4">
+    <input id="input4" name="radio4" type="radio" checked>
+</div>
+
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+new WebKitShadowRoot(host1).innerHTML = '<content select="input:checked">';
+new WebKitShadowRoot(host2).innerHTML = '<content select="input:checked">';
+new WebKitShadowRoot(host3).innerHTML = '<content select="input:checked">';
+new WebKitShadowRoot(host4).innerHTML = '<content select="input:checked">';
+
+setTimeout(function() {
+    input1.checked = true;
+    input2.checked = false;
+    input3.checked = true;
+    input4.checked = false;
+    testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>
+

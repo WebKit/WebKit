@@ -1,3 +1,17 @@
+2012-11-14  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing pseudoClass (:checked) should cause distribution.
+        https://bugs.webkit.org/show_bug.cgi?id=101902
+
+        Reviewed by Dimitri Glazkov.
+
+        Since an option element does not create a renderer, we cannot make its test a reftest.
+
+        * fast/dom/shadow/pseudoclass-update-checked-input-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-checked-input.html: Added.
+        * fast/dom/shadow/pseudoclass-update-checked-option-expected.txt: Added.
+        * fast/dom/shadow/pseudoclass-update-checked-option.html: Added.
+
 2012-11-14  Keishi Hattori  <keishi@webkit.org>
 
         Add tests for week picker

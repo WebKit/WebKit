@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+
+<p>When an option element became 'checked' or not-'checked', distribution should happen.</p>
+<p>Since an option element does not create a renderer, we cannot check this using reftest.</p>
+
+<div id="container">
+    <div id="host1">
+        <option id="option1">option 1</option>
+    </div>
+
+    <div id="host2">
+        <option id="option2" selected>option 2</option>
+    </div>
+</div>
+
+<pre id="console"></pre>
+
+<script>
+jsTestIsAsync = true;
+
+var shadowRoot1 = new WebKitShadowRoot(host1);
+var shadowRoot2 = new WebKitShadowRoot(host2);
+
+shadowRoot1.innerHTML = '<content select="option:checked">';
+shadowRoot2.innerHTML = '<content select="option:checked">';
+
+var content1 = shadowRoot1.querySelector('content');
+var content2 = shadowRoot2.querySelector('content');
+
+setTimeout(function() {
+    option1.setAttribute('selected', true);
+    option2.removeAttribute('selected');
+
+    nodes1 = content1.getDistributedNodes();
+    shouldBe('nodes1.length', '0');
+
+    nodes2 = content2.getDistributedNodes();
+    shouldBe('nodes2.length', '1');
+    shouldBe('nodes2.item(0).innerHTML', '"option 2"');
+
+    container.innerHTML = "";
+    finishJSTest();
+}, 0);
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

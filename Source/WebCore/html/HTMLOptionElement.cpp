@@ -256,6 +256,7 @@ void HTMLOptionElement::setSelectedState(bool selected)
 
     m_isSelected = selected;
     setNeedsStyleRecalc();
+    invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureChecked);    
 
     if (HTMLSelectElement* select = ownerSelectElement())
         select->invalidateSelectedItems();
