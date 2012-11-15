@@ -81,7 +81,7 @@ class CoordinatedGraphicsLayer : public GraphicsLayer
     , public TiledBackingStoreClient
     , public WebKit::CoordinatedTileClient {
 public:
-    CoordinatedGraphicsLayer(GraphicsLayerClient*);
+    explicit CoordinatedGraphicsLayer(GraphicsLayerClient*);
     virtual ~CoordinatedGraphicsLayer();
 
     // Reimplementations from GraphicsLayer.h.
@@ -160,7 +160,6 @@ private:
     bool fixedToViewport() const { return m_fixedToViewport; }
     void setMaskTarget(GraphicsLayer* layer) { m_maskTarget = layer; }
 
-    void notifyChange();
     void didChangeLayerState();
     void didChangeAnimations();
     void didChangeGeometry();
@@ -178,7 +177,6 @@ private:
 #endif
     void syncImageBacking();
     void syncCanvas();
-    void ensureImageBackingStore();
     void computeTransformedVisibleRect();
     void updateContentBuffers();
 
@@ -197,7 +195,6 @@ private:
     WebKit::WebLayerID m_id;
     WebKit::WebLayerInfo m_layerInfo;
     GraphicsLayer* m_maskTarget;
-    FloatRect m_needsDisplayRect;
     GraphicsLayerTransform m_layerTransform;
     bool m_inUpdateMode : 1;
     bool m_shouldUpdateVisibleRect: 1;
@@ -208,9 +205,6 @@ private:
     bool m_shouldSyncAnimations: 1;
     bool m_fixedToViewport : 1;
     bool m_canvasNeedsDisplay : 1;
-
-    float m_effectiveOpacity;
-    TransformationMatrix m_effectiveTransform;
 
     WebKit::CoordinatedGraphicsLayerClient* m_coordinator;
     OwnPtr<TiledBackingStore> m_mainBackingStore;

@@ -1,3 +1,13 @@
+2012-11-14  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Remove unused members and methods in CoordinatedGraphicsLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=102172
+
+        Reviewed by Noam Rosenthal.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayer):
+
 2012-11-14  Brady Eidson  <beidson@apple.com>
 
         Move loading responsibility out of WebResourceLoadScheduler into a new WebResourceLoader
