@@ -212,10 +212,10 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior) const
+PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavior scaleBehavior) const
 {
     RetainPtr<CGImageRef> image;
-    if (m_resolutionScale == 1)
+    if (m_resolutionScale == 1 || scaleBehavior == Unscaled)
         image = copyNativeImage(copyBehavior);
     else {
         image.adoptCF(copyNativeImage(DontCopyBackingStore));

@@ -145,7 +145,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double*, CoordinateS
     return String();
 }
 
-PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior) const
+PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavior) const
 {
     ASSERT(copyBehavior == CopyBackingStore);
     
