@@ -116,8 +116,12 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
             }
             CGContextShowGlyphsAtPositions(context, glyphs, positions.data(), count);
             CGContextSetTextMatrix(context, savedMatrix);
-        } else
+        } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             CGContextShowGlyphsWithAdvances(context, glyphs, advances, count);
+#pragma clang diagnostic pop
+        }
     }
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     else {

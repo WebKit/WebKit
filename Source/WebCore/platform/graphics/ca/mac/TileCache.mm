@@ -539,9 +539,12 @@ void TileCache::drawRepaintCounter(WebTileLayer *layer, CGContextRef context)
     else
         CGContextSetRGBFillColor(context, 1, 1, 1, 1);
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
     CGContextSelectFont(context, "Helvetica", 22, kCGEncodingMacRoman);
     CGContextShowTextAtPoint(context, indicatorBox.origin.x + 5, indicatorBox.origin.y + 22, text, strlen(text));
+#pragma clang diagnostic pop
 
     CGContextEndTransparencyLayer(context);
     CGContextRestoreGState(context);
