@@ -1,3 +1,13 @@
+2012-11-15  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Update pixel test expectation for datalist tests
+        https://bugs.webkit.org/show_bug.cgi?id=102365
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/efl/fast/forms/datalist/input-appearance-range-with-padding-with-datalist-expected.png:
+
 2012-11-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r134495): It made svg/custom/use-instanceRoot-event-listeners.xhtml fail and fast/events/attribute-listener-deletion-crash.html timeout
