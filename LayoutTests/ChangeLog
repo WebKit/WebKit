@@ -1,3 +1,17 @@
+2012-11-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Read-only properties created with putDirect() should tell the structure that there are read-only properties
+        https://bugs.webkit.org/show_bug.cgi?id=102292
+
+        Reviewed by Gavin Barraclough.
+
+        * fast/js/function-dot-length-read-only-expected.txt: Added.
+        * fast/js/function-dot-length-read-only.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/function-dot-length-read-only.js: Added.
+        (foo):
+        (Bar):
+
 2012-11-14  Alec Flett  <alecflett@chromium.org>
 
         Add tests for explicit serialization values

@@ -1,0 +1,11 @@
+Tests that function.length correctly intercepts stores when a function is used as a prototype.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS o.length is 0
+PASS o.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

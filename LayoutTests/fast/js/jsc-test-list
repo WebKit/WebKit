@@ -203,6 +203,7 @@ fast/js/function-declaration
 fast/js/function-declarations-in-switch-statement
 fast/js/function-dot-apply-replace-base
 fast/js/function-dot-arguments
+fast/js/function-dot-length-read-only
 fast/js/function-prototype-descriptor
 fast/js/function-toString-object-literals
 fast/js/function-toString-parentheses

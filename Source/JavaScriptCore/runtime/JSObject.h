@@ -1312,6 +1312,8 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, PropertyName p
         // See comment on setNewProperty call below.
         if (!specificFunction)
             slot.setNewProperty(this, offset);
+        if (attributes & ReadOnly)
+            structure()->setContainsReadOnlyProperties();
         return true;
     }
 
@@ -1379,6 +1381,8 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, PropertyName p
     // so leave the slot in an uncachable state.
     if (!specificFunction)
         slot.setNewProperty(this, offset);
+    if (attributes & ReadOnly)
+        structure->setContainsReadOnlyProperties();
     return true;
 }
 
