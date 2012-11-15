@@ -706,7 +706,7 @@ media/audio-repaint.html
 fast/forms/file/file-input-capture.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=85522
-http/tests/security/sandboxed-iframe-modify-self.html
+http/tests/security/sandboxed-iframe-form-top.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=85523
 fullscreen/full-screen-iframe-legacy.html
