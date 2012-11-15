@@ -52,15 +52,29 @@ bool PluginData::supportsMimeType(const String& mimeType) const
     return false;
 }
 
-String PluginData::pluginNameForMimeType(const String& mimeType) const
+const PluginInfo* PluginData::pluginInfoForMimeType(const String& mimeType) const
 {
     for (unsigned i = 0; i < m_mimes.size(); ++i) {
         const MimeClassInfo& info = m_mimes[i];
     
         if (info.type == mimeType)
-            return m_plugins[m_mimePluginIndices[i]].name;
+            return &m_plugins[m_mimePluginIndices[i]];
     }
 
+    return 0;
+}
+
+String PluginData::pluginNameForMimeType(const String& mimeType) const
+{
+    if (const PluginInfo* info = pluginInfoForMimeType(mimeType))
+        return info->name;
+    return String();
+}
+
+String PluginData::pluginFileForMimeType(const String& mimeType) const
+{
+    if (const PluginInfo* info = pluginInfoForMimeType(mimeType))
+        return info->file;
     return String();
 }
 

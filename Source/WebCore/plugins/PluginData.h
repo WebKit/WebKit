@@ -79,12 +79,14 @@ public:
     
     bool supportsMimeType(const String& mimeType) const;
     String pluginNameForMimeType(const String& mimeType) const;
+    String pluginFileForMimeType(const String& mimeType) const;
 
     static void refresh();
 
 private:
     PluginData(const Page*);
     void initPlugins(const Page*);
+    const PluginInfo* pluginInfoForMimeType(const String& mimeType) const;
 
     Vector<PluginInfo> m_plugins;
     Vector<MimeClassInfo> m_mimes;
